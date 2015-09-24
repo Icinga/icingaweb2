@@ -3,11 +3,11 @@ use Icinga\Module\Monitoring\Object\Host;
 
 if (! $this->compact): ?>
 <div class="controls">
-  <?= $this->tabs; ?>
-  <?= $this->sortBox; ?>
-  <?= $this->limiter; ?>
-  <?= $this->paginator; ?>
-  <?= $this->filterEditor; ?>
+  <?= $this->tabs ?>
+  <?= $this->sortBox ?>
+  <?= $this->limiter ?>
+  <?= $this->paginator ?>
+  <?= $this->filterEditor ?>
 </div>
 <?php endif ?>
 <div class="content">
@@ -17,15 +17,15 @@ $hostgroups->peekAhead($this->compact);
 $firstRow = true;
 foreach ($hostgroups as $h): ?>
 <?php if ($firstRow): ?>
-  <?php $firstRow = false; ?>
+  <?php $firstRow = false ?>
   <table class="groupview action" data-base-target="_next">
     <thead>
-      <th><?= $this->translate('Last Problem'); ?></th>
-      <th><?= $this->translate('Host Group'); ?></th>
-      <th><?= $this->translate('Total Hosts'); ?></th>
-      <th><?= $this->translate('Host States'); ?></th>
-      <th><?= $this->translate('Total Services'); ?></th>
-      <th><?= $this->translate('Service States'); ?></th>
+      <th><?= $this->translate('Last Problem') ?></th>
+      <th><?= $this->translate('Host Group') ?></th>
+      <th><?= $this->translate('Total Hosts') ?></th>
+      <th><?= $this->translate('Host States') ?></th>
+      <th><?= $this->translate('Total Services') ?></th>
+      <th><?= $this->translate('Service States') ?></th>
     </thead>
     <tbody>
 <?php endif ?>
@@ -61,9 +61,9 @@ if ($h->hosts_down_unhandled) {
         $this->href('monitoring/list/hosts', array('hostgroup_name' => $h->hostgroup_name))
       ?>">
         <td class="state">
-          <strong><?= Host::getStateText($state, true); ?></strong>
+          <strong><?= Host::getStateText($state, true) ?></strong>
           <br>
-          <?= $this->timeSince($lastStateChange, $this->compact); ?>
+          <?= $this->timeSince($lastStateChange, $this->compact) ?>
         </td>
         <td class="groupname">
           <?= $this->qlink(
@@ -71,7 +71,7 @@ if ($h->hosts_down_unhandled) {
             'monitoring/list/hosts',
             array('hostgroup_name' => $h->hostgroup_name),
             array('title' => sprintf($this->translate('List all hosts in the group "%s"'), $h->hostgroup_alias))
-          ); ?>
+          ) ?>
         </td>
         <td class="total">
           <?= $this->qlink(
@@ -82,7 +82,7 @@ if ($h->hosts_down_unhandled) {
                 $this->translate('List all hosts in host group "%s"'),
                 $h->hostgroup_alias
             ))
-          ); ?>
+          ) ?>
         </td>
         <td>
         <?php if ($h->hosts_up): ?>
@@ -106,7 +106,7 @@ if ($h->hosts_down_unhandled) {
                   $h->hostgroup_alias
                 )
               )
-            ); ?>
+            ) ?>
           </span>
         <?php endif ?>
         <?php if ($h->hosts_down_unhandled): ?>
@@ -132,7 +132,7 @@ if ($h->hosts_down_unhandled) {
                   $h->hostgroup_alias
                 )
               )
-            ); ?>
+            ) ?>
         <?php endif ?>
           <?php if ($h->hosts_down_handled): ?>
             <span class="state critical handled">
@@ -156,7 +156,7 @@ if ($h->hosts_down_unhandled) {
                     $h->hostgroup_alias
                   )
                 )
-              ); ?>
+              ) ?>
             </span>
           <?php endif ?>
         <?php if ($h->hosts_down_unhandled): ?>
@@ -185,7 +185,7 @@ if ($h->hosts_down_unhandled) {
                   $h->hostgroup_alias
                 )
               )
-            ); ?>
+            ) ?>
         <?php endif ?>
           <?php if ($h->hosts_unreachable_handled): ?>
             <span class="state unknown handled">
@@ -209,7 +209,7 @@ if ($h->hosts_down_unhandled) {
                     $h->hostgroup_alias
                   )
                 )
-              ); ?>
+              ) ?>
             </span>
           <?php endif ?>
         <?php if ($h->hosts_unreachable_unhandled): ?>
@@ -236,7 +236,7 @@ if ($h->hosts_down_unhandled) {
                   $h->hostgroup_alias
                 )
               )
-            ); ?>
+            ) ?>
           </span>
         <?php endif ?>
         </td>
@@ -249,7 +249,7 @@ if ($h->hosts_down_unhandled) {
                 $this->translate('List all services of all hosts in host group "%s"'),
                 $h->hostgroup_alias
             ))
-          ); ?>
+          ) ?>
         </td>
         <td>
         <?php if ($h->services_ok): ?>
@@ -273,7 +273,7 @@ if ($h->hosts_down_unhandled) {
                   $h->hostgroup_alias
                 )
               )
-            ); ?>
+            ) ?>
           </span>
         <?php endif ?>
         <?php if ($h->services_critical_unhandled): ?>
@@ -300,7 +300,7 @@ if ($h->hosts_down_unhandled) {
                   $h->hostgroup_alias
                 )
               )
-            ); ?>
+            ) ?>
         <?php endif ?>
           <?php if ($h->services_critical_handled): ?>
             <span class="state critical handled">
@@ -324,7 +324,7 @@ if ($h->hosts_down_unhandled) {
                     $h->hostgroup_alias
                   )
                 )
-              ); ?>
+              ) ?>
             </span>
           <?php endif ?>
         <?php if ($h->services_critical_unhandled): ?>
@@ -354,7 +354,7 @@ if ($h->hosts_down_unhandled) {
                   $h->hostgroup_alias
                 )
               )
-            ); ?>
+            ) ?>
         <?php endif ?>
           <?php if ($h->services_unknown_handled): ?>
             <span class="state unknown handled">
@@ -378,7 +378,7 @@ if ($h->hosts_down_unhandled) {
                     $h->hostgroup_alias
                   )
                 )
-              ); ?>
+              ) ?>
             </span>
           <?php endif ?>
         <?php if ($h->services_unknown_unhandled): ?>
@@ -408,7 +408,7 @@ if ($h->hosts_down_unhandled) {
                   $h->hostgroup_alias
                 )
               )
-            ); ?>
+            ) ?>
         <?php endif ?>
           <?php if ($h->services_warning_handled): ?>
             <span class="state warning handled">
@@ -432,7 +432,7 @@ if ($h->hosts_down_unhandled) {
                     $h->hostgroup_alias
                   )
                 )
-              ); ?>
+              ) ?>
             </span>
           <?php endif ?>
         <?php if ($h->services_warning_unhandled): ?>
@@ -459,7 +459,7 @@ if ($h->hosts_down_unhandled) {
                   $h->hostgroup_alias
                 )
               )
-            ); ?>
+            ) ?>
           </span>
         <?php endif ?>
         </td>
@@ -477,9 +477,9 @@ if ($h->hosts_down_unhandled) {
       'data-base-target'    => '_next',
       'class'               => 'pull-right show-more'
     )
-  ); ?>
+  ) ?>
 <?php endif ?>
 <?php else: ?>
-  <?= $this->translate('No hostgroups found matching the filter'); ?>
+  <?= $this->translate('No hostgroups found matching the filter') ?>
 <?php endif ?>
 </div>
