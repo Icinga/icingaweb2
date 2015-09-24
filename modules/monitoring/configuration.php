@@ -353,3 +353,4 @@ $dashboard->add(
  */
 $this->provideCssFile('colors.less');
 $this->provideCssFile('service-grid.less');
+$this->provideCssFile('tables.less');
