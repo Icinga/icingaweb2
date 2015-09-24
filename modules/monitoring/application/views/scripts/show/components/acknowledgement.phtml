@@ -63,12 +63,16 @@ if ($object->acknowledged): ?>
                 if ($object->getType() === $object::TYPE_HOST) {
                     $ackLink = $this->href(
                         'monitoring/host/acknowledge-problem',
-                        array('host' => $object->getName())
+                        array('host' => $object->getName()),
+                        null,
+                        array('class' => 'action-link')
                     );
                 } else {
                     $ackLink = $this->href(
                         'monitoring/service/acknowledge-problem',
-                        array('host' => $object->getHost()->getName(), 'service' => $object->getName())
+                        array('host' => $object->getHost()->getName(), 'service' => $object->getName()),
+                        null,
+                        array('class' => 'action-link')
                     );
                 }
             ?>
@@ -77,8 +81,9 @@ if ($object->acknowledged): ?>
                 $ackLink,
                 null,
                 array(
-                    'icon'              => 'ok',
+                    'class'             => 'action-link',
                     'data-base-target'  => '_self',
+                    'icon'              => 'ok',
                     'title'             => $this->translate(
                         'Acknowledge this problem, suppress all future notifications for it and tag it as being handled'
                     )
