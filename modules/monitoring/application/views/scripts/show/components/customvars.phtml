@@ -1,17 +1,6 @@
-<?php if (empty($object->customvars)) return; ?>
-<tr class="newsection">
-    <td colspan="2">
-        <h2 class="customvar"><?= $this->translate('Custom variables') ?></h2>
-    </td>
+<?php foreach ($object->customvars as $name => $value): ?>
+<tr>
+    <th><?= $this->escape($name) ?></th>
+    <td><?= $this->customvar($value) ?></td>
 </tr>
-<?php
-
-foreach ($object->customvars as $name => $value) {
-
-    printf(
-        '<tr><th>%s</th><td class="customvar">%s</td></tr>' . "\n",
-        $this->escape($name),
-        $this->customvar($value)
-    );
-}
-
+<?php endforeach ?>
