@@ -464,7 +464,10 @@ class NavigationConfigForm extends ConfigForm
         $children = $this->getFlattenedChildren($name);
         if (! empty($children)) {
             throw new IcingaException(
-                'Unable to delete navigation item "%s". There are other items dependent from it: %s',
+                $this->translate(
+                    'Unable to delete navigation item "%s". There'
+                    . ' are other items dependent from it: %s'
+                ),
                 $name,
                 join(', ', $children)
             );
@@ -500,8 +503,10 @@ class NavigationConfigForm extends ConfigForm
 
         if ($parent && $this->hasBeenShared($parent)) {
             throw new IcingaException(
-                'Unable to unshare navigation item "%s". It is dependent from item "%s".'
-                . ' Dependent items can only be unshared by unsharing their parent',
+                $this->translate(
+                    'Unable to unshare navigation item "%s". It is dependent from item "%s".'
+                    . ' Dependent items can only be unshared by unsharing their parent'
+                ),
                 $name,
                 $parent
             );
