@@ -30,7 +30,7 @@ if (! $this->compact): ?>
         $hostLink = $this->href('monitoring/host/show', array('host' => $host->host_name)); ?>
         <tr>
             <td class="state-col state-<?= $hostStateName ?><?= $host->host_handled ? '-handled' : '' ?>">
-                <strong><?= Host::getStateText($host->host_state, true) ?></strong>
+                <span class="state-label"><?= Host::getStateText($host->host_state, true) ?></span>
             <?php if ((int) $host->host_state !== 99): ?>
                 <br>
                 <?= $this->timeSince($host->host_last_state_change, $this->compact) ?>
