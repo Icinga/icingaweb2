@@ -19,6 +19,10 @@ if (! $this->compact): ?>
 </div>
 <?php endif ?>
 <div class="content">
+<?php if (! $hosts->hasResult()): ?>
+    <p><?= $this->translate('No hosts found matching the filter'.) ?></p>
+    </div>
+<?php return; endif ?>
     <table data-base-target="_next"
            class="action-table multiselect"
            data-icinga-multiselect-url="<?= $this->href('monitoring/hosts/show') ?>"
@@ -94,9 +98,7 @@ if (! $this->compact): ?>
     <?php endforeach ?>
     </tbody>
     </table>
-<?php if (! $hosts->hasResult()): ?>
-    <?= $this->translate('No hosts found matching the filter') ?>
-<?php elseif ($hosts->hasMore()): ?>
+<?php if ($hosts->hasMore()): ?>
     <div class="text-right">
         <?= $this->qlink(
             $this->translate('Show More'),
