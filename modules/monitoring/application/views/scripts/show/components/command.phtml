@@ -23,8 +23,9 @@ $command = array_shift($parts);
                     'monitoring/host/process-check-result',
                     array('host' => $object->getName()),
                     array(
-                        'icon'              => 'reply',
+                        'class'             => 'action-link',
                         'data-base-target'  => '_self',
+                        'icon'              => 'reply',
                         'title'             => $title
                     )
                 );
@@ -34,8 +35,9 @@ $command = array_shift($parts);
                     'monitoring/service/process-check-result',
                     array('host' => $object->getHost()->getName(), 'service' => $object->getName()),
                     array(
-                        'icon'              => 'reply',
+                        'class'             => 'action-link',
                         'data-base-target'  => '_self',
+                        'icon'              => 'reply',
                         'title'             => $title
                     )
                 );
