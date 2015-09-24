@@ -282,19 +282,15 @@ class Url
      * Return the relative url
      *
      * @return  string
-     *
-     * @throws  ProgrammingError    In case no relative url path is set or it is absolute
      */
     public function getRelativeUrl($separator = '&')
     {
-        $path = $this->getPath();
-        if (! $path) {
-            throw new ProgrammingError('Unable to provide a relative URL. No path set');
-        } elseif ($path[0] === '/') {
-            throw new ProgrammingError('Cannot provide a relative URL. Path is absolute');
+        $path = $this->buildPathQueryAndFragment($separator);
+        if ($path && $path[0] === '/') {
+            return '';
         }
 
-        return $this->buildPathQueryAndFragment($separator);
+        return $path;
     }
 
     /**
