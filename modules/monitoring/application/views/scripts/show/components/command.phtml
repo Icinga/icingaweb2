@@ -1,22 +1,21 @@
 <?php
-
 $parts = explode('!', $object->check_command);
 $command = array_shift($parts);
 
-?>
-
-<?php if ($showInstance): ?>
+if ($showInstance): ?>
 <tr class="newsection">
-    <th><?= $this->translate('Instance'); ?></th>
-    <td><?= $this->escape($object->instance_name); ?></td>
+    <th><?= $this->translate('Instance') ?></th>
+    <td><?= $this->escape($object->instance_name) ?></td>
 </tr>
 <?php endif ?>
 <tr class="newsection">
-    <th><?= $this->translate('Command'); ?></th>
+    <th><?= $this->translate('Command') ?></th>
     <td>
-        <?= $this->escape($command); ?>
+        <?= $this->escape($command) ?>
         <?php if ($this->hasPermission('monitoring/command/schedule-check') && $object->passive_checks_enabled) {
-            $title = sprintf($this->translate('Submit a one time or so called passive result for the %s check'), $command);
+            $title = sprintf(
+                $this->translate('Submit a one time or so called passive result for the %s check'), $command
+            );
             if ($object->getType() === $object::TYPE_HOST) {
                 echo $this->qlink(
                     $this->translate('Process check result'),
@@ -47,9 +46,7 @@ $command = array_shift($parts);
 </tr>
 
 <?php
-
 $row = "<tr>\n  <th>%s</th>\n  <td>%s</td>\n</tr>\n";
 for ($i = 0; $i < count($parts); $i++) {
     printf($row, '$ARG' . ($i + 1) . '$', $this->escape($parts[$i]));
 }
-
