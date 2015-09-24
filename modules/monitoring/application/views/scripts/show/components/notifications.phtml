@@ -11,8 +11,9 @@
                     'monitoring/host/send-custom-notification',
                     array('host' => $object->getName()),
                     array(
-                        'icon'              => 'bell',
+                        'class'             => 'action-link',
                         'data-base-target'  => '_self',
+                        'icon'              => 'bell',
                         'title'             => $this->translate(
                             'Send a custom notification to contacts responsible for this host'
                         )
@@ -25,8 +26,9 @@
                     'monitoring/service/send-custom-notification',
                     array('host' => $object->getHost()->getName(), 'service' => $object->getName()),
                     array(
-                        'icon'              => 'bell',
+                        'class'             => 'action-link',
                         'data-base-target'  => '_self',
+                        'icon'              => 'bell',
                         'title'             => $this->translate(
                             'Send a custom notification to contacts responsible for this service'
                         )
