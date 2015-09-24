@@ -5,19 +5,19 @@ use Icinga\Module\Monitoring\Object\Service;
 $services->peekAhead($this->compact);
 
 if (! $this->compact): ?>
-    <div class="controls separated">
-        <?= $this->tabs ?>
-        <div class="dontprint">
-            <?= $this->render('list/components/selectioninfo.phtml') ?>
-            <h1 class="tinystatesummary" <?= $this->compact ? ' data-base-target="col1"' : ''; ?>>
-                <?= $this->render('list/components/servicesummary.phtml') ?>
-            </h1>
-        </div>
-        <?= $this->sortBox ?>
-        <?= $this->limiter ?>
-        <?= $this->paginator ?>
-        <?= $this->filterEditor ?>
+<div class="controls separated">
+    <?= $this->tabs ?>
+    <div class="dontprint">
+        <?= $this->render('list/components/selectioninfo.phtml') ?>
+        <h1 class="tinystatesummary" <?= $this->compact ? ' data-base-target="col1"' : ''; ?>>
+            <?= $this->render('list/components/servicesummary.phtml') ?>
+        </h1>
     </div>
+    <?= $this->sortBox ?>
+    <?= $this->limiter ?>
+    <?= $this->paginator ?>
+    <?= $this->filterEditor ?>
+</div>
 <?php endif ?>
 <div class="content">
     <table data-base-target="_next"
@@ -40,10 +40,9 @@ if (! $this->compact): ?>
                 'host' => $service->host_name,
             )
         );
-        $serviceStateName = Service::getStateText($service->service_state);
-        ?>
-        <tr class="state <?= $serviceStateName ?><?= $service->service_handled ? ' handled' : '' ?>">
-            <td class="state">
+        $serviceStateName = Service::getStateText($service->service_state); ?>
+        <tr>
+            <td class="state-col state-<?= $serviceStateName ?><?= $service->service_handled ? '-handled' : '' ?>">
                 <p>
                     <span class="state-label"><?= Service::getStateText($service->service_state, true) ?></span>
                 <?php if ((int) $service->service_state !== 99): ?>
@@ -100,14 +99,16 @@ if (! $this->compact): ?>
     <?php if (! $services->hasResult()): ?>
         <?= $this->translate('No services found matching the filter'); ?>
     <?php elseif ($services->hasMore()): ?>
-        <?= $this->qlink(
-            $this->translate('Show More'),
-            $this->url()->without(array('view', 'limit')),
-            null,
-            array(
-                'data-base-target'    => '_next',
-                'class'               => 'action-link pull-right'
-            )
-        ) ?>
+        <div class="text-right">
+            <?= $this->qlink(
+                $this->translate('Show More'),
+                $this->url()->without(array('view', 'limit')),
+                null,
+                array(
+                    'data-base-target'  => '_next',
+                    'class'             => 'action-link'
+                )
+            ) ?>
+        </div>
     <?php endif ?>
 </div>
