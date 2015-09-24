@@ -114,6 +114,7 @@ class NavigationConfigForm extends ConfigForm
      */
     public function setUserConfig(Config $config)
     {
+        $config->getConfigObject()->setKeyColumn('name');
         $this->userConfig = $config;
         return $this;
     }
@@ -126,7 +127,7 @@ class NavigationConfigForm extends ConfigForm
     public function getUserConfig()
     {
         if ($this->userConfig === null) {
-            $this->userConfig = $this->getUser()->loadNavigationConfig();
+            $this->setUserConfig($this->getUser()->loadNavigationConfig());
         }
 
         return $this->userConfig;
@@ -141,6 +142,7 @@ class NavigationConfigForm extends ConfigForm
      */
     public function setShareConfig(Config $config)
     {
+        $config->getConfigObject()->setKeyColumn('name');
         $this->shareConfig = $config;
         return $this;
     }
