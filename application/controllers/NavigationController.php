@@ -162,14 +162,20 @@ class NavigationController extends Controller
         $form->setUser($this->Auth()->getUser());
         $form->setShareConfig(Config::app('navigation'));
         $form->setOnSuccess(function (NavigationConfigForm $form) {
+            $data = array_filter($form->getValues());
+
             try {
-                $form->add(array_filter($form->getValues()));
+                $form->add($data);
             } catch (Exception $e) {
                 $form->error($e->getMessage());
                 return false;
             }
 
             if ($form->save()) {
+                if (isset($data['type']) && $data['type'] === 'menu-item') {
+                    $form->getResponse()->setRerenderLayout();
+                }
+
                 Notification::success(t('Navigation item successfully created'));
                 return true;
             }
