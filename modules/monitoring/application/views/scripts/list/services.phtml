@@ -20,6 +20,10 @@ if (! $this->compact): ?>
 </div>
 <?php endif ?>
 <div class="content">
+<?php if (! $services->hasResult()): ?>
+    <p><?= $this->translate('No services found matching the filter.') ?></p>
+</div>
+<?php return; endif ?>
     <table data-base-target="_next"
            class="action-table multiselect<?php if ($this->compact): ?> compact<?php endif ?>"
            data-icinga-multiselect-url="<?= $this->href('monitoring/services/show') ?>"
@@ -96,19 +100,17 @@ if (! $this->compact): ?>
     <?php endforeach ?>
     </tbody>
     </table>
-    <?php if (! $services->hasResult()): ?>
-        <?= $this->translate('No services found matching the filter'); ?>
-    <?php elseif ($services->hasMore()): ?>
-        <div class="text-right">
-            <?= $this->qlink(
-                $this->translate('Show More'),
-                $this->url()->without(array('view', 'limit')),
-                null,
-                array(
-                    'data-base-target'  => '_next',
-                    'class'             => 'action-link'
-                )
-            ) ?>
-        </div>
-    <?php endif ?>
+<?php if ($services->hasMore()): ?>
+    <div class="text-right">
+        <?= $this->qlink(
+            $this->translate('Show More'),
+            $this->url()->without(array('view', 'limit')),
+            null,
+            array(
+                'data-base-target'  => '_next',
+                'class'             => 'action-link'
+            )
+        ) ?>
+    </div>
+<?php endif ?>
 </div>
