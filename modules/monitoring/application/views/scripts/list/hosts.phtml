@@ -30,15 +30,17 @@ if (! $this->compact): ?>
         $hostLink = $this->href('monitoring/host/show', array('host' => $host->host_name)); ?>
         <tr>
             <td class="state-col state-<?= $hostStateName ?><?= $host->host_handled ? '-handled' : '' ?>">
-                <span class="state-label"><?= Host::getStateText($host->host_state, true) ?></span>
-            <?php if ((int) $host->host_state !== 99): ?>
-                <br>
-                <?= $this->timeSince($host->host_last_state_change, $this->compact) ?>
-            <?php if ((int) $host->host_state > 0 && (int) $host->host_state_type === 0): ?>
-                <br>
-                <span class="text-small">Soft <?= $host->host_attempt ?></span>
-            <?php endif ?>
-            <?php endif ?>
+                <p>
+                    <span class="state-label"><?= Host::getStateText($host->host_state, true) ?></span>
+                <?php if ((int) $host->host_state !== 99): ?>
+                    <br>
+                    <?= $this->timeSince($host->host_last_state_change, $this->compact) ?>
+                <?php if ((int) $host->host_state > 0 && (int) $host->host_state_type === 0): ?>
+                    <br>
+                    <span class="text-small">Soft <?= $host->host_attempt ?></span>
+                <?php endif ?>
+                <?php endif ?>
+                </p>
             </td>
             <td>
                 <?= $this->iconImage()->host($host) ?>
