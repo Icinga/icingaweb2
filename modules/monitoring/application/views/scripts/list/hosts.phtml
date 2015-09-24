@@ -8,7 +8,7 @@ if (! $this->compact): ?>
     <?= $this->tabs ?>
     <div class="dontprint">
         <?= $this->render('list/components/selectioninfo.phtml') ?>
-        <h2 class="tinystatesummary" <?= $this->compact ? ' data-base-target="col1"' : '' ?>
+        <h2 class="tinystatesummary" <?= $this->compact ? ' data-base-target="col1"' : '' ?>>
             <?= $this->render('list/components/hostssummary.phtml') ?>
         </h2>
     </div>
