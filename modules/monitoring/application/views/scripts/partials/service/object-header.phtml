@@ -1,11 +1,10 @@
 <?php
 use Icinga\Module\Monitoring\Object\Host;
 use Icinga\Module\Monitoring\Object\Service;
-
 ?>
 <table class="objectstate">
-    <tr class="state <?= Host::getStateText($object->host_state); ?><?= $object->host_handled ? ' handled' : ''; ?>">
-        <td class="state">
+    <tr>
+        <td class="state-col state-<?= Host::getStateText($object->host_state); ?><?= $object->host_handled ? ' handled' : ''; ?>">
             <strong><?= Host::getStateText($object->host_state, true); ?></strong><br>
             <?= $this->timeSince($object->host_last_state_change) ?>
         </td>
