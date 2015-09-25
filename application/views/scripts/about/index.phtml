@@ -30,4 +30,29 @@
     ?></a>&emsp;<a href="https://www.facebook.com/icinga"><?=
         $this->translate('Icinga on Facebook')
     ?></a></p>
+    <h1><?= $this->translate('Loaded modules') ?></h1>
+    <table class="action alternating" data-base-target="_next">
+      <thead>
+        <tr>
+          <th><?= $this->translate('Name') ?></th>
+          <th><?= $this->translate('Version') ?></th>
+        </tr>
+      </thead>
+      <tbody>
+      <?php
+      foreach ($modules as $module) {
+        $name = $module->getName();
+      ?>
+        <tr>
+          <td><?= $hasPermission ? $this->qlink(
+            $name,
+            'config/module/',
+            array('name' => $name),
+            array('title' => sprintf($this->translate('Show the overview of the %s module'), $name))
+          ) : $name ?></td>
+          <td><?= $module->getVersion() ?></td>
+        </tr>
+      <?php } ?>
+      </tbody>
+    </table>
 </div>
