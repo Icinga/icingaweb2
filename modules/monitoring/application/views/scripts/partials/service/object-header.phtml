@@ -6,34 +6,44 @@ use Icinga\Module\Monitoring\Object\Service;
 <table>
     <tr>
         <td class="state-col state-<?= Host::getStateText($object->host_state) ?><?= $object->host_handled ? ' handled' : '' ?>">
-            <?= Host::getStateText($object->host_state, true) ?><br>
-            <?= $this->timeSince($object->host_last_state_change) ?>
+            <p>
+                <?= Host::getStateText($object->host_state, true) ?>
+                <br>
+                <?= $this->timeSince($object->host_last_state_change) ?>
+            </p>
         </td>
         <td>
-            <?= $this->iconImage()->service($object) ?>
-            <?= $this->escape($object->host_display_name) ?>
-        <?php if ($object->host_display_name !== $object->host_name): ?>
-            (<?= $this->escape($object->host_name) ?>)
-        <?php endif ?>
-        <?php if ($object->host_address && $object->host_address !== $object->host_name): ?>
-            <br>
-            <?= $this->escape($object->host_address) ?>
-        <?php endif ?>
+            <p>
+                <?= $this->iconImage()->service($object) ?>
+                <?= $this->escape($object->host_display_name) ?>
+            <?php if ($object->host_display_name !== $object->host_name): ?>
+                (<?= $this->escape($object->host_name) ?>)
+            <?php endif ?>
+            <?php if ($object->host_address && $object->host_address !== $object->host_name): ?>
+                <br>
+                <?= $this->escape($object->host_address) ?>
+            <?php endif ?>
             <?= $this->render('partials/host/statusicons.phtml') ?>
+            </p>
         </td>
     </tr>
     <tr>
         <td class="state-col state-<?= Service::getStateText($object->service_state) ?><?= $object->service_handled ? ' handled' : '' ?>">
-            <?= Service::getStateText($object->service_state, true) ?><br>
-            <?= $this->timeSince($object->service_last_state_change) ?>
+            <p>
+                <?= Service::getStateText($object->service_state, true) ?>
+                <br>
+                <?= $this->timeSince($object->service_last_state_change) ?>
+            </p>
         </td>
         <td>
-            <?= $this->iconImage()->host($object) ?>
-            <?= $this->translate('Service') ?>: <?= $this->escape($object->service_display_name) ?>
-        <?php if ($object->service_display_name !== $object->service_description): ?>
-            (<?= $this->escape($object->service_description) ?>)
-        <?php endif ?>
-            <?= $this->render('partials/service/statusicons.phtml') ?>
+            <p>
+                <?= $this->iconImage()->host($object) ?>
+                <?= $this->translate('Service') ?>: <?= $this->escape($object->service_display_name) ?>
+            <?php if ($object->service_display_name !== $object->service_description): ?>
+                (<?= $this->escape($object->service_description) ?>)
+            <?php endif ?>
+                <?= $this->render('partials/service/statusicons.phtml') ?>
+            </p>
         </td>
     </tr>
 </table>
