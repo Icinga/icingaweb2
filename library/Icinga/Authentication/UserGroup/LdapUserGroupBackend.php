@@ -420,6 +420,29 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
     }
 
     /**
+     * Validate that the requested table exists
+     *
+     * This will return $this->groupClass in case $table equals "group" or "group_membership".
+     *
+     * @param   string              $table      The table to validate
+     * @param   RepositoryQuery     $query      An optional query to pass as context
+     *                                          (unused by the base implementation)
+     *
+     * @return  string
+     *
+     * @throws  ProgrammingError                In case the given table does not exist
+     */
+    public function requireTable($table, RepositoryQuery $query = null)
+    {
+        $table = parent::requireTable($table, $query);
+        if ($table === 'group' || $table === 'group_membership') {
+            $table = $this->groupClass;
+        }
+
+        return $table;
+    }
+
+    /**
      * Return the groups the given user is a member of
      *
      * @param   User    $user
