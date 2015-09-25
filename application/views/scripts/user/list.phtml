@@ -1,17 +1,16 @@
 <?php
-
 use Icinga\Data\Extensible;
 use Icinga\Data\Reducible;
 
 if (! $this->compact): ?>
 <div class="controls">
-  <?= $this->tabs; ?>
-  <?= $this->sortBox; ?>
-  <?= $this->limiter; ?>
-  <?= $this->paginator; ?>
+  <?= $this->tabs ?>
+  <?= $this->sortBox ?>
+  <?= $this->limiter ?>
+  <?= $this->paginator ?>
   <div>
-    <?= $this->backendSelection; ?>
-    <?= $this->filterEditor; ?>
+    <?= $this->backendSelection ?>
+    <?= $this->filterEditor ?>
   </div>
 </div>
 <?php endif ?>
@@ -29,13 +28,13 @@ if (! isset($backend)) {
 $firstRow = true;
 foreach ($users as $user): ?>
   <?php if ($firstRow): ?>
-    <?php $firstRow = false; ?>
+    <?php $firstRow = false ?>
 <table data-base-target="_next" class="action user-list alternating">
   <thead>
     <tr>
-      <th class="user-name"><?= $this->translate('Username'); ?></th>
+      <th class="user-name"><?= $this->translate('Username') ?></th>
      <?php if ($reducible): ?>
-      <th class="user-remove"><?= $this->translate('Remove'); ?></th>
+      <th class="user-remove"><?= $this->translate('Remove') ?></th>
      <?php endif ?>
     </tr>
   </thead>
@@ -47,7 +46,7 @@ foreach ($users as $user): ?>
         'user'      => $user->user_name
       ), array(
         'title'     => sprintf($this->translate('Show detailed information about %s'), $user->user_name)
-      )); ?></td>
+      )) ?></td>
      <?php if ($reducible): ?>
       <td class="user-remove">
         <?= $this->qlink(
@@ -61,7 +60,7 @@ foreach ($users as $user): ?>
             'title'     => sprintf($this->translate('Remove user %s'), $user->user_name),
             'icon'      => 'trash'
           )
-        ); ?>
+        ) ?>
       </td>
      <?php endif ?>
     </tr>
@@ -70,13 +69,13 @@ foreach ($users as $user): ?>
   </tbody>
 </table>
 <?php else: ?>
-<p><?= $this->translate('No users found matching the filter'); ?></p>
+<p><?= $this->translate('No users found matching the filter') ?></p>
 <?php endif ?>
 <?php if ($extensible): ?>
 <?= $this->qlink($this->translate('Add a new user'), 'user/add', array('backend' => $backend->getName()), array(
   'icon'                => 'plus',
   'data-base-target'    => '_next',
   'class'               => 'user-add'
-)); ?>
+)) ?>
 <?php endif ?>
 </div>
