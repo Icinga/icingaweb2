@@ -16,9 +16,10 @@
     <?php else: ?>
         <?= $this->render('show/components/hostgroups.phtml') ?>
     <?php endif ?>
-        <?= $this->render('show/components/perfdata.phtml') ?>
     </tbody>
     </table>
+
+    <?= $this->render('show/components/perfdata.phtml') ?>
 
     <h2><?= $this->translate('Notifications') ?></h2>
     <table class="name-value-table">
@@ -39,12 +40,12 @@
     </table>
 
     <?php if (! empty($object->customvars)): ?>
-        <h2><?= $this->translate('Custom Variables') ?></h2>
-        <table class="name-value-table">
-        <tbody>
-            <?= $this->render('show/components/customvars.phtml') ?>
-        </tbody>
-        </table>
+    <h2><?= $this->translate('Custom Variables') ?></h2>
+    <table class="name-value-table">
+    <tbody>
+        <?= $this->render('show/components/customvars.phtml') ?>
+    </tbody>
+    </table>
     <?php endif ?>
 
     <?= $this->render('show/components/flags.phtml') ?>
