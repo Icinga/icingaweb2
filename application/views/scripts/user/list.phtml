@@ -35,12 +35,12 @@ $reducible = $this->hasPermission('config/authentication/users/remove') && $back
         'class'               => 'action-link'
     )) ?>
 <?php endif ?>
-    <table data-base-target="_next" class="action">
+    <table class="action-table" data-base-target="_next">
     <thead>
         <tr>
-            <th class="user-name"><?= $this->translate('Username') ?></th>
+            <th><?= $this->translate('Username') ?></th>
         <?php if ($reducible): ?>
-            <th class="user-remove"><?= $this->translate('Remove') ?></th>
+            <th><?= $this->translate('Remove') ?></th>
         <?php endif ?>
         </tr>
     </thead>
