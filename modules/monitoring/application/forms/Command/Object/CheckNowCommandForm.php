@@ -18,7 +18,7 @@ class CheckNowCommandForm extends ObjectsCommandForm
      */
     public function init()
     {
-        $this->setAttrib('class', 'inline link-like');
+        $this->setAttrib('class', 'link');
     }
 
     /**
@@ -39,7 +39,7 @@ class CheckNowCommandForm extends ObjectsCommandForm
                         . $this->translate('Check now'),
                     'decorators'    => array('ViewHelper'),
                     'escape'        => false,
-                    'class'         => 'link-like spinner',
+                    'class'         => 'action-link link',
                     'title'         => $this->translate('Schedule the next active check to run immediately')
                 )
             )
