@@ -22,8 +22,8 @@ use Icinga\Module\Monitoring\Object\Service;
             <?= $this->render('partials/host/statusicons.phtml') ?>
         </td>
     </tr>
-    <tr class="state <?= Service::getStateText($object->service_state) ?><?= $object->service_handled ? ' handled' : '' ?>">
-        <td class="state">
+    <tr>
+        <td class="state-col state-<?= Service::getStateText($object->service_state) ?><?= $object->service_handled ? ' handled' : '' ?>">
             <?= Service::getStateText($object->service_state, true) ?><br>
             <?= $this->timeSince($object->service_last_state_change) ?>
         </td>
