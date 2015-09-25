@@ -28,6 +28,13 @@ if (! $this->compact): ?>
 $extensible = $this->hasPermission('config/authentication/users/add') && $backend instanceof Extensible;
 $reducible = $this->hasPermission('config/authentication/users/remove') && $backend instanceof Reducible;
 ?>
+<?php if ($extensible): ?>
+    <?= $this->qlink($this->translate('Add a new user'), 'user/add', array('backend' => $backend->getName()), array(
+        'icon'                => 'plus',
+        'data-base-target'    => '_next',
+        'class'               => 'user-add'
+    )) ?>
+<?php endif ?>
     <table data-base-target="_next" class="action user-list alternating">
     <thead>
         <tr>
@@ -69,11 +76,4 @@ $reducible = $this->hasPermission('config/authentication/users/remove') && $back
     <?php endforeach ?>
     </tbody>
     </table>
-<?php if ($extensible): ?>
-    <?= $this->qlink($this->translate('Add a new user'), 'user/add', array('backend' => $backend->getName()), array(
-        'icon'                => 'plus',
-        'data-base-target'    => '_next',
-        'class'               => 'user-add'
-    )) ?>
-<?php endif ?>
 </div>
