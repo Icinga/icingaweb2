@@ -257,7 +257,7 @@ class NavigationController extends Controller
         $form->setTitle(sprintf($this->translate('Remove Navigation Item %s'), $itemName));
         $form->setOnSuccess(function (ConfirmRemovalForm $form) use ($itemName, $navigationConfigForm) {
             try {
-                $navigationConfigForm->delete($itemName);
+                $itemConfig = $navigationConfigForm->delete($itemName);
             } catch (NotFoundError $e) {
                 Notification::success(sprintf(t('Navigation Item "%s" not found. No action required'), $itemName));
                 return true;
@@ -267,6 +267,10 @@ class NavigationController extends Controller
             }
 
             if ($navigationConfigForm->save()) {
+                if ($itemConfig->type === 'menu-item') {
+                    $form->getResponse()->setRerenderLayout();
+                }
+
                 Notification::success(sprintf(t('Navigation Item "%s" successfully removed'), $itemName));
                 return true;
             }

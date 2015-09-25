@@ -8,6 +8,7 @@ use Icinga\Application\Config;
 use Icinga\Application\Logger;
 use Icinga\Application\Icinga;
 use Icinga\Authentication\Auth;
+use Icinga\Data\ConfigObject;
 use Icinga\Exception\IcingaException;
 use Icinga\Exception\NotFoundError;
 use Icinga\Exception\ProgrammingError;
@@ -449,7 +450,7 @@ class NavigationConfigForm extends ConfigForm
      *
      * @param   string  $name
      *
-     * @return  $this
+     * @return  ConfigObject        The navigation item's config
      *
      * @throws  NotFoundError       In case no navigation item with the given name is found
      * @throws  IcingaException     In case the navigation item has still children
@@ -473,9 +474,10 @@ class NavigationConfigForm extends ConfigForm
             );
         }
 
+        $section = $config->getSection($name);
         $config->removeSection($name);
         $this->setIniConfig($config);
-        return $this;
+        return $section;
     }
 
     /**
