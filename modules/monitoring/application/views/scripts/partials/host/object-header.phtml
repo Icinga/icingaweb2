@@ -1,8 +1,8 @@
 <?php
 use Icinga\Module\Monitoring\Object\Host;
-
+/** @var Host $object */
 ?>
-<table class="objectstate">
+<table>
     <tr class="state <?= Host::getStateText($object->host_state); ?><?= $object->host_handled ? ' handled' : ''; ?>">
         <td class="state">
             <strong><?= Host::getStateText($object->host_state, true); ?></strong><br>
