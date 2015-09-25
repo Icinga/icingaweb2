@@ -85,3 +85,21 @@ dl.feed-list {
     border-bottom: 1px solid @gray-lighter;
   }
 }
+
+table.listing-table {
+  border-collapse: collapse;
+
+  th {
+    color: @text-color-light;
+    // Reset default font-weight
+    font-weight: normal;
+  }
+
+  tr {
+    border-bottom: 1px solid @gray-lightest;
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+}
