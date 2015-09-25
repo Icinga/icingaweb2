@@ -8,6 +8,7 @@ use Icinga\Exception\NotReadableError;
 use Icinga\Exception\NotWritableError;
 use Icinga\User\Preferences;
 use Icinga\User\Preferences\PreferencesStore;
+use Icinga\File\Ini\IniParser;
 
 /**
  * Load and save user preferences from and to INI files
@@ -57,7 +58,7 @@ class IniStore extends PreferencesStore
                     $this->getUser()->getUsername()
                 );
             } else {
-                $this->preferences = parse_ini_file($this->preferencesFile, true);
+                $this->preferences = IniParser::parseIniFile($this->preferencesFile)->toArray();
             }
         }
 
