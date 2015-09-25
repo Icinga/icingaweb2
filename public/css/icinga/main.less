@@ -17,10 +17,12 @@
   }
 }
 
-.clearfix:after {
-  clear: both;
-  content: "";
-  display: table;
+.clearfix {
+  &:after {
+    content: "";
+    clear: both;
+    display: table;
+  }
 }
 
 .name-value-table {
