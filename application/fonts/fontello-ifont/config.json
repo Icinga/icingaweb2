@@ -451,6 +451,18 @@
       "src": "fontawesome"
     },
     {
+      "uid": "745f12abe1472d14f8f658de7e5aba66",
+      "css": "angle-double-left",
+      "code": 59514,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "fdfbd1fcbd4cb229716a810801a5f207",
+      "css": "angle-double-right",
+      "code": 59515,
+      "src": "fontawesome"
+    },
+    {
       "uid": "1c4068ed75209e21af36017df8871802",
       "css": "down-big",
       "code": 59432,
