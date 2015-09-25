@@ -4,7 +4,7 @@ use Icinga\Module\Monitoring\Object\Host;
 ?>
 <table>
     <tr>
-        <td class="state-col state <?= Host::getStateText($object->host_state) ?><?= $object->host_handled ? ' handled' : '' ?>">
+        <td class="state-col state <?= Host::getStateText($object->host_state) ?><?= $object->host_handled ? '-handled' : '' ?>">
             <p>
                 <?= Host::getStateText($object->host_state, true) ?>
                 <br>
