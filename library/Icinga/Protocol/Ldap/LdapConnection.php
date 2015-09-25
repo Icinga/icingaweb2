@@ -667,17 +667,20 @@ class LdapConnection implements Selectable, Inspectable
         $ds = $this->getConnection();
 
         $serverSorting = $this->getCapabilities()->hasOid(LdapCapabilities::LDAP_SERVER_SORT_OID);
-        if ($serverSorting && $query->hasOrder()) {
-            ldap_set_option($ds, LDAP_OPT_SERVER_CONTROLS, array(
-                array(
-                    'oid'   => LdapCapabilities::LDAP_SERVER_SORT_OID,
-                    'value' => $this->encodeSortRules($query->getOrder())
-                )
-            ));
-        } elseif ($query->hasOrder()) {
-            foreach ($query->getOrder() as $rule) {
-                if (! in_array($rule[0], $fields)) {
-                    $fields[] = $rule[0];
+
+        if ($query->hasOrder()) {
+            if ($serverSorting) {
+                ldap_set_option($ds, LDAP_OPT_SERVER_CONTROLS, array(
+                    array(
+                        'oid'   => LdapCapabilities::LDAP_SERVER_SORT_OID,
+                        'value' => $this->encodeSortRules($query->getOrder())
+                    )
+                ));
+            } else {
+                foreach ($query->getOrder() as $rule) {
+                    if (! in_array($rule[0], $fields)) {
+                        $fields[] = $rule[0];
+                    }
                 }
             }
         }
@@ -778,7 +781,7 @@ class LdapConnection implements Selectable, Inspectable
             // server to return results even if the paged search request cannot be satisfied
             ldap_control_paged_result($ds, $pageSize, false, $cookie);
 
-            if ($serverSorting) {
+            if ($serverSorting && $query->hasOrder()) {
                 ldap_set_option($ds, LDAP_OPT_SERVER_CONTROLS, array(
                     array(
                         'oid'   => LdapCapabilities::LDAP_SERVER_SORT_OID,

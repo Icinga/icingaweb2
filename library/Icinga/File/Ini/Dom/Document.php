@@ -115,4 +115,18 @@ class Document
         }
         return $str;
     }
+
+    /**
+     * Convert $this to an array
+     *
+     * @return  array
+     */
+    public function toArray()
+    {
+        $a = array();
+        foreach ($this->sections as $section) {
+            $a[$section->getName()] = $section->toArray();
+        }
+        return $a;
+    }
 }

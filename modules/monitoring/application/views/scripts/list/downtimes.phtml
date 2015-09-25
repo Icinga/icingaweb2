@@ -21,6 +21,7 @@ if (! $this->compact): ?>
   <table data-base-target="_next"
          class="action multiselect"
          data-icinga-multiselect-url="<?= $this->href('monitoring/downtimes/show'); ?>"
+         data-icinga-multiselect-controllers="<?= $this->href("monitoring/downtimes") ?>"
          data-icinga-multiselect-data="downtime_id">
     <tbody>
     <?php foreach ($downtimes as $downtime): ?>

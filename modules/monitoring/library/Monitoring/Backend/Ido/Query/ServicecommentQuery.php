@@ -203,6 +203,10 @@ class ServicecommentQuery extends IdoQuery
             if ($this->hasJoinedVirtualTable('servicestatus')) {
                 $group[] = 'ss.servicestatus_id';
             }
+
+            if ($this->hasJoinedVirtualTable('instances')) {
+                $group[] = 'i.instance_id';
+            }
         }
 
         return $group;

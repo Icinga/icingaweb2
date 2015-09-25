@@ -34,20 +34,6 @@ class DbUserGroupBackendForm extends Form
                 'label'         => $this->translate('Backend Name'),
                 'description'   => $this->translate(
                     'The name of this user group backend that is used to differentiate it from others'
-                ),
-                'validators'    => array(
-                    array(
-                        'Regex',
-                        false,
-                        array(
-                            'pattern'  => '/^[^\\[\\]:]+$/',
-                            'messages' => array(
-                                'regexNotMatch' => $this->translate(
-                                    'The name cannot contain \'[\', \']\' or \':\'.'
-                                )
-                            )
-                        )
-                    )
                 )
             )
         );

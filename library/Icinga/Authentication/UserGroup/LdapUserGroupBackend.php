@@ -12,6 +12,7 @@ use Icinga\Protocol\Ldap\Expression;
 use Icinga\Repository\LdapRepository;
 use Icinga\Repository\RepositoryQuery;
 use Icinga\User;
+use Icinga\Application\Logger;
 
 class LdapUserGroupBackend /*extends LdapRepository*/ implements UserGroupBackendInterface
 {
@@ -532,18 +533,26 @@ class LdapUserGroupBackend /*extends LdapRepository*/ implements UserGroupBacken
      */
     public function getMemberships(User $user)
     {
-        $userQuery = $this->ds
-            ->select()
-            ->from($this->userClass)
-            ->where($this->userNameAttribute, $user->getUsername())
-            ->setBase($this->userBaseDn)
-            ->setUsePagedResults(false);
-        if ($this->userFilter) {
-            $userQuery->where(new Expression($this->userFilter));
-        }
+        if ($this->groupClass === 'posixGroup') {
+            // Posix group only uses simple user name
+            $userDn = $user->getUsername();
+        } else {
+            // LDAP groups use the complete DN
+            if (($userDn = $user->getAdditional('ldap_dn')) === null) {
+                $userQuery = $this->ds
+                    ->select()
+                    ->from($this->userClass)
+                    ->where($this->userNameAttribute, $user->getUsername())
+                    ->setBase($this->userBaseDn)
+                    ->setUsePagedResults(false);
+                if ($this->userFilter) {
+                    $userQuery->where(new Expression($this->userFilter));
+                }
 
-        if (($userDn = $userQuery->fetchDn()) === null) {
-            return array();
+                if (($userDn = $userQuery->fetchDn()) === null) {
+                    return array();
+                }
+            }
         }
 
         $groupQuery = $this->ds
@@ -555,10 +564,12 @@ class LdapUserGroupBackend /*extends LdapRepository*/ implements UserGroupBacken
             $groupQuery->where(new Expression($this->groupFilter));
         }
 
+        Logger::debug('Fetching groups for user %s using filter %s.', $user->getUsername(), $groupQuery->__toString());
         $groups = array();
         foreach ($groupQuery as $row) {
             $groups[] = $row->{$this->groupNameAttribute};
         }
+        Logger::debug('Fetched %d groups: %s.', count($groups), join(', ', $groups));
 
         return $groups;
     }

@@ -15,6 +15,7 @@
   <table data-base-target="_next"
          class="action comments multiselect"
          data-icinga-multiselect-url="<?= $this->href('monitoring/comments/show'); ?>"
+         data-icinga-multiselect-related="<?= $this->href("monitoring/comments") ?>"
          data-icinga-multiselect-data="comment_id">
     <tbody>
     <?php foreach ($comments->peekAhead($this->compact) as $comment): ?>
@@ -46,7 +47,8 @@
               'title' => sprintf(
                 $this->translate('Show detailed information for this comment about host %s'),
                 $comment->host_display_name
-              )
+              ),
+              'class' => 'rowaction'
             )
           ); ?>
         <?php endif ?>

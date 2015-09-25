@@ -181,6 +181,10 @@ class HostcommentQuery extends IdoQuery
             if ($this->hasJoinedVirtualTable('hoststatus')) {
                 $group[] = 'hs.hoststatus_id';
             }
+
+            if ($this->hasJoinedVirtualTable('instances')) {
+                $group[] = 'i.instance_id';
+            }
         }
 
         return $group;
