@@ -15,7 +15,7 @@ if (! $this->compact): ?>
 </div>
 <?php endif ?>
 
-<div class="content users">
+<div class="content">
 <?php if (! isset($backend)): ?>
     <p><?= $this->translate('No backend found which is able to list users.') ?></p>
 </div>
@@ -35,7 +35,7 @@ $reducible = $this->hasPermission('config/authentication/users/remove') && $back
         'class'               => 'user-add'
     )) ?>
 <?php endif ?>
-    <table data-base-target="_next" class="action user-list alternating">
+    <table data-base-target="_next" class="action">
     <thead>
         <tr>
             <th class="user-name"><?= $this->translate('Username') ?></th>
@@ -47,7 +47,7 @@ $reducible = $this->hasPermission('config/authentication/users/remove') && $back
     <tbody>
     <?php foreach ($users as $user): ?>
         <tr>
-            <td class="user-name"><?= $this->qlink(
+            <td><?= $this->qlink(
                 $user->user_name,
                 'user/show',
                 array(
@@ -59,7 +59,7 @@ $reducible = $this->hasPermission('config/authentication/users/remove') && $back
                 )
             ) ?></td>
         <?php if ($reducible): ?>
-            <td class="user-remove"><?= $this->qlink(
+            <td><?= $this->qlink(
                 null,
                 'user/remove',
                 array(
