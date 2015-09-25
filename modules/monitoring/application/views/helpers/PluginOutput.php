@@ -49,7 +49,7 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
             );
         }
         if (! $raw) {
-            $output = '<pre class="pluginoutput">' . $output . '</pre>';
+            $output = '<pre class="plugin-output">' . $output . '</pre>';
         }
         $output = $this->fixLinks($output);
         return $output;
