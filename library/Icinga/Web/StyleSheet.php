@@ -17,6 +17,8 @@ class StyleSheet
         'css/icinga/mixins.less',
         'css/icinga/base.less',
         'css/icinga/main.less',
+        'css/icinga/nav.less',
+        'css/icinga/limiter.less',
         'css/icinga/animation.less',
         'css/icinga/layout-colors.less',
         'css/icinga/layout-structure.less',
