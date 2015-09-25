@@ -4,7 +4,7 @@
   <?php if (! $this->compact): ?>
     <?= $this->tabs; ?>
   <?php endif ?>
-    <?= $this->render('partials/host/object-header.phtml') ?>
+    <?= $this->render('partials/object/host-header.phtml') ?>
     <h3 class="tinystatesummary" <?= $this->compact ? ' data-base-target="col1"' : ''; ?>>
         <?php
         $this->stats = $object->stats;
