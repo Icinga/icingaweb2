@@ -5,20 +5,25 @@ use Icinga\Module\Monitoring\Object\Host;
 <table>
     <tr>
         <td class="state-col state <?= Host::getStateText($object->host_state) ?><?= $object->host_handled ? ' handled' : '' ?>">
-            <?= Host::getStateText($object->host_state, true) ?><br>
-            <?= $this->timeSince($object->host_last_state_change) ?>
+            <p>
+                <?= Host::getStateText($object->host_state, true) ?>
+                <br>
+                <?= $this->timeSince($object->host_last_state_change) ?>
+            </p>
         </td>
         <td>
-            <?= $this->iconImage()->host($object) ?>
-            <?= $this->escape($object->host_display_name) ?>
-        <?php if ($object->host_display_name !== $object->host_name): ?>
-            (<?= $this->escape($object->host_name) ?>)
-        <?php endif ?>
-        <?php if ($object->host_address && $object->host_address !== $object->host_name): ?>
-            <br>
-            <?= $this->escape($object->host_address) ?>
-        <?php endif ?>
-            <?= $this->render('partials/host/statusicons.phtml') ?>
+            <p>
+                <?= $this->iconImage()->host($object) ?>
+                <?= $this->escape($object->host_display_name) ?>
+            <?php if ($object->host_display_name !== $object->host_name): ?>
+                (<?= $this->escape($object->host_name) ?>)
+            <?php endif ?>
+            <?php if ($object->host_address && $object->host_address !== $object->host_name): ?>
+                <br>
+                <?= $this->escape($object->host_address) ?>
+            <?php endif ?>
+                <?= $this->render('partials/host/statusicons.phtml') ?>
+            </p>
         </td>
     </tr>
 </table>
