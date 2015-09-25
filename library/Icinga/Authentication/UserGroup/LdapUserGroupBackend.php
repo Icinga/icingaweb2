@@ -338,7 +338,6 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
     public function select(array $columns = null)
     {
         $query = parent::select($columns);
-        
         $query->getQuery()->setBase($this->groupBaseDn);
         if ($this->groupFilter) {
             // TODO(jom): This should differentiate between groups and their memberships
@@ -381,7 +380,7 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
             'created_at'    => $createdAtAttribute,
             'last_modified' => $lastModifiedAttribute
         );
-        return array( $this->groupClass => $columns, 'group_membership' => $columns); //dumb hack because of how groupcontroller fetches data and my limited knowledge of this codebase
+        return array('group' => $columns, 'group_membership' => $columns);
     }
 
     /**
