@@ -16,30 +16,28 @@ if (! $this->compact): ?>
 <?php endif ?>
 <div class="content users">
 <?php
-
 if (! isset($backend)) {
     echo $this->translate('No backend found which is able to list users') . '</div>';
+    return;
+} elseif (! $users->hasResult()) {
+    echo '<p>' . $this->translate('No users found matching the filter') . '</p>' . '</div>';
     return;
 } else {
     $extensible = $this->hasPermission('config/authentication/users/add') && $backend instanceof Extensible;
     $reducible = $this->hasPermission('config/authentication/users/remove') && $backend instanceof Reducible;
 }
-
-$firstRow = true;
-foreach ($users as $user): ?>
-  <?php if ($firstRow): ?>
-    <?php $firstRow = false ?>
+?>
 <table data-base-target="_next" class="action user-list alternating">
-  <thead>
+    <thead>
     <tr>
-      <th class="user-name"><?= $this->translate('Username') ?></th>
-     <?php if ($reducible): ?>
-      <th class="user-remove"><?= $this->translate('Remove') ?></th>
-     <?php endif ?>
+        <th class="user-name"><?= $this->translate('Username') ?></th>
+    <?php if ($reducible): ?>
+        <th class="user-remove"><?= $this->translate('Remove') ?></th>
+    <?php endif ?>
     </tr>
-  </thead>
-  <tbody>
-  <?php endif ?>
+    </thead>
+    <tbody>
+    <?php foreach ($users as $user): ?>
     <tr>
       <td class="user-name"><?= $this->qlink($user->user_name, 'user/show', array(
         'backend'   => $backend->getName(),
@@ -65,12 +63,8 @@ foreach ($users as $user): ?>
      <?php endif ?>
     </tr>
 <?php endforeach ?>
-<?php if ($users->hasResult()): ?>
-  </tbody>
+</tbody>
 </table>
-<?php else: ?>
-<p><?= $this->translate('No users found matching the filter') ?></p>
-<?php endif ?>
 <?php if ($extensible): ?>
 <?= $this->qlink($this->translate('Add a new user'), 'user/add', array('backend' => $backend->getName()), array(
   'icon'                => 'plus',
