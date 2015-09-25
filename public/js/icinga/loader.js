@@ -331,7 +331,7 @@
                 }
             }
 
-            this.redirectToUrl(redirect, req.$target, req.getResponseHeader('X-Icinga-Rerender-Layout'));
+            this.redirectToUrl(redirect, req.$target, req.url, req.getResponseHeader('X-Icinga-Rerender-Layout'));
             return true;
         },
 
@@ -340,9 +340,10 @@
          *
          * @param {string}  url
          * @param {object}  $target
+         * @param {string]  origin
          * @param {boolean} rerenderLayout
          */
-        redirectToUrl: function (url, $target, rerenderLayout) {
+        redirectToUrl: function (url, $target, origin, rerenderLayout) {
             var icinga = this.icinga;
 
             if (typeof rerenderLayout === 'undefined') {
@@ -365,7 +366,15 @@
                     // Retain detail URL if the layout is rerendered
                     parts = document.location.hash.split('#!').splice(1);
                     if (parts.length) {
-                        r.loadNext = parts;
+                        r.loadNext = $.grep(parts, function (url) {
+                            if (url !== origin) {
+                                icinga.logger.debug('Retaining detail url ' + url);
+                                return true;
+                            }
+
+                            icinga.logger.debug('Discarding detail url ' + url + ' as it\'s the origin of the redirect');
+                            return false;
+                        });
                     }
                 }
             } else {
@@ -609,7 +618,7 @@
 
             this.processRedirectHeader(req);
 
-            if (typeof req.loadNext !== 'undefined') {
+            if (typeof req.loadNext !== 'undefined' && req.loadNext.length) {
                 if ($('#col2').length) {
                     this.loadUrl(req.loadNext[0], $('#col2'));
                     this.icinga.ui.layout2col();

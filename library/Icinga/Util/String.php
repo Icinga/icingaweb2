@@ -24,7 +24,7 @@ class String
     /**
      * Uppercase the first character of each word in a string
      *
-     * Converts 'first_name' to 'firstName' for example.
+     * Converts 'first_name' to 'FirstName' for example.
      *
      * @param   string $name
      * @param   string $separator Word separator

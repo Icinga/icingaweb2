@@ -57,15 +57,11 @@
          * TODO: How should we handle POST requests? e.g. search VS login
          */
         pushCurrentState: function () {
-
-            var icinga = this.icinga;
-
             // No history API, no action
-            if (!this.enabled) {
+            if (! this.enabled) {
                 return;
             }
 
-            icinga.logger.debug('Pushing current state to history');
             var url = '';
 
             // We only store URLs of containers sitting directly under #main:
@@ -85,6 +81,7 @@
 
             // Did we find any URL? Then push it!
             if (url !== '') {
+                this.icinga.logger.debug('Pushing current state to history');
                 this.push(url);
             }
         },
@@ -112,6 +109,9 @@
         push: function (url) {
             url = url.replace(/[\?&]?_(render|reload)=[a-z0-9]+/g, '');
             if (this.lastPushUrl === url) {
+                this.icinga.logger.debug(
+                    'Ignoring history state push for url ' + url + ' as it\' currently on top of the stack'
+                );
                 return;
             }
             this.lastPushUrl = url;
