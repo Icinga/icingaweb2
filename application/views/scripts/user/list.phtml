@@ -4,72 +4,76 @@ use Icinga\Data\Reducible;
 
 if (! $this->compact): ?>
 <div class="controls">
-  <?= $this->tabs ?>
-  <?= $this->sortBox ?>
-  <?= $this->limiter ?>
-  <?= $this->paginator ?>
-  <div>
-    <?= $this->backendSelection ?>
-    <?= $this->filterEditor ?>
-  </div>
+    <?= $this->tabs ?>
+    <?= $this->sortBox ?>
+    <?= $this->limiter ?>
+    <?= $this->paginator ?>
+    <div>
+        <?= $this->backendSelection ?>
+        <?= $this->filterEditor ?>
+    </div>
 </div>
 <?php endif ?>
+
 <div class="content users">
+<?php if (! isset($backend)): ?>
+    <p><?= $this->translate('No backend found which is able to list users.') ?></p>
+</div>
+<?php return; endif ?>
+<?php if (! $users->hasResult()): ?>
+    <p><?= $this->translate('No users found matching the filter.') ?></p>
+</div>
+<?php return; endif ?>
 <?php
-if (! isset($backend)) {
-    echo $this->translate('No backend found which is able to list users') . '</div>';
-    return;
-} elseif (! $users->hasResult()) {
-    echo '<p>' . $this->translate('No users found matching the filter') . '</p>' . '</div>';
-    return;
-} else {
-    $extensible = $this->hasPermission('config/authentication/users/add') && $backend instanceof Extensible;
-    $reducible = $this->hasPermission('config/authentication/users/remove') && $backend instanceof Reducible;
-}
+$extensible = $this->hasPermission('config/authentication/users/add') && $backend instanceof Extensible;
+$reducible = $this->hasPermission('config/authentication/users/remove') && $backend instanceof Reducible;
 ?>
-<table data-base-target="_next" class="action user-list alternating">
+    <table data-base-target="_next" class="action user-list alternating">
     <thead>
-    <tr>
-        <th class="user-name"><?= $this->translate('Username') ?></th>
-    <?php if ($reducible): ?>
-        <th class="user-remove"><?= $this->translate('Remove') ?></th>
-    <?php endif ?>
-    </tr>
+        <tr>
+            <th class="user-name"><?= $this->translate('Username') ?></th>
+        <?php if ($reducible): ?>
+            <th class="user-remove"><?= $this->translate('Remove') ?></th>
+        <?php endif ?>
+        </tr>
     </thead>
     <tbody>
     <?php foreach ($users as $user): ?>
-    <tr>
-      <td class="user-name"><?= $this->qlink($user->user_name, 'user/show', array(
-        'backend'   => $backend->getName(),
-        'user'      => $user->user_name
-      ), array(
-        'title'     => sprintf($this->translate('Show detailed information about %s'), $user->user_name)
-      )) ?></td>
-     <?php if ($reducible): ?>
-      <td class="user-remove">
-        <?= $this->qlink(
-          null,
-          'user/remove',
-          array(
-            'backend'   => $backend->getName(),
-            'user'      => $user->user_name
-          ),
-          array(
-            'title'     => sprintf($this->translate('Remove user %s'), $user->user_name),
-            'icon'      => 'trash'
-          )
-        ) ?>
-      </td>
-     <?php endif ?>
-    </tr>
-<?php endforeach ?>
-</tbody>
-</table>
+        <tr>
+            <td class="user-name"><?= $this->qlink(
+                $user->user_name,
+                'user/show',
+                array(
+                    'backend'   => $backend->getName(),
+                    'user'      => $user->user_name
+                ),
+                array(
+                    'title'     => sprintf($this->translate('Show detailed information about %s'), $user->user_name)
+                )
+            ) ?></td>
+        <?php if ($reducible): ?>
+            <td class="user-remove"><?= $this->qlink(
+                null,
+                'user/remove',
+                array(
+                    'backend'   => $backend->getName(),
+                    'user'      => $user->user_name
+                ),
+                array(
+                    'title'     => sprintf($this->translate('Remove user %s'), $user->user_name),
+                    'icon'      => 'trash'
+                )
+            ) ?></td>
+            <?php endif ?>
+        </tr>
+    <?php endforeach ?>
+    </tbody>
+    </table>
 <?php if ($extensible): ?>
-<?= $this->qlink($this->translate('Add a new user'), 'user/add', array('backend' => $backend->getName()), array(
-  'icon'                => 'plus',
-  'data-base-target'    => '_next',
-  'class'               => 'user-add'
-)) ?>
+    <?= $this->qlink($this->translate('Add a new user'), 'user/add', array('backend' => $backend->getName()), array(
+        'icon'                => 'plus',
+        'data-base-target'    => '_next',
+        'class'               => 'user-add'
+    )) ?>
 <?php endif ?>
 </div>
