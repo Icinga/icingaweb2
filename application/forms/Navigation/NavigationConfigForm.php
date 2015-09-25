@@ -350,7 +350,7 @@ class NavigationConfigForm extends ConfigForm
                 : ((! isset($data['users']) || !$data['users']) && (! isset($data['groups']) || !$data['groups']))
             ) {
                 // It is shared but shouldn't anymore
-                $config = $this->unshare($name, isset($data['parent']) ? $data['parent'] : null)->config;
+                $config = $this->unshare($name, isset($data['parent']) ? $data['parent'] : null);
             }
         } elseif ((isset($data['users']) && $data['users']) || (isset($data['groups']) && $data['groups'])) {
             if ($this->getUser()->can('application/share/navigation')) {
@@ -484,7 +484,7 @@ class NavigationConfigForm extends ConfigForm
      * @param   string  $name
      * @param   string  $parent
      *
-     * @return  $this
+     * @return  Config              The new config of the given navigation item
      *
      * @throws  NotFoundError       In case no navigation item with the given name is found
      * @throws  IcingaException     In case the navigation item has a parent assigned to it
@@ -536,7 +536,7 @@ class NavigationConfigForm extends ConfigForm
 
         $config->setSection($name, $itemConfig);
         $this->setIniConfig($config);
-        return $this;
+        return $config;
     }
 
     /**

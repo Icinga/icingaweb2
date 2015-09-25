@@ -293,9 +293,15 @@ class NavigationController extends Controller
 
         $form = new Form(array(
             'onSuccess' => function ($form) use ($navigationConfigForm) {
+                $itemName = $form->getValue('name');
+
                 try {
-                    $navigationConfigForm->unshare($form->getValue('name'));
+                    $newConfig = $navigationConfigForm->unshare($itemName);
                     if ($navigationConfigForm->save()) {
+                        if ($newConfig->getSection($itemName)->type === 'menu-item') {
+                            $form->getResponse()->setRerenderLayout();
+                        }
+
                         Notification::success(sprintf(
                             t('Navigation item "%s" has been unshared'),
                             $form->getValue('name')
