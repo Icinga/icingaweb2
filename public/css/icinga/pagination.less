@@ -1,79 +1,46 @@
 /*! Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
-ul.pagination {
-  font-size: 0.68em;
-  padding: 0;
-  display: inline;
-  white-space: nowrap;
-
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
-
-#layout.twocols u.pagination {
-  font-size: 0.5em;
-}
-
-.pagination > li {
-  list-style-type: none;
+.pagination-control {
   display: inline-block;
-  margin: 0;
-  padding: 0;
-}
+  font-size: @font-size-small;
+  line-height: @line-height-small;
 
-.pagination > li > a, .pagination > li.disabled > span {
-  display: block;
-  padding: 0em 1em 0em 1em;
-  line-height: 2em;
-  border: 1px solid #ddd;
-  border-right-width: 0;
-}
+  li {
+    &.active {
+      > a,
+      > a:hover {
+        background-color: @text-color;
+        border-color: @text-color;
+        color: @text-color-inverted;
+      }
+      > a:hover {
+        cursor: default;
+        text-decoration: none;
+      }
+    }
 
-.pagination > li > a {
-  color: @colorTextDarkDefault;
-  text-decoration: none;
-  outline: 0;
-}
+    &.disabled {
+      color: @gray-light;
+      cursor: no-drop;
+    }
 
-.pagination li.disabled span {
-  cursor: no-drop;
-  color: #ddd;
-}
+    &:first-child {
+      > a,
+      > a:hover {
+        margin-left: 0;
+      }
+    }
 
-.pagination > li:last-child > a, .pagination > li:last-child > span {
-  border-right-width: 1px;
-}
-
-.pagination > li:first-child > a, .pagination > li:first-child > span {
-}
-
-.pagination > li > a:hover {
-    color: #000;
-    background-color: #eee;
-}
-
-.pagination > li.active > a {
-  background-color: #555;
-  border-color: #555;
-  color: #fff;
-  cursor: default;
-}
-
-a.show-more, a.load-more {
-  display: block;
-  margin: 0.5em;
-}
-
-a.load-more-hint {
-  display: inline-block;
-  margin-left: 1em;
-}
-
-div.load-more-container {
-  display: table;
-  margin: 0 auto;
-  margin-top: 0.5em;
+    > a,
+    > span {
+      border: 1px solid @gray-lighter;
+      margin-left: -1px;
+      padding: 4px 8px;
+    }
+    > a:hover {
+      background-color: @gray-lighter;
+      border: 1px solid @gray-lighter;
+      padding: 4px 8px;
+    }
+  }
 }
