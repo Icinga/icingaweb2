@@ -80,7 +80,7 @@ class Limiter extends AbstractWidget
         $navigation = new Navigation();
         $navigation->setLayout(Navigation::LAYOUT_TABS);
         foreach (static::$limits as $limit => $label) {
-            $navigationItem = new NavigationItem();
+            $navigationItem = new NavigationItem($limit);
             $navigationItem
                 ->setActive($activeLimit === $limit)
                 ->setAttribute(
@@ -90,17 +90,15 @@ class Limiter extends AbstractWidget
                         $limit
                     )
                 )
-                ->setId($limit)
                 ->setLabel($label)
                 ->setUrl($url->with(array('limit' => $limit)));
             $navigation->addItem($navigationItem);
         }
         if ($activeLimit === 0) {
-            $navigationItem = new NavigationItem();
+            $navigationItem = new NavigationItem(0);
             $navigationItem
                 ->setActive(true)
                 ->setAttribute('title', t('Show all items on this page'))
-                ->setId(0)
                 ->setLabel(t('all'));
             $navigation->addItem($navigationItem);
         }
