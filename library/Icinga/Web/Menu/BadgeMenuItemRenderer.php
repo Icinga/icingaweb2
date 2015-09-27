@@ -42,7 +42,7 @@ abstract class BadgeMenuItemRenderer extends MenuItemRenderer
      */
     public function render(Menu $menu)
     {
-        return $this->renderBadge() . $this->createLink($menu);
+        return '<div class="clearfix">' . $this->renderBadge() . $this->createLink($menu) . '</div>';
     }
 
     /**
@@ -53,10 +53,11 @@ abstract class BadgeMenuItemRenderer extends MenuItemRenderer
     protected function renderBadge()
     {
         if ($count = $this->getCount()) {
+            $view = $this->getView();
             return sprintf(
-                '<div title="%s" class="badge-container"><span class="badge badge-%s">%s</span></div>',
-                $this->getView()->escape($this->getTitle()),
-                $this->getView()->escape($this->getState()),
+                '<span title="%s" class="badge pull-right state-%s">%s</span>',
+                $view->escape($this->getTitle()),
+                $view->escape($this->getState()),
                 $count
             );
         }
