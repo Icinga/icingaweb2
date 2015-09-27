@@ -117,6 +117,13 @@ class StateBadges extends AbstractWidget
     protected $badges = array();
 
     /**
+     * Internal counter for badge priorities
+     *
+     * @var int
+     */
+    protected $priority = 1;
+
+    /**
      * Base URL
      *
      * @var Url
@@ -189,6 +196,7 @@ class StateBadges extends AbstractWidget
             $badges->addItem(new NavigationItem($state, array(
                 'attributes'    => array('class' => 'badge ' . $state),
                 'label'         => $badge->count,
+                'priority'      => $this->priority++,
                 'url'           => $this->url
             )));
         }
@@ -207,7 +215,13 @@ class StateBadges extends AbstractWidget
     {
         $group = array_intersect_key($this->badges, array_flip($states));
         if (! empty($group)) {
-            $groupItem = new NavigationItem(uniqid(), array('name' => ''));
+            $groupItem = new NavigationItem(
+                uniqid(),
+                array(
+                    'name'      => '',
+                    'priority'  => $this->priority++
+                )
+            );
             $groupBadges = new Navigation();
             $groupBadges->setLayout(Navigation::LAYOUT_TABS);
             foreach (array_keys($group) as $state) {
