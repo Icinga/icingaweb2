@@ -207,22 +207,27 @@ groupadd -r icingaweb2
 addgroup --system icingaweb2
 ````
 
-Add your web server's user to the system group `icingaweb2`:
+Add your web server's user to the system group `icingaweb2`
+and restart the web server:
 
 **Fedora, RHEL and CentOS**:
 ````
 usermod -a -G icingaweb2 apache
+service httpd restart
 ````
 
 **SLES and OpenSUSE**:
 ````
 usermod -A icingaweb2 wwwrun
+service apache2 restart
 ````
 
 **Debian and Ubuntu**:
 ````
 usermod -a -G icingaweb2 www-data
+service apache2 restart
 ````
+
 
 Use `icingacli` to create the configuration directory which defaults to **/etc/icingaweb2**:
 ````
