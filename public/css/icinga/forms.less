@@ -40,6 +40,24 @@ select {
   display: table-cell;
 }
 
+button.link,
+input[type="submit"].link {
+  // Reset defaults
+  background: none;
+  border: none;
+  padding: 0;
+
+  font-weight: @font-weight-bold;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+form.link {
+  display: inline-block;
+}
+
 //div.config-form-buttons {
 //  margin-top: 5px;
 //}
