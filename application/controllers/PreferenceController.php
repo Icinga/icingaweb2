@@ -32,7 +32,7 @@ class PreferenceController extends BasePreferenceController
                 array(
                     'title' => t('Adjust the preferences of Icinga Web 2 according to your needs'),
                     'label' => t('Preferences'),
-                    'url'   => Url::fromPath('/preference')
+                    'url'   => Url::fromPath('preference')
                 )
             )
         );

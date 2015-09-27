@@ -169,4 +169,18 @@ class Section
         $str = str_replace(';', '\\;', $str);
         return str_replace(PHP_EOL, ' ', $str);
     }
+
+    /**
+     * Convert $this to an array
+     *
+     * @return  array
+     */
+    public function toArray()
+    {
+        $a = array();
+        foreach ($this->directives as $directive) {
+            $a[$directive->getKey()] = $directive->getValue();
+        }
+        return $a;
+    }
 }

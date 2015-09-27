@@ -5,56 +5,33 @@ namespace Icinga\Web\Navigation;
 
 use ArrayAccess;
 use ArrayIterator;
+use Exception;
 use Countable;
 use InvalidArgumentException;
 use IteratorAggregate;
+use Traversable;
+use Icinga\Application\Icinga;
+use Icinga\Application\Logger;
+use Icinga\Authentication\Auth;
+use Icinga\Data\ConfigObject;
+use Icinga\Exception\ConfigurationError;
+use Icinga\Exception\IcingaException;
+use Icinga\Exception\ProgrammingError;
+use Icinga\Util\String;
+use Icinga\Web\Navigation\Renderer\RecursiveNavigationRenderer;
 
 /**
  * Container for navigation items
- *
- * Usage example:
- * <code>
- * <?php
- *
- * namespace Icinga\Example;
- *
- * use Icinga\Web\Navigation\DropdownItem;
- * use Icinga\Web\Navigation\Navigation;
- * use Icinga\Web\Navigation\NavigationItem;
- *
- * $navigation = new Navigation();
- * $navigation->setLayout(Navigation::LAYOUT_TABS);
- * $home = new NavigationItem();
- * $home
- *     ->setIcon('home')
- *     ->setLabel('Home');
- *     ->setUrl('/home');
- * $logout = new NavigationItem();
- * $logout
- *     ->setIcon('logout')
- *     ->setLabel('Logout')
- *     ->setUrl('/logout');
- * $dropdown = new DropdownItem();
- * $dropdown
- *     ->setIcon('user')
- *     ->setLabel('Preferences');
- * $preferences = new NavigationItem();
- * $preferences
- *     ->setIcon('preferences');
- *     ->setLabel('preferences')
- *     ->setUrl('/preferences');
- * $dropdown->addChild($preferences);
- * $navigation
- *     ->addItem($home)
- *     ->addItem($logout);
- *     ->addItem($dropdown);
- * echo $navigation
- *     ->getRenderer()
- *     ->setCssClass('example-nav')
- *     ->render();
  */
 class Navigation implements ArrayAccess, Countable, IteratorAggregate
 {
+    /**
+     * The class namespace where to locate navigation type classes
+     *
+     * @var string
+     */
+    const NAVIGATION_NS = 'Web\\Navigation';
+
     /**
      * Flag for dropdown layout
      *
@@ -70,14 +47,21 @@ class Navigation implements ArrayAccess, Countable, IteratorAggregate
     const LAYOUT_TABS = 2;
 
     /**
-     * Navigation items
+     * Known navigation types
+     *
+     * @var array
+     */
+    protected static $types;
+
+    /**
+     * This navigation's items
      *
      * @var NavigationItem[]
      */
     protected $items = array();
 
     /**
-     * Navigation layout
+     * This navigation's layout
      *
      * @var int
      */
@@ -128,51 +112,141 @@ class Navigation implements ArrayAccess, Countable, IteratorAggregate
      */
     public function getIterator()
     {
+        $this->order();
         return new ArrayIterator($this->items);
     }
 
     /**
-     * Ad a navigation item
+     * Create and return a new navigation item for the given configuration
      *
-     * @param   NavigationItem|array    $item   The item to append
+     * @param   string              $name
+     * @param   array|ConfigObject  $properties
      *
-     * @return  $this
-     * @throws  InvalidArgumentException        If the item argument is invalid
+     * @return  NavigationItem
+     *
+     * @throws  InvalidArgumentException    If the $properties argument is neither an array nor a ConfigObject
      */
-    public function addItem($item)
+    public function createItem($name, $properties)
     {
-        if (! $item instanceof NavigationItem) {
-            if (! is_array($item)) {
-                throw new InvalidArgumentException(
-                    'Argument item must be either an array or an instance of NavigationItem'
-                );
-            }
-            $item = new NavigationItem($item);
+        if ($properties instanceof ConfigObject) {
+            $properties = $properties->toArray();
+        } elseif (! is_array($properties)) {
+            throw new InvalidArgumentException('Argument $properties must be of type array or ConfigObject');
         }
-        $this->items[] = $item;
-        return $this;
+
+        $itemType = isset($properties['type']) ? String::cname($properties['type'], '-') : 'NavigationItem';
+        if (! empty(static::$types) && isset(static::$types[$itemType])) {
+            return new static::$types[$itemType]($name, $properties);
+        }
+
+        $item = null;
+        foreach (Icinga::app()->getModuleManager()->getLoadedModules() as $module) {
+            $classPath = 'Icinga\\Module\\'
+                . ucfirst($module->getName())
+                . '\\'
+                . static::NAVIGATION_NS
+                . '\\'
+                . $itemType;
+            if (class_exists($classPath)) {
+                $item = new $classPath($name, $properties);
+                break;
+            }
+        }
+
+        if ($item === null) {
+            $classPath = 'Icinga\\' . static::NAVIGATION_NS . '\\' . $itemType;
+            if (class_exists($classPath)) {
+                $item = new $classPath($name, $properties);
+            }
+        }
+
+        if ($item === null) {
+            Logger::debug(
+                'Failed to find custom navigation item class %s for item %s. Using base class NavigationItem now',
+                $itemType,
+                $name
+            );
+
+            $item = new NavigationItem($name, $properties);
+            static::$types[$itemType] = 'Icinga\\Web\\Navigation\\NavigationItem';
+        } elseif (! $item instanceof NavigationItem) {
+            throw new ProgrammingError('Class %s must inherit from NavigationItem', $classPath);
+        } else {
+            static::$types[$itemType] = $classPath;
+        }
+
+        return $item;
     }
 
     /**
-     * Get the item with the given ID
+     * Add a navigation item
      *
-     * @param   mixed   $id
+     * If you do not pass an instance of NavigationItem, this will only add the item
+     * if it does not require a permission or the current user has the permission.
+     *
+     * @param   string|NavigationItem   $name       The name of the item or an instance of NavigationItem
+     * @param   array                   $properties The properties of the item to add (Ignored if $name is not a string)
+     *
+     * @return  bool                                Whether the item was added or not
+     *
+     * @throws  InvalidArgumentException            In case $name is neither a string nor an instance of NavigationItem
+     */
+    public function addItem($name, array $properties = array())
+    {
+        if (is_string($name)) {
+            if (isset($properties['permission'])) {
+                if (! Auth::getInstance()->hasPermission($properties['permission'])) {
+                    return false;
+                }
+
+                unset($properties['permission']);
+            }
+
+            $item = $this->createItem($name, $properties);
+        } elseif (! $name instanceof NavigationItem) {
+            throw new InvalidArgumentException('Argument $name must be of type string or NavigationItem');
+        } else {
+            $item = $name;
+        }
+
+        $this->items[$item->getName()] = $item;
+        return true;
+    }
+
+    /**
+     * Return the item with the given name
+     *
+     * @param   string  $name
      * @param   mixed   $default
      *
      * @return  NavigationItem|mixed
      */
-    public function getItem($id, $default = null)
+    public function getItem($name, $default = null)
     {
-        if (isset($this->items[$id])) {
-            return $this->items[$id];
-        }
-        return $default;
+        return isset($this->items[$name]) ? $this->items[$name] : $default;
     }
 
     /**
-     * Get the items
+     * Return the currently active item or the first one if none is active
      *
-     * @return array
+     * @return  NavigationItem
+     */
+    public function getActiveItem()
+    {
+        foreach ($this->items as $item) {
+            if ($item->getActive()) {
+                return $item;
+            }
+        }
+
+        $firstItem = reset($this->items);
+        return $firstItem ? $firstItem->setActive() : null;
+    }
+
+    /**
+     * Return this navigation's items
+     *
+     * @return  array
      */
     public function getItems()
     {
@@ -180,19 +254,9 @@ class Navigation implements ArrayAccess, Countable, IteratorAggregate
     }
 
     /**
-     * Get whether the navigation has items
+     * Return whether this navigation is empty
      *
-     * @return bool
-     */
-    public function hasItems()
-    {
-        return ! empty($this->items);
-    }
-
-    /**
-     * Get whether the navigation is empty
-     *
-     * @return bool
+     * @return  bool
      */
     public function isEmpty()
     {
@@ -200,9 +264,25 @@ class Navigation implements ArrayAccess, Countable, IteratorAggregate
     }
 
     /**
-     * Get the layout
+     * Return whether this navigation has any renderable items
      *
-     * @return int
+     * @return  bool
+     */
+    public function hasRenderableItems()
+    {
+        foreach ($this->getItems() as $item) {
+            if ($item->shouldRender()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Return this navigation's layout
+     *
+     * @return  int
      */
     public function getLayout()
     {
@@ -210,9 +290,9 @@ class Navigation implements ArrayAccess, Countable, IteratorAggregate
     }
 
     /**
-     * Set the layout
+     * Set this navigation's layout
      *
-     * @param   int $layout
+     * @param   int     $layout
      *
      * @return  $this
      */
@@ -223,13 +303,250 @@ class Navigation implements ArrayAccess, Countable, IteratorAggregate
     }
 
     /**
-     * Get the navigation renderer
+     * Create and return the renderer for this navigation
      *
-     * @return RecursiveNavigationRenderer
+     * @return  RecursiveNavigationRenderer
      */
     public function getRenderer()
     {
         return new RecursiveNavigationRenderer($this);
     }
-}
 
+    /**
+     * Return this navigation rendered to HTML
+     *
+     * @return  string
+     */
+    public function render()
+    {
+        return $this->getRenderer()->render();
+    }
+
+    /**
+     * Order this navigation's items
+     *
+     * @return  $this
+     */
+    public function order()
+    {
+        uasort($this->items, array($this, 'compareItems'));
+        foreach ($this->items as $item) {
+            if ($item->hasChildren()) {
+                $item->getChildren()->order();
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * Return whether the first item is less than, more than or equal to the second one
+     *
+     * @param   NavigationItem  $a
+     * @param   NavigationItem  $b
+     *
+     * @return  int
+     */
+    protected function compareItems(NavigationItem $a, NavigationItem $b)
+    {
+        if ($a->getPriority() === $b->getPriority()) {
+            return strcasecmp($a->getLabel(), $b->getLabel());
+        }
+
+        return $a->getPriority() > $b->getPriority() ? 1 : -1;
+    }
+
+    /**
+     * Try to find and return a item with the given or a similar name
+     *
+     * @param   string  $name
+     *
+     * @return  NavigationItem
+     */
+    protected function findItem($name)
+    {
+        $item = $this->getItem($name);
+        if ($item !== null) {
+            return $item;
+        }
+
+        $loweredName = strtolower($name);
+        foreach ($this->getItems() as $item) {
+            if (strtolower($item->getName()) === $loweredName) {
+                return $item;
+            }
+        }
+    }
+
+    /**
+     * Merge this navigation with the given one
+     *
+     * Any duplicate items of this navigation will be overwritten by the given navigation's items.
+     *
+     * @param   Navigation  $navigation
+     *
+     * @return  $this
+     */
+    public function merge(Navigation $navigation)
+    {
+        foreach ($navigation as $item) {
+            /** @var $item NavigationItem */
+            if (($existingItem = $this->findItem($item->getName())) !== null) {
+                if ($existingItem->conflictsWith($item)) {
+                    $name = $item->getName();
+                    do {
+                        if (preg_match('~_(\d+)$~', $name, $matches)) {
+                            $name = preg_replace('~_\d+$~', $matches[1] + 1, $name);
+                        } else {
+                            $name .= '_2';
+                        }
+                    } while ($this->getItem($name) !== null);
+
+                    $this->addItem($item->setName($name));
+                } else {
+                    $existingItem->merge($item);
+                }
+            } else {
+                $this->addItem($item);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * Extend this navigation set with all additional items of the given type
+     *
+     * This will fetch navigation items from the following sources:
+     * * User Shareables
+     * * User Preferences
+     * * Modules
+     * Any existing entry will be overwritten by one that is coming later in order.
+     *
+     * @param   string  $type
+     *
+     * @return  $this
+     */
+    public function load($type)
+    {
+        // Shareables
+        $this->merge(Icinga::app()->getSharedNavigation($type));
+
+        // User Preferences
+        $user = Auth::getInstance()->getUser();
+        $this->merge($user->getNavigation($type));
+
+        // Modules
+        $moduleManager = Icinga::app()->getModuleManager();
+        foreach ($moduleManager->getLoadedModules() as $module) {
+            if ($user->can($moduleManager::MODULE_PERMISSION_NS . $module->getName())) {
+                if ($type === 'menu-item') {
+                    $this->merge($module->getMenu());
+                } elseif ($type === 'dashboard-pane') {
+                    $this->merge($module->getDashboard());
+                }
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * Create and return a new set of navigation items for the given configuration
+     *
+     * Note that this is supposed to be utilized for one dimensional structures
+     * only. Multi dimensional structures can be processed by fromArray().
+     *
+     * @param   Traversable|array   $config
+     *
+     * @return  Navigation
+     *
+     * @throws  InvalidArgumentException    In case the given configuration is invalid
+     * @throws  ConfigurationError          In case a referenced parent does not exist
+     */
+    public static function fromConfig($config)
+    {
+        if (! is_array($config) && !$config instanceof Traversable) {
+            throw new InvalidArgumentException('Argument $config must be an array or a instance of Traversable');
+        }
+
+        $flattened = $orphans = $topLevel = array();
+        foreach ($config as $sectionName => $sectionConfig) {
+            $parentName = $sectionConfig->parent;
+            unset($sectionConfig->parent);
+
+            if (! $parentName) {
+                $topLevel[$sectionName] = $sectionConfig->toArray();
+                $flattened[$sectionName] = & $topLevel[$sectionName];
+            } elseif (isset($flattened[$parentName])) {
+                $flattened[$parentName]['children'][$sectionName] = $sectionConfig->toArray();
+                $flattened[$sectionName] = & $flattened[$parentName]['children'][$sectionName];
+            } else {
+                $orphans[$parentName][$sectionName] = $sectionConfig->toArray();
+                $flattened[$sectionName] = & $orphans[$parentName][$sectionName];
+            }
+        }
+
+        do {
+            $match = false;
+            foreach ($orphans as $parentName => $children) {
+                if (isset($flattened[$parentName])) {
+                    if (isset($flattened[$parentName]['children'])) {
+                        $flattened[$parentName]['children'] = array_merge(
+                            $flattened[$parentName]['children'],
+                            $children
+                        );
+                    } else {
+                        $flattened[$parentName]['children'] = $children;
+                    }
+
+                    unset($orphans[$parentName]);
+                    $match = true;
+                }
+            }
+        } while ($match && !empty($orphans));
+
+        if (! empty($orphans)) {
+            throw new ConfigurationError(
+                t(
+                    'Failed to fully parse navigation configuration. Ensure that'
+                    . ' all referenced parents are existing navigation items: %s'
+                ),
+                join(', ', array_keys($orphans))
+            );
+        }
+
+        return static::fromArray($topLevel);
+    }
+
+    /**
+     * Create and return a new set of navigation items for the given array
+     *
+     * @param   array   $array
+     *
+     * @return  Navigation
+     */
+    public static function fromArray(array $array)
+    {
+        $navigation = new static();
+        foreach ($array as $name => $properties) {
+            $navigation->addItem($name, $properties);
+        }
+
+        return $navigation;
+    }
+
+    /**
+     * Return this navigation rendered to HTML
+     *
+     * @return  string
+     */
+    public function __toString()
+    {
+        try {
+            return $this->render();
+        } catch (Exception $e) {
+            return IcingaException::describe($e);
+        }
+    }
+}

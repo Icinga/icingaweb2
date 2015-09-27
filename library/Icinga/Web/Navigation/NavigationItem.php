@@ -3,113 +3,146 @@
 
 namespace Icinga\Web\Navigation;
 
-use Countable;
+use Exception;
 use InvalidArgumentException;
 use IteratorAggregate;
 use Icinga\Application\Icinga;
-use Icinga\Web\View;
+use Icinga\Exception\IcingaException;
+use Icinga\Exception\ProgrammingError;
+use Icinga\Web\Navigation\Renderer\NavigationItemRenderer;
 use Icinga\Web\Url;
 
 /**
  * A navigation item
- *
- * @see \Icinga\Web\Navigation\Navigation For a usage example.
  */
-class NavigationItem implements Countable, IteratorAggregate
+class NavigationItem implements IteratorAggregate
 {
     /**
-     * Alternative markup element if the navigation item has no URL
+     * Alternative markup element for items without a url
      *
      * @var string
      */
     const LINK_ALTERNATIVE = 'span';
 
     /**
-     * Whether the item is active
+     * The class namespace where to locate navigation type renderer classes
+     */
+    const RENDERER_NS = 'Web\\Navigation\\Renderer';
+
+    /**
+     * Whether this item is active
      *
      * @var bool
      */
-    protected $active = false;
+    protected $active;
 
     /**
-     * Attributes of the item's element
+     * This item's priority
+     *
+     * The priority defines when the item is rendered in relation to its parent's childs.
+     *
+     * @var int
+     */
+    protected $priority;
+
+    /**
+     * The attributes of this item's element
      *
      * @var array
      */
-    protected $attributes = array();
+    protected $attributes;
 
     /**
-     * Item's children
+     * This item's children
      *
      * @var Navigation
      */
     protected $children;
 
     /**
-     * Icon
+     * This item's icon
      *
-     * @var string|null
+     * @var string
      */
     protected $icon;
 
     /**
-     * Item's ID
+     * This item's name
      *
-     * @var mixed
+     * @var string
      */
-    protected $id;
+    protected $name;
 
     /**
-     * Label
+     * This item's label
      *
-     * @var string|null
+     * @var string
      */
     protected $label;
 
     /**
-     * Parent
+     * This item's parent
      *
-     * @var NavigationItem|null
+     * @var NavigationItem
      */
-    private $parent;
+    protected $parent;
 
     /**
-     * URL
+     * This item's url
      *
-     * @var Url|null
+     * @var Url
      */
     protected $url;
 
     /**
-     * URL parameters
+     * This item's url target
+     *
+     * @var string
+     */
+    protected $target;
+
+    /**
+     * Additional parameters for this item's url
      *
      * @var array
      */
-    protected $urlParameters = array();
+    protected $urlParameters;
 
     /**
-     * View
+     * This item's renderer
      *
-     * @var View|null
+     * @var NavigationItemRenderer
      */
-    protected $view;
+    protected $renderer;
 
     /**
-     * Create a new navigation item
+     * Whether to render this item
      *
-     * @param array $properties
+     * @var bool
      */
-    public function __construct(array $properties = array())
+    protected $render;
+
+    /**
+     * Create a new NavigationItem
+     *
+     * @param   string  $name
+     * @param   array   $properties
+     */
+    public function __construct($name, array $properties = null)
     {
+        $this->setName($name);
+        $this->priority = 100;
+        $this->children = new Navigation();
+
         if (! empty($properties)) {
             $this->setProperties($properties);
         }
-        $this->children = new Navigation();
+
         $this->init();
     }
 
     /**
-     * Initialize the navigation item
+     * Initialize this NavigationItem
      */
     public function init()
     {
@@ -119,33 +152,39 @@ class NavigationItem implements Countable, IteratorAggregate
     /**
      * {@inheritdoc}
      */
-    public function count()
-    {
-        return $this->children->count();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getIterator()
     {
-        return $this->children;
+        return $this->getChildren();
     }
 
     /**
-     * Get whether the item is active
+     * Return whether this item is active
      *
-     * @return bool
+     * @return  bool
      */
     public function getActive()
     {
+        if ($this->active === null) {
+            $this->active = false;
+            if ($this->getUrl() !== null && Icinga::app()->getRequest()->getUrl()->matches($this->getUrl())) {
+                $this->setActive();
+            } elseif ($this->hasChildren()) {
+                foreach ($this->getChildren() as $item) {
+                    /** @var NavigationItem $item */
+                    if ($item->getActive()) {
+                        // Do nothing, a true active state is automatically passed to all parents
+                    }
+                }
+            }
+        }
+
         return $this->active;
     }
 
     /**
-     * Set whether the item is active
+     * Set whether this item is active
      *
-     * Bubbles active state.
+     * If it's active and has a parent, the parent gets activated as well.
      *
      * @param   bool    $active
      *
@@ -154,57 +193,76 @@ class NavigationItem implements Countable, IteratorAggregate
     public function setActive($active = true)
     {
         $this->active = (bool) $active;
-        $parent = $this;
-        while (($parent = $parent->parent) !== null) {
-            $parent->setActive($active);
+        if ($this->active && $this->getParent() !== null) {
+            $this->getParent()->setActive();
         }
+
         return $this;
     }
 
     /**
-     * Get an attribute's value of the item's element
+     * Return this item's priority
      *
-     * @param   string      $name       Name of the attribute
-     * @param   mixed       $default    Default value
+     * @return  int
+     */
+    public function getPriority()
+    {
+        return $this->priority;
+    }
+
+    /**
+     * Set this item's priority
+     *
+     * @param   int     $priority
+     *
+     * @return  $this
+     */
+    public function setPriority($priority)
+    {
+        $this->priority = (int) $priority;
+        return $this;
+    }
+
+    /**
+     * Return the value of the given element attribute
+     *
+     * @param   string  $name
+     * @param   mixed   $default
      *
      * @return  mixed
      */
     public function getAttribute($name, $default = null)
     {
-        $name = (string) $name;
-        if (array_key_exists($name, $this->attributes)) {
-            return $this->attributes[$name];
-        }
-        return $default;
+        $attributes = $this->getAttributes();
+        return array_key_exists($name, $attributes) ? $attributes[$name] : $default;
     }
 
     /**
-     * Set an attribute of the item's element
+     * Set the value of the given element attribute
      *
-     * @param   string  $name   Name of the attribute
-     * @param   mixed   $value  Value of the attribute
+     * @param   string  $name
+     * @param   mixed   $value
      *
      * @return  $this
      */
     public function setAttribute($name, $value)
     {
-        $name = (string) $name;
         $this->attributes[$name] = $value;
         return $this;
     }
 
     /**
-     * Get the item's attributes
+     * Return the attributes of this item's element
      *
-     * @return array
+     * @return  array
      */
     public function getAttributes()
     {
-        return $this->attributes;
+        return $this->attributes ?: array();
     }
 
     /**
-     * Set the item's attributes
+     * Set the attributes of this item's element
      *
      * @param   array   $attributes
      *
@@ -212,44 +270,33 @@ class NavigationItem implements Countable, IteratorAggregate
      */
     public function setAttributes(array $attributes)
     {
-        foreach ($attributes as $name => $value) {
-            $this->setAttribute($name, $value);
-        }
+        $this->attributes = $attributes;
         return $this;
     }
 
     /**
-     * Add a child item to this item
+     * Add a child to this item
      *
-     * Bubbles active state.
+     * If the child is active this item gets activated as well.
      *
-     * @param   NavigationItem|array    $child  The child to add
+     * @param   NavigationItem  $child
      *
      * @return  $this
-     * @throws  InvalidArgumentException        If the child argument is invalid
      */
-    public function addChild($child)
+    public function addChild(NavigationItem $child)
     {
-        if (! $child instanceof NavigationItem) {
-            if (! is_array($child)) {
-                throw new InvalidArgumentException(
-                    'Argument child must be either an array or an instance of NavigationItem'
-                );
-            }
-            $child = new NavigationItem($child);
-        }
-        $child->parent = $this;
-        $this->children->addItem($child);
+        $this->getChildren()->addItem($child->setParent($this));
         if ($child->getActive()) {
             $this->setActive();
         }
+
         return $this;
     }
 
     /**
-     * Get the item's children
+     * Return this item's children
      *
-     * @return Navigation
+     * @return  Navigation
      */
     public function getChildren()
     {
@@ -257,32 +304,42 @@ class NavigationItem implements Countable, IteratorAggregate
     }
 
     /**
-     * Get whether the item has children
+     * Return whether this item has any children
      *
-     * @return bool
+     * @return  bool
      */
     public function hasChildren()
     {
-        return ! $this->children->isEmpty();
+        return !$this->getChildren()->isEmpty();
     }
 
     /**
-     * Set children
+     * Set this item's children
      *
-     * @param   Navigation  $children
+     * @param   array|Navigation  $children
      *
      * @return  $this
      */
-    public function setChildren(Navigation $children)
+    public function setChildren($children)
     {
+        if (is_array($children)) {
+            $children = Navigation::fromArray($children);
+        } elseif (! $children instanceof Navigation) {
+            throw new InvalidArgumentException('Argument $children must be of type array or Navigation');
+        }
+
+        foreach ($children as $item) {
+            $item->setParent($this);
+        }
+
         $this->children = $children;
         return $this;
     }
 
     /**
-     * Get the icon
+     * Return this item's icon
      *
-     * @return string|null
+     * @return  string
      */
     public function getIcon()
     {
@@ -290,7 +347,7 @@ class NavigationItem implements Countable, IteratorAggregate
     }
 
     /**
-     * Set the icon
+     * Set this item's icon
      *
      * @param   string  $icon
      *
@@ -298,45 +355,92 @@ class NavigationItem implements Countable, IteratorAggregate
      */
     public function setIcon($icon)
     {
-        $this->icon = (string) $icon;
+        $this->icon = $icon;
         return $this;
     }
 
     /**
-     * Get the item's ID
+     * Return this item's name escaped with only ASCII chars and/or digits
      *
-     * @return mixed
+     * @return  string
      */
-    public function getId()
+    protected function getEscapedName()
     {
-        return $this->id;
+        return preg_replace('~[^a-zA-Z0-9]~', '_', $this->getName());
     }
 
     /**
-     * Set the item's ID
+     * Return a unique version of this item's name
      *
-     * @param   mixed   $id ID of the item
+     * @return  string
+     */
+    public function getUniqueName()
+    {
+        if ($this->getParent() === null) {
+            return 'navigation-' . $this->getEscapedName();
+        }
+
+        return $this->getParent()->getUniqueName() . '-' . $this->getEscapedName();
+    }
+
+    /**
+     * Return this item's name
+     *
+     * @return  string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * Set this item's name
+     *
+     * @param   string  $name
      *
      * @return  $this
      */
-    public function setId($id)
+    public function setName($name)
     {
-        $this->id = $id;
+        $this->name = $name;
         return $this;
     }
 
     /**
-     * Get the label
+     * Set this item's parent
      *
-     * @return string|null
+     * @param   NavigationItem  $parent
+     *
+     * @return  $this
      */
-    public function getLabel()
+    public function setParent(NavigationItem $parent)
     {
-        return $this->label;
+        $this->parent = $parent;
+        return $this;
     }
 
     /**
-     * Set the label
+     * Return this item's parent
+     *
+     * @return  NavigationItem
+     */
+    public function getParent()
+    {
+        return $this->parent;
+    }
+
+    /**
+     * Return this item's label
+     *
+     * @return  string
+     */
+    public function getLabel()
+    {
+        return $this->label ?: $this->getName();
+    }
+
+    /**
+     * Set this item's label
      *
      * @param   string  $label
      *
@@ -344,48 +448,108 @@ class NavigationItem implements Countable, IteratorAggregate
      */
     public function setLabel($label)
     {
-        $this->label = (string) $label;
+        $this->label = $label;
         return $this;
     }
 
     /**
-     * Get the URL
+     * Set this item's url target
      *
-     * @return Url|null
+     * @param   string  $target
+     *
+     * @return  $this
+     */
+    public function setTarget($target)
+    {
+        $this->target = $target;
+        return $this;
+    }
+
+    /**
+     * Return this item's url target
+     *
+     * @return  string
+     */
+    public function getTarget()
+    {
+        return $this->target;
+    }
+
+    /**
+     * Return this item's url
+     *
+     * @return  Url
      */
     public function getUrl()
     {
-        if ($this->url !== null && ! $this->url instanceof Url) {
-            $this->url = Url::fromPath((string) $this->url);
+        if ($this->url === null && $this->hasChildren()) {
+            $this->setUrl(Url::fromPath('#'));
         }
+
         return $this->url;
     }
 
     /**
-     * Set the URL
+     * Set this item's url
      *
-     * @param   Url|string $url
+     * @param   Url|string  $url
      *
      * @return  $this
+     *
+     * @throws  InvalidArgumentException    If the given url is neither of type
      */
     public function setUrl($url)
     {
+        if (is_string($url)) {
+            $url = Url::fromPath($url);
+        } elseif (! $url instanceof Url) {
+            throw new InvalidArgumentException('Argument $url must be of type string or Url');
+        }
+
         $this->url = $url;
         return $this;
     }
 
     /**
-     * Get the URL parameters
+     * Return the value of the given url parameter
      *
-     * @return array
+     * @param   string  $name
+     * @param   mixed   $default
+     *
+     * @return  mixed
      */
-    public function getUrlParameters()
+    public function getUrlParameter($name, $default = null)
     {
-        return $this->urlParameters;
+        $parameters = $this->getUrlParameters();
+        return isset($parameters[$name]) ? $parameters[$name] : $default;
     }
 
     /**
-     * Set the URL parameters
+     * Set the value of the given url parameter
+     *
+     * @param   string  $name
+     * @param   mixed   $value
+     *
+     * @return  $this
+     */
+    public function setUrlParameter($name, $value)
+    {
+        $this->urlParameters[$name] = $value;
+        return $this;
+    }
+
+    /**
+     * Return all additional parameters for this item's url
+     *
+     * @return  array
+     */
+    public function getUrlParameters()
+    {
+        return $this->urlParameters ?: array();
+    }
+
+    /**
+     * Set additional parameters for this item's url
      *
      * @param   array   $urlParameters
      *
@@ -398,86 +562,230 @@ class NavigationItem implements Countable, IteratorAggregate
     }
 
     /**
-     * Get the view
+     * Set this item's properties
      *
-     * @return View
-     */
-    public function getView()
-    {
-        if ($this->view === null) {
-            $this->view = Icinga::app()->getViewRenderer()->view;
-        }
-        return $this->view;
-    }
-
-    /**
-     * Set the view
-     *
-     * @param   View    $view
-     *
-     * @return  $this
-     */
-    public function setView(View $view)
-    {
-        $this->view = $view;
-        return $this;
-    }
-
-    /**
-     * Set properties for the item
+     * Unknown properties (no matching setter) are considered as element attributes.
      *
      * @param   array   $properties
      *
      * @return  $this
      */
-    public function setProperties(array $properties = array())
+    public function setProperties(array $properties)
     {
         foreach ($properties as $name => $value) {
             $setter = 'set' . ucfirst($name);
             if (method_exists($this, $setter)) {
                 $this->$setter($value);
+            } else {
+                $this->setAttribute($name, $value);
             }
         }
+
         return $this;
     }
 
     /**
-     * Render the navigation item to HTML
+     * Merge this item with the given one
      *
-     * @return string
+     * @param   NavigationItem  $item
+     *
+     * @return  $this
      */
-    public function render()
+    public function merge(NavigationItem $item)
     {
-        $view = $this->getView();
-        $label = $view->escape($this->getLabel());
-        if (null !== $icon = $this->getIcon()) {
-            $label = $view->icon($icon) . $label;
+        if ($this->conflictsWith($item)) {
+            throw new ProgrammingError('Cannot merge, conflict detected.');
         }
-        if (null !== $url = $this->getUrl()) {
-            $content = sprintf(
-                '<a%s href="%s">%s</a>',
-                $view->propertiesToString($this->getAttributes()),
-                $view->url($url, $this->getUrlParameters()),
-                $label
-            );
-        } else {
-            $content = sprintf(
-                '<%1$s%2$s>%3$s</%1$s>',
-                static::LINK_ALTERNATIVE,
-                $view->propertiesToString($this->getAttributes()),
-                $label
-            );
+
+        if ($item->getActive()) {
+            $this->setActive();
         }
-        return $content;
+
+        if (! $this->getIcon()) {
+            $this->setIcon($item->getIcon());
+        }
+
+        if ($this->getLabel() === $this->getName()) {
+            $this->setLabel($item->getLabel());
+        }
+
+        foreach ($item->getAttributes() as $name => $value) {
+            $this->setAttribute($name, $value);
+        }
+
+        foreach ($item->getUrlParameters() as $name => $value) {
+            $this->setUrlParameter($name, $value);
+        }
+
+        if ($item->hasChildren()) {
+            $this->getChildren()->merge($item->getChildren());
+        }
+
+        return $this;
     }
 
     /**
-     * Render the navigation item to HTML
+     * Return whether it's possible to merge this item with the given one
      *
-     * @return string
+     * @param   NavigationItem  $item
+     *
+     * @return  bool
+     */
+    public function conflictsWith(NavigationItem $item)
+    {
+        if (! $item instanceof $this) {
+            return true;
+        }
+
+        if ($this->getUrl() === null || $item->getUrl() === null) {
+            return false;
+        }
+
+        return !$this->getUrl()->matches($item->getUrl());
+    }
+
+    /**
+     * Create and return the given renderer
+     *
+     * @param   string|array    $name
+     *
+     * @return  NavigationItemRenderer
+     */
+    protected function createRenderer($name)
+    {
+        if (is_array($name)) {
+            $options = array_splice($name, 1);
+            $name = $name[0];
+        } else {
+            $options = array();
+        }
+
+        $renderer = null;
+        foreach (Icinga::app()->getModuleManager()->getLoadedModules() as $module) {
+            $classPath = 'Icinga\\Module\\' . ucfirst($module->getName()) . '\\' . static::RENDERER_NS . '\\' . $name;
+            if (class_exists($classPath)) {
+                $renderer = new $classPath($options);
+                break;
+            }
+        }
+
+        if ($renderer === null) {
+            $classPath = 'Icinga\\' . static::RENDERER_NS . '\\' . $name;
+            if (class_exists($classPath)) {
+                $renderer = new $classPath($options);
+            }
+        }
+
+        if ($renderer === null) {
+            throw new ProgrammingError(
+                'Cannot find renderer "%s" for navigation item "%s"',
+                $name,
+                $this->getName()
+            );
+        } elseif (! $renderer instanceof NavigationItemRenderer) {
+            throw new ProgrammingError('Class %s must inherit from NavigationItemRenderer', $classPath);
+        }
+
+        return $renderer;
+    }
+
+    /**
+     * Set this item's renderer
+     *
+     * @param   string|array|NavigationItemRenderer     $renderer
+     *
+     * @return  $this
+     *
+     * @throws  InvalidArgumentException    If the $renderer argument is neither a string nor a NavigationItemRenderer
+     */
+    public function setRenderer($renderer)
+    {
+        if (is_string($renderer) || is_array($renderer)) {
+            $renderer = $this->createRenderer($renderer);
+        } elseif (! $renderer instanceof NavigationItemRenderer) {
+            throw new InvalidArgumentException(
+                'Argument $renderer must be of type string, array or NavigationItemRenderer'
+            );
+        }
+
+        $this->renderer = $renderer;
+        return $this;
+    }
+
+    /**
+     * Return this item's renderer
+     *
+     * @return  NavigationItemRenderer
+     */
+    public function getRenderer()
+    {
+        if ($this->renderer === null) {
+            $this->setRenderer('NavigationItemRenderer');
+        }
+
+        return $this->renderer;
+    }
+
+    /**
+     * Set whether this item should be rendered
+     *
+     * @param   bool    $state
+     *
+     * @return  $this
+     */
+    public function setRender($state = true)
+    {
+        $this->render = (bool) $state;
+        return $this;
+    }
+
+    /**
+     * Return whether this item should be rendered
+     *
+     * @return  bool
+     */
+    public function getRender()
+    {
+        if ($this->render === null) {
+            return true;
+        }
+
+        return $this->render;
+    }
+
+    /**
+     * Return whether this item should be rendered
+     *
+     * Alias for NavigationItem::getRender().
+     *
+     * @return  bool
+     */
+    public function shouldRender()
+    {
+        return $this->getRender();
+    }
+
+    /**
+     * Return this item rendered to HTML
+     *
+     * @return  string
+     */
+    public function render()
+    {
+        return $this->getRenderer()->setItem($this)->render();
+    }
+
+    /**
+     * Return this item rendered to HTML
+     *
+     * @return  string
      */
     public function __toString()
     {
-        return $this->render();
+        try {
+            return $this->render();
+        } catch (Exception $e) {
+            return IcingaException::describe($e);
+        }
     }
 }

@@ -57,7 +57,9 @@ class AlertsummaryController extends Controller
         $this->view->title = $this->translate('Alert Summary');
 
         $this->view->intervalBox = $this->createIntervalBox();
-        $this->view->recentAlerts = $this->createRecentAlerts();
+        list($recentAlerts, $recentAlertsUrl) = $this->createRecentAlerts();
+        $this->view->recentAlerts = $recentAlerts;
+        $this->view->recentAlertsUrl = $recentAlertsUrl;
         $this->view->interval = $this->getInterval();
         $this->view->defectChart = $this->createDefectImage();
         $this->view->healingChart = $this->createHealingChart();
@@ -80,6 +82,7 @@ class AlertsummaryController extends Controller
         );
         $this->applyRestriction('monitoring/filter/objects', $query);
         $this->view->notifications = $query;
+        $this->view->notificationsUrl = 'monitoring/list/notifications';
 
         $this->setupLimitControl();
         $this->setupPaginationControl($this->view->notifications);
@@ -487,7 +490,7 @@ class AlertsummaryController extends Controller
     /**
      * Top recent alerts
      *
-     * @return mixed
+     * @return array
      */
     private function createRecentAlerts()
     {
@@ -508,7 +511,10 @@ class AlertsummaryController extends Controller
 
         $query->order('notification_start_time', 'desc');
 
-        return $query->limit(5);
+        return array(
+            $query->limit(5),
+            'monitoring/list/notifications?sort=notification_start_time&dir=desc'
+        );
     }
 
     /**

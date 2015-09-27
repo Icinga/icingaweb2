@@ -364,7 +364,12 @@ class LdapUserBackend extends LdapRepository implements UserBackendInterface, In
                 return false;
             }
 
-            return $this->ds->testCredentials($userDn, $password);
+            $testCredentialsResult = $this->ds->testCredentials($userDn, $password);
+            if ($testCredentialsResult) {
+                $user->setAdditional('ldap_dn', $userDn);
+            }
+
+            return $testCredentialsResult;
         } catch (LdapException $e) {
             throw new AuthenticationException(
                 'Failed to authenticate user "%s" against backend "%s". An exception was thrown:',

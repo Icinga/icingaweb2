@@ -5,7 +5,7 @@
 
 <div class="content" data-base-target="_next">
   <p>
-    <a href="<?= $this->href('/monitoring/config/createbackend'); ?>">
+    <a href="<?= $this->href('monitoring/config/createbackend'); ?>">
       <?= $this->icon('plus'); ?> <?= $this->translate('Create New Monitoring Backend'); ?>
     </a>
   </p>
@@ -20,7 +20,7 @@
         <td>
           <?= $this->qlink(
             $backendName,
-            '/monitoring/config/editbackend',
+            'monitoring/config/editbackend',
             array('backend-name' => $backendName),
             array(
                 'icon'  => 'edit',
@@ -35,7 +35,7 @@
         <td>
           <?= $this->qlink(
             '',
-            '/monitoring/config/removebackend',
+            'monitoring/config/removebackend',
             array('backend-name' => $backendName),
             array(
                 'icon'  => 'trash',
@@ -49,7 +49,7 @@
   </table>
   <h1><?= $this->translate('Command Transports') ?></h1>
   <p>
-    <a href="<?= $this->href('/monitoring/config/createtransport'); ?>">
+    <a href="<?= $this->href('monitoring/config/createtransport'); ?>">
       <?= $this->icon('plus'); ?> <?= $this->translate('Create New Transport'); ?>
     </a>
   </p>
@@ -64,7 +64,7 @@
         <td>
           <?= $this->qlink(
             $transportName,
-            '/monitoring/config/edittransport',
+            'monitoring/config/edittransport',
             array('transport' => $transportName),
             array(
                 'icon'  => 'edit',
@@ -79,7 +79,7 @@
         <td>
           <?= $this->qlink(
             '',
-            '/monitoring/config/removetransport',
+            'monitoring/config/removetransport',
             array('transport' => $transportName),
             array(
                 'icon'  => 'trash',

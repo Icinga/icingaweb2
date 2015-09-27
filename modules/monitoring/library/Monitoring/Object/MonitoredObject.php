@@ -5,9 +5,11 @@ namespace Icinga\Module\Monitoring\Object;
 
 use InvalidArgumentException;
 use Icinga\Application\Config;
+use Icinga\Application\Logger;
 use Icinga\Data\Filter\Filter;
 use Icinga\Data\Filterable;
 use Icinga\Exception\InvalidPropertyException;
+use Icinga\Exception\ProgrammingError;
 use Icinga\Module\Monitoring\Backend\MonitoringBackend;
 use Icinga\Web\UrlParams;
 
@@ -206,6 +208,59 @@ abstract class MonitoredObject implements Filterable
     public function where($condition, $value = null)
     {
         // Left out on purpose. Interface is deprecated.
+    }
+
+    /**
+     * Return whether this object matches the given filter
+     *
+     * @param   Filter  $filter
+     *
+     * @return  bool
+     *
+     * @throws  ProgrammingError    In case the object cannot be found
+     */
+    public function matches(Filter $filter)
+    {
+        if ($this->properties === null && $this->fetch() === false) {
+            throw new ProgrammingError(
+                'Unable to apply filter. Object %s of type %s not found.',
+                $this->getName(),
+                $this->getType()
+            );
+        }
+
+        $queryString = $filter->toQueryString();
+        $row = clone $this->properties;
+
+        if (strpos($queryString, '_host_') !== false || strpos($queryString, '_service_') !== false) {
+            if ($this->customvars === null) {
+                $this->fetchCustomvars();
+            }
+
+            foreach ($this->customvars as $name => $value) {
+                if (! is_object($value)) {
+                    $row->{'_' . $this->getType() . '_' . strtolower(str_replace(' ', '_', $name))} = $value;
+                }
+            }
+        }
+
+        if (strpos($queryString, 'hostgroup_name') !== false) {
+            if ($this->hostgroups === null) {
+                $this->fetchHostgroups();
+            }
+
+            $row->hostgroup_name = array_keys($this->hostgroups);
+        }
+
+        if (strpos($queryString, 'servicegroup_name') !== false) {
+            if ($this->servicegroups === null) {
+                $this->fetchServicegroups();
+            }
+
+            $row->servicegroup_name = array_keys($this->servicegroups);
+        }
+
+        return $filter->matches($row);
     }
 
     /**
@@ -529,12 +584,15 @@ abstract class MonitoredObject implements Filterable
      */
     public function fetchServicegroups()
     {
-        $this->servicegroups = $this->backend->select()
+        $query = $this->backend->select()
             ->from('servicegroup', array('servicegroup_name', 'servicegroup_alias'))
-            ->where('host_name', $this->host_name)
-            ->where('service_description', $this->service_description)
-            ->applyFilter($this->getFilter())
-            ->fetchPairs();
+            ->where('host_name', $this->host_name);
+
+        if ($this->type === self::TYPE_SERVICE) {
+            $query->where('service_description', $this->service_description);
+        }
+
+        $this->servicegroups = $query->applyFilter($this->getFilter())->fetchPairs();
         return $this;
     }
 
