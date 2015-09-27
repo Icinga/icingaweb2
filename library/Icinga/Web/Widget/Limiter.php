@@ -5,7 +5,6 @@ namespace Icinga\Web\Widget;
 
 use Icinga\Web\Navigation\Navigation;
 use Icinga\Web\Navigation\NavigationItem;
-use Icinga\Web\Navigation\NavigationRenderer;
 use Icinga\Web\Url;
 
 /**
@@ -102,10 +101,10 @@ class Limiter extends AbstractWidget
                 ->setLabel(t('all'));
             $navigation->addItem($navigationItem);
         }
-        $navigationRenderer = new NavigationRenderer($navigation);
-        $navigationRenderer
+        return $navigation
+            ->getRenderer()
             ->setCssClass(static::CSS_CLASS_LIMITER)
-            ->setHeading(t('Limiter'));
-        return $navigationRenderer->render();
+            ->setHeading(t('Limiter'))
+            ->render();
     }
 }
