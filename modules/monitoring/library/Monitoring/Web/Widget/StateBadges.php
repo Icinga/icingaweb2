@@ -11,6 +11,8 @@ use Icinga\Web\Widget\AbstractWidget;
 
 class StateBadges extends AbstractWidget
 {
+    const CSS_CLASS = 'state-badges';
+
     const STATE_CRITICAL = 'state-critical';
 
     const STATE_CRITICAL_HANDLED = 'state-critical-handled';
@@ -128,6 +130,6 @@ class StateBadges extends AbstractWidget
             )
             ->createBadge(static::STATE_UNKNOWN, $badges)
             ->createBadge(static::STATE_PENDING, $badges);
-        return $badges->getRenderer()->render();
+        return $badges->getRenderer()->setCssClass(static::CSS_CLASS)->render();
     }
 }
