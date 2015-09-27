@@ -5,7 +5,7 @@ if ($this->pageCount <= 1) return;
 ?>
 <div class="pagination-control" role="navigation">
     <h2 id="<?= $this->protectId('pagination') ?>" class="sr-only" tabindex="-1"><?= $this->translate('Pagination') ?></h2>
-    <ul class="nav nav-tabs">
+    <ul class="nav tab-nav">
     <?php if (isset($this->previous)): ?>
         <?php $label = sprintf(
             $this->translate('Show rows %u to %u of %u'),
