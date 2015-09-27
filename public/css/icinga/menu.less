@@ -53,7 +53,10 @@
 
 #menu > nav > ul > li.active > a {
   color: @icinga-blue;
-  text-shadow: none;
+}
+
+#menu > nav > ul > li.active > div.clearfix > a {
+  color: @icinga-blue;
 }
 
 #menu > nav > ul > li.active li.active a {
@@ -61,11 +64,10 @@
 }
 
 #menu > nav > ul > li.active li a:hover {
-  text-decoration: underline;
+  color: @icinga-blue;
 }
 
 #menu > nav > ul > li a:hover {
-  color: @icinga-blue;
 }
 
 #menu > nav > ul > li li {
@@ -78,13 +80,12 @@
 }
 
 #menu nav > ul > li.active > .badge {
-  margin-top: 5px;
+  margin-top: 15px;
   margin-right: 5px;
 }
 
-
 #menu nav > ul > li > div > .badge{
-  margin-top: 5px;
+  margin-top: 8px;
 }
 
 #menu nav > ul > li.active > div > .badge{
@@ -124,9 +125,9 @@
 }
 
 #menu ul ul li a {
-  line-height: 1.8em;
-  padding-top: 0.5em;
-  padding-bottom: 0.5em;
+  line-height: 1.5em;
+  padding-top: 0.4em;
+  padding-bottom: 0.7em;
 }
 
 #menu ul ul li a {
@@ -167,7 +168,7 @@
   left: 10.9em;
   right: 0;
   top: -0.5em;
-  padding-top: 1em;
+  padding-top: 0.8em;
   padding-left: 1em;
   padding-bottom: 0.5em;
   height: auto;
@@ -176,7 +177,6 @@
 }
 
 #menu li.hover > a {
-  color: @icinga-blue;
   overflow: visible;
 }
 
@@ -231,7 +231,7 @@
 }
 
 #menu input.search {
-  font-size: 0.9em;
+  font-size: 14px;
   margin: 0;
   padding: 0 0.5em 0 2.2em;
   border: none;
