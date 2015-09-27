@@ -19,7 +19,7 @@ abstract class BadgeNavigationItemRenderer extends NavigationItemRenderer
     /**
      * The tooltip text for the badge
      *
-     * @var string 
+     * @var string
      */
     protected $title;
 
@@ -28,7 +28,7 @@ abstract class BadgeNavigationItemRenderer extends NavigationItemRenderer
      *
      * The state identifier defines the background color of the badge.
      *
-     * @var string 
+     * @var string
      */
     protected $state;
 
@@ -94,7 +94,7 @@ abstract class BadgeNavigationItemRenderer extends NavigationItemRenderer
      */
     public function render(NavigationItem $item = null)
     {
-        return $this->renderBadge() . parent::render($item);
+        return '<div class="clearfix">' . $this->renderBadge() . parent::render($item) . '</div>';
     }
 
     /**
@@ -104,11 +104,12 @@ abstract class BadgeNavigationItemRenderer extends NavigationItemRenderer
      */
     protected function renderBadge()
     {
-        if (($count = $this->getCount()) > 0) {
+        if ($count = $this->getCount()) {
+            $view = $this->view();
             return sprintf(
-                '<div title="%s" class="badge-container"><span class="badge badge-%s">%s</span></div>',
-                $this->view()->escape($this->getTitle()),
-                $this->view()->escape($this->getState()),
+                '<span title="%s" class="badge pull-right state-%s">%s</span>',
+                $view->escape($this->getTitle()),
+                $view->escape($this->getState()),
                 $count
             );
         }
