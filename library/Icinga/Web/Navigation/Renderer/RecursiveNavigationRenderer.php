@@ -120,6 +120,7 @@ class RecursiveNavigationRenderer extends RecursiveIteratorIterator implements N
     public function endChildren()
     {
         $this->content[] = $this->getInnerIterator()->endChildrenMarkup();
+        $this->content[] = $this->getInnerIterator()->endItemMarkup();
     }
 
     /**
