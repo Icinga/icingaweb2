@@ -15,7 +15,7 @@
 }
 
 #menu a {
-  color: @text-color-default;
+  color: @text-color-default; 
 }
 
 #menu .separator {
@@ -48,7 +48,6 @@
 
 #menu > nav > ul > li > a {
   color: @icinga-blue;
-  font-size: 0.9em;
   text-shadow: none;
 }
 
@@ -65,13 +64,33 @@
   text-decoration: underline;
 }
 
-#menu > nav > ul > li {
+#menu > nav > ul > li a:hover {
+  color: @icinga-blue;
 }
 
 #menu > nav > ul > li li {
   font-size: 0.8em;
   padding-left: 1.6em;
 }
+
+#menu .badge {
+  margin-right: 5px;
+}
+
+#menu nav > ul > li.active > .badge {
+  margin-top: 5px;
+  margin-right: 5px;
+}
+
+
+#menu nav > ul > li > div > .badge{
+  margin-top: 5px;
+}
+
+#menu nav > ul > li.active > div > .badge{
+  display: none;
+}
+
 
 /* Collapsed menu item color */
 #menu > nav > ul > li > a {
@@ -94,7 +113,6 @@
   line-height: 2.8em;
   padding-left: 0.7em;
   text-decoration: none;
-  overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
 }
@@ -106,8 +124,12 @@
 }
 
 #menu ul ul li a {
-  line-height: 1.5em;
-  padding-bottom: 1em;
+  line-height: 1.8em;
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+}
+
+#menu ul ul li a {
 }
 
 #menu > nav > ul > li {
@@ -132,7 +154,7 @@
 /* BEGIN OF Hoverable menu */
 
 #menu li.hover {
-  width: 28em;
+  width: 27em;
   padding-left: 0.0em;
   margin-left: 0px;
   margin-right: 5;
@@ -159,9 +181,8 @@
 }
 
 #menu li.hover > ul a {
-  width: 95%;
+  width: 90%;
   display: block;
-  color: @text-color-light;
   color: @text-color-inverted;
 }
 
@@ -212,7 +233,7 @@
 #menu input.search {
   font-size: 0.9em;
   margin: 0;
-  padding: 0 0.5em 0 2.8em;
+  padding: 0 0.5em 0 2.2em;
   border: none;
   width: 100%;
   border-radius: 0;
@@ -222,8 +243,9 @@
   background-color: transparent;
   background-image: url('../img/icons/search.png');
   background-repeat: no-repeat;
-  background-position: 1.15em center;
+  background-position: 1.0em center;
   color: @colorTextDefault;
+  border-left: solid 5px @gray-lighter;
 }
 
 html.ie8 #menu input.search {

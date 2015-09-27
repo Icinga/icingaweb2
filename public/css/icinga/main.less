@@ -126,3 +126,17 @@ a.button {
     font-size: 16px;
   }
 }
+
+.badge {
+  min-width: 25px;
+  font-family: tahoma, verdana, sans-serif;
+  font-weight: @font-weight-bold;
+  font-size: 11px;
+  text-align: center;
+  color: @text-color-inverted;
+  padding: 5px;
+
+  &.state-critical {
+    .bg-color-critical();
+  }
+}

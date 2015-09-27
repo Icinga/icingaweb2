@@ -1,5 +1,71 @@
 /*! Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
+/* Badges */
+.state-badges {
+
+  > ul > li {
+    padding-right: 5px;
+    &:last-child {
+      padding-right: 0;
+    }
+  }
+
+  li .state-ok {
+    .bg-color-ok(); 
+  }
+
+  li .state-warning {
+    .bg-color-warning(); 
+  }
+
+  li .state-critical {
+  }
+
+  li .state-unreachable {
+    .bg-color-unreachable(); 
+  }
+
+  li .state-unknown {
+    .bg-color-unknown(); 
+  }
+
+  li .state-pending {
+    .bg-color-pending(); 
+  }
+}
+
+/* Tactical overview element styles */
+
+//.tactical > .boxview > div.box {
+//  min-height: 20em;
+//  min-width: 12.1em;
+//}
+//
+//.tactical div.box.contents {
+//  min-height: 14.5em;
+//}
+//
+//div.box.contents.zero {
+//  min-width: 11.1em;
+//
+//  background-color: transparent;
+//}
+//
+//div.box.contents.zero span {
+//  font-weight: bold;
+//  line-height: 2em;
+//
+//  color: #666;
+//}
+//
+//div.box.contents.zero h3 {
+//  margin: 0;
+//  font-size: 12em;
+//  line-height: 1em;
+//
+//  color: #666;
+//}
+
 //.content.processinfo table.avp th {
 //  width: 16em;
 //}
@@ -671,7 +737,7 @@
 //  color: @colorTextDefault;
 //}
 //
-///* Tactical overview element styles */
+/* Tactical overview element styles */
 //
 //.tactical > .boxview > div.box {
 //  min-height: 20em;
