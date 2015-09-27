@@ -283,6 +283,7 @@ class StateBadges extends AbstractWidget
             )
             ->createBadge(static::STATE_UNKNOWN, $badges)
             ->createBadge(static::STATE_OK, $badges)
+            ->createBadge(static::STATE_UP, $badges)
             ->createBadge(static::STATE_PENDING, $badges);
         return $badges
             ->getRenderer()

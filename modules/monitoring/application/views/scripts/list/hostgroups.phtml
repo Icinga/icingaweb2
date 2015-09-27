@@ -57,7 +57,7 @@ if (! $this->compact): ?>
             $stateBadges
                 ->setUrl('monitoring/list/hosts')
                 ->add(
-                    StateBadges::STATE_OK,
+                    StateBadges::STATE_UP,
                     array(
                         'host_state'        => 0,
                         'hostgroup_name'    => $hostgroup->hostgroup_name,
