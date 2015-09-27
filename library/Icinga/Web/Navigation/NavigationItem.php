@@ -436,7 +436,7 @@ class NavigationItem implements IteratorAggregate
      */
     public function getLabel()
     {
-        return $this->label ?: $this->getName();
+        return $this->label !== null ? $this->label : $this->getName();
     }
 
     /**
