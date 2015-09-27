@@ -14,6 +14,7 @@ class StyleSheet
         'css/vendor/normalize.css',
         'css/vendor/tipsy.css',
         'css/icinga/themes/icinga.less',
+        'css/icinga/colors.less',
         'css/icinga/mixins.less',
         'css/icinga/base.less',
         'css/icinga/main.less',

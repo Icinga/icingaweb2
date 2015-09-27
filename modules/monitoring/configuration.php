@@ -361,7 +361,6 @@ $dashboard->add(
 /*
  * CSS
  */
-$this->provideCssFile('colors.less');
 $this->provideCssFile('plugin-output.less');
 $this->provideCssFile('service-grid.less');
 $this->provideCssFile('tables.less');
