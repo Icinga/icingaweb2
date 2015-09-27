@@ -160,8 +160,8 @@ class StateBadges extends AbstractWidget
      * Add a state badge
      *
      * @param   string  $state
-     * @param   array   $filter
      * @param   int     $count
+     * @param   array   $filter
      * @param   string  $translateSingular
      * @param   string  $translatePlural
      * @param   array   $translateArgs
@@ -169,7 +169,7 @@ class StateBadges extends AbstractWidget
      * @return  $this
      */
     public function add(
-        $state, array $filter, $count, $translateSingular, $translatePlural, array $translateArgs = array()
+        $state, $count, array $filter, $translateSingular, $translatePlural, array $translateArgs = array()
     ) {
         $this->badges[$state] = (object) array(
             'count'             => (int) $count,
@@ -218,7 +218,7 @@ class StateBadges extends AbstractWidget
             $groupItem = new NavigationItem(
                 uniqid(),
                 array(
-                    'name'      => '',
+                    'label'     => '',
                     'priority'  => $this->priority++
                 )
             );
