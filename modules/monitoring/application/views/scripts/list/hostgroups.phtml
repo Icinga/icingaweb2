@@ -69,7 +69,7 @@ if (! $this->compact): ?>
                     array($hostgroup->hosts_up, $hostgroup->hostgroup_alias)
                 )
                 ->add(
-                    StateBadges::STATE_CRITICAL,
+                    StateBadges::STATE_DOWN,
                     array(
                         'host_state'        => 1,
                         'host_acknowledged' => 0,
@@ -83,7 +83,7 @@ if (! $this->compact): ?>
                     array($hostgroup->hosts_down_unhandled, $hostgroup->hostgroup_alias)
                 )
                 ->add(
-                    StateBadges::STATE_CRITICAL_HANDLED,
+                    StateBadges::STATE_DOWN_HANDLED,
                     array(
                         'host_state'      => 1,
                         'host_handled'    => 1,

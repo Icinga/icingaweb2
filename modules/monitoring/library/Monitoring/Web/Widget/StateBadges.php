@@ -17,6 +17,10 @@ class StateBadges extends AbstractWidget
 
     const STATE_CRITICAL_HANDLED = 'state-critical-handled';
 
+    const STATE_DOWN = 'state-down';
+
+    const STATE_DOWN_HANDLED = 'state-down-handled';
+
     const STATE_OK = 'state-ok';
 
     const STATE_PENDING = 'state-pending';
@@ -125,11 +129,18 @@ class StateBadges extends AbstractWidget
                 $badges
             )
             ->createBadgeGroup(
+                array(static::STATE_DOWN, static::STATE_DOWN_HANDLED),
+                $badges
+            )
+            ->createBadgeGroup(
                 array(static::STATE_UNREACHABLE, static::STATE_UNREACHABLE_HANDLED),
                 $badges
             )
             ->createBadge(static::STATE_UNKNOWN, $badges)
             ->createBadge(static::STATE_PENDING, $badges);
-        return $badges->getRenderer()->setCssClass(static::CSS_CLASS)->render();
+        return $badges
+            ->getRenderer()
+            ->setCssClass(static::CSS_CLASS)
+            ->render();
     }
 }
