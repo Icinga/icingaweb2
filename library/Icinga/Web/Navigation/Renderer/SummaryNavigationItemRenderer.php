@@ -41,6 +41,6 @@ class SummaryNavigationItemRenderer extends BadgeNavigationItemRenderer
      */
     public function getTitle()
     {
-        return !empty($this->titles) ? join(', ', $this->titles) : '';
+        return ! empty($this->titles) ? join(', ', $this->titles) : '';
     }
 }
