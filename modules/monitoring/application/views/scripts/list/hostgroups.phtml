@@ -1,52 +1,55 @@
 <?php
-use Icinga\Module\Monitoring\Object\Host;
 use Icinga\Module\Monitoring\Web\Widget\StateBadges;
 
 if (! $this->compact): ?>
 <div class="controls">
-  <?= $this->tabs ?>
-  <?= $this->sortBox ?>
-  <?= $this->limiter ?>
-  <?= $this->paginator ?>
-  <?= $this->filterEditor ?>
+    <?= $this->tabs ?>
+    <?= $this->sortBox ?>
+    <?= $this->limiter ?>
+    <?= $this->paginator ?>
+    <?= $this->filterEditor ?>
 </div>
 <?php endif ?>
+
 <div class="content">
-<?php if (! $hostgroups->hasResult()): ?>
+    <?php if (! $hostgroups->hasResult()): ?>
     <p><?= $this->translate('No host groups found matching the filter.') ?></p>
-    </div>
+</div>
 <?php return; endif ?>
 <table class="action-table listing-table" data-base-target="_next">
-    <thead>
-        <tr>
-            <th><?= $this->translate('Host Group') ?></th>
-            <th><?= $this->translate('Total Hosts') ?></th>
-            <th><?= $this->translate('Host States') ?></th>
-            <th><?= $this->translate('Total Services') ?></th>
-            <th><?= $this->translate('Service States') ?></th>
-        </tr>
-    </thead>
-    <tbody>
+<thead>
+<tr>
+    <th><?= $this->translate('Host Group') ?></th>
+    <th><?= $this->translate('Total Hosts') ?></th>
+    <th><?= $this->translate('Host States') ?></th>
+    <th><?= $this->translate('Total Services') ?></th>
+    <th><?= $this->translate('Service States') ?></th>
+</tr>
+</thead>
+<tbody>
 <?php foreach ($hostgroups as $hostgroup): ?>
-      <tr href="<?= $this->href('monitoring/list/hosts', array('hostgroup_name' => $hostgroup->hostgroup_name)) ?>">
+    <tr href="<?= $this->href('monitoring/list/hosts', array('hostgroup_name' => $hostgroup->hostgroup_name)) ?>">
         <td class="groupname">
-          <?= $this->qlink(
-            $hostgroup->hostgroup_alias,
-            'monitoring/list/hosts',
-            array('hostgroup_name' => $hostgroup->hostgroup_name),
-            array('title' => sprintf($this->translate('List all hosts in the group "%s"'), $hostgroup->hostgroup_alias))
-          ) ?>
+            <?= $this->qlink(
+                $hostgroup->hostgroup_alias,
+                'monitoring/list/hosts',
+                array('hostgroup_name' => $hostgroup->hostgroup_name),
+                array('title' => sprintf(
+                    $this->translate('List all hosts in the group "%s"'),
+                    $hostgroup->hostgroup_alias
+                ))
+            ) ?>
         </td>
         <td class="total">
-          <?= $this->qlink(
-            $hostgroup->hosts_total,
-            'monitoring/list/hosts',
-            array('hostgroup_name' => $hostgroup->hostgroup_name),
-            array('title' => sprintf(
-                $this->translate('List all hosts in host group "%s"'),
-                $hostgroup->hostgroup_alias
-            ))
-          ) ?>
+            <?= $this->qlink(
+                $hostgroup->hosts_total,
+                'monitoring/list/hosts',
+                array('hostgroup_name' => $hostgroup->hostgroup_name),
+                array('title' => sprintf(
+                    $this->translate('List all hosts in host group "%s"'),
+                    $hostgroup->hostgroup_alias
+                ))
+            ) ?>
         </td>
         <td>
             <?php
@@ -131,19 +134,19 @@ if (! $this->compact): ?>
                     'List %u hosts which are currently in state PENDING in the host group "%s"',
                     array($hostgroup->hosts_pending, $hostgroup->hostgroup_alias)
                 );
-                echo $stateBadges->render();
+            echo $stateBadges->render();
             ?>
         </td>
         <td class="total">
-          <?= $this->qlink(
-            $hostgroup->services_total,
-            'monitoring/list/services',
-            array('hostgroup_name' => $hostgroup->hostgroup_name),
-            array('title' => sprintf(
-                $this->translate('List all services of all hosts in host group "%s"'),
-                $hostgroup->hostgroup_alias
-            ))
-          ) ?>
+            <?= $this->qlink(
+                $hostgroup->services_total,
+                'monitoring/list/services',
+                array('hostgroup_name' => $hostgroup->hostgroup_name),
+                array('title' => sprintf(
+                    $this->translate('List all services of all hosts in host group "%s"'),
+                    $hostgroup->hostgroup_alias
+                ))
+            ) ?>
         </td>
         <td>
             <?php
@@ -262,19 +265,19 @@ if (! $this->compact): ?>
             echo $stateBadges->render();
             ?>
         </td>
-      </tr>
+    </tr>
 <?php endforeach ?>
-    </tbody>
-  </table>
+</tbody>
+</table>
 <?php if ($hostgroups->hasMore()): ?>
-  <?= $this->qlink(
+<?= $this->qlink(
     $this->translate('Show More'),
     $this->url()->without(array('view', 'limit')),
     null,
     array(
-      'data-base-target'    => '_next',
-      'class'               => 'pull-right show-more'
+        'data-base-target'    => '_next',
+        'class'               => 'pull-right show-more'
     )
-  ) ?>
+) ?>
 <?php endif ?>
 </div>
