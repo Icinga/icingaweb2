@@ -1,5 +1,6 @@
 <?php
 use Icinga\Module\Monitoring\Object\Host;
+use Icinga\Module\Monitoring\Web\Widget\StateBadges;
 
 if (! $this->compact): ?>
 <div class="controls">
@@ -48,160 +49,90 @@ if (! $this->compact): ?>
           ) ?>
         </td>
         <td>
-        <?php if ($hostgroup->hosts_up): ?>
-          <span class="state ok">
-            <?= $this->qlink(
-              $hostgroup->hosts_up,
-              'monitoring/list/hosts',
-              array(
-                'host_state'        => 0,
-                'hostgroup_name'    => $hostgroup->hostgroup_name,
-                'sort'              => 'host_severity'
-              ),
-              array(
-                'title' => sprintf(
-                  $this->translatePlural(
+            <?php
+            $stateBadges = new StateBadges();
+            $stateBadges
+                ->setUrl('monitoring/list/hosts')
+                ->add(
+                    StateBadges::STATE_OK,
+                    array(
+                        'host_state'        => 0,
+                        'hostgroup_name'    => $hostgroup->hostgroup_name,
+                        'sort'              => 'host_severity'
+                    ),
+                    $hostgroup->hosts_up,
                     'List %u host that is currently in state UP in the host group "%s"',
                     'List %u hosts which are currently in state UP in the host group "%s"',
-                    $hostgroup->hosts_up
-                  ),
-                  $hostgroup->hosts_up,
-                  $hostgroup->hostgroup_alias
+                    array($hostgroup->hosts_up, $hostgroup->hostgroup_alias)
                 )
-              )
-            ) ?>
-          </span>
-        <?php endif ?>
-        <?php if ($hostgroup->hosts_down_unhandled): ?>
-          <span class="state critical">
-            <?= $this->qlink(
-              $hostgroup->hosts_down_unhandled,
-              'monitoring/list/hosts',
-              array(
-                'host_state'        => 1,
-                'host_acknowledged' => 0,
-                'host_in_downtime'  => 0,
-                'hostgroup_name'    => $hostgroup->hostgroup_name,
-                'sort'              => 'host_severity'
-              ),
-              array(
-                'title' => sprintf(
-                  $this->translatePlural(
+                ->add(
+                    StateBadges::STATE_CRITICAL,
+                    array(
+                        'host_state'        => 1,
+                        'host_acknowledged' => 0,
+                        'host_in_downtime'  => 0,
+                        'hostgroup_name'    => $hostgroup->hostgroup_name,
+                        'sort'              => 'host_severity'
+                    ),
+                    $hostgroup->hosts_down_unhandled,
                     'List %u host that is currently in state DOWN in the host group "%s"',
                     'List %u hosts which are currently in state DOWN in the host group "%s"',
-                    $hostgroup->hosts_down_unhandled
-                  ),
-                  $hostgroup->hosts_down_unhandled,
-                  $hostgroup->hostgroup_alias
+                    array($hostgroup->hosts_down_unhandled, $hostgroup->hostgroup_alias)
                 )
-              )
-            ) ?>
-        <?php endif ?>
-          <?php if ($hostgroup->hosts_down_handled): ?>
-            <span class="state critical handled">
-              <?= $this->qlink(
-                $hostgroup->hosts_down_handled,
-                'monitoring/list/hosts',
-                array(
-                  'host_state'      => 1,
-                  'host_handled'    => 1,
-                  'hostgroup_name'  => $hostgroup->hostgroup_name,
-                  'sort'            => 'host_severity'
-                ),
-                array(
-                  'title' => sprintf(
-                    $this->translatePlural(
-                      'List %u host that is currently in state DOWN (Acknowledged) in the host group "%s"',
-                      'List %u hosts which are currently in state DOWN (Acknowledged) in the host group "%s"',
-                      $hostgroup->hosts_down_handled
+                ->add(
+                    StateBadges::STATE_CRITICAL_HANDLED,
+                    array(
+                        'host_state'      => 1,
+                        'host_handled'    => 1,
+                        'hostgroup_name'  => $hostgroup->hostgroup_name,
+                        'sort'            => 'host_severity'
                     ),
                     $hostgroup->hosts_down_handled,
-                    $hostgroup->hostgroup_alias
-                  )
+                    'List %u host that is currently in state DOWN (Acknowledged) in the host group "%s"',
+                    'List %u hosts which are currently in state DOWN (Acknowledged) in the host group "%s"',
+                    array($hostgroup->hosts_down_handled, $hostgroup->hostgroup_alias)
                 )
-              ) ?>
-            </span>
-          <?php endif ?>
-        <?php if ($hostgroup->hosts_down_unhandled): ?>
-          </span>
-        <?php endif ?>
-        <?php if ($hostgroup->hosts_unreachable_unhandled): ?>
-          <span class="state unknown">
-            <?= $this->qlink(
-              $hostgroup->hosts_unreachable_unhandled,
-              'monitoring/list/hosts',
-              array(
-                'host_state'        => 2,
-                'host_acknowledged' => 0,
-                'host_in_downtime'  => 0,
-                'hostgroup_name'    => $hostgroup->hostgroup_name,
-                'sort'              => 'host_severity'
-              ),
-              array(
-                'title' => sprintf(
-                  $this->translatePlural(
+                ->add(
+                    StateBadges::STATE_UNREACHABLE,
+                    array(
+                        'host_state'        => 2,
+                        'host_acknowledged' => 0,
+                        'host_in_downtime'  => 0,
+                        'hostgroup_name'    => $hostgroup->hostgroup_name,
+                        'sort'              => 'host_severity'
+                    ),
+                    $hostgroup->hosts_unreachable_unhandled,
                     'List %u host that is currently in state UNREACHABLE in the host group "%s"',
                     'List %u hosts which are currently in state UNREACHABLE in the host group "%s"',
-                    $hostgroup->hosts_unreachable_unhandled
-                  ),
-                  $hostgroup->hosts_unreachable_unhandled,
-                  $hostgroup->hostgroup_alias
+                    array($hostgroup->hosts_unreachable_unhandled, $hostgroup->hostgroup_alias)
                 )
-              )
-            ) ?>
-        <?php endif ?>
-          <?php if ($hostgroup->hosts_unreachable_handled): ?>
-            <span class="state unknown handled">
-              <?= $this->qlink(
-                $hostgroup->hosts_unreachable_handled,
-                'monitoring/list/hosts',
-                array(
-                  'host_state'      => 2,
-                  'host_handled'    => 1,
-                  'hostgroup_name'  => $hostgroup->hostgroup_name,
-                  'sort'            => 'host_severity'
-                ),
-                array(
-                  'title' => sprintf(
-                    $this->translatePlural(
-                      'List %u host that is currently in state UNREACHABLE (Acknowledged) in the host group "%s"',
-                      'List %u hosts which are currently in state UNREACHABLE (Acknowledged) in the host group "%s"',
-                      $hostgroup->hosts_unreachable_handled
+                ->add(
+                    StateBadges::STATE_UNREACHABLE_HANDLED,
+                    array(
+                        'host_state'      => 2,
+                        'host_handled'    => 1,
+                        'hostgroup_name'  => $hostgroup->hostgroup_name,
+                        'sort'            => 'host_severity'
                     ),
                     $hostgroup->hosts_unreachable_handled,
-                    $hostgroup->hostgroup_alias
-                  )
+                    'List %u host that is currently in state UNREACHABLE (Acknowledged) in the host group "%s"',
+                    'List %u hosts which are currently in state UNREACHABLE (Acknowledged) in the host group "%s"',
+                    array($hostgroup->hosts_unreachable_handled, $hostgroup->hostgroup_alias)
                 )
-              ) ?>
-            </span>
-          <?php endif ?>
-        <?php if ($hostgroup->hosts_unreachable_unhandled): ?>
-          </span>
-        <?php endif ?>
-        <?php if ($hostgroup->hosts_pending): ?>
-          <span class="state pending">
-            <?= $this->qlink(
-              $hostgroup->hosts_pending,
-              'monitoring/list/hosts',
-              array(
-                'host_state'        => 99,
-                'hostgroup_name'    => $hostgroup->hostgroup_name,
-                'sort'              => 'host_severity'
-              ),
-              array(
-                'title' => sprintf(
-                  $this->translatePlural(
+                ->add(
+                    StateBadges::STATE_PENDING,
+                    array(
+                        'host_state'        => 99,
+                        'hostgroup_name'    => $hostgroup->hostgroup_name,
+                        'sort'              => 'host_severity'
+                    ),
+                    $hostgroup->hosts_pending,
                     'List %u host that is currently in state PENDING in the host group "%s"',
                     'List %u hosts which are currently in state PENDING in the host group "%s"',
-                    $hostgroup->hosts_pending
-                  ),
-                  $hostgroup->hosts_pending,
-                  $hostgroup->hostgroup_alias
-                )
-              )
-            ) ?>
-          </span>
-        <?php endif ?>
+                    array($hostgroup->hosts_pending, $hostgroup->hostgroup_alias)
+                );
+                echo $stateBadges->render();
+            ?>
         </td>
         <td class="total">
           <?= $this->qlink(
