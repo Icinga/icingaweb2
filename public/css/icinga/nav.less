@@ -1,16 +1,28 @@
 /*! Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
+li.nav-item {
+  a {
+    font-weight: normal;
+  }
+
+  a, span {
+    // Rollover
+    display: block;
+  }
+}
+
+// TODO(el): Use tab-nav in the Tabs widget
+.tabs {
+  a {
+    font-weight: normal;
+  }
+}
+
 ul.nav {
   // Reset defaults
   margin: 0;
   padding: 0;
   list-style-type: none;
-
-  // TODO(el): li.nav-item {
-  a, span {
-    // Rollover
-    display: block;
-  }
 }
 
 ul.tab-nav {
