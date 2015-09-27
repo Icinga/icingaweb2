@@ -76,9 +76,9 @@ class StateBadges extends AbstractWidget
         if ($this->has($state)) {
             $badge = $this->get($state);
             $badges->addItem(array(
-                'class' => static::STATE_OK,
-                'label' => $badge->count,
-                'url'   => $this->url
+                'attributes'    => array('class' => 'badge ' . $state),
+                'label'         => $badge->count,
+                'url'           => $this->url
             ));
         }
         return $this;
