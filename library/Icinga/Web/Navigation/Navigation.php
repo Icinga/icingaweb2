@@ -139,7 +139,7 @@ class Navigation implements ArrayAccess, Countable, IteratorAggregate
      * @return  $this
      * @throws  InvalidArgumentException        If the item argument is invalid
      */
-    public function addItem(NavigationItem $item)
+    public function addItem($item)
     {
         if (! $item instanceof NavigationItem) {
             if (! is_array($item)) {
