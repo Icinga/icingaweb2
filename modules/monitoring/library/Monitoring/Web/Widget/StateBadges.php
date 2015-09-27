@@ -265,11 +265,6 @@ class StateBadges extends AbstractWidget
         $badges = new Navigation();
         $badges->setLayout(Navigation::LAYOUT_TABS);
         $this
-            ->createBadge(static::STATE_OK, $badges)
-            ->createBadgeGroup(
-                array(static::STATE_WARNING, static::STATE_WARNING_HANDLED),
-                $badges
-            )
             ->createBadgeGroup(
                 array(static::STATE_CRITICAL, static::STATE_CRITICAL_HANDLED),
                 $badges
@@ -279,10 +274,15 @@ class StateBadges extends AbstractWidget
                 $badges
             )
             ->createBadgeGroup(
+                array(static::STATE_WARNING, static::STATE_WARNING_HANDLED),
+                $badges
+            )
+            ->createBadgeGroup(
                 array(static::STATE_UNREACHABLE, static::STATE_UNREACHABLE_HANDLED),
                 $badges
             )
             ->createBadge(static::STATE_UNKNOWN, $badges)
+            ->createBadge(static::STATE_OK, $badges)
             ->createBadge(static::STATE_PENDING, $badges);
         return $badges
             ->getRenderer()
