@@ -75,11 +75,11 @@ class StateBadges extends AbstractWidget
     {
         if ($this->has($state)) {
             $badge = $this->get($state);
-            $badges->addItem(array(
+            $badges->addItem(new NavigationItem($state, array(
                 'attributes'    => array('class' => 'badge ' . $state),
                 'label'         => $badge->count,
                 'url'           => $this->url
-            ));
+            )));
         }
         return $this;
     }
@@ -88,7 +88,7 @@ class StateBadges extends AbstractWidget
     {
         $group = array_intersect_key($this->badges, array_flip($states));
         if (! empty($group)) {
-            $groupItem = new NavigationItem();
+            $groupItem = new NavigationItem(uniqid(), array('name' => ''));
             $groupBadges = new Navigation();
             $groupBadges->setLayout(Navigation::LAYOUT_TABS);
             foreach (array_keys($group) as $state) {
