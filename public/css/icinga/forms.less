@@ -1,5 +1,45 @@
 /*! Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
+input {
+  border: none;
+  border-bottom: 1px solid @text-color-light;
+  color: inherit;
+  display: inline-block;
+  padding: @vertical-padding / 2 @horizontal-padding / 2;
+
+  &:focus {
+    border-bottom: 1px solid @text-color;
+  }
+}
+
+form {
+  // Disable icons for the moment
+  i {
+    display: none;
+  }
+}
+
+.control-label {
+  display: inline-block;
+  font-size: @font-size-small;
+  color: @text-color-light;
+}
+
+.control-label-group {
+  display: inline-block;
+  padding-right: @horizontal-padding;
+  text-align: right;
+  width: 240px;
+}
+
+.control-group {
+  padding: @vertical-padding @horizontal-padding;
+}
+
+select {
+  display: table-cell;
+}
+
 //div.config-form-buttons {
 //  margin-top: 5px;
 //}
