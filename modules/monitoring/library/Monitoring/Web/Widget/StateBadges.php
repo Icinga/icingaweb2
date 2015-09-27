@@ -11,48 +11,135 @@ use Icinga\Web\Widget\AbstractWidget;
 
 class StateBadges extends AbstractWidget
 {
+    /**
+     * CSS class for the widget
+     *
+     * @var string
+     */
     const CSS_CLASS = 'state-badges';
 
+    /**
+     * State critical
+     *
+     * @var string
+     */
     const STATE_CRITICAL = 'state-critical';
 
+    /**
+     * State critical handled
+     *
+     * @var string
+     */
     const STATE_CRITICAL_HANDLED = 'state-critical-handled';
 
+    /**
+     * State down
+     *
+     * @var string
+     */
     const STATE_DOWN = 'state-down';
 
+    /**
+     * State down handled
+     *
+     * @var string
+     */
     const STATE_DOWN_HANDLED = 'state-down-handled';
 
+    /**
+     * State ok
+     *
+     * @var string
+     */
     const STATE_OK = 'state-ok';
 
+    /**
+     * State pending
+     *
+     * @var string
+     */
     const STATE_PENDING = 'state-pending';
 
+    /**
+     * State unknown
+     *
+     * @var string
+     */
     const STATE_UNKNOWN = 'state-unknown';
 
+    /**
+     * State unknown handled
+     *
+     * @var string
+     */
     const STATE_UNKNOWN_HANDLED = 'state-unknown-handled';
 
+    /**
+     * State unreachable
+     *
+     * @var string
+     */
     const STATE_UNREACHABLE = 'state-unreachable';
 
+    /**
+     * State unreachable handled
+     *
+     * @var string
+     */
     const STATE_UNREACHABLE_HANDLED = 'state-unreachable-handled';
 
+    /**
+     * State up
+     *
+     * @var string
+     */
     const STATE_UP = 'state-up';
 
+    /**
+     * State warning
+     *
+     * @var string
+     */
     const STATE_WARNING = 'state-warning';
 
+    /**
+     * State warning handled
+     *
+     * @var string
+     */
     const STATE_WARNING_HANDLED = 'state-warning-handled';
 
+    /**
+     * State badges
+     *
+     * @var object[]
+     */
     protected $badges = array();
 
+    /**
+     * Base URL
+     *
+     * @var Url
+     */
     protected $url;
 
-    public function getBadges()
-    {
-        return $this->badges;
-    }
-
+    /**
+     * Get the base URL
+     *
+     * @return Url
+     */
     public function getUrl()
     {
         return $this->url;
     }
 
+    /**
+     * Set the base URL
+     *
+     * @param   Url|string $url
+     *
+     * @return  $this
+     */
     public function setUrl($url)
     {
         if (! $url instanceof $url) {
@@ -62,6 +149,18 @@ class StateBadges extends AbstractWidget
         return $this;
     }
 
+    /**
+     * Add a state badge
+     *
+     * @param   string  $state
+     * @param   array   $filter
+     * @param   int     $count
+     * @param   string  $translateSingular
+     * @param   string  $translatePlural
+     * @param   array   $translateArgs
+     *
+     * @return  $this
+     */
     public function add(
         $state, array $filter, $count, $translateSingular, $translatePlural, array $translateArgs = array()
     ) {
@@ -75,6 +174,14 @@ class StateBadges extends AbstractWidget
         return $this;
     }
 
+    /**
+     * Create a badge
+     *
+     * @param   string $state
+     * @param   Navigation $badges
+     *
+     * @return  $this
+     */
     public function createBadge($state, Navigation $badges)
     {
         if ($this->has($state)) {
@@ -88,6 +195,14 @@ class StateBadges extends AbstractWidget
         return $this;
     }
 
+    /**
+     * Create a badge group
+     *
+     * @param   array $states
+     * @param   Navigation $badges
+     *
+     * @return  $this
+     */
     public function createBadgeGroup(array $states, Navigation $badges)
     {
         $group = array_intersect_key($this->badges, array_flip($states));
@@ -104,16 +219,33 @@ class StateBadges extends AbstractWidget
         return $this;
     }
 
+    /**
+     * Get whether a badge for the given state has been added
+     *
+     * @param   string $state
+     *
+     * @return  bool
+     */
     public function has($state)
     {
         return isset($this->badges[$state]) && $this->badges[$state]->count;
     }
 
+    /**
+     * Get the badge for the given state
+     *
+     * @param   string $state
+     *
+     * @return  object
+     */
     public function get($state)
     {
         return $this->badges[$state];
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function render()
     {
         $badges = new Navigation();
