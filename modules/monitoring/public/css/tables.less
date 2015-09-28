@@ -3,58 +3,62 @@
 @border-left-width: 6px;
 
 .state-col {
-  &.state-critical-handled,
-  &.state-down-handled {
-    border-left: @border-left-width solid @color-critical-handled;
-  }
-
   &.state-ok,
-  &.state-ok-handled,
-  &.state-up,
-  &.state-up-handled {
+  &.state-up {
     border-left: @border-left-width solid @color-ok;
 
     .state-label {
-      color: @color-ok;
+      .fg-color-ok();
     }
   }
 
-  &.state-pending,
-  &.state-pending-handled {
+  &.state-pending {
     border-left: @border-left-width solid @color-pending;
-  }
-
-  &.state-warning-handled {
-    border-left: @border-left-width solid @color-warning-handled;
-  }
-
-  &.state-unknown-handled {
-    border-left: @border-left-width solid @color-unknown-handled;
-  }
-
-  &.state-unreachable-handled {
-    border-left: @border-left-width solid @color-unreachable-handled;
   }
 
   &.state-critical,
   &.state-down {
     .bg-color-critical();
-    color: @text-color-inverted;
+    .fg-color-inverted();
+
+    &.handled {
+      .bg-color-default();
+      .fg-color-default();
+      border-left: @border-left-width solid @color-critical-handled;
+    }
   }
 
   &.state-warning {
     .bg-color-warning();
-    color: @text-color-inverted;
+    .fg-color-inverted();
+
+    &.handled {
+      .bg-color-default();
+      .fg-color-default();
+      border-left: @border-left-width solid @color-warning-handled;
+    }
   }
 
   &.state-unknown {
     .bg-color-unknown();
-    color: @text-color-inverted;
+    .fg-color-inverted();
+
+    &.handled {
+      .bg-color-default();
+      .fg-color-default();
+      border-left: @border-left-width solid @color-unknown-handled;
+    }
   }
 
   &.state-unreachable {
     .bg-color-unreachable();
-    color: @text-color-inverted;
+    .fg-color-inverted();
+
+    &.handled {
+      .bg-color-default();
+      .fg-color-default();
+      border-left: @border-left-width solid @color-unreachable-handled;
+    }
   }
 
   * {

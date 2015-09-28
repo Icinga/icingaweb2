@@ -44,7 +44,7 @@ if (! $this->compact): ?>
         );
         $serviceStateName = Service::getStateText($service->service_state); ?>
         <tr>
-            <td class="state-col state-<?= $serviceStateName ?><?= $service->service_handled ? '-handled' : '' ?>">
+            <td class="state-col state-<?= $serviceStateName ?><?= $service->service_handled ? ' handled' : '' ?>">
                 <p>
                     <span class="state-label"><?= Service::getStateText($service->service_state, true) ?></span>
                 <?php if ((int) $service->service_state !== 99): ?>
