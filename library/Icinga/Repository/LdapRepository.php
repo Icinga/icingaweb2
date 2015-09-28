@@ -28,13 +28,18 @@ abstract class LdapRepository extends Repository
      * @var array
      */
     protected $normedAttributes = array(
-        'uid'               => 'uid',
-        'gid'               => 'gid',
-        'user'              => 'user',
-        'group'             => 'group',
-        'member'            => 'member',
-        'inetorgperson'     => 'inetOrgPerson',
-        'samaccountname'    => 'sAMAccountName'
+        'uid'                   => 'uid',
+        'gid'                   => 'gid',
+        'user'                  => 'user',
+        'group'                 => 'group',
+        'member'                => 'member',
+        'memberuid'             => 'memberUid',
+        'posixgroup'            => 'posixGroup',
+        'uniquemember'          => 'uniqueMember',
+        'groupofnames'          => 'groupOfNames',
+        'inetorgperson'         => 'inetOrgPerson',
+        'samaccountname'        => 'sAMAccountName',
+        'groupofuniquenames'    => 'groupOfUniqueNames'
     );
 
     /**
