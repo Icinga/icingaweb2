@@ -8,22 +8,22 @@
 </div>
 <?php endif ?>
 <div class="content">
+<?php if ($servicegroups->hasResult()): ?>
+  <p><?= $this->translate('No servicegroups found matching the filter') ?></p>
+</div>
+<?php endif ?>
+<table class="groupview action" data-base-target="_next">
+  <thead>
+  <th><?= $this->translate('Last Problem') ?></th>
+  <th><?= $this->translate('Service Group') ?></th>
+  <th><?= $this->translate('Total Services') ?></th>
+  <th><?= $this->translate('Service States') ?></th>
+  </thead>
+  <tbody>
 <?php
 
 $servicegroups->peekAhead($this->compact);
-$firstRow = true;
 foreach ($servicegroups as $s): ?>
-<?php if ($firstRow): ?>
-  <?php $firstRow = false ?>
-  <table class="groupview action" data-base-target="_next">
-    <thead>
-      <th><?= $this->translate('Last Problem') ?></th>
-      <th><?= $this->translate('Service Group') ?></th>
-      <th><?= $this->translate('Total Services') ?></th>
-      <th><?= $this->translate('Service States') ?></th>
-    </thead>
-    <tbody>
-<?php endif ?>
       <tr href="<?= $this->href('monitoring/list/services', array('servicegroup_name' => $s->servicegroup_name)) ?>">
        <?php if ($s->services_critical_last_state_change_unhandled): ?>
         <td class="state change critical unhandled">
@@ -299,7 +299,6 @@ foreach ($servicegroups as $s): ?>
         </td>
       </tr>
 <?php endforeach ?>
-<?php if ($servicegroups->hasResult()): ?>
     </tbody>
   </table>
 <?php if ($servicegroups->hasMore()): ?>
@@ -312,8 +311,5 @@ foreach ($servicegroups as $s): ?>
       'class'               => 'pull-right show-more'
     )
   ) ?>
-<?php endif ?>
-<?php else: ?>
-  <?= $this->translate('No servicegroups found matching the filter') ?>
 <?php endif ?>
 </div>
