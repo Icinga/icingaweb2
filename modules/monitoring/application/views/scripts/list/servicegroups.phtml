@@ -10,7 +10,7 @@ if (! $this->compact): ?>
 </div>
 <?php endif ?>
 <div class="content">
-    <?php if ($servicegroups->hasResult()): ?>
+<?php if (! $servicegroups->hasResult()): ?>
     <p><?= $this->translate('No service groups found matching the filter.') ?></p>
 </div>
 <?php return; endif ?>
