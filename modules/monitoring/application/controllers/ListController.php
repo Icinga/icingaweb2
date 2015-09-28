@@ -450,21 +450,13 @@ class ListController extends Controller
             'servicegroup_alias',
             'servicegroup_name',
             'services_critical_handled',
-            'services_critical_last_state_change_handled' => 'services_critical_handled_last_state_change',
-            'services_critical_last_state_change_unhandled' => 'services_critical_unhandled_last_state_change',
             'services_critical_unhandled',
             'services_ok',
-            'services_ok_last_state_change',
             'services_pending',
-            'services_pending_last_state_change',
             'services_total',
             'services_unknown_handled',
-            'services_unknown_last_state_change_handled' => 'services_unknown_handled_last_state_change',
-            'services_unknown_last_state_change_unhandled' => 'services_unknown_unhandled_last_state_change',
             'services_unknown_unhandled',
             'services_warning_handled',
-            'services_warning_last_state_change_handled' => 'services_warning_handled_last_state_change',
-            'services_warning_last_state_change_unhandled' => 'services_warning_unhandled_last_state_change',
             'services_warning_unhandled'
         ));
         $this->applyRestriction('monitoring/filter/objects', $query);
