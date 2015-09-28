@@ -297,9 +297,6 @@ class Web extends EmbeddedWeb
                     )
                 ),
                 'user' => array(
-                    'label'     => $this->user->getUsername(),
-                    'icon'      => 'user',
-                    'priority'  => 900,
                     'children'  => array(
                         'preferences'   => array(
                             'label'     => t('Preferences'),
@@ -316,11 +313,17 @@ class Web extends EmbeddedWeb
                             'url'       => 'authentication/logout',
                             'priority'  => 990,
                             'renderer'  => array(
-                                'NavigationItemRenderer',
+                                'LogoutNavigationItemRenderer',
                                 'target' => '_self'
                             )
                         )
-                    )
+                    ),
+                    'label'     => $this->user->getUsername(),
+                    'url'       => 'account',
+                    'priority'  => 900,
+                    'renderer'  => array(
+                        'UserNavigationItemRenderer'
+                    ),
                 )
             );
 
