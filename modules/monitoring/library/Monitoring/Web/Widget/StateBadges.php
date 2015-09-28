@@ -30,7 +30,7 @@ class StateBadges extends AbstractWidget
      *
      * @var string
      */
-    const STATE_CRITICAL_HANDLED = 'state-critical-handled';
+    const STATE_CRITICAL_HANDLED = 'state-critical handled';
 
     /**
      * State down
@@ -44,7 +44,7 @@ class StateBadges extends AbstractWidget
      *
      * @var string
      */
-    const STATE_DOWN_HANDLED = 'state-down-handled';
+    const STATE_DOWN_HANDLED = 'state-down handled';
 
     /**
      * State ok
@@ -72,7 +72,7 @@ class StateBadges extends AbstractWidget
      *
      * @var string
      */
-    const STATE_UNKNOWN_HANDLED = 'state-unknown-handled';
+    const STATE_UNKNOWN_HANDLED = 'state-unknown handled';
 
     /**
      * State unreachable
@@ -86,7 +86,7 @@ class StateBadges extends AbstractWidget
      *
      * @var string
      */
-    const STATE_UNREACHABLE_HANDLED = 'state-unreachable-handled';
+    const STATE_UNREACHABLE_HANDLED = 'state-unreachable handled';
 
     /**
      * State up
@@ -107,7 +107,7 @@ class StateBadges extends AbstractWidget
      *
      * @var string
      */
-    const STATE_WARNING_HANDLED = 'state-warning-handled';
+    const STATE_WARNING_HANDLED = 'state-warning handled';
 
     /**
      * State badges
