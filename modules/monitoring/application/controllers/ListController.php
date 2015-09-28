@@ -126,11 +126,6 @@ class ListController extends Controller
             'host_name',
             'host_display_name',
             'host_state',
-            'host_state_type',
-            'host_last_state_change',
-            'host_address',
-            'host_address6',
-            'host_handled',
             'service_description',
             'service_display_name',
             'service_state' => $stateColumn,
@@ -147,14 +142,9 @@ class ListController extends Controller
             'service_state_type',
             'service_handled',
             'service_severity',
-            'service_last_check',
             'service_notifications_enabled',
-            'service_action_url',
-            'service_notes_url',
             'service_active_checks_enabled',
-            'service_passive_checks_enabled',
-            'current_check_attempt' => 'service_current_check_attempt',
-            'max_check_attempts'    => 'service_max_check_attempts'
+            'service_passive_checks_enabled'
         ), $this->addColumns());
         $query = $this->backend->select()->from('servicestatus', $columns);
         $this->applyRestriction('monitoring/filter/objects', $query);
