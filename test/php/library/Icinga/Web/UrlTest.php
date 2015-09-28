@@ -82,13 +82,13 @@ class UrlTest extends BaseTestCase
         $url = Url::fromPath('/my/test/url.html');
 
         $this->assertEquals(
-            '/',
+            '',
             $url->getBaseUrl(),
             'Url::fromPath does not recognize the correct base url'
         );
         $this->assertEquals(
-            'my/test/url.html',
-            $url->getPath(),
+            '/my/test/url.html',
+            $url->getAbsoluteUrl(),
             'Url::fromPath does not recognize the correct url path'
         );
     }

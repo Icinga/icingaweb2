@@ -36,6 +36,11 @@ input, select, textarea {
   font-family: Calibri, Helvetica, sans-serif;
 }
 
+input[type=checkbox] {
+  margin-top: 0.3em;
+  margin-bottom: 0.1em;
+}
+
 input:focus, select:focus {
   border-color: #333;
 }
@@ -358,6 +363,10 @@ i.autosubmit-warning {
     content: '\e874'; // icon-spin6
     .animate(spin 2s infinite linear);
   }
+}
+
+input[type=checkbox] + i.autosubmit-warning {
+  margin-top: 0.15em;
 }
 
 html.no-js i.autosubmit-warning {

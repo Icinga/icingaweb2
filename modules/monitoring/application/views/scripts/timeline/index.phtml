@@ -65,7 +65,7 @@ if (! $beingExtended && !$this->compact): ?>
         <div class="timeframe">
             <span><?= $this->qlink(
                 $timeInfo[0]->end->format($intervalFormat),
-                '/monitoring/list/eventhistory',
+                'monitoring/list/eventhistory',
                 array(
                     'timestamp<' => $timeInfo[0]->start->getTimestamp(),
                     'timestamp>' => $timeInfo[0]->end->getTimestamp()

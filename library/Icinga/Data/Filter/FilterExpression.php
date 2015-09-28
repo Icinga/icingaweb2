@@ -97,18 +97,41 @@ class FilterExpression extends Filter
 
     public function matches($row)
     {
+        if (! isset($row->{$this->column})) {
+            // TODO: REALLY? Exception?
+            return false;
+        }
+
         if (is_array($this->expression)) {
             return in_array($row->{$this->column}, $this->expression);
-        } elseif (strpos($this->expression, '*') === false) {
-            return (string) $row->{$this->column} === (string) $this->expression;
-        } else {
-            $parts = preg_split('~\*~', $this->expression);
-            foreach ($parts as & $part) {
-                $part = preg_quote($part);
-            }
-            $pattern = '/^' . implode('.*', $parts) . '$/';
-            return (bool) preg_match($pattern, $row->{$this->column});
         }
+
+        $expression = (string) $this->expression;
+        if (strpos($expression, '*') === false) {
+            if (is_array($row->{$this->column})) {
+                return in_array($expression, $row->{$this->column});
+            }
+
+            return (string) $row->{$this->column} === $expression;
+        }
+
+        $parts = array();
+        foreach (preg_split('~\*~', $expression) as $part) {
+            $parts[] = preg_quote($part);
+        }
+        $pattern = '/^' . implode('.*', $parts) . '$/';
+
+        if (is_array($row->{$this->column})) {
+            foreach ($row->{$this->column} as $candidate) {
+                if (preg_match($pattern, $candidate)) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        return (bool) preg_match($pattern, $row->{$this->column});
     }
 
     public function andFilter(Filter $filter)

@@ -3,6 +3,23 @@
 
 use Icinga\Util\Translator;
 
+
+/**
+ * No-op translate
+ *
+ * Supposed to be used for marking a string as available for translation without actually translating it immediately.
+ * The returned string is the one given in the input. This does only work with the standard gettext macros t() and mt().
+ *
+ * @param   string  $messageId
+ *
+ * @return  string
+ */
+function N_($messageId)
+{
+    return $messageId;
+}
+
+
 if (extension_loaded('gettext')) {
 
     /**

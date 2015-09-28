@@ -1,13 +1,13 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
-namespace Icinga\Module\Monitoring\Web\Menu;
+namespace Icinga\Module\Monitoring\Web\Navigation\Renderer;
 
-use Icinga\Web\Menu;
-use Icinga\Web\Menu\BadgeMenuItemRenderer;
+use Exception;
+use Icinga\Web\Navigation\Renderer\BadgeNavigationItemRenderer;
 use Icinga\Module\Monitoring\Backend\MonitoringBackend;
 
-class BackendAvailabilityMenuItemRenderer extends BadgeMenuItemRenderer
+class BackendAvailabilityNavigationItemRenderer extends BadgeNavigationItemRenderer
 {
     /**
      * Get whether or not the monitoring backend is currently running
@@ -43,10 +43,15 @@ class BackendAvailabilityMenuItemRenderer extends BadgeMenuItemRenderer
      */
     public function getCount()
     {
-        if (! $this->isCurrentlyRunning()) {
-            return 1;
+        try {
+            if ($this->isCurrentlyRunning()) {
+                return 0;
+            }
+        } catch (Exception $_) {
+            // pass
         }
-        return 0;
+
+        return 1;
     }
 
     /**

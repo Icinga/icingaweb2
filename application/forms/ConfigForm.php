@@ -43,7 +43,7 @@ class ConfigForm extends Form
     public function save()
     {
         try {
-            $this->config->saveIni();
+            $this->writeConfig($this->config);
         } catch (Exception $e) {
             $this->addDecorator('ViewScript', array(
                 'viewModule'    => 'default',
@@ -57,5 +57,15 @@ class ConfigForm extends Form
         }
 
         return true;
+    }
+
+    /**
+     * Write the configuration to disk
+     *
+     * @param   Config  $config
+     */
+    protected function writeConfig(Config $config)
+    {
+        $config->saveIni();
     }
 }
