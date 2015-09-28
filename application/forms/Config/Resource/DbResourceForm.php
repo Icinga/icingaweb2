@@ -3,8 +3,8 @@
 
 namespace Icinga\Forms\Config\Resource;
 
-use Icinga\Web\Form;
 use Icinga\Application\Platform;
+use Icinga\Web\Form;
 
 /**
  * Form class for adding/modifying database resources
