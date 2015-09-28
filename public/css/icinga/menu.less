@@ -46,11 +46,6 @@
   margin-right: 0;
 }
 
-#menu > nav > ul > li > a {
-  color: @icinga-blue;
-  text-shadow: none;
-}
-
 #menu > nav > ul > li.active > a {
   color: @icinga-blue;
 }
@@ -63,12 +58,16 @@
   color: @icinga-blue;
 }
 
-#menu > nav > ul > li.active li a:hover {
+#menu > nav > ul > li a:hover {
   color: @icinga-blue;
 }
 
-#menu > nav > ul > li a:hover {
-  color: @icinga-blue;
+#menu > nav > ul > li.nav-item.hover > ul > li > a:hover {
+   color: @gray;
+}
+
+#menu > nav > ul > li.nav-item.hover > ul > li div.clearfix > a:hover {
+   color: @gray;
 }
 
 #menu > nav > ul > li li {
@@ -164,7 +163,7 @@
   position: relative;
 }
 
-#menu li.hover > ul {
+#menu li.hover > ul{
   position: absolute;
   display: block;
   left: 10.9em;
@@ -212,7 +211,7 @@
   margin-top: 0.8em;
   pointer-events: none;
   position: absolute;
-  left: 12em;
+  left: 10.8em;
   height: 0;
   width: 0;
 }
@@ -339,8 +338,8 @@ a:focus {
 }
 
 #menu .user-nav-item {
-  background-color: @color-ok;
-  border-left: solid 5px @color-ok;
+  background-color: @gray;
+  border-left: solid 5px @gray;
 
   .user-avatar {
     border: 1px solid @gray;
@@ -358,16 +357,16 @@ a:focus {
 
   a:hover {
     background-color: white;
-    color: @color-ok;
+    color: @gray;
   };
 }
 
 #menu > nav > ul > li.user-nav-item.active > div.clearfix > a {
-  color: @color-ok;
+  color: @gray;
 }
 
 #menu > nav > ul > li.user-nav-item.active {
-  border-left: solid 5px @color-ok;
+  border-left: solid 5px @gray;
   -webkit-transition: border 0.5s;
   -moz-transition: border 0.5s;
   -o-transition: border 0.5s;
