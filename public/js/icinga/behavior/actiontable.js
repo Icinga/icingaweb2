@@ -2,7 +2,7 @@
 
 /**
  * Icinga.Behavior.ActionTable
- * 
+ *
  * A multi selection that distincts between the table rows using the row action URL filter
  */
 (function(Icinga, $) {
@@ -51,7 +51,7 @@
         this.$el = $(table);
         this.icinga = icinga;
         this.col = this.$el.closest('div.container').attr('id');
-        
+
         if (this.hasMultiselection()) {
             if (! this.getMultiselectionKeys().length) {
                 icinga.logger.error('multiselect table has no data-icinga-multiselect-data');
@@ -330,7 +330,7 @@
         this.loading = false;
 
         this.on('rendered', this.onRendered, this);
-        this.on('click', 'table.action tr[href]', this.onRowClicked, this);
+        this.on('click', 'table.action tr[href], table.action-table tr[href]', this.onRowClicked, this);
     };
     ActionTable.prototype = new Icinga.EventListener();
 
@@ -342,9 +342,9 @@
      */
     ActionTable.prototype.tables = function(context) {
         if (context) {
-            return $(context).find('table.action');
+            return $(context).find('table.action, table.action-table');
         }
-        return $('table.action');
+        return $('table.action, table.action-table');
     };
 
     /**
@@ -354,7 +354,7 @@
         var self = event.data.self;
         var $target = $(event.target);
         var $tr = $target.closest('tr');
-        var table = new Selection($tr.closest('table.action')[0], self.icinga);
+        var table = new Selection($tr.closest('table.action, table.action-table')[0], self.icinga);
 
         // some rows may contain form actions that trigger a different action, pass those through
         if (!$target.hasClass('rowaction') && $target.closest('form').length &&
@@ -398,7 +398,7 @@
             }
         }
         self.icinga.history.pushUrl(state);
-        
+
         // redraw all table selections
         self.tables().each(function () {
             new Selection(this, self.icinga).refresh();
@@ -417,7 +417,7 @@
         var self = evt.data.self;
 
         // initialize all rows with the correct link
-        $('table.action tr', container).each(function(idx, el) {
+        $('table.action tr, table.action tr', container).each(function(idx, el) {
             var $a = $('a[href].rowaction', el).first();
             if ($a.length) {
                 // TODO: Find out whether we leak memory on IE with this:
@@ -431,7 +431,7 @@
         });
 
         // IE will not ignore user-select unless we cancel selectstart
-        $('table.action.multiselect tr', container).each(function(idx, el) {
+        $('table.action.multiselect tr, table.action-table.multiselect tr', container).each(function(idx, el) {
             $(el).on('selectstart', false);
         });
 
