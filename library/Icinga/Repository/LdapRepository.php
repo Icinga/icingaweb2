@@ -43,6 +43,15 @@ abstract class LdapRepository extends Repository
     );
 
     /**
+     * Object attributes whose value is not distinguished name
+     *
+     * @var array
+     */
+    protected $ambiguousAttributes = array(
+        'posixGroup' => 'memberUid'
+    );
+
+    /**
      * Create a new LDAP repository object
      *
      * @param   LdapConnection  $ds     The data source to use
@@ -67,5 +76,18 @@ abstract class LdapRepository extends Repository
         }
 
         return $name;
+    }
+
+    /**
+     * Return whether the given object attribute's value is not a distinguished name
+     *
+     * @param   string  $objectClass
+     * @param   string  $attributeName
+     *
+     * @return  bool
+     */
+    protected function isAmbiguous($objectClass, $attributeName)
+    {
+        return isset($this->ambiguousAttributes[$objectClass][$attributeName]);
     }
 }
