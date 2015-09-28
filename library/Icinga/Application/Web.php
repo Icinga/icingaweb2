@@ -307,15 +307,6 @@ class Web extends EmbeddedWeb
                             'label'     => t('Navigation'),
                             'url'       => 'navigation',
                             'priority'  => 920
-                        ),
-                        'logout'        => array(
-                            'label'     => t('Logout'),
-                            'url'       => 'authentication/logout',
-                            'priority'  => 990,
-                            'renderer'  => array(
-                                'LogoutNavigationItemRenderer',
-                                'target' => '_self'
-                            )
                         )
                     ),
                     'label'     => $this->user->getUsername(),
@@ -324,6 +315,15 @@ class Web extends EmbeddedWeb
                     'renderer'  => array(
                         'UserNavigationItemRenderer'
                     ),
+                ),
+                'logout' => array(
+                    'label'     => t('Logout'),
+                    'url'       => 'authentication/logout',
+                    'priority'  => 990,
+                    'renderer'  => array(
+                        'LogoutNavigationItemRenderer',
+                        'target' => '_self'
+                    )
                 )
             );
 
