@@ -311,6 +311,7 @@ class Web extends EmbeddedWeb
                     ),
                     'cssClass'  => 'user-nav-item',
                     'label'     => $this->user->getUsername(),
+                    'icon'	=> 'user',
                     'url'       => 'account',
                     'priority'  => 900,
                     'renderer'  => array(
@@ -320,6 +321,7 @@ class Web extends EmbeddedWeb
                 'logout' => array(
                     'cssClass'  => 'user-nav-item',
                     'label'     => t('Logout'),
+                    'icon'	=> 'starttime',
                     'priority'  => 990,
                     'renderer'  => array(
                         'LogoutNavigationItemRenderer',

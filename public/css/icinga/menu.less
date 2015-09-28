@@ -68,6 +68,7 @@
 }
 
 #menu > nav > ul > li a:hover {
+  color: @icinga-blue;
 }
 
 #menu > nav > ul > li li {
@@ -151,6 +152,7 @@
   -o-transition: border 0.5s;
   transition: border 0.5s;
 }
+
 
 /* BEGIN OF Hoverable menu */
 
@@ -327,4 +329,47 @@ a:focus {
       }
     }
   }
+}
+
+.user-nav-item {
+  margin-top: 39px;
+}
+.user-nav-item ~ .user-nav-item {
+  margin-top: 0px;
+}
+
+#menu .user-nav-item {
+  background-color: @color-ok;
+  border-left: solid 5px @color-ok;
+
+  .user-avatar {
+    border: 1px solid @gray;
+    float: right;
+    margin-top: 5px;
+    margin-right: 5px;
+    border-radius: 150px;
+    height: 30px;
+    width: 30px;
+  }
+
+  a {
+    color: @text-color-inverted;
+  };
+
+  a:hover {
+    background-color: white;
+    color: @color-ok;
+  };
+}
+
+#menu > nav > ul > li.user-nav-item.active > div.clearfix > a {
+  color: @color-ok;
+}
+
+#menu > nav > ul > li.user-nav-item.active {
+  border-left: solid 5px @color-ok;
+  -webkit-transition: border 0.5s;
+  -moz-transition: border 0.5s;
+  -o-transition: border 0.5s;
+  transition: border 0.5s;
 }
