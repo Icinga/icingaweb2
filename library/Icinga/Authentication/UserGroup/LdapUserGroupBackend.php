@@ -451,9 +451,9 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
      */
     public function getMemberships(User $user)
     {
-        $queryUsername = $user->getUsername();
-        
-        if (($userDn = $user->getAdditional('ldap_dn')) === null) {
+        if ($this->isAmbiguous($this->groupClass, $this->groupMemberAttribute)) {
+            $queryValue = $user->getUsername();
+        } elseif (($queryValue = $user->getAdditional('ldap_dn')) === null) {
             $userQuery = $this->ds
                 ->select()
                 ->from($this->userClass)
@@ -464,19 +464,16 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
                 $userQuery->where(new Expression($this->userFilter));
             }
 
-            if ($this->groupClass != 'posixGroup') {
-              if (($queryUsername = $userQuery->fetchDn()) === null) {
-                  return array();
-              }
+            if (($queryValue = $userQuery->fetchDn()) === null) {
+                return array();
             }
         }
 
         $groupQuery = $this->ds
             ->select()
             ->from($this->groupClass, array($this->groupNameAttribute))
-            ->where($this->groupMemberAttribute, $queryUsername)
+            ->where($this->groupMemberAttribute, $queryValue)
             ->setBase($this->groupBaseDn);
-            
         if ($this->groupFilter) {
             $groupQuery->where(new Expression($this->groupFilter));
         }
