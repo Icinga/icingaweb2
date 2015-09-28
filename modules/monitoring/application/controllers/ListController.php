@@ -58,8 +58,6 @@ class ListController extends Controller
             'host_name',
             'host_display_name',
             'host_state' => $stateColumn,
-            'host_address',
-            'host_address6',
             'host_acknowledged',
             'host_output',
             'host_attempt',
@@ -67,15 +65,10 @@ class ListController extends Controller
             'host_is_flapping',
             'host_state_type',
             'host_handled',
-            'host_last_check',
             'host_last_state_change' => $stateChangeColumn,
             'host_notifications_enabled',
-            'host_action_url',
-            'host_notes_url',
             'host_active_checks_enabled',
-            'host_passive_checks_enabled',
-            'host_current_check_attempt',
-            'host_max_check_attempts'
+            'host_passive_checks_enabled'
         ), $this->addColumns()));
         $this->applyRestriction('monitoring/filter/objects', $query);
         $this->filterQuery($query);
