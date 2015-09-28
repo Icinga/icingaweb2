@@ -1,16 +1,20 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
+namespace Icinga\Controllers;
+
+use Icinga\Application\Config;
+use Icinga\Data\ConfigObject;
+use Icinga\Forms\PreferenceForm;
+use Icinga\User\Preferences\PreferencesStore;
 use Icinga\Web\Controller\BasePreferenceController;
 use Icinga\Web\Url;
 use Icinga\Web\Widget\Tab;
-use Icinga\Application\Config;
-use Icinga\Forms\PreferenceForm;
-use Icinga\Data\ConfigObject;
-use Icinga\User\Preferences\PreferencesStore;
 
 /**
  * Application wide preference controller for user preferences
+ *
+ * @TODO(el): Rename to PreferencesController: https://dev.icinga.org/issues/10014
  */
 class PreferenceController extends BasePreferenceController
 {
@@ -28,7 +32,7 @@ class PreferenceController extends BasePreferenceController
                 array(
                     'title' => t('Adjust the preferences of Icinga Web 2 according to your needs'),
                     'label' => t('Preferences'),
-                    'url'   => Url::fromPath('/preference')
+                    'url'   => Url::fromPath('preference')
                 )
             )
         );

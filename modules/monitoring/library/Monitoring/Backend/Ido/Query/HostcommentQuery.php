@@ -17,6 +17,9 @@ class HostcommentQuery extends IdoQuery
      * {@inheritdoc}
      */
     protected $columnMap = array(
+        'instances' => array(
+            'instance_name' => 'i.instance_name'
+        ),
         'comments' => array(
             'comment_author'        => 'c.author_name COLLATE latin1_general_ci',
             'comment_author_name'   => 'c.author_name',
@@ -142,11 +145,23 @@ class HostcommentQuery extends IdoQuery
     {
         $this->select->joinLeft(
             array('s' => $this->prefix . 'services'),
-            's.host_object_id = h.host_object_id',
+            's.host_object_id = ho.object_id',
             array()
         )->joinLeft(
             array('so' => $this->prefix . 'objects'),
             'so.object_id = s.service_object_id AND so.is_active = 1 AND so.objecttype_id = 2',
+            array()
+        );
+    }
+
+    /**
+     * Join instances
+     */
+    protected function joinInstances()
+    {
+        $this->select->join(
+            array('i' => $this->prefix . 'instances'),
+            'i.instance_id = c.instance_id',
             array()
         );
     }
@@ -165,6 +180,10 @@ class HostcommentQuery extends IdoQuery
 
             if ($this->hasJoinedVirtualTable('hoststatus')) {
                 $group[] = 'hs.hoststatus_id';
+            }
+
+            if ($this->hasJoinedVirtualTable('instances')) {
+                $group[] = 'i.instance_id';
             }
         }
 

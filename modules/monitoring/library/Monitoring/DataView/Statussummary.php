@@ -6,9 +6,7 @@ namespace Icinga\Module\Monitoring\DataView;
 class StatusSummary extends DataView
 {
     /**
-     * Retrieve columns provided by this view
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function getColumns()
     {
@@ -100,27 +98,14 @@ class StatusSummary extends DataView
     /**
      * {@inheritdoc}
      */
-    public function getFilterColumns()
+    public function getStaticFilterColumns()
     {
         return array(
+            'instance_name',
             'host', 'host_alias', 'host_display_name', 'host_name',
             'hostgroup', 'hostgroup_alias', 'hostgroup_name',
             'service', 'service_description', 'service_display_name',
             'servicegroup', 'servicegroup_alias', 'servicegroup_name'
         );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isValidFilterTarget($column)
-    {
-        if ($column[0] === '_'
-            && preg_match('/^_(?:host|service)_/', $column)
-        ) {
-            return true;
-        } else {
-            return in_array($column, $this->getFilterColumns());
-        }
     }
 }

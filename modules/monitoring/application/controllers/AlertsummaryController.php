@@ -1,15 +1,23 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
+namespace Icinga\Module\Monitoring\Controllers;
+
+use stdClass;
+use DateInterval;
+use DatePeriod;
+use DateTime;
+use Zend_Controller_Action_Exception;
 use Icinga\Chart\GridChart;
 use Icinga\Chart\Unit\LinearUnit;
 use Icinga\Chart\Unit\StaticAxis;
+use Icinga\Data\Filter\FilterExpression;
 use Icinga\Module\Monitoring\Controller;
 use Icinga\Module\Monitoring\Web\Widget\SelectBox;
-use Icinga\Web\Widget\Tabextension\DashboardAction;
 use Icinga\Web\Url;
+use Icinga\Web\Widget\Tabextension\DashboardAction;
 
-class Monitoring_AlertsummaryController extends Controller
+class AlertsummaryController extends Controller
 {
     /**
      * @var array
@@ -49,7 +57,9 @@ class Monitoring_AlertsummaryController extends Controller
         $this->view->title = $this->translate('Alert Summary');
 
         $this->view->intervalBox = $this->createIntervalBox();
-        $this->view->recentAlerts = $this->createRecentAlerts();
+        list($recentAlerts, $recentAlertsUrl) = $this->createRecentAlerts();
+        $this->view->recentAlerts = $recentAlerts;
+        $this->view->recentAlertsUrl = $recentAlertsUrl;
         $this->view->interval = $this->getInterval();
         $this->view->defectChart = $this->createDefectImage();
         $this->view->healingChart = $this->createHealingChart();
@@ -72,6 +82,7 @@ class Monitoring_AlertsummaryController extends Controller
         );
         $this->applyRestriction('monitoring/filter/objects', $query);
         $this->view->notifications = $query;
+        $this->view->notificationsUrl = 'monitoring/list/notifications';
 
         $this->setupLimitControl();
         $this->setupPaginationControl($this->view->notifications);
@@ -95,7 +106,7 @@ class Monitoring_AlertsummaryController extends Controller
         $this->applyRestriction('monitoring/filter/objects', $query);
 
         $query->addFilter(
-            new Icinga\Data\Filter\FilterExpression(
+            new FilterExpression(
                 'notification_start_time',
                 '>=',
                 $this->getBeginDate($interval)->format('Y-m-d H:i:s')
@@ -144,7 +155,7 @@ class Monitoring_AlertsummaryController extends Controller
         $this->applyRestriction('monitoring/filter/objects', $query);
 
         $query->addFilter(
-            new Icinga\Data\Filter\FilterExpression(
+            new FilterExpression(
                 'notification_start_time',
                 '>=',
                 $beginDate->format('Y-m-d H:i:s')
@@ -212,7 +223,7 @@ class Monitoring_AlertsummaryController extends Controller
         $this->applyRestriction('monitoring/filter/objects', $query);
 
         $query->addFilter(
-            new Icinga\Data\Filter\FilterExpression(
+            new FilterExpression(
                 'notification_start_time',
                 '>=',
                 $this->getBeginDate($interval)->format('Y-m-d H:i:s')
@@ -263,7 +274,7 @@ class Monitoring_AlertsummaryController extends Controller
         $this->applyRestriction('monitoring/filter/objects', $query);
 
         $query->addFilter(
-            new Icinga\Data\Filter\FilterExpression(
+            new FilterExpression(
                 'timestamp',
                 '>=',
                 $this->getBeginDate($interval)->getTimestamp()
@@ -271,7 +282,7 @@ class Monitoring_AlertsummaryController extends Controller
         );
 
         $query->addFilter(
-            new Icinga\Data\Filter\FilterExpression(
+            new FilterExpression(
                 'state',
                 '>',
                 0
@@ -329,7 +340,7 @@ class Monitoring_AlertsummaryController extends Controller
         $this->applyRestriction('monitoring/filter/objects', $query);
 
         $query->addFilter(
-            new Icinga\Data\Filter\FilterExpression(
+            new FilterExpression(
                 'notification_start_time',
                 '>=',
                 $this->getBeginDate($interval)->format('Y-m-d H:i:s')
@@ -479,7 +490,7 @@ class Monitoring_AlertsummaryController extends Controller
     /**
      * Top recent alerts
      *
-     * @return mixed
+     * @return array
      */
     private function createRecentAlerts()
     {
@@ -500,7 +511,10 @@ class Monitoring_AlertsummaryController extends Controller
 
         $query->order('notification_start_time', 'desc');
 
-        return $query->limit(5);
+        return array(
+            $query->limit(5),
+            'monitoring/list/notifications?sort=notification_start_time&dir=desc'
+        );
     }
 
     /**

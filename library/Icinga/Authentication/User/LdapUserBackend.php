@@ -50,7 +50,14 @@ class LdapUserBackend extends LdapRepository implements UserBackendInterface, In
      *
      * @var array
      */
-    protected $filterColumns = array('user');
+    protected $blacklistedQueryColumns = array('user');
+
+    /**
+     * The search columns being provided
+     *
+     * @var array
+     */
+    protected $searchColumns = array('user');
 
     /**
      * The default sort rules to be applied on a query
@@ -244,6 +251,21 @@ class LdapUserBackend extends LdapRepository implements UserBackendInterface, In
     }
 
     /**
+     * Initialize this repository's filter columns
+     *
+     * @return  array
+     */
+    protected function initializeFilterColumns()
+    {
+        return array(
+            t('Username')       => 'user_name',
+            t('Active')         => 'is_active',
+            t('Created At')     => 'created_at',
+            t('Last Modified')  => 'last_modified'
+        );
+    }
+
+    /**
      * Initialize this repository's conversion rules
      *
      * @return  array
@@ -342,7 +364,12 @@ class LdapUserBackend extends LdapRepository implements UserBackendInterface, In
                 return false;
             }
 
-            return $this->ds->testCredentials($userDn, $password);
+            $testCredentialsResult = $this->ds->testCredentials($userDn, $password);
+            if ($testCredentialsResult) {
+                $user->setAdditional('ldap_dn', $userDn);
+            }
+
+            return $testCredentialsResult;
         } catch (LdapException $e) {
             throw new AuthenticationException(
                 'Failed to authenticate user "%s" against backend "%s". An exception was thrown:',

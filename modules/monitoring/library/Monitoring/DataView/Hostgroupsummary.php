@@ -44,9 +44,10 @@ class Hostgroupsummary extends DataView
     /**
      * {@inheritdoc}
      */
-    public function getFilterColumns()
+    public function getStaticFilterColumns()
     {
         return array(
+            'instance_name',
             'hosts_severity',
             'host', 'host_alias', 'host_display_name', 'host_name',
             'hostgroup',
@@ -94,19 +95,5 @@ class Hostgroupsummary extends DataView
                 'order' => self::SORT_ASC
             )
         );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isValidFilterTarget($column)
-    {
-        if ($column[0] === '_'
-            && preg_match('/^_(?:host|service)_/', $column)
-        ) {
-            return true;
-        } else {
-            return parent::isValidFilterTarget($column);
-        }
     }
 }

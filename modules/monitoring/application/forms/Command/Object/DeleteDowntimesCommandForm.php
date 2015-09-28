@@ -13,7 +13,7 @@ use Icinga\Web\Notification;
 class DeleteDowntimesCommandForm extends CommandForm
 {
     /**
-     * The downtimes to delete on success
+     * The downtimes to delete
      *
      * @var array
      */
@@ -25,6 +25,19 @@ class DeleteDowntimesCommandForm extends CommandForm
     public function init()
     {
         $this->setAttrib('class', 'inline');
+    }
+
+    /**
+     * Set the downtimes to delete
+     *
+     * @param   array $downtimes
+     *
+     * @return  $this
+     */
+    public function setDowntimes(array $downtimes)
+    {
+        $this->downtimes = $downtimes;
+        return $this;
     }
 
     /**
@@ -57,28 +70,18 @@ class DeleteDowntimesCommandForm extends CommandForm
     {
         foreach ($this->downtimes as $downtime) {
             $delDowntime = new DeleteDowntimeCommand();
-            $delDowntime->setDowntimeId($downtime->id);
-            $delDowntime->setIsService(isset($downtime->service_description));
+            $delDowntime
+                ->setDowntimeId($downtime->id)
+                ->setIsService(isset($downtime->service_description));
             $this->getTransport($this->request)->send($delDowntime);
         }
         $redirect = $this->getElement('redirect')->getValue();
         if (! empty($redirect)) {
             $this->setRedirectUrl($redirect);
         }
-        Notification::success($this->translate('Deleting downtime.'));
+        Notification::success(
+            $this->translatePlural('Deleting downtime..', 'Deleting downtimes..', count($this->downtimes))
+        );
         return true;
-    }
-
-    /**
-     * Set the downtimes to be deleted upon success
-     *
-     * @param   array $downtimes
-     *
-     * @return  $this
-     */
-    public function setDowntimes(array $downtimes)
-    {
-        $this->downtimes = $downtimes;
-        return $this;
     }
 }

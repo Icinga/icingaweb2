@@ -8,20 +8,6 @@ class Eventgrid extends DataView
     /**
      * {@inheritdoc}
      */
-    public function isValidFilterTarget($column)
-    {
-        if ($column[0] === '_' && preg_match('/^_(?:host|service)_/', $column)) {
-            return true;
-        }
-
-        return parent::isValidFilterTarget($column);
-    }
-
-    /**
-     * Retrieve columns provided by this view
-     *
-     * @return array
-     */
     public function getColumns()
     {
         return array(
@@ -61,9 +47,10 @@ class Eventgrid extends DataView
     /**
      * {@inheritdoc}
      */
-    public function getFilterColumns()
+    public function getStaticFilterColumns()
     {
         return array(
+            'instance_name',
             'host', 'host_alias',
             'hostgroup', 'hostgroup_alias', 'hostgroup_name',
             'service', 'service_host_name',

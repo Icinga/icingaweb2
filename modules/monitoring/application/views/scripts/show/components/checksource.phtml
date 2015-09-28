@@ -14,7 +14,11 @@
         <?= $this->translate('Reachable') ?>
     </th>
     <td>
-        <?= $object->is_reachable ? $this->translate('Yes') : $this->translate('No') ?>
+    <?php if ((bool) $object->is_reachable) {
+        echo $this->icon('circle', $this->translate('Is reachable'), array('class' => 'fg-color-ok'));
+    } else {
+        echo $this->icon('circle', $this->translate('Not reachable'), array('class' => 'fg-color-critical'));
+    } ?>
     </td>
 </tr>
 <?php endif ?>

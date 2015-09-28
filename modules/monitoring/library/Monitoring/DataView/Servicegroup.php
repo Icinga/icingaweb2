@@ -3,8 +3,6 @@
 
 namespace Icinga\Module\Monitoring\DataView;
 
-/**
- * Service group view */
 class Servicegroup extends DataView
 {
     /**
@@ -13,6 +11,7 @@ class Servicegroup extends DataView
     public function getColumns()
     {
         return array(
+            'instance_name',
             'servicegroup_alias',
             'servicegroup_name'
         );
@@ -21,7 +20,7 @@ class Servicegroup extends DataView
     /**
      * {@inheritdoc}
      */
-    public function getFilterColumns()
+    public function getStaticFilterColumns()
     {
         return array(
             'host', 'host_alias', 'host_display_name', 'host_name',
@@ -29,19 +28,5 @@ class Servicegroup extends DataView
             'service', 'service_description', 'service_display_name',
             'servicegroup'
         );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isValidFilterTarget($column)
-    {
-        if ($column[0] === '_'
-            && preg_match('/^_(?:host|service)_/', $column)
-        ) {
-            return true;
-        } else {
-            return parent::isValidFilterTarget($column);
-        }
     }
 }

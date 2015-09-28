@@ -52,11 +52,7 @@ class ProcessCheckResultCommandForm extends ObjectsCommandForm
                 'required'      => true,
                 'label'         => $this->translate('Status'),
                 'description'   => $this->translate('The state this check result should report'),
-                'multiOptions'  => $object->getType() === $object::TYPE_HOST ? array(
-                    ProcessCheckResultCommand::HOST_UP          => $this->translate('UP', 'icinga.state'),
-                    ProcessCheckResultCommand::HOST_DOWN        => $this->translate('DOWN', 'icinga.state'),
-                    ProcessCheckResultCommand::HOST_UNREACHABLE => $this->translate('UNREACHABLE', 'icinga.state')
-                ) : array(
+                'multiOptions'  => $object->getType() === $object::TYPE_HOST ? $this->getHostMultiOptions() : array(
                     ProcessCheckResultCommand::SERVICE_OK       => $this->translate('OK', 'icinga.state'),
                     ProcessCheckResultCommand::SERVICE_WARNING  => $this->translate('WARNING', 'icinga.state'),
                     ProcessCheckResultCommand::SERVICE_CRITICAL => $this->translate('CRITICAL', 'icinga.state'),
@@ -114,5 +110,24 @@ class ProcessCheckResultCommandForm extends ObjectsCommandForm
         ));
 
         return true;
+    }
+
+    /**
+     * Returns the available host options based on the program version
+     *
+     * @return array
+     */
+    protected function getHostMultiOptions()
+    {
+        $options =  array(
+            ProcessCheckResultCommand::HOST_UP => $this->translate('UP', 'icinga.state'),
+            ProcessCheckResultCommand::HOST_DOWN => $this->translate('DOWN', 'icinga.state')
+        );
+
+        if (substr($this->getBackend()->getProgramVersion(), 0, 2) !== 'v2') {
+            $options[ProcessCheckResultCommand::HOST_UNREACHABLE] = $this->translate('UNREACHABLE', 'icinga.state');
+        }
+
+        return $options;
     }
 }

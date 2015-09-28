@@ -1,11 +1,9 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
-# namespace Icinga\Application\Controllers;
+namespace Icinga\Controllers;
 
-use Icinga\Application\Config;
 use Icinga\Application\Icinga;
-use Icinga\Application\Logger;
 use Icinga\Forms\Authentication\LoginForm;
 use Icinga\Web\Controller;
 use Icinga\Web\Url;
@@ -16,11 +14,14 @@ use Icinga\Web\Url;
 class AuthenticationController extends Controller
 {
     /**
-     * This controller does not require authentication
-     *
-     * @var bool
+     * {@inheritdoc}
      */
     protected $requiresAuthentication = false;
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $innerLayout = 'inline';
 
     /**
      * Log into the application
@@ -36,6 +37,14 @@ class AuthenticationController extends Controller
             $this->redirectNow($form->getRedirectUrl());
         }
         if (! $requiresSetup) {
+            if (! $this->getRequest()->hasCookieSupport()) {
+                $this
+                    ->getResponse()
+                    ->setBody("Cookies must be enabled to run this application.\n")
+                    ->setHttpResponseCode(403)
+                    ->sendResponse();
+                exit();
+            }
             $form->handleRequest();
         }
         $this->view->form = $form;

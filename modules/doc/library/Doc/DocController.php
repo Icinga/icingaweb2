@@ -10,6 +10,21 @@ use Icinga\Web\Controller;
 class DocController extends Controller
 {
     /**
+     * {@inheritdoc}
+     */
+    protected function moduleInit()
+    {
+        // Our UrlParams object does not take parameters from custom routes into account which is why we have to set
+        // them explicitly
+        if ($this->hasParam('chapter')) {
+            $this->params->set('chapter', $this->getParam('chapter'));
+        }
+        if ($this->hasParam('moduleName')) {
+            $this->params->set('moduleName', $this->getParam('moduleName'));
+        }
+    }
+
+    /**
      * Render a chapter
      *
      * @param string    $path       Path to the documentation

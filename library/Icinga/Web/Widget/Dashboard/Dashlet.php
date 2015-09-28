@@ -3,8 +3,6 @@
 
 namespace Icinga\Web\Widget\Dashboard;
 
-use Zend_Form_Element_Button;
-use Icinga\Web\Form;
 use Icinga\Web\Url;
 use Icinga\Data\ConfigObject;
 use Icinga\Exception\IcingaException;
@@ -20,7 +18,7 @@ class Dashlet extends UserWidget
     /**
      * The url of this Dashlet
      *
-     * @var \Icinga\Web\Url
+     * @var Url|null
      */
     private $url;
 
@@ -44,6 +42,13 @@ class Dashlet extends UserWidget
     private $disabled = false;
 
     /**
+     * The progress label being used
+     *
+     * @var string
+     */
+    private $progressLabel;
+
+    /**
      * The template string used for rendering this widget
      *
      * @var string
@@ -52,6 +57,7 @@ class Dashlet extends UserWidget
 
     <div class="container" data-icinga-url="{URL}">
         <h1><a href="{FULL_URL}" aria-label="{TOOLTIP}" title="{TOOLTIP}" data-base-target="col1">{TITLE}</a></h1>
+        <p class="progress-label">{PROGRESS_LABEL}<span>.</span><span>.</span><span>.</span></p>
         <noscript>
             <iframe
                 src="{IFRAME_URL}"
@@ -74,16 +80,13 @@ EOD;
     {
         $this->title = $title;
         $this->pane = $pane;
-        if ($url instanceof Url) {
-            $this->url = $url;
-        } elseif ($url) {
-            $this->url = Url::fromPath($url);
-        } else {
+        if (! $url) {
             throw new IcingaException(
                 'Cannot create dashboard dashlet "%s" without valid URL',
                 $title
             );
         }
+        $this->url = $url;
     }
 
     /**
@@ -107,10 +110,13 @@ EOD;
     /**
      * Retrieve the dashlets url
      *
-     * @return Url
+     * @return Url|null
      */
     public function getUrl()
     {
+        if ($this->url !== null && ! $this->url instanceof Url) {
+            $this->url = Url::fromPath($this->url);
+        }
         return $this->url;
     }
 
@@ -123,11 +129,7 @@ EOD;
      */
     public function setUrl($url)
     {
-        if ($url instanceof Url) {
-            $this->url = $url;
-        } else {
-            $this->url = Url::fromPath($url);
-        }
+        $this->url = $url;
         return $this;
     }
 
@@ -152,6 +154,33 @@ EOD;
     }
 
     /**
+     * Set the progress label to use
+     *
+     * @param   string  $label
+     *
+     * @return  $this
+     */
+    public function setProgressLabel($label)
+    {
+        $this->progressLabel = $label;
+        return $this;
+    }
+
+    /**
+     * Return the progress label to use
+     *
+     * @return  string
+     */
+    public function getProgressLabe()
+    {
+        if ($this->progressLabel === null) {
+            return $this->view()->translate('Loading');
+        }
+
+        return $this->progressLabel;
+    }
+
+    /**
      * Return this dashlet's structure as array
      *
      * @return  array
@@ -159,7 +188,7 @@ EOD;
     public function toArray()
     {
         $array = array(
-            'url'   => $this->url->getRelativeUrl(),
+            'url'   => $this->getUrl()->getRelativeUrl(),
             'title' => $this->getTitle()
         );
         if ($this->getDisabled() === true) {
@@ -178,9 +207,9 @@ EOD;
         }
 
         $view = $this->view();
-        $url = clone($this->url);
+        $url = $this->getUrl();
         $url->setParam('view', 'compact');
-        $iframeUrl = clone($url);
+        $iframeUrl = clone $url;
         $iframeUrl->setParam('isIframe');
 
         $searchTokens = array(
@@ -189,7 +218,8 @@ EOD;
             '{FULL_URL}',
             '{TOOLTIP}',
             '{TITLE}',
-            '{TITLE_PREFIX}'
+            '{TITLE_PREFIX}',
+            '{PROGRESS_LABEL}'
         );
 
         $replaceTokens = array(
@@ -198,7 +228,8 @@ EOD;
             $url->getUrlWithout(array('view', 'limit')),
             sprintf($view->translate('Show %s', 'dashboard.dashlet.tooltip'), $view->escape($this->getTitle())),
             $view->escape($this->getTitle()),
-            $view->translate('Dashlet') . ': '
+            $view->translate('Dashlet') . ': ',
+            $this->getProgressLabe()
         );
 
         return str_replace($searchTokens, $replaceTokens, $this->template);

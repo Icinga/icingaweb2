@@ -17,6 +17,9 @@ class ServicecommentQuery extends IdoQuery
      * {@inheritdoc}
      */
     protected $columnMap = array(
+        'instances' => array(
+            'instance_name' => 'i.instance_name'
+        ),
         'comments' => array(
             'comment_author'        => 'c.author_name COLLATE latin1_general_ci',
             'comment_author_name'   => 'c.author_name',
@@ -166,6 +169,18 @@ class ServicecommentQuery extends IdoQuery
     }
 
     /**
+     * Join instances
+     */
+    protected function joinInstances()
+    {
+        $this->select->join(
+            array('i' => $this->prefix . 'instances'),
+            'i.instance_id = c.instance_id',
+            array()
+        );
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function getGroup()
@@ -187,6 +202,10 @@ class ServicecommentQuery extends IdoQuery
 
             if ($this->hasJoinedVirtualTable('servicestatus')) {
                 $group[] = 'ss.servicestatus_id';
+            }
+
+            if ($this->hasJoinedVirtualTable('instances')) {
+                $group[] = 'i.instance_id';
             }
         }
 

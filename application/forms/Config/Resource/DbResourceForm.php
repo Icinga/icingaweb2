@@ -33,7 +33,23 @@ class DbResourceForm extends Form
         if (Platform::hasPostgresqlSupport()) {
             $dbChoices['pgsql'] = 'PostgreSQL';
         }
-
+        if (Platform::hasMssqlSupport()) {
+            $dbChoices['mssql'] = 'MSSQL';
+        }
+        if (Platform::hasOracleSupport()) {
+            $dbChoices['oracle'] = 'Oracle';
+        }
+        if (Platform::hasOciSupport()) {
+            $dbChoices['oci'] = 'Oracle (OCI8)';
+        }
+        $offerPostgres = false;
+        if (isset($formData['db'])) {
+            if ($formData['db'] === 'pgsql') {
+                $offerPostgres = true;
+            }
+        } elseif (key($dbChoices) === 'pgsql') {
+            $offerPostgres = true;
+        }
         $this->addElement(
             'text',
             'name',
@@ -68,11 +84,11 @@ class DbResourceForm extends Form
             'number',
             'port',
             array(
-                'required'          => true,
-                'preserveDefault'   => true,
-                'label'             => $this->translate('Port'),
                 'description'       => $this->translate('The port to use'),
-                'value'             => ! array_key_exists('db', $formData) || $formData['db'] === 'mysql' ? 3306 : 5432
+                'label'             => $this->translate('Port'),
+                'preserveDefault'   => true,
+                'required'          => $offerPostgres,
+                'value'             => $offerPostgres ? 5432 : null
             )
         );
         $this->addElement(
@@ -101,6 +117,17 @@ class DbResourceForm extends Form
                 'renderPassword'    => true,
                 'label'             => $this->translate('Password'),
                 'description'       => $this->translate('The password to use for authentication')
+            )
+        );
+        $this->addElement(
+            'checkbox',
+            'persistent',
+            array(
+                'description'   => $this->translate(
+                    'Check this box for persistent database connections. Persistent connections are not closed at the'
+                    . ' end of a request, but are cached and re-used. This is experimental'
+                ),
+                'label'         => $this->translate('Persistent')
             )
         );
 

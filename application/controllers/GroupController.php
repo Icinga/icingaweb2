@@ -1,10 +1,13 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
+namespace Icinga\Controllers;
+
+use Exception;
 use Icinga\Application\Logger;
 use Icinga\Data\DataArray\ArrayDatasource;
-use Icinga\Data\Reducible;
 use Icinga\Data\Filter\Filter;
+use Icinga\Data\Reducible;
 use Icinga\Exception\NotFoundError;
 use Icinga\Forms\Config\UserGroup\AddMemberForm;
 use Icinga\Forms\Config\UserGroup\UserGroupForm;
@@ -54,19 +57,12 @@ class GroupController extends AuthBackendController
         }
 
         $query = $backend->select(array('group_name'));
-        $filterEditor = Widget::create('filterEditor')
-            ->setQuery($query)
-            ->setSearchColumns(array('group', 'user'))
-            ->preserveParams('limit', 'sort', 'dir', 'view', 'backend')
-            ->ignoreParams('page')
-            ->handleRequest($this->getRequest());
-        $query->applyFilter($filterEditor->getFilter());
-        $this->setupFilterControl($filterEditor);
 
         $this->view->groups = $query;
         $this->view->backend = $backend;
 
         $this->setupPaginationControl($query);
+        $this->setupFilterControl($query);
         $this->setupLimitControl();
         $this->setupSortControl(
             array(
@@ -101,15 +97,7 @@ class GroupController extends AuthBackendController
             ->from('group_membership', array('user_name'))
             ->where('group_name', $groupName);
 
-        $filterEditor = Widget::create('filterEditor')
-            ->setQuery($members)
-            ->setSearchColumns(array('user'))
-            ->preserveParams('limit', 'sort', 'dir', 'view', 'backend', 'group')
-            ->ignoreParams('page')
-            ->handleRequest($this->getRequest());
-        $members->applyFilter($filterEditor->getFilter());
-
-        $this->setupFilterControl($filterEditor);
+        $this->setupFilterControl($members, null, array('user'));
         $this->setupPaginationControl($members);
         $this->setupLimitControl();
         $this->setupSortControl(
@@ -146,7 +134,7 @@ class GroupController extends AuthBackendController
             $removeForm->addElement('button', 'btn_submit', array(
                 'escape'        => false,
                 'type'          => 'submit',
-                'class'         => 'link-like',
+                'class'         => 'link-like spinner',
                 'value'         => 'btn_submit',
                 'decorators'    => array('ViewHelper'),
                 'label'         => $this->view->icon('trash'),

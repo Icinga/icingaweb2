@@ -57,10 +57,10 @@ class Macro
      */
     public static function resolveMacro($macro, $object)
     {
-        if (array_key_exists($macro, self::$icingaMacros) && $object->{self::$icingaMacros[$macro]} !== false) {
+        if (isset(self::$icingaMacros[$macro]) && isset($object->{self::$icingaMacros[$macro]})) {
             return $object->{self::$icingaMacros[$macro]};
         }
-        if (array_key_exists($macro, $object->customvars)) {
+        if (isset($object->customvars[$macro])) {
             return $object->customvars[$macro];
         }
 

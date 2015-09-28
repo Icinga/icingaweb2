@@ -4,23 +4,24 @@
 namespace Icinga\Application\Modules;
 
 use Exception;
+use Zend_Controller_Router_Route;
 use Zend_Controller_Router_Route_Abstract;
-use Zend_Controller_Router_Route as Route;
-use Zend_Controller_Router_Route_Regex as RegexRoute;
+use Zend_Controller_Router_Route_Regex;
 use Icinga\Application\ApplicationBootstrap;
 use Icinga\Application\Config;
 use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
-use Icinga\Data\ConfigObject;
-use Icinga\Util\Translator;
-use Icinga\Web\Hook;
-use Icinga\Web\Menu;
-use Icinga\Web\Widget;
-use Icinga\Web\Widget\Dashboard\Pane;
+use Icinga\Application\Modules\DashboardContainer;
+use Icinga\Application\Modules\MenuItemContainer;
+use Icinga\Exception\IcingaException;
+use Icinga\Exception\ProgrammingError;
 use Icinga\Module\Setup\SetupWizard;
 use Icinga\Util\File;
-use Icinga\Exception\ProgrammingError;
-use Icinga\Exception\IcingaException;
+use Icinga\Util\Translator;
+use Icinga\Web\Controller\Dispatcher;
+use Icinga\Web\Hook;
+use Icinga\Web\Navigation\Navigation;
+use Icinga\Web\Widget;
 
 /**
  * Module handling
@@ -163,6 +164,20 @@ class Module
     private $app;
 
     /**
+     * The CSS/LESS files this module provides
+     *
+     * @var array
+     */
+    protected $cssFiles = array();
+
+    /**
+     * The Javascript files this module provides
+     *
+     * @var array
+     */
+    protected $jsFiles = array();
+
+    /**
      * Routes to add to the route chain
      *
      * @var array Array of name-route pairs
@@ -174,7 +189,7 @@ class Module
     /**
      * A set of menu elements
      *
-     * @var array
+     * @var MenuItemContainer[]
      */
     protected $menuItems = array();
 
@@ -205,6 +220,13 @@ class Module
      * @var array
      */
     protected $userGroupBackends = array();
+
+    /**
+     * This module's configurable navigation items
+     *
+     * @var array
+     */
+    protected $navigationItems = array();
 
     /**
      * Create a new module object
@@ -262,38 +284,98 @@ class Module
     }
 
     /**
-     * Get all pane items
+     * Return this module's dashboard
      *
-     * @return array
+     * @return  Navigation
      */
-    public function getPaneItems()
+    public function getDashboard()
     {
         $this->launchConfigScript();
-        return $this->paneItems;
+        return $this->createDashboard($this->paneItems);
     }
 
     /**
-     * Add a pane to dashboard
+     * Create and return a new navigation for the given dashboard panes
      *
-     * @param   string $name
+     * @param   DashboardContainer[]    $panes
      *
-     * @return  Pane
+     * @return  Navigation
      */
-    protected function dashboard($name)
+    public function createDashboard(array $panes)
     {
-        $this->paneItems[$name] = new Pane($name);
+        $navigation = new Navigation();
+        foreach ($panes as $pane) {
+            /** @var DashboardContainer $pane */
+            $dashlets = array();
+            foreach ($pane->getDashlets() as $dashletName => $dashletUrl) {
+                $dashlets[$this->translate($dashletName)] = $dashletUrl;
+            }
+
+            $navigation->addItem(
+                $pane->getName(),
+                array_merge(
+                    $pane->getProperties(),
+                    array(
+                        'label'     => $this->translate($pane->getName()),
+                        'type'      => 'dashboard-pane',
+                        'dashlets'  => $dashlets
+                    )
+                )
+            );
+        }
+
+        return $navigation;
+    }
+
+    /**
+     * Add or get a dashboard pane
+     *
+     * @param   string  $name
+     * @param   array   $properties
+     *
+     * @return  DashboardContainer
+     */
+    protected function dashboard($name, array $properties = array())
+    {
+        if (array_key_exists($name, $this->paneItems)) {
+            $this->paneItems[$name]->setProperties($properties);
+        } else {
+            $this->paneItems[$name] = new DashboardContainer($name, $properties);
+        }
+
         return $this->paneItems[$name];
     }
 
     /**
-     * Get all menu items
+     * Return this module's menu
      *
-     * @return array
+     * @return  Navigation
      */
-    public function getMenuItems()
+    public function getMenu()
     {
         $this->launchConfigScript();
-        return $this->menuItems;
+        return $this->createMenu($this->menuItems);
+    }
+
+    /**
+     * Create and return a new navigation for the given menu items
+     *
+     * @param   MenuItemContainer[]     $items
+     *
+     * @return  Navigation
+     */
+    private function createMenu(array $items)
+    {
+        $navigation = new Navigation();
+        foreach ($items as $item) {
+            /** @var MenuItemContainer $item */
+            $navigationItem = $navigation->createItem($item->getName(), $item->getProperties());
+            $navigationItem->setChildren($this->createMenu($item->getChildren()));
+            $navigationItem->setLabel($this->translate($item->getName()));
+            $navigation->addItem($navigationItem);
+        }
+
+        return $navigation;
     }
 
     /**
@@ -302,14 +384,14 @@ class Module
      * @param   string  $name
      * @param   array   $properties
      *
-     * @return  Menu
+     * @return  MenuItemContainer
      */
     protected function menuSection($name, array $properties = array())
     {
         if (array_key_exists($name, $this->menuItems)) {
             $this->menuItems[$name]->setProperties($properties);
         } else {
-            $this->menuItems[$name] = new Menu($name, new ConfigObject($properties));
+            $this->menuItems[$name] = new MenuItemContainer($name, $properties);
         }
 
         return $this->menuItems[$name];
@@ -389,13 +471,31 @@ class Module
     }
 
     /**
+     * Provide an additional CSS/LESS file
+     *
+     * @param   string  $path   The path to the file, relative to self::$cssdir
+     *
+     * @return  $this
+     */
+    protected function provideCssFile($path)
+    {
+        $this->cssFiles[] = $this->cssdir . DIRECTORY_SEPARATOR . $path;
+        return $this;
+    }
+
+    /**
      * Test if module provides css
      *
      * @return bool
      */
     public function hasCss()
     {
-        return file_exists($this->getCssFilename());
+        if (file_exists($this->getCssFilename())) {
+            return true;
+        }
+
+        $this->launchConfigScript();
+        return !empty($this->cssFiles);
     }
 
     /**
@@ -409,13 +509,44 @@ class Module
     }
 
     /**
+     * Return the CSS/LESS files this module provides
+     *
+     * @return  array
+     */
+    public function getCssFiles()
+    {
+        $this->launchConfigScript();
+        $files = $this->cssFiles;
+        $files[] = $this->getCssFilename();
+        return $files;
+    }
+
+    /**
+     * Provide an additional Javascript file
+     *
+     * @param   string  $path   The path to the file, relative to self::$jsdir
+     *
+     * @return  $this
+     */
+    protected function provideJsFile($path)
+    {
+        $this->jsFiles[] = $this->jsdir . DIRECTORY_SEPARATOR . $path;
+        return $this;
+    }
+
+    /**
      * Test if module provides js
      *
      * @return bool
      */
     public function hasJs()
     {
-        return file_exists($this->getJsFilename());
+        if (file_exists($this->getJsFilename())) {
+            return true;
+        }
+
+        $this->launchConfigScript();
+        return !empty($this->jsFiles);
     }
 
     /**
@@ -426,6 +557,19 @@ class Module
     public function getJsFilename()
     {
         return $this->jsdir . '/module.js';
+    }
+
+    /**
+     * Return the Javascript files this module provides
+     *
+     * @return  array
+     */
+    public function getJsFiles()
+    {
+        $this->launchConfigScript();
+        $files = $this->jsFiles;
+        $files[] = $this->getJsFilename();
+        return $files;
     }
 
     /**
@@ -694,6 +838,7 @@ class Module
     {
         $this->launchConfigScript();
         $tabs = Widget::create('tabs');
+        /** @var \Icinga\Web\Widget\Tabs $tabs */
         $tabs->add('info', array(
             'url'       => 'config/module',
             'urlParams' => array('name' => $this->getName()),
@@ -751,6 +896,17 @@ class Module
     {
         $this->launchConfigScript();
         return $this->userGroupBackends;
+    }
+
+    /**
+     * Return this module's configurable navigation items
+     *
+     * @return  array
+     */
+    public function getNavigationItems()
+    {
+        $this->launchConfigScript();
+        return $this->navigationItems;
     }
 
     /**
@@ -858,7 +1014,21 @@ class Module
     }
 
     /**
-     * Register module namespaces on the autoloader
+     * Provide a new type of configurable navigation item with a optional label
+     *
+     * @param   string  $type
+     * @param   string  $label
+     *
+     * @return  $this
+     */
+    protected function provideNavigationItem($type, $label = null)
+    {
+        $this->navigationItems[$type] = $label ?: $type;
+        return $this;
+    }
+
+    /**
+     * Register module namespaces on our class loader
      *
      * @return $this
      */
@@ -868,16 +1038,17 @@ class Module
             return $this;
         }
 
+        $loader = $this->app->getLoader();
         $moduleName = ucfirst($this->getName());
 
         $moduleLibraryDir = $this->getLibDir(). '/'. $moduleName;
         if (is_dir($moduleLibraryDir)) {
-            $this->app->getLoader()->registerNamespace('Icinga\\Module\\' . $moduleName, $moduleLibraryDir);
+            $loader->registerNamespace('Icinga\\Module\\' . $moduleName, $moduleLibraryDir);
         }
 
         $moduleFormDir = $this->getFormDir();
         if (is_dir($moduleFormDir)) {
-            $this->app->getLoader()->registerNamespace('Icinga\\Module\\' . $moduleName. '\\Forms',  $moduleFormDir);
+            $loader->registerNamespace('Icinga\\Module\\' . $moduleName. '\\Forms', $moduleFormDir);
         }
 
         $this->registeredAutoloader = true;
@@ -939,19 +1110,23 @@ class Module
      */
     protected function registerWebIntegration()
     {
-        if (!$this->app->isWeb()) {
+        if (! $this->app->isWeb()) {
             return $this;
         }
-
-        if (file_exists($this->controllerdir) && is_dir($this->controllerdir)) {
+        $moduleControllerDir = $this->getControllerDir();
+        if (is_dir($moduleControllerDir)) {
             $this->app->getfrontController()->addControllerDirectory(
-                $this->controllerdir,
-                $this->name
+                $moduleControllerDir,
+                $this->getName()
+            );
+            $this->app->getLoader()->registerNamespace(
+                'Icinga\\Module\\' . ucfirst($this->getName()) . '\\' . Dispatcher::CONTROLLER_NAMESPACE,
+                $moduleControllerDir
             );
         }
-
-        $this->registerLocales()
-             ->registerRoutes();
+        $this
+            ->registerLocales()
+            ->registerRoutes();
         return $this;
     }
 
@@ -963,27 +1138,30 @@ class Module
     protected function registerRoutes()
     {
         $router = $this->app->getFrontController()->getRouter();
+        /** @var \Zend_Controller_Router_Rewrite $router */
         foreach ($this->routes as $name => $route) {
             $router->addRoute($name, $route);
         }
         $router->addRoute(
             $this->name . '_jsprovider',
-            new Route(
+            new Zend_Controller_Router_Route(
                 'js/' . $this->name . '/:file',
                 array(
+                    'action'        => 'javascript',
                     'controller'    => 'static',
-                    'action'        =>'javascript',
+                    'module'        => 'default',
                     'module_name'   => $this->name
                 )
             )
         );
         $router->addRoute(
             $this->name . '_img',
-            new RegexRoute(
+            new Zend_Controller_Router_Route_Regex(
                 'img/' . $this->name . '/(.+)',
                 array(
-                    'controller'    => 'static',
                     'action'        => 'img',
+                    'controller'    => 'static',
+                    'module'        => 'default',
                     'module_name'   => $this->name
                 ),
                 array(

@@ -1,11 +1,13 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
+namespace Icinga\Module\Doc\Controllers;
+
 use Icinga\Application\Icinga;
 use Icinga\Module\Doc\DocController;
 use Icinga\Module\Doc\Exception\DocException;
 
-class Doc_ModuleController extends DocController
+class ModuleController extends DocController
 {
     /**
      * Get the path to a module documentation

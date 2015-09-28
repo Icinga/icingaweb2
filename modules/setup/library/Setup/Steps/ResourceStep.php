@@ -5,6 +5,7 @@ namespace Icinga\Module\Setup\Steps;
 
 use Exception;
 use Icinga\Application\Config;
+use Icinga\Exception\IcingaException;
 use Icinga\Module\Setup\Step;
 
 class ResourceStep extends Step
@@ -143,7 +144,7 @@ class ResourceStep extends Step
                     mt('setup', 'Resource configuration could not be written to: %s. An error occured:'),
                     Config::resolvePath('resources.ini')
                 ),
-                sprintf(mt('setup', 'ERROR: %s'), $this->error->getMessage())
+                sprintf(mt('setup', 'ERROR: %s'), IcingaException::describe($this->error))
             );
         }
     }

@@ -134,8 +134,8 @@ class Number extends FormElement
     {
         $this->setValue($value);
         $value = $this->getValue();
-        if (! is_numeric($value)) {
-            $this->addError(sprintf($this->translate('\'%s\' is not a valid number'), $value));
+        if ($value !== '' && ! is_numeric($value)) {
+            $this->addError(sprintf(t('\'%s\' is not a valid number'), $value));
             return false;
         }
         return parent::isValid($value, $context);

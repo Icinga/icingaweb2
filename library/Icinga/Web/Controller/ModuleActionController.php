@@ -6,6 +6,7 @@ namespace Icinga\Web\Controller;
 use Icinga\Application\Config;
 use Icinga\Application\Icinga;
 use Icinga\Application\Modules\Manager;
+use Icinga\Application\Modules\Module;
 
 /**
  * Base class for module action controllers
@@ -19,24 +20,14 @@ class ModuleActionController extends ActionController
     private $module;
 
     /**
-     * Module name
-     *
-     * @var string
-     */
-    protected $moduleName;
-
-    /**
      * (non-PHPDoc)
      * @see \Icinga\Web\Controller\ActionController For the method documentation.
      */
     protected function prepareInit()
     {
-        $this->moduleName = $this->_request->getModuleName();
-        $this->_helper->layout()->moduleName = $this->moduleName;
-        $this->view->translationDomain = $this->moduleName;
         $this->moduleInit();
-        if ($this->getFrontController()->getDefaultModule() !== $this->moduleName) {
-            $this->assertPermission(Manager::MODULE_PERMISSION_NS . $this->moduleName);
+        if ($this->getFrontController()->getDefaultModule() !== $this->getModuleName()) {
+            $this->assertPermission(Manager::MODULE_PERMISSION_NS . $this->getModuleName());
         }
     }
 
@@ -51,22 +42,28 @@ class ModuleActionController extends ActionController
     {
         if ($file === null) {
             if ($this->config === null) {
-                $this->config = Config::module($this->moduleName);
+                $this->config = Config::module($this->getModuleName());
             }
             return $this->config;
         } else {
             if (! array_key_exists($file, $this->configs)) {
-                $this->configs[$file] = Config::module($this->moduleName, $file);
+                $this->configs[$file] = Config::module($this->getModuleName(), $file);
             }
             return $this->configs[$file];
         }
     }
 
+    /**
+     * Return this controller's module
+     *
+     * @return  Module
+     */
     public function Module()
     {
         if ($this->module === null) {
-            $this->module = Icinga::app()->getModuleManager()->getModule($this->moduleName);
+            $this->module = Icinga::app()->getModuleManager()->getModule($this->getModuleName());
         }
+
         return $this->module;
     }
 
@@ -77,6 +74,6 @@ class ModuleActionController extends ActionController
     public function postDispatchXhr()
     {
         parent::postDispatchXhr();
-        $this->getResponse()->setHeader('X-Icinga-Module', $this->moduleName, true);
+        $this->getResponse()->setHeader('X-Icinga-Module', $this->getModuleName(), true);
     }
 }

@@ -16,9 +16,9 @@
           <?php if ($module->enabled && $module->loaded) {
             echo $this->icon('thumbs-up', sprintf($this->translate('Module %s is enabled'), $module->name));
           } elseif (! $module->enabled) {
-            echo $this->icon('thumbs-down', sprintf($this->translate('Module %s is disabled'), $module->name));
+            echo $this->icon('block', sprintf($this->translate('Module %s is disabled'), $module->name));
           } else { // ! $module->loaded
-            echo $this->icon('thumbs-down', sprintf($this->translate('Module %s has failed to load'), $module->name));
+            echo $this->icon('block', sprintf($this->translate('Module %s has failed to load'), $module->name));
           }
 
           echo $this->qlink(

@@ -17,6 +17,9 @@ class ServicenotificationQuery extends IdoQuery
      * {@inheritdoc}
      */
     protected $columnMap = array(
+        'instances' => array(
+            'instance_name' => 'i.instance_name'
+        ),
         'notifications' => array(
             'notification_output'       => 'sn.output',
             'notification_start_time'   => 'UNIX_TIMESTAMP(sn.start_time)',
@@ -223,6 +226,18 @@ class ServicenotificationQuery extends IdoQuery
     }
 
     /**
+     * Join instances
+     */
+    protected function joinInstances()
+    {
+        $this->select->join(
+            array('i' => $this->prefix . 'instances'),
+            'i.instance_id = sn.instance_id',
+            array()
+        );
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function getGroup()
@@ -252,6 +267,10 @@ class ServicenotificationQuery extends IdoQuery
 
             if ($this->hasJoinedVirtualTable('acknowledgements')) {
                 $group[] = 'a.acknowledgement_id';
+            }
+
+            if ($this->hasJoinedVirtualTable('instances')) {
+                $group[] = 'i.instance_id';
             }
         }
 

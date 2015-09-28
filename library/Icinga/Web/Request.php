@@ -4,6 +4,7 @@
 namespace Icinga\Web;
 
 use Zend_Controller_Request_Http;
+use Icinga\Application\Icinga;
 use Icinga\User;
 
 /**
@@ -12,11 +13,11 @@ use Icinga\User;
 class Request extends Zend_Controller_Request_Http
 {
     /**
-     * User if authenticated
+     * Response
      *
-     * @var User|null
+     * @var Response
      */
-    protected $user;
+    protected $response;
 
     /**
      * Unique identifier
@@ -33,13 +34,24 @@ class Request extends Zend_Controller_Request_Http
     protected $url;
 
     /**
-     * Get whether the request seems to be an API request
+     * User if authenticated
      *
-     * @return bool
+     * @var User|null
      */
-    public function getIsApiRequest()
+    protected $user;
+
+    /**
+     * Get the response
+     *
+     * @return Response
+     */
+    public function getResponse()
     {
-        return $this->getHeader('Accept') === 'application/json';
+        if ($this->response === null) {
+            $this->response = Icinga::app()->getResponse();
+        }
+
+        return $this->response;
     }
 
     /**
@@ -79,6 +91,16 @@ class Request extends Zend_Controller_Request_Http
     }
 
     /**
+     * Get whether the request seems to be an API request
+     *
+     * @return bool
+     */
+    public function isApiRequest()
+    {
+        return $this->getHeader('Accept') === 'application/json';
+    }
+
+    /**
      * Makes an ID unique to this request, to prevent id collisions in different containers
      *
      * Call this whenever an ID might show up multiple times in different containers. This function is useful
@@ -95,5 +117,16 @@ class Request extends Zend_Controller_Request_Http
             $this->uniqueId = Window::generateId();
         }
         return $id . '-' . $this->uniqueId;
+    }
+
+    /**
+     * Detect whether cookies are enabled
+     *
+     * @return bool
+     */
+    public function hasCookieSupport()
+    {
+        $cookie = new Cookie($this);
+        return $cookie->isSupported();
     }
 }

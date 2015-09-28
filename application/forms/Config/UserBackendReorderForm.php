@@ -3,6 +3,7 @@
 
 namespace Icinga\Forms\Config;
 
+use Icinga\Application\Config;
 use Icinga\Forms\ConfigForm;
 use Icinga\Exception\NotFoundError;
 use Icinga\Web\Notification;
@@ -26,6 +27,16 @@ class UserBackendReorderForm extends ConfigForm
     public function getBackendOrder()
     {
         return $this->config->keys();
+    }
+
+    /**
+     * Return the ordered backend configuration
+     *
+     * @return Config
+     */
+    public function getConfig()
+    {
+        return $this->config;
     }
 
     /**

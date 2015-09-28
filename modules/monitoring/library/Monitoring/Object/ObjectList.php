@@ -83,7 +83,7 @@ abstract class ObjectList implements Countable, IteratorAggregate, Filterable
     public function getFilter()
     {
         if ($this->filter === null) {
-            $this->filter = Filter::matchAny();
+            $this->filter = Filter::matchAll();
         }
 
         return $this->filter;

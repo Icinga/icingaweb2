@@ -319,6 +319,41 @@ class Platform
     }
 
     /**
+     * Return whether it's possible to connect to a LDAP server
+     *
+     * Checks whether the ldap extension is loaded
+     *
+     * @return  bool
+     */
+    public static function hasLdapSupport()
+    {
+        return static::extensionLoaded('ldap');
+    }
+
+    /**
+     * Return whether it's possible to connect to any of the supported database servers
+     *
+     * @return bool
+     */
+    public static function hasDatabaseSupport()
+    {
+        return static::hasMssqlSupport() || static::hasMysqlSupport() || static::hasOciSupport()
+            || static::hasOracleSupport() || static::hasPostgresqlSupport();
+    }
+
+    /**
+     * Return whether it's possible to connect to a MSSQL database
+     *
+     * Checks whether the mssql pdo extension has been loaded and Zend framework adapter for MSSQL is available
+     *
+     * @return  bool
+     */
+    public static function hasMssqlSupport()
+    {
+        return static::extensionLoaded('mssql') && static::classExists('Zend_Db_Adapter_Pdo_Mssql');
+    }
+
+    /**
      * Return whether it's possible to connect to a MySQL database
      *
      * Checks whether the mysql pdo extension has been loaded and the Zend framework adapter for MySQL is available
@@ -328,6 +363,30 @@ class Platform
     public static function hasMysqlSupport()
     {
         return static::extensionLoaded('mysql') && static::classExists('Zend_Db_Adapter_Pdo_Mysql');
+    }
+
+    /**
+     * Return whether it's possible to connect to a Oracle database using OCI8
+     *
+     * Checks whether the OCI8 extension has been loaded and the Zend framework adapter for Oracle is available
+     *
+     * @return  bool
+     */
+    public static function hasOciSupport()
+    {
+        return static::extensionLoaded('oci8') && static::classExists('Zend_Db_Adapter_Oracle');
+    }
+
+    /**
+     * Return whether it's possible to connect to a Oracle database using PDO_OCI
+     *
+     * Checks whether the OCI PDO extension has been loaded and the Zend framework adapter for Oci is available
+     *
+     * @return  bool
+     */
+    public static function hasOracleSupport()
+    {
+        return static::extensionLoaded('pdo_oci') && static::classExists('Zend_Db_Adapter_Pdo_Mysql');
     }
 
     /**

@@ -9,6 +9,8 @@ use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\NotReadableError;
 use Icinga\Exception\ProgrammingError;
 use Icinga\User;
+use Icinga\Web\Navigation\DashboardPane;
+use Icinga\Web\Navigation\Navigation;
 use Icinga\Web\Widget\Dashboard\Pane;
 use Icinga\Web\Widget\Dashboard\Dashlet as DashboardDashlet;
 use Icinga\Web\Url;
@@ -68,16 +70,21 @@ class Dashboard extends AbstractWidget
      */
     public function load()
     {
-        $manager = Icinga::app()->getModuleManager();
-        foreach ($manager->getLoadedModules() as $module) {
-            if ($this->getUser()->can($manager::MODULE_PERMISSION_NS . $module->getName())) {
-                $this->mergePanes($module->getPaneItems());
+        $navigation = new Navigation();
+        $navigation->load('dashboard-pane');
+
+        $panes = array();
+        foreach ($navigation as $dashboardPane) {
+            /** @var DashboardPane $dashboardPane */
+            $pane = new Pane($dashboardPane->getLabel());
+            foreach ($dashboardPane->getDashlets() as $title => $url) {
+                $pane->addDashlet($title, $url);
             }
 
+            $panes[] = $pane;
         }
 
-        $this->loadUserDashboards();
-
+        $this->mergePanes($panes);
         return $this;
     }
 

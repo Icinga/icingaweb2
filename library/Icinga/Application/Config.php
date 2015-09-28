@@ -12,6 +12,7 @@ use Icinga\Data\ConfigObject;
 use Icinga\Data\Selectable;
 use Icinga\Data\SimpleQuery;
 use Icinga\File\Ini\IniWriter;
+use Icinga\File\Ini\IniParser;
 use Icinga\Exception\NotReadableError;
 
 /**
@@ -313,9 +314,7 @@ class Config implements Countable, Iterator, Selectable
         if ($filepath === false) {
             $emptyConfig->setConfigFile($file);
         } elseif (is_readable($filepath)) {
-            $config = new static(new ConfigObject(parse_ini_file($filepath, true)));
-            $config->setConfigFile($filepath);
-            return $config;
+            return IniParser::parseIniFile($filepath);
         } elseif (@file_exists($filepath)) {
             throw new NotReadableError(t('Cannot read config file "%s". Permission denied'), $filepath);
         }
@@ -359,11 +358,7 @@ class Config implements Countable, Iterator, Selectable
      */
     protected function getIniWriter($filePath = null, $fileMode = null)
     {
-        return new IniWriter(array(
-            'config' => $this,
-            'filename' => $filePath,
-            'filemode' => $fileMode
-        ));
+        return new IniWriter($this, $filePath, $fileMode);
     }
 
     /**
@@ -418,7 +413,6 @@ class Config implements Countable, Iterator, Selectable
                 static::resolvePath('modules/' . $modulename . '/' . $configname . '.ini')
             );
         }
-
         return $moduleConfigs[$configname];
     }
 

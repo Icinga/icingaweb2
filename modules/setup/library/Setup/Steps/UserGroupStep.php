@@ -153,6 +153,10 @@ class UserGroupStep extends Step
             . '<td><strong>' . mt('setup', 'Group Name Attribute') . '</strong></td>'
             . '<td>' . $this->data['groupConfig']['group_name_attribute'] . '</td>'
             . '</tr>'
+            . '<tr>'
+            . '<td><strong>' . mt('setup', 'Group Member Attribute') . '</strong></td>'
+            . '<td>' . $this->data['groupConfig']['group_member_attribute'] . '</td>'
+            . '</tr>'
             . '</tbody>'
             . '</table>';
 

@@ -3,13 +3,16 @@ use Icinga\Module\Monitoring\Object\Host;
 use Icinga\Module\Monitoring\Object\Service;
 
 $selfUrl = 'monitoring/list/services';
+$services->peekAhead($this->compact);
 
 if (! $this->compact): ?>
 <div class="controls separated">
   <?= $this->tabs ?>
   <div class="dontprint">
     <?= $this->render('list/components/selectioninfo.phtml') ?>
-    <?= $this->render('list/components/servicesummary.phtml') ?>
+    <h1 class="tinystatesummary" <?= $this->compact ? ' data-base-target="col1"' : ''; ?>>
+      <?= $this->render('list/components/servicesummary.phtml') ?>
+    </h1>
   </div>
   <?= $this->sortBox ?>
   <?= $this->limiter ?>
@@ -18,9 +21,10 @@ if (! $this->compact): ?>
 </div>
 <?php endif ?>
 <div class="content">
-<table data-base-target="<?= isset($baseTarget) ? $baseTarget : '_next'; ?>"
+<table data-base-target="_next"
     class="action multiselect <?php if ($this->compact): ?> compact<?php endif ?>" style="table-layout: auto;"
     data-icinga-multiselect-url="<?= $this->href("monitoring/services/show") ?>"
+    data-icinga-multiselect-controllers="<?= $this->href("monitoring/services") ?>"
     data-icinga-multiselect-data="service,host">
   <tbody>
 <?php foreach ($services as $service):
@@ -32,7 +36,7 @@ if (! $this->compact): ?>
       )
     );
     $hostLink = $this->href(
-      'monitoring/show/host',
+      'monitoring/host/show',
       array(
         'host' => $service->host_name,
       )
@@ -86,5 +90,15 @@ if (! $this->compact): ?>
 </table>
 <?php if (! $services->hasResult()): ?>
   <?= $this->translate('No services found matching the filter'); ?>
+<?php elseif ($services->hasMore()): ?>
+  <?= $this->qlink(
+    $this->translate('Show More'),
+    $this->url()->without(array('view', 'limit')),
+    null,
+    array(
+      'data-base-target'    => '_next',
+      'class'               => 'pull-right show-more'
+    )
+  ); ?>
 <?php endif ?>
 </div>

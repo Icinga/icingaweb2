@@ -106,6 +106,7 @@ class Service extends MonitoredObject
     protected function getDataView()
     {
         return $this->backend->select()->from('servicestatus', array(
+            'instance_name',
             'host_icon_image',
             'host_icon_image_alt',
             'host_acknowledged',
@@ -124,6 +125,7 @@ class Service extends MonitoredObject
             'service_icon_image',
             'service_icon_image_alt',
             'service_acknowledged',
+            'service_acknowledgement_type',
             'service_action_url',
             'service_active_checks_enabled',
             'service_active_checks_enabled_changed',
@@ -132,6 +134,7 @@ class Service extends MonitoredObject
             'service_check_execution_time',
             'service_check_latency',
             'service_check_source',
+            'service_check_timeperiod',
             'service_current_notification_number',
             'service_description',
             'service_display_name',
@@ -148,6 +151,7 @@ class Service extends MonitoredObject
             'service_last_state_change',
             'service_long_output',
             'service_next_check',
+            'service_next_update',
             'service_notes',
             'service_notes_url',
             'service_notifications_enabled',

@@ -2,6 +2,10 @@
 
 use Icinga\Web\Wizard;
 
+if (! $form->getWizard()->getRequirements()->fulfilled()) {
+    $form->getElement(Wizard::BTN_NEXT)->setAttrib('disabled', 1);
+}
+
 ?>
 <h1>Icinga Web 2</h1>
 <?= $form->getWizard()->getRequirements(true); ?>
@@ -9,18 +13,24 @@ use Icinga\Web\Wizard;
 <h1><?= ucwords($moduleName) . ' ' . $this->translate('Module'); ?></h1>
 <?= $wizard->getRequirements(); ?>
 <?php endforeach ?>
-<form id="<?= $form->getName(); ?>" name="<?= $form->getName(); ?>" enctype="<?= $form->getEncType(); ?>" method="<?= $form->getMethod(); ?>" action="<?= $form->getAction(); ?>">
+<form
+ id="<?= $form->getName(); ?>"
+ name="<?= $form->getName(); ?>"
+ enctype="<?= $form->getEncType(); ?>"
+ method="<?= $form->getMethod(); ?>"
+ action="<?= $form->getAction(); ?>"
+ data-progress-element="<?= Wizard::PROGRESS_ELEMENT; ?>"
+>
   <?= $form->getElement($form->getTokenElementName()); ?>
   <?= $form->getElement($form->getUidElementName()); ?>
   <div class="buttons">
-    <?= $form->getElement(Wizard::BTN_PREV); ?>
     <?php
-      $btn = $form->getElement(Wizard::BTN_NEXT);
-      if (! $form->getWizard()->getRequirements()->fulfilled()) {
-          $btn->setAttrib('disabled', 1);
-      }
-      echo $btn;
+      $double = clone $form->getElement(Wizard::BTN_NEXT);
+      echo $double->setAttrib('class', 'double');
     ?>
+    <?= $form->getElement(Wizard::BTN_PREV); ?>
+    <?= $form->getElement(Wizard::BTN_NEXT); ?>
+    <?= $form->getElement(Wizard::PROGRESS_ELEMENT); ?>
     <div class="requirements-refresh">
       <?php $title = $this->translate('You may also need to restart the web-server for the changes to take effect!'); ?>
       <?= $this->qlink(

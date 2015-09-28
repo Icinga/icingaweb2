@@ -43,6 +43,7 @@ Directive               | Description
 **resource**            | The name of the LDAP resource defined in [resources.ini](resources.md#resources).
 **user_class**          | LDAP user class.
 **user_name_attribute** | LDAP attribute which contains the username.
+**filter**              | LDAP search filter.
 
 **Example:**
 
@@ -52,6 +53,7 @@ backend             = ldap
 resource            = my_ldap
 user_class          = inetOrgPerson
 user_name_attribute = uid
+filter              = "memberOf=cn=icinga_users,cn=groups,cn=accounts,dc=icinga,dc=org"
 ```
 
 Note that in case the set *user_name_attribute* holds multiple values it is required that all of its
@@ -62,14 +64,14 @@ with Icinga Web 2 (e.g. an alias) no matter what the primary user id might actua
 
 Directive               | Description
 ------------------------|------------
-**backend**             | `ad`
+**backend**             | `msldap`
 **resource**            | The name of the LDAP resource defined in [resources.ini](resources.md#resources).
 
 **Example:**
 
 ```
 [auth_ad]
-backend  = ad
+backend  = msldap
 resource = my_ad
 ```
 

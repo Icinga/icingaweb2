@@ -1,11 +1,10 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
-use Icinga\Web\MenuRenderer;
+namespace Icinga\Controllers;
+
+use Icinga\Application\Icinga;
 use Icinga\Web\Controller\ActionController;
-use Icinga\Web\Hook;
-use Icinga\Web\Menu;
-use Icinga\Web\Url;
 
 /**
  * Create complex layout parts
@@ -19,9 +18,6 @@ class LayoutController extends ActionController
     {
         $this->setAutorefreshInterval(15);
         $this->_helper->layout()->disableLayout();
-
-        $url = Url::fromRequest();
-        $menu = new MenuRenderer(Menu::load(), $url->getRelativeUrl());
-        $this->view->menuRenderer = $menu->useCustomRenderer();
+        $this->view->menuRenderer = Icinga::app()->getMenu()->getRenderer();
     }
 }

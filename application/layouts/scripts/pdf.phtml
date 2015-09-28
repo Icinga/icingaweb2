@@ -4,7 +4,7 @@ use Icinga\Web\StyleSheet;
 
 
 $moduleName = $this->layout()->moduleName;
-if ($moduleName) {
+if ($moduleName !== 'default') {
     $moduleClass = ' icinga-module module-' . $moduleName;
 } else {
     $moduleClass = '';

@@ -3,16 +3,19 @@
 
 namespace Icinga\File\Ini;
 
-use Zend_Config;
-use Zend_Config_Ini;
+use Icinga\Application\Logger;
+use Icinga\Data\ConfigObject;
+use Icinga\Exception\ProgrammingError;
+use Icinga\File\Ini\Dom\Directive;
+use Icinga\File\Ini\Dom\Document;
+use Icinga\File\Ini\Dom\Section;
 use Zend_Config_Exception;
-use Zend_Config_Writer_FileAbstract;
 use Icinga\Application\Config;
 
 /**
  * A INI file adapter that respects the file structure and the comments of already existing ini files
  */
-class IniWriter extends Zend_Config_Writer_FileAbstract
+class IniWriter
 {
     /**
      * Stores the options
@@ -22,150 +25,139 @@ class IniWriter extends Zend_Config_Writer_FileAbstract
     protected $options;
 
     /**
+     * The configuration object to write
+     *
+     * @var Config
+     */
+    protected $config;
+
+    /**
      * The mode to set on new files
      *
      * @var int
      */
-    public static $fileMode = 0660;
+    protected $fileMode;
+
+    /**
+     * The path to write to
+     *
+     * @var string
+     */
+    protected $filename;
 
     /**
      * Create a new INI writer
      *
-     * @param array $options   Supports all options of Zend_Config_Writer and additional options:
-     *                          * filemode:             The mode to set on new files
-     *                          * valueIndentation:     The indentation level of the values
-     *                          * commentIndentation:   The indentation level of the comments
-     *                          * sectionSeparators:    The amount of newlines between sections
+     * @param Config    $config    The configuration to write
+     * @param string    $filename  The file name to write to
+     * @param int       $filemode  Octal file persmissions
      *
      * @link http://framework.zend.com/apidoc/1.12/files/Config.Writer.html#\Zend_Config_Writer
      */
-    public function __construct(array $options = null)
+    public function __construct(Config $config, $filename, $filemode = 0660, $options = array())
     {
-        if (isset($options['config']) && $options['config'] instanceof Config) {
-            // As this class inherits from Zend_Config_Writer_FileAbstract we must
-            // not pass the config directly as it needs to be of type Zend_Config
-            $options['config'] = new Zend_Config($options['config']->toArray(), true);
-        }
-
+        $this->config = $config;
+        $this->filename = $filename;
+        $this->fileMode = $filemode;
         $this->options = $options;
-        parent::__construct($options);
     }
 
     /**
-     * Render the Zend_Config into a config file string
+     * Render the Zend_Config into a config filestring
      *
      * @return  string
      */
     public function render()
     {
-        if (file_exists($this->_filename)) {
-            $oldconfig = new Zend_Config_Ini($this->_filename);
-            $content = trim(file_get_contents($this->_filename));
+        if (file_exists($this->filename)) {
+            $oldconfig = Config::fromIni($this->filename);
+            $content = trim(file_get_contents($this->filename));
         } else {
-            $oldconfig = new Zend_Config(array());
+            $oldconfig = Config::fromArray(array());
             $content = '';
         }
-
-        $newconfig = $this->_config;
-        $editor = new IniEditor($content, $this->options);
-        $this->diffConfigs($oldconfig, $newconfig, $editor);
-        $this->updateSectionOrder($newconfig, $editor);
-        return $editor->getText();
+        $doc = IniParser::parseIni($content);
+        $this->diffPropertyUpdates($this->config, $doc);
+        $this->diffPropertyDeletions($oldconfig, $this->config, $doc);
+        $doc = $this->updateSectionOrder($this->config, $doc);
+        return $doc->render();
     }
 
     /**
      * Write configuration to file and set file mode in case it does not exist yet
      *
      * @param string $filename
-     * @param Zend_Config $config
      * @param bool $exclusiveLock
+     *
+     * @throws Zend_Config_Exception
      */
-    public function write($filename = null, Zend_Config $config = null, $exclusiveLock = null)
+    public function write($filename = null, $exclusiveLock = false)
     {
-        $filePath = $filename !== null ? $filename : $this->_filename;
+        $filePath = isset($filename) ? $filename : $this->filename;
         $setMode = false === file_exists($filePath);
 
-        parent::write($filename, $config, $exclusiveLock);
+        if (file_put_contents($filePath, $this->render(), $exclusiveLock ? LOCK_EX : 0) === false) {
+            throw new Zend_Config_Exception('Could not write to file "' . $filePath . '"');
+        }
 
         if ($setMode) {
-            $mode = isset($this->options['filemode']) ? $this->options['filemode'] : static::$fileMode;
-            if (is_int($mode) && false === @chmod($filePath, $mode)) {
+            // file was newly created
+            $mode = $this->fileMode;
+            if (is_int($this->fileMode) && false === @chmod($filePath, $this->fileMode)) {
                 throw new Zend_Config_Exception(sprintf('Failed to set file mode "%o" on file "%s"', $mode, $filePath));
             }
         }
     }
 
     /**
-     * Create a property diff and apply the changes to the editor
-     *
-     * @param   Zend_Config     $oldconfig      The config representing the state before the change
-     * @param   Zend_Config     $newconfig      The config representing the state after the change
-     * @param   IniEditor       $editor         The editor that should be used to edit the old config file
-     * @param   array           $parents        The parent keys that should be respected when editing the config
-     */
-    protected function diffConfigs(
-        Zend_Config $oldconfig,
-        Zend_Config $newconfig,
-        IniEditor $editor,
-        array $parents = array()
-    ) {
-        $this->diffPropertyUpdates($oldconfig, $newconfig, $editor, $parents);
-        $this->diffPropertyDeletions($oldconfig, $newconfig, $editor, $parents);
-    }
-
-    /**
      * Update the order of the sections in the ini file to match the order of the new config
+     *
+     * @return Document     A new document with the changed section order applied
      */
-    protected function updateSectionOrder(Zend_Config $newconfig, IniEditor $editor)
+    protected function updateSectionOrder(Config $newconfig, Document $oldDoc)
     {
-        $order = array();
-        foreach ($newconfig as $key => $value) {
-            if ($value instanceof Zend_Config) {
-                array_push($order, $key);
-            }
+        $doc = new Document();
+        $dangling = $oldDoc->getCommentsDangling();
+        if (isset($dangling)) {
+            $doc->setCommentsDangling($dangling);
         }
-        $editor->refreshSectionOrder($order);
+        foreach ($newconfig->toArray() as $section => $directives) {
+            $doc->addSection($oldDoc->getSection($section));
+        }
+        return $doc;
     }
 
     /**
      * Search for created and updated properties and use the editor to create or update these entries
      *
-     * @param Zend_Config   $oldconfig  The config representing the state before the change
-     * @param Zend_Config   $newconfig  The config representing the state after the change
-     * @param IniEditor     $editor     The editor that should be used to edit the old config file
-     * @param array         $parents    The parent keys that should be respected when editing the config
+     * @param Config     $newconfig  The config representing the state after the change
+     * @param Document   $doc
+     *
+     * @throws ProgrammingError
      */
-    protected function diffPropertyUpdates(
-        Zend_Config $oldconfig,
-        Zend_Config $newconfig,
-        IniEditor $editor,
-        array $parents = array()
-    ) {
-        // The current section. This value is null when processing the section-less root element
-        $section = empty($parents) ? null : $parents[0];
-        // Iterate over all properties in the new configuration file and search for changes
-        foreach ($newconfig as $key => $value) {
-            $oldvalue = $oldconfig->get($key);
-            $nextParents = array_merge($parents, array($key));
-            $keyIdentifier = empty($parents) ? array($key) : array_slice($nextParents, 1, null, true);
-            if ($value instanceof Zend_Config) {
-                // The value is a nested Zend_Config, handle it recursively
-                if ($section === null) {
-                    // Update the section declaration
-                    $extends = $newconfig->getExtends();
-                    $extend = array_key_exists($key, $extends) ? $extends[$key] : null;
-                    $editor->setSection($key, $extend);
-                }
-                if ($oldvalue === null) {
-                    $oldvalue = new Zend_Config(array());
-                }
-                $this->diffConfigs($oldvalue, $value, $editor, $nextParents);
+    protected function diffPropertyUpdates(Config $newconfig, Document $doc)
+    {
+        foreach ($newconfig->toArray() as $section => $directives) {
+            if (! is_array($directives)) {
+                Logger::warning('Section-less property ' . (string)$directives . ' was ignored.');
+                continue;
+            }
+            if (!$doc->hasSection($section)) {
+                $domSection = new Section($section);
+                $doc->addSection($domSection);
             } else {
-                // The value is a plain value, use the editor to set it
-                if (is_numeric($key)) {
-                    $editor->setArrayElement($keyIdentifier, $value, $section);
+                $domSection = $doc->getSection($section);
+            }
+            foreach ($directives as $key => $value) {
+                if ($value instanceof ConfigObject) {
+                    throw new ProgrammingError('Cannot diff recursive configs');
+                }
+                if ($domSection->hasDirective($key)) {
+                    $domSection->getDirective($key)->setValue($value);
                 } else {
-                    $editor->set($keyIdentifier, $value, $section);
+                    $dir = new Directive($key);
+                    $dir->setValue($value);
+                    $domSection->addDirective($dir);
                 }
             }
         }
@@ -174,68 +166,36 @@ class IniWriter extends Zend_Config_Writer_FileAbstract
     /**
      * Search for deleted properties and use the editor to delete these entries
      *
-     * @param Zend_Config   $oldconfig  The config representing the state before the change
-     * @param Zend_Config   $newconfig  The config representing the state after the change
-     * @param IniEditor     $editor     The editor that should be used to edit the old config file
-     * @param array         $parents    The parent keys that should be respected when editing the config
+     * @param Config    $oldconfig  The config representing the state before the change
+     * @param Config    $newconfig  The config representing the state after the change
+     * @param Document  $doc
+     *
+     * @throws ProgrammingError
      */
-    protected function diffPropertyDeletions(
-        Zend_Config $oldconfig,
-        Zend_Config $newconfig,
-        IniEditor $editor,
-        array $parents = array()
-    ) {
-        // The current section. This value is null when processing the section-less root element
-        $section = empty($parents) ? null : $parents[0];
+    protected function diffPropertyDeletions(Config $oldconfig, Config $newconfig, Document $doc)
+    {
+        // Iterate over all properties in the old configuration file and remove those that don't
+        // exist in the new config
+        foreach ($oldconfig->toArray() as $section => $directives) {
+            if (! is_array($directives)) {
+                Logger::warning('Section-less property ' . (string)$directives . ' was ignored.');
+                continue;
+            }
 
-        // Iterate over all properties in the old configuration file and search for deleted properties
-        foreach ($oldconfig as $key => $value) {
-            if ($newconfig->get($key) === null) {
-                $nextParents = array_merge($parents, array($key));
-                $keyIdentifier = empty($parents) ? array($key) : array_slice($nextParents, 1, null, true);
-                foreach ($this->getPropertyIdentifiers($value, $keyIdentifier) as $propertyIdentifier) {
-                    $editor->reset($propertyIdentifier, $section);
+            if ($newconfig->hasSection($section)) {
+                $newSection = $newconfig->getSection($section);
+                $oldDomSection = $doc->getSection($section);
+                foreach ($directives as $key => $value) {
+                    if ($value instanceof ConfigObject) {
+                        throw new ProgrammingError('Cannot diff recursive configs');
+                    }
+                    if (null === $newSection->get($key) && $oldDomSection->hasDirective($key)) {
+                        $oldDomSection->removeDirective($key);
+                    }
                 }
+            } else {
+                $doc->removeSection($section);
             }
         }
-    }
-
-    /**
-     * Return all possible combinations of property identifiers for the given value
-     *
-     * @param   mixed   $value  The value to return all combinations for
-     * @param   array   $key    The root property identifier, if any
-     *
-     * @return  array           All property combinations that are possible
-     *
-     * @todo                    Cannot handle array properties yet (e.g. a.b[]='c')
-     */
-    protected function getPropertyIdentifiers($value, array $key = null)
-    {
-        $combinations = array();
-        $rootProperty = $key !== null ? $key : array();
-
-        if ($value instanceof Zend_Config) {
-            foreach ($value as $subProperty => $subValue) {
-                $combinations = array_merge(
-                    $combinations,
-                    $this->getPropertyIdentifiers($subValue, array_merge($rootProperty, array($subProperty)))
-                );
-            }
-        } elseif (is_string($value)) {
-            $combinations[] = $rootProperty;
-        }
-
-        return $combinations;
-    }
-
-    /**
-     * Getter for filename
-     *
-     * @return string
-     */
-    public function getFilename()
-    {
-        return $this->_filename;
     }
 }

@@ -163,6 +163,16 @@ class WebWizard extends Wizard implements SetupWizard
             }
         /*} elseif ($page->getName() === 'setup_ldap_discovery_confirm') {
             $page->setResourceConfig($this->getPageData('setup_ldap_discovery'));*/
+        } elseif ($page->getName() === 'setup_auth_db_resource') {
+            $page->addDescription(mt(
+                'setup',
+                'Now please configure the database resource where to store users and user groups.'
+            ));
+            $page->addDescription(mt(
+                'setup',
+                'Note that the database itself does not need to exist at this time as'
+                . ' it is going to be created once the wizard is about to be finished.'
+            ));
         } elseif ($page->getName() === 'setup_usergroup_backend') {
             $page->setResourceConfig($this->getPageData('setup_ldap_resource'));
             $page->setBackendConfig($this->getPageData('setup_authentication_backend'));
@@ -187,6 +197,16 @@ class WebWizard extends Wizard implements SetupWizard
             $page->setSubjectTitle('Icinga Web 2');
             $page->setSummary($this->getSetup()->getSummary());
         } elseif ($page->getName() === 'setup_config_db_resource') {
+            $page->addDescription(mt(
+                'setup',
+                'Now please configure the database resource where to store user preferences.'
+            ));
+            $page->addDescription(mt(
+                'setup',
+                'Note that the database itself does not need to exist at this time as'
+                . ' it is going to be created once the wizard is about to be finished.'
+            ));
+
             $ldapData = $this->getPageData('setup_ldap_resource');
             if ($ldapData !== null && $request->getPost('name') === $ldapData['name']) {
                 $page->error(
@@ -209,7 +229,10 @@ class WebWizard extends Wizard implements SetupWizard
         } elseif ($page->getName() === 'setup_general_config') {
             $authData = $this->getPageData('setup_authentication_type');
             if ($authData['type'] === 'db') {
-                $page->create()->getElement('global_config_backend')->setValue('db');
+                $page
+                    ->create($this->getRequestData($page, $request))
+                    ->getElement('global_config_backend')
+                    ->setValue('db');
                 $page->info(
                     mt(
                         'setup',
@@ -346,9 +369,10 @@ class WebWizard extends Wizard implements SetupWizard
                 'submit',
                 'backend_validation',
                 array(
-                    'ignore'        => true,
-                    'label'         => t('Validate Configuration'),
-                    'decorators'    => array('ViewHelper')
+                    'ignore'                => true,
+                    'label'                 => t('Validate Configuration'),
+                    'data-progress-label'   => t('Validation In Progress'),
+                    'decorators'            => array('ViewHelper')
                 )
             );
             $page->getDisplayGroup('buttons')->addElement($page->getElement('backend_validation'));

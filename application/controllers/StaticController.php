@@ -1,16 +1,18 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
-use Icinga\Web\Controller\ActionController;
+namespace Icinga\Controllers;
+
+use Icinga\Web\Controller;
 use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
 use Icinga\Web\FileCache;
-use Zend_Controller_Action_Exception as ActionException;
+use Icinga\Web\LessCompiler;
 
 /**
  * Delivery static content to clients
  */
-class StaticController extends ActionController
+class StaticController extends Controller
 {
     /**
      * Static routes don't require authentication
@@ -57,17 +59,15 @@ class StaticController extends ActionController
      */
     public function imgAction()
     {
+        // TODO(el): I think this action only retrieves images from modules
         $module = $this->_getParam('module_name');
         $file   = $this->_getParam('file');
         $basedir = Icinga::app()->getModuleManager()->getModule($module)->getBaseDir();
 
         $filePath = realpath($basedir . '/public/img/' . $file);
 
-        if (! $filePath || strpos($filePath, $basedir) !== 0) {
-            throw new ActionException(sprintf(
-                '%s does not exist',
-                $filePath
-            ), 404);
+        if ($filePath === false) {
+            $this->httpNotFound('%s does not exist', $filePath);
         }
         if (preg_match('/\.([a-z]+)$/i', $file, $m)) {
             $extension = $m[1];
@@ -80,10 +80,7 @@ class StaticController extends ActionController
         header(sprintf('ETag: "%x-%x-%x"', $s['ino'], $s['size'], (float) str_pad($s['mtime'], 16, '0')));
         header('Cache-Control: public, max-age=3600');
         header('Pragma: cache');
-        header('Last-Modified: ' . gmdate(
-            'D, d M Y H:i:s',
-            $s['mtime']
-        ) . ' GMT');
+        header('Last-Modified: ' . gmdate('D, d M Y H:i:s', $s['mtime']) . ' GMT');
 
         readfile($filePath);
     }
@@ -100,7 +97,7 @@ class StaticController extends ActionController
             $basedir = Icinga::app()->getApplicationDir('../public/js/icinga/components/');
             $filePath = $basedir . $file;
         } else {
-            if (!Icinga::app()->getModuleManager()->hasEnabled($module)) {
+            if (! Icinga::app()->getModuleManager()->hasEnabled($module)) {
                 Logger::error(
                     'Non-existing frontend component "' . $module . '/' . $file
                     . '" was requested. The module "' . $module . '" does not exist or is not active.'
@@ -112,7 +109,7 @@ class StaticController extends ActionController
             $filePath = $basedir . '/public/js/' . $file;
         }
 
-        if (!file_exists($filePath)) {
+        if (! file_exists($filePath)) {
             Logger::error(
                 'Non-existing frontend component "' . $module . '/' . $file
                 . '" was requested, which would resolve to the the path: ' . $filePath
@@ -122,41 +119,41 @@ class StaticController extends ActionController
         }
         $response = $this->getResponse();
         $response->setHeader('Content-Type', 'text/javascript');
-        $this->setCacheHeader(3600);
+        $this->setCacheHeader();
 
         $response->setHeader(
             'Last-Modified',
-            gmdate(
-                'D, d M Y H:i:s',
-                filemtime($filePath)
-            ) . ' GMT'
+            gmdate('D, d M Y H:i:s', filemtime($filePath)) . ' GMT'
         );
 
         readfile($filePath);
     }
 
     /**
-     * Set cache header for this response
+     * Set cache header for the response
      *
-     * @param integer $maxAge The maximum age to set
+     * @param int $maxAge The maximum age to set
      */
-    private function setCacheHeader($maxAge)
+    private function setCacheHeader($maxAge = 3600)
     {
-        $this->_response->setHeader('Cache-Control', 'max-age=3600', true);
-        $this->_response->setHeader('Pragma', 'cache', true);
-        $this->_response->setHeader(
-            'Expires',
-            gmdate(
-                'D, d M Y H:i:s',
-                time()+3600
-            ) . ' GMT',
-            true
-        );
+        $maxAge = (int) $maxAge;
+        $this
+            ->getResponse()
+            ->setHeader('Cache-Control', sprintf('max-age=%d', $maxAge), true)
+            ->setHeader('Pragma', 'cache', true)
+            ->setHeader(
+                'Expires',
+                gmdate('D, d M Y H:i:s', time() + $maxAge) . ' GMT',
+                true
+            );
     }
 
+    /**
+     * Send application's and modules' CSS
+     */
     public function stylesheetAction()
     {
-        $lessCompiler = new \Icinga\Web\LessCompiler();
+        $lessCompiler = new LessCompiler();
         $moduleManager = Icinga::app()->getModuleManager();
 
         $publicDir = realpath(dirname($_SERVER['SCRIPT_FILENAME']));
@@ -172,7 +169,7 @@ class StaticController extends ActionController
             }
         }
 
-        $this->_response->setHeader('Content-Type', 'text/css');
+        $this->getResponse()->setHeader('Content-Type', 'text/css');
         $this->setCacheHeader(3600);
 
         $lessCompiler->printStack();

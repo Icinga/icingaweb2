@@ -1,60 +1,27 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
-use Icinga\Web\Url;
+namespace Icinga\Module\Monitoring\Controllers;
+
 use Icinga\Module\Monitoring\Backend;
 use Icinga\Module\Monitoring\Controller;
+use Icinga\Web\Url;
 
 /**
  * Class Monitoring_ShowController
  *
  * Actions for show context
  */
-class Monitoring_ShowController extends Controller
+class ShowController extends Controller
 {
     /**
      * @var Backend
      */
     protected $backend;
 
-    /**
-     * @deprecated
-     */
-    public function serviceAction()
-    {
-        $this->redirectNow(Url::fromRequest()->setPath('monitoring/service/show'));
-    }
-
-    /**
-     * @deprecated
-     */
-    public function hostAction()
-    {
-        $this->redirectNow(Url::fromRequest()->setPath('monitoring/host/show'));
-    }
-
-    /**
-     * @deprecated
-     */
-    public function historyAction()
-    {
-        if ($this->params->has('service')) {
-            $this->redirectNow(Url::fromRequest()->setPath('monitoring/service/history'));
-        }
-
-        $this->redirectNow(Url::fromRequest()->setPath('monitoring/host/history'));
-    }
-
     public function contactAction()
     {
-        $contactName = $this->getParam('contact_name');
-
-        if (! $contactName) {
-            throw new Zend_Controller_Action_Exception(
-                $this->translate('The parameter `contact_name\' is required'),
-                404
-            );
-        }
+        $contactName = $this->params->getRequired('contact_name');
 
         $query = $this->backend->select()->from('contact', array(
             'contact_name',

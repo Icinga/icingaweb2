@@ -43,17 +43,6 @@ class JavaScript
         'js/vendor/jquery.tipsy'
     );
 
-    public static function listModuleFiles()
-    {
-        $list = array();
-        foreach (Icinga::app()->getModuleManager()->getLoadedModules() as $name => $module) {
-            if ($module->hasJs()) {
-                $list[] = 'js/' . $name . '/module.js';
-            }
-        }
-        return $list;
-    }
-
     public static function sendMinified()
     {
         return self::send(true);
@@ -87,7 +76,11 @@ class JavaScript
 
         foreach (Icinga::app()->getModuleManager()->getLoadedModules() as $name => $module) {
             if ($module->hasJs()) {
-                $jsFiles[] = $module->getJsFilename();
+                foreach ($module->getJsFiles() as $path) {
+                    if (file_exists($path)) {
+                        $jsFiles[] = $path;
+                    }
+                }
             }
         }
         $files = array_merge($vendorFiles, $jsFiles);
@@ -115,7 +108,7 @@ class JavaScript
         }
 
         foreach ($jsFiles as $file) {
-            $js .= file_get_contents($file);
+            $js .= file_get_contents($file) . "\n\n\n";
         }
 
         if ($minified) {

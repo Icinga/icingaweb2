@@ -36,6 +36,11 @@ input, select, textarea {
   font-family: Calibri, Helvetica, sans-serif;
 }
 
+input[type=checkbox] {
+  margin-top: 0.3em;
+  margin-bottom: 0.1em;
+}
+
 input:focus, select:focus {
   border-color: #333;
 }
@@ -105,6 +110,38 @@ form.inline {
   margin: 0;
   padding: 0;
   display: inline;
+}
+
+div.spinner {
+  display: inline-block;
+  margin-top: 0.2em;
+  margin-left: 0.25em;
+
+  i {
+    visibility: hidden;
+
+    &.active {
+      visibility: visible;
+
+      &:before {
+        .animate(spin 2s infinite linear);
+      }
+    }
+
+    &:before {
+      margin: 0; // Disables wobbling
+    }
+  }
+}
+
+button.animated.active {
+  &.move-up i:before {
+    .animate(move-vertical 500ms infinite linear);
+  }
+
+  &.move-down i:before {
+    .animate(move-vertical 500ms infinite linear reverse);
+  }
 }
 
 button, .button-like {
@@ -252,12 +289,18 @@ form div.element {
 
 form label {
   display: inline-block;
+  vertical-align: top;
+  margin-top: 0.25em;
   margin-right: 1em;
   font-size: 0.9em;
   width: 10em;
 }
 
-form div.element > * {
+form div.element i.help:before {
+  margin-top: 0.25em;
+}
+
+label ~ * {
   vertical-align: top;
 }
 
@@ -295,16 +338,35 @@ select.grant-permissions {
   width: auto;
 }
 
-label ~ input, label ~ select {
-  margin-left: 1.35em;
+label ~ input, label ~ select, label ~ textarea {
+  margin-left: 1.3em;
 }
 
-label + i ~ input, label + i ~ select {
+label + i ~ input, label + i ~ select, label + i ~ textarea {
   margin-left: 0;
 }
 
 button.noscript-apply {
   margin-left: 0.5em;
+}
+
+i.autosubmit-warning {
+  display: inline-block;
+  margin-left: 0.2em;
+  margin-top: 0.25em;
+
+  &:before {
+    margin: 0; // Disables wobbling
+  }
+
+  &.spinning:before {
+    content: '\e874'; // icon-spin6
+    .animate(spin 2s infinite linear);
+  }
+}
+
+input[type=checkbox] + i.autosubmit-warning {
+  margin-top: 0.15em;
 }
 
 html.no-js i.autosubmit-warning {

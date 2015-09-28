@@ -49,6 +49,7 @@ The following filter column names are available in filter expressions:
 
 | Column                                                       |
 |--------------------------------------------------------------|
+| instance_name                                                |
 | host_name                                                    |
 | hostgroup_name                                               |
 | service_description                                          |

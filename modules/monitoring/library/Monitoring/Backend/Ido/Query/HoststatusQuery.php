@@ -16,6 +16,9 @@ class HoststatusQuery extends IdoQuery
      * {@inheritdoc}
      */
     protected $columnMap = array(
+        'instances' => array(
+            'instance_name' => 'i.instance_name'
+        ),
         'hostgroups' => array(
             'hostgroup'         => 'hgo.name1 COLLATE latin1_general_ci',
             'hostgroup_alias'   => 'hg.alias COLLATE latin1_general_ci',
@@ -34,7 +37,8 @@ class HoststatusQuery extends IdoQuery
             'host_name'             => 'ho.name1',
             'host_notes'            => 'h.notes',
             'host_notes_url'        => 'h.notes_url',
-            'object_type'           => '(\'host\')'
+            'object_type'           => '(\'host\')',
+            'object_id'             => 'ho.object_id'
         ),
         'hoststatus' => array(
             'host_acknowledged'                     => 'hs.problem_has_been_acknowledged',
@@ -74,6 +78,20 @@ class HoststatusQuery extends IdoQuery
             'host_modified_host_attributes'         => 'hs.modified_host_attributes',
             'host_next_check'                       => 'CASE hs.should_be_scheduled WHEN 1 THEN UNIX_TIMESTAMP(hs.next_check) ELSE NULL END',
             'host_next_notification'                => 'UNIX_TIMESTAMP(hs.next_notification)',
+            'host_next_update'                      => 'CASE WHEN hs.has_been_checked = 0 OR hs.has_been_checked IS NULL
+            THEN
+                NULL
+            ELSE
+                UNIX_TIMESTAMP(hs.last_check)
+                + CASE WHEN
+                    COALESCE(hs.current_state, 0) > 0 AND hs.state_type = 0
+                THEN
+                    hs.retry_check_interval
+                ELSE
+                    hs.normal_check_interval
+                END * 60 * 2
+                + CEIL(hs.execution_time)
+            END',
             'host_no_more_notifications'            => 'hs.no_more_notifications',
             'host_normal_check_interval'            => 'hs.normal_check_interval',
             'host_notifications_enabled'            => 'hs.notifications_enabled',
@@ -131,63 +149,20 @@ class HoststatusQuery extends IdoQuery
             'host_status_update_time'   => 'hs.status_update_time',
             'host_unhandled'            => 'CASE WHEN (hs.problem_has_been_acknowledged + hs.scheduled_downtime_depth) = 0 THEN 1 ELSE 0 END'
         ),
-        'lasthostackcomment' => array(
-            'host_last_ack' => 'hlac.last_ack_data'
-        ),
-        'lasthostcomment' => array(
-            'host_last_comment' => 'hlc.last_comment_data'
-        ),
-        'lasthostdowntimecomment' => array(
-            'host_last_downtime' => 'hldc.last_downtime_data'
-        ),
-        'lasthostflappingcomment' => array(
-            'host_last_flapping' => 'hlfc.last_flapping_data'
-        ),
         'servicegroups' => array(
             'servicegroup'          => 'sgo.name1 COLLATE latin1_general_ci',
             'servicegroup_name'     => 'sgo.name1',
             'servicegroup_alias'    => 'sg.alias COLLATE latin1_general_ci'
         ),
-        'serviceproblemsummary' => array(
-            'host_unhandled_services' => 'sps.unhandled_services_count'
-        ),
         'services' => array(
             'service'                => 'so.name2 COLLATE latin1_general_ci',
             'service_description'    => 'so.name2',
             'service_display_name'   => 's.display_name COLLATE latin1_general_ci',
+        ),
+        'checktimeperiods' => array(
+            'host_check_timeperiod' => 'ctp.alias COLLATE latin1_general_ci'
         )
     );
-
-    /**
-     * Create a sub query to join comments into status query
-     *
-     * @param   int     $entryType
-     * @param   string  $alias
-     *
-     * @return  Zend_Db_Expr
-     */
-    protected function createLastCommentSubQuery($entryType, $alias)
-    {
-        $sql = <<<SQL
-SELECT
-  c.object_id,
-  '[' || c.author_name || '] ' || c.comment_data AS $alias
-FROM
-  icinga_comments c
-INNER JOIN
-  (
-    SELECT
-      MAX(comment_id) AS comment_id,
-      object_id
-    FROM
-      icinga_comments
-    WHERE
-      entry_type = $entryType
-    GROUP BY object_id
-  ) ec ON ec.comment_id = c.comment_id
-SQL;
-        return new Zend_Db_Expr('(' . $sql . ')');
-    }
 
     /**
      * {@inheritdoc}
@@ -246,54 +221,6 @@ SQL;
     }
 
     /**
-     * Join last host acknowledgement comment
-     */
-    protected function joinLasthostackcomment()
-    {
-        $this->select->joinLeft(
-            array('hlac' => $this->createLastCommentSubQuery(4, 'last_ack_data')),
-            'hlac.object_id = ho.object_id',
-            array()
-        );
-    }
-
-    /**
-     * Join last host comment
-     */
-    protected function joinLasthostcomment()
-    {
-        $this->select->joinLeft(
-            array('hlc' => $this->createLastCommentSubQuery(1, 'last_comment_data')),
-            'hlc.object_id = ho.object_id',
-            array()
-        );
-    }
-
-    /**
-     * Join last host downtime comment
-     */
-    protected function joinLasthostdowntimeComment()
-    {
-        $this->select->joinLeft(
-            array('hldc' => $this->createLastCommentSubQuery(2, 'last_downtime_data')),
-            'hldc.object_id = ho.object_id',
-            array()
-        );
-    }
-
-    /**
-     * Join last host flapping comment
-     */
-    protected function joinLasthostflappingcomment()
-    {
-        $this->select->joinLeft(
-            array('hlfc' => $this->createLastCommentSubQuery(3, 'last_flapping_data')),
-            'hlfc.object_id = ho.object_id',
-            array()
-        );
-    }
-
-    /**
      * Join service groups
      */
     protected function joinServicegroups()
@@ -332,40 +259,22 @@ SQL;
     }
 
     /**
-     * Join service problem summary
+     * Join instances
      */
-    protected function joinServiceproblemsummary()
+    protected function joinInstances()
     {
-        $select = <<<'SQL'
-SELECT
-    SUM(
-        CASE WHEN(ss.problem_has_been_acknowledged + ss.scheduled_downtime_depth + COALESCE(hs.current_state, 0)) > 0
-        THEN 0
-        ELSE 1
-        END
-    ) AS unhandled_services_count,
-    SUM(
-        CASE WHEN (ss.problem_has_been_acknowledged + ss.scheduled_downtime_depth + COALESCE(hs.current_state, 0) ) > 0
-        THEN 1
-        ELSE 0
-        END
-    ) AS handled_services_count,
-    s.host_object_id
-FROM
-    icinga_servicestatus ss
-    JOIN icinga_objects o ON o.object_id = ss.service_object_id
-    JOIN icinga_services s ON s.service_object_id = o.object_id
-    JOIN icinga_hoststatus hs ON hs.host_object_id = s.host_object_id
-WHERE
-    o.is_active = 1
-    AND o.objecttype_id = 2
-    AND ss.current_state > 0
-GROUP BY
-    s.host_object_id
-SQL;
+        $this->select->join(
+            array('i' => $this->prefix . 'instances'),
+            'i.instance_id = ho.instance_id',
+            array()
+        );
+    }
+
+    protected function joinChecktimeperiods()
+    {
         $this->select->joinLeft(
-            array('sps' => new Zend_Db_Expr('(' . $select . ')')),
-            'sps.host_object_id = ho.object_id',
+            array('ctp' => $this->prefix . 'timeperiods'),
+            'ctp.timeperiod_object_id = h.check_timeperiod_object_id',
             array()
         );
     }
@@ -375,78 +284,84 @@ SQL;
      */
     public function getGroup()
     {
-        $group = array();
-        if ($this->hasJoinedVirtualTable('hostgroups') || $this->hasJoinedVirtualTable('services')) {
-            $group = array('h.host_id', 'ho.object_id');
-            if ($this->hasJoinedVirtualTable('hoststatus')) {
-                $group[] = 'hs.hoststatus_id';
-            }
-
-            if ($this->hasJoinedVirtualTable('serviceproblemsummary')) {
-                $group[] = 'sps.unhandled_services_count';
-            }
-
-            if ($this->hasJoinedVirtualTable('lasthostackcomment')) {
-                $group[] = 'hlac.last_ack_data';
-            }
-
-            if ($this->hasJoinedVirtualTable('lasthostcomment')) {
-                $group[] = 'hlc.last_comment_data';
-            }
-
-            if ($this->hasJoinedVirtualTable('lasthostdowntimecomment')) {
-                $group[] = 'hldc.last_downtime_data';
-            }
-
-            if ($this->hasJoinedVirtualTable('lasthostflappingcomment')) {
-                $group[] = 'hlfc.last_flapping_data';
-            }
-
-            if ($this->hasJoinedVirtualTable('hostgroups')) {
-                $selected = false;
-                foreach ($this->columns as $alias => $column) {
-                    if ($column instanceof Zend_Db_Expr) {
-                        continue;
-                    }
-
-                    $table = $this->aliasToTableName(
-                        $this->hasAliasName($alias) ? $alias : $this->customAliasToAlias($alias)
-                    );
-                    if ($table === 'hostgroups') {
-                        $selected = true;
-                        break;
-                    }
-                }
-
-                if ($selected) {
-                    $group[] = 'hg.hostgroup_id';
-                    $group[] = 'hgo.object_id';
-                }
-            }
-
-            if ($this->hasJoinedVirtualTable('servicegroups')) {
-                $selected = false;
-                foreach ($this->columns as $alias => $column) {
-                    if ($column instanceof Zend_Db_Expr) {
-                        continue;
-                    }
-
-                    $table = $this->aliasToTableName(
-                        $this->hasAliasName($alias) ? $alias : $this->customAliasToAlias($alias)
-                    );
-                    if ($table === 'servicegroups') {
-                        $selected = true;
-                        break;
-                    }
-                }
-
-                if ($selected) {
-                    $group[] = 'sg.servicegroup_id';
-                    $group[] = 'sgo.object_id';
-                }
+        $group = parent::getGroup() ?: array();
+        if (! is_array($group)) {
+            $group = array($group);
+        }
+        $groupedTables = array();
+        if ($this->hasJoinedVirtualTable('servicegroups')) {
+            $group[] = 'ho.object_id';
+            $group[] = 'h.host_id';
+            $groupedTables['hosts'] = true;
+            $serviceGroupColumns = array_keys($this->columnMap['servicegroups']);
+            $selectedServiceGroupColumns = array_intersect($serviceGroupColumns, array_keys($this->columns));
+            if (! empty($selectedServiceGroupColumns)) {
+                $group[] = 'sgo.object_id';
+                $group[] = 'sg.servicegroup_id';
+                $groupedTables['servicegroups'] = true;
             }
         }
-
+        if ($this->hasJoinedVirtualTable('hostgroups')) {
+            if (! isset($groupedTables['hosts'])) {
+                $group[] = 'ho.object_id';
+                $group[] = 'h.host_id';
+                $groupedTables['hosts'] = true;
+            }
+            $hostGroupColumns = array_keys($this->columnMap['hostgroups']);
+            $selectedHostGroupColumns = array_intersect($hostGroupColumns, array_keys($this->columns));
+            if (! empty($selectedHostGroupColumns)) {
+                $group[] = 'hgo.object_id';
+                $group[] = 'hg.hostgroup_id';
+                $groupedTables['hostgroups'] = true;
+            }
+        }
+        if (! empty($groupedTables)) {
+            foreach ($this->columns as $alias => $column) {
+                if ($column instanceof Zend_Db_Expr || $column === '(NULL)') {
+                    continue;
+                }
+                $tableName = $this->aliasToTableName(
+                    $this->hasAliasName($alias) ? $alias : $this->customAliasToAlias($alias)
+                );
+                if (isset($groupedTables[$tableName])) {
+                    continue;
+                }
+                switch ($tableName) {
+                    case 'hoststatus':
+                        $group[] = 'hs.hoststatus_id';
+                        break;
+                    case 'serviceproblemsummary':
+                        $group[] = 'sps.unhandled_services_count';
+                        break;
+                    case 'services':
+                        $group[] = 'so.object_id';
+                        $group[] = 's.service_id';
+                        break;
+                    case 'instances':
+                        $group[] = 'i.instance_id';
+                        break;
+                    default:
+                        continue 2;
+                }
+                $groupedTables[$tableName] = true;
+            }
+        }
         return $group;
+    }
+
+    /**
+     * Query the service problem summary for all hosts of this query's result set
+     *
+     * @return  HostserviceproblemsummaryQuery
+     */
+    public function queryServiceProblemSummary()
+    {
+        return $this->createSubQuery('Hostserviceproblemsummary')
+            ->setHostStatusQuery($this)
+            ->columns(array(
+                'host_name',
+                'unhandled_service_count'
+            )
+        );
     }
 }

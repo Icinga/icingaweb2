@@ -17,6 +17,9 @@ class ServicedowntimeQuery extends IdoQuery
      * {@inheritdoc}
      */
     protected $columnMap = array(
+        'instances' => array(
+            'instance_name' => 'i.instance_name'
+        ),
         'downtimes' => array(
             'downtime_author'           => 'sd.author_name COLLATE latin1_general_ci',
             'downtime_author_name'      => 'sd.author_name',
@@ -172,6 +175,18 @@ class ServicedowntimeQuery extends IdoQuery
     }
 
     /**
+     * Join instances
+     */
+    protected function joinInstances()
+    {
+        $this->select->join(
+            array('i' => $this->prefix . 'instances'),
+            'i.instance_id = sd.instance_id',
+            array()
+        );
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function getGroup()
@@ -194,6 +209,10 @@ class ServicedowntimeQuery extends IdoQuery
 
             if ($this->hasJoinedVirtualTable('servicestatus')) {
                 $group[] = 'ss.servicestatus_id';
+            }
+
+            if ($this->hasJoinedVirtualTable('instances')) {
+                $group[] = 'i.instance_id';
             }
         }
 

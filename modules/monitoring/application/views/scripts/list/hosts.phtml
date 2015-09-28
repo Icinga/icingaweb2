@@ -1,12 +1,16 @@
 <?php
 use Icinga\Module\Monitoring\Object\Host;
 
+$hosts->peekAhead($this->compact);
+
 if (! $this->compact): ?>
 <div class="controls separated">
   <?= $this->tabs; ?>
   <div class="dontprint">
     <?= $this->render('list/components/selectioninfo.phtml'); ?>
-    <?= $this->render('list/components/hostssummary.phtml'); ?>
+    <h2 class="tinystatesummary" <?= $this->compact ? ' data-base-target="col1"' : ''; ?>
+      <?= $this->render('list/components/hostssummary.phtml'); ?>
+    </h2>
   </div>
   <?= $this->sortBox; ?>
   <?= $this->limiter; ?>
@@ -19,6 +23,7 @@ if (! $this->compact): ?>
     data-base-target="_next"
     class="action multiselect"
     data-icinga-multiselect-url="<?= $this->href('monitoring/hosts/show') ?>"
+    data-icinga-multiselect-controllers="<?= $this->href("monitoring/hosts") ?>"
     data-icinga-multiselect-data="host"
 >
   <tbody>
@@ -56,11 +61,11 @@ if (! $this->compact): ?>
             'class' => 'rowaction'
           )
         ); ?>
-        <?php if (isset($host->host_unhandled_services) && $host->host_unhandled_services > 0): ?>
+        <?php if (isset($summary[$host->host_name])): ?>
         <span> (<?= $this->qlink(
           sprintf(
-            $this->translatePlural('%u unhandled service', '%u unhandled services', $host->host_unhandled_services),
-            $host->host_unhandled_services
+            $this->translatePlural('%u unhandled service', '%u unhandled services', $summary[$host->host_name]),
+            $summary[$host->host_name]
           ),
           'monitoring/list/services',
           array(
@@ -74,9 +79,9 @@ if (! $this->compact): ?>
               $this->translatePlural(
                 'List %s unhandled service problem on host %s',
                 'List %s unhandled service problems on host %s',
-                $host->host_unhandled_services
+                $summary[$host->host_name]
               ),
-              $host->host_unhandled_services,
+              $summary[$host->host_name],
               $host->host_name
             )
           )
@@ -93,5 +98,15 @@ if (! $this->compact): ?>
 </table>
 <?php if (! $hosts->hasResult()): ?>
   <?= $this->translate('No hosts found matching the filter'); ?>
+<?php elseif ($hosts->hasMore()): ?>
+  <?= $this->qlink(
+    $this->translate('Show More'),
+    $this->url()->without(array('view', 'limit')),
+    null,
+    array(
+      'data-base-target'    => '_next',
+      'class'               => 'pull-right show-more'
+    )
+  ); ?>
 <?php endif ?>
 </div>

@@ -22,9 +22,9 @@ require_once 'Mockery/Loader.php';
 $mockeryLoader = new \Mockery\Loader;
 $mockeryLoader->register();
 
-require_once($libraryPath . '/Icinga/Application/Loader.php');
+require_once($libraryPath . '/Icinga/Application/ClassLoader.php');
 
-$loader = new Icinga\Application\Loader();
+$loader = new Icinga\Application\ClassLoader();
 $loader->registerNamespace('Tests', $testLibraryPath);
 $loader->registerNamespace('Icinga', $libraryPath . '/Icinga');
 $loader->registerNamespace('Icinga\\Forms', $applicationPath . '/forms');

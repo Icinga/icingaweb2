@@ -236,10 +236,10 @@ class ResourceConfigForm extends ConfigForm
             'livestatus'    => 'Livestatus',
             'ssh'           => $this->translate('SSH Identity'),
         );
-        if ($resourceType === 'ldap' || Platform::extensionLoaded('ldap')) {
+        if ($resourceType === 'ldap' || Platform::hasLdapSupport()) {
             $resourceTypes['ldap'] = 'LDAP';
         }
-        if ($resourceType === 'db' || Platform::hasMysqlSupport() || Platform::hasPostgresqlSupport()) {
+        if ($resourceType === 'db' || Platform::hasDatabaseSupport()) {
             $resourceTypes['db'] = $this->translate('SQL Database');
         }
 
@@ -344,13 +344,27 @@ class ResourceConfigForm extends ConfigForm
             'submit',
             'resource_validation',
             array(
-                'ignore'        => true,
-                'label'         => $this->translate('Validate Configuration'),
-                'decorators'    => array('ViewHelper')
+                'ignore'                => true,
+                'label'                 => $this->translate('Validate Configuration'),
+                'data-progress-label'   => $this->translate('Validation In Progress'),
+                'decorators'            => array('ViewHelper')
             )
         );
+
+        $this->setAttrib('data-progress-element', 'resource-progress');
+        $this->addElement(
+            'note',
+            'resource-progress',
+            array(
+                'decorators'    => array(
+                    'ViewHelper',
+                    array('Spinner', array('id' => 'resource-progress'))
+                )
+            )
+        );
+
         $this->addDisplayGroup(
-            array('btn_submit', 'resource_validation'),
+            array('btn_submit', 'resource_validation', 'resource-progress'),
             'submit_validation',
             array(
                 'decorators' => array(

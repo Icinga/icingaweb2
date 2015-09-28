@@ -4,7 +4,7 @@
 namespace Icinga\Util;
 
 /**
- * Common string helper
+ * Common string functions
  */
 class String
 {
@@ -24,7 +24,7 @@ class String
     /**
      * Uppercase the first character of each word in a string
      *
-     * Converts 'first_name' to 'firstName' for example.
+     * Converts 'first_name' to 'FirstName' for example.
      *
      * @param   string $name
      * @param   string $separator Word separator
@@ -103,8 +103,8 @@ class String
     /**
      * Check if a string ends with a different string
      *
-     * @param $haystack The string to search for matches
-     * @param $needle   The string to match at the start of the haystack
+     * @param $haystack string The string to search for matches
+     * @param $needle   string The string to match at the start of the haystack
      *
      * @return bool     Whether or not needle is at the beginning of haystack
      */

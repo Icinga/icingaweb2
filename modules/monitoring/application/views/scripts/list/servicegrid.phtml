@@ -1,5 +1,6 @@
 <?php
 use Icinga\Module\Monitoring\Object\Service;
+use Icinga\Web\Url;
 
 if (! $this->compact): ?>
 <div class="controls">
@@ -12,97 +13,120 @@ if (! $this->compact): ?>
 <?php endif ?>
 <div class="content" data-base-target="_next">
 <?php
-
-$hasHeader = false;
-$pivotData = $this->pivot->toArray();
-if (count($pivotData) === 0) {
+if (empty($pivotData)) {
     echo $this->translate('No services found matching the filter') . '</div>';
     return;
 }
-
 $hostFilter = '(host_name=' . implode('|host_name=', array_keys($pivotData)) . ')';
 ?>
-  <table class="pivot servicestates">
-<?php foreach ($pivotData as $host_name => $serviceStates): ?>
-<?php if (!$hasHeader): ?>
-    <thead>
-      <tr>
-        <th><?= $this->partial(
-          'joystickPagination.phtml',
-          'default',
-          array(
-            'xAxisPaginator' => $horizontalPaginator,
-            'yAxisPaginator' => $verticalPaginator
-          )
-        ); ?></th>
-        <th colspan="<?= count($serviceStates); ?>">
-          <div>
-<?php
-$serviceDescriptions = array_keys($serviceStates);
-$serviceFilter = '(service_description=' . implode('|service_description=', $serviceDescriptions) . ')';
 
-foreach ($serviceDescriptions as $service_description): ?>
-            <span>
-              <?= $this->qlink(
-                '<abbr>' . (strlen($service_description) > 18 ? substr($service_description, 0, 18) . '...' : $service_description) . '</abbr>',
+<table class="service-grid-table">
+    <thead>
+        <tr>
+            <th><?= $this->partial(
+                'joystickPagination.phtml',
+                'default',
+                array(
+                    'xAxisPaginator' => $horizontalPaginator,
+                    'yAxisPaginator' => $verticalPaginator
+                )
+            ); ?></th>
+        <?php foreach ($pivotHeader['cols'] as $serviceDescription => $serviceDisplayName): ?>
+            <th class="rotate-45"><div><span><?= $this->qlink(
+                $this->ellipsis($serviceDisplayName, 18),
                 'monitoring/list/services?' . $hostFilter,
-                array(
-                  'service_description' => $service_description
-                ),
-                array(
-                  'title' => sprintf($this->translate('List all services with the name "%s" on all reported hosts'), $service_description)
-                ),
+                array('service_description' => $serviceDescription),
+                array('title' => sprintf(
+                    $this->translate('List all services with the name "%s" on all reported hosts'),
+                    $serviceDisplayName
+                )),
                 false
-              ); ?>
-            </span>
-<?php endforeach ?>
-          </div>
-        </th>
-      </tr>
+            ) ?></span></div></th>
+        <?php endforeach ?>
+        </tr>
     </thead>
     <tbody>
-<?php $hasHeader = true; ?>
-<?php endif ?>
-      <tr>
-        <th>
-          <?= $this->qlink(
-            $host_name,
-            'monitoring/list/services?' . $serviceFilter,
-            array('host' => $host_name),
-            array('title' => sprintf($this->translate('List all reported services on host %s'), $host_name))
-          ); ?>
-        </th>
-<?php foreach (array_values($serviceStates) as $service): ?>
-<?php if ($service !== null): ?>
-        <td>
-          <span class="sr-only" id="<?= $service->host_name . '_' . $service->service_description . '_desc'; ?>">
-            <?= $this->escape($service->service_output); ?>
-          </span>
-          <?= $this->qlink(
-            '',
-            'monitoring/show/service',
-            array(
-              'host'      => $service->host_name,
-              'service'   => $service->service_description
-            ),
-            array(
-              'aria-describedby'    => $service->host_name . '_' . $service->service_description . '_desc',
-              'class'               => 'state_' . Service::getStateText($service->service_state). ($service->service_handled ? ' handled' : ''),
-              'title'               => $this->escape($service->service_output),
-              'aria-label'          => sprintf(
-                $this->translate('Show detailed information for service %s on host %s'),
-                $service->service_description,
-                $service->host_name
-              )
-            )
-          ); ?>
-        </td>
-<?php else: ?>
-        <td><span aria-hidden="true">&middot;</span></td>
-<?php endif ?>
-<?php endforeach ?>
-      </tr>
-<?php endforeach ?>
+
+    <?php $i = 0; ?>
+    <?php foreach ($pivotHeader['rows'] as $hostName => $hostDisplayName): ?>
+        <tr>
+            <th><?php
+                $services = $pivotData[$hostName];
+                $serviceFilter = '(service_description=' . implode('|service_description=', array_keys($services)) . ')';
+                echo $this->qlink(
+                    $hostDisplayName,
+                    'monitoring/list/services?' . $serviceFilter,
+                    array('host_name' => $hostName),
+                    array('title' => sprintf($this->translate('List all reported services on host %s'), $hostDisplayName))
+                );
+            ?></th>
+        <?php foreach (array_keys($pivotHeader['cols']) as $serviceDescription): ?>
+            <td>
+            <?php
+            $service = $pivotData[$hostName][$serviceDescription];
+            if ($service === null): ?>
+                <span aria-hidden="true">&middot;</span>
+            <?php continue; endif ?>
+                <?php $ariaDescribedById = $this->protectId($service->host_name . '_' . $service->service_description . '_desc') ?>
+                <span class="sr-only" id="<?= $ariaDescribedById ?>">
+                    <?= $this->escape($service->service_output) ?>
+                </span>
+              <?= $this->qlink(
+                  '',
+                  'monitoring/service/show',
+                  array(
+                      'host'    => $hostName,
+                      'service' => $serviceDescription
+                  ),
+                array(
+                    'aria-describedby'    => $ariaDescribedById,
+                    'class'               => 'bg-color-' . Service::getStateText($service->service_state) . ($service->service_handled ? ' handled' : ''),
+                    'title'               => $this->escape($service->service_output),
+                    'aria-label'          => sprintf(
+                        $this->translate('Show detailed information for service %s on host %s'),
+                        $service->service_display_name,
+                        $service->host_display_name
+                    )
+                )
+            ); ?>
+            </td>
+        <?php endforeach ?>
+        <?php if (! $this->compact && $this->horizontalPaginator->getPages()->pageCount > 1): ?>
+            <td>
+                <?php $expandLink = $this->qlink(
+                    $this->translate('more …'),
+                    Url::fromRequest(),
+                    array(
+                        'limit' => (
+                                $this->horizontalPaginator->getItemCountPerPage() + 20) . ','
+                             .  $this->verticalPaginator->getItemCountPerPage()
+                    ),
+                    array(
+                        'data-base-target'  => '_self',
+                    )
+                ) ?>
+                <?= ++$i === (int) (count($pivotHeader['rows']) / 2) ? $expandLink : '' ?>
+            </td>
+        <?php endif;?>
+        </tr>
+    <?php endforeach ?>
+    <?php if (! $this->compact && $this->verticalPaginator->getPages()->pageCount > 1): ;?>
+        <tr>
+            <td colspan="<?= count($pivotHeader['cols']) + 1?>" class="service-grid-table-more">
+                <?php echo $this->qlink(
+                    $this->translate('more …'),
+                    Url::fromRequest(),
+                    array(
+                        'limit' => $this->horizontalPaginator->getItemCountPerPage() . ',' .
+                            ($this->verticalPaginator->getItemCountPerPage() + 20)
+                    ),
+                    array(
+                        'data-base-target'  => '_self'
+                    )
+                ) ?>
+            </td>
+        </tr>
+    <?php endif;?>
     </tbody>
-  </table>
+</table>
 </div>
