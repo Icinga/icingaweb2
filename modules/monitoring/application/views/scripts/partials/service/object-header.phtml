@@ -11,16 +11,16 @@ use Icinga\Module\Monitoring\Object\Service;
         </td>
         <td>
           <?= $this->iconImage()->service($object) ?>
-          <strong class="dblclickselect"><?= $this->escape($object->host_display_name); ?></strong>
+          <strong class="selectable"><?= $this->escape($object->host_display_name); ?></strong>
           <?php if ($object->host_display_name !== $object->host_name): ?>
-            <small class="dblclickselect">(<?= $this->escape($object->host_name); ?>)</small>
+            <small class="selectable">(<?= $this->escape($object->host_name); ?>)</small>
           <?php endif ?>
           <br/>
           <?php if ($object->host_address6 && $object->host_address6 !== $object->host_name): ?>
-            <span class="address padded dblclickselect" title="IPv6 address"><?= $this->escape($object->host_address6); ?></span>
+            <span class="selectable" title="IPv6 address"><?= $this->escape($object->host_address6); ?></span>
           <?php endif ?>
           <?php if ($object->host_address && $object->host_address !== $object->host_name): ?>
-            <span class="address padded dblclickselect" title="IPv4 address"><?= $this->escape($object->host_address); ?></span>
+            <span class="selectable" title="IPv4 address"><?= $this->escape($object->host_address); ?></span>
           <?php endif ?>
         </td>
     </tr>
@@ -31,7 +31,7 @@ use Icinga\Module\Monitoring\Object\Service;
         </td>
         <td>
             <?= $this->iconImage()->host($object) ?>
-            <strong><?= $this->translate('Service'); ?>: <span class="dblclickselect"><?= $this->escape($object->service_display_name); ?></span></strong>
+            <strong><?= $this->translate('Service'); ?>: <span class="selectable"><?= $this->escape($object->service_display_name); ?></span></strong>
             <?php if ($object->service_display_name !== $object->service_description): ?>
               <small>(<?= $this->escape($object->service_description); ?>)</small>
             <?php endif ?>

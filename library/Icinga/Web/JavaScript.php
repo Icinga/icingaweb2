@@ -28,7 +28,7 @@ class JavaScript
         'js/icinga/behavior/navigation.js',
         'js/icinga/behavior/form.js',
         'js/icinga/behavior/actiontable.js',
-        'js/icinga/behavior/dblclickselect.js'
+        'js/icinga/behavior/selectable.js'
     );
 
     protected static $vendorFiles = array(
