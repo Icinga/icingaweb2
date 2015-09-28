@@ -33,7 +33,10 @@ class Contact extends DataView
             'contact_notify_host_flapping',
             'contact_notify_host_downtime',
             'contact_notify_host_timeperiod',
-            'contact_notify_service_timeperiod'
+            'contact_notify_service_timeperiod',
+            'contactgroup',
+            'contactgroup_name',
+            'contactgroup_alias'
         );
     }
 

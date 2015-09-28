@@ -20,6 +20,11 @@ class ContactQuery extends IdoQuery
         'instances' => array(
             'instance_name' => 'i.instance_name'
         ),
+        'contactgroups' => array(
+            'contactgroup'          => 'cgo.name1 COLLATE latin1_general_ci',
+            'contactgroup_name'     => 'cgo.name1',
+            'contactgroup_alias'    => 'cg.alias COLLATE latin1_general_ci'
+        ),
         'contacts' => array(
             'contact_id'                        => 'c.contact_id',
             'contact'                           => 'co.name1 COLLATE latin1_general_ci',
@@ -182,6 +187,26 @@ class ContactQuery extends IdoQuery
         )->joinLeft(
             array('so' => $this->prefix . 'objects'),
             'so.object_id = s.service_object_id AND so.is_active = 1 AND so.objecttype_id = 2',
+            array()
+        );
+    }
+
+    /**
+     * Join contacts
+     */
+    protected function joinContactgroups()
+    {
+        $this->select->joinLeft(
+            array('cgm' => $this->prefix . 'contactgroup_members'),
+            'co.object_id = cgm.contact_object_id',
+            array()
+        )->joinLeft(
+            array('cg' => $this->prefix . 'contactgroups'),
+            'cgm.contactgroup_id = cg.contactgroup_id',
+            array()
+        )->joinLeft(
+            array('cgo' => $this->prefix . 'objects'),
+            'cg.contactgroup_object_id = cgo.object_id AND cgo.is_active = 1 AND cgo.objecttype_id = 11',
             array()
         );
     }
