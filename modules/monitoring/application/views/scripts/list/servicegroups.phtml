@@ -14,26 +14,26 @@ if (! $this->compact): ?>
     <p><?= $this->translate('No service groups found matching the filter.') ?></p>
 </div>
 <?php return; endif ?>
-<table class="groupview action" data-base-target="_next">
+<table class="action-tabline listing-table" data-base-target="_next">
 <thead>
+    <th></th>
     <th><?= $this->translate('Service Group') ?></th>
-    <th><?= $this->translate('Total Services') ?></th>
     <th><?= $this->translate('Service States') ?></th>
 </thead>
 <tbody>
 <?php foreach ($servicegroups->peekAhead($this->compact) as  $serviceGroup): ?>
     <tr href="<?= $this->href('monitoring/list/services', array('servicegroup_name' =>  $serviceGroup->servicegroup_name)) ?>">
-        <td class="groupname">
+        <td class="count-col">
+            <span class="badge"><?= $serviceGroup->services_total ?></span>
+        </td>
+        <th>
             <?= $this->qlink(
                 $serviceGroup->servicegroup_alias,
                 'monitoring/list/services',
                 array('servicegroup_name' =>  $serviceGroup->servicegroup_name),
                 array('title' => sprintf($this->translate('List all services in the group "%s"'),  $serviceGroup->servicegroup_alias))
             ) ?>
-        </td>
-        <td class="total">
-            <?=  $serviceGroup->services_total ?>
-        </td>
+        </th>
         <td>
             <?php
             $stateBadges = new StateBadges();
