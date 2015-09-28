@@ -186,7 +186,7 @@ abstract class DataView implements QueryInterface, SortRules, FilterColumns, Ite
     public function isValidFilterTarget($column)
     {
         // Customvar
-        if ($column[0] === '_' && preg_match('/^_(?:host|service)_/', $column)) {
+        if ($column[0] === '_' && preg_match('/^_(?:host|service)_/i', $column)) {
             return true;
         }
         return in_array($column, $this->getColumns()) || in_array($column, $this->getStaticFilterColumns());
