@@ -9,6 +9,6 @@ class LogoutNavigationItemRenderer extends NavigationItemRenderer
 {
     public function render(NavigationItem $item = null)
     {
-        return '<div class="user-nav-item">' . parent::render($item) . '</div>';
+        return parent::render($item);
     }
 }

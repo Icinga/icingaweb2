@@ -17,6 +17,6 @@ class UserNavigationItemRenderer extends NavigationItemRenderer
 
     public function render(NavigationItem $item = null)
     {
-        return '<div class="user-nav-item clearfix">' . $this->getAvatar() . parent::render($item) . '</div>';
+        return '<div class="clearfix">' . $this->getAvatar() . parent::render($item) . '</div>';
     }
 }

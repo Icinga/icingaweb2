@@ -309,6 +309,7 @@ class Web extends EmbeddedWeb
                             'priority'  => 920
                         )
                     ),
+                    'cssClass'  => 'user-nav-item',
                     'label'     => $this->user->getUsername(),
                     'url'       => 'account',
                     'priority'  => 900,
@@ -317,13 +318,14 @@ class Web extends EmbeddedWeb
                     ),
                 ),
                 'logout' => array(
+                    'cssClass'  => 'user-nav-item',
                     'label'     => t('Logout'),
-                    'url'       => 'authentication/logout',
                     'priority'  => 990,
                     'renderer'  => array(
                         'LogoutNavigationItemRenderer',
                         'target' => '_self'
-                    )
+                    ),
+                    'url'       => 'authentication/logout'
                 )
             );
 
