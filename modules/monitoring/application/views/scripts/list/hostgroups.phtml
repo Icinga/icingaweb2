@@ -19,17 +19,20 @@ if (! $this->compact): ?>
 <table class="action-table listing-table" data-base-target="_next">
 <thead>
 <tr>
+    <th></th>
     <th><?= $this->translate('Host Group') ?></th>
-    <th><?= $this->translate('Total Hosts') ?></th>
     <th><?= $this->translate('Host States') ?></th>
-    <th><?= $this->translate('Total Services') ?></th>
+    <th></th>
     <th><?= $this->translate('Service States') ?></th>
 </tr>
 </thead>
 <tbody>
 <?php foreach ($hostgroups as $hostgroup): ?>
     <tr href="<?= $this->href('monitoring/list/hosts', array('hostgroup_name' => $hostgroup->hostgroup_name)) ?>">
-        <td class="groupname">
+        <td class="count-col">
+            <span class="badge"><?= $hostgroup->hosts_total ?></span>
+        </td>
+        <th>
             <?= $this->qlink(
                 $hostgroup->hostgroup_alias,
                 'monitoring/list/hosts',
@@ -39,18 +42,7 @@ if (! $this->compact): ?>
                     $hostgroup->hostgroup_alias
                 ))
             ) ?>
-        </td>
-        <td class="total">
-            <?= $this->qlink(
-                $hostgroup->hosts_total,
-                'monitoring/list/hosts',
-                array('hostgroup_name' => $hostgroup->hostgroup_name),
-                array('title' => sprintf(
-                    $this->translate('List all hosts in host group "%s"'),
-                    $hostgroup->hostgroup_alias
-                ))
-            ) ?>
-        </td>
+        </th>
         <td>
             <?php
             $stateBadges = new StateBadges();
@@ -137,7 +129,7 @@ if (! $this->compact): ?>
             echo $stateBadges->render();
             ?>
         </td>
-        <td class="total">
+        <td class="count-col">
             <?= $this->qlink(
                 $hostgroup->services_total,
                 'monitoring/list/services',
@@ -145,7 +137,7 @@ if (! $this->compact): ?>
                 array('title' => sprintf(
                     $this->translate('List all services of all hosts in host group "%s"'),
                     $hostgroup->hostgroup_alias
-                ))
+                ), 'class' => 'badge')
             ) ?>
         </td>
         <td>
