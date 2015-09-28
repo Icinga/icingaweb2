@@ -2,171 +2,168 @@
 
 if (! $this->compact): ?>
 <div class="controls">
-  <?= $this->tabs ?>
-  <?= $this->sortBox ?>
-  <?= $this->limiter ?>
-  <?= $this->paginator ?>
-  <?= $this->filterEditor ?>
+    <?= $this->tabs ?>
+    <?= $this->sortBox ?>
+    <?= $this->limiter ?>
+    <?= $this->paginator ?>
+    <?= $this->filterEditor ?>
 </div>
 <?php endif ?>
 <div class="content">
-<?php if ($servicegroups->hasResult()): ?>
-  <p><?= $this->translate('No servicegroups found matching the filter') ?></p>
+    <?php if ($servicegroups->hasResult()): ?>
+    <p><?= $this->translate('No service groups found matching the filter.') ?></p>
 </div>
-<?php endif ?>
+<?php return; endif ?>
 <table class="groupview action" data-base-target="_next">
-  <thead>
-  <th><?= $this->translate('Service Group') ?></th>
-  <th><?= $this->translate('Total Services') ?></th>
-  <th><?= $this->translate('Service States') ?></th>
-  </thead>
-  <tbody>
-<?php
-
-$servicegroups->peekAhead($this->compact);
-foreach ($servicegroups as  $serviceGroup): ?>
-      <tr href="<?= $this->href('monitoring/list/services', array('servicegroup_name' =>  $serviceGroup->servicegroup_name)) ?>">
+<thead>
+    <th><?= $this->translate('Service Group') ?></th>
+    <th><?= $this->translate('Total Services') ?></th>
+    <th><?= $this->translate('Service States') ?></th>
+</thead>
+<tbody>
+<?php foreach ($servicegroups->peekAhead($this->compact) as  $serviceGroup): ?>
+    <tr href="<?= $this->href('monitoring/list/services', array('servicegroup_name' =>  $serviceGroup->servicegroup_name)) ?>">
         <td class="groupname">
-          <?= $this->qlink(
-             $serviceGroup->servicegroup_alias,
-            'monitoring/list/services',
-            array('servicegroup_name' =>  $serviceGroup->servicegroup_name),
-            array('title' => sprintf($this->translate('List all services in the group "%s"'),  $serviceGroup->servicegroup_alias))
-          ) ?>
+            <?= $this->qlink(
+                $serviceGroup->servicegroup_alias,
+                'monitoring/list/services',
+                array('servicegroup_name' =>  $serviceGroup->servicegroup_name),
+                array('title' => sprintf($this->translate('List all services in the group "%s"'),  $serviceGroup->servicegroup_alias))
+            ) ?>
         </td>
         <td class="total">
-          <?=  $serviceGroup->services_total ?>
+            <?=  $serviceGroup->services_total ?>
         </td>
         <td>
-          <?php
-          $stateBadges = new StateBadges();
-          $stateBadges
-              ->setUrl('monitoring/list/services')
-              ->add(
-                  StateBadges::STATE_OK,
-                  $serviceGroup->services_ok,
-                  array(
-                      'service_state'     => 0,
-                      'servicegroup_name' => $serviceGroup->servicegroup_name,
-                      'sort'              => 'service_severity'
-                  ),
-                  'List %s service that is currently in state OK in service group "%s"',
-                  'List %s services which are currently in state OK in service group "%s"',
-                  array($serviceGroup->services_ok, $serviceGroup->servicegroup_alias)
-              )
-              ->add(
-                  StateBadges::STATE_CRITICAL,
-                  $serviceGroup->services_critical_unhandled,
-                  array(
-                      'service_state'         => 2,
-                      'service_acknowledged'  => 0,
-                      'service_in_downtime'   => 0,
-                      'host_problem'          => 0,
-                      'servicegroup_name'     => $serviceGroup->servicegroup_name,
-                      'sort'                  => 'service_severity'
-                  ),
-                  'List %s service that is currently in state CRITICAL in service group "%s"',
-                  'List %s services which are currently in state CRITICAL in service group "%s"',
-                  array($serviceGroup->services_critical_unhandled, $serviceGroup->servicegroup_alias)
-              )
-              ->add(
-                  StateBadges::STATE_CRITICAL_HANDLED,
-                  $serviceGroup->services_critical_handled,
-                  array(
-                      'service_state'     => 2,
-                      'service_handled'   => 1,
-                      'servicegroup_name' => $serviceGroup->servicegroup_name,
-                      'sort'              => 'service_severity'
-                  ),
-                  'List %s service that is currently in state CRITICAL (Acknowledged) in service group "%s"',
-                  'List %s services which are currently in state CRITICAL (Acknowledged) in service group "%s"',
-                  array($serviceGroup->services_critical_unhandled, $serviceGroup->servicegroup_alias)
-              )
-              ->add(
-                  StateBadges::STATE_UNKNOWN,
-                  $serviceGroup->services_unknown_unhandled,
-                  array(
-                      'service_state'         => 3,
-                      'service_acknowledged'  => 0,
-                      'service_in_downtime'   => 0,
-                      'host_problem'          => 0,
-                      'servicegroup_name'     => $serviceGroup->servicegroup_name,
-                      'sort'                  => 'service_severity'
-                  ),
-                  'List %s service that is currently in state UNKNOWN in service group "%s"',
-                  'List %s services which are currently in state UNKNOWN in service group "%s"',
-                  array($serviceGroup->services_unknown_unhandled, $serviceGroup->servicegroup_alias)
-              )
-              ->add(
-                  StateBadges::STATE_UNKNOWN_HANDLED,
-                  $serviceGroup->services_unknown_handled,
-                  array(
-                      'service_state'     => 3,
-                      'service_handled'   => 1,
-                      'servicegroup_name' => $serviceGroup->servicegroup_name,
-                      'sort'              => 'service_severity'
-                  ),
-                  'List %s service that is currently in state UNKNOWN (Acknowledged) in service group "%s"',
-                  'List %s services which are currently in state UNKNOWN (Acknowledged) in service group "%s"',
-                  array($serviceGroup->services_unknown_handled, $serviceGroup->servicegroup_alias)
+            <?php
+            $stateBadges = new StateBadges();
+            $stateBadges
+                ->setUrl('monitoring/list/services')
+                ->add(
+                    StateBadges::STATE_OK,
+                    $serviceGroup->services_ok,
+                    array(
+                        'service_state'     => 0,
+                        'servicegroup_name' => $serviceGroup->servicegroup_name,
+                        'sort'              => 'service_severity'
+                    ),
+                    'List %s service that is currently in state OK in service group "%s"',
+                    'List %s services which are currently in state OK in service group "%s"',
+                    array($serviceGroup->services_ok, $serviceGroup->servicegroup_alias)
+                )
+                ->add(
+                    StateBadges::STATE_CRITICAL,
+                    $serviceGroup->services_critical_unhandled,
+                    array(
+                        'service_state'         => 2,
+                        'service_acknowledged'  => 0,
+                        'service_in_downtime'   => 0,
+                        'host_problem'          => 0,
+                        'servicegroup_name'     => $serviceGroup->servicegroup_name,
+                        'sort'                  => 'service_severity'
+                    ),
+                    'List %s service that is currently in state CRITICAL in service group "%s"',
+                    'List %s services which are currently in state CRITICAL in service group "%s"',
+                    array($serviceGroup->services_critical_unhandled, $serviceGroup->servicegroup_alias)
+                )
+                ->add(
+                    StateBadges::STATE_CRITICAL_HANDLED,
+                    $serviceGroup->services_critical_handled,
+                    array(
+                        'service_state'     => 2,
+                        'service_handled'   => 1,
+                        'servicegroup_name' => $serviceGroup->servicegroup_name,
+                        'sort'              => 'service_severity'
+                    ),
+                    'List %s service that is currently in state CRITICAL (Acknowledged) in service group "%s"',
+                    'List %s services which are currently in state CRITICAL (Acknowledged) in service group "%s"',
+                    array($serviceGroup->services_critical_unhandled, $serviceGroup->servicegroup_alias)
+                )
+                ->add(
+                    StateBadges::STATE_UNKNOWN,
+                    $serviceGroup->services_unknown_unhandled,
+                    array(
+                        'service_state'         => 3,
+                        'service_acknowledged'  => 0,
+                        'service_in_downtime'   => 0,
+                        'host_problem'          => 0,
+                        'servicegroup_name'     => $serviceGroup->servicegroup_name,
+                        'sort'                  => 'service_severity'
+                    ),
+                    'List %s service that is currently in state UNKNOWN in service group "%s"',
+                    'List %s services which are currently in state UNKNOWN in service group "%s"',
+                    array($serviceGroup->services_unknown_unhandled, $serviceGroup->servicegroup_alias)
+                )
+                ->add(
+                    StateBadges::STATE_UNKNOWN_HANDLED,
+                    $serviceGroup->services_unknown_handled,
+                    array(
+                        'service_state'     => 3,
+                        'service_handled'   => 1,
+                        'servicegroup_name' => $serviceGroup->servicegroup_name,
+                        'sort'              => 'service_severity'
+                    ),
+                    'List %s service that is currently in state UNKNOWN (Acknowledged) in service group "%s"',
+                    'List %s services which are currently in state UNKNOWN (Acknowledged) in service group "%s"',
+                    array($serviceGroup->services_unknown_handled, $serviceGroup->servicegroup_alias)
 
-              )
-              ->add(
-                  StateBadges::STATE_WARNING,
-                  $serviceGroup->services_warning_unhandled,
-                  array(
-                      'service_state'         => 1,
-                      'service_acknowledged'  => 0,
-                      'service_in_downtime'   => 0,
-                      'host_problem'          => 0,
-                      'servicegroup_name'     => $serviceGroup->servicegroup_name,
-                      'sort'                  => 'service_severity'
-                  ),
-                  'List %s service that is currently in state WARNING in service group "%s"',
-                  'List %s services which are currently in state WARNING in service group "%s"',
-                  array($serviceGroup->services_warning_unhandled, $serviceGroup->servicegroup_alias)
-              )
-              ->add(
-                  StateBadges::STATE_WARNING_HANDLED,
-                  $serviceGroup->services_warning_handled,
-                  array(
-                      'service_state'     => 1,
-                      'service_handled'   => 1,
-                      'servicegroup_name' => $serviceGroup->servicegroup_name,
-                      'sort'              => 'service_severity'
-                  ),
-                  'List %s service that is currently in state WARNING (Acknowledged) in service group "%s"',
-                  'List %s services which are currently in state WARNING (Acknowledged) in service group "%s"',
-                  array($serviceGroup->services_warning_handled, $serviceGroup->servicegroup_alias)
-              )
-              ->add(
-                  StateBadges::STATE_PENDING,
-                  $serviceGroup->services_pending,
-                  array(
-                      'service_state'     => 99,
-                      'servicegroup_name' => $serviceGroup->servicegroup_name,
-                      'sort'              => 'service_severity'
-                  ),
-                  'List %s service that is currenlty in state PENDING in service group "%s"',
-                  'List %s services which are currently in state PENDING in service group "%s"',
-                  array($serviceGroup->services_pending, $serviceGroup->servicegroup_alias)
-              );
-          echo $stateBadges->render();
-          ?>
+                )
+                ->add(
+                    StateBadges::STATE_WARNING,
+                    $serviceGroup->services_warning_unhandled,
+                    array(
+                        'service_state'         => 1,
+                        'service_acknowledged'  => 0,
+                        'service_in_downtime'   => 0,
+                        'host_problem'          => 0,
+                        'servicegroup_name'     => $serviceGroup->servicegroup_name,
+                        'sort'                  => 'service_severity'
+                    ),
+                    'List %s service that is currently in state WARNING in service group "%s"',
+                    'List %s services which are currently in state WARNING in service group "%s"',
+                    array($serviceGroup->services_warning_unhandled, $serviceGroup->servicegroup_alias)
+                )
+                ->add(
+                    StateBadges::STATE_WARNING_HANDLED,
+                    $serviceGroup->services_warning_handled,
+                    array(
+                        'service_state'     => 1,
+                        'service_handled'   => 1,
+                        'servicegroup_name' => $serviceGroup->servicegroup_name,
+                        'sort'              => 'service_severity'
+                    ),
+                    'List %s service that is currently in state WARNING (Acknowledged) in service group "%s"',
+                    'List %s services which are currently in state WARNING (Acknowledged) in service group "%s"',
+                    array($serviceGroup->services_warning_handled, $serviceGroup->servicegroup_alias)
+                )
+                ->add(
+                    StateBadges::STATE_PENDING,
+                    $serviceGroup->services_pending,
+                    array(
+                        'service_state'     => 99,
+                        'servicegroup_name' => $serviceGroup->servicegroup_name,
+                        'sort'              => 'service_severity'
+                    ),
+                    'List %s service that is currenlty in state PENDING in service group "%s"',
+                    'List %s services which are currently in state PENDING in service group "%s"',
+                    array($serviceGroup->services_pending, $serviceGroup->servicegroup_alias)
+                );
+            echo $stateBadges->render();
+            ?>
         </td>
-      </tr>
+    </tr>
 <?php endforeach ?>
-    </tbody>
-  </table>
+</tbody>
+</table>
 <?php if ($servicegroups->hasMore()): ?>
-  <?= $this->qlink(
+<?= $this->qlink(
     $this->translate('Show More'),
     $this->url()->without(array('view', 'limit')),
     null,
     array(
-      'data-base-target'    => '_next',
-      'class'               => 'pull-right show-more'
+        'data-base-target'    => '_next',
+        'class'               => 'pull-right show-more'
     )
-  ) ?>
+) ?>
 <?php endif ?>
 </div>

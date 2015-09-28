@@ -12,7 +12,7 @@ if (! $this->compact): ?>
 <?php endif ?>
 
 <div class="content">
-    <?php if (! $hostgroups->hasResult()): ?>
+<?php if (! $hostgroups->hasResult()): ?>
     <p><?= $this->translate('No host groups found matching the filter.') ?></p>
 </div>
 <?php return; endif ?>
