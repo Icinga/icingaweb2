@@ -1,10 +1,10 @@
 <?php if (! $this->compact): ?>
 <div class="controls">
-  <?= $this->tabs; ?>
-  <?= $this->sortBox; ?>
-  <?= $this->limiter; ?>
-  <?= $this->paginator; ?>
-  <?= $this->filterEditor; ?>
+  <?= $this->tabs ?>
+  <?= $this->sortBox ?>
+  <?= $this->limiter ?>
+  <?= $this->paginator ?>
+  <?= $this->filterEditor ?>
 </div>
 <?php endif ?>
 <div class="content">
@@ -14,64 +14,64 @@ $servicegroups->peekAhead($this->compact);
 $firstRow = true;
 foreach ($servicegroups as $s): ?>
 <?php if ($firstRow): ?>
-  <?php $firstRow = false; ?>
+  <?php $firstRow = false ?>
   <table class="groupview action" data-base-target="_next">
     <thead>
-      <th><?= $this->translate('Last Problem'); ?></th>
-      <th><?= $this->translate('Service Group'); ?></th>
-      <th><?= $this->translate('Total Services'); ?></th>
-      <th><?= $this->translate('Service States'); ?></th>
+      <th><?= $this->translate('Last Problem') ?></th>
+      <th><?= $this->translate('Service Group') ?></th>
+      <th><?= $this->translate('Total Services') ?></th>
+      <th><?= $this->translate('Service States') ?></th>
     </thead>
     <tbody>
 <?php endif ?>
-      <tr href="<?= $this->href('monitoring/list/services', array('servicegroup_name' => $s->servicegroup_name)); ?>">
+      <tr href="<?= $this->href('monitoring/list/services', array('servicegroup_name' => $s->servicegroup_name)) ?>">
        <?php if ($s->services_critical_last_state_change_unhandled): ?>
         <td class="state change critical unhandled">
-          <strong><?= $this->translate('CRITICAL'); ?></strong>
+          <strong><?= $this->translate('CRITICAL') ?></strong>
           <br>
-          <?= $this->timeSince($s->services_critical_last_state_change_unhandled); ?>
+          <?= $this->timeSince($s->services_critical_last_state_change_unhandled) ?>
         </td>
        <?php elseif ($s->services_unknown_last_state_change_unhandled): ?>
         <td class="state change unknown unhandled">
-          <strong><?= $this->translate('UNKNOWN'); ?></strong>
+          <strong><?= $this->translate('UNKNOWN') ?></strong>
           <br>
-          <?= $this->timeSince($s->services_unknown_last_state_change_unhandled); ?>
+          <?= $this->timeSince($s->services_unknown_last_state_change_unhandled) ?>
         </td>
        <?php elseif ($s->services_warning_last_state_change_unhandled): ?>
         <td class="state change warning unhandled">
-          <strong><?= $this->translate('WARNING'); ?></strong>
+          <strong><?= $this->translate('WARNING') ?></strong>
           <br>
-          <?= $this->timeSince($s->services_warning_last_state_change_unhandled); ?>
+          <?= $this->timeSince($s->services_warning_last_state_change_unhandled) ?>
         </td>
        <?php elseif ($s->services_critical_last_state_change_handled): ?>
         <td class="state change critical">
-          <strong><?= $this->translate('CRITICAL'); ?></strong>
+          <strong><?= $this->translate('CRITICAL') ?></strong>
           <br>
-          <?= $this->timeSince($s->services_critical_last_state_change_handled); ?>
+          <?= $this->timeSince($s->services_critical_last_state_change_handled) ?>
         </td>
        <?php elseif ($s->services_unknown_last_state_change_handled): ?>
         <td class="state change unknown">
-          <strong><?= $this->translate('UNKNOWN'); ?></strong>
+          <strong><?= $this->translate('UNKNOWN') ?></strong>
           <br>
-          <?= $this->timeSince($s->services_unknown_last_state_change_handled); ?>
+          <?= $this->timeSince($s->services_unknown_last_state_change_handled) ?>
         </td>
        <?php elseif ($s->services_warning_last_state_change_handled): ?>
         <td class="state change warning">
-          <strong><?= $this->translate('WARNING'); ?></strong>
+          <strong><?= $this->translate('WARNING') ?></strong>
           <br>
-          <?= $this->timeSince($s->services_warning_last_state_change_handled); ?>
+          <?= $this->timeSince($s->services_warning_last_state_change_handled) ?>
         </td>
        <?php elseif ($s->services_ok_last_state_change): ?>
         <td class="state change ok">
-          <strong><?= $this->translate('OK'); ?></strong>
+          <strong><?= $this->translate('OK') ?></strong>
           <br>
-          <?= $this->timeSince($s->services_ok_last_state_change); ?>
+          <?= $this->timeSince($s->services_ok_last_state_change) ?>
         </td>
        <?php else: ?>
         <td class="state change pending">
-          <strong><?= $this->translate('PENDING'); ?></strong>
+          <strong><?= $this->translate('PENDING') ?></strong>
           <br>
-          <?= $this->timeSince($s->services_pending_last_state_change); ?>
+          <?= $this->timeSince($s->services_pending_last_state_change) ?>
         </td>
        <?php endif ?>
         <td class="groupname">
@@ -80,10 +80,10 @@ foreach ($servicegroups as $s): ?>
             'monitoring/list/services',
             array('servicegroup_name' => $s->servicegroup_name),
             array('title' => sprintf($this->translate('List all services in the group "%s"'), $s->servicegroup_alias))
-          ); ?>
+          ) ?>
         </td>
         <td class="total">
-          <?= $s->services_total; ?>
+          <?= $s->services_total ?>
         </td>
         <td>
         <?php if ($s->services_ok): ?>
@@ -107,7 +107,7 @@ foreach ($servicegroups as $s): ?>
                   $s->servicegroup_alias
                 )
               )
-            ); ?>
+            ) ?>
           </span>
         <?php endif ?>
         <?php if ($s->services_critical_unhandled): ?>
@@ -134,7 +134,7 @@ foreach ($servicegroups as $s): ?>
                   $s->servicegroup_alias
                 )
               )
-            ); ?>
+            ) ?>
         <?php endif ?>
           <?php if ($s->services_critical_handled): ?>
             <span class="state critical handled">
@@ -158,7 +158,7 @@ foreach ($servicegroups as $s): ?>
                     $s->servicegroup_alias
                   )
                 )
-              ); ?>
+              ) ?>
             </span>
           <?php endif ?>
         <?php if ($s->services_critical_unhandled): ?>
@@ -188,7 +188,7 @@ foreach ($servicegroups as $s): ?>
                   $s->servicegroup_alias
                 )
               )
-            ); ?>
+            ) ?>
         <?php endif ?>
           <?php if ($s->services_unknown_handled): ?>
             <span class="state unknown handled">
@@ -212,7 +212,7 @@ foreach ($servicegroups as $s): ?>
                     $s->servicegroup_alias
                   )
                 )
-              ); ?>
+              ) ?>
             </span>
           <?php endif ?>
         <?php if ($s->services_unknown_unhandled): ?>
@@ -242,7 +242,7 @@ foreach ($servicegroups as $s): ?>
                   $s->servicegroup_alias
                 )
               )
-            ); ?>
+            ) ?>
         <?php endif ?>
           <?php if ($s->services_warning_handled): ?>
             <span class="state warning handled">
@@ -266,7 +266,7 @@ foreach ($servicegroups as $s): ?>
                     $s->servicegroup_alias
                   )
                 )
-              ); ?>
+              ) ?>
             </span>
           <?php endif ?>
         <?php if ($s->services_warning_unhandled): ?>
@@ -293,7 +293,7 @@ foreach ($servicegroups as $s): ?>
                   $s->servicegroup_alias
                 )
               )
-            ); ?>
+            ) ?>
           </span>
         <?php endif ?>
         </td>
@@ -311,9 +311,9 @@ foreach ($servicegroups as $s): ?>
       'data-base-target'    => '_next',
       'class'               => 'pull-right show-more'
     )
-  ); ?>
+  ) ?>
 <?php endif ?>
 <?php else: ?>
-  <?= $this->translate('No servicegroups found matching the filter'); ?>
+  <?= $this->translate('No servicegroups found matching the filter') ?>
 <?php endif ?>
 </div>
