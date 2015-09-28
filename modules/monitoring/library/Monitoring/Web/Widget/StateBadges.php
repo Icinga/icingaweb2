@@ -197,7 +197,11 @@ class StateBadges extends AbstractWidget
                 'attributes'    => array('class' => 'badge ' . $state),
                 'label'         => $badge->count,
                 'priority'      => $this->priority++,
-                'url'           => $this->url
+                'title'         => vsprintf(
+                    mtp('monitoring', $badge->translateSingular, $badge->translatePlural, $badge->count),
+                    $badge->translateArgs
+                ),
+                'url'           => clone $this->url->setParams($badge->filter)
             )));
         }
         return $this;
