@@ -15,6 +15,7 @@ class StyleSheet
         'css/vendor/tipsy.css',
         'css/icinga/themes/icinga.less',
         'css/icinga/colors.less',
+        'css/icinga/badges.less',
         'css/icinga/mixins.less',
         'css/icinga/base.less',
         'css/icinga/nav.less',

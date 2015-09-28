@@ -1,0 +1,45 @@
+.badge {
+  min-width: 25px;
+  font-family: tahoma, verdana, sans-serif;
+  font-weight: @font-weight-bold;
+  font-size: 11px;
+  text-align: center;
+  color: @text-color-inverted;
+  padding-left: 5px;
+  padding-right: 5px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  background-color: @gray-light;
+
+  &.state-ok {
+    .bg-color-ok();
+  }
+
+  &.state-up {
+    .bg-color-up();
+  }
+
+  &.state-warning {
+    .bg-color-warning();
+  }
+
+  &.state-critical {
+    .bg-color-critical();
+  }
+
+  &.state-down {
+    .bg-color-down();
+  }
+
+  &.state-unreachable {
+    .bg-color-unreachable();
+  }
+
+  &.state-unknown {
+    .bg-color-unknown();
+  }
+
+  &.state-pending {
+    .bg-color-pending();
+  }
+}
