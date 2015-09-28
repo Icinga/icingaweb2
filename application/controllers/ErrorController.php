@@ -35,6 +35,10 @@ class ErrorController extends ActionController
         Logger::error($exception);
         Logger::error('Stacktrace: %s', $exception->getTraceAsString());
 
+        if (! ($isAuthenticated = $this->Auth()->isAuthenticated())) {
+            $this->innerLayout = 'error';
+        }
+
         switch ($error->type) {
             case Zend_Controller_Plugin_ErrorHandler::EXCEPTION_NO_ROUTE:
             case Zend_Controller_Plugin_ErrorHandler::EXCEPTION_NO_CONTROLLER:
@@ -45,11 +49,13 @@ class ErrorController extends ActionController
                 $path = array_shift($path);
                 $this->getResponse()->setHttpResponseCode(404);
                 $this->view->message = $this->translate('Page not found.');
-                if ($this->Auth()->isAuthenticated() && $modules->hasInstalled($path) && ! $modules->hasEnabled($path)) {
-                    $this->view->message .= ' ' . sprintf(
-                        $this->translate('Enabling the "%s" module might help!'),
-                        $path
-                    );
+                if ($isAuthenticated) {
+                    if ($modules->hasInstalled($path) && ! $modules->hasEnabled($path)) {
+                        $this->view->message .= ' ' . sprintf(
+                            $this->translate('Enabling the "%s" module might help!'),
+                            $path
+                        );
+                    }
                 }
 
                 break;
@@ -93,5 +99,6 @@ class ErrorController extends ActionController
         }
 
         $this->view->request = $error->request;
+        $this->view->hideControls = ! $isAuthenticated;
     }
 }

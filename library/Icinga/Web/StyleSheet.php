@@ -28,6 +28,7 @@ class StyleSheet
         'css/icinga/pagination.less',
         'css/icinga/selection-toolbar.less',
         'css/icinga/login.less',
+        'css/icinga/logo.less',
         'css/icinga/controls.less'
     );
 

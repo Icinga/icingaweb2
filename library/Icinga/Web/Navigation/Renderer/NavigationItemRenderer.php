@@ -37,6 +37,13 @@ class NavigationItemRenderer
     protected $internalLinkTargets;
 
     /**
+     * Whether to escape the label
+     *
+     * @var bool
+     */
+    protected $escapeLabel;
+
+    /**
      * Create a new NavigationItemRenderer
      *
      * @param   array   $options
@@ -127,6 +134,29 @@ class NavigationItemRenderer
     }
 
     /**
+     * Set whether to escape the label
+     *
+     * @param   bool    $state
+     *
+     * @return  $this
+     */
+    public function setEscapeLabel($state = true)
+    {
+        $this->escapeLabel = (bool) $state;
+        return $this;
+    }
+
+    /**
+     * Return whether to escape the label
+     *
+     * @return  bool
+     */
+    public function getEscapeLabel()
+    {
+        return $this->escapeLabel !== null ? $this->escapeLabel : true;
+    }
+
+    /**
      * Render the given navigation item as HTML anchor
      *
      * @param   NavigationItem  $item
@@ -144,7 +174,9 @@ class NavigationItemRenderer
             );
         }
 
-        $label = $this->view()->escape($item->getLabel());
+        $label = $this->getEscapeLabel()
+            ? $this->view()->escape($item->getLabel())
+            : $item->getLabel();
         if (($icon = $item->getIcon()) !== null) {
             $label = $this->view()->icon($icon) . $label;
         }
