@@ -4,7 +4,7 @@ use Icinga\Module\Monitoring\Object\Service;
 
 ?>
 <?php if ($services_critical_handled || $services_critical_unhandled): ?>
-<div class="box entry state_<?= Service::getStateText(2); ?> <?= $services_critical_unhandled ? '' : 'handled'; ?>">
+<div class="box badge entry state-<?= Service::getStateText(2); ?> <?= $services_critical_unhandled ? '' : 'handled'; ?>">
 <?php if ($services_critical_unhandled): ?>
     <?= $this->qlink(
         $services_critical_unhandled . ' ' . Service::getStateText(2, true),
@@ -103,7 +103,7 @@ use Icinga\Module\Monitoring\Object\Service;
 </div>
 <?php endif ?>
 <?php if ($services_warning_handled || $services_warning_unhandled): ?>
-<div class="box entry state_<?= Service::getStateText(1); ?> <?= $services_warning_unhandled ? '' : 'handled'; ?>">
+<div class="box badge entry state-<?= Service::getStateText(1); ?> <?= $services_warning_unhandled ? '' : 'handled'; ?>">
 <?php if ($services_warning_unhandled): ?>
     <?= $this->qlink(
         $services_warning_unhandled . ' ' . Service::getStateText(1, true),
@@ -202,7 +202,7 @@ use Icinga\Module\Monitoring\Object\Service;
 </div>
 <?php endif ?>
 <?php if ($services_unknown_handled || $services_unknown_unhandled): ?>
-<div class="box entry state_<?= Service::getStateText(3); ?> <?= $services_unknown_unhandled ? '' : 'handled'; ?>">
+<div class="box badge entry state-<?= Service::getStateText(3); ?> <?= $services_unknown_unhandled ? '' : 'handled'; ?>">
 <?php if ($services_unknown_unhandled): ?>
     <?= $this->qlink(
         $services_unknown_unhandled . ' ' . Service::getStateText(3, true),
@@ -301,7 +301,7 @@ use Icinga\Module\Monitoring\Object\Service;
 </div>
 <?php endif ?>
 <?php if ($services_ok): ?>
-<div class="box entry state_<?= Service::getStateText(0); ?>">
+<div class="box badge entry state-<?= Service::getStateText(0); ?>">
     <?= $this->qlink(
         $services_ok . ' ' . Service::getStateText(0, true),
         'monitoring/list/services',
@@ -348,7 +348,7 @@ use Icinga\Module\Monitoring\Object\Service;
 </div>
 <?php endif ?>
 <?php if ($services_pending): ?>
-<div class="box entry state_<?= Service::getStateText(99); ?>">
+<div class="box badge entry state-<?= Service::getStateText(99); ?>">
     <?= $this->qlink(
         $services_pending . ' ' . Service::getStateText(99, true),
         'monitoring/list/services',

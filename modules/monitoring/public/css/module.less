@@ -1,13 +1,110 @@
 /*! Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
-/* Badges */
-.state-badges {
-  > ul > li {
-    padding-right: 5px;
-    &:last-child {
-      padding-right: 0;
-    }
-  }
+/* Generic box element */
+
+.boxview a {
+  text-decoration: none;
+}
+
+.boxview > div.box {
+  text-align: center;
+  vertical-align: top;
+  display: inline-block; 
+  padding: 20px;
+  margin: 0.5em;
+}
+
+
+/* Box body of contents */
+
+.boxview div.box.contents {
+  padding-top: 20px;
+}
+
+.boxview div.box.contents table {
+  width: 100%;
+}
+
+.boxview div.box.contents td {
+  vertical-align: top;
+}
+
+/* Box entry */
+
+/* Any line of a box entry */
+.boxview div.box.entry a {
+  display: block;
+  color: inherit;
+}
+
+.boxview  div.box.badge {
+  border-radius: 3px;
+  margin: 5px;
+  padding: 5px;
+}
+
+.boxview div.box.entry a:hover {
+}
+
+/* First line of a box entry */
+.boxview div.box.entry a:first-child {
+}
+
+/* End of generic box element */
+
+/* Tactical overview element styles */
+
+.tactical > .boxview > div.box {
+  min-height: 30em;
+  min-width: 30em;
+}
+
+.tactical div.box.header {
+  min-height: 5em;
+  border-bottom:1px solid @gray-lighter;
+}
+
+div.box.contents.zero {
+}
+
+div.box.ok_hosts.state_up {
+  border: 2px solid @color-ok;
+  border-top: 15px solid @color-ok;
+}
+
+div.box.problem_hosts.state_down {
+  border: 2px solid @color-critical;
+  border-top: 15px solid @color-critical;
+}
+
+div.box.ok_hosts div.box.entry, div.box.problem_hosts div.box.entry {
+  min-width: 11.1em;
+}
+
+div.box.monitoringfeatures {
+  border: 2px solid @gray;
+  border-top: 15px solid @gray;
+}
+
+div.box.monitoringfeatures div.box-separator {
+  color: white;
+  background-color: @color-ok;
+}
+
+div.box.monitoringfeatures div.feature-highlight {
+  background-color: @color-critical;
+}
+
+div.box.monitoringfeatures a.feature-highlight {
+}
+
+div.box.hostservicechecks {
+  border: 2px solid @gray;
+  border-top: 15px solid @gray;
+}
+
+div.box.hostservicechecks th {
+  padding-bottom: 20px;
 }
 
 //p.pluginoutput {
