@@ -4,14 +4,12 @@
   <?php if (! $this->compact): ?>
     <?= $this->tabs; ?>
   <?php endif ?>
-  <?= $this->render('partials/host/object-header.phtml') ?>
-  <h2 class="tinystatesummary" <?= $this->compact ? ' data-base-target="col1"' : ''; ?>
+  <?= $this->render('partials/object/host-header.phtml') ?>
     <?php
       $this->baseFilter = Filter::where('host', $object->host_name);
       $this->stats = $object->stats;
       echo $this->render('list/components/servicesummary.phtml');
     ?>
-  </h2>
 </div>
 <?= $this->partial(
   'list/services.phtml',
