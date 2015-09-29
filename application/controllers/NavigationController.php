@@ -63,6 +63,35 @@ class NavigationController extends Controller
     }
 
     /**
+     * Return the path to the configuration file for the given navigation item type and user
+     *
+     * @param   string  $type
+     * @param   string  $username
+     *
+     * @return  string
+     *
+     * @throws  IcingaException     In case the given type is unknown
+     */
+    protected function getConfigPath($type, $username = null)
+    {
+        if (isset($this->defaultItemTypes[$type])) {
+            $options = $this->defaultItemTypes[$type];
+        } elseif (isset($this->moduleItemTypes[$type])) {
+            $options = $this->moduleItemTypes[$type];
+        } else {
+            throw new IcingaException('Invalid navigation item type %s provided', $type);
+        }
+
+        if (isset($options['config'])) {
+            $filename = $options['config'] . '.ini';
+        } else {
+            $filename = $type . 's.ini';
+        }
+
+        return Config::resolvePath(($username ? "preferences/$username/" : 'navigation/') . $filename);
+    }
+
+    /**
      * Show the current user a list of his/her navigation items
      */
     public function indexAction()
