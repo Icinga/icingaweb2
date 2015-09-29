@@ -10,7 +10,7 @@ if (! $this->compact): ?>
 
 <div class="content processinfo">
     <div class="boxview">
-        <div style="min-width: 30em;" class="box left">
+        <div class="box process">
             <h2><?= $this->translate('Process Info') ?></h2>
             <table class="avp">
                 <tbody>
@@ -75,9 +75,7 @@ if (! $this->compact): ?>
                 </div>
             <?php endif ?>
         </div>
-
-        <br>
-        <div style="min-width: 30em;" class="box left">
+        <div class="box features">
             <?= $this->toggleFeaturesForm; ?>
         </div>
     </div>

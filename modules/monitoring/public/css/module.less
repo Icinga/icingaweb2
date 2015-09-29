@@ -123,6 +123,121 @@ div.box.hostservicechecks th {
   padding-bottom: 20px;
 }
 
+/* Monitoring health - PROCESS - element styles */
+
+div.box.process {
+  border: 1px solid @gray-lighter;
+  border-left: 15px solid @gray;
+  min-height: 30em;
+  min-width: 30em;
+}
+
+.process div.box.header {
+  min-height: 5em;
+  border-bottom:1px solid @gray-lighter;
+}
+
+.process > .boxview > div.box {
+  min-height: 30em;
+  min-width: 30em;
+}
+
+.process h2 {
+  padding-bottom: 15px;
+  border-bottom:1px solid @gray-lighter;
+}
+
+.process th {
+  text-align: right;
+}
+
+.process td {
+  padding-left: 2em;
+  text-align: left;
+}
+
+div.backend-running {
+  background: @color-ok;
+  color: white;
+  text-align: center;
+  margin-top: 1em;
+  padding: 0.5em;
+
+  &.span {
+  color: white;
+  }
+}
+
+div.backend-not-running {
+  background: @color-critical;
+  color: white;
+  text-align: center;
+  padding: 0.1em;
+}
+
+
+/* Monitoring health - FEATURE - element styles */
+
+div.box.features {
+  border: 1px solid @gray-lighter;
+  border-left: 15px solid @gray;
+  min-height: 30em;
+  min-width: 30em;
+}
+
+.features div.box.header {
+  min-height: 5em;
+  border-bottom:1px solid @gray-lighter;
+}
+
+.features > .boxview > div.box {
+  min-height: 30em;
+  min-width: 30em;
+}
+
+.features h2 {
+  padding-bottom: 15px;
+  border-bottom:1px solid @gray-lighter;
+}
+
+
+/* Monitoring health - STATS - element styles */
+
+div.box.stats {
+  border: 1px solid @gray-lighter;
+  border-left: 15px solid @gray;
+  color: @text-color;
+}
+
+.stats > .boxview > div.box {
+  min-height: 30em;
+  width:95%;
+}
+
+.stats > .avp > tbody {
+  text-align: left;
+}
+
+.stats > table {
+  padding-bottom: 15px;
+}
+
+.stats > table > thead{
+  color: @gray;
+}
+
+.stats > .pull-left  {
+  float: none;
+}
+
+.stats > h3 {
+  color: @gray;
+  text-align: left;
+  border-bottom:1px solid @gray-lighter;
+  padding-bottom: 15px;
+}
+
+
 //p.pluginoutput {
 //  width: 100%;
 //  white-space: pre-wrap;

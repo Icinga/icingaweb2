@@ -6,7 +6,7 @@ if (! $stats instanceof stdClass) {
     $stats = $stats->fetchRow();
 }
 ?>
-<div class="pull-left">
+<div>
 <?= $this->qlink(
     sprintf($this->translatePlural(
         '%u Service', '%u Services', $stats->services_total),
