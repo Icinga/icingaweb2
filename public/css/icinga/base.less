@@ -25,6 +25,15 @@ a {
   }
 }
 
+blockquote {
+  border-left: 6px solid @gray-light;
+  color: @text-color-light;
+  // Reset default margin
+  margin: 0;
+  font-family: @font-family-fixed;
+  padding: @vertical-padding @horizontal-padding;
+}
+
 body {
   background-color: @body-bg-color;
   color: @text-color;
@@ -35,14 +44,14 @@ body {
 
 h1 {
   font-size: 18px;
-  line-height: 22px;
   font-weight: normal;
+  line-height: 22px;
 }
 
 h2 {
   font-size: 16px;
-  line-height: 19px;
   font-weight: normal;
+  line-height: 19px;
 }
 
 p {
