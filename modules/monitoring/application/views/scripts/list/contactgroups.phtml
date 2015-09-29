@@ -1,5 +1,4 @@
 <?php
-use Icinga\Module\Monitoring\Web\Widget\StateBadges;
 
 if (! $this->compact): ?>
 <div class="controls">
@@ -12,46 +11,44 @@ if (! $this->compact): ?>
 <?php endif ?>
 <div class="content">
 <?php
-
 if (count($groupData) === 0) {
     echo $this->translate('No contactgroups found matching the filter') . '</div>';
     return;
 }
 ?>
+    <table class="action action-table listing-table" data-base-target="_next">
+        <thead>
+        <tr>
+            <th></th>
+            <th><?= $this->translate('Hostgroup') ?></th>
+            <th><?= $this->translate('Alias') ?></th>
+        </tr>
+        </thead>
+        <tbody>
 
-<table class="action action-table listing-table" data-base-target="_next">
-    <thead>
-    <tr>
-        <th></th>
-        <th><?= $this->translate('Hostgroup') ?></th>
-        <th><?= $this->translate('Alias') ?></th>
-    </tr>
-    </thead>
-    <tbody>
-
-    <?php foreach ($groupData as $groupName => $groupInfo): ?>
-    <tr>
-        <td class="count-col">
-            <span class="badge"><?= count($groupInfo['contacts'])  ?></span>
-        </td>
-        <td>
-            <?= $this->qlink(
-                $groupName,
-                'monitoring/list/contacts',
-                array('contactgroup' => $groupName),
-                array('title' => sprintf(
-                    $this->translate('Show detailed information about %s'),
-                    $groupName
-                ))
-            ); ?>
-        </td>
-        <td>
-            <?php if ($groupInfo['alias'] !== $groupName): ?>
-                <?= $groupInfo['alias'] ?>
-            <?php endif ?>
-        </td>
-    </tr>
-    <?php endforeach ?>
-    </tbody>
-</table>
+        <?php foreach ($groupData as $groupName => $groupInfo): ?>
+        <tr>
+            <td class="count-col">
+                <span class="badge"><?= count($groupInfo['contacts'])  ?></span>
+            </td>
+            <td>
+                <?= $this->qlink(
+                    $groupName,
+                    'monitoring/list/contacts',
+                    array('contactgroup' => $groupName),
+                    array('title' => sprintf(
+                        $this->translate('Show detailed information about %s'),
+                        $groupName
+                    ))
+                ) ?>
+            </td>
+            <td>
+                <?php if ($groupInfo['alias'] !== $groupName): ?>
+                    <?= $groupInfo['alias'] ?>
+                <?php endif ?>
+            </td>
+        </tr>
+        <?php endforeach ?>
+        </tbody>
+    </table>
 </div>

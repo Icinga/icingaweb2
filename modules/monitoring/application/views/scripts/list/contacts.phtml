@@ -8,71 +8,71 @@
 </div>
 <?php endif ?>
 
-<table class="action action-table listing-table" data-base-target="_next">
-    <thead>
-    <tr>
-        <th><?= $this->translate('Name') ?></th>
-        <th><?= $this->translate('Email') ?></th>
-        <th><?= $this->translate('Pager') ?></th>
-    </tr>
-    </thead>
-    <tbody>
-    <?php foreach ($contacts->peekAhead($this->compact) as $contact): ?>
+<div class="content">
+<?php if ($contacts->hasResult()): ?>
+    <table class="action action-table listing-table" data-base-target="_next">
+        <thead>
         <tr>
-        <td>
-            <?= $this->qlink(
-                $contact->contact_name,
-                'monitoring/show/contact',
-                array('contact_name' => $contact->contact_name),
-                array('title' => sprintf(
-                    $this->translate('Show detailed information about %s'),
-                    $contact->contact_alias
-                ), 'class' => 'rowaction')
-            ); ?>
-        </td>
-        <td>
-            <?= $this->translate('Email'); ?>:
-            <a href="mailto:<?= $contact->contact_email; ?>"
-               title="<?= sprintf($this->translate('Send a mail to %s'), $contact->contact_alias); ?>"
-               aria-label="<?= sprintf($this->translate('Send a mail to %s'), $contact->contact_alias); ?>">
-                <?= $this->escape($contact->contact_email); ?>
-            </a>
-        </td>
-            <td>
-            <?php if ($contact->contact_pager): ?>
-                <div>
-                    <?= $this->escape($contact->contact_pager) ?>
-                </div>
-            <?php endif; ?>
-            </td>
-
-            <?php if ($contact->contact_notify_service_timeperiod): ?>
-            <td>
-                <?= $this->escape($contact->contact_notify_service_timeperiod) ?>
-            </td>
-            <?php endif; ?>
-
-            <?php if ($contact->contact_notify_host_timeperiod): ?>
-            <td>
-                <?= $this->escape($contact->contact_notify_host_timeperiod) ?>
-            </td>
-            <?php endif; ?>
+            <th><?= $this->translate('Name') ?></th>
+            <th><?= $this->translate('Email') ?></th>
+            <th><?= $this->translate('Pager') ?></th>
         </tr>
-    <?php endforeach ?>
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+        <?php foreach ($contacts->peekAhead($this->compact) as $contact): ?>
+            <tr>
+            <td>
+                <?= $this->qlink(
+                    $contact->contact_name,
+                    'monitoring/show/contact',
+                    array('contact_name' => $contact->contact_name),
+                    array('title' => sprintf(
+                        $this->translate('Show detailed information about %s'),
+                        $contact->contact_alias
+                    ), 'class' => 'rowaction')
+                ); ?>
+            </td>
+            <td>
+                <?= $this->translate('Email') ?>:
+                <a href="mailto:<?= $contact->contact_email; ?>"
+                   title="<?= sprintf($this->translate('Send a mail to %s'), $contact->contact_alias); ?>"
+                   aria-label="<?= sprintf($this->translate('Send a mail to %s'), $contact->contact_alias); ?>">
+                    <?= $this->escape($contact->contact_email); ?>
+                </a>
+            </td>
+                <td>
+                <?php if ($contact->contact_pager): ?>
+                    <?= $this->escape($contact->contact_pager) ?>
+                <?php endif; ?>
+                </td>
 
-<?php if (! $contacts->hasResult()): ?>
+                <?php if ($contact->contact_notify_service_timeperiod): ?>
+                <td>
+                    <?= $this->escape($contact->contact_notify_service_timeperiod) ?>
+                </td>
+                <?php endif; ?>
+
+                <?php if ($contact->contact_notify_host_timeperiod): ?>
+                <td>
+                    <?= $this->escape($contact->contact_notify_host_timeperiod) ?>
+                </td>
+                <?php endif; ?>
+            </tr>
+        <?php endforeach ?>
+        </tbody>
+    </table>
+    <?php if ($contacts->hasMore()): ?>
+        <?= $this->qlink(
+            $this->translate('Show More'),
+            $this->url()->without(array('view', 'limit')),
+            null,
+            array(
+                'data-base-target'  => '_next',
+                'class'             => 'pull-right show-more'
+            )
+        ); ?>
+    <?php endif ?>
+<?php else: ?>
     <?= $this->translate('No contacts found matching the filter'); ?>
-<?php elseif ($contacts->hasMore()): ?>
-    <?= $this->qlink(
-        $this->translate('Show More'),
-        $this->url()->without(array('view', 'limit')),
-        null,
-        array(
-            'data-base-target'  => '_next',
-            'class'             => 'pull-right show-more'
-        )
-    ); ?>
 <?php endif ?>
-
+</div>
