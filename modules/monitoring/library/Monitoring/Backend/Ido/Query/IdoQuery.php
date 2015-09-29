@@ -1041,6 +1041,9 @@ abstract class IdoQuery extends DbQuery
                             $group[] = 'sgo.object_id';
                             $group[] = 'sg.servicegroup_id';
                             break;
+                        case 'serviceobjects':
+                            $group[] = 'so.object_id';
+                            break;
                         case 'serviceproblemsummary':
                             $group[] = 'sps.unhandled_services_count';
                             break;
