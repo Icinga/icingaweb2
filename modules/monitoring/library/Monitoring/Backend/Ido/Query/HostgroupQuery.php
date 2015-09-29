@@ -16,6 +16,16 @@ class HostgroupQuery extends IdoQuery
     /**
      * {@inheritdoc}
      */
+    protected $groupBase = array('hostgroups' => array('hg.hostgroup_id', 'hgo.object_id'));
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $groupOrigin = array('hostobjects');
+
+    /**
+     * {@inheritdoc}
+     */
     protected $columnMap = array(
         'instances' => array(
             'instance_name' => 'i.instance_name'
@@ -139,18 +149,5 @@ class HostgroupQuery extends IdoQuery
             'i.instance_id = hg.instance_id',
             array()
         );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getGroup()
-    {
-        $group = array();
-        if ($this->hasJoinedVirtualTable('hostobjects')) {
-            $group = array('hg.hostgroup_id', 'hgo.object_id');
-        }
-
-        return $group;
     }
 }
