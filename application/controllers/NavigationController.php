@@ -321,13 +321,17 @@ class NavigationController extends Controller
     public function removeAction()
     {
         $itemName = $this->params->getRequired('name');
+        $itemType = $this->params->getRequired('type');
+        $user = $this->Auth()->getUser();
 
         $navigationConfigForm = new NavigationConfigForm();
-        $navigationConfigForm->setUser($this->Auth()->getUser());
-        $navigationConfigForm->setShareConfig(Config::app('navigation'));
+        $navigationConfigForm->setUser($user);
+        $navigationConfigForm->setShareConfig(Config::fromIni($this->getConfigPath($itemType)));
+        $navigationConfigForm->setUserConfig(Config::fromIni($this->getConfigPath($itemType, $user->getUsername())));
+
         $form = new ConfirmRemovalForm();
         $form->setRedirectUrl('navigation');
-        $form->setTitle(sprintf($this->translate('Remove Navigation Item %s'), $itemName));
+        $form->setTitle(sprintf($this->translate('Remove %s %s'), $this->getItemLabel($itemType), $itemName));
         $form->setOnSuccess(function (ConfirmRemovalForm $form) use ($itemName, $navigationConfigForm) {
             try {
                 $itemConfig = $navigationConfigForm->delete($itemName);
