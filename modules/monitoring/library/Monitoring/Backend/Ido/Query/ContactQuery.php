@@ -16,6 +16,16 @@ class ContactQuery extends IdoQuery
     /**
      * {@inheritdoc}
      */
+    protected $groupBase = array('contacts' => array('co.object_id', 'c.contact_id'));
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $groupOrigin = array('hosts', 'services');
+
+    /**
+     * {@inheritdoc}
+     */
     protected $columnMap = array(
         'contacts' => array(
             'contact_id'                        => 'c.contact_id',
@@ -196,22 +206,5 @@ class ContactQuery extends IdoQuery
             'i.instance_id = c.instance_id',
             array()
         );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getGroup()
-    {
-        $group = array();
-        if ($this->hasJoinedVirtualTable('hosts') || $this->hasJoinedVirtualTable('services')) {
-            $group = array('c.contact_id', 'co.object_id');
-            if ($this->hasJoinedVirtualTable('timeperiods')) {
-                $group[] = 'ht.timeperiod_id';
-                $group[] = 'st.timeperiod_id';
-            }
-        }
-
-        return $group;
     }
 }
