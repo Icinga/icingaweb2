@@ -467,7 +467,7 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
     {
         return $this->ds
             ->select()
-            ->from($this->userClass, array($this->userNameAttribute))
+            ->from('*', array($this->userNameAttribute))
             ->setBase($dn)
             ->fetchOne();
     }
