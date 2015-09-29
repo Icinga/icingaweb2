@@ -1,0 +1,29 @@
+<?php if (! $this->compact): ?>
+<div class="controls">
+    <?= $tabs; ?>
+</div>
+<?php endif ?>
+<?php if ($dashboard): ?>
+<div class="dashboard content">
+    <?= $dashboard; ?>
+</div>
+<?php else: ?>
+<div class="content">
+    <h1><?= $this->escape($this->translate('Welcome to Icinga Web 2!')); ?></h1>
+    <p>
+    <?php if (! $this->hasPermission('config/modules')): ?>
+        <?= $this->escape($this->translate(
+            'Currently there is no dashboard available. Please contact the administrator.'
+        )); ?>
+    <?php else: ?>
+        <?= sprintf(
+            $this->escape($this->translate(
+                'Currently there is no dashboard available. This might change once you enabled some of the available %smodules%s.'
+            )),
+            substr($this->qlink(null, 'config/modules'), 0, -4),
+            '</a>'
+        ); ?>
+    <?php endif ?>
+    </p>
+</div>
+<?php endif ?>
