@@ -27,9 +27,6 @@ class HostcommentQuery extends IdoQuery
      * {@inheritdoc}
      */
     protected $columnMap = array(
-        'instances' => array(
-            'instance_name' => 'i.instance_name'
-        ),
         'comments' => array(
             'comment_author'        => 'c.author_name COLLATE latin1_general_ci',
             'comment_author_name'   => 'c.author_name',
@@ -54,6 +51,9 @@ class HostcommentQuery extends IdoQuery
         ),
         'hoststatus' => array(
             'host_state'            => 'CASE WHEN hs.has_been_checked = 0 OR hs.has_been_checked IS NULL THEN 99 ELSE hs.current_state END'
+        ),
+        'instances' => array(
+            'instance_name' => 'i.instance_name'
         ),
         'servicegroups' => array(
             'servicegroup'          => 'sgo.name1 COLLATE latin1_general_ci',
@@ -128,6 +128,18 @@ class HostcommentQuery extends IdoQuery
     }
 
     /**
+     * Join instances
+     */
+    protected function joinInstances()
+    {
+        $this->select->join(
+            array('i' => $this->prefix . 'instances'),
+            'i.instance_id = c.instance_id',
+            array()
+        );
+    }
+
+    /**
      * Join service groups
      */
     protected function joinServicegroups()
@@ -160,18 +172,6 @@ class HostcommentQuery extends IdoQuery
         )->joinLeft(
             array('so' => $this->prefix . 'objects'),
             'so.object_id = s.service_object_id AND so.is_active = 1 AND so.objecttype_id = 2',
-            array()
-        );
-    }
-
-    /**
-     * Join instances
-     */
-    protected function joinInstances()
-    {
-        $this->select->join(
-            array('i' => $this->prefix . 'instances'),
-            'i.instance_id = c.instance_id',
             array()
         );
     }
