@@ -1,5 +1,6 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
+
 namespace Icinga\Web;
 
 class FileCache
@@ -191,7 +192,7 @@ class FileCache
      * Whether the given ETag matchesspecific file(s) on disk
      *
      * If no ETag is given we'll try to fetch the one from the current
-     * HTTP request.
+     * HTTP request. Respects HTTP Cache-Control: no-cache, if set.
      *
      * @param string|array $files file(s) to check
      * @param string       $match ETag to match against
@@ -206,6 +207,9 @@ class FileCache
                 : false;
         }
         if (! $match) {
+            return false;
+        }
+        if (isset($_SERVER['HTTP_CACHE_CONTROL']) &&  $_SERVER['HTTP_CACHE_CONTROL'] === 'no-cache') {
             return false;
         }
 

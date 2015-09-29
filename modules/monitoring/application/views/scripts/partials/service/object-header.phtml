@@ -11,15 +11,17 @@ use Icinga\Module\Monitoring\Object\Service;
         </td>
         <td>
           <?= $this->iconImage()->service($object) ?>
-          <strong><?= $this->escape($object->host_display_name); ?></strong>
+          <strong class="selectable"><?= $this->escape($object->host_display_name); ?></strong>
           <?php if ($object->host_display_name !== $object->host_name): ?>
-            <small>(<?= $this->escape($object->host_name); ?>)</small>
+            <small class="selectable">(<?= $this->escape($object->host_name); ?>)</small>
+          <?php endif ?>
+          <br/>
+          <?php if ($object->host_address6 && $object->host_address6 !== $object->host_name): ?>
+            <span class="selectable" title="IPv6 address"><?= $this->escape($object->host_address6); ?></span>
           <?php endif ?>
           <?php if ($object->host_address && $object->host_address !== $object->host_name): ?>
-            <br>
-            <?= $this->escape($object->host_address); ?>
+            <span class="selectable" title="IPv4 address"><?= $this->escape($object->host_address); ?></span>
           <?php endif ?>
-            <?= $this->render('partials/host/statusicons.phtml'); ?>
         </td>
     </tr>
     <tr class="state <?= Service::getStateText($object->service_state); ?><?= $object->service_handled ? ' handled' : ''; ?>">
@@ -29,7 +31,7 @@ use Icinga\Module\Monitoring\Object\Service;
         </td>
         <td>
             <?= $this->iconImage()->host($object) ?>
-            <strong><?= $this->translate('Service'); ?>: <?= $this->escape($object->service_display_name); ?></strong>
+            <strong><?= $this->translate('Service'); ?>: <span class="selectable"><?= $this->escape($object->service_display_name); ?></span></strong>
             <?php if ($object->service_display_name !== $object->service_description): ?>
               <small>(<?= $this->escape($object->service_description); ?>)</small>
             <?php endif ?>

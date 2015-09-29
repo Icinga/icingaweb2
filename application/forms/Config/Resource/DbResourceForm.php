@@ -3,8 +3,8 @@
 
 namespace Icinga\Forms\Config\Resource;
 
-use Icinga\Web\Form;
 use Icinga\Application\Platform;
+use Icinga\Web\Form;
 
 /**
  * Form class for adding/modifying database resources
@@ -43,12 +43,30 @@ class DbResourceForm extends Form
             $dbChoices['oci'] = 'Oracle (OCI8)';
         }
         $offerPostgres = false;
+        $offerMysql = false;
         if (isset($formData['db'])) {
             if ($formData['db'] === 'pgsql') {
                 $offerPostgres = true;
+            } elseif ($formData['db'] === 'mysql') {
+                $offerMysql = true;
             }
-        } elseif (key($dbChoices) === 'pgsql') {
-            $offerPostgres = true;
+        } else {
+            $dbChoice = key($dbChoices);
+            if ($dbChoice === 'pgsql') {
+                $offerPostgres = true;
+            } elseif ($dbChoices === 'mysql') {
+                $offerMysql = true;
+            }
+        }
+        $socketInfo = '';
+        if ($offerPostgres) {
+            $socketInfo = $this->translate(
+                'For using unix domain sockets, specify the path to the unix domain socket directory'
+            );
+        } elseif ($offerMysql) {
+            $socketInfo = $this->translate(
+                'For using unix domain sockets, specify localhost'
+            );
         }
         $this->addElement(
             'text',
@@ -76,7 +94,8 @@ class DbResourceForm extends Form
             array (
                 'required'      => true,
                 'label'         => $this->translate('Host'),
-                'description'   => $this->translate('The hostname of the database'),
+                'description'   => $this->translate('The hostname of the database')
+                    . ($socketInfo ? '. ' . $socketInfo : ''),
                 'value'         => 'localhost'
             )
         );
