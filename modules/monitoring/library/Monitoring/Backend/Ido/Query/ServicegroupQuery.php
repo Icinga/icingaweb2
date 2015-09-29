@@ -13,6 +13,16 @@ class ServicegroupQuery extends IdoQuery
     /**
      * {@inheritdoc}
      */
+    protected $groupBase = array('servicegroups' => array('sg.servicegroup_id', 'sgo.object_id'));
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $groupOrigin = array('serviceobjects');
+
+    /**
+     * {@inheritdoc}
+     */
     protected $columnMap = array(
         'instances' => array(
             'instance_name' => 'i.instance_name'
@@ -131,18 +141,5 @@ class ServicegroupQuery extends IdoQuery
             'i.instance_id = sg.instance_id',
             array()
         );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getGroup()
-    {
-        $group = array();
-        if ($this->hasJoinedVirtualTable('serviceobjects')) {
-            $group = array('sg.servicegroup_id', 'sgo.object_id');
-        }
-
-        return $group;
     }
 }
