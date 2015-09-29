@@ -658,7 +658,7 @@ class LdapConnection implements Selectable, Inspectable
     protected function runQuery(LdapQuery $query, array $fields = null)
     {
         $limit = $query->getLimit();
-        $offset = $query->hasOffset() ? $query->getOffset() - 1 : 0;
+        $offset = $query->hasOffset() ? $query->getOffset() : 0;
 
         if ($fields === null) {
             $fields = $query->getColumns();
