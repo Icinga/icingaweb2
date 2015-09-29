@@ -30,12 +30,12 @@ class HostcommenthistoryQuery extends IdoQuery
         'commenthistory' => array(
             'host'          => 'ho.name1 COLLATE latin1_general_ci',
             'host_name'     => 'ho.name1',
-            'object_type'   => '(\'host\')',
-            'type'          => "(CASE hch.entry_type WHEN 1 THEN 'comment' WHEN 2 THEN 'dt_comment' WHEN 3 THEN 'flapping' WHEN 4 THEN 'ack' END)",
-            'timestamp'     => 'UNIX_TIMESTAMP(hch.comment_time)',
             'object_id'     => 'hch.object_id',
-            'state'         => '(-1)',
+            'object_type'   => '(\'host\')',
             'output'        => "('[' || hch.author_name || '] ' || hch.comment_data)",
+            'state'         => '(-1)',
+            'timestamp'     => 'UNIX_TIMESTAMP(hch.comment_time)',
+            'type'          => "(CASE hch.entry_type WHEN 1 THEN 'comment' WHEN 2 THEN 'dt_comment' WHEN 3 THEN 'flapping' WHEN 4 THEN 'ack' END)"
         ),
         'hostgroups' => array(
             'hostgroup'         => 'hgo.name1 COLLATE latin1_general_ci',
