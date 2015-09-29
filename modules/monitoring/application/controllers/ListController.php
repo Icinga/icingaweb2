@@ -388,7 +388,9 @@ class ListController extends Controller
                     'contacts'  => array()
                 );
             }
-            $groupData[$c->contactgroup_name]['contacts'][] = $c;
+            if (isset ($c->contact_name)) {
+                $groupData[$c->contactgroup_name]['contacts'][] = $c;
+            }
         }
 
         // TODO: Find a better naming

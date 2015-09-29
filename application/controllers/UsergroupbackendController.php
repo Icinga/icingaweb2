@@ -154,14 +154,26 @@ class UsergroupbackendController extends Controller
     protected function createListTabs()
     {
         $tabs = $this->getTabs();
+        $tabs->add('general', array(
+            'title' => $this->translate('Adjust the general configuration of Icinga Web 2'),
+            'label' => $this->translate('General'),
+            'url'   => 'config/general',
+            'baseTarget' => '_main'
+        ));
+        $tabs->add('resource', array(
+            'title' => $this->translate('Configure which resources are being utilized by Icinga Web 2'),
+            'label' => $this->translate('Resources'),
+            'url'   => 'config/resource',
+            'baseTarget' => '_main'
+        ));
         $tabs->add('userbackend', array(
             'title' => $this->translate('Configure how users authenticate with and log into Icinga Web 2'),
-            'label' => $this->translate('User Backends'),
+            'label' => $this->translate('Authentication'),
             'url'   => 'config/userbackend'
         ));
         $tabs->add('usergroupbackend', array(
             'title' => $this->translate('Configure how users are associated with groups by Icinga Web 2'),
-            'label' => $this->translate('User Group Backends'),
+            'label' => $this->translate('User Groups'),
             'url'   => 'usergroupbackend/list'
         ));
         return $tabs;

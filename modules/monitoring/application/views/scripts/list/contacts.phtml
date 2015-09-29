@@ -7,54 +7,61 @@
   <?= $this->filterEditor; ?>
 </div>
 <?php endif ?>
-<div data-base-target="_next" class="content contacts">
-    <?php foreach ($contacts->peekAhead($this->compact) as $contact): ?>
-        <div class="contact">
-            <?= $this->img('static/gravatar', array('email' => $contact->contact_email)); ?>
-            <strong><?= $this->qlink(
-                $contact->contact_name,
-                'monitoring/show/contact',
-                array('contact_name' => $contact->contact_name),
-                array('title' => sprintf(
-                    $this->translate('Show detailed information about %s'),
-                    $contact->contact_alias
-                ))
-            ); ?></strong> (<?= $contact->contact_alias; ?>)
-            <div>
-                <?= $this->translate('Email'); ?>: <a href="mailto:<?= $contact->contact_email; ?>" title="<?= sprintf($this->translate('Send a mail to %s'), $contact->contact_alias); ?>" aria-label="<?= sprintf($this->translate('Send a mail to %s'), $contact->contact_alias); ?>">
+
+<div class="content">
+<?php if ($contacts->hasResult()): ?>
+    <table class="action action-table listing-table" data-base-target="_next">
+        <thead>
+        <tr>
+            <th><?= $this->translate('Name') ?></th>
+            <th><?= $this->translate('Email') ?></th>
+            <th><?= $this->translate('Pager') ?></th>
+        </tr>
+        </thead>
+        <tbody>
+        <?php foreach ($contacts->peekAhead($this->compact) as $contact): ?>
+            <tr>
+            <td>
+                <?= $this->qlink(
+                    $contact->contact_name,
+                    'monitoring/show/contact',
+                    array('contact_name' => $contact->contact_name),
+                    array('title' => sprintf(
+                        $this->translate('Show detailed information about %s'),
+                        $contact->contact_alias
+                    ), 'class' => 'rowaction')
+                ); ?>
+            </td>
+            <td>
+                <?= $this->translate('Email') ?>:
+                <a href="mailto:<?= $contact->contact_email; ?>"
+                   title="<?= sprintf($this->translate('Send a mail to %s'), $contact->contact_alias); ?>"
+                   aria-label="<?= sprintf($this->translate('Send a mail to %s'), $contact->contact_alias); ?>">
                     <?= $this->escape($contact->contact_email); ?>
                 </a>
-            </div>
-            <?php if ($contact->contact_pager): ?>
-            <div>
-                <?= $this->translate('Pager') ?>:
-                <?= $this->escape($contact->contact_pager) ?>
-            </div>
-            <?php endif; ?>
-            <div style="clear: both;"></div>
-            <div class="notification-periods">
+            </td>
+                <td>
+                <?php if ($contact->contact_pager): ?>
+                    <?= $this->escape($contact->contact_pager) ?>
+                <?php endif; ?>
+                </td>
+
                 <?php if ($contact->contact_notify_service_timeperiod): ?>
-                <div>
-                    <?= $this->translate('Service notification period') ?>:
+                <td>
                     <?= $this->escape($contact->contact_notify_service_timeperiod) ?>
-                </div>
+                </td>
                 <?php endif; ?>
+
                 <?php if ($contact->contact_notify_host_timeperiod): ?>
-                <div>
-                    <?= $this->translate('Host notification period') ?>:
+                <td>
                     <?= $this->escape($contact->contact_notify_host_timeperiod) ?>
-                </div>
+                </td>
                 <?php endif; ?>
-            </div>
-        </div>
-    <?php
-    endforeach;
-    if (true): /* The following piece of HTML MUST be nested in <?php */ ?>
-    <div style="clear: both;"></div>
-    <?php endif; ?>
-    <?php if (! $contacts->hasResult()): ?>
-        <?= $this->translate('No contacts found matching the filter'); ?>
-    <?php elseif ($contacts->hasMore()): ?>
+            </tr>
+        <?php endforeach ?>
+        </tbody>
+    </table>
+    <?php if ($contacts->hasMore()): ?>
         <?= $this->qlink(
             $this->translate('Show More'),
             $this->url()->without(array('view', 'limit')),
@@ -65,4 +72,7 @@
             )
         ); ?>
     <?php endif ?>
+<?php else: ?>
+    <?= $this->translate('No contacts found matching the filter'); ?>
+<?php endif ?>
 </div>

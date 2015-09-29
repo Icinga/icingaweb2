@@ -14,10 +14,12 @@ input {
 
 input.search {
   padding-left: 20px;
-  background-image: url('../img/icons/search.png');
+  background: url('../img/icons/search.png') no-repeat 0;
   background-size: 12px 12px;
-  background-repeat: no-repeat;
-  background-position: 0em;
+}
+
+input, select, textarea {
+  width: 320px;
 }
 
 form {
@@ -37,15 +39,11 @@ form {
   display: inline-block;
   padding-right: @horizontal-padding;
   text-align: right;
-  width: 240px;
+  width: 160px;
 }
 
 .control-group {
   padding: @vertical-padding @horizontal-padding;
-}
-
-select {
-  display: table-cell;
 }
 
 button.link,
