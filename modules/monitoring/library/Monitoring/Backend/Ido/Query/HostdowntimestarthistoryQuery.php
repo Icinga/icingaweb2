@@ -16,6 +16,16 @@ class HostdowntimestarthistoryQuery extends IdoQuery
     /**
      * {@inheritdoc}
      */
+    protected $groupBase = array('downtimehistory' => array('hdh.downtimehistory_id', 'ho.object_id'));
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $groupOrigin = array('hostgroups', 'services');
+
+    /**
+     * {@inheritdoc}
+     */
     protected $columnMap = array(
         'instances' => array(
             'instance_name' => 'i.instance_name'
@@ -23,14 +33,12 @@ class HostdowntimestarthistoryQuery extends IdoQuery
         'downtimehistory' => array(
             'host'          => 'ho.name1 COLLATE latin1_general_ci',
             'host_name'     => 'ho.name1',
-            'object_type'   => '(\'host\')'
-        ),
-        'history' => array(
-            'type'      => "('dt_start')",
-            'timestamp' => 'UNIX_TIMESTAMP(hdh.actual_start_time)',
-            'object_id' => 'hdh.object_id',
-            'state'     => '(-1)',
-            'output'    => "('[' || hdh.author_name || '] ' || hdh.comment_data)",
+            'object_id'     => 'hdh.object_id',
+            'object_type'   => '(\'host\')',
+            'output'        => "('[' || hdh.author_name || '] ' || hdh.comment_data)",
+            'state'         => '(-1)',
+            'timestamp'     => 'UNIX_TIMESTAMP(hdh.actual_start_time)',
+            'type'          => "('dt_start')"
         ),
         'hostgroups' => array(
             'hostgroup'         => 'hgo.name1 COLLATE latin1_general_ci',
@@ -171,21 +179,5 @@ class HostdowntimestarthistoryQuery extends IdoQuery
             'i.instance_id = hdh.instance_id',
             array()
         );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getGroup()
-    {
-        $group = array();
-        if ($this->hasJoinedVirtualTable('hostgroups') || $this->hasJoinedVirtualTable('services')) {
-            $group = array('hdh.downtimehistory_id', 'ho.object_id');
-            if ($this->hasJoinedVirtualTable('hosts')) {
-                $group[] = 'h.host_id';
-            }
-        }
-
-        return $group;
     }
 }
