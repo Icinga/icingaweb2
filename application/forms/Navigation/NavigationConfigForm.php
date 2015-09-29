@@ -565,6 +565,13 @@ class NavigationConfigForm extends ConfigForm
         $shared = false;
         $itemTypes = $this->getItemTypes();
         $itemType = isset($formData['type']) ? $formData['type'] : key($itemTypes);
+        if ($itemType === null) {
+            throw new ProgrammingError(
+                'This should actually not happen. Create a bug report at dev.icinga.org'
+                . ' or remove this assertion if you know what you\'re doing'
+            );
+        }
+
         $itemForm = $this->getItemForm($itemType);
 
         $this->addElement(
@@ -622,17 +629,33 @@ class NavigationConfigForm extends ConfigForm
             }
         }
 
-        $this->addElement(
-            'select',
-            'type',
-            array(
-                'required'      => true,
-                'autosubmit'    => true,
-                'label'         => $this->translate('Type'),
-                'description'   => $this->translate('The type of this navigation item'),
-                'multiOptions'  => $itemTypes
-            )
-        );
+        if (empty($itemTypes) || count($itemTypes) === 1) {
+            $this->addElement(
+                'hidden',
+                'type',
+                array(
+                    'disabled'  => true,
+                    'value'     => $itemType
+                )
+            );
+        } else {
+            $multiOptions = array();
+            foreach ($itemTypes as $type => $options) {
+                $multiOptions[$type] = isset($options['label']) ? $options['label'] : $type;
+            }
+
+            $this->addElement(
+                'select',
+                'type',
+                array(
+                    'required'      => true,
+                    'autosubmit'    => true,
+                    'label'         => $this->translate('Type'),
+                    'description'   => $this->translate('The type of this navigation item'),
+                    'multiOptions'  => $multiOptions
+                )
+            );
+        }
 
         if (! $shared && $itemForm->requiresParentSelection()) {
             if ($this->itemToLoad && $this->hasBeenShared($this->itemToLoad)) {
