@@ -1,5 +1,18 @@
 /*! Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
+.state-badges {
+  display: inline-block;
+  vertical-align: middle;
+
+  > ul > li {
+    padding-right: 5px;
+
+    &:last-child {
+      padding-right: 0;
+    }
+  }
+}
+
 /* Generic box element */
 
 .boxview a {
@@ -9,7 +22,7 @@
 .boxview > div.box {
   text-align: center;
   vertical-align: top;
-  display: inline-block; 
+  display: inline-block;
   padding: 20px;
   margin: 0.5em;
 }
