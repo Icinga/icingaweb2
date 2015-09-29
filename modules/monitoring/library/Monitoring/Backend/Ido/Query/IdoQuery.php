@@ -1021,6 +1021,9 @@ abstract class IdoQuery extends DbQuery
                             $group[] = 'co.object_id';
                             $group[] = 'c.contact_id';
                             break;
+                        case 'hostobjects':
+                            $group[] = 'ho.object_id';
+                            break;
                         case 'hosts':
                             $group[] = 'h.host_id';
                             break;
