@@ -15,6 +15,16 @@ class HoststatusQuery extends IdoQuery
     /**
      * {@inheritdoc}
      */
+    protected $groupBase = array('hosts' => array('ho.object_id', 'h.host_id'));
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $groupOrigin = array('hostgroups', 'servicegroups', 'services');
+
+    /**
+     * {@inheritdoc}
+     */
     protected $columnMap = array(
         'instances' => array(
             'instance_name' => 'i.instance_name'
@@ -276,76 +286,6 @@ class HoststatusQuery extends IdoQuery
             'ctp.timeperiod_object_id = h.check_timeperiod_object_id',
             array()
         );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getGroup()
-    {
-        $group = parent::getGroup() ?: array();
-        if (! is_array($group)) {
-            $group = array($group);
-        }
-        $groupedTables = array();
-        if ($this->hasJoinedVirtualTable('servicegroups')) {
-            $group[] = 'ho.object_id';
-            $group[] = 'h.host_id';
-            $groupedTables['hosts'] = true;
-            $serviceGroupColumns = array_keys($this->columnMap['servicegroups']);
-            $selectedServiceGroupColumns = array_intersect($serviceGroupColumns, array_keys($this->columns));
-            if (! empty($selectedServiceGroupColumns)) {
-                $group[] = 'sgo.object_id';
-                $group[] = 'sg.servicegroup_id';
-                $groupedTables['servicegroups'] = true;
-            }
-        }
-        if ($this->hasJoinedVirtualTable('hostgroups')) {
-            if (! isset($groupedTables['hosts'])) {
-                $group[] = 'ho.object_id';
-                $group[] = 'h.host_id';
-                $groupedTables['hosts'] = true;
-            }
-            $hostGroupColumns = array_keys($this->columnMap['hostgroups']);
-            $selectedHostGroupColumns = array_intersect($hostGroupColumns, array_keys($this->columns));
-            if (! empty($selectedHostGroupColumns)) {
-                $group[] = 'hgo.object_id';
-                $group[] = 'hg.hostgroup_id';
-                $groupedTables['hostgroups'] = true;
-            }
-        }
-        if (! empty($groupedTables)) {
-            foreach ($this->columns as $alias => $column) {
-                if ($column instanceof Zend_Db_Expr || $column === '(NULL)') {
-                    continue;
-                }
-                $tableName = $this->aliasToTableName(
-                    $this->hasAliasName($alias) ? $alias : $this->customAliasToAlias($alias)
-                );
-                if (isset($groupedTables[$tableName])) {
-                    continue;
-                }
-                switch ($tableName) {
-                    case 'hoststatus':
-                        $group[] = 'hs.hoststatus_id';
-                        break;
-                    case 'serviceproblemsummary':
-                        $group[] = 'sps.unhandled_services_count';
-                        break;
-                    case 'services':
-                        $group[] = 'so.object_id';
-                        $group[] = 's.service_id';
-                        break;
-                    case 'instances':
-                        $group[] = 'i.instance_id';
-                        break;
-                    default:
-                        continue 2;
-                }
-                $groupedTables[$tableName] = true;
-            }
-        }
-        return $group;
     }
 
     /**
