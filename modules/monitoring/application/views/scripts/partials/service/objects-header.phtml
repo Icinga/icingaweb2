@@ -12,8 +12,10 @@ $i = 0;
             continue;
         }
         ?>
-        <tr class="state <?= Service::getStateText($service->service_state); ?><?= $service->service_handled ? ' handled' : '' ?>">
-            <td class="state"><?= Service::getStateText($service->service_state, true); ?><br /></td>
+        <tr>
+            <td class="state-col state-<?= Service::getStateText($service->service_state); ?><?= $service->service_handled ? ' handled' : '' ?>"?>
+                <?= Service::getStateText($service->service_state, true); ?><br />
+            </td>
             <td>
             <?= $this->iconImage()->service($service) ?>
             <?= implode(' ', $this->serviceFlags($service)) ?>

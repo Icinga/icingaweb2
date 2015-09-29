@@ -22,7 +22,6 @@ switch ($comment->type) {
         break;
 }
 ?>
-<strong><?= $this->escape($title) ?></strong>
-<br>
-<?= $this->icon($icon, $tooltip) ?>
-<?= $this->timeAgo($comment->timestamp, $this->compact) ?>
+<span style="font-size: 1.8em">
+    <?= $this->icon($icon, $tooltip); ?>
+</span>
