@@ -16,6 +16,16 @@ class HostcommentQuery extends IdoQuery
     /**
      * {@inheritdoc}
      */
+    protected $groupBase = array('comments' => array('c.comment_id', 'ho.object_id'));
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $groupOrigin = array('hostgroups', 'services');
+
+    /**
+     * {@inheritdoc}
+     */
     protected $columnMap = array(
         'instances' => array(
             'instance_name' => 'i.instance_name'
@@ -164,29 +174,5 @@ class HostcommentQuery extends IdoQuery
             'i.instance_id = c.instance_id',
             array()
         );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getGroup()
-    {
-        $group = array();
-        if ($this->hasJoinedVirtualTable('hostgroups') || $this->hasJoinedVirtualTable('services')) {
-            $group = array('c.comment_id', 'ho.object_id');
-            if ($this->hasJoinedVirtualTable('hosts')) {
-                $group[] = 'h.host_id';
-            }
-
-            if ($this->hasJoinedVirtualTable('hoststatus')) {
-                $group[] = 'hs.hoststatus_id';
-            }
-
-            if ($this->hasJoinedVirtualTable('instances')) {
-                $group[] = 'i.instance_id';
-            }
-        }
-
-        return $group;
     }
 }
