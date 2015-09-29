@@ -358,9 +358,25 @@ class LdapConnection implements Selectable, Inspectable
      */
     public function count(LdapQuery $query)
     {
-        $ds = $this->getConnection();
         $this->bind();
 
+        if (($unfoldAttribute = $query->getUnfoldAttribute()) !== null) {
+            $desiredColumns = $query->getColumns();
+            if (isset($desiredColumns[$unfoldAttribute])) {
+                $fields = array($unfoldAttribute => $desiredColumns[$unfoldAttribute]);
+            } elseif (in_array($unfoldAttribute, $desiredColumns, true)) {
+                $fields = array($unfoldAttribute);
+            } else {
+                throw new ProgrammingError(
+                    'The attribute used to unfold a query\'s result must be selected'
+                );
+            }
+
+            $res = $this->runQuery($query, $fields);
+            return count($res);
+        }
+
+        $ds = $this->getConnection();
         $results = @ldap_search(
             $ds,
             $query->getBase() ?: $this->getDn(),
