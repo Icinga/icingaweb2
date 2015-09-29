@@ -12,9 +12,8 @@ use Icinga\Protocol\Ldap\Expression;
 use Icinga\Repository\LdapRepository;
 use Icinga\Repository\RepositoryQuery;
 use Icinga\User;
-use Icinga\Application\Logger;
 
-class LdapUserGroupBackend /*extends LdapRepository*/ implements UserGroupBackendInterface
+class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInterface
 {
     /**
      * The base DN to use for a user query
@@ -118,30 +117,6 @@ class LdapUserGroupBackend /*extends LdapRepository*/ implements UserGroupBacken
         'inetorgperson'     => 'inetOrgPerson',
         'samaccountname'    => 'sAMAccountName'
     );
-
-    /**
-     * The name of this repository
-     *
-     * @var string
-     */
-    protected $name;
-
-    /**
-     * The datasource being used
-     *
-     * @var Connection
-     */
-    protected $ds;
-
-    /**
-     * Create a new LDAP repository object
-     *
-     * @param   Connection  $ds     The data source to use
-     */
-    public function __construct($ds)
-    {
-        $this->ds = $ds;
-    }
 
     /**
      * Return the given attribute name normed to known LDAP enviroments, if possible
@@ -420,6 +395,7 @@ class LdapUserGroupBackend /*extends LdapRepository*/ implements UserGroupBacken
     public function select(array $columns = null)
     {
         $query = parent::select($columns);
+        
         $query->getQuery()->setBase($this->groupBaseDn);
         if ($this->groupFilter) {
             // TODO(jom): This should differentiate between groups and their memberships
@@ -462,7 +438,7 @@ class LdapUserGroupBackend /*extends LdapRepository*/ implements UserGroupBacken
             'created_at'    => $createdAtAttribute,
             'last_modified' => $lastModifiedAttribute
         );
-        return array('group' => $columns, 'group_membership' => $columns);
+        return array( $this->groupClass => $columns, 'group_membership' => $columns); //dumb hack because of how groupcontroller fetches data and my limited knowledge of this codebase
     }
 
     /**
@@ -502,29 +478,6 @@ class LdapUserGroupBackend /*extends LdapRepository*/ implements UserGroupBacken
     }
 
     /**
-     * Validate that the requested table exists
-     *
-     * This will return $this->groupClass in case $table equals "group" or "group_membership".
-     *
-     * @param   string              $table      The table to validate
-     * @param   RepositoryQuery     $query      An optional query to pass as context
-     *                                          (unused by the base implementation)
-     *
-     * @return  string
-     *
-     * @throws  ProgrammingError                In case the given table does not exist
-     */
-    public function requireTable($table, RepositoryQuery $query = null)
-    {
-        $table = parent::requireTable($table, $query);
-        if ($table === 'group' || $table === 'group_membership') {
-            $table = $this->groupClass;
-        }
-
-        return $table;
-    }
-
-    /**
      * Return the groups the given user is a member of
      *
      * @param   User    $user
@@ -533,43 +486,40 @@ class LdapUserGroupBackend /*extends LdapRepository*/ implements UserGroupBacken
      */
     public function getMemberships(User $user)
     {
-        if ($this->groupClass === 'posixGroup') {
-            // Posix group only uses simple user name
-            $userDn = $user->getUsername();
-        } else {
-            // LDAP groups use the complete DN
-            if (($userDn = $user->getAdditional('ldap_dn')) === null) {
-                $userQuery = $this->ds
-                    ->select()
-                    ->from($this->userClass)
-                    ->where($this->userNameAttribute, $user->getUsername())
-                    ->setBase($this->userBaseDn)
-                    ->setUsePagedResults(false);
-                if ($this->userFilter) {
-                    $userQuery->where(new Expression($this->userFilter));
-                }
+        $queryUsername = $user->getUsername();
+        
+        if (($userDn = $user->getAdditional('ldap_dn')) === null) {
+            $userQuery = $this->ds
+                ->select()
+                ->from($this->userClass)
+                ->where($this->userNameAttribute, $user->getUsername())
+                ->setBase($this->userBaseDn)
+                ->setUsePagedResults(false);
+            if ($this->userFilter) {
+                $userQuery->where(new Expression($this->userFilter));
+            }
 
-                if (($userDn = $userQuery->fetchDn()) === null) {
-                    return array();
-                }
+            if ($this->groupClass != 'posixGroup') {
+              if (($queryUsername = $userQuery->fetchDn()) === null) {
+                  return array();
+              }
             }
         }
 
         $groupQuery = $this->ds
             ->select()
             ->from($this->groupClass, array($this->groupNameAttribute))
-            ->where($this->groupMemberAttribute, $userDn)
+            ->where($this->groupMemberAttribute, $queryUsername)
             ->setBase($this->groupBaseDn);
+            
         if ($this->groupFilter) {
             $groupQuery->where(new Expression($this->groupFilter));
         }
 
-        Logger::debug('Fetching groups for user %s using filter %s.', $user->getUsername(), $groupQuery->__toString());
         $groups = array();
         foreach ($groupQuery as $row) {
             $groups[] = $row->{$this->groupNameAttribute};
         }
-        Logger::debug('Fetched %d groups: %s.', count($groups), join(', ', $groups));
 
         return $groups;
     }
