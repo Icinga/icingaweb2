@@ -439,13 +439,37 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
         if ($this->groupClass === null) {
             throw new ProgrammingError('It is required to set the objectClass where to look for groups first');
         }
+        if ($this->groupMemberAttribute === null) {
+            throw new ProgrammingError('It is required to set a attribute name where to find a group\'s members first');
+        }
 
-        return array(
+        $rules = array(
             $this->groupClass => array(
                 'created_at'    => 'generalized_time',
                 'last_modified' => 'generalized_time'
             )
         );
+        if (! $this->isAmbiguous($this->groupClass, $this->groupMemberAttribute)) {
+            $rules[$this->groupClass][] = 'user_name';
+        }
+
+        return $rules;
+    }
+
+    /**
+     * Return the uid for the given distinguished name
+     *
+     * @param   string  $username
+     *
+     * @param   string
+     */
+    protected function retrieveUserName($dn)
+    {
+        return $this->ds
+            ->select()
+            ->from($this->userClass, array($this->userNameAttribute))
+            ->setBase($dn)
+            ->fetchOne();
     }
 
     /**
