@@ -28,7 +28,7 @@ use Icinga\Module\Monitoring\Object\Service;
         </td>
     </tr>
     <tr>
-        <td class="state-col state-<?= Service::getStateText($object->service_state) ?><?= $object->service_handled ? '-handled' : '' ?>">
+        <td class="state-col state-<?= Service::getStateText($object->service_state) ?><?= $object->service_handled ? ' handled' : '' ?>">
             <p>
                 <?= Service::getStateText($object->service_state, true) ?>
                 <br>
