@@ -879,6 +879,6 @@ class NavigationConfigForm extends ConfigForm
             $configName = $type . 's';
         }
 
-        return Config::app($username ? "preferences/$username/" : 'navigation/' . $configName);
+        return Config::app(($username ? "preferences/$username/" : 'navigation/') . $configName);
     }
 }
