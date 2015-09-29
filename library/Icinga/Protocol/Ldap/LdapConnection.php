@@ -727,23 +727,21 @@ class LdapConnection implements Selectable, Inspectable
         $count = 0;
         $entries = array();
         $entry = ldap_first_entry($ds, $results);
+        $unfoldAttribute = $query->getUnfoldAttribute();
         do {
-            $count += 1;
-            if (! $serverSorting || $offset === 0 || $offset < $count) {
-                $row = $this->cleanupAttributes(
+            if ($unfoldAttribute) {
+                $rows = $this->cleanupAttributes(
                     ldap_get_attributes($ds, $entry),
                     array_flip($fields),
-                    $query->getUnfoldAttribute()
+                    $unfoldAttribute
                 );
 
-                if (is_array($row)) {
+                if (is_array($rows)) {
                     // TODO: Register the DN the same way as a section name in the ArrayDatasource!
-
-                    $count -= 1;
-                    foreach ($row as $additionalRow) {
+                    foreach ($rows as $row) {
                         $count += 1;
                         if (! $serverSorting || $offset === 0 || $offset < $count) {
-                            $entries[] = $additionalRow;
+                            $entries[] = $row;
                         }
 
                         if ($serverSorting && $limit > 0 && $limit === count($entries)) {
@@ -751,7 +749,18 @@ class LdapConnection implements Selectable, Inspectable
                         }
                     }
                 } else {
-                    $entries[ldap_get_dn($ds, $entry)] = $row;
+                    $count += 1;
+                    if (! $serverSorting || $offset === 0 || $offset < $count) {
+                        $entries[ldap_get_dn($ds, $entry)] = $rows;
+                    }
+                }
+            } else {
+                $count += 1;
+                if (! $serverSorting || $offset === 0 || $offset < $count) {
+                    $entries[ldap_get_dn($ds, $entry)] = $this->cleanupAttributes(
+                        ldap_get_attributes($ds, $entry),
+                        array_flip($fields)
+                    );
                 }
             }
         } while ((! $serverSorting || $limit === 0 || $limit !== count($entries))
@@ -811,6 +820,7 @@ class LdapConnection implements Selectable, Inspectable
         $count = 0;
         $cookie = '';
         $entries = array();
+        $unfoldAttribute = $query->getUnfoldAttribute();
         do {
             // Do not request the pagination control as a critical extension, as we want the
             // server to return results even if the paged search request cannot be satisfied
@@ -861,22 +871,19 @@ class LdapConnection implements Selectable, Inspectable
 
             $entry = ldap_first_entry($ds, $results);
             do {
-                $count += 1;
-                if (! $serverSorting || $offset === 0 || $offset < $count) {
-                    $row = $this->cleanupAttributes(
+                if ($unfoldAttribute) {
+                    $rows = $this->cleanupAttributes(
                         ldap_get_attributes($ds, $entry),
                         array_flip($fields),
-                        $query->getUnfoldAttribute()
+                        $unfoldAttribute
                     );
 
-                    if (is_array($row)) {
+                    if (is_array($rows)) {
                         // TODO: Register the DN the same way as a section name in the ArrayDatasource!
-
-                        $count -= 1;
-                        foreach ($row as $additionalRow) {
+                        foreach ($rows as $row) {
                             $count += 1;
                             if (! $serverSorting || $offset === 0 || $offset < $count) {
-                                $entries[] = $additionalRow;
+                                $entries[] = $row;
                             }
 
                             if ($serverSorting && $limit > 0 && $limit === count($entries)) {
@@ -884,7 +891,18 @@ class LdapConnection implements Selectable, Inspectable
                             }
                         }
                     } else {
-                        $entries[ldap_get_dn($ds, $entry)] = $row;
+                        $count += 1;
+                        if (! $serverSorting || $offset === 0 || $offset < $count) {
+                            $entries[ldap_get_dn($ds, $entry)] = $rows;
+                        }
+                    }
+                } else {
+                    $count += 1;
+                    if (! $serverSorting || $offset === 0 || $offset < $count) {
+                        $entries[ldap_get_dn($ds, $entry)] = $this->cleanupAttributes(
+                            ldap_get_attributes($ds, $entry),
+                            array_flip($fields)
+                        );
                     }
                 }
             } while (
