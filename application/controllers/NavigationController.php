@@ -232,7 +232,6 @@ class NavigationController extends Controller
         $form->setItemTypes(array_merge($this->defaultItemTypes, $this->moduleItemTypes));
         $form->addDescription($this->translate('Create a new navigation item, such as a menu entry or dashlet.'));
         $form->setUser($this->Auth()->getUser());
-        $form->setShareConfig(Config::app('navigation'));
         $form->setOnSuccess(function (NavigationConfigForm $form) {
             $data = array_filter($form->getValues());
 
@@ -244,7 +243,7 @@ class NavigationController extends Controller
             }
 
             if ($form->save()) {
-                if (isset($data['type']) && $data['type'] === 'menu-item') {
+                if ($data['type'] === 'menu-item') {
                     $form->getResponse()->setRerenderLayout();
                 }
 
