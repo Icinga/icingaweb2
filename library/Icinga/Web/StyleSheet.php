@@ -17,6 +17,7 @@ class StyleSheet
         'css/icinga/colors.less',
         'css/icinga/badges.less',
         'css/icinga/mixins.less',
+        'css/icinga/grid.less',
         'css/icinga/base.less',
         'css/icinga/nav.less',
         'css/icinga/main.less',
