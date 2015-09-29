@@ -714,10 +714,29 @@ class LdapConnection implements Selectable, Inspectable
         do {
             $count += 1;
             if (! $serverSorting || $offset === 0 || $offset < $count) {
-                $entries[ldap_get_dn($ds, $entry)] = $this->cleanupAttributes(
+                $row = $this->cleanupAttributes(
                     ldap_get_attributes($ds, $entry),
-                    array_flip($fields)
+                    array_flip($fields),
+                    $query->getUnfoldAttribute()
                 );
+
+                if (is_array($row)) {
+                    // TODO: Register the DN the same way as a section name in the ArrayDatasource!
+
+                    $count -= 1;
+                    foreach ($row as $additionalRow) {
+                        $count += 1;
+                        if (! $serverSorting || $offset === 0 || $offset < $count) {
+                            $entries[] = $additionalRow;
+                        }
+
+                        if ($serverSorting && $limit > 0 && $limit === count($entries)) {
+                            break;
+                        }
+                    }
+                } else {
+                    $entries[ldap_get_dn($ds, $entry)] = $row;
+                }
             }
         } while ((! $serverSorting || $limit === 0 || $limit !== count($entries))
             && ($entry = ldap_next_entry($ds, $entry))
@@ -828,10 +847,29 @@ class LdapConnection implements Selectable, Inspectable
             do {
                 $count += 1;
                 if (! $serverSorting || $offset === 0 || $offset < $count) {
-                    $entries[ldap_get_dn($ds, $entry)] = $this->cleanupAttributes(
+                    $row = $this->cleanupAttributes(
                         ldap_get_attributes($ds, $entry),
-                        array_flip($fields)
+                        array_flip($fields),
+                        $query->getUnfoldAttribute()
                     );
+
+                    if (is_array($row)) {
+                        // TODO: Register the DN the same way as a section name in the ArrayDatasource!
+
+                        $count -= 1;
+                        foreach ($row as $additionalRow) {
+                            $count += 1;
+                            if (! $serverSorting || $offset === 0 || $offset < $count) {
+                                $entries[] = $additionalRow;
+                            }
+
+                            if ($serverSorting && $limit > 0 && $limit === count($entries)) {
+                                break;
+                            }
+                        }
+                    } else {
+                        $entries[ldap_get_dn($ds, $entry)] = $row;
+                    }
                 }
             } while (
                 (! $serverSorting || $limit === 0 || $limit !== count($entries))
@@ -879,14 +917,16 @@ class LdapConnection implements Selectable, Inspectable
     /**
      * Clean up the given attributes and return them as simple object
      *
-     * Applies column aliases, aggregates multi-value attributes as array and sets null for each missing attribute.
+     * Applies column aliases, aggregates/unfolds multi-value attributes
+     * as array and sets null for each missing attribute.
      *
      * @param   array   $attributes
      * @param   array   $requestedFields
+     * @param   string  $unfoldAttribute
      *
-     * @return  object
+     * @return  object|array    An array in case the object has been unfolded
      */
-    public function cleanupAttributes($attributes, array $requestedFields)
+    public function cleanupAttributes($attributes, array $requestedFields, $unfoldAttribute = null)
     {
         // In case the result contains attributes with a differing case than the requested fields, it is
         // necessary to create another array to map attributes case insensitively to their requested counterparts.
@@ -925,6 +965,24 @@ class LdapConnection implements Selectable, Inspectable
                 $cleanedAttributes[$alias] = null;
                 Logger::debug('LDAP query result does not provide the requested field "%s"', $name);
             }
+        }
+
+        if (
+            $unfoldAttribute !== null
+            && isset($cleanedAttributes[$unfoldAttribute])
+            && is_array($cleanedAttributes[$unfoldAttribute])
+        ) {
+            $values = $cleanedAttributes[$unfoldAttribute];
+            unset($cleanedAttributes[$unfoldAttribute]);
+            $baseRow = (object) $cleanedAttributes;
+            $rows = array();
+            foreach ($values as $value) {
+                $row = clone $baseRow;
+                $row->{$unfoldAttribute} = $value;
+                $rows[] = $row;
+            }
+
+            return $rows;
         }
 
         return (object) $cleanedAttributes;
