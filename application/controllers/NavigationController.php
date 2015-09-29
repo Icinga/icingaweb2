@@ -364,9 +364,13 @@ class NavigationController extends Controller
         $this->assertPermission('config/application/navigation');
         $this->assertHttpMethod('POST');
 
+        $itemType = $this->params->getRequired('type');
+        $itemOwner = $this->params->getRequired('owner');
+
         $navigationConfigForm = new NavigationConfigForm();
         $navigationConfigForm->setUser($this->Auth()->getUser());
-        $navigationConfigForm->setShareConfig(Config::app('navigation'));
+        $navigationConfigForm->setShareConfig(Config::fromIni($this->getConfigPath($itemType)));
+        $navigationConfigForm->setUserConfig(Config::fromIni($this->getConfigPath($itemType, $itemOwner)));
 
         $form = new Form(array(
             'onSuccess' => function ($form) use ($navigationConfigForm) {
