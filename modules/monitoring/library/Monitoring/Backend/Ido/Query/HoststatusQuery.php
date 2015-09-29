@@ -26,8 +26,8 @@ class HoststatusQuery extends IdoQuery
      * {@inheritdoc}
      */
     protected $columnMap = array(
-        'instances' => array(
-            'instance_name' => 'i.instance_name'
+        'checktimeperiods' => array(
+            'host_check_timeperiod' => 'ctp.alias COLLATE latin1_general_ci'
         ),
         'hostgroups' => array(
             'hostgroup'         => 'hgo.name1 COLLATE latin1_general_ci',
@@ -158,6 +158,9 @@ class HoststatusQuery extends IdoQuery
             'host_status_update_time'   => 'hs.status_update_time',
             'host_unhandled'            => 'CASE WHEN (hs.problem_has_been_acknowledged + hs.scheduled_downtime_depth) = 0 THEN 1 ELSE 0 END'
         ),
+        'instances' => array(
+            'instance_name' => 'i.instance_name'
+        ),
         'servicegroups' => array(
             'servicegroup'          => 'sgo.name1 COLLATE latin1_general_ci',
             'servicegroup_name'     => 'sgo.name1',
@@ -167,9 +170,6 @@ class HoststatusQuery extends IdoQuery
             'service'                => 'so.name2 COLLATE latin1_general_ci',
             'service_description'    => 'so.name2',
             'service_display_name'   => 's.display_name COLLATE latin1_general_ci',
-        ),
-        'checktimeperiods' => array(
-            'host_check_timeperiod' => 'ctp.alias COLLATE latin1_general_ci'
         )
     );
 
@@ -195,6 +195,18 @@ class HoststatusQuery extends IdoQuery
             array()
         );
         $this->joinedVirtualTables['hosts'] = true;
+    }
+
+    /**
+     * Join check time periods
+     */
+    protected function joinChecktimeperiods()
+    {
+        $this->select->joinLeft(
+            array('ctp' => $this->prefix . 'timeperiods'),
+            'ctp.timeperiod_object_id = h.check_timeperiod_object_id',
+            array()
+        );
     }
 
     /**
@@ -225,6 +237,18 @@ class HoststatusQuery extends IdoQuery
         $this->select->join(
             array('hs' => $this->prefix . 'hoststatus'),
             'hs.host_object_id = ho.object_id',
+            array()
+        );
+    }
+
+    /**
+     * Join instances
+     */
+    protected function joinInstances()
+    {
+        $this->select->join(
+            array('i' => $this->prefix . 'instances'),
+            'i.instance_id = ho.instance_id',
             array()
         );
     }
@@ -263,27 +287,6 @@ class HoststatusQuery extends IdoQuery
         )->joinLeft(
             array('so' => $this->prefix . 'objects'),
             'so.object_id = s.service_object_id AND so.is_active = 1 AND so.objecttype_id = 2',
-            array()
-        );
-    }
-
-    /**
-     * Join instances
-     */
-    protected function joinInstances()
-    {
-        $this->select->join(
-            array('i' => $this->prefix . 'instances'),
-            'i.instance_id = ho.instance_id',
-            array()
-        );
-    }
-
-    protected function joinChecktimeperiods()
-    {
-        $this->select->joinLeft(
-            array('ctp' => $this->prefix . 'timeperiods'),
-            'ctp.timeperiod_object_id = h.check_timeperiod_object_id',
             array()
         );
     }
