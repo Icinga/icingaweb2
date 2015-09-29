@@ -933,9 +933,6 @@ class LdapConnection implements Selectable, Inspectable
             // the server: https://www.ietf.org/rfc/rfc2696.txt
             ldap_control_paged_result($ds, 0, false, $cookie);
             ldap_search($ds, $base, $queryString); // Returns no entries, due to the page size
-        } else {
-            // Reset the paged search request so that subsequent requests succeed
-            ldap_control_paged_result($ds, 0);
         }
 
         if (! $serverSorting && $query->hasOrder()) {
