@@ -41,6 +41,26 @@ class NavigationController extends Controller
     }
 
     /**
+     * Return the label for the given navigation item type
+     *
+     * @param   string  $type
+     *
+     * @return  string          It's $type if no label can be found
+     */
+    protected function getItemLabel($type)
+    {
+        if (isset($this->moduleItemTypes[$type]['label'])) {
+            return $this->moduleItemTypes[$type]['label'];
+        }
+
+        if (isset($this->defaultItemTypes[$type]['label'])) {
+            return $this->defaultItemTypes[$type]['label'];
+        }
+
+        return $type;
+    }
+
+    /**
      * Return a list of available navigation item types
      *
      * @return  array
