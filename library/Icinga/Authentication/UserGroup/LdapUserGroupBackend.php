@@ -401,7 +401,6 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
             $lastModifiedAttribute = 'modifyTimestamp';
         }
 
-        // TODO(jom): Fetching memberships does not work currently, we'll need some aggregate functionality!
         $columns = array(
             'group'         => $this->groupNameAttribute,
             'group_name'    => $this->groupNameAttribute,
@@ -470,6 +469,27 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
         }
 
         return $table;
+    }
+
+    /**
+     * Validate that the given column is a valid query target and return it or the actual name if it's an alias
+     *
+     * @param   string              $table  The table where to look for the column or alias
+     * @param   string              $name   The name or alias of the column to validate
+     * @param   RepositoryQuery     $query  An optional query to pass as context
+     *
+     * @return  string                      The given column's name
+     *
+     * @throws  QueryException              In case the given column is not a valid query column
+     */
+    public function requireQueryColumn($table, $name, RepositoryQuery $query = null)
+    {
+        $column = parent::requireQueryColumn($table, $name, $query);
+        if ($name === 'user_name' && $query !== null) {
+            $query->getQuery()->setUnfoldAttribute('user_name');
+        }
+
+        return $column;
     }
 
     /**
