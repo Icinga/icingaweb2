@@ -417,7 +417,7 @@
         var self = evt.data.self;
 
         // initialize all rows with the correct link
-        $('table.action tr, table.action tr', container).each(function(idx, el) {
+        $('table.action tr, table.action-table tr', container).each(function(idx, el) {
             var $a = $('a[href].rowaction', el).first();
             if ($a.length) {
                 // TODO: Find out whether we leak memory on IE with this:
