@@ -11,7 +11,7 @@
     $permissions = $module->getProvidedPermissions();
     $state = $moduleData->enabled ? ($moduleData->loaded ? 'enabled' : 'failed') : 'disabled'
   ?>
-  <table class="avp">
+  <table class="name-value-table">
     <tr>
       <th><?= $this->escape($this->translate('Name')) ?></th>
       <td><?= $this->escape($module->getName()) ?></td>
