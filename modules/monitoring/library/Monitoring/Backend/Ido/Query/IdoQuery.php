@@ -3,6 +3,8 @@
 
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
+use AppendIterator;
+use ArrayIterator;
 use Zend_Db_Expr;
 use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
@@ -10,9 +12,9 @@ use Icinga\Data\Db\DbQuery;
 use Icinga\Data\Filter\Filter;
 use Icinga\Data\Filter\FilterExpression;
 use Icinga\Exception\IcingaException;
-use Icinga\Exception\NotImplementedError;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Exception\QueryException;
+use Icinga\Module\Monitoring\Data\ColumnFilterIterator;
 use Icinga\Web\Session;
 
 /**
@@ -118,6 +120,27 @@ abstract class IdoQuery extends DbQuery
      * @var array
      */
     protected $joinedVirtualTables = array();
+
+    /**
+     * Unresolved order columns
+     *
+     * @var array
+     */
+    protected $orderColumns = array();
+
+    /**
+     * Table to columns map which have to be added to the GROUP BY list if the query is grouped
+     *
+     * @var array
+     */
+    protected $groupBase = array();
+
+    /**
+     * List of table names which initiate grouping if one of them is joined
+     *
+     * @var array
+     */
+    protected $groupOrigin = array();
 
     /**
      * The primary key column for the instances table
@@ -408,6 +431,7 @@ abstract class IdoQuery extends DbQuery
     public function order($columnOrAlias, $dir = null)
     {
         $this->requireColumn($columnOrAlias);
+        $this->orderColumns[$columnOrAlias] = $columnOrAlias;
         if ($this->isCustomvar($columnOrAlias)) {
             $columnOrAlias = $this->getCustomvarColumnName($columnOrAlias);
         } elseif ($this->hasAliasName($columnOrAlias)) {
@@ -947,41 +971,94 @@ abstract class IdoQuery extends DbQuery
     }
 
     /**
+     * Handle grouping for special columns, e.g. when the column sources more than one table
+     *
+     * @param   string  $column         Column
+     * @param   array   $groupColumns   GROUP BY list
+     * @param   array   $groupedTables  Already grouped tables
+     *
+     * @return  bool    Whether the column was handled
+     */
+    protected function handleGroupColumn($column, &$groupColumns, &$groupedTables) {
+        return false;
+    }
+
+    /**
      * {@inheritdoc}
      */
-    public function _getGroup()
+    public function getGroup()
     {
-        throw new NotImplementedError('Does not work in its current state but will, probably, in the future');
-
-        // TODO: order by??
-        $group = parent::getGroup();
-        if (! empty($group) && $this->ds->getDbType() === 'pgsql') {
-            $group = is_array($group) ? $group : array($group);
-            foreach ($this->columns as $alias => $column) {
-                if ($column instanceof Zend_Db_Expr) {
-                    continue;
+        $group = parent::getGroup() ?: array();
+        if (! is_array($group)) {
+            $group = array($group);
+        }
+        foreach ($this->groupOrigin as $table) {
+            if ($this->hasJoinedVirtualTable($table)) {
+                $groupedTables = array();
+                foreach ($this->groupBase as $table => $columns) {
+                    foreach ($columns as $column) {
+                        $group[] = $column;
+                    }
+                    $groupedTables[$table] = true;
+                }
+                $columnIterator = new AppendIterator();
+                $columnIterator->append(new ColumnFilterIterator($this->columns));
+                $columnIterator->append(new ArrayIterator($this->orderColumns));
+                foreach ($columnIterator as $alias => $column) {
+                    $alias = $this->hasAliasName($alias) ? $alias : $this->customAliasToAlias($alias);
+                    if ($this->handleGroupColumn($alias, $group, $groupedTables) === true) {
+                        continue;
+                    }
+                    $tableName = $this->aliasToTableName($alias);
+                    if (isset($groupedTables[$tableName])) {
+                        continue;
+                    }
+                    switch ($tableName) {
+                        case 'checktimeperiods':
+                            $group[] = 'ctp.timeperiod_id';
+                            break;
+                        case 'contacts':
+                            $group[] = 'co.object_id';
+                            $group[] = 'c.contact_id';
+                            break;
+                        case 'hosts':
+                            $group[] = 'h.host_id';
+                            break;
+                        case 'hostgroups':
+                            $group[] = 'hgo.object_id';
+                            $group[] = 'hg.hostgroup_id';
+                            break;
+                        case 'hoststatus':
+                            $group[] = 'hs.hoststatus_id';
+                            break;
+                        case 'instances':
+                            $group[] = 'i.instance_id';
+                            break;
+                        case 'servicegroups':
+                            $group[] = 'sgo.object_id';
+                            $group[] = 'sg.servicegroup_id';
+                            break;
+                        case 'serviceproblemsummary':
+                            $group[] = 'sps.unhandled_services_count';
+                            break;
+                        case 'services':
+                            $group[] = 'so.object_id';
+                            $group[] = 's.service_id';
+                            break;
+                        case 'servicestatus':
+                            $group[] = 'ss.servicestatus_id';
+                            break;
+                        case 'timeperiods':
+                            $group[] = 'ht.timeperiod_id';
+                            $group[] = 'st.timeperiod_id';
+                            break;
+                        default:
+                            continue 2;
+                    }
+                    $groupedTables[$tableName] = true;
                 }
 
-                // TODO: What if $alias is neither a native nor a custom alias???
-                $table = $this->aliasToTableName(
-                    $this->hasAliasName($alias) ? $alias : $this->customAliasToAlias($alias)
-                );
-
-                // TODO: We cannot rely on the underlying select here, tables may be joined multiple times with
-                //       different aliases so the only way to get the correct alias here is to register such by ourself
-                //       for each virtual column (We may also inspect $column for the alias but this will probably lead
-                //       to false positives.. AND prevents custom implementations from providing their own "mapping")
-                if (($tableAlias = $this->getJoinedTableAlias($this->prefix . $table)) === null) {
-                    $tableAlias = $table;
-                }
-
-                // TODO: Same issue as with identifying table aliases; Our virtual tables are not named exactly how
-                //       they are in the IDO. We definitely need to register aliases explicitly (hint: DbRepository
-                //       is already providing such..)
-                $aliasedPk = $tableAlias . '.' . $this->getPrimaryKeyColumn($table);
-                if (! in_array($aliasedPk, $group)) {
-                    $group[] = $aliasedPk;
-                }
+                break;
             }
         }
 
