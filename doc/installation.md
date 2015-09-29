@@ -162,6 +162,23 @@ This version also offers snapshots for easy download which you can use if you do
 git clone git://git.icinga.org/icingaweb2.git
 ````
 
+### <a id="installing-from-source-requirements"></a> Installing Requirements from Source
+
+You will need to install certain dependencies depending on your setup listed [here](installation.md#installing-requirements).
+
+The following example installs Apache2 as web server, MySQL as RDBMS and uses the PHP adapter for MySQL.
+Adopt the package requirements to your needs (e.g. adding ldap for authentication) and distribution.
+
+Example for RHEL/CentOS/Fedora:
+
+````
+# yum install httpd mysql-server
+# yum install php php-gd php-intl php-ZendFramework php-ZendFramework-Db-Adapter-Pdo-Mysql
+````
+
+The setup wizard will check the pre-requisites later on.
+
+
 ### <a id="installing-from-source-example"></a> Installing Icinga Web 2
 
 Choose a target directory and move Icinga Web 2 there.
@@ -191,7 +208,13 @@ Example for Apache on RHEL or CentOS:
 ./bin/icingacli setup config webserver apache --document-root /usr/share/icingaweb2/public > /etc/httpd/conf.d/icingaweb2.conf
 ````
 
-### <a id="preparing-web-setup-from-source"></a> Preparing Web Setup
+Example for Apache on Debian Jessie:
+````
+./bin/icingacli setup config webserver apache --document-root /usr/share/icingaweb2/public > /etc/apache2/conf-available/icingaweb2.conf
+a2enconf icingaweb2
+````
+
+### <a id="preparing-web-setup-from-source"></a> Preparing Icinga Web 2 Setup
 
 You can set up Icinga Web 2 quickly and easily with the Icinga Web 2 setup wizard which is available the first time
 you visit Icinga Web 2 in your browser. Please follow the steps listed below for preparing the web setup.
@@ -250,8 +273,161 @@ In case you do not remember the token you can show it using the `icingacli`:
 ./bin/icingacli setup token show
 ````
 
+### <a id="web-setup-from-source-wizard"></a> Icinga Web 2 Setup Wizard
+
 Finally visit Icinga Web 2 in your browser to access the setup wizard and complete the installation:
 `/icingaweb2/setup`.
+
+Paste the previously token and follow the steps on-screen. Then you are done here.
+
+
+### <a id="web-setup-manual-from-source"></a> Icinga Web 2 Manual Setup
+
+If you have chosen not to run the setup wizard, you will need further knowledge
+about
+
+* manual creation of the Icinga Web 2 database `icingaweb2` including a default user (optional as authentication and session backend)
+* additional configuration for the application
+* additional configuration for the monitoring module (e.g. the IDO database and external command pipe from Icinga 2)
+
+This comes in handy if you are planning to deploy Icinga Web 2 automatically using
+Puppet, Ansible, Chef, etc. modules.
+
+> **Warning**
+>
+> Read the documentation on the respective linked configuration sections before
+> deploying the configuration manually.
+>
+> If you are unsure about certain settings, use the [setup wizard](installation.md#web-setup-wizard-from-source) once
+> and then collect the generated configuration as well as sql dumps.
+
+#### <a id="web-setup-manual-from-source-database"></a> Icinga Web 2 Manual Database Setup
+
+Create the database and add a new user as shown below for MySQL:
+
+````
+# sudo mysql -p
+
+CREATE DATABASE icingaweb2;
+GRANT SELECT, INSERT, UPDATE, DELETE, DROP, CREATE VIEW, INDEX, EXECUTE ON icingaweb2.* TO 'icingaweb2'@'localhost' IDENTIFIED BY 'icingaweb2';
+quit
+
+# mysql -p icingaweb2 < /usr/share/icingaweb2/etc/schema/mysql.schema.sql
+````
+
+
+Then generate a new password hash as described in the [authentication docs](authentication.md#authentication-configuration-db-setup)
+and use it to insert a new user called `icingaadmin` into the database.
+
+````
+# mysql -p icingaweb2
+
+INSERT INTO icingaweb_user (name, active, password_hash) VALUES ('icingaadmin', 1, '$1$EzxLOFDr$giVx3bGhVm4lDUAw6srGX1');
+quit
+````
+
+#### <a id="web-setup-manual-from-source-config"></a> Icinga Web 2 Manual Configuration
+
+
+[resources.ini](resources.md#resources) providing the details for the Icinga Web 2 and
+Icinga 2 IDO database configuration. Example for MySQL:
+
+````
+vim /etc/icingaweb2/resources.ini
+
+[icingaweb2]
+type                = "db"
+db                  = "mysql"
+host                = "localhost"
+port                = "3306"
+dbname              = "icingaweb2"
+username            = "icingaweb2"
+password            = "icingaweb2"
+
+
+[icinga2]
+type                = "db"
+db                  = "mysql"
+host                = "localhost"
+port                = "3306"
+dbname              = "icinga"
+username            = "icinga"
+password            = "icinga"
+````
+
+[config.ini](configuration.md#configuration) defining general application settings.
+
+````
+vim /etc/icingaweb2/config.ini
+
+[logging]
+log                 = "syslog"
+level               = "ERROR"
+application         = "icingaweb2"
+
+
+[preferences]
+type                = "db"
+resource            = "icingaweb2"
+````
+
+[authentication.ini](authentication.md#authentication) for e.g. using the previously created database.
+
+````
+vim /etc/icingaweb2/authentication.ini
+
+[icingaweb2]
+backend             = "db"
+resource            = "icingaweb2"
+````
+
+
+[roles.ini](security.md#security) granting the previously added `icingaadmin` user all permissions.
+
+````
+vim /etc/icingaweb2/roles.ini
+
+[admins]
+users               = "icingaadmin"
+permissions         = "*"
+````
+
+#### <a id="web-setup-manual-from-source-config-monitoring-module"></a> Icinga Web 2 Manual Configuration Monitoring Module
+
+
+[config.ini](../modules/monitoring/doc/configuration.md#configuration) defining additional security settings.
+
+````
+vim /etc/icingaweb2/modules/monitoring/config.ini
+
+[security]
+protected_customvars = "*pw*,*pass*,community"
+````
+
+[backends.ini](../modules/monitoring/doc/configuration.md#configuration) referencing the Icinga 2 DB IDO resource.
+
+````
+vim /etc/icingaweb2/modules/monitoring/backends.ini
+
+[icinga2]
+type                = "ido"
+resource            = "icinga2"
+````
+
+[commandtransports.ini](../modules/monitoring/doc/commandtransports.md#commandtransports) defining the Icinga 2 command pipe.
+
+````
+vim /etc/icingaweb2/modules/monitoring/commandtransports.ini
+
+[icinga2]
+transport           = "local"
+path                = "/var/run/icinga2/cmd/icinga2.cmd"
+````
+
+#### <a id="web-setup-manual-from-source-login"></a> Icinga Web 2 Manual Setup Login
+
+Finally visit Icinga Web 2 in your browser to login as `icingaadmin` user: `/icingaweb2`.
+
 
 # <a id="upgrading"></a> Upgrading Icinga Web 2
 
