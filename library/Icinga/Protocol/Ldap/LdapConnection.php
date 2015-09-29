@@ -789,7 +789,7 @@ class LdapConnection implements Selectable, Inspectable
         }
 
         $limit = $query->getLimit();
-        $offset = $query->hasOffset() ? $query->getOffset() - 1 : 0;
+        $offset = $query->hasOffset() ? $query->getOffset() : 0;
         $queryString = (string) $query;
         $base = $query->getBase() ?: $this->rootDn;
 
