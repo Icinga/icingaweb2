@@ -16,6 +16,13 @@ use Icinga\User;
 class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInterface
 {
     /**
+     * The user backend being associated with this user group backend
+     *
+     * @var LdapUserBackend
+     */
+    protected $userBackend;
+
+    /**
      * The base DN to use for a user query
      *
      * @var string
@@ -102,6 +109,29 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
             'order' => 'asc'
         )
     );
+
+    /**
+     * Set the user backend to be associated with this user group backend
+     *
+     * @param   LdapUserBackend     $backend
+     *
+     * @return  $this
+     */
+    public function setUserBackend(LdapUserBackend $backend)
+    {
+        $this->userBackend = $backend;
+        return $this;
+    }
+
+    /**
+     * Return the user backend being associated with this user group backend
+     *
+     * @return  LdapUserBackend
+     */
+    public function getUserBackend()
+    {
+        return $this->userBackend;
+    }
 
     /**
      * Set the base DN to use for a user query
@@ -522,6 +552,7 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
                 );
             }
 
+            $this->setUserBackend($userBackend);
             $defaults->merge(array(
                 'user_base_dn'          => $userBackend->getBaseDn(),
                 'user_class'            => $userBackend->getUserClass(),
