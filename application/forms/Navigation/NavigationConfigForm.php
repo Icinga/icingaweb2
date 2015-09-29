@@ -123,12 +123,18 @@ class NavigationConfigForm extends ConfigForm
     /**
      * Return the user's navigation configuration
      *
+     * @param   string  $type
+     *
      * @return  Config
      */
-    public function getUserConfig()
+    public function getUserConfig($type = null)
     {
         if ($this->userConfig === null) {
-            $this->setUserConfig($this->getUser()->loadNavigationConfig());
+            if ($type === null) {
+                throw new ProgrammingError('You need to pass a type if no user configuration is set');
+            }
+
+            $this->setUserConfig($this->getItemConfig($type, $this->getUser()->getUsername()));
         }
 
         return $this->userConfig;
@@ -205,10 +211,9 @@ class NavigationConfigForm extends ConfigForm
             }
         }
 
-        foreach ($this->getUserConfig() as $sectionName => $sectionConfig) {
+        foreach ($this->getUserConfig($type) as $sectionName => $sectionConfig) {
             if (
                 $sectionName !== $this->itemToLoad
-                && $sectionConfig->type === $type
                 && !in_array($sectionName, $children, true)
             ) {
                 $names[] = $sectionName;
@@ -271,17 +276,19 @@ class NavigationConfigForm extends ConfigForm
      *
      * @return  $this
      *
-     * @throws  InvalidArgumentException    In case $data does not contain a navigation item name
+     * @throws  InvalidArgumentException    In case $data does not contain a navigation item name or type
      * @throws  IcingaException             In case a navigation item with the same name already exists
      */
     public function add(array $data)
     {
         if (! isset($data['name'])) {
             throw new InvalidArgumentException('Key \'name\' missing');
+        } elseif (! isset($data['type'])) {
+            throw new InvalidArgumentException('Key \'type\' missing');
         }
 
         $shared = false;
-        $config = $this->getUserConfig();
+        $config = $this->getUserConfig($data['type']);
         if ((isset($data['users']) && $data['users']) || (isset($data['groups']) && $data['groups'])) {
             if ($this->getUser()->can('application/share/navigation')) {
                 $data['owner'] = $this->getUser()->getUsername();
@@ -301,7 +308,7 @@ class NavigationConfigForm extends ConfigForm
         $exists = $config->hasSection($itemName);
         if (! $exists) {
             if ($shared) {
-                $exists = $this->getUserConfig()->hasSection($itemName);
+                $exists = $this->getUserConfig($data['type'])->hasSection($itemName);
             } else {
                 $exists = (bool) $this->getShareConfig()
                     ->select()
@@ -820,5 +827,25 @@ class NavigationConfigForm extends ConfigForm
         }
 
         return $form;
+    }
+
+    /**
+     * Return the configuration file for the given type of navigation item
+     *
+     * @param   string  $type
+     * @param   string  $username
+     *
+     * @return  Config
+     */
+    protected function getItemConfig($type, $username = null)
+    {
+        $itemTypes = $this->getItemTypes();
+        if (isset($itemTypes[$type]['config'])) {
+            $configName = $itemTypes[$type]['config'];
+        } else {
+            $configName = $type . 's';
+        }
+
+        return Config::app($username ? "preferences/$username/" : 'navigation/' . $configName);
     }
 }
