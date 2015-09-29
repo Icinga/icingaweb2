@@ -157,10 +157,20 @@ class NavigationConfigForm extends ConfigForm
     /**
      * Return the shared navigation configuration
      *
+     * @param   string  $type
+     *
      * @return  Config
      */
-    public function getShareConfig()
+    public function getShareConfig($type = null)
     {
+        if ($this->shareConfig === null) {
+            if ($type === null) {
+                throw new ProgrammingError('You need to pass a type if no share configuration is set');
+            }
+
+            $this->setShareConfig($this->getItemConfig($type));
+        }
+
         return $this->shareConfig;
     }
 
@@ -200,10 +210,9 @@ class NavigationConfigForm extends ConfigForm
         $children = $this->itemToLoad ? $this->getFlattenedChildren($this->itemToLoad) : array();
 
         $names = array();
-        foreach ($this->getShareConfig() as $sectionName => $sectionConfig) {
+        foreach ($this->getShareConfig($type) as $sectionName => $sectionConfig) {
             if (
                 $sectionName !== $this->itemToLoad
-                && $sectionConfig->type === $type
                 && $sectionConfig->owner === ($owner ?: $this->getUser()->getUsername())
                 && !in_array($sectionName, $children, true)
             ) {
@@ -292,15 +301,15 @@ class NavigationConfigForm extends ConfigForm
         if ((isset($data['users']) && $data['users']) || (isset($data['groups']) && $data['groups'])) {
             if ($this->getUser()->can('application/share/navigation')) {
                 $data['owner'] = $this->getUser()->getUsername();
-                $config = $this->getShareConfig();
+                $config = $this->getShareConfig($data['type']);
                 $shared = true;
             } else {
                 unset($data['users']);
                 unset($data['groups']);
             }
-        } elseif (isset($data['parent']) && $data['parent'] && $this->hasBeenShared($data['parent'])) {
+        } elseif (isset($data['parent']) && $data['parent'] && $this->hasBeenShared($data['parent'], $data['type'])) {
             $data['owner'] = $this->getUser()->getUsername();
-            $config = $this->getShareConfig();
+            $config = $this->getShareConfig($data['type']);
             $shared = true;
         }
 
@@ -310,7 +319,7 @@ class NavigationConfigForm extends ConfigForm
             if ($shared) {
                 $exists = $this->getUserConfig($data['type'])->hasSection($itemName);
             } else {
-                $exists = (bool) $this->getShareConfig()
+                $exists = (bool) $this->getShareConfig($data['type'])
                     ->select()
                     ->where('name', $itemName)
                     ->where('owner', $this->getUser()->getUsername())
@@ -774,12 +783,13 @@ class NavigationConfigForm extends ConfigForm
      * Return whether the given navigation item has been shared
      *
      * @param   string  $name
+     * @param   string  $type
      *
      * @return  bool
      */
-    protected function hasBeenShared($name)
+    protected function hasBeenShared($name, $type = null)
     {
-        return $this->getConfigForItem($name) === $this->getShareConfig();
+        return $this->getShareConfig($type) === $this->getConfigForItem($name);
     }
 
     /**
