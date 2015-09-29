@@ -98,23 +98,6 @@ class ContactQuery extends IdoQuery
     }
 
     /**
-     * Join timeperiods
-     */
-    protected function joinTimeperiods()
-    {
-        $this->select->joinLeft(
-            array('ht' => $this->prefix . 'timeperiods'),
-            'ht.timeperiod_object_id = c.host_timeperiod_object_id',
-            array()
-        );
-        $this->select->joinLeft(
-            array('st' => $this->prefix . 'timeperiods'),
-            'st.timeperiod_object_id = c.service_timeperiod_object_id',
-            array()
-        );
-    }
-
-    /**
      * Join host groups
      */
     protected function joinHostgroups()
@@ -151,6 +134,18 @@ class ContactQuery extends IdoQuery
         )->joinLeft(
             array('ho' => $this->prefix . 'objects'),
             'ho.object_id = h.host_object_id AND ho.is_active = 1',
+            array()
+        );
+    }
+
+    /**
+     * Join instances
+     */
+    protected function joinInstances()
+    {
+        $this->select->join(
+            array('i' => $this->prefix . 'instances'),
+            'i.instance_id = c.instance_id',
             array()
         );
     }
@@ -197,13 +192,18 @@ class ContactQuery extends IdoQuery
     }
 
     /**
-     * Join instances
+     * Join time periods
      */
-    protected function joinInstances()
+    protected function joinTimeperiods()
     {
-        $this->select->join(
-            array('i' => $this->prefix . 'instances'),
-            'i.instance_id = c.instance_id',
+        $this->select->joinLeft(
+            array('ht' => $this->prefix . 'timeperiods'),
+            'ht.timeperiod_object_id = c.host_timeperiod_object_id',
+            array()
+        );
+        $this->select->joinLeft(
+            array('st' => $this->prefix . 'timeperiods'),
+            'st.timeperiod_object_id = c.service_timeperiod_object_id',
             array()
         );
     }
