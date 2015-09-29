@@ -1,4 +1,8 @@
-<?php if (! $this->compact): ?>
+<?php
+
+use Icinga\Web\Url;
+
+if (! $this->compact): ?>
 <div class="controls">
     <?= $this->tabs; ?>
     <?= $this->sortBox; ?>
@@ -26,6 +30,8 @@
                     'navigation/edit',
                     array(
                         'name'      => $name,
+                        'type'      => $item->type,
+                        'owner'     => $item->owner,
                         'referrer'  => 'shared'
                     ),
                     array(
@@ -48,7 +54,12 @@
                     )
                 ); ?></td>
             <?php else: ?>
-                <td data-base-target="_self"><?= $removeForm->setDefault('name', $name); ?></td>
+                <td data-base-target="_self"><?= $removeForm
+                    ->setDefault('name', $name)
+                    ->setAction(Url::fromPath(
+                        'navigation/unshare',
+                        array('type' => $item->type, 'owner' => $item->owner)
+                )); ?></td>
             <?php endif ?>
             </tr>
         <?php endforeach ?>

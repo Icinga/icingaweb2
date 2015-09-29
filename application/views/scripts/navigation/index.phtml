@@ -27,7 +27,10 @@
                 <td><?= $this->qlink(
                     $name,
                     'navigation/edit',
-                    array('name' => $name),
+                    array(
+                        'name'  => $name,
+                        'type'  => $item->type
+                    ),
                     array(
                         'title' => sprintf($this->translate('Edit navigation item %s'), $name)
                     )
@@ -39,7 +42,10 @@
                 <td><?= $this->qlink(
                     '',
                     'navigation/remove',
-                    array('name' => $name),
+                    array(
+                        'name'  => $name,
+                        'type'  => $item->type
+                    ),
                     array(
                         'icon'  => 'trash',
                         'title' => sprintf($this->translate('Remove navigation item %s'), $name)

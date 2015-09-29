@@ -182,7 +182,6 @@ class NavigationController extends Controller
 
         $removeForm = new Form();
         $removeForm->setUidDisabled();
-        $removeForm->setAction(Url::fromPath('navigation/unshare'));
         $removeForm->addElement('hidden', 'name', array(
             'decorators'    => array('ViewHelper')
         ));
