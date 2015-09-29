@@ -16,6 +16,16 @@ class HostcommenthistoryQuery extends IdoQuery
     /**
      * {@inheritdoc}
      */
+    protected $groupBase = array('commenthistory' => array('hch.commenthistory_id', 'ho.object_id'));
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $groupOrigin = array('hostgroups', 'services');
+
+    /**
+     * {@inheritdoc}
+     */
     protected $columnMap = array(
         'instances' => array(
             'instance_name' => 'i.instance_name'
@@ -23,14 +33,12 @@ class HostcommenthistoryQuery extends IdoQuery
         'commenthistory' => array(
             'host'          => 'ho.name1 COLLATE latin1_general_ci',
             'host_name'     => 'ho.name1',
-            'object_type'   => '(\'host\')'
-        ),
-        'history' => array(
-            'type'      => "(CASE hch.entry_type WHEN 1 THEN 'comment' WHEN 2 THEN 'dt_comment' WHEN 3 THEN 'flapping' WHEN 4 THEN 'ack' END)",
-            'timestamp' => 'UNIX_TIMESTAMP(hch.comment_time)',
-            'object_id' => 'hch.object_id',
-            'state'     => '(-1)',
-            'output'    => "('[' || hch.author_name || '] ' || hch.comment_data)",
+            'object_type'   => '(\'host\')',
+            'type'          => "(CASE hch.entry_type WHEN 1 THEN 'comment' WHEN 2 THEN 'dt_comment' WHEN 3 THEN 'flapping' WHEN 4 THEN 'ack' END)",
+            'timestamp'     => 'UNIX_TIMESTAMP(hch.comment_time)',
+            'object_id'     => 'hch.object_id',
+            'state'         => '(-1)',
+            'output'        => "('[' || hch.author_name || '] ' || hch.comment_data)",
         ),
         'hostgroups' => array(
             'hostgroup'         => 'hgo.name1 COLLATE latin1_general_ci',
@@ -80,7 +88,6 @@ class HostcommenthistoryQuery extends IdoQuery
             array()
         );
         $this->joinedVirtualTables['commenthistory'] = true;
-        $this->joinedVirtualTables['history'] = true;
     }
 
     /**
@@ -162,21 +169,5 @@ class HostcommenthistoryQuery extends IdoQuery
             'i.instance_id = hch.instance_id',
             array()
         );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getGroup()
-    {
-        $group = array();
-        if ($this->hasJoinedVirtualTable('hostgroups') || $this->hasJoinedVirtualTable('services')) {
-            $group = array('hch.commenthistory_id', 'ho.object_id');
-            if ($this->hasJoinedVirtualTable('hosts')) {
-                $group[] = 'h.host_id';
-            }
-        }
-
-        return $group;
     }
 }
