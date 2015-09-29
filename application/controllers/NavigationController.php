@@ -267,14 +267,22 @@ class NavigationController extends Controller
     public function editAction()
     {
         $itemName = $this->params->getRequired('name');
+        $itemType = $this->params->getRequired('type');
         $referrer = $this->params->get('referrer', 'index');
 
+        $user = $this->Auth()->getUser();
+        if ($user->can('config/application/navigation')) {
+            $itemOwner = $this->params->get('owner', $user->getUsername());
+        } else {
+            $itemOwner = $user->getUsername();
+        }
+
         $form = new NavigationConfigForm();
+        $form->setUser($user);
+        $form->setShareConfig(Config::fromIni($this->getConfigPath($itemType)));
+        $form->setUserConfig(Config::fromIni($this->getConfigPath($itemType, $itemOwner)));
         $form->setRedirectUrl($referrer === 'shared' ? 'navigation/shared' : 'navigation');
-        $form->setItemTypes($this->listItemTypes());
-        $form->setTitle(sprintf($this->translate('Edit Navigation Item %s'), $itemName));
-        $form->setUser($this->Auth()->getUser());
-        $form->setShareConfig(Config::app('navigation'));
+        $form->setTitle(sprintf($this->translate('Edit %s %s'), $this->getItemLabel($itemType), $itemName));
         $form->setOnSuccess(function (NavigationConfigForm $form) use ($itemName) {
             $data = array_map(
                 function ($v) {
