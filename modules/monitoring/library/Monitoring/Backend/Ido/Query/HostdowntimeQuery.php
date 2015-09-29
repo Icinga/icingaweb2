@@ -16,6 +16,16 @@ class HostdowntimeQuery extends IdoQuery
     /**
      * {@inheritdoc}
      */
+    protected $groupBase = array('downtimes' => array('sd.scheduleddowntime_id', 'ho.object_id'));
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $groupOrigin = array('hostgroups', 'servicegroups', 'services');
+
+    /**
+     * {@inheritdoc}
+     */
     protected $columnMap = array(
         'downtimes' => array(
             'downtime_author'           => 'sd.author_name COLLATE latin1_general_ci',
@@ -170,29 +180,5 @@ class HostdowntimeQuery extends IdoQuery
             'so.object_id = s.service_object_id AND so.is_active = 1 AND so.objecttype_id = 2',
             array()
         );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getGroup()
-    {
-        $group = array();
-        if ($this->hasJoinedVirtualTable('hostgroups') || $this->hasJoinedVirtualTable('servicegroups') || $this->hasJoinedVirtualTable('services')) {
-            $group = array('sd.scheduleddowntime_id', 'ho.object_id');
-            if ($this->hasJoinedVirtualTable('hosts')) {
-                $group[] = 'h.host_id';
-            }
-
-            if ($this->hasJoinedVirtualTable('hoststatus')) {
-                $group[] = 'hs.hoststatus_id';
-            }
-
-            if ($this->hasJoinedVirtualTable('instances')) {
-                $group[] = 'i.instance_id';
-            }
-        }
-
-        return $group;
     }
 }
