@@ -13,14 +13,14 @@
 <?php endif ?>
 <div class="content">
   <table data-base-target="_next"
-         class="action action-table comments multiselect"
+         class="action-table multiselect"
          data-icinga-multiselect-url="<?= $this->href('monitoring/comments/show'); ?>"
          data-icinga-multiselect-related="<?= $this->href("monitoring/comments") ?>"
          data-icinga-multiselect-data="comment_id">
     <tbody>
     <?php foreach ($comments->peekAhead($this->compact) as $comment): ?>
-      <tr class="state invalid">
-        <td class="comment-col">
+      <tr>
+        <td class="icon-col">
           <?= $this->partial('partials/comment/comment-description.phtml', array('comment' => $comment)); ?>
         </td>
         <td>
