@@ -5,22 +5,47 @@ https://dev.icinga.org/projects/icingaweb2/roadmap
 
 # Release Workflow
 
+## Authors
+
 Update the [.mailmap](.mailmap) and [AUTHORS](AUTHORS) files:
 
     $ git log --use-mailmap | grep ^Author: | cut -f2- -d' ' | sort | uniq > AUTHORS
 
-Update the version number in the [icingaweb2.spec] and [VERSION] files.
+## Version
+
+Update the version number in the following files:
+
+* [icingaweb2.spec] (ensure that the revision is properly set)
+* [VERSION]
+* Application Version: [library/Icinga/Application/Version.php]
+* Module Versions in modules/*/module.info
+
+Commands:
+
+    VERSION=2.0.0
+
+    vim icingaweb2.spec
+
+    echo "v$VERSION" > VERSION
+
+    sed -i '' "s/const VERSION = '.*'/const VERSION = '$VERSION'/g" library/Icinga/Application/Version.php
+
+    find . -type f -name '*.info' -exec sed -i '' "s/Version: .*/Version: $VERSION/g" {} \;
+
+## Changelog
 
 Update the [ChangeLog](ChangeLog) file using
 the changelog.py script.
 
 Changelog:
 
-    $ ./changelog.py --version 2.0.0-rc1
+    $ ./changelog.py --version 2.0.0
 
 Wordpress:
 
-    $ ./changelog.py --version 2.0.0-rc1 --html --links
+    $ ./changelog.py --version 2.0.0 --html --links
+
+## Git Tag
 
 Commit these changes to the "master" branch:
 
