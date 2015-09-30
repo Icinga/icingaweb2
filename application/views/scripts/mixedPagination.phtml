@@ -13,7 +13,7 @@ if ($this->pageCount <= 1) return;
             ($this->current - 1) * $this->itemCountPerPage,
             $this->totalItemCount
         ) ?>
-        <li>
+        <li class="nav-item">
             <a  href="<?= Url::fromRequest()->overwriteParams(array('page' => $this->previous)) ?>"
                 title="<?= $label ?>"
                 aria-label="<?= $label ?>">
@@ -21,7 +21,7 @@ if ($this->pageCount <= 1) return;
             </a>
         </li>
     <?php else: ?>
-        <li class="disabled" aria-hidden="true">
+        <li class="nav-item disabled" aria-hidden="true">
             <span>
                 <span class="sr-only"><?= $this->translate('Previous page') ?></span>
                 <?= $this->icon('angle-double-left') ?>
@@ -30,7 +30,7 @@ if ($this->pageCount <= 1) return;
     <?php endif ?>
     <?php foreach ($this->pagesInRange as $page): ?>
         <?php if ($page === '...'): ?>
-            <li class="disabled">
+            <li class="nav-item disabled">
                 <span>...</span>
             </li>
         <?php else: ?>
@@ -46,7 +46,7 @@ if ($this->pageCount <= 1) return;
                 $this->totalItemCount
             );
             ?>
-            <li<?= $page === $this->current ? ' class="active"' : '' ?>>
+            <li<?= $page === $this->current ? ' class="active nav-item"' : ' class="nav-item"' ?>>
                 <a  href="<?= Url::fromRequest()->overwriteParams(array('page' => $page)) ?>"
                     title="<?= $label ?>"
                     aria-label="<?= $label ?>">
@@ -62,7 +62,7 @@ if ($this->pageCount <= 1) return;
             ($this->current + 1) * $this->itemCountPerPage,
             $this->totalItemCount
         ) ?>
-        <li>
+        <li class="nav-item">
             <a  href="<?= Url::fromRequest()->overwriteParams(array('page' => $this->next)) ?>"
                 title="<?= $label ?>"
                 aria-label="<?= $label ?>">
@@ -70,7 +70,7 @@ if ($this->pageCount <= 1) return;
             </a>
         </li>
     <?php else: ?>
-        <li class="disabled" aria-hidden="true">
+        <li class="disabled nav-item" aria-hidden="true">
             <span>
                 <span class="sr-only"><?= $this->translate('Next page') ?></span>
                 <?= $this->icon('angle-double-right') ?>
