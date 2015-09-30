@@ -632,8 +632,7 @@ class NavigationConfigForm extends ConfigForm
                 'hidden',
                 'type',
                 array(
-                    'disabled'  => true,
-                    'value'     => $itemType
+                    'value' => $itemType
                 )
             );
         } else {
