@@ -7,9 +7,10 @@
         'config/createuserbackend',
         null,
         array(
-            'class'   => 'button action-link',
-            'icon'    => 'plus',
-            'title'   => $this->translate('Create a new user backend')
+            'class'             => 'button action-link',
+            'data-base-target'  => '_next',
+            'icon'              => 'plus',
+            'title'             => $this->translate('Create a new user backend')
         )
     ) ?>
     <?= $form ?>
