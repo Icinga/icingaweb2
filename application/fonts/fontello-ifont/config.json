@@ -667,9 +667,21 @@
       "src": "fontawesome"
     },
     {
+      "uid": "4743b088aa95d6f3b6b990e770d3b647",
+      "css": "facebook-squared",
+      "code": 59519,
+      "src": "fontawesome"
+    },
+    {
       "uid": "e7cb72a17f3b21e3576f35c3f0a7639b",
       "css": "git",
       "code": 59402,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "627abcdb627cb1789e009c08e2678ef9",
+      "css": "twitter",
+      "code": 59518,
       "src": "fontawesome"
     },
     {
