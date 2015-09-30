@@ -39,7 +39,6 @@ class StyleSheet
         'css/icinga/controls.less',
         'css/icinga/dev.less',
 //        'css/icinga/logo.less',
-        'css/icinga/about.less',
         'css/icinga/spinner.less'
     );
 
