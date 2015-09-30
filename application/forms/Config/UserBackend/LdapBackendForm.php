@@ -90,19 +90,9 @@ class LdapBackendForm extends Form
                     ),
                     'decorators'        => array(
                         array('ViewHelper', array('separator' => '')),
-                        array('HtmlTag', array('tag' => 'div', 'class' => 'element'))
+                        array('HtmlTag', array('tag' => 'div', 'class' => 'control-group form-controls'))
                     ),
                     'formnovalidate'    => 'formnovalidate'
-                )
-            );
-            $this->addDisplayGroup(
-                array('resource', 'discovery_btn'),
-                'connection_discovery',
-                array(
-                    'decorators' => array(
-                        'FormElements',
-                        array('HtmlTag', array('tag' => 'div', 'class' => 'control-group'))
-                    )
                 )
             );
 
