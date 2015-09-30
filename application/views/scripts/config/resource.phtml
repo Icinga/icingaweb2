@@ -48,18 +48,16 @@
                     ) ?>
                 </td>
                 <td>
-                    <center>
-                        <?= $this->qlink(
-                            '',
-                            'config/removeresource',
-                            array('resource' => $name),
-                            array(
-                                'class'   => 'action-link',
-                                'icon'    => 'cancel',
-                                'title'   => sprintf($this->translate('Remove resource %s'), $name)
-                            )
-                        ) ?>
-                    </center>
+                    <?= $this->qlink(
+                        '',
+                        'config/removeresource',
+                        array('resource' => $name),
+                        array(
+                            'class'   => 'action-link',
+                            'icon'    => 'cancel',
+                            'title'   => sprintf($this->translate('Remove resource %s'), $name)
+                        )
+                    ) ?>
                 </td>
             </tr>
         <?php endforeach ?>
