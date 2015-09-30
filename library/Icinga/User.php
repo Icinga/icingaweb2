@@ -488,8 +488,7 @@ class User
      */
     public function getNavigation($type)
     {
-        $config = Config::navigation($type === 'dashboard-pane' ? 'dashlet' : $type);
-        $config->getConfigObject()->setKeyColumn('name');
+        $config = Config::navigation($type === 'dashboard-pane' ? 'dashlet' : $type, $this->getUsername());
 
         if ($type === 'dashboard-pane') {
             $panes = array();
