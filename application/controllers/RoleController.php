@@ -20,6 +20,8 @@ class RoleController extends AuthBackendController
 {
     /**
      * List roles
+     *
+     * @TODO(el): Rename to indexAction()
      */
     public function listAction()
     {
@@ -30,6 +32,8 @@ class RoleController extends AuthBackendController
 
     /**
      * Create a new role
+     *
+     * @TODO(el): Rename to newAction()
      */
     public function addAction()
     {
@@ -52,24 +56,23 @@ class RoleController extends AuthBackendController
             }
         ));
         $role
-            ->setTitle($this->translate('New Role'))
             ->setSubmitLabel($this->translate('Create Role'))
             ->setIniConfig(Config::app('roles', true))
             ->setRedirectUrl('role/list')
             ->handleRequest();
-        $this->view->form = $role;
-        $this->render('form');
+        $this->renderForm($role, $this->translate('New Role'));
     }
 
     /**
      * Update a role
+     *
+     * @TODO(el): Rename to updateAction()
      */
     public function editAction()
     {
         $this->assertPermission('config/authentication/roles/edit');
         $name = $this->params->getRequired('role');
         $role = new RoleForm();
-        $role->setTitle(sprintf($this->translate('Update Role %s'), $name));
         $role->setSubmitLabel($this->translate('Update Role'));
         try {
             $role
@@ -97,8 +100,7 @@ class RoleController extends AuthBackendController
             })
             ->setRedirectUrl('role/list')
             ->handleRequest();
-        $this->view->form = $role;
-        $this->render('form');
+        $this->renderForm($role, $this->translate('Update Role'));
     }
 
     /**
@@ -132,12 +134,10 @@ class RoleController extends AuthBackendController
             }
         ));
         $confirmation
-            ->setTitle(sprintf($this->translate('Remove Role %s'), $name))
             ->setSubmitLabel($this->translate('Remove Role'))
             ->setRedirectUrl('role/list')
             ->handleRequest();
-        $this->view->form = $confirmation;
-        $this->render('form');
+        $this->renderForm($confirmation, $this->translate('Remove Role'));
     }
 
     /**
