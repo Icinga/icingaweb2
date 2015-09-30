@@ -37,13 +37,14 @@
                 </td>
                 <td><?= $this->escape($role->users) ?></td>
                 <td><?= $this->escape($role->groups) ?></td>
-                <td>
+                <td class="text-right">
                     <?= $this->qlink(
                         '',
                         'role/remove',
                         array('role' => $name),
                         array(
-                            'icon'  => 'trash',
+                            'class' => 'action-link',
+                            'icon'  => 'cancel',
                             'title' => sprintf($this->translate('Remove role %s'), $name)
                         )
                     ) ?>
