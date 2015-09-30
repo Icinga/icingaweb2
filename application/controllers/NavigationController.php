@@ -5,13 +5,13 @@ namespace Icinga\Controllers;
 
 use Exception;
 use Icinga\Application\Config;
-use Icinga\Application\Icinga;
 use Icinga\Exception\NotFoundError;
 use Icinga\Data\DataArray\ArrayDatasource;
 use Icinga\Forms\ConfirmRemovalForm;
 use Icinga\Forms\Navigation\NavigationConfigForm;
 use Icinga\Web\Controller;
 use Icinga\Web\Form;
+use Icinga\Web\Navigation\Navigation;
 use Icinga\Web\Notification;
 use Icinga\Web\Url;
 
@@ -21,11 +21,11 @@ use Icinga\Web\Url;
 class NavigationController extends Controller
 {
     /**
-     * The default item types provided by Icinga Web 2
+     * The global navigation item type configuration
      *
      * @var array
      */
-    protected $defaultItemTypes;
+    protected $itemTypeConfig;
 
     /**
      * {@inheritdoc}
@@ -33,11 +33,19 @@ class NavigationController extends Controller
     public function init()
     {
         parent::init();
+        $this->itemTypeConfig = Navigation::getItemTypeConfiguration();
+    }
 
-        $this->defaultItemTypes = array(
-            'menu-item' => $this->translate('Menu Entry'),
-            'dashlet'   => 'Dashlet'
-        );
+    /**
+     * Return the label for the given navigation item type
+     *
+     * @param   string  $type
+     *
+     * @return  string          $type if no label can be found
+     */
+    protected function getItemLabel($type)
+    {
+        return isset($this->itemTypeConfig[$type]['label']) ? $this->itemTypeConfig[$type]['label'] : $type;
     }
 
     /**
@@ -47,19 +55,59 @@ class NavigationController extends Controller
      */
     protected function listItemTypes()
     {
-        $moduleManager = Icinga::app()->getModuleManager();
-
-        $types = $this->defaultItemTypes;
-        foreach ($moduleManager->getLoadedModules() as $module) {
-            if ($this->hasPermission($moduleManager::MODULE_PERMISSION_NS . $module->getName())) {
-                $moduleTypes = $module->getNavigationItems();
-                if (! empty($moduleTypes)) {
-                    $types = array_merge($types, $moduleTypes);
-                }
-            }
+        $types = array();
+        foreach ($this->itemTypeConfig as $type => $options) {
+            $types[$type] = isset($options['label']) ? $options['label'] : $type;
         }
 
         return $types;
+    }
+
+    /**
+     * Return all shared navigation item configurations
+     *
+     * @param   string  $owner  A username if only items shared by a specific user are desired
+     *
+     * @return  array
+     */
+    protected function fetchSharedNavigationItemConfigs($owner = null)
+    {
+        $configs = array();
+        foreach ($this->itemTypeConfig as $type => $_) {
+            $config = Config::navigation($type);
+            $config->getConfigObject()->setKeyColumn('name');
+            $query = $config->select();
+            if ($owner !== null) {
+                $query->where('owner', $owner);
+            }
+
+            foreach ($query as $itemConfig) {
+                $configs[] = $itemConfig;
+            }
+        }
+
+        return $configs;
+    }
+
+    /**
+     * Return all user navigation item configurations
+     *
+     * @param   string  $username
+     *
+     * @return  array
+     */
+    protected function fetchUserNavigationItemConfigs($username)
+    {
+        $configs = array();
+        foreach ($this->itemTypeConfig as $type => $_) {
+            $config = Config::navigation($type, $username);
+            $config->getConfigObject()->setKeyColumn('name');
+            foreach ($config->select() as $itemConfig) {
+                $configs[] = $itemConfig;
+            }
+        }
+
+        return $configs;
     }
 
     /**
@@ -68,12 +116,10 @@ class NavigationController extends Controller
     public function indexAction()
     {
         $user = $this->Auth()->getUser();
-
         $ds = new ArrayDatasource(array_merge(
-            Config::app('navigation')->select()->where('owner', $user->getUsername())->fetchAll(),
-            iterator_to_array($user->loadNavigationConfig())
+            $this->fetchSharedNavigationItemConfigs($user->getUsername()),
+            $this->fetchUserNavigationItemConfigs($user->getUsername())
         ));
-        $ds->setKeyColumn('name');
         $query = $ds->select();
 
         $this->view->types = $this->listItemTypes();
@@ -91,7 +137,7 @@ class NavigationController extends Controller
             array(
                 'type'  => $this->translate('Type'),
                 'owner' => $this->translate('Shared'),
-                'name'  => $this->translate('Shared Navigation')
+                'name'  => $this->translate('Navigation')
             ),
             $query
         );
@@ -103,13 +149,11 @@ class NavigationController extends Controller
     public function sharedAction()
     {
         $this->assertPermission('config/application/navigation');
-        $config = Config::app('navigation');
-        $config->getConfigObject()->setKeyColumn('name');
-        $query = $config->select();
+        $ds = new ArrayDatasource($this->fetchSharedNavigationItemConfigs());
+        $query = $ds->select();
 
         $removeForm = new Form();
         $removeForm->setUidDisabled();
-        $removeForm->setAction(Url::fromPath('navigation/unshare'));
         $removeForm->addElement('hidden', 'name', array(
             'decorators'    => array('ViewHelper')
         ));
@@ -156,11 +200,10 @@ class NavigationController extends Controller
     {
         $form = new NavigationConfigForm();
         $form->setRedirectUrl('navigation');
+        $form->setUser($this->Auth()->getUser());
         $form->setItemTypes($this->listItemTypes());
         $form->setTitle($this->translate('Create New Navigation Item'));
         $form->addDescription($this->translate('Create a new navigation item, such as a menu entry or dashlet.'));
-        $form->setUser($this->Auth()->getUser());
-        $form->setShareConfig(Config::app('navigation'));
         $form->setOnSuccess(function (NavigationConfigForm $form) {
             $data = array_filter($form->getValues());
 
@@ -172,7 +215,7 @@ class NavigationController extends Controller
             }
 
             if ($form->save()) {
-                if (isset($data['type']) && $data['type'] === 'menu-item') {
+                if ($data['type'] === 'menu-item') {
                     $form->getResponse()->setRerenderLayout();
                 }
 
@@ -194,14 +237,22 @@ class NavigationController extends Controller
     public function editAction()
     {
         $itemName = $this->params->getRequired('name');
+        $itemType = $this->params->getRequired('type');
         $referrer = $this->params->get('referrer', 'index');
 
+        $user = $this->Auth()->getUser();
+        if ($user->can('config/application/navigation')) {
+            $itemOwner = $this->params->get('owner', $user->getUsername());
+        } else {
+            $itemOwner = $user->getUsername();
+        }
+
         $form = new NavigationConfigForm();
+        $form->setUser($user);
+        $form->setShareConfig(Config::navigation($itemType));
+        $form->setUserConfig(Config::navigation($itemType, $itemOwner));
         $form->setRedirectUrl($referrer === 'shared' ? 'navigation/shared' : 'navigation');
-        $form->setItemTypes($this->listItemTypes());
-        $form->setTitle(sprintf($this->translate('Edit Navigation Item %s'), $itemName));
-        $form->setUser($this->Auth()->getUser());
-        $form->setShareConfig(Config::app('navigation'));
+        $form->setTitle(sprintf($this->translate('Edit %s %s'), $this->getItemLabel($itemType), $itemName));
         $form->setOnSuccess(function (NavigationConfigForm $form) use ($itemName) {
             $data = array_map(
                 function ($v) {
@@ -248,13 +299,17 @@ class NavigationController extends Controller
     public function removeAction()
     {
         $itemName = $this->params->getRequired('name');
+        $itemType = $this->params->getRequired('type');
+        $user = $this->Auth()->getUser();
 
         $navigationConfigForm = new NavigationConfigForm();
-        $navigationConfigForm->setUser($this->Auth()->getUser());
-        $navigationConfigForm->setShareConfig(Config::app('navigation'));
+        $navigationConfigForm->setUser($user);
+        $navigationConfigForm->setShareConfig(Config::navigation($itemType));
+        $navigationConfigForm->setUserConfig(Config::navigation($itemType, $user->getUsername()));
+
         $form = new ConfirmRemovalForm();
         $form->setRedirectUrl('navigation');
-        $form->setTitle(sprintf($this->translate('Remove Navigation Item %s'), $itemName));
+        $form->setTitle(sprintf($this->translate('Remove %s %s'), $this->getItemLabel($itemType), $itemName));
         $form->setOnSuccess(function (ConfirmRemovalForm $form) use ($itemName, $navigationConfigForm) {
             try {
                 $itemConfig = $navigationConfigForm->delete($itemName);
@@ -291,9 +346,14 @@ class NavigationController extends Controller
         $this->assertPermission('config/application/navigation');
         $this->assertHttpMethod('POST');
 
+        // TODO: I'd like these being form fields
+        $itemType = $this->params->getRequired('type');
+        $itemOwner = $this->params->getRequired('owner');
+
         $navigationConfigForm = new NavigationConfigForm();
         $navigationConfigForm->setUser($this->Auth()->getUser());
-        $navigationConfigForm->setShareConfig(Config::app('navigation'));
+        $navigationConfigForm->setShareConfig(Config::navigation($itemType));
+        $navigationConfigForm->setUserConfig(Config::navigation($itemType, $itemOwner));
 
         $form = new Form(array(
             'onSuccess' => function ($form) use ($navigationConfigForm) {

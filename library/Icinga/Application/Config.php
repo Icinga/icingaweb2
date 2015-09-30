@@ -13,7 +13,9 @@ use Icinga\Data\Selectable;
 use Icinga\Data\SimpleQuery;
 use Icinga\File\Ini\IniWriter;
 use Icinga\File\Ini\IniParser;
+use Icinga\Exception\IcingaException;
 use Icinga\Exception\NotReadableError;
+use Icinga\Web\Navigation\Navigation;
 
 /**
  * Container for INI like configuration and global registry of application and module related configuration.
@@ -40,6 +42,13 @@ class Config implements Countable, Iterator, Selectable
      * @var array
      */
     protected static $modules = array();
+
+    /**
+     * Navigation config instances per type
+     *
+     * @var array
+     */
+    protected static $navigation = array();
 
     /**
      * The internal ConfigObject
@@ -414,6 +423,60 @@ class Config implements Countable, Iterator, Selectable
             );
         }
         return $moduleConfigs[$configname];
+    }
+
+    /**
+     * Retrieve a navigation config
+     *
+     * @param   string  $type       The type identifier of the navigation item for which to return its config
+     * @param   string  $username   A user's name or null if the shared config is desired
+     * @param   bool    $fromDisk   If true, the configuration will be read from disk
+     *
+     * @return  Config              The requested configuration
+     */
+    public static function navigation($type, $username = null, $fromDisk = false)
+    {
+        if (! isset(self::$navigation[$type])) {
+            self::$navigation[$type] = array();
+        }
+
+        $branch = $username ?: 'shared';
+        $typeConfigs = self::$navigation[$type];
+        if (! isset($typeConfigs[$branch]) || $fromDisk) {
+            $typeConfigs[$branch] = static::fromIni(static::getNavigationConfigPath($type, $username));
+        }
+
+        return $typeConfigs[$branch];
+    }
+
+    /**
+     * Return the path to the configuration file for the given navigation item type and user
+     *
+     * @param   string  $type
+     * @param   string  $username
+     *
+     * @return  string
+     *
+     * @throws  IcingaException     In case the given type is unknown
+     */
+    protected static function getNavigationConfigPath($type, $username = null)
+    {
+        $itemTypeConfig = Navigation::getItemTypeConfiguration();
+        if (! isset($itemTypeConfig[$type])) {
+            throw new IcingaException('Invalid navigation item type %s provided', $type);
+        }
+
+        if (isset($itemTypeConfig[$type]['config'])) {
+            $filename = $itemTypeConfig[$type]['config'] . '.ini';
+        } else {
+            $filename = $type . 's.ini';
+        }
+
+        return static::resolvePath(
+            ($username ? 'preferences' . DIRECTORY_SEPARATOR . $username : 'navigation')
+            . DIRECTORY_SEPARATOR
+            . $filename
+        );
     }
 
     /**

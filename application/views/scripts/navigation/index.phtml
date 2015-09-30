@@ -22,14 +22,17 @@
             <th style="width: 5em"><?= $this->translate('Remove'); ?></th>
         </thead>
         <tbody>
-        <?php foreach ($items as $name => $item): ?>
+        <?php foreach ($items as $item): ?>
             <tr>
                 <td><?= $this->qlink(
-                    $name,
+                    $item->name,
                     'navigation/edit',
-                    array('name' => $name),
                     array(
-                        'title' => sprintf($this->translate('Edit navigation item %s'), $name)
+                        'name'  => $item->name,
+                        'type'  => $item->type
+                    ),
+                    array(
+                        'title' => sprintf($this->translate('Edit navigation item %s'), $item->name)
                     )
                 ); ?></td>
                 <td><?= $item->type && isset($types[$item->type])
@@ -39,10 +42,13 @@
                 <td><?= $this->qlink(
                     '',
                     'navigation/remove',
-                    array('name' => $name),
+                    array(
+                        'name'  => $item->name,
+                        'type'  => $item->type
+                    ),
                     array(
                         'icon'  => 'trash',
-                        'title' => sprintf($this->translate('Remove navigation item %s'), $name)
+                        'title' => sprintf($this->translate('Remove navigation item %s'), $item->name)
                     )
                 ); ?></td>
             </tr>
