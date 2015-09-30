@@ -22,6 +22,7 @@ if (! $stats instanceof stdClass) {
 <?php
 $stateBadges = new StateBadges();
 $stateBadges
+    ->setBaseFilter(isset($baseFilter) ? $baseFilter : null)
     ->setUrl('monitoring/list/services')
     ->add(
         StateBadges::STATE_OK,

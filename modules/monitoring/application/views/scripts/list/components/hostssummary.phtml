@@ -19,6 +19,7 @@ if (! $stats instanceof stdClass) {
 <?php
 $stateBadges = new StateBadges();
 $stateBadges
+    ->setBaseFilter(isset($baseFilter) ? $baseFilter : null)
     ->setUrl('monitoring/list/hosts')
     ->add(
         StateBadges::STATE_UP,

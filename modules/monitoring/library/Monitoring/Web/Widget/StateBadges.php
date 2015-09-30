@@ -8,6 +8,7 @@ use Icinga\Web\Navigation\Navigation;
 use Icinga\Web\Navigation\NavigationItem;
 use Icinga\Web\Url;
 use Icinga\Web\Widget\AbstractWidget;
+use Icinga\Data\Filter\Filter;
 
 class StateBadges extends AbstractWidget
 {
@@ -124,6 +125,13 @@ class StateBadges extends AbstractWidget
     protected $priority = 1;
 
     /**
+     * The base filter applied to any badge link
+     *
+     * @var Filter
+     */
+    protected $baseFilter;
+
+    /**
      * Base URL
      *
      * @var Url
@@ -153,6 +161,29 @@ class StateBadges extends AbstractWidget
             $url = Url::fromPath($url);
         }
         $this->url = $url;
+        return $this;
+    }
+
+    /**
+     * Get the base filter
+     *
+     * @return  Filter
+     */
+    public function getBaseFilter()
+    {
+        return $this->baseFilter;
+    }
+
+    /**
+     * Set the base filter
+     *
+     * @param   Filter $baseFilter
+     *
+     * @return  $this
+     */
+    public function setBaseFilter($baseFilter)
+    {
+        $this->baseFilter = $baseFilter;
         return $this;
     }
 
@@ -193,6 +224,10 @@ class StateBadges extends AbstractWidget
     {
         if ($this->has($state)) {
             $badge = $this->get($state);
+            $url = clone $this->url->setParams($badge->filter);
+            if (isset($this->baseFilter)) {
+                $url->addFilter($this->baseFilter);
+            }
             $badges->addItem(new NavigationItem($state, array(
                 'attributes'    => array('class' => 'badge ' . $state),
                 'label'         => $badge->count,
@@ -201,7 +236,7 @@ class StateBadges extends AbstractWidget
                     mtp('monitoring', $badge->translateSingular, $badge->translatePlural, $badge->count),
                     $badge->translateArgs
                 ),
-                'url'           => clone $this->url->setParams($badge->filter)
+                'url'           => $url
             )));
         }
         return $this;
