@@ -1,5 +1,3 @@
-<?php use Icinga\Data\Filter\Filter; ?>
-
 <div class="controls">
 
    <?php if (! $this->compact): ?>
@@ -7,14 +5,10 @@
    <?php endif ?>
 
   <?php if (isset($serviceStates)): ?>
-    <h2 class="tinystatesummary" <?= $this->compact ? ' data-base-target="col1"' : ''; ?>
     <?= $this->render('list/components/servicesummary.phtml'); ?>
-    </h2>
     <?= $this->render('partials/service/objects-header.phtml'); ?>
   <?php else: ?>
-    <h2 class="tinystatesummary" <?= $this->compact ? ' data-base-target="col1"' : ''; ?>
-      <?= $this->render('list/components/hostssummary.phtml') ?>
-    </h2>
+    <?= $this->render('list/components/hostssummary.phtml') ?>
     <?= $this->render('partials/host/objects-header.phtml'); ?>
   <?php endif ?>
 </div>
