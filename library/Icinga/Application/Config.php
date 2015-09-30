@@ -472,7 +472,11 @@ class Config implements Countable, Iterator, Selectable
             $filename = $type . 's.ini';
         }
 
-        return static::resolvePath(($username ? "preferences/$username/" : 'navigation/') . $filename);
+        return static::resolvePath(
+            ($username ? 'preferences' . DIRECTORY_SEPARATOR . $username : 'navigation')
+            . DIRECTORY_SEPARATOR
+            . $filename
+        );
     }
 
     /**
