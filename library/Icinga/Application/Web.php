@@ -180,7 +180,6 @@ class Web extends EmbeddedWeb
     public function getSharedNavigation($type)
     {
         $config = Config::navigation($type === 'dashboard-pane' ? 'dashlet' : $type);
-        $config->getConfigObject()->setKeyColumn('name');
 
         if ($type === 'dashboard-pane') {
             $panes = array();
