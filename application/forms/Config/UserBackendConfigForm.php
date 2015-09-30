@@ -476,7 +476,7 @@ class UserBackendConfigForm extends ConfigForm
             array(
                 'decorators' => array(
                     'FormElements',
-                    array('HtmlTag', array('tag' => 'div', 'class' => 'control-group'))
+                    array('HtmlTag', array('tag' => 'div', 'class' => 'control-group form-controls'))
                 )
             )
         );
