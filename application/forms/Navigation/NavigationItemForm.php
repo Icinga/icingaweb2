@@ -4,6 +4,7 @@
 namespace Icinga\Forms\Navigation;
 
 use Icinga\Web\Form;
+use Icinga\Web\Url;
 
 class NavigationItemForm extends Form
 {
@@ -70,5 +71,21 @@ class NavigationItemForm extends Form
                 )
             )
         );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getValues($suppressArrayNotation = false)
+    {
+        $values = parent::getValues($suppressArrayNotation);
+        if (isset($values['url']) && $values['url']) {
+            $url = Url::fromPath($values['url']);
+            if (! $url->isExternal() && ($relativePath = $url->getRelativeUrl())) {
+                $values['url'] = $relativePath;
+            }
+        }
+
+        return $values;
     }
 }
