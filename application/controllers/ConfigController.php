@@ -349,8 +349,11 @@ class ConfigController extends Controller
     public function createresourceAction()
     {
         $this->assertPermission('config/application/resources');
+        $this->getTabs()->add('resources/new', array(
+            'label' => $this->translate('New Resource'),
+            'url'   => Url::fromRequest()
+        ))->activate('resources/new');
         $form = new ResourceConfigForm();
-        $form->setTitle($this->translate('Create A New Resource'));
         $form->addDescription($this->translate('Resources are entities that provide data to Icinga Web 2.'));
         $form->setIniConfig(Config::app('resources'));
         $form->setRedirectUrl('config/resource');
