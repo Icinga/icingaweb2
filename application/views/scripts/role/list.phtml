@@ -7,9 +7,10 @@
         'role/add',
         null,
         array(
-            'class'   => 'button action-link',
-            'icon'    => 'plus',
-            'title'   => $this->translate('Create a new role')
+            'class'             => 'button action-link',
+            'data-base-target'  => '_next',
+            'icon'              => 'plus',
+            'title'             => $this->translate('Create a new role')
         )
     ) ?>
 <?php /** @var \Icinga\Application\Config $roles */ if ($roles->isEmpty()): ?>
