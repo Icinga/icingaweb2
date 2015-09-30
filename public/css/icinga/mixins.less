@@ -26,6 +26,11 @@
   }
 }
 
+.invisible {
+  // Maintain layout but hide visually and from screen readers
+  visibility: hidden;
+}
+
 .transform(@transform) {
   -webkit-transform: @transform;
      -moz-transform: @transform;
@@ -42,4 +47,8 @@
   -webkit-background-clip: padding-box;
      -moz-background-clip: padding;
           background-clip: padding-box;
+}
+
+.visible {
+  visibility: visible;
 }
