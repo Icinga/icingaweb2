@@ -118,10 +118,10 @@ class NavigationController extends Controller
      */
     protected function getConfigPath($type, $username = null)
     {
-        if (isset($this->defaultItemTypes[$type])) {
-            $options = $this->defaultItemTypes[$type];
-        } elseif (isset($this->moduleItemTypes[$type])) {
+        if (isset($this->moduleItemTypes[$type])) {
             $options = $this->moduleItemTypes[$type];
+        } elseif (isset($this->defaultItemTypes[$type])) {
+            $options = $this->defaultItemTypes[$type];
         } else {
             throw new IcingaException('Invalid navigation item type %s provided', $type);
         }
