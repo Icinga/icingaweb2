@@ -17,18 +17,35 @@ class RemoveAcknowledgementCommandForm extends ObjectsCommandForm
      */
     public function init()
     {
-        $this->setAttrib('class', 'inline link-like');
+        $this->setAttrib('class', 'inline');
     }
 
     /**
-     * (non-PHPDoc)
-     * @see \Icinga\Web\Form::getSubmitLabel() For the method documentation.
+     * {@inheritdoc}
      */
-    public function getSubmitLabel()
+    public function addSubmitButton()
     {
-        return mtp(
-            'monitoring', 'Remove problem acknowledgement', 'Remove problem acknowledgements', count($this->objects)
+        $this->addElement(
+            'button',
+            'btn_submit',
+            array(
+                'class'         => 'link-button spinner',
+                'decorators'    => array(
+                    'ViewHelper',
+                    array('HtmlTag', array('tag' => 'div', 'class' => 'control-group form-controls'))
+                ),
+                'escape'        => false,
+                'ignore'        => true,
+                'label'         => $this->getView()->icon('cancel'),
+                'title'         => $this->translatePlural(
+                    'Remove problem acknowledgement',
+                    'Remove problem acknowledgements',
+                    count($this->objects)
+                ),
+                'type'          => 'submit'
+            )
         );
+        return $this;
     }
 
     /**
