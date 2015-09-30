@@ -9,6 +9,7 @@ use Icinga\Module\Monitoring\Object\Host;
 use Icinga\Module\Monitoring\Object\Service;
 use Icinga\Web\Url;
 use Icinga\Web\Widget\Tabextension\DashboardAction;
+use Icinga\Web\Widget\Tabextension\MenuAction;
 
 /**
  * Display detailed information about a downtime
@@ -65,7 +66,7 @@ class DowntimeController extends Controller
                 'title' => $this->translate('Display detailed information about a downtime.'),
                 'url'   =>'monitoring/downtimes/show'
             )
-        )->activate('downtime')->extend(new DashboardAction());
+        )->activate('downtime')->extend(new DashboardAction())->extend(new MenuAction());
     }
 
     /**

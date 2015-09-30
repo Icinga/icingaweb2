@@ -6,6 +6,7 @@ namespace Icinga\Module\Monitoring\Controllers;
 use Icinga\Module\Monitoring\Controller;
 use Icinga\Web\Url;
 use Icinga\Web\Widget\Tabextension\DashboardAction;
+use Icinga\Web\Widget\Tabextension\MenuAction;
 
 class TacticalController extends Controller
 {
@@ -22,7 +23,7 @@ class TacticalController extends Controller
                 'label' => $this->translate('Tactical Overview'),
                 'url'   => Url::fromRequest()
             )
-        )->extend(new DashboardAction())->activate('tactical_overview');
+        )->extend(new DashboardAction())->extend(new MenuAction())->activate('tactical_overview');
         $stats = $this->backend->select()->from(
             'statussummary',
             array(

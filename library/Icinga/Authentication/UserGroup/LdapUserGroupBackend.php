@@ -12,10 +12,16 @@ use Icinga\Protocol\Ldap\Expression;
 use Icinga\Repository\LdapRepository;
 use Icinga\Repository\RepositoryQuery;
 use Icinga\User;
-use Icinga\Application\Logger;
 
-class LdapUserGroupBackend /*extends LdapRepository*/ implements UserGroupBackendInterface
+class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInterface
 {
+    /**
+     * The user backend being associated with this user group backend
+     *
+     * @var LdapUserBackend
+     */
+    protected $userBackend;
+
     /**
      * The base DN to use for a user query
      *
@@ -105,84 +111,26 @@ class LdapUserGroupBackend /*extends LdapRepository*/ implements UserGroupBacken
     );
 
     /**
-     * Normed attribute names based on known LDAP environments
+     * Set the user backend to be associated with this user group backend
      *
-     * @var array
-     */
-    protected $normedAttributes = array(
-        'uid'               => 'uid',
-        'gid'               => 'gid',
-        'user'              => 'user',
-        'group'             => 'group',
-        'member'            => 'member',
-        'inetorgperson'     => 'inetOrgPerson',
-        'samaccountname'    => 'sAMAccountName'
-    );
-
-    /**
-     * The name of this repository
-     *
-     * @var string
-     */
-    protected $name;
-
-    /**
-     * The datasource being used
-     *
-     * @var Connection
-     */
-    protected $ds;
-
-    /**
-     * Create a new LDAP repository object
-     *
-     * @param   Connection  $ds     The data source to use
-     */
-    public function __construct($ds)
-    {
-        $this->ds = $ds;
-    }
-
-    /**
-     * Return the given attribute name normed to known LDAP enviroments, if possible
-     *
-     * @param   string  $name
-     *
-     * @return  string
-     */
-    protected function getNormedAttribute($name)
-    {
-        $loweredName = strtolower($name);
-        if (array_key_exists($loweredName, $this->normedAttributes)) {
-            return $this->normedAttributes[$loweredName];
-        }
-
-        return $name;
-    }
-
-    /**
-     * Set this repository's name
-     *
-     * @param   string  $name
+     * @param   LdapUserBackend     $backend
      *
      * @return  $this
      */
-    public function setName($name)
+    public function setUserBackend(LdapUserBackend $backend)
     {
-        $this->name = $name;
+        $this->userBackend = $backend;
         return $this;
     }
 
     /**
-     * Return this repository's name
+     * Return the user backend being associated with this user group backend
      *
-     * In case no name has been explicitly set yet, the class name is returned.
-     *
-     * @return  string
+     * @return  LdapUserBackend
      */
-    public function getName()
+    public function getUserBackend()
     {
-        return $this->name;
+        return $this->userBackend;
     }
 
     /**
@@ -453,7 +401,6 @@ class LdapUserGroupBackend /*extends LdapRepository*/ implements UserGroupBacken
             $lastModifiedAttribute = 'modifyTimestamp';
         }
 
-        // TODO(jom): Fetching memberships does not work currently, we'll need some aggregate functionality!
         $columns = array(
             'group'         => $this->groupNameAttribute,
             'group_name'    => $this->groupNameAttribute,
@@ -492,13 +439,37 @@ class LdapUserGroupBackend /*extends LdapRepository*/ implements UserGroupBacken
         if ($this->groupClass === null) {
             throw new ProgrammingError('It is required to set the objectClass where to look for groups first');
         }
+        if ($this->groupMemberAttribute === null) {
+            throw new ProgrammingError('It is required to set a attribute name where to find a group\'s members first');
+        }
 
-        return array(
+        $rules = array(
             $this->groupClass => array(
                 'created_at'    => 'generalized_time',
                 'last_modified' => 'generalized_time'
             )
         );
+        if (! $this->isAmbiguous($this->groupClass, $this->groupMemberAttribute)) {
+            $rules[$this->groupClass][] = 'user_name';
+        }
+
+        return $rules;
+    }
+
+    /**
+     * Return the uid for the given distinguished name
+     *
+     * @param   string  $username
+     *
+     * @param   string
+     */
+    protected function retrieveUserName($dn)
+    {
+        return $this->ds
+            ->select()
+            ->from('*', array($this->userNameAttribute))
+            ->setBase($dn)
+            ->fetchOne();
     }
 
     /**
@@ -525,6 +496,27 @@ class LdapUserGroupBackend /*extends LdapRepository*/ implements UserGroupBacken
     }
 
     /**
+     * Validate that the given column is a valid query target and return it or the actual name if it's an alias
+     *
+     * @param   string              $table  The table where to look for the column or alias
+     * @param   string              $name   The name or alias of the column to validate
+     * @param   RepositoryQuery     $query  An optional query to pass as context
+     *
+     * @return  string                      The given column's name
+     *
+     * @throws  QueryException              In case the given column is not a valid query column
+     */
+    public function requireQueryColumn($table, $name, RepositoryQuery $query = null)
+    {
+        $column = parent::requireQueryColumn($table, $name, $query);
+        if ($name === 'user_name' && $query !== null) {
+            $query->getQuery()->setUnfoldAttribute('user_name');
+        }
+
+        return $column;
+    }
+
+    /**
      * Return the groups the given user is a member of
      *
      * @param   User    $user
@@ -533,43 +525,37 @@ class LdapUserGroupBackend /*extends LdapRepository*/ implements UserGroupBacken
      */
     public function getMemberships(User $user)
     {
-        if ($this->groupClass === 'posixGroup') {
-            // Posix group only uses simple user name
-            $userDn = $user->getUsername();
-        } else {
-            // LDAP groups use the complete DN
-            if (($userDn = $user->getAdditional('ldap_dn')) === null) {
-                $userQuery = $this->ds
-                    ->select()
-                    ->from($this->userClass)
-                    ->where($this->userNameAttribute, $user->getUsername())
-                    ->setBase($this->userBaseDn)
-                    ->setUsePagedResults(false);
-                if ($this->userFilter) {
-                    $userQuery->where(new Expression($this->userFilter));
-                }
+        if ($this->isAmbiguous($this->groupClass, $this->groupMemberAttribute)) {
+            $queryValue = $user->getUsername();
+        } elseif (($queryValue = $user->getAdditional('ldap_dn')) === null) {
+            $userQuery = $this->ds
+                ->select()
+                ->from($this->userClass)
+                ->where($this->userNameAttribute, $user->getUsername())
+                ->setBase($this->userBaseDn)
+                ->setUsePagedResults(false);
+            if ($this->userFilter) {
+                $userQuery->where(new Expression($this->userFilter));
+            }
 
-                if (($userDn = $userQuery->fetchDn()) === null) {
-                    return array();
-                }
+            if (($queryValue = $userQuery->fetchDn()) === null) {
+                return array();
             }
         }
 
         $groupQuery = $this->ds
             ->select()
             ->from($this->groupClass, array($this->groupNameAttribute))
-            ->where($this->groupMemberAttribute, $userDn)
+            ->where($this->groupMemberAttribute, $queryValue)
             ->setBase($this->groupBaseDn);
         if ($this->groupFilter) {
             $groupQuery->where(new Expression($this->groupFilter));
         }
 
-        Logger::debug('Fetching groups for user %s using filter %s.', $user->getUsername(), $groupQuery->__toString());
         $groups = array();
         foreach ($groupQuery as $row) {
             $groups[] = $row->{$this->groupNameAttribute};
         }
-        Logger::debug('Fetched %d groups: %s.', count($groups), join(', ', $groups));
 
         return $groups;
     }
@@ -610,6 +596,7 @@ class LdapUserGroupBackend /*extends LdapRepository*/ implements UserGroupBacken
                 );
             }
 
+            $this->setUserBackend($userBackend);
             $defaults->merge(array(
                 'user_base_dn'          => $userBackend->getBaseDn(),
                 'user_class'            => $userBackend->getUserClass(),

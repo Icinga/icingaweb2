@@ -75,7 +75,7 @@ class Url
         }
 
         $url = new Url();
-        $url->setPath($request->getPathInfo());
+        $url->setPath(ltrim($request->getPathInfo(), '/'));
 
         // $urlParams = UrlParams::fromQueryString($request->getQuery());
         if (isset($_SERVER['QUERY_STRING'])) {
@@ -159,16 +159,17 @@ class Url
         if (isset($urlParts['path'])) {
             $urlPath = $urlParts['path'];
             if ($urlPath && $urlPath[0] === '/') {
-                $baseUrl = '';
+                if ($baseUrl) {
+                    $urlPath = substr($urlPath, 1);
+                } elseif (strpos($urlPath, $request->getBaseUrl()) === 0) {
+                    $baseUrl = $request->getBaseUrl();
+                    $urlPath = substr($urlPath, strlen($baseUrl) + 1);
+                }
             } elseif (! $baseUrl) {
                 $baseUrl = $request->getBaseUrl();
             }
 
-            if ($baseUrl && !$urlObject->isExternal() && strpos($urlPath, $baseUrl) === 0) {
-                $urlObject->setPath(substr($urlPath, strlen($baseUrl)));
-            } else {
-                $urlObject->setPath($urlPath);
-            }
+            $urlObject->setPath($urlPath);
         } elseif (! $baseUrl) {
             $baseUrl = $request->getBaseUrl();
         }
@@ -255,7 +256,7 @@ class Url
      */
     public function setPath($path)
     {
-        $this->path = ltrim($path, '/');
+        $this->path = $path;
         return $this;
     }
 

@@ -17,6 +17,7 @@ use Icinga\Module\Monitoring\Forms\Command\Object\SendCustomNotificationCommandF
 use Icinga\Module\Monitoring\Object\ServiceList;
 use Icinga\Web\Url;
 use Icinga\Web\Widget\Tabextension\DashboardAction;
+use Icinga\Web\Widget\Tabextension\MenuAction;
 
 class ServicesController extends Controller
 {
@@ -46,7 +47,7 @@ class ServicesController extends Controller
                 'url'   => Url::fromRequest(),
                 'icon'  => 'services'
             )
-        )->extend(new DashboardAction())->activate('show');
+        )->extend(new DashboardAction())->extend(new MenuAction())->activate('show');
     }
 
     protected function handleCommandForm(ObjectsCommandForm $form)
@@ -56,6 +57,7 @@ class ServicesController extends Controller
             'host_icon_image_alt',
             'host_name',
             'host_address',
+            'host_address6',
             'host_output',
             'host_state',
             'host_problem',
@@ -101,6 +103,7 @@ class ServicesController extends Controller
             'host_icon_image_alt',
             'host_name',
             'host_address',
+            'host_address6',
             'host_output',
             'host_state',
             'host_problem',

@@ -429,12 +429,14 @@ class Navigation implements ArrayAccess, Countable, IteratorAggregate
      */
     public function load($type)
     {
-        // Shareables
-        $this->merge(Icinga::app()->getSharedNavigation($type));
-
-        // User Preferences
         $user = Auth::getInstance()->getUser();
-        $this->merge($user->getNavigation($type));
+        if ($type !== 'dashboard-pane') {
+            // Shareables
+            $this->merge(Icinga::app()->getSharedNavigation($type));
+
+            // User Preferences
+            $this->merge($user->getNavigation($type));
+        }
 
         // Modules
         $moduleManager = Icinga::app()->getModuleManager();
@@ -449,6 +451,39 @@ class Navigation implements ArrayAccess, Countable, IteratorAggregate
         }
 
         return $this;
+    }
+
+    /**
+     * Return the global navigation item type configuration
+     *
+     * @return  array
+     */
+    public static function getItemTypeConfiguration()
+    {
+        $defaultItemTypes = array(
+            'menu-item' => array(
+                'label'     => t('Menu Entry'),
+                'config'    => 'menu'
+            )/*, // Disabled, until it is able to fully replace the old implementation
+            'dashlet'   => array(
+                'label'     => 'Dashlet',
+                'config'    => 'dashboard'
+            )*/
+        );
+
+        $moduleItemTypes = array();
+        $moduleManager = Icinga::app()->getModuleManager();
+        foreach ($moduleManager->getLoadedModules() as $module) {
+            if (Auth::getInstance()->hasPermission($moduleManager::MODULE_PERMISSION_NS . $module->getName())) {
+                foreach ($module->getNavigationItems() as $type => $options) {
+                    if (! isset($moduleItemTypes[$type])) {
+                        $moduleItemTypes[$type] = $options;
+                    }
+                }
+            }
+        }
+
+        return array_merge($defaultItemTypes, $moduleItemTypes);
     }
 
     /**

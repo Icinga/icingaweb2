@@ -1,4 +1,8 @@
-<?php if (! $this->compact): ?>
+<?php
+
+use Icinga\Web\Url;
+
+if (! $this->compact): ?>
 <div class="controls">
     <?= $this->tabs; ?>
     <?= $this->sortBox; ?>
@@ -19,17 +23,19 @@
             <th style="width: 5em"><?= $this->translate('Unshare'); ?></th>
         </thead>
         <tbody>
-        <?php foreach ($items as $name => $item): ?>
+        <?php foreach ($items as $item): ?>
             <tr>
                 <td><?= $this->qlink(
-                    $name,
+                    $item->name,
                     'navigation/edit',
                     array(
-                        'name'      => $name,
+                        'name'      => $item->name,
+                        'type'      => $item->type,
+                        'owner'     => $item->owner,
                         'referrer'  => 'shared'
                     ),
                     array(
-                        'title' => sprintf($this->translate('Edit shared navigation item %s'), $name)
+                        'title' => sprintf($this->translate('Edit shared navigation item %s'), $item->name)
                     )
                 ); ?></td>
                 <td><?= $item->type && isset($types[$item->type])
@@ -48,7 +54,12 @@
                     )
                 ); ?></td>
             <?php else: ?>
-                <td data-base-target="_self"><?= $removeForm->setDefault('name', $name); ?></td>
+                <td data-base-target="_self"><?= $removeForm
+                    ->setDefault('name', $item->name)
+                    ->setAction(Url::fromPath(
+                        'navigation/unshare',
+                        array('type' => $item->type, 'owner' => $item->owner)
+                )); ?></td>
             <?php endif ?>
             </tr>
         <?php endforeach ?>

@@ -179,12 +179,11 @@ class Web extends EmbeddedWeb
      */
     public function getSharedNavigation($type)
     {
-        $config = Config::app('navigation')->getConfigObject();
-        $config->setKeyColumn('name');
+        $config = Config::navigation($type === 'dashboard-pane' ? 'dashlet' : $type);
 
         if ($type === 'dashboard-pane') {
             $panes = array();
-            foreach ($config->select()->where('type', 'dashlet') as $dashletName => $dashletConfig) {
+            foreach ($config as $dashletName => $dashletConfig) {
                 if ($this->hasAccessToSharedNavigationItem($dashletConfig)) {
                     // TODO: Throw ConfigurationError if pane or url is missing
                     $panes[$dashletConfig->pane][$dashletName] = $dashletConfig->url;
@@ -203,7 +202,7 @@ class Web extends EmbeddedWeb
             }
         } else {
             $items = array();
-            foreach ($config->select()->where('type', $type) as $name => $typeConfig) {
+            foreach ($config as $name => $typeConfig) {
                 if ($this->hasAccessToSharedNavigationItem($typeConfig)) {
                     $items[$name] = $typeConfig;
                 }

@@ -2,6 +2,7 @@
 
 use Icinga\Data\Extensible;
 use Icinga\Data\Updatable;
+use Icinga\Data\Selectable;
 
 $extensible = $this->hasPermission('config/authentication/groups/add') && $backend instanceof Extensible;
 
@@ -67,7 +68,22 @@ foreach ($members as $member): ?>
     <tbody>
   <?php endif ?>
       <tr>
-        <td class="member-name"><?= $this->escape($member->user_name); ?></td>
+        <td class="member-name">
+        <?php if (
+          $this->hasPermission('config/authentication/users/show')
+          && ($userBackend = $backend->getUserBackend()) !== null
+          && $userBackend instanceof Selectable
+        ): ?>
+          <?= $this->qlink($member->user_name, 'user/show', array(
+            'backend' => $userBackend->getName(),
+            'user'    => $member->user_name
+          ), array(
+            'title'   => sprintf($this->translate('Show detailed information about %s'), $member->user_name)
+          )); ?>
+        <?php else: ?>
+          <?= $this->escape($member->user_name); ?>
+        <?php endif ?>
+        </td>
        <?php if (isset($removeForm)): ?>
         <td class="member-remove" data-base-target="_self">
           <?php $removeForm->getElement('user_name')->setValue($member->user_name); echo $removeForm; ?>

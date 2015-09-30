@@ -358,9 +358,25 @@ class LdapConnection implements Selectable, Inspectable
      */
     public function count(LdapQuery $query)
     {
-        $ds = $this->getConnection();
         $this->bind();
 
+        if (($unfoldAttribute = $query->getUnfoldAttribute()) !== null) {
+            $desiredColumns = $query->getColumns();
+            if (isset($desiredColumns[$unfoldAttribute])) {
+                $fields = array($unfoldAttribute => $desiredColumns[$unfoldAttribute]);
+            } elseif (in_array($unfoldAttribute, $desiredColumns, true)) {
+                $fields = array($unfoldAttribute);
+            } else {
+                throw new ProgrammingError(
+                    'The attribute used to unfold a query\'s result must be selected'
+                );
+            }
+
+            $res = $this->runQuery($query, $fields);
+            return count($res);
+        }
+
+        $ds = $this->getConnection();
         $results = @ldap_search(
             $ds,
             $query->getBase() ?: $this->getDn(),
@@ -658,7 +674,7 @@ class LdapConnection implements Selectable, Inspectable
     protected function runQuery(LdapQuery $query, array $fields = null)
     {
         $limit = $query->getLimit();
-        $offset = $query->hasOffset() ? $query->getOffset() - 1 : 0;
+        $offset = $query->hasOffset() ? $query->getOffset() : 0;
 
         if ($fields === null) {
             $fields = $query->getColumns();
@@ -711,13 +727,41 @@ class LdapConnection implements Selectable, Inspectable
         $count = 0;
         $entries = array();
         $entry = ldap_first_entry($ds, $results);
+        $unfoldAttribute = $query->getUnfoldAttribute();
         do {
-            $count += 1;
-            if (! $serverSorting || $offset === 0 || $offset < $count) {
-                $entries[ldap_get_dn($ds, $entry)] = $this->cleanupAttributes(
+            if ($unfoldAttribute) {
+                $rows = $this->cleanupAttributes(
                     ldap_get_attributes($ds, $entry),
-                    array_flip($fields)
+                    array_flip($fields),
+                    $unfoldAttribute
                 );
+
+                if (is_array($rows)) {
+                    // TODO: Register the DN the same way as a section name in the ArrayDatasource!
+                    foreach ($rows as $row) {
+                        $count += 1;
+                        if (! $serverSorting || $offset === 0 || $offset < $count) {
+                            $entries[] = $row;
+                        }
+
+                        if ($serverSorting && $limit > 0 && $limit === count($entries)) {
+                            break;
+                        }
+                    }
+                } else {
+                    $count += 1;
+                    if (! $serverSorting || $offset === 0 || $offset < $count) {
+                        $entries[ldap_get_dn($ds, $entry)] = $rows;
+                    }
+                }
+            } else {
+                $count += 1;
+                if (! $serverSorting || $offset === 0 || $offset < $count) {
+                    $entries[ldap_get_dn($ds, $entry)] = $this->cleanupAttributes(
+                        ldap_get_attributes($ds, $entry),
+                        array_flip($fields)
+                    );
+                }
             }
         } while ((! $serverSorting || $limit === 0 || $limit !== count($entries))
             && ($entry = ldap_next_entry($ds, $entry))
@@ -754,7 +798,7 @@ class LdapConnection implements Selectable, Inspectable
         }
 
         $limit = $query->getLimit();
-        $offset = $query->hasOffset() ? $query->getOffset() - 1 : 0;
+        $offset = $query->hasOffset() ? $query->getOffset() : 0;
         $queryString = (string) $query;
         $base = $query->getBase() ?: $this->rootDn;
 
@@ -776,6 +820,7 @@ class LdapConnection implements Selectable, Inspectable
         $count = 0;
         $cookie = '';
         $entries = array();
+        $unfoldAttribute = $query->getUnfoldAttribute();
         do {
             // Do not request the pagination control as a critical extension, as we want the
             // server to return results even if the paged search request cannot be satisfied
@@ -826,12 +871,39 @@ class LdapConnection implements Selectable, Inspectable
 
             $entry = ldap_first_entry($ds, $results);
             do {
-                $count += 1;
-                if (! $serverSorting || $offset === 0 || $offset < $count) {
-                    $entries[ldap_get_dn($ds, $entry)] = $this->cleanupAttributes(
+                if ($unfoldAttribute) {
+                    $rows = $this->cleanupAttributes(
                         ldap_get_attributes($ds, $entry),
-                        array_flip($fields)
+                        array_flip($fields),
+                        $unfoldAttribute
                     );
+
+                    if (is_array($rows)) {
+                        // TODO: Register the DN the same way as a section name in the ArrayDatasource!
+                        foreach ($rows as $row) {
+                            $count += 1;
+                            if (! $serverSorting || $offset === 0 || $offset < $count) {
+                                $entries[] = $row;
+                            }
+
+                            if ($serverSorting && $limit > 0 && $limit === count($entries)) {
+                                break;
+                            }
+                        }
+                    } else {
+                        $count += 1;
+                        if (! $serverSorting || $offset === 0 || $offset < $count) {
+                            $entries[ldap_get_dn($ds, $entry)] = $rows;
+                        }
+                    }
+                } else {
+                    $count += 1;
+                    if (! $serverSorting || $offset === 0 || $offset < $count) {
+                        $entries[ldap_get_dn($ds, $entry)] = $this->cleanupAttributes(
+                            ldap_get_attributes($ds, $entry),
+                            array_flip($fields)
+                        );
+                    }
                 }
             } while (
                 (! $serverSorting || $limit === 0 || $limit !== count($entries))
@@ -861,9 +933,6 @@ class LdapConnection implements Selectable, Inspectable
             // the server: https://www.ietf.org/rfc/rfc2696.txt
             ldap_control_paged_result($ds, 0, false, $cookie);
             ldap_search($ds, $base, $queryString); // Returns no entries, due to the page size
-        } else {
-            // Reset the paged search request so that subsequent requests succeed
-            ldap_control_paged_result($ds, 0);
         }
 
         if (! $serverSorting && $query->hasOrder()) {
@@ -879,14 +948,16 @@ class LdapConnection implements Selectable, Inspectable
     /**
      * Clean up the given attributes and return them as simple object
      *
-     * Applies column aliases, aggregates multi-value attributes as array and sets null for each missing attribute.
+     * Applies column aliases, aggregates/unfolds multi-value attributes
+     * as array and sets null for each missing attribute.
      *
      * @param   array   $attributes
      * @param   array   $requestedFields
+     * @param   string  $unfoldAttribute
      *
-     * @return  object
+     * @return  object|array    An array in case the object has been unfolded
      */
-    public function cleanupAttributes($attributes, array $requestedFields)
+    public function cleanupAttributes($attributes, array $requestedFields, $unfoldAttribute = null)
     {
         // In case the result contains attributes with a differing case than the requested fields, it is
         // necessary to create another array to map attributes case insensitively to their requested counterparts.
@@ -925,6 +996,24 @@ class LdapConnection implements Selectable, Inspectable
                 $cleanedAttributes[$alias] = null;
                 Logger::debug('LDAP query result does not provide the requested field "%s"', $name);
             }
+        }
+
+        if (
+            $unfoldAttribute !== null
+            && isset($cleanedAttributes[$unfoldAttribute])
+            && is_array($cleanedAttributes[$unfoldAttribute])
+        ) {
+            $values = $cleanedAttributes[$unfoldAttribute];
+            unset($cleanedAttributes[$unfoldAttribute]);
+            $baseRow = (object) $cleanedAttributes;
+            $rows = array();
+            foreach ($values as $value) {
+                $row = clone $baseRow;
+                $row->{$unfoldAttribute} = $value;
+                $rows[] = $row;
+            }
+
+            return $rows;
         }
 
         return (object) $cleanedAttributes;

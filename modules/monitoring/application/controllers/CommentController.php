@@ -7,6 +7,7 @@ use Icinga\Module\Monitoring\Controller;
 use Icinga\Module\Monitoring\Forms\Command\Object\DeleteCommentCommandForm;
 use Icinga\Web\Url;
 use Icinga\Web\Widget\Tabextension\DashboardAction;
+use Icinga\Web\Widget\Tabextension\MenuAction;
 
 /**
  * Display detailed information about a comment
@@ -55,7 +56,7 @@ class CommentController extends Controller
                 'title' => $this->translate('Display detailed information about a comment.'),
                 'url'   =>'monitoring/comments/show'
             )
-        )->activate('comment')->extend(new DashboardAction());
+        )->activate('comment')->extend(new DashboardAction())->extend(new MenuAction());
     }
 
     /**

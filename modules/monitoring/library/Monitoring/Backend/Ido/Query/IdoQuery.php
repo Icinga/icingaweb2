@@ -832,7 +832,7 @@ abstract class IdoQuery extends DbQuery
         list($type, $name) = $this->customvarNameToTypeName($customvar);
         $alias = ($type === 'host' ? 'hcv_' : 'scv_') . $name;
 
-        $this->customVars[$customvar] = $alias;
+        $this->customVars[strtolower($customvar)] = $alias;
 
         if ($this->hasJoinedVirtualTable('services')) {
             $leftcol = 's.' . $type . '_object_id';

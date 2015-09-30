@@ -3,7 +3,7 @@
 use Icinga\Web\Navigation\Navigation;
 
 $navigation = new Navigation();
-$navigation->load($object->getType() . '-note');
+//$navigation->load($object->getType() . '-note');
 foreach ($navigation as $item) {
     $item->setObject($object);
 }
@@ -26,7 +26,11 @@ if (! empty($links)) {
             $this->escape($link) . $newTabInfo,
             array(
                 'url'       => $link,
-                'target'    => '_blank'
+                'target'    => '_blank',
+                'renderer'  => array(
+                    'NavigationItemRenderer',
+                    'escape_label' => false
+                )
             )
         );
     }

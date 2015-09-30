@@ -1,6 +1,6 @@
 <?php foreach ($object->customvars as $name => $value): ?>
 <tr>
-    <th><?= $this->escape($name) ?></th>
+    <th><?= $this->escape(ucwords(str_replace('_', ' ', strtolower($name)))) ?></th>
     <td><?= $this->customvar($value) ?></td>
 </tr>
 <?php endforeach ?>

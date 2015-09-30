@@ -80,7 +80,7 @@ class ArrayDatasource implements Selectable
      */
     public function select()
     {
-        return new SimpleQuery($this);
+        return new SimpleQuery(clone $this);
     }
 
     /**

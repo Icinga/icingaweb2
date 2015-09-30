@@ -16,7 +16,11 @@ foreach ($object->getActionUrls() as $i => $link) {
         'Action ' . ($i + 1) . $newTabInfo,
         array(
             'url'       => $link,
-            'target'    => '_blank'
+            'target'    => '_blank',
+            'renderer'  => array(
+                'NavigationItemRenderer',
+                'escape_label' => false
+            )
         )
     );
 }

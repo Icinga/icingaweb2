@@ -16,6 +16,7 @@ use Icinga\Module\Monitoring\Controller;
 use Icinga\Module\Monitoring\Web\Widget\SelectBox;
 use Icinga\Web\Url;
 use Icinga\Web\Widget\Tabextension\DashboardAction;
+use Icinga\Web\Widget\Tabextension\MenuAction;
 
 class AlertsummaryController extends Controller
 {
@@ -53,7 +54,7 @@ class AlertsummaryController extends Controller
                 'label' => $this->translate('Alert Summary'),
                 'url'   => Url::fromRequest()
             )
-        )->extend(new DashboardAction())->activate('alertsummary');
+        )->extend(new DashboardAction())->extend(new MenuAction())->activate('alertsummary');
         $this->view->title = $this->translate('Alert Summary');
 
         $this->view->intervalBox = $this->createIntervalBox();

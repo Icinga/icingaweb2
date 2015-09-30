@@ -18,6 +18,7 @@ use Icinga\Module\Monitoring\Forms\Command\Object\SendCustomNotificationCommandF
 use Icinga\Module\Monitoring\Object\HostList;
 use Icinga\Web\Url;
 use Icinga\Web\Widget\Tabextension\DashboardAction;
+use Icinga\Web\Widget\Tabextension\MenuAction;
 
 class HostsController extends Controller
 {
@@ -44,7 +45,7 @@ class HostsController extends Controller
                 'url'   => Url::fromRequest(),
                 'icon'  => 'host'
             )
-        )->extend(new DashboardAction())->activate('show');
+        )->extend(new DashboardAction())->extend(new MenuAction())->activate('show');
         $this->view->listAllLink = Url::fromRequest()->setPath('monitoring/list/hosts');
     }
 
@@ -55,6 +56,7 @@ class HostsController extends Controller
             'host_icon_image_alt',
             'host_name',
             'host_address',
+            'host_address6',
             'host_state',
             'host_problem',
             'host_handled',
@@ -92,6 +94,7 @@ class HostsController extends Controller
             'host_icon_image_alt',
             'host_name',
             'host_address',
+            'host_address6',
             'host_state',
             'host_problem',
             'host_handled',
