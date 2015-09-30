@@ -22,11 +22,31 @@ input, select, textarea {
   width: 320px;
 }
 
+input[type="checkbox"],
+input[type="submit"] {
+  width: initial;
+}
+
 form {
   // Disable icons for the moment
   i {
     display: none;
   }
+}
+
+// TODO(el): .form-inline control-group { display: inline-block; }
+form.inline {
+  display: inline-block;
+}
+
+
+.form-controls {
+  margin-left: 160px;
+}
+
+button,
+input[type="submit"] {
+  .button();
 }
 
 .control-label {
