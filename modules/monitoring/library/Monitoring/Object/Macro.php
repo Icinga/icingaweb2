@@ -60,8 +60,9 @@ class Macro
         if (isset(self::$icingaMacros[$macro]) && isset($object->{self::$icingaMacros[$macro]})) {
             return $object->{self::$icingaMacros[$macro]};
         }
-        if (isset($object->customvars[$macro])) {
-            return $object->customvars[$macro];
+        $customVar = strtolower($macro);
+        if (isset($object->customvars[$customVar])) {
+            return $object->customvars[$customVar];
         }
 
         return $macro;

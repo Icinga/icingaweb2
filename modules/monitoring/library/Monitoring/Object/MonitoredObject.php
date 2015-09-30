@@ -239,7 +239,7 @@ abstract class MonitoredObject implements Filterable
 
             foreach ($this->customvars as $name => $value) {
                 if (! is_object($value)) {
-                    $row->{'_' . $this->getType() . '_' . strtolower(str_replace(' ', '_', $name))} = $value;
+                    $row->{'_' . $this->getType() . '_' . $name} = $value;
                 }
             }
         }
@@ -477,8 +477,8 @@ abstract class MonitoredObject implements Filterable
         $this->customvars = array();
 
         $customvars = $query->getQuery()->fetchAll();
-        foreach ($customvars as $name => $cv) {
-            $name = ucwords(str_replace('_', ' ', strtolower($cv->varname)));
+        foreach ($customvars as $cv) {
+            $name = strtolower($cv->varname);
             if ($blacklistPattern && preg_match($blacklistPattern, $cv->varname)) {
                 $this->customvars[$name] = '***';
             } elseif ($cv->is_json) {
