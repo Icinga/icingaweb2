@@ -82,7 +82,7 @@ class Controller extends IcingaWebController
             'service_description',
             'servicegroup_name',
             function ($c) {
-                return preg_match('/^_(?:host|service)_/', $c);
+                return preg_match('/^_(?:host|service)_/i', $c);
             }
         ));
         foreach ($this->getRestrictions($name) as $filter) {

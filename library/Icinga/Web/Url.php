@@ -13,12 +13,17 @@ use Icinga\Data\Filter\Filter;
  * returns Urls reflecting all changes made to the url and to the parameters.
  *
  * Direct instantiation is prohibited and should be done either with @see Url::fromRequest() or
- * @see Url::fromUrlString()
- *
- * Currently, protocol, host and port are ignored and will be implemented when required
+ * @see Url::fromPath()
  */
 class Url
 {
+    /**
+     * Whether this url points to an external resource
+     *
+     * @var bool
+     */
+    protected $external;
+
     /**
      * An array of all parameters stored in this Url
      *
@@ -41,12 +46,11 @@ class Url
     protected $path = '';
 
     /**
-     * The baseUrl that will be appended to @see Url::$path in order to
-     * create an absolute Url
+     * The baseUrl that will be appended to @see Url::$path
      *
      * @var string
      */
-    protected $baseUrl = '/';
+    protected $baseUrl = '';
 
     protected function __construct()
     {
@@ -71,7 +75,7 @@ class Url
         }
 
         $url = new Url();
-        $url->setPath($request->getPathInfo());
+        $url->setPath(ltrim($request->getPathInfo(), '/'));
 
         // $urlParams = UrlParams::fromQueryString($request->getQuery());
         if (isset($_SERVER['QUERY_STRING'])) {
@@ -124,7 +128,7 @@ class Url
             $request = self::getRequest();
         }
 
-        if (!is_string($url)) {
+        if (! is_string($url)) {
             throw new ProgrammingError(
                 'url "%s" is not a string',
                 $url
@@ -132,17 +136,44 @@ class Url
         }
 
         $urlObject = new Url();
-        $baseUrl = $request->getBaseUrl();
-        $urlObject->setBaseUrl($baseUrl);
+
+        if ($url === '#') {
+            $urlObject->setPath($url);
+            return $urlObject;
+        }
 
         $urlParts = parse_url($url);
-        if (isset($urlParts['path'])) {
-            if ($baseUrl !== '' && strpos($urlParts['path'], $baseUrl) === 0) {
-                $urlObject->setPath(substr($urlParts['path'], strlen($baseUrl)));
-            } else {
-                $urlObject->setPath($urlParts['path']);
-            }
+        if (isset($urlParts['scheme']) && (
+            $urlParts['scheme'] !== $request->getScheme()
+            || (isset($urlParts['host']) && $urlParts['host'] !== $request->getServer('SERVER_NAME'))
+            || (isset($urlParts['port']) && $urlParts['port'] != $request->getServer('SERVER_PORT')))
+        ) {
+            $baseUrl = $urlParts['scheme'] . '://' . $urlParts['host'] . (isset($urlParts['port'])
+                ? (':' . $urlParts['port'])
+                : '');
+            $urlObject->setIsExternal();
+        } else {
+            $baseUrl = '';
         }
+
+        if (isset($urlParts['path'])) {
+            $urlPath = $urlParts['path'];
+            if ($urlPath && $urlPath[0] === '/') {
+                if ($baseUrl) {
+                    $urlPath = substr($urlPath, 1);
+                } elseif (strpos($urlPath, $request->getBaseUrl()) === 0) {
+                    $baseUrl = $request->getBaseUrl();
+                    $urlPath = substr($urlPath, strlen($baseUrl) + 1);
+                }
+            } elseif (! $baseUrl) {
+                $baseUrl = $request->getBaseUrl();
+            }
+
+            $urlObject->setPath($urlPath);
+        } elseif (! $baseUrl) {
+            $baseUrl = $request->getBaseUrl();
+        }
+
         // TODO: This has been used by former filter implementation, remove it:
         if (isset($urlParts['query'])) {
             $params = UrlParams::fromQueryString($urlParts['query'])->mergeValues($params);
@@ -152,6 +183,7 @@ class Url
             $urlObject->setAnchor($urlParts['fragment']);
         }
 
+        $urlObject->setBaseUrl($baseUrl);
         $urlObject->setParams($params);
         return $urlObject;
     }
@@ -179,19 +211,13 @@ class Url
     /**
      * Overwrite the baseUrl
      *
-     * If an empty Url is given '/' is used as the base
-     *
      * @param   string  $baseUrl    The url path to use as the Url Base
      *
      * @return  $this
      */
     public function setBaseUrl($baseUrl)
     {
-        if (($baseUrl = rtrim($baseUrl, '/ ')) ===  '') {
-            $baseUrl = '/';
-        }
-
-        $this->baseUrl = $baseUrl;
+        $this->baseUrl = rtrim($baseUrl, '/ ');
         return $this;
     }
 
@@ -214,7 +240,7 @@ class Url
      */
     public function setPath($path)
     {
-        $this->path = ltrim($path, '/');
+        $this->path = $path;
         return $this;
     }
 
@@ -231,17 +257,61 @@ class Url
     }
 
     /**
-     * Return the relative url with query parameters as a string
+     * Set whether this url points to an external resource
+     *
+     * @param   bool    $state
+     *
+     * @return  $this
+     */
+    public function setIsExternal($state = true)
+    {
+        $this->external = (bool) $state;
+        return $this;
+    }
+
+    /**
+     * Return whether this url points to an external resource
+     *
+     * @return  bool
+     */
+    public function isExternal()
+    {
+        return $this->external;
+    }
+
+    /**
+     * Return the relative url
      *
      * @return  string
      */
     public function getRelativeUrl($separator = '&')
     {
-        if ($this->params->isEmpty()) {
-            return $this->path . $this->anchor;
-        } else {
-            return $this->path . '?' . $this->params->toString($separator) . $this->anchor;
+        $path = $this->buildPathQueryAndFragment($separator);
+        if ($path && $path[0] === '/') {
+            return '';
         }
+
+        return $path;
+    }
+
+    /**
+     * Return this url's path with its query parameters and fragment as string
+     *
+     * @return  string
+     */
+    protected function buildPathQueryAndFragment($querySeparator)
+    {
+        $anchor = $this->getAnchor();
+        if ($anchor) {
+            $anchor = '#' . $anchor;
+        }
+
+        $query = $this->getQueryString($querySeparator);
+        if ($query) {
+            $query = '?' . $query;
+        }
+
+        return $this->getPath() . $query . $anchor;
     }
 
     public function setQueryString($queryString)
@@ -250,9 +320,9 @@ class Url
         return $this;
     }
 
-    public function getQueryString()
+    public function getQueryString($separator = null)
     {
-        return (string) $this->params;
+        return $this->params->toString($separator);
     }
 
     /**
@@ -262,7 +332,17 @@ class Url
      */
     public function getAbsoluteUrl($separator = '&')
     {
-        return $this->baseUrl . ($this->baseUrl !== '/' ? '/' : '') . $this->getRelativeUrl($separator);
+        $path = $this->buildPathQueryAndFragment($separator);
+        if ($path && ($path === '#' || $path[0] === '/')) {
+            return $path;
+        }
+
+        $baseUrl = $this->getBaseUrl();
+        if (! $baseUrl) {
+            $baseUrl = '/';
+        }
+
+        return $baseUrl . ($baseUrl !== '/' && $path ? '/' : '') . $path;
     }
 
     /**
@@ -380,8 +460,18 @@ class Url
      */
     public function setAnchor($anchor)
     {
-        $this->anchor = '#' . $anchor;
+        $this->anchor = $anchor;
         return $this;
+    }
+
+    /**
+     * Return the url anchor-part
+     *
+     * @return  string  The site's anchor string without the '#'
+     */
+    public function getAnchor()
+    {
+        return $this->anchor;
     }
 
     /**

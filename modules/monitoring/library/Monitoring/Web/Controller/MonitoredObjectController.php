@@ -13,6 +13,7 @@ use Icinga\Module\Monitoring\Forms\Command\Object\ToggleObjectFeaturesCommandFor
 use Icinga\Web\Hook;
 use Icinga\Web\Url;
 use Icinga\Web\Widget\Tabextension\DashboardAction;
+use Icinga\Web\Widget\Tabextension\MenuAction;
 
 /**
  * Base class for the host and service controller
@@ -232,6 +233,6 @@ abstract class MonitoredObjectController extends Controller
                 )
             );
         }
-        $tabs->extend(new DashboardAction());
+        $tabs->extend(new DashboardAction())->extend(new MenuAction());
     }
 }

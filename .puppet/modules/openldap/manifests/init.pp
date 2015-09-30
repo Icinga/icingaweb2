@@ -14,11 +14,12 @@
 #
 class openldap {
 
-  package { ['openldap-servers', 'openldap-clients']:
+  package { [ 'openldap-servers', 'openldap-clients', ]:
     ensure => latest,
   }
 
   service { 'slapd':
+    enable  => true,
     ensure  => running,
     require => Package['openldap-servers'],
   }

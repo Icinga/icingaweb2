@@ -11,7 +11,8 @@ use Icinga\Application\ApplicationBootstrap;
 use Icinga\Application\Config;
 use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
-use Icinga\Data\ConfigObject;
+use Icinga\Application\Modules\DashboardContainer;
+use Icinga\Application\Modules\MenuItemContainer;
 use Icinga\Exception\IcingaException;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Module\Setup\SetupWizard;
@@ -19,9 +20,8 @@ use Icinga\Util\File;
 use Icinga\Util\Translator;
 use Icinga\Web\Controller\Dispatcher;
 use Icinga\Web\Hook;
-use Icinga\Web\Menu;
+use Icinga\Web\Navigation\Navigation;
 use Icinga\Web\Widget;
-use Icinga\Web\Widget\Dashboard\Pane;
 
 /**
  * Module handling
@@ -189,7 +189,7 @@ class Module
     /**
      * A set of menu elements
      *
-     * @var Menu[]
+     * @var MenuItemContainer[]
      */
     protected $menuItems = array();
 
@@ -220,6 +220,13 @@ class Module
      * @var array
      */
     protected $userGroupBackends = array();
+
+    /**
+     * This module's configurable navigation items
+     *
+     * @var array
+     */
+    protected $navigationItems = array();
 
     /**
      * Create a new module object
@@ -277,38 +284,98 @@ class Module
     }
 
     /**
-     * Get all pane items
+     * Return this module's dashboard
      *
-     * @return array
+     * @return  Navigation
      */
-    public function getPaneItems()
+    public function getDashboard()
     {
         $this->launchConfigScript();
-        return $this->paneItems;
+        return $this->createDashboard($this->paneItems);
     }
 
     /**
-     * Add a pane to dashboard
+     * Create and return a new navigation for the given dashboard panes
      *
-     * @param   string $name
+     * @param   DashboardContainer[]    $panes
      *
-     * @return  Pane
+     * @return  Navigation
      */
-    protected function dashboard($name)
+    public function createDashboard(array $panes)
     {
-        $this->paneItems[$name] = new Pane($name);
+        $navigation = new Navigation();
+        foreach ($panes as $pane) {
+            /** @var DashboardContainer $pane */
+            $dashlets = array();
+            foreach ($pane->getDashlets() as $dashletName => $dashletUrl) {
+                $dashlets[$this->translate($dashletName)] = $dashletUrl;
+            }
+
+            $navigation->addItem(
+                $pane->getName(),
+                array_merge(
+                    $pane->getProperties(),
+                    array(
+                        'label'     => $this->translate($pane->getName()),
+                        'type'      => 'dashboard-pane',
+                        'dashlets'  => $dashlets
+                    )
+                )
+            );
+        }
+
+        return $navigation;
+    }
+
+    /**
+     * Add or get a dashboard pane
+     *
+     * @param   string  $name
+     * @param   array   $properties
+     *
+     * @return  DashboardContainer
+     */
+    protected function dashboard($name, array $properties = array())
+    {
+        if (array_key_exists($name, $this->paneItems)) {
+            $this->paneItems[$name]->setProperties($properties);
+        } else {
+            $this->paneItems[$name] = new DashboardContainer($name, $properties);
+        }
+
         return $this->paneItems[$name];
     }
 
     /**
-     * Get all menu items
+     * Return this module's menu
      *
-     * @return array
+     * @return  Navigation
      */
-    public function getMenuItems()
+    public function getMenu()
     {
         $this->launchConfigScript();
-        return $this->menuItems;
+        return $this->createMenu($this->menuItems);
+    }
+
+    /**
+     * Create and return a new navigation for the given menu items
+     *
+     * @param   MenuItemContainer[]     $items
+     *
+     * @return  Navigation
+     */
+    private function createMenu(array $items)
+    {
+        $navigation = new Navigation();
+        foreach ($items as $item) {
+            /** @var MenuItemContainer $item */
+            $navigationItem = $navigation->createItem($item->getName(), $item->getProperties());
+            $navigationItem->setChildren($this->createMenu($item->getChildren()));
+            $navigationItem->setLabel($this->translate($item->getName()));
+            $navigation->addItem($navigationItem);
+        }
+
+        return $navigation;
     }
 
     /**
@@ -317,14 +384,14 @@ class Module
      * @param   string  $name
      * @param   array   $properties
      *
-     * @return  Menu
+     * @return  MenuItemContainer
      */
     protected function menuSection($name, array $properties = array())
     {
         if (array_key_exists($name, $this->menuItems)) {
             $this->menuItems[$name]->setProperties($properties);
         } else {
-            $this->menuItems[$name] = new Menu($name, new ConfigObject($properties));
+            $this->menuItems[$name] = new MenuItemContainer($name, $properties);
         }
 
         return $this->menuItems[$name];
@@ -832,6 +899,17 @@ class Module
     }
 
     /**
+     * Return this module's configurable navigation items
+     *
+     * @return  array
+     */
+    public function getNavigationItems()
+    {
+        $this->launchConfigScript();
+        return $this->navigationItems;
+    }
+
+    /**
      * Provide a named permission
      *
      * @param   string $name        Unique permission name
@@ -932,6 +1010,25 @@ class Module
     protected function provideUserGroupBackend($identifier, $className)
     {
         $this->userGroupBackends[strtolower($identifier)] = $className;
+        return $this;
+    }
+
+    /**
+     * Provide a new type of configurable navigation item with a optional label and config filename
+     *
+     * @param   string  $type
+     * @param   string  $label
+     * @param   string  $config
+     *
+     * @return  $this
+     */
+    protected function provideNavigationItem($type, $label = null, $config = null)
+    {
+        $this->navigationItems[$type] = array(
+            'label'     => $label,
+            'config'    => $config
+        );
+
         return $this;
     }
 

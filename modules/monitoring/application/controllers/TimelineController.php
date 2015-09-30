@@ -12,6 +12,7 @@ use Icinga\Module\Monitoring\Web\Widget\SelectBox;
 use Icinga\Util\Format;
 use Icinga\Web\Url;
 use Icinga\Web\Widget\Tabextension\DashboardAction;
+use Icinga\Web\Widget\Tabextension\MenuAction;
 
 class TimelineController extends Controller
 {
@@ -24,7 +25,7 @@ class TimelineController extends Controller
                 'label' => $this->translate('Timeline'),
                 'url'   => Url::fromRequest()
             )
-        )->extend(new DashboardAction())->activate('timeline');
+        )->extend(new DashboardAction())->extend(new MenuAction())->activate('timeline');
         $this->view->title = $this->translate('Timeline');
 
         // TODO: filter for hard_states (precedence adjustments necessary!)

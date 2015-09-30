@@ -10,7 +10,7 @@
 <div data-base-target="_next" class="content contacts">
     <?php foreach ($contacts->peekAhead($this->compact) as $contact): ?>
         <div class="contact">
-            <?= $this->img('/static/gravatar', array('email' => $contact->contact_email)); ?>
+            <?= $this->img('static/gravatar', array('email' => $contact->contact_email)); ?>
             <strong><?= $this->qlink(
                 $contact->contact_name,
                 'monitoring/show/contact',

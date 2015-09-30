@@ -16,6 +16,7 @@ use Icinga\User;
 use Icinga\Util\TimezoneDetect;
 use Icinga\Util\Translator;
 use Icinga\Web\Controller\Dispatcher;
+use Icinga\Web\Navigation\Navigation;
 use Icinga\Web\Notification;
 use Icinga\Web\Session;
 use Icinga\Web\Session\Session as BaseSession;
@@ -137,6 +138,203 @@ class Web extends EmbeddedWeb
     public function getViewRenderer()
     {
         return $this->viewRenderer;
+    }
+
+    private function hasAccessToSharedNavigationItem(& $config)
+    {
+        // TODO: Provide a more sophisticated solution
+
+        if (isset($config['owner']) && $config['owner'] === $this->user->getUsername()) {
+            unset($config['owner']);
+            return true;
+        }
+
+        if (isset($config['users'])) {
+            $users = array_map('trim', explode(',', strtolower($config['users'])));
+            if (in_array($this->user->getUsername(), $users, true)) {
+                unset($config['users']);
+                return true;
+            }
+        }
+
+        if (isset($config['groups'])) {
+            $groups = array_map('trim', explode(',', strtolower($config['groups'])));
+            $userGroups = array_map('strtolower', $this->user->getGroups());
+            $matches = array_intersect($userGroups, $groups);
+            if (! empty($matches)) {
+                unset($config['groups']);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Load and return the shared navigation of the given type
+     *
+     * @param   string  $type
+     *
+     * @return  Navigation
+     */
+    public function getSharedNavigation($type)
+    {
+        $config = Config::navigation($type === 'dashboard-pane' ? 'dashlet' : $type);
+
+        if ($type === 'dashboard-pane') {
+            $panes = array();
+            foreach ($config as $dashletName => $dashletConfig) {
+                if ($this->hasAccessToSharedNavigationItem($dashletConfig)) {
+                    // TODO: Throw ConfigurationError if pane or url is missing
+                    $panes[$dashletConfig->pane][$dashletName] = $dashletConfig->url;
+                }
+            }
+
+            $navigation = new Navigation();
+            foreach ($panes as $paneName => $dashlets) {
+                $navigation->addItem(
+                    $paneName,
+                    array(
+                        'type'      => 'dashboard-pane',
+                        'dashlets'  => $dashlets
+                    )
+                );
+            }
+        } else {
+            $items = array();
+            foreach ($config as $name => $typeConfig) {
+                if ($this->hasAccessToSharedNavigationItem($typeConfig)) {
+                    $items[$name] = $typeConfig;
+                }
+            }
+
+            $navigation = Navigation::fromConfig($items);
+        }
+
+        return $navigation;
+    }
+
+    /**
+     * Return the app's menu
+     *
+     * @return  Navigation
+     */
+    public function getMenu()
+    {
+        if ($this->user !== null) {
+            $menu = array(
+                'dashboard' => array(
+                    'label'     => t('Dashboard'),
+                    'url'       => 'dashboard',
+                    'icon'      => 'dashboard',
+                    'priority'  => 10
+                ),
+                'system' => array(
+                    'label'     => t('System'),
+                    'icon'      => 'services',
+                    'priority'  => 700,
+                    'renderer'  => array(
+                        'SummaryNavigationItemRenderer',
+                        'state' => 'critical'
+                    ),
+                    'children'  => array(
+                        'about' => array(
+                            'label'     => t('About'),
+                            'url'       => 'about',
+                            'priority'  => 701
+                        )
+                    )
+                ),
+                'configuration' => array(
+                    'label'         => t('Configuration'),
+                    'icon'          => 'wrench',
+                    'permission'    => 'config/*',
+                    'priority'      => 800,
+                    'children'      => array(
+                        'application'       => array(
+                            'label'         => t('Application'),
+                            'url'           => 'config/general',
+                            'permission'    => 'config/application/*',
+                            'priority'      => 810
+                        ),
+                        'navigation'        => array(
+                            'label'         => t('Shared Navigation'),
+                            'url'           => 'navigation/shared',
+                            'permission'    => 'config/application/navigation',
+                            'priority'      => 820,
+                        ),
+                        'authentication'    => array(
+                            'label'         => t('Authentication'),
+                            'url'           => 'config/userbackend',
+                            'permission'    => 'config/authentication/*',
+                            'priority'      => 830
+                        ),
+                        'roles'             => array(
+                            'label'         => t('Roles'),
+                            'url'           => 'role/list',
+                            'permission'    => 'config/authentication/roles/show',
+                            'priority'      => 840
+                        ),
+                        'users'             => array(
+                            'label'         => t('Users'),
+                            'url'           => 'user/list',
+                            'permission'    => 'config/authentication/users/show',
+                            'priority'      => 850
+                        ),
+                        'groups'            => array(
+                            'label'         => t('Usergroups'),
+                            'url'           => 'group/list',
+                            'permission'    => 'config/authentication/groups/show',
+                            'priority'      => 860
+                        ),
+                        'modules'           => array(
+                            'label'         => t('Modules'),
+                            'url'           => 'config/modules',
+                            'permission'    => 'config/modules',
+                            'priority'      => 890
+                        )
+                    )
+                ),
+                'user' => array(
+                    'label'     => $this->user->getUsername(),
+                    'icon'      => 'user',
+                    'priority'  => 900,
+                    'children'  => array(
+                        'preferences'   => array(
+                            'label'     => t('Preferences'),
+                            'url'       => 'preference',
+                            'priority'  => 910
+                        ),
+                        'navigation'    => array(
+                            'label'     => t('Navigation'),
+                            'url'       => 'navigation',
+                            'priority'  => 920
+                        ),
+                        'logout'        => array(
+                            'label'     => t('Logout'),
+                            'url'       => 'authentication/logout',
+                            'priority'  => 990,
+                            'renderer'  => array(
+                                'NavigationItemRenderer',
+                                'target' => '_self'
+                            )
+                        )
+                    )
+                )
+            );
+
+            if (Logger::writesToFile()) {
+                $menu['system']['children']['application_log'] = array(
+                    'label'     => t('Application Log'),
+                    'url'       => 'list/applicationlog',
+                    'priority'  => 710
+                );
+            }
+        } else {
+            $menu = array();
+        }
+
+        return Navigation::fromArray($menu)->load('menu-item');
     }
 
     /**
