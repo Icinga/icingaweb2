@@ -1,25 +1,128 @@
-<div class="content">
-    <h1>Icinga Web 2</h1>
-    <?php
-    $versionInfo = array();
-    if ($version !== false) {
-        foreach (array(
-            'appVersion'    => $this->translate('Version: %s'),
-            'gitCommitID'   => $this->translate('Git commit ID: %s'),
-            'gitCommitDate' => $this->translate('Git commit date: %s')
-        ) as $key => $label) {
-            if (array_key_exists($key, $version) && null !== ($value = $version[$key])) {
-                $versionInfo[] = sprintf($label, htmlspecialchars($value));
-            }
-        }
-    }
-
-    echo (
-        0 === count($versionInfo)
-            ? '<p class="message-error">' . $this->translate(
-                'Can\'t determine Icinga Web 2\'s version'
+<div class="controls">
+    <?= $tabs; ?>
+</div>
+<div class="content about">
+    <?= $this->img(
+        'img/logo_icinga_big_dark.png',
+        null,
+        array(
+            'width' => 400,
+            'class' => 'about-logo'
+        )
+    ); ?>
+    <p class="about-version">
+    <?php if (isset($version['appVersion'])): ?>
+        <strong><?= $this->translate('Version'); ?>:</strong> <?= $this->escape($version['appVersion']); ?>
+    <?php endif ?>
+    <?php if (isset($version['gitCommitID'])): ?>
+        <br>
+        <strong><?= $this->translate('Git commit ID'); ?>:</strong> <?= $this->escape($version['gitCommitID']); ?>
+    <?php endif ?>
+    <?php if (isset($version['gitCommitDate'])): ?>
+        <br>
+        <strong><?= $this->translate('Git commit date'); ?>:</strong> <?= $this->escape($version['gitCommitDate']); ?>
+    <?php endif ?>
+    </p>
+    <p class="about-license">
+        <strong><?= $this->translate('Copyright'); ?></strong>: &copy; 2013-<?= date('Y'); ?> <?= $this->qlink(
+            $this->translate('The Icinga Project'),
+            'https://www.icinga.org',
+            null,
+            array(
+                'target' => '_blank'
             )
-            : '<p>' . nl2br(implode("\n", $versionInfo), false)
-    ) . '</p>';
-    ?>
+        ); ?>
+        <br>
+        <strong><?= $this->translate('License'); ?></strong>: GNU GPL v2+
+    </p>
+    <p class="about-social">
+        <?= $this->qlink(
+            null,
+            'https://www.twitter.com/icinga',
+            null,
+            array(
+                'target'    => '_blank',
+                'icon'      => 'twitter',
+                'title'     => $this->translate('Icinga on Twitter')
+            )
+        ); ?> <?= $this->qlink(
+            null,
+            'https://www.facebook.com/icinga',
+            null,
+            array(
+                'target'    => '_blank',
+                'icon'      => 'facebook-squared',
+                'title'     => $this->translate('Icinga on Facebook')
+            )
+        ); ?>
+    </p>
+    <div class="about-urls">
+        <div><?= $this->qlink(
+            null,
+            'https://dev.icinga.org/projects/icingaweb2',
+            null,
+            array(
+                'target'    => '_blank',
+                'img'       => 'img/bugreport.png',
+                'title'     => $this->translate('Report a bug')
+            )
+        ); ?> <?= $this->qlink(
+            null,
+            'https://www.icinga.org/services/support',
+            null,
+            array(
+                'target'    => '_blank',
+                'img'       => 'img/support.png',
+                'title'     => $this->translate('Support / Mailinglists')
+            )
+        ); ?></div>
+        <div><?= $this->qlink(
+            null,
+            'https://wiki.icinga.org',
+            null,
+            array(
+                'target'    => '_blank',
+                'img'       => 'img/wiki.png',
+                'title'     => $this->translate('Icinga Wiki')
+            )
+        ); ?> <?= $this->qlink(
+            null,
+            'https://docs.icinga.org/',
+            null,
+            array(
+                'target'    => '_blank',
+                'img'       => 'img/docs.png',
+                'title'     => $this->translate('Icinga Documentation')
+            )
+        ); ?></div>
+    </div>
+    <h2><?= $this->translate('Loaded modules') ?></h2>
+    <table class="action alternating about-modules" data-base-target="_next">
+        <thead>
+            <tr>
+                <th><?= $this->translate('Name') ?></th>
+                <th><?= $this->translate('Version') ?></th>
+            </tr>
+        </thead>
+        <tbody>
+        <?php foreach ($modules as $module): ?>
+            <tr>
+                <td>
+                <?php if ($this->hasPermission('config/modules')): ?>
+                    <?= $this->qlink(
+                        $module->getName(),
+                        'config/module/',
+                        array('name' => $module->getName()),
+                        array('title' => sprintf($this->translate('Show the overview of the %s module'), $module->getName()))
+                    ); ?>
+                <?php else: ?>
+                    <?= $this->escape($module->getName()); ?>
+                <?php endif ?>
+                <td>
+                    <?= $this->escape($module->getVersion()); ?>
+                </td>
+            </tr>
+        <?php endforeach ?>
+        </tbody>
+    </table>
 </div>

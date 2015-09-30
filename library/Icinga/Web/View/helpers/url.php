@@ -43,6 +43,11 @@ $this->addHelperFunction('qlink', function ($title, $url, $params = null, $prope
             $icon = $view->icon($properties['icon']);
             unset($properties['icon']);
         }
+
+        if (array_key_exists('img', $properties)) {
+            $icon = $view->img($properties['img']);
+            unset($properties['img']);
+        }
     }
 
     return sprintf(

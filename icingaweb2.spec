@@ -204,7 +204,7 @@ rm -rf %{buildroot}
 %{basedir}/application/forms
 %{basedir}/application/layouts
 %{basedir}/application/views
-%{basedir}/application/VERSION
+%{basedir}/application/GITCOMMIT
 %{basedir}/doc
 %{basedir}/modules
 %{basedir}/public

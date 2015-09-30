@@ -8,4 +8,4 @@ Vagrantfile export-ignore
 .puppet* eol=lf
 
 # Include version information on `git archive'
-/application/VERSION export-subst
+/application/GITCOMMIT export-subst
