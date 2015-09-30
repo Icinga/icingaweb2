@@ -139,6 +139,14 @@ class DbResourceForm extends Form
             )
         );
         $this->addElement(
+            'text',
+            'charset',
+            array (
+                'description'   => $this->translate('The character set for the database'),
+                'label'         => $this->translate('Character Set')
+            )
+        );
+        $this->addElement(
             'checkbox',
             'persistent',
             array(
