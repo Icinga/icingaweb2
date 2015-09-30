@@ -852,7 +852,7 @@ class Form extends Zend_Form
                     'decorators'            => array(
                         'ViewHelper',
                         array('Spinner', array('separator' => '')),
-                        array('HtmlTag', array('tag' => 'div', 'class' => 'buttons'))
+                        array('HtmlTag', array('tag' => 'div', 'class' => 'control-group form-controls'))
                     )
                 )
             );
