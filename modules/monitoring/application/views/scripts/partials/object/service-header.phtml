@@ -15,13 +15,21 @@ use Icinga\Module\Monitoring\Object\Service;
         <td>
             <p>
                 <?= $this->iconImage()->service($object) ?>
-                <?= $this->escape($object->host_display_name) ?>
+                <span class="selectable"><?= $this->escape($object->host_display_name) ?></span>
             <?php if ($object->host_display_name !== $object->host_name): ?>
-                (<?= $this->escape($object->host_name) ?>)
+                <span class="selectable text-small">&#40;<?= $this->escape($object->host_name) ?>&#41;</span>
+            <?php endif ?>
+            <?php if ($object->host_address6 && $object->host_address6 !== $object->host_name): ?>
+                <br>
+                <span class="selectable text-small" title="<?= $this->translate('IPv6 address') ?>">
+                <?= $this->escape($object->host_address6) ?>
+            </span>
             <?php endif ?>
             <?php if ($object->host_address && $object->host_address !== $object->host_name): ?>
                 <br>
+                <span class="selectable text-small" title="<?= $this->translate('IPv4 address') ?>">
                 <?= $this->escape($object->host_address) ?>
+            </span>
             <?php endif ?>
             <?= $this->render('partials/host/statusicons.phtml') ?>
             </p>
@@ -38,9 +46,9 @@ use Icinga\Module\Monitoring\Object\Service;
         <td>
             <p>
                 <?= $this->iconImage()->host($object) ?>
-                <?= $this->translate('Service') ?>: <?= $this->escape($object->service_display_name) ?>
+                <?= $this->translate('Service') ?>&#58; <span class="selectable"><?= $this->escape($object->service_display_name) ?></span>
             <?php if ($object->service_display_name !== $object->service_description): ?>
-                (<?= $this->escape($object->service_description) ?>)
+                <span class="selectable text-small">&#40;<?= $this->escape($object->service_description) ?>&#41;</span>
             <?php endif ?>
                 <?= $this->render('partials/service/statusicons.phtml') ?>
             </p>
