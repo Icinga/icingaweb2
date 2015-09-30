@@ -16,7 +16,7 @@ class ServicedowntimestarthistoryQuery extends IdoQuery
     /**
      * {@inheritdoc}
      */
-    protected $groupBase = array('downtimehistory', array('sdh.downtimehistory_id', 'so.object_id'));
+    protected $groupBase = array('downtimehistory' => array('sdh.downtimehistory_id', 'so.object_id'));
 
     /**
      * {@inheritdoc}

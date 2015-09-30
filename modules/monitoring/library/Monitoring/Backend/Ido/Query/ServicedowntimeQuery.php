@@ -16,7 +16,7 @@ class ServicedowntimeQuery extends IdoQuery
     /**
      * {@inheritdoc}
      */
-    protected $groupBase = array('downtimes', array('sd.scheduleddowntime_id', 'so.object_id'));
+    protected $groupBase = array('downtimes' => array('sd.scheduleddowntime_id', 'so.object_id'));
 
     /**
      * {@inheritdoc}

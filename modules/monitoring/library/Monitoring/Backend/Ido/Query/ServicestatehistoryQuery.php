@@ -16,7 +16,7 @@ class ServicestatehistoryQuery extends IdoQuery
     /**
      * {@inheritdoc}
      */
-    protected $groupBase = array('statehistory', array('sh.statehistory_id', 'so.object_id'));
+    protected $groupBase = array('statehistory' => array('sh.statehistory_id', 'so.object_id'));
 
     /**
      * {@inheritdoc}
@@ -81,7 +81,7 @@ class ServicestatehistoryQuery extends IdoQuery
         if ($col === 'UNIX_TIMESTAMP(sh.state_time)') {
             return 'sh.state_time ' . $sign . ' ' . $this->timestampForSql($this->valueToTimestamp($expression));
         } elseif (
-            $col === $this->columnMap['history']['type']
+            $col === $this->columnMap['statehistory']['type']
             && ! is_array($expression)
             && array_key_exists($expression, $this->types)
         ) {

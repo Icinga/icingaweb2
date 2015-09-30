@@ -97,7 +97,6 @@ class HostdowntimestarthistoryQuery extends IdoQuery
         }
 
         $this->joinedVirtualTables['downtimehistory'] = true;
-        $this->joinedVirtualTables['history'] = true;
     }
 
     /**
