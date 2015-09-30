@@ -34,6 +34,11 @@
   font-family: @font-family-fixed;
 }
 
+.content-centered {
+  .text-center();
+  margin: 0 auto;
+}
+
 .icon-col {
   width: 28px;
 }
@@ -65,6 +70,10 @@
   float: right;
 }
 
+.text-center {
+  text-align: center;
+}
+
 .text-left {
   text-align: left;
 }
@@ -91,7 +100,8 @@ a:hover .icon-cancel {
   color: @color-critical;
 }
 
-a.button {
+.button-link {
+  .action-link();
   .button();
   display: inline-block;
   height: 35px;
