@@ -4,19 +4,6 @@
   color: @icinga-blue;
 }
 
-.action-table {
-  tbody tr {
-    &.active {
-      background-color: @gray-lighter;
-    }
-
-    &:hover {
-      background-color: @gray-lightest;
-      cursor: pointer;
-    }
-  }
-}
-
 .big-icon {
   font-size: 28px;
 }
@@ -41,19 +28,6 @@
 
 .icon-col {
   width: 28px;
-}
-
-.name-value-table {
-  border-spacing: @vertical-padding 0;
-  line-height: @line-height;
-
-  th {
-    .text-left();
-    .text-small();
-    // Reset default font-weight
-    font-weight: normal;
-    width: 120px;
-  }
 }
 
 .primary-nav {
@@ -132,6 +106,30 @@ dl.feed-list {
   }
 }
 
+dl.name-value-list {
+  dd {
+    // Reset default margin
+    margin: 0;
+  }
+
+  dt {
+    .text-small();
+  }
+}
+
+table.action-table {
+  tbody tr {
+    &.active {
+      background-color: @gray-lighter;
+    }
+
+    &:hover {
+      background-color: @gray-lightest;
+      cursor: pointer;
+    }
+  }
+}
+
 table.listing-table {
   border-collapse: collapse;
 
@@ -151,5 +149,18 @@ table.listing-table {
     &:last-child {
       border-bottom: none;
     }
+  }
+}
+
+.name-value-table {
+  border-spacing: @vertical-padding 0;
+  line-height: @line-height;
+
+  th {
+    .text-left();
+    .text-small();
+    // Reset default font-weight
+    font-weight: normal;
+    width: 120px;
   }
 }
