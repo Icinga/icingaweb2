@@ -159,7 +159,9 @@ class Url
         if (isset($urlParts['path'])) {
             $urlPath = $urlParts['path'];
             if ($urlPath && $urlPath[0] === '/') {
-                $baseUrl = '';
+                if ($baseUrl) {
+                    $urlPath = substr($urlPath, 1);
+                }
             } elseif (! $baseUrl) {
                 $baseUrl = $request->getBaseUrl();
             }
