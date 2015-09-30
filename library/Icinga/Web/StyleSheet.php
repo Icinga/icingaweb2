@@ -29,7 +29,8 @@ class StyleSheet
         'css/icinga/selection-toolbar.less',
         'css/icinga/login.less',
         'css/icinga/logo.less',
-        'css/icinga/controls.less'
+        'css/icinga/controls.less',
+        'css/icinga/about.less'
     );
 
     public static function compileForPdf()
