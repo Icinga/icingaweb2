@@ -6,7 +6,7 @@ if (! $stats instanceof stdClass) {
     $stats = $stats->fetchRow();
 }
 ?>
-<div>
+<div class="v-center">
 <?= $this->qlink(
     sprintf($this->translatePlural('%u Host', '%u Hosts', $stats->hosts_total), $stats->hosts_total),
     'monitoring/list/hosts',
