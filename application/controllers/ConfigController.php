@@ -19,6 +19,7 @@ use Icinga\Forms\ConfirmRemovalForm;
 use Icinga\Security\SecurityException;
 use Icinga\Web\Controller;
 use Icinga\Web\Notification;
+use Icinga\Web\Url;
 use Icinga\Web\Widget;
 
 /**
@@ -381,6 +382,10 @@ class ConfigController extends Controller
     public function removeresourceAction()
     {
         $this->assertPermission('config/application/resources');
+        $this->getTabs()->add('resources/remove', array(
+            'label' => $this->translate('Remove Resource'),
+            'url'   => Url::fromRequest()
+        ))->activate('resources/remove');
         $form = new ConfirmRemovalForm(array(
             'onSuccess' => function ($form) {
                 $configForm = new ResourceConfigForm();
@@ -401,7 +406,6 @@ class ConfigController extends Controller
                 }
             }
         ));
-        $form->setTitle($this->translate('Remove Existing Resource'));
         $form->setRedirectUrl('config/resource');
         $form->handleRequest();
 
