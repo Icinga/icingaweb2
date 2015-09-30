@@ -5,14 +5,14 @@
     <?= $this->tabs; ?>
   <?php endif ?>
   <?php if ($object->getType() === $object::TYPE_HOST): ?>
-    <?= $this->render('partials/host/object-header.phtml'); ?>
+    <?= $this->render('partials/object/host-header.phtml'); ?>
     <?php
     $this->baseFilter = Filter::where('host', $object->host_name);
     $this->stats = $object->stats;
     echo $this->render('list/components/servicesummary.phtml');
     ?>
   <?php else: ?>
-    <?= $this->render('partials/service/object-header.phtml'); ?>
+    <?= $this->render('partials/object/service-header.phtml'); ?>
     <hr class="command-separator">
   <?php endif ?>
 </div>

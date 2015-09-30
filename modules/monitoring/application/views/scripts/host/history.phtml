@@ -28,7 +28,7 @@ $history->limit($limit * $page);
 if (! $this->compact): ?>
 <div class="controls">
   <?= $this->tabs; ?>
-  <?= $this->render('partials/host/object-header.phtml'); ?>
+  <?= $this->render('partials/object/host-header.phtml'); ?>
   <h1><?= $this->translate('This Host\'s Event History'); ?></h1>
   <?= $this->sortBox; ?>
   <?= $this->limiter; ?>
