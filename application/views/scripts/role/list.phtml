@@ -12,31 +12,30 @@
             'title'   => $this->translate('Create a new role')
         )
     ) ?>
-    <div>
-        <?php /** @var \Icinga\Application\Config $roles */ if ($roles->isEmpty()): ?>
-            <?= $this->translate('No roles found.') ?>
-        <?php else: ?>
-            <table class="action-table listing-table" data-base-target="_next">
-                <thead>
-                <tr>
-                    <th><?= $this->translate('Name') ?></th>
+<?php /** @var \Icinga\Application\Config $roles */ if ($roles->isEmpty()): ?>
+    <p><?= $this->translate('No roles found.') ?></p>
+<?php return; endif ?>
+    <table class="action-table listing-table" data-base-target="_next">
+        <thead>
+        <tr>
+            <th><?= $this->translate('Name') ?></th>
 <!--                    <th>--><?//= $this->translate('Permissions') ?><!--</th>-->
 <!--                    <th>--><?//= $this->translate('Restrictions') ?><!--</th>-->
-                    <th><?= $this->translate('Users') ?></th>
-                    <th><?= $this->translate('Groups') ?></th>
-                </tr>
-                </thead>
-                <tbody>
-                <?php foreach ($roles as $name => $role): /** @var object $role */ ?>
-                    <tr>
-                        <td>
-                            <?= $this->qlink(
-                                $name,
-                                'role/edit',
-                                array('role' => $name),
-                                array('title' => sprintf($this->translate('Edit role %s'), $name))
-                            ); ?>
-                        </td>
+            <th><?= $this->translate('Users') ?></th>
+            <th><?= $this->translate('Groups') ?></th>
+        </tr>
+        </thead>
+        <tbody>
+        <?php foreach ($roles as $name => $role): /** @var object $role */ ?>
+            <tr>
+                <td>
+                    <?= $this->qlink(
+                        $name,
+                        'role/edit',
+                        array('role' => $name),
+                        array('title' => sprintf($this->translate('Edit role %s'), $name))
+                    ); ?>
+                </td>
 <!--                        <td>--><?//= $this->escape($role->permissions, 0, 50) ?><!--</td>-->
 <!--                        <td>-->
 <!--                            --><?php
@@ -59,23 +58,21 @@
 <!--                            </table>-->
 <!--                            --><?php //endif ?>
 <!--                        </td>-->
-                        <td><?= $this->escape($role->users) ?></td>
-                        <td><?= $this->escape($role->groups) ?></td>
-                        <td>
-                            <?= $this->qlink(
-                                '',
-                                'role/remove',
-                                array('role' => $name),
-                                array(
-                                    'icon'  => 'trash',
-                                    'title' => sprintf($this->translate('Remove role %s'), $name)
-                                )
-                            ); ?>
-                        </td>
-                    </tr>
-                <?php endforeach ?>
-                </tbody>
-            </table>
-        <?php endif ?>
-    </div>
+                <td><?= $this->escape($role->users) ?></td>
+                <td><?= $this->escape($role->groups) ?></td>
+                <td>
+                    <?= $this->qlink(
+                        '',
+                        'role/remove',
+                        array('role' => $name),
+                        array(
+                            'icon'  => 'trash',
+                            'title' => sprintf($this->translate('Remove role %s'), $name)
+                        )
+                    ); ?>
+                </td>
+            </tr>
+        <?php endforeach ?>
+        </tbody>
+    </table>
 </div>
