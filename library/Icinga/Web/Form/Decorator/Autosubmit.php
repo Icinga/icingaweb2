@@ -100,7 +100,7 @@ class Autosubmit extends Zend_Form_Decorator_Abstract
                 : t('Upon its value has changed, this field issues an automatic update of this page.');
             $content .= $this->getView()->icon('cw', $warning, array(
                 'aria-hidden'   => $isForm ? 'false' : 'true',
-                'class'         => 'autosubmit-warning'
+                'class'         => 'spinner'
             ));
             if (! $isForm && $this->getAccessible()) {
                 $content = '<span id="' . $this->getWarningId() . '" class="sr-only">' . $warning . '</span>' . $content;
