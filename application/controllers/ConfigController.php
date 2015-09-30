@@ -213,13 +213,13 @@ class ConfigController extends Controller
     {
         $this->assertPermission('config/application/userbackend');
         $form = new UserBackendConfigForm();
-        $form->setRedirectUrl('config/userbackend');
-        $form->setTitle($this->translate('Create New User Backend'));
-        $form->addDescription($this->translate(
-            'Create a new backend for authenticating your users. This backend'
-            . ' will be added at the end of your authentication order.'
-        ));
-        $form->setIniConfig(Config::app('authentication'));
+        $form
+            ->setRedirectUrl('config/userbackend')
+            ->addDescription($this->translate(
+                'Create a new backend for authenticating your users. This backend'
+                . ' will be added at the end of your authentication order.'
+            ))
+            ->setIniConfig(Config::app('authentication'));
 
         try {
             $form->setResourceConfig(ResourceFactory::getResourceConfigs());
@@ -249,8 +249,7 @@ class ConfigController extends Controller
         });
         $form->handleRequest();
 
-        $this->view->form = $form;
-        $this->render('form');
+        $this->renderForm($form, $this->translate('New User Backend'));
     }
 
     /**
@@ -263,7 +262,6 @@ class ConfigController extends Controller
 
         $form = new UserBackendConfigForm();
         $form->setRedirectUrl('config/userbackend');
-        $form->setTitle(sprintf($this->translate('Edit User Backend %s'), $backendName));
         $form->setIniConfig(Config::app('authentication'));
         $form->setOnSuccess(function (UserBackendConfigForm $form) use ($backendName) {
             try {
@@ -294,8 +292,7 @@ class ConfigController extends Controller
             $this->httpNotFound(sprintf($this->translate('User backend "%s" not found'), $backendName));
         }
 
-        $this->view->form = $form;
-        $this->render('form');
+        $this->renderForm($form, $this->translate('Update User Backend'));
     }
 
     /**
@@ -310,7 +307,6 @@ class ConfigController extends Controller
         $backendForm->setIniConfig(Config::app('authentication'));
         $form = new ConfirmRemovalForm();
         $form->setRedirectUrl('config/userbackend');
-        $form->setTitle(sprintf($this->translate('Remove User Backend %s'), $backendName));
         $form->setOnSuccess(function (ConfirmRemovalForm $form) use ($backendName, $backendForm) {
             try {
                 $backendForm->delete($backendName);
@@ -328,8 +324,7 @@ class ConfigController extends Controller
         });
         $form->handleRequest();
 
-        $this->view->form = $form;
-        $this->render('form');
+        $this->renderForm($form, $this->translate('Remove User Backend'));
     }
 
     /**
