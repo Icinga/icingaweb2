@@ -19,10 +19,9 @@
         <thead>
         <tr>
             <th><?= $this->translate('Name') ?></th>
-<!--                    <th>--><?//= $this->translate('Permissions') ?><!--</th>-->
-<!--                    <th>--><?//= $this->translate('Restrictions') ?><!--</th>-->
             <th><?= $this->translate('Users') ?></th>
             <th><?= $this->translate('Groups') ?></th>
+            <th></th>
         </tr>
         </thead>
         <tbody>
@@ -34,30 +33,8 @@
                         'role/edit',
                         array('role' => $name),
                         array('title' => sprintf($this->translate('Edit role %s'), $name))
-                    ); ?>
+                    ) ?>
                 </td>
-<!--                        <td>--><?//= $this->escape($role->permissions, 0, 50) ?><!--</td>-->
-<!--                        <td>-->
-<!--                            --><?php
-//                            // TODO(el): $role->without(...) or $role->shift(...) would be nice!
-//                            $restrictions = clone $role;
-//                            unset($restrictions['users']);
-//                            unset($restrictions['groups']);
-//                            unset($restrictions['permissions']);
-//                            ?>
-<!--                            --><?php //if (! empty($restrictions)): ?>
-<!--                            <table>-->
-<!--                                <tbody>-->
-<!--                                --><?php //foreach ($restrictions as $restrictionName => $restriction): ?>
-<!--                                    <tr>-->
-<!--                                        <th>--><?//= $this->escape($restrictionName) ?><!--</th>-->
-<!--                                        <td>--><?//= $this->escape($restriction) ?><!--</td>-->
-<!--                                    </tr>-->
-<!--                                --><?php //endforeach ?>
-<!--                                </tbody>-->
-<!--                            </table>-->
-<!--                            --><?php //endif ?>
-<!--                        </td>-->
                 <td><?= $this->escape($role->users) ?></td>
                 <td><?= $this->escape($role->groups) ?></td>
                 <td>
@@ -69,7 +46,7 @@
                             'icon'  => 'trash',
                             'title' => sprintf($this->translate('Remove role %s'), $name)
                         )
-                    ); ?>
+                    ) ?>
                 </td>
             </tr>
         <?php endforeach ?>
