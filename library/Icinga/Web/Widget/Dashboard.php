@@ -85,6 +85,7 @@ class Dashboard extends AbstractWidget
         }
 
         $this->mergePanes($panes);
+        $this->loadUserDashboards();
         return $this;
     }
 
