@@ -5,13 +5,11 @@
     <?= $this->tabs; ?>
   <?php endif ?>
     <?= $this->render('partials/object/host-header.phtml') ?>
-    <h3 class="tinystatesummary" <?= $this->compact ? ' data-base-target="col1"' : ''; ?>>
-        <?php
-        $this->stats = $object->stats;
-        $this->baseFilter = Filter::where('host', $object->host_name);
-        echo $this->render('list/components/servicesummary.phtml');
-        ?>
-    </h3>
+    <?php
+    $this->stats = $object->stats;
+    $this->baseFilter = Filter::where('host', $object->host_name);
+    echo $this->render('list/components/servicesummary.phtml');
+    ?>
 </div>
 
 <?= $this->render('partials/object/detail-content.phtml') ?>
