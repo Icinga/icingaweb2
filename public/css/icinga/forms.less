@@ -29,17 +29,25 @@ input[type="submit"] {
 
 // TODO(el): .form-inline control-group { display: inline-block; }
 form.inline {
+  .control-group {
+    padding: 0;
+  }
+  .form-controls {
+    margin: 0;
+  }
   display: inline-block;
 }
-
 
 .form-controls {
   margin-left: 160px;
 }
 
-button,
 input[type="submit"] {
   .button();
+}
+
+button:hover .icon-cancel {
+  color: @color-critical;
 }
 
 .control-label {
@@ -59,8 +67,8 @@ input[type="submit"] {
   padding: @vertical-padding @horizontal-padding;
 }
 
-button.link,
-input[type="submit"].link {
+.link-button {
+  .action-link();
   // Reset defaults
   background: none;
   border: none;
@@ -70,31 +78,6 @@ input[type="submit"].link {
 
   &:hover {
     text-decoration: underline;
-  }
-}
-
-form.link {
-  display: inline-block;
-}
-
-.spinner {
-  display: inline-block;
-  vertical-align: middle;
-
-  i {
-    .invisible();
-
-    &.active {
-      .visible();
-
-      &:before {
-        .animate(spin 2s infinite linear);
-      }
-    }
-
-    &:before {
-      margin: 0; // Disables wobbling
-    }
   }
 }
 
