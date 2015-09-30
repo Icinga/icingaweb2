@@ -480,22 +480,6 @@ class User
     }
 
     /**
-     * Load and return this user's navigation configuration
-     *
-     * @return  Config
-     */
-    public function loadNavigationConfig()
-    {
-        return Config::fromIni(
-            Config::resolvePath('preferences')
-            . DIRECTORY_SEPARATOR
-            . $this->getUsername()
-            . DIRECTORY_SEPARATOR
-            . 'navigation.ini'
-        );
-    }
-
-    /**
      * Load and return this user's configured navigation of the given type
      *
      * @param   string  $type
@@ -504,12 +488,12 @@ class User
      */
     public function getNavigation($type)
     {
-        $config = $this->loadNavigationConfig();
+        $config = Config::navigation($type === 'dashboard-pane' ? 'dashlet' : $type);
         $config->getConfigObject()->setKeyColumn('name');
 
         if ($type === 'dashboard-pane') {
             $panes = array();
-            foreach ($config->select()->where('type', 'dashlet') as $dashletName => $dashletConfig) {
+            foreach ($config as $dashletName => $dashletConfig) {
                 // TODO: Throw ConfigurationError if pane or url is missing
                 $panes[$dashletConfig->pane][$dashletName] = $dashletConfig->url;
             }
@@ -525,7 +509,7 @@ class User
                 );
             }
         } else {
-            $navigation = Navigation::fromConfig($config->select()->where('type', $type));
+            $navigation = Navigation::fromConfig($config);
         }
 
         return $navigation;

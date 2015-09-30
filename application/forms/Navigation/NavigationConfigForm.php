@@ -401,8 +401,7 @@ class NavigationConfigForm extends ConfigForm
                         if ($ownerName === $this->getUser()->getUsername()) {
                             $exists = $this->getUserConfig()->hasSection($name);
                         } else {
-                            $owner = new User($ownerName);
-                            $exists = $owner->loadNavigationConfig()->hasSection($name);
+                            $exists = Config::navigation($itemConfig->type, $ownerName)->hasSection($name);
                         }
                     } else {
                         $exists = (bool) $this->getShareConfig()
@@ -537,8 +536,7 @@ class NavigationConfigForm extends ConfigForm
         if (! $itemConfig->owner || $itemConfig->owner === $this->getUser()->getUsername()) {
             $config = $this->getUserConfig();
         } else {
-            $owner = new User($itemConfig->owner);
-            $config = $owner->loadNavigationConfig();
+            $config = Config::navigation($itemConfig->type, $itemConfig->owner);
         }
 
         foreach ($children as $child) {
