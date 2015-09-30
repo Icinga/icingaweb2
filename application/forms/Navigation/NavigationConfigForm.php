@@ -134,7 +134,7 @@ class NavigationConfigForm extends ConfigForm
                 throw new ProgrammingError('You need to pass a type if no user configuration is set');
             }
 
-            $this->setUserConfig($this->getItemConfig($type, $this->getUser()->getUsername()));
+            $this->setUserConfig(Config::navigation($type, $this->getUser()->getUsername()));
         }
 
         return $this->userConfig;
@@ -168,7 +168,7 @@ class NavigationConfigForm extends ConfigForm
                 throw new ProgrammingError('You need to pass a type if no share configuration is set');
             }
 
-            $this->setShareConfig($this->getItemConfig($type));
+            $this->setShareConfig(Config::navigation($type));
         }
 
         return $this->shareConfig;
@@ -639,11 +639,6 @@ class NavigationConfigForm extends ConfigForm
                 )
             );
         } else {
-            $multiOptions = array();
-            foreach ($itemTypes as $type => $options) {
-                $multiOptions[$type] = isset($options['label']) ? $options['label'] : $type;
-            }
-
             $this->addElement(
                 'select',
                 'type',
@@ -652,7 +647,7 @@ class NavigationConfigForm extends ConfigForm
                     'autosubmit'    => true,
                     'label'         => $this->translate('Type'),
                     'description'   => $this->translate('The type of this navigation item'),
-                    'multiOptions'  => $multiOptions
+                    'multiOptions'  => $itemTypes
                 )
             );
         }
@@ -860,25 +855,5 @@ class NavigationConfigForm extends ConfigForm
         }
 
         return $form;
-    }
-
-    /**
-     * Return the configuration file for the given type of navigation item
-     *
-     * @param   string  $type
-     * @param   string  $username
-     *
-     * @return  Config
-     */
-    protected function getItemConfig($type, $username = null)
-    {
-        $itemTypes = $this->getItemTypes();
-        if (isset($itemTypes[$type]['config'])) {
-            $configName = $itemTypes[$type]['config'];
-        } else {
-            $configName = $type . 's';
-        }
-
-        return Config::app(($username ? "preferences/$username/" : 'navigation/') . $configName);
     }
 }

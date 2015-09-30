@@ -64,35 +64,6 @@ class NavigationController extends Controller
     }
 
     /**
-     * Return the path to the configuration file for the given navigation item type and user
-     *
-     * @param   string  $type
-     * @param   string  $username
-     *
-     * @return  string
-     *
-     * @throws  IcingaException     In case the given type is unknown
-     */
-    protected function getConfigPath($type, $username = null)
-    {
-        if (isset($this->moduleItemTypes[$type])) {
-            $options = $this->moduleItemTypes[$type];
-        } elseif (isset($this->defaultItemTypes[$type])) {
-            $options = $this->defaultItemTypes[$type];
-        } else {
-            throw new IcingaException('Invalid navigation item type %s provided', $type);
-        }
-
-        if (isset($options['config'])) {
-            $filename = $options['config'] . '.ini';
-        } else {
-            $filename = $type . 's.ini';
-        }
-
-        return Config::resolvePath(($username ? "preferences/$username/" : 'navigation/') . $filename);
-    }
-
-    /**
      * Show the current user a list of his/her navigation items
      */
     public function indexAction()
@@ -185,10 +156,10 @@ class NavigationController extends Controller
     {
         $form = new NavigationConfigForm();
         $form->setRedirectUrl('navigation');
-        $form->setTitle($this->translate('Create New Navigation Item'));
-        $form->setItemTypes(array_merge($this->defaultItemTypes, $this->moduleItemTypes));
-        $form->addDescription($this->translate('Create a new navigation item, such as a menu entry or dashlet.'));
         $form->setUser($this->Auth()->getUser());
+        $form->setItemTypes($this->listItemTypes());
+        $form->setTitle($this->translate('Create New Navigation Item'));
+        $form->addDescription($this->translate('Create a new navigation item, such as a menu entry or dashlet.'));
         $form->setOnSuccess(function (NavigationConfigForm $form) {
             $data = array_filter($form->getValues());
 
@@ -234,8 +205,8 @@ class NavigationController extends Controller
 
         $form = new NavigationConfigForm();
         $form->setUser($user);
-        $form->setShareConfig(Config::fromIni($this->getConfigPath($itemType)));
-        $form->setUserConfig(Config::fromIni($this->getConfigPath($itemType, $itemOwner)));
+        $form->setShareConfig(Config::navigation($itemType));
+        $form->setUserConfig(Config::navigation($itemType, $itemOwner));
         $form->setRedirectUrl($referrer === 'shared' ? 'navigation/shared' : 'navigation');
         $form->setTitle(sprintf($this->translate('Edit %s %s'), $this->getItemLabel($itemType), $itemName));
         $form->setOnSuccess(function (NavigationConfigForm $form) use ($itemName) {
@@ -289,8 +260,8 @@ class NavigationController extends Controller
 
         $navigationConfigForm = new NavigationConfigForm();
         $navigationConfigForm->setUser($user);
-        $navigationConfigForm->setShareConfig(Config::fromIni($this->getConfigPath($itemType)));
-        $navigationConfigForm->setUserConfig(Config::fromIni($this->getConfigPath($itemType, $user->getUsername())));
+        $navigationConfigForm->setShareConfig(Config::navigation($itemType));
+        $navigationConfigForm->setUserConfig(Config::navigation($itemType, $user->getUsername()));
 
         $form = new ConfirmRemovalForm();
         $form->setRedirectUrl('navigation');
@@ -336,8 +307,8 @@ class NavigationController extends Controller
 
         $navigationConfigForm = new NavigationConfigForm();
         $navigationConfigForm->setUser($this->Auth()->getUser());
-        $navigationConfigForm->setShareConfig(Config::fromIni($this->getConfigPath($itemType)));
-        $navigationConfigForm->setUserConfig(Config::fromIni($this->getConfigPath($itemType, $itemOwner)));
+        $navigationConfigForm->setShareConfig(Config::navigation($itemType));
+        $navigationConfigForm->setUserConfig(Config::navigation($itemType, $itemOwner));
 
         $form = new Form(array(
             'onSuccess' => function ($form) use ($navigationConfigForm) {
