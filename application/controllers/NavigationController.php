@@ -137,7 +137,7 @@ class NavigationController extends Controller
             array(
                 'type'  => $this->translate('Type'),
                 'owner' => $this->translate('Shared'),
-                'name'  => $this->translate('Shared Navigation')
+                'name'  => $this->translate('Navigation')
             ),
             $query
         );
