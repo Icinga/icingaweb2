@@ -1,94 +1,116 @@
 <div class="controls">
-  <?= $tabs; ?>
-  <h1><?= $this->translate('Monitoring Backends') ?></h1>
+    <?= $tabs ?>
 </div>
 
 <div class="content" data-base-target="_next">
-  <p>
-    <a href="<?= $this->href('monitoring/config/createbackend'); ?>">
-      <?= $this->icon('plus'); ?> <?= $this->translate('Create New Monitoring Backend'); ?>
-    </a>
-  </p>
-  <table class="action alternating">
+    <div>
+    <h2><?= $this->translate('Monitoring Backends') ?></h2>
+    <?= $this->qlink(
+        $this->translate('Create A New Monitoring Backend') ,
+        'monitoring/config/createbackend',
+        null,
+        array(
+            'class'   => 'button action-link',
+            'icon'    => 'plus',
+            'title'   => $this->translate('Create a new monitoring backend')
+        )
+    ) ?>
+    <table class="action-table listing-table">
+        <thead>
+        <tr>
+            <th><?= $this->translate('Monitoring Backend') ?></th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <?php foreach ($this->backendsConfig as $backendName => $config): ?>
+            <tr>
+                <td>
+                    <?= $this->qlink(
+                        $backendName,
+                        'monitoring/config/editbackend',
+                        array('backend-name' => $backendName),
+                        array(
+                            'icon'  => 'edit',
+                            'title' => sprintf($this->translate('Edit monitoring backend %s'), $backendName)
+                        )
+                    ) ?>
+                    <span class="text-small">&#40;<?= sprintf(
+                        $this->translate('Type: %s'),
+                        $this->escape($config->type === 'ido' ? 'IDO' : ucfirst($config->type))
+                    ) ?>&#41;
+                    </span>
+                </td>
+                <td class="text-right">
+                    <?= $this->qlink(
+                        '',
+                        'monitoring/config/removebackend',
+                        array('backend-name' => $backendName),
+                        array(
+                            'class' => 'action-link',
+                            'icon'  => 'cancel',
+                            'title' => sprintf($this->translate('Remove monitoring backend %s'), $backendName)
+                        )
+                    ) ?>
+                </td>
+            </tr>
+        <?php endforeach ?>
+        </tbody>
+    </table>
+    </div>
+    <div>
+    <h2><?= $this->translate('Command Transports') ?></h2>
+    <?= $this->qlink(
+        $this->translate('Create A New Command Transport') ,
+        'monitoring/config/createtransport',
+        null,
+        array(
+            'class'   => 'button action-link',
+            'icon'    => 'plus',
+            'title'   => $this->translate('Create a new command transport')
+        )
+    ) ?>
+    <table class="action-table listing-table">
     <thead>
-      <th><?= $this->translate('Monitoring Backend'); ?></th>
-      <th style="width: 5em"><?= $this->translate('Remove'); ?></th>
-    </thead>
-    <tbody>
-    <?php foreach ($this->backendsConfig as $backendName => $config): ?>
-      <tr>
-        <td>
-          <?= $this->qlink(
-            $backendName,
-            'monitoring/config/editbackend',
-            array('backend-name' => $backendName),
-            array(
-                'icon'  => 'edit',
-                'title' => sprintf($this->translate('Edit monitoring backend %s'), $backendName)
-            )
-          ); ?>
-          <small>(<?= sprintf(
-            $this->translate('Type: %s'),
-            $this->escape($config->type === 'ido' ? 'IDO' : ucfirst($config->type))
-          ); ?>)</small>
-        </td>
-        <td>
-          <?= $this->qlink(
-            '',
-            'monitoring/config/removebackend',
-            array('backend-name' => $backendName),
-            array(
-                'icon'  => 'trash',
-                'title' => sprintf($this->translate('Remove monitoring backend %s'), $backendName)
-            )
-          ); ?>
-        </td>
-      </tr>
-    <?php endforeach; ?>
-    </tbody>
-  </table>
-  <h1><?= $this->translate('Command Transports') ?></h1>
-  <p>
-    <a href="<?= $this->href('monitoring/config/createtransport'); ?>">
-      <?= $this->icon('plus'); ?> <?= $this->translate('Create New Transport'); ?>
-    </a>
-  </p>
-  <table class="action alternating">
-    <thead>
-      <th><?= $this->translate('Transport'); ?></th>
-      <th style="width: 5em"><?= $this->translate('Remove'); ?></th>
+    <tr>
+        <th><?= $this->translate('Transport') ?></th>
+        <th></th>
+    </tr>
     </thead>
     <tbody>
     <?php foreach ($this->transportConfig as $transportName => $config): ?>
-      <tr>
-        <td>
-          <?= $this->qlink(
-            $transportName,
-            'monitoring/config/edittransport',
-            array('transport' => $transportName),
-            array(
-                'icon'  => 'edit',
-                'title' => sprintf($this->translate('Edit command transport %s'), $transportName)
-            )
-          ); ?>
-          <small>(<?= sprintf(
-            $this->translate('Type: %s'),
-            $config->host !== null ? $this->translate('Remote') : $this->translate('Local')
-          ); ?>)</small>
-        </td>
-        <td>
-          <?= $this->qlink(
-            '',
-            'monitoring/config/removetransport',
-            array('transport' => $transportName),
-            array(
-                'icon'  => 'trash',
-                'title' => sprintf($this->translate('Remove command transport %s'), $transportName)
-            )
-          ); ?>
-        </td>
-      </tr>
-    <?php endforeach; ?>
+        <tr>
+            <td>
+                <?= $this->qlink(
+                    $transportName,
+                    'monitoring/config/edittransport',
+                    array('transport' => $transportName),
+                    array(
+                        'icon'  => 'edit',
+                        'title' => sprintf($this->translate('Edit command transport %s'), $transportName)
+                    )
+                ); ?>
+                <span class="text-small">&#40;<?= sprintf(
+                    $this->translate('Type: %s'),
+                    $config->host !== null ? $this->translate('Remote') : $this->translate('Local')
+                ) ?>&#41;
+                </span>
+            </td>
+            <td class="text-right">
+                <?= $this->qlink(
+                    '',
+                    'monitoring/config/removetransport',
+                    array('transport' => $transportName),
+                    array(
+                        'class' => 'action-link',
+                        'icon'  => 'cancel',
+                        'title' => sprintf($this->translate('Remove command transport %s'), $transportName)
+                    )
+                ); ?>
+            </td>
+        </tr>
+    <?php endforeach ?>
     </tbody>
-  </table>
+    </table>
+    </div>
 </div>
