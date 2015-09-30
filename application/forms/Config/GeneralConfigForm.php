@@ -3,10 +3,10 @@
 
 namespace Icinga\Forms\Config;
 
-use Icinga\Web\Notification;
-use Icinga\Forms\ConfigForm;
-use Icinga\Forms\Config\General\LoggingConfigForm;
 use Icinga\Forms\Config\General\ApplicationConfigForm;
+use Icinga\Forms\Config\General\LoggingConfigForm;
+use Icinga\Forms\ConfigForm;
+use Icinga\Web\Notification;
 
 /**
  * Form class for application-wide and logging specific settings
@@ -20,7 +20,6 @@ class GeneralConfigForm extends ConfigForm
     {
         $this->setName('form_config_general');
         $this->setSubmitLabel($this->translate('Save Changes'));
-        $this->setTitle($this->translate('General Configuration'));
     }
 
     /**
