@@ -14,6 +14,16 @@ class HoststatehistoryQuery extends IdoQuery
     protected $allowCustomVars = true;
 
     /**
+     * {@inheritdoc}
+     */
+    protected $groupBase = array('statehistory' => array('hh.statehistory_id', 'ho.object_id'));
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $groupOrigin = array('hostgroups', 'services');
+
+    /**
      * Array to map type names to type ids for query optimization
      *
      * @var array
@@ -29,18 +39,6 @@ class HoststatehistoryQuery extends IdoQuery
     protected $columnMap = array(
         'instances' => array(
             'instance_name' => 'i.instance_name'
-        ),
-        'statehistory' => array(
-            'host'          => 'ho.name1 COLLATE latin1_general_ci',
-            'host_name'     => 'ho.name1',
-            'object_type'   => '(\'host\')'
-        ),
-        'history' => array(
-            'type'      => "(CASE WHEN hh.state_type = 1 THEN 'hard_state' ELSE 'soft_state' END)",
-            'timestamp' => 'UNIX_TIMESTAMP(hh.state_time)',
-            'object_id' => 'hh.object_id',
-            'state'     => 'hh.state',
-            'output'    => "('[ ' || hh.current_check_attempt || '/' || hh.max_check_attempts || ' ] ' || hh.output)",
         ),
         'hostgroups' => array(
             'hostgroup'         => 'hgo.name1 COLLATE latin1_general_ci',
@@ -61,7 +59,17 @@ class HoststatehistoryQuery extends IdoQuery
             'service_description'   => 'so.name2',
             'service_display_name'  => 's.display_name COLLATE latin1_general_ci',
             'service_host_name'     => 'so.name1'
-        )
+        ),
+        'statehistory' => array(
+            'host'          => 'ho.name1 COLLATE latin1_general_ci',
+            'host_name'     => 'ho.name1',
+            'object_id'     => 'hh.object_id',
+            'object_type'   => '(\'host\')',
+            'output'        => "('[ ' || hh.current_check_attempt || '/' || hh.max_check_attempts || ' ] ' || hh.output)",
+            'state'         => 'hh.state',
+            'timestamp'     => 'UNIX_TIMESTAMP(hh.state_time)',
+            'type'          => "(CASE WHEN hh.state_type = 1 THEN 'hard_state' ELSE 'soft_state' END)"
+        ),
     );
 
     /**
@@ -96,7 +104,6 @@ class HoststatehistoryQuery extends IdoQuery
             array()
         );
         $this->joinedVirtualTables['statehistory'] = true;
-        $this->joinedVirtualTables['history'] = true;
     }
 
     /**
@@ -178,21 +185,5 @@ class HoststatehistoryQuery extends IdoQuery
             'i.instance_id = hh.instance_id',
             array()
         );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getGroup()
-    {
-        $group = array();
-        if ($this->hasJoinedVirtualTable('hostgroups') || $this->hasJoinedVirtualTable('services')) {
-            $group = array('hh.statehistory_id', 'ho.object_id');
-            if ($this->hasJoinedVirtualTable('hosts')) {
-                $group[] = 'h.host_id';
-            }
-        }
-
-        return $group;
     }
 }
