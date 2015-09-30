@@ -10,6 +10,7 @@ use Icinga\Protocol\File\FileReader;
 use Icinga\Web\Controller;
 use Icinga\Web\Url;
 use Icinga\Web\Widget\Tabextension\DashboardAction;
+use Icinga\Web\Widget\Tabextension\MenuAction;
 use Icinga\Web\Widget\Tabextension\OutputFormat;
 
 /**
@@ -30,7 +31,7 @@ class ListController extends Controller
                     'list/'
                     . str_replace(' ', '', $action)
                 )
-        ))->extend(new OutputFormat())->extend(new DashboardAction())->activate($action);
+        ))->extend(new OutputFormat())->extend(new DashboardAction())->extend(new MenuAction())->activate($action);
     }
 
     /**

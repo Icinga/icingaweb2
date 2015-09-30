@@ -204,6 +204,10 @@ class NavigationController extends Controller
         $form->setItemTypes($this->listItemTypes());
         $form->setTitle($this->translate('Create New Navigation Item'));
         $form->addDescription($this->translate('Create a new navigation item, such as a menu entry or dashlet.'));
+
+        // TODO: Fetch all "safe" parameters from the url and populate them
+        $form->populate(array('url' => rawurldecode($this->params->get('url', ''))));
+
         $form->setOnSuccess(function (NavigationConfigForm $form) {
             $data = array_filter($form->getValues());
 

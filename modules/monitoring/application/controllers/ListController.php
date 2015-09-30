@@ -13,6 +13,7 @@ use Icinga\Module\Monitoring\Forms\Command\Object\DeleteDowntimeCommandForm;
 use Icinga\Module\Monitoring\Forms\StatehistoryForm;
 use Icinga\Web\Url;
 use Icinga\Web\Widget\Tabextension\DashboardAction;
+use Icinga\Web\Widget\Tabextension\MenuAction;
 use Icinga\Web\Widget\Tabextension\OutputFormat;
 use Icinga\Web\Widget\Tabs;
 
@@ -625,6 +626,6 @@ class ListController extends Controller
      */
     private function createTabs()
     {
-        $this->getTabs()->extend(new OutputFormat())->extend(new DashboardAction());
+        $this->getTabs()->extend(new OutputFormat())->extend(new DashboardAction())->extend(new MenuAction());
     }
 }
