@@ -30,7 +30,7 @@ class ServicecommentdeletionhistoryQuery extends ServicecommenthistoryQuery
         $this->columnMap['commenthistory']['timestamp'] = str_replace(
             'comment_time',
             'deletion_time',
-            $this->columnMap['history']['timestamp']
+            $this->columnMap['commenthistory']['timestamp']
         );
         $this->columnMap['commenthistory']['type'] = str_replace(
             'END)',
