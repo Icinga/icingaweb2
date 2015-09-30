@@ -5,14 +5,13 @@ namespace Icinga\Controllers;
 
 use Exception;
 use Icinga\Application\Config;
-use Icinga\Application\Icinga;
-use Icinga\Exception\IcingaException;
 use Icinga\Exception\NotFoundError;
 use Icinga\Data\DataArray\ArrayDatasource;
 use Icinga\Forms\ConfirmRemovalForm;
 use Icinga\Forms\Navigation\NavigationConfigForm;
 use Icinga\Web\Controller;
 use Icinga\Web\Form;
+use Icinga\Web\Navigation\Navigation;
 use Icinga\Web\Notification;
 use Icinga\Web\Url;
 
@@ -22,18 +21,11 @@ use Icinga\Web\Url;
 class NavigationController extends Controller
 {
     /**
-     * The default item types provided by Icinga Web 2
+     * The global navigation item type configuration
      *
      * @var array
      */
-    protected $defaultItemTypes;
-
-    /**
-     * The item types provided by Icinga Web 2's modules
-     *
-     * @var array
-     */
-    protected $moduleItemTypes;
+    protected $itemTypeConfig;
 
     /**
      * {@inheritdoc}
@@ -41,30 +33,7 @@ class NavigationController extends Controller
     public function init()
     {
         parent::init();
-        $this->defaultItemTypes = array(
-            'menu-item' => array(
-                'label'     => $this->translate('Menu Entry'),
-                'config'    => 'menu'
-            ),
-            'dashlet'   => array(
-                'label'     => 'Dashlet',
-                'config'    => 'dashboard'
-            )
-        );
-
-        $moduleItemTypes = array();
-        $moduleManager = Icinga::app()->getModuleManager();
-        foreach ($moduleManager->getLoadedModules() as $module) {
-            if ($this->hasPermission($moduleManager::MODULE_PERMISSION_NS . $module->getName())) {
-                foreach ($module->getNavigationItems() as $type => $options) {
-                    if (! isset($moduleItemTypes[$type])) {
-                        $moduleItemTypes[$type] = $options;
-                    }
-                }
-            }
-        }
-
-        $this->moduleItemTypes = $moduleItemTypes;
+        $this->itemTypeConfig = Navigation::getItemTypeConfiguration();
     }
 
     /**
@@ -72,19 +41,11 @@ class NavigationController extends Controller
      *
      * @param   string  $type
      *
-     * @return  string          It's $type if no label can be found
+     * @return  string          $type if no label can be found
      */
     protected function getItemLabel($type)
     {
-        if (isset($this->moduleItemTypes[$type]['label'])) {
-            return $this->moduleItemTypes[$type]['label'];
-        }
-
-        if (isset($this->defaultItemTypes[$type]['label'])) {
-            return $this->defaultItemTypes[$type]['label'];
-        }
-
-        return $type;
+        return isset($this->itemTypeConfig[$type]['label']) ? $this->itemTypeConfig[$type]['label'] : $type;
     }
 
     /**
@@ -95,11 +56,7 @@ class NavigationController extends Controller
     protected function listItemTypes()
     {
         $types = array();
-        foreach ($this->defaultItemTypes as $type => $options) {
-            $types[$type] = isset($options['label']) ? $options['label'] : $type;
-        }
-
-        foreach ($this->moduleItemTypes as $type => $options) {
+        foreach ($this->itemTypeConfig as $type => $options) {
             $types[$type] = isset($options['label']) ? $options['label'] : $type;
         }
 

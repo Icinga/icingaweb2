@@ -452,6 +452,39 @@ class Navigation implements ArrayAccess, Countable, IteratorAggregate
     }
 
     /**
+     * Return the global navigation item type configuration
+     *
+     * @return  array
+     */
+    public static function getItemTypeConfiguration()
+    {
+        $defaultItemTypes = array(
+            'menu-item' => array(
+                'label'     => t('Menu Entry'),
+                'config'    => 'menu'
+            ),
+            'dashlet'   => array(
+                'label'     => 'Dashlet',
+                'config'    => 'dashboard'
+            )
+        );
+
+        $moduleItemTypes = array();
+        $moduleManager = Icinga::app()->getModuleManager();
+        foreach ($moduleManager->getLoadedModules() as $module) {
+            if (Auth::getInstance()->hasPermission($moduleManager::MODULE_PERMISSION_NS . $module->getName())) {
+                foreach ($module->getNavigationItems() as $type => $options) {
+                    if (! isset($moduleItemTypes[$type])) {
+                        $moduleItemTypes[$type] = $options;
+                    }
+                }
+            }
+        }
+
+        return array_merge($defaultItemTypes, $moduleItemTypes);
+    }
+
+    /**
      * Create and return a new set of navigation items for the given configuration
      *
      * Note that this is supposed to be utilized for one dimensional structures
