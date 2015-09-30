@@ -366,8 +366,11 @@ class ConfigController extends Controller
     public function editresourceAction()
     {
         $this->assertPermission('config/application/resources');
+        $this->getTabs()->add('resources/update', array(
+            'label' => $this->translate('Update Resource'),
+            'url'   => Url::fromRequest()
+        ))->activate('resources/update');
         $form = new ResourceConfigForm();
-        $form->setTitle($this->translate('Edit Existing Resource'));
         $form->setIniConfig(Config::app('resources'));
         $form->setRedirectUrl('config/resource');
         $form->handleRequest();
