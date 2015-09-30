@@ -77,6 +77,27 @@ form.link {
   display: inline-block;
 }
 
+.spinner {
+  display: inline-block;
+  vertical-align: middle;
+
+  i {
+    .invisible();
+
+    &.active {
+      .visible();
+
+      &:before {
+        .animate(spin 2s infinite linear);
+      }
+    }
+
+    &:before {
+      margin: 0; // Disables wobbling
+    }
+  }
+}
+
 //div.config-form-buttons {
 //  margin-top: 5px;
 //}
