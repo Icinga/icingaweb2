@@ -6,13 +6,11 @@
   <?php endif ?>
   <?php if ($object->getType() === $object::TYPE_HOST): ?>
     <?= $this->render('partials/host/object-header.phtml'); ?>
-    <h3 class="tinystatesummary" <?= $this->compact ? ' data-base-target="col1"' : ''; ?>">
-      <?php
-      $this->baseFilter = Filter::where('host', $object->host_name);
-      $this->stats = $object->stats;
-      echo $this->render('list/components/servicesummary.phtml');
-      ?>
-    </h3>
+    <?php
+    $this->baseFilter = Filter::where('host', $object->host_name);
+    $this->stats = $object->stats;
+    echo $this->render('list/components/servicesummary.phtml');
+    ?>
   <?php else: ?>
     <?= $this->render('partials/service/object-header.phtml'); ?>
     <hr class="command-separator">
