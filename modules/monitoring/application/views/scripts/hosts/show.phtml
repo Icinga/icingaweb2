@@ -3,11 +3,8 @@
         <?= $tabs; ?>
     <?php endif ?>
 
-    <h2 class="tinystatesummary" <?= $this->compact ? ' data-base-target="col1"' : ''; ?>
-        <?= $this->render('list/components/hostssummary.phtml') ?>
-    </h2>
+    <?= $this->render('list/components/hostssummary.phtml') ?>
     <?= $this->render('partials/host/objects-header.phtml'); ?>
-
 </div>
 
 <div class="content multi-commands">
