@@ -64,17 +64,62 @@ class NavigationController extends Controller
     }
 
     /**
+     * Return all shared navigation item configurations
+     *
+     * @param   string  $owner  A username if only items shared by a specific user are desired
+     *
+     * @return  array
+     */
+    protected function fetchSharedNavigationItemConfigs($owner = null)
+    {
+        $configs = array();
+        foreach ($this->itemTypeConfig as $type => $_) {
+            $config = Config::navigation($type);
+            $config->getConfigObject()->setKeyColumn('name');
+            $query = $config->select();
+            if ($owner !== null) {
+                $query->where('owner', $owner);
+            }
+
+            foreach ($query as $itemConfig) {
+                $configs[] = $itemConfig;
+            }
+        }
+
+        return $configs;
+    }
+
+    /**
+     * Return all user navigation item configurations
+     *
+     * @param   string  $username
+     *
+     * @return  array
+     */
+    protected function fetchUserNavigationItemConfigs($username)
+    {
+        $configs = array();
+        foreach ($this->itemTypeConfig as $type => $_) {
+            $config = Config::navigation($type, $username);
+            $config->getConfigObject()->setKeyColumn('name');
+            foreach ($config->select() as $itemConfig) {
+                $configs[] = $itemConfig;
+            }
+        }
+
+        return $configs;
+    }
+
+    /**
      * Show the current user a list of his/her navigation items
      */
     public function indexAction()
     {
         $user = $this->Auth()->getUser();
-
         $ds = new ArrayDatasource(array_merge(
-            Config::app('navigation')->select()->where('owner', $user->getUsername())->fetchAll(),
-            iterator_to_array($user->loadNavigationConfig())
+            $this->fetchSharedNavigationItemConfigs($user->getUsername()),
+            $this->fetchUserNavigationItemConfigs($user->getUsername())
         ));
-        $ds->setKeyColumn('name');
         $query = $ds->select();
 
         $this->view->types = $this->listItemTypes();
@@ -104,9 +149,8 @@ class NavigationController extends Controller
     public function sharedAction()
     {
         $this->assertPermission('config/application/navigation');
-        $config = Config::app('navigation');
-        $config->getConfigObject()->setKeyColumn('name');
-        $query = $config->select();
+        $ds = new ArrayDatasource($this->fetchSharedNavigationItemConfigs());
+        $query = $ds->select();
 
         $removeForm = new Form();
         $removeForm->setUidDisabled();
@@ -302,6 +346,7 @@ class NavigationController extends Controller
         $this->assertPermission('config/application/navigation');
         $this->assertHttpMethod('POST');
 
+        // TODO: I'd like these being form fields
         $itemType = $this->params->getRequired('type');
         $itemOwner = $this->params->getRequired('owner');
 
