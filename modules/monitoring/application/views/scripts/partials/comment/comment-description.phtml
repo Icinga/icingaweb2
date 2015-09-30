@@ -21,7 +21,4 @@ switch ($comment->type) {
         $tooltip = $this->translate('Comment was caused by an acknowledgement');
         break;
 }
-?>
-<span style="font-size: 1.8em">
-    <?= $this->icon($icon, $tooltip); ?>
-</span>
+echo $this->icon($icon, $tooltip, array('class' => 'big-icon'));
