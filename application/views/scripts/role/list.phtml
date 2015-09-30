@@ -2,6 +2,16 @@
     <?= $tabs ?>
 </div>
 <div class="content">
+    <?= $this->qlink(
+        $this->translate('Create A New Role') ,
+        'role/add',
+        null,
+        array(
+            'class'   => 'button action-link',
+            'icon'    => 'plus',
+            'title'   => $this->translate('Create a new role')
+        )
+    ) ?>
     <div>
         <?php /** @var \Icinga\Application\Config $roles */ if ($roles->isEmpty()): ?>
             <?= $this->translate('No roles found.') ?>
@@ -67,8 +77,5 @@
                 </tbody>
             </table>
         <?php endif ?>
-        <a data-base-target="_next" href="<?= $this->href('role/add') ?>">
-            <?= $this->translate('Create a New Role') ?>
-        </a>
     </div>
 </div>
