@@ -75,7 +75,7 @@ class Url
         }
 
         $url = new Url();
-        $url->setPath($request->getPathInfo());
+        $url->setPath(ltrim($request->getPathInfo(), '/'));
 
         // $urlParams = UrlParams::fromQueryString($request->getQuery());
         if (isset($_SERVER['QUERY_STRING'])) {
@@ -240,7 +240,7 @@ class Url
      */
     public function setPath($path)
     {
-        $this->path = ltrim($path, '/');
+        $this->path = $path;
         return $this;
     }
 
