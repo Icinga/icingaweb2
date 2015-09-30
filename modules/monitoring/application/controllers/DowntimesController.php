@@ -101,6 +101,6 @@ class DowntimesController extends Controller
         ));
         $delDowntimeForm->setRedirectUrl(Url::fromPath('monitoring/list/downtimes'));
         $delDowntimeForm->setDowntimes($this->downtimes->fetchAll())->handleRequest();
-        $this->view->delDowntimeForm = $delDowntimeForm;
+        $this->view->delAllDowntimeForm = $delDowntimeForm;
     }
 }

@@ -4,7 +4,9 @@
     <?= $this->tabs; ?>
   <?php endif ?>
 
-  <?= $this->render('partials/downtime/downtime-header.phtml'); ?>
+  <table>
+    <tr> <?= $this->render('partials/downtime/downtime-header.phtml') ?> </tr>
+  </table>
 </div>
 <div class="content object-command">
     <?= $delDowntimeForm; ?>
