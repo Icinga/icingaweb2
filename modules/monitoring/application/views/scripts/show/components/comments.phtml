@@ -60,16 +60,15 @@ if (empty($object->comments) && ! $addLink) {
                 $deleteButton = '';
             }
             ?>
-            <dt class="feed-author">
+            <dt class="feed-author clearfix">
                 <?= $this->escape($comment->author) ?>
+                <span class="text-small"><?= $this->translate('commented') ?></span>
                 <?= $this->timeAgo($comment->timestamp) ?>
             <?php if ($deleteButton): ?>
-                <span class="clearfix">
                     <?= $deleteButton ?>
-                </span>
             <?php endif ?>
             </dt>
-            <dd>
+            <dd class="comment-text">
                 <?= str_replace(array('\r\n', '\n'), '<br>', $this->createTicketLinks($comment->comment)) ?>
             </dd>
         <?php endforeach ?>

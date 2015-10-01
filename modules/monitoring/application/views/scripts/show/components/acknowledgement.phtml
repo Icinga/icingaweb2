@@ -1,4 +1,4 @@
-<?php
+modules/monitoring/application/views/scripts/partials/command/object-command-form.phtml<?php
 
 /** @var \Icinga\Module\Monitoring\Object\MonitoredObject $object */
 
@@ -15,44 +15,39 @@ if ($object->acknowledged): ?>
     <tr>
         <th><?= $this->translate('Acknowledged') ?></th>
         <td data-base-target="_self">
-            <ul class="inline-comments">
-                <li class="comment-item">
-                    <h3>
-                        <?= sprintf(
-                            $this->translate('%s acknowledged %s'),
-                            '<span class="author">' . $this->escape($acknowledgement->getAuthor()) . '</span>',
-                            $this->timeAgo($acknowledgement->getEntryTime())
-                        ) ?>
-                        <?php
-                        if ($acknowledgement->getSticky()) {
-                            echo $this->icon('pin', sprintf(
-                                $this->translate(
-                                    'Acknowledgement remains until the %1$s recovers even if the %1$s changes state'
-                                ),
-                                $object->getType(true)
-                            ));
-                        }
-                        if (isset($removeAckForm)) {
-                            // Form is unset if the current user lacks the respective permission
-                            // Form is unset if the current user lacks the respective permission
-                            echo $removeAckForm;
-                        }
-                        ?>
-                    </h3>
-                    <p>
-                        <span class="sr-only">(<?= $this->translate('Comment') ?>): </span>
-                        <?= nl2br($this->createTicketLinks($acknowledgement->getComment()), false) ?>
-                    </p>
-                <?php if ($acknowledgement->expires()): ?>
-                    <p class="info">
-                        <?= sprintf(
-                            $this->translate('Expires %s'),
-                            $this->timeUntil($acknowledgement->getExpirationTime())
-                        ) ?>
-                    </p>
-                <?php endif ?>
-                </li>
-            </ul>
+            <dl class="feed-list">
+                <dt class="feed-author clearfix">
+                    <?= $this->escape($acknowledgement->getAuthor()) ?>
+                    <span class="text-small"><?= $this->translate('acknowledged') ?></span>
+                    <?= $this->timeAgo($acknowledgement->getEntryTime()) ?>
+                    <?php
+                    if ($acknowledgement->getSticky()) {
+                        echo $this->icon('pin', sprintf(
+                            $this->translate(
+                                'Acknowledgement remains until the %1$s recovers even if the %1$s changes state'
+                            ),
+                            $object->getType(true)
+                        ));
+                    }
+                    if (isset($removeAckForm)) {
+                        $removeAckForm->setAttrib('class', $removeAckForm->getAttrib('class') . ' pull-right');
+                        // Form is unset if the current user lacks the respective permission
+                        echo $removeAckForm;
+                    }
+                    ?>
+                </dt>
+                <dd class="comment-text">
+                    <?= nl2br($this->createTicketLinks($acknowledgement->getComment()), false) ?>
+                </dd>
+            <?php if ($acknowledgement->expires()): ?>
+                <dd>
+                    <?= sprintf(
+                        $this->translate('Expires %s'),
+                        $this->timeUntil($acknowledgement->getExpirationTime())
+                    ) ?>
+                </dd>
+            <?php endif ?>
+            </dl>
         </td>
     </tr>
 <?php else: ?>
