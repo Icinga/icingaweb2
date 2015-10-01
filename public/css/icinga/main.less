@@ -17,7 +17,7 @@
 }
 
 .comment-text {
-  color: @text-color-light;
+  .text-small();
   font-family: @font-family-fixed;
 }
 
@@ -66,8 +66,10 @@
   width: 16px;
 }
 
-.v-center > * {
-  vertical-align: middle;
+.v-center {
+  > * {
+    vertical-align: middle;
+  }
 }
 
 a:hover .icon-cancel {
@@ -178,6 +180,29 @@ table.listing-table {
     // Reset default font-weight
     font-weight: normal;
     width: 120px;
-    vertical-align: top; 
+    vertical-align: top;
+  }
+}
+
+// TODO(el): Fix
+.controls {
+  .limiter-control {
+    .pull-left();
+    padding: @vertical-padding / 2 0;
+  }
+
+  .pagination-control {
+    .pull-left();
+    padding: @vertical-padding / 2 @horizontal-padding;
+  }
+
+  .sort-control {
+    .pull-right();
+    padding: @vertical-padding / 2 0;
+  }
+
+  .selection-info {
+    .pull-right();
+    padding: @vertical-padding / 2 0;
   }
 }
