@@ -54,9 +54,9 @@ if (! $this->compact): ?>
                 <?php endif ?>
                 </p>
             </td>
-            <td>
+            <td class="clearfix">
                 <?= $this->iconImage()->host($host) ?>
-                <span class="objectflags"><?= implode(' ', $this->hostFlags($host)) ?></span>
+                <span class="pull-right"><?= implode(' ', $this->hostFlags($host)) ?></span>
                 <?= $this->qlink(
                     $host->host_display_name,
                     $hostLink,

@@ -68,9 +68,9 @@ if (! $this->compact): ?>
                 </p>
             </td>
 
-            <td>
+            <td class="clearfix">
                 <?= $this->iconImage()->service($service) ?>
-                <span class="objectflags"><?= implode(' ', $this->serviceFlags($service)) ?></span>
+                <span class="pull-right"><?= implode(' ', $this->serviceFlags($service)) ?></span>
                 <?php if ($this->showHost): ?><?= $this->qlink(
                     $service->host_display_name
                     . ($service->host_state != 0 ? ' (' . Host::getStateText($service->host_state, true) . ')' : ''),
