@@ -129,7 +129,7 @@ class NavigationConfigForm extends ConfigForm
      */
     public function getUserConfig($type = null)
     {
-        if ($this->userConfig === null) {
+        if ($this->userConfig === null || $type !== null) {
             if ($type === null) {
                 throw new ProgrammingError('You need to pass a type if no user configuration is set');
             }
