@@ -1,5 +1,5 @@
-<form id="<?= $form->getId(); ?>" name="<?= $form->getName(); ?>" enctype="<?= $form->getEncType(); ?>" method="<?= $form->getMethod(); ?>" action="<?= $form->getAction(); ?>">
-  <table class="action-table listing-table">
+<form id="<?= $form->getId() ?>" name="<?= $form->getName() ?>" enctype="<?= $form->getEncType() ?>" method="<?= $form->getMethod() ?>" action="<?= $form->getAction() ?>">
+  <table class="action-table listing-table" data-base-target="_next">
     <thead>
       <th><?= $this->translate('Backend') ?></th>
       <th></th>
@@ -24,9 +24,9 @@
                 'class' => 'rowaction',
                 'title' => sprintf($this->translate('rEdit user backend %s'), $backendNames[$i])
             )
-          ); ?>
+          ) ?>
         </td>
-        <td class="text-right">
+        <td class="icon-col text-right">
           <?= $this->qlink(
             '',
             'config/removeuserbackend',
@@ -36,42 +36,42 @@
                 'icon'  => 'cancel',
                 'title' => sprintf($this->translate('Remove user backend %s'), $backendNames[$i])
             )
-          ); ?>
+          ) ?>
         </td>
-        <td class="text-right" data-base-target="_self">
+        <td class="icon-col text-right" data-base-target="_self">
 <?php if ($i > 0): ?>
-          <button type="submit" name="backend_newpos" class="link-like icon-only animated move-up" value="<?= sprintf(
+          <button type="submit" name="backend_newpos" class="link-button icon-only animated move-up" value="<?= sprintf(
             '%s|%s',
             $backendNames[$i],
             $i - 1
-          ); ?>" title="<?= $this->translate(
+          ) ?>" title="<?= $this->translate(
             'Move up in authentication order'
-          ); ?>" aria-label="<?= sprintf(
+          ) ?>" aria-label="<?= sprintf(
             $this->translate('Move user backend %s upwards'),
             $backendNames[$i]
-          ); ?>">
-            <?= $this->icon('up-small'); ?>
+          ) ?>">
+            <?= $this->icon('up-small') ?>
           </button>
-<?php endif; ?>
+<?php endif ?>
 <?php if ($i + 1 < count($backendNames)): ?>
-          <button type="submit" name="backend_newpos" class="link-like icon-only animated move-down" value="<?= sprintf(
+          <button type="submit" name="backend_newpos" class="link-button icon-only animated move-down" value="<?= sprintf(
             '%s|%s',
             $backendNames[$i],
             $i + 1
-          ); ?>" title="<?= $this->translate(
+          ) ?>" title="<?= $this->translate(
             'Move down in authentication order'
-          ); ?>" aria-label="<?= sprintf(
+          ) ?>" aria-label="<?= sprintf(
             $this->translate('Move user backend %s downwards'),
             $backendNames[$i]
-          ); ?>">
-            <?= $this->icon('down-small'); ?>
+          ) ?>">
+            <?= $this->icon('down-small') ?>
           </button>
-<?php endif; ?>
+<?php endif ?>
         </td>
       </tr>
-<?php endfor; ?>
+<?php endfor ?>
     </tbody>
   </table>
-  <?= $form->getElement($form->getTokenElementName()); ?>
-  <?= $form->getElement($form->getUidElementName()); ?>
+  <?= $form->getElement($form->getTokenElementName()) ?>
+  <?= $form->getElement($form->getUidElementName()) ?>
 </form>
