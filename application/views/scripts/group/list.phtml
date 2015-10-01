@@ -25,12 +25,29 @@ if (! isset($backend)) {
     $extensible = $this->hasPermission('config/authentication/groups/add') && $backend instanceof Extensible;
     $reducible = $this->hasPermission('config/authentication/groups/remove') && $backend instanceof Reducible;
 }
+?>
 
+<?php if ($extensible): ?>
+    <?= $this->qlink(
+        $this->translate('Add a New User Group') ,
+        'group/add',
+        array('backend' => $backend->getName()),
+        array(
+            'class'             => 'button-link',
+            'data-base-target'  => '_next',
+            'icon'              => 'plus',
+            'title'             => $this->translate('Create a new user')
+        )
+    ) ?>
+<?php endif ?>
+
+<?php
+// @TODO(el): Remove $firstRow stuff
 $firstRow = true;
 foreach ($groups as $group): ?>
   <?php if ($firstRow): ?>
     <?php $firstRow = false; ?>
-<table data-base-target="_next" class="action group-list alternating">
+<table data-base-target="_next" class="action-table listing-table">
   <thead>
     <tr>
       <th class="group-name"><?= $this->translate('Group'); ?></th>
@@ -71,12 +88,5 @@ foreach ($groups as $group): ?>
 </table>
 <?php else: ?>
 <p><?= $this->translate('No groups found matching the filter'); ?></p>
-<?php endif ?>
-<?php if ($extensible): ?>
-<?= $this->qlink($this->translate('Add a new group'), 'group/add', array('backend' => $backend->getName()), array(
-  'icon'                => 'plus',
-  'data-base-target'    => '_next',
-  'class'               => 'group-add'
-)); ?>
 <?php endif ?>
 </div>

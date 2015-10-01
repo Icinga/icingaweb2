@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 use Icinga\Data\Extensible;
 use Icinga\Data\Updatable;
@@ -50,6 +50,20 @@ if ($this->hasPermission('config/authentication/groups/edit') && $backend instan
 <?php endif ?>
 </div>
 <div class="content members" data-base-target="_next">
+<?php if ($extensible): ?>
+    <?= $this->qlink(
+        $this->translate('Add User to Group') ,
+        'group/addmember',
+        null,
+        array(
+            'class'             => 'button-link',
+            'data-base-target'  => '_next',
+            'icon'              => 'plus',
+            'title'             => $this->translate('Add user to group')
+        )
+    ) ?>
+<?php endif ?>
+
 <?php
 
 $firstRow = true;
@@ -97,14 +111,4 @@ foreach ($members as $member): ?>
 <?php else: ?>
   <p><?= $this->translate('No group member found matching the filter'); ?></p>
 <?php endif ?>
-<?php if ($extensible): ?>
-  <?= $this->qlink($this->translate('Add a new member'), 'group/addmember', array(
-    'backend'           => $backend->getName(),
-    'group'             => $group->group_name
-  ), array(
-    'icon'              => 'plus',
-    'data-base-target'  => '_next',
-    'class'             => 'member-add'
-  )); ?>
- <?php endif ?>
 </div>
