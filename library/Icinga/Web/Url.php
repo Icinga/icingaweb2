@@ -161,9 +161,12 @@ class Url
             if ($urlPath && $urlPath[0] === '/') {
                 if ($baseUrl) {
                     $urlPath = substr($urlPath, 1);
-                } elseif (strpos($urlPath, $request->getBaseUrl()) === 0) {
-                    $baseUrl = $request->getBaseUrl();
-                    $urlPath = substr($urlPath, strlen($baseUrl) + 1);
+                } else {
+                    $requestBaseUrl = $request->getBaseUrl();
+                    if ($requestBaseUrl && $requestBaseUrl !== '/' && strpos($urlPath, $requestBaseUrl) === 0) {
+                        $urlPath = substr($urlPath, strlen($requestBaseUrl) + 1);
+                        $baseUrl = $requestBaseUrl;
+                    }
                 }
             } elseif (! $baseUrl) {
                 $baseUrl = $request->getBaseUrl();
