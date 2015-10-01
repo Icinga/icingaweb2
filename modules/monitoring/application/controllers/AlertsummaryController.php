@@ -86,7 +86,6 @@ class AlertsummaryController extends Controller
         $this->view->notificationsUrl = 'monitoring/list/notifications';
 
         $this->setupLimitControl();
-        $this->setupPaginationControl($this->view->notifications);
     }
 
     /**
