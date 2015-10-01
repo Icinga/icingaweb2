@@ -916,12 +916,16 @@ class Form extends Zend_Form
                     || ($type === 'button' && isset($options['type']) && $options['type'] === 'submit'))
                 ) {
                     array_splice($options['decorators'], 1, 0, array(array('Spinner', array('separator' => ''))));
+                } elseif ($type === 'hidden') {
+                    $options['decorators'] = array('ViewHelper');
                 }
             }
         } else {
             $options = array('decorators' => static::$defaultElementDecorators);
             if ($type === 'submit') {
                 array_splice($options['decorators'], 1, 0, array(array('Spinner', array('separator' => ''))));
+            } elseif ($type === 'hidden') {
+                $options['decorators'] = array('ViewHelper');
             }
         }
 
