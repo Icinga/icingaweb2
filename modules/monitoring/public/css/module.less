@@ -12,8 +12,18 @@
   }
 }
 
-.v-center {
-  margin-top: 10px;
+.hosts-summary,
+.services-summary {
+  .v-center();
+  margin-top: @horizontal-padding;
+}
+
+.grid {
+  .hosts-summary,
+  .services-summary {
+    margin: 0;
+    .pull-left();
+  }
 }
 
 /* Generic box element */
