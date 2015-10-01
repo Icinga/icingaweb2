@@ -9,6 +9,10 @@ class UserNavigationItemRenderer extends NavigationItemRenderer
 {
     public function getAvatar()
     {
+        // Temporarily disabled as of layout issues. Should be fixed once
+        // we have avatars
+        return '';
+
         return '<img class="pull-left user-avatar"
                      src="/icingaweb2/static/gravatar?email=icinga%40localhost"
                      alt="Avatar"
