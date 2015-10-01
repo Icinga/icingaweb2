@@ -41,7 +41,6 @@ class LoginForm extends Form
             array(
                 'required'      => true,
                 'label'         => $this->translate('Username'),
-                'placeholder'   => $this->translate(''),
                 'class'         => false === isset($formData['username']) ? 'autofocus' : ''
             )
         );
@@ -51,7 +50,6 @@ class LoginForm extends Form
             array(
                 'required'      => true,
                 'label'         => $this->translate('Password'),
-                'placeholder'   => $this->translate(''),
                 'class'         => isset($formData['username']) ? 'autofocus' : ''
             )
         );
