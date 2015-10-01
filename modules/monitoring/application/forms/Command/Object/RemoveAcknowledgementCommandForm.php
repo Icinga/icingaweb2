@@ -36,7 +36,11 @@ class RemoveAcknowledgementCommandForm extends ObjectsCommandForm
                 ),
                 'escape'        => false,
                 'ignore'        => true,
-                'label'         => $this->getView()->icon('cancel'),
+                'label'         => $this->getView()->icon('cancel') . $this->translatePlural(
+                    'Remove problem acknowledgement',
+                    'Remove problem acknowledgements',
+                    count($this->objects)
+                ),
                 'title'         => $this->translatePlural(
                     'Remove problem acknowledgement',
                     'Remove problem acknowledgements',
