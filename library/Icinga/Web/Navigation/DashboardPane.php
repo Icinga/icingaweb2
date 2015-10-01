@@ -44,7 +44,9 @@ class DashboardPane extends NavigationItem
         }
 
         if ($ordered) {
-            ksort($this->dashlets);
+            $dashlets = $this->dashlets;
+            ksort($dashlets);
+            return $dashlets;
         }
 
         return $this->dashlets;
