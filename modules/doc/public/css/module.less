@@ -58,33 +58,19 @@ tbody tr:hover {
 thead {
   th {
     color: @icinga;
-    .uppercase;
+    .uppercase();
     .bold;
   }
   border-bottom: 0.25rem solid @icinga;
 }
 
 code {
-  // Reset
-  background-color: inherit;
-  border: none;
-  padding: 0;
-  display: inline;
-}
-
-code {
-  color: @icinga;
-  .bold;
+  color: @icinga-blue;
+  font-family: @font-family-fixed;
 }
 
 pre > code {
-  color: #fff;
-  font-weight: normal;
-
-  width: 100%;
-  background-color: #666;
-  display: block;
-  padding: 1em;
+  color: inherit;
 }
 
 ul.toc {
@@ -94,5 +80,5 @@ ul.toc {
 
 .search-highlight {
   color: #FBE012;
-  background: @icinga;
+  background: @icinga-blue;
 }
