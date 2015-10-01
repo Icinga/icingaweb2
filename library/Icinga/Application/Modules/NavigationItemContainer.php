@@ -95,7 +95,7 @@ abstract class NavigationItemContainer
     public function __call($name, $arguments)
     {
         if (method_exists($this, $name)) {
-            return call_user_method_array($name, $this, $arguments);
+            return call_user_func(array($this, $name), $this, $arguments);
         }
 
         $type = substr($name, 0, 3);
