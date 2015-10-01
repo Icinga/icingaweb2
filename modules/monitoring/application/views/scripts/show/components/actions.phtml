@@ -8,12 +8,17 @@ foreach ($navigation as $item) {
     $item->setObject($object);
 }
 
-// add warning to links that open in new tabs to improve accessibility, as recommended by WCAG20 G201
-$newTabInfo = sprintf('<span class="info-box display-on-hover"> %s </span>', $this->translate('opens in new window'));
+
 
 foreach ($object->getActionUrls() as $i => $link) {
     $navigation->addItem(
-        'Action ' . ($i + 1) . $newTabInfo,
+
+        // add warning to links that open in new tabs to improve accessibility, as recommended by WCAG20 G201
+        $this->icon(
+            'forward',
+            $this->translate('Link opens in new window'),
+            array('aria-label' => $this->translate('Link opens in new window'))
+        ) . ' Action ' . ($i + 1),
         array(
             'url'       => $link,
             'target'    => '_blank',
