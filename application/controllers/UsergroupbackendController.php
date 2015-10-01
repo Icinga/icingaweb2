@@ -150,7 +150,7 @@ class UsergroupbackendController extends Controller
         $tabs = $this->getTabs();
         $tabs->add('userbackend', array(
             'title' => $this->translate('Configure how users authenticate with and log into Icinga Web 2'),
-            'label' => $this->translate('Authentication'),
+            'label' => $this->translate('Users'),
             'url'   => 'config/userbackend'
         ));
         $tabs->add('usergroupbackend', array(

@@ -40,7 +40,7 @@ if ($object->acknowledged): ?>
                     <?= nl2br($this->createTicketLinks($acknowledgement->getComment()), false) ?>
                 </dd>
             <?php if ($acknowledgement->expires()): ?>
-                <dd>
+                <dd class="text-small">
                     <?= sprintf(
                         $this->translate('Expires %s'),
                         $this->timeUntil($acknowledgement->getExpirationTime())

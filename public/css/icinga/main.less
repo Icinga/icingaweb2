@@ -103,23 +103,23 @@ dl.feed-list {
 
   dt {
     border-bottom: 1px solid @gray-lighter;
-    
+    margin-top: @vertical-padding;
+
     .icon-cancel {
       display: none;
     }
+
+    &:hover {
+      background-color: @gray-lightest;
+      .icon-cancel {
+        display: block;
+      }
+    }
+
+    &:first-child {
+      margin-top: 0;
+    }
   }
-    dt:hover { 
-        background: #F9F9F9;
-        position: relative;
-
-        form { 
-            display: inline;
-        } 
-
-    	.icon-cancel {
-      	display: inline;
-    	}
-    } 
 }
 
 dl.name-value-list {
