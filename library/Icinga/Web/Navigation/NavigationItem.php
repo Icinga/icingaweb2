@@ -131,7 +131,6 @@ class NavigationItem implements IteratorAggregate
     public function __construct($name, array $properties = null)
     {
         $this->setName($name);
-        $this->priority = 100;
         $this->children = new Navigation();
 
         if (! empty($properties)) {
@@ -207,7 +206,7 @@ class NavigationItem implements IteratorAggregate
      */
     public function getPriority()
     {
-        return $this->priority;
+        return $this->priority !== null ? $this->priority : 100;
     }
 
     /**
@@ -595,6 +594,10 @@ class NavigationItem implements IteratorAggregate
     {
         if ($this->conflictsWith($item)) {
             throw new ProgrammingError('Cannot merge, conflict detected.');
+        }
+
+        if ($this->priority === null && ($priority = $item->getPriority()) !== null) {
+            $this->setPriority($priority);
         }
 
         if ($item->getActive()) {
