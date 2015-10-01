@@ -40,7 +40,7 @@ if (! $this->compact): ?>
       $this->downtime = $downtime;
       $this->displayComment = true;
     ?>
-    <tr>
+    <tr href="<?= $this->href('monitoring/downtime/show', array('downtime_id' => $downtime->id)) ?>">
       <?= $this->render('partials/downtime/downtime-header.phtml'); ?>
     </tr>
     <?php endforeach ?>
