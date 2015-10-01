@@ -32,7 +32,7 @@ if (! $this->compact): ?>
   <h1><?= $this->translate('This Host\'s Event History'); ?></h1>
   <?= $this->sortBox; ?>
   <?= $this->limiter; ?>
-  <a class="load-more-hint" href="#load-more">
+  <a href="#load-more">
     <?= $this->translate('Scroll to the bottom of this page to load additional events'); ?>
   </a>
   <?= $this->filterEditor; ?>
@@ -151,7 +151,7 @@ if (! $this->compact): ?>
 <?php if (! $history->hasResult()): ?>
   <?= $this->translate('No history events found matching the filter'); ?>
 <?php elseif ($history->hasMore()): ?>
-  <div class="load-more-container"><?= $this->qlink(
+  <?= $this->qlink(
     $this->translate('Load More'),
     $url->setAnchor('page-' . ($page + 1)),
     array(
@@ -159,8 +159,8 @@ if (! $this->compact): ?>
     ),
     array(
       'id'      => 'load-more',
-      'class'   => 'pull-right load-more button-like'
+      'class'   => 'pull-right action-link'
     )
-  ); ?></div>
+  ); ?>
 <?php endif ?>
 </div>
