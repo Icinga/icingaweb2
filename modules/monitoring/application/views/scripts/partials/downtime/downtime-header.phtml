@@ -11,7 +11,7 @@
   <span class="comment-header">
     <?php if ($isService): ?>
         <?= $this->icon('service', $this->translate('Service')); ?> <?= $this->qlink(
-            $this->escape($downtime->host_display_name) . ': ' . $this->escape($downtime->service_display_name),
+            $downtime->host_display_name . ': ' . $downtime->service_display_name,
             'monitoring/service/show',
             array(
                 'host'    => $downtime->host_name,
@@ -27,7 +27,7 @@
         ); ?>
     <?php else: ?>
         <?= $this->icon('host', $this->translate('host')); ?> <?= $this->qlink(
-            $this->escape($downtime->host_display_name),
+            $downtime->host_display_name,
             'monitoring/host/show',
             array('host' => $downtime->host_name, 'downtime_id' => $downtime->id),
             array(

@@ -1,7 +1,7 @@
 <span class="comment-header">
 <?php if ($comment->objecttype === 'service'): ?>
     <?= $this->icon('service', $this->translate('Service')) ?> <?= $this->qlink(
-        $this->escape($comment->host_display_name) . ': ' . $this->escape($comment->service_display_name),
+        $comment->host_display_name . ': ' . $comment->service_display_name,
         'monitoring/service/show',
         array(
             'host'    => $comment->host_name,
@@ -17,7 +17,7 @@
     ) ?>
 <?php else: ?>
     <?= $this->icon('host', $this->translate('Host')) ?> <?= $this->qlink(
-        $this->escape($comment->host_display_name),
+        $comment->host_display_name,
         'monitoring/host/show',
         array('host' => $comment->host_name),
         array(
