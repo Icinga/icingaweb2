@@ -63,7 +63,7 @@ class ToggleInstanceFeaturesCommandForm extends CommandForm
         if ((bool) $this->status->notifications_enabled) {
             if ($this->hasPermission('monitoring/command/feature/instance')) {
                 $notificationDescription = sprintf(
-                    '<a aria-label="%1$s" title="%1$s" href="%2$s" data-base-target="_next">%3$s</a>',
+                    '<a aria-label="%1$s" class="action-link" title="%1$s" href="%2$s" data-base-target="_next">%3$s</a>',
                     $this->translate('Disable notifications for a specific time on a program-wide basis'),
                     $this->getView()->href('monitoring/health/disable-notifications'),
                     $this->translate('Disable temporarily')
@@ -126,14 +126,15 @@ class ToggleInstanceFeaturesCommandForm extends CommandForm
                 'autosubmit'    => true,
                 'description'   => $notificationDescription,
                 'decorators'    => array(
-                    'ViewHelper',
-                    'Errors',
+                    array('Label', array('tag'=>'span', 'separator' => '', 'class' => 'control-label')),
                     array(
                         'Description',
                         array('tag' => 'span', 'class' => 'description', 'escape' => false)
                     ),
-                    'Label',
-                    array('HtmlTag', array('tag' => 'div'))
+                    array(array('labelWrap' => 'HtmlTag'), array('tag' => 'div', 'class' => 'control-label-group')),
+                    array('ViewHelper', array('separator' => '')),
+                    array('Errors', array('separator' => '')),
+                    array('HtmlTag', array('tag' => 'div', 'class' => 'control-group'))
                 ),
                 'disabled'      => $toggleDisabled
             )

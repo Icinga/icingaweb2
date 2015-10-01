@@ -1,9 +1,9 @@
 <?php use Icinga\Data\Filter\Filter; ?>
 
 <div class="controls separated">
-  <?php if (! $this->compact): ?>
-    <?= $this->tabs; ?>
-  <?php endif ?>
+<?php if (! $this->compact): ?>
+    <?= $this->tabs ?>
+<?php endif ?>
     <?= $this->render('partials/object/host-header.phtml') ?>
     <?php
     $this->stats = $object->stats;
