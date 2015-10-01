@@ -3,7 +3,7 @@
     if (!$this->statusSummary->hosts_down_unhandled && !$this->statusSummary->hosts_unreachable_unhandled) {
         echo ' handled';
     }
-?>">
+?> col-1-2">
     <div class="box header">
     <?php if ($this->statusSummary->hosts_down): ?>
         <h2><?= $this->qlink(

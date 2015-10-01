@@ -23,7 +23,6 @@
   vertical-align: top;
   display: inline-block;
   padding: 20px;
-  margin: 0.5em;
 }
 
 
@@ -67,7 +66,6 @@
 
 .tactical > .boxview > div.box {
   min-height: 30em;
-  min-width: 30em;
 }
 
 .tactical div.box.header {
@@ -206,7 +204,6 @@ div.box.stats {
 
 .stats > .boxview > div.box {
   min-height: 30em;
-  width:95%;
 }
 
 .stats > .avp > tbody {
@@ -231,6 +228,107 @@ div.box.stats {
   border-bottom:1px solid @gray-lighter;
   padding-bottom: 15px;
 }
+
+/* Monitoring timeline styles */
+
+div.timeline-legend {
+  padding: 0.5em;
+  margin-top: 2em;
+  border: 1px solid @gray-lighter;
+  border-left: 15px solid @gray;
+
+  h2 {
+    margin: 0;
+    margin-left: 0.5em;
+    line-height: 1.1em;
+  }
+
+  & > span {
+    display: inline-block;
+    padding: 0.5em;
+    margin: 0.5em;
+
+    span {
+      white-space: nowrap;
+      min-width: 25px;
+      font-family: tahoma, verdana, sans-serif;
+      font-weight: @font-weight-bold;
+      font-size: 11px;
+      text-align: center;
+      color: @text-color-inverted;
+      padding-left: 5px;
+      padding-right: 5px;
+      padding-top: 2px;
+      padding-bottom: 2px;
+    }
+  }
+}
+
+div.timeline {
+  div.timeframe {
+    height: 7em;
+    margin-bottom: 1em;
+    clear: left;
+
+    span {
+      width: 8em;
+      margin-top: 2.3em;
+      margin-right: 1.5em;
+      display: block;
+      float: left;
+      text-align: center;
+
+      a {
+        font-weight: bold;
+        text-decoration: none;
+        white-space: nowrap;
+
+        &:hover {
+          text-decoration: underline;
+
+        }
+      }
+    }
+
+    div.circle-box {
+      height: 100%;
+      margin-right: 0.5em;
+      position: relative;
+      float: left;
+
+      div.outer-circle {
+        position: absolute;
+        top: 50%;
+
+        &.extrapolated {
+          border-width: 2px;
+          border-style: dotted;
+          border-radius: 100%;
+        }
+
+        a.inner-circle {
+          display: block;
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          border-radius: 100%;
+        }
+      }
+    }
+  }
+
+  hr {
+    border: 0;
+    height: 1px;
+    background-image: linear-gradient(left, rgba(0,0,0,0), rgba(0,0,0,0.3), rgba(0,0,0,0));
+    background-image: -o-linear-gradient(left, rgba(0,0,0,0), rgba(0,0,0,0.3), rgba(0,0,0,0));
+    background-image: -ms-linear-gradient(left, rgba(0,0,0,0), rgba(0,0,0,0.3), rgba(0,0,0,0));
+    background-image: -moz-linear-gradient(left, rgba(0,0,0,0), rgba(0,0,0,0.3), rgba(0,0,0,0));
+    background-image: -webkit-linear-gradient(left, rgba(0,0,0,0), rgba(0,0,0,0.3), rgba(0,0,0,0));
+  }
+}
+
+/* End of monitoring timeline styles */
 
 
 //p.pluginoutput {

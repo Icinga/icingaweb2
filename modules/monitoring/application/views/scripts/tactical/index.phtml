@@ -3,7 +3,7 @@
     <?= $this->tabs ?>
 </div>
 <?php endif ?>
-<div class="content tactical">
+<div class="content tactical grid">
     <div class="boxview" data-base-target="_next">
 <?php if ($this->statusSummary->hosts_down || $this->statusSummary->hosts_unreachable): ?>
         <?= $this->render('tactical/components/problem_hosts.phtml'); ?>

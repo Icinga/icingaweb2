@@ -8,10 +8,10 @@ $firstRow = ! $beingExtended;
 if (! $beingExtended && !$this->compact): ?>
 <div class="controls">
     <?= $this->tabs; ?>
-    <div style="float: right;" class="dontprint">
+    <div class="dontprint">
         <?= $intervalBox; ?>
     </div>
-    <div style="margin: 1em;" class="timeline-legend">
+    <div class="timeline-legend">
         <h2><?= $this->translate('Legend'); ?></h2>
 <?php foreach ($groupInfo as $labelAndColor): ?>
         <span style="background-color: <?= $labelAndColor['color']; ?>;">
