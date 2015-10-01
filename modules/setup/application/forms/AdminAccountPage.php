@@ -291,11 +291,15 @@ class AdminAccountPage extends Form
     protected function fetchUsers()
     {
         try {
-            return $this
+            $query = $this
                 ->createUserBackend()
                 ->select(array('user_name'))
-                ->order('user_name', 'asc', true)
-                ->fetchColumn();
+                ->order('user_name', 'asc', true);
+            if (in_array($this->backendConfig['backend'], array('ldap', 'msldap'))) {
+                $query->getQuery()->setUsePagedResults();
+            }
+
+            return $query->fetchColumn();
         } catch (Exception $_) {
             // No need to handle anything special here. Error means no users found.
             return array();
@@ -346,10 +350,14 @@ class AdminAccountPage extends Form
     protected function fetchGroups()
     {
         try {
-            return $this
+            $query = $this
                 ->createUserGroupBackend()
-                ->select(array('group_name'))
-                ->fetchColumn();
+                ->select(array('group_name'));
+            if (in_array($this->backendConfig['backend'], array('ldap', 'msldap'))) {
+                $query->getQuery()->setUsePagedResults();
+            }
+
+            return $query->fetchColumn();
         } catch (Exception $_) {
             // No need to handle anything special here. Error means no groups found.
             return array();

@@ -48,7 +48,7 @@ class LdapQuery extends SimpleQuery
     protected function init()
     {
         $this->filters = array();
-        $this->usePagedResults = true;
+        $this->usePagedResults = false;
     }
 
     /**
