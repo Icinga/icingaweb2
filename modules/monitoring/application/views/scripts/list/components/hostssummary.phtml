@@ -1,5 +1,6 @@
 <?php
 use Icinga\Module\Monitoring\Web\Widget\StateBadges;
+use Icinga\Web\Url;
 
 // Don't fetch rows until they are actually needed to improve dashlet performance
 if (! $stats instanceof stdClass) {
@@ -9,7 +10,8 @@ if (! $stats instanceof stdClass) {
 <div class="v-center">
 <?= $this->qlink(
     sprintf($this->translatePlural('%u Host', '%u Hosts', $stats->hosts_total), $stats->hosts_total),
-    'monitoring/list/hosts',
+    // @TODO(el): Fix that
+    Url::fromPath('monitoring/list/hosts')->setParams(isset($baseFilter) ? $baseFilter->getUrlParams() : array()),
     null,
     array('title' => sprintf(
         $this->translatePlural('List %u host', 'List all %u hosts', $stats->hosts_total),
