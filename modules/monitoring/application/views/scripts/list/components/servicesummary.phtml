@@ -1,5 +1,6 @@
 <?php
 use Icinga\Module\Monitoring\Web\Widget\StateBadges;
+use Icinga\Web\Url;
 
 // Don't fetch rows until they are actually needed, to improve dashlet performance
 if (! $stats instanceof stdClass) {
@@ -12,7 +13,8 @@ if (! $stats instanceof stdClass) {
         '%u Service', '%u Services', $stats->services_total),
         $stats->services_total
     ),
-    'monitoring/list/services',
+    // @TODO(el): Fix that
+    Url::fromPath('monitoring/list/services')->setParams(isset($baseFilter) ? $baseFilter->getUrlParams() : array()),
     null,
     array('title' => sprintf(
         $this->translatePlural('List %u service', 'List all %u services', $stats->services_total),
