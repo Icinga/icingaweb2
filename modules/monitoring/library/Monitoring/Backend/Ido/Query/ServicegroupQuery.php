@@ -13,10 +13,17 @@ class ServicegroupQuery extends IdoQuery
     /**
      * {@inheritdoc}
      */
+    protected $groupBase = array('servicegroups' => array('sg.servicegroup_id', 'sgo.object_id'));
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $groupOrigin = array('serviceobjects');
+
+    /**
+     * {@inheritdoc}
+     */
     protected $columnMap = array(
-        'instances' => array(
-            'instance_name' => 'i.instance_name'
-        ),
         'hostgroups' => array(
             'hostgroup'             => 'hgo.name1 COLLATE latin1_general_ci',
             'hostgroup_alias'       => 'hg.alias COLLATE latin1_general_ci',
@@ -25,6 +32,9 @@ class ServicegroupQuery extends IdoQuery
         'hosts' => array(
             'host_alias'            => 'h.alias',
             'host_display_name'     => 'h.display_name COLLATE latin1_general_ci',
+        ),
+        'instances' => array(
+            'instance_name' => 'i.instance_name'
         ),
         'servicegroups' => array(
             'servicegroup'          => 'sgo.name1 COLLATE latin1_general_ci',
@@ -93,6 +103,18 @@ class ServicegroupQuery extends IdoQuery
     }
 
     /**
+     * Join instances
+     */
+    protected function joinInstances()
+    {
+        $this->select->join(
+            array('i' => $this->prefix . 'instances'),
+            'i.instance_id = sg.instance_id',
+            array()
+        );
+    }
+
+    /**
      * Join service objects
      */
     protected function joinServiceobjects()
@@ -119,30 +141,5 @@ class ServicegroupQuery extends IdoQuery
             's.service_object_id = so.object_id',
             array()
         );
-    }
-
-    /**
-     * Join instances
-     */
-    protected function joinInstances()
-    {
-        $this->select->join(
-            array('i' => $this->prefix . 'instances'),
-            'i.instance_id = sg.instance_id',
-            array()
-        );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getGroup()
-    {
-        $group = array();
-        if ($this->hasJoinedVirtualTable('serviceobjects')) {
-            $group = array('sg.servicegroup_id', 'sgo.object_id');
-        }
-
-        return $group;
     }
 }

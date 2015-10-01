@@ -16,10 +16,17 @@ class ServicedowntimeQuery extends IdoQuery
     /**
      * {@inheritdoc}
      */
+    protected $groupBase = array('downtimes' => array('sd.scheduleddowntime_id', 'so.object_id'));
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $groupOrigin = array('hostgroups', 'servicegroups');
+
+    /**
+     * {@inheritdoc}
+     */
     protected $columnMap = array(
-        'instances' => array(
-            'instance_name' => 'i.instance_name'
-        ),
         'downtimes' => array(
             'downtime_author'           => 'sd.author_name COLLATE latin1_general_ci',
             'downtime_author_name'      => 'sd.author_name',
@@ -54,6 +61,9 @@ class ServicedowntimeQuery extends IdoQuery
         ),
         'hoststatus' => array(
             'host_state' => 'CASE WHEN hs.has_been_checked = 0 OR hs.has_been_checked IS NULL THEN 99 ELSE hs.current_state END'
+        ),
+        'instances' => array(
+            'instance_name' => 'i.instance_name'
         ),
         'servicegroups' => array(
             'servicegroup'          => 'sgo.name1 COLLATE latin1_general_ci',
@@ -131,6 +141,18 @@ class ServicedowntimeQuery extends IdoQuery
     }
 
     /**
+     * Join instances
+     */
+    protected function joinInstances()
+    {
+        $this->select->join(
+            array('i' => $this->prefix . 'instances'),
+            'i.instance_id = sd.instance_id',
+            array()
+        );
+    }
+
+    /**
      * Join service groups
      */
     protected function joinServicegroups()
@@ -172,50 +194,5 @@ class ServicedowntimeQuery extends IdoQuery
             'ss.service_object_id = so.object_id',
             array()
         );
-    }
-
-    /**
-     * Join instances
-     */
-    protected function joinInstances()
-    {
-        $this->select->join(
-            array('i' => $this->prefix . 'instances'),
-            'i.instance_id = sd.instance_id',
-            array()
-        );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getGroup()
-    {
-        $group = array();
-        if ($this->hasJoinedVirtualTable('hostgroups') || $this->hasJoinedVirtualTable('servicegroups')) {
-            $group = array('sd.scheduleddowntime_id', 'so.object_id');
-
-            if ($this->hasJoinedVirtualTable('hosts')) {
-                $group[] = 'h.host_id';
-            }
-
-            if ($this->hasJoinedVirtualTable('hoststatus')) {
-                $group[] = 'hs.hoststatus_id';
-            }
-
-            if ($this->hasJoinedVirtualTable('services')) {
-                $group[] = 's.service_id';
-            }
-
-            if ($this->hasJoinedVirtualTable('servicestatus')) {
-                $group[] = 'ss.servicestatus_id';
-            }
-
-            if ($this->hasJoinedVirtualTable('instances')) {
-                $group[] = 'i.instance_id';
-            }
-        }
-
-        return $group;
     }
 }

@@ -55,8 +55,10 @@ class HostserviceproblemsummaryQuery extends IdoQuery
     public function setHoststatusQuery(HoststatusQuery $query)
     {
         $this->hostStatusQuery = clone $query;
-        $this->hostStatusQuery->setIsSubQuery();
-        $this->hostStatusQuery->columns(array('object_id'));
+        $this->hostStatusQuery
+            ->clearOrder()
+            ->setIsSubQuery()
+            ->columns(array('object_id'));
         return $this;
     }
 
@@ -70,12 +72,10 @@ class HostserviceproblemsummaryQuery extends IdoQuery
             array()
         )->join(
             array('s' => $this->prefix . 'services'),
-            's.service_object_id = so.object_id',
+            's.service_object_id = so.object_id AND so.is_active = 1',
             array()
         );
-
-        $this->select->group(array('so.name1'));
-        $this->select->where('so.is_active = 1');
+        $this->select->group(array('so.object_id'));
         $this->joinedVirtualTables['services'] = true;
     }
 

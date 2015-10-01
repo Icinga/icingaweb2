@@ -15,9 +15,19 @@ class HoststatusQuery extends IdoQuery
     /**
      * {@inheritdoc}
      */
+    protected $groupBase = array('hosts' => array('ho.object_id', 'h.host_id'));
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $groupOrigin = array('hostgroups', 'servicegroups', 'services');
+
+    /**
+     * {@inheritdoc}
+     */
     protected $columnMap = array(
-        'instances' => array(
-            'instance_name' => 'i.instance_name'
+        'checktimeperiods' => array(
+            'host_check_timeperiod' => 'ctp.alias COLLATE latin1_general_ci'
         ),
         'hostgroups' => array(
             'hostgroup'         => 'hgo.name1 COLLATE latin1_general_ci',
@@ -149,6 +159,9 @@ class HoststatusQuery extends IdoQuery
             'host_status_update_time'   => 'hs.status_update_time',
             'host_unhandled'            => 'CASE WHEN (hs.problem_has_been_acknowledged + hs.scheduled_downtime_depth) = 0 THEN 1 ELSE 0 END'
         ),
+        'instances' => array(
+            'instance_name' => 'i.instance_name'
+        ),
         'servicegroups' => array(
             'servicegroup'          => 'sgo.name1 COLLATE latin1_general_ci',
             'servicegroup_name'     => 'sgo.name1',
@@ -158,9 +171,6 @@ class HoststatusQuery extends IdoQuery
             'service'                => 'so.name2 COLLATE latin1_general_ci',
             'service_description'    => 'so.name2',
             'service_display_name'   => 's.display_name COLLATE latin1_general_ci',
-        ),
-        'checktimeperiods' => array(
-            'host_check_timeperiod' => 'ctp.alias COLLATE latin1_general_ci'
         )
     );
 
@@ -186,6 +196,18 @@ class HoststatusQuery extends IdoQuery
             array()
         );
         $this->joinedVirtualTables['hosts'] = true;
+    }
+
+    /**
+     * Join check time periods
+     */
+    protected function joinChecktimeperiods()
+    {
+        $this->select->joinLeft(
+            array('ctp' => $this->prefix . 'timeperiods'),
+            'ctp.timeperiod_object_id = h.check_timeperiod_object_id',
+            array()
+        );
     }
 
     /**
@@ -216,6 +238,18 @@ class HoststatusQuery extends IdoQuery
         $this->select->join(
             array('hs' => $this->prefix . 'hoststatus'),
             'hs.host_object_id = ho.object_id',
+            array()
+        );
+    }
+
+    /**
+     * Join instances
+     */
+    protected function joinInstances()
+    {
+        $this->select->join(
+            array('i' => $this->prefix . 'instances'),
+            'i.instance_id = ho.instance_id',
             array()
         );
     }
@@ -256,97 +290,6 @@ class HoststatusQuery extends IdoQuery
             'so.object_id = s.service_object_id AND so.is_active = 1 AND so.objecttype_id = 2',
             array()
         );
-    }
-
-    /**
-     * Join instances
-     */
-    protected function joinInstances()
-    {
-        $this->select->join(
-            array('i' => $this->prefix . 'instances'),
-            'i.instance_id = ho.instance_id',
-            array()
-        );
-    }
-
-    protected function joinChecktimeperiods()
-    {
-        $this->select->joinLeft(
-            array('ctp' => $this->prefix . 'timeperiods'),
-            'ctp.timeperiod_object_id = h.check_timeperiod_object_id',
-            array()
-        );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getGroup()
-    {
-        $group = parent::getGroup() ?: array();
-        if (! is_array($group)) {
-            $group = array($group);
-        }
-        $groupedTables = array();
-        if ($this->hasJoinedVirtualTable('servicegroups')) {
-            $group[] = 'ho.object_id';
-            $group[] = 'h.host_id';
-            $groupedTables['hosts'] = true;
-            $serviceGroupColumns = array_keys($this->columnMap['servicegroups']);
-            $selectedServiceGroupColumns = array_intersect($serviceGroupColumns, array_keys($this->columns));
-            if (! empty($selectedServiceGroupColumns)) {
-                $group[] = 'sgo.object_id';
-                $group[] = 'sg.servicegroup_id';
-                $groupedTables['servicegroups'] = true;
-            }
-        }
-        if ($this->hasJoinedVirtualTable('hostgroups')) {
-            if (! isset($groupedTables['hosts'])) {
-                $group[] = 'ho.object_id';
-                $group[] = 'h.host_id';
-                $groupedTables['hosts'] = true;
-            }
-            $hostGroupColumns = array_keys($this->columnMap['hostgroups']);
-            $selectedHostGroupColumns = array_intersect($hostGroupColumns, array_keys($this->columns));
-            if (! empty($selectedHostGroupColumns)) {
-                $group[] = 'hgo.object_id';
-                $group[] = 'hg.hostgroup_id';
-                $groupedTables['hostgroups'] = true;
-            }
-        }
-        if (! empty($groupedTables)) {
-            foreach ($this->columns as $alias => $column) {
-                if ($column instanceof Zend_Db_Expr || $column === '(NULL)') {
-                    continue;
-                }
-                $tableName = $this->aliasToTableName(
-                    $this->hasAliasName($alias) ? $alias : $this->customAliasToAlias($alias)
-                );
-                if (isset($groupedTables[$tableName])) {
-                    continue;
-                }
-                switch ($tableName) {
-                    case 'hoststatus':
-                        $group[] = 'hs.hoststatus_id';
-                        break;
-                    case 'serviceproblemsummary':
-                        $group[] = 'sps.unhandled_services_count';
-                        break;
-                    case 'services':
-                        $group[] = 'so.object_id';
-                        $group[] = 's.service_id';
-                        break;
-                    case 'instances':
-                        $group[] = 'i.instance_id';
-                        break;
-                    default:
-                        continue 2;
-                }
-                $groupedTables[$tableName] = true;
-            }
-        }
-        return $group;
     }
 
     /**

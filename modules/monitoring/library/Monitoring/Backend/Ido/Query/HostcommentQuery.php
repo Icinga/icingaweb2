@@ -16,10 +16,17 @@ class HostcommentQuery extends IdoQuery
     /**
      * {@inheritdoc}
      */
+    protected $groupBase = array('comments' => array('c.comment_id', 'ho.object_id'));
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $groupOrigin = array('hostgroups', 'services');
+
+    /**
+     * {@inheritdoc}
+     */
     protected $columnMap = array(
-        'instances' => array(
-            'instance_name' => 'i.instance_name'
-        ),
         'comments' => array(
             'comment_author'        => 'c.author_name COLLATE latin1_general_ci',
             'comment_author_name'   => 'c.author_name',
@@ -44,6 +51,9 @@ class HostcommentQuery extends IdoQuery
         ),
         'hoststatus' => array(
             'host_state'            => 'CASE WHEN hs.has_been_checked = 0 OR hs.has_been_checked IS NULL THEN 99 ELSE hs.current_state END'
+        ),
+        'instances' => array(
+            'instance_name' => 'i.instance_name'
         ),
         'servicegroups' => array(
             'servicegroup'          => 'sgo.name1 COLLATE latin1_general_ci',
@@ -118,6 +128,18 @@ class HostcommentQuery extends IdoQuery
     }
 
     /**
+     * Join instances
+     */
+    protected function joinInstances()
+    {
+        $this->select->join(
+            array('i' => $this->prefix . 'instances'),
+            'i.instance_id = c.instance_id',
+            array()
+        );
+    }
+
+    /**
      * Join service groups
      */
     protected function joinServicegroups()
@@ -152,41 +174,5 @@ class HostcommentQuery extends IdoQuery
             'so.object_id = s.service_object_id AND so.is_active = 1 AND so.objecttype_id = 2',
             array()
         );
-    }
-
-    /**
-     * Join instances
-     */
-    protected function joinInstances()
-    {
-        $this->select->join(
-            array('i' => $this->prefix . 'instances'),
-            'i.instance_id = c.instance_id',
-            array()
-        );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getGroup()
-    {
-        $group = array();
-        if ($this->hasJoinedVirtualTable('hostgroups') || $this->hasJoinedVirtualTable('services')) {
-            $group = array('c.comment_id', 'ho.object_id');
-            if ($this->hasJoinedVirtualTable('hosts')) {
-                $group[] = 'h.host_id';
-            }
-
-            if ($this->hasJoinedVirtualTable('hoststatus')) {
-                $group[] = 'hs.hoststatus_id';
-            }
-
-            if ($this->hasJoinedVirtualTable('instances')) {
-                $group[] = 'i.instance_id';
-            }
-        }
-
-        return $group;
     }
 }

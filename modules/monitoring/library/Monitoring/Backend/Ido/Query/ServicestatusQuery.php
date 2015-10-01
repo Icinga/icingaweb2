@@ -3,8 +3,6 @@
 
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
-use Zend_Db_Expr;
-
 /**
  * Query for service status
  */
@@ -18,7 +16,20 @@ class ServicestatusQuery extends IdoQuery
     /**
      * {@inheritdoc}
      */
+    protected $groupBase = array('services' => array('so.object_id', 's.service_id'));
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $groupOrigin = array('hostgroups', 'servicegroups');
+
+    /**
+     * {@inheritdoc}
+     */
     protected $columnMap = array(
+        'checktimeperiods' => array(
+            'service_check_timeperiod' => 'ctp.alias COLLATE latin1_general_ci'
+        ),
         'hostgroups' => array(
             'hostgroup'         => 'hgo.name1 COLLATE latin1_general_ci',
             'hostgroup_alias'   => 'hg.alias COLLATE latin1_general_ci',
@@ -270,9 +281,6 @@ class ServicestatusQuery extends IdoQuery
             'service_state_type'                        => 'ss.state_type',
             'service_status_update_time'                => 'ss.status_update_time',
             'service_unhandled'                         => 'CASE WHEN (ss.problem_has_been_acknowledged + ss.scheduled_downtime_depth + COALESCE(hs.current_state, 0)) = 0 THEN 1 ELSE 0 END'
-        ),
-        'checktimeperiods' => array(
-            'service_check_timeperiod'                  => 'ctp.alias COLLATE latin1_general_ci'
         )
     );
 
@@ -299,6 +307,18 @@ class ServicestatusQuery extends IdoQuery
             array()
         );
         $this->joinedVirtualTables['services'] = true;
+    }
+
+    /**
+     * Join check time periods
+     */
+    protected function joinChecktimeperiods()
+    {
+        $this->select->joinLeft(
+            array('ctp' => $this->prefix . 'timeperiods'),
+            'ctp.timeperiod_object_id = s.check_timeperiod_object_id',
+            array()
+        );
     }
 
     /**
@@ -390,81 +410,25 @@ class ServicestatusQuery extends IdoQuery
         );
     }
 
-    protected function joinChecktimeperiods()
-    {
-        $this->select->joinLeft(
-            array('ctp' => $this->prefix . 'timeperiods'),
-            'ctp.timeperiod_object_id = s.check_timeperiod_object_id',
-            array()
-        );
-    }
-
     /**
      * {@inheritdoc}
      */
-    public function getGroup()
+    protected function handleGroupColumn($column, &$groupColumns, &$groupedTables)
     {
-        $group = parent::getGroup() ?: array();
-        if (! is_array($group)) {
-            $group = array($group);
-        }
-        $groupedTables = array();
-        if ($this->hasJoinedVirtualTable('servicegroups')) {
-            $group[] = 'so.object_id';
-            $group[] = 's.service_id';
-            $groupedTables['services'] = true;
-            $serviceGroupColumns = array_keys($this->columnMap['servicegroups']);
-            $selectedServiceGroupColumns = array_intersect($serviceGroupColumns, array_keys($this->columns));
-            if (! empty($selectedServiceGroupColumns)) {
-                $group[] = 'sgo.object_id';
-                $group[] = 'sg.servicegroup_id';
-                $groupedTables['servicegroups'] = true;
-            }
-        }
-        if ($this->hasJoinedVirtualTable('hostgroups')) {
-            if (! isset($groupedTables['services'])) {
-                $group[] = 'so.object_id';
-                $group[] = 's.service_id';
-                $groupedTables['services'] = true;
-            }
-            $hostGroupColumns = array_keys($this->columnMap['hostgroups']);
-            $selectedHostGroupColumns = array_intersect($hostGroupColumns, array_keys($this->columns));
-            if (! empty($selectedHostGroupColumns)) {
-                $group[] = 'hgo.object_id';
-                $group[] = 'hg.hostgroup_id';
-                $groupedTables['hostgroups'] = true;
-            }
-        }
-        if (! empty($groupedTables)) {
-            foreach ($this->columns as $alias => $column) {
-                if ($column instanceof Zend_Db_Expr || $column === '(NULL)') {
-                    continue;
+        switch ($column) {
+            case 'service_handled':
+            case 'service_severity':
+            case 'service_unhandled':
+                if (! isset($groupedTables['hoststatus'])) {
+                    $groupColumns[] = 'hs.hoststatus_id';
+                    $groupedTables['hoststatus'] = true;
                 }
-                $tableName = $this->aliasToTableName(
-                    $this->hasAliasName($alias) ? $alias : $this->customAliasToAlias($alias)
-                );
-                if (isset($groupedTables[$tableName])) {
-                    continue;
+                if (! isset($groupedTables['servicestatus'])) {
+                    $groupColumns[] = 'ss.servicestatus_id';
+                    $groupedTables['servicestatus'] = true;
                 }
-                switch ($tableName) {
-                    case 'hosts':
-                        $group[] = 'h.host_id';
-                        break;
-                    case 'hoststatus':
-                        $group[] = 'hs.hoststatus_id';
-                        break;
-                    case 'instances':
-                        $group[] = 'i.instance_id';
-                        break;
-                    case 'servicestatus':
-                        $group[] = 'ss.servicestatus_id';
-                        break;
-                    default:
-                        continue 2;
-                }
-                $groupedTables[$tableName] = true;
-            }
+                return true;
         }
-        return $group;
+        return false;
     }
 }
