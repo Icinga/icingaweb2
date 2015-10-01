@@ -1,6 +1,6 @@
 # Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+
 
-%define revision 4.rc1
+%define revision 5
 
 Name:           icingaweb2
 Version:        2.0.0
