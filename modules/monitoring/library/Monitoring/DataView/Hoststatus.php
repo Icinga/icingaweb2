@@ -81,9 +81,15 @@ class HostStatus extends DataView
     /**
      * {@inheritdoc}
      */
-    public function getSearchColumns()
+    public function getSearchColumns($search = null)
     {
-        return array('host_display_name');
+        if ($search !== null
+            && (@inet_pton($search) !== false || preg_match('/^\d{1,3}\.\d{1,3}\./', $search))
+        ) {
+            return array('host', 'host_address', 'host_address6');
+        } else {
+            return array('host', 'host_display_name');
+        }
     }
 
     /**
