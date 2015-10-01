@@ -347,6 +347,63 @@ form.object-features .control-label {
   line-height: 25px;
 }
 
+/* Inline Comments */
+
+.inline-comments {
+    padding: 0;
+    margin: 0;
+    font-size: 0.857em;
+
+    .time-ago {
+        color: #919191;
+    }
+
+    li {
+        list-style-type: none;
+        margin-bottom: 8px;
+    }
+
+    h3 {
+        border: none;
+	border-bottom: 1px solid @gray-lighter;
+        font-weight: normal;
+        color: inherit;
+        margin: 0;
+        padding-bottom: 0.1em;
+    }
+
+    h3 .author {
+    }
+
+    h3 form {
+        display: none;
+    }
+
+    h3 form {
+        float: right;
+    }
+
+    li:hover h3 {
+        background: #F9F9F9;
+        position: relative;
+
+        form {
+            display: inline;
+        }
+    }
+
+    p {
+	font-size 0.5em;
+        margin: 0;
+	color: #9e9e9e;
+	font-family: Menlo, monospace;
+
+        a {
+            color: #222;
+        }
+    }
+}
+
 
 //p.pluginoutput {
 //  width: 100%;
