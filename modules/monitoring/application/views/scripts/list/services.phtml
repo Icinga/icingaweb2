@@ -38,7 +38,7 @@ if (! $this->compact): ?>
            data-icinga-multiselect-controllers="<?= $this->href('monitoring/services') ?>"
            data-icinga-multiselect-data="service,host">
     <tbody>
-    <?php foreach ($services as $service):
+    <?php foreach ($services->peekAhead($this->compact) as $service):
         $serviceLink = $this->href(
             'monitoring/service/show',
             array(

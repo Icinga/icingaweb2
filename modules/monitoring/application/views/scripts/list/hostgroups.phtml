@@ -27,7 +27,7 @@ if (! $this->compact): ?>
 </tr>
 </thead>
 <tbody>
-<?php foreach ($hostgroups as $hostgroup): ?>
+<?php foreach ($hostgroups->peekAhead($this->compact) as $hostgroup): ?>
     <tr href="<?= $this->href('monitoring/list/hosts', array('hostgroup_name' => $hostgroup->hostgroup_name)) ?>">
         <td class="count-col">
             <span class="badge"><?= $hostgroup->hosts_total ?></span>
