@@ -77,7 +77,7 @@ class Dashboard extends AbstractWidget
         foreach ($navigation as $dashboardPane) {
             /** @var DashboardPane $dashboardPane */
             $pane = new Pane($dashboardPane->getLabel());
-            foreach ($dashboardPane->getDashlets() as $title => $url) {
+            foreach ($dashboardPane->getDashlets(false) as $title => $url) {
                 $pane->addDashlet($title, $url);
             }
 
