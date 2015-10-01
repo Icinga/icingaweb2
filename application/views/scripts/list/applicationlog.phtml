@@ -1,9 +1,17 @@
 <?php if (! $this->compact): ?>
 <div class="controls">
   <?= $this->tabs; ?>
-  <?= $this->sortBox; ?>
-  <?= $this->limiter; ?>
-  <?= $this->paginator; ?>
+  <div class="grid dont-print">
+        <div class="col-1-3 text-left">
+            <?= $this->limiter ?>
+        </div>
+        <div class="col-1-3">
+            <?= $this->paginator ?>
+        </div>
+        <div class="col-1-3 text-right">
+            <?= $this->sortBox ?>
+        </div>
+    </div>
   <?= $this->filterEditor; ?>
 </div>
 <?php endif ?>
