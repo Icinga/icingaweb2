@@ -1,6 +1,4 @@
 <?php if ($object->perfdata): ?>
 <h2><?= $this->translate('Performance data') ?></h2>
-<div class="performance-data">
-    <?= $this->perfdata($object->perfdata) ?>
-</div>
+<?= $this->perfdata($object->perfdata) ?>
 <?php endif ?>
