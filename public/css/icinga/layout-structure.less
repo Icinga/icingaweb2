@@ -141,11 +141,17 @@ html {
   background-color: white;
   padding: 1em 1em 0;
   z-index: 100;
+
+  h1 {
+    margin: 0;
+    margin-top: @horizontal-padding;
+  }
 }
 
 .container .controls.separated {
     box-shadow: 0 3px 4px -4px rgba(0, 0, 0, 0.2);
-    padding-bottom: 0.5em;
+//  border-bottom: 1px solid @gray-lightest;
+    padding-bottom: @horizontal-padding / 2
 }
 
 .container .fake-controls {
@@ -321,7 +327,7 @@ html {
 }
 
 #layout.twocols #col2 {
-  border-left: 1px solid #d9d9d9;
+  border-left: 1px solid @gray-light;
   display: block;
 }
 
