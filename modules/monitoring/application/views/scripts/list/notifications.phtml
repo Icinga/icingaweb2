@@ -14,7 +14,7 @@ if (! $this->compact): ?>
 </div>
 <?php endif ?>
 <div class="content">
-    <table data-base-target="_next" class="action">
+    <table data-base-target="_next" class="action action-table">
     <tbody>
     <?php foreach ($notifications as $notification):
         if (isset($notification->service_description)) {
@@ -25,11 +25,11 @@ if (! $this->compact): ?>
             $stateName = Host::getStateText($notification->notification_state);
         }
     ?>
-        <tr class="state <?= $stateName ?>">
-            <td class="state">
+        <tr>
+            <td class="state-col state-<?= $stateName ?>">
                 <?= $this->timeAgo($notification->notification_start_time, $this->compact) ?>
             </td>
-            <td style="font-size: 0.8em">
+            <td>
                 <?php if ($isService): ?>
                     <?= $this->icon('service', $this->translate('Service')); ?>
                     <?= $this->link()->service(
@@ -43,25 +43,26 @@ if (! $this->compact): ?>
                     <?= $this->icon('host', $this->translate('Host')); ?>
                     <?= $this->link()->host($notification->host_name, $notification->host_display_name) ?>
                 <?php endif ?>
-                <br>
-                <?= $this->pluginOutput($this->ellipsis($notification->notification_output, 10000), true) ?>
-                <br>
+
                 <?php if (! $this->contact): ?>
-                    <small>
-                    <?php if ($notification->notification_contact_name): ?>
-                        <?= sprintf(
-                            $this->translate('Sent to %s'),
-                            $this->qlink(
-                                $notification->notification_contact_name,
-                                'monitoring/show/contact',
-                                array('contact_name' => $notification->notification_contact_name)
-                            )
-                        ) ?>
-                    <?php else: ?>
-                        <?= $this->translate('This notification was not sent out to any contact.'); ?>
-                    <?php endif ?>
-                    </small>
+                    <span class="pull-right text-small">
+                        <?php if ($notification->notification_contact_name): ?>
+                            <?= sprintf(
+                                $this->translate('Sent to %s'),
+                                $this->qlink(
+                                    $notification->notification_contact_name,
+                                    'monitoring/show/contact',
+                                    array('contact_name' => $notification->notification_contact_name)
+                                )
+                            ) ?>
+                        <?php else: ?>
+                            <?= $this->translate('This notification was not sent out to any contact.'); ?>
+                        <?php endif ?>
+                    </span>
                 <?php endif ?>
+                <p class="plugin-output">
+                    <?= $this->pluginOutput($this->ellipsis($notification->notification_output, 10000), true) ?>
+                </p>
             </td>
         </tr>
     <?php endforeach ?>
