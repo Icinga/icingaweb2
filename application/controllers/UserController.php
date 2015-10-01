@@ -162,8 +162,7 @@ class UserController extends AuthBackendController
         $form->setRepository($backend);
         $form->add()->handleRequest();
 
-        $this->view->form = $form;
-        $this->render('form');
+        $this->renderForm($form, $this->translate('New User'));
     }
 
     /**
@@ -185,8 +184,7 @@ class UserController extends AuthBackendController
             $this->httpNotFound(sprintf($this->translate('User "%s" not found'), $userName));
         }
 
-        $this->view->form = $form;
-        $this->render('form');
+        $this->renderForm($form, $this->translate('Update User'));
     }
 
     /**
@@ -208,8 +206,7 @@ class UserController extends AuthBackendController
             $this->httpNotFound(sprintf($this->translate('User "%s" not found'), $userName));
         }
 
-        $this->view->form = $form;
-        $this->render('form');
+        $this->renderForm($form, $this->translate('Remove User'));
     }
 
     /**

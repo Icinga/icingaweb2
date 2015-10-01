@@ -29,11 +29,17 @@ $extensible = $this->hasPermission('config/authentication/users/add') && $backen
 $reducible = $this->hasPermission('config/authentication/users/remove') && $backend instanceof Reducible;
 ?>
 <?php if ($extensible): ?>
-    <?= $this->qlink($this->translate('Add a new user'), 'user/add', array('backend' => $backend->getName()), array(
-        'icon'                => 'plus',
-        'data-base-target'    => '_next',
-        'class'               => 'action-link button'
-    )) ?>
+    <?= $this->qlink(
+        $this->translate('Add a New User') ,
+        'user/add',
+        array('backend' => $backend->getName()),
+        array(
+            'class'             => 'button-link',
+            'data-base-target'  => '_next',
+            'icon'              => 'plus',
+            'title'             => $this->translate('Create a new user')
+        )
+    ) ?>
 <?php endif ?>
     <table class="action-table listing-table" data-base-target="_next">
     <thead>
@@ -59,7 +65,7 @@ $reducible = $this->hasPermission('config/authentication/users/remove') && $back
                 )
             ) ?></td>
         <?php if ($reducible): ?>
-            <td><?= $this->qlink(
+            <td class="icon-col"><?= $this->qlink(
                 null,
                 'user/remove',
                 array(
@@ -67,8 +73,9 @@ $reducible = $this->hasPermission('config/authentication/users/remove') && $back
                     'user'      => $user->user_name
                 ),
                 array(
-                    'title'     => sprintf($this->translate('Remove user %s'), $user->user_name),
-                    'icon'      => 'cancel'
+                    'class' => 'action-link',
+                    'icon'  => 'cancel',
+                    'title' => sprintf($this->translate('Remove user %s'), $user->user_name)
                 )
             ) ?></td>
             <?php endif ?>

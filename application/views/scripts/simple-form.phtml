@@ -2,5 +2,5 @@
     <?= $tabs ?>
 </div>
 <div class="content">
-    <?= $form->setTitle(null) ?>
+    <?= $form->create()->setTitle(null) // @TODO(el): create() has to be called because the UserForm is setting the title there ?>
 </div>
