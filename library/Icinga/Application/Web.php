@@ -151,7 +151,7 @@ class Web extends EmbeddedWeb
 
         if (isset($config['users'])) {
             $users = array_map('trim', explode(',', strtolower($config['users'])));
-            if (in_array($this->user->getUsername(), $users, true)) {
+            if (in_array('*', $users, true) || in_array($this->user->getUsername(), $users, true)) {
                 unset($config['users']);
                 return true;
             }
@@ -159,6 +159,11 @@ class Web extends EmbeddedWeb
 
         if (isset($config['groups'])) {
             $groups = array_map('trim', explode(',', strtolower($config['groups'])));
+            if (in_array('*', $groups, true)) {
+                unset($config['groups']);
+                return true;
+            }
+
             $userGroups = array_map('strtolower', $this->user->getGroups());
             $matches = array_intersect($userGroups, $groups);
             if (! empty($matches)) {
