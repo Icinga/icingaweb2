@@ -110,14 +110,13 @@ if (! $this->compact): ?>
           break;
       }
     ?>
-      <tr class="state <?= $stateClass; ?>">
-        <td class="state">
+      <tr>
+        <td class="state-col state-<?= $stateClass; ?>">
         <?php if ($history->getIteratorPosition() % $limit === 0): ?>
           <a id="page-<?= $history->getIteratorPosition() / $limit + 1; ?>"></a>
         <?php endif ?>
           <strong><?= $this->escape($title); ?></strong>
-          <br>
-          <?= date('d.m. H:i', $event->timestamp); ?>
+          <p><?= date('d.m. H:i', $event->timestamp); ?></p>
         </td>
         <td>
         <?php if ($isService): ?>
@@ -141,10 +140,9 @@ if (! $this->compact): ?>
         <?php else: ?>
           <?= $this->escape($event->host_name); ?>
         <?php endif ?>
-          <br>
-          <div>
+          <p class="plugin-output">
             <?= $this->icon($icon, $title); ?> <?= $this->createTicketLinks($msg) ?>
-          </div>
+          </p>
         </td>
       </tr>
     <?php endforeach; ?>
