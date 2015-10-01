@@ -74,6 +74,8 @@ class NavigationConfigForm extends ConfigForm
      */
     protected $itemTypes;
 
+    private $defaultUrl;
+
     /**
      * Initialize this form
      */
@@ -681,6 +683,14 @@ class NavigationConfigForm extends ConfigForm
     }
 
     /**
+     * DO NOT USE! This will be removed soon, very soon...
+     */
+    public function setDefaultUrl($url)
+    {
+        $this->defaultUrl = $url;
+    }
+
+    /**
      * Populate the configuration of the navigation item to load
      */
     public function onRequest()
@@ -689,6 +699,8 @@ class NavigationConfigForm extends ConfigForm
             $data = $this->getConfigForItem($this->itemToLoad)->getSection($this->itemToLoad)->toArray();
             $data['name'] = $this->itemToLoad;
             $this->populate($data);
+        } elseif ($this->defaultUrl !== null) {
+            $this->populate(array('url' => $this->defaultUrl));
         }
     }
 
