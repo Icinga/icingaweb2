@@ -3,18 +3,18 @@ use Icinga\Module\Monitoring\Object\Host;
 use Icinga\Module\Monitoring\Object\Service;
 
 if (! $this->compact): ?>
-<div class="controls separated">
+<div class="controls separated dont-print">
     <?= $this->tabs ?>
-    <div class="grid dont-print">
-        <div class="col-1-2 text-left">
+    <div class="grid">
+        <div class="col-1-2">
             <?= $this->render('list/components/servicesummary.phtml') ?>
         </div>
         <div class="col-1-2 text-right">
             <?= $this->render('list/components/selectioninfo.phtml') ?>
         </div>
     </div>
-    <div class="grid dont-print">
-        <div class="col-1-3 text-left">
+    <div class="grid">
+        <div class="col-1-3">
             <?= $this->limiter ?>
         </div>
         <div class="col-1-3">

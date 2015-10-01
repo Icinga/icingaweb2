@@ -2,19 +2,24 @@
 use Icinga\Module\Monitoring\Object\Host;
 use Icinga\Module\Monitoring\Object\Service;
 
-$downtimes->peekAhead($this->compact);
-
 if (! $this->compact): ?>
-<div class="controls">
-  <?= $this->tabs; ?>
-    <div class="dontprint">
+<div class="controls dont-print">
+    <?= $tabs ?>
+    <div class="text-right">
         <?= $this->render('list/components/selectioninfo.phtml'); ?>
     </div>
-    <h1><?= count($downtimes) ?> <?= $this->translate('Downtimes') ?></h1>
-  <?= $this->sortBox ?>
-  <?= $this->limiter ?>
-  <?= $this->paginator ?>
-  <?= $this->filterEditor ?>
+    <div class="grid">
+        <div class="col-1-3">
+            <?= $this->limiter ?>
+        </div>
+        <div class="col-1-3">
+            <?= $this->paginator ?>
+        </div>
+        <div class="col-1-3 text-right">
+            <?= $this->sortBox ?>
+        </div>
+    </div>
+    <?= $this->filterEditor ?>
 </div>
 <?php endif ?>
 <div class="content">
@@ -24,7 +29,7 @@ if (! $this->compact): ?>
          data-icinga-multiselect-controllers="<?= $this->href("monitoring/downtimes") ?>"
          data-icinga-multiselect-data="downtime_id">
     <tbody>
-    <?php foreach ($downtimes as $downtime):
+    <?php foreach ($downtimes->peekAhead($this->compact) as $downtime):
       if (isset($downtime->service_description)) {
           $this->isService = true;
           $this->stateName = Service::getStateText($downtime->service_state);
