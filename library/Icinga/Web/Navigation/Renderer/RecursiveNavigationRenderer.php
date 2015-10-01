@@ -8,6 +8,7 @@ use RecursiveIteratorIterator;
 use Icinga\Exception\IcingaException;
 use Icinga\Web\Navigation\Navigation;
 use Icinga\Web\Navigation\NavigationItem;
+use Icinga\Web\Navigation\Renderer\NavigationItemRenderer;
 
 /**
  * Renderer for multi level navigation
@@ -26,6 +27,13 @@ class RecursiveNavigationRenderer extends RecursiveIteratorIterator implements N
     protected $content;
 
     /**
+     * Whether to use the standard item renderer
+     *
+     * @var bool
+     */
+    protected $useStandardRenderer;
+
+    /**
      * Create a new RecursiveNavigationRenderer
      *
      * @param   Navigation  $navigation
@@ -37,6 +45,29 @@ class RecursiveNavigationRenderer extends RecursiveIteratorIterator implements N
             new NavigationRenderer($navigation, true),
             RecursiveIteratorIterator::SELF_FIRST
         );
+    }
+
+    /**
+     * Set whether to use the standard navigation item renderer
+     *
+     * @param   bool    $state
+     *
+     * @return  $this
+     */
+    public function setUseStandardItemRenderer($state = true)
+    {
+        $this->useStandardRenderer = (bool) $state;
+        return $this;
+    }
+
+    /**
+     * Return whether to use the standard navigation item renderer
+     *
+     * @return  bool
+     */
+    public function getUseStandardItemRenderer()
+    {
+        return $this->useStandardRenderer;
     }
 
     /**
@@ -131,7 +162,14 @@ class RecursiveNavigationRenderer extends RecursiveIteratorIterator implements N
             /** @var NavigationItem $item */
             if ($item->shouldRender()) {
                 $this->content[] = $this->getInnerIterator()->beginItemMarkup($item);
-                $this->content[] = $item->render();
+
+                if ($this->getUseStandardItemRenderer()) {
+                    $renderer = new NavigationItemRenderer();
+                    $this->content[] = $renderer->render($item);
+                } else {
+                    $this->content[] = $item->render();
+                }
+
                 if (! $item->hasChildren()) {
                     $this->content[] = $this->getInnerIterator()->endItemMarkup();
                 }
