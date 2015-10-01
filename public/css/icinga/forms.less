@@ -2,13 +2,13 @@
 
 input {
   border: none;
-  border-bottom: 1px solid @text-color-light;
+  border-bottom: 1px solid @gray-light;
   color: inherit;
   display: inline-block;
   padding: @vertical-padding / 2 @horizontal-padding / 2;
 
   &:focus {
-    border-bottom: 1px solid @text-color;
+    border-bottom: 1px solid @icinga-blue;
   }
 }
 
@@ -67,8 +67,10 @@ button:hover .icon-cancel {
 
 .control-label {
   display: inline-block;
-  font-size: @font-size-small;
-  color: @text-color-light;
+}
+
+label {
+  .text-small();
 }
 
 .control-label-group {
@@ -153,6 +155,15 @@ button.animated.active {
   &.move-down i:before {
     .animate(move-vertical 500ms infinite linear reverse);
   }
+}
+
+textarea {
+  height: 4em;
+}
+
+select.grant-permissions {
+  height: 20em;
+  width: auto;
 }
 
 //div.config-form-buttons {
