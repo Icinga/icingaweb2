@@ -82,6 +82,7 @@ class LdapBackendForm extends Form
                 'button',
                 'discovery_btn',
                 array(
+                    'class'             => 'control-button',
                     'type'              => 'submit',
                     'value'             => 'discovery_btn',
                     'label'             => $this->translate('Discover', 'A button to discover LDAP capabilities'),
@@ -90,6 +91,7 @@ class LdapBackendForm extends Form
                     ),
                     'decorators'        => array(
                         array('ViewHelper', array('separator' => '')),
+                        array('Spinner'),
                         array('HtmlTag', array('tag' => 'div', 'class' => 'control-group form-controls'))
                     ),
                     'formnovalidate'    => 'formnovalidate'
