@@ -22,7 +22,7 @@ if (! $this->compact): ?>
 </div>
 <?php endif ?>
 <div class="content">
-  <table data-base-target="_next" class="action">
+  <table data-base-target="_next" class="action action-table">
     <tbody>
     <?php foreach ($history->peekAhead() as $event): ?>
     <?php
@@ -77,27 +77,26 @@ if (! $this->compact): ?>
           break;
         }
       ?>
-      <tr class="state <?= $stateName; ?>">
-        <td class="state">
+      <tr>
+        <td class="state-col state-<?= $stateName; ?>">
         <?php if ($history->getIteratorPosition() % $limit === 0): ?>
           <a id="page-<?= $history->getIteratorPosition() / $limit + 1; ?>"></a>
         <?php endif ?>
           <strong><?= $this->escape($title); ?></strong>
-          <br>
-          <?= $this->timeAgo($event->timestamp, $this->compact); ?>
+          <p><?= $this->timeAgo($event->timestamp, $this->compact); ?></p>
         </td>
         <td>
-        <?php if ($isService): ?>
+          <?= $this->icon($icon, $title); ?>
+          <?php if ($isService): ?>
           <?= $this->link()->service(
               $event->service_description, $event->service_display_name, $event->host_name, $event->host_display_name, 'rowaction'
           ) ?>
         <?php else: ?>
           <?= $this->link()->host($event->host_name, $event->host_display_name) ?>
         <?php endif ?>
-          <br>
-          <div>
-            <?= $this->icon($icon, $title); ?> <?= empty($msg) ? '' : $this->escape($msg) ?>
-          </div>
+          <p class="plugin-output">
+            <?= empty($msg) ? '' : $this->escape($msg) ?>
+          </p>
         </td>
       </tr>
     <?php endforeach ?>
