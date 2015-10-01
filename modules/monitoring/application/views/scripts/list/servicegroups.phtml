@@ -30,7 +30,7 @@ if (! $this->compact): ?>
 </thead>
 <tbody>
 <?php foreach ($servicegroups->peekAhead($this->compact) as  $serviceGroup): ?>
-    <tr href="<?= $this->href('monitoring/list/services', array('servicegroup_name' =>  $serviceGroup->servicegroup_name)) ?>">
+    <tr>
         <td class="count-col">
             <span class="badge"><?= $serviceGroup->services_total ?></span>
         </td>

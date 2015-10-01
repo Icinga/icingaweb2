@@ -40,7 +40,7 @@ if (! $this->compact): ?>
     <?php foreach($hosts->peekAhead($this->compact) as $host):
         $hostStateName = Host::getStateText($host->host_state);
         $hostLink = $this->href('monitoring/host/show', array('host' => $host->host_name)); ?>
-        <tr href="<?= $hostLink ?>">
+        <tr>
             <td class="state-col state-<?= $hostStateName ?><?= $host->host_handled ? ' handled' : '' ?>">
                 <p>
                     <span class="state-label"><?= Host::getStateText($host->host_state, true) ?></span>

@@ -53,7 +53,7 @@ if (! $this->compact): ?>
             )
         );
         $serviceStateName = Service::getStateText($service->service_state); ?>
-        <tr href="<?= $serviceLink ?>">
+        <tr>
             <td class="state-col state-<?= $serviceStateName ?><?= $service->service_handled ? ' handled' : '' ?>">
                 <p>
                     <span class="state-label"><?= Service::getStateText($service->service_state, true) ?></span>
