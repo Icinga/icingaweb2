@@ -35,7 +35,7 @@ class FormDescriptions extends Zend_Form_Decorator_Abstract
             return $content;
         }
 
-        $html = '<ul class="descriptions">';
+        $html = '<ul class="form-description">';
         foreach ($descriptions as $description) {
             if (is_array($description)) {
                 list($description, $properties) = $description;
