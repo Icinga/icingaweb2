@@ -105,7 +105,7 @@ $section = $this->menuSection(N_('Problems'), array(
     'icon'      => 'block',
     'priority'  => 20
 ));
-$section->add(N_('Unhandled Hosts'), array(
+$section->add(N_('Host Problems'), array(
     'renderer'  => array(
         'MonitoringBadgeNavigationItemRenderer',
         'columns' => array(
@@ -114,10 +114,10 @@ $section->add(N_('Unhandled Hosts'), array(
         'state'    => 'critical',
         'dataView' => 'statussummary'
     ),
-    'url'       => 'monitoring/list/hosts?host_problem=1&host_handled=0',
-    'priority'  => 30
+    'url'       => 'monitoring/list/hosts?host_problem=1&sort=host_severity',
+    'priority'  => 50
 ));
-$section->add(N_('Unhandled Services'), array(
+$section->add(N_('Service Problems'), array(
     'renderer'  => array(
         'MonitoringBadgeNavigationItemRenderer',
         'columns' => array(
@@ -126,14 +126,6 @@ $section->add(N_('Unhandled Services'), array(
         'state'    => 'critical',
         'dataView' => 'statussummary'
     ),
-    'url'       => 'monitoring/list/services?service_problem=1&service_handled=0&sort=service_severity',
-    'priority'  => 40
-));
-$section->add(N_('Host Problems'), array(
-    'url'       => 'monitoring/list/hosts?host_problem=1&sort=host_severity',
-    'priority'  => 50
-));
-$section->add(N_('Service Problems'), array(
     'url'       => 'monitoring/list/services?service_problem=1&sort=service_severity&dir=desc',
     'priority'  => 60
 ));
