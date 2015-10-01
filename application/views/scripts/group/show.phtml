@@ -28,8 +28,8 @@ if ($this->hasPermission('config/authentication/groups/edit') && $backend instan
  <?php if (! $this->compact): ?>
   <?= $tabs; ?>
  <?php endif ?>
-  <h1><?= $this->escape($group->group_name); ?><span class="pull-right"><?= $editLink; ?></span></h1>
-  <table class="avp user-header">
+  <h2 class="clearfix"><?= $this->escape($group->group_name) ?><span class="pull-right"><?= $editLink ?></span></h2>
+  <table class="name-value-table">
     <tr>
       <th><?= $this->translate('Created at'); ?></th>
       <td><?= $group->created_at === null ? '-' : $this->formatDateTime($group->created_at); ?></td>
@@ -70,7 +70,7 @@ $firstRow = true;
 foreach ($members as $member): ?>
 <?php if ($firstRow): ?>
   <?php $firstRow = false; ?>
-  <table data-base-target="_next" class="action member-list">
+  <table data-base-target="_next" class="action-table listing-table">
     <thead>
       <tr>
         <th class="member-name"><?= $this->translate('Username'); ?></th>
@@ -99,7 +99,7 @@ foreach ($members as $member): ?>
         <?php endif ?>
         </td>
        <?php if (isset($removeForm)): ?>
-        <td class="member-remove" data-base-target="_self">
+        <td class="icon-col" data-base-target="_self">
           <?php $removeForm->getElement('user_name')->setValue($member->user_name); echo $removeForm; ?>
         </td>
        <?php endif ?>
