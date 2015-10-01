@@ -71,6 +71,7 @@ foreach ($members as $member): ?>
         <td class="member-name">
         <?php if (
           $this->hasPermission('config/authentication/users/show')
+          && method_exists($backend, 'getUserBackend')
           && ($userBackend = $backend->getUserBackend()) !== null
           && $userBackend instanceof Selectable
         ): ?>
