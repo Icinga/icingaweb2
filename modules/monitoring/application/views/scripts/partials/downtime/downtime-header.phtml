@@ -29,8 +29,7 @@
         <?= $this->icon('host', $this->translate('host')); ?> <?= $this->qlink(
             $this->escape($downtime->host_display_name),
             'monitoring/host/show',
-            array('host' => $downtime->host_name),
-            array('downtime_id' => $downtime->id),
+            array('host' => $downtime->host_name, 'downtime_id' => $downtime->id),
             array(
                 'title' => sprintf(
                     $this->translate('Show detailed information for this downtime scheduled for host %s'),
