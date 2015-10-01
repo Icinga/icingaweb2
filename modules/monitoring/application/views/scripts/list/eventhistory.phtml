@@ -11,14 +11,14 @@ if (! $url->hasParam('page') || ($page = (int) $url->getParam('page')) < 1) {
 $history->limit($limit * $page);
 
 if (! $this->compact): ?>
-<div class="controls">
+<div class="controls dont-print separated">
   <?= $this->tabs; ?>
-  <div class="grid dont-print">
+  <div class="grid">
     <div class="col-1-3 text-left">
       <?= $this->limiter ?>
     </div>
     <div class="col-1-3">
-      <a href="#load-more">
+      <a class="action-link" href="#load-more">
         <?= $this->translate('Scroll to the bottom of this page to load additional events'); ?>
       </a>
     </div>
