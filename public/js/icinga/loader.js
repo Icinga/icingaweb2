@@ -359,7 +359,7 @@
                 url = parts.shift();
                 var redirectionUrl = this.addUrlFlag(url, 'renderLayout');
                 var r = this.loadUrl(redirectionUrl, $('#layout'));
-                r.url = url;
+                r.historyUrl = url;
                 if (parts.length) {
                     r.loadNext = parts;
                 } else if (!! document.location.hash) {
@@ -608,7 +608,8 @@
                 } else {
                     // Request wasn't for a container, so it's usually the body
                     // or the full layout. Push request URL to history:
-                    this.icinga.history.pushUrl(req.url);
+                    var url = typeof req.historyUrl !== 'undefined' ? req.historyUrl : req.url;
+                    this.icinga.history.pushUrl(url);
                 }
             }
 
@@ -620,7 +621,8 @@
 
             if (typeof req.loadNext !== 'undefined' && req.loadNext.length) {
                 if ($('#col2').length) {
-                    this.loadUrl(req.loadNext[0], $('#col2'));
+                    var r = this.loadUrl(req.loadNext[0], $('#col2'));
+                    r.addToHistory = req.addToHistory;
                     this.icinga.ui.layout2col();
                 } else {
                   this.icinga.logger.error('Failed to load URL for #col2', req.loadNext);

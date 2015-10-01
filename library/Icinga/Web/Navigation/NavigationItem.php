@@ -138,7 +138,6 @@ class NavigationItem implements IteratorAggregate
     public function __construct($name, array $properties = null)
     {
         $this->setName($name);
-        $this->priority = 100;
         $this->children = new Navigation();
 
         if (! empty($properties)) {
@@ -237,7 +236,7 @@ class NavigationItem implements IteratorAggregate
      */
     public function getPriority()
     {
-        return $this->priority;
+        return $this->priority !== null ? $this->priority : 100;
     }
 
     /**
@@ -627,16 +626,30 @@ class NavigationItem implements IteratorAggregate
             throw new ProgrammingError('Cannot merge, conflict detected.');
         }
 
-        if ($item->getActive()) {
-            $this->setActive();
+        if ($this->priority === null) {
+            $priority = $item->getPriority();
+            if ($priority !== 100) {
+                $this->setPriority($priority);
+            }
         }
 
         if (! $this->getIcon()) {
             $this->setIcon($item->getIcon());
         }
 
-        if ($this->getLabel() === $this->getName()) {
+        if ($this->getLabel() === $this->getName() && $item->getLabel() !== $item->getName()) {
             $this->setLabel($item->getLabel());
+        }
+
+        if ($this->target === null && ($target = $item->getTarget()) !== null) {
+            $this->setTarget($target);
+        }
+
+        if ($this->renderer === null) {
+            $renderer = $item->getRenderer();
+            if (get_class($renderer) !== 'NavigationItemRenderer') {
+                $this->setRenderer($renderer);
+            }
         }
 
         foreach ($item->getAttributes() as $name => $value) {

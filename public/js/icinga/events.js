@@ -291,7 +291,9 @@
                         // Disable all form controls to prevent resubmission as early as possible.
                         // (This relies on native form submission, so using setTimeout is the only possible solution)
                         setTimeout(function () {
-                            $form.find(':input:not(:disabled)').prop('disabled', true);
+                            if ($target.attr('id') == $form.closest('.container').attr('id')) {
+                                $form.find(':input:not(:disabled)').prop('disabled', true);
+                            }
                         }, 0);
 
                         if (autosubmit) {
@@ -331,7 +333,9 @@
 
             // Disable all form controls to prevent resubmission except for our search input
             // Note that disabled form inputs will not be enabled via JavaScript again
-            $form.find(':input:not(#search):not(:disabled)').prop('disabled', true);
+            if ($target.attr('id') == $form.closest('.container').attr('id')) {
+                $form.find(':input:not(#search):not(:disabled)').prop('disabled', true);
+            }
 
             // Show a spinner depending on how the form is being submitted
             if (autosubmit && typeof $el !== 'undefined' && $el.next().hasClass('spinner')) {

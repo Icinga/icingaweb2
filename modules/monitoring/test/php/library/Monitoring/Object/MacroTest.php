@@ -48,10 +48,10 @@ class MacroTest extends BaseTestCase
     {
         $objectMock = Mockery::mock('object');
         $objectMock->customvars = array(
-            'CUSTOMVAR' => 'test'
+            'customvar' => 'test'
         );
 
-        $this->assertEquals(Macro::resolveMacros('$CUSTOMVAR$', $objectMock), $objectMock->customvars['CUSTOMVAR']);
+        $this->assertEquals(Macro::resolveMacros('$CUSTOMVAR$', $objectMock), $objectMock->customvars['customvar']);
     }
 
     public function testFaultyMacros()
@@ -59,8 +59,8 @@ class MacroTest extends BaseTestCase
         $hostMock = Mockery::mock('host');
         $hostMock->host_name = 'test';
         $hostMock->customvars = array(
-            'HOST' => 'te',
-            'NAME' => 'st'
+            'host' => 'te',
+            'name' => 'st'
         );
 
         $this->assertEquals(
@@ -73,12 +73,12 @@ class MacroTest extends BaseTestCase
     {
         $objectMock = Mockery::mock('object');
         $objectMock->customvars = array(
-            'V€RY_SP3C|@L' => 'not too special!'
+            'v€ry_sp3c|@l' => 'not too special!'
         );
 
         $this->assertEquals(
             Macro::resolveMacros('$V€RY_SP3C|@L$', $objectMock),
-            $objectMock->customvars['V€RY_SP3C|@L']
+            $objectMock->customvars['v€ry_sp3c|@l']
         );
     }
 }

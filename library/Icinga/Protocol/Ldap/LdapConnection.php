@@ -808,7 +808,7 @@ class LdapConnection implements Selectable, Inspectable
 
         $ds = $this->getConnection();
 
-        $serverSorting = $this->getCapabilities()->hasOid(LdapCapabilities::LDAP_SERVER_SORT_OID);
+        $serverSorting = false;//$this->getCapabilities()->hasOid(LdapCapabilities::LDAP_SERVER_SORT_OID);
         if (! $serverSorting && $query->hasOrder()) {
             foreach ($query->getOrder() as $rule) {
                 if (! in_array($rule[0], $fields)) {
