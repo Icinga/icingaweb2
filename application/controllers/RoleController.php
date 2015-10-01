@@ -158,6 +158,24 @@ class RoleController extends AuthBackendController
 
             )
         );
+        $tabs->add(
+            'user/list',
+            array(
+                'title'     => $this->translate('List users of authentication backends'),
+                'label'     => $this->translate('Users'),
+                'icon'      => 'user',
+                'url'       => 'user/list'
+            )
+        );
+        $tabs->add(
+            'group/list',
+            array(
+                'title'     => $this->translate('List groups of user group backends'),
+                'label'     => $this->translate('User Groups'),
+                'icon'      => 'users',
+                'url'       => 'group/list'
+            )
+        );
         return $tabs;
     }
 }

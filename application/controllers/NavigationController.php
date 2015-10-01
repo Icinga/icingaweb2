@@ -125,14 +125,24 @@ class NavigationController extends Controller
         $this->view->types = $this->listItemTypes();
         $this->view->items = $query;
 
-        $this->getTabs()->add(
+        $this->getTabs()
+        ->add(
+            'preferences',
+            array(
+                'title' => $this->translate('Adjust the preferences of Icinga Web 2 according to your needs'),
+                'label' => $this->translate('Preferences'),
+                'url'   => 'preference'
+            )
+        )
+        ->add(
             'navigation',
             array(
+                'active'    => true,
                 'title'     => $this->translate('List and configure your own navigation items'),
                 'label'     => $this->translate('Navigation'),
                 'url'       => 'navigation'
             )
-        )->activate('navigation');
+        );
         $this->setupSortControl(
             array(
                 'type'  => $this->translate('Type'),

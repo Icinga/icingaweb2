@@ -343,15 +343,35 @@ class GroupController extends AuthBackendController
     {
         $tabs = $this->getTabs();
         $tabs->add(
+            'role/list',
+            array(
+                'baseTarget'    => '_main',
+                'label'         => $this->translate('Roles'),
+                'title'         => $this->translate(
+                    'Configure roles to permit or restrict users and groups accessing Icinga Web 2'
+                ),
+                'url'           => 'role/list'
+
+            )
+        );
+        $tabs->add(
+            'user/list',
+            array(
+                'title'     => $this->translate('List users of authentication backends'),
+                'label'     => $this->translate('Users'),
+                'icon'      => 'user',
+                'url'       => 'user/list'
+            )
+        );
+        $tabs->add(
             'group/list',
             array(
                 'title'     => $this->translate('List groups of user group backends'),
-                'label'     => $this->translate('Usergroups'),
+                'label'     => $this->translate('User Groups'),
                 'icon'      => 'users',
                 'url'       => 'group/list'
             )
         );
-
         return $tabs;
     }
 }

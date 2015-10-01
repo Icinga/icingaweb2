@@ -56,7 +56,7 @@ class ConfigController extends Controller
         $tabs = $this->getTabs();
         $tabs->add('userbackend', array(
             'title' => $this->translate('Configure how users authenticate with and log into Icinga Web 2'),
-            'label' => $this->translate('Authentication'),
+            'label' => $this->translate('Users'),
             'url'   => 'config/userbackend',
             'baseTarget' => '_main'
         ));
@@ -96,7 +96,6 @@ class ConfigController extends Controller
 
         $this->view->form = $form;
         $this->createApplicationTabs()->activate('general');
-        $this->createAuthenticationTabs();
     }
 
     /**
@@ -201,7 +200,6 @@ class ConfigController extends Controller
         $form->handleRequest();
 
         $this->view->form = $form;
-        $this->createApplicationTabs();
         $this->createAuthenticationTabs()->activate('userbackend');
         $this->render('userbackend/reorder');
     }
@@ -335,7 +333,6 @@ class ConfigController extends Controller
         $this->assertPermission('config/application/resources');
         $this->view->resources = Config::app('resources', true);
         $this->createApplicationTabs()->activate('resource');
-        $this->createAuthenticationTabs();
     }
 
     /**
