@@ -93,7 +93,7 @@ class ApplicationConfigForm extends Form
             array(
                 'label'         => $this->translate('Datetime format'),
                 'required'      => true,
-                'value'         => $this->translate('d.m. H:i'),
+                'value'         => $this->translate('Y-m-d H:i:s'),
                 'description'   => $this->translate(
                     'Datetime format for use when displaying timestamps in history views. Uses PHP '
                     . 'date() format, see PHP documentation for syntax.'

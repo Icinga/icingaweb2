@@ -120,7 +120,7 @@ if (! $this->compact): ?>
         <?php endif ?>
           <strong><?= $this->escape($title); ?></strong>
           <br>
-          <?= date($this->config->get('datetime', 'format', 'd.m. H:i'), $event->timestamp); ?>
+          <?= date($this->config->get('datetime', 'format', 'Y-m-d H:i:s'), $event->timestamp); ?>
         </td>
         <td>
         <?php if ($isService): ?>
