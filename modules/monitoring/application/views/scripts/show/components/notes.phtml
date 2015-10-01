@@ -22,7 +22,7 @@ if (! empty($links)) {
                 'forward',
                 $this->translate('Link opens in new window'),
                 array('aria-label' => $this->translate('Link opens in new window'))
-            ) . $this->escape($link),
+            ) . ' ' . $this->escape($link),
             array(
                 'url'       => $link,
                 'target'    => '_blank',
