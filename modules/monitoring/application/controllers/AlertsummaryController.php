@@ -86,6 +86,11 @@ class AlertsummaryController extends Controller
         $this->view->notificationsUrl = 'monitoring/list/notifications';
 
         $this->setupLimitControl();
+        if (($limit = $this->params->get('limit'))) {
+            $query->limit($limit);
+        } else {
+            $query->limit(25);
+        }
     }
 
     /**
