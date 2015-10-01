@@ -248,19 +248,19 @@ $dashboard->add(
 /*
  * Overview
  */
-$dashboard = $this->dashboard(N_('Overview'), array('priority' => 60));
-$dashboard->add(
-    N_('Service Grid'),
-    'monitoring/list/servicegrid?limit=15,18'
-);
-$dashboard->add(
-    N_('Service Groups'),
-    'monitoring/list/servicegroups'
-);
-$dashboard->add(
-    N_('Host Groups'),
-    'monitoring/list/hostgroups'
-);
+//$dashboard = $this->dashboard(N_('Overview'), array('priority' => 60));
+//$dashboard->add(
+//    N_('Service Grid'),
+//    'monitoring/list/servicegrid?limit=15,18'
+//);
+//$dashboard->add(
+//    N_('Service Groups'),
+//    'monitoring/list/servicegroups'
+//);
+//$dashboard->add(
+//    N_('Host Groups'),
+//    'monitoring/list/hostgroups'
+//);
 
 /*
  * Most Overdue
@@ -315,40 +315,40 @@ $dashboard->add(
 /*
  * Activity Stream
  */
-$dashboard = $this->dashboard(N_('Activity Stream'), array('priority' => 90));
-$dashboard->add(
-    N_('Recent Events'),
-    'monitoring/list/eventhistory?timestamp>=-3%20days&sort=timestamp&dir=desc&limit=8'
-);
-$dashboard->add(
-    N_('Recent Hard State Changes'),
-    'monitoring/list/eventhistory?timestamp>=-3%20days&type=hard_state&sort=timestamp&dir=desc&limit=8'
-);
-$dashboard->add(
-    N_('Recent Notifications'),
-    'monitoring/list/eventhistory?timestamp>=-3%20days&type=notify&sort=timestamp&dir=desc&limit=8'
-);
-$dashboard->add(
-    N_('Downtimes Recently Started'),
-    'monitoring/list/eventhistory?timestamp>=-3%20days&type=dt_start&sort=timestamp&dir=desc&limit=8'
-);
-$dashboard->add(
-    N_('Downtimes Recently Ended'),
-    'monitoring/list/eventhistory?timestamp>=-3%20days&type=dt_end&sort=timestamp&dir=desc&limit=8'
-);
+//$dashboard = $this->dashboard(N_('Activity Stream'), array('priority' => 90));
+//$dashboard->add(
+//    N_('Recent Events'),
+//    'monitoring/list/eventhistory?timestamp>=-3%20days&sort=timestamp&dir=desc&limit=8'
+//);
+//$dashboard->add(
+//    N_('Recent Hard State Changes'),
+//    'monitoring/list/eventhistory?timestamp>=-3%20days&type=hard_state&sort=timestamp&dir=desc&limit=8'
+//);
+//$dashboard->add(
+//    N_('Recent Notifications'),
+//    'monitoring/list/eventhistory?timestamp>=-3%20days&type=notify&sort=timestamp&dir=desc&limit=8'
+//);
+//$dashboard->add(
+//    N_('Downtimes Recently Started'),
+//    'monitoring/list/eventhistory?timestamp>=-3%20days&type=dt_start&sort=timestamp&dir=desc&limit=8'
+//);
+//$dashboard->add(
+//    N_('Downtimes Recently Ended'),
+//    'monitoring/list/eventhistory?timestamp>=-3%20days&type=dt_end&sort=timestamp&dir=desc&limit=8'
+//);
 
 /*
  * Stats
  */
-$dashboard = $this->dashboard(N_('Stats'), array('priority' => 99));
-$dashboard->add(
-    N_('Check Stats'),
-    'monitoring/health/stats'
-);
-$dashboard->add(
-    N_('Process Information'),
-    'monitoring/health/info'
-);
+//$dashboard = $this->dashboard(N_('Stats'), array('priority' => 99));
+//$dashboard->add(
+//    N_('Check Stats'),
+//    'monitoring/health/stats'
+//);
+//$dashboard->add(
+//    N_('Process Information'),
+//    'monitoring/health/info'
+//);
 
 /*
  * CSS
