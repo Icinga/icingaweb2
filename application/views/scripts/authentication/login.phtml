@@ -19,12 +19,28 @@
     <?php endif ?>
     <?= $this->form ?>
     <div class="footer">
-	Icinga Web 2 &copy; 2013-2015<br><br>
-	<a href="https://www.icinga.org"><?= $this->translate('The Icinga Project'); ?></a>
-	&nbsp;|&nbsp;
-	<a href="http://www.twitter.com/icinga"><?= $this->translate('Icinga on Twitter'); ?></a>
-	&nbsp;|&nbsp;
-	<a href="http://www.facebook.com/icinga"><?= $this->translate('Icinga on Facebook'); ?></a>
+      Icinga Web 2 &copy; 2013-<?= date('Y'); ?><br><br>
+      <?= $this->qlink($this->translate('The Icinga Project'), 'https://www.icinga.org'); ?>
+      <?= $this->qlink(
+        null,
+        'http://www.twitter.com/icinga',
+        null,
+        array(
+          'target'  => '_blank',
+          'icon'    => 'twitter',
+          'title'   => $this->translate('Icinga on Twitter')
+        )
+      ); ?>
+      <?= $this->qlink(
+        null,
+        'http://www.facebook.com/icinga',
+        null,
+        array(
+          'target'  => '_blank',
+         'icon'     => 'facebook-squared',
+         'title'    => $this->translate('Icinga on Facebook')
+        )
+      ); ?>
     </div>
   </div>
  </div>

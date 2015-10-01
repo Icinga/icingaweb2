@@ -12,28 +12,30 @@
     <?php if ($isService): ?>
         <?= $this->icon('service', $this->translate('Service')); ?> <?= $this->qlink(
             $this->escape($downtime->host_display_name) . ': ' . $this->escape($downtime->service_display_name),
-            'monitoring/downtime/show',
-            array('downtime_id' => $downtime->id),
+            'monitoring/service/show',
+            array(
+                'host'    => $downtime->host_name,
+                'service' => $downtime->service_description
+            ),
             array(
                 'title' => sprintf(
                     $this->translate('Show detailed information for this downtime scheduled for service %s on host %s'),
                     $downtime->service_display_name,
                     $downtime->host_display_name
-                ),
-                'class' => 'rowaction'
+                )
             )
         ); ?>
     <?php else: ?>
         <?= $this->icon('host', $this->translate('host')); ?> <?= $this->qlink(
             $this->escape($downtime->host_display_name),
-            'monitoring/downtime/show',
+            'monitoring/host/show',
+            array('host' => $downtime->host_name),
             array('downtime_id' => $downtime->id),
             array(
                 'title' => sprintf(
                     $this->translate('Show detailed information for this downtime scheduled for host %s'),
                     $downtime->host_display_name
-                ),
-                'class' => 'rowaction'
+                )
             )
         ); ?>
     <?php endif ?>

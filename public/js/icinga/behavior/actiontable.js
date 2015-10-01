@@ -84,7 +84,7 @@
          * @returns         {jQuery}
          */
         rowActions: function() {
-            return this.$el.find('tr a.rowaction');
+            return this.$el.find('tr[href]');
         },
 
         /**
@@ -416,12 +416,18 @@
         var container = evt.target;
         var self = evt.data.self;
 
-        // initialize all rows with the correct link
+        // initialize all rows with the correct row action
         $('table.action tr, table.action-table tr', container).each(function(idx, el) {
+
+            // decide which row action to use: links declared with the class rowaction take
+            // the highest precedence before hrefs defined in the tr itself and regular links
             var $a = $('a[href].rowaction', el).first();
             if ($a.length) {
                 // TODO: Find out whether we leak memory on IE with this:
                 $(el).attr('href', $a.attr('href'));
+                return;
+            }
+            if ($(el).attr('href') && $(el).attr('href').length) {
                 return;
             }
             $a = $('a[href]', el).first();

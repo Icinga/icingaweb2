@@ -26,7 +26,7 @@
          data-icinga-multiselect-data="comment_id">
     <tbody>
     <?php foreach ($comments->peekAhead($this->compact) as $comment): ?>
-      <tr>
+      <tr href="<?=  $this->href('monitoring/comment/show', array('comment_id' => $comment->id)) ?>">
         <td class="icon-col">
           <?= $this->partial('partials/comment/comment-description.phtml', array('comment' => $comment)); ?>
         </td>
