@@ -118,7 +118,7 @@ class ActionController extends Zend_Controller_Action
             $this->view->compact = true;
         }
         if ($this->rerenderLayout = $request->getUrl()->shift('renderLayout')) {
-            $this->xhrLayout = 'body';
+            $this->xhrLayout = $this->innerLayout;
         }
         if ($request->getUrl()->shift('_disableLayout')) {
             $this->_helper->layout()->disableLayout();
