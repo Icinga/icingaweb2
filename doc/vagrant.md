@@ -3,10 +3,15 @@
 ## Requirements
 
 * Vagrant &gt;= version 1.5
-* VirtualBox or Parallels
+* VirtualBox or Parallels Desktop
 
 > **Note:** The deployment of the virtual machine is tested against Vagrant starting with version 1.5.
 > Unfortunately older versions will not work.
+
+Parallels requires the additional provider plugin
+[vagrant-paralells](http://parallels.github.io/vagrant-parallels/docs/) to be installed:
+
+    $ vagrant plugin install vagrant-parallels
 
 ## General
 

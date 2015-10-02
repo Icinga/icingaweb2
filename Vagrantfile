@@ -21,14 +21,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.provision :shell, :path => ".puppet/manifests/puppet.sh"
 
-  config.vm.provider :virtualbox do |v, override|
-    override.vm.box = "centos-71-x64-vbox"
-    override.vm.box_url = "http://boxes.icinga.org/centos-71-x64-vbox.box"
-
-    v.customize ["modifyvm", :id, "--memory", "1024"]
-    v.customize ["modifyvm", :id, "--cpus", "2"]
-  end
-
   config.vm.provider :parallels do |p, override|
     override.vm.box = "parallels/centos-7.1"
 
@@ -42,6 +34,14 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
     p.memory = 1024
     p.cpus = 2
+  end
+
+  config.vm.provider :virtualbox do |v, override|
+    override.vm.box = "centos-71-x64-vbox"
+    override.vm.box_url = "http://boxes.icinga.org/centos-71-x64-vbox.box"
+
+    v.customize ["modifyvm", :id, "--memory", "1024"]
+    v.customize ["modifyvm", :id, "--cpus", "2"]
   end
 
   config.vm.provision :puppet do |puppet|
