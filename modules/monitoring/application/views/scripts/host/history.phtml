@@ -1,4 +1,5 @@
 <?php
+use Icinga\Application\Icinga;
 use Icinga\Module\Monitoring\Object\Host;
 use Icinga\Module\Monitoring\Object\Service;
 
@@ -24,6 +25,8 @@ if (! $url->hasParam('page') || ($page = (int) $url->getParam('page')) < 1) {
 }
 
 $history->limit($limit * $page);
+
+$this->config = Icinga::app()->getConfig();
 
 if (! $this->compact): ?>
 <div class="controls">
@@ -117,7 +120,7 @@ if (! $this->compact): ?>
         <?php endif ?>
           <strong><?= $this->escape($title); ?></strong>
           <br>
-          <?= date('d.m. H:i', $event->timestamp); ?>
+          <?= date($this->config->get('datetime', 'format', 'Y-m-d H:i:s'), $event->timestamp); ?>
         </td>
         <td>
         <?php if ($isService): ?>
