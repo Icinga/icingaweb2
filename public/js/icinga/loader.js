@@ -571,6 +571,11 @@
          * Regardless of whether a request succeeded of failed, clean up
          */
         onComplete: function (req, textStatus) {
+            if (this.processRedirectHeader(req)) {
+                delete this.requests[req.$target.attr('id')];
+                return;
+            }
+
             // Remove 'impact' class if there was such
             if (req.$target.hasClass('impact')) {
                 req.$target.removeClass('impact');
@@ -617,8 +622,6 @@
             delete this.requests[req.$target.attr('id')];
             this.icinga.ui.fadeNotificationsAway();
 
-            this.processRedirectHeader(req);
-
             if (typeof req.loadNext !== 'undefined' && req.loadNext.length) {
                 if ($('#col2').length) {
                     var r = this.loadUrl(req.loadNext[0], $('#col2'));
@@ -646,7 +649,6 @@
             if (req.addToHistory && ! req.autorefresh) {
                 req.$target.data('icingaRefresh', 0);
                 req.$target.data('icingaUrl', url);
-                icinga.history.pushCurrentState();
             }
 
             if (typeof req.progressTimer !== 'undefined') {
