@@ -28,13 +28,16 @@ class PreferenceController extends BasePreferenceController
     public static function createProvidedTabs()
     {
         return array(
-            'preferences' => new Tab(
-                array(
-                    'title' => t('Adjust the preferences of Icinga Web 2 according to your needs'),
-                    'label' => t('Preferences'),
-                    'url'   => Url::fromPath('preference')
-                )
-            )
+            'preferences' => new Tab(array(
+                'title' => t('Adjust the preferences of Icinga Web 2 according to your needs'),
+                'label' => t('Preferences'),
+                'url'   => 'preference'
+            )),
+            'navigation' => new Tab(array(
+                'title' => t('List and configure your own navigation items'),
+                'label' => t('Navigation'),
+                'url'   => 'navigation'
+            ))
         );
     }
 

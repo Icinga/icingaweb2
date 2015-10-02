@@ -1,11 +1,4 @@
-<?php if (! $object->perfdata) return ?>
-<tr class="newsection">
- <td colspan="2">
-  <h2><?= $this->translate('Performance data') ?></h2>
- </td>
-</tr>
-<tr>
- <td colspan="2" class="performance-data">
-  <?= $this->perfdata($object->perfdata) ?>
- </td>
-</tr>
+<?php if ($object->perfdata): ?>
+<h2><?= $this->translate('Performance data') ?></h2>
+<?= $this->perfdata($object->perfdata) ?>
+<?php endif ?>

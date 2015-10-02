@@ -56,6 +56,7 @@ class Contact extends DataView
     {
         return array(
             'contact',
+            'contactgroup', 'contactgroup_name', 'contactgroup_alias',
             'host', 'host_name', 'host_display_name', 'host_alias',
             'hostgroup', 'hostgroup_alias', 'hostgroup_name',
             'service', 'service_description', 'service_display_name',

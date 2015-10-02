@@ -1,59 +1,86 @@
 <?php if (! $this->compact): ?>
 <div class="controls">
-    <?= $this->tabs; ?>
-    <?= $this->sortBox; ?>
-    <?= $this->limiter; ?>
-    <?= $this->paginator; ?>
-    <?= $this->filterEditor; ?>
+    <?= $this->tabs ?>
+    <div class="grid dont-print">
+        <div class="col-1-3 text-left">
+            <?= $this->limiter ?>
+        </div>
+        <div class="col-1-3">
+            <?= $this->paginator ?>
+        </div>
+        <div class="col-1-3 text-right">
+            <?= $this->sortBox ?>
+        </div>
+    </div>
+    <?= $this->filterEditor ?>
 </div>
 <?php endif ?>
-<div class="content" data-base-target="_next">
-    <a href="<?= $this->href('navigation/add'); ?>">
-        <?= $this->icon('plus'); ?> <?= $this->translate('Create A New Navigation Item'); ?>
-    </a>
+<div class="content">
+    <?= $this->qlink(
+        $this->translate('Create a New Navigation Item') ,
+        'navigation/add',
+        null,
+        array(
+            'class'             => 'button-link',
+            'data-base-target'  => '_next',
+            'icon'              => 'plus',
+            'title'             => $this->translate('Create a new navigation item')
+        )
+    ) ?>
 <?php if (count($items) === 0): ?>
-    <p><?= $this->translate('You did not create any navigation item yet'); ?></p>
-<?php else: ?>
-    <table class="action alternating">
-        <thead>
-            <th><?= $this->translate('Navigation'); ?></th>
-            <th style="width: 10em"><?= $this->translate('Type'); ?></th>
-            <th style="width: 5em"><?= $this->translate('Shared'); ?></th>
-            <th style="width: 5em"><?= $this->translate('Remove'); ?></th>
-        </thead>
-        <tbody>
-        <?php foreach ($items as $item): ?>
-            <tr>
-                <td><?= $this->qlink(
-                    $item->name,
-                    'navigation/edit',
-                    array(
-                        'name'  => $item->name,
-                        'type'  => $item->type
-                    ),
-                    array(
-                        'title' => sprintf($this->translate('Edit navigation item %s'), $item->name)
-                    )
-                ); ?></td>
-                <td><?= $item->type && isset($types[$item->type])
-                    ? $this->escape($types[$item->type])
-                    : $this->escape($this->translate('Unknown')); ?></td>
-                <td><?= $item->owner ? $this->translate('Yes') : $this->translate('No'); ?></td>
-                <td><?= $this->qlink(
-                    '',
-                    'navigation/remove',
-                    array(
-                        'name'  => $item->name,
-                        'type'  => $item->type
-                    ),
-                    array(
-                        'icon'  => 'trash',
-                        'title' => sprintf($this->translate('Remove navigation item %s'), $item->name)
-                    )
-                ); ?></td>
-            </tr>
-        <?php endforeach ?>
-        </tbody>
+    <p><?= $this->translate('You did not create any navigation item yet.') ?></p>
+</div>
+<?php return; endif ?>
+    <table class="action-table listing-table" data-base-target="_next">
+    <thead>
+    <tr>
+        <th><?= $this->translate('Navigation') ?></th>
+        <th><?= $this->translate('Type') ?></th>
+        <th><?= $this->translate('Shared') ?></th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+<?php foreach ($items as $item): ?>
+    <tr>
+        <td>
+            <?= $this->qlink(
+                $item->name,
+                'navigation/edit',
+                array(
+                    'name'  => $item->name,
+                    'type'  => $item->type
+                ),
+                array(
+                    'title' => sprintf($this->translate('Edit navigation item %s'), $item->name)
+                )
+            ) ?>
+        </td>
+        <td>
+            <?= $item->type && isset($types[$item->type])
+                ? $this->escape($types[$item->type])
+                : $this->escape($this->translate('Unknown')) ?>
+        </td>
+        <td class="icon-col">
+            <?= $item->owner ? $this->translate('Yes') : $this->translate('No') ?>
+        </td>
+        <td class="icon-col text-right">
+            <?= $this->qlink(
+                '',
+                'navigation/remove',
+                array(
+                    'name'  => $item->name,
+                    'type'  => $item->type
+                ),
+                array(
+                    'class' => 'action-link',
+                    'icon'  => 'cancel',
+                    'title' => sprintf($this->translate('Remove navigation item %s'), $item->name)
+                )
+            ) ?>
+        </td>
+    </tr>
+<?php endforeach ?>
+    </tbody>
     </table>
-<?php endif ?>
 </div>

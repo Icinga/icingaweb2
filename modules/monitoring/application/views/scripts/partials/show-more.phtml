@@ -1,0 +1,15 @@
+<?php
+/** @var \Icinga\Module\Monitoring\DataView\DataView $dataView */
+if ($dataView->hasMore()): ?>
+<div class="text-right">
+    <?= $this->qlink(
+        $this->translate('Show More'),
+        $this->url()->without(array('view', 'limit')),
+        null,
+        array(
+            'data-base-target'  => '_next',
+            'class'             => 'action-link'
+        )
+    ) ?>
+</div>
+<?php endif ?>

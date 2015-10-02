@@ -8,13 +8,10 @@
 #setup {
   .header {
     width: 100%;
-    height: 5.4em;
-    background-color: @colorPetrol;
+    height: 5.5em;
+    background-color: @icinga-blue;
     border-bottom: 1px solid #d9d9d9d;
     text-align: center;
-    -webkit-box-shadow: 0 3px 7px -3px #000;
-    -moz-box-shadow: 0 3px 7px -3px #000;
-    box-shadow: 0 3px 7px -3px #000;
 
 
     img {
@@ -86,7 +83,7 @@
           }
 
           &.complete {
-            background-color: @colorOk ;
+            background-color: @color-ok;
           }
 
           &.visited {
@@ -99,6 +96,10 @@
 
   .setup-content {
     margin: 1.5em 10em 0 10em;
+
+    h1 {
+      font-weight: bold;
+    }
 
     form {
       h2 {
@@ -168,7 +169,7 @@ form#setup_requirements {
     div.title {
       width: 25%;
 
-      h3 {
+      h2 {
         padding: 0;
         margin: 0 1em 0 0;
         border-bottom: 0;
@@ -193,7 +194,7 @@ form#setup_requirements {
       padding: 0.4em;
 
       &.fulfilled {
-        background-color: @colorOk;
+        background-color: @color-ok;
       }
 
       &.not-available {
@@ -202,7 +203,7 @@ form#setup_requirements {
       }
 
       &.missing {
-        background-color: @colorCritical;
+        background-color: @color-critical;
       }
     }
   }
@@ -233,7 +234,7 @@ form#setup_requirements {
 
     div.page {
       float: left;
-      width: 20em;
+      width: 25em;
       min-height: 25em;
       padding: 0 1em 1em;
       margin: 1em 1.5em 1.5em;
@@ -241,6 +242,7 @@ form#setup_requirements {
 
       h2 {
         font-size: 1.2em;
+        font-weight: bold;
       }
 
       div.topic {
@@ -278,11 +280,11 @@ form#setup_requirements {
     color: white;
 
     &.success {
-      background-color: @colorOk;
+      background-color: @color-ok;
     }
 
     &.failure {
-      background-color: @colorCritical;
+      background-color: @color-critical;
     }
   }
 
@@ -333,8 +335,9 @@ form#setup_requirements {
       padding: 0.2em;
       margin: -1em -1em 1em;
       text-align: center;
-      color: @colorTextDefault;
+      color: @text-color;
       background-color: #f6fafa;
+      border: 1px solid lightgrey;
     }
 
     img {
@@ -373,7 +376,7 @@ form#setup_requirements {
 #setup_modules {
   div.module {
     float: left;
-    width: 15em;
+    //width: 15em;
     height: 15em;
     margin: 1em;
     padding: 0.3em;
@@ -393,9 +396,10 @@ form#setup_requirements {
     }
 
     h3 + label {
+      display: inline-block;
       width: 13.5em;
       height: 13.9em;
-      overflow: auto;
+      overflow: visible;
       cursor: pointer;
       font-weight: normal;
     }

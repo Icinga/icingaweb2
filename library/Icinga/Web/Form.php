@@ -221,11 +221,12 @@ class Form extends Zend_Form
      * @var array
      */
     public static $defaultElementDecorators = array(
+        array('Label', array('tag'=>'span', 'separator' => '', 'class' => 'control-label')),
+        array('Help', array('placement' => 'APPEND')),
+        array(array('labelWrap' => 'HtmlTag'), array('tag' => 'div', 'class' => 'control-label-group')),
         array('ViewHelper', array('separator' => '')),
         array('Errors', array('separator' => '')),
-        array('Help', array('placement' => 'PREPEND')),
-        array('Label', array('separator' => '')),
-        array('HtmlTag', array('tag' => 'div', 'class' => 'element'))
+        array('HtmlTag', array('tag' => 'div', 'class' => 'control-group'))
     );
 
     /**
@@ -851,7 +852,7 @@ class Form extends Zend_Form
                     'decorators'            => array(
                         'ViewHelper',
                         array('Spinner', array('separator' => '')),
-                        array('HtmlTag', array('tag' => 'div', 'class' => 'buttons'))
+                        array('HtmlTag', array('tag' => 'div', 'class' => 'control-group form-controls'))
                     )
                 )
             );
@@ -915,12 +916,16 @@ class Form extends Zend_Form
                     || ($type === 'button' && isset($options['type']) && $options['type'] === 'submit'))
                 ) {
                     array_splice($options['decorators'], 1, 0, array(array('Spinner', array('separator' => ''))));
+                } elseif ($type === 'hidden') {
+                    $options['decorators'] = array('ViewHelper');
                 }
             }
         } else {
             $options = array('decorators' => static::$defaultElementDecorators);
             if ($type === 'submit') {
                 array_splice($options['decorators'], 1, 0, array(array('Spinner', array('separator' => ''))));
+            } elseif ($type === 'hidden') {
+                $options['decorators'] = array('ViewHelper');
             }
         }
 

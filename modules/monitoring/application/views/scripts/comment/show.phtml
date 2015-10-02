@@ -9,10 +9,10 @@
 </div>
 <div class="content">
 
-<h3><?= $this->translate('Comment detail information') ?></h3>
-<table class="avp">
+<h2><?= $this->translate('Comment detail information') ?></h2>
+<table class="name-value-table">
   <tbody>
-    <tr data-base-target='_next'>
+    <tr>
       <?php if ($this->comment->objecttype === 'service'): ?>
         <th> <?= $this->translate('Service') ?> </th>
         <td>

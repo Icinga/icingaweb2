@@ -15,15 +15,14 @@ if ($notes) {
 
 $links = $object->getNotesUrls();
 if (! empty($links)) {
-    // add warning to links that open in new tabs to improve accessibility, as recommended by WCAG20 G201
-    $newTabInfo = sprintf(
-        '<span class="info-box display-on-hover"> %s </span>',
-        $this->translate('opens in new window')
-    );
-
     foreach ($links as $link) {
         $navigation->addItem(
-            $this->escape($link) . $newTabInfo,
+            // add warning to links that open in new tabs to improve accessibility, as recommended by WCAG20 G201
+            $this->icon(
+                'forward',
+                $this->translate('Link opens in new window'),
+                array('aria-label' => $this->translate('Link opens in new window'))
+            ) . ' ' . $this->escape($link),
             array(
                 'url'       => $link,
                 'target'    => '_blank',

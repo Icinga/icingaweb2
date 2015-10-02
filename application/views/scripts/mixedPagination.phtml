@@ -1,93 +1,81 @@
 <?php
-
 use Icinga\Web\Url;
 
-// Please note that there is a reason for the strange way of writing ><.
-// It was the best compromise that came to my mind to get rid of whitespaces
-// between inline-block elements. Found no better hack - and table-cell seems
-// to be less supported.
-
 if ($this->pageCount <= 1) return;
-
-?><p id="<?= $this->protectId('paginationlabel'); ?>" class="audible"><?= t('Pagination') ?></p>
-<ul class="pagination" aria-labelledby="<?= $this->protectId('paginationlabel'); ?>" role="navigation"
-<?php
-
-$fromto = t('Show rows %u to %u out of %u');
-$total = $this->totalItemCount;
-$limit = $this->itemCountPerPage;
-$title_prev = sprintf(
-    $fromto,
-    ($this->current - 2) * $limit + 1,
-    ($this->current - 1) * $limit,
-    $total
-);
-
-$title_next = sprintf(
-    $fromto,
-    ($this->current) * $limit + 1,
-    ($this->current + 1) * $limit,
-    $total
-);
-$li = '  ><li%1$s><span class="audible">'
-    . t('Page')
-    . ' </span><a href="%2$s" aria-label="%3$s" title="%3$s">%4$s</a></li
-';
-
 ?>
-<?php
-
-if (isset($this->previous)) {
-    printf(
-        $li,
-        '',
-        Url::fromRequest()->overwriteParams(
-            array('page' => $this->previous)
-        )->getAbsoluteUrl(),
-        $title_prev,
-        '« ' . t('Prev')
-    );
-} else {
-    echo '  ><li class="disabled"><span>« ' . t('Prev') . '</span></li';
-}
-
-foreach ($this->pagesInRange as $page) {
-    $start = ($page - 1) * $limit + 1;
-    $end = $page * $limit;
-    if ($end > $total) {
-        $end = $total;
-    }
-    $title = sprintf($fromto, $start, $end, $total);
-    $class = $page === $this->current ? ' class="active"' : '';
-
-    if ($page === '...') {
-      echo '  ><li class="disabled"><span>...</span></li';
-    } else {
-      printf(
-          $li,
-          $class,
-          Url::fromRequest()->overwriteParams(
-              array('page' => $page)
-          ),
-          $title,
-          $page
-      );
-    }
-}
-
-if (isset($this->next)) {
-    printf(
-        $li,
-        '',
-        Url::fromRequest()->overwriteParams(
-            array('page' => $this->next)
-        )->getAbsoluteUrl(),
-        $title_next,
-        t('Next') . ' »'
-    );
-} else {
-    echo '  ><li class="disabled"><span>' . t('Next') . ' »</span></li';
-}
-
-?>
-></ul>
+<div class="pagination-control" role="navigation">
+    <h2 id="<?= $this->protectId('pagination') ?>" class="sr-only" tabindex="-1"><?= $this->translate('Pagination') ?></h2>
+    <ul class="nav tab-nav">
+    <?php if (isset($this->previous)): ?>
+        <?php $label = sprintf(
+            $this->translate('Show rows %u to %u of %u'),
+            ($this->current - 2) * $this->itemCountPerPage + 1,
+            ($this->current - 1) * $this->itemCountPerPage,
+            $this->totalItemCount
+        ) ?>
+        <li class="nav-item">
+            <a  href="<?= Url::fromRequest()->overwriteParams(array('page' => $this->previous)) ?>"
+                title="<?= $label ?>"
+                aria-label="<?= $label ?>">
+                <?= $this->icon('angle-double-left') ?>
+            </a>
+        </li>
+    <?php else: ?>
+        <li class="nav-item disabled" aria-hidden="true">
+            <span>
+                <span class="sr-only"><?= $this->translate('Previous page') ?></span>
+                <?= $this->icon('angle-double-left') ?>
+            </span>
+        </li>
+    <?php endif ?>
+    <?php foreach ($this->pagesInRange as $page): ?>
+        <?php if ($page === '...'): ?>
+            <li class="nav-item disabled">
+                <span>...</span>
+            </li>
+        <?php else: ?>
+            <?php
+            $end = $page * $this->itemCountPerPage;
+            if ($end > $this->totalItemCount) {
+                $end = $this->totalItemCount;
+            }
+            $label = sprintf(
+                $this->translate('Show rows %u to %u of %u'),
+                ($page - 1) * $this->itemCountPerPage + 1,
+                $end,
+                $this->totalItemCount
+            );
+            ?>
+            <li<?= $page === $this->current ? ' class="active nav-item"' : ' class="nav-item"' ?>>
+                <a  href="<?= Url::fromRequest()->overwriteParams(array('page' => $page)) ?>"
+                    title="<?= $label ?>"
+                    aria-label="<?= $label ?>">
+                    <?= $page ?>
+                </a>
+            </li>
+        <?php endif ?>
+    <?php endforeach ?>
+    <?php if (isset($this->next)): ?>
+        <?php $label = sprintf(
+            $this->translate('Show rows %u to %u of %u'),
+            $this->current * $this->itemCountPerPage + 1,
+            ($this->current + 1) * $this->itemCountPerPage,
+            $this->totalItemCount
+        ) ?>
+        <li class="nav-item">
+            <a  href="<?= Url::fromRequest()->overwriteParams(array('page' => $this->next)) ?>"
+                title="<?= $label ?>"
+                aria-label="<?= $label ?>">
+                <?= $this->icon('angle-double-right') ?>
+            </a>
+        </li>
+    <?php else: ?>
+        <li class="disabled nav-item" aria-hidden="true">
+            <span>
+                <span class="sr-only"><?= $this->translate('Next page') ?></span>
+                <?= $this->icon('angle-double-right') ?>
+            </span>
+        </li>
+    <?php endif ?>
+    </ul>
+</div>

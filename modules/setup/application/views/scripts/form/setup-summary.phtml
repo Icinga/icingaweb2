@@ -2,7 +2,10 @@
 
 use Icinga\Web\Wizard;
 
-$form->getElement(Wizard::BTN_NEXT)->setAttrib('class', 'finish');
+$form->getElement(Wizard::BTN_NEXT)->setAttrib(
+    'class',
+    $form->getElement(Wizard::BTN_NEXT)->getAttrib('class') . ' finish'
+);
 
 ?>
 <p><?= sprintf(

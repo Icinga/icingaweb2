@@ -11,7 +11,7 @@
     $permissions = $module->getProvidedPermissions();
     $state = $moduleData->enabled ? ($moduleData->loaded ? 'enabled' : 'failed') : 'disabled'
   ?>
-  <table class="avp">
+  <table class="name-value-table">
     <tr>
       <th><?= $this->escape($this->translate('Name')) ?></th>
       <td><?= $this->escape($module->getName()) ?></td>
@@ -23,7 +23,7 @@
         $this->translate('disable'),
         'config/moduledisable',
         array('name' => $module->getName()),
-        array('title' => sprintf($this->translate('Disable the %s module'), $module->getName()))
+        array('title' => sprintf($this->translate('Disable the %s module'), $module->getName()), 'class' => 'action-link')
       ); ?>
       <?php endif ?>
       <?php if ($state === 'disabled'): ?>
@@ -31,7 +31,7 @@
         $this->translate('enable'),
         'config/moduleenable',
         array('name' => $module->getName()),
-        array('title' => sprintf($this->translate('Enable the %s module'), $module->getName()))
+        array('title' => sprintf($this->translate('Enable the %s module'), $module->getName()), 'class' => 'action-link')
       ); ?>
       <?php endif ?>
       </td>

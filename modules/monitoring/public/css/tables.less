@@ -1,0 +1,88 @@
+/*! Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
+
+@border-left-width: 6px;
+
+.count-col {
+  width: 60px;
+}
+
+.state-col {
+  &.state-ok,
+  &.state-up {
+    border-left: @border-left-width solid @color-ok;
+  }
+
+  &.state-pending {
+    border-left: @border-left-width solid @color-pending;
+  }
+
+  &.state-critical,
+  &.state-down {
+    .bg-color-critical();
+    .fg-color-inverted();
+
+    &.handled {
+      .bg-color-default();
+      .fg-color-default();
+      border-left: @border-left-width solid @color-critical-handled;
+    }
+  }
+
+  &.state-warning {
+    .bg-color-warning();
+    .fg-color-inverted();
+
+    &.handled {
+      .bg-color-default();
+      .fg-color-default();
+      border-left: @border-left-width solid @color-warning-handled;
+    }
+  }
+
+  &.state-unknown {
+    .bg-color-unknown();
+    .fg-color-inverted();
+
+    &.handled {
+      .bg-color-default();
+      .fg-color-default();
+      border-left: @border-left-width solid @color-unknown-handled;
+    }
+  }
+
+  &.state-unreachable {
+    .bg-color-unreachable();
+    .fg-color-inverted();
+
+    &.handled {
+      .bg-color-default();
+      .fg-color-default();
+      border-left: @border-left-width solid @color-unreachable-handled;
+    }
+  }
+
+  * {
+    color: inherit;
+  }
+
+  text-align: center;
+  width: 100px;
+}
+
+.comment-col {
+  padding-top: 0.5em;
+  vertical-align: top;
+  width: 3em;
+}
+
+.comment-content {
+  line-height: 1.5em;
+  padding-top: 0.4em;
+  padding-bottom: 0.7em;
+  max-width: 15em;
+  color: @text-color-light;
+}
+
+.comment-header {
+  line-height: 1.8em;
+}

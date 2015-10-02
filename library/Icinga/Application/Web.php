@@ -256,43 +256,31 @@ class Web extends EmbeddedWeb
                     'permission'    => 'config/*',
                     'priority'      => 800,
                     'children'      => array(
-                        'application'       => array(
+                        'application' => array(
                             'label'         => t('Application'),
                             'url'           => 'config/general',
                             'permission'    => 'config/application/*',
                             'priority'      => 810
                         ),
-                        'navigation'        => array(
+                        'authentication' => array(
+                            'label'     => t('Authentication'),
+                            'url'       => 'config/userbackend',
+                            'permission'    => 'config/application/*',
+                            'priority'      => 820
+                        ),
+                        'authorization' => array(
+                            'label'         => t('Authorization'),
+                            'permission'    => 'config/authentication/*',
+                            'priority'      => 830,
+                            'url'           => 'role/list'
+                        ),
+                        'navigation' => array(
                             'label'         => t('Shared Navigation'),
                             'url'           => 'navigation/shared',
                             'permission'    => 'config/application/navigation',
-                            'priority'      => 820,
+                            'priority'      => 840,
                         ),
-                        'authentication'    => array(
-                            'label'         => t('Authentication'),
-                            'url'           => 'config/userbackend',
-                            'permission'    => 'config/authentication/*',
-                            'priority'      => 830
-                        ),
-                        'roles'             => array(
-                            'label'         => t('Roles'),
-                            'url'           => 'role/list',
-                            'permission'    => 'config/authentication/roles/show',
-                            'priority'      => 840
-                        ),
-                        'users'             => array(
-                            'label'         => t('Users'),
-                            'url'           => 'user/list',
-                            'permission'    => 'config/authentication/users/show',
-                            'priority'      => 850
-                        ),
-                        'groups'            => array(
-                            'label'         => t('Usergroups'),
-                            'url'           => 'group/list',
-                            'permission'    => 'config/authentication/groups/show',
-                            'priority'      => 860
-                        ),
-                        'modules'           => array(
+                        'modules' => array(
                             'label'         => t('Modules'),
                             'url'           => 'config/modules',
                             'permission'    => 'config/modules',
@@ -301,30 +289,25 @@ class Web extends EmbeddedWeb
                     )
                 ),
                 'user' => array(
+                    'cssClass'  => 'user-nav-item',
                     'label'     => $this->user->getUsername(),
                     'icon'      => 'user',
+                    'url'       => 'preference',
                     'priority'  => 900,
-                    'children'  => array(
-                        'preferences'   => array(
-                            'label'     => t('Preferences'),
-                            'url'       => 'preference',
-                            'priority'  => 910
-                        ),
-                        'navigation'    => array(
-                            'label'     => t('Navigation'),
-                            'url'       => 'navigation',
-                            'priority'  => 920
-                        ),
-                        'logout'        => array(
-                            'label'     => t('Logout'),
-                            'url'       => 'authentication/logout',
-                            'priority'  => 990,
-                            'renderer'  => array(
-                                'NavigationItemRenderer',
-                                'target' => '_self'
-                            )
-                        )
-                    )
+                    'renderer'  => array(
+                        'UserNavigationItemRenderer'
+                    ),
+                ),
+                'logout' => array(
+                    'cssClass'  => 'user-nav-item',
+                    'label'     => t('Logout'),
+                    'icon'	=> 'starttime',
+                    'priority'  => 990,
+                    'renderer'  => array(
+                        'LogoutNavigationItemRenderer',
+                        'target' => '_self'
+                    ),
+                    'url'       => 'authentication/logout'
                 )
             );
 

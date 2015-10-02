@@ -338,8 +338,8 @@
             }
 
             // Show a spinner depending on how the form is being submitted
-            if (autosubmit && typeof $el !== 'undefined' && $el.next().hasClass('autosubmit-warning')) {
-                $el.next().addClass('spinning');
+            if (autosubmit && typeof $el !== 'undefined' && $el.next().hasClass('spinner')) {
+                $el.next().addClass('active');
             } else if ($button.length && $button.is('button') && $button.hasClass('animated')) {
                 $button.addClass('active');
             } else if ($button.length && $button.attr('data-progress-label')) {
@@ -380,7 +380,7 @@
                     if ($progressElement.hasClass('spinner')) {
                         $('i', $progressElement).addClass('active');
                     } else {
-                        $('i.autosubmit-warning', $progressElement).addClass('spinning');
+                        $('i.spinner', $progressElement).addClass('active');
                     }
                 }
             }

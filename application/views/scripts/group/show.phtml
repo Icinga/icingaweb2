@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 use Icinga\Data\Extensible;
 use Icinga\Data\Updatable;
@@ -28,8 +28,8 @@ if ($this->hasPermission('config/authentication/groups/edit') && $backend instan
  <?php if (! $this->compact): ?>
   <?= $tabs; ?>
  <?php endif ?>
-  <h1><?= $this->escape($group->group_name); ?><span class="pull-right"><?= $editLink; ?></span></h1>
-  <table class="avp user-header">
+  <h2 class="clearfix"><?= $this->escape($group->group_name) ?><span class="pull-right"><?= $editLink ?></span></h2>
+  <table class="name-value-table">
     <tr>
       <th><?= $this->translate('Created at'); ?></th>
       <td><?= $group->created_at === null ? '-' : $this->formatDateTime($group->created_at); ?></td>
@@ -50,13 +50,27 @@ if ($this->hasPermission('config/authentication/groups/edit') && $backend instan
 <?php endif ?>
 </div>
 <div class="content members" data-base-target="_next">
+<?php if ($extensible): ?>
+    <?= $this->qlink(
+        $this->translate('Add User to Group') ,
+        'group/addmember',
+        null,
+        array(
+            'class'             => 'button-link',
+            'data-base-target'  => '_next',
+            'icon'              => 'plus',
+            'title'             => $this->translate('Add user to group')
+        )
+    ) ?>
+<?php endif ?>
+
 <?php
 
 $firstRow = true;
 foreach ($members as $member): ?>
 <?php if ($firstRow): ?>
   <?php $firstRow = false; ?>
-  <table data-base-target="_next" class="action member-list">
+  <table data-base-target="_next" class="action-table listing-table">
     <thead>
       <tr>
         <th class="member-name"><?= $this->translate('Username'); ?></th>
@@ -86,7 +100,7 @@ foreach ($members as $member): ?>
         <?php endif ?>
         </td>
        <?php if (isset($removeForm)): ?>
-        <td class="member-remove" data-base-target="_self">
+        <td class="icon-col" data-base-target="_self">
           <?php $removeForm->getElement('user_name')->setValue($member->user_name); echo $removeForm; ?>
         </td>
        <?php endif ?>
@@ -98,14 +112,4 @@ foreach ($members as $member): ?>
 <?php else: ?>
   <p><?= $this->translate('No group member found matching the filter'); ?></p>
 <?php endif ?>
-<?php if ($extensible): ?>
-  <?= $this->qlink($this->translate('Add a new member'), 'group/addmember', array(
-    'backend'           => $backend->getName(),
-    'group'             => $group->group_name
-  ), array(
-    'icon'              => 'plus',
-    'data-base-target'  => '_next',
-    'class'             => 'member-add'
-  )); ?>
- <?php endif ?>
 </div>

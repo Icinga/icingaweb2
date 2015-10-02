@@ -11,16 +11,24 @@ class StyleSheet
 {
     protected static $lessFiles = array(
         '../application/fonts/fontello-ifont/css/ifont-embedded.css',
+        'css/vendor/normalize.css',
         'css/vendor/tipsy.css',
+        'css/icinga/themes/icinga.less',
+        'css/icinga/colors.less',
+        'css/icinga/badges.less',
         'css/icinga/mixins.less',
-        'css/icinga/defaults.less',
+        'css/icinga/grid.less',
+        'css/icinga/base.less',
+        'css/icinga/nav.less',
+        'css/icinga/main.less',
+        'css/icinga/limiter.less',
         'css/icinga/animation.less',
         'css/icinga/layout-colors.less',
         'css/icinga/layout-structure.less',
         'css/icinga/menu.less',
         'css/icinga/header-elements.less',
         'css/icinga/footer-elements.less',
-        'css/icinga/main-content.less',
+//        'css/icinga/main-content.less',
         'css/icinga/tabs.less',
         'css/icinga/forms.less',
         'css/icinga/setup.less',
@@ -28,9 +36,11 @@ class StyleSheet
         'css/icinga/pagination.less',
         'css/icinga/selection-toolbar.less',
         'css/icinga/login.less',
-        'css/icinga/logo.less',
         'css/icinga/controls.less',
-        'css/icinga/about.less'
+        'css/icinga/dev.less',
+//        'css/icinga/logo.less',
+        'css/icinga/spinner.less',
+        'css/icinga/compat.less',
     );
 
     public static function compileForPdf()

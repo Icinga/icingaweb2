@@ -87,7 +87,11 @@ $this->addHelperFunction('icon', function ($img, $title = null, array $propertie
             $properties['class'] = 'icon';
         }
 
-        return $view->img('img/icons/' . $img, $properties);
+        if (strpos($img, '/') === false) {
+            return $view->img('img/icons/' . $img, $properties);
+        } else {
+            return $view->img($img, $properties);
+        }
     }
 
     $ariaHidden = array_key_exists('aria-hidden', $properties) ? $properties['aria-hidden'] : null;

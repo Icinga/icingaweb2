@@ -2,103 +2,113 @@
 use Icinga\Module\Monitoring\Object\Host;
 use Icinga\Module\Monitoring\Object\Service;
 
-$selfUrl = 'monitoring/list/services';
-$services->peekAhead($this->compact);
-
 if (! $this->compact): ?>
-<div class="controls separated">
-  <?= $this->tabs ?>
-  <div class="dontprint">
-    <?= $this->render('list/components/selectioninfo.phtml') ?>
-    <h1 class="tinystatesummary" <?= $this->compact ? ' data-base-target="col1"' : ''; ?>>
-      <?= $this->render('list/components/servicesummary.phtml') ?>
-    </h1>
-  </div>
-  <?= $this->sortBox ?>
-  <?= $this->limiter ?>
-  <?= $this->paginator ?>
-  <?= $this->filterEditor ?>
+<div class="controls separated dont-print">
+    <?= $this->tabs ?>
+    <div class="grid">
+        <?= $this->render('list/components/servicesummary.phtml') ?>
+        <?= $this->render('list/components/selectioninfo.phtml') ?>
+    </div>
+    <div class="grid">
+        <?= $this->limiter ?>
+        <?= $this->paginator ?>
+        <?= $this->sortBox ?>
+    </div>
+    <?= $this->filterEditor ?>
 </div>
 <?php endif ?>
 <div class="content">
-<table data-base-target="_next"
-    class="action multiselect <?php if ($this->compact): ?> compact<?php endif ?>" style="table-layout: auto;"
-    data-icinga-multiselect-url="<?= $this->href("monitoring/services/show") ?>"
-    data-icinga-multiselect-controllers="<?= $this->href("monitoring/services") ?>"
-    data-icinga-multiselect-data="service,host">
-  <tbody>
-<?php foreach ($services as $service):
-    $serviceLink = $this->href(
-      'monitoring/service/show',
-      array(
-        'host' => $service->host_name,
-        'service' => $service->service_description
-      )
-    );
-    $hostLink = $this->href(
-      'monitoring/host/show',
-      array(
-        'host' => $service->host_name,
-      )
-    );
-    $serviceStateName = Service::getStateText($service->service_state);
-?>
-    <tr class="state <?= $serviceStateName ?><?= $service->service_handled ? ' handled' : '' ?>">
-      <td class="state">
-        <strong><?= Service::getStateText($service->service_state, true) ?></strong>
-        <?php if ((int) $service->service_state !== 99): ?>
-          <br />
-          <?= $this->timeSince($service->service_last_state_change, $this->compact) ?>
-          <?php if ((int) $service->service_state > 0 && (int) $service->service_state_type === 0): ?>
-            <br />
-            <strong>Soft <?= $service->service_attempt ?></strong>
-          <?php endif ?>
-        <?php endif ?>
-      </td>
-
-      <td>
-        <?= $this->iconImage()->service($service) ?>
-        <span class="objectflags"><?= implode(' ', $this->serviceFlags($service)) ?></span>
-<?php if ($this->showHost): ?><?= $this->qlink(
-          $service->host_display_name . ($service->host_state != 0 ? ' (' . Host::getStateText($service->host_state, true) . ')' : ''),
-          $hostLink,
-          null,
-          array('title' => sprintf($this->translate('Show detailed information for host %s'), $service->host_display_name))
-        ) ?>: 
-<?php endif ?><?= $this->qlink(
-    $service->service_display_name,
-    $serviceLink,
-    null,
-    array(
-        'title' => sprintf(
-            $this->translate('Show detailed information for service %s on host %s'),
-            $service->service_display_name,
-            $service->host_display_name
-        ),
-        'class' => 'rowaction'
-    )
-) ?><br />
-        <div class="sparkline-box"><?= $this->perfdata($service->service_perfdata, true, 5) ?> </div>
-        <p class="pluginoutput"><?= $this->pluginOutput($this->ellipsis($service->service_output, 10000), true) ?></p>
-      </td>
-<?php foreach($this->addColumns as $col): ?>
-      <td><?= $this->escape($service->$col) ?></td>
-<?php endforeach ?>
-    </tr>
-<?php endforeach ?>
-  </tbody>
-</table>
 <?php if (! $services->hasResult()): ?>
-  <?= $this->translate('No services found matching the filter'); ?>
-<?php elseif ($services->hasMore()): ?>
-  <?= $this->qlink(
-    $this->translate('Show More'),
-    $this->url()->without(array('view', 'limit')),
-    null,
-    array(
-      'data-base-target'    => '_next',
-      'class'               => 'pull-right show-more'
-    )
-  ); ?>
+    <p><?= $this->translate('No services found matching the filter.') ?></p>
+</div>
+<?php return; endif ?>
+    <table data-base-target="_next"
+           class="action-table multiselect<?php if ($this->compact): ?> compact<?php endif ?>"
+           data-icinga-multiselect-url="<?= $this->href('monitoring/services/show') ?>"
+           data-icinga-multiselect-controllers="<?= $this->href('monitoring/services') ?>"
+           data-icinga-multiselect-data="service,host">
+    <tbody>
+    <?php foreach ($services->peekAhead($this->compact) as $service):
+        $serviceLink = $this->href(
+            'monitoring/service/show',
+            array(
+                'host'      => $service->host_name,
+                'service'   => $service->service_description
+            )
+        );
+        $hostLink = $this->href(
+            'monitoring/host/show',
+            array(
+                'host' => $service->host_name,
+            )
+        );
+        $serviceStateName = Service::getStateText($service->service_state); ?>
+        <tr>
+            <td class="state-col state-<?= $serviceStateName ?><?= $service->service_handled ? ' handled' : '' ?>">
+                <p>
+                    <span class="state-label"><?= Service::getStateText($service->service_state, true) ?></span>
+                <?php if ((int) $service->service_state !== 99): ?>
+                    <br>
+                    <?= $this->timeSince($service->service_last_state_change, $this->compact) ?>
+                <?php if ((int) $service->service_state > 0 && (int) $service->service_state_type === 0): ?>
+                    <br>
+                    <span class="text-small">Soft <?= $service->service_attempt ?></span>
+                <?php endif ?>
+                <?php endif ?>
+                </p>
+            </td>
+
+            <td class="clearfix">
+                <?= $this->iconImage()->service($service) ?>
+                <span class="pull-right"><?= implode(' ', $this->serviceFlags($service)) ?></span>
+                <?php if ($this->showHost): ?><?= $this->qlink(
+                    $service->host_display_name
+                    . ($service->host_state != 0 ? ' (' . Host::getStateText($service->host_state, true) . ')' : ''),
+                    $hostLink,
+                    null,
+                    array(
+                        'title' => sprintf(
+                            $this->translate('Show detailed information for host %s'),
+                            $service->host_display_name
+                        )
+                    )
+                ) ?>:
+                <?php endif ?><?= $this->qlink(
+                    $service->service_display_name,
+                    $serviceLink,
+                    null,
+                    array(
+                        'title' => sprintf(
+                            $this->translate('Show detailed information for service %s on host %s'),
+                            $service->service_display_name,
+                            $service->host_display_name
+                        ),
+                        'class' => 'rowaction'
+                    )
+                ) ?><br />
+                <div class="sparkline-box"><?= $this->perfdata($service->service_perfdata, true, 5) ?> </div>
+                <p class="plugin-output">
+                    <?= $this->pluginOutput($this->ellipsis($service->service_output, 10000), true) ?>
+                </p>
+            </td>
+        <?php foreach($this->addColumns as $col): ?>
+            <td><?= $this->escape($service->$col) ?></td>
+        <?php endforeach ?>
+        </tr>
+    <?php endforeach ?>
+    </tbody>
+    </table>
+<?php if ($services->hasMore()): ?>
+    <div class="text-right">
+        <?= $this->qlink(
+            $this->translate('Show More'),
+            $this->url()->without(array('view', 'limit')),
+            null,
+            array(
+                'data-base-target'  => '_next',
+                'class'             => 'action-link'
+            )
+        ) ?>
+    </div>
 <?php endif ?>
 </div>

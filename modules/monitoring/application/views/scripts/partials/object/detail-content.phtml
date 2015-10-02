@@ -1,0 +1,52 @@
+<div class="content" data-base-target="_next">
+    <?= $this->render('show/components/output.phtml') ?>
+    <?= $this->render('show/components/grapher.phtml') ?>
+
+    <h2><?= $this->translate('Problem handling') ?></h2>
+    <table class="name-value-table">
+    <tbody>
+        <?= $this->render('show/components/acknowledgement.phtml') ?>
+        <?= $this->render('show/components/comments.phtml') ?>
+        <?= $this->render('show/components/downtime.phtml') ?>
+        <?= $this->render('show/components/notes.phtml') ?>
+        <?= $this->render('show/components/actions.phtml') ?>
+        <?= $this->render('show/components/flapping.phtml') ?>
+    <?php if ($object->type === 'service'): ?>
+        <?= $this->render('show/components/servicegroups.phtml') ?>
+    <?php else: ?>
+        <?= $this->render('show/components/hostgroups.phtml') ?>
+    <?php endif ?>
+    </tbody>
+    </table>
+
+    <?= $this->render('show/components/perfdata.phtml') ?>
+
+    <h2><?= $this->translate('Notifications') ?></h2>
+    <table class="name-value-table">
+    <tbody>
+        <?= $this->render('show/components/notifications.phtml') ?>
+        <?= $this->render('show/components/contacts.phtml') ?>
+    </tbody>
+    </table>
+
+    <h2><?= $this->translate('Check execution') ?></h2>
+    <table class="name-value-table">
+    <tbody>
+        <?= $this->render('show/components/command.phtml') ?>
+        <?= $this->render('show/components/checksource.phtml') ?>
+        <?= $this->render('show/components/checkstatistics.phtml') ?>
+        <?= $this->render('show/components/checktimeperiod.phtml') ?>
+    </tbody>
+    </table>
+
+    <?php if (! empty($object->customvars)): ?>
+    <h2><?= $this->translate('Custom Variables') ?></h2>
+    <table class="name-value-table">
+    <tbody>
+        <?= $this->render('show/components/customvars.phtml') ?>
+    </tbody>
+    </table>
+    <?php endif ?>
+
+    <?= $this->render('show/components/flags.phtml') ?>
+</div>

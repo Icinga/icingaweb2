@@ -152,7 +152,7 @@ class HostsController extends Controller
             ->setQueryString(
                 $this->hostList
                     ->objectsFilter()
-                    ->andFilter(FilterEqual::where('downtime_objecttype', 'host'))
+                    ->andFilter(FilterEqual::where('object_type', 'host'))
                     ->toQueryString()
             );
         $this->view->commentsLink = Url::fromRequest()->setPath('monitoring/list/comments');

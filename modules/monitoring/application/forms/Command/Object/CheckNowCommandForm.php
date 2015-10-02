@@ -18,7 +18,7 @@ class CheckNowCommandForm extends ObjectsCommandForm
      */
     public function init()
     {
-        $this->setAttrib('class', 'inline link-like');
+        $this->setAttrib('class', 'inline');
     }
 
     /**
@@ -32,15 +32,17 @@ class CheckNowCommandForm extends ObjectsCommandForm
                 'button',
                 'btn_submit',
                 array(
-                    'ignore'        => true,
-                    'type'          => 'submit',
-                    'value'         => $this->translate('Check now'),
-                    'label'         => '<i aria-hidden="true" class="icon-reschedule"></i>'
-                        . $this->translate('Check now'),
-                    'decorators'    => array('ViewHelper'),
+                    'class'         => 'link-button spinner',
+                    'decorators'    => array(
+                        'ViewHelper',
+                        array('HtmlTag', array('tag' => 'div', 'class' => 'control-group form-controls'))
+                    ),
                     'escape'        => false,
-                    'class'         => 'link-like spinner',
-                    'title'         => $this->translate('Schedule the next active check to run immediately')
+                    'ignore'        => true,
+                    'label'         => $this->getView()->icon('reschedule') . $this->translate('Check now'),
+                    'type'          => 'submit',
+                    'title'         => $this->translate('Schedule the next active check to run immediately'),
+                    'value'         => $this->translate('Check now')
                 )
             )
         ));

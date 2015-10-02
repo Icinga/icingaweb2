@@ -1,0 +1,45 @@
+.grid {
+  .clearfix();
+}
+
+[class^="col-"],
+[class*=" col-"] {
+  .pull-left();
+  // Fix that empty columns don't consume their width
+  min-height: 1px;
+}
+
+.controls {
+  [class^="col-"],
+  [class*=" col-"] {
+    padding: @vertical-padding / 2 0;
+  }
+}
+
+.col-1-2 {
+  width: 50%;
+}
+
+.col-1-3 {
+  width: 33.33%;
+}
+
+.col-2-3 {
+  width: 66.66%;
+}
+
+.col-3-3 {
+  width: 100%;
+}
+
+// TODO(el): Set proper breakpoints
+#layout.twocols,
+#layout.compact-layout,
+#layout.minimal-layout,
+#layout.poor-layout {
+  [class^="col-"],
+  [class*=" col-"] {
+    float: none;
+    width: 100%;
+  }
+}

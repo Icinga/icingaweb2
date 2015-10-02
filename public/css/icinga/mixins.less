@@ -1,5 +1,42 @@
 /*! Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
+.box-sizing(@sizing: border-box) {
+  -webkit-box-sizing: @sizing;
+     -moz-box-sizing: @sizing;
+          box-sizing: @sizing;
+}
+
+.button() {
+  .rounded-corners(3px);
+  background-color: @body-bg-color;
+  border: 2px solid @icinga-blue;
+  color: @icinga-blue;
+  cursor: pointer;
+  padding: @vertical-padding @horizontal-padding;
+
+  -webkit-transition: background 0.3s ease, color 0.3s ease;
+     -moz-transition: background 0.3s ease, color 0.3s ease;
+       -o-transition: background 0.3s ease, color 0.3s ease;
+          transition: background 0.3s ease, color 0.3s ease;
+
+  &:hover {
+    background-color: @icinga-blue;
+    color: @text-color-inverted;
+    text-decoration: none;
+  }
+}
+
+.invisible {
+  // Maintain layout but hide visually and from screen readers
+  visibility: hidden;
+}
+
+.opacity(@opacity: 0.6) {
+  -webkit-opacity: @opacity;
+     -moz-opacity: @opacity;
+          opacity: @opacity;
+}
+
 .transform(@transform) {
   -webkit-transform: @transform;
      -moz-transform: @transform;
@@ -16,4 +53,8 @@
   -webkit-background-clip: padding-box;
      -moz-background-clip: padding;
           background-clip: padding-box;
+}
+
+.visible {
+  visibility: visible;
 }

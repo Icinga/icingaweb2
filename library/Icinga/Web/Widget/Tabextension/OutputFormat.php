@@ -101,7 +101,7 @@ class OutputFormat implements Tabextension
             $supportedTypes[self::TYPE_JSON] = array(
                 'name'      => 'json',
                 'label'     => 'JSON',
-                'icon'      => 'img/icons/json.png',
+                'icon'      => 'doc-text',
                 'urlParams' => array('format' => 'json')
             );
         }

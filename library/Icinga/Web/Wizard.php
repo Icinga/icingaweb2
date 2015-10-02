@@ -608,6 +608,7 @@ class Wizard
                 'button',
                 static::BTN_NEXT,
                 array(
+                    'class'         => 'control-button',
                     'type'          => 'submit',
                     'value'         => $pages[1]->getName(),
                     'label'         => t('Next'),
@@ -619,6 +620,7 @@ class Wizard
                 'button',
                 static::BTN_PREV,
                 array(
+                    'class'             => 'control-button',
                     'type'              => 'submit',
                     'value'             => $pages[$index - 1]->getName(),
                     'label'             => t('Back'),
@@ -630,6 +632,7 @@ class Wizard
                 'button',
                 static::BTN_NEXT,
                 array(
+                    'class'         => 'control-button',
                     'type'          => 'submit',
                     'value'         => $pages[$index + 1]->getName(),
                     'label'         => t('Next'),
@@ -641,6 +644,7 @@ class Wizard
                 'button',
                 static::BTN_PREV,
                 array(
+                    'class'             => 'control-button',
                     'type'              => 'submit',
                     'value'             => $pages[$index - 1]->getName(),
                     'label'             => t('Back'),
@@ -652,6 +656,7 @@ class Wizard
                 'button',
                 static::BTN_NEXT,
                 array(
+                    'class'         => 'control-button',
                     'type'          => 'submit',
                     'value'         => $page->getName(),
                     'label'         => t('Finish'),

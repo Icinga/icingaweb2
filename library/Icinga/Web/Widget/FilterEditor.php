@@ -235,7 +235,7 @@ class FilterEditor extends AbstractWidget
                 $filter = $this->mergeRootExpression($filter, trim($k), '=', ltrim($v));
             } else {
                 if ($this->searchColumns === null && $this->query instanceof FilterColumns) {
-                    $this->searchColumns = $this->query->getSearchColumns();
+                    $this->searchColumns = $this->query->getSearchColumns($search);
                 }
 
                 if (! empty($this->searchColumns)) {

@@ -35,7 +35,7 @@ class RequirementsRenderer extends RecursiveIteratorIterator
     {
         foreach ($this as $requirement) {
             $this->tags[] = '<li class="clearfix">';
-            $this->tags[] = '<div class="title"><h3>' . $requirement->getTitle() . '</h3></div>';
+            $this->tags[] = '<div class="title"><h2>' . $requirement->getTitle() . '</h2></div>';
             $this->tags[] = '<div class="description">';
             $descriptions = $requirement->getDescriptions();
             if (count($descriptions) > 1) {

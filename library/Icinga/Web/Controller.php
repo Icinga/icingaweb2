@@ -79,6 +79,23 @@ class Controller extends ModuleActionController
     }
 
     /**
+     * Render the given form using a simple view script
+     *
+     * @param   Form    $form
+     * @param   string  $tab
+     */
+    public function renderForm(Form $form, $tab)
+    {
+        $this->getTabs()->add(uniqid(), array(
+            'active'    => true,
+            'label'     => $tab,
+            'url'       => Url::fromRequest()
+        ));
+        $this->view->form = $form;
+        $this->render('simple-form', null, true);
+    }
+
+    /**
      * Create a SortBox widget and apply its sort rules on the given query
      *
      * The widget is set on the `sortBox' view property only if the current view has not been requested as compact

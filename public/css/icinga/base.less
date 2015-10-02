@@ -1,0 +1,84 @@
+/*! Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
+
+// Make padding not affect the final computed width of an element
+html {
+  box-sizing: border-box;
+}
+*,
+*:before,
+*:after {
+  .box-sizing(inherit);
+}
+
+a {
+  // Reset defaults
+  color: inherit;
+  font-weight: @font-weight-bold;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+blockquote {
+  border-left: 6px solid @gray-light;
+  color: @text-color-light;
+  // Reset default margin
+  margin: 0;
+  font-family: @font-family-fixed;
+  padding: @vertical-padding @horizontal-padding;
+}
+
+body {
+  background-color: @body-bg-color;
+  color: @text-color;
+  font-family: @font-family;
+  font-size: @font-size;
+  line-height: @line-height;
+}
+
+h1 {
+  border-bottom: 1px solid @gray-lightest;
+  font-size: 18px;
+  font-weight: normal;
+  line-height: 22px;
+}
+
+h2 {
+  border-bottom: 1px solid @gray-lightest;
+  font-size: 16px;
+  font-weight: normal;
+  line-height: 19px;
+}
+
+p {
+  color: @text-color;
+  font-size: @font-size;
+  line-height: @line-height;
+  // Remove default margin
+  margin: 0;
+}
+
+pre {
+  background-color: @gray-lightest;
+  color: @text-color-light;
+  font-family: @font-family-fixed;
+  padding: @vertical-padding @horizontal-padding;
+}
+
+table {
+  border-collapse: separate;
+  border-spacing: 0 1px;
+  width: 100%;
+}
+
+td {
+  padding: @vertical-padding / 2 @horizontal-padding / 2;
+}
+
+@media print {
+  .dont-print {
+    display:none;
+  }
+}

@@ -23,6 +23,30 @@ class DeleteDowntimeCommandForm extends CommandForm
     /**
      * {@inheritdoc}
      */
+    public function addSubmitButton()
+    {
+        $this->addElement(
+            'button',
+            'btn_submit',
+            array(
+                'class'         => 'link-button spinner',
+                'decorators'    => array(
+                    'ViewHelper',
+                    array('HtmlTag', array('tag' => 'div', 'class' => 'control-group form-controls'))
+                ),
+                'escape'        => false,
+                'ignore'        => true,
+                'label'         => $this->getView()->icon('cancel'),
+                'title'         => $this->translate('Delete this downtime'),
+                'type'          => 'submit'
+            )
+        );
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function createElements(array $formData = array())
     {
         $this->addElements(
@@ -31,17 +55,17 @@ class DeleteDowntimeCommandForm extends CommandForm
                     'hidden',
                     'downtime_id',
                     array(
-                        'required' => true,
-                        'validators' => array('NotEmpty'),
-                        'decorators' => array('ViewHelper')
+                        'decorators'    => array('ViewHelper'),
+                        'required'      => true,
+                        'validators'    => array('NotEmpty')
                     )
                 ),
                 array(
                     'hidden',
                     'downtime_is_service',
                     array(
-                        'filters' => array('Boolean'),
-                        'decorators' => array('ViewHelper')
+                        'decorators'    => array('ViewHelper'),
+                        'filters'       => array('Boolean')
                     )
                 ),
                 array(
@@ -51,27 +75,6 @@ class DeleteDowntimeCommandForm extends CommandForm
                         'decorators' => array('ViewHelper')
                     )
                 )
-            )
-        );
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function addSubmitButton()
-    {
-        $this->addElement(
-            'button',
-            'btn_submit',
-            array(
-                'ignore'        => true,
-                'escape'        => false,
-                'type'          => 'submit',
-                'class'         => 'link-like spinner',
-                'label'         => $this->getView()->icon('trash'),
-                'title'         => $this->translate('Delete this downtime'),
-                'decorators'    => array('ViewHelper')
             )
         );
         return $this;

@@ -125,14 +125,24 @@ class NavigationController extends Controller
         $this->view->types = $this->listItemTypes();
         $this->view->items = $query;
 
-        $this->getTabs()->add(
+        $this->getTabs()
+        ->add(
+            'preferences',
+            array(
+                'title' => $this->translate('Adjust the preferences of Icinga Web 2 according to your needs'),
+                'label' => $this->translate('Preferences'),
+                'url'   => 'preference'
+            )
+        )
+        ->add(
             'navigation',
             array(
+                'active'    => true,
                 'title'     => $this->translate('List and configure your own navigation items'),
                 'label'     => $this->translate('Navigation'),
                 'url'       => 'navigation'
             )
-        )->activate('navigation');
+        );
         $this->setupSortControl(
             array(
                 'type'  => $this->translate('Type'),
@@ -202,7 +212,6 @@ class NavigationController extends Controller
         $form->setRedirectUrl('navigation');
         $form->setUser($this->Auth()->getUser());
         $form->setItemTypes($this->listItemTypes());
-        $form->setTitle($this->translate('Create New Navigation Item'));
         $form->addDescription($this->translate('Create a new navigation item, such as a menu entry or dashlet.'));
 
         // TODO: Fetch all "safe" parameters from the url and populate them
@@ -231,8 +240,7 @@ class NavigationController extends Controller
         });
         $form->handleRequest();
 
-        $this->view->form = $form;
-        $this->render('form');
+        $this->renderForm($form, $this->translate('New Navigation Item'));
     }
 
     /**
@@ -256,7 +264,6 @@ class NavigationController extends Controller
         $form->setShareConfig(Config::navigation($itemType));
         $form->setUserConfig(Config::navigation($itemType, $itemOwner));
         $form->setRedirectUrl($referrer === 'shared' ? 'navigation/shared' : 'navigation');
-        $form->setTitle(sprintf($this->translate('Edit %s %s'), $this->getItemLabel($itemType), $itemName));
         $form->setOnSuccess(function (NavigationConfigForm $form) use ($itemName) {
             $data = array_map(
                 function ($v) {
@@ -293,8 +300,7 @@ class NavigationController extends Controller
             $this->httpNotFound(sprintf($this->translate('Navigation item "%s" not found'), $itemName));
         }
 
-        $this->view->form = $form;
-        $this->render('form');
+        $this->renderForm($form, $this->translate('Update Navigation Item'));
     }
 
     /**
@@ -313,7 +319,6 @@ class NavigationController extends Controller
 
         $form = new ConfirmRemovalForm();
         $form->setRedirectUrl('navigation');
-        $form->setTitle(sprintf($this->translate('Remove %s %s'), $this->getItemLabel($itemType), $itemName));
         $form->setOnSuccess(function (ConfirmRemovalForm $form) use ($itemName, $navigationConfigForm) {
             try {
                 $itemConfig = $navigationConfigForm->delete($itemName);
@@ -338,8 +343,7 @@ class NavigationController extends Controller
         });
         $form->handleRequest();
 
-        $this->view->form = $form;
-        $this->render('form');
+        $this->renderForm($form, $this->translate('Remove Navigation Item'));
     }
 
     /**

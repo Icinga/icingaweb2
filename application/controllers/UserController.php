@@ -162,8 +162,7 @@ class UserController extends AuthBackendController
         $form->setRepository($backend);
         $form->add()->handleRequest();
 
-        $this->view->form = $form;
-        $this->render('form');
+        $this->renderForm($form, $this->translate('New User'));
     }
 
     /**
@@ -185,8 +184,7 @@ class UserController extends AuthBackendController
             $this->httpNotFound(sprintf($this->translate('User "%s" not found'), $userName));
         }
 
-        $this->view->form = $form;
-        $this->render('form');
+        $this->renderForm($form, $this->translate('Update User'));
     }
 
     /**
@@ -208,8 +206,7 @@ class UserController extends AuthBackendController
             $this->httpNotFound(sprintf($this->translate('User "%s" not found'), $userName));
         }
 
-        $this->view->form = $form;
-        $this->render('form');
+        $this->renderForm($form, $this->translate('Remove User'));
     }
 
     /**
@@ -306,6 +303,18 @@ class UserController extends AuthBackendController
     {
         $tabs = $this->getTabs();
         $tabs->add(
+            'role/list',
+            array(
+                'baseTarget'    => '_main',
+                'label'         => $this->translate('Roles'),
+                'title'         => $this->translate(
+                    'Configure roles to permit or restrict users and groups accessing Icinga Web 2'
+                ),
+                'url'           => 'role/list'
+
+            )
+        );
+        $tabs->add(
             'user/list',
             array(
                 'title'     => $this->translate('List users of authentication backends'),
@@ -314,7 +323,15 @@ class UserController extends AuthBackendController
                 'url'       => 'user/list'
             )
         );
-
+        $tabs->add(
+            'group/list',
+            array(
+                'title'     => $this->translate('List groups of user group backends'),
+                'label'     => $this->translate('User Groups'),
+                'icon'      => 'users',
+                'url'       => 'group/list'
+            )
+        );
         return $tabs;
     }
 }

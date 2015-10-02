@@ -63,7 +63,7 @@ class NavigationItemRenderer
      */
     public function init()
     {
-        
+
     }
 
     /**
@@ -196,13 +196,15 @@ class NavigationItemRenderer
                 $this->renderTargetAttribute(),
                 $label
             );
-        } else {
+        } elseif ($label) {
             $content = sprintf(
                 '<%1$s%2$s>%3$s</%1$s>',
                 $item::LINK_ALTERNATIVE,
                 $this->view()->propertiesToString($item->getAttributes()),
                 $label
             );
+        } else {
+            $content = '';
         }
 
         return $content;

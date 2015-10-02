@@ -212,6 +212,22 @@ class Url
     }
 
     /**
+     * Set the new Filter of the url to be the current filter and the given filter
+     *
+     * @param Filter $and
+     */
+    public function addFilter($and)
+    {
+        $this->setQueryString(
+            Filter::matchAll(
+                $and,
+                Filter::fromQueryString($this->getQueryString())
+            )->toQueryString()
+        );
+        return $this;
+    }
+
+    /**
      * Overwrite the baseUrl
      *
      * @param   string  $baseUrl    The url path to use as the Url Base

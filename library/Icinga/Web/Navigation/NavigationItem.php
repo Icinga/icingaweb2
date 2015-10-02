@@ -37,6 +37,13 @@ class NavigationItem implements IteratorAggregate
     protected $active;
 
     /**
+     * The CSS class used for the outer li element
+     *
+     * @var string
+     */
+    protected $cssClass;
+
+    /**
      * This item's priority
      *
      * The priority defines when the item is rendered in relation to its parent's childs.
@@ -196,6 +203,29 @@ class NavigationItem implements IteratorAggregate
             $this->getParent()->setActive();
         }
 
+        return $this;
+    }
+
+    /**
+     * Get the CSS class used for the outer li element
+     *
+     * @return  string
+     */
+    public function getCssClass()
+    {
+        return $this->cssClass;
+    }
+
+    /**
+     * Set the CSS class to use for the outer li element
+     *
+     * @param   string  $class
+     *
+     * @return  $this
+     */
+    public function setCssClass($class)
+    {
+        $this->cssClass = (string) $class;
         return $this;
     }
 
@@ -435,7 +465,7 @@ class NavigationItem implements IteratorAggregate
      */
     public function getLabel()
     {
-        return $this->label ?: $this->getName();
+        return $this->label !== null ? $this->label : $this->getName();
     }
 
     /**

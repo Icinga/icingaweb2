@@ -19,6 +19,7 @@ use Icinga\Forms\ConfirmRemovalForm;
 use Icinga\Security\SecurityException;
 use Icinga\Web\Controller;
 use Icinga\Web\Notification;
+use Icinga\Web\Url;
 use Icinga\Web\Widget;
 
 /**
@@ -55,13 +56,13 @@ class ConfigController extends Controller
         $tabs = $this->getTabs();
         $tabs->add('userbackend', array(
             'title' => $this->translate('Configure how users authenticate with and log into Icinga Web 2'),
-            'label' => $this->translate('User Backends'),
+            'label' => $this->translate('Users'),
             'url'   => 'config/userbackend',
             'baseTarget' => '_main'
         ));
         $tabs->add('usergroupbackend', array(
             'title' => $this->translate('Configure how users are associated with groups by Icinga Web 2'),
-            'label' => $this->translate('User Group Backends'),
+            'label' => $this->translate('User Groups'),
             'url'   => 'usergroupbackend/list',
             'baseTarget' => '_main'
         ));
@@ -210,13 +211,13 @@ class ConfigController extends Controller
     {
         $this->assertPermission('config/application/userbackend');
         $form = new UserBackendConfigForm();
-        $form->setRedirectUrl('config/userbackend');
-        $form->setTitle($this->translate('Create New User Backend'));
-        $form->addDescription($this->translate(
-            'Create a new backend for authenticating your users. This backend'
-            . ' will be added at the end of your authentication order.'
-        ));
-        $form->setIniConfig(Config::app('authentication'));
+        $form
+            ->setRedirectUrl('config/userbackend')
+            ->addDescription($this->translate(
+                'Create a new backend for authenticating your users. This backend'
+                . ' will be added at the end of your authentication order.'
+            ))
+            ->setIniConfig(Config::app('authentication'));
 
         try {
             $form->setResourceConfig(ResourceFactory::getResourceConfigs());
@@ -246,8 +247,7 @@ class ConfigController extends Controller
         });
         $form->handleRequest();
 
-        $this->view->form = $form;
-        $this->render('form');
+        $this->renderForm($form, $this->translate('New User Backend'));
     }
 
     /**
@@ -260,7 +260,6 @@ class ConfigController extends Controller
 
         $form = new UserBackendConfigForm();
         $form->setRedirectUrl('config/userbackend');
-        $form->setTitle(sprintf($this->translate('Edit User Backend %s'), $backendName));
         $form->setIniConfig(Config::app('authentication'));
         $form->setOnSuccess(function (UserBackendConfigForm $form) use ($backendName) {
             try {
@@ -291,8 +290,7 @@ class ConfigController extends Controller
             $this->httpNotFound(sprintf($this->translate('User backend "%s" not found'), $backendName));
         }
 
-        $this->view->form = $form;
-        $this->render('form');
+        $this->renderForm($form, $this->translate('Update User Backend'));
     }
 
     /**
@@ -307,7 +305,6 @@ class ConfigController extends Controller
         $backendForm->setIniConfig(Config::app('authentication'));
         $form = new ConfirmRemovalForm();
         $form->setRedirectUrl('config/userbackend');
-        $form->setTitle(sprintf($this->translate('Remove User Backend %s'), $backendName));
         $form->setOnSuccess(function (ConfirmRemovalForm $form) use ($backendName, $backendForm) {
             try {
                 $backendForm->delete($backendName);
@@ -325,8 +322,7 @@ class ConfigController extends Controller
         });
         $form->handleRequest();
 
-        $this->view->form = $form;
-        $this->render('form');
+        $this->renderForm($form, $this->translate('Remove User Backend'));
     }
 
     /**
@@ -345,8 +341,11 @@ class ConfigController extends Controller
     public function createresourceAction()
     {
         $this->assertPermission('config/application/resources');
+        $this->getTabs()->add('resources/new', array(
+            'label' => $this->translate('New Resource'),
+            'url'   => Url::fromRequest()
+        ))->activate('resources/new');
         $form = new ResourceConfigForm();
-        $form->setTitle($this->translate('Create A New Resource'));
         $form->addDescription($this->translate('Resources are entities that provide data to Icinga Web 2.'));
         $form->setIniConfig(Config::app('resources'));
         $form->setRedirectUrl('config/resource');
@@ -362,8 +361,11 @@ class ConfigController extends Controller
     public function editresourceAction()
     {
         $this->assertPermission('config/application/resources');
+        $this->getTabs()->add('resources/update', array(
+            'label' => $this->translate('Update Resource'),
+            'url'   => Url::fromRequest()
+        ))->activate('resources/update');
         $form = new ResourceConfigForm();
-        $form->setTitle($this->translate('Edit Existing Resource'));
         $form->setIniConfig(Config::app('resources'));
         $form->setRedirectUrl('config/resource');
         $form->handleRequest();
@@ -378,6 +380,10 @@ class ConfigController extends Controller
     public function removeresourceAction()
     {
         $this->assertPermission('config/application/resources');
+        $this->getTabs()->add('resources/remove', array(
+            'label' => $this->translate('Remove Resource'),
+            'url'   => Url::fromRequest()
+        ))->activate('resources/remove');
         $form = new ConfirmRemovalForm(array(
             'onSuccess' => function ($form) {
                 $configForm = new ResourceConfigForm();
@@ -398,7 +404,6 @@ class ConfigController extends Controller
                 }
             }
         ));
-        $form->setTitle($this->translate('Remove Existing Resource'));
         $form->setRedirectUrl('config/resource');
         $form->handleRequest();
 

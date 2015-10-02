@@ -13,4 +13,4 @@ if ($searchDashboard->search('dummy')->getPane('search')->hasDashlets()): ?>
         />
     </form>
 <?php endif; ?>
-<?= $menuRenderer->setHeading(t('Navigation'))->setElementTag('nav'); ?>
+<?= $menuRenderer->setCssClass('primary-nav')->setElementTag('nav')->setHeading(t('Navigation')); ?>

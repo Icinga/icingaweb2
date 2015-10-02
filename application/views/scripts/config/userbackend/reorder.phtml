@@ -1,11 +1,17 @@
 <div class="controls">
-  <?= $tabs; ?>
+    <?= $tabs ?>
 </div>
-<div class="content" data-base-target="_next">
-  <a href="<?= $this->href('config/createuserbackend'); ?>">
-    <?= $this->icon('plus'); ?><?= $this->translate('Create A New User Backend'); ?>
-  </a>
-  <div id="authentication-reorder-form">
-    <?= $form; ?>
-  </div>
+<div class="content">
+    <?= $this->qlink(
+        $this->translate('Create a New User Backend') ,
+        'config/createuserbackend',
+        null,
+        array(
+            'class'             => 'button-link',
+            'data-base-target'  => '_next',
+            'icon'              => 'plus',
+            'title'             => $this->translate('Create a new user backend')
+        )
+    ) ?>
+    <?= $form ?>
 </div>

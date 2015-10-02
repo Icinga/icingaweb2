@@ -567,7 +567,7 @@
                     top      : $parent.offset().top,
                     // Firefox gives 1px too much depending on total width.
                     // TODO: find a better solution for -1
-                    width    : ($fake.width() - 1) + 'px'
+                    width    : ($fake.outerWidth() - 1) + 'px'
                 });
 
                 $fake.css({

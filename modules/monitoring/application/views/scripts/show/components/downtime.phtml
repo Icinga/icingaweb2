@@ -8,8 +8,9 @@ if ($this->hasPermission('monitoring/command/downtime/schedule')) {
             'monitoring/host/schedule-downtime',
             array('host' => $object->getName()),
             array(
-                'icon'              => 'plug',
+                'class'             => 'action-link',
                 'data-base-target'  => '_self',
+                'icon'              => 'plug',
                 'title'             => $this->translate(
                     'Schedule a downtime to suppress all problem notifications within a specific period of time'
                 )
@@ -21,8 +22,9 @@ if ($this->hasPermission('monitoring/command/downtime/schedule')) {
             'monitoring/service/schedule-downtime',
             array('host' => $object->getHost()->getName(), 'service' => $object->getName()),
             array(
-                'icon'              => 'plug',
+                'class'             => 'action-link',
                 'data-base-target'  => '_self',
+                'icon'              => 'plug',
                 'title'             => $this->translate(
                     'Schedule a downtime to suppress all problem notifications within a specific period of time'
                 )
@@ -45,7 +47,7 @@ if (empty($object->comments) && ! $addLink) {
     <?php if (empty($object->downtimes)):
         echo $addLink;
     else: ?>
-        <ul class="inline-comments">
+        <dl class="feed-list">
         <?php foreach ($object->downtimes as $downtime):
             if ((bool) $downtime->is_in_effect) {
                 $state = sprintf(
@@ -73,30 +75,30 @@ if (empty($object->comments) && ! $addLink) {
             // Form is unset if the current user lacks the respective permission
             if (isset($delDowntimeForm)) {
                 $deleteButton = clone($delDowntimeForm);
+                $deleteButton->setAttrib('class', $deleteButton->getAttrib('class') . ' pull-right');
                 $deleteButton->populate(
                     array(
-                        'downtime_id' => $downtime->id,
-                        'downtime_is_service' => $object->getType() === $object::TYPE_SERVICE
+                        'downtime_id'           => $downtime->id,
+                        'downtime_is_service'   => $object->getType() === $object::TYPE_SERVICE
                     )
                 );
             } else {
                 $deleteButton = '';
             }
             ?>
-            <li class="comment-item">
-                <h3>
-                    <span class="author"><?= $this->escape($downtime->author_name) ?></span>
-                    <?= $this->timeAgo($downtime->entry_time) ?>
-                    <?= $deleteButton ?>
-                </h3>
-                <p>
-                    <span class="sr-only"><?= $this->translate('Downtime') ?></span>
-                    <?= $state ?> -
+            <dt class="clearfix feed-author">
+                <span class="author"><?= $this->escape($downtime->author_name) ?></span>
+                <?= $this->timeAgo($downtime->entry_time) ?>
+                <?= $deleteButton ?>
+             </dt>
+             <dd class="comment-text">
                     <?= str_replace(array('\r\n', '\n'), '<br>', $this->createTicketLinks($downtime->comment)) ?>
-                </p>
-             </li>
+            </dd>
+            <dd class="text-small">
+                <?= $state ?>
+            </dd>
         <?php endforeach ?>
-        </ul>
+        </dl>
     <?php endif ?>
     </td>
 </tr>

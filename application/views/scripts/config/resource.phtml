@@ -1,67 +1,76 @@
 <div class="controls">
-  <?= $tabs; ?>
+    <?= $tabs ?>
 </div>
-<div class="content" data-base-target="_next">
-  <a href="<?= $this->href('config/createresource'); ?>">
-    <?= $this->icon('plus'); ?> <?= $this->translate('Create A New Resource'); ?>
-  </a>
-  <table class="action alternating" id="resource-edit-table">
+<div class="content">
+    <?= $this->qlink(
+        $this->translate('Create a New Resource') ,
+        'config/createresource',
+        null,
+        array(
+            'class'             => 'button-link',
+            'data-base-target'  => '_next',
+            'icon'              => 'plus',
+            'title'             => $this->translate('Create a new resource')
+        )
+    ) ?>
+    <table class="action-table listing-table" data-base-target="_next">
     <thead>
-      <th><?= $this->translate('Resource'); ?></th>
-      <th style="width: 5em"><?= $this->translate('Remove'); ?></th>
+    <tr>
+        <th><?= $this->translate('Resource') ?></th>
+        <th></th>
+    </tr>
     </thead>
     <tbody>
-    <?php foreach ($this->resources as $name => $value): ?>
-      <tr>
+<?php foreach ($this->resources as $name => $value): ?>
+    <tr>
         <td>
-          <?php
-          switch ($value->type) {
-            case 'db':
-              $icon = 'database';
-              break;
-            case 'ldap':
-              $icon = 'sitemap';
-              break;
-            case 'livestatus':
-              $icon = 'flash';
-              break;
-            case 'ssh':
-              $icon = 'user';
-              break;
-            case 'file':
-            case 'ini':
-              $icon = 'doc-text';
-              break;
-            default:
-              $icon = 'edit';
-              break;
-          }
-          ?>
-          <?= $this->qlink(
-            $name,
-            'config/editresource',
-            array('resource' => $name),
-            array(
-                'icon'  => $icon,
-                'title' => sprintf($this->translate('Edit resource %s'), $name)
-            )
-          ); ?>
-        </td>
-        <td>
-          <center>
+            <?php
+            switch ($value->type) {
+                case 'db':
+                    $icon = 'database';
+                    break;
+                case 'ldap':
+                    $icon = 'sitemap';
+                    break;
+                case 'livestatus':
+                    $icon = 'flash';
+                    break;
+                case 'ssh':
+                    $icon = 'user';
+                    break;
+                case 'file':
+                case 'ini':
+                    $icon = 'doc-text';
+                    break;
+                default:
+                    $icon = 'edit';
+                    break;
+            }
+            ?>
             <?= $this->qlink(
-              '',
-              'config/removeresource',
-              array('resource' => $name),
-              array(
-                  'icon'    => 'trash',
-                  'title'   => sprintf($this->translate('Remove resource %s'), $name)
-              )
-            ); ?>
-          </center>
+                $name,
+                'config/editresource',
+                array('resource' => $name),
+                array(
+                    'icon'  => $icon,
+                    'title' => sprintf($this->translate('Edit resource %s'), $name)
+                )
+            ) ?>
         </td>
-      </tr>
-    <?php endforeach; ?>
+        <td class="icon-col text-right">
+            <?= $this->qlink(
+                '',
+                'config/removeresource',
+                array('resource' => $name),
+                array(
+                    'class'   => 'action-link',
+                    'icon'    => 'cancel',
+                    'title'   => sprintf($this->translate('Remove resource %s'), $name)
+                )
+            ) ?>
+        </td>
+    </tr>
+<?php endforeach ?>
     </tbody>
-  </table>
+    </table>
 </div>

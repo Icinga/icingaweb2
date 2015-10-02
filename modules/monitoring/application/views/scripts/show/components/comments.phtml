@@ -8,8 +8,9 @@ if ($this->hasPermission('monitoring/command/comment/add')) {
             'monitoring/host/add-comment',
             array('host' => $object->getName()),
             array(
-                'icon'              => 'comment',
+                'class'             => 'action-link',
                 'data-base-target'  => '_self',
+                'icon'              => 'comment',
                 'title'             => $this->translate('Add a new comment to this host')
             )
         );
@@ -19,8 +20,9 @@ if ($this->hasPermission('monitoring/command/comment/add')) {
             'monitoring/service/add-comment',
             array('host' => $object->getHost()->getName(), 'service' => $object->getName()),
             array(
-                'icon'              => 'comment',
+                'class'             => 'action-link',
                 'data-base-target'  => '_self',
+                'icon'              => 'comment',
                 'title'             => $this->translate('Add a new comment to this service')
             )
         );
@@ -41,34 +43,36 @@ if (empty($object->comments) && ! $addLink) {
     <?php if (empty($object->comments)):
         echo $addLink;
     else: ?>
-        <ul class="inline-comments">
+        <dl class="feed-list">
         <?php foreach ($object->comments as $comment):
             // Form is unset if the current user lacks the respective permission
             if (isset($delCommentForm)) {
                 $deleteButton = clone($delCommentForm);
+                /** @var \Icinga\Module\Monitoring\Forms\Command\Object\DeleteCommentCommandForm $deleteButton */
+                $deleteButton->setAttrib('class', $deleteButton->getAttrib('class') . ' pull-right');
                 $deleteButton->populate(
                     array(
-                        'comment_id' => $comment->id,
-                        'comment_is_service' => isset($comment->service_description)
+                        'comment_id'            => $comment->id,
+                        'comment_is_service'    => isset($comment->service_description)
                     )
                 );
             } else {
                 $deleteButton = '';
             }
             ?>
-            <li class="comment-item">
-                <h3>
-                    <span class="author"><?= $this->escape($comment->author) ?></span>
-                    <?= $this->timeAgo($comment->timestamp) ?>
+            <dt class="feed-author clearfix">
+                <?= $this->escape($comment->author) ?>
+                <span class="text-small"><?= $this->translate('commented') ?></span>
+                <?= $this->timeAgo($comment->timestamp) ?>
+            <?php if ($deleteButton): ?>
                     <?= $deleteButton ?>
-                </h3>
-                <p>
-                    <span class="sr-only">(<?= $this->translate('Comment') ?>): </span>
-                    <?= str_replace(array('\r\n', '\n'), '<br>', $this->createTicketLinks($comment->comment)) ?>
-                </p>
-            </li>
+            <?php endif ?>
+            </dt>
+            <dd class="comment-text">
+                <?= str_replace(array('\r\n', '\n'), '<br>', $this->createTicketLinks($comment->comment)) ?>
+            </dd>
         <?php endforeach ?>
-        </ul>
+        </dl>
     <?php endif ?>
     </td>
 </tr>

@@ -5,6 +5,11 @@
   overflow: auto;
 }
 
+#menu > nav > ul > li.nav-item.no-icon a {
+  display: inline-block;
+  padding-left: 28px;
+}
+
 #layout.hoveredmenu #menu {
   overflow: visible;
 }
@@ -15,8 +20,7 @@
 }
 
 #menu a {
-  outline: 0;
-  color: black;
+  color: @text-color-default;
 }
 
 #menu .separator {
@@ -47,26 +51,28 @@
   margin-right: 0;
 }
 
-#menu > nav > ul > li > a {
-  font-size: 0.9em;
-  text-shadow: none;
+#menu > nav > ul > li.active > a {
+  color: @icinga-blue;
 }
 
-#menu > nav > ul > li.active > a {
-  color: @colorTextDefault;
-  text-shadow: none;
+#menu > nav > ul > li.active > div.clearfix > a {
+  color: @icinga-blue;
 }
 
 #menu > nav > ul > li.active li.active a {
-  color: @colorPetrol;
+  color: @icinga-blue;
 }
 
-#menu > nav > ul > li.active li a:hover {
-  text-decoration: underline;
+#menu > nav > ul > li a:hover {
+  color: @icinga-blue;
 }
 
-#menu > nav > ul > li {
-  border-bottom: 1px solid #d9d9d9;
+#menu > nav > ul > li.nav-item.hover > ul > li > a:hover {
+   color: @gray;
+}
+
+#menu > nav > ul > li.nav-item.hover > ul > li div.clearfix > a:hover {
+   color: @gray;
 }
 
 #menu > nav > ul > li li {
@@ -74,9 +80,28 @@
   padding-left: 1.6em;
 }
 
+#menu .badge {
+  margin-right: 5px;
+}
+
+#menu nav > ul > li.active > .badge {
+  margin-top: 15px;
+  margin-right: 5px;
+}
+
+#menu nav > ul > li > div > .badge{
+  margin-top: 8px;
+}
+
+#menu nav > ul > li.active > div > .badge{
+  display: none;
+}
+
+
 /* Collapsed menu item color */
 #menu > nav > ul > li > a {
-  color: @colorTextDefault;
+  color: @text-color-light;
+  font-weight: 500;
 }
 
 /* Sub item color */
@@ -91,10 +116,9 @@
 
 #menu ul li a {
   display: block;
-  line-height: 2.2em;
+  line-height: 2.8em;
   padding-left: 0.7em;
   text-decoration: none;
-  overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
 }
@@ -106,53 +130,66 @@
 }
 
 #menu ul ul li a {
-  line-height: 1.2em;
-  padding-bottom: 1em;
+  line-height: 1.5em;
+  padding-top: 0.4em;
+  padding-bottom: 0.7em;
+}
+
+#menu ul ul li a {
 }
 
 #menu > nav > ul > li {
-  margin-left: 5px;
+  border-left: solid 5px @gray-lighter;
+}
+
+#menu > nav > ul > li > a {
+  color: @text-color;
 }
 
 #menu > nav > ul > li.active {
   -moz-box-shadow: none;
   -webkit-box-shadow: none;
   box-shadow: none;
-  border-left: solid 5px @colorPetrol;
+  border-left: solid 5px @icinga-blue;
+  -webkit-transition: border 0.5s;
+  -moz-transition: border 0.5s;
+  -o-transition: border 0.5s;
+  transition: border 0.5s;
 }
+
 
 /* BEGIN OF Hoverable menu */
 
 #menu li.hover {
-  width: 26em;
+  width: 27em;
   padding-left: 0.0em;
-  margin-left: 5px;
+  margin-left: 0px;
   margin-right: 5;
   position: relative;
 }
 
-#menu li.hover > ul {
+#menu li.hover > ul{
   position: absolute;
   display: block;
-  left: 11.5em;
+  left: 10.9em;
   right: 0;
   top: -0.5em;
-  padding-top: 1em;
+  padding-top: 0.8em;
   padding-left: 1em;
   padding-bottom: 0.5em;
   height: auto;
-  background-color: #222222;
+  background-color: @text-color;
+  font-size:15px;
 }
 
 #menu li.hover > a {
-  color: black;
   overflow: visible;
 }
 
 #menu li.hover > ul a {
-  width: 95%;
+  width: 90%;
   display: block;
-  color: white;
+  color: @text-color-inverted;
 }
 
 #menu li.hover > ul a:hover {
@@ -165,7 +202,7 @@
 
 #menu li.hover > ul > li.active > a {
   font-weight: bold;
-  color: white;
+  color: @text-color-light;
 }
 
 #menu li.hover li {
@@ -179,7 +216,7 @@
   margin-top: 0.8em;
   pointer-events: none;
   position: absolute;
-  left: 12em;
+  left: 10.8em;
   height: 0;
   width: 0;
 }
@@ -200,44 +237,48 @@
 }
 
 #menu input.search {
-  font-size: 0.9em;
+  font-size: 14px;
   margin: 0;
-  padding: 0 0.5em 0 2.8em;
+  padding: 0 0.5em 0 2.2em;
   border: none;
   width: 100%;
   border-radius: 0;
-  height: 2.2em;
+  height: 2.8em;
   display: block;
   outline: none;
   background-color: transparent;
   background-image: url('../img/icons/search.png');
   background-repeat: no-repeat;
-  background-position: 1.2em center;
+  background-position: 1.0em center;
   color: @colorTextDefault;
-  border-bottom: 1px solid #d9d9d9;
+  border-left: solid 5px @gray-lighter;
 }
 
 html.ie8 #menu input.search {
-  line-height: 2.5em;
+  line-height: 2.8em;
 }
 
 #menu input.search:-ms-input-placeholder {
-  color: @colorTextDefault;
+  color: @text-color;
 }
 
 #menu input.search::-webkit-input-placeholder {
-  color: @colorTextDefault;
+  color: @text-color;
 }
 
 #menu input.search::-moz-placeholder {
-  color: @colorTextDefault;
-  opacity: 1;
+  color: @text-color;
 }
 
 #menu input.search.active {
   background-color: white;
   color: #121212;
   text-shadow: none;
+  border-left: solid 5px @icinga-blue;
+  -webkit-transition: border 0.5s;
+  -moz-transition: border 0.5s;
+  -o-transition: border 0.5s;
+  transition: border 0.5s;
 }
 
 #menu input.search.active::-moz-placeholder {
@@ -264,7 +305,7 @@ a:focus {
 #menu a:focus,
 #menu > nav > ul > li > a:focus,
 #menu .active ul li a:focus {
-  color: #21b5ad;
+  color: @icinga-blue;
   outline: none;
 }
 
@@ -292,4 +333,47 @@ a:focus {
       }
     }
   }
+}
+
+.user-nav-item {
+  margin-top: 39px;
+}
+.user-nav-item ~ .user-nav-item {
+  margin-top: 0px;
+}
+
+#menu .user-nav-item {
+  background-color: @gray;
+  border-left: solid 5px @gray;
+
+  .user-avatar {
+    border: 1px solid @gray;
+    float: right;
+    margin-top: 5px;
+    margin-right: 5px;
+    border-radius: 150px;
+    height: 30px;
+    width: 30px;
+  }
+
+  a {
+    color: @text-color-inverted;
+  };
+
+  a:hover {
+    background-color: white;
+    color: @gray;
+  };
+}
+
+#menu > nav > ul > li.user-nav-item.active > div.clearfix > a {
+  color: @gray;
+}
+
+#menu > nav > ul > li.user-nav-item.active {
+  border-left: solid 5px @gray;
+  -webkit-transition: border 0.5s;
+  -moz-transition: border 0.5s;
+  -o-transition: border 0.5s;
+  transition: border 0.5s;
 }

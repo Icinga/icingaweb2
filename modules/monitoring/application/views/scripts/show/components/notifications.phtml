@@ -11,8 +11,9 @@
                     'monitoring/host/send-custom-notification',
                     array('host' => $object->getName()),
                     array(
-                        'icon'              => 'bell',
+                        'class'             => 'action-link',
                         'data-base-target'  => '_self',
+                        'icon'              => 'bell-alt',
                         'title'             => $this->translate(
                             'Send a custom notification to contacts responsible for this host'
                         )
@@ -25,8 +26,9 @@
                     'monitoring/service/send-custom-notification',
                     array('host' => $object->getHost()->getName(), 'service' => $object->getName()),
                     array(
-                        'icon'              => 'bell',
+                        'class'             => 'action-link',
                         'data-base-target'  => '_self',
+                        'icon'              => 'bell-alt',
                         'title'             => $this->translate(
                             'Send a custom notification to contacts responsible for this service'
                         )
@@ -34,7 +36,7 @@
                 );
             }
             if (! in_array((int) $object->state, array(0, 99))) {
-                echo '<br />';
+                echo '<br>';
             }
         } elseif (in_array((int) $object->state, array(0, 99))) {
             echo '&#45;';
@@ -51,7 +53,7 @@
                     $msg = sprintf(
                         $this->translate('%d notifications have been sent for this issue.'),
                         $object->current_notification_number
-                    ) . '<br />' . sprintf(
+                    ) . '<br>' . sprintf(
                         $this->translate('The last one was sent %s.'),
                         $this->timeAgo($object->last_notification)
                     );

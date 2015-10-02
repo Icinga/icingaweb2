@@ -1,0 +1,208 @@
+/*! Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
+
+.action-link {
+  color: @icinga-blue;
+}
+
+.big-icon {
+  font-size: 28px;
+}
+
+.clearfix {
+  &:after {
+    content: "";
+    clear: both;
+    display: table;
+  }
+}
+
+.comment-text {
+  .text-small();
+  font-family: @font-family-fixed;
+}
+
+.content-centered {
+  .text-center();
+  margin: 0 auto;
+}
+
+.icon-col {
+  width: 28px;
+}
+
+.primary-nav {
+  a {
+    font-weight: normal;
+  }
+}
+
+.pull-left {
+  float: left;
+}
+
+.pull-right {
+  float: right;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.text-small {
+  color: @text-color-light;
+  font-size: @font-size-small;
+}
+
+.user-avatar {
+  height: 16px;
+  width: 16px;
+}
+
+.v-center {
+  > * {
+    vertical-align: middle;
+  }
+}
+
+a:hover .icon-cancel {
+  color: @color-critical;
+}
+
+.button-link {
+  .action-link();
+  .button();
+  display: inline-block;
+  height: 35px;
+  line-height: 20px;
+  min-width: 175px;
+
+  &:hover {
+    text-decoration: none;
+  }
+
+  * {
+    line-height: inherit;
+  }
+
+  i {
+    font-size: 16px;
+  }
+}
+
+dl.feed-list {
+  dd {
+    // Reset default margin
+    margin: 0;
+  }
+
+  dt {
+    border-bottom: 1px solid @gray-lighter;
+    margin-top: @vertical-padding;
+
+    .icon-cancel {
+      display: none;
+    }
+
+    &:hover {
+      background-color: @gray-lightest;
+      .icon-cancel {
+        display: block;
+      }
+    }
+
+    &:first-child {
+      margin-top: 0;
+    }
+  }
+}
+
+dl.name-value-list {
+  dd {
+    // Reset default margin
+    margin: 0;
+  }
+
+  dt {
+    .text-small();
+  }
+}
+
+table.action-table {
+  tbody tr {
+    &.active {
+      background-color: @gray-lighter;
+    }
+
+    &:hover {
+      background-color: @gray-lightest;
+      cursor: pointer;
+    }
+  }
+}
+
+table.listing-table {
+  border-collapse: collapse;
+
+  tbody th {
+    text-align: left;
+  }
+
+  thead {
+    color: @text-color-light;
+    // Reset default font-weight
+    font-weight: normal;
+  }
+
+  tr {
+    border-bottom: 1px solid @gray-lightest;
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+}
+
+.name-value-table {
+  border-spacing: @vertical-padding 0;
+  line-height: @line-height;
+
+  th {
+    .text-left();
+    .text-small();
+    // Reset default font-weight
+    font-weight: normal;
+    width: 120px;
+    vertical-align: top;
+  }
+}
+
+// TODO(el): Fix
+.controls {
+  .limiter-control {
+    .pull-left();
+    padding: @vertical-padding / 2 0;
+  }
+
+  .pagination-control {
+    .pull-left();
+    padding: @vertical-padding / 2 @horizontal-padding;
+  }
+
+  .sort-control {
+    .pull-right();
+    padding: @vertical-padding / 2 0;
+  }
+
+  .selection-info {
+    .pull-right();
+    padding: @vertical-padding / 2 0;
+  }
+}

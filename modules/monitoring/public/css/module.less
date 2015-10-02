@@ -1,516 +1,30 @@
 /*! Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
-.content.processinfo table.avp th {
-  width: 16em;
-}
+.state-badges {
+  display: inline-block;
 
-p.pluginoutput {
-  width: 100%;
-  white-space: pre-wrap;
-  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', 'DejaVu Sans Mono', 'Courier New', Courier, monospace;
-}
+  > ul > li {
+    padding-right: 5px;
 
-table.action td .pluginoutput {
-  font-size: 0.875em;
-  line-height: 1.2em;
-  padding: 0;
-  margin: 0;
-}
-
-td.notes ul.nav,
-td.actions ul.nav {
-  .non-list-like-list;
-}
-
-div.pluginoutput {
-  overflow: auto;
-  color: #888;
-  margin-bottom: 1em;
-  padding: 0.2em;
-}
-
-div.pluginoutput pre {
-  white-space: pre-wrap;
-  border-left: 4px solid #d8d8d8;
-  padding: 0.3em 0 0.3em 1em;
-  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', 'DejaVu Sans Mono', 'Courier New', Courier, monospace;
-}
-
-table.objectstate td.state {
-  padding-top: 0.5em;
-  padding-bottom: 0.5em;
-}
-
-div.contacts div.contact {
-  background-color: #eee;
-  padding: 0.5em;
-  border: 1px solid #d9d9d9;
-  overflow: hidden;
-  margin: 0.125em;
-  float: left;
-}
-
-div.contacts div.contact a{
-  color: @colorTextDefault;
-}
-
-div.contacts div.contact > img {
-  width: 80px;
-  height: 80px;
-  margin-right: 8px;
-  float: left;
-}
-
-div.contacts div.notification-periods {
-  margin-top: 0.5em;
-}
-
-.tinystatesummary {
-  .badges {
-    display: inline-block;
-    margin-bottom: 4px;
-    margin-left: 1em;
-    height: auto;
-  }
-
-  .state > a {
-    color: white;
-    font-size: 0.857em;
-    padding: 2px 5px;
+    &:last-child {
+      padding-right: 0;
+    }
   }
 }
 
-/* State badges */
-span.state {
-    font-weight: bold;
-    color: white;
-    font-weight: bold;
-    padding: 1px 2px;
-    margin-right: 5px;
+.hosts-summary,
+.services-summary {
+  .v-center();
+  margin-top: @horizontal-padding;
 }
 
-span.state.active {
-    border: 2px solid #555;
-}
-
-span.state span.state {
-    margin: 0 -3px 0 5px;
-}
-
-span.state.ok {
-    background: @colorOk;
-}
-
-span.state.up {
-  background: @colorOk;
-}
-
-span.state.critical {
-    background: @colorCritical;
-}
-
-span.state.down {
-  background: @colorCritical;
-}
-
-span.state.handled.critical {
-    background: @colorCriticalHandled;
-}
-
-span.state.handled.down {
-  background: @colorCriticalHandled;
-}
-
-span.state.warning {
-    background: @colorWarning;
-}
-
-span.state.handled.warning {
-    background: @colorWarningHandled;
-}
-
-span.state.unknown {
-    background: @colorUnknown;
-}
-
-span.state.handled.unknown {
-    background: @colorUnknownHandled;
-}
-
-span.state.pending {
-    background: @colorPending;
-}
-
-form.instance-features span.description, form.object-features span.description {
-  display: inline;
-}
-
-.boxview div.box form.instance-features div.header {
-  border-bottom: 1px solid #d9d9d9;
-  margin-bottom: 0.5em;
-
-  h2 {
-    border: 0;
-    padding-bottom: 0;
-  }
-}
-
-table.avp form.object-features div.header h4 {
-  margin: 0;
-}
-
-table.avp {
-    th {
-        font-weight: normal;
-        font-size: 0.875em;
-        padding-top: 0.25em;
-    }
-
-    h2 {
-        font-size: 0.875em;
-        line-height: 1.2em;
-        padding-bottom: 0.1em;
-    }
-
-    td {
-        color: #666;
-        padding-bottom: 0.3em;
-        line-height: 1.5em;
-        th, td {
-            padding: 0;
-        }
-    }
-
-    .badge a[href] {
-        color: @colorGray;
-    }
-
-    .go-ahead {
-        a, button.link-like {
-            color: #222;
-        }
-    }
-
-    .object-features {
-        label {
-            font-weight: normal;
-            margin-right: 0;
-            width: 14em;
-            font-size: 0.875em;
-        }
-
-        input {
-            margin: 0;
-        }
-    }
-}
-
-table.avp .customvar ul {
-    list-style-type: none;
+.grid {
+  .hosts-summary,
+  .services-summary {
     margin: 0;
-    padding: 0;
-    padding-left: 1.5em;
-}
-
-div.selection-info {
-  padding-top: 0.4em;
-  float: right;
-  cursor: help;
-  font-size: 0.857em;
-}
-
-.optionbox {
-  margin-left: 0em;
-  margin-right: 3em;
-}
-
-.optionbox label {
-  max-width: 6.5em;
-  text-align: left;
-  vertgical-align: middle;
-  margin-right: 0em;
-}
-
-.optionbox input {
-  vertical-align: middle;
-}
-
-.object-command form h1, .objects-command form h1 {
-  border: none;
-}
-
-hr.command-separator {
-  border: none;
-  border-bottom: 2px solid @colorPetrol;
-}
-
-div.backend-not-running {
-  background: @colorCritical;
-  color: white;
-  text-align: center;
-  padding: 0.1em;
-}
-
-td.state {
-  .time-ago,
-  .time-since,
-  .time-until {
-    text-transform: capitalize;
+    .pull-left();
   }
 }
-
-.inline-comments {
-    padding: 0;
-    margin: 0;
-    font-size: 0.857em;
-
-    .time-ago {
-        font-style: italic;
-        color: #919191;
-    }
-
-    li {
-        list-style-type: none;
-        margin-bottom: 8px;
-    }
-
-    h3 {
-        border: none;
-        border-bottom: 1px solid gray;
-        font-weight: normal;
-        font-size: inherit;
-        color: inherit;
-        margin: 0;
-        padding-bottom: 0.1em;
-    }
-
-    h3 .author {
-        font-weight: bold;
-    }
-
-    h3 form {
-        display: none;
-    }
-
-    h3 form {
-        float: right;
-    }
-
-    li:hover h3 {
-        background: #F9F9F9;
-        position: relative;
-
-        form {
-            display: inline;
-        }
-    }
-
-    p {
-        margin: 0;
-
-        a {
-            color: #222;
-        }
-    }
-}
-
-/* Special tables and states */
-
-table.colors {
-  font-size: 0.8em;
-  width: 98%;
-  margin: 0 1%;
-}
-
-table.colors td {
-  text-align: center;
-  vertical-align: middle;
-  width:  10%;
-  height: 1.6em;
-  font-weight: normal;
-  border: 0.079em solid white;
-}
-
-table.action td.state, table.objectstate td.state {
-  font-size: 0.857em;
-  text-align: center;
-}
-
-
-/* State row behaviour */
-
-tr.state img.icon {
-  margin-right: 2px;
-}
-
-tr.state a {
-  color: #222;
-}
-
-/* Hostgroup badge quickfix */
-tr.state span a {
-  color: inherit;
-}
-
-tr.state:hover a {
-  color: inherit;
-}
-
-tr.state a.active {
-}
-
-tr.state.new td.state {
-  font-weight: bold;
-}
-
-tr.state td.state {
-  width: 9em;
-  color: white;
-  border-bottom: none;
-}
-
-tr.state.handled td.state, tr.state.ok td.state, tr.state.up td.state, tr.state.pending td.state {
-  border-left-style: solid;
-  border-left-width: 1.5em;
-  padding-left: 0em;
-  padding-right: 0.5em;
-  color: black;
-  background-color: transparent;
-}
-
-tr.state.ok td.state, tr.state.up td.state {
-  border-left-color: @colorOk;
-}
-
-tr.state.warning td.state {
-  background-color: @colorWarning;
-}
-
-tr.state.warning.handled td.state {
-  border-left-color: @colorWarningHandled;
-}
-
-tr.state.critical td.state, tr.state.down td.state {
-  background-color: @colorCritical;
-}
-
-tr.state.critical.handled td.state, tr.state.down.handled td.state {
-  border-left-color: @colorCriticalHandled;
-}
-
-tr.state.unreachable td.state {
-  background-color: @colorUnreachable;
-}
-
-tr.state.unreachable.handled td.state {
-  border-left-color: @colorUnreachableHandled;
-}
-
-tr.state.unknown td.state {
-  background-color: @colorUnknown;
-}
-
-tr.state.unknown.handled td.state {
-  border-left-color: @colorUnknownHandled;
-}
-
-tr.state.pending td.state {
-  border-left-color: @colorPending;
-}
-
-tr.state.invalid td.state {
-  background-color: @colorInvalid;
-}
-
-tr.state.unreachable td.state {
-  background-color: @colorUnreachable;
-}
-
-tr.state.unreachable.handled td.state {
-  border-left-color: @colorUnreachableHandled;
-}
-
-tr.state.handled td.state {
-  color: inherit;
-  background-color: transparent !important;
-}
-
-/* HOVER colors */
-
-tr.state[href]:hover td.state {
-  background-color: #eee;
-}
-
-tr.state.ok[href]:hover, tr.state.up[href]:hover {
-  background-color: @colorOk;
-}
-
-tr.state.handled[href]:hover, tr.state.handled[href]:hover td.state {
-  color: #121212 !important;
-}
-
-tr.state.warning[href]:hover {
-  background-color: @colorWarning;
-  color: white;
-}
-
-tr.state.warning.handled[href]:hover {
-  background-color: @colorWarningHandled;
-}
-
-tr.state.critical[href]:hover, tr.state.down[href]:hover {
-  background-color: @colorCritical;
-  color: white;
-}
-
-tr.state.critical.handled[href]:hover, tr.state.down.handled[href]:hover {
-  background-color: @colorCriticalHandled;
-  color: #333;
-}
-
-tr.state.unknown[href]:hover {
-  background-color: @colorUnknown;
-  color: white;
-}
-
-tr.state.unknown.handled[href]:hover {
-  background-color: @colorUnknownHandled;
-}
-
-tr.state.pending[href]:hover {
-  background-color: @colorPending;
-}
-
-tr.state.invalid[href]:hover {
-  background-color: @colorInvalid;
-  color: white;
-}
-
-tr.state.unreachable[href]:hover {
-  background-color: @colorUnreachable;
-}
-
-tr.state.unreachable.handled[href]:hover {
-  background-color: @colorUnreachableHandled;
-}
-
-tr.state[href]:hover td.state {
-  background-color: inherit !important;
-}
-
-/* END of HOVER colors */
-
-/* END of special tables and states */
-
-
-/* Generic colors */
-
-a.critical {
-  color: @colorCritical;
-}
-
-/* END of Generic colors */
-
 
 /* Generic box element */
 
@@ -522,50 +36,15 @@ a.critical {
   text-align: center;
   vertical-align: top;
   display: inline-block;
-  padding: 0.4em;
-  margin: 0.4em;
-  border: 1px solid #d9d9d9;
-  background: #eee;
+  padding: 20px;
 }
 
-/* Box header */
-.boxview div.box.header {
-  padding-bottom: 0.5em;
-  margin-bottom: 0.5em;
-  border-bottom: 1px solid #888;
-}
 
-.boxview div.box.header h2 {
-  margin-top: 0.1em;
-  margin-bottom: 0;
-  font-size: 0.8em;
-  border-bottom: none;
-  color: @colorTextDefault;
-}
-
-.boxview div.box.header h2:first-child {
-  margin-top: 0.2em;
-  font-size: inherit;
-  color: @colorTextDefault;
-}
-
-.boxview div.box.header h2 > a {
-  color: inherit;
-}
-
-.boxview div.box.header h2 > a:hover {
-  text-decoration: underline;
-}
-
-.boxview div.box.header h3 {
-  line-height: 1.5em;
-  font-size: 0.9em;
-  color: #555;
-}
 
 /* Box body of contents */
+
 .boxview div.box.contents {
-  padding: 0.2em;
+  padding-top: 20px;
 }
 
 .boxview div.box.contents table {
@@ -573,289 +52,201 @@ a.critical {
 }
 
 .boxview div.box.contents td {
-  width: 13em;
   vertical-align: top;
 }
 
-/* Box separator */
-.boxview div.box-separator:first-child {
-  border-top-width: 0;
-}
-
-.boxview div.box-separator {
-  font-size: 0.8em;
-  padding: 0.4em 0 0.4em;
-  border: 1px solid #d9d9d9;
-
-  font-weight: bold;
-  letter-spacing: 0.1em;
-}
-
 /* Box entry */
-.boxview div.box.entry {
-  min-height: 2.7em;
-  margin: 0.2em;
-  font-size: 0.9em;
-  white-space: nowrap;
-
-  color: @colorTextDefault;
-}
 
 /* Any line of a box entry */
 .boxview div.box.entry a {
   display: block;
-
   color: inherit;
 }
 
-.boxview div.box.entry a:hover {
-  color: @colorTextDefault;
+.boxview  div.box.badge {
+  border-radius: 3px;
+  margin: 5px;
+  padding: 5px;
 }
+
 
 /* First line of a box entry */
 .boxview div.box.entry a:first-child {
-  font-size: 1em;
 }
 
 /* End of generic box element */
 
-
-/* Monitoring box element styles */
-
-/* Host- and Servicegroup element styles */
-
-div.box.entry.state_up, div.box.entry.state_ok {
-  border: 1px solid @colorOk;
-  border-left: 1em solid @colorOk;
-}
-
-div.box.entry.state_pending {
-  border: 1px solid @colorPending;
-  border-left: 1em solid @colorPending;
-}
-
-div.box.entry.state_down, div.box.entry.state_critical {
-  border: 1px solid @colorCritical;
-  border-left: 1em solid @colorCritical;
-  background-color: @colorCritical;
-  color: white;
-}
-
-div.box.entry.state_down a:hover, div.box.entry.state_critical a:hover {
-  color: #dcdcdc;
-}
-
-div.box.entry.state_warning {
-  border: 1px solid @colorWarning;
-  border-left: 1em solid @colorWarning;
-  background-color: @colorWarning;
-  color: white;
-}
-
-div.box.entry.state_warning a:hover {
-  color: #dcdcdc;
-}
-
-div.box.entry.state_unreachable, div.box.entry.state_unknown {
-  border: 1px solid @colorUnknown;
-  border-left: 1em solid @colorUnknown;
-  background-color: @colorUnknown;
-  color: white;
-}
-
-div.box.entry.state_unreachable a:hover, div.box.entry.state_unknown a:hover {
-  color: #dcdcdc;
-}
-
-div.box.entry.handled {
-  background-color: transparent;
-  color: inherit;
-}
-
-div.box.entry.handled a:hover {
-  color: @colorTextDefault;
-}
-
 /* Tactical overview element styles */
 
 .tactical > .boxview > div.box {
-  min-height: 20em;
-  min-width: 12.1em;
+  min-height: 30em;
 }
 
-.tactical div.box.contents {
-  min-height: 14.5em;
-}
-
-div.box.contents.zero {
-  min-width: 11.1em;
-
-  background-color: transparent;
-}
-
-div.box.contents.zero span {
-  font-weight: bold;
-  line-height: 2em;
-
-  color: #666;
-}
-
-div.box.contents.zero h3 {
-  margin: 0;
-  font-size: 12em;
-  line-height: 1em;
-
-  color: #666;
+.tactical div.box.header {
+  min-height: 5em;
+  border-bottom:1px solid @gray-lighter;
 }
 
 div.box.ok_hosts.state_up {
-  border: 5px solid @colorOk;
-}
-
-div.box.ok_hosts.state_pending {
-  background-color: @colorPending;
+  border: 1px solid @gray-lighter;
+  border-left: 15px solid @color-ok;
 }
 
 div.box.problem_hosts.state_down {
-  border: 5px solid @colorCritical;
-}
-
-div.box.problem_hosts.state_down.handled {
-  background-color: @colorCriticalHandled;
-}
-
-div.box.problem_hosts.state_unreachable {
-  background-color: @colorUnreachable;
-}
-
-div.box.problem_hosts.state_unreachable.handled {
-  background-color: @colorUnreachableHandled;
+  border: 1px solid @gray-lighter;
+  border-left: 15px solid @color-critical;
 }
 
 div.box.ok_hosts div.box.entry, div.box.problem_hosts div.box.entry {
   min-width: 11.1em;
 }
 
-div.box.monitoringfeatures div.box.contents {
-  padding: 0 2 0em;
-}
-
 div.box.monitoringfeatures {
-  border: 5px solid #d9d9d9;
+  border: 1px solid @gray-lighter;
+  border-left: 15px solid @gray;
 }
 
 div.box.monitoringfeatures div.box-separator {
   color: white;
-  background-color: @colorOk;
+  background-color: @color-ok;
 }
 
 div.box.monitoringfeatures div.feature-highlight {
-  background-color: @colorCritical;
+  background-color: @color-critical;
 }
 
 div.box.monitoringfeatures a.feature-highlight {
-  font-weight: bold;
 }
 
 div.box.hostservicechecks {
-  border: 5px solid #d9d9d9;
+  border: 1px solid @gray-lighter;
+  border-left: 15px solid @gray;
 }
 
-/* Contactgroup element styles */
-
-div.box.contactgroup {
-  width: 18em;
-  padding: 0.8em;
+div.box.hostservicechecks th {
+  padding-bottom: 20px;
 }
 
-div.box.contactgroup div.box.contents {
-  padding: 0.6em;
+/* Monitoring health - PROCESS - element styles */
+
+div.box.process {
+  border: 1px solid @gray-lighter;
+  border-left: 15px solid @gray;
+  min-height: 30em;
+  min-width: 30em;
 }
 
-div.box.contactgroup div.box.entry {
-  overflow: hidden;
-  clear: left;
+.process div.box.header {
+  min-height: 5em;
+  border-bottom:1px solid @gray-lighter;
 }
 
-div.box.contactgroup div.box.entry img {
-  width: 80px;
-  height: 80px;
-  float: left;
-
+.process > .boxview > div.box {
+  min-height: 30em;
+  min-width: 30em;
 }
 
-div.box.contactgroup div.box.entry a {
-  margin-top: 0.4em;
-
-  font-weight: bold;
+.process h2 {
+  padding-bottom: 15px;
+  border-bottom:1px solid @gray-lighter;
 }
 
-div.box.contactgroup div.box.entry p {
-  margin: 0.4em 0 0;
+.process th {
+  text-align: right;
 }
 
-div.circular {
-  margin-top: 0.5em;
-  margin-left: 2em;
-  margin-right: 1em;
-  width: 80px;
-  height: 80px;
-  float: left;
-  background-size: 100% 100%;
+.process td {
+  padding-left: 2em;
+  text-align: left;
 }
 
-/* End of monitoring box element styles */
+div.backend-running {
+  background: @color-ok;
+  color: white;
+  text-align: center;
+  margin-top: 1em;
+  padding: 0.5em;
 
-
-/* Monitoring pivot table styles */
-
-div.pivot-pagination {
-  margin: 1em;
-
-  table {
-    table-layout: fixed;
-    border-spacing: 1px;
-    border-collapse: separate;
-    border: 1px solid LightGrey;
-    border-radius: 0.3em;
-
-    td {
-      width: 16px;
-      height: 16px;
-      padding: 0;
-      background-color: #fbfbfb;
-
-      &:hover, &.active {
-        background-color: #e5e5e5;
-      }
-
-      a {
-        width: 16px;
-        height: 16px;
-        display: block;
-      }
-    }
+  &.span {
+  color: white;
   }
 }
 
-table.joystick-pagination {
-  margin-top: -1.5em;
-
-  td {
-    width: 1.25em;
-    height: 1.3em;
-  }
+div.backend-not-running {
+  background: @color-critical;
+  color: white;
+  text-align: center;
+  padding: 0.1em;
 }
 
-/* End of monitoring pivot table styles */
+
+/* Monitoring health - FEATURE - element styles */
+
+div.box.features {
+  border: 1px solid @gray-lighter;
+  border-left: 15px solid @gray;
+  min-height: 30em;
+  min-width: 30em;
+}
+
+.features div.box.header {
+  min-height: 5em;
+  border-bottom:1px solid @gray-lighter;
+}
+
+.features > .boxview > div.box {
+  min-height: 30em;
+  min-width: 30em;
+}
+
+.features h2 {
+  padding-bottom: 15px;
+  border-bottom:1px solid @gray-lighter;
+}
+
+
+/* Monitoring health - STATS - element styles */
+
+div.box.stats {
+  border: 1px solid @gray-lighter;
+  border-left: 15px solid @gray;
+  color: @text-color;
+}
+
+.stats > .boxview > div.box {
+  min-height: 30em;
+}
+
+.stats > .avp > tbody {
+  text-align: left;
+}
+
+.stats > table {
+  padding-bottom: 15px;
+}
+
+.stats > table > thead{
+  color: @gray;
+}
+
+.stats > .pull-left  {
+  float: none;
+}
+
+.stats > h3 {
+  color: @gray;
+  text-align: left;
+  border-bottom:1px solid @gray-lighter;
+  padding-bottom: 15px;
+}
 
 /* Monitoring timeline styles */
 
 div.timeline-legend {
-  float: left;
   padding: 0.5em;
-  border: 1px solid #d9d9d9;
-  background-color: #eee;
+  margin-top: 2em;
+  border: 1px solid @gray-lighter;
+  border-left: 15px solid @gray;
 
   h2 {
     margin: 0;
@@ -869,10 +260,17 @@ div.timeline-legend {
     margin: 0.5em;
 
     span {
-      color: white;
-      font-size: 0.8em;
-      font-weight: bold;
       white-space: nowrap;
+      min-width: 25px;
+      font-family: tahoma, verdana, sans-serif;
+      font-weight: @font-weight-bold;
+      font-size: 11px;
+      text-align: center;
+      color: @text-color-inverted;
+      padding-left: 5px;
+      padding-right: 5px;
+      padding-top: 2px;
+      padding-bottom: 2px;
     }
   }
 }
@@ -892,14 +290,11 @@ div.timeline {
       text-align: center;
 
       a {
-        color: @colorTextDefault;
-        font-size: 0.8em;
         font-weight: bold;
         text-decoration: none;
         white-space: nowrap;
 
         &:hover {
-          color: @colorTextDefault;
           text-decoration: underline;
 
         }
@@ -907,38 +302,27 @@ div.timeline {
     }
 
     div.circle-box {
-      // width: inline-style;
       height: 100%;
       margin-right: 0.5em;
       position: relative;
       float: left;
 
       div.outer-circle {
-        // width: inline-style;
-        // height: inline-style;
         position: absolute;
         top: 50%;
-        // margin-top: inline-style;
 
         &.extrapolated {
           border-width: 2px;
           border-style: dotted;
-          //border-color: inline-style;
           border-radius: 100%;
-          // background-color: inline-style;
         }
 
         a.inner-circle {
-          // width: inline-style;
-          // height: inline-style;
           display: block;
           position: absolute;
           top: 50%;
           left: 50%;
-          // margin-top: inline-style;
-          // margin-left: inline-style;
           border-radius: 100%;
-          // background-color: inline-style;
         }
       }
     }
@@ -957,189 +341,1163 @@ div.timeline {
 
 /* End of monitoring timeline styles */
 
-/* Monitoring groupsummary styles */
+/* Object features */
 
-.dashboard table.groupview {
-  margin-top: 0;
-}
-
-table.groupview {
-  width: 100%;
-  margin-top: 1em;
-  border-collapse: separate;
-  border-spacing: 0.1em;
-
-  th {
-    font-size: 0.9em;
-    text-align: left;
-    white-space: nowrap;
-  }
-
-  td {
-    &.groupname {
-      width: 60%;
-
-      a {
-        color: inherit;
-        text-decoration: none;
-
-        &:hover {
-          text-decoration: underline;
-        }
-      }
-    }
-
-    &.total {
-      width: 10%;
-    }
-
-    &.state {
-      width: 20%;
-      white-space: nowrap;
-
-      &.change {
-        width: 10%;
-        text-align: center;
-        border-left-width: 1.5em;
-        border-left-style: solid;
-        padding: 0.3em 0.5em 0.3em 0.5em;
-
-        strong {
-          font-size: 0.8em;
-        }
-
-        &.ok {
-          border-color: @colorOk;
-        }
-
-        &.pending {
-          border-color: @colorPending;
-        }
-
-        &.warning {
-          border-color: @colorWarningHandled;
-
-          &.unhandled {
-            color: white;
-            border-left-width: 0;
-            background-color: @colorWarning;
-          }
-        }
-
-        &.unknown {
-          border-color: @colorUnknownHandled;
-
-          &.unhandled {
-            color: white;
-            border-left-width: 0;
-            background-color: @colorUnknown;
-          }
-        }
-
-        &.critical {
-          border-color: @colorCriticalHandled;
-
-          &.unhandled {
-            color: white;
-            border-left-width: 0;
-            background-color: @colorCritical;
-          }
-        }
-      }
-
-      span.state {
-        &.handled {
-          margin-right: 2px;
-        }
-
-        a {
-          font-size: 0.9em;
-          color: white;
-          text-decoration: none;
-
-          &:hover {
-            text-decoration: underline;
-          }
-        }
-      }
-    }
-  }
-}
-
-/* End of monitoring groupsummary styles */
-
-/* compact table */
-table.statesummary {
+form.instance-features span.description, form.object-features span.description {
   text-align: left;
-  width: auto;
-  border-collapse: separate;
-
-  tr.state td.state {
-    width: auto;
-    font-weight: bold;
-  }
-
-  td {
-    font-size: 0.9em;
-    line-height: 1.2em;
-    padding-left: 0.2em;
-    margin: 0;
-  }
-
-  td.state {
-    padding: 0.2em;
-    min-width: 75px;
-    font-size: 0.75em;
-    text-align: center;
-  }
-
-  td.name {
-    font-weight: bold;
-  }
-
-  td a {
-    color: inherit;
-    text-decoration: none;
-  }
 }
 
-table.action .objectflags {
-  float: right;
+form.object-features .control-label-group {
+  text-align: left;
+  width: 150px;
 }
 
-table.objectstate {
-  border-collapse: separate;
-  border-spacing: 1px;
+form.object-features .control-label {
+  margin-left: 7px;
+  line-height: 25px;
 }
 
-table.objectstate td {
-  padding-left: 1em;
-}
-
-table.objectstate tr.state td.state {
-  width: 9em;
-  text-align: center;
-  padding-left: 0;
-  border-radius: 0;
-}
-
-table.avp td.performance-data {
-  padding: 0.3em 0 0.3em 1em;
-}
-
-table.perfdata {
-  min-width: 24em;
-  font-size: 0.9em;
-  width: 100%;
-}
-
-table.perfdata th {
+.custom-variables ul {
+  list-style-type: none;
+  margin: 0;
   padding: 0;
-  text-align: left;
-  padding-right: 0.5em;
+  padding-left: @vertical-padding;
 }
 
-table.perfdata td {
-  white-space: nowrap;
-  padding-right: 0.5em;
-}
+
+//p.pluginoutput {
+//  width: 100%;
+//  white-space: pre-wrap;
+//  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', 'DejaVu Sans Mono', 'Courier New', Courier, monospace;
+//}
+//
+//table.action td .pluginoutput {
+//  font-size: 0.875em;
+//  line-height: 1.2em;
+//  padding: 0;
+//  margin: 0;
+//}
+//
+//div.pluginoutput {
+//  overflow: auto;
+//  color: #888;
+//  margin-bottom: 1em;
+//  padding: 0.2em;
+//}
+//
+//div.pluginoutput pre {
+//  white-space: pre-wrap;
+//  border-left: 4px solid #d8d8d8;
+//  padding: 0.3em 0 0.3em 1em;
+//  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', 'DejaVu Sans Mono', 'Courier New', Courier, monospace;
+//}
+//
+//table.objectstate td.state {
+//  padding-top: 0.5em;
+//  padding-bottom: 0.5em;
+//}
+//
+//div.contacts div.contact {
+//  background-color: #eee;
+//  padding: 0.5em;
+//  border: 1px solid #d9d9d9;
+//  overflow: hidden;
+//  margin: 0.125em;
+//  float: left;
+//}
+//
+//div.contacts div.contact a{
+//  color: @colorTextDefault;
+//}
+//
+//div.contacts div.contact > img {
+//  width: 80px;
+//  height: 80px;
+//  margin-right: 8px;
+//  float: left;
+//}
+//
+//div.contacts div.notification-periods {
+//  margin-top: 0.5em;
+//}
+//
+//.tinystatesummary {
+//  .badges {
+//    display: inline-block;
+//    margin-bottom: 4px;
+//    margin-left: 1em;
+//    height: auto;
+//  }
+//
+//  .state > a {
+//    color: white;
+//    font-size: 0.857em;
+//    padding: 2px 5px;
+//  }
+//}
+//
+///* State badges */
+//span.state {
+//    font-weight: bold;
+//    color: white;
+//    font-weight: bold;
+//    padding: 2px 3px;
+//    margin-right: 5px;
+//}
+//
+//span.state.active {
+//    border: 2px solid #555;
+//    padding: 2px 4px;
+//    margin-right: 4px;
+//}
+//
+//span.state span.state {
+//    margin: 0 -6px 0 5px;
+//}
+//
+//span.state.ok {
+//    background: @colorOk;
+//}
+//
+//span.state.up {
+//  background: @colorOk;
+//}
+//
+//span.state.critical {
+//    background: @colorCritical;
+//}
+//
+//span.state.down {
+//  background: @colorCritical;
+//}
+//
+//span.state.handled.critical {
+//    background: @colorCriticalHandled;
+//}
+//
+//span.state.handled.down {
+//  background: @colorCriticalHandled;
+//}
+//
+//span.state.warning {
+//    background: @colorWarning;
+//}
+//
+//span.state.handled.warning {
+//    background: @colorWarningHandled;
+//}
+//
+//span.state.unknown {
+//    background: @colorUnknown;
+//}
+//
+//span.state.handled.unknown {
+//    background: @colorUnknownHandled;
+//}
+//
+//span.state.pending {
+//    background: @colorPending;
+//}
+//
+//form.instance-features span.description, form.object-features span.description {
+//  display: inline;
+//}
+//
+//.boxview div.box form.instance-features div.header {
+//  border-bottom: 1px solid #d9d9d9;
+//  margin-bottom: 0.5em;
+//
+//  h2 {
+//    border: 0;
+//    padding-bottom: 0;
+//  }
+//}
+//
+//table.avp form.object-features div.header h4 {
+//  margin: 0;
+//}
+//
+//table.avp {
+//    th {
+//        font-weight: normal;
+//        font-size: 0.875em;
+//        padding-top: 0.25em;
+//    }
+//
+//    h2 {
+//        font-size: 0.875em;
+//        line-height: 1.2em;
+//        padding-bottom: 0.1em;
+//    }
+//
+//    td {
+//        color: #666;
+//        padding-bottom: 0.3em;
+//        line-height: 1.5em;
+//        th, td {
+//            padding: 0;
+//        }
+//    }
+//
+//    .badge a[href] {
+//        color: @colorGray;
+//    }
+//
+//    .go-ahead {
+//        a, button.link-like {
+//            color: #222;
+//        }
+//    }
+//
+//    .object-features {
+//        label {
+//            font-weight: normal;
+//            margin-right: 0;
+//            width: 14em;
+//            font-size: 0.875em;
+//        }
+//
+//        input {
+//            margin: 0;
+//        }
+//    }
+//}
+//
+//table.avp .customvar ul {
+//    list-style-type: none;
+//    margin: 0;
+//    padding: 0;
+//    padding-left: 1.5em;
+//}
+//
+//div.selection-info {
+//  padding-top: 0.4em;
+//  float: right;
+//  cursor: help;
+//  font-size: 0.857em;
+//}
+//
+//.optionbox {
+//  margin-left: 0em;
+//  margin-right: 3em;
+//}
+//
+//.optionbox label {
+//  max-width: 6.5em;
+//  text-align: left;
+//  vertgical-align: middle;
+//  margin-right: 0em;
+//}
+//
+//.optionbox input {
+//  vertical-align: middle;
+//}
+//
+//.object-command form h1, .objects-command form h1 {
+//  border: none;
+//}
+//
+//hr.command-separator {
+//  border: none;
+//  border-bottom: 2px solid @colorPetrol;
+//}
+//
+//div.backend-not-running {
+//  background: @colorCritical;
+//  color: white;
+//  text-align: center;
+//  padding: 0.1em;
+//}
+//
+//td.state {
+//  .time-ago,
+//  .time-since,
+//  .time-until {
+//    text-transform: capitalize;
+//  }
+//}
+//
+//.inline-comments {
+//    padding: 0;
+//    margin: 0;
+//    font-size: 0.857em;
+//
+//    .time-ago {
+//        font-style: italic;
+//        color: #919191;
+//    }
+//
+//    li {
+//        list-style-type: none;
+//        margin-bottom: 8px;
+//    }
+//
+//    h3 {
+//        border: none;
+//        border-bottom: 1px solid gray;
+//        font-weight: normal;
+//        font-size: inherit;
+//        color: inherit;
+//        margin: 0;
+//        padding-bottom: 0.1em;
+//    }
+//
+//    h3 .author {
+//        font-weight: bold;
+//    }
+//
+//    h3 form {
+//        display: none;
+//    }
+//
+//    h3 form {
+//        float: right;
+//    }
+//
+//    li:hover h3 {
+//        background: #F9F9F9;
+//        position: relative;
+//
+//        form {
+//            display: inline;
+//        }
+//    }
+//
+//    p {
+//        margin: 0;
+//
+//        a {
+//            color: #222;
+//        }
+//    }
+//}
+//
+///* Special tables and states */
+//
+//table.colors {
+//  font-size: 0.8em;
+//  width: 98%;
+//  margin: 0 1%;
+//}
+//
+//table.colors td {
+//  text-align: center;
+//  vertical-align: middle;
+//  width:  10%;
+//  height: 1.6em;
+//  font-weight: normal;
+//  border: 0.079em solid white;
+//}
+//
+//table.action td.state, table.objectstate td.state {
+//  font-size: 0.857em;
+//  text-align: center;
+//}
+//
+//
+///* State row behaviour */
+//
+//tr.state img.icon {
+//  margin-right: 2px;
+//}
+//
+///* Hostgroup badge quickfix */
+//tr.state span a {
+//  color: white;
+//  font-size: 0.857em;
+//  padding: 2px 5px;
+//}
+//
+//tr.state:hover a {
+//  color: inherit;
+//}
+//
+//tr.state a.active {
+//}
+//
+//tr.state.new td.state {
+//  font-weight: bold;
+//}
+//
+//tr.state td.state {
+//  width: 9em;
+//  color: white;
+//  border-bottom: none;
+//}
+//
+//tr.state.handled td.state, tr.state.ok td.state, tr.state.up td.state, tr.state.pending td.state {
+//  border-left-style: solid;
+//  border-left-width: 1.5em;
+//  padding-left: 0em;
+//  padding-right: 0.5em;
+//  color: black;
+//  background-color: transparent;
+//}
+//
+//tr.state.ok td.state, tr.state.up td.state {
+//  border-left-color: @colorOk;
+//}
+//
+//tr.state.warning td.state {
+//  background-color: @colorWarning;
+//}
+//
+//tr.state.warning.handled td.state {
+//  border-left-color: @colorWarningHandled;
+//}
+//
+//tr.state.critical td.state, tr.state.down td.state {
+//  background-color: @colorCritical;
+//}
+//
+//tr.state.critical.handled td.state, tr.state.down.handled td.state {
+//  border-left-color: @colorCriticalHandled;
+//}
+//
+//tr.state.unreachable td.state {
+//  background-color: @colorUnreachable;
+//}
+//
+//tr.state.unreachable.handled td.state {
+//  border-left-color: @colorUnreachableHandled;
+//}
+//
+//tr.state.unknown td.state {
+//  background-color: @colorUnknown;
+//}
+//
+//tr.state.unknown.handled td.state {
+//  border-left-color: @colorUnknownHandled;
+//}
+//
+//tr.state.pending td.state {
+//  border-left-color: @colorPending;
+//}
+//
+//tr.state.invalid td.state {
+//  background-color: @colorInvalid;
+//}
+//
+//tr.state.unreachable td.state {
+//  background-color: @colorUnreachable;
+//}
+//
+//tr.state.unreachable.handled td.state {
+//  border-left-color: @colorUnreachableHandled;
+//}
+//
+//tr.state.handled td.state {
+//  color: inherit;
+//  background-color: transparent !important;
+//}
+//
+///* HOVER colors */
+//
+//tr.state[href]:hover td.state {
+//  background-color: #eee;
+//}
+//
+//tr.state.ok[href]:hover, tr.state.up[href]:hover {
+//  background-color: @colorOk;
+//}
+//
+//tr.state.handled[href]:hover, tr.state.handled[href]:hover td.state {
+//  color: #121212 !important;
+//}
+//
+//tr.state.warning[href]:hover {
+//  background-color: @colorWarning;
+//  color: white;
+//}
+//
+//tr.state.warning.handled[href]:hover {
+//  background-color: @colorWarningHandled;
+//}
+//
+//tr.state.critical[href]:hover, tr.state.down[href]:hover {
+//  background-color: @colorCritical;
+//  color: white;
+//}
+//
+//tr.state.critical.handled[href]:hover, tr.state.down.handled[href]:hover {
+//  background-color: @colorCriticalHandled;
+//  color: #333;
+//}
+//
+//tr.state.unknown[href]:hover {
+//  background-color: @colorUnknown;
+//  color: white;
+//}
+//
+//tr.state.unknown.handled[href]:hover {
+//  background-color: @colorUnknownHandled;
+//}
+//
+//tr.state.pending[href]:hover {
+//  background-color: @colorPending;
+//}
+//
+//tr.state.invalid[href]:hover {
+//  background-color: @colorInvalid;
+//  color: white;
+//}
+//
+//tr.state.unreachable[href]:hover {
+//  background-color: @colorUnreachable;
+//}
+//
+//tr.state.unreachable.handled[href]:hover {
+//  background-color: @colorUnreachableHandled;
+//}
+//
+//tr.state[href]:hover td.state {
+//  background-color: inherit !important;
+//}
+//
+///* END of HOVER colors */
+//
+///* END of special tables and states */
+//
+//
+///* Generic colors */
+//
+//a.critical {
+//  color: @colorCritical;
+//}
+//
+///* END of Generic colors */
+//
+//
+///* Generic box element */
+//
+//.boxview a {
+//  text-decoration: none;
+//}
+//
+//.boxview > div.box {
+//  text-align: center;
+//  vertical-align: top;
+//  display: inline-block;
+//  padding: 0.4em;
+//  margin: 0.4em;
+//  border: 1px solid #d9d9d9;
+//  background: #eee;
+//}
+//
+///* Box header */
+//.boxview div.box.header {
+//  padding-bottom: 0.5em;
+//  margin-bottom: 0.5em;
+//  border-bottom: 1px solid #888;
+//}
+//
+//.boxview div.box.header h2 {
+//  margin-top: 0.1em;
+//  margin-bottom: 0;
+//  font-size: 0.8em;
+//  border-bottom: none;
+//  color: @colorTextDefault;
+//}
+//
+//.boxview div.box.header h2:first-child {
+//  margin-top: 0.2em;
+//  font-size: inherit;
+//  color: @colorTextDefault;
+//}
+//
+//.boxview div.box.header h2 > a {
+//  color: inherit;
+//}
+//
+//.boxview div.box.header h2 > a:hover {
+//  text-decoration: underline;
+//}
+//
+//.boxview div.box.header h3 {
+//  line-height: 1.5em;
+//  font-size: 0.9em;
+//  color: #555;
+//}
+//
+///* Box body of contents */
+//.boxview div.box.contents {
+//  padding: 0.2em;
+//}
+//
+//.boxview div.box.contents table {
+//  width: 100%;
+//}
+//
+//.boxview div.box.contents td {
+//  width: 13em;
+//  vertical-align: top;
+//}
+//
+///* Box separator */
+//.boxview div.box-separator:first-child {
+//  border-top-width: 0;
+//}
+//
+//.boxview div.box-separator {
+//  font-size: 0.8em;
+//  padding: 0.4em 0 0.4em;
+//  border: 1px solid #d9d9d9;
+//
+//  font-weight: bold;
+//  letter-spacing: 0.1em;
+//}
+//
+///* Box entry */
+//.boxview div.box.entry {
+//  min-height: 2.7em;
+//  margin: 0.2em;
+//  font-size: 0.9em;
+//  white-space: nowrap;
+//
+//  color: @colorTextDefault;
+//}
+//
+///* Any line of a box entry */
+//.boxview div.box.entry a {
+//  display: block;
+//
+//  color: inherit;
+//}
+//
+//.boxview div.box.entry a:hover {
+//  color: @colorTextDefault;
+//}
+//
+///* First line of a box entry */
+//.boxview div.box.entry a:first-child {
+//  font-size: 1em;
+//}
+//
+///* End of generic box element */
+//
+//
+///* Monitoring box element styles */
+//
+///* Host- and Servicegroup element styles */
+//
+//div.box.entry.state_up, div.box.entry.state_ok {
+//  border: 1px solid @colorOk;
+//  border-left: 1em solid @colorOk;
+//}
+//
+//div.box.entry.state_pending {
+//  border: 1px solid @colorPending;
+//  border-left: 1em solid @colorPending;
+//}
+//
+//div.box.entry.state_down, div.box.entry.state_critical {
+//  border: 1px solid @colorCritical;
+//  border-left: 1em solid @colorCritical;
+//  background-color: @colorCritical;
+//  color: white;
+//}
+//
+//div.box.entry.state_down a:hover, div.box.entry.state_critical a:hover {
+//  color: #dcdcdc;
+//}
+//
+//div.box.entry.state_warning {
+//  border: 1px solid @colorWarning;
+//  border-left: 1em solid @colorWarning;
+//  background-color: @colorWarning;
+//  color: white;
+//}
+//
+//div.box.entry.state_warning a:hover {
+//  color: #dcdcdc;
+//}
+//
+//div.box.entry.state_unreachable, div.box.entry.state_unknown {
+//  border: 1px solid @colorUnknown;
+//  border-left: 1em solid @colorUnknown;
+//  background-color: @colorUnknown;
+//  color: white;
+//}
+//
+//div.box.entry.state_unreachable a:hover, div.box.entry.state_unknown a:hover {
+//  color: #dcdcdc;
+//}
+//
+//div.box.entry.handled {
+//  background-color: transparent;
+//  color: inherit;
+//}
+//
+//div.box.entry.handled a:hover {
+//  color: @colorTextDefault;
+//}
+//
+/* Tactical overview element styles */
+//
+//.tactical > .boxview > div.box {
+//  min-height: 20em;
+//  min-width: 12.1em;
+//}
+//
+//.tactical div.box.contents {
+//  min-height: 14.5em;
+//}
+//
+//div.box.contents.zero {
+//  min-width: 11.1em;
+//
+//  background-color: transparent;
+//}
+//
+//div.box.contents.zero span {
+//  font-weight: bold;
+//  line-height: 2em;
+//
+//  color: #666;
+//}
+//
+//div.box.contents.zero h3 {
+//  margin: 0;
+//  font-size: 12em;
+//  line-height: 1em;
+//
+//  color: #666;
+//}
+//
+//div.box.ok_hosts.state_up {
+//  border: 5px solid @colorOk;
+//}
+//
+//div.box.ok_hosts.state_pending {
+//  background-color: @colorPending;
+//}
+//
+//div.box.problem_hosts.state_down {
+//  border: 5px solid @colorCritical;
+//}
+//
+//div.box.problem_hosts.state_down.handled {
+//  background-color: @colorCriticalHandled;
+//}
+//
+//div.box.problem_hosts.state_unreachable {
+//  background-color: @colorUnreachable;
+//}
+//
+//div.box.problem_hosts.state_unreachable.handled {
+//  background-color: @colorUnreachableHandled;
+//}
+//
+//div.box.ok_hosts div.box.entry, div.box.problem_hosts div.box.entry {
+//  min-width: 11.1em;
+//}
+//
+//div.box.monitoringfeatures div.box.contents {
+//  padding: 0 2 0em;
+//}
+//
+//div.box.monitoringfeatures {
+//  border: 5px solid #d9d9d9;
+//}
+//
+//div.box.monitoringfeatures div.box-separator {
+//  color: white;
+//  background-color: @colorOk;
+//}
+//
+//div.box.monitoringfeatures div.feature-highlight {
+//  background-color: @colorCritical;
+//}
+//
+//div.box.monitoringfeatures a.feature-highlight {
+//  font-weight: bold;
+//}
+//
+//div.box.hostservicechecks {
+//  border: 5px solid #d9d9d9;
+//}
+//
+///* Contactgroup element styles */
+//
+//div.box.contactgroup {
+//  width: 18em;
+//  padding: 0.8em;
+//}
+//
+//div.box.contactgroup div.box.contents {
+//  padding: 0.6em;
+//}
+//
+//div.box.contactgroup div.box.entry {
+//  overflow: hidden;
+//  clear: left;
+//}
+//
+//div.box.contactgroup div.box.entry img {
+//  width: 80px;
+//  height: 80px;
+//  float: left;
+//
+//}
+//
+//div.box.contactgroup div.box.entry a {
+//  margin-top: 0.4em;
+//
+//  font-weight: bold;
+//}
+//
+//div.box.contactgroup div.box.entry p {
+//  margin: 0.4em 0 0;
+//}
+//
+//div.circular {
+//  margin-top: 0.5em;
+//  margin-left: 2em;
+//  margin-right: 1em;
+//  width: 80px;
+//  height: 80px;
+//  float: left;
+//  background-size: 100% 100%;
+//}
+//
+///* End of monitoring box element styles */
+//
+//
+///* Monitoring pivot table styles */
+//
+//div.pivot-pagination {
+//  margin: 1em;
+//
+//  table {
+//    table-layout: fixed;
+//    border-spacing: 1px;
+//    border-collapse: separate;
+//    border: 1px solid LightGrey;
+//    border-radius: 0.3em;
+//
+//    td {
+//      width: 16px;
+//      height: 16px;
+//      padding: 0;
+//      background-color: #fbfbfb;
+//
+//      &:hover, &.active {
+//        background-color: #e5e5e5;
+//      }
+//
+//      a {
+//        width: 16px;
+//        height: 16px;
+//        display: block;
+//      }
+//    }
+//  }
+//}
+//
+//table.joystick-pagination {
+//  margin-top: -1.5em;
+//
+//  td {
+//    width: 1.25em;
+//    height: 1.3em;
+//  }
+//}
+//
+///* End of monitoring pivot table styles */
+//
+///* Monitoring timeline styles */
+//
+//div.timeline-legend {
+//  float: left;
+//  padding: 0.5em;
+//  border: 1px solid #d9d9d9;
+//  background-color: #eee;
+//
+//  h2 {
+//    margin: 0;
+//    margin-left: 0.5em;
+//    line-height: 1.1em;
+//  }
+//
+//  & > span {
+//    display: inline-block;
+//    padding: 0.5em;
+//    margin: 0.5em;
+//
+//    span {
+//      color: white;
+//      font-size: 0.8em;
+//      font-weight: bold;
+//      white-space: nowrap;
+//    }
+//  }
+//}
+//
+//div.timeline {
+//  div.timeframe {
+//    height: 7em;
+//    margin-bottom: 1em;
+//    clear: left;
+//
+//    span {
+//      width: 8em;
+//      margin-top: 2.3em;
+//      margin-right: 1.5em;
+//      display: block;
+//      float: left;
+//      text-align: center;
+//
+//      a {
+//        color: @colorTextDefault;
+//        font-size: 0.8em;
+//        font-weight: bold;
+//        text-decoration: none;
+//        white-space: nowrap;
+//
+//        &:hover {
+//          color: @colorTextDefault;
+//          text-decoration: underline;
+//
+//        }
+//      }
+//    }
+//
+//    div.circle-box {
+//      // width: inline-style;
+//      height: 100%;
+//      margin-right: 0.5em;
+//      position: relative;
+//      float: left;
+//
+//      div.outer-circle {
+//        // width: inline-style;
+//        // height: inline-style;
+//        position: absolute;
+//        top: 50%;
+//        // margin-top: inline-style;
+//
+//        &.extrapolated {
+//          border-width: 2px;
+//          border-style: dotted;
+//          //border-color: inline-style;
+//          border-radius: 100%;
+//          // background-color: inline-style;
+//        }
+//
+//        a.inner-circle {
+//          // width: inline-style;
+//          // height: inline-style;
+//          display: block;
+//          position: absolute;
+//          top: 50%;
+//          left: 50%;
+//          // margin-top: inline-style;
+//          // margin-left: inline-style;
+//          border-radius: 100%;
+//          // background-color: inline-style;
+//        }
+//      }
+//    }
+//  }
+//
+//  hr {
+//    border: 0;
+//    height: 1px;
+//    background-image: linear-gradient(left, rgba(0,0,0,0), rgba(0,0,0,0.3), rgba(0,0,0,0));
+//    background-image: -o-linear-gradient(left, rgba(0,0,0,0), rgba(0,0,0,0.3), rgba(0,0,0,0));
+//    background-image: -ms-linear-gradient(left, rgba(0,0,0,0), rgba(0,0,0,0.3), rgba(0,0,0,0));
+//    background-image: -moz-linear-gradient(left, rgba(0,0,0,0), rgba(0,0,0,0.3), rgba(0,0,0,0));
+//    background-image: -webkit-linear-gradient(left, rgba(0,0,0,0), rgba(0,0,0,0.3), rgba(0,0,0,0));
+//  }
+//}
+//
+///* End of monitoring timeline styles */
+//
+///* Monitoring groupsummary styles */
+//
+//.dashboard table.groupview {
+//  margin-top: 0;
+//}
+//
+//table.groupview {
+//  width: 100%;
+//  margin-top: 1em;
+//  border-collapse: separate;
+//  border-spacing: 0.1em;
+//
+//  th {
+//    font-size: 1.0em;
+//    font-weight: normal;
+//    text-align: center;
+//    white-space: nowrap;
+//    border-bottom: 2px solid @gray-light;
+//  }
+//
+//  td {
+//    &.groupname {
+//      width: 60%;
+//
+//      a {
+//        color: inherit;
+//        text-decoration: none;
+//
+//        &:hover {
+//          text-decoration: underline;
+//        }
+//      }
+//    }
+//
+//    &.total {
+//      width: 10%;
+//    }
+//
+//    &.state {
+//      width: 20%;
+//      white-space: nowrap;
+//
+//      &.change {
+//        width: 10%;
+//        text-align: center;
+//        border-left-width: 1.5em;
+//        border-left-style: solid;
+//        padding: 0.3em 0.5em 0.3em 0.5em;
+//
+//        strong {
+//          font-size: 0.8em;
+//        }
+//
+//        &.ok {
+//          border-color: @colorOk;
+//        }
+//
+//        &.pending {
+//          border-color: @colorPending;
+//        }
+//
+//        &.warning {
+//          border-color: @colorWarningHandled;
+//
+//          &.unhandled {
+//            color: white;
+//            border-left-width: 0;
+//            background-color: @colorWarning;
+//          }
+//        }
+//
+//        &.unknown {
+//          border-color: @colorUnknownHandled;
+//
+//          &.unhandled {
+//            color: white;
+//            border-left-width: 0;
+//            background-color: @colorUnknown;
+//          }
+//        }
+//
+//        &.critical {
+//          border-color: @colorCriticalHandled;
+//
+//          &.unhandled {
+//            color: white;
+//            border-left-width: 0;
+//            background-color: @colorCritical;
+//          }
+//        }
+//      }
+//
+//      span.state {
+//        &.handled {
+//          margin-right: 2px;
+//        }
+//
+//        a {
+//          font-size: 0.9em;
+//          color: white;
+//          text-decoration: none;
+//
+//          &:hover {
+//            text-decoration: underline;
+//          }
+//        }
+//      }
+//    }
+//  }
+//}
+//
+///* End of monitoring groupsummary styles */
+//
+///* compact table */
+//table.statesummary {
+//  text-align: left;
+//  width: auto;
+//  border-collapse: separate;
+//
+//  tr.state td.state {
+//    width: auto;
+//    font-weight: bold;
+//  }
+//
+//  td {
+//    font-size: 0.9em;
+//    line-height: 1.2em;
+//    padding-left: 0.2em;
+//    margin: 0;
+//  }
+//
+//  td.state {
+//    padding: 0.2em;
+//    min-width: 75px;
+//    font-size: 0.75em;
+//    text-align: center;
+//  }
+//
+//  td.name {
+//    font-weight: bold;
+//  }
+//
+//  td a {
+//    color: inherit;
+//    text-decoration: none;
+//  }
+//}
+//
+//table.action .objectflags {
+//  float: right;
+//}
+//
+//table.objectstate {
+//  border-collapse: separate;
+//  border-spacing: 1px;
+//}
+//
+//table.objectstate td {
+//  padding-left: 1em;
+//}
+//
+//table.objectstate tr.state td.state {
+//  width: 9em;
+//  text-align: center;
+//  padding-left: 0;
+//  border-radius: 0;
+//}
+//
+//table.avp td.performance-data {
+//  padding: 0.3em 0 0.3em 1em;
+//}
+//
+//table.perfdata {
+//  min-width: 24em;
+//  font-size: 0.9em;
+//  width: 100%;
+//}
+//
+//table.perfdata th {
+//  padding: 0;
+//  text-align: left;
+//  padding-right: 0.5em;
+//}
+//
+//table.perfdata td {
+//  white-space: nowrap;
+//  padding-right: 0.5em;
+//}

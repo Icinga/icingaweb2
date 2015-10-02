@@ -8,7 +8,7 @@ $service_problems = (
     $this->statusSummary->services_unknown_unhandled_on_ok_hosts
 );
 ?>
-<div class="box ok_hosts state_<?= $this->statusSummary->hosts_up ? 'up' : 'pending'; ?>">
+<div class="box ok_hosts state_<?= $this->statusSummary->hosts_up ? 'up' : 'pending'; ?> col-1-2">
     <div class="box header">
     <?php if ($this->statusSummary->hosts_up): ?>
         <h2><?= $this->qlink(

@@ -67,7 +67,7 @@ class FormHints extends Zend_Form_Decorator_Abstract
             return $content;
         }
 
-        $html = '<ul class="hints">';
+        $html = '<ul class="form-info">';
         foreach ($hints as $hint) {
             if (is_array($hint)) {
                 list($hint, $properties) = $hint;

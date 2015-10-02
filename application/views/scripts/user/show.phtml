@@ -26,8 +26,8 @@ if ($this->hasPermission('config/authentication/users/edit') && $backend instanc
 <?php if (! $this->compact): ?>
   <?= $tabs; ?>
 <?php endif ?>
-  <h1><?= $this->escape($user->user_name); ?><span class="pull-right"><?= $editLink; ?></span></h1>
-  <table class="avp user-header">
+  <h2 class="clearfix"><?= $this->escape($user->user_name) ?><span class="pull-right"><?= $editLink ?></span></h2>
+  <table class="name-value-table">
     <tr>
       <th><?= $this->translate('State'); ?></th>
       <td><?= $user->is_active === null ? '-' : ($user->is_active ? $this->translate('Active') : $this->translate('Inactive')); ?></td>
@@ -52,13 +52,26 @@ if ($this->hasPermission('config/authentication/users/edit') && $backend instanc
 <?php endif ?>
 </div>
 <div class="content memberships">
+    <?php if ($showCreateMembershipLink): ?>
+    <?= $this->qlink(
+        $this->translate('Add User to Group') ,
+        'user/createmembership',
+        array('backend' => $backend->getName()),
+        array(
+            'class'             => 'button-link',
+            'data-base-target'  => '_next',
+            'icon'              => 'plus',
+            'title'             => $this->translate('Add user to user group')
+        )
+    ) ?>
+    <?php endif ?>
 <?php
-
+// @TODO(el): Remove that $firstRow thingy
 $firstRow = true;
 foreach ($memberships as $membership): ?>
 <?php if ($firstRow): ?>
   <?php $firstRow = false; ?>
-  <table data-base-target="_next" class="action membership-list alternating">
+  <table data-base-target="_next" class="action-table listing-table">
     <thead>
       <tr>
         <th class="membership-group"><?= $this->translate('Group'); ?></th>
@@ -97,20 +110,5 @@ foreach ($memberships as $membership): ?>
   </table>
 <?php else: ?>
   <p><?= $this->translate('No memberships found matching the filter'); ?></p>
-<?php endif ?>
-<?php if ($showCreateMembershipLink): ?>
-<?= $this->qlink(
-  $this->translate('Create New Membership'),
-  'user/createmembership',
-  array(
-    'backend'   => $backend->getName(),
-    'user'      => $user->user_name
-  ),
-  array(
-    'icon'              => 'plus',
-    'data-base-target'  => '_next',
-    'class'             => 'membership-create'
-  )
-); ?>
 <?php endif ?>
 </div>

@@ -1,141 +1,118 @@
 <?php
-
-use Icinga\Data\Filter\Filter;
+use Icinga\Module\Monitoring\Web\Widget\StateBadges;
 use Icinga\Web\Url;
-use Icinga\Module\Monitoring\Object\Service;
 
-$this->baseFilter = isset($this->baseFilter) ? $this->baseFilter : null;
-
-// don't fetch rows until they are actually needed, to improve dashlet performance
-if (!$stats instanceof stdClass) {
+// Don't fetch rows until they are actually needed, to improve dashlet performance
+if (! $stats instanceof stdClass) {
     $stats = $stats->fetchRow();
-};
-$selfUrl = 'monitoring/list/services';
-$currentUrl = Url::fromRequest()->getRelativeUrl();
-
-echo $this->qlink(
+}
+?>
+<div class="services-summary">
+<?= $this->qlink(
     sprintf($this->translatePlural(
         '%u Service', '%u Services', $stats->services_total),
         $stats->services_total
     ),
-    $selfUrl,
+    // @TODO(el): Fix that
+    Url::fromPath('monitoring/list/services')->setParams(isset($baseFilter) ? $baseFilter->getUrlParams() : array()),
     null,
     array('title' => sprintf(
         $this->translatePlural('List %u service', 'List all %u services', $stats->services_total),
         $stats->services_total
     ))
 ) ?>&#58;
-<span class="badges">
-<?php if ($stats->services_ok): ?>
-<span class="state ok<?= $currentUrl === Url::fromPath($selfUrl, array('service_state' => 0))->getRelativeUrl() ? ' active' : ''; ?>">
-    <?=
-        $this->qlink(
-            $stats->services_ok,
-            Url::urlAddFilterOptional($selfUrl, Filter::where('service_state', 0), $this->baseFilter),
-            null,
-            array('title' => sprintf(
-                $this->translatePlural(
-                    'List %u service that is currently in state OK',
-                    'List %u services which are currently in state OK',
-                    $stats->services_ok
-                ),
-                $stats->services_ok
-            ))
-        );
-    ?>
-</span>
-<?php endif ?>
 <?php
-foreach (array(2 => 'critical', 3 => 'unknown', 1 => 'warning') as $stateId => $state) {
-    $pre = 'services_' . $state;
-    if ($stats->$pre) {
-        $handled = $pre . '_handled';
-        $unhandled = $pre . '_unhandled';
-        $paramsHandled = Filter::matchAll(
-            Filter::where('service_state', $stateId),
-            Filter::where('service_handled', 1)
-        );
-        $paramsUnhandled = Filter::matchAll(
-            Filter::where('service_state', $stateId),
-            Filter::where('service_handled', 0)
-        );
-        if ($stats->$unhandled) {
-            $compareUrl = Url::fromPath($selfUrl)->setQueryString($paramsUnhandled->toQueryString())->getRelativeUrl();
-        } else {
-            $compareUrl = Url::fromPath($selfUrl)->setQueryString($paramsUnhandled->toQueryString())->getRelativeUrl();
-        }
+$stateBadges = new StateBadges();
+$stateBadges
+    ->setBaseFilter(isset($baseFilter) ? $baseFilter : null)
+    ->setUrl('monitoring/list/services')
+    ->add(
+        StateBadges::STATE_OK,
+        $stats->services_ok,
+        array(
+            'service_state' => 0
+        ),
+        'List %u service that is currently in state OK',
+        'List %u services which are currently in state OK',
+        array($stats->services_ok)
+    )
+    ->add(
+        StateBadges::STATE_CRITICAL,
+        $stats->services_critical_unhandled,
+        array(
+            'service_state'     => 2,
+            'service_handled'   => 0
+        ),
+        'List %u service that is currently in state CRITICAL',
+        'List %u services which are currently in state CRITICAL',
+        array($stats->services_critical_unhandled)
+    )
+    ->add(
+        StateBadges::STATE_CRITICAL_HANDLED,
+        $stats->services_critical_handled,
+        array(
+            'service_state'     => 2,
+            'service_handled'   => 1
+        ),
+        'List %u handled service that is currently in state CRITICAL',
+        'List %u handled services which are currently in state CRITICAL',
+        array($stats->services_critical_unhandled)
+    )
+    ->add(
+        StateBadges::STATE_UNKNOWN,
+        $stats->services_unknown_unhandled,
+        array(
+            'service_state'     => 3,
+            'service_handled'   => 0
+        ),
+        'List %u service that is currently in state UNKNOWN',
+        'List %u services which are currently in state UNKNOWN',
+        array($stats->services_unknown_unhandled)
+    )
+    ->add(
+        StateBadges::STATE_UNKNOWN_HANDLED,
+        $stats->services_unknown_handled,
+        array(
+            'service_state'     => 3,
+            'service_handled'   => 1
+        ),
+        'List %u handled service that is currently in state UNKNOWN',
+        'List %u handled services which are currently in state UNKNOWN',
+        array($stats->services_unknown_handled)
 
-        if ($compareUrl === $currentUrl) {
-            $active = ' active';
-        } else {
-            $active = '';
-        }
-
-        echo '<span class="state ' . $state . $active . ($stats->$unhandled ? '' : ' handled') . '">';
-        if ($stats->$unhandled) {
-
-            echo $this->qlink(
-                $stats->$unhandled,
-                Url::urlAddFilterOptional($selfUrl, $paramsUnhandled, $this->baseFilter),
-                null,
-                array('title' => sprintf(
-                    $this->translatePlural(
-                        'List %u service that is currently in state %s',
-                        'List %u services which are currently in state %s',
-                        $stats->$unhandled
-                    ),
-                    $stats->$unhandled,
-                    Service::getStateText($stateId, true)
-                ))
-            );
-        }
-        if ($stats->$handled) {
-
-            if (Url::fromPath($selfUrl)->setQueryString($paramsHandled->toQueryString())->getRelativeUrl() === $currentUrl) {
-                $active = ' active';
-            } else {
-                $active = '';
-            }
-            if ($stats->$unhandled) {
-                echo '<span class="state handled ' . $state . $active . '">';
-            }
-            echo $this->qlink(
-                $stats->$handled,
-                Url::urlAddFilterOptional($selfUrl, $paramsHandled, $this->baseFilter),
-                null,
-                array('title' => sprintf(
-                    $this->translatePlural(
-                        'List %u service that is currently in state %s (Acknowledged)',
-                        'List %u services which are currently in state %s (Acknowledged)',
-                        $stats->$handled
-                    ),
-                    $stats->$handled,
-                    Service::getStateText($stateId, true)
-                ))
-            );
-            if ($stats->$unhandled) {
-                echo "</span>\n";
-            }
-        }
-        echo "</span>\n";
-    }
-}
-?>
-<?php if ($stats->services_pending): ?>
-<span class="state pending<?= $currentUrl === Url::fromPath($selfUrl, array('service_state' => 99))->getRelativeUrl() ? ' active' : ''; ?>">
-    <?= $this->qlink(
+    )
+    ->add(
+        StateBadges::STATE_WARNING,
+        $stats->services_warning_unhandled,
+        array(
+            'service_state'     => 1,
+            'service_handled'   => 0
+        ),
+        'List %u service that is currently in state WARNING',
+        'List %u services which are currently in state WARNING',
+        array($stats->services_warning_unhandled)
+    )
+    ->add(
+        StateBadges::STATE_WARNING_HANDLED,
+        $stats->services_warning_handled,
+        array(
+            'service_state'     => 1,
+            'service_handled'   => 1
+        ),
+        'List %u handled service that is currently in state WARNING',
+        'List %u handled services which are currently in state WARNING',
+        array($stats->services_warning_handled)
+    )
+    ->add(
+        StateBadges::STATE_PENDING,
         $stats->services_pending,
-        Url::urlAddFilterOptional($selfUrl, Filter::where('service_state', 99), $this->baseFilter),
-        null,
-        array('title' => sprintf(
-            $this->translatePlural(
-                'List %u service that is currently in state PENDING',
-                'List %u services which are currently in state PENDING',
-                $stats->services_pending
-            ),
-            $stats->services_pending
-        ))
-    ); ?>
-</span>
-<?php endif ?>
-</span>
+        array(
+            'service_state' => 99
+        ),
+        'List %u handled service that is currently in state PENDING',
+        'List %u handled services which are currently in state PENDING',
+        array($stats->services_pending)
+    );
+echo $stateBadges->render();
+?>
+</div>

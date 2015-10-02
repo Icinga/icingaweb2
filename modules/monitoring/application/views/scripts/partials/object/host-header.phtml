@@ -1,0 +1,37 @@
+<?php
+use Icinga\Module\Monitoring\Object\Host;
+/** @var Host $object */
+?>
+<table>
+    <tr>
+        <td class="state-col state-<?= Host::getStateText($object->host_state) ?><?= $object->host_handled ? ' handled' : '' ?>">
+            <p>
+                <?= Host::getStateText($object->host_state, true) ?>
+                <br>
+                <?= $this->timeSince($object->host_last_state_change) ?>
+            </p>
+        </td>
+        <td>
+            <p>
+                <?= $this->iconImage()->host($object) ?>
+                <span class="selectable"><?= $this->escape($object->host_display_name) ?></span>
+            <?php if ($object->host_display_name !== $object->host_name): ?>
+                <span class="selectable text-small">&#40;<?= $this->escape($object->host_name) ?>&#41;</span>
+            <?php endif ?>
+            <?php if ($object->host_address6 && $object->host_address6 !== $object->host_name): ?>
+                <br>
+                <span class="selectable text-small" title="<?= $this->translate('IPv6 address') ?>">
+                    <?= $this->escape($object->host_address6) ?>
+                </span>
+            <?php endif ?>
+            <?php if ($object->host_address && $object->host_address !== $object->host_name): ?>
+                <br>
+                <span class="selectable text-small" title="<?= $this->translate('IPv4 address') ?>">
+                    <?= $this->escape($object->host_address) ?>
+                </span>
+            <?php endif ?>
+                <?= $this->render('partials/host/statusicons.phtml') ?>
+            </p>
+        </td>
+    </tr>
+</table>

@@ -1,221 +1,201 @@
 <div class="controls">
 
     <?php if (! $this->compact): ?>
-        <?= $tabs; ?>
+        <?= $tabs ?>
     <?php endif ?>
-
-
-    <h2 class="tinystatesummary" <?= $this->compact ? ' data-base-target="col1"' : ''; ?>
-        <?= $this->render('list/components/servicesummary.phtml') ?>
-    </h2>
-    <?= $this->render('partials/service/objects-header.phtml'); ?>
-
+    <?= $this->render('list/components/servicesummary.phtml') ?>
+    <?= $this->render('partials/service/objects-header.phtml') ?>
+    <?php
+        $serviceCount = count($objects);
+        $unhandledCount = count($unhandledObjects);
+        $problemCount = count($problemObjects);
+        $unackCount = count($unacknowledgedObjects);
+        $scheduledDowntimeCount = count($objects->getScheduledDowntimes());
+    ?>
 </div>
-<div class="content multi-commands">
-    <h3>
-        <?= $this->icon('reschedule') ?>
-        <?= $this->translate('Commands') ?>
-    </h3>
 
-    <?php if (($serviceCount = count($objects)) === 0): ?>
-        <?= $this->translate('No services found matching the filter'); ?>
+<div class="content">
+
+    <?php if ($serviceCount === 0): ?>
+        <?= $this->translate('No services found matching the filter') ?>
     <?php else: ?>
-        <p>
-        <?= sprintf($this->translatePlural(
-            'Issue commands to %s selected service:',
-            'Issue commands to all %s selected services:',
-            count($objects)
-        ), '<b>' . count($objects) . '</b>') ?>
-        </p>
-        <?= $checkNowForm; ?>
-        <br>
-        <?= $this->qlink(
-            $this->translate('Reschedule next checks'),
-            $rescheduleAllLink,
-            null,
-            array('icon' => 'reschedule')
-        ); ?>
-
-        <br>
-        <?= $this->qlink(
-            $this->translate('Schedule downtimes'),
-            $downtimeAllLink,
-            null,
-            array('icon' => 'plug')
-        ); ?>
-
-        <br>
-        <?= $this->qlink(
-            $this->translate('Submit passive check results'),
-            $processCheckResultAllLink,
-            null,
-            array('icon' => 'reply')
-        ); ?>
-
-        <br>
-        <?= $this->qlink(
-            $this->translate('Add comments'),
-            $addCommentLink,
-            null,
-            array('icon' => 'comment')
-        ); ?>
-
-        <?php if ($this->hasPermission('monitoring/command/send-custom-notification')): ?>
-            <br>
-            <?= $this->qlink(
-                    sprintf($this->translate('Send a custom notification for all %u services'), $serviceCount),
-                    $sendCustomNotificationLink,
-                    null,
-                    array('icon' => 'comment')
-            ); ?>
-        <?php endif; ?>
-
-        <?php
-            $unhandledCount = count($unhandledObjects);
-            $problemCount = count($problemObjects);
-            $unackCount = count($unacknowledgedObjects);
-        ?>
-
-        <?php if ($problemCount || $unhandledCount || $unackCount): ?>
-        <div>
-            <h3>
-                <?= $this->icon('attention-alt') ?>
-                <?= $this->translate('Problems') ?>
-            </h3>
-
-            <?php if ($problemCount): ?>
-                <p>
-                <?= sprintf(
-                    $this->translatePlural(
-                        'There is %s problem, issue commands to the problem service',
-                        'There are %s problems, issue commands to the problem services',
-                        $problemCount
-                    ),
-                    '<b>' . $problemCount . '</b>'
-                ); ?>
-                </p>
-                <?= $this->qlink(
-                    sprintf(
-                        $this->translatePlural(
-                            'Schedule a downtime for %s problem service',
-                            'Schedule downtimes for %s problem services',
-                            $problemCount
-                        ),
-                        $problemCount
-                    ),
-                    $downtimeLink,
-                    null,
-                    array('icon' => 'plug')
-                ); ?>
-            <?php endif ?>
-
+        <h2> <?= $this->translate('Problem handling') ?> </h2>
+        <table class="name-value-table">
+            <tbody>
             <?php if ($unackCount > 0): ?>
-                <br>
-                <?= $this->qlink(
-                    sprintf(
-                        $this->translatePlural(
-                            'Acknowledge %u unacknowledged problem service',
-                            'Acknowledge %u unacknowledged problem services',
-                            $unackCount
-                        ),
-                        $unackCount
-                    ),
-                    $acknowledgeLink,
-                    null,
-                    array('icon' => 'ok')
-                ); ?>
+                <tr>
+                    <th> <?= sprintf($this->translate('%d unhandled problems'), $unackCount) ?> </th>
+                    <td> <?= $this->qlink(
+                            $this->translate('Acknowledge'),
+                            $acknowledgeLink,
+                            null,
+                            array(
+                                'icon' => 'ok',
+                                'class' =>  'action-link'
+                            )
+                        ) ?> </td>
+                </tr>
             <?php endif; ?>
 
-            <?php if ($unhandledCount): ?>
-                <p>
-                <?= sprintf($this->translate('There are %s unhandled problem services. ' .
-                        'Issue commands to the problematic services:'),
-                        '<span class="badge badge-critical">' . $unhandledCount . '</span>') ?>
-
-                </p>
-                <?= $this->qlink(
-                    sprintf(
-                        $this->translatePlural(
-                            'Schedule a downtime for %u unhandled problem service',
-                            'Schedule a downtime for %u unhandled problem services',
-                            $unhandledCount
-                        ),
-                        $unhandledCount
-                    ),
-                    $downtimeUnhandledLink,
-                    null,
-                    array('icon' => 'plug')
-                ); ?>
-
+            <?php if (($acknowledgedCount = count($acknowledgedObjects)) > 0): ?>
+                <tr>
+                    <th> <?= sprintf(
+                            $this->translatePlural(
+                                '%s acknowledgedment',
+                                '%s acknowledgedments',
+                                $acknowledgedCount
+                            ),
+                            '<b>' . $acknowledgedCount . '</b>'
+                        ) ?>
+                    </th>
+                    <td>
+                        <?= $removeAckForm ?>
+                    </td>
+                </tr>
             <?php endif ?>
 
-        </div>
-        <?php endif; ?>
+            <tr>
+                <th> <?= $this->translate('Comments') ?> </th>
+                <td>
+                    <?= $this->qlink(
+                        $this->translate('Add comments'),
+                        $addCommentLink,
+                        null,
+                        array(
+                            'icon' => 'comment',
+                            'class' =>  'action-link'
+                        )
+                    ) ?>
+                </td>
+            </tr>
 
-    <?php if (($acknowledgedCount = count($acknowledgedObjects)) > 0): ?>
-        <h3><?= $this->icon('ok', $this->translate('Acknowledgements')) ?> <?= $this->translate('Acknowledgements') ?></h3>
-        <p>
-            <?= sprintf(
-                $this->translatePlural(
-                    '%s Acknowledged Service Problem.',
-                    '%s Acknowledged Service Problems.',
-                    $acknowledgedCount
-                ),
-                '<b>' . $acknowledgedCount . '</b>'
-            ); ?> <?= $removeAckForm ?>
-        </p>
-    <?php endif ?>
+            <?php if (($commentCount = count($objects->getComments())) > 0): ?>
+            <tr>
+                <th></th>
+                <td>
+                    <?= $this->qlink(
+                        sprintf(
+                            $this->translatePlural(
+                                '%s comment',
+                                '%s comments',
+                                $commentCount
+                            ),
+                            $commentCount
+                        ),
+                        $commentsLink,
+                        null,
+                        array('data-base-target' => '_next')
+                    ) ?>
+                </td>
+            </tr>
+            <?php endif ?>
 
-    <?php $scheduledDowntimeCount = count($objects->getScheduledDowntimes()) ?>
+            <tr>
+                <th>
+                    <?= $this->translate('Downtimes') ?>
+                </th>
+                <td>
+                    <?= $this->qlink(
+                        $this->translate('Schedule downtimes'),
+                        $downtimeAllLink,
+                        null,
+                        array(
+                            'icon' => 'plug',
+                            'class' => 'action-link'
+                        )
+                    ) ?>
+                </td>
+            </tr>
 
-    <?php if ($scheduledDowntimeCount): ?>
-    <h3><?= $this->icon('plug', $this->translate('Downtimes')) ?> <?= $this->translate('Downtimes') ?></h3>
-        <?= $this->qlink(
-            sprintf(
-                $this->translatePlural(
-                    '%s scheduled downtime',
-                    '%s scheduled downtimes',
-                    $scheduledDowntimeCount
-                ),
-                $scheduledDowntimeCount
-            ),
-            $showDowntimesLink,
-            null,
-            array('data-base-target' => '_next')
-        );?>
-        <?= sprintf($this->translate('on all selected services.')) ?>
+            <?php if ($scheduledDowntimeCount > 0): ?>
+            <tr>
+                <th></th>
+                <td>
+                    <?= $this->qlink(
+                        sprintf(
+                            $this->translatePlural(
+                                '%d scheduled downtime',
+                                '%d scheduled downtimes',
+                                $scheduledDowntimeCount
+                            ),
+                            $scheduledDowntimeCount
+                        ),
+                        $showDowntimesLink,
+                        null,
+                        array(
+                            'data-base-target' => '_next'
+                        )
+                    ) ?>
+                </td>
+            </tr>
+            <?php endif ?>
 
-        <?php if (($inDowntimeCount = count($objectsInDowntime)) > 0): ?>
-            <br>
-            <?= $this->qlink(
-                sprintf($this->translatePlural(
-                    '%s service',
-                    '%s services',
-                    $inDowntimeCount
-                ), $inDowntimeCount),
-                $inDowntimeLink,
-                null,
-                array('data-base-target' => '_next')
-            );?>
-            <?= sprintf($this->translate('are currently in downtime.')) ?>
+            </tbody>
+        </table>
+
+        <?php if ($this->hasPermission('monitoring/command/send-custom-notification')): ?>
+
+            <h2> <?= $this->translate('Notifications') ?> </h2>
+
+            <table class="name-value-table">
+                <tbody>
+                <tr>
+                    <th> <?= $this->translate('Notifications') ?> </th>
+                    <td>
+                        <?= $this->qlink(
+                            $this->translate('Send notifications'),
+                            $sendCustomNotificationLink,
+                            null,
+                            array(
+                                'icon' => 'bell-alt',
+                                'class' => 'action-link'
+                            )
+                        ) ?>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
         <?php endif ?>
-    <?php endif ?>
 
-    <?php $commentCount = count($objects->getComments()) ?>
-    <?php if ($commentCount > 0): ?>
-        <h3> <?= $this->icon('comment') ?> <?= $this->translate('Comments') ?> </h3>
-        <?= $this->qlink(
-            sprintf(
-                $this->translatePlural(
-                    '%s comment.',
-                    '%s comments.',
-                    $commentCount
-            ), $commentCount),
-            $commentsLink,
-            null,
-            array('data-base-target' => '_next')
-        ); ?>
-        <?= $this->translate('on all selected services.') ?>
+        <h2> <?= $this->translate('Check Execution') ?> </h2>
+
+        <table class="name-value-table">
+            <tbody>
+            <tr>
+                <th> <?= $this->translate('Command') ?> </th>
+                <td>
+                    <?= $this->qlink(
+                        $this->translate('Process check result'),
+                        $processCheckResultAllLink,
+                        null,
+                        array(
+                            'icon' => 'reply',
+                            'class' => 'action-link'
+                        )
+                    ) ?>
+                </td>
+            </tr>
+
+            <tr>
+                <th> <?= $this->translate('Schedule Check') ?> </th>
+                <td> <?= $checkNowForm ?> </td>
+            </tr>
+
+            <tr>
+                <th></th>
+                <td>
+                    <?= $this->qlink(
+                        $this->translate('Reschedule'),
+                        $rescheduleAllLink,
+                        null,
+                        array(
+                            'icon' => 'reschedule',
+                            'class' => 'action-link'
+                        )
+                    ) ?>
+                </td>
+            </tr>
+            </tbody>
+        </table>
     <?php endif ?>
-<?php endif ?>
 </div>
