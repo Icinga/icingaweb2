@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Monitoring Module (2.0.0-rc1)\n"
 "Report-Msgid-Bugs-To: dev@icinga.org\n"
 "POT-Creation-Date: 2015-10-02 09:45+0200\n"
-"PO-Revision-Date: 2015-10-02 12:08+0100\n"
+"PO-Revision-Date: 2015-10-02 12:10+0100\n"
 "Last-Translator: Thomas Gelf <thomas@gelf.net>\n"
 "Language: it_IT\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1704,9 +1704,8 @@ msgstr "Periodo delle Notifiche per l'Host"
 
 #: /usr/local/icingaweb2/modules/monitoring/configuration.php:108
 #: /usr/local/icingaweb2/modules/monitoring/configuration.php:244
-#, fuzzy
 msgid "Host Problems"
-msgstr "Ultimo Problema"
+msgstr "Host con Problemi"
 
 #: /usr/local/icingaweb2/modules/monitoring/application/views/scripts/health/stats.phtml:35
 #, fuzzy
