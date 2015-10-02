@@ -100,7 +100,7 @@
         },
 
         /**
-         * Return the numeric identifier fot a given log level
+         * Return the numeric identifier for a given log level
          */
         numericLevel: function (level) {
             var ret = this.logLevels[level];

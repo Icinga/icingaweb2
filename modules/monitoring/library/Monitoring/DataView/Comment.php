@@ -11,19 +11,6 @@ class Comment extends DataView
     /**
      * {@inheritdoc}
      */
-    public function isValidFilterTarget($column)
-    {
-        if ($column[0] === '_'
-            && preg_match('/^_(?:host|service)_/', $column)
-        ) {
-            return true;
-        }
-        return parent::isValidFilterTarget($column);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getColumns()
     {
         return array(
@@ -46,12 +33,13 @@ class Comment extends DataView
     /**
      * {@inheritdoc}
      */
-    public function getFilterColumns()
+    public function getStaticFilterColumns()
     {
         return array(
             'comment_author',
             'host', 'host_alias',
             'hostgroup', 'hostgroup_alias', 'hostgroup_name',
+            'instance_name',
             'service',
             'servicegroup', 'servicegroup_alias', 'servicegroup_name'
         );
@@ -62,7 +50,7 @@ class Comment extends DataView
      */
     public function getSearchColumns()
     {
-        return array('host', 'host_display_name', 'service', 'service_display_name', 'comment_author');
+        return array('host_display_name', 'service_display_name');
     }
 
     /**

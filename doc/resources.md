@@ -19,21 +19,38 @@ to handle authentication and authorization, monitoring data or user preferences.
 Directive       | Description
 ----------------|------------
 **type**        | `db`
-**db**          | Database management system. Either `mysql` or `pgsql`.
-**host**        | Connect to the database server on the given host.
-**port**        | Port number to use for the connection.
+**db**          | Database management system. In most cases `mysql` or `pgsql`.
+**host**        | Connect to the database server on the given host. For using unix domain sockets, specify `localhost` for MySQL and the path to the unix domain socket directory for PostgreSQL.
+**port**        | Port number to use. Mandatory for connections to a PostgreSQL database.
 **username**    | The username to use when connecting to the server.
 **password**    | The password to use when connecting to the server.
 **dbname**      | The database to use.
 
 **Example:**
 
-```
-[icingaweb]
+````
+[icingaweb-mysql-tcp]
+type      = db
+db        = mysql
+host      = 127.0.0.1
+port      = 3306
+username  = icingaweb
+password  = icingaweb
+dbname    = icingaweb
+
+[icingaweb-mysql-socket]
 type      = db
 db        = mysql
 host      = localhost
-port      = 3306
+username  = icingaweb
+password  = icingaweb
+dbname    = icingaweb
+
+[icingaweb-pgsql-socket]
+type      = db
+db        = pgsql
+host      = /var/run/postgresql
+port      = 5432
 username  = icingaweb
 password  = icingaweb
 dbname    = icingaweb

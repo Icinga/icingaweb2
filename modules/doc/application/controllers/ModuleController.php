@@ -1,26 +1,26 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
-use \Zend_Controller_Action_Exception;
+namespace Icinga\Module\Doc\Controllers;
+
 use Icinga\Application\Icinga;
 use Icinga\Module\Doc\DocController;
 use Icinga\Module\Doc\Exception\DocException;
 
-class Doc_ModuleController extends DocController
+class ModuleController extends DocController
 {
     /**
      * Get the path to a module documentation
      *
-     * @param   string  $module                     The name of the module
-     * @param   string  $default                    The default path
-     * @param   bool    $suppressErrors             Whether to not throw an exception if the module documentation is not
-     *                                              available
+     * @param   string  $module         The name of the module
+     * @param   string  $default        The default path
+     * @param   bool    $suppressErrors Whether to not throw an exception if the module documentation is not available
      *
-     * @return  string|null                         Path to the documentation or null if the module documentation is not
-     *                                              available and errors are suppressed
+     * @return  string|null             Path to the documentation or null if the module documentation is not available
+     *                                  and errors are suppressed
      *
-     * @throws  Zend_Controller_Action_Exception    If the module documentation is not available and errors are not
-     *                                              suppressed
+     * @throws  \Icinga\Exception\Http\HttpNotFoundException    If the module documentation is not available and errors
+     *                                                          are not suppressed
      */
     protected function getPath($module, $default, $suppressErrors = false)
     {
@@ -36,10 +36,7 @@ class Doc_ModuleController extends DocController
         if ($suppressErrors) {
             return null;
         }
-        throw new Zend_Controller_Action_Exception(
-            sprintf($this->translate('Documentation for module \'%s\' is not available'), $module),
-            404
-        );
+        $this->httpNotFound($this->translate('Documentation for module \'%s\' is not available'), $module);
     }
 
     /**
@@ -49,55 +46,41 @@ class Doc_ModuleController extends DocController
     {
         $moduleManager = Icinga::app()->getModuleManager();
         $modules = array();
-        foreach ($moduleManager->listEnabledModules() as $module) {
+        foreach ($moduleManager->listInstalledModules() as $module) {
             $path = $this->getPath($module, $moduleManager->getModuleDir($module, '/doc'), true);
             if ($path !== null) {
-                $modules[] = $moduleManager->getModule($module);
+                $modules[] = $moduleManager->getModule($module, false);
             }
         }
         $this->view->modules = $modules;
     }
 
     /**
-     * Assert that the given module is enabled
+     * Assert that the given module is installed
      *
-     * @param   $moduleName
+     * @param   string $moduleName
      *
-     * @throws  Zend_Controller_Action_Exception    If the required parameter 'moduleName' is empty or either if the
-     *                                              given module is neither installed nor enabled
+     * @throws  \Icinga\Exception\Http\HttpNotFoundException If the given module is not installed
      */
-    protected function assertModuleEnabled($moduleName)
+    protected function assertModuleInstalled($moduleName)
     {
-        if (empty($moduleName)) {
-            throw new Zend_Controller_Action_Exception(
-                sprintf($this->translate('Missing parameter \'%s\''), 'moduleName'),
-                404
-            );
-        }
         $moduleManager = Icinga::app()->getModuleManager();
         if (! $moduleManager->hasInstalled($moduleName)) {
-            throw new Zend_Controller_Action_Exception(
-                sprintf($this->translate('Module \'%s\' is not installed'), $moduleName),
-                404
-            );
-        }
-        if (! $moduleManager->hasEnabled($moduleName)) {
-            throw new Zend_Controller_Action_Exception(
-                sprintf($this->translate('Module \'%s\' is not enabled'), $moduleName),
-                404
-            );
+            $this->httpNotFound($this->translate('Module \'%s\' is not installed'), $moduleName);
         }
     }
 
     /**
      * View the toc of a module's documentation
      *
-     * @see assertModuleEnabled()
+     * @throws  \Icinga\Exception\MissingParameterException     If the required parameter 'moduleName' is empty
+     * @throws  \Icinga\Exception\Http\HttpNotFoundException    If the given module is not installed
+     * @see     assertModuleInstalled()
      */
     public function tocAction()
     {
-        $module = $this->getParam('moduleName');
-        $this->assertModuleEnabled($module);
+        $module = $this->params->getRequired('moduleName');
+        $this->assertModuleInstalled($module);
         $this->view->moduleName = $module;
         try {
             $this->renderToc(
@@ -107,28 +90,23 @@ class Doc_ModuleController extends DocController
                 array('moduleName' => $module)
             );
         } catch (DocException $e) {
-            throw new Zend_Controller_Action_Exception($e->getMessage(), 404);
+            $this->httpNotFound($e->getMessage());
         }
     }
 
     /**
      * View a chapter of a module's documentation
      *
-     * @throws  Zend_Controller_Action_Exception    If the required parameter 'chapterId' is missing or if an error in
-     *                                              the documentation module's library occurs
-     * @see     assertModuleEnabled()
+     * @throws  \Icinga\Exception\MissingParameterException     If one of the required parameters 'moduleName' and
+     *                                                          'chapter' is empty
+     * @throws  \Icinga\Exception\Http\HttpNotFoundException    If the given module is not installed
+     * @see     assertModuleInstalled()
      */
     public function chapterAction()
     {
-        $module = $this->getParam('moduleName');
-        $this->assertModuleEnabled($module);
-        $chapter = $this->getParam('chapter');
-        if ($chapter === null) {
-            throw new Zend_Controller_Action_Exception(
-                sprintf($this->translate('Missing parameter %s'), 'chapter'),
-                404
-            );
-        }
+        $module = $this->params->getRequired('moduleName');
+        $this->assertModuleInstalled($module);
+        $chapter = $this->params->getRequired('chapter');
         $this->view->moduleName = $module;
         try {
             $this->renderChapter(
@@ -138,19 +116,21 @@ class Doc_ModuleController extends DocController
                 array('moduleName' => $module)
             );
         } catch (DocException $e) {
-            throw new Zend_Controller_Action_Exception($e->getMessage(), 404);
+            $this->httpNotFound($e->getMessage());
         }
     }
 
     /**
      * View a module's documentation as PDF
      *
-     * @see assertModuleEnabled()
+     * @throws  \Icinga\Exception\MissingParameterException     If the required parameter 'moduleName' is empty
+     * @throws  \Icinga\Exception\Http\HttpNotFoundException    If the given module is not installed
+     * @see     assertModuleInstalled()
      */
     public function pdfAction()
     {
-        $module = $this->getParam('moduleName');
-        $this->assertModuleEnabled($module);
+        $module = $this->params->getRequired('moduleName');
+        $this->assertModuleInstalled($module);
         $this->renderPdf(
             $this->getPath($module, Icinga::app()->getModuleManager()->getModuleDir($module, '/doc')),
             $module,

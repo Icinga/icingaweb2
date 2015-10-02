@@ -70,8 +70,8 @@ abstract class Session extends SessionNamespace
     public function getNamespace($identifier)
     {
         if (!isset($this->namespaces[$identifier])) {
-            if (in_array($identifier, $this->removedNamespaces)) {
-                unset($this->removedNamespaces[array_search($identifier, $this->removedNamespaces)]);
+            if (in_array($identifier, $this->removedNamespaces, true)) {
+                unset($this->removedNamespaces[array_search($identifier, $this->removedNamespaces, true)]);
             }
 
             $this->namespaces[$identifier] = new SessionNamespace();

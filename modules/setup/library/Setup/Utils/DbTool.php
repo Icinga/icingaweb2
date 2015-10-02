@@ -205,6 +205,16 @@ class DbTool
     }
 
     /**
+     * Return whether a connection with the server has been established
+     *
+     * @return  bool
+     */
+    public function isConnected()
+    {
+        return $this->pdoConn !== null;
+    }
+
+    /**
      * Establish a connection with the database or just the server by omitting the database name
      *
      * @param   string  $dbname     The name of the database to connect to
@@ -261,6 +271,8 @@ class DbTool
                 $this->config['db']
             );
         }
+
+        $this->zendConn->getConnection(); // Force connection attempt
     }
 
     /**
@@ -432,6 +444,24 @@ class DbTool
         $stmt = $this->pdoConn->prepare($statement);
         $stmt->execute($params);
         return $stmt;
+    }
+
+    /**
+     * Return the version of the server currently connected to
+     *
+     * @return  string|null
+     */
+    public function getServerVersion()
+    {
+        if ($this->config['db'] === 'mysql') {
+            return $this->query('show variables like "version"')->fetchColumn(1) ?: null;
+        } elseif ($this->config['db'] === 'pgsql') {
+            return $this->query('show server_version')->fetchColumn() ?: null;
+        } else {
+            throw new LogicException(
+                sprintf('Unable to fetch the server\'s version. Unsupported PDO driver "%s"', $this->config['db'])
+            );
+        }
     }
 
     /**
@@ -816,7 +846,7 @@ EOD;
             // as the chances are very high that the database is created later causing the current user being
             // the owner with ALL privileges. (Which in turn can be granted to others.)
 
-            if (array_search('CREATE', $privileges) !== false) {
+            if (array_search('CREATE', $privileges, true) !== false) {
                 $query = $this->query(
                     'select rolcreatedb from pg_roles where rolname = :user',
                     array(':user' => $username !== null ? $username : $this->config['username'])
@@ -825,7 +855,7 @@ EOD;
             }
         }
 
-        if (array_search('CREATEROLE', $privileges) !== false) {
+        if (array_search('CREATEROLE', $privileges, true) !== false) {
             $query = $this->query(
                 'select rolcreaterole from pg_roles where rolname = :user',
                 array(':user' => $username !== null ? $username : $this->config['username'])
@@ -833,7 +863,7 @@ EOD;
             $privilegesGranted &= $query->fetchColumn() !== false;
         }
 
-        if (array_search('SUPER', $privileges) !== false) {
+        if (array_search('SUPER', $privileges, true) !== false) {
             $query = $this->query(
                 'select rolsuper from pg_roles where rolname = :user',
                 array(':user' => $username !== null ? $username : $this->config['username'])

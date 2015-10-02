@@ -8,11 +8,10 @@ namespace Tests\Icinga\Web;
 require_once realpath(dirname(__FILE__) . '/../../../../bootstrap.php');
 
 use Mockery;
-use Icinga\Application\Icinga;
+use Icinga\Test\BaseTestCase;
 use Icinga\Web\Widget\Dashboard;
 use Icinga\Web\Widget\Dashboard\Pane;
 use Icinga\Web\Widget\Dashboard\Dashlet;
-use Icinga\Test\BaseTestCase;
 
 class DashletWithMockedView extends Dashlet
 {
@@ -44,22 +43,6 @@ class DashboardTest extends BaseTestCase
     {
         parent::tearDown();
         Mockery::close(); // Necessary because some tests run in a separate process
-    }
-
-    public function setUp()
-    {
-        $moduleMock = Mockery::mock('Icinga\Application\Modules\Module');
-        $moduleMock->shouldReceive('getPaneItems')->andReturn(array(
-            'test-pane' => new Pane('Test Pane')
-        ));
-
-        $moduleManagerMock = Mockery::mock('Icinga\Application\Modules\Manager');
-        $moduleManagerMock->shouldReceive('getLoadedModules')->andReturn(array(
-            'test-module' => $moduleMock
-        ));
-
-        $bootstrapMock = $this->setupIcingaMock();
-        $bootstrapMock->shouldReceive('getModuleManager')->andReturn($moduleManagerMock);
     }
 
     public function testWhetherCreatePaneCreatesAPane()
@@ -122,21 +105,6 @@ class DashboardTest extends BaseTestCase
             'test1',
             $pane->getName(),
             'Dashboard:getPane() could not return pane by name'
-        );
-    }
-
-    /**
-     * @depends testWhetherCreatePaneCreatesAPane
-     */
-    public function testLoadPaneItemsProvidedByEnabledModules()
-    {
-        $dashboard = new Dashboard();
-        $dashboard->load();
-
-        $this->assertCount(
-            1,
-            $dashboard->getPanes(),
-            'Dashboard::load() could not load panes from enabled modules'
         );
     }
 

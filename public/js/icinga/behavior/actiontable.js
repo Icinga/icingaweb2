@@ -43,13 +43,14 @@
      * Handle the selection of an action table
      *
      * @param   table   {HTMLElement}   The table
-     * @param           {Icinga}
+     * @param   icinga  {Icinga}
      *
      * @constructor
      */
     var Selection = function(table, icinga) {
         this.$el = $(table);
         this.icinga = icinga;
+        this.col = this.$el.closest('div.container').attr('id');
         
         if (this.hasMultiselection()) {
             if (! this.getMultiselectionKeys().length) {
@@ -62,6 +63,11 @@
     };
 
     Selection.prototype = {
+
+        /**
+         * The container id in which this selection happens
+         */
+        col: null,
 
         /**
          * Return all rows as jQuery selector
@@ -110,7 +116,7 @@
         },
 
         /**
-         * Return the target URL that is used when multi selecting rows
+         * Return the main target URL that is used when multi selecting rows
          *
          * This URL may differ from the url that is used when applying single rows
          *
@@ -118,6 +124,28 @@
          */
         getMultiselectionUrl: function() {
             return this.$el.data('icinga-multiselect-url');
+        },
+
+        /**
+         * Check whether the given url is
+         *
+         * @param {String}  url
+         */
+        hasMultiselectionUrl: function(url) {
+            var urls = this.$el.data('icinga-multiselect-url').split(' ');
+
+            var related = this.$el.data('icinga-multiselect-controllers');
+            if (related && related.length) {
+                urls = urls.concat(this.$el.data('icinga-multiselect-controllers').split(' '));
+            }
+
+            var hasSelection = false;
+            $.each(urls, function (i, object) {
+                if (url.indexOf(object) === 0) {
+                    hasSelection = true;
+                }
+            });
+            return hasSelection;
         },
 
         /**
@@ -158,7 +186,6 @@
                 return;
             }
             var self = this;
-            var url = this.getMultiselectionUrl();
             this.rowActions()
                 .filter(
                     function (i, el) {
@@ -228,7 +255,17 @@
          * @param   url     {String}    The target url
          */
         selectUrl: function(url) {
-            this.rows().filter('[href="' + url + '"]').addClass('active');
+            var $row = this.rows().filter('[href="' + url + '"]');
+            if ($row.length) {
+               $row.addClass('active');
+            } else {
+                // rows sometimes need to be displayed as active when related actions
+                // like command actions are being opened. Do not do this for col2, as it
+                // would always select the opened URL itself.
+                if (this.col !== 'col2') {
+                    this.rows().filter('[href$="' + icinga.utils.parseUrl(url).query + '"]').addClass('active');
+                }
+            }
         },
 
         /**
@@ -240,13 +277,14 @@
             var self = this;
             var selections = this.selections();
             var queries = [];
+            var utils = this.icinga.utils;
             if (selections.length === 1) {
                 return $(selections[0]).attr('href');
             } else if (selections.length > 1 && self.hasMultiselection()) {
                 selections.each(function (i, el) {
                     var parts = [];
                     $.each(self.getRowData($(el)), function(key, value) {
-                        parts.push(encodeURIComponent(key) + '=' + encodeURIComponent(value));
+                        parts.push(utils.fixedEncodeURIComponent(key) + '=' + utils.fixedEncodeURIComponent(value));
                     });
                     queries.push('(' + parts.join('&') + ')');
                 });
@@ -261,10 +299,10 @@
          */
         refresh: function() {
             this.clear();
-            var hash = this.icinga.utils.parseUrl(window.location.href).hash;
+            var hash = icinga.history.getCol2State().replace(/^#!/, '');
             if (this.hasMultiselection()) {
                 var query = parseSelectionQuery(hash);
-                if (query.length > 1 && this.getMultiselectionUrl() === this.icinga.utils.parseUrl(hash.substr(1)).path) {
+                if (query.length > 1 && this.hasMultiselectionUrl(this.icinga.utils.parseUrl(hash).path)) {
                     // select all rows with matching filters
                     var self = this;
                     $.each(query, function(i, selection) {
@@ -275,7 +313,7 @@
                     return;
                 }
             }
-            this.selectUrl(hash.substr(1));
+            this.selectUrl(hash);
         }
     };
 
@@ -283,14 +321,7 @@
 
     var ActionTable = function (icinga) {
         Icinga.EventListener.call(this, icinga);
-        
-       /**
-        * The hash that is currently being loaded
-        *
-        * @var String
-        */
-        this.loadingHash = null;
-        
+
         /**
          * If currently loading
          *
@@ -321,13 +352,18 @@
      */
     ActionTable.prototype.onRowClicked = function (event) {
         var self = event.data.self;
-        var $tr = $(event.target).closest('tr');
+        var $target = $(event.target);
+        var $tr = $target.closest('tr');
         var table = new Selection($tr.closest('table.action')[0], self.icinga);
 
-        // allow form actions in table rows to pass through
-        if ($(event.target).closest('form').length) {
+        // some rows may contain form actions that trigger a different action, pass those through
+        if (!$target.hasClass('rowaction') && $target.closest('form').length &&
+            ($target.closest('a').length ||                                         // allow regular link clinks
+             $target.closest('button').length ||                                    // allow submitting forms
+             $target.closest('input').length || $target.closest('label').length)) { // allow selecting form elements
             return;
         }
+
         event.stopPropagation();
         event.preventDefault();
 
@@ -350,13 +386,12 @@
         }
 
         // update history
-        var url = self.icinga.utils.parseUrl(window.location.href.split('#')[0]);
+        var state = icinga.history.getCol1State();
         var count = table.selections().length;
-        var state = url.path + url.query;
         if (count > 0) {
             var query = table.toQuery();
             self.icinga.loader.loadUrl(query, self.icinga.events.getLinkTargetFor($tr));
-            state +=  '#!' + query;
+            state += '#!' + query;
         } else {
             if (self.icinga.events.getLinkTargetFor($tr).attr('id') === 'col2') {
                 self.icinga.ui.layout1col();
@@ -364,7 +399,7 @@
         }
         self.icinga.history.pushUrl(state);
         
-        // re draw all table selections
+        // redraw all table selections
         self.tables().each(function () {
             new Selection(this, self.icinga).refresh();
         });
@@ -375,20 +410,46 @@
     };
 
     /**
-     * Ensure that
+     * Render the selection and prepare selection rows
      */
     ActionTable.prototype.onRendered = function(evt) {
         var container = evt.target;
         var self = evt.data.self;
 
-        // draw all selections
+        // initialize all rows with the correct link
+        $('table.action tr', container).each(function(idx, el) {
+            var $a = $('a[href].rowaction', el).first();
+            if ($a.length) {
+                // TODO: Find out whether we leak memory on IE with this:
+                $(el).attr('href', $a.attr('href'));
+                return;
+            }
+            $a = $('a[href]', el).first();
+            if ($a.length) {
+                $(el).attr('href', $a.attr('href'));
+            }
+        });
+
+        // IE will not ignore user-select unless we cancel selectstart
+        $('table.action.multiselect tr', container).each(function(idx, el) {
+            $(el).on('selectstart', false);
+        });
+
+        // draw all active selections that have disappeared on reload
         self.tables().each(function(i, el) {
             new Selection(el, self.icinga).refresh();
         });
 
-        // update displayed selection count
+        // update displayed selection counter
         var table = new Selection(self.tables(container).first());
         $(container).find('.selection-info-count').text(table.selections().size());
+    };
+
+    ActionTable.prototype.clearAll = function () {
+        var self = this;
+        this.tables().each(function () {
+            new Selection(this, self.icinga).clear();
+        });
     };
 
     Icinga.Behaviors.ActionTable = ActionTable;

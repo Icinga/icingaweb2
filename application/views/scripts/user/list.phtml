@@ -26,7 +26,10 @@ if (! isset($backend)) {
     $reducible = $this->hasPermission('config/authentication/users/remove') && $backend instanceof Reducible;
 }
 
-if (count($users) > 0): ?>
+$firstRow = true;
+foreach ($users as $user): ?>
+  <?php if ($firstRow): ?>
+    <?php $firstRow = false; ?>
 <table data-base-target="_next" class="action user-list alternating">
   <thead>
     <tr>
@@ -37,7 +40,7 @@ if (count($users) > 0): ?>
     </tr>
   </thead>
   <tbody>
-  <?php foreach ($users as $user): ?>
+  <?php endif ?>
     <tr>
       <td class="user-name"><?= $this->qlink($user->user_name, 'user/show', array(
         'backend'   => $backend->getName(),
@@ -62,7 +65,8 @@ if (count($users) > 0): ?>
       </td>
      <?php endif ?>
     </tr>
-  <?php endforeach ?>
+<?php endforeach ?>
+<?php if ($users->hasResult()): ?>
   </tbody>
 </table>
 <?php else: ?>

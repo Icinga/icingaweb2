@@ -3,10 +3,13 @@
 
 namespace Icinga\Web\Controller;
 
-use Exception;
+use Zend_Controller_Action;
+use Zend_Controller_Action_HelperBroker;
+use Zend_Controller_Request_Abstract;
+use Zend_Controller_Response_Abstract;
 use Icinga\Application\Benchmark;
 use Icinga\Application\Config;
-use Icinga\Authentication\Manager;
+use Icinga\Authentication\Auth;
 use Icinga\Exception\Http\HttpMethodNotAllowedException;
 use Icinga\Exception\IcingaException;
 use Icinga\Exception\ProgrammingError;
@@ -20,15 +23,21 @@ use Icinga\Web\Url;
 use Icinga\Web\UrlParams;
 use Icinga\Web\Widget\Tabs;
 use Icinga\Web\Window;
-use Zend_Controller_Action;
-use Zend_Controller_Action_HelperBroker as ActionHelperBroker;
-use Zend_Controller_Request_Abstract as Request;
-use Zend_Controller_Response_Abstract as Response;
 
 /**
  * Base class for all core action controllers
  *
  * All Icinga Web core controllers should extend this class
+ *
+ * @method \Icinga\Web\Request getRequest() {
+ *     {@inheritdoc}
+ *     @return  \Icinga\Web\Request
+ * }
+ *
+ * @method \Icinga\Web\Response getResponse() {
+ *     {@inheritdoc}
+ *     @return  \Icinga\Web\Response
+ * }
  */
 class ActionController extends Zend_Controller_Action
 {
@@ -38,6 +47,13 @@ class ActionController extends Zend_Controller_Action
      * @var bool
      */
     protected $requiresAuthentication = true;
+
+    /**
+     * The current module's name
+     *
+     * @var string
+     */
+    private $moduleName;
 
     private $autorefreshInterval;
 
@@ -50,9 +66,16 @@ class ActionController extends Zend_Controller_Action
     private $xhrLayout = 'inline';
 
     /**
+     * The inner layout (inside the body) to use
+     *
+     * @var string
+     */
+    protected $innerLayout = 'body';
+
+    /**
      * Authentication manager
      *
-     * @var Manager|null
+     * @var Auth|null
      */
     private $auth;
 
@@ -67,13 +90,13 @@ class ActionController extends Zend_Controller_Action
      * The constructor starts benchmarking, loads the configuration and sets
      * other useful controller properties
      *
-     * @param Request  $request
-     * @param Response $response
-     * @param array    $invokeArgs Any additional invocation arguments
+     * @param Zend_Controller_Request_Abstract  $request
+     * @param Zend_Controller_Response_Abstract $response
+     * @param array                             $invokeArgs Any additional invocation arguments
      */
     public function __construct(
-        Request $request,
-        Response $response,
+        Zend_Controller_Request_Abstract $request,
+        Zend_Controller_Response_Abstract $response,
         array $invokeArgs = array()
     ) {
         $this->params = UrlParams::fromQueryString();
@@ -81,20 +104,24 @@ class ActionController extends Zend_Controller_Action
         $this->setRequest($request)
             ->setResponse($response)
             ->_setInvokeArgs($invokeArgs);
-        $this->_helper = new ActionHelperBroker($this);
+        $this->_helper = new Zend_Controller_Action_HelperBroker($this);
 
         $this->handlerBrowserWindows();
-        $this->view->translationDomain = 'icinga';
+        $moduleName = $this->getModuleName();
+        $this->view->translationDomain = $moduleName !== 'default' ? $moduleName : 'icinga';
         $this->_helper->layout()->isIframe = $request->getUrl()->shift('isIframe');
         $this->_helper->layout()->showFullscreen = $request->getUrl()->shift('showFullscreen');
-        $this->_helper->layout()->moduleName = false;
+        $this->_helper->layout()->moduleName = $moduleName;
 
         $this->view->compact = $request->getParam('view') === 'compact';
         if ($request->getUrl()->shift('showCompact')) {
             $this->view->compact = true;
         }
         if ($this->rerenderLayout = $request->getUrl()->shift('renderLayout')) {
-            $this->xhrLayout = 'body';
+            $this->xhrLayout = $this->innerLayout;
+        }
+        if ($request->getUrl()->shift('_disableLayout')) {
+            $this->_helper->layout()->disableLayout();
         }
 
         if ($this->requiresLogin()) {
@@ -121,12 +148,12 @@ class ActionController extends Zend_Controller_Action
     /**
      * Get the authentication manager
      *
-     * @return Manager
+     * @return Auth
      */
     public function Auth()
     {
         if ($this->auth === null) {
-            $this->auth = Manager::getInstance();
+            $this->auth = Auth::getInstance();
         }
         return $this->auth;
     }
@@ -152,9 +179,23 @@ class ActionController extends Zend_Controller_Action
      */
     public function assertPermission($permission)
     {
-        if (! $this->Auth()->hasPermission($permission)) {
+        if ($this->requiresAuthentication && ! $this->Auth()->hasPermission($permission)) {
             throw new SecurityException('No permission for %s', $permission);
         }
+    }
+
+    /**
+     * Return the current module's name
+     *
+     * @return  string
+     */
+    public function getModuleName()
+    {
+        if ($this->moduleName === null) {
+            $this->moduleName = $this->getRequest()->getModuleName();
+        }
+
+        return $this->moduleName;
     }
 
     public function Config($file = null)
@@ -415,6 +456,7 @@ class ActionController extends Zend_Controller_Action
 
         $req = $this->getRequest();
         $layout = $this->_helper->layout();
+        $layout->innerLayout = $this->innerLayout;
 
         if ($user = $req->getUser()) {
             // Cast preference app.show_benchmark to bool because preferences loaded from a preferences storage are
@@ -452,14 +494,14 @@ class ActionController extends Zend_Controller_Action
         $notifications = Notification::getInstance();
         if ($notifications->hasMessages()) {
             $notificationList = array();
-            foreach ($notifications->getMessages() as $m) {
+            foreach ($notifications->popMessages() as $m) {
                 $notificationList[] = rawurlencode($m->type . ' ' . $m->message);
             }
-            $resp->setHeader('X-Icinga-Notification', implode('&', $notificationList));
+            $resp->setHeader('X-Icinga-Notification', implode('&', $notificationList), true);
         }
 
         if ($this->reloadCss) {
-            $resp->setHeader('X-Icinga-CssReload', 'now');
+            $resp->setHeader('X-Icinga-CssReload', 'now', true);
         }
 
         if ($this->view->title) {
@@ -469,18 +511,19 @@ class ActionController extends Zend_Controller_Action
             }
             $resp->setHeader(
                 'X-Icinga-Title',
-                rawurlencode($this->view->title . ' :: Icinga Web')
+                rawurlencode($this->view->title . ' :: Icinga Web'),
+                true
             );
         } else {
-            $resp->setHeader('X-Icinga-Title', rawurlencode('Icinga Web'));
+            $resp->setHeader('X-Icinga-Title', rawurlencode('Icinga Web'), true);
         }
 
         if ($this->rerenderLayout) {
-            $this->getResponse()->setHeader('X-Icinga-Container', 'layout');
+            $this->getResponse()->setHeader('X-Icinga-Container', 'layout', true);
         }
 
         if ($this->autorefreshInterval !== null) {
-            $resp->setHeader('X-Icinga-Refresh', $this->autorefreshInterval);
+            $resp->setHeader('X-Icinga-Refresh', $this->autorefreshInterval, true);
         }
     }
 

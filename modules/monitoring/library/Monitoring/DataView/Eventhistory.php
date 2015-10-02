@@ -8,23 +8,10 @@ class EventHistory extends DataView
     /**
      * {@inheritdoc}
      */
-    public function isValidFilterTarget($column)
-    {
-        if ($column[0] === '_' && preg_match('/^_(?:host|service)_/', $column)) {
-            return true;
-        }
-
-        return parent::isValidFilterTarget($column);
-    }
-
-    /**
-     * Retrieve columns provided by this view
-     *
-     * @return array
-     */
     public function getColumns()
     {
         return array(
+            'instance_name',
             'cnt_notification',
             'cnt_hard_state',
             'cnt_soft_state',
@@ -49,8 +36,7 @@ class EventHistory extends DataView
     {
         return array(
             'timestamp' => array(
-                'columns'   => array('timestamp'),
-                'order'     => 'DESC'
+                'order' => self::SORT_DESC
             )
         );
     }
@@ -58,7 +44,7 @@ class EventHistory extends DataView
     /**
      * {@inheritdoc}
      */
-    public function getFilterColumns()
+    public function getStaticFilterColumns()
     {
         return array(
             'host', 'host_alias',
@@ -73,6 +59,6 @@ class EventHistory extends DataView
      */
     public function getSearchColumns()
     {
-        return array('host', 'host_display_name', 'service', 'service_display_name', 'type');
+        return array('host_display_name', 'service_display_name');
     }
 }

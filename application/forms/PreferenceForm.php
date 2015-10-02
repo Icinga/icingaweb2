@@ -5,8 +5,9 @@ namespace Icinga\Forms;
 
 use Exception;
 use DateTimeZone;
+use Icinga\Application\Config;
 use Icinga\Application\Logger;
-use Icinga\Authentication\Manager;
+use Icinga\Authentication\Auth;
 use Icinga\User\Preferences;
 use Icinga\User\Preferences\PreferencesStore;
 use Icinga\Util\TimezoneDetect;
@@ -123,7 +124,7 @@ class PreferenceForm extends Form
      */
     public function onRequest()
     {
-        $auth = Manager::getInstance();
+        $auth = Auth::getInstance();
         $values = $auth->getUser()->getPreferences()->get('icingaweb');
 
         if (! isset($values['language'])) {
@@ -178,6 +179,19 @@ class PreferenceForm extends Form
             )
         );
 
+        if (Auth::getInstance()->hasPermission('application/stacktraces')) {
+            $this->addElement(
+                'checkbox',
+                'show_stacktraces',
+                array(
+                    'required'      => true,
+                    'value'         => $this->getDefaultShowStacktraces(),
+                    'label'         => $this->translate('Show Stacktraces'),
+                    'description'   => $this->translate('Set whether to show an exception\'s stacktrace.')
+                )
+            );
+        }
+
         $this->addElement(
             'checkbox',
             'show_benchmark',
@@ -205,10 +219,7 @@ class PreferenceForm extends Form
                 array(
                     'ignore'        => true,
                     'label'         => $this->translate('Save to the Preferences'),
-                    'decorators'    => array(
-                        'ViewHelper',
-                        array('HtmlTag', array('tag' => 'div'))
-                    )
+                    'decorators'    => array('ViewHelper')
                 )
             );
         }
@@ -219,15 +230,24 @@ class PreferenceForm extends Form
             array(
                 'ignore'        => true,
                 'label'         => $this->translate('Save for the current Session'),
+                'decorators'    => array('ViewHelper')
+            )
+        );
+
+        $this->setAttrib('data-progress-element', 'preferences-progress');
+        $this->addElement(
+            'note',
+            'preferences-progress',
+            array(
                 'decorators'    => array(
                     'ViewHelper',
-                    array('HtmlTag', array('tag' => 'div'))
+                    array('Spinner', array('id' => 'preferences-progress'))
                 )
             )
         );
 
         $this->addDisplayGroup(
-            array('btn_submit_preferences', 'btn_submit_session'),
+            array('btn_submit_preferences', 'btn_submit_session', 'preferences-progress'),
             'submit_buttons',
             array(
                 'decorators' => array(
@@ -262,5 +282,15 @@ class PreferenceForm extends Form
     {
         $locale = Translator::getPreferredLocaleCode($_SERVER['HTTP_ACCEPT_LANGUAGE']);
         return $locale;
+    }
+
+    /**
+     * Return the default global setting for show_stacktraces
+     *
+     * @return  bool
+     */
+    protected function getDefaultShowStacktraces()
+    {
+        return Config::app()->get('global', 'show_stacktraces', true);
     }
 }

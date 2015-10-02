@@ -3,11 +3,9 @@
 
 namespace Icinga\Application;
 
-use Icinga\Application\EmbeddedWeb;
-use Icinga\Application\Web;
-use Icinga\Web\StyleSheet;
-use Icinga\Web\JavaScript;
 use Icinga\Chart\Inline\PieChart;
+use Icinga\Web\JavaScript;
+use Icinga\Web\StyleSheet;
 
 error_reporting(E_ALL | E_STRICT);
 

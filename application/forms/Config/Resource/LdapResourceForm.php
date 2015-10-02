@@ -3,10 +3,7 @@
 
 namespace Icinga\Forms\Config\Resource;
 
-use Exception;
 use Icinga\Web\Form;
-use Icinga\Data\ConfigObject;
-use Icinga\Data\ResourceFactory;
 use Icinga\Protocol\Ldap\LdapConnection;
 
 /**
@@ -23,7 +20,9 @@ class LdapResourceForm extends Form
     }
 
     /**
-     * @see Form::createElements()
+     * Create and add elements to this form
+     *
+     * @param   array   $formData   The data sent by the user
      */
     public function createElements(array $formData)
     {
@@ -82,22 +81,6 @@ class LdapResourceForm extends Form
             )
         );
 
-        if (isset($formData['encryption']) && $formData['encryption'] !== 'none') {
-            // TODO(jom): Do not show this checkbox unless the connection is actually failing due to certificate errors
-            $this->addElement(
-                'checkbox',
-                'reqcert',
-                array(
-                    'required'      => true,
-                    'label'         => $this->translate('Require Certificate'),
-                    'description'   => $this->translate(
-                        'When checked, the LDAP server must provide a valid and known (trusted) certificate.'
-                    ),
-                    'value'         => 1
-                )
-            );
-        }
-
         $this->addElement(
             'text',
             'root_dn',
@@ -131,40 +114,5 @@ class LdapResourceForm extends Form
         );
 
         return $this;
-    }
-
-    /**
-     * Validate that the current configuration points to a valid resource
-     *
-     * @see Form::onSuccess()
-     */
-    public function onSuccess()
-    {
-        if (false === static::isValidResource($this)) {
-            return false;
-        }
-    }
-
-    /**
-     * Validate the resource configuration by trying to connect with it
-     *
-     * @param   Form    $form   The form to fetch the configuration values from
-     *
-     * @return  bool            Whether validation succeeded or not
-     */
-    public static function isValidResource(Form $form)
-    {
-        $result = ResourceFactory::createResource(new ConfigObject($form->getValues()))->inspect();
-        if ($result->hasError()) {
-            $form->addError(sprintf(
-                '%s (%s)',
-                $form->translate('Connectivity validation failed, connection to the given resource not possible.'),
-                $result->getError()
-            ));
-        }
-
-        // TODO: display diagnostics in $result->toArray() to the user
-
-        return ! $result->hasError();
     }
 }

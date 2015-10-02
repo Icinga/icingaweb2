@@ -12,8 +12,8 @@ use Icinga\Module\Setup\RequirementSet;
 use Icinga\Module\Setup\Forms\SummaryPage;
 use Icinga\Module\Monitoring\Forms\Setup\WelcomePage;
 use Icinga\Module\Monitoring\Forms\Setup\BackendPage;
-use Icinga\Module\Monitoring\Forms\Setup\InstancePage;
 use Icinga\Module\Monitoring\Forms\Setup\SecurityPage;
+use Icinga\Module\Monitoring\Forms\Setup\TransportPage;
 use Icinga\Module\Monitoring\Forms\Setup\IdoResourcePage;
 use Icinga\Module\Monitoring\Forms\Setup\LivestatusResourcePage;
 use Icinga\Module\Setup\Requirement\ClassRequirement;
@@ -33,7 +33,7 @@ class MonitoringWizard extends Wizard implements SetupWizard
         $this->addPage(new BackendPage());
         $this->addPage(new IdoResourcePage());
         $this->addPage(new LivestatusResourcePage());
-        $this->addPage(new InstancePage());
+        $this->addPage(new TransportPage());
         $this->addPage(new SecurityPage());
         $this->addPage(new SummaryPage(array('name' => 'setup_monitoring_summary')));
     }
@@ -114,6 +114,20 @@ class MonitoringWizard extends Wizard implements SetupWizard
                 mt('monitoring', 'Setup the monitoring module for Icinga Web 2', 'setup.summary.btn.finish')
             );
         }
+
+        if ($page->getName() === 'setup_monitoring_ido') {
+            $page->addElement(
+                'submit',
+                'backend_validation',
+                array(
+                    'ignore'                => true,
+                    'label'                 => t('Validate Configuration'),
+                    'data-progress-label'   => t('Validation In Progress'),
+                    'decorators'            => array('ViewHelper')
+                )
+            );
+            $page->getDisplayGroup('buttons')->addElement($page->getElement('backend_validation'));
+        }
     }
 
     /**
@@ -136,8 +150,8 @@ class MonitoringWizard extends Wizard implements SetupWizard
         );
 
         $setup->addStep(
-            new InstanceStep(array(
-                'instanceConfig'    => $pageData['setup_monitoring_instance']
+            new TransportStep(array(
+                'transportConfig'    => $pageData['setup_command_transport']
             ))
         );
 

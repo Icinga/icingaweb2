@@ -3,11 +3,8 @@
 
 namespace Icinga\Forms\Config\Resource;
 
-use Exception;
-use Icinga\Web\Form;
-use Icinga\Data\ConfigObject;
-use Icinga\Data\ResourceFactory;
 use Icinga\Application\Platform;
+use Icinga\Web\Form;
 
 /**
  * Form class for adding/modifying database resources
@@ -23,7 +20,9 @@ class DbResourceForm extends Form
     }
 
     /**
-     * @see Form::createElements()
+     * Create and add elements to this form
+     *
+     * @param   array   $formData   The data sent by the user
      */
     public function createElements(array $formData)
     {
@@ -34,7 +33,41 @@ class DbResourceForm extends Form
         if (Platform::hasPostgresqlSupport()) {
             $dbChoices['pgsql'] = 'PostgreSQL';
         }
-
+        if (Platform::hasMssqlSupport()) {
+            $dbChoices['mssql'] = 'MSSQL';
+        }
+        if (Platform::hasOracleSupport()) {
+            $dbChoices['oracle'] = 'Oracle';
+        }
+        if (Platform::hasOciSupport()) {
+            $dbChoices['oci'] = 'Oracle (OCI8)';
+        }
+        $offerPostgres = false;
+        $offerMysql = false;
+        if (isset($formData['db'])) {
+            if ($formData['db'] === 'pgsql') {
+                $offerPostgres = true;
+            } elseif ($formData['db'] === 'mysql') {
+                $offerMysql = true;
+            }
+        } else {
+            $dbChoice = key($dbChoices);
+            if ($dbChoice === 'pgsql') {
+                $offerPostgres = true;
+            } elseif ($dbChoices === 'mysql') {
+                $offerMysql = true;
+            }
+        }
+        $socketInfo = '';
+        if ($offerPostgres) {
+            $socketInfo = $this->translate(
+                'For using unix domain sockets, specify the path to the unix domain socket directory'
+            );
+        } elseif ($offerMysql) {
+            $socketInfo = $this->translate(
+                'For using unix domain sockets, specify localhost'
+            );
+        }
         $this->addElement(
             'text',
             'name',
@@ -61,7 +94,8 @@ class DbResourceForm extends Form
             array (
                 'required'      => true,
                 'label'         => $this->translate('Host'),
-                'description'   => $this->translate('The hostname of the database'),
+                'description'   => $this->translate('The hostname of the database')
+                    . ($socketInfo ? '. ' . $socketInfo : ''),
                 'value'         => 'localhost'
             )
         );
@@ -69,11 +103,11 @@ class DbResourceForm extends Form
             'number',
             'port',
             array(
-                'required'          => true,
-                'preserveDefault'   => true,
-                'label'             => $this->translate('Port'),
                 'description'       => $this->translate('The port to use'),
-                'value'             => ! array_key_exists('db', $formData) || $formData['db'] === 'mysql' ? 3306 : 5432
+                'label'             => $this->translate('Port'),
+                'preserveDefault'   => true,
+                'required'          => $offerPostgres,
+                'value'             => $offerPostgres ? 5432 : null
             )
         );
         $this->addElement(
@@ -104,38 +138,26 @@ class DbResourceForm extends Form
                 'description'       => $this->translate('The password to use for authentication')
             )
         );
+        $this->addElement(
+            'text',
+            'charset',
+            array (
+                'description'   => $this->translate('The character set for the database'),
+                'label'         => $this->translate('Character Set')
+            )
+        );
+        $this->addElement(
+            'checkbox',
+            'persistent',
+            array(
+                'description'   => $this->translate(
+                    'Check this box for persistent database connections. Persistent connections are not closed at the'
+                    . ' end of a request, but are cached and re-used. This is experimental'
+                ),
+                'label'         => $this->translate('Persistent')
+            )
+        );
 
         return $this;
-    }
-
-    /**
-     * Validate that the current configuration points to a valid resource
-     *
-     * @see Form::onSuccess()
-     */
-    public function onSuccess()
-    {
-        if (false === static::isValidResource($this)) {
-            return false;
-        }
-    }
-
-    /**
-     * Validate the resource configuration by trying to connect with it
-     *
-     * @param   Form    $form   The form to fetch the configuration values from
-     *
-     * @return  bool            Whether validation succeeded or not
-     */
-    public static function isValidResource(Form $form)
-    {
-        $result = ResourceFactory::createResource(new ConfigObject($form->getValues()))->inspect();
-        if ($result->hasError()) {
-            $form->addError(sprintf($form->translate('Connectivity validation failed: %s'), $result->getError()));
-        }
-
-        // TODO: display diagnostics in $result->toArray() to the user
-
-        return ! $result->hasError();
     }
 }

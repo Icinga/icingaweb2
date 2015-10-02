@@ -1,6 +1,6 @@
 # Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+
 
-%define revision 4.rc1
+%define revision 5
 
 Name:           icingaweb2
 Version:        2.0.0
@@ -46,8 +46,6 @@ Requires:                       %{name}-vendor-HTMLPurifier
 Requires:                       %{name}-vendor-JShrink
 Requires:                       %{name}-vendor-lessphp
 Requires:                       %{name}-vendor-Parsedown
-Requires:                       %{zend}
-Obsoletes:                      %{name}-vendor-zend
 
 
 %description
@@ -84,6 +82,10 @@ Requires:                   %{php}-gd %{php}-intl
 %{?fedora:Requires:         php-pecl-imagick}
 %{?rhel:Requires:           php-pecl-imagick}
 %{?suse_version:Requires:   %{php}-gettext %{php}-json %{php}-openssl %{php}-posix}
+Requires:                   %{zend}
+Obsoletes:                  %{name}-vendor-zend
+Requires:                   %{zend}-Db-Adapter-Pdo-Mysql
+Requires:                   %{zend}-Db-Adapter-Pdo-Pgsql
 
 %description -n php-Icinga
 Icinga Web 2 PHP library
@@ -170,18 +172,18 @@ Icinga Web 2 vendor library Parsedown
 
 %install
 rm -rf %{buildroot}
-mkdir -p %{buildroot}/{%{basedir}/{modules,library/vendor,public},%{bindir},%{configdir}/modules/setup,%{logdir},%{phpdir},%{wwwconfigdir},%{_sysconfdir}/bash_completion.d,%{docsdir}}
+mkdir -p %{buildroot}/{%{basedir}/{modules,library/vendor,public},%{bindir},%{configdir}/modules,%{logdir},%{phpdir},%{wwwconfigdir},%{_sysconfdir}/bash_completion.d,%{docsdir}}
 cp -prv application doc %{buildroot}/%{basedir}
 cp -pv etc/bash_completion.d/icingacli %{buildroot}/%{_sysconfdir}/bash_completion.d/icingacli
 cp -prv modules/{monitoring,setup,doc,translation} %{buildroot}/%{basedir}/modules
 cp -prv library/Icinga %{buildroot}/%{phpdir}
 cp -prv library/vendor/{dompdf,HTMLPurifier,JShrink,lessphp,Parsedown} %{buildroot}/%{basedir}/library/vendor
-cp -prv public/{css,img,js,error_norewrite.html} %{buildroot}/%{basedir}/public
+cp -prv public/{css,iframe,img,js,error_norewrite.html} %{buildroot}/%{basedir}/public
 cp -pv packages/files/apache/icingaweb2.conf %{buildroot}/%{wwwconfigdir}/icingaweb2.conf
 cp -pv packages/files/bin/icingacli %{buildroot}/%{bindir}
 cp -pv packages/files/public/index.php %{buildroot}/%{basedir}/public
 cp -prv etc/schema %{buildroot}/%{docsdir}
-cp -prv packages/files/config/modules/setup %{buildroot}/%{configdir}/modules/
+cp -prv packages/files/config/modules/{setup,translation} %{buildroot}/%{configdir}/modules
 
 %pre
 getent group icingacmd >/dev/null || groupadd -r icingacmd
@@ -210,6 +212,8 @@ rm -rf %{buildroot}
 %attr(2775,root,%{icingawebgroup}) %dir %{logdir}
 %attr(2770,root,%{icingawebgroup}) %config(noreplace) %dir %{configdir}/modules/setup
 %attr(0660,root,%{icingawebgroup}) %config(noreplace) %{configdir}/modules/setup/config.ini
+%attr(2770,root,%{icingawebgroup}) %config(noreplace) %dir %{configdir}/modules/translation
+%attr(0660,root,%{icingawebgroup}) %config(noreplace) %{configdir}/modules/translation/config.ini
 %{docsdir}
 %docdir %{docsdir}
 

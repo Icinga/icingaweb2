@@ -47,6 +47,10 @@ html {
   }
 }
 
+#fileupload-frame-target {
+  display: none;
+}
+
 #responsive-debug {
   font-size: 0.9em;
   font-family: Courier new, monospace;
@@ -276,14 +280,7 @@ html {
   }
 
   #login {
-    .logo .image img {
-      width: 70%;
-    }
-    .form {
-      width: 100%;
-      margin: auto;
-    }
-    .form label {
+    .below-logo label {
       width: 100%;
       margin: 0;
       text-align: center;
@@ -400,4 +397,14 @@ html {
 .multi-commands {
   padding-top: 0em;
   font-size: 0.9em;
+}
+
+// Hide non-javascript elements if javascript is enabled
+html.js *.no-js {
+  .sr-only;
+}
+
+// Hide javascript elements if javascript is disabled
+html.no-js *.js {
+  .sr-only;
 }

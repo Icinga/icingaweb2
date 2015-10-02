@@ -6,9 +6,9 @@ namespace Icinga\Module\Monitoring\Command\Transport;
 use Icinga\Application\Logger;
 use Icinga\Data\ResourceFactory;
 use Icinga\Exception\ConfigurationError;
-use Icinga\Module\Monitoring\Command\Exception\TransportException;
 use Icinga\Module\Monitoring\Command\IcingaCommand;
 use Icinga\Module\Monitoring\Command\Renderer\IcingaCommandFileCommandRenderer;
+use Icinga\Module\Monitoring\Exception\CommandTransportException;
 
 /**
  * A remote Icinga command file
@@ -21,6 +21,13 @@ class RemoteCommandFile implements CommandTransportInterface
      * Transport identifier
      */
     const TRANSPORT = 'remote';
+
+    /**
+     * The name of the Icinga instance this transport will transfer commands to
+     *
+     * @var string
+     */
+    protected $instanceName;
 
     /**
      * Remote host
@@ -72,6 +79,29 @@ class RemoteCommandFile implements CommandTransportInterface
     public function __construct()
     {
         $this->renderer = new IcingaCommandFileCommandRenderer();
+    }
+
+    /**
+     * Set the name of the Icinga instance this transport will transfer commands to
+     *
+     * @param   string  $name
+     *
+     * @return  $this
+     */
+    public function setInstance($name)
+    {
+        $this->instanceName = $name;
+        return $this;
+    }
+
+    /**
+     * Return the name of the Icinga instance this transport will transfer commands to
+     *
+     * @return  string
+     */
+    public function getInstance()
+    {
+        return $this->instanceName;
     }
 
     /**
@@ -224,7 +254,7 @@ class RemoteCommandFile implements CommandTransportInterface
      * @param   int|null        $now
      *
      * @throws  ConfigurationError
-     * @throws  TransportException
+     * @throws  CommandTransportException
      */
     public function send(IcingaCommand $command, $now = null)
     {
@@ -260,7 +290,7 @@ class RemoteCommandFile implements CommandTransportInterface
         );
         exec($ssh, $output, $status);
         if ($status !== 0) {
-            throw new TransportException(
+            throw new CommandTransportException(
                 'Can\'t send external Icinga command: %s',
                 implode(' ', $output)
             );

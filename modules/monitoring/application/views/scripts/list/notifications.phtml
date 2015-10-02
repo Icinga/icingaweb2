@@ -2,6 +2,8 @@
 use Icinga\Module\Monitoring\Object\Host;
 use Icinga\Module\Monitoring\Object\Service;
 
+$notifications->peekAhead($this->compact);
+
 if (! $this->compact): ?>
 <div class="controls">
   <?= $this->tabs; ?>
@@ -12,13 +14,6 @@ if (! $this->compact): ?>
 </div>
 <?php endif ?>
 <div class="content">
-<?php
-
-if (count($notifications) === 0) {
-    echo $this->translate('No notifications found matching the filter') . '</div>';
-    return;
-}
-?>
     <table data-base-target="_next" class="action">
     <tbody>
     <?php foreach ($notifications as $notification):
@@ -41,7 +36,8 @@ if (count($notifications) === 0) {
                         $notification->service_description,
                         $notification->service_display_name,
                         $notification->host_name,
-                        $notification->host_display_name
+                        $notification->host_display_name,
+                        'rowaction'
                     ) ?>
                 <?php else: ?>
                     <?= $this->icon('host', $this->translate('Host')); ?>
@@ -71,4 +67,17 @@ if (count($notifications) === 0) {
     <?php endforeach ?>
     </tbody>
     </table>
+<?php if (! $notifications->hasResult()): ?>
+  <?= $this->translate('No notifications found matching the filter'); ?>
+<?php elseif ($notifications->hasMore()): ?>
+  <?= $this->qlink(
+    $this->translate('Show More'),
+    $this->url(isset($notificationsUrl) ? $notificationsUrl : null)->without(array('view', 'limit')),
+    null,
+    array(
+      'data-base-target'    => '_next',
+      'class'               => 'pull-right show-more'
+    )
+  ); ?>
+<?php endif ?>
 </div>

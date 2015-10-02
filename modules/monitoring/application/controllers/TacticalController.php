@@ -1,14 +1,18 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
-use Icinga\Module\Monitoring\Controller as MonitoringController;
-use Icinga\Web\Widget\Tabextension\DashboardAction;
-use Icinga\Web\Url;
+namespace Icinga\Module\Monitoring\Controllers;
 
-class Monitoring_TacticalController extends MonitoringController
+use Icinga\Module\Monitoring\Controller;
+use Icinga\Web\Url;
+use Icinga\Web\Widget\Tabextension\DashboardAction;
+use Icinga\Web\Widget\Tabextension\MenuAction;
+
+class TacticalController extends Controller
 {
     public function indexAction()
     {
+        $this->setAutorefreshInterval(15);
         $this->getTabs()->add(
             'tactical_overview',
             array(
@@ -19,7 +23,7 @@ class Monitoring_TacticalController extends MonitoringController
                 'label' => $this->translate('Tactical Overview'),
                 'url'   => Url::fromRequest()
             )
-        )->extend(new DashboardAction())->activate('tactical_overview');
+        )->extend(new DashboardAction())->extend(new MenuAction())->activate('tactical_overview');
         $stats = $this->backend->select()->from(
             'statussummary',
             array(

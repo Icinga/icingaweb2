@@ -82,13 +82,13 @@ class UrlTest extends BaseTestCase
         $url = Url::fromPath('/my/test/url.html');
 
         $this->assertEquals(
-            '/',
+            '',
             $url->getBaseUrl(),
             'Url::fromPath does not recognize the correct base url'
         );
         $this->assertEquals(
-            'my/test/url.html',
-            $url->getPath(),
+            '/my/test/url.html',
+            $url->getAbsoluteUrl(),
             'Url::fromPath does not recognize the correct url path'
         );
     }
@@ -158,17 +158,14 @@ class UrlTest extends BaseTestCase
         );
     }
 
-    /**
-     * @depends testWhetherFromPathProperlyRecognizesAndDecodesQueryParameters
-     */
-    public function testWhetherGetRelativeUrlReturnsTheRelativeUrl()
+    public function testWhetherGetRelativeUrlReturnsTheEmptyStringForAbsoluteUrls()
     {
         $url = Url::fromPath('/my/test/url.html?param=val&param2=val2');
 
         $this->assertEquals(
-            'my/test/url.html?param=val&param2=val2',
+            '',
             $url->getRelativeUrl(),
-            'Url::getRelativeUrl does not return the relative url'
+            'Url::getRelativeUrl does not return the empty string for absolute urls'
         );
     }
 

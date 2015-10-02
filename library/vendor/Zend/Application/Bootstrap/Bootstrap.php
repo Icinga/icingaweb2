@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Application
  * @subpackage Bootstrap
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -33,7 +33,7 @@
  * @category   Zend
  * @package    Zend_Application
  * @subpackage Bootstrap
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Application_Bootstrap_Bootstrap
@@ -63,9 +63,13 @@ class Zend_Application_Bootstrap_Bootstrap
         parent::__construct($application);
 
         if ($application->hasOption('resourceloader')) {
-            $this->setOptions(array(
-                'resourceloader' => $application->getOption('resourceloader')
-            ));
+            $this->setOptions(
+                array(
+                    'resourceloader' => $application->getOption(
+                        'resourceloader'
+                    )
+                )
+            );
         }
         $this->getResourceLoader();
 
@@ -127,10 +131,14 @@ class Zend_Application_Bootstrap_Bootstrap
         ) {
             $r    = new ReflectionClass($this);
             $path = $r->getFileName();
-            $this->setResourceLoader(new Zend_Application_Module_Autoloader(array(
-                'namespace' => $namespace,
-                'basePath'  => dirname($path),
-            )));
+            $this->setResourceLoader(
+                new Zend_Application_Module_Autoloader(
+                    array(
+                        'namespace' => $namespace,
+                        'basePath'  => dirname($path),
+                    )
+                )
+            );
         }
         return $this->_resourceLoader;
     }

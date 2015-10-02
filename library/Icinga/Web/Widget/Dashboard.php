@@ -9,6 +9,8 @@ use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\NotReadableError;
 use Icinga\Exception\ProgrammingError;
 use Icinga\User;
+use Icinga\Web\Navigation\DashboardPane;
+use Icinga\Web\Navigation\Navigation;
 use Icinga\Web\Widget\Dashboard\Pane;
 use Icinga\Web\Widget\Dashboard\Dashlet as DashboardDashlet;
 use Icinga\Web\Url;
@@ -36,7 +38,7 @@ class Dashboard extends AbstractWidget
      *
      * @var Tabs
      */
-    private $tabs;
+    protected $tabs;
 
     /**
      * The parameter that will be added to identify panes
@@ -68,16 +70,22 @@ class Dashboard extends AbstractWidget
      */
     public function load()
     {
-        $manager = Icinga::app()->getModuleManager();
-        foreach ($manager->getLoadedModules() as $module) {
-            /** @var $module \Icinga\Application\Modules\Module */
-            $this->mergePanes($module->getPaneItems());
+        $navigation = new Navigation();
+        $navigation->load('dashboard-pane');
 
-        }
-        if ($this->user !== null) {
-            $this->loadUserDashboards();
+        $panes = array();
+        foreach ($navigation as $dashboardPane) {
+            /** @var DashboardPane $dashboardPane */
+            $pane = new Pane($dashboardPane->getLabel());
+            foreach ($dashboardPane->getDashlets(false) as $title => $url) {
+                $pane->addDashlet($title, $url);
+            }
+
+            $panes[] = $pane;
         }
 
+        $this->mergePanes($panes);
+        $this->loadUserDashboards();
         return $this;
     }
 
@@ -90,11 +98,11 @@ class Dashboard extends AbstractWidget
     {
         $output = array();
         foreach ($this->panes as $pane) {
-            if ($pane->isUserWidget() === true) {
+            if ($pane->isUserWidget()) {
                 $output[$pane->getName()] = $pane->toArray();
             }
             foreach ($pane->getDashlets() as $dashlet) {
-                if ($dashlet->isUserWidget() === true) {
+                if ($dashlet->isUserWidget()) {
                     $output[$pane->getName() . '.' . $dashlet->getTitle()] = $dashlet->toArray();
                 }
             }

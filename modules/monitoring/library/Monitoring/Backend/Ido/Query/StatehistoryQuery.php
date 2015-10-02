@@ -61,6 +61,20 @@ class StatehistoryQuery extends IdoQuery
     /**
      * {@inheritdoc}
      */
+    public function allowsCustomVars()
+    {
+        foreach ($this->subQueries as $query) {
+            if (! $query->allowsCustomVars()) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     protected function joinBaseTables()
     {
         $this->stateHistoryQuery = $this->db->select();

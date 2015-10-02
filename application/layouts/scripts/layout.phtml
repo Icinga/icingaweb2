@@ -1,6 +1,5 @@
 <?php
 
-use Icinga\Web\JavaScript;
 use Icinga\Util\Translator;
 
 if (array_key_exists('_dev', $_GET)) {
@@ -16,6 +15,7 @@ $lang = Translator::splitLocaleCode()->language;
 $isIframe = $this->layout()->isIframe;
 $showFullscreen = $this->layout()->showFullscreen;
 $iframeClass = $isIframe ? ' iframe' : '';
+$innerLayoutScript = $this->layout()->innerLayout . '.phtml';
 
 ?><!DOCTYPE html>
 <!--[if IE 8]>
@@ -52,8 +52,9 @@ $iframeClass = $isIframe ? ' iframe' : '';
 <body id="body">
 <pre id="responsive-debug"></pre>
 <div id="layout" class="default-layout<?php if ($showFullscreen): ?> fullscreen-layout<?php endif ?>">
-<?= $this->render('body.phtml') ?>
+<?= $this->render($innerLayoutScript); ?>
 </div>
+<iframe id="fileupload-frame-target" name="fileupload-frame-target"></iframe>
 <!--[if IE 8]>
 <script type="text/javascript" src="<?= $this->href($ie8jsfile) ?>"></script>
 <![endif]-->
@@ -62,7 +63,7 @@ $iframeClass = $isIframe ? ' iframe' : '';
 <!--<![endif]-->
 <script type="text/javascript">
 var icinga = new Icinga({
-  baseUrl: '<?= $this->href('/') ?>'
+  baseUrl: '<?= $this->baseUrl(); ?>'
 });
 </script>
 </body>

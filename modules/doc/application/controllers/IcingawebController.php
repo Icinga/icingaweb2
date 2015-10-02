@@ -1,18 +1,19 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
-use \Zend_Controller_Action_Exception;
+namespace Icinga\Module\Doc\Controllers;
+
 use Icinga\Application\Icinga;
 use Icinga\Module\Doc\DocController;
 
-class Doc_IcingawebController extends DocController
+class IcingawebController extends DocController
 {
     /**
      * Get the path to Icinga Web 2's documentation
      *
      * @return  string
      *
-     * @throws  Zend_Controller_Action_Exception    If Icinga Web 2's documentation is not available
+     * @throws  \Icinga\Exception\Http\HttpNotFoundException If Icinga Web 2's documentation is not available
      */
     protected function getPath()
     {
@@ -25,10 +26,7 @@ class Doc_IcingawebController extends DocController
                 return $path;
             }
         }
-        throw new Zend_Controller_Action_Exception(
-            $this->translate('Documentation for Icinga Web 2 is not available'),
-            404
-        );
+        $this->httpNotFound($this->translate('Documentation for Icinga Web 2 is not available'));
     }
 
     /**
@@ -42,17 +40,11 @@ class Doc_IcingawebController extends DocController
     /**
      * View a chapter of Icinga Web 2's documentation
      *
-     * @throws Zend_Controller_Action_Exception If the required parameter 'chapterId' is missing
+     * @throws \Icinga\Exception\MissingParameterException If the required parameter 'chapter' is missing
      */
     public function chapterAction()
     {
-        $chapter = $this->getParam('chapter');
-        if ($chapter === null) {
-            throw new Zend_Controller_Action_Exception(
-                sprintf($this->translate('Missing parameter %s'), 'chapter'),
-                404
-            );
-        }
+        $chapter = $this->params->getRequired('chapter');
         $this->renderChapter(
             $this->getPath(),
             $chapter,

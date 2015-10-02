@@ -3,6 +3,7 @@
 
 namespace Icinga\Module\Doc;
 
+use CachingIterator;
 use LogicException;
 use SplStack;
 use Icinga\Data\Tree\SimpleTree;
@@ -15,6 +16,20 @@ use Icinga\Module\Doc\Exception\DocException;
  */
 class DocParser
 {
+    /**
+     * Internal identifier for Atx-style headers
+     *
+     * @var int
+     */
+    const HEADER_ATX = 1;
+
+    /**
+     * Internal identifier for Setext-style headers
+     *
+     * @var int
+     */
+    const HEADER_SETEXT = 2;
+
     /**
      * Path to the documentation
      *
@@ -70,11 +85,11 @@ class DocParser
      * Extract atx- or setext-style headers from the given lines
      *
      * @param   string $line
-     * @param   string $lastLine
+     * @param   string $nextLine
      *
      * @return  array|null An array containing the header and the header level or null if there's nothing to extract
      */
-    protected function extractHeader($line, $lastLine)
+    protected function extractHeader($line, $nextLine)
     {
         if (! $line) {
             return null;
@@ -90,13 +105,14 @@ class DocParser
             if (! $header) {
                 return null;
             }
+            $headerStyle = static::HEADER_ATX;
         } elseif (
-            $line
-            && ($line[0] === '=' || $line[0] === '-')
-            && preg_match('/^[=-]+\s*$/', $line, $match) === 1
+            $nextLine
+            && ($nextLine[0] === '=' || $nextLine[0] === '-')
+            && preg_match('/^[=-]+\s*$/', $nextLine, $match) === 1
         ) {
             // Setext
-            $header = trim($lastLine);
+            $header = trim($line);
             if (! $header) {
                 return null;
             }
@@ -105,6 +121,7 @@ class DocParser
             } else {
                 $level = 2;
             }
+            $headerStyle = static::HEADER_SETEXT;
         }
         if ($header === null) {
             return null;
@@ -117,7 +134,7 @@ class DocParser
         } else {
             $id = null;
         }
-        return array($header, $id, $level);
+        return array($header, $id, $level, $headerStyle);
     }
 
     /**
@@ -128,15 +145,18 @@ class DocParser
     public function getDocTree()
     {
         $tree = new SimpleTree();
-        $stack = new SplStack();
         foreach ($this->docIterator as $fileInfo) {
             /** @var $fileInfo \SplFileInfo */
             $file = $fileInfo->openFile();
             $lastLine = null;
-            foreach ($file as $line) {
-                $header = $this->extractHeader($line, $lastLine);
+            $stack = new SplStack();
+            $cachingIterator = new CachingIterator($file, CachingIterator::TOSTRING_USE_CURRENT);
+            for ($cachingIterator->rewind(); $line = $cachingIterator->valid(); $cachingIterator->next()) {
+                $fileIterator = $cachingIterator->getInnerIterator();
+                $line = $cachingIterator->current();
+                $header = $this->extractHeader($line, $fileIterator->valid() ? $fileIterator->current() : null);
                 if ($header !== null) {
-                    list($title, $id, $level) = $header;
+                    list($title, $id, $level, $headerStyle) = $header;
                     while (! $stack->isEmpty() && $stack->top()->getLevel() >= $level) {
                         $stack->pop();
                     }
@@ -169,14 +189,29 @@ class DocParser
                         $tree->addChild($section, $stack->top());
                     }
                     $stack->push($section);
+                    if ($headerStyle === static::HEADER_SETEXT) {
+                        $cachingIterator->next();
+                        continue;
+                    }
                 } else {
                     if ($stack->isEmpty()) {
-                        throw new LogicException('Heading required');
+                        $title = ucfirst($file->getBasename('.' . pathinfo($file->getFilename(), PATHINFO_EXTENSION)));
+                        $id = $title;
+                        if ($tree->getNode($id) !== null) {
+                            $id = uniqid($id);
+                        }
+                        $section = new DocSection();
+                        $section
+                            ->setId($id)
+                            ->setTitle($title)
+                            ->setLevel(1)
+                            ->setNoFollow(true);
+                        $section->setChapter($section);
+                        $tree->addChild($section);
+                        $stack->push($section);
                     }
                     $stack->top()->appendContent($line);
                 }
-                // Save last line for setext-style headers
-                $lastLine = $line;
             }
         }
         return $tree;

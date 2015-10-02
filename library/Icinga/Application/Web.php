@@ -3,7 +3,7 @@
 
 namespace Icinga\Application;
 
-require_once __DIR__ . '/ApplicationBootstrap.php';
+require_once __DIR__ . '/EmbeddedWeb.php';
 
 use Zend_Controller_Action_HelperBroker;
 use Zend_Controller_Front;
@@ -11,14 +11,13 @@ use Zend_Controller_Router_Route;
 use Zend_Layout;
 use Zend_Paginator;
 use Zend_View_Helper_PaginationControl;
-use Icinga\Application\Logger;
-use Icinga\Authentication\Manager;
+use Icinga\Authentication\Auth;
 use Icinga\User;
 use Icinga\Util\TimezoneDetect;
 use Icinga\Util\Translator;
+use Icinga\Web\Controller\Dispatcher;
+use Icinga\Web\Navigation\Navigation;
 use Icinga\Web\Notification;
-use Icinga\Web\Request;
-use Icinga\Web\Response;
 use Icinga\Web\Session;
 use Icinga\Web\Session\Session as BaseSession;
 use Icinga\Web\View;
@@ -28,11 +27,11 @@ use Icinga\Web\View;
  *
  * Usage example:
  * <code>
- * use Icinga\Application\EmbeddedWeb;
- * EmbeddedWeb::start();
+ * use Icinga\Application\Web;
+ * Web::start();
  * </code>
  */
-class Web extends ApplicationBootstrap
+class Web extends EmbeddedWeb
 {
     /**
      * View object
@@ -47,13 +46,6 @@ class Web extends ApplicationBootstrap
      * @var Zend_Controller_Front
      */
     private $frontController;
-
-    /**
-     * Request object
-     *
-     * @var Request
-     */
-    private $request;
 
     /**
      * Session object
@@ -91,13 +83,15 @@ class Web extends ApplicationBootstrap
             ->setupResourceFactory()
             ->setupSession()
             ->setupNotifications()
+            ->setupRequest()
+            ->setupResponse()
+            ->setupUserBackendFactory()
             ->setupUser()
             ->setupTimezone()
             ->setupLogger()
             ->setupInternationalization()
-            ->setupRequest()
             ->setupZendMvc()
-            ->setupFormNamespace()
+            ->setupNamespaces()
             ->setupModuleManager()
             ->loadSetupModuleIfNecessary()
             ->loadEnabledModules()
@@ -146,12 +140,214 @@ class Web extends ApplicationBootstrap
         return $this->viewRenderer;
     }
 
+    private function hasAccessToSharedNavigationItem(& $config)
+    {
+        // TODO: Provide a more sophisticated solution
+
+        if (isset($config['owner']) && $config['owner'] === $this->user->getUsername()) {
+            unset($config['owner']);
+            return true;
+        }
+
+        if (isset($config['users'])) {
+            $users = array_map('trim', explode(',', strtolower($config['users'])));
+            if (in_array('*', $users, true) || in_array($this->user->getUsername(), $users, true)) {
+                unset($config['users']);
+                return true;
+            }
+        }
+
+        if (isset($config['groups'])) {
+            $groups = array_map('trim', explode(',', strtolower($config['groups'])));
+            if (in_array('*', $groups, true)) {
+                unset($config['groups']);
+                return true;
+            }
+
+            $userGroups = array_map('strtolower', $this->user->getGroups());
+            $matches = array_intersect($userGroups, $groups);
+            if (! empty($matches)) {
+                unset($config['groups']);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Load and return the shared navigation of the given type
+     *
+     * @param   string  $type
+     *
+     * @return  Navigation
+     */
+    public function getSharedNavigation($type)
+    {
+        $config = Config::navigation($type === 'dashboard-pane' ? 'dashlet' : $type);
+
+        if ($type === 'dashboard-pane') {
+            $panes = array();
+            foreach ($config as $dashletName => $dashletConfig) {
+                if ($this->hasAccessToSharedNavigationItem($dashletConfig)) {
+                    // TODO: Throw ConfigurationError if pane or url is missing
+                    $panes[$dashletConfig->pane][$dashletName] = $dashletConfig->url;
+                }
+            }
+
+            $navigation = new Navigation();
+            foreach ($panes as $paneName => $dashlets) {
+                $navigation->addItem(
+                    $paneName,
+                    array(
+                        'type'      => 'dashboard-pane',
+                        'dashlets'  => $dashlets
+                    )
+                );
+            }
+        } else {
+            $items = array();
+            foreach ($config as $name => $typeConfig) {
+                if ($this->hasAccessToSharedNavigationItem($typeConfig)) {
+                    $items[$name] = $typeConfig;
+                }
+            }
+
+            $navigation = Navigation::fromConfig($items);
+        }
+
+        return $navigation;
+    }
+
+    /**
+     * Return the app's menu
+     *
+     * @return  Navigation
+     */
+    public function getMenu()
+    {
+        if ($this->user !== null) {
+            $menu = array(
+                'dashboard' => array(
+                    'label'     => t('Dashboard'),
+                    'url'       => 'dashboard',
+                    'icon'      => 'dashboard',
+                    'priority'  => 10
+                ),
+                'system' => array(
+                    'label'     => t('System'),
+                    'icon'      => 'services',
+                    'priority'  => 700,
+                    'renderer'  => array(
+                        'SummaryNavigationItemRenderer',
+                        'state' => 'critical'
+                    ),
+                    'children'  => array(
+                        'about' => array(
+                            'label'     => t('About'),
+                            'url'       => 'about',
+                            'priority'  => 701
+                        )
+                    )
+                ),
+                'configuration' => array(
+                    'label'         => t('Configuration'),
+                    'icon'          => 'wrench',
+                    'permission'    => 'config/*',
+                    'priority'      => 800,
+                    'children'      => array(
+                        'application'       => array(
+                            'label'         => t('Application'),
+                            'url'           => 'config/general',
+                            'permission'    => 'config/application/*',
+                            'priority'      => 810
+                        ),
+                        'navigation'        => array(
+                            'label'         => t('Shared Navigation'),
+                            'url'           => 'navigation/shared',
+                            'permission'    => 'config/application/navigation',
+                            'priority'      => 820,
+                        ),
+                        'authentication'    => array(
+                            'label'         => t('Authentication'),
+                            'url'           => 'config/userbackend',
+                            'permission'    => 'config/authentication/*',
+                            'priority'      => 830
+                        ),
+                        'roles'             => array(
+                            'label'         => t('Roles'),
+                            'url'           => 'role/list',
+                            'permission'    => 'config/authentication/roles/show',
+                            'priority'      => 840
+                        ),
+                        'users'             => array(
+                            'label'         => t('Users'),
+                            'url'           => 'user/list',
+                            'permission'    => 'config/authentication/users/show',
+                            'priority'      => 850
+                        ),
+                        'groups'            => array(
+                            'label'         => t('Usergroups'),
+                            'url'           => 'group/list',
+                            'permission'    => 'config/authentication/groups/show',
+                            'priority'      => 860
+                        ),
+                        'modules'           => array(
+                            'label'         => t('Modules'),
+                            'url'           => 'config/modules',
+                            'permission'    => 'config/modules',
+                            'priority'      => 890
+                        )
+                    )
+                ),
+                'user' => array(
+                    'label'     => $this->user->getUsername(),
+                    'icon'      => 'user',
+                    'priority'  => 900,
+                    'children'  => array(
+                        'preferences'   => array(
+                            'label'     => t('Preferences'),
+                            'url'       => 'preference',
+                            'priority'  => 910
+                        ),
+                        'navigation'    => array(
+                            'label'     => t('Navigation'),
+                            'url'       => 'navigation',
+                            'priority'  => 920
+                        ),
+                        'logout'        => array(
+                            'label'     => t('Logout'),
+                            'url'       => 'authentication/logout',
+                            'priority'  => 990,
+                            'renderer'  => array(
+                                'NavigationItemRenderer',
+                                'target' => '_self'
+                            )
+                        )
+                    )
+                )
+            );
+
+            if (Logger::writesToFile()) {
+                $menu['system']['children']['application_log'] = array(
+                    'label'     => t('Application Log'),
+                    'url'       => 'list/applicationlog',
+                    'priority'  => 710
+                );
+            }
+        } else {
+            $menu = array();
+        }
+
+        return Navigation::fromArray($menu)->load('menu-item');
+    }
+
     /**
      * Dispatch public interface
      */
     public function dispatch()
     {
-        $this->frontController->dispatch($this->request, new Response());
+        $this->frontController->dispatch($this->getRequest(), $this->getResponse());
     }
 
     /**
@@ -179,9 +375,11 @@ class Web extends ApplicationBootstrap
      */
     private function setupUser()
     {
-        $auth = Manager::getInstance();
+        $auth = Auth::getInstance();
         if ($auth->isAuthenticated()) {
-            $this->user = $auth->getUser();
+            $user = $auth->getUser();
+            $this->getRequest()->setUser($user);
+            $this->user = $user;
         }
         return $this;
     }
@@ -209,20 +407,6 @@ class Web extends ApplicationBootstrap
     }
 
     /**
-     * Inject dependencies into request
-     *
-     * @return $this
-     */
-    private function setupRequest()
-    {
-        $this->request = new Request();
-        if ($this->user instanceof User) {
-            $this->request->setUser($this->user);
-        }
-        return $this;
-    }
-
-    /**
      * Instantiate front controller
      *
      * @return $this
@@ -230,11 +414,22 @@ class Web extends ApplicationBootstrap
     private function setupFrontController()
     {
         $this->frontController = Zend_Controller_Front::getInstance();
-        $this->frontController->setRequest($this->request);
+        $this->frontController->setDispatcher(new Dispatcher());
+        $this->frontController->setRequest($this->getRequest());
         $this->frontController->setControllerDirectory($this->getApplicationDir('/controllers'));
+
+        $displayExceptions = $this->config->get('global', 'show_stacktraces', true);
+        if ($this->user !== null && $this->user->can('application/stacktraces')) {
+            $displayExceptions = $this->user->getPreferences()->getValue(
+                'icingaweb',
+                'show_stacktraces',
+                $displayExceptions
+            );
+        }
+
         $this->frontController->setParams(
             array(
-                'displayExceptions' => true
+                'displayExceptions' => $displayExceptions
             )
         );
         return $this;
@@ -282,7 +477,7 @@ class Web extends ApplicationBootstrap
      */
     protected function detectTimezone()
     {
-        $auth = Manager::getInstance();
+        $auth = Auth::getInstance();
         if (! $auth->isAuthenticated()
             || ($timezone = $auth->getUser()->getPreferences()->getValue('icingaweb', 'timezone')) === null
         ) {
@@ -303,7 +498,7 @@ class Web extends ApplicationBootstrap
      */
     protected function detectLocale()
     {
-        $auth = Manager::getInstance();
+        $auth = Auth::getInstance();
         if ($auth->isAuthenticated()
             && ($locale = $auth->getUser()->getPreferences()->getValue('icingaweb', 'language')) !== null
         ) {
@@ -316,16 +511,22 @@ class Web extends ApplicationBootstrap
     }
 
     /**
-     * Setup an autoloader namespace for Icinga\Forms
+     * Setup class loader namespaces for Icinga\Controllers and Icinga\Forms
      *
      * @return $this
      */
-    private function setupFormNamespace()
+    private function setupNamespaces()
     {
-        $this->getLoader()->registerNamespace(
-            'Icinga\\Forms',
-            $this->getApplicationDir('forms')
-        );
+        $this
+            ->getLoader()
+            ->registerNamespace(
+                'Icinga\\' . Dispatcher::CONTROLLER_NAMESPACE,
+                $this->getApplicationDir('controllers')
+            )
+            ->registerNamespace(
+                'Icinga\\Forms',
+                $this->getApplicationDir('forms')
+            );
         return $this;
     }
 }

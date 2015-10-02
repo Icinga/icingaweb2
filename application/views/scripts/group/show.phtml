@@ -2,6 +2,7 @@
 
 use Icinga\Data\Extensible;
 use Icinga\Data\Updatable;
+use Icinga\Data\Selectable;
 
 $extensible = $this->hasPermission('config/authentication/groups/add') && $backend instanceof Extensible;
 
@@ -49,7 +50,12 @@ if ($this->hasPermission('config/authentication/groups/edit') && $backend instan
 <?php endif ?>
 </div>
 <div class="content members" data-base-target="_next">
-<?php if (count($members) > 0): ?>
+<?php
+
+$firstRow = true;
+foreach ($members as $member): ?>
+<?php if ($firstRow): ?>
+  <?php $firstRow = false; ?>
   <table data-base-target="_next" class="action member-list">
     <thead>
       <tr>
@@ -60,16 +66,33 @@ if ($this->hasPermission('config/authentication/groups/edit') && $backend instan
       </tr>
     </thead>
     <tbody>
-    <?php foreach ($members as $member): ?>
+  <?php endif ?>
       <tr>
-        <td class="member-name"><?= $this->escape($member->user_name); ?></td>
+        <td class="member-name">
+        <?php if (
+          $this->hasPermission('config/authentication/users/show')
+          && method_exists($backend, 'getUserBackend')
+          && ($userBackend = $backend->getUserBackend()) !== null
+          && $userBackend instanceof Selectable
+        ): ?>
+          <?= $this->qlink($member->user_name, 'user/show', array(
+            'backend' => $userBackend->getName(),
+            'user'    => $member->user_name
+          ), array(
+            'title'   => sprintf($this->translate('Show detailed information about %s'), $member->user_name)
+          )); ?>
+        <?php else: ?>
+          <?= $this->escape($member->user_name); ?>
+        <?php endif ?>
+        </td>
        <?php if (isset($removeForm)): ?>
         <td class="member-remove" data-base-target="_self">
           <?php $removeForm->getElement('user_name')->setValue($member->user_name); echo $removeForm; ?>
         </td>
        <?php endif ?>
       </tr>
-    <?php endforeach ?>
+<?php endforeach ?>
+<?php if ($members->hasResult()): ?>
     </tbody>
   </table>
 <?php else: ?>

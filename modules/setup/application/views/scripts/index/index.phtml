@@ -19,7 +19,7 @@ $maxProgress = @max(array_keys(array_filter(
 
 $notifications = Notification::getInstance();
 if ($notifications->hasMessages()) {
-    foreach ($notifications->getMessages() as $m) {
+    foreach ($notifications->popMessages() as $m) {
         echo '<li class="' . $m->type . '">' . $this->escape($m->message) . '</li>';
     }
 }
@@ -80,7 +80,10 @@ if ($notifications->hasMessages()) {
               $pos < $maxProgress ? ' visited' : ($currentPos > 2 ? ' active' : '')
             ); ?>
             <?php if ($page === $firstPage): ?>
-            <div class="line left<?= $stateClass; ?>" style="float: left; width: <?= $lineWidth; ?>%; margin-right: 0"></div>
+            <div class="line left<?= $stateClass; ?>" style="float: left; width: <?= sprintf(
+                '%.2F',
+                100 - (count($configPagesLeft) - 1) * $lineWidth
+            ); ?>%; margin-right: 0"></div>
             <?php elseif ($page === $lastPage): ?>
             <div class="line<?= $stateClass; ?>" style="float: left; width: <?= $lineWidth; ?>%; margin-right: -0.1em;"></div>
             <?php else: ?>
@@ -109,7 +112,10 @@ if ($notifications->hasMessages()) {
             <?php if ($page === $firstPage): ?>
             <div class="line<?= $stateClass; ?>" style="float: left; width: <?= $lineWidth; ?>%; margin-left: -0.1em;"></div>
             <?php elseif ($page === $lastPage): ?>
-            <div class="line right<?= $stateClass; ?>" style="float: left; width: <?= $lineWidth; ?>%; margin-left: 0;"></div>
+            <div class="line right<?= $stateClass; ?>" style="float: left; width: <?= sprintf(
+                '%.2F',
+                100 - (count($configPagesRight) - 1) * $lineWidth
+            ); ?>%; margin-left: 0;"></div>
             <?php else: ?>
             <div class="line<?= $stateClass; ?>" style="float: left; width: <?= $lineWidth; ?>%;"></div>
             <?php endif ?>

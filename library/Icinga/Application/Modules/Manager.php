@@ -25,6 +25,13 @@ use Icinga\Exception\NotReadableError;
 class Manager
 {
     /**
+     * Namespace for module permissions
+     *
+     * @var string
+     */
+    const MODULE_PERMISSION_NS = 'module/';
+
+    /**
      * Array of all installed module's base directories
      *
      * @var array
@@ -274,7 +281,10 @@ class Manager
     public function disableModule($name)
     {
         if (! $this->hasEnabled($name)) {
-            return $this;
+            throw new ConfigurationError(
+                'Cannot disable module "%s". Module is not installed.',
+                $name
+            );
         }
 
         if (! is_writable($this->enableDir)) {
@@ -401,22 +411,25 @@ class Manager
     }
 
     /**
-     * Return the module instance of the given module when it is loaded
+     * Get a module
      *
-     * @param   string $name        The module name to return
+     * @param   string  $name           Name of the module
+     * @param   bool    $assertLoaded   Whether or not to throw an exception if the module hasn't been loaded
      *
      * @return  Module
-     * @throws  ProgrammingError    When the module hasn't been loaded
+     * @throws  ProgrammingError        If the module hasn't been loaded
      */
-    public function getModule($name)
+    public function getModule($name, $assertLoaded = true)
     {
-        if (!$this->hasLoaded($name)) {
-            throw new ProgrammingError(
-                'Cannot access module %s as it hasn\'t been loaded',
-                $name
-            );
+        if ($this->hasLoaded($name)) {
+            return $this->loadedModules[$name];
+        } elseif (! (bool) $assertLoaded) {
+            return new Module($this->app, $name, $this->getModuleDir($name));
         }
-        return $this->loadedModules[$name];
+        throw new ProgrammingError(
+            'Can\'t access module %s because it hasn\'t been loaded',
+            $name
+        );
     }
 
     /**

@@ -16,6 +16,16 @@ class ContactgroupQuery extends IdoQuery
     /**
      * {@inheritdoc}
      */
+    protected $groupBase = array('contactgroups' => array('cg.contactgroup_id', 'cgo.object_id'));
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $groupOrigin = array('contacts', 'hosts', 'services');
+
+    /**
+     * {@inheritdoc}
+     */
     protected $columnMap = array(
         'contactgroups' => array(
             'contactgroup'          => 'cgo.name1 COLLATE latin1_general_ci',
@@ -55,6 +65,9 @@ class ContactgroupQuery extends IdoQuery
             'host_name'         => 'ho.name1',
             'host_alias'        => 'h.alias',
             'host_display_name' => 'h.display_name COLLATE latin1_general_ci'
+        ),
+        'instances' => array(
+            'instance_name' => 'i.instance_name'
         ),
         'servicegroups' => array(
             'servicegroup'          => 'sgo.name1 COLLATE latin1_general_ci',
@@ -147,6 +160,18 @@ class ContactgroupQuery extends IdoQuery
     }
 
     /**
+     * Join instances
+     */
+    protected function joinInstances()
+    {
+        $this->select->join(
+            array('i' => $this->prefix . 'instances'),
+            'i.instance_id = cg.instance_id',
+            array()
+        );
+    }
+
+    /**
      * Join service groups
      */
     protected function joinServicegroups()
@@ -185,29 +210,5 @@ class ContactgroupQuery extends IdoQuery
             'so.object_id = s.service_object_id AND so.is_active = 1 AND so.objecttype_id = 2',
             array()
         );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getGroup()
-    {
-        $group = array();
-        if ($this->hasJoinedVirtualTable('hosts') || $this->hasJoinedVirtualTable('services')) {
-            $group = array('cg.contactgroup_id', 'cgo.object_id');
-            if ($this->hasJoinedVirtualTable('contacts')) {
-                $group[] = 'c.contact_id';
-                $group[] = 'co.object_id';
-            }
-        } elseif ($this->hasJoinedVirtualTable('contacts')) {
-            $group = array(
-                'cg.contactgroup_id',
-                'cgo.object_id',
-                'c.contact_id',
-                'co.object_id'
-            );
-        }
-
-        return $group;
     }
 }

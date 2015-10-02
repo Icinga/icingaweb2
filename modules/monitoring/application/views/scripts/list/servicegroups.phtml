@@ -10,12 +10,12 @@
 <div class="content">
 <?php
 
-if (count($servicegroups) === 0) {
-    echo $this->translate('No servicegroups found matching the filter') . '</div>';
-    return;
-}
-?>
-  <table class="groupview" data-base-target="_next">
+$servicegroups->peekAhead($this->compact);
+$firstRow = true;
+foreach ($servicegroups as $s): ?>
+<?php if ($firstRow): ?>
+  <?php $firstRow = false; ?>
+  <table class="groupview action" data-base-target="_next">
     <thead>
       <th><?= $this->translate('Last Problem'); ?></th>
       <th><?= $this->translate('Service Group'); ?></th>
@@ -23,7 +23,7 @@ if (count($servicegroups) === 0) {
       <th><?= $this->translate('Service States'); ?></th>
     </thead>
     <tbody>
-    <?php foreach ($servicegroups as $s): ?>
+<?php endif ?>
       <tr href="<?= $this->href('monitoring/list/services', array('servicegroup_name' => $s->servicegroup_name)); ?>">
        <?php if ($s->services_critical_last_state_change_unhandled): ?>
         <td class="state change critical unhandled">
@@ -298,7 +298,22 @@ if (count($servicegroups) === 0) {
         <?php endif ?>
         </td>
       </tr>
-    <?php endforeach ?>
+<?php endforeach ?>
+<?php if ($servicegroups->hasResult()): ?>
     </tbody>
   </table>
+<?php if ($servicegroups->hasMore()): ?>
+  <?= $this->qlink(
+    $this->translate('Show More'),
+    $this->url()->without(array('view', 'limit')),
+    null,
+    array(
+      'data-base-target'    => '_next',
+      'class'               => 'pull-right show-more'
+    )
+  ); ?>
+<?php endif ?>
+<?php else: ?>
+  <?= $this->translate('No servicegroups found matching the filter'); ?>
+<?php endif ?>
 </div>

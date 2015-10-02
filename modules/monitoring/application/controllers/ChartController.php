@@ -1,20 +1,18 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
-use Icinga\Module\Monitoring\Controller;
+namespace Icinga\Module\Monitoring\Controllers;
+
 use Icinga\Chart\GridChart;
 use Icinga\Chart\PieChart;
-use Icinga\Chart\Unit\StaticAxis;
 use Icinga\Chart\Unit\LogarithmicUnit;
-use Icinga\Chart\Unit\LinearUnit;
+use Icinga\Chart\Unit\StaticAxis;
+use Icinga\Module\Monitoring\Controller;
 
 /**
- * Class Monitoring_CommandController
- *
- * Interface to send commands and display forms
+ * @TODO(el): Fix and reuse the controller or remove it: https://dev.icinga.org/issues/10019
  */
-
-class Monitoring_ChartController extends Controller
+class ChartController extends Controller
 {
     private function drawLogChart1()
     {

@@ -1,0 +1,69 @@
+<?php
+
+use Icinga\Web\Url;
+
+if (! $this->compact): ?>
+<div class="controls">
+    <?= $this->tabs; ?>
+    <?= $this->sortBox; ?>
+    <?= $this->limiter; ?>
+    <?= $this->paginator; ?>
+    <?= $this->filterEditor; ?>
+</div>
+<?php endif ?>
+<div class="content" data-base-target="_next">
+<?php if (count($items) === 0): ?>
+    <p><?= $this->translate('There are currently no navigation items being shared'); ?></p>
+<?php else: ?>
+    <table class="action alternating">
+        <thead>
+            <th><?= $this->translate('Shared Navigation'); ?></th>
+            <th style="width: 10em"><?= $this->translate('Type'); ?></th>
+            <th style="width: 10em"><?= $this->translate('Owner'); ?></th>
+            <th style="width: 5em"><?= $this->translate('Unshare'); ?></th>
+        </thead>
+        <tbody>
+        <?php foreach ($items as $item): ?>
+            <tr>
+                <td><?= $this->qlink(
+                    $item->name,
+                    'navigation/edit',
+                    array(
+                        'name'      => $item->name,
+                        'type'      => $item->type,
+                        'owner'     => $item->owner,
+                        'referrer'  => 'shared'
+                    ),
+                    array(
+                        'title' => sprintf($this->translate('Edit shared navigation item %s'), $item->name)
+                    )
+                ); ?></td>
+                <td><?= $item->type && isset($types[$item->type])
+                    ? $this->escape($types[$item->type])
+                    : $this->escape($this->translate('Unknown')); ?></td>
+                <td><?= $this->escape($item->owner); ?></td>
+            <?php if ($item->parent): ?>
+                <td><?= $this->icon(
+                    'block',
+                    sprintf(
+                        $this->translate(
+                            'This is a child of the navigation item %1$s. You can'
+                            . ' only unshare this item by unsharing %1$s'
+                        ),
+                        $item->parent
+                    )
+                ); ?></td>
+            <?php else: ?>
+                <td data-base-target="_self"><?= $removeForm
+                    ->setDefault('name', $item->name)
+                    ->setAction(Url::fromPath(
+                        'navigation/unshare',
+                        array('type' => $item->type, 'owner' => $item->owner)
+                )); ?></td>
+            <?php endif ?>
+            </tr>
+        <?php endforeach ?>
+        </tbody>
+    </table>
+<?php endif ?>
+</div>

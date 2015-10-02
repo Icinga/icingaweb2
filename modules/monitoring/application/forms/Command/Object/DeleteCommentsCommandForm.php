@@ -4,7 +4,7 @@
 namespace Icinga\Module\Monitoring\Forms\Command\Object;
 
 use Icinga\Module\Monitoring\Command\Object\DeleteCommentCommand;
-use \Icinga\Module\Monitoring\Forms\Command\CommandForm;
+use Icinga\Module\Monitoring\Forms\Command\CommandForm;
 use Icinga\Web\Notification;
 
 /**
@@ -13,15 +13,14 @@ use Icinga\Web\Notification;
 class DeleteCommentsCommandForm extends CommandForm
 {
     /**
-     * The comments deleted on success
+     * The comments to delete
      *
      * @var array
      */
     protected $comments;
 
     /**
-     * (non-PHPDoc)
-     * @see \Zend_Form::init() For the method documentation.
+     * {@inheritdoc}
      */
     public function init()
     {
@@ -29,8 +28,20 @@ class DeleteCommentsCommandForm extends CommandForm
     }
 
     /**
-     * (non-PHPDoc)
-     * @see \Icinga\Web\Form::createElements() For the method documentation.
+     * Set the comments to delete
+     *
+     * @param   array $comments
+     *
+     * @return  $this
+     */
+    public function setComments(array $comments)
+    {
+        $this->comments = $comments;
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function createElements(array $formData = array())
     {
@@ -45,23 +56,22 @@ class DeleteCommentsCommandForm extends CommandForm
     }
 
     /**
-     * (non-PHPDoc)
-     * @see \Icinga\Web\Form::getSubmitLabel() For the method documentation.
+     * {@inheritdoc}
      */
     public function getSubmitLabel()
     {
-        return $this->translatePlural('Remove', 'Remove All', count($this->downtimes));
+        return $this->translatePlural('Remove', 'Remove All', count($this->comments));
     }
 
     /**
-     * (non-PHPDoc)
-     * @see \Icinga\Web\Form::onSuccess() For the method documentation.
+     * {@inheritdoc}
      */
     public function onSuccess()
     {
         foreach ($this->comments as $comment) {
             $cmd = new DeleteCommentCommand();
-            $cmd->setCommentId($comment->id)
+            $cmd
+                ->setCommentId($comment->id)
                 ->setIsService(isset($comment->service_description));
             $this->getTransport($this->request)->send($cmd);
         }
@@ -69,20 +79,9 @@ class DeleteCommentsCommandForm extends CommandForm
         if (! empty($redirect)) {
             $this->setRedirectUrl($redirect);
         }
-        Notification::success($this->translate('Deleting comment..'));
+        Notification::success(
+            $this->translatePlural('Deleting comment..', 'Deleting comments..', count($this->comments))
+        );
         return true;
-    }
-
-    /**
-     * Set the comments to be deleted upon success
-     *
-     * @param array $comments
-     *
-     * @return this             fluent interface
-     */
-    public function setComments(array $comments)
-    {
-        $this->comments = $comments;
-        return $this;
     }
 }

@@ -7,9 +7,9 @@ use Exception;
 use RuntimeException;
 use Icinga\Application\Logger;
 use Icinga\Exception\ConfigurationError;
-use Icinga\Module\Monitoring\Command\Exception\TransportException;
 use Icinga\Module\Monitoring\Command\IcingaCommand;
 use Icinga\Module\Monitoring\Command\Renderer\IcingaCommandFileCommandRenderer;
+use Icinga\Module\Monitoring\Exception\CommandTransportException;
 use Icinga\Util\File;
 
 /**
@@ -21,6 +21,13 @@ class LocalCommandFile implements CommandTransportInterface
      * Transport identifier
      */
     const TRANSPORT = 'local';
+
+    /**
+     * The name of the Icinga instance this transport will transfer commands to
+     *
+     * @var string
+     */
+    protected $instanceName;
 
     /**
      * Path to the icinga command file
@@ -49,6 +56,29 @@ class LocalCommandFile implements CommandTransportInterface
     public function __construct()
     {
         $this->renderer = new IcingaCommandFileCommandRenderer();
+    }
+
+    /**
+     * Set the name of the Icinga instance this transport will transfer commands to
+     *
+     * @param   string  $name
+     *
+     * @return  $this
+     */
+    public function setInstance($name)
+    {
+        $this->instanceName = $name;
+        return $this;
+    }
+
+    /**
+     * Return the name of the Icinga instance this transport will transfer commands to
+     *
+     * @return  string
+     */
+    public function getInstance()
+    {
+        return $this->instanceName;
     }
 
     /**
@@ -104,7 +134,7 @@ class LocalCommandFile implements CommandTransportInterface
      * @param   int|null        $now
      *
      * @throws  ConfigurationError
-     * @throws  TransportException
+     * @throws  CommandTransportException
      */
     public function send(IcingaCommand $command, $now = null)
     {
@@ -122,14 +152,13 @@ class LocalCommandFile implements CommandTransportInterface
         try {
             $file = new File($this->path, $this->openMode);
             $file->fwrite($commandString . "\n");
-            $file->fflush();
         } catch (Exception $e) {
             $message = $e->getMessage();
             if ($e instanceof RuntimeException && ($pos = strrpos($message, ':')) !== false) {
                 // Assume RuntimeException thrown by SplFileObject in the format: __METHOD__ . "({$filename}): Message"
                 $message = substr($message, $pos + 1);
             }
-            throw new TransportException(
+            throw new CommandTransportException(
                 'Can\'t send external Icinga command to the local command file "%s": %s',
                 $this->path,
                 $message

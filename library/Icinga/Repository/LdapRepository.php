@@ -28,13 +28,27 @@ abstract class LdapRepository extends Repository
      * @var array
      */
     protected $normedAttributes = array(
-        'uid'               => 'uid',
-        'gid'               => 'gid',
-        'user'              => 'user',
-        'group'             => 'group',
-        'member'            => 'member',
-        'inetorgperson'     => 'inetOrgPerson',
-        'samaccountname'    => 'sAMAccountName'
+        'uid'                   => 'uid',
+        'gid'                   => 'gid',
+        'user'                  => 'user',
+        'group'                 => 'group',
+        'member'                => 'member',
+        'memberuid'             => 'memberUid',
+        'posixgroup'            => 'posixGroup',
+        'uniquemember'          => 'uniqueMember',
+        'groupofnames'          => 'groupOfNames',
+        'inetorgperson'         => 'inetOrgPerson',
+        'samaccountname'        => 'sAMAccountName',
+        'groupofuniquenames'    => 'groupOfUniqueNames'
+    );
+
+    /**
+     * Object attributes whose value is not distinguished name
+     *
+     * @var array
+     */
+    protected $ambiguousAttributes = array(
+        'posixGroup' => 'memberUid'
     );
 
     /**
@@ -62,5 +76,18 @@ abstract class LdapRepository extends Repository
         }
 
         return $name;
+    }
+
+    /**
+     * Return whether the given object attribute's value is not a distinguished name
+     *
+     * @param   string  $objectClass
+     * @param   string  $attributeName
+     *
+     * @return  bool
+     */
+    protected function isAmbiguous($objectClass, $attributeName)
+    {
+        return isset($this->ambiguousAttributes[$objectClass][$attributeName]);
     }
 }

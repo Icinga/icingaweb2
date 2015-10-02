@@ -4,7 +4,7 @@
 namespace Icinga\Module\Monitoring\Forms\Command\Object;
 
 use Icinga\Module\Monitoring\Command\Object\DeleteDowntimeCommand;
-use \Icinga\Module\Monitoring\Forms\Command\CommandForm;
+use Icinga\Module\Monitoring\Forms\Command\CommandForm;
 use Icinga\Web\Notification;
 
 /**
@@ -13,15 +13,14 @@ use Icinga\Web\Notification;
 class DeleteDowntimesCommandForm extends CommandForm
 {
     /**
-     * The downtimes to delete on success
+     * The downtimes to delete
      *
      * @var array
      */
     protected $downtimes;
-    
+
     /**
-     * (non-PHPDoc)
-     * @see \Zend_Form::init() For the method documentation.
+     * {@inheritdoc}
      */
     public function init()
     {
@@ -29,8 +28,20 @@ class DeleteDowntimesCommandForm extends CommandForm
     }
 
     /**
-     * (non-PHPDoc)
-     * @see \Icinga\Web\Form::createElements() For the method documentation.
+     * Set the downtimes to delete
+     *
+     * @param   array $downtimes
+     *
+     * @return  $this
+     */
+    public function setDowntimes(array $downtimes)
+    {
+        $this->downtimes = $downtimes;
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function createElements(array $formData = array())
     {
@@ -43,46 +54,34 @@ class DeleteDowntimesCommandForm extends CommandForm
         ));
         return $this;
     }
- 
+
     /**
-     * (non-PHPDoc)
-     * @see \Icinga\Web\Form::getSubmitLabel() For the method documentation.
+     * {@inheritdoc}
      */
     public function getSubmitLabel()
     {
         return $this->translatePlural('Remove', 'Remove All', count($this->downtimes));
     }
-    
+
     /**
-     * (non-PHPDoc)
-     * @see \Icinga\Web\Form::onSuccess() For the method documentation.
+     * {@inheritdoc}
      */
     public function onSuccess()
     {
         foreach ($this->downtimes as $downtime) {
             $delDowntime = new DeleteDowntimeCommand();
-            $delDowntime->setDowntimeId($downtime->id);
-            $delDowntime->setIsService(isset($downtime->service_description));
+            $delDowntime
+                ->setDowntimeId($downtime->id)
+                ->setIsService(isset($downtime->service_description));
             $this->getTransport($this->request)->send($delDowntime);
         }
         $redirect = $this->getElement('redirect')->getValue();
         if (! empty($redirect)) {
             $this->setRedirectUrl($redirect);
         }
-        Notification::success($this->translate('Deleting downtime.'));
+        Notification::success(
+            $this->translatePlural('Deleting downtime..', 'Deleting downtimes..', count($this->downtimes))
+        );
         return true;
-    }
-    
-    /**
-     * Set the downtimes to be deleted upon success
-     *
-     * @param type $downtimes
-     *
-     * @return $this
-     */
-    public function setDowntimes(array $downtimes)
-    {
-        $this->downtimes = $downtimes;
-        return $this;
     }
 }

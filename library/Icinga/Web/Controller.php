@@ -3,8 +3,10 @@
 
 namespace Icinga\Web;
 
+use Icinga\Data\Filterable;
 use Icinga\Data\Sortable;
 use Icinga\Data\QueryInterface;
+use Icinga\Exception\Http\HttpBadRequestException;
 use Icinga\Exception\Http\HttpNotFoundException;
 use Icinga\Web\Controller\ModuleActionController;
 use Icinga\Web\Widget\Limiter;
@@ -37,13 +39,13 @@ class Controller extends ModuleActionController
             return;
         }
 
-        if (($sort = $request->getPost('sort'))) {
+        if (($sort = $request->getPost('sort')) || ($direction = $request->getPost('dir'))) {
             $url = Url::fromRequest();
-            $url->setParam('sort', $sort);
-            if (($dir = $request->getPost('dir'))) {
-                $url->setParam('dir', $dir);
+            if ($sort) {
+                $url->setParam('sort', $sort);
+                $url->remove('dir');
             } else {
-                $url->removeParam('dir');
+                $url->setParam('dir', $direction);
             }
 
             $this->redirectNow($url);
@@ -51,15 +53,29 @@ class Controller extends ModuleActionController
     }
 
     /**
+     * Immediately respond w/ HTTP 400
+     *
+     * @param   string  $message    Exception message or exception format string
+     * @param   mixed   ...$arg     Format string argument
+     *
+     * @throws  HttpBadRequestException
+     */
+    public function httpBadRequest($message)
+    {
+        throw HttpBadRequestException::create(func_get_args());
+    }
+
+    /**
      * Immediately respond w/ HTTP 404
      *
-     * @param   $message
+     * @param   string  $message    Exception message or exception format string
+     * @param   mixed   ...$arg     Format string argument
      *
      * @throws  HttpNotFoundException
      */
     public function httpNotFound($message)
     {
-        throw new HttpNotFoundException($message);
+        throw HttpNotFoundException::create(func_get_args());
     }
 
     /**
@@ -139,16 +155,51 @@ class Controller extends ModuleActionController
     }
 
     /**
-     * Set the view property `filterEditor' to the given FilterEditor
+     * Create a FilterEditor widget and apply the user's chosen filter options on the given filterable
      *
-     * In case the current view has been requested as compact this method does nothing.
+     * The widget is set on the `filterEditor' view property only if the current view has not been requested as compact.
+     * The optional $filterColumns parameter should be an array of key-value pairs where the key is the name of the
+     * column and the value the label to show to the user. The optional $searchColumns parameter should be an array
+     * of column names to be used to handle quick searches.
      *
-     * @param   Form    $editor    The FilterEditor
+     * If the given filterable is an instance of Icinga\Data\FilterColumns, $filterable->getFilterColumns() and
+     * $filterable->getSearchColumns() is called to provide the respective columns if $filterColumns or $searchColumns
+     * is not given.
+     *
+     * @param   Filterable  $filterable         The filterable to create a filter editor for
+     * @param   array       $filterColumns      The filter columns to offer to the user
+     * @param   array       $searchColumns      The search columns to utilize for quick searches
      *
      * @return  $this
+     *
+     * @todo    Preserving and ignoring parameters should be configurable (another two method params? property magic?)
      */
-    protected function setupFilterControl($editor)
-    {
+    protected function setupFilterControl(
+        Filterable $filterable,
+        array $filterColumns = null,
+        array $searchColumns = null
+    ) {
+        $editor = Widget::create('filterEditor')
+            ->setQuery($filterable)
+            ->preserveParams(
+                'limit',
+                'sort',
+                'dir',
+                'format',
+                'view',
+                'user',
+                'group',
+                'backend',
+                'stateType',
+                'addColumns',
+                'problems',
+                '_dev'
+            )
+            ->ignoreParams('page')
+            ->setColumns($filterColumns)
+            ->setSearchColumns($searchColumns)
+            ->handleRequest($this->getRequest());
+
         if (! $this->view->compact) {
             $this->view->filterEditor = $editor;
         }

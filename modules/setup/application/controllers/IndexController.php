@@ -1,10 +1,12 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
-use Icinga\Web\Controller;
-use Icinga\Module\Setup\WebWizard;
+namespace Icinga\Module\Setup\Controllers;
 
-class Setup_IndexController extends Controller
+use Icinga\Module\Setup\WebWizard;
+use Icinga\Web\Controller;
+
+class IndexController extends Controller
 {
     /**
      * Whether the controller requires the user to be authenticated
@@ -14,6 +16,11 @@ class Setup_IndexController extends Controller
      * @var bool
      */
     protected $requiresAuthentication = false;
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $innerLayout = 'inline';
 
     /**
      * Show the web wizard and run the configuration once finished

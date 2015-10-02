@@ -36,12 +36,19 @@ class LdapQuery extends SimpleQuery
     protected $usePagedResults;
 
     /**
+     * The name of the attribute used to unfold the result
+     *
+     * @var string
+     */
+    protected $unfoldAttribute;
+
+    /**
      * Initialize this query
      */
     protected function init()
     {
         $this->filters = array();
-        $this->usePagedResults = true;
+        $this->usePagedResults = false;
     }
 
     /**
@@ -88,6 +95,29 @@ class LdapQuery extends SimpleQuery
     public function getUsePagedResults()
     {
         return $this->usePagedResults;
+    }
+
+    /**
+     * Set the attribute to be used to unfold the result
+     *
+     * @param   string  $attributeName
+     *
+     * @return  $this
+     */
+    public function setUnfoldAttribute($attributeName)
+    {
+        $this->unfoldAttribute = $attributeName;
+        return $this;
+    }
+
+    /**
+     * Return the attribute to use to unfold the result
+     *
+     * @return  string
+     */
+    public function getUnfoldAttribute()
+    {
+        return $this->unfoldAttribute;
     }
 
     /**

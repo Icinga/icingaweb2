@@ -6,12 +6,27 @@ namespace Icinga\Module\Translation\Cli;
 use Exception;
 use Icinga\Cli\Command;
 use Icinga\Exception\IcingaException;
+use Icinga\Module\Translation\Util\GettextTranslationHelper;
 
 /**
  * Base class for translation commands
  */
 class TranslationCommand extends Command
 {
+    /**
+     * Get the gettext translation helper
+     *
+     * @param   string $locale
+     *
+     * @return  GettextTranslationHelper
+     */
+    public function getTranslationHelper($locale)
+    {
+        $helper = new GettextTranslationHelper($this->app, $locale);
+        $helper->setConfig($this->Config());
+        return $helper;
+    }
+
     /**
      * Check whether the given locale code is valid
      *
@@ -46,7 +61,7 @@ class TranslationCommand extends Command
     {
         $enabledModules = $this->app->getModuleManager()->listEnabledModules();
 
-        if (!in_array($name, $enabledModules)) {
+        if (! in_array($name, $enabledModules)) {
             throw new IcingaException(
                 'Module with name \'%s\' not found or is not enabled',
                 $name

@@ -10,7 +10,7 @@ use Icinga\Data\Filter\Filter;
 /**
  * Query for host and service status summary
  */
-class StatusSummaryQuery extends IdoQuery
+class StatussummaryQuery extends IdoQuery
 {
     /**
      * {@inheritdoc}
@@ -129,6 +129,20 @@ We have to find a better solution here.
      * @var IdoQuery[]
      */
     protected $subQueries = array();
+
+    /**
+     * {@inheritdoc}
+     */
+    public function allowsCustomVars()
+    {
+        foreach ($this->subQueries as $query) {
+            if (! $query->allowsCustomVars()) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 
     /**
      * {@inheritdoc}

@@ -5,6 +5,7 @@ namespace Icinga\Module\Setup\Steps;
 
 use Exception;
 use PDOException;
+use Icinga\Exception\IcingaException;
 use Icinga\Module\Setup\Step;
 use Icinga\Module\Setup\Utils\DbTool;
 use Icinga\Module\Setup\Exception\SetupException;
@@ -65,7 +66,7 @@ class DatabaseStep extends Step
             $db->reconnect($this->data['resourceConfig']['dbname']);
         }
 
-        if (array_search(key($this->data['tables']), $db->listTables()) !== false) {
+        if (array_search(reset($this->data['tables']), $db->listTables(), true) !== false) {
             $this->log(mt('setup', 'Database schema already exists...'));
         } else {
             $this->log(mt('setup', 'Creating database schema...'));
@@ -116,7 +117,7 @@ class DatabaseStep extends Step
             $db->reconnect($this->data['resourceConfig']['dbname']);
         }
 
-        if (array_search(key($this->data['tables']), $db->listTables()) !== false) {
+        if (array_search(reset($this->data['tables']), $db->listTables(), true) !== false) {
             $this->log(mt('setup', 'Database schema already exists...'));
         } else {
             $this->log(mt('setup', 'Creating database schema...'));
@@ -163,7 +164,7 @@ class DatabaseStep extends Step
 
         try {
             $db->connectToDb();
-            if (array_search(key($this->data['tables']), $db->listTables()) === false) {
+            if (array_search(reset($this->data['tables']), $db->listTables(), true) === false) {
                 if ($resourceConfig['username'] !== $this->data['resourceConfig']['username']) {
                     $message = sprintf(
                         mt(
@@ -253,7 +254,7 @@ class DatabaseStep extends Step
         } elseif ($this->error !== null) {
             $report = $this->messages;
             $report[] = mt('setup', 'Failed to fully setup the database. An error occured:');
-            $report[] = sprintf(mt('setup', 'ERROR: %s'), $this->error->getMessage());
+            $report[] = sprintf(mt('setup', 'ERROR: %s'), IcingaException::describe($this->error));
             return $report;
         }
     }

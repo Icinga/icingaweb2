@@ -3,7 +3,6 @@
 
 namespace Icinga\Forms\Config\UserGroup;
 
-use Icinga\Application\Config;
 use Icinga\Authentication\User\UserBackend;
 use Icinga\Authentication\UserGroup\LdapUserGroupBackend;
 use Icinga\Data\ConfigObject;
@@ -32,6 +31,18 @@ class LdapUserGroupBackendForm extends Form
      */
     public function createElements(array $formData)
     {
+        $this->addElement(
+            'text',
+            'name',
+            array(
+                'required'      => true,
+                'label'         => $this->translate('Backend Name'),
+                'description'   => $this->translate(
+                    'The name of this user group backend that is used to differentiate it from others'
+                )
+            )
+        );
+
         $resourceNames = $this->getLdapResourceNames();
         $this->addElement(
             'select',
@@ -50,10 +61,12 @@ class LdapUserGroupBackendForm extends Form
                 : $resourceNames[0]
         );
 
-        $userBackends = array('none' => $this->translate('None', 'usergroupbackend.ldap.user_backend'));
         $userBackendNames = $this->getLdapUserBackendNames($resource);
         if (! empty($userBackendNames)) {
-            $userBackends = array_merge($userBackends, array_combine($userBackendNames, $userBackendNames));
+            $userBackends = array_combine($userBackendNames, $userBackendNames);
+            $userBackends['none'] = $this->translate('None', 'usergroupbackend.ldap.user_backend');
+        } else {
+            $userBackends = array('none' => $this->translate('None', 'usergroupbackend.ldap.user_backend'));
         }
         $this->addElement(
             'select',
@@ -76,20 +89,19 @@ class LdapUserGroupBackendForm extends Form
             $groupConfigDisabled = $userConfigDisabled = true;
         }
 
-        $dnDisabled = null; // MUST BE null
-        if (isset($formData['user_backend']) && $formData['user_backend'] !== 'none') {
-            $userBackend = UserBackend::create($formData['user_backend']);
-            $defaults->merge(array(
-                'user_base_dn'          => $userBackend->getBaseDn(),
-                'user_class'            => $userBackend->getUserClass(),
-                'user_name_attribute'   => $userBackend->getUserNameAttribute(),
-                'user_filter'           => $userBackend->getFilter()
-            ));
-            $userConfigDisabled = $dnDisabled = true;
+        $this->createGroupConfigElements($defaults, $groupConfigDisabled);
+        if (count($userBackends) === 1 || (isset($formData['user_backend']) && $formData['user_backend'] === 'none')) {
+            $this->createUserConfigElements($defaults, $userConfigDisabled);
         }
 
-        $this->createGroupConfigElements($defaults, $groupConfigDisabled);
-        $this->createUserConfigElements($defaults, $userConfigDisabled, $dnDisabled);
+        $this->addElement(
+            'hidden',
+            'backend',
+            array(
+                'disabled'  => true, // Prevents the element from being submitted, see #7717
+                'value'     => $formData['type']
+            )
+        );
     }
 
     /**
@@ -151,11 +163,23 @@ class LdapUserGroupBackendForm extends Form
                 'preserveDefault'   => true,
                 'ignore'            => $disabled,
                 'disabled'          => $disabled,
-                    'label'         => $this->translate('LDAP Group Name Attribute'),
+                'label'             => $this->translate('LDAP Group Name Attribute'),
                 'description'       => $this->translate(
                     'The attribute name used for storing a group\'s name on the LDAP server.'
                 ),
                 'value'             => $defaults->group_name_attribute
+            )
+        );
+        $this->addElement(
+            'text',
+            'group_member_attribute',
+            array(
+                'preserveDefault'   => true,
+                'ignore'            => $disabled,
+                'disabled'          => $disabled,
+                'label'             => $this->translate('LDAP Group Member Attribute'),
+                'description'       => $this->translate('The attribute name used for storing a group\'s members.'),
+                'value'             => $defaults->group_member_attribute
             )
         );
         $this->addElement(
@@ -178,9 +202,8 @@ class LdapUserGroupBackendForm extends Form
      *
      * @param   ConfigObject    $defaults
      * @param   null|bool       $disabled
-     * @param   null|bool       $dnDisabled
      */
-    protected function createUserConfigElements(ConfigObject $defaults, $disabled, $dnDisabled)
+    protected function createUserConfigElements(ConfigObject $defaults, $disabled)
     {
         $this->addElement(
             'text',
@@ -200,8 +223,6 @@ class LdapUserGroupBackendForm extends Form
             array(
                 'preserveDefault'   => true,
                 'allowEmpty'        => true,
-                'ignore'            => $dnDisabled,
-                'disabled'          => $dnDisabled,
                 'label'             => $this->translate('LDAP User Filter'),
                 'description'       => $this->translate(
                     'An additional filter to use when looking up users using the specified connection. '
@@ -235,7 +256,7 @@ class LdapUserGroupBackendForm extends Form
                 'preserveDefault'   => true,
                 'ignore'            => $disabled,
                 'disabled'          => $disabled,
-                    'label'         => $this->translate('LDAP User Name Attribute'),
+                'label'             => $this->translate('LDAP User Name Attribute'),
                 'description'       => $this->translate(
                     'The attribute name used for storing a user\'s name on the LDAP server.'
                 ),
@@ -247,8 +268,6 @@ class LdapUserGroupBackendForm extends Form
             'user_base_dn',
             array(
                 'preserveDefault'   => true,
-                'ignore'            => $dnDisabled,
-                'disabled'          => $dnDisabled,
                 'label'             => $this->translate('LDAP User Base DN'),
                 'description'       => $this->translate(
                     'The path where users can be found on the LDAP server. Leave ' .
@@ -293,7 +312,7 @@ class LdapUserGroupBackendForm extends Form
     protected function getLdapUserBackendNames(LdapConnection $resource)
     {
         $names = array();
-        foreach (Config::app('authentication') as $name => $config) {
+        foreach (UserBackend::getBackendConfigs() as $name => $config) {
             if (in_array(strtolower($config->backend), array('ldap', 'msldap'))) {
                 $backendResource = ResourceFactory::create($config->resource);
                 if (

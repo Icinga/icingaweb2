@@ -6,6 +6,7 @@ namespace Icinga\Web\Form;
 use BadMethodCallException;
 use Zend_Translate_Adapter;
 use Zend_Validate_NotEmpty;
+use Zend_Validate_File_MimeType;
 use Icinga\Web\Form\Validator\DateTimeValidator;
 use Icinga\Web\Form\Validator\ReadablePathValidator;
 use Icinga\Web\Form\Validator\WritablePathValidator;
@@ -42,10 +43,15 @@ class ErrorLabeller extends Zend_Translate_Adapter
         $label = $element->getLabel() ?: $element->getName();
 
         return array(
-            Zend_Validate_NotEmpty::IS_EMPTY    => sprintf(t('%s is required and must not be empty'), $label),
-            WritablePathValidator::NOT_WRITABLE     => sprintf(t('%s is not writable', 'config.path'), $label),
-            WritablePathValidator::DOES_NOT_EXIST   => sprintf(t('%s does not exist', 'config.path'), $label),
-            ReadablePathValidator::NOT_READABLE     => sprintf(t('%s is not readable', 'config.path'), $label),
+            Zend_Validate_NotEmpty::IS_EMPTY            => sprintf(t('%s is required and must not be empty'), $label),
+            Zend_Validate_File_MimeType::FALSE_TYPE     => sprintf(
+                t('%s (%%value%%) has a false MIME type of "%%type%%"'),
+                $label
+            ),
+            Zend_Validate_File_MimeType::NOT_DETECTED   => sprintf(t('%s (%%value%%) has no MIME type'), $label),
+            WritablePathValidator::NOT_WRITABLE         => sprintf(t('%s is not writable', 'config.path'), $label),
+            WritablePathValidator::DOES_NOT_EXIST       => sprintf(t('%s does not exist', 'config.path'), $label),
+            ReadablePathValidator::NOT_READABLE         => sprintf(t('%s is not readable', 'config.path'), $label),
             DateTimeValidator::INVALID_DATETIME_FORMAT  => sprintf(
                 t('%s not in the expected format: %%value%%'),
                 $label

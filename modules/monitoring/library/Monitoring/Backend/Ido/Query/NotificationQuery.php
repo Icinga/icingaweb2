@@ -26,7 +26,8 @@ class NotificationQuery extends IdoQuery
             'acknowledgement_entry_time'    => 'n.acknowledgement_entry_time',
             'acknowledgement_author_name'   => 'n.acknowledgement_author_name',
             'acknowledgement_comment_data'  => 'n.acknowledgement_comment_data',
-            'object_type'                   => 'n.object_type'
+            'object_type'                   => 'n.object_type',
+            'instance_name'                 => 'n.instance_name'
         ),
         'history' => array(
             'type'      => 'n.type',
@@ -126,6 +127,20 @@ class NotificationQuery extends IdoQuery
         $services = $this->createSubQuery('servicenotification', $columns);
         $this->subQueries[] = $services;
         $this->notificationQuery->union(array($services), Zend_Db_Select::SQL_UNION_ALL);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function allowsCustomVars()
+    {
+        foreach ($this->subQueries as $query) {
+            if (! $query->allowsCustomVars()) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**

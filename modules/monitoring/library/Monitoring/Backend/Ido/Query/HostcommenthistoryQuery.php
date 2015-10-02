@@ -16,18 +16,26 @@ class HostcommenthistoryQuery extends IdoQuery
     /**
      * {@inheritdoc}
      */
+    protected $groupBase = array('commenthistory' => array('hch.commenthistory_id', 'ho.object_id'));
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $groupOrigin = array('hostgroups', 'services');
+
+    /**
+     * {@inheritdoc}
+     */
     protected $columnMap = array(
         'commenthistory' => array(
             'host'          => 'ho.name1 COLLATE latin1_general_ci',
             'host_name'     => 'ho.name1',
-            'object_type'   => '(\'host\')'
-        ),
-        'history' => array(
-            'type'      => "(CASE hch.entry_type WHEN 1 THEN 'comment' WHEN 2 THEN 'dt_comment' WHEN 3 THEN 'flapping' WHEN 4 THEN 'ack' END)",
-            'timestamp' => 'UNIX_TIMESTAMP(hch.comment_time)',
-            'object_id' => 'hch.object_id',
-            'state'     => '(-1)',
-            'output'    => "('[' || hch.author_name || '] ' || hch.comment_data)",
+            'object_id'     => 'hch.object_id',
+            'object_type'   => '(\'host\')',
+            'output'        => "('[' || hch.author_name || '] ' || hch.comment_data)",
+            'state'         => '(-1)',
+            'timestamp'     => 'UNIX_TIMESTAMP(hch.comment_time)',
+            'type'          => "(CASE hch.entry_type WHEN 1 THEN 'comment' WHEN 2 THEN 'dt_comment' WHEN 3 THEN 'flapping' WHEN 4 THEN 'ack' END)"
         ),
         'hostgroups' => array(
             'hostgroup'         => 'hgo.name1 COLLATE latin1_general_ci',
@@ -37,6 +45,9 @@ class HostcommenthistoryQuery extends IdoQuery
         'hosts' => array(
             'host_alias'        => 'h.alias',
             'host_display_name' => 'h.display_name COLLATE latin1_general_ci'
+        ),
+        'instances' => array(
+            'instance_name' => 'i.instance_name'
         ),
         'servicegroups' => array(
             'servicegroup'          => 'sgo.name1 COLLATE latin1_general_ci',
@@ -77,7 +88,6 @@ class HostcommenthistoryQuery extends IdoQuery
             array()
         );
         $this->joinedVirtualTables['commenthistory'] = true;
-        $this->joinedVirtualTables['history'] = true;
     }
 
     /**
@@ -108,6 +118,18 @@ class HostcommenthistoryQuery extends IdoQuery
         $this->select->join(
             array('h' => $this->prefix . 'hosts'),
             'h.host_object_id = ho.object_id',
+            array()
+        );
+    }
+
+    /**
+     * Join instances
+     */
+    protected function joinInstances()
+    {
+        $this->select->join(
+            array('i' => $this->prefix . 'instances'),
+            'i.instance_id = hch.instance_id',
             array()
         );
     }
@@ -147,21 +169,5 @@ class HostcommenthistoryQuery extends IdoQuery
             'so.object_id = s.service_object_id AND so.is_active = 1 AND so.objecttype_id = 2',
             array()
         );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getGroup()
-    {
-        $group = array();
-        if ($this->hasJoinedVirtualTable('hostgroups') || $this->hasJoinedVirtualTable('services')) {
-            $group = array('hch.commenthistory_id', 'ho.object_id');
-            if ($this->hasJoinedVirtualTable('hosts')) {
-                $group[] = 'h.host_id';
-            }
-        }
-
-        return $group;
     }
 }

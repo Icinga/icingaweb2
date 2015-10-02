@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Tool
  * @subpackage Framework
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -23,18 +23,22 @@
 /**
  * @see Zend_Tool_Project_Context_Filesystem_File
  */
+require_once 'Zend/Tool/Project/Context/Filesystem/File.php';
 
 /**
  * @see Zend_Filter
  */
+require_once 'Zend/Filter.php';
 
 /**
  * @see Zend_Filter_Word_CamelCaseToDash
  */
+require_once 'Zend/Filter/Word/CamelCaseToDash.php';
 
 /**
  * @see Zend_Filter_StringToLower
  */
+require_once 'Zend/Filter/StringToLower.php';
 
 
 /**
@@ -45,7 +49,7 @@
  *
  * @category   Zend
  * @package    Zend_Tool
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Tool_Project_Context_Zf_ViewScriptFile extends Zend_Tool_Project_Context_Filesystem_File

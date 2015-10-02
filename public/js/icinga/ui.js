@@ -122,12 +122,39 @@
             return this;
         },
 
+        /**
+         * Focus the given element and scroll to its position
+         *
+         * @param   {string}    element     The name or id of the element to focus
+         * @param   {object}    $container  The container containing the element
+         */
+        focusElement: function(element, $container) {
+            var $element = $('#' + element, $container);
+
+            if (! $element.length) {
+                // The name attribute is actually deprecated, on anchor tags,
+                // but we'll possibly handle links from another source
+                // (module etc) so that's used as a fallback
+                $element = $('[name="' + element.replace(/'/, '\\\'') + '"]', $container);
+            }
+
+            if ($element.length) {
+                if (typeof $element.attr('tabindex') === 'undefined') {
+                    $element.attr('tabindex', -1);
+                }
+
+                $element.focus();
+                $container.scrollTop(0);
+                $container.scrollTop($element.first().position().top);
+            }
+        },
+
         moveToLeft: function () {
             var col2 = this.cutContainer($('#col2'));
             var kill = this.cutContainer($('#col1'));
             this.pasteContainer($('#col1'), col2);
             this.fixControls();
-            this.icinga.behaviors.navigation.setActiveByUrl($('#col1').data('icingaUrl'));
+            this.icinga.behaviors.navigation.trySetActiveByUrl($('#col1').data('icingaUrl'));
         },
 
         cutContainer: function ($col) {
@@ -157,18 +184,6 @@
             $col.data('icingaRefresh', backup['data']['data-icinga-refresh']);
             $col.data('lastUpdate', backup['data']['data-last-update']);
             $col.data('icingaModule', backup['data']['data-icinga-module']);
-        },
-
-        scrollContainerToAnchor: function ($container, anchorName) {
-            // TODO: Generic issue -> we probably should escape attribute value selectors!?
-            var $anchor = $("a[name='" + anchorName.replace(/'/, '\\\'') + "']", $container);
-            if ($anchor.length) {
-                $container.scrollTop(0);
-                $container.scrollTop($anchor.first().position().top);
-                this.icinga.logger.debug('Scrolling ', $container, ' to ', anchorName);
-            } else {
-                this.icinga.logger.info('Anchor "' + anchorName + '" not found in ', $container);
-            }
         },
 
         triggerWindowResize: function () {
@@ -241,6 +256,9 @@
             $('#layout').removeClass('twocols');
             this.closeContainer($('#col2'));
             this.disableCloseButtons();
+
+            // one-column layouts never have any selection active
+            this.icinga.behaviors.actiontable.clearAll();
         },
 
         closeContainer: function($c) {
@@ -462,8 +480,7 @@
          * @param value     {String}  The value to set, can be '1', '0' and 'unchanged'
          * @param $checkbox {jQuery}  The checkbox
          */
-        setTriState: function(value, $checkbox)
-        {
+        setTriState: function(value, $checkbox) {
             switch (value) {
                 case ('1'):
                     $checkbox.prop('checked', true).prop('indeterminate', false);

@@ -29,11 +29,11 @@ class HostdowntimeendhistoryQuery extends HostdowntimestarthistoryQuery
     {
         parent::joinBaseTables(true);
         $this->select->where("hdh.actual_end_time > '1970-01-02 00:00:00'");
-        $this->columnMap['history']['type'] = "('dt_end')";
-        $this->columnMap['history']['timestamp'] = str_replace(
+        $this->columnMap['downtimehistory']['type'] = "('dt_end')";
+        $this->columnMap['downtimehistory']['timestamp'] = str_replace(
             'actual_start_time',
             'actual_end_time',
-            $this->columnMap['history']['timestamp']
+            $this->columnMap['downtimehistory']['timestamp']
         );
     }
 }

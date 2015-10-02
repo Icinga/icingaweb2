@@ -7,6 +7,7 @@ use ErrorException;
 use Exception;
 use LogicException;
 use Icinga\Application\Modules\Manager as ModuleManager;
+use Icinga\Authentication\User\UserBackend;
 use Icinga\Data\ConfigObject;
 use Icinga\Data\ResourceFactory;
 use Icinga\Exception\ConfigurationError;
@@ -77,9 +78,9 @@ abstract class ApplicationBootstrap
     protected $configDir;
 
     /**
-     * Icinga auto loader
+     * Icinga class loader
      *
-     * @var Loader
+     * @var ClassLoader
      */
     private $loader;
 
@@ -182,7 +183,7 @@ abstract class ApplicationBootstrap
     /**
      * Getter for class loader
      *
-     * @return Loader
+     * @return ClassLoader
      */
     public function getLoader()
     {
@@ -338,15 +339,15 @@ abstract class ApplicationBootstrap
     }
 
     /**
-     * Setup Icinga auto loader
+     * Setup Icinga class loader
      *
      * @return $this
      */
     public function setupAutoloader()
     {
-        require $this->libDir . '/Icinga/Application/Loader.php';
+        require $this->libDir . '/Icinga/Application/ClassLoader.php';
 
-        $this->loader = new Loader();
+        $this->loader = new ClassLoader();
         $this->loader->registerNamespace('Icinga', $this->libDir. '/Icinga');
         $this->loader->register();
 
@@ -538,6 +539,24 @@ abstract class ApplicationBootstrap
         } catch (NotReadableError $e) {
             Logger::error(
                 new IcingaException('Cannot load resource configuration. An exception was thrown:', $e)
+            );
+        }
+
+        return $this;
+    }
+
+    /**
+     * Set up the user backend factory
+     *
+     * @return  $this
+     */
+    protected function setupUserBackendFactory()
+    {
+        try {
+            UserBackend::setConfig(Config::app('authentication'));
+        } catch (NotReadableError $e) {
+            Logger::error(
+                new IcingaException('Cannot load user backend configuration. An exception was thrown:', $e)
             );
         }
 

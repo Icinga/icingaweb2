@@ -27,15 +27,15 @@ class ServicecommentdeletionhistoryQuery extends ServicecommenthistoryQuery
     {
         parent::joinBaseTables();
         $this->select->where("sch.deletion_time > '1970-01-02 00:00:00'");
-        $this->columnMap['history']['timestamp'] = str_replace(
+        $this->columnMap['commenthistory']['timestamp'] = str_replace(
             'comment_time',
             'deletion_time',
-            $this->columnMap['history']['timestamp']
+            $this->columnMap['commenthistory']['timestamp']
         );
-        $this->columnMap['history']['type'] = str_replace(
+        $this->columnMap['commenthistory']['type'] = str_replace(
             'END)',
             "END || '_deleted')",
-            $this->columnMap['history']['type']
+            $this->columnMap['commenthistory']['type']
         );
     }
 }

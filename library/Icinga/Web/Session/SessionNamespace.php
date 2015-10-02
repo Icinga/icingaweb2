@@ -101,8 +101,8 @@ class SessionNamespace implements IteratorAggregate
     {
         $this->values[$key] = $value;
 
-        if (in_array($key, $this->removed)) {
-            unset($this->removed[array_search($key, $this->removed)]);
+        if (in_array($key, $this->removed, true)) {
+            unset($this->removed[array_search($key, $this->removed, true)]);
         }
 
         return $this;
@@ -112,8 +112,8 @@ class SessionNamespace implements IteratorAggregate
     {
         $this->values[$key] = & $value;
 
-        if (in_array($key, $this->removed)) {
-            unset($this->removed[array_search($key, $this->removed)]);
+        if (in_array($key, $this->removed, true)) {
+            unset($this->removed[array_search($key, $this->removed, true)]);
         }
 
         return $this;

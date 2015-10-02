@@ -8,21 +8,10 @@ class Contact extends DataView
     /**
      * {@inheritdoc}
      */
-    public function isValidFilterTarget($column)
-    {
-        if ($column[0] === '_' && preg_match('/^_(?:host|service)_/', $column)) {
-            return true;
-        }
-
-        return parent::isValidFilterTarget($column);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getColumns()
     {
         return array(
+            'instance_name',
             'contact_object_id',
             'contact_id',
             'contact_name',
@@ -63,7 +52,7 @@ class Contact extends DataView
     /**
      * {@inheritdoc}
      */
-    public function getFilterColumns()
+    public function getStaticFilterColumns()
     {
         return array(
             'contact',
@@ -79,14 +68,6 @@ class Contact extends DataView
      */
     public function getSearchColumns()
     {
-        return array(
-            'contact',
-            'contact_alias',
-            'contact_email',
-            'host',
-            'host_display_name',
-            'service',
-            'service_display_name'
-        );
+        return array('contact_alias');
     }
 }

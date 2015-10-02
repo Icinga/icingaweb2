@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Tool
  * @subpackage Framework
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -23,10 +23,12 @@
 /**
  * @see Zend_Tool_Project_Context_Interface
  */
+require_once 'Zend/Tool/Project/Context/Interface.php';
 
 /**
  * @see Zend_Reflection_File
  */
+require_once 'Zend/Reflection/File.php';
 
 /**
  * This class is the front most class for utilizing Zend_Tool_Project
@@ -36,7 +38,7 @@
  *
  * @category   Zend
  * @package    Zend_Tool
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Tool_Project_Context_Zf_ActionMethod implements Zend_Tool_Project_Context_Interface
@@ -74,6 +76,7 @@ class Zend_Tool_Project_Context_Zf_ActionMethod implements Zend_Tool_Project_Con
         $this->_resource->setAppendable(false);
         $this->_controllerResource = $this->_resource->getParentResource();
         if (!$this->_controllerResource->getContext() instanceof Zend_Tool_Project_Context_Zf_ControllerFile) {
+            require_once 'Zend/Tool/Project/Context/Exception.php';
             throw new Zend_Tool_Project_Context_Exception('ActionMethod must be a sub resource of a ControllerFile');
         }
         // make the ControllerFile node appendable so we can tack on the actionMethod.
@@ -85,6 +88,7 @@ class Zend_Tool_Project_Context_Zf_ActionMethod implements Zend_Tool_Project_Con
          * This code block is now commented, its doing to much for init()
          *
         if ($this->_controllerPath != '' && self::hasActionMethod($this->_controllerPath, $this->_actionName)) {
+            require_once 'Zend/Tool/Project/Context/Exception.php';
             throw new Zend_Tool_Project_Context_Exception('An action named ' . $this->_actionName . 'Action already exists in this controller');
         }
         */
@@ -156,6 +160,7 @@ class Zend_Tool_Project_Context_Zf_ActionMethod implements Zend_Tool_Project_Con
     public function create()
     {
         if (self::createActionMethod($this->_controllerPath, $this->_actionName) === false) {
+            require_once 'Zend/Tool/Project/Context/Exception.php';
             throw new Zend_Tool_Project_Context_Exception(
                 'Could not create action within controller ' . $this->_controllerPath
                 . ' with action name ' . $this->_actionName

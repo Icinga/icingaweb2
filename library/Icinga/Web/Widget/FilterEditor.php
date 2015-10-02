@@ -3,6 +3,8 @@
 
 namespace Icinga\Web\Widget;
 
+use Icinga\Data\Filterable;
+use Icinga\Data\FilterColumns;
 use Icinga\Data\Filter\Filter;
 use Icinga\Data\Filter\FilterExpression;
 use Icinga\Data\Filter\FilterChain;
@@ -25,6 +27,11 @@ class FilterEditor extends AbstractWidget
      */
     private $filter;
 
+    /**
+     * The query to filter
+     *
+     * @var Filterable
+     */
     protected $query;
 
     protected $url;
@@ -41,7 +48,7 @@ class FilterEditor extends AbstractWidget
 
     protected $ignoreParams = array();
 
-    protected $searchColumns = null;
+    protected $searchColumns;
 
     /**
      * @var string
@@ -84,7 +91,7 @@ class FilterEditor extends AbstractWidget
      *
      * @return $this
      */
-    public function setSearchColumns(array $searchColumns)
+    public function setSearchColumns(array $searchColumns = null)
     {
         $this->searchColumns = $searchColumns;
         return $this;
@@ -112,7 +119,14 @@ class FilterEditor extends AbstractWidget
         return $this->preservedUrl;
     }
 
-    public function setQuery($query)
+    /**
+     * Set the query to filter
+     *
+     * @param   Filterable  $query
+     *
+     * @return  $this
+     */
+    public function setQuery(Filterable $query)
     {
         $this->query = $query;
         return $this;
@@ -219,19 +233,25 @@ class FilterEditor extends AbstractWidget
             if (strpos($search, '=') !== false) {
                 list($k, $v) = preg_split('/=/', $search);
                 $filter = $this->mergeRootExpression($filter, trim($k), '=', ltrim($v));
-            } elseif (! empty($this->searchColumns)) {
-                if (! $this->resetSearchColumns($filter)) {
-                    $filter = Filter::matchAll();
-                }
-                $filters = array();
-                $search = ltrim($search);
-                foreach ($this->searchColumns as $searchColumn) {
-                    $filters[] = Filter::expression($searchColumn, '=', "*$search*");
-                }
-                $filter = $filter->andFilter(new FilterOr($filters));
             } else {
-                Notification::error(mt('monitoring', 'Cannot search here'));
-                return $this;
+                if ($this->searchColumns === null && $this->query instanceof FilterColumns) {
+                    $this->searchColumns = $this->query->getSearchColumns();
+                }
+
+                if (! empty($this->searchColumns)) {
+                    if (! $this->resetSearchColumns($filter)) {
+                        $filter = Filter::matchAll();
+                    }
+                    $filters = array();
+                    $search = ltrim($search);
+                    foreach ($this->searchColumns as $searchColumn) {
+                        $filters[] = Filter::expression($searchColumn, '=', "*$search*");
+                    }
+                    $filter = $filter->andFilter(new FilterOr($filters));
+                } else {
+                    Notification::error(mt('monitoring', 'Cannot search here'));
+                    return $this;
+                }
             }
 
             $url = $this->url()->setQueryString(
@@ -284,6 +304,11 @@ class FilterEditor extends AbstractWidget
         if ($add) {
             $this->addFilterToId($add);
         }
+
+        if ($this->query !== null && $request->isGet()) {
+            $this->query->applyFilter($this->getFilter());
+        }
+
         return $this;
     }
 
@@ -482,12 +507,14 @@ class FilterEditor extends AbstractWidget
         );
     }
 
-    protected function arrayForSelect($array)
+    protected function arrayForSelect($array, $flip = false)
     {
         $res = array();
         foreach ($array as $k => $v) {
             if (is_int($k)) {
-                $res[$v] = $v;
+                $res[$v] = ucwords(str_replace('_', ' ', $v));
+            } elseif ($flip) {
+                $res[$v] = $k;
             } else {
                 $res[$k] = $v;
             }
@@ -540,11 +567,17 @@ class FilterEditor extends AbstractWidget
         );
     }
 
+    public function setColumns(array $columns = null)
+    {
+        $this->cachedColumnSelect = $columns ? $this->arrayForSelect($columns) : null;
+        return $this;
+    }
+
     protected function selectColumn(Filter $filter = null)
     {
         $active = $filter === null ? null : $filter->getColumn();
 
-        if ($this->query === null) {
+        if ($this->cachedColumnSelect === null && $this->query === null) {
             return sprintf(
                 '<input type="text" name="%s" value="%s" />',
                 $this->elementId('column', $filter),
@@ -552,20 +585,15 @@ class FilterEditor extends AbstractWidget
             );
         }
 
-        if ($this->cachedColumnSelect === null) {
-            $this->cachedColumnSelect = $this->arrayForSelect($this->query->getColumns());
+        if ($this->cachedColumnSelect === null && $this->query instanceof FilterColumns) {
+            $this->cachedColumnSelect = $this->arrayForSelect($this->query->getFilterColumns(), true);
             asort($this->cachedColumnSelect);
-        }
-        $cols = $this->cachedColumnSelect;
-        $seen = false;
-        foreach ($cols as $k => & $v) {
-            $v = str_replace('_', ' ', ucfirst($v));
-            if ($k === $active) {
-                $seen = true;
-            }
+        } elseif ($this->cachedColumnSelect === null) {
+            throw new ProgrammingError('No columns set nor does the query provide any');
         }
 
-        if (!$seen) {
+        $cols = $this->cachedColumnSelect;
+        if ($active && !isset($cols[$active])) {
             $cols[$active] = str_replace('_', ' ', ucfirst(ltrim($active, '_')));
         }
 

@@ -2,6 +2,8 @@
 use Icinga\Module\Monitoring\Object\Host;
 use Icinga\Module\Monitoring\Object\Service;
 
+$downtimes->peekAhead($this->compact);
+
 if (! $this->compact): ?>
 <div class="controls">
   <?= $this->tabs; ?>
@@ -16,17 +18,10 @@ if (! $this->compact): ?>
 </div>
 <?php endif ?>
 <div class="content">
-<?php
-
-if (count($downtimes) === 0) {
-    echo $this->translate('No downtimes found matching the filter,'
-            . ' maybe the downtime already expired.') . '</div>';
-    return;
-}
-?>
   <table data-base-target="_next"
          class="action multiselect"
-         data-icinga-multiselect-url="/icingaweb2/monitoring/downtimes/show"
+         data-icinga-multiselect-url="<?= $this->href('monitoring/downtimes/show'); ?>"
+         data-icinga-multiselect-controllers="<?= $this->href("monitoring/downtimes") ?>"
          data-icinga-multiselect-data="downtime_id">
     <tbody>
     <?php foreach ($downtimes as $downtime): ?>
@@ -41,9 +36,15 @@ if (count($downtimes) === 0) {
     ?>
       <tr class="state <?= $stateName; ?><?= $downtime->is_in_effect ? ' handled' : ''; ?>">
         <td class="state">
+        <?php if ($downtime->start <= time() && ! $downtime->is_in_effect): ?>
+          <strong><?= $this->translate('Ends'); ?></strong>
+          <br>
+          <?= $this->timeUntil($downtime->is_flexible ? $downtime->scheduled_end : $downtime->end, $this->compact) ?>
+        <?php else: ?>
           <strong><?= $downtime->is_in_effect ? $this->translate('Expires') : $this->translate('Starts'); ?></strong>
           <br>
           <?= $this->timeUntil($downtime->is_in_effect ? $downtime->end : $downtime->start, $this->compact) ?>
+        <?php endif; ?>
         </td>
         <td>
         <?php if ($isService): ?>
@@ -126,7 +127,7 @@ if (count($downtimes) === 0) {
           </small>
         </td>
         <?php if (isset($delDowntimeForm)): // Form is unset if the current user lacks the respective permission ?>
-        <td style="width: 2em" data-base-target="self">
+        <td style="width: 2em" data-base-target="_self">
           <?php
           $delDowntimeForm = clone $delDowntimeForm;
           $delDowntimeForm->populate(
@@ -143,4 +144,17 @@ if (count($downtimes) === 0) {
 <?php endforeach ?>
     </tbody>
   </table>
+<?php if (! $downtimes->hasResult()): ?>
+  <?= $this->translate('No downtimes found matching the filter, maybe the downtime already expired.'); ?>
+<?php elseif ($downtimes->hasMore()): ?>
+  <?= $this->qlink(
+    $this->translate('Show More'),
+    $this->url()->without(array('view', 'limit')),
+    null,
+    array(
+      'data-base-target'    => '_next',
+      'class'               => 'pull-right show-more'
+    )
+  ); ?>
+<?php endif ?>
 </div>

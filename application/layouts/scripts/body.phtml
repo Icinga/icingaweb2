@@ -2,61 +2,62 @@
 
 use Icinga\Web\Url;
 use Icinga\Web\Notification;
-use Icinga\Authentication\Manager as Auth;
+use Icinga\Authentication\Auth;
 
+$moduleName = $this->layout()->moduleName;
+if ($moduleName !== 'default') {
+    $moduleClass = ' icinga-module module-' . $moduleName;
+} else {
+    $moduleClass = '';
+}
 
-if (Auth::getInstance()->isAuthenticated()):
-    $moduleName = $this->layout()->moduleName;
-    if ($moduleName) {
-        $moduleClass = ' icinga-module module-' . $moduleName;
-    } else {
-        $moduleClass = '';
-    }
+$refresh = '';
+if ($this->layout()->autorefreshInterval) {
+    $refresh = ' data-icinga-refresh="' . $this->layout()->autorefreshInterval . '"';
+}
 
-    $refresh = '';
-    if ($this->layout()->autorefreshInterval) {
-        $refresh = ' data-icinga-refresh="' . $this->layout()->autorefreshInterval . '"';
-    }
 ?>
- <div id="header">
-   <div id="logo" data-base-target="_main">
-       <?= $this->qlink(
-           '',
-           '/dashboard',
-           null,
-           array(
-               'icon'           => '../logo_icinga-inv.png',
-               'aria-hidden'    => 'true',
-               'tabindex'       => -1
-           )
-       ); ?>
-   </div>
- </div>
-
-<?php if (!$this->layout()->isIframe): ?>
- <div id="sidebar">
-  <?php echo $this->render('parts/navigation.phtml') ?>
- </div>
+<div id="header">
+  <div id="logo">
+  <?php if (Auth::getInstance()->isAuthenticated()): ?>
+    <?= $this->qlink(
+      '',
+      'dashboard',
+      null,
+      array(
+        'icon'              => '../logo_icinga-inv.png',
+        'data-base-target'  => '_main',
+        'aria-hidden'       => 'true',
+        'tabindex'          => -1
+      )
+    ); ?>
+  <?php else: ?>
+    <?= $this->icon('../logo_icinga-inv.png'); ?>
+  <?php endif ?>
+  </div>
+</div>
+<?php if (! $this->layout()->isIframe): ?>
+<div id="sidebar">
+  <?= $this->render('parts/navigation.phtml'); ?>
+</div>
 <?php endif ?>
- <div id="main" role="main">
-  <div id="col1" class="container<?= $moduleClass ?>"<?php if ($moduleName): ?> data-icinga-module="<?= $moduleName ?>" <?php endif ?> data-icinga-url="<?= Url::fromRequest()->without('renderLayout') ?>"<?= $refresh ?> style="display: block">
-   <?= $this->render('inline.phtml') ?>
+<div id="main" role="main">
+  <div id="col1" class="container<?= $moduleClass ?>"<?php if ($moduleName): ?> data-icinga-module="<?= $moduleName ?>" <?php endif ?> data-icinga-url="<?= Url::fromRequest()->without('renderLayout'); ?>"<?= $refresh; ?> style="display: block">
+    <?= $this->render('inline.phtml') ?>
   </div>
   <div id="col2" class="container">
   </div>
   <div id="col3" class="container">
   </div>
- </div><!-- END of main -->
- <div id="footer">
-   <ul id="notifications"><?php
-$notifications = Notification::getInstance();
-if ($notifications->hasMessages()) {
-    foreach ($notifications->getMessages() as $m) {
-        echo '<li class="' . $m->type . '">' . $this->escape($m->message) . '</li>';
+</div>
+<div id="footer">
+  <ul id="notifications"><?php
+
+    $notifications = Notification::getInstance();
+    if ($notifications->hasMessages()) {
+        foreach ($notifications->popMessages() as $m) {
+            echo '<li class="' . $m->type . '">' . $this->escape($m->message) . '</li>';
+        }
     }
-}
-   ?></ul>
- </div>
-<?php else: ?>
-<?= $this->render('inline.phtml') ?>
-<?php endif ?>
+  ?></ul>
+</div>

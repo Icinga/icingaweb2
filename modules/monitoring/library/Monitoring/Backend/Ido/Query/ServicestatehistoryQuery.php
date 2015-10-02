@@ -14,6 +14,16 @@ class ServicestatehistoryQuery extends IdoQuery
     protected $allowCustomVars = true;
 
     /**
+     * {@inheritdoc}
+     */
+    protected $groupBase = array('statehistory' => array('sh.statehistory_id', 'so.object_id'));
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $groupOrigin = array('hostgroups', 'servicegroups');
+
+    /**
      * Array to map type names to type ids for query optimization
      *
      * @var array
@@ -27,22 +37,6 @@ class ServicestatehistoryQuery extends IdoQuery
      * {@inheritdoc}
      */
     protected $columnMap = array(
-        'statehistory' => array(
-            'host'                  => 'so.name1 COLLATE latin1_general_ci',
-            'host_name'             => 'so.name1',
-            'object_type'           => '(\'service\')',
-            'service'               => 'so.name2 COLLATE latin1_general_ci',
-            'service_description'   => 'so.name2',
-            'service_host'          => 'so.name1 COLLATE latin1_general_ci',
-            'service_host_name'     => 'so.name1'
-        ),
-        'history' => array(
-            'type'      => "(CASE WHEN sh.state_type = 1 THEN 'hard_state' ELSE 'soft_state' END)",
-            'timestamp' => 'UNIX_TIMESTAMP(sh.state_time)',
-            'object_id' => 'sh.object_id',
-            'state'     => 'sh.state',
-            'output'    => "('[ ' || sh.current_check_attempt || '/' || sh.max_check_attempts || ' ] ' || sh.output)",
-        ),
         'hostgroups' => array(
             'hostgroup'         => 'hgo.name1 COLLATE latin1_general_ci',
             'hostgroup_alias'   => 'hg.alias COLLATE latin1_general_ci',
@@ -52,6 +46,9 @@ class ServicestatehistoryQuery extends IdoQuery
             'host_alias'        => 'h.alias',
             'host_display_name' => 'h.display_name COLLATE latin1_general_ci'
         ),
+        'instances' => array(
+            'instance_name' => 'i.instance_name'
+        ),
         'servicegroups' => array(
             'servicegroup'          => 'sgo.name1 COLLATE latin1_general_ci',
             'servicegroup_name'     => 'sgo.name1',
@@ -59,7 +56,21 @@ class ServicestatehistoryQuery extends IdoQuery
         ),
         'services' => array(
             'service_display_name'  => 's.display_name COLLATE latin1_general_ci'
-        )
+        ),
+        'statehistory' => array(
+            'host'                  => 'so.name1 COLLATE latin1_general_ci',
+            'host_name'             => 'so.name1',
+            'object_id'             => 'sh.object_id',
+            'object_type'           => '(\'service\')',
+            'output'                => "('[ ' || sh.current_check_attempt || '/' || sh.max_check_attempts || ' ] ' || sh.output)",
+            'service'               => 'so.name2 COLLATE latin1_general_ci',
+            'service_description'   => 'so.name2',
+            'service_host'          => 'so.name1 COLLATE latin1_general_ci',
+            'service_host_name'     => 'so.name1',
+            'state'                 => 'sh.state',
+            'timestamp'             => 'UNIX_TIMESTAMP(sh.state_time)',
+            'type'                  => "(CASE WHEN sh.state_type = 1 THEN 'hard_state' ELSE 'soft_state' END)"
+        ),
     );
 
     /**
@@ -70,7 +81,7 @@ class ServicestatehistoryQuery extends IdoQuery
         if ($col === 'UNIX_TIMESTAMP(sh.state_time)') {
             return 'sh.state_time ' . $sign . ' ' . $this->timestampForSql($this->valueToTimestamp($expression));
         } elseif (
-            $col === $this->columnMap['history']['type']
+            $col === $this->columnMap['statehistory']['type']
             && ! is_array($expression)
             && array_key_exists($expression, $this->types)
         ) {
@@ -94,7 +105,6 @@ class ServicestatehistoryQuery extends IdoQuery
             array()
         );
         $this->joinedVirtualTables['statehistory'] = true;
-        $this->joinedVirtualTables['history'] = true;
     }
 
     /**
@@ -132,6 +142,18 @@ class ServicestatehistoryQuery extends IdoQuery
     }
 
     /**
+     * Join instances
+     */
+    protected function joinInstances()
+    {
+        $this->select->join(
+            array('i' => $this->prefix . 'instances'),
+            'i.instance_id = sh.instance_id',
+            array()
+        );
+    }
+
+    /**
      * Join service groups
      */
     protected function joinServicegroups()
@@ -161,22 +183,5 @@ class ServicestatehistoryQuery extends IdoQuery
             's.service_object_id = so.object_id',
             array()
         );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getGroup()
-    {
-        $group = array();
-        if ($this->hasJoinedVirtualTable('hostgroups') || $this->hasJoinedVirtualTable('servicegroups')) {
-            $group = array('sh.statehistory_id', 'so.object_id');
-            if ($this->hasJoinedVirtualTable('services')) {
-                $group[] = 'h.host_id';
-                $group[] = 's.service_id';
-            }
-        }
-
-        return $group;
     }
 }

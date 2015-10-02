@@ -13,11 +13,11 @@ if (! $this->compact): ?>
 <div class="content">
 <?php
 
-if (count($hostgroups) === 0) {
-    echo $this->translate('No hostgroups found matching the filter') . '</div>';
-    return;
-}
-?>
+$hostgroups->peekAhead($this->compact);
+$firstRow = true;
+foreach ($hostgroups as $h): ?>
+<?php if ($firstRow): ?>
+  <?php $firstRow = false; ?>
   <table class="groupview action" data-base-target="_next">
     <thead>
       <th><?= $this->translate('Last Problem'); ?></th>
@@ -28,32 +28,35 @@ if (count($hostgroups) === 0) {
       <th><?= $this->translate('Service States'); ?></th>
     </thead>
     <tbody>
-    <?php foreach ($hostgroups as $h):
-        if ($h->hosts_down_unhandled) {
-            $handled = false;
-            $state = Host::STATE_DOWN;
-            $lastStateChange = $h->hosts_down_last_state_change_unhandled;
-        } elseif ($h->hosts_unreachable_unhandled) {
-            $handled = false;
-            $state = Host::STATE_UNREACHABLE;
-            $lastStateChange = $h->hosts_unreachable_last_state_change_unhandled;
-        } else {
-            $handled = true;
-            if ($h->hosts_down_handled) {
-                $state = Host::STATE_DOWN;
-                $lastStateChange = $h->hosts_down_last_state_change_handled;
-            } elseif ($h->hosts_unreachable_handled) {
-                $state = Host::STATE_UNREACHABLE;
-                $lastStateChange = $h->hosts_unreachable_last_state_change_handled;
-            } elseif ($h->hosts_up) {
-                $state = Host::STATE_UP;
-                $lastStateChange = $h->hosts_up_last_state_change;
-            } else {
-                $state = Host::STATE_PENDING;
-                $lastStateChange = $h->hosts_pending_last_state_change;
-            }
-        }
-    ?>
+<?php endif ?>
+<?php
+
+if ($h->hosts_down_unhandled) {
+    $handled = false;
+    $state = Host::STATE_DOWN;
+    $lastStateChange = $h->hosts_down_last_state_change_unhandled;
+} elseif ($h->hosts_unreachable_unhandled) {
+    $handled = false;
+    $state = Host::STATE_UNREACHABLE;
+    $lastStateChange = $h->hosts_unreachable_last_state_change_unhandled;
+} else {
+    $handled = true;
+    if ($h->hosts_down_handled) {
+        $state = Host::STATE_DOWN;
+        $lastStateChange = $h->hosts_down_last_state_change_handled;
+    } elseif ($h->hosts_unreachable_handled) {
+        $state = Host::STATE_UNREACHABLE;
+        $lastStateChange = $h->hosts_unreachable_last_state_change_handled;
+    } elseif ($h->hosts_up) {
+        $state = Host::STATE_UP;
+        $lastStateChange = $h->hosts_up_last_state_change;
+    } else {
+        $state = Host::STATE_PENDING;
+        $lastStateChange = $h->hosts_pending_last_state_change;
+    }
+}
+
+?>
       <tr class="state <?= Host::getStateText($state) ?><?= $handled ? ' handled' : '' ?>" href="<?=
         $this->href('monitoring/list/hosts', array('hostgroup_name' => $h->hostgroup_name))
       ?>">
@@ -461,7 +464,22 @@ if (count($hostgroups) === 0) {
         <?php endif ?>
         </td>
       </tr>
-    <?php endforeach ?>
+<?php endforeach ?>
+<?php if ($hostgroups->hasResult()): ?>
     </tbody>
   </table>
+<?php if ($hostgroups->hasMore()): ?>
+  <?= $this->qlink(
+    $this->translate('Show More'),
+    $this->url()->without(array('view', 'limit')),
+    null,
+    array(
+      'data-base-target'    => '_next',
+      'class'               => 'pull-right show-more'
+    )
+  ); ?>
+<?php endif ?>
+<?php else: ?>
+  <?= $this->translate('No hostgroups found matching the filter'); ?>
+<?php endif ?>
 </div>

@@ -1,32 +1,27 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
+namespace Icinga\Module\Monitoring\Controllers;
+
 use Icinga\Module\Monitoring\Controller;
-use Icinga\Module\Monitoring\Object\Service;
-use Icinga\Module\Monitoring\Object\Host;
 use Icinga\Module\Monitoring\Forms\Command\Object\DeleteDowntimeCommandForm;
-use Icinga\Module\Monitoring\Command\Object\DeleteDowntimeCommand;
+use Icinga\Module\Monitoring\Object\Host;
+use Icinga\Module\Monitoring\Object\Service;
 use Icinga\Web\Url;
 use Icinga\Web\Widget\Tabextension\DashboardAction;
+use Icinga\Web\Widget\Tabextension\MenuAction;
 
 /**
  * Display detailed information about a downtime
  */
-class Monitoring_DowntimeController extends Controller
+class DowntimeController extends Controller
 {
     /**
      * The fetched downtime
      *
-     * @var stdClass
+     * @var object
      */
     protected $downtime;
-
-    /**
-     * If the downtime is a service or not
-     *
-     * @var boolean
-     */
-    protected $isService;
 
     /**
      * Fetch the downtime matching the given id and add tabs
@@ -58,29 +53,20 @@ class Monitoring_DowntimeController extends Controller
         ))->where('downtime_internal_id', $downtimeId);
         $this->applyRestriction('monitoring/filter/objects', $query);
 
-        $this->downtime = $query->getQuery()->fetchRow();
-        if ($this->downtime === false) {
+        if (false === $this->downtime = $query->fetchRow()) {
             $this->httpNotFound($this->translate('Downtime not found'));
         }
 
-        if (isset($this->downtime->service_description)) {
-            $this->isService = true;
-        } else {
-            $this->isService = false;
-        }
+        $this->getTabs()->add(
+            'downtime',
+            array(
 
-        $this->getTabs()
-            ->add(
-                'downtime',
-                array(
-                    'title' => $this->translate(
-                        'Display detailed information about a downtime.'
-                    ),
-                    'icon' => 'plug',
-                    'label' => $this->translate('Downtime'),
-                    'url'   =>'monitoring/downtimes/show'
-                )
-            )->activate('downtime')->extend(new DashboardAction());
+                'icon'  => 'plug',
+                'label' => $this->translate('Downtime'),
+                'title' => $this->translate('Display detailed information about a downtime.'),
+                'url'   =>'monitoring/downtimes/show'
+            )
+        )->activate('downtime')->extend(new DashboardAction())->extend(new MenuAction());
     }
 
     /**
@@ -88,52 +74,27 @@ class Monitoring_DowntimeController extends Controller
      */
     public function showAction()
     {
+        $isService = isset($this->downtime->service_description);
         $this->view->downtime = $this->downtime;
-        $this->view->isService = $this->isService;
-        $this->view->stateName = isset($this->downtime->service_description) ?
-                Service::getStateText($this->downtime->service_state) :
-                Host::getStateText($this->downtime->host_state);
+        $this->view->isService = $isService;
         $this->view->listAllLink = Url::fromPath('monitoring/list/downtimes');
-        $this->view->showHostLink = Url::fromPath('monitoring/host/show')
-                ->setParam('host', $this->downtime->host_name);
+        $this->view->showHostLink = Url::fromPath('monitoring/host/show')->setParam('host', $this->downtime->host_name);
         $this->view->showServiceLink = Url::fromPath('monitoring/service/show')
                 ->setParam('host', $this->downtime->host_name)
                 ->setParam('service', $this->downtime->service_description);
+        $this->view->stateName = $isService ? Service::getStateText($this->downtime->service_state)
+            : Host::getStateText($this->downtime->host_state);
+
         if ($this->hasPermission('monitoring/command/downtime/delete')) {
-            $this->view->delDowntimeForm = $this->createDelDowntimeForm();
-            $this->view->delDowntimeForm->populate(
-                array(
-                    'redirect' => Url::fromPath('monitoring/list/downtimes'),
-                    'downtime_id' => $this->downtime->id,
-                    'downtime_is_service' => $this->isService
-                )
-            );
+            $form = new DeleteDowntimeCommandForm();
+            $form
+                ->populate(array(
+                    'downtime_id'           => $this->downtime->id,
+                    'downtime_is_service'   => $isService,
+                    'redirect'              => Url::fromPath('monitoring/list/downtimes'),
+                ))
+                ->handleRequest();
+            $this->view->delDowntimeForm = $form;
         }
-    }
-
-    /**
-     * Receive DeleteDowntimeCommandForm post from other controller
-     */
-    public function removeAction()
-    {
-        $this->assertHttpMethod('POST');
-        $this->createDelDowntimeForm();
-    }
-
-    /**
-     * Create a command form to delete a single comment
-     *
-     * @return DeleteDowntimeCommandForm
-     */
-    private function createDelDowntimeForm()
-    {
-        $this->assertPermission('monitoring/command/downtime/delete');
-        $delDowntimeForm = new DeleteDowntimeCommandForm();
-        $delDowntimeForm->setAction(
-            Url::fromPath('monitoring/downtime/show')
-                ->setParam('downtime_id', $this->downtime->id)
-        );
-        $delDowntimeForm->handleRequest();
-        return $delDowntimeForm;
     }
 }

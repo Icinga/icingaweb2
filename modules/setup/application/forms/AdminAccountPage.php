@@ -4,10 +4,16 @@
 namespace Icinga\Module\Setup\Forms;
 
 use Exception;
+use Icinga\Application\Config;
 use Icinga\Authentication\User\UserBackend;
 use Icinga\Authentication\User\DbUserBackend;
 use Icinga\Authentication\User\LdapUserBackend;
+use Icinga\Authentication\UserGroup\UserGroupBackend;
+use Icinga\Authentication\UserGroup\LdapUserGroupBackend;
 use Icinga\Data\ConfigObject;
+use Icinga\Data\ResourceFactory;
+use Icinga\Data\Selectable;
+use Icinga\Exception\NotImplementedError;
 use Icinga\Web\Form;
 
 /**
@@ -23,11 +29,18 @@ class AdminAccountPage extends Form
     protected $resourceConfig;
 
     /**
-     * The backend configuration to use
+     * The user backend configuration to use
      *
      * @var array
      */
     protected $backendConfig;
+
+    /**
+     * The user group backend configuration to use
+     *
+     * @var array
+     */
+    protected $groupConfig;
 
     /**
      * Initialize this page
@@ -37,7 +50,7 @@ class AdminAccountPage extends Form
         $this->setName('setup_admin_account');
         $this->setTitle($this->translate('Administration', 'setup.page.title'));
         $this->addDescription($this->translate(
-            'Now it\'s time to configure your first administrative account for Icinga Web 2.'
+            'Now it\'s time to configure your first administrative account or group for Icinga Web 2.'
         ));
     }
 
@@ -55,7 +68,7 @@ class AdminAccountPage extends Form
     }
 
     /**
-     * Set the backend configuration to use
+     * Set the user backend configuration to use
      *
      * @param   array   $config
      *
@@ -68,6 +81,19 @@ class AdminAccountPage extends Form
     }
 
     /**
+     * Set the user group backend configuration to use
+     *
+     * @param   array   $config
+     *
+     * @return  $this
+     */
+    public function setGroupConfig(array $config = null)
+    {
+        $this->groupConfig = $config;
+        return $this;
+    }
+
+    /**
      * @see Form::createElements()
      */
     public function createElements(array $formData)
@@ -76,6 +102,13 @@ class AdminAccountPage extends Form
         if ($this->backendConfig['backend'] !== 'db') {
             $choices['by_name'] = $this->translate('By Name', 'setup.admin');
             $choice = isset($formData['user_type']) ? $formData['user_type'] : 'by_name';
+
+            if (in_array($this->backendConfig['backend'], array('ldap', 'msldap'))) {
+                $groups = $this->fetchGroups();
+                if (! empty($groups)) {
+                    $choices['user_group'] = $this->translate('User Group', 'setup.admin');
+                }
+            }
         } else {
             $choices['new_user'] = $this->translate('New User', 'setup.admin');
             $choice = isset($formData['user_type']) ? $formData['user_type'] : 'new_user';
@@ -89,9 +122,6 @@ class AdminAccountPage extends Form
         }
 
         if (count($choices) > 1) {
-            $this->addDescription($this->translate(
-                'Below are several options you can choose from for how to define the desired account.'
-            ));
             $this->addElement(
                 'select',
                 'user_type',
@@ -99,6 +129,7 @@ class AdminAccountPage extends Form
                     'required'      => true,
                     'autosubmit'    => true,
                     'label'         => $this->translate('Type Of Definition'),
+                    'description'   => $this->translate('Choose how to define the desired account.'),
                     'multiOptions'  => $choices,
                     'value'         => $choice
                 )
@@ -124,8 +155,25 @@ class AdminAccountPage extends Form
                     'label'         => $this->translate('Username'),
                     'description'   => $this->translate(
                         'Define the initial administrative account by providing a username that reflects'
-                        . ' a user created later or one that is authenticated using external mechanisms'
+                        . ' a user created later or one that is authenticated using external mechanisms.'
                     )
+                )
+            );
+        }
+
+        if ($choice === 'user_group') {
+            $this->addElement(
+                'select',
+                'user_group',
+                array(
+                    'required'      => true,
+                    'label'         => $this->translate('Group Name'),
+                    'description'   => $this->translate(
+                        'Choose a user group reported by the LDAP backend'
+                        . ' to permit its members administrative access.',
+                        'setup.admin'
+                    ),
+                    'multiOptions'  => array_combine($groups, $groups)
                 )
             );
         }
@@ -139,7 +187,7 @@ class AdminAccountPage extends Form
                     'label'         => $this->translate('Username'),
                     'description'   => sprintf(
                         $this->translate(
-                            'Choose a user reported by the %s backend as the initial administrative account',
+                            'Choose a user reported by the %s backend as the initial administrative account.',
                             'setup.admin'
                         ),
                         $this->backendConfig['backend'] === 'db'
@@ -159,7 +207,7 @@ class AdminAccountPage extends Form
                     'required'      => true,
                     'label'         => $this->translate('Username'),
                     'description'   => $this->translate(
-                        'Enter the username to be used when creating an initial administrative account'
+                        'Enter the username to be used when creating an initial administrative account.'
                     )
                 )
             );
@@ -170,7 +218,9 @@ class AdminAccountPage extends Form
                     'required'          => true,
                     'renderPassword'    => true,
                     'label'             => $this->translate('Password'),
-                    'description'       => $this->translate('Enter the password to assign to the newly created account')
+                    'description'       => $this->translate(
+                        'Enter the password to assign to the newly created account.'
+                    )
                 )
             );
             $this->addElement(
@@ -181,7 +231,7 @@ class AdminAccountPage extends Form
                     'renderPassword'    => true,
                     'label'             => $this->translate('Repeat password'),
                     'description'       => $this->translate(
-                        'Please repeat the password given above to avoid typing errors'
+                        'Please repeat the password given above to avoid typing errors.'
                     ),
                     'validators'        => array(
                         array('identical', false, array('new_user_password'))
@@ -234,14 +284,22 @@ class AdminAccountPage extends Form
     }
 
     /**
-     * Return the names of all users the backend currently provides
+     * Return the names of all users the user backend currently provides
      *
      * @return  array
      */
     protected function fetchUsers()
     {
         try {
-            return $this->createBackend()->select(array('user_name'))->order('user_name', 'asc', true)->fetchColumn();
+            $query = $this
+                ->createUserBackend()
+                ->select(array('user_name'))
+                ->order('user_name', 'asc', true);
+            if (in_array($this->backendConfig['backend'], array('ldap', 'msldap'))) {
+                $query->getQuery()->setUsePagedResults();
+            }
+
+            return $query->fetchColumn();
         } catch (Exception $_) {
             // No need to handle anything special here. Error means no users found.
             return array();
@@ -249,7 +307,7 @@ class AdminAccountPage extends Form
     }
 
     /**
-     * Return whether the backend provides a user with the given name
+     * Return whether the user backend provides a user with the given name
      *
      * @param   string  $username
      *
@@ -258,21 +316,107 @@ class AdminAccountPage extends Form
     protected function hasUser($username)
     {
         try {
-            return $this->createBackend()->select()->where('user_name', $username)->count() > 1;
+            return $this
+                ->createUserBackend()
+                ->select()
+                ->where('user_name', $username)
+                ->count() > 1;
         } catch (Exception $_) {
-            return null;
+            return false;
         }
     }
 
     /**
-     * Create and return the backend
+     * Create and return the user backend
      *
      * @return  DbUserBackend|LdapUserBackend
      */
-    protected function createBackend()
+    protected function createUserBackend()
     {
+        $resourceConfig = new Config();
+        $resourceConfig->setSection($this->resourceConfig['name'], $this->resourceConfig);
+        ResourceFactory::setConfig($resourceConfig);
+
         $config = new ConfigObject($this->backendConfig);
-        $config->resource = $this->resourceConfig;
+        $config->resource = $this->resourceConfig['name'];
         return UserBackend::create(null, $config);
+    }
+
+    /**
+     * Return the names of all user groups the user group backend currently provides
+     *
+     * @return  array
+     */
+    protected function fetchGroups()
+    {
+        try {
+            $query = $this
+                ->createUserGroupBackend()
+                ->select(array('group_name'));
+            if (in_array($this->backendConfig['backend'], array('ldap', 'msldap'))) {
+                $query->getQuery()->setUsePagedResults();
+            }
+
+            return $query->fetchColumn();
+        } catch (Exception $_) {
+            // No need to handle anything special here. Error means no groups found.
+            return array();
+        }
+    }
+
+    /**
+     * Return whether the user group backend provides a user group with the given name
+     *
+     * @param   string  $groupname
+     *
+     * @return  bool
+     */
+    protected function hasGroup($groupname)
+    {
+        try {
+            return $this
+                ->createUserGroupBackend()
+                ->select()
+                ->where('group_name', $groupname)
+                ->count() > 1;
+        } catch (Exception $_) {
+            return false;
+        }
+    }
+
+    /**
+     * Create and return the user group backend
+     *
+     * @return  LdapUserGroupBackend
+     */
+    protected function createUserGroupBackend()
+    {
+        $resourceConfig = new Config();
+        $resourceConfig->setSection($this->resourceConfig['name'], $this->resourceConfig);
+        ResourceFactory::setConfig($resourceConfig);
+
+        $backendConfig = new Config();
+        $backendConfig->setSection($this->backendConfig['name'], array_merge(
+            $this->backendConfig,
+            array('resource' => $this->resourceConfig['name'])
+        ));
+        UserBackend::setConfig($backendConfig);
+
+        if (empty($this->groupConfig)) {
+            $groupConfig = new ConfigObject(array(
+                'backend'       => $this->backendConfig['backend'], // _Should_ be "db" or "msldap"
+                'resource'      => $this->resourceConfig['name'],
+                'user_backend'  => $this->backendConfig['name'] // Gets ignored if 'backend' is "db"
+            ));
+        } else {
+            $groupConfig = new ConfigObject($this->groupConfig);
+        }
+
+        $backend = UserGroupBackend::create(null, $groupConfig);
+        if (! $backend instanceof Selectable) {
+            throw new NotImplementedError('Unsupported, until #9772 has been resolved');
+        }
+
+        return $backend;
     }
 }

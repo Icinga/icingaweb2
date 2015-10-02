@@ -61,6 +61,20 @@ class DowntimeendhistoryQuery extends IdoQuery
     /**
      * {@inheritdoc}
      */
+    public function allowsCustomVars()
+    {
+        foreach ($this->subQueries as $query) {
+            if (! $query->allowsCustomVars()) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     protected function joinBaseTables()
     {
         $this->downtimeEndHistoryQuery = $this->db->select();

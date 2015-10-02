@@ -6,29 +6,19 @@ namespace Icinga\Module\Monitoring\DataView;
 class ServiceStatus extends DataView
 {
     /**
-     * Sets the mode for `distinct as workaround
-     *
-     * @TODO Subject to change, see #7344
-     */
-    public function init()
-    {
-        $this->query->setMode('service');
-    }
-
-    /**
-     * Retrieve columns provided by this view
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function getColumns()
     {
         return array(
+            'instance_name',
             'host_name',
             'host_display_name',
             'host_state',
             'host_state_type',
             'host_last_state_change',
             'host_address',
+            'host_address6',
             'host_problem',
             'host_handled',
             'service_description',
@@ -48,11 +38,8 @@ class ServiceStatus extends DataView
             'service_notifications_enabled',
             'service_notifications_enabled_changed',
             'service_action_url',
+            'service_notes',
             'service_notes_url',
-            'service_last_comment',
-            'service_last_downtime',
-            'service_last_flapping',
-            'service_last_ack',
             'service_last_check',
             'service_next_check',
             'service_attempt',
@@ -69,7 +56,6 @@ class ServiceStatus extends DataView
             'host_unhandled_service_count',
             'host_action_url',
             'host_notes_url',
-            'host_last_comment',
             'host_display_name',
             'host_alias',
             'host_ipv4',
@@ -88,6 +74,7 @@ class ServiceStatus extends DataView
             'service_problem',
             'service_perfdata',
             'service_check_source',
+            'service_check_timeperiod',
             'service_active_checks_enabled',
             'service_active_checks_enabled_changed',
             'service_passive_checks_enabled',
@@ -107,15 +94,14 @@ class ServiceStatus extends DataView
             'service_flap_detection_enabled',
             'service_flap_detection_enabled_changed',
             'service_modified_service_attributes',
-            'service_host_name'
+            'service_host_name',
+            'service_acknowledgement_type',
         );
     }
 
-    public static function getQueryName()
-    {
-        return 'status';
-    }
-
+    /**
+     * {@inheritdoc}
+     */
     public function getSortRules()
     {
         return array(
@@ -161,7 +147,10 @@ class ServiceStatus extends DataView
         );
     }
 
-    public function getFilterColumns()
+    /**
+     * {@inheritdoc}
+     */
+    public function getStaticFilterColumns()
     {
         return array(
             'host',
@@ -176,21 +165,11 @@ class ServiceStatus extends DataView
         );
     }
 
-    public function isValidFilterTarget($column)
-    {
-        if ($column[0] === '_'
-            && preg_match('/^_(?:host|service)_/', $column)
-        ) {
-            return true;
-        }
-        return parent::isValidFilterTarget($column);
-    }
-
     /**
      * {@inheritdoc}
      */
     public function getSearchColumns()
     {
-        return array('host', 'host_display_name', 'service', 'service_display_name');
+        return array('host_display_name', 'service_display_name');
     }
 }

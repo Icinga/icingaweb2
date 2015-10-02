@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Tool
  * @subpackage Framework
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -23,15 +23,17 @@
 /**
  * @see Zend_Tool_Framework_Loader_Abstract
  */
+require_once 'Zend/Tool/Framework/Loader/Abstract.php';
 
 /**
  * @see Zend_Tool_Framework_Loader_IncludePathLoader_RecursiveFilterIterator
  */
+require_once 'Zend/Tool/Framework/Loader/IncludePathLoader/RecursiveFilterIterator.php';
 
 /**
  * @category   Zend
  * @package    Zend_Tool
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Tool_Framework_Loader_IncludePathLoader extends Zend_Tool_Framework_Loader_Abstract
@@ -44,6 +46,7 @@ class Zend_Tool_Framework_Loader_IncludePathLoader extends Zend_Tool_Framework_L
      */
     protected function _getFiles()
     {
+        require_once 'Zend/Loader.php';
         $paths = Zend_Loader::explodeIncludePath();
 
         // used for checking similarly named files

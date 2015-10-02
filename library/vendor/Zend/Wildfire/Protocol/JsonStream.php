@@ -15,16 +15,19 @@
  * @category   Zend
  * @package    Zend_Wildfire
  * @subpackage Protocol
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
 
 /** Zend_Wildfire_Plugin_Interface */
+require_once 'Zend/Wildfire/Plugin/Interface.php';
 
 /** Zend_Wildfire_Channel_Interface */
+require_once 'Zend/Wildfire/Channel/Interface.php';
 
 /** Zend_Json */
+require_once 'Zend/Json.php';
 
 /**
  * Encodes messages into the Wildfire JSON Stream Communication Protocol.
@@ -32,7 +35,7 @@
  * @category   Zend
  * @package    Zend_Wildfire
  * @subpackage Protocol
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Wildfire_Protocol_JsonStream
@@ -155,6 +158,7 @@ class Zend_Wildfire_Protocol_JsonStream
     public function getPayload(Zend_Wildfire_Channel_Interface $channel)
     {
         if (!$channel instanceof Zend_Wildfire_Channel_HttpHeaders) {
+            require_once 'Zend/Wildfire/Exception.php';
             throw new Zend_Wildfire_Exception('The '.get_class($channel).' channel is not supported by the '.get_class($this).' protocol.');
         }
 
@@ -213,6 +217,7 @@ class Zend_Wildfire_Protocol_JsonStream
                             $message_index++;
 
                             if ($message_index > 99999) {
+                                require_once 'Zend/Wildfire/Exception.php';
                                 throw new Zend_Wildfire_Exception('Maximum number (99,999) of messages reached!');
                             }
                         }

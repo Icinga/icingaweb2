@@ -4,8 +4,6 @@
 
     "use strict";
 
-    var activeMenuId;
-
     Icinga.Behaviors = Icinga.Behaviors || {};
 
     var Navigation = function (icinga) {
@@ -16,55 +14,107 @@
         this.on('mouseleave', 'li.dropdown', this.dropdownLeave, this);
         this.on('mouseenter', '#menu > nav > ul > li', this.menuTitleHovered, this);
         this.on('mouseleave', '#sidebar', this.leaveSidebar, this);
-        this.on('rendered', this.onRendered);
+        this.on('rendered', this.onRendered, this);
+
+        /**
+         * The DOM-Path of the active item
+         *
+         * @see getDomPath
+         *
+         * @type {null|Array}
+         */
+        this.active = null;
+
+        /**
+         * The DOM-Path of the hovered item
+         *
+         * @see getDomPath
+         *
+         * @type {null|Array}
+         */
+        this.hovered = null;
+
+        /**
+         * @type {HTMLElement}
+         */
+        this.element = null;
     };
     Navigation.prototype = new Icinga.EventListener();
 
+    /**
+     * Apply the menu selection and hovering according to the current state
+     *
+     * @param evt   {Object}    The event context
+     */
     Navigation.prototype.onRendered = function(evt) {
-        // get original source element of the rendered-event
-        var el = evt.target;
-        if (activeMenuId) {
-            // restore old menu state
-            $('#menu li.active', el).removeClass('active');
-            var $selectedMenu = $('#' + activeMenuId).addClass('active');
-            var $outerMenu = $selectedMenu.parent().closest('li');
-            if ($outerMenu.size()) {
-                $outerMenu.addClass('active');
+        var self = evt.data.self;
+        this.element = evt.target;
+
+        if (! self.active) {
+            // There is no stored menu item, therefore it is assumed that this is the first rendering
+            // of the navigation after the page has been opened.
+
+            // initialise the menu selected by the backend as active.
+            var $menus = $('#menu li.active', evt.target);
+            if ($menus.size()) {
+                $menus.each(function () {
+                    self.setActive($(this));
+                });
+            } else {
+                // if no item is marked as active, try to select the menu from the current URL
+                self.setActiveByUrl($('#col1').data('icingaUrl'));
             }
+        }
+        self.refresh();
+    };
+
+    /**
+     * Re-render the menu selection and menu hovering according to the current state
+     */
+    Navigation.prototype.refresh = function() {
+        // restore selection to current active element
+        if (this.active) {
+            var $el = $(this.icinga.utils.getElementByDomPath(this.active));
+            this.setActive($el);
 
             /*
-              Recreate the html content of the menu item to force the browser to update the layout, or else
-              the link would only be visible as active after another click or page reload in Gecko and WebKit.
+             * Recreate the html content of the menu item to force the browser to update the layout, or else
+             * the link would only be visible as active after another click or page reload in Gecko and WebKit.
+             *
+             * fixes #7897
+             */
+            if ($el.is('li')) {
+                $el.html($el.html());
+            }
+        }
 
-              fixes #7897
-            */
-            $selectedMenu.html($selectedMenu.html());
-
-        } else {
-            // store menu state
-            var $menus = $('#menu li.active', el);
-            if ($menus.size()) {
-                activeMenuId = $menus[0].id;
-                $menus.find('li.active').first().each(function () {
-                    activeMenuId = this.id;
-                });
+        // restore hovered menu to current hovered element
+        if (this.hovered) {
+            var hovered = this.icinga.utils.getElementByDomPath(this.hovered);
+            if (hovered) {
+                this.hoverElement($(hovered));
             }
         }
     };
 
+    /**
+     * Handle a link click in the menu
+     *
+     * @param event
+     */
     Navigation.prototype.linkClicked = function(event) {
         var $a = $(this);
         var href = $a.attr('href');
         var $li;
-        var icinga = event.data.self.icinga;
+        var self = event.data.self;
+        var icinga = self.icinga;
 
+        self.hovered = null;
         if (href.match(/#/)) {
             // ...it may be a menu section without a dedicated link.
             // Switch the active menu item:
+            self.setActive($a);
             $li = $a.closest('li');
-            $('#menu .active').removeClass('active');
-            $li.addClass('active');
-            activeMenuId = $($li).attr('id');
             if ($li.hasClass('hover')) {
                 $li.removeClass('hover');
             }
@@ -76,7 +126,7 @@
                 return;
             }
         } else {
-            activeMenuId = $(event.target).closest('li').attr('id');
+            self.setActive($(event.target));
         }
         // update target url of the menu container to the clicked link
         var $menu = $('#menu');
@@ -85,10 +135,83 @@
         $menu.data('icinga-url', menuDataUrl);
     };
 
+    /**
+     * Activate a menu item based on the current URL
+     *
+     * Activate a menu item that is an exact match or fall back to items that match the base URL
+     *
+     * @param url   {String}    The url to match
+     */
     Navigation.prototype.setActiveByUrl = function(url) {
-        this.resetActive();
+
+        // try to active the first item that has an exact URL match
         this.setActive($('#menu [href="' + url + '"]'));
-    }
+
+        // the url may point to the search field, which must be activated too
+        if (! this.active) {
+            this.setActive($('#menu form[action="' + this.icinga.utils.parseUrl(url).path + '"]'));
+        }
+
+        // some urls may have custom filters which won't match any menu item, in that case search
+        // for a menu item that points to the base action without any filters
+        if (! this.active) {
+            this.setActive($('#menu [href="' + this.icinga.utils.parseUrl(url).path + '"]').first());
+        }
+
+        // if no item with the base action exists, activate the first URL that beings with the base path
+        // but may have different filters
+        if (! this.active) {
+            this.setActive($('#menu [href^="' + this.icinga.utils.parseUrl(url).path + '"]').first());
+        }
+    };
+
+    /**
+     * Try to select a new URL by
+     *
+     * @param url
+     */
+    Navigation.prototype.trySetActiveByUrl = function(url) {
+        var active = this.active;
+        this.setActiveByUrl(url);
+        if (! this.active && active) {
+            this.setActive($(this.icinga.utils.getElementByDomPath(active)));
+        }
+    };
+
+    /**
+     * Remove all active elements
+     */
+    Navigation.prototype.clear = function() {
+        // menu items
+        $('#menu li.active', this.element).removeClass('active');
+
+        // search fields
+        $('#menu input.active', this.element).removeClass('active');
+    };
+
+    /**
+     * Select all menu items in the selector as active and unfold surrounding menus when necessary
+     *
+     * @param   $item   {jQuery}    The jQuery selector
+     */
+    Navigation.prototype.select = function($item) {
+        // support selecting the url of the menu entry
+        var $input = $item.find('input');
+        $item = $item.closest('li');
+
+        if ($item.length) {
+            // select the current item
+            var $selectedMenu = $item.addClass('active');
+
+            // unfold the containing menu
+            var $outerMenu = $selectedMenu.parent().closest('li');
+            if ($outerMenu.size()) {
+                $outerMenu.addClass('active');
+            }
+        } else if ($input.length) {
+            $input.addClass('active');
+        }
+    };
 
     /**
      * Change the active menu element
@@ -96,15 +219,59 @@
      * @param $el   {jQuery}    A selector pointing to the active element
      */
     Navigation.prototype.setActive = function($el) {
-
-        $el.closest('li').addClass('active');
-        $el.parents('li').addClass('active');
-        activeMenuId = $el.closest('li').attr('id');
+        this.clear();
+        this.select($el);
+        if ($el.closest('li')[0]) {
+            this.active = this.icinga.utils.getDomPath($el.closest('li')[0]);
+        } else if ($el.find('input')[0]) {
+            this.active = this.icinga.utils.getDomPath($el[0]);
+        } else {
+            this.active = null;
+        }
+        // TODO: push to history
     };
 
+    /**
+     * Reset the active element to nothing
+     */
     Navigation.prototype.resetActive = function() {
-        $('#menu .active').removeClass('active');
-        activeMenuId = null;
+        this.clear();
+        this.active = null;
+    };
+
+    /**
+     * Called when the history changes
+     *
+     * @param url   The url of the new state
+     * @param data  The active menu item of the new state
+     */
+    Navigation.prototype.onPopState = function (url, data) {
+        // 1. get selection data and set active menu
+        console.log('popstate:', data);
+        if (data) {
+            var active = this.icinga.utils.getElementByDomPath(data);
+            if (!active) {
+                this.logger.fail(
+                    'Could not restore active menu from history, path in DOM not found.',
+                    data,
+                    url
+                );
+                return;
+            }
+            this.setActive($(active));
+        } else {
+            this.resetActive();
+        }
+    };
+
+    /**
+     * Called when the current state gets pushed onto the history, can return a value
+     * to be preserved as the current state
+     *
+     * @returns     {null|Array}    The currently active menu item
+     */
+    Navigation.prototype.onPushState = function () {
+        return this.active;
     };
 
     Navigation.prototype.menuTitleHovered = function(event) {
@@ -112,6 +279,7 @@
             delay = 800,
             self = event.data.self;
 
+        self.hovered = null;
         if ($li.hasClass('active')) {
             $li.siblings().removeClass('hover');
             return;
@@ -170,11 +338,17 @@
             $li.removeClass('hover');
             $('#layout').removeClass('hoveredmenu');
         }, 500);
+        self.hovered = null;
     };
 
     Navigation.prototype.hoverElement = function ($li)  {
         $('#layout').addClass('hoveredmenu');
         $li.addClass('hover');
+        if ($li[0]) {
+            this.hovered = this.icinga.utils.getDomPath($li[0]);
+        } else {
+            this.hovered = null;
+        }
     };
 
     Navigation.prototype.dropdownHover = function () {
@@ -192,6 +366,7 @@
                 }
             } catch(e) { /* Bypass because if IE8 */ }
         }, 300);
+        self.hovered = null;
     };
     Icinga.Behaviors.Navigation = Navigation;
 

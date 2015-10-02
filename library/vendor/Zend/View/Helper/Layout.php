@@ -15,19 +15,20 @@
  * @category   Zend
  * @package    Zend_View
  * @subpackage Helper
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @version    $Id$
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
 /** Zend_View_Helper_Abstract.php */
+require_once 'Zend/View/Helper/Abstract.php';
 
 /**
  * View helper for retrieving layout object
  *
  * @package    Zend_View
  * @subpackage Helper
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_View_Helper_Layout extends Zend_View_Helper_Abstract
@@ -43,6 +44,7 @@ class Zend_View_Helper_Layout extends Zend_View_Helper_Abstract
     public function getLayout()
     {
         if (null === $this->_layout) {
+            require_once 'Zend/Layout.php';
             $this->_layout = Zend_Layout::getMvcInstance();
             if (null === $this->_layout) {
                 // Implicitly creates layout object

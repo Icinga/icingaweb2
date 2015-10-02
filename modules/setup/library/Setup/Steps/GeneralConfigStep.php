@@ -6,6 +6,7 @@ namespace Icinga\Module\Setup\Steps;
 use Exception;
 use Icinga\Application\Logger;
 use Icinga\Application\Config;
+use Icinga\Exception\IcingaException;
 use Icinga\Module\Setup\Step;
 
 class GeneralConfigStep extends Step
@@ -52,6 +53,10 @@ class GeneralConfigStep extends Step
 
         $generalHtml = ''
             . '<ul>'
+            . '<li>' . ($this->data['generalConfig']['global_show_stacktraces']
+                ? t('An exception\'s stacktrace is shown to every user by default.')
+                : t('An exception\'s stacktrace is hidden from every user by default.')
+            ) . '</li>'
             . '<li>' . sprintf(
                 $this->data['generalConfig']['global_config_backend'] === 'ini' ? sprintf(
                     t('Preferences will be stored per user account in INI files at: %s'),
@@ -112,7 +117,7 @@ class GeneralConfigStep extends Step
                     mt('setup', 'General configuration could not be written to: %s. An error occured:'),
                     Config::resolvePath('config.ini')
                 ),
-                sprintf(mt('setup', 'ERROR: %s'), $this->error->getMessage())
+                sprintf(mt('setup', 'ERROR: %s'), IcingaException::describe($this->error))
             );
         }
     }

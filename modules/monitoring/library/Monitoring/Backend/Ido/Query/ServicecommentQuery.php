@@ -16,6 +16,16 @@ class ServicecommentQuery extends IdoQuery
     /**
      * {@inheritdoc}
      */
+    protected $groupBase = array('comments' => array('c.comment_id', 'so.object_id'));
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $groupOrigin = array('hostgroups', 'servicegroups');
+
+    /**
+     * {@inheritdoc}
+     */
     protected $columnMap = array(
         'comments' => array(
             'comment_author'        => 'c.author_name COLLATE latin1_general_ci',
@@ -42,6 +52,9 @@ class ServicecommentQuery extends IdoQuery
         'hosts' => array(
             'host_alias'            => 'h.alias',
             'host_display_name'     => 'h.display_name COLLATE latin1_general_ci'
+        ),
+        'instances' => array(
+            'instance_name' => 'i.instance_name'
         ),
         'hoststatus' => array(
             'host_state' => 'CASE WHEN hs.has_been_checked = 0 OR hs.has_been_checked IS NULL THEN 99 ELSE hs.current_state END'
@@ -142,6 +155,18 @@ class ServicecommentQuery extends IdoQuery
     }
 
     /**
+     * Join instances
+     */
+    protected function joinInstances()
+    {
+        $this->select->join(
+            array('i' => $this->prefix . 'instances'),
+            'i.instance_id = c.instance_id',
+            array()
+        );
+    }
+
+    /**
      * Join services
      */
     protected function joinServices()
@@ -163,33 +188,5 @@ class ServicecommentQuery extends IdoQuery
             'ss.service_object_id = so.object_id',
             array()
         );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getGroup()
-    {
-        $group = array();
-        if ($this->hasJoinedVirtualTable('hostgroups') || $this->hasJoinedVirtualTable('servicegroups')) {
-            $group = array('c.comment_id', 'so.object_id');
-            if ($this->hasJoinedVirtualTable('hosts')) {
-                $group[] = 'h.host_id';
-            }
-
-            if ($this->hasJoinedVirtualTable('services')) {
-                $group[] = 's.service_id';
-            }
-
-            if ($this->hasJoinedVirtualTable('hoststatus')) {
-                $group[] = 'hs.hoststatus_id';
-            }
-
-            if ($this->hasJoinedVirtualTable('servicestatus')) {
-                $group[] = 'ss.servicestatus_id';
-            }
-        }
-
-        return $group;
     }
 }

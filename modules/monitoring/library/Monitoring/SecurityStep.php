@@ -6,6 +6,7 @@ namespace Icinga\Module\Monitoring;
 use Exception;
 use Icinga\Module\Setup\Step;
 use Icinga\Application\Config;
+use Icinga\Exception\IcingaException;
 
 class SecurityStep extends Step
 {
@@ -76,7 +77,7 @@ class SecurityStep extends Step
                     ),
                     Config::resolvePath('modules/monitoring/config.ini')
                 ),
-                sprintf(mt('setup', 'ERROR: %s'), $this->error->getMessage())
+                sprintf(mt('setup', 'ERROR: %s'), IcingaException::describe($this->error))
             );
         }
     }

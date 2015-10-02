@@ -3,7 +3,6 @@
 
 namespace Icinga\Module\Monitoring\Forms;
 
-use \Zend_Form;
 use Icinga\Web\Form;
 use Icinga\Data\Filter\Filter;
 
@@ -13,7 +12,7 @@ use Icinga\Data\Filter\Filter;
 class StatehistoryForm extends Form
 {
     /**
-     * Initialize this form
+     * {@inheritdoc}
      */
     public function init()
     {
@@ -56,7 +55,7 @@ class StatehistoryForm extends Form
     }
 
     /**
-     * @see Form::createElements()
+     * {@inheritdoc}
      */
     public function createElements(array $formData)
     {

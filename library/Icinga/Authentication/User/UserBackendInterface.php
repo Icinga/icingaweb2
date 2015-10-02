@@ -3,13 +3,13 @@
 
 namespace Icinga\Authentication\User;
 
-use Icinga\Exception\AuthenticationException;
+use Icinga\Authentication\Authenticatable;
 use Icinga\User;
 
 /**
  * Interface for user backends
  */
-interface UserBackendInterface
+interface UserBackendInterface extends Authenticatable
 {
     /**
      * Set this backend's name
@@ -26,16 +26,4 @@ interface UserBackendInterface
      * @return  string
      */
     public function getName();
-
-    /**
-     * Authenticate the given user
-     *
-     * @param   User        $user
-     * @param   string      $password
-     *
-     * @return  bool                        True on success, false on failure
-     *
-     * @throws  AuthenticationException     In case authentication is not possible due to an error
-     */
-    public function authenticate(User $user, $password);
 }

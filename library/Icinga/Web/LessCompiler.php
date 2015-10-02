@@ -8,7 +8,6 @@ use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use RegexIterator;
 use RecursiveRegexIterator;
-use Zend_Controller_Front;
 use Icinga\Application\Icinga;
 use lessc;
 
@@ -31,8 +30,6 @@ class LessCompiler
      */
     private $lessc;
 
-    private $baseUrl;
-
     private $source;
 
     /**
@@ -42,6 +39,17 @@ class LessCompiler
     {
         require_once 'lessphp/lessc.inc.php';
         $this->lessc = new lessc();
+    }
+
+    /**
+     * Disable the extendend import functionality
+     *
+     * @return  $this
+     */
+    public function disableExtendedImport()
+    {
+        $this->lessc->importDisabled = true;
+        return $this;
     }
 
     public function compress()
@@ -85,14 +93,21 @@ class LessCompiler
     public function addModule($name, $module)
     {
         if ($module->hasCss()) {
-            $this->source .= "\n/* CSS: modules/$name/module.less */\n"
+            $contents = array();
+            foreach ($module->getCssFiles() as $path) {
+                if (file_exists($path)) {
+                    $contents[] = "/* CSS: modules/$name/$path */\n" . file_get_contents($path);
+                }
+            }
+
+            $this->source .= ''
                 . '.icinga-module.module-'
                 . $name
                 . " {\n"
-                . file_get_contents($module->getCssFilename())
-                . "}\n\n"
-            ;
+                . join("\n\n", $contents)
+                . "}\n\n";
         }
+
         return $this;
     }
 

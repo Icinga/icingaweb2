@@ -1,10 +1,12 @@
+<?php if (! $hideControls): ?>
 <div class="controls">
-<?= $this->tabs->showOnlyCloseButton() ?>
+    <?= $tabs->showOnlyCloseButton(); ?>
 </div>
-<div class="content">
-  <p><strong><?= nl2br($this->escape($message)) ?></strong></p>
-<?php if (isset($stackTrace)) : ?>
-  <hr />
-  <pre><?= $this->escape($stackTrace) ?></pre>
 <?php endif ?>
+<div class="content">
+    <p><strong><?= nl2br($this->escape($message)); ?></strong></p>
+    <?php if (isset($stackTrace)): ?>
+        <hr />
+        <pre><?= $this->escape($stackTrace) ?></pre>
+    <?php endif ?>
 </div>

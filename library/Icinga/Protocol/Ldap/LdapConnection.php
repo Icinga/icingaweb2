@@ -123,13 +123,6 @@ class LdapConnection implements Selectable, Inspectable
     protected $rootDn;
 
     /**
-     * Whether to load the configuration for strict certificate validation or the one for non-strict validation
-     *
-     * @var bool
-     */
-    protected $validateCertificate;
-
-    /**
      * Whether the bind on this connection has already been performed
      *
      * @var bool
@@ -176,7 +169,6 @@ class LdapConnection implements Selectable, Inspectable
         $this->bindPw = $config->bind_pw;
         $this->rootDn = $config->root_dn;
         $this->port = $config->get('port', 389);
-        $this->validateCertificate = (bool) $config->get('reqcert', true);
 
         $this->encryption = $config->encryption;
         if ($this->encryption !== null) {
@@ -314,7 +306,7 @@ class LdapConnection implements Selectable, Inspectable
     public function bind()
     {
         if ($this->bound) {
-            return;
+            return $this;
         }
 
         $ds = $this->getConnection();
@@ -332,6 +324,7 @@ class LdapConnection implements Selectable, Inspectable
         }
 
         $this->bound = true;
+        return $this;
     }
 
     /**
@@ -367,8 +360,44 @@ class LdapConnection implements Selectable, Inspectable
     {
         $this->bind();
 
-        $res = $this->runQuery($query, array());
-        return count($res);
+        if (($unfoldAttribute = $query->getUnfoldAttribute()) !== null) {
+            $desiredColumns = $query->getColumns();
+            if (isset($desiredColumns[$unfoldAttribute])) {
+                $fields = array($unfoldAttribute => $desiredColumns[$unfoldAttribute]);
+            } elseif (in_array($unfoldAttribute, $desiredColumns, true)) {
+                $fields = array($unfoldAttribute);
+            } else {
+                throw new ProgrammingError(
+                    'The attribute used to unfold a query\'s result must be selected'
+                );
+            }
+
+            $res = $this->runQuery($query, $fields);
+            return count($res);
+        }
+
+        $ds = $this->getConnection();
+        $results = @ldap_search(
+            $ds,
+            $query->getBase() ?: $this->getDn(),
+            (string) $query,
+            array('dn'),
+            0,
+            0
+        );
+
+        if ($results === false) {
+            if (ldap_errno($ds) !== self::LDAP_NO_SUCH_OBJECT) {
+                throw new LdapException(
+                    'LDAP count query "%s" (base %s) failed: %s',
+                    (string) $query,
+                    $query->getBase() ?: $this->getDn(),
+                    ldap_error($ds)
+                );
+            }
+        }
+
+        return ldap_count_entries($ds, $results);
     }
 
     /**
@@ -545,9 +574,9 @@ class LdapConnection implements Selectable, Inspectable
      */
     public function hasDn($dn)
     {
+        $ds = $this->getConnection();
         $this->bind();
 
-        $ds = $this->getConnection();
         $result = ldap_read($ds, $dn, '(objectClass=*)', array('objectClass'));
         return ldap_count_entries($ds, $result) > 0;
     }
@@ -563,9 +592,9 @@ class LdapConnection implements Selectable, Inspectable
      */
     public function deleteRecursively($dn)
     {
+        $ds = $this->getConnection();
         $this->bind();
 
-        $ds = $this->getConnection();
         $result = @ldap_list($ds, $dn, '(objectClass=*)', array('objectClass'));
         if ($result === false) {
             if (ldap_errno($ds) === self::LDAP_NO_SUCH_OBJECT) {
@@ -598,9 +627,9 @@ class LdapConnection implements Selectable, Inspectable
      */
     public function deleteDn($dn)
     {
+        $ds = $this->getConnection();
         $this->bind();
 
-        $ds = $this->getConnection();
         $result = @ldap_delete($ds, $dn);
         if ($result === false) {
             if (ldap_errno($ds) === self::LDAP_NO_SUCH_OBJECT) {
@@ -645,7 +674,7 @@ class LdapConnection implements Selectable, Inspectable
     protected function runQuery(LdapQuery $query, array $fields = null)
     {
         $limit = $query->getLimit();
-        $offset = $query->hasOffset() ? $query->getOffset() - 1 : 0;
+        $offset = $query->hasOffset() ? $query->getOffset() : 0;
 
         if ($fields === null) {
             $fields = $query->getColumns();
@@ -653,18 +682,21 @@ class LdapConnection implements Selectable, Inspectable
 
         $ds = $this->getConnection();
 
-        $serverSorting = false;//$this->capabilities->hasOid(Capability::LDAP_SERVER_SORT_OID);
-        if ($serverSorting && $query->hasOrder()) {
-            ldap_set_option($ds, LDAP_OPT_SERVER_CONTROLS, array(
-                array(
-                    'oid'   => LdapCapabilities::LDAP_SERVER_SORT_OID,
-                    'value' => $this->encodeSortRules($query->getOrder())
-                )
-            ));
-        } elseif ($query->hasOrder()) {
-            foreach ($query->getOrder() as $rule) {
-                if (! in_array($rule[0], $fields)) {
-                    $fields[] = $rule[0];
+        $serverSorting = $this->getCapabilities()->hasOid(LdapCapabilities::LDAP_SERVER_SORT_OID);
+
+        if ($query->hasOrder()) {
+            if ($serverSorting) {
+                ldap_set_option($ds, LDAP_OPT_SERVER_CONTROLS, array(
+                    array(
+                        'oid'   => LdapCapabilities::LDAP_SERVER_SORT_OID,
+                        'value' => $this->encodeSortRules($query->getOrder())
+                    )
+                ));
+            } else {
+                foreach ($query->getOrder() as $rule) {
+                    if (! in_array($rule[0], $fields)) {
+                        $fields[] = $rule[0];
+                    }
                 }
             }
         }
@@ -695,13 +727,41 @@ class LdapConnection implements Selectable, Inspectable
         $count = 0;
         $entries = array();
         $entry = ldap_first_entry($ds, $results);
+        $unfoldAttribute = $query->getUnfoldAttribute();
         do {
-            $count += 1;
-            if (! $serverSorting || $offset === 0 || $offset < $count) {
-                $entries[ldap_get_dn($ds, $entry)] = $this->cleanupAttributes(
+            if ($unfoldAttribute) {
+                $rows = $this->cleanupAttributes(
                     ldap_get_attributes($ds, $entry),
-                    array_flip($fields)
+                    array_flip($fields),
+                    $unfoldAttribute
                 );
+
+                if (is_array($rows)) {
+                    // TODO: Register the DN the same way as a section name in the ArrayDatasource!
+                    foreach ($rows as $row) {
+                        $count += 1;
+                        if (! $serverSorting || $offset === 0 || $offset < $count) {
+                            $entries[] = $row;
+                        }
+
+                        if ($serverSorting && $limit > 0 && $limit === count($entries)) {
+                            break;
+                        }
+                    }
+                } else {
+                    $count += 1;
+                    if (! $serverSorting || $offset === 0 || $offset < $count) {
+                        $entries[ldap_get_dn($ds, $entry)] = $rows;
+                    }
+                }
+            } else {
+                $count += 1;
+                if (! $serverSorting || $offset === 0 || $offset < $count) {
+                    $entries[ldap_get_dn($ds, $entry)] = $this->cleanupAttributes(
+                        ldap_get_attributes($ds, $entry),
+                        array_flip($fields)
+                    );
+                }
             }
         } while ((! $serverSorting || $limit === 0 || $limit !== count($entries))
             && ($entry = ldap_next_entry($ds, $entry))
@@ -738,7 +798,7 @@ class LdapConnection implements Selectable, Inspectable
         }
 
         $limit = $query->getLimit();
-        $offset = $query->hasOffset() ? $query->getOffset() - 1 : 0;
+        $offset = $query->hasOffset() ? $query->getOffset() : 0;
         $queryString = (string) $query;
         $base = $query->getBase() ?: $this->rootDn;
 
@@ -748,15 +808,8 @@ class LdapConnection implements Selectable, Inspectable
 
         $ds = $this->getConnection();
 
-        $serverSorting = false;//$this->capabilities->hasOid(Capability::LDAP_SERVER_SORT_OID);
-        if ($serverSorting && $query->hasOrder()) {
-            ldap_set_option($ds, LDAP_OPT_SERVER_CONTROLS, array(
-                array(
-                    'oid'   => LdapCapabilities::LDAP_SERVER_SORT_OID,
-                    'value' => $this->encodeSortRules($query->getOrder())
-                )
-            ));
-        } elseif ($query->hasOrder()) {
+        $serverSorting = false;//$this->getCapabilities()->hasOid(LdapCapabilities::LDAP_SERVER_SORT_OID);
+        if (! $serverSorting && $query->hasOrder()) {
             foreach ($query->getOrder() as $rule) {
                 if (! in_array($rule[0], $fields)) {
                     $fields[] = $rule[0];
@@ -767,10 +820,20 @@ class LdapConnection implements Selectable, Inspectable
         $count = 0;
         $cookie = '';
         $entries = array();
+        $unfoldAttribute = $query->getUnfoldAttribute();
         do {
             // Do not request the pagination control as a critical extension, as we want the
             // server to return results even if the paged search request cannot be satisfied
             ldap_control_paged_result($ds, $pageSize, false, $cookie);
+
+            if ($serverSorting && $query->hasOrder()) {
+                ldap_set_option($ds, LDAP_OPT_SERVER_CONTROLS, array(
+                    array(
+                        'oid'   => LdapCapabilities::LDAP_SERVER_SORT_OID,
+                        'value' => $this->encodeSortRules($query->getOrder())
+                    )
+                ));
+            }
 
             $results = @ldap_search(
                 $ds,
@@ -808,12 +871,39 @@ class LdapConnection implements Selectable, Inspectable
 
             $entry = ldap_first_entry($ds, $results);
             do {
-                $count += 1;
-                if (! $serverSorting || $offset === 0 || $offset < $count) {
-                    $entries[ldap_get_dn($ds, $entry)] = $this->cleanupAttributes(
+                if ($unfoldAttribute) {
+                    $rows = $this->cleanupAttributes(
                         ldap_get_attributes($ds, $entry),
-                        array_flip($fields)
+                        array_flip($fields),
+                        $unfoldAttribute
                     );
+
+                    if (is_array($rows)) {
+                        // TODO: Register the DN the same way as a section name in the ArrayDatasource!
+                        foreach ($rows as $row) {
+                            $count += 1;
+                            if (! $serverSorting || $offset === 0 || $offset < $count) {
+                                $entries[] = $row;
+                            }
+
+                            if ($serverSorting && $limit > 0 && $limit === count($entries)) {
+                                break;
+                            }
+                        }
+                    } else {
+                        $count += 1;
+                        if (! $serverSorting || $offset === 0 || $offset < $count) {
+                            $entries[ldap_get_dn($ds, $entry)] = $rows;
+                        }
+                    }
+                } else {
+                    $count += 1;
+                    if (! $serverSorting || $offset === 0 || $offset < $count) {
+                        $entries[ldap_get_dn($ds, $entry)] = $this->cleanupAttributes(
+                            ldap_get_attributes($ds, $entry),
+                            array_flip($fields)
+                        );
+                    }
                 }
             } while (
                 (! $serverSorting || $limit === 0 || $limit !== count($entries))
@@ -843,9 +933,6 @@ class LdapConnection implements Selectable, Inspectable
             // the server: https://www.ietf.org/rfc/rfc2696.txt
             ldap_control_paged_result($ds, 0, false, $cookie);
             ldap_search($ds, $base, $queryString); // Returns no entries, due to the page size
-        } else {
-            // Reset the paged search request so that subsequent requests succeed
-            ldap_control_paged_result($ds, 0);
         }
 
         if (! $serverSorting && $query->hasOrder()) {
@@ -861,14 +948,16 @@ class LdapConnection implements Selectable, Inspectable
     /**
      * Clean up the given attributes and return them as simple object
      *
-     * Applies column aliases, aggregates multi-value attributes as array and sets null for each missing attribute.
+     * Applies column aliases, aggregates/unfolds multi-value attributes
+     * as array and sets null for each missing attribute.
      *
      * @param   array   $attributes
      * @param   array   $requestedFields
+     * @param   string  $unfoldAttribute
      *
-     * @return  object
+     * @return  object|array    An array in case the object has been unfolded
      */
-    public function cleanupAttributes($attributes, array $requestedFields)
+    public function cleanupAttributes($attributes, array $requestedFields, $unfoldAttribute = null)
     {
         // In case the result contains attributes with a differing case than the requested fields, it is
         // necessary to create another array to map attributes case insensitively to their requested counterparts.
@@ -909,6 +998,24 @@ class LdapConnection implements Selectable, Inspectable
             }
         }
 
+        if (
+            $unfoldAttribute !== null
+            && isset($cleanedAttributes[$unfoldAttribute])
+            && is_array($cleanedAttributes[$unfoldAttribute])
+        ) {
+            $values = $cleanedAttributes[$unfoldAttribute];
+            unset($cleanedAttributes[$unfoldAttribute]);
+            $baseRow = (object) $cleanedAttributes;
+            $rows = array();
+            foreach ($values as $value) {
+                $row = clone $baseRow;
+                $row->{$unfoldAttribute} = $value;
+                $rows[] = $row;
+            }
+
+            return $rows;
+        }
+
         return (object) $cleanedAttributes;
     }
 
@@ -917,28 +1024,53 @@ class LdapConnection implements Selectable, Inspectable
      *
      * @param   array   $sortRules
      *
-     * @return  string
-     * @throws ProgrammingError
-     *
-     * @todo    Produces an invalid stream, obviously
+     * @return  string  Binary representation of the octet stream
      */
     protected function encodeSortRules(array $sortRules)
     {
-        if (count($sortRules) > 127) {
-            throw new ProgrammingError(
-                'Cannot encode more than 127 sort rules. Only length octets in short form are supported'
-            );
-        }
+        $sequenceOf = '';
 
-        $seq = '30' . str_pad(dechex(count($sortRules)), 2, '0', STR_PAD_LEFT);
         foreach ($sortRules as $rule) {
-            $hexdAttribute = unpack('H*', $rule[0]);
-            $seq .= '3002'
-                . '04' . str_pad(dechex(strlen($rule[0])), 2, '0', STR_PAD_LEFT) . $hexdAttribute[1]
-                . '0101' . ($rule[1] === Sortable::SORT_DESC ? 'ff' : '00');
+            if ($rule[1] === Sortable::SORT_DESC) {
+                $reversed = '8101ff';
+            } else {
+                $reversed = '';
+            }
+
+            $attributeType = unpack('H*', $rule[0]);
+            $attributeType = $attributeType[1];
+            $attributeOctets = strlen($attributeType) / 2;
+            if ($attributeOctets >= 127) {
+                // Use the indefinite form of the length octets (the long form would be another option)
+                $attributeType = '0440' . $attributeType . '0000';
+
+            } else {
+                $attributeType = '04' . str_pad(dechex($attributeOctets), 2, '0', STR_PAD_LEFT) . $attributeType;
+            }
+
+            $sequence = $attributeType . $reversed;
+            $sequenceOctects = strlen($sequence) / 2;
+            if ($sequenceOctects >= 127) {
+                $sequence = '3040' . $sequence . '0000';
+            } else {
+                $sequence = '30' . str_pad(dechex($sequenceOctects), 2, '0', STR_PAD_LEFT) . $sequence;
+            }
+
+            $sequenceOf .= $sequence;
         }
 
-        return $seq;
+        $sequenceOfOctets = strlen($sequenceOf) / 2;
+        if ($sequenceOfOctets >= 127) {
+            $sequenceOf = '3040' . $sequenceOf . '0000';
+        } else {
+            $sequenceOf = '30' . str_pad(dechex($sequenceOfOctets), 2, '0', STR_PAD_LEFT) . $sequenceOf;
+        }
+
+        if (version_compare(PHP_VERSION, '5.4.0') >= 0) {
+            return hex2bin($sequenceOf);
+        } else {
+            return pack('H*', $sequenceOf);
+        }
     }
 
     /**
@@ -956,16 +1088,9 @@ class LdapConnection implements Selectable, Inspectable
             $info = new Inspection('');
         }
 
-        if ($this->encryption === static::STARTTLS || $this->encryption === static::LDAPS) {
-            $this->prepareTlsEnvironment();
-        }
-
         $hostname = $this->hostname;
         if ($this->encryption === static::LDAPS) {
             $info->write('Connect using LDAPS');
-            if (! $this->validateCertificate) {
-                $info->write('Skip certificate validation');
-            }
             $hostname = 'ldaps://' . $hostname;
         }
 
@@ -982,9 +1107,6 @@ class LdapConnection implements Selectable, Inspectable
         if ($this->encryption === static::STARTTLS) {
             $this->encrypted = true;
             $info->write('Connect using STARTTLS');
-            if (! $this->validateCertificate) {
-                $info->write('Skip certificate validation');
-            }
             if (! ldap_start_tls($ds)) {
                 throw new LdapException('LDAP STARTTLS failed: %s', ldap_error($ds));
             }
@@ -995,30 +1117,6 @@ class LdapConnection implements Selectable, Inspectable
         }
 
         return $ds;
-    }
-
-    /**
-     * Set up how to handle StartTLS connections
-     *
-     * @throws  LdapException   In case the LDAPRC environment variable cannot be set
-     */
-    protected function prepareTlsEnvironment()
-    {
-        // TODO: allow variable known CA location (system VS Icinga)
-        if (Platform::isWindows()) {
-            putenv('LDAPTLS_REQCERT=never');
-        } else {
-            if ($this->validateCertificate) {
-                $ldap_conf = $this->getConfigDir('ldap_ca.conf');
-            } else {
-                $ldap_conf = $this->getConfigDir('ldap_nocert.conf');
-            }
-
-            putenv('LDAPRC=' . $ldap_conf); // TODO: Does not have any effect
-            if (getenv('LDAPRC') !== $ldap_conf) {
-                throw new LdapException('putenv failed');
-            }
-        }
     }
 
     /**
@@ -1102,6 +1200,13 @@ class LdapConnection implements Selectable, Inspectable
         try {
             $ds = $this->prepareNewConnection($insp);
         } catch (Exception $e) {
+            if ($this->encryption === 'starttls') {
+                // The Exception does not return any proper error messages in case of certificate errors. Connecting
+                // by STARTTLS will usually fail at this point when the certificate is unknown,
+                // so at least try to give some hints.
+                $insp->write('NOTE: There might be an issue with the chosen encryption. Ensure that the LDAP-Server ' .
+                    'supports STARTTLS and that the LDAP-Client is configured to accept its certificate.');
+            }
             return $insp->error($e->getMessage());
         }
 
@@ -1115,6 +1220,13 @@ class LdapConnection implements Selectable, Inspectable
             '***' /* $this->bindPw */
         );
         if (! $success) {
+            // ldap_error does not return any proper error messages in case of certificate errors. Connecting
+            // by LDAPS will usually fail at this point when the certificate is unknown, so at least try to give
+            // some hints.
+            if ($this->encryption === 'ldaps') {
+                $insp->write('NOTE: There might be an issue with the chosen encryption. Ensure that the LDAP-Server ' .
+                    ' supports LDAPS and that the LDAP-Client is configured to accept its certificate.');
+            }
             return $insp->error(sprintf('%s failed: %s', $msg, ldap_error($ds)));
         }
         $insp->write(sprintf($msg . ' successful'));
@@ -1135,13 +1247,5 @@ class LdapConnection implements Selectable, Inspectable
             $insp->write('Schema discovery not possible: ' . $e->getMessage());
         }
         return $insp;
-    }
-
-    /**
-     * Reset the environment variables set by self::prepareTlsEnvironment()
-     */
-    public function __destruct()
-    {
-        putenv('LDAPRC');
     }
 }

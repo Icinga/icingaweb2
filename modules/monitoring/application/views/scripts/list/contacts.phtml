@@ -8,16 +8,9 @@
 </div>
 <?php endif ?>
 <div data-base-target="_next" class="content contacts">
-<?php
-
-if (count($contacts) === 0) {
-    echo $this->translate('No contacts found matching the filter') . '</div>';
-    return;
-}
-?>
-<?php foreach ($contacts as $contact): ?>
+    <?php foreach ($contacts->peekAhead($this->compact) as $contact): ?>
         <div class="contact">
-            <?= $this->img('/static/gravatar', array('email' => $contact->contact_email)); ?>
+            <?= $this->img('static/gravatar', array('email' => $contact->contact_email)); ?>
             <strong><?= $this->qlink(
                 $contact->contact_name,
                 'monitoring/show/contact',
@@ -59,4 +52,17 @@ if (count($contacts) === 0) {
     if (true): /* The following piece of HTML MUST be nested in <?php */ ?>
     <div style="clear: both;"></div>
     <?php endif; ?>
+    <?php if (! $contacts->hasResult()): ?>
+        <?= $this->translate('No contacts found matching the filter'); ?>
+    <?php elseif ($contacts->hasMore()): ?>
+        <?= $this->qlink(
+            $this->translate('Show More'),
+            $this->url()->without(array('view', 'limit')),
+            null,
+            array(
+                'data-base-target'  => '_next',
+                'class'             => 'pull-right show-more'
+            )
+        ); ?>
+    <?php endif ?>
 </div>

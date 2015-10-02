@@ -31,11 +31,14 @@ class AuthenticationPage extends Form
     public function createElements(array $formData)
     {
         if (isset($formData['type']) && $formData['type'] === 'external' && !isset($_SERVER['REMOTE_USER'])) {
-            $this->addDescription($this->translate(
-                'You\'re currently not authenticated using any of the web server\'s authentication '
-                . 'mechanisms. Make sure you\'ll configure such, otherwise you\'ll not be able to '
-                . 'log into Icinga Web 2.'
-            ));
+            $this->info(
+                $this->translate(
+                    'You\'re currently not authenticated using any of the web server\'s authentication '
+                    . 'mechanisms. Make sure you\'ll configure such, otherwise you\'ll not be able to '
+                    . 'log into Icinga Web 2.'
+                ),
+                false
+            );
         }
 
         $backendTypes = array();

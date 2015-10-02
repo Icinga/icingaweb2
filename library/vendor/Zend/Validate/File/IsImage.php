@@ -14,7 +14,7 @@
  *
  * @category  Zend
  * @package   Zend_Validate
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd     New BSD License
  * @version   $Id$
  */
@@ -22,13 +22,14 @@
 /**
  * @see Zend_Validate_File_MimeType
  */
+require_once 'Zend/Validate/File/MimeType.php';
 
 /**
  * Validator which checks if the file already exists in the directory
  *
  * @category  Zend
  * @package   Zend_Validate
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Validate_File_IsImage extends Zend_Validate_File_MimeType
@@ -52,8 +53,7 @@ class Zend_Validate_File_IsImage extends Zend_Validate_File_MimeType
     /**
      * Sets validator options
      *
-     * @param  string|array|Zend_Config $mimetype
-     * @return void
+     * @param string|array|Zend_Config $mimetype
      */
     public function __construct($mimetype = array())
     {

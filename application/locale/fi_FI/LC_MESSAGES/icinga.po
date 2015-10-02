@@ -1,0 +1,1352 @@
+# Icinga Web 2 - Head for multiple monitoring backends.
+# Copyright (C) 2015 Icinga Development Team
+# This file is distributed under the same license as Icinga Web 2.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Icinga Web 2 (None)\n"
+"Report-Msgid-Bugs-To: dev@icinga.org\n"
+"POT-Creation-Date: 2015-02-11 15:47+0100\n"
+"PO-Revision-Date: 2015-02-28 01:56+0200\n"
+"Last-Translator: Mikko Peltokangas <mikko@peltokangas.org>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 1.7.1\n"
+"Language: fi_FI\n"
+
+#: /usr/share/icingaweb2/library/Icinga/Web/Menu/MonitoringMenuItemRenderer.php:40
+#, php-format
+msgid "%d unhandled hosts down"
+msgstr "%d käsittelemätöntä hostia alhaalla"
+
+#: /usr/share/icingaweb2/library/Icinga/Web/Menu/MonitoringMenuItemRenderer.php:41
+#, php-format
+msgid "%d unhandled services critical"
+msgstr "%d käsittelemätöntä palvelua alhaalla"
+
+#: /usr/share/icingaweb2/library/Icinga/Web/View/DateTimeRenderer.php:185
+msgctxt "timespan"
+msgid "%im %ss"
+msgstr "%im %ss [ timespan ]"
+
+#: /usr/share/icingaweb2/application/views/scripts/joystickPagination.phtml:9
+#: /usr/share/icingaweb2/application/views/scripts/pivottablePagination.phtml:9
+#, php-format
+msgid "%s: %d to %d of %d (on the %s-axis)"
+msgstr "%s: %d to %d of %d ( %s-akselilla)"
+
+#: /usr/share/icingaweb2/library/Icinga/Web/Form/Element/Number.php:138
+#, php-format
+msgid "'%s' is not a valid number"
+msgstr "'%s' ei ole kelvollinen luku"
+
+#: /usr/share/icingaweb2/application/forms/Authentication/LoginForm.php:44
+msgid "...and your password"
+msgstr ".. .ja salasanasi"
+
+#: /usr/share/icingaweb2/application/views/scripts/dashboard/new-dashlet.phtml:5
+msgid "Add Dashlet To Dashboard"
+msgstr "Lisää dashlet kojelaudalle"
+
+#: /usr/share/icingaweb2/application/forms/Dashboard/DashletForm.php:28
+#: /usr/share/icingaweb2/library/Icinga/Web/Widget/Tabextension/DashboardSettings.php:25
+msgid "Add To Dashboard"
+msgstr "Lisää kojelaudalle"
+
+#: /usr/share/icingaweb2/library/Icinga/Web/Widget/FilterWidget.php:80
+msgid "Add filter..."
+msgstr "Lisää suodatin..."
+
+#: /usr/share/icingaweb2/application/controllers/AuthenticationController.php:111
+msgid ""
+"All configured authentication methods failed. Please check the system log or Icinga Web "
+"2 log for more information."
+msgstr ""
+"Kaikki asetetut todennusmenetelmät epäonnistuivat. Tarkista järjestelmäloki tai Icinga "
+"Web 2 loki lisätietojen vuoksi."
+
+#: /usr/share/icingaweb2/application/controllers/RolesController.php:28
+#: /usr/share/icingaweb2/application/controllers/ConfigController.php:42
+msgid "Application"
+msgstr "Sovellus"
+
+#: /usr/share/icingaweb2/library/Icinga/Web/Menu.php:233
+msgid "Application Log"
+msgstr "Sovelluslogi"
+
+#: /usr/share/icingaweb2/application/forms/Config/General/LoggingConfigForm.php:66
+msgid "Application Prefix"
+msgstr "Sovelluksen etuliite"
+
+#: /usr/share/icingaweb2/library/Icinga/Web/Form/Decorator/NoScriptApply.php:28
+msgid "Apply"
+msgstr "Suorita"
+
+#: /usr/share/icingaweb2/application/controllers/RolesController.php:34
+#: /usr/share/icingaweb2/application/controllers/ConfigController.php:49
+msgid "Authentication"
+msgstr "Tunnistautuminen"
+
+#: /usr/share/icingaweb2/application/forms/Config/AuthenticationBackendConfigForm.php:213
+#, php-format
+msgid "Authentication backend \"%s\" has been successfully changed"
+msgstr "Taustajärjestelmän tunnistautuminen \"%s\" muutettu"
+
+#: /usr/share/icingaweb2/application/forms/Config/AuthenticationBackendConfigForm.php:210
+#, php-format
+msgid "Authentication backend \"%s\" has been successfully created"
+msgstr "Taustajärjestelmän tunnistautuminen \"%s\" luotu"
+
+#: /usr/share/icingaweb2/application/controllers/ConfigController.php:259
+#, php-format
+msgid "Authentication backend \"%s\" has been successfully removed"
+msgstr "Taustajärjestelmän tunnistautuminen \"%s\" poistettu"
+
+#: /usr/share/icingaweb2/application/forms/Config/AuthenticationBackendConfigForm.php:95
+msgid "Authentication backend already exists"
+msgstr "Taustajärjestelmän tunnistautuminen on jo olemassa"
+
+#: /usr/share/icingaweb2/application/forms/Config/AuthenticationBackendConfigForm.php:93
+#: /usr/share/icingaweb2/application/forms/Config/AuthenticationBackendConfigForm.php:146
+#: /usr/share/icingaweb2/application/forms/Config/AuthenticationBackendConfigForm.php:169
+#: /usr/share/icingaweb2/application/forms/Config/AuthenticationBackendConfigForm.php:239
+msgid "Authentication backend name missing"
+msgstr "Taustajärjestelmän tunnistautumisen nimi puuttuu"
+
+#: /usr/share/icingaweb2/application/forms/Config/AuthenticationBackendReorderForm.php:54
+msgid "Authentication order updated!"
+msgstr "Kirjautumisjärjestys päivitetty!"
+
+#: /usr/share/icingaweb2/library/Icinga/Web/Wizard.php:617
+#: /usr/share/icingaweb2/library/Icinga/Web/Wizard.php:638
+msgid "Back"
+msgstr "Takaisin"
+
+#: /usr/share/icingaweb2/application/forms/Config/AuthenticationBackendConfigForm.php:244
+#, php-format
+msgid "Backend \"%s\" has no `backend' setting"
+msgstr "Taustajärjestelmä \"%s\" ei ole  `Taustajärjestelmä' "
+
+#: /usr/share/icingaweb2/application/forms/Config/Authentication/LdapBackendForm.php:56
+#: /usr/share/icingaweb2/application/forms/Config/Authentication/ExternalBackendForm.php:32
+#: /usr/share/icingaweb2/application/forms/Config/Authentication/DbBackendForm.php:55
+msgid "Backend Name"
+msgstr "Taustajärjestelmän nimi"
+
+#: /usr/share/icingaweb2/application/forms/Config/AuthenticationBackendConfigForm.php:322
+msgid "Backend Type"
+msgstr "Taustajärjestelmän tyyppi"
+
+#: /usr/share/icingaweb2/application/forms/Config/Authentication/LdapBackendForm.php:109
+msgid "Base DN"
+msgstr "Base DN"
+
+#: /usr/share/icingaweb2/application/forms/Config/Resource/LdapResourceForm.php:76
+msgid "Bind DN"
+msgstr "Liitä DN"
+
+#: /usr/share/icingaweb2/application/forms/Config/Resource/LdapResourceForm.php:86
+msgid "Bind Password"
+msgstr "Liitä salasana"
+
+#: /usr/share/icingaweb2/application/forms/PreferenceForm.php:144
+#: /usr/share/icingaweb2/application/forms/PreferenceForm.php:150
+#, php-format
+msgctxt "preferences.form"
+msgid "Browser (%s)"
+msgstr "Selain (%s)"
+
+#: /usr/share/icingaweb2/application/forms/Security/RoleForm.php:187
+#, php-format
+msgid "Can't add role '%s'. Role already exists"
+msgstr "Ei voi lisätä roolia '%s'. Rooli löytyy jo."
+
+#: /usr/share/icingaweb2/application/forms/Security/RoleForm.php:146
+#, php-format
+msgid "Can't load role '%s'. Role does not exist"
+msgstr "Ei voi ladata roolia '%s'. Roolia ei ole"
+
+#: /usr/share/icingaweb2/application/forms/Security/RoleForm.php:213
+#, php-format
+msgid "Can't remove role '%s'. Role does not exist"
+msgstr "Ei voi poistaa roolia '%s'. Roolia ei ole"
+
+#: /usr/share/icingaweb2/application/forms/Security/RoleForm.php:246
+#, php-format
+msgid "Can't update role '%s'. Role does not exist"
+msgstr "Ei voi päivittää roolia '%s'. Roolia ei ole"
+
+#: /usr/share/icingaweb2/library/Icinga/Web/Widget/FilterEditor.php:352
+msgid "Cancel this operation"
+msgstr "Peruuta toiminta"
+
+#: /usr/share/icingaweb2/library/Icinga/Application/Config.php:298
+#, php-format
+msgid "Cannot read config file \"%s\". Permission denied"
+msgstr "Ei voi lukea tiedostoa \"%s\". Lupa evätty"
+
+#: /usr/share/icingaweb2/application/forms/Dashboard/DashletForm.php:122
+msgid "Check this box if you want to add the dashlet to a new dashboard"
+msgstr "Valitse tämä, jos haluat lisätä dashletin kojelaudalle"
+
+#: /usr/share/icingaweb2/application/forms/Config/ResourceConfigForm.php:200
+#: /usr/share/icingaweb2/application/forms/Config/AuthenticationBackendConfigForm.php:281
+msgid "Check this box to enforce changes without connectivity validation"
+msgstr "Valitse tämä, jos haluat tallentaa muutokset ilman yhteyden vahvistamista"
+
+#: /usr/share/icingaweb2/library/Icinga/Web/Widget/FilterEditor.php:326
+msgid "Click to add another filter"
+msgstr "Paina tästä lisätäksesi suodattimen"
+
+#: /usr/share/icingaweb2/library/Icinga/Web/Widget/FilterWidget.php:68
+#: /usr/share/icingaweb2/library/Icinga/Web/Widget/FilterEditor.php:313
+msgid "Click to remove this part of your filter"
+msgstr "Paina tästä, jos haluat poistaa suodattimen"
+
+#: /usr/share/icingaweb2/application/forms/Security/RoleForm.php:100
+msgid "Comma-separated list of groups that are assigned to the role"
+msgstr "Pilkulla eroteltu lista ryhmistä, jotka kuuluvat tähän rooliin"
+
+#: /usr/share/icingaweb2/application/forms/Security/RoleForm.php:92
+msgid "Comma-separated list of users that are assigned to the role"
+msgstr "Pilkulla eroteltu lista käyttäjistä, jotka kuuluvat tähän rooliin"
+
+#: /usr/share/icingaweb2/library/Icinga/Web/Menu.php:223
+msgid "Configuration"
+msgstr "Asetukset"
+
+#: /usr/share/icingaweb2/application/forms/ConfirmRemovalForm.php:19
+msgid "Confirm Removal"
+msgstr "Vahvista poisto"
+
+#: /usr/share/icingaweb2/application/forms/Config/Resource/LivestatusResourceForm.php:79
+#: /usr/share/icingaweb2/application/forms/Config/Resource/LdapResourceForm.php:126
+#: /usr/share/icingaweb2/application/forms/Config/Resource/DbResourceForm.php:135
+msgid "Connectivity validation failed, connection to the given resource not possible."
+msgstr "Yhteyden vahvistaminen epäonnistui, yhteys resurssiin ei ole mahdollista"
+
+#: /usr/share/icingaweb2/application/forms/Config/General/ApplicationConfigForm.php:37
+msgid ""
+"Contains the directories that will be searched for available modules, separated by "
+"colons. Modules that don't exist in these directories can still be symlinked in the "
+"module folder, but won't show up in the list of disabled modules."
+msgstr ""
+"Sisältää hakemistot, joista etsitään mahdollisia moduleja, eroteltuna pilkulla. Modulit, "
+"jotka eivät ole näissä hakemistoissa voidaan silti liittää symbolisilla linkeillä "
+"modulikansioon. Nämä eivät kuitenkaan tule näkyville käytöstä poistetuissa moduleissa."
+
+#: /usr/share/icingaweb2/application/forms/Config/AuthenticationBackendConfigForm.php:261
+msgid "Could not find any resources for authentication"
+msgstr "Yhtään tunnistautumisresurssia ei löytynyt"
+
+#: /usr/share/icingaweb2/application/views/scripts/dashboard/error.phtml:2
+msgid "Could not persist dashboard"
+msgstr "Kojelauta ei pysy"
+
+#: /usr/share/icingaweb2/application/controllers/AuthenticationController.php:62
+msgid "Could not read your authentication.ini, no authentication methods are available."
+msgstr ""
+"Ei voi lukea authentication.ini-tiedostoa, tunnistautumismetodeita ei ole käytössä."
+
+#: /usr/share/icingaweb2/application/views/scripts/config/authentication/reorder.phtml:7
+msgid "Create A New Authentication Backend"
+msgstr "Luo uusi todennus taustajärjestelmälle"
+
+#: /usr/share/icingaweb2/application/views/scripts/config/resource.phtml:7
+#: /usr/share/icingaweb2/application/views/scripts/config/resource/create.phtml:4
+msgid "Create A New Resource"
+msgstr "Luo uusi resurssi"
+
+#: /usr/share/icingaweb2/application/views/scripts/config/authentication/create.phtml:4
+msgid "Create New Authentication Backend"
+msgstr "Luo uusi todennus taustajärjestelmälle"
+
+#: /usr/share/icingaweb2/application/controllers/RolesController.php:82
+msgid "Create Role"
+msgstr "Luo rooli"
+
+#: /usr/share/icingaweb2/application/views/scripts/config/authentication/create.phtml:7
+msgid ""
+"Create a new backend for authenticating your users. This backend will be added at the "
+"end of your authentication order."
+msgstr ""
+"Luo uusi taustajärjestelmä kirjautumisiin. Tämä taustajärjestelmä liitetään "
+"kirjautumisjärjestyksen loppuun."
+
+#: /usr/share/icingaweb2/application/views/scripts/dashboard/index.phtml:13
+#, php-format
+msgid ""
+"Currently there is no dashlet available. This might change once you enabled some of the "
+"available %s."
+msgstr ""
+"Tällä hetkellä ei ole yhtään dashletia valmiina. Tämä saattaa muuttua kunhan otat %s "
+"käyttöön."
+
+#: /usr/share/icingaweb2/application/forms/Dashboard/DashletForm.php:108
+#: /usr/share/icingaweb2/application/layouts/scripts/body.phtml:31
+#: /usr/share/icingaweb2/library/Icinga/Web/Menu.php:213
+msgid "Dashboard"
+msgstr "Kojelauta"
+
+#: /usr/share/icingaweb2/application/views/scripts/dashboard/settings.phtml:7
+msgid "Dashboard Settings"
+msgstr "Kojelaudan asetukset"
+
+#: /usr/share/icingaweb2/application/controllers/DashboardController.php:205
+msgid "Dashboard has been removed"
+msgstr "Kojelauta on poistettu"
+
+#: /usr/share/icingaweb2/application/views/scripts/dashboard/settings.phtml:13
+msgid "Dashlet Name"
+msgstr "Dashletin nimi"
+
+#: /usr/share/icingaweb2/application/forms/Dashboard/DashletForm.php:79
+msgid "Dashlet Title"
+msgstr "Dashletin otsikko"
+
+#: /usr/share/icingaweb2/application/controllers/DashboardController.php:66
+msgid "Dashlet created"
+msgstr "Dashlet luotu"
+
+#: /usr/share/icingaweb2/application/controllers/DashboardController.php:166
+msgid "Dashlet has been removed from"
+msgstr "Dashlet on poistettu"
+
+#: /usr/share/icingaweb2/application/controllers/DashboardController.php:128
+msgid "Dashlet updated"
+msgstr "Dashlet päivitetty"
+
+#: /usr/share/icingaweb2/application/forms/Config/AuthenticationBackendConfigForm.php:295
+#: /usr/share/icingaweb2/application/forms/Config/General/ApplicationConfigForm.php:53
+msgid "Database"
+msgstr "Tietokanta"
+
+#: /usr/share/icingaweb2/application/forms/Config/Authentication/DbBackendForm.php:66
+#: /usr/share/icingaweb2/application/forms/Config/General/ApplicationConfigForm.php:72
+msgid "Database Connection"
+msgstr "Tietokantayhteys"
+
+#: /usr/share/icingaweb2/application/forms/Config/Resource/DbResourceForm.php:82
+msgid "Database Name"
+msgstr "Tietokannan nimi"
+
+#: /usr/share/icingaweb2/application/forms/Config/Resource/DbResourceForm.php:52
+msgid "Database Type"
+msgstr "Tietokannan tyyppi"
+
+#: /usr/share/icingaweb2/library/Icinga/Web/Form/Validator/DateTimeValidator.php:48
+#, php-format
+msgid "Date/time string not in the expected format %s"
+msgstr "Pvm/aika-jon ei ole odotetussa muodossa %s"
+
+#: /usr/share/icingaweb2/application/forms/Config/General/LoggingConfigForm.php:54
+msgctxt "app.config.logging.level"
+msgid "Debug"
+msgstr "Debug"
+
+#: /usr/share/icingaweb2/application/views/scripts/config/module.phtml:42
+msgid "Dependencies"
+msgstr "Riippuvuudet"
+
+#: /usr/share/icingaweb2/application/views/scripts/config/module.phtml:38
+msgid "Description"
+msgstr "Kuvaus"
+
+#: /usr/share/icingaweb2/application/views/scripts/showConfiguration.phtml:19
+msgid ""
+"Details can be found in the application log. (If you don't have access to this log, call "
+"your administrator in this case)"
+msgstr ""
+"Lisätiedot löytyvät ohjelman logista. (Jos sinulla ei ole pääsyä logiin, ota yhteys "
+"järjestelmävalvojaan)"
+
+#: /usr/share/icingaweb2/application/forms/Config/General/ApplicationConfigForm.php:54
+msgid "Don't Store Preferences"
+msgstr "Älä talleta asetuksia"
+
+#: /usr/share/icingaweb2/application/views/scripts/config/authentication/modify.phtml:4
+msgid "Edit Backend"
+msgstr "Muokkaa taustajärjestelmää"
+
+#: /usr/share/icingaweb2/application/views/scripts/dashboard/update-dashlet.phtml:6
+msgid "Edit Dashlet"
+msgstr "Muokkaa dashletia"
+
+#: /usr/share/icingaweb2/application/views/scripts/config/resource/modify.phtml:4
+msgid "Edit Existing Resource"
+msgstr "Muokkaa olemassaolevaa resurssia"
+
+#: /usr/share/icingaweb2/application/controllers/ErrorController.php:39
+#, php-format
+msgid "Enabling the \"%s\" module might help!"
+msgstr "Modulin \"%s\" käyttöönotto voisi auttaa!"
+
+#: /usr/share/icingaweb2/application/forms/Dashboard/DashletForm.php:80
+msgid "Enter a title for the dashlet."
+msgstr "Dashletin otsikko"
+
+#: /usr/share/icingaweb2/application/forms/Dashboard/DashletForm.php:99
+msgid "Enter a title for the new pane."
+msgstr "Ruudun otsikko"
+
+#: /usr/share/icingaweb2/application/forms/Dashboard/DashletForm.php:70
+msgid ""
+"Enter url being loaded in the dashlet. You can paste the full URL, including filters."
+msgstr "Anna url, jonka haluat ladattavan dashletiin. Voit käyttää copy-pastea."
+
+#: /usr/share/icingaweb2/application/forms/Config/General/LoggingConfigForm.php:51
+msgctxt "app.config.logging.level"
+msgid "Error"
+msgstr "Virhe"
+
+#: /usr/share/icingaweb2/application/views/scripts/dashboard/error.phtml:11
+msgid "Error details"
+msgstr "Virheen tiedot"
+
+#: /usr/share/icingaweb2/application/forms/Config/AuthenticationBackendConfigForm.php:308
+msgid "External"
+msgstr "Ulkoinen"
+
+#: /usr/share/icingaweb2/application/forms/Config/ResourceConfigForm.php:213
+msgid "File"
+msgstr "Tiedosto"
+
+#: /usr/share/icingaweb2/application/forms/Config/General/LoggingConfigForm.php:36
+msgctxt "app.config.logging.type"
+msgid "File"
+msgstr "Tiedosto"
+
+#: /usr/share/icingaweb2/application/forms/Config/General/ApplicationConfigForm.php:52
+msgid "File System (INI Files)"
+msgstr "Tiedostojärjestelmä"
+
+#: /usr/share/icingaweb2/application/forms/Config/General/LoggingConfigForm.php:107
+msgid "File path"
+msgstr "Tiedostopolku"
+
+#: /usr/share/icingaweb2/application/forms/Config/Resource/FileResourceForm.php:41
+msgid "Filepath"
+msgstr "Tiedostopolku"
+
+#: /usr/share/icingaweb2/application/forms/Config/Authentication/ExternalBackendForm.php:54
+msgid "Filter Pattern"
+msgstr "Suodata kaava"
+
+#: /usr/share/icingaweb2/library/Icinga/Web/Widget/FilterWidget.php:89
+#: /usr/share/icingaweb2/library/Icinga/Web/Widget/FilterEditor.php:659
+msgid "Filter this list"
+msgstr "Suodata lista"
+
+#: /usr/share/icingaweb2/library/Icinga/Web/Widget/FilterWidget.php:93
+msgid "Filtered"
+msgstr "Suodatettu"
+
+#: /usr/share/icingaweb2/library/Icinga/Web/Wizard.php:648
+msgid "Finish"
+msgstr "Valmis"
+
+#: /usr/share/icingaweb2/application/forms/Config/ResourceConfigForm.php:199
+#: /usr/share/icingaweb2/application/forms/Config/AuthenticationBackendConfigForm.php:280
+msgid "Force Changes"
+msgstr "Pakota muutokset"
+
+#: /usr/share/icingaweb2/application/forms/Security/RoleForm.php:99
+#: /usr/share/icingaweb2/application/views/scripts/roles/index.phtml:17
+msgid "Groups"
+msgstr "Ryhmät"
+
+#: /usr/share/icingaweb2/application/views/scripts/search/hint.phtml:3
+msgid "Hint"
+msgstr "Vihje"
+
+#: /usr/share/icingaweb2/application/forms/LdapDiscoveryForm.php:49
+#: /usr/share/icingaweb2/application/forms/Config/Resource/LdapResourceForm.php:43
+#: /usr/share/icingaweb2/application/forms/Config/Resource/DbResourceForm.php:62
+msgid "Host"
+msgstr "Host"
+
+#: /usr/share/icingaweb2/application/views/scripts/joystickPagination.phtml:35
+#: /usr/share/icingaweb2/application/views/scripts/joystickPagination.phtml:90
+#: /usr/share/icingaweb2/application/views/scripts/pivottablePagination.phtml:28
+msgid "Hosts"
+msgstr "Hostit"
+
+#: /usr/share/icingaweb2/application/views/scripts/search/hint.phtml:2
+msgid "I'm ready to search, waiting for your input"
+msgstr "Olen valmiina etsimään, odotan syötettä"
+
+#: /usr/share/icingaweb2/application/forms/LdapDiscoveryForm.php:50
+msgid "IP or hostname to search."
+msgstr "Etsi ip:llä tai hostnamella"
+
+#: /usr/share/icingaweb2/application/views/scripts/authentication/login.phtml:15
+msgid "Icinga Web 2 Documentation"
+msgstr "Icinga Web 2 dokumentaatio"
+
+#: /usr/share/icingaweb2/application/views/scripts/authentication/login.phtml:16
+msgid "Icinga Web 2 Setup-Wizard"
+msgstr "Icinga Web 2 Asennusvelho"
+
+#: /usr/share/icingaweb2/application/controllers/AuthenticationController.php:44
+msgid "Icingaweb Login"
+msgstr "Icingaweb Login"
+
+#: /usr/share/icingaweb2/application/views/scripts/authentication/logout.phtml:14
+msgid ""
+"If this message does not disappear, it might be necessary to quit the current session "
+"manually by clearing the cache, or by closing the current browser session."
+msgstr ""
+"Jos tämä teksti ei näy, voi olla tarpeellista lopettaa aktiivinen istunto käsin "
+"välimuistia tyhjäämällä tai sulkemalla selainikkunan."
+
+#: /usr/share/icingaweb2/application/views/scripts/showConfiguration.phtml:21
+msgid ""
+"In case you can access the file by yourself, you can open it and insert the config "
+"manually:"
+msgstr "Jos pääset muokkaamaan itse tiedostoa, vois avata sen ja lisätä asetukset käsin:"
+
+#: /usr/share/icingaweb2/application/controllers/AuthenticationController.php:124
+msgid "Incorrect username or password"
+msgstr "Väärä käyttäjätunnus tai salasana"
+
+#: /usr/share/icingaweb2/application/forms/Config/General/LoggingConfigForm.php:53
+msgctxt "app.config.logging.level"
+msgid "Information"
+msgstr "Tietoa"
+
+#: /usr/share/icingaweb2/application/views/scripts/config/modules.phtml:3
+msgid "Installed Modules"
+msgstr "Asennetut modulit"
+
+#: /usr/share/icingaweb2/application/forms/Config/AuthenticationBackendConfigForm.php:72
+#, php-format
+msgid "Invalid backend type \"%s\" provided"
+msgstr "Väärä taustajärjestelmä \"%s\""
+
+#: /usr/share/icingaweb2/application/forms/Config/ResourceConfigForm.php:45
+#, php-format
+msgid "Invalid resource type \"%s\" provided"
+msgstr "Väärä resurssi \"%s\""
+
+#: /usr/share/icingaweb2/library/Icinga/Web/Form/Validator/DateTimeValidator.php:41
+msgid "Invalid type given. Instance of DateTime or date/time string expected"
+msgstr "Väärä tyyppi annettu. Tähän käy vain DateTime-instanssi tai pvm/aika-merkkijono"
+
+#: /usr/share/icingaweb2/application/views/scripts/authentication/login.phtml:11
+#, php-format
+msgid ""
+"It appears that you did not configure Icinga Web 2 yet so it's not possible to log in "
+"without any defined authentication method. Please define a authentication method by "
+"following the instructions in the %1$sdocumentation%3$s or by using our %2$sweb-based "
+"setup-wizard%3$s."
+msgstr ""
+"Näyttää siltä, että et ole konfiguroinut Icinga Web 2:sta vielä, joten kirjautuminen ei "
+"ole vielä mahdollista. Määritä kirjautumistyyli ohjeiden %1$sdocumentation%3$s avulla "
+"tai käyttämällä %2$sweb-based setup-wizard%3$s."
+
+#: /usr/share/icingaweb2/application/forms/Config/Authentication/LdapBackendForm.php:67
+msgid "LDAP Resource"
+msgstr "LDAP-resurssi"
+
+#: /usr/share/icingaweb2/application/forms/Config/Authentication/LdapBackendForm.php:89
+msgid "LDAP User Name Attribute"
+msgstr "LDAP-käyttäjän asetukset"
+
+#: /usr/share/icingaweb2/application/forms/Config/Authentication/LdapBackendForm.php:79
+msgid "LDAP User Object Class"
+msgstr "LDAP-käyttäjän tyyppi"
+
+#: /usr/share/icingaweb2/application/forms/Config/General/LoggingConfigForm.php:48
+msgid "Logging Level"
+msgstr "Login taso"
+
+#: /usr/share/icingaweb2/application/forms/Config/General/LoggingConfigForm.php:32
+msgid "Logging Type"
+msgstr "Login tyyppi"
+
+#: /usr/share/icingaweb2/application/views/scripts/authentication/logout.phtml:12
+msgid "Logging out..."
+msgstr "Kirjaudutaan ulos..."
+
+#: /usr/share/icingaweb2/application/forms/Authentication/LoginForm.php:20
+#: /usr/share/icingaweb2/application/views/scripts/authentication/logout.phtml:21
+msgid "Login"
+msgstr "Kirjaudu"
+
+#: /usr/share/icingaweb2/library/Icinga/Web/Menu.php:248
+msgid "Logout"
+msgstr "Kirjaudu ulos"
+
+#: /usr/share/icingaweb2/application/views/scripts/authentication/logout.phtml:43
+msgid "Logout successful!"
+msgstr "Uloskirjautuminen onnistui!"
+
+#: /usr/share/icingaweb2/application/views/scripts/dashboard/error.phtml:7
+msgid "Make sure that the webserver can write to this file."
+msgstr "Varmista että webpalvelin voi kirjoittaa tähän tiedostoon"
+
+#: /usr/share/icingaweb2/library/Icinga/Web/Controller/ActionController.php:197
+msgid "Method Not Allowed"
+msgstr "Ei ole sallittu"
+
+#: /usr/share/icingaweb2/library/Icinga/Web/Widget/FilterWidget.php:94
+#: /usr/share/icingaweb2/library/Icinga/Web/Widget/FilterEditor.php:661
+msgid "Modify this filter"
+msgstr "Muuta suodatinta"
+
+#: /usr/share/icingaweb2/application/controllers/ConfigController.php:179
+#, php-format
+msgid "Module \"%s\" disabled"
+msgstr "Moduli \"%s\" poistettu käytöstä"
+
+#: /usr/share/icingaweb2/application/controllers/ConfigController.php:159
+#, php-format
+msgid "Module \"%s\" enabled"
+msgstr "Moduli \"%s\" otettu käyttöön"
+
+#: /usr/share/icingaweb2/application/forms/Config/General/ApplicationConfigForm.php:33
+msgid "Module Path"
+msgstr "Modulipolku"
+
+#: /usr/share/icingaweb2/application/views/scripts/config/modules.phtml:16
+msgid "Module is disabled"
+msgstr "Moduli on poistettu käytöstä"
+
+#: /usr/share/icingaweb2/application/views/scripts/config/modules.phtml:14
+msgid "Module is enabled"
+msgstr "Moduli on otettu käyttöön"
+
+#: /usr/share/icingaweb2/application/controllers/ConfigController.php:117
+#: /usr/share/icingaweb2/library/Icinga/Web/Menu.php:227
+msgid "Modules"
+msgstr "Modulit"
+
+#: /usr/share/icingaweb2/application/views/scripts/form/reorder-authbackend.phtml:30
+msgid "Move down in authentication order"
+msgstr "Siirrä alas tunnistautumisjärjestyksessä"
+
+#: /usr/share/icingaweb2/application/views/scripts/form/reorder-authbackend.phtml:25
+msgid "Move up in authentication order"
+msgstr "Siirrä ylös tunnistautumisjärjestyksessä"
+
+#: /usr/share/icingaweb2/application/views/scripts/config/module.phtml:18
+#: /usr/share/icingaweb2/application/views/scripts/roles/index.phtml:13
+msgid "Name"
+msgstr "Nimi"
+
+#: /usr/share/icingaweb2/application/views/scripts/pivottablePagination.phtml:16
+msgid "Navigation"
+msgstr "Ohjaus"
+
+#: /usr/share/icingaweb2/application/forms/Dashboard/DashletForm.php:98
+msgid "New Dashboard Title"
+msgstr "Uusi otsikko kojelautaan"
+
+#: /usr/share/icingaweb2/application/views/scripts/roles/index.phtml:68
+#: /usr/share/icingaweb2/application/views/scripts/roles/new.phtml:3
+msgid "New Role"
+msgstr "Uusi rooli"
+
+#: /usr/share/icingaweb2/application/forms/Config/AuthenticationBackendConfigForm.php:118
+msgid "New authentication backend name missing"
+msgstr "Uuden tunnistustaustajärjestelmän nimi puuttuu"
+
+#: /usr/share/icingaweb2/application/forms/Config/GeneralConfigForm.php:54
+msgid "New configuration has successfully been stored"
+msgstr "Uudet asetukset tallennettu"
+
+#: /usr/share/icingaweb2/application/forms/Dashboard/DashletForm.php:120
+msgid "New dashboard"
+msgstr "Uusi kojelauta"
+
+#: /usr/share/icingaweb2/application/forms/Config/ResourceConfigForm.php:89
+msgid "New resource name missing"
+msgstr "Uuden resurssin nimi puuttuu"
+
+#: /usr/share/icingaweb2/application/views/scripts/mixedPagination.phtml:86
+#: /usr/share/icingaweb2/application/views/scripts/mixedPagination.phtml:89
+#: /usr/share/icingaweb2/library/Icinga/Web/Wizard.php:606
+#: /usr/share/icingaweb2/library/Icinga/Web/Wizard.php:627
+msgid "Next"
+msgstr "Seuraava"
+
+#: /usr/share/icingaweb2/application/forms/LdapDiscoveryForm.php:38
+msgid ""
+"No Ldap servers found on this domain. You can try to specify host and port and try "
+"again, or just skip this step and configure the server manually."
+msgstr ""
+"Ldap-palvelinta ei löytynyt. Voit yrittää määrittää hostin ja portin uudelleen, tai "
+"ohittaa vaiheen ja konfiguroida palvelimen käsin."
+
+#: /usr/share/icingaweb2/application/controllers/AuthenticationController.php:104
+msgid ""
+"No authentication methods available. Did you create authentication.ini when setting up "
+"Icinga Web 2?"
+msgstr ""
+"Kirjautumiskeinoja ei löytynyt. Teitkö authentication.ini-tiedot kun asensit Icinga Web "
+"2:sen?"
+
+#: /usr/share/icingaweb2/application/views/scripts/dashboard/settings.phtml:37
+msgid "No dashlets added to dashboard"
+msgstr "Dashleteja ei lisätty kojelaudalle"
+
+#: /usr/share/icingaweb2/application/views/scripts/roles/index.phtml:8
+msgid "No roles found."
+msgstr "Rooleja ei löytynyt"
+
+#: /usr/share/icingaweb2/application/forms/Config/Authentication/DbBackendForm.php:111
+msgid "No users found under the specified database backend"
+msgstr "Käyttäjiä ei löytynyt taustajärjestelmän tietokannasta"
+
+#: /usr/share/icingaweb2/application/forms/Config/General/LoggingConfigForm.php:37
+msgctxt "app.config.logging.type"
+msgid "None"
+msgstr "Ei mitään"
+
+#: /usr/share/icingaweb2/application/forms/Config/AuthenticationBackendConfigForm.php:116
+msgid "Old authentication backend name missing"
+msgstr "Vanhan tunnistautumistaustajärjestelmän nimi puuttuu"
+
+#: /usr/share/icingaweb2/application/forms/Config/ResourceConfigForm.php:87
+msgid "Old resource name missing"
+msgstr "Vanha resurssinimi puuttuu"
+
+#: /usr/share/icingaweb2/application/forms/Config/Resource/LdapResourceForm.php:67
+msgid "Only the root and its child nodes will be accessible on this resource."
+msgstr "Vain root-node sekä siitä seuraavat nodet voivat käyttää tätä resurssia"
+
+#: /usr/share/icingaweb2/application/views/scripts/form/reorder-authbackend.phtml:6
+msgid "Order"
+msgstr "Järjestys"
+
+#: /usr/share/icingaweb2/application/views/scripts/mixedPagination.phtml:33
+msgid "Page"
+msgstr "Sivu"
+
+#: /usr/share/icingaweb2/application/controllers/ErrorController.php:36
+msgid "Page not found."
+msgstr "Sivua ei löydy"
+
+#: /usr/share/icingaweb2/application/views/scripts/mixedPagination.phtml:12
+msgid "Pagination"
+msgstr "Sivutus"
+
+#: /usr/share/icingaweb2/application/forms/Config/Resource/DbResourceForm.php:101
+#: /usr/share/icingaweb2/application/forms/Authentication/LoginForm.php:43
+msgid "Password"
+msgstr "Salasana"
+
+#: /usr/share/icingaweb2/library/Icinga/Web/Form/Validator/ReadablePathValidator.php:32
+msgid "Path does not exist"
+msgstr "Polkua ei ole"
+
+#: /usr/share/icingaweb2/library/Icinga/Web/Form/Validator/ReadablePathValidator.php:31
+msgid "Path is not readable"
+msgstr "Polkua ei voida lukea"
+
+#: /usr/share/icingaweb2/application/forms/Config/Resource/FileResourceForm.php:51
+msgid "Pattern"
+msgstr "Kaava"
+
+#: /usr/share/icingaweb2/application/views/scripts/config/module.phtml:54
+msgid "Permissions"
+msgstr "Oikeudet"
+
+#: /usr/share/icingaweb2/application/forms/Security/RoleForm.php:107
+msgid "Permissions Set"
+msgstr "Oikeuksien asettaminen"
+
+#: /usr/share/icingaweb2/application/views/scripts/dashboard/remove-dashlet.phtml:9
+msgid "Please confirm the removal"
+msgstr "Vahvista poisto"
+
+#: /usr/share/icingaweb2/application/views/scripts/dashboard/remove-pane.phtml:9
+msgid "Please confirm the removal of"
+msgstr "Vahvista poisto"
+
+#: /usr/share/icingaweb2/application/views/scripts/dashboard/error.phtml:4
+msgid "Please copy the following dashboard snippet to "
+msgstr "Kopioi seuraava kojelaudan kappale"
+
+#: /usr/share/icingaweb2/application/forms/Authentication/LoginForm.php:34
+msgid "Please enter your username..."
+msgstr "Anna käyttäjänimesi"
+
+#: /usr/share/icingaweb2/application/controllers/AuthenticationController.php:118
+msgid ""
+"Please note that not all authentication methods were available. Check the system log or "
+"Icinga Web 2 log for more information."
+msgstr ""
+"Ota huomioon, että kaikki kirjautumiskeinot eivät olleet mahdollisia. Tarkista "
+"järjestelmän logtiedosto tai Icinga Web 2:sen logtiedosto lisätietojen vuoksi."
+
+#: /usr/share/icingaweb2/application/views/scripts/search/hint.phtml:4
+msgid ""
+"Please use the asterisk (*) as a placeholder for wildcard searches. For convenience I'll "
+"always add a wildcard in front and after your search string."
+msgstr ""
+"Käytä asteriskia (*) jokerihauissa. Lisään varmuudeksi asteriskin haettavan merkkijonon "
+"eteen tai taakse."
+
+#: /usr/share/icingaweb2/application/forms/LdapDiscoveryForm.php:59
+#: /usr/share/icingaweb2/application/forms/LdapDiscoveryForm.php:60
+#: /usr/share/icingaweb2/application/forms/Config/Resource/LdapResourceForm.php:55
+#: /usr/share/icingaweb2/application/forms/Config/Resource/DbResourceForm.php:72
+msgid "Port"
+msgstr "Portti"
+
+#: /usr/share/icingaweb2/application/controllers/PreferenceController.php:28
+#: /usr/share/icingaweb2/library/Icinga/Web/Menu.php:243
+msgid "Preferences"
+msgstr "Asetukset"
+
+#: /usr/share/icingaweb2/application/forms/PreferenceForm.php:107
+msgid "Preferences successfully saved"
+msgstr "Asetukset tallennettu"
+
+#: /usr/share/icingaweb2/application/forms/PreferenceForm.php:109
+msgid "Preferences successfully saved for the current session"
+msgstr "Istunnon asetukset tallennettu"
+
+#: /usr/share/icingaweb2/application/views/scripts/mixedPagination.phtml:48
+#: /usr/share/icingaweb2/application/views/scripts/mixedPagination.phtml:51
+msgid "Prev"
+msgstr "Edellinen"
+
+#: /usr/share/icingaweb2/application/views/scripts/config/resource.phtml:13
+#: /usr/share/icingaweb2/application/views/scripts/form/reorder-authbackend.phtml:5
+#: /usr/share/icingaweb2/application/views/scripts/form/reorder-authbackend.phtml:19
+msgid "Remove"
+msgstr "Poista"
+
+#: /usr/share/icingaweb2/application/views/scripts/config/authentication/remove.phtml:4
+msgid "Remove Backend"
+msgstr "Poista taustajärjestelmä"
+
+#: /usr/share/icingaweb2/application/views/scripts/dashboard/remove-pane.phtml:6
+msgid "Remove Dashboard"
+msgstr "Poista kojelauta"
+
+#: /usr/share/icingaweb2/application/views/scripts/dashboard/remove-dashlet.phtml:6
+msgid "Remove Dashlet From Dashboard"
+msgstr "Poista dashlet kojelaudalta"
+
+#: /usr/share/icingaweb2/application/views/scripts/config/resource/remove.phtml:4
+msgid "Remove Existing Resource"
+msgstr "Poista olemassaoleva rooli"
+
+#: /usr/share/icingaweb2/application/controllers/RolesController.php:179
+msgid "Remove Role"
+msgstr "Poista rooli"
+
+#: /usr/share/icingaweb2/application/views/scripts/roles/remove.phtml:3
+#, php-format
+msgid "Remove Role %s"
+msgstr "Poista rooli %s"
+
+#: /usr/share/icingaweb2/application/views/scripts/roles/index.phtml:56
+#, php-format
+msgid "Remove role %s"
+msgstr "Poista rooli %s"
+
+#: /usr/share/icingaweb2/library/Icinga/Web/Widget/FilterWidget.php:98
+msgid "Remove this filter"
+msgstr "Poista suodatin"
+
+#: /usr/share/icingaweb2/application/controllers/RolesController.php:99
+#: /usr/share/icingaweb2/application/controllers/RolesController.php:148
+#, php-format
+msgid "Required parameter '%s' missing"
+msgstr "Tarvittava parametri '%s' puuttuu"
+
+#: /usr/share/icingaweb2/application/views/scripts/config/resource.phtml:12
+msgid "Resource"
+msgstr "Resurssi"
+
+#: /usr/share/icingaweb2/application/forms/Config/ResourceConfigForm.php:148
+#, php-format
+msgid "Resource \"%s\" has been successfully changed"
+msgstr "Resurssi \"%s\" muutettu"
+
+#: /usr/share/icingaweb2/application/forms/Config/ResourceConfigForm.php:145
+#, php-format
+msgid "Resource \"%s\" has been successfully created"
+msgstr "Resurssi \"%s\" luotu"
+
+#: /usr/share/icingaweb2/application/controllers/ConfigController.php:335
+#, php-format
+msgid "Resource \"%s\" has been successfully removed"
+msgstr "Resurssi \"%s\" poistettu"
+
+#: /usr/share/icingaweb2/application/forms/Config/Resource/LivestatusResourceForm.php:35
+#: /usr/share/icingaweb2/application/forms/Config/Resource/LdapResourceForm.php:34
+#: /usr/share/icingaweb2/application/forms/Config/Resource/DbResourceForm.php:43
+#: /usr/share/icingaweb2/application/forms/Config/Resource/FileResourceForm.php:32
+msgid "Resource Name"
+msgstr "Resurssin nimi"
+
+#: /usr/share/icingaweb2/application/forms/Config/ResourceConfigForm.php:229
+msgid "Resource Type"
+msgstr "Resurssin tyyppi"
+
+#: /usr/share/icingaweb2/application/forms/Config/ResourceConfigForm.php:66
+msgid "Resource already exists"
+msgstr "Resurssi on jo olemassa"
+
+#: /usr/share/icingaweb2/application/forms/Config/ResourceConfigForm.php:64
+#: /usr/share/icingaweb2/application/forms/Config/ResourceConfigForm.php:113
+#: /usr/share/icingaweb2/application/forms/Config/ResourceConfigForm.php:174
+msgid "Resource name missing"
+msgstr "Resurssin nimi puuttuu"
+
+#: /usr/share/icingaweb2/application/controllers/RolesController.php:40
+#: /usr/share/icingaweb2/application/controllers/ConfigController.php:56
+msgid "Resources"
+msgstr "Resurssit"
+
+#: /usr/share/icingaweb2/application/views/scripts/config/resource/create.phtml:5
+msgid "Resources are entities that provide data to Icinga Web 2."
+msgstr "Resurssit ovat kokonaisuuksia, jotka tuottavat tietoa Icinga Web 2:seen."
+
+#: /usr/share/icingaweb2/application/views/scripts/config/module.phtml:62
+msgid "Restrictions"
+msgstr "Rajoitukset"
+
+#: /usr/share/icingaweb2/application/forms/Security/RoleForm.php:82
+msgid "Role Name"
+msgstr "Roolin nimi"
+
+#: /usr/share/icingaweb2/application/controllers/RolesController.php:75
+msgid "Role created"
+msgstr "Rooli luotu"
+
+#: /usr/share/icingaweb2/application/controllers/RolesController.php:172
+msgid "Role removed"
+msgstr "Rooli poistettu"
+
+#: /usr/share/icingaweb2/application/controllers/RolesController.php:127
+msgid "Role updated"
+msgstr "Rooli päivitetty"
+
+#: /usr/share/icingaweb2/application/views/scripts/roles/index.phtml:3
+#: /usr/share/icingaweb2/application/controllers/RolesController.php:45
+#: /usr/share/icingaweb2/application/controllers/ConfigController.php:63
+msgid "Roles"
+msgstr "Roolit"
+
+#: /usr/share/icingaweb2/application/forms/Config/Resource/LdapResourceForm.php:65
+msgid "Root DN"
+msgstr "Juuri DN"
+
+#: /usr/share/icingaweb2/application/forms/Config/ResourceConfigForm.php:220
+msgid "SQL Database"
+msgstr "SQL-tietokanta"
+
+#: /usr/share/icingaweb2/application/forms/Config/ResourceConfigForm.php:24
+#: /usr/share/icingaweb2/application/forms/Config/GeneralConfigForm.php:22
+#: /usr/share/icingaweb2/application/forms/Config/AuthenticationBackendConfigForm.php:33
+msgid "Save Changes"
+msgstr "Tallenna muutokset"
+
+#: /usr/share/icingaweb2/application/forms/PreferenceForm.php:208
+msgid "Save for the current Session"
+msgstr "Tallenna istunto"
+
+#: /usr/share/icingaweb2/application/forms/PreferenceForm.php:194
+msgid "Save to the Preferences"
+msgstr "Tallenna asetuksiin"
+
+#: /usr/share/icingaweb2/application/views/scripts/showConfiguration.phtml:2
+msgid "Saving Configuration Failed"
+msgstr "Asetusten tallennus epäonnistui"
+
+#: /usr/share/icingaweb2/library/Icinga/Web/Widget/SearchDashboard.php:63
+msgid "Search"
+msgstr "Etsi"
+
+#: /usr/share/icingaweb2/application/forms/LdapDiscoveryForm.php:28
+msgid "Search Domain"
+msgstr "Etsi domainista"
+
+#: /usr/share/icingaweb2/application/forms/LdapDiscoveryForm.php:29
+msgid "Search this domain for records of available servers."
+msgstr "Etsi domainista tiedot saatavissa olevista palvelimista"
+
+#: /usr/share/icingaweb2/application/views/scripts/layout/menu.phtml:8
+#: /usr/share/icingaweb2/library/Icinga/Web/Widget/FilterEditor.php:655
+msgid "Search..."
+msgstr "Etsi..."
+
+#: /usr/share/icingaweb2/application/forms/Dashboard/DashletForm.php:110
+msgid "Select a pane you want to add the dashlet."
+msgstr "Valitse ruutu minkä haluat lisätä dashletiin"
+
+#: /usr/share/icingaweb2/application/views/scripts/joystickPagination.phtml:54
+#: /usr/share/icingaweb2/application/views/scripts/joystickPagination.phtml:71
+#: /usr/share/icingaweb2/application/views/scripts/pivottablePagination.phtml:35
+msgid "Services"
+msgstr "Palvelut"
+
+#: /usr/share/icingaweb2/library/Icinga/Web/Widget/Tabextension/DashboardSettings.php:34
+msgid "Settings"
+msgstr "Asetukset"
+
+#: /usr/share/icingaweb2/library/Icinga/Web/Widget/Limiter.php:83
+#, php-format
+msgid "Show %s rows on one page"
+msgstr "Näytä %s riviä sivulla"
+
+#: /usr/share/icingaweb2/application/views/scripts/mixedPagination.phtml:16
+#, php-format
+msgid "Show rows %d to %d of %d"
+msgstr "Näytä %d:n rivit %d:sta %d:hen "
+
+#: /usr/share/icingaweb2/application/forms/Config/Resource/LivestatusResourceForm.php:44
+msgid "Socket"
+msgstr "Socket"
+
+#: /usr/share/icingaweb2/application/views/scripts/showConfiguration.phtml:14
+msgid "Something went wrong while writing the file"
+msgstr "Jotain meni pieleen tiedoston tallennuksessa"
+
+#: /usr/share/icingaweb2/application/views/scripts/config/module.phtml:22
+msgid "State"
+msgstr "Tila"
+
+#: /usr/share/icingaweb2/library/Icinga/Web/Widget/FilterEditor.php:339
+msgid "Strip this filter"
+msgstr "Riisu suodatin"
+
+#: /usr/share/icingaweb2/library/Icinga/Web/Menu.php:219
+msgid "System"
+msgstr "System"
+
+#: /usr/share/icingaweb2/application/views/scripts/authentication/login.phtml:34
+msgid "The Icinga Project"
+msgstr "The Icinga Project"
+
+#: /usr/share/icingaweb2/application/views/scripts/authentication/login.phtml:4
+msgid "The Icinga logo"
+msgstr "Icingan logo"
+
+#: /usr/share/icingaweb2/application/forms/Config/Authentication/LdapBackendForm.php:91
+msgid "The attribute name used for storing the user name on the ldap server"
+msgstr "Ominaisuuden nimi, millä käyttäjänimi tallennetaan ldap-palvelimelle"
+
+#: /usr/share/icingaweb2/application/forms/Config/Authentication/DbBackendForm.php:68
+msgid "The database connection to use for authenticating with this provider"
+msgstr "Tietokantayhteys, jota käytetään toimittajan tunnistautumiseen"
+
+#: /usr/share/icingaweb2/application/views/scripts/showConfiguration.phtml:5
+#, php-format
+msgid "The file %s couldn't be stored. (Error: \"%s\")"
+msgstr "Tiedostoa %s ei voitu tallentaa. (Virhe: \"%s\")"
+
+#: /usr/share/icingaweb2/application/forms/Config/Resource/FileResourceForm.php:42
+msgid "The filename to fetch information from"
+msgstr "Tiedostonimi josta tieto poimitaan"
+
+#: /usr/share/icingaweb2/application/forms/Config/General/LoggingConfigForm.php:108
+msgid "The full path to the log file to write messages to."
+msgstr "Logitiedoston polku, mihin viestit kirjoitetaan"
+
+#: /usr/share/icingaweb2/application/forms/Config/Resource/DbResourceForm.php:63
+msgid "The hostname of the database"
+msgstr "Tietokantahostin nimi"
+
+#: /usr/share/icingaweb2/application/forms/Config/Resource/LdapResourceForm.php:45
+msgid "The hostname or address of the LDAP server to use for authentication"
+msgstr "LDAP-palvelimen nimi tai osoite, mitä haluat käyttää todennuksessa"
+
+#: /usr/share/icingaweb2/application/forms/Config/General/LoggingConfigForm.php:49
+msgid "The maximum logging level to emit."
+msgstr "Korkein logtaso, mikä lähtetään"
+
+#: /usr/share/icingaweb2/application/forms/Config/General/LoggingConfigForm.php:68
+msgid "The name of the application by which to prefix syslog messages."
+msgstr "Sovelluksen nimi etuliitteeksi syslogtietoihin"
+
+#: /usr/share/icingaweb2/application/forms/Config/Resource/DbResourceForm.php:83
+msgid "The name of the database to use"
+msgstr "Käytettävän tietokannan nimi"
+
+#: /usr/share/icingaweb2/application/forms/Security/RoleForm.php:83
+msgid "The name of the role"
+msgstr "Roolin nimi"
+
+#: /usr/share/icingaweb2/application/forms/Config/Authentication/LdapBackendForm.php:58
+#: /usr/share/icingaweb2/application/forms/Config/Authentication/ExternalBackendForm.php:34
+#: /usr/share/icingaweb2/application/forms/Config/Authentication/DbBackendForm.php:57
+msgid ""
+"The name of this authentication provider that is used to differentiate it from others"
+msgstr "Tunnistautumisen toimittajan nimi"
+
+#: /usr/share/icingaweb2/application/forms/Config/Authentication/LdapBackendForm.php:80
+msgid "The object class used for storing users on the ldap server"
+msgstr "Käytettävä objektiluokka tallentaessa käyttäjiä ldap-palvelimelle"
+
+#: /usr/share/icingaweb2/application/forms/Config/Resource/DbResourceForm.php:102
+msgid "The password to use for authentication"
+msgstr "Tunnistautumiseen käytettävä salasana"
+
+#: /usr/share/icingaweb2/application/forms/Config/Resource/LdapResourceForm.php:87
+msgid "The password to use for querying the ldap server"
+msgstr "LDAP-palvelinkyselyihin käytettävä salasana"
+
+#: /usr/share/icingaweb2/application/forms/Config/Resource/LivestatusResourceForm.php:45
+msgid "The path to your livestatus socket used for querying monitoring data"
+msgstr "Polku livestatus-socketiin valvontadatan kyselyä varten"
+
+#: /usr/share/icingaweb2/application/forms/Config/Authentication/LdapBackendForm.php:111
+msgid ""
+"The path where users can be found on the ldap server. Leave empty to select all users "
+"available on the specified resource."
+msgstr ""
+"LDAP-palvelimen polku, mistä käyttäjät löytyvät. Voit jättää tyhjäksi, jos haluat valita "
+"kaikki käyttäjät."
+
+#: /usr/share/icingaweb2/application/forms/Security/RoleForm.php:109
+msgid "The permissions to grant. You may select more than one permission"
+msgstr "Myönnettävät oikeudet. Voit valita useamman kuin yhden oikeuden"
+
+#: /usr/share/icingaweb2/application/forms/Config/Resource/LdapResourceForm.php:56
+msgid "The port of the LDAP server to use for authentication"
+msgstr "Käytettävä portti LDAP-palvelimessa"
+
+#: /usr/share/icingaweb2/application/forms/Config/Resource/DbResourceForm.php:73
+msgid "The port to use"
+msgstr "Käytettävä portti"
+
+#: /usr/share/icingaweb2/application/forms/Config/Resource/FileResourceForm.php:52
+msgid "The regular expression by which to identify columns"
+msgstr "Säännöllinen lauseke sarakkeiden tunnistamista varten"
+
+#: /usr/share/icingaweb2/application/forms/Config/Authentication/ExternalBackendForm.php:56
+msgid ""
+"The regular expression to use to strip specific parts off from usernames. Leave empty if "
+"you do not want to strip off anything"
+msgstr ""
+"Säännöllinen lauseke vaaditaan jos haluat jättää pois tiettyjä osia käyttäjänimistä. "
+"Jätä tyhjäksi ellet halua jättää pois mitään."
+
+#: /usr/share/icingaweb2/application/controllers/ConfigController.php:351
+#, php-format
+msgid ""
+"The resource \"%s\" is currently in use by the authentication backend \"%s\". Removing "
+"the resource can result in noone being able to log in any longer."
+msgstr ""
+"Resurssi \"%s\" on käytössä taustajärjestelmässä \"%s\". Resurssin poistaminen aiheuttaa "
+"sen, ettei kukaan pääse kirjautumaan."
+
+#: /usr/share/icingaweb2/application/forms/Config/Authentication/LdapBackendForm.php:68
+msgid "The resource to use for authenticating with this provider"
+msgstr "Resurssi tunnistautumiseen"
+
+#: /usr/share/icingaweb2/application/forms/Config/Resource/DbResourceForm.php:53
+msgid "The type of SQL database"
+msgstr "SQL-kannan tyyppi"
+
+#: /usr/share/icingaweb2/application/forms/Config/General/LoggingConfigForm.php:33
+msgid "The type of logging to utilize."
+msgstr "Käytettävä login tyyppi"
+
+#: /usr/share/icingaweb2/application/forms/Config/ResourceConfigForm.php:230
+msgid "The type of resource"
+msgstr "Resurssin tyyppi"
+
+#: /usr/share/icingaweb2/application/forms/Config/AuthenticationBackendConfigForm.php:324
+msgid "The type of the resource to use for this authenticaton provider"
+msgstr "Resurssin tyyppi, jotka käytetään tunnistautumisen toimittajalla"
+
+#: /usr/share/icingaweb2/application/forms/Config/Resource/LivestatusResourceForm.php:36
+#: /usr/share/icingaweb2/application/forms/Config/Resource/LdapResourceForm.php:35
+#: /usr/share/icingaweb2/application/forms/Config/Resource/DbResourceForm.php:44
+#: /usr/share/icingaweb2/application/forms/Config/Resource/FileResourceForm.php:33
+msgid "The unique name of this resource"
+msgstr "Resurssin nimi"
+
+#: /usr/share/icingaweb2/application/forms/Config/Resource/LdapResourceForm.php:77
+msgid "The user dn to use for querying the ldap server"
+msgstr "LDAP-palvelin kyselyissä käytettävä user dn"
+
+#: /usr/share/icingaweb2/application/forms/Config/Resource/DbResourceForm.php:92
+msgid "The user name to use for authentication"
+msgstr "Käyttäjätunnus kirjautumiseen"
+
+#: /usr/share/icingaweb2/application/views/scripts/config/module.phtml:7
+msgid "There is no such module installed."
+msgstr "Modulia ei ole asennettu."
+
+#: /usr/share/icingaweb2/application/views/scripts/showConfiguration.phtml:15
+msgid "There's an application error preventing you from persisting the configuration"
+msgstr "Sovelluksessa on virhe, mikä estää käyttämästä konfiguraatiota."
+
+#: /usr/share/icingaweb2/application/views/scripts/showConfiguration.phtml:10
+msgid "This could have one or more of the following reasons:"
+msgstr "Tämä on voinut tapahtua seuraavista syistä:"
+
+#: /usr/share/icingaweb2/application/views/scripts/config/module.phtml:46
+msgid "This module has no dependencies"
+msgstr "Modulilla ei ole riippuvuutta"
+
+#: /usr/share/icingaweb2/library/Icinga/Application/Modules/Module.php:500
+msgid "This module has no description"
+msgstr "Modulilla ei ole selitettä"
+
+#: /usr/share/icingaweb2/application/views/scripts/config/devtools.phtml:5
+msgid "UI Debug"
+msgstr "UI Debug"
+
+#: /usr/share/icingaweb2/application/forms/Config/Authentication/LdapBackendForm.php:152
+#, php-format
+msgid "Unable to validate authentication: %s"
+msgstr "Ei voi todentaa autentikointia %s"
+
+#: /usr/share/icingaweb2/application/forms/Config/AuthenticationBackendConfigForm.php:120
+#: /usr/share/icingaweb2/application/forms/Config/AuthenticationBackendConfigForm.php:148
+#: /usr/share/icingaweb2/application/forms/Config/AuthenticationBackendConfigForm.php:171
+#: /usr/share/icingaweb2/application/forms/Config/AuthenticationBackendConfigForm.php:241
+msgid "Unknown authentication backend provided"
+msgstr "Tuntematon todennus backendillä"
+
+#: /usr/share/icingaweb2/application/forms/Config/ResourceConfigForm.php:91
+#: /usr/share/icingaweb2/application/forms/Config/ResourceConfigForm.php:115
+#: /usr/share/icingaweb2/application/forms/Config/ResourceConfigForm.php:176
+msgid "Unknown resource provided"
+msgstr "Tuntematon lähde"
+
+#: /usr/share/icingaweb2/application/controllers/DashboardController.php:80
+msgid "Update Dashlet"
+msgstr "Päivitä Dashlet"
+
+#: /usr/share/icingaweb2/application/controllers/RolesController.php:104
+msgid "Update Role"
+msgstr "Päivitä rooli"
+
+#: /usr/share/icingaweb2/application/views/scripts/roles/update.phtml:3
+#, php-format
+msgid "Update Role %s"
+msgstr "Päivitä rooli %s"
+
+#: /usr/share/icingaweb2/application/forms/Dashboard/DashletForm.php:68
+#: /usr/share/icingaweb2/application/views/scripts/dashboard/settings.phtml:16
+msgid "Url"
+msgstr "Url"
+
+#: /usr/share/icingaweb2/application/forms/PreferenceForm.php:184
+msgid "Use benchmark"
+msgstr "Käytä testiä"
+
+#: /usr/share/icingaweb2/application/forms/PreferenceForm.php:161
+msgid "Use the following language to display texts and messages"
+msgstr "Käytä seuraavaa kieltä näyttääksesi tekstit ja viestit"
+
+#: /usr/share/icingaweb2/application/forms/PreferenceForm.php:173
+msgid "Use the following timezone for dates and times"
+msgstr "Käytä seuraavaa aikavyöhykettä päivämääriin ja kellonaikoihin"
+
+#: /usr/share/icingaweb2/application/forms/Config/General/ApplicationConfigForm.php:50
+msgid "User Preference Storage Type"
+msgstr "Ensisijainen tallennustila"
+
+#: /usr/share/icingaweb2/application/forms/Config/Resource/DbResourceForm.php:91
+#: /usr/share/icingaweb2/application/forms/Authentication/LoginForm.php:33
+msgid "Username"
+msgstr "Käyttäjänimi"
+
+#: /usr/share/icingaweb2/application/forms/Security/RoleForm.php:91
+#: /usr/share/icingaweb2/application/views/scripts/roles/index.phtml:16
+msgid "Users"
+msgstr "Käyttäjät"
+
+#: /usr/share/icingaweb2/application/forms/Config/Authentication/DbBackendForm.php:115
+#, php-format
+msgid "Using the specified backend failed: %s"
+msgstr "Backendin %s käyttäminen epäonnistui"
+
+#: /usr/share/icingaweb2/application/views/scripts/config/module.phtml:35
+msgid "Version"
+msgstr "Versio"
+
+#: /usr/share/icingaweb2/application/forms/Config/General/LoggingConfigForm.php:52
+msgctxt "app.config.logging.level"
+msgid "Warning"
+msgstr "Varoitus"
+
+#: /usr/share/icingaweb2/application/views/scripts/authentication/login.phtml:25
+msgid "Welcome to Icinga Web 2"
+msgstr "Tervetuloa Icinga Web 2:seen"
+
+#: /usr/share/icingaweb2/application/views/scripts/dashboard/index.phtml:10
+msgid "Welcome to Icinga Web!"
+msgstr "Tervetuloa Icinga Webiin!"
+
+#: /usr/share/icingaweb2/application/views/scripts/showConfiguration.phtml:13
+msgid "You don't have file-system permissions to write to the file"
+msgstr "Sinulla ei ole oikeuksia tiedostojärjestelmässä kirjoittaa tiedostoon"
+
+#: /usr/share/icingaweb2/application/views/scripts/authentication/login.phtml:21
+msgid ""
+"You're currently not authenticated using any of the web server's authentication "
+"mechanisms. Make sure you'll configure such, otherwise you'll not be able to login."
+msgstr ""
+"Et ole kirjautunut millään palvelimen autentikointitavoista. Tarkista, että olet "
+"konfiguroinut jonkin niistä, muuten et voi kirjautua sisään."
+
+#: /usr/share/icingaweb2/application/forms/PreferenceForm.php:160
+msgid "Your Current Language"
+msgstr "Kielesi"
+
+#: /usr/share/icingaweb2/application/forms/PreferenceForm.php:172
+msgid "Your Current Timezone"
+msgstr "Aikavyöhykkeesi"
+
+#: /usr/share/icingaweb2/library/Icinga/Web/Widget/Limiter.php:57
+msgid "all"
+msgstr "kaikki"
+
+#: /usr/share/icingaweb2/application/views/scripts/config/module.phtml:24
+msgid "disable"
+msgstr "poista käytöstä"
+
+#: /usr/share/icingaweb2/application/views/scripts/config/modules.phtml:22
+msgid "disabled"
+msgstr "poistettu käytöstä"
+
+#: /usr/share/icingaweb2/application/views/scripts/config/module.phtml:29
+msgid "enable"
+msgstr "ota käyttöön"
+
+#: /usr/share/icingaweb2/application/views/scripts/config/modules.phtml:22
+msgid "enabled"
+msgstr "otettu käyttöön"
+
+#: /usr/share/icingaweb2/application/views/scripts/config/modules.phtml:22
+msgid "failed"
+msgstr "epäonnistui"
+
+#: /usr/share/icingaweb2/library/Icinga/Util/Format.php:82
+#: /usr/share/icingaweb2/library/Icinga/Util/Format.php:88
+msgid "for"
+msgstr "for"
+
+#: /usr/share/icingaweb2/application/views/scripts/dashboard/index.phtml:14
+msgid "modules"
+msgstr "modulit"
+
+#: /usr/share/icingaweb2/library/Icinga/Util/Format.php:86
+#: /usr/share/icingaweb2/library/Icinga/Util/Format.php:108
+#: /usr/share/icingaweb2/library/Icinga/Util/Format.php:110
+msgid "since"
+msgstr "asti"
+
+#: /usr/share/icingaweb2/application/views/scripts/config/devtools.phtml:5
+msgid "toggle"
+msgstr "vaihda"
+
+msgid "Lorem ipsum dolor sit amet"
+msgstr "Lorem ipsum dolor sit amet"

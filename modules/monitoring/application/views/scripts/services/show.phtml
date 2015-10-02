@@ -1,10 +1,13 @@
-<div data-base-target='_next' class="controls">
+<div class="controls">
 
     <?php if (! $this->compact): ?>
         <?= $tabs; ?>
     <?php endif ?>
 
-    <?= $this->render('list/components/servicesummary.phtml') ?>
+
+    <h2 class="tinystatesummary" <?= $this->compact ? ' data-base-target="col1"' : ''; ?>
+        <?= $this->render('list/components/servicesummary.phtml') ?>
+    </h2>
     <?= $this->render('partials/service/objects-header.phtml'); ?>
 
 </div>

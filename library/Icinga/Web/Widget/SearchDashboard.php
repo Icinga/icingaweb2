@@ -12,20 +12,70 @@ use Icinga\Web\Url;
  */
 class SearchDashboard extends Dashboard
 {
+    /**
+     * Name for the search pane
+     *
+     * @var string
+     */
     const SEARCH_PANE = 'search';
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getTabs()
+    {
+        if ($this->tabs === null) {
+            $this->tabs = new Tabs();
+            $this->tabs->add(
+                'search',
+                array(
+                    'title' => t('Show Search', 'dashboard.pane.tooltip'),
+                    'label' => t('Search'),
+                    'url'   => Url::fromRequest()
+                )
+            );
+        }
+        return $this->tabs;
+    }
 
     /**
      * Load all available search dashlets from modules
      *
      * @param   string $searchString
      *
-     * @return  Dashboard|SearchDashboard
+     * @return  $this
      */
-    public static function search($searchString = '')
+    public function search($searchString = '')
     {
-        $dashboard = new static('searchDashboard');
-        $dashboard->loadSearchDashlets($searchString);
-        return $dashboard;
+        $pane = $this->createPane(self::SEARCH_PANE)->getPane(self::SEARCH_PANE)->setTitle(t('Search'));
+        $this->activate(self::SEARCH_PANE);
+
+        $manager = Icinga::app()->getModuleManager();
+        $searchUrls = array();
+
+        foreach ($manager->getLoadedModules() as $module) {
+            if ($this->getUser()->can($manager::MODULE_PERMISSION_NS . $module->getName())) {
+                $moduleSearchUrls = $module->getSearchUrls();
+                if (! empty($moduleSearchUrls)) {
+                    if ($searchString === '') {
+                        $pane->add(t('Ready to search'), 'search/hint');
+                        return $this;
+                    }
+                    $searchUrls = array_merge($searchUrls, $moduleSearchUrls);
+                }
+            }
+        }
+
+        usort($searchUrls, array($this, 'compareSearchUrls'));
+
+        foreach (array_reverse($searchUrls) as $searchUrl) {
+            $pane->createDashlet(
+                $searchUrl->title . ': ' . $searchString,
+                Url::fromPath($searchUrl->url, array('q' => $searchString))
+            )->setProgressLabel(t('Searching'));
+        }
+
+        return $this;
     }
 
     /**
@@ -41,40 +91,6 @@ class SearchDashboard extends Dashboard
             throw new Zend_Controller_Action_Exception(t('Page not found'), 404);
         }
         return parent::render();
-    }
-
-    /**
-     * Loads search dashlets
-     *
-     * @param string $searchString
-     */
-    protected function loadSearchDashlets($searchString)
-    {
-        $pane = $this->createPane(self::SEARCH_PANE)->getPane(self::SEARCH_PANE)->setTitle(t('Search'));
-        $this->activate(self::SEARCH_PANE);
-
-        $manager = Icinga::app()->getModuleManager();
-        $searchUrls = array();
-
-        foreach ($manager->getLoadedModules() as $module) {
-            $moduleSearchUrls = $module->getSearchUrls();
-            if (! empty($moduleSearchUrls)) {
-                if ($searchString === '') {
-                    $pane->add(t('Ready to search'), 'search/hint');
-                    return;
-                }
-                $searchUrls = array_merge($searchUrls, $moduleSearchUrls);
-            }
-        }
-
-        usort($searchUrls, array($this, 'compareSearchUrls'));
-
-        foreach (array_reverse($searchUrls) as $searchUrl) {
-            $pane->addDashlet(
-                $searchUrl->title . ': ' . $searchString,
-                Url::fromPath($searchUrl->url, array('q' => $searchString))
-            );
-        }
     }
 
     /**

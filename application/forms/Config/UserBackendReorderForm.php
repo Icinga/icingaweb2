@@ -3,9 +3,10 @@
 
 namespace Icinga\Forms\Config;
 
-use InvalidArgumentException;
-use Icinga\Web\Notification;
+use Icinga\Application\Config;
 use Icinga\Forms\ConfigForm;
+use Icinga\Exception\NotFoundError;
+use Icinga\Web\Notification;
 
 class UserBackendReorderForm extends ConfigForm
 {
@@ -29,7 +30,19 @@ class UserBackendReorderForm extends ConfigForm
     }
 
     /**
-     * @see Form::createElements()
+     * Return the ordered backend configuration
+     *
+     * @return Config
+     */
+    public function getConfig()
+    {
+        return $this->config;
+    }
+
+    /**
+     * Create and add elements to this form
+     *
+     * @param   array   $formData
      */
     public function createElements(array $formData)
     {
@@ -39,8 +52,6 @@ class UserBackendReorderForm extends ConfigForm
 
     /**
      * Update the user backend order and save the configuration
-     *
-     * @see Form::onSuccess()
      */
     public function onSuccess()
     {
@@ -55,8 +66,8 @@ class UserBackendReorderForm extends ConfigForm
                 } else {
                     return false;
                 }
-            } catch (InvalidArgumentException $e) {
-                Notification::error($e->getMessage());
+            } catch (NotFoundError $_) {
+                 Notification::error(sprintf($this->translate('User backend "%s" not found'), $backendName));
             }
         }
     }

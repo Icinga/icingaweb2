@@ -8,24 +8,10 @@ class Notification extends DataView
     /**
      * {@inheritdoc}
      */
-    public function isValidFilterTarget($column)
-    {
-        if ($column[0] === '_'
-            && preg_match('/^_(?:host|service)_/', $column)
-        ) {
-            return true;
-        }
-        return parent::isValidFilterTarget($column);
-    }
-
-    /**
-     * Retrieve columns provided by this view
-     *
-     * @return array
-     */
     public function getColumns()
     {
         return array(
+            'instance_name',
             'notification_state',
             'notification_start_time',
             'notification_contact_name',
@@ -74,7 +60,7 @@ class Notification extends DataView
     /**
      * {@inheritdoc}
      */
-    public function getFilterColumns()
+    public function getStaticFilterColumns()
     {
         return array(
             'contact',
@@ -90,6 +76,6 @@ class Notification extends DataView
      */
     public function getSearchColumns()
     {
-        return array('contact', 'host', 'host_display_name', 'service', 'service_display_name');
+        return array('host_display_name', 'service_display_name');
     }
 }

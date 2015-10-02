@@ -32,7 +32,7 @@ namespace Icinga\Test {
     /**
      * Class BaseTestCase
      */
-    class BaseTestCase extends PHPUnit_Framework_TestCase implements DbTest
+    abstract class BaseTestCase extends PHPUnit_Framework_TestCase implements DbTest
     {
         /**
          * Path to application/
@@ -180,7 +180,7 @@ namespace Icinga\Test {
          */
         public function getRequestMock()
         {
-            return Icinga::app()->getFrontController()->getRequest();
+            return Icinga::app()->getRequest();
         }
 
         /**

@@ -42,13 +42,15 @@
         /**
          * Load the given URL to the given target
          *
-         * @param {string} url     URL to be loaded
-         * @param {object} target  Target jQuery element
-         * @param {object} data    Optional parameters, usually for POST requests
-         * @param {string} method  HTTP method, default is 'GET'
-         * @param {string} action  How to handle the response ('replace' or 'append'), default is 'replace'
+         * @param {string}  url             URL to be loaded
+         * @param {object}  target          Target jQuery element
+         * @param {object}  data            Optional parameters, usually for POST requests
+         * @param {string}  method          HTTP method, default is 'GET'
+         * @param {string}  action          How to handle the response ('replace' or 'append'), default is 'replace'
+         * @param {boolean} autorefresh     Whether the cause is a autorefresh or not
+         * @param {object}  progressTimer   A timer to be stopped when the request is done
          */
-        loadUrl: function (url, $target, data, method, action, autorefresh) {
+        loadUrl: function (url, $target, data, method, action, autorefresh, progressTimer) {
             var id = null;
 
             // Default method is GET
@@ -74,11 +76,13 @@
                 if (autorefresh) {
                     return false;
                 }
-                // ...ignore the new request if it is already pending with the same URL
-                if (this.requests[id].url === url) {
+                // ... ignore the new request if it is already pending with the same URL. Only abort GETs, as those
+                // are the only methods that are guaranteed to return the same value
+                if (this.requests[id].url === url && method === 'GET') {
                     this.icinga.logger.debug('Request to ', url, ' is already running for ', $target);
                     return this.requests[id];
                 }
+
                 // ...or abort the former request otherwise
                 this.icinga.logger.debug(
                     'Aborting pending request loading ',
@@ -100,13 +104,25 @@
                 headers['X-Icinga-WindowId'] = 'undefined';
             }
 
+            // This is jQuery's default content type
+            var contentType = 'application/x-www-form-urlencoded; charset=UTF-8';
+
+            var isFormData = typeof window.FormData !== 'undefined' && data instanceof window.FormData;
+            if (isFormData) {
+                // Setting false is mandatory as the form's data
+                // won't be recognized by the server otherwise
+                contentType = false;
+            }
+
             var self = this;
             var req = $.ajax({
                 type   : method,
                 url    : url,
                 data   : data,
                 headers: headers,
-                context: self
+                context: self,
+                contentType: contentType,
+                processData: ! isFormData
             });
 
             req.$target = $target;
@@ -117,6 +133,7 @@
             req.autorefresh = autorefresh;
             req.action = action;
             req.addToHistory = true;
+            req.progressTimer = progressTimer;
 
             if (id) {
                 this.requests[id] = req;
@@ -126,6 +143,41 @@
             }
             this.icinga.ui.refreshDebug();
             return req;
+        },
+
+        /**
+         * Mimic XHR form submission by using an iframe
+         *
+         * @param {object} $form    The form being submitted
+         * @param {string} action   The form's action URL
+         * @param {object} $target  The target container
+         */
+        submitFormToIframe: function ($form, action, $target) {
+            var self = this;
+
+            $form.prop('action', self.icinga.utils.addUrlParams(action, {
+                '_frameUpload': true
+            }));
+            $form.prop('target', 'fileupload-frame-target');
+            $('#fileupload-frame-target').on('load', function (event) {
+                var $frame = $(event.target);
+                var $contents = $frame.contents();
+
+                var $redirectMeta = $contents.find('meta[name="redirectUrl"]');
+                if ($redirectMeta.length) {
+                    self.redirectToUrl($redirectMeta.attr('content'), $target);
+                } else {
+                    // Fetch the frame's new content and paste it into the target
+                    self.renderContentToContainer(
+                        $contents.find('body').html(),
+                        $target,
+                        'replace'
+                    );
+                }
+
+                $frame.prop('src', 'about:blank'); // Clear the frame's dom
+                $frame.off('load'); // Unbind the event as it's set on demand
+            });
         },
 
         /**
@@ -279,47 +331,70 @@
                 }
             }
 
+            this.redirectToUrl(redirect, req.$target, req.url, req.getResponseHeader('X-Icinga-Rerender-Layout'));
+            return true;
+        },
+
+        /**
+         * Redirect to the given url
+         *
+         * @param {string}  url
+         * @param {object}  $target
+         * @param {string]  origin
+         * @param {boolean} rerenderLayout
+         */
+        redirectToUrl: function (url, $target, origin, rerenderLayout) {
+            var icinga = this.icinga;
+
+            if (typeof rerenderLayout === 'undefined') {
+                rerenderLayout = false;
+            }
+
             icinga.logger.debug(
-                'Got redirect for ', req.$target, ', URL was ' + redirect
+                'Got redirect for ', $target, ', URL was ' + url
             );
 
-            if (req.getResponseHeader('X-Icinga-Rerender-Layout')) {
-                var parts = redirect.split(/#!/);
-                redirect = parts.shift();
-                var redirectionUrl = this.addUrlFlag(redirect, 'renderLayout');
+            if (rerenderLayout) {
+                var parts = url.split(/#!/);
+                url = parts.shift();
+                var redirectionUrl = this.addUrlFlag(url, 'renderLayout');
                 var r = this.loadUrl(redirectionUrl, $('#layout'));
-                r.url = redirect;
+                r.historyUrl = url;
                 if (parts.length) {
                     r.loadNext = parts;
                 } else if (!! document.location.hash) {
                     // Retain detail URL if the layout is rerendered
                     parts = document.location.hash.split('#!').splice(1);
                     if (parts.length) {
-                        r.loadNext = parts;
+                        r.loadNext = $.grep(parts, function (url) {
+                            if (url !== origin) {
+                                icinga.logger.debug('Retaining detail url ' + url);
+                                return true;
+                            }
+
+                            icinga.logger.debug('Discarding detail url ' + url + ' as it\'s the origin of the redirect');
+                            return false;
+                        });
                     }
                 }
-
             } else {
-
-                if (redirect.match(/#!/)) {
-                    var parts = redirect.split(/#!/);
+                if (url.match(/#!/)) {
+                    var parts = url.split(/#!/);
                     icinga.ui.layout2col();
                     this.loadUrl(parts.shift(), $('#col1'));
                     this.loadUrl(parts.shift(), $('#col2'));
                 } else {
-
-                    if (req.$target.attr('id') === 'col2') { // TODO: multicol
-                        if ($('#col1').data('icingaUrl').split('?')[0] === redirect.split('?')[0]) {
+                    if ($target.attr('id') === 'col2') { // TODO: multicol
+                        if ($('#col1').data('icingaUrl').split('?')[0] === url.split('?')[0]) {
                             icinga.ui.layout1col();
-                            req.$target = $('#col1');
+                            $target = $('#col1');
                             delete(this.requests['col2']);
                         }
                     }
 
-                    this.loadUrl(redirect, req.$target);
+                    this.loadUrl(url, $target);
                 }
             }
-            return true;
         },
 
         cacheLoadedIcons: function($container) {
@@ -361,7 +436,9 @@
                 this.icinga.ui.reloadCss();
             }
 
-            if (req.getResponseHeader('X-Icinga-Redirect')) return;
+            if (req.getResponseHeader('X-Icinga-Redirect')) {
+                return;
+            }
 
             // div helps getting an XML tree
             var $resp = $('<div>' + req.responseText + '</div>');
@@ -452,8 +529,6 @@
                     var $el = $(el);
                     if ($el.hasClass('dashboard')) {
                         return;
-                    } else {
-
                     }
                     var url = $el.data('icingaUrl');
                     targets[i].data('icingaUrl', url);
@@ -470,28 +545,13 @@
 
             this.icinga.ui.initializeTriStates($resp);
 
-            /* Should we try to fiddle with responses containing full HTML? */
-            /*
-            if ($('body', $resp).length) {
-                req.responseText = $('script', $('body', $resp).html()).remove();
+            if (rendered) {
+                return;
             }
-            */
-            /*
 
-            var containers = [];
-
-            $('.dashboard .container').each(function(idx, el) {
-              urls.push($(el).data('icingaUrl'));
-            });
-            console.log(urls);
-                  $('.container[data-icinga-refresh]').each(function(idx, el) {
-                    var $el = $(el);
-                    self.loadUrl($el.data('icingaUrl'), $el).autorefresh = true;
-                    el = null;
-                  });
-            */
-
-            if (rendered) return;
+            if (typeof req.progressTimer !== 'undefined') {
+                this.icinga.timer.unregister(req.progressTimer);
+            }
 
             // .html() removes outer div we added above
             this.renderContentToContainer($resp.html(), req.$target, req.action, req.autorefresh);
@@ -499,7 +559,7 @@
                 oldNotifications.appendTo($('#notifications'));
             }
             if (url.match(/#/)) {
-                this.icinga.ui.scrollContainerToAnchor(req.$target, url.split(/#/)[1]);
+                this.icinga.ui.focusElement(url.split(/#/)[1], req.$target);
             }
             if (newBody) {
                 this.icinga.ui.fixDebugVisibility().triggerWindowResize();
@@ -519,38 +579,26 @@
             if (! req.autorefresh) {
                 // TODO: Hook for response/url?
                 var url = req.url;
+
+                if (req.$target[0].id === 'col1') {
+                    self.icinga.behaviors.navigation.trySetActiveByUrl(url);
+                }
+
                 var $forms = $('[action="' + this.icinga.utils.parseUrl(url).path + '"]');
                 var $matches = $.merge($('[href="' + url + '"]'), $forms);
-                $matches.each(function (idx, el) {
-                    if ($(el).closest('#menu').length) {
-                        if (req.$target[0].id === 'col1') {
-                            self.icinga.behaviors.navigation.resetActive();
-                        }
-                    } else if ($(el).closest('table.action').length) {
-                        $(el).closest('table.action').find('.active').removeClass('active');
-                    }
-                });
-
                 $matches.each(function (idx, el) {
                     var $el = $(el);
                     if ($el.closest('#menu').length) {
                         if ($el.is('form')) {
                             $('input', $el).addClass('active');
-                        } else {
-                            if (req.$target[0].id === 'col1') {
-                                self.icinga.behaviors.navigation.setActive($el);
-                            }
                         }
-                        // Interrupt .each, only on menu item shall be active
+                        // Interrupt .each, only one menu item shall be active
                         return false;
-                    } else if ($(el).closest('table.action').length) {
-                        $el.addClass('active');
                     }
                 });
             }
 
-            // Update history when necessary. Don't do so for requests triggered
-            // by history or autorefresh events
+            // Update history when necessary
             if (! req.autorefresh && req.addToHistory) {
                 if (req.$target.hasClass('container')) {
                     // We only want to care about top-level containers
@@ -560,7 +608,8 @@
                 } else {
                     // Request wasn't for a container, so it's usually the body
                     // or the full layout. Push request URL to history:
-                    this.icinga.history.pushUrl(req.url);
+                    var url = typeof req.historyUrl !== 'undefined' ? req.historyUrl : req.url;
+                    this.icinga.history.pushUrl(url);
                 }
             }
 
@@ -570,14 +619,17 @@
 
             this.processRedirectHeader(req);
 
-            if (typeof req.loadNext !== 'undefined') {
+            if (typeof req.loadNext !== 'undefined' && req.loadNext.length) {
                 if ($('#col2').length) {
-                    this.loadUrl(req.loadNext[0], $('#col2'));
+                    var r = this.loadUrl(req.loadNext[0], $('#col2'));
+                    r.addToHistory = req.addToHistory;
                     this.icinga.ui.layout2col();
                 } else {
                   this.icinga.logger.error('Failed to load URL for #col2', req.loadNext);
                 }
             }
+
+            req.$target.trigger('rendered');
 
             this.icinga.ui.refreshDebug();
         },
@@ -591,10 +643,14 @@
             /*
              * Test if a manual actions comes in and autorefresh is active: Stop refreshing
              */
-            if (req.addToHistory && ! req.autorefresh && req.$target.data('icingaRefresh') > 0
-            && req.$target.data('icingaUrl') !== url) {
+            if (req.addToHistory && ! req.autorefresh) {
                 req.$target.data('icingaRefresh', 0);
                 req.$target.data('icingaUrl', url);
+                icinga.history.pushCurrentState();
+            }
+
+            if (typeof req.progressTimer !== 'undefined') {
+                this.icinga.timer.unregister(req.progressTimer);
             }
 
             if (req.status > 0) {
@@ -737,9 +793,6 @@
                     $(self.icinga.utils.getElementByDomPath(origFocus)).focus();
                 }, 0);
             }
-
-            // TODO: this.icinga.events.refreshContainer(container);
-            $container.trigger('rendered');
 
             if (scrollPos !== false) {
                 $container.scrollTop(scrollPos);

@@ -89,18 +89,20 @@ class Host extends MonitoredObject
     protected function getDataView()
     {
         $columns = array(
-            'host_icon_image',
-            'host_icon_image_alt',
             'host_acknowledged',
+            'host_acknowledgement_type',
             'host_action_url',
             'host_active_checks_enabled',
             'host_active_checks_enabled_changed',
             'host_address',
+            'host_address6',
             'host_alias',
+            'host_attempt',
             'host_check_command',
             'host_check_execution_time',
             'host_check_latency',
             'host_check_source',
+            'host_check_timeperiod',
             'host_current_check_attempt',
             'host_current_notification_number',
             'host_display_name',
@@ -109,6 +111,8 @@ class Host extends MonitoredObject
             'host_flap_detection_enabled',
             'host_flap_detection_enabled_changed',
             'host_handled',
+            'host_icon_image',
+            'host_icon_image_alt',
             'host_in_downtime',
             'host_is_flapping',
             'host_is_reachable',
@@ -119,6 +123,7 @@ class Host extends MonitoredObject
             'host_max_check_attempts',
             'host_name',
             'host_next_check',
+            'host_next_update',
             'host_notes',
             'host_notes_url',
             'host_notifications_enabled',
@@ -132,7 +137,8 @@ class Host extends MonitoredObject
             'host_perfdata',
             'host_process_perfdata' => 'host_process_performance_data',
             'host_state',
-            'host_state_type'
+            'host_state_type',
+            'instance_name'
         );
         if ($this->backend->getType() === 'livestatus') {
             $columns[] = 'host_contacts';

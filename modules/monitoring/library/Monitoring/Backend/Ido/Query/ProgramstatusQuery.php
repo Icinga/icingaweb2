@@ -4,10 +4,13 @@
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
 /**
- * Query program status out of database
+ * Program status query
  */
 class ProgramstatusQuery extends IdoQuery
 {
+    /**
+     * {@inheritdoc}
+     */
     protected $columnMap = array(
         'programstatus' => array(
             'id'                    => 'programstatus_id',
@@ -15,16 +18,11 @@ class ProgramstatusQuery extends IdoQuery
             'program_version'       => 'program_version',
             'program_start_time'    => 'UNIX_TIMESTAMP(programstatus.program_start_time)',
             'program_end_time'      => 'UNIX_TIMESTAMP(programstatus.program_end_time)',
-            'is_currently_running'  => 'CASE WHEN (programstatus.is_currently_running = 0)
+            'is_currently_running'  => 'CASE WHEN (UNIX_TIMESTAMP(programstatus.status_update_time) + 60 > UNIX_TIMESTAMP(NOW()))
                 THEN
-                    0
+                    1
                 ELSE
-                    CASE WHEN (UNIX_TIMESTAMP(programstatus.status_update_time) + 60 > UNIX_TIMESTAMP(NOW()))
-                    THEN
-                        1
-                    ELSE
-                        0
-                    END
+                    0
                 END',
             'process_id'                        => 'process_id',
             'endpoint_name'                     => 'endpoint_name',
@@ -50,6 +48,9 @@ class ProgramstatusQuery extends IdoQuery
         )
     );
 
+    /**
+     * {@inheritdoc}
+     */
     protected function joinBaseTables()
     {
         parent::joinBaseTables();
@@ -59,6 +60,9 @@ class ProgramstatusQuery extends IdoQuery
         }
         if (version_compare($this->getIdoVersion(), '1.11.8', '<')) {
             $this->columnMap['programstatus']['program_version'] = '(NULL)';
+        }
+        if (version_compare($this->getIdoVersion(), '1.8', '<')) {
+            $this->columnMap['programstatus']['disable_notif_expire_time'] = '(NULL)';
         }
     }
 }

@@ -61,7 +61,14 @@ class DbUserBackend extends DbRepository implements UserBackendInterface, Inspec
      *
      * @var array
      */
-    protected $filterColumns = array('user');
+    protected $blacklistedQueryColumns = array('user');
+
+    /**
+     * The search columns being provided
+     *
+     * @var array
+     */
+    protected $searchColumns = array('user');
 
     /**
      * The default sort rules to be applied on a query
@@ -96,6 +103,23 @@ class DbUserBackend extends DbRepository implements UserBackendInterface, Inspec
         if (! $this->ds->getTablePrefix()) {
             $this->ds->setTablePrefix('icingaweb_');
         }
+    }
+
+    /**
+     * Initialize this repository's filter columns
+     *
+     * @return  array
+     */
+    protected function initializeFilterColumns()
+    {
+        $userLabel = t('Username') . ' ' . t('(Case insensitive)');
+        return array(
+            $userLabel          => 'user',
+            t('Username')       => 'user_name',
+            t('Active')         => 'is_active',
+            t('Created At')     => 'created_at',
+            t('Last Modified')  => 'last_modified'
+        );
     }
 
     /**
@@ -260,7 +284,7 @@ class DbUserBackend extends DbRepository implements UserBackendInterface, Inspec
         $insp->write($this->ds->inspect());
         try {
             $users = $this->select()->where('is_active', true)->count();
-            if ($users > 1) {
+            if ($users > 0) {
                 $insp->write(sprintf('%s active users', $users));
             } else {
                 return $insp->error('0 active users', $users);

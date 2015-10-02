@@ -9,11 +9,12 @@ use Icinga\Application\Icinga;
 use Icinga\Data\ConfigObject;
 use Icinga\Data\ResourceFactory;
 use Icinga\Exception\ConfigurationError;
+use Icinga\Util\ConfigAwareFactory;
 
 /**
  * Factory for user backends
  */
-class UserBackend
+class UserBackend implements ConfigAwareFactory
 {
     /**
      * The default user backend types provided by Icinga Web 2
@@ -33,6 +34,48 @@ class UserBackend
      * @var array
      */
     protected static $customBackends;
+
+    /**
+     * User backend configuration
+     *
+     * @var Config
+     */
+    private static $backends;
+
+    /**
+     * Set user backend configuration
+     *
+     * @param   Config  $config
+     */
+    public static function setConfig($config)
+    {
+        self::$backends = $config;
+    }
+
+    /**
+     * Return the configuration of all existing user backends
+     *
+     * @return  Config
+     */
+    public static function getBackendConfigs()
+    {
+        self::assertBackendsExist();
+        return self::$backends;
+    }
+
+    /**
+     * Check if any user backends exist. If not, throw an error.
+     *
+     * @throws  ConfigurationError
+     */
+    private static function assertBackendsExist()
+    {
+        if (self::$backends === null) {
+            throw new ConfigurationError(
+                'User backends not set up. Please contact your Icinga Web administrator'
+            );
+        }
+    }
 
     /**
      * Register all custom user backends from all loaded modules
@@ -110,9 +153,9 @@ class UserBackend
     public static function create($name, ConfigObject $backendConfig = null)
     {
         if ($backendConfig === null) {
-            $authConfig = Config::app('authentication');
-            if ($authConfig->hasSection($name)) {
-                $backendConfig = $authConfig->getSection($name);
+            self::assertBackendsExist();
+            if (self::$backends->hasSection($name)) {
+                $backendConfig = self::$backends->getSection($name);
             } else {
                 throw new ConfigurationError('User backend "%s" does not exist', $name);
             }
@@ -164,12 +207,7 @@ class UserBackend
             );
         }
 
-        if ($backendConfig->resource instanceof ConfigObject) {
-            $resource = ResourceFactory::createResource($backendConfig->resource);
-        } else {
-            $resource = ResourceFactory::create($backendConfig->resource);
-        }
-
+        $resource = ResourceFactory::create($backendConfig->resource);
         switch ($backendType) {
             case 'db':
                 $backend = new DbUserBackend($resource);

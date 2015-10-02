@@ -15,7 +15,7 @@
  *
  * @category   Zend
  * @package    Zend_Console_Getopt
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -80,7 +80,7 @@
  *
  * @category   Zend
  * @package    Zend_Console_Getopt
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    Release: @package_version@
  * @since      Class available since Release 0.6.0
@@ -727,6 +727,27 @@ class Zend_Console_Getopt
     }
 
     /**
+     * @throws Zend_Console_Getopt_Exception
+     */
+    public function checkRequiredArguments()
+    {
+        foreach ($this->_rules as $name => $rule) {
+            if ($rule['param'] === 'required') {
+                $defined = false;
+                foreach ($rule['alias'] as $alias) {
+                    $defined = $defined === true ? true : array_key_exists($alias, $this->_options);
+                }
+                if ($defined === false) {
+                    throw new Zend_Console_Getopt_Exception(
+                        'Option "$alias" requires a parameter.',
+                        $this->getUsageMessage()
+                    );
+                }
+            }
+        }
+    }
+
+    /**
      * Parse command-line arguments for a single long option.
      * A long option is preceded by a double '--' character.
      * Long options may not be clustered.
@@ -783,7 +804,7 @@ class Zend_Console_Getopt
         $realFlag = $this->_ruleMap[$flag];
         switch ($this->_rules[$realFlag]['param']) {
             case 'required':
-                if (count($argv) > 0) {
+                if (count($argv) > 0 && substr($argv[0], 0, 1) != '-') {
                     $param = array_shift($argv);
                     $this->_checkParameterType($realFlag, $param);
                 } else {

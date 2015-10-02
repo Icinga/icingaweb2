@@ -1,0 +1,10 @@
+<html>
+  <head>
+  <?php if (isset($this->layout()->redirectUrl)): ?>
+    <meta name="redirectUrl" content="<?= $this->layout()->redirectUrl; ?>">
+  <?php endif ?>
+  </head>
+  <body>
+    <?= $this->render('inline.phtml'); ?>
+  </body>
+</html>

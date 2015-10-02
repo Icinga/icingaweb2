@@ -5,16 +5,19 @@ namespace Icinga\Repository;
 
 use Iterator;
 use IteratorAggregate;
+use Traversable;
 use Icinga\Application\Benchmark;
 use Icinga\Application\Logger;
 use Icinga\Data\QueryInterface;
 use Icinga\Data\Filter\Filter;
+use Icinga\Data\FilterColumns;
+use Icinga\Data\SortRules;
 use Icinga\Exception\QueryException;
 
 /**
  * Query class supposed to mediate between a repository and its datasource's query
  */
-class RepositoryQuery implements QueryInterface, Iterator
+class RepositoryQuery implements QueryInterface, SortRules, FilterColumns, Iterator
 {
     /**
      * The repository being used
@@ -140,6 +143,26 @@ class RepositoryQuery implements QueryInterface, Iterator
     }
 
     /**
+     * Return this query's available filter columns with their optional label as key
+     *
+     * @return  array
+     */
+    public function getFilterColumns()
+    {
+        return $this->repository->getFilterColumns();
+    }
+
+    /**
+     * Return this query's available search columns
+     *
+     * @return  array
+     */
+    public function getSearchColumns()
+    {
+        return $this->repository->getSearchColumns();
+    }
+
+    /**
      * Filter this query using the given column and value
      *
      * This notifies the repository about the required filter column.
@@ -213,6 +236,16 @@ class RepositoryQuery implements QueryInterface, Iterator
     }
 
     /**
+     * Return the sort rules being applied on this query
+     *
+     * @return  array
+     */
+    public function getSortRules()
+    {
+        return $this->repository->getSortRules();
+    }
+
+    /**
      * Add a sort rule for this query
      *
      * If called without a specific column, the repository's defaul sort rules will be applied.
@@ -226,7 +259,7 @@ class RepositoryQuery implements QueryInterface, Iterator
      */
     public function order($field = null, $direction = null, $ignoreDefault = false)
     {
-        $sortRules = $this->repository->getSortRules();
+        $sortRules = $this->getSortRules();
         if ($field === null) {
             // Use first available sort rule as default
             if (empty($sortRules)) {
@@ -330,6 +363,39 @@ class RepositoryQuery implements QueryInterface, Iterator
     public function getOrder()
     {
         return $this->query->getOrder();
+    }
+
+    /**
+     * Set whether this query should peek ahead for more results
+     *
+     * Enabling this causes the current query limit to be increased by one. The potential extra row being yielded will
+     * be removed from the result set. Note that this only applies when fetching multiple results of limited queries.
+     *
+     * @return  $this
+     */
+    public function peekAhead($state = true)
+    {
+        return $this->query->peekAhead($state);
+    }
+
+    /**
+     * Return whether this query did not yield all available results
+     *
+     * @return  bool
+     */
+    public function hasMore()
+    {
+        return $this->query->hasMore();
+    }
+
+    /**
+     * Return whether this query will or has yielded any result
+     *
+     * @return  bool
+     */
+    public function hasResult()
+    {
+        return $this->query->hasResult();
     }
 
     /**
@@ -561,6 +627,16 @@ class RepositoryQuery implements QueryInterface, Iterator
     }
 
     /**
+     * Return the current position of this query's iterator
+     *
+     * @return  int
+     */
+    public function getIteratorPosition()
+    {
+        return $this->query->getIteratorPosition();
+    }
+
+    /**
      * Start or rewind the iteration
      */
     public function rewind()
@@ -570,7 +646,12 @@ class RepositoryQuery implements QueryInterface, Iterator
                 $this->order();
             }
 
-            $iterator = $this->repository->getDataSource()->query($this->query);
+            if ($this->query instanceof Traversable) {
+                $iterator = $this->query;
+            } else {
+                $iterator = $this->repository->getDataSource()->query($this->query);
+            }
+
             if ($iterator instanceof IteratorAggregate) {
                 $this->iterator = $iterator->getIterator();
             } else {

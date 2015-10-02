@@ -1,8 +1,13 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
+namespace Icinga\Controllers;
+
+use Icinga\Web\Response\JsonResponse;
+use Zend_Controller_Plugin_ErrorHandler;
 use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
+use Icinga\Exception\Http\HttpBadRequestException;
 use Icinga\Exception\Http\HttpMethodNotAllowedException;
 use Icinga\Exception\Http\HttpNotFoundException;
 use Icinga\Exception\MissingParameterException;
@@ -14,6 +19,9 @@ use Icinga\Web\Controller\ActionController;
  */
 class ErrorController extends ActionController
 {
+    /**
+     * {@inheritdoc}
+     */
     protected $requiresAuthentication = false;
 
     /**
@@ -23,9 +31,13 @@ class ErrorController extends ActionController
     {
         $error      = $this->_getParam('error_handler');
         $exception  = $error->exception;
-
+        /** @var \Exception $exception */
         Logger::error($exception);
         Logger::error('Stacktrace: %s', $exception->getTraceAsString());
+
+        if (! ($isAuthenticated = $this->Auth()->isAuthenticated())) {
+            $this->innerLayout = 'error';
+        }
 
         switch ($error->type) {
             case Zend_Controller_Plugin_ErrorHandler::EXCEPTION_NO_ROUTE:
@@ -37,11 +49,13 @@ class ErrorController extends ActionController
                 $path = array_shift($path);
                 $this->getResponse()->setHttpResponseCode(404);
                 $this->view->message = $this->translate('Page not found.');
-                if ($this->Auth()->isAuthenticated() && $modules->hasInstalled($path) && ! $modules->hasEnabled($path)) {
-                    $this->view->message .= ' ' . sprintf(
-                        $this->translate('Enabling the "%s" module might help!'),
-                        $path
-                    );
+                if ($isAuthenticated) {
+                    if ($modules->hasInstalled($path) && ! $modules->hasEnabled($path)) {
+                        $this->view->message .= ' ' . sprintf(
+                            $this->translate('Enabling the "%s" module might help!'),
+                            $path
+                        );
+                    }
                 }
 
                 break;
@@ -61,6 +75,9 @@ class ErrorController extends ActionController
                             'Missing parameter ' . $exception->getParameter()
                         );
                         break;
+                    case $exception instanceof HttpBadRequestException:
+                        $this->getResponse()->setHttpResponseCode(400);
+                        break;
                     case $exception instanceof SecurityException:
                         $this->getResponse()->setHttpResponseCode(403);
                         break;
@@ -74,6 +91,14 @@ class ErrorController extends ActionController
                 }
                 break;
         }
+
+        if ($this->getRequest()->isApiRequest()) {
+            $this->getResponse()->json()
+                ->setErrorMessage($this->view->message)
+                ->sendResponse();
+        }
+
         $this->view->request = $error->request;
+        $this->view->hideControls = ! $isAuthenticated;
     }
 }

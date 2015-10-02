@@ -12,19 +12,13 @@
 </div>
 <?php endif ?>
 <div class="content">
-<?php
-
-if (count($comments) === 0) {
-    echo $this->translate('No comments found matching the filter') . '</div>';
-    return;
-}
-?>
   <table data-base-target="_next"
          class="action comments multiselect"
-         data-icinga-multiselect-url="/icingaweb2/monitoring/comments/show"
+         data-icinga-multiselect-url="<?= $this->href('monitoring/comments/show'); ?>"
+         data-icinga-multiselect-related="<?= $this->href("monitoring/comments") ?>"
          data-icinga-multiselect-data="comment_id">
     <tbody>
-    <?php foreach ($comments as $comment): ?>
+    <?php foreach ($comments->peekAhead($this->compact) as $comment): ?>
       <tr class="state invalid">
         <td class="state" style="width: 12em;">
           <?= $this->partial('partials/comment/comment-description.phtml', array('comment' => $comment)); ?>
@@ -53,7 +47,8 @@ if (count($comments) === 0) {
               'title' => sprintf(
                 $this->translate('Show detailed information for this comment about host %s'),
                 $comment->host_display_name
-              )
+              ),
+              'class' => 'rowaction'
             )
           ); ?>
         <?php endif ?>
@@ -74,7 +69,7 @@ if (count($comments) === 0) {
           ) : $this->translate('This comment does not expire.'); ?>
         </td>
         <?php if (isset($delCommentForm)): // Form is unset if the current user lacks the respective permission ?>
-        <td style="width: 2em" data-base-target="self">
+        <td style="width: 2em" data-base-target="_self">
           <?php
           $delCommentForm = clone $delCommentForm;
           $delCommentForm->populate(
@@ -91,4 +86,17 @@ if (count($comments) === 0) {
 <?php endforeach ?>
     </tbody>
   </table>
+<?php if (! $comments->hasResult()): ?>
+  <?= $this->translate('No comments found matching the filter'); ?>
+<?php elseif ($comments->hasMore()): ?>
+  <?= $this->qlink(
+    $this->translate('Show More'),
+    $this->url()->without(array('view', 'limit')),
+    null,
+    array(
+      'data-base-target'    => '_next',
+      'class'               => 'pull-right show-more'
+    )
+  ); ?>
+<?php endif ?>
 </div>

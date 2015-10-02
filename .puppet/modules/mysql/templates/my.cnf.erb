@@ -104,8 +104,8 @@ innodb_file_per_table
 innodb_log_file_size = 64M
 
 [mysqld_safe]
-log-error=/var/log/mysqld.log
-pid-file=/var/run/mysqld/mysqld.pid
+log-error=<%= @log_error %>
+pid-file=<%= @pid_file %>
 
 # Increase the amount of open files allowed per process. Warning: Make
 # sure you have set the global system limit high enough! The high value

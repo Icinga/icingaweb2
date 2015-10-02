@@ -1,26 +1,46 @@
 <?php
-$notes = trim($object->getNotes());
-$links = $object->getNotesUrls();
 
-if (! empty($links) || ! empty($notes)): ?>
+use Icinga\Web\Navigation\Navigation;
+
+$navigation = new Navigation();
+//$navigation->load($object->getType() . '-note');
+foreach ($navigation as $item) {
+    $item->setObject($object);
+}
+
+$notes = trim($object->getNotes());
+if ($notes) {
+    $navigation->addItem($notes);
+}
+
+$links = $object->getNotesUrls();
+if (! empty($links)) {
+    // add warning to links that open in new tabs to improve accessibility, as recommended by WCAG20 G201
+    $newTabInfo = sprintf(
+        '<span class="info-box display-on-hover"> %s </span>',
+        $this->translate('opens in new window')
+    );
+
+    foreach ($links as $link) {
+        $navigation->addItem(
+            $this->escape($link) . $newTabInfo,
+            array(
+                'url'       => $link,
+                'target'    => '_blank',
+                'renderer'  => array(
+                    'NavigationItemRenderer',
+                    'escape_label' => false
+                )
+            )
+        );
+    }
+}
+
+if ($navigation->isEmpty() || !$navigation->hasRenderableItems()) {
+    return;
+}
+?>
 <tr>
-    <th><?= $this->translate('Notes') ?></th>
-    <td>
-        <?php
-            if (! empty($notes)) {
-                echo $notes . '<br>';
-            }
-            // add warning to links that open in new tabs to improve accessibility, as recommended by WCAG20 G201
-            $newTabInfo = sprintf(
-                '<span class="info-box display-on-hover"> %s </span>',
-                $this->translate('opens in new window')
-            );
-            $linkText = '<a href="%s" target="_blank">%s ' . $newTabInfo . '</a>';
-            foreach ($links as $i => $link) {
-                $links[$i] = sprintf($linkText, $this->escape($link), $this->escape($link));
-            }
-            echo implode('<br>', $links);
-        ?>
-    </td>
+    <th><?= $this->translate('Notes'); ?></th>
+    <?= $navigation->getRenderer()->setElementTag('td')->setCssClass('notes'); ?>
 </tr>
-<?php endif ?>

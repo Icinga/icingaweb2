@@ -86,36 +86,62 @@ $this->provideSearchUrl($this->translate('Hostgroups'), 'monitoring/list/hostgro
 $this->provideSearchUrl($this->translate('Servicegroups'), 'monitoring/list/servicegroups?limit=10', 96);
 
 /*
+ * Available navigation items
+ */
+$this->provideNavigationItem('host-action', $this->translate('Host Action'));
+$this->provideNavigationItem('service-action', $this->translate('Service Action'));
+// Notes are disabled as we're not sure whether to really make a difference between actions and notes
+//$this->provideNavigationItem('host-note', $this->translate('Host Note'));
+//$this->provideNavigationItem('service-note', $this->translate('Service Note'));
+
+/*
  * Problems Section
  */
-$section = $this->menuSection($this->translate('Problems'), array(
-    'renderer'  => 'Icinga\Module\Monitoring\Web\Menu\ProblemMenuItemRenderer',
+$section = $this->menuSection(N_('Problems'), array(
+    'renderer' => array(
+        'SummaryNavigationItemRenderer',
+        'state' => 'critical'
+    ),
     'icon'      => 'block',
     'priority'  => 20
 ));
-$section->add($this->translate('Unhandled Hosts'), array(
-    'renderer'  => 'Icinga\Module\Monitoring\Web\Menu\UnhandledHostMenuItemRenderer',
+$section->add(N_('Unhandled Hosts'), array(
+    'renderer'  => array(
+        'MonitoringBadgeNavigationItemRenderer',
+        'columns' => array(
+            'hosts_down_unhandled' => $this->translate('%d unhandled hosts down')
+        ),
+        'state'    => 'critical',
+        'dataView' => 'statussummary'
+    ),
     'url'       => 'monitoring/list/hosts?host_problem=1&host_handled=0',
     'priority'  => 30
 ));
-$section->add($this->translate('Unhandled Services'), array(
-    'renderer'  => 'Icinga\Module\Monitoring\Web\Menu\UnhandledServiceMenuItemRenderer',
+$section->add(N_('Unhandled Services'), array(
+    'renderer'  => array(
+        'MonitoringBadgeNavigationItemRenderer',
+        'columns' => array(
+            'services_critical_unhandled' => $this->translate('%d unhandled services critical')
+        ),
+        'state'    => 'critical',
+        'dataView' => 'statussummary'
+    ),
     'url'       => 'monitoring/list/services?service_problem=1&service_handled=0&sort=service_severity',
     'priority'  => 40
 ));
-$section->add($this->translate('Host Problems'), array(
+$section->add(N_('Host Problems'), array(
     'url'       => 'monitoring/list/hosts?host_problem=1&sort=host_severity',
     'priority'  => 50
 ));
-$section->add($this->translate('Service Problems'), array(
+$section->add(N_('Service Problems'), array(
     'url'       => 'monitoring/list/services?service_problem=1&sort=service_severity&dir=desc',
     'priority'  => 60
 ));
-$section->add($this->translate('Service Grid'), array(
+$section->add(N_('Service Grid'), array(
     'url'       => 'monitoring/list/servicegrid?problems',
     'priority'  => 70
 ));
-$section->add($this->translate('Current Downtimes'), array(
+$section->add(N_('Current Downtimes'), array(
     'url'       => 'monitoring/list/downtimes?downtime_is_in_effect=1',
     'priority'  => 80
 ));
@@ -123,103 +149,217 @@ $section->add($this->translate('Current Downtimes'), array(
 /*
  * Overview Section
  */
-$section = $this->menuSection($this->translate('Overview'), array(
+$section = $this->menuSection(N_('Overview'), array(
     'icon'      => 'sitemap',
     'priority'  => 30
 ));
-$section->add($this->translate('Tactical Overview'), array(
+$section->add(N_('Tactical Overview'), array(
     'url'      => 'monitoring/tactical',
     'priority' => 40
 ));
-$section->add($this->translate('Hosts'), array(
+$section->add(N_('Hosts'), array(
     'url'      => 'monitoring/list/hosts',
     'priority' => 50
 ));
-$section->add($this->translate('Services'), array(
+$section->add(N_('Services'), array(
     'url'      => 'monitoring/list/services',
     'priority' => 50
 ));
-$section->add($this->translate('Servicegroups'), array(
+$section->add(N_('Servicegroups'), array(
     'url'      => 'monitoring/list/servicegroups',
     'priority' => 60
 ));
-$section->add($this->translate('Hostgroups'), array(
+$section->add(N_('Hostgroups'), array(
     'url'      => 'monitoring/list/hostgroups',
     'priority' => 60
 ));
-$section->add($this->translate('Contacts'), array(
+$section->add(N_('Contacts'), array(
     'url'      => 'monitoring/list/contacts',
     'priority' => 70
 ));
-$section->add($this->translate('Contactgroups'), array(
+$section->add(N_('Contactgroups'), array(
     'url'      => 'monitoring/list/contactgroups',
     'priority' => 70
 ));
-$section->add($this->translate('Comments'), array(
+$section->add(N_('Comments'), array(
     'url'      => 'monitoring/list/comments?comment_type=(comment|ack)',
     'priority' => 80
 ));
-$section->add($this->translate('Downtimes'), array(
+$section->add(N_('Downtimes'), array(
     'url'      => 'monitoring/list/downtimes',
     'priority' => 80
 ));
-$section->add($this->translate('Notifications'), array(
-    'url'      => 'monitoring/list/notifications',
-    'priority' => 80
-));
-
 
 /*
  * History Section
  */
-$section = $this->menuSection($this->translate('History'), array(
-    'icon'      => 'rewind'
+$section = $this->menuSection(N_('History'), array(
+    'icon'      => 'rewind',
+    'priority'  => 90
 ));
-$section->add($this->translate('Event Grid'), array(
-    'url'      => 'monitoring/list/eventgrid',
-    'priority' => 50
+$section->add(N_('Event Grid'), array(
+    'priority'  => 10,
+    'url'       => 'monitoring/list/eventgrid'
 ));
-$section->add($this->translate('Events'), array(
-    'title'    => $this->translate('Event Overview'),
-    'url'      => 'monitoring/list/eventhistory?timestamp>=-7%20days'
+$section->add(N_('Event Overview'), array(
+    'priority'  => 20,
+    'url'       => 'monitoring/list/eventhistory?timestamp>=-7%20days'
 ));
-$section->add($this->translate('Timeline'))->setUrl('monitoring/timeline');
+$section->add(N_('Notifications'), array(
+    'priority'  => 30,
+    'url'       => 'monitoring/list/notifications',
+));
+$section->add(N_('Timeline'), array(
+    'priority'  => 40,
+    'url'       => 'monitoring/timeline'
+));
 
 /*
  * Reporting Section
  */
-$section = $this->menuSection($this->translate('Reporting'), array(
+$section = $this->menuSection(N_('Reporting'), array(
     'icon'      => 'barchart',
     'priority'  => 100
 ));
 
-$section->add($this->translate('Alert Summary'), array(
+$section->add(N_('Alert Summary'), array(
    'url'    => 'monitoring/alertsummary/index'
 ));
 
 /*
  * System Section
  */
-$section = $this->menuSection($this->translate('System'));
-$section->add($this->translate('Monitoring Health'), array(
-    'url'      => 'monitoring/process/info',
+$section = $this->menuSection(N_('System'));
+$section->add(N_('Monitoring Health'), array(
+    'url'      => 'monitoring/health/info',
     'priority' => 720,
-    'renderer'  => 'Icinga\Module\Monitoring\Web\Menu\BackendAvailabilityMenuItemRenderer'
+    'renderer' => 'BackendAvailabilityNavigationItemRenderer'
 ));
 
 /*
- * Dashboard
+ * Current Incidents
  */
-$dashboard = $this->dashboard($this->translate('Current Incidents'));
+$dashboard = $this->dashboard(N_('Current Incidents'), array('priority' => 50));
 $dashboard->add(
-    $this->translate('Service Problems'),
+    N_('Service Problems'),
     'monitoring/list/services?service_problem=1&limit=10&sort=service_severity'
 );
 $dashboard->add(
-    $this->translate('Recently Recovered Services'),
+    N_('Recently Recovered Services'),
     'monitoring/list/services?service_state=0&limit=10&sort=service_last_state_change&dir=desc'
 );
 $dashboard->add(
-    $this->translate('Host Problems'),
+    N_('Host Problems'),
     'monitoring/list/hosts?host_problem=1&sort=host_severity'
 );
+
+/*
+ * Overview
+ */
+$dashboard = $this->dashboard(N_('Overview'), array('priority' => 60));
+$dashboard->add(
+    N_('Service Grid'),
+    'monitoring/list/servicegrid?limit=15,18'
+);
+$dashboard->add(
+    N_('Service Groups'),
+    'monitoring/list/servicegroups'
+);
+$dashboard->add(
+    N_('Host Groups'),
+    'monitoring/list/hostgroups'
+);
+
+/*
+ * Most Overdue
+ */
+$dashboard = $this->dashboard(N_('Overdue'), array('priority' => 70));
+$dashboard->add(
+    N_('Late Host Check Results'),
+    'monitoring/list/hosts?host_next_update<now'
+);
+$dashboard->add(
+    N_('Late Service Check Results'),
+    'monitoring/list/services?service_next_update<now'
+);
+$dashboard->add(
+    N_('Acknowledgements Active For At Least Three Days'),
+    'monitoring/list/comments?comment_type=Ack&comment_timestamp<-3 days&sort=comment_timestamp&dir=asc'
+);
+$dashboard->add(
+    N_('Downtimes Active For More Than Three Days'),
+    'monitoring/list/downtimes?downtime_is_in_effect=1&downtime_scheduled_start<-3%20days&sort=downtime_start&dir=asc'
+);
+
+/*
+ * Muted Objects
+ */
+$dashboard = $this->dashboard(N_('Muted'), array('priority' => 80));
+$dashboard->add(
+    N_('Disabled Service Notifications'),
+    'monitoring/list/services?service_notifications_enabled=0&limit=10'
+);
+$dashboard->add(
+    N_('Disabled Host Notifications'),
+    'monitoring/list/hosts?host_notifications_enabled=0&limit=10'
+);
+$dashboard->add(
+    N_('Disabled Service Checks'),
+    'monitoring/list/services?service_active_checks_enabled=0&limit=10'
+);
+$dashboard->add(
+    N_('Disabled Host Checks'),
+    'monitoring/list/hosts?host_active_checks_enabled=0&limit=10'
+);
+$dashboard->add(
+    N_('Acknowledged Problem Services'),
+    'monitoring/list/services?service_acknowledgement_type=2&service_problem=1&sort=service_state&limit=10'
+);
+$dashboard->add(
+    N_('Acknowledged Problem Hosts'),
+    'monitoring/list/hosts?host_acknowledgement_type=2&host_problem=1&sort=host_severity&limit=10'
+);
+
+/*
+ * Activity Stream
+ */
+$dashboard = $this->dashboard(N_('Activity Stream'), array('priority' => 90));
+$dashboard->add(
+    N_('Recent Events'),
+    'monitoring/list/eventhistory?timestamp>=-3%20days&sort=timestamp&dir=desc&limit=8'
+);
+$dashboard->add(
+    N_('Recent Hard State Changes'),
+    'monitoring/list/eventhistory?timestamp>=-3%20days&type=hard_state&sort=timestamp&dir=desc&limit=8'
+);
+$dashboard->add(
+    N_('Recent Notifications'),
+    'monitoring/list/eventhistory?timestamp>=-3%20days&type=notify&sort=timestamp&dir=desc&limit=8'
+);
+$dashboard->add(
+    N_('Downtimes Recently Started'),
+    'monitoring/list/eventhistory?timestamp>=-3%20days&type=dt_start&sort=timestamp&dir=desc&limit=8'
+);
+$dashboard->add(
+    N_('Downtimes Recently Ended'),
+    'monitoring/list/eventhistory?timestamp>=-3%20days&type=dt_end&sort=timestamp&dir=desc&limit=8'
+);
+
+/*
+ * Stats
+ */
+$dashboard = $this->dashboard(N_('Stats'), array('priority' => 99));
+$dashboard->add(
+    N_('Check Stats'),
+    'monitoring/health/stats'
+);
+$dashboard->add(
+    N_('Process Information'),
+    'monitoring/health/info'
+);
+
+/*
+ * CSS
+ */
+$this->provideCssFile('colors.less');
+$this->provideCssFile('service-grid.less');

@@ -1,6 +1,8 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
+namespace Icinga\Module\Monitoring\Controllers;
+
 use Icinga\Module\Monitoring\Forms\Command\Object\AcknowledgeProblemCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\AddCommentCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\ProcessCheckResultCommandForm;
@@ -11,11 +13,11 @@ use Icinga\Module\Monitoring\Object\Host;
 use Icinga\Module\Monitoring\Web\Controller\MonitoredObjectController;
 use Icinga\Web\Hook;
 
-class Monitoring_HostController extends MonitoredObjectController
+class HostController extends MonitoredObjectController
 {
+
     /**
-     * (non-PHPDoc)
-     * @see MonitoredObjectController::$commandRedirectUrl For the property documentation.
+     * {@inheritdoc}
      */
     protected $commandRedirectUrl = 'monitoring/host/show';
 
@@ -25,9 +27,7 @@ class Monitoring_HostController extends MonitoredObjectController
     public function init()
     {
         $host = new Host($this->backend, $this->params->getRequired('host'));
-
         $this->applyRestriction('monitoring/filter/objects', $host);
-
         if ($host->fetch() === false) {
             $this->httpNotFound($this->translate('Host not found'));
         }
@@ -77,6 +77,7 @@ class Monitoring_HostController extends MonitoredObjectController
             'host_state_type',
             'host_last_state_change',
             'host_address',
+            'host_address6',
             'host_handled',
             'service_description',
             'service_display_name',
@@ -98,9 +99,6 @@ class Monitoring_HostController extends MonitoredObjectController
             'service_notifications_enabled',
             'service_action_url',
             'service_notes_url',
-            'service_last_comment',
-            'service_last_ack',
-            'service_last_downtime',
             'service_active_checks_enabled',
             'service_passive_checks_enabled',
             'current_check_attempt' => 'service_current_check_attempt',
@@ -167,6 +165,7 @@ class Monitoring_HostController extends MonitoredObjectController
         $this->assertPermission('monitoring/command/process-check-result');
 
         $form = new ProcessCheckResultCommandForm();
+        $form->setBackend($this->backend);
         $form->setTitle($this->translate('Submit Passive Host Check Result'));
         $this->handleCommandForm($form);
     }

@@ -38,7 +38,7 @@ class CompileCommand extends TranslationCommand
     {
         $locale = $this->validateLocaleCode($this->params->shift());
 
-        $helper = new GettextTranslationHelper($this->app, $locale);
+        $helper = $this->getTranslationHelper($locale);
         $helper->compileIcingaTranslation();
     }
 
@@ -61,7 +61,7 @@ class CompileCommand extends TranslationCommand
         $module = $this->validateModuleName($this->params->shift());
         $locale = $this->validateLocaleCode($this->params->shift());
 
-        $helper = new GettextTranslationHelper($this->app, $locale);
+        $helper = $this->getTranslationHelper($locale);
         $helper->compileModuleTranslation($module);
     }
 }

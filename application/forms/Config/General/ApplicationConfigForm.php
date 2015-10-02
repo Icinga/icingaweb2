@@ -26,6 +26,20 @@ class ApplicationConfigForm extends Form
     public function createElements(array $formData)
     {
         $this->addElement(
+            'checkbox',
+            'global_show_stacktraces',
+            array(
+                'required'      => true,
+                'value'         => true,
+                'label'         => $this->translate('Show Stacktraces'),
+                'description'   => $this->translate(
+                    'Set whether to show an exception\'s stacktrace by default. This can also'
+                    . ' be set in a user\'s preferences with the appropriate permission.'
+                )
+            )
+        );
+
+        $this->addElement(
             'text',
             'global_module_path',
             array(

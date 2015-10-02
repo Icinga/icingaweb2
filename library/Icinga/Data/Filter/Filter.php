@@ -227,6 +227,8 @@ abstract class Filter
      * Create filter from queryString
      *
      * This is still pretty basic, need improvement
+     *
+     * @return static
      */
     public static function fromQueryString($query)
     {

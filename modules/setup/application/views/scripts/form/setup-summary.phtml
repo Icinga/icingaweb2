@@ -2,6 +2,8 @@
 
 use Icinga\Web\Wizard;
 
+$form->getElement(Wizard::BTN_NEXT)->setAttrib('class', 'finish');
+
 ?>
 <p><?= sprintf(
   $this->translate(
@@ -20,11 +22,16 @@ use Icinga\Web\Wizard;
  <?php endif ?>
 <?php endforeach ?>
 </div>
-<form id="<?= $form->getName(); ?>" name="<?= $form->getName(); ?>" enctype="<?= $form->getEncType(); ?>" method="<?= $form->getMethod(); ?>" action="<?= $form->getAction(); ?>" class="summary">
+<form
+ id="<?= $form->getName(); ?>"
+ name="<?= $form->getName(); ?>"
+ enctype="<?= $form->getEncType(); ?>"
+ method="<?= $form->getMethod(); ?>"
+ action="<?= $form->getAction(); ?>"
+ data-progress-element="<?= Wizard::PROGRESS_ELEMENT; ?>"
+ class="summary"
+>
   <?= $form->getElement($form->getTokenElementName()); ?>
   <?= $form->getElement($form->getUidElementName()); ?>
-  <div class="buttons">
-    <?= $form->getElement(Wizard::BTN_PREV); ?>
-    <?= $form->getElement(Wizard::BTN_NEXT)->setAttrib('class', 'finish'); ?>
-  </div>
+  <?= $form->getDisplayGroup('buttons'); ?>
 </form>

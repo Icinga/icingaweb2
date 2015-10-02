@@ -11,10 +11,12 @@ class HostStatus extends DataView
     public function getColumns()
     {
         return array(
+            'instance_name',
             'host_name',
             'host_display_name',
             'host_alias',
             'host_address',
+            'host_address6',
             'host_state',
             'host_state_type',
             'host_handled',
@@ -31,9 +33,9 @@ class HostStatus extends DataView
             'host_output',
             'host_long_output',
             'host_check_command',
+            'host_check_timeperiod',
             'host_perfdata',
             'host_check_source',
-            'host_unhandled_services',
             'host_passive_checks_enabled',
             'host_passive_checks_enabled_changed',
             'host_obsessing',
@@ -52,24 +54,21 @@ class HostStatus extends DataView
             'host_current_notification_number',
             'host_percent_state_change',
             'host_is_flapping',
-            'host_last_comment',
-            'host_last_downtime',
-            'host_last_ack',
-            'host_last_flapping',
             'host_action_url',
             'host_notes_url',
             'host_percent_state_change',
             'host_modified_host_attributes',
             'host_severity',
             'host_problem',
-            'host_ipv4'
+            'host_ipv4',
+            'host_acknowledgement_type'
         );
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getFilterColumns()
+    public function getStaticFilterColumns()
     {
         return array(
             'host',
@@ -84,13 +83,11 @@ class HostStatus extends DataView
      */
     public function getSearchColumns()
     {
-        return array('host', 'host_display_name');
+        return array('host_display_name');
     }
 
     /**
-     * The sort rules for this query
-     *
-     * @return array
+     * {@inheritdoc}
      */
     public function getSortRules()
     {
@@ -116,18 +113,5 @@ class HostStatus extends DataView
                 'order' => self::SORT_ASC
             )
         );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isValidFilterTarget($column)
-    {
-        if ($column[0] === '_'
-            && preg_match('/^_(?:host|service)_/', $column)
-        ) {
-            return true;
-        }
-        return parent::isValidFilterTarget($column);
     }
 }

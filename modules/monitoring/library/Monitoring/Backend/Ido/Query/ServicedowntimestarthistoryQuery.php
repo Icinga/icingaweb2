@@ -16,22 +16,30 @@ class ServicedowntimestarthistoryQuery extends IdoQuery
     /**
      * {@inheritdoc}
      */
+    protected $groupBase = array('downtimehistory' => array('sdh.downtimehistory_id', 'so.object_id'));
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $groupOrigin = array('hostgroups', 'servicegroups');
+
+    /**
+     * {@inheritdoc}
+     */
     protected $columnMap = array(
         'downtimehistory' => array(
             'host'                  => 'so.name1 COLLATE latin1_general_ci',
             'host_name'             => 'so.name1',
+            'object_id'             => 'sdh.object_id',
             'object_type'           => '(\'service\')',
+            'output'                => "('[' || sdh.author_name || '] ' || sdh.comment_data)",
             'service'               => 'so.name2 COLLATE latin1_general_ci',
             'service_description'   => 'so.name2',
             'service_host'          => 'so.name1 COLLATE latin1_general_ci',
-            'service_host_name'     => 'so.name1'
-        ),
-        'history' => array(
-            'type'      => "('dt_start')",
-            'timestamp' => 'UNIX_TIMESTAMP(sdh.actual_start_time)',
-            'object_id' => 'sdh.object_id',
-            'state'     => '(-1)',
-            'output'    => "('[' || sdh.author_name || '] ' || sdh.comment_data)",
+            'service_host_name'     => 'so.name1',
+            'state'                 => '(-1)',
+            'timestamp'             => 'UNIX_TIMESTAMP(sdh.actual_start_time)',
+            'type'                  => "('dt_start')"
         ),
         'hostgroups' => array(
             'hostgroup'         => 'hgo.name1 COLLATE latin1_general_ci',
@@ -41,6 +49,9 @@ class ServicedowntimestarthistoryQuery extends IdoQuery
         'hosts' => array(
             'host_alias'        => 'h.alias',
             'host_display_name' => 'h.display_name COLLATE latin1_general_ci'
+        ),
+        'instances' => array(
+            'instance_name' => 'i.instance_name'
         ),
         'servicegroups' => array(
             'servicegroup'          => 'sgo.name1 COLLATE latin1_general_ci',
@@ -87,7 +98,6 @@ class ServicedowntimestarthistoryQuery extends IdoQuery
         }
 
         $this->joinedVirtualTables['downtimehistory'] = true;
-        $this->joinedVirtualTables['history'] = true;
     }
 
     /**
@@ -125,6 +135,18 @@ class ServicedowntimestarthistoryQuery extends IdoQuery
     }
 
     /**
+     * Join instances
+     */
+    protected function joinInstances()
+    {
+        $this->select->join(
+            array('i' => $this->prefix . 'instances'),
+            'i.instance_id = sdh.instance_id',
+            array()
+        );
+    }
+
+    /**
      * Join service groups
      */
     protected function joinServicegroups()
@@ -154,22 +176,5 @@ class ServicedowntimestarthistoryQuery extends IdoQuery
             's.service_object_id = so.object_id',
             array()
         );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getGroup()
-    {
-        $group = array();
-        if ($this->hasJoinedVirtualTable('hostgroups') || $this->hasJoinedVirtualTable('servicegroups')) {
-            $group = array('sdh.downtimehistory_id', 'so.object_id');
-            if ($this->hasJoinedVirtualTable('services')) {
-                $group[] = 'h.host_id';
-                $group[] = 's.service_id';
-            }
-        }
-
-        return $group;
     }
 }

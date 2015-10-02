@@ -117,54 +117,14 @@
     left: -1337px;
   }
 
-  #btn_prev {
-    margin-right: 1em;
-    font-size: 0.9em;
+  button.finish, a.button-like.login {
+    min-width: 25em;
   }
+}
 
-  #btn_next {
-    font-size: 0.9em;
-  }
-
-  button, .button-like {
-    font-size: 0.9em;
-    font-weight: bold;
-    outline: 0;
-    color: #fff;
-    border: 2px solid;
-    border-color: @colorPetrol;
-    background: @colorPetrol;
-
-    &[disabled="1"] {
-      background-color: #aaa;
-      border: 1px solid black;
-    }
-
-    &:hover, &:focus, &:active {
-      background-color: #666;
-      border-color: #666;
-      cursor: pointer;
-
-      &[disabled="1"] {
-        background-color: #aaa;
-      }
-    }
-
-    &.finish, &.login {
-      min-width: 25em;
-      color: #fffafa;
-      background: @colorPetrol;
-
-      &:hover, &:focus, &:active {
-        background: #666;
-      }
-    }
-  }
-
-  a.button-like {
-    cursor: default;
-    text-decoration: none;
-  }
+#setup div.buttons + ul.hints {
+  margin-top: -1.5em;
+  margin-bottom: 1.5em;
 }
 
 form#setup_requirements {
@@ -326,13 +286,14 @@ form#setup_requirements {
     }
   }
 
-  textarea.report {
+  pre.log-output {
     width: 66%;
     height: 25em;
+    max-height: none;
   }
 
   div.buttons {
-    margin-top: 0.5em;
+    margin-top: 0;
     text-align: center;
 
     a {

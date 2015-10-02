@@ -13,8 +13,7 @@ use Icinga\Web\Notification;
 class DeleteCommentCommandForm extends CommandForm
 {
     /**
-     * (non-PHPDoc)
-     * @see \Zend_Form::init() For the method documentation.
+     * {@inheritdoc}
      */
     public function init()
     {
@@ -22,8 +21,7 @@ class DeleteCommentCommandForm extends CommandForm
     }
 
     /**
-     * (non-PHPDoc)
-     * @see \Icinga\Web\Form::createElements() For the method documentation.
+     * {@inheritdoc}
      */
     public function createElements(array $formData = array())
     {
@@ -59,8 +57,7 @@ class DeleteCommentCommandForm extends CommandForm
     }
 
     /**
-     * (non-PHPDoc)
-     * @see \Icinga\Web\Form::addSubmitButton() For the method documentation.
+     * {@inheritdoc}
      */
     public function addSubmitButton()
     {
@@ -71,7 +68,7 @@ class DeleteCommentCommandForm extends CommandForm
                 'ignore'        => true,
                 'escape'        => false,
                 'type'          => 'submit',
-                'class'         => 'link-like',
+                'class'         => 'link-like spinner',
                 'label'         => $this->getView()->icon('trash'),
                 'title'         => $this->translate('Delete this comment'),
                 'decorators'    => array('ViewHelper')
@@ -81,8 +78,7 @@ class DeleteCommentCommandForm extends CommandForm
     }
 
     /**
-     * (non-PHPDoc)
-     * @see \Icinga\Web\Form::onSuccess() For the method documentation.
+     * {@inheritdoc}
      */
     public function onSuccess()
     {

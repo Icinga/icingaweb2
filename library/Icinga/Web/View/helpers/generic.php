@@ -3,11 +3,11 @@
 
 namespace Icinga\Web\View;
 
-use Icinga\Authentication\Manager;
+use Icinga\Authentication\Auth;
 use Icinga\Web\Widget;
 
 $this->addHelperFunction('auth', function () {
-    return Manager::getInstance();
+    return Auth::getInstance();
 });
 
 $this->addHelperFunction('widget', function ($name, $options = null) {

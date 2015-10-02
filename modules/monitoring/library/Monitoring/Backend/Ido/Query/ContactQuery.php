@@ -16,6 +16,16 @@ class ContactQuery extends IdoQuery
     /**
      * {@inheritdoc}
      */
+    protected $groupBase = array('contacts' => array('co.object_id', 'c.contact_id'));
+
+    /**
+     * {@inheritdoc}
+     */
+    protected $groupOrigin = array('hosts', 'services');
+
+    /**
+     * {@inheritdoc}
+     */
     protected $columnMap = array(
         'contacts' => array(
             'contact_id'                        => 'c.contact_id',
@@ -40,10 +50,6 @@ class ContactQuery extends IdoQuery
             'contact_notify_host_flapping'      => 'c.notify_host_flapping',
             'contact_notify_host_downtime'      => 'c.notify_host_downtime'
         ),
-        'timeperiods' => array(
-            'contact_notify_host_timeperiod'    => 'ht.alias COLLATE latin1_general_ci',
-            'contact_notify_service_timeperiod' => 'st.alias COLLATE latin1_general_ci'
-        ),
         'hostgroups' => array(
             'hostgroup'         => 'hgo.name1 COLLATE latin1_general_ci',
             'hostgroup_alias'   => 'hg.alias COLLATE latin1_general_ci',
@@ -55,6 +61,9 @@ class ContactQuery extends IdoQuery
             'host_alias'        => 'h.alias',
             'host_display_name' => 'h.display_name COLLATE latin1_general_ci'
         ),
+        'instances' => array(
+            'instance_name' => 'i.instance_name'
+        ),
         'servicegroups' => array(
             'servicegroup'          => 'sgo.name1 COLLATE latin1_general_ci',
             'servicegroup_name'     => 'sgo.name1',
@@ -65,6 +74,10 @@ class ContactQuery extends IdoQuery
             'service_description'   => 'so.name2',
             'service_display_name'  => 's.display_name COLLATE latin1_general_ci',
             'service_host_name'     => 'so.name1'
+        ),
+        'timeperiods' => array(
+            'contact_notify_host_timeperiod'    => 'ht.alias COLLATE latin1_general_ci',
+            'contact_notify_service_timeperiod' => 'st.alias COLLATE latin1_general_ci'
         )
     );
 
@@ -82,23 +95,6 @@ class ContactQuery extends IdoQuery
             array()
         );
         $this->joinedVirtualTables['contacts'] = true;
-    }
-
-    /**
-     * Join timeperiods
-     */
-    protected function joinTimeperiods()
-    {
-        $this->select->joinLeft(
-            array('ht' => $this->prefix . 'timeperiods'),
-            'ht.timeperiod_object_id = c.host_timeperiod_object_id',
-            array()
-        );
-        $this->select->joinLeft(
-            array('st' => $this->prefix . 'timeperiods'),
-            'st.timeperiod_object_id = c.service_timeperiod_object_id',
-            array()
-        );
     }
 
     /**
@@ -138,6 +134,18 @@ class ContactQuery extends IdoQuery
         )->joinLeft(
             array('ho' => $this->prefix . 'objects'),
             'ho.object_id = h.host_object_id AND ho.is_active = 1',
+            array()
+        );
+    }
+
+    /**
+     * Join instances
+     */
+    protected function joinInstances()
+    {
+        $this->select->join(
+            array('i' => $this->prefix . 'instances'),
+            'i.instance_id = c.instance_id',
             array()
         );
     }
@@ -184,19 +192,19 @@ class ContactQuery extends IdoQuery
     }
 
     /**
-     * {@inheritdoc}
+     * Join time periods
      */
-    public function getGroup()
+    protected function joinTimeperiods()
     {
-        $group = array();
-        if ($this->hasJoinedVirtualTable('hosts') || $this->hasJoinedVirtualTable('services')) {
-            $group = array('c.contact_id', 'co.object_id');
-            if ($this->hasJoinedVirtualTable('timeperiods')) {
-                $group[] = 'ht.timeperiod_id';
-                $group[] = 'st.timeperiod_id';
-            }
-        }
-
-        return $group;
+        $this->select->joinLeft(
+            array('ht' => $this->prefix . 'timeperiods'),
+            'ht.timeperiod_object_id = c.host_timeperiod_object_id',
+            array()
+        );
+        $this->select->joinLeft(
+            array('st' => $this->prefix . 'timeperiods'),
+            'st.timeperiod_object_id = c.service_timeperiod_object_id',
+            array()
+        );
     }
 }

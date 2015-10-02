@@ -18,11 +18,21 @@ class DeleteCommentCommand extends IcingaCommand
     protected $commentId;
 
     /**
-     * The type of the comment, either 'host' or 'service'
+     * Whether the command affects a service comment
      *
      * @var boolean
      */
     protected $isService = false;
+
+    /**
+     * Get the ID of the comment that is to be deleted
+     *
+     * @return int
+     */
+    public function getCommentId()
+    {
+        return $this->commentId;
+    }
 
     /**
      * Set the ID of the comment that is to be deleted
@@ -38,17 +48,7 @@ class DeleteCommentCommand extends IcingaCommand
     }
 
     /**
-     * Get the ID of the comment that is to be deleted
-     *
-     * @return int
-     */
-    public function getCommentId()
-    {
-        return $this->commentId;
-    }
-
-    /**
-     * Whether the command affects a service comment
+     * Get whether the command affects a service comment
      *
      * @return boolean
      */
@@ -58,15 +58,15 @@ class DeleteCommentCommand extends IcingaCommand
     }
 
     /**
-     * Set whether the command affects a service
+     * Set whether the command affects a service comment
      *
-     * @param boolean $value    The value, defaults to true
+     * @param   bool $isService
      *
-     * @return this             fluent interface
+     * @return  $this
      */
-    public function setIsService($value = true)
+    public function setIsService($isService = true)
     {
-        $this->isService = (bool) $value;
+        $this->isService = (bool) $isService;
         return $this;
     }
 }

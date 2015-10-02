@@ -4,25 +4,38 @@
 namespace Icinga\Forms\Config;
 
 use InvalidArgumentException;
-use Icinga\Forms\ConfigForm;
-use Icinga\Web\Notification;
 use Icinga\Application\Config;
-use Icinga\Application\Platform;
-use Icinga\Data\ConfigObject;
-use Icinga\Data\ResourceFactory;
+use Icinga\Authentication\User\UserBackend;
 use Icinga\Exception\ConfigurationError;
+use Icinga\Exception\IcingaException;
+use Icinga\Exception\NotFoundError;
+use Icinga\Data\ConfigObject;
+use Icinga\Data\Inspectable;
+use Icinga\Data\Inspection;
+use Icinga\Forms\ConfigForm;
+use Icinga\Forms\Config\UserBackend\ExternalBackendForm;
 use Icinga\Forms\Config\UserBackend\DbBackendForm;
 use Icinga\Forms\Config\UserBackend\LdapBackendForm;
-use Icinga\Forms\Config\UserBackend\ExternalBackendForm;
+use Icinga\Web\Form;
 
+/**
+ * Form for managing user backends
+ */
 class UserBackendConfigForm extends ConfigForm
 {
     /**
-     * The available resources split by type
+     * The available user backend resources split by type
      *
      * @var array
      */
     protected $resources;
+
+    /**
+     * The backend to load when displaying the form for the first time
+     *
+     * @var string
+     */
+    protected $backendToLoad;
 
     /**
      * Initialize this form
@@ -31,20 +44,45 @@ class UserBackendConfigForm extends ConfigForm
     {
         $this->setName('form_config_authbackend');
         $this->setSubmitLabel($this->translate('Save Changes'));
+        $this->setValidatePartial(true);
     }
 
     /**
      * Set the resource configuration to use
      *
-     * @param   Config      $resources      The resource configuration
+     * @param   Config  $resourceConfig     The resource configuration
      *
      * @return  $this
+     *
+     * @throws  ConfigurationError          In case there are no valid resources for authentication available
      */
     public function setResourceConfig(Config $resourceConfig)
     {
         $resources = array();
         foreach ($resourceConfig as $name => $resource) {
-            $resources[strtolower($resource->type)][] = $name;
+            if (in_array($resource->type, array('db', 'ldap'))) {
+                $resources[$resource->type][] = $name;
+            }
+        }
+
+        if (empty($resources)) {
+            $externalBackends = $this->config->toArray();
+            array_walk(
+                $externalBackends,
+                function (& $authBackendCfg) {
+                    if (! isset($authBackendCfg['backend']) || $authBackendCfg['backend'] !== 'external') {
+                        $authBackendCfg = null;
+                    }
+                }
+            );
+            if (count(array_filter($externalBackends)) > 0 && (
+                $this->backendToLoad === null || !isset($externalBackends[$this->backendToLoad])
+            )) {
+                throw new ConfigurationError($this->translate(
+                    'Could not find any valid user backend resources.'
+                    . ' Please configure a resource for authentication first.'
+                ));
+            }
         }
 
         $this->resources = $resources;
@@ -54,9 +92,11 @@ class UserBackendConfigForm extends ConfigForm
     /**
      * Return a form object for the given backend type
      *
-     * @param   string      $type   The backend type for which to return a form
+     * @param   string      $type           The backend type for which to return a form
      *
      * @return  Form
+     *
+     * @throws  InvalidArgumentException    In case the given backend type is invalid
      */
     public function getBackendForm($type)
     {
@@ -84,81 +124,103 @@ class UserBackendConfigForm extends ConfigForm
     }
 
     /**
-     * Add a particular user backend
+     * Populate the form with the given backend's config
      *
-     * The backend to add is identified by the array-key `name'.
-     *
-     * @param   array   $values             The values to extend the configuration with
+     * @param   string  $name
      *
      * @return  $this
      *
-     * @throws  InvalidArgumentException    In case the backend does already exist
+     * @throws  NotFoundError   In case no backend with the given name is found
      */
-    public function add(array $values)
+    public function load($name)
     {
-        $name = isset($values['name']) ? $values['name'] : '';
-        if (! $name) {
-            throw new InvalidArgumentException($this->translate('User backend name missing'));
-        } elseif ($this->config->hasSection($name)) {
-            throw new InvalidArgumentException($this->translate('User backend already exists'));
+        if (! $this->config->hasSection($name)) {
+            throw new NotFoundError('No user backend called "%s" found', $name);
         }
 
-        unset($values['name']);
-        $this->config->setSection($name, $values);
+        $this->backendToLoad = $name;
         return $this;
     }
 
     /**
-     * Edit a particular user backend
+     * Add a new user backend
      *
-     * @param   string  $name               The name of the backend to edit
-     * @param   array   $values             The values to edit the configuration with
+     * The backend to add is identified by the array-key `name'.
      *
-     * @return  array                       The edited backend configuration
+     * @param   array   $data
      *
-     * @throws  InvalidArgumentException    In case the backend does not exist
+     * @return  $this
+     *
+     * @throws  InvalidArgumentException    In case $data does not contain a backend name
+     * @throws  IcingaException             In case a backend with the same name already exists
      */
-    public function edit($name, array $values)
+    public function add(array $data)
     {
-        if (! $name) {
-            throw new InvalidArgumentException($this->translate('Old user backend name missing'));
-        } elseif (! ($newName = isset($values['name']) ? $values['name'] : '')) {
-            throw new InvalidArgumentException($this->translate('New user backend name missing'));
-        } elseif (! $this->config->hasSection($name)) {
-            throw new InvalidArgumentException($this->translate('Unknown user backend provided'));
+        if (! isset($data['name'])) {
+            throw new InvalidArgumentException('Key \'name\' missing');
         }
 
-        $backendConfig = $this->config->getSection($name);
-        if ($newName !== $name) {
-            // Only remove the old entry if it has changed as the order gets screwed when editing backend names
-            $this->config->removeSection($name);
+        $backendName = $data['name'];
+        if ($this->config->hasSection($backendName)) {
+            throw new IcingaException(
+                $this->translate('A user backend with the name "%s" does already exist'),
+                $backendName
+            );
         }
 
-        unset($values['name']);
-        $this->config->setSection($newName, $backendConfig->merge($values));
-        return $backendConfig;
+        unset($data['name']);
+        $this->config->setSection($backendName, $data);
+        return $this;
     }
 
     /**
-     * Remove the given user backend
+     * Edit a user backend
      *
-     * @param   string      $name           The name of the backend to remove
+     * @param   string  $name
+     * @param   array   $data
      *
-     * @return  array                       The removed backend configuration
+     * @return  $this
      *
-     * @throws  InvalidArgumentException    In case the backend does not exist
+     * @throws  NotFoundError   In case no backend with the given name is found
      */
-    public function remove($name)
+    public function edit($name, array $data)
     {
-        if (! $name) {
-            throw new InvalidArgumentException($this->translate('user backend name missing'));
-        } elseif (! $this->config->hasSection($name)) {
-            throw new InvalidArgumentException($this->translate('Unknown user backend provided'));
+        if (! $this->config->hasSection($name)) {
+            throw new NotFoundError('No user backend called "%s" found', $name);
         }
 
         $backendConfig = $this->config->getSection($name);
+        if (isset($data['name'])) {
+            if ($data['name'] !== $name) {
+                $this->config->removeSection($name);
+                $name = $data['name'];
+            }
+
+            unset($data['name']);
+        }
+
+        $backendConfig->merge($data);
+        foreach ($backendConfig->toArray() as $k => $v) {
+            if ($v === null) {
+                unset($backendConfig->$k);
+            }
+        }
+
+        $this->config->setSection($name, $backendConfig);
+        return $this;
+    }
+
+    /**
+     * Remove a user backend
+     *
+     * @param   string  $name
+     *
+     * @return  $this
+     */
+    public function delete($name)
+    {
         $this->config->removeSection($name);
-        return $backendConfig;
+        return $this;
     }
 
     /**
@@ -169,14 +231,12 @@ class UserBackendConfigForm extends ConfigForm
      *
      * @return  $this
      *
-     * @throws  InvalidArgumentException    In case the backend does not exist
+     * @throws  NotFoundError               In case no backend with the given name is found
      */
     public function move($name, $position)
     {
-        if (! $name) {
-            throw new InvalidArgumentException($this->translate('User backend name missing'));
-        } elseif (! $this->config->hasSection($name)) {
-            throw new InvalidArgumentException($this->translate('Unknown user backend provided'));
+        if (! $this->config->hasSection($name)) {
+            throw new NotFoundError('No user backend called "%s" found', $name);
         }
 
         $backendOrder = $this->config->keys();
@@ -194,105 +254,9 @@ class UserBackendConfigForm extends ConfigForm
     }
 
     /**
-     * Add or edit an user backend and save the configuration
+     * Create and add elements to this form
      *
-     * Performs a connectivity validation using the submitted values. A checkbox is
-     * added to the form to skip the check if it fails and redirection is aborted.
-     *
-     * @see Form::onSuccess()
-     */
-    public function onSuccess()
-    {
-        if (($el = $this->getElement('force_creation')) === null || false === $el->isChecked()) {
-            $backendForm = $this->getBackendForm($this->getElement('type')->getValue());
-            if (false === $backendForm::isValidUserBackend($this)) {
-                $this->addElement($this->getForceCreationCheckbox());
-                return false;
-            }
-        }
-
-        $authBackend = $this->request->getQuery('backend');
-        try {
-            if ($authBackend === null) { // create new backend
-                $this->add($this->getValues());
-                $message = $this->translate('User backend "%s" has been successfully created');
-            } else { // edit existing backend
-                $this->edit($authBackend, $this->getValues());
-                $message = $this->translate('User backend "%s" has been successfully changed');
-            }
-        } catch (InvalidArgumentException $e) {
-            Notification::error($e->getMessage());
-            return;
-        }
-
-        if ($this->save()) {
-            Notification::success(sprintf($message, $this->getElement('name')->getValue()));
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * Populate the form in case an user backend is being edited
-     *
-     * @see Form::onRequest()
-     *
-     * @throws  ConfigurationError      In case the backend name is missing in the request or is invalid
-     */
-    public function onRequest()
-    {
-        $authBackend = $this->request->getQuery('backend');
-        if ($authBackend !== null) {
-            if ($authBackend === '') {
-                throw new ConfigurationError($this->translate('User backend name missing'));
-            } elseif (! $this->config->hasSection($authBackend)) {
-                throw new ConfigurationError($this->translate('Unknown user backend provided'));
-            } elseif ($this->config->getSection($authBackend)->backend === null) {
-                throw new ConfigurationError(
-                    sprintf($this->translate('Backend "%s" has no `backend\' setting'), $authBackend)
-                );
-            }
-
-            $configValues = $this->config->getSection($authBackend)->toArray();
-            $configValues['type'] = $configValues['backend'];
-            $configValues['name'] = $authBackend;
-            $this->populate($configValues);
-        } elseif (empty($this->resources)) {
-            $externalBackends = array_filter(
-                $this->config->toArray(),
-                function ($authBackendCfg) {
-                    return isset($authBackendCfg['backend']) && $authBackendCfg['backend'] === 'external';
-                }
-            );
-
-            if (false === empty($externalBackends)) {
-                throw new ConfigurationError($this->translate('Could not find any resources for authentication'));
-            }
-        }
-    }
-
-    /**
-     * Return a checkbox to be displayed at the beginning of the form
-     * which allows the user to skip the connection validation
-     *
-     * @return  Zend_Form_Element
-     */
-    protected function getForceCreationCheckbox()
-    {
-        return $this->createElement(
-            'checkbox',
-            'force_creation',
-            array(
-                'order'         => 0,
-                'ignore'        => true,
-                'label'         => $this->translate('Force Changes'),
-                'description'   => $this->translate('Check this box to enforce changes without connectivity validation')
-            )
-        );
-    }
-
-    /**
-     * @see Form::createElements()
+     * @param   array   $formData
      */
     public function createElements(array $formData)
     {
@@ -302,7 +266,7 @@ class UserBackendConfigForm extends ConfigForm
         if (isset($this->resources['db'])) {
             $backendTypes['db'] = $this->translate('Database');
         }
-        if (isset($this->resources['ldap']) && ($backendType === 'ldap' || Platform::extensionLoaded('ldap'))) {
+        if (isset($this->resources['ldap'])) {
             $backendTypes['ldap'] = 'LDAP';
             $backendTypes['msldap'] = 'ActiveDirectory';
         }
@@ -336,21 +300,187 @@ class UserBackendConfigForm extends ConfigForm
             )
         );
 
-        if (isset($formData['force_creation']) && $formData['force_creation']) {
+        if (isset($formData['skip_validation']) && $formData['skip_validation']) {
             // In case another error occured and the checkbox was displayed before
-            $this->addElement($this->getForceCreationCheckbox());
+            $this->addSkipValidationCheckbox();
         }
 
-        $this->addElements($this->getBackendForm($backendType)->createElements($formData)->getElements());
+        $this->addSubForm($this->getBackendForm($backendType)->create($formData), 'backend_form');
     }
 
     /**
-     * Return the configuration for the chosen resource
-     *
-     * @return  ConfigObject
+     * Populate the configuration of the backend to load
      */
-    public function getResourceConfig()
+    public function onRequest()
     {
-        return ResourceFactory::getResourceConfig($this->getValue('resource'));
+        if ($this->backendToLoad) {
+            $data = $this->config->getSection($this->backendToLoad)->toArray();
+            $data['name'] = $this->backendToLoad;
+            $data['type'] = $data['backend'];
+            $this->populate($data);
+        }
+    }
+
+    /**
+     * Retrieve all form element values
+     *
+     * @param   bool    $suppressArrayNotation  Ignored
+     *
+     * @return  array
+     */
+    public function getValues($suppressArrayNotation = false)
+    {
+        $values = parent::getValues();
+        $values = array_merge($values, $values['backend_form']);
+        unset($values['backend_form']);
+        return $values;
+    }
+
+    /**
+     * Return whether the given values are valid
+     *
+     * @param   array   $formData   The data to validate
+     *
+     * @return  bool
+     */
+    public function isValid($formData)
+    {
+        if (! parent::isValid($formData)) {
+            return false;
+        }
+
+        if (($el = $this->getElement('skip_validation')) === null || false === $el->isChecked()) {
+            $inspection = static::inspectUserBackend($this);
+            if ($inspection && $inspection->hasError()) {
+                $this->error($inspection->getError());
+                if ($el === null) {
+                    $this->addSkipValidationCheckbox();
+                }
+
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Create a user backend by using the given form's values and return its inspection results
+     *
+     * Returns null for non-inspectable backends.
+     *
+     * @param   Form    $form
+     *
+     * @return  Inspection|null
+     */
+    public static function inspectUserBackend(Form $form)
+    {
+        $backend = UserBackend::create(null, new ConfigObject($form->getValues()));
+        if ($backend instanceof Inspectable) {
+            return $backend->inspect();
+        }
+    }
+
+    /**
+     * Add a checkbox to the form by which the user can skip the connection validation
+     */
+    protected function addSkipValidationCheckbox()
+    {
+        $this->addElement(
+            'checkbox',
+            'skip_validation',
+            array(
+                'order'         => 0,
+                'ignore'        => true,
+                'required'      => true,
+                'label'         => $this->translate('Skip Validation'),
+                'description'   => $this->translate(
+                    'Check this box to enforce changes without validating that authentication is possible.'
+                )
+            )
+        );
+    }
+
+    /**
+     * Run the configured backend's inspection checks and show the result, if necessary
+     *
+     * This will only run any validation if the user pushed the 'backend_validation' button.
+     *
+     * @param   array   $formData
+     *
+     * @return  bool
+     */
+    public function isValidPartial(array $formData)
+    {
+        if ($this->getElement('backend_validation')->isChecked() && parent::isValid($formData)) {
+            $inspection = static::inspectUserBackend($this);
+            if ($inspection !== null) {
+                $join = function ($e) use (& $join) {
+                    return is_string($e) ? $e : join("\n", array_map($join, $e));
+                };
+                $this->addElement(
+                    'note',
+                    'inspection_output',
+                    array(
+                        'order'         => 0,
+                        'value'         => '<strong>' . $this->translate('Validation Log') . "</strong>\n\n"
+                            . join("\n", array_map($join, $inspection->toArray())),
+                        'decorators'    => array(
+                            'ViewHelper',
+                            array('HtmlTag', array('tag' => 'pre', 'class' => 'log-output')),
+                        )
+                    )
+                );
+
+                if ($inspection->hasError()) {
+                    $this->warning(sprintf(
+                        $this->translate('Failed to successfully validate the configuration: %s'),
+                        $inspection->getError()
+                    ));
+                    return false;
+                }
+            }
+
+            $this->info($this->translate('The configuration has been successfully validated.'));
+        }
+
+        return true;
+    }
+
+    /**
+     * Add a submit button to this form and one to manually validate the configuration
+     *
+     * Calls parent::addSubmitButton() to add the submit button.
+     *
+     * @return  $this
+     */
+    public function addSubmitButton()
+    {
+        parent::addSubmitButton()
+            ->getElement('btn_submit')
+            ->setDecorators(array('ViewHelper'));
+
+        $this->addElement(
+            'submit',
+            'backend_validation',
+            array(
+                'ignore'                => true,
+                'label'                 => $this->translate('Validate Configuration'),
+                'data-progress-label'   => $this->translate('Validation In Progress'),
+                'decorators'            => array('ViewHelper')
+            )
+        );
+        $this->addDisplayGroup(
+            array('btn_submit', 'backend_validation'),
+            'submit_validation',
+            array(
+                'decorators' => array(
+                    'FormElements',
+                    array('HtmlTag', array('tag' => 'div', 'class' => 'control-group'))
+                )
+            )
+        );
+
+        return $this;
     }
 }

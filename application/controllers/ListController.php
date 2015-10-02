@@ -1,19 +1,19 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
-use Icinga\Web\Controller;
-use Icinga\Web\Url;
-use Icinga\Web\Widget\Tabextension\DashboardAction;
-use Icinga\Web\Widget\Tabextension\OutputFormat;
+namespace Icinga\Controllers;
+
 use Icinga\Application\Config;
 use Icinga\Application\Logger;
 use Icinga\Data\ConfigObject;
 use Icinga\Protocol\File\FileReader;
-use \Zend_Controller_Action_Exception as ActionError;
+use Icinga\Web\Controller;
+use Icinga\Web\Url;
+use Icinga\Web\Widget\Tabextension\DashboardAction;
+use Icinga\Web\Widget\Tabextension\MenuAction;
+use Icinga\Web\Widget\Tabextension\OutputFormat;
 
 /**
- * Class ListController
- *
  * Application wide controller for various listing actions
  */
 class ListController extends Controller
@@ -31,7 +31,7 @@ class ListController extends Controller
                     'list/'
                     . str_replace(' ', '', $action)
                 )
-        ))->extend(new OutputFormat())->extend(new DashboardAction())->activate($action);
+        ))->extend(new OutputFormat())->extend(new DashboardAction())->extend(new MenuAction())->activate($action);
     }
 
     /**
@@ -40,7 +40,7 @@ class ListController extends Controller
     public function applicationlogAction()
     {
         if (! Logger::writesToFile()) {
-            throw new ActionError('Site not found', 404);
+            $this->httpNotFound('Page not found');
         }
 
         $this->addTitleTab('application log');

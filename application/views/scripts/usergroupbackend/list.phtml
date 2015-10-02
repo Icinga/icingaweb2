@@ -19,14 +19,19 @@
     <tr>
   </thead>
   <tbody>
-<?php foreach ($backendNames as $backendName): ?>
+<?php foreach ($backendNames as $backendName => $config):
+    $type = $config->get('backend');
+    ?>
     <tr>
       <td class="backend-name">
         <?= $this->qlink(
           $backendName,
           'usergroupbackend/edit',
           array('backend' => $backendName),
-          array('title' => sprintf($this->translate('Edit user group backend %s'), $backendName))
+          array(
+              'icon'  => $type === 'external' ? 'magic' : ($type === 'ldap' || $type === 'msldap' ? 'sitemap' : 'database'),
+              'title' => sprintf($this->translate('Edit user group backend %s'), $backendName)
+          )
         ); ?>
       </td>
       <td class="backend-remove"><?= $this->qlink(

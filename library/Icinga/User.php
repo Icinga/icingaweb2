@@ -5,7 +5,9 @@ namespace Icinga;
 
 use DateTimeZone;
 use InvalidArgumentException;
+use Icinga\Application\Config;
 use Icinga\User\Preferences;
+use Icinga\Web\Navigation\Navigation;
 
 /**
  *  This class represents an authorized user
@@ -57,7 +59,7 @@ class User
     protected $additionalInformation = array();
 
     /**
-     * Information if the user is external authenticated
+     * Information if the user is externally authenticated
      *
      * Keys:
      *
@@ -66,7 +68,7 @@ class User
      *
      * @var array
      */
-    protected $remoteUserInformation = array();
+    protected $externalUserInformation = array();
 
     /**
      * Set of permissions
@@ -95,6 +97,13 @@ class User
      * @var Preferences
      */
     protected $preferences;
+
+    /**
+     * Whether the user is authenticated using a HTTP authentication mechanism
+     *
+     * @var bool
+     */
+    protected $isHttpUser = false;
 
     /**
      * Creates a user object given the provided information
@@ -380,34 +389,57 @@ class User
     }
 
     /**
-     * Set additional remote user information
+     * Set additional external user information
      *
-     * @param stirng    $username
+     * @param string    $username
      * @param string    $field
      */
-    public function setRemoteUserInformation($username, $field)
+    public function setExternalUserInformation($username, $field)
     {
-        $this->remoteUserInformation = array($username, $field);
+        $this->externalUserInformation = array($username, $field);
     }
 
     /**
-     * Get additional remote user information
+     * Get additional external user information
      *
      * @return array
      */
-    public function getRemoteUserInformation()
+    public function getExternalUserInformation()
     {
-        return $this->remoteUserInformation;
+        return $this->externalUserInformation;
     }
 
     /**
-     * Return true if user has remote user information set
+     * Return true if user has external user information set
      *
      * @return bool
      */
-    public function isRemoteUser()
+    public function isExternalUser()
     {
-        return ! empty($this->remoteUserInformation);
+        return ! empty($this->externalUserInformation);
+    }
+
+    /**
+     * Get whether the user is authenticated using a HTTP authentication mechanism
+     *
+     * @return bool
+     */
+    public function getIsHttpUser()
+    {
+        return $this->isHttpUser;
+    }
+
+    /**
+     * Set whether the user is authenticated using a HTTP authentication mechanism
+     *
+     * @param   bool $isHttpUser
+     *
+     * @return  $this
+     */
+    public function setIsHttpUser($isHttpUser = true)
+    {
+        $this->isHttpUser = (bool) $isHttpUser;
+        return $this;
     }
 
     /**
@@ -422,16 +454,19 @@ class User
         if (isset($this->permissions['*']) || isset($this->permissions[$requiredPermission])) {
             return true;
         }
-        // If the permission to check contains a wildcard, grant the permission if any permit related to the permission
-        // matches
-        $any = strpos($requiredPermission, '*');
+
+        $requiredWildcard = strpos($requiredPermission, '*');
         foreach ($this->permissions as $grantedPermission) {
-            if ($any !== false) {
-                $wildcard = $any;
+            if ($requiredWildcard !== false) {
+                if (($grantedWildcard = strpos($grantedPermission, '*')) !== false) {
+                    $wildcard = min($requiredWildcard, $grantedWildcard);
+                } else {
+                    $wildcard = $requiredWildcard;
+                }
             } else {
-                // If the permit contains a wildcard, grant the permission if it's related to the permit
                 $wildcard = strpos($grantedPermission, '*');
             }
+
             if ($wildcard !== false) {
                 if (substr($requiredPermission, 0, $wildcard) === substr($grantedPermission, 0, $wildcard)) {
                     return true;
@@ -440,6 +475,42 @@ class User
                 return true;
             }
         }
+
         return false;
+    }
+
+    /**
+     * Load and return this user's configured navigation of the given type
+     *
+     * @param   string  $type
+     *
+     * @return  Navigation
+     */
+    public function getNavigation($type)
+    {
+        $config = Config::navigation($type === 'dashboard-pane' ? 'dashlet' : $type, $this->getUsername());
+
+        if ($type === 'dashboard-pane') {
+            $panes = array();
+            foreach ($config as $dashletName => $dashletConfig) {
+                // TODO: Throw ConfigurationError if pane or url is missing
+                $panes[$dashletConfig->pane][$dashletName] = $dashletConfig->url;
+            }
+
+            $navigation = new Navigation();
+            foreach ($panes as $paneName => $dashlets) {
+                $navigation->addItem(
+                    $paneName,
+                    array(
+                        'type'      => 'dashboard-pane',
+                        'dashlets'  => $dashlets
+                    )
+                );
+            }
+        } else {
+            $navigation = Navigation::fromConfig($config);
+        }
+
+        return $navigation;
     }
 }

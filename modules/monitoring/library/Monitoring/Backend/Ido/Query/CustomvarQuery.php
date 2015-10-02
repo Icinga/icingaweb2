@@ -6,7 +6,10 @@ namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 class CustomvarQuery extends IdoQuery
 {
     protected $columnMap = array(
-        'customvars' => array(
+        'instances' => array(
+            'instance_name' => 'i.instance_name'
+        ),
+        'customvariablestatus' => array(
             'varname'  => 'cvs.varname',
             'varvalue' => 'cvs.varvalue',
             'is_json'  => 'cvs.is_json',
@@ -38,7 +41,7 @@ class CustomvarQuery extends IdoQuery
     protected function joinBaseTables()
     {
         if (version_compare($this->getIdoVersion(), '1.12.0', '<')) {
-            $this->columnMap['customvars']['is_json'] = '(0)';
+            $this->columnMap['customvariablestatus']['is_json'] = '(0)';
         }
 
         $this->select->from(
@@ -50,8 +53,41 @@ class CustomvarQuery extends IdoQuery
             array()
         );
         $this->joinedVirtualTables = array(
-            'customvars' => true,
-            'objects'    => true
+            'customvariablestatus'  => true,
+            'objects'               => true
         );
+    }
+
+    /**
+     * Join instances
+     */
+    protected function joinInstances()
+    {
+        $this->select->join(
+            array('i' => $this->prefix . 'instances'),
+            'i.instance_id = cvs.instance_id',
+            array()
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getGroup()
+    {
+        $group = parent::getGroup();
+        if (! empty($group) && $this->ds->getDbType() === 'pgsql') {
+            foreach ($this->columnMap as $table => $columns) {
+                $pk = ($table === 'objects' ? 'cvo.' : 'cvs.') . $this->getPrimaryKeyColumn($table);
+                foreach ($columns as $alias => $_) {
+                    if (! in_array($pk, $group, true) && in_array($alias, $group, true)) {
+                        $group[] = $pk;
+                        break;
+                    }
+                }
+            }
+        }
+
+        return $group;
     }
 }

@@ -43,6 +43,7 @@ class Cli extends ApplicationBootstrap
             ->setupLogger()
             ->setupResourceFactory()
             ->setupModuleManager()
+            ->setupUserBackendFactory()
             ->loadSetupModuleIfNecessary();
     }
 

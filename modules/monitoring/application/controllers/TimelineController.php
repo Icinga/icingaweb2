@@ -1,15 +1,20 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
-use Icinga\Web\Url;
-use Icinga\Util\Format;
+namespace Icinga\Module\Monitoring\Controllers;
+
+use DateInterval;
+use DateTime;
 use Icinga\Module\Monitoring\Controller;
 use Icinga\Module\Monitoring\Timeline\TimeLine;
 use Icinga\Module\Monitoring\Timeline\TimeRange;
 use Icinga\Module\Monitoring\Web\Widget\SelectBox;
+use Icinga\Util\Format;
+use Icinga\Web\Url;
 use Icinga\Web\Widget\Tabextension\DashboardAction;
+use Icinga\Web\Widget\Tabextension\MenuAction;
 
-class Monitoring_TimelineController extends Controller
+class TimelineController extends Controller
 {
     public function indexAction()
     {
@@ -20,7 +25,7 @@ class Monitoring_TimelineController extends Controller
                 'label' => $this->translate('Timeline'),
                 'url'   => Url::fromRequest()
             )
-        )->extend(new DashboardAction())->activate('timeline');
+        )->extend(new DashboardAction())->extend(new MenuAction())->activate('timeline');
         $this->view->title = $this->translate('Timeline');
 
         // TODO: filter for hard_states (precedence adjustments necessary!)

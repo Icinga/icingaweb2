@@ -1,25 +1,19 @@
 <div class="controls">
-  <?php if (! $this->compact): ?>
-      <?= $this->tabs; ?>
-  <?php endif ?>
-
-  <div data-base-target='_next'>
-     <?= $this->render('partials/comment/comments-header.phtml'); ?>
-  </div>
+<?php if (! $this->compact): ?>
+    <?= $this->tabs ?>
+<?php endif ?>
+    <?= $this->render('partials/comment/comments-header.phtml') ?>
 </div>
 
 <div class="content multi-commands">
-  <h3><?= $this->icon('reschedule') ?> <?= $this->translate('Commands') ?> </h3>
+    <h3><?= $this->icon('reschedule') ?><?= $this->translate('Commands') ?></h3>
     <?= $this->qlink(
-        sprintf(
-            $this->translate('Remove %d comments'),
-            count($comments)
-        ),
+        sprintf($this->translate('Remove %d comments'), $comments->count()),
         $removeAllLink,
         null,
         array(
-            'icon' => 'trash',
-            'title' => $this->translate('Remove all selected comments.')
+            'icon'  => 'trash',
+            'title' => $this->translate('Remove all selected comments')
         )
     ) ?>
 </div>

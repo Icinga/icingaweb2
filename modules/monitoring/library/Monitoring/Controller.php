@@ -51,37 +51,55 @@ class Controller extends IcingaWebController
     }
 
     /**
-     * Apply a restriction on the given data view
+     * Apply a restriction of the authenticated on the given filterable
      *
-     * @param   string      $restriction    The name of restriction
-     * @param   Filterable  $view           The filterable to restrict
+     * @param   string      $name       Name of the restriction
+     * @param   Filterable  $filterable Filterable to restrict
      *
-     * @return  Filterable  The filterable
+     * @return  Filterable  The filterable having the restriction applied
      */
-    protected function applyRestriction($restriction, Filterable $view)
+    protected function applyRestriction($name, Filterable $filterable)
     {
-        $restrictions = Filter::matchAny();
-        $restrictions->setAllowedFilterColumns(array(
+        $filterable->applyFilter($this->getRestriction($name));
+        return $filterable;
+    }
+
+    /**
+     * Get a restriction of the authenticated
+     *
+     * @param   string $name        Name of the restriction
+     *
+     * @return  Filter|null         Filter object or null if the authenticated user is not restricted
+     * @throws  ConfigurationError  If the restriction contains invalid filter columns
+     */
+    protected function getRestriction($name)
+    {
+        $restriction = Filter::matchAny();
+        $restriction->setAllowedFilterColumns(array(
             'host_name',
             'hostgroup_name',
+            'instance_name',
             'service_description',
             'servicegroup_name',
             function ($c) {
-                return preg_match('/^_(?:host|service)_/', $c);
+                return preg_match('/^_(?:host|service)_/i', $c);
             }
         ));
-
-        foreach ($this->getRestrictions($restriction) as $filter) {
+        foreach ($this->getRestrictions($name) as $filter) {
+            if ($filter === '*') {
+                return Filter::matchAny();
+            }
             try {
-                $restrictions->addFilter(Filter::fromQueryString($filter));
+                $restriction->addFilter(Filter::fromQueryString($filter));
             } catch (QueryException $e) {
                 throw new ConfigurationError(
                     $this->translate(
                         'Cannot apply restriction %s using the filter %s. You can only use the following columns: %s'
                     ),
-                    $restriction,
+                    $name,
                     $filter,
                     implode(', ', array(
+                        'instance_name',
                         'host_name',
                         'hostgroup_name',
                         'service_description',
@@ -92,9 +110,7 @@ class Controller extends IcingaWebController
                 );
             }
         }
-
-        $view->applyFilter($restrictions);
-        return $view;
+        return $restriction;
     }
 }
 

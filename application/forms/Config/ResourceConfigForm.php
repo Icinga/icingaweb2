@@ -4,15 +4,20 @@
 namespace Icinga\Forms\Config;
 
 use InvalidArgumentException;
-use Icinga\Web\Notification;
+use Icinga\Application\Platform;
+use Icinga\Exception\ConfigurationError;
+use Icinga\Data\ConfigObject;
+use Icinga\Data\Inspectable;
+use Icinga\Data\Inspection;
+use Icinga\Data\ResourceFactory;
 use Icinga\Forms\ConfigForm;
 use Icinga\Forms\Config\Resource\DbResourceForm;
 use Icinga\Forms\Config\Resource\FileResourceForm;
 use Icinga\Forms\Config\Resource\LdapResourceForm;
 use Icinga\Forms\Config\Resource\LivestatusResourceForm;
 use Icinga\Forms\Config\Resource\SshResourceForm;
-use Icinga\Application\Platform;
-use Icinga\Exception\ConfigurationError;
+use Icinga\Web\Form;
+use Icinga\Web\Notification;
 
 class ResourceConfigForm extends ConfigForm
 {
@@ -23,6 +28,7 @@ class ResourceConfigForm extends ConfigForm
     {
         $this->setName('form_config_resource');
         $this->setSubmitLabel($this->translate('Save Changes'));
+        $this->setValidatePartial(true);
     }
 
     /**
@@ -141,7 +147,9 @@ class ResourceConfigForm extends ConfigForm
         $resourceForm = $this->getResourceForm($this->getElement('type')->getValue());
 
         if (($el = $this->getElement('force_creation')) === null || false === $el->isChecked()) {
-            if (method_exists($resourceForm, 'isValidResource') && false === $resourceForm::isValidResource($this)) {
+            $inspection = static::inspectResource($this);
+            if ($inspection !== null && $inspection->hasError()) {
+                $this->error($inspection->getError());
                 $this->addElement($this->getForceCreationCheckbox());
                 return false;
             }
@@ -228,10 +236,10 @@ class ResourceConfigForm extends ConfigForm
             'livestatus'    => 'Livestatus',
             'ssh'           => $this->translate('SSH Identity'),
         );
-        if ($resourceType === 'ldap' || Platform::extensionLoaded('ldap')) {
+        if ($resourceType === 'ldap' || Platform::hasLdapSupport()) {
             $resourceTypes['ldap'] = 'LDAP';
         }
-        if ($resourceType === 'db' || Platform::hasMysqlSupport() || Platform::hasPostgresqlSupport()) {
+        if ($resourceType === 'db' || Platform::hasDatabaseSupport()) {
             $resourceTypes['db'] = $this->translate('SQL Database');
         }
 
@@ -254,5 +262,118 @@ class ResourceConfigForm extends ConfigForm
         }
 
         $this->addElements($this->getResourceForm($resourceType)->createElements($formData)->getElements());
+    }
+
+    /**
+     * Create a resource by using the given form's values and return its inspection results
+     *
+     * @param   Form    $form
+     *
+     * @return  Inspection
+     */
+    public static function inspectResource(Form $form)
+    {
+        if ($form->getValue('type') !== 'ssh') {
+            $resource = ResourceFactory::createResource(new ConfigObject($form->getValues()));
+            if ($resource instanceof Inspectable) {
+                return $resource->inspect();
+            }
+        }
+    }
+
+    /**
+     * Run the configured resource's inspection checks and show the result, if necessary
+     *
+     * This will only run any validation if the user pushed the 'resource_validation' button.
+     *
+     * @param   array   $formData
+     *
+     * @return  bool
+     */
+    public function isValidPartial(array $formData)
+    {
+        if ($this->getElement('resource_validation')->isChecked() && parent::isValid($formData)) {
+            $inspection = static::inspectResource($this);
+            if ($inspection !== null) {
+                $join = function ($e) use (& $join) {
+                    return is_string($e) ? $e : join("\n", array_map($join, $e));
+                };
+                $this->addElement(
+                    'note',
+                    'inspection_output',
+                    array(
+                        'order'         => 0,
+                        'value'         => '<strong>' . $this->translate('Validation Log') . "</strong>\n\n"
+                            . join("\n", array_map($join, $inspection->toArray())),
+                        'decorators'    => array(
+                            'ViewHelper',
+                            array('HtmlTag', array('tag' => 'pre', 'class' => 'log-output')),
+                        )
+                    )
+                );
+
+                if ($inspection->hasError()) {
+                    $this->warning(sprintf(
+                        $this->translate('Failed to successfully validate the configuration: %s'),
+                        $inspection->getError()
+                    ));
+                    return false;
+                }
+            }
+
+            $this->info($this->translate('The configuration has been successfully validated.'));
+        }
+
+        return true;
+    }
+
+    /**
+     * Add a submit button to this form and one to manually validate the configuration
+     *
+     * Calls parent::addSubmitButton() to add the submit button.
+     *
+     * @return  $this
+     */
+    public function addSubmitButton()
+    {
+        parent::addSubmitButton()
+            ->getElement('btn_submit')
+            ->setDecorators(array('ViewHelper'));
+
+        $this->addElement(
+            'submit',
+            'resource_validation',
+            array(
+                'ignore'                => true,
+                'label'                 => $this->translate('Validate Configuration'),
+                'data-progress-label'   => $this->translate('Validation In Progress'),
+                'decorators'            => array('ViewHelper')
+            )
+        );
+
+        $this->setAttrib('data-progress-element', 'resource-progress');
+        $this->addElement(
+            'note',
+            'resource-progress',
+            array(
+                'decorators'    => array(
+                    'ViewHelper',
+                    array('Spinner', array('id' => 'resource-progress'))
+                )
+            )
+        );
+
+        $this->addDisplayGroup(
+            array('btn_submit', 'resource_validation', 'resource-progress'),
+            'submit_validation',
+            array(
+                'decorators' => array(
+                    'FormElements',
+                    array('HtmlTag', array('tag' => 'div', 'class' => 'control-group'))
+                )
+            )
+        );
+
+        return $this;
     }
 }

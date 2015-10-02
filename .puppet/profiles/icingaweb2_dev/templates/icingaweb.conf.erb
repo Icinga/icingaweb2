@@ -1,23 +1,38 @@
-Alias /<%= @web_path %> /vagrant/public
+Alias /<%= @web_path %> "/vagrant/public"
 
-<Directory "/vagrant/public/">
-    Options FollowSymLinks
+<Directory "/vagrant/public">
+    Options SymLinksIfOwnerMatch
     AllowOverride None
-    Order allow,deny
-    Allow from all
 
-    # SetEnv ICINGAWEB_CONFIGDIR <%= @config %>
+    <IfModule mod_authz_core.c>
+        # Apache 2.4
+        <RequireAll>
+            Require all granted
+        </RequireAll>
+    </IfModule>
+
+    <IfModule !mod_authz_core.c>
+        # Apache 2.2
+        Order allow,deny
+        Allow from all
+    </IfModule>
+
+    SetEnv ICINGAWEB_CONFIGDIR <%= @config %>
 
     EnableSendfile Off
 
-    RewriteEngine on
-    RewriteBase /<%= @web_path %>/
-    RewriteCond %{REQUEST_FILENAME} -s [OR]
-    RewriteCond %{REQUEST_FILENAME} -l [OR]
-    RewriteCond %{REQUEST_FILENAME} -d
-    RewriteRule ^.*$ - [NC,L]
-    RewriteRule ^.*$ index.php [NC,L]
+    <IfModule mod_rewrite.c>
+        RewriteEngine on
+        RewriteBase /<%= @web_path %>/
+        RewriteCond %{REQUEST_FILENAME} -s [OR]
+        RewriteCond %{REQUEST_FILENAME} -l [OR]
+        RewriteCond %{REQUEST_FILENAME} -d
+        RewriteRule ^.*$ - [NC,L]
+        RewriteRule ^.*$ index.php [NC,L]
+    </IfModule>
 
-    php_value xdebug.idekey PHPSTORM
+    <IfModule !mod_rewrite.c>
+        DirectoryIndex error_norewrite.html
+        ErrorDocument 404 /error_norewrite.html
+    </IfModule>
 </Directory>
-

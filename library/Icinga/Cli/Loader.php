@@ -4,6 +4,7 @@
 namespace Icinga\Cli;
 
 use Icinga\Application\ApplicationBootstrap as App;
+use Icinga\Exception\IcingaException;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Cli\Params;
 use Icinga\Cli\Screen;
@@ -265,36 +266,17 @@ class Loader
             if ($obj && $obj instanceof Command && $obj->showTrace()) {
                 echo $this->formatTrace($e->getTrace());
             }
-            $this->fail($e->getMessage());
+
+            $this->fail(IcingaException::describe($e));
         }
     }
 
     protected function searchMatch($needle, $haystack)
     {
-        $stack = $haystack;
-        $search = $needle;
-        $this->lastSuggestions = array();
-        while (strlen($search) > 0) {
-            $len = strlen($search);
-            foreach ($stack as & $s) {
-                $s = substr($s, 0, $len);
-            }
-
-            $res = array_keys($stack, $search, true);
-            if (count($res) === 1) {
-                $found = $haystack[$res[0]];
-                if (substr($found, 0, strlen($needle)) === $needle) {
-                    return $found;
-                } else {
-                    return false;
-                }
-            } elseif (count($res) > 1) {
-                foreach ($res as $key) {
-                    $this->lastSuggestions[] = $haystack[$key];
-                }
-                return false;
-            }
-            $search = substr($search, 0, -1);
+        $this->lastSuggestions = preg_grep(sprintf('/^%s.*$/', preg_quote($needle, '/')), $haystack);
+        $match = array_search($needle, $haystack, true);
+        if (false !== $match) {
+            return $haystack[$match];
         }
         return false;
     }

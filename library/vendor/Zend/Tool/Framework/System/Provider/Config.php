@@ -15,25 +15,29 @@
  * @category   Zend
  * @package    Zend_Tool
  * @subpackage Framework
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
 /**
  * @see Zend_Tool_Framework_Provider_Abstract
  */
+require_once "Zend/Tool/Framework/Provider/Abstract.php";
 
 /**
  * @see Zend_Config
  */
+require_once "Zend/Config.php";
 
 /**
  * @see Zend_Config_Writer_Ini
  */
+require_once "Zend/Config/Writer/Ini.php";
 
 /**
  * @see Zend_Loader
  */
+require_once "Zend/Loader.php";
 
 /**
  * Configuration Provider
@@ -42,7 +46,7 @@
  * @package    Zend_Tool
  * @package    Framework
  * @uses       Zend_Tool_Framework_Provider_Abstract
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id$
  */
@@ -70,6 +74,7 @@ class Zend_Tool_Framework_System_Provider_Config extends Zend_Tool_Framework_Pro
 
         $resp = $this->_registry->getResponse();
         if ($userConfig->exists()) {
+            require_once "Zend/Tool/Framework/Exception.php";
             throw new Zend_Tool_Framework_Exception(
                 "A configuration already exists, cannot create a new one.");
         }
@@ -104,6 +109,7 @@ class Zend_Tool_Framework_System_Provider_Config extends Zend_Tool_Framework_Pro
                 return $homeDirectory;
             }
         }
+        require_once "Zend/Tool/Framework/Exception.php";
         throw new Zend_Tool_Framework_Exception("Cannot detect user home directory, set ZF_HOME enviroment variable.");
     }
 
@@ -194,6 +200,7 @@ class Zend_Tool_Framework_System_Provider_Config extends Zend_Tool_Framework_Pro
         Zend_Loader::loadClass($className);
         $reflClass = new ReflectionClass($className);
         if (!in_array("Zend_Tool_Framework_Provider_Interface", $reflClass->getInterfaceNames())) {
+            require_once "Zend/Tool/Framework/Exception.php";
             throw new Zend_Tool_Framework_Exception("Given class is not a provider");
         }
         $this->_doEnable($className);
@@ -226,11 +233,13 @@ class Zend_Tool_Framework_System_Provider_Config extends Zend_Tool_Framework_Pro
                     array("color" => "green", "aligncenter" => true)
                 );
             } else {
+                require_once "Zend/Tool/Framework/Exception.php";
                 throw new Zend_Tool_Framework_Exception(
                     "Could not write user configuration to persistence."
                 );
             }
         } else {
+            require_once "Zend/Tool/Framework/Exception.php";
             throw new Zend_Tool_Framework_Exception(
                 "Provider/Manifest '".$className."' is already enabled."
             );
@@ -245,6 +254,7 @@ class Zend_Tool_Framework_System_Provider_Config extends Zend_Tool_Framework_Pro
         Zend_Loader::loadClass($className);
         $reflClass = new ReflectionClass($className);
         if (!in_array("Zend_Tool_Framework_Manifest_Interface", $reflClass->getInterfaceNames())) {
+            require_once "Zend/Tool/Framework/Exception.php";
             throw new Zend_Tool_Framework_Exception("Given class is not a manifest.");
         }
         $this->_doEnable($className);
@@ -282,11 +292,13 @@ class Zend_Tool_Framework_System_Provider_Config extends Zend_Tool_Framework_Pro
                     array("color" => "green", "aligncenter" => true)
                 );
             } else {
+                require_once "Zend/Tool/Framework/Exception.php";
                 throw new Zend_Tool_Framework_Exception(
                     "Could not write user configuration to persistence."
                 );
             }
         } else {
+            require_once "Zend/Tool/Framework/Exception.php";
             throw new Zend_Tool_Framework_Exception(
                 "Provider/Manifest '".$className."' is not enabled."
             );
