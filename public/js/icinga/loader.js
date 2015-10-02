@@ -359,7 +359,7 @@
                 url = parts.shift();
                 var redirectionUrl = this.addUrlFlag(url, 'renderLayout');
                 var r = this.loadUrl(redirectionUrl, $('#layout'));
-                r.historyUrl = url;
+                r.addToHistory = false;
                 if (parts.length) {
                     r.loadNext = parts;
                 } else if (!! document.location.hash) {
@@ -613,8 +613,7 @@
                 } else {
                     // Request wasn't for a container, so it's usually the body
                     // or the full layout. Push request URL to history:
-                    var url = typeof req.historyUrl !== 'undefined' ? req.historyUrl : req.url;
-                    this.icinga.history.pushUrl(url);
+                    this.icinga.history.pushUrl(req.url);
                 }
             }
 
