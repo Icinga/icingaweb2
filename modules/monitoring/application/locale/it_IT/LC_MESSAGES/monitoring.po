@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Monitoring Module (2.0.0-rc1)\n"
 "Report-Msgid-Bugs-To: dev@icinga.org\n"
 "POT-Creation-Date: 2015-10-02 09:45+0200\n"
-"PO-Revision-Date: 2015-10-02 12:01+0100\n"
+"PO-Revision-Date: 2015-10-02 12:08+0100\n"
 "Last-Translator: Thomas Gelf <thomas@gelf.net>\n"
 "Language: it_IT\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -716,10 +716,9 @@ msgid "CRITICAL"
 msgstr "CRITICO"
 
 #: /usr/local/icingaweb2/modules/monitoring/application/forms/Command/Object/ProcessCheckResultCommandForm.php:58
-#, fuzzy
 msgctxt "icinga.state"
 msgid "CRITICAL"
-msgstr "CRITICAL"
+msgstr "CRITICO"
 
 #: /usr/local/icingaweb2/modules/monitoring/library/Monitoring/Command/Transport/RemoteCommandFile.php:214
 msgid "Can't send external Icinga Command. Remote user is missing"
@@ -1563,7 +1562,7 @@ msgstr "Controllo Funzionalità"
 
 #: /usr/local/icingaweb2/modules/monitoring/application/forms/Navigation/ActionForm.php:24
 msgid "Filter"
-msgstr ""
+msgstr "Filtro"
 
 #: /usr/local/icingaweb2/modules/monitoring/application/forms/Command/Object/ScheduleServiceDowntimeCommandForm.php:107
 #: /usr/local/icingaweb2/modules/monitoring/application/views/scripts/downtime/show.phtml:60
@@ -2732,9 +2731,8 @@ msgid "Not acknowledged"
 msgstr "Non Confermato"
 
 #: /usr/local/icingaweb2/modules/monitoring/application/views/scripts/show/components/checksource.phtml:12
-#, fuzzy
 msgid "Not reachable"
-msgstr "Unreachable"
+msgstr "Irragiungibile"
 
 #: /usr/local/icingaweb2/modules/monitoring/application/views/scripts/show/components/notes.phtml:43
 msgid "Notes"
@@ -2868,9 +2866,8 @@ msgid "Overdue"
 msgstr "In ritardo"
 
 #: /usr/local/icingaweb2/modules/monitoring/configuration.php:144
-#, fuzzy
 msgid "Overview"
-msgstr "Panoramica Eventi"
+msgstr "Panoramica"
 
 #: /usr/local/icingaweb2/modules/monitoring/library/Monitoring/Object/Host.php:191
 #: /usr/local/icingaweb2/modules/monitoring/library/Monitoring/Object/Service.php:200
@@ -2916,9 +2913,8 @@ msgid "Path to the local Icinga command file"
 msgstr "Percorso locale del command file di Icinga"
 
 #: /usr/local/icingaweb2/modules/monitoring/application/views/scripts/health/stats.phtml:88
-#, fuzzy
 msgid "Per Host"
-msgstr "Host"
+msgstr "Per Host"
 
 #: /usr/local/icingaweb2/modules/monitoring/application/forms/Command/Instance/ToggleInstanceFeaturesCommandForm.php:186
 #: /usr/local/icingaweb2/modules/monitoring/application/forms/Command/Object/ProcessCheckResultCommandForm.php:77
