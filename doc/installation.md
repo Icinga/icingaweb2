@@ -5,7 +5,7 @@ system and distribution you are running. But it is also possible to install Icin
 
 In case you are upgrading from an older version of Icinga Web 2
 please make sure to read the [upgrading](installation.md#upgrading) section
-throroughly.
+thoroughly.
 
 ## <a id="installing-requirements"></a> Installing Requirements
 
@@ -208,6 +208,11 @@ Example for Apache on RHEL or CentOS:
 ./bin/icingacli setup config webserver apache --document-root /usr/share/icingaweb2/public > /etc/httpd/conf.d/icingaweb2.conf
 ````
 
+Example for Apache on SUSE:
+````
+./bin/icingacli setup config webserver apache --document-root /usr/share/icingaweb2/public > /etc/apache2/conf.d/icingaweb2.conf
+````
+
 Example for Apache on Debian Jessie:
 ````
 ./bin/icingacli setup config webserver apache --document-root /usr/share/icingaweb2/public > /etc/apache2/conf-available/icingaweb2.conf
@@ -278,7 +283,7 @@ In case you do not remember the token you can show it using the `icingacli`:
 Finally visit Icinga Web 2 in your browser to access the setup wizard and complete the installation:
 `/icingaweb2/setup`.
 
-Paste the previously token and follow the steps on-screen. Then you are done here.
+Paste the previously generated token and follow the steps on-screen. Then you are done here.
 
 
 ### <a id="web-setup-manual-from-source"></a> Icinga Web 2 Manual Setup
