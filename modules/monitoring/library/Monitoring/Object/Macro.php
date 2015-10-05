@@ -3,6 +3,9 @@
 
 namespace Icinga\Module\Monitoring\Object;
 
+use Exception;
+use Icinga\Application\Logger;
+
 /**
  * Expand macros in string in the context of MonitoredObjects
  */
@@ -60,11 +63,14 @@ class Macro
         if (isset(self::$icingaMacros[$macro]) && isset($object->{self::$icingaMacros[$macro]})) {
             return $object->{self::$icingaMacros[$macro]};
         }
-        $customVar = strtolower($macro);
-        if (isset($object->customvars[$customVar])) {
-            return $object->customvars[$customVar];
+
+        try {
+            $value = $object->$macro;
+        } catch (Exception $e) {
+            $value = null;
+            Logger::debug('Unable to resolve macro "%s". An error occured: %s', $macro, $e);
         }
 
-        return $macro;
+        return $value !== null ? $value : $macro;
     }
 }
