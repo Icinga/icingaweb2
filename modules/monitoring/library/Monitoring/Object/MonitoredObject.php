@@ -231,6 +231,8 @@ abstract class MonitoredObject implements Filterable
      * @return  bool
      *
      * @throws  ProgrammingError    In case the object cannot be found
+     *
+     * @deprecated      Use $filter->matches($object) instead
      */
     public function matches(Filter $filter)
     {
@@ -242,38 +244,7 @@ abstract class MonitoredObject implements Filterable
             );
         }
 
-        $queryString = $filter->toQueryString();
-        $row = clone $this->properties;
-
-        if (strpos($queryString, '_host_') !== false || strpos($queryString, '_service_') !== false) {
-            if ($this->customvars === null) {
-                $this->fetchCustomvars();
-            }
-
-            foreach ($this->customvars as $name => $value) {
-                if (! is_object($value)) {
-                    $row->{'_' . $this->getType() . '_' . $name} = $value;
-                }
-            }
-        }
-
-        if (strpos($queryString, 'hostgroup_name') !== false) {
-            if ($this->hostgroups === null) {
-                $this->fetchHostgroups();
-            }
-
-            $row->hostgroup_name = array_keys($this->hostgroups);
-        }
-
-        if (strpos($queryString, 'servicegroup_name') !== false) {
-            if ($this->servicegroups === null) {
-                $this->fetchServicegroups();
-            }
-
-            $row->servicegroup_name = array_keys($this->servicegroups);
-        }
-
-        return $filter->matches($row);
+        return $filter->matches($this);
     }
 
     /**
