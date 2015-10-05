@@ -3,6 +3,8 @@
 
 namespace Icinga\Data\Filter;
 
+use Exception;
+
 class FilterExpression extends Filter
 {
     protected $column;
@@ -97,22 +99,24 @@ class FilterExpression extends Filter
 
     public function matches($row)
     {
-        if (! isset($row->{$this->column})) {
+        try {
+            $rowValue = $row->{$this->column};
+        } catch (Exception $e) {
             // TODO: REALLY? Exception?
             return false;
         }
 
         if (is_array($this->expression)) {
-            return in_array($row->{$this->column}, $this->expression);
+            return in_array($rowValue, $this->expression);
         }
 
         $expression = (string) $this->expression;
         if (strpos($expression, '*') === false) {
-            if (is_array($row->{$this->column})) {
-                return in_array($expression, $row->{$this->column});
+            if (is_array($rowValue)) {
+                return in_array($expression, $rowValue);
             }
 
-            return (string) $row->{$this->column} === $expression;
+            return (string) $rowValue === $expression;
         }
 
         $parts = array();
@@ -121,8 +125,8 @@ class FilterExpression extends Filter
         }
         $pattern = '/^' . implode('.*', $parts) . '$/';
 
-        if (is_array($row->{$this->column})) {
-            foreach ($row->{$this->column} as $candidate) {
+        if (is_array($rowValue)) {
+            foreach ($rowValue as $candidate) {
                 if (preg_match($pattern, $candidate)) {
                     return true;
                 }
@@ -131,7 +135,7 @@ class FilterExpression extends Filter
             return false;
         }
 
-        return (bool) preg_match($pattern, $row->{$this->column});
+        return (bool) preg_match($pattern, $rowValue);
     }
 
     public function andFilter(Filter $filter)
