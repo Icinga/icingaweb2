@@ -820,19 +820,60 @@ abstract class MonitoredObject implements Filterable
     {
         if (property_exists($this->properties, $name)) {
             return $this->properties->$name;
-        } elseif (property_exists($this, $name) && $this->$name !== null) {
-            return $this->$name;
         } elseif (property_exists($this, $name)) {
-            $fetchMethod = 'fetch' . ucfirst($name);
-            $this->$fetchMethod();
+            if ($this->$name === null) {
+                $fetchMethod = 'fetch' . ucfirst($name);
+                $this->$fetchMethod();
+            }
+
             return $this->$name;
-        }
-        if (substr($name, 0, strlen($this->prefix)) !== $this->prefix) {
-            $prefixedName = $this->prefix . strtolower($name);
+        } elseif (preg_match('/^_(host|service)_(.+)/i', $name, $matches)) {
+            if (strtolower($matches[1]) === static::TYPE_HOST) {
+                if ($this->hostVariables === null) {
+                    $this->fetchHostVariables();
+                }
+
+                $customvars = $this->hostVariables;
+            } else {
+                if ($this->serviceVariables === null) {
+                    $this->fetchServiceVariables();
+                }
+
+                $customvars = $this->serviceVariables;
+            }
+
+            $variableName = strtolower($matches[2]);
+            if (isset($customvars[$variableName])) {
+                return $customvars[$variableName];
+            }
+
+            return null; // Unknown custom variables MUST NOT throw an error
+        } elseif (strpos($name, $this->prefix) !== 0) {
+            $propertyName = strtolower($name);
+            $prefixedName = $this->prefix . $propertyName;
             if (property_exists($this->properties, $prefixedName)) {
                 return $this->properties->$prefixedName;
             }
+
+            if ($this->type === static::TYPE_HOST) {
+                if ($this->hostVariables === null) {
+                    $this->fetchHostVariables();
+                }
+
+                $customvars = $this->hostVariables;
+            } else { // $this->type === static::TYPE_SERVICE
+                if ($this->serviceVariables === null) {
+                    $this->fetchServiceVariables();
+                }
+
+                $customvars = $this->serviceVariables;
+            }
+
+            if (isset($customvars[$propertyName])) {
+                return $customvars[$propertyName];
+            }
         }
+
         throw new InvalidPropertyException('Can\'t access property \'%s\'. Property does not exist.', $name);
     }
 
