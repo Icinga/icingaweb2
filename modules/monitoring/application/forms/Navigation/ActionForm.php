@@ -47,6 +47,8 @@ class ActionForm extends NavigationItemForm
                 'instance_name',
                 'service_description',
                 'servicegroup_name',
+                'contact_name',
+                'contactgroup_name',
                 function ($c) {
                     return preg_match('/^_(?:host|service)_/', $c);
                 }
@@ -63,6 +65,8 @@ class ActionForm extends NavigationItemForm
                         'hostgroup_name',
                         'service_description',
                         'servicegroup_name',
+                        'contact_name',
+                        'contactgroup_name',
                         '_(host|service)_<customvar-name>'
                     ))
                 ));
