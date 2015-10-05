@@ -848,6 +848,32 @@ abstract class MonitoredObject implements Filterable
             }
 
             return null; // Unknown custom variables MUST NOT throw an error
+        } elseif (in_array($name, array('contact_name', 'contactgroup_name', 'hostgroup_name', 'servicegroup_name'))) {
+            if ($name === 'contact_name') {
+                if ($this->contacts === null) {
+                    $this->fetchContacts();
+                }
+
+                return array_map(function ($el) { return $el->contact_name; }, $this->contacts);
+            } elseif ($name === 'contactgroup_name') {
+                if ($this->contactgroups === null) {
+                    $this->fetchContactgroups();
+                }
+
+                return array_map(function ($el) { return $el->contactgroup_name; }, $this->contactgroups);
+            } elseif ($name === 'hostgroup_name') {
+                if ($this->hostgroups === null) {
+                    $this->fetchHostgroups();
+                }
+
+                return array_keys($this->hostgroups);
+            } else { // $name === 'servicegroup_name'
+                if ($this->servicegroups === null) {
+                    $this->fetchServicegroups();
+                }
+
+                return array_keys($this->servicegroups);
+            }
         } elseif (strpos($name, $this->prefix) !== 0) {
             $propertyName = strtolower($name);
             $prefixedName = $this->prefix . $propertyName;
