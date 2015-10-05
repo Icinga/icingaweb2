@@ -508,7 +508,7 @@ abstract class MonitoredObject implements Filterable
             'varvalue',
             'is_json'
         ))
-            ->where('object_type', static::TYPE_SERVICE)
+            ->where('object_type', static::TYPE_HOST)
             ->where('host_name', $this->host_name);
 
         $this->hostVariables = array();
