@@ -4,7 +4,6 @@
 namespace Icinga\Web\Widget;
 
 use Icinga\Web\Navigation\Navigation;
-use Icinga\Web\Navigation\NavigationItem;
 use Icinga\Web\Url;
 
 /**
@@ -79,28 +78,30 @@ class Limiter extends AbstractWidget
         $navigation = new Navigation();
         $navigation->setLayout(Navigation::LAYOUT_TABS);
         foreach (static::$limits as $limit => $label) {
-            $navigationItem = new NavigationItem($limit);
-            $navigationItem
-                ->setActive($activeLimit === $limit)
-                ->setAttribute(
-                    'title',
-                    sprintf(
-                        t('Show %u rows on this page'),
-                        $limit
-                    )
+            $navigation->addItem(
+                'limit_' . $limit,
+                array(
+                    'priority'  => $limit,
+                    'label'     => $label,
+                    'active'    => $activeLimit === $limit,
+                    'url'       => $url->with(array('limit' => $limit)),
+                    'title'     => sprintf(t('Show %u rows on this page'), $limit)
                 )
-                ->setLabel($label)
-                ->setUrl($url->with(array('limit' => $limit)));
-            $navigation->addItem($navigationItem);
+            );
         }
+
         if ($activeLimit === 0) {
-            $navigationItem = new NavigationItem(0);
-            $navigationItem
-                ->setActive(true)
-                ->setAttribute('title', t('Show all items on this page'))
-                ->setLabel(t('all'));
-            $navigation->addItem($navigationItem);
+            $navigation->addItem(
+                'limit_0',
+                array(
+                    'active'    => true,
+                    'label'     => t('all'),
+                    'title'     => t('Show all items on this page'),
+                    'priority'  => max(array_keys(static::$limits)) + 1
+                )
+            );
         }
+
         return $navigation
             ->getRenderer()
             ->setCssClass(static::CSS_CLASS_LIMITER)
