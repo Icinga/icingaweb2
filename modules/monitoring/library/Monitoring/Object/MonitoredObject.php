@@ -5,7 +5,6 @@ namespace Icinga\Module\Monitoring\Object;
 
 use InvalidArgumentException;
 use Icinga\Application\Config;
-use Icinga\Application\Logger;
 use Icinga\Data\Filter\Filter;
 use Icinga\Data\Filterable;
 use Icinga\Exception\InvalidPropertyException;
@@ -50,11 +49,25 @@ abstract class MonitoredObject implements Filterable
     protected $comments;
 
     /**
-     * Custom variables
+     * This object's obfuscated custom variables
      *
      * @var array
      */
     protected $customvars;
+
+    /**
+     * The host custom variables
+     *
+     * @var array
+     */
+    protected $hostVariables;
+
+    /**
+     * The service custom variables
+     *
+     * @var array
+     */
+    protected $serviceVariables;
 
     /**
      * Contact groups
@@ -438,9 +451,9 @@ abstract class MonitoredObject implements Filterable
     }
 
     /**
-     * Fetch the object's custom variables
+     * Fetch this object's obfuscated custom variables
      *
-     * @return $this
+     * @return  $this
      */
     public function fetchCustomvars()
     {
@@ -463,28 +476,81 @@ abstract class MonitoredObject implements Filterable
             $blacklistPattern = '/^(' . implode('|', $blacklist) . ')$/i';
         }
 
+        if ($this->type === self::TYPE_SERVICE) {
+            $this->fetchServiceVariables();
+            $customvars = $this->serviceVariables;
+        } else {
+            $this->fetchHostVariables();
+            $customvars = $this->hostVariables;
+        }
+
+        $this->customvars = array();
+        foreach ($customvars as $name => $value) {
+            if ($blacklistPattern && preg_match($blacklistPattern, $name)) {
+                $this->customvars[$name] = '***';
+            } else {
+                $this->customvars[$name] = $value;
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * Fetch the host custom variables related to this object
+     *
+     * @return  $this
+     */
+    public function fetchHostVariables()
+    {
         $query = $this->backend->select()->from('customvar', array(
             'varname',
             'varvalue',
             'is_json'
         ))
-            ->where('object_type', $this->type)
+            ->where('object_type', static::TYPE_SERVICE)
             ->where('host_name', $this->host_name);
-        if ($this->type === self::TYPE_SERVICE) {
-            $query->where('service_description', $this->service_description);
+
+        $this->hostVariables = array();
+        foreach ($query as $row) {
+            if ($row->is_json) {
+                $this->hostVariables[strtolower($row->varname)] = json_decode($row->varvalue);
+            } else {
+                $this->hostVariables[strtolower($row->varname)] = $row->varvalue;
+            }
         }
 
-        $this->customvars = array();
+        return $this;
+    }
 
-        $customvars = $query->getQuery()->fetchAll();
-        foreach ($customvars as $cv) {
-            $name = strtolower($cv->varname);
-            if ($blacklistPattern && preg_match($blacklistPattern, $cv->varname)) {
-                $this->customvars[$name] = '***';
-            } elseif ($cv->is_json) {
-                $this->customvars[$name] = json_decode($cv->varvalue);
+    /**
+     * Fetch the service custom variables related to this object
+     *
+     * @return  $this
+     *
+     * @throws  ProgrammingError    In case this object is not a service
+     */
+    public function fetchServiceVariables()
+    {
+        if ($this->type !== static::TYPE_SERVICE) {
+            throw new ProgrammingError('Cannot fetch service custom variables for non-service objects');
+        }
+
+        $query = $this->backend->select()->from('customvar', array(
+            'varname',
+            'varvalue',
+            'is_json'
+        ))
+            ->where('object_type', static::TYPE_SERVICE)
+            ->where('host_name', $this->host_name)
+            ->where('service_description', $this->service_description);
+
+        $this->serviceVariables = array();
+        foreach ($query as $row) {
+            if ($row->is_json) {
+                $this->serviceVariables[strtolower($row->varname)] = json_decode($row->varvalue);
             } else {
-                $this->customvars[$name] = $cv->varvalue;
+                $this->serviceVariables[strtolower($row->varname)] = $row->varvalue;
             }
         }
 
