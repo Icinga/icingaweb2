@@ -47,6 +47,9 @@ abstract class MonitoredObjectController extends Controller
         if (Hook::has('grapher')) {
             $this->view->grapher = Hook::first('grapher');
         }
+        if (Hook::has('cmdb')) {
+            $this->view->cmdb = Hook::first('cmdb');
+        }
     }
 
     /**
