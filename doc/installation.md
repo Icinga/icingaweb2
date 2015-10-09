@@ -495,6 +495,6 @@ The first release candidate of Icinga Web 2 introduces the following non-backwar
   the file remains unchanged.
 
 * The location of a user's preferences has been changed from
-  **<config-dir>/preferences/<username>.ini** to
-  **<config-dir>/preferences/<username>/config.ini**.
+  **&lt;config-dir&gt;/preferences/&lt;username&gt;.ini** to
+  **&lt;config-dir&gt;/preferences/&lt;username&gt;/config.ini**.
   The content of the file remains unchanged.
