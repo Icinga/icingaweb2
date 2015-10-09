@@ -409,7 +409,7 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
             'created_at'    => $createdAtAttribute,
             'last_modified' => $lastModifiedAttribute
         );
-        return array('group' => $columns, 'group_membership' => $columns);
+        return array($this->groupClass => $columns, $this->groupClass => $columns);
     }
 
     /**
