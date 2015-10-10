@@ -1001,9 +1001,9 @@ abstract class IdoQuery extends DbQuery
                     }
                     $groupedTables[$table] = true;
                 }
-                if ($this->getDatasource()->getDbType() !== 'pgsql') {
+                /*if ($this->getDatasource()->getDbType() !== 'pgsql') {
                     return $group;
-                }
+                }*/
                 $columnIterator = new AppendIterator();
                 $columnIterator->append(new ColumnFilterIterator($this->columns));
                 $columnIterator->append(new ArrayIterator($this->orderColumns));
