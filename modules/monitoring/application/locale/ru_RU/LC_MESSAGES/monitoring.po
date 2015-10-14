@@ -128,7 +128,7 @@ msgstr ""
 #: /vagrant/modules/monitoring/application/views/helpers/Perfdata.php:96
 #, php-format
 msgid "%d more ..."
-msgstr ""
+msgstr "%d не показано..."
 
 # Plural forms needed
 #: /vagrant/modules/monitoring/application/views/scripts/show/components/notifications.phtml:54
@@ -773,7 +773,7 @@ msgstr "Попытки проверки"
 
 #: /vagrant/modules/monitoring/application/views/scripts/partials/object/detail-content.phtml:32
 msgid "Check execution"
-msgstr ""
+msgstr "Выполнение проверки"
 
 #: /vagrant/modules/monitoring/application/views/scripts/show/components/checkstatistics.phtml:75
 msgid "Check execution time"
@@ -2893,7 +2893,7 @@ msgstr "Обработка проблемы"
 #: /vagrant/modules/monitoring/application/views/scripts/partials/object/detail-content.phtml:5
 #: /vagrant/modules/monitoring/application/views/scripts/services/show.phtml:22
 msgid "Problem handling"
-msgstr ""
+msgstr "Обработка событий"
 
 #: /vagrant/modules/monitoring/configuration.php:100
 msgid "Problems"
