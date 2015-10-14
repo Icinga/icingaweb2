@@ -140,11 +140,11 @@ msgstr "Добавить"
 
 #: /vagrant/application/controllers/DashboardController.php:72
 msgid "Add Dashlet To Dashboard"
-msgstr ""
+msgstr "Добавить компонент в сводку"
 
 #: /vagrant/library/Icinga/Web/Widget/Tabextension/DashboardSettings.php:25
 msgid "Add New Pane Or Dashlet"
-msgstr ""
+msgstr "Добавить новую панель или страницу сводки"
 
 #: /vagrant/application/forms/Dashboard/DashletForm.php:28
 #: /vagrant/library/Icinga/Web/Widget/Tabextension/DashboardAction.php:27
@@ -637,7 +637,7 @@ msgstr "Сводка"
 
 #: /vagrant/application/views/scripts/dashboard/settings.phtml:5
 msgid "Dashboard Settings"
-msgstr ""
+msgstr "Параметры сводки"
 
 #: /vagrant/application/controllers/DashboardController.php:211
 msgid "Dashboard has been removed"
@@ -645,11 +645,11 @@ msgstr ""
 
 #: /vagrant/application/views/scripts/dashboard/settings.phtml:11
 msgid "Dashlet Name"
-msgstr ""
+msgstr "Название компонента"
 
 #: /vagrant/application/forms/Dashboard/DashletForm.php:79
 msgid "Dashlet Title"
-msgstr ""
+msgstr "Заголовок компонента"
 
 #: /vagrant/application/controllers/DashboardController.php:69
 msgid "Dashlet created"
@@ -802,7 +802,7 @@ msgstr ""
 
 #: /vagrant/application/forms/Dashboard/DashletForm.php:80
 msgid "Enter a title for the dashlet."
-msgstr ""
+msgstr "Введите название для компонента."
 
 #: /vagrant/application/forms/Dashboard/DashletForm.php:99
 msgid "Enter a title for the new pane."
@@ -813,6 +813,7 @@ msgid ""
 "Enter url being loaded in the dashlet. You can paste the full URL, including "
 "filters."
 msgstr ""
+"Введите URL компонента. Вы можете скопировать полный URL, включая фильтры."
 
 #: /vagrant/application/forms/Config/General/LoggingConfigForm.php:50
 msgctxt "app.config.logging.level"
@@ -1461,7 +1462,7 @@ msgstr ""
 
 #: /vagrant/application/forms/Dashboard/DashletForm.php:121
 msgid "New dashboard"
-msgstr ""
+msgstr "Создать новый экран сводки"
 
 #: /vagrant/application/forms/Config/ResourceConfigForm.php:98
 msgid "New resource name missing"
@@ -1973,7 +1974,7 @@ msgstr ""
 
 #: /vagrant/application/forms/Dashboard/DashletForm.php:110
 msgid "Select a pane you want to add the dashlet."
-msgstr ""
+msgstr "Выберите панель, на которую следует добавить компонент."
 
 #: /vagrant/application/forms/Config/User/CreateMembershipForm.php:81
 #, php-format
@@ -2002,7 +2003,7 @@ msgstr ""
 
 #: /vagrant/library/Icinga/Web/Widget/Tabextension/DashboardSettings.php:34
 msgid "Settings"
-msgstr ""
+msgstr "Параметры"
 
 #: /vagrant/application/controllers/NavigationController.php:149
 #: /vagrant/application/forms/Navigation/NavigationConfigForm.php:602
@@ -2576,14 +2577,14 @@ msgstr ""
 msgid ""
 "Upon its value has changed, this field issues an automatic update of this "
 "page."
-msgstr ""
+msgstr "В случае изменения значения поля страница будет обновлена"
 
 #: /vagrant/application/forms/Dashboard/DashletForm.php:68
 #: /vagrant/application/forms/Navigation/DashletForm.php:27
 #: /vagrant/application/forms/Navigation/NavigationItemForm.php:54
 #: /vagrant/application/views/scripts/dashboard/settings.phtml:14
 msgid "Url"
-msgstr ""
+msgstr "URL"
 
 #: /vagrant/application/forms/PreferenceForm.php:200
 msgid "Use benchmark"
