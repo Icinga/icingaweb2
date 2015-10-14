@@ -444,11 +444,11 @@ msgstr ""
 
 #: /vagrant/modules/monitoring/configuration.php:311
 msgid "Acknowledged Problem Hosts"
-msgstr ""
+msgstr "Обработанные события узлов"
 
 #: /vagrant/modules/monitoring/configuration.php:307
 msgid "Acknowledged Problem Services"
-msgstr ""
+msgstr "Обработанные события служб"
 
 #: /vagrant/modules/monitoring/application/views/scripts/list/eventhistory.phtml:54
 #: /vagrant/modules/monitoring/application/views/scripts/partials/comment/comment-description.phtml:20
@@ -1171,19 +1171,19 @@ msgstr ""
 
 #: /vagrant/modules/monitoring/configuration.php:303
 msgid "Disabled Host Checks"
-msgstr ""
+msgstr "Отключенные проверки узлов"
 
 #: /vagrant/modules/monitoring/configuration.php:295
 msgid "Disabled Host Notifications"
-msgstr ""
+msgstr "Отключенные уведомления узлов"
 
 #: /vagrant/modules/monitoring/configuration.php:299
 msgid "Disabled Service Checks"
-msgstr ""
+msgstr "Отключенные проверки служб"
 
 #: /vagrant/modules/monitoring/configuration.php:291
 msgid "Disabled Service Notifications"
-msgstr ""
+msgstr "Отключенные уведомления служб"
 
 #: /vagrant/modules/monitoring/application/forms/Command/Object/ToggleObjectFeaturesCommandForm.php:125
 msgid "Disabling active checks.."
@@ -2515,7 +2515,7 @@ msgstr ""
 
 #: /vagrant/modules/monitoring/configuration.php:289
 msgid "Muted"
-msgstr ""
+msgstr "Отключенные объекты"
 
 #: /vagrant/modules/monitoring/application/views/scripts/health/info.phtml:21
 #: /vagrant/modules/monitoring/application/views/scripts/health/info.phtml:39
