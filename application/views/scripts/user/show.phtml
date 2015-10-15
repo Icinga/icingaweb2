@@ -54,17 +54,15 @@ if ($this->hasPermission('config/authentication/users/edit') && $backend instanc
 <div class="content memberships">
 <?php if ($showCreateMembershipLink): ?>
     <?= $this->qlink(
-        $this->translate('Add User to Group') ,
+        $this->translate('Create New Membership') ,
         'user/createmembership',
         array(
             'backend'   => $backend->getName(),
             'user'      => $user->user_name
         ),
         array(
-            'class'             => 'button-link',
-            'data-base-target'  => '_next',
-            'icon'              => 'plus',
-            'title'             => $this->translate('Add user to user group')
+            'icon'  => 'plus',
+            'class' => 'button-link'
         )
     ) ?>
 <?php endif ?>
