@@ -44,7 +44,7 @@ class UserController extends AuthBackendController
             'backend',
             array(
                 'autosubmit'    => true,
-                'label'         => $this->translate('Authentication Backend'),
+                'label'         => $this->translate('User Backend'),
                 'multiOptions'  => array_combine($backendNames, $backendNames),
                 'value'         => $this->params->get('backend')
             )
