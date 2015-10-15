@@ -134,7 +134,7 @@ class GroupController extends AuthBackendController
             $removeForm->addElement('button', 'btn_submit', array(
                 'escape'        => false,
                 'type'          => 'submit',
-                'class'         => 'link-like spinner',
+                'class'         => 'link-button spinner',
                 'value'         => 'btn_submit',
                 'decorators'    => array('ViewHelper'),
                 'label'         => $this->view->icon('trash'),
