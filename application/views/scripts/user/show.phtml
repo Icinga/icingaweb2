@@ -56,7 +56,10 @@ if ($this->hasPermission('config/authentication/users/edit') && $backend instanc
     <?= $this->qlink(
         $this->translate('Add User to Group') ,
         'user/createmembership',
-        array('backend' => $backend->getName()),
+        array(
+            'backend'   => $backend->getName(),
+            'user'      => $user->user_name
+        ),
         array(
             'class'             => 'button-link',
             'data-base-target'  => '_next',
