@@ -54,7 +54,7 @@ if ($this->hasPermission('config/authentication/users/edit') && $backend instanc
 <div class="content">
 <?php if ($showCreateMembershipLink): ?>
     <?= $this->qlink(
-        $this->translate('Create New Membership') ,
+        $this->translate('Create New Membership'),
         'user/createmembership',
         array(
             'backend'   => $backend->getName(),
@@ -94,7 +94,7 @@ if ($this->hasPermission('config/authentication/users/edit') && $backend instanc
                     <?= $this->escape($membership->group_name); ?>
                 <?php endif ?>
                 </td>
-                <td data-base-target="_self">
+                <td class="icon-col" data-base-target="_self">
                 <?php if (isset($removeForm) && $membership->backend instanceof Reducible): ?>
                     <?= $removeForm->setAction($this->url('group/removemember', array(
                         'backend'   => $membership->backend->getName(),
