@@ -561,6 +561,21 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
     }
 
     /**
+     * Return the name of the backend that is providing the given user
+     *
+     * @param   string  $username   Unused
+     *
+     * @return  null|string     The name of the backend or null in case this information is not available
+     */
+    public function getUserBackendName($username)
+    {
+        $userBackend = $this->getUserBackend();
+        if ($userBackend !== null) {
+            return $userBackend->getName();
+        }
+    }
+
+    /**
      * Apply the given configuration on this backend
      *
      * @param   ConfigObject    $config
