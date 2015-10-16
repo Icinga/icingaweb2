@@ -622,7 +622,7 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
 
         return $this
             ->setGroupBaseDn($config->base_dn)
-            ->setUserBaseDn($config->get('user_base_dn', $this->getUserBaseDn()))
+            ->setUserBaseDn($config->get('user_base_dn', $this->getGroupBaseDn()))
             ->setGroupClass($config->get('group_class', $defaults->group_class))
             ->setUserClass($config->get('user_class', $defaults->user_class))
             ->setGroupNameAttribute($config->get('group_name_attribute', $defaults->group_name_attribute))
