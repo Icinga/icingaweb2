@@ -250,7 +250,7 @@ class DbUserGroupBackend extends DbRepository implements UserGroupBackendInterfa
      */
     protected function joinGroupMembership(RepositoryQuery $query)
     {
-        $query->getQuery()->join(
+        $query->getQuery()->joinLeft(
             $this->requireTable('group_membership'),
             'g.id = gm.group_id',
             array()
