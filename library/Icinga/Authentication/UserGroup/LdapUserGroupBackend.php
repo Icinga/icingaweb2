@@ -5,6 +5,7 @@ namespace Icinga\Authentication\UserGroup;
 
 use Icinga\Authentication\User\UserBackend;
 use Icinga\Authentication\User\LdapUserBackend;
+use Icinga\Application\Logger;
 use Icinga\Data\ConfigObject;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\ProgrammingError;
@@ -454,10 +455,46 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
             )
         );
         if (! $this->isAmbiguous($this->groupClass, $this->groupMemberAttribute)) {
+            $rules['group_membership']['user_name'] = 'user_name';
+            $rules['group_membership']['user'] = 'user_name';
             $rules['group']['user_name'] = 'user_name';
+            $rules['group']['user'] = 'user_name';
         }
 
         return $rules;
+    }
+
+    /**
+     * Return the distinguished name for the given uid or gid
+     *
+     * @param   string  $name
+     *
+     * @return  string
+     */
+    protected function persistUserName($name)
+    {
+        $userDn = $this->ds
+            ->select()
+            ->from($this->userClass, array())
+            ->where($this->userNameAttribute, $name)
+            ->setUsePagedResults(false)
+            ->fetchDn();
+        if ($userDn) {
+            return $userDn;
+        }
+
+        $groupDn = $this->ds
+            ->select()
+            ->from($this->groupClass, array())
+            ->where($this->groupNameAttribute, $name)
+            ->setUsePagedResults(false)
+            ->fetchDn();
+        if ($groupDn) {
+            return $groupDn;
+        }
+
+        Logger::debug('Unable to persist uid or gid "%s" in repository "%s". No DN found.', $name, $this->getName());
+        return $name;
     }
 
     /**
