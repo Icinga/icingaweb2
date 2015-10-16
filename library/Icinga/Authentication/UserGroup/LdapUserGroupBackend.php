@@ -211,15 +211,13 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
     /**
      * Set the objectClass where to look for groups
      *
-     * Sets also the base table name for the underlying repository.
-     *
      * @param   string  $groupClass
      *
      * @return  $this
      */
     public function setGroupClass($groupClass)
     {
-        $this->baseTable = $this->groupClass = $this->getNormedAttribute($groupClass);
+        $this->groupClass = $this->getNormedAttribute($groupClass);
         return $this;
     }
 
@@ -382,15 +380,16 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
      *
      * @return  array
      *
-     * @throws  ProgrammingError    In case either $this->groupNameAttribute or $this->groupClass has not been set yet
+     * @throws  ProgrammingError    In case either $this->groupNameAttribute or
+     *                              $this->groupMemberAttribute has not been set yet
      */
     protected function initializeQueryColumns()
     {
-        if ($this->groupClass === null) {
-            throw new ProgrammingError('It is required to set the objectClass where to look for groups first');
-        }
         if ($this->groupNameAttribute === null) {
             throw new ProgrammingError('It is required to set a attribute name where to find a group\'s name first');
+        }
+        if ($this->groupMemberAttribute === null) {
+            throw new ProgrammingError('It is required to set a attribute name where to find a group\'s members first');
         }
 
         if ($this->ds->getCapabilities()->isActiveDirectory()) {
@@ -409,7 +408,7 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
             'created_at'    => $createdAtAttribute,
             'last_modified' => $lastModifiedAttribute
         );
-        return array($this->groupClass => $columns, $this->groupClass => $columns);
+        return array('group' => $columns, 'group_membership' => $columns);
     }
 
     /**
@@ -432,7 +431,8 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
      *
      * @return  array
      *
-     * @throws  ProgrammingError    In case $this->groupClass has not been set yet
+     * @throws  ProgrammingError    In case either $this->groupClass or $this->groupMemberAttribute
+     *                              has not been set yet
      */
     protected function initializeConversionRules()
     {
@@ -444,13 +444,17 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
         }
 
         $rules = array(
-            $this->groupClass => array(
+            'group' => array(
+                'created_at'    => 'generalized_time',
+                'last_modified' => 'generalized_time'
+            ),
+            'group_membership' => array(
                 'created_at'    => 'generalized_time',
                 'last_modified' => 'generalized_time'
             )
         );
         if (! $this->isAmbiguous($this->groupClass, $this->groupMemberAttribute)) {
-            $rules[$this->groupClass][] = 'user_name';
+            $rules['group']['user_name'] = 'user_name';
         }
 
         return $rules;
