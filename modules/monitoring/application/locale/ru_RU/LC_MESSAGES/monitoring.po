@@ -215,22 +215,25 @@ msgstr ""
 #, php-format
 msgid "%u Active"
 msgid_plural "%u Active"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%u активна"
+msgstr[1] "%u активны"
+msgstr[2] "%u активны"
 
 #: /vagrant/modules/monitoring/application/views/scripts/list/components/hostssummary.phtml:12
 #, php-format
 msgid "%u Host"
 msgid_plural "%u Hosts"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%u узел"
+msgstr[1] "%u узла"
+msgstr[2] "%u узлов"
 
 #: /vagrant/modules/monitoring/application/views/scripts/tactical/components/problem_hosts.phtml:11
 #, php-format
 msgid "%u Host DOWN"
 msgid_plural "%u Hosts DOWN"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%u узел ОТКЛЮЧЕН"
+msgstr[1] "%u узла ОТКЛЮЧЕНЫ"
+msgstr[2] "%u узлов ОТКЛЮЧЕНЫ"
 
 #: /vagrant/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:20
 #: /vagrant/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:141
@@ -261,22 +264,25 @@ msgstr[1] ""
 #, php-format
 msgid "%u Host UNREACHABLE"
 msgid_plural "%u Hosts UNREACHABLE"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%u узел НЕДОСТУПЕН"
+msgstr[1] "%u узла НЕДОСТУПНЫ"
+msgstr[2] "%u узлов НЕДОСТУПНЫ"
 
 #: /vagrant/modules/monitoring/application/views/scripts/tactical/components/ok_hosts.phtml:16
 #, php-format
 msgid "%u Host UP"
 msgid_plural "%u Hosts UP"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%u узел ВКЛЮЧЁН"
+msgstr[1] "%u узла ВКЛЮЧЕНЫ"
+msgstr[2] "%u узлов ВКЛЮЧЕНЫ"
 
 #: /vagrant/modules/monitoring/application/views/scripts/list/components/servicesummary.phtml:13
 #, php-format
 msgid "%u Service"
 msgid_plural "%u Services"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%u служба"
+msgstr[1] "%u службы"
+msgstr[2] "%u служб"
 
 #: /vagrant/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:75
 #: /vagrant/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:175
