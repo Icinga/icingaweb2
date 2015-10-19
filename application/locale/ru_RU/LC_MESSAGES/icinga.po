@@ -1097,7 +1097,7 @@ msgstr ""
 
 #: /vagrant/application/forms/Navigation/NavigationItemForm.php:68
 msgid "Icon"
-msgstr "Значек"
+msgstr "Значок"
 
 #: /vagrant/application/views/scripts/authentication/logout.phtml:15
 msgid ""
@@ -2251,7 +2251,7 @@ msgstr ""
 msgid ""
 "The icon of this navigation item. Leave blank if you do not want a icon "
 "being displayed"
-msgstr "Значек элемента навигации. Оставьте пустым для скрытия значка"
+msgstr "Значок элемента навигации. Оставьте пустым для скрытия значка"
 
 #: /vagrant/application/forms/Config/General/LoggingConfigForm.php:48
 msgid "The maximum logging level to emit."
