@@ -672,7 +672,7 @@ msgstr ""
 #: /vagrant/modules/monitoring/application/views/scripts/comment/show.phtml:42
 #: /vagrant/modules/monitoring/application/views/scripts/downtime/show.phtml:39
 msgid "Author"
-msgstr ""
+msgstr "Автор"
 
 #: /vagrant/modules/monitoring/application/views/scripts/alertsummary/index.phtml:33
 msgid "Average"
@@ -1057,7 +1057,7 @@ msgstr "Критично"
 
 #: /vagrant/modules/monitoring/configuration.php:136
 msgid "Current Downtimes"
-msgstr ""
+msgstr "Проходящие обслуживания"
 
 #: /vagrant/modules/monitoring/application/controllers/ListController.php:163
 msgid "Current Host State"
@@ -1322,7 +1322,7 @@ msgstr ""
 #: /vagrant/modules/monitoring/application/views/scripts/downtime/show.phtml:53
 #: /vagrant/modules/monitoring/application/views/scripts/downtime/show.phtml:135
 msgid "Duration"
-msgstr ""
+msgstr "Длительность"
 
 #: /vagrant/modules/monitoring/library/Monitoring/BackendStep.php:155
 #: /vagrant/modules/monitoring/library/Monitoring/BackendStep.php:168
@@ -1420,7 +1420,7 @@ msgstr ""
 #: /vagrant/modules/monitoring/application/controllers/ListController.php:230
 #: /vagrant/modules/monitoring/application/forms/Command/Object/ScheduleServiceDowntimeCommandForm.php:88
 msgid "End Time"
-msgstr ""
+msgstr "Время окончания"
 
 #: /vagrant/modules/monitoring/application/controllers/TimelineController.php:75
 msgid "Ended downtimes"
@@ -1870,7 +1870,7 @@ msgstr ""
 
 #: /vagrant/modules/monitoring/application/controllers/ListController.php:224
 msgid "Is In Effect"
-msgstr ""
+msgstr "В процессе"
 
 #: /vagrant/modules/monitoring/application/views/scripts/show/components/checksource.phtml:10
 msgid "Is reachable"
@@ -2576,6 +2576,8 @@ msgstr ""
 msgid ""
 "No downtimes found matching the filter, maybe the downtime already expired."
 msgstr ""
+"Не найдено обслуживаний в соответствии с фильтром, возможно все обслуживания "
+"завершены."
 
 #: /vagrant/modules/monitoring/application/views/scripts/host/history.phtml:152
 #: /vagrant/modules/monitoring/application/views/scripts/list/eventhistory.phtml:114
@@ -3180,11 +3182,11 @@ msgstr ""
 
 #: /vagrant/modules/monitoring/application/controllers/ListController.php:232
 msgid "Scheduled End"
-msgstr ""
+msgstr "Запланированное окончание"
 
 #: /vagrant/modules/monitoring/application/controllers/ListController.php:231
 msgid "Scheduled Start"
-msgstr ""
+msgstr "Запланированное начало"
 
 #: /vagrant/modules/monitoring/application/views/scripts/downtime/show.phtml:127
 msgid "Scheduled end"
@@ -3560,7 +3562,7 @@ msgstr ""
 #: /vagrant/modules/monitoring/application/controllers/ListController.php:229
 #: /vagrant/modules/monitoring/application/forms/Command/Object/ScheduleServiceDowntimeCommandForm.php:78
 msgid "Start Time"
-msgstr ""
+msgstr "Время начала"
 
 #: /vagrant/modules/monitoring/application/controllers/TimelineController.php:70
 msgid "Started downtimes"
