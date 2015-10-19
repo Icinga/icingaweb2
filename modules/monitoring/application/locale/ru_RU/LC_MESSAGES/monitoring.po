@@ -1618,7 +1618,7 @@ msgstr ""
 
 #: /vagrant/modules/monitoring/configuration.php:91
 msgid "Host Action"
-msgstr ""
+msgstr "Действие узла"
 
 #: /vagrant/modules/monitoring/application/controllers/ListController.php:165
 msgid "Host Address"
@@ -1660,9 +1660,8 @@ msgid "Host Problems:"
 msgstr ""
 
 #: /vagrant/modules/monitoring/application/controllers/ListController.php:162
-#, fuzzy
 msgid "Host Severity"
-msgstr "Уровень узла"
+msgstr "Влияние состояния узла"
 
 #: /vagrant/modules/monitoring/application/views/scripts/list/hostgroups.phtml:26
 msgid "Host States"
@@ -2258,17 +2257,17 @@ msgstr[1] ""
 #: /vagrant/modules/monitoring/application/views/scripts/partials/comment/comments-header.phtml:23
 #, php-format
 msgid "List all %d comments"
-msgstr ""
+msgstr "Показать все %d комментария"
 
 #: /vagrant/modules/monitoring/application/views/scripts/partials/downtime/downtimes-header.phtml:31
 #, php-format
 msgid "List all %d downtimes"
-msgstr ""
+msgstr "Показать все %d запланированныз обслуживаний"
 
 #: /vagrant/modules/monitoring/application/views/scripts/partials/service/objects-header.phtml:35
 #, php-format
 msgid "List all %d services"
-msgstr ""
+msgstr "Показать все %d службы"
 
 #: /vagrant/modules/monitoring/application/views/scripts/timeline/index.phtml:74
 #, php-format
@@ -2297,7 +2296,7 @@ msgstr ""
 #: /vagrant/modules/monitoring/application/views/scripts/list/servicegrid.phtml:68
 #, php-format
 msgid "List all reported services on host %s"
-msgstr ""
+msgstr "Показать все проблемные службы узла %s"
 
 #: /vagrant/modules/monitoring/application/views/scripts/list/servicegroups.phtml:36
 #: /vagrant/modules/monitoring/application/views/scripts/show/components/servicegroups.phtml:11
@@ -2318,7 +2317,7 @@ msgstr "Показать все службы узла %s"
 #: /vagrant/modules/monitoring/application/views/scripts/list/servicegrid.phtml:48
 #, php-format
 msgid "List all services with the name \"%s\" on all reported hosts"
-msgstr ""
+msgstr "Показать все службы с именем \"%s\" на всех проблемных узлах"
 
 #: /vagrant/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:98
 msgid "List all services, for which flap detection is enabled entirely"
@@ -3309,7 +3308,7 @@ msgstr "Служба"
 
 #: /vagrant/modules/monitoring/configuration.php:92
 msgid "Service Action"
-msgstr ""
+msgstr "Действие службы"
 
 #: /vagrant/modules/monitoring/application/views/scripts/health/stats.phtml:87
 #: /vagrant/modules/monitoring/application/views/scripts/health/stats.phtml:127
@@ -3320,7 +3319,7 @@ msgstr ""
 #: /vagrant/modules/monitoring/configuration.php:132
 #: /vagrant/modules/monitoring/application/controllers/ListController.php:534
 msgid "Service Grid"
-msgstr ""
+msgstr "Матрица служб"
 
 #: /vagrant/modules/monitoring/application/views/scripts/list/servicegroups.phtml:22
 msgid "Service Group"
@@ -3359,9 +3358,8 @@ msgid "Service Problems:"
 msgstr "Проблемы служб"
 
 #: /vagrant/modules/monitoring/application/controllers/ListController.php:158
-#, fuzzy
 msgid "Service Severity"
-msgstr "Уровень службы"
+msgstr "Влияние состояния службы"
 
 #: /vagrant/modules/monitoring/application/views/scripts/list/hostgroups.phtml:28
 #: /vagrant/modules/monitoring/application/views/scripts/list/servicegroups.phtml:23
@@ -3415,9 +3413,8 @@ msgstr ""
 #: /vagrant/modules/monitoring/application/controllers/ListController.php:93
 #: /vagrant/modules/monitoring/application/controllers/ListController.php:457
 #: /vagrant/modules/monitoring/application/controllers/ListController.php:495
-#, fuzzy
 msgid "Severity"
-msgstr "Уровень"
+msgstr "Влияние состояния"
 
 #: /vagrant/modules/monitoring/application/views/scripts/list/comments.phtml:41
 #: /vagrant/modules/monitoring/application/views/scripts/list/contacts.phtml:67
@@ -4010,7 +4007,7 @@ msgstr "ВКЛЮЧЕН"
 #: /vagrant/modules/monitoring/application/views/scripts/partials/host/statusicons.phtml:5
 #: /vagrant/modules/monitoring/application/views/scripts/partials/service/statusicons.phtml:5
 msgid "Unhandled"
-msgstr ""
+msgstr "Не обработано"
 
 #: /vagrant/modules/monitoring/application/views/scripts/health/stats.phtml:14
 msgid "Unhandled Problems:"

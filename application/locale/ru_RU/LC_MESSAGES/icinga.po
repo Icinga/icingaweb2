@@ -153,7 +153,7 @@ msgstr "Сводка"
 
 #: /vagrant/library/Icinga/Web/Widget/Tabextension/MenuAction.php:27
 msgid "Add To Menu"
-msgstr ""
+msgstr "Добавить в меню"
 
 #: /vagrant/application/views/scripts/group/show.phtml:55
 #: /vagrant/application/views/scripts/user/show.phtml:57
@@ -566,7 +566,7 @@ msgstr ""
 
 #: /vagrant/application/controllers/NavigationController.php:215
 msgid "Create a new navigation item, such as a menu entry or dashlet."
-msgstr ""
+msgstr "Создать новый элемент навигации - элемент меню или компонент сводки."
 
 #: /vagrant/application/views/scripts/config/resource.phtml:13
 msgid "Create a new resource"
@@ -1097,7 +1097,7 @@ msgstr ""
 
 #: /vagrant/application/forms/Navigation/NavigationItemForm.php:68
 msgid "Icon"
-msgstr ""
+msgstr "Значек"
 
 #: /vagrant/application/views/scripts/authentication/logout.phtml:15
 msgid ""
@@ -1298,7 +1298,7 @@ msgstr ""
 
 #: /vagrant/library/Icinga/Web/Navigation/Navigation.php:465
 msgid "Menu Entry"
-msgstr ""
+msgstr "Элемент меню"
 
 #: /vagrant/library/Icinga/Web/Controller/ActionController.php:249
 msgid "Method Not Allowed"
@@ -1371,7 +1371,7 @@ msgstr ""
 #: /vagrant/application/views/scripts/config/module.phtml:16
 #: /vagrant/application/views/scripts/role/list.phtml:22
 msgid "Name"
-msgstr ""
+msgstr "Название"
 
 #: /vagrant/application/controllers/NavigationController.php:142
 #: /vagrant/application/controllers/NavigationController.php:150
@@ -1454,7 +1454,7 @@ msgstr ""
 
 #: /vagrant/application/forms/Navigation/NavigationItemForm.php:41
 msgid "New Window"
-msgstr ""
+msgstr "В новом окне"
 
 #: /vagrant/application/forms/Config/GeneralConfigForm.php:54
 msgid "New configuration has successfully been stored"
@@ -1526,7 +1526,7 @@ msgstr ""
 #: /vagrant/application/forms/Navigation/NavigationConfigForm.php:674
 msgctxt "No parent for a navigation item"
 msgid "None"
-msgstr ""
+msgstr "Отсутствует"
 
 #: /vagrant/application/forms/Config/General/LoggingConfigForm.php:36
 msgctxt "app.config.logging.type"
@@ -1584,7 +1584,7 @@ msgstr ""
 #: /vagrant/library/Icinga/Authentication/UserGroup/DbUserGroupBackend.php:121
 #: /vagrant/library/Icinga/Authentication/UserGroup/IniUserGroupBackend.php:74
 msgid "Parent"
-msgstr ""
+msgstr "Родительский элемент"
 
 #: /vagrant/application/forms/Authentication/LoginForm.php:52
 #: /vagrant/application/forms/Config/Resource/DbResourceForm.php:137
@@ -1936,7 +1936,7 @@ msgstr ""
 #: /vagrant/application/forms/Config/UserGroup/UserGroupBackendForm.php:29
 #: /vagrant/application/forms/Navigation/NavigationConfigForm.php:85
 msgid "Save Changes"
-msgstr ""
+msgstr "Сохранить изменения"
 
 #: /vagrant/application/forms/PreferenceForm.php:232
 msgid "Save for the current Session"
@@ -2009,7 +2009,7 @@ msgstr "Параметры"
 #: /vagrant/application/forms/Navigation/NavigationConfigForm.php:602
 #: /vagrant/application/views/scripts/navigation/index.phtml:39
 msgid "Shared"
-msgstr ""
+msgstr "Общий"
 
 #: /vagrant/application/controllers/NavigationController.php:192
 #: /vagrant/application/controllers/NavigationController.php:200
@@ -2085,7 +2085,7 @@ msgstr ""
 
 #: /vagrant/application/forms/Navigation/NavigationItemForm.php:43
 msgid "Single Column"
-msgstr ""
+msgstr "Один столбец"
 
 #: /vagrant/application/forms/Config/UserBackendConfigForm.php:396
 msgid "Skip Validation"
@@ -2105,7 +2105,7 @@ msgstr ""
 
 #: /vagrant/library/Icinga/Web/Widget/SortBox.php:174
 msgid "Sort by"
-msgstr ""
+msgstr "Сортировать по"
 
 #: /vagrant/application/views/scripts/config/module.phtml:20
 #: /vagrant/application/views/scripts/user/show.phtml:32
@@ -2127,7 +2127,7 @@ msgstr "Система"
 
 #: /vagrant/application/forms/Navigation/NavigationItemForm.php:38
 msgid "Target"
-msgstr ""
+msgstr "Цель"
 
 #: /vagrant/application/views/scripts/about/index.phtml:29
 #: /vagrant/application/views/scripts/authentication/login.phtml:23
@@ -2251,7 +2251,7 @@ msgstr ""
 msgid ""
 "The icon of this navigation item. Leave blank if you do not want a icon "
 "being displayed"
-msgstr ""
+msgstr "Значек элемента навигации. Оставьте пустым для скрытия значка"
 
 #: /vagrant/application/forms/Config/General/LoggingConfigForm.php:48
 msgid "The maximum logging level to emit."
@@ -2290,6 +2290,7 @@ msgstr ""
 msgid ""
 "The name of this navigation item that is used to differentiate it from others"
 msgstr ""
+"Название элемента навигации, позволяющее отличить его от других элементов"
 
 #: /vagrant/application/forms/Config/UserGroup/DbUserGroupBackendForm.php:36
 #: /vagrant/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:41
@@ -2318,6 +2319,8 @@ msgid ""
 "The parent menu to assign this menu entry to. Select \"None\" to make this a "
 "main menu entry"
 msgstr ""
+"Родительское меню, в которое будет назначен данный элемент меню. Выберите "
+"\"Отсутствует\" для назначения данного меню корневым."
 
 #: /vagrant/application/forms/Config/Resource/DbResourceForm.php:138
 msgid "The password to use for authentication"
@@ -2380,7 +2383,7 @@ msgstr ""
 
 #: /vagrant/application/forms/Navigation/NavigationItemForm.php:39
 msgid "The target where to open this navigation item's url"
-msgstr ""
+msgstr "Укажите как будет открыта ссылка данного элемента навигации"
 
 #: /vagrant/application/forms/Config/Resource/DbResourceForm.php:87
 msgid "The type of SQL database"
@@ -2400,7 +2403,7 @@ msgstr ""
 
 #: /vagrant/application/forms/Navigation/NavigationConfigForm.php:648
 msgid "The type of this navigation item"
-msgstr ""
+msgstr "Тип элемента навигации"
 
 #: /vagrant/application/forms/Config/UserGroup/UserGroupBackendForm.php:181
 msgid "The type of this user group backend"
@@ -2420,6 +2423,9 @@ msgid ""
 "displayed. For external urls, make sure to prepend an appropriate protocol "
 "identifier (e.g. http://example.tld)"
 msgstr ""
+"URL адрес элемента навигации. Оставьте пустым, если необходимо только "
+"отображение имени. Для внешних адресов убедитесь, что в начале ссылке указан "
+"корректный протокол (например, http://example.tld)"
 
 #: /vagrant/application/forms/Navigation/DashletForm.php:29
 msgid ""
@@ -2482,7 +2488,7 @@ msgstr ""
 
 #: /vagrant/application/forms/Navigation/NavigationConfigForm.php:603
 msgid "Tick this box to share this item with others"
-msgstr ""
+msgstr "Сделать элемент доступным другим пользователям"
 
 #: /vagrant/application/forms/Config/Resource/SshResourceForm.php:91
 msgid "To modify the private key you must recreate this resource."
@@ -2494,7 +2500,7 @@ msgstr ""
 #: /vagrant/application/views/scripts/navigation/index.phtml:38
 #: /vagrant/application/views/scripts/navigation/shared.phtml:29
 msgid "Type"
-msgstr ""
+msgstr "Тип"
 
 #: /vagrant/application/views/scripts/config/devtools.phtml:5
 msgid "UI Debug"
