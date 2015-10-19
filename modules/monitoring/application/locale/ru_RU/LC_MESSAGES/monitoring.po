@@ -1466,7 +1466,7 @@ msgstr "Обработчик событий"
 #: /vagrant/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:208
 #: /vagrant/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:210
 msgid "Event Handlers"
-msgstr ""
+msgstr "Обработчики событий"
 
 #: /vagrant/modules/monitoring/configuration.php:196
 #: /vagrant/modules/monitoring/application/controllers/ListController.php:506
@@ -1675,7 +1675,7 @@ msgstr "Состояние узлов"
 
 #: /vagrant/modules/monitoring/application/views/scripts/tactical/components/hostservicechecks.phtml:3
 msgid "Host and Service Checks"
-msgstr ""
+msgstr "Проверки узлов и служб"
 
 #: /vagrant/modules/monitoring/application/views/scripts/health/disable-notifications.phtml:10
 msgid "Host and service notifications are already disabled."
@@ -2441,7 +2441,7 @@ msgstr ""
 
 #: /vagrant/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:3
 msgid "Monitoring Features"
-msgstr ""
+msgstr "Возможности мониторинга"
 
 #: /vagrant/modules/monitoring/configuration.php:225
 msgid "Monitoring Health"
@@ -3633,7 +3633,7 @@ msgstr "Система"
 #: /vagrant/modules/monitoring/configuration.php:148
 #: /vagrant/modules/monitoring/application/controllers/TacticalController.php:23
 msgid "Tactical Overview"
-msgstr ""
+msgstr "Тактический обзор"
 
 #: /vagrant/modules/monitoring/library/Monitoring/MonitoringWizard.php:204
 msgid ""
