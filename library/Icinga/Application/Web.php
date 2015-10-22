@@ -293,10 +293,7 @@ class Web extends EmbeddedWeb
                     'label'     => $this->user->getUsername(),
                     'icon'      => 'user',
                     'url'       => 'preference',
-                    'priority'  => 900,
-                    'renderer'  => array(
-                        'UserNavigationItemRenderer'
-                    ),
+                    'priority'  => 900
                 ),
                 'logout' => array(
                     'cssClass'  => 'user-nav-item',
