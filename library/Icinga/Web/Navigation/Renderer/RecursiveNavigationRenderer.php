@@ -162,14 +162,15 @@ class RecursiveNavigationRenderer extends RecursiveIteratorIterator implements N
         foreach ($this as $item) {
             /** @var NavigationItem $item */
             if ($item->shouldRender()) {
-                $this->content[] = $this->getInnerIterator()->beginItemMarkup($item);
-
                 if ($this->getUseStandardItemRenderer()) {
                     $renderer = new NavigationItemRenderer();
-                    $this->content[] = $renderer->render($item);
+                    $content = $renderer->render($item);
                 } else {
-                    $this->content[] = $item->render();
+                    $content = $item->render();
                 }
+                $this->content[] = $this->getInnerIterator()->beginItemMarkup($item);
+
+                $this->content[] = $content;
 
                 if (! $item->hasChildren()) {
                     $this->content[] = $this->getInnerIterator()->endItemMarkup();
