@@ -1,16 +1,19 @@
 /*! Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
+// Link to unhandled services in the hosts overview
 .host-services-incidents {
   color: @color-critical;
   font-family: @font-family-wide;
   font-size: @font-size-small;
 }
 
+// State summary badges
 .state-badges {
   display: inline-block;
+  vertical-align: middle;
 
   > ul > li {
-    padding-right: 5px;
+    padding-right: @vertical-padding;
 
     &:last-child {
       padding-right: 0;
