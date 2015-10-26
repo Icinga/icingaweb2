@@ -1,7 +1,18 @@
 /*! Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
+li.badge-nav-item {
+  > a {
+    .clearfix();
+
+    .badge {
+      float: right;
+    }
+  }
+}
+
 li.nav-item {
-  a, span {
+  > a,
+  > span {
     // Rollover
     display: block;
   }
@@ -18,6 +29,6 @@ ul.tab-nav {
   .clearfix();
 
   li {
-    .pull-left();
+    float: left;
   }
 }

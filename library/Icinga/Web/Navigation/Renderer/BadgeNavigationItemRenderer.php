@@ -94,7 +94,14 @@ abstract class BadgeNavigationItemRenderer extends NavigationItemRenderer
      */
     public function render(NavigationItem $item = null)
     {
-        return '<div class="clearfix">' . $this->renderBadge() . parent::render($item) . '</div>';
+        if ($item === null) {
+            $item = $this->getItem();
+        }
+        $item->setCssClass('badge-nav-item');
+        $this->setEscapeLabel(false);
+        $label = $this->view()->escape($item->getLabel());
+        $item->setLabel($this->renderBadge() . $label);
+        return parent::render($item);
     }
 
     /**
@@ -107,7 +114,7 @@ abstract class BadgeNavigationItemRenderer extends NavigationItemRenderer
         if ($count = $this->getCount()) {
             $view = $this->view();
             return sprintf(
-                '<span title="%s" class="badge pull-right state-%s">%s</span>',
+                '<span title="%s" class="badge state-%s">%s</span>',
                 $view->escape($this->getTitle()),
                 $view->escape($this->getState()),
                 $count
