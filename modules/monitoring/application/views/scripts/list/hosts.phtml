@@ -60,7 +60,7 @@ if (! $this->compact): ?>
                     )
                 ) ?>
             <?php if (isset($summary[$host->host_name])): ?>
-                <span class="text-small"> (<?= $this->qlink(
+                <span class="host-services-incidents"> (<?= $this->qlink(
                       sprintf(
                           $this->translatePlural(
                               '%u unhandled service', '%u unhandled services', $summary[$host->host_name]
