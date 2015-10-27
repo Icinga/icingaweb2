@@ -16,11 +16,6 @@
   }
 }
 
-.comment-text {
-  .text-small();
-  font-family: @font-family-fixed;
-}
-
 .content-centered {
   .text-center();
   margin: 0 auto;
@@ -91,23 +86,15 @@ a:hover > .icon-cancel {
   }
 }
 
-dl.feed-list {
-  dd {
-    // Reset default margin
-    margin: 0;
-  }
-
-  dt {
+.comment-list {
+  > .comment-header {
     border-bottom: 1px solid @gray-lighter;
     margin-top: @vertical-padding;
 
-    .icon-cancel {
-      display: none;
-    }
-
     &:hover {
       background-color: @gray-lightest;
-      .icon-cancel {
+
+      > .comment-meta > .meta-icons > .remove-comment {
         display: block;
       }
     }
@@ -115,7 +102,32 @@ dl.feed-list {
     &:first-child {
       margin-top: 0;
     }
+
+    > .comment-meta > .meta-icons > .remove-comment {
+      display: none;
+    }
   }
+}
+
+.comment-header {
+  .clearfix();
+}
+
+.comment-meta {
+  color: @text-color-light;
+  font-size: @font-size-small;
+  vertical-align: middle;
+
+  > .meta-icons {
+    float: right;
+    margin-top: 0.2em;
+  }
+}
+
+.comment-text {
+  // Reset margin
+  margin: 0;
+  margin-top: @vertical-padding / 2;
 }
 
 dl.name-value-list {
