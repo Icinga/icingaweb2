@@ -1,313 +1,155 @@
 /*! Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
+@icon-width: 1.4em; // 1em width + 0.2em left margin + 0.2em right margin
+
 #menu {
-  max-height: 100%;
+  height: 100%;
   overflow: auto;
 }
 
-#menu > nav > ul > li.nav-item.no-icon a {
-  display: inline-block;
-  padding-left: 28px;
-}
-
-#layout.hoveredmenu #menu {
-  overflow: visible;
-}
-
-#menu, #menu ul {
-  margin: 0;
-  padding: 0;
-}
-
 #menu a {
-  color: @text-color-default;
-}
-
-#menu .separator {
-  background-color: #888;
-}
-
-#menu li {
-  margin-left: 0.0em;
-}
-
-#menu > nav > ul > li > ul {
-  display: none;
-  padding-left: 6px;
-}
-
-.no-js #menu > nav > ul > li > ul {
-  display: block;
-}
-
-#menu > nav > ul > li.active > ul {
-  display: block;
-}
-
-#menu > nav > ul > li.active {
-  background-color: white;
-  padding-left: 0.0em;
-  margin-left: 0;
-  margin-right: 0;
-}
-
-#menu > nav > ul > li.active > a {
-  color: @icinga-blue;
-}
-
-#menu > nav > ul > li.active > div.clearfix > a {
-  color: @icinga-blue;
-}
-
-#menu > nav > ul > li.active li.active a {
-  color: @icinga-blue;
-}
-
-#menu > nav > ul > li a:hover {
-  color: @icinga-blue;
-}
-
-#menu > nav > ul > li.nav-item.hover > ul > li > a:hover {
-   color: @gray;
-}
-
-#menu > nav > ul > li.nav-item.hover > ul > li div.clearfix > a:hover {
-   color: @gray;
-}
-
-#menu > nav > ul > li li {
-  font-size: 0.8em;
-  padding-left: 1.6em;
-}
-
-#menu .badge {
-  margin-right: 5px;
-}
-
-#menu nav > ul > li.active > .badge {
-  margin-top: 15px;
-  margin-right: 5px;
-}
-
-#menu nav > ul > li > div > .badge{
-  margin-top: 8px;
-}
-
-#menu nav > ul > li.active > div > .badge{
-  display: none;
-}
-
-
-/* Collapsed menu item color */
-#menu > nav > ul > li > a {
-  color: @text-color-light;
-  font-weight: 500;
-}
-
-/* Sub item color */
-#menu .active ul li a {
-  color: @colorTextDefault;
-}
-
-#menu ul {
-  list-style-type: none;
-  padding: 0;
-}
-
-#menu ul li a {
-  display: block;
-  line-height: 2.8em;
-  padding-left: 0.7em;
-  text-decoration: none;
-  white-space: nowrap;
+  overflow: hidden;
+  padding: @vertical-padding / 2 @horizontal-padding / 2;
   text-overflow: ellipsis;
+  white-space: nowrap;
+
+  &:hover {
+    color: @icinga-blue;
+    text-decoration: none;
+  }
+}
+
+#menu .active > a {
+  color: @icinga-blue;
+}
+
+#menu .nav-level-1 > .nav-item {
+  line-height: 2.429em; // 34 px
+
+  &.active {
+    .nav-level-2 > li {
+      // Expand menu if active
+      display: block;
+    }
+
+    background-color: @body-bg-color;
+    border-left: 5px solid @icinga-blue;
+  }
+
+  &.no-icon {
+    margin-left: @icon-width;
+  }
+}
+
+#menu .nav-level-2 > .nav-item {
+  // Collapse menu by default
+  display: none;
+  line-height: 1.857em; // 26px
+  margin-left: @icon-width;
+
+  > a {
+    font-size: @font-size-smaller;
+  }
+}
+
+.no-js #menu .nav-level-2 > .nav-item {
+  // Expand menu if JavaScript is disabled
+  display: block;
 }
 
 #menu img.icon {
-  margin-right: 0.5em;
+  line-height: 1;
+  margin: 0 0.2em;
   width: 1em;
-  height: 1em;
 }
 
-#menu ul ul li a {
-  line-height: 1.5em;
-  padding-top: 0.4em;
-  padding-bottom: 0.7em;
-}
-
-#menu ul ul li a {
-}
-
-#menu > nav > ul > li {
-  border-left: solid 5px @gray-lighter;
-}
-
-#menu > nav > ul > li > a {
-  color: @text-color;
-}
-
-#menu > nav > ul > li.active {
-  -moz-box-shadow: none;
-  -webkit-box-shadow: none;
-  box-shadow: none;
-  border-left: solid 5px @icinga-blue;
-  -webkit-transition: border 0.5s;
-  -moz-transition: border 0.5s;
-  -o-transition: border 0.5s;
-  transition: border 0.5s;
-}
-
-
-/* BEGIN OF Hoverable menu */
-
-#menu li.hover {
-  width: 27em;
-  padding-left: 0.0em;
-  margin-left: 0px;
-  margin-right: 5;
-  position: relative;
-}
-
-#menu li.hover > ul{
-  position: absolute;
-  display: block;
-  left: 10.9em;
-  right: 0;
-  top: -0.5em;
-  padding-top: 0.8em;
-  padding-left: 1em;
-  padding-bottom: 0.5em;
-  height: auto;
-  background-color: @text-color;
-  font-size:15px;
-}
-
-#menu li.hover > a {
-  overflow: visible;
-}
-
-#menu li.hover > ul a {
-  width: 90%;
-  display: block;
+#menu .user-nav-item {
+  background-color: @gray;
   color: @text-color-inverted;
+
+  > a:hover {
+    background-color: @text-color-inverted;
+    color: @gray;
+  }
 }
 
-#menu li.hover > ul a:hover {
-  text-decoration: underline;
+#menu input.search {
+  background: transparent url('../img/icons/search.png') no-repeat @vertical-padding + 0.2em center;
+  background-size: @font-size auto;
+  border: none;
+  line-height: 2.8em;
+  outline: none;
+  padding-left: @icon-width + @vertical-padding;
+  width: 100%;
+
+  &.active {
+    background-color: @body-bg-color;
+    border-left: 5px solid @icinga-blue;
+  }
 }
 
-#menu li.hover > ul a:focus {
-  text-shadow: none;
+// Badge offset correction
+
+#menu > nav > .nav-level-1 > .badge-nav-item > a > .badge {
+  margin-top: 0.6em;
 }
 
-#menu li.hover > ul > li.active > a {
-  font-weight: bold;
-  color: @text-color-light;
+#menu .nav-level-2 > .badge-nav-item > a > .badge {
+  margin-top: 0.4em;
 }
 
-#menu li.hover li {
-  padding: 0;
-}
+// Hovered menu
 
-#menu li.hover > a:after {
-  border: 0.5em solid rgba(0, 0, 0, 0);
-  border-right-color: #333;
-  content: " ";
-  margin-top: 0.8em;
-  pointer-events: none;
-  position: absolute;
-  left: 10.8em;
-  height: 0;
-  width: 0;
+#menu .nav-level-1 > .nav-item.hover {
+  position: relative;
+
+  &:before {
+    border: 0.5em solid rgba(0, 0, 0, 0);
+    border-right-color: @text-color;
+    content: "";
+    position: absolute;
+    right: 0;
+    top: 30%;
+  }
+
+  > .nav-level-2 {
+    background-color: @text-color;
+    color: @text-color-inverted;
+    left: 100%;
+    padding: @vertical-padding 0;
+    position: absolute;
+    top: 0;
+
+    > .nav-item {
+      display: block;
+
+      > a:hover {
+        color: @text-color-inverted;
+        text-decoration: underline;
+      }
+    }
+  }
+
+  > a > .badge {
+    display: none;
+  }
 }
 
 #layout.hoveredmenu {
   #main {
-    z-index: 2;
+   z-index: 2;
   }
+
   #sidebar {
-    z-index: 3;
+   z-index: 3;
+  }
+
+  #menu {
+    overflow: visible;
   }
 }
 
-/* END of Hoverable menu */
-
-#menu form {
-  width: 100%;
-}
-
-#menu input.search {
-  font-size: 14px;
-  margin: 0;
-  padding: 0 0.5em 0 2.2em;
-  border: none;
-  width: 100%;
-  border-radius: 0;
-  height: 2.8em;
-  display: block;
-  outline: none;
-  background-color: transparent;
-  background-image: url('../img/icons/search.png');
-  background-repeat: no-repeat;
-  background-position: 1.0em center;
-  color: @colorTextDefault;
-  border-left: solid 5px @gray-lighter;
-}
-
-html.ie8 #menu input.search {
-  line-height: 2.8em;
-}
-
-#menu input.search:-ms-input-placeholder {
-  color: @text-color;
-}
-
-#menu input.search::-webkit-input-placeholder {
-  color: @text-color;
-}
-
-#menu input.search::-moz-placeholder {
-  color: @text-color;
-}
-
-#menu input.search.active {
-  background-color: white;
-  color: #121212;
-  text-shadow: none;
-  border-left: solid 5px @icinga-blue;
-  -webkit-transition: border 0.5s;
-  -moz-transition: border 0.5s;
-  -o-transition: border 0.5s;
-  transition: border 0.5s;
-}
-
-#menu input.search.active::-moz-placeholder {
-  color: #999;
-}
-
-#menu input.search.active::-webkit-input-placeholder {
-  color: #999;
-}
-
-#menu input.search.active:-ms-input-placeholder {
-  color: #999;
-}
-
-input:focus { outline: none; }
-
-/* Make focus outline properly visible */
-a:focus {
-  outline: dotted black 1px;
-}
-
-/* Displaying the outline in the navigation is not possible because of the messed up link borders,
-   color those links instead. */
-#menu a:focus,
-#menu > nav > ul > li > a:focus,
-#menu .active ul li a:focus {
-  color: @icinga-blue;
-  outline: none;
-}
+// Accessibility skip links
 
 .skip-links {
   position: relative;
@@ -318,9 +160,9 @@ a:focus {
     li {
       display: block;
       a, button[type="submit"] {
-        background-color: #fff;
+        background-color: @body-bg-color;
         left: -999em;
-        padding: 0.8em;
+        padding: @vertical-padding @horizontal-padding;
         position: absolute;
         width: 100%;
         &:focus {
@@ -333,47 +175,4 @@ a:focus {
       }
     }
   }
-}
-
-.user-nav-item {
-  margin-top: 39px;
-}
-.user-nav-item ~ .user-nav-item {
-  margin-top: 0px;
-}
-
-#menu .user-nav-item {
-  background-color: @gray;
-  border-left: solid 5px @gray;
-
-  .user-avatar {
-    border: 1px solid @gray;
-    float: right;
-    margin-top: 5px;
-    margin-right: 5px;
-    border-radius: 150px;
-    height: 30px;
-    width: 30px;
-  }
-
-  a {
-    color: @text-color-inverted;
-  };
-
-  a:hover {
-    background-color: white;
-    color: @gray;
-  };
-}
-
-#menu > nav > ul > li.user-nav-item.active > div.clearfix > a {
-  color: @gray;
-}
-
-#menu > nav > ul > li.user-nav-item.active {
-  border-left: solid 5px @gray;
-  -webkit-transition: border 0.5s;
-  -moz-transition: border 0.5s;
-  -o-transition: border 0.5s;
-  transition: border 0.5s;
 }
