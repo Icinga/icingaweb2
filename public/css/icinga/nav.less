@@ -1,16 +1,16 @@
 /*! Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
-li.badge-nav-item {
+.badge-nav-item {
   > a {
     .clearfix();
 
-    .badge {
+    > .badge {
       float: right;
     }
   }
 }
 
-li.nav-item {
+.nav-item {
   > a,
   > span {
     // Rollover
@@ -18,17 +18,21 @@ li.nav-item {
   }
 }
 
-ul.nav {
+.nav {
   // Reset defaults
+  list-style-type: none;
   margin: 0;
   padding: 0;
-  list-style-type: none;
 }
 
-ul.tab-nav {
+.tab-nav {
   .clearfix();
 
-  li {
+  > .nav-item {
     float: left;
   }
+}
+
+.primary-nav a {
+  font-weight: 500;
 }
