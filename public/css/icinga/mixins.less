@@ -26,6 +26,14 @@
   }
 }
 
+.clearfix {
+  &:after {
+    content: "";
+    clear: both;
+    display: table;
+  }
+}
+
 .invisible {
   // Maintain layout but hide visually and from screen readers
   visibility: hidden;
