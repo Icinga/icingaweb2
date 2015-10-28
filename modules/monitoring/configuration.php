@@ -353,6 +353,5 @@ $dashboard->add(
 /*
  * CSS
  */
-$this->provideCssFile('plugin-output.less');
 $this->provideCssFile('service-grid.less');
 $this->provideCssFile('tables.less');
