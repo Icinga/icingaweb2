@@ -135,8 +135,12 @@ dl.name-value-list {
 
 table.action-table {
   tbody tr {
+    .transition(background-color 0.3s ease);
+
     &.active {
       background-color: @gray-lighter;
+      // Auto-refresh must not start transition
+      transition: none;
     }
 
     &:hover {
