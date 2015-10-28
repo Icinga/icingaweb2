@@ -8,85 +8,87 @@ if (in_array((int) $object->state, array(0, 99))) {
 }
 
 if ($object->acknowledged): ?>
-    <?php
-    $acknowledgement = $object->acknowledgement;
-    /** @var \Icinga\Module\Monitoring\Object\Acknowledgement $acknowledgement */
-    ?>
-    <tr>
-        <th><?= $this->translate('Acknowledged') ?></th>
-        <td data-base-target="_self">
-            <dl class="feed-list">
-                <dt class="feed-author clearfix">
-                    <?= $this->escape($acknowledgement->getAuthor()) ?>
-                    <span class="text-small"><?= $this->translate('acknowledged') ?></span>
+<?php
+$acknowledgement = $object->acknowledgement;
+/** @var \Icinga\Module\Monitoring\Object\Acknowledgement $acknowledgement */
+?>
+<tr>
+    <th><?= $this->translate('Acknowledged') ?></th>
+    <td data-base-target="_self">
+        <dl class="comment-list">
+            <dt class="comment-header">
+                <?= $this->escape($acknowledgement->getAuthor()) ?>
+                <span class="comment-meta">
+                    <?= $this->translate('acknowledged') ?>
                     <?= $this->timeAgo($acknowledgement->getEntryTime()) ?>
-                    <?php
-                    if ($acknowledgement->getSticky()) {
-                        echo $this->icon('pin', sprintf(
-                            $this->translate(
-                                'Acknowledgement remains until the %1$s recovers even if the %1$s changes state'
-                            ),
-                            $object->getType(true)
-                        ));
-                    }
-                    if (isset($removeAckForm)) {
-                        $removeAckForm->setAttrib('class', $removeAckForm->getAttrib('class') . ' pull-right');
-                        // Form is unset if the current user lacks the respective permission
-                        echo $removeAckForm;
-                    }
-                    ?>
-                </dt>
-                <dd class="comment-text">
-                    <?= nl2br($this->createTicketLinks($acknowledgement->getComment()), false) ?>
-                </dd>
-            <?php if ($acknowledgement->expires()): ?>
-                <dd class="text-small">
+                <?php if ($acknowledgement->expires()): ?>
+                    <span aria-hidden="true">&#448;</span>
                     <?= sprintf(
                         $this->translate('Expires %s'),
                         $this->timeUntil($acknowledgement->getExpirationTime())
                     ) ?>
-                </dd>
-            <?php endif ?>
-            </dl>
-        </td>
-    </tr>
+                <?php endif ?>
+                <?php if ($acknowledgement->getSticky()): ?>
+                    <?= $this->icon('pin', sprintf(
+                        $this->translate(
+                            'Acknowledgement remains until the %1$s recovers even if the %1$s changes state'
+                        ),
+                        $object->getType(true)
+                    )) ?>
+                <?php endif ?>
+                <?php if (isset($removeAckForm)): // Form is unset if the current user lacks the respective permission ?>
+                    <span class="meta-icons">
+                        <?php
+                        $removeAckForm->setAttrib('class', $removeAckForm->getAttrib('class') . ' remove-comment');
+                        echo $removeAckForm;
+                        ?>
+                    </span>
+                <?php endif ?>
+                </span>
+            </dt>
+            <dd class="comment-text">
+                <p><?= nl2br($this->createTicketLinks($acknowledgement->getComment()), false) ?></p>
+            </dd>
+        </dl>
+    </td>
+</tr>
 <?php else: ?>
-    <tr>
-        <th><?= $this->translate('Not acknowledged') ?></th>
-        <td>
-            <?php if ($this->hasPermission('monitoring/command/acknowledge-problem')) {
-                if ($object->getType() === $object::TYPE_HOST) {
-                    $ackLink = $this->href(
-                        'monitoring/host/acknowledge-problem',
-                        array('host' => $object->getName()),
-                        null,
-                        array('class' => 'action-link')
-                    );
-                } else {
-                    $ackLink = $this->href(
-                        'monitoring/service/acknowledge-problem',
-                        array('host' => $object->getHost()->getName(), 'service' => $object->getName()),
-                        null,
-                        array('class' => 'action-link')
-                    );
-                }
-            ?>
-            <?= $this->qlink(
-                $this->translate('Acknowledge'),
-                $ackLink,
+<tr>
+    <th><?= $this->translate('Not acknowledged') ?></th>
+    <td>
+    <?php if ($this->hasPermission('monitoring/command/acknowledge-problem')) {
+        if ($object->getType() === $object::TYPE_HOST) {
+            $ackLink = $this->href(
+                'monitoring/host/acknowledge-problem',
+                array('host' => $object->getName()),
                 null,
-                array(
-                    'class'             => 'action-link',
-                    'data-base-target'  => '_self',
-                    'icon'              => 'ok',
-                    'title'             => $this->translate(
-                        'Acknowledge this problem, suppress all future notifications for it and tag it as being handled'
-                    )
+                array('class' => 'action-link')
+            );
+        } else {
+            $ackLink = $this->href(
+                'monitoring/service/acknowledge-problem',
+                array('host' => $object->getHost()->getName(), 'service' => $object->getName()),
+                null,
+                array('class' => 'action-link')
+            );
+        }
+    ?>
+        <?= $this->qlink(
+            $this->translate('Acknowledge'),
+            $ackLink,
+            null,
+            array(
+                'class'             => 'action-link',
+                'data-base-target'  => '_self',
+                'icon'              => 'ok',
+                'title'             => $this->translate(
+                    'Acknowledge this problem, suppress all future notifications for it and tag it as being handled'
                 )
-            ); ?>
-            <?php } else {
-                echo '&#45;';
-            } // endif ?>
-        </td>
-    </tr>
+            )
+        ); ?>
+    <?php } else {
+        echo '&#45;';
+    } // endif ?>
+    </td>
+</tr>
 <?php endif ?>
