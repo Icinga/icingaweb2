@@ -45,7 +45,7 @@ if (! $this->compact): ?>
         $serviceStateName = Service::getStateText($service->service_state); ?>
         <tr>
             <td class="state-col state-<?= $serviceStateName ?><?= $service->service_handled ? ' handled' : '' ?>">
-                <span class="state-label"><?= Service::getStateText($service->service_state, true) ?></span>
+                <div class="state-label"><?= Service::getStateText($service->service_state, true) ?></div>
             <?php if ((int) $service->service_state !== 99): ?>
                 <div class="state-meta">
                     <?= $this->timeSince($service->service_last_state_change, $this->compact) ?>

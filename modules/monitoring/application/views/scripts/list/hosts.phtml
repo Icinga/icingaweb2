@@ -32,61 +32,63 @@ if (! $this->compact): ?>
         $hostLink = $this->href('monitoring/host/show', array('host' => $host->host_name)); ?>
         <tr>
             <td class="state-col state-<?= $hostStateName ?><?= $host->host_handled ? ' handled' : '' ?>">
-                <p>
-                    <span class="state-label"><?= Host::getStateText($host->host_state, true) ?></span>
+                <div class="state-label"><?= Host::getStateText($host->host_state, true) ?></div>
                 <?php if ((int) $host->host_state !== 99): ?>
-                    <br>
-                    <?= $this->timeSince($host->host_last_state_change, $this->compact) ?>
-                <?php if ((int) $host->host_state > 0 && (int) $host->host_state_type === 0): ?>
-                    <br>
-                    <span class="text-small">Soft <?= $host->host_attempt ?></span>
+                    <div class="state-meta">
+                        <?= $this->timeSince($host->host_last_state_change, $this->compact) ?>
+                    <?php if ((int) $host->host_state > 0 && (int) $host->host_state_type === 0): ?>
+                        <div>Soft <?= $host->host_attempt ?></div>
+                    <?php endif ?>
+                    </div>
                 <?php endif ?>
-                <?php endif ?>
-                </p>
             </td>
-            <td class="clearfix">
-                <?= $this->iconImage()->host($host) ?>
-                <span class="pull-right"><?= implode(' ', $this->hostFlags($host)) ?></span>
-                <?= $this->qlink(
-                    $host->host_display_name,
-                    $hostLink,
-                    null,
-                    array(
-                        'title' => sprintf(
-                            $this->translate('Show detailed information for host %s'),
-                            $host->host_display_name
-                        ),
-                        'class' => 'rowaction'
-                    )
-                ) ?>
-            <?php if (isset($summary[$host->host_name])): ?>
-                <span class="host-services-incidents"> (<?= $this->qlink(
-                      sprintf(
-                          $this->translatePlural(
-                              '%u unhandled service', '%u unhandled services', $summary[$host->host_name]
-                          ),
-                          $summary[$host->host_name]
-                      ),
-                      'monitoring/list/services',
-                      array(
-                          'host'               => $host->host_name,
-                          'service_problem'    => 1,
-                          'service_handled'    => 0
-                      ),
-                      array(
-                          'title' => sprintf(
+            <td>
+                <div class="state-header">
+                    <?= $this->iconImage()->host($host) ?>
+                    <?= $this->qlink(
+                        $host->host_display_name,
+                        $hostLink,
+                        null,
+                        array(
+                            'title' => sprintf(
+                                $this->translate('Show detailed information for host %s'),
+                                $host->host_display_name
+                            ),
+                            'class' => 'rowaction'
+                        )
+                    ) ?>
+                <?php if (isset($summary[$host->host_name])): ?>
+                    <span class="host-services-incidents"> (<?= $this->qlink(
+                          sprintf(
                               $this->translatePlural(
-                                  'List %s unhandled service problem on host %s',
-                                  'List %s unhandled service problems on host %s',
-                                  $summary[$host->host_name]
+                                  '%u unhandled service', '%u unhandled services', $summary[$host->host_name]
                               ),
-                              $summary[$host->host_name],
-                              $host->host_name
+                              $summary[$host->host_name]
+                          ),
+                          'monitoring/list/services',
+                          array(
+                              'host'               => $host->host_name,
+                              'service_problem'    => 1,
+                              'service_handled'    => 0
+                          ),
+                          array(
+                              'title' => sprintf(
+                                  $this->translatePlural(
+                                      'List %s unhandled service problem on host %s',
+                                      'List %s unhandled service problems on host %s',
+                                      $summary[$host->host_name]
+                                  ),
+                                  $summary[$host->host_name],
+                                  $host->host_name
+                              )
                           )
-                      )
-                ) ?>)</span>
-            <?php endif ?>
-                <p class="plugin-output"><?= $this->pluginOutput($this->ellipsis($host->host_output, 10000), true) ?></p>
+                    ) ?>)</span>
+                <?php endif ?>
+                    <span class="state-icons"><?= implode(' ', $this->hostFlags($host)) ?></span>
+                </div>
+                <p class="overview-plugin-output">
+                    <?= $this->pluginOutput($this->ellipsis($host->host_output, 10000), true) ?>
+                </p>
             </td>
         <?php foreach($this->addColumns as $col): ?>
             <td><?= $this->escape($host->$col) ?></td>
