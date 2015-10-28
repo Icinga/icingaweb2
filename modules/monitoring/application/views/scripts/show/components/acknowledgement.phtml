@@ -39,7 +39,7 @@ $acknowledgement = $object->acknowledgement;
                 <?php if (isset($removeAckForm)): // Form is unset if the current user lacks the respective permission ?>
                     <span class="meta-icons">
                         <?php
-                        $removeAckForm->setAttrib('class', $removeAckForm->getAttrib('class') . ' remove-comment');
+                        $removeAckForm->setAttrib('class', $removeAckForm->getAttrib('class') . ' remove-action');
                         echo $removeAckForm;
                         ?>
                     </span>

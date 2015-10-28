@@ -54,7 +54,7 @@
               <?php
               $deleteButton = clone $delDowntimeForm;
               /** @var \Icinga\Module\Monitoring\Forms\Command\Object\DeleteDowntimeCommandForm $deleteButton */
-              $deleteButton->setAttrib('class', $deleteButton->getAttrib('class') . ' remove-comment');
+              $deleteButton->setAttrib('class', $deleteButton->getAttrib('class') . ' remove-action');
               $deleteButton->populate(
                   array(
                       'downtime_id'         => $downtime->id,
