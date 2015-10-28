@@ -52,7 +52,7 @@ if (! $this->compact): ?>
                     <?= $this->timeSince($service->service_last_state_change, $this->compact) ?>
                 <?php if ((int) $service->service_state > 0 && (int) $service->service_state_type === 0): ?>
                     <br>
-                    <span class="text-small">Soft <?= $service->service_attempt ?></span>
+                    <span class="text-small"><?= $this->translate('Soft', 'Soft state') ?> <?= $service->service_attempt ?></span>
                 <?php endif ?>
                 <?php endif ?>
                 </p>
