@@ -3,7 +3,7 @@
 @border-left-width: 6px;
 
 .count-col {
-  width: 60px;
+  width: 4em;
 }
 
 .state-col {
@@ -18,45 +18,45 @@
 
   &.state-critical,
   &.state-down {
-    .bg-color-critical();
-    .fg-color-inverted();
+    background-color: @color-critical;
+    color: @text-color-inverted;
 
     &.handled {
-      .bg-color-default();
-      .fg-color-default();
+      background-color: inherit;
+      color: inherit;
       border-left: @border-left-width solid @color-critical-handled;
     }
   }
 
   &.state-warning {
-    .bg-color-warning();
-    .fg-color-inverted();
+    background-color: @color-warning;
+    color: @text-color-inverted;
 
     &.handled {
-      .bg-color-default();
-      .fg-color-default();
+      background-color: inherit;
+      color: inherit;
       border-left: @border-left-width solid @color-warning-handled;
     }
   }
 
   &.state-unknown {
-    .bg-color-unknown();
-    .fg-color-inverted();
+    background-color: @color-warning;
+    color: @text-color-inverted;
 
     &.handled {
-      .bg-color-default();
-      .fg-color-default();
+      background-color: inherit;
+      color: inherit;
       border-left: @border-left-width solid @color-unknown-handled;
     }
   }
 
   &.state-unreachable {
-    .bg-color-unreachable();
-    .fg-color-inverted();
+    background-color: @color-unreachable;
+    color: @text-color-inverted;
 
     &.handled {
-      .bg-color-default();
-      .fg-color-default();
+      background-color: inherit;
+      color: inherit;
       border-left: @border-left-width solid @color-unreachable-handled;
     }
   }
@@ -69,20 +69,32 @@
   width: 100px;
 }
 
-.comment-col {
-  padding-top: 0.5em;
-  vertical-align: top;
-  width: 3em;
-}
-
-.comment-content {
-  line-height: 1.5em;
-  padding-top: 0.4em;
-  padding-bottom: 0.7em;
-  max-width: 15em;
+.host-meta, .service-meta {
   color: @text-color-light;
+  font-size: @font-size-small;
 }
 
-.comment-header {
-  line-height: 1.8em;
+// Link to unhandled services in the hosts overview
+.host-services-incidents {
+  color: @color-critical;
+  font-family: @font-family-wide;
+  font-size: @font-size-small;
+}
+
+.state-header {
+  .clearfix();
+}
+
+.state-icons {
+  float: right;
+}
+
+.state-label {
+  font-family: @font-family-wide;
+  font-size: @font-size-small;
+  letter-spacing: 1px;
+}
+
+.state-meta {
+  font-size: @font-size-small;
 }
