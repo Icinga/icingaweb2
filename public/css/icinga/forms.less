@@ -21,6 +21,22 @@ input.search {
   &:focus {
     background-color: @body-bg-color;
   }
+
+  &::-webkit-input-placeholder {
+    color: @text-color;
+  }
+
+  &:-moz-placeholder {
+    color: @text-color;
+  }
+
+  &::-moz-placeholder {
+    color: @text-color;
+  }
+
+  &:-ms-input-placeholder {
+    color: @text-color;
+  }
 }
 
 input, select, textarea {
