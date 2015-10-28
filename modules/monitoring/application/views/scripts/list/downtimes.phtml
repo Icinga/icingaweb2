@@ -30,7 +30,6 @@ if (! $this->compact): ?>
           $this->stateName = Host::getStateText($downtime->host_state);
       }
       $this->downtime = $downtime;
-      $this->displayComment = true;
     ?>
     <tr href="<?= $this->href('monitoring/downtime/show', array('downtime_id' => $downtime->id)) ?>">
       <?= $this->render('partials/downtime/downtime-header.phtml'); ?>
