@@ -10,7 +10,7 @@ use Icinga\Module\Monitoring\Object\Service;
             <div class="state-meta"><?= $this->timeSince($object->host_last_state_change) ?></div>
         </td>
         <td>
-            <?= $this->iconImage()->service($object) ?>
+            <?= $this->iconImage()->host($object) ?>
             <span class="selectable"><?= $this->escape($object->host_display_name) ?></span>
         <?php if ($object->host_display_name !== $object->host_name): ?>
             <span class="selectable host-meta">&#40;<?= $this->escape($object->host_name) ?>&#41;</span>
@@ -34,7 +34,7 @@ use Icinga\Module\Monitoring\Object\Service;
             <div class="state-meta"><?= $this->timeSince($object->service_last_state_change) ?></div>
         </td>
         <td>
-            <?= $this->iconImage()->host($object) ?>
+            <?= $this->iconImage()->service($object) ?>
             <?= $this->translate('Service') ?>&#58; <span class="selectable"><?= $this->escape($object->service_display_name) ?></span>
             <?php if ($object->service_display_name !== $object->service_description): ?>
                 <span class="selectable service-meta">&#40;<?= $this->escape($object->service_description) ?>&#41;</span>
