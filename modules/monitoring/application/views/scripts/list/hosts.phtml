@@ -58,7 +58,7 @@ if (! $this->compact): ?>
                         )
                     ) ?>
                 <?php if (isset($summary[$host->host_name])): ?>
-                    <span class="host-services-incidents"> (<?= $this->qlink(
+                    <span class="host-services-incidents"> &#40;<?= $this->qlink(
                           sprintf(
                               $this->translatePlural(
                                   '%u unhandled service', '%u unhandled services', $summary[$host->host_name]
@@ -82,7 +82,7 @@ if (! $this->compact): ?>
                                   $host->host_name
                               )
                           )
-                    ) ?>)</span>
+                    ) ?>&#41;</span>
                 <?php endif ?>
                     <span class="state-icons"><?= implode(' ', $this->hostFlags($host)) ?></span>
                 </div>

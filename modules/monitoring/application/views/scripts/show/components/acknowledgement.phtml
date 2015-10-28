@@ -7,8 +7,7 @@ if (in_array((int) $object->state, array(0, 99))) {
     return;
 }
 
-if ($object->acknowledged): ?>
-<?php
+if ($object->acknowledged):
 $acknowledgement = $object->acknowledgement;
 /** @var \Icinga\Module\Monitoring\Object\Acknowledgement $acknowledgement */
 ?>
