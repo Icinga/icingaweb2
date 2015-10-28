@@ -45,49 +45,49 @@ if (! $this->compact): ?>
         $serviceStateName = Service::getStateText($service->service_state); ?>
         <tr>
             <td class="state-col state-<?= $serviceStateName ?><?= $service->service_handled ? ' handled' : '' ?>">
-                <p>
-                    <span class="state-label"><?= Service::getStateText($service->service_state, true) ?></span>
-                <?php if ((int) $service->service_state !== 99): ?>
-                    <br>
+                <span class="state-label"><?= Service::getStateText($service->service_state, true) ?></span>
+            <?php if ((int) $service->service_state !== 99): ?>
+                <div class="state-meta">
                     <?= $this->timeSince($service->service_last_state_change, $this->compact) ?>
                 <?php if ((int) $service->service_state > 0 && (int) $service->service_state_type === 0): ?>
-                    <br>
-                    <span class="text-small"><?= $this->translate('Soft', 'Soft state') ?> <?= $service->service_attempt ?></span>
+                    <div><?= $this->translate('Soft', 'Soft state') ?> <?= $service->service_attempt ?></div>
                 <?php endif ?>
-                <?php endif ?>
-                </p>
+                </div>
+            <?php endif ?>
             </td>
 
-            <td class="clearfix">
-                <?= $this->iconImage()->service($service) ?>
-                <span class="pull-right"><?= implode(' ', $this->serviceFlags($service)) ?></span>
-                <?php if ($this->showHost): ?><?= $this->qlink(
-                    $service->host_display_name
-                    . ($service->host_state != 0 ? ' (' . Host::getStateText($service->host_state, true) . ')' : ''),
-                    $hostLink,
-                    null,
-                    array(
-                        'title' => sprintf(
-                            $this->translate('Show detailed information for host %s'),
-                            $service->host_display_name
+            <td>
+                <div class="state-header">
+                    <?= $this->iconImage()->service($service) ?>
+                    <?php if ($this->showHost): ?><?= $this->qlink(
+                        $service->host_display_name
+                        . ($service->host_state != 0 ? ' (' . Host::getStateText($service->host_state, true) . ')' : ''),
+                        $hostLink,
+                        null,
+                        array(
+                            'title' => sprintf(
+                                $this->translate('Show detailed information for host %s'),
+                                $service->host_display_name
+                            )
                         )
-                    )
-                ) ?>:
-                <?php endif ?><?= $this->qlink(
-                    $service->service_display_name,
-                    $serviceLink,
-                    null,
-                    array(
-                        'title' => sprintf(
-                            $this->translate('Show detailed information for service %s on host %s'),
-                            $service->service_display_name,
-                            $service->host_display_name
-                        ),
-                        'class' => 'rowaction'
-                    )
-                ) ?><br />
-                <div class="sparkline-box"><?= $this->perfdata($service->service_perfdata, true, 5) ?> </div>
-                <p class="plugin-output">
+                    ) ?>:
+                    <?php endif ?><?= $this->qlink(
+                        $service->service_display_name,
+                        $serviceLink,
+                        null,
+                        array(
+                            'title' => sprintf(
+                                $this->translate('Show detailed information for service %s on host %s'),
+                                $service->service_display_name,
+                                $service->host_display_name
+                            ),
+                            'class' => 'rowaction'
+                        )
+                    ) ?>
+                    <span class="state-icons"><?= implode(' ', $this->serviceFlags($service)) ?></span>
+                </div>
+                <div class="sparkline-box"><?= $this->perfdata($service->service_perfdata, true, 5) ?></div>
+                <p class="overview-plugin-output">
                     <?= $this->pluginOutput($this->ellipsis($service->service_output, 10000), true) ?>
                 </p>
             </td>
