@@ -63,6 +63,13 @@
           background-clip: padding-box;
 }
 
+.transition (@transition) {
+  -webkit-transition: @transition;
+     -moz-transition: @transition;
+       -o-transition: @transition;
+          transition: @transition;
+}
+
 .visible {
   visibility: visible;
 }
