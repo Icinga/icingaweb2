@@ -22,93 +22,90 @@ if ($this->hasPermission('config/authentication/users/edit') && $backend instanc
 }
 
 ?>
-<div class="controls">
+<div class="controls separated dont-print">
 <?php if (! $this->compact): ?>
-  <?= $tabs; ?>
+    <?= $tabs; ?>
 <?php endif ?>
-  <h2 class="clearfix"><?= $this->escape($user->user_name) ?><span class="pull-right"><?= $editLink ?></span></h2>
-  <table class="name-value-table">
-    <tr>
-      <th><?= $this->translate('State'); ?></th>
-      <td><?= $user->is_active === null ? '-' : ($user->is_active ? $this->translate('Active') : $this->translate('Inactive')); ?></td>
-    </tr>
-    <tr>
-      <th><?= $this->translate('Created at'); ?></th>
-      <td><?= $user->created_at === null ? '-' : $this->formatDateTime($user->created_at); ?></td>
-    </tr>
-    <tr>
-      <th><?= $this->translate('Last modified'); ?></th>
-      <td><?= $user->last_modified === null ? '-' : $this->formatDateTime($user->last_modified); ?></td>
-    </tr>
-  </table>
-  <h2><?= $this->translate('Group Memberships'); ?></h2>
+    <h2 class="clearfix"><?= $this->escape($user->user_name) ?><span class="pull-right"><?= $editLink ?></span></h2>
+    <table class="name-value-table">
+        <tr>
+            <th><?= $this->translate('State'); ?></th>
+            <td><?= $user->is_active === null ? '-' : ($user->is_active ? $this->translate('Active') : $this->translate('Inactive')); ?></td>
+        </tr>
+        <tr>
+            <th><?= $this->translate('Created at'); ?></th>
+            <td><?= $user->created_at === null ? '-' : $this->formatDateTime($user->created_at); ?></td>
+        </tr>
+        <tr>
+            <th><?= $this->translate('Last modified'); ?></th>
+            <td><?= $user->last_modified === null ? '-' : $this->formatDateTime($user->last_modified); ?></td>
+        </tr>
+    </table>
 <?php if (! $this->compact): ?>
-  <?= $this->sortBox; ?>
-<?php endif ?>
-  <?= $this->limiter; ?>
-  <?= $this->paginator; ?>
-<?php if (! $this->compact): ?>
-  <?= $this->filterEditor; ?>
+    <h2><?= $this->translate('Group Memberships'); ?></h2>
+    <div class="grid">
+        <?= $this->limiter; ?>
+        <?= $this->paginator; ?>
+        <?= $this->sortBox; ?>
+    </div>
+    <?= $this->filterEditor; ?>
 <?php endif ?>
 </div>
-<div class="content memberships">
-    <?php if ($showCreateMembershipLink): ?>
+<div class="content">
+<?php if ($showCreateMembershipLink): ?>
     <?= $this->qlink(
-        $this->translate('Add User to Group') ,
+        $this->translate('Create New Membership'),
         'user/createmembership',
-        array('backend' => $backend->getName()),
         array(
-            'class'             => 'button-link',
-            'data-base-target'  => '_next',
-            'icon'              => 'plus',
-            'title'             => $this->translate('Add user to user group')
+            'backend'   => $backend->getName(),
+            'user'      => $user->user_name
+        ),
+        array(
+            'icon'  => 'plus',
+            'class' => 'button-link'
         )
     ) ?>
-    <?php endif ?>
-<?php
-// @TODO(el): Remove that $firstRow thingy
-$firstRow = true;
-foreach ($memberships as $membership): ?>
-<?php if ($firstRow): ?>
-  <?php $firstRow = false; ?>
-  <table data-base-target="_next" class="action-table listing-table">
-    <thead>
-      <tr>
-        <th class="membership-group"><?= $this->translate('Group'); ?></th>
-        <th class="membership-cancel"><?= $this->translate('Cancel', 'group.membership'); ?></th>
-      </tr>
-    </thead>
-    <tbody>
 <?php endif ?>
-      <tr>
-        <td class="membership-group">
-         <?php if ($this->hasPermission('config/authentication/groups/show') && $membership->backend instanceof Selectable): ?>
-          <?= $this->qlink($membership->group_name, 'group/show', array(
-            'backend' => $membership->backend->getName(),
-            'group'   => $membership->group_name
-          ), array(
-            'title'   => sprintf($this->translate('Show detailed information for group %s'), $membership->group_name)
-          )); ?>
-         <?php else: ?>
-          <?= $this->escape($membership->group_name); ?>
-         <?php endif ?>
-        </td>
-        <td class="membership-cancel" data-base-target="_self">
-       <?php if (isset($removeForm) && $membership->backend instanceof Reducible): ?>
-          <?= $removeForm->setAction($this->url('group/removemember', array(
-            'backend'   => $membership->backend->getName(),
-            'group'     => $membership->group_name
-          ))); ?>
-       <?php else: ?>
-          -
-       <?php endif ?>
-        </td>
-      </tr>
-<?php endforeach ?>
-<?php if ($memberships->hasResult()): ?>
-    </tbody>
-  </table>
-<?php else: ?>
-  <p><?= $this->translate('No memberships found matching the filter'); ?></p>
-<?php endif ?>
+
+<?php if (! $memberships->hasResult()): ?>
+    <p><?= $this->translate('No memberships found matching the filter'); ?></p>
+</div>
+<?php return; endif ?>
+
+    <table data-base-target="_next" class="action-table listing-table">
+        <thead>
+            <tr>
+                <th><?= $this->translate('Group'); ?></th>
+                <th><?= $this->translate('Cancel', 'group.membership'); ?></th>
+            </tr>
+        </thead>
+        <tbody>
+        <?php foreach ($memberships as $membership): ?>
+            <tr>
+                <td>
+                <?php if ($this->hasPermission('config/authentication/groups/show') && $membership->backend instanceof Selectable): ?>
+                    <?= $this->qlink($membership->group_name, 'group/show', array(
+                        'backend' => $membership->backend->getName(),
+                        'group'   => $membership->group_name
+                    ), array(
+                        'title'   => sprintf($this->translate('Show detailed information for group %s'), $membership->group_name)
+                    )); ?>
+                <?php else: ?>
+                    <?= $this->escape($membership->group_name); ?>
+                <?php endif ?>
+                </td>
+                <td class="icon-col" data-base-target="_self">
+                <?php if (isset($removeForm) && $membership->backend instanceof Reducible): ?>
+                    <?= $removeForm->setAction($this->url('group/removemember', array(
+                        'backend'   => $membership->backend->getName(),
+                        'group'     => $membership->group_name
+                    ))); ?>
+                <?php else: ?>
+                    -
+                <?php endif ?>
+                </td>
+            </tr>
+        <?php endforeach ?>
+        </tbody>
+    </table>
 </div>

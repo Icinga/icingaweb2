@@ -218,6 +218,18 @@ class DbUserGroupBackend extends DbRepository implements UserGroupBackendInterfa
     }
 
     /**
+     * Return the name of the backend that is providing the given user
+     *
+     * @param   string  $username   Currently unused
+     *
+     * @return  null|string     The name of the backend or null in case this information is not available
+     */
+    public function getUserBackendName($username)
+    {
+        return null; // TODO(10373): Store this to the database when inserting and fetch it here
+    }
+
+    /**
      * Join group into group_membership
      *
      * @param   RepositoryQuery     $query
@@ -238,7 +250,7 @@ class DbUserGroupBackend extends DbRepository implements UserGroupBackendInterfa
      */
     protected function joinGroupMembership(RepositoryQuery $query)
     {
-        $query->getQuery()->join(
+        $query->getQuery()->joinLeft(
             $this->requireTable('group_membership'),
             'g.id = gm.group_id',
             array()

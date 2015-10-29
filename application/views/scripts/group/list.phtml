@@ -4,30 +4,24 @@ use Icinga\Data\Extensible;
 use Icinga\Data\Reducible;
 
 if (! $this->compact): ?>
-<div class="controls">
-  <?= $this->tabs; ?>
-  <div class="grid dont-print">
-    <div class="col-1-3 text-left">
-      <?= $this->limiter ?>
+<div class="controls separated dont-print">
+    <?= $tabs; ?>
+    <div class="grid">
+        <?= $this->limiter ?>
+        <?= $this->paginator ?>
+        <?= $this->sortBox ?>
     </div>
-    <div class="col-1-3">
-      <?= $this->paginator ?>
+    <div>
+        <?= $this->backendSelection; ?>
+        <?= $this->filterEditor; ?>
     </div>
-    <div class="col-1-3 text-right">
-      <?= $this->sortBox ?>
-    </div>
-  </div>
-  <div>
-    <?= $this->backendSelection; ?>
-    <?= $this->filterEditor; ?>
-  </div>
 </div>
 <?php endif ?>
-<div class="content groups">
+<div class="content">
 <?php
 
 if (! isset($backend)) {
-    echo $this->translate('No backend found which is able to list groups') . '</div>';
+    echo $this->translate('No backend found which is able to list user groups') . '</div>';
     return;
 } else {
     $extensible = $this->hasPermission('config/authentication/groups/add') && $backend instanceof Extensible;
@@ -37,64 +31,68 @@ if (! isset($backend)) {
 
 <?php if ($extensible): ?>
     <?= $this->qlink(
-        $this->translate('Add a New User Group') ,
+        $this->translate('Add a New User Group'),
         'group/add',
         array('backend' => $backend->getName()),
         array(
             'class'             => 'button-link',
             'data-base-target'  => '_next',
-            'icon'              => 'plus',
-            'title'             => $this->translate('Create a new user group')
+            'icon'              => 'plus'
         )
     ) ?>
 <?php endif ?>
 
-<?php
-// @TODO(el): Remove $firstRow stuff
-$firstRow = true;
-foreach ($groups as $group): ?>
-  <?php if ($firstRow): ?>
-    <?php $firstRow = false; ?>
-<table data-base-target="_next" class="action-table listing-table">
-  <thead>
-    <tr>
-      <th class="group-name"><?= $this->translate('Group'); ?></th>
-     <?php if ($reducible): ?>
-      <th class="group-remove"><?= $this->translate('Remove'); ?></th>
-     <?php endif ?>
-    </tr>
-  </thead>
-  <tbody>
-  <?php endif ?>
-    <tr>
-      <td class="group-name"><?= $this->qlink($group->group_name, 'group/show', array(
-        'backend'   => $backend->getName(),
-        'group'     => $group->group_name
-      ), array(
-        'title'     => sprintf($this->translate('Show detailed information for group %s'), $group->group_name)
-      )); ?></td>
-     <?php if ($reducible): ?>
-      <td class="group-remove">
-        <?= $this->qlink(
-          null,
-          'group/remove',
-          array(
-            'backend'   => $backend->getName(),
-            'group'     => $group->group_name
-          ),
-          array(
-            'title'     => sprintf($this->translate('Remove group %s'), $group->group_name),
-            'icon'      => 'trash'
-          )
-        ); ?>
-      </td>
-     <?php endif ?>
-    </tr>
-<?php endforeach ?>
-<?php if ($groups->hasResult()): ?>
-  </tbody>
-</table>
-<?php else: ?>
-<p><?= $this->translate('No groups found matching the filter'); ?></p>
+<?php if (! $groups->hasResult()): ?>
+    <p><?= $this->translate('No user groups found matching the filter'); ?></p>
+</div>
 <?php endif ?>
+
+    <table data-base-target="_next" class="action-table listing-table">
+        <thead>
+            <tr>
+                <th><?= $this->translate('User Group'); ?></th>
+            <?php if ($reducible): ?>
+                <th><?= $this->translate('Remove'); ?></th>
+            <?php endif ?>
+            </tr>
+        </thead>
+        <tbody>
+        <?php foreach ($groups as $group): ?>
+            <tr>
+                <td>
+                    <?= $this->qlink(
+                        $group->group_name,
+                        'group/show',
+                        array(
+                            'backend'   => $backend->getName(),
+                            'group'     => $group->group_name
+                        ),
+                        array(
+                            'title'     => sprintf(
+                                $this->translate('Show detailed information for user group %s'),
+                                $group->group_name
+                            )
+                        )
+                    ); ?>
+                </td>
+            <?php if ($reducible): ?>
+                <td class="icon-col">
+                    <?= $this->qlink(
+                        null,
+                        'group/remove',
+                        array(
+                            'backend'   => $backend->getName(),
+                            'group'     => $group->group_name
+                        ),
+                        array(
+                            'title'     => sprintf($this->translate('Remove user group %s'), $group->group_name),
+                            'icon'      => 'trash'
+                        )
+                    ); ?>
+                </td>
+            <?php endif ?>
+            </tr>
+        <?php endforeach ?>
+        </tbody>
+    </table>
 </div>
