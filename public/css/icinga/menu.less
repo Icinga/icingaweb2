@@ -36,7 +36,7 @@
     border-left: 5px solid @icinga-blue;
   }
 
-  &.no-icon {
+  &.no-icon > a {
     margin-left: @icon-width;
   }
 }
@@ -74,12 +74,12 @@
 }
 
 #menu input.search {
-  background: transparent url('../img/icons/search.png') no-repeat @vertical-padding + 0.2em center;
+  background: transparent url('../img/icons/search.png') no-repeat @horizontal-padding + 0.2em center;
   background-size: @font-size auto;
   border: none;
   line-height: 2.8em;
   outline: none;
-  padding-left: @icon-width + @vertical-padding;
+  padding-left: @icon-width + @horizontal-padding;
   width: 100%;
 
   &.active {
