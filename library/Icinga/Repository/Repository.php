@@ -53,6 +53,16 @@ abstract class Repository implements Selectable
     protected $baseTable;
 
     /**
+     * The virtual tables being provided
+     *
+     * This may be initialized by concrete repository implementations with an array
+     * where a key is the name of a virtual table and its value the real table name.
+     *
+     * @var array
+     */
+    protected $virtualTables;
+
+    /**
      * The query columns being provided
      *
      * This must be initialized by concrete repository implementations, in the following format
@@ -253,6 +263,32 @@ abstract class Repository implements Selectable
         }
 
         return $this->baseTable;
+    }
+
+    /**
+     * Return the virtual tables being provided
+     *
+     * Calls $this->initializeVirtualTables() in case $this->virtualTables is null.
+     *
+     * @return  array
+     */
+    public function getVirtualTables()
+    {
+        if ($this->virtualTables === null) {
+            $this->virtualTables = $this->initializeVirtualTables();
+        }
+
+        return $this->virtualTables;
+    }
+
+    /**
+     * Overwrite this in your repository implementation in case you need to initialize the virtual tables lazily
+     *
+     * @return  array
+     */
+    protected function initializeVirtualTables()
+    {
+        return array();
     }
 
     /**
@@ -792,7 +828,7 @@ abstract class Repository implements Selectable
     }
 
     /**
-     * Validate that the requested table exists
+     * Validate that the requested table exists and resolve it's real name if necessary
      *
      * @param   string              $table      The table to validate
      * @param   RepositoryQuery     $query      An optional query to pass as context
@@ -807,6 +843,11 @@ abstract class Repository implements Selectable
         $queryColumns = $this->getQueryColumns();
         if (! isset($queryColumns[$table])) {
             throw new ProgrammingError('Table "%s" not found', $table);
+        }
+
+        $virtualTables = $this->getVirtualTables();
+        if (isset($virtualTables[$table])) {
+            $table = $virtualTables[$table];
         }
 
         return $table;
