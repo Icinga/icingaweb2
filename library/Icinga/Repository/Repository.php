@@ -617,7 +617,7 @@ abstract class Repository implements Selectable
     {
         $converter = $this->getConverter($table, $name, 'persist', $query);
         if ($converter !== null) {
-            $value = $this->$converter($value);
+            $value = $this->$converter($value, $name, $table, $query);
         }
 
         return $value;
@@ -639,7 +639,7 @@ abstract class Repository implements Selectable
     {
         $converter = $this->getConverter($table, $name, 'retrieve', $query);
         if ($converter !== null) {
-            $value = $this->$converter($value);
+            $value = $this->$converter($value, $name, $table, $query);
         }
 
         return $value;
