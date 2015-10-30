@@ -903,7 +903,7 @@ abstract class Repository implements Selectable
         $columns = array();
         foreach ($queryColumns[$table] as $alias => $column) {
             if (! in_array(is_string($alias) ? $alias : $column, $blacklist)) {
-                $columns[$alias] = $column;
+                $columns[$alias] = $this->resolveQueryColumnAlias($table, $alias);
             }
         }
 
