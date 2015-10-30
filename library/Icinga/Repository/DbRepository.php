@@ -294,11 +294,16 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
      *
      * @param   string  $table
      * @param   array   $bind
+     *
+     * @return  int             The number of affected rows
      */
     public function insert($table, array $bind)
     {
         $this->requireTable($table);
-        $this->ds->insert($this->prependTablePrefix($table), $this->requireStatementColumns($table, $bind));
+        return $this->ds->insert(
+            $this->prependTablePrefix($table),
+            $this->requireStatementColumns($table, $bind)
+        );
     }
 
     /**
@@ -307,6 +312,8 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
      * @param   string  $table
      * @param   array   $bind
      * @param   Filter  $filter
+     *
+     * @return  int             The number of affected rows
      */
     public function update($table, array $bind, Filter $filter = null)
     {
@@ -316,7 +323,11 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
             $filter = $this->requireFilter($table, $filter);
         }
 
-        $this->ds->update($this->prependTablePrefix($table), $this->requireStatementColumns($table, $bind), $filter);
+        return $this->ds->update(
+            $this->prependTablePrefix($table),
+            $this->requireStatementColumns($table, $bind),
+            $filter
+        );
     }
 
     /**
@@ -324,6 +335,8 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
      *
      * @param   string  $table
      * @param   Filter  $filter
+     *
+     * @return  int             The number of affected rows
      */
     public function delete($table, Filter $filter = null)
     {
@@ -333,7 +346,7 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
             $filter = $this->requireFilter($table, $filter);
         }
 
-        $this->ds->delete($this->prependTablePrefix($table), $filter);
+        return $this->ds->delete($this->prependTablePrefix($table), $filter);
     }
 
     /**
