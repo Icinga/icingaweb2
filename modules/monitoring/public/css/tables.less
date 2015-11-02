@@ -2,10 +2,50 @@
 
 @border-left-width: 6px;
 
+// Check source reachable information in the host and service detail views
+.check-source-meta {
+  font-size: @font-size-small;
+}
+
+// Column for counts, e.g. host group members
 .count-col {
   width: 4em;
 }
 
+// Host name and IP addresses in the host and service detail view
+.host-meta {
+  color: @text-color-light;
+  font-size: @font-size-small;
+}
+
+// Link to unhandled services in the hosts overview
+.host-services-incidents {
+  color: @color-critical;
+  font-family: @font-family-wide;
+  font-size: @font-size-small;
+}
+
+// Notification recipient in the notifications overview
+.notification-recipient {
+  color: @text-color-light;
+  float: right;
+  font-size: @font-size-small;
+}
+
+// Plugin output in overviews
+.overview-plugin-output {
+  color: @text-color-light;
+  font-family: @font-family-fixed;
+  font-size: @font-size-small;
+}
+
+// Service description if in the service detail view
+.service-meta {
+  color: @text-color-light;
+  font-size: @font-size-small;
+}
+
+// State column for label and duration in overviews
 .state-col {
   &.state-ok,
   &.state-up {
@@ -69,40 +109,24 @@
   width: 8em;
 }
 
-.host-meta, .service-meta {
-  color: @text-color-light;
-  font-size: @font-size-small;
-}
-
-// Link to unhandled services in the hosts overview
-.host-services-incidents {
-  color: @color-critical;
-  font-family: @font-family-wide;
-  font-size: @font-size-small;
-}
-
-// Plugin output in overviews
-.overview-plugin-output {
-  color: @text-color-light;
-  font-family: @font-family-fixed;
-  font-size: @font-size-small;
-}
-
+// Wraps links, icons and meta in overviews
 .state-header {
   .clearfix();
 }
 
+// State icons, e.g. acknowledged in overviews
 .state-icons {
   float: right;
 }
 
+// State label in overviews
 .state-label {
   font-family: @font-family-wide;
   font-size: @font-size-small;
   letter-spacing: 1px;
 }
 
-.check-source-meta,
+// State duration and state type information in overviews
 .state-meta {
   font-size: @font-size-small;
 }
