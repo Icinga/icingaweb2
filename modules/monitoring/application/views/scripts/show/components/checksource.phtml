@@ -14,7 +14,7 @@
             } ?>
             <?= $this->escape($object->check_source) ?>
         <?php if ($object->is_reachable !== null): ?>
-            <span class="text-small"><?= (bool) $object->is_reachable ? $this->translate('is reachable') : $this->translate('is not reachable') ?></span>
+            <span class="check-source-meta"><?= (bool) $object->is_reachable ? $this->translate('is reachable') : $this->translate('is not reachable') ?></span>
         <?php endif ?>
         </p>
     </td>
