@@ -254,17 +254,24 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
      * Return the given table with its alias being applied
      *
      * @param   array|string    $table
+     * @param   string          $virtualTable
      *
      * @return  array|string
      */
-    protected function applyTableAlias($table)
+    protected function applyTableAlias($table, $virtualTable = null)
     {
         $tableAliases = $this->getTableAliases();
-        if (is_array($table) || !isset($tableAliases[($nonPrefixedTable = $this->removeTablePrefix($table))])) {
-            return $table;
+        if (! is_array($table)) {
+            if ($virtualTable !== null && isset($tableAliases[$virtualTable])) {
+                return array($tableAliases[$virtualTable] => $table);
+            }
+
+            if (isset($tableAliases[($nonPrefixedTable = $this->removeTablePrefix($table))])) {
+                return array($tableAliases[$nonPrefixedTable] => $table);
+            }
         }
 
-        return array($tableAliases[$nonPrefixedTable] => $table);
+        return $table;
     }
 
     /**
@@ -555,12 +562,18 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
      */
     public function requireTable($table, RepositoryQuery $query = null)
     {
+        $virtualTable = null;
         $statementColumns = $this->getStatementColumns();
         if (! isset($statementColumns[$table])) {
-            $table = parent::requireTable($table);
+            $newTable = parent::requireTable($table);
+            if ($newTable !== $table) {
+                $virtualTable = $table;
+            }
+
+            $table = $newTable;
         }
 
-        return $this->prependTablePrefix($this->applyTableAlias($table));
+        return $this->prependTablePrefix($this->applyTableAlias($table, $virtualTable));
     }
 
     /**
