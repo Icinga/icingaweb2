@@ -250,7 +250,7 @@ Finally visit Icinga Web 2 in your browser to access the setup wizard and comple
 
 If you are automating the installation of Icinga Web 2, you may want to skip the wizard and do things yourself. These are the steps you'd need to take (assuming you are using MySQL/MariaDB, if you are using PostgreSQL please adapt accordingly. Note you need to have successfully completed the Icinga 2 installation, installed the Icinga Web 2 packages and all the other steps described above first.
 
-  1. Install PHP dependencies: `php5`, `php5-intl`, `php5-imagick` used by Icinga Web 2.
+  1. Install PHP dependencies: `php5`, `php5-intl`, `php5-imagick`, `php5-gd` and `php5-mysql` used by Icinga Web 2.
   2. Set a timezone in `php.ini` configuration file.
   3. Create a database for Icinga Web 2 (and a user, although you could reuse the Icinga database if you give the right permissions to handle the new database). I will assume the Icinga Web 2 database will be `icingaweb`.
   4. Import the icingaweb schema: `mysql -D icingaweb < /usr/share/icingaweb2/etc/schema/mysql.schema.sql` (as root, otherwise provide `-u` and `-p`)
