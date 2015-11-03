@@ -101,6 +101,11 @@
     }
   }
 
+  // State class for history events
+  &.state-no-state {
+    border-left: @border-left-width solid @text-color-light;
+  }
+
   * {
     color: inherit;
   }
@@ -119,7 +124,7 @@
   float: right;
 }
 
-// State label in overviews
+// State labels in overviews
 .state-label {
   font-family: @font-family-wide;
   font-size: @font-size-small;
