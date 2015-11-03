@@ -92,7 +92,7 @@ if (! $this->compact): ?>
                 <?= $this->link()->host($event->host_name, $event->host_display_name) ?>
             <?php endif ?>
                 <p class="plugin-output">
-                    <?= empty($msg) ? '' : $this->escape($msg) ?>
+                    <?= nl2br($this->createTicketLinks($this->escape($msg)), false) ?>
                 </p>
             </td>
         </tr>

@@ -46,7 +46,7 @@ $acknowledgement = $object->acknowledgement;
                 </span>
             </dt>
             <dd class="comment-text">
-                <p><?= nl2br($this->createTicketLinks($acknowledgement->getComment()), false) ?></p>
+                <p><?= nl2br($this->createTicketLinks($this->escape($acknowledgement->getComment())), false) ?></p>
             </dd>
         </dl>
     </td>

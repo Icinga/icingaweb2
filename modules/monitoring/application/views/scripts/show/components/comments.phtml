@@ -69,7 +69,7 @@ if (empty($object->comments) && ! $addLink) {
                 </span>
             </dt>
             <dd class="comment-text">
-                <?= str_replace(array('\r\n', '\n'), '<br>', $this->createTicketLinks($comment->comment)) ?>
+                <p><?= nl2br($this->createTicketLinks($this->escape($comment->comment)), false) ?></p>
             </dd>
         <?php endforeach ?>
         </dl>
