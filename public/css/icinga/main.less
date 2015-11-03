@@ -41,11 +41,6 @@
   text-align: right;
 }
 
-.text-small {
-  color: @text-color-light;
-  font-size: @font-size-small;
-}
-
 .user-avatar {
   height: 16px;
   width: 16px;
@@ -133,7 +128,8 @@ dl.name-value-list {
   }
 
   dt {
-    .text-small();
+    color: @text-color-light;
+    font-size: @font-size-small;
   }
 }
 
@@ -181,7 +177,8 @@ table.listing-table {
 
   th {
     .text-left();
-    .text-small();
+    color: @text-color-light;
+    font-size: @font-size-small;
     // Reset default font-weight
     font-weight: normal;
     width: 10em;
