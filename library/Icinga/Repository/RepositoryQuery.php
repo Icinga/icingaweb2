@@ -48,6 +48,13 @@ class RepositoryQuery implements QueryInterface, SortRules, FilterColumns, Itera
     protected $iterator;
 
     /**
+     * This query's custom aliases
+     *
+     * @var array
+     */
+    protected $customAliases;
+
+    /**
      * Create a new repository query
      *
      * @param   Repository  $repository     The repository to use
@@ -124,6 +131,7 @@ class RepositoryQuery implements QueryInterface, SortRules, FilterColumns, Itera
      */
     protected function prepareQueryColumns($target, array $desiredColumns = null)
     {
+        $this->customAliases = array();
         if (empty($desiredColumns)) {
             $columns = $this->repository->requireAllQueryColumns($target);
         } else {
@@ -131,9 +139,15 @@ class RepositoryQuery implements QueryInterface, SortRules, FilterColumns, Itera
             foreach ($desiredColumns as $customAlias => $columnAlias) {
                 $resolvedColumn = $this->repository->requireQueryColumn($target, $columnAlias, $this);
                 if ($resolvedColumn !== $columnAlias) {
-                    $columns[is_string($customAlias) ? $customAlias : $columnAlias] = $resolvedColumn;
+                    if (is_string($customAlias)) {
+                        $columns[$customAlias] = $resolvedColumn;
+                        $this->customAliases[$customAlias] = $columnAlias;
+                    } else {
+                        $columns[$columnAlias] = $resolvedColumn;
+                    }
                 } elseif (is_string($customAlias)) {
                     $columns[$customAlias] = $columnAlias;
+                    $this->customAliases[$customAlias] = $columnAlias;
                 } else {
                     $columns[] = $columnAlias;
                 }
@@ -141,6 +155,24 @@ class RepositoryQuery implements QueryInterface, SortRules, FilterColumns, Itera
         }
 
         return $columns;
+    }
+
+    /**
+     * Return the native column alias for the given custom alias
+     *
+     * If no custom alias is found with the given name, it is returned unchanged.
+     *
+     * @param   string  $customAlias
+     *
+     * @return  string
+     */
+    protected function getNativeAlias($customAlias)
+    {
+        if (isset($this->customAliases[$customAlias])) {
+            return $this->customAliases[$customAlias];
+        }
+
+        return $customAlias;
     }
 
     /**
@@ -467,7 +499,7 @@ class RepositoryQuery implements QueryInterface, SortRules, FilterColumns, Itera
         $result = $this->query->fetchOne();
         if ($result !== false && $this->repository->providesValueConversion($this->target)) {
             $columns = $this->getColumns();
-            $column = isset($columns[0]) ? $columns[0] : key($columns);
+            $column = isset($columns[0]) ? $columns[0] : $this->getNativeAlias(key($columns));
             return $this->repository->retrieveColumn($this->target, $column, $result, $this);
         }
 
@@ -492,7 +524,12 @@ class RepositoryQuery implements QueryInterface, SortRules, FilterColumns, Itera
                     $alias = $column;
                 }
 
-                $result->$alias = $this->repository->retrieveColumn($this->target, $alias, $result->$alias, $this);
+                $result->$alias = $this->repository->retrieveColumn(
+                    $this->target,
+                    $this->getNativeAlias($alias),
+                    $result->$alias,
+                    $this
+                );
             }
         }
 
@@ -514,7 +551,7 @@ class RepositoryQuery implements QueryInterface, SortRules, FilterColumns, Itera
         if (! empty($results) && $this->repository->providesValueConversion($this->target)) {
             $columns = $this->getColumns();
             $aliases = array_keys($columns);
-            $column = is_int($aliases[0]) ? $columns[0] : $aliases[0];
+            $column = is_int($aliases[0]) ? $columns[0] : $this->getNativeAlias($aliases[0]);
             if ($this->repository->providesValueConversion($this->target, $column)) {
                 foreach ($results as & $value) {
                     $value = $this->repository->retrieveColumn($this->target, $column, $value, $this);
@@ -542,8 +579,11 @@ class RepositoryQuery implements QueryInterface, SortRules, FilterColumns, Itera
         if (! empty($results) && $this->repository->providesValueConversion($this->target)) {
             $columns = $this->getColumns();
             $aliases = array_keys($columns);
-            $colOne = $aliases[0] !== 0 ? $aliases[0] : $columns[0];
-            $colTwo = count($aliases) < 2 ? $colOne : ($aliases[1] !== 1 ? $aliases[1] : $columns[1]);
+            $colOne = $aliases[0] !== 0 ? $this->getNativeAlias($aliases[0]) : $columns[0];
+            $colTwo = count($aliases) < 2 ? $colOne : (
+                $aliases[1] !== 1 ? $this->getNativeAlias($aliases[1]) : $columns[1]
+            );
+
             if (
                 $this->repository->providesValueConversion($this->target, $colOne)
                 || $this->repository->providesValueConversion($this->target, $colTwo)
@@ -588,21 +628,27 @@ class RepositoryQuery implements QueryInterface, SortRules, FilterColumns, Itera
                         $alias = $column;
                     }
 
-                    $row->$alias = $this->repository->retrieveColumn($this->target, $alias, $row->$alias, $this);
+                    $row->$alias = $this->repository->retrieveColumn(
+                        $this->target,
+                        $this->getNativeAlias($alias),
+                        $row->$alias,
+                        $this
+                    );
                 }
 
                 foreach (($this->getOrder() ?: array()) as $rule) {
+                    $nativeAlias = $this->getNativeAlias($rule[0]);
                     if (! array_key_exists($rule[0], $flippedColumns) && property_exists($row, $rule[0])) {
-                        if ($this->repository->providesValueConversion($this->target, $rule[0])) {
+                        if ($this->repository->providesValueConversion($this->target, $nativeAlias)) {
                             $updateOrder = true;
                             $row->{$rule[0]} = $this->repository->retrieveColumn(
                                 $this->target,
-                                $rule[0],
+                                $nativeAlias,
                                 $row->{$rule[0]}
                             );
                         }
                     } elseif (array_key_exists($rule[0], $flippedColumns)) {
-                        if ($this->repository->providesValueConversion($this->target, $rule[0])) {
+                        if ($this->repository->providesValueConversion($this->target, $nativeAlias)) {
                             $updateOrder = true;
                         }
                     }
@@ -678,7 +724,12 @@ class RepositoryQuery implements QueryInterface, SortRules, FilterColumns, Itera
                     $alias = $column;
                 }
 
-                $row->$alias = $this->repository->retrieveColumn($this->target, $alias, $row->$alias, $this);
+                $row->$alias = $this->repository->retrieveColumn(
+                    $this->target,
+                    $this->getNativeAlias($alias),
+                    $row->$alias,
+                    $this
+                );
             }
         }
 
