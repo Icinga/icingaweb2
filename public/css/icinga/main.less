@@ -33,10 +33,6 @@
   text-align: center;
 }
 
-.text-left {
-  text-align: left;
-}
-
 .text-right {
   text-align: right;
 }
@@ -176,11 +172,11 @@ table.listing-table {
   border-spacing: @vertical-padding 0;
 
   th {
-    .text-left();
     color: @text-color-light;
     font-size: @font-size-small;
     // Reset default font-weight
     font-weight: normal;
+    text-align: left;
     width: 10em;
   }
 }
