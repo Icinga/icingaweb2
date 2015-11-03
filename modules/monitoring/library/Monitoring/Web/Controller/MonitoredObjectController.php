@@ -108,6 +108,7 @@ abstract class MonitoredObjectController extends Controller
         $this->setupLimitControl(50);
         $this->setupPaginationControl($this->view->history, 50);
         $this->view->object = $this->object;
+        $this->render('object/detail-history', null, true);
     }
 
     /**
