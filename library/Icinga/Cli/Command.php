@@ -28,9 +28,9 @@ abstract class Command
     protected $commandName;
     protected $actionName;
 
-    private $config;
+    protected $config;
 
-    private $configs;
+    protected $configs;
 
     protected $defaultActionName = 'default';
 
