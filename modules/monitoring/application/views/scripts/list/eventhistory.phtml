@@ -12,21 +12,21 @@ $history->limit($limit * $page);
 
 if (! $this->compact): ?>
 <div class="controls dont-print separated">
-    <?= $this->tabs; ?>
+    <?= $this->tabs ?>
     <div class="grid">
         <div class="col-1-3 text-left">
             <?= $this->limiter ?>
         </div>
         <div class="col-1-3">
             <a class="action-link" href="#load-more">
-                <?= $this->translate('Scroll to the bottom of this page to load additional events'); ?>
+                <?= $this->translate('Scroll to the bottom of this page to load additional events') ?>
             </a>
         </div>
         <div class="col-1-3 text-right">
             <?= $this->sortBox ?>
         </div>
     </div>
-    <?= $this->filterEditor; ?>
+    <?= $this->filterEditor ?>
 </div>
 <?php endif ?>
 <div class="content">
@@ -84,15 +84,15 @@ if (! $this->compact): ?>
                 break;
         } ?>
         <tr>
-            <td class="state-col state-<?= $stateName; ?>">
+            <td class="state-col state-<?= $stateName ?>">
             <?php if ($history->getIteratorPosition() % $limit === 0): ?>
-                <a id="page-<?= $history->getIteratorPosition() / $limit + 1; ?>"></a>
+                <a id="page-<?= $history->getIteratorPosition() / $limit + 1 ?>"></a>
             <?php endif ?>
-                <strong><?= $this->escape($title); ?></strong>
-                <p><?= $this->timeAgo($event->timestamp, $this->compact); ?></p>
+                <strong><?= $this->escape($title) ?></strong>
+                <p><?= $this->timeAgo($event->timestamp, $this->compact) ?></p>
             </td>
             <td>
-                <?= $this->icon($icon, $title); ?>
+                <?= $this->icon($icon, $title) ?>
             <?php if ($isService): ?>
                 <?= $this->link()->service(
                     $event->service_description, $event->service_display_name, $event->host_name, $event->host_display_name, 'rowaction'
@@ -109,7 +109,7 @@ if (! $this->compact): ?>
     </tbody>
     </table>
 <?php if (! $history->hasResult()): ?>
-    <?= $this->translate('No history events found matching the filter'); ?>
+    <?= $this->translate('No history events found matching the filter') ?>
 <?php elseif ($history->hasMore()): ?>
 <?php if ($this->compact): ?>
     <?= $this->qlink(
@@ -120,7 +120,7 @@ if (! $this->compact): ?>
             'data-base-target'    => '_next',
             'class'               => 'pull-right action-link'
         )
-    ); ?>
+    ) ?>
 <?php else: ?>
     <?= $this->qlink(
         $this->translate('Load More'),
@@ -132,7 +132,7 @@ if (! $this->compact): ?>
             'id'      => 'load-more',
             'class'   => 'pull-right action-link'
         )
-    ); ?>
+    ) ?>
 <?php endif ?>
 <?php endif ?>
 </div>
