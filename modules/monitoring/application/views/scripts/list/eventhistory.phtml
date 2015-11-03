@@ -14,17 +14,8 @@ if (! $this->compact): ?>
 <div class="controls dont-print separated">
     <?= $this->tabs ?>
     <div class="grid">
-        <div class="col-1-3 text-left">
-            <?= $this->limiter ?>
-        </div>
-        <div class="col-1-3">
-            <a class="action-link" href="#load-more">
-                <?= $this->translate('Scroll to the bottom of this page to load additional events') ?>
-            </a>
-        </div>
-        <div class="col-1-3 text-right">
-            <?= $this->sortBox ?>
-        </div>
+        <?= $this->limiter ?>
+        <?= $this->sortBox ?>
     </div>
     <?= $this->filterEditor ?>
 </div>
