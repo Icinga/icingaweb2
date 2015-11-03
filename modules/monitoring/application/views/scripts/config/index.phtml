@@ -35,7 +35,7 @@
                             'title' => sprintf($this->translate('Edit monitoring backend %s'), $backendName)
                         )
                     ) ?>
-                    <span class="text-small">&#40;<?= sprintf(
+                    <span class="config-label-meta">&#40;<?= sprintf(
                         $this->translate('Type: %s'),
                         $this->escape($config->type === 'ido' ? 'IDO' : ucfirst($config->type))
                     ) ?>&#41;
@@ -90,7 +90,7 @@
                         'title' => sprintf($this->translate('Edit command transport %s'), $transportName)
                     )
                 ); ?>
-                <span class="text-small">&#40;<?= sprintf(
+                <span class="config-label-meta">&#40;<?= sprintf(
                     $this->translate('Type: %s'),
                     $config->host !== null ? $this->translate('Remote') : $this->translate('Local')
                 ) ?>&#41;
