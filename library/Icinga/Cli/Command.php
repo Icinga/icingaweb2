@@ -127,7 +127,7 @@ abstract class Command
 
     public function fail($msg)
     {
-        throw new IcingaException($msg);
+        throw new IcingaException('%s', $msg);
     }
 
     public function getDefaultActionName()
