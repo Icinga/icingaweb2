@@ -644,7 +644,8 @@ class RepositoryQuery implements QueryInterface, SortRules, FilterColumns, Itera
                             $row->{$rule[0]} = $this->repository->retrieveColumn(
                                 $this->target,
                                 $nativeAlias,
-                                $row->{$rule[0]}
+                                $row->{$rule[0]},
+                                $this
                             );
                         }
                     } elseif (array_key_exists($rule[0], $flippedColumns)) {
