@@ -71,7 +71,7 @@ $firstRow = true;
 foreach ($memberships as $membership): ?>
 <?php if ($firstRow): ?>
   <?php $firstRow = false; ?>
-  <table data-base-target="_next" class="action-table common-table">
+  <table data-base-target="_next" class="table-row-selectable common-table">
     <thead>
       <tr>
         <th class="membership-group"><?= $this->translate('Group'); ?></th>

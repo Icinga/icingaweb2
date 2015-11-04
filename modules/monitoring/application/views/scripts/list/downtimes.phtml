@@ -16,7 +16,7 @@ if (! $this->compact): ?>
 <?php endif ?>
 <div class="content">
   <table data-base-target="_next"
-         class="action-table multiselect"
+         class="table-row-selectable multiselect"
          data-icinga-multiselect-url="<?= $this->href('monitoring/downtimes/show'); ?>"
          data-icinga-multiselect-controllers="<?= $this->href("monitoring/downtimes") ?>"
          data-icinga-multiselect-data="downtime_id">

@@ -70,7 +70,7 @@ $firstRow = true;
 foreach ($members as $member): ?>
 <?php if ($firstRow): ?>
   <?php $firstRow = false; ?>
-  <table data-base-target="_next" class="action-table common-table">
+  <table data-base-target="_next" class="table-row-selectable common-table">
     <thead>
       <tr>
         <th class="member-name"><?= $this->translate('Username'); ?></th>
