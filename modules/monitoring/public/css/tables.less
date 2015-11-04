@@ -42,6 +42,7 @@
   color: @text-color-light;
   font-family: @font-family-fixed;
   font-size: @font-size-small;
+  margin: 0;
 }
 
 // Service description if in the service detail view
@@ -139,4 +140,20 @@
 // State duration and state type information in overviews
 .state-meta {
   font-size: @font-size-small;
+}
+
+.state-table {
+  border-collapse: separate;
+  border-spacing: 1px;
+
+  tr[href] {
+    &.active {
+      background-color: @gray-lighter;
+    }
+
+    &:hover {
+      background-color: @gray-lightest;
+      cursor: pointer;
+    }
+  }
 }
