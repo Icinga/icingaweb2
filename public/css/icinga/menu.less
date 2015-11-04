@@ -13,6 +13,11 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 
+  &:focus {
+    color: @icinga-blue;
+    outline-offset: -@vertical-padding / 2;
+  }
+
   &:hover {
     color: @icinga-blue;
     text-decoration: none;
@@ -24,9 +29,13 @@
 }
 
 #menu .nav-level-1 > .nav-item {
-  line-height: 2.429em; // 34 px
+  line-height: 2.167em; // 26 px
 
   &.active {
+    > a > .badge {
+      display: none;
+    }
+
     .nav-level-2 > li {
       // Expand menu if active
       display: block;
@@ -39,16 +48,20 @@
   &.no-icon > a {
     margin-left: @icon-width;
   }
+
+  > a:active ~ .nav-level-2 > li {
+    display: block;
+  }
 }
 
 #menu .nav-level-2 > .nav-item {
   // Collapse menu by default
   display: none;
-  line-height: 1.857em; // 26px
+  line-height: 1.833em; // 22px
   margin-left: @icon-width;
 
   > a {
-    font-size: @font-size-smaller;
+    font-size: @font-size-small;
   }
 }
 
@@ -67,6 +80,7 @@
   background-color: @gray;
   color: @text-color-inverted;
 
+  > a:focus,
   > a:hover {
     background-color: @text-color-inverted;
     color: @gray;
@@ -75,10 +89,9 @@
 
 #menu input.search {
   background: transparent url('../img/icons/search.png') no-repeat @horizontal-padding + 0.2em center;
-  background-size: @font-size auto;
+  background-size: 1em auto;
   border: none;
-  line-height: 2.8em;
-  outline: none;
+  line-height: 2.167em;
   padding-left: @icon-width + @horizontal-padding;
   width: 100%;
 
@@ -91,11 +104,11 @@
 // Badge offset correction
 
 #menu > nav > .nav-level-1 > .badge-nav-item > a > .badge {
-  margin-top: 0.6em;
+  margin-top: 0.5em;
 }
 
 #menu .nav-level-2 > .badge-nav-item > a > .badge {
-  margin-top: 0.4em;
+  margin-top: 0.5em;
 }
 
 // Hovered menu
@@ -161,7 +174,7 @@
       display: block;
       a, button[type="submit"] {
         background-color: @body-bg-color;
-        left: -999em;
+        left: -999px;
         padding: @vertical-padding @horizontal-padding;
         position: absolute;
         width: 100%;
