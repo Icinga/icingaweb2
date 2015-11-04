@@ -38,15 +38,6 @@ blockquote {
   padding: 0.667em 0.333em;
 }
 
-body {
-  background-color: @body-bg-color;
-  color: @text-color;
-  font-family: @font-family;
-  font-size: @font-size;
-  // Set line-height w/o unit so that the line-height is dynamically calculated as font-size * line-height
-  line-height: 1.2;
-}
-
 h1, h2, h3, h4, h5, h6 {
   border-bottom: 1px solid @gray-lighter;
   font-weight: @font-weight-bold;
@@ -105,6 +96,15 @@ td, th {
   &:before {
     margin-left: 0;
   }
+}
+
+#layout {
+  background-color: @body-bg-color;
+  color: @text-color;
+  font-family: @font-family;
+  font-size: @font-size;
+  // Set line-height w/o unit so that the line-height is dynamically calculated as font-size * line-height
+  line-height: 1.2;
 }
 
 @media print {
