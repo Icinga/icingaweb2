@@ -125,14 +125,19 @@ dl.name-value-list {
   }
 }
 
-table.action-table {
-  tbody tr {
-    .transition(background-color 0.3s ease);
+table.common-table {
 
+  border-collapse: collapse;
+
+  tr {
+    border-left: 5px solid rgba(0,0,0,0.5);
+    border-opacity:0.7;
+  }
+
+  tr[href] {
     &.active {
       background-color: @gray-lighter;
-      // Auto-refresh must not start transition
-      transition: none;
+      border-left: 5px solid @icinga-blue;
     }
 
     &:hover {
@@ -140,19 +145,17 @@ table.action-table {
       cursor: pointer;
     }
   }
-}
-
-table.listing-table {
-  border-collapse: collapse;
 
   tbody th {
     text-align: left;
   }
 
   thead {
-    color: @text-color-light;
+    border-bottom: 1px solid @gray-light;
+
     // Reset default font-weight
     font-weight: normal;
+    text-align: left;
   }
 
   tr {
