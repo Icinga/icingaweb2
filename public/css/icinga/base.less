@@ -103,10 +103,14 @@ td {
   padding: @vertical-padding / 2 @horizontal-padding / 2;
 }
 
-// Smooth icons; ifont claims to have it, but it does not work in :before
 [class^="icon-"], [class*=" icon-"] {
+  // Smooth icons; ifont claims to have it, but it does not work in :before
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  &:before {
+    margin-left: 0;
+  }
 }
 
 @media print {
