@@ -18,7 +18,7 @@ if (! $this->compact): ?>
     <p><?= $this->translate('No notifications found matching the filter.') ?></p>
 </div>
 <?php return; endif ?>
-    <table data-base-target="_next" class="table-row-selectable">
+    <table data-base-target="_next" class="table-row-selectable state-table">
     <tbody>
     <?php foreach ($notifications->peekAhead($this->compact) as $notification):
         if (isset($notification->service_description)) {

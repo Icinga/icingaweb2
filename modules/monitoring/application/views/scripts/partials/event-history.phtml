@@ -31,7 +31,7 @@ $history->limit($limit * $page);
     <p><?= $this->translate('No historical events found matching the filter.') ?></p>
 </div>
 <?php return; endif ?>
-    <table data-base-target="_next"<?php if (isset($tableCssClass)): ?> class="<?=$tableCssClass ?>"<?php endif ?>>
+    <table class="state-table" data-base-target="_next"<?php if (isset($tableCssClass)): ?> class="<?=$tableCssClass ?>"<?php endif ?>>
     <tbody>
     <?php foreach ($history->peekAhead() as $event):
         $icon = '';

@@ -22,7 +22,7 @@ if (! $this->compact): ?>
     </div>
 <?php return; endif ?>
     <table data-base-target="_next"
-           class="table-row-selectable multiselect"
+           class="table-row-selectable state-table multiselect"
            data-icinga-multiselect-url="<?= $this->href('monitoring/hosts/show') ?>"
            data-icinga-multiselect-controllers="<?= $this->href("monitoring/hosts") ?>"
            data-icinga-multiselect-data="host">

@@ -3,7 +3,7 @@ use Icinga\Module\Monitoring\Object\Host;
 use Icinga\Module\Monitoring\Object\Service;
 /** @var \Icinga\Module\Monitoring\Object\MonitoredObject $object */
 ?>
-<table>
+<table class="state-table">
     <tr>
         <td class="state-col state-<?= Host::getStateText($object->host_state) ?><?= $object->host_handled ? ' handled' : '' ?>">
             <div class="state-label"><?= Host::getStateText($object->host_state, true) ?></div>
