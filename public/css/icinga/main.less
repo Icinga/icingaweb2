@@ -126,18 +126,35 @@ dl.name-value-list {
 }
 
 table.common-table {
+  width: 100%;
 
-  border-collapse: collapse;
+  td, th {
+    padding-top: 0.667em;
+    padding-bottom: 0.667em;
+    vertical-align: middle;
+  }
 
-  tr {
-    border-left: 5px solid rgba(0,0,0,0.5);
-    border-opacity:0.7;
+  th {
+    text-align: left;
+  }
+
+  thead {
+    border-bottom: 1px solid @gray-light;
+  }
+
+  tbody tr {
+    border-bottom: 1px solid @gray-lightest;
+    border-left: 5px solid transparent;
+
+    &:last-child {
+      border-bottom: none;
+    }
   }
 
   tr[href] {
     &.active {
       background-color: @gray-lighter;
-      border-left: 5px solid @icinga-blue;
+      border-left-color: @icinga-blue;
     }
 
     &:hover {
@@ -145,35 +162,15 @@ table.common-table {
       cursor: pointer;
     }
   }
-
-  tbody th {
-    text-align: left;
-  }
-
-  thead {
-    border-bottom: 1px solid @gray-light;
-
-    // Reset default font-weight
-    font-weight: normal;
-    text-align: left;
-  }
-
-  tr {
-    border-bottom: 1px solid @gray-lightest;
-
-    &:last-child {
-      border-bottom: none;
-    }
-  }
 }
 
 .name-value-table th {
-    color: @text-color-light;
-    font-size: @font-size-small;
-    // Reset default font-weight
-    font-weight: normal;
-    text-align: left;
-    width: 10em;
+  color: @text-color-light;
+  font-size: @font-size-small;
+  // Reset default font-weight
+  font-weight: normal;
+  text-align: left;
+  width: 10em;
 }
 
 // TODO(el): Fix
