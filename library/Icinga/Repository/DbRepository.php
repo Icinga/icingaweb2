@@ -577,6 +577,21 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
     }
 
     /**
+     * Return the alias for the given table or null if none has been defined
+     *
+     * @param   string  $table
+     *
+     * @return  string|null
+     */
+    public function resolveTableAlias($table)
+    {
+        $tableAliases = $this->getTableAliases();
+        if (isset($tableAliases[$table])) {
+            return $tableAliases[$table];
+        }
+    }
+
+    /**
      * Recurse the given filter, require each column for the given table and convert all values
      *
      * In case of a PostgreSQL connection, this applies LOWER() on the column and strtolower()
@@ -828,8 +843,10 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
             $column = $name;
         }
 
-        $prefixedTableName = $this->prependTablePrefix($tableName);
-        if ($query->getQuery()->hasJoinedTable($prefixedTableName)) {
+        if (($joinIdentifier = $this->resolveTableAlias($tableName)) === null) {
+            $joinIdentifier = $this->prependTablePrefix($tableName);
+        }
+        if ($query->getQuery()->hasJoinedTable($joinIdentifier)) {
             return $column;
         }
 
