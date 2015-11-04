@@ -51,18 +51,33 @@ body {
   line-height: 1.2;
 }
 
-h1 {
-  border-bottom: 1px solid @gray-lightest;
-  font-size: 1.286em;
-  font-weight: normal;
+h1, h2, h3, h4, h5, h6 {
+  border-bottom: 1px solid @gray-lighter;
+  font-size: 1em;
+  font-weight: @font-weight-bold;
   margin: @vertical-padding 0;
 }
 
+h1 {
+  border-color: @gray-light;
+  font-size: 1.286em;
+}
+
 h2 {
-  border-bottom: 1px solid @gray-lightest;
   font-size: 1.143em;
+}
+
+h3 {
+  font-size: 1.143em;
+}
+
+h5 {
+  font-size: @font-size-smaller;
+}
+
+h6 {
+  font-size: @font-size-smaller;
   font-weight: normal;
-  margin: @vertical-padding 0;
 }
 
 p {
@@ -72,7 +87,6 @@ p {
 
 pre {
   background-color: @gray-lightest;
-  color: @text-color-light;
   font-family: @font-family-fixed;
   padding: @vertical-padding @horizontal-padding;
 }
