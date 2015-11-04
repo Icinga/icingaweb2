@@ -100,8 +100,16 @@ abstract class BadgeNavigationItemRenderer extends NavigationItemRenderer
         $item->setCssClass('badge-nav-item');
         $this->setEscapeLabel(false);
         $label = $this->view()->escape($item->getLabel());
+        if (($icon = $item->getIcon()) !== null) {
+            $label = $this->view()->icon($icon) . $label;
+            $item->setIcon(null);
+        }
         $item->setLabel($this->renderBadge() . $label);
-        return parent::render($item);
+        $html = parent::render($item);
+        if ($icon) {
+            $item->setIcon(true);
+        }
+        return $html;
     }
 
     /**
