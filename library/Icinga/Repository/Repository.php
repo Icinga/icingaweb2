@@ -873,7 +873,7 @@ abstract class Repository implements Selectable
         if ($filter->isExpression()) {
             $column = $filter->getColumn();
             $filter->setColumn($this->requireFilterColumn($table, $column, $query));
-            $filter->setExpression($this->persistColumn($table, $column, $filter->getExpression()));
+            $filter->setExpression($this->persistColumn($table, $column, $filter->getExpression(), $query));
         } elseif ($filter->isChain()) {
             foreach ($filter->filters() as $chainOrExpression) {
                 $this->requireFilter($table, $chainOrExpression, $query, false);
