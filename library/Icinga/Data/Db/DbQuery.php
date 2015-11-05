@@ -288,9 +288,14 @@ class DbQuery extends SimpleQuery
             $expression = $this->valueToTimestamp($expression);
         }
 
-        if (is_array($expression) && $sign === '=') {
-            // TODO: Should we support this? Doesn't work for blub*
-            return $col . ' IN (' . $this->escapeForSql($expression) . ')';
+        if (is_array($expression)) {
+            if ($sign === '=') {
+                return $col . ' IN (' . $this->escapeForSql($expression) . ')';
+            } elseif ($sign === '!=') {
+                return $col . ' NOT IN (' . $this->escapeForSql($expression) . ')';
+            }
+
+            throw new QueryException('Unable to render array expressions with operators other than equal or not equal');
         } elseif ($sign === '=' && strpos($expression, '*') !== false) {
             if ($expression === '*') {
                 // We'll ignore such filters as it prevents index usage and because "*" means anything, anything means
