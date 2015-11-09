@@ -21,6 +21,11 @@
   text-decoration: line-through;
 }
 
+.preformatted {
+  font-family: @font-family-fixed;
+  white-space: pre-wrap;
+}
+
 .pull-left {
   float: left;
 }
@@ -48,6 +53,8 @@ a:hover > .icon-cancel {
   color: @color-critical;
 }
 
+// Link styles
+
 .button-link {
   .action-link();
   .button();
@@ -68,6 +75,8 @@ a:hover > .icon-cancel {
     font-size: 16px;
   }
 }
+
+// List styles
 
 .comment-list {
   > .comment-header {
@@ -113,7 +122,7 @@ a:hover > .icon-cancel {
   margin-top: @vertical-padding / 2;
 }
 
-dl.name-value-list {
+.name-value-list {
   dd {
     // Reset default margin
     margin: 0;
@@ -125,7 +134,9 @@ dl.name-value-list {
   }
 }
 
-table.common-table {
+// Table styles
+
+.common-table {
   width: 100%;
 
   td, th {
@@ -178,11 +189,6 @@ table.common-table {
   text-align: left;
   vertical-align: top;
   width: 14em;
-}
-
-.preformatted {
-  font-family: @font-family-fixed;
-  white-space: pre-wrap;
 }
 
 // TODO(el): Fix
