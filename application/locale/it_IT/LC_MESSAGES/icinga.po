@@ -2,21 +2,21 @@
 # Copyright (C) 2015 Icinga Development Team
 # This file is distributed under the same license as Icinga Web 2.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
+#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: Icinga Web 2 (None)\n"
 "Report-Msgid-Bugs-To: dev@icinga.org\n"
-"POT-Creation-Date: 2015-10-05 11:52+0200\n"
-"PO-Revision-Date: 2015-10-05 12:30+0200\n"
+"POT-Creation-Date: 2015-11-09 10:59+0100\n"
+"PO-Revision-Date: 2015-11-09 10:54+0100\n"
 "Last-Translator: Davide Demuru <davide.demuru@gmail.com>\n"
 "Language: it_IT\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"Language-Team: \n"
-"X-Generator: Poedit 1.8.4\n"
 
 #: /usr/share/php/Icinga/Web/Form/Validator/InArray.php:16
 #, php-format
@@ -95,9 +95,9 @@ msgstr "%s: Mostra %s %u a %u di %u"
 msgid "'%s' is not a valid number"
 msgstr "'%s' non è un numero valido"
 
+#: /usr/share/php/Icinga/Authentication/User/DbUserBackend.php:115
 #: /usr/share/php/Icinga/Authentication/UserGroup/DbUserGroupBackend.php:114
 #: /usr/share/php/Icinga/Authentication/UserGroup/DbUserGroupBackend.php:115
-#: /usr/share/php/Icinga/Authentication/User/DbUserBackend.php:115
 msgid "(Case insensitive)"
 msgstr "(Case insensitive)"
 
@@ -126,17 +126,17 @@ msgstr "Info Icinga Web 2"
 msgid "Accessibility Skip Links"
 msgstr "Salta Controllo di Accessibilità"
 
-#: /usr/share/icingaweb2/application/forms/Config/User/UserForm.php:24
-#: /usr/share/icingaweb2/application/views/scripts/user/show.phtml:33
 #: /usr/share/icingaweb2/application/controllers/UserController.php:70
+#: /usr/share/icingaweb2/application/views/scripts/user/show.phtml:33
+#: /usr/share/icingaweb2/application/forms/Config/User/UserForm.php:24
 #: /usr/share/php/Icinga/Authentication/User/DbUserBackend.php:119
 #: /usr/share/php/Icinga/Authentication/User/LdapUserBackend.php:262
 msgid "Active"
 msgstr "Attivo"
 
+#: /usr/share/icingaweb2/application/forms/Config/User/UserForm.php:46
 #: /usr/share/icingaweb2/application/forms/Config/UserGroup/AddMemberForm.php:126
 #: /usr/share/icingaweb2/application/forms/Config/UserGroup/UserGroupForm.php:29
-#: /usr/share/icingaweb2/application/forms/Config/User/UserForm.php:46
 msgid "Add"
 msgstr "Aggiungi"
 
@@ -157,8 +157,8 @@ msgstr "Aggiungi alla Dashboard"
 msgid "Add To Menu"
 msgstr "Aggiungi al Menu"
 
-#: /usr/share/icingaweb2/application/views/scripts/group/show.phtml:55
 #: /usr/share/icingaweb2/application/views/scripts/user/show.phtml:57
+#: /usr/share/icingaweb2/application/views/scripts/group/show.phtml:55
 msgid "Add User to Group"
 msgstr "Aggiungi Utente al Gruppo"
 
@@ -203,8 +203,8 @@ msgstr "Aggiungi un utente al gruppo"
 msgid "Adjust the general configuration of Icinga Web 2"
 msgstr "Cambia la configurazione generale di Icinga Web 2"
 
-#: /usr/share/icingaweb2/application/controllers/PreferenceController.php:32
 #: /usr/share/icingaweb2/application/controllers/NavigationController.php:132
+#: /usr/share/icingaweb2/application/controllers/PreferenceController.php:32
 msgid "Adjust the preferences of Icinga Web 2 according to your needs"
 msgstr "Modifica le preferenze di Icinga Web 2 in base alle tue esigenze"
 
@@ -246,8 +246,8 @@ msgstr ""
 "connessione specificata. Lasciare vuoto se non si vuole applicare nessun "
 "filtro."
 
-#: /usr/share/icingaweb2/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:228
 #: /usr/share/icingaweb2/application/forms/Config/UserBackend/LdapBackendForm.php:153
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:228
 msgid ""
 "An additional filter to use when looking up users using the specified "
 "connection. Leave empty to not to use any additional filter rules."
@@ -324,11 +324,11 @@ msgstr "Indietro"
 msgid "Backend"
 msgstr "Backend"
 
-#: /usr/share/icingaweb2/application/forms/Config/UserGroup/DbUserGroupBackendForm.php:34
-#: /usr/share/icingaweb2/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:39
-#: /usr/share/icingaweb2/application/forms/Config/UserBackend/LdapBackendForm.php:57
 #: /usr/share/icingaweb2/application/forms/Config/UserBackend/ExternalBackendForm.php:32
 #: /usr/share/icingaweb2/application/forms/Config/UserBackend/DbBackendForm.php:53
+#: /usr/share/icingaweb2/application/forms/Config/UserBackend/LdapBackendForm.php:57
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:39
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/DbUserGroupBackendForm.php:34
 msgid "Backend Name"
 msgstr "Nome Backend"
 
@@ -484,19 +484,19 @@ msgstr "Lista degli utenti assegnati al ruolo separati da virgole"
 msgid "Configuration"
 msgstr "Configurazione"
 
-#: /usr/share/icingaweb2/application/controllers/UsergroupbackendController.php:157
 #: /usr/share/icingaweb2/application/controllers/ConfigController.php:64
+#: /usr/share/icingaweb2/application/controllers/UsergroupbackendController.php:157
 msgid "Configure how users are associated with groups by Icinga Web 2"
 msgstr "Configura come gli utenti è associati ai gruppi per Icinga Web 2"
 
-#: /usr/share/icingaweb2/application/controllers/UsergroupbackendController.php:152
 #: /usr/share/icingaweb2/application/controllers/ConfigController.php:58
+#: /usr/share/icingaweb2/application/controllers/UsergroupbackendController.php:152
 msgid "Configure how users authenticate with and log into Icinga Web 2"
 msgstr "Configura come gli utenti si autenticano e accedono a Icinga Web 2"
 
-#: /usr/share/icingaweb2/application/controllers/UserController.php:311
-#: /usr/share/icingaweb2/application/controllers/RoleController.php:155
 #: /usr/share/icingaweb2/application/controllers/GroupController.php:347
+#: /usr/share/icingaweb2/application/controllers/RoleController.php:155
+#: /usr/share/icingaweb2/application/controllers/UserController.php:311
 msgid ""
 "Configure roles to permit or restrict users and groups accessing Icinga Web 2"
 msgstr ""
@@ -633,19 +633,19 @@ msgstr "Crea un nuovo backend gruppo utenti"
 msgid "Create memberships for %s"
 msgstr "Crea associazione per %s"
 
+#: /usr/share/php/Icinga/Authentication/User/DbUserBackend.php:120
+#: /usr/share/php/Icinga/Authentication/User/LdapUserBackend.php:263
 #: /usr/share/php/Icinga/Authentication/UserGroup/IniUserGroupBackend.php:75
 #: /usr/share/php/Icinga/Authentication/UserGroup/DbUserGroupBackend.php:122
 #: /usr/share/php/Icinga/Authentication/UserGroup/LdapUserGroupBackend.php:425
-#: /usr/share/php/Icinga/Authentication/User/DbUserBackend.php:120
-#: /usr/share/php/Icinga/Authentication/User/LdapUserBackend.php:263
 msgid "Created At"
 msgstr "Creato il "
 
-#: /usr/share/icingaweb2/application/views/scripts/group/show.phtml:34
-#: /usr/share/icingaweb2/application/views/scripts/user/show.phtml:36
-#: /usr/share/icingaweb2/application/controllers/UserController.php:71
 #: /usr/share/icingaweb2/application/controllers/GroupController.php:70
 #: /usr/share/icingaweb2/application/controllers/GroupController.php:106
+#: /usr/share/icingaweb2/application/controllers/UserController.php:71
+#: /usr/share/icingaweb2/application/views/scripts/user/show.phtml:36
+#: /usr/share/icingaweb2/application/views/scripts/group/show.phtml:34
 msgid "Created at"
 msgstr "Creato il "
 
@@ -702,14 +702,14 @@ msgid "Dashlet updated"
 msgstr "Vista Aggioranta"
 
 #: /usr/share/icingaweb2/application/forms/Config/UserBackendConfigForm.php:267
-#: /usr/share/icingaweb2/application/forms/Config/UserGroup/UserGroupBackendForm.php:163
 #: /usr/share/icingaweb2/application/forms/Config/General/ApplicationConfigForm.php:66
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/UserGroupBackendForm.php:163
 msgid "Database"
 msgstr "Database"
 
-#: /usr/share/icingaweb2/application/forms/Config/UserGroup/DbUserGroupBackendForm.php:47
 #: /usr/share/icingaweb2/application/forms/Config/UserBackend/DbBackendForm.php:64
 #: /usr/share/icingaweb2/application/forms/Config/General/ApplicationConfigForm.php:85
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/DbUserGroupBackendForm.php:47
 msgid "Database Connection"
 msgstr "Connessione Database"
 
@@ -779,8 +779,8 @@ msgstr "Modifica Vista"
 msgid "Edit dashlet %s"
 msgstr "Modifica vista %s"
 
-#: /usr/share/icingaweb2/application/forms/Config/UserGroup/UserGroupForm.php:31
 #: /usr/share/icingaweb2/application/views/scripts/group/show.phtml:19
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/UserGroupForm.php:31
 #, php-format
 msgid "Edit group %s"
 msgstr "Modifica gruppo %s"
@@ -805,8 +805,8 @@ msgstr "Modifica ruolo %s"
 msgid "Edit shared navigation item %s"
 msgstr "Modifica oggetto di navigazione condiviso %s"
 
-#: /usr/share/icingaweb2/application/forms/Config/User/UserForm.php:67
 #: /usr/share/icingaweb2/application/views/scripts/user/show.phtml:17
+#: /usr/share/icingaweb2/application/forms/Config/User/UserForm.php:67
 #, php-format
 msgid "Edit user %s"
 msgstr "Modifica utente %s"
@@ -821,8 +821,8 @@ msgstr "Modifica backend utenti %s"
 msgid "Edit user group backend %s"
 msgstr "Modifica backend gruppo utenti %s"
 
-#: /usr/share/icingaweb2/application/forms/PreferenceForm.php:209
 #: /usr/share/icingaweb2/application/forms/AutoRefreshForm.php:63
+#: /usr/share/icingaweb2/application/forms/PreferenceForm.php:209
 msgid "Enable auto refresh"
 msgstr "Abilitare aggiornamento automatico"
 
@@ -868,8 +868,8 @@ msgstr "Dettagli dell'Errore"
 msgid "External"
 msgstr "Esterno"
 
-#: /usr/share/icingaweb2/application/forms/Config/UserGroup/AddMemberForm.php:163
 #: /usr/share/icingaweb2/application/forms/Config/User/CreateMembershipForm.php:128
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/AddMemberForm.php:163
 #, php-format
 msgid "Failed to add \"%s\" as group member for \"%s\""
 msgstr "Impossibile aggiungere \"%s\" come membro del gruppo \"%s\""
@@ -947,8 +947,8 @@ msgstr "Impossibile rimuovere il gruppo \"%s\""
 msgid "Failed to remove user \"%s\""
 msgstr "Impossibile rimuovere l'utente \"%s\""
 
-#: /usr/share/icingaweb2/application/forms/Config/ResourceConfigForm.php:317
 #: /usr/share/icingaweb2/application/forms/Config/UserBackendConfigForm.php:437
+#: /usr/share/icingaweb2/application/forms/Config/ResourceConfigForm.php:317
 #, php-format
 msgid "Failed to successfully validate the configuration: %s"
 msgstr "Impossibile convalidare la configurazione: %s"
@@ -1043,11 +1043,11 @@ msgstr "Data commit Gid"
 msgid "Grid Chart"
 msgstr "Grafico a Griglia"
 
-#: /usr/share/icingaweb2/application/views/scripts/group/list.phtml:61
-#: /usr/share/icingaweb2/application/views/scripts/user/show.phtml:77
-#: /usr/share/icingaweb2/application/controllers/UserController.php:108
 #: /usr/share/icingaweb2/application/controllers/GroupController.php:69
 #: /usr/share/icingaweb2/application/controllers/GroupController.php:326
+#: /usr/share/icingaweb2/application/controllers/UserController.php:108
+#: /usr/share/icingaweb2/application/views/scripts/user/show.phtml:77
+#: /usr/share/icingaweb2/application/views/scripts/group/list.phtml:61
 msgid "Group"
 msgstr "Gruppo"
 
@@ -1091,10 +1091,10 @@ msgstr "Membro \"%s\" aggiunto correttamente"
 msgid "Group members added successfully"
 msgstr "Membri aggiunti correttamente"
 
-#: /usr/share/icingaweb2/application/forms/Config/User/CreateMembershipForm.php:79
-#: /usr/share/icingaweb2/application/forms/Security/RoleForm.php:151
-#: /usr/share/icingaweb2/application/forms/Navigation/NavigationConfigForm.php:623
 #: /usr/share/icingaweb2/application/views/scripts/role/list.phtml:24
+#: /usr/share/icingaweb2/application/forms/Config/User/CreateMembershipForm.php:79
+#: /usr/share/icingaweb2/application/forms/Navigation/NavigationConfigForm.php:623
+#: /usr/share/icingaweb2/application/forms/Security/RoleForm.php:151
 msgid "Groups"
 msgstr "Gruppi"
 
@@ -1135,13 +1135,13 @@ msgstr "Installazione Guidata Icinga Web 2"
 msgid "Icinga Wiki"
 msgstr "Icinga Wiki"
 
-#: /usr/share/icingaweb2/application/views/scripts/authentication/login.phtml:41
 #: /usr/share/icingaweb2/application/views/scripts/about/index.phtml:55
+#: /usr/share/icingaweb2/application/views/scripts/authentication/login.phtml:41
 msgid "Icinga on Facebook"
 msgstr "Icinga su Facebook"
 
-#: /usr/share/icingaweb2/application/views/scripts/authentication/login.phtml:31
 #: /usr/share/icingaweb2/application/views/scripts/about/index.phtml:46
+#: /usr/share/icingaweb2/application/views/scripts/authentication/login.phtml:31
 msgid "Icinga on Twitter"
 msgstr "Icinga su Twitter"
 
@@ -1208,8 +1208,8 @@ msgstr ""
 msgid "LDAP Base DN"
 msgstr "LDAP Base DN"
 
-#: /usr/share/icingaweb2/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:53
 #: /usr/share/icingaweb2/application/forms/Config/UserBackend/LdapBackendForm.php:68
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:53
 msgid "LDAP Connection"
 msgstr "Connessione LDAP"
 
@@ -1245,29 +1245,29 @@ msgstr "Base DN Utenti LDAP"
 msgid "LDAP User Filter"
 msgstr "Filtro Utenti LDAP"
 
-#: /usr/share/icingaweb2/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:259
 #: /usr/share/icingaweb2/application/forms/Config/UserBackend/LdapBackendForm.php:189
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:259
 msgid "LDAP User Name Attribute"
 msgstr "Attributo per Nome Utente LDAP"
 
-#: /usr/share/icingaweb2/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:215
 #: /usr/share/icingaweb2/application/forms/Config/UserBackend/LdapBackendForm.php:139
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:215
 msgid "LDAP User Object Class"
 msgstr "Object Class Utente LDAP"
 
+#: /usr/share/php/Icinga/Authentication/User/DbUserBackend.php:121
+#: /usr/share/php/Icinga/Authentication/User/LdapUserBackend.php:264
 #: /usr/share/php/Icinga/Authentication/UserGroup/IniUserGroupBackend.php:76
 #: /usr/share/php/Icinga/Authentication/UserGroup/DbUserGroupBackend.php:123
 #: /usr/share/php/Icinga/Authentication/UserGroup/LdapUserGroupBackend.php:426
-#: /usr/share/php/Icinga/Authentication/User/DbUserBackend.php:121
-#: /usr/share/php/Icinga/Authentication/User/LdapUserBackend.php:264
 msgid "Last Modified"
 msgstr "Ultima Modifica"
 
-#: /usr/share/icingaweb2/application/views/scripts/group/show.phtml:38
-#: /usr/share/icingaweb2/application/views/scripts/user/show.phtml:40
-#: /usr/share/icingaweb2/application/controllers/UserController.php:72
 #: /usr/share/icingaweb2/application/controllers/GroupController.php:71
 #: /usr/share/icingaweb2/application/controllers/GroupController.php:107
+#: /usr/share/icingaweb2/application/controllers/UserController.php:72
+#: /usr/share/icingaweb2/application/views/scripts/user/show.phtml:40
+#: /usr/share/icingaweb2/application/views/scripts/group/show.phtml:38
 msgid "Last modified"
 msgstr "Ultima Modifica"
 
@@ -1283,14 +1283,14 @@ msgstr "Limitatore"
 msgid "List and configure shared navigation items"
 msgstr "Mostra e configura gli oggetti di navigazione condivisi"
 
-#: /usr/share/icingaweb2/application/controllers/PreferenceController.php:37
 #: /usr/share/icingaweb2/application/controllers/NavigationController.php:141
+#: /usr/share/icingaweb2/application/controllers/PreferenceController.php:37
 msgid "List and configure your own navigation items"
 msgstr "Mostra e configura i tuoi oggetti di navigazione"
 
-#: /usr/share/icingaweb2/application/controllers/UserController.php:329
-#: /usr/share/icingaweb2/application/controllers/RoleController.php:173
 #: /usr/share/icingaweb2/application/controllers/GroupController.php:365
+#: /usr/share/icingaweb2/application/controllers/RoleController.php:173
+#: /usr/share/icingaweb2/application/controllers/UserController.php:329
 msgid "List groups of user group backends"
 msgstr "Mostra gruppi dei backend gruppo utenti"
 
@@ -1298,9 +1298,9 @@ msgstr "Mostra gruppi dei backend gruppo utenti"
 msgid "List intalled modules"
 msgstr "Mostra moduli installati"
 
-#: /usr/share/icingaweb2/application/controllers/UserController.php:320
-#: /usr/share/icingaweb2/application/controllers/RoleController.php:164
 #: /usr/share/icingaweb2/application/controllers/GroupController.php:356
+#: /usr/share/icingaweb2/application/controllers/RoleController.php:164
+#: /usr/share/icingaweb2/application/controllers/UserController.php:320
 msgid "List users of authentication backends"
 msgstr "Mostra utenti dei backend di autenticazione"
 
@@ -1324,8 +1324,8 @@ msgstr "Accesso in corso"
 msgid "Logging out..."
 msgstr "Uscita in corso..."
 
-#: /usr/share/icingaweb2/application/forms/Authentication/LoginForm.php:29
 #: /usr/share/icingaweb2/application/views/scripts/authentication/logout.phtml:22
+#: /usr/share/icingaweb2/application/forms/Authentication/LoginForm.php:29
 msgid "Login"
 msgstr "Accedi"
 
@@ -1426,19 +1426,19 @@ msgstr "Sposta Backend Utenti %s giù"
 msgid "Move user backend %s upwards"
 msgstr "Sposta Backend Utenti %s su"
 
-#: /usr/share/icingaweb2/application/forms/Navigation/NavigationConfigForm.php:582
-#: /usr/share/icingaweb2/application/views/scripts/config/module.phtml:16
 #: /usr/share/icingaweb2/application/views/scripts/about/index.phtml:107
+#: /usr/share/icingaweb2/application/views/scripts/config/module.phtml:16
 #: /usr/share/icingaweb2/application/views/scripts/role/list.phtml:22
+#: /usr/share/icingaweb2/application/forms/Navigation/NavigationConfigForm.php:582
 msgid "Name"
 msgstr "Nome"
 
+#: /usr/share/icingaweb2/application/controllers/NavigationController.php:142
+#: /usr/share/icingaweb2/application/controllers/NavigationController.php:150
+#: /usr/share/icingaweb2/application/controllers/PreferenceController.php:38
 #: /usr/share/icingaweb2/application/views/scripts/pivottablePagination.phtml:16
 #: /usr/share/icingaweb2/application/views/scripts/navigation/index.phtml:37
 #: /usr/share/icingaweb2/application/views/scripts/layout/menu.phtml:16
-#: /usr/share/icingaweb2/application/controllers/PreferenceController.php:38
-#: /usr/share/icingaweb2/application/controllers/NavigationController.php:142
-#: /usr/share/icingaweb2/application/controllers/NavigationController.php:150
 msgid "Navigation"
 msgstr "Navigazione"
 
@@ -1586,14 +1586,8 @@ msgstr "Nessun ruolo trovato."
 msgid "No users found matching the filter."
 msgstr "Nessun utente soddisfa i criteri di ricerca"
 
-#: /usr/share/icingaweb2/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:67
-#: /usr/share/icingaweb2/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:69
-msgctxt "usergroupbackend.ldap.user_backend"
-msgid "None"
-msgstr "Nessuno"
-
-#: /usr/share/icingaweb2/application/forms/Config/Resource/LdapResourceForm.php:77
-msgctxt "resource.ldap.encryption"
+#: /usr/share/icingaweb2/application/forms/Navigation/NavigationConfigForm.php:674
+msgctxt "No parent for a navigation item"
 msgid "None"
 msgstr "Nessuno"
 
@@ -1602,8 +1596,14 @@ msgctxt "app.config.logging.type"
 msgid "None"
 msgstr "Nessuno"
 
-#: /usr/share/icingaweb2/application/forms/Navigation/NavigationConfigForm.php:674
-msgctxt "No parent for a navigation item"
+#: /usr/share/icingaweb2/application/forms/Config/Resource/LdapResourceForm.php:77
+msgctxt "resource.ldap.encryption"
+msgid "None"
+msgstr "Nessuno"
+
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:67
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:69
+msgctxt "usergroupbackend.ldap.user_backend"
 msgid "None"
 msgstr "Nessuno"
 
@@ -1624,8 +1624,8 @@ msgid "Only the root and its child nodes will be accessible on this resource."
 msgstr ""
 "Solo gli oggetti che appartengono a questa risorsa radice saranno accessibili"
 
-#: /usr/share/icingaweb2/application/views/scripts/navigation/shared.phtml:30
 #: /usr/share/icingaweb2/application/controllers/NavigationController.php:199
+#: /usr/share/icingaweb2/application/views/scripts/navigation/shared.phtml:30
 msgid "Owner"
 msgstr "Proprietario"
 
@@ -1651,9 +1651,9 @@ msgstr "Pannello"
 msgid "Parent"
 msgstr "Padre"
 
-#: /usr/share/icingaweb2/application/forms/Config/Resource/DbResourceForm.php:137
 #: /usr/share/icingaweb2/application/forms/Config/User/UserForm.php:41
 #: /usr/share/icingaweb2/application/forms/Config/User/UserForm.php:63
+#: /usr/share/icingaweb2/application/forms/Config/Resource/DbResourceForm.php:137
 #: /usr/share/icingaweb2/application/forms/Authentication/LoginForm.php:52
 msgid "Password"
 msgstr "Password"
@@ -1712,9 +1712,9 @@ msgstr ""
 msgid "Port"
 msgstr "Porta"
 
-#: /usr/share/icingaweb2/application/forms/PreferenceForm.php:44
-#: /usr/share/icingaweb2/application/controllers/PreferenceController.php:33
 #: /usr/share/icingaweb2/application/controllers/NavigationController.php:133
+#: /usr/share/icingaweb2/application/controllers/PreferenceController.php:33
+#: /usr/share/icingaweb2/application/forms/PreferenceForm.php:44
 #: /usr/share/php/Icinga/Web/Menu.php:308
 msgid "Preferences"
 msgstr "Preferenze"
@@ -1782,9 +1782,9 @@ msgstr "Colonna \"%s\" non trovata nella tabella \"%s\""
 msgid "Ready to search"
 msgstr "Pronto per la ricerca"
 
-#: /usr/share/icingaweb2/application/views/scripts/group/show.phtml:78
-#: /usr/share/icingaweb2/application/views/scripts/group/list.phtml:63
 #: /usr/share/icingaweb2/application/views/scripts/user/list.phtml:57
+#: /usr/share/icingaweb2/application/views/scripts/group/list.phtml:63
+#: /usr/share/icingaweb2/application/views/scripts/group/show.phtml:78
 msgid "Remove"
 msgstr "Rimuovi"
 
@@ -1901,10 +1901,10 @@ msgstr "Rimuovi backend gruppo utenti %s"
 msgid "Report a bug"
 msgstr "Segnala un bug"
 
-#: /usr/share/php/Icinga/Cli/Params.php:183
-#: /usr/share/php/Icinga/Cli/Params.php:285
 #: /usr/share/php/Icinga/Web/UrlParams.php:65
 #: /usr/share/php/Icinga/Web/UrlParams.php:160
+#: /usr/share/php/Icinga/Cli/Params.php:183
+#: /usr/share/php/Icinga/Cli/Params.php:285
 #, php-format
 msgid "Required parameter '%s' missing"
 msgstr "Parametro richiesto '%s' non trovato"
@@ -1930,9 +1930,9 @@ msgstr "Risorsa \"%s\" rimossa correttamente"
 
 #: /usr/share/icingaweb2/application/forms/Config/Resource/LivestatusResourceForm.php:35
 #: /usr/share/icingaweb2/application/forms/Config/Resource/LdapResourceForm.php:38
+#: /usr/share/icingaweb2/application/forms/Config/Resource/SshResourceForm.php:36
 #: /usr/share/icingaweb2/application/forms/Config/Resource/DbResourceForm.php:76
 #: /usr/share/icingaweb2/application/forms/Config/Resource/FileResourceForm.php:32
-#: /usr/share/icingaweb2/application/forms/Config/Resource/SshResourceForm.php:36
 msgid "Resource Name"
 msgstr "Nome Risorsa"
 
@@ -1988,9 +1988,9 @@ msgstr "Ruolo rimosso"
 msgid "Role updated"
 msgstr "Ruolo aggiornato"
 
-#: /usr/share/icingaweb2/application/controllers/UserController.php:309
-#: /usr/share/icingaweb2/application/controllers/RoleController.php:153
 #: /usr/share/icingaweb2/application/controllers/GroupController.php:345
+#: /usr/share/icingaweb2/application/controllers/RoleController.php:153
+#: /usr/share/icingaweb2/application/controllers/UserController.php:309
 #: /usr/share/php/Icinga/Web/Menu.php:283
 msgid "Roles"
 msgstr "Ruoli"
@@ -2007,14 +2007,14 @@ msgstr "SQL Database"
 msgid "SSH Identity"
 msgstr "Identità SSH"
 
-#: /usr/share/icingaweb2/application/forms/Config/UserGroup/UserGroupForm.php:32
 #: /usr/share/icingaweb2/application/forms/Config/User/UserForm.php:68
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/UserGroupForm.php:32
 msgid "Save"
 msgstr "Salva"
 
-#: /usr/share/icingaweb2/application/forms/Config/ResourceConfigForm.php:30
 #: /usr/share/icingaweb2/application/forms/Config/UserBackendConfigForm.php:46
 #: /usr/share/icingaweb2/application/forms/Config/GeneralConfigForm.php:22
+#: /usr/share/icingaweb2/application/forms/Config/ResourceConfigForm.php:30
 #: /usr/share/icingaweb2/application/forms/Config/UserGroup/UserGroupBackendForm.php:29
 #: /usr/share/icingaweb2/application/forms/Navigation/NavigationConfigForm.php:85
 msgid "Save Changes"
@@ -2092,15 +2092,15 @@ msgstr "Selezionare se si vuole visualizzare le eccezioni dello stacktrace"
 msgid "Settings"
 msgstr "Impostazioni"
 
-#: /usr/share/icingaweb2/application/forms/Navigation/NavigationConfigForm.php:602
-#: /usr/share/icingaweb2/application/views/scripts/navigation/index.phtml:39
 #: /usr/share/icingaweb2/application/controllers/NavigationController.php:149
+#: /usr/share/icingaweb2/application/views/scripts/navigation/index.phtml:39
+#: /usr/share/icingaweb2/application/forms/Navigation/NavigationConfigForm.php:602
 msgid "Shared"
 msgstr "Condiviso"
 
-#: /usr/share/icingaweb2/application/views/scripts/navigation/shared.phtml:28
 #: /usr/share/icingaweb2/application/controllers/NavigationController.php:192
 #: /usr/share/icingaweb2/application/controllers/NavigationController.php:200
+#: /usr/share/icingaweb2/application/views/scripts/navigation/shared.phtml:28
 #: /usr/share/php/Icinga/Application/Web.php:278
 msgid "Shared Navigation"
 msgstr "Navigazione Condivisa"
@@ -2135,14 +2135,14 @@ msgstr "Mostra tutti gli oggetti in questa pagina"
 msgid "Show dashlet %s"
 msgstr "Mostra vista %s"
 
-#: /usr/share/icingaweb2/application/views/scripts/group/show.phtml:96
 #: /usr/share/icingaweb2/application/views/scripts/user/list.phtml:72
+#: /usr/share/icingaweb2/application/views/scripts/group/show.phtml:96
 #, php-format
 msgid "Show detailed information about %s"
 msgstr "Mostra dettagli riguardo %s"
 
-#: /usr/share/icingaweb2/application/views/scripts/group/list.phtml:74
 #: /usr/share/icingaweb2/application/views/scripts/user/show.phtml:90
+#: /usr/share/icingaweb2/application/views/scripts/group/list.phtml:74
 #, php-format
 msgid "Show detailed information for group %s"
 msgstr "Mostra dettagli del gruppo %s"
@@ -2159,8 +2159,8 @@ msgstr "Mostra gruppo %s"
 msgid "Show rows %u to %u of %u"
 msgstr "Mostra dalla riga %u alla %u di %u"
 
-#: /usr/share/icingaweb2/application/views/scripts/config/modules.phtml:41
 #: /usr/share/icingaweb2/application/views/scripts/about/index.phtml:120
+#: /usr/share/icingaweb2/application/views/scripts/config/modules.phtml:41
 #, php-format
 msgid "Show the overview of the %s module"
 msgstr "Mostra i dettagli del modulo %s"
@@ -2194,8 +2194,8 @@ msgstr "Qualcosa è andato storto durante la scrittura del file"
 msgid "Sort by"
 msgstr "Ordina per"
 
-#: /usr/share/icingaweb2/application/views/scripts/config/module.phtml:20
 #: /usr/share/icingaweb2/application/views/scripts/user/show.phtml:32
+#: /usr/share/icingaweb2/application/views/scripts/config/module.phtml:20
 msgid "State"
 msgstr "Stato"
 
@@ -2216,8 +2216,8 @@ msgstr "Sistema"
 msgid "Target"
 msgstr "Destinazione"
 
-#: /usr/share/icingaweb2/application/views/scripts/authentication/login.phtml:23
 #: /usr/share/icingaweb2/application/views/scripts/about/index.phtml:29
+#: /usr/share/icingaweb2/application/views/scripts/authentication/login.phtml:23
 msgid "The Icinga Project"
 msgstr "Il Progetto Icinga"
 
@@ -2266,8 +2266,8 @@ msgstr ""
 "Il filtro che identifica le colonne deve essere un'espressione regolare "
 "valida."
 
-#: /usr/share/icingaweb2/application/forms/Config/ResourceConfigForm.php:324
 #: /usr/share/icingaweb2/application/forms/Config/UserBackendConfigForm.php:444
+#: /usr/share/icingaweb2/application/forms/Config/ResourceConfigForm.php:324
 msgid "The configuration has been successfully validated."
 msgstr "La configurazione è stata convalidata."
 
@@ -2393,8 +2393,8 @@ msgid ""
 msgstr ""
 "Il nome dell'oggetto di navigazione usato per differenziarlo dagli altri."
 
-#: /usr/share/icingaweb2/application/forms/Config/UserGroup/DbUserGroupBackendForm.php:36
 #: /usr/share/icingaweb2/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:41
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/DbUserGroupBackendForm.php:36
 msgid ""
 "The name of this user group backend that is used to differentiate it from "
 "others"
@@ -2404,8 +2404,8 @@ msgstr "Nome del backend gruppo utenti usato per differenziarlo dagli altri"
 msgid "The object class used for storing groups on the LDAP server."
 msgstr "La classe oggetto usata per memorizzare i gruppi del server LDAP"
 
-#: /usr/share/icingaweb2/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:216
 #: /usr/share/icingaweb2/application/forms/Config/UserBackend/LdapBackendForm.php:140
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:216
 msgid "The object class used for storing users on the LDAP server."
 msgstr "Object class usata per memorizzare gli utenti su server ldap."
 
@@ -2448,8 +2448,8 @@ msgstr ""
 "vuoto per selezionare tutti gli utenti disponibili usando la connessione "
 "specificata."
 
-#: /usr/share/icingaweb2/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:273
 #: /usr/share/icingaweb2/application/forms/Config/UserBackend/LdapBackendForm.php:212
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:273
 msgid ""
 "The path where users can be found on the LDAP server. Leave empty to select "
 "all users available using the specified connection."
@@ -2523,9 +2523,9 @@ msgstr "Tipo del backend gruppo utenti"
 
 #: /usr/share/icingaweb2/application/forms/Config/Resource/LivestatusResourceForm.php:36
 #: /usr/share/icingaweb2/application/forms/Config/Resource/LdapResourceForm.php:39
+#: /usr/share/icingaweb2/application/forms/Config/Resource/SshResourceForm.php:37
 #: /usr/share/icingaweb2/application/forms/Config/Resource/DbResourceForm.php:77
 #: /usr/share/icingaweb2/application/forms/Config/Resource/FileResourceForm.php:33
-#: /usr/share/icingaweb2/application/forms/Config/Resource/SshResourceForm.php:37
 msgid "The unique name of this resource"
 msgstr "Nome univoco per questa risorsa"
 
@@ -2614,11 +2614,11 @@ msgstr "Spunta questa casella per condividere questo oggetto con gli altri"
 msgid "To modify the private key you must recreate this resource."
 msgstr "Per modificare la chiave privata è necessario ricreare questa risorsa"
 
-#: /usr/share/icingaweb2/application/forms/Navigation/NavigationConfigForm.php:647
-#: /usr/share/icingaweb2/application/views/scripts/navigation/index.phtml:38
-#: /usr/share/icingaweb2/application/views/scripts/navigation/shared.phtml:29
 #: /usr/share/icingaweb2/application/controllers/NavigationController.php:148
 #: /usr/share/icingaweb2/application/controllers/NavigationController.php:198
+#: /usr/share/icingaweb2/application/views/scripts/navigation/index.phtml:38
+#: /usr/share/icingaweb2/application/views/scripts/navigation/shared.phtml:29
+#: /usr/share/icingaweb2/application/forms/Navigation/NavigationConfigForm.php:647
 msgid "Type"
 msgstr "Tipo"
 
@@ -2712,10 +2712,10 @@ msgid ""
 "page."
 msgstr "Cambiando questo valore la pagina verrà ricaricata automaticamente."
 
-#: /usr/share/icingaweb2/application/forms/Dashboard/DashletForm.php:68
-#: /usr/share/icingaweb2/application/forms/Navigation/DashletForm.php:27
-#: /usr/share/icingaweb2/application/forms/Navigation/NavigationItemForm.php:54
 #: /usr/share/icingaweb2/application/views/scripts/dashboard/settings.phtml:14
+#: /usr/share/icingaweb2/application/forms/Navigation/NavigationItemForm.php:54
+#: /usr/share/icingaweb2/application/forms/Navigation/DashletForm.php:27
+#: /usr/share/icingaweb2/application/forms/Dashboard/DashletForm.php:68
 msgid "Url"
 msgstr "Url"
 
@@ -2731,8 +2731,8 @@ msgstr "Usa la lingua seguente per visualizzare testi e messaggi"
 msgid "Use the following timezone for dates and times"
 msgstr "Usa il seguente fuso orario per data e ora"
 
-#: /usr/share/icingaweb2/application/forms/Config/Resource/SshResourceForm.php:45
 #: /usr/share/icingaweb2/application/controllers/UserController.php:290
+#: /usr/share/icingaweb2/application/forms/Config/Resource/SshResourceForm.php:45
 msgid "User"
 msgstr "Utente"
 
@@ -2776,11 +2776,11 @@ msgstr "Backend Utenti"
 msgid "User Group"
 msgstr "Gruppi Utenti"
 
-#: /usr/share/icingaweb2/application/controllers/UsergroupbackendController.php:158
-#: /usr/share/icingaweb2/application/controllers/UserController.php:330
 #: /usr/share/icingaweb2/application/controllers/ConfigController.php:65
-#: /usr/share/icingaweb2/application/controllers/RoleController.php:174
+#: /usr/share/icingaweb2/application/controllers/UsergroupbackendController.php:158
 #: /usr/share/icingaweb2/application/controllers/GroupController.php:366
+#: /usr/share/icingaweb2/application/controllers/RoleController.php:174
+#: /usr/share/icingaweb2/application/controllers/UserController.php:330
 msgid "User Groups"
 msgstr "Gruppi Utenti"
 
@@ -2792,8 +2792,8 @@ msgstr "Metodo di salvataggio delle preferenze degli utenti"
 msgid "User added successfully"
 msgstr "Utente aggiunto correttamente"
 
-#: /usr/share/icingaweb2/application/forms/Config/UserBackendReorderForm.php:70
 #: /usr/share/icingaweb2/application/controllers/ConfigController.php:290
+#: /usr/share/icingaweb2/application/forms/Config/UserBackendReorderForm.php:70
 #, php-format
 msgid "User backend \"%s\" not found"
 msgstr "Backend Utenti \"%s\" non trovato"
@@ -2853,53 +2853,53 @@ msgstr "Backend Gruppi Utenti"
 msgid "Usergroups"
 msgstr "Gruppi Utenti"
 
-#: /usr/share/icingaweb2/application/forms/Config/Resource/DbResourceForm.php:127
-#: /usr/share/icingaweb2/application/forms/Config/User/UserForm.php:33
-#: /usr/share/icingaweb2/application/forms/Authentication/LoginForm.php:43
-#: /usr/share/icingaweb2/application/views/scripts/group/show.phtml:76
-#: /usr/share/icingaweb2/application/views/scripts/user/list.phtml:55
-#: /usr/share/icingaweb2/application/controllers/UserController.php:69
 #: /usr/share/icingaweb2/application/controllers/GroupController.php:105
-#: /usr/share/php/Icinga/Authentication/UserGroup/DbUserGroupBackend.php:114
-#: /usr/share/php/Icinga/Authentication/UserGroup/DbUserGroupBackend.php:118
-#: /usr/share/php/Icinga/Authentication/UserGroup/LdapUserGroupBackend.php:423
+#: /usr/share/icingaweb2/application/controllers/UserController.php:69
+#: /usr/share/icingaweb2/application/views/scripts/user/list.phtml:55
+#: /usr/share/icingaweb2/application/views/scripts/group/show.phtml:76
+#: /usr/share/icingaweb2/application/forms/Config/User/UserForm.php:33
+#: /usr/share/icingaweb2/application/forms/Config/Resource/DbResourceForm.php:127
+#: /usr/share/icingaweb2/application/forms/Authentication/LoginForm.php:43
 #: /usr/share/php/Icinga/Authentication/User/DbUserBackend.php:115
 #: /usr/share/php/Icinga/Authentication/User/DbUserBackend.php:118
 #: /usr/share/php/Icinga/Authentication/User/LdapUserBackend.php:261
+#: /usr/share/php/Icinga/Authentication/UserGroup/DbUserGroupBackend.php:114
+#: /usr/share/php/Icinga/Authentication/UserGroup/DbUserGroupBackend.php:118
+#: /usr/share/php/Icinga/Authentication/UserGroup/LdapUserGroupBackend.php:423
 msgid "Username"
 msgstr "Nome Utente"
 
-#: /usr/share/icingaweb2/application/forms/Config/UserGroup/AddMemberForm.php:118
-#: /usr/share/icingaweb2/application/forms/Security/RoleForm.php:143
-#: /usr/share/icingaweb2/application/forms/Navigation/NavigationConfigForm.php:613
-#: /usr/share/icingaweb2/application/views/scripts/role/list.phtml:23
-#: /usr/share/icingaweb2/application/controllers/UsergroupbackendController.php:153
-#: /usr/share/icingaweb2/application/controllers/UserController.php:321
 #: /usr/share/icingaweb2/application/controllers/ConfigController.php:59
-#: /usr/share/icingaweb2/application/controllers/RoleController.php:165
+#: /usr/share/icingaweb2/application/controllers/UsergroupbackendController.php:153
 #: /usr/share/icingaweb2/application/controllers/GroupController.php:357
+#: /usr/share/icingaweb2/application/controllers/RoleController.php:165
+#: /usr/share/icingaweb2/application/controllers/UserController.php:321
+#: /usr/share/icingaweb2/application/views/scripts/role/list.phtml:23
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/AddMemberForm.php:118
+#: /usr/share/icingaweb2/application/forms/Navigation/NavigationConfigForm.php:613
+#: /usr/share/icingaweb2/application/forms/Security/RoleForm.php:143
 #: /usr/share/php/Icinga/Web/Menu.php:288
 msgid "Users"
 msgstr "Utenti"
 
-#: /usr/share/icingaweb2/application/forms/Config/ResourceConfigForm.php:348
 #: /usr/share/icingaweb2/application/forms/Config/UserBackendConfigForm.php:468
+#: /usr/share/icingaweb2/application/forms/Config/ResourceConfigForm.php:348
 msgid "Validate Configuration"
 msgstr "Convalida Configurazione"
 
-#: /usr/share/icingaweb2/application/forms/Config/ResourceConfigForm.php:349
 #: /usr/share/icingaweb2/application/forms/Config/UserBackendConfigForm.php:469
+#: /usr/share/icingaweb2/application/forms/Config/ResourceConfigForm.php:349
 msgid "Validation In Progress"
 msgstr "Convalida In Corso"
 
-#: /usr/share/icingaweb2/application/forms/Config/ResourceConfigForm.php:306
 #: /usr/share/icingaweb2/application/forms/Config/UserBackendConfigForm.php:426
+#: /usr/share/icingaweb2/application/forms/Config/ResourceConfigForm.php:306
 msgid "Validation Log"
 msgstr "Log di Convalida"
 
-#: /usr/share/icingaweb2/application/views/scripts/config/module.phtml:39
 #: /usr/share/icingaweb2/application/views/scripts/about/index.phtml:14
 #: /usr/share/icingaweb2/application/views/scripts/about/index.phtml:108
+#: /usr/share/icingaweb2/application/views/scripts/config/module.phtml:39
 msgid "Version"
 msgstr "Versione"
 
@@ -2932,9 +2932,9 @@ msgctxt "pagination.joystick"
 msgid "Y-Axis"
 msgstr "Asse Y"
 
-#: /usr/share/icingaweb2/application/forms/Config/UserGroup/UserGroupForm.php:66
-#: /usr/share/icingaweb2/application/forms/Config/User/UserForm.php:116
 #: /usr/share/icingaweb2/application/views/scripts/navigation/index.phtml:65
+#: /usr/share/icingaweb2/application/forms/Config/User/UserForm.php:116
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/UserGroupForm.php:66
 msgid "Yes"
 msgstr "Si"
 
@@ -3045,6 +3045,12 @@ msgstr "dal %s"
 msgid "toggle"
 msgstr "seleziona"
 
+#~ msgid "User Group Backend"
+#~ msgstr "Backend Gruppi Utenti"
+
+#~ msgid "None"
+#~ msgstr "Nessuno"
+
 #~ msgid "Error"
 #~ msgstr "Error"
 
@@ -3057,23 +3063,26 @@ msgstr "seleziona"
 #~ msgid "Debug"
 #~ msgstr "Debug"
 
+#~ msgid "Discover"
+#~ msgstr "Esplora"
+
 #~ msgid "Browser (%s)"
 #~ msgstr "Browser (%s)"
 
-#~ msgid "Loading"
-#~ msgstr "Caricamento"
+#~ msgid "No backend found which is able to list user groups"
+#~ msgstr "Nessun backend è in grado di fornire la lista degli utenti."
 
-#~ msgid "Dashlet"
-#~ msgstr "Vista"
+#~ msgid "No user groups found matching the filter"
+#~ msgstr "Nessun gruppo di utenti soddisfa i criteri di ricerca"
 
-#~ msgid "Lorem ipsum dolor sit amet"
-#~ msgstr "Lorem ipsum dolor sit amet"
+#~ msgid "Show detailed information for user group %s"
+#~ msgstr "Mostra informazioni dettagliate per il gruppo di utenti %s"
 
-#~ msgid "context service"
-#~ msgstr "context service"
+#~ msgid "Remove user group %s"
+#~ msgstr "Rimuovi gruppo utenti %s"
 
-#~ msgid "test"
-#~ msgstr "test"
+#~ msgid "Add New Member"
+#~ msgstr "Aggiungi Nuovo Membro"
 
 #~ msgid "%s: Show %s %u to %u out of %u"
 #~ msgstr "%s: Mostra %s %u a %u di %u"
@@ -3089,6 +3098,33 @@ msgstr "seleziona"
 
 #~ msgid "services"
 #~ msgstr "servizi"
+
+#~ msgid "No backend found which is able to list users"
+#~ msgstr "Nessun backend è in grado di mostrare la lista degli utenti"
+
+#~ msgid "No users found matching the filter"
+#~ msgstr "Nessun utente soddisfa i criteri di ricerca"
+
+#~ msgid "Create New Membership"
+#~ msgstr "Crea Nuova Associazione"
+
+#~ msgid "Cancel"
+#~ msgstr "Annulla"
+
+#~ msgid "Loading"
+#~ msgstr "Caricamento"
+
+#~ msgid "Dashlet"
+#~ msgstr "Vista"
+
+#~ msgid "Lorem ipsum dolor sit amet"
+#~ msgstr "Lorem ipsum dolor sit amet"
+
+#~ msgid "context service"
+#~ msgstr "context service"
+
+#~ msgid "test"
+#~ msgstr "test"
 
 #~ msgid "User Backends"
 #~ msgstr "Utente Backend"
@@ -3176,15 +3212,6 @@ msgstr "seleziona"
 
 #~ msgid "You did not create any navigation item yet"
 #~ msgstr "Non hai ancora creato nessun oggetto di navigazione"
-
-#~ msgid "No backend found which is able to list users"
-#~ msgstr "Nessun backend è in grado di mostrare la lista degli utenti"
-
-#~ msgid "No users found matching the filter"
-#~ msgstr "Nessun utente soddisfa i criteri di ricerca"
-
-#~ msgid "Create New Membership"
-#~ msgstr "Crea Nuova Associazione"
 
 #~ msgid "Create A New User Group Backend"
 #~ msgstr "Crea Nuovo Backend Gruppo Utenti"
