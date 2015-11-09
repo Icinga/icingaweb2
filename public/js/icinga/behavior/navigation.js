@@ -47,10 +47,11 @@
      * @param evt   {Object}    The event context
      */
     Navigation.prototype.onRendered = function(evt) {
-        var self = evt.data.self;
+        var _this = evt.data.self;
+
         this.element = evt.target;
 
-        if (! self.active) {
+        if (! _this.active) {
             // There is no stored menu item, therefore it is assumed that this is the first rendering
             // of the navigation after the page has been opened.
 
@@ -58,14 +59,15 @@
             var $menus = $('#menu li.active', evt.target);
             if ($menus.size()) {
                 $menus.each(function () {
-                    self.setActive($(this));
+                    _this.setActive($(this));
                 });
             } else {
                 // if no item is marked as active, try to select the menu from the current URL
-                self.setActiveByUrl($('#col1').data('icingaUrl'));
+                _this.setActiveByUrl($('#col1').data('icingaUrl'));
             }
         }
-        self.refresh();
+
+        _this.refresh();
     };
 
     /**
