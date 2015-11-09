@@ -533,7 +533,7 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
             if ($query !== null && $this->groupFilter) {
                 $query->getQuery()->setNativeFilter($this->groupFilter);
             }
-        } elseif ($table === 'group_memership') {
+        } elseif ($table === 'group_membership') {
             $table = $this->groupClass;
         }
 
