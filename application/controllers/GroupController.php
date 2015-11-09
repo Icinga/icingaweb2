@@ -44,7 +44,7 @@ class GroupController extends AuthBackendController
             'backend',
             array(
                 'autosubmit'    => true,
-                'label'         => $this->translate('Usergroup Backend'),
+                'label'         => $this->translate('User Group Backend'),
                 'multiOptions'  => array_combine($backendNames, $backendNames),
                 'value'         => $this->params->get('backend')
             )
@@ -66,7 +66,7 @@ class GroupController extends AuthBackendController
         $this->setupLimitControl();
         $this->setupSortControl(
             array(
-                'group_name'    => $this->translate('Group'),
+                'group_name'    => $this->translate('User Group'),
                 'created_at'    => $this->translate('Created at'),
                 'last_modified' => $this->translate('Last modified')
             ),
@@ -134,7 +134,7 @@ class GroupController extends AuthBackendController
             $removeForm->addElement('button', 'btn_submit', array(
                 'escape'        => false,
                 'type'          => 'submit',
-                'class'         => 'link-like spinner',
+                'class'         => 'link-button spinner',
                 'value'         => 'btn_submit',
                 'decorators'    => array('ViewHelper'),
                 'label'         => $this->view->icon('trash'),

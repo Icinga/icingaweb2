@@ -101,7 +101,7 @@ class Action extends NavigationItem
     {
         if ($this->render === null) {
             $filter = $this->getFilter();
-            $this->render = $filter ? $this->getObject()->matches(Filter::fromQueryString($filter)) : true;
+            $this->render = $filter ? Filter::fromQueryString($filter)->matches($this->getObject()) : true;
         }
 
         return $this->render;

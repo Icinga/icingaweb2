@@ -130,6 +130,7 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
             'username'          => $this->config->username,
             'password'          => $this->config->password,
             'dbname'            => $this->config->dbname,
+            'charset'           => $this->config->charset,
             'persistent'        => (bool) $this->config->get('persistent', false),
             'options'           => & $genericAdapterOptions,
             'driver_options'    => & $driverOptions

@@ -5,7 +5,6 @@ namespace Icinga\Module\Monitoring\Object;
 
 use InvalidArgumentException;
 use Icinga\Application\Config;
-use Icinga\Application\Logger;
 use Icinga\Data\Filter\Filter;
 use Icinga\Data\Filterable;
 use Icinga\Exception\InvalidPropertyException;
@@ -50,11 +49,25 @@ abstract class MonitoredObject implements Filterable
     protected $comments;
 
     /**
-     * Custom variables
+     * This object's obfuscated custom variables
      *
      * @var array
      */
     protected $customvars;
+
+    /**
+     * The host custom variables
+     *
+     * @var array
+     */
+    protected $hostVariables;
+
+    /**
+     * The service custom variables
+     *
+     * @var array
+     */
+    protected $serviceVariables;
 
     /**
      * Contact groups
@@ -218,6 +231,8 @@ abstract class MonitoredObject implements Filterable
      * @return  bool
      *
      * @throws  ProgrammingError    In case the object cannot be found
+     *
+     * @deprecated      Use $filter->matches($object) instead
      */
     public function matches(Filter $filter)
     {
@@ -229,38 +244,7 @@ abstract class MonitoredObject implements Filterable
             );
         }
 
-        $queryString = $filter->toQueryString();
-        $row = clone $this->properties;
-
-        if (strpos($queryString, '_host_') !== false || strpos($queryString, '_service_') !== false) {
-            if ($this->customvars === null) {
-                $this->fetchCustomvars();
-            }
-
-            foreach ($this->customvars as $name => $value) {
-                if (! is_object($value)) {
-                    $row->{'_' . $this->getType() . '_' . $name} = $value;
-                }
-            }
-        }
-
-        if (strpos($queryString, 'hostgroup_name') !== false) {
-            if ($this->hostgroups === null) {
-                $this->fetchHostgroups();
-            }
-
-            $row->hostgroup_name = array_keys($this->hostgroups);
-        }
-
-        if (strpos($queryString, 'servicegroup_name') !== false) {
-            if ($this->servicegroups === null) {
-                $this->fetchServicegroups();
-            }
-
-            $row->servicegroup_name = array_keys($this->servicegroups);
-        }
-
-        return $filter->matches($row);
+        return $filter->matches($this);
     }
 
     /**
@@ -438,9 +422,9 @@ abstract class MonitoredObject implements Filterable
     }
 
     /**
-     * Fetch the object's custom variables
+     * Fetch this object's obfuscated custom variables
      *
-     * @return $this
+     * @return  $this
      */
     public function fetchCustomvars()
     {
@@ -463,28 +447,81 @@ abstract class MonitoredObject implements Filterable
             $blacklistPattern = '/^(' . implode('|', $blacklist) . ')$/i';
         }
 
+        if ($this->type === self::TYPE_SERVICE) {
+            $this->fetchServiceVariables();
+            $customvars = $this->serviceVariables;
+        } else {
+            $this->fetchHostVariables();
+            $customvars = $this->hostVariables;
+        }
+
+        $this->customvars = array();
+        foreach ($customvars as $name => $value) {
+            if ($blacklistPattern && preg_match($blacklistPattern, $name)) {
+                $this->customvars[$name] = '***';
+            } else {
+                $this->customvars[$name] = $value;
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * Fetch the host custom variables related to this object
+     *
+     * @return  $this
+     */
+    public function fetchHostVariables()
+    {
         $query = $this->backend->select()->from('customvar', array(
             'varname',
             'varvalue',
             'is_json'
         ))
-            ->where('object_type', $this->type)
+            ->where('object_type', static::TYPE_HOST)
             ->where('host_name', $this->host_name);
-        if ($this->type === self::TYPE_SERVICE) {
-            $query->where('service_description', $this->service_description);
+
+        $this->hostVariables = array();
+        foreach ($query as $row) {
+            if ($row->is_json) {
+                $this->hostVariables[strtolower($row->varname)] = json_decode($row->varvalue);
+            } else {
+                $this->hostVariables[strtolower($row->varname)] = $row->varvalue;
+            }
         }
 
-        $this->customvars = array();
+        return $this;
+    }
 
-        $customvars = $query->getQuery()->fetchAll();
-        foreach ($customvars as $cv) {
-            $name = strtolower($cv->varname);
-            if ($blacklistPattern && preg_match($blacklistPattern, $cv->varname)) {
-                $this->customvars[$name] = '***';
-            } elseif ($cv->is_json) {
-                $this->customvars[$name] = json_decode($cv->varvalue);
+    /**
+     * Fetch the service custom variables related to this object
+     *
+     * @return  $this
+     *
+     * @throws  ProgrammingError    In case this object is not a service
+     */
+    public function fetchServiceVariables()
+    {
+        if ($this->type !== static::TYPE_SERVICE) {
+            throw new ProgrammingError('Cannot fetch service custom variables for non-service objects');
+        }
+
+        $query = $this->backend->select()->from('customvar', array(
+            'varname',
+            'varvalue',
+            'is_json'
+        ))
+            ->where('object_type', static::TYPE_SERVICE)
+            ->where('host_name', $this->host_name)
+            ->where('service_description', $this->service_description);
+
+        $this->serviceVariables = array();
+        foreach ($query as $row) {
+            if ($row->is_json) {
+                $this->serviceVariables[strtolower($row->varname)] = json_decode($row->varvalue);
             } else {
-                $this->customvars[$name] = $cv->varvalue;
+                $this->serviceVariables[strtolower($row->varname)] = $row->varvalue;
             }
         }
 
@@ -754,19 +791,86 @@ abstract class MonitoredObject implements Filterable
     {
         if (property_exists($this->properties, $name)) {
             return $this->properties->$name;
-        } elseif (property_exists($this, $name) && $this->$name !== null) {
-            return $this->$name;
         } elseif (property_exists($this, $name)) {
-            $fetchMethod = 'fetch' . ucfirst($name);
-            $this->$fetchMethod();
+            if ($this->$name === null) {
+                $fetchMethod = 'fetch' . ucfirst($name);
+                $this->$fetchMethod();
+            }
+
             return $this->$name;
-        }
-        if (substr($name, 0, strlen($this->prefix)) !== $this->prefix) {
-            $prefixedName = $this->prefix . strtolower($name);
+        } elseif (preg_match('/^_(host|service)_(.+)/i', $name, $matches)) {
+            if (strtolower($matches[1]) === static::TYPE_HOST) {
+                if ($this->hostVariables === null) {
+                    $this->fetchHostVariables();
+                }
+
+                $customvars = $this->hostVariables;
+            } else {
+                if ($this->serviceVariables === null) {
+                    $this->fetchServiceVariables();
+                }
+
+                $customvars = $this->serviceVariables;
+            }
+
+            $variableName = strtolower($matches[2]);
+            if (isset($customvars[$variableName])) {
+                return $customvars[$variableName];
+            }
+
+            return null; // Unknown custom variables MUST NOT throw an error
+        } elseif (in_array($name, array('contact_name', 'contactgroup_name', 'hostgroup_name', 'servicegroup_name'))) {
+            if ($name === 'contact_name') {
+                if ($this->contacts === null) {
+                    $this->fetchContacts();
+                }
+
+                return array_map(function ($el) { return $el->contact_name; }, $this->contacts);
+            } elseif ($name === 'contactgroup_name') {
+                if ($this->contactgroups === null) {
+                    $this->fetchContactgroups();
+                }
+
+                return array_map(function ($el) { return $el->contactgroup_name; }, $this->contactgroups);
+            } elseif ($name === 'hostgroup_name') {
+                if ($this->hostgroups === null) {
+                    $this->fetchHostgroups();
+                }
+
+                return array_keys($this->hostgroups);
+            } else { // $name === 'servicegroup_name'
+                if ($this->servicegroups === null) {
+                    $this->fetchServicegroups();
+                }
+
+                return array_keys($this->servicegroups);
+            }
+        } elseif (strpos($name, $this->prefix) !== 0) {
+            $propertyName = strtolower($name);
+            $prefixedName = $this->prefix . $propertyName;
             if (property_exists($this->properties, $prefixedName)) {
                 return $this->properties->$prefixedName;
             }
+
+            if ($this->type === static::TYPE_HOST) {
+                if ($this->hostVariables === null) {
+                    $this->fetchHostVariables();
+                }
+
+                $customvars = $this->hostVariables;
+            } else { // $this->type === static::TYPE_SERVICE
+                if ($this->serviceVariables === null) {
+                    $this->fetchServiceVariables();
+                }
+
+                $customvars = $this->serviceVariables;
+            }
+
+            if (isset($customvars[$propertyName])) {
+                return $customvars[$propertyName];
+            }
         }
+
         throw new InvalidPropertyException('Can\'t access property \'%s\'. Property does not exist.', $name);
     }
 

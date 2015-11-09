@@ -2,7 +2,6 @@
 
 use Icinga\Data\Extensible;
 use Icinga\Data\Updatable;
-use Icinga\Data\Selectable;
 
 $extensible = $this->hasPermission('config/authentication/groups/add') && $backend instanceof Extensible;
 
@@ -24,92 +23,86 @@ if ($this->hasPermission('config/authentication/groups/edit') && $backend instan
 }
 
 ?>
-<div class="controls">
- <?php if (! $this->compact): ?>
-  <?= $tabs; ?>
- <?php endif ?>
-  <h2 class="clearfix"><?= $this->escape($group->group_name) ?><span class="pull-right"><?= $editLink ?></span></h2>
-  <table class="name-value-table">
-    <tr>
-      <th><?= $this->translate('Created at'); ?></th>
-      <td><?= $group->created_at === null ? '-' : $this->formatDateTime($group->created_at); ?></td>
-    </tr>
-    <tr>
-      <th><?= $this->translate('Last modified'); ?></th>
-      <td><?= $group->last_modified === null ? '-' : $this->formatDateTime($group->last_modified); ?></td>
-    </tr>
-  </table>
-  <h2><?= $this->translate('Members'); ?></h2>
+<div class="controls separated dont-print">
 <?php if (! $this->compact): ?>
-  <?= $this->sortBox; ?>
+    <?= $tabs; ?>
 <?php endif ?>
-  <?= $this->limiter; ?>
-  <?= $this->paginator; ?>
+    <h2 class="clearfix"><?= $this->escape($group->group_name) ?><span class="pull-right"><?= $editLink ?></span></h2>
+    <table class="name-value-table">
+        <tr>
+            <th><?= $this->translate('Created at'); ?></th>
+            <td><?= $group->created_at === null ? '-' : $this->formatDateTime($group->created_at); ?></td>
+        </tr>
+        <tr>
+            <th><?= $this->translate('Last modified'); ?></th>
+            <td><?= $group->last_modified === null ? '-' : $this->formatDateTime($group->last_modified); ?></td>
+        </tr>
+    </table>
 <?php if (! $this->compact): ?>
-  <?= $this->filterEditor; ?>
+    <h2><?= $this->translate('Members'); ?></h2>
+    <div class="grid">
+        <?= $this->limiter; ?>
+        <?= $this->paginator; ?>
+        <?= $this->sortBox; ?>
+    </div>
+    <?= $this->filterEditor; ?>
 <?php endif ?>
 </div>
-<div class="content members" data-base-target="_next">
+<div class="content">
 <?php if ($extensible): ?>
     <?= $this->qlink(
-        $this->translate('Add User to Group') ,
+        $this->translate('Add New Member'),
         'group/addmember',
-        null,
         array(
-            'class'             => 'button-link',
-            'data-base-target'  => '_next',
-            'icon'              => 'plus',
-            'title'             => $this->translate('Add user to group')
+            'backend'   => $backend->getName(),
+            'group'     => $group->group_name
+        ),
+        array(
+            'icon'  => 'plus',
+            'class' => 'button-link'
         )
     ) ?>
 <?php endif ?>
 
-<?php
-
-$firstRow = true;
-foreach ($members as $member): ?>
-<?php if ($firstRow): ?>
-  <?php $firstRow = false; ?>
-  <table data-base-target="_next" class="action-table listing-table">
-    <thead>
-      <tr>
-        <th class="member-name"><?= $this->translate('Username'); ?></th>
-       <?php if (isset($removeForm)): ?>
-        <th class="member-remove"><?= $this->translate('Remove'); ?></th>
-       <?php endif ?>
-      </tr>
-    </thead>
-    <tbody>
-  <?php endif ?>
-      <tr>
-        <td class="member-name">
-        <?php if (
-          $this->hasPermission('config/authentication/users/show')
-          && method_exists($backend, 'getUserBackend')
-          && ($userBackend = $backend->getUserBackend()) !== null
-          && $userBackend instanceof Selectable
-        ): ?>
-          <?= $this->qlink($member->user_name, 'user/show', array(
-            'backend' => $userBackend->getName(),
-            'user'    => $member->user_name
-          ), array(
-            'title'   => sprintf($this->translate('Show detailed information about %s'), $member->user_name)
-          )); ?>
-        <?php else: ?>
-          <?= $this->escape($member->user_name); ?>
-        <?php endif ?>
-        </td>
-       <?php if (isset($removeForm)): ?>
-        <td class="icon-col" data-base-target="_self">
-          <?php $removeForm->getElement('user_name')->setValue($member->user_name); echo $removeForm; ?>
-        </td>
-       <?php endif ?>
-      </tr>
-<?php endforeach ?>
-<?php if ($members->hasResult()): ?>
-    </tbody>
-  </table>
-<?php else: ?>
+<?php if (! $members->hasResult()): ?>
   <p><?= $this->translate('No group member found matching the filter'); ?></p>
-<?php endif ?>
+</div>
+<?php return; endif ?>
+
+    <table data-base-target="_next" class="action-table listing-table">
+        <thead>
+            <tr>
+                <th><?= $this->translate('Username'); ?></th>
+            <?php if (isset($removeForm)): ?>
+                <th><?= $this->translate('Remove'); ?></th>
+            <?php endif ?>
+            </tr>
+        </thead>
+        <tbody>
+        <?php foreach ($members as $member): ?>
+            <tr>
+                <td>
+                <?php if (
+                    $this->hasPermission('config/authentication/users/show')
+                    && ($userBackend = $backend->getUserBackendName($member->user_name)) !== null
+                ): ?>
+                    <?= $this->qlink($member->user_name, 'user/show', array(
+                        'backend' => $userBackend,
+                        'user'    => $member->user_name
+                    ), array(
+                        'title'   => sprintf($this->translate('Show detailed information about %s'), $member->user_name)
+                    )); ?>
+                <?php else: ?>
+                    <?= $this->escape($member->user_name); ?>
+                <?php endif ?>
+                </td>
+            <?php if (isset($removeForm)): ?>
+                <td class="icon-col" data-base-target="_self">
+                    <?php $removeForm->getElement('user_name')->setValue($member->user_name); echo $removeForm; ?>
+                </td>
+            <?php endif ?>
+            </tr>
+        <?php endforeach ?>
+        </tbody>
+    </table>
 </div>

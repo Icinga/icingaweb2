@@ -102,15 +102,13 @@ class LdapUserBackend extends LdapRepository implements UserBackendInterface, In
     /**
      * Set the objectClass where to look for users
      *
-     * Sets also the base table name for the underlying repository.
-     *
      * @param   string  $userClass
      *
      * @return  $this
      */
     public function setUserClass($userClass)
     {
-        $this->baseTable = $this->userClass = $this->getNormedAttribute($userClass);
+        $this->userClass = $this->getNormedAttribute($userClass);
         return $this;
     }
 
@@ -216,13 +214,10 @@ class LdapUserBackend extends LdapRepository implements UserBackendInterface, In
      *
      * @return  array
      *
-     * @throws  ProgrammingError    In case either $this->userNameAttribute or $this->userClass has not been set yet
+     * @throws  ProgrammingError    In case $this->userNameAttribute has not been set yet
      */
     protected function initializeQueryColumns()
     {
-        if ($this->userClass === null) {
-            throw new ProgrammingError('It is required to set the objectClass where to look for users first');
-        }
         if ($this->userNameAttribute === null) {
             throw new ProgrammingError('It is required to set a attribute name where to find a user\'s name first');
         }
@@ -240,7 +235,7 @@ class LdapUserBackend extends LdapRepository implements UserBackendInterface, In
         }
 
         return array(
-            $this->userClass => array(
+            'user' => array(
                 'user'          => $this->userNameAttribute,
                 'user_name'     => $this->userNameAttribute,
                 'is_active'     => $isActiveAttribute,
@@ -269,15 +264,9 @@ class LdapUserBackend extends LdapRepository implements UserBackendInterface, In
      * Initialize this repository's conversion rules
      *
      * @return  array
-     *
-     * @throws  ProgrammingError    In case $this->userClass has not been set yet
      */
     protected function initializeConversionRules()
     {
-        if ($this->userClass === null) {
-            throw new ProgrammingError('It is required to set the objectClass where to look for users first');
-        }
-
         if ($this->ds->getCapabilities()->isActiveDirectory()) {
             $stateConverter = 'user_account_control';
         } else {
@@ -285,7 +274,7 @@ class LdapUserBackend extends LdapRepository implements UserBackendInterface, In
         }
 
         return array(
-            $this->userClass => array(
+            'user' => array(
                 'is_active'     => $stateConverter,
                 'created_at'    => 'generalized_time',
                 'last_modified' => 'generalized_time'
@@ -330,14 +319,47 @@ class LdapUserBackend extends LdapRepository implements UserBackendInterface, In
     }
 
     /**
-
-     * @param   Inspection  $info           Optional inspection to fill with diagnostic info
+     * Validate that the requested table exists
      *
-     * @throws  AuthenticationException     When authentication is not possible
+     * This will return $this->userClass in case $table equals "user".
+     *
+     * @param   string              $table      The table to validate
+     * @param   RepositoryQuery     $query      An optional query to pass as context
+     *                                          (unused by the base implementation)
+     *
+     * @return  string
+     *
+     * @throws  ProgrammingError                In case the given table does not exist
      */
-    public function assertAuthenticationPossible(Inspection $insp = null)
+    public function requireTable($table, RepositoryQuery $query = null)
     {
+        $table = parent::requireTable($table, $query);
+        if ($table === 'user') {
+            $table = $this->userClass;
+        }
 
+        return $table;
+    }
+
+    /**
+     * Validate that the given column is a valid query target and return it or the actual name if it's an alias
+     *
+     * @param   string              $table  The table where to look for the column or alias
+     * @param   string              $name   The name or alias of the column to validate
+     * @param   RepositoryQuery     $query  An optional query to pass as context
+     *
+     * @return  string                      The given column's name
+     *
+     * @throws  QueryException              In case the given column is not a valid query column
+     */
+    public function requireQueryColumn($table, $name, RepositoryQuery $query = null)
+    {
+        $column = parent::requireQueryColumn($table, $name, $query);
+        if ($name === 'user_name' && $query !== null) {
+            $query->getQuery()->setUnfoldAttribute('user_name');
+        }
+
+        return $column;
     }
 
     /**
@@ -359,17 +381,16 @@ class LdapUserBackend extends LdapRepository implements UserBackendInterface, In
                 ->getQuery()
                 ->setUsePagedResults(false)
                 ->fetchDn();
-
             if ($userDn === null) {
                 return false;
             }
 
-            $testCredentialsResult = $this->ds->testCredentials($userDn, $password);
-            if ($testCredentialsResult) {
+            $validCredentials = $this->ds->testCredentials($userDn, $password);
+            if ($validCredentials) {
                 $user->setAdditional('ldap_dn', $userDn);
             }
 
-            return $testCredentialsResult;
+            return $validCredentials;
         } catch (LdapException $e) {
             throw new AuthenticationException(
                 'Failed to authenticate user "%s" against backend "%s". An exception was thrown:',

@@ -53,6 +53,16 @@ abstract class Repository implements Selectable
     protected $baseTable;
 
     /**
+     * The virtual tables being provided
+     *
+     * This may be initialized by concrete repository implementations with an array
+     * where a key is the name of a virtual table and its value the real table name.
+     *
+     * @var array
+     */
+    protected $virtualTables;
+
+    /**
      * The query columns being provided
      *
      * This must be initialized by concrete repository implementations, in the following format
@@ -253,6 +263,32 @@ abstract class Repository implements Selectable
         }
 
         return $this->baseTable;
+    }
+
+    /**
+     * Return the virtual tables being provided
+     *
+     * Calls $this->initializeVirtualTables() in case $this->virtualTables is null.
+     *
+     * @return  array
+     */
+    public function getVirtualTables()
+    {
+        if ($this->virtualTables === null) {
+            $this->virtualTables = $this->initializeVirtualTables();
+        }
+
+        return $this->virtualTables;
+    }
+
+    /**
+     * Overwrite this in your repository implementation in case you need to initialize the virtual tables lazily
+     *
+     * @return  array
+     */
+    protected function initializeVirtualTables()
+    {
+        return array();
     }
 
     /**
@@ -581,7 +617,7 @@ abstract class Repository implements Selectable
     {
         $converter = $this->getConverter($table, $name, 'persist', $query);
         if ($converter !== null) {
-            $value = $this->$converter($value);
+            $value = $this->$converter($value, $name, $table, $query);
         }
 
         return $value;
@@ -603,7 +639,7 @@ abstract class Repository implements Selectable
     {
         $converter = $this->getConverter($table, $name, 'retrieve', $query);
         if ($converter !== null) {
-            $value = $this->$converter($value);
+            $value = $this->$converter($value, $name, $table, $query);
         }
 
         return $value;
@@ -792,7 +828,7 @@ abstract class Repository implements Selectable
     }
 
     /**
-     * Validate that the requested table exists
+     * Validate that the requested table exists and resolve it's real name if necessary
      *
      * @param   string              $table      The table to validate
      * @param   RepositoryQuery     $query      An optional query to pass as context
@@ -807,6 +843,11 @@ abstract class Repository implements Selectable
         $queryColumns = $this->getQueryColumns();
         if (! isset($queryColumns[$table])) {
             throw new ProgrammingError('Table "%s" not found', $table);
+        }
+
+        $virtualTables = $this->getVirtualTables();
+        if (isset($virtualTables[$table])) {
+            $table = $virtualTables[$table];
         }
 
         return $table;
@@ -832,7 +873,7 @@ abstract class Repository implements Selectable
         if ($filter->isExpression()) {
             $column = $filter->getColumn();
             $filter->setColumn($this->requireFilterColumn($table, $column, $query));
-            $filter->setExpression($this->persistColumn($table, $column, $filter->getExpression()));
+            $filter->setExpression($this->persistColumn($table, $column, $filter->getExpression(), $query));
         } elseif ($filter->isChain()) {
             foreach ($filter->filters() as $chainOrExpression) {
                 $this->requireFilter($table, $chainOrExpression, $query, false);
@@ -862,7 +903,7 @@ abstract class Repository implements Selectable
         $columns = array();
         foreach ($queryColumns[$table] as $alias => $column) {
             if (! in_array(is_string($alias) ? $alias : $column, $blacklist)) {
-                $columns[$alias] = $column;
+                $columns[$alias] = $this->resolveQueryColumnAlias($table, $alias);
             }
         }
 

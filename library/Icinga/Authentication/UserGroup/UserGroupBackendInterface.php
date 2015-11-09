@@ -34,4 +34,13 @@ interface UserGroupBackendInterface
      * @return  array
      */
     public function getMemberships(User $user);
+
+    /**
+     * Return the name of the backend that is providing the given user
+     *
+     * @param   string  $username
+     *
+     * @return  null|string     The name of the backend or null in case this information is not available
+     */
+    public function getUserBackendName($username);
 }

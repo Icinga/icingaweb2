@@ -1,20 +1,15 @@
 <?php
+
 use Icinga\Data\Extensible;
 use Icinga\Data\Reducible;
 
 if (! $this->compact): ?>
-<div class="controls">
-    <?= $this->tabs ?>
-    <div class="grid dont-print">
-        <div class="col-1-3 text-left">
-            <?= $this->limiter ?>
-        </div>
-        <div class="col-1-3">
-            <?= $this->paginator ?>
-        </div>
-        <div class="col-1-3 text-right">
-            <?= $this->sortBox ?>
-        </div>
+<div class="controls separated dont-print">
+    <?= $tabs ?>
+    <div class="grid">
+        <?= $this->limiter ?>
+        <?= $this->paginator ?>
+        <?= $this->sortBox ?>
     </div>
     <div>
         <?= $this->backendSelection ?>
@@ -22,20 +17,18 @@ if (! $this->compact): ?>
     </div>
 </div>
 <?php endif ?>
-
 <div class="content">
-<?php if (! isset($backend)): ?>
-    <p><?= $this->translate('No backend found which is able to list users.') ?></p>
-</div>
-<?php return; endif ?>
-<?php if (! $users->hasResult()): ?>
-    <p><?= $this->translate('No users found matching the filter.') ?></p>
-</div>
-<?php return; endif ?>
 <?php
-$extensible = $this->hasPermission('config/authentication/users/add') && $backend instanceof Extensible;
-$reducible = $this->hasPermission('config/authentication/users/remove') && $backend instanceof Reducible;
+
+if (! isset($backend)) {
+    echo $this->translate('No backend found which is able to list users') . '</div>';
+    return;
+} else {
+    $extensible = $this->hasPermission('config/authentication/users/add') && $backend instanceof Extensible;
+    $reducible = $this->hasPermission('config/authentication/users/remove') && $backend instanceof Reducible;
+}
 ?>
+
 <?php if ($extensible): ?>
     <?= $this->qlink(
         $this->translate('Add a New User') ,
@@ -44,12 +37,17 @@ $reducible = $this->hasPermission('config/authentication/users/remove') && $back
         array(
             'class'             => 'button-link',
             'data-base-target'  => '_next',
-            'icon'              => 'plus',
-            'title'             => $this->translate('Create a new user')
+            'icon'              => 'plus'
         )
     ) ?>
 <?php endif ?>
-    <table class="action-table listing-table" data-base-target="_next">
+
+<?php if (! $users->hasResult()): ?>
+    <p><?= $this->translate('No users found matching the filter') ?></p>
+</div>
+<?php return; endif ?>
+
+    <table data-base-target="_next" class="action-table listing-table">
     <thead>
         <tr>
             <th><?= $this->translate('Username') ?></th>

@@ -44,41 +44,15 @@ class MacroTest extends BaseTestCase
         $this->assertEquals(Macro::resolveMacros('$service.description$', $svcMock), $svcMock->service_description);
     }
 
-    public function testCustomvars()
-    {
-        $objectMock = Mockery::mock('object');
-        $objectMock->customvars = array(
-            'customvar' => 'test'
-        );
-
-        $this->assertEquals(Macro::resolveMacros('$CUSTOMVAR$', $objectMock), $objectMock->customvars['customvar']);
-    }
-
     public function testFaultyMacros()
     {
         $hostMock = Mockery::mock('host');
         $hostMock->host_name = 'test';
-        $hostMock->customvars = array(
-            'host' => 'te',
-            'name' => 'st'
-        );
+        $hostMock->host = 'te';
 
         $this->assertEquals(
-            Macro::resolveMacros('$$HOSTNAME$ $ HOSTNAME$ $HOST$NAME$', $hostMock),
-            '$test $ HOSTNAME$ teNAME$'
-        );
-    }
-
-    public function testMacrosWithSpecialCharacters()
-    {
-        $objectMock = Mockery::mock('object');
-        $objectMock->customvars = array(
-            'v€ry_sp3c|@l' => 'not too special!'
-        );
-
-        $this->assertEquals(
-            Macro::resolveMacros('$V€RY_SP3C|@L$', $objectMock),
-            $objectMock->customvars['v€ry_sp3c|@l']
+            '$test $ HOSTNAME$ teNAME$',
+            Macro::resolveMacros('$$HOSTNAME$ $ HOSTNAME$ $host$NAME$', $hostMock)
         );
     }
 }
