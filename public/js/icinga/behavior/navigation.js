@@ -57,7 +57,7 @@
 
             // initialise the menu selected by the backend as active.
             var $menus = $('#menu li.active', e.target);
-            if ($menus.size()) {
+            if ($menus.length) {
                 $menus.each(function () {
                     _this.setActive($(this));
                 });
@@ -207,7 +207,7 @@
 
             // unfold the containing menu
             var $outerMenu = $selectedMenu.parent().closest('li');
-            if ($outerMenu.size()) {
+            if ($outerMenu.length) {
                 $outerMenu.addClass('active');
             }
         } else if ($input.length) {
