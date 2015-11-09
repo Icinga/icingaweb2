@@ -7,13 +7,14 @@ use Exception;
 use ArrayIterator;
 use Icinga\Application\Config;
 use Icinga\Application\Logger;
-use Icinga\Application\Platform;
 use Icinga\Data\ConfigObject;
 use Icinga\Data\Inspectable;
 use Icinga\Data\Inspection;
 use Icinga\Data\Selectable;
 use Icinga\Data\Sortable;
-use Icinga\Exception\InspectionException;
+use Icinga\Data\Filter\Filter;
+use Icinga\Data\Filter\FilterChain;
+use Icinga\Data\Filter\FilterExpression;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Protocol\Ldap\LdapException;
 
@@ -1182,6 +1183,93 @@ class LdapConnection implements Selectable, Inspectable
         }
 
         return $dir;
+    }
+
+    /**
+     * Render and return a valid LDAP filter representation of the given filter
+     *
+     * @param   Filter  $filter
+     * @param   int     $level
+     *
+     * @return  string
+     */
+    public function renderFilter(Filter $filter, $level = 0)
+    {
+        if ($filter->isExpression()) {
+            /** @var $filter FilterExpression */
+            return $this->renderFilterExpression($filter);
+        }
+
+        /** @var $filter FilterChain */
+        $parts = array();
+        foreach ($filter->filters() as $filterPart) {
+            $part = $this->renderFilter($filterPart, $level + 1);
+            if ($part) {
+                $parts[] = $part;
+            }
+        }
+
+        if (empty($parts)) {
+            return '';
+        }
+
+        $format = '%1$s(%2$s)';
+        if (count($parts) === 1) {
+            $format = '%2$s';
+        }
+        if ($level === 0) {
+            $format = '(' . $format . ')';
+        }
+
+        return sprintf($format, $filter->getOperatorSymbol(), implode(')(', $parts));
+    }
+
+    /**
+     * Render and return a valid LDAP filter expression of the given filter
+     *
+     * @param   FilterExpression    $filter
+     *
+     * @return  string
+     */
+    protected function renderFilterExpression(FilterExpression $filter)
+    {
+        $column = $filter->getColumn();
+        $sign = $filter->getSign();
+        $expression = $filter->getExpression();
+        $format = '%1$s%2$s%3$s';
+
+        if ($expression === null || $expression === true) {
+            $expression = '*';
+        } elseif (is_array($expression)) {
+            $seqFormat = '|(%s)';
+            if ($sign === '!=') {
+                $seqFormat = '!(' . $seqFormat . ')';
+                $sign = '=';
+            }
+
+            $seqParts = array();
+            foreach ($expression as $expressionValue) {
+                $seqParts[] = sprintf(
+                    $format,
+                    LdapUtils::quoteForSearch($column),
+                    $sign,
+                    LdapUtils::quoteForSearch($expressionValue, true)
+                );
+            }
+
+            return sprintf($seqFormat, implode(')(', $seqParts));
+        }
+
+        if ($sign === '!=') {
+            $format = '!(%1$s=%3$s)';
+        }
+
+        return sprintf(
+            $format,
+            LdapUtils::quoteForSearch($column),
+            $sign,
+            LdapUtils::quoteForSearch($expression, true)
+        );
     }
 
     /**
