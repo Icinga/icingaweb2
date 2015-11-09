@@ -9,6 +9,7 @@ use Icinga\Application\Logger;
 use Icinga\Data\ConfigObject;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\ProgrammingError;
+use Icinga\Protocol\Ldap\LdapException;
 use Icinga\Repository\LdapRepository;
 use Icinga\Repository\RepositoryQuery;
 use Icinga\User;
@@ -467,24 +468,28 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
      */
     protected function persistUserName($name)
     {
-        $userDn = $this->ds
-            ->select()
-            ->from($this->userClass, array())
-            ->where($this->userNameAttribute, $name)
-            ->setUsePagedResults(false)
-            ->fetchDn();
-        if ($userDn) {
-            return $userDn;
-        }
+        try {
+            $userDn = $this->ds
+                ->select()
+                ->from($this->userClass, array())
+                ->where($this->userNameAttribute, $name)
+                ->setUsePagedResults(false)
+                ->fetchDn();
+            if ($userDn) {
+                return $userDn;
+            }
 
-        $groupDn = $this->ds
-            ->select()
-            ->from($this->groupClass, array())
-            ->where($this->groupNameAttribute, $name)
-            ->setUsePagedResults(false)
-            ->fetchDn();
-        if ($groupDn) {
-            return $groupDn;
+            $groupDn = $this->ds
+                ->select()
+                ->from($this->groupClass, array())
+                ->where($this->groupNameAttribute, $name)
+                ->setUsePagedResults(false)
+                ->fetchDn();
+            if ($groupDn) {
+                return $groupDn;
+            }
+        } catch (LdapException $_) {
+            // pass
         }
 
         Logger::debug('Unable to persist uid or gid "%s" in repository "%s". No DN found.', $name, $this->getName());
