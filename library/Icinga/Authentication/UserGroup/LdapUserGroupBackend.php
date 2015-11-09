@@ -9,7 +9,6 @@ use Icinga\Application\Logger;
 use Icinga\Data\ConfigObject;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\ProgrammingError;
-use Icinga\Protocol\Ldap\Expression;
 use Icinga\Repository\LdapRepository;
 use Icinga\Repository\RepositoryQuery;
 use Icinga\User;
@@ -368,11 +367,6 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
     {
         $query = parent::select($columns);
         $query->getQuery()->setBase($this->groupBaseDn);
-        if ($this->groupFilter) {
-            // TODO(jom): This should differentiate between groups and their memberships
-            $query->getQuery()->where(new Expression($this->groupFilter));
-        }
-
         return $query;
     }
 
@@ -529,7 +523,12 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
     public function requireTable($table, RepositoryQuery $query = null)
     {
         $table = parent::requireTable($table, $query);
-        if ($table === 'group' || $table === 'group_membership') {
+        if ($table === 'group') {
+            $table = $this->groupClass;
+            if ($query !== null && $this->groupFilter) {
+                $query->getQuery()->setNativeFilter($this->groupFilter);
+            }
+        } elseif ($table === 'group_memership') {
             $table = $this->groupClass;
         }
 
@@ -576,7 +575,7 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
                 ->setBase($this->userBaseDn)
                 ->setUsePagedResults(false);
             if ($this->userFilter) {
-                $userQuery->where(new Expression($this->userFilter));
+                $userQuery->setNativeFilter($this->userFilter);
             }
 
             if (($queryValue = $userQuery->fetchDn()) === null) {
@@ -590,7 +589,7 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
             ->where($this->groupMemberAttribute, $queryValue)
             ->setBase($this->groupBaseDn);
         if ($this->groupFilter) {
-            $groupQuery->where(new Expression($this->groupFilter));
+            $groupQuery->setNativeFilter($this->groupFilter);
         }
 
         $groups = array();

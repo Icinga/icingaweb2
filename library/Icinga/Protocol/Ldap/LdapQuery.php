@@ -43,6 +43,13 @@ class LdapQuery extends SimpleQuery
     protected $unfoldAttribute;
 
     /**
+     * This query's native LDAP filter
+     *
+     * @var string
+     */
+    protected $nativeFilter;
+
+    /**
      * Initialize this query
      */
     protected function init()
@@ -121,6 +128,29 @@ class LdapQuery extends SimpleQuery
     }
 
     /**
+     * Set this query's native LDAP filter
+     *
+     * @param   string  $filter
+     *
+     * @return  $this
+     */
+    public function setNativeFilter($filter)
+    {
+        $this->nativeFilter = $filter;
+        return $this;
+    }
+
+    /**
+     * Return this query's native LDAP filter
+     *
+     * @return  string
+     */
+    public function getNativeFilter()
+    {
+        return $this->nativeFilter;
+    }
+
+    /**
      * Choose an objectClass and the columns you are interested in
      *
      * {@inheritdoc} This creates an objectClass filter.
@@ -141,13 +171,7 @@ class LdapQuery extends SimpleQuery
      */
     public function where($condition, $value = null)
     {
-        // TODO: Adjust this once support for Icinga\Data\Filter is available
-        if ($condition instanceof Expression) {
-            $this->filters[] = $condition;
-        } else {
-            $this->filters[$condition] = $value;
-        }
-
+        $this->filters[$condition] = $value;
         return $this;
     }
 
@@ -239,22 +263,24 @@ class LdapQuery extends SimpleQuery
 
         $parts = array();
         foreach ($this->filters as $key => $value) {
-            if ($value instanceof Expression) {
-                $parts[] = (string) $value;
-            } else {
-                $parts[] = sprintf(
-                    '%s=%s',
-                    LdapUtils::quoteForSearch($key),
-                    LdapUtils::quoteForSearch($value, true)
-                );
-            }
+            $parts[] = sprintf(
+                '%s=%s',
+                LdapUtils::quoteForSearch($key),
+                LdapUtils::quoteForSearch($value, true)
+            );
         }
 
         if (count($parts) > 1) {
-            return '(&(' . implode(')(', $parts) . '))';
+            $filter = '(&(' . implode(')(', $parts) . '))';
         } else {
-            return '(' . $parts[0] . ')';
+            $filter = '(' . $parts[0] . ')';
         }
+
+        if ($this->nativeFilter) {
+            $filter = '(&(' . $this->nativeFilter . ')' . $filter . ')';
+        }
+
+        return $filter;
     }
 
     /**

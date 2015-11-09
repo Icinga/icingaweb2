@@ -12,7 +12,6 @@ use Icinga\Exception\ProgrammingError;
 use Icinga\Repository\LdapRepository;
 use Icinga\Repository\RepositoryQuery;
 use Icinga\Protocol\Ldap\LdapException;
-use Icinga\Protocol\Ldap\Expression;
 use Icinga\User;
 
 class LdapUserBackend extends LdapRepository implements UserBackendInterface, Inspectable
@@ -203,7 +202,7 @@ class LdapUserBackend extends LdapRepository implements UserBackendInterface, In
         $query = parent::select($columns);
         $query->getQuery()->setBase($this->baseDn);
         if ($this->filter) {
-            $query->getQuery()->where(new Expression($this->filter));
+            $query->getQuery()->setNativeFilter($this->filter);
         }
 
         return $query;
