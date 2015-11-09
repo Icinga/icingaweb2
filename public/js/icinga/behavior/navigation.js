@@ -42,21 +42,21 @@
     Navigation.prototype = new Icinga.EventListener();
 
     /**
-     * Apply the menu selection and hovering according to the current state
+     * Activate menu items if their class is set to active or if the current URL matches their link
      *
-     * @param evt   {Object}    The event context
+     * @param {Object} e Event
      */
-    Navigation.prototype.onRendered = function(evt) {
-        var _this = evt.data.self;
+    Navigation.prototype.onRendered = function(e) {
+        var _this = e.data.self;
 
-        this.element = evt.target;
+        this.element = e.target;
 
         if (! _this.active) {
             // There is no stored menu item, therefore it is assumed that this is the first rendering
             // of the navigation after the page has been opened.
 
             // initialise the menu selected by the backend as active.
-            var $menus = $('#menu li.active', evt.target);
+            var $menus = $('#menu li.active', e.target);
             if ($menus.size()) {
                 $menus.each(function () {
                     _this.setActive($(this));
