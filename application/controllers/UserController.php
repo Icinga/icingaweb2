@@ -99,7 +99,8 @@ class UserController extends AuthBackendController
         $this->setupFilterControl(
             $memberships,
             array('group_name' => t('User Group')),
-            array('group_name')
+            array('group'),
+            array('user')
         );
         $this->setupPaginationControl($memberships);
         $this->setupLimitControl();
@@ -259,6 +260,7 @@ class UserController extends AuthBackendController
                     $alreadySeen[$groupName] = null;
                     $groups[] = (object) array(
                         'group_name'    => $groupName,
+                        'group'         => $groupName,
                         'backend'       => $backend
                     );
                 }

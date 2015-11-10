@@ -25,7 +25,7 @@ Packager:       Icinga Team <info@icinga.org>
 %if 0%{?suse_version}
 %define wwwconfigdir    %{_sysconfdir}/apache2/conf.d
 %define wwwuser         wwwrun
-%define zend            php5-ZendFramework
+%define zend            %{name}-vendor-Zend
 %if 0%{?suse_version} == 1110
 %define php php53
 Requires: apache2-mod_php53
@@ -83,7 +83,6 @@ Requires:                   %{php}-gd %{php}-intl
 %{?rhel:Requires:           php-pecl-imagick}
 %{?suse_version:Requires:   %{php}-gettext %{php}-json %{php}-openssl %{php}-posix}
 Requires:                   %{zend}
-Obsoletes:                  %{name}-vendor-zend
 Requires:                   %{zend}-Db-Adapter-Pdo-Mysql
 Requires:                   %{zend}-Db-Adapter-Pdo-Pgsql
 

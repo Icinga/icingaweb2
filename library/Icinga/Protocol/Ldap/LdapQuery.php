@@ -4,23 +4,12 @@
 namespace Icinga\Protocol\Ldap;
 
 use Icinga\Data\SimpleQuery;
-use Icinga\Data\Filter\Filter;
-use Icinga\Exception\NotImplementedError;
 
 /**
  * LDAP query class
  */
 class LdapQuery extends SimpleQuery
 {
-    /**
-     * This query's filters
-     *
-     * Currently just a basic key/value pair based array. Can be removed once Icinga\Data\Filter is supported.
-     *
-     * @var array
-     */
-    protected $filters;
-
     /**
      * The base dn being used for this query
      *
@@ -43,11 +32,17 @@ class LdapQuery extends SimpleQuery
     protected $unfoldAttribute;
 
     /**
+     * This query's native LDAP filter
+     *
+     * @var string
+     */
+    protected $nativeFilter;
+
+    /**
      * Initialize this query
      */
     protected function init()
     {
-        $this->filters = array();
         $this->usePagedResults = false;
     }
 
@@ -121,57 +116,37 @@ class LdapQuery extends SimpleQuery
     }
 
     /**
+     * Set this query's native LDAP filter
+     *
+     * @param   string  $filter
+     *
+     * @return  $this
+     */
+    public function setNativeFilter($filter)
+    {
+        $this->nativeFilter = $filter;
+        return $this;
+    }
+
+    /**
+     * Return this query's native LDAP filter
+     *
+     * @return  string
+     */
+    public function getNativeFilter()
+    {
+        return $this->nativeFilter;
+    }
+
+    /**
      * Choose an objectClass and the columns you are interested in
      *
      * {@inheritdoc} This creates an objectClass filter.
      */
     public function from($target, array $fields = null)
     {
-        $this->filters['objectClass'] = $target;
+        $this->where('objectClass', $target);
         return parent::from($target, $fields);
-    }
-
-    /**
-     * Add a new filter to the query
-     *
-     * @param   string      $condition  Column to search in
-     * @param   mixed       $value      Value to look for (asterisk wildcards are allowed)
-     *
-     * @return  $this
-     */
-    public function where($condition, $value = null)
-    {
-        // TODO: Adjust this once support for Icinga\Data\Filter is available
-        if ($condition instanceof Expression) {
-            $this->filters[] = $condition;
-        } else {
-            $this->filters[$condition] = $value;
-        }
-
-        return $this;
-    }
-
-    public function getFilter()
-    {
-        throw new NotImplementedError('Support for Icinga\Data\Filter is still missing. Use $this->where() instead');
-    }
-
-    public function addFilter(Filter $filter)
-    {
-        // TODO: This should be considered a quick fix only.
-        //       Drop this entirely once support for Icinga\Data\Filter is available
-        if ($filter->isExpression()) {
-            $this->where($filter->getColumn(), $filter->getExpression());
-        } elseif ($filter->isChain()) {
-            foreach ($filter->filters() as $chainOrExpression) {
-                $this->addFilter($chainOrExpression);
-            }
-        }
-    }
-
-    public function setFilter(Filter $filter)
-    {
-        throw new NotImplementedError('Support for Icinga\Data\Filter is still missing. Use $this->where() instead');
     }
 
     /**
@@ -225,36 +200,18 @@ class LdapQuery extends SimpleQuery
     }
 
     /**
-     * Return the LDAP filter to be applied on this query
+     * Render and return this query's filter
      *
      * @return  string
-     *
-     * @throws  LdapException   In case the objectClass filter does not exist
      */
-    protected function renderFilter()
+    public function renderFilter()
     {
-        if (! isset($this->filters['objectClass'])) {
-            throw new LdapException('Object class is mandatory');
+        $filter = $this->ds->renderFilter($this->filter);
+        if ($this->nativeFilter) {
+            $filter = '(&(' . $this->nativeFilter . ')' . $filter . ')';
         }
 
-        $parts = array();
-        foreach ($this->filters as $key => $value) {
-            if ($value instanceof Expression) {
-                $parts[] = (string) $value;
-            } else {
-                $parts[] = sprintf(
-                    '%s=%s',
-                    LdapUtils::quoteForSearch($key),
-                    LdapUtils::quoteForSearch($value, true)
-                );
-            }
-        }
-
-        if (count($parts) > 1) {
-            return '(&(' . implode(')(', $parts) . '))';
-        } else {
-            return '(' . $parts[0] . ')';
-        }
+        return $filter;
     }
 
     /**
