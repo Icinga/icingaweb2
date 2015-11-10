@@ -58,7 +58,7 @@
             // initialise the menu selected by the backend as active.
             var $menus = $('#menu li.active', e.target);
             if ($menus.length) {
-                $menus.each(function () {
+                $menus.each(function() {
                     _this.setActive($(this));
                 });
             } else {
