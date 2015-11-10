@@ -97,7 +97,7 @@ class GroupController extends AuthBackendController
             ->from('group_membership', array('user_name'))
             ->where('group_name', $groupName);
 
-        $this->setupFilterControl($members, null, array('user'));
+        $this->setupFilterControl($members, null, array('user'), array('group'));
         $this->setupPaginationControl($members);
         $this->setupLimitControl();
         $this->setupSortControl(
