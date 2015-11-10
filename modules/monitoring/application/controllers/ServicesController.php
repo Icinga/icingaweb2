@@ -39,13 +39,12 @@ class ServicesController extends Controller
         $this->getTabs()->add(
             'show',
             array(
+                'label' => $this->translate('Services') . sprintf(' (%d)', count($this->serviceList)),
                 'title' => sprintf(
                     $this->translate('Show summarized information for %u services'),
                     count($this->serviceList)
                 ),
-                'label' => $this->translate('Services') . sprintf(' (%d)', count($this->serviceList)),
-                'url'   => Url::fromRequest(),
-                'icon'  => 'services'
+                'url'   => Url::fromRequest()
             )
         )->extend(new DashboardAction())->extend(new MenuAction())->activate('show');
     }
