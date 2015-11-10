@@ -55,6 +55,7 @@ class ServicesController extends Controller
             'host_display_name',
             'host_name',
             'host_problem',
+            'host_state',
             'service_acknowledged',
             'service_active_checks_enabled',
             'service_description',
@@ -65,6 +66,7 @@ class ServicesController extends Controller
             'service_last_state_change',
             'service_notifications_enabled',
             'service_passive_checks_enabled',
+            'service_problem',
             'service_state'
         ));
 
