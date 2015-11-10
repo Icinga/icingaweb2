@@ -52,21 +52,18 @@ class HostsController extends Controller
     protected function handleCommandForm(ObjectsCommandForm $form)
     {
         $this->hostList->setColumns(array(
-            'host_icon_image',
-            'host_icon_image_alt',
-            'host_name',
-            'host_address',
-            'host_address6',
-            'host_state',
-            'host_problem',
-            'host_handled',
             'host_acknowledged',
+            'host_active_checks_enabled',
+            'host_display_name',
+            'host_handled',
             'host_in_downtime',
             'host_is_flapping',
-            'host_output',
+            'host_last_state_change',
+            'host_name',
             'host_notifications_enabled',
-            'host_active_checks_enabled',
-            'host_passive_checks_enabled'
+            'host_passive_checks_enabled',
+            'host_problem',
+            'host_state'
         ));
 
         $form
@@ -90,24 +87,18 @@ class HostsController extends Controller
             ->handleRequest();
         $this->view->checkNowForm = $checkNowForm;
         $this->hostList->setColumns(array(
-            'host_icon_image',
-            'host_icon_image_alt',
-            'host_name',
-            'host_address',
-            'host_address6',
-            'host_state',
-            'host_problem',
-            'host_handled',
             'host_acknowledged',
+            'host_active_checks_enabled',
+            'host_display_name',
+            'host_handled',
             'host_in_downtime',
             'host_is_flapping',
-            'host_output',
+            'host_last_state_change',
+            'host_name',
             'host_notifications_enabled',
-            'host_active_checks_enabled',
-            'host_passive_checks_enabled'
-            /*'host_event_handler_enabled',
-            'host_flap_detection_enabled',
-            'host_obsessing'*/
+            'host_passive_checks_enabled',
+            'host_problem',
+            'host_state'
         ));
 
         $acknowledgedObjects = $this->hostList->getAcknowledgedObjects();
