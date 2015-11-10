@@ -41,6 +41,8 @@
 @font-size-small: 0.833em; // 10px
 @font-weight-bold: 600;
 
+@table-column-padding: 0.333em; // 4px
+
 @vertical-padding: 0.5em; // 6px
 @horizontal-padding: 1em; // 12px
 
@@ -118,7 +120,7 @@ pre {
 }
 
 td, th {
-  padding: 0.333em; // 4px
+  padding: @table-column-padding;
 }
 
 [class^="icon-"], [class*=" icon-"] {
