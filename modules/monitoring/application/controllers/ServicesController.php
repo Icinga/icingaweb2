@@ -53,28 +53,20 @@ class ServicesController extends Controller
     protected function handleCommandForm(ObjectsCommandForm $form)
     {
         $this->serviceList->setColumns(array(
-            'host_icon_image',
-            'host_icon_image_alt',
+            'host_display_name',
             'host_name',
-            'host_address',
-            'host_address6',
-            'host_output',
-            'host_state',
             'host_problem',
-            'host_handled',
-            'service_icon_image',
-            'service_icon_image_alt',
-            'service_description',
-            'service_state',
-            'service_problem',
-            'service_handled',
             'service_acknowledged',
+            'service_active_checks_enabled',
+            'service_description',
+            'service_display_name',
+            'service_handled',
             'service_in_downtime',
             'service_is_flapping',
-            'service_output',
+            'service_last_state_change',
             'service_notifications_enabled',
-            'service_active_checks_enabled',
-            'service_passive_checks_enabled'
+            'service_passive_checks_enabled',
+            'service_state'
         ));
 
         $form
@@ -99,32 +91,22 @@ class ServicesController extends Controller
             ->handleRequest();
         $this->view->checkNowForm = $checkNowForm;
         $this->serviceList->setColumns(array(
-            'host_icon_image',
-            'host_icon_image_alt',
+            'host_display_name',
             'host_name',
-            'host_address',
-            'host_address6',
-            'host_output',
-            'host_state',
             'host_problem',
-            'host_handled',
-            'service_icon_image',
-            'service_icon_image_alt',
-            'service_output',
-            'service_description',
-            'service_state',
-            'service_problem',
-            'service_handled',
+            'host_state',
             'service_acknowledged',
+            'service_active_checks_enabled',
+            'service_description',
+            'service_display_name',
+            'service_handled',
             'service_in_downtime',
             'service_is_flapping',
+            'service_last_state_change',
             'service_notifications_enabled',
-            'service_active_checks_enabled',
-            'service_passive_checks_enabled'
-            /*
-            'service_event_handler_enabled',
-            'service_flap_detection_enabled',
-            'service_obsessing'*/
+            'service_passive_checks_enabled',
+            'service_problem',
+            'service_state'
         ));
 
         $acknowledgedObjects = $this->serviceList->getAcknowledgedObjects();
