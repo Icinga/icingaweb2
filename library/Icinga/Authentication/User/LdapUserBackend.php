@@ -12,7 +12,6 @@ use Icinga\Exception\ProgrammingError;
 use Icinga\Repository\LdapRepository;
 use Icinga\Repository\RepositoryQuery;
 use Icinga\Protocol\Ldap\LdapException;
-use Icinga\Protocol\Ldap\Expression;
 use Icinga\User;
 
 class LdapUserBackend extends LdapRepository implements UserBackendInterface, Inspectable
@@ -203,10 +202,28 @@ class LdapUserBackend extends LdapRepository implements UserBackendInterface, In
         $query = parent::select($columns);
         $query->getQuery()->setBase($this->baseDn);
         if ($this->filter) {
-            $query->getQuery()->where(new Expression($this->filter));
+            $query->getQuery()->setNativeFilter($this->filter);
         }
 
         return $query;
+    }
+
+    /**
+     * Initialize this repository's virtual tables
+     *
+     * @return  array
+     *
+     * @throws  ProgrammingError    In case $this->userClass has not been set yet
+     */
+    protected function initializeVirtualTables()
+    {
+        if ($this->userClass === null) {
+            throw new ProgrammingError('It is required to set the object class where to find users first');
+        }
+
+        return array(
+            'user' => $this->userClass
+        );
     }
 
     /**
@@ -316,29 +333,6 @@ class LdapUserBackend extends LdapRepository implements UserBackendInterface, In
         $bigBang = clone $now;
         $bigBang->setTimestamp(0);
         return ((int) $value) >= $bigBang->diff($now)->days;
-    }
-
-    /**
-     * Validate that the requested table exists
-     *
-     * This will return $this->userClass in case $table equals "user".
-     *
-     * @param   string              $table      The table to validate
-     * @param   RepositoryQuery     $query      An optional query to pass as context
-     *                                          (unused by the base implementation)
-     *
-     * @return  string
-     *
-     * @throws  ProgrammingError                In case the given table does not exist
-     */
-    public function requireTable($table, RepositoryQuery $query = null)
-    {
-        $table = parent::requireTable($table, $query);
-        if ($table === 'user') {
-            $table = $this->userClass;
-        }
-
-        return $table;
     }
 
     /**
