@@ -731,12 +731,7 @@ class LdapConnection implements Selectable, Inspectable
         $unfoldAttribute = $query->getUnfoldAttribute();
         do {
             if ($unfoldAttribute) {
-                $rows = $this->cleanupAttributes(
-                    ldap_get_attributes($ds, $entry),
-                    array_flip($fields),
-                    $unfoldAttribute
-                );
-
+                $rows = $this->cleanupAttributes(ldap_get_attributes($ds, $entry), $fields, $unfoldAttribute);
                 if (is_array($rows)) {
                     // TODO: Register the DN the same way as a section name in the ArrayDatasource!
                     foreach ($rows as $row) {
@@ -760,7 +755,7 @@ class LdapConnection implements Selectable, Inspectable
                 if (! $serverSorting || $offset === 0 || $offset < $count) {
                     $entries[ldap_get_dn($ds, $entry)] = $this->cleanupAttributes(
                         ldap_get_attributes($ds, $entry),
-                        array_flip($fields)
+                        $fields
                     );
                 }
             }
@@ -874,12 +869,7 @@ class LdapConnection implements Selectable, Inspectable
             $entry = ldap_first_entry($ds, $results);
             do {
                 if ($unfoldAttribute) {
-                    $rows = $this->cleanupAttributes(
-                        ldap_get_attributes($ds, $entry),
-                        array_flip($fields),
-                        $unfoldAttribute
-                    );
-
+                    $rows = $this->cleanupAttributes(ldap_get_attributes($ds, $entry), $fields, $unfoldAttribute);
                     if (is_array($rows)) {
                         // TODO: Register the DN the same way as a section name in the ArrayDatasource!
                         foreach ($rows as $row) {
@@ -903,7 +893,7 @@ class LdapConnection implements Selectable, Inspectable
                     if (! $serverSorting || $offset === 0 || $offset < $count) {
                         $entries[ldap_get_dn($ds, $entry)] = $this->cleanupAttributes(
                             ldap_get_attributes($ds, $entry),
-                            array_flip($fields)
+                            $fields
                         );
                     }
                 }
@@ -965,8 +955,17 @@ class LdapConnection implements Selectable, Inspectable
         // necessary to create another array to map attributes case insensitively to their requested counterparts.
         // This does also apply the virtual alias handling. (Since an LDAP server does not handle such)
         $loweredFieldMap = array();
-        foreach ($requestedFields as $name => $alias) {
-            $loweredFieldMap[strtolower($name)] = is_string($alias) ? $alias : $name;
+        foreach ($requestedFields as $alias => $name) {
+            $loweredName = strtolower($name);
+            if (isset($loweredFieldMap[$loweredName])) {
+                if (! is_array($loweredFieldMap[$loweredName])) {
+                    $loweredFieldMap[$loweredName] = array($loweredFieldMap[$loweredName]);
+                }
+
+                $loweredFieldMap[$loweredName][] = is_string($alias) ? $alias : $name;
+            } else {
+                $loweredFieldMap[$loweredName] = is_string($alias) ? $alias : $name;
+            }
         }
 
         $cleanedAttributes = array();
@@ -984,12 +983,18 @@ class LdapConnection implements Selectable, Inspectable
             $requestedAttributeName = isset($loweredFieldMap[strtolower($attribute_name)])
                 ? $loweredFieldMap[strtolower($attribute_name)]
                 : $attribute_name;
-            $cleanedAttributes[$requestedAttributeName] = $attribute_value;
+            if (is_array($requestedAttributeName)) {
+                foreach ($requestedAttributeName as $requestedName) {
+                    $cleanedAttributes[$requestedName] = $attribute_value;
+                }
+            } else {
+                $cleanedAttributes[$requestedAttributeName] = $attribute_value;
+            }
         }
 
         // The result may not contain all requested fields, so populate the cleaned
         // result with the missing fields and their value being set to null
-        foreach ($requestedFields as $name => $alias) {
+        foreach ($requestedFields as $alias => $name) {
             if (! is_string($alias)) {
                 $alias = $name;
             }

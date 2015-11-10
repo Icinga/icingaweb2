@@ -308,12 +308,8 @@ class LdapCapabilities
                 ldap_error($ds)
             );
         }
-        $cap = new LdapCapabilities(
-            $connection->cleanupAttributes(
-                ldap_get_attributes($ds, $entry),
-                array_flip($fields)
-            )
-        );
+
+        $cap = new LdapCapabilities($connection->cleanupAttributes(ldap_get_attributes($ds, $entry), $fields));
         return $cap;
     }
 
