@@ -1,5 +1,8 @@
 /*! Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
+// Width for the name column--th--of name-value-table
+@name-value-table-name-width = 14em;
+
 .action-link {
   color: @icinga-blue;
 }
@@ -183,7 +186,7 @@ a:hover > .icon-cancel {
   padding-left: 0;
   text-align: left;
   vertical-align: top;
-  width: 14em;
+  width: @name-value-table-name-width;
 }
 
 // TODO(el): Fix
