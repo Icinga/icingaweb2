@@ -372,6 +372,25 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
     }
 
     /**
+     * Initialize this repository's virtual tables
+     *
+     * @return  array
+     *
+     * @throws  ProgrammingError    In case $this->groupClass has not been set yet
+     */
+    protected function initializeVirtualTables()
+    {
+        if ($this->groupClass === null) {
+            throw new ProgrammingError('It is required to set the object class where to find groups first');
+        }
+
+        return array(
+            'group'             => $this->groupClass,
+            'group_membership'  => $this->groupClass
+        );
+    }
+
+    /**
      * Initialize this repository's query columns
      *
      * @return  array
@@ -515,11 +534,8 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
     /**
      * Validate that the requested table exists
      *
-     * This will return $this->groupClass in case $table equals "group" or "group_membership".
-     *
      * @param   string              $table      The table to validate
      * @param   RepositoryQuery     $query      An optional query to pass as context
-     *                                          (unused by the base implementation)
      *
      * @return  string
      *
@@ -527,17 +543,11 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
      */
     public function requireTable($table, RepositoryQuery $query = null)
     {
-        $table = parent::requireTable($table, $query);
-        if ($table === 'group') {
-            $table = $this->groupClass;
-            if ($query !== null && $this->groupFilter) {
-                $query->getQuery()->setNativeFilter($this->groupFilter);
-            }
-        } elseif ($table === 'group_membership') {
-            $table = $this->groupClass;
+        if ($query !== null && $table === 'group' && $this->groupFilter) {
+            $query->getQuery()->setNativeFilter($this->groupFilter);
         }
 
-        return $table;
+        return parent::requireTable($table, $query);
     }
 
     /**
