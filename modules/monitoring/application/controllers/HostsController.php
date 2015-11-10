@@ -37,13 +37,12 @@ class HostsController extends Controller
         $this->getTabs()->add(
             'show',
             array(
+                'label' => $this->translate('Hosts') . sprintf(' (%d)', count($this->hostList)),
                 'title' => sprintf(
                     $this->translate('Show summarized information for %u hosts'),
                     count($this->hostList)
                 ),
-                'label' => $this->translate('Hosts') . sprintf(' (%d)', count($this->hostList)),
-                'url'   => Url::fromRequest(),
-                'icon'  => 'host'
+                'url'   => Url::fromRequest()
             )
         )->extend(new DashboardAction())->extend(new MenuAction())->activate('show');
         $this->view->listAllLink = Url::fromRequest()->setPath('monitoring/list/hosts');
