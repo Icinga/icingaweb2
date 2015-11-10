@@ -695,7 +695,7 @@ class LdapConnection implements Selectable, Inspectable
                 ));
             } else {
                 foreach ($query->getOrder() as $rule) {
-                    if (! in_array($rule[0], $fields)) {
+                    if (! in_array($rule[0], $fields, true)) {
                         $fields[] = $rule[0];
                     }
                 }
@@ -812,7 +812,7 @@ class LdapConnection implements Selectable, Inspectable
         $serverSorting = false;//$this->getCapabilities()->hasOid(LdapCapabilities::LDAP_SERVER_SORT_OID);
         if (! $serverSorting && $query->hasOrder()) {
             foreach ($query->getOrder() as $rule) {
-                if (! in_array($rule[0], $fields)) {
+                if (! in_array($rule[0], $fields, true)) {
                     $fields[] = $rule[0];
                 }
             }
@@ -858,7 +858,8 @@ class LdapConnection implements Selectable, Inspectable
             } elseif (ldap_count_entries($ds, $results) === 0) {
                 if (in_array(
                     ldap_errno($ds),
-                    array(static::LDAP_SIZELIMIT_EXCEEDED, static::LDAP_ADMINLIMIT_EXCEEDED)
+                    array(static::LDAP_SIZELIMIT_EXCEEDED, static::LDAP_ADMINLIMIT_EXCEEDED),
+                    true
                 )) {
                     Logger::warning(
                         'Unable to request more than %u results. Does the server allow paged search requests? (%s)',
