@@ -14,7 +14,7 @@
 }
 
 .icon-col {
-  width: 28px;
+  width: 1em;
 }
 
 .icon-strikethrough {
@@ -79,24 +79,21 @@ a:hover > .icon-cancel {
 // List styles
 
 .comment-list {
-  > .comment-header {
+  margin: 0;
+
+  .comment-header {
     border-bottom: 1px solid @gray-lighter;
-    margin-top: @vertical-padding;
 
     &:hover {
       background-color: @gray-lightest;
 
       > .comment-meta > .meta-icons > .remove-action {
-        display: block;
+        visibility: visible;
       }
     }
 
-    &:first-child {
-      margin-top: 0;
-    }
-
     > .comment-meta > .meta-icons > .remove-action {
-      display: none;
+      visibility: hidden;
     }
   }
 }
@@ -108,7 +105,6 @@ a:hover > .icon-cancel {
 .comment-meta {
   color: @text-color-light;
   font-size: @font-size-small;
-  vertical-align: middle;
 
   > .meta-icons {
     float: right;
@@ -119,7 +115,6 @@ a:hover > .icon-cancel {
 .comment-text {
   // Reset margin
   margin: 0;
-  margin-top: @vertical-padding / 2;
 }
 
 .name-value-list {
@@ -142,7 +137,6 @@ a:hover > .icon-cancel {
   td, th {
     padding-top: 0.667em;
     padding-bottom: 0.667em;
-    vertical-align: middle;
   }
 
   th {
