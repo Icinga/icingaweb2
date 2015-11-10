@@ -600,7 +600,7 @@ abstract class IdoQuery extends DbQuery
         }
 
         if (! empty($this->columnsWithoutCollation)) {
-            return in_array($column, $this->columnsWithoutCollation) || strpos($column, 'LOWER') !== 0;
+            return in_array($column, $this->columnsWithoutCollation) || strpos($column, 'LOWER') === 0;
         }
 
         return preg_match('/ COLLATE .+$/', $column) === 1;
