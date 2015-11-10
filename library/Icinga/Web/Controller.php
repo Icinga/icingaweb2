@@ -203,6 +203,7 @@ class Controller extends ModuleActionController
             'sort', // setupSortControl()
             'dir', // setupSortControl()
             'backend', // Framework
+            'view', // Framework
             '_dev' // Framework
         );
 
