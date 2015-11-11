@@ -73,6 +73,13 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
     protected $groupMemberAttribute;
 
     /**
+     * Whether the attribute name where to find a group's member holds ambiguous values
+     *
+     * @var bool
+     */
+    protected $ambiguousMemberAttribute;
+
+    /**
      * The custom LDAP filter to apply on a user query
      *
      * @var string
@@ -358,17 +365,36 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
     }
 
     /**
-     * Return a new query for the given columns
+     * Return whether the attribute name where to find a group's member holds ambiguous values
      *
-     * @param   array   $columns    The desired columns, if null all columns will be queried
+     * @return  bool
      *
-     * @return  RepositoryQuery
+     * @throws  ProgrammingError    In case either $this->groupClass or $this->groupMemberAttribute
+     *                              has not been set yet
      */
-    public function select(array $columns = null)
+    protected function isMemberAttributeAmbiguous()
     {
-        $query = parent::select($columns);
-        $query->getQuery()->setBase($this->groupBaseDn);
-        return $query;
+        if ($this->ambiguousMemberAttribute === null) {
+            if ($this->groupClass === null) {
+                throw new ProgrammingError(
+                    'It is required to set the objectClass where to look for groups first'
+                );
+            } elseif ($this->groupMemberAttribute === null) {
+                throw new ProgrammingError(
+                    'It is required to set a attribute name where to find a group\'s members first'
+                );
+            }
+
+            $sampleValue = $this->ds
+                ->select()
+                ->from($this->groupClass, array($this->groupMemberAttribute))
+                ->setUnfoldAttribute($this->groupMemberAttribute)
+                ->setBase($this->groupBaseDn)
+                ->fetchOne();
+            $this->ambiguousMemberAttribute = !$this->isRelatedDn($sampleValue);
+        }
+
+        return $this->ambiguousMemberAttribute;
     }
 
     /**
@@ -445,19 +471,9 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
      * Initialize this repository's conversion rules
      *
      * @return  array
-     *
-     * @throws  ProgrammingError    In case either $this->groupClass or $this->groupMemberAttribute
-     *                              has not been set yet
      */
     protected function initializeConversionRules()
     {
-        if ($this->groupClass === null) {
-            throw new ProgrammingError('It is required to set the objectClass where to look for groups first');
-        }
-        if ($this->groupMemberAttribute === null) {
-            throw new ProgrammingError('It is required to set a attribute name where to find a group\'s members first');
-        }
-
         $rules = array(
             'group' => array(
                 'created_at'    => 'generalized_time',
@@ -468,7 +484,7 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
                 'last_modified' => 'generalized_time'
             )
         );
-        if (! $this->isAmbiguous($this->groupClass, $this->groupMemberAttribute)) {
+        if (! $this->isMemberAttributeAmbiguous()) {
             $rules['group_membership']['user_name'] = 'user_name';
             $rules['group_membership']['user'] = 'user_name';
             $rules['group']['user_name'] = 'user_name';
@@ -492,6 +508,7 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
                 ->select()
                 ->from($this->userClass, array())
                 ->where($this->userNameAttribute, $name)
+                ->setBase($this->userBaseDn)
                 ->setUsePagedResults(false)
                 ->fetchDn();
             if ($userDn) {
@@ -502,6 +519,7 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
                 ->select()
                 ->from($this->groupClass, array())
                 ->where($this->groupNameAttribute, $name)
+                ->setBase($this->groupBaseDn)
                 ->setUsePagedResults(false)
                 ->fetchDn();
             if ($groupDn) {
@@ -543,8 +561,11 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
      */
     public function requireTable($table, RepositoryQuery $query = null)
     {
-        if ($query !== null && $table === 'group' && $this->groupFilter) {
-            $query->getQuery()->setNativeFilter($this->groupFilter);
+        if ($query !== null) {
+            $query->getQuery()->setBase($this->groupBaseDn);
+            if ($table === 'group' && $this->groupFilter) {
+                $query->getQuery()->setNativeFilter($this->groupFilter);
+            }
         }
 
         return parent::requireTable($table, $query);
@@ -580,7 +601,7 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
      */
     public function getMemberships(User $user)
     {
-        if ($this->isAmbiguous($this->groupClass, $this->groupMemberAttribute)) {
+        if ($this->isMemberAttributeAmbiguous()) {
             $queryValue = $user->getUsername();
         } elseif (($queryValue = $user->getAdditional('ldap_dn')) === null) {
             $userQuery = $this->ds

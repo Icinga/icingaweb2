@@ -137,6 +137,16 @@ class Logger
     }
 
     /**
+     * Return the logging level being used
+     *
+     * @return  int
+     */
+    public function getLevel()
+    {
+        return $this->level;
+    }
+
+    /**
      * Register the given message as config error
      *
      * Config errors are logged every time a log message is being logged.
