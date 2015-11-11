@@ -61,14 +61,14 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
                 $headers[$column] = $labels[$column];
             }
         }
-        $table = array('<td><b>' . implode('</b></td><td><b>', $headers) . '<b></td>');
+        $table = array('<thead><tr><th>' . implode('</th><th>', $headers) . '</th></tr></thead>');
         foreach ($pieChartData as $perfdata) {
             if ($compact && $perfdata->isVisualizable()) {
                 $results[] = $perfdata->asInlinePie($color)->render();
             } else {
                 $data = array();
                 if ($perfdata->isVisualizable()) {
-                    $data []= $perfdata->asInlinePie($color)->render() . '&nbsp;';
+                    $data []= $perfdata->asInlinePie($color)->render();
                 } elseif (isset($columns[''])) {
                     $data []= '';
                 }
@@ -85,7 +85,7 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
                         );
                     }
                 }
-                $table []= '<tr><td>' . implode('</td><td>', $data) . '</td></tr>';
+                $table []= '<tbody><tr><td class="sparkline-col">' . implode('</td><td>', $data) . '</td></tr></tbody>';
             }
         }
         if ($limit > 0) {
@@ -107,8 +107,7 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
                 return '';
             }
             return sprintf(
-                '<table class="perfdata %s">%s</table>',
-                isset($columns['']) ? 'perfdata-piecharts' : '',
+                '<table class="performance-data-table">%s</table>',
                 implode("\n", $table)
             );
         }
