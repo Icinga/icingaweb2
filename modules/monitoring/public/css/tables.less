@@ -45,6 +45,27 @@
   margin: 0;
 }
 
+// Table for performance data in detail views
+.performance-data-table {
+  width: 100%;
+
+  > thead > tr > th {
+    // Result base padding
+    padding-left: 0;
+    text-align: left;
+  }
+
+  > tbody > tr > td:first-child {
+    // Reset base padding
+    padding-left: 0;
+  }
+}
+
+// Performance data table column for sparkline pie charts in detail views
+.sparkline-col {
+  width: 2em;
+}
+
 // Service description if in the service detail view
 .service-meta {
   color: @text-color-light;
