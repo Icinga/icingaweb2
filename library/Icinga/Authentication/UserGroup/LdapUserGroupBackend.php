@@ -9,7 +9,7 @@ use Icinga\Application\Logger;
 use Icinga\Data\ConfigObject;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\ProgrammingError;
-use Icinga\Protocol\Ldap\Expression;
+use Icinga\Protocol\Ldap\LdapException;
 use Icinga\Repository\LdapRepository;
 use Icinga\Repository\RepositoryQuery;
 use Icinga\User;
@@ -408,12 +408,26 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
     {
         $query = parent::select($columns);
         $query->getQuery()->setBase($this->groupBaseDn);
-        if ($this->groupFilter) {
-            // TODO(jom): This should differentiate between groups and their memberships
-            $query->getQuery()->where(new Expression($this->groupFilter));
+        return $query;
+    }
+
+    /**
+     * Initialize this repository's virtual tables
+     *
+     * @return  array
+     *
+     * @throws  ProgrammingError    In case $this->groupClass has not been set yet
+     */
+    protected function initializeVirtualTables()
+    {
+        if ($this->groupClass === null) {
+            throw new ProgrammingError('It is required to set the object class where to find groups first');
         }
 
-        return $query;
+        return array(
+            'group'             => $this->groupClass,
+            'group_membership'  => $this->groupClass
+        );
     }
 
     /**
@@ -460,7 +474,7 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
     protected function initializeFilterColumns()
     {
         return array(
-            t('Username')       => 'user',
+            t('Username')       => 'user_name',
             t('User Group')     => 'group_name',
             t('Created At')     => 'created_at',
             t('Last Modified')  => 'last_modified'
@@ -503,26 +517,30 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
      */
     protected function persistUserName($name)
     {
-        $userDn = $this->ds
-            ->select()
-            ->from($this->userClass, array())
-            ->where($this->userNameAttribute, $name)
-            ->setBase($this->userBaseDn)
-            ->setUsePagedResults(false)
-            ->fetchDn();
-        if ($userDn) {
-            return $userDn;
-        }
+        try {
+            $userDn = $this->ds
+                ->select()
+                ->from($this->userClass, array())
+                ->where($this->userNameAttribute, $name)
+                ->setBase($this->userBaseDn)
+                ->setUsePagedResults(false)
+                ->fetchDn();
+            if ($userDn) {
+                return $userDn;
+            }
 
-        $groupDn = $this->ds
-            ->select()
-            ->from($this->groupClass, array())
-            ->where($this->groupNameAttribute, $name)
-            ->setBase($this->groupBaseDn)
-            ->setUsePagedResults(false)
-            ->fetchDn();
-        if ($groupDn) {
-            return $groupDn;
+            $groupDn = $this->ds
+                ->select()
+                ->from($this->groupClass, array())
+                ->where($this->groupNameAttribute, $name)
+                ->setBase($this->groupBaseDn)
+                ->setUsePagedResults(false)
+                ->fetchDn();
+            if ($groupDn) {
+                return $groupDn;
+            }
+        } catch (LdapException $_) {
+            // pass
         }
 
         Logger::debug('Unable to persist uid or gid "%s" in repository "%s". No DN found.', $name, $this->getName());
@@ -548,11 +566,8 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
     /**
      * Validate that the requested table exists
      *
-     * This will return $this->groupClass in case $table equals "group" or "group_membership".
-     *
      * @param   string              $table      The table to validate
      * @param   RepositoryQuery     $query      An optional query to pass as context
-     *                                          (unused by the base implementation)
      *
      * @return  string
      *
@@ -560,12 +575,11 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
      */
     public function requireTable($table, RepositoryQuery $query = null)
     {
-        $table = parent::requireTable($table, $query);
-        if ($table === 'group' || $table === 'group_membership') {
-            $table = $this->groupClass;
+        if ($query !== null && $table === 'group' && $this->groupFilter) {
+            $query->getQuery()->setNativeFilter($this->groupFilter);
         }
 
-        return $table;
+        return parent::requireTable($table, $query);
     }
 
     /**
@@ -608,7 +622,7 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
                 ->setBase($this->userBaseDn)
                 ->setUsePagedResults(false);
             if ($this->userFilter) {
-                $userQuery->where(new Expression($this->userFilter));
+                $userQuery->setNativeFilter($this->userFilter);
             }
 
             if (($queryValue = $userQuery->fetchDn()) === null) {
@@ -622,7 +636,7 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
             ->where($this->groupMemberAttribute, $queryValue)
             ->setBase($this->groupBaseDn);
         if ($this->groupFilter) {
-            $groupQuery->where(new Expression($this->groupFilter));
+            $groupQuery->setNativeFilter($this->groupFilter);
         }
 
         $groups = array();

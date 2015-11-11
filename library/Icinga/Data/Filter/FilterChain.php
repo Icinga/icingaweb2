@@ -125,17 +125,26 @@ abstract class FilterChain extends Filter
         return $this;
     }
 
-    public function listFilteredColumns()
+    /**
+     * List and return all column names referenced in this filter
+     *
+     * @param   array   $columns    The columns listed so far
+     *
+     * @return  array
+     */
+    public function listFilteredColumns(array $columns = array())
     {
-        $columns = array();
         foreach ($this->filters as $filter) {
             if ($filter instanceof FilterExpression) {
-                $columns[] = $filter->getColumn();
+                $column= $filter->getColumn();
+                if (! in_array($column, $columns, true)) {
+                    $columns[] = $column;
+                }
             } else {
-                $columns += $filter->listFilteredColumns();
+                $columns = $filter->listFilteredColumns($columns);
             }
         }
-        // array_unique?
+
         return $columns;
     }
 

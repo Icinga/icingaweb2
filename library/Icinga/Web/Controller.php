@@ -186,6 +186,7 @@ class Controller extends ModuleActionController
      * @param   Filterable  $filterable         The filterable to create a filter editor for
      * @param   array       $filterColumns      The filter columns to offer to the user
      * @param   array       $searchColumns      The search columns to utilize for quick searches
+     * @param   array       $preserveParams     The url parameters to preserve
      *
      * @return  $this
      *
@@ -194,25 +195,27 @@ class Controller extends ModuleActionController
     protected function setupFilterControl(
         Filterable $filterable,
         array $filterColumns = null,
-        array $searchColumns = null
+        array $searchColumns = null,
+        array $preserveParams = null
     ) {
-        $editor = Widget::create('filterEditor')
+        $defaultPreservedParams = array(
+            'limit', // setupPaginationControl()
+            'sort', // setupSortControl()
+            'dir', // setupSortControl()
+            'backend', // Framework
+            'view', // Framework
+            '_dev' // Framework
+        );
+
+        $editor = Widget::create('filterEditor');
+        call_user_func_array(
+            array($editor, 'preserveParams'),
+            array_merge($defaultPreservedParams, $preserveParams ?: array())
+        );
+
+        $editor
             ->setQuery($filterable)
-            ->preserveParams(
-                'limit',
-                'sort',
-                'dir',
-                'format',
-                'view',
-                'user',
-                'group',
-                'backend',
-                'stateType',
-                'addColumns',
-                'problems',
-                '_dev'
-            )
-            ->ignoreParams('page')
+            ->ignoreParams('page') // setupPaginationControl()
             ->setColumns($filterColumns)
             ->setSearchColumns($searchColumns)
             ->handleRequest($this->getRequest());
