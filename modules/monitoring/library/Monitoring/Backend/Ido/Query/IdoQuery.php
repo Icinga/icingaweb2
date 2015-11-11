@@ -421,26 +421,32 @@ abstract class IdoQuery extends DbQuery
     }
 
     /**
-     * Order the result by the given column
+     * Order the result by the given alias
      *
-     * @param string $columnOrAlias         The column or column alias to order by
-     * @param int $dir                      The sort direction or null to use default direction
+     * @param   string  $alias  The column alias to order by
+     * @param   int     $dir    The sort direction or null to use the default direction
      *
-     * @return $this                         Fluent interface
+     * @return  $this
      */
-    public function order($columnOrAlias, $dir = null)
+    public function order($alias, $dir = null)
     {
-        $this->requireColumn($columnOrAlias);
-        $this->orderColumns[$columnOrAlias] = $columnOrAlias;
-        if ($this->isCustomvar($columnOrAlias)) {
-            $columnOrAlias = $this->getCustomvarColumnName($columnOrAlias);
-        } elseif ($this->hasAliasName($columnOrAlias)) {
-            $columnOrAlias = $this->aliasToColumnName($columnOrAlias);
+        $this->requireColumn($alias);
+
+        if ($this->isCustomvar($alias)) {
+            $column = $this->getCustomvarColumnName($alias);
+        } elseif ($this->hasAliasName($alias)) {
+            $column = $this->aliasToColumnName($alias);
+            $table = $this->aliasToTableName($alias);
+            if (isset($this->caseInsensitiveColumns[$table][$alias])) {
+                $column = 'LOWER(' . $column . ')';
+            }
         } else {
-            Logger::info('Can\'t order by column ' . $columnOrAlias);
+            Logger::info('Can\'t order by column ' . $alias);
             return $this;
         }
-        return parent::order($columnOrAlias, $dir);
+
+        $this->orderColumns[$alias] = $alias;
+        return parent::order($column, $dir);
     }
 
     /**
