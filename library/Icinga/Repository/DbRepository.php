@@ -688,19 +688,20 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
      * @param   string              $name   The name or alias of the column to validate
      * @param   RepositoryQuery     $query  An optional query to pass as context,
      *                                      if not given the column is considered being used for a statement filter
+     * @param   FilterExpression    $filter An optional filter to pass as context
      *
      * @return  string                      The given column's name
      *
      * @throws  QueryException              In case the given column is not a valid filter column
      */
-    public function requireFilterColumn($table, $name, RepositoryQuery $query = null)
+    public function requireFilterColumn($table, $name, RepositoryQuery $query = null, FilterExpression $filter = null)
     {
         if ($query === null) {
             return $this->requireStatementColumn($table, $name);
         }
 
         if ($this->validateQueryColumnAssociation($table, $name)) {
-            return parent::requireFilterColumn($table, $name, $query);
+            return parent::requireFilterColumn($table, $name, $query, $filter);
         }
 
         return $this->joinColumn($name, $table, $query);
