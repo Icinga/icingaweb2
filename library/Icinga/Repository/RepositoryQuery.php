@@ -86,9 +86,8 @@ class RepositoryQuery implements QueryInterface, SortRules, FilterColumns, Itera
      */
     public function from($target, array $columns = null)
     {
-        $this->query = $this->repository->getDataSource()->select()->from(
-            $this->repository->requireTable($target, $this)
-        );
+        $this->query = $this->repository->getDataSource()->select();
+        $this->query->from($this->repository->requireTable($target, $this));
         $this->query->columns($this->prepareQueryColumns($target, $columns));
         $this->target = $target;
         return $this;
