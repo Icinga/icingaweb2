@@ -43,15 +43,6 @@ abstract class LdapRepository extends Repository
     );
 
     /**
-     * Object attributes whose value is not distinguished name
-     *
-     * @var array
-     */
-    protected $ambiguousAttributes = array(
-        'posixGroup' => 'memberUid'
-    );
-
-    /**
      * Create a new LDAP repository object
      *
      * @param   LdapConnection  $ds     The data source to use
@@ -79,15 +70,19 @@ abstract class LdapRepository extends Repository
     }
 
     /**
-     * Return whether the given object attribute's value is not a distinguished name
+     * Return whether the given object DN is related to the given base DN
      *
-     * @param   string  $objectClass
-     * @param   string  $attributeName
+     * Will use the current connection's root DN if $baseDn is not given.
+     *
+     * @param   string  $dn         The object DN to check
+     * @param   string  $baseDn     The base DN to compare the object DN with
      *
      * @return  bool
      */
-    protected function isAmbiguous($objectClass, $attributeName)
+    protected function isRelatedDn($dn, $baseDn = null)
     {
-        return isset($this->ambiguousAttributes[$objectClass][$attributeName]);
+        $normalizedDn = strtolower(join(',', array_map('trim', explode(',', $dn))));
+        $normalizedBaseDn = strtolower(join(',', array_map('trim', explode(',', $baseDn ?: $this->ds->getDn()))));
+        return strpos($normalizedDn, $normalizedBaseDn) !== false;
     }
 }

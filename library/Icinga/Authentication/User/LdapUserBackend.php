@@ -191,24 +191,6 @@ class LdapUserBackend extends LdapRepository implements UserBackendInterface, In
     }
 
     /**
-     * Return a new query for the given columns
-     *
-     * @param   array   $columns    The desired columns, if null all columns will be queried
-     *
-     * @return  RepositoryQuery
-     */
-    public function select(array $columns = null)
-    {
-        $query = parent::select($columns);
-        $query->getQuery()->setBase($this->baseDn);
-        if ($this->filter) {
-            $query->getQuery()->setNativeFilter($this->filter);
-        }
-
-        return $query;
-    }
-
-    /**
      * Initialize this repository's virtual tables
      *
      * @return  array
@@ -333,6 +315,28 @@ class LdapUserBackend extends LdapRepository implements UserBackendInterface, In
         $bigBang = clone $now;
         $bigBang->setTimestamp(0);
         return ((int) $value) >= $bigBang->diff($now)->days;
+    }
+
+    /**
+     * Validate that the requested table exists
+     *
+     * @param   string              $table      The table to validate
+     * @param   RepositoryQuery     $query      An optional query to pass as context
+     *
+     * @return  string
+     *
+     * @throws  ProgrammingError                In case the given table does not exist
+     */
+    public function requireTable($table, RepositoryQuery $query = null)
+    {
+        if ($query !== null) {
+            $query->getQuery()->setBase($this->baseDn);
+            if ($this->filter) {
+                $query->getQuery()->setNativeFilter($this->filter);
+            }
+        }
+
+        return parent::requireTable($table, $query);
     }
 
     /**
