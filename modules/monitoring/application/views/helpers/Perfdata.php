@@ -61,7 +61,7 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
                 $headers[$column] = $labels[$column];
             }
         }
-        $table = array('<thead><tr><th>' . implode('</th><th>', $headers) . '</th></tr></thead>');
+        $table = array('<thead><tr><th>' . implode('</th><th>', $headers) . '</th></tr></thead><tbody>');
         foreach ($pieChartData as $perfdata) {
             if ($compact && $perfdata->isVisualizable()) {
                 $results[] = $perfdata->asInlinePie($color)->render();
@@ -85,9 +85,10 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
                         );
                     }
                 }
-                $table []= '<tbody><tr><td class="sparkline-col">' . implode('</td><td>', $data) . '</td></tr></tbody>';
+                $table []= '<tr><td class="sparkline-col">' . implode('</td><td>', $data) . '</td></tr>';
             }
         }
+        $table[] = '</tbody>';
         if ($limit > 0) {
             $count = $compact ? count($results) : count($table);
             if ($count > $limit) {
