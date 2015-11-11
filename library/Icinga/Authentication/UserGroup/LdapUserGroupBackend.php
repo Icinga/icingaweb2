@@ -398,20 +398,6 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
     }
 
     /**
-     * Return a new query for the given columns
-     *
-     * @param   array   $columns    The desired columns, if null all columns will be queried
-     *
-     * @return  RepositoryQuery
-     */
-    public function select(array $columns = null)
-    {
-        $query = parent::select($columns);
-        $query->getQuery()->setBase($this->groupBaseDn);
-        return $query;
-    }
-
-    /**
      * Initialize this repository's virtual tables
      *
      * @return  array
@@ -575,8 +561,11 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
      */
     public function requireTable($table, RepositoryQuery $query = null)
     {
-        if ($query !== null && $table === 'group' && $this->groupFilter) {
-            $query->getQuery()->setNativeFilter($this->groupFilter);
+        if ($query !== null) {
+            $query->getQuery()->setBase($this->groupBaseDn);
+            if ($table === 'group' && $this->groupFilter) {
+                $query->getQuery()->setNativeFilter($this->groupFilter);
+            }
         }
 
         return parent::requireTable($table, $query);
