@@ -86,10 +86,14 @@ if (! $this->compact): ?>
                     ) ?>
                     <span class="state-icons"><?= implode(' ', $this->serviceFlags($service)) ?></span>
                 </div>
-                <div class="sparkline-box"><?= $this->perfdata($service->service_perfdata, true, 5) ?></div>
-                <p class="overview-plugin-output">
-                    <?= $this->pluginOutput($this->ellipsis($service->service_output, 10000), true) ?>
-                </p>
+                <div class="overview-plugin-output-container">
+                    <div class="overview-performance-data">
+                        <?= $this->perfdata($service->service_perfdata, true, 5) ?>
+                    </div>
+                    <p class="overview-plugin-output">
+                        <?= $this->pluginOutput($this->ellipsis($service->service_output, 10000), true) ?>
+                    </p>
+                </div>
             </td>
         <?php foreach($this->addColumns as $col): ?>
             <td><?= $this->escape($service->$col) ?></td>
