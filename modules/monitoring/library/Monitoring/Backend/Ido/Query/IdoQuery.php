@@ -55,14 +55,14 @@ abstract class IdoQuery extends DbQuery
     protected $prefix;
 
     /**
-     * An array to map aliases to table names
+     * An array to map aliases to column names
      *
      * @var array
      */
     protected $idxAliasColumn;
 
     /**
-     * An array to map aliases to column names
+     * An array to map aliases to table names
      *
      * @var array
      */
@@ -400,14 +400,14 @@ abstract class IdoQuery extends DbQuery
     protected static $idoVersion;
 
     /**
-     * List of columns where the COLLATE SQL-instruction has been removed
+     * List of column aliases mapped to their table where the COLLATE SQL-instruction has been removed
      *
      * This list is being populated in case of a PostgreSQL backend only,
      * to ensure case-insensitive string comparison in WHERE clauses.
      *
      * @var array
      */
-    protected $columnsWithoutCollation = array();
+    protected $caseInsensitiveColumns;
 
     /**
      * Return true when the column is an aggregate column
@@ -493,6 +493,15 @@ abstract class IdoQuery extends DbQuery
                 $column = $this->getCustomvarColumnName($alias);
             } else {
                 $column = $this->aliasToColumnName($alias);
+                if (isset($this->caseInsensitiveColumns[$this->aliasToTableName($alias)][$alias])) {
+                    $column = 'LOWER(' . $column . ')';
+                    $expression = $filter->getExpression();
+                    if (is_array($expression)) {
+                        $filter->setExpression(array_map('strtolower', $expression));
+                    } else {
+                        $filter->setExpression(strtolower($expression));
+                    }
+                }
             }
 
             $filter->setColumn($column);
@@ -511,42 +520,6 @@ abstract class IdoQuery extends DbQuery
         $filter = clone $filter;
         $this->requireFilterColumns($filter);
         return parent::addFilter($filter);
-    }
-
-    /**
-     * Recurse the given filter and ensure that any string conversion is case-insensitive
-     *
-     * @param Filter $filter
-     */
-    protected function lowerColumnsWithoutCollation(Filter $filter)
-    {
-        if ($filter instanceof FilterExpression) {
-            if (
-                in_array($filter->getColumn(), $this->columnsWithoutCollation)
-                && strpos($filter->getColumn(), 'LOWER') !== 0
-            ) {
-                $filter->setColumn('LOWER(' . $filter->getColumn() . ')');
-                $expression = $filter->getExpression();
-                if (is_array($expression)) {
-                    $filter->setExpression(array_map('strtolower', $expression));
-                } else {
-                    $filter->setExpression(strtolower($expression));
-                }
-            }
-        } else {
-            foreach ($filter->filters() as $chainedFilter) {
-                $this->lowerColumnsWithoutCollation($chainedFilter);
-            }
-        }
-    }
-
-    protected function applyFilterSql($select)
-    {
-        if (! empty($this->columnsWithoutCollation)) {
-            $this->lowerColumnsWithoutCollation($this->filter);
-        }
-
-        parent::applyFilterSql($select);
     }
 
     public function where($condition, $value = null)
@@ -582,28 +555,37 @@ abstract class IdoQuery extends DbQuery
     }
 
     /**
-     * Return whether the given alias or column name provides case insensitive value comparison
+     * Return whether the given alias provides case insensitive value comparison
      *
-     * @param   string  $aliasOrColumn
+     * @param   string  $alias
      *
      * @return  bool
      */
-    public function isCaseInsensitive($aliasOrColumn)
+    public function isCaseInsensitive($alias)
     {
-        if ($this->isCustomVar($aliasOrColumn)) {
+        if ($this->isCustomVar($alias)) {
             return false;
         }
 
-        $column = $this->getMappedField($aliasOrColumn) ?: $aliasOrColumn;
+        $column = $this->getMappedField($alias);
         if (! $column) {
             return false;
         }
 
-        if (! empty($this->columnsWithoutCollation)) {
-            return in_array($column, $this->columnsWithoutCollation) || strpos($column, 'LOWER') === 0;
+        if (empty($this->caseInsensitiveColumns)) {
+            return preg_match('/ COLLATE .+$/', $column) === 1;
         }
 
-        return preg_match('/ COLLATE .+$/', $column) === 1;
+        if (strpos($column, 'LOWER') === 0) {
+            return true;
+        }
+
+        $table = $this->aliasToTableName($alias);
+        if (! $table) {
+            return false;
+        }
+
+        return isset($this->caseInsensitiveColumns[$table][$alias]);
     }
 
     /**
@@ -635,10 +617,12 @@ abstract class IdoQuery extends DbQuery
             '%1$s = %2$s.object_id AND LOWER(%2$s.varname) = %3$s';
         foreach ($this->columnMap as $table => & $columns) {
             foreach ($columns as $alias => & $column) {
+                // Using a regex here because COLLATE may occur anywhere in the string
                 $column = preg_replace('/ COLLATE .+$/', '', $column, -1, $count);
                 if ($count > 0) {
-                    $this->columnsWithoutCollation[] = $this->getMappedField($alias);
+                    $this->caseInsensitiveColumns[$table][$alias] = true;
                 }
+
                 $column = preg_replace(
                     '/inet_aton\(([[:word:].]+)\)/i',
                     '(CASE WHEN $1 ~ \'(?:[0-9]{1,3}\\\\.){3}[0-9]{1,3}\' THEN $1::inet - \'0.0.0.0\' ELSE NULL END)',
