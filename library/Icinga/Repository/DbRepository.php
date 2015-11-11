@@ -93,20 +93,20 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
     protected $statementColumnAliasMap;
 
     /**
-     * List of columns where the COLLATE SQL-instruction has been removed
+     * List of column names or aliases mapped to their table where the COLLATE SQL-instruction has been removed
      *
      * This list is being populated in case of a PostgreSQL backend only,
      * to ensure case-insensitive string comparison in WHERE clauses.
      *
      * @var array
      */
-    protected $columnsWithoutCollation;
+    protected $caseInsensitiveColumns;
 
     /**
      * Create a new DB repository object
      *
      * In case $this->queryColumns has already been initialized, this initializes
-     * $this->columnsWithoutCollation in case of a PostgreSQL connection.
+     * $this->caseInsensitiveColumns in case of a PostgreSQL connection.
      *
      * @param   DbConnection    $ds     The datasource to use
      */
@@ -114,7 +114,6 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
     {
         parent::__construct($ds);
 
-        $this->columnsWithoutCollation = array();
         if ($ds->getDbType() === 'pgsql' && $this->queryColumns !== null) {
             $this->queryColumns = $this->removeCollateInstruction($this->queryColumns);
         }
@@ -123,7 +122,7 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
     /**
      * Return the query columns being provided
      *
-     * Initializes $this->columnsWithoutCollation in case of a PostgreSQL connection.
+     * Initializes $this->caseInsensitiveColumns in case of a PostgreSQL connection.
      *
      * @return  array
      */
@@ -174,11 +173,12 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
      */
     protected function removeCollateInstruction($queryColumns)
     {
-        foreach ($queryColumns as & $columns) {
-            foreach ($columns as & $column) {
+        foreach ($queryColumns as $table => & $columns) {
+            foreach ($columns as $alias => & $column) {
+                // Using a regex here because COLLATE may occur anywhere in the string
                 $column = preg_replace('/ COLLATE .+$/', '', $column, -1, $count);
                 if ($count > 0) {
-                    $this->columnsWithoutCollation[] = $column;
+                    $this->caseInsensitiveColumns[$table][is_string($alias) ? $alias : $column] = true;
                 }
             }
         }
@@ -607,22 +607,29 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
      */
     public function requireFilter($table, Filter $filter, RepositoryQuery $query = null, $clone = true)
     {
-        $filter = parent::requireFilter($table, $filter, $query, $clone);
+        if (! empty($this->caseInsensitiveColumns) && $filter->isExpression()) {
+            $alias = $filter->getColumn();
+            if (! $this->validateQueryColumnAssociation($table, $alias)) {
+                $origin = $this->findTableName($alias); // It might be a joined column
+            } else {
+                $origin = $table;
+            }
 
-        if ($filter->isExpression()) {
-            $column = $filter->getColumn();
-            if (in_array($column, $this->columnsWithoutCollation) && strpos($column, 'LOWER') !== 0) {
-                $filter->setColumn('LOWER(' . $column . ')');
+            if ($origin && isset($this->caseInsensitiveColumns[$origin][$alias])) {
+                $filter = parent::requireFilter($table, $filter, $query, $clone);
+                $filter->setColumn('LOWER(' . $filter->getColumn() . ')');
                 $expression = $filter->getExpression();
                 if (is_array($expression)) {
                     $filter->setExpression(array_map('strtolower', $expression));
                 } else {
                     $filter->setExpression(strtolower($expression));
                 }
+
+                return $filter;
             }
         }
 
-        return $filter;
+        return parent::requireFilter($table, $filter, $query, $clone);
     }
 
     /**
