@@ -1,5 +1,8 @@
 /*! Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
+@badge-line-height: 1.2;
+@badge-padding: 0.25em;
+
 .badge {
   .rounded-corners();
   background-color: @gray-light;
@@ -7,10 +10,9 @@
   display: inline-block;
   font-family: @font-family-wide;
   font-size: @font-size-small;
-  font-weight: @font-weight-bold;
-  line-height: 1;
-  min-width: 3em;
-  padding: @vertical-padding / 2;
+  line-height: @badge-line-height;
+  min-width: 2em;
+  padding: @badge-padding;
   text-align: center;
   vertical-align: middle;
   white-space: nowrap;
