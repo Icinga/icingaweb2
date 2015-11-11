@@ -476,8 +476,28 @@ class LdapConnection implements Selectable, Inspectable
      */
     public function fetchOne(LdapQuery $query, array $fields = null)
     {
-        $row = (array) $this->fetchRow($query, $fields);
-        return array_shift($row) ?: false;
+        $row = $this->fetchRow($query, $fields);
+        if ($row === false) {
+            return false;
+        }
+
+        $values = get_object_vars($row);
+        if (empty($values)) {
+            return false;
+        }
+
+        if ($fields === null) {
+            // Fetch the desired columns from the query if not explicitly overriden in the method's parameter
+            $fields = $query->getColumns();
+        }
+
+        if (empty($fields)) {
+            // The desired columns may be empty independently whether provided by the query or the method's parameter
+            return array_shift($values);
+        }
+
+        $alias = key($fields);
+        return $values[is_string($alias) ? $alias : $fields[$alias]];
     }
 
     /**
