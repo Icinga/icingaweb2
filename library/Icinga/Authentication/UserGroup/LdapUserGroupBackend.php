@@ -507,6 +507,7 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
             ->select()
             ->from($this->userClass, array())
             ->where($this->userNameAttribute, $name)
+            ->setBase($this->userBaseDn)
             ->setUsePagedResults(false)
             ->fetchDn();
         if ($userDn) {
@@ -517,6 +518,7 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
             ->select()
             ->from($this->groupClass, array())
             ->where($this->groupNameAttribute, $name)
+            ->setBase($this->groupBaseDn)
             ->setUsePagedResults(false)
             ->fetchDn();
         if ($groupDn) {
