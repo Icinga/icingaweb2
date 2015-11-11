@@ -377,14 +377,7 @@ class LdapConnection implements Selectable, Inspectable
         }
 
         $ds = $this->getConnection();
-        $results = @ldap_search(
-            $ds,
-            $query->getBase() ?: $this->getDn(),
-            (string) $query,
-            array('dn'),
-            0,
-            0
-        );
+        $results = $this->ldapSearch($query, array('dn'));
 
         if ($results === false) {
             if (ldap_errno($ds) !== self::LDAP_NO_SUCH_OBJECT) {
@@ -701,12 +694,10 @@ class LdapConnection implements Selectable, Inspectable
             }
         }
 
-        $results = @ldap_search(
-            $ds,
-            $query->getBase() ?: $this->rootDn,
-            (string) $query,
+        $results = $this->ldapSearch(
+            $query,
             array_values($fields),
-            0, // Attributes and values
+            0,
             $serverSorting && $limit ? $offset + $limit : 0
         );
         if ($results === false) {
@@ -799,8 +790,6 @@ class LdapConnection implements Selectable, Inspectable
 
         $limit = $query->getLimit();
         $offset = $query->hasOffset() ? $query->getOffset() : 0;
-        $queryString = (string) $query;
-        $base = $query->getBase() ?: $this->rootDn;
 
         if ($fields === null) {
             $fields = $query->getColumns();
@@ -835,12 +824,10 @@ class LdapConnection implements Selectable, Inspectable
                 ));
             }
 
-            $results = @ldap_search(
-                $ds,
-                $base,
-                $queryString,
+            $results = $this->ldapSearch(
+                $query,
                 array_values($fields),
-                0, // Attributes and values
+                0,
                 $serverSorting && $limit ? $offset + $limit : 0
             );
             if ($results === false) {
@@ -850,8 +837,8 @@ class LdapConnection implements Selectable, Inspectable
 
                 throw new LdapException(
                     'LDAP query "%s" (base %s) failed. Error: %s',
-                    $queryString,
-                    $base,
+                    (string) $query,
+                    $query->getBase() ?: $this->getDn(),
                     ldap_error($ds)
                 );
             } elseif (ldap_count_entries($ds, $results) === 0) {
@@ -932,7 +919,8 @@ class LdapConnection implements Selectable, Inspectable
             // pagedResultsControl with the size set to zero (0) and the cookie set to the last cookie returned by
             // the server: https://www.ietf.org/rfc/rfc2696.txt
             ldap_control_paged_result($ds, 0, false, $cookie);
-            ldap_search($ds, $base, $queryString); // Returns no entries, due to the page size
+            // Returns no entries, due to the page size
+            ldap_search($ds, $query->getBase() ?: $this->getDn(), (string) $query);
         }
 
         if (! $serverSorting && $query->hasOrder()) {
@@ -1117,6 +1105,77 @@ class LdapConnection implements Selectable, Inspectable
         }
 
         return $ds;
+    }
+
+    /**
+     * Perform a LDAP search and return the result
+     *
+     * @param   LdapQuery   $query
+     * @param   array       $attributes     An array of the required attributes
+     * @param   int         $attrsonly      Should be set to 1 if only attribute types are wanted
+     * @param   int         $sizelimit      Enables you to limit the count of entries fetched
+     * @param   int         $timelimit      Sets the number of seconds how long is spend on the search
+     * @param   int         $deref
+     *
+     * @return  resource|bool               A search result identifier or false on error
+     */
+    public function ldapSearch(
+        LdapQuery $query,
+        array $attributes = null,
+        $attrsonly = 0,
+        $sizelimit = 0,
+        $timelimit = 0,
+        $deref = LDAP_DEREF_NEVER
+    ) {
+        $queryString = (string) $query;
+        $baseDn = $query->getBase() ?: $this->getDn();
+
+        if (Logger::getInstance()->getLevel() === Logger::DEBUG) {
+            // We're checking the level by ourself to avoid rendering the ldapsearch commandline for nothing
+            $starttlsParam = $this->encryption === static::STARTTLS ? ' -ZZ' : '';
+            $ldapUrl = ($this->encryption === static::LDAPS ? 'ldaps://' : 'ldap://')
+                . $this->hostname
+                . ($this->port ? ':' . $this->port : '');
+
+            if ($this->bound) {
+                $bindParams = ' -D "' . $this->bindDn . '"' . ($this->bindPw ? ' -w "' . $this->bindPw . '"' : '');
+            }
+
+            if ($deref === LDAP_DEREF_NEVER) {
+                $derefName = 'never';
+            } elseif ($deref === LDAP_DEREF_ALWAYS) {
+                $derefName = 'always';
+            } elseif ($deref === LDAP_DEREF_SEARCHING) {
+                $derefName = 'search';
+            } else { // $deref === LDAP_DEREF_FINDING
+                $derefName = 'find';
+            }
+
+            Logger::debug("Issueing LDAP search. Use '%s' to reproduce.", sprintf(
+                'ldapsearch -P 3%s -H "%s"%s -b "%s" -s "sub" -z %u -l %u -a "%s"%s%s%s',
+                $starttlsParam,
+                $ldapUrl,
+                $bindParams,
+                $baseDn,
+                $sizelimit,
+                $timelimit,
+                $derefName,
+                $attrsonly ? ' -A' : '',
+                $queryString ? ' "' . $queryString . '"' : '',
+                $attributes ? ' "' . join('" "', $attributes) . '"' : ''
+            ));
+        }
+
+        return @ldap_search(
+            $this->getConnection(),
+            $baseDn,
+            $queryString,
+            $attributes,
+            $attrsonly,
+            $sizelimit,
+            $timelimit,
+            $deref
+        );
     }
 
     /**
