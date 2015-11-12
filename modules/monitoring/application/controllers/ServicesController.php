@@ -53,6 +53,7 @@ class ServicesController extends Controller
     {
         $this->serviceList->setColumns(array(
             'host_display_name',
+            'host_handled',
             'host_name',
             'host_problem',
             'host_state',
@@ -93,6 +94,7 @@ class ServicesController extends Controller
         $this->view->checkNowForm = $checkNowForm;
         $this->serviceList->setColumns(array(
             'host_display_name',
+            'host_handled',
             'host_name',
             'host_problem',
             'host_state',
