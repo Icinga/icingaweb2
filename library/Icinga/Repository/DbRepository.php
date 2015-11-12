@@ -6,6 +6,7 @@ namespace Icinga\Repository;
 use Icinga\Data\Db\DbConnection;
 use Icinga\Data\Extensible;
 use Icinga\Data\Filter\Filter;
+use Icinga\Data\Filter\FilterExpression;
 use Icinga\Data\Reducible;
 use Icinga\Data\Updatable;
 use Icinga\Exception\IcingaException;
