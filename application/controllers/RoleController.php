@@ -163,7 +163,6 @@ class RoleController extends AuthBackendController
             array(
                 'title'     => $this->translate('List users of authentication backends'),
                 'label'     => $this->translate('Users'),
-                'icon'      => 'user',
                 'url'       => 'user/list'
             )
         );
@@ -172,7 +171,6 @@ class RoleController extends AuthBackendController
             array(
                 'title'     => $this->translate('List groups of user group backends'),
                 'label'     => $this->translate('User Groups'),
-                'icon'      => 'users',
                 'url'       => 'group/list'
             )
         );
