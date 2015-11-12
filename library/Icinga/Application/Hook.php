@@ -8,7 +8,7 @@ use Icinga\Application\Logger;
 use Icinga\Exception\ProgrammingError;
 
 /**
- * Icinga Web Hook registry
+ * Icinga Hook registry
  *
  * Modules making use of predefined hooks have to use this registry
  *
@@ -38,7 +38,7 @@ class Hook
      *
      * @var string
      */
-    public static $BASE_NS = 'Icinga\\Web\\Hook\\';
+    public static $BASE_NS = 'Icinga\\Application\\Hook\\';
 
     /**
      * Append this string to base class
@@ -56,7 +56,7 @@ class Hook
     {
         self::$hooks = array();
         self::$instances = array();
-        self::$BASE_NS = 'Icinga\\Web\\Hook\\';
+        self::$BASE_NS = 'Icinga\\Application\\Hook\\';
     }
 
     /**
@@ -149,7 +149,7 @@ class Hook
         } else {
             $base_class = 'Icinga\\Module\\'
                         . ucfirst($module)
-                        . '\\Web\\Hook\\'
+                        . '\\Hook\\'
                         . ucfirst($name)
                         . $suffix;
         }
@@ -205,7 +205,7 @@ class Hook
      * @param   string      $name   One of the predefined hook names
      * @param   string      $key    The identifier of a specific subtype
      * @param   string      $class  Your class name, must inherit one of the
-     *                              classes in the Icinga/Web/Hook folder
+     *                              classes in the Icinga/Application/Hook folder
      */
     public static function register($name, $key, $class)
     {
