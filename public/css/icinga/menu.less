@@ -14,6 +14,7 @@
 
   &:focus {
     color: @icinga-blue;
+    outline-offset: -0.25em;
   }
 
   &:hover {
@@ -29,7 +30,6 @@
 #menu .nav-level-1 > .nav-item {
   border-left: 5px solid transparent;
   line-height: 2.167em; // 26 px
-  padding: @vertical-padding / 2 @horizontal-padding;
 
   &.active {
     > a > .badge {
@@ -49,6 +49,10 @@
     margin-left: @icon-width;
   }
 
+  > a {
+    padding: 0.5em 0.5em; // 6px 6px
+  }
+
   > a:active ~ .nav-level-2 > li {
     display: block;
   }
@@ -59,10 +63,10 @@
   display: none;
   line-height: 1.833em; // 22px
   margin-left: @icon-width;
-  padding: @vertical-padding / 2 0;
 
   > a {
     font-size: @font-size-small;
+    padding: 0.364em 0.545em; // 4px 6px
   }
 }
 
