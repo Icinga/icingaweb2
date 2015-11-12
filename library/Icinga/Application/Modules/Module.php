@@ -591,6 +591,16 @@ class Module
     }
 
     /**
+     * Get the module namespace
+     *
+     * @return string
+     */
+    public function getNamespace()
+    {
+        return 'Icinga\\Module\\' . ucfirst($this->getName());
+    }
+
+    /**
      * Get the module version
      *
      * @return string
