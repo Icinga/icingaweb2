@@ -1248,12 +1248,35 @@ class Module
      */
     protected function registerHook($name, $class, $key = null)
     {
-        if ($key === null) {
-            $key = $class;
+        return $this->provideHook($name, $class, $key);
+    }
+
+    protected function slashesToNamespace($class)
+    {
+        $list = explode('/', $class);
+        foreach ($list as &$part) {
+            $part = ucfirst($part);
         }
 
-        Hook::register($name, $key, $class);
+        return implode('\\', $list);
+    }
 
+    // deprecate $key
+    protected function provideHook($name, $implementation = null, $key = null)
+    {
+        if ($implementation === null) {
+            $implementation = $name;
+        }
+
+        if (strpos($implementation, '\\') === false) {
+            $class = $this->getNamespace()
+                   . '\\Hook\\'
+                   . $this->slashesToNamespace($implementation);
+        } else {
+            $class = $implementation;
+        }
+
+        Hook::register($name, $implementation, $class);
         return $this;
     }
 
