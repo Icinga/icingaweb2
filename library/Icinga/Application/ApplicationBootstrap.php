@@ -358,20 +358,15 @@ abstract class ApplicationBootstrap
     /**
      * Register the Zend Autoloader
      *
+     * Deprecated, compat only - does nothing
+     *
      * @return $this
      */
     public function setupZendAutoloader()
     {
-        require_once 'Zend/Loader/Autoloader.php';
-
-        \Zend_Loader_Autoloader::getInstance();
-
-        \Zend_Paginator::addScrollingStylePrefixPath(
-            'Icinga_Web_Paginator_ScrollingStyle_', $this->libDir . '/Icinga/Web/Paginator/ScrollingStyle'
-        );
-
         return $this;
     }
+
     /**
      * Setup module manager
      *
