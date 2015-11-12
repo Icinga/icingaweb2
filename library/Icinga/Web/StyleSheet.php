@@ -31,7 +31,6 @@ class StyleSheet
         'css/icinga/forms.less',
         'css/icinga/setup.less',
         'css/icinga/widgets.less',
-        'css/icinga/selection-toolbar.less',
         'css/icinga/login.less',
         'css/icinga/controls.less',
         'css/icinga/dev.less',
