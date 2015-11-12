@@ -1239,7 +1239,7 @@ class Module
     protected function registerHook($name, $class, $key = null)
     {
         if ($key === null) {
-            $key = $this->name;
+            $key = $class;
         }
 
         Hook::register($name, $key, $class);
