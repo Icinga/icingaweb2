@@ -3,7 +3,7 @@
 
 namespace Icinga\Module\Monitoring\Web\Hook;
 
-use Icinga\Module\Monitoring\Hook\HostActionsHook as BaseHook;
+use Icinga\Module\Monitoring\Hook\ServiceActionsHook as BaseHook;
 
 /**
  * Compat only
