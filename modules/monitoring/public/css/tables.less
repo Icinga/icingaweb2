@@ -17,6 +17,17 @@
   width: 4em;
 }
 
+// Custom variables in the host and service detail view
+.custom-variables > ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0 0 0 @vertical-padding;
+
+  &:first-child {
+    padding: 0;
+  }
+}
+
 // Host name and IP addresses in the host and service detail view
 .host-meta {
   color: @text-color-light;
