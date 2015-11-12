@@ -1,17 +1,19 @@
 /*! Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
-.limiter-control {
-  font-size: @font-size-small;
+.limiter-control > .control-group {
+  padding: 0;
 
-  li {
-    a {
-      padding: 2px 4px;
-    }
+  > .control-label-group {
+    text-align: left;
+    padding: 0;
+    width: 1em;
+  }
 
-    &.active {
-      a {
-        color: @text-color-light;
-      }
-    }
+  > select {
+    width: 4.5em;
+  }
+
+  > i {
+    .sr-only();
   }
 }
