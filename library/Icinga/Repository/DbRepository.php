@@ -6,6 +6,7 @@ namespace Icinga\Repository;
 use Icinga\Data\Db\DbConnection;
 use Icinga\Data\Extensible;
 use Icinga\Data\Filter\Filter;
+use Icinga\Data\Filter\FilterExpression;
 use Icinga\Data\Reducible;
 use Icinga\Data\Updatable;
 use Icinga\Exception\IcingaException;
@@ -93,20 +94,20 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
     protected $statementColumnAliasMap;
 
     /**
-     * List of columns where the COLLATE SQL-instruction has been removed
+     * List of column names or aliases mapped to their table where the COLLATE SQL-instruction has been removed
      *
      * This list is being populated in case of a PostgreSQL backend only,
      * to ensure case-insensitive string comparison in WHERE clauses.
      *
      * @var array
      */
-    protected $columnsWithoutCollation;
+    protected $caseInsensitiveColumns;
 
     /**
      * Create a new DB repository object
      *
      * In case $this->queryColumns has already been initialized, this initializes
-     * $this->columnsWithoutCollation in case of a PostgreSQL connection.
+     * $this->caseInsensitiveColumns in case of a PostgreSQL connection.
      *
      * @param   DbConnection    $ds     The datasource to use
      */
@@ -114,7 +115,6 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
     {
         parent::__construct($ds);
 
-        $this->columnsWithoutCollation = array();
         if ($ds->getDbType() === 'pgsql' && $this->queryColumns !== null) {
             $this->queryColumns = $this->removeCollateInstruction($this->queryColumns);
         }
@@ -123,7 +123,7 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
     /**
      * Return the query columns being provided
      *
-     * Initializes $this->columnsWithoutCollation in case of a PostgreSQL connection.
+     * Initializes $this->caseInsensitiveColumns in case of a PostgreSQL connection.
      *
      * @return  array
      */
@@ -174,11 +174,12 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
      */
     protected function removeCollateInstruction($queryColumns)
     {
-        foreach ($queryColumns as & $columns) {
-            foreach ($columns as & $column) {
+        foreach ($queryColumns as $table => & $columns) {
+            foreach ($columns as $alias => & $column) {
+                // Using a regex here because COLLATE may occur anywhere in the string
                 $column = preg_replace('/ COLLATE .+$/', '', $column, -1, $count);
                 if ($count > 0) {
-                    $this->columnsWithoutCollation[] = $column;
+                    $this->caseInsensitiveColumns[$table][is_string($alias) ? $alias : $column] = true;
                 }
             }
         }
@@ -592,40 +593,6 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
     }
 
     /**
-     * Recurse the given filter, require each column for the given table and convert all values
-     *
-     * In case of a PostgreSQL connection, this applies LOWER() on the column and strtolower()
-     * on the value if a COLLATE SQL-instruction is part of the resolved column.
-     *
-     * @param   string              $table      The table being filtered
-     * @param   Filter              $filter     The filter to recurse
-     * @param   RepositoryQuery     $query      An optional query to pass as context
-     *                                          (Directly passed through to $this->requireFilterColumn)
-     * @param   bool                $clone      Whether to clone $filter first
-     *
-     * @return  Filter                          The udpated filter
-     */
-    public function requireFilter($table, Filter $filter, RepositoryQuery $query = null, $clone = true)
-    {
-        $filter = parent::requireFilter($table, $filter, $query, $clone);
-
-        if ($filter->isExpression()) {
-            $column = $filter->getColumn();
-            if (in_array($column, $this->columnsWithoutCollation) && strpos($column, 'LOWER') !== 0) {
-                $filter->setColumn('LOWER(' . $column . ')');
-                $expression = $filter->getExpression();
-                if (is_array($expression)) {
-                    $filter->setExpression(array_map('strtolower', $expression));
-                } else {
-                    $filter->setExpression(strtolower($expression));
-                }
-            }
-        }
-
-        return $filter;
-    }
-
-    /**
      * Return the alias for the given query column name or null in case the query column name does not exist
      *
      * @param   string  $table
@@ -675,28 +642,58 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
      * Validate that the given column is a valid filter target and return it or the actual name if it's an alias
      *
      * Attempts to join the given column from a different table if its association to the given table cannot be
-     * verified.
+     * verified. In case of a PostgreSQL connection and if a COLLATE SQL-instruction is part of the resolved column,
+     * this applies LOWER() on the column and, if given, strtolower() on the filter's expression.
      *
      * @param   string              $table  The table where to look for the column or alias
      * @param   string              $name   The name or alias of the column to validate
      * @param   RepositoryQuery     $query  An optional query to pass as context,
      *                                      if not given the column is considered being used for a statement filter
+     * @param   FilterExpression    $filter An optional filter to pass as context
      *
      * @return  string                      The given column's name
      *
      * @throws  QueryException              In case the given column is not a valid filter column
      */
-    public function requireFilterColumn($table, $name, RepositoryQuery $query = null)
+    public function requireFilterColumn($table, $name, RepositoryQuery $query = null, FilterExpression $filter = null)
     {
+        $joined = false;
         if ($query === null) {
-            return $this->requireStatementColumn($table, $name);
+            $column = $this->requireStatementColumn($table, $name);
+        } elseif ($this->validateQueryColumnAssociation($table, $name)) {
+            $column = parent::requireFilterColumn($table, $name, $query, $filter);
+        } else {
+            $column = $this->joinColumn($name, $table, $query);
+            $joined = true;
         }
 
-        if ($this->validateQueryColumnAssociation($table, $name)) {
-            return parent::requireFilterColumn($table, $name, $query);
+        if (! empty($this->caseInsensitiveColumns)) {
+            if ($joined) {
+                $table = $this->findTableName($name);
+            }
+
+            if ($column === $name) {
+                if ($query === null) {
+                    $name = $this->reassembleStatementColumnAlias($table, $name);
+                } else {
+                    $name = $this->reassembleQueryColumnAlias($table, $name);
+                }
+            }
+
+            if (isset($this->caseInsensitiveColumns[$table][$name])) {
+                $column = 'LOWER(' . $column . ')';
+                if ($filter !== null) {
+                    $expression = $filter->getExpression();
+                    if (is_array($expression)) {
+                        $filter->setExpression(array_map('strtolower', $expression));
+                    } else {
+                        $filter->setExpression(strtolower($expression));
+                    }
+                }
+            }
         }
 
-        return $this->joinColumn($name, $table, $query);
+        return $column;
     }
 
     /**

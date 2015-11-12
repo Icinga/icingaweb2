@@ -206,10 +206,7 @@ class RepositoryQuery implements QueryInterface, SortRules, FilterColumns, Itera
      */
     public function where($column, $value = null)
     {
-        $this->query->where(
-            $this->repository->requireFilterColumn($this->target, $column, $this),
-            $this->repository->persistColumn($this->target, $column, $value, $this)
-        );
+        $this->addFilter(Filter::where($column, $value));
         return $this;
     }
 

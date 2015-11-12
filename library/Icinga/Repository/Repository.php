@@ -6,6 +6,7 @@ namespace Icinga\Repository;
 use DateTime;
 use Icinga\Application\Logger;
 use Icinga\Data\Filter\Filter;
+use Icinga\Data\Filter\FilterExpression;
 use Icinga\Data\Selectable;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Exception\QueryException;
@@ -872,7 +873,7 @@ abstract class Repository implements Selectable
 
         if ($filter->isExpression()) {
             $column = $filter->getColumn();
-            $filter->setColumn($this->requireFilterColumn($table, $column, $query));
+            $filter->setColumn($this->requireFilterColumn($table, $column, $query, $filter));
             $filter->setExpression($this->persistColumn($table, $column, $filter->getExpression(), $query));
         } elseif ($filter->isChain()) {
             foreach ($filter->filters() as $chainOrExpression) {
@@ -1049,12 +1050,13 @@ abstract class Repository implements Selectable
      * @param   string              $table  The table where to look for the column or alias
      * @param   string              $name   The name or alias of the column to validate
      * @param   RepositoryQuery     $query  An optional query to pass as context (unused by the base implementation)
+     * @param   FilterExpression    $filter An optional filter to pass as context (unused by the base implementation)
      *
      * @return  string                      The given column's name
      *
      * @throws  QueryException              In case the given column is not a valid filter column
      */
-    public function requireFilterColumn($table, $name, RepositoryQuery $query = null)
+    public function requireFilterColumn($table, $name, RepositoryQuery $query = null, FilterExpression $filter = null)
     {
         if (($column = $this->resolveQueryColumnAlias($table, $name)) !== null) {
             $alias = $name;
