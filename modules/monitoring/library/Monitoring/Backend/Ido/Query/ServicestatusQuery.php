@@ -413,22 +413,20 @@ class ServicestatusQuery extends IdoQuery
     /**
      * {@inheritdoc}
      */
-    protected function handleGroupColumn($column, &$groupColumns, &$groupedTables)
+    protected function registerGroupColumns($alias, $table, array &$groupedColumns, array &$groupedTables)
     {
-        switch ($column) {
-            case 'service_handled':
-            case 'service_severity':
-            case 'service_unhandled':
-                if (! isset($groupedTables['hoststatus'])) {
-                    $groupColumns[] = 'hs.hoststatus_id';
-                    $groupedTables['hoststatus'] = true;
-                }
-                if (! isset($groupedTables['servicestatus'])) {
-                    $groupColumns[] = 'ss.servicestatus_id';
-                    $groupedTables['servicestatus'] = true;
-                }
-                return true;
+        if ($alias === 'service_handled' || $alias === 'service_severity' || $alias === 'service_unhandled') {
+            if (! isset($groupedTables['hoststatus'])) {
+                $groupedColumns[] = 'hs.hoststatus_id';
+                $groupedTables['hoststatus'] = true;
+            }
+
+            if (! isset($groupedTables['servicestatus'])) {
+                $groupedColumns[] = 'ss.servicestatus_id';
+                $groupedTables['servicestatus'] = true;
+            }
+        } else {
+            parent::registerGroupColumns($alias, $table, $groupedColumns, $groupedTables);
         }
-        return false;
     }
 }
