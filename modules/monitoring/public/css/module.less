@@ -102,8 +102,6 @@
 }
 
 .boxview  div.box.badge {
-  border-radius: 3px;
-  margin: 5px;
   padding: 5px;
 }
 
@@ -117,26 +115,41 @@
 /* Tactical overview element styles */
 
 .tactical > .boxview > div.box {
-  min-height: 30em;
+  min-height: 45em;
+  padding: 0px;
 }
 
 .tactical div.box.header {
-  min-height: 5em;
-  border-bottom:1px solid @gray-lighter;
+  margin: 10px;
+  min-height: 8em;
+  color: @text-color-inverted;
+  font-size: @font-size-dashboard;
+}
+
+.tactical div.box.badge {
+  border-radius: 0.0em;
 }
 
 div.box.ok_hosts.state_up {
-  border: 1px solid @gray-lighter;
-  border-left: 15px solid @color-ok;
+  background-color: @color-ok;
+  border: 1px solid white;
 }
 
 div.box.problem_hosts.state_down {
-  border: 1px solid @gray-lighter;
-  border-left: 15px solid @color-critical;
+  background-color: @color-critical;
+  border: 1px solid white;
 }
 
 div.box.ok_hosts div.box.entry, div.box.problem_hosts div.box.entry {
-  min-width: 11.1em;
+  min-width: 8em;
+  min-height: 4em;
+}
+
+.tactical div.box.contents {
+  background-color: white;
+  min-height: 13em;
+  font-size: @font-size-dashboard-small;
+  text-align: left;
 }
 
 div.box.monitoringfeatures {
