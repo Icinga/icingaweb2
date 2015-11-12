@@ -7,11 +7,11 @@
     &.active {
       > a,
       > a:hover {
-        background-color: @text-color;
-        border-color: @text-color;
-        color: @text-color-inverted;
+        border-bottom: 2px solid @icinga-blue;
+        color: @icinga-blue
       }
       > a:hover {
+        background: none;
         cursor: default;
         text-decoration: none;
       }
@@ -22,23 +22,13 @@
       cursor: no-drop;
     }
 
-    &:first-child {
-      > a,
-      > a:hover {
-        margin-left: 0;
-      }
-    }
-
     > a,
     > span {
-      border: 1px solid @gray-lighter;
-      margin-left: -1px;
-      padding: 4px 8px;
+      padding: 0.5em;
     }
     > a:hover {
       background-color: @gray-lighter;
-      border: 1px solid @gray-lighter;
-      padding: 4px 8px;
+      text-decoration: none;
     }
   }
 }
