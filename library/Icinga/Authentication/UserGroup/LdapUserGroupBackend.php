@@ -5,10 +5,11 @@ namespace Icinga\Authentication\UserGroup;
 
 use Icinga\Authentication\User\UserBackend;
 use Icinga\Authentication\User\LdapUserBackend;
+use Icinga\Application\Logger;
 use Icinga\Data\ConfigObject;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\ProgrammingError;
-use Icinga\Protocol\Ldap\Expression;
+use Icinga\Protocol\Ldap\LdapException;
 use Icinga\Repository\LdapRepository;
 use Icinga\Repository\RepositoryQuery;
 use Icinga\User;
@@ -70,6 +71,13 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
      * @var string
      */
     protected $groupMemberAttribute;
+
+    /**
+     * Whether the attribute name where to find a group's member holds ambiguous values
+     *
+     * @var bool
+     */
+    protected $ambiguousMemberAttribute;
 
     /**
      * The custom LDAP filter to apply on a user query
@@ -211,15 +219,13 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
     /**
      * Set the objectClass where to look for groups
      *
-     * Sets also the base table name for the underlying repository.
-     *
      * @param   string  $groupClass
      *
      * @return  $this
      */
     public function setGroupClass($groupClass)
     {
-        $this->baseTable = $this->groupClass = $this->getNormedAttribute($groupClass);
+        $this->groupClass = $this->getNormedAttribute($groupClass);
         return $this;
     }
 
@@ -359,22 +365,55 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
     }
 
     /**
-     * Return a new query for the given columns
+     * Return whether the attribute name where to find a group's member holds ambiguous values
      *
-     * @param   array   $columns    The desired columns, if null all columns will be queried
+     * @return  bool
      *
-     * @return  RepositoryQuery
+     * @throws  ProgrammingError    In case either $this->groupClass or $this->groupMemberAttribute
+     *                              has not been set yet
      */
-    public function select(array $columns = null)
+    protected function isMemberAttributeAmbiguous()
     {
-        $query = parent::select($columns);
-        $query->getQuery()->setBase($this->groupBaseDn);
-        if ($this->groupFilter) {
-            // TODO(jom): This should differentiate between groups and their memberships
-            $query->getQuery()->where(new Expression($this->groupFilter));
+        if ($this->ambiguousMemberAttribute === null) {
+            if ($this->groupClass === null) {
+                throw new ProgrammingError(
+                    'It is required to set the objectClass where to look for groups first'
+                );
+            } elseif ($this->groupMemberAttribute === null) {
+                throw new ProgrammingError(
+                    'It is required to set a attribute name where to find a group\'s members first'
+                );
+            }
+
+            $sampleValue = $this->ds
+                ->select()
+                ->from($this->groupClass, array($this->groupMemberAttribute))
+                ->setUnfoldAttribute($this->groupMemberAttribute)
+                ->setBase($this->groupBaseDn)
+                ->fetchOne();
+            $this->ambiguousMemberAttribute = !$this->isRelatedDn($sampleValue);
         }
 
-        return $query;
+        return $this->ambiguousMemberAttribute;
+    }
+
+    /**
+     * Initialize this repository's virtual tables
+     *
+     * @return  array
+     *
+     * @throws  ProgrammingError    In case $this->groupClass has not been set yet
+     */
+    protected function initializeVirtualTables()
+    {
+        if ($this->groupClass === null) {
+            throw new ProgrammingError('It is required to set the object class where to find groups first');
+        }
+
+        return array(
+            'group'             => $this->groupClass,
+            'group_membership'  => $this->groupClass
+        );
     }
 
     /**
@@ -382,15 +421,16 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
      *
      * @return  array
      *
-     * @throws  ProgrammingError    In case either $this->groupNameAttribute or $this->groupClass has not been set yet
+     * @throws  ProgrammingError    In case either $this->groupNameAttribute or
+     *                              $this->groupMemberAttribute has not been set yet
      */
     protected function initializeQueryColumns()
     {
-        if ($this->groupClass === null) {
-            throw new ProgrammingError('It is required to set the objectClass where to look for groups first');
-        }
         if ($this->groupNameAttribute === null) {
             throw new ProgrammingError('It is required to set a attribute name where to find a group\'s name first');
+        }
+        if ($this->groupMemberAttribute === null) {
+            throw new ProgrammingError('It is required to set a attribute name where to find a group\'s members first');
         }
 
         if ($this->ds->getCapabilities()->isActiveDirectory()) {
@@ -409,7 +449,7 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
             'created_at'    => $createdAtAttribute,
             'last_modified' => $lastModifiedAttribute
         );
-        return array($this->groupClass => $columns, $this->groupClass => $columns);
+        return array('group' => $columns, 'group_membership' => $columns);
     }
 
     /**
@@ -420,7 +460,7 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
     protected function initializeFilterColumns()
     {
         return array(
-            t('Username')       => 'user',
+            t('Username')       => 'user_name',
             t('User Group')     => 'group_name',
             t('Created At')     => 'created_at',
             t('Last Modified')  => 'last_modified'
@@ -431,29 +471,66 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
      * Initialize this repository's conversion rules
      *
      * @return  array
-     *
-     * @throws  ProgrammingError    In case $this->groupClass has not been set yet
      */
     protected function initializeConversionRules()
     {
-        if ($this->groupClass === null) {
-            throw new ProgrammingError('It is required to set the objectClass where to look for groups first');
-        }
-        if ($this->groupMemberAttribute === null) {
-            throw new ProgrammingError('It is required to set a attribute name where to find a group\'s members first');
-        }
-
         $rules = array(
-            $this->groupClass => array(
+            'group' => array(
+                'created_at'    => 'generalized_time',
+                'last_modified' => 'generalized_time'
+            ),
+            'group_membership' => array(
                 'created_at'    => 'generalized_time',
                 'last_modified' => 'generalized_time'
             )
         );
-        if (! $this->isAmbiguous($this->groupClass, $this->groupMemberAttribute)) {
-            $rules[$this->groupClass][] = 'user_name';
+        if (! $this->isMemberAttributeAmbiguous()) {
+            $rules['group_membership']['user_name'] = 'user_name';
+            $rules['group_membership']['user'] = 'user_name';
+            $rules['group']['user_name'] = 'user_name';
+            $rules['group']['user'] = 'user_name';
         }
 
         return $rules;
+    }
+
+    /**
+     * Return the distinguished name for the given uid or gid
+     *
+     * @param   string  $name
+     *
+     * @return  string
+     */
+    protected function persistUserName($name)
+    {
+        try {
+            $userDn = $this->ds
+                ->select()
+                ->from($this->userClass, array())
+                ->where($this->userNameAttribute, $name)
+                ->setBase($this->userBaseDn)
+                ->setUsePagedResults(false)
+                ->fetchDn();
+            if ($userDn) {
+                return $userDn;
+            }
+
+            $groupDn = $this->ds
+                ->select()
+                ->from($this->groupClass, array())
+                ->where($this->groupNameAttribute, $name)
+                ->setBase($this->groupBaseDn)
+                ->setUsePagedResults(false)
+                ->fetchDn();
+            if ($groupDn) {
+                return $groupDn;
+            }
+        } catch (LdapException $_) {
+            // pass
+        }
+
+        Logger::debug('Unable to persist uid or gid "%s" in repository "%s". No DN found.', $name, $this->getName());
+        return $name;
     }
 
     /**
@@ -475,11 +552,8 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
     /**
      * Validate that the requested table exists
      *
-     * This will return $this->groupClass in case $table equals "group" or "group_membership".
-     *
      * @param   string              $table      The table to validate
      * @param   RepositoryQuery     $query      An optional query to pass as context
-     *                                          (unused by the base implementation)
      *
      * @return  string
      *
@@ -487,12 +561,14 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
      */
     public function requireTable($table, RepositoryQuery $query = null)
     {
-        $table = parent::requireTable($table, $query);
-        if ($table === 'group' || $table === 'group_membership') {
-            $table = $this->groupClass;
+        if ($query !== null) {
+            $query->getQuery()->setBase($this->groupBaseDn);
+            if ($table === 'group' && $this->groupFilter) {
+                $query->getQuery()->setNativeFilter($this->groupFilter);
+            }
         }
 
-        return $table;
+        return parent::requireTable($table, $query);
     }
 
     /**
@@ -525,7 +601,7 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
      */
     public function getMemberships(User $user)
     {
-        if ($this->isAmbiguous($this->groupClass, $this->groupMemberAttribute)) {
+        if ($this->isMemberAttributeAmbiguous()) {
             $queryValue = $user->getUsername();
         } elseif (($queryValue = $user->getAdditional('ldap_dn')) === null) {
             $userQuery = $this->ds
@@ -535,7 +611,7 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
                 ->setBase($this->userBaseDn)
                 ->setUsePagedResults(false);
             if ($this->userFilter) {
-                $userQuery->where(new Expression($this->userFilter));
+                $userQuery->setNativeFilter($this->userFilter);
             }
 
             if (($queryValue = $userQuery->fetchDn()) === null) {
@@ -549,7 +625,7 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
             ->where($this->groupMemberAttribute, $queryValue)
             ->setBase($this->groupBaseDn);
         if ($this->groupFilter) {
-            $groupQuery->where(new Expression($this->groupFilter));
+            $groupQuery->setNativeFilter($this->groupFilter);
         }
 
         $groups = array();
@@ -558,6 +634,21 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
         }
 
         return $groups;
+    }
+
+    /**
+     * Return the name of the backend that is providing the given user
+     *
+     * @param   string  $username   Unused
+     *
+     * @return  null|string     The name of the backend or null in case this information is not available
+     */
+    public function getUserBackendName($username)
+    {
+        $userBackend = $this->getUserBackend();
+        if ($userBackend !== null) {
+            return $userBackend->getName();
+        }
     }
 
     /**
@@ -607,7 +698,7 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
 
         return $this
             ->setGroupBaseDn($config->base_dn)
-            ->setUserBaseDn($config->get('user_base_dn', $this->getGroupBaseDn()))
+            ->setUserBaseDn($config->get('user_base_dn', $defaults->get('user_base_dn', $this->getGroupBaseDn())))
             ->setGroupClass($config->get('group_class', $defaults->group_class))
             ->setUserClass($config->get('user_class', $defaults->user_class))
             ->setGroupNameAttribute($config->get('group_name_attribute', $defaults->group_name_attribute))

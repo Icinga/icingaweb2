@@ -7,13 +7,14 @@ use Exception;
 use ArrayIterator;
 use Icinga\Application\Config;
 use Icinga\Application\Logger;
-use Icinga\Application\Platform;
 use Icinga\Data\ConfigObject;
 use Icinga\Data\Inspectable;
 use Icinga\Data\Inspection;
 use Icinga\Data\Selectable;
 use Icinga\Data\Sortable;
-use Icinga\Exception\InspectionException;
+use Icinga\Data\Filter\Filter;
+use Icinga\Data\Filter\FilterChain;
+use Icinga\Data\Filter\FilterExpression;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Protocol\Ldap\LdapException;
 
@@ -377,14 +378,7 @@ class LdapConnection implements Selectable, Inspectable
         }
 
         $ds = $this->getConnection();
-        $results = @ldap_search(
-            $ds,
-            $query->getBase() ?: $this->getDn(),
-            (string) $query,
-            array('dn'),
-            0,
-            0
-        );
+        $results = $this->ldapSearch($query, array('dn'));
 
         if ($results === false) {
             if (ldap_errno($ds) !== self::LDAP_NO_SUCH_OBJECT) {
@@ -482,8 +476,28 @@ class LdapConnection implements Selectable, Inspectable
      */
     public function fetchOne(LdapQuery $query, array $fields = null)
     {
-        $row = (array) $this->fetchRow($query, $fields);
-        return array_shift($row) ?: false;
+        $row = $this->fetchRow($query, $fields);
+        if ($row === false) {
+            return false;
+        }
+
+        $values = get_object_vars($row);
+        if (empty($values)) {
+            return false;
+        }
+
+        if ($fields === null) {
+            // Fetch the desired columns from the query if not explicitly overriden in the method's parameter
+            $fields = $query->getColumns();
+        }
+
+        if (empty($fields)) {
+            // The desired columns may be empty independently whether provided by the query or the method's parameter
+            return array_shift($values);
+        }
+
+        $alias = key($fields);
+        return $values[is_string($alias) ? $alias : $fields[$alias]];
     }
 
     /**
@@ -694,19 +708,27 @@ class LdapConnection implements Selectable, Inspectable
                 ));
             } else {
                 foreach ($query->getOrder() as $rule) {
-                    if (! in_array($rule[0], $fields)) {
+                    if (! in_array($rule[0], $fields, true)) {
                         $fields[] = $rule[0];
                     }
                 }
             }
         }
 
-        $results = @ldap_search(
-            $ds,
-            $query->getBase() ?: $this->rootDn,
-            (string) $query,
+        $unfoldAttribute = $query->getUnfoldAttribute();
+        if ($unfoldAttribute) {
+            foreach ($query->getFilter()->listFilteredColumns() as $filterColumn) {
+                $fieldKey = array_search($filterColumn, $fields, true);
+                if ($fieldKey === false || is_string($fieldKey)) {
+                    $fields[] = $filterColumn;
+                }
+            }
+        }
+
+        $results = $this->ldapSearch(
+            $query,
             array_values($fields),
-            0, // Attributes and values
+            0,
             $serverSorting && $limit ? $offset + $limit : 0
         );
         if ($results === false) {
@@ -727,25 +749,21 @@ class LdapConnection implements Selectable, Inspectable
         $count = 0;
         $entries = array();
         $entry = ldap_first_entry($ds, $results);
-        $unfoldAttribute = $query->getUnfoldAttribute();
         do {
             if ($unfoldAttribute) {
-                $rows = $this->cleanupAttributes(
-                    ldap_get_attributes($ds, $entry),
-                    array_flip($fields),
-                    $unfoldAttribute
-                );
-
+                $rows = $this->cleanupAttributes(ldap_get_attributes($ds, $entry), $fields, $unfoldAttribute);
                 if (is_array($rows)) {
                     // TODO: Register the DN the same way as a section name in the ArrayDatasource!
                     foreach ($rows as $row) {
-                        $count += 1;
-                        if (! $serverSorting || $offset === 0 || $offset < $count) {
-                            $entries[] = $row;
-                        }
+                        if ($query->getFilter()->matches($row)) {
+                            $count += 1;
+                            if (! $serverSorting || $offset === 0 || $offset < $count) {
+                                $entries[] = $row;
+                            }
 
-                        if ($serverSorting && $limit > 0 && $limit === count($entries)) {
-                            break;
+                            if ($serverSorting && $limit > 0 && $limit === count($entries)) {
+                                break;
+                            }
                         }
                     }
                 } else {
@@ -759,7 +777,7 @@ class LdapConnection implements Selectable, Inspectable
                 if (! $serverSorting || $offset === 0 || $offset < $count) {
                     $entries[ldap_get_dn($ds, $entry)] = $this->cleanupAttributes(
                         ldap_get_attributes($ds, $entry),
-                        array_flip($fields)
+                        $fields
                     );
                 }
             }
@@ -799,8 +817,6 @@ class LdapConnection implements Selectable, Inspectable
 
         $limit = $query->getLimit();
         $offset = $query->hasOffset() ? $query->getOffset() : 0;
-        $queryString = (string) $query;
-        $base = $query->getBase() ?: $this->rootDn;
 
         if ($fields === null) {
             $fields = $query->getColumns();
@@ -811,8 +827,18 @@ class LdapConnection implements Selectable, Inspectable
         $serverSorting = false;//$this->getCapabilities()->hasOid(LdapCapabilities::LDAP_SERVER_SORT_OID);
         if (! $serverSorting && $query->hasOrder()) {
             foreach ($query->getOrder() as $rule) {
-                if (! in_array($rule[0], $fields)) {
+                if (! in_array($rule[0], $fields, true)) {
                     $fields[] = $rule[0];
+                }
+            }
+        }
+
+        $unfoldAttribute = $query->getUnfoldAttribute();
+        if ($unfoldAttribute) {
+            foreach ($query->getFilter()->listFilteredColumns() as $filterColumn) {
+                $fieldKey = array_search($filterColumn, $fields, true);
+                if ($fieldKey === false || is_string($fieldKey)) {
+                    $fields[] = $filterColumn;
                 }
             }
         }
@@ -820,7 +846,6 @@ class LdapConnection implements Selectable, Inspectable
         $count = 0;
         $cookie = '';
         $entries = array();
-        $unfoldAttribute = $query->getUnfoldAttribute();
         do {
             // Do not request the pagination control as a critical extension, as we want the
             // server to return results even if the paged search request cannot be satisfied
@@ -835,12 +860,10 @@ class LdapConnection implements Selectable, Inspectable
                 ));
             }
 
-            $results = @ldap_search(
-                $ds,
-                $base,
-                $queryString,
+            $results = $this->ldapSearch(
+                $query,
                 array_values($fields),
-                0, // Attributes and values
+                0,
                 $serverSorting && $limit ? $offset + $limit : 0
             );
             if ($results === false) {
@@ -850,14 +873,15 @@ class LdapConnection implements Selectable, Inspectable
 
                 throw new LdapException(
                     'LDAP query "%s" (base %s) failed. Error: %s',
-                    $queryString,
-                    $base,
+                    (string) $query,
+                    $query->getBase() ?: $this->getDn(),
                     ldap_error($ds)
                 );
             } elseif (ldap_count_entries($ds, $results) === 0) {
                 if (in_array(
                     ldap_errno($ds),
-                    array(static::LDAP_SIZELIMIT_EXCEEDED, static::LDAP_ADMINLIMIT_EXCEEDED)
+                    array(static::LDAP_SIZELIMIT_EXCEEDED, static::LDAP_ADMINLIMIT_EXCEEDED),
+                    true
                 )) {
                     Logger::warning(
                         'Unable to request more than %u results. Does the server allow paged search requests? (%s)',
@@ -872,22 +896,19 @@ class LdapConnection implements Selectable, Inspectable
             $entry = ldap_first_entry($ds, $results);
             do {
                 if ($unfoldAttribute) {
-                    $rows = $this->cleanupAttributes(
-                        ldap_get_attributes($ds, $entry),
-                        array_flip($fields),
-                        $unfoldAttribute
-                    );
-
+                    $rows = $this->cleanupAttributes(ldap_get_attributes($ds, $entry), $fields, $unfoldAttribute);
                     if (is_array($rows)) {
                         // TODO: Register the DN the same way as a section name in the ArrayDatasource!
                         foreach ($rows as $row) {
-                            $count += 1;
-                            if (! $serverSorting || $offset === 0 || $offset < $count) {
-                                $entries[] = $row;
-                            }
+                            if ($query->getFilter()->matches($row)) {
+                                $count += 1;
+                                if (! $serverSorting || $offset === 0 || $offset < $count) {
+                                    $entries[] = $row;
+                                }
 
-                            if ($serverSorting && $limit > 0 && $limit === count($entries)) {
-                                break;
+                                if ($serverSorting && $limit > 0 && $limit === count($entries)) {
+                                    break;
+                                }
                             }
                         }
                     } else {
@@ -901,7 +922,7 @@ class LdapConnection implements Selectable, Inspectable
                     if (! $serverSorting || $offset === 0 || $offset < $count) {
                         $entries[ldap_get_dn($ds, $entry)] = $this->cleanupAttributes(
                             ldap_get_attributes($ds, $entry),
-                            array_flip($fields)
+                            $fields
                         );
                     }
                 }
@@ -932,7 +953,8 @@ class LdapConnection implements Selectable, Inspectable
             // pagedResultsControl with the size set to zero (0) and the cookie set to the last cookie returned by
             // the server: https://www.ietf.org/rfc/rfc2696.txt
             ldap_control_paged_result($ds, 0, false, $cookie);
-            ldap_search($ds, $base, $queryString); // Returns no entries, due to the page size
+            // Returns no entries, due to the page size
+            ldap_search($ds, $query->getBase() ?: $this->getDn(), (string) $query);
         }
 
         if (! $serverSorting && $query->hasOrder()) {
@@ -963,8 +985,17 @@ class LdapConnection implements Selectable, Inspectable
         // necessary to create another array to map attributes case insensitively to their requested counterparts.
         // This does also apply the virtual alias handling. (Since an LDAP server does not handle such)
         $loweredFieldMap = array();
-        foreach ($requestedFields as $name => $alias) {
-            $loweredFieldMap[strtolower($name)] = is_string($alias) ? $alias : $name;
+        foreach ($requestedFields as $alias => $name) {
+            $loweredName = strtolower($name);
+            if (isset($loweredFieldMap[$loweredName])) {
+                if (! is_array($loweredFieldMap[$loweredName])) {
+                    $loweredFieldMap[$loweredName] = array($loweredFieldMap[$loweredName]);
+                }
+
+                $loweredFieldMap[$loweredName][] = is_string($alias) ? $alias : $name;
+            } else {
+                $loweredFieldMap[$loweredName] = is_string($alias) ? $alias : $name;
+            }
         }
 
         $cleanedAttributes = array();
@@ -982,12 +1013,18 @@ class LdapConnection implements Selectable, Inspectable
             $requestedAttributeName = isset($loweredFieldMap[strtolower($attribute_name)])
                 ? $loweredFieldMap[strtolower($attribute_name)]
                 : $attribute_name;
-            $cleanedAttributes[$requestedAttributeName] = $attribute_value;
+            if (is_array($requestedAttributeName)) {
+                foreach ($requestedAttributeName as $requestedName) {
+                    $cleanedAttributes[$requestedName] = $attribute_value;
+                }
+            } else {
+                $cleanedAttributes[$requestedAttributeName] = $attribute_value;
+            }
         }
 
         // The result may not contain all requested fields, so populate the cleaned
         // result with the missing fields and their value being set to null
-        foreach ($requestedFields as $name => $alias) {
+        foreach ($requestedFields as $alias => $name) {
             if (! is_string($alias)) {
                 $alias = $name;
             }
@@ -1003,6 +1040,14 @@ class LdapConnection implements Selectable, Inspectable
             && isset($cleanedAttributes[$unfoldAttribute])
             && is_array($cleanedAttributes[$unfoldAttribute])
         ) {
+            $siblings = array();
+            foreach ($loweredFieldMap as $loweredName => $requestedNames) {
+                if (is_array($requestedNames) && in_array($unfoldAttribute, $requestedNames, true)) {
+                    $siblings = array_diff($requestedNames, array($unfoldAttribute));
+                    break;
+                }
+            }
+
             $values = $cleanedAttributes[$unfoldAttribute];
             unset($cleanedAttributes[$unfoldAttribute]);
             $baseRow = (object) $cleanedAttributes;
@@ -1010,6 +1055,10 @@ class LdapConnection implements Selectable, Inspectable
             foreach ($values as $value) {
                 $row = clone $baseRow;
                 $row->{$unfoldAttribute} = $value;
+                foreach ($siblings as $sibling) {
+                    $row->{$sibling} = $value;
+                }
+
                 $rows[] = $row;
             }
 
@@ -1120,6 +1169,77 @@ class LdapConnection implements Selectable, Inspectable
     }
 
     /**
+     * Perform a LDAP search and return the result
+     *
+     * @param   LdapQuery   $query
+     * @param   array       $attributes     An array of the required attributes
+     * @param   int         $attrsonly      Should be set to 1 if only attribute types are wanted
+     * @param   int         $sizelimit      Enables you to limit the count of entries fetched
+     * @param   int         $timelimit      Sets the number of seconds how long is spend on the search
+     * @param   int         $deref
+     *
+     * @return  resource|bool               A search result identifier or false on error
+     */
+    public function ldapSearch(
+        LdapQuery $query,
+        array $attributes = null,
+        $attrsonly = 0,
+        $sizelimit = 0,
+        $timelimit = 0,
+        $deref = LDAP_DEREF_NEVER
+    ) {
+        $queryString = (string) $query;
+        $baseDn = $query->getBase() ?: $this->getDn();
+
+        if (Logger::getInstance()->getLevel() === Logger::DEBUG) {
+            // We're checking the level by ourself to avoid rendering the ldapsearch commandline for nothing
+            $starttlsParam = $this->encryption === static::STARTTLS ? ' -ZZ' : '';
+            $ldapUrl = ($this->encryption === static::LDAPS ? 'ldaps://' : 'ldap://')
+                . $this->hostname
+                . ($this->port ? ':' . $this->port : '');
+
+            if ($this->bound) {
+                $bindParams = ' -D "' . $this->bindDn . '"' . ($this->bindPw ? ' -w "' . $this->bindPw . '"' : '');
+            }
+
+            if ($deref === LDAP_DEREF_NEVER) {
+                $derefName = 'never';
+            } elseif ($deref === LDAP_DEREF_ALWAYS) {
+                $derefName = 'always';
+            } elseif ($deref === LDAP_DEREF_SEARCHING) {
+                $derefName = 'search';
+            } else { // $deref === LDAP_DEREF_FINDING
+                $derefName = 'find';
+            }
+
+            Logger::debug("Issueing LDAP search. Use '%s' to reproduce.", sprintf(
+                'ldapsearch -P 3%s -H "%s"%s -b "%s" -s "sub" -z %u -l %u -a "%s"%s%s%s',
+                $starttlsParam,
+                $ldapUrl,
+                $bindParams,
+                $baseDn,
+                $sizelimit,
+                $timelimit,
+                $derefName,
+                $attrsonly ? ' -A' : '',
+                $queryString ? ' "' . $queryString . '"' : '',
+                $attributes ? ' "' . join('" "', $attributes) . '"' : ''
+            ));
+        }
+
+        return @ldap_search(
+            $this->getConnection(),
+            $baseDn,
+            $queryString,
+            $attributes,
+            $attrsonly,
+            $sizelimit,
+            $timelimit,
+            $deref
+        );
+    }
+
+    /**
      * Create an LDAP entry
      *
      * @param   string  $dn             The distinguished name to use
@@ -1182,6 +1302,93 @@ class LdapConnection implements Selectable, Inspectable
         }
 
         return $dir;
+    }
+
+    /**
+     * Render and return a valid LDAP filter representation of the given filter
+     *
+     * @param   Filter  $filter
+     * @param   int     $level
+     *
+     * @return  string
+     */
+    public function renderFilter(Filter $filter, $level = 0)
+    {
+        if ($filter->isExpression()) {
+            /** @var $filter FilterExpression */
+            return $this->renderFilterExpression($filter);
+        }
+
+        /** @var $filter FilterChain */
+        $parts = array();
+        foreach ($filter->filters() as $filterPart) {
+            $part = $this->renderFilter($filterPart, $level + 1);
+            if ($part) {
+                $parts[] = $part;
+            }
+        }
+
+        if (empty($parts)) {
+            return '';
+        }
+
+        $format = '%1$s(%2$s)';
+        if (count($parts) === 1) {
+            $format = '%2$s';
+        }
+        if ($level === 0) {
+            $format = '(' . $format . ')';
+        }
+
+        return sprintf($format, $filter->getOperatorSymbol(), implode(')(', $parts));
+    }
+
+    /**
+     * Render and return a valid LDAP filter expression of the given filter
+     *
+     * @param   FilterExpression    $filter
+     *
+     * @return  string
+     */
+    protected function renderFilterExpression(FilterExpression $filter)
+    {
+        $column = $filter->getColumn();
+        $sign = $filter->getSign();
+        $expression = $filter->getExpression();
+        $format = '%1$s%2$s%3$s';
+
+        if ($expression === null || $expression === true) {
+            $expression = '*';
+        } elseif (is_array($expression)) {
+            $seqFormat = '|(%s)';
+            if ($sign === '!=') {
+                $seqFormat = '!(' . $seqFormat . ')';
+                $sign = '=';
+            }
+
+            $seqParts = array();
+            foreach ($expression as $expressionValue) {
+                $seqParts[] = sprintf(
+                    $format,
+                    LdapUtils::quoteForSearch($column),
+                    $sign,
+                    LdapUtils::quoteForSearch($expressionValue, true)
+                );
+            }
+
+            return sprintf($seqFormat, implode(')(', $seqParts));
+        }
+
+        if ($sign === '!=') {
+            $format = '!(%1$s=%3$s)';
+        }
+
+        return sprintf(
+            $format,
+            LdapUtils::quoteForSearch($column),
+            $sign,
+            LdapUtils::quoteForSearch($expression, true)
+        );
     }
 
     /**

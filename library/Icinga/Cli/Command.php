@@ -28,9 +28,9 @@ abstract class Command
     protected $commandName;
     protected $actionName;
 
-    private $config;
+    protected $config;
 
-    private $configs;
+    protected $configs;
 
     protected $defaultActionName = 'default';
 
@@ -127,7 +127,7 @@ abstract class Command
 
     public function fail($msg)
     {
-        throw new IcingaException($msg);
+        throw new IcingaException('%s', $msg);
     }
 
     public function getDefaultActionName()

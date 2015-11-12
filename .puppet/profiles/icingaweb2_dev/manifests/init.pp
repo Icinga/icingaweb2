@@ -88,6 +88,7 @@ class icingaweb2_dev (
 
   icingaweb2::config::general { 'authentication':
     source => $name,
+    replace => false,
   }
 
   icingaweb2::config::general { [ 'config', 'resources', 'roles' ]:

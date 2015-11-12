@@ -574,7 +574,12 @@ class ListController extends Controller
      */
     protected function filterQuery(DataView $dataView)
     {
-        $this->setupFilterControl($dataView);
+        $this->setupFilterControl($dataView, null, null, array(
+            'format', // handleFormatRequest()
+            'stateType', // hostsAction() and servicesAction()
+            'addColumns', // addColumns()
+            'problems' // servicegridAction()
+        ));
         $this->handleFormatRequest($dataView);
         return $dataView;
     }

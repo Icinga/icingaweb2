@@ -171,7 +171,7 @@ class UrlParams
 
     protected function urlEncode($value)
     {
-        return rawurlencode((string) $value);
+        return rawurlencode($value instanceof Url ? $value->getAbsoluteUrl() : (string) $value);
     }
 
     /**

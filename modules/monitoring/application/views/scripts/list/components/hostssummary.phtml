@@ -73,8 +73,8 @@ $stateBadges
             'host_state'    => 2,
             'host_handled'  => 1
         ),
-        'List %u host that is currently in state UNREACHABLE (Acknowledged) in the host group "%s"',
-        'List %u hosts which are currently in state UNREACHABLE (Acknowledged) in the host group "%s"',
+        'List %u host that is currently in state UNREACHABLE (Acknowledged)',
+        'List %u hosts which are currently in state UNREACHABLE (Acknowledged)',
         array($stats->hosts_unreachable_handled)
     )
     ->add(
@@ -83,8 +83,8 @@ $stateBadges
         array(
             'host_state' => 99
         ),
-        'List %u host that is currently in state UNREACHABLE (Acknowledged)',
-        'List %u hosts which are currently in state UNREACHABLE (Acknowledged)',
+        'List %u host that is currently in state PENDING',
+        'List %u hosts which are currently in state PENDING',
         array($stats->hosts_pending)
     );
 echo $stateBadges->render();

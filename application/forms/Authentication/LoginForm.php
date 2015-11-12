@@ -71,7 +71,7 @@ class LoginForm extends Form
         if ($this->created) {
             $redirect = $this->getElement('redirect')->getValue();
         }
-        if (empty($redirect) || strpos($redirect, 'authentication/logout') !== 0) {
+        if (empty($redirect) || strpos($redirect, 'authentication/logout') !== false) {
             $redirect = static::REDIRECT_URL;
         }
         return Url::fromPath($redirect);

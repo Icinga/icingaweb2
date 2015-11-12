@@ -44,7 +44,7 @@ class UserController extends AuthBackendController
             'backend',
             array(
                 'autosubmit'    => true,
-                'label'         => $this->translate('Authentication Backend'),
+                'label'         => $this->translate('User Backend'),
                 'multiOptions'  => array_combine($backendNames, $backendNames),
                 'value'         => $this->params->get('backend')
             )
@@ -99,7 +99,8 @@ class UserController extends AuthBackendController
         $this->setupFilterControl(
             $memberships,
             array('group_name' => t('User Group')),
-            array('group_name')
+            array('group'),
+            array('user')
         );
         $this->setupPaginationControl($memberships);
         $this->setupLimitControl();
@@ -140,7 +141,7 @@ class UserController extends AuthBackendController
             $removeForm->addElement('button', 'btn_submit', array(
                 'escape'        => false,
                 'type'          => 'submit',
-                'class'         => 'link-like spinner',
+                'class'         => 'link-button spinner',
                 'value'         => 'btn_submit',
                 'decorators'    => array('ViewHelper'),
                 'label'         => $this->view->icon('trash'),
@@ -259,6 +260,7 @@ class UserController extends AuthBackendController
                     $alreadySeen[$groupName] = null;
                     $groups[] = (object) array(
                         'group_name'    => $groupName,
+                        'group'         => $groupName,
                         'backend'       => $backend
                     );
                 }

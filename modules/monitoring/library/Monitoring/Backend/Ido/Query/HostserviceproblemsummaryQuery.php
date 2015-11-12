@@ -75,7 +75,7 @@ class HostserviceproblemsummaryQuery extends IdoQuery
             's.service_object_id = so.object_id AND so.is_active = 1',
             array()
         );
-        $this->select->group(array('so.object_id'));
+        $this->select->group('so.name1');
         $this->joinedVirtualTables['services'] = true;
     }
 

@@ -130,6 +130,7 @@ class DbUserBackend extends DbRepository implements UserBackendInterface, Inspec
      */
     public function insert($table, array $bind)
     {
+        $this->requireTable($table);
         $bind['created_at'] = date('Y-m-d H:i:s');
         $this->ds->insert(
             $this->prependTablePrefix($table),
@@ -150,6 +151,7 @@ class DbUserBackend extends DbRepository implements UserBackendInterface, Inspec
      */
     public function update($table, array $bind, Filter $filter = null)
     {
+        $this->requireTable($table);
         $bind['last_modified'] = date('Y-m-d H:i:s');
         if ($filter) {
             $filter = $this->requireFilter($table, $filter);
