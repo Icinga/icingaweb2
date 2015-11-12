@@ -9,7 +9,6 @@
 
 #menu a {
   overflow: hidden;
-  padding: @vertical-padding / 2 @horizontal-padding;
   text-overflow: ellipsis;
   white-space: nowrap;
 
@@ -31,6 +30,7 @@
 #menu .nav-level-1 > .nav-item {
   border-left: 5px solid transparent;
   line-height: 2.167em; // 26 px
+  padding: @vertical-padding / 2 @horizontal-padding;
 
   &.active {
     > a > .badge {
@@ -60,6 +60,7 @@
   display: none;
   line-height: 1.833em; // 22px
   margin-left: @icon-width;
+  padding: @vertical-padding / 2 0;
 
   > a {
     font-size: @font-size-small;
@@ -82,16 +83,17 @@
 }
 
 #menu input.search {
-  background: transparent url('../img/icons/search.png') no-repeat @horizontal-padding + 0.2em center;
+  background: transparent url('../img/icons/search.png') no-repeat @horizontal-padding center;
   background-size: 1em auto;
   border: none;
+  border-left: 5px solid transparent;
   line-height: 2.167em;
   padding-left: @icon-width + @horizontal-padding;
   width: 100%;
 
   &.active {
     background-color: @body-bg-color;
-    border-left: 5px solid @icinga-blue;
+    border-color: @icinga-blue;
   }
 }
 
