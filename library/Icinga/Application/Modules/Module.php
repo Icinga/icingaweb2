@@ -1061,18 +1061,13 @@ class Module
             return $this;
         }
 
-        $loader = $this->app->getLoader();
         $moduleName = ucfirst($this->getName());
 
-        $moduleLibraryDir = $this->getLibDir(). '/'. $moduleName;
-        if (is_dir($moduleLibraryDir)) {
-            $loader->registerNamespace('Icinga\\Module\\' . $moduleName, $moduleLibraryDir);
-        }
-
-        $moduleFormDir = $this->getFormDir();
-        if (is_dir($moduleFormDir)) {
-            $loader->registerNamespace('Icinga\\Module\\' . $moduleName. '\\Forms', $moduleFormDir);
-        }
+        $this->app->getLoader()->registerNamespace(
+            'Icinga\\Module\\' . $moduleName,
+            $this->getLibDir() . '/'. $moduleName,
+            $this->getApplicationDir()
+        );
 
         $this->registeredAutoloader = true;
 
@@ -1136,21 +1131,10 @@ class Module
         if (! $this->app->isWeb()) {
             return $this;
         }
-        $moduleControllerDir = $this->getControllerDir();
-        if (is_dir($moduleControllerDir)) {
-            $this->app->getfrontController()->addControllerDirectory(
-                $moduleControllerDir,
-                $this->getName()
-            );
-            $this->app->getLoader()->registerNamespace(
-                'Icinga\\Module\\' . ucfirst($this->getName()) . '\\' . Dispatcher::CONTROLLER_NAMESPACE,
-                $moduleControllerDir
-            );
-        }
-        $this
+
+        return $this
             ->registerLocales()
             ->registerRoutes();
-        return $this;
     }
 
     /**
@@ -1161,6 +1145,13 @@ class Module
     protected function registerRoutes()
     {
         $router = $this->app->getFrontController()->getRouter();
+
+        // TODO: We should not be required to do this. Please check dispatch()
+        $this->app->getfrontController()->addControllerDirectory(
+            $this->getControllerDir(),
+            $this->getName()
+        );
+
         /** @var \Zend_Controller_Router_Rewrite $router */
         foreach ($this->routes as $name => $route) {
             $router->addRoute($name, $route);
