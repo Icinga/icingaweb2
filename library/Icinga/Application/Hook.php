@@ -68,7 +68,22 @@ class Hook
      */
     public static function has($name)
     {
+        $name = self::normalizeHookName($name);
         return array_key_exists($name, self::$hooks);
+    }
+
+    protected static function normalizeHookName($name)
+    {
+        if (strpos($name, '\\') === false) {
+            $parts = explode('/', $name);
+            foreach ($parts as & $part) {
+                $part = ucfirst($part);
+            }
+
+            return implode('\\', $parts);
+        }
+
+        return $name;
     }
 
     /**
@@ -83,6 +98,8 @@ class Hook
      */
     public static function createInstance($name, $key)
     {
+        $name = self::normalizeHookName($name);
+
         if (!self::has($name, $key)) {
             return null;
         }
@@ -134,6 +151,8 @@ class Hook
      */
     private static function assertValidHook($instance, $name)
     {
+        $name = self::normalizeHookName($name);
+
         $suffix = self::$classSuffix; // 'Hook'
         $base = self::$BASE_NS;       // 'Icinga\\Web\\Hook\\'
 
@@ -208,6 +227,8 @@ class Hook
      */
     public static function first($name)
     {
+        $name = self::normalizeHookName($name);
+
         if (self::has($name)) {
             return self::createInstance($name, key(self::$hooks[$name]));
         }
@@ -223,6 +244,8 @@ class Hook
      */
     public static function register($name, $key, $class)
     {
+        $name = self::normalizeHookName($name);
+
         if (!isset(self::$hooks[$name])) {
             self::$hooks[$name] = array();
         }
