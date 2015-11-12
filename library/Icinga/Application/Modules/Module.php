@@ -19,7 +19,7 @@ use Icinga\Module\Setup\SetupWizard;
 use Icinga\Util\File;
 use Icinga\Util\Translator;
 use Icinga\Web\Controller\Dispatcher;
-use Icinga\Web\Hook;
+use Icinga\Application\Hook;
 use Icinga\Web\Navigation\Navigation;
 use Icinga\Web\Widget;
 
