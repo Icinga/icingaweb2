@@ -262,7 +262,7 @@ class BackendConfigForm extends ConfigForm
             array(
                 'decorators'    => array(
                     'FormElements',
-                    array('HtmlTag', array('tag' => 'div', 'class' => 'element'))
+                    array('HtmlTag', array('tag' => 'div', 'class' => 'control-group'))
                 )
             )
         );
