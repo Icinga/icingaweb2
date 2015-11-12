@@ -2,7 +2,7 @@
 use Icinga\Module\Monitoring\Object\Host;
 
 if (! ($hostCount = count($objects))): return; endif ?>
-<table class="state-table">
+<table class="state-table host-detail-state">
 <tbody>
 <?php foreach ($objects as $i => $host): /** @var Host $host */
     if ($i === 5) {

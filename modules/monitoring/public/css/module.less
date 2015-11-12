@@ -39,16 +39,27 @@
   width: 1em;
 }
 
+// Host and service summaries in detail and list views
 .hosts-summary,
 .services-summary {
-  .v-center();
-  margin-top: @horizontal-padding;
+  margin-bottom: 0.5em;
+
+  > .hosts-link,
+  > .services-link,
+  > .state-badges {
+    vertical-align: middle;
+  }
+}
+
+// State table in the host and service multi-selection and detail views
+.host-detail-state,
+.service-detail-state {
+  margin-bottom: 0.5em;
 }
 
 .grid {
   .hosts-summary,
   .services-summary {
-    margin: 0;
     .pull-left();
   }
 }

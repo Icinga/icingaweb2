@@ -3,7 +3,7 @@ use Icinga\Module\Monitoring\Object\Host;
 use Icinga\Module\Monitoring\Object\Service;
 
 if (! ($serviceCount = count($objects))): return; endif ?>
-<table class="state-table">
+<table class="state-table service-detail-state">
 <tbody>
 <?php foreach ($objects as $i => $service): /** @var Service $service */
     if ($i === 5) {

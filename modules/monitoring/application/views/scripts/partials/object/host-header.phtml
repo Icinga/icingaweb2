@@ -2,7 +2,7 @@
 use Icinga\Module\Monitoring\Object\Host;
 /** @var Host $object */
 ?>
-<table class="state-table">
+<table class="state-table host-detail-state">
     <tr>
         <td class="state-col state-<?= Host::getStateText($object->host_state) ?><?= $object->host_handled ? ' handled' : '' ?>">
             <div class="state-header"><?= Host::getStateText($object->host_state, true) ?></div>
