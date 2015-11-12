@@ -52,6 +52,13 @@ class Module
     private $cssdir;
 
     /**
+     * Base application directory
+     *
+     * @var string
+     */
+    private $appdir;
+
+    /**
      * Library directory
      *
      * @var string
@@ -244,6 +251,7 @@ class Module
         $this->jsdir          = $basedir . '/public/js';
         $this->libdir         = $basedir . '/library';
         $this->configdir      = $app->getConfigDir('modules/' . $name);
+        $this->appdir         = $basedir . '/application';
         $this->localedir      = $basedir . '/application/locale';
         $this->formdir        = $basedir . '/application/forms';
         $this->controllerdir  = $basedir . '/application/controllers';
@@ -737,6 +745,16 @@ class Module
     public function getBaseDir()
     {
         return $this->basedir;
+    }
+
+    /**
+     * Get the module's application directory
+     *
+     * @return string
+     */
+    public function getApplicationDir()
+    {
+        return $this->appdir;
     }
 
     /**
