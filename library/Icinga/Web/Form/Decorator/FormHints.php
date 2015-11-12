@@ -58,7 +58,7 @@ class FormHints extends Zend_Form_Decorator_Abstract
         $hints = $this->recurseForm($form, $entirelyRequired);
         if ($entirelyRequired !== null) {
             $hints[] = $form->getView()->translate(sprintf(
-                '* Required field',
+                '%s Required field',
                 $form->getRequiredCue()
             ));
         }
