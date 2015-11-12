@@ -155,6 +155,20 @@ class Hook
         }
 
         if (!$instance instanceof $base_class) {
+
+            // This is a compatibility check. Should be removed one far day:
+            if ($module !== null) {
+                $compat_class = 'Icinga\\Module\\'
+                              . ucfirst($module)
+                              . '\\Web\\Hook\\'
+                              . ucfirst($name)
+                              . $suffix;
+
+                if ($instance instanceof $compat_class) {
+                    return;
+                }
+            }
+
             throw new ProgrammingError(
                 '%s is not an instance of %s',
                 get_class($instance),
