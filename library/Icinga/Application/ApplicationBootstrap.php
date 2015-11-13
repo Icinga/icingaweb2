@@ -356,10 +356,9 @@ abstract class ApplicationBootstrap
     }
 
     /**
-     * Register the Zend Autoloader
+     * Register the Zend Autoloader - compat only - does nothing
      *
-     * Deprecated, compat only - does nothing
-     *
+     * @deprecated
      * @return $this
      */
     public function setupZendAutoloader()
