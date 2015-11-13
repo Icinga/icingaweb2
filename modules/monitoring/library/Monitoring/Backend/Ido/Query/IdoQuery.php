@@ -890,7 +890,7 @@ abstract class IdoQuery extends DbQuery
      */
     protected function joinHookedVirtualTable($table)
     {
-        $this->hookedVirtualTable[$table]->joinVirtualTable($table);
+        $this->hookedVirtualTables[$table]->joinVirtualTable($table);
         $this->joinedVirtualTables[$table] = true;
         return $this;
     }
