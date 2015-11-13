@@ -545,6 +545,7 @@ class ListController extends Controller
         $this->applyRestriction('monitoring/filter/objects', $query);
         $this->filterQuery($query);
         $filter = (bool) $this->params->shift('problems', false) ? Filter::where('service_problem', 1) : null;
+        $query->getQuery()->setGroupBase(array());
         $pivot = $query
             ->pivot(
                 'service_description',

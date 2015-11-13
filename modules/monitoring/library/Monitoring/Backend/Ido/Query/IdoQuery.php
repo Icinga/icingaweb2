@@ -990,6 +990,12 @@ abstract class IdoQuery extends DbQuery
         return $this;
     }
 
+    public function setGroupBase(array $groupBase)
+    {
+        $this->groupBase = $groupBase;
+        return $this;
+    }
+
     /**
      * Register the GROUP BY columns required for the given alias
      *
