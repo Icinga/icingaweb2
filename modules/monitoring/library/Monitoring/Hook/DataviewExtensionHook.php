@@ -5,5 +5,12 @@ namespace Icinga\Module\Monitoring\Hook;
 
 abstract class DataviewExtensionHook
 {
-    abstract public function getAdditionalQueryColumns($queryName);
+    public function getAdditionalQueryColumns($queryName)
+    {
+        $cols = $this->provideAdditionalQueryColumns($queryName);
+
+        return $cols;
+    }
+
+    abstract public function provideAdditionalQueryColumns($queryName);
 }
