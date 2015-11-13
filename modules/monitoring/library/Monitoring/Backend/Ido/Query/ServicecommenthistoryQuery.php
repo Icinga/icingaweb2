@@ -21,7 +21,7 @@ class ServicecommenthistoryQuery extends IdoQuery
     /**
      * {@inheritdoc}
      */
-    protected $groupOrigin = array('hostgroups', 'services');
+    protected $groupOrigin = array('hostgroups', 'servicegroups', 'services');
 
     /**
      * {@inheritdoc}

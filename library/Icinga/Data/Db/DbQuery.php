@@ -3,7 +3,9 @@
 
 namespace Icinga\Data\Db;
 
+use Exception;
 use Zend_Db_Select;
+use Icinga\Application\Logger;
 use Icinga\Data\Filter\FilterAnd;
 use Icinga\Data\Filter\FilterChain;
 use Icinga\Data\Filter\FilterNot;
@@ -382,8 +384,13 @@ class DbQuery extends SimpleQuery
      */
     public function __toString()
     {
-        $select = (string) $this->getSelectQuery();
-        return $this->getIsSubQuery() ? ('(' . $select . ')') : $select;
+        try {
+            $select = (string) $this->getSelectQuery();
+            return $this->getIsSubQuery() ? ('(' . $select . ')') : $select;
+        } catch (Exception $e) {
+            Logger::debug('Failed to render DbQuery. An error occured: %s', $e);
+            return '';
+        }
     }
 
     /**

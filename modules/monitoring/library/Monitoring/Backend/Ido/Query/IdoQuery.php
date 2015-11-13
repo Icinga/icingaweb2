@@ -3,8 +3,6 @@
 
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
-use AppendIterator;
-use ArrayIterator;
 use Zend_Db_Expr;
 use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
@@ -14,8 +12,8 @@ use Icinga\Data\Filter\FilterExpression;
 use Icinga\Exception\IcingaException;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Exception\QueryException;
-use Icinga\Module\Monitoring\Data\ColumnFilterIterator;
 use Icinga\Web\Session;
+use Icinga\Module\Monitoring\Data\ColumnFilterIterator;
 
 /**
  * Base class for Ido Queries
@@ -122,7 +120,7 @@ abstract class IdoQuery extends DbQuery
     protected $joinedVirtualTables = array();
 
     /**
-     * Unresolved order columns
+     * List of column aliases used for sorting the result
      *
      * @var array
      */
@@ -445,7 +443,7 @@ abstract class IdoQuery extends DbQuery
             return $this;
         }
 
-        $this->orderColumns[$alias] = $alias;
+        $this->orderColumns[] = $alias;
         return parent::order($column, $dir);
     }
 
@@ -548,16 +546,17 @@ abstract class IdoQuery extends DbQuery
     /**
      * Return true if an field contains an explicit timestamp
      *
-     * @param  String $field    The field to test for containing an timestamp
-     * @return bool             True when the field represents an timestamp
+     * @param   string  $field      The field to test for containing an timestamp
+     *
+     * @return  bool                True when the field represents an timestamp
      */
     public function isTimestamp($field)
     {
-        $mapped = $this->getMappedField($field);
-        if ($mapped === null) {
-            return stripos($field, 'UNIX_TIMESTAMP') !== false;
+        if ($this->isCustomVar($field)) {
+            return false;
         }
-        return stripos($mapped, 'UNIX_TIMESTAMP') !== false;
+
+        return stripos($this->getMappedField($field) ?: $field, 'UNIX_TIMESTAMP') !== false;
     }
 
     /**
@@ -992,17 +991,73 @@ abstract class IdoQuery extends DbQuery
         return $this;
     }
 
+    public function clearGroupingRules()
+    {
+        $this->groupBase = array();
+        $this->groupOrigin = array();
+        return $this;
+    }
+
     /**
-     * Handle grouping for special columns, e.g. when the column sources more than one table
+     * Register the GROUP BY columns required for the given alias
      *
-     * @param   string  $column         Column
-     * @param   array   $groupColumns   GROUP BY list
-     * @param   array   $groupedTables  Already grouped tables
-     *
-     * @return  bool    Whether the column was handled
+     * @param   string  $alias              The alias to register columns for
+     * @param   string  $table              The table the given alias is associated with
+     * @param   array   $groupedColumns     The grouping columns registered so far
+     * @param   array   $groupedTables      The tables for which columns were registered so far
      */
-    protected function handleGroupColumn($column, &$groupColumns, &$groupedTables) {
-        return false;
+    protected function registerGroupColumns($alias, $table, array &$groupedColumns, array &$groupedTables)
+    {
+        switch ($table) {
+            case 'checktimeperiods':
+                $groupedColumns[] = 'ctp.timeperiod_id';
+                break;
+            case 'contacts':
+                $groupedColumns[] = 'co.object_id';
+                $groupedColumns[] = 'c.contact_id';
+                break;
+            case 'hostobjects':
+                $groupedColumns[] = 'ho.object_id';
+                break;
+            case 'hosts':
+                $groupedColumns[] = 'h.host_id';
+                break;
+            case 'hostgroups':
+                $groupedColumns[] = 'hgo.object_id';
+                $groupedColumns[] = 'hg.hostgroup_id';
+                break;
+            case 'hoststatus':
+                $groupedColumns[] = 'hs.hoststatus_id';
+                break;
+            case 'instances':
+                $groupedColumns[] = 'i.instance_id';
+                break;
+            case 'servicegroups':
+                $groupedColumns[] = 'sgo.object_id';
+                $groupedColumns[] = 'sg.servicegroup_id';
+                break;
+            case 'serviceobjects':
+                $groupedColumns[] = 'so.object_id';
+                break;
+            case 'serviceproblemsummary':
+                $groupedColumns[] = 'sps.unhandled_services_count';
+                break;
+            case 'services':
+                $groupedColumns[] = 'so.object_id';
+                $groupedColumns[] = 's.service_id';
+                break;
+            case 'servicestatus':
+                $groupedColumns[] = 'ss.servicestatus_id';
+                break;
+            case 'timeperiods':
+                $groupedColumns[] = 'ht.timeperiod_id';
+                $groupedColumns[] = 'st.timeperiod_id';
+                break;
+            default:
+                return;
+        }
+
+        $groupedTables[$table] = true;
     }
 
     /**
@@ -1014,82 +1069,38 @@ abstract class IdoQuery extends DbQuery
         if (! is_array($group)) {
             $group = array($group);
         }
-        foreach ($this->groupOrigin as $table) {
-            if ($this->hasJoinedVirtualTable($table)) {
-                $groupedTables = array();
-                foreach ($this->groupBase as $table => $columns) {
-                    foreach ($columns as $column) {
-                        $group[] = $column;
-                    }
-                    $groupedTables[$table] = true;
-                }
-                if ($this->getDatasource()->getDbType() !== 'pgsql') {
-                    return $group;
-                }
-                $columnIterator = new AppendIterator();
-                $columnIterator->append(new ColumnFilterIterator($this->columns));
-                $columnIterator->append(new ArrayIterator($this->orderColumns));
-                foreach ($columnIterator as $alias => $column) {
-                    $alias = $this->hasAliasName($alias) ? $alias : $this->customAliasToAlias($alias);
-                    if ($this->handleGroupColumn($alias, $group, $groupedTables) === true) {
-                        continue;
-                    }
-                    $tableName = $this->aliasToTableName($alias);
-                    if (isset($groupedTables[$tableName])) {
-                        continue;
-                    }
-                    switch ($tableName) {
-                        case 'checktimeperiods':
-                            $group[] = 'ctp.timeperiod_id';
-                            break;
-                        case 'contacts':
-                            $group[] = 'co.object_id';
-                            $group[] = 'c.contact_id';
-                            break;
-                        case 'hostobjects':
-                            $group[] = 'ho.object_id';
-                            break;
-                        case 'hosts':
-                            $group[] = 'h.host_id';
-                            break;
-                        case 'hostgroups':
-                            $group[] = 'hgo.object_id';
-                            $group[] = 'hg.hostgroup_id';
-                            break;
-                        case 'hoststatus':
-                            $group[] = 'hs.hoststatus_id';
-                            break;
-                        case 'instances':
-                            $group[] = 'i.instance_id';
-                            break;
-                        case 'servicegroups':
-                            $group[] = 'sgo.object_id';
-                            $group[] = 'sg.servicegroup_id';
-                            break;
-                        case 'serviceobjects':
-                            $group[] = 'so.object_id';
-                            break;
-                        case 'serviceproblemsummary':
-                            $group[] = 'sps.unhandled_services_count';
-                            break;
-                        case 'services':
-                            $group[] = 'so.object_id';
-                            $group[] = 's.service_id';
-                            break;
-                        case 'servicestatus':
-                            $group[] = 'ss.servicestatus_id';
-                            break;
-                        case 'timeperiods':
-                            $group[] = 'ht.timeperiod_id';
-                            $group[] = 'st.timeperiod_id';
-                            break;
-                        default:
-                            continue 2;
-                    }
-                    $groupedTables[$tableName] = true;
-                }
 
-                break;
+        $joinedOrigins = array_filter($this->groupOrigin, array($this, 'hasJoinedVirtualTable'));
+        if (empty($joinedOrigins)) {
+            return $group;
+        }
+
+        $groupedTables = array();
+        foreach ($this->groupBase as $baseTable => $aliasedPks) {
+            $groupedTables[$baseTable] = true;
+            foreach ($aliasedPks as $aliasedPk) {
+                $group[] = $aliasedPk;
+            }
+        }
+
+        foreach (new ColumnFilterIterator($this->columns) as $desiredAlias => $desiredColumn) {
+            $alias = is_string($desiredAlias) ? $this->customAliasToAlias($desiredAlias) : $desiredColumn;
+            $table = $this->aliasToTableName($alias);
+            if ($table && !isset($groupedTables[$table]) && (
+                in_array($table, $joinedOrigins, true) || $this->getDatasource()->getDbType() === 'pgsql')
+            ) {
+                $this->registerGroupColumns($alias, $table, $group, $groupedTables);
+            }
+        }
+
+        if (! empty($group) && $this->getDatasource()->getDbType() === 'pgsql') {
+            foreach (new ColumnFilterIterator($this->orderColumns) as $alias) {
+                $table = $this->aliasToTableName($alias);
+                if ($table && !isset($groupedTables[$table])
+                    && !in_array($this->getMappedField($alias), $this->columns, true)
+                ) {
+                    $this->registerGroupColumns($alias, $table, $group, $groupedTables);
+                }
             }
         }
 
