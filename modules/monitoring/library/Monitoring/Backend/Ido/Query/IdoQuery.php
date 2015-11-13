@@ -828,7 +828,7 @@ abstract class IdoQuery extends DbQuery
         }
 
         if ($this->virtualTableIsHooked($name)) {
-            return $this->joinHookedVirtualTable($this, $name);
+            return $this->joinHookedVirtualTable($name);
         } else {
             return $this->joinVirtualTable($name);
         }
@@ -890,7 +890,7 @@ abstract class IdoQuery extends DbQuery
      */
     protected function joinHookedVirtualTable($table)
     {
-        $this->hookedVirtualTables[$table]->joinVirtualTable($table);
+        $this->hookedVirtualTables[$table]->joinVirtualTable($this, $table);
         $this->joinedVirtualTables[$table] = true;
         return $this;
     }
