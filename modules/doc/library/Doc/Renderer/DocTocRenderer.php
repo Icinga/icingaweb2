@@ -86,7 +86,9 @@ class DocTocRenderer extends DocRenderer
             );
             $url = $view->url($path);
             /** @var \Icinga\Web\Url $url */
-            $url->setAnchor($this->encodeAnchor($section->getId()));
+            if ($this->getDepth() > 0) {
+                $url->setAnchor($this->encodeAnchor($section->getId()));
+            }
             $urlAttributes = array(
                 'data-base-target'  => '_next',
                 'title'             => sprintf(

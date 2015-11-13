@@ -1,0 +1,13 @@
+<?php
+
+if (! $this->compact): ?>
+<div class="controls separated">
+    <?= $this->tabs ?>
+<?php if ($object->type === 'service') {
+    echo $this->render('partials/object/service-header.phtml');
+} else {
+    echo $this->render('partials/object/host-header.phtml');
+} ?>
+</div>
+<?php endif ?>
+<?= $this->render('partials/event-history.phtml') ?>

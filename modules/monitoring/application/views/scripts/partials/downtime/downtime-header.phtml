@@ -1,14 +1,14 @@
 <td class="state-col state-<?= $stateName; ?><?= $downtime->is_in_effect ? ' handled' : ''; ?>">
   <?php if ($downtime->start <= time() && ! $downtime->is_in_effect): ?>
-      <strong><?= $this->translate('Ends'); ?></strong>
-      <p><?= $this->timeUntil($downtime->is_flexible ? $downtime->scheduled_end : $downtime->end, $this->compact) ?></p>
+      <div class="state-label"><?= $this->translate('ENDS', 'Downtime status'); ?></div>
+      <div class="state-meta"><?= $this->timeUntil($downtime->is_flexible ? $downtime->scheduled_end : $downtime->end, $this->compact) ?></div>
   <?php else: ?>
-      <strong><?= $downtime->is_in_effect ? $this->translate('Expires') : $this->translate('Starts'); ?></strong>
-      <p><?= $this->timeUntil($downtime->is_in_effect ? $downtime->end : $downtime->start, $this->compact) ?></p>
+      <div class="state-label"><?= $downtime->is_in_effect ? $this->translate('EXPIRES', 'Downtime status') : $this->translate('STARTS', 'Downtime status'); ?></div>
+      <div class="state-meta"><?= $this->timeUntil($downtime->is_in_effect ? $downtime->end : $downtime->start, $this->compact) ?></div>
   <?php endif; ?>
 </td>
 <td>
-  <span class="comment-header">
+  <div class="comment-header">
     <?php if ($isService): ?>
         <?= $this->icon('service', $this->translate('Service')); ?> <?= $this->qlink(
             $downtime->host_display_name . ': ' . $downtime->service_display_name,
@@ -38,11 +38,10 @@
             )
         ); ?>
     <?php endif ?>
-
-    <?= $this->translate('by') ?>
-    <?= $this->escape($downtime->author_name) ?>
-
-    <span class="pull-right">
+    <span class="comment-meta">
+        <?= $this->translate('by') ?>
+        <?= $this->escape($downtime->author_name) ?>
+        <span class="meta-icons">
           <?php if ($downtime->is_flexible): ?>
               <?= $this->icon('magic', $this->translate('This downtime is flexible')); ?>
           <?php endif ?>
@@ -52,22 +51,23 @@
           <?php endif ?>
 
           <?php if (isset($delDowntimeForm)): // Form is unset if the current user lacks the respective permission ?>
-          <?php
-          $delDowntimeForm = clone $delDowntimeForm;
-          $delDowntimeForm->populate(
-              array(
-                  'downtime_id' => $downtime->id,
-                  'downtime_is_service' => isset($downtime->service_description)
-              )
-          );
-          echo $delDowntimeForm;
-          ?>
+              <?php
+              $deleteButton = clone $delDowntimeForm;
+              /** @var \Icinga\Module\Monitoring\Forms\Command\Object\DeleteDowntimeCommandForm $deleteButton */
+              $deleteButton->setAttrib('class', $deleteButton->getAttrib('class') . ' remove-action');
+              $deleteButton->populate(
+                  array(
+                      'downtime_id'         => $downtime->id,
+                      'downtime_is_service' => isset($downtime->service_description)
+                  )
+              );
+              echo $deleteButton;
+              ?>
           <?php endif ?>
+        </span>
     </span>
-  </span>
-  <?php if (isset ($displayComment) && $displayComment): ?>
-    <p class="comment-text">
-      <?= $this->escape($downtime->comment) ?>
-    </p>
-  <?php endif ?>
+  </div>
+  <p class="comment-text">
+    <?= $this->escape($downtime->comment) ?>
+  </p>
 </td>

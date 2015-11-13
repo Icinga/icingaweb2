@@ -42,30 +42,32 @@
     Navigation.prototype = new Icinga.EventListener();
 
     /**
-     * Apply the menu selection and hovering according to the current state
+     * Activate menu items if their class is set to active or if the current URL matches their link
      *
-     * @param evt   {Object}    The event context
+     * @param {Object} e Event
      */
-    Navigation.prototype.onRendered = function(evt) {
-        var self = evt.data.self;
-        this.element = evt.target;
+    Navigation.prototype.onRendered = function(e) {
+        var _this = e.data.self;
 
-        if (! self.active) {
+        this.element = e.target;
+
+        if (! _this.active) {
             // There is no stored menu item, therefore it is assumed that this is the first rendering
             // of the navigation after the page has been opened.
 
             // initialise the menu selected by the backend as active.
-            var $menus = $('#menu li.active', evt.target);
-            if ($menus.size()) {
-                $menus.each(function () {
-                    self.setActive($(this));
+            var $menus = $('#menu li.active', e.target);
+            if ($menus.length) {
+                $menus.each(function() {
+                    _this.setActive($(this));
                 });
             } else {
                 // if no item is marked as active, try to select the menu from the current URL
-                self.setActiveByUrl($('#col1').data('icingaUrl'));
+                _this.setActiveByUrl($('#col1').data('icingaUrl'));
             }
         }
-        self.refresh();
+
+        _this.refresh();
     };
 
     /**
@@ -205,7 +207,7 @@
 
             // unfold the containing menu
             var $outerMenu = $selectedMenu.parent().closest('li');
-            if ($outerMenu.size()) {
+            if ($outerMenu.length) {
                 $outerMenu.addClass('active');
             }
         } else if ($input.length) {

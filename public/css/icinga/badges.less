@@ -1,15 +1,21 @@
+/*! Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
+
+@badge-line-height: 1.2;
+@badge-padding: 0.25em;
+
 .badge {
-  min-width: 25px;
-  font-family: tahoma, verdana, sans-serif;
-  font-weight: @font-weight-bold;
-  font-size: 11px;
-  text-align: center;
-  color: @text-color-inverted;
-  padding-left: 5px;
-  padding-right: 5px;
-  padding-top: 2px;
-  padding-bottom: 2px;
+  .rounded-corners();
   background-color: @gray-light;
+  color: @text-color-inverted;
+  display: inline-block;
+  font-family: @font-family-wide;
+  font-size: @font-size-small;
+  line-height: @badge-line-height;
+  min-width: 2em;
+  padding: @badge-padding;
+  text-align: center;
+  vertical-align: middle;
+  white-space: nowrap;
 
   &.state-ok {
     .bg-color-ok();

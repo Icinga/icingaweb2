@@ -348,29 +348,24 @@ abstract class ApplicationBootstrap
         require $this->libDir . '/Icinga/Application/ClassLoader.php';
 
         $this->loader = new ClassLoader();
-        $this->loader->registerNamespace('Icinga', $this->libDir. '/Icinga');
+        $this->loader->registerNamespace('Icinga', $this->libDir . '/Icinga');
+        $this->loader->registerNamespace('Icinga', $this->libDir . '/Icinga', $this->appDir);
         $this->loader->register();
 
         return $this;
     }
 
     /**
-     * Register the Zend Autoloader
+     * Register the Zend Autoloader - compat only - does nothing
      *
+     * @deprecated
      * @return $this
      */
     public function setupZendAutoloader()
     {
-        require_once 'Zend/Loader/Autoloader.php';
-
-        \Zend_Loader_Autoloader::getInstance();
-
-        \Zend_Paginator::addScrollingStylePrefixPath(
-            'Icinga_Web_Paginator_ScrollingStyle_', $this->libDir . '/Icinga/Web/Paginator/ScrollingStyle'
-        );
-
         return $this;
     }
+
     /**
      * Setup module manager
      *

@@ -96,7 +96,7 @@ class DashletForm extends Form
                 array(
                     'required'      => true,
                     'label'         => $this->translate("New Dashboard Title"),
-                    'description'   => $this->translate('Enter a title for the new pane.')
+                    'description'   => $this->translate('Enter a title for the new dashboard')
                 )
             );
         } else {
@@ -107,7 +107,7 @@ class DashletForm extends Form
                     'required'      => true,
                     'label'         => $this->translate('Dashboard'),
                     'multiOptions'  => $panes,
-                    'description'   => $this->translate('Select a pane you want to add the dashlet.')
+                    'description'   => $this->translate('Select a dashboard you want to add the dashlet to')
                 )
             );
         }

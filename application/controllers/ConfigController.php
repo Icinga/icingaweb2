@@ -119,12 +119,6 @@ class ConfigController extends Controller
             ->order('name');
         $this->setupLimitControl();
         $this->setupPaginationControl($this->view->modules);
-        // TODO: Not working
-        /*$this->setupSortControl(array(
-            'name'      => $this->translate('Modulename'),
-            'path'      => $this->translate('Installation Path'),
-            'enabled'   => $this->translate('State')
-        ));*/
     }
 
     public function moduleAction()

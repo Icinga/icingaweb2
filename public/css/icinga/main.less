@@ -1,39 +1,32 @@
 /*! Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
+// Width for the name column--th--of name-value-table
+@name-value-table-name-width: 14em;
+
 .action-link {
   color: @icinga-blue;
 }
 
-.big-icon {
-  font-size: 28px;
-}
-
-.clearfix {
-  &:after {
-    content: "";
-    clear: both;
-    display: table;
-  }
-}
-
-.comment-text {
-  .text-small();
-  font-family: @font-family-fixed;
+.large-icon {
+  font-size: 200%;
 }
 
 .content-centered {
-  .text-center();
   margin: 0 auto;
+  text-align: center;
 }
 
 .icon-col {
-  width: 28px;
+  width: 1em;
 }
 
-.primary-nav {
-  a {
-    font-weight: normal;
-  }
+.icon-strikethrough {
+  text-decoration: line-through;
+}
+
+.preformatted {
+  font-family: @font-family-fixed;
+  white-space: pre-wrap;
 }
 
 .pull-left {
@@ -44,21 +37,8 @@
   float: right;
 }
 
-.text-center {
-  text-align: center;
-}
-
-.text-left {
-  text-align: left;
-}
-
 .text-right {
   text-align: right;
-}
-
-.text-small {
-  color: @text-color-light;
-  font-size: @font-size-small;
 }
 
 .user-avatar {
@@ -72,9 +52,11 @@
   }
 }
 
-a:hover .icon-cancel {
+a:hover > .icon-cancel {
   color: @color-critical;
 }
+
+// Link styles
 
 .button-link {
   .action-link();
@@ -97,48 +79,90 @@ a:hover .icon-cancel {
   }
 }
 
-dl.feed-list {
-  dd {
-    // Reset default margin
-    margin: 0;
-  }
+// List styles
 
-  dt {
+.comment-list {
+  margin: 0;
+
+  .comment-header {
     border-bottom: 1px solid @gray-lighter;
-    margin-top: @vertical-padding;
-
-    .icon-cancel {
-      display: none;
-    }
 
     &:hover {
       background-color: @gray-lightest;
-      .icon-cancel {
-        display: block;
+
+      > .comment-meta > .meta-icons > .remove-action {
+        visibility: visible;
       }
     }
 
-    &:first-child {
-      margin-top: 0;
+    > .comment-meta > .meta-icons > .remove-action {
+      visibility: hidden;
     }
   }
 }
 
-dl.name-value-list {
+.comment-header {
+  .clearfix();
+}
+
+.comment-meta {
+  color: @text-color-light;
+  font-size: @font-size-small;
+
+  > .meta-icons {
+    float: right;
+    margin-top: 0.2em;
+  }
+}
+
+.comment-text {
+  // Reset margin
+  margin: 0;
+}
+
+.name-value-list {
   dd {
     // Reset default margin
     margin: 0;
   }
 
   dt {
-    .text-small();
+    color: @text-color-light;
+    font-size: @font-size-small;
   }
 }
 
-table.action-table {
+// Table styles
+
+.common-table {
+  width: 100%;
+
+  td, th {
+    padding-bottom: 1em;
+    padding-top: 1em;
+  }
+
+  th {
+    text-align: left;
+  }
+
+  thead {
+    border-bottom: 1px solid @gray-light;
+  }
+
   tbody tr {
+    border-bottom: 1px solid @gray-lightest;
+    border-left: 5px solid transparent;
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+
+  tr[href] {
     &.active {
       background-color: @gray-lighter;
+      border-left-color: @icinga-blue;
     }
 
     &:hover {
@@ -146,42 +170,23 @@ table.action-table {
       cursor: pointer;
     }
   }
-}
 
-table.listing-table {
-  border-collapse: collapse;
-
-  tbody th {
-    text-align: left;
-  }
-
-  thead {
-    color: @text-color-light;
-    // Reset default font-weight
-    font-weight: normal;
-  }
-
-  tr {
-    border-bottom: 1px solid @gray-lightest;
-
-    &:last-child {
-      border-bottom: none;
-    }
+  caption {
+    border-top: 1px solid @gray-light;
+    caption-side: bottom;
+    text-align: right;
+    font-style: italic;
   }
 }
 
-.name-value-table {
-  border-spacing: @vertical-padding 0;
-  line-height: @line-height;
-
-  th {
-    .text-left();
-    .text-small();
-    // Reset default font-weight
-    font-weight: normal;
-    width: 120px;
-    vertical-align: top;
-  }
+.name-value-table th {
+  color: @text-color-light;
+  // Reset default font-weight
+  font-weight: normal;
+  padding-left: 0;
+  text-align: left;
+  vertical-align: top;
+  width: @name-value-table-name-width;
 }
 
 // TODO(el): Fix
@@ -197,11 +202,6 @@ table.listing-table {
   }
 
   .sort-control {
-    .pull-right();
-    padding: @vertical-padding / 2 0;
-  }
-
-  .selection-info {
     .pull-right();
     padding: @vertical-padding / 2 0;
   }

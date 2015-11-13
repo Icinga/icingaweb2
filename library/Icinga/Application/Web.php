@@ -91,7 +91,6 @@ class Web extends EmbeddedWeb
             ->setupLogger()
             ->setupInternationalization()
             ->setupZendMvc()
-            ->setupNamespaces()
             ->setupModuleManager()
             ->loadSetupModuleIfNecessary()
             ->loadEnabledModules()
@@ -140,19 +139,37 @@ class Web extends EmbeddedWeb
         return $this->viewRenderer;
     }
 
-    private function hasAccessToSharedNavigationItem(& $config)
+    private function hasAccessToSharedNavigationItem(& $config, Config $navConfig)
     {
         // TODO: Provide a more sophisticated solution
 
         if (isset($config['owner']) && $config['owner'] === $this->user->getUsername()) {
             unset($config['owner']);
+            unset($config['users']);
+            unset($config['groups']);
             return true;
+        }
+
+        if (isset($config['parent']) && $navConfig->hasSection($config['parent'])) {
+            unset($config['owner']);
+            if (isset($this->accessibleMenuItems[$config['parent']])) {
+                return $this->accessibleMenuItems[$config['parent']];
+            }
+
+            $parentConfig = $navConfig->getSection($config['parent']);
+            $this->accessibleMenuItems[$config['parent']] = $this->hasAccessToSharedNavigationItem(
+                $parentConfig,
+                $navConfig
+            );
+            return $this->accessibleMenuItems[$config['parent']];
         }
 
         if (isset($config['users'])) {
             $users = array_map('trim', explode(',', strtolower($config['users'])));
             if (in_array('*', $users, true) || in_array($this->user->getUsername(), $users, true)) {
+                unset($config['owner']);
                 unset($config['users']);
+                unset($config['groups']);
                 return true;
             }
         }
@@ -160,6 +177,8 @@ class Web extends EmbeddedWeb
         if (isset($config['groups'])) {
             $groups = array_map('trim', explode(',', strtolower($config['groups'])));
             if (in_array('*', $groups, true)) {
+                unset($config['owner']);
+                unset($config['users']);
                 unset($config['groups']);
                 return true;
             }
@@ -167,6 +186,8 @@ class Web extends EmbeddedWeb
             $userGroups = array_map('strtolower', $this->user->getGroups());
             $matches = array_intersect($userGroups, $groups);
             if (! empty($matches)) {
+                unset($config['owner']);
+                unset($config['users']);
                 unset($config['groups']);
                 return true;
             }
@@ -208,8 +229,17 @@ class Web extends EmbeddedWeb
         } else {
             $items = array();
             foreach ($config as $name => $typeConfig) {
-                if ($this->hasAccessToSharedNavigationItem($typeConfig)) {
-                    $items[$name] = $typeConfig;
+                if (isset($this->accessibleMenuItems[$name])) {
+                    if ($this->accessibleMenuItems[$name]) {
+                        $items[$name] = $typeConfig;
+                    }
+                } else {
+                    if ($this->hasAccessToSharedNavigationItem($typeConfig, $config)) {
+                        $this->accessibleMenuItems[$name] = true;
+                        $items[$name] = $typeConfig;
+                    } else {
+                        $this->accessibleMenuItems[$name] = false;
+                    }
                 }
             }
 
@@ -292,22 +322,20 @@ class Web extends EmbeddedWeb
                     'cssClass'  => 'user-nav-item',
                     'label'     => $this->user->getUsername(),
                     'icon'      => 'user',
-                    'url'       => 'preference',
                     'priority'  => 900,
-                    'renderer'  => array(
-                        'UserNavigationItemRenderer'
-                    ),
-                ),
-                'logout' => array(
-                    'cssClass'  => 'user-nav-item',
-                    'label'     => t('Logout'),
-                    'icon'	=> 'starttime',
-                    'priority'  => 990,
-                    'renderer'  => array(
-                        'LogoutNavigationItemRenderer',
-                        'target' => '_self'
-                    ),
-                    'url'       => 'authentication/logout'
+                    'children'  => array(
+                        'preferences' => array(
+                            'label'     => t('Preferences'),
+                            'priority'  => 100,
+                            'url'       => 'preference'
+                        ),
+                        'logout' => array(
+                            'label'     => t('Logout'),
+                            'priority'  => 200,
+                            'target'    => '_self',
+                            'url'       => 'authentication/logout'
+                        )
+                    )
                 )
             );
 
@@ -346,6 +374,7 @@ class Web extends EmbeddedWeb
                 'layoutPath' => $this->getApplicationDir('/layouts/scripts')
             )
         );
+
         $this->setupFrontController();
         $this->setupViewRenderer();
         return $this;
@@ -491,25 +520,5 @@ class Web extends EmbeddedWeb
             return Translator::getPreferredLocaleCode($_SERVER['HTTP_ACCEPT_LANGUAGE']);
         }
         return Translator::DEFAULT_LOCALE;
-    }
-
-    /**
-     * Setup class loader namespaces for Icinga\Controllers and Icinga\Forms
-     *
-     * @return $this
-     */
-    private function setupNamespaces()
-    {
-        $this
-            ->getLoader()
-            ->registerNamespace(
-                'Icinga\\' . Dispatcher::CONTROLLER_NAMESPACE,
-                $this->getApplicationDir('controllers')
-            )
-            ->registerNamespace(
-                'Icinga\\Forms',
-                $this->getApplicationDir('forms')
-            );
-        return $this;
     }
 }

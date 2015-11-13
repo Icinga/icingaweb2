@@ -52,7 +52,7 @@ class Zend_View_Helper_Link extends Zend_View_Helper_Abstract
     public function service($service, $serviceLinkText, $host, $hostLinkText, $class = null)
     {
         return sprintf(
-            '%s: %s',
+            '%s&#58; %s',
             $this->host($host, $hostLinkText),
             $this->view->qlink(
                 $serviceLinkText,

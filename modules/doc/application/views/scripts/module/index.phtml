@@ -1,7 +1,8 @@
 <div class="controls">
-    <?= /** @var \Icinga\Web\Widget\Tabs $tabs */ $tabs->showOnlyCloseButton(); ?>
+    <?= $this->tabs ?>
     <h1><?= $this->translate('Module documentations'); ?></h1>
 </div>
+
 <div class="content">
     <ul>
     <?php foreach ($modules as $module): /** @var \Icinga\Application\Modules\Module $module */ ?>

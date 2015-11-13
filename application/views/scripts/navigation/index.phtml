@@ -1,16 +1,8 @@
 <?php if (! $this->compact): ?>
-<div class="controls">
+<div class="controls separated">
     <?= $this->tabs ?>
-    <div class="grid dont-print">
-        <div class="col-1-3 text-left">
-            <?= $this->limiter ?>
-        </div>
-        <div class="col-1-3">
-            <?= $this->paginator ?>
-        </div>
-        <div class="col-1-3 text-right">
-            <?= $this->sortBox ?>
-        </div>
+    <div class="grid">
+        <?= $this->sortBox ?>
     </div>
     <?= $this->filterEditor ?>
 </div>
@@ -31,7 +23,7 @@
     <p><?= $this->translate('You did not create any navigation item yet.') ?></p>
 </div>
 <?php return; endif ?>
-    <table class="action-table listing-table" data-base-target="_next">
+    <table class="table-row-selectable common-table" data-base-target="_next">
     <thead>
     <tr>
         <th><?= $this->translate('Navigation') ?></th>
