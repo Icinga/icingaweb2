@@ -546,16 +546,17 @@ abstract class IdoQuery extends DbQuery
     /**
      * Return true if an field contains an explicit timestamp
      *
-     * @param  String $field    The field to test for containing an timestamp
-     * @return bool             True when the field represents an timestamp
+     * @param   string  $field      The field to test for containing an timestamp
+     *
+     * @return  bool                True when the field represents an timestamp
      */
     public function isTimestamp($field)
     {
-        $mapped = $this->getMappedField($field);
-        if ($mapped === null) {
-            return stripos($field, 'UNIX_TIMESTAMP') !== false;
+        if ($this->isCustomVar($field)) {
+            return false;
         }
-        return stripos($mapped, 'UNIX_TIMESTAMP') !== false;
+
+        return stripos($this->getMappedField($field) ?: $field, 'UNIX_TIMESTAMP') !== false;
     }
 
     /**
