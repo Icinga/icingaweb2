@@ -10,7 +10,7 @@ class ServiceStatus extends DataView
      */
     public function getColumns()
     {
-        return array(
+        return array_merge($this->getHookedColumns(), array(
             'instance_name',
             'host_name',
             'host_display_name',
@@ -98,7 +98,7 @@ class ServiceStatus extends DataView
             'service_modified_service_attributes',
             'service_host_name',
             'service_acknowledgement_type',
-        );
+        ));
     }
 
     /**
