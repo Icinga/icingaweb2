@@ -6,7 +6,6 @@ namespace Icinga\Forms\Config;
 use Icinga\Forms\Config\General\ApplicationConfigForm;
 use Icinga\Forms\Config\General\LoggingConfigForm;
 use Icinga\Forms\ConfigForm;
-use Icinga\Web\Notification;
 
 /**
  * Form class for application-wide and logging specific settings
@@ -31,44 +30,5 @@ class GeneralConfigForm extends ConfigForm
         $loggingConfigForm = new LoggingConfigForm();
         $this->addElements($appConfigForm->createElements($formData)->getElements());
         $this->addElements($loggingConfigForm->createElements($formData)->getElements());
-    }
-
-    /**
-     * @see Form::onSuccess()
-     */
-    public function onSuccess()
-    {
-        $sections = array();
-        foreach ($this->getValues() as $sectionAndPropertyName => $value) {
-            list($section, $property) = explode('_', $sectionAndPropertyName, 2);
-            if (! isset($sections[$section])) {
-                $sections[$section] = array();
-            }
-            $sections[$section][$property] = $value;
-        }
-        foreach ($sections as $section => $config) {
-            $this->config->setSection($section, $config);
-        }
-
-        if ($this->save()) {
-            Notification::success($this->translate('New configuration has successfully been stored'));
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * @see Form::onRequest()
-     */
-    public function onRequest()
-    {
-        $values = array();
-        foreach ($this->config as $section => $properties) {
-            foreach ($properties as $name => $value) {
-                $values[$section . '_' . $name] = $value;
-            }
-        }
-
-        $this->populate($values);
     }
 }
