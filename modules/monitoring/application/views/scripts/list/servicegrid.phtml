@@ -3,11 +3,9 @@ use Icinga\Module\Monitoring\Object\Service;
 use Icinga\Web\Url;
 
 if (! $this->compact): ?>
-<div class="controls separated">
+<div class="controls">
     <?= $this->tabs ?>
-    <div class="grid">
-        <?= $this->sortBox ?>
-    </div>
+    <?= $this->sortBox ?>
     <?= $this->filterEditor ?>
 </div>
 <?php endif ?>
