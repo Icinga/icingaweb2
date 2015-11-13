@@ -139,19 +139,37 @@ class Web extends EmbeddedWeb
         return $this->viewRenderer;
     }
 
-    private function hasAccessToSharedNavigationItem(& $config)
+    private function hasAccessToSharedNavigationItem(& $config, Config $navConfig)
     {
         // TODO: Provide a more sophisticated solution
 
         if (isset($config['owner']) && $config['owner'] === $this->user->getUsername()) {
             unset($config['owner']);
+            unset($config['users']);
+            unset($config['groups']);
             return true;
+        }
+
+        if (isset($config['parent']) && $navConfig->hasSection($config['parent'])) {
+            unset($config['owner']);
+            if (isset($this->accessibleMenuItems[$config['parent']])) {
+                return $this->accessibleMenuItems[$config['parent']];
+            }
+
+            $parentConfig = $navConfig->getSection($config['parent']);
+            $this->accessibleMenuItems[$config['parent']] = $this->hasAccessToSharedNavigationItem(
+                $parentConfig,
+                $navConfig
+            );
+            return $this->accessibleMenuItems[$config['parent']];
         }
 
         if (isset($config['users'])) {
             $users = array_map('trim', explode(',', strtolower($config['users'])));
             if (in_array('*', $users, true) || in_array($this->user->getUsername(), $users, true)) {
+                unset($config['owner']);
                 unset($config['users']);
+                unset($config['groups']);
                 return true;
             }
         }
@@ -159,6 +177,8 @@ class Web extends EmbeddedWeb
         if (isset($config['groups'])) {
             $groups = array_map('trim', explode(',', strtolower($config['groups'])));
             if (in_array('*', $groups, true)) {
+                unset($config['owner']);
+                unset($config['users']);
                 unset($config['groups']);
                 return true;
             }
@@ -166,6 +186,8 @@ class Web extends EmbeddedWeb
             $userGroups = array_map('strtolower', $this->user->getGroups());
             $matches = array_intersect($userGroups, $groups);
             if (! empty($matches)) {
+                unset($config['owner']);
+                unset($config['users']);
                 unset($config['groups']);
                 return true;
             }
@@ -207,8 +229,17 @@ class Web extends EmbeddedWeb
         } else {
             $items = array();
             foreach ($config as $name => $typeConfig) {
-                if ($this->hasAccessToSharedNavigationItem($typeConfig)) {
-                    $items[$name] = $typeConfig;
+                if (isset($this->accessibleMenuItems[$name])) {
+                    if ($this->accessibleMenuItems[$name]) {
+                        $items[$name] = $typeConfig;
+                    }
+                } else {
+                    if ($this->hasAccessToSharedNavigationItem($typeConfig, $config)) {
+                        $this->accessibleMenuItems[$name] = true;
+                        $items[$name] = $typeConfig;
+                    } else {
+                        $this->accessibleMenuItems[$name] = false;
+                    }
                 }
             }
 
