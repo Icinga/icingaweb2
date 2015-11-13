@@ -991,9 +991,10 @@ abstract class IdoQuery extends DbQuery
         return $this;
     }
 
-    public function setGroupBase(array $groupBase)
+    public function clearGroupingRules()
     {
-        $this->groupBase = $groupBase;
+        $this->groupBase = array();
+        $this->groupOrigin = array();
         return $this;
     }
 

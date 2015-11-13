@@ -226,6 +226,7 @@ class PivotTable implements Sortable
     {
         if ($this->xAxisQuery === null) {
             $this->xAxisQuery = clone $this->baseQuery;
+            $this->xAxisQuery->clearGroupingRules();
             $xAxisHeader = $this->getXAxisHeader();
             $columns = array($this->xAxisColumn, $xAxisHeader);
             $this->xAxisQuery->group(array_unique($columns)); // xAxisColumn and header may be the same column
@@ -253,6 +254,7 @@ class PivotTable implements Sortable
     {
         if ($this->yAxisQuery === null) {
             $this->yAxisQuery = clone $this->baseQuery;
+            $this->yAxisQuery->clearGroupingRules();
             $yAxisHeader = $this->getYAxisHeader();
             $columns = array($this->yAxisColumn, $yAxisHeader);
             $this->yAxisQuery->group(array_unique($columns)); // yAxisColumn and header may be the same column
