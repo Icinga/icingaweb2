@@ -32,6 +32,7 @@ class StyleSheet
         'css/icinga/setup.less',
         'css/icinga/widgets.less',
         'css/icinga/login.less',
+        'css/icinga/about.less',
         'css/icinga/controls.less',
         'css/icinga/dev.less',
 //        'css/icinga/logo.less',
