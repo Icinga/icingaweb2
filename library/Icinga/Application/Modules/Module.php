@@ -19,7 +19,7 @@ use Icinga\Module\Setup\SetupWizard;
 use Icinga\Util\File;
 use Icinga\Util\Translator;
 use Icinga\Web\Controller\Dispatcher;
-use Icinga\Web\Hook;
+use Icinga\Application\Hook;
 use Icinga\Web\Navigation\Navigation;
 use Icinga\Web\Widget;
 
@@ -588,6 +588,16 @@ class Module
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * Get the module namespace
+     *
+     * @return string
+     */
+    public function getNamespace()
+    {
+        return 'Icinga\\Module\\' . ucfirst($this->getName());
     }
 
     /**
@@ -1238,12 +1248,35 @@ class Module
      */
     protected function registerHook($name, $class, $key = null)
     {
-        if ($key === null) {
-            $key = $this->name;
+        return $this->provideHook($name, $class, $key);
+    }
+
+    protected function slashesToNamespace($class)
+    {
+        $list = explode('/', $class);
+        foreach ($list as &$part) {
+            $part = ucfirst($part);
         }
 
-        Hook::register($name, $key, $class);
+        return implode('\\', $list);
+    }
 
+    // deprecate $key
+    protected function provideHook($name, $implementation = null, $key = null)
+    {
+        if ($implementation === null) {
+            $implementation = $name;
+        }
+
+        if (strpos($implementation, '\\') === false) {
+            $class = $this->getNamespace()
+                   . '\\ProvidedHook\\'
+                   . $this->slashesToNamespace($implementation);
+        } else {
+            $class = $implementation;
+        }
+
+        Hook::register($name, $implementation, $class);
         return $this;
     }
 

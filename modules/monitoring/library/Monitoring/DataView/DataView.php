@@ -4,6 +4,7 @@
 namespace Icinga\Module\Monitoring\DataView;
 
 use IteratorAggregate;
+use Icinga\Application\Hook;
 use Icinga\Data\ConnectionInterface;
 use Icinga\Data\Filter\Filter;
 use Icinga\Data\Filter\FilterMatch;
@@ -120,6 +121,18 @@ abstract class DataView implements QueryInterface, SortRules, FilterColumns, Ite
         $view->applyUrlFilter($request);
 
         return $view;
+    }
+
+    protected function getHookedColumns()
+    {
+        $columns = array();
+        foreach (Hook::all('monitoring/dataviewExtension') as $hook) {
+            foreach ($hook->getAdditionalQueryColumns($this->getQueryName()) as $col) {
+                $columns[] = $col;
+            }
+        }
+
+        return $columns;
     }
 
     // TODO: This is not the right place for this, move it away

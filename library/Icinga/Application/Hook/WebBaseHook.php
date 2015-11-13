@@ -1,7 +1,7 @@
 <?php
 /* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
-namespace Icinga\Web\Hook;
+namespace Icinga\Application\Hook;
 
 use Zend_Controller_Action_HelperBroker;
 use Zend_View;
