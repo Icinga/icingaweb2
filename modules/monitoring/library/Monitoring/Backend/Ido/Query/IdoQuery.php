@@ -883,6 +883,19 @@ abstract class IdoQuery extends DbQuery
     }
 
     /**
+     * Tell a hook to join a virtual table
+     *
+     * @param  String $table
+     * @return $this
+     */
+    protected function joinHookedVirtualTable($table)
+    {
+        $this->hookedVirtualTable[$table]->joinVirtualTable($table);
+        $this->joinedVirtualTables[$table] = true;
+        return $this;
+    }
+
+    /**
      * Get the table for a specific alias
      *
      * @param   String $alias   The alias to request the table for
