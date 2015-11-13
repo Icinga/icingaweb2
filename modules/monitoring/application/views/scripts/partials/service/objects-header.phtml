@@ -1,46 +1,45 @@
 <?php
+use Icinga\Module\Monitoring\Object\Host;
 use Icinga\Module\Monitoring\Object\Service;
 
-$i = 0;
-?>
-<?php if (($serviceCount = count($objects)) > 0): ?>
-    <table class='action state statesummary'>
-    <tbody>
-    <?php foreach ($objects as $service): /** @var Service $service */ ?>
-        <?php
-        if (++ $i > 5) {
-            continue;
-        }
-        ?>
-        <tr>
-            <td class="state-col state-<?= Service::getStateText($service->service_state); ?><?= $service->service_handled ? ' handled' : '' ?>"?>
-                <?= Service::getStateText($service->service_state, true); ?><br />
-            </td>
-            <td>
-            <?= $this->iconImage()->service($service) ?>
+if (! ($serviceCount = count($objects))): return; endif ?>
+<table class="state-table service-detail-state">
+<tbody>
+<?php foreach ($objects as $i => $service): /** @var Service $service */
+    if ($i === 5) {
+        break;
+    } ?>
+    <tr>
+        <td class="state-col state-<?= Service::getStateText($service->service_state) ?><?= $service->service_handled ? ' handled' : '' ?>">
+            <span class="sr-only"><?= Service::getStateText($service->service_state) ?></span>
+            <div class="state-meta">
+                <?= $this->timeSince($service->service_last_state_change, $this->compact) ?>
+            </div>
+        </td>
+        <td>
+            <?= $this->link()->service(
+                $service->service_description,
+                $service->service_display_name,
+                $service->host_name,
+                $service->host_display_name
+                    . ($service->host_state != 0 ? ' (' . Host::getStateText($service->host_state, true) . ')' : '')
+            ) ?>
             <?= implode(' ', $this->serviceFlags($service)) ?>
-            <b>
-               <?= $this->escape($service->getHost()->getName()); ?>:
-               <?= $this->escape($service->getName()); ?> <br>
-            </b>
-            <?= $this->escape($service->service_output) ?>
-            </td>
-        </tr>
-    <?php endforeach ?>
-    </tbody>
-    </table>
-    <div class="hbox-item multi-commands">
-        <?php if ($i > 5): ?>
-        <?= $this->qlink(
-            sprintf($this->translate('List all %d services'), $i),
-            $listAllLink,
-            null,
-            array(
-                'icon' => 'down-open',
-                'data-base-target' => '_next'
-            )
-        );
-        ?>
-        <?php endif ?>
-    </div>
+        </td>
+    </tr>
+<?php endforeach ?>
+</tbody>
+</table>
+<?php if ($serviceCount > 5): ?>
+<div class="services-link">
+    <?= $this->qlink(
+        sprintf($this->translate('List all %d services'), $serviceCount),
+        $this->url()->setPath('monitoring/list/services'),
+        null,
+        array(
+            'data-base-target'  => '_next',
+            'icon'              => 'forward'
+        )
+    ) ?>
+</div>
 <?php endif ?>

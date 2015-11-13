@@ -400,7 +400,6 @@ class Perfdata
         $data = $this->calculatePieChartData();
         $pieChart = new InlinePie($data, $this);
         $pieChart->setColors(array('#44bb77', '#ffaa44', '#ff5566', '#ddccdd'));
-        $pieChart->setSparklineClass('sparkline-perfdata');
 
         if (Zend_Controller_Front::getInstance()->getRequest()->isXmlHttpRequest()) {
             $pieChart->disableNoScript();

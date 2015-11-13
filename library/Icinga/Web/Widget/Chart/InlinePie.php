@@ -74,7 +74,7 @@ class InlinePie extends AbstractWidget
      * @var string
      */
     private $template =<<<'EOD'
-<span sparkType="pie" class="sparkline {class}" {title} sparkWidth={size} sparkHeight={size} sparkSliceColors="[{colors}]" values="{data}">
+<span sparkType="pie" class="sparkline {class}" {title} sparkSliceColors="[{colors}]" values="{data}">
 </span>
 {noscript}
 EOD;

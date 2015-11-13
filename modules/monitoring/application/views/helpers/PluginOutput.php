@@ -40,6 +40,7 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
                 '<table style="font-size: 0.75em"',
                 $this->getPurifier()->purify($output)
             );
+            $isHtml = true;
         } else {
             // Plaintext
             $output = preg_replace(
@@ -47,11 +48,17 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
                 self::$txtReplacements,
                 $this->view->escape($output)
             );
-        }
-        if (! $raw) {
-            $output = '<pre class="plugin-output">' . $output . '</pre>';
+            $isHtml = false;
         }
         $output = $this->fixLinks($output);
+
+        if (! $raw) {
+            if ($isHtml) {
+                $output = '<div class="pluginoutput">' . $output . '</div>';
+            } else {
+                $output = '<div class="pluginoutput preformatted">' . $output . '</div>';
+            }
+        }
         return $output;
     }
 

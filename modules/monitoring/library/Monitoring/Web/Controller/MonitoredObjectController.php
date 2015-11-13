@@ -108,6 +108,7 @@ abstract class MonitoredObjectController extends Controller
         $this->setupLimitControl(50);
         $this->setupPaginationControl($this->view->history, 50);
         $this->view->object = $this->object;
+        $this->render('object/detail-history', null, true);
     }
 
     /**
@@ -180,7 +181,6 @@ abstract class MonitoredObjectController extends Controller
                     $isService ? $object->getHost()->getName() : $object->getName()
                 ),
                 'label'     => $this->translate('Host'),
-                'icon'      => 'host',
                 'url'       => 'monitoring/host/show',
                 'urlParams' => $params
             )
@@ -195,7 +195,6 @@ abstract class MonitoredObjectController extends Controller
                         $isService ? $object->getHost()->getName() : $object->getName()
                     ),
                     'label'     => $this->translate('Service'),
-                    'icon'      => 'service',
                     'url'       => 'monitoring/service/show',
                     'urlParams' => $params
                 )
@@ -209,7 +208,6 @@ abstract class MonitoredObjectController extends Controller
                     $isService ? $object->getHost()->getName() : $object->getName()
                 ),
                 'label'     => $this->translate('Services'),
-                'icon'      => 'services',
                 'url'       => 'monitoring/host/services',
                 'urlParams' => $params
             )
@@ -227,7 +225,6 @@ abstract class MonitoredObjectController extends Controller
                         : sprintf($this->translate('Show all event records of host %s'), $object->getName())
                     ,
                     'label'     => $this->translate('History'),
-                    'icon'      => 'rewind',
                     'url'       => $isService ? 'monitoring/service/history' : 'monitoring/host/history',
                     'urlParams' => $params
                 )

@@ -2,10 +2,99 @@
 
 @border-left-width: 6px;
 
-.count-col {
-  width: 60px;
+// Check source reachable information in the host and service detail views
+.check-source-meta {
+  font-size: @font-size-small;
 }
 
+// Type information for backends in the monitoring config
+.config-label-meta {
+  font-size: @font-size-small;
+}
+
+// Column for counts, e.g. host group members
+.count-col {
+  width: 4em;
+}
+
+// Custom variables in the host and service detail view
+.custom-variables > ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0 0 0 @vertical-padding;
+
+  &:first-child {
+    padding: 0;
+  }
+}
+
+// Host name and IP addresses in the host and service detail view
+.host-meta {
+  color: @text-color-light;
+  font-size: @font-size-small;
+}
+
+// Link to unhandled services in the hosts overview
+.host-services-incidents {
+  color: @color-critical;
+  font-family: @font-family-wide;
+  font-size: @font-size-small;
+}
+
+// Notification recipient in the notifications overview
+.notification-recipient {
+  color: @text-color-light;
+  float: right;
+  font-size: @font-size-small;
+}
+
+
+// Container for plugin output and performance data in overviews
+.overview-plugin-output-container {
+  .clearfix();
+}
+
+// Performance data pies in overviews
+.overview-performance-data {
+  float: right;
+  font-size: @font-size-small;
+}
+
+// Plugin output in overviews
+.overview-plugin-output {
+  color: @text-color-light;
+  font-family: @font-family-fixed;
+  font-size: @font-size-small;
+  margin: 0;
+}
+
+// Table for performance data in detail views
+.performance-data-table {
+  width: 100%;
+
+  > thead > tr > th {
+    text-align: left;
+  }
+
+  > thead > tr > th:first-child,
+  > tbody > tr > td:first-child {
+    // Reset base padding
+    padding-left: 0;
+  }
+}
+
+// Performance data table column for sparkline pie charts in detail views
+.sparkline-col {
+  width: 2em;
+}
+
+// Service description if in the service detail view
+.service-meta {
+  color: @text-color-light;
+  font-size: @font-size-small;
+}
+
+// State column for label and duration in overviews
 .state-col {
   &.state-ok,
   &.state-up {
@@ -18,47 +107,52 @@
 
   &.state-critical,
   &.state-down {
-    .bg-color-critical();
-    .fg-color-inverted();
+    background-color: @color-critical;
+    color: @text-color-inverted;
 
     &.handled {
-      .bg-color-default();
-      .fg-color-default();
+      background-color: inherit;
+      color: inherit;
       border-left: @border-left-width solid @color-critical-handled;
     }
   }
 
   &.state-warning {
-    .bg-color-warning();
-    .fg-color-inverted();
+    background-color: @color-warning;
+    color: @text-color-inverted;
 
     &.handled {
-      .bg-color-default();
-      .fg-color-default();
+      background-color: inherit;
+      color: inherit;
       border-left: @border-left-width solid @color-warning-handled;
     }
   }
 
   &.state-unknown {
-    .bg-color-unknown();
-    .fg-color-inverted();
+    background-color: @color-unknown;
+    color: @text-color-inverted;
 
     &.handled {
-      .bg-color-default();
-      .fg-color-default();
+      background-color: inherit;
+      color: inherit;
       border-left: @border-left-width solid @color-unknown-handled;
     }
   }
 
   &.state-unreachable {
-    .bg-color-unreachable();
-    .fg-color-inverted();
+    background-color: @color-unreachable;
+    color: @text-color-inverted;
 
     &.handled {
-      .bg-color-default();
-      .fg-color-default();
+      background-color: inherit;
+      color: inherit;
       border-left: @border-left-width solid @color-unreachable-handled;
     }
+  }
+
+  // State class for history events
+  &.state-no-state {
+    border-left: @border-left-width solid @text-color-light;
   }
 
   * {
@@ -66,23 +160,44 @@
   }
 
   text-align: center;
-  width: 100px;
+  width: 8em;
 }
 
-.comment-col {
-  padding-top: 0.5em;
-  vertical-align: top;
-  width: 3em;
+// Wraps links, icons and meta in overviews
+.state-header {
+  .clearfix();
 }
 
-.comment-content {
-  line-height: 1.5em;
-  padding-top: 0.4em;
-  padding-bottom: 0.7em;
-  max-width: 15em;
-  color: @text-color-light;
+// State icons, e.g. acknowledged in overviews
+.state-icons {
+  float: right;
 }
 
-.comment-header {
-  line-height: 1.8em;
+// State labels in overviews
+.state-label {
+  font-family: @font-family-wide;
+  font-size: @font-size-small;
+  letter-spacing: 1px;
+}
+
+// State duration and state type information in overviews
+.state-meta {
+  font-size: @font-size-small;
+}
+
+.state-table {
+  border-collapse: separate;
+  border-spacing: 0 1px;
+  width: 100%;
+
+  tr[href] {
+    &.active {
+      background-color: @gray-lighter;
+    }
+
+    &:hover {
+      background-color: @gray-lightest;
+      cursor: pointer;
+    }
+  }
 }

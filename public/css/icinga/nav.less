@@ -1,23 +1,38 @@
 /*! Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
-li.nav-item {
-  a, span {
+.badge-nav-item {
+  > a {
+    .clearfix();
+
+    > .badge {
+      float: right;
+    }
+  }
+}
+
+.nav-item {
+  > a,
+  > span {
     // Rollover
     display: block;
   }
 }
 
-ul.nav {
+.nav {
   // Reset defaults
+  list-style-type: none;
   margin: 0;
   padding: 0;
-  list-style-type: none;
 }
 
-ul.tab-nav {
+.tab-nav {
   .clearfix();
 
-  li {
-    .pull-left();
+  > .nav-item {
+    float: left;
   }
+}
+
+.primary-nav a {
+  font-weight: 500;
 }

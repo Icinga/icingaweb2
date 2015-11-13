@@ -1,4 +1,4 @@
-<span class="comment-header">
+<div class="comment-header">
 <?php if ($comment->objecttype === 'service'): ?>
     <?= $this->icon('service', $this->translate('Service')) ?> <?= $this->qlink(
         $comment->host_display_name . ': ' . $comment->service_display_name,
@@ -28,27 +28,31 @@
         )
     ) ?>
 <?php endif ?>
-    <?= $this->translate('by') ?>
-    <?= $this->escape($comment->author) ?>
-    <?= $this->timeAgo($comment->timestamp) ?>
-    <span class="pull-right" data-base-target="_self">
-        <?= $comment->persistent ? $this->icon('attach', 'This comment is persistent.') : '' ?>
-        <?= $comment->expiration ? $this->icon('clock', sprintf(
-            $this->translate('This comment expires %s.'),
-            $this->timeUntil($comment->expiration)
-        )) : '' ?>
-    <?php if (isset($delCommentForm)) {
-        $delCommentForm = clone $delCommentForm;
-        $delCommentForm->populate(
-            array(
-                'comment_id'            => $comment->id,
-                'comment_is_service'    => isset($comment->service_description)
-            )
-        );
-        echo $delCommentForm;
-    } ?>
+    <span class="comment-meta">
+        <?= $this->translate('by') ?>
+        <?= $this->escape($comment->author) ?>
+        <?= $this->timeAgo($comment->timestamp) ?>
+        <span class="meta-icons" data-base-target="_self">
+            <?= $comment->persistent ? $this->icon('attach', 'This comment is persistent.') : '' ?>
+            <?= $comment->expiration ? $this->icon('clock', sprintf(
+                $this->translate('This comment expires %s.'),
+                $this->timeUntil($comment->expiration)
+            )) : '' ?>
+        <?php if (isset($delCommentForm)) {
+            $deleteButton = clone $delCommentForm;
+            /** @var \Icinga\Module\Monitoring\Forms\Command\Object\DeleteCommentCommandForm $deleteButton */
+            $deleteButton->setAttrib('class', $deleteButton->getAttrib('class') . ' remove-action');
+            $deleteButton->populate(
+                array(
+                    'comment_id'            => $comment->id,
+                    'comment_is_service'    => isset($comment->service_description)
+                )
+            );
+            echo $deleteButton;
+        } ?>
+        </span>
     </span>
-</span>
+</div>
 <p class="comment-text">
     <?= $this->escape($comment->comment) ?>
 </p>

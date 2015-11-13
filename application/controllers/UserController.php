@@ -290,7 +290,6 @@ class UserController extends AuthBackendController
             array(
                 'title'     => sprintf($this->translate('Show user %s'), $userName),
                 'label'     => $this->translate('User'),
-                'icon'      => 'user',
                 'url'       => Url::fromPath('user/show', array('backend' => $backendName, 'user' => $userName))
             )
         );
@@ -321,7 +320,6 @@ class UserController extends AuthBackendController
             array(
                 'title'     => $this->translate('List users of authentication backends'),
                 'label'     => $this->translate('Users'),
-                'icon'      => 'user',
                 'url'       => 'user/list'
             )
         );
@@ -330,7 +328,6 @@ class UserController extends AuthBackendController
             array(
                 'title'     => $this->translate('List groups of user group backends'),
                 'label'     => $this->translate('User Groups'),
-                'icon'      => 'users',
                 'url'       => 'group/list'
             )
         );

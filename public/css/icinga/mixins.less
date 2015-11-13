@@ -26,6 +26,14 @@
   }
 }
 
+.clearfix {
+  &:after {
+    content: "";
+    clear: both;
+    display: table;
+  }
+}
+
 .invisible {
   // Maintain layout but hide visually and from screen readers
   visibility: hidden;
@@ -53,6 +61,13 @@
   -webkit-background-clip: padding-box;
      -moz-background-clip: padding;
           background-clip: padding-box;
+}
+
+.transition (@transition) {
+  -webkit-transition: @transition;
+     -moz-transition: @transition;
+       -o-transition: @transition;
+          transition: @transition;
 }
 
 .visible {

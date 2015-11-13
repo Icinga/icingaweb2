@@ -1,10 +1,17 @@
 /*! Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
+// Show more and load more links in overviews
+.action-links {
+  text-align: right;
+}
+
+// State summary badges
 .state-badges {
   display: inline-block;
+  vertical-align: middle;
 
   > ul > li {
-    padding-right: 5px;
+    padding-right: @vertical-padding;
 
     &:last-child {
       padding-right: 0;
@@ -12,16 +19,47 @@
   }
 }
 
+// Multi-selection info
+.selection-info {
+  float: right;
+  font-size: @font-size-small;
+  padding: @vertical-padding / 2 0;
+
+  &:hover {
+    cursor: help;
+  }
+}
+
+// Performance data pie charts
+.sparkline {
+  height: 1em;
+  margin-right: 0.1em;
+  position: relative;
+  top: 0.1em;
+  width: 1em;
+}
+
+// Host and service summaries in detail and list views
 .hosts-summary,
 .services-summary {
-  .v-center();
-  margin-top: @horizontal-padding;
+  margin-bottom: 0.5em;
+
+  > .hosts-link,
+  > .services-link,
+  > .state-badges {
+    vertical-align: middle;
+  }
+}
+
+// State table in the host and service multi-selection and detail views
+.host-detail-state,
+.service-detail-state {
+  margin-bottom: 0.5em;
 }
 
 .grid {
   .hosts-summary,
   .services-summary {
-    margin: 0;
     .pull-left();
   }
 }
@@ -64,8 +102,6 @@
 }
 
 .boxview  div.box.badge {
-  border-radius: 3px;
-  margin: 5px;
   padding: 5px;
 }
 
@@ -79,26 +115,41 @@
 /* Tactical overview element styles */
 
 .tactical > .boxview > div.box {
-  min-height: 30em;
+  min-height: 45em;
+  padding: 0px;
 }
 
 .tactical div.box.header {
-  min-height: 5em;
-  border-bottom:1px solid @gray-lighter;
+  margin: 10px;
+  min-height: 8em;
+  color: @text-color-inverted;
+  font-size: @font-size-dashboard;
+}
+
+.tactical div.box.badge {
+  border-radius: 0.0em;
 }
 
 div.box.ok_hosts.state_up {
-  border: 1px solid @gray-lighter;
-  border-left: 15px solid @color-ok;
+  background-color: @color-ok;
+  border: 1px solid white;
 }
 
 div.box.problem_hosts.state_down {
-  border: 1px solid @gray-lighter;
-  border-left: 15px solid @color-critical;
+  background-color: @color-critical;
+  border: 1px solid white;
 }
 
 div.box.ok_hosts div.box.entry, div.box.problem_hosts div.box.entry {
-  min-width: 11.1em;
+  min-width: 8em;
+  min-height: 4em;
+}
+
+.tactical div.box.contents {
+  background-color: white;
+  min-height: 13em;
+  font-size: @font-size-dashboard-small;
+  text-align: left;
 }
 
 div.box.monitoringfeatures {
@@ -347,23 +398,36 @@ form.instance-features span.description, form.object-features span.description {
   text-align: left;
 }
 
-form.object-features .control-label-group {
-  text-align: left;
-  width: 150px;
+.object-features {
+  .control-label-group {
+    text-align: left;
+    padding: @table-column-padding;
+    padding-left: 0;
+    width: @name-value-table-name-width;
+
+    label {
+      font-size: inherit;
+    }
+  }
+
+  input[type="checkbox"] {
+    margin: @table-column-padding;
+  }
 }
 
-form.object-features .control-label {
-  margin-left: 7px;
-  line-height: 25px;
+div.pluginoutput {
+  border-left: 5px solid @gray-lighter;
+  padding: 0.66em 0.33em;
 }
 
-.custom-variables ul {
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
-  padding-left: @vertical-padding;
-}
+.go-ahead > a {
+   border-bottom: 1px @gray-light dotted;
 
+  &:hover {
+    border-bottom: 1px @gray-light solid;
+    text-decoration: none;
+  }
+}
 
 //p.pluginoutput {
 //  width: 100%;

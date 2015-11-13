@@ -1,0 +1,179 @@
+<?php
+use Icinga\Module\Monitoring\Object\Host;
+use Icinga\Module\Monitoring\Object\Service;
+
+function contactsLink($match, $view) {
+    $links = array();
+    foreach (preg_split('/,\s/', $match[1]) as $contact) {
+        $links[] = $view->qlink(
+            $contact,
+            'monitoring/show/contact',
+            array('contact_name' => $contact),
+            array('title' => sprintf($view->translate('Show detailed information about %s'), $contact))
+        );
+    }
+    return '[' . implode(', ', $links) . ']';
+}
+
+$self = $this;
+
+$url = $this->url();
+$limit = (int) $url->getParam('limit', 25);
+if (! $url->hasParam('page') || ($page = (int) $url->getParam('page')) < 1) {
+    $page = 1;
+}
+
+/** @var \Icinga\Module\Monitoring\DataView\EventHistory $history */
+$history->limit($limit * $page);
+?>
+<div class="content">
+<?php if (! $history->hasResult()): ?>
+    <p><?= $this->translate('No historical events found matching the filter.') ?></p>
+</div>
+<?php return; endif ?>
+    <table class="state-table" data-base-target="_next"<?php if (isset($tableCssClass)): ?> class="<?=$tableCssClass ?>"<?php endif ?>>
+    <tbody>
+    <?php foreach ($history->peekAhead() as $event):
+        $icon = '';
+        $iconCssClass = '';
+        $isService = isset($event->service_description);
+        $msg = $event->output;
+        $stateName = 'no-state';
+        switch ($event->type) {
+            case 'notify':
+                $icon = 'bell-alt';
+                $label = $this->translate('NOTIFICATION');
+                $msg = $msg ? preg_replace_callback(
+                    '/^\[([^\]]+)\]/',
+                    function($match) use ($self) { return contactsLink($match, $self); },
+                    $msg
+                ) : $this->translate('This notification was not sent out to any contact.');
+                $stateName = $isService ? Service::getStateText($event->state) : Host::getStateText($event->state);
+                break;
+            case 'comment':
+                $icon = 'comment';
+                $label = $this->translate('COMMENT');
+                break;
+            case 'comment_deleted':
+                $icon = 'cancel';
+                $label = $this->translate('COMMENT DELETED');
+                break;
+            case 'ack':
+                $icon = 'ok';
+                $label = $this->translate('ACKNOWLEDGED');
+                break;
+            case 'ack_deleted':
+                $icon = 'ok';
+                $iconCssClass = 'icon-strikethrough';
+                $label = $this->translate('ACKNOWLEDGEMENT REMOVED');
+                break;
+            case 'dt_comment':
+                // TODO(el): Does not appear in history
+                $icon = 'plug';
+                $label = $this->translate('SCHEDULED DOWNTIME');
+                break;
+            case 'dt_comment_deleted':
+                // TODO(el): Does not appear in history
+                $icon = 'plug';
+                $iconCssClass = 'icon-strikethrough';
+                $label = $this->translate('DOWNTIME DELETED');
+                break;
+            case 'flapping':
+                // TODO(el): Icon
+                $label = $this->translate('FLAPPING');
+                break;
+            case 'flapping_deleted':
+                // TODO(el): Icon
+                $label = $this->translate('FLAPPING STOPPED');
+                break;
+            case 'hard_state':
+                $label = $isService ? Service::getStateText($event->state, true) : Host::getStateText($event->state, true);
+                $stateName = $isService ? Service::getStateText($event->state) : Host::getStateText($event->state);
+                break;
+            case 'soft_state':
+                $label = $isService ? Service::getStateText($event->state, true) : Host::getStateText($event->state, true);
+                $stateName = $isService ? Service::getStateText($event->state) : Host::getStateText($event->state);
+                break;
+            case 'dt_start':
+                $icon = 'plug';
+                $label = $this->translate('DOWNTIME START');
+                break;
+            case 'dt_end':
+                $icon = 'plug';
+                $iconCssClass = 'icon-strikethrough';
+                $label = $this->translate('DOWNTIME END');
+                break;
+        } ?>
+        <tr>
+            <td class="state-col state-<?= $stateName ?>">
+            <?php if ($history->getIteratorPosition() % $limit === 0): ?>
+                <a id="page-<?= $history->getIteratorPosition() / $limit + 1 ?>"></a>
+            <?php endif ?>
+                <div class="state-label"><?= $this->escape($label) ?></div>
+                <div class="state-meta"><?= $this->timeAgo($event->timestamp, $this->compact) ?></div>
+            </td>
+            <td>
+                <?php if ($this->isOverview): ?>
+                    <?= $this->qlink(
+                        $event->host_display_name,
+                        'monitoring/host/show',
+                        array(
+                            'host' => $event->host_name,
+                        ),
+                        array('title' => sprintf(
+                            $this->translate('Show detailed information for host %s'),
+                            $event->host_display_name
+                        ))
+                    ) ?><?php if ($isService): ?>&#58;
+                        <?= $this->qlink(
+                            $event->service_display_name,
+                            'monitoring/service/show',
+                            array(
+                                'host'      => $event->host_name,
+                                'service'   => $event->service_description
+                            ),
+                            array(
+                                'class' => 'rowaction',
+                                'title' => sprintf(
+                                    $this->translate('Show detailed information for service %s on host %s'),
+                                    $event->service_display_name,
+                                    $event->host_display_name
+                                )
+                            )
+                        ) ?>
+                    <?php endif ?>
+                <?php endif ?>
+                <p class="overview-plugin-output">
+                    <?php if ($icon) {
+                        echo $this->icon($icon, null, $iconCssClass ? array('class' => $iconCssClass) : array());
+                    } ?>
+                    <?= nl2br($this->createTicketLinks($this->escape($msg)), false) ?>
+                </p>
+            </td>
+        </tr>
+        <?php endforeach ?>
+        </tbody>
+    </table>
+<?php if ($history->hasMore()): ?>
+    <div class="action-links">
+    <?php if ($this->compact) {
+        echo $this->qlink(
+            $this->translate('Show More'),
+            $url->without(array('view', 'limit')),
+            null,
+            array(
+                'class'             => 'action-link',
+                'data-base-target'  => '_next'
+            )
+        );
+    } else {
+        echo $this->qlink(
+            $this->translate('Load More'),
+            $url->setAnchor('page-' . ($page + 1)),
+            array('page' => $page + 1,),
+            array('class' => 'action-link')
+        );
+    } ?>
+    </div>
+<?php endif ?>
+</div>

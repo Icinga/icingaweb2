@@ -2,12 +2,12 @@
     <tbody>
     <?php
     foreach ($comments as $i => $comment):
-        if ($i > 5) {
+        if ($i === 5) {
             break;
         }
     ?>
     <tr>
-        <td class="comment-col">
+        <td class="icon-col">
             <?= $this->partial('partials/comment/comment-description.phtml', array('comment' => $comment)) ?>
         </td>
         <td>

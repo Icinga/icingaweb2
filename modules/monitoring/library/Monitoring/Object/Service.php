@@ -107,6 +107,7 @@ class Service extends MonitoredObject
     {
         return $this->backend->select()->from('servicestatus', array(
             'instance_name',
+            'host_attempt',
             'host_icon_image',
             'host_icon_image_alt',
             'host_acknowledged',
@@ -122,6 +123,7 @@ class Service extends MonitoredObject
             'host_notifications_enabled',
             'host_passive_checks_enabled',
             'host_state',
+            'host_state_type',
             'service_icon_image',
             'service_icon_image_alt',
             'service_acknowledged',

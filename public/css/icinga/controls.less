@@ -1,6 +1,55 @@
 /*! Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
-div.sort-control {
+.limiter-control > .control-group {
+  padding: 0;
+
+  > .control-label-group {
+    text-align: left;
+    padding: 0;
+    width: 1em;
+  }
+
+  > select {
+    width: 4.5em;
+  }
+
+  > i {
+    .sr-only();
+  }
+}
+
+.pagination-control {
+  li {
+    &.active {
+      > a,
+      > a:hover {
+        border-bottom: 2px solid @icinga-blue;
+        color: @icinga-blue
+      }
+      > a:hover {
+        background: none;
+        cursor: default;
+        text-decoration: none;
+      }
+    }
+
+    &.disabled {
+      color: @gray-light;
+      cursor: no-drop;
+    }
+
+    > a,
+    > span {
+      padding: 0 0.5em 0.25em 0.5em;
+    }
+    > a:hover {
+      background-color: @gray-lighter;
+      text-decoration: none;
+    }
+  }
+}
+
+.sort-control {
   label {
     width: auto;
     margin-right: 0.5em;
@@ -17,7 +66,7 @@ div.sort-control {
   }
 }
 
-html.no-js div.sort-control form {
+html.no-js .sort-control form {
   display: table;
   margin-left: auto;
   margin-top: 0.25em;

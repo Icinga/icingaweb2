@@ -16,7 +16,7 @@ if (! $this->compact): ?>
 <?php endif ?>
 <div class="content">
   <table data-base-target="_next"
-         class="action action-table multiselect"
+         class="table-row-selectable state-table multiselect"
          data-icinga-multiselect-url="<?= $this->href('monitoring/downtimes/show'); ?>"
          data-icinga-multiselect-controllers="<?= $this->href("monitoring/downtimes") ?>"
          data-icinga-multiselect-data="downtime_id">
@@ -30,7 +30,6 @@ if (! $this->compact): ?>
           $this->stateName = Host::getStateText($downtime->host_state);
       }
       $this->downtime = $downtime;
-      $this->displayComment = true;
     ?>
     <tr href="<?= $this->href('monitoring/downtime/show', array('downtime_id' => $downtime->id)) ?>">
       <?= $this->render('partials/downtime/downtime-header.phtml'); ?>

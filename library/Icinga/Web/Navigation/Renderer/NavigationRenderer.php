@@ -271,9 +271,11 @@ class NavigationRenderer implements RecursiveIterator, NavigationRendererInterfa
     /**
      * Return the opening markup for multiple navigation items
      *
+     * @param   int $level
+     *
      * @return  string
      */
-    public function beginChildrenMarkup()
+    public function beginChildrenMarkup($level = 1)
     {
         $cssClass = array(static::CSS_CLASS_NAV);
         if ($this->navigation->getLayout() === Navigation::LAYOUT_TABS) {
@@ -281,6 +283,8 @@ class NavigationRenderer implements RecursiveIterator, NavigationRendererInterfa
         } elseif ($this->navigation->getLayout() === Navigation::LAYOUT_DROPDOWN) {
             $cssClass[] = static::CSS_CLASS_NAV_DROPDOWN;
         }
+
+        $cssClass[] = 'nav-level-' . $level;
 
         return '<ul class="' . join(' ', $cssClass) . '">';
     }
@@ -352,8 +356,9 @@ class NavigationRenderer implements RecursiveIterator, NavigationRendererInterfa
         foreach ($this as $item) {
             /** @var NavigationItem $item */
             if ($item->shouldRender()) {
+                $content = $item->render();
                 $this->content[] = $this->beginItemMarkup($item);
-                $this->content[] = $item->render();
+                $this->content[] = $content;
                 $this->content[] = $this->endItemMarkup();
             }
         }

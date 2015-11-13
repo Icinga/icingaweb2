@@ -8,19 +8,19 @@ if (! $stats instanceof stdClass) {
 }
 ?>
 <div class="services-summary">
-<?= $this->qlink(
-    sprintf($this->translatePlural(
-        '%u Service', '%u Services', $stats->services_total),
-        $stats->services_total
-    ),
-    // @TODO(el): Fix that
-    Url::fromPath('monitoring/list/services')->setParams(isset($baseFilter) ? $baseFilter->getUrlParams() : array()),
-    null,
-    array('title' => sprintf(
-        $this->translatePlural('List %u service', 'List all %u services', $stats->services_total),
-        $stats->services_total
-    ))
-) ?>&#58;
+    <span class="services-link"><?= $this->qlink(
+        sprintf($this->translatePlural(
+            '%u Service', '%u Services', $stats->services_total),
+            $stats->services_total
+        ),
+        // @TODO(el): Fix that
+        Url::fromPath('monitoring/list/services')->setParams(isset($baseFilter) ? $baseFilter->getUrlParams() : array()),
+        null,
+        array('title' => sprintf(
+            $this->translatePlural('List %u service', 'List all %u services', $stats->services_total),
+            $stats->services_total
+        ))
+    ) ?>&#58;</span>
 <?php
 $stateBadges = new StateBadges();
 $stateBadges

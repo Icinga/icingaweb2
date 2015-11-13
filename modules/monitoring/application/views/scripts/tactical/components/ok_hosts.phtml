@@ -49,7 +49,6 @@ $service_problems = (
     </div>
 <?php if ($service_problems || $this->statusSummary->hosts_down || $this->statusSummary->hosts_unreachable): ?>
     <div class="box contents">
-        <strong><?= $this->translate('Services'); ?></strong>
         <?= $this->partial(
             'tactical/components/parts/servicestatesummarybyhoststate.phtml',
             array(
