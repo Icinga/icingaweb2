@@ -91,7 +91,6 @@ class Web extends EmbeddedWeb
             ->setupLogger()
             ->setupInternationalization()
             ->setupZendMvc()
-            ->setupNamespaces()
             ->setupModuleManager()
             ->loadSetupModuleIfNecessary()
             ->loadEnabledModules()
@@ -346,6 +345,7 @@ class Web extends EmbeddedWeb
                 'layoutPath' => $this->getApplicationDir('/layouts/scripts')
             )
         );
+
         $this->setupFrontController();
         $this->setupViewRenderer();
         return $this;
@@ -491,25 +491,5 @@ class Web extends EmbeddedWeb
             return Translator::getPreferredLocaleCode($_SERVER['HTTP_ACCEPT_LANGUAGE']);
         }
         return Translator::DEFAULT_LOCALE;
-    }
-
-    /**
-     * Setup class loader namespaces for Icinga\Controllers and Icinga\Forms
-     *
-     * @return $this
-     */
-    private function setupNamespaces()
-    {
-        $this
-            ->getLoader()
-            ->registerNamespace(
-                'Icinga\\' . Dispatcher::CONTROLLER_NAMESPACE,
-                $this->getApplicationDir('controllers')
-            )
-            ->registerNamespace(
-                'Icinga\\Forms',
-                $this->getApplicationDir('forms')
-            );
-        return $this;
     }
 }

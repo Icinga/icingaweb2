@@ -53,7 +53,7 @@ add-apt-repository 'deb http://packages.icinga.org/ubuntu icinga-trusty main'
 apt-get update
 ````
 
-For other Ubuntu versions just replace trusty with your distribution's code name.
+For other Ubuntu versions just replace trusty with your distribution\'s code name.
 
 **RHEL and CentOS**:
 ````
@@ -171,10 +171,10 @@ Adopt the package requirements to your needs (e.g. adding ldap for authenticatio
 
 Example for RHEL/CentOS/Fedora:
 
-````
-# yum install httpd mysql-server
-# yum install php php-gd php-intl php-ZendFramework php-ZendFramework-Db-Adapter-Pdo-Mysql
-````
+```
+yum install httpd mysql-server
+yum install php php-gd php-intl php-ZendFramework php-ZendFramework-Db-Adapter-Pdo-Mysql
+```
 
 The setup wizard will check the pre-requisites later on.
 
@@ -311,13 +311,13 @@ Puppet, Ansible, Chef, etc. modules.
 Create the database and add a new user as shown below for MySQL:
 
 ````
-# sudo mysql -p
+sudo mysql -p
 
 CREATE DATABASE icingaweb2;
 GRANT SELECT, INSERT, UPDATE, DELETE, DROP, CREATE VIEW, INDEX, EXECUTE ON icingaweb2.* TO 'icingaweb2'@'localhost' IDENTIFIED BY 'icingaweb2';
 quit
 
-# mysql -p icingaweb2 < /usr/share/icingaweb2/etc/schema/mysql.schema.sql
+mysql -p icingaweb2 < /usr/share/icingaweb2/etc/schema/mysql.schema.sql
 ````
 
 
@@ -325,7 +325,7 @@ Then generate a new password hash as described in the [authentication docs](auth
 and use it to insert a new user called `icingaadmin` into the database.
 
 ````
-# mysql -p icingaweb2
+mysql -p icingaweb2
 
 INSERT INTO icingaweb_user (name, active, password_hash) VALUES ('icingaadmin', 1, '$1$EzxLOFDr$giVx3bGhVm4lDUAw6srGX1');
 quit

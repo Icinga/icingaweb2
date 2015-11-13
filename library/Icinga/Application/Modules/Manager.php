@@ -74,6 +74,13 @@ class Manager
     private $modulePaths        = array();
 
     /**
+     * Whether we loaded all enabled modules
+     *
+     * @var bool
+     */
+    private $loadedAllEnabledModules = false;
+
+    /**
      *  Create a new instance of the module manager
      *
      *  @param ApplicationBootstrap $app
@@ -177,11 +184,27 @@ class Manager
      */
     public function loadEnabledModules()
     {
-        foreach ($this->listEnabledModules() as $name) {
-            $this->loadModule($name);
+        if (! $this->loadedAllEnabledModules) {
+            foreach ($this->listEnabledModules() as $name) {
+                $this->loadModule($name);
+            }
+
+            $this->loadedAllEnabledModules = true;
         }
+
         return $this;
     }
+
+    /**
+     * Whether we loaded all enabled modules
+     *
+     * @return bool
+     */
+    public function loadedAllEnabledModules()
+    {
+        return $this->loadedAllEnabledModules;
+    }
+
 
     /**
      * Try to load the module and register it in the application
@@ -244,6 +267,8 @@ class Manager
                 $this->enableDir
             );
         }
+
+        $this->loadedAllEnabledModules = false;
 
         if (file_exists($link) && is_link($link)) {
             return $this;
