@@ -9,6 +9,10 @@ abstract class DataviewExtensionHook
     {
         $cols = $this->provideAdditionalQueryColumns($queryName);
 
+        if (! is_array($cols)) {
+            return array();
+        }
+
         return $cols;
     }
 
