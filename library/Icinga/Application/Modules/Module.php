@@ -1270,7 +1270,7 @@ class Module
 
         if (strpos($implementation, '\\') === false) {
             $class = $this->getNamespace()
-                   . '\\Hook\\'
+                   . '\\ProvidedHook\\'
                    . $this->slashesToNamespace($implementation);
         } else {
             $class = $implementation;
