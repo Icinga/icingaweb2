@@ -205,6 +205,7 @@ class Hook
      */
     public static function all($name)
     {
+        $name = self::normalizeHookName($name);
         if (!self::has($name)) {
             return array();
         }
