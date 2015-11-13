@@ -1,7 +1,7 @@
 <div class="controls">
     <?= $tabs ?>
 </div>
-<div class="content content-centered">
+<div id="about" class="content content-centered">
     <?= $this->img(
         'img/logo_icinga_big_dark.png',
         null,
@@ -35,7 +35,7 @@
             ) ?>
         </dd>
     </dl>
-    <div>
+    <div class="about-social">
         <?= $this->qlink(
             null,
             'https://www.twitter.com/icinga',
@@ -54,16 +54,25 @@
                 'icon'      => 'facebook-squared',
                 'title'     => $this->translate('Icinga on Facebook')
             )
+        ) ?> <?= $this->qlink(
+            null,
+            'https://plus.google.com/+icinga',
+            null,
+            array(
+                'target'    => '_blank',
+                'icon'      => 'google-plus-squared',
+                'title'     => $this->translate('Icinga on Google+')
+            )
         ) ?>
     </div>
-    <div>
+    <div class="about-links">
     <?= $this->qlink(
         null,
         'https://dev.icinga.org/projects/icingaweb2',
         null,
         array(
             'target'    => '_blank',
-            'img'       => 'img/bugreport.png',
+            'icon'       => 'bug',
             'title'     => $this->translate('Report a bug')
         )
     ) ?>
@@ -73,19 +82,17 @@
         null,
         array(
             'target'    => '_blank',
-            'img'       => 'img/support.png',
+            'icon'       => 'chat',
             'title'     => $this->translate('Support / Mailinglists')
         )
     ) ?>
-    </div>
-    <div>
         <?= $this->qlink(
             null,
             'https://wiki.icinga.org',
             null,
             array(
                 'target'    => '_blank',
-                'img'       => 'img/wiki.png',
+                'icon'       => 'lightbulb',
                 'title'     => $this->translate('Icinga Wiki')
             )
         ) ?>
@@ -95,13 +102,13 @@
             null,
             array(
                 'target'    => '_blank',
-                'img'       => 'img/docs.png',
+                'icon'       => 'doc-text',
                 'title'     => $this->translate('Icinga Documentation')
             )
         ) ?>
     </div>
     <h2><?= $this->translate('Loaded modules') ?></h2>
-    <table class="action-table listing-table" data-base-target="_next">
+    <table class="table-row-selectable common-table" data-base-target="_next">
     <thead>
         <tr>
             <th><?= $this->translate('Name') ?></th>

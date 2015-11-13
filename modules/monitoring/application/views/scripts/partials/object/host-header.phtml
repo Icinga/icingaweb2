@@ -2,36 +2,34 @@
 use Icinga\Module\Monitoring\Object\Host;
 /** @var Host $object */
 ?>
-<table>
+<table class="state-table host-detail-state">
     <tr>
         <td class="state-col state-<?= Host::getStateText($object->host_state) ?><?= $object->host_handled ? ' handled' : '' ?>">
-            <p>
-                <?= Host::getStateText($object->host_state, true) ?>
-                <br>
+            <div class="state-header"><?= Host::getStateText($object->host_state, true) ?></div>
+            <div class="state-meta">
                 <?= $this->timeSince($object->host_last_state_change) ?>
-            </p>
+            <?php if ((int) $object->host_state > 0 && (int) $object->host_state_type === 0): ?>
+                <div><?= $this->translate('Soft', 'Soft state') ?> <?= $object->host_attempt ?></div>
+            <?php endif ?>
+            </div>
         </td>
         <td>
-            <p>
-                <?= $this->iconImage()->host($object) ?>
-                <span class="selectable"><?= $this->escape($object->host_display_name) ?></span>
-            <?php if ($object->host_display_name !== $object->host_name): ?>
-                <span class="selectable text-small">&#40;<?= $this->escape($object->host_name) ?>&#41;</span>
-            <?php endif ?>
-            <?php if ($object->host_address6 && $object->host_address6 !== $object->host_name): ?>
-                <br>
-                <span class="selectable text-small" title="<?= $this->translate('IPv6 address') ?>">
-                    <?= $this->escape($object->host_address6) ?>
-                </span>
-            <?php endif ?>
-            <?php if ($object->host_address && $object->host_address !== $object->host_name): ?>
-                <br>
-                <span class="selectable text-small" title="<?= $this->translate('IPv4 address') ?>">
-                    <?= $this->escape($object->host_address) ?>
-                </span>
-            <?php endif ?>
-                <?= $this->render('partials/host/statusicons.phtml') ?>
-            </p>
+            <?= $this->iconImage()->host($object) ?>
+            <span class="selectable"><?= $this->escape($object->host_display_name) ?></span>
+        <?php if ($object->host_display_name !== $object->host_name): ?>
+            <span class="selectable host-meta">&#40;<?= $this->escape($object->host_name) ?>&#41;</span>
+        <?php endif ?>
+            <?= $this->render('partials/host/statusicons.phtml') ?>
+        <?php if ($object->host_address6 && $object->host_address6 !== $object->host_name): ?>
+            <div class="selectable host-meta" title="<?= $this->translate('IPv6 address') ?>">
+                <?= $this->escape($object->host_address6) ?>
+            </div>
+        <?php endif ?>
+        <?php if ($object->host_address && $object->host_address !== $object->host_name): ?>
+            <div class="selectable host-meta" title="<?= $this->translate('IPv4 address') ?>">
+                <?= $this->escape($object->host_address) ?>
+            </div>
+        <?php endif ?>
         </td>
     </tr>
 </table>

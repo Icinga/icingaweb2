@@ -291,22 +291,20 @@ class Web extends EmbeddedWeb
                     'cssClass'  => 'user-nav-item',
                     'label'     => $this->user->getUsername(),
                     'icon'      => 'user',
-                    'url'       => 'preference',
                     'priority'  => 900,
-                    'renderer'  => array(
-                        'UserNavigationItemRenderer'
-                    ),
-                ),
-                'logout' => array(
-                    'cssClass'  => 'user-nav-item',
-                    'label'     => t('Logout'),
-                    'icon'	=> 'starttime',
-                    'priority'  => 990,
-                    'renderer'  => array(
-                        'LogoutNavigationItemRenderer',
-                        'target' => '_self'
-                    ),
-                    'url'       => 'authentication/logout'
+                    'children'  => array(
+                        'preferences' => array(
+                            'label'     => t('Preferences'),
+                            'priority'  => 100,
+                            'url'       => 'preference'
+                        ),
+                        'logout' => array(
+                            'label'     => t('Logout'),
+                            'priority'  => 200,
+                            'target'    => '_self',
+                            'url'       => 'authentication/logout'
+                        )
+                    )
                 )
             );
 

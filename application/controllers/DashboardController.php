@@ -253,14 +253,6 @@ class DashboardController extends ActionController
                     $this->dashboard->getConfig()->saveIni();
                     $this->redirectNow(URL::fromRequest()->remove('remove'));
                 }
-                $this->view->tabs->add(
-                    'Add',
-                    array(
-                        'label' => '+',
-                        'title' => 'Add a dashlet to an existing or new dashboard',
-                        'url'   => Url::fromPath('dashboard/new-dashlet')
-                    )
-                );
                 $this->view->dashboard = $this->dashboard;
             }
         }

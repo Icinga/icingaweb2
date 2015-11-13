@@ -3,32 +3,20 @@ use Icinga\Module\Monitoring\Object\Service;
 use Icinga\Web\Url;
 
 if (! $this->compact): ?>
-<div class="controls separated">
-  <?= $this->tabs; ?>
-  <div class="grid dont-print">
-    <div class="col-1-3 text-left">
-      <?= $this->limiter ?>
-    </div>
-    <div class="col-1-3">
-      <?= $this->paginator ?>
-    </div>
-    <div class="col-1-3 text-right">
-      <?= $this->sortBox ?>
-    </div>
-  </div>
-  <?= $this->filterEditor; ?>
+<div class="controls">
+    <?= $this->tabs ?>
+    <?= $this->sortBox ?>
+    <?= $this->filterEditor ?>
 </div>
 <?php endif ?>
 <div class="content" data-base-target="_next">
-<?php
-if (empty($pivotData)) {
-    echo $this->translate('No services found matching the filter') . '</div>';
-    return;
-}
+<?php if (empty($pivotData)): ?>
+    <p><?= $this->translate('No services found matching the filter.') ?></p>
+</div>
+<?php return; endif;
 $hostFilter = '(host_name=' . implode('|host_name=', array_keys($pivotData)) . ')';
 ?>
-
-<table class="service-grid-table">
+    <table class="service-grid-table">
     <thead>
         <tr>
             <th><?= $this->partial(
@@ -38,7 +26,7 @@ $hostFilter = '(host_name=' . implode('|host_name=', array_keys($pivotData)) . '
                     'xAxisPaginator' => $horizontalPaginator,
                     'yAxisPaginator' => $verticalPaginator
                 )
-            ); ?></th>
+            ) ?></th>
         <?php foreach ($pivotHeader['cols'] as $serviceDescription => $serviceDisplayName): ?>
             <th class="rotate-45"><div><span><?= $this->qlink(
                 $this->ellipsis($serviceDisplayName, 18),
@@ -55,7 +43,7 @@ $hostFilter = '(host_name=' . implode('|host_name=', array_keys($pivotData)) . '
     </thead>
     <tbody>
 
-    <?php $i = 0; ?>
+    <?php $i = 0 ?>
     <?php foreach ($pivotHeader['rows'] as $hostName => $hostDisplayName): ?>
         <tr>
             <th><?php
@@ -79,24 +67,24 @@ $hostFilter = '(host_name=' . implode('|host_name=', array_keys($pivotData)) . '
                 <span class="sr-only" id="<?= $ariaDescribedById ?>">
                     <?= $this->escape($service->service_output) ?>
                 </span>
-              <?= $this->qlink(
-                  '',
-                  'monitoring/service/show',
-                  array(
-                      'host'    => $hostName,
-                      'service' => $serviceDescription
-                  ),
-                array(
-                    'aria-describedby'    => $ariaDescribedById,
-                    'class'               => 'bg-color-' . Service::getStateText($service->service_state) . ($service->service_handled ? ' handled' : ''),
-                    'title'               => $this->escape($service->service_output),
-                    'aria-label'          => sprintf(
-                        $this->translate('Show detailed information for service %s on host %s'),
-                        $service->service_display_name,
-                        $service->host_display_name
+                <?= $this->qlink(
+                    '',
+                    'monitoring/service/show',
+                    array(
+                        'host'    => $hostName,
+                        'service' => $serviceDescription
+                    ),
+                    array(
+                        'aria-describedby'    => $ariaDescribedById,
+                        'aria-label'          => sprintf(
+                            $this->translate('Show detailed information for service %s on host %s'),
+                            $service->service_display_name,
+                            $service->host_display_name
+                        ),
+                        'class'               => 'bg-color-' . Service::getStateText($service->service_state) . ($service->service_handled ? ' handled' : ''),
+                        'title'               => $this->escape($service->service_output)
                     )
-                )
-            ); ?>
+                ) ?>
             </td>
         <?php endforeach ?>
         <?php if (! $this->compact && $this->horizontalPaginator->getPages()->pageCount > 1): ?>
@@ -110,16 +98,16 @@ $hostFilter = '(host_name=' . implode('|host_name=', array_keys($pivotData)) . '
                              .  $this->verticalPaginator->getItemCountPerPage()
                     ),
                     array(
-                        'data-base-target'  => '_self',
-                        'class'             => 'action-link'
+                        'class'             => 'action-link',
+                        'data-base-target'  => '_self'
                     )
                 ) ?>
                 <?= ++$i === (int) (count($pivotHeader['rows']) / 2) ? $expandLink : '' ?>
             </td>
-        <?php endif;?>
+        <?php endif ?>
         </tr>
     <?php endforeach ?>
-    <?php if (! $this->compact && $this->verticalPaginator->getPages()->pageCount > 1): ;?>
+    <?php if (! $this->compact && $this->verticalPaginator->getPages()->pageCount > 1): ?>
         <tr>
             <td colspan="<?= count($pivotHeader['cols']) + 1?>" class="service-grid-table-more">
                 <?php echo $this->qlink(
@@ -130,13 +118,13 @@ $hostFilter = '(host_name=' . implode('|host_name=', array_keys($pivotData)) . '
                             ($this->verticalPaginator->getItemCountPerPage() + 20)
                     ),
                     array(
-                        'data-base-target'  => '_self',
-                        'class'             => 'action-link'
+                        'class'             => 'action-link',
+                        'data-base-target'  => '_self'
                     )
                 ) ?>
             </td>
         </tr>
-    <?php endif;?>
+    <?php endif ?>
     </tbody>
-</table>
+    </table>
 </div>

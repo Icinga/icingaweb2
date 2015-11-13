@@ -13,15 +13,13 @@ class StyleSheet
         '../application/fonts/fontello-ifont/css/ifont-embedded.css',
         'css/vendor/normalize.css',
         'css/vendor/tipsy.css',
-        'css/icinga/themes/icinga.less',
+        'css/icinga/base.less',
         'css/icinga/colors.less',
         'css/icinga/badges.less',
         'css/icinga/mixins.less',
         'css/icinga/grid.less',
-        'css/icinga/base.less',
         'css/icinga/nav.less',
         'css/icinga/main.less',
-        'css/icinga/limiter.less',
         'css/icinga/animation.less',
         'css/icinga/layout-colors.less',
         'css/icinga/layout-structure.less',
@@ -33,14 +31,13 @@ class StyleSheet
         'css/icinga/forms.less',
         'css/icinga/setup.less',
         'css/icinga/widgets.less',
-        'css/icinga/pagination.less',
-        'css/icinga/selection-toolbar.less',
         'css/icinga/login.less',
+        'css/icinga/about.less',
         'css/icinga/controls.less',
         'css/icinga/dev.less',
 //        'css/icinga/logo.less',
         'css/icinga/spinner.less',
-        'css/icinga/compat.less',
+        'css/icinga/compat.less'
     );
 
     public static function compileForPdf()

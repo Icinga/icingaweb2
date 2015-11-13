@@ -9,7 +9,7 @@ table.historycolorgrid th {
   height: 1em;
   margin: 0.5em;
   font-size: 0.55em;
-  font-weight: normal;
+  font-weight: bold;
 }
 
 table.historycolorgrid td {
@@ -24,17 +24,18 @@ table.historycolorgrid td:hover {
 
 table.historycolorgrid td.weekday {
   font-size: 0.55em;
-  font-weight: normal;
+  font-weight: bold;
   width: 2.5em;
   opacity: 1.0;
 }
 
 table.historycolorgrid a, table.historycolorgrid span {
+  .rounded-corners(0.2em);
   margin: 0;
   text-decoration: none;
   display: block;
-  width: 1em;
-  height: 1em;
+  width: 1.1em;
+  height: 1.1em;
 }
 
 table.historycolorgrid a:hover {
@@ -66,21 +67,12 @@ table.multiselect tr[href] td {
   }
 }
 
-ul.datafilter li {
-  list-style-type: none;
-  margin: 0;
-}
-
 ul.tree select { /* ?? */
   margin-bottom: 0.3em;
   margin-left: 1em;
 }
-ul.datafilter li input, ul.datafilter li select:first-child {
-    margin-left: 1em;
-}
 
 ul.tree {
-  font-size: 0.8em;
   padding: 0;
   margin: 0;
 }
@@ -165,7 +157,7 @@ ul.tree > ul > li::before, ul.tree > ul > li::after {
 
 ul.tree li a {
   display: inline-block;
-/* TODO -> find something better  padding-left: 2.4em; */
+  padding-left: 1em;
   line-height: 2em;
   text-decoration: none;
   color: #777;
@@ -190,10 +182,6 @@ ul.tree li a.error:hover {
 /* Add hover effect to chart data */
 .chart-data:hover {
   opacity: 0.85;
-}
-
-.pie-data:hover {
-  opacity: 0.6;
 }
 
 /* charts should grow as much as possible but never beyond the current viewport's size */
@@ -238,42 +226,6 @@ ul.tree li a.error:hover {
 //    color: @colorGray;
 //    text-decoration: none;
 //}
-//
-//#menu nav ul .badge {
-//  margin-right: 0em;
-//  top: 0.5em;
-//}
-
-//#menu nav > ul > li.active > .badge-container {
-//  display: none;
-//}
-//
-//#menu nav > ul > li.hover > .badge-container {
-//  display: none;
-//}
-//
-//#menu nav > ul > li.active > ul > li .badge-container {
-//  position: relative;
-//  top: -0.5em;
-//}
-
-#menu nav > ul > li.hover > ul > li > a {
-  width: 12.5em;
-}
-
-//#menu nav > ul > li.hover > ul > li .badge-container {
-//  position: relative;
-//  top: -0.5em;
-//}
-
-#menu nav > ul > li.hover > ul > li  {
-  // prevent floating badges from resizing list items in webkit
-  //max-height: 2em;
-}
-
-//li li .badge {
-//  font-size: 0.975em;
-//}
 
 //.badge-critical {
 //  background-color: @colorCritical;
@@ -303,44 +255,12 @@ ul.tree li a.error:hover {
 //  background-color: @colorUnknown;
 //}
 
-.sparkline-box {
-  position: relative;
-  top: -3px;
-  float: right;
-}
-
-.dashboard .sparkline-box {
-  top: -3px;
-}
-
-.sparkline {
-  width: 12px;
-  height: 12px;
-  position: relative;
-  top: 4px;
-
-  margin: 0em 0em 0em 0.1em;
-}
-
 .tipsy .tipsy-inner {
   // overwrite tooltip max width, we need them to grow bigger
+  font-family: @font-family;
+  font-size: @font-size-small;
   max-width: 300px;
   text-align: left;
-}
-
-.color-box {
-  position: relative;
-  top: 2px;
-  margin: 0px 3px 0px 3px;
-  display: inline-block;
-  width: 12px;
-  height: 12px;
-}
-
-.oneline {
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 
 .progress-label span {

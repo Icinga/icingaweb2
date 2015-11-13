@@ -1,6 +1,6 @@
 /*! Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
-table.service-grid-table {
+.service-grid-table {
   width: 0;
   white-space: nowrap;
 
@@ -25,7 +25,7 @@ table.service-grid-table {
     }
   }
 
-  th.rotate-45 {
+  .rotate-45 {
     height: 6em;
 
     div {
@@ -34,10 +34,14 @@ table.service-grid-table {
     }
   }
 
-  td.service-grid-table-more {
+  .service-grid-table-more {
     text-align: center;
     a {
       display: inline;
     }
   }
+}
+
+.joystick-pagination a {
+  color: @text-color;
 }
