@@ -345,13 +345,19 @@ class PivotTable implements Sortable
         ) {
             $xAxis = $this->queryXAxis()->fetchPairs();
             $yAxis = $this->queryYAxis()->fetchPairs();
+            $xAxisKeys = array_keys($xAxis);
+            $yAxisKeys = array_keys($yAxis);
         } else {
             if ($this->xAxisFilter !== null) {
                 $xAxis = $this->queryXAxis()->fetchPairs();
-                $yAxis = $this->queryYAxis()->where($this->xAxisColumn, $xAxis)->fetchPairs();
+                $xAxisKeys = array_keys($xAxis);
+                $yAxis = $this->queryYAxis()->where($this->xAxisColumn, $xAxisKeys)->fetchPairs();
+                $yAxisKeys = array_keys($yAxis);
             } else { // $this->yAxisFilter !== null
                 $yAxis = $this->queryYAxis()->fetchPairs();
-                $xAxis = $this->queryXAxis()->where($this->yAxisColumn, $yAxis)->fetchPairs();
+                $yAxisKeys = array_keys($yAxis);
+                $xAxis = $this->queryXAxis()->where($this->yAxisColumn, $yAxisKeys)->fetchPairs();
+                $xAxisKeys = array_keys($xAxis);
             }
         }
         $pivotData = array();
@@ -360,8 +366,6 @@ class PivotTable implements Sortable
             'rows'  => $yAxis
         );
         if (! empty($xAxis) && ! empty($yAxis)) {
-            $xAxisKeys = array_keys($xAxis);
-            $yAxisKeys = array_keys($yAxis);
             $this->baseQuery
                 ->where($this->xAxisColumn, $xAxisKeys)
                 ->where($this->yAxisColumn, $yAxisKeys);
