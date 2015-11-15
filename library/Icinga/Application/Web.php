@@ -472,10 +472,17 @@ class Web extends EmbeddedWeb
      */
     private function setupPagination()
     {
+        // TODO: document what we need for whatever reason?!
+        Zend_Paginator::addScrollingStylePrefixPath(
+            'Icinga_Web_Paginator_ScrollingStyle_',
+            $this->getLibraryDir('Icinga/Web/Paginator/ScrollingStyle')
+        );
+
         Zend_Paginator::addScrollingStylePrefixPath(
             'Icinga_Web_Paginator_ScrollingStyle',
             'Icinga/Web/Paginator/ScrollingStyle'
         );
+
         Zend_Paginator::setDefaultScrollingStyle('SlidingWithBorder');
         Zend_View_Helper_PaginationControl::setDefaultViewPartial(
             array('mixedPagination.phtml', 'default')
