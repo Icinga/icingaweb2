@@ -2,16 +2,16 @@
 use Icinga\Module\Monitoring\Object\Host;
 
 if (! $this->compact): ?>
-<div class="controls separated dont-print">
+<div class="controls">
     <?= $this->tabs ?>
     <div class="grid">
         <?= $this->render('list/components/hostssummary.phtml') ?>
         <?= $this->render('list/components/selectioninfo.phtml') ?>
     </div>
     <div class="grid">
+        <?= $this->sortBox ?>
         <?= $this->limiter ?>
         <?= $this->paginator ?>
-        <?= $this->sortBox ?>
     </div>
     <?= $this->filterEditor ?>
 </div>
