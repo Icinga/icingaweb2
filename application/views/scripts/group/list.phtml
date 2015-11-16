@@ -7,9 +7,9 @@ if (! $this->compact): ?>
 <div class="controls separated dont-print">
     <?= $tabs; ?>
     <div class="grid">
+        <?= $this->sortBox ?>
         <?= $this->limiter ?>
         <?= $this->paginator ?>
-        <?= $this->sortBox ?>
     </div>
     <div>
         <?= $this->backendSelection; ?>
