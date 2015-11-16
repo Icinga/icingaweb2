@@ -162,7 +162,7 @@ class ConfigController extends Controller
         $form->setTitle(sprintf($this->translate('Remove Command Transport %s'), $transportName));
         $form->info(
             $this->translate(
-                'If you have still any environments or views referring to this transport, '
+                'If you still have any environments or views referring to this transport, '
                 . 'you won\'t be able to send commands anymore after deletion.'
             ),
             false
