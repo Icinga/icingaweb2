@@ -2066,7 +2066,7 @@ msgstr ""
 
 #: /vagrant/application/views/scripts/pivottablePagination.phtml:35
 msgid "Services"
-msgstr "Dienste"
+msgstr "Services"
 
 #: /vagrant/application/forms/Config/General/ApplicationConfigForm.php:36
 msgid ""
@@ -3070,7 +3070,7 @@ msgstr "in %s"
 #: /vagrant/application/views/scripts/joystickPagination.phtml:97
 msgctxt "pagination.joystick"
 msgid "services"
-msgstr "Dienste"
+msgstr "Services"
 
 #: /vagrant/library/Icinga/Date/DateFormatter.php:209
 #, php-format
