@@ -21,7 +21,7 @@ class ApplicationStateController extends Controller
         }
         $now = time();
         if ($last + 60 < $now) {
-            Session::getSession()->refreshId();
+            Session::getSession()->write();
             $params = session_get_cookie_params();
             setcookie(
                 'icingaweb2-session',
