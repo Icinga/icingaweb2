@@ -86,11 +86,10 @@ $this->addHelperFunction('icon', function ($img, $title = null, array $propertie
         } else {
             $properties['class'] = 'icon';
         }
-
         if (strpos($img, '/') === false) {
-            return $view->img('img/icons/' . $img, $properties);
+            return $view->img('img/icons/' . $img, null, $properties);
         } else {
-            return $view->img($img, $properties);
+            return $view->img($img, null, $properties);
         }
     }
 
