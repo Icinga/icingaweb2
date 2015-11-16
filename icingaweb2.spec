@@ -83,8 +83,9 @@ Requires:                   %{php}-gd %{php}-intl
 %{?rhel:Requires:           php-pecl-imagick}
 %{?suse_version:Requires:   %{php}-gettext %{php}-json %{php}-openssl %{php}-posix}
 Requires:                   %{zend}
-Requires:                   %{zend}-Db-Adapter-Pdo-Mysql
-Requires:                   %{zend}-Db-Adapter-Pdo-Pgsql
+%{?amzn:Requires:           %{zend}-Db-Adapter-Pdo-Mysql %{zend}-Db-Adapter-Pdo-Pgsql}
+%{?fedora:Requires:         %{zend}-Db-Adapter-Pdo-Mysql %{zend}-Db-Adapter-Pdo-Pgsql}
+%{?rhel:Requires:           %{zend}-Db-Adapter-Pdo-Mysql %{zend}-Db-Adapter-Pdo-Pgsql}
 
 %description -n php-Icinga
 Icinga Web 2 PHP library
