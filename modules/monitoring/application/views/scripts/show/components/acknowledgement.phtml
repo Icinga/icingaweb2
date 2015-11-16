@@ -14,6 +14,7 @@ $acknowledgement = $object->acknowledgement;
 <tr>
     <th><?= $this->translate('Acknowledged') ?></th>
     <td data-base-target="_self">
+        <?php if ($acknowledgement): ?>
         <dl class="comment-list">
             <dt class="comment-header">
                 <?= $this->escape($acknowledgement->getAuthor()) ?>
@@ -49,6 +50,9 @@ $acknowledgement = $object->acknowledgement;
                 <p><?= nl2br($this->createTicketLinks($this->escape($acknowledgement->getComment())), false) ?></p>
             </dd>
         </dl>
+        <?php else: ?>
+            <?= $removeAckForm ?>
+        <?php endif ?>
     </td>
 </tr>
 <?php else: ?>
