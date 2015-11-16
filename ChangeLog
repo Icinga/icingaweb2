@@ -1,3 +1,250 @@
+# Icinga Web 2 Changelog
+
+## What's New in Version 2.1.0
+
+#### Features
+
+* Feature 10613: Extend and simplify Hook api
+
+#### Bugfixes
+
+* Bug 8713: Invalid filter "host_name=*(test)*", unexpected ) at pos 17
+* Bug 8999: Navigation and search bar is not available using a small width
+* Bug 10229: Dashboard requests do not refresh the session
+* Bug 10268: Unhandled services in the hosts overview list don't stand out
+* Bug 10287: Redirect after login no longer working
+* Bug 10288: The order for the limit links is incorrect
+* Bug 10292: Hovered links in hover menu are unreadable
+* Bug 10293: Hover menu is missing it's arrow for menu entries providing badges
+* Bug 10295: Reset static line-height on body
+* Bug 10296: Scrolling to the bottom of the page does not load more events
+* Bug 10299: Badges are overridden by menu text
+* Bug 10301: Format helpers like timeSince are polluted with text-small
+* Bug 10303: Zooming in, or having another layout destroys the hover menu
+* Bug 10304: Cannot access a host's customvars for service actions
+* Bug 10305: Hover menu arrow color no longer fits background color
+* Bug 10316: Not all Servicegroups / Hostgroups are shown
+* Bug 10317: Event history style broken
+* Bug 10319: Recursive sharing navigation items doesn't work.
+* Bug 10321: Module iframe doesn't show website with parameters as a single column
+* Bug 10328: ZendFramework packages missing for SLES12
+* Bug 10359: Charset option not passed thru PDO adapter
+* Bug 10364: PostgreSQL queries apply LOWER() on selected columns
+* Bug 10367: Broken user- and group-management
+* Bug 10389: Host overview: vsprintf(): Too few arguments
+* Bug 10402: LdapUserGroupBackend: user_base_dn not used from UserBackend
+* Bug 10419: Swapped icon image order in service header
+* Bug 10490: Unhandled service counter in the hosts overview shows incorrect values
+* Bug 10533: Form notifications of type information are green
+* Bug 10567: Member user name used for basedn when querying usergroup members
+* Bug 10597: Empty PDO charset option is invalid
+* Bug 10614: Class loader: hardcode module and Zend prefixes
+* Bug 10623: Acknowledging multiple selected objects erroneous
+
+## What's New in Version 2.0.0
+
+### Changes
+
+
+Upgrading to Icinga Web 2 2.0.0
+
+Icinga Web 2 installations from package on RHEL/CentOS 7 now depend on php-ZendFramework which is available through the EPEL repository. Before, Zend was installed as Icinga Web 2 vendor library through the package icingaweb2-vendor-zend. After upgrading, please make sure to remove the package icingaweb2-vendor-zend.
+
+Icinga Web 2 version 2.0.0 requires permissions for accessing modules. Those permissions are automatically generated for each installed module in the format module/<moduleName>. Administrators have to grant the module permissions to users and/or user groups in the roles configuration for permitting access to specific modules. In addition, restrictions provided by modules are now configurable for each installed module too. Before, a module had to be enabled before having the possibility to configure restrictions.
+
+The instances.ini configuration file provided by the monitoring module has been renamed to commandtransports.ini. The content and location of the file remains unchanged.
+
+The location of a user's preferences has been changed from config-dir/preferences/username.ini to config-dir/preferences/username/config.ini. The content of the file remains unchanged.
+
+#### Features
+
+* Feature 5600: User specific menu entries
+* Feature 5647: GUI for permission and restriction assignment
+* Feature 5786: Namespace all web controllers
+* Feature 6144: Provide additional dashboard panes per default
+* Feature 6677: Allow to extend the content of a dashlet on the right
+* Feature 7180: Show active cluster hostname in the monitoring health view
+* Feature 7367: GUI for adding action and notes URLs
+* Feature 7570: Document installation
+* Feature 7773: Interpret links in custom variables
+* Feature 8336: IDO: Double check that we always add the is_active = 1 condition in our queries
+* Feature 8369: Show an indicator when automatic form submission is ongoing
+* Feature 8378: Indicate when check results are being late
+* Feature 8407: Document example commands for installing from source
+* Feature 8642: Show acknowledgement expire time (if any) in the host and service detail view
+* Feature 8645: Generic iFrame module
+* Feature 8758: Add support for file uploads
+* Feature 8848: Show activity indicator for dashlets
+* Feature 8884: Move the menu entry for notifications beneath history
+* Feature 8981: Combo backend for command transports (fallback mechanism)
+* Feature 8985: Visually separate enabled and disabled modules in the modules view
+* Feature 9029: Provide a complete list of available filter columns plus custom variables (where appropriate) in the filter editor
+* Feature 9030: Service grid: Add limit control
+* Feature 9247: Show Icinga Web 2's version in the frontend
+* Feature 9364: Apply sort rules for ldap queries on the server's side
+* Feature 9381: List installed modules, versions and state in the about page
+* Feature 9453: Vagrant: Upgrade to CentOS 7
+* Feature 9460: IDO resource configuration: Ensure that the user is running PostgreSQL 9.1+
+* Feature 9524: Improve setup wizard
+* Feature 9525: Configuration enhancements
+* Feature 9591: IP Address Search
+* Feature 9604: Add Inspection API for Connections
+* Feature 9605: LDAP Connection add Test Function
+* Feature 9630: Inspectable: Add inspectable API to LDAP connections
+* Feature 9641: Add Inspection API for DB Connections
+* Feature 9644: Permit access to modules
+* Feature 9645: Support for address6
+* Feature 9651: Automatically use the correct instance configuration based on a host's or service's instance
+* Feature 9660: Basic access authentication
+* Feature 9661: Query for limit+1 for "Show more results" candidates
+* Feature 9683: Allow to create MSSQL and Oracle DB resources
+* Feature 9702: Allow module developers to define additional static files
+* Feature 9761: Store active menu item as HTML5 history state information
+* Feature 9772: Allow to list groups from a LDAP backend
+* Feature 9826: Allow to select text in the host and service detail area header via double click
+* Feature 9830: Monitoring: Support the wildcard restriction for "administrative" roles
+* Feature 9888: Display a host's and service's check timeperiod as well as notification timeperiod in the detail view
+* Feature 9908: Use better icons for resources, backends and module state
+* Feature 9942: Add a warning to the navigition if the last IDO update is older than 5 minutes
+* Feature 9943: Offer instance_name as query column
+* Feature 9945: Show instance_name in a host's and service's detail view
+* Feature 10033: Provide "Counter"-View
+
+#### Bugfixes
+
+* Bug 6644: Default sort order is not applied
+* Bug 7383: This webpage has a redirect loop without cookies
+* Bug 7486: Instance Configuration: Instance must NOT be a GET parameter when creating an instance
+* Bug 7488: Instance Configuration: Instance parameter must be mandatory for updating and removing instances
+* Bug 7489: Instance Configuration: Custom validation errors must be shown in the form not as notification
+* Bug 7490: Instance Configuration: HTTP response code flaws
+* Bug 7818: Incorrect language & timezone detection w/ Safari
+* Bug 7930: Hide external commands which are not supported by Icinga 2
+* Bug 8312: Don't show last and next check information and schedule check controls for passive only checks
+* Bug 8620: Searching in the downtimes list view throws an exception
+* Bug 8623: Selected row lost after auto-refresh in every overview except for hosts and services
+* Bug 8703: Do not show computer accounts for Active Directory
+* Bug 8768: Range multiselection not working in IE11
+* Bug 8845: Missing downtime end information in host and service detail views
+* Bug 8954: Document and rename Ldap\Connection to Ldap\LdapConnection
+* Bug 8955: Document and rename Ldap\Query to Ldap\LdapQuery
+* Bug 8969: Tooltips hidden after auto refresh
+* Bug 8975: Error messages disappear after auto refresh #2
+* Bug 8983: Remove yellow boxes from forms and wherever else used
+* Bug 9024: Form autosubmits cause autorefreshs to not run anymore
+* Bug 9036: Plugin output HTML tags are always escaped
+* Bug 9042: Browser address bar gets not updated when closing the detail area while a request for the url that has just been closed is pending
+* Bug 9054: Multiselection not visible until a subsequent auto-refresh has been completed
+* Bug 9168: Can't use Icinga Web 2 w/ IDO version 1.7
+* Bug 9179: LDAP discovery relies on anonymous access and does not respect encryption
+* Bug 9266: Downtimes show "Starts in" for objects with non-problem state
+* Bug 9306: Installation Wizard complains about "required and must not be empty"-fields when the user changes the database type first
+* Bug 9314: RPM packages do not require Zend PDO packages which results in missing 'php-pdo' exception
+* Bug 9330: Uncaught TypeError: Cannot read property 'id' of undefined when deleting comments or downtimes via their respective overview
+* Bug 9333: Sorting the service grid by service description fails w/ PostgreSQL
+* Bug 9346: Potential active rows not deselected when navigating by browser history
+* Bug 9347: Service names with round bracket fail w/ innvalid filter exception when selecting multiple services
+* Bug 9348: LDAP filter input errors w/ "The filter must not be wrapped in parantheses"
+* Bug 9349: Duplicate headers from Controller::postDispatch()
+* Bug 9360: service matrix does not show all intersections
+* Bug 9374: Non-existent modules can be disabled
+* Bug 9375: Fatal error in icingacli (icingacli-2.0.0-3.beta3.el7.centos.noarch)
+* Bug 9376: INI writer must not persist section keys with a null value
+* Bug 9398: Rename menu "authentication" to "security"
+* Bug 9402: A command form's view script cannot be found if benchmark is enabled
+* Bug 9418: DB resources: Do not allow to configure table prefixes
+* Bug 9421: Sort controls misbehavior
+* Bug 9449: The use statement with non-compound name ... has no effect w/ PHP 5.6.9+
+* Bug 9454: Ghost host- and servicegroups
+* Bug 9472: Fetch object statistics only if they're actually displayed
+* Bug 9473: Inconsistent counters for service problems
+* Bug 9477: Command forms have no tabs
+* Bug 9483: Icinga\Web\Widget\Paginator should not require a full query interface
+* Bug 9484: Document that the web server has to be restarted after adding the web server user to the icingaweb2 system group
+* Bug 9494: Refresh button loads invalid links for views with complex filters
+* Bug 9497: Eventhistory: Quick search not working
+* Bug 9498: Service overview: Cannot quick search for hosts
+* Bug 9499: Hostgroup overview: Cannot quick search for hosts
+* Bug 9500: Servicegroup overview: Cannot quick search for services
+* Bug 9502: Comment overview: Cannot quick search
+* Bug 9503: Comment overview shows duplicate entries when filtering for services
+* Bug 9504: Contactgroup overview: Cannot quick search
+* Bug 9505: Contact overview: Cannot quick search
+* Bug 9506: Notification overview: Cannot quick search
+* Bug 9509: Setup: Authentication backend validation broken
+* Bug 9511: Setup: Cannot select an existing user as admin account when I've configured an authentication backend of type msldap
+* Bug 9516: Improve request processing for all monitoring config forms
+* Bug 9517: Behave nicely in case no monitoring instance resources are configured
+* Bug 9519: Monitoring backend configuration does not validate IDO resources
+* Bug 9529: RPM: Apache config ist not defined as configuration file
+* Bug 9530: Creating a dashlet with "()" in dashboard title affects all dashboards
+* Bug 9538: Use display_name for host and service names in the service grid
+* Bug 9553: User- and Group-Management broken on PHP > 5.3
+* Bug 9572: Cannot remove a user group from a MariaDB backend
+* Bug 9573: Selecting multiple services not working while being restricted
+* Bug 9574: Multiviews do not only display the chosen objects but everything, if a restriction is active
+* Bug 9582: icon_image does not allow to use an icon from our ifont
+* Bug 9597: Clicking on the row of a service notification will show the host
+* Bug 9607: Ignoring LDAP connection certificate errors does not have any effect
+* Bug 9608: LDAP connection must fail when the configured encryption is not possible
+* Bug 9611: generictts integration fails if regular expression is empty
+* Bug 9615: Hardcoded PHP and gettext tools path
+* Bug 9616: Security config form shows no tabs
+* Bug 9626: Tactical overview does not auto-refresh
+* Bug 9633: Icinga\Cli\Command is unable to detect exact action names
+* Bug 9646: If a CLI command fails, crucial exception information missing w/o --trace
+* Bug 9668: Browser history issues
+* Bug 9672: Invalid host passive check result state: unreachable
+* Bug 9674: Don't show comment(s) of acknowledgement(s) in the comment list of a host or service but next to whether the host or service problem is acknowledged
+* Bug 9687: @import rules not working in a module's module.less
+* Bug 9688: Icinga Web 2 ignores Cache-Control:no-cache
+* Bug 9692: Can't filter for custom variables
+* Bug 9694: Lib: Weird interface for creating problem menu entries
+* Bug 9695: IDO: Empty programstatus table not indicated as problem in the menu
+* Bug 9696: Logged exceptions for custom menu item renderers are missing crucial exception information
+* Bug 9719: Monitoring backend validation cannot be skipped
+* Bug 9739: DbUserBackend inspection unsuccessful for backends with just a single user
+* Bug 9751: Bad performance for quick searches
+* Bug 9765: instances.ini: transport is undocumented
+* Bug 9787: It's not possible to use Unix socket to connect to PostgreSQL
+* Bug 9790: Do not suggest to enable modules if it's not possible
+* Bug 9815: Multiview detail: controls have wrong link target
+* Bug 9817: Documentation: Required parameter 'chapter' missing
+* Bug 9819: JS Behaviors: Selection not updated when using multi detail controls
+* Bug 9828: Wrong count for queries having a group by clause
+* Bug 9837: Documentation: Don't suggest to install icingacli on Debian
+* Bug 9844: url anchors not working if a column hash (#!) is also part of the url
+* Bug 9869: A module's rendered event is not called upon initialization
+* Bug 9892: Module styles not visible for anonymous users
+* Bug 9901: Use the DN to fetch group memberships from LDAP
+* Bug 9932: Url to extend the timeline is pushed to history
+* Bug 9954: PostgreSQL queries use LOWER(...) for non-collated columns which have a collated counterpart
+* Bug 9955: PostgreSQL queries ordered by collated columns don't use LOWER
+* Bug 9956: Unnecessary GROUP BY clauses
+* Bug 9959: Authentication documentation suggests outdated backend identifier "ad"
+* Bug 9963: Service history is disordered and shows service and host history
+* Bug 9965: format=json does not respect the filter objects
+* Bug 9971: Seleting multiple objects at once doesn't work anymore
+* Bug 9995: "Show More" links broken in the Alert Summary
+* Bug 9998: Can't use custom variables as restriction filter
+* Bug 10009: Prettify page layout when accessing a non-existent route while not being authenticated
+* Bug 10016: config/* does not permit access to the application and authentication configuration
+* Bug 10025: Filter, submitting form via keyboard doesn't work on chrome
+* Bug 10031: Navigation by history is broken
+* Bug 10046: Menu is somehow confusing top/sub-level entries
+* Bug 10082: Adding an entry to a menu section influences it's position
+* Bug 10150: IniParser should unescape escaped sections automatically
+* Bug 10151: Do not validate section names in forms
+* Bug 10155: Multiselection disapperears when issuing commands
+* Bug 10160: Notifications/Alert Summary: Grouping errors w/ PostgreSQL
+* Bug 10163: Search for hostname does not work in snapshot release
+* Bug 10169: Multiselect URLs broken where base url != /icingaweb2
+* Bug 10172: Customvar filters are mostly broken, completely for Icinga 1.x
+* Bug 10218: Notes URL isn't showing properly
+* Bug 10236: notes_url and action_url target is always icinga.domain.de
+* Bug 10246: Use a separate configuration file for each type of navigation item
+* Bug 10263: Forms with target=_next remain unusable after first submission
+
 ## What's New in Version 2.0.0-rc1
 
 ### Changes
