@@ -1,0 +1,4573 @@
+# Icinga Web 2 - Head for multiple monitoring backends.
+# Copyright (C) 2015 Icinga Development Team
+# This file is distributed under the same license as Monitoring Module.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Monitoring Module (2.0.0~alpha4)\n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: Yuri Konotopov <ykonotopov@gmail.com>\n"
+"Language-Team:  <ykonotopov@gmail.com>\n"
+"Language: ru_RU\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.5.5\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11) ? 0 : ((n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20)) ? 1 : 2);\n"
+
+#: /vagrant/modules/monitoring/application/controllers/ChartController.php:375
+msgid " Down Hosts (Handled)"
+msgstr "Остановленные узлы (Обработано)"
+
+#: /vagrant/modules/monitoring/application/controllers/ChartController.php:376
+msgid " Down Hosts (Unhandled)"
+msgstr "Остановленные узлы (Не обработано)"
+
+#: /vagrant/modules/monitoring/application/controllers/ChartController.php:343
+#: /vagrant/modules/monitoring/application/controllers/ChartController.php:397
+msgid " Down Services (Handled)"
+msgstr "Остановленные службы (Обработано)"
+
+#: /vagrant/modules/monitoring/application/controllers/ChartController.php:344
+#: /vagrant/modules/monitoring/application/controllers/ChartController.php:398
+msgid " Down Services (Unhandled)"
+msgstr "Остановленные службы (Не обработано)"
+
+#: /vagrant/modules/monitoring/application/controllers/ChartController.php:379
+msgid " Pending Hosts"
+msgstr "Ожидающие обработки узлы"
+
+#: /vagrant/modules/monitoring/application/controllers/ChartController.php:347
+#: /vagrant/modules/monitoring/application/controllers/ChartController.php:401
+msgid " Pending Services"
+msgstr "Ожидающие обработки службы"
+
+#: /vagrant/modules/monitoring/application/controllers/ChartController.php:377
+msgid " Unreachable Hosts (Handled)"
+msgstr "Недоступные узлы (Обработано)"
+
+#: /vagrant/modules/monitoring/application/controllers/ChartController.php:378
+msgid " Unreachable Hosts (Unhandled)"
+msgstr "Недоступные узлы (Не обработано)"
+
+#: /vagrant/modules/monitoring/application/controllers/ChartController.php:345
+#: /vagrant/modules/monitoring/application/controllers/ChartController.php:399
+msgid " Unreachable Services (Handled)"
+msgstr "Недоступные службы (Обработано)"
+
+#: /vagrant/modules/monitoring/application/controllers/ChartController.php:346
+#: /vagrant/modules/monitoring/application/controllers/ChartController.php:400
+msgid " Unreachable Services (Unhandled)"
+msgstr "Недоступные службы (Не обработано)"
+
+#: /vagrant/modules/monitoring/application/controllers/ChartController.php:374
+msgid " Up Hosts"
+msgstr "Включенные узлы"
+
+#: /vagrant/modules/monitoring/application/controllers/ChartController.php:394
+msgid " Up Services"
+msgstr "Включенные службы"
+
+#: /vagrant/modules/monitoring/application/controllers/ChartController.php:341
+#: /vagrant/modules/monitoring/application/controllers/ChartController.php:395
+msgid " Warning Services (Handled)"
+msgstr "Службы с предупреждениями (Обработано)"
+
+#: /vagrant/modules/monitoring/application/controllers/ChartController.php:342
+#: /vagrant/modules/monitoring/application/controllers/ChartController.php:396
+msgid " Warning Services (Unhandled)"
+msgstr "Службы с предупреждениями (Не обработано)"
+
+#: /vagrant/modules/monitoring/application/views/scripts/health/info.phtml:65
+#, php-format
+msgctxt "Last format parameter represents the time running"
+msgid "%1$s has been up and running with PID %2$d %3$s"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/hostservicechecks.phtml:75
+#, php-format
+msgid "%d Active"
+msgid_plural "%d Active"
+msgstr[0] ""
+msgstr[1] ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/hostservicechecks.phtml:55
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/hostservicechecks.phtml:111
+#, php-format
+msgid "%d Disabled"
+msgid_plural "%d Disabled"
+msgstr[0] ""
+msgstr[1] ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/hostservicechecks.phtml:37
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/hostservicechecks.phtml:93
+#, php-format
+msgid "%d Passive"
+msgid_plural "%d Passive"
+msgstr[0] ""
+msgstr[1] ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/list/eventgrid.phtml:42
+#, php-format
+msgid "%d hosts down on %s"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/list/eventgrid.phtml:20
+#, php-format
+msgid "%d hosts ok on %s"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/list/eventgrid.phtml:25
+#, php-format
+msgid "%d hosts unreachable on %s"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/helpers/Perfdata.php:96
+#, php-format
+msgid "%d more ..."
+msgstr "%d не показано..."
+
+# Plural forms needed
+#: /vagrant/modules/monitoring/application/views/scripts/show/components/notifications.phtml:54
+#, php-format
+msgid "%d notifications have been sent for this issue."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/hosts/show.phtml:118
+#: /vagrant/modules/monitoring/application/views/scripts/services/show.phtml:117
+#, php-format
+msgid "%d scheduled downtime"
+msgid_plural "%d scheduled downtimes"
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/list/eventgrid.phtml:30
+#, php-format
+msgid "%d services critical on %s"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/list/eventgrid.phtml:52
+#, php-format
+msgid "%d services ok on %s"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/list/eventgrid.phtml:47
+#, php-format
+msgid "%d services unknown on %s"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/list/eventgrid.phtml:36
+#, php-format
+msgid "%d services warning on %s"
+msgstr ""
+
+#: /vagrant/modules/monitoring/configuration.php:112
+#, php-format
+msgid "%d unhandled hosts down"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/hosts/show.phtml:27
+#: /vagrant/modules/monitoring/application/views/scripts/services/show.phtml:27
+#, php-format
+msgid "%d unhandled problems"
+msgstr ""
+
+#: /vagrant/modules/monitoring/configuration.php:124
+#, php-format
+msgid "%d unhandled services critical"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/hosts/show.phtml:46
+#: /vagrant/modules/monitoring/application/views/scripts/services/show.phtml:44
+#, php-format
+msgid "%s acknowledgedment"
+msgid_plural "%s acknowledgedments"
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/hosts/show.phtml:80
+#: /vagrant/modules/monitoring/application/views/scripts/services/show.phtml:79
+#, php-format
+msgid "%s comment"
+msgid_plural "%s comments"
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/health/not-running.phtml:7
+#, php-format
+msgid "%s is currently not up and running"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/host/history.phtml:124
+#: /vagrant/modules/monitoring/application/views/scripts/service/history.phtml:122
+#, php-format
+msgctxt "Service running on host"
+msgid "%s on %s"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/hostservicechecks.phtml:19
+#, php-format
+msgid "%u Active"
+msgid_plural "%u Active"
+msgstr[0] "%u активна"
+msgstr[1] "%u активны"
+msgstr[2] "%u активны"
+
+#: /vagrant/modules/monitoring/application/views/scripts/list/components/hostssummary.phtml:12
+#, php-format
+msgid "%u Host"
+msgid_plural "%u Hosts"
+msgstr[0] "%u узел"
+msgstr[1] "%u узла"
+msgstr[2] "%u узлов"
+
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/problem_hosts.phtml:11
+#, php-format
+msgid "%u Host DOWN"
+msgid_plural "%u Hosts DOWN"
+msgstr[0] "%u узел ОТКЛЮЧЕН"
+msgstr[1] "%u узла ОТКЛЮЧЕНЫ"
+msgstr[2] "%u узлов ОТКЛЮЧЕНЫ"
+
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:20
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:141
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:220
+#, php-format
+msgid "%u Host Disabled"
+msgid_plural "%u Hosts Disabled"
+msgstr[0] "%u узел запрещён"
+msgstr[1] "%u узела запрещёны"
+msgstr[2] "%u узлов запрещёны"
+
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:50
+#, php-format
+msgid "%u Host Flapping"
+msgid_plural "%u Hosts Flapping"
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/ok_hosts.phtml:34
+#, php-format
+msgid "%u Host PENDING"
+msgid_plural "%u Hosts PENDING"
+msgstr[0] ""
+msgstr[1] ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/problem_hosts.phtml:30
+#, php-format
+msgid "%u Host UNREACHABLE"
+msgid_plural "%u Hosts UNREACHABLE"
+msgstr[0] "%u узел НЕДОСТУПЕН"
+msgstr[1] "%u узла НЕДОСТУПНЫ"
+msgstr[2] "%u узлов НЕДОСТУПНЫ"
+
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/ok_hosts.phtml:16
+#, php-format
+msgid "%u Host UP"
+msgid_plural "%u Hosts UP"
+msgstr[0] "%u узел ВКЛЮЧЁН"
+msgstr[1] "%u узла ВКЛЮЧЕНЫ"
+msgstr[2] "%u узлов ВКЛЮЧЕНЫ"
+
+#: /vagrant/modules/monitoring/application/views/scripts/list/components/servicesummary.phtml:13
+#, php-format
+msgid "%u Service"
+msgid_plural "%u Services"
+msgstr[0] "%u служба"
+msgstr[1] "%u службы"
+msgstr[2] "%u служб"
+
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:75
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:175
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:254
+#, php-format
+msgid "%u Service Disabled"
+msgid_plural "%u Services Disabled"
+msgstr[0] "%u служба запрещена"
+msgstr[1] "%u службы запрещены"
+msgstr[2] "%u служб запрещены"
+
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:105
+#, php-format
+msgid "%u Service Flapping"
+msgid_plural "%u Services Flapping"
+msgstr[0] ""
+msgstr[1] ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:80
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:179
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:278
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:325
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:372
+#, php-format
+msgid "%u is not checked at all"
+msgid_plural "%u are not checked at all"
+msgstr[0] ""
+msgstr[1] ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:53
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:152
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:251
+#, php-format
+msgid "%u is passively checked"
+msgid_plural "%u are passively checked"
+msgstr[0] ""
+msgstr[1] ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/list/hosts.phtml:66
+#, php-format
+msgid "%u unhandled service"
+msgid_plural "%u unhandled services"
+msgstr[0] "%u необработанная служба"
+msgstr[1] "%u необработанные службы"
+msgstr[2] "%u необработанных служб"
+
+#: /vagrant/modules/monitoring/library/Monitoring/DataView/DataView.php:220
+msgid "(Case insensitive)"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/StatehistoryForm.php:72
+msgid "1 Year"
+msgstr "1 год"
+
+#: /vagrant/modules/monitoring/application/forms/StatehistoryForm.php:73
+msgid "2 Years"
+msgstr "2 года"
+
+#: /vagrant/modules/monitoring/application/forms/StatehistoryForm.php:69
+msgid "3 Months"
+msgstr "3 месяца"
+
+#: /vagrant/modules/monitoring/application/controllers/TimelineController.php:103
+msgid "4 Hours"
+msgstr "4 часа "
+
+#: /vagrant/modules/monitoring/application/forms/StatehistoryForm.php:70
+msgid "4 Months"
+msgstr "4 месяца"
+
+#: /vagrant/modules/monitoring/application/forms/StatehistoryForm.php:71
+msgid "8 Months"
+msgstr "8 месяцев"
+
+#: /vagrant/modules/monitoring/application/controllers/AlertsummaryController.php:448
+msgid "<b>{title}:</b> {value}m max. reaction time"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/AlertsummaryController.php:438
+msgid "<b>{title}:</b> {value}m min. reaction time"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/ChartController.php:289
+msgid "<b>{title}:</b><br> {value} of {sum} hosts are {label}"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/ChartController.php:240
+msgid "<b>{title}:</b><br>{value} of {sum} services are {label}"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Config/TransportConfigForm.php:129
+#, php-format
+msgid "A command transport with the name \"%s\" does already exist"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/downtime/show.phtml:46
+msgid ""
+"A comment, as entered by the author, associated with the scheduled downtime"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Config/BackendConfigForm.php:113
+#, php-format
+msgid "A monitoring backend with the name \"%s\" does already exist"
+msgstr ""
+
+# Plural forms needed
+#: /vagrant/modules/monitoring/application/views/scripts/show/components/notifications.phtml:49
+#, php-format
+msgid "A notification has been sent for this issue %s."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/host/history.phtml:75
+#: /vagrant/modules/monitoring/application/views/scripts/service/history.phtml:73
+msgid "Ack removed"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/host/history.phtml:71
+#: /vagrant/modules/monitoring/application/views/scripts/hosts/show.phtml:30
+#: /vagrant/modules/monitoring/application/views/scripts/service/history.phtml:69
+#: /vagrant/modules/monitoring/application/views/scripts/services/show.phtml:29
+#: /vagrant/modules/monitoring/application/views/scripts/show/components/acknowledgement.phtml:75
+msgid "Acknowledge"
+msgstr "Обработать"
+
+#: /vagrant/modules/monitoring/application/controllers/HostController.php:120
+msgid "Acknowledge Host Problem"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/HostsController.php:182
+msgid "Acknowledge Host Problems"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/ServiceController.php:78
+msgid "Acknowledge Service Problem"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/ServicesController.php:195
+msgid "Acknowledge Service Problems"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/AcknowledgeProblemCommandForm.php:34
+msgid "Acknowledge problem"
+msgid_plural "Acknowledge problems"
+msgstr[0] ""
+msgstr[1] ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/show/components/acknowledgement.phtml:83
+msgid ""
+"Acknowledge this problem, suppress all future notifications for it and tag "
+"it as being handled"
+msgstr ""
+"Подтвердить проблему, подавить все будущие уведомления об этой проблеме и "
+"отметить, что она находится в решении"
+
+#: /vagrant/modules/monitoring/application/views/helpers/HostFlags.php:16
+#: /vagrant/modules/monitoring/application/views/helpers/ServiceFlags.php:12
+#: /vagrant/modules/monitoring/application/views/scripts/partials/host/statusicons.phtml:9
+#: /vagrant/modules/monitoring/application/views/scripts/partials/service/statusicons.phtml:9
+#: /vagrant/modules/monitoring/application/views/scripts/show/components/acknowledgement.phtml:16
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:31
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:130
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:229
+msgid "Acknowledged"
+msgstr ""
+
+#: /vagrant/modules/monitoring/configuration.php:311
+msgid "Acknowledged Problem Hosts"
+msgstr "Обработанные события узлов"
+
+#: /vagrant/modules/monitoring/configuration.php:307
+msgid "Acknowledged Problem Services"
+msgstr "Обработанные события служб"
+
+#: /vagrant/modules/monitoring/application/views/scripts/list/eventhistory.phtml:54
+#: /vagrant/modules/monitoring/application/views/scripts/partials/comment/comment-description.phtml:20
+msgid "Acknowledgement"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/show/components/acknowledgement.phtml:27
+#, php-format
+msgid ""
+"Acknowledgement remains until the %1$s recovers even if the %1$s changes "
+"state"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/TimelineController.php:65
+msgid "Acknowledgements"
+msgstr ""
+
+#: /vagrant/modules/monitoring/configuration.php:278
+msgid "Acknowledgements Active For At Least Three Days"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/AcknowledgeProblemCommandForm.php:157
+msgid "Acknowledging problem.."
+msgid_plural "Acknowledging problems.."
+msgstr[0] ""
+msgstr[1] ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/show/components/actions.phtml:45
+msgid "Actions"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/helpers/HostFlags.php:29
+#: /vagrant/modules/monitoring/application/views/helpers/ServiceFlags.php:25
+#: /vagrant/modules/monitoring/application/views/scripts/partials/host/statusicons.phtml:24
+#: /vagrant/modules/monitoring/application/views/scripts/partials/service/statusicons.phtml:24
+msgid "Active And Passive Checks Disabled"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/ToggleObjectFeaturesCommandForm.php:37
+msgid "Active Checks"
+msgstr "Активные проверки"
+
+#: /vagrant/modules/monitoring/application/views/helpers/HostFlags.php:31
+#: /vagrant/modules/monitoring/application/views/helpers/ServiceFlags.php:27
+#: /vagrant/modules/monitoring/application/views/scripts/partials/host/statusicons.phtml:22
+#: /vagrant/modules/monitoring/application/views/scripts/partials/service/statusicons.phtml:22
+msgid "Active Checks Disabled"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/health/info.phtml:54
+msgid "Active Endpoint"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Instance/ToggleInstanceFeaturesCommandForm.php:89
+msgid "Active Host Checks"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Instance/ToggleInstanceFeaturesCommandForm.php:98
+msgid "Active Service Checks"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/health/stats.phtml:109
+msgid "Active checks"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/downtime/show.phtml:145
+msgid "Actual end time"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/downtime/show.phtml:140
+msgid "Actual start time"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/HostController.php:132
+msgid "Add Host Comment"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/HostsController.php:170
+msgid "Add Host Comments"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/ServiceController.php:90
+msgid "Add Service Comment"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/ServicesController.php:183
+msgid "Add Service Comments"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/show/components/comments.phtml:14
+msgid "Add a new comment to this host"
+msgstr "Добавить комментарий к данному узлу"
+
+#: /vagrant/modules/monitoring/application/views/scripts/show/components/comments.phtml:26
+msgid "Add a new comment to this service"
+msgstr "Добавить комментарий к данной службе"
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/AddCommentCommandForm.php:28
+#: /vagrant/modules/monitoring/application/views/scripts/show/components/comments.phtml:7
+#: /vagrant/modules/monitoring/application/views/scripts/show/components/comments.phtml:19
+msgid "Add comment"
+msgid_plural "Add comments"
+msgstr[0] "Добавить комментарий"
+msgstr[1] "Добавить комментария"
+msgstr[2] "Добавить комментариев"
+
+#: /vagrant/modules/monitoring/application/views/scripts/hosts/show.phtml:62
+#: /vagrant/modules/monitoring/application/views/scripts/services/show.phtml:61
+msgid "Add comments"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/AddCommentCommandForm.php:83
+msgid "Adding comment.."
+msgid_plural "Adding comments.."
+msgstr[0] ""
+msgstr[1] ""
+
+#: /vagrant/modules/monitoring/application/controllers/ListController.php:96
+msgid "Address"
+msgstr "Адрес"
+
+#: /vagrant/modules/monitoring/configuration.php:217
+#: /vagrant/modules/monitoring/application/controllers/AlertsummaryController.php:54
+#: /vagrant/modules/monitoring/application/controllers/AlertsummaryController.php:58
+msgid "Alert Summary"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/alertsummary/index.phtml:11
+msgid "Alert summary"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/ListController.php:295
+#: /vagrant/modules/monitoring/application/views/scripts/list/contactgroups.phtml:26
+msgid "Alias"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:39
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:160
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:239
+msgid "All Hosts Enabled"
+msgstr "Все узлы разрешены"
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/ScheduleHostCheckCommandForm.php:26
+#: /vagrant/modules/monitoring/application/forms/Command/Object/ScheduleHostDowntimeCommandForm.php:31
+msgid "All Services"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:94
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:194
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:273
+msgid "All Services Enabled"
+msgstr "Все службы разрешены"
+
+#: /vagrant/modules/monitoring/library/Monitoring/Backend/MonitoringBackend.php:178
+msgid "All backends are disabled"
+msgstr ""
+
+#: /vagrant/modules/monitoring/configuration.php:16
+msgid "Allow acknowledging host and service problems"
+msgstr ""
+
+#: /vagrant/modules/monitoring/configuration.php:24
+msgid "Allow adding and deleting host and service comments"
+msgstr ""
+
+#: /vagrant/modules/monitoring/configuration.php:8
+msgid "Allow all commands"
+msgstr ""
+
+#: /vagrant/modules/monitoring/configuration.php:28
+msgid "Allow commenting on hosts and services"
+msgstr ""
+
+#: /vagrant/modules/monitoring/configuration.php:32
+msgid "Allow deleting host and service comments"
+msgstr ""
+
+#: /vagrant/modules/monitoring/configuration.php:44
+msgid "Allow deleting host and service downtimes"
+msgstr ""
+
+#: /vagrant/modules/monitoring/configuration.php:52
+msgid ""
+"Allow processing commands for toggling features on an instance-wide basis"
+msgstr ""
+
+#: /vagrant/modules/monitoring/configuration.php:56
+msgid ""
+"Allow processing commands for toggling features on host and service objects"
+msgstr ""
+
+#: /vagrant/modules/monitoring/configuration.php:48
+msgid "Allow processing host and service check results"
+msgstr ""
+
+#: /vagrant/modules/monitoring/configuration.php:20
+msgid "Allow removing problem acknowledgements"
+msgstr ""
+
+#: /vagrant/modules/monitoring/configuration.php:36
+msgid "Allow scheduling and deleting host and service downtimes"
+msgstr ""
+
+#: /vagrant/modules/monitoring/configuration.php:12
+msgid "Allow scheduling host and service checks"
+msgstr ""
+
+#: /vagrant/modules/monitoring/configuration.php:40
+msgid "Allow scheduling host and service downtimes"
+msgstr ""
+
+#: /vagrant/modules/monitoring/configuration.php:60
+msgid "Allow sending custom notifications for hosts and services"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/StatehistoryForm.php:20
+msgid "Apply"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/ListController.php:228
+#: /vagrant/modules/monitoring/application/views/scripts/comment/show.phtml:42
+#: /vagrant/modules/monitoring/application/views/scripts/downtime/show.phtml:39
+msgid "Author"
+msgstr "Автор"
+
+#: /vagrant/modules/monitoring/application/views/scripts/alertsummary/index.phtml:33
+msgid "Average"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/AlertsummaryController.php:434
+msgid "Avg (min)"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/health/info.phtml:74
+#, php-format
+msgid "Backend %s is not running"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Config/BackendConfigForm.php:193
+#: /vagrant/modules/monitoring/application/forms/Setup/BackendPage.php:28
+msgid "Backend Name"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Config/BackendConfigForm.php:221
+#: /vagrant/modules/monitoring/application/forms/Setup/BackendPage.php:44
+msgid "Backend Type"
+msgstr ""
+
+#: /vagrant/modules/monitoring/configuration.php:70
+msgid "Backends"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/SendCustomNotificationCommandForm.php:67
+msgid "Broadcast"
+msgstr ""
+
+#: /vagrant/modules/monitoring/library/Monitoring/Object/Service.php:194
+msgid "CRITICAL"
+msgstr "КРИТИЧНО"
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/ProcessCheckResultCommandForm.php:58
+msgctxt "icinga.state"
+msgid "CRITICAL"
+msgstr "КРИТИЧНО"
+
+#: /vagrant/modules/monitoring/library/Monitoring/Command/Transport/RemoteCommandFile.php:214
+msgid "Can't send external Icinga Command. Remote user is missing"
+msgstr ""
+
+#: /vagrant/modules/monitoring/library/Monitoring/Command/Transport/RemoteCommandFile.php:219
+msgid ""
+"Can't send external Icinga Command. The private key for the remote user is "
+"missing"
+msgstr ""
+
+#: /vagrant/modules/monitoring/library/Monitoring/Controller.php:97
+#, php-format
+msgid ""
+"Cannot apply restriction %s using the filter %s. You can only use the "
+"following columns: %s"
+msgstr ""
+
+#: /vagrant/modules/monitoring/library/Monitoring/Command/Transport/CommandTransport.php:76
+#, php-format
+msgid ""
+"Cannot create command transport \"%s\". Invalid transport defined in \"%s\". "
+"Use one of \"%s\" or \"%s\"."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Config/BackendConfigForm.php:350
+msgid ""
+"Cannot find the IDO schema. Please verify that the given database contains "
+"the schema and that the configured user has access to it."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/hosts/show.phtml:158
+#: /vagrant/modules/monitoring/application/views/scripts/services/show.phtml:160
+msgid "Check Execution"
+msgstr "Выполнение проверки"
+
+#: /vagrant/modules/monitoring/application/views/scripts/health/stats.phtml:113
+#: /vagrant/modules/monitoring/application/views/scripts/health/stats.phtml:140
+msgid "Check Performance"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/show/components/checksource.phtml:4
+msgid "Check Source"
+msgstr "Источник проверок"
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/ScheduleServiceCheckCommandForm.php:51
+msgid "Check Time"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/show/components/checktimeperiod.phtml:4
+#: /vagrant/modules/monitoring/application/views/scripts/show/components/checktimeperiod.phtml:15
+msgid "Check Timeperiod"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/show/components/checkstatistics.phtml:66
+msgid "Check attempts"
+msgstr "Попытки проверки"
+
+#: /vagrant/modules/monitoring/application/views/scripts/partials/object/detail-content.phtml:32
+msgid "Check execution"
+msgstr "Выполнение проверки"
+
+#: /vagrant/modules/monitoring/application/views/scripts/show/components/checkstatistics.phtml:75
+msgid "Check execution time"
+msgstr "Время выполнения проверки"
+
+#: /vagrant/modules/monitoring/application/views/scripts/show/components/checkstatistics.phtml:82
+msgid "Check latency"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/CheckNowCommandForm.php:42
+#: /vagrant/modules/monitoring/application/forms/Command/Object/CheckNowCommandForm.php:45
+msgid "Check now"
+msgstr "Проверить"
+
+#: /vagrant/modules/monitoring/application/views/scripts/show/components/checkstatistics.phtml:60
+msgid "Check result is late"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Setup/LivestatusResourcePage.php:78
+msgid ""
+"Check this to not to validate connectivity with the given Livestatus socket"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Config/BackendConfigForm.php:329
+msgid "Check this to not to validate the IDO schema of the chosen resource."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Setup/IdoResourcePage.php:185
+msgid "Check this to not to validate the configuration"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/health/stats.phtml:114
+msgid "Checks"
+msgstr "Проверки"
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/ScheduleHostDowntimeCommandForm.php:42
+msgid "Child Hosts"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Config/SecurityConfigForm.php:58
+msgid ""
+"Comma separated case insensitive list of protected custom variables. Use * "
+"as a placeholder for zero or more wildcard characters. Existance of those "
+"custom variables will be shown, but their values will be masked."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/hosts/show.phtml:163
+#: /vagrant/modules/monitoring/application/views/scripts/services/show.phtml:165
+#: /vagrant/modules/monitoring/application/views/scripts/show/components/command.phtml:12
+msgid "Command"
+msgstr "Команда"
+
+#: /vagrant/modules/monitoring/application/forms/Config/Transport/LocalTransportForm.php:30
+#: /vagrant/modules/monitoring/application/forms/Config/Transport/RemoteTransportForm.php:177
+msgid "Command File"
+msgstr ""
+
+#: /vagrant/modules/monitoring/library/Monitoring/TransportStep.php:43
+msgid "Command Transport"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Setup/TransportPage.php:14
+msgctxt "setup.page.title"
+msgid "Command Transport"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/config/index.phtml:62
+msgid "Command Transports"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/ConfigController.php:228
+#, php-format
+msgid "Command transport \"%s\" not found"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/CommandForm.php:65
+#, php-format
+msgid "Command transport \"%s\" not found."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/ConfigController.php:179
+#, php-format
+msgid "Command transport \"%s\" successfully removed"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/ConfigController.php:217
+#, php-format
+msgid "Command transport \"%s\" successfully updated"
+msgstr ""
+
+#: /vagrant/modules/monitoring/library/Monitoring/TransportStep.php:98
+#, php-format
+msgid ""
+"Command transport configuration could not be written to: %s. An error "
+"occured:"
+msgstr ""
+
+#: /vagrant/modules/monitoring/library/Monitoring/TransportStep.php:90
+#, php-format
+msgid "Command transport configuration has been successfully created: %s"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/ConfigController.php:254
+msgid "Command transport successfully created"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/comment/show.phtml:70
+#: /vagrant/modules/monitoring/application/views/scripts/comments/show.phtml:9
+#: /vagrant/modules/monitoring/application/views/scripts/downtime/show.phtml:163
+#: /vagrant/modules/monitoring/application/views/scripts/downtimes/show.phtml:9
+#: /vagrant/modules/monitoring/application/views/scripts/show/contact.phtml:51
+msgid "Commands"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/CommentController.php:55
+#: /vagrant/modules/monitoring/application/forms/Command/Object/AcknowledgeProblemCommandForm.php:49
+#: /vagrant/modules/monitoring/application/forms/Command/Object/AddCommentCommandForm.php:43
+#: /vagrant/modules/monitoring/application/forms/Command/Object/ScheduleServiceDowntimeCommandForm.php:65
+#: /vagrant/modules/monitoring/application/forms/Command/Object/SendCustomNotificationCommandForm.php:43
+#: /vagrant/modules/monitoring/application/views/scripts/downtime/show.phtml:47
+#: /vagrant/modules/monitoring/application/views/scripts/host/history.phtml:63
+#: /vagrant/modules/monitoring/application/views/scripts/list/eventhistory.phtml:50
+#: /vagrant/modules/monitoring/application/views/scripts/service/history.phtml:61
+msgid "Comment"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/ListController.php:413
+msgid "Comment Timestamp"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/ListController.php:416
+msgid "Comment Type"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/host/history.phtml:67
+#: /vagrant/modules/monitoring/application/views/scripts/service/history.phtml:65
+msgid "Comment deleted"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/comment/show.phtml:12
+msgid "Comment detail information"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/CommentController.php:48
+msgid "Comment not found"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/partials/comment/comment-description.phtml:16
+msgid "Comment was caused by a downtime"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/partials/comment/comment-description.phtml:6
+msgid "Comment was caused by a flapping host or service"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/partials/comment/comment-description.phtml:21
+msgid "Comment was caused by an acknowledgement"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/partials/comment/comment-description.phtml:11
+msgid "Comment was created by an user"
+msgstr ""
+
+#: /vagrant/modules/monitoring/configuration.php:176
+#: /vagrant/modules/monitoring/application/controllers/CommentsController.php:62
+#: /vagrant/modules/monitoring/application/controllers/ListController.php:388
+#: /vagrant/modules/monitoring/application/controllers/TimelineController.php:60
+#: /vagrant/modules/monitoring/application/forms/EventOverviewForm.php:64
+#: /vagrant/modules/monitoring/application/views/scripts/hosts/show.phtml:59
+#: /vagrant/modules/monitoring/application/views/scripts/services/show.phtml:58
+#: /vagrant/modules/monitoring/application/views/scripts/show/components/comments.phtml:37
+msgid "Comments"
+msgstr "Комментарии"
+
+#: /vagrant/modules/monitoring/library/Monitoring/Backend/MonitoringBackend.php:196
+#, php-format
+msgid "Configuration for backend %s is disabled"
+msgstr ""
+
+#: /vagrant/modules/monitoring/configuration.php:74
+msgid ""
+"Configure how to protect your monitoring environment against prying eyes"
+msgstr ""
+
+#: /vagrant/modules/monitoring/configuration.php:69
+msgid "Configure how to retrieve monitoring information"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/CommentsController.php:95
+#, php-format
+msgid "Confirm removal of %d comments."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/DowntimesController.php:99
+#, php-format
+msgid "Confirm removal of %d downtimes."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/list/contactgroups.phtml:25
+msgid "Contact Group "
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/ListController.php:347
+msgid "Contact Groups"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/show/contact.phtml:6
+msgid "Contact details"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/ListController.php:364
+msgid "Contactgroup Alias"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/ListController.php:363
+msgid "Contactgroup Name"
+msgstr ""
+
+#: /vagrant/modules/monitoring/configuration.php:172
+#: /vagrant/modules/monitoring/application/views/scripts/show/components/contacts.phtml:36
+msgid "Contactgroups"
+msgstr "Группы контактов"
+
+#: /vagrant/modules/monitoring/configuration.php:168
+#: /vagrant/modules/monitoring/application/controllers/ListController.php:277
+#: /vagrant/modules/monitoring/application/views/scripts/show/components/contacts.phtml:17
+msgid "Contacts"
+msgstr "Контакты"
+
+#: /vagrant/modules/monitoring/application/controllers/ChartController.php:292
+msgid "Contains host states of each service group."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/ChartController.php:233
+msgid "Contains service states for each service group."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Config/Transport/RemoteTransportForm.php:47
+msgid "Could not find any valid SSH resources"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Config/BackendConfigForm.php:65
+msgid ""
+"Could not find any valid monitoring backend resources. Please configure a "
+"database resource first."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/ConfigController.php:242
+msgid "Create New Command Transport"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/ConfigController.php:83
+msgid "Create New Monitoring Backend"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/config/index.phtml:64
+msgid "Create a New Command Transport"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/config/index.phtml:9
+msgid "Create a New Monitoring Backend"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/config/index.phtml:70
+msgid "Create a new command transport"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/config/index.phtml:15
+msgid "Create a new monitoring backend"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/comment/show.phtml:52
+msgid "Created"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/ChartController.php:257
+#: /vagrant/modules/monitoring/application/forms/StatehistoryForm.php:117
+#: /vagrant/modules/monitoring/application/views/helpers/Perfdata.php:41
+msgid "Critical"
+msgstr "Критично"
+
+#: /vagrant/modules/monitoring/configuration.php:136
+msgid "Current Downtimes"
+msgstr "Проходящие обслуживания"
+
+#: /vagrant/modules/monitoring/application/controllers/ListController.php:163
+msgid "Current Host State"
+msgstr "Состояние узла"
+
+#: /vagrant/modules/monitoring/configuration.php:234
+msgid "Current Incidents"
+msgstr "Актуальные события"
+
+#: /vagrant/modules/monitoring/application/controllers/ListController.php:159
+msgid "Current Service State"
+msgstr "Состояние службы"
+
+#: /vagrant/modules/monitoring/application/controllers/ListController.php:94
+msgid "Current State"
+msgstr "Состояние"
+
+#: /vagrant/modules/monitoring/application/views/scripts/partials/object/detail-content.phtml:43
+msgid "Custom Variables"
+msgstr "Дополнительные переменные"
+
+#: /vagrant/modules/monitoring/library/Monitoring/Object/Host.php:185
+msgid "DOWN"
+msgstr "ОСТАНОВЛЕН"
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/ProcessCheckResultCommandForm.php:124
+msgctxt "icinga.state"
+msgid "DOWN"
+msgstr "ОСТАНОВЛЕН"
+
+#: /vagrant/modules/monitoring/library/Monitoring/BackendStep.php:105
+msgid "Database Name"
+msgstr ""
+
+#: /vagrant/modules/monitoring/library/Monitoring/BackendStep.php:84
+msgid "Database Resource"
+msgstr ""
+
+#: /vagrant/modules/monitoring/library/Monitoring/BackendStep.php:93
+msgid "Database Type"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/downtime/show.phtml:42
+msgid "Date and time this downtime was entered"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/AlertsummaryController.php:642
+#: /vagrant/modules/monitoring/application/controllers/AlertsummaryController.php:645
+msgid "Day"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/AlertsummaryController.php:463
+msgid "Defect Chart"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/AlertsummaryController.php:484
+msgid "Defects"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/ScheduleHostDowntimeCommandForm.php:40
+msgid "Define what should be done with the child hosts of the hosts."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/DeleteCommentCommandForm.php:76
+msgid "Delete this comment"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/DeleteDowntimeCommandForm.php:40
+msgid "Delete this downtime"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/DeleteCommentCommandForm.php:96
+#: /vagrant/modules/monitoring/application/forms/Command/Object/DeleteCommentsCommandForm.php:83
+msgid "Deleting comment.."
+msgid_plural "Deleting comments.."
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/DeleteDowntimeCommandForm.php:97
+msgid "Deleting downtime."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/DeleteDowntimesCommandForm.php:83
+msgid "Deleting downtime.."
+msgid_plural "Deleting downtimes.."
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/downtime/show.phtml:10
+msgid "Details"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/HealthController.php:171
+#: /vagrant/modules/monitoring/application/forms/Command/Instance/DisableNotificationsExpireCommandForm.php:24
+msgid "Disable Notifications"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Config/BackendConfigForm.php:185
+msgid "Disable This Backend"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Instance/ToggleInstanceFeaturesCommandForm.php:67
+msgid "Disable notifications for a specific time on a program-wide basis"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Instance/ToggleInstanceFeaturesCommandForm.php:69
+msgid "Disable temporarily"
+msgstr ""
+
+#: /vagrant/modules/monitoring/configuration.php:303
+msgid "Disabled Host Checks"
+msgstr "Отключенные проверки узлов"
+
+#: /vagrant/modules/monitoring/configuration.php:295
+msgid "Disabled Host Notifications"
+msgstr "Отключенные уведомления узлов"
+
+#: /vagrant/modules/monitoring/configuration.php:299
+msgid "Disabled Service Checks"
+msgstr "Отключенные проверки служб"
+
+#: /vagrant/modules/monitoring/configuration.php:291
+msgid "Disabled Service Notifications"
+msgstr "Отключенные уведомления служб"
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/ToggleObjectFeaturesCommandForm.php:125
+msgid "Disabling active checks.."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Instance/ToggleInstanceFeaturesCommandForm.php:221
+msgid "Disabling active host checks.."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Instance/ToggleInstanceFeaturesCommandForm.php:225
+msgid "Disabling active service checks.."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/ToggleObjectFeaturesCommandForm.php:141
+msgid "Disabling event handler.."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Instance/ToggleInstanceFeaturesCommandForm.php:229
+msgid "Disabling event handlers.."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Instance/ToggleInstanceFeaturesCommandForm.php:233
+#: /vagrant/modules/monitoring/application/forms/Command/Object/ToggleObjectFeaturesCommandForm.php:145
+msgid "Disabling flap detection.."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Instance/DisableNotificationsExpireCommandForm.php:61
+msgid "Disabling host and service notifications.."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Instance/ToggleInstanceFeaturesCommandForm.php:237
+#: /vagrant/modules/monitoring/application/forms/Command/Object/ToggleObjectFeaturesCommandForm.php:137
+msgid "Disabling notifications.."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Instance/ToggleInstanceFeaturesCommandForm.php:241
+msgid "Disabling obsessing over hosts.."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Instance/ToggleInstanceFeaturesCommandForm.php:245
+msgid "Disabling obsessing over services.."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/ToggleObjectFeaturesCommandForm.php:133
+msgid "Disabling obsessing.."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/ToggleObjectFeaturesCommandForm.php:129
+msgid "Disabling passive checks.."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Instance/ToggleInstanceFeaturesCommandForm.php:249
+msgid "Disabling passive host checks.."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Instance/ToggleInstanceFeaturesCommandForm.php:253
+msgid "Disabling passive service checks.."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Instance/ToggleInstanceFeaturesCommandForm.php:257
+msgid "Disabling performance data.."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/CommentController.php:56
+msgid "Display detailed information about a comment."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/DowntimeController.php:66
+msgid "Display detailed information about a downtime."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/CommentsController.php:64
+msgid "Display detailed information about multiple comments."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/DowntimesController.php:70
+msgid "Display detailed information about multiple downtimes."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Navigation/ActionForm.php:26
+msgid ""
+"Display this action only for objects matching this filter. Leave it blank if "
+"you want this action being displayed regardless of the object"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/ScheduleHostDowntimeCommandForm.php:44
+msgid "Do nothing with child hosts"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/ChartController.php:307
+#: /vagrant/modules/monitoring/application/forms/StatehistoryForm.php:138
+msgid "Down"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/DowntimeController.php:65
+#: /vagrant/modules/monitoring/application/views/scripts/partials/comment/comment-description.phtml:15
+msgid "Downtime"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/host/history.phtml:109
+#: /vagrant/modules/monitoring/application/views/scripts/list/eventhistory.phtml:84
+#: /vagrant/modules/monitoring/application/views/scripts/service/history.phtml:107
+msgid "Downtime End"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/host/history.phtml:105
+#: /vagrant/modules/monitoring/application/views/scripts/list/eventhistory.phtml:80
+#: /vagrant/modules/monitoring/application/views/scripts/service/history.phtml:103
+msgid "Downtime Start"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/DowntimeController.php:57
+msgid "Downtime not found"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/host/history.phtml:83
+#: /vagrant/modules/monitoring/application/views/scripts/service/history.phtml:81
+msgid "Downtime removed"
+msgstr ""
+
+#: /vagrant/modules/monitoring/configuration.php:180
+#: /vagrant/modules/monitoring/application/controllers/DowntimesController.php:69
+#: /vagrant/modules/monitoring/application/controllers/ListController.php:192
+#: /vagrant/modules/monitoring/application/forms/EventOverviewForm.php:54
+#: /vagrant/modules/monitoring/application/views/scripts/hosts/show.phtml:96
+#: /vagrant/modules/monitoring/application/views/scripts/services/show.phtml:95
+#: /vagrant/modules/monitoring/application/views/scripts/show/components/downtime.phtml:41
+msgid "Downtimes"
+msgstr "Время простоя"
+
+#: /vagrant/modules/monitoring/configuration.php:282
+msgid "Downtimes Active For More Than Three Days"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/ListController.php:233
+#: /vagrant/modules/monitoring/application/views/scripts/downtime/show.phtml:53
+#: /vagrant/modules/monitoring/application/views/scripts/downtime/show.phtml:135
+msgid "Duration"
+msgstr "Длительность"
+
+#: /vagrant/modules/monitoring/library/Monitoring/BackendStep.php:155
+#: /vagrant/modules/monitoring/library/Monitoring/BackendStep.php:168
+#: /vagrant/modules/monitoring/library/Monitoring/SecurityStep.php:80
+#: /vagrant/modules/monitoring/library/Monitoring/TransportStep.php:102
+#, php-format
+msgid "ERROR: %s"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/ConfigController.php:200
+#, php-format
+msgid "Edit Command Transport %s"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/ConfigController.php:41
+#, php-format
+msgid "Edit Monitoring Backend %s"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/config/index.phtml:90
+#, php-format
+msgid "Edit command transport %s"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/config/index.phtml:35
+#, php-format
+msgid "Edit monitoring backend %s"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/ListController.php:296
+#: /vagrant/modules/monitoring/application/views/scripts/list/contacts.phtml:18
+#: /vagrant/modules/monitoring/application/views/scripts/list/contacts.phtml:37
+#: /vagrant/modules/monitoring/application/views/scripts/show/contact.phtml:24
+msgid "Email"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/ToggleObjectFeaturesCommandForm.php:124
+msgid "Enabling active checks.."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Instance/ToggleInstanceFeaturesCommandForm.php:220
+msgid "Enabling active host checks.."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Instance/ToggleInstanceFeaturesCommandForm.php:224
+msgid "Enabling active service checks.."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/ToggleObjectFeaturesCommandForm.php:140
+msgid "Enabling event handler.."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Instance/ToggleInstanceFeaturesCommandForm.php:228
+msgid "Enabling event handlers.."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Instance/ToggleInstanceFeaturesCommandForm.php:232
+#: /vagrant/modules/monitoring/application/forms/Command/Object/ToggleObjectFeaturesCommandForm.php:144
+msgid "Enabling flap detection.."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Instance/ToggleInstanceFeaturesCommandForm.php:236
+#: /vagrant/modules/monitoring/application/forms/Command/Object/ToggleObjectFeaturesCommandForm.php:136
+msgid "Enabling notifications.."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Instance/ToggleInstanceFeaturesCommandForm.php:240
+msgid "Enabling obsessing over hosts.."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Instance/ToggleInstanceFeaturesCommandForm.php:244
+msgid "Enabling obsessing over services.."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/ToggleObjectFeaturesCommandForm.php:132
+msgid "Enabling obsessing.."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/ToggleObjectFeaturesCommandForm.php:128
+msgid "Enabling passive checks.."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Instance/ToggleInstanceFeaturesCommandForm.php:248
+msgid "Enabling passive host checks.."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Instance/ToggleInstanceFeaturesCommandForm.php:252
+msgid "Enabling passive service checks.."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Instance/ToggleInstanceFeaturesCommandForm.php:256
+msgid "Enabling performance data.."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/ListController.php:230
+#: /vagrant/modules/monitoring/application/forms/Command/Object/ScheduleServiceDowntimeCommandForm.php:88
+msgid "End Time"
+msgstr "Время окончания"
+
+#: /vagrant/modules/monitoring/application/controllers/TimelineController.php:75
+msgid "Ended downtimes"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/partials/downtime/downtime-header.phtml:3
+msgid "Ends"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/ScheduleServiceDowntimeCommandForm.php:159
+msgid ""
+"Enter here the duration of the downtime. The downtime will be automatically "
+"deleted after this time expired."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/AcknowledgeProblemCommandForm.php:90
+msgid ""
+"Enter the expire date and time for this acknowledgement here. Icinga will "
+"delete the acknowledgement after this time expired."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/ListController.php:227
+#: /vagrant/modules/monitoring/application/views/scripts/downtime/show.phtml:43
+msgid "Entry Time"
+msgstr ""
+
+#: /vagrant/modules/monitoring/configuration.php:192
+#: /vagrant/modules/monitoring/application/controllers/ListController.php:305
+msgid "Event Grid"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/ToggleObjectFeaturesCommandForm.php:77
+msgid "Event Handler"
+msgstr "Обработчик событий"
+
+#: /vagrant/modules/monitoring/application/forms/Command/Instance/ToggleInstanceFeaturesCommandForm.php:107
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:208
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:210
+msgid "Event Handlers"
+msgstr "Обработчики событий"
+
+#: /vagrant/modules/monitoring/configuration.php:196
+#: /vagrant/modules/monitoring/application/controllers/ListController.php:506
+msgid "Event Overview"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/health/stats.phtml:116
+msgid "Execution time"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/ListController.php:417
+msgid "Expiration"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Instance/DisableNotificationsExpireCommandForm.php:43
+#: /vagrant/modules/monitoring/application/forms/Command/Object/AcknowledgeProblemCommandForm.php:87
+msgid "Expire Time"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/comment/show.phtml:57
+#: /vagrant/modules/monitoring/application/views/scripts/partials/downtime/downtime-header.phtml:6
+msgid "Expires"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/show/components/acknowledgement.phtml:45
+#, php-format
+msgid "Expires %s"
+msgstr ""
+
+#: /vagrant/modules/monitoring/library/Monitoring/Command/Transport/CommandTransport.php:144
+msgid ""
+"Failed to send external Icinga command. No transport has been configured for "
+"this instance. Please contact your Icinga Web administrator."
+msgstr ""
+
+#: /vagrant/modules/monitoring/library/Monitoring/Command/Transport/CommandTransport.php:135
+msgid ""
+"Failed to send external Icinga command. None of the configured transports "
+"was able to transfer the command. Please see the log for more details."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Setup/IdoResourcePage.php:143
+#, php-format
+msgid "Failed to successfully validate the configuration: %s"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Instance/ToggleInstanceFeaturesCommandForm.php:29
+#: /vagrant/modules/monitoring/application/views/scripts/show/components/flags.phtml:2
+msgid "Feature Commands"
+msgstr "Возможности"
+
+#: /vagrant/modules/monitoring/application/forms/Navigation/ActionForm.php:24
+msgid "Filter"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/ScheduleServiceDowntimeCommandForm.php:107
+#: /vagrant/modules/monitoring/application/views/scripts/downtime/show.phtml:60
+msgid "Fixed"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/downtime/show.phtml:66
+msgid "Fixed downtimes have a static start and end time."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Instance/ToggleInstanceFeaturesCommandForm.php:116
+#: /vagrant/modules/monitoring/application/forms/Command/Object/ToggleObjectFeaturesCommandForm.php:86
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:8
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:10
+msgid "Flap Detection"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/EventOverviewForm.php:84
+#: /vagrant/modules/monitoring/application/views/helpers/HostFlags.php:19
+#: /vagrant/modules/monitoring/application/views/helpers/ServiceFlags.php:15
+#: /vagrant/modules/monitoring/application/views/scripts/host/history.phtml:87
+#: /vagrant/modules/monitoring/application/views/scripts/list/eventhistory.phtml:62
+#: /vagrant/modules/monitoring/application/views/scripts/partials/comment/comment-description.phtml:5
+#: /vagrant/modules/monitoring/application/views/scripts/service/history.phtml:85
+msgid "Flapping"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/list/eventhistory.phtml:66
+msgid "Flapping Stopped"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/host/history.phtml:91
+#: /vagrant/modules/monitoring/application/views/scripts/service/history.phtml:89
+msgid "Flapping stopped"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/ScheduleServiceDowntimeCommandForm.php:108
+#: /vagrant/modules/monitoring/application/views/scripts/downtime/show.phtml:60
+msgid "Flexible"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/ScheduleServiceDowntimeCommandForm.php:157
+msgid "Flexible Duration"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/downtime/show.phtml:63
+msgid ""
+"Flexible downtimes have a hard start and end time, but also an additional "
+"restriction on the duration in which  the host or service may actually be "
+"down."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/ScheduleServiceCheckCommandForm.php:62
+msgid "Force Check"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/SendCustomNotificationCommandForm.php:55
+msgid "Forced"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/StatehistoryForm.php:66
+msgid "From"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/health/info.phtml:48
+msgid "Global Host Event Handler"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/health/info.phtml:42
+msgid "Global Service Event Handler"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/TimelineController.php:55
+msgid "Hard state changes"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/AlertsummaryController.php:325
+msgid "Healing Chart"
+msgstr ""
+
+#: /vagrant/modules/monitoring/configuration.php:188
+#: /vagrant/modules/monitoring/application/views/scripts/alertsummary/index.phtml:69
+#: /vagrant/modules/monitoring/library/Monitoring/Web/Controller/MonitoredObjectController.php:229
+msgid "History"
+msgstr "История"
+
+#: /vagrant/modules/monitoring/application/controllers/ListController.php:225
+#: /vagrant/modules/monitoring/application/controllers/ListController.php:414
+#: /vagrant/modules/monitoring/application/forms/Config/Transport/RemoteTransportForm.php:139
+#: /vagrant/modules/monitoring/application/views/scripts/comment/show.phtml:29
+#: /vagrant/modules/monitoring/application/views/scripts/comment/show.phtml:31
+#: /vagrant/modules/monitoring/application/views/scripts/downtime/show.phtml:15
+#: /vagrant/modules/monitoring/application/views/scripts/downtime/show.phtml:30
+#: /vagrant/modules/monitoring/application/views/scripts/list/notifications.phtml:45
+#: /vagrant/modules/monitoring/application/views/scripts/partials/comment/comment-detail.phtml:19
+#: /vagrant/modules/monitoring/library/Monitoring/BackendStep.php:97
+#: /vagrant/modules/monitoring/library/Monitoring/DataView/DataView.php:260
+#: /vagrant/modules/monitoring/library/Monitoring/Web/Controller/MonitoredObjectController.php:182
+msgid "Host"
+msgstr ""
+
+#: /vagrant/modules/monitoring/configuration.php:91
+msgid "Host Action"
+msgstr "Действие узла"
+
+#: /vagrant/modules/monitoring/application/controllers/ListController.php:165
+msgid "Host Address"
+msgstr "Адрес узла"
+
+#: /vagrant/modules/monitoring/application/views/scripts/health/stats.phtml:61
+#: /vagrant/modules/monitoring/application/views/scripts/health/stats.phtml:121
+#: /vagrant/modules/monitoring/application/views/scripts/health/stats.phtml:148
+msgid "Host Checks"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/list/hostgroups.phtml:25
+msgid "Host Group"
+msgstr "Группа узлов"
+
+#: /vagrant/modules/monitoring/application/controllers/ChartController.php:291
+msgid "Host Group Chart"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/ListController.php:496
+msgid "Host Group Name"
+msgstr "Название группы узлов"
+
+#: /vagrant/modules/monitoring/application/controllers/ListController.php:465
+msgid "Host Groups"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/ListController.php:299
+msgid "Host Notification Timeperiod"
+msgstr ""
+
+#: /vagrant/modules/monitoring/configuration.php:108
+#: /vagrant/modules/monitoring/configuration.php:244
+msgid "Host Problems"
+msgstr "Проблемы с узлами"
+
+#: /vagrant/modules/monitoring/application/views/scripts/health/stats.phtml:35
+msgid "Host Problems:"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/ListController.php:162
+msgid "Host Severity"
+msgstr "Влияние состояния узла"
+
+#: /vagrant/modules/monitoring/application/views/scripts/list/hostgroups.phtml:26
+msgid "Host States"
+msgstr "Состояние узлов"
+
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/hostservicechecks.phtml:3
+msgid "Host and Service Checks"
+msgstr "Проверки узлов и служб"
+
+#: /vagrant/modules/monitoring/application/views/scripts/health/disable-notifications.phtml:10
+msgid "Host and service notifications are already disabled."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/HostController.php:32
+msgid "Host not found"
+msgstr ""
+
+#: /vagrant/modules/monitoring/configuration.php:85
+#: /vagrant/modules/monitoring/configuration.php:164
+#: /vagrant/modules/monitoring/application/views/scripts/show/components/hostgroups.phtml:16
+msgid "Hostgroups"
+msgstr "Группы узлов"
+
+#: /vagrant/modules/monitoring/application/controllers/ListController.php:95
+#: /vagrant/modules/monitoring/application/controllers/ListController.php:164
+#: /vagrant/modules/monitoring/application/controllers/ListController.php:558
+msgid "Hostname"
+msgstr "Имя узла"
+
+#: /vagrant/modules/monitoring/application/forms/Config/Transport/RemoteTransportForm.php:141
+msgid "Hostname or address of the remote Icinga instance"
+msgstr ""
+
+#: /vagrant/modules/monitoring/configuration.php:83
+#: /vagrant/modules/monitoring/configuration.php:152
+#: /vagrant/modules/monitoring/application/controllers/ChartController.php:295
+#: /vagrant/modules/monitoring/application/controllers/HostsController.php:44
+#: /vagrant/modules/monitoring/application/controllers/ListController.php:54
+#: /vagrant/modules/monitoring/application/forms/StatehistoryForm.php:100
+#: /vagrant/modules/monitoring/application/views/scripts/show/contact.phtml:39
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/hostservicechecks.phtml:9
+msgid "Hosts"
+msgstr "Узлы"
+
+#: /vagrant/modules/monitoring/application/controllers/AlertsummaryController.php:639
+msgid "Hour"
+msgstr "Час"
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/ScheduleServiceDowntimeCommandForm.php:137
+msgid "Hours"
+msgstr "Часы"
+
+#: /vagrant/modules/monitoring/application/views/scripts/partials/object/host-header.phtml:29
+#: /vagrant/modules/monitoring/application/views/scripts/partials/object/service-header.phtml:30
+msgid "IPv4 address"
+msgstr "Адрес IPv4"
+
+#: /vagrant/modules/monitoring/application/views/scripts/partials/object/host-header.phtml:23
+#: /vagrant/modules/monitoring/application/views/scripts/partials/object/service-header.phtml:24
+msgid "IPv6 address"
+msgstr "Адрес IPv6"
+
+#: /vagrant/modules/monitoring/library/Monitoring/SecurityStep.php:45
+msgid ""
+"Icinga Web 2 will protect your monitoring environment against prying eyes "
+"using the configuration specified below:"
+msgstr ""
+
+#: /vagrant/modules/monitoring/library/Monitoring/BackendStep.php:77
+#, php-format
+msgid ""
+"Icinga Web 2 will retrieve information from your monitoring environment "
+"using a backend called \"%s\" and the specified resource below:"
+msgstr ""
+
+#: /vagrant/modules/monitoring/library/Monitoring/TransportStep.php:76
+#, php-format
+msgid ""
+"Icinga Web 2 will use the named pipe located at \"%s\" to send commands to "
+"your monitoring instance."
+msgstr ""
+
+#: /vagrant/modules/monitoring/library/Monitoring/TransportStep.php:49
+#, php-format
+msgid ""
+"Icinga Web 2 will use the named pipe located on a remote machine at \"%s\" "
+"to send commands to your monitoring instance by using the connection details "
+"listed below:"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/AcknowledgeProblemCommandForm.php:74
+msgid "If the acknowledgement should expire, check this option."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/SendCustomNotificationCommandForm.php:58
+msgid ""
+"If you check this option, the notification is sent out regardless of time "
+"restrictions and whether or not notifications are enabled."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/SendCustomNotificationCommandForm.php:70
+msgid ""
+"If you check this option, the notification is sent out to all normal and "
+"escalated contacts."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/AcknowledgeProblemCommandForm.php:126
+msgid ""
+"If you do not want an acknowledgement notification to be sent out to the "
+"appropriate contacts, uncheck this option."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/ConfigController.php:165
+msgid ""
+"If you have still any environments or views referring to this transport, you "
+"won't be able to send commands anymore after deletion."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/ScheduleServiceDowntimeCommandForm.php:101
+msgid ""
+"If you select the fixed option, the downtime will be in effect between the "
+"start and end times you specify whereas a flexible downtime starts when the "
+"host or service enters a problem state sometime between the start and end "
+"times you specified and lasts as long as the duration time you enter. The "
+"duration fields do not apply for fixed downtimes."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/ScheduleServiceCheckCommandForm.php:64
+msgid ""
+"If you select this option, Icinga will force a check regardless of both what "
+"time the scheduled check occurs and whether or not checks are enabled."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/AddCommentCommandForm.php:58
+msgid ""
+"If you uncheck this option, the comment will automatically be deleted the "
+"next time Icinga is restarted."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/AcknowledgeProblemCommandForm.php:114
+msgid ""
+"If you want the acknowledgement to remain until the host or service recovers "
+"even if the host or service changes state, check this option."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/AcknowledgeProblemCommandForm.php:51
+#: /vagrant/modules/monitoring/application/forms/Command/Object/AddCommentCommandForm.php:45
+#: /vagrant/modules/monitoring/application/forms/Command/Object/ScheduleServiceDowntimeCommandForm.php:67
+#: /vagrant/modules/monitoring/application/forms/Command/Object/SendCustomNotificationCommandForm.php:45
+msgid ""
+"If you work with other administrators, you may find it useful to share "
+"information about the the host or service that is having problems. Make sure "
+"you enter a brief description of what you are doing."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/AcknowledgeProblemCommandForm.php:63
+msgid ""
+"If you would like the comment to remain even when the acknowledgement is "
+"removed, check this option."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/helpers/HostFlags.php:25
+#: /vagrant/modules/monitoring/application/views/helpers/ServiceFlags.php:21
+#: /vagrant/modules/monitoring/application/views/scripts/host/history.phtml:79
+#: /vagrant/modules/monitoring/application/views/scripts/list/eventhistory.phtml:58
+#: /vagrant/modules/monitoring/application/views/scripts/partials/host/statusicons.phtml:17
+#: /vagrant/modules/monitoring/application/views/scripts/partials/service/statusicons.phtml:17
+#: /vagrant/modules/monitoring/application/views/scripts/service/history.phtml:77
+msgid "In Downtime"
+msgstr ""
+
+#: /vagrant/modules/monitoring/library/Monitoring/MonitoringWizard.php:182
+msgid ""
+"In case it's desired that a TCP connection is being used by Icinga Web 2 to "
+"access a Livestatus interface, the Sockets module for PHP is required."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/downtime/show.phtml:151
+msgid "In effect"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/downtime/show.phtml:131
+msgid ""
+"Indicates the number of seconds that the scheduled downtime should last. "
+"This is usually only needed if this is a flexible downtime, which can start "
+"at a variable time, but lasts for the specified duration"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/show/components/command.phtml:7
+msgid "Instance"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Config/TransportConfigForm.php:203
+msgid "Instance Link"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Config/TransportConfigForm.php:84
+#, php-format
+msgid "Invalid command transport type \"%s\" given"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Navigation/ActionForm.php:59
+#, php-format
+msgid "Invalid filter provided. You can only use the following columns: %s"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/ListController.php:224
+msgid "Is In Effect"
+msgstr "В процессе"
+
+#: /vagrant/modules/monitoring/application/views/scripts/show/components/checksource.phtml:10
+msgid "Is reachable"
+msgstr "Доступен"
+
+#: /vagrant/modules/monitoring/application/forms/Setup/WelcomePage.php:43
+msgid ""
+"It offers various status and reporting views with powerful filter "
+"capabilities that allow you to keep track of the most important events in "
+"your monitoring environment."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/helpers/Perfdata.php:36
+msgid "Label"
+msgstr "Название"
+
+#: /vagrant/modules/monitoring/application/controllers/ListController.php:97
+msgid "Last Check"
+msgstr "Последняя проверка"
+
+#: /vagrant/modules/monitoring/application/views/scripts/health/info.phtml:32
+msgid "Last External Command Check"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/ListController.php:166
+msgid "Last Host Check"
+msgstr "Последняя проверка узла"
+
+#: /vagrant/modules/monitoring/application/views/scripts/health/info.phtml:36
+msgid "Last Log File Rotation"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/ListController.php:161
+msgid "Last Service Check"
+msgstr "Последняя проверка службы"
+
+#: /vagrant/modules/monitoring/application/views/scripts/health/info.phtml:28
+msgid "Last Status Update"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/show/components/checkstatistics.phtml:7
+msgid "Last check"
+msgstr "Последняя проверка"
+
+#: /vagrant/modules/monitoring/application/views/scripts/show/components/checkstatistics.phtml:7
+msgid "Last update"
+msgstr ""
+
+#: /vagrant/modules/monitoring/configuration.php:270
+msgid "Late Host Check Results"
+msgstr ""
+
+#: /vagrant/modules/monitoring/configuration.php:274
+msgid "Late Service Check Results"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/health/stats.phtml:115
+msgid "Latency"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/timeline/index.phtml:15
+msgid "Legend"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/show/components/actions.phtml:19
+#: /vagrant/modules/monitoring/application/views/scripts/show/components/actions.phtml:20
+#: /vagrant/modules/monitoring/application/views/scripts/show/components/notes.phtml:23
+#: /vagrant/modules/monitoring/application/views/scripts/show/components/notes.phtml:24
+msgid "Link opens in new window"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/list/hosts.phtml:79
+#, php-format
+msgid "List %s unhandled service problem on host %s"
+msgid_plural "List %s unhandled service problems on host %s"
+msgstr[0] ""
+msgstr[1] ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/timeline/index.phtml:112
+#, php-format
+msgctxt "timeline.link.title"
+msgid "List %u %s registered %s"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/hostservicechecks.phtml:26
+#, php-format
+msgid "List %u actively checked host"
+msgid_plural "List %u actively checked hosts"
+msgstr[0] ""
+msgstr[1] ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/hostservicechecks.phtml:82
+#, php-format
+msgid "List %u actively checked service"
+msgid_plural "List %u actively checked services"
+msgstr[0] ""
+msgstr[1] ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/list/components/hostssummary.phtml:17
+#, php-format
+msgid "List %u host"
+msgid_plural "List all %u hosts"
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:29
+#, php-format
+msgid "List %u host for which flap detection has been disabled"
+msgid_plural "List %u hosts for which flap detection has been disabled"
+msgstr[0] ""
+msgstr[1] ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:150
+#, php-format
+msgid "List %u host for which notifications are suppressed"
+msgid_plural "List %u hosts for which notifications are suppressed"
+msgstr[0] ""
+msgstr[1] ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:59
+#, php-format
+msgid "List %u host that is currently flapping"
+msgid_plural "List %u hosts which are currently flapping"
+msgstr[0] ""
+msgstr[1] ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/problem_hosts.phtml:18
+#, php-format
+msgid "List %u host that is currently in state DOWN"
+msgid_plural "List %u hosts which are currently in state DOWN"
+msgstr[0] ""
+msgstr[1] ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/ok_hosts.phtml:41
+#, php-format
+msgid "List %u host that is currently in state PENDING"
+msgid_plural "List %u hosts which are currently in state PENDING"
+msgstr[0] ""
+msgstr[1] ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/problem_hosts.phtml:40
+#, php-format
+msgid "List %u host that is currently in state UNREACHABLE"
+msgid_plural "List %u hosts which are currently in state UNREACHABLE"
+msgstr[0] ""
+msgstr[1] ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/ok_hosts.phtml:23
+#, php-format
+msgid "List %u host that is currently in state UP"
+msgid_plural "List %u hosts which are currently in state UP"
+msgstr[0] ""
+msgstr[1] ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/hostservicechecks.phtml:62
+#, php-format
+msgid "List %u host that is not being checked at all"
+msgid_plural "List %u hosts which are not being checked at all"
+msgstr[0] ""
+msgstr[1] ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:229
+#, php-format
+msgid "List %u host that is not processing any event handlers"
+msgid_plural "List %u hosts which are not processing any event handlers"
+msgstr[0] ""
+msgstr[1] ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/hostservicechecks.phtml:44
+#, php-format
+msgid "List %u passively checked host"
+msgid_plural "List %u passively checked hosts"
+msgstr[0] ""
+msgstr[1] ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/hostservicechecks.phtml:100
+#, php-format
+msgid "List %u passively checked service"
+msgid_plural "List %u passively checked services"
+msgstr[0] ""
+msgstr[1] ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/list/components/servicesummary.phtml:20
+#, php-format
+msgid "List %u service"
+msgid_plural "List all %u services"
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:84
+#, php-format
+msgid "List %u service for which flap detection has been disabled"
+msgid_plural "List %u services for which flap detection has been disabled"
+msgstr[0] ""
+msgstr[1] ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:184
+#, php-format
+msgid "List %u service for which notifications are suppressed"
+msgid_plural "List %u services for which notifications are suppressed"
+msgstr[0] ""
+msgstr[1] ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:114
+#, php-format
+msgid "List %u service that is currently flapping"
+msgid_plural "List %u services which are currently flapping"
+msgstr[0] ""
+msgstr[1] ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:20
+#, php-format
+msgid "List %u service that is currently in state CRITICAL"
+msgid_plural "List %u services which are currently in state CRITICAL"
+msgstr[0] "Показать %u службу, находящуюся в состоянии КРИТИЧНО"
+msgstr[1] "Показать %u службы, находящиеся в состоянии КРИТИЧНО"
+msgstr[2] "Показать %u служб, находящихся в состоянии КРИТИЧНО"
+
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:41
+#, php-format
+msgid "List %u service that is currently in state CRITICAL (Acknowledged)"
+msgid_plural ""
+"List %u services which are currently in state CRITICAL (Acknowledged)"
+msgstr[0] "Показать %u службу, находящуюся в состоянии КРИТИЧНО (Подтверждено)"
+msgstr[1] "Показать %u службы, находящиеся в состоянии КРИТИЧНО (Подтверждено)"
+msgstr[2] "Показать %u служб, находящихся в состоянии КРИТИЧНО (Подтверждено)"
+
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:95
+#, php-format
+msgid ""
+"List %u service that is currently in state CRITICAL and not checked at all"
+msgid_plural ""
+"List %u services which are currently in state CRITICAL and not checked at all"
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:68
+#, php-format
+msgid ""
+"List %u service that is currently in state CRITICAL and passively checked"
+msgid_plural ""
+"List %u services which are currently in state CRITICAL and passively checked"
+msgstr[0] ""
+"Показать %u службу, находящуюся в состоянии КРИТИЧНО, и проверенную пассивно"
+msgstr[1] ""
+"Показать %u службы, находящиеся в состоянии КРИТИЧНО, и проверенные пассивно"
+msgstr[2] ""
+"Показать %u служб, находящихся в состоянии КРИТИЧНО, и проверенных пассивно"
+
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:314
+#, php-format
+msgid "List %u service that is currently in state OK"
+msgid_plural "List %u services which are currently in state OK"
+msgstr[0] "Показать %u службу, находящуюся в состоянии ОК"
+msgstr[1] "Показать %u службы, находящиеся в состоянии ОК"
+msgstr[2] "Показать %u служб, находящихся в состоянии ОК"
+
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:340
+#, php-format
+msgid "List %u service that is currently in state OK and not checked at all"
+msgid_plural ""
+"List %u services which are currently in state OK and not checked at all"
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:361
+#, php-format
+msgid "List %u service that is currently in state PENDING"
+msgid_plural "List %u services which are currently in state PENDING"
+msgstr[0] "Показать %u службу, находящуюся в состоянии ОЖИДАНИЕ"
+msgstr[1] "Показать %u службы, находящиеся в состоянии ОЖИДАНИЕ"
+msgstr[2] "Показать %u служб, находящихся в состоянии ОЖИДАНИЕ"
+
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:387
+#, php-format
+msgid ""
+"List %u service that is currently in state PENDING and not checked at all"
+msgid_plural ""
+"List %u services which are currently in state PENDING and not checked at all"
+msgstr[0] ""
+msgstr[1] ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:218
+#, php-format
+msgid "List %u service that is currently in state UNKNOWN"
+msgid_plural "List %u services which are currently in state UNKNOWN"
+msgstr[0] "Показать %u службу, находящуюся в состоянии НЕИЗВЕСТНО"
+msgstr[1] "Показать %u службы, находящиеся в состоянии НЕИЗВЕСТНО"
+msgstr[2] "Показать %u служб, находящихся в состоянии НЕИЗВЕСТНО"
+
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:239
+#, php-format
+msgid "List %u service that is currently in state UNKNOWN (Acknowledged)"
+msgid_plural ""
+"List %u services which are currently in state UNKNOWN (Acknowledged)"
+msgstr[0] ""
+"Показать %u службу, находящуюся в состоянии НЕИЗВЕСТНО (Подтверждено)"
+msgstr[1] ""
+"Показать %u службы, находящиеся в состоянии НЕИЗВЕСТНО (Подтверждено)"
+msgstr[2] ""
+"Показать %u служб, находящихся в состоянии НЕИЗВЕСТНО (Подтверждено)"
+
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:293
+#, php-format
+msgid ""
+"List %u service that is currently in state UNKNOWN and not checked at all"
+msgid_plural ""
+"List %u services which are currently in state UNKNOWN and not checked at all"
+msgstr[0] ""
+msgstr[1] ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:266
+#, php-format
+msgid ""
+"List %u service that is currently in state UNKNOWN and passively checked"
+msgid_plural ""
+"List %u services which are currently in state UNKNOWN and passively checked"
+msgstr[0] ""
+"Показать %u службу, находящуюся в состоянии НЕИЗВЕСТНО, и проверенную "
+"пассивно"
+msgstr[1] ""
+"Показать %u службы, находящиеся в состоянии НЕИЗВЕСТНО, и проверенные "
+"пассивно"
+msgstr[2] ""
+"Показать %u служб, находящихся в состоянии НЕИЗВЕСТНО, и проверенных пассивно"
+
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:119
+#, php-format
+msgid "List %u service that is currently in state WARNING"
+msgid_plural "List %u services which are currently in state WARNING"
+msgstr[0] "Показать %u службу, находящуюся в состоянии ВНИМАНИЕ"
+msgstr[1] "Показать %u службы, находящиеся в состоянии ВНИМАНИЕ"
+msgstr[2] "Показать %u служб, находящихся в состоянии ВНИМАНИЕ"
+
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:140
+#, php-format
+msgid "List %u service that is currently in state WARNING (Acknowledged)"
+msgid_plural ""
+"List %u services which are currently in state WARNING (Acknowledged)"
+msgstr[0] "Показать %u службу, находящуюся в состоянии ВНИМАНИЕ (Подтверждено)"
+msgstr[1] "Показать %u службы, находящиеся в состоянии ВНИМАНИЕ (Подтверждено)"
+msgstr[2] "Показать %u служб, находящихся в состоянии ВНИМАНИЕ (Подтверждено)"
+
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:194
+#, php-format
+msgid ""
+"List %u service that is currently in state WARNING and not checked at all"
+msgid_plural ""
+"List %u services which are currently in state WARNING and not checked at all"
+msgstr[0] ""
+msgstr[1] ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:167
+#, php-format
+msgid ""
+"List %u service that is currently in state WARNING and passively checked"
+msgid_plural ""
+"List %u services which are currently in state WARNING and passively checked"
+msgstr[0] ""
+"Показать %u службу, находящуюся в состоянии ВНИМАНИЕ, и проверенную пассивно"
+msgstr[1] ""
+"Показать %u службы, находящиеся в состоянии ВНИМАНИЕ, и проверенные пассивно"
+msgstr[2] ""
+"Показать %u служб, находящихся в состоянии ВНИМАНИЕ, и проверенных пассивно"
+
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/hostservicechecks.phtml:118
+#, php-format
+msgid "List %u service that is not being checked at all"
+msgid_plural "List %u services which are not being checked at all"
+msgstr[0] ""
+msgstr[1] ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:263
+#, php-format
+msgid "List %u service that is not processing any event handlers"
+msgid_plural "List %u services which are not processing any event handlers"
+msgstr[0] ""
+msgstr[1] ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/partials/comment/comments-header.phtml:23
+#, php-format
+msgid "List all %d comments"
+msgstr "Показать все %d комментария"
+
+#: /vagrant/modules/monitoring/application/views/scripts/partials/downtime/downtimes-header.phtml:31
+#, php-format
+msgid "List all %d downtimes"
+msgstr "Показать все %d запланированныз обслуживаний"
+
+#: /vagrant/modules/monitoring/application/views/scripts/partials/service/objects-header.phtml:35
+#, php-format
+msgid "List all %d services"
+msgstr "Показать все %d службы"
+
+#: /vagrant/modules/monitoring/application/views/scripts/timeline/index.phtml:74
+#, php-format
+msgctxt "timeline.link.title"
+msgid "List all event records registered %s"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/list/hostgroups.phtml:43
+#: /vagrant/modules/monitoring/application/views/scripts/show/components/hostgroups.phtml:11
+#, php-format
+msgid "List all hosts in the group \"%s\""
+msgstr "Показать все узлы в группе  \"%s\""
+
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:43
+msgid "List all hosts, for which flap detection is enabled entirely"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:164
+msgid "List all hosts, for which notifications are enabled entirely"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:243
+msgid "List all hosts, which are processing event handlers entirely"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/list/servicegrid.phtml:68
+#, php-format
+msgid "List all reported services on host %s"
+msgstr "Показать все проблемные службы узла %s"
+
+#: /vagrant/modules/monitoring/application/views/scripts/list/servicegroups.phtml:36
+#: /vagrant/modules/monitoring/application/views/scripts/show/components/servicegroups.phtml:11
+#, php-format
+msgid "List all services in the group \"%s\""
+msgstr "Показать все службы в группе \"%s\""
+
+#: /vagrant/modules/monitoring/application/views/scripts/list/hostgroups.phtml:140
+#, php-format
+msgid "List all services of all hosts in host group \"%s\""
+msgstr "Показать все службы всех узлов группы узлов \"%s\""
+
+#: /vagrant/modules/monitoring/library/Monitoring/Web/Controller/MonitoredObjectController.php:208
+#, php-format
+msgid "List all services on host %s"
+msgstr "Показать все службы узла %s"
+
+#: /vagrant/modules/monitoring/application/views/scripts/list/servicegrid.phtml:48
+#, php-format
+msgid "List all services with the name \"%s\" on all reported hosts"
+msgstr "Показать все службы с именем \"%s\" на всех проблемных узлах"
+
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:98
+msgid "List all services, for which flap detection is enabled entirely"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:198
+msgid "List all services, for which notifications are enabled entirely"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:277
+msgid "List all services, which are processing event handlers entirely"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/ListController.php:388
+msgid "List comments"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/ListController.php:348
+msgid "List contact groups"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/ListController.php:277
+msgid "List contacts"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/show/components/contacts.phtml:30
+#, php-format
+msgid "List contacts in contact-group \"%s\""
+msgstr "Показать контакты в группе контактов \"%s\""
+
+#: /vagrant/modules/monitoring/application/controllers/ListController.php:192
+msgid "List downtimes"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/ListController.php:507
+msgid "List event records"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/ListController.php:465
+msgid "List host groups"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/ListController.php:54
+msgid "List hosts"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/ListController.php:250
+msgid "List notifications"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/ListController.php:433
+msgid "List service groups"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/ListController.php:119
+msgid "List services"
+msgstr ""
+
+#: /vagrant/modules/monitoring/library/Monitoring/BackendStep.php:119
+msgid "Livestatus Resource"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/host/history.phtml:155
+#: /vagrant/modules/monitoring/application/views/scripts/list/eventhistory.phtml:128
+#: /vagrant/modules/monitoring/application/views/scripts/service/history.phtml:139
+msgid "Load More"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/list/servicegrid.phtml:105
+#: /vagrant/modules/monitoring/application/views/scripts/list/servicegrid.phtml:126
+msgid "Load more"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/config/index.phtml:95
+msgid "Local"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Config/TransportConfigForm.php:225
+msgid "Local Command File"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Config/Transport/RemoteTransportForm.php:89
+msgid "Make use of the ssh identity resource"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/helpers/Perfdata.php:39
+msgid "Max"
+msgstr "Макс."
+
+#: /vagrant/modules/monitoring/application/controllers/AlertsummaryController.php:444
+msgid "Max (min)"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/helpers/Perfdata.php:38
+msgid "Min"
+msgstr "Мин."
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/ScheduleServiceDowntimeCommandForm.php:147
+msgid "Minutes"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/config/index.phtml:21
+#: /vagrant/modules/monitoring/library/Monitoring/BackendStep.php:73
+msgid "Monitoring Backend"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Setup/BackendPage.php:14
+msgctxt "setup.page.title"
+msgid "Monitoring Backend"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/config/index.phtml:7
+msgid "Monitoring Backends"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:3
+msgid "Monitoring Features"
+msgstr "Возможности мониторинга"
+
+#: /vagrant/modules/monitoring/configuration.php:225
+msgid "Monitoring Health"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Setup/IdoResourcePage.php:21
+msgctxt "setup.page.title"
+msgid "Monitoring IDO Resource"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Setup/LivestatusResourcePage.php:14
+msgctxt "setup.page.title"
+msgid "Monitoring Livestatus Resource"
+msgstr ""
+
+#: /vagrant/modules/monitoring/library/Monitoring/SecurityStep.php:42
+msgid "Monitoring Security"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Setup/SecurityPage.php:14
+msgctxt "setup.page.title"
+msgid "Monitoring Security"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/ConfigController.php:69
+#, php-format
+msgid "Monitoring backend \"%s\" not found"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/ConfigController.php:139
+#, php-format
+msgid "Monitoring backend \"%s\" successfully removed"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/ConfigController.php:58
+#, php-format
+msgid "Monitoring backend \"%s\" successfully updated"
+msgstr ""
+
+#: /vagrant/modules/monitoring/library/Monitoring/Web/Navigation/Renderer/BackendAvailabilityNavigationItemRenderer.php:66
+#, php-format
+msgid "Monitoring backend %s is not running"
+msgstr ""
+
+#: /vagrant/modules/monitoring/library/Monitoring/BackendStep.php:151
+#, php-format
+msgid ""
+"Monitoring backend configuration could not be written to: %s. An error "
+"occured:"
+msgstr ""
+
+#: /vagrant/modules/monitoring/library/Monitoring/BackendStep.php:144
+#, php-format
+msgid "Monitoring backend configuration has been successfully written to: %s"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/ConfigController.php:106
+msgid "Monitoring backend successfully created"
+msgstr ""
+
+#: /vagrant/modules/monitoring/library/Monitoring/SecurityStep.php:76
+#, php-format
+msgid ""
+"Monitoring security configuration could not be written to: %s. An error "
+"occured:"
+msgstr ""
+
+#: /vagrant/modules/monitoring/library/Monitoring/SecurityStep.php:68
+#, php-format
+msgid "Monitoring security configuration has been successfully created: %s"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/AlertsummaryController.php:648
+msgid "Month"
+msgstr ""
+
+#: /vagrant/modules/monitoring/configuration.php:289
+msgid "Muted"
+msgstr "Отключенные объекты"
+
+#: /vagrant/modules/monitoring/application/views/scripts/health/info.phtml:21
+#: /vagrant/modules/monitoring/application/views/scripts/health/info.phtml:39
+#: /vagrant/modules/monitoring/application/views/scripts/health/info.phtml:45
+#: /vagrant/modules/monitoring/application/views/scripts/health/info.phtml:51
+#: /vagrant/modules/monitoring/application/views/scripts/health/info.phtml:57
+msgid "N/A"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/ListController.php:294
+#: /vagrant/modules/monitoring/application/views/scripts/list/contacts.phtml:17
+msgid "Name"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Config/SecurityConfigForm.php:31
+msgid "New security configuration has successfully been stored"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/show/components/checkstatistics.phtml:19
+msgid "Next check"
+msgstr "Следующая проверка"
+
+#: /vagrant/modules/monitoring/application/views/scripts/show/components/checkstatistics.phtml:19
+msgid "Next update"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/comment/show.phtml:48
+#: /vagrant/modules/monitoring/application/views/scripts/downtime/show.phtml:155
+msgid "No"
+msgstr "Нет"
+
+#: /vagrant/modules/monitoring/library/Monitoring/Backend/MonitoringBackend.php:176
+msgid "No backend has been configured"
+msgstr ""
+
+#: /vagrant/modules/monitoring/library/Monitoring/Command/Transport/CommandTransport.php:41
+#, php-format
+msgid "No command transports have been configured in \"%s\"."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/list/comments.phtml:38
+msgid "No comments found matching the filter"
+msgstr ""
+
+#: /vagrant/modules/monitoring/library/Monitoring/Backend/MonitoringBackend.php:189
+#, php-format
+msgid "No configuration for backend %s"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/list/contactgroups.phtml:17
+msgid "No contactgroups found matching the filter"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/list/contacts.phtml:77
+msgid "No contacts found matching the filter"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/list/downtimes.phtml:42
+msgid ""
+"No downtimes found matching the filter, maybe the downtime already expired."
+msgstr ""
+"Не найдено обслуживаний в соответствии с фильтром, возможно все обслуживания "
+"завершены."
+
+#: /vagrant/modules/monitoring/application/views/scripts/host/history.phtml:152
+#: /vagrant/modules/monitoring/application/views/scripts/list/eventhistory.phtml:114
+#: /vagrant/modules/monitoring/application/views/scripts/service/history.phtml:136
+msgid "No history events found matching the filter"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/list/hostgroups.phtml:18
+msgid "No host groups found matching the filter."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/hosts/show.phtml:18
+msgid "No hosts found matching the filter"
+msgstr "Не найдены узлы в соответствии с фильтром"
+
+#: /vagrant/modules/monitoring/application/views/scripts/list/hosts.phtml:21
+msgid "No hosts found matching the filter."
+msgstr "Не найдены узлы в соответствии с фильтром."
+
+# Plural forms needed
+#: /vagrant/modules/monitoring/application/views/scripts/show/components/notifications.phtml:62
+msgid "No notification has been sent for this issue."
+msgstr "Для этого события не были отправлены уведомления."
+
+#: /vagrant/modules/monitoring/application/views/scripts/list/notifications.phtml:74
+msgid "No notifications found matching the filter"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/show/contact.phtml:69
+msgid "No notifications have been sent for this contact"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/list/servicegroups.phtml:16
+msgid "No service groups found matching the filter."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/list/servicegrid.phtml:25
+#: /vagrant/modules/monitoring/application/views/scripts/services/show.phtml:20
+msgid "No services found matching the filter"
+msgstr "Не найдены службы в соответствии с фильтром"
+
+#: /vagrant/modules/monitoring/application/views/scripts/list/services.phtml:22
+msgid "No services found matching the filter."
+msgstr "Не найдены службы в соответствии с фильтром."
+
+#: /vagrant/modules/monitoring/application/views/scripts/list/eventgrid.phtml:81
+msgid "No state changes in the selected time period."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/show/contact.phtml:12
+msgid "No such contact"
+msgstr ""
+
+#: /vagrant/modules/monitoring/library/Monitoring/SecurityStep.php:56
+msgid "None"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Config/TransportConfigForm.php:198
+msgctxt "command transport instance association"
+msgid "None"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/show/components/acknowledgement.phtml:55
+msgid "Not acknowledged"
+msgstr "Не обработано"
+
+#: /vagrant/modules/monitoring/application/views/scripts/show/components/checksource.phtml:12
+msgid "Not reachable"
+msgstr "Не доступен"
+
+#: /vagrant/modules/monitoring/application/views/scripts/show/components/notes.phtml:43
+msgid "Notes"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/host/history.phtml:52
+#: /vagrant/modules/monitoring/application/views/scripts/list/eventhistory.phtml:45
+#: /vagrant/modules/monitoring/application/views/scripts/service/history.phtml:50
+msgid "Notification"
+msgstr "Оповещение"
+
+#: /vagrant/modules/monitoring/application/controllers/ListController.php:271
+msgid "Notification Start"
+msgstr ""
+
+#: /vagrant/modules/monitoring/configuration.php:200
+#: /vagrant/modules/monitoring/application/controllers/AlertsummaryController.php:329
+#: /vagrant/modules/monitoring/application/controllers/AlertsummaryController.php:424
+#: /vagrant/modules/monitoring/application/controllers/AlertsummaryController.php:467
+#: /vagrant/modules/monitoring/application/controllers/AlertsummaryController.php:474
+#: /vagrant/modules/monitoring/application/controllers/ListController.php:249
+#: /vagrant/modules/monitoring/application/controllers/TimelineController.php:50
+#: /vagrant/modules/monitoring/application/forms/EventOverviewForm.php:74
+#: /vagrant/modules/monitoring/application/forms/Command/Instance/ToggleInstanceFeaturesCommandForm.php:125
+#: /vagrant/modules/monitoring/application/forms/Command/Object/ToggleObjectFeaturesCommandForm.php:68
+#: /vagrant/modules/monitoring/application/views/scripts/hosts/show.phtml:137
+#: /vagrant/modules/monitoring/application/views/scripts/hosts/show.phtml:141
+#: /vagrant/modules/monitoring/application/views/scripts/partials/object/detail-content.phtml:24
+#: /vagrant/modules/monitoring/application/views/scripts/services/show.phtml:138
+#: /vagrant/modules/monitoring/application/views/scripts/services/show.phtml:143
+#: /vagrant/modules/monitoring/application/views/scripts/show/components/notifications.phtml:2
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:129
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:131
+msgid "Notifications"
+msgstr "Уведомления"
+
+#: /vagrant/modules/monitoring/application/views/helpers/HostFlags.php:22
+#: /vagrant/modules/monitoring/application/views/helpers/ServiceFlags.php:18
+#: /vagrant/modules/monitoring/application/views/scripts/partials/host/statusicons.phtml:13
+#: /vagrant/modules/monitoring/application/views/scripts/partials/service/statusicons.phtml:13
+msgid "Notifications Disabled"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/alertsummary/index.phtml:15
+msgid "Notifications and Problems"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/AlertsummaryController.php:326
+msgid "Notifications and average reaction time per hour."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/AlertsummaryController.php:464
+msgid "Notifications and defects per hour"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/show/contact.phtml:58
+msgid "Notifications sent to this contact"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Instance/ToggleInstanceFeaturesCommandForm.php:76
+#, php-format
+msgid "Notifications will be re-enabled in <strong>%s</strong>"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/health/disable-notifications.phtml:13
+#, php-format
+msgid "Notifications will be re-enabled in <strong>%s</strong>."
+msgstr ""
+
+#: /vagrant/modules/monitoring/library/Monitoring/Object/Service.php:188
+msgid "OK"
+msgstr "ОК"
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/ProcessCheckResultCommandForm.php:56
+msgctxt "icinga.state"
+msgid "OK"
+msgstr "ОК"
+
+#: /vagrant/modules/monitoring/application/forms/StatehistoryForm.php:96
+msgid "Object type"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/ToggleObjectFeaturesCommandForm.php:57
+msgid "Obsessing"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Instance/ToggleInstanceFeaturesCommandForm.php:148
+msgid "Obsessing Over Hosts"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Instance/ToggleInstanceFeaturesCommandForm.php:157
+msgid "Obsessing Over Services"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/ListController.php:528
+msgid "Occurence"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/ChartController.php:243
+#: /vagrant/modules/monitoring/application/forms/StatehistoryForm.php:120
+msgid "Ok"
+msgstr "Ок"
+
+#: /vagrant/modules/monitoring/application/controllers/AlertsummaryController.php:535
+#: /vagrant/modules/monitoring/application/controllers/TimelineController.php:104
+msgid "One day"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/AlertsummaryController.php:537
+#: /vagrant/modules/monitoring/application/controllers/TimelineController.php:106
+msgid "One month"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/AlertsummaryController.php:536
+#: /vagrant/modules/monitoring/application/controllers/TimelineController.php:105
+msgid "One week"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/AlertsummaryController.php:538
+#: /vagrant/modules/monitoring/application/controllers/TimelineController.php:107
+msgid "One year"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/ProcessCheckResultCommandForm.php:68
+msgid "Output"
+msgstr ""
+
+#: /vagrant/modules/monitoring/configuration.php:268
+msgid "Overdue"
+msgstr ""
+
+#: /vagrant/modules/monitoring/configuration.php:144
+msgid "Overview"
+msgstr "Обзор"
+
+#: /vagrant/modules/monitoring/library/Monitoring/Object/Host.php:191
+#: /vagrant/modules/monitoring/library/Monitoring/Object/Service.php:200
+msgid "PENDING"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/list/contacts.phtml:19
+#: /vagrant/modules/monitoring/application/views/scripts/show/contact.phtml:34
+msgid "Pager"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/ListController.php:297
+msgid "Pager Address / Number"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/ToggleObjectFeaturesCommandForm.php:46
+#: /vagrant/modules/monitoring/application/views/scripts/health/stats.phtml:141
+msgid "Passive Checks"
+msgstr "Пассивные проверки"
+
+#: /vagrant/modules/monitoring/application/forms/Command/Instance/ToggleInstanceFeaturesCommandForm.php:166
+msgid "Passive Host Checks"
+msgstr "Пассивные проверки узла"
+
+#: /vagrant/modules/monitoring/application/forms/Command/Instance/ToggleInstanceFeaturesCommandForm.php:175
+msgid "Passive Service Checks"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/health/stats.phtml:136
+msgid "Passive checks"
+msgstr ""
+
+#: /vagrant/modules/monitoring/library/Monitoring/BackendStep.php:113
+msgid "Password"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Config/Transport/RemoteTransportForm.php:179
+msgid "Path to the Icinga command file on the remote Icinga instance"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Config/Transport/LocalTransportForm.php:32
+msgid "Path to the local Icinga command file"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/health/stats.phtml:88
+msgid "Per Host"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Instance/ToggleInstanceFeaturesCommandForm.php:186
+#: /vagrant/modules/monitoring/application/forms/Command/Object/ProcessCheckResultCommandForm.php:77
+msgid "Performance Data"
+msgstr "Данные производительности"
+
+#: /vagrant/modules/monitoring/application/views/scripts/show/components/perfdata.phtml:2
+msgid "Performance data"
+msgstr "Данные производительности"
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/AddCommentCommandForm.php:55
+#: /vagrant/modules/monitoring/application/views/scripts/comment/show.phtml:47
+msgid "Persistent"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/AcknowledgeProblemCommandForm.php:61
+msgid "Persistent Comment"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Setup/BackendPage.php:16
+msgid ""
+"Please configure below how Icinga Web 2 should retrieve monitoring "
+"information."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Setup/TransportPage.php:16
+msgid ""
+"Please define below how you want to send commands to your monitoring "
+"instance."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Setup/IdoResourcePage.php:23
+msgid ""
+"Please fill out the connection details below to access the IDO database of "
+"your monitoring environment."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Setup/LivestatusResourcePage.php:16
+msgid ""
+"Please fill out the connection details below to access the Livestatus socket "
+"interface for your monitoring environment."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/show/components/output.phtml:2
+msgid "Plugin Output"
+msgstr "Вывод плагина"
+
+#: /vagrant/modules/monitoring/application/forms/Config/Transport/RemoteTransportForm.php:150
+#: /vagrant/modules/monitoring/library/Monitoring/BackendStep.php:101
+msgid "Port"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/list/components/selectioninfo.phtml:2
+msgctxt "multiselection"
+msgid ""
+"Press and hold the Ctrl key while clicking on rows to select multiple rows "
+"or press and hold the Shift key to select a range of rows."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/hosts/show.phtml:20
+msgid "Problem Handling"
+msgstr "Обработка проблемы"
+
+#: /vagrant/modules/monitoring/application/views/scripts/partials/object/detail-content.phtml:5
+#: /vagrant/modules/monitoring/application/views/scripts/services/show.phtml:22
+msgid "Problem handling"
+msgstr "Обработка событий"
+
+#: /vagrant/modules/monitoring/configuration.php:100
+msgid "Problems"
+msgstr "Проблемы"
+
+#: /vagrant/modules/monitoring/application/views/scripts/health/info.phtml:14
+msgid "Process Info"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/HealthController.php:33
+#: /vagrant/modules/monitoring/application/controllers/HealthController.php:55
+msgid "Process Information"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/hosts/show.phtml:166
+#: /vagrant/modules/monitoring/application/views/scripts/services/show.phtml:168
+#: /vagrant/modules/monitoring/application/views/scripts/show/components/command.phtml:21
+#: /vagrant/modules/monitoring/application/views/scripts/show/components/command.phtml:33
+msgid "Process check result"
+msgstr "Добавить результат проверки"
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/ProcessCheckResultCommandForm.php:107
+msgid "Processing check result.."
+msgid_plural "Processing check results.."
+msgstr[0] ""
+msgstr[1] ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/health/info.phtml:24
+msgid "Program Start Time"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/health/info.phtml:18
+msgid "Program Version"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Config/SecurityConfigForm.php:56
+#: /vagrant/modules/monitoring/library/Monitoring/SecurityStep.php:53
+msgid "Protected Custom Variables"
+msgstr ""
+
+#: /vagrant/modules/monitoring/configuration.php:240
+msgid "Recently Recovered Services"
+msgstr "Недавно восстановленные службы"
+
+#: /vagrant/modules/monitoring/application/views/scripts/config/index.phtml:95
+msgid "Remote"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Config/TransportConfigForm.php:226
+msgid "Remote Command File"
+msgstr ""
+
+#: /vagrant/modules/monitoring/library/Monitoring/TransportStep.php:59
+msgid "Remote Host"
+msgstr ""
+
+#: /vagrant/modules/monitoring/library/Monitoring/TransportStep.php:63
+msgid "Remote SSH Port"
+msgstr ""
+
+#: /vagrant/modules/monitoring/library/Monitoring/TransportStep.php:67
+msgid "Remote SSH User"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/DeleteCommentsCommandForm.php:63
+#: /vagrant/modules/monitoring/application/forms/Command/Object/DeleteDowntimesCommandForm.php:63
+msgid "Remove"
+msgid_plural "Remove All"
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/comments/show.phtml:11
+#, php-format
+msgid "Remove %d comments"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/ConfigController.php:162
+#, php-format
+msgid "Remove Command Transport %s"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/ConfigController.php:129
+#, php-format
+msgid "Remove Monitoring Backend %s"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/downtimes/show.phtml:11
+#, php-format
+msgid "Remove all %d scheduled downtimes"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/CommentsController.php:93
+msgid "Remove all Comments"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/DowntimesController.php:97
+msgid "Remove all Downtimes"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/comments/show.phtml:16
+msgid "Remove all selected comments"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/downtimes/show.phtml:16
+msgid "Remove all selected downtimes"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/config/index.phtml:107
+#, php-format
+msgid "Remove command transport %s"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/config/index.phtml:52
+#, php-format
+msgid "Remove monitoring backend %s"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/RemoveAcknowledgementCommandForm.php:41
+msgid "Remove problem acknowledgement"
+msgid_plural "Remove problem acknowledgements"
+msgstr[0] ""
+msgstr[1] ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/RemoveAcknowledgementCommandForm.php:65
+msgid "Removing problem acknowledgement.."
+msgid_plural "Removing problem acknowledgements.."
+msgstr[0] ""
+msgstr[1] ""
+
+#: /vagrant/modules/monitoring/application/controllers/AlertsummaryController.php:540
+msgid "Report interval"
+msgstr ""
+
+#: /vagrant/modules/monitoring/configuration.php:212
+msgid "Reporting"
+msgstr "Отчёты"
+
+#: /vagrant/modules/monitoring/application/views/scripts/hosts/show.phtml:186
+#: /vagrant/modules/monitoring/application/views/scripts/services/show.phtml:188
+#: /vagrant/modules/monitoring/application/views/scripts/show/components/checkstatistics.phtml:24
+#: /vagrant/modules/monitoring/application/views/scripts/show/components/checkstatistics.phtml:38
+msgid "Reschedule"
+msgstr "Запланировать"
+
+#: /vagrant/modules/monitoring/application/controllers/HostController.php:144
+msgid "Reschedule Host Check"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/HostsController.php:194
+msgid "Reschedule Host Checks"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/ServiceController.php:102
+msgid "Reschedule Service Check"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/ServicesController.php:207
+msgid "Reschedule Service Checks"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Config/BackendConfigForm.php:236
+msgid "Resource"
+msgstr ""
+
+#: /vagrant/modules/monitoring/library/Monitoring/BackendStep.php:89
+#: /vagrant/modules/monitoring/library/Monitoring/BackendStep.php:124
+msgid "Resource Name"
+msgstr ""
+
+#: /vagrant/modules/monitoring/library/Monitoring/BackendStep.php:165
+#, php-format
+msgid "Resource configuration could not be udpated: %s. An error occured:"
+msgstr ""
+
+#: /vagrant/modules/monitoring/library/Monitoring/BackendStep.php:160
+#, php-format
+msgid "Resource configuration has been successfully updated: %s"
+msgstr ""
+
+#: /vagrant/modules/monitoring/configuration.php:65
+msgid "Restrict views to the Icinga objects that match the filter"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/health/stats.phtml:60
+#: /vagrant/modules/monitoring/application/views/scripts/health/stats.phtml:86
+msgid "Runtime Variables"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Config/Transport/RemoteTransportForm.php:108
+msgid "SSH Identity"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Config/Transport/RemoteTransportForm.php:151
+msgid "SSH port to connect to on the remote Icinga instance"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Config/BackendConfigForm.php:42
+#: /vagrant/modules/monitoring/application/forms/Config/SecurityConfigForm.php:20
+#: /vagrant/modules/monitoring/application/forms/Config/TransportConfigForm.php:40
+msgid "Save Changes"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/hosts/show.phtml:178
+#: /vagrant/modules/monitoring/application/views/scripts/services/show.phtml:180
+#, fuzzy
+msgid "Schedule Check"
+msgstr "Запланировать обслуживание"
+
+#: /vagrant/modules/monitoring/application/controllers/HostController.php:156
+msgid "Schedule Host Downtime"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/HostsController.php:206
+msgid "Schedule Host Downtimes"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/ServiceController.php:114
+msgid "Schedule Service Downtime"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/ServicesController.php:219
+msgid "Schedule Service Downtimes"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/show/components/downtime.phtml:15
+#: /vagrant/modules/monitoring/application/views/scripts/show/components/downtime.phtml:29
+msgid ""
+"Schedule a downtime to suppress all problem notifications within a specific "
+"period of time"
+msgstr ""
+"Запланировать обслуживание для подавления всех уведомлений в указанный "
+"промежуток времени"
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/ScheduleServiceCheckCommandForm.php:34
+msgid "Schedule check"
+msgid_plural "Schedule checks"
+msgstr[0] ""
+msgstr[1] ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/ScheduleHostCheckCommandForm.php:28
+msgid "Schedule check for all services on the hosts and the hosts themselves."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/ScheduleServiceDowntimeCommandForm.php:47
+#: /vagrant/modules/monitoring/application/views/scripts/show/components/downtime.phtml:7
+#: /vagrant/modules/monitoring/application/views/scripts/show/components/downtime.phtml:21
+msgid "Schedule downtime"
+msgid_plural "Schedule downtimes"
+msgstr[0] "Запланировать обслуживание"
+msgstr[1] "Запланировать обслуживания"
+msgstr[2] "Запланировать обслуживаний"
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/ScheduleHostDowntimeCommandForm.php:29
+msgid ""
+"Schedule downtime for all services on the hosts and the hosts themselves."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/hosts/show.phtml:100
+#: /vagrant/modules/monitoring/application/views/scripts/services/show.phtml:99
+msgid "Schedule downtimes"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/ScheduleHostDowntimeCommandForm.php:46
+msgid "Schedule non-triggered downtime for all child hosts"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/show/components/checkstatistics.phtml:32
+#: /vagrant/modules/monitoring/application/views/scripts/show/components/checkstatistics.phtml:46
+msgid "Schedule the next active check at a different time than the current one"
+msgstr "Изменить время следующей активной проверки"
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/CheckNowCommandForm.php:44
+msgid "Schedule the next active check to run immediately"
+msgstr "Незамедлительно провести следующую активную проверку"
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/ScheduleHostDowntimeCommandForm.php:45
+msgid "Schedule triggered downtime for all child hosts"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/health/stats.phtml:72
+#: /vagrant/modules/monitoring/application/views/scripts/health/stats.phtml:100
+msgid "Scheduled"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/ListController.php:232
+msgid "Scheduled End"
+msgstr "Запланированное окончание"
+
+#: /vagrant/modules/monitoring/application/controllers/ListController.php:231
+msgid "Scheduled Start"
+msgstr "Запланированное начало"
+
+#: /vagrant/modules/monitoring/application/views/scripts/downtime/show.phtml:127
+msgid "Scheduled end"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/downtime/show.phtml:120
+msgid "Scheduled start"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/CheckNowCommandForm.php:74
+msgid "Scheduling check.."
+msgid_plural "Scheduling checks.."
+msgstr[0] ""
+msgstr[1] ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/ScheduleHostCheckCommandForm.php:51
+msgid "Scheduling host check.."
+msgid_plural "Scheduling host checks.."
+msgstr[0] ""
+msgstr[1] ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/ScheduleHostDowntimeCommandForm.php:87
+msgid "Scheduling host downtime.."
+msgid_plural "Scheduling host downtimes.."
+msgstr[0] ""
+msgstr[1] ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/ScheduleServiceCheckCommandForm.php:100
+msgid "Scheduling service check.."
+msgid_plural "Scheduling service checks.."
+msgstr[0] ""
+msgstr[1] ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/ScheduleServiceDowntimeCommandForm.php:207
+msgid "Scheduling service downtime.."
+msgid_plural "Scheduling service downtimes.."
+msgstr[0] ""
+msgstr[1] ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/host/history.phtml:36
+#: /vagrant/modules/monitoring/application/views/scripts/list/eventhistory.phtml:22
+#: /vagrant/modules/monitoring/application/views/scripts/service/history.phtml:35
+msgid "Scroll to the bottom of this page to load additional events"
+msgstr "Переместитесь вниз страницы для загрузки дополнительных событий"
+
+#: /vagrant/modules/monitoring/configuration.php:75
+msgid "Security"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/HostController.php:181
+#: /vagrant/modules/monitoring/application/controllers/HostsController.php:231
+msgid "Send Custom Host Notification"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/ServiceController.php:139
+#: /vagrant/modules/monitoring/application/controllers/ServicesController.php:244
+msgid "Send Custom Service Notification"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/AcknowledgeProblemCommandForm.php:123
+msgid "Send Notification"
+msgstr "Отправить оповещение"
+
+#: /vagrant/modules/monitoring/application/views/scripts/show/components/notifications.phtml:18
+msgid "Send a custom notification to contacts responsible for this host"
+msgstr "Отправить уведомление ответственным за данный узел"
+
+#: /vagrant/modules/monitoring/application/views/scripts/show/components/notifications.phtml:33
+msgid "Send a custom notification to contacts responsible for this service"
+msgstr "Отправить уведомление ответственным за данную службу"
+
+#: /vagrant/modules/monitoring/application/views/scripts/list/contacts.phtml:39
+#: /vagrant/modules/monitoring/application/views/scripts/list/contacts.phtml:40
+#: /vagrant/modules/monitoring/application/views/scripts/show/contact.phtml:26
+#, php-format
+msgid "Send a mail to %s"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/SendCustomNotificationCommandForm.php:29
+msgid "Send custom notification"
+msgid_plural "Send custom notifications"
+msgstr[0] ""
+msgstr[1] ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/show/components/notifications.phtml:10
+#: /vagrant/modules/monitoring/application/views/scripts/show/components/notifications.phtml:25
+msgid "Send notification"
+msgstr "Отправить уведомление"
+
+#: /vagrant/modules/monitoring/application/views/scripts/hosts/show.phtml:144
+#: /vagrant/modules/monitoring/application/views/scripts/services/show.phtml:146
+msgid "Send notifications"
+msgstr "Отправить уведомления"
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/SendCustomNotificationCommandForm.php:95
+msgid "Sending custom notification.."
+msgid_plural "Sending custom notifications.."
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/list/notifications.phtml:53
+#, php-format
+msgid "Sent to %s"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/ListController.php:226
+#: /vagrant/modules/monitoring/application/controllers/ListController.php:415
+#: /vagrant/modules/monitoring/application/views/scripts/comment/show.phtml:17
+#: /vagrant/modules/monitoring/application/views/scripts/comment/show.phtml:19
+#: /vagrant/modules/monitoring/application/views/scripts/downtime/show.phtml:15
+#: /vagrant/modules/monitoring/application/views/scripts/downtime/show.phtml:26
+#: /vagrant/modules/monitoring/application/views/scripts/list/notifications.phtml:36
+#: /vagrant/modules/monitoring/application/views/scripts/partials/comment/comment-detail.phtml:3
+#: /vagrant/modules/monitoring/application/views/scripts/partials/downtime/downtime-header.phtml:13
+#: /vagrant/modules/monitoring/application/views/scripts/partials/object/service-header.phtml:49
+#: /vagrant/modules/monitoring/library/Monitoring/DataView/DataView.php:263
+#: /vagrant/modules/monitoring/library/Monitoring/Web/Controller/MonitoredObjectController.php:197
+msgid "Service"
+msgstr "Служба"
+
+#: /vagrant/modules/monitoring/configuration.php:92
+msgid "Service Action"
+msgstr "Действие службы"
+
+#: /vagrant/modules/monitoring/application/views/scripts/health/stats.phtml:87
+#: /vagrant/modules/monitoring/application/views/scripts/health/stats.phtml:127
+#: /vagrant/modules/monitoring/application/views/scripts/health/stats.phtml:152
+msgid "Service Checks"
+msgstr ""
+
+#: /vagrant/modules/monitoring/configuration.php:132
+#: /vagrant/modules/monitoring/application/controllers/ListController.php:534
+msgid "Service Grid"
+msgstr "Матрица служб"
+
+#: /vagrant/modules/monitoring/application/views/scripts/list/servicegroups.phtml:22
+msgid "Service Group"
+msgstr "Группа служб"
+
+#: /vagrant/modules/monitoring/application/controllers/ChartController.php:232
+msgid "Service Group Chart"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/ListController.php:458
+msgid "Service Group Name"
+msgstr "Название группы служб"
+
+#: /vagrant/modules/monitoring/application/controllers/ListController.php:432
+msgid "Service Groups"
+msgstr "Группы служб"
+
+#: /vagrant/modules/monitoring/application/controllers/ListController.php:160
+#: /vagrant/modules/monitoring/application/controllers/ListController.php:559
+msgid "Service Name"
+msgstr "Название службы"
+
+#: /vagrant/modules/monitoring/application/controllers/ListController.php:298
+msgid "Service Notification Timeperiod"
+msgstr ""
+
+#: /vagrant/modules/monitoring/configuration.php:120
+#: /vagrant/modules/monitoring/configuration.php:236
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/ok_hosts.phtml:79
+msgid "Service Problems"
+msgstr "Проблемы служб"
+
+#: /vagrant/modules/monitoring/application/views/scripts/health/stats.phtml:20
+#, fuzzy
+msgid "Service Problems:"
+msgstr "Проблемы служб"
+
+#: /vagrant/modules/monitoring/application/controllers/ListController.php:158
+msgid "Service Severity"
+msgstr "Влияние состояния службы"
+
+#: /vagrant/modules/monitoring/application/views/scripts/list/hostgroups.phtml:28
+#: /vagrant/modules/monitoring/application/views/scripts/list/servicegroups.phtml:23
+msgid "Service States"
+msgstr "Состояние служб"
+
+#: /vagrant/modules/monitoring/application/controllers/ServiceController.php:35
+msgid "Service not found"
+msgstr ""
+
+#: /vagrant/modules/monitoring/configuration.php:86
+#: /vagrant/modules/monitoring/configuration.php:160
+#: /vagrant/modules/monitoring/application/views/scripts/show/components/servicegroups.phtml:17
+msgid "Servicegroups"
+msgstr "Группы служб"
+
+#: /vagrant/modules/monitoring/configuration.php:84
+#: /vagrant/modules/monitoring/configuration.php:156
+#: /vagrant/modules/monitoring/application/controllers/ChartController.php:236
+#: /vagrant/modules/monitoring/application/controllers/ListController.php:119
+#: /vagrant/modules/monitoring/application/controllers/ServicesController.php:46
+#: /vagrant/modules/monitoring/application/forms/StatehistoryForm.php:99
+#: /vagrant/modules/monitoring/application/views/scripts/show/contact.phtml:44
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/hostservicechecks.phtml:10
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/ok_hosts.phtml:52
+#: /vagrant/modules/monitoring/application/views/scripts/tactical/components/problem_hosts.phtml:50
+#: /vagrant/modules/monitoring/library/Monitoring/Web/Controller/MonitoredObjectController.php:211
+msgid "Services"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/ScheduleServiceCheckCommandForm.php:53
+msgid "Set the date and time when the check should be scheduled."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/ScheduleServiceDowntimeCommandForm.php:89
+msgid "Set the end date and time for the downtime."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Instance/DisableNotificationsExpireCommandForm.php:44
+msgid "Set the expire time."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/ScheduleServiceDowntimeCommandForm.php:79
+msgid "Set the start date and time for the downtime."
+msgstr ""
+
+#: /vagrant/modules/monitoring/library/Monitoring/MonitoringWizard.php:114
+msgid "Setup the monitoring module for Icinga Web 2"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/ListController.php:93
+#: /vagrant/modules/monitoring/application/controllers/ListController.php:457
+#: /vagrant/modules/monitoring/application/controllers/ListController.php:495
+msgid "Severity"
+msgstr "Влияние состояния"
+
+#: /vagrant/modules/monitoring/application/views/scripts/list/comments.phtml:41
+#: /vagrant/modules/monitoring/application/views/scripts/list/contacts.phtml:67
+#: /vagrant/modules/monitoring/application/views/scripts/list/downtimes.phtml:45
+#: /vagrant/modules/monitoring/application/views/scripts/list/eventhistory.phtml:118
+#: /vagrant/modules/monitoring/application/views/scripts/list/hostgroups.phtml:268
+#: /vagrant/modules/monitoring/application/views/scripts/list/hosts.phtml:101
+#: /vagrant/modules/monitoring/application/views/scripts/list/notifications.phtml:77
+#: /vagrant/modules/monitoring/application/views/scripts/list/servicegroups.phtml:162
+#: /vagrant/modules/monitoring/application/views/scripts/list/services.phtml:104
+#: /vagrant/modules/monitoring/application/views/scripts/partials/show-more.phtml:6
+msgid "Show More"
+msgstr "Показать больше"
+
+#: /vagrant/modules/monitoring/library/Monitoring/Web/Controller/MonitoredObjectController.php:227
+#, php-format
+msgid "Show all event records of host %s"
+msgstr ""
+
+#: /vagrant/modules/monitoring/library/Monitoring/Web/Controller/MonitoredObjectController.php:223
+#, php-format
+msgid "Show all event records of service %s on host %s"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/TacticalController.php:20
+msgid ""
+"Show an overview of all hosts and services, their current states and "
+"monitoring feature utilisation"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/host/history.phtml:12
+#: /vagrant/modules/monitoring/application/views/scripts/list/contactgroups.phtml:42
+#: /vagrant/modules/monitoring/application/views/scripts/list/contacts.phtml:31
+#: /vagrant/modules/monitoring/application/views/scripts/service/history.phtml:11
+#: /vagrant/modules/monitoring/application/views/scripts/show/components/contacts.phtml:11
+#, php-format
+msgid "Show detailed information about %s"
+msgstr "Показать подробную информацию о %s"
+
+#: /vagrant/modules/monitoring/application/views/helpers/Link.php:37
+#: /vagrant/modules/monitoring/application/views/scripts/list/hosts.phtml:56
+#: /vagrant/modules/monitoring/application/views/scripts/list/services.phtml:71
+#: /vagrant/modules/monitoring/library/Monitoring/Web/Controller/MonitoredObjectController.php:179
+#, php-format
+msgid "Show detailed information for host %s"
+msgstr "Показать подробную информацию об узле %s"
+
+#: /vagrant/modules/monitoring/application/views/helpers/Link.php:63
+#: /vagrant/modules/monitoring/application/views/scripts/host/history.phtml:133
+#: /vagrant/modules/monitoring/application/views/scripts/list/servicegrid.phtml:94
+#: /vagrant/modules/monitoring/application/views/scripts/list/services.phtml:82
+#: /vagrant/modules/monitoring/library/Monitoring/Web/Controller/MonitoredObjectController.php:193
+#, php-format
+msgid "Show detailed information for service %s on host %s"
+msgstr "Показать подробную информацию о службе %s узла %s"
+
+#: /vagrant/modules/monitoring/application/views/scripts/partials/comment/comment-detail.phtml:25
+#, php-format
+msgid "Show detailed information for this comment about host %s"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/partials/comment/comment-detail.phtml:12
+#, php-format
+msgid "Show detailed information for this comment about service %s on host %s"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/partials/downtime/downtime-header.phtml:35
+#, php-format
+msgid "Show detailed information for this downtime scheduled for host %s"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/partials/downtime/downtime-header.phtml:22
+#, php-format
+msgid ""
+"Show detailed information for this downtime scheduled for service %s on host "
+"%s"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/HealthController.php:30
+msgid ""
+"Show information about the current monitoring instance's process and it's "
+"performance as well as available features"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/AlertsummaryController.php:51
+msgid ""
+"Show recent alerts and visualize notifications and problems based on their "
+"amount and chronological distribution"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Config/BackendConfigForm.php:255
+#: /vagrant/modules/monitoring/application/forms/Config/Transport/RemoteTransportForm.php:127
+msgid "Show resource configuration"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/HealthController.php:41
+msgid "Show statistics about the monitored objects"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/HostsController.php:41
+#, php-format
+msgid "Show summarized information for %u hosts"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/ServicesController.php:43
+#, php-format
+msgid "Show summarized information for %u services"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/ListController.php:305
+msgid "Show the Event Grid"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/ListController.php:534
+msgid "Show the Service Grid"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Config/BackendConfigForm.php:254
+#: /vagrant/modules/monitoring/application/forms/Config/Transport/RemoteTransportForm.php:126
+#, php-format
+msgid "Show the configuration of the %s resource"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/TimelineController.php:24
+msgid "Show the number of historical event records grouped by time and type"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Config/BackendConfigForm.php:327
+#: /vagrant/modules/monitoring/application/forms/Setup/IdoResourcePage.php:184
+#: /vagrant/modules/monitoring/application/forms/Setup/LivestatusResourcePage.php:76
+msgid "Skip Validation"
+msgstr ""
+
+#: /vagrant/modules/monitoring/library/Monitoring/BackendStep.php:128
+msgid "Socket"
+msgstr ""
+
+#: /vagrant/modules/monitoring/library/Monitoring/MonitoringWizard.php:111
+msgctxt "setup.welcome.btn.next"
+msgid "Start"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/ListController.php:229
+#: /vagrant/modules/monitoring/application/forms/Command/Object/ScheduleServiceDowntimeCommandForm.php:78
+msgid "Start Time"
+msgstr "Время начала"
+
+#: /vagrant/modules/monitoring/application/controllers/TimelineController.php:70
+msgid "Started downtimes"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/partials/downtime/downtime-header.phtml:6
+msgid "Starts"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/StatehistoryForm.php:114
+#: /vagrant/modules/monitoring/application/forms/StatehistoryForm.php:134
+msgid "State"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/EventOverviewForm.php:44
+msgid "State Changes"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/HealthController.php:43
+msgid "Stats"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/ProcessCheckResultCommandForm.php:53
+msgid "Status"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/AcknowledgeProblemCommandForm.php:111
+msgid "Sticky Acknowledgement"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/ProcessCheckResultCommandForm.php:31
+msgid "Submit Passive Check Result"
+msgid_plural "Submit Passive Check Results"
+msgstr[0] ""
+msgstr[1] ""
+
+#: /vagrant/modules/monitoring/application/controllers/HostController.php:169
+msgid "Submit Passive Host Check Result"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/HostsController.php:219
+msgid "Submit Passive Host Check Results"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/ServiceController.php:127
+msgid "Submit Passive Service Check Result"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/ServicesController.php:232
+msgid "Submit Passive Service Check Results"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/show/components/command.phtml:17
+#, php-format
+msgid "Submit a one time or so called passive result for the %s check"
+msgstr ""
+
+#: /vagrant/modules/monitoring/configuration.php:224
+msgid "System"
+msgstr "Система"
+
+#: /vagrant/modules/monitoring/configuration.php:148
+#: /vagrant/modules/monitoring/application/controllers/TacticalController.php:23
+msgid "Tactical Overview"
+msgstr "Тактический обзор"
+
+#: /vagrant/modules/monitoring/library/Monitoring/MonitoringWizard.php:204
+msgid ""
+"The Zend database adapter for MySQL is required to access a MySQL database."
+msgstr ""
+
+#: /vagrant/modules/monitoring/library/Monitoring/MonitoringWizard.php:224
+msgid ""
+"The Zend database adapter for PostgreSQL is required to access a PostgreSQL "
+"database."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Setup/IdoResourcePage.php:102
+msgid "The configuration has been successfully validated."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Setup/BackendPage.php:46
+msgid "The data source used for retrieving monitoring information"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/downtime/show.phtml:143
+msgid "The date/time the scheduled downtime actually ended"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/downtime/show.phtml:123
+msgid ""
+"The date/time the scheduled downtime is supposed to end. If this is a "
+"flexible (non-fixed) downtime, this refers to the last possible time that "
+"the downtime can start"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/downtime/show.phtml:116
+msgid ""
+"The date/time the scheduled downtime is supposed to start. If this is a "
+"flexible (non-fixed) downtime, this refers to the earliest possible time "
+"that the downtime can start"
+msgstr ""
+
+#: /vagrant/modules/monitoring/library/Monitoring/DataView/DataView.php:433
+#, php-format
+msgid "The filter column \"%s\" is not allowed here."
+msgstr ""
+
+#: /vagrant/modules/monitoring/library/Monitoring/MonitoringWizard.php:66
+msgid "The given resource name is already in use."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Setup/BackendPage.php:29
+msgid "The identifier of this backend"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/show/components/notifications.phtml:57
+#, fuzzy, php-format
+msgid "The last one was sent %s."
+msgstr "Последнее произошло %s назад"
+
+#: /vagrant/modules/monitoring/application/forms/Config/TransportConfigForm.php:205
+msgid ""
+"The name of the Icinga instance this transport should exclusively transfer "
+"commands to."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/downtime/show.phtml:38
+msgid "The name of the person who scheduled this downtime"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Config/TransportConfigForm.php:219
+msgid ""
+"The name of this command transport that is used to differentiate it from "
+"others"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Config/BackendConfigForm.php:195
+msgid ""
+"The name of this monitoring backend that is used to differentiate it from "
+"others"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/ProcessCheckResultCommandForm.php:79
+msgid ""
+"The performance data of this check result. Leave empty if this check result "
+"has no performance data"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/ProcessCheckResultCommandForm.php:69
+msgid "The plugin output of this check result"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Config/BackendConfigForm.php:237
+#: /vagrant/modules/monitoring/application/forms/Config/Transport/RemoteTransportForm.php:109
+msgid "The resource to use"
+msgstr ""
+
+#: /vagrant/modules/monitoring/library/Monitoring/DataView/DataView.php:342
+#, php-format
+msgid "The sort column \"%s\" is not allowed in \"%s\"."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/ProcessCheckResultCommandForm.php:54
+msgid "The state this check result should report"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Config/BackendConfigForm.php:223
+msgid "The type of data source used for retrieving monitoring information"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Config/BackendConfigForm.php:381
+msgid ""
+"There is currently more than one icinga instance writing to the IDO. You'll "
+"see all objects from all instances without any differentation. If this is "
+"not desired, consider setting up a separate IDO for each instance."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Config/BackendConfigForm.php:375
+msgid ""
+"There is currently no icinga instance writing to the IDO. Make sure that a "
+"icinga instance is configured and able to write to the IDO."
+msgstr ""
+
+#: /vagrant/modules/monitoring/library/Monitoring/Backend/MonitoringBackend.php:91
+#, php-format
+msgid "There is no \"%s\" monitoring backend"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/host/history.phtml:32
+msgid "This Host's Event History"
+msgstr "История событий узла"
+
+#: /vagrant/modules/monitoring/application/views/scripts/service/history.phtml:31
+#, fuzzy
+msgid "This Service's Event History"
+msgstr "История событий службы"
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/AcknowledgeProblemCommandForm.php:22
+msgid ""
+"This command is used to acknowledge host or service problems. When a problem "
+"is acknowledged, future notifications about problems are temporarily "
+"disabled until the host or service recovers."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/AddCommentCommandForm.php:19
+msgid "This command is used to add host or service comments."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Instance/DisableNotificationsExpireCommandForm.php:26
+msgid ""
+"This command is used to disable host and service notifications for a "
+"specific time."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/ScheduleServiceDowntimeCommandForm.php:33
+msgid ""
+"This command is used to schedule host and service downtimes. During the "
+"specified downtime, Icinga will not send notifications out about the hosts "
+"and services. When the scheduled downtime expires, Icinga will send out "
+"notifications for the hosts and services as it normally would. Scheduled "
+"downtimes are preserved across program shutdowns and restarts."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/ScheduleServiceCheckCommandForm.php:23
+msgid ""
+"This command is used to schedule the next check of hosts or services. Icinga "
+"will re-queue the hosts or services to be checked at the time you specify."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/SendCustomNotificationCommandForm.php:20
+msgid ""
+"This command is used to send custom notifications about hosts or services."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/ProcessCheckResultCommandForm.php:20
+msgid "This command is used to submit passive host or service check results."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/comment/show.phtml:63
+msgid "This comment does not expire."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/partials/comment/comment-detail.phtml:37
+#, php-format
+msgid "This comment expires %s."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/comment/show.phtml:60
+#, php-format
+msgid "This comment expires on %s at %s."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/partials/downtime/downtime-header.phtml:47
+msgid "This downtime is flexible"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/partials/downtime/downtime-header.phtml:51
+msgid "This downtime is in effect"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/downtime/show.phtml:106
+#, php-format
+msgid ""
+"This fixed host downtime has been scheduled to start on %s at %s and to end "
+"on %s at %s."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/downtime/show.phtml:96
+#, php-format
+msgid ""
+"This fixed host downtime was started on %s at %s and expires on %s at %s."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/downtime/show.phtml:105
+#, php-format
+msgid ""
+"This fixed service downtime has been scheduled to start on %s at %s and to "
+"end on %s at %s."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/downtime/show.phtml:95
+#, php-format
+msgid ""
+"This fixed service downtime was started on %s at %s and expires on %s at %s."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/downtime/show.phtml:85
+#, php-format
+msgid ""
+"This flexible host downtime has been scheduled to start between %s - %s and "
+"to last for %s."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/downtime/show.phtml:74
+#, php-format
+msgid ""
+"This flexible host downtime was started on %s at %s and lasts for %s until "
+"%s at %s."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/downtime/show.phtml:84
+#, php-format
+msgid ""
+"This flexible service downtime has been scheduled to start between %s - %s "
+"and to last for %s."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/downtime/show.phtml:73
+#, php-format
+msgid ""
+"This flexible service downtime was started on %s at %s and lasts for %s "
+"until %s at %s."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Setup/WelcomePage.php:33
+msgid "This is the core module for Icinga Web 2."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/host/history.phtml:59
+#: /vagrant/modules/monitoring/application/views/scripts/list/eventhistory.phtml:46
+#: /vagrant/modules/monitoring/application/views/scripts/list/notifications.phtml:61
+#: /vagrant/modules/monitoring/application/views/scripts/service/history.phtml:57
+msgid "This notification was not sent out to any contact."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/alertsummary/index.phtml:22
+msgid "Time to Reaction (Ack, Recover)"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/TimelineController.php:109
+msgid "TimeLine interval"
+msgstr ""
+
+#: /vagrant/modules/monitoring/configuration.php:204
+#: /vagrant/modules/monitoring/application/controllers/TimelineController.php:25
+#: /vagrant/modules/monitoring/application/controllers/TimelineController.php:29
+msgid "Timeline"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/StatehistoryForm.php:82
+msgid "To"
+msgstr ""
+
+#: /vagrant/modules/monitoring/library/Monitoring/MonitoringWizard.php:195
+msgid ""
+"To access the IDO stored in a MySQL database the PDO-MySQL module for PHP is "
+"required."
+msgstr ""
+
+#: /vagrant/modules/monitoring/library/Monitoring/MonitoringWizard.php:215
+msgid ""
+"To access the IDO stored in a PostgreSQL database the PDO-PostgreSQL module "
+"for PHP is required."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Setup/SecurityPage.php:16
+msgid ""
+"To protect your monitoring environment against prying eyes please fill out "
+"the settings below."
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/StatehistoryForm.php:85
+msgid "Today"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/alertsummary/index.phtml:56
+msgid "Top 5 Recent Alerts"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/health/stats.phtml:68
+#: /vagrant/modules/monitoring/application/views/scripts/health/stats.phtml:94
+msgid "Total"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/ListController.php:497
+msgid "Total Hosts"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/ListController.php:459
+#: /vagrant/modules/monitoring/application/controllers/ListController.php:498
+msgid "Total Services"
+msgstr "Количество служб"
+
+#: /vagrant/modules/monitoring/application/views/scripts/config/index.phtml:76
+msgid "Transport"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Config/TransportConfigForm.php:217
+msgid "Transport Name"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Config/TransportConfigForm.php:241
+msgid "Transport Type"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/alertsummary/index.phtml:29
+msgid "Trend"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/alertsummary/index.phtml:39
+msgid "Trend for the last 24h"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/ScheduleServiceDowntimeCommandForm.php:99
+msgid "Type"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/config/index.phtml:39
+#: /vagrant/modules/monitoring/application/views/scripts/config/index.phtml:94
+#, php-format
+msgid "Type: %s"
+msgstr ""
+
+#: /vagrant/modules/monitoring/library/Monitoring/Object/Service.php:197
+msgid "UNKNOWN"
+msgstr "НЕИЗВЕСТНО"
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/ProcessCheckResultCommandForm.php:59
+msgctxt "icinga.state"
+msgid "UNKNOWN"
+msgstr "НЕИЗВЕСТНО"
+
+#: /vagrant/modules/monitoring/library/Monitoring/Object/Host.php:188
+msgid "UNREACHABLE"
+msgstr "НЕДОСТУПНО"
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/ProcessCheckResultCommandForm.php:128
+msgctxt "icinga.state"
+msgid "UNREACHABLE"
+msgstr "НЕДОСТУПНО"
+
+#: /vagrant/modules/monitoring/library/Monitoring/Object/Host.php:182
+msgid "UP"
+msgstr "ВКЛЮЧЕН"
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/ProcessCheckResultCommandForm.php:123
+msgctxt "icinga.state"
+msgid "UP"
+msgstr "ВКЛЮЧЕН"
+
+#: /vagrant/modules/monitoring/application/views/helpers/HostFlags.php:13
+#: /vagrant/modules/monitoring/application/views/helpers/ServiceFlags.php:9
+#: /vagrant/modules/monitoring/application/views/scripts/partials/host/statusicons.phtml:5
+#: /vagrant/modules/monitoring/application/views/scripts/partials/service/statusicons.phtml:5
+msgid "Unhandled"
+msgstr "Не обработано"
+
+#: /vagrant/modules/monitoring/application/views/scripts/health/stats.phtml:14
+msgid "Unhandled Problems:"
+msgstr "Необработанные события:"
+
+#: /vagrant/modules/monitoring/application/controllers/ChartController.php:264
+#: /vagrant/modules/monitoring/application/forms/StatehistoryForm.php:119
+msgid "Unknown"
+msgstr "Неизвестно"
+
+#: /vagrant/modules/monitoring/application/controllers/ChartController.php:314
+#: /vagrant/modules/monitoring/application/forms/StatehistoryForm.php:139
+msgid "Unreachable"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/ChartController.php:300
+#: /vagrant/modules/monitoring/application/forms/StatehistoryForm.php:137
+msgid "Up"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/AcknowledgeProblemCommandForm.php:72
+msgid "Use Expire Time"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Config/Transport/RemoteTransportForm.php:88
+msgid "Use SSH Identity"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Config/Transport/RemoteTransportForm.php:163
+#: /vagrant/modules/monitoring/application/views/scripts/comment/show.phtml:43
+#: /vagrant/modules/monitoring/application/views/scripts/downtime/show.phtml:40
+msgid "User"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/partials/comment/comment-description.phtml:10
+msgid "User Comment"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Config/Transport/RemoteTransportForm.php:165
+msgid ""
+"User to log in as on the remote Icinga instance. Please note that key-based "
+"SSH login must be possible for this user"
+msgstr ""
+
+#: /vagrant/modules/monitoring/library/Monitoring/BackendStep.php:109
+msgid "Username"
+msgstr "Имя пользователя"
+
+#: /vagrant/modules/monitoring/library/Monitoring/MonitoringWizard.php:124
+msgid "Validate Configuration"
+msgstr ""
+
+#: /vagrant/modules/monitoring/library/Monitoring/MonitoringWizard.php:125
+msgid "Validation In Progress"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Setup/IdoResourcePage.php:131
+msgid "Validation Log"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/helpers/Perfdata.php:37
+msgid "Value"
+msgstr "Значение"
+
+#: /vagrant/modules/monitoring/application/controllers/AlertsummaryController.php:623
+msgid "Value for interval not valid"
+msgstr ""
+
+#: /vagrant/modules/monitoring/library/Monitoring/Object/Service.php:191
+msgid "WARNING"
+msgstr "ВНИМАНИЕ"
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/ProcessCheckResultCommandForm.php:57
+msgctxt "icinga.state"
+msgid "WARNING"
+msgstr "ВНИМАНИЕ"
+
+#: /vagrant/modules/monitoring/application/controllers/ChartController.php:250
+#: /vagrant/modules/monitoring/application/forms/StatehistoryForm.php:118
+#: /vagrant/modules/monitoring/application/views/helpers/Perfdata.php:40
+msgid "Warning"
+msgstr "Предупреждение"
+
+#: /vagrant/modules/monitoring/application/forms/Setup/WelcomePage.php:21
+msgid "Welcome to the configuration of the monitoring module for Icinga Web 2!"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/comment/show.phtml:48
+#: /vagrant/modules/monitoring/application/views/scripts/downtime/show.phtml:155
+msgid "Yes"
+msgstr "Да"
+
+#: /vagrant/modules/monitoring/library/Monitoring/MonitoringWizard.php:201
+msgid "Zend database adapter for MySQL"
+msgstr ""
+
+#: /vagrant/modules/monitoring/library/Monitoring/MonitoringWizard.php:221
+msgid "Zend database adapter for PostgreSQL"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/show/components/acknowledgement.phtml:21
+msgid "acknowledged"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/timeline/index.phtml:60
+#, php-format
+msgctxt "timeline.link.title.datetime.twice"
+msgid "between %s and %s"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/partials/comment/comment-detail.phtml:31
+#: /vagrant/modules/monitoring/application/views/scripts/partials/downtime/downtime-header.phtml:42
+msgid "by"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/forms/Command/Object/ToggleObjectFeaturesCommandForm.php:107
+msgid "changed"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/show/components/comments.phtml:65
+msgid "commented"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/AlertsummaryController.php:194
+msgid "down"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/show/components/downtime.phtml:60
+#, php-format
+msgctxt "Last format parameter represents the end time"
+msgid "ends %s"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/show/components/checkstatistics.phtml:56
+#, php-format
+msgid "expected %s"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/show/components/downtime.phtml:54
+#, php-format
+msgctxt "Last format parameter represents the downtime expire time"
+msgid "expires %s"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/show/components/checkstatistics.phtml:69
+msgid "hard state"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/downtime/show.phtml:138
+msgid "he date/time the scheduled downtime was actually started"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/partials/downtime/downtime-header.phtml:29
+#: /vagrant/modules/monitoring/library/Monitoring/Object/MonitoredObject.php:650
+msgid "host"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/timeline/index.phtml:48
+#, php-format
+msgctxt "timeline.link.title.month.and.year"
+msgid "in %s"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/timeline/index.phtml:54
+#, php-format
+msgctxt "timeline.link.title.year"
+msgid "in %s"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/alertsummary/index.phtml:37
+msgid "in the last hour"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/timeline/index.phtml:41
+#, php-format
+msgctxt "timeline.link.title.week.and.year"
+msgid "in week %s of %s"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/show/components/checksource.phtml:17
+msgid "is not reachable"
+msgstr "не доступен"
+
+#: /vagrant/modules/monitoring/application/views/scripts/show/components/checksource.phtml:17
+msgid "is reachable"
+msgstr "доступен"
+
+#: /vagrant/modules/monitoring/application/views/scripts/alertsummary/index.phtml:35
+msgid "notifications per hour"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/timeline/index.phtml:35
+#, php-format
+msgctxt "timeline.link.title.time"
+msgid "on %s"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/list/components/selectioninfo.phtml:5
+msgctxt "multiselection"
+msgid "row(s) selected"
+msgstr "строк выделено"
+
+#: /vagrant/modules/monitoring/application/views/scripts/show/components/downtime.phtml:65
+#, php-format
+msgctxt "Last format parameter represents the time scheduled"
+msgid "scheduled %s"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/show/components/downtime.phtml:70
+#, php-format
+msgctxt "Last format parameter represents the time scheduled"
+msgid "scheduled flexible %s"
+msgstr ""
+
+#: /vagrant/modules/monitoring/library/Monitoring/Object/MonitoredObject.php:653
+msgid "service"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/partials/host/objects-header.phtml:36
+#, php-format
+msgid "show all %d hosts"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/views/scripts/show/components/checkstatistics.phtml:69
+msgid "soft state"
+msgstr ""
+
+#: /vagrant/modules/monitoring/library/Monitoring/MonitoringWizard.php:53
+msgid "the monitoring module"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/AlertsummaryController.php:192
+msgid "unchanged"
+msgstr ""
+
+#: /vagrant/modules/monitoring/application/controllers/AlertsummaryController.php:196
+msgid "up"
+msgstr ""
+
+#~ msgid "%u configured service:"
+#~ msgid_plural "%u configured services:"
+#~ msgstr[0] "%u настроенная служба"
+#~ msgstr[1] "%u настроенные службы"
+#~ msgstr[2] "%u настроенных служб"
+
+#~ msgid "Last Problem"
+#~ msgstr "Последняя проблема"
+
+#~ msgid ""
+#~ "List %s service that is currenlty in state PENDING in service group \"%s\""
+#~ msgid_plural ""
+#~ "List %s services which are currently in state PENDING in service group "
+#~ "\"%s\""
+#~ msgstr[0] ""
+#~ "Показать %s службу, находящуюся в состоянии ОЖИДАНИЕ, в группе служб \"%s"
+#~ "\""
+#~ msgstr[1] ""
+#~ "Показать %s службы, находящиеся в состоянии ОЖИДАНИЕ, в группе служб \"%s"
+#~ "\""
+#~ msgstr[2] ""
+#~ "Показать %s служб, находящихся в состоянии ОЖИДАНИЕ, в группе служб \"%s\""
+
+#~ msgid ""
+#~ "List %s service that is currently in state CRITICAL (Acknowledged) in "
+#~ "service group \"%s\""
+#~ msgid_plural ""
+#~ "List %s services which are currently in state CRITICAL (Acknowledged) in "
+#~ "service group \"%s\""
+#~ msgstr[0] ""
+#~ "Показать %s службу, находящуюся в состоянии КРИТИЧНО (Подтверждено), в "
+#~ "группе служб \"%s\""
+#~ msgstr[1] ""
+#~ "Показать %s службы, находящиеся в состоянии КРИТИЧНО (Подтверждено), в "
+#~ "группе служб \"%s\""
+#~ msgstr[2] ""
+#~ "Показать %s служб, находящихся в состоянии КРИТИЧНО (Подтверждено), в "
+#~ "группе служб \"%s\""
+
+#~ msgid ""
+#~ "List %s service that is currently in state CRITICAL in service group \"%s"
+#~ "\""
+#~ msgid_plural ""
+#~ "List %s services which are currently in state CRITICAL in service group "
+#~ "\"%s\""
+#~ msgstr[0] ""
+#~ "Показать %s службу, находящуюся в состоянии КРИТИЧНО, в группе служб \"%s"
+#~ "\""
+#~ msgstr[1] ""
+#~ "Показать %s службы, находящиеся в состоянии КРИТИЧНО, в группе служб \"%s"
+#~ "\""
+#~ msgstr[2] ""
+#~ "Показать %s служб, находящихся в состоянии КРИТИЧНО, в группе служб \"%s\""
+
+#~ msgid ""
+#~ "List %s service that is currently in state OK in service group \"%s\""
+#~ msgid_plural ""
+#~ "List %s services which are currently in state OK in service group \"%s\""
+#~ msgstr[0] ""
+#~ "Показать %s службу, находящуюся в состоянии ОК, в группе служб \"%s\""
+#~ msgstr[1] ""
+#~ "Показать %s службу, находящуюся в состоянии ОК, в группе служб \"%s\""
+#~ msgstr[2] ""
+#~ "Показать %s служб, находящихся в состоянии ОК, в группе служб \"%s\""
+
+#~ msgid ""
+#~ "List %s service that is currently in state UNKNOWN (Acknowledged) in "
+#~ "service group \"%s\""
+#~ msgid_plural ""
+#~ "List %s services which are currently in state UNKNOWN (Acknowledged) in "
+#~ "service group \"%s\""
+#~ msgstr[0] ""
+#~ "Показать %s службу, находящуюся в состоянии НЕИЗВЕСТНО (Подтверждено), в "
+#~ "группе служб \"%s\""
+#~ msgstr[1] ""
+#~ "Показать %s службы, находящиеся в состоянии НЕИЗВЕСТНО (Подтверждено), в "
+#~ "группе служб \"%s\""
+#~ msgstr[2] ""
+#~ "Показать %s служб, находящихся в состоянии НЕИЗВЕСТНО (Подтверждено), в "
+#~ "группе служб \"%s\""
+
+#~ msgid ""
+#~ "List %s service that is currently in state UNKNOWN in service group \"%s\""
+#~ msgid_plural ""
+#~ "List %s services which are currently in state UNKNOWN in service group "
+#~ "\"%s\""
+#~ msgstr[0] ""
+#~ "Показать %s службу, находящуюся в состоянии НЕИЗВЕСТНО, в группе служб "
+#~ "\"%s\""
+#~ msgstr[1] ""
+#~ "Показать %s службы, находящиеся в состоянии НЕИЗВЕСТНО, в группе служб "
+#~ "\"%s\""
+#~ msgstr[2] ""
+#~ "Показать %s служб, находящихся в состоянии НЕИЗВЕСТНО, в группе служб \"%s"
+#~ "\""
+
+#~ msgid ""
+#~ "List %s service that is currently in state WARNING (Acknowledged) in "
+#~ "service group \"%s\""
+#~ msgid_plural ""
+#~ "List %s services which are currently in state WARNING (Acknowledged) in "
+#~ "service group \"%s\""
+#~ msgstr[0] ""
+#~ "Показать %s службу, находящуюся в состоянии ВНИМАНИЕ (Подтверждено), в "
+#~ "группе служб \"%s\""
+#~ msgstr[1] ""
+#~ "Показать %s службы, находящиеся в состоянии ВНИМАНИЕ (Подтверждено), в "
+#~ "группе служб \"%s\""
+#~ msgstr[2] ""
+#~ "Показать %s служб, находящихся в состоянии ВНИМАНИЕ (Подтверждено), в "
+#~ "группе служб \"%s\""
+
+#~ msgid ""
+#~ "List %s service that is currently in state WARNING in service group \"%s\""
+#~ msgid_plural ""
+#~ "List %s services which are currently in state WARNING in service group "
+#~ "\"%s\""
+#~ msgstr[0] ""
+#~ "Показать %s службу, находящуюся в состоянии ВНИМАНИЕ, в группе служб \"%s"
+#~ "\""
+#~ msgstr[1] ""
+#~ "Показать %s службы, находящиеся в состоянии ВНИМАНИЕ, в группе служб \"%s"
+#~ "\""
+#~ msgstr[2] ""
+#~ "Показать %s служб, находящихся в состоянии ВНИМАНИЕ, в группе служб \"%s\""
+
+#~ msgid "List %u service that is currently in state %s"
+#~ msgid_plural "List %u services which are currently in state %s"
+#~ msgstr[0] "Показать %u службу, находящуюся в состоянии %s"
+#~ msgstr[1] "Показать %u службы, находящиеся в состоянии %s"
+#~ msgstr[2] "Показать %u служб, находящихся в состоянии %s"
+
+#~ msgid "List %u service that is currently in state %s (Acknowledged)"
+#~ msgid_plural ""
+#~ "List %u services which are currently in state %s (Acknowledged)"
+#~ msgstr[0] "Показать %u службу, находящуюся в состоянии %s (Подтверждено)"
+#~ msgstr[1] "Показать %u службы, находящиеся в состоянии %s (Подтверждено)"
+#~ msgstr[2] "Показать %u служб, находящихся в состоянии %s (Подтверждено)"
+
+#~ msgid ""
+#~ "List %u service that is currently in state %s (Acknowledged) on host %s"
+#~ msgid_plural ""
+#~ "List %u services which are currently in state %s (Acknowledged) on host %s"
+#~ msgstr[0] ""
+#~ "Показать %u службу, находящуюся в состоянии %s (Подтверждено), на узле %s"
+#~ msgstr[1] ""
+#~ "Показать %u службы, находящиеся в состоянии %s (Подтверждено), на узле %s"
+#~ msgstr[2] ""
+#~ "Показать %u служб, находящихся в состоянии %s (Подтверждено), на узле %s"
+
+#~ msgid "List %u service that is currently in state %s on host %s"
+#~ msgid_plural "List %u services which are currently in state %s on host %s"
+#~ msgstr[0] "Показать %u службу, находящуюся в состоянии %s, на узле  %s"
+#~ msgstr[1] "Показать %u службы, находящиеся в состоянии %s, на узле  %s"
+#~ msgstr[2] "Показать %u служб, находящихся в состоянии %s, на узле  %s"
+
+#~ msgid ""
+#~ "List %u service that is currently in state CRITICAL (Acknowledged) on "
+#~ "hosts in the host group \"%s\""
+#~ msgid_plural ""
+#~ "List %u services which are currently in state CRITICAL (Acknowledged) on "
+#~ "hosts in the host group \"%s\""
+#~ msgstr[0] ""
+#~ "Показать %u службу, находящуюся в состоянии КРИТИЧНО (Подтверждено), на "
+#~ "узлах группы \"%s\""
+#~ msgstr[1] ""
+#~ "Показать %u службы, находящиеся в состоянии КРИТИЧНО (Подтверждено), на "
+#~ "узлах группы \"%s\""
+#~ msgstr[2] ""
+#~ "Показать %u служб, находящихся в состоянии КРИТИЧНО (Подтверждено), на "
+#~ "узлах группы \"%s\""
+
+#~ msgid ""
+#~ "List %u service that is currently in state CRITICAL on hosts in the host "
+#~ "group \"%s\""
+#~ msgid_plural ""
+#~ "List %u services which are currently in state CRITICAL on hosts in the "
+#~ "host group \"%s\""
+#~ msgstr[0] ""
+#~ "Показать %u службу, находящуюся в состоянии КРИТИЧНО, на узлах группы  "
+#~ "\"%s\""
+#~ msgstr[1] ""
+#~ "Показать %u службы, находящиеся в состоянии КРИТИЧНО, на узлах группы  "
+#~ "\"%s\""
+#~ msgstr[2] ""
+#~ "Показать %u служб, находящихся в состоянии КРИТИЧНО, на узлах группы  \"%s"
+#~ "\""
+
+#~ msgid "List %u service that is currently in state OK on host %s"
+#~ msgid_plural "List %u services which are currently in state OK on host %s"
+#~ msgstr[0] "Показать %u службу, находящуюся в состоянии ОК, на узле  %s"
+#~ msgstr[1] "Показать %u службы, находящиеся в состоянии ОК, на узле  %s"
+#~ msgstr[2] "Показать %u служб, находящихся в состоянии ОК, на узле  %s"
+
+#~ msgid ""
+#~ "List %u service that is currently in state OK on hosts in the host group "
+#~ "\"%s\""
+#~ msgid_plural ""
+#~ "List %u services which are currently in state OK on hosts in the host "
+#~ "group \"%s\""
+#~ msgstr[0] ""
+#~ "Показать %u службу, находящуюся в состоянии ОК, на узлах группы  \"%s\""
+#~ msgstr[1] ""
+#~ "Показать %u службы, находящиеся в состоянии ОК, на узлах группы  \"%s\""
+#~ msgstr[2] ""
+#~ "Показать %u служб, находящихся в состоянии ОК, на узлах группы  \"%s\""
+
+#~ msgid "List %u service that is currently in state PENDING on host %s"
+#~ msgid_plural ""
+#~ "List %u services which are currently in state PENDING on host %s"
+#~ msgstr[0] ""
+#~ "Показать %u службу, находящуюся в состоянии ОЖИДАНИЕ, на узле  %s"
+#~ msgstr[1] ""
+#~ "Показать %u службы, находящиеся в состоянии ОЖИДАНИЕ, на узле  %s"
+#~ msgstr[2] "Показать %u служб, находящихся в состоянии ОЖИДАНИЕ, на узле  %s"
+
+#~ msgid ""
+#~ "List %u service that is currently in state PENDING on hosts in the host "
+#~ "group \"%s\""
+#~ msgid_plural ""
+#~ "List %u services which are currently in state PENDING on hosts in the "
+#~ "host group \"%s\""
+#~ msgstr[0] ""
+#~ "Показать %u службу, находящуюся в состоянии ОЖИДАНИЕ, на узлах группы  "
+#~ "\"%s\""
+#~ msgstr[1] ""
+#~ "Показать %u службы, находящиеся в состоянии ОЖИДАНИЕ, на узлах группы  "
+#~ "\"%s\""
+#~ msgstr[2] ""
+#~ "Показать %u служб, находящихся в состоянии ОЖИДАНИЕ, на узлах группы  \"%s"
+#~ "\""
+
+#~ msgid ""
+#~ "List %u service that is currently in state UNKNOWN (Acknowledged) on "
+#~ "hosts in the host group \"%s\""
+#~ msgid_plural ""
+#~ "List %u services which are currently in state UNKNOWN (Acknowledged) on "
+#~ "hosts in the host group \"%s\""
+#~ msgstr[0] ""
+#~ "Показать %u службу, находящуюся в состоянии НЕИЗВЕСТНО (Подтверждено), на "
+#~ "узлах группы \"%s\""
+#~ msgstr[1] ""
+#~ "Показать %u службы, находящиеся в состоянии НЕИЗВЕСТНО (Подтверждено), на "
+#~ "узлах группы \"%s\""
+#~ msgstr[2] ""
+#~ "Показать %u служб, находящихся в состоянии НЕИЗВЕСТНО (Подтверждено), на "
+#~ "узлах группы \"%s\""
+
+#~ msgid ""
+#~ "List %u service that is currently in state UNKNOWN on hosts in the host "
+#~ "group \"%s\""
+#~ msgid_plural ""
+#~ "List %u services which are currently in state UNKNOWN on hosts in the "
+#~ "host group \"%s\""
+#~ msgstr[0] ""
+#~ "Показать %u службу, находящуюся в состоянии НЕИЗВЕСТНО, на узлах группы  "
+#~ "\"%s\""
+#~ msgstr[1] ""
+#~ "Показать %u службы, находящиеся в состоянии НЕИЗВЕСТНО, на узлах группы  "
+#~ "\"%s\""
+#~ msgstr[2] ""
+#~ "Показать %u служб, находящихся в состоянии НЕИЗВЕСТНО, на узлах группы  "
+#~ "\"%s\""
+
+#~ msgid ""
+#~ "List %u service that is currently in state WARNING (Acknowledged) on "
+#~ "hosts in the host group \"%s\""
+#~ msgid_plural ""
+#~ "List %u services which are currently in state WARNING (Acknowledged) on "
+#~ "hosts in the host group \"%s\""
+#~ msgstr[0] ""
+#~ "Показать %u службу, находящуюся в состоянии ВНИМАНИЕ (Подтверждено), на "
+#~ "узлах группы \"%s\""
+#~ msgstr[1] ""
+#~ "Показать %u службы, находящиеся в состоянии ВНИМАНИЕ (Подтверждено), на "
+#~ "узлах группы \"%s\""
+#~ msgstr[2] ""
+#~ "Показать %u служб, находящихся в состоянии ВНИМАНИЕ (Подтверждено), на "
+#~ "узлах группы \"%s\""
+
+#~ msgid ""
+#~ "List %u service that is currently in state WARNING on hosts in the host "
+#~ "group \"%s\""
+#~ msgid_plural ""
+#~ "List %u services which are currently in state WARNING on hosts in the "
+#~ "host group \"%s\""
+#~ msgstr[0] ""
+#~ "Показать %u службу, находящуюся в состоянии ВНИМАНИЕ, на узлах группы  "
+#~ "\"%s\""
+#~ msgstr[1] ""
+#~ "Показать %u службы, находящиеся в состоянии ВНИМАНИЕ, на узлах группы  "
+#~ "\"%s\""
+#~ msgstr[2] ""
+#~ "Показать %u служб, находящихся в состоянии ВНИМАНИЕ, на узлах группы  \"%s"
+#~ "\""
+
+#~ msgid "Services CRITICAL"
+#~ msgstr "Службы в статусе КРИТИЧНО"
+
+#~ msgid "Services OK"
+#~ msgstr "Службы в статусе ОК"
+
+#~ msgid "Services PENDING"
+#~ msgstr "Службы в статусе ОЖИДАНИЕ"
+
+#~ msgid "Services UNKNOWN"
+#~ msgstr "Службы в статусе НЕИЗВЕСТНО"
+
+#~ msgid "Services WARNING"
+#~ msgstr "Службы в статусе ВНИМАНИЕ"
+
+#~ msgid "Sort by"
+#~ msgstr "Сортировка"
+
+#~ msgid "Unhandled Services"
+#~ msgstr "Необработанные службы"
