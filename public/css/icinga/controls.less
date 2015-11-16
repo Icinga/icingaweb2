@@ -47,6 +47,14 @@
       text-decoration: none;
     }
   }
+
+  .previous-page {
+    padding-left: 0;
+  }
+
+  .next-page {
+    padding-right: 0;
+  }
 }
 
 .sort-control {
@@ -63,6 +71,10 @@
   select[name=dir] {
     width: 8em;
     margin-left: 0;
+  }
+
+  > form > i {
+    .sr-only();
   }
 }
 
