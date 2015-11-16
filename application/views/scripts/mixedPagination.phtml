@@ -16,13 +16,14 @@ if ($this->pageCount <= 1) return;
         <li class="nav-item">
             <a  href="<?= Url::fromRequest()->overwriteParams(array('page' => $this->previous)) ?>"
                 title="<?= $label ?>"
-                aria-label="<?= $label ?>">
+                aria-label="<?= $label ?>"
+                class="previous-page">
                 <?= $this->icon('angle-double-left') ?>
             </a>
         </li>
     <?php else: ?>
         <li class="nav-item disabled" aria-hidden="true">
-            <span>
+            <span class="previous-page">
                 <span class="sr-only"><?= $this->translate('Previous page') ?></span>
                 <?= $this->icon('angle-double-left') ?>
             </span>
@@ -65,13 +66,14 @@ if ($this->pageCount <= 1) return;
         <li class="nav-item">
             <a  href="<?= Url::fromRequest()->overwriteParams(array('page' => $this->next)) ?>"
                 title="<?= $label ?>"
-                aria-label="<?= $label ?>">
+                aria-label="<?= $label ?>"
+                class="next-page">
                 <?= $this->icon('angle-double-right') ?>
             </a>
         </li>
     <?php else: ?>
         <li class="disabled nav-item" aria-hidden="true">
-            <span>
+            <span class="next-page">
                 <span class="sr-only"><?= $this->translate('Next page') ?></span>
                 <?= $this->icon('angle-double-right') ?>
             </span>
