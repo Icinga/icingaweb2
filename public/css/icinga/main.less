@@ -192,17 +192,34 @@ a:hover > .icon-cancel {
 // TODO(el): Fix
 .controls {
   .limiter-control {
-    .pull-left();
+    float: right;
     padding: @vertical-padding / 2 0;
+    margin-bottom: 0.25em;
   }
 
   .pagination-control {
-    .pull-left();
-    padding: @vertical-padding / 2 @horizontal-padding;
+    padding: @vertical-padding / 2 0;
+    margin-bottom: 0.25em;
   }
 
   .sort-control {
-    .pull-right();
+    float: right;
     padding: @vertical-padding / 2 0;
+    margin-bottom: 0.25em;
+    margin-left: 0.5em;
+  }
+
+  .sort-direction-control {
+    margin-bottom: 0.5em;
+    margin-left: 0.5em;
+    width: 1em;
+  }
+
+  .filter {
+    margin-bottom: 0.5em;
+  }
+
+  .selection-info {
+    margin-left: 0.5em;
   }
 }
