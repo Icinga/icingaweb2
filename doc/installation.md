@@ -498,3 +498,7 @@ The first release candidate of Icinga Web 2 introduces the following non-backwar
   **&lt;config-dir&gt;/preferences/&lt;username&gt;.ini** to
   **&lt;config-dir&gt;/preferences/&lt;username&gt;/config.ini**.
   The content of the file remains unchanged.
+
+## <a id="upgrading-to-2.1.0"></a> Upgrading to Icinga Web 2 2.1.0
+
+Icinga Web 2 2.1.0 does not introduce any backward incompatible change.
