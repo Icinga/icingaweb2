@@ -35,6 +35,7 @@ class HookTest extends BaseTestCase
 
     public function setUp()
     {
+        $this->markTestSkipped();
         parent::setUp();
         Hook::clean();
     }
