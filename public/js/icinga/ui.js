@@ -20,6 +20,8 @@
         this.debugTimer = null;
 
         this.timeCounterTimer = null;
+
+        this.mobileMenu = false;
     };
 
     Icinga.UI.prototype = {
@@ -533,8 +535,39 @@
 
                 if (! $('#layout').hasClass('fullscreen-layout')) {
                     $('#header').css({height: 'auto'});
-                    $('#main').css({top: $('#header').css('height')});
-                    $('#sidebar').css({top: $('#header').height() + 'px'});
+                    if ($('#layout').hasClass('minimal-layout')) {
+                        if (! this.mobileMenu) {
+                            $('#header').css({top: $('#sidebar').height() + 'px'});
+                            $('#main').css({
+                                top: $('#header').height() + $('#sidebar').height()
+                            });
+                            $('#sidebar').css({
+                                zIndex: 2
+                            }).on('click', function (e) {
+                                var $sidebar = $('#sidebar');
+                                var $target = $(e.target);
+                                var href = $target.attr('href');
+                                if (href) {
+                                    if (href !== '#') {
+                                        $sidebar.removeClass('expanded');
+                                    }
+                                } else if (! $target.is('input')) {
+                                    $sidebar.toggleClass('expanded');
+                                }
+                                $('#search').keypress(function(e) {
+                                    if (e.which === 13) {
+                                        $sidebar.removeClass('expanded');
+                                    }
+                                });
+                            }).prepend('<i class="icon-menu" style="vertical-align: middle;"></i>').css({
+                                paddingBottom: 32
+                            });
+                            this.mobileMenu = true;
+                        }
+                    } else {
+                        $('#main').css({top: $('#header').css('height')});
+                        $('#sidebar').css({top: $('#header').height() + 'px'});
+                    }
                     $('#header').css({height: $('#header').height() + 'px'});
                     $('#inner-layout').css({top: $('#header').css('height')});
                 }

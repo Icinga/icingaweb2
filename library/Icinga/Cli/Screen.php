@@ -29,7 +29,7 @@ class Screen
         $rows = (int) getenv('ROWS');
         if (! $rows) {
             // stty -a ?
-            $rows = (int) exec('tput rows');
+            $rows = (int) exec('tput lines');
         }
         if (! $rows) {
             $rows = 25;

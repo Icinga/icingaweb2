@@ -4,6 +4,7 @@
 namespace Icinga\Web\Controller;
 
 use Exception;
+use Icinga\Util\String;
 use Zend_Controller_Action;
 use Zend_Controller_Action_Interface;
 use Zend_Controller_Dispatcher_Exception;
@@ -43,7 +44,7 @@ class Dispatcher extends Zend_Controller_Dispatcher_Standard
             parent::dispatch($request, $response);
             return;
         }
-        $controllerName = ucfirst($controllerName) . 'Controller';
+        $controllerName = String::cname($controllerName, '-') . 'Controller';
         $moduleName = $request->getModuleName();
         if ($moduleName === null || $moduleName === $this->_defaultModule) {
             $controllerClass = 'Icinga\\' . self::CONTROLLER_NAMESPACE . '\\' . $controllerName;

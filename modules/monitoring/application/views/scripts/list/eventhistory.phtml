@@ -1,13 +1,13 @@
 <?php
 
 if (! $this->compact): ?>
-<div class="controls dont-print separated">
+<div class="controls">
     <?= $this->tabs ?>
     <div class="grid">
-        <?= $this->limiter ?>
         <?= $this->sortBox ?>
+        <?= $this->limiter ?>
+        <?= $this->filterEditor ?>
     </div>
-    <?= $this->filterEditor ?>
 </div>
 <?php endif ?>
 <?= $this->partial(

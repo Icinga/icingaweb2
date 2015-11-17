@@ -91,8 +91,8 @@ class FilterExpression extends Filter
     public function toQueryString()
     {
         $expression = is_array($this->expression) ?
-             '(' . implode('|', $this->expression) . ')' :
-             $this->expression;
+             '(' . implode('|', array_map('rawurlencode', $this->expression)) . ')' :
+             rawurlencode($this->expression);
 
         return $this->column . $this->sign . $expression;
     }

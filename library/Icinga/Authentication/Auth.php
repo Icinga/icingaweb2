@@ -341,6 +341,17 @@ class Auth
      */
     public function persistCurrentUser()
     {
+        // @TODO(el): https://dev.icinga.org/issues/10646
+        $params = session_get_cookie_params();
+        setcookie(
+            'icingaweb2-session',
+            time(),
+            null,
+            $params['path'],
+            $params['domain'],
+            $params['secure'],
+            $params['httponly']
+        );
         Session::getSession()->set('user', $this->user)->refreshId();
     }
 

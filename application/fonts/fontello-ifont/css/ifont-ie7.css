@@ -138,3 +138,4 @@
 .icon-info-circled { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe87d;&nbsp;'); }
 .icon-twitter { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe87e;&nbsp;'); }
 .icon-facebook-squared { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe87f;&nbsp;'); }
+.icon-gplus-squared { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe880;&nbsp;'); }

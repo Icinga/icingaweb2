@@ -1,11 +1,11 @@
 <?php if (! $this->compact): ?>
 <div class="controls separated dont-print">
     <?= $tabs ?>
+    <?= $this->render('list/components/selectioninfo.phtml') ?>
     <div class="grid">
+        <?= $this->sortBox ?>
         <?= $this->limiter ?>
         <?= $this->paginator ?>
-        <?= $this->render('list/components/selectioninfo.phtml') ?>
-        <?= $this->sortBox ?>
     </div>
     <?= $this->filterEditor ?>
 </div>

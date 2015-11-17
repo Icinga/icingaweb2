@@ -180,27 +180,6 @@ class SortBox extends AbstractWidget
             )
         );
 
-        $orderForm = new Form();
-        $orderForm->setTokenDisabled();
-        $orderForm->setName($this->name . '-order');
-        $orderForm->setAttrib('class', 'inline');
-        $orderForm->addElement(
-            'select',
-            'dir',
-            array(
-                'autosubmit'    => true,
-                'label'         => $this->view()->translate('Direction', 'sort direction'),
-                'multiOptions'  => array(
-                    'asc'       => $this->view()->translate('Ascending', 'sort direction'),
-                    'desc'      => $this->view()->translate('Descending', 'sort direction')
-                ),
-                'decorators'    => array(
-                    array('ViewHelper'),
-                    array('Label', array('class' => 'no-js'))
-                )
-            )
-        );
-
         $column = null;
         if ($this->request) {
             $url = $this->request->getUrl();
@@ -222,8 +201,38 @@ class SortBox extends AbstractWidget
             list($column, $direction) = $this->getSortDefaults();
         }
 
+        // TODO(el): ToggleButton :)
+        $toggle = array('asc' => 'sort-name-down', 'desc' => 'sort-name-up');
+        unset($toggle[$direction]);
+        $newDirection = key($toggle);
+        $icon = current($toggle);
+
+        $orderForm = new Form();
+        $orderForm->setTokenDisabled();
+        $orderForm->setName($this->name . '-order');
+        $orderForm->setAttrib('class', 'inline sort-direction-control');
+        $orderForm->addElement(
+            'hidden',
+            'dir'
+        );
+        $orderForm->addElement(
+            'button',
+            'btn_submit',
+            array(
+                'ignore'        => true,
+                'type'          => 'submit',
+                'label'         => $this->view()->icon($icon),
+                'decorators'    => array('ViewHelper'),
+                'escape'        => false,
+                'class'         => 'link-button spinner',
+                'value'         => 'submit',
+                'title'         => t('Change sort direction'),
+            )
+        );
+
+
         $columnForm->populate(array('sort' => $column));
-        $orderForm->populate(array('dir' => $direction));
+        $orderForm->populate(array('dir' => $newDirection));
         return '<div class="sort-control">' . $columnForm . $orderForm . '</div>';
     }
 }

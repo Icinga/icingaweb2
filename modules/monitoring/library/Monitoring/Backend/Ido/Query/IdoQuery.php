@@ -5,6 +5,7 @@ namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
 use Zend_Db_Expr;
 use Icinga\Application\Icinga;
+use Icinga\Application\Hook;
 use Icinga\Application\Logger;
 use Icinga\Data\Db\DbQuery;
 use Icinga\Data\Filter\Filter;
@@ -118,6 +119,15 @@ abstract class IdoQuery extends DbQuery
      * @var array
      */
     protected $joinedVirtualTables = array();
+
+    /**
+     * A map of virtual table names and corresponding hook instances
+     *
+     * Joins for those tables will be delegated to them
+     *
+     * @var array
+     */
+    protected $hookedVirtualTables = array();
 
     /**
      * List of column aliases used for sorting the result
@@ -594,6 +604,18 @@ abstract class IdoQuery extends DbQuery
     }
 
     /**
+     * Return our column map
+     *
+     * Might be useful for hooks
+     *
+     * @return array
+     */
+    public function getColumnMap()
+    {
+        return $this->columnMap;
+    }
+
+    /**
      * Apply oracle specific query initialization
      */
     private function initializeForOracle()
@@ -651,6 +673,23 @@ abstract class IdoQuery extends DbQuery
     {
         parent::init();
         $this->prefix = $this->ds->getTablePrefix();
+
+        foreach (Hook::all('monitoring/idoQueryExtension') as $hook) {
+            $extensions = $hook->extendColumnMap($this);
+            if (! is_array($extensions)) continue;
+
+            foreach ($extensions as $vTable => $cols) {
+                if (! array_key_exists($vTable, $this->columnMap)) {
+                    $this->hookedVirtualTables[$vTable] = $hook;
+                    $this->columMap[$vTable] = array();
+                }
+
+                foreach ($cols as $k => $v) {
+                    $this->columnMap[$vTable][$k] = $v;
+                }
+            }
+        }
+
         $dbType = $this->ds->getDbType();
         if ($dbType === 'oracle') {
             $this->initializeForOracle();
@@ -787,7 +826,24 @@ abstract class IdoQuery extends DbQuery
         if ($this->hasJoinedVirtualTable($name)) {
             return $this;
         }
-        return $this->joinVirtualTable($name);
+
+        if ($this->virtualTableIsHooked($name)) {
+            return $this->joinHookedVirtualTable($name);
+        } else {
+            return $this->joinVirtualTable($name);
+        }
+    }
+
+    /**
+     * Whether a given virtual table name has been provided by a hook
+     *
+     * @param string $name Virtual table name
+     *
+     * @return boolean
+     */
+    protected function virtualTableIsHooked($name)
+    {
+        return array_key_exists($name, $this->hookedVirtualTables);
     }
 
     protected function conflictsWithVirtualTable($name)
@@ -822,6 +878,19 @@ abstract class IdoQuery extends DbQuery
                 $table
             );
         }
+        $this->joinedVirtualTables[$table] = true;
+        return $this;
+    }
+
+    /**
+     * Tell a hook to join a virtual table
+     *
+     * @param  String $table
+     * @return $this
+     */
+    protected function joinHookedVirtualTable($table)
+    {
+        $this->hookedVirtualTables[$table]->joinVirtualTable($this, $table);
         $this->joinedVirtualTables[$table] = true;
         return $this;
     }

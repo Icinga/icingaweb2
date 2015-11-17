@@ -6,6 +6,7 @@ namespace Icinga\Forms;
 use Exception;
 use Zend_Form_Decorator_Abstract;
 use Icinga\Web\Form;
+use Icinga\Web\Notification;
 use Icinga\Application\Config;
 
 /**
@@ -31,6 +32,47 @@ class ConfigForm extends Form
     {
         $this->config = $config;
         return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function onSuccess()
+    {
+        $sections = array();
+        foreach ($this->getValues() as $sectionAndPropertyName => $value) {
+            if ($value === '') {
+                $value = null; // Causes the config writer to unset it
+            }
+
+            list($section, $property) = explode('_', $sectionAndPropertyName, 2);
+            $sections[$section][$property] = $value;
+        }
+
+        foreach ($sections as $section => $config) {
+            $this->config->setSection($section, $config);
+        }
+
+        if ($this->save()) {
+            Notification::success($this->translate('New configuration has successfully been stored'));
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function onRequest()
+    {
+        $values = array();
+        foreach ($this->config as $section => $properties) {
+            foreach ($properties as $name => $value) {
+                $values[$section . '_' . $name] = $value;
+            }
+        }
+
+        $this->populate($values);
     }
 
     /**

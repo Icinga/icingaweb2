@@ -3,12 +3,12 @@ use Icinga\Module\Monitoring\Object\Host;
 use Icinga\Module\Monitoring\Object\Service;
 
 if (! $this->compact): ?>
-<div class="controls separated dont-print">
+<div class="controls">
     <?= $tabs ?>
     <div class="grid">
+        <?= $this->sortBox ?>
         <?= $this->limiter ?>
         <?= $this->paginator ?>
-        <?= $this->sortBox ?>
     </div>
     <?= $this->filterEditor ?>
 </div>
