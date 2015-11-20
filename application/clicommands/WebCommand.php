@@ -38,8 +38,8 @@ class WebCommand extends Command
         }
 
         $fork = $this->params->get('daemonize');
-        $documentRoot = $this->params->shift('document-root');
-        $socket  = $this->params->shift('listen-addr');
+        $documentRoot = $this->params->shift();
+        $socket  = $this->params->shift();
 
         // TODO: Sanity check!!
         if ($socket === null) {
