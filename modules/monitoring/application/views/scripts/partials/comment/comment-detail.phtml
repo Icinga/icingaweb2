@@ -1,10 +1,11 @@
-<div class="comment-header">
-<?php if ($comment->objecttype === 'service'): ?>
-    <?= $this->icon('service', $this->translate('Service')) ?> <?= $this->qlink(
+<div class="comment-author">
+<?php if ($comment->objecttype === 'service') {
+    echo $this->icon('service', $this->translate('Service'));
+    echo $this->qlink(
         $comment->host_display_name . ': ' . $comment->service_display_name,
         'monitoring/service/show',
         array(
-            'host'    => $comment->host_name,
+            'host' => $comment->host_name,
             'service' => $comment->service_description
         ),
         array(
@@ -14,9 +15,10 @@
                 $comment->host_display_name
             )
         )
-    ) ?>
-<?php else: ?>
-    <?= $this->icon('host', $this->translate('Host')) ?> <?= $this->qlink(
+    );
+} else {
+    echo $this->icon('host', $this->translate('Host'));
+    echo $this->qlink(
         $comment->host_display_name,
         'monitoring/host/show',
         array('host' => $comment->host_name),
@@ -26,33 +28,33 @@
                 $comment->host_display_name
             )
         )
-    ) ?>
-<?php endif ?>
-    <span class="comment-meta">
+    );
+} ?>
+    <span class="comment-time">
         <?= $this->translate('by') ?>
         <?= $this->escape($comment->author) ?>
         <?= $this->timeAgo($comment->timestamp) ?>
-        <span class="meta-icons" data-base-target="_self">
-            <?= $comment->persistent ? $this->icon('attach', 'This comment is persistent.') : '' ?>
-            <?= $comment->expiration ? $this->icon('clock', sprintf(
-                $this->translate('This comment expires %s.'),
-                $this->timeUntil($comment->expiration)
-            )) : '' ?>
-        <?php if (isset($delCommentForm)) {
-            $deleteButton = clone $delCommentForm;
-            /** @var \Icinga\Module\Monitoring\Forms\Command\Object\DeleteCommentCommandForm $deleteButton */
-            $deleteButton->setAttrib('class', $deleteButton->getAttrib('class') . ' remove-action');
-            $deleteButton->populate(
-                array(
-                    'comment_id'            => $comment->id,
-                    'comment_is_service'    => isset($comment->service_description)
-                )
-            );
-            echo $deleteButton;
-        } ?>
-        </span>
+    </span>
+    <span class="comment-icons" data-base-target="_self">
+        <?= $comment->persistent ? $this->icon('attach', 'This comment is persistent.') : '' ?>
+        <?= $comment->expiration ? $this->icon('clock', sprintf(
+            $this->translate('This comment expires %s.'),
+            $this->timeUntil($comment->expiration)
+        )) : '' ?>
+    <?php if (isset($delCommentForm)) {
+        $deleteButton = clone $delCommentForm;
+        /** @var \Icinga\Module\Monitoring\Forms\Command\Object\DeleteCommentCommandForm $deleteButton */
+        $deleteButton->setAttrib('class', $deleteButton->getAttrib('class') . ' remove-action');
+        $deleteButton->populate(
+            array(
+                'comment_id'            => $comment->id,
+                'comment_is_service'    => isset($comment->service_description)
+            )
+        );
+        echo $deleteButton;
+    } ?>
     </span>
 </div>
 <p class="comment-text">
-    <?= $this->escape($comment->comment) ?>
+    <?= $this->nl2br($this->escape($comment->comment)) ?>
 </p>
