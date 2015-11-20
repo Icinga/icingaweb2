@@ -322,6 +322,7 @@ abstract class MonitoredObject implements Filterable
             'comment'           => 'comment_data',
             'expiration'        => 'comment_expiration',
             'id'                => 'comment_internal_id',
+            'persistent'        => 'comment_is_persistent',
             'timestamp'         => 'comment_timestamp',
             'type'              => 'comment_type'
         ));
