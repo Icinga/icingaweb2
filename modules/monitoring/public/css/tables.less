@@ -186,8 +186,11 @@
   width: 100%;
 
   tr[href] {
+    .transition(background 0.2s ease);
+
     &.active {
       background-color: @gray-lighter;
+      transition: none;
     }
 
     &:hover {
