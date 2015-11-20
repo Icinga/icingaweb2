@@ -44,7 +44,7 @@ $acknowledgement = $object->acknowledgement;
                 } ?>
             </dt>
             <dd>
-                <?= nl2br($this->createTicketLinks($this->escape($acknowledgement->getComment())), false) ?>
+                <?= $this->nl2br($this->createTicketLinks($this->escape($acknowledgement->getComment()))) ?>
             </dd>
         </dl>
         <?php else: ?>
@@ -85,7 +85,7 @@ $acknowledgement = $object->acknowledgement;
                     'Acknowledge this problem, suppress all future notifications for it and tag it as being handled'
                 )
             )
-        ); ?>
+        ) ?>
     <?php } else {
         echo '&#45;';
     } // endif ?>
