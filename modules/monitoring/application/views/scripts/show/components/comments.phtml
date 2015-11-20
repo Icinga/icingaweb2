@@ -67,7 +67,7 @@ if (empty($object->comments) && ! $addLink) {
                 } ?>
             </dt>
             <dd>
-                <?= nl2br($this->createTicketLinks($this->escape($comment->comment)), false) ?>
+                <?= $this->nl2br($this->createTicketLinks($this->escape($comment->comment))) ?>
             </dd>
         <?php endforeach ?>
         </dl>
