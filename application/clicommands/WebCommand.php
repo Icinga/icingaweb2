@@ -9,23 +9,6 @@ use Icinga\Exception\IcingaException;
 
 class WebCommand extends Command
 {
-    /**
-     * Serve Icinga Web 2 with PHP's built-in web server
-     *
-     * USAGE
-     *
-     *   icingacli web serve [options]
-     *
-     * OPTIONS
-     *
-     *   --daemonize                Run in background
-     *   --document-root=<dir>      The document root directory of Icinga Web 2 (e.g. ./public)
-     *   --listen-addr=<host:port>  The address to listen on
-     *
-     * EXAMPLES
-     *
-     *   icingacli web serve --listen-addr=127.0.0.1:8080
-     */
     public function serveAction()
     {
         $minVersion = '5.4.0';
