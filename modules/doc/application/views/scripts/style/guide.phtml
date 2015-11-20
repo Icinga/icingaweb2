@@ -10,6 +10,7 @@
             <li><a href="#headings">Headings</a></li>
             <li><a href="#block-content">Block Content</a></li>
             <li><a href="#tables">Tables</a></li>
+            <li><a href="#comment-list">Comment List</a></li>
         </ul>
     </div>
 
@@ -61,5 +62,37 @@
             </tr>
         </tbody>
         </table>
+    </div>
+
+    <div class="section">
+        <h2 id="comment-list"><?= $this->translate('Comment List') ?></h2>
+        <dl class="comment-list">
+            <dt>
+                John Doe
+                <span class="comment-time">
+                    <?= $this->translate('commented') ?>
+                    <span class="relative-time"><?= $this->translate('some time ago') ?></span>
+                </span>
+                <i class="remove-action icon-cancel"></i>
+            </dt>
+            <dd>
+                Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore
+                <br>
+                et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.
+            </dd>
+            <dt>
+                Richard Roe
+                <span class="comment-time">
+                    <?= $this->translate('commented') ?>
+                    <span class="relative-time"><?= $this->translate('some time ago') ?></span>
+                </span>
+                <i class="remove-action icon-cancel"></i>
+            </dt>
+            <dd>
+                Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore
+                <br>
+                et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.
+            </dd>
+        </dl>
     </div>
 </div>
