@@ -109,6 +109,13 @@ class Hook
         }
 
         $class = self::$hooks[$name][$key];
+
+        if (! class_exists($class)) {
+            throw new ProgrammingError(
+                'Erraneous hook implementation, class "%s" does not exist',
+                $class
+            );
+        }
         try {
             $instance = new $class();
         } catch (Exception $e) {

@@ -159,12 +159,6 @@
         if (! this.active) {
             this.setActive($('#menu [href="' + this.icinga.utils.parseUrl(url).path + '"]').first());
         }
-
-        // if no item with the base action exists, activate the first URL that beings with the base path
-        // but may have different filters
-        if (! this.active) {
-            this.setActive($('#menu [href^="' + this.icinga.utils.parseUrl(url).path + '"]').first());
-        }
     };
 
     /**

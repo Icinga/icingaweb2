@@ -80,7 +80,9 @@ class LimiterControlForm extends Form
      */
     public function getRedirectUrl()
     {
-        return $this->getRequest()->getUrl()->setParam('limit', $this->getElement('limit')->getValue());
+        return $this->getRequest()->getUrl()
+            ->setParam('limit', $this->getElement('limit')->getValue())
+            ->without('page');
     }
 
     /**

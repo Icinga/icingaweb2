@@ -21,7 +21,7 @@ class WebCommand extends Command
         }
 
         $fork = $this->params->get('daemonize');
-        $basedir = $this->params->shift();
+        $documentRoot = $this->params->shift();
         $socket  = $this->params->shift();
 
         // TODO: Sanity check!!
@@ -29,23 +29,23 @@ class WebCommand extends Command
             $socket = '0.0.0.0:80';
             // throw new IcingaException('Socket is required');
         }
-        if ($basedir === null) {
-            $basedir = Icinga::app()->getBaseDir('public');
-            if (! file_exists($basedir) || ! is_dir($basedir)) {
-                throw new IcingaException('Basedir is required');
+        if ($documentRoot === null) {
+            $documentRoot = Icinga::app()->getBaseDir('public');
+            if (! file_exists($documentRoot) || ! is_dir($documentRoot)) {
+                throw new IcingaException('Document root directory is required');
             }
         }
-        $basedir = realpath($basedir);
+        $documentRoot = realpath($documentRoot);
 
         if ($fork) {
             $this->forkAndExit();
         }
-        echo "Serving Icingaweb from $basedir\n";
+        echo "Serving Icingaweb from $documentRoot\n";
         $cmd = sprintf(
             '%s -S %s -t %s %s',
             readlink('/proc/self/exe'),
             $socket,
-            $basedir,
+            $documentRoot,
             Icinga::app()->getLibraryDir('/Icinga/Application/webrouter.php')
         );
 
