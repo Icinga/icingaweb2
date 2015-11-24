@@ -182,8 +182,8 @@ msgstr "%d unbestätigte Services KRITISCH"
 #: /vagrant/modules/monitoring/application/views/scripts/hosts/show.phtml:46
 #: /vagrant/modules/monitoring/application/views/scripts/services/show.phtml:44
 #, php-format
-msgid "%s acknowledgedment"
-msgid_plural "%s acknowledgedments"
+msgid "%s acknowledgement"
+msgid_plural "%s acknowledgements"
 msgstr[0] "%s Bestätigung"
 msgstr[1] "%s Bestätigungen"
 
