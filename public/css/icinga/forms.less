@@ -15,29 +15,36 @@ input {
   }
 }
 
+input:-moz-placeholder { // FF 18-
+  color: inherit;
+  opacity: 1;
+}
+
+input::-moz-placeholder { // FF 19+
+  color: inherit;
+  opacity: 1;
+}
+
+input:-ms-input-placeholder {
+  color: inherit;
+}
+
+input::-webkit-input-placeholder {
+  color: inherit;
+}
+
+input[placeholder] {
+  color: inherit;
+}
+
 input.search {
-  padding-left: 20px;
   background: transparent url('../img/icons/search.png') no-repeat 2px;
   background-size: 12px 12px;
+  padding-left: 20px;
 
   &:focus {
     background-color: @body-bg-color;
-  }
-
-  &::-webkit-input-placeholder {
-    color: inherit;
-  }
-
-  &:-moz-placeholder {
-    color: inherit;
-  }
-
-  &::-moz-placeholder {
-    color: inherit;
-  }
-
-  &:-ms-input-placeholder {
-    color: inherit;
+    background-image: url('../img/icons/search_icinga_blue.png') !important;
   }
 }
 

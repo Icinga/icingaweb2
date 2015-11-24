@@ -169,17 +169,13 @@ class DashboardController extends ActionController
             try {
                 $dashboardConfig->saveIni();
                 Notification::success(t('Dashlet has been removed from') . ' ' . $pane->getTitle());
-                return true;
             }  catch (Exception $e) {
                 $action->view->error = $e;
                 $action->view->config = $dashboardConfig;
                 $action->render('error');
                 return false;
-            } catch (ProgrammingError $e) {
-                Notification::error($e->getMessage());
-                return false;
             }
-            return false;
+            return true;
         });
         $form->setTitle($this->translate('Remove Dashlet From Dashboard'));
         $form->setRedirectUrl('dashboard/settings');
@@ -209,17 +205,13 @@ class DashboardController extends ActionController
             try {
                 $dashboardConfig->saveIni();
                 Notification::success(t('Dashboard has been removed') . ': ' . $pane->getTitle());
-                return true;
             }  catch (Exception $e) {
                 $action->view->error = $e;
                 $action->view->config = $dashboardConfig;
                 $action->render('error');
                 return false;
-            } catch (ProgrammingError $e) {
-                Notification::error($e->getMessage());
-                return false;
             }
-            return false;
+            return true;
         });
         $form->setTitle($this->translate('Remove Dashboard'));
         $form->setRedirectUrl('dashboard/settings');

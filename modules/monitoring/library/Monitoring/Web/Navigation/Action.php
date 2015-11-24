@@ -89,9 +89,10 @@ class Action extends NavigationItem
         if (! $this->resolved && $url !== null) {
             $this->setUrl(Macro::resolveMacros($url->getAbsoluteUrl(), $this->getObject()));
             $this->resolved = true;
+            return parent::getUrl();
+        } else {
+            return $url;
         }
-
-        return $url;
     }
 
     /**

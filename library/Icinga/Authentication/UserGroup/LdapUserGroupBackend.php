@@ -388,6 +388,7 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
             $sampleValue = $this->ds
                 ->select()
                 ->from($this->groupClass, array($this->groupMemberAttribute))
+                ->where($this->groupMemberAttribute, '*')
                 ->setUnfoldAttribute($this->groupMemberAttribute)
                 ->setBase($this->groupBaseDn)
                 ->fetchOne();
