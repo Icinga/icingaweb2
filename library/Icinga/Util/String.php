@@ -101,17 +101,17 @@ class String
     }
 
     /**
-     * Check if a string ends with a different string
+     * Test whether the given string ends with the given suffix
      *
-     * @param $haystack string The string to search for matches
-     * @param $needle   string The string to match at the start of the haystack
+     * @param   string  $string The string to test
+     * @param   string  $suffix The suffix the string must end with
      *
-     * @return bool     Whether or not needle is at the beginning of haystack
+     * @return bool
      */
-    public static function endsWith($haystack, $needle)
+    public static function endsWith($string, $suffix)
     {
-        return $needle === '' ||
-             (($temp = strlen($haystack) - strlen($needle)) >= 0 && false !== strpos($haystack, $needle, $temp));
+        $stringSuffix = substr($string, -strlen($suffix));
+        return $stringSuffix !== false ? $stringSuffix === $suffix : false;
     }
 
     /**
