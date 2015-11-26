@@ -5,15 +5,16 @@ namespace Icinga\Forms\Config;
 
 use Icinga\Forms\Config\General\ApplicationConfigForm;
 use Icinga\Forms\Config\General\LoggingConfigForm;
+use Icinga\Forms\Config\General\ThemingConfigForm;
 use Icinga\Forms\ConfigForm;
 
 /**
- * Form class for application-wide and logging specific settings
+ * Configuration form for application-wide options
  */
 class GeneralConfigForm extends ConfigForm
 {
     /**
-     * Initialize this configuration form
+     * {@inheritdoc}
      */
     public function init()
     {
@@ -22,13 +23,15 @@ class GeneralConfigForm extends ConfigForm
     }
 
     /**
-     * @see Form::createElements()
+     * {@inheritdoc}
      */
     public function createElements(array $formData)
     {
         $appConfigForm = new ApplicationConfigForm();
         $loggingConfigForm = new LoggingConfigForm();
-        $this->addElements($appConfigForm->createElements($formData)->getElements());
-        $this->addElements($loggingConfigForm->createElements($formData)->getElements());
+        $themingConfigForm = new ThemingConfigForm();
+        $this->addSubForm($appConfigForm->create($formData));
+        $this->addSubForm($loggingConfigForm->create($formData));
+        $this->addSubForm($themingConfigForm->create($formData));
     }
 }
