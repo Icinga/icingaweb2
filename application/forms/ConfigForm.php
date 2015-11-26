@@ -5,9 +5,9 @@ namespace Icinga\Forms;
 
 use Exception;
 use Zend_Form_Decorator_Abstract;
+use Icinga\Application\Config;
 use Icinga\Web\Form;
 use Icinga\Web\Notification;
-use Icinga\Application\Config;
 
 /**
  * Form base-class providing standard functionality for configuration forms
@@ -20,6 +20,23 @@ class ConfigForm extends Form
      * @var Config
      */
     protected $config;
+
+    /**
+     * {@inheritdoc}
+     *
+     * Values from subforms are directly added to the returned values array instead of being grouped by the subforms'
+     * names.
+     */
+    public function getValues($suppressArrayNotation = false)
+    {
+        $values = parent::getValues($suppressArrayNotation);
+        foreach (array_keys($this->_subForms) as $name) {
+            // Zend returns values from subforms grouped by their names, but we want them flat
+            $values = array_merge($values, $values[$name]);
+            unset($values[$name]);
+        }
+        return $values;
+    }
 
     /**
      * Set the configuration to use when populating the form or when saving the user's input
