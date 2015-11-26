@@ -258,19 +258,4 @@ class TransportConfigForm extends ConfigForm
             $this->populate($data);
         }
     }
-
-    /**
-     * Retrieve all form element values
-     *
-     * @param   bool    $suppressArrayNotation  Ignored
-     *
-     * @return  array
-     */
-    public function getValues($suppressArrayNotation = false)
-    {
-        $values = parent::getValues();
-        $values = array_merge($values, $values['transport_form']);
-        unset($values['transport_form']);
-        return $values;
-    }
 }

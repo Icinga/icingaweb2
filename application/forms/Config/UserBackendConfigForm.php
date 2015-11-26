@@ -322,21 +322,6 @@ class UserBackendConfigForm extends ConfigForm
     }
 
     /**
-     * Retrieve all form element values
-     *
-     * @param   bool    $suppressArrayNotation  Ignored
-     *
-     * @return  array
-     */
-    public function getValues($suppressArrayNotation = false)
-    {
-        $values = parent::getValues();
-        $values = array_merge($values, $values['backend_form']);
-        unset($values['backend_form']);
-        return $values;
-    }
-
-    /**
      * Return whether the given values are valid
      *
      * @param   array   $formData   The data to validate
