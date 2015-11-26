@@ -44,13 +44,15 @@ class FileCache
         $tmpDir = sys_get_temp_dir();
         $runtimePath = $tmpDir . '/FileCache_' . $name;
         if (is_dir($runtimePath)) {
-            // Don't combine the following if with the above because else mkdir may fail w/ file exists if the runtime
-            // path exists and is not writeable
+            // Don't combine the following if with the above because else the elseif path will be evaluated if the
+            // runtime path exists and is not writeable
             if (is_writeable($runtimePath)) {
                 $this->basedir = $runtimePath;
                 $this->enabled = true;
             }
-        } elseif (is_dir($tmpDir) && is_writeable($tmpDir) && mkdir($runtimePath, '0750', true)) {
+        } elseif (is_dir($tmpDir) && is_writeable($tmpDir) && @mkdir($runtimePath, '0750', true)) {
+            // Suppress mkdir errors because it may error w/ no such file directory if the systemd private tmp directory
+            // for the web server has been removed
             $this->basedir = $runtimePath;
             $this->enabled = true;
         }
