@@ -6,10 +6,15 @@ namespace Icinga\Forms\Config\General;
 use Icinga\Application\Logger;
 use Icinga\Web\Form;
 
+/**
+ * Configuration form for logging options
+ *
+ * This form is not used directly but as subform for the {@link GeneralConfigForm}.
+ */
 class LoggingConfigForm extends Form
 {
     /**
-     * Initialize this form
+     * {@inheritdoc}
      */
     public function init()
     {
@@ -17,8 +22,9 @@ class LoggingConfigForm extends Form
     }
 
     /**
-     * (non-PHPDoc)
-     * @see Form::createElements() For the method documentation.
+     * {@inheritdoc}
+     *
+     * @return  $this
      */
     public function createElements(array $formData)
     {
