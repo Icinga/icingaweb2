@@ -8,12 +8,14 @@ use Icinga\Data\ResourceFactory;
 use Icinga\Web\Form;
 
 /**
- * Form class to modify the general application configuration
+ * Configuration form for general application options
+ *
+ * This form is not used directly but as subform to the {@link GeneralConfigForm}.
  */
 class ApplicationConfigForm extends Form
 {
     /**
-     * Initialize this form
+     * {@inheritdoc}
      */
     public function init()
     {
@@ -21,7 +23,9 @@ class ApplicationConfigForm extends Form
     }
 
     /**
-     * @see Form::createElements()
+     * {@inheritdoc}
+     *
+     * @return  $this
      */
     public function createElements(array $formData)
     {
@@ -68,6 +72,7 @@ class ApplicationConfigForm extends Form
                 )
             )
         );
+
         if (isset($formData['global_config_backend']) && $formData['global_config_backend'] === 'db') {
             $backends = array();
             foreach (ResourceFactory::getResourceConfigs()->toArray() as $name => $resource) {
