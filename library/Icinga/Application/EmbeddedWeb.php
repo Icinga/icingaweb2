@@ -20,7 +20,7 @@ use Icinga\Web\Response;
 class EmbeddedWeb extends ApplicationBootstrap
 {
     /**
-     * Request object
+     * Request
      *
      * @var Request
      */
@@ -57,6 +57,7 @@ class EmbeddedWeb extends ApplicationBootstrap
      * Embedded bootstrap parts
      *
      * @see    ApplicationBootstrap::bootstrap
+     *
      * @return $this
      */
     protected function bootstrap()
@@ -65,6 +66,8 @@ class EmbeddedWeb extends ApplicationBootstrap
             ->setupZendAutoloader()
             ->setupErrorHandling()
             ->loadConfig()
+            ->setupLogging()
+            ->setupLogger()
             ->setupRequest()
             ->setupResponse()
             ->setupTimezone()
