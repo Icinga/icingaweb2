@@ -46,13 +46,13 @@ class JavaScript
 
     public static function sendMinified()
     {
-        return self::send(true);
+        self::send(true);
     }
 
     public static function sendForIe8()
     {
         self::$vendorFiles = self::$ie8VendorFiles;
-        return self::send();
+        self::send();
     }
 
     public static function send($minified = false)
