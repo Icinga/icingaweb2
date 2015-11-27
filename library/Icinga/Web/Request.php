@@ -118,15 +118,4 @@ class Request extends Zend_Controller_Request_Http
         }
         return $id . '-' . $this->uniqueId;
     }
-
-    /**
-     * Detect whether cookies are enabled
-     *
-     * @return bool
-     */
-    public function hasCookieSupport()
-    {
-        $cookie = new Cookie($this);
-        return $cookie->isSupported();
-    }
 }
