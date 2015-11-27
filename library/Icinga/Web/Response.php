@@ -7,6 +7,9 @@ use Zend_Controller_Response_Http;
 use Icinga\Application\Icinga;
 use Icinga\Web\Response\JsonResponse;
 
+/**
+ * A HTTP response
+ */
 class Response extends Zend_Controller_Response_Http
 {
     /**
@@ -22,6 +25,13 @@ class Response extends Zend_Controller_Response_Http
      * @var Request
      */
     protected $request;
+
+    /**
+     * Whether to instruct client side script code to reload CSS
+     *
+     * @var bool
+     */
+    protected $reloadCss;
 
     /**
      * Whether to send the rerender layout header on XHR
@@ -75,6 +85,29 @@ class Response extends Zend_Controller_Response_Http
     }
 
     /**
+     * Get whether to instruct client side script code to reload CSS
+     *
+     * @return bool
+     */
+    public function isReloadCss()
+    {
+        return $this->reloadCss;
+    }
+
+    /**
+     * Set whether to instruct client side script code to reload CSS
+     *
+     * @param   bool    $reloadCss
+     *
+     * @return  $this
+     */
+    public function setReloadCss($reloadCss)
+    {
+        $this->reloadCss = $reloadCss;
+        return $this;
+    }
+
+    /**
      * Get whether to send the rerender layout header on XHR
      *
      * @return bool
@@ -122,6 +155,9 @@ class Response extends Zend_Controller_Response_Http
             }
             if ($this->getRerenderLayout()) {
                 $this->setHeader('X-Icinga-Container', 'layout', true);
+            }
+            if ($this->isReloadCss()) {
+                $this->setHeader('X-Icinga-Reload-Css', 'now', true);
             }
         } else {
             if ($redirectUrl !== null) {
