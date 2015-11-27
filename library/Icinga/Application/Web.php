@@ -21,6 +21,7 @@ use Icinga\Web\Navigation\Navigation;
 use Icinga\Web\Notification;
 use Icinga\Web\Session;
 use Icinga\Web\Session\Session as BaseSession;
+use Icinga\Web\StyleSheet;
 use Icinga\Web\View;
 
 /**
@@ -34,13 +35,6 @@ use Icinga\Web\View;
  */
 class Web extends EmbeddedWeb
 {
-    /**
-     * The name of the default theme
-     *
-     * @var string
-     */
-    const DEFAULT_THEME = 'Icinga';
-
     /**
      * View object
      *
@@ -113,7 +107,7 @@ class Web extends EmbeddedWeb
      */
     public function getThemes()
     {
-        $themes = array(static::DEFAULT_THEME);
+        $themes = array(StyleSheet::DEFAULT_THEME);
         $applicationThemePath = $this->getBaseDir('public/css/themes');
         if (DirectoryIterator::isReadable($applicationThemePath)) {
             foreach (new DirectoryIterator($applicationThemePath, 'less') as $name => $theme) {
