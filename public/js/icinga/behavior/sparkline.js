@@ -14,8 +14,6 @@
     Sparkline.prototype = new Icinga.EventListener();
 
     Sparkline.prototype.onRendered = function(e) {
-        var el = e.target;
-
         $(e.target).find('.sparkline').each(function() {
             $(this).sparkline('html', {
                 enableTagOptions: true,
