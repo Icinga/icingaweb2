@@ -153,7 +153,10 @@ class DbQuery extends SimpleQuery
             $select->group($group);
         }
 
-        $select->columns($this->columns);
+        if (! empty($this->columns)) {
+            $select->columns($this->columns);
+        }
+
         $this->applyFilterSql($select);
 
         if ($this->hasLimit() || $this->hasOffset()) {
@@ -333,7 +336,9 @@ class DbQuery extends SimpleQuery
         $this->applyFilterSql($count);
         $group = $this->getGroup();
         if ($this->useSubqueryCount || $group) {
-            $count->columns($this->columns);
+            if (! empty($this->columns)) {
+                $count->columns($this->columns);
+            }
             if ($group) {
                 $count->group($group);
             }
