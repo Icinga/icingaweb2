@@ -203,7 +203,7 @@ class SortBox extends AbstractWidget
 
         // TODO(el): ToggleButton :)
         $toggle = array('asc' => 'sort-name-down', 'desc' => 'sort-name-up');
-        unset($toggle[$direction]);
+        unset($toggle[strtolower($direction) ?: 'asc']);
         $newDirection = key($toggle);
         $icon = current($toggle);
 
