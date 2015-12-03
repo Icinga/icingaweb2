@@ -577,4 +577,18 @@ class DbQuery extends SimpleQuery
         $this->select->joinNatural($name, $cols, $schema);
         return $this;
     }
+
+    /**
+     * Add a UNION clause to the query
+     *
+     * @param   array   $select     Select clauses for the union
+     * @param   string  $type       Type of UNION to use
+     *
+     * @return  $this
+     */
+    public function union($select = array(), $type = Zend_Db_Select::SQL_UNION)
+    {
+        $this->select->union($select, $type);
+        return $this;
+    }
 }
