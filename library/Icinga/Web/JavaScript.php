@@ -26,6 +26,7 @@ class JavaScript
         'js/icinga/behavior/tooltip.js',
         'js/icinga/behavior/sparkline.js',
         'js/icinga/behavior/tristate.js',
+        'js/icinga/behavior/dropdown.js',
         'js/icinga/behavior/navigation.js',
         'js/icinga/behavior/form.js',
         'js/icinga/behavior/actiontable.js',
