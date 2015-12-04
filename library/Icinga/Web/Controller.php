@@ -100,16 +100,17 @@ class Controller extends ModuleActionController
      *
      * The widget is set on the `sortBox' view property only if the current view has not been requested as compact
      *
-     * @param   array    $columns    An array containing the sort columns, with the
-     *                               submit value as the key and the label as the value
-     * @param   Sortable $query      Query to apply the user chosen sort rules on
+     * @param   array       $columns    An array containing the sort columns, with the
+     *                                  submit value as the key and the label as the value
+     * @param   Sortable    $query      Query to apply the user chosen sort rules on
+     * @param   array       $defaults   An array containing default sort directions for specific columns
      *
      * @return  $this
      */
-    protected function setupSortControl(array $columns, Sortable $query = null)
+    protected function setupSortControl(array $columns, Sortable $query = null, array $defaults = null)
     {
         $request = $this->getRequest();
-        $sortBox = SortBox::create('sortbox-' . $request->getActionName(), $columns);
+        $sortBox = SortBox::create('sortbox-' . $request->getActionName(), $columns, $defaults);
         $sortBox->setRequest($request);
 
         if ($query) {
