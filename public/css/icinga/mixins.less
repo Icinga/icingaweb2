@@ -6,6 +6,12 @@
           box-sizing: @sizing;
 }
 
+.box-shadow(@x: 0.2em; @y: 0.2em; @blur: 0.2em; @spread: 0; @color: rgba(83, 83, 83, 0.25)) {
+  -webkit-box-shadow: @arguments;
+     -moz-box-shadow: @arguments;
+          box-shadow: @arguments;
+}
+
 .button() {
   .rounded-corners(3px);
   background-color: @body-bg-color;
