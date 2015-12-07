@@ -181,6 +181,9 @@ class DbQuery extends SimpleQuery
         }
     }
 
+    /**
+     * @deprecated  Use DbConnection::renderFilter() instead!
+     */
     protected function renderFilter($filter, $level = 0)
     {
         $str = '';
