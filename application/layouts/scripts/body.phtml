@@ -19,21 +19,16 @@ if ($this->layout()->autorefreshInterval) {
 ?>
 <div id="header">
   <div id="logo">
-  <?php if (Auth::getInstance()->isAuthenticated()): ?>
     <?= $this->qlink(
       '',
-      'dashboard',
+      Auth::getInstance()->isAuthenticated() ? 'dashboard' : '',
       null,
       array(
-        'icon'              => 'img/logo_icinga-inv.png',
         'data-base-target'  => '_main',
         'aria-hidden'       => 'true',
         'tabindex'          => -1
       )
     ); ?>
-  <?php else: ?>
-    <?= $this->icon('img/logo_icinga-inv.png'); ?>
-  <?php endif ?>
   </div>
 </div>
 <?php if (! $this->layout()->isIframe): ?>
