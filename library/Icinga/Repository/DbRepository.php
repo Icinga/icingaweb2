@@ -503,6 +503,10 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
     public function providesValueConversion($table, $column = null)
     {
         if ($column !== null) {
+            if ($column instanceof Zend_Db_Expr) {
+                return false;
+            }
+
             if ($this->validateQueryColumnAssociation($table, $column)) {
                 return parent::providesValueConversion($table, $column);
             }
@@ -536,6 +540,10 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
      */
     protected function getConverter($table, $name, $context, RepositoryQuery $query = null)
     {
+        if ($name instanceof Zend_Db_Expr) {
+            return null;
+        }
+
         if (
             ! ($query !== null && $this->validateQueryColumnAssociation($table, $name))
             && !($query === null && $this->validateStatementColumnAssociation($table, $name))
