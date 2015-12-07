@@ -112,7 +112,7 @@ class StyleSheet
             }
         }
 
-        $themingConfig = $this->app->getConfig()->getSection('theming');
+        $themingConfig = $this->app->getConfig()->getSection('themes');
         $defaultTheme = $themingConfig->get('default', self::DEFAULT_THEME);
         $theme = null;
 
