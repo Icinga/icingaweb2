@@ -1199,7 +1199,7 @@ class LdapConnection implements Selectable, Inspectable
                 . ($this->port ? ':' . $this->port : '');
 
             if ($this->bound) {
-                $bindParams = ' -D "' . $this->bindDn . '"' . ($this->bindPw ? ' -w "' . $this->bindPw . '"' : '');
+                $bindParams = ' -D "' . $this->bindDn . '"' . ($this->bindPw ? ' -W' : '');
             }
 
             if ($deref === LDAP_DEREF_NEVER) {

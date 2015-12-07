@@ -3,6 +3,7 @@
 
 namespace Icinga\Repository;
 
+use Zend_Db_Expr;
 use Icinga\Data\Db\DbConnection;
 use Icinga\Data\Extensible;
 use Icinga\Data\Filter\Filter;
@@ -502,6 +503,10 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
     public function providesValueConversion($table, $column = null)
     {
         if ($column !== null) {
+            if ($column instanceof Zend_Db_Expr) {
+                return false;
+            }
+
             if ($this->validateQueryColumnAssociation($table, $column)) {
                 return parent::providesValueConversion($table, $column);
             }
@@ -535,6 +540,10 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
      */
     protected function getConverter($table, $name, $context, RepositoryQuery $query = null)
     {
+        if ($name instanceof Zend_Db_Expr) {
+            return null;
+        }
+
         if (
             ! ($query !== null && $this->validateQueryColumnAssociation($table, $name))
             && !($query === null && $this->validateStatementColumnAssociation($table, $name))
@@ -631,6 +640,10 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
      */
     public function requireQueryColumn($table, $name, RepositoryQuery $query = null)
     {
+        if ($name instanceof Zend_Db_Expr) {
+            return $name;
+        }
+
         if ($query === null || $this->validateQueryColumnAssociation($table, $name)) {
             return parent::requireQueryColumn($table, $name, $query);
         }
@@ -657,6 +670,10 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
      */
     public function requireFilterColumn($table, $name, RepositoryQuery $query = null, FilterExpression $filter = null)
     {
+        if ($name instanceof Zend_Db_Expr) {
+            return $name;
+        }
+
         $joined = false;
         if ($query === null) {
             $column = $this->requireStatementColumn($table, $name);

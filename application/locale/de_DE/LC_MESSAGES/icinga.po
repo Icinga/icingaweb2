@@ -1303,7 +1303,7 @@ msgstr "Logging-Typ"
 
 #: /vagrant/application/forms/Authentication/LoginForm.php:30
 msgid "Logging in"
-msgstr "Anmelden…"
+msgstr "Anmelden"
 
 #: /vagrant/application/views/scripts/authentication/logout.phtml:12
 msgid "Logging out..."

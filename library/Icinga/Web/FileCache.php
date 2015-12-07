@@ -41,21 +41,20 @@ class FileCache
     protected function __construct($name)
     {
         $this->name = $name;
-        $tmpdir = sys_get_temp_dir();
-        $basedir = $tmpdir . '/FileCache_' . $name;
-
-        if (file_exists($basedir) && is_writeable($basedir)) {
-
-            $this->basedir = $basedir;
-            $this->enabled = true;
-
-        } elseif (file_exists($tmpdir) && is_writeable($tmpdir)) {
-
-            if (mkdir($basedir, '0750', true)) {
+        $tmpDir = sys_get_temp_dir();
+        $runtimePath = $tmpDir . '/FileCache_' . $name;
+        if (is_dir($runtimePath)) {
+            // Don't combine the following if with the above because else the elseif path will be evaluated if the
+            // runtime path exists and is not writeable
+            if (is_writeable($runtimePath)) {
+                $this->basedir = $runtimePath;
                 $this->enabled = true;
-                $this->basedir = $basedir;
             }
-
+        } elseif (is_dir($tmpDir) && is_writeable($tmpDir) && @mkdir($runtimePath, '0750', true)) {
+            // Suppress mkdir errors because it may error w/ no such file directory if the systemd private tmp directory
+            // for the web server has been removed
+            $this->basedir = $runtimePath;
+            $this->enabled = true;
         }
     }
 

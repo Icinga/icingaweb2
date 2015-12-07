@@ -34,6 +34,15 @@ class SortBox extends AbstractWidget
     protected $sortFields;
 
     /**
+     * An array containing default sort directions for specific columns
+     *
+     * The first entry will be used as default sort column.
+     *
+     * @var array
+     */
+    protected $sortDefaults;
+
+    /**
      * The name used to uniquely identfy the forms being created
      *
      * @var string
@@ -59,11 +68,13 @@ class SortBox extends AbstractWidget
      *
      * @param   string  $name           The name for the SortBox
      * @param   array   $sortFields     An array containing the columns and their labels to be displayed in the SortBox
+     * @param   array   $sortDefaults   An array containing default sort directions for specific columns
      */
-    public function __construct($name, array $sortFields)
+    public function __construct($name, array $sortFields, array $sortDefaults = null)
     {
         $this->name = $name;
         $this->sortFields = $sortFields;
+        $this->sortDefaults = $sortDefaults;
     }
 
     /**
@@ -71,12 +82,13 @@ class SortBox extends AbstractWidget
      *
      * @param   string  $name           The name for the SortBox
      * @param   array   $sortFields     An array containing the columns and their labels to be displayed in the SortBox
+     * @param   array   $sortDefaults   An array containing default sort directions for specific columns
      *
      * @return  SortBox
      */
-    public static function create($name, array $sortFields)
+    public static function create($name, array $sortFields, array $sortDefaults = null)
     {
-        return new static($name, $sortFields);
+        return new static($name, $sortFields, $sortDefaults);
     }
 
     /**
@@ -106,30 +118,6 @@ class SortBox extends AbstractWidget
     }
 
     /**
-     * Apply the sort rules from the given or current request on the query
-     *
-     * @param   Request     $request
-     *
-     * @return  $this
-     */
-    public function handleRequest(Request $request = null)
-    {
-        if ($this->query !== null) {
-            if ($request === null) {
-                $request = Icinga::app()->getRequest();
-            }
-            if (null === $sort = $request->getParam('sort')) {
-                list($sort, $dir) = $this->getSortDefaults();
-            } else {
-                list($_, $dir) = $this->getSortDefaults($sort);
-            }
-            $this->query->order($sort, $request->getParam('dir', $dir));
-        }
-
-        return $this;
-    }
-
-    /**
      * Return the default sort rule for the query
      *
      * @param   string  $column     An optional column
@@ -139,7 +127,14 @@ class SortBox extends AbstractWidget
     protected function getSortDefaults($column = null)
     {
         $direction = null;
-        if ($this->query !== null && $this->query instanceof SortRules) {
+        if (! empty($this->sortDefaults) && ($column === null || isset($this->sortDefaults[$column]))) {
+            if ($column === null) {
+                reset($this->sortDefaults);
+                $column = key($this->sortDefaults);
+            }
+
+            $direction = $this->sortDefaults[$column];
+        } elseif ($this->query !== null && $this->query instanceof SortRules) {
             $sortRules = $this->query->getSortRules();
             if ($column === null) {
                 $column = key($sortRules);
@@ -152,7 +147,34 @@ class SortBox extends AbstractWidget
             reset($this->sortFields);
             $column = key($this->sortFields);
         }
+
         return array($column, $direction);
+    }
+
+    /**
+     * Apply the sort rules from the given or current request on the query
+     *
+     * @param   Request     $request
+     *
+     * @return  $this
+     */
+    public function handleRequest(Request $request = null)
+    {
+        if ($this->query !== null) {
+            if ($request === null) {
+                $request = Icinga::app()->getRequest();
+            }
+
+            if (! ($sort = $request->getParam('sort'))) {
+                list($sort, $dir) = $this->getSortDefaults();
+            } else {
+                list($_, $dir) = $this->getSortDefaults($sort);
+            }
+
+            $this->query->order($sort, $request->getParam('dir', $dir));
+        }
+
+        return $this;
     }
 
     /**
@@ -203,7 +225,7 @@ class SortBox extends AbstractWidget
 
         // TODO(el): ToggleButton :)
         $toggle = array('asc' => 'sort-name-down', 'desc' => 'sort-name-up');
-        unset($toggle[$direction]);
+        unset($toggle[strtolower($direction) ?: 'asc']);
         $newDirection = key($toggle);
         $icon = current($toggle);
 

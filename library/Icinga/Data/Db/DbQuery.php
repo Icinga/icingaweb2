@@ -153,7 +153,10 @@ class DbQuery extends SimpleQuery
             $select->group($group);
         }
 
-        $select->columns($this->columns);
+        if (! empty($this->columns)) {
+            $select->columns($this->columns);
+        }
+
         $this->applyFilterSql($select);
 
         if ($this->hasLimit() || $this->hasOffset()) {
@@ -178,6 +181,9 @@ class DbQuery extends SimpleQuery
         }
     }
 
+    /**
+     * @deprecated  Use DbConnection::renderFilter() instead!
+     */
     protected function renderFilter($filter, $level = 0)
     {
         $str = '';
@@ -333,7 +339,9 @@ class DbQuery extends SimpleQuery
         $this->applyFilterSql($count);
         $group = $this->getGroup();
         if ($this->useSubqueryCount || $group) {
-            $count->columns($this->columns);
+            if (! empty($this->columns)) {
+                $count->columns($this->columns);
+            }
             if ($group) {
                 $count->group($group);
             }
@@ -575,6 +583,20 @@ class DbQuery extends SimpleQuery
     public function joinNatural($name, $cols = Zend_Db_Select::SQL_WILDCARD, $schema = null)
     {
         $this->select->joinNatural($name, $cols, $schema);
+        return $this;
+    }
+
+    /**
+     * Add a UNION clause to the query
+     *
+     * @param   array   $select     Select clauses for the union
+     * @param   string  $type       Type of UNION to use
+     *
+     * @return  $this
+     */
+    public function union($select = array(), $type = Zend_Db_Select::SQL_UNION)
+    {
+        $this->select->union($select, $type);
         return $this;
     }
 }

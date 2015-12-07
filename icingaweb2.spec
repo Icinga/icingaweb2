@@ -118,7 +118,7 @@ Icinga Web 2 vendor library dompdf
 
 
 %package vendor-HTMLPurifier
-Version:    4.6.0
+Version:    4.7.0
 Release:    1%{?dist}
 Summary:    Icinga Web 2 vendor library HTMLPurifier
 Group:      Development/Libraries
@@ -177,7 +177,7 @@ cp -prv application doc %{buildroot}/%{basedir}
 cp -pv etc/bash_completion.d/icingacli %{buildroot}/%{_sysconfdir}/bash_completion.d/icingacli
 cp -prv modules/{monitoring,iframe,setup,doc,translation} %{buildroot}/%{basedir}/modules
 cp -prv library/Icinga %{buildroot}/%{phpdir}
-cp -prv library/vendor/{dompdf,HTMLPurifier,JShrink,lessphp,Parsedown} %{buildroot}/%{basedir}/library/vendor
+cp -prv library/vendor/{dompdf,HTMLPurifier*,JShrink,lessphp,Parsedown} %{buildroot}/%{basedir}/library/vendor
 cp -prv public/{css,img,js,error_norewrite.html} %{buildroot}/%{basedir}/public
 cp -pv packages/files/apache/icingaweb2.conf %{buildroot}/%{wwwconfigdir}/icingaweb2.conf
 cp -pv packages/files/bin/icingacli %{buildroot}/%{bindir}
@@ -250,6 +250,8 @@ exit 0
 %files vendor-HTMLPurifier
 %defattr(-,root,root)
 %{basedir}/library/vendor/HTMLPurifier
+%{basedir}/library/vendor/HTMLPurifier.autoload.php
+%{basedir}/library/vendor/HTMLPurifier.php
 
 
 %files vendor-JShrink

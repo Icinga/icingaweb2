@@ -434,12 +434,33 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
         $sign = $filter->getSign();
         $value = $filter->getExpression();
 
-        if (is_array($value) && $sign === '=') {
-            // TODO: Should we support this? Doesn't work for blub*
-            return $column . ' IN (' . $this->dbAdapter->quote($value) . ')';
+        if (is_array($value)) {
+            if ($sign === '=') {
+                return $column . ' IN (' . $this->dbAdapter->quote($value) . ')';
+            } elseif ($sign === '!=') {
+                return $column . ' NOT IN (' . $this->dbAdapter->quote($value) . ')';
+            }
+
+            throw new ProgrammingError(
+                'Unable to render array expressions with operators other than equal or not equal'
+            );
         } elseif ($sign === '=' && strpos($value, '*') !== false) {
+            if ($value === '*') {
+                // We'll ignore such filters as it prevents index usage and because "*" means anything, anything means
+                // all whereas all means that whether we use a filter to match anything or no filter at all makes no
+                // difference, except for performance reasons...
+                return '';
+            }
+
             return $column . ' LIKE ' . $this->dbAdapter->quote(preg_replace('~\*~', '%', $value));
         } elseif ($sign === '!=' && strpos($value, '*') !== false) {
+            if ($value === '*') {
+                // We'll ignore such filters as it prevents index usage and because "*" means nothing, so whether we're
+                // using a real column with a valid comparison here or just an expression which cannot be evaluated to
+                // true makes no difference, except for performance reasons...
+                return $this->dbAdapter->quote(0);
+            }
+
             return $column . ' NOT LIKE ' . $this->dbAdapter->quote(preg_replace('~\*~', '%', $value));
         } else {
             return $column . ' ' . $sign . ' ' . $this->dbAdapter->quote($value);

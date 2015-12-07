@@ -65,6 +65,25 @@ class RepositoryQuery implements QueryInterface, SortRules, FilterColumns, Itera
     }
 
     /**
+     * Clone all state relevant properties of this query
+     */
+    public function __clone()
+    {
+        $this->query = clone $this->query;
+        $this->iterator = clone $this->iterator;
+    }
+
+    /**
+     * Return a string representation of this query
+     *
+     * @return  string
+     */
+    public function __toString()
+    {
+        return (string) $this->query;
+    }
+
+    /**
      * Return the real query being used
      *
      * @return  QueryInterface
