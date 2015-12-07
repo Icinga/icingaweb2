@@ -70,6 +70,9 @@ class StaticController extends Controller
         }
         if (preg_match('/\.([a-z]+)$/i', $file, $m)) {
             $extension = $m[1];
+            if ($extension === 'svg') {
+                $extension = 'svg+xml';
+            }
         } else {
             $extension = 'fixme';
         }

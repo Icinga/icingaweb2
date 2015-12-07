@@ -541,7 +541,7 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
     protected function getConverter($table, $name, $context, RepositoryQuery $query = null)
     {
         if ($name instanceof Zend_Db_Expr) {
-            return null;
+            return;
         }
 
         if (
@@ -550,6 +550,14 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
         ) {
             $table = $this->findTableName($name);
             if (! $table) {
+                if ($query !== null) {
+                    // It may be an aliased Zend_Db_Expr
+                    $desiredColumns = $query->getColumns();
+                    if (isset($desiredColumns[$name]) && $desiredColumns[$name] instanceof Zend_Db_Expr) {
+                        return;
+                    }
+                }
+
                 throw new ProgrammingError('Column name validation seems to have failed. Did you require the column?');
             }
         }
@@ -637,6 +645,7 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
      * @return  string                      The given column's name
      *
      * @throws  QueryException              In case the given column is not a valid query column
+     * @throws  ProgrammingError            In case the given column is not found in $table and cannot be joined in
      */
     public function requireQueryColumn($table, $name, RepositoryQuery $query = null)
     {
@@ -648,7 +657,26 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
             return parent::requireQueryColumn($table, $name, $query);
         }
 
-        return $this->joinColumn($name, $table, $query);
+        $column = $this->joinColumn($name, $table, $query);
+        if ($column === null) {
+            if ($query !== null) {
+                // It may be an aliased Zend_Db_Expr
+                $desiredColumns = $query->getColumns();
+                if (isset($desiredColumns[$name]) && $desiredColumns[$name] instanceof Zend_Db_Expr) {
+                    $column = $desiredColumns[$name];
+                }
+            }
+
+            if ($column === null) {
+                throw new ProgrammingError(
+                    'Unable to find a valid table for column "%s" to join into "%s"',
+                    $name,
+                    $table
+                );
+            }
+        }
+
+        return $column;
     }
 
     /**
@@ -667,6 +695,7 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
      * @return  string                      The given column's name
      *
      * @throws  QueryException              In case the given column is not a valid filter column
+     * @throws  ProgrammingError            In case the given column is not found in $table and cannot be joined in
      */
     public function requireFilterColumn($table, $name, RepositoryQuery $query = null, FilterExpression $filter = null)
     {
@@ -681,7 +710,25 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
             $column = parent::requireFilterColumn($table, $name, $query, $filter);
         } else {
             $column = $this->joinColumn($name, $table, $query);
-            $joined = true;
+            if ($column === null) {
+                if ($query !== null) {
+                    // It may be an aliased Zend_Db_Expr
+                    $desiredColumns = $query->getColumns();
+                    if (isset($desiredColumns[$name]) && $desiredColumns[$name] instanceof Zend_Db_Expr) {
+                        $column = $desiredColumns[$name];
+                    }
+                }
+
+                if ($column === null) {
+                    throw new ProgrammingError(
+                        'Unable to find a valid table for column "%s" to join into "%s"',
+                        $name,
+                        $table
+                    );
+                }
+            } else {
+                $joined = true;
+            }
         }
 
         if (! empty($this->caseInsensitiveColumns)) {
@@ -831,26 +878,19 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
      * Join alias or column $name into $table using $query
      *
      * Attempts to find a valid table for the given alias or column name and a method labelled join<TableName>
-     * to process the actual join logic. If neither of those is found, ProgrammingError will be thrown.
+     * to process the actual join logic. If neither of those is found, null is returned.
      * The method is called with the same parameters but in reversed order.
      *
      * @param   string              $name       The alias or column name to join into $target
      * @param   string              $target     The table to join $name into
      * @param   RepositoryQUery     $query      The query to apply the JOIN-clause on
      *
-     * @return  string                          The resolved alias or $name
-     *
-     * @throws  ProgrammingError                In case no valid table or join<TableName>-method is found
+     * @return  string|null                     The resolved alias or $name, null if no join logic is found
      */
     public function joinColumn($name, $target, RepositoryQuery $query)
     {
-        $tableName = $this->findTableName($name);
-        if (! $tableName) {
-            throw new ProgrammingError(
-                'Unable to find a valid table for column "%s" to join into "%s"',
-                $name,
-                $target
-            );
+        if (! ($tableName = $this->findTableName($name))) {
+            return;
         }
 
         if (($column = $this->resolveQueryColumnAlias($tableName, $name)) === null) {
