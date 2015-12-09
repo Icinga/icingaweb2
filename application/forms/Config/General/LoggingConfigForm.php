@@ -73,7 +73,7 @@ class LoggingConfigForm extends Form
                             'Regex',
                             false,
                             array(
-                                'pattern'  => '/^[^\W]+$/',
+                                'pattern'  => '/^\S+$/',
                                 'messages' => array(
                                     'regexNotMatch' => $this->translate(
                                         'The application prefix must not contain whitespace.'
