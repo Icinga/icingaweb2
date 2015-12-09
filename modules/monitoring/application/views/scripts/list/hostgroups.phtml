@@ -20,13 +20,13 @@ if (! $this->compact): ?>
 <?php return; endif ?>
 <table class="table-row-selectable common-table" data-base-target="_next">
 <thead>
-<tr>
-    <th></th>
-    <th><?= $this->translate('Host Group') ?></th>
-    <th><?= $this->translate('Host States') ?></th>
-    <th></th>
-    <th><?= $this->translate('Service States') ?></th>
-</tr>
+    <tr>
+        <th></th>
+        <th><?= $this->translate('Host Group') ?></th>
+        <th><?= $this->translate('Host States') ?></th>
+        <th></th>
+        <th><?= $this->translate('Service States') ?></th>
+    </tr>
 </thead>
 <tbody>
 <?php foreach ($hostgroups->peekAhead($this->compact) as $hostgroup): ?>
