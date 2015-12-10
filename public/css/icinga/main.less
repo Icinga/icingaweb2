@@ -227,3 +227,35 @@ a:hover > .icon-cancel {
     margin-left: 0.5em;
   }
 }
+
+/* Styles for centering content of unknown width and height both horizontally and vertically
+ *
+ * Example markup:
+ * <div class="centered-ghost">
+ *     <div class="centered-content">
+ *         <p>I'm centered.</p>
+ *     </div>
+ * </div>
+ */
+
+.centered-content {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.centered-ghost {
+  height: 100%;
+  text-align: center;
+  letter-spacing: -1em; // Remove gap between content and ghost
+}
+
+.centered-ghost > * {
+  letter-spacing: normal;
+}
+
+.centered-ghost:after {
+  content: '';
+  display: inline-block;
+  height: 100%;
+  vertical-align: middle;
+}
