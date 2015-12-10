@@ -254,7 +254,9 @@ class Response extends Zend_Controller_Response_Http
     public function sendHeaders()
     {
         $this->prepare();
-        $this->sendCookies();
+        if (! $this->getRequest()->isApiRequest()) {
+            $this->sendCookies();
+        }
         return parent::sendHeaders();
     }
 }
