@@ -18,14 +18,15 @@ if ($this->layout()->autorefreshInterval) {
 
 ?>
 <div id="header">
-  <div id="logo">
+  <div id="header-logo-container">
     <?= $this->qlink(
       '',
       Auth::getInstance()->isAuthenticated() ? 'dashboard' : '',
       null,
       array(
-        'data-base-target'  => '_main',
         'aria-hidden'       => 'true',
+        'data-base-target'  => '_main',
+        'id'                => 'header-logo',
         'tabindex'          => -1
       )
     ); ?>
