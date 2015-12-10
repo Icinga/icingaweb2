@@ -36,7 +36,7 @@ class ErrorController extends ActionController
         Logger::error('Stacktrace: %s', $exception->getTraceAsString());
 
         if (! ($isAuthenticated = $this->Auth()->isAuthenticated())) {
-            $this->innerLayout = 'error';
+            $this->innerLayout = 'guest-error';
         }
 
         switch ($error->type) {
@@ -89,6 +89,7 @@ class ErrorController extends ActionController
                 if ($this->getInvokeArg('displayExceptions')) {
                     $this->view->stackTrace = $exception->getTraceAsString();
                 }
+
                 break;
         }
 

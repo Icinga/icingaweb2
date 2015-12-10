@@ -1,10 +1,10 @@
-<?php if (! $this->compact && !$hideControls): ?>
+<?php if (! $this->compact && ! $hideControls): ?>
 <div class="controls">
-    <?= $tabs->showOnlyCloseButton(); ?>
+    <?= $tabs->showOnlyCloseButton() ?>
 </div>
 <?php endif ?>
 <div class="content">
-    <p><strong><?= nl2br($this->escape($message)); ?></strong></p>
+    <p class="error-message"><?= nl2br($this->escape($message)) ?></p>
     <?php if (isset($stackTrace)): ?>
         <hr />
         <pre><?= $this->escape($stackTrace) ?></pre>

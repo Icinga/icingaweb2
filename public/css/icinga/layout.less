@@ -1,5 +1,20 @@
 /*! Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
+#guest-error {
+  background-color: @icinga-blue;
+  height: 100%;
+}
+
+#guest-error #icinga-logo {
+  .fadein();
+}
+
+#guest-error-message {
+  .fadein();
+  color: @body-bg-color;
+  font-size: 2em;
+}
+
 #footer {
   position: fixed;
   left: 0;
@@ -40,6 +55,16 @@
   background-size: contain;
   display: block;
   height: 100%;
+}
+
+#icinga-logo {
+  background-image: url('../img/logo_icinga_big.png');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain; // Does not work in IE < 10
+  height: 177px;
+  margin-bottom: 2em;
+  width: 100%;
 }
 
 #sidebar {
