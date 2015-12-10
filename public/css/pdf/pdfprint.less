@@ -1,6 +1,11 @@
 /*! Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
-.controls form, .controls .pagination, .controls .widgetLimiter, .controls > .tabs, .dontprint {
+.controls form,
+.controls .pagination,
+.controls .widgetLimiter,
+.controls > .tabs,
+.dontprint, // Compat only, use dont-print instead
+.dont-print {
   display: none !important;
 }
 
@@ -10,7 +15,7 @@ table.action img.inlinepie {
 }
 
 @page {
-	margin: 2cm;
+  margin: 2cm;
 }
 
 .container * {
@@ -26,15 +31,15 @@ body > h1 {
   font-weight: bold;
   position: fixed;
   left: 1em;
-	right: 1em;
-	color: #aaa;
-	font-size: 0.9em;
+  right: 1em;
+  color: #aaa;
+  font-size: 0.9em;
 }
 
 #page-header table, #page-footer table {
-	width: 100%;
-	border-collapse: collapse;
-	border: none;
+  width: 100%;
+  border-collapse: collapse;
+  border: none;
 }
 
 #page-header table {
@@ -45,12 +50,12 @@ body > h1 {
   font-family: fixed;
   padding: 0;
   color: #aaa;
-	width: 50%;
+  width: 50%;
 }
 
 #page-header {
   top: 0.5em;
-	border-bottom: 0.2pt solid #aaa;
+  border-bottom: 0.2pt solid #aaa;
 }
 
 #page-footer {
@@ -93,4 +98,3 @@ h1 form {
 body {
   margin: 1cm 1cm 1.5cm 1cm;
 }
-
