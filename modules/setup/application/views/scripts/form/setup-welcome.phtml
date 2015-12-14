@@ -11,7 +11,6 @@ $setupTokenPath = rtrim($configDir, '/') . '/setup.token';
 $cliPath = realpath(Icinga::app()->getApplicationDir() . '/../bin/icingacli');
 
 $groupadd = null;
-$usermod = null;
 if (! (false === ($distro = Platform::getLinuxDistro(1)) || $distro === 'linux')) {
     foreach (array(
         'groupadd -r icingaweb2' => array(
@@ -26,21 +25,28 @@ if (! (false === ($distro = Platform::getLinuxDistro(1)) || $distro === 'linux')
         }
     }
 
-    foreach (array(
-        'usermod -a -G icingaweb2 apache' => array(
-            'redhat', 'rhel', 'centos', 'fedora'
-        ),
-        'usermod -A icingaweb2 wwwrun' => array(
-            'suse', 'sles', 'sled', 'opensuse'
-        ),
-        'usermod -a -G icingaweb2 www-data' => array(
-            'debian', 'ubuntu'
-        )
-    ) as $usermod_ => $distros) {
-        if (in_array($distro, $distros)) {
-            $usermod = $usermod_;
+    switch ($distro) {
+        case 'redhat':
+        case 'rhel':
+        case 'centos':
+        case 'fedora':
+            $usermod = 'usermod -a -G icingaweb2 %s';
+            $webSrvUser = 'apache';
             break;
-        }
+        case 'suse':
+        case 'sles':
+        case 'sled':
+        case 'opensuse':
+            $usermod = 'usermod -A icingaweb2 %s';
+            $webSrvUser = 'wwwrun';
+            break;
+        case 'debian':
+        case 'ubuntu':
+            $usermod = 'usermod -a -G icingaweb2 %s';
+            $webSrvUser = 'www-data';
+            break;
+        default:
+            $usermod = $webSrvUser = null;
     }
 }
 ?>
@@ -85,7 +91,7 @@ if (! (false === ($distro = Platform::getLinuxDistro(1)) || $distro === 'linux')
       <?php if (! ($groupadd === null || $usermod === null)) { ?>
       <div class="code">
         <span><?= $this->escape($groupadd . ';') ?></span>
-        <span><?= $this->escape($usermod . ';') ?></span>
+        <span><?= $this->escape(sprintf($usermod, $phpUser ?: $webSrvUser) . ';') ?></span>
       </div>
       <?php } ?>
       <p><?= $this->translate('If you\'ve got the IcingaCLI installed you can do the following:'); ?></p>
