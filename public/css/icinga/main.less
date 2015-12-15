@@ -3,8 +3,8 @@
 // Width for the name column--th--of name-value-table
 @name-value-table-name-width: 14em;
 
-.action-link {
-  color: @icinga-blue;
+.action-link(@color: @icinga-blue) {
+  color: @color;
 }
 
 .error-message {
@@ -62,9 +62,9 @@ a:hover > .icon-cancel {
 
 // Link styles
 
-.button-link {
-  .action-link();
-  .button();
+.button-link(@background-color: @body-bg-color, @color: @icinga-blue) {
+  .action-link(@color);
+  .button(@background-color, @color);
   display: inline-block;
   height: 35px;
   line-height: 20px;
