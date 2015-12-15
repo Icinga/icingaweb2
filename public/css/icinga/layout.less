@@ -1,8 +1,17 @@
 /*! Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
+#footer {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 999;
+}
+
 #guest-error {
   background-color: @icinga-blue;
   height: 100%;
+  overflow: auto;
 }
 
 #guest-error #icinga-logo {
@@ -15,14 +24,6 @@
   font-size: 2em;
 }
 
-#footer {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 999;
-}
-
 #header,
 #main > .container,
 #menu {
@@ -32,12 +33,6 @@
 
 #header {
   background-color: @icinga-blue;
-}
-
-#layout {
-  background-color: @body-bg-color;
-  color: @text-color;
-  font-family: @font-family;
 }
 
 #header-logo-container {
@@ -65,6 +60,16 @@
   height: 177px;
   margin-bottom: 2em;
   width: 100%;
+}
+
+#layout {
+  background-color: @body-bg-color;
+  color: @text-color;
+  font-family: @font-family;
+}
+
+#login {
+  overflow: auto;
 }
 
 #sidebar {
