@@ -161,6 +161,7 @@
         },
 
         onLoad: function (event) {
+            $('body').removeClass('loading');
             //$('.container').trigger('rendered');
         },
 

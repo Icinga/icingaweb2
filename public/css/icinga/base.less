@@ -137,3 +137,12 @@ td, th {
     margin-left: 0;
   }
 }
+
+// Styles for when the page is loading. JS will remove this class once the document is ready
+.loading * {
+  // Disable all transition on page load
+  -webkit-transition: none !important;
+     -moz-transition: none !important;
+       -o-transition: none !important;
+          transition: none !important;
+}

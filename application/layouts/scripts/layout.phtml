@@ -48,7 +48,7 @@ $innerLayoutScript = $this->layout()->innerLayout . '.phtml';
   <![endif]-->
   <link type="image/png" rel="shortcut icon" href="<?= $this->baseUrl('img/favicon.png') ?>" />
 </head>
-<body id="body">
+<body id="body" class="loading">
 <pre id="responsive-debug"></pre>
 <div id="layout" class="default-layout<?php if ($showFullscreen): ?> fullscreen-layout<?php endif ?>">
 <?= $this->render($innerLayoutScript); ?>
