@@ -212,7 +212,7 @@ class Perfdata
 
         if ($this->maxValue !== null) {
             $minValue = $this->minValue !== null ? $this->minValue : 0;
-            if ($this->maxValue - $minValue === 0.0) {
+            if ((float) ($this->maxValue - $minValue) === 0.0) {
                 return null;
             }
 
