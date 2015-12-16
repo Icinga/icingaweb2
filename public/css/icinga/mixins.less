@@ -27,9 +27,13 @@
        -o-transition: background 0.3s ease, color 0.3s ease;
           transition: background 0.3s ease, color 0.3s ease;
 
+  &:focus,
   &:hover {
     background-color: @color;
     color: @background-color;
+  }
+
+  &:hover {
     text-decoration: none;
   }
 }
