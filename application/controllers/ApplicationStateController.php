@@ -20,7 +20,7 @@ class ApplicationStateController extends Controller
             $last = 0;
         }
         $now = time();
-        if ($last + 60 < $now) {
+        if ($last + 600 < $now) {
             Session::getSession()->write();
             $params = session_get_cookie_params();
             setcookie(

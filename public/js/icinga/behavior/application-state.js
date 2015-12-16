@@ -16,8 +16,9 @@
     ApplicationState.prototype = new Icinga.EventListener();
 
     ApplicationState.prototype.onRendered = function(e) {
-        var _this = e.data.self;
-        if (! $('#application-state').length) {
+        if (! $('#application-state').length && ! $('#login').length && ! $('#guest-error').length) {
+            var _this = e.data.self;
+
             $('#layout').append(
                 '<div id="application-state" class="container" style="display: none" data-icinga-url="'
                 + _this.icinga.loader.baseUrl
