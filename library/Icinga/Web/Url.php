@@ -219,10 +219,9 @@ class Url
     public function addFilter($and)
     {
         $this->setQueryString(
-            Filter::matchAll(
-                $and,
-                Filter::fromQueryString($this->getQueryString())
-            )->toQueryString()
+            Filter::fromQueryString($this->getQueryString())
+                ->andFilter($and)
+                ->toQueryString()
         );
         return $this;
     }
