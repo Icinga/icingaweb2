@@ -7,7 +7,7 @@ if (! $stats instanceof stdClass) {
     $stats = $stats->fetchRow();
 }
 ?>
-<div class="hosts-summary">
+<div class="hosts-summary dont-print">
     <span class="hosts-link"><?= $this->qlink(
         sprintf($this->translatePlural('%u Host', '%u Hosts', $stats->hosts_total), $stats->hosts_total),
         // @TODO(el): Fix that

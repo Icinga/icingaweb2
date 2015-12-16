@@ -42,33 +42,7 @@ class RoleForm extends ConfigForm
             'application/stacktraces'                       => $this->translate(
                 'Allow to adjust in the preferences whether to show stacktraces'
             ) . ' (application/stacktraces)',
-            'config/*'                                      => $this->translate('Allow config access') . ' (config/*)',
-/*
-            // [tg] seems excessive for me, hidden for rc1, tbd
-            'config/application/*'                          => 'config/application/*',
-            'config/application/general'                    => 'config/application/general',
-            'config/application/resources'                  => 'config/application/resources',
-            'config/application/userbackend'                => 'config/application/userbackend',
-            'config/application/usergroupbackend'           => 'config/application/usergroupbackend',
-            'config/application/navigation'                 => 'config/application/navigation',
-            'config/authentication/*'                       => 'config/authentication/*',
-            'config/authentication/users/*'                 => 'config/authentication/users/*',
-            'config/authentication/users/show'              => 'config/authentication/users/show',
-            'config/authentication/users/add'               => 'config/authentication/users/add',
-            'config/authentication/users/edit'              => 'config/authentication/users/edit',
-            'config/authentication/users/remove'            => 'config/authentication/users/remove',
-            'config/authentication/groups/*'                => 'config/authentication/groups/*',
-            'config/authentication/groups/show'             => 'config/authentication/groups/show',
-            'config/authentication/groups/add'              => 'config/authentication/groups/add',
-            'config/authentication/groups/edit'             => 'config/authentication/groups/edit',
-            'config/authentication/groups/remove'           => 'config/authentication/groups/remove',
-            'config/authentication/roles/*'                 => 'config/authentication/roles/*',
-            'config/authentication/roles/show'              => 'config/authentication/roles/show',
-            'config/authentication/roles/add'               => 'config/authentication/roles/add',
-            'config/authentication/roles/edit'              => 'config/authentication/roles/edit',
-            'config/authentication/roles/remove'            => 'config/authentication/roles/remove',
-            'config/modules'                                => 'config/modules'
-*/
+            'config/*'                                      => $this->translate('Allow config access') . ' (config/*)'
         );
 
         $helper = new Zend_Form_Element('bogus');

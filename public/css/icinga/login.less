@@ -1,189 +1,91 @@
 /*! Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
+// Login page styles
+
 #login {
+  #icinga-logo {
+    .fadein();
+  }
+
   background-color: @icinga-blue;
-  width: 100%;
-  height: 100%;
 
-  .form-controls {
-    margin: 0;
-  }
-
-  .control-group {
-    padding: 0;
-  }
-
-  .logo {
-    text-align: center;
-  }
-
-  .image {
-    padding-top: 5%;
-    margin-left: auto;
-    margin-right: auto;
-    text-align: center;
-    font-size: 0.9em;
+  .control-label {
+    color: @body-bg-color;
+    font-size: 1em;
+    line-height: @line-height;
   }
 
   .errors {
-    font-size: 0.9em;
-    margin-bottom: 0.5em;
-    margin-left:auto;
-    margin-right:auto;
-    padding: 0.5em;
-  }
+    background-color: @color-critical;
+    color: @body-bg-color;
+    font-size: @font-size-small;
+    margin: 2em 0 0 0;
 
-  .image img {
-    width: 355px;
-  }
-
-  .form {
-    position: absolute;
-    font-size: 0.9em;
-    top: 35%;
-    left: 0;
-    bottom: 0;
-    right: 0;
-  }
-
-  .form h1 {
-    text-align: center;
-    font-size: 1.5em;
-    margin-left: 2.3em;
-    border: none;
-    color: @text-color-inverted;
-    font-variant: unset;
-  }
-
-  .form div.element {
-    margin: 0;
-
-    ul.errors {
+    > li {
+      padding: 1em;
     }
   }
 
-  .form label {
-    color: @text-color-inverted;
-    font-weight: normal;
+  .control-group {
+    margin: 0 auto; // Center horizontally
+    width: 24em;
+  }
+
+  .control-label-group {
     display: block;
-    line-height: 2.5em;
-    width: 15em;
-    margin-right: 2.5em;
+    padding: 0;
     text-align: left;
-
+    width: 100%;
   }
 
-  form {
-    margin-left: auto;
-    margin-right: auto;
-    width: 18em;
-    font-size: 20px;
-  }
-
-  form input {
-    color: @text-color-inverted;
-    width: 18em;
-    padding: 0.5em;
-    background: rgba(255,255,255,0.2);
-    margin-left: 0;
-    padding: 6px 10px;
+  input[type=password],
+  input[type=text] {
+    background-color: @gray-light; // IE8 fallback
+    background-color: rgba(255,255,255,0.2);
     border: none;
     border-bottom: solid 3px @body-bg-color;
-    -webkit-transition: border 0.3s;
-    -moz-transition: border 0.3s;
-    -o-transition: border 0.3s;
-    transition: border 0.3s;
+    color: @body-bg-color;
+    display: block;
+    margin: 0;
+    width: 100%;
   }
 
-  form input:focus {
-    border-bottom: solid 3px @body-bg-color;
-    background: rgba(255,255,255,0.4);
-  }
-
-  ul.errors {
+  .form-controls {
+    margin-bottom: 2em;
+    margin-top: 2em;
   }
 
   input[type=submit] {
-    color: @text-color-inverted;
-    background: none;
-    border: none;
-    margin-top: 3em;
-    margin-right: 5px;
-    border: solid 3px @body-bg-color;
-    -webkit-transition: border 0.3s;
-    -moz-transition: border 0.3s;
-    -o-transition: border 0.3s;
+    .button(@icinga-blue, @body-bg-color);
+    margin: 0;
+    width: 100%;
   }
 
-  input[type=submit]:hover, a.button:hover, input[type=submit]:focus {
-    background: @body-bg-color;
-    color: @icinga-blue;
-  }
-
-  .footer {
-    color: @text-color-inverted;
-    margin-top: 5em;
-    font-size: 0.9em;
-    text-align: center;
-
-    a {
-      color: @text-color-inverted;
-      font-weight: bold;
-    }
-  }
-
-  p.config-note {
-    width: 50%;
-    padding: 1em;
-    margin: 0 auto 2.5em;
-    text-align: center;
+  .config-note {
     color: white;
     background-color: @color-critical;
+    margin: 0 auto 2em auto; // Center horizontally w/ bottom margin
+    max-width: 50%;
+    min-width: 24em;
+    padding: 1em;
 
     a {
       color: @text-color-inverted;
       font-weight: bold;
-    }
-  }
-
-  p.info-box {
-    width: 50%;
-    height: 2.2em;
-    margin: 2em auto 2.5em;
-
-    i.icon-info {
-      float: left;
-      height: 100%;
-    }
-
-    em {
-      text-decoration: underline;
     }
   }
 }
 
-  /* make keyframes that tell the start state and the end state of our object */
-  @-webkit-keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
-  @-moz-keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
-  @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+#login-footer {
+  color: @body-bg-color;
+  font-size: @font-size-small;
 
-  .fade-in {
-    opacity:0;  /* make things invisible upon start */
-    -webkit-animation:fadeIn ease-in 1;  /* call our keyframe named fadeIn, use animattion ease-in and repeat it only 1 time */
-    -moz-animation:fadeIn ease-in 1;
-    animation:fadeIn ease-in 1;
+  a {
+    font-weight: @font-weight-bold;
 
-    -webkit-animation-fill-mode:forwards;  /* this makes sure that after animation is done we remain at the last keyframe value (opacity: 1)*/
-    -moz-animation-fill-mode:forwards;
-    animation-fill-mode:forwards;
-
-    -webkit-animation-duration:1s;
-    -moz-animation-duration:1s;
-    animation-duration:1s;
+    // Social links
+    &:hover > i {
+      color: @text-color;
+    }
   }
-
-  .fade-in.one {
-    -webkit-animation-delay: 0.7s;
-    -moz-animation-delay: 0.7s;
-    animation-delay: 0.7s;
-  }
+}

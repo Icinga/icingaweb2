@@ -41,15 +41,14 @@ $innerLayoutScript = $this->layout()->innerLayout . '.phtml';
   }());
   </script>
 <?php endif ?>
-  <link rel="stylesheet" href="<?= $this->href($cssfile) ?>" media="screen" type="text/css" />
+  <link rel="stylesheet" href="<?= $this->href($cssfile) ?>" media="all" type="text/css" />
   <!-- Respond.js IE8 support of media queries -->
   <!--[if lt IE 9]>
   <script src="<?= $this->baseUrl('js/vendor/respond.min.js');?>"></script>
   <![endif]-->
   <link type="image/png" rel="shortcut icon" href="<?= $this->baseUrl('img/favicon.png') ?>" />
-
 </head>
-<body id="body">
+<body id="body" class="loading">
 <pre id="responsive-debug"></pre>
 <div id="layout" class="default-layout<?php if ($showFullscreen): ?> fullscreen-layout<?php endif ?>">
 <?= $this->render($innerLayoutScript); ?>

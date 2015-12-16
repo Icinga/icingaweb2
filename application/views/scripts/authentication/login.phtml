@@ -1,55 +1,51 @@
- <div id="login">
-  <div class="logo">
-   <div class="image">
-    <img aria-hidden="true" class="fade-in one" src="<?= $this->baseUrl('img/logo_icinga_big.png'); ?>" alt="<?= $this->translate('The Icinga logo'); ?>" >
-   </div>
-  </div>
-  <div class="form" data-base-target="layout">
-    <?php if ($requiresSetup): ?>
-    <p class="config-note"><?= sprintf(
-      $this->translate(
-        'It appears that you did not configure Icinga Web 2 yet so it\'s not possible to log in without any defined '
-        . 'authentication method. Please define a authentication method by following the instructions in the'
-        . ' %1$sdocumentation%3$s or by using our %2$sweb-based setup-wizard%3$s.'
-      ),
-      '<a href="http://docs.icinga.org/" title="' . $this->translate('Icinga Web 2 Documentation') . '">', // TODO: More exact documentation link..
-      '<a href="' . $this->href('setup') . '" title="' . $this->translate('Icinga Web 2 Setup-Wizard') . '">',
-      '</a>'
-    ); ?></p>
-    <?php endif ?>
-    <?= $this->form ?>
-    <div class="footer">
-      Icinga Web 2 &copy; 2013-<?= date('Y'); ?><br><br>
-      <?= $this->qlink($this->translate('The Icinga Project'), 'https://www.icinga.org'); ?>
-      <?= $this->qlink(
-        null,
-        'http://www.twitter.com/icinga',
-        null,
-        array(
-          'target'  => '_blank',
-          'icon'    => 'twitter',
-          'title'   => $this->translate('Icinga on Twitter')
-        )
-      ); ?>
-      <?= $this->qlink(
-        null,
-        'http://www.facebook.com/icinga',
-        null,
-        array(
-          'target'  => '_blank',
-         'icon'     => 'facebook-squared',
-         'title'    => $this->translate('Icinga on Facebook')
-        )
-      ) ?> <?= $this->qlink(
-          null,
-          'https://plus.google.com/+icinga',
-          null,
-          array(
-              'target'    => '_blank',
-              'icon'      => 'gplus-squared',
-              'title'     => $this->translate('Icinga on Google+')
-          )
-      ); ?>
+<div id="login" class="centered-ghost">
+    <div class="centered-content" data-base-target="layout">
+        <div id="icinga-logo" aria-hidden="true"></div>
+        <?php if ($requiresSetup): ?>
+            <p class="config-note"><?= sprintf(
+                $this->translate(
+                    'It appears that you did not configure Icinga Web 2 yet so it\'s not possible to log in without any defined '
+                    . 'authentication method. Please define a authentication method by following the instructions in the'
+                    . ' %1$sdocumentation%3$s or by using our %2$sweb-based setup-wizard%3$s.'
+                ),
+                '<a href="http://docs.icinga.org/" title="' . $this->translate('Icinga Web 2 Documentation') . '">', // TODO: More exact documentation link
+                '<a href="' . $this->href('setup') . '" title="' . $this->translate('Icinga Web 2 Setup-Wizard') . '">',
+                '</a>'
+            ) ?></p>
+        <?php endif ?>
+        <?= $this->form ?>
+        <div id="login-footer">
+            <p>Icinga Web 2 &copy; 2013-<?= date('Y') ?></p>
+            <?= $this->qlink($this->translate('The Icinga Project'), 'https://www.icinga.org') ?>
+            <?= $this->qlink(
+                null,
+                'http://www.twitter.com/icinga',
+                null,
+                array(
+                    'target'  => '_blank',
+                    'icon'    => 'twitter',
+                    'title'   => $this->translate('Icinga on Twitter')
+                )
+            ) ?>
+            <?= $this->qlink(
+                null,
+                'http://www.facebook.com/icinga',
+                null,
+                array(
+                    'target'  => '_blank',
+                    'icon'     => 'facebook-squared',
+                    'title'    => $this->translate('Icinga on Facebook')
+                )
+            ) ?> <?= $this->qlink(
+                null,
+                'https://plus.google.com/+icinga',
+                null,
+                array(
+                    'target'    => '_blank',
+                    'icon'      => 'gplus-squared',
+                    'title'     => $this->translate('Icinga on Google+')
+                )
+            ) ?>
+        </div>
     </div>
-  </div>
- </div>
+</div>

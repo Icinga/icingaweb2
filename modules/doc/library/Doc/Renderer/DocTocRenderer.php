@@ -70,6 +70,9 @@ class DocTocRenderer extends DocRenderer
      */
     public function render()
     {
+        if (empty($this->content)) {
+            return '<p>' . mt('doc', 'Documentation is empty.') . '</p>';
+        }
         $view = $this->getView();
         $zendUrlHelper = $view->getHelper('Url');
         foreach ($this as $section) {

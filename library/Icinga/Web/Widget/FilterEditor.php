@@ -703,7 +703,7 @@ class FilterEditor extends AbstractWidget
 
     public function renderSearch()
     {
-        $html = ' <form method="post" class="search inline dontprint" action="'
+        $html = ' <form method="post" class="search inline" action="'
               . $this->preservedUrl()
               . '"><input type="text" name="q" style="width: 8em" class="search" value="" placeholder="'
               . t('Search...')

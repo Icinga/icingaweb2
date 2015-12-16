@@ -47,15 +47,22 @@ class JavaScript
 
     public static function sendMinified()
     {
-        return self::send(true);
+        self::send(true);
     }
 
     public static function sendForIe8()
     {
         self::$vendorFiles = self::$ie8VendorFiles;
-        return self::send();
+        self::send();
     }
 
+    /**
+     * Send the client side script code to the client
+     *
+     * Does not cache the client side script code if the HTTP header Cache-Control or Pragma is set to no-cache.
+     *
+     * @param   bool    $minified   Whether to compress the client side script code
+     */
     public static function send($minified = false)
     {
         header('Content-Type: application/javascript');
@@ -87,7 +94,10 @@ class JavaScript
         }
         $files = array_merge($vendorFiles, $jsFiles);
 
-        if ($etag = FileCache::etagMatchesFiles($files)) {
+        $request = Icinga::app()->getRequest();
+        $noCache = $request->getHeader('Cache-Control') === 'no-cache' || $request->getHeader('Pragma') === 'no-cache';
+
+        if (! $noCache && FileCache::etagMatchesFiles($files)) {
             header("HTTP/1.1 304 Not Modified");
             return;
         } else {
@@ -99,7 +109,7 @@ class JavaScript
 
         $cacheFile = 'icinga-' . $etag . $min . '.js';
         $cache = FileCache::instance();
-        if ($cache->has($cacheFile)) {
+        if (! $noCache && $cache->has($cacheFile)) {
             $cache->send($cacheFile);
             return;
         }

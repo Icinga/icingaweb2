@@ -3,167 +3,170 @@
 
 namespace Icinga\Web;
 
-use Exception;
-use RecursiveDirectoryIterator;
+use Icinga\Application\Logger;
+use RecursiveArrayIterator;
 use RecursiveIteratorIterator;
-use RegexIterator;
-use RecursiveRegexIterator;
-use Icinga\Application\Icinga;
 use lessc;
 
 /**
- * Less compiler prints files or directories to stdout
+ * Compile LESS into CSS
+ *
+ * Comments will be removed always. lessc is messing them up.
  */
 class LessCompiler
 {
     /**
-     * Collection of items: File or directories
-     *
-     * @var array
-     */
-    private $items = array();
-
-    /**
      * lessphp compiler
      *
-     * @var \lessc
+     * @var lessc
      */
-    private $lessc;
-
-    private $source;
+    protected $lessc;
 
     /**
-     * Create a new instance
+     * Array of LESS files
+     *
+     * @var string[]
+     */
+    protected $lessFiles = array();
+
+    /**
+     * Array of module LESS files indexed by module names
+     *
+     * @var array[]
+     */
+    protected $moduleLessFiles = array();
+
+    /**
+     * LESS source
+     *
+     * @var string
+     */
+    protected $source;
+
+    /**
+     * Path of the LESS theme
+     *
+     * @var string
+     */
+    protected $theme;
+
+    /**
+     * Create a new LESS compiler
      */
     public function __construct()
     {
         require_once 'lessphp/lessc.inc.php';
         $this->lessc = new lessc();
+        // Discourage usage of import because we're caching based on an explicit list of LESS files to compile
+        $this->lessc->importDisabled = true;
     }
 
     /**
-     * Disable the extendend import functionality
+     * Add a Web 2 LESS file
+     *
+     * @param   string  $lessFile   Path to the LESS file
      *
      * @return  $this
      */
-    public function disableExtendedImport()
+    public function addLessFile($lessFile)
     {
-        $this->lessc->importDisabled = true;
+        $this->lessFiles[] = $lessFile;
         return $this;
     }
 
+    /**
+     * Add a module LESS file
+     *
+     * @param   string  $moduleName Name of the module
+     * @param   string  $lessFile   Path to the LESS file
+     *
+     * @return  $this
+     */
+    public function addModuleLessFile($moduleName, $lessFile)
+    {
+        if (! isset($this->moduleLessFiles[$moduleName])) {
+            $this->moduleLessFiles[$moduleName] = array();
+        }
+        $this->moduleLessFiles[$moduleName][] = $lessFile;
+        return $this;
+    }
+
+    /**
+     * Get the list of LESS files added to the compiler
+     *
+     * @return string[]
+     */
+    public function getLessFiles()
+    {
+        $lessFiles = iterator_to_array(new RecursiveIteratorIterator(new RecursiveArrayIterator(
+                $this->lessFiles + $this->moduleLessFiles
+        )));
+        if ($this->theme !== null) {
+            $lessFiles[] = $this->theme;
+        }
+        return $lessFiles;
+    }
+
+    /**
+     * Set the path to the LESS theme
+     *
+     * @param   string  $theme  Path to the LESS theme
+     *
+     * @return  $this
+     */
+    public function setTheme($theme)
+    {
+        if (is_file($theme) && is_readable($theme)) {
+            $this->theme = $theme;
+        } else {
+            Logger::error('Can\t load theme %s. Make sure that the theme exists and is readable', $theme);
+        }
+        return $this;
+    }
+
+    /**
+     * Instruct the compiler to minify CSS
+     *
+     * @return  $this
+     */
     public function compress()
     {
-        $this->lessc->setPreserveComments(false);
         $this->lessc->setFormatter('compressed');
         return $this;
     }
 
     /**
-     * Add usable style item to stack
+     * Render to CSS
      *
-     * @param string $item File or directory
+     * @return  string
      */
-    public function addItem($item)
+    public function render()
     {
-        $this->items[] = $item;
-    }
-
-    public function addLoadedModules()
-    {
-        foreach (Icinga::app()->getModuleManager()->getLoadedModules() as $name => $module) {
-            $this->addModule($name, $module);
+        foreach ($this->lessFiles as $lessFile) {
+            $this->source .= file_get_contents($lessFile);
         }
-        return $this;
-    }
 
-    public function addFile($filename)
-    {
-        $this->source .= "\n/* CSS: $filename */\n"
-            . file_get_contents($filename)
-            . "\n\n";
-        return $this;
-    }
+        $moduleCss = '';
+        foreach ($this->moduleLessFiles as $moduleName => $moduleLessFiles) {
+            $moduleCss .= '.icinga-module.module-' . $moduleName . ' {';
+            foreach ($moduleLessFiles as $moduleLessFile) {
+                $moduleCss .= file_get_contents($moduleLessFile);
+            }
+            $moduleCss .= '}';
+        }
 
-    public function compile()
-    {
+        $moduleCss = preg_replace(
+            '/(\.icinga-module\.module-[^\s]+) (#layout\.[^\s]+)/m',
+            '\2 \1',
+            $moduleCss
+        );
+
+        $this->source .= $moduleCss;
+
+        if ($this->theme !== null) {
+            $this->source .= file_get_contents($this->theme);
+        }
+
         return $this->lessc->compile($this->source);
-    }
-
-    public function addModule($name, $module)
-    {
-        if ($module->hasCss()) {
-            $contents = array();
-            foreach ($module->getCssFiles() as $path) {
-                if (file_exists($path)) {
-                    $contents[] = "/* CSS: modules/$name/$path */\n" . file_get_contents($path);
-                }
-            }
-
-            $this->source .= ''
-                . '.icinga-module.module-'
-                . $name
-                . " {\n"
-                . join("\n\n", $contents)
-                . "}\n\n";
-        }
-
-        return $this;
-    }
-
-    /**
-     * Compile and print a single file
-     *
-     * @param string $file
-     */
-    public function printFile($file)
-    {
-        $ext = pathinfo($file, PATHINFO_EXTENSION);
-        echo PHP_EOL. '/* CSS: ' . $file . ' */' . PHP_EOL;
-
-        if ($ext === 'css') {
-            readfile($file);
-        } elseif ($ext === 'less') {
-            try {
-                echo $this->lessc->compileFile($file);
-            } catch (Exception $e) {
-                echo '/* ' . PHP_EOL . ' ===' . PHP_EOL;
-                echo '  Error in file ' . $file . PHP_EOL;
-                echo '  ' . $e->getMessage() . PHP_EOL . PHP_EOL;
-                echo '  ' . 'This file was dropped cause of errors.' . PHP_EOL;
-                echo ' ===' . PHP_EOL . '*/' . PHP_EOL;
-            }
-        }
-
-        echo PHP_EOL;
-    }
-
-    /**
-     * Compile and print a path content (recursive)
-     *
-     * @param string $path
-     */
-    public function printPathRecursive($path)
-    {
-        $directoryInterator = new RecursiveDirectoryIterator($path);
-        $iterator = new RecursiveIteratorIterator($directoryInterator);
-        $filteredIterator = new RegexIterator($iterator, '/\.(css|less)$/', RecursiveRegexIterator::GET_MATCH);
-        foreach ($filteredIterator as $file => $extension) {
-            $this->printFile($file);
-        }
-    }
-
-    /**
-     * Compile and print the whole item stack
-     */
-    public function printStack()
-    {
-        foreach ($this->items as $item) {
-            if (is_dir($item)) {
-                $this->printPathRecursive($item);
-            } elseif (is_file($item)) {
-                $this->printFile($item);
-            }
-        }
     }
 }

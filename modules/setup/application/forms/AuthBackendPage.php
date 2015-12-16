@@ -117,21 +117,6 @@ class AuthBackendPage extends Form
     }
 
     /**
-     * Retrieve all form element values
-     *
-     * @param   bool    $suppressArrayNotation  Ignored
-     *
-     * @return  array
-     */
-    public function getValues($suppressArrayNotation = false)
-    {
-        $values = parent::getValues();
-        $values = array_merge($values, $values['backend_form']);
-        unset($values['backend_form']);
-        return $values;
-    }
-
-    /**
      * Validate the given form data and check whether it's possible to authenticate using the configured backend
      *
      * @param   array   $data   The data to validate

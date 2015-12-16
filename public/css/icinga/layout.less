@@ -1,0 +1,121 @@
+/*! Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
+
+#footer {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 999;
+}
+
+#guest-error {
+  background-color: @icinga-blue;
+  height: 100%;
+  overflow: auto;
+}
+
+#guest-error #icinga-logo {
+  .fadein();
+}
+
+#guest-error-message {
+  .fadein();
+  color: @body-bg-color;
+  font-size: 2em;
+}
+
+#header,
+#main > .container,
+#menu {
+  font-size: @font-size;
+  line-height: @line-height;
+}
+
+#header {
+  background-color: @icinga-blue;
+}
+
+#header-logo-container {
+  height: 4em;
+  margin-left: 1.5em;
+  margin-top: 0.2em;
+  margin-bottom: 0.2em;
+  width: 100px;
+}
+
+#header-logo {
+  background-image: url('../img/logo_icinga-inv.png');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  display: block;
+  height: 100%;
+}
+
+#icinga-logo {
+  background-image: url('../img/logo_icinga_big.png');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain; // Does not work in IE < 10
+  height: 177px;
+  margin-bottom: 2em;
+  width: 100%;
+}
+
+#layout {
+  background-color: @body-bg-color;
+  color: @text-color;
+  font-family: @font-family;
+}
+
+#login {
+  overflow: auto;
+}
+
+#sidebar {
+  background-color: @gray-lighter;
+}
+
+.controls {
+  background-color: @body-bg-color;
+}
+
+// Notification styles
+
+#notifications {
+  margin: 0;
+  padding: 0;
+}
+
+#notifications > li {
+  list-style-type: none;
+  display: block;
+  border-top: 1px solid #999;
+  color: white;
+  line-height: 2.5em;
+  padding-left: 3em;
+  background-repeat: no-repeat;
+  background-position: 1em center;
+}
+
+#notifications > li:hover {
+  cursor: pointer;
+}
+
+#notifications > li.info {
+  background-color: @colorFormNotificationInfo;
+}
+
+#notifications > li.warning {
+  background-color: @colorWarningHandled;
+}
+#notifications > li.error {
+  background-color: @colorCritical;
+  background-image: url(../img/icons/error_white.png);
+}
+
+#notifications > li.success {
+  background-color: #fe6;
+  background-image: url(../img/icons/success.png);
+  color: #333;
+}

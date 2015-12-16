@@ -186,12 +186,14 @@
   width: 100%;
 
   tr[href] {
+    .transition(background 0.2s ease);
+
     &.active {
-      background-color: @gray-lighter;
+      background-color: @tr-active-color;
     }
 
     &:hover {
-      background-color: @gray-lightest;
+      background-color: @tr-hover-color;
       cursor: pointer;
     }
   }

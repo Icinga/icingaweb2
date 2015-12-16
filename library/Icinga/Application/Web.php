@@ -13,6 +13,7 @@ use Zend_Paginator;
 use Zend_View_Helper_PaginationControl;
 use Icinga\Authentication\Auth;
 use Icinga\User;
+use Icinga\Util\DirectoryIterator;
 use Icinga\Util\TimezoneDetect;
 use Icinga\Util\Translator;
 use Icinga\Web\Controller\Dispatcher;
@@ -20,6 +21,7 @@ use Icinga\Web\Navigation\Navigation;
 use Icinga\Web\Notification;
 use Icinga\Web\Session;
 use Icinga\Web\Session\Session as BaseSession;
+use Icinga\Web\StyleSheet;
 use Icinga\Web\View;
 
 /**
@@ -96,6 +98,33 @@ class Web extends EmbeddedWeb
             ->loadEnabledModules()
             ->setupRoute()
             ->setupPagination();
+    }
+
+    /**
+     * Get themes provided by Web 2 and all enabled modules
+     *
+     * @return  string[]    Array of theme names as keys and values
+     */
+    public function getThemes()
+    {
+        $themes = array(StyleSheet::DEFAULT_THEME);
+        $applicationThemePath = $this->getBaseDir('public/css/themes');
+        if (DirectoryIterator::isReadable($applicationThemePath)) {
+            foreach (new DirectoryIterator($applicationThemePath, 'less') as $name => $theme) {
+                $themes[] = substr($name, 0, -5);
+            }
+        }
+        $mm = $this->getModuleManager();
+        foreach ($mm->listEnabledModules() as $moduleName) {
+            $moduleThemePath = $mm->getModule($moduleName)->getCssDir() . '/themes';
+            if (! DirectoryIterator::isReadable($moduleThemePath)) {
+                continue;
+            }
+            foreach (new DirectoryIterator($moduleThemePath, 'less') as $name => $theme) {
+                $themes[] = $moduleName . '/' . substr($name, 0, -5);
+            }
+        }
+        return array_combine($themes, $themes);
     }
 
     /**

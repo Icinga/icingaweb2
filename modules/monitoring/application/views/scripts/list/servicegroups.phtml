@@ -18,9 +18,11 @@ if (! $this->compact): ?>
 <?php return; endif ?>
 <table class="table-row-selectable common-table" data-base-target="_next">
 <thead>
-    <th></th>
-    <th><?= $this->translate('Service Group') ?></th>
-    <th><?= $this->translate('Service States') ?></th>
+    <tr>
+        <th></th>
+        <th><?= $this->translate('Service Group') ?></th>
+        <th><?= $this->translate('Service States') ?></th>
+    </tr>
 </thead>
 <tbody>
 <?php foreach ($servicegroups->peekAhead($this->compact) as  $serviceGroup): ?>

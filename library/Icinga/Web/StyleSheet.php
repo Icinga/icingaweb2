@@ -3,12 +3,28 @@
 
 namespace Icinga\Web;
 
+use Exception;
 use Icinga\Application\Icinga;
-use Icinga\Web\FileCache;
-use Icinga\Web\LessCompiler;
+use Icinga\Application\Logger;
+use Icinga\Exception\IcingaException;
 
+/**
+ * Send CSS for Web 2 and all loaded modules to the client
+ */
 class StyleSheet
 {
+    /**
+     * The name of the default theme
+     *
+     * @var string
+     */
+    const DEFAULT_THEME = 'Icinga';
+
+    /**
+     * Array of core LESS files Web 2 sends to the client
+     *
+     * @var string[]
+     */
     protected static $lessFiles = array(
         '../application/fonts/fontello-ifont/css/ifont-embedded.css',
         'css/vendor/normalize.css',
@@ -21,11 +37,9 @@ class StyleSheet
         'css/icinga/nav.less',
         'css/icinga/main.less',
         'css/icinga/animation.less',
-        'css/icinga/layout-colors.less',
+        'css/icinga/layout.less',
         'css/icinga/layout-structure.less',
         'css/icinga/menu.less',
-        'css/icinga/header-elements.less',
-        'css/icinga/footer-elements.less',
 //        'css/icinga/main-content.less',
         'css/icinga/tabs.less',
         'css/icinga/forms.less',
@@ -37,92 +51,180 @@ class StyleSheet
         'css/icinga/dev.less',
 //        'css/icinga/logo.less',
         'css/icinga/spinner.less',
-        'css/icinga/compat.less'
+        'css/icinga/compat.less',
+        'css/icinga/print.less'
     );
 
-    public static function compileForPdf()
-    {
-        self::checkPhp();
-        $less = new LessCompiler();
-        $basedir = Icinga::app()->getBootstrapDirectory();
-        foreach (self::$lessFiles as $file) {
-            $less->addFile($basedir . '/' . $file);
-        }
-        $less->addLoadedModules();
-        $less->addFile($basedir . '/css/pdf/pdfprint.less');
-        return $less->compile();
-    }
+    /**
+     * Application instance
+     *
+     * @var \Icinga\Application\EmbeddedWeb
+     */
+    protected $app;
 
-    public static function sendMinified()
-    {
-        self::send(true);
-    }
+    /**
+     * Less compiler
+     *
+     * @var LessCompiler
+     */
+    protected $lessCompiler;
 
-    protected static function fixModuleLayoutCss($css)
-    {
-        return preg_replace(
-            '/(\.icinga-module\.module-[^\s]+) (#layout\.[^\s]+)/m',
-            '\2 \1',
-            $css
-        );
-    }
+    /**
+     * Path to the public directory
+     *
+     * @var string
+     */
+    protected $pubPath;
 
-    protected static function checkPhp()
+    /**
+     * Create the StyleSheet
+     */
+    public function __construct()
     {
         // PHP had a rather conservative PCRE backtrack limit unless 5.3.7
         if (version_compare(PHP_VERSION, '5.3.7') <= 0) {
             ini_set('pcre.backtrack_limit', 1000000);
         }
+        $app = Icinga::app();
+        $this->app = $app;
+        $this->lessCompiler = new LessCompiler();
+        $this->pubPath = $app->getBootstrapDirectory();
+        $this->collect();
     }
 
-    public static function send($minified = false)
+    /**
+     * Collect Web 2 and module LESS files and add them to the LESS compiler
+     */
+    protected function collect()
     {
-        self::checkPhp();
-        $app = Icinga::app();
-        $basedir = $app->getBootstrapDirectory();
-        foreach (self::$lessFiles as $file) {
-            $lessFiles[] = $basedir . '/' . $file;
+        foreach (self::$lessFiles as $lessFile) {
+            $this->lessCompiler->addLessFile($this->pubPath . '/' . $lessFile);
         }
-        $files = $lessFiles;
-        foreach ($app->getModuleManager()->getLoadedModules() as $name => $module) {
+
+        $mm = $this->app->getModuleManager();
+
+        foreach ($mm->getLoadedModules() as $moduleName => $module) {
             if ($module->hasCss()) {
-                foreach ($module->getCssFiles() as $path) {
-                    if (file_exists($path)) {
-                        $files[] = $path;
-                    }
+                foreach ($module->getCssFiles() as $lessFilePath) {
+                    $this->lessCompiler->addModuleLessFile($moduleName, $lessFilePath);
                 }
             }
         }
 
-        if ($etag = FileCache::etagMatchesFiles($files)) {
-            header("HTTP/1.1 304 Not Modified");
-            return;
+        $themingConfig = $this->app->getConfig()->getSection('themes');
+        $defaultTheme = $themingConfig->get('default', self::DEFAULT_THEME);
+        $theme = null;
+
+        if ((bool) $themingConfig->get('disabled', false)) {
+            if ($defaultTheme !== self::DEFAULT_THEME) {
+                $theme = $defaultTheme;
+            }
         } else {
-            $etag = FileCache::etagForFiles($files);
+            if (($userTheme = $this->app->getRequest()->getCookie('theme', $defaultTheme))
+                && $userTheme !== $defaultTheme
+            ) {
+                $theme = $userTheme;
+            }
         }
-        header('Cache-Control: public');
-        header('ETag: "' . $etag . '"');
-        header('Content-Type: text/css');
 
-        $min = $minified ? '.min' : '';
-        $cacheFile = 'icinga-' . $etag . $min . '.css';
-        $cache = FileCache::instance();
-        if ($cache->has($cacheFile)) {
-            $cache->send($cacheFile);
+        if ($theme) {
+            if (($pos = strpos($theme, '/')) !== false) {
+                $moduleName = substr($theme, 0, $pos);
+                $theme = substr($theme, $pos + 1);
+                if ($mm->hasLoaded($moduleName)) {
+                    $module = $mm->getModule($moduleName);
+                    $this->lessCompiler->setTheme($module->getCssDir() . '/themes/' . $theme . '.less');
+                }
+            } else {
+                $this->lessCompiler->setTheme($this->pubPath . '/css/themes/' . $theme . '.less');
+            }
+        }
+    }
+
+    /**
+     * Get the stylesheet for PDF export
+     *
+     * @return  $this
+     */
+    public static function forPdf()
+    {
+        $styleSheet = new self();
+        $styleSheet->lessCompiler->addLessFile($styleSheet->pubPath . '/css/pdf/pdfprint.less');
+        // TODO(el): Caching
+        return $styleSheet;
+    }
+
+    /**
+     * Render the stylesheet
+     *
+     * @param   bool    $minified   Whether to compress the stylesheet
+     *
+     * @return  string              CSS
+     */
+    public function render($minified = false)
+    {
+        if ($minified) {
+            $this->lessCompiler->compress();
+        }
+        return $this->lessCompiler->render();
+    }
+
+    /**
+     * Send the stylesheet to the client
+     *
+     * Does not cache the stylesheet if the HTTP header Cache-Control or Pragma is set to no-cache.
+     *
+     * @param   bool    $minified   Whether to compress the stylesheet
+     */
+    public static function send($minified = false)
+    {
+        $styleSheet = new self();
+
+        $request = $styleSheet->app->getRequest();
+        $response = $styleSheet->app->getResponse();
+
+        $noCache = $request->getHeader('Cache-Control') === 'no-cache' || $request->getHeader('Pragma') === 'no-cache';
+
+        if (! $noCache && FileCache::etagMatchesFiles($styleSheet->lessCompiler->getLessFiles())) {
+            $response
+                ->setHttpResponseCode(304)
+                ->sendHeaders();
             return;
         }
 
-        $less = new LessCompiler();
-        $less->disableExtendedImport();
-        foreach ($lessFiles as $file) {
-            $less->addFile($file);
+        $etag = FileCache::etagForFiles($styleSheet->lessCompiler->getLessFiles());
+
+        $response
+            ->setHeader('Cache-Control', 'public', true)
+            ->setHeader('ETag', $etag, true)
+            ->setHeader('Content-Type', 'text/css', true);
+
+        $cacheFile = 'icinga-' . $etag . ($minified ? '.min' : '') . '.css';
+        $cache = FileCache::instance();
+
+        if (! $noCache && $cache->has($cacheFile)) {
+            $response->setBody($cache->get($cacheFile));
+        } else {
+            $css = $styleSheet->render($minified);
+            $response->setBody($css);
+            $cache->store($cacheFile, $css);
         }
-        $less->addLoadedModules();
-        if ($minified) {
-            $less->compress();
+
+        $response->sendResponse();
+    }
+
+    /**
+     * Render the stylesheet
+     *
+     * @return  string
+     */
+    public function __toString()
+    {
+        try {
+            return $this->render();
+        } catch (Exception $e) {
+            Logger::error($e);
+            return IcingaException::describe($e);
         }
-        $out = self::fixModuleLayoutCss($less->compile());
-        $cache->store($cacheFile, $out);
-        echo $out;
     }
 }

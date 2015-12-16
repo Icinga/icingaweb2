@@ -3,77 +3,260 @@
 
 namespace Icinga\Web;
 
+use Icinga\Application\Config;
+use Icinga\Application\Icinga;
+use InvalidArgumentException;
+
 /**
- * Helper Class Cookie
+ * A HTTP cookie
  */
 class Cookie
 {
     /**
-     * The name of the control cookie
+     * Domain of the cookie
+     *
+     * @var string
      */
-    const CHECK_COOKIE = '_chc';
+    protected $domain;
 
     /**
-     * The request
+     * The timestamp at which the cookie expires
      *
-     * @var Request
+     * @var int
      */
-    protected $request;
+    protected $expire;
+
+    /**
+     * Whether to protect the cookie against client side script code attempts to read the cookie
+     *
+     * Defaults to true.
+     *
+     * @var bool
+     */
+    protected $httpOnly = true;
+
+    /**
+     * Name of the cookie
+     *
+     * @var string
+     */
+    protected $name;
+
+    /**
+     * The path on the web server where the cookie is available
+     *
+     * Defaults to the base URL.
+     *
+     * @var string
+     */
+    protected $path;
+
+    /**
+     * Whether to send the cookie only over a secure connection
+     *
+     * Defaults to auto-detection so that if the current request was sent over a secure connection the secure flag will
+     * be set to true.
+     *
+     * @var bool
+     */
+    protected $secure;
+
+    /**
+     * Value of the cookie
+     *
+     * @var string
+     */
+    protected $value;
 
     /**
      * Create a new cookie
      *
-     * @param Request $request
+     * @param   string  $name
+     * @param   string  $value
      */
-    public function __construct(Request $request)
+    public function __construct($name, $value = null)
     {
-        $this->request = $request;
+        if (preg_match("/[=,; \t\r\n\013\014]/", $name)) {
+            throw new InvalidArgumentException(sprintf(
+                'Cookie name can\'t contain these characters: =,; \t\r\n\013\014 (%s)',
+                $name
+            ));
+        }
+        if (empty($name)) {
+            throw new InvalidArgumentException('The cookie name can\'t be empty');
+        }
+        $this->name = $name;
+        $this->value = $value;
     }
 
     /**
-     * Check whether cookies are supported or not
+     * Get the domain of the cookie
+     *
+     * @return  string
+     */
+    public function getDomain()
+    {
+        return $this->domain;
+    }
+
+    /**
+     * Set the domain of the cookie
+     *
+     * @param   string  $domain
+     *
+     * @return  $this
+     */
+    public function setDomain($domain)
+    {
+        $this->domain = $domain;
+        return $this;
+    }
+
+    /**
+     * Get the timestamp at which the cookie expires
+     *
+     * @return  int
+     */
+    public function getExpire()
+    {
+        return $this->expire;
+    }
+
+    /**
+     * Set the timestamp at which the cookie expires
+     *
+     * @param   int $expire
+     *
+     * @return  $this
+     */
+    public function setExpire($expire)
+    {
+        $this->expire = $expire;
+        return $this;
+    }
+
+    /**
+     * Get whether to protect the cookie against client side script code attempts to read the cookie
+     *
+     * @return  bool
+     */
+    public function isHttpOnly()
+    {
+        return $this->httpOnly;
+    }
+
+    /**
+     * Set whether to protect the cookie against client side script code attempts to read the cookie
+     *
+     * @param   bool    $httpOnly
+     *
+     * @return  $this
+     */
+    public function setHttpOnly($httpOnly)
+    {
+        $this->httpOnly = $httpOnly;
+        return $this;
+    }
+
+    /**
+     * Get the name of the cookie
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * Get the path on the web server where the cookie is available
+     *
+     * If the path has not been set either via {@link setPath()} or via config, the base URL will be returned.
+     *
+     * @return  string
+     */
+    public function getPath()
+    {
+        if ($this->path === null) {
+            $path = Config::app()->get('cookie', 'path');
+            if ($path === null) {
+                // The following call could be used as default for ConfigObject::get(), but we prevent unnecessary
+                // function calls here, if the path is set in the config
+                $path = Icinga::app()->getRequest()->getBaseUrl();
+            }
+            return $path;
+        }
+        return $this->path;
+    }
+
+    /**
+     * Set the path on the web server where the cookie is available
+     *
+     * @param   string  $path
+     *
+     * @return  $this
+     */
+    public function setPath($path)
+    {
+        $this->path = $path;
+        return $this;
+    }
+
+    /**
+     * Get whether to send the cookie only over a secure connection
+     *
+     * If the secure flag has not been set either via {@link setSecure()} or via config and if the current request was
+     * sent over a secure connection, true will be returned.
      *
      * @return bool
      */
-    public function isSupported()
+    public function isSecure()
     {
-        if (! empty($_COOKIE)) {
-            $this->cleanupCheck();
-            return true;
+        if ($this->secure === null) {
+            $secure = Config::app()->get('cookie', 'secure');
+            if ($secure === null) {
+                // The following call could be used as default for ConfigObject::get(), but we prevent unnecessary
+                // function calls here, if the secure flag is set in the config
+                $secure = Icinga::app()->getRequest()->isSecure();
+            }
+            return $secure;
         }
-
-        $url = $this->request->getUrl();
-
-        if ($url->hasParam('_checkCookie') && empty($_COOKIE)) {
-            return false;
-        }
-
-        if (! $url->hasParam('_checkCookie')) {
-            $this->provideCheck();
-        }
-
-        return false;
+        return $this->secure;
     }
 
     /**
-     * Prepare check to detect cookie support
+     * Set whether to send the cookie only over a secure connection
+     *
+     * @param   bool    $secure
+     *
+     * @return  $this
      */
-    public function provideCheck()
+    public function setSecure($secure)
     {
-        setcookie(self::CHECK_COOKIE, '1');
-
-        $requestUri = $this->request->getUrl()->addParams(array('_checkCookie' => 1));
-        $this->request->getResponse()->redirectAndExit($requestUri);
+        $this->secure = $secure;
+        return $this;
     }
 
     /**
-     * Cleanup the cookie support check
+     * Get the value of the cookie
+     *
+     * @return  string
      */
-    public function cleanupCheck()
+    public function getValue()
     {
-        if ($this->request->getUrl()->hasParam('_checkCookie') && isset($_COOKIE[self::CHECK_COOKIE])) {
-            $requestUri =$this->request->getUrl()->without('_checkCookie');
-            $this->request->getResponse()->redirectAndExit($requestUri);
-        }
+        return $this->value;
+    }
+
+    /**
+     * Set the value of the cookie
+     *
+     * @param   string  $value
+     *
+     * @return  $this
+     */
+    public function setValue($value)
+    {
+        $this->value = $value;
+        return $this;
     }
 }

@@ -4,11 +4,11 @@
 namespace Icinga\Module\Doc;
 
 use CachingIterator;
-use LogicException;
+use SplFileObject;
 use SplStack;
 use Icinga\Data\Tree\SimpleTree;
 use Icinga\Exception\NotReadableError;
-use Icinga\Module\Doc\Exception\DocEmptyException;
+use Icinga\Util\DirectoryIterator;
 use Icinga\Module\Doc\Exception\DocException;
 
 /**
@@ -40,7 +40,7 @@ class DocParser
     /**
      * Iterator over documentation files
      *
-     * @var DocIterator
+     * @var DirectoryIterator
      */
     protected $docIterator;
 
@@ -51,34 +51,17 @@ class DocParser
      *
      * @throws  DocException        If the documentation directory does not exist
      * @throws  NotReadableError    If the documentation directory is not readable
-     * @throws  DocEmptyException   If the documentation directory is empty
      */
     public function __construct($path)
     {
-        if (! is_dir($path)) {
+        if (! DirectoryIterator::isReadable($path)) {
             throw new DocException(
-                sprintf(mt('doc', 'Documentation directory \'%s\' does not exist'), $path)
-            );
-        }
-        if (! is_readable($path)) {
-            throw new DocException(
-                sprintf(mt('doc', 'Documentation directory \'%s\' is not readable'), $path)
-            );
-        }
-        $docIterator = new DocIterator($path);
-        if ($docIterator->count() === 0) {
-            throw new DocEmptyException(
-                sprintf(
-                    mt(
-                        'doc',
-                        'Documentation directory \'%s\' does not contain any non-empty Markdown file (\'.md\' suffix)'
-                    ),
-                    $path
-                )
+                mt('doc', 'Documentation directory \'%s\' is not readable'),
+                $path
             );
         }
         $this->path = $path;
-        $this->docIterator = $docIterator;
+        $this->docIterator = new DirectoryIterator($path, 'md');
     }
 
     /**
@@ -145,9 +128,8 @@ class DocParser
     public function getDocTree()
     {
         $tree = new SimpleTree();
-        foreach ($this->docIterator as $fileInfo) {
-            /** @var $fileInfo \SplFileInfo */
-            $file = $fileInfo->openFile();
+        foreach ($this->docIterator as $filename) {
+            $file = new SplFileObject($filename);
             $lastLine = null;
             $stack = new SplStack();
             $cachingIterator = new CachingIterator($file, CachingIterator::TOSTRING_USE_CURRENT);

@@ -3,8 +3,12 @@
 // Width for the name column--th--of name-value-table
 @name-value-table-name-width: 14em;
 
-.action-link {
-  color: @icinga-blue;
+.action-link(@color: @icinga-blue) {
+  color: @color;
+}
+
+.error-message {
+  font-weight: @font-weight-bold;
 }
 
 .large-icon {
@@ -58,9 +62,9 @@ a:hover > .icon-cancel {
 
 // Link styles
 
-.button-link {
-  .action-link();
-  .button();
+.button-link(@background-color: @body-bg-color, @color: @icinga-blue) {
+  .action-link(@color);
+  .button(@background-color, @color);
   display: inline-block;
   height: 35px;
   line-height: 20px;
@@ -164,13 +168,16 @@ a:hover > .icon-cancel {
   }
 
   tr[href] {
+    .transition(background 0.2s ease);
+
     &.active {
-      background-color: @gray-lighter;
+      background-color: @tr-active-color;
       border-left-color: @icinga-blue;
+      transition: none;
     }
 
     &:hover {
-      background-color: @gray-lightest;
+      background-color: @tr-hover-color;
       cursor: pointer;
     }
   }
@@ -226,4 +233,36 @@ a:hover > .icon-cancel {
   .selection-info {
     margin-left: 0.5em;
   }
+}
+
+/* Styles for centering content of unknown width and height both horizontally and vertically
+ *
+ * Example markup:
+ * <div class="centered-ghost">
+ *     <div class="centered-content">
+ *         <p>I'm centered.</p>
+ *     </div>
+ * </div>
+ */
+
+.centered-content {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.centered-ghost {
+  height: 100%;
+  text-align: center;
+  letter-spacing: -1em; // Remove gap between content and ghost
+}
+
+.centered-ghost > * {
+  letter-spacing: normal;
+}
+
+.centered-ghost:after {
+  content: '';
+  display: inline-block;
+  height: 100%;
+  vertical-align: middle;
 }

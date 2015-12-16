@@ -764,17 +764,6 @@ class NavigationConfigForm extends ConfigForm
     /**
      * {@inheritdoc}
      */
-    public function getValues($suppressArrayNotation = false)
-    {
-        $values = parent::getValues();
-        $values = array_merge($values, $values['item_form']);
-        unset($values['item_form']);
-        return $values;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     protected function writeConfig(Config $config)
     {
         parent::writeConfig($config);

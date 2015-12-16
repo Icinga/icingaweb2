@@ -61,7 +61,7 @@ if (in_array($path, $special)) {
             Stylesheet::send();
             exit;
         case 'css/icinga.min.css':
-            Stylesheet::sendMinified();
+            Stylesheet::send(true);
             exit;
 
         case 'js/icinga.dev.js':

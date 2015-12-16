@@ -7,7 +7,6 @@ use Icinga\Web\Controller;
 use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
 use Icinga\Web\FileCache;
-use Icinga\Web\LessCompiler;
 
 /**
  * Delivery static content to clients
@@ -86,95 +85,5 @@ class StaticController extends Controller
         header('Last-Modified: ' . gmdate('D, d M Y H:i:s', $s['mtime']) . ' GMT');
 
         readfile($filePath);
-    }
-
-    /**
-     * Return a javascript file from the application's or the module's public folder
-     */
-    public function javascriptAction()
-    {
-        $module = $this->_getParam('module_name');
-        $file   = $this->_getParam('file');
-
-        if ($module == 'app') {
-            $basedir = Icinga::app()->getApplicationDir('../public/js/icinga/components/');
-            $filePath = $basedir . $file;
-        } else {
-            if (! Icinga::app()->getModuleManager()->hasEnabled($module)) {
-                Logger::error(
-                    'Non-existing frontend component "' . $module . '/' . $file
-                    . '" was requested. The module "' . $module . '" does not exist or is not active.'
-                );
-                echo "/** Module not enabled **/";
-                return;
-            }
-            $basedir = Icinga::app()->getModuleManager()->getModule($module)->getBaseDir();
-            $filePath = $basedir . '/public/js/' . $file;
-        }
-
-        if (! file_exists($filePath)) {
-            Logger::error(
-                'Non-existing frontend component "' . $module . '/' . $file
-                . '" was requested, which would resolve to the the path: ' . $filePath
-            );
-            echo '/** Module has no js files **/';
-            return;
-        }
-        $response = $this->getResponse();
-        $response->setHeader('Content-Type', 'text/javascript');
-        $this->setCacheHeader();
-
-        $response->setHeader(
-            'Last-Modified',
-            gmdate('D, d M Y H:i:s', filemtime($filePath)) . ' GMT'
-        );
-
-        readfile($filePath);
-    }
-
-    /**
-     * Set cache header for the response
-     *
-     * @param int $maxAge The maximum age to set
-     */
-    private function setCacheHeader($maxAge = 3600)
-    {
-        $maxAge = (int) $maxAge;
-        $this
-            ->getResponse()
-            ->setHeader('Cache-Control', sprintf('max-age=%d', $maxAge), true)
-            ->setHeader('Pragma', 'cache', true)
-            ->setHeader(
-                'Expires',
-                gmdate('D, d M Y H:i:s', time() + $maxAge) . ' GMT',
-                true
-            );
-    }
-
-    /**
-     * Send application's and modules' CSS
-     */
-    public function stylesheetAction()
-    {
-        $lessCompiler = new LessCompiler();
-        $moduleManager = Icinga::app()->getModuleManager();
-
-        $publicDir = realpath(dirname($_SERVER['SCRIPT_FILENAME']));
-
-        $lessCompiler->addItem($publicDir . '/css/vendor');
-        $lessCompiler->addItem($publicDir . '/css/icinga');
-
-        foreach ($moduleManager->getLoadedModules() as $moduleName) {
-            $cssDir = $moduleName->getCssDir();
-
-            if (is_dir($cssDir)) {
-                $lessCompiler->addItem($cssDir);
-            }
-        }
-
-        $this->getResponse()->setHeader('Content-Type', 'text/css');
-        $this->setCacheHeader(3600);
-
-        $lessCompiler->printStack();
     }
 }
