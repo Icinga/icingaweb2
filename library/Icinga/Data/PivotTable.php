@@ -369,8 +369,18 @@ class PivotTable implements Sortable
         );
         if (! empty($xAxis) && ! empty($yAxis)) {
             $this->baseQuery
-                ->where($this->xAxisColumn, $xAxisKeys)
-                ->where($this->yAxisColumn, $yAxisKeys);
+                ->where($this->xAxisColumn, array_map(
+                    function($key) {
+                        return (string) $key;
+                    },
+                    $xAxisKeys
+                ))
+                ->where($this->yAxisColumn, array_map(
+                    function($key) {
+                        return (string) $key;
+                    },
+                    $yAxisKeys
+                ));
 
             foreach ($yAxisKeys as $yAxisKey) {
                 foreach ($xAxisKeys as $xAxisKey) {
