@@ -25,9 +25,7 @@ if (! $this->compact): ?>
     </tr>
 </thead>
 <tbody>
-<?php
-$currentFilter = $this->filterEditor->getFilter()->getUrlParams()->toArray(false);
-foreach ($servicegroups->peekAhead($this->compact) as  $serviceGroup): ?>
+<?php foreach ($servicegroups->peekAhead($this->compact) as  $serviceGroup): ?>
     <tr>
         <td class="count-col">
             <span class="badge"><?= $serviceGroup->services_total ?></span>
@@ -48,11 +46,11 @@ foreach ($servicegroups->peekAhead($this->compact) as  $serviceGroup): ?>
                 ->add(
                     StateBadges::STATE_OK,
                     $serviceGroup->services_ok,
-                    array_merge($currentFilter, array(
+                    array(
                         'service_state'     => 0,
                         'servicegroup_name' => $serviceGroup->servicegroup_name,
                         'sort'              => 'service_severity'
-                    )),
+                    ),
                     'List %s service that is currently in state OK in service group "%s"',
                     'List %s services which are currently in state OK in service group "%s"',
                     array($serviceGroup->services_ok, $serviceGroup->servicegroup_alias)
@@ -60,14 +58,14 @@ foreach ($servicegroups->peekAhead($this->compact) as  $serviceGroup): ?>
                 ->add(
                     StateBadges::STATE_CRITICAL,
                     $serviceGroup->services_critical_unhandled,
-                    array_merge($currentFilter, array(
+                    array(
                         'service_state'         => 2,
                         'service_acknowledged'  => 0,
                         'service_in_downtime'   => 0,
                         'host_problem'          => 0,
                         'servicegroup_name'     => $serviceGroup->servicegroup_name,
                         'sort'                  => 'service_severity'
-                    )),
+                    ),
                     'List %s service that is currently in state CRITICAL in service group "%s"',
                     'List %s services which are currently in state CRITICAL in service group "%s"',
                     array($serviceGroup->services_critical_unhandled, $serviceGroup->servicegroup_alias)
@@ -75,12 +73,12 @@ foreach ($servicegroups->peekAhead($this->compact) as  $serviceGroup): ?>
                 ->add(
                     StateBadges::STATE_CRITICAL_HANDLED,
                     $serviceGroup->services_critical_handled,
-                    array_merge($currentFilter, array(
+                    array(
                         'service_state'     => 2,
                         'service_handled'   => 1,
                         'servicegroup_name' => $serviceGroup->servicegroup_name,
                         'sort'              => 'service_severity'
-                    )),
+                    ),
                     'List %s service that is currently in state CRITICAL (Acknowledged) in service group "%s"',
                     'List %s services which are currently in state CRITICAL (Acknowledged) in service group "%s"',
                     array($serviceGroup->services_critical_unhandled, $serviceGroup->servicegroup_alias)
@@ -88,14 +86,14 @@ foreach ($servicegroups->peekAhead($this->compact) as  $serviceGroup): ?>
                 ->add(
                     StateBadges::STATE_UNKNOWN,
                     $serviceGroup->services_unknown_unhandled,
-                    array_merge($currentFilter, array(
+                    array(
                         'service_state'         => 3,
                         'service_acknowledged'  => 0,
                         'service_in_downtime'   => 0,
                         'host_problem'          => 0,
                         'servicegroup_name'     => $serviceGroup->servicegroup_name,
                         'sort'                  => 'service_severity'
-                    )),
+                    ),
                     'List %s service that is currently in state UNKNOWN in service group "%s"',
                     'List %s services which are currently in state UNKNOWN in service group "%s"',
                     array($serviceGroup->services_unknown_unhandled, $serviceGroup->servicegroup_alias)
@@ -103,12 +101,12 @@ foreach ($servicegroups->peekAhead($this->compact) as  $serviceGroup): ?>
                 ->add(
                     StateBadges::STATE_UNKNOWN_HANDLED,
                     $serviceGroup->services_unknown_handled,
-                    array_merge($currentFilter, array(
+                    array(
                         'service_state'     => 3,
                         'service_handled'   => 1,
                         'servicegroup_name' => $serviceGroup->servicegroup_name,
                         'sort'              => 'service_severity'
-                    )),
+                    ),
                     'List %s service that is currently in state UNKNOWN (Acknowledged) in service group "%s"',
                     'List %s services which are currently in state UNKNOWN (Acknowledged) in service group "%s"',
                     array($serviceGroup->services_unknown_handled, $serviceGroup->servicegroup_alias)
@@ -117,14 +115,14 @@ foreach ($servicegroups->peekAhead($this->compact) as  $serviceGroup): ?>
                 ->add(
                     StateBadges::STATE_WARNING,
                     $serviceGroup->services_warning_unhandled,
-                    array_merge($currentFilter, array(
+                    array(
                         'service_state'         => 1,
                         'service_acknowledged'  => 0,
                         'service_in_downtime'   => 0,
                         'host_problem'          => 0,
                         'servicegroup_name'     => $serviceGroup->servicegroup_name,
                         'sort'                  => 'service_severity'
-                    )),
+                    ),
                     'List %s service that is currently in state WARNING in service group "%s"',
                     'List %s services which are currently in state WARNING in service group "%s"',
                     array($serviceGroup->services_warning_unhandled, $serviceGroup->servicegroup_alias)
@@ -132,12 +130,12 @@ foreach ($servicegroups->peekAhead($this->compact) as  $serviceGroup): ?>
                 ->add(
                     StateBadges::STATE_WARNING_HANDLED,
                     $serviceGroup->services_warning_handled,
-                    array_merge($currentFilter, array(
+                    array(
                         'service_state'     => 1,
                         'service_handled'   => 1,
                         'servicegroup_name' => $serviceGroup->servicegroup_name,
                         'sort'              => 'service_severity'
-                    )),
+                    ),
                     'List %s service that is currently in state WARNING (Acknowledged) in service group "%s"',
                     'List %s services which are currently in state WARNING (Acknowledged) in service group "%s"',
                     array($serviceGroup->services_warning_handled, $serviceGroup->servicegroup_alias)
@@ -145,11 +143,11 @@ foreach ($servicegroups->peekAhead($this->compact) as  $serviceGroup): ?>
                 ->add(
                     StateBadges::STATE_PENDING,
                     $serviceGroup->services_pending,
-                    array_merge($currentFilter, array(
+                    array(
                         'service_state'     => 99,
                         'servicegroup_name' => $serviceGroup->servicegroup_name,
                         'sort'              => 'service_severity'
-                    )),
+                    ),
                     'List %s service that is currenlty in state PENDING in service group "%s"',
                     'List %s services which are currently in state PENDING in service group "%s"',
                     array($serviceGroup->services_pending, $serviceGroup->servicegroup_alias)
