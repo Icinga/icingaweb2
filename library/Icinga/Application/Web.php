@@ -361,7 +361,7 @@ class Web extends EmbeddedWeb
                         'logout' => array(
                             'label'     => t('Logout'),
                             'priority'  => 200,
-                            'target'    => '_self',
+                            'target'    => 'current_window',
                             'url'       => 'authentication/logout'
                         )
                     )
