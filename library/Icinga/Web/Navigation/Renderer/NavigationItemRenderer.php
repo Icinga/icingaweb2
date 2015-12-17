@@ -37,6 +37,13 @@ class NavigationItemRenderer
     protected $internalLinkTargets;
 
     /**
+     * Native HTML link targets
+     *
+     * @var array
+     */
+    protected $htmlLinkTargets;
+
+    /**
      * Whether to escape the label
      *
      * @var bool
@@ -58,6 +65,10 @@ class NavigationItemRenderer
             'single_column'     => '_main',
             'current_column'    => '_self',
             'next_column'       => '_next'
+        );
+        $this->htmlLinkTargets = array(
+            'current_window'    => '_self',
+            'new_window'        => '_blank'
         );
         $this->init();
     }
@@ -227,26 +238,29 @@ class NavigationItemRenderer
         }
 
         $actualTarget = $this->actualLinkTarget($target);
-        if ($actualTarget === null) {
-            return ' target="' . $this->view()->escape($target) . '"';
+        if ($actualTarget !== null) {
+            return ' data-base-target="' . $actualTarget . '"';
         }
 
-        return ' data-base-target="' . $actualTarget . '"';
+        $actualTarget = $this->actualLinkTarget($target, false);
+        return ' target="' . ($actualTarget === null ? $this->view()->escape($target) : $actualTarget) . '"';
     }
 
     /**
-     * If $target is an internal linktarget, return its HTML version. Otherwise, return null.
+     * If $target is a linktarget, return its HTML version. Otherwise, return null.
      *
      * @param   string  $target
+     * @param   bool    $internal   Whether the target must or must not be provided by Icinga Web 2
      *
      * @return  string|null
      */
-    protected function actualLinkTarget($target)
+    protected function actualLinkTarget($target, $internal = true)
     {
-        if (isset($this->internalLinkTargets[$target])) {
-            return $this->internalLinkTargets[$target];
+        $linkTargets = $internal ? $this->internalLinkTargets : $this->htmlLinkTargets;
+        if (isset($linkTargets[$target])) {
+            return $linkTargets[$target];
         }
-        if (in_array($target, $this->internalLinkTargets, true)) {
+        if (in_array($target, $linkTargets, true)) {
             return $target;
         }
     }
