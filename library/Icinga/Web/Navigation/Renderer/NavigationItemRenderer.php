@@ -37,13 +37,6 @@ class NavigationItemRenderer
     protected $internalLinkTargets;
 
     /**
-     * Native HTML link targets
-     *
-     * @var array
-     */
-    protected $htmlLinkTargets;
-
-    /**
      * Whether to escape the label
      *
      * @var bool
@@ -61,15 +54,7 @@ class NavigationItemRenderer
             $this->setOptions($options);
         }
 
-        $this->internalLinkTargets = array(
-            'single_column'     => '_main',
-            'current_column'    => '_self',
-            'next_column'       => '_next'
-        );
-        $this->htmlLinkTargets = array(
-            'current_window'    => '_self',
-            'new_window'        => '_blank'
-        );
+        $this->internalLinkTargets = array('_main', '_self', '_next');
         $this->init();
     }
 
@@ -200,7 +185,7 @@ class NavigationItemRenderer
             $url->overwriteParams($item->getUrlParameters());
 
             $target = $item->getTarget();
-            if ($url->isExternal() && ! ($target && $this->getIcingaLinkTarget($target) === null)) {
+            if ($url->isExternal() && (!$target || in_array($target, $this->internalLinkTargets, true))) {
                 $url = Url::fromPath('iframe', array('url' => $url));
             }
 
@@ -237,43 +222,10 @@ class NavigationItemRenderer
             return '';
         }
 
-        $icingaTarget = $this->getIcingaLinkTarget($target);
-        if ($icingaTarget !== null) {
-            return ' data-base-target="' . $icingaTarget . '"';
+        if (! in_array($target, $this->internalLinkTargets, true)) {
+            return ' target="' . $this->view()->escape($target) . '"';
         }
 
-        $htmlTarget = $this->getHtmlLinkTarget($target);
-        return ' target="' . ($htmlTarget === null ? $this->view()->escape($target) : $htmlTarget) . '"';
-    }
-
-    /**
-     * If $targetName is an internal link target, return its HTML version. Otherwise, return null.
-     *
-     * @param   string  $targetName
-     *
-     * @return  string|null
-     */
-    protected function getIcingaLinkTarget($targetName)
-    {
-        if (isset($this->internalLinkTargets[$targetName])) {
-            return $this->internalLinkTargets[$targetName];
-        }
-        if (in_array($targetName, $this->internalLinkTargets, true)) {
-            return $targetName;
-        }
-    }
-
-    /**
-     * If $targetName is an HTML link target, return its HTML version. Otherwise, return null.
-     *
-     * @param   string  $targetName
-     *
-     * @return  string|null
-     */
-    protected function getHtmlLinkTarget($targetName)
-    {
-        if (isset($this->htmlLinkTargets[$targetName])) {
-            return $this->htmlLinkTargets[$targetName];
-        }
+        return ' data-base-target="' . $target . '"';
     }
 }
