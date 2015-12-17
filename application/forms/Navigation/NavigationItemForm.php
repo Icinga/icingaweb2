@@ -38,10 +38,10 @@ class NavigationItemForm extends Form
                 'label'         => $this->translate('Target'),
                 'description'   => $this->translate('The target where to open this navigation item\'s url'),
                 'multiOptions'  => array(
-                    '_blank'    => $this->translate('New Window'),
-                    '_next'     => $this->translate('New Column'),
-                    '_main'     => $this->translate('Single Column'),
-                    '_self'     => $this->translate('Current Column')
+                    'new_window'        => $this->translate('New Window'),
+                    'next_column'       => $this->translate('New Column'),
+                    'single_column'     => $this->translate('Single Column'),
+                    'current_column'    => $this->translate('Current Column')
                 )
             )
         );
