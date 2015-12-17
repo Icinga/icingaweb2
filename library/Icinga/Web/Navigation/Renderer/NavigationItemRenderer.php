@@ -200,7 +200,7 @@ class NavigationItemRenderer
             $url->overwriteParams($item->getUrlParameters());
 
             $target = $item->getTarget();
-            if ($url->isExternal() && ! ($target && $this->actualLinkTarget($target) === null)) {
+            if ($url->isExternal() && ! ($target && $this->getIcingaLinkTarget($target) === null)) {
                 $url = Url::fromPath('iframe', array('url' => $url));
             }
 
@@ -237,31 +237,43 @@ class NavigationItemRenderer
             return '';
         }
 
-        $actualTarget = $this->actualLinkTarget($target);
+        $actualTarget = $this->getIcingaLinkTarget($target);
         if ($actualTarget !== null) {
             return ' data-base-target="' . $actualTarget . '"';
         }
 
-        $actualTarget = $this->actualLinkTarget($target, false);
+        $actualTarget = $this->getHtmlLinkTarget($target);
         return ' target="' . ($actualTarget === null ? $this->view()->escape($target) : $actualTarget) . '"';
     }
 
     /**
-     * If $target is a linktarget, return its HTML version. Otherwise, return null.
+     * If $targetName is an internal link target, return its HTML version. Otherwise, return null.
      *
-     * @param   string  $target
-     * @param   bool    $internal   Whether the target must or must not be provided by Icinga Web 2
+     * @param   string  $targetName
      *
      * @return  string|null
      */
-    protected function actualLinkTarget($target, $internal = true)
+    protected function getIcingaLinkTarget($targetName)
     {
-        $linkTargets = $internal ? $this->internalLinkTargets : $this->htmlLinkTargets;
-        if (isset($linkTargets[$target])) {
-            return $linkTargets[$target];
+        if (isset($this->internalLinkTargets[$targetName])) {
+            return $this->internalLinkTargets[$targetName];
         }
-        if (in_array($target, $linkTargets, true)) {
-            return $target;
+        if (in_array($targetName, $this->internalLinkTargets, true)) {
+            return $targetName;
+        }
+    }
+
+    /**
+     * If $targetName is an HTML link target, return its HTML version. Otherwise, return null.
+     *
+     * @param   string  $targetName
+     *
+     * @return  string|null
+     */
+    protected function getHtmlLinkTarget($targetName)
+    {
+        if (isset($this->htmlLinkTargets[$targetName])) {
+            return $this->htmlLinkTargets[$targetName];
         }
     }
 }
