@@ -359,10 +359,10 @@ class Web extends EmbeddedWeb
                             'url'       => 'preference'
                         ),
                         'logout' => array(
-                            'label'     => t('Logout'),
-                            'priority'  => 200,
-                            'target'    => '_self',
-                            'url'       => 'authentication/logout'
+                            'label'         => t('Logout'),
+                            'priority'      => 200,
+                            'attributes'    => array('target' => '_self'),
+                            'url'           => 'authentication/logout'
                         )
                     )
                 )
