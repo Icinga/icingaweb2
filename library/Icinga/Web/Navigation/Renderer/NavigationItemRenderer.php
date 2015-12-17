@@ -54,7 +54,11 @@ class NavigationItemRenderer
             $this->setOptions($options);
         }
 
-        $this->internalLinkTargets = array('_main', '_self', '_next');
+        $this->internalLinkTargets = array(
+            'single_column'     => '_main',
+            'current_column'    => '_self',
+            'next_column'       => '_next'
+        );
         $this->init();
     }
 
@@ -185,7 +189,7 @@ class NavigationItemRenderer
             $url->overwriteParams($item->getUrlParameters());
 
             $target = $item->getTarget();
-            if ($url->isExternal() && (!$target || in_array($target, $this->internalLinkTargets, true))) {
+            if ($url->isExternal() && ! ($target && $this->actualLinkTarget($target) === null)) {
                 $url = Url::fromPath('iframe', array('url' => $url));
             }
 
@@ -222,10 +226,28 @@ class NavigationItemRenderer
             return '';
         }
 
-        if (! in_array($target, $this->internalLinkTargets, true)) {
+        $actualTarget = $this->actualLinkTarget($target);
+        if ($actualTarget === null) {
             return ' target="' . $this->view()->escape($target) . '"';
         }
 
-        return ' data-base-target="' . $target . '"';
+        return ' data-base-target="' . $actualTarget . '"';
+    }
+
+    /**
+     * If $target is an internal linktarget, return its HTML version. Otherwise, return null.
+     *
+     * @param   string  $target
+     *
+     * @return  string|null
+     */
+    protected function actualLinkTarget($target)
+    {
+        if (isset($this->internalLinkTargets[$target])) {
+            return $this->internalLinkTargets[$target];
+        }
+        if (in_array($target, $this->internalLinkTargets, true)) {
+            return $target;
+        }
     }
 }
