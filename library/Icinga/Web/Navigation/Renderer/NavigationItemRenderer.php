@@ -237,13 +237,13 @@ class NavigationItemRenderer
             return '';
         }
 
-        $actualTarget = $this->getIcingaLinkTarget($target);
-        if ($actualTarget !== null) {
-            return ' data-base-target="' . $actualTarget . '"';
+        $icingaTarget = $this->getIcingaLinkTarget($target);
+        if ($icingaTarget !== null) {
+            return ' data-base-target="' . $icingaTarget . '"';
         }
 
-        $actualTarget = $this->getHtmlLinkTarget($target);
-        return ' target="' . ($actualTarget === null ? $this->view()->escape($target) : $actualTarget) . '"';
+        $htmlTarget = $this->getHtmlLinkTarget($target);
+        return ' target="' . ($htmlTarget === null ? $this->view()->escape($target) : $htmlTarget) . '"';
     }
 
     /**
