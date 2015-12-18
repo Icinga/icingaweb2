@@ -138,9 +138,8 @@ abstract class ApplicationBootstrap
         $this->setupAutoloader();
 
         if ($configDir === null) {
-            if (array_key_exists('ICINGAWEB_CONFIGDIR', $_SERVER)) {
-                $configDir = $_SERVER['ICINGAWEB_CONFIGDIR'];
-            } else {
+            $configDir = getenv('ICINGAWEB_CONFIGDIR');
+            if ($configDir === false) {
                 $configDir = Platform::isWindows()
                     ? $baseDir . '/config'
                     : '/etc/icingaweb2';
