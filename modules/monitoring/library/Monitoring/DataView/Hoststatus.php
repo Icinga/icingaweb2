@@ -117,7 +117,7 @@ class HostStatus extends DataView
                 'order' => self::SORT_ASC
             ),
             'host_last_state_change' => array(
-                'order' => self::SORT_ASC
+                'order' => self::SORT_DESC
             )
         );
     }

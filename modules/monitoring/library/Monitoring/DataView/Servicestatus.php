@@ -145,6 +145,9 @@ class ServiceStatus extends DataView
                     'service_display_name'
                 ),
                 'order' => self::SORT_ASC
+            ),
+            'service_last_state_change' => array(
+                'order' => self::SORT_DESC
             )
         );
     }
