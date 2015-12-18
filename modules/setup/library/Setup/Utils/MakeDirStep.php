@@ -29,7 +29,7 @@ class MakeDirStep extends Step
         $success = true;
         foreach ($this->paths as $path) {
             if (false === file_exists($path)) {
-                if (false === @mkdir($path)) {
+                if (false === @mkdir($path, 0777, true)) {
                     $this->errors[$path] = error_get_last();
                     $success = false;
                 } else {
