@@ -269,11 +269,11 @@ class AdminAccountPage extends Form
      */
     protected function getUsername()
     {
-        if (false === isset($_SERVER['REMOTE_USER'])) {
+        $name = getenv('REMOTE_USER');
+        if ($name === false) {
             return '';
         }
 
-        $name = $_SERVER['REMOTE_USER'];
         if (isset($this->backendConfig['strip_username_regexp']) && $this->backendConfig['strip_username_regexp']) {
             // No need to silence or log anything here because the pattern has
             // already been successfully compiled during backend configuration

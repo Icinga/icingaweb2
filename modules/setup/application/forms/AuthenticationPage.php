@@ -30,7 +30,7 @@ class AuthenticationPage extends Form
      */
     public function createElements(array $formData)
     {
-        if (isset($formData['type']) && $formData['type'] === 'external' && !isset($_SERVER['REMOTE_USER'])) {
+        if (isset($formData['type']) && $formData['type'] === 'external' && getenv('REMOTE_USER') === false) {
             $this->info(
                 $this->translate(
                     'You\'re currently not authenticated using any of the web server\'s authentication '
