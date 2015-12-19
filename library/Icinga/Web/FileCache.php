@@ -50,7 +50,7 @@ class FileCache
                 $this->basedir = $runtimePath;
                 $this->enabled = true;
             }
-        } elseif (is_dir($tmpDir) && is_writeable($tmpDir) && @mkdir($runtimePath, 01750, true)) {
+        } elseif (is_dir($tmpDir) && is_writeable($tmpDir) && @mkdir($runtimePath, octdec('01750'), true)) {
             // Suppress mkdir errors because it may error w/ no such file directory if the systemd private tmp directory
             // for the web server has been removed
             $this->basedir = $runtimePath;
