@@ -20,19 +20,21 @@ class ScheduleHostDowntimeCommandForm extends ScheduleServiceDowntimeCommandForm
     public function createElements(array $formData = array())
     {
         parent::createElements($formData);
-        $this->addElements(array(
+
+        $this->addElement(
+            'checkbox',
+            'all_services',
             array(
-                'checkbox',
-                'all_services',
-                array(
-                    'description'   => $this->translate(
-                        'Schedule downtime for all services on the hosts and the hosts themselves.'
-                    ),
-                    'label'         => $this->translate('All Services'),
-                    'value'         => false
-                )
-            ),
-            array(
+                'description'   => $this->translate(
+                    'Schedule downtime for all services on the hosts and the hosts themselves.'
+                ),
+                'label'         => $this->translate('All Services'),
+                'value'         => false
+            )
+        );
+
+        if (substr($this->getBackend()->getProgramVersion(), 0, 2) !== 'v2') {
+            $this->addElement(
                 'select',
                 'child_hosts',
                 array(
@@ -47,8 +49,9 @@ class ScheduleHostDowntimeCommandForm extends ScheduleServiceDowntimeCommandForm
                     ),
                     'value'         => 0
                 )
-            )
-        ));
+            );
+        }
+
         return $this;
     }
 
@@ -60,7 +63,11 @@ class ScheduleHostDowntimeCommandForm extends ScheduleServiceDowntimeCommandForm
     {
         foreach ($this->objects as $object) {
             /** @var \Icinga\Module\Monitoring\Object\Host $object */
-            $childHosts = (int) $this->getElement('child_hosts')->getValue();
+            if (($childHostsEl = $this->getElement('child_hosts')) !== null) {
+                $childHosts = (int) $childHostsEl->getValue();
+            } else {
+                $childHosts = 0;
+            }
             $allServices = $this->getElement('all_services')->isChecked();
             if ($childHosts === 0) {
                 $hostDowntime = new ScheduleHostDowntimeCommand();
