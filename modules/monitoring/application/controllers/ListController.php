@@ -160,12 +160,12 @@ class ListController extends Controller
             'service_state'             => $this->translate('Current Service State'),
             'service_display_name'      => $this->translate('Service Name'),
             'service_last_check'        => $this->translate('Last Service Check'),
+            'service_last_state_change' => $this->translate('Last State Change'),
             'host_severity'             => $this->translate('Host Severity'),
             'host_state'                => $this->translate('Current Host State'),
             'host_display_name'         => $this->translate('Hostname'),
             'host_address'              => $this->translate('Host Address'),
-            'host_last_check'           => $this->translate('Last Host Check'),
-            'service_last_state_change' => $this->translate('Last State Change')
+            'host_last_check'           => $this->translate('Last Host Check')
         ), $query);
 
         $stats = $this->backend->select()->from('servicestatussummary', array(

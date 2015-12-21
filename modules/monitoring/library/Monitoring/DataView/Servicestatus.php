@@ -123,6 +123,9 @@ class ServiceStatus extends DataView
                 ),
                 'order' => self::SORT_DESC
             ),
+            'service_last_state_change' => array(
+                'order' => self::SORT_DESC
+            ),
             'host_severity' => array(
                 'columns' => array(
                     'host_severity',
@@ -145,9 +148,6 @@ class ServiceStatus extends DataView
                     'service_display_name'
                 ),
                 'order' => self::SORT_ASC
-            ),
-            'service_last_state_change' => array(
-                'order' => self::SORT_DESC
             )
         );
     }
