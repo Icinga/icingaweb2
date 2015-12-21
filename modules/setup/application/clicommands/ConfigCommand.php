@@ -54,7 +54,7 @@ class ConfigCommand extends Command
             ));
         }
 
-        if (! file_exists($configDir) && ! @mkdir($configDir)) {
+        if (! file_exists($configDir) && ! @mkdir($configDir, 0755, true)) {
             $e = error_get_last();
             $this->fail(sprintf(
                 $this->translate('Can\'t create configuration directory %s: %s'),
