@@ -1,47 +1,112 @@
 <div class="controls">
-<?= $this->tabs ?>
+    <?= $this->tabs ?>
 </div>
 
 <div class="content styleguide">
-<h1>Header h1</h1>
-<h2>Header h2</h2>
-<h3>Header h3</h3>
-<h4>Header h4</h4>
-<h5>Header h5</h5>
-<h6>Header h6</h6>
+    <div class="section">
+        <h1>Icinga Web 2 Design Guidelines</h1>
 
-<p>This is a paragraph. This is a paragraph. This is a paragraph. This is a paragraph. This is a paragraph. This is a paragraph. A <a href="#">link pointing somewhere</a>. This is a paragraph. This is a paragraph. This is a paragraph. This is a paragraph. This is a paragraph.</p>
+        <ul class="toc">
+            <li><a href="#headings">Headings</a></li>
+            <li><a href="#block-content">Block Content</a></li>
+            <li><a href="#tables">Tables</a></li>
+            <li><a href="#comment-list">Comment List</a></li>
+            <li><a href="#blockquote">Blockquote</a></li>
+        </ul>
+    </div>
 
-<table class="avp">
-<thead>
-  <tr>
-    <th>Table Head - th in thead</th>
-    <td>td in thead<td>
-  </tr>
-</thead>
-<tbody>
-  <tr>
-    <th>Tbody - th</th>
-    <td>Tbody - td</td>
-  </tr>
-  <tr>
-    <th>Tbody - th</th>
-    <td>Tbody - td</td>
-  </tr>
-  <tr>
-    <th>Tbody - th</th>
-    <td>Tbody - td</td>
-  </tr>
-</tbody>
-</table>
+    <div class="section">
+        <h2 id="headings">Headings</h2>
+        <h1>Header h1</h1>
+        <h2>Header h2</h2>
+        <h3>Header h3</h3>
+        <h4>Header h4</h4>
+        <h5>Header h5</h5>
+        <h6>Header h6</h6>
+    </div>
 
-<blockquote>
-  Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
-  invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.
-  At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren,
-  no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet,
-  consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore
-  magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.
-  Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
-</blockquote>
+    <div class="section">
+        <h2 id="block-content">Block Content</h2>
+        <h3>Paragraph</h3>
+        <p>
+            This is a paragraph. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
+            invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo
+            dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+            A <a href="#">link inside a paragraph</a>.
+            Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et
+            dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.
+            Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+        </p>
+    </div>
+
+    <div class="section">
+        <h2 id="tables">Tables</h2>
+        <table class="common-table">
+        <thead>
+            <tr>
+                <th>Table Head - th in thead</th>
+                <td>td in thead<td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <th>Tbody - th</th>
+                <td>Tbody - td</td>
+            </tr>
+            <tr>
+                <th>Tbody - th</th>
+                <td>Tbody - td</td>
+            </tr>
+            <tr>
+                <th>Tbody - th</th>
+                <td>Tbody - td</td>
+            </tr>
+        </tbody>
+        </table>
+    </div>
+
+    <div class="section">
+        <h2 id="comment-list"><?= $this->translate('Comment List') ?></h2>
+        <dl class="comment-list">
+            <dt>
+                John Doe
+                <span class="comment-time">
+                    <?= $this->translate('commented') ?>
+                    <span class="relative-time"><?= $this->translate('some time ago') ?></span>
+                </span>
+                <i class="remove-action icon-cancel"></i>
+            </dt>
+            <dd>
+                Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore
+                <br>
+                et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.
+            </dd>
+            <dt>
+                Richard Roe
+                <span class="comment-time">
+                    <?= $this->translate('commented') ?>
+                    <span class="relative-time"><?= $this->translate('some time ago') ?></span>
+                </span>
+                <i class="remove-action icon-cancel"></i>
+            </dt>
+            <dd>
+                Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore
+                <br>
+                et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.
+            </dd>
+        </dl>
+    </div>
+
+    <div class="section">
+        <h2 id="blockquote"><?= $this->translate('Blockquote') ?></h2>
+        <blockquote>
+            Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
+            invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.
+            At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren,
+            no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet,
+            consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore
+            magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.
+            Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+        </blockquote>
+    </div>
 </div>

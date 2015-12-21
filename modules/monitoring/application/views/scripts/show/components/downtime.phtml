@@ -73,33 +73,30 @@ if (empty($object->comments) && ! $addLink) {
                 }
             }
         ?>
-            <dt class="comment-header">
+            <dt>
                 <?= $this->escape($downtime->author_name) ?>
-                <span class="comment-meta">
+                <span class="comment-time">
                     <?= $this->translate('created') ?>
                     <?= $this->timeAgo($downtime->entry_time) ?>
                     <span aria-hidden="true">&#448;</span>
                     <?= $state ?>
-                <?php if (isset($delDowntimeForm)): // Form is unset if the current user lacks the respective permission ?>
-                    <span class="meta-icons">
-                    <?php
-                        $deleteButton = clone($delDowntimeForm);
-                        /** @var \Icinga\Module\Monitoring\Forms\Command\Object\DeleteDowntimeCommandForm $deleteButton */
-                        $deleteButton->setAttrib('class', $deleteButton->getAttrib('class') . ' remove-action');
-                        $deleteButton->populate(
-                            array(
-                                'downtime_id'           => $downtime->id,
-                                'downtime_is_service'   => $object->getType() === $object::TYPE_SERVICE
-                            )
-                        );
-                        echo $deleteButton;
-                    ?>
-                    </span>
-                <?php endif ?>
                 </span>
+                <?php if (isset($delDowntimeForm)) {
+                    // Form is unset if the current user lacks the respective permission
+                    $deleteButton = clone($delDowntimeForm);
+                    /** @var \Icinga\Module\Monitoring\Forms\Command\Object\DeleteDowntimeCommandForm $deleteButton */
+                    $deleteButton->setAttrib('class', $deleteButton->getAttrib('class') . ' remove-action');
+                    $deleteButton->populate(
+                        array(
+                            'downtime_id'           => $downtime->id,
+                            'downtime_is_service'   => $object->getType() === $object::TYPE_SERVICE
+                        )
+                    );
+                    echo $deleteButton;
+                } ?>
             </dt>
-            <dd class="comment-text">
-                <p><?= nl2br($this->createTicketLinks($this->escape($downtime->comment)), false) ?></p>
+            <dd>
+                <?= $this->nl2br($this->createTicketLinks($this->escape($downtime->comment))) ?>
             </dd>
         <?php endforeach ?>
         </dl>
