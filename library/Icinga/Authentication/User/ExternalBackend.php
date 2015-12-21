@@ -58,8 +58,8 @@ class ExternalBackend implements UserBackendInterface
      */
     public function authenticate(User $user, $password = null)
     {
-        if (isset($_SERVER['REMOTE_USER'])) {
-            $username = $_SERVER['REMOTE_USER'];
+        $username = getenv('REMOTE_USER');
+        if ($username !== false) {
             $user->setExternalUserInformation($username, 'REMOTE_USER');
 
             if ($this->stripUsernameRegexp) {
