@@ -525,6 +525,24 @@
             $('a.close-toggle').show();
         },
 
+        toggleMobileMenu: function(e) {
+            var $sidebar = $('#sidebar');
+            var $target = $(e.target);
+            var href = $target.attr('href');
+            if (href) {
+                if (href !== '#') {
+                    $sidebar.removeClass('expanded');
+                }
+            } else if (! $target.is('input')) {
+                $sidebar.toggleClass('expanded');
+            }
+            $('#search').keypress(function(e) {
+                if (e.which === 13) {
+                    $sidebar.removeClass('expanded');
+                }
+            });
+        },
+
         fixControls: function ($parent) {
             var self = this;
             if ($('#layout').hasClass('fullscreen-layout')) {
@@ -537,36 +555,42 @@
                     $('#header').css({height: 'auto'});
                     if ($('#layout').hasClass('minimal-layout')) {
                         if (! this.mobileMenu) {
-                            $('#header').css({top: $('#sidebar').height() + 'px'});
+                            $('#header-logo').css({
+                                display: 'none'
+                            });
+                            $('#header').css({top: $('#sidebar').outerHeight() + 'px'});
                             $('#main').css({
-                                top: $('#header').height() + $('#sidebar').height()
+                                top: $('#header').height() + $('#sidebar').outerHeight(),
+                                zIndex: 1
                             });
-                            $('#sidebar').css({
-                                zIndex: 2
-                            }).on('click', function (e) {
-                                var $sidebar = $('#sidebar');
-                                var $target = $(e.target);
-                                var href = $target.attr('href');
-                                if (href) {
-                                    if (href !== '#') {
-                                        $sidebar.removeClass('expanded');
-                                    }
-                                } else if (! $target.is('input')) {
-                                    $sidebar.toggleClass('expanded');
-                                }
-                                $('#search').keypress(function(e) {
-                                    if (e.which === 13) {
-                                        $sidebar.removeClass('expanded');
-                                    }
+                            $('#sidebar')
+                                .css({
+                                    top: 0,
+                                    zIndex: 2
+                                })
+                                .on('click', this.toggleMobileMenu)
+                                .prepend(
+                                    '<i id="mobile-menu-toggle" class="icon-menu" style="vertical-align: middle;"></i>'
+                                )
+                                .css({
+                                    paddingBottom: 32
                                 });
-                            }).prepend('<i class="icon-menu" style="vertical-align: middle;"></i>').css({
-                                paddingBottom: 32
-                            });
                             this.mobileMenu = true;
                         }
                     } else {
                         $('#main').css({top: $('#header').css('height')});
                         $('#sidebar').css({top: $('#header').height() + 'px'});
+                        if (this.mobileMenu) {
+                            $('#header-logo').css({
+                                display: 'block'
+                            });
+                            $('#sidebar').off('click', this.toggleMobileMenu);
+                            $('#header').css({
+                                top: 0
+                            });
+                            $('#mobile-menu-toggle').remove();
+                            this.mobileMenu = false;
+                        }
                     }
                     $('#header').css({height: $('#header').height() + 'px'});
                     $('#inner-layout').css({top: $('#header').css('height')});
