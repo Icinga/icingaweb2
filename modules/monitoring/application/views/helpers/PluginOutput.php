@@ -20,10 +20,10 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
         "\n",
         "\t",
         "\n",
-        '<span class="state ok">$1OK$2</span>',
-        '<span class="state warning">$1WARNING$2</span>',
-        '<span class="state critical">$1CRITICAL$2</span>',
-        '<span class="state error">$1UNKNOWN$2</span>',
+        '<span class="state-ok">$1OK$2</span>',
+        '<span class="state-warning">$1WARNING$2</span>',
+        '<span class="state-critical">$1CRITICAL$2</span>',
+        '<span class="state-unknown">$1UNKNOWN$2</span>',
         '@@@@@@',
     );
 
@@ -54,9 +54,9 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
 
         if (! $raw) {
             if ($isHtml) {
-                $output = '<div class="pluginoutput">' . $output . '</div>';
+                $output = '<div class="plugin-output">' . $output . '</div>';
             } else {
-                $output = '<div class="pluginoutput preformatted">' . $output . '</div>';
+                $output = '<div class="plugin-output preformatted">' . $output . '</div>';
             }
         }
         return $output;
