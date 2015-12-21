@@ -3,6 +3,7 @@
 
 namespace Icinga\Web\Widget;
 
+use Icinga\Exception\Http\HttpNotFoundException;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Web\Url;
 use Icinga\Web\Widget\Tabextension\Tabextension;
@@ -114,22 +115,25 @@ EOT;
      *
      * If another tab is currently active it will be deactivated
      *
-     * @param   string $name Name of the tab going to be activated
+     * @param   string  $name           Name of the tab going to be activated
      *
      * @return  $this
      *
-     * @throws  ProgrammingError When the given tab name doesn't exist
+     * @throws  HttpNotFoundException   When the tab w/ the given name does not exist
      *
      */
     public function activate($name)
     {
-        if ($this->has($name)) {
-            if ($this->active !== null) {
-                $this->tabs[$this->active]->setActive(false);
-            }
-            $this->get($name)->setActive();
-            $this->active = $name;
+        if (! $this->has($name)) {
+            throw new HttpNotFoundException('Can\'t activate tab %s. Tab does not exist', $name);
         }
+
+        if ($this->active !== null) {
+            $this->tabs[$this->active]->setActive(false);
+        }
+        $this->get($name)->setActive();
+        $this->active = $name;
+
         return $this;
     }
 
