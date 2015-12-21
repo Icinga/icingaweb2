@@ -70,7 +70,7 @@ class DocTocRenderer extends DocRenderer
      */
     public function render()
     {
-        if (empty($this->content)) {
+        if ($this->getInnerIterator()->isEmpty()) {
             return '<p>' . mt('doc', 'Documentation is empty.') . '</p>';
         }
         $view = $this->getView();
