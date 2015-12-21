@@ -23,6 +23,7 @@ class JavaScript
         'js/icinga/module.js',
         'js/icinga/timezone.js',
         'js/icinga/behavior/application-state.js',
+        'js/icinga/behavior/autofocus.js',
         'js/icinga/behavior/tooltip.js',
         'js/icinga/behavior/sparkline.js',
         'js/icinga/behavior/tristate.js',

@@ -31,6 +31,7 @@ class WelcomePage extends Form
             'text',
             'token',
             array(
+                'class'         => 'autofocus',
                 'required'      => true,
                 'label'         => $this->translate('Setup Token'),
                 'description'   => $this->translate(
