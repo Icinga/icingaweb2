@@ -16,7 +16,11 @@
     ApplicationState.prototype = new Icinga.EventListener();
 
     ApplicationState.prototype.onRendered = function(e) {
-        if (! $('#application-state').length && ! $('#login').length && ! $('#guest-error').length) {
+        if (! $('#application-state').length
+            && ! $('#login').length
+            && ! $('#guest-error').length
+            && ! $('#setup').length
+        ) {
             var _this = e.data.self;
 
             $('#layout').append(
