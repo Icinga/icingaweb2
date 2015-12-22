@@ -148,7 +148,7 @@ class ServicesController extends Controller
         $this->view->showDowntimesLink = Url::fromPath('monitoring/downtimes/show')
             ->setQueryString(
                 $this->serviceList->getObjectsInDowntime()
-                    ->objectsFilter()->toQueryString()
+                    ->objectsFilter()->andFilter(Filter::where('object_type', 'service'))->toQueryString()
             );
         $this->view->commentsLink = Url::fromRequest()
             ->setPath('monitoring/list/comments');
