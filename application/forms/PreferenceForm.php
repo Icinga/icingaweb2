@@ -96,7 +96,10 @@ class PreferenceForm extends Form
 
         $webPreferences = $this->preferences->get('icingaweb', array());
         foreach ($this->getValues() as $key => $value) {
-            if ($value === '' || $value === 'autodetect') {
+            if ($value === ''
+                || $value === 'autodetect'
+                || ($key === 'theme' && $value === Config::app()->get('themes', 'default', StyleSheet::DEFAULT_THEME))
+            ) {
                 if (isset($webPreferences[$key])) {
                     unset($webPreferences[$key]);
                 }
@@ -155,12 +158,11 @@ class PreferenceForm extends Form
     {
         if (! (bool) Config::app()->get('themes', 'disabled', false)) {
             $themes = Icinga::app()->getThemes();
-            $defaultTheme = Config::app()->get('themes', 'default', StyleSheet::DEFAULT_THEME);
-            if (isset($themes[$defaultTheme])) {
-                $themes[''] = $themes[$defaultTheme] . ' (' . $this->translate('default') . ')';
-                unset($themes[$defaultTheme]);
-            }
             if (count($themes) > 1) {
+                $defaultTheme = Config::app()->get('themes', 'default', StyleSheet::DEFAULT_THEME);
+                if (isset($themes[$defaultTheme])) {
+                    $themes[$defaultTheme] .= ' (' . $this->translate('default') . ')';
+                }
                 $this->addElement(
                     'select',
                     'theme',
@@ -168,7 +170,7 @@ class PreferenceForm extends Form
                         'label'         => $this->translate('Theme', 'Form element label'),
                         'multiOptions'  => $themes,
                         'value'         => $this->preferences->getValue(
-                            'icingaweb', 'theme', ''
+                            'icingaweb', 'theme', $defaultTheme
                         )
                     )
                 );

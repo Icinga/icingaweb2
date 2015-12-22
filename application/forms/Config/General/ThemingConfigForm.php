@@ -31,16 +31,17 @@ class ThemingConfigForm extends Form
     public function createElements(array $formData)
     {
         $themes = Icinga::app()->getThemes();
-        $themes[''] = $themes[StyleSheet::DEFAULT_THEME] . ' (' . $this->translate('default') . ')';
-        unset($themes[StyleSheet::DEFAULT_THEME]);
+        $themes[StyleSheet::DEFAULT_THEME] .= ' (' . $this->translate('default') . ')';
+
         $this->addElement(
             'select',
             'themes_default',
             array(
                 'description'   => $this->translate('The default theme', 'Form element description'),
+                'disabled'      => count($themes) < 2,
                 'label'         => $this->translate('Default Theme', 'Form element label'),
                 'multiOptions'  => $themes,
-                'value'         => ''
+                'value'         => StyleSheet::DEFAULT_THEME
             )
         );
 
@@ -66,7 +67,7 @@ class ThemingConfigForm extends Form
     public function getValues($suppressArrayNotation = false)
     {
         $values = parent::getValues($suppressArrayNotation);
-        if ($values['themes_default'] === '') {
+        if ($values['themes_default'] === '' || $values['themes_default'] === StyleSheet::DEFAULT_THEME) {
             $values['themes_default'] = null;
         }
         if (! $values['themes_disabled']) {
