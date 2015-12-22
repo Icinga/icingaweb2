@@ -6,6 +6,7 @@ namespace Icinga\Web;
 use Exception;
 use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
+use Icinga\Authentication\Auth;
 use Icinga\Exception\IcingaException;
 
 /**
@@ -112,18 +113,22 @@ class StyleSheet
         }
 
         $themingConfig = $this->app->getConfig()->getSection('themes');
-        $defaultTheme = $themingConfig->get('default', self::DEFAULT_THEME);
+        $defaultTheme = $themingConfig->get('default');
         $theme = null;
 
         if ((bool) $themingConfig->get('disabled', false)) {
-            if ($defaultTheme !== self::DEFAULT_THEME) {
+            if ($defaultTheme !== null && $defaultTheme !== self::DEFAULT_THEME) {
                 $theme = $defaultTheme;
             }
         } else {
-            if (($userTheme = $this->app->getRequest()->getCookie('theme', $defaultTheme))
-                && $userTheme !== $defaultTheme
-            ) {
-                $theme = $userTheme;
+            $auth = Auth::getInstance();
+            if ($auth->isAuthenticated()) {
+                $userTheme = $auth->getUser()->getPreferences()->getValue('icingaweb', 'theme');
+                if ($userTheme !== null) {
+                    $theme = $userTheme;
+                } elseif ($defaultTheme !== null && $defaultTheme !== self::DEFAULT_THEME) {
+                    $theme = $defaultTheme;
+                }
             }
         }
 
