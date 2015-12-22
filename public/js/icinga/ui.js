@@ -587,13 +587,13 @@
                         });
                         $main.css({
                             top: $header.height() + $sidebar.outerHeight(),
-                            zIndex: 1
+                            zIndex: 2
                         });
                         $sidebar
                             .css({
                                 paddingBottom: 32,
                                 top: 0,
-                                zIndex: 2
+                                zIndex: 3
                             })
                             .on('click', this.toggleMobileMenu)
                             .prepend(
@@ -610,11 +610,11 @@
                 } else {
                     $main.css({
                         top: $header.css('height'),
-                        zIndex: 'auto'
+                        zIndex: ''
                     });
                     $sidebar.css({
                         top: $header.css('height'),
-                        zIndex: 'auto'
+                        zIndex: ''
                     });
                     $header.css({
                         height: $header.height() + 'px'
@@ -627,7 +627,7 @@
                         $headerLogo.css({
                             display: 'block'
                         });
-                        $sidebar.off('click', this.toggleMobileMenu);
+                        $sidebar.removeClass('expanded').off('click', this.toggleMobileMenu);
                         $search.off('keypress', this.closeMobileMenu);
                         $('#mobile-menu-toggle').remove();
 
