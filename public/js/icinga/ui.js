@@ -21,6 +21,11 @@
 
         this.timeCounterTimer = null;
 
+        /**
+         * Whether the mobile menu is shown
+         *
+         * @type {bool}
+         */
         this.mobileMenu = false;
     };
 
@@ -525,6 +530,11 @@
             $('a.close-toggle').show();
         },
 
+        /**
+         * Toggle mobile menu
+         *
+         * @param {object} e Event
+         */
         toggleMobileMenu: function(e) {
             var $sidebar = $('#sidebar');
             var $target = $(e.target);
@@ -536,67 +546,98 @@
             } else if (! $target.is('input')) {
                 $sidebar.toggleClass('expanded');
             }
-            $('#search').keypress(function(e) {
-                if (e.which === 13) {
-                    $sidebar.removeClass('expanded');
-                }
-            });
+        },
+
+        /**
+         * Close mobile menu when the enter key was pressed
+         *
+         * @param {object} e Event
+         */
+        closeMobileMenu: function(e) {
+            if (e.which === 13) {
+                $('#sidebar').removeClass('expanded');
+            }
         },
 
         fixControls: function ($parent) {
-            var self = this;
-            if ($('#layout').hasClass('fullscreen-layout')) {
+            var $layout = $('#layout');
+
+            if ($layout.hasClass('fullscreen-layout')) {
                 return;
             }
 
-            if ('undefined' === typeof $parent) {
+            if (typeof $parent === 'undefined') {
+                var $header = $('#header');
+                var $headerLogo = $('#header-logo');
+                var $main = $('#main');
+                var $search = $('#search');
+                var $sidebar = $('#sidebar');
 
-                if (! $('#layout').hasClass('fullscreen-layout')) {
-                    $('#header').css({height: 'auto'});
-                    if ($('#layout').hasClass('minimal-layout')) {
-                        if (! this.mobileMenu) {
-                            $('#header-logo').css({
-                                display: 'none'
-                            });
-                            $('#header').css({top: $('#sidebar').outerHeight() + 'px'});
-                            $('#main').css({
-                                top: $('#header').height() + $('#sidebar').outerHeight(),
-                                zIndex: 1
-                            });
-                            $('#sidebar')
-                                .css({
-                                    top: 0,
-                                    zIndex: 2
+                $header.css({
+                    height: 'auto'
+                });
+
+                if ($layout.hasClass('minimal-layout')) {
+                    if (! this.mobileMenu) {
+                        $header.css({
+                            top: $sidebar.outerHeight() + 'px'
+                        });
+                        $headerLogo.css({
+                            display: 'none'
+                        });
+                        $main.css({
+                            top: $header.height() + $sidebar.outerHeight(),
+                            zIndex: 1
+                        });
+                        $sidebar
+                            .css({
+                                paddingBottom: 32,
+                                top: 0,
+                                zIndex: 2
+                            })
+                            .on('click', this.toggleMobileMenu)
+                            .prepend(
+                                $('<i id="mobile-menu-toggle" class="icon-menu"></i>').css({
+                                    cursor: 'pointer',
+                                    display: 'block',
+                                    height: '32px'
                                 })
-                                .on('click', this.toggleMobileMenu)
-                                .prepend(
-                                    '<i id="mobile-menu-toggle" class="icon-menu" style="vertical-align: middle;"></i>'
-                                )
-                                .css({
-                                    paddingBottom: 32
-                                });
-                            this.mobileMenu = true;
-                        }
-                    } else {
-                        $('#main').css({top: $('#header').css('height')});
-                        $('#sidebar').css({top: $('#header').height() + 'px'});
-                        if (this.mobileMenu) {
-                            $('#header-logo').css({
-                                display: 'block'
-                            });
-                            $('#sidebar').off('click', this.toggleMobileMenu);
-                            $('#header').css({
-                                top: 0
-                            });
-                            $('#mobile-menu-toggle').remove();
-                            this.mobileMenu = false;
-                        }
+                            );
+                        $search.on('keypress', this.closeMobileMenu);
+
+                        this.mobileMenu = true;
                     }
-                    $('#header').css({height: $('#header').height() + 'px'});
-                    $('#inner-layout').css({top: $('#header').css('height')});
+                } else {
+                    $main.css({
+                        top: $header.css('height'),
+                        zIndex: 'auto'
+                    });
+                    $sidebar.css({
+                        top: $header.css('height'),
+                        zIndex: 'auto'
+                    });
+                    $header.css({
+                        height: $header.height() + 'px'
+                    });
+
+                    if (this.mobileMenu) {
+                        $header.css({
+                            top: 0
+                        });
+                        $headerLogo.css({
+                            display: 'block'
+                        });
+                        $sidebar.off('click', this.toggleMobileMenu);
+                        $search.off('keypress', this.closeMobileMenu);
+                        $('#mobile-menu-toggle').remove();
+
+                        this.mobileMenu = false;
+                    }
                 }
+
+                var _this = this;
                 $('.container').each(function (idx, container) {
-                    self.fixControls($(container));
+                    _this.fixControls($(container));
                 });
 
                 return;
