@@ -502,3 +502,7 @@ The first release candidate of Icinga Web 2 introduces the following non-backwar
 ## <a id="upgrading-to-2.1.0"></a> Upgrading to Icinga Web 2 2.1.0
 
 Icinga Web 2 2.1.0 does not introduce any backward incompatible change.
+
+## <a id="upgrading-to-2.1.1"></a> Upgrading to Icinga Web 2 2.1.1
+
+Nothing special :).
