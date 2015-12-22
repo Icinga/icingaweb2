@@ -1,5 +1,37 @@
 # Icinga Web 2 Changelog
 
+## What's New in Version 2.1.1
+
+#### Features
+
+* Feature 10488: Use _ENV variables with built-in PHP webserver
+* Feature 10705: Theming
+* Feature 10898: Winter theme
+
+#### Bugfixes
+
+* Bug 9685: Deprecate Module::registerHook() in favor of Hook::provideHook()
+* Bug 9957: Sort hosts and services by last state change
+* Bug 10123: CSS loading may fail w/ mkdir(): File exists in FileCache.php
+* Bug 10126: setup config directory --config should use mkdir -p instead of mkdir()
+* Bug 10166: library/vendor/HTMLPurifier tree is incorrectly unpacked
+* Bug 10170: Link to service downtimes from multiple selected services includes host downtimes aswell
+* Bug 10338: Debian: Failed to open stream HTMLPurifier/HTMLPurifier.php
+* Bug 10603: Line breaks are not respected in acknowledgements, comments and downtimes
+* Bug 10658: SUSE packages have the wrong dependencies
+* Bug 10659: LDAP group members are shown with their DN and membership registration does not work
+* Bug 10670: State not highlighted in plugin output
+* Bug 10671: Auto-focus the username field on the login page
+* Bug 10683: lib/CLI command web serve: rename variable basedir to something meaningful
+* Bug 10702: Host- and Service-Actions configured in Web 2 do not resolve any macros
+* Bug 10749: XHR application-state requests pollute the URL if not authenticated
+* Bug 10771: Login shows "Anmelden........" upon login with the german locale
+* Bug 10781: LoggingConfigForm.php complains about whitespace but checks with /^[^\W]+$/
+* Bug 10790: "Problems - Service Grid" does not work with host names that contain only digits
+* Bug 10884: Tabs MUST throw an exception when activating an inexistant tab
+* Bug 10886: "impacted" container is no longer fading out
+* Bug 10892: Wrong mask for FileCache's temp directory
+
 ## What's New in Version 2.1.0
 
 #### Features
