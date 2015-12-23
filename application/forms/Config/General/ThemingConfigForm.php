@@ -38,7 +38,7 @@ class ThemingConfigForm extends Form
             'themes_default',
             array(
                 'description'   => $this->translate('The default theme', 'Form element description'),
-                'disabled'      => count($themes) < 2,
+                'disabled'      => count($themes) < 2 ? 'disabled' : null,
                 'label'         => $this->translate('Default Theme', 'Form element label'),
                 'multiOptions'  => $themes,
                 'value'         => StyleSheet::DEFAULT_THEME
