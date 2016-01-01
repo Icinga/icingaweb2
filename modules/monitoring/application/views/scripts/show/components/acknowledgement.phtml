@@ -16,9 +16,9 @@ $acknowledgement = $object->acknowledgement;
     <td data-base-target="_self">
         <?php if ($acknowledgement): ?>
         <dl class="comment-list">
-            <dt class="comment-header">
+            <dt>
                 <?= $this->escape($acknowledgement->getAuthor()) ?>
-                <span class="comment-meta">
+                <span class="comment-time">
                     <?= $this->translate('acknowledged') ?>
                     <?= $this->timeAgo($acknowledgement->getEntryTime()) ?>
                 <?php if ($acknowledgement->expires()): ?>
@@ -28,6 +28,7 @@ $acknowledgement = $object->acknowledgement;
                         $this->timeUntil($acknowledgement->getExpirationTime())
                     ) ?>
                 <?php endif ?>
+                </span>
                 <?php if ($acknowledgement->getSticky()): ?>
                     <?= $this->icon('pin', sprintf(
                         $this->translate(
@@ -36,18 +37,14 @@ $acknowledgement = $object->acknowledgement;
                         $object->getType(true)
                     )) ?>
                 <?php endif ?>
-                <?php if (isset($removeAckForm)): // Form is unset if the current user lacks the respective permission ?>
-                    <span class="meta-icons">
-                        <?php
-                        $removeAckForm->setAttrib('class', $removeAckForm->getAttrib('class') . ' remove-action');
-                        echo $removeAckForm;
-                        ?>
-                    </span>
-                <?php endif ?>
-                </span>
+                <?php if (isset($removeAckForm)) {
+                    // Form is unset if the current user lacks the respective permission
+                    $removeAckForm->setAttrib('class', $removeAckForm->getAttrib('class') . ' remove-action');
+                    echo $removeAckForm;
+                } ?>
             </dt>
-            <dd class="comment-text">
-                <p><?= nl2br($this->createTicketLinks($this->escape($acknowledgement->getComment())), false) ?></p>
+            <dd>
+                <?= $this->nl2br($this->createTicketLinks($this->escape($acknowledgement->getComment()))) ?>
             </dd>
         </dl>
         <?php else: ?>
@@ -88,7 +85,7 @@ $acknowledgement = $object->acknowledgement;
                     'Acknowledge this problem, suppress all future notifications for it and tag it as being handled'
                 )
             )
-        ); ?>
+        ) ?>
     <?php } else {
         echo '&#45;';
     } // endif ?>

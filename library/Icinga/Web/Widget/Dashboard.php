@@ -363,7 +363,9 @@ class Dashboard extends AbstractWidget
     {
         reset($this->panes);
         $active = key($this->panes);
-        $this->activate($active);
+        if ($active !== null) {
+            $this->activate($active);
+        }
         return $active;
     }
 

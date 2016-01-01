@@ -45,31 +45,29 @@ if (empty($object->comments) && ! $addLink) {
     else: ?>
         <dl class="comment-list">
         <?php foreach ($object->comments as $comment): ?>
-            <dt class="comment-header">
+            <dt>
                 <?= $this->escape($comment->author) ?>
-                <span class="comment-meta">
+                <span class="comment-time">
                     <?= $this->translate('commented') ?>
                     <?= $this->timeAgo($comment->timestamp) ?>
-                <?php if (isset($delCommentForm)): // Form is unset if the current user lacks the respective permission ?>
-                    <span class="meta-icons">
-                    <?php
-                        $deleteButton = clone($delCommentForm);
-                        /** @var \Icinga\Module\Monitoring\Forms\Command\Object\DeleteCommentCommandForm $deleteButton */
-                        $deleteButton->setAttrib('class', $deleteButton->getAttrib('class') . ' remove-action');
-                        $deleteButton->populate(
-                            array(
-                                'comment_id'            => $comment->id,
-                                'comment_is_service'    => isset($comment->service_description)
-                            )
-                        );
-                        echo $deleteButton;
-                    ?>
-                    </span>
-                <?php endif ?>
                 </span>
+                <?= $comment->persistent ? $this->icon('attach', 'This comment is persistent.') : '' ?>
+                <?php if (isset($delCommentForm)) {
+                    // Form is unset if the current user lacks the respective permission
+                    $deleteButton = clone($delCommentForm);
+                    /** @var \Icinga\Module\Monitoring\Forms\Command\Object\DeleteCommentCommandForm $deleteButton */
+                    $deleteButton->setAttrib('class', $deleteButton->getAttrib('class') . ' remove-action');
+                    $deleteButton->populate(
+                        array(
+                            'comment_id'            => $comment->id,
+                            'comment_is_service'    => isset($comment->service_description)
+                        )
+                    );
+                    echo $deleteButton;
+                } ?>
             </dt>
-            <dd class="comment-text">
-                <p><?= nl2br($this->createTicketLinks($this->escape($comment->comment)), false) ?></p>
+            <dd>
+                <?= $this->nl2br($this->createTicketLinks($this->escape($comment->comment))) ?>
             </dd>
         <?php endforeach ?>
         </dl>

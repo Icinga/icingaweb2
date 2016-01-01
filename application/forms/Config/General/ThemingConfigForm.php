@@ -6,6 +6,7 @@ namespace Icinga\Forms\Config\General;
 use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
 use Icinga\Web\Form;
+use Icinga\Web\StyleSheet;
 
 /**
  * Configuration form for theming options
@@ -29,13 +30,18 @@ class ThemingConfigForm extends Form
      */
     public function createElements(array $formData)
     {
+        $themes = Icinga::app()->getThemes();
+        $themes[StyleSheet::DEFAULT_THEME] .= ' (' . $this->translate('default') . ')';
+
         $this->addElement(
             'select',
             'themes_default',
             array(
                 'description'   => $this->translate('The default theme', 'Form element description'),
+                'disabled'      => count($themes) < 2 ? 'disabled' : null,
                 'label'         => $this->translate('Default Theme', 'Form element label'),
-                'multiOptions'  => Icinga::app()->getThemes()
+                'multiOptions'  => $themes,
+                'value'         => StyleSheet::DEFAULT_THEME
             )
         );
 
@@ -48,7 +54,7 @@ class ThemingConfigForm extends Form
                     . ' used nonetheless',
                     'Form element description'
                 ),
-                'label'         => $this->translate('Disable Themes', 'Form element label')
+                'label'         => $this->translate('Users Can\'t Change Theme', 'Form element label')
             )
         );
 
@@ -61,7 +67,7 @@ class ThemingConfigForm extends Form
     public function getValues($suppressArrayNotation = false)
     {
         $values = parent::getValues($suppressArrayNotation);
-        if ($values['themes_default'] === 'Icinga') {
+        if ($values['themes_default'] === '' || $values['themes_default'] === StyleSheet::DEFAULT_THEME) {
             $values['themes_default'] = null;
         }
         if (! $values['themes_disabled']) {

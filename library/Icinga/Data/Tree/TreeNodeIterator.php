@@ -84,4 +84,14 @@ class TreeNodeIterator implements RecursiveIterator
     {
         return new static($this->current());
     }
+
+    /**
+     * Get whether the iterator is empty
+     *
+     * @return bool
+     */
+    public function isEmpty()
+    {
+        return empty($this->children);
+    }
 }

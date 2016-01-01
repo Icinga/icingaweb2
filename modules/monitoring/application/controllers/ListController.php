@@ -90,11 +90,12 @@ class ListController extends Controller
         $this->setupLimitControl();
         $this->setupPaginationControl($this->view->hosts);
         $this->setupSortControl(array(
-            'host_severity'     => $this->translate('Severity'),
-            'host_state'        => $this->translate('Current State'),
-            'host_display_name' => $this->translate('Hostname'),
-            'host_address'      => $this->translate('Address'),
-            'host_last_check'   => $this->translate('Last Check')
+            'host_severity'             => $this->translate('Severity'),
+            'host_state'                => $this->translate('Current State'),
+            'host_display_name'         => $this->translate('Hostname'),
+            'host_address'              => $this->translate('Address'),
+            'host_last_check'           => $this->translate('Last Check'),
+            'host_last_state_change'    => $this->translate('Last State Change')
         ), $query);
 
         $summary = $query->getQuery()->queryServiceProblemSummary();
@@ -155,15 +156,16 @@ class ListController extends Controller
         $this->setupLimitControl();
         $this->setupPaginationControl($this->view->services);
         $this->setupSortControl(array(
-            'service_severity'      => $this->translate('Service Severity'),
-            'service_state'         => $this->translate('Current Service State'),
-            'service_display_name'  => $this->translate('Service Name'),
-            'service_last_check'    => $this->translate('Last Service Check'),
-            'host_severity'         => $this->translate('Host Severity'),
-            'host_state'            => $this->translate('Current Host State'),
-            'host_display_name'     => $this->translate('Hostname'),
-            'host_address'          => $this->translate('Host Address'),
-            'host_last_check'       => $this->translate('Last Host Check')
+            'service_severity'          => $this->translate('Service Severity'),
+            'service_state'             => $this->translate('Current Service State'),
+            'service_display_name'      => $this->translate('Service Name'),
+            'service_last_check'        => $this->translate('Last Service Check'),
+            'service_last_state_change' => $this->translate('Last State Change'),
+            'host_severity'             => $this->translate('Host Severity'),
+            'host_state'                => $this->translate('Current Host State'),
+            'host_display_name'         => $this->translate('Hostname'),
+            'host_address'              => $this->translate('Host Address'),
+            'host_last_check'           => $this->translate('Last Host Check')
         ), $query);
 
         $stats = $this->backend->select()->from('servicestatussummary', array(

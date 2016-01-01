@@ -3,8 +3,8 @@
 // Width for the name column--th--of name-value-table
 @name-value-table-name-width: 14em;
 
-.action-link(@color: @icinga-blue) {
-  color: @color;
+.action-link {
+  color: @icinga-blue;
 }
 
 .error-message {
@@ -56,15 +56,19 @@
   }
 }
 
+.section {
+  margin-bottom: 2em;
+}
+
 a:hover > .icon-cancel {
   color: @color-critical;
 }
 
 // Link styles
 
-.button-link(@background-color: @body-bg-color, @color: @icinga-blue) {
-  .action-link(@color);
-  .button(@background-color, @color);
+.button-link {
+  .action-link();
+  .button();
   display: inline-block;
   height: 35px;
   line-height: 20px;
@@ -88,49 +92,40 @@ a:hover > .icon-cancel {
 .comment-list {
   margin: 0;
 
-  .comment-header {
+  > dt {
     border-bottom: 1px solid @gray-lighter;
+    margin-bottom: 0.25em;
 
     &:hover {
       background-color: @gray-lightest;
 
-      > .comment-meta > .meta-icons > .remove-action {
+      > .remove-action {
         visibility: visible;
       }
     }
 
-    > .comment-meta > .meta-icons > .remove-action {
+    > .remove-action {
       visibility: hidden;
     }
   }
-}
 
-.comment-header {
-  .clearfix();
-}
-
-.comment-meta {
-  color: @text-color-light;
-  font-size: @font-size-small;
-
-  > .meta-icons {
-    float: right;
-    margin-top: 0.2em;
+  > dd {
+    margin: 0 0 1em 0;
   }
 }
 
-.comment-text {
-  // Reset margin
-  margin: 0;
+.comment-time {
+  color: @text-color-light;
+  font-size: @font-size-small;
 }
 
 .name-value-list {
-  dd {
+  > dd {
     // Reset default margin
     margin: 0;
   }
 
-  dt {
+  > dt {
     color: @text-color-light;
     font-size: @font-size-small;
   }
@@ -190,7 +185,11 @@ a:hover > .icon-cancel {
   }
 }
 
-.name-value-table th {
+.name-value-table {
+  width: 100%;
+}
+
+.name-value-table > tbody > tr > th {
   color: @text-color-light;
   // Reset default font-weight
   font-weight: normal;

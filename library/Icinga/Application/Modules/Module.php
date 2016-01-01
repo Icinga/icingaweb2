@@ -1238,13 +1238,15 @@ class Module
     }
 
     /**
-     * Register hook
+     * Register a hook
      *
-     * @param   string $name
-     * @param   string $class
-     * @param   string $key
+     * @param   string  $name   Name of the hook
+     * @param   string  $class  Class of the hook w/ namespace
+     * @param   string  $key
      *
      * @return  $this
+     *
+     * @deprecated              Deprecated in favor of {@link provideHook()}. Will be removed in version 2.2.0
      */
     protected function registerHook($name, $class, $key = null)
     {
@@ -1261,7 +1263,18 @@ class Module
         return implode('\\', $list);
     }
 
-    // deprecate $key
+    /**
+     * Provide a hook implementation
+     *
+     * @param   string  $name           Name of the hook for which to provide an implementation
+     * @param   string  $implementation [optional] Fully qualified name of the class providing the hook implementation.
+     *                                  Defaults to the module's ProvidedHook namespace plus the hook's name for the
+     *                                  class name. Web 2's namespace separator is \\ (double backslash) at the moment
+     * @param   string  $key            No-op arg for compatibility reasons. This argument is deprecated and will be
+     *                                  removed in version 2.2.0
+     *
+     * @return  $this
+     */
     protected function provideHook($name, $implementation = null, $key = null)
     {
         if ($implementation === null) {

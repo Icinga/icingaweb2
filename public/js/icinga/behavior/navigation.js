@@ -271,6 +271,10 @@
     };
 
     Navigation.prototype.menuTitleHovered = function(event) {
+        if ($('#layout').hasClass('minimal-layout')) {
+            return;
+        }
+
         var $li = $(this),
             delay = 800,
             self = event.data.self;

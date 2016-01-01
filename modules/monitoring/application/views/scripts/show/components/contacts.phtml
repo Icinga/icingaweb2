@@ -1,6 +1,6 @@
 <?php
 
-if (! empty($object->contacts)) {
+if ($object->contacts->hasResult()) {
 
     $list = array();
     foreach ($object->contacts as $contact) {
@@ -17,10 +17,9 @@ if (! empty($object->contacts)) {
         $this->translate('Contacts'),
         implode(', ', $list)
     );
-
 }
 
-if (! empty($object->contactgroups)) {
+if ($object->contactgroups->hasResult()) {
     $list = array();
     foreach ($object->contactgroups as $contactgroup) {
         $list[] = $this->qlink(
@@ -36,6 +35,4 @@ if (! empty($object->contactgroups)) {
         $this->translate('Contactgroups'),
         implode(', ', $list)
     );
-
 }
-

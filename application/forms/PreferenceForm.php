@@ -17,6 +17,7 @@ use Icinga\Web\Cookie;
 use Icinga\Web\Form;
 use Icinga\Web\Notification;
 use Icinga\Web\Session;
+use Icinga\Web\StyleSheet;
 
 /**
  * Form class to adjust user preferences
@@ -91,9 +92,14 @@ class PreferenceForm extends Form
     {
         $this->preferences = new Preferences($this->store ? $this->store->load() : array());
 
+        $oldTheme = $this->preferences->getValue('icingaweb', 'theme');
+
         $webPreferences = $this->preferences->get('icingaweb', array());
         foreach ($this->getValues() as $key => $value) {
-            if ($value === null || $value === 'autodetect') {
+            if ($value === ''
+                || $value === 'autodetect'
+                || ($key === 'theme' && $value === Config::app()->get('themes', 'default', StyleSheet::DEFAULT_THEME))
+            ) {
                 if (isset($webPreferences[$key])) {
                     unset($webPreferences[$key]);
                 }
@@ -106,11 +112,9 @@ class PreferenceForm extends Form
         Session::getSession()->user->setPreferences($this->preferences);
 
         if (($theme = $this->getElement('theme')) !== null
-            && ($theme = $theme->getValue()) !== $this->getRequest()->getCookie('theme')
+            && ($theme = $theme->getValue()) !== $oldTheme
         ) {
-            $this->getResponse()
-                ->setCookie(new Cookie('theme', $theme))
-                ->setReloadCss(true);
+            $this->getResponse()->setReloadCss(true);
         }
 
         try {
@@ -155,12 +159,19 @@ class PreferenceForm extends Form
         if (! (bool) Config::app()->get('themes', 'disabled', false)) {
             $themes = Icinga::app()->getThemes();
             if (count($themes) > 1) {
+                $defaultTheme = Config::app()->get('themes', 'default', StyleSheet::DEFAULT_THEME);
+                if (isset($themes[$defaultTheme])) {
+                    $themes[$defaultTheme] .= ' (' . $this->translate('default') . ')';
+                }
                 $this->addElement(
                     'select',
                     'theme',
                     array(
                         'label'         => $this->translate('Theme', 'Form element label'),
-                        'multiOptions'  => $themes
+                        'multiOptions'  => $themes,
+                        'value'         => $this->preferences->getValue(
+                            'icingaweb', 'theme', $defaultTheme
+                        )
                     )
                 );
             }

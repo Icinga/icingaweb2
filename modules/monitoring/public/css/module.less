@@ -415,9 +415,33 @@ form.instance-features span.description, form.object-features span.description {
   }
 }
 
-div.pluginoutput {
+.plugin-output {
   border-left: 5px solid @gray-lighter;
   padding: 0.66em 0.33em;
+
+  .state-critical {
+    background-color: @color-critical;
+    color: @body-bg-color;
+    padding: 0.2em;
+  }
+
+  .state-ok {
+    background-color: @color-ok;
+    color: @body-bg-color;
+    padding: 0.2em;
+  }
+
+  .state-unknown {
+    background-color: @color-unknown;
+    color: @body-bg-color;
+    padding: 0.2em;
+  }
+
+  .state-warning {
+    background-color: @color-warning;
+    color: @body-bg-color;
+    padding: 0.2em;
+  }
 }
 
 .go-ahead > a {

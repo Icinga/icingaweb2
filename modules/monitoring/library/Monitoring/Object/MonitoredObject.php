@@ -322,6 +322,7 @@ abstract class MonitoredObject implements Filterable
             'comment'           => 'comment_data',
             'expiration'        => 'comment_expiration',
             'id'                => 'comment_internal_id',
+            'persistent'        => 'comment_is_persistent',
             'timestamp'         => 'comment_timestamp',
             'type'              => 'comment_type'
         ));
@@ -388,7 +389,7 @@ abstract class MonitoredObject implements Filterable
         } else {
             $contactsGroups->where('host_name', $this->host_name);
         }
-        $this->contactgroups = $contactsGroups->applyFilter($this->getFilter())->getQuery()->fetchAll();
+        $this->contactgroups = $contactsGroups;
         return $this;
     }
 
@@ -417,7 +418,7 @@ abstract class MonitoredObject implements Filterable
         } else {
             $contacts->where('host_name', $this->host_name);
         }
-        $this->contacts = $contacts->applyFilter($this->getFilter())->getQuery()->fetchAll();
+        $this->contacts = $contacts;
         return $this;
     }
 
@@ -595,7 +596,7 @@ abstract class MonitoredObject implements Filterable
             $eventHistory->where('service_description', $this->service_description);
         }
 
-        $this->eventhistory = $eventHistory->applyFilter($this->getFilter());
+        $this->eventhistory = $eventHistory;
         return $this;
     }
 

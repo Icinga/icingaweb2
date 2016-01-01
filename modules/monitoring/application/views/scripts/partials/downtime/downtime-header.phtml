@@ -8,7 +8,7 @@
   <?php endif; ?>
 </td>
 <td>
-  <div class="comment-header">
+  <div class="comment-author">
     <?php if ($isService): ?>
         <?= $this->icon('service', $this->translate('Service')); ?> <?= $this->qlink(
             $downtime->host_display_name . ': ' . $downtime->service_display_name,
@@ -38,36 +38,35 @@
             )
         ); ?>
     <?php endif ?>
-    <span class="comment-meta">
+    <span class="comment-time">
         <?= $this->translate('by') ?>
         <?= $this->escape($downtime->author_name) ?>
-        <span class="meta-icons">
-          <?php if ($downtime->is_flexible): ?>
-              <?= $this->icon('magic', $this->translate('This downtime is flexible')); ?>
-          <?php endif ?>
+    </span>
+    <span class="comment-icons">
+      <?php if ($downtime->is_flexible): ?>
+          <?= $this->icon('magic', $this->translate('This downtime is flexible')); ?>
+      <?php endif ?>
 
-          <?php if ($downtime->is_in_effect): ?>
-              <?= $this->icon('plug', $this->translate('This downtime is in effect')); ?>
-          <?php endif ?>
+      <?php if ($downtime->is_in_effect): ?>
+          <?= $this->icon('plug', $this->translate('This downtime is in effect')); ?>
+      <?php endif ?>
 
-          <?php if (isset($delDowntimeForm)): // Form is unset if the current user lacks the respective permission ?>
-              <?php
-              $deleteButton = clone $delDowntimeForm;
-              /** @var \Icinga\Module\Monitoring\Forms\Command\Object\DeleteDowntimeCommandForm $deleteButton */
-              $deleteButton->setAttrib('class', $deleteButton->getAttrib('class') . ' remove-action');
-              $deleteButton->populate(
-                  array(
-                      'downtime_id'         => $downtime->id,
-                      'downtime_is_service' => isset($downtime->service_description)
-                  )
-              );
-              echo $deleteButton;
-              ?>
-          <?php endif ?>
-        </span>
+      <?php if (isset($delDowntimeForm)) {
+          // Form is unset if the current user lacks the respective permission
+          $deleteButton = clone $delDowntimeForm;
+          /** @var \Icinga\Module\Monitoring\Forms\Command\Object\DeleteDowntimeCommandForm $deleteButton */
+          $deleteButton->setAttrib('class', $deleteButton->getAttrib('class') . ' remove-action');
+          $deleteButton->populate(
+              array(
+                  'downtime_id' => $downtime->id,
+                  'downtime_is_service' => isset($downtime->service_description)
+              )
+          );
+          echo $deleteButton;
+      } ?>
     </span>
   </div>
   <p class="comment-text">
-    <?= $this->escape($downtime->comment) ?>
+    <?= $this->nl2br($this->escape($downtime->comment)) ?>
   </p>
 </td>
