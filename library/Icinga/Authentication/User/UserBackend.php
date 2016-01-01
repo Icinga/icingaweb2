@@ -22,6 +22,7 @@ class UserBackend implements ConfigAwareFactory
      * @var array
      */
     protected static $defaultBackends = array(
+        'sproxy',
         'external',
         'db',
         'ldap',
@@ -173,6 +174,11 @@ class UserBackend implements ConfigAwareFactory
         }
         if ($backendType === 'external') {
             $backend = new ExternalBackend($backendConfig);
+            $backend->setName($name);
+            return $backend;
+        }
+        if ($backendType === 'sproxy') {
+            $backend = new SproxyBackend($backendConfig);
             $backend->setName($name);
             return $backend;
         }
