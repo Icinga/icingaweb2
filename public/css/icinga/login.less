@@ -3,6 +3,8 @@
 // Login page styles
 
 #login {
+  font-size: 1em;
+
   #icinga-logo {
     .fadein();
   }
@@ -46,8 +48,18 @@
     border-bottom: solid 3px @body-bg-color;
     color: @body-bg-color;
     display: block;
+    height: 2.5em;
     margin: 0;
+    transition: none;
     width: 100%;
+
+    &:focus {
+      .rounded-corners(3px);
+      background-color: @body-bg-color;
+      border: none;
+      color: @icinga-blue;
+      padding-bottom: 3px;
+    }
   }
 
   .form-controls {
@@ -57,6 +69,7 @@
 
   input[type=submit] {
     .button(@icinga-blue, @body-bg-color);
+    height: 2.5em;
     margin: 0;
     width: 100%;
   }
