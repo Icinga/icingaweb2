@@ -6,6 +6,7 @@ namespace Icinga\Module\Doc;
 use Icinga\Module\Doc\Renderer\DocSectionRenderer;
 use Icinga\Module\Doc\Renderer\DocTocRenderer;
 use Icinga\Web\Controller;
+use Icinga\Web\Url;
 
 class DocController extends Controller
 {
@@ -41,6 +42,11 @@ class DocController extends Controller
             ->setUrlParams($urlParams)
             ->setHighlightSearch($this->params->get('highlight-search'));
         $this->view->title = $chapter;
+        $this->getTabs()->add('toc', array(
+            'active'    => true,
+            'title'     => ucfirst($chapter),
+            'url'       => Url::fromRequest()
+        ));
         $this->render('chapter', null, true);
     }
 
@@ -61,6 +67,11 @@ class DocController extends Controller
             ->setUrlParams($urlParams);
         $name = ucfirst($name);
         $this->view->title = sprintf($this->translate('%s Documentation'), $name);
+        $this->getTabs()->add('toc', array(
+            'active'    => true,
+            'title'     => $name,
+            'url'       => Url::fromRequest()
+        ));
         $this->render('toc', null, true);
     }
 
