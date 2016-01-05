@@ -68,7 +68,7 @@ foreach ($summary as $entry) {
         Filter::expression('timestamp', '<', strtotime($day . ' 23:59:59')),
         Filter::expression('timestamp', '>', strtotime($day . ' 00:00:00')),
         $form->getFilter(),
-        Filter::fromQueryString($this->url()->getParams()->toString())
+        $filter
     );
     $data[$day] = array(
         'value'   => $value,
