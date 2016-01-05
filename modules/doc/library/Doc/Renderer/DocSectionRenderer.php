@@ -245,10 +245,18 @@ class DocSectionRenderer extends DocRenderer
             } else {
                 $title = $this->getView()->escape($title);
             }
+            $number = '';
+            for ($i = 0; $i < $this->getDepth() + 1; ++$i) {
+                if ($i > 0) {
+                    $number .= '.';
+                }
+                $number .= $this->getSubIterator($i)->key() + 1;
+            }
             $this->content[] = sprintf(
-                '<a name="%1$s"></a><h%2$d>%3$s</h%2$d>',
+                '<a name="%1$s"></a><h%2$d>%3$s. %4$s</h%2$d>',
                 static::encodeAnchor($section->getId()),
                 $section->getLevel(),
+                $number,
                 $title
             );
             $html = $this->parsedown->text(implode('', $section->getContent()));
