@@ -1,16 +1,6 @@
 /*! Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
-.content {
-  font-size: 1.167em;
-}
-
-.uppercase {
-  text-transform: uppercase;
-}
-
-.bold {
-  font-weight: bold;
-}
+// Mixins
 
 .gradient(@a: @gray-lighter; @b: @gray-lightest) {
   background: @a;
@@ -22,55 +12,7 @@
   background: linear-gradient(to bottom, @a, @b);
 }
 
-table {
-  // Reset
-  border-collapse: collapse;
-  border-spacing: 0;
-  width: 100%;
-}
-
-a[name]:focus {
-  outline: 0;
-}
-
-th, td {
-  padding: 0.25rem;
-  text-align: left;
-  line-height: 1.25rem;
-  color: #666;
-}
-
-td {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-tbody tr:nth-child(odd) {
-  .gradient;
-}
-
-tbody tr:nth-child(even) {
-  background: #fff;
-}
-
-tbody tr:hover {
-  background: #666;
-  td {
-    color: #fff;
-  }
-}
-
-@icinga: #049baf;
-
-thead {
-  th {
-    color: @icinga;
-    .uppercase();
-    .bold;
-  }
-  border-bottom: 0.25rem solid @icinga;
-}
+// General styles
 
 code {
   color: @icinga-blue;
@@ -79,6 +21,10 @@ code {
 
 pre > code {
   color: inherit;
+}
+
+.content {
+  font-size: 1.167em;
 }
 
 .search-highlight {
@@ -121,4 +67,36 @@ pre > code {
       display: block;
     }
   }
+}
+
+// Table styles
+
+table {
+  margin-bottom: 1em;
+  width: 100%;
+}
+
+tbody > tr:nth-child(odd) {
+  .gradient()
+}
+
+tbody > tr:nth-child(even) {
+  background: @body-bg-color;
+}
+
+td, th {
+  padding: 0.5em;
+}
+
+td {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+th {
+  border-bottom: 2px solid @icinga-blue;
+  font-weight: @font-weight-bold;
+  text-align: left;
+  text-transform: uppercase;
 }
