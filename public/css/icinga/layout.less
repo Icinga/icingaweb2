@@ -78,7 +78,19 @@
 }
 
 .controls {
+  // Override default transparent background because scrolled content is positioned beneath controls and could be seen
+  // through otherwise
   background-color: @body-bg-color;
+
+  > .tabs {
+    height: 2.6em;
+    margin-top: -2.6em;
+    overflow: hidden;
+  }
+
+  > .tabs-spacer {
+    margin-bottom: 1em;
+  }
 }
 
 // Notification styles

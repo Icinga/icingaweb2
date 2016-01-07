@@ -501,27 +501,6 @@
             }
         },
 
-        initializeControls: function (parent) {
-            if ($(parent).closest('.dashboard').length || $('#layout').hasClass('fullscreen-layout')) {
-                return;
-            }
-
-            $('.controls', parent).each(function (idx, el) {
-                var $el = $(el);
-
-                if (! $el.next('.fake-controls').length) {
-
-                    var newdiv = $('<div class="fake-controls"></div>');
-                    newdiv.css({
-                        height: $el.css('height')
-                    });
-                    $el.after(newdiv);
-                }
-            });
-
-            this.fixControls(parent);
-        },
-
         disableCloseButtons: function () {
             $('a.close-toggle').hide();
         },
@@ -559,14 +538,42 @@
             }
         },
 
-        fixControls: function ($parent) {
+        initializeControls: function(container) {
+            var $container = $(container);
+
+            if ($container.parent('.dashboard').length || $('#layout').hasClass('fullscreen-layout')) {
+                return;
+            }
+
+            $container.find('.controls').each(function() {
+                var $controls = $(this);
+                console.log($controls.css('height'), $controls.height(), $controls.innerHeight());
+                if (! $controls.next('.fake-controls').length) {
+                    var $tabs = $controls.find('.tabs', $controls);
+                    if ($tabs.length && $controls.children().length > 1 && ! $tabs.next('.tabs-spacer').length) {
+                        $tabs.after($('<div class="tabs-spacer"></div>'));
+                    }
+                    var $fakeControls = $('<div class="fake-controls"></div>');
+                    $fakeControls.height($controls.height()).css({
+                        display: 'block'
+                    });
+                    $controls.css({
+                        position: 'fixed'
+                    }).after($fakeControls);
+                }
+            });
+
+            this.fixControls($container);
+        },
+
+        fixControls: function($container) {
             var $layout = $('#layout');
 
             if ($layout.hasClass('fullscreen-layout')) {
                 return;
             }
 
-            if (typeof $parent === 'undefined') {
+            if (typeof $container === 'undefined') {
                 var $header = $('#header');
                 var $headerLogo = $('#header-logo');
                 var $main = $('#main');
@@ -636,42 +643,30 @@
                 }
 
                 var _this = this;
-                $('.container').each(function (idx, container) {
-                    _this.fixControls($(container));
+                $('.container').each(function () {
+                    _this.fixControls($(this));
                 });
 
                 return;
             }
 
-            if ($parent.closest('.dashboard').length) {
+            if ($container.parent('.dashboard').length) {
                 return;
             }
 
             // Enable this only in case you want to track down UI problems
-            // self.icinga.logger.debug('Fixing controls for ', $parent);
+            //this.icinga.logger.debug('Fixing controls for ', $container);
 
-            $('.controls', $parent).each(function (idx, el) {
-                var $el = $(el);
+            $container.find('.controls').each(function() {
+                var $controls = $(this);
+                var $fakeControls = $controls.next('.fake-controls');
 
-                if ($el.closest('.dashboard').length) {
-                    return;
-                }
-
-                var $fake = $el.next('.fake-controls');
-                var y = $parent.scrollTop();
-
-                $el.css({
-                    position : 'fixed',
-                    top      : $parent.offset().top,
-                    // Firefox gives 1px too much depending on total width.
-                    // TODO: find a better solution for -1
-                    width    : ($fake.outerWidth() - 1) + 'px'
+                $controls.css({
+                    top: $container.offset().top,
+                    width: $fakeControls.outerWidth()
                 });
 
-                $fake.css({
-                    height  : $el.css('height'),
-                    display : 'block'
-                });
+                $fakeControls.height($controls.height());
             });
         },
 
