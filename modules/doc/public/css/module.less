@@ -81,15 +81,44 @@ pre > code {
   color: inherit;
 }
 
-.toc {
-  margin: 0;
-  padding: 0 0 0 1em;
-}
-
 .search-highlight {
   .rounded-corners();
 
   background: @icinga-blue;
   color: @text-color-on-icinga-blue;
   padding: 0 0.3em 0 0.3em;
+}
+
+.toc {
+  counter-reset: li;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+
+  li {
+    counter-increment: li;
+    margin-top: 0.25em;
+
+    > .toc {
+      margin-left: 2em;
+    }
+
+    a {
+      &:before {
+        .rounded-corners();
+
+        background-color: @icinga-blue;
+        color: @text-color-on-icinga-blue;
+        content: counter(li) ".";
+        display: inline-block;
+        font-size: small;
+        margin-right: 0.25em;
+        min-width: 1.5em;
+        padding: 0.25em;
+        text-align: center;
+      }
+
+      display: block;
+    }
+  }
 }
