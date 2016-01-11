@@ -21,7 +21,7 @@ class DashboardSettings implements Tabextension
         $tabs->addAsDropdown(
             'dashboard_add',
             array(
-                'icon'      => 'img/icons/dashboard.png',
+                'icon'      => 'dashboard',
                 'label'     => t('Add Dashlet'),
                 'url'       => Url::fromPath('dashboard/new-dashlet')
             )
@@ -30,7 +30,7 @@ class DashboardSettings implements Tabextension
         $tabs->addAsDropdown(
             'dashboard_settings',
             array(
-                'icon'      => 'img/icons/dashboard.png',
+                'icon'      => 'dashboard',
                 'label'     => t('Settings'),
                 'url'       => Url::fromPath('dashboard/settings')
             )
