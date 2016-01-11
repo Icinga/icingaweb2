@@ -1,6 +1,5 @@
 <div class="controls">
     <?= $this->tabs ?>
-    <h1><?= $this->translate('Module documentations'); ?></h1>
 </div>
 
 <div class="content">
@@ -14,7 +13,7 @@
                 $this->translate('Show the documentation\'s table of contents for the %s'),
                 $module->getTitle()
             ))
-        ); ?></li>
+        ) ?></li>
     <?php endforeach ?>
     </ul>
 </div>

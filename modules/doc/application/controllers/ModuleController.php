@@ -6,6 +6,7 @@ namespace Icinga\Module\Doc\Controllers;
 use Icinga\Application\Icinga;
 use Icinga\Module\Doc\DocController;
 use Icinga\Module\Doc\Exception\DocException;
+use Icinga\Web\Url;
 
 class ModuleController extends DocController
 {
@@ -53,6 +54,12 @@ class ModuleController extends DocController
             }
         }
         $this->view->modules = $modules;
+        $this->getTabs()->add('module-documentation', array(
+            'active'    => true,
+            'title'     => $this->translate('Module Documentation', 'Tab title'),
+            'url'       => Url::fromRequest()
+        ));
+
     }
 
     /**

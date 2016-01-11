@@ -4,6 +4,7 @@
 namespace Icinga\Module\Doc\Controllers;
 
 use Icinga\Module\Doc\DocController;
+use Icinga\Web\Url;
 
 /**
  * Documentation module index
@@ -17,5 +18,10 @@ class IndexController extends DocController
      */
     public function indexAction()
     {
+        $this->getTabs()->add('documentation', array(
+            'active'    => true,
+            'title'     => $this->translate('Documentation', 'Tab title'),
+            'url'       => Url::fromRequest()
+        ));
     }
 }
