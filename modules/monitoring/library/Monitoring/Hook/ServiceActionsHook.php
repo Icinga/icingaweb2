@@ -8,7 +8,7 @@ use Icinga\Module\Monitoring\Object\Service;
 /**
  * Base class for host action hooks
  */
-abstract class ServiceActionsHook
+abstract class ServiceActionsHook extends ObjectActionsHook
 {
     /**
      * Implementors of this method should return an array containing

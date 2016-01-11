@@ -3,6 +3,8 @@
 
 namespace Icinga\Module\Monitoring\Controllers;
 
+use Icinga\Web\Hook;
+use Icinga\Web\Navigation\Navigation;
 use Icinga\Module\Monitoring\Forms\Command\Object\AcknowledgeProblemCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\AddCommentCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\ProcessCheckResultCommandForm;
@@ -11,7 +13,6 @@ use Icinga\Module\Monitoring\Forms\Command\Object\ScheduleHostDowntimeCommandFor
 use Icinga\Module\Monitoring\Forms\Command\Object\SendCustomNotificationCommandForm;
 use Icinga\Module\Monitoring\Object\Host;
 use Icinga\Module\Monitoring\Web\Controller\MonitoredObjectController;
-use Icinga\Web\Hook;
 
 class HostController extends MonitoredObjectController
 {
@@ -43,15 +44,12 @@ class HostController extends MonitoredObjectController
      */
     protected function getHostActions()
     {
-        $urls = array();
-
+        $navigation = new Navigation();
         foreach (Hook::all('Monitoring\\HostActions') as $hook) {
-            foreach ($hook->getActionsForHost($this->object) as $id => $url) {
-                $urls[$id] = $url;
-            }
+            $navigation->merge($hook->getNavigation($this->object));
         }
 
-        return $urls;
+        return $navigation;
     }
 
     /**

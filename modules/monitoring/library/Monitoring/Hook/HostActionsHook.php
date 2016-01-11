@@ -8,7 +8,7 @@ use Icinga\Module\Monitoring\Object\Host;
 /**
  * Base class for host action hooks
  */
-abstract class HostActionsHook
+abstract class HostActionsHook extends ObjectActionsHook
 {
     /**
      * Implementors of this method should return an array containing
