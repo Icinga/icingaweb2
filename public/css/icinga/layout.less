@@ -141,15 +141,18 @@ html.no-js .controls > .tabs {
 
 .dashboard {
   letter-spacing: -0.417em;
-  margin: 0 -0.5 * @gutter;
 
   > .container {
     display: inline-block;
     letter-spacing: normal;
-    padding: 0 0.5 * @gutter;
     vertical-align: top;
     // Column width controlled by #layout
     width: 100%;
+
+    &:last-of-type {
+      // See reponsive.less for gutters
+      padding-right: 0;
+    }
   }
 }
 
