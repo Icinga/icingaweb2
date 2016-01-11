@@ -35,9 +35,9 @@ EOT;
      * @var string
      */
     private $dropdownTpl = <<< 'EOT'
-<li class="dropdown">
+<li class="dropdown-nav-item">
   <a href="#" class="dropdown-toggle"><i aria-hidden="true" class="icon-down-open"></i></a>
-  <ul class="dropdown-menu">
+  <ul class="nav">
     {TABS}
   </ul>
 </li>
@@ -50,7 +50,7 @@ EOT;
      */
     private $closeTpl = <<< 'EOT'
 <li class="dropdown" style="float: right;">
-  <a href="#" class="dropdown-toggle close-container-control">
+  <a href="#" class="close-container-control">
     <i aria-hidden="true" class="icon-cancel"></i>
   </a>
 </li>
@@ -63,7 +63,7 @@ EOT;
      */
     private $refreshTpl = <<< 'EOT'
 <li>
-  <a class="spinner" href="{URL}" title="{TITLE}" aria-label="{LABEL}">
+  <a class="refresh-container-control spinner" href="{URL}" title="{TITLE}" aria-label="{LABEL}">
     <i aria-hidden="true" class="icon-cw"></i>
   </a>
 </li>

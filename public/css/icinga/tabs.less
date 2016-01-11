@@ -1,130 +1,107 @@
 /*! Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
-ul.tabs li {
+// Styles for tab navigation of containers
+
+.tabs {
+  letter-spacing: -0.417em;
+}
+
+.tabs > li {
   display: inline-block;
+  letter-spacing: normal;
 }
 
-ul.tabs li a {
-  text-decoration: none;
-  display: block;
-  padding: 0 1em;
-  line-height: 2.6em;
-  white-space: nowrap;
-  color: #ddd;
-  outline: 0;
+.tabs {
+  height: 2.6em;
+
+  a {
+    padding: 0 1em;
+    line-height: 2.6em;
+
+    &:focus {
+      outline-offset: -0.5em;
+    }
+  }
+}
+
+.tabs > li {
   margin-right: 0.5em;
+
+  > a {
+    color: @body-bg-color;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  &.active {
+    background-color: @body-bg-color;
+
+    > a {
+      color: @text-color;
+    }
+  }
+
+  &:last-child {
+    margin-right: 0;
+  }
 }
 
-ul.tabs > li > a {
-  color: white;
+.tabs > .dropdown-nav-item > a,
+.tabs > li > .close-container-control,
+.tabs > li > .refresh-container-control {
+  text-align: center;
+  width: 3em;
 }
 
-ul.tabs > li > a:focus {
-  color: @colorTextDefault;
-  text-shadow: none;
+.tabs > .dropdown-nav-item:hover > a,
+.tabs > .dropdown-nav-item > a:focus,
+.tabs > li > .close-container-control:focus,
+.tabs > li > .close-container-control:hover,
+.tabs > li > .refresh-container-control:focus,
+.tabs > li > .refresh-container-control:hover {
+  background-color: @body-bg-color;
+  color: @text-color;
+  text-decoration: none;
 }
 
-ul.tabs > li.active > a:focus {
-  text-shadow: none;
-  color: @colorTextDefault;
-}
+.tabs > .dropdown-nav-item > ul {
+  .box-shadow();
+  .rounded-corners(0 0 0.3em 0.3em);
 
-ul.tabs li.dropdown > a{
-  padding: 0 0.4em;
-}
-
-ul.tabs li.active a, ul.tabs li.dropdown:hover a, ul.tabs li.dropdown.hover a {
-  background-color: white;
-  color: black;
-}
-
-ul.tabs li a:hover {
-  text-decoration: underline;
-}
-
-ul.dropdown-menu {
-  margin: 0;
-  padding: 0;
-  background-color: #eee;
-  position: absolute;
-  overflow: hidden;
-  z-index: 1000;
-  border: 1px solid #d9d9d9;
+  background-color: @body-bg-color;
+  border: 1px solid @gray-light;
   border-top: none;
   margin-left: -1px;
+  width: 14em;
 }
 
-/* Dropdown tabs after the fourth title should be right-aligned */
-ul.tabs li:nth-child(n+5) ul.dropdown-menu {
-  width: 13em;
-  margin-left: -11em;
+.tabs > .dropdown-nav-item > ul > li:hover {
+  > a {
+    background-color: @gray-lighter;
+    text-decoration: none;
+  }
 }
 
-ul.dropdown-menu {
-  box-shadow: 0.2em 0.2em 0.3em -0.2em #555;
-  -moz-box-shadow: 0.2em 0.2em 0.3em -0.2em #555;
-  -webkit-box-shadow: 0.2em 0.2em 0.3em -0.2em #555;
-  border-radius: 0 0 3px 3px;
-  -moz-border-radius: 0 0 3px 3px;
-  -webkit-border-radius: 0 0 3px 3px;
+// Dropdown tabs after the fourth title should be right-aligned
+.tabs > li:nth-child(n+5).dropdown-nav-item > ul {
+  // Offset according to width
+  margin-left: -10.95em;
+  margin-right: 1px;
 }
 
-ul.dropdown-menu li {
-  background-color: white;
-}
-
-ul.dropdown-menu li {
-  display: block;
-}
-
-ul.tabs ul.dropdown-menu {
-  display: none;
-}
-
-ul.tabs ul.dropdown-menu li a {
-  color: @colorTextDarkDefault;
-  margin: 0em;
-}
-
-ul.tabs ul.dropdown-menu li a:focus {
-  color: #333;
-}
-
-ul.tabs ul.dropdown-menu li a:hover, ul.tabs ul.dropdown-menu li a:focus {
-  background-color: #ccc;
-  color: #333;
-}
-
-ul.tabs li.dropdown:hover a {
-  text-decoration: none;
-  color: @colorTextDarkDefault;
-}
-
-li.dropdown:hover ul.dropdown-menu, li.dropdown.hover ul.dropdown-menu {
-  display: block;
-}
-
-ul.tabs img.icon {
-    margin-right: 4px;
-    margin-top: -4px;
-}
-
-a.close-tab {
-  display: none;
-}
-
-span.display-on-hover {
-  font-size: 0.8em;
-  left: -9000px;
+// TODO(el): Rename display-on-hover and move it to main.less
+.display-on-hover {
+  font-size: @font-size-small;
+  left: -999em;
   position: relative;
-  display: inline;
-  width: 0;
-  overflow: hidden;
-  color: #000000;
-  text-decoration: none;
+
+  &:focus {
+    position: static;
+  }
 }
 
-:hover > span.display-on-hover, :focus > span.display-on-hover {
-  left:1em; width:12em;
-  text-align: center
+li:hover > a > .display-on-hover {
+  position: static;
 }

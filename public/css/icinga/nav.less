@@ -10,12 +10,14 @@
   }
 }
 
-.nav-item {
-  > a,
-  > span {
-    // Rollover
-    display: block;
-  }
+.dropdown-nav-item > ul {
+  display: none;
+  position: absolute;
+}
+
+.dropdown-nav-item.active > ul,
+.dropdown-nav-item:hover > ul {
+  display: block;
 }
 
 .nav {
@@ -23,12 +25,18 @@
   list-style-type: none;
   margin: 0;
   padding: 0;
+
+  li > a,
+  li > span {
+    // Rollover
+    display: block;
+  }
 }
 
 .tab-nav {
   .clearfix();
 
-  > .nav-item {
+  > li {
     float: left;
   }
 }
