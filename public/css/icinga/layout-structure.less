@@ -1,39 +1,39 @@
 /*! Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
-/** Default layout **/
 html {
   font-family: 'default-layout';
 }
 
 #layout {
-  position: fixed;
+  height: 100%;
   left: 0;
+  position: fixed;
   top: 0;
-  right: 0;
-  bottom: 0;
+  width: 100%;
 }
 
 #header {
+  height: 4em;
+  left: 0;
   position: fixed;
   top: 0;
-  left: 0;
-  right: 0;
+  width: 100%;
 }
 
 #sidebar {
-  width: 12em;
-  position: fixed;
-  left: 0;
-  top: 4.6em;
   bottom: 0;
+  left: 0;
+  position: fixed;
+  top: 4em;
+  width: 12em;
 }
 
 #main {
-  position: fixed;
-  left: 12em;
-  top: 3.6em;
-  right: 0;
   bottom: 0;
+  left: 12em;
+  position: fixed;
+  right: 0;
+  top: 4em;
 }
 
 .iframe {
@@ -72,9 +72,11 @@ html {
 #layout.minimal-layout #responsive-debug {
   font-size: 0.6em;
 }
+
 #layout.poor-layout #responsive-debug {
   font-size: 0.7em;
 }
+
 #layout.compact-layout #responsive-debug {
   font-size: 0.8em;
 }
@@ -110,209 +112,10 @@ html {
   }
 }
 
-/* tmp */
-#main > .container {
-  box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  float: left;
-}
-
-#layout.twocols #main > .container {
-  width: 50%;
-}
-
-
-/* #layout.twocols #main > .container > .controls {*/
-/*#layout.twocols #main .container > .controls {
-  width: 100%;
-}
-
-.container > div {
-  padding: 0;
-}
-*/
-.container .controls {
-  top: 0;
-  padding: 1em 1em 0;
-  z-index: 100;
-
-  h1 {
-    margin: 0;
-    margin-top: @horizontal-padding;
-  }
-}
-
 .container .controls.separated {
     box-shadow: 0 3px 4px -4px rgba(0, 0, 0, 0.2);
 //  border-bottom: 1px solid @gray-lightest;
     padding-bottom: @horizontal-padding / 2
-}
-
-.container .fake-controls {
-  padding: 1em 1em 0;
-}
-
-#main .dashboard {
-  padding: 0;
-}
-
-.dashboard > div.container {
-  vertical-align: top;
-  width: 48.5%;
-  display: inline-block;
-  padding: 0;
-  margin-top: 0em;
-  margin-left: 1%;
-}
-
-.content {
-  padding: 0 1em 1em 1em;
-}
-
-.dashboard .content {
-  padding: 0;
-}
-
-.dashboard .controls {
-  padding: 0;
-}
-
-/* Not growing larger than 3840px at 1em=16px right now */
-@media screen and (min-width: 240em) {
-  #main {
-    width: 227em;
-  }
-  #header {
-    width: 240em;
-  }
-}
-
-/** More than 100em, that's usually 1600px **/
-@media screen and (min-width: 100em) {
-  html {
-    font-family: 'wide-layout';
-  }
-}
-
-/** Up to 72em, that's usually 1152px on desktops **/
-@media screen and (max-width:72em) {
-  html {
-    font-family: 'compact-layout';
-  }
-}
-
-/** Up to 752px, poor boy **/
-@media screen and (max-width: 47em) {
-  html {
-    font-family: 'poor-layout';
-  }
-}
-
-/* Up to 576px for 1em=16px, should fit 320px devices */
-@media screen and (max-width: 36em) {
-  html {
-    font-family: 'minimal-layout';
-  }
-}
-
-/* 100em */
-#layout.wide-layout {
-  .dashboard > div.container {
-    width: 32%;
-    margin-left: 1%;
-    margin-right: 0;
-  }
-}
-
-/* 72em */
-#layout.compact-layout {
-  font-size: 0.875em;
-}
-
-#layout.poor-layout {
-  font-size: 0.875em;
-
-  .dashboard > div.container {
-    width: 98%;
-    margin-left: 1%;
-    margin-right: 1%;
-  }
-
-  #layout.twocols {
-    #main > .container {
-      width: 99%;
-    }
-    #col1 {
-      display: none;
-    }
-  }
-}
-
-#layout.minimal-layout {
-  #sidebar {
-    top: 0;
-    height: 32px;
-    width: 100%;
-  }
-
-  .dashboard > div.container {
-    width: 98%;
-    margin-left: 1%;
-    margin-right: 1%;
-  }
-
-  #main {
-    left: 0;
-  }
-}
-
-
-#layout.twocols .dashboard > div.container {
-  width: 96%;
-  margin-left: 2%;
-  margin-right: 2%;
-}
-
-#layout.twocols.wide-layout #col1 {
-  width: 33.333%;
-}
-
-#layout.twocols.wide-layout #col2 {
-  width: 66.667%;
-}
-
-#layout.threecols.wide-layout #main > .container {
-  width: 33.333%;
-}
-
-#layout #col2, #layout #col3 {
-  display: none;
-}
-
-#layout.twocols #col2 {
-  border-left: 1px solid @gray-light;
-  display: block;
-}
-
-#layout.threecols #col3 {
-  border-left: 1px solid #d9d9d9;
-  display: block;
-}
-
-.audible {
-  left: -999em;
-  position: absolute;
-}
-
-.message-error {
-  padding: 0.5em;
-  background-color: @colorCritical;
-  font-weight: bold;
-  color: white;
 }
 
 .hbox {

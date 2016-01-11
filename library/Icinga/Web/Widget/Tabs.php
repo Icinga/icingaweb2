@@ -21,7 +21,7 @@ class Tabs extends AbstractWidget implements Countable
      * @var string
      */
     private $baseTpl = <<< 'EOT'
-<ul class="tabs primary-nav">
+<ul class="tabs primary-nav nav">
   {TABS}
   {DROPDOWN}
   {REFRESH}

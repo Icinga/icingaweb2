@@ -1,10 +1,10 @@
 /*! Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
 #footer {
-  position: fixed;
+  bottom: 0;
   left: 0;
   right: 0;
-  bottom: 0;
+  position: fixed;
   z-index: 999;
 }
 
@@ -24,7 +24,7 @@
   font-size: 2em;
 }
 
-#header,
+#header-logo-container,
 #login,
 #main > .container,
 #menu {
@@ -38,9 +38,9 @@
 
 #header-logo-container {
   height: 4em;
+  margin-bottom: 0.2em;
   margin-left: 1.5em;
   margin-top: 0.2em;
-  margin-bottom: 0.2em;
   width: 100px;
 }
 
@@ -73,6 +73,42 @@
   overflow: auto;
 }
 
+@gutter: 1em;
+
+// x-column-layout
+
+#main {
+  .clearfix();
+
+  & > .container {
+    float: left;
+    // Column width controlled by #layout
+    width: 100%;
+
+    // Container scrolling
+    height: 100%;
+    overflow: auto;
+
+    & > .content {
+      padding: @gutter;
+      z-index: 2;
+    }
+
+    & > .controls {
+      z-index: 3;
+
+      > * {
+       margin-left: @gutter !important;
+       margin-right: @gutter !important;
+      }
+    }
+
+    // 1em gutter of containers is maintained by padding of content and margin of every element in controls. We're not
+    // setting padding to .container because else horizontally scrolled .content may overflow .controls when scrolled
+    // vertically
+  }
+}
+
 #sidebar {
   background-color: @gray-lighter;
 }
@@ -90,6 +126,30 @@
 
   > .tabs-spacer {
     margin-bottom: 1em;
+  }
+}
+
+// Display tabs if JS is disabled
+html.no-js .controls > .tabs {
+  background-color: @icinga-blue;
+  margin-left: -1 * @gutter;
+  margin-right: -1 * @gutter;
+  margin-top: -1 * @gutter;
+}
+
+// Dashboard grid
+
+.dashboard {
+  letter-spacing: -0.417em;
+  margin: 0 -0.5 * @gutter;
+
+  > .container {
+    display: inline-block;
+    letter-spacing: normal;
+    padding: 0 0.5 * @gutter;
+    vertical-align: top;
+    // Column width controlled by #layout
+    width: 100%;
   }
 }
 

@@ -1,0 +1,116 @@
+/*! Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
+
+// Not growing larger than 3840px at 1em=16px right now
+@media screen and (min-width: 240em) {
+  #header {
+    width: 240em;
+  }
+
+  #main {
+    width: 227em;
+  }
+}
+
+// More than 100em, usually 1600px at 1em=16px
+@media screen and (min-width: 100em) {
+  html {
+    font-family: 'wide-layout';
+  }
+}
+
+// Up to 1152px at 1em=16px
+@media screen and (max-width:72em) {
+  html {
+    font-family: 'compact-layout';
+  }
+}
+
+// Up to 752px at 1em=16px
+@media screen and (max-width: 47em) {
+  html {
+    font-family: 'poor-layout';
+  }
+}
+
+// Up to 576px at 1em=16px, should fit 320px devices
+@media screen and (max-width: 36em) {
+  html {
+    font-family: 'minimal-layout';
+  }
+}
+
+#layout.compact-layout {
+  font-size: 0.875em;
+}
+
+#layout.poor-layout {
+  font-size: 0.875em;
+
+  #layout.twocols {
+    #col1 {
+      display: none;
+    }
+
+    #main > .container {
+      width: 100%;
+    }
+  }
+
+  .dashboard > div.container {
+    width: 100%;
+  }
+}
+
+#layout.minimal-layout {
+  #main {
+    left: 0;
+  }
+
+  #sidebar {
+    top: 0;
+    height: 32px;
+    width: 100%;
+  }
+
+  .dashboard > div.container {
+    width: 100%;
+  }
+}
+
+
+// Dashboard
+
+#layout.default-layout .dashboard > .container {
+  width: 50%;
+}
+
+#layout.wide-layout .dashboard > .container {
+  width: 33.33%;
+}
+
+#layout.twocols .dashboard > .container {
+  width: 100%;
+}
+
+// Columns
+
+#layout #col2 {
+  display: none;
+}
+
+#layout.twocols #col2 {
+  border-left: 1px solid @gray-light;
+  display: block;
+}
+
+#layout.twocols > #main > .container {
+  width: 50%;
+}
+
+#layout.twocols.wide-layout #col1 {
+  width: 33.33%;
+}
+
+#layout.twocols.wide-layout #col2 {
+  width: 66.66%;
+}

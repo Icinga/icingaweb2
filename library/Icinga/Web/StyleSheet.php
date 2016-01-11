@@ -53,7 +53,8 @@ class StyleSheet
 //        'css/icinga/logo.less',
         'css/icinga/spinner.less',
         'css/icinga/compat.less',
-        'css/icinga/print.less'
+        'css/icinga/print.less',
+        'css/icinga/responsive.less'
     );
 
     /**
