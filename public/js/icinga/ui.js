@@ -547,7 +547,6 @@
 
             $container.find('.controls').each(function() {
                 var $controls = $(this);
-                console.log($controls.css('height'), $controls.height(), $controls.innerHeight());
                 if (! $controls.next('.fake-controls').length) {
                     var $tabs = $controls.find('.tabs', $controls);
                     if ($tabs.length && $controls.children().length > 1 && ! $tabs.next('.tabs-spacer').length) {
