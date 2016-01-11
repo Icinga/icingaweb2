@@ -77,11 +77,9 @@
   width: 14em;
 }
 
-.tabs > .dropdown-nav-item > ul > li:hover {
-  > a {
-    background-color: @gray-lighter;
-    text-decoration: none;
-  }
+.tabs > .dropdown-nav-item > ul > li:hover > a {
+  background-color: @gray-lighter;
+  text-decoration: none;
 }
 
 // Dropdown tabs after the fourth title should be right-aligned
@@ -96,12 +94,9 @@
   font-size: @font-size-small;
   left: -999em;
   position: relative;
-
-  &:focus {
-    position: static;
-  }
 }
 
-li:hover > a > .display-on-hover {
+.dropdown-nav-item > ul > li > a:focus > .display-on-hover,
+.dropdown-nav-item > ul > li:hover > a > .display-on-hover {
   position: static;
 }
