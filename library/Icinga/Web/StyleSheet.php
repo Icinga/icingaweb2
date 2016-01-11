@@ -50,7 +50,6 @@ class StyleSheet
         'css/icinga/about.less',
         'css/icinga/controls.less',
         'css/icinga/dev.less',
-//        'css/icinga/logo.less',
         'css/icinga/spinner.less',
         'css/icinga/compat.less',
         'css/icinga/print.less',
