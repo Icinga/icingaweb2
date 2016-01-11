@@ -502,11 +502,11 @@
         },
 
         disableCloseButtons: function () {
-            $('a.close-toggle').hide();
+            $('a.close-container-control').hide();
         },
 
         enableCloseButtons: function () {
-            $('a.close-toggle').show();
+            $('a.close-close-container-control').show();
         },
 
         /**

@@ -485,7 +485,7 @@
             // If link has hash tag...
             if (href.match(/#/)) {
                 if (href === '#') {
-                    if ($a.hasClass('close-toggle')) {
+                    if ($a.hasClass('close-container-control')) {
                         if (! icinga.ui.isOneColLayout()) {
                             var $cont = $a.closest('.container').first();
                             if ($cont.attr('id') === 'col1') {
