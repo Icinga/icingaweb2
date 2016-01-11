@@ -31,7 +31,8 @@
                     'partials/comment/comment-detail.phtml',
                     array(
                         'comment'        => $comment,
-                        'delCommentForm' => $delCommentForm // Form is unset if the current user lacks the respective permission
+                        'delCommentForm' => isset($delCommentForm) ? $delCommentForm : null
+                        // Form is unset if the current user lacks the respective permission
                 )) ?>
             </td>
         </tr>
