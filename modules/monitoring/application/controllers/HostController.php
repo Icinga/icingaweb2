@@ -3,8 +3,6 @@
 
 namespace Icinga\Module\Monitoring\Controllers;
 
-use Icinga\Web\Hook;
-use Icinga\Web\Navigation\Navigation;
 use Icinga\Module\Monitoring\Forms\Command\Object\AcknowledgeProblemCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\AddCommentCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\ProcessCheckResultCommandForm;
@@ -13,6 +11,8 @@ use Icinga\Module\Monitoring\Forms\Command\Object\ScheduleHostDowntimeCommandFor
 use Icinga\Module\Monitoring\Forms\Command\Object\SendCustomNotificationCommandForm;
 use Icinga\Module\Monitoring\Object\Host;
 use Icinga\Module\Monitoring\Web\Controller\MonitoredObjectController;
+use Icinga\Web\Hook;
+use Icinga\Web\Navigation\Navigation;
 
 class HostController extends MonitoredObjectController
 {
@@ -40,7 +40,7 @@ class HostController extends MonitoredObjectController
     /**
      * Get host actions from hook
      *
-     * @return array
+     * @return  Navigation
      */
     protected function getHostActions()
     {

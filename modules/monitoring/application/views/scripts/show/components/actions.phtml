@@ -32,7 +32,7 @@ if (isset($this->actions)) {
     $navigation->merge($this->actions);
 }
 
-if ($navigation->isEmpty() || !$navigation->hasRenderableItems()) {
+if ($navigation->isEmpty() || ! $navigation->hasRenderableItems()) {
     return;
 }
 
