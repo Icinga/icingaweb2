@@ -18,7 +18,7 @@ abstract class ObjectActionsHook
      */
     public function getNavigation(MonitoredObject $object)
     {
-        $urls = $this->getActionsForHost($object);
+        $urls = $this->getActionsForObject($object);
         if (is_array($urls)) {
             $navigation = new Navigation();
             foreach ($urls as $label => $url) {
@@ -42,4 +42,6 @@ abstract class ObjectActionsHook
     {
         return empty($actions) ? new Navigation() : Navigation::fromArray($actions);
     }
+
+    abstract function getActionsForObject(MonitoredObject $object);
 }

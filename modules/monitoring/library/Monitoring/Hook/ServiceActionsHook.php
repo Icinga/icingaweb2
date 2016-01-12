@@ -4,6 +4,7 @@
 namespace Icinga\Module\Monitoring\Hook;
 
 use Icinga\Module\Monitoring\Object\Service;
+use Icinga\Module\Monitoring\Object\MonitoredObject;
 
 /**
  * Base class for host action hooks
@@ -43,4 +44,9 @@ abstract class ServiceActionsHook extends ObjectActionsHook
      * @return  array   An array containing a list of service action links
      */
     abstract public function getActionsForService(Service $service);
+
+    public function getActionsForObject(MonitoredObject $object)
+    {
+        return $this->getActionsForService($object);
+    }
 }
