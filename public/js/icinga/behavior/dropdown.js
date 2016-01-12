@@ -32,9 +32,12 @@
      */
     function clearFocus(e) {
         var $dropdown = $(this);
-        if ($(e.target).is($dropdown.find('a').last())) {
-            $dropdown.removeClass('active');
-        }
+        // Timeout is required to wait for the next element in the DOM to receive focus
+        setTimeout(function() {
+            if (! $.contains($dropdown[0], document.activeElement)) {
+                $dropdown.removeClass('active');
+            }
+        }, 10);
     }
 
     Icinga.Behaviors = Icinga.Behaviors || {};
