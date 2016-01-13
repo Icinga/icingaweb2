@@ -35,12 +35,10 @@
     }
   }
 
-  &.active {
+  &.active > a,
+  > a:focus {
     background-color: @body-bg-color;
-
-    > a {
-      color: @text-color;
-    }
+    color: @text-color;
   }
 
   &:last-child {
