@@ -132,17 +132,21 @@
         /**
          * Focus the given element and scroll to its position
          *
-         * @param   {string}    element     The name or id of the element to focus
-         * @param   {object}    $container  The container containing the element
+         * @param   {string}    element         The name or id of the element to focus
+         * @param   {object}    [$container]    The container containing the element
          */
         focusElement: function(element, $container) {
-            var $element = $('#' + element, $container);
+            var $element = $('#' + element);
 
             if (! $element.length) {
                 // The name attribute is actually deprecated, on anchor tags,
                 // but we'll possibly handle links from another source
                 // (module etc) so that's used as a fallback
-                $element = $('[name="' + element.replace(/'/, '\\\'') + '"]', $container);
+                if ($container && $container.length) {
+                    $element = $container.find('[name="' + element.replace(/'/, '\\\'') + '"]');
+                } else {
+                    $element = $('[name="' + element.replace(/'/, '\\\'') + '"]');
+                }
             }
 
             if ($element.length) {
@@ -151,8 +155,11 @@
                 }
 
                 $element.focus();
-                $container.scrollTop(0);
-                $container.scrollTop($element.first().position().top);
+
+                if ($container && $container.length) {
+                    $container.scrollTop(0);
+                    $container.scrollTop($element.first().position().top);
+                }
             }
         },
 
