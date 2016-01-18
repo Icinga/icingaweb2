@@ -11,15 +11,15 @@ if (! $this->compact): ?>
 <div class="content stats grid">
     <div class="boxview">
         <div class="box stats col-1-2">
-            <h3><?= $this->unhandledProblems ?> <?= $this->translate('Unhandled Problems:') ?>
-                <span class="badge badge-critical"> <?= $this->unhandledProblems ?> </span>
+            <h3 tabindex="0"><?= $this->unhandledProblems ?> <?= $this->translate('Unhandled Problems:') ?>
+                <span class="badge state-critical"> <?= $this->unhandledProblems ?> </span>
             </h3>
             <table class="avp">
                 <tbody>
                 <tr>
                     <th> <?= $this->translate('Service Problems:') ?> </th>
                     <td>
-                        <span class="badge badge-critical">
+                        <span class="badge state-critical">
                             <?=
                             $this->qlink(
                                 $this->unhandledServiceProblems,
@@ -34,7 +34,7 @@ if (! $this->compact): ?>
                 <tr>
                     <th> <?= $this->translate('Host Problems:') ?> </th>
                     <td>
-                        <span class="badge badge-critical">
+                        <span class="badge state-critical">
                             <?=
                             $this->qlink(
                                 $this->unhandledhostProblems,
@@ -50,7 +50,7 @@ if (! $this->compact): ?>
             </table>
             <br>
 
-            <h3 class="tinystatesummary" data-base-target="_next">
+            <h3 tabindex="0" class="tinystatesummary" data-base-target="_next">
                 <?php $this->stats = $hoststats ?>
                 <?= $this->render('list/components/hostssummary.phtml') ?>
             </h3>

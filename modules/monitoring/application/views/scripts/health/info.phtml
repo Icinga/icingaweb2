@@ -11,7 +11,7 @@ if (! $this->compact): ?>
 <div class="content processinfo grid">
     <div class="boxview">
         <div class="box process col-1-2">
-            <h2><?= $this->translate('Process Info') ?></h2>
+            <h2 tabindex="0"><?= $this->translate('Process Info') ?></h2>
             <table class="avp">
                 <tbody>
                 <tr>
@@ -76,7 +76,8 @@ if (! $this->compact): ?>
             <?php endif ?>
         </div>
         <div class="box features col-1-2">
-            <?= $this->toggleFeaturesForm; ?>
+            <h2 tabindex="0"><?= $this->translate('Feature Commands') ?></h2>
+            <?= $this->toggleFeaturesForm ?>
         </div>
     </div>
 </div>
