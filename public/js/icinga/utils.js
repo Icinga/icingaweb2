@@ -286,7 +286,7 @@
             while (true) {
                 var id = $node.attr('id');
 
-                if (typeof id !== 'undefined') {
+                if (typeof id !== 'undefined' && id.indexOf('form_') !== 0) {
                     path.push('#' + id);
                     break;
                 }
