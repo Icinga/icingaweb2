@@ -3,10 +3,13 @@
 
 namespace Icinga\Forms\Authentication;
 
+use Icinga\Application\Config;
+use Icinga\Application\Icinga;
 use Icinga\Authentication\Auth;
 use Icinga\Authentication\User\ExternalBackend;
 use Icinga\User;
 use Icinga\Web\Form;
+use Icinga\Web\StyleSheet;
 use Icinga\Web\Url;
 
 /**
@@ -53,6 +56,24 @@ class LoginForm extends Form
                 'class'         => isset($formData['username']) ? 'autofocus' : ''
             )
         );
+        if (! (bool) Config::app()->get('themes', 'disabled', false)) {
+            $themes = Icinga::app()->getThemes();
+            if (count($themes) > 1) {
+                $defaultTheme = Config::app()->get('themes', 'default', StyleSheet::DEFAULT_THEME);
+                if (isset($themes[$defaultTheme])) {
+                    $themes[$defaultTheme] .= ' (' . $this->translate('default') . ')';
+                }
+                $this->addElement(
+                    'select',
+                    'theme',
+                    array(
+                        'label'         => $this->translate('Theme', 'Form element label'),
+                        'multiOptions'  => $themes,
+                        //'value'         => null
+                    )
+                );
+            }
+        }
         $this->addElement(
             'hidden',
             'redirect',

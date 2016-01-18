@@ -386,7 +386,9 @@
                 }
             }
 
-            icinga.loader.loadUrl(url, $target, data, method).progressTimer = progressTimer;
+            var req = icinga.loader.loadUrl(url, $target, data, method);
+            req.forceFocus = autosubmit ? $(event.currentTarget) : null;
+            req.progressTimer = progressTimer;
 
             event.stopPropagation();
             event.preventDefault();

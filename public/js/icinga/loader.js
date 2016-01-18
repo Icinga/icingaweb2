@@ -554,7 +554,7 @@
             }
 
             // .html() removes outer div we added above
-            this.renderContentToContainer($resp.html(), req.$target, req.action, req.autorefresh);
+            this.renderContentToContainer($resp.html(), req.$target, req.action, req.autorefresh, req.forceFocus);
             if (oldNotifications) {
                 oldNotifications.appendTo($('#notifications'));
             }
@@ -721,14 +721,16 @@
         /**
          * Smoothly render given HTML to given container
          */
-        renderContentToContainer: function (content, $container, action, autorefresh) {
+        renderContentToContainer: function (content, $container, action, autorefresh, forceFocus) {
             // Container update happens here
             var scrollPos = false;
             var self = this;
             var containerId = $container.attr('id');
 
             var activeElementPath = false;
-            if (document.activeElement
+            if (forceFocus && forceFocus.length) {
+                activeElementPath = this.icinga.utils.getCSSPath($(forceFocus));
+            } else if (document.activeElement
                 && document.activeElement !== document.body
                 && $.contains($container[0], document.activeElement)
             ) {
