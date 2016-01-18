@@ -1,18 +1,32 @@
 /*! Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
-input {
+input:not([type]),
+input[type=text],
+input[type=date],
+input[type=datetime-local],
+input[type=email],
+input[type=number],
+input[type=password],
+input[type=search],
+input[type=tel],
+input[type=time],
+input[type=url] {
+  .box-shadow(0 1px 0 0 @gray-light);
   .transition(border 0.3s ease);
 
   border: none;
   border-bottom: 1px solid @gray-light;
-  color: inherit;
-  display: inline-block;
+  outline: none;
   padding: @vertical-padding / 2 @horizontal-padding / 2;
 
-  &:focus {
+  &:focus:not([readonly]) {
     border-color: @icinga-blue;
-    outline: none;
   }
+}
+
+.control-button,
+input[type="submit"] {
+  .button();
 }
 
 input:-moz-placeholder { // FF 18-
@@ -52,12 +66,6 @@ input, select, textarea {
   width: 20em;
 }
 
-input[type="checkbox"],
-input[type="radio"],
-input[type="submit"] {
-  width: initial;
-}
-
 // TODO(el): .form-inline control-group { display: inline-block; }
 form.inline {
   .control-group {
@@ -71,12 +79,6 @@ form.inline {
 
 .form-controls {
   margin-left: 10em;
-}
-
-
-.control-button,
-input[type="submit"] {
-  .button();
 }
 
 button:hover .icon-cancel {
