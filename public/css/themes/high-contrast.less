@@ -1,0 +1,59 @@
+@icinga-blue: #006D8C;
+
+@color-ok: #006400;
+@color-critical: #EE0000;
+@color-critical-handled: #EE0000;
+@color-warning: #8B5A00;
+@color-warning-handled: #8B5A00;
+@color-unknown: #800080;
+@color-unknown-handled: #800080;
+@color-unreachable: #800080;
+@color-unreachable-handled: #800080;
+@color-pending: #0000EE;
+
+@text-color: #191919;
+@text-color-light: #555555;
+
+
+.badge {
+  background-color: @text-color-light;
+}
+
+.badge.handled {
+  background-color: @body-bg-color !important;
+  color: @text-color;
+
+  &.state-warning {
+    border: 1px solid @color-warning-handled;
+    margin-top: -1px;
+  }
+
+  &.state-critical {
+    border: 1px solid @color-critical-handled;
+    margin-top: -1px;
+  }
+
+  &.state-down {
+    border: 1px solid @color-critical-handled;
+    margin-top: -1px;
+  }
+
+  &.state-unreachable {
+    border: 1px solid @color-unreachable-handled;
+    margin-top: -1px;
+  }
+
+  &.state-unknown {
+    border: 1px solid @color-unknown-handled;
+    margin-top: -1px;
+  }
+}
+
+#menu a:hover {
+  color: @body-bg-color;
+  background-color: @icinga-blue;
+}
+
+#menu .active > a {
+  text-decoration: underline;
+}
