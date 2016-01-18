@@ -726,15 +726,22 @@
             var scrollPos = false;
             var self = this;
             var containerId = $container.attr('id');
+
+            var activeElementPath = false;
+            if (document.activeElement
+                && document.activeElement !== document.body
+                && $.contains($container[0], document.activeElement)
+            ) {
+                // Active element in container
+                activeElementPath = this.icinga.utils.getCSSPath($(document.activeElement));
+            }
+
             if (typeof containerId !== 'undefined') {
                 if (autorefresh) {
                     scrollPos = $container.scrollTop();
                 } else {
                     scrollPos = 0;
                 }
-            }
-            if (autorefresh && $.contains($container[0], document.activeElement)) {
-                var origFocus = self.icinga.utils.getDomPath(document.activeElement);
             }
 
             $container.trigger('beforerender');
@@ -788,9 +795,28 @@
             }
             this.icinga.ui.assignUniqueContainerIds();
 
-            if (origFocus && origFocus.length > 0 && origFocus[0] !== '') {
+            if (! activeElementPath) {
+                // Active element was not in this container
+                if (! autorefresh) {
+                    setTimeout(function() {
+                        if (typeof $container.attr('tabindex') === 'undefined') {
+                            $container.attr('tabindex', -1);
+                        }
+                        $container.focus();
+                    }, 0);
+                }
+            } else {
                 setTimeout(function() {
-                    $(self.icinga.utils.getElementByDomPath(origFocus)).focus();
+                    var $activeElement = $(activeElementPath);
+
+                    if ($activeElement.length) {
+                        $activeElement.focus();
+                    } else if (! autorefresh) {
+                        if (typeof $container.attr('tabindex') === 'undefined') {
+                            $container.attr('tabindex', -1);
+                        }
+                        $container.focus();
+                    }
                 }, 0);
             }
 
