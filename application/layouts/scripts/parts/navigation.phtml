@@ -9,10 +9,10 @@ if (! $this->auth()->isAuthenticated()) {
 
 ?>
 <div class="skip-links">
-    <h1 class="sr-only"><?= t('Accessibility Skip Links'); ?></h1>
+    <h1 class="sr-only"><?= t('Accessibility Skip Links') ?></h1>
     <ul>
         <li>
-            <a tabindex="0" href="#main"><?= t('Skip to Content'); ?></a>
+            <a href="#main"><?= t('Skip to Content') ?></a>
         </li>
         <li>
             <?= $this->layout()->autoRefreshForm ?>
