@@ -270,6 +270,57 @@
         },
 
         /**
+         * Get the CSS selector to the given node
+         *
+         * @param   {jQuery}    $node
+         *
+         * @returns {string}
+         */
+        getCSSPath: function($node) {
+            if (! $node.length) {
+                throw 'Requires a node';
+            }
+
+            var path = [];
+
+            while (true) {
+                var id = $node.attr('id');
+
+                if (typeof id !== 'undefined') {
+                    path.push('#' + id);
+                    break;
+                }
+
+                var tagName = $node.prop('tagName').toLowerCase();
+                //var classes = $node.attr('class');
+                //
+                //if (classes) {
+                //    classes = classes.split(' ').join('.');
+                //}
+
+                var $parent = $node.parent();
+
+                if (! $parent.length) {
+                    path.push(tagName);
+                    break;
+                }
+
+                var $siblings = $parent.children(tagName);
+
+                if ($siblings.length > 1) {
+                    var index = $siblings.index($node) + 1;
+                    path.push(tagName + ':nth-of-type(' + index.toString() + ')');
+                } else {
+                    path.push(tagName);
+                }
+
+                $node = $parent;
+            }
+
+            return path.reverse().join(' > ');
+        },
+
+        /**
          * Climbs up the given dom path and returns the element
          *
          * This is the counterpart
