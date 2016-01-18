@@ -113,6 +113,11 @@
   background-color: @gray-lighter;
 }
 
+.container {
+  // Don't outline containers when focused because they receive focus for accessibility only programmatically
+  outline: none;
+}
+
 .controls {
   // Override default transparent background because scrolled content is positioned beneath controls and could be seen
   // through otherwise
