@@ -4,7 +4,7 @@
 </div>
 <?php endif ?>
 <div class="content">
-    <p class="error-message"><?= nl2br($this->escape($message)) ?></p>
+    <p class="autofocus error-message"><?= nl2br($this->escape($message)) ?></p>
     <?php if (isset($stackTrace)): ?>
         <hr />
         <pre><?= $this->escape($stackTrace) ?></pre>
