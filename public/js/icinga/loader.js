@@ -809,7 +809,7 @@
                 setTimeout(function() {
                     var $activeElement = $(activeElementPath);
 
-                    if ($activeElement.length) {
+                    if ($activeElement.length && $activeElement.is(':visible')) {
                         $activeElement.focus();
                     } else if (! autorefresh) {
                         if (typeof $container.attr('tabindex') === 'undefined') {
