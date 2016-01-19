@@ -77,7 +77,8 @@ class Cli extends ApplicationBootstrap
             $config->application = 'icingacli';
         }
 
-        if ($this->params->shift('verbose', false)) {
+        // TODO: Use shift() instead once Command::$isVerbose has been dropped
+        if ($this->params->get('verbose', false)) {
             $config->level = Logger::DEBUG;
         }
 
