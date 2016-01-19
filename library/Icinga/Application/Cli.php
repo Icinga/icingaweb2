@@ -47,16 +47,41 @@ class Cli extends ApplicationBootstrap
             ->loadSetupModuleIfNecessary();
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function setupLogging()
     {
         Logger::create(
             new ConfigObject(
                 array(
-                    'level' => Logger::INFO,
-                    'log'   => 'stdout',
+                    'log' => 'stdout'
                 )
             )
         );
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function setupLogger()
+    {
+        $config = new ConfigObject();
+        $config->log = $this->params->shift('log', 'stdout');
+        $config->level = $this->params->shift('log-level', Logger::INFO);
+        if ($config->log === 'file') {
+            $config->file = $this->params->shiftRequired('log-path');
+        } elseif ($config->log === 'syslog') {
+            $config->application = 'icingacli';
+        }
+
+        if ($this->params->shift('verbose', false)) {
+            $config->level = Logger::DEBUG;
+        }
+
+        Logger::create($config);
         return $this;
     }
 

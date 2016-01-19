@@ -21,6 +21,10 @@ abstract class Command
      */
     protected $params;
     protected $screen;
+
+    /**
+     * @deprecated  Use Logger::debug() directly
+     */
     protected $isVerbose;
     protected $isDebugging;
 
