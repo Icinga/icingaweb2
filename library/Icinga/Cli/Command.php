@@ -26,7 +26,6 @@ abstract class Command
      * @deprecated  Use Logger::debug() directly
      */
     protected $isVerbose;
-    protected $isDebugging;
 
     protected $moduleName;
     protected $commandName;
@@ -48,7 +47,6 @@ abstract class Command
         $this->screen     = Screen::instance($app);
         $this->trace      = $this->params->shift('trace', false);
         $this->isVerbose  = $this->params->shift('verbose', false);
-        $this->isDebuging = $this->params->shift('debug', false);
         if ($initialize) {
             $this->init();
         }
