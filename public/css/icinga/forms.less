@@ -22,6 +22,12 @@ input[type=url] {
   &:focus:not([readonly]) {
     border-color: @icinga-blue;
   }
+
+  width: 20em;
+}
+
+select, textarea {
+  width: 20em;
 }
 
 .control-button,
@@ -60,10 +66,6 @@ input.search {
     background-color: @body-bg-color;
     background-image: url('../img/icons/search_icinga_blue.png') !important;
   }
-}
-
-input, select, textarea {
-  width: 20em;
 }
 
 // TODO(el): .form-inline control-group { display: inline-block; }
