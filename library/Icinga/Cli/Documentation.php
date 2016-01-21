@@ -50,7 +50,7 @@ class Documentation
             $d .= '  ' . $module . "\n";
         }
         $d .= "\nGlobal options:\n\n"
-            . "  --log [t]       Log to <t>, either stdout, file or syslog (default: stdout)\n"
+            . "  --log [t]       Log to <t>, either stderr, file or syslog (default: stderr)\n"
             . "  --log-path <f>  Which file to log into in case of --log file\n"
             . "  --verbose       Be verbose\n"
             . "  --debug         Show debug output\n"

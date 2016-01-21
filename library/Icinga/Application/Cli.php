@@ -55,7 +55,7 @@ class Cli extends ApplicationBootstrap
         Logger::create(
             new ConfigObject(
                 array(
-                    'log' => 'stdout'
+                    'log' => 'stderr'
                 )
             )
         );
@@ -69,7 +69,7 @@ class Cli extends ApplicationBootstrap
     protected function setupLogger()
     {
         $config = new ConfigObject();
-        $config->log = $this->params->shift('log', 'stdout');
+        $config->log = $this->params->shift('log', 'stderr');
         if ($config->log === 'file') {
             $config->file = $this->params->shiftRequired('log-path');
         } elseif ($config->log === 'syslog') {
