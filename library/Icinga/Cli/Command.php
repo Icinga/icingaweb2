@@ -8,7 +8,6 @@ use Icinga\Util\Translator;
 use Icinga\Cli\Params;
 use Icinga\Application\Config;
 use Icinga\Application\ApplicationBootstrap as App;
-use Exception;
 use Icinga\Exception\IcingaException;
 
 abstract class Command
@@ -23,9 +22,18 @@ abstract class Command
     protected $screen;
 
     /**
-     * @deprecated  Use Logger::debug() directly
+     * Whether the --verbose switch is given and thus the set log level INFO is
+     *
+     * @var bool
      */
     protected $isVerbose;
+
+    /**
+     * Whether the --debug switch is given and thus the set log level DEBUG is
+     *
+     * @var bool
+     */
+    protected $isDebugging;
 
     protected $moduleName;
     protected $commandName;
@@ -47,6 +55,7 @@ abstract class Command
         $this->screen     = Screen::instance($app);
         $this->trace      = $this->params->shift('trace', false);
         $this->isVerbose  = $this->params->shift('verbose', false);
+        $this->isDebugging = $this->params->shift('debug', false);
         if ($initialize) {
             $this->init();
         }

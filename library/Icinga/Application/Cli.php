@@ -70,16 +70,18 @@ class Cli extends ApplicationBootstrap
     {
         $config = new ConfigObject();
         $config->log = $this->params->shift('log', 'stdout');
-        $config->level = $this->params->shift('log-level', Logger::INFO);
         if ($config->log === 'file') {
             $config->file = $this->params->shiftRequired('log-path');
         } elseif ($config->log === 'syslog') {
             $config->application = 'icingacli';
         }
 
-        // TODO: Use shift() instead once Command::$isVerbose has been dropped
         if ($this->params->get('verbose', false)) {
+            $config->level = Logger::INFO;
+        } elseif ($this->params->get('debug', false)) {
             $config->level = Logger::DEBUG;
+        } else {
+            $config->level = Logger::WARNING;
         }
 
         Logger::create($config);
