@@ -46,7 +46,7 @@ if ($this->layout()->autorefreshInterval) {
   </div>
 </div>
 <div id="footer">
-  <ul id="notifications"><?php
+  <ul role="alert" id="notifications"><?php
 
     $notifications = Notification::getInstance();
     if ($notifications->hasMessages()) {
