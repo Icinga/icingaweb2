@@ -115,19 +115,16 @@ class StyleSheet
         $themingConfig = $this->app->getConfig()->getSection('themes');
         $defaultTheme = $themingConfig->get('default');
         $theme = null;
+        if ($defaultTheme !== null && $defaultTheme !== self::DEFAULT_THEME) {
+            $theme = $defaultTheme;
+        }
 
-        if ((bool) $themingConfig->get('disabled', false)) {
-            if ($defaultTheme !== null && $defaultTheme !== self::DEFAULT_THEME) {
-                $theme = $defaultTheme;
-            }
-        } else {
+        if (! (bool) $themingConfig->get('disabled', false)) {
             $auth = Auth::getInstance();
             if ($auth->isAuthenticated()) {
                 $userTheme = $auth->getUser()->getPreferences()->getValue('icingaweb', 'theme');
                 if ($userTheme !== null) {
                     $theme = $userTheme;
-                } elseif ($defaultTheme !== null && $defaultTheme !== self::DEFAULT_THEME) {
-                    $theme = $defaultTheme;
                 }
             }
         }
