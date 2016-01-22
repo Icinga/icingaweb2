@@ -95,7 +95,7 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
                 if ($compact) {
                     $results = array_slice($results, 0, $limit);
                     $title = sprintf($this->view->translate('%d more ...'), $count - $limit);
-                    $results[] = '<span title="' . $title . '">...</span>';
+                    $results[] = '<span aria-hidden="true" title="' . $title . '">...</span>';
                 } else {
                     $table = array_slice($table, 0, $limit);
                 }
