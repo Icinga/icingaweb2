@@ -1,13 +1,17 @@
 /*! Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
 
+.refresh-container-control > i:before {
+  margin: 0;
+}
+
 a.spinner.active > i,
 button.spinner.active > i,
 i.spinner.active {
-  .animate(spin 2s infinite linear);
   &:before {
+    .animate(spin 2s infinite linear);
+
     // icon-spin6
     content: '\e874';
-    margin: 0; // Disables wobbling
   }
 }
 
