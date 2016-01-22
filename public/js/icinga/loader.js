@@ -331,7 +331,7 @@
                 }
             }
 
-            this.redirectToUrl(redirect, req.$target, req.url, req.getResponseHeader('X-Icinga-Rerender-Layout'));
+            this.redirectToUrl(redirect, req.$target, req.url, req.getResponseHeader('X-Icinga-Rerender-Layout'), req.forceFocus);
             return true;
         },
 
@@ -340,10 +340,10 @@
          *
          * @param {string}  url
          * @param {object}  $target
-         * @param {string]  origin
+         * @param {string}  origin
          * @param {boolean} rerenderLayout
          */
-        redirectToUrl: function (url, $target, origin, rerenderLayout) {
+        redirectToUrl: function (url, $target, origin, rerenderLayout, forceFocus) {
             var icinga = this.icinga;
 
             if (typeof rerenderLayout === 'undefined') {
@@ -392,7 +392,8 @@
                         }
                     }
 
-                    this.loadUrl(url, $target);
+                    var req = this.loadUrl(url, $target);
+                    req.forceFocus = url === origin ? forceFocus : null;
                 }
             }
         },

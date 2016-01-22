@@ -387,7 +387,7 @@
             }
 
             var req = icinga.loader.loadUrl(url, $target, data, method);
-            req.forceFocus = autosubmit ? $(event.currentTarget) : null;
+            req.forceFocus = autosubmit ? $(event.currentTarget) : $button.length ? $button : null;
             req.progressTimer = progressTimer;
 
             event.stopPropagation();
