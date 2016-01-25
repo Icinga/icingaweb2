@@ -31,7 +31,6 @@ class StyleSheet
         'css/vendor/normalize.css',
         'css/vendor/tipsy.css',
         'css/icinga/base.less',
-        'css/icinga/colors.less',
         'css/icinga/badges.less',
         'css/icinga/mixins.less',
         'css/icinga/grid.less',
