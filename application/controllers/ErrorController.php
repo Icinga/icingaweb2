@@ -3,7 +3,6 @@
 
 namespace Icinga\Controllers;
 
-use Icinga\Web\Response\JsonResponse;
 use Zend_Controller_Plugin_ErrorHandler;
 use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
@@ -13,6 +12,7 @@ use Icinga\Exception\Http\HttpNotFoundException;
 use Icinga\Exception\MissingParameterException;
 use Icinga\Security\SecurityException;
 use Icinga\Web\Controller\ActionController;
+use Icinga\Web\Url;
 
 /**
  * Application wide controller for displaying exceptions
@@ -100,6 +100,15 @@ class ErrorController extends ActionController
         }
 
         $this->view->request = $error->request;
-        $this->view->hideControls = ! $isAuthenticated;
+        if (! $isAuthenticated) {
+            $this->view->hideControls = true;
+        } else {
+            $this->view->hideControls = false;
+            $this->getTabs()->add('error', array(
+                'active'    => true,
+                'label'     => $this->translate('Error'),
+                'url'       => Url::fromRequest()
+            ));
+        }
     }
 }

@@ -1,12 +1,12 @@
 <?php if (! $this->compact && ! $hideControls): ?>
 <div class="controls">
-    <?= $tabs->showOnlyCloseButton() ?>
+    <?= $tabs ?>
 </div>
 <?php endif ?>
 <div class="content">
-    <p class="autofocus error-message"><?= nl2br($this->escape($message)) ?></p>
-    <?php if (isset($stackTrace)): ?>
-        <hr />
-        <pre><?= $this->escape($stackTrace) ?></pre>
-    <?php endif ?>
+    <p tabindex="-1" class="autofocus error-message"><?= nl2br($this->escape($message)) ?></p>
+<?php if (isset($stackTrace)): ?>
+    <hr>
+    <pre><?= $this->escape($stackTrace) ?></pre>
+<?php endif ?>
 </div>

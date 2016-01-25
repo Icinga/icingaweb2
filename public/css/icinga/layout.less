@@ -113,8 +113,10 @@
   background-color: @gray-lighter;
 }
 
-.container {
-  // Don't outline containers when focused because they receive focus for accessibility only programmatically
+.container,
+.error-message {
+  // Don't outline containers and error messages when focused because they receive focus for accessibility only
+  // programmatically
   outline: none;
 }
 
