@@ -11,11 +11,26 @@ use Icinga\Web\Form;
 class ConfirmRemovalForm extends Form
 {
     /**
-     * Initialize this form
+     * {@inheritdoc}
      */
     public function init()
     {
         $this->setName('form_confirm_removal');
         $this->getSubmitLabel() ?: $this->setSubmitLabel($this->translate('Confirm Removal'));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function addSubmitButton()
+    {
+        parent::addSubmitButton();
+
+        if (($submit = $this->getElement('btn_submit')) !== null) {
+            $class = $submit->getAttrib('class');
+            $submit->setAttrib('class', empty($class) ? 'autofocus' : $class . ' autofocus');
+        }
+
+        return $this;
     }
 }
