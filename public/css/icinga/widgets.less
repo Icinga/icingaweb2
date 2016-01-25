@@ -116,7 +116,7 @@ ul.tree li::before, ul.tree li::after {
   position: absolute;
   right: auto;
   left: -0.2em;
-  border-color: #aaa;
+  border-color: @gray-light;
   border-style: dotted;
   border-width: 0;
 }
@@ -158,22 +158,22 @@ ul.tree li a {
   padding-left: 1em;
   line-height: 2em;
   text-decoration: none;
-  color: #777;
+  color: @gray;
   background-repeat: no-repeat;
   background-position: 0.8em 0.4em;
 }
 
 ul.tree li a.error {
-  color: @colorCriticalHandled;
+  color: @color-critical-handled;
 }
 
 ul.tree li a:hover {
-	color: #000;
+  color: @text-color;
   text-decoration: underline;
 }
 
 ul.tree li a.error:hover {
-  color: @colorCritical;
+  color: @color-critical;
 }
 
 /* Add hover effect to chart data */
@@ -186,71 +186,6 @@ ul.tree li a.error:hover {
   padding: 1.5em;
   height: 80vh;
 }
-
-//.badge-container {
-//  font-size: 1em;
-//  display: inline-block;
-//  float: right;
-//  margin-right: 0.6em;
-//}
-//
-//li li .badge-container {
-//  /*
-//   fix margin for smaller font-size of list elements
-//   1 = 0,8em / 0.8em
-//  */
-//  margin-right: 0.75em;
-//}
-
-//.badge {
-//  position: relative;
-//  top: -0.15em;
-//  display: inline-block;
-//  min-width: 1em;
-//  padding: 3px 7px;
-//  margin: 0 0.2em 0 0.2em;
-//  font-size: 0.8em;
-//  font-weight: 700;
-//  line-height: 1.1em;
-//  color: white;
-//  text-align: center;
-//  white-space: nowrap;
-//  vertical-align: baseline;
-//  background-color: @colorInvalid;
-//}
-//
-//.badge a[href] {
-//    color: @colorGray;
-//    text-decoration: none;
-//}
-
-//.badge-critical {
-//  background-color: @colorCritical;
-//}
-//
-//.badge-down {
-//  background-color: @colorCritical;
-//}
-//
-//.badge-warning {
-//  background-color: @colorWarning;
-//}
-//
-//.badge-ok {
-//  background-color: @colorOk;
-//}
-//
-//.badge-up {
-//  background-color: @colorOk;
-//}
-//
-//.badge-pending {
-//  background-color: @colorPending;
-//}
-//
-//.badge-unknown {
-//  background-color: @colorUnknown;
-//}
 
 .tipsy .tipsy-inner {
   // overwrite tooltip max width, we need them to grow bigger
