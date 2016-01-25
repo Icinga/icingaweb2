@@ -729,6 +729,7 @@
             var containerId = $container.attr('id');
 
             var activeElementPath = false;
+            var focusFallback = false;
             if (forceFocus && forceFocus.length) {
                 activeElementPath = this.icinga.utils.getCSSPath($(forceFocus));
             } else if (document.activeElement
@@ -736,7 +737,15 @@
                 && $.contains($container[0], document.activeElement)
             ) {
                 // Active element in container
-                activeElementPath = this.icinga.utils.getCSSPath($(document.activeElement));
+                var $activeElement = $(document.activeElement);
+                var $pagination = $activeElement.closest('.pagination-control');
+                if ($pagination.length) {
+                    focusFallback = {
+                        'parent': this.icinga.utils.getCSSPath($pagination),
+                        'child': '.active > a'
+                    };
+                }
+                activeElementPath = this.icinga.utils.getCSSPath($activeElement);
             }
 
             if (typeof containerId !== 'undefined') {
@@ -815,7 +824,9 @@
                     if ($activeElement.length && $activeElement.is(':visible')) {
                         $activeElement.focus();
                     } else if (! autorefresh) {
-                        if (typeof $container.attr('tabindex') === 'undefined') {
+                        if (focusFallback) {
+                            $(focusFallback.parent).find(focusFallback.child).focus();
+                        } else if (typeof $container.attr('tabindex') === 'undefined') {
                             $container.attr('tabindex', -1);
                         }
                         $container.focus();
