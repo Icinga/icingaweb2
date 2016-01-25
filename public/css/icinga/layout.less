@@ -166,39 +166,40 @@ html.no-js .controls > .tabs {
 // Notification styles
 
 #notifications {
+  // Reset defaults
+  list-style-type: none;
   margin: 0;
   padding: 0;
 }
 
 #notifications > li {
-  list-style-type: none;
+  background: no-repeat 1em center;
+  border-top: 1px solid @gray-light;
+  color: @body-bg-color;
   display: block;
-  border-top: 1px solid #999;
-  color: white;
   line-height: 2.5em;
   padding-left: 3em;
-  background-repeat: no-repeat;
-  background-position: 1em center;
-}
 
-#notifications > li:hover {
-  cursor: pointer;
-}
+  &:hover {
+    cursor: pointer;
+  }
 
-#notifications > li.info {
-  background-color: @colorFormNotificationInfo;
-}
+  &.error {
+    background-color: @color-notification-error;
+    background-image: url(../img/icons/error_white.png);
+  }
 
-#notifications > li.warning {
-  background-color: @colorWarningHandled;
-}
-#notifications > li.error {
-  background-color: @colorCritical;
-  background-image: url(../img/icons/error_white.png);
-}
+  &.info {
+    background-color: @color-notification-info;
+  }
 
-#notifications > li.success {
-  background-color: #fe6;
-  background-image: url(../img/icons/success.png);
-  color: #333;
+  &.success {
+    background-color: @color-notification-success;
+    background-image: url(../img/icons/success.png);
+    color: @text-color;
+  }
+
+  &.warning {
+    background-color: @color-notification-warning;
+  }
 }
