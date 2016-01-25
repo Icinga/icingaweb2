@@ -37,7 +37,11 @@ class DashboardController extends ActionController
     public function newDashletAction()
     {
         $form = new DashletForm();
-        $this->createTabs();
+        $this->getTabs()->add('new-dashlet', array(
+            'active'    => true,
+            'label'     => $this->translate('New Dashlet'),
+            'url'       => Url::fromRequest()
+        ));
         $dashboard = $this->dashboard;
         $form->setDashboard($dashboard);
         if ($this->_request->getParam('url')) {
@@ -77,7 +81,11 @@ class DashboardController extends ActionController
 
     public function updateDashletAction()
     {
-        $this->createTabs();
+        $this->getTabs()->add('update-dashlet', array(
+            'active'    => true,
+            'label'     => $this->translate('Update Dashlet'),
+            'url'       => Url::fromRequest()
+        ));
         $dashboard = $this->dashboard;
         $form = new DashletForm();
         $form->setDashboard($dashboard);
@@ -145,7 +153,11 @@ class DashboardController extends ActionController
     public function removeDashletAction()
     {
         $form = new ConfirmRemovalForm();
-        $this->createTabs();
+        $this->getTabs()->add('remove-dashlet', array(
+            'active'    => true,
+            'label'     => $this->translate('Remove Dashlet'),
+            'url'       => Url::fromRequest()
+        ));
         $dashboard = $this->dashboard;
         if (! $this->_request->getParam('pane')) {
             throw new Zend_Controller_Action_Exception(
