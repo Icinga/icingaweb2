@@ -36,7 +36,7 @@ EOT;
      */
     private $dropdownTpl = <<< 'EOT'
 <li class="dropdown-nav-item">
-  <a href="#" class="dropdown-toggle"><i aria-hidden="true" class="icon-down-open"></i></a>
+  <a href="#" class="dropdown-toggle" title="{TITLE}" aria-label="{TITLE}"><i aria-hidden="true" class="icon-down-open"></i></a>
   <ul class="nav">
     {TABS}
   </ul>
@@ -50,7 +50,7 @@ EOT;
      */
     private $closeTpl = <<< 'EOT'
 <li class="dropdown" style="float: right;">
-  <a href="#" class="close-container-control">
+  <a href="#" title="{TITLE}" aria-label="{TITLE}" class="close-container-control">
     <i aria-hidden="true" class="icon-cancel"></i>
   </a>
 </li>
@@ -287,7 +287,7 @@ EOT;
             }
             $tabs .= $tab;
         }
-        return str_replace('{TABS}', $tabs, $this->dropdownTpl);
+        return str_replace(array('{TABS}', '{TITLE}'), array($tabs, t('Dropdown menu')), $this->dropdownTpl);
     }
 
     /**
@@ -310,7 +310,7 @@ EOT;
 
     private function renderCloseTab()
     {
-        return $this->closeTpl;
+        return str_replace('{TITLE}', t('Close container'), $this->closeTpl);
     }
 
     private function renderRefreshTab()
