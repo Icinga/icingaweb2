@@ -14,6 +14,7 @@ use Icinga\Module\Monitoring\Forms\Command\Object\RemoveAcknowledgementCommandFo
 use Icinga\Module\Monitoring\Forms\Command\Object\ScheduleServiceCheckCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\ScheduleServiceDowntimeCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\SendCustomNotificationCommandForm;
+use Icinga\Module\Monitoring\Forms\Command\Object\ToggleObjectFeaturesCommandForm;
 use Icinga\Module\Monitoring\Object\ServiceList;
 use Icinga\Web\Url;
 use Icinga\Web\Widget\Tabextension\DashboardAction;
@@ -34,6 +35,27 @@ class ServicesController extends Controller
             (string) $this->params->without(array('service_problem', 'service_handled', 'view'))
         ));
         $this->serviceList = $serviceList;
+        $this->serviceList->setColumns(array(
+            'host_display_name',
+            'host_handled',
+            'host_name',
+            'host_problem',
+            'host_state',
+            'service_acknowledged',
+            'service_active_checks_enabled',
+            'service_description',
+            'service_display_name',
+            'service_event_handler_enabled',
+            'service_flap_detection_enabled',
+            'service_handled',
+            'service_in_downtime',
+            'service_is_flapping',
+            'service_last_state_change',
+            'service_notifications_enabled',
+            'service_passive_checks_enabled',
+            'service_problem',
+            'service_state'
+        ));
         $this->view->baseFilter = $this->serviceList->getFilter();
         $this->view->listAllLink = Url::fromRequest()->setPath('monitoring/list/services');
         $this->getTabs()->add(
@@ -51,26 +73,6 @@ class ServicesController extends Controller
 
     protected function handleCommandForm(ObjectsCommandForm $form)
     {
-        $this->serviceList->setColumns(array(
-            'host_display_name',
-            'host_handled',
-            'host_name',
-            'host_problem',
-            'host_state',
-            'service_acknowledged',
-            'service_active_checks_enabled',
-            'service_description',
-            'service_display_name',
-            'service_handled',
-            'service_in_downtime',
-            'service_is_flapping',
-            'service_last_state_change',
-            'service_notifications_enabled',
-            'service_passive_checks_enabled',
-            'service_problem',
-            'service_state'
-        ));
-
         $form
             ->setObjects($this->serviceList)
             ->setRedirectUrl(Url::fromPath('monitoring/services/show')->setParams($this->params))
@@ -92,25 +94,6 @@ class ServicesController extends Controller
             ->setObjects($this->serviceList)
             ->handleRequest();
         $this->view->checkNowForm = $checkNowForm;
-        $this->serviceList->setColumns(array(
-            'host_display_name',
-            'host_handled',
-            'host_name',
-            'host_problem',
-            'host_state',
-            'service_acknowledged',
-            'service_active_checks_enabled',
-            'service_description',
-            'service_display_name',
-            'service_handled',
-            'service_in_downtime',
-            'service_is_flapping',
-            'service_last_state_change',
-            'service_notifications_enabled',
-            'service_passive_checks_enabled',
-            'service_problem',
-            'service_state'
-        ));
 
         $acknowledgedObjects = $this->serviceList->getAcknowledgedObjects();
         if (! empty($acknowledgedObjects)) {
@@ -120,6 +103,16 @@ class ServicesController extends Controller
                 ->handleRequest();
             $this->view->removeAckForm = $removeAckForm;
         }
+
+        $featureStatus = $this->serviceList->getFeatureStatus();
+        $toggleFeaturesForm = new ToggleObjectFeaturesCommandForm(array(
+            'backend'   => $this->backend,
+            'objects'   => $this->serviceList
+        ));
+        $toggleFeaturesForm
+            ->load((object) $featureStatus)
+            ->handleRequest();
+        $this->view->toggleFeaturesForm = $toggleFeaturesForm;
 
         $this->setAutorefreshInterval(15);
         $this->view->rescheduleAllLink = Url::fromRequest()->setPath('monitoring/services/reschedule-check');
