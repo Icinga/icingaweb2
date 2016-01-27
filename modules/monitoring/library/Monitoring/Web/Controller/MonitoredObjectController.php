@@ -75,11 +75,12 @@ abstract class MonitoredObjectController extends Controller
             }
         }
         $this->object->populate();
-        $toggleFeaturesForm = new ToggleObjectFeaturesCommandForm();
+        $toggleFeaturesForm = new ToggleObjectFeaturesCommandForm(array(
+            'backend'   => $this->backend,
+            'objects'   => $this->object
+        ));
         $toggleFeaturesForm
-            ->setBackend($this->backend)
             ->load($this->object)
-            ->setObjects($this->object)
             ->handleRequest();
         $this->view->toggleFeaturesForm = $toggleFeaturesForm;
         if (! empty($this->object->comments) && $auth->hasPermission('monitoring/command/comment/delete')) {

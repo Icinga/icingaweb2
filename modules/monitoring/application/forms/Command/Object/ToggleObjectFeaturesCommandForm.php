@@ -13,6 +13,20 @@ use Icinga\Web\Notification;
 class ToggleObjectFeaturesCommandForm extends ObjectsCommandForm
 {
     /**
+     * Feature to label map
+     *
+     * @var string[]
+     */
+    protected $features;
+
+    /**
+     * Feature to feature status map
+     *
+     * @var int[]
+     */
+    protected $featureStatus;
+
+    /**
      * (non-PHPDoc)
      * @see \Zend_Form::init() For the method documentation.
      */
@@ -20,6 +34,21 @@ class ToggleObjectFeaturesCommandForm extends ObjectsCommandForm
     {
         $this->setUseFormAutosubmit();
         $this->setAttrib('class', 'inline object-features');
+
+        $features = array(
+            ToggleObjectFeatureCommand::FEATURE_ACTIVE_CHECKS => $this->translate('Active Checks'),
+            ToggleObjectFeatureCommand::FEATURE_PASSIVE_CHECKS => $this->translate('Passive Checks'),
+            ToggleObjectFeatureCommand::FEATURE_OBSESSING => $this->translate('Obsessing'),
+            ToggleObjectFeatureCommand::FEATURE_NOTIFICATIONS => $this->translate('Notifications'),
+            ToggleObjectFeatureCommand::FEATURE_EVENT_HANDLER => $this->translate('Event Handler'),
+            ToggleObjectFeatureCommand::FEATURE_FLAP_DETECTION => $this->translate('Flap Detection')
+        );
+
+        if (preg_match('~^v2\.\d+\.\d+.*$~', $this->getIcingaVersion())) {
+            unset($features[ToggleObjectFeatureCommand::FEATURE_OBSESSING]);
+        }
+
+        $this->features = $features;
     }
 
     /**
@@ -30,83 +59,53 @@ class ToggleObjectFeaturesCommandForm extends ObjectsCommandForm
     {
         $toggleDisabled = $this->hasPermission('monitoring/command/feature/object')  ? null : '';
 
-        $this->addElement(
-            'checkbox',
-            ToggleObjectFeatureCommand::FEATURE_ACTIVE_CHECKS,
-            array(
-                'label'         => $this->translate('Active Checks'),
+        foreach ($this->features as $feature => $label) {
+            $options = array(
                 'autosubmit'    => true,
-                'disabled'      => $toggleDisabled
-            )
-        );
-        $this->addElement(
-            'checkbox',
-            ToggleObjectFeatureCommand::FEATURE_PASSIVE_CHECKS,
-            array(
-                'label'         => $this->translate('Passive Checks'),
-                'autosubmit'    => true,
-                'disabled'      => $toggleDisabled
-            )
-        );
-
-        if (! preg_match('~^v2\.\d+\.\d+.*$~', $this->getIcingaVersion())) {
-            $this->addElement(
-                'checkbox',
-                ToggleObjectFeatureCommand::FEATURE_OBSESSING,
-                array(
-                    'label'         => $this->translate('Obsessing'),
-                    'autosubmit'    => true,
-                    'disabled'      => $toggleDisabled
-                )
+                'disabled'      => $toggleDisabled,
+                'label'         => $label
             );
+            if ($formData[$feature . '_changed']) {
+                $options['description'] = $this->translate('changed');
+            }
+            if ($formData[$feature] === 2) {
+                $options['multiOptions'] = array(
+                    $this->translate('disable'),
+                    $this->translate('enable'),
+                );
+                $options['separator'] = '';
+                $elementType = 'radio';
+            } else {
+                $elementType = 'checkbox';
+                $options['value'] = $formData[$feature];
+            }
+            $this->addElement($elementType, $feature, $options);
         }
-
-        $this->addElement(
-            'checkbox',
-            ToggleObjectFeatureCommand::FEATURE_NOTIFICATIONS,
-            array(
-                'label'         => $this->translate('Notifications'),
-                'autosubmit'    => true,
-                'disabled'      => $toggleDisabled
-            )
-        );
-        $this->addElement(
-            'checkbox',
-            ToggleObjectFeatureCommand::FEATURE_EVENT_HANDLER,
-            array(
-                'label'         => $this->translate('Event Handler'),
-                'autosubmit'    => true,
-                'disabled'      => $toggleDisabled
-            )
-        );
-        $this->addElement(
-            'checkbox',
-            ToggleObjectFeatureCommand::FEATURE_FLAP_DETECTION,
-            array(
-                'label'         => $this->translate('Flap Detection'),
-                'autosubmit'    => true,
-                'disabled'      => $toggleDisabled
-            )
-        );
     }
 
     /**
      * Load feature status
      *
-     * @param   MonitoredObject $object
+     * @param   MonitoredObject|object  $object
      *
      * @return  $this
      */
-    public function load(MonitoredObject $object)
+    public function load($object)
     {
-        $this->create();
-        foreach ($this->getValues() as $feature => $enabled) {
-            $element = $this->getElement($feature);
-            $element->setChecked($object->{$feature});
-            if ((bool) $object->{$feature . '_changed'} === true) {
-                $element->setDescription($this->translate('changed'));
+        $featureStatus = array();
+
+        foreach (array_keys($this->features) as $feature) {
+            $featureStatus[$feature] = $object->{$feature};
+            if (isset($object->{$feature . '_changed'})) {
+                $featureStatus[$feature . '_changed'] = (bool) $object->{$feature . '_changed'};
+            } else {
+                $featureStatus[$feature . '_changed'] = false;
             }
         }
+
+        $this->create($featureStatus);
+
+        $this->featureStatus = $featureStatus;
 
         return $this;
     }
@@ -146,9 +145,15 @@ class ToggleObjectFeaturesCommandForm extends ObjectsCommandForm
             )
         );
 
-        foreach ($this->objects as $object) {
-            /** @var \Icinga\Module\Monitoring\Object\MonitoredObject $object */
-            foreach ($this->getValues() as $feature => $enabled) {
+        foreach ($this->getValues() as $feature => $enabled) {
+            if ($enabled === null
+                || (int) $enabled === (int) $this->featureStatus[$feature]
+            ) {
+                // Ignore unchanged features
+                continue;
+            }
+            foreach ($this->objects as $object) {
+                /** @var \Icinga\Module\Monitoring\Object\MonitoredObject $object */
                 if ((bool) $object->{$feature} !== (bool) $enabled) {
                     $toggleFeature = new ToggleObjectFeatureCommand();
                     $toggleFeature
@@ -156,12 +161,11 @@ class ToggleObjectFeaturesCommandForm extends ObjectsCommandForm
                         ->setObject($object)
                         ->setEnabled($enabled);
                     $this->getTransport($this->request)->send($toggleFeature);
-
-                    Notification::success(
-                        $notifications[$feature][$enabled ? 0 : 1]
-                    );
                 }
             }
+            Notification::success(
+                $notifications[$feature][$enabled ? 0 : 1]
+            );
         }
 
         return true;
