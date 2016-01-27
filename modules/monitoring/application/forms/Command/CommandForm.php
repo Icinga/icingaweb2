@@ -72,4 +72,21 @@ abstract class CommandForm extends Form
 
         return $transport;
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getRedirectUrl()
+    {
+        $redirectUrl = parent::getRedirectUrl();
+        // TODO(el): Forms should provide event handling. This is quite hackish
+        $formData = $this->getRequestData();
+        if ($this->wasSent($formData)
+            && (! $this->getSubmitLabel() || $this->isSubmitted())
+            && $this->isValid($formData)
+        ) {
+            $this->getResponse()->setAutoRefreshInterval(1);
+        }
+        return $redirectUrl;
+    }
 }
