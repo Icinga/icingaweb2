@@ -247,7 +247,7 @@ class ClassLoader
     /**
      * Whether given prefix (Forms, Controllers...) makes part of "application"
      *
-     * @param  string $prefix 
+     * @param  string $prefix
      *
      * @return boolean
      */
@@ -291,7 +291,12 @@ class ClassLoader
         // Return as fast as possible if we already did so.
         if (substr($class, 0, 5) === 'Zend_') {
             if (! $this->gotZend) {
-                $this->requireZendAutoloader();
+                $zendLoader = $this->requireZendAutoloader();
+                if (version_compare(PHP_VERSION, '7.0.0') >= 0) {
+                    // PHP7 seems to remember the autoload function stack before auto-loading. Thus
+                    // autoload functions registered during autoload never get called
+                    return $zendLoader::autoload($class);
+                }
             }
             return false;
         }
