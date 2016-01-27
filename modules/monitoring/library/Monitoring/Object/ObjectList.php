@@ -247,4 +247,48 @@ abstract class ObjectList implements Countable, IteratorAggregate, Filterable
      * @return  Filter
      */
     abstract function objectsFilter($columns = array());
+
+    /**
+     * Get the feature status
+     *
+     * @return array
+     */
+    public function getFeatureStatus()
+    {
+        // null - init
+        // 0 - disabled
+        // 1 - enabled
+        // 2 - enabled & disabled
+        $featureStatus = array(
+            'active_checks_enabled'     => null,
+            'passive_checks_enabled'    => null,
+            'notifications_enabled'     => null,
+            'event_handler_enabled'     => null,
+            'flap_detection_enabled'    => null
+        );
+
+        $features = array();
+
+        foreach ($featureStatus as $feature => &$status) {
+            $features[$feature] = &$status;
+        }
+
+        foreach ($this as $object) {
+            foreach ($features as $feature => &$status) {
+                $enabled = (int) $object->{$feature};
+                if (! isset($status)) {
+                    $status = $enabled;
+                } elseif ($status !== $enabled) {
+                    $status = 2;
+                    unset($features[$status]);
+                    if (empty($features)) {
+                        break 2;
+                    }
+                    break;
+                }
+            }
+        }
+
+        return $featureStatus;
+    }
 }
