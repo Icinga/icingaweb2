@@ -7,7 +7,7 @@ use Icinga\Exception\StatementException;
 use Icinga\Data\Filter\Filter;
 use Icinga\Repository\IniRepository;
 use Icinga\User;
-use Icinga\Util\String;
+use Icinga\Util\StringHelper;
 
 class IniUserGroupBackend extends IniRepository implements UserGroupBackendInterface
 {
@@ -126,7 +126,7 @@ class IniUserGroupBackend extends IniRepository implements UserGroupBackendInter
         $memberships = array();
         foreach ($result as $group) {
             if ($group->users && !in_array($group->group_name, $memberships)) {
-                $users = array_map('strtolower', String::trimSplit($group->users));
+                $users = array_map('strtolower', StringHelper::trimSplit($group->users));
                 if (in_array($username, $users)) {
                     $memberships[] = $group->group_name;
                     $parent = $groups[$group->group_name];

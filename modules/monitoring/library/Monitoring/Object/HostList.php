@@ -7,7 +7,7 @@ use Icinga\Data\DataArray\ArrayDatasource;
 use Icinga\Data\Filter\Filter;
 use Icinga\Data\Filter\FilterOr;
 use Icinga\Data\SimpleQuery;
-use Icinga\Util\String;
+use Icinga\Util\StringHelper;
 
 /**
  * A host list
@@ -61,7 +61,7 @@ class HostList extends ObjectList
      */
     public static function getHostStatesSummaryEmpty()
     {
-        return String::cartesianProduct(
+        return StringHelper::cartesianProduct(
             array(
                 array('hosts'),
                 array(

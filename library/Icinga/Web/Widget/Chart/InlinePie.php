@@ -5,7 +5,7 @@ namespace Icinga\Web\Widget\Chart;
 
 use Icinga\Chart\PieChart;
 use Icinga\Module\Monitoring\Plugin\PerfdataSet;
-use Icinga\Util\String;
+use Icinga\Util\StringHelper;
 use Icinga\Web\Widget\AbstractWidget;
 use Icinga\Web\Url;
 use Icinga\Util\Format;
@@ -277,7 +277,7 @@ EOD;
     {
         $handledUnhandledStates = array();
         foreach ($states as $key => $value) {
-            if (String::endsWith($key, '_handled') || String::endsWith($key, '_unhandled')) {
+            if (StringHelper::endsWith($key, '_handled') || StringHelper::endsWith($key, '_unhandled')) {
                 $handledUnhandledStates[$key] = $value;
             }
         }

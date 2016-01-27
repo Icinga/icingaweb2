@@ -4,7 +4,7 @@
 namespace Tests\Icinga\Util;
 
 use Icinga\Test\BaseTestCase;
-use Icinga\Util\String;
+use Icinga\Util\StringHelper;
 
 class StringTest extends BaseTestCase
 {
@@ -12,7 +12,7 @@ class StringTest extends BaseTestCase
     {
         $this->assertEquals(
             array('one', 'two', 'three'),
-            String::trimSplit(' one ,two  , three'),
+            StringHelper::trimSplit(' one ,two  , three'),
             'String::trimSplit does not properly split a string and/or trim its elements'
         );
     }
@@ -21,7 +21,7 @@ class StringTest extends BaseTestCase
     {
         $this->assertEquals(
             array('one', 'two', 'three'),
-            String::trimSplit('one.two.three', '.'),
+            StringHelper::trimSplit('one.two.three', '.'),
             'String::trimSplit does not split a string by the given delimiter'
         );
     }

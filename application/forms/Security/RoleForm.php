@@ -9,7 +9,7 @@ use Icinga\Application\Icinga;
 use Icinga\Exception\AlreadyExistsException;
 use Icinga\Exception\NotFoundError;
 use Icinga\Forms\ConfigForm;
-use Icinga\Util\String;
+use Icinga\Util\StringHelper;
 
 /**
  * Form for managing roles
@@ -176,7 +176,7 @@ class RoleForm extends ConfigForm
         }
         $role = $this->config->getSection($name)->toArray();
         $role['permissions'] = ! empty($role['permissions'])
-            ? String::trimSplit($role['permissions'])
+            ? StringHelper::trimSplit($role['permissions'])
             : null;
         $role['name'] = $name;
         $restrictions = array();

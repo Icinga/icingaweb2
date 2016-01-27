@@ -6,7 +6,7 @@ namespace Icinga\Util;
 /**
  * Common string functions
  */
-class String
+class StringHelper
 {
     /**
      * Split string into an array and trim spaces

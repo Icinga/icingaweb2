@@ -8,7 +8,7 @@ use Icinga\Application\Logger;
 use Icinga\Exception\NotReadableError;
 use Icinga\Data\ConfigObject;
 use Icinga\User;
-use Icinga\Util\String;
+use Icinga\Util\StringHelper;
 
 /**
  * Retrieve restrictions and permissions for users
@@ -26,13 +26,13 @@ class AdmissionLoader
     {
         $username = strtolower($username);
         if (! empty($section->users)) {
-            $users = array_map('strtolower', String::trimSplit($section->users));
+            $users = array_map('strtolower', StringHelper::trimSplit($section->users));
             if (in_array($username, $users)) {
                 return true;
             }
         }
         if (! empty($section->groups)) {
-            $groups = array_map('strtolower', String::trimSplit($section->groups));
+            $groups = array_map('strtolower', StringHelper::trimSplit($section->groups));
             foreach ($userGroups as $userGroup) {
                 if (in_array(strtolower($userGroup), $groups)) {
                     return true;
@@ -69,7 +69,7 @@ class AdmissionLoader
             if ($this->match($username, $userGroups, $role)) {
                 $permissions = array_merge(
                     $permissions,
-                    array_diff(String::trimSplit($role->permissions), $permissions)
+                    array_diff(StringHelper::trimSplit($role->permissions), $permissions)
                 );
                 $restrictionsFromRole = $role->toArray();
                 unset($restrictionsFromRole['users']);

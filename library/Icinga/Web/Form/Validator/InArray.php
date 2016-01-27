@@ -4,14 +4,14 @@
 namespace Icinga\Web\Form\Validator;
 
 use Zend_Validate_InArray;
-use Icinga\Util\String;
+use Icinga\Util\StringHelper;
 
 class InArray extends Zend_Validate_InArray
 {
     protected function _error($messageKey, $value = null)
     {
         if ($messageKey === static::NOT_IN_ARRAY) {
-            $matches = String::findSimilar($this->_value, $this->_haystack);
+            $matches = StringHelper::findSimilar($this->_value, $this->_haystack);
             if (empty($matches)) {
                 $this->_messages[$messageKey] = sprintf(t('"%s" is not in the list of allowed values.'), $this->_value);
             } else {

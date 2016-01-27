@@ -5,7 +5,7 @@ namespace Icinga\Web\Navigation\Renderer;
 
 use Icinga\Application\Icinga;
 use Icinga\Exception\ProgrammingError;
-use Icinga\Util\String;
+use Icinga\Util\StringHelper;
 use Icinga\Web\Navigation\NavigationItem;
 use Icinga\Web\Url;
 use Icinga\Web\View;
@@ -76,7 +76,7 @@ class NavigationItemRenderer
     public function setOptions(array $options)
     {
         foreach ($options as $name => $value) {
-            $setter = 'set' . String::cname($name);
+            $setter = 'set' . StringHelper::cname($name);
             if (method_exists($this, $setter)) {
                 $this->$setter($value);
             }

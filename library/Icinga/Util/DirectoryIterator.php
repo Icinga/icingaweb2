@@ -134,7 +134,7 @@ class DirectoryIterator implements Iterator
                         break;
                     }
 
-                    if ($this->extension && ! String::endsWith($file, $this->extension)) {
+                    if ($this->extension && ! StringHelper::endsWith($file, $this->extension)) {
                         $skip = true;
                         break;
                     }

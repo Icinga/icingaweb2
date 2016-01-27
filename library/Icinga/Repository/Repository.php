@@ -11,7 +11,7 @@ use Icinga\Data\Selectable;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Exception\QueryException;
 use Icinga\Exception\StatementException;
-use Icinga\Util\String;
+use Icinga\Util\StringHelper;
 
 /**
  * Abstract base class for concrete repository implementations
@@ -789,7 +789,7 @@ abstract class Repository implements Selectable
     protected function retrieveCommaSeparatedString($value)
     {
         if ($value && is_string($value)) {
-            $value = String::trimSplit($value);
+            $value = StringHelper::trimSplit($value);
         } elseif ($value !== null) {
             throw new ProgrammingError('Cannot retrieve value "%s" as array. It\'s not a string', $value);
         }

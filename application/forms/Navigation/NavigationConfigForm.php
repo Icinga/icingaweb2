@@ -14,7 +14,7 @@ use Icinga\Exception\NotFoundError;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Forms\ConfigForm;
 use Icinga\User;
-use Icinga\Util\String;
+use Icinga\Util\StringHelper;
 use Icinga\Web\Form;
 
 /**
@@ -817,7 +817,7 @@ class NavigationConfigForm extends ConfigForm
      */
     protected function getItemForm($type)
     {
-        $className = String::cname($type, '-') . 'Form';
+        $className = StringHelper::cname($type, '-') . 'Form';
 
         $form = null;
         foreach (Icinga::app()->getModuleManager()->getLoadedModules() as $module) {

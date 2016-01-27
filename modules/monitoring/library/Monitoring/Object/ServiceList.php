@@ -7,7 +7,7 @@ use Icinga\Data\DataArray\ArrayDatasource;
 use Icinga\Data\Filter\Filter;
 use Icinga\Data\Filter\FilterOr;
 use Icinga\Data\SimpleQuery;
-use Icinga\Util\String;
+use Icinga\Util\StringHelper;
 
 /**
  * A service list
@@ -106,7 +106,7 @@ class ServiceList extends ObjectList
      */
     public static function getServiceStatesSummaryEmpty()
     {
-        return String::cartesianProduct(
+        return StringHelper::cartesianProduct(
             array(
                 array('services'),
                 array(

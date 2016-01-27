@@ -3,7 +3,7 @@
 
 use Icinga\Module\Monitoring\Plugin\Perfdata;
 use Icinga\Module\Monitoring\Plugin\PerfdataSet;
-use Icinga\Util\String;
+use Icinga\Util\StringHelper;
 
 class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
 {
@@ -81,7 +81,7 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
                         $data []= sprintf(
                             '<span title="%s">%s</span>',
                             $text,
-                            String::ellipsisCenter($text, 24)
+                            StringHelper::ellipsisCenter($text, 24)
                         );
                     }
                 }
