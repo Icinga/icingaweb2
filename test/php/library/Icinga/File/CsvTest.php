@@ -14,7 +14,7 @@ class CsvTest extends BaseTestCase
         $queryMock = Mockery::mock(
             'Icinga\Data\SimpleQuery',
             array(
-                'getQuery->fetchAll' => array(
+                'fetchAll' => array(
                     array('col1' => 'val1', 'col2' => 'val2', 'col3' => 'val3', 'col4' => 'val4'),
                     array('col1' => 'val5', 'col2' => 'val6', 'col3' => 'val7', 'col4' => 'val8')
                 )
