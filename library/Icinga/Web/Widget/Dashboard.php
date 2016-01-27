@@ -3,17 +3,17 @@
 
 namespace Icinga\Web\Widget;
 
-use Icinga\Application\Icinga;
 use Icinga\Application\Config;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\NotReadableError;
 use Icinga\Exception\ProgrammingError;
+use Icinga\Legacy\DashboardConfig;
 use Icinga\User;
 use Icinga\Web\Navigation\DashboardPane;
 use Icinga\Web\Navigation\Navigation;
-use Icinga\Web\Widget\Dashboard\Pane;
-use Icinga\Web\Widget\Dashboard\Dashlet as DashboardDashlet;
 use Icinga\Web\Url;
+use Icinga\Web\Widget\Dashboard\Dashlet as DashboardDashlet;
+use Icinga\Web\Widget\Dashboard\Pane;
 
 /**
  * Dashboards display multiple views on a single page
@@ -108,19 +108,34 @@ class Dashboard extends AbstractWidget
             }
         }
 
-        return Config::fromArray($output)->setConfigFile($this->getConfigFile());
+        return DashboardConfig::fromArray($output)->setConfigFile($this->getConfigFile())->setUser($this->user);
     }
 
     /**
-     * @return bool
+     * Load user dashboards from all config files that match the username
      */
-    private function loadUserDashboards()
+    protected function loadUserDashboards()
+    {
+        foreach (DashboardConfig::listConfigFilesForUser($this->user) as $file) {
+            $this->loadUserDashboardsFromFile($file);
+        }
+    }
+
+    /**
+     * Load user dashboards from the given config file
+     *
+     * @param   string  $file
+     *
+     * @return  bool
+     */
+    protected function loadUserDashboardsFromFile($file)
     {
         try {
-            $config = Config::fromIni($this->getConfigFile());
+            $config = Config::fromIni($file);
         } catch (NotReadableError $e) {
-            return;
+            return false;
         }
+
         if (! count($config)) {
             return false;
         }
@@ -439,6 +454,6 @@ class Dashboard extends AbstractWidget
         if ($this->user === null) {
             throw new ProgrammingError('Can\'t load dashboards. User is not set');
         }
-        return Config::resolvePath('dashboards/' . $this->user->getUsername() . '/dashboard.ini');
+        return Config::resolvePath('dashboards/' . strtolower($this->user->getUsername()) . '/dashboard.ini');
     }
 }
