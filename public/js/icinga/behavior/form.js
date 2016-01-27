@@ -81,17 +81,13 @@
         if (changed) {
             return null;
         }
-        if (
-            // is the focus among the elements to be replaced?
-            $container.has(origFocus).length &&
-                // is an autorefresh
-                autorefresh &&
-
-                // and has focus
-                $(origFocus).length &&
-                !$(origFocus).hasClass('autofocus') &&
-                $(origFocus).closest('form').length
-            ) {
+        if ($container.has(origFocus).length
+            && autorefresh
+            && $(origFocus).length
+            && ! $(origFocus).hasClass('autofocus')
+            && ! $(origFocus).hasClass('autosubmit')
+            && $(origFocus).closest('form').length
+        ) {
             icinga.logger.debug('Not changing content for ' + containerId + ' form has focus');
             return null;
         }
