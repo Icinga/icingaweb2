@@ -331,7 +331,10 @@
                 }
             }
 
-            this.redirectToUrl(redirect, req.$target, req.url, req.getResponseHeader('X-Icinga-Rerender-Layout'), req.forceFocus);
+            this.redirectToUrl(
+                redirect, req.$target, req.url, req.getResponseHeader('X-Icinga-Rerender-Layout'), req.forceFocus,
+                req.getResponseHeader('X-Icinga-Refresh')
+            );
             return true;
         },
 
@@ -343,7 +346,7 @@
          * @param {string}  origin
          * @param {boolean} rerenderLayout
          */
-        redirectToUrl: function (url, $target, origin, rerenderLayout, forceFocus) {
+        redirectToUrl: function (url, $target, origin, rerenderLayout, forceFocus, autoRefreshInterval) {
             var icinga = this.icinga;
 
             if (typeof rerenderLayout === 'undefined') {
@@ -394,6 +397,7 @@
 
                     var req = this.loadUrl(url, $target);
                     req.forceFocus = url === origin ? forceFocus : null;
+                    req.autoRefreshInterval = autoRefreshInterval;
                 }
             }
         },
@@ -496,7 +500,7 @@
                 this.icinga.ui.setTitle(decodeURIComponent(title));
             }
 
-            var refresh = req.getResponseHeader('X-Icinga-Refresh');
+            var refresh = req.autoRefreshInterval || req.getResponseHeader('X-Icinga-Refresh');
             if (refresh) {
                 req.$target.data('icingaRefresh', refresh);
             } else {
