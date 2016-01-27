@@ -255,8 +255,10 @@ class Translator
         usort( // Sort DESC but keep equal elements ASC
             $headerValues,
             function ($a, $b) {
-                $qValA = (float) (strpos($a[0], ';') > 0 ? substr(array_pop((explode(';', $a[0], 2))), 2) : 1);
-                $qValB = (float) (strpos($b[0], ';') > 0 ? substr(array_pop((explode(';', $b[0], 2))), 2) : 1);
+                $tagA = explode(';', $a[0], 2);
+                $tagB = explode(';', $b[0], 2);
+                $qValA = (float) (strpos($a[0], ';') > 0 ? substr(array_pop($tagA), 2) : 1);
+                $qValB = (float) (strpos($b[0], ';') > 0 ? substr(array_pop($tagB), 2) : 1);
                 return $qValA < $qValB ? 1 : ($qValA > $qValB ? -1 : ($a[1] > $b[1] ? 1 : ($a[1] < $b[1] ? -1 : 0)));
             }
         );
