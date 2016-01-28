@@ -52,6 +52,7 @@ class ServicesController extends Controller
             'service_is_flapping',
             'service_last_state_change',
             'service_notifications_enabled',
+            'service_obsessing',
             'service_passive_checks_enabled',
             'service_problem',
             'service_state'

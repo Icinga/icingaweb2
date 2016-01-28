@@ -46,6 +46,7 @@ class HostsController extends Controller
             'host_last_state_change',
             'host_name',
             'host_notifications_enabled',
+            'host_obsessing',
             'host_passive_checks_enabled',
             'host_problem',
             'host_state'
