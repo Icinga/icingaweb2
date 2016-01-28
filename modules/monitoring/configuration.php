@@ -52,14 +52,9 @@ $this->providePermission(
     $this->translate('Allow processing commands for toggling features on an instance-wide basis')
 );
 $this->providePermission(
-    'monitoring/command/feature/object',
-    $this->translate('DEPRECATED in favor of monitoring/command/feature/object/*')
-);
-$this->providePermission(
     'monitoring/command/feature/object/*',
     $this->translate('Allow processing commands for toggling features on host and service objects')
 );
-$this->providePermissionAlias('monitoring/command/feature/object', 'monitoring/command/feature/object/*');
 $this->providePermission(
     'monitoring/command/feature/object/active-checks',
     $this->translate('Allow processing commands for toggling active checks on host and service objects')
