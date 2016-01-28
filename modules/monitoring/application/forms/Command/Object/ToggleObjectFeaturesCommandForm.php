@@ -13,7 +13,7 @@ use Icinga\Web\Notification;
 class ToggleObjectFeaturesCommandForm extends ObjectsCommandForm
 {
     /**
-     * Feature to label map
+     * Feature to feature spec map
      *
      * @var string[]
      */
@@ -27,43 +27,54 @@ class ToggleObjectFeaturesCommandForm extends ObjectsCommandForm
     protected $featureStatus;
 
     /**
-     * (non-PHPDoc)
-     * @see \Zend_Form::init() For the method documentation.
+     * {@inheritdoc}
      */
     public function init()
     {
         $this->setUseFormAutosubmit();
         $this->setAttrib('class', 'inline object-features');
-
         $features = array(
-            ToggleObjectFeatureCommand::FEATURE_ACTIVE_CHECKS => $this->translate('Active Checks'),
-            ToggleObjectFeatureCommand::FEATURE_PASSIVE_CHECKS => $this->translate('Passive Checks'),
-            ToggleObjectFeatureCommand::FEATURE_OBSESSING => $this->translate('Obsessing'),
-            ToggleObjectFeatureCommand::FEATURE_NOTIFICATIONS => $this->translate('Notifications'),
-            ToggleObjectFeatureCommand::FEATURE_EVENT_HANDLER => $this->translate('Event Handler'),
-            ToggleObjectFeatureCommand::FEATURE_FLAP_DETECTION => $this->translate('Flap Detection')
+            ToggleObjectFeatureCommand::FEATURE_ACTIVE_CHECKS => array(
+                'label'         => $this->translate('Active Checks'),
+                'permission'    => 'monitoring/command/feature/active-checks'
+            ),
+            ToggleObjectFeatureCommand::FEATURE_PASSIVE_CHECKS => array(
+                'label' => $this->translate('Passive Checks'),
+                'permission'    => 'monitoring/command/feature/passive-checks'
+            ),
+            ToggleObjectFeatureCommand::FEATURE_OBSESSING => array(
+                'label'         => $this->translate('Obsessing'),
+                'permission'    => 'monitoring/command/feature/obsessing'
+            ),
+            ToggleObjectFeatureCommand::FEATURE_NOTIFICATIONS => array(
+                'label'         => $this->translate('Notifications'),
+                'permission'    => 'monitoring/command/feature/notifications'
+            ),
+            ToggleObjectFeatureCommand::FEATURE_EVENT_HANDLER => array(
+                'label'         => $this->translate('Event Handler'),
+                'permission'    => 'monitoring/command/feature/event-handler'
+            ),
+            ToggleObjectFeatureCommand::FEATURE_FLAP_DETECTION => array(
+                'label'         => $this->translate('Flap Detection'),
+                'permission'    => 'monitoring/command/feature/flap-detection'
+            )
         );
-
         if (preg_match('~^v2\.\d+\.\d+.*$~', $this->getIcingaVersion())) {
             unset($features[ToggleObjectFeatureCommand::FEATURE_OBSESSING]);
         }
-
         $this->features = $features;
     }
 
     /**
-     * (non-PHPDoc)
-     * @see \Icinga\Web\Form::createElements() For the method documentation.
+     * {@inheritdoc}
      */
     public function createElements(array $formData = array())
     {
-        $toggleDisabled = $this->hasPermission('monitoring/command/feature/object')  ? null : '';
-
-        foreach ($this->features as $feature => $label) {
+        foreach ($this->features as $feature => $spec) {
             $options = array(
                 'autosubmit'    => true,
-                'disabled'      => $toggleDisabled,
-                'label'         => $label
+                'disabled'      => $this->hasPermission($spec['permission']) ? '' : 'disabled',
+                'label'         => $spec['label']
             );
             if ($formData[$feature . '_changed']) {
                 $options['description'] = $this->translate('changed');
@@ -93,7 +104,6 @@ class ToggleObjectFeaturesCommandForm extends ObjectsCommandForm
     public function load($object)
     {
         $featureStatus = array();
-
         foreach (array_keys($this->features) as $feature) {
             $featureStatus[$feature] = $object->{$feature};
             if (isset($object->{$feature . '_changed'})) {
@@ -102,9 +112,7 @@ class ToggleObjectFeaturesCommandForm extends ObjectsCommandForm
                 $featureStatus[$feature . '_changed'] = false;
             }
         }
-
         $this->create($featureStatus);
-
         $this->featureStatus = $featureStatus;
 
         return $this;
@@ -116,8 +124,6 @@ class ToggleObjectFeaturesCommandForm extends ObjectsCommandForm
      */
     public function onSuccess()
     {
-        $this->assertPermission('monitoring/command/feature/object');
-
         $notifications = array(
             ToggleObjectFeatureCommand::FEATURE_ACTIVE_CHECKS => array(
                 $this->translate('Enabling active checks..'),
@@ -146,10 +152,10 @@ class ToggleObjectFeaturesCommandForm extends ObjectsCommandForm
         );
 
         foreach ($this->getValues() as $feature => $enabled) {
-            if ($enabled === null
+            if ($this->getElement($feature)->getAttrib('disabled') !== null
+                || $enabled === null
                 || (int) $enabled === (int) $this->featureStatus[$feature]
             ) {
-                // Ignore unchanged features
                 continue;
             }
             foreach ($this->objects as $object) {
