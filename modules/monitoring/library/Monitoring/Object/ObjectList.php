@@ -262,6 +262,7 @@ abstract class ObjectList implements Countable, IteratorAggregate, Filterable
         $featureStatus = array(
             'active_checks_enabled'     => null,
             'passive_checks_enabled'    => null,
+            'obsessing'                 => null,
             'notifications_enabled'     => null,
             'event_handler_enabled'     => null,
             'flap_detection_enabled'    => null
