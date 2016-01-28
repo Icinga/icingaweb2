@@ -640,7 +640,7 @@ class WebWizard extends Wizard implements SetupWizard
         $mysqlSet = new RequirementSet(true);
         $mysqlSet->add(new PhpModuleRequirement(array(
             'optional'      => true,
-            'condition'     => 'mysql',
+            'condition'     => 'pdo_mysql',
             'alias'         => 'PDO-MySQL',
             'description'   => mt(
                 'setup',
@@ -661,7 +661,7 @@ class WebWizard extends Wizard implements SetupWizard
         $pgsqlSet = new RequirementSet(true);
         $pgsqlSet->add(new PhpModuleRequirement(array(
             'optional'      => true,
-            'condition'     => 'pgsql',
+            'condition'     => 'pdo_pgsql',
             'alias'         => 'PDO-PostgreSQL',
             'description'   => mt(
                 'setup',

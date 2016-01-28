@@ -362,7 +362,7 @@ class Platform
      */
     public static function hasMysqlSupport()
     {
-        return static::extensionLoaded('mysql') && static::classExists('Zend_Db_Adapter_Pdo_Mysql');
+        return static::extensionLoaded('pdo_mysql') && static::classExists('Zend_Db_Adapter_Pdo_Mysql');
     }
 
     /**
@@ -398,6 +398,6 @@ class Platform
      */
     public static function hasPostgresqlSupport()
     {
-        return static::extensionLoaded('pgsql') && static::classExists('Zend_Db_Adapter_Pdo_Pgsql');
+        return static::extensionLoaded('pdo_pgsql') && static::classExists('Zend_Db_Adapter_Pdo_Pgsql');
     }
 }
