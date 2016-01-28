@@ -57,7 +57,7 @@ class DashboardConfig extends Config
     {
         $files = [];
         $dashboards = static::resolvePath('dashboards');
-        if ($handle = opendir($dashboards)) {
+        if ($handle = @opendir($dashboards)) {
             while (false !== ($entry = readdir($handle))) {
                 if ($entry[0] === '.' || ! is_dir($dashboards . '/' . $entry)) {
                     continue;
