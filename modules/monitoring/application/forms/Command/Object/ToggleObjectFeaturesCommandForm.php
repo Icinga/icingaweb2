@@ -59,7 +59,7 @@ class ToggleObjectFeaturesCommandForm extends ObjectsCommandForm
                 'permission'    => 'monitoring/command/feature/object/flap-detection'
             )
         );
-        if (preg_match('~^v2\.\d+\.\d+.*$~', $this->getIcingaVersion())) {
+        if (preg_match('~^[vr]2\.\d+\.\d+.*$~', $this->getIcingaVersion())) {
             unset($features[ToggleObjectFeatureCommand::FEATURE_OBSESSING]);
         }
         $this->features = $features;
