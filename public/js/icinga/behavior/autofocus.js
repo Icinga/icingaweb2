@@ -15,7 +15,9 @@
 
     Autofocus.prototype.onRendered = function(e) {
         setTimeout(function() {
-            if (document.activeElement === e.target) {
+            if (document.activeElement === e.target
+                || document.activeElement === document.body
+            ) {
                 $(e.target).find('.autofocus').focus();
             }
         }, 0);
