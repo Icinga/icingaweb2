@@ -36,27 +36,27 @@ class ToggleObjectFeaturesCommandForm extends ObjectsCommandForm
         $features = array(
             ToggleObjectFeatureCommand::FEATURE_ACTIVE_CHECKS => array(
                 'label'         => $this->translate('Active Checks'),
-                'permission'    => 'monitoring/command/feature/active-checks'
+                'permission'    => 'monitoring/command/feature/object/active-checks'
             ),
             ToggleObjectFeatureCommand::FEATURE_PASSIVE_CHECKS => array(
                 'label' => $this->translate('Passive Checks'),
-                'permission'    => 'monitoring/command/feature/passive-checks'
+                'permission'    => 'monitoring/command/feature/object/passive-checks'
             ),
             ToggleObjectFeatureCommand::FEATURE_OBSESSING => array(
                 'label'         => $this->translate('Obsessing'),
-                'permission'    => 'monitoring/command/feature/obsessing'
+                'permission'    => 'monitoring/command/feature/object/obsessing'
             ),
             ToggleObjectFeatureCommand::FEATURE_NOTIFICATIONS => array(
                 'label'         => $this->translate('Notifications'),
-                'permission'    => 'monitoring/command/feature/notifications'
+                'permission'    => 'monitoring/command/feature/object/notifications'
             ),
             ToggleObjectFeatureCommand::FEATURE_EVENT_HANDLER => array(
                 'label'         => $this->translate('Event Handler'),
-                'permission'    => 'monitoring/command/feature/event-handler'
+                'permission'    => 'monitoring/command/feature/object/event-handler'
             ),
             ToggleObjectFeatureCommand::FEATURE_FLAP_DETECTION => array(
                 'label'         => $this->translate('Flap Detection'),
-                'permission'    => 'monitoring/command/feature/flap-detection'
+                'permission'    => 'monitoring/command/feature/object/flap-detection'
             )
         );
         if (preg_match('~^v2\.\d+\.\d+.*$~', $this->getIcingaVersion())) {
@@ -73,7 +73,7 @@ class ToggleObjectFeaturesCommandForm extends ObjectsCommandForm
         foreach ($this->features as $feature => $spec) {
             $options = array(
                 'autosubmit'    => true,
-                'disabled'      => $this->hasPermission($spec['permission']) ? '' : 'disabled',
+                'disabled'      => $this->hasPermission($spec['permission']) ? null : 'disabled',
                 'label'         => $spec['label']
             );
             if ($formData[$feature . '_changed']) {
