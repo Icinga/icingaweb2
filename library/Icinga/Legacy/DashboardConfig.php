@@ -55,7 +55,7 @@ class DashboardConfig extends Config
      */
     public static function listConfigFilesForUser(User $user)
     {
-        $files = [];
+        $files = array();
         $dashboards = static::resolvePath('dashboards');
         if ($handle = @opendir($dashboards)) {
             while (false !== ($entry = readdir($handle))) {
