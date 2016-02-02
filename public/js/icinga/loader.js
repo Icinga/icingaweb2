@@ -734,8 +734,11 @@
 
             var activeElementPath = false;
             var focusFallback = false;
+
             if (forceFocus && forceFocus.length) {
                 activeElementPath = this.icinga.utils.getCSSPath($(forceFocus));
+            } else if (document.activeElement.id === 'search') {
+                activeElementPath = '#search';
             } else if (document.activeElement
                 && document.activeElement !== document.body
                 && $.contains($container[0], document.activeElement)
