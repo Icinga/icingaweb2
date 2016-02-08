@@ -1,4 +1,4 @@
-/* Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
+/* Icinga Web 2 | (c) 2014 Icinga Development Team | GPLv2+ */
 
 CREATE OR REPLACE FUNCTION unix_timestamp(timestamp with time zone) RETURNS bigint AS '
         SELECT EXTRACT(EPOCH FROM $1)::bigint AS result

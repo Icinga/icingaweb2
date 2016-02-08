@@ -1,3 +1,4 @@
+/*! Icinga Web 2 | (c) 2015 Icinga Development Team | GPLv2+ */
 
 (function(Icinga) {
 
