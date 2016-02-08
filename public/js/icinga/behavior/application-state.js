@@ -1,4 +1,4 @@
-/*! Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+ */
+/*! Icinga Web 2 | (c) 2015 Icinga Development Team | GPLv2+ */
 
 // @TODO(el): https://dev.icinga.org/issues/10646
 (function(Icinga, $) {

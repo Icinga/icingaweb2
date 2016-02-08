@@ -1,4 +1,4 @@
-# Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+
+# Icinga Web 2 | (c) 2014 Icinga Development Team | GPLv2+
 
 CREATE TABLE `icingaweb_group`(
   `id`     int(10) unsigned NOT NULL AUTO_INCREMENT,
