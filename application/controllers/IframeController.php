@@ -1,14 +1,14 @@
 <?php
 /* Icinga Web 2 | (c) 2015 Icinga Development Team | GPLv2+ */
 
-namespace Icinga\Module\Iframe\Controllers;
+namespace Icinga\Controllers;
 
 use Icinga\Web\Controller;
 
 /**
  * Display external or internal links within an iframe
  */
-class IndexController extends Controller
+class IframeController extends Controller
 {
     /**
      * Display iframe w/ the given URL
