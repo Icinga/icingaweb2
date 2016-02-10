@@ -278,6 +278,10 @@ class Loader
         if (false !== $match) {
             return $haystack[$match];
         }
+        if (count($this->lastSuggestions) === 1) {
+            $lastSuggestions = array_values($this->lastSuggestions);
+            return $lastSuggestions[0];
+        }
         return false;
     }
 
