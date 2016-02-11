@@ -705,7 +705,7 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
             ->setGroupNameAttribute($config->get('group_name_attribute', $defaults->group_name_attribute))
             ->setUserNameAttribute($config->get('user_name_attribute', $defaults->user_name_attribute))
             ->setGroupMemberAttribute($config->get('group_member_attribute', $defaults->group_member_attribute))
-            ->setGroupFilter($config->filter)
+            ->setGroupFilter($config->group_filter)
             ->setUserFilter($config->user_filter);
     }
 
