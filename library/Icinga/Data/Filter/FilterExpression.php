@@ -94,7 +94,7 @@ class FilterExpression extends Filter
      *
      * @return $this
      */
-    public function setCaseSensitive($caseSensitive)
+    public function setCaseSensitive($caseSensitive = true)
     {
         $this->caseSensitive = $caseSensitive;
         return $this;
