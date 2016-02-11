@@ -64,6 +64,8 @@ class FilterExpression extends Filter
     }
 
     /**
+     * Return whether this filter compares case sensitive
+     *
      * @return bool
      */
     public function getCaseSensitive()
@@ -86,6 +88,8 @@ class FilterExpression extends Filter
     }
 
     /**
+     * Set this filter's case sensitivity
+     *
      * @param   bool    $caseSensitive
      *
      * @return $this
