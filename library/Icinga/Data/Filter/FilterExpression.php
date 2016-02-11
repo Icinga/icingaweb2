@@ -11,12 +11,20 @@ class FilterExpression extends Filter
     protected $sign;
     protected $expression;
 
+    /**
+     * Does this filter compare case sensitive?
+     *
+     * @var bool
+     */
+    protected $caseSensitive;
+
     public function __construct($column, $sign, $expression)
     {
         $column = trim($column);
         $this->column = $column;
         $this->sign = $sign;
         $this->expression = $expression;
+        $this->caseSensitive = true;
     }
 
     public function isExpression()
@@ -55,6 +63,14 @@ class FilterExpression extends Filter
         return $this->expression;
     }
 
+    /**
+     * @return bool
+     */
+    public function getCaseSensitive()
+    {
+        return $this->caseSensitive;
+    }
+
     public function setExpression($expression)
     {
         $this->expression = $expression;
@@ -66,6 +82,17 @@ class FilterExpression extends Filter
         if ($sign !== $this->sign) {
             return Filter::expression($this->column, $sign, $this->expression);
         }
+        return $this;
+    }
+
+    /**
+     * @param   bool    $caseSensitive
+     *
+     * @return $this
+     */
+    public function setCaseSensitive($caseSensitive)
+    {
+        $this->caseSensitive = $caseSensitive;
         return $this;
     }
 
@@ -97,6 +124,26 @@ class FilterExpression extends Filter
         return $this->column . $this->sign . $expression;
     }
 
+    /**
+     * If $var is a scalar, do the same as strtolower() would do.
+     * If $var is an array, map $this->strtolowerRecursive() to its elements.
+     * Otherwise, return $var unchanged.
+     *
+     * @param   mixed   $var
+     *
+     * @return  mixed
+     */
+    protected function strtolowerRecursive($var)
+    {
+        if ($var === null || is_scalar($var)) {
+            return strtolower($var);
+        }
+        if (is_array($var)) {
+            return array_map(array($this, 'strtolowerRecursive'), $var);
+        }
+        return $var;
+    }
+
     public function matches($row)
     {
         try {
@@ -106,11 +153,18 @@ class FilterExpression extends Filter
             return false;
         }
 
-        if (is_array($this->expression)) {
-            return in_array($rowValue, $this->expression);
+        if ($this->caseSensitive) {
+            $expression = $this->expression;
+        } else {
+            $rowValue = $this->strtolowerRecursive($rowValue);
+            $expression = $this->strtolowerRecursive($this->expression);
         }
 
-        $expression = (string) $this->expression;
+        if (is_array($expression)) {
+            return in_array($rowValue, $expression);
+        }
+
+        $expression = (string) $expression;
         if (strpos($expression, '*') === false) {
             if (is_array($rowValue)) {
                 return in_array($expression, $rowValue);
