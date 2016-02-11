@@ -7,6 +7,7 @@ use Exception;
 use Icinga\Application\Config;
 use Icinga\Exception\NotFoundError;
 use Icinga\Data\DataArray\ArrayDatasource;
+use Icinga\Data\Filter\FilterMatchCaseInsensitive;
 use Icinga\Forms\ConfirmRemovalForm;
 use Icinga\Forms\Navigation\NavigationConfigForm;
 use Icinga\Web\Controller;
@@ -78,7 +79,7 @@ class NavigationController extends Controller
             $config->getConfigObject()->setKeyColumn('name');
             $query = $config->select();
             if ($owner !== null) {
-                $query->where('owner', $owner);
+                $query->applyFilter(new FilterMatchCaseInsensitive('owner', '=', $owner));
             }
 
             foreach ($query as $itemConfig) {

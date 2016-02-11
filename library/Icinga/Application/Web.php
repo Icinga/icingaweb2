@@ -172,7 +172,7 @@ class Web extends EmbeddedWeb
     {
         // TODO: Provide a more sophisticated solution
 
-        if (isset($config['owner']) && $config['owner'] === $this->user->getUsername()) {
+        if (isset($config['owner']) && strtolower($config['owner']) === strtolower($this->user->getUsername())) {
             unset($config['owner']);
             unset($config['users']);
             unset($config['groups']);
@@ -195,7 +195,7 @@ class Web extends EmbeddedWeb
 
         if (isset($config['users'])) {
             $users = array_map('trim', explode(',', strtolower($config['users'])));
-            if (in_array('*', $users, true) || in_array($this->user->getUsername(), $users, true)) {
+            if (in_array('*', $users, true) || in_array(strtolower($this->user->getUsername()), $users, true)) {
                 unset($config['owner']);
                 unset($config['users']);
                 unset($config['groups']);
