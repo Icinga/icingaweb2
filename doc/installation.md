@@ -502,3 +502,5 @@ The first release candidate of Icinga Web 2 introduces the following non-backwar
 ## <a id="upgrading-to-2.1.x"></a> Upgrading to Icinga Web 2 2.1.x
 
 * Since Icinga Web 2 version 2.1.3 LDAP user group backends respect the configuration option `group_filter`.
+  Users who changed the configuration manually and used the option `filter` instead
+  have to change it back to `group_filter`.
