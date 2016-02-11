@@ -475,9 +475,10 @@ class Config implements Countable, Iterator, Selectable
         if ($username) {
             $path = static::resolvePath(implode(DIRECTORY_SEPARATOR, array('preferences', $username, $filename)));
             if (realpath($path) === false) {
-                $path = static::resolvePath(implode(DIRECTORY_SEPARATOR, array(
-                    'preferences', strtolower($username), $filename
-                )));
+                $path = static::resolvePath(implode(
+                    DIRECTORY_SEPARATOR,
+                    array('preferences', strtolower($username), $filename)
+                ));
             }
         } else {
             $path = static::resolvePath('navigation' . DIRECTORY_SEPARATOR . $filename);
