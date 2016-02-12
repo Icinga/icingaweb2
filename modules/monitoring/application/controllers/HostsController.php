@@ -83,11 +83,13 @@ class HostsController extends Controller
     public function showAction()
     {
         $this->setAutorefreshInterval(15);
-        $checkNowForm = new CheckNowCommandForm();
-        $checkNowForm
-            ->setObjects($this->hostList)
-            ->handleRequest();
-        $this->view->checkNowForm = $checkNowForm;
+        if ($this->Auth()->hasPermission('monitoring/command/schedule-check')) {
+            $checkNowForm = new CheckNowCommandForm();
+            $checkNowForm
+                ->setObjects($this->hostList)
+                ->handleRequest();
+            $this->view->checkNowForm = $checkNowForm;
+        }
 
         $acknowledgedObjects = $this->hostList->getAcknowledgedObjects();
         if (! empty($acknowledgedObjects)) {

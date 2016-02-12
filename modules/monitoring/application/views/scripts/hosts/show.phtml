@@ -174,10 +174,12 @@
                 </td>
             </tr>
 
-            <tr>
-                <th> <?= $this->translate('Schedule Check') ?> </th>
-                <td> <?= $checkNowForm ?> </td>
-            </tr>
+            <?php if (isset($checkNowForm)): // Form is unset if the current user lacks the respective permission ?>
+                <tr>
+                    <th> <?= $this->translate('Schedule Check') ?> </th>
+                    <td> <?= $checkNowForm ?> </td>
+                </tr>
+            <?php endif ?>
 
             <tr>
                 <th></th>
