@@ -5,6 +5,7 @@ namespace Icinga\Module\Setup\Forms;
 
 use Exception;
 use Zend_Validate_NotEmpty;
+use Icinga\Exception\IcingaException;
 use Icinga\Web\Form;
 use Icinga\Web\Form\ErrorLabeller;
 use Icinga\Forms\LdapDiscoveryForm;
@@ -75,11 +76,12 @@ class LdapDiscoveryPage extends Form
                     return true;
                 }
             } catch (Exception $e) {
+                $this->error(sprintf(
+                    $this->translate('Could not find any LDAP servers on the domain "%s". An error occurred: %s'),
+                    $data['domain'],
+                    IcingaException::describe($e)
+                ));
             }
-
-            $this->error(
-                sprintf($this->translate('Could not find any LDAP servers on the domain "%s".'), $data['domain'])
-            );
         } else {
             $labeller = new ErrorLabeller(array('element' => $this->getElement('domain')));
             $this->getElement('domain')->addError($labeller->translate(Zend_Validate_NotEmpty::IS_EMPTY));
