@@ -87,11 +87,6 @@ class ServicesController extends Controller
     public function showAction()
     {
         $this->setAutorefreshInterval(15);
-        $checkNowForm = new CheckNowCommandForm();
-        $checkNowForm
-            ->setObjects($this->serviceList)
-            ->handleRequest();
-        $this->view->checkNowForm = $checkNowForm;
         $this->serviceList->setColumns(array(
             'host_display_name',
             'host_handled',
@@ -111,6 +106,14 @@ class ServicesController extends Controller
             'service_problem',
             'service_state'
         ));
+
+        if ($this->Auth()->hasPermission('monitoring/command/schedule-check')) {
+            $checkNowForm = new CheckNowCommandForm();
+            $checkNowForm
+                ->setObjects($this->serviceList)
+                ->handleRequest();
+            $this->view->checkNowForm = $checkNowForm;
+        }
 
         $acknowledgedObjects = $this->serviceList->getAcknowledgedObjects();
         if (! empty($acknowledgedObjects)) {

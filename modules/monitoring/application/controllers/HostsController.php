@@ -80,11 +80,6 @@ class HostsController extends Controller
     public function showAction()
     {
         $this->setAutorefreshInterval(15);
-        $checkNowForm = new CheckNowCommandForm();
-        $checkNowForm
-            ->setObjects($this->hostList)
-            ->handleRequest();
-        $this->view->checkNowForm = $checkNowForm;
         $this->hostList->setColumns(array(
             'host_acknowledged',
             'host_active_checks_enabled',
@@ -99,6 +94,14 @@ class HostsController extends Controller
             'host_problem',
             'host_state'
         ));
+
+        if ($this->Auth()->hasPermission('monitoring/command/schedule-check')) {
+            $checkNowForm = new CheckNowCommandForm();
+            $checkNowForm
+                ->setObjects($this->hostList)
+                ->handleRequest();
+            $this->view->checkNowForm = $checkNowForm;
+        }
 
         $acknowledgedObjects = $this->hostList->getAcknowledgedObjects();
         if (! empty($acknowledgedObjects)) {
