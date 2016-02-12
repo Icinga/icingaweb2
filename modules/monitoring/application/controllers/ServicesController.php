@@ -90,11 +90,13 @@ class ServicesController extends Controller
     public function showAction()
     {
         $this->setAutorefreshInterval(15);
-        $checkNowForm = new CheckNowCommandForm();
-        $checkNowForm
-            ->setObjects($this->serviceList)
-            ->handleRequest();
-        $this->view->checkNowForm = $checkNowForm;
+        if ($this->Auth()->hasPermission('monitoring/command/schedule-check')) {
+            $checkNowForm = new CheckNowCommandForm();
+            $checkNowForm
+                ->setObjects($this->serviceList)
+                ->handleRequest();
+            $this->view->checkNowForm = $checkNowForm;
+        }
 
         $acknowledgedObjects = $this->serviceList->getAcknowledgedObjects();
         if (! empty($acknowledgedObjects)) {
