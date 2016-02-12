@@ -15,7 +15,6 @@ use Icinga\Data\Sortable;
 use Icinga\Data\Filter\Filter;
 use Icinga\Data\Filter\FilterChain;
 use Icinga\Data\Filter\FilterExpression;
-use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Protocol\Ldap\LdapException;
 
@@ -169,12 +168,7 @@ class LdapConnection implements Selectable, Inspectable
         $this->hostname = $config->hostname;
         $this->bindDn = $config->bind_dn;
         $this->bindPw = $config->bind_pw;
-
-        if (empty($config->root_dn)) {
-            throw new ConfigurationError('LDAP root DN missing');
-        }
         $this->rootDn = $config->root_dn;
-
         $this->port = $config->get('port', 389);
 
         $this->encryption = $config->encryption;

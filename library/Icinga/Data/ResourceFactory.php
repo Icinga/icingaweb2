@@ -81,16 +81,12 @@ class ResourceFactory implements ConfigAwareFactory
     }
 
     /**
-     * Create a single resource from the given configuration.
+     * Create and return a resource based on the given configuration
      *
-     * NOTE: The factory does not test if the given configuration is valid and the resource is accessible, this
-     * depends entirely on the implementation of the returned resource.
+     * @param   ConfigObject    $config     The configuration of the resource to create
      *
-     * @param ConfigObject $config                   The configuration for the created resource.
-     *
-     * @return DbConnection|LdapConnection|LivestatusConnection An object that can be used to access
-     *         the given resource. The returned class depends on the configuration property 'type'.
-     * @throws ConfigurationError When an unsupported type is given
+     * @return  Selectable                  The resource
+     * @throws  ConfigurationError          In case of an unsupported type or invalid configuration
      */
     public static function createResource(ConfigObject $config)
     {
@@ -99,6 +95,10 @@ class ResourceFactory implements ConfigAwareFactory
                 $resource = new DbConnection($config);
                 break;
             case 'ldap':
+                if (empty($config->root_dn)) {
+                    throw new ConfigurationError('LDAP root DN missing');
+                }
+
                 $resource = new LdapConnection($config);
                 break;
             case 'livestatus':
@@ -116,6 +116,7 @@ class ResourceFactory implements ConfigAwareFactory
                     $config->type
                 );
         }
+
         return $resource;
     }
 
