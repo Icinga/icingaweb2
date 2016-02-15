@@ -278,10 +278,11 @@ class Auth
      */
     protected function authHttp()
     {
-        if ($this->getRequest()->isXmlHttpRequest()) {
+        $request = $this->getRequest();
+        if ($request->isXmlHttpRequest()) {
             return false;
         }
-        if (($header = $this->getRequest()->getHeader('Authorization')) === false) {
+        if (($header = $request->getHeader('Authorization')) === false) {
             return false;
         }
         if (empty($header)) {
