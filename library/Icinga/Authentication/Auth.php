@@ -282,7 +282,8 @@ class Auth
         if ($request->isXmlHttpRequest() || ! $request->isApiRequest()) {
             return false;
         }
-        if (empty($header = $request->getHeader('Authorization'))) {
+        $header = $request->getHeader('Authorization');
+        if (empty($header)) {
             $this->challengeHttp();
         }
         list($scheme) = explode(' ', $header, 2);
