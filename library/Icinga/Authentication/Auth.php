@@ -289,7 +289,7 @@ class Auth
         }
         list($scheme) = explode(' ', $header, 2);
         if ($scheme !== 'Basic') {
-            $this->challengeHttp();
+            return false;
         }
         $authorization = substr($header, strlen('Basic '));
         $credentials = base64_decode($authorization);
