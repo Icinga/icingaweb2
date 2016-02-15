@@ -270,7 +270,7 @@ class Auth
     }
 
     /**
-     * Attempt to authenticate a user using HTTP authentication
+     * Attempt to authenticate a user using HTTP authentication on API requests only
      *
      * Supports only the Basic HTTP authentication scheme. XHR will be ignored.
      *
@@ -278,13 +278,11 @@ class Auth
      */
     protected function authHttp()
     {
-        if ($this->getRequest()->isXmlHttpRequest()) {
+        $request = $this->getRequest();
+        if ($request->isXmlHttpRequest() || ! $request->isApiRequest()) {
             return false;
         }
-        if (($header = $this->getRequest()->getHeader('Authorization')) === false) {
-            return false;
-        }
-        if (empty($header)) {
+        if (empty($header = $request->getHeader('Authorization'))) {
             $this->challengeHttp();
         }
         list($scheme) = explode(' ', $header, 2);

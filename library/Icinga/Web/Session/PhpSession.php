@@ -213,7 +213,9 @@ class PhpSession extends Session
     public function refreshId()
     {
         $this->open();
-        session_regenerate_id();
+        if ($this->exists()) {
+            session_regenerate_id();
+        }
         session_write_close();
         $this->hasBeenTouched = true;
     }
