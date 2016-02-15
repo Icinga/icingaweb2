@@ -16,6 +16,21 @@ thoroughly.
 * Icinga 1.x w/ Livestatus or IDO; Icinga 2.x w/ Livestatus or IDO feature enabled
 * MySQL or PostgreSQL PHP libraries when using IDO
 
+### <a id="pagespeed-incompatibility"></a> PageSpeed Module Incompatibility
+
+It seems that Web 2 is not compatible with the PageSpeed module. Please disable the PageSpeed module using one of the
+following methods.
+
+**Apache**:
+````
+ModPagespeedDisallow "*/icingaweb2/*"
+````
+
+**Nginx**:
+````
+pagespeed Disallow "*/icingaweb2/*";
+````
+
 ## <a id="installing-from-package"></a> Installing Icinga Web 2 from Package
 
 Below is a list of official package repositories for installing Icinga Web 2 for various operating systems.
