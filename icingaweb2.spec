@@ -106,7 +106,7 @@ Icinga CLI
 
 
 %package vendor-dompdf
-Version:    0.6.1
+Version:    0.6.2
 Release:    1%{?dist}
 Summary:    Icinga Web 2 vendor library dompdf
 Group:      Development/Libraries

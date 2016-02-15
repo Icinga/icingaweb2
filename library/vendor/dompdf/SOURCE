@@ -1,6 +1,6 @@
-curl https://codeload.github.com/dompdf/dompdf/tar.gz/v0.6.1 -o dompdf-0.6.1.tar.gz
-tar xzf dompdf-0.6.1.tar.gz --strip-components 1 dompdf-0.6.1/{include/*.php,lib,dompdf*.php,LICENSE.LGPL}
-rm dompdf-0.6.1.tar.gz
+curl https://codeload.github.com/dompdf/dompdf/tar.gz/v0.6.2 -o dompdf-0.6.2.tar.gz
+tar xzf dompdf-0.6.2.tar.gz --strip-components 1 --wildcards dompdf-0.6.2/{include/\*.php,lib,dompdf\*.php,LICENSE.LGPL}
+rm dompdf-0.6.2.tar.gz
 mv LICENSE.LGPL LICENSE
 
 curl https://codeload.github.com/PhenX/php-font-lib/tar.gz/0.4 -o php-font-lib-0.4.tar.gz
