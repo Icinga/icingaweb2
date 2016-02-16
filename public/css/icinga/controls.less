@@ -1,5 +1,14 @@
 /*! Icinga Web 2 | (c) 2015 Icinga Development Team | GPLv2+ */
 
+.filter {
+  clear: both;
+}
+
+.limiter-control,
+.sort-control {
+  display: inline-block;
+}
+
 .limiter-control > .control-group {
   padding: 0;
 
@@ -19,6 +28,9 @@
 }
 
 .pagination-control {
+  clear: both;
+  float: left;
+
   li {
     &.active {
       > a,
@@ -76,6 +88,11 @@
   > form > i {
     .sr-only();
   }
+}
+
+.sort-controls-container {
+  clear: right;
+  float: right;
 }
 
 html.no-js .sort-control form {
