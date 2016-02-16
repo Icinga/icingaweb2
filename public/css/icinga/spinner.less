@@ -20,10 +20,10 @@ div.spinner {
   vertical-align: middle;
 
   i {
-    .invisible();
+    visibility: hidden;
 
     &.active {
-      .visible();
+      visibility: visible;
 
       &:before {
         .animate(spin 2s infinite linear);
