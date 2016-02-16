@@ -5,16 +5,14 @@ use Icinga\Data\Reducible;
 
 if (! $this->compact): ?>
 <div class="controls separated">
-    <?= $tabs ?>
-    <div class="grid">
-        <?= $this->sortBox ?>
+    <?= $this->tabs ?>
+    <?= $this->paginator ?>
+    <div class="sort-controls-container">
         <?= $this->limiter ?>
-        <?= $this->paginator ?>
+        <?= $this->sortBox ?>
     </div>
-    <div>
-        <?= $this->backendSelection ?>
-        <?= $this->filterEditor ?>
-    </div>
+    <?= $this->backendSelection ?>
+    <?= $this->filterEditor ?>
 </div>
 <?php endif ?>
 <div class="content">
