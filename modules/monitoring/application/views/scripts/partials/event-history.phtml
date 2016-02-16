@@ -147,7 +147,9 @@ $history->limit($limit * $page);
                     <?php if ($icon) {
                         echo $this->icon($icon, null, $iconCssClass ? array('class' => $iconCssClass) : array());
                     } ?>
-                    <?= nl2br($this->createTicketLinks($this->escape($msg)), false) ?>
+                    <?= $this->nl2br($this->createTicketLinks($this->escapeComment($msg)))
+                    // TODO(ak): this allows only a[href] in messages, but plugin output allows more
+                    ?>
                 </p>
             </td>
         </tr>
