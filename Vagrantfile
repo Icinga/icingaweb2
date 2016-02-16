@@ -22,7 +22,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.provision :shell, :path => ".puppet/manifests/puppet.sh"
 
   config.vm.provider :parallels do |p, override|
-    override.vm.box = "parallels/centos-7.1"
+    override.vm.box = "parallels/centos-7.2"
 
     p.name = "Icinga Web 2 Development"
 
