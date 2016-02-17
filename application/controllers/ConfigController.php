@@ -45,25 +45,10 @@ class ConfigController extends Controller
             'url'   => 'config/resource',
             'baseTarget' => '_main'
         ));
-        return $tabs;
-    }
-
-    /**
-     * Create and return the tabs to display when showing authentication configuration
-     */
-    public function createAuthenticationTabs()
-    {
-        $tabs = $this->getTabs();
-        $tabs->add('userbackend', array(
-            'title' => $this->translate('Configure how users authenticate with and log into Icinga Web 2'),
-            'label' => $this->translate('Users'),
+        $tabs->add('authentication', array(
+            'title' => $this->translate('Configure the user and group backends'),
+            'label' => $this->translate('Authentication'),
             'url'   => 'config/userbackend',
-            'baseTarget' => '_main'
-        ));
-        $tabs->add('usergroupbackend', array(
-            'title' => $this->translate('Configure how users are associated with groups by Icinga Web 2'),
-            'label' => $this->translate('User Groups'),
-            'url'   => 'usergroupbackend/list',
             'baseTarget' => '_main'
         ));
         return $tabs;
@@ -194,7 +179,7 @@ class ConfigController extends Controller
         $form->handleRequest();
 
         $this->view->form = $form;
-        $this->createAuthenticationTabs()->activate('userbackend');
+        $this->createApplicationTabs()->activate('authentication');
         $this->render('userbackend/reorder');
     }
 
