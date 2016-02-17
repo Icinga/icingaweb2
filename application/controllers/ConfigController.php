@@ -169,16 +169,18 @@ class ConfigController extends Controller
     }
 
     /**
-     * Action for listing and reordering user backends
+     * Action for listing user and group backends
      */
     public function userbackendAction()
     {
         $this->assertPermission('config/application/userbackend');
+        $this->assertPermission('config/application/usergroupbackend');
         $form = new UserBackendReorderForm();
         $form->setIniConfig(Config::app('authentication'));
         $form->handleRequest();
 
         $this->view->form = $form;
+        $this->view->backendNames = Config::app('groups');
         $this->createApplicationTabs()->activate('authentication');
         $this->render('userbackend/reorder');
     }
