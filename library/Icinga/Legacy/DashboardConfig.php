@@ -77,6 +77,9 @@ class DashboardConfig extends Config
     public function saveIni($filePath = null, $fileMode = 0660)
     {
         parent::saveIni($filePath, $fileMode);
+        if ($filePath === null) {
+            $filePath = $this->configFile;
+        }
         foreach (static::listConfigFilesForUser($this->user) as $file) {
             if ($file !== $filePath) {
                 @unlink($file);
