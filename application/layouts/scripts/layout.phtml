@@ -54,6 +54,7 @@ $innerLayoutScript = $this->layout()->innerLayout . '.phtml';
 <?= $this->render($innerLayoutScript); ?>
 </div>
 <iframe id="fileupload-frame-target" name="fileupload-frame-target"></iframe>
+<a href="#" id="close-container-control-ghost" title="Close container" aria-label="<?= t('Close container') ?>" class="close-container-control"><i aria-hidden="true" class="icon-cancel"></i></a>
 <!--[if IE 8]>
 <script type="text/javascript" src="<?= $this->href($ie8jsfile) ?>"></script>
 <![endif]-->
