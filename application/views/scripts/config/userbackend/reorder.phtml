@@ -2,6 +2,7 @@
     <?= $tabs ?>
 </div>
 <div class="content">
+    <h1><?= $this->translate('User Backends') ?></h1>
     <?= $this->qlink(
         $this->translate('Create a New User Backend') ,
         'config/createuserbackend',
@@ -15,6 +16,7 @@
     ) ?>
     <?= $form ?>
 
+    <h1><?= $this->translate('User Group Backends') ?></h1>
     <?= $this->qlink(
         $this->translate('Create a New User Group Backend') ,
         'usergroupbackend/create',
