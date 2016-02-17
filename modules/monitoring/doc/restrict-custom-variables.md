@@ -5,7 +5,7 @@
 
 Imagine the following host custom variable structure.
 
-````
+```
 host.vars.
 |-- cmdb_name
 |-- cmdb_id
@@ -23,7 +23,7 @@ host.vars.
     `-- passwords.
         |-- mysql_password
         `-- ldap_password
-````
+```
 
 `host.vars.cmdb_name`
 
