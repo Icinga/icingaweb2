@@ -1289,7 +1289,7 @@ class Module
             $class = $implementation;
         }
 
-        Hook::register($name, $implementation, $class);
+        Hook::register($name, $class, $class);
         return $this;
     }
 
