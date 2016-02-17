@@ -89,12 +89,6 @@
             if ($searchField.length && $searchField.val().length) {
                 self.searchValue = $searchField.val();
             }
-
-            if (icinga.ui.isOneColLayout()) {
-                icinga.ui.disableCloseButtons();
-            } else {
-                icinga.ui.enableCloseButtons();
-            }
         },
 
         /**
