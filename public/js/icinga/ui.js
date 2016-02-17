@@ -269,8 +269,6 @@
             this.icinga.logger.debug('Switching to single col');
             $('#layout').removeClass('twocols');
             this.closeContainer($('#col2'));
-            this.disableCloseButtons();
-
             // one-column layouts never have any selection active
             this.icinga.behaviors.actiontable.clearAll();
         },
@@ -281,6 +279,7 @@
             $c.removeData('lastUpdate');
             $c.removeData('icingaModule');
             this.icinga.loader.stopPendingRequestsFor($c);
+            $c.trigger('close-column');
             $c.html('');
             this.fixControls();
         },
@@ -290,7 +289,6 @@
             this.icinga.logger.debug('Switching to double col');
             $('#layout').addClass('twocols');
             this.fixControls();
-            this.enableCloseButtons();
         },
 
         getAvailableColumnSpace: function () {
@@ -506,14 +504,6 @@
                     $checkbox.prop('checked', false).prop('indeterminate', true);
                     break;
             }
-        },
-
-        disableCloseButtons: function () {
-            $('a.close-container-control').hide();
-        },
-
-        enableCloseButtons: function () {
-            $('a.close-close-container-control').show();
         },
 
         /**
