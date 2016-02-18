@@ -114,7 +114,7 @@ The packages for RHEL/CentOS depend on other packages which are distributed as p
 #### <a id="package-repositories-wheezy-notes"></a> Debian wheezy Notes
 
 The packages for Debian wheezy depend on other packages which are distributed as part of the
-[wheezy-packports](http://backports.debian.org/) repository. Please make sure to enable this repository by following
+[wheezy-backports](http://backports.debian.org/) repository. Please make sure to enable this repository by following
 [these instructions](http://backports.debian.org/Instructions/).
 
 ### <a id="installing-from-package-example"></a> Installing Icinga Web 2
