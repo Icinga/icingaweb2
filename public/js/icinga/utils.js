@@ -371,6 +371,21 @@
             return encodeURIComponent(str).replace(/[()]/g, function(c) {
                 return '%' + c.charCodeAt(0).toString(16);
             });
+        },
+
+        escape: function (str) {
+            return String(str).replace(
+                /[&<>"']/gm,
+                function (c) {
+                    return {
+                        '&': '&amp;',
+                        '<': '&lt;',
+                        '>': '&gt;',
+                        '"': '&quot;',
+                        "'": '&#039;'
+                    }[c];
+                }
+            );
         }
     };
 
