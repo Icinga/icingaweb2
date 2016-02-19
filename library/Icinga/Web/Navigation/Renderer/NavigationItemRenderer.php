@@ -192,7 +192,7 @@ class NavigationItemRenderer
             $content = sprintf(
                 '<a%s href="%s"%s>%s</a>',
                 $this->view()->propertiesToString($item->getAttributes()),
-                $this->view()->escape($url),
+                $this->view()->escape($url->getAbsoluteUrl('&')),
                 $this->renderTargetAttribute(),
                 $label
             );
