@@ -386,6 +386,24 @@
                     }[c];
                 }
             );
+        },
+
+        /**
+         * Pad a string with another one
+         *
+         * @param   {String}    str         the string to pad
+         * @param   {String}    padding     the string to use for padding
+         * @param   {Number}    minLength   the minimum length of the result
+         *
+         * @returns {String}    the padded string
+         */
+        padString: function(str, padding, minLength) {
+            str = String(str);
+            padding = String(padding);
+            while (str.length < minLength) {
+                str = padding + str;
+            }
+            return str;
         }
     };
 
