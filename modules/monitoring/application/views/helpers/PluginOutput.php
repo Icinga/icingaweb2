@@ -33,7 +33,7 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
             return '';
         }
         $output = preg_replace('~<br[^>]*>~', "\n", $output);
-        if (strlen($output) > strlen(strip_tags($output))) {
+        if (preg_match('~<[^>]*["/\'][^>]*>~', $output)) {
             // HTML
             $output = preg_replace(
                 '~<table~',

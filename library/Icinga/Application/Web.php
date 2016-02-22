@@ -87,17 +87,17 @@ class Web extends EmbeddedWeb
             ->setupNotifications()
             ->setupRequest()
             ->setupResponse()
-            ->setupUserBackendFactory()
-            ->setupUser()
-            ->setupTimezone()
-            ->setupLogger()
-            ->setupInternationalization()
             ->setupZendMvc()
             ->setupModuleManager()
             ->loadSetupModuleIfNecessary()
             ->loadEnabledModules()
             ->setupRoute()
-            ->setupPagination();
+            ->setupPagination()
+            ->setupUserBackendFactory()
+            ->setupUser()
+            ->setupTimezone()
+            ->setupLogger()
+            ->setupInternationalization();
     }
 
     /**

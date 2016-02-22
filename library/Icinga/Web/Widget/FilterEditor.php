@@ -714,7 +714,7 @@ class FilterEditor extends AbstractWidget
         } else {
             $title = t('Modify this filter');
             if (! $this->filter->isEmpty()) {
-                $title .= ': ' . $this->filter;
+                $title .= ': ' . $this->view()->escape($this->filter);
             }
         }
         return $html
@@ -732,7 +732,7 @@ class FilterEditor extends AbstractWidget
     public function render()
     {
         if (! $this->preservedUrl()->getParam('modifyFilter')) {
-            return '<div class="filter">' . $this->renderSearch() . $this->shorten($this->filter, 50) . '</div>';
+            return '<div class="filter">' . $this->renderSearch() . $this->view()->escape($this->shorten($this->filter, 50)) . '</div>';
         }
         return  '<div class="filter">'
             . $this->renderSearch()

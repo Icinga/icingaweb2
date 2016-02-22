@@ -97,15 +97,15 @@
     & > .controls {
       z-index: 3;
 
-      > * {
-       margin-left: @gutter !important;
-       margin-right: @gutter !important;
+      padding-left: @gutter;
+      padding-right: @gutter;
+
+      > .tabs {
+        // Remove gutter for tabs
+        margin-left: -1 * @gutter;
+        margin-right: -1 * @gutter;
       }
     }
-
-    // 1em gutter of containers is maintained by padding of content and margin of every element in controls. We're not
-    // setting padding to .container because else horizontally scrolled .content may overflow .controls when scrolled
-    // vertically
   }
 }
 
