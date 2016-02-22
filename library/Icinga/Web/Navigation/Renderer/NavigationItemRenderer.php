@@ -218,7 +218,7 @@ class NavigationItemRenderer
     protected function renderTargetAttribute()
     {
         $target = $this->getItem()->getTarget();
-        if ($target === null) {
+        if ($target === null || $this->getItem()->getUrl()->getAbsoluteUrl() == '#') {
             return '';
         }
 
