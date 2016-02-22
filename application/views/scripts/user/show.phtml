@@ -21,7 +21,8 @@ use Icinga\Data\Selectable;
             ),
             array(
                 'class' => 'button-link',
-                'icon'  => 'edit'
+                'icon'  => 'edit',
+                'title' => sprintf($this->translate('Edit user %s'), $user->user_name)
             )
         );
     }
