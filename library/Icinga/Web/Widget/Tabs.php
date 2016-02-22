@@ -25,7 +25,6 @@ class Tabs extends AbstractWidget implements Countable
   {TABS}
   {DROPDOWN}
   {REFRESH}
-  {CLOSE}
 </ul>
 EOT;
 
@@ -364,20 +363,17 @@ EOT;
             $tabs = $this->renderTabs();
             $drop = $this->renderDropdownTabs();
         }
-        $close = $this->closeTab ? $this->renderCloseTab() : '';
         $refresh = $this->renderRefreshTab();
 
         return str_replace(
             array(
                 '{TABS}',
                 '{DROPDOWN}',
-                '{REFRESH}',
-                '{CLOSE}'
+                '{REFRESH}'
             ),
             array(
                 $tabs,
                 $drop,
-                $close,
                 $refresh
             ),
             $this->baseTpl
@@ -419,12 +415,14 @@ EOT;
     /**
      * Whether to hide all elements except of the close button
      *
+     * @deprecated Close-container control will always be rendered via JS
+     *
      * @param   bool    $value
-     * @return  Tabs            fluent interface
+     *
+     * @return  $this
      */
     public function showOnlyCloseButton($value = true)
     {
-        $this->closeButtonOnly = $value;
         return $this;
     }
 
