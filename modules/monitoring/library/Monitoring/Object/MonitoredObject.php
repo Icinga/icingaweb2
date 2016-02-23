@@ -463,7 +463,7 @@ abstract class MonitoredObject implements Filterable
     }
 
     /**
-     * Obfuscate custom variables recursively for $this->customvars.
+     * Obfuscate custom variables recursively
      *
      * @param stdClass|array    $customvars         The custom variables to obfuscate
      * @param string            $blacklistPattern   Which custom variables to obfuscate
