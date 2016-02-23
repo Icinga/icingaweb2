@@ -162,26 +162,23 @@ a:hover > .icon-cancel {
     }
   }
 
-  tr[href] {
+  tr[href].active {
+    background-color: @tr-active-color;
+    border-left-color: @icinga-blue;
+  }
+
+  tr[href]:hover {
     .transition(background 0.2s ease);
 
-    &.active {
-      background-color: @tr-active-color;
-      border-left-color: @icinga-blue;
-      transition: none;
-    }
-
-    &:hover {
-      background-color: @tr-hover-color;
-      cursor: pointer;
-    }
+    background-color: @tr-hover-color;
+    cursor: pointer;
   }
 
   caption {
     border-top: 1px solid @gray-light;
     caption-side: bottom;
-    text-align: right;
     font-style: italic;
+    text-align: right;
   }
 }
 

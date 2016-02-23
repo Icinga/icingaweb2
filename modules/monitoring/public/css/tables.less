@@ -201,16 +201,14 @@
   border-spacing: 0 1px;
   width: 100%;
 
-  tr[href] {
+  tr[href].active {
+    background-color: @tr-active-color;
+  }
+
+  tr[href]:hover {
     .transition(background 0.2s ease);
 
-    &.active {
-      background-color: @tr-active-color;
-    }
-
-    &:hover {
-      background-color: @tr-hover-color;
-      cursor: pointer;
-    }
+    background-color: @tr-hover-color;
+    cursor: pointer;
   }
 }
