@@ -27,7 +27,7 @@ class DashletForm extends Form
         if (! $this->getSubmitLabel()) {
             $this->setSubmitLabel($this->translate('Add To Dashboard'));
         }
-        $this->setAction(URL::fromRequest());
+        $this->setAction(Url::fromRequest());
     }
 
     /**
