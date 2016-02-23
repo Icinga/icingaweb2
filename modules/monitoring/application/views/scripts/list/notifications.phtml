@@ -70,9 +70,7 @@ if (! $this->compact): ?>
                     </div>
                 <?php endif ?>
                 </div>
-                <p class="overview-plugin-output">
-                    <?= $this->pluginOutput($this->ellipsis($notification->notification_output, 10000), true) ?>
-                </p>
+                <p class="overview-plugin-output"><?= $this->pluginOutput($this->ellipsis($notification->notification_output, 10000), true) ?></p>
             </td>
         </tr>
     <?php endforeach ?>
