@@ -40,30 +40,26 @@
         </td>
         <td class="icon-col text-right" data-base-target="_self">
 <?php if ($i > 0): ?>
-          <button type="submit" name="backend_newpos" class="link-button icon-only animated move-up" value="<?= sprintf(
-            '%s|%s',
-            $backendNames[$i],
-            $i - 1
+          <button type="submit" name="backend_newpos" class="link-button icon-only animated move-up" value="<?= $this->escape(
+            $backendNames[$i] . '|' . ($i - 1)
           ) ?>" title="<?= $this->translate(
             'Move up in authentication order'
-          ) ?>" aria-label="<?= sprintf(
+          ) ?>" aria-label="<?= $this->escape(sprintf(
             $this->translate('Move user backend %s upwards'),
             $backendNames[$i]
-          ) ?>">
+          )) ?>">
             <?= $this->icon('up-small') ?>
           </button>
 <?php endif ?>
 <?php if ($i + 1 < count($backendNames)): ?>
-          <button type="submit" name="backend_newpos" class="link-button icon-only animated move-down" value="<?= sprintf(
-            '%s|%s',
-            $backendNames[$i],
-            $i + 1
+          <button type="submit" name="backend_newpos" class="link-button icon-only animated move-down" value="<?= $this->escape(
+            $backendNames[$i] . '|' . ($i + 1)
           ) ?>" title="<?= $this->translate(
             'Move down in authentication order'
-          ) ?>" aria-label="<?= sprintf(
+          ) ?>" aria-label="<?= $this->escape(sprintf(
             $this->translate('Move user backend %s downwards'),
             $backendNames[$i]
-          ) ?>">
+          )) ?>">
             <?= $this->icon('down-small') ?>
           </button>
 <?php endif ?>
