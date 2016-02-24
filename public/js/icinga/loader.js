@@ -706,7 +706,7 @@
                 c += ' persist';
             }
             var $notice = $(
-                '<li class="' + c + '">' + message + '</li>'
+                '<li class="' + c + '">' + this.icinga.utils.escape(message) + '</li>'
             ).appendTo($('#notifications'));
 
             this.icinga.ui.fixControls();

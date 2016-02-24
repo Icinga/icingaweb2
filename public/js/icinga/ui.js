@@ -355,7 +355,7 @@
                 if (loading === '') {
                     loading = '<br />Loading:<br />';
                 }
-                loading += el + ' => ' + req.url;
+                loading += el + ' => ' + encodeURI(req.url);
             });
 
             $('#responsive-debug').html(
