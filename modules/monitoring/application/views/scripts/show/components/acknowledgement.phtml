@@ -44,7 +44,7 @@ $acknowledgement = $object->acknowledgement;
                 } ?>
             </dt>
             <dd>
-                <?= $this->nl2br($this->createTicketLinks($this->escape($acknowledgement->getComment()))) ?>
+                <?= $this->nl2br($this->createTicketLinks($this->escapeComment($acknowledgement->getComment()))) ?>
             </dd>
         </dl>
         <?php elseif (isset($removeAckForm)): ?>
