@@ -5,6 +5,7 @@ namespace Icinga\Cli;
 
 use Icinga\Application\ApplicationBootstrap as App;
 use Icinga\Exception\IcingaException;
+use Icinga\Exception\NotReadableError;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Cli\Params;
 use Icinga\Cli\Screen;
@@ -421,10 +422,14 @@ class Loader
     {
         if ($this->modules === null) {
             $this->modules = array();
-            $this->modules = array_unique(array_merge(
-                $this->app->getModuleManager()->listEnabledModules(),
-                $this->app->getModuleManager()->listLoadedModules()
-            ));
+            try {
+                $this->modules = array_unique(array_merge(
+                    $this->app->getModuleManager()->listEnabledModules(),
+                    $this->app->getModuleManager()->listLoadedModules()
+                ));
+            } catch (NotReadableError $e) {
+                $this->fail($e->getMessage());
+            }
         }
         return $this->modules;
     }
