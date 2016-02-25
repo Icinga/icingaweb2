@@ -3,7 +3,6 @@
 
 use Icinga\Util\Translator;
 
-
 /**
  * No-op translate
  *
@@ -19,6 +18,11 @@ function N_($messageId)
     return $messageId;
 }
 
+// Workaround for test issues, this is required unless our tests are able to
+// accomplish "real" bootstrapping
+if (function_exists('t')) {
+    return;
+}
 
 if (extension_loaded('gettext')) {
 
