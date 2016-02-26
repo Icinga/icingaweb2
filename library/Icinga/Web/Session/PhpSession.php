@@ -5,6 +5,7 @@ namespace Icinga\Web\Session;
 
 use Icinga\Application\Logger;
 use Icinga\Exception\ConfigurationError;
+use Icinga\Web\Cookie;
 
 /**
  * Session implementation in PHP
@@ -102,11 +103,21 @@ class PhpSession extends Session
             ini_set('session.cache_limiter', null);
         }
 
+        $cookie = new Cookie('bogus');
+        session_set_cookie_params(
+            0,
+            $cookie->getPath(),
+            $cookie->getDomain(),
+            $cookie->isSecure(),
+            true
+        );
+
         session_start();
 
         if ($this->hasBeenTouched) {
             ini_set('session.use_cookies', true);
             ini_set('session.use_only_cookies', true);
+            /** @noinspection PhpUndefinedVariableInspection */
             ini_set('session.cache_limiter', $cacheLimiter);
         }
     }
