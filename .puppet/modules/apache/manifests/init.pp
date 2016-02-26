@@ -35,6 +35,11 @@ class apache {
     require => Package['apache'],
   }
 
+  package { 'mod_ssl':
+    ensure => latest,
+    notify => Service[$apache],
+  }
+
   @user { $user:
     alias => 'apache',
   }
