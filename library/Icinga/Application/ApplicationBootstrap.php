@@ -521,25 +521,6 @@ abstract class ApplicationBootstrap
     }
 
     /**
-     * Set up the resource factory
-     *
-     * @return $this
-     */
-    protected function setupResourceFactory()
-    {
-        try {
-            $config = Config::app('resources');
-            ResourceFactory::setConfig($config);
-        } catch (NotReadableError $e) {
-            Logger::error(
-                new IcingaException('Cannot load resource configuration. An exception was thrown:', $e)
-            );
-        }
-
-        return $this;
-    }
-
-    /**
      * Set up the user backend factory
      *
      * @return  $this

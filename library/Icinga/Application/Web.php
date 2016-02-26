@@ -82,7 +82,6 @@ class Web extends EmbeddedWeb
             ->setupLogging()
             ->setupErrorHandling()
             ->loadConfig()
-            ->setupResourceFactory()
             ->setupSession()
             ->setupNotifications()
             ->setupRequest()
