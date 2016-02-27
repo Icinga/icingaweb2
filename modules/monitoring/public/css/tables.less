@@ -71,7 +71,20 @@
   font-size: @font-size-small;
 }
 
-// Plugin output in overviews
+// Plugin output in detail views
+.plugin-output,
+// Plugin output in overvies
+.overview-plugin-output {
+  -webkit-hyphens: auto;
+     -moz-hyphens: auto;
+      -ms-hyphens: auto;
+          hyphens: auto;
+
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
+
+// Plugin output in overvies
 .overview-plugin-output {
   color: @text-color-light;
   font-family: @font-family-fixed;
