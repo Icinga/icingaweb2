@@ -75,6 +75,7 @@ class ServicesController extends Controller
     protected function handleCommandForm(ObjectsCommandForm $form)
     {
         $form
+            ->setBackend($this->backend)
             ->setObjects($this->serviceList)
             ->setRedirectUrl(Url::fromPath('monitoring/services/show')->setParams($this->params))
             ->handleRequest();
@@ -209,7 +210,6 @@ class ServicesController extends Controller
         $this->assertPermission('monitoring/command/process-check-result');
 
         $form = new ProcessCheckResultCommandForm();
-        $form->setBackend($this->backend);
         $form->setTitle($this->translate('Submit Passive Service Check Results'));
         $this->handleCommandForm($form);
     }

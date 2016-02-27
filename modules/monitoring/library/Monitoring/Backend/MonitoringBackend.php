@@ -341,4 +341,22 @@ class MonitoringBackend implements Selectable, Queryable, ConnectionInterface
     {
         return $this->select()->from('programstatus', array('program_version'))->fetchOne();
     }
+
+    /**
+     * Get whether the backend is Icinga 2
+     *
+     * @param   string  $programVersion
+     *
+     * @return  bool
+     */
+    public function isIcinga2($programVersion = null)
+    {
+        if ($programVersion === null) {
+            $programVersion = $this->select()->from('programstatus', array('program_version'))->fetchOne();
+        }
+        return (bool) preg_match(
+            '/^[vr]2\.\d+\.\d+.*$/',
+            $programVersion
+        );
+    }
 }

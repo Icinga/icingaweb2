@@ -122,6 +122,7 @@ abstract class MonitoredObjectController extends Controller
     protected function handleCommandForm(ObjectsCommandForm $form)
     {
         $form
+            ->setBackend($this->backend)
             ->setObjects($this->object)
             ->setRedirectUrl(Url::fromPath($this->commandRedirectUrl)->setParams($this->params))
             ->handleRequest();

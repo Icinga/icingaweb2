@@ -151,7 +151,6 @@ class HostController extends MonitoredObjectController
         $this->assertPermission('monitoring/command/downtime/schedule');
 
         $form = new ScheduleHostDowntimeCommandForm();
-        $form->setBackend($this->backend);
         $form->setTitle($this->translate('Schedule Host Downtime'));
         $this->handleCommandForm($form);
     }
@@ -164,7 +163,6 @@ class HostController extends MonitoredObjectController
         $this->assertPermission('monitoring/command/process-check-result');
 
         $form = new ProcessCheckResultCommandForm();
-        $form->setBackend($this->backend);
         $form->setTitle($this->translate('Submit Passive Host Check Result'));
         $this->handleCommandForm($form);
     }

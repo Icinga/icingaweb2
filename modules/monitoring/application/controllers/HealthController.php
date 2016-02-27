@@ -93,6 +93,7 @@ class HealthController extends Controller
         $this->view->programStatus = $programStatus;
         $toggleFeaturesForm = new ToggleInstanceFeaturesCommandForm();
         $toggleFeaturesForm
+            ->setBackend($this->backend)
             ->setStatus($programStatus)
             ->load($programStatus)
             ->handleRequest();

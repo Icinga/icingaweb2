@@ -69,6 +69,7 @@ class HostsController extends Controller
     protected function handleCommandForm(ObjectsCommandForm $form)
     {
         $form
+            ->setBackend($this->backend)
             ->setObjects($this->hostList)
             ->setRedirectUrl(Url::fromPath('monitoring/hosts/show')->setParams($this->params))
             ->handleRequest();
@@ -194,7 +195,6 @@ class HostsController extends Controller
         $this->assertPermission('monitoring/command/downtime/schedule');
 
         $form = new ScheduleHostDowntimeCommandForm();
-        $form->setBackend($this->backend);
         $form->setTitle($this->translate('Schedule Host Downtimes'));
         $this->handleCommandForm($form);
     }
@@ -207,7 +207,6 @@ class HostsController extends Controller
         $this->assertPermission('monitoring/command/process-check-result');
 
         $form = new ProcessCheckResultCommandForm();
-        $form->setBackend($this->backend);
         $form->setTitle($this->translate('Submit Passive Host Check Results'));
         $this->handleCommandForm($form);
     }

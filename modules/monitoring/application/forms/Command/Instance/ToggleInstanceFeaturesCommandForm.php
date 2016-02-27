@@ -138,7 +138,7 @@ class ToggleInstanceFeaturesCommandForm extends CommandForm
             )
         );
 
-        if (! preg_match('~^v2\.\d+\.\d+.*$~', $this->status->program_version)) {
+        if (! $this->getBackend()->isIcinga2($this->status->program_version)) {
             $this->addElement(
                 'checkbox',
                 ToggleInstanceFeatureCommand::FEATURE_HOST_OBSESSING,
