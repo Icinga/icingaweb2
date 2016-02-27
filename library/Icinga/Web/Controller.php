@@ -209,6 +209,7 @@ class Controller extends ModuleActionController
         );
 
         $editor = Widget::create('filterEditor');
+        /** @var \Icinga\Web\Widget\FilterEditor $editor */
         call_user_func_array(
             array($editor, 'preserveParams'),
             array_merge($defaultPreservedParams, $preserveParams ?: array())
@@ -221,9 +222,11 @@ class Controller extends ModuleActionController
             ->setSearchColumns($searchColumns)
             ->handleRequest($this->getRequest());
 
-        if (! $this->view->compact) {
-            $this->view->filterEditor = $editor;
+        if ($this->view->compact) {
+            $editor->setVisible(false);
         }
+
+        $this->view->filterEditor = $editor;
 
         return $this;
     }
