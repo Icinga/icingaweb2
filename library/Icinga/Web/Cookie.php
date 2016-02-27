@@ -96,6 +96,9 @@ class Cookie
      */
     public function getDomain()
     {
+        if ($this->domain === null) {
+            $this->domain = Config::app()->get('cookie', 'domain');
+        }
         return $this->domain;
     }
 
