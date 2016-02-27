@@ -185,9 +185,9 @@ class Cookie
             if ($path === null) {
                 // The following call could be used as default for ConfigObject::get(), but we prevent unnecessary
                 // function calls here, if the path is set in the config
-                $path = Icinga::app()->getRequest()->getBaseUrl();
+                $path = Icinga::app()->getRequest()->getBaseUrl() . '/'; // Zend has rtrim($baseUrl, '/')
             }
-            return $path;
+            $this->path = $path;
         }
         return $this->path;
     }
@@ -222,7 +222,7 @@ class Cookie
                 // function calls here, if the secure flag is set in the config
                 $secure = Icinga::app()->getRequest()->isSecure();
             }
-            return $secure;
+            $this->secure = $secure;
         }
         return $this->secure;
     }
