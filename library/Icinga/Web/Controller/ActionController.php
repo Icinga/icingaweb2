@@ -459,15 +459,13 @@ class ActionController extends Zend_Controller_Action
         $layout->innerLayout = $this->innerLayout;
 
         if ($user = $req->getUser()) {
-            // Cast preference app.show_benchmark to bool because preferences loaded from a preferences storage are
-            // always strings
-            if ((bool) $user->getPreferences()->getValue('icingaweb', 'show_benchmark', false) === true) {
-                if (!$this->_helper->viewRenderer->getNoRender()) {
+            if ((bool) $user->getPreferences()->getValue('icingaweb', 'show_benchmark', false)) {
+                if ($this->_helper->layout()->isEnabled()) {
                     $layout->benchmark = $this->renderBenchmark();
                 }
             }
 
-            if ((bool) $user->getPreferences()->getValue('icingaweb', 'auto_refresh', true) === false) {
+            if (! (bool) $user->getPreferences()->getValue('icingaweb', 'auto_refresh', true)) {
                 $this->disableAutoRefresh();
             }
         }
