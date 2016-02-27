@@ -321,13 +321,7 @@ class Web extends EmbeddedWeb
                             'priority'      => 810
                         ),
                         'authentication' => array(
-                            'label'     => t('Authentication'),
-                            'url'       => 'config/userbackend',
-                            'permission'    => 'config/application/*',
-                            'priority'      => 820
-                        ),
-                        'authorization' => array(
-                            'label'         => t('Authorization'),
+                            'label'         => t('Authentication'),
                             'permission'    => 'config/authentication/*',
                             'priority'      => 830,
                             'url'           => 'role/list'
