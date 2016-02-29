@@ -89,7 +89,11 @@ class HostStatus extends DataView
         ) {
             return array('host', 'host_address', 'host_address6');
         } else {
-            return array('host', 'host_display_name');
+            if ($this->connection->isIcinga2()) {
+                return array('host', 'host_display_name');
+            } else {
+                return array('host', 'host_display_name', 'host_alias');
+            }
         }
     }
 
