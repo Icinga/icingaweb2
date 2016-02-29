@@ -48,6 +48,7 @@ class Monitoring_ActionsController extends Controller
         $form = new ScheduleHostDowntimeCommandForm();
         $form
             ->setIsApiTarget(true)
+            ->setBackend($this->backend)
             ->setObjects($hostList->fetch())
             ->handleRequest($this->getRequest());
     }
@@ -96,6 +97,7 @@ class Monitoring_ActionsController extends Controller
         $form = new ScheduleServiceDowntimeCommandForm();
         $form
             ->setIsApiTarget(true)
+            ->setBackend($this->backend)
             ->setObjects($serviceList->fetch())
             ->handleRequest($this->getRequest());
     }
