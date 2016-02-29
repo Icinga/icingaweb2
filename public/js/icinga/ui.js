@@ -99,12 +99,18 @@
             $('link').each(function() {
                 var $oldLink = $(this);
                 if ($oldLink.hasAttr('type') && $oldLink.attr('type').indexOf('css') > -1) {
+                    var base = location.protocol + '//' + location.host;
+                    if (location.port) {
+                        base += location.port;
+                    }
+                    var url = icinga.utils.addUrlParams(
+                        $(this).attr('href'),
+                        { id: new Date().getTime() }
+                    );
+
                     var $newLink = $oldLink.clone().attr(
                         'href',
-                        icinga.utils.addUrlParams(
-                            $(this).attr('href'),
-                            { id: new Date().getTime() }
-                        )
+                        base + '/' + url.replace(/^\//, '')
                     ).on('load', function() {
                         icinga.ui.fixControls();
                         $oldLink.remove();
