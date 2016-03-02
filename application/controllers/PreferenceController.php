@@ -19,6 +19,16 @@ use Icinga\Web\Widget\Tab;
 class PreferenceController extends BasePreferenceController
 {
     /**
+     * {@inheritdoc}
+     */
+    public function init()
+    {
+        parent::init();
+
+        $this->assertPermission('user/preference');
+    }
+
+    /**
      * Create tabs for this preference controller
      *
      * @return  array

@@ -457,6 +457,12 @@ class User
             return true;
         }
 
+        // the user/* context is available for all default users
+        // TODO: verify security! (admin?)
+        if (!$this->isGuest() and strpos($requiredPermission, 'user/') === 0) {
+            return true;
+        }
+
         $requiredWildcard = strpos($requiredPermission, '*');
         foreach ($this->permissions as $grantedPermission) {
             if ($requiredWildcard !== false) {

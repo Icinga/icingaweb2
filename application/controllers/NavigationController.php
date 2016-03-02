@@ -35,6 +35,8 @@ class NavigationController extends Controller
     {
         parent::init();
         $this->itemTypeConfig = Navigation::getItemTypeConfiguration();
+
+        $this->assertPermission('user/navigation');
     }
 
     /**
