@@ -24,6 +24,12 @@ class AuthenticationController extends Controller
      */
     protected $innerLayout = 'inline';
 
+    public function init() {
+        parent::init();
+
+        if ($this->Auth()->canLogin() === false)
+            $this->redirectNow('/');
+    }
     /**
      * Log into the application
      */
@@ -34,7 +40,7 @@ class AuthenticationController extends Controller
             $this->redirectNow(Url::fromPath('setup'));
         }
         $form = new LoginForm();
-        if ($this->Auth()->isAuthenticated()) {
+        if ($this->Auth()->isAuthenticated() && !$this->Auth()->getUser()->isGuest()) {
             $this->redirectNow($form->getRedirectUrl());
         }
         if (! $requiresSetup) {
@@ -69,6 +75,9 @@ class AuthenticationController extends Controller
         $auth->removeAuthorization();
         if ($isExternalUser) {
             $this->getResponse()->setHttpResponseCode(401);
+        } elseif ($auth->isGuestLoginAllowed()) {
+            // redirect to guest view
+            $this->redirectNow('/');
         } else {
             $this->redirectToLogin();
         }

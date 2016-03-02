@@ -105,6 +105,8 @@ class User
      */
     protected $isHttpUser = false;
 
+    protected $guest = false;
+
     /**
      * Creates a user object given the provided information
      *
@@ -512,5 +514,21 @@ class User
         }
 
         return $navigation;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isGuest()
+    {
+        return $this->guest;
+    }
+
+    /**
+     * @param boolean $guest
+     */
+    public function setGuest($guest)
+    {
+        $this->guest = $guest;
     }
 }

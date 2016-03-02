@@ -339,27 +339,43 @@ class Web extends EmbeddedWeb
                             'priority'      => 890
                         )
                     )
-                ),
-                'user' => array(
-                    'cssClass'  => 'user-nav-item',
-                    'label'     => $this->user->getUsername(),
-                    'icon'      => 'user',
-                    'priority'  => 900,
-                    'children'  => array(
-                        'preferences' => array(
-                            'label'     => t('Preferences'),
-                            'priority'  => 100,
-                            'url'       => 'preference'
-                        ),
-                        'logout' => array(
-                            'label'         => t('Logout'),
-                            'priority'      => 200,
-                            'attributes'    => array('target' => '_self'),
-                            'url'           => 'authentication/logout'
-                        )
-                    )
                 )
             );
+
+            if ($this->user->isGuest()) {
+                // logged in guest can log in as a user
+                if (Auth::getInstance()->canLogin()) {
+                    $menu['login'] = array(
+                        'cssClass' => 'user-nav-item',
+                        'label' => t('Login'),
+                        'icon' => 'user',
+                        'priority' => 900,
+                        'attributes' => array('target' => '_self'),
+                        'url' => 'authentication/login'
+                    );
+                }
+            }
+            else {
+                $menu['user'] = array(
+                    'cssClass' => 'user-nav-item',
+                    'label' => $this->user->getUsername(),
+                    'icon' => 'user',
+                    'priority' => 900,
+                    'children' => array(
+                        'preferences' => array(
+                            'label' => t('Preferences'),
+                            'priority' => 100,
+                            'url' => 'preference'
+                        ),
+                        'logout' => array(
+                            'label' => t('Logout'),
+                            'priority' => 200,
+                            'attributes' => array('target' => '_self'),
+                            'url' => 'authentication/logout'
+                        )
+                    )
+                );
+            }
 
             if (Logger::writesToFile()) {
                 $menu['system']['children']['application_log'] = array(

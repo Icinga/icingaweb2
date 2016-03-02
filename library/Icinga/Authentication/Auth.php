@@ -47,12 +47,18 @@ class Auth
      */
     private $user;
 
+    /**
+     * @var Config
+     */
+    private $config;
+
 
     /**
      * @see getInstance()
      */
     private function __construct()
     {
+        $this->config = Config::app();
     }
 
     /**
@@ -91,17 +97,27 @@ class Auth
             $this->authenticateFromSession();
         }
         if ($this->user === null && ! $this->authExternal()) {
-            return $this->authHttp();
+            $this->authHttp();
         }
-        return true;
+        // guest mode
+        if ($this->user === null && $this->isGuestLoginAllowed()) {
+            $this->user = new User('_guest_');
+            $this->user->setGuest(true);
+        }
+        if ($this->user !== null) {
+            return true;
+        }
+        else return false;
     }
 
     public function setAuthenticated(User $user, $persist = true)
     {
         $username = $user->getUsername();
+        // TODO: migrate to $this->config
         try {
             $config = Config::app();
         } catch (NotReadableError $e) {
+            // TODO: wrong error?
             Logger::error(
                 new IcingaException(
                     'Cannot load preferences for user "%s". An exception was thrown: %s',
@@ -247,7 +263,9 @@ class Auth
             $username = getenv($field); // usually REMOTE_USER here
             if ( !$username || $username !== $originUsername) {
                 $this->removeAuthorization();
+                return false;
             }
+            else return true;
         }
     }
 
@@ -364,5 +382,20 @@ class Auth
     {
         $this->user = null;
         Session::getSession()->purge();
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isGuestLoginAllowed()
+    {
+        return $this->config->get('global', 'guest_allowed', false) === '1';
+    }
+
+    public function canLogin()
+    {
+        if (!$this->isGuestLoginAllowed()) return true;
+        return $this->config->get('global', 'guest_only', false) !== '1';
+
     }
 }
