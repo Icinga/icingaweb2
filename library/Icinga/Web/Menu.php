@@ -260,8 +260,9 @@ class Menu implements RecursiveIterator
             ));
             if (Logger::writesToFile()) {
                 $section->add(t('Application Log'), array(
-                    'url'      => 'list/applicationlog',
-                    'priority' => 710
+                    'url'        => 'list/applicationlog',
+                    'permission' => 'application/log',
+                    'priority'   => 710
                 ));
             }
 

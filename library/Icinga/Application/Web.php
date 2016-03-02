@@ -363,9 +363,10 @@ class Web extends EmbeddedWeb
 
             if (Logger::writesToFile()) {
                 $menu['system']['children']['application_log'] = array(
-                    'label'     => t('Application Log'),
-                    'url'       => 'list/applicationlog',
-                    'priority'  => 710
+                    'label'      => t('Application Log'),
+                    'url'        => 'list/applicationlog',
+                    'permission' => 'application/log',
+                    'priority'   => 710
                 );
             }
         } else {

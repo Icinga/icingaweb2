@@ -39,6 +39,8 @@ class ListController extends Controller
      */
     public function applicationlogAction()
     {
+        $this->assertPermission('application/log');
+
         if (! Logger::writesToFile()) {
             $this->httpNotFound('Page not found');
         }
