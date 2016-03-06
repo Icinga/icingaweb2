@@ -138,6 +138,53 @@ class DbResourceForm extends Form
                 'description'       => $this->translate('The password to use for authentication')
             )
         );
+        if ($offerMysql) {
+            $this->addElement(
+                'text',
+                'ssl_key',
+                array(
+                    'required'          => false,
+                    'label'             => $this->translate('SSL Key'),
+                    'description'       => $this->translate('The SSL client key file path')
+                )
+            );
+            $this->addElement(
+                'text',
+                'ssl_cert',
+                array(
+                    'required'          => false,
+                    'label'             => $this->translate('SSL Certificate'),
+                    'description'       => $this->translate('The SSL certificate file path')
+                )
+            );
+            $this->addElement(
+                'text',
+                'ssl_ca',
+                array(
+                    'required'          => false,
+                    'label'             => $this->translate('SSL CA'),
+                    'description'       => $this->translate('The SSL Certificate Authority certificate file path')
+                )
+            );
+            $this->addElement(
+                'text',
+                'ssl_capath',
+                array(
+                    'required'          => false,
+                    'label'             => $this->translate('SSL CA Path'),
+                    'description'       => $this->translate('The SSL trusted SSL CA certificates in PEM format directory path')
+                )
+            );
+            $this->addElement(
+                'text',
+                'ssl_cipher',
+                array(
+                    'required'          => false,
+                    'label'             => $this->translate('SSL Cipher'),
+                    'description'       => $this->translate('The SSL list of permissible ciphers')
+                )
+            );
+        }
         $this->addElement(
             'text',
             'charset',
