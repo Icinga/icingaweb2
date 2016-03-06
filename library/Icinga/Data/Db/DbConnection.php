@@ -143,6 +143,30 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
                 break;
             case 'mysql':
                 $adapter = 'Pdo_Mysql';
+                // If any SSL options are set, add them to driver_options
+                if ($this->config->ssl_key
+                    || $this->config->ssl_cert
+                    || $this->config->ssl_ca
+                    || $this->config->ssl_capath
+                    || $this->config->ssl_cipher
+                ) {
+                    # The presence of these keys as empty strings or null cause non-ssl connections to fail
+                    if ($this->config->ssl_key) {
+                        $adapterParamaters['driver_options'][PDO::MYSQL_ATTR_SSL_KEY] = $this->config->ssl_key;
+                    }
+                    if ($this->config->ssl_cert) {
+                        $adapterParamaters['driver_options'][PDO::MYSQL_ATTR_SSL_CERT] = $this->config->ssl_cert;
+                    }
+                    if ($this->config->ssl_ca) {
+                        $adapterParamaters['driver_options'][PDO::MYSQL_ATTR_SSL_CA] = $this->config->ssl_ca;
+                    }
+                    if ($this->config->ssl_capath) {
+                        $adapterParamaters['driver_options'][PDO::MYSQL_ATTR_SSL_CAPATH] = $this->config->ssl_capath;
+                    }
+                    if ($this->config->ssl_cipher) {
+                        $adapterParamaters['driver_options'][PDO::MYSQL_ATTR_SSL_CIPHER] = $this->config->ssl_cipher;
+                    }
+                }
                 /*
                  * Set MySQL server SQL modes to behave as closely as possible to Oracle and PostgreSQL. Note that the
                  * ONLY_FULL_GROUP_BY mode is left on purpose because MySQL requires you to specify all non-aggregate
@@ -490,11 +514,24 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
                 case 'mysql':
                     $rows = $this->dbAdapter->query(
                         'SHOW VARIABLES WHERE variable_name ' .
-                        'IN (\'version\', \'protocol_version\', \'version_compile_os\');'
+                        'IN (\'version\', \'protocol_version\', \'version_compile_os\', \'have_ssl\');'
                     )->fetchAll();
                     $sqlinsp = new Inspection('MySQL');
+                    $have_ssl = false;
                     foreach ($rows as $row) {
                         $sqlinsp->write($row->variable_name . ': ' . $row->value);
+                        if ($row->variable_name === 'have_ssl' && $row->value === 'YES') {
+                            $have_ssl = true;
+                        }
+                    }
+                    if ($have_ssl) {
+                        $ssl_rows = $this->dbAdapter->query(
+                            'SHOW STATUS WHERE variable_name ' .
+                            'IN (\'Ssl_Cipher\');'
+                        )->fetchAll();
+                        foreach ($ssl_rows as $ssl_row) {
+                            $sqlinsp->write($ssl_row->variable_name . ': ' . $ssl_row->value);
+                        }
                     }
                     $insp->write($sqlinsp);
                     break;
