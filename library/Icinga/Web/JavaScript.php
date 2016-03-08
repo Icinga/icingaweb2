@@ -31,7 +31,8 @@ class JavaScript
         'js/icinga/behavior/navigation.js',
         'js/icinga/behavior/form.js',
         'js/icinga/behavior/actiontable.js',
-        'js/icinga/behavior/selectable.js'
+        'js/icinga/behavior/selectable.js',
+        'js/icinga/behavior/collapsible-container.js'
     );
 
     protected static $vendorFiles = array(
