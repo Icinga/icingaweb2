@@ -215,3 +215,47 @@ a:hover > .icon-cancel {
   height: 100%;
   vertical-align: middle;
 }
+
+.collapsible-container {
+    overflow: hidden;
+    position: relative;
+    padding-bottom: 24px;
+
+    &:after {
+        content: "";
+        height: 48px;
+        width: 100%;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        background: white;
+        background: -webkit-linear-gradient(top,       rgba(255,255,255,0) 0, #ffffff 90%);
+        background:    -moz-linear-gradient(top,       rgba(255,255,255,0) 0, #ffffff 90%);
+        background:     -ms-linear-gradient(top,       rgba(255,255,255,0) 0, #ffffff 90%);
+        background:         linear-gradient(to bottom, rgba(255,255,255,0) 0, #ffffff 90%);
+
+    }
+
+    .collapsible-control {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        padding: 0 1em;
+        border: none;
+        background: none;
+        -webkit-appearance: none;
+        -ms-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        color: @icinga-blue;
+        z-index: 2;
+    }
+
+    .collapsible-control:hover {
+        text-decoration: underline;
+    }
+}
+
+#collapsible-control-ghost {
+    display: none;
+}
