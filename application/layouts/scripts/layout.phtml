@@ -57,6 +57,7 @@ $innerLayoutScript = $this->layout()->innerLayout . '.phtml';
 <?= $this->render($innerLayoutScript); ?>
 </div>
 <iframe id="fileupload-frame-target" name="fileupload-frame-target"></iframe>
+<button id="collapsible-control-ghost" title="Close container" aria-label="<?= t('Close container') ?>" data-labels='{ "def": "<?= t("Show less") ?>", "collapsed": "<?= t("Show more") ?>"}' class="collapsible-control">Test</button>
 <!--[if IE 8]>
 <script type="text/javascript" src="<?= $this->href($ie8jsfile) ?>"></script>
 <![endif]-->
