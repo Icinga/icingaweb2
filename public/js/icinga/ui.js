@@ -587,7 +587,7 @@
                 });
 
                 if ($layout.hasClass('minimal-layout')) {
-                    if (! this.mobileMenu) {
+                    if (! this.mobileMenu && $sidebar.length) {
                         $header.css({
                             top: $sidebar.outerHeight() + 'px'
                         });
@@ -599,19 +599,18 @@
                             zIndex: 2
                         });
                         $sidebar
+                            .on(
+                                'click',
+                                this.toggleMobileMenu
+                            )
+                            .prepend(
+                                $('<div id="mobile-menu-toggle"><button><i class="icon-menu"></i></button></div>')
+                            )
                             .css({
-                                paddingBottom: 32,
+                                paddingBottom: $('#mobile-menu-toggle').height(),
                                 top: 0,
                                 zIndex: 3
-                            })
-                            .on('click', this.toggleMobileMenu)
-                            .prepend(
-                                $('<i id="mobile-menu-toggle" class="icon-menu"></i>').css({
-                                    cursor: 'pointer',
-                                    display: 'block',
-                                    height: '32px'
-                                })
-                            );
+                            });
                         $search.on('keypress', this.closeMobileMenu);
 
                         this.mobileMenu = true;
