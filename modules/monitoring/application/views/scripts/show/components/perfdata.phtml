@@ -1,4 +1,6 @@
 <?php if ($object->perfdata): ?>
 <h2><?= $this->translate('Performance data') ?></h2>
+<div class="collapsible-container perf-data">
 <?= $this->perfdata($object->perfdata) ?>
+</div>
 <?php endif ?>
