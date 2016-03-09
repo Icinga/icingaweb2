@@ -11,41 +11,76 @@
      * @param {object} e Event
      */
     function onRendered(e) {
-        if ( $(this).find(".collapsible-container").length > 0 ) {
-            var $collapsibleContainer = $(this).find(".collapsible-container");
-            var $this = $(this);
-            var $b = null;
-            if ($collapsibleContainer.children('.collapsible-control').length < 1 ) {
-                $b = $('#collapsible-control-ghost').clone().removeAttr("id");
-                $collapsibleContainer.append($b);
-            } else {
-                $b = $collapsibleContainer.children('.collapsible-control');
+        var _this = e.data.self;
+        var $containers = $('.collapsible-container');
+        $containers.each(function() {
+            var $container = $(this);
+            if ($container.children('.collapsible-control').length < 1 ) {
+                $container.append($('#collapsible-control-ghost').clone().removeAttr('id'));
             }
-            updateCollapseState($this, $collapsibleContainer, $b);
-        }
+            updateCollapseState($container, _this);
+        });
     }
 
     /**
      * Render collapsible container state
      *
-     * @param {jQuery} $container               The column container
-     * @param {jQuery} $collapsibleContainer    The collapsible container
-     * @param {jQuery} $button                  The toggle button
+     * @param {jQuery} $container   The collapsible container
+     * @param {object} listener     The EventListener object
      */
-    function updateCollapseState($container, $collapsibleContainer, $button) {
-        if ($container.hasClass("custom-vars-collapsed")) {
-            $collapsibleContainer.height("auto");
-            $button.text($button.data("labels").def);
-        } else {
-            $collapsibleContainer.height(40);
-            $button.text($button.data("labels").collapsed);
+    function updateCollapseState($container, listener) {
+        var classes = listener.collapsedClasses;
+        if ($container.hasClass('perf-data')) {
+            if (classes.indexOf('perf-data') > -1) {
+                var $button = $container.find('.collapsible-control');
+                $container.addClass('collapsed');
+                $container.find('.collapsible-control').text($button.data('labels').collapsed);
+            } else {
+                var $button = $container.find('.collapsible-control');
+                $container.removeClass('collapsed');
+                $container.find('.collapsible-control').text($button.data('labels').def);
+            }
+        }
+        if ($container.hasClass('custom-vars')) {
+            if (classes.indexOf('custom-vars') > -1) {
+                var $button = $container.find('.collapsible-control');
+                $container.addClass('collapsed');
+                $container.find('.collapsible-control').text($button.data('labels').collapsed);
+            } else {
+                var $button = $container.find('.collapsible-control');
+                $container.removeClass('collapsed');
+                $container.find('.collapsible-control').text($button.data('labels').def);
+            }
         }
     }
 
+    /**
+     * Toggle collapse state of collapsible containers
+     *
+     * @param {object} e Event
+     */
     function onControlClicked(e) {
-        var $col2 = $('#col2');
-        $col2.toggleClass("custom-vars-collapsed");
-        updateCollapseState($col2, $(this).closest('.collapsible-container'), $(this));
+        var _this = e.data.self;
+        var $parentCollapsible = $(e.target).closest('.collapsible-container');
+        if ($parentCollapsible.hasClass('perf-data')) {
+            if ( _this.collapsedClasses.indexOf('perf-data') > -1) {
+                _this.collapsedClasses.splice(_this.collapsedClasses.indexOf('perf-data'), 1);
+                $parentCollapsible.addClass('collapsed');
+            } else {
+                _this.collapsedClasses.push('perf-data');
+                $parentCollapsible.removeClass('collapsed');
+            }
+        }
+        if ($parentCollapsible.hasClass('custom-vars')) {
+            if ( _this.collapsedClasses.indexOf('custom-vars') > -1) {
+                _this.collapsedClasses.splice(_this.collapsedClasses.indexOf('custom-vars'), 1);
+                $parentCollapsible.addClass('collapsed');
+            } else {
+                _this.collapsedClasses.push('custom-vars');
+                $parentCollapsible.removeClass('collapsed');
+            }
+        }
+        updateCollapseState($parentCollapsible, _this);
     }
 
     Icinga.Behaviors = Icinga.Behaviors || {};
@@ -62,9 +97,9 @@
      */
     var collapsibleContainer = function(icinga) {
         Icinga.EventListener.call(this, icinga);
-
         this.on('rendered', '#col2', onRendered, this);
         this.on('click', '#col2 .collapsible-container .collapsible-control', onControlClicked, this);
+        this.collapsedClasses = ['perf-data', 'custom-vars'];
     };
 
     collapsibleContainer.prototype = new Icinga.EventListener();
