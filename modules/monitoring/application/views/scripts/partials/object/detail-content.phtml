@@ -41,14 +41,14 @@
     </table>
 
     <?php if (! empty($object->customvars)): ?>
-    <div class="collapsible-container">
-        <h2><?= $this->translate('Custom Variables') ?></h2>
-        <table class="name-value-table">
-        <tbody>
-            <?= $this->render('show/components/customvars.phtml') ?>
-        </tbody>
-        </table>
-    </div>
+    <h2><?= $this->translate('Custom Variables') ?></h2>
+        <div class="collapsible-container custom-vars">
+            <table class="name-value-table">
+            <tbody>
+                <?= $this->render('show/components/customvars.phtml') ?>
+            </tbody>
+            </table>
+        </div>
     <?php endif ?>
 
     <?= $this->render('show/components/flags.phtml') ?>
