@@ -165,6 +165,18 @@ Requires:   %{php} >= 5.3.0
 Icinga Web 2 vendor library Parsedown
 
 
+%package vendor-Zend
+Version:    1.12.15
+Release:    1%{?dist}
+Summary:    Icinga Web 2 vendor library Zend Framework
+Group:      Development/Libraries
+License:    BSD
+Requires:   %{php} >= 5.3.0
+
+%description vendor-Zend
+Icinga Web 2 vendor library Zend
+
+
 %prep
 %setup -q
 
@@ -177,7 +189,7 @@ cp -prv application doc %{buildroot}/%{basedir}
 cp -pv etc/bash_completion.d/icingacli %{buildroot}/%{_sysconfdir}/bash_completion.d/icingacli
 cp -prv modules/{monitoring,setup,doc,translation} %{buildroot}/%{basedir}/modules
 cp -prv library/Icinga %{buildroot}/%{phpdir}
-cp -prv library/vendor/{dompdf,HTMLPurifier*,JShrink,lessphp,Parsedown} %{buildroot}/%{basedir}/library/vendor
+cp -prv library/vendor/{dompdf,HTMLPurifier*,JShrink,lessphp,Parsedown,Zend} %{buildroot}/%{basedir}/library/vendor
 cp -prv public/{css,img,js,error_norewrite.html} %{buildroot}/%{basedir}/public
 cp -pv packages/files/apache/icingaweb2.conf %{buildroot}/%{wwwconfigdir}/icingaweb2.conf
 cp -pv packages/files/bin/icingacli %{buildroot}/%{bindir}
@@ -267,3 +279,8 @@ exit 0
 %files vendor-Parsedown
 %defattr(-,root,root)
 %{basedir}/library/vendor/Parsedown
+
+
+%files vendor-Zend
+%defattr(-,root,root)
+%{basedir}/library/vendor/Zend
