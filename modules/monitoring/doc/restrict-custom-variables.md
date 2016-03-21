@@ -49,7 +49,7 @@ Matches all custom variables on the second level which are equal to `mysql_passw
 
 Matches all custom variables on the second level which end with `password`.
 
-`host.vars.*.{mysql_password,ldap_password}`
+`host.vars.*.mysql_password,host.vars.*.ldap_password`
 
 Matches all custorm variables on the second level which equal `mysql_password` or `ldap_password`.
 
@@ -69,8 +69,6 @@ the following restriction.
 
 Use backslash to escape the meta characters
 
-* {
-* }
 * *
 * ,
 
