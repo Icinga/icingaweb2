@@ -681,11 +681,17 @@
                     req.addToHistory = false;
                 } else {
                     if (this.failureNotice === null) {
+                        var now = new Date();
+                        var padString = this.icinga.utils.padString;
                         this.failureNotice = this.createNotice(
                             'error',
-                            'The connection to the Icinga web server was lost at ' +
-                            this.icinga.utils.timeShort() +
-                            '.',
+                            'The connection to the Icinga web server was lost at '
+                            + now.getFullYear()
+                            + '-' + padString(now.getMonth() + 1, 0, 2)
+                            + '-' + padString(now.getDate(), 0, 2)
+                            + ' ' + padString(now.getHours(), 0, 2)
+                            + ':' + padString(now.getMinutes(), 0, 2)
+                            + '.',
                             true
                         );
 
@@ -711,7 +717,7 @@
                 c += ' persist';
             }
             var $notice = $(
-                '<li class="' + c + '">' + message + '</li>'
+                '<li class="' + c + '">' + this.icinga.utils.escape(message) + '</li>'
             ).appendTo($('#notifications'));
 
             this.icinga.ui.fixControls();
@@ -737,7 +743,7 @@
 
             if (forceFocus && forceFocus.length) {
                 activeElementPath = this.icinga.utils.getCSSPath($(forceFocus));
-            } else if (document.activeElement.id === 'search') {
+            } else if (document.activeElement && document.activeElement.id === 'search') {
                 activeElementPath = '#search';
             } else if (document.activeElement
                 && document.activeElement !== document.body

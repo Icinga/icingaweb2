@@ -86,9 +86,7 @@ if (! $this->compact): ?>
                 <?php endif ?>
                     <span class="state-icons"><?= implode(' ', $this->hostFlags($host)) ?></span>
                 </div>
-                <p class="overview-plugin-output">
-                    <?= $this->pluginOutput($this->ellipsis($host->host_output, 10000), true) ?>
-                </p>
+                <p class="overview-plugin-output"><?= $this->pluginOutput($this->ellipsis($host->host_output, 10000), true) ?></p>
             </td>
         <?php foreach($this->addColumns as $col): ?>
             <td><?= $this->escape($host->$col) ?></td>

@@ -99,12 +99,18 @@
             $('link').each(function() {
                 var $oldLink = $(this);
                 if ($oldLink.hasAttr('type') && $oldLink.attr('type').indexOf('css') > -1) {
+                    var base = location.protocol + '//' + location.host;
+                    if (location.port) {
+                        base += location.port;
+                    }
+                    var url = icinga.utils.addUrlParams(
+                        $(this).attr('href'),
+                        { id: new Date().getTime() }
+                    );
+
                     var $newLink = $oldLink.clone().attr(
                         'href',
-                        icinga.utils.addUrlParams(
-                            $(this).attr('href'),
-                            { id: new Date().getTime() }
-                        )
+                        base + '/' + url.replace(/^\//, '')
                     ).on('load', function() {
                         icinga.ui.fixControls();
                         $oldLink.remove();
@@ -269,8 +275,6 @@
             this.icinga.logger.debug('Switching to single col');
             $('#layout').removeClass('twocols');
             this.closeContainer($('#col2'));
-            this.disableCloseButtons();
-
             // one-column layouts never have any selection active
             this.icinga.behaviors.actiontable.clearAll();
         },
@@ -281,6 +285,7 @@
             $c.removeData('lastUpdate');
             $c.removeData('icingaModule');
             this.icinga.loader.stopPendingRequestsFor($c);
+            $c.trigger('close-column');
             $c.html('');
             this.fixControls();
         },
@@ -290,7 +295,6 @@
             this.icinga.logger.debug('Switching to double col');
             $('#layout').addClass('twocols');
             this.fixControls();
-            this.enableCloseButtons();
         },
 
         getAvailableColumnSpace: function () {
@@ -362,7 +366,7 @@
                 if (loading === '') {
                     loading = '<br />Loading:<br />';
                 }
-                loading += el + ' => ' + req.url;
+                loading += el + ' => ' + encodeURI(req.url);
             });
 
             $('#responsive-debug').html(
@@ -506,14 +510,6 @@
                     $checkbox.prop('checked', false).prop('indeterminate', true);
                     break;
             }
-        },
-
-        disableCloseButtons: function () {
-            $('a.close-container-control').hide();
-        },
-
-        enableCloseButtons: function () {
-            $('a.close-close-container-control').show();
         },
 
         /**

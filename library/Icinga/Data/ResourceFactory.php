@@ -67,16 +67,14 @@ class ResourceFactory implements ConfigAwareFactory
     }
 
     /**
-     * Check if the existing resources are set. If not, throw an error.
+     * Check if the existing resources are set. If not, load them from resources.ini
      *
      * @throws  ConfigurationError
      */
     private static function assertResourcesExist()
     {
         if (self::$resources === null) {
-            throw new ConfigurationError(
-                'Resources not set up. Please contact your Icinga Web administrator'
-            );
+            self::$resources = Config::app('resources');
         }
     }
 

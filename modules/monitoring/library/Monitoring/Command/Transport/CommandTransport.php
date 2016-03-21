@@ -111,16 +111,16 @@ class CommandTransport implements CommandTransportInterface
      */
     public function send(IcingaCommand $command, $now = null)
     {
-        $tries = 0;
-        foreach (static::getConfig() as $transportConfig) {
-            $transport = static::createTransport($transportConfig);
+        $errors = array();
 
+        foreach (static::getConfig() as $name => $transportConfig) {
+            $transport = static::createTransport($transportConfig);
             if ($this->transferPossible($command, $transport)) {
                 try {
                     $transport->send($command, $now);
                 } catch (CommandTransportException $e) {
                     Logger::error($e);
-                    $tries += 1;
+                    $errors[] = sprintf('%s: %s.', $name, rtrim($e->getMessage(), '.'));
                     continue; // Try the next transport
                 }
 
@@ -128,14 +128,8 @@ class CommandTransport implements CommandTransportInterface
             }
         }
 
-        if ($tries > 0) {
-            throw new CommandTransportException(
-                mt(
-                    'monitoring',
-                    'Failed to send external Icinga command. None of the configured transports'
-                    . ' was able to transfer the command. Please see the log for more details.'
-                )
-            );
+        if (! empty($errors)) {
+            throw new CommandTransportException(implode("\n", $errors));
         }
 
         throw new CommandTransportException(

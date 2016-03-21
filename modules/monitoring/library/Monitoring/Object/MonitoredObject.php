@@ -3,6 +3,7 @@
 
 namespace Icinga\Module\Monitoring\Object;
 
+use stdClass;
 use InvalidArgumentException;
 use Icinga\Application\Config;
 use Icinga\Data\Filter\Filter;
@@ -456,16 +457,32 @@ abstract class MonitoredObject implements Filterable
             $customvars = $this->hostVariables;
         }
 
-        $this->customvars = array();
-        foreach ($customvars as $name => $value) {
-            if ($blacklistPattern && preg_match($blacklistPattern, $name)) {
-                $this->customvars[$name] = '***';
-            } else {
-                $this->customvars[$name] = $value;
-            }
-        }
+        $this->customvars = $this->obfuscateCustomVars($customvars, $blacklistPattern);
 
         return $this;
+    }
+
+    /**
+     * Obfuscate custom variables recursively
+     *
+     * @param stdClass|array    $customvars         The custom variables to obfuscate
+     * @param string            $blacklistPattern   Which custom variables to obfuscate
+     *
+     * @return stdClass|array                       The obfuscated custom variables
+     */
+    protected function obfuscateCustomVars($customvars, $blacklistPattern)
+    {
+        $obfuscatedCustomVars = array();
+        foreach ($customvars as $name => $value) {
+            if ($blacklistPattern && preg_match($blacklistPattern, $name)) {
+                $obfuscatedCustomVars[$name] = '***';
+            } else {
+                $obfuscatedCustomVars[$name] = $value instanceof stdClass || is_array($value)
+                    ? $this->obfuscateCustomVars($value, $blacklistPattern)
+                    : $value;
+            }
+        }
+        return $customvars instanceof stdClass ? (object) $obfuscatedCustomVars : $obfuscatedCustomVars;
     }
 
     /**

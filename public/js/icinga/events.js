@@ -36,6 +36,12 @@
             var self = event.data.self;
             var icinga = self.icinga;
 
+            if (! icinga) {
+                // Attempt to catch a rare error, race condition, whatever
+                console.log('Got no icinga in applyHandlers');
+                return;
+            }
+
             if (self.initializeModules) {
                 var loaded = false;
                 var moduleName = $target.data('icingaModule');
@@ -88,12 +94,6 @@
             // Remember initial search field value if any
             if ($searchField.length && $searchField.val().length) {
                 self.searchValue = $searchField.val();
-            }
-
-            if (icinga.ui.isOneColLayout()) {
-                icinga.ui.disableCloseButtons();
-            } else {
-                icinga.ui.enableCloseButtons();
             }
         },
 

@@ -217,7 +217,7 @@
                 $ = undefined;
 
                 oldjQuery.getScript(
-                    oldConfig.baseUrl + 'js/icinga.min.js'
+                    oldConfig.baseUrl.replace(/\/$/, '') + '/js/icinga.min.js'
                 ).done(function () {
                     var jQuery = window.jQuery;
                     window.icinga = new window.Icinga(oldConfig);

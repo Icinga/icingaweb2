@@ -371,6 +371,39 @@
             return encodeURIComponent(str).replace(/[()]/g, function(c) {
                 return '%' + c.charCodeAt(0).toString(16);
             });
+        },
+
+        escape: function (str) {
+            return String(str).replace(
+                /[&<>"']/gm,
+                function (c) {
+                    return {
+                        '&': '&amp;',
+                        '<': '&lt;',
+                        '>': '&gt;',
+                        '"': '&quot;',
+                        "'": '&#039;'
+                    }[c];
+                }
+            );
+        },
+
+        /**
+         * Pad a string with another one
+         *
+         * @param   {String}    str         the string to pad
+         * @param   {String}    padding     the string to use for padding
+         * @param   {Number}    minLength   the minimum length of the result
+         *
+         * @returns {String}    the padded string
+         */
+        padString: function(str, padding, minLength) {
+            str = String(str);
+            padding = String(padding);
+            while (str.length < minLength) {
+                str = padding + str;
+            }
+            return str;
         }
     };
 

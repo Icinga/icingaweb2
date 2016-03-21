@@ -2,6 +2,13 @@
 
 @border-left-width: 6px;
 
+// Icon images in list and detail views
+.host-icon-image,
+.service-icon-image {
+  max-width: 2em;
+  vertical-align: middle;
+}
+
 // Check source reachable information in the host and service detail views
 .check-source-meta {
   font-size: @font-size-small;
@@ -77,6 +84,7 @@
   font-family: @font-family-fixed;
   font-size: @font-size-small;
   margin: 0;
+  white-space: pre-wrap;
 }
 
 // Table for performance data in detail views
@@ -201,16 +209,12 @@
   border-spacing: 0 1px;
   width: 100%;
 
-  tr[href] {
-    .transition(background 0.2s ease);
+  tr[href].active {
+    background-color: @tr-active-color;
+  }
 
-    &.active {
-      background-color: @tr-active-color;
-    }
-
-    &:hover {
-      background-color: @tr-hover-color;
-      cursor: pointer;
-    }
+  tr[href]:hover {
+    background-color: @tr-hover-color;
+    cursor: pointer;
   }
 }

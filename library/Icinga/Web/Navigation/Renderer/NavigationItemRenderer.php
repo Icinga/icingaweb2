@@ -192,7 +192,7 @@ class NavigationItemRenderer
             $content = sprintf(
                 '<a%s href="%s"%s>%s</a>',
                 $this->view()->propertiesToString($item->getAttributes()),
-                $url,
+                $this->view()->escape($url->getAbsoluteUrl('&')),
                 $this->renderTargetAttribute(),
                 $label
             );
@@ -218,7 +218,7 @@ class NavigationItemRenderer
     protected function renderTargetAttribute()
     {
         $target = $this->getItem()->getTarget();
-        if ($target === null) {
+        if ($target === null || $this->getItem()->getUrl()->getAbsoluteUrl() == '#') {
             return '';
         }
 

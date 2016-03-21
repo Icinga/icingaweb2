@@ -65,14 +65,12 @@ if (! $this->compact): ?>
                             )
                         ) ?>
                     <?php else: ?>
-                        <?= $this->translate('Sent out to any contact') ?>
+                        <?= $this->translate('Not sent out to any contact') ?>
                     <?php endif ?>
                     </div>
                 <?php endif ?>
                 </div>
-                <p class="overview-plugin-output">
-                    <?= $this->pluginOutput($this->ellipsis($notification->notification_output, 10000), true) ?>
-                </p>
+                <p class="overview-plugin-output"><?= $this->pluginOutput($this->ellipsis($notification->notification_output, 10000), true) ?></p>
             </td>
         </tr>
     <?php endforeach ?>

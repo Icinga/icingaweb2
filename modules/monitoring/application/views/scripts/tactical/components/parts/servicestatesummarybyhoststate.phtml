@@ -28,7 +28,7 @@ use Icinga\Module\Monitoring\Object\Service;
 <?php if ($services_critical_handled): ?>
     <?= $this->qlink(
         $services_critical_handled . ' ' . (
-            $services_critical_unhandled ? $this->translate('Acknowledged') : Service::getStateText(2, true)
+            $services_critical_unhandled ? $this->translate('Handled') : Service::getStateText(2, true)
         ),
         'monitoring/list/services',
         array(
@@ -38,8 +38,8 @@ use Icinga\Module\Monitoring\Object\Service;
         ),
         array('title' => sprintf(
             $this->translatePlural(
-                'List %u service that is currently in state CRITICAL (Acknowledged)',
-                'List %u services which are currently in state CRITICAL (Acknowledged)',
+                'List %u service that is currently in state CRITICAL (Handled)',
+                'List %u services which are currently in state CRITICAL (Handled)',
                 $services_critical_handled
             ),
             $services_critical_handled
@@ -127,7 +127,7 @@ use Icinga\Module\Monitoring\Object\Service;
 <?php if ($services_warning_handled): ?>
     <?= $this->qlink(
         $services_warning_handled . ' ' . (
-            $services_warning_unhandled ? $this->translate('Acknowledged') : Service::getStateText(1, true)
+            $services_warning_unhandled ? $this->translate('Handled') : Service::getStateText(1, true)
         ),
         'monitoring/list/services',
         array(
@@ -137,8 +137,8 @@ use Icinga\Module\Monitoring\Object\Service;
         ),
         array('title' => sprintf(
             $this->translatePlural(
-                'List %u service that is currently in state WARNING (Acknowledged)',
-                'List %u services which are currently in state WARNING (Acknowledged)',
+                'List %u service that is currently in state WARNING (Handled)',
+                'List %u services which are currently in state WARNING (Handled)',
                 $services_warning_handled
             ),
             $services_warning_handled
@@ -226,7 +226,7 @@ use Icinga\Module\Monitoring\Object\Service;
 <?php if ($services_unknown_handled): ?>
     <?= $this->qlink(
         $services_unknown_handled . ' ' . (
-            $services_unknown_unhandled ? $this->translate('Acknowledged') : Service::getStateText(3, true)
+            $services_unknown_unhandled ? $this->translate('Handled') : Service::getStateText(3, true)
         ),
         'monitoring/list/services',
         array(
@@ -236,8 +236,8 @@ use Icinga\Module\Monitoring\Object\Service;
         ),
         array('title' => sprintf(
             $this->translatePlural(
-                'List %u service that is currently in state UNKNOWN (Acknowledged)',
-                'List %u services which are currently in state UNKNOWN (Acknowledged)',
+                'List %u service that is currently in state UNKNOWN (Handled)',
+                'List %u services which are currently in state UNKNOWN (Handled)',
                 $services_unknown_handled
             ),
             $services_unknown_handled

@@ -163,10 +163,11 @@ td, th {
 
 // Styles for when containers are loading. JS will remove this once the containers are ready
 .impact {
-  .active > a, // Remove > a once .tabs layout has been fixed
-  .controls,
-  .content {
     .transition(background-color 2s 1s linear !important);
     background-color: @gray-lighter !important;
-  }
+}
+
+.impact > .controls, .impact li.active a {
+    .transition(background-color 2s 1s linear !important);
+    background-color: @gray-lighter !important;
 }

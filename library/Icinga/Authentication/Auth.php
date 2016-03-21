@@ -244,7 +244,8 @@ class Auth
         $this->user = Session::getSession()->get('user');
         if ($this->user !== null && $this->user->isExternalUser() === true) {
             list($originUsername, $field) = $this->user->getExternalUserInformation();
-            if (! array_key_exists($field, $_SERVER) || $_SERVER[$field] !== $originUsername) {
+            $username = getenv($field); // usually REMOTE_USER here
+            if ( !$username || $username !== $originUsername) {
                 $this->removeAuthorization();
             }
         }

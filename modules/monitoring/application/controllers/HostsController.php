@@ -69,6 +69,7 @@ class HostsController extends Controller
     protected function handleCommandForm(ObjectsCommandForm $form)
     {
         $form
+            ->setBackend($this->backend)
             ->setObjects($this->hostList)
             ->setRedirectUrl(Url::fromPath('monitoring/hosts/show')->setParams($this->params))
             ->handleRequest();
@@ -83,11 +84,13 @@ class HostsController extends Controller
     public function showAction()
     {
         $this->setAutorefreshInterval(15);
-        $checkNowForm = new CheckNowCommandForm();
-        $checkNowForm
-            ->setObjects($this->hostList)
-            ->handleRequest();
-        $this->view->checkNowForm = $checkNowForm;
+        if ($this->Auth()->hasPermission('monitoring/command/schedule-check')) {
+            $checkNowForm = new CheckNowCommandForm();
+            $checkNowForm
+                ->setObjects($this->hostList)
+                ->handleRequest();
+            $this->view->checkNowForm = $checkNowForm;
+        }
 
         $acknowledgedObjects = $this->hostList->getAcknowledgedObjects();
         if (! empty($acknowledgedObjects)) {
@@ -192,7 +195,6 @@ class HostsController extends Controller
         $this->assertPermission('monitoring/command/downtime/schedule');
 
         $form = new ScheduleHostDowntimeCommandForm();
-        $form->setBackend($this->backend);
         $form->setTitle($this->translate('Schedule Host Downtimes'));
         $this->handleCommandForm($form);
     }
@@ -205,7 +207,6 @@ class HostsController extends Controller
         $this->assertPermission('monitoring/command/process-check-result');
 
         $form = new ProcessCheckResultCommandForm();
-        $form->setBackend($this->backend);
         $form->setTitle($this->translate('Submit Passive Host Check Results'));
         $this->handleCommandForm($form);
     }

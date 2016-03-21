@@ -6,11 +6,14 @@ $activeChecksEnabled = (bool) $object->active_checks_enabled;
 <tr>
     <th><?= $activeChecksEnabled ? $this->translate('Last check') : $this->translate('Last update') ?></th>
     <td data-base-target="_self">
+<?php if ((int) $object->state !== 99): ?>
+        <?= $this->timeAgo($object->last_check) ?>
+    <?php if ($object->next_update < time()): ?>
+        <?= $this->icon('circle', $this->translate('Check result is late'), array('class' => 'check-result-late')) ?>
+    <?php endif ?>
+<?php endif ?>
     <?php if (isset($checkNowForm)) { // Form is unset if the current user lacks the respective permission
         echo $checkNowForm;
-    } ?>
-    <?php if ((int) $object->state !== 99) {
-        echo $this->timeAgo($object->last_check);
     } ?>
     </td>
 </tr>
@@ -18,6 +21,13 @@ $activeChecksEnabled = (bool) $object->active_checks_enabled;
 <tr>
     <th><?= $activeChecksEnabled ? $this->translate('Next check') : $this->translate('Next update') ?></th>
     <td>
+    <?php if ((int) $object->state !== 99) {
+        if ($activeChecksEnabled) {
+            echo $this->timeUntil($object->next_check);
+        } else {
+            echo sprintf($this->translate('expected %s'), $this->timeUntil($object->next_update));
+        }
+    } ?>
     <?php if ($activeChecksEnabled && $this->hasPermission('monitoring/command/schedule-check')) {
         if ($object->getType() === $object::TYPE_SERVICE) {
             echo $this->qlink(
@@ -48,16 +58,6 @@ $activeChecksEnabled = (bool) $object->active_checks_enabled;
                 )
             );
         }
-    } ?>
-    <?php if ((int) $object->state !== 99) {
-        if ($activeChecksEnabled) {
-            echo $this->timeUntil($object->next_check);
-        } else {
-            echo sprintf($this->translate('expected %s'), $this->timeUntil($object->next_update));
-        }
-    } ?>
-    <?php if ($object->next_update < time()) {
-        echo $this->icon('circle', $this->translate('Check result is late'), array('class' => 'fg-color-critical'));
     } ?>
     </td>
 </tr>

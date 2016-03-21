@@ -95,7 +95,9 @@ abstract class DataView implements QueryInterface, SortRules, FilterColumns, Ite
 
     public function dump()
     {
-        $this->order();
+        if (! $this->isSorted) {
+            $this->order();
+        }
         return $this->query->dump();
     }
 

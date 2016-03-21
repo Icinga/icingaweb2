@@ -75,6 +75,7 @@ class ServicesController extends Controller
     protected function handleCommandForm(ObjectsCommandForm $form)
     {
         $form
+            ->setBackend($this->backend)
             ->setObjects($this->serviceList)
             ->setRedirectUrl(Url::fromPath('monitoring/services/show')->setParams($this->params))
             ->handleRequest();
@@ -90,11 +91,13 @@ class ServicesController extends Controller
     public function showAction()
     {
         $this->setAutorefreshInterval(15);
-        $checkNowForm = new CheckNowCommandForm();
-        $checkNowForm
-            ->setObjects($this->serviceList)
-            ->handleRequest();
-        $this->view->checkNowForm = $checkNowForm;
+        if ($this->Auth()->hasPermission('monitoring/command/schedule-check')) {
+            $checkNowForm = new CheckNowCommandForm();
+            $checkNowForm
+                ->setObjects($this->serviceList)
+                ->handleRequest();
+            $this->view->checkNowForm = $checkNowForm;
+        }
 
         $acknowledgedObjects = $this->serviceList->getAcknowledgedObjects();
         if (! empty($acknowledgedObjects)) {
@@ -207,7 +210,6 @@ class ServicesController extends Controller
         $this->assertPermission('monitoring/command/process-check-result');
 
         $form = new ProcessCheckResultCommandForm();
-        $form->setBackend($this->backend);
         $form->setTitle($this->translate('Submit Passive Service Check Results'));
         $this->handleCommandForm($form);
     }

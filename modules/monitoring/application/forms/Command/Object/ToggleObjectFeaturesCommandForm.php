@@ -59,7 +59,7 @@ class ToggleObjectFeaturesCommandForm extends ObjectsCommandForm
                 'permission'    => 'monitoring/command/feature/object/flap-detection'
             )
         );
-        if (preg_match('~^[vr]2\.\d+\.\d+.*$~', $this->getIcingaVersion())) {
+        if ($this->getBackend()->isIcinga2()) {
             unset($features[ToggleObjectFeatureCommand::FEATURE_OBSESSING]);
         }
         $this->features = $features;
@@ -175,15 +175,5 @@ class ToggleObjectFeaturesCommandForm extends ObjectsCommandForm
         }
 
         return true;
-    }
-
-    /**
-     * Fetch and return the program version of the current instance
-     *
-     * @return  string
-     */
-    protected function getIcingaVersion()
-    {
-        return $this->getBackend()->select()->from('programstatus', array('program_version'))->fetchOne();
     }
 }
