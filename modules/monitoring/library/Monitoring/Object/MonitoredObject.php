@@ -5,6 +5,7 @@ namespace Icinga\Module\Monitoring\Object;
 
 use stdClass;
 use InvalidArgumentException;
+use Icinga\Authentication\Auth;
 use Icinga\Application\Config;
 use Icinga\Data\Filter\Filter;
 use Icinga\Data\Filterable;
@@ -146,6 +147,13 @@ abstract class MonitoredObject implements Filterable
      * @var object
      */
     protected $stats;
+
+    /**
+     * The properties to hide from the user
+     *
+     * @var array
+     */
+    protected $blacklistedProperties = null;
 
     /**
      * Create a monitored object, i.e. host or service
@@ -457,7 +465,9 @@ abstract class MonitoredObject implements Filterable
             $customvars = $this->hostVariables;
         }
 
-        $this->customvars = $this->obfuscateCustomVars($customvars, $blacklistPattern);
+        $this->customvars = $customvars;
+        $this->hideBlacklistedProperties();
+        $this->customvars = $this->obfuscateCustomVars($this->customvars, $blacklistPattern);
 
         return $this;
     }
@@ -483,6 +493,79 @@ abstract class MonitoredObject implements Filterable
             }
         }
         return $customvars instanceof stdClass ? (object) $obfuscatedCustomVars : $obfuscatedCustomVars;
+    }
+
+    /**
+     * Hide all blacklisted properties from the user as restricted by monitoring/blacklist/properties
+     *
+     * Currently this only affects the custom variables
+     */
+    protected function hideBlacklistedProperties()
+    {
+        if ($this->blacklistedProperties === null) {
+            $this->blacklistedProperties = array();
+            foreach (Auth::getInstance()->getRestrictions('monitoring/blacklist/properties') as $patterns) {
+                foreach (explode(',', $patterns) as $pattern) {
+                    $pattern = explode('.', $pattern);
+                    foreach ($pattern as & $subPattern) {
+                        $subPattern = explode('*', $subPattern);
+                        foreach ($subPattern as & $subPatternPart) {
+                            if ($subPatternPart !== '') {
+                                $subPatternPart = preg_quote($subPatternPart, '/');
+                            }
+                            unset($subPatternPart);
+                        }
+                        $subPattern = '/^' . implode('.*', $subPattern) . '$/';
+                        unset($subPattern);
+                    }
+
+                    $this->blacklistedProperties[] = $pattern;
+                }
+            }
+        }
+
+        $allProperties = array($this->type => array('vars' => $this->customvars));
+        foreach ($this->blacklistedProperties as $blacklistedProperty) {
+            $allProperties = $this->hideBlacklistedPropertiesRecursive($allProperties, $blacklistedProperty);
+        }
+        $this->customvars = $allProperties[$this->type]['vars'];
+    }
+
+    /**
+     * Helper method for hideBlacklistedProperties()
+     *
+     * @param   stdClass|array  $allProperties
+     * @param   array           $blacklistedProperty
+     *
+     * @return  stdClass|array
+     */
+    protected function hideBlacklistedPropertiesRecursive($allProperties, $blacklistedProperty)
+    {
+        $isObject = $allProperties instanceof stdClass;
+        if ($isObject || is_array($allProperties)) {
+            if ($isObject) {
+                $allProperties = (array) $allProperties;
+            }
+
+            $currentLevel = $blacklistedProperty[0];
+            $nextLevels = count($blacklistedProperty) === 1 ? null : array_slice($blacklistedProperty, 1);
+            foreach ($allProperties as $k => & $v) {
+                if (preg_match($currentLevel, (string) $k)) {
+                    if ($nextLevels === null) {
+                        unset($allProperties[$k]);
+                    } else {
+                        $v = $this->hideBlacklistedPropertiesRecursive($v, $nextLevels);
+                    }
+                }
+                unset($v);
+            }
+
+            if ($isObject) {
+                $allProperties = (object) $allProperties;
+            }
+        }
+
+        return $allProperties;
     }
 
     /**
