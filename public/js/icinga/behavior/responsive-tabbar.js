@@ -4,75 +4,87 @@
 
     'use strict';
 
-
-
     function onRendered(e) {
-	    var _this = e.data.self;
-        var $this = $(this);
-        console.log("on rendered", e.type);
-        if ($this.find(".tabs")) {
-            cacheTabWidths($this, _this);
-            updateBreakIndex($this, _this);
-        }
-    }
-
-    function onWindowResized (e) {
-	    console.log("window resize", e);
-	    var _this = e.data.self;
-
-        $('#col1, #col2').each(function(i) {
-            var $this = $(this);
-            if ($this.find(".tabs")) {
-	            if (_this.containerData[$this.attr("id")]) {
-		            console.log("update");
+	    console.log(e.type);
+        var _this = e.data.self;
+		if ($('#layout').hasClass('twocols')) {
+			$('#col1, #col2').each( function() {
+				var $this = $(this);
+			    if ($this.find('.tabs')) {
+		            cacheBreakpoints($this, _this);
 		            updateBreakIndex($this, _this);
-	            }
-            }
-        });
-    }
-
-    function onLayoutChange (e) {
-
-	    var _this = e.data.self;
-
-		$('#col1, #col2').each(function(i) {
-            var $this = $(this);
-            if ($this.find(".tabs")) {
-	            cacheTabWidths($this, _this);
+		        }
+			});
+	    } else {
+		    var $this = $(this);
+		    if ($this.find('.tabs')) {
+	            cacheBreakpoints($this, _this);
 	            updateBreakIndex($this, _this);
-            }
-        });
+	        }
+	    }
     }
 
-	/**
-     * Calculate the breakIndex according to tabs container width
-     *
-     * @param {jQuery}		$container	Element containing the tabs
-     *
-     * @param {object} 		e 			Event
-     */
+    function onWindowResized(e) {
+	    console.log(e.type);
+	    var _this = e.data.self;
+		$('#col1, #col2').each(function() {
+			var $this = $(this);
+
+			if (_this.containerData[$this.attr("id")]) {
+				if ($this.find('.tabs')) {
+		            updateBreakIndex($this, _this);
+		        }
+	        }
+		});
+    }
+
+    function onLayoutchange(e) {
+	    console.log(e.type);
+	    var _this = e.data.self;
+		$('#col1, #col2').each(function() {
+			var $this = $(this);
+			if ($this.find('.tabs')) {
+				cacheBreakpoints($this, _this);
+	            updateBreakIndex($this, _this);
+	        }
+		});
+    }
+
+    function cacheBreakpoints($container, e) {
+        var containerData = {};
+        containerData.breakPoints = [];
+        var w = $container.find('.dropdown-nav-item').outerWidth(true)+1;
+        $container.find(".tabs").not(".cloned").show();
+        $container.find(".tabs").not(".cloned").children("li").not('.dropdown-nav-item').each(function() {
+            containerData.breakPoints.push(w += $(this).outerWidth(true) + 1);
+        });
+        e.containerData[$container.attr('id')] = containerData;
+//         console.log("cacheBreak", e.containerData);
+    }
+
     function updateBreakIndex($container, e) {
 
-        var breakIndex = false;
+        var b = false;
 
-        var w = 0;
-        var tabsElWidth = $container.find('.tabs').not(".cloned").width() - parseFloat($container.find('.tabs').not(".cloned").css("padding-left"));
-        var tabWidths = e.containerData[$container.attr("id")].tabWidths;
+		// show container before calculating dimensions
+        var $tabContainer = $container.find('.tabs').show();
 
-        for (var i = 0; i < tabWidths.length; i++) {
-            w += tabWidths[i];
-            if (w > Math.floor(tabsElWidth)) {
-                breakIndex = i;
-            } else {
-	            breakIndex = false;
+        var breakPoints = e.containerData[$container.attr('id')].breakPoints;
+		var dw = $tabContainer.find('.dropdown-nav-item').outerWidth(true) + 1;
+		var tw = $tabContainer.width();
+// 		var w = tw - dw;
+		var w = $tabContainer.width();
+
+        for (var i = 0; i < breakPoints.length; i++) {
+            if ( breakPoints[i] > w) {
+                b = i;
+                break;
             }
         }
 
-        console.log("w : tabsW", w, tabsElWidth, $container, tabWidths);
-
-        setBreakIndex($container, breakIndex, e);
+//         console.log("updateBreak", e.containerData);
+        setBreakIndex($container, b, e);
     }
-
 
 	/**
      * Set the breakIndex and if value has changed render Tabs
@@ -82,33 +94,19 @@
      * @param {Int}			NewIndex 	New Value for the breakIndex
      */
     function setBreakIndex($container, newIndex, e) {
-        if (newIndex == e.containerData[$container.attr("id")].breakIndex) {
+//         console.log("setBreak", e.containerData);
+		var containerData = e.containerData[$container.attr("id")];
+		console.log("event", e);
+		console.log("container", $container);
+		console.log("data", containerData);
+		console.log("new : old", newIndex, containerData.breakIndex)
+
+        if (newIndex === containerData.breakIndex) {
             return;
         } else {
-            $container.breakIndex = newIndex;
-            renderTabs($container);
-            console.log("break index change", $container, $container.breakIndex);
+            e.containerData[$container.attr('id')].breakIndex = newIndex;
+            renderTabs($container, e);
         }
-    }
-
-	/**
-     * Save horizontal dimensions of the tabs once
-     *
-     * @param {jQuery}		$container	Element containing the tabs
-     *
-     * @param {object} 		e 			Event
-     */
-    function cacheTabWidths($container, e) {
-        var containerData = {};
-        containerData.tabWidths = [];
-
-        $container.find(".tabs").not(".cloned").children("li").each(function () {
-            containerData.tabWidths.push($(this).width() + parseFloat($(this).css("margin-right")));
-        });
-
-        e.containerData[$container.attr("id")] = containerData;
-
-        console.log("tab widths cached", $container, containerData, e.containerData);
     }
 
     /**
@@ -116,31 +114,36 @@
      *
      * @param {jQuery} $container	Element containing the tabs
      */
-    function renderTabs($container) {
+    function renderTabs($container, e) {
+        var breakIndex = e.containerData[$container.attr('id')].breakIndex;
+
         $container.find('.tabs.cloned').remove();
-		var $tabs = $container.find(".tabs").show();
-        if ($container.breakIndex) {
-	    	var $additionalTabsDropdown = $('<li class="dropdown-nav-item additional-items"><a href="#" class="dropdown-toggle"><i class="icon-ellipsis"></i></a><ul class="nav"></ul></li>');
-        	var $clonedTabs = $tabs.clone().addClass("cloned");
-        	var $tabItems = $clonedTabs.children('li');
+        if (breakIndex) {
+            var $tabsClone = $container.find('.tabs').not('.cloned').hide().clone().addClass("cloned");
 
-        	for (var i = $container.breakIndex-1; i < $tabItems.length + 1; i++) {
-				var $item = $($tabItems.get(i));
+            // if not exists, create dropdown
+            var $dropdown = null;
+            if ( $tabsClone.children(".dropdown-nav-item").length > 0 ) {
+                $dropdown = $tabsClone.children(".dropdown-nav-item");
+            } else {
+                $dropdown = $('<li class="dropdown-nav-item"><a href="#" class="dropdown-toggle" title="Dropdown menu" aria-label="Dropdown menu"><i aria-hidden="true" class="icon-down-open"></i></a><ul class="nav"></ul></li>');
+                $tabsClone.append($dropdown);
+            } // END if not exists, create dropdown
 
-				if ($item.children('ul.nav').length > 0) {
-					$item.children('ul.nav').children('li').each(function(j) {
-						$additionalTabsDropdown.children("ul").append(this);
-					});
-					$item.remove();
-				} else {
-					$additionalTabsDropdown.children("ul").append($item);
-					$item.children("a").append($item.children("a").attr("title"));
-				}
-        	}
-			$clonedTabs.append($additionalTabsDropdown);
-        	$container.find(".controls").prepend($clonedTabs);
+            // insert tab items into dropdown
+            var l = $tabsClone.children("li").not('.dropdown-nav-item').length;
+            for (var i = breakIndex; i < l; i++) {
+                var $tab = $($tabsClone.children("li").not('.dropdown-nav-item').get(i));
 
-            $tabs.hide();
+                $dropdown.children('ul').append($tab.clone());
+                $tab.hide();
+            } // END insert tab items into dropdown
+
+			$container.find('.tabs').not('.cloned').hide();
+            $container.find(".controls").prepend($tabsClone.show());
+        } else {
+            //breakIndex false: No need for cloned tabs
+            $container.find('.tabs').not('.cloned').show();
         }
     }
 
@@ -157,12 +160,17 @@
      * @constructor
      */
     var ResponsiveTabBar = function(icinga) {
-	    this.containerData = [];
+	    this.containerData = {};
         Icinga.EventListener.call(this, icinga);
         this.on('rendered', '#col1, #col2', onRendered, this);
+
+
 		$(window).resize({self: this}, onWindowResized);
-		this.on('layout-change', '#col1, #col2', onLayoutChange, this);
+
+		this.on('layout-change', onLayoutchange, this);
+/*
 		this.on('close-column', '#col1, #col2', onRendered, this);
+*/
     };
 
     ResponsiveTabBar.prototype = new Icinga.EventListener();

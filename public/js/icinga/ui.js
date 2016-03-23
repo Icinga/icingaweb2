@@ -245,6 +245,7 @@
                     if (this.currentLayout === 'poor' || this.currentLayout === 'minimal') {
                         this.layout1col();
                     }
+                    $(this).trigger('layout-change');
                     return true;
                 }
             }
