@@ -13,7 +13,6 @@
 
 .tabs {
   height: 2.6em;
-  padding-right: 3em;
 
   a {
     padding: 0 1em;
@@ -23,6 +22,12 @@
       outline-offset: -0.5em;
     }
   }
+}
+
+.twocols {
+	.tabs {
+	  padding-right: 3em
+	}
 }
 
 .tabs > li {
@@ -44,12 +49,6 @@
 
   &:last-child {
     margin-right: 0;
-  }
-
-  &.additional-items {
-	display: inline-block;
-	width: 32px;
-	height: 32px;
   }
 }
 
@@ -122,4 +121,8 @@
   height: 1.938em;
   line-height: 2.6em;
   width: 3em;
+}
+
+.tabs.cloned {
+	background: lime;
 }
