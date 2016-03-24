@@ -93,6 +93,13 @@ class User
     protected $groups = array();
 
     /**
+     * Roles of this user
+     *
+     * @var Role[]
+     */
+    protected $roles = array();
+
+    /**
      * Preferences object
      *
      * @var Preferences
