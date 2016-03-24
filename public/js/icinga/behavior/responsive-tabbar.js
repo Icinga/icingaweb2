@@ -4,85 +4,41 @@
 
     'use strict';
 
-    function onRendered(e) {
-	    console.log(e.type);
-        var _this = e.data.self;
-		if ($('#layout').hasClass('twocols')) {
-			$('#col1, #col2').each( function() {
-				var $this = $(this);
-			    if ($this.find('.tabs')) {
-		            cacheBreakpoints($this, _this);
-		            updateBreakIndex($this, _this);
-		        }
-			});
-	    } else {
-		    var $this = $(this);
-		    if ($this.find('.tabs')) {
-	            cacheBreakpoints($this, _this);
-	            updateBreakIndex($this, _this);
-	        }
-	    }
-    }
-
-    function onWindowResized(e) {
-	    console.log(e.type);
-	    var _this = e.data.self;
+	function onWindowResized(e) {
+		var _this = e.data.self;
 		$('#col1, #col2').each(function() {
 			var $this = $(this);
-
-			if (_this.containerData[$this.attr("id")]) {
-				if ($this.find('.tabs')) {
-		            updateBreakIndex($this, _this);
-		        }
-	        }
+			cacheBreakpoints($this, _this);
 		});
-    }
+	}
 
-    function onLayoutchange(e) {
-	    console.log(e.type);
-	    var _this = e.data.self;
-		$('#col1, #col2').each(function() {
-			var $this = $(this);
-			if ($this.find('.tabs')) {
-				cacheBreakpoints($this, _this);
-	            updateBreakIndex($this, _this);
-	        }
-		});
+    function onFixControls(e) {
+		var $this = $(this);
+		var _this = e.data.self;
+		if ($this.find('.tabs')) {
+            updateBreakIndex($this, _this);
+        }
     }
 
     function cacheBreakpoints($container, e) {
         var containerData = {};
-        containerData.breakPoints = [];
         var w = $container.find('.dropdown-nav-item').outerWidth(true)+1;
-        $container.find(".tabs").not(".cloned").show();
-        $container.find(".tabs").not(".cloned").children("li").not('.dropdown-nav-item').each(function() {
+        containerData.breakPoints = [];
+        $container.find(".tabs").not(".cloned").show().children("li").not('.dropdown-nav-item').each(function() {
             containerData.breakPoints.push(w += $(this).outerWidth(true) + 1);
         });
         e.containerData[$container.attr('id')] = containerData;
-//         console.log("cacheBreak", e.containerData);
     }
 
     function updateBreakIndex($container, e) {
-
         var b = false;
-
-		// show container before calculating dimensions
-        var $tabContainer = $container.find('.tabs').show();
-
         var breakPoints = e.containerData[$container.attr('id')].breakPoints;
-		var dw = $tabContainer.find('.dropdown-nav-item').outerWidth(true) + 1;
-		var tw = $tabContainer.width();
-// 		var w = tw - dw;
-		var w = $tabContainer.width();
-
         for (var i = 0; i < breakPoints.length; i++) {
-            if ( breakPoints[i] > w) {
+            if ( breakPoints[i] > $container.find('.tabs').width()) {
                 b = i;
                 break;
             }
         }
-
-//         console.log("updateBreak", e.containerData);
         setBreakIndex($container, b, e);
     }
 
@@ -94,13 +50,7 @@
      * @param {Int}			NewIndex 	New Value for the breakIndex
      */
     function setBreakIndex($container, newIndex, e) {
-//         console.log("setBreak", e.containerData);
 		var containerData = e.containerData[$container.attr("id")];
-		console.log("event", e);
-		console.log("container", $container);
-		console.log("data", containerData);
-		console.log("new : old", newIndex, containerData.breakIndex)
-
         if (newIndex === containerData.breakIndex) {
             return;
         } else {
@@ -162,15 +112,14 @@
     var ResponsiveTabBar = function(icinga) {
 	    this.containerData = {};
         Icinga.EventListener.call(this, icinga);
-        this.on('rendered', '#col1, #col2', onRendered, this);
 
+		var _this = this;
+		$('#col1, #col2').each(function() {
+			cacheBreakpoints($(this), _this);
+		});
 
 		$(window).resize({self: this}, onWindowResized);
-
-		this.on('layout-change', onLayoutchange, this);
-/*
-		this.on('close-column', '#col1, #col2', onRendered, this);
-*/
+		this.on('fix-controls', '#col1, #col2', onFixControls, this);
     };
 
     ResponsiveTabBar.prototype = new Icinga.EventListener();
