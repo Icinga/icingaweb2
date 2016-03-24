@@ -27,9 +27,11 @@
      *
      * @param {object} e Event
      */
-    function onCloseColumn(e) {
-        $('#col1 .controls > .close-container-control').remove();
-        $('#col2 .controls > .close-container-control').remove();
+    function onFixControls(e) {
+	    if (!$('#layout').hasClass('twocols')) {
+		    $('#col1 .controls > .close-container-control').remove();
+		    $('#col2 .controls > .close-container-control').remove();
+        }
     }
 
     Icinga.Behaviors = Icinga.Behaviors || {};
@@ -47,7 +49,7 @@
     var ContainerToggles = function(icinga) {
         Icinga.EventListener.call(this, icinga);
         this.on('rendered', '#col1, #col2', onRendered, this);
-        this.on('close-column', '#col1, #col2', onCloseColumn, this);
+		this.on('fix-controls', '#col1, #col2', onFixControls, this);
     };
 
     ContainerToggles.prototype = new Icinga.EventListener();

@@ -245,7 +245,6 @@
                     if (this.currentLayout === 'poor' || this.currentLayout === 'minimal') {
                         this.layout1col();
                     }
-                    $(this).trigger('layout-change');
                     return true;
                 }
             }
@@ -280,7 +279,6 @@
             $c.removeData('lastUpdate');
             $c.removeData('icingaModule');
             this.icinga.loader.stopPendingRequestsFor($c);
-            $c.trigger('close-column');
             $c.html('');
             this.fixControls();
         },
@@ -646,6 +644,8 @@
 
                 return;
             }
+
+            $($container).trigger("fix-controls");
 
             if ($container.parent('.dashboard').length) {
                 return;
