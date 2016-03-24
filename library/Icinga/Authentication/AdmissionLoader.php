@@ -5,6 +5,7 @@ namespace Icinga\Authentication;
 
 use Icinga\Application\Config;
 use Icinga\Application\Logger;
+use Icinga\Authentication\Role;
 use Icinga\Exception\NotReadableError;
 use Icinga\Data\ConfigObject;
 use Icinga\User;
@@ -63,11 +64,13 @@ class AdmissionLoader
             return;
         }
         $userGroups = $user->getGroups();
-        foreach ($roles as $role) {
+        $roleObjs = array();
+        foreach ($roles as $roleName => $role) {
             if ($this->match($username, $userGroups, $role)) {
+                $permissionsFromRole = StringHelper::trimSplit($role->permissions);
                 $permissions = array_merge(
                     $permissions,
-                    array_diff(StringHelper::trimSplit($role->permissions), $permissions)
+                    array_diff($permissionsFromRole, $permissions)
                 );
                 $restrictionsFromRole = $role->toArray();
                 unset($restrictionsFromRole['users']);
@@ -79,10 +82,16 @@ class AdmissionLoader
                     }
                     $restrictions[$name][] = $restriction;
                 }
+
+                $roleObj = new Role();
+                $roleObjs[] = $roleObj
+                    ->setName($roleName)
+                    ->setPermissions($permissionsFromRole)
+                    ->setRestrictions($restrictionsFromRole);
             }
         }
         $user->setPermissions($permissions);
         $user->setRestrictions($restrictions);
-//        $user->setRoles($roles);
+        $user->setRoles($roleObjs);
     }
 }
