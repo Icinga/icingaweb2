@@ -45,11 +45,9 @@ class AdmissionLoader
     /**
      * Get user permissions and restrictions
      *
-     * @param   User $user
-     *
-     * @return  array
+     * @param   User    $user
      */
-    public function getPermissionsAndRestrictions(User $user)
+    public function applyRoles(User $user)
     {
         $permissions = array();
         $restrictions = array();
@@ -62,7 +60,7 @@ class AdmissionLoader
                 $username,
                 $e
             );
-            return array($permissions, $restrictions);
+            return;
         }
         $userGroups = $user->getGroups();
         foreach ($roles as $role) {
@@ -83,6 +81,8 @@ class AdmissionLoader
                 }
             }
         }
-        return array($permissions, $restrictions);
+        $user->setPermissions($permissions);
+        $user->setRestrictions($restrictions);
+//        $user->setRoles($roles);
     }
 }
