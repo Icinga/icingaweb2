@@ -22,8 +22,7 @@ class UserGroupBackend
     protected static $defaultBackends = array(
         'db',
         'ldap',
-        'msldap',
-        //'ini'
+        'msldap'
     );
 
     /**
@@ -154,9 +153,6 @@ class UserGroupBackend
         switch ($backendType) {
             case 'db':
                 $backend = new DbUserGroupBackend($resource);
-                break;
-            case 'ini':
-                $backend = new IniUserGroupBackend($resource);
                 break;
             case 'ldap':
             case 'msldap':

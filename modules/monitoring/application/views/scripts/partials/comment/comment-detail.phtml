@@ -36,10 +36,11 @@
         <?= $this->timeAgo($comment->timestamp) ?>
     </span>
     <span class="comment-icons" data-base-target="_self">
-        <?= $comment->persistent ? $this->icon('attach', 'This comment is persistent.') : '' ?>
+        <?= $comment->persistent ? $this->icon('attach', 'This comment is persistent') : '' ?>
         <?= $comment->expiration ? $this->icon('clock', sprintf(
-            $this->translate('This comment expires %s.'),
-            $this->timeUntil($comment->expiration)
+            $this->translate('This comment expires on %s at %s'),
+            $this->formatDate($comment->expiration),
+            $this->formatTime($comment->expiration)
         )) : '' ?>
     <?php if (isset($delCommentForm)) {
         $deleteButton = clone $delCommentForm;
@@ -56,5 +57,5 @@
     </span>
 </div>
 <p class="comment-text">
-    <?= $this->nl2br($this->escape($comment->comment)) ?>
+    <?= $this->nl2br($this->escapeComment($comment->comment)) ?>
 </p>

@@ -1,5 +1,5 @@
 # Icinga Web 2 - Head for multiple monitoring backends.
-# Copyright (C) 2015 Icinga Development Team
+# Copyright (C) 2016 Icinga Development Team
 # This file is distributed under the same license as Icinga Web 2.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Icinga Web 2 (None)\n"
 "Report-Msgid-Bugs-To: dev@icinga.org\n"
-"POT-Creation-Date: 2015-11-12 14:17+0000\n"
-"PO-Revision-Date: 2015-11-13 15:14+0100\n"
+"POT-Creation-Date: 2016-02-29 14:39+0000\n"
+"PO-Revision-Date: 2016-02-29 22:16+0100\n"
 "Last-Translator: Thomas Gelf <thomas@gelf.net>\n"
 "Language: de_DE\n"
 "MIME-Version: 1.0\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "Language-Team: \n"
-"X-Generator: Poedit 1.8.6\n"
+"X-Generator: Poedit 1.8.7\n"
 
 #: /vagrant/library/Icinga/Web/Form/Validator/InArray.php:16
 #, php-format
@@ -115,7 +115,7 @@ msgid "A user backend with the name \"%s\" does already exist"
 msgstr "Ein Nutzerbackend mit dem Namen “%s” existiert bereits"
 
 #: /vagrant/application/controllers/AboutController.php:19
-#: /vagrant/library/Icinga/Application/Web.php:247
+#: /vagrant/library/Icinga/Application/Web.php:305
 #: /vagrant/library/Icinga/Web/Menu.php:257
 msgid "About"
 msgstr "Über Icinga Web 2"
@@ -142,7 +142,12 @@ msgstr "Aktiv"
 msgid "Add"
 msgstr "Hinzufügen"
 
-#: /vagrant/application/controllers/DashboardController.php:72
+#: /vagrant/library/Icinga/Web/Widget/Tabextension/DashboardSettings.php:25
+#, fuzzy
+msgid "Add Dashlet"
+msgstr "Dashlet bearbeiten"
+
+#: /vagrant/application/controllers/DashboardController.php:76
 msgid "Add Dashlet To Dashboard"
 msgstr "Zum Dashboard hinzufügem"
 
@@ -150,11 +155,7 @@ msgstr "Zum Dashboard hinzufügem"
 msgid "Add New Member"
 msgstr "Mitglied hinzufügen"
 
-#: /vagrant/library/Icinga/Web/Widget/Tabextension/DashboardSettings.php:25
-msgid "Add New Pane Or Dashlet"
-msgstr "Neues Dashboard"
-
-#: /vagrant/application/forms/Dashboard/DashletForm.php:28
+#: /vagrant/application/forms/Dashboard/DashletForm.php:29
 #: /vagrant/library/Icinga/Web/Widget/Tabextension/DashboardAction.php:27
 msgid "Add To Dashboard"
 msgstr "Zum Dashboard hinzufügen"
@@ -179,7 +180,7 @@ msgstr "Neue Gruppe anlegen"
 msgid "Add a new user"
 msgstr "Neuen Benutzer anlegen"
 
-#: /vagrant/library/Icinga/Web/Widget/FilterEditor.php:378
+#: /vagrant/library/Icinga/Web/Widget/FilterEditor.php:409
 msgid "Add another filter"
 msgstr "Weiteren Filter hinzufügen..."
 
@@ -196,7 +197,7 @@ msgstr "Mitglied der Gruppe %s hinzufügen"
 msgid "Adjust the general configuration of Icinga Web 2"
 msgstr "Allgemeine Einstellungen von Icinga Web 2"
 
-#: /vagrant/application/controllers/NavigationController.php:132
+#: /vagrant/application/controllers/NavigationController.php:133
 #: /vagrant/application/controllers/PreferenceController.php:32
 msgid "Adjust the preferences of Icinga Web 2 according to your needs"
 msgstr "Anpassung von Icinga Web 2 an individuelle Bedürfnisse"
@@ -209,7 +210,7 @@ msgstr ""
 "Alle konfigurierten Authentifizierungsmethoden sind fehlgeschlagen. Mehr "
 "Details dazu stehen im Systemlog oder im Log von Icinga Web 2."
 
-#: /vagrant/application/forms/Security/RoleForm.php:94
+#: /vagrant/application/forms/Security/RoleForm.php:68
 #, php-format
 msgid "Allow access to module %s"
 msgstr "Zugriff auf das Modul %s erlauben"
@@ -247,17 +248,17 @@ msgstr ""
 "Ein zusätzlicher Filter für die Suche nach Benutzern für die angegebene "
 "Verbindung. Leer lassen, um keine Filter zu verwenden."
 
-#: /vagrant/library/Icinga/Application/Web.php:260
+#: /vagrant/library/Icinga/Application/Web.php:318
 #: /vagrant/library/Icinga/Web/Menu.php:273
 msgid "Application"
 msgstr "Anwendung"
 
-#: /vagrant/library/Icinga/Application/Web.php:316
+#: /vagrant/library/Icinga/Application/Web.php:366
 #: /vagrant/library/Icinga/Web/Menu.php:262
 msgid "Application Log"
 msgstr "Anwendungslog"
 
-#: /vagrant/application/forms/Config/General/LoggingConfigForm.php:65
+#: /vagrant/application/forms/Config/General/LoggingConfigForm.php:71
 msgid "Application Prefix"
 msgstr "Anwendungspräfix"
 
@@ -265,12 +266,8 @@ msgstr "Anwendungspräfix"
 msgid "Apply"
 msgstr "Anwenden"
 
-#: /vagrant/library/Icinga/Web/Widget/SortBox.php:194
-msgctxt "sort direction"
-msgid "Ascending"
-msgstr "Aufsteigend [ Sortierreihenfolge ]"
-
-#: /vagrant/library/Icinga/Application/Web.php:266
+#: /vagrant/application/controllers/ConfigController.php:50
+#: /vagrant/library/Icinga/Application/Web.php:324
 #: /vagrant/library/Icinga/Web/Menu.php:278
 msgid "Authentication"
 msgstr "Authentifizierung"
@@ -289,10 +286,6 @@ msgstr "Authentifizierungsbackend “%s” wurde nicht gefunden"
 msgid "Authentication order updated"
 msgstr "Authentifizierungsreihenfolge wurde aktualisiert"
 
-#: /vagrant/library/Icinga/Application/Web.php:272
-msgid "Authorization"
-msgstr "Autorisierung"
-
 #: /vagrant/application/forms/AutoRefreshForm.php:44
 msgid "Auto refresh successfully disabled"
 msgstr "Automatische Aktualisierung erfolgreich deaktiviert"
@@ -306,8 +299,8 @@ msgstr "Automatische Aktualisierung erfolgreich aktiviert"
 msgid "Back"
 msgstr "Zurück"
 
+#: /vagrant/application/views/scripts/config/userbackend/reorder.phtml:35
 #: /vagrant/application/views/scripts/form/reorder-authbackend.phtml:4
-#: /vagrant/application/views/scripts/usergroupbackend/list.phtml:20
 msgid "Backend"
 msgstr "Backend-Name"
 
@@ -336,29 +329,29 @@ msgstr "Bind DN"
 msgid "Bind Password"
 msgstr "Bind Kennwort"
 
-#: /vagrant/application/forms/PreferenceForm.php:147
-#: /vagrant/application/forms/PreferenceForm.php:153
+#: /vagrant/application/forms/PreferenceForm.php:181
+#: /vagrant/application/forms/PreferenceForm.php:187
 #, php-format
 msgctxt "preferences.form"
 msgid "Browser (%s)"
 msgstr "Browser (%s)"
 
-#: /vagrant/application/forms/Security/RoleForm.php:240
+#: /vagrant/application/forms/Security/RoleForm.php:214
 #, php-format
 msgid "Can't add role '%s'. Role already exists"
 msgstr "Kann Rolle ‘%s’ nicht hinzufügen. Die Rolle existiert bereits"
 
-#: /vagrant/application/forms/Security/RoleForm.php:199
+#: /vagrant/application/forms/Security/RoleForm.php:173
 #, php-format
 msgid "Can't load role '%s'. Role does not exist"
 msgstr "Kann Rolle ‘%s’ nicht laden. Die Rolle existiert nicht"
 
-#: /vagrant/application/forms/Security/RoleForm.php:266
+#: /vagrant/application/forms/Security/RoleForm.php:240
 #, php-format
 msgid "Can't remove role '%s'. Role does not exist"
 msgstr "Kann Rolle ‘%s’ nicht löschen. Die Rolle existiert nicht"
 
-#: /vagrant/application/forms/Security/RoleForm.php:299
+#: /vagrant/application/forms/Security/RoleForm.php:273
 #, php-format
 msgid "Can't update role '%s'. Role does not exist"
 msgstr "Kann Rolle ‘%s’ nicht akualisieren. Die Rolle existiert nicht"
@@ -372,7 +365,7 @@ msgstr "Abbrechen"
 msgid "Cancel this membership"
 msgstr "Diese Mitgliedschaft beenden"
 
-#: /vagrant/library/Icinga/Web/Widget/FilterEditor.php:404
+#: /vagrant/library/Icinga/Web/Widget/FilterEditor.php:435
 msgid "Cancel this operation"
 msgstr "Diese Operation abbrechen"
 
@@ -386,7 +379,7 @@ msgstr "Einfügen nicht möglich. Die Sektion “%s” existiert bereits"
 msgid "Cannot read config file \"%s\". Permission denied"
 msgstr "Kann Konfigurationsdatei “%s” nicht lesen"
 
-#: /vagrant/library/Icinga/Web/Widget/FilterEditor.php:252
+#: /vagrant/library/Icinga/Web/Widget/FilterEditor.php:283
 msgid "Cannot search here"
 msgstr "Suche ist hier nicht möglich"
 
@@ -404,9 +397,22 @@ msgstr ""
 msgid "Cannot update. Section \"%s\" does already exist"
 msgstr "Aktualisierung nicht möglich. Sektion “%s” existiert bereits"
 
+#: /vagrant/library/Icinga/Web/Widget/SortBox.php:251
+msgid "Change sort direction"
+msgstr "Sortierreihenfolge"
+
 #: /vagrant/application/forms/Config/Resource/DbResourceForm.php:146
 msgid "Character Set"
 msgstr "Zeichensatz"
+
+#: /vagrant/application/forms/Config/General/ThemingConfigForm.php:53
+msgctxt "Form element description"
+msgid ""
+"Check this box for disallowing users to change the theme. If a default theme "
+"is set, it will be used nonetheless"
+msgstr ""
+"Checkbox auswählen um Benutzeranpassung zu verbieten. Die Standardtheme wird "
+"für alle Benutzer angezeigt."
 
 #: /vagrant/application/forms/Config/Resource/DbResourceForm.php:154
 msgid ""
@@ -418,7 +424,7 @@ msgstr ""
 "Verbindungen werden am Ende einer Anfrage nicht geschlossen, sondern "
 "gecached wiederverwendet"
 
-#: /vagrant/application/forms/Dashboard/DashletForm.php:122
+#: /vagrant/application/forms/Dashboard/DashletForm.php:101
 msgid "Check this box if you want to add the dashlet to a new dashboard"
 msgstr "Häkchen setzen, um dieses Dashlet einem neuen Dashboard hinzuzufügen"
 
@@ -428,7 +434,7 @@ msgstr ""
 "Häkchen setzen, um die Änderungen ohne Validierung der Verbindung zu "
 "speichern"
 
-#: /vagrant/application/forms/Config/UserBackendConfigForm.php:398
+#: /vagrant/application/forms/Config/UserBackendConfigForm.php:383
 msgid ""
 "Check this box to enforce changes without validating that authentication is "
 "possible."
@@ -457,38 +463,32 @@ msgstr ""
 "Kommaseparierte Liste von Nutzernamen, mit denen dieses Element geteilt "
 "werden soll"
 
-#: /vagrant/application/forms/Security/RoleForm.php:152
+#: /vagrant/application/forms/Security/RoleForm.php:126
 msgid "Comma-separated list of groups that are assigned to the role"
 msgstr "Kommaseparierte Liste von Gruppen, die dieser Rolle zugewiesen werden"
 
-#: /vagrant/application/forms/Security/RoleForm.php:144
+#: /vagrant/application/forms/Security/RoleForm.php:118
 msgid "Comma-separated list of users that are assigned to the role"
 msgstr "Kommaseparierte Liste von Nutzern, die dieser Rolle zugewiesen werden"
 
-#: /vagrant/library/Icinga/Application/Web.php:254
+#: /vagrant/library/Icinga/Application/Web.php:312
 #: /vagrant/library/Icinga/Web/Menu.php:268
 msgid "Configuration"
 msgstr "Konfiguration"
 
-#: /vagrant/application/controllers/ConfigController.php:64
-#: /vagrant/application/controllers/UsergroupbackendController.php:157
-msgid "Configure how users are associated with groups by Icinga Web 2"
-msgstr ""
-"Konfiguration der Verknüpfung von Nutzern und Gruppen durch Icinga Web 2"
-
-#: /vagrant/application/controllers/ConfigController.php:58
-#: /vagrant/application/controllers/UsergroupbackendController.php:152
-msgid "Configure how users authenticate with and log into Icinga Web 2"
-msgstr "Konfiguration der Nutzerauthentifizierung für Icinga Web 2"
-
-#: /vagrant/application/controllers/GroupController.php:347
+#: /vagrant/application/controllers/GroupController.php:346
 #: /vagrant/application/controllers/RoleController.php:155
-#: /vagrant/application/controllers/UserController.php:313
+#: /vagrant/application/controllers/UserController.php:312
 msgid ""
 "Configure roles to permit or restrict users and groups accessing Icinga Web 2"
 msgstr ""
 "Konfiguration der Zugangsberechtigungen für Nutzer und Gruppen in Icinga Web "
 "2"
+
+#: /vagrant/application/controllers/ConfigController.php:49
+#, fuzzy
+msgid "Configure the user and group backends"
+msgstr "Neues Backend für Benutzergruppen erstellen"
 
 #: /vagrant/application/controllers/ConfigController.php:43
 msgid "Configure which resources are being utilized by Icinga Web 2"
@@ -514,7 +514,7 @@ msgstr "Enthält Daten in einem Balken- oder Liniendiagramm."
 msgid "Contains data in a pie chart."
 msgstr "Enthält Daten in einem Tortendiagramm."
 
-#: /vagrant/application/forms/Config/General/ApplicationConfigForm.php:50
+#: /vagrant/application/forms/Config/General/ApplicationConfigForm.php:54
 msgid ""
 "Contains the directories that will be searched for available modules, "
 "separated by colons. Modules that don't exist in these directories can still "
@@ -554,7 +554,7 @@ msgstr "Neue Gruppenmitgliedschaft"
 msgid "Create Role"
 msgstr "Rolle erstellen"
 
-#: /vagrant/application/views/scripts/navigation/index.phtml:20
+#: /vagrant/application/views/scripts/navigation/index.phtml:12
 msgid "Create a New Navigation Item"
 msgstr "Neues Navigationselement erstellen"
 
@@ -566,15 +566,15 @@ msgstr "Neue Ressource erstellen"
 msgid "Create a New Role"
 msgstr "Neue Rolle erstellen"
 
-#: /vagrant/application/views/scripts/config/userbackend/reorder.phtml:6
+#: /vagrant/application/views/scripts/config/userbackend/reorder.phtml:7
 msgid "Create a New User Backend"
 msgstr "Neues Backend für Benutzer erstellen"
 
-#: /vagrant/application/views/scripts/usergroupbackend/list.phtml:6
+#: /vagrant/application/views/scripts/config/userbackend/reorder.phtml:21
 msgid "Create a New User Group Backend"
 msgstr "Neues Backend für Benutzergruppen erstellen"
 
-#: /vagrant/application/controllers/ConfigController.php:217
+#: /vagrant/application/controllers/ConfigController.php:198
 msgid ""
 "Create a new backend for authenticating your users. This backend will be "
 "added at the end of your authentication order."
@@ -582,15 +582,15 @@ msgstr ""
 "Neues Backend für die Nutzerauthentifizierung anlegen.  Dieses Backend wird "
 "an das Ende Ihrer Authentifizierungsreihenfolge angehängt"
 
-#: /vagrant/application/controllers/UsergroupbackendController.php:51
+#: /vagrant/application/controllers/UsergroupbackendController.php:42
 msgid "Create a new backend to associate users and groups with."
 msgstr "Neues Backend zur Assoziation von Benutzern und Gruppen anlegen."
 
-#: /vagrant/application/views/scripts/navigation/index.phtml:27
+#: /vagrant/application/views/scripts/navigation/index.phtml:19
 msgid "Create a new navigation item"
 msgstr "Ein neues Navigationselement erzeugen"
 
-#: /vagrant/application/controllers/NavigationController.php:215
+#: /vagrant/application/controllers/NavigationController.php:216
 msgid "Create a new navigation item, such as a menu entry or dashlet."
 msgstr ""
 "Ein neues Navigationselement (zum Beispiel Menüeintrag oder Dashlet) "
@@ -604,11 +604,11 @@ msgstr "Neue Ressource erstellen"
 msgid "Create a new role"
 msgstr "Neue Rolle erstellen"
 
-#: /vagrant/application/views/scripts/config/userbackend/reorder.phtml:13
+#: /vagrant/application/views/scripts/config/userbackend/reorder.phtml:14
 msgid "Create a new user backend"
 msgstr "Neue Backend für Benutzer erstellen"
 
-#: /vagrant/application/views/scripts/usergroupbackend/list.phtml:13
+#: /vagrant/application/views/scripts/config/userbackend/reorder.phtml:28
 msgid "Create a new user group backend"
 msgstr "Neues Backend für Benutzergruppen erstellen"
 
@@ -620,8 +620,7 @@ msgstr "Mitgliedschaften für %s erstellen"
 #: /vagrant/library/Icinga/Authentication/User/DbUserBackend.php:120
 #: /vagrant/library/Icinga/Authentication/User/LdapUserBackend.php:257
 #: /vagrant/library/Icinga/Authentication/UserGroup/DbUserGroupBackend.php:122
-#: /vagrant/library/Icinga/Authentication/UserGroup/IniUserGroupBackend.php:75
-#: /vagrant/library/Icinga/Authentication/UserGroup/LdapUserGroupBackend.php:465
+#: /vagrant/library/Icinga/Authentication/UserGroup/LdapUserGroupBackend.php:466
 msgid "Created At"
 msgstr "Erstellt am"
 
@@ -653,8 +652,8 @@ msgstr ""
 "Momentan ist kein Dashlet verfügbar. Das könnte durch die Aktivierung von "
 "einigen der verfügbaren %s behoben werden."
 
-#: /vagrant/application/forms/Dashboard/DashletForm.php:108
-#: /vagrant/library/Icinga/Application/Web.php:232
+#: /vagrant/application/forms/Dashboard/DashletForm.php:120
+#: /vagrant/library/Icinga/Application/Web.php:290
 #: /vagrant/library/Icinga/Web/Menu.php:243
 msgid "Dashboard"
 msgstr "Dashboard"
@@ -663,7 +662,7 @@ msgstr "Dashboard"
 msgid "Dashboard Settings"
 msgstr "Dashboardeinstellungen"
 
-#: /vagrant/application/controllers/DashboardController.php:211
+#: /vagrant/application/controllers/DashboardController.php:219
 msgid "Dashboard has been removed"
 msgstr "Das Dashboard wurde entfernt"
 
@@ -671,29 +670,29 @@ msgstr "Das Dashboard wurde entfernt"
 msgid "Dashlet Name"
 msgstr "Name des Dashlets"
 
-#: /vagrant/application/forms/Dashboard/DashletForm.php:79
+#: /vagrant/application/forms/Dashboard/DashletForm.php:81
 msgid "Dashlet Title"
 msgstr "Titel des Dashlets"
 
-#: /vagrant/application/controllers/DashboardController.php:69
+#: /vagrant/application/controllers/DashboardController.php:73
 msgid "Dashlet created"
 msgstr "Dashlet wurde angelegt"
 
-#: /vagrant/application/controllers/DashboardController.php:171
+#: /vagrant/application/controllers/DashboardController.php:183
 msgid "Dashlet has been removed from"
 msgstr "Das Dashlet wurde entfernt von"
 
-#: /vagrant/application/controllers/DashboardController.php:132
+#: /vagrant/application/controllers/DashboardController.php:140
 msgid "Dashlet updated"
 msgstr "Dashlet aktualisiert"
 
 #: /vagrant/application/forms/Config/UserBackendConfigForm.php:267
-#: /vagrant/application/forms/Config/General/ApplicationConfigForm.php:66
+#: /vagrant/application/forms/Config/General/ApplicationConfigForm.php:70
 #: /vagrant/application/forms/Config/UserGroup/UserGroupBackendForm.php:163
 msgid "Database"
 msgstr "SQL Datenbank"
 
-#: /vagrant/application/forms/Config/General/ApplicationConfigForm.php:85
+#: /vagrant/application/forms/Config/General/ApplicationConfigForm.php:90
 #: /vagrant/application/forms/Config/UserBackend/DbBackendForm.php:64
 #: /vagrant/application/forms/Config/UserGroup/DbUserGroupBackendForm.php:47
 msgid "Database Connection"
@@ -707,19 +706,20 @@ msgstr "Datenbankname"
 msgid "Database Type"
 msgstr "Datenbanktyp"
 
-#: /vagrant/application/forms/Config/General/LoggingConfigForm.php:53
+#: /vagrant/application/forms/Config/General/LoggingConfigForm.php:59
 msgctxt "app.config.logging.level"
 msgid "Debug"
 msgstr "Debug"
 
+#: /vagrant/application/forms/Config/General/ThemingConfigForm.php:42
+#, fuzzy
+msgctxt "Form element label"
+msgid "Default Theme"
+msgstr "Standardsprache"
+
 #: /vagrant/application/views/scripts/config/module.phtml:46
 msgid "Dependencies"
 msgstr "Abhängigkeiten"
-
-#: /vagrant/library/Icinga/Web/Widget/SortBox.php:195
-msgctxt "sort direction"
-msgid "Descending"
-msgstr "Absteigend"
 
 #: /vagrant/application/views/scripts/config/module.phtml:42
 msgid "Description"
@@ -732,11 +732,6 @@ msgid ""
 msgstr ""
 "Details können im Log der Anwendung gefunden werden. (Wenn kein Zugriff auf "
 "das Log möglich ist, kontaktieren  Sie bitte Ihren Administrator)"
-
-#: /vagrant/library/Icinga/Web/Widget/SortBox.php:192
-msgctxt "sort direction"
-msgid "Direction"
-msgstr "Richtung"
 
 #: /vagrant/application/forms/AutoRefreshForm.php:65
 msgid "Disable auto refresh"
@@ -752,13 +747,18 @@ msgctxt "A button to discover LDAP capabilities"
 msgid "Discover"
 msgstr "Entdecken"
 
-#: /vagrant/application/forms/Config/General/ApplicationConfigForm.php:67
+#: /vagrant/application/forms/Config/General/ApplicationConfigForm.php:71
 msgid "Don't Store Preferences"
 msgstr "Einstellungen nicht speichern"
 
-#: /vagrant/application/controllers/DashboardController.php:135
+#: /vagrant/application/controllers/DashboardController.php:143
 msgid "Edit Dashlet"
 msgstr "Dashlet bearbeiten"
+
+#: /vagrant/application/views/scripts/user/show.phtml:16
+#, fuzzy
+msgid "Edit User"
+msgstr "Nutzer %s bearbeiten"
 
 #: /vagrant/application/views/scripts/dashboard/settings.phtml:53
 #, php-format
@@ -771,7 +771,7 @@ msgstr "Dashlet %s bearbeiten"
 msgid "Edit group %s"
 msgstr "Gruppe %s bearbeiten"
 
-#: /vagrant/application/views/scripts/navigation/index.phtml:55
+#: /vagrant/application/views/scripts/navigation/index.phtml:47
 #, php-format
 msgid "Edit navigation item %s"
 msgstr "Navigationselement %s bearbeiten"
@@ -786,13 +786,13 @@ msgstr "Ressource %s bearbeiten"
 msgid "Edit role %s"
 msgstr "Rolle %s bearbeiten"
 
-#: /vagrant/application/views/scripts/navigation/shared.phtml:46
+#: /vagrant/application/views/scripts/navigation/shared.phtml:37
 #, php-format
 msgid "Edit shared navigation item %s"
 msgstr "Geteiltes Navigationselement %s bearbeiten"
 
 #: /vagrant/application/forms/Config/User/UserForm.php:67
-#: /vagrant/application/views/scripts/user/show.phtml:17
+#: /vagrant/application/views/scripts/user/show.phtml:25
 #, php-format
 msgid "Edit user %s"
 msgstr "Nutzer %s bearbeiten"
@@ -802,13 +802,13 @@ msgstr "Nutzer %s bearbeiten"
 msgid "Edit user backend %s"
 msgstr "Nutzerbackend %s bearbeiten"
 
-#: /vagrant/application/views/scripts/usergroupbackend/list.phtml:36
+#: /vagrant/application/views/scripts/config/userbackend/reorder.phtml:51
 #, php-format
 msgid "Edit user group backend %s"
 msgstr "Nutzgruppenbackend %s bearbeiten"
 
 #: /vagrant/application/forms/AutoRefreshForm.php:63
-#: /vagrant/application/forms/PreferenceForm.php:209
+#: /vagrant/application/forms/PreferenceForm.php:243
 msgid "Enable auto refresh"
 msgstr "Automatische Aktualisierung aktivieren"
 
@@ -826,15 +826,16 @@ msgstr "Die Aktivierung des Moduls \"%s\" könnte helfen!"
 msgid "Encryption"
 msgstr "Verschlüsselung"
 
-#: /vagrant/application/forms/Dashboard/DashletForm.php:80
+#: /vagrant/application/forms/Dashboard/DashletForm.php:82
 msgid "Enter a title for the dashlet."
 msgstr "Titel für das Dashlet eingeben"
 
-#: /vagrant/application/forms/Dashboard/DashletForm.php:99
-msgid "Enter a title for the new pane."
+#: /vagrant/application/forms/Dashboard/DashletForm.php:111
+#, fuzzy
+msgid "Enter a title for the new dashboard"
 msgstr "Titel für das Dashboard eingeben"
 
-#: /vagrant/application/forms/Dashboard/DashletForm.php:70
+#: /vagrant/application/forms/Dashboard/DashletForm.php:71
 msgid ""
 "Enter url being loaded in the dashlet. You can paste the full URL, including "
 "filters."
@@ -842,7 +843,12 @@ msgstr ""
 "URL angeben, die in dem Dashlet geladen werden soll. Es sind vollständige "
 "URLs mit Filtern möglich."
 
-#: /vagrant/application/forms/Config/General/LoggingConfigForm.php:50
+#: /vagrant/application/controllers/ErrorController.php:109
+#, fuzzy
+msgid "Error"
+msgstr "Fehler"
+
+#: /vagrant/application/forms/Config/General/LoggingConfigForm.php:56
 msgctxt "app.config.logging.level"
 msgid "Error"
 msgstr "Fehler"
@@ -934,12 +940,12 @@ msgid "Failed to remove user \"%s\""
 msgstr "Benutzer “%s” konnte nicht entfernt werden"
 
 #: /vagrant/application/forms/Config/ResourceConfigForm.php:317
-#: /vagrant/application/forms/Config/UserBackendConfigForm.php:437
+#: /vagrant/application/forms/Config/UserBackendConfigForm.php:422
 #, php-format
 msgid "Failed to successfully validate the configuration: %s"
 msgstr "Validierung der Konfiguration schlug fehl: %s"
 
-#: /vagrant/application/controllers/NavigationController.php:385
+#: /vagrant/application/controllers/NavigationController.php:386
 #, php-format
 msgid "Failed to unshare navigation item \"%s\""
 msgstr ""
@@ -954,16 +960,16 @@ msgstr "Aktualisierung fehlgeschlagen. Ein Fehler ist aufgetreten: %s"
 msgid "File"
 msgstr "Datei"
 
-#: /vagrant/application/forms/Config/General/LoggingConfigForm.php:35
+#: /vagrant/application/forms/Config/General/LoggingConfigForm.php:41
 msgctxt "app.config.logging.type"
 msgid "File"
 msgstr "Datei"
 
-#: /vagrant/application/forms/Config/General/ApplicationConfigForm.php:65
+#: /vagrant/application/forms/Config/General/ApplicationConfigForm.php:69
 msgid "File System (INI Files)"
 msgstr "Dateisystem"
 
-#: /vagrant/application/forms/Config/General/LoggingConfigForm.php:109
+#: /vagrant/application/forms/Config/General/LoggingConfigForm.php:115
 msgid "File path"
 msgstr "Dateipfad"
 
@@ -985,7 +991,7 @@ msgstr "Filterspalte “%s” nicht gefunden"
 msgid "Filter column \"%s\" not found in table \"%s\""
 msgstr "Filterspalte “%s” in Tabelle “%s” nicht gefunden"
 
-#: /vagrant/library/Icinga/Web/Widget/FilterEditor.php:713
+#: /vagrant/library/Icinga/Web/Widget/FilterEditor.php:744
 #: /vagrant/library/Icinga/Web/Widget/FilterWidget.php:89
 msgid "Filter this list"
 msgstr "Diese Liste filtern"
@@ -1078,7 +1084,7 @@ msgstr "Gruppenmitglieder wurden erfolgreich hinzugefügt"
 
 #: /vagrant/application/forms/Config/User/CreateMembershipForm.php:79
 #: /vagrant/application/forms/Navigation/NavigationConfigForm.php:623
-#: /vagrant/application/forms/Security/RoleForm.php:151
+#: /vagrant/application/forms/Security/RoleForm.php:125
 #: /vagrant/application/views/scripts/role/list.phtml:24
 msgid "Groups"
 msgstr "Gruppen"
@@ -1100,33 +1106,39 @@ msgstr "Hosts"
 msgid "I'm ready to search, waiting for your input"
 msgstr "Ich bin bereit zur Suche. Warte auf Eingabe"
 
-#: /vagrant/application/views/scripts/about/index.phtml:99
+#: /vagrant/application/views/scripts/about/index.phtml:106
 msgid "Icinga Documentation"
 msgstr "Icinga Dokumentation"
 
-#: /vagrant/application/views/scripts/authentication/login.phtml:15
+#: /vagrant/application/views/scripts/authentication/login.phtml:11
 msgid "Icinga Web 2 Documentation"
 msgstr "Icinga Web 2 Dokumentation"
 
-#: /vagrant/application/controllers/AuthenticationController.php:51
+#: /vagrant/application/controllers/AuthenticationController.php:53
 msgid "Icinga Web 2 Login"
 msgstr "Icinga Web 2 Anmeldung"
 
-#: /vagrant/application/views/scripts/authentication/login.phtml:16
+#: /vagrant/application/views/scripts/authentication/login.phtml:12
 msgid "Icinga Web 2 Setup-Wizard"
 msgstr "Icinga Web 2 Einrichtungsassistent"
 
-#: /vagrant/application/views/scripts/about/index.phtml:89
+#: /vagrant/application/views/scripts/about/index.phtml:96
 msgid "Icinga Wiki"
 msgstr "Icinga Wiki"
 
 #: /vagrant/application/views/scripts/about/index.phtml:55
-#: /vagrant/application/views/scripts/authentication/login.phtml:41
+#: /vagrant/application/views/scripts/authentication/login.phtml:37
 msgid "Icinga on Facebook"
 msgstr "Icinga auf Facebook"
 
+#: /vagrant/application/views/scripts/about/index.phtml:64
+#: /vagrant/application/views/scripts/authentication/login.phtml:46
+#, fuzzy
+msgid "Icinga on Google+"
+msgstr "Icinga auf Facebook"
+
 #: /vagrant/application/views/scripts/about/index.phtml:46
-#: /vagrant/application/views/scripts/authentication/login.phtml:31
+#: /vagrant/application/views/scripts/authentication/login.phtml:27
 msgid "Icinga on Twitter"
 msgstr "Icinga auf Twitter"
 
@@ -1160,7 +1172,7 @@ msgstr "Inaktiv"
 msgid "Incorrect username or password"
 msgstr "Benutzername oder Kennwort ungültig"
 
-#: /vagrant/application/forms/Config/General/LoggingConfigForm.php:52
+#: /vagrant/application/forms/Config/General/LoggingConfigForm.php:58
 msgctxt "app.config.logging.level"
 msgid "Information"
 msgstr "Information"
@@ -1176,7 +1188,7 @@ msgstr "Ungültiger Backendtyp “%s” angegeben"
 msgid "Invalid resource type \"%s\" provided"
 msgstr "Ungültiger Ressourcentyp “%s” angegeben"
 
-#: /vagrant/application/views/scripts/authentication/login.phtml:11
+#: /vagrant/application/views/scripts/authentication/login.phtml:7
 #, php-format
 msgid ""
 "It appears that you did not configure Icinga Web 2 yet so it's not possible "
@@ -1243,8 +1255,7 @@ msgstr "LDAP Objektklasse für den Benutzer"
 #: /vagrant/library/Icinga/Authentication/User/DbUserBackend.php:121
 #: /vagrant/library/Icinga/Authentication/User/LdapUserBackend.php:258
 #: /vagrant/library/Icinga/Authentication/UserGroup/DbUserGroupBackend.php:123
-#: /vagrant/library/Icinga/Authentication/UserGroup/IniUserGroupBackend.php:76
-#: /vagrant/library/Icinga/Authentication/UserGroup/LdapUserGroupBackend.php:466
+#: /vagrant/library/Icinga/Authentication/UserGroup/LdapUserGroupBackend.php:467
 msgid "Last Modified"
 msgstr "Zuletzt verändert"
 
@@ -1260,44 +1271,40 @@ msgstr "Zuletzt verändert"
 msgid "Leave empty for not updating the user's password"
 msgstr "Leer lassen, um das Passwort unverändert zu lassen"
 
-#: /vagrant/library/Icinga/Web/Widget/Limiter.php:108
-msgid "Limiter"
-msgstr "Begrenzer"
-
-#: /vagrant/application/controllers/NavigationController.php:191
+#: /vagrant/application/controllers/NavigationController.php:192
 msgid "List and configure shared navigation items"
 msgstr "Geteilte Navigationselemente auflisten und bearbeiten"
 
-#: /vagrant/application/controllers/NavigationController.php:141
+#: /vagrant/application/controllers/NavigationController.php:142
 #: /vagrant/application/controllers/PreferenceController.php:37
 msgid "List and configure your own navigation items"
 msgstr "Eigene Navigationselemente auflisten und bearbeiten"
 
-#: /vagrant/application/controllers/GroupController.php:365
-#: /vagrant/application/controllers/RoleController.php:173
-#: /vagrant/application/controllers/UserController.php:331
+#: /vagrant/application/controllers/GroupController.php:363
+#: /vagrant/application/controllers/RoleController.php:172
+#: /vagrant/application/controllers/UserController.php:329
 msgid "List groups of user group backends"
 msgstr "Gruppierte Benutzergruppenbackends auflisten"
 
-#: /vagrant/application/controllers/ConfigController.php:112
+#: /vagrant/application/controllers/ConfigController.php:97
 msgid "List intalled modules"
 msgstr "Installierte Module auflisten"
 
-#: /vagrant/application/controllers/GroupController.php:356
+#: /vagrant/application/controllers/GroupController.php:355
 #: /vagrant/application/controllers/RoleController.php:164
-#: /vagrant/application/controllers/UserController.php:322
+#: /vagrant/application/controllers/UserController.php:321
 msgid "List users of authentication backends"
 msgstr "Benutzer des Authentifizierungsbackends auflisten"
 
-#: /vagrant/application/views/scripts/about/index.phtml:103
+#: /vagrant/application/views/scripts/about/index.phtml:110
 msgid "Loaded modules"
 msgstr "Geladene Module"
 
-#: /vagrant/application/forms/Config/General/LoggingConfigForm.php:47
+#: /vagrant/application/forms/Config/General/LoggingConfigForm.php:53
 msgid "Logging Level"
 msgstr "Log-Level"
 
-#: /vagrant/application/forms/Config/General/LoggingConfigForm.php:31
+#: /vagrant/application/forms/Config/General/LoggingConfigForm.php:37
 msgid "Logging Type"
 msgstr "Logging-Typ"
 
@@ -1314,7 +1321,7 @@ msgstr "Abmelden..."
 msgid "Login"
 msgstr "Anmelden"
 
-#: /vagrant/library/Icinga/Application/Web.php:303
+#: /vagrant/library/Icinga/Application/Web.php:355
 #: /vagrant/library/Icinga/Web/Menu.php:313
 msgid "Logout"
 msgstr "Abmelden"
@@ -1349,111 +1356,111 @@ msgstr "Menüeintrag"
 msgid "Method Not Allowed"
 msgstr "Nicht zulässig"
 
-#: /vagrant/library/Icinga/Web/Widget/FilterEditor.php:715
+#: /vagrant/library/Icinga/Web/Widget/FilterEditor.php:746
 #: /vagrant/library/Icinga/Web/Widget/FilterWidget.php:94
 msgid "Modify this filter"
 msgstr "Diesen Filter bearbeiten"
 
-#: /vagrant/application/views/scripts/config/modules.phtml:22
+#: /vagrant/application/views/scripts/config/modules.phtml:11
 msgid "Module"
 msgstr "Modul"
 
-#: /vagrant/application/controllers/ConfigController.php:182
+#: /vagrant/application/controllers/ConfigController.php:161
 #, php-format
 msgid "Module \"%s\" disabled"
 msgstr "Modul “%s” deaktiviert"
 
-#: /vagrant/application/controllers/ConfigController.php:162
+#: /vagrant/application/controllers/ConfigController.php:141
 #, php-format
 msgid "Module \"%s\" enabled"
 msgstr "Modul “%s” aktiviert"
 
-#: /vagrant/application/views/scripts/config/modules.phtml:34
+#: /vagrant/application/views/scripts/config/modules.phtml:23
 #, php-format
 msgid "Module %s has failed to load"
 msgstr "Modul %s konnte nicht geladen werden"
 
-#: /vagrant/application/views/scripts/config/modules.phtml:32
+#: /vagrant/application/views/scripts/config/modules.phtml:21
 #, php-format
 msgid "Module %s is disabled"
 msgstr "Modul “%s” ist deaktiviert"
 
-#: /vagrant/application/views/scripts/config/modules.phtml:30
+#: /vagrant/application/views/scripts/config/modules.phtml:19
 #, php-format
 msgid "Module %s is enabled"
 msgstr "Modul “%s” ist aktiviert"
 
-#: /vagrant/application/forms/Config/General/ApplicationConfigForm.php:46
+#: /vagrant/application/forms/Config/General/ApplicationConfigForm.php:50
 msgid "Module Path"
 msgstr "Pfad zu den Modulen"
 
-#: /vagrant/application/controllers/ConfigController.php:111
-#: /vagrant/library/Icinga/Application/Web.php:284
+#: /vagrant/application/controllers/ConfigController.php:96
+#: /vagrant/library/Icinga/Application/Web.php:336
 #: /vagrant/library/Icinga/Web/Menu.php:298
 msgid "Modules"
 msgstr "Module"
 
-#: /vagrant/application/views/scripts/form/reorder-authbackend.phtml:62
+#: /vagrant/application/views/scripts/form/reorder-authbackend.phtml:58
 msgid "Move down in authentication order"
 msgstr "In der Authentifizierungsreihenfolge nach unten schieben"
 
-#: /vagrant/application/views/scripts/form/reorder-authbackend.phtml:48
+#: /vagrant/application/views/scripts/form/reorder-authbackend.phtml:46
 msgid "Move up in authentication order"
 msgstr "In der Authentifizierungsreihenfolge nach oben schieben"
 
-#: /vagrant/application/views/scripts/form/reorder-authbackend.phtml:64
+#: /vagrant/application/views/scripts/form/reorder-authbackend.phtml:60
 #, php-format
 msgid "Move user backend %s downwards"
 msgstr "Benutzerbackend %s nach unten schieben"
 
-#: /vagrant/application/views/scripts/form/reorder-authbackend.phtml:50
+#: /vagrant/application/views/scripts/form/reorder-authbackend.phtml:48
 #, php-format
 msgid "Move user backend %s upwards"
 msgstr "Benutzerbackend %s nach oben schieben"
 
 #: /vagrant/application/forms/Navigation/NavigationConfigForm.php:582
-#: /vagrant/application/views/scripts/about/index.phtml:107
+#: /vagrant/application/views/scripts/about/index.phtml:114
 #: /vagrant/application/views/scripts/config/module.phtml:16
 #: /vagrant/application/views/scripts/role/list.phtml:22
 msgid "Name"
 msgstr "Name"
 
-#: /vagrant/application/controllers/NavigationController.php:142
-#: /vagrant/application/controllers/NavigationController.php:150
+#: /vagrant/application/controllers/NavigationController.php:143
+#: /vagrant/application/controllers/NavigationController.php:151
 #: /vagrant/application/controllers/PreferenceController.php:38
 #: /vagrant/application/views/scripts/pivottablePagination.phtml:16
 #: /vagrant/application/views/scripts/layout/menu.phtml:16
-#: /vagrant/application/views/scripts/navigation/index.phtml:37
+#: /vagrant/application/views/scripts/navigation/index.phtml:29
 msgid "Navigation"
 msgstr "Navigation"
 
-#: /vagrant/application/controllers/NavigationController.php:326
+#: /vagrant/application/controllers/NavigationController.php:327
 #, php-format
 msgid "Navigation Item \"%s\" not found. No action required"
 msgstr "Navigationselement “%s” nicht gefunden. Kein Eingriff erfoderlich"
 
-#: /vagrant/application/controllers/NavigationController.php:338
+#: /vagrant/application/controllers/NavigationController.php:339
 #, php-format
 msgid "Navigation Item \"%s\" successfully removed"
 msgstr "Navigationselement “%s” erfolgreich entfernt"
 
-#: /vagrant/application/controllers/NavigationController.php:378
+#: /vagrant/application/controllers/NavigationController.php:379
 #, php-format
 msgid "Navigation item \"%s\" has been unshared"
 msgstr "Teilen des Navigationselementes “%s” erfolgreich aufgehoben"
 
-#: /vagrant/application/controllers/NavigationController.php:300
-#: /vagrant/application/controllers/NavigationController.php:411
+#: /vagrant/application/controllers/NavigationController.php:301
+#: /vagrant/application/controllers/NavigationController.php:412
 #, php-format
 msgid "Navigation item \"%s\" not found"
 msgstr "Navigationselement “%s” wurde nicht gefunden"
 
-#: /vagrant/application/controllers/NavigationController.php:289
+#: /vagrant/application/controllers/NavigationController.php:290
 #, php-format
 msgid "Navigation item \"%s\" successfully updated"
 msgstr "Navigationselement “%s” erfolgreich aktualisiert"
 
-#: /vagrant/application/controllers/NavigationController.php:235
+#: /vagrant/application/controllers/NavigationController.php:236
 msgid "Navigation item successfully created"
 msgstr "Navigationselement “%s” erfolgreich angelegt"
 
@@ -1461,15 +1468,20 @@ msgstr "Navigationselement “%s” erfolgreich angelegt"
 msgid "New Column"
 msgstr "Neue Spalte anlegen"
 
-#: /vagrant/application/forms/Dashboard/DashletForm.php:98
+#: /vagrant/application/forms/Dashboard/DashletForm.php:110
 msgid "New Dashboard Title"
 msgstr "Neuen Dashboardtitel vergeben"
 
-#: /vagrant/application/controllers/NavigationController.php:243
+#: /vagrant/application/controllers/DashboardController.php:42
+#, fuzzy
+msgid "New Dashlet"
+msgstr "Dashlet aktualisieren"
+
+#: /vagrant/application/controllers/NavigationController.php:244
 msgid "New Navigation Item"
 msgstr "Neues Navigationselement erstellen"
 
-#: /vagrant/application/controllers/ConfigController.php:345
+#: /vagrant/application/controllers/ConfigController.php:326
 msgid "New Resource"
 msgstr "Neue Ressource erstellen"
 
@@ -1481,7 +1493,7 @@ msgstr "Neue Rolle anlegen"
 msgid "New User"
 msgstr "Neuen Benutzer anlegen"
 
-#: /vagrant/application/controllers/ConfigController.php:250
+#: /vagrant/application/controllers/ConfigController.php:231
 msgid "New User Backend"
 msgstr "Neues Backend für Benutzer anlegen"
 
@@ -1489,7 +1501,7 @@ msgstr "Neues Backend für Benutzer anlegen"
 msgid "New User Group"
 msgstr "Neue Benutzergruppe anlegen"
 
-#: /vagrant/application/controllers/UsergroupbackendController.php:70
+#: /vagrant/application/controllers/UsergroupbackendController.php:61
 msgid "New User Group Backend"
 msgstr "Neues Backend für Benutzergruppen erstellen"
 
@@ -1501,11 +1513,11 @@ msgstr "Neue Benutzergruppe anlegen"
 msgid "New Window"
 msgstr "Neues Fenster"
 
-#: /vagrant/application/forms/Config/GeneralConfigForm.php:54
+#: /vagrant/application/forms/ConfigForm.php:74
 msgid "New configuration has successfully been stored"
 msgstr "Die neue Konfiguration wurde erfolgreich gespeichert"
 
-#: /vagrant/application/forms/Dashboard/DashletForm.php:121
+#: /vagrant/application/forms/Dashboard/DashletForm.php:100
 msgid "New dashboard"
 msgstr "Neues Dashboard"
 
@@ -1518,11 +1530,11 @@ msgstr "Name für die neue Ressource fehlt"
 msgid "Next"
 msgstr "Weiter"
 
-#: /vagrant/application/views/scripts/mixedPagination.phtml:75
+#: /vagrant/application/views/scripts/mixedPagination.phtml:77
 msgid "Next page"
 msgstr "Nächste Seite"
 
-#: /vagrant/application/views/scripts/navigation/index.phtml:65
+#: /vagrant/application/views/scripts/navigation/index.phtml:57
 msgid "No"
 msgstr "Nein"
 
@@ -1578,23 +1590,23 @@ msgstr "Es wurde kein Benutzer gefunden, der den Filterkriterien entspricht"
 #: /vagrant/application/forms/Navigation/NavigationConfigForm.php:674
 msgctxt "No parent for a navigation item"
 msgid "None"
-msgstr ""
+msgstr "Keines"
 
-#: /vagrant/application/forms/Config/General/LoggingConfigForm.php:36
+#: /vagrant/application/forms/Config/General/LoggingConfigForm.php:42
 msgctxt "app.config.logging.type"
 msgid "None"
-msgstr ""
+msgstr "Nicht loggen"
 
 #: /vagrant/application/forms/Config/Resource/LdapResourceForm.php:77
 msgctxt "resource.ldap.encryption"
 msgid "None"
-msgstr ""
+msgstr "Keine Verschlüsselung"
 
 #: /vagrant/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:67
 #: /vagrant/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:69
 msgctxt "usergroupbackend.ldap.user_backend"
 msgid "None"
-msgstr ""
+msgstr "Kein Userbackend"
 
 #: /vagrant/application/forms/Config/UserGroup/UserGroupForm.php:63
 msgid ""
@@ -1614,8 +1626,8 @@ msgstr ""
 "Auf dieser Ressource werden nur der Wurzelknoten und seine Kindknoten "
 "sichtbar sein."
 
-#: /vagrant/application/controllers/NavigationController.php:199
-#: /vagrant/application/views/scripts/navigation/shared.phtml:30
+#: /vagrant/application/controllers/NavigationController.php:200
+#: /vagrant/application/views/scripts/navigation/shared.phtml:21
 msgid "Owner"
 msgstr "Eigentümer"
 
@@ -1637,9 +1649,8 @@ msgstr "Dashboard"
 
 #: /vagrant/application/forms/Navigation/NavigationConfigForm.php:668
 #: /vagrant/library/Icinga/Authentication/UserGroup/DbUserGroupBackend.php:121
-#: /vagrant/library/Icinga/Authentication/UserGroup/IniUserGroupBackend.php:74
 msgid "Parent"
-msgstr ""
+msgstr "Übergeordnetes Element"
 
 #: /vagrant/application/forms/Authentication/LoginForm.php:52
 #: /vagrant/application/forms/Config/Resource/DbResourceForm.php:137
@@ -1656,7 +1667,7 @@ msgstr "Muster"
 msgid "Permissions"
 msgstr "Berechtigungen"
 
-#: /vagrant/application/forms/Security/RoleForm.php:159
+#: /vagrant/application/forms/Security/RoleForm.php:133
 msgid "Permissions Set"
 msgstr "Berechtigungen"
 
@@ -1702,18 +1713,18 @@ msgstr ""
 msgid "Port"
 msgstr "Port"
 
-#: /vagrant/application/controllers/NavigationController.php:133
+#: /vagrant/application/controllers/NavigationController.php:134
 #: /vagrant/application/controllers/PreferenceController.php:33
-#: /vagrant/application/forms/PreferenceForm.php:44
+#: /vagrant/library/Icinga/Application/Web.php:350
 #: /vagrant/library/Icinga/Web/Menu.php:308
 msgid "Preferences"
 msgstr "Einstellungen"
 
-#: /vagrant/application/forms/PreferenceForm.php:110
+#: /vagrant/application/forms/PreferenceForm.php:123
 msgid "Preferences successfully saved"
 msgstr "Einstellungen erfolgreich gespeichert"
 
-#: /vagrant/application/forms/PreferenceForm.php:112
+#: /vagrant/application/forms/PreferenceForm.php:125
 msgid "Preferences successfully saved for the current session"
 msgstr "Einstellungen erfolgreich für die aktuelle Sitzung gespeichert"
 
@@ -1721,7 +1732,7 @@ msgstr "Einstellungen erfolgreich für die aktuelle Sitzung gespeichert"
 msgid "Prevents the user from logging in if unchecked"
 msgstr "Verhindert das Anmelden des Benutzer, wenn nicht markiert"
 
-#: /vagrant/application/views/scripts/mixedPagination.phtml:26
+#: /vagrant/application/views/scripts/mixedPagination.phtml:27
 msgid "Previous page"
 msgstr "Vorherige Seite"
 
@@ -1777,19 +1788,24 @@ msgstr "Bereit zur Suche"
 msgid "Remove"
 msgstr "Entfernen"
 
-#: /vagrant/application/controllers/DashboardController.php:224
+#: /vagrant/application/controllers/DashboardController.php:228
 msgid "Remove Dashboard"
 msgstr "Dashboard entfernen"
 
-#: /vagrant/application/controllers/DashboardController.php:184
+#: /vagrant/application/controllers/DashboardController.php:158
+#, fuzzy
+msgid "Remove Dashlet"
+msgstr "Dashboard entfernen"
+
+#: /vagrant/application/controllers/DashboardController.php:192
 msgid "Remove Dashlet From Dashboard"
 msgstr "Dashlet aus Dashboard entfernen"
 
-#: /vagrant/application/controllers/NavigationController.php:346
+#: /vagrant/application/controllers/NavigationController.php:347
 msgid "Remove Navigation Item"
 msgstr "Dieses Navigationselement entfernen"
 
-#: /vagrant/application/controllers/ConfigController.php:384
+#: /vagrant/application/controllers/ConfigController.php:365
 msgid "Remove Resource"
 msgstr "Ressource entfernen"
 
@@ -1802,7 +1818,7 @@ msgstr "Rolle entfernen"
 msgid "Remove User"
 msgstr "Benutzer entfernen"
 
-#: /vagrant/application/controllers/ConfigController.php:325
+#: /vagrant/application/controllers/ConfigController.php:306
 msgid "Remove User Backend"
 msgstr "Backend für Benutzer entfernen"
 
@@ -1810,7 +1826,7 @@ msgstr "Backend für Benutzer entfernen"
 msgid "Remove User Group"
 msgstr "Benutzergruppe entfernen"
 
-#: /vagrant/application/controllers/UsergroupbackendController.php:142
+#: /vagrant/application/controllers/UsergroupbackendController.php:133
 msgid "Remove User Group Backend"
 msgstr "Backend für Benutzergruppen entfernen"
 
@@ -1824,7 +1840,7 @@ msgstr "Dashlet %s aus Dashboard %s entfernen"
 msgid "Remove group %s?"
 msgstr "Gruppe %s entfernen"
 
-#: /vagrant/application/views/scripts/navigation/index.phtml:78
+#: /vagrant/application/views/scripts/navigation/index.phtml:70
 #, php-format
 msgid "Remove navigation item %s"
 msgstr "Navigationselement %s entfernen"
@@ -1857,7 +1873,7 @@ msgstr "Diesen Filter entfernen"
 msgid "Remove this member"
 msgstr "Dieses Mitglied entfernen"
 
-#: /vagrant/library/Icinga/Web/Widget/FilterEditor.php:365
+#: /vagrant/library/Icinga/Web/Widget/FilterEditor.php:396
 msgid "Remove this part of your filter"
 msgstr "Klicken, um diesen Teil des Filters zu löschen"
 
@@ -1881,12 +1897,12 @@ msgstr "Benutzerbackend %s entfernen"
 msgid "Remove user group %s"
 msgstr "Benutzergruppe %s entfernen"
 
-#: /vagrant/application/views/scripts/usergroupbackend/list.phtml:48
+#: /vagrant/application/views/scripts/config/userbackend/reorder.phtml:63
 #, php-format
 msgid "Remove user group backend %s"
 msgstr "Benutzergruppenbackend %s entfernen"
 
-#: /vagrant/application/views/scripts/about/index.phtml:67
+#: /vagrant/application/views/scripts/about/index.phtml:76
 msgid "Report a bug"
 msgstr "Einen Fehler melden"
 
@@ -1912,7 +1928,7 @@ msgstr "Die Ressource “%s” wurde erfolgreich geändert"
 msgid "Resource \"%s\" has been successfully created"
 msgstr "Die Ressource “%s” wurde erfolgreich angelegt"
 
-#: /vagrant/application/controllers/ConfigController.php:401
+#: /vagrant/application/controllers/ConfigController.php:382
 #, php-format
 msgid "Resource \"%s\" has been successfully removed"
 msgstr "Die Ressource “%s” wurde erfolgreich entfernt"
@@ -1943,17 +1959,17 @@ msgstr "Der Ressourcenname fehlt"
 msgid "Resources"
 msgstr "Ressourcen"
 
-#: /vagrant/application/controllers/ConfigController.php:349
+#: /vagrant/application/controllers/ConfigController.php:330
 msgid "Resources are entities that provide data to Icinga Web 2."
 msgstr "Ressourcen dienen als Datenquellen für Icinga Web 2."
 
-#: /vagrant/application/forms/Security/RoleForm.php:85
+#: /vagrant/application/forms/Security/RoleForm.php:59
 msgid "Restrict which groups this role can share items and information with"
 msgstr ""
 "Beschränken Sie, mit welchen Gruppen diese Rolle Elemente und Informationen "
 "teilen kann."
 
-#: /vagrant/application/forms/Security/RoleForm.php:79
+#: /vagrant/application/forms/Security/RoleForm.php:53
 msgid "Restrict which users this role can share items and information with"
 msgstr ""
 "Beschränken Sie, mit welchen Benutzern diese Rolle Elemente und "
@@ -1963,7 +1979,7 @@ msgstr ""
 msgid "Restrictions"
 msgstr "Beschränkungen"
 
-#: /vagrant/application/forms/Security/RoleForm.php:134
+#: /vagrant/application/forms/Security/RoleForm.php:108
 msgid "Role Name"
 msgstr "Rollenname"
 
@@ -1979,9 +1995,9 @@ msgstr "Rolle entfernt"
 msgid "Role updated"
 msgstr "Rolle aktualisiert"
 
-#: /vagrant/application/controllers/GroupController.php:345
+#: /vagrant/application/controllers/GroupController.php:344
 #: /vagrant/application/controllers/RoleController.php:153
-#: /vagrant/application/controllers/UserController.php:311
+#: /vagrant/application/controllers/UserController.php:310
 #: /vagrant/library/Icinga/Web/Menu.php:283
 msgid "Roles"
 msgstr "Rollen"
@@ -2011,11 +2027,11 @@ msgstr "Speichern"
 msgid "Save Changes"
 msgstr "Änderungen speichern"
 
-#: /vagrant/application/forms/PreferenceForm.php:232
+#: /vagrant/application/forms/PreferenceForm.php:266
 msgid "Save for the current Session"
 msgstr "Für die aktuelle Sitzung speichern"
 
-#: /vagrant/application/forms/PreferenceForm.php:221
+#: /vagrant/application/forms/PreferenceForm.php:255
 msgid "Save to the Preferences"
 msgstr "Dauerhaft speichern"
 
@@ -2037,7 +2053,7 @@ msgstr "Domains durchsuchen"
 msgid "Search this domain for records of available servers."
 msgstr "Diese Domain nach verfügbaren Servern durchsuchen."
 
-#: /vagrant/library/Icinga/Web/Widget/FilterEditor.php:709
+#: /vagrant/library/Icinga/Web/Widget/FilterEditor.php:740
 msgid "Search..."
 msgstr "Suche..."
 
@@ -2045,8 +2061,9 @@ msgstr "Suche..."
 msgid "Searching"
 msgstr "Suche"
 
-#: /vagrant/application/forms/Dashboard/DashletForm.php:110
-msgid "Select a pane you want to add the dashlet."
+#: /vagrant/application/forms/Dashboard/DashletForm.php:122
+#, fuzzy
+msgid "Select a dashboard you want to add the dashlet to"
 msgstr "Wählen Sie ein Dashboard aus, dem Sie das Dashlet hinzufügen wollen."
 
 #: /vagrant/application/forms/Config/User/CreateMembershipForm.php:81
@@ -2068,7 +2085,7 @@ msgstr ""
 msgid "Services"
 msgstr "Services"
 
-#: /vagrant/application/forms/Config/General/ApplicationConfigForm.php:36
+#: /vagrant/application/forms/Config/General/ApplicationConfigForm.php:40
 msgid ""
 "Set whether to show an exception's stacktrace by default. This can also be "
 "set in a user's preferences with the appropriate permission."
@@ -2077,7 +2094,7 @@ msgstr ""
 "Exceptions angezeigt werden soll. Dies kann auch von Benutzern mit den "
 "nötigen Rechten eingestellt werden."
 
-#: /vagrant/application/forms/PreferenceForm.php:190
+#: /vagrant/application/forms/PreferenceForm.php:224
 msgid "Set whether to show an exception's stacktrace."
 msgstr ""
 "Stellen Sie hier ein, ob ein Stacktrace im Falle von Exceptions angezeigt "
@@ -2087,43 +2104,34 @@ msgstr ""
 msgid "Settings"
 msgstr "Einstellungen"
 
-#: /vagrant/application/controllers/NavigationController.php:149
+#: /vagrant/application/controllers/NavigationController.php:150
 #: /vagrant/application/forms/Navigation/NavigationConfigForm.php:602
-#: /vagrant/application/views/scripts/navigation/index.phtml:39
+#: /vagrant/application/views/scripts/navigation/index.phtml:31
 msgid "Shared"
 msgstr "Freigegeben"
 
-#: /vagrant/application/controllers/NavigationController.php:192
-#: /vagrant/application/controllers/NavigationController.php:200
-#: /vagrant/application/views/scripts/navigation/shared.phtml:28
-#: /vagrant/library/Icinga/Application/Web.php:278
+#: /vagrant/application/controllers/NavigationController.php:193
+#: /vagrant/application/controllers/NavigationController.php:201
+#: /vagrant/application/views/scripts/navigation/shared.phtml:19
+#: /vagrant/library/Icinga/Application/Web.php:330
 msgid "Shared Navigation"
 msgstr "Freigegebene Navigation"
 
-#: /vagrant/library/Icinga/Web/Widget/Dashboard.php:223
+#: /vagrant/library/Icinga/Web/Widget/Dashboard.php:238
 #, php-format
 msgctxt "dashboard.pane.tooltip"
 msgid "Show %s"
 msgstr "Zeige %s"
-
-#: /vagrant/library/Icinga/Web/Widget/Limiter.php:88
-#, php-format
-msgid "Show %u rows on this page"
-msgstr "Zeige %u Zeilen pro Seite"
 
 #: /vagrant/library/Icinga/Web/Widget/SearchDashboard.php:32
 msgctxt "dashboard.pane.tooltip"
 msgid "Show Search"
 msgstr "Suche anzeigen"
 
-#: /vagrant/application/forms/PreferenceForm.php:189
-#: /vagrant/application/forms/Config/General/ApplicationConfigForm.php:34
+#: /vagrant/application/forms/PreferenceForm.php:223
+#: /vagrant/application/forms/Config/General/ApplicationConfigForm.php:38
 msgid "Show Stacktraces"
 msgstr "Stacktrace anzeigen"
-
-#: /vagrant/library/Icinga/Web/Widget/Limiter.php:99
-msgid "Show all items on this page"
-msgstr "Zeige alle Elemente auf dieser Seite"
 
 #: /vagrant/application/views/scripts/dashboard/settings.phtml:61
 #, php-format
@@ -2152,14 +2160,14 @@ msgid "Show group %s"
 msgstr "Zeige Gruppe %s"
 
 #: /vagrant/application/views/scripts/mixedPagination.phtml:11
-#: /vagrant/application/views/scripts/mixedPagination.phtml:43
-#: /vagrant/application/views/scripts/mixedPagination.phtml:60
+#: /vagrant/application/views/scripts/mixedPagination.phtml:44
+#: /vagrant/application/views/scripts/mixedPagination.phtml:61
 #, php-format
 msgid "Show rows %u to %u of %u"
 msgstr "Zeige die Zeilen %d bis %d von %d"
 
-#: /vagrant/application/views/scripts/about/index.phtml:120
-#: /vagrant/application/views/scripts/config/modules.phtml:41
+#: /vagrant/application/views/scripts/about/index.phtml:127
+#: /vagrant/application/views/scripts/config/modules.phtml:32
 #, php-format
 msgid "Show the overview of the %s module"
 msgstr "Zeige eine Übersicht des Moduls %s"
@@ -2173,7 +2181,7 @@ msgstr "Zeige Benutzer %s"
 msgid "Single Column"
 msgstr "Eine Spalte"
 
-#: /vagrant/application/forms/Config/UserBackendConfigForm.php:396
+#: /vagrant/application/forms/Config/UserBackendConfigForm.php:381
 msgid "Skip Validation"
 msgstr "Überprüfung überspringen"
 
@@ -2189,7 +2197,7 @@ msgstr "Socket"
 msgid "Something went wrong while writing the file"
 msgstr "Fehler beim Schreiben der Datei"
 
-#: /vagrant/library/Icinga/Web/Widget/SortBox.php:174
+#: /vagrant/library/Icinga/Web/Widget/SortBox.php:196
 msgid "Sort by"
 msgstr "Sortieren nach"
 
@@ -2198,15 +2206,15 @@ msgstr "Sortieren nach"
 msgid "State"
 msgstr "Status"
 
-#: /vagrant/library/Icinga/Web/Widget/FilterEditor.php:391
+#: /vagrant/library/Icinga/Web/Widget/FilterEditor.php:422
 msgid "Strip this filter"
 msgstr "Diesen Filter bearbeiten"
 
-#: /vagrant/application/views/scripts/about/index.phtml:77
+#: /vagrant/application/views/scripts/about/index.phtml:86
 msgid "Support / Mailinglists"
 msgstr "Support/Mailinglisten"
 
-#: /vagrant/library/Icinga/Application/Web.php:238
+#: /vagrant/library/Icinga/Application/Web.php:296
 #: /vagrant/library/Icinga/Web/Menu.php:249
 msgid "System"
 msgstr "System"
@@ -2216,14 +2224,9 @@ msgid "Target"
 msgstr "Ziel"
 
 #: /vagrant/application/views/scripts/about/index.phtml:29
-#: /vagrant/application/views/scripts/authentication/login.phtml:23
+#: /vagrant/application/views/scripts/authentication/login.phtml:19
 msgid "The Icinga Project"
 msgstr "Das Icinga Projekt"
-
-#: /vagrant/application/layouts/scripts/error.phtml:3
-#: /vagrant/application/views/scripts/authentication/login.phtml:4
-msgid "The Icinga logo"
-msgstr "Das Icinga Logo"
 
 #: /vagrant/application/forms/Config/UserBackend/LdapBackendForm.php:70
 msgid "The LDAP connection to use for authenticating with this provider."
@@ -2236,8 +2239,8 @@ msgid "The LDAP connection to use for this backend."
 msgstr ""
 "Die Datenbankverbindung, welche mit diesem Backend verwendet werden soll."
 
-#: /vagrant/application/forms/Config/General/LoggingConfigForm.php:69
-#: /vagrant/application/forms/Config/General/LoggingConfigForm.php:79
+#: /vagrant/application/forms/Config/General/LoggingConfigForm.php:75
+#: /vagrant/application/forms/Config/General/LoggingConfigForm.php:85
 msgid "The application prefix must not contain whitespace."
 msgstr "Das Applikationspräfix darf keine Leerzeichen enthalten."
 
@@ -2274,7 +2277,7 @@ msgid "The column pattern must be a valid regular expression."
 msgstr "Das Muster für die Spalte muss ein gültiger regulärer Ausdruck sein."
 
 #: /vagrant/application/forms/Config/ResourceConfigForm.php:324
-#: /vagrant/application/forms/Config/UserBackendConfigForm.php:444
+#: /vagrant/application/forms/Config/UserBackendConfigForm.php:429
 msgid "The configuration has been successfully validated."
 msgstr "Die Konfiguration wurde erfolgreich überprüft."
 
@@ -2289,6 +2292,11 @@ msgid "The database connection to use for this backend"
 msgstr ""
 "Die Datenbankverbindung, welche zur Authentifizierung mit diesem Provider "
 "genutzt werden soll"
+
+#: /vagrant/application/forms/Config/General/ThemingConfigForm.php:40
+msgctxt "Form element description"
+msgid "The default theme"
+msgstr "Standardtheme"
 
 #: /vagrant/application/views/scripts/showConfiguration.phtml:5
 #, php-format
@@ -2337,7 +2345,7 @@ msgstr ""
 "Der Filter, anhand dessen bestimmte Teile von Benutzernamen entfernt werden. "
 "Lassen Sie dieses Feld leer, wenn Sie keine Änderungen vornehmen möchten."
 
-#: /vagrant/application/forms/Config/General/LoggingConfigForm.php:110
+#: /vagrant/application/forms/Config/General/LoggingConfigForm.php:116
 msgid "The full path to the log file to write messages to."
 msgstr ""
 "Der vollständige Pfad zu der Logdatei, in welche Nachrichten geschrieben "
@@ -2364,12 +2372,12 @@ msgid ""
 msgstr ""
 "Das Icon für dieses Navigationselement. Leer lassen, um kein Icon anzuzeigen."
 
-#: /vagrant/application/forms/Config/General/LoggingConfigForm.php:48
+#: /vagrant/application/forms/Config/General/LoggingConfigForm.php:54
 msgid "The maximum logging level to emit."
 msgstr ""
 "Der höchste Loglevel, bis zu welchem Nachrichten ausgegeben werden sollen."
 
-#: /vagrant/application/forms/Config/General/LoggingConfigForm.php:67
+#: /vagrant/application/forms/Config/General/LoggingConfigForm.php:73
 msgid "The name of the application by which to prefix syslog messages."
 msgstr ""
 "Der Anwendungsname, welcher Syslog-Nachrichten vorangestellt werden soll."
@@ -2383,7 +2391,7 @@ msgstr ""
 msgid "The name of the database to use"
 msgstr "Der Name der zu benutzenden Datenbank"
 
-#: /vagrant/application/forms/Security/RoleForm.php:135
+#: /vagrant/application/forms/Security/RoleForm.php:109
 msgid "The name of the role"
 msgstr "Der Name dieser Rolle"
 
@@ -2479,7 +2487,7 @@ msgstr ""
 msgid "The pattern by which to identify columns."
 msgstr "Der reguläre Ausdruck, mit welchem Spalten identifiziert werden können"
 
-#: /vagrant/application/forms/Security/RoleForm.php:161
+#: /vagrant/application/forms/Security/RoleForm.php:135
 msgid "The permissions to grant. You may select more than one permission"
 msgstr ""
 "Die zu vergebenden Berechtigungen. Sie können mehrere gleichzeitig auswählen."
@@ -2502,7 +2510,7 @@ msgstr "Der private Schlüssel des Benutzers “%s” ist bereits hinterlegt."
 msgid "The private key which will be used for the SSH connections"
 msgstr "Der private Schlüssel, der für SSH-Verbindungen verwendet wird."
 
-#: /vagrant/application/controllers/ConfigController.php:417
+#: /vagrant/application/controllers/ConfigController.php:398
 #, php-format
 msgid ""
 "The resource \"%s\" is currently utilized for authentication by user backend "
@@ -2521,7 +2529,7 @@ msgstr "Das Target der URL dieses Navigationselementes"
 msgid "The type of SQL database"
 msgstr "Der Typ der SQL-Datenbank."
 
-#: /vagrant/application/forms/Config/General/LoggingConfigForm.php:32
+#: /vagrant/application/forms/Config/General/LoggingConfigForm.php:38
 msgid "The type of logging to utilize."
 msgstr "Der Typ des zu benutzenden Loggings."
 
@@ -2589,7 +2597,12 @@ msgstr ""
 msgid "The user name to use for authentication"
 msgstr "Der für die Authentifizierung zu benutzende Benutzername."
 
-#: /vagrant/application/views/scripts/navigation/shared.phtml:24
+#: /vagrant/application/forms/PreferenceForm.php:170
+msgctxt "Form element label"
+msgid "Theme"
+msgstr ""
+
+#: /vagrant/application/views/scripts/navigation/shared.phtml:15
 msgid "There are currently no navigation items being shared"
 msgstr "Aktuell werden keinen Navigationselemente geteilt."
 
@@ -2608,7 +2621,7 @@ msgstr ""
 msgid "This could have one or more of the following reasons:"
 msgstr "Dies könnte an einem oder mehreren der folgenden Gründe liegen:"
 
-#: /vagrant/application/views/scripts/navigation/shared.phtml:58
+#: /vagrant/application/views/scripts/navigation/shared.phtml:49
 #, php-format
 msgid ""
 "This is a child of the navigation item %1$s. You can only unshare this item "
@@ -2621,11 +2634,11 @@ msgstr ""
 msgid "This module has no dependencies"
 msgstr "Dieses Modul hat keine Abhängigkeiten"
 
-#: /vagrant/library/Icinga/Application/Modules/Module.php:703
+#: /vagrant/library/Icinga/Application/Modules/Module.php:721
 msgid "This module has no description"
 msgstr "Dieses Modul hat keine Beschreibung"
 
-#: /vagrant/application/forms/PreferenceForm.php:210
+#: /vagrant/application/forms/PreferenceForm.php:244
 msgid ""
 "This option allows you to enable or to disable the global page content auto "
 "refresh"
@@ -2644,11 +2657,11 @@ msgstr ""
 "Um diesen privaten Schlüssel modifizieren zu können, müssen Sie diese "
 "Ressource neu anlegen."
 
-#: /vagrant/application/controllers/NavigationController.php:148
-#: /vagrant/application/controllers/NavigationController.php:198
+#: /vagrant/application/controllers/NavigationController.php:149
+#: /vagrant/application/controllers/NavigationController.php:199
 #: /vagrant/application/forms/Navigation/NavigationConfigForm.php:647
-#: /vagrant/application/views/scripts/navigation/index.phtml:38
-#: /vagrant/application/views/scripts/navigation/shared.phtml:29
+#: /vagrant/application/views/scripts/navigation/index.phtml:30
+#: /vagrant/application/views/scripts/navigation/shared.phtml:20
 msgid "Type"
 msgstr "Typ"
 
@@ -2676,8 +2689,8 @@ msgstr ""
 "nur aufgehoben werden, wenn dies auch für ihre Elternelemente durchgeführt "
 "wird."
 
-#: /vagrant/application/views/scripts/navigation/index.phtml:62
-#: /vagrant/application/views/scripts/navigation/shared.phtml:51
+#: /vagrant/application/views/scripts/navigation/index.phtml:54
+#: /vagrant/application/views/scripts/navigation/shared.phtml:42
 msgid "Unknown"
 msgstr "Unbekannt"
 
@@ -2687,23 +2700,24 @@ msgstr "Unbekannt"
 msgid "Unknown resource provided"
 msgstr "Unbekannte Ressource angegeben"
 
-#: /vagrant/application/views/scripts/navigation/shared.phtml:31
+#: /vagrant/application/views/scripts/navigation/shared.phtml:22
 msgid "Unshare"
 msgstr "Freigabe aufheben"
 
-#: /vagrant/application/controllers/NavigationController.php:181
+#: /vagrant/application/controllers/NavigationController.php:182
 msgid "Unshare this navigation item"
 msgstr "Freigabe dieses Navigationselementes aufheben"
 
-#: /vagrant/application/controllers/DashboardController.php:84
+#: /vagrant/application/controllers/DashboardController.php:86
+#: /vagrant/application/controllers/DashboardController.php:92
 msgid "Update Dashlet"
 msgstr "Dashlet aktualisieren"
 
-#: /vagrant/application/controllers/NavigationController.php:303
+#: /vagrant/application/controllers/NavigationController.php:304
 msgid "Update Navigation Item"
 msgstr "Navigationselement aktualisieren"
 
-#: /vagrant/application/controllers/ConfigController.php:365
+#: /vagrant/application/controllers/ConfigController.php:346
 msgid "Update Resource"
 msgstr "Ressource aktualisieren"
 
@@ -2716,7 +2730,7 @@ msgstr "Rolle aktualisieren"
 msgid "Update User"
 msgstr "Benutzer aktualisieren"
 
-#: /vagrant/application/controllers/ConfigController.php:293
+#: /vagrant/application/controllers/ConfigController.php:274
 msgid "Update User Backend"
 msgstr "Backend für Benutzer aktualisieren"
 
@@ -2724,7 +2738,7 @@ msgstr "Backend für Benutzer aktualisieren"
 msgid "Update User Group"
 msgstr "Benutzergruppe aktualisieren"
 
-#: /vagrant/application/controllers/UsergroupbackendController.php:111
+#: /vagrant/application/controllers/UsergroupbackendController.php:102
 msgid "Update User Group Backend"
 msgstr "Backend für Benutzergruppe aktualisieren"
 
@@ -2744,22 +2758,22 @@ msgstr ""
 "Dieses Feld löst eine automatische Aktualisierung dieser Seite aus, wenn "
 "sein Inhalt geändert wird."
 
-#: /vagrant/application/forms/Dashboard/DashletForm.php:68
+#: /vagrant/application/forms/Dashboard/DashletForm.php:69
 #: /vagrant/application/forms/Navigation/DashletForm.php:27
 #: /vagrant/application/forms/Navigation/NavigationItemForm.php:54
 #: /vagrant/application/views/scripts/dashboard/settings.phtml:14
 msgid "Url"
 msgstr "URL"
 
-#: /vagrant/application/forms/PreferenceForm.php:200
+#: /vagrant/application/forms/PreferenceForm.php:234
 msgid "Use benchmark"
 msgstr "Benchmark verwenden"
 
-#: /vagrant/application/forms/PreferenceForm.php:164
+#: /vagrant/application/forms/PreferenceForm.php:198
 msgid "Use the following language to display texts and messages"
 msgstr "Die folgende Sprache verwenden, um Texte und Nachrichten anzuzeigen"
 
-#: /vagrant/application/forms/PreferenceForm.php:176
+#: /vagrant/application/forms/PreferenceForm.php:210
 msgid "Use the following timezone for dates and times"
 msgstr "Die folgende Zeitzone für Datums- und Zeitangaben verwenden."
 
@@ -2801,13 +2815,16 @@ msgstr "Der Benutzer %s ist bereits Mitglied in allen Gruppen"
 msgid "User Backend"
 msgstr "Backend für Benutzer"
 
+#: /vagrant/application/views/scripts/config/userbackend/reorder.phtml:5
+msgid "User Backends"
+msgstr "Backends für Benutzer"
+
 #: /vagrant/application/controllers/GroupController.php:69
 #: /vagrant/application/controllers/UserController.php:101
 #: /vagrant/application/views/scripts/group/list.phtml:53
 #: /vagrant/library/Icinga/Authentication/UserGroup/DbUserGroupBackend.php:115
 #: /vagrant/library/Icinga/Authentication/UserGroup/DbUserGroupBackend.php:120
-#: /vagrant/library/Icinga/Authentication/UserGroup/IniUserGroupBackend.php:73
-#: /vagrant/library/Icinga/Authentication/UserGroup/LdapUserGroupBackend.php:464
+#: /vagrant/library/Icinga/Authentication/UserGroup/LdapUserGroupBackend.php:465
 msgid "User Group"
 msgstr "Benutzergruppe"
 
@@ -2815,15 +2832,18 @@ msgstr "Benutzergruppe"
 msgid "User Group Backend"
 msgstr "Backend für Benutzergruppen"
 
-#: /vagrant/application/controllers/ConfigController.php:65
-#: /vagrant/application/controllers/GroupController.php:366
-#: /vagrant/application/controllers/RoleController.php:174
-#: /vagrant/application/controllers/UserController.php:332
-#: /vagrant/application/controllers/UsergroupbackendController.php:158
+#: /vagrant/application/views/scripts/config/userbackend/reorder.phtml:19
+#, fuzzy
+msgid "User Group Backends"
+msgstr "Backend für Benutzergruppen"
+
+#: /vagrant/application/controllers/GroupController.php:364
+#: /vagrant/application/controllers/RoleController.php:173
+#: /vagrant/application/controllers/UserController.php:330
 msgid "User Groups"
 msgstr "Benutzergruppen"
 
-#: /vagrant/application/forms/Config/General/ApplicationConfigForm.php:63
+#: /vagrant/application/forms/Config/General/ApplicationConfigForm.php:67
 msgid "User Preference Storage Type"
 msgstr "Speicherart für die Benutzereinstellungen"
 
@@ -2831,23 +2851,23 @@ msgstr "Speicherart für die Benutzereinstellungen"
 msgid "User added successfully"
 msgstr "Benutzer erfolgreich hinzugefügt"
 
-#: /vagrant/application/controllers/ConfigController.php:290
+#: /vagrant/application/controllers/ConfigController.php:271
 #: /vagrant/application/forms/Config/UserBackendReorderForm.php:70
 #, php-format
 msgid "User backend \"%s\" not found"
 msgstr "Benutzerbackend “%s” wurde nicht gefunden"
 
-#: /vagrant/application/controllers/ConfigController.php:317
+#: /vagrant/application/controllers/ConfigController.php:298
 #, php-format
 msgid "User backend \"%s\" successfully removed"
 msgstr "Benutzerbackend “%s” erfolgreich entfernt"
 
-#: /vagrant/application/controllers/ConfigController.php:278
+#: /vagrant/application/controllers/ConfigController.php:259
 #, php-format
 msgid "User backend \"%s\" successfully updated"
 msgstr "Benutzerbackend “%s” erfolgreich aktualisiert"
 
-#: /vagrant/application/controllers/ConfigController.php:242
+#: /vagrant/application/controllers/ConfigController.php:223
 msgid "User backend successfully created"
 msgstr "Benutzerbackend erfolgreich angelegt"
 
@@ -2856,23 +2876,23 @@ msgstr "Benutzerbackend erfolgreich angelegt"
 msgid "User group backend \"%s\" is not %s"
 msgstr "Benutzerbackend “%s” ist nicht %s"
 
-#: /vagrant/application/controllers/UsergroupbackendController.php:108
+#: /vagrant/application/controllers/UsergroupbackendController.php:99
 #: /vagrant/library/Icinga/Web/Controller/AuthBackendController.php:120
 #, php-format
 msgid "User group backend \"%s\" not found"
 msgstr "Benutzergruppenbackend “%s” wurde nicht gefunden"
 
-#: /vagrant/application/controllers/UsergroupbackendController.php:134
+#: /vagrant/application/controllers/UsergroupbackendController.php:125
 #, php-format
 msgid "User group backend \"%s\" successfully removed"
 msgstr "Benutzergruppenbackend “%s” erfolgreich entfernt"
 
-#: /vagrant/application/controllers/UsergroupbackendController.php:97
+#: /vagrant/application/controllers/UsergroupbackendController.php:88
 #, php-format
 msgid "User group backend \"%s\" successfully updated"
 msgstr "Benutzergruppenbackend “%s” erfolgreich aktualisiert"
 
-#: /vagrant/application/controllers/UsergroupbackendController.php:62
+#: /vagrant/application/controllers/UsergroupbackendController.php:53
 msgid "User group backend successfully created"
 msgstr "Benutzergruppenbackend erfolgreich angelegt"
 
@@ -2901,45 +2921,48 @@ msgstr "Benutzergruppen"
 #: /vagrant/library/Icinga/Authentication/User/LdapUserBackend.php:255
 #: /vagrant/library/Icinga/Authentication/UserGroup/DbUserGroupBackend.php:114
 #: /vagrant/library/Icinga/Authentication/UserGroup/DbUserGroupBackend.php:118
-#: /vagrant/library/Icinga/Authentication/UserGroup/LdapUserGroupBackend.php:463
+#: /vagrant/library/Icinga/Authentication/UserGroup/LdapUserGroupBackend.php:464
 msgid "Username"
 msgstr "Benutzername"
 
-#: /vagrant/application/controllers/ConfigController.php:59
-#: /vagrant/application/controllers/GroupController.php:357
+#: /vagrant/application/controllers/GroupController.php:356
 #: /vagrant/application/controllers/RoleController.php:165
-#: /vagrant/application/controllers/UserController.php:323
-#: /vagrant/application/controllers/UsergroupbackendController.php:153
+#: /vagrant/application/controllers/UserController.php:322
 #: /vagrant/application/forms/Config/UserGroup/AddMemberForm.php:118
 #: /vagrant/application/forms/Navigation/NavigationConfigForm.php:613
-#: /vagrant/application/forms/Security/RoleForm.php:143
+#: /vagrant/application/forms/Security/RoleForm.php:117
 #: /vagrant/application/views/scripts/role/list.phtml:23
 #: /vagrant/library/Icinga/Web/Menu.php:288
 msgid "Users"
 msgstr "Benutzer"
 
+#: /vagrant/application/forms/Config/General/ThemingConfigForm.php:57
+msgctxt "Form element label"
+msgid "Users Can't Change Theme"
+msgstr "Theme Benutzeranpassung verbieten"
+
 #: /vagrant/application/forms/Config/ResourceConfigForm.php:348
-#: /vagrant/application/forms/Config/UserBackendConfigForm.php:468
+#: /vagrant/application/forms/Config/UserBackendConfigForm.php:453
 msgid "Validate Configuration"
 msgstr "Konfiguration validieren"
 
 #: /vagrant/application/forms/Config/ResourceConfigForm.php:349
-#: /vagrant/application/forms/Config/UserBackendConfigForm.php:469
+#: /vagrant/application/forms/Config/UserBackendConfigForm.php:454
 msgid "Validation In Progress"
 msgstr "Wird überprüft"
 
 #: /vagrant/application/forms/Config/ResourceConfigForm.php:306
-#: /vagrant/application/forms/Config/UserBackendConfigForm.php:426
+#: /vagrant/application/forms/Config/UserBackendConfigForm.php:411
 msgid "Validation Log"
 msgstr "Validierungslog"
 
 #: /vagrant/application/views/scripts/about/index.phtml:14
-#: /vagrant/application/views/scripts/about/index.phtml:108
+#: /vagrant/application/views/scripts/about/index.phtml:115
 #: /vagrant/application/views/scripts/config/module.phtml:39
 msgid "Version"
 msgstr "Version"
 
-#: /vagrant/application/forms/Config/General/LoggingConfigForm.php:51
+#: /vagrant/application/forms/Config/General/LoggingConfigForm.php:57
 msgctxt "app.config.logging.level"
 msgid "Warning"
 msgstr "Warnung"
@@ -2970,11 +2993,11 @@ msgstr "Y-Achse"
 
 #: /vagrant/application/forms/Config/User/UserForm.php:116
 #: /vagrant/application/forms/Config/UserGroup/UserGroupForm.php:66
-#: /vagrant/application/views/scripts/navigation/index.phtml:65
+#: /vagrant/application/views/scripts/navigation/index.phtml:57
 msgid "Yes"
 msgstr "Ja"
 
-#: /vagrant/application/views/scripts/navigation/index.phtml:31
+#: /vagrant/application/views/scripts/navigation/index.phtml:23
 msgid "You did not create any navigation item yet."
 msgstr "Sie haben noch kein Navigationselement angelegt."
 
@@ -3000,17 +3023,13 @@ msgstr ""
 "konfigurieren Sie eine Authentifizierung über Ihren Webserver, sonst werden "
 "Sie sich nicht in Icinga Web 2 anmelden können."
 
-#: /vagrant/application/forms/PreferenceForm.php:163
+#: /vagrant/application/forms/PreferenceForm.php:197
 msgid "Your Current Language"
 msgstr "Ihre aktuelle Sprache"
 
-#: /vagrant/application/forms/PreferenceForm.php:175
+#: /vagrant/application/forms/PreferenceForm.php:209
 msgid "Your Current Timezone"
 msgstr "Ihre aktuelle Zeitzone"
-
-#: /vagrant/library/Icinga/Web/Widget/Limiter.php:98
-msgid "all"
-msgstr "alle"
 
 #: /vagrant/library/Icinga/Date/DateFormatter.php:176
 #, php-format
@@ -3023,6 +3042,11 @@ msgstr "vor %s"
 msgctxt "An event will happen at the given time"
 msgid "at %s"
 msgstr "in %s"
+
+#: /vagrant/application/forms/PreferenceForm.php:164
+#: /vagrant/application/forms/Config/General/ThemingConfigForm.php:34
+msgid "default"
+msgstr "standard"
 
 #: /vagrant/application/views/scripts/config/module.phtml:23
 msgid "disable"
@@ -3082,6 +3106,46 @@ msgstr "seit %s"
 msgid "toggle"
 msgstr "umschalten"
 
+#~ msgid "Add New Pane Or Dashlet"
+#~ msgstr "Neues Dashboard"
+
+#~ msgctxt "sort direction"
+#~ msgid "Ascending"
+#~ msgstr "Aufsteigend [ Sortierreihenfolge ]"
+
+#~ msgid "Authorization"
+#~ msgstr "Autorisierung"
+
+#~ msgid "Configure how users are associated with groups by Icinga Web 2"
+#~ msgstr ""
+#~ "Konfiguration der Verknüpfung von Nutzern und Gruppen durch Icinga Web 2"
+
+#~ msgid "Configure how users authenticate with and log into Icinga Web 2"
+#~ msgstr "Konfiguration der Nutzerauthentifizierung für Icinga Web 2"
+
+#~ msgctxt "sort direction"
+#~ msgid "Descending"
+#~ msgstr "Absteigend"
+
+#~ msgctxt "sort direction"
+#~ msgid "Direction"
+#~ msgstr "Richtung"
+
+#~ msgid "Limiter"
+#~ msgstr "Begrenzer"
+
+#~ msgid "Show %u rows on this page"
+#~ msgstr "Zeige %u Zeilen pro Seite"
+
+#~ msgid "Show all items on this page"
+#~ msgstr "Zeige alle Elemente auf dieser Seite"
+
+#~ msgid "The Icinga logo"
+#~ msgstr "Das Icinga Logo"
+
+#~ msgid "all"
+#~ msgstr "alle"
+
 #, fuzzy
 #~ msgid "Add User to Group"
 #~ msgstr "Benutzergruppe"
@@ -3132,9 +3196,6 @@ msgstr "umschalten"
 #~ msgid "Remove %s %s"
 #~ msgstr "Diesen Filter entfernen"
 
-#~ msgid "User Backends"
-#~ msgstr "Backends für Benutzer"
-
 #~ msgid "Check this to enable logging."
 #~ msgstr "Aktiviere dieses Häkchen um das Logging zu aktivieren."
 
@@ -3158,9 +3219,6 @@ msgstr "umschalten"
 #~ msgstr ""
 #~ "Deine authentication.ini konnte nicht gelesen werden, darum sind keine "
 #~ "Authentifizierungsmethoden verfügbar."
-
-#~ msgid "Default Language"
-#~ msgstr "Standardsprache"
 
 #~ msgid "Expression"
 #~ msgstr "Ausdruck"

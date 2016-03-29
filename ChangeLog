@@ -1,5 +1,66 @@
 # Icinga Web 2 Changelog
 
+## What's New in Version 2.2.0
+
+#### Features
+
+* Feature 8487: Number headings in the documentation module
+* Feature 8963: Feature commands in the multi select views
+* Feature 10654: Render links in acknowledgements, comments and downtimes
+* Feature 11062: Allow style classes in plugin output
+* Feature 11238: Puppet/Vagrant: Install mod_ssl and forward port 443
+
+#### Bugfixes
+
+* Bug 7350: Tabs are missing if JS is disabled
+* Bug 9800: Debian packaging: Ship translation module w/ the icingaweb2 package and install its config.ini
+* Bug 10173: Failed commands give no useful error any more
+* Bug 10251: Icinga Web 2 fails to run with PHP7
+* Bug 10277: Special characters are incorrectly escaped for tooltips in the service grid
+* Bug 10289: Doc module: Headers are cut off when clicking on TOC links
+* Bug 10309: Move auth backend configuration to app config
+* Bug 10310: Monitoring details: information/action ordering
+* Bug 10362: Debian packaging: Separate package for CLI missing
+* Bug 10366: Text plugin output treated as HTML in too many occasions
+* Bug 10369: Accessibility: Focus not visible and lost after refresh
+* Bug 10397: Users with no permissions can check multiple services
+* Bug 10442: Edit user control should be more prominent
+* Bug 10469: "Remove Acknowledgement" text missing in multi-select views
+* Bug 10506: HTTP basic auth request is sent when using Kerberos authentication with Apache2 and mod_php
+* Bug 10625: Return local date and time when lost connection to the web server
+* Bug 10640: Respect protected_variables in nested custom variables too
+* Bug 10778: Filters in the host group and service group overview not applied to state links
+* Bug 10786: Whitespace characters are ignored in the plugin output in list views
+* Bug 10805: Setup Wizard: Obsolete PHP sockets requirement
+* Bug 10856: Benchmark is not rendered on many pages
+* Bug 10871: Get rid of padding in controls
+* Bug 10878: Dashboards different depending on username casing
+* Bug 10881: Move iframe from modules to framework
+* Bug 10917: Event grid tiles: The filter column "from" is not allowed here
+* Bug 10918: Error on logout when using external authentication
+* Bug 10921: icingacli monitoring list --format=csv throws error
+* Bug 11000: Change license header to only reflect a file's year of creation/initial commit
+* Bug 11008: Wobbling spinners
+* Bug 11021: Global default theme is not applied while not authenticated
+* Bug 11032: Fix icon_image size and provide a CSS class for theming
+* Bug 11039: Misleading tooltip in Tactical Overview
+* Bug 11051: Preferences and navigation items stored in INI files rely on case sensitive usernames
+* Bug 11073: Active row is flickering on refresh
+* Bug 11091: Custom navigation items: URL is not escaped/encoded
+* Bug 11100: Comments are always persistent
+* Bug 11114: Validate that a proper root DN is set for LDAP resources
+* Bug 11117: Vendor: Update dompdf to version 0.6.2
+* Bug 11119: icingacli shows ugly exception when unable to access the config directory
+* Bug 11120: icingacli: command and action shortcuts have been broken
+* Bug 11126: Invalid cookie value in cookie icingaweb2-tzo
+* Bug 11142: LDAP User Groups backend group_filter
+* Bug 11143: Layout: Tabs should be left-aligned
+* Bug 11151: Having basic authentication on the webserver but not in Icinga Web 2 causes Web 2 to require basic auth
+* Bug 11168: Debian packaging: Don't patch HTMLPurifier loading and install HTMLPurifier*.php files from the library/vendor root
+* Bug 11187: Session cookie: Path too broad and unset secure flag on HTTPS
+* Bug 11197: Menu items without url should ignore the target configuration
+* Bug 11260: Scheduling downtimes through the API not working
+
 ## What's New in Version 2.1.1
 
 #### Features

@@ -124,7 +124,7 @@ class ProcessCheckResultCommandForm extends ObjectsCommandForm
             ProcessCheckResultCommand::HOST_DOWN => $this->translate('DOWN', 'icinga.state')
         );
 
-        if (substr($this->getBackend()->getProgramVersion(), 0, 2) !== 'v2') {
+        if (! $this->getBackend()->isIcinga2()) {
             $options[ProcessCheckResultCommand::HOST_UNREACHABLE] = $this->translate('UNREACHABLE', 'icinga.state');
         }
 

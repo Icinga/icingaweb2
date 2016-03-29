@@ -114,7 +114,7 @@ The packages for RHEL/CentOS depend on other packages which are distributed as p
 #### <a id="package-repositories-wheezy-notes"></a> Debian wheezy Notes
 
 The packages for Debian wheezy depend on other packages which are distributed as part of the
-[wheezy-packports](http://backports.debian.org/) repository. Please make sure to enable this repository by following
+[wheezy-backports](http://backports.debian.org/) repository. Please make sure to enable this repository by following
 [these instructions](http://backports.debian.org/Instructions/).
 
 ### <a id="installing-from-package-example"></a> Installing Icinga Web 2
@@ -519,3 +519,8 @@ The first release candidate of Icinga Web 2 introduces the following non-backwar
 * Since Icinga Web 2 version 2.1.3 LDAP user group backends respect the configuration option `group_filter`.
   Users who changed the configuration manually and used the option `filter` instead
   have to change it back to `group_filter`.
+
+## <a id="upgrading-to-2.2.0"></a> Upgrading to Icinga Web 2 2.2.0
+
+* The menu entry `Authorization` beneath `Config` has been renamed to `Authentication`. The role, user backend and user
+  group backend configuration which was previously found beneath `Authentication` has been moved to `Application`.

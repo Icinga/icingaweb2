@@ -36,6 +36,12 @@
             var self = event.data.self;
             var icinga = self.icinga;
 
+            if (! icinga) {
+                // Attempt to catch a rare error, race condition, whatever
+                console.log('Got no icinga in applyHandlers');
+                return;
+            }
+
             if (self.initializeModules) {
                 var loaded = false;
                 var moduleName = $target.data('icingaModule');

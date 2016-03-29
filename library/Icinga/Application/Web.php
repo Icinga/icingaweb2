@@ -82,10 +82,9 @@ class Web extends EmbeddedWeb
             ->setupLogging()
             ->setupErrorHandling()
             ->loadConfig()
-            ->setupResourceFactory()
+            ->setupRequest()
             ->setupSession()
             ->setupNotifications()
-            ->setupRequest()
             ->setupResponse()
             ->setupZendMvc()
             ->setupModuleManager()
@@ -322,13 +321,7 @@ class Web extends EmbeddedWeb
                             'priority'      => 810
                         ),
                         'authentication' => array(
-                            'label'     => t('Authentication'),
-                            'url'       => 'config/userbackend',
-                            'permission'    => 'config/application/*',
-                            'priority'      => 820
-                        ),
-                        'authorization' => array(
-                            'label'         => t('Authorization'),
+                            'label'         => t('Authentication'),
                             'permission'    => 'config/authentication/*',
                             'priority'      => 830,
                             'url'           => 'role/list'
@@ -370,9 +363,10 @@ class Web extends EmbeddedWeb
 
             if (Logger::writesToFile()) {
                 $menu['system']['children']['application_log'] = array(
-                    'label'     => t('Application Log'),
-                    'url'       => 'list/applicationlog',
-                    'priority'  => 710
+                    'label'      => t('Application Log'),
+                    'url'        => 'list/applicationlog',
+                    'permission' => 'application/log',
+                    'priority'   => 710
                 );
             }
         } else {

@@ -120,7 +120,7 @@ class Manager
         }
         if (! is_readable($parent)) {
             throw new NotReadableError(
-                'Cannot read enabled modules. Module directory\'s parent directory "%s" is not readable',
+                'Cannot read enabled modules. Config directory "%s" is not readable',
                 $parent
             );
         }
