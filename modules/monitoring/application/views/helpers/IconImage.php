@@ -27,13 +27,14 @@ class Zend_View_Helper_IconImage extends Zend_View_Helper_Abstract
     public function host($object)
     {
         if ($object->host_icon_image && ! preg_match('/[\'"]/', $object->host_icon_image)) {
-            return $this->view->icon(
+            return $this->view->img(
                 Macro::resolveMacros($object->host_icon_image, $object),
                 null,
                 array(
-                    'alt' => $object->host_icon_image_alt,
-                    'title' => $object->host_icon_image_alt,
-                    'data-tooltip-delay' => 0
+                    'alt'                   => $object->host_icon_image_alt,
+                    'data-tooltip-delay'    => 0,
+                    'class'                 => 'host-icon-image',
+                    'title'                 => $object->host_icon_image_alt
                 )
             );
         }
@@ -49,13 +50,14 @@ class Zend_View_Helper_IconImage extends Zend_View_Helper_Abstract
     public function service($object)
     {
         if ($object->service_icon_image && ! preg_match('/[\'"]/', $object->service_icon_image)) {
-            return $this->view->icon(
+            return $this->view->img(
                 Macro::resolveMacros($object->service_icon_image, $object),
                 null,
                 array(
-                    'alt' => $object->service_icon_image_alt,
-                    'title' => $object->service_icon_image_alt,
-                    'data-tooltip-delay' => 0
+                    'alt'                   => $object->service_icon_image_alt,
+                    'class'                 => 'service-icon-image',
+                    'data-tooltip-delay'    => 0,
+                    'title'                 => $object->service_icon_image_alt
                 )
             );
         }

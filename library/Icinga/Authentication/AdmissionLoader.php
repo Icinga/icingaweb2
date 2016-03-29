@@ -5,6 +5,7 @@ namespace Icinga\Authentication;
 
 use Icinga\Application\Config;
 use Icinga\Application\Logger;
+use Icinga\Authentication\Role;
 use Icinga\Exception\NotReadableError;
 use Icinga\Data\ConfigObject;
 use Icinga\User;
@@ -43,16 +44,12 @@ class AdmissionLoader
     }
 
     /**
-     * Get user permissions and restrictions
+     * Apply permissions, restrictions and roles to the given user
      *
-     * @param   User $user
-     *
-     * @return  array
+     * @param   User    $user
      */
-    public function getPermissionsAndRestrictions(User $user)
+    public function applyRoles(User $user)
     {
-        $permissions = array();
-        $restrictions = array();
         $username = $user->getUsername();
         try {
             $roles = Config::app('roles');
@@ -62,14 +59,18 @@ class AdmissionLoader
                 $username,
                 $e
             );
-            return array($permissions, $restrictions);
+            return;
         }
         $userGroups = $user->getGroups();
-        foreach ($roles as $role) {
+        $permissions = array();
+        $restrictions = array();
+        $roleObjs = array();
+        foreach ($roles as $roleName => $role) {
             if ($this->match($username, $userGroups, $role)) {
+                $permissionsFromRole = StringHelper::trimSplit($role->permissions);
                 $permissions = array_merge(
                     $permissions,
-                    array_diff(StringHelper::trimSplit($role->permissions), $permissions)
+                    array_diff($permissionsFromRole, $permissions)
                 );
                 $restrictionsFromRole = $role->toArray();
                 unset($restrictionsFromRole['users']);
@@ -81,8 +82,16 @@ class AdmissionLoader
                     }
                     $restrictions[$name][] = $restriction;
                 }
+
+                $roleObj = new Role();
+                $roleObjs[] = $roleObj
+                    ->setName($roleName)
+                    ->setPermissions($permissionsFromRole)
+                    ->setRestrictions($restrictionsFromRole);
             }
         }
-        return array($permissions, $restrictions);
+        $user->setPermissions($permissions);
+        $user->setRestrictions($restrictions);
+        $user->setRoles($roleObjs);
     }
 }

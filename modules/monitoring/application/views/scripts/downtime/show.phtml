@@ -45,7 +45,7 @@
       </tr>
       <tr title="<?= $this->translate('A comment, as entered by the author, associated with the scheduled downtime'); ?>">
         <th><?= $this->translate('Comment') ?></th>
-        <td class="comment-text"><?= $this->nl2br($this->escape($this->downtime->comment)) ?></td>
+        <td class="comment-text"><?= $this->nl2br($this->escapeComment($this->downtime->comment)) ?></td>
       </tr>
     </tbody>
   </table>

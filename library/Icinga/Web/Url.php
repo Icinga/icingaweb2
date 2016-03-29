@@ -212,17 +212,18 @@ class Url
     }
 
     /**
-     * Set the new Filter of the url to be the current filter and the given filter
+     * Add the given filter to the current filter of the URL
      *
-     * @param Filter $and
+     * @param   Filter $and
+     *
+     * @return  $this
      */
     public function addFilter($and)
     {
         $this->setQueryString(
-            Filter::matchAll(
-                $and,
-                Filter::fromQueryString($this->getQueryString())
-            )->toQueryString()
+            Filter::fromQueryString($this->getQueryString())
+                ->andFilter($and)
+                ->toQueryString()
         );
         return $this;
     }

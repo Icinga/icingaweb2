@@ -41,7 +41,6 @@ class Cli extends ApplicationBootstrap
             ->setupInternationalization()
             ->parseBasicParams()
             ->setupLogger()
-            ->setupResourceFactory()
             ->setupModuleManager()
             ->setupUserBackendFactory()
             ->loadSetupModuleIfNecessary();

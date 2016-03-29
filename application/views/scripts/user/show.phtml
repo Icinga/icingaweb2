@@ -4,29 +4,29 @@ use Icinga\Data\Updatable;
 use Icinga\Data\Reducible;
 use Icinga\Data\Selectable;
 
-$editLink = null;
-if ($this->hasPermission('config/authentication/users/edit') && $backend instanceof Updatable) {
-    $editLink = $this->qlink(
-        null,
-        'user/edit',
-        array(
-            'backend'   => $backend->getName(),
-            'user'      => $user->user_name
-        ),
-        array(
-            'title' => sprintf($this->translate('Edit user %s'), $user->user_name),
-            'class' => 'user-edit',
-            'icon'  => 'edit'
-        )
-    );
-}
-
 ?>
 <div class="controls separated">
 <?php if (! $this->compact): ?>
     <?= $tabs; ?>
 <?php endif ?>
-    <h2 class="clearfix"><?= $this->escape($user->user_name) ?><span class="pull-right"><?= $editLink ?></span></h2>
+    <h2><?= $this->escape($user->user_name) ?></h2>
+    <?php
+    if ($this->hasPermission('config/authentication/users/edit') && $backend instanceof Updatable) {
+        echo $this->qlink(
+            $this->translate('Edit User'),
+            'user/edit',
+            array(
+                'backend'   => $backend->getName(),
+                'user'      => $user->user_name
+            ),
+            array(
+                'class' => 'button-link',
+                'icon'  => 'edit',
+                'title' => sprintf($this->translate('Edit user %s'), $user->user_name)
+            )
+        );
+    }
+    ?>
     <table class="name-value-table">
         <tr>
             <th><?= $this->translate('State'); ?></th>

@@ -243,7 +243,6 @@
      */
     Navigation.prototype.onPopState = function (url, data) {
         // 1. get selection data and set active menu
-        console.log('popstate:', data);
         if (data) {
             var active = this.icinga.utils.getElementByDomPath(data);
             if (!active) {

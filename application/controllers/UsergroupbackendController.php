@@ -29,16 +29,7 @@ class UsergroupbackendController extends Controller
      */
     public function indexAction()
     {
-        $this->redirectNow('usergroupbackend/list');
-    }
-
-    /**
-     * Show a list of all user group backends
-     */
-    public function listAction()
-    {
-        $this->view->backendNames = Config::app('groups');
-        $this->createListTabs()->activate('usergroupbackend');
+        $this->redirectNow('config/userbackend');
     }
 
     /**
@@ -47,7 +38,7 @@ class UsergroupbackendController extends Controller
     public function createAction()
     {
         $form = new UserGroupBackendForm();
-        $form->setRedirectUrl('usergroupbackend/list');
+        $form->setRedirectUrl('config/userbackend');
         $form->addDescription($this->translate('Create a new backend to associate users and groups with.'));
         $form->setIniConfig(Config::app('groups'));
         $form->setOnSuccess(function (UserGroupBackendForm $form) {
@@ -78,7 +69,7 @@ class UsergroupbackendController extends Controller
         $backendName = $this->params->getRequired('backend');
 
         $form = new UserGroupBackendForm();
-        $form->setRedirectUrl('usergroupbackend/list');
+        $form->setRedirectUrl('config/userbackend');
         $form->setIniConfig(Config::app('groups'));
         $form->setOnSuccess(function (UserGroupBackendForm $form) use ($backendName) {
             try {
@@ -121,7 +112,7 @@ class UsergroupbackendController extends Controller
         $backendForm = new UserGroupBackendForm();
         $backendForm->setIniConfig(Config::app('groups'));
         $form = new ConfirmRemovalForm();
-        $form->setRedirectUrl('usergroupbackend/list');
+        $form->setRedirectUrl('config/userbackend');
         $form->setOnSuccess(function (ConfirmRemovalForm $form) use ($backendName, $backendForm) {
             try {
                 $backendForm->delete($backendName);
@@ -140,24 +131,5 @@ class UsergroupbackendController extends Controller
         $form->handleRequest();
 
         $this->renderForm($form, $this->translate('Remove User Group Backend'));
-    }
-
-    /**
-     * Create the tabs for the application configuration
-     */
-    protected function createListTabs()
-    {
-        $tabs = $this->getTabs();
-        $tabs->add('userbackend', array(
-            'title' => $this->translate('Configure how users authenticate with and log into Icinga Web 2'),
-            'label' => $this->translate('Users'),
-            'url'   => 'config/userbackend'
-        ));
-        $tabs->add('usergroupbackend', array(
-            'title' => $this->translate('Configure how users are associated with groups by Icinga Web 2'),
-            'label' => $this->translate('User Groups'),
-            'url'   => 'usergroupbackend/list'
-        ));
-        return $tabs;
     }
 }
