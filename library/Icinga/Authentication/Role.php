@@ -63,7 +63,17 @@ class Role
     }
 
     /**
-     * Set permissions of the role
+     * Get the permissions of the role
+     *
+     * @return  string[]
+     */
+    public function getPermissions()
+    {
+        return $this->permissions;
+    }
+
+    /**
+     * Set the permissions of the role
      *
      * @param   string[]    $permissions
      *
@@ -73,16 +83,6 @@ class Role
     {
         $this->permissions = $permissions;
         return $this;
-    }
-
-    /**
-     * Get the permissions of the role
-     *
-     * @return  string[]
-     */
-    public function getPermissions()
-    {
-        return $this->permissions;
     }
 
     /**
@@ -99,19 +99,6 @@ class Role
             $this->restrictions[$name] = array();
         }
         $this->restrictions[$name][] = $restriction;
-        return $this;
-    }
-
-    /**
-     * Set restrictions of the role
-     *
-     * @param   string[]    $restrictions
-     *
-     * @return  $this
-     */
-    public function setRestrictions(array $restrictions)
-    {
-        $this->restrictions = $restrictions;
         return $this;
     }
 
@@ -135,5 +122,18 @@ class Role
         }
 
         return null;
+    }
+
+    /**
+     * Set the restrictions of the role
+     *
+     * @param   string[]    $restrictions
+     *
+     * @return  $this
+     */
+    public function setRestrictions(array $restrictions)
+    {
+        $this->restrictions = $restrictions;
+        return $this;
     }
 }
