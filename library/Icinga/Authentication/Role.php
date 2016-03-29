@@ -50,19 +50,6 @@ class Role
     }
 
     /**
-     * Add a permission to the role
-     *
-     * @param   string  $permission
-     *
-     * @return  $this
-     */
-    public function addPermission($permission)
-    {
-        $this->permissions[$permission] = $permission;
-        return $this;
-    }
-
-    /**
      * Get the permissions of the role
      *
      * @return  string[]
