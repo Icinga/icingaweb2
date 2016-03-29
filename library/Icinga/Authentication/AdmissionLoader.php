@@ -50,8 +50,6 @@ class AdmissionLoader
      */
     public function applyRoles(User $user)
     {
-        $permissions = array();
-        $restrictions = array();
         $username = $user->getUsername();
         try {
             $roles = Config::app('roles');
@@ -64,6 +62,8 @@ class AdmissionLoader
             return;
         }
         $userGroups = $user->getGroups();
+        $permissions = array();
+        $restrictions = array();
         $roleObjs = array();
         foreach ($roles as $roleName => $role) {
             if ($this->match($username, $userGroups, $role)) {
