@@ -237,13 +237,16 @@ class User
     }
 
     /**
-     * Settter for restrictions
+     * Set the user's restrictions
      *
-     * @param   array   $restrictions
+     * @param   string[]    $restrictions
+     *
+     * @return  $this
      */
     public function setRestrictions(array $restrictions)
     {
         $this->restrictions = $restrictions;
+        return $this;
     }
 
     /**
