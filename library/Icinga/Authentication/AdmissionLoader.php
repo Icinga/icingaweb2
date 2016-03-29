@@ -44,7 +44,7 @@ class AdmissionLoader
     }
 
     /**
-     * Get user permissions and restrictions
+     * Apply permissions, restrictions and roles to the given user
      *
      * @param   User    $user
      */
