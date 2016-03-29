@@ -11,15 +11,37 @@
 			cacheBreakpoints($this, _this);
 		});
 	}
+    /**
+     * Flag container as being rendered
+     *
+     * @param {object} e - The behavior
+     */
 
     function onFixControls(e) {
 		var $this = $(this);
 		var _this = e.data.self;
 		if ($this.find('.tabs')) {
+    /**
+     * Cache break points for #col1 and #col2
+     *
+     * @param {object} e - The behavior
+     */
             updateBreakIndex($this, _this);
+    /**
+     * Update container's break index if it has been already rendered
+     *
+     * @param {object} e - The behavior
+     */
         }
     }
 
+    /**
+     * Cache tab break points in container
+     *
+     * @param {jQuery} $container - Element containing the tabs
+     *
+     * @param {object} e - The behavior
+     */
     function cacheBreakpoints($container, e) {
         var containerData = {};
         var w = $container.find('.dropdown-nav-item').outerWidth(true)+1;
@@ -30,6 +52,13 @@
         e.containerData[$container.attr('id')] = containerData;
     }
 
+    /**
+     * Check Breakpoints and accordingly set the breakIndex
+     *
+     * @param {jQuery} $container - Element containing the tabs
+     *
+     * @param {object} e - The behavior
+     */
     function updateBreakIndex($container, e) {
         var b = false;
         var breakPoints = e.containerData[$container.attr('id')].breakPoints;
@@ -42,12 +71,14 @@
         setBreakIndex($container, b, e);
     }
 
-	/**
+    /**
      * Set the breakIndex and if value has changed render Tabs
      *
-     * @param {jQuery}		$container	Element containing the tabs
+     * @param {jQuery} $container - Element containing the tabs
      *
-     * @param {Int}			NewIndex 	New Value for the breakIndex
+     * @param {int} newIndex - The index to be set
+     *
+     * @param {object} e - The behavior
      */
     function setBreakIndex($container, newIndex, e) {
 		var containerData = e.containerData[$container.attr("id")];
@@ -62,7 +93,9 @@
     /**
      * Render Tabs of a container according to the updated breakIndex
      *
-     * @param {jQuery} $container	Element containing the tabs
+     * @param {jQuery} $container - Element containing the tabs
+     *
+     * @param {object} e - The behavior
      */
     function renderTabs($container, e) {
         var breakIndex = e.containerData[$container.attr('id')].breakIndex;
