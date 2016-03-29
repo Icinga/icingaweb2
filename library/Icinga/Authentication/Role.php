@@ -86,23 +86,6 @@ class Role
     }
 
     /**
-     * Add a restriction to the role
-     *
-     * @param   string  $name
-     * @param   string  $restriction
-     *
-     * @return  $this
-     */
-    public function addRestriction($name, $restriction)
-    {
-        if (! isset($this->restrictions[$name])) {
-            $this->restrictions[$name] = array();
-        }
-        $this->restrictions[$name][] = $restriction;
-        return $this;
-    }
-
-    /**
      * Get the restrictions of the role
      *
      * @param   string  $name   Optional name of the restriction
