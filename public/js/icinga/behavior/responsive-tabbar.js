@@ -46,7 +46,7 @@
         var containerData = {};
         var w = $container.find('.dropdown-nav-item').outerWidth(true)+1;
         containerData.breakPoints = [];
-        $container.find(".tabs").not(".cloned").show().children("li").not('.dropdown-nav-item').each(function() {
+        $container.find('.tabs').not('.cloned').show().children('li').not('.dropdown-nav-item').each(function() {
             containerData.breakPoints.push(w += $(this).outerWidth(true) + 1);
         });
         e.containerData[$container.attr('id')] = containerData;
@@ -81,7 +81,7 @@
      * @param {object} e - The behavior
      */
     function setBreakIndex($container, newIndex, e) {
-		var containerData = e.containerData[$container.attr("id")];
+        var containerData = e.containerData[$container.attr('id')];
         if (newIndex === containerData.breakIndex) {
             return;
         } else {
@@ -102,28 +102,28 @@
 
         $container.find('.tabs.cloned').remove();
         if (breakIndex) {
-            var $tabsClone = $container.find('.tabs').not('.cloned').hide().clone().addClass("cloned");
+            var $tabsClone = $container.find('.tabs').not('.cloned').hide().clone().addClass('cloned');
 
             // if not exists, create dropdown
             var $dropdown = null;
-            if ( $tabsClone.children(".dropdown-nav-item").length > 0 ) {
-                $dropdown = $tabsClone.children(".dropdown-nav-item");
+            if ( $tabsClone.children('.dropdown-nav-item').length > 0 ) {
+                $dropdown = $tabsClone.children('.dropdown-nav-item');
             } else {
                 $dropdown = $('<li class="dropdown-nav-item"><a href="#" class="dropdown-toggle" title="Dropdown menu" aria-label="Dropdown menu"><i aria-hidden="true" class="icon-down-open"></i></a><ul class="nav"></ul></li>');
                 $tabsClone.append($dropdown);
             } // END if not exists, create dropdown
 
             // insert tab items into dropdown
-            var l = $tabsClone.children("li").not('.dropdown-nav-item').length;
+            var l = $tabsClone.children('li').not('.dropdown-nav-item').length;
             for (var i = breakIndex; i < l; i++) {
-                var $tab = $($tabsClone.children("li").not('.dropdown-nav-item').get(i));
+                var $tab = $($tabsClone.children('li').not('.dropdown-nav-item').get(i));
 
                 $dropdown.children('ul').append($tab.clone());
                 $tab.hide();
             } // END insert tab items into dropdown
 
-			$container.find('.tabs').not('.cloned').hide();
-            $container.find(".controls").prepend($tabsClone.show());
+            $container.find('.tabs').not('.cloned').hide();
+            $container.find('.controls').prepend($tabsClone.show());
         } else {
             //breakIndex false: No need for cloned tabs
             $container.find('.tabs').not('.cloned').show();
