@@ -4,34 +4,44 @@
 
     'use strict';
 
-	function onWindowResized(e) {
-		var _this = e.data.self;
-		$('#col1, #col2').each(function() {
-			var $this = $(this);
-			cacheBreakpoints($this, _this);
-		});
-	}
     /**
      * Flag container as being rendered
      *
      * @param {object} e - The behavior
      */
+    function onRendered(e) {
+        var _this = e.data.self;
+        var $container = $(this);
+        _this.containerData[$container.attr('id')].isRendered = true;
+    }
 
-    function onFixControls(e) {
-		var $this = $(this);
-		var _this = e.data.self;
-		if ($this.find('.tabs')) {
     /**
      * Cache break points for #col1 and #col2
      *
      * @param {object} e - The behavior
      */
+    function onWindowResized(e) {
+        var _this = e.data.self;
+        $('#col1, #col2').each(function() {
+            var $this = $(this);
+            cacheBreakpoints($this, _this);
             updateBreakIndex($this, _this);
+        });
+    }
+
     /**
      * Update container's break index if it has been already rendered
      *
      * @param {object} e - The behavior
      */
+    function onFixControls(e) {
+        var $container = $(this);
+        var _this = e.data.self;
+        if (_this.containerData[$container.attr('id')].isRendered) {
+            if ($container.find('.tabs')) {
+                updateBreakIndex($container, _this);
+            }
+            _this.containerData[$container.attr('id')].isRendered = false;
         }
     }
 
@@ -143,16 +153,15 @@
      * @constructor
      */
     var ResponsiveTabBar = function(icinga) {
-	    this.containerData = {};
+        var _this = this;
+        this.containerData = {};
         Icinga.EventListener.call(this, icinga);
-
-		var _this = this;
-		$('#col1, #col2').each(function() {
-			cacheBreakpoints($(this), _this);
-		});
-
-		$(window).resize({self: this}, onWindowResized);
-		this.on('fix-controls', '#col1, #col2', onFixControls, this);
+        $('#col1, #col2').each(function() {
+            cacheBreakpoints($(this), _this);
+        });
+        this.on('rendered', '#col1, #col2', onRendered, this);
+        $(window).resize({self: this}, onWindowResized);
+        this.on('fix-controls', '#col1, #col2', onFixControls, this);
     };
 
     ResponsiveTabBar.prototype = new Icinga.EventListener();
