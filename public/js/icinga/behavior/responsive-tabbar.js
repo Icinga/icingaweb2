@@ -5,9 +5,29 @@
     'use strict';
 
     /**
+     * Initialize container data
+     *
+     * @param {event} e - Event
+     */
+    function onLayoutRendered(e) {
+        console.log('layout render');
+        var _this = e.data.self;
+        _this.containerData = {};
+        $('#col1, #col2').each( function() {
+            var $container = $(this);
+            var containerData = {
+                breakIndex: false,
+                breakPoints: [],
+                isRendered: true
+            };
+            _this.containerData[$container.attr('id')] = containerData;
+        });
+    }
+
+    /**
      * Flag container as being rendered
      *
-     * @param {object} e - The behavior
+     * @param {event} e - Event
      */
     function onRendered(e) {
         var _this = e.data.self;
@@ -18,7 +38,7 @@
     /**
      * Cache break points for #col1 and #col2
      *
-     * @param {object} e - The behavior
+     * @param {event} e - Event
      */
     function onWindowResized(e) {
         var _this = e.data.self;
@@ -32,12 +52,14 @@
     /**
      * Update container's break index if it has been already rendered
      *
-     * @param {object} e - The behavior
+     * @param {event} e - Event
      */
     function onFixControls(e) {
         var $container = $(this);
         var _this = e.data.self;
-        if (_this.containerData[$container.attr('id')].isRendered) {
+        if (_this.containerData && _this.containerData[$container.attr('id')] && _this.containerData[$container.attr('id')].isRendered) {
+            console.log("fix");
+
             if ($container.find('.tabs')) {
                 updateBreakIndex($container, _this);
             }
@@ -55,6 +77,7 @@
     function cacheBreakpoints($container, e) {
         var containerData = {};
         var w = $container.find('.dropdown-nav-item').outerWidth(true)+1;
+        containerData.isRendered = false;
         containerData.breakPoints = [];
         $container.find('.tabs').not('.cloned').show().children('li').not('.dropdown-nav-item').each(function() {
             containerData.breakPoints.push(w += $(this).outerWidth(true) + 1);
@@ -143,7 +166,7 @@
     Icinga.Behaviors = Icinga.Behaviors || {};
 
     /**
-     * Behavior for managing tab bar width
+     * Behavior for managing tab bar width for variable screen width
      *
      * The ResponsiveTabBar will wrap tabs in a dropdown if the containing
      * tab bar becomes insufficient
@@ -153,15 +176,12 @@
      * @constructor
      */
     var ResponsiveTabBar = function(icinga) {
-        var _this = this;
-        this.containerData = {};
         Icinga.EventListener.call(this, icinga);
-        $('#col1, #col2').each(function() {
-            cacheBreakpoints($(this), _this);
-        });
+
+        this.on('rendered', '#layout', onLayoutRendered, this);
         this.on('rendered', '#col1, #col2', onRendered, this);
-        $(window).resize({self: this}, onWindowResized);
         this.on('fix-controls', '#col1, #col2', onFixControls, this);
+        $(window).resize({self: this}, onWindowResized);
     };
 
     ResponsiveTabBar.prototype = new Icinga.EventListener();
