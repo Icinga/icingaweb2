@@ -6,6 +6,7 @@ namespace Icinga;
 use DateTimeZone;
 use InvalidArgumentException;
 use Icinga\Application\Config;
+use Icinga\Authentication\Role;
 use Icinga\User\Preferences;
 use Icinga\Web\Navigation\Navigation;
 
@@ -90,6 +91,13 @@ class User
      * @var array
      */
     protected $groups = array();
+
+    /**
+     * Roles of this user
+     *
+     * @var Role[]
+     */
+    protected $roles = array();
 
     /**
      * Preferences object
@@ -229,13 +237,39 @@ class User
     }
 
     /**
-     * Settter for restrictions
+     * Set the user's restrictions
      *
-     * @param   array   $restrictions
+     * @param   string[]    $restrictions
+     *
+     * @return  $this
      */
     public function setRestrictions(array $restrictions)
     {
         $this->restrictions = $restrictions;
+        return $this;
+    }
+
+    /**
+     * Get the roles of the user
+     *
+     * @return Role[]
+     */
+    public function getRoles()
+    {
+        return $this->roles;
+    }
+
+    /**
+     * Set the roles of the user
+     *
+     * @param   Role[]  $roles
+     *
+     * @return  $this
+     */
+    public function setRoles(array $roles)
+    {
+        $this->roles = $roles;
+        return $this;
     }
 
     /**

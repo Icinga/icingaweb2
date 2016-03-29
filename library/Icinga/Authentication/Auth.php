@@ -160,9 +160,7 @@ class Auth
         }
         $user->setGroups($groups);
         $admissionLoader = new AdmissionLoader();
-        list($permissions, $restrictions) = $admissionLoader->getPermissionsAndRestrictions($user);
-        $user->setPermissions($permissions);
-        $user->setRestrictions($restrictions);
+        $admissionLoader->applyRoles($user);
         $this->user = $user;
         if ($persist) {
             $this->persistCurrentUser();
