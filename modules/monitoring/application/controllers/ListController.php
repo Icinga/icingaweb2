@@ -385,12 +385,20 @@ class ListController extends Controller
         $this->view->groupData = $groupData;
     }
 
+    /**
+     * List all comments
+     */
     public function commentsAction()
     {
-        $this->addTitleTab('comments', $this->translate('Comments'), $this->translate('List comments'));
+        $this->addTitleTab(
+            'comments',
+            $this->translate('Comments'),
+            $this->translate('List comments')
+        );
+
         $this->setAutorefreshInterval(12);
 
-        $query = $this->backend->select()->from('comment', array(
+        $comments = $this->backend->select()->from('comment', array(
             'id'         => 'comment_internal_id',
             'objecttype' => 'object_type',
             'comment'    => 'comment_data',
@@ -404,12 +412,11 @@ class ListController extends Controller
             'host_display_name',
             'service_display_name'
         ));
-        $this->applyRestriction('monitoring/filter/objects', $query);
-        $this->filterQuery($query);
-        $this->view->comments = $query;
+        $this->applyRestriction('monitoring/filter/objects', $comments);
+        $this->filterQuery($comments);
 
+        $this->setupPaginationControl($comments);
         $this->setupLimitControl();
-        $this->setupPaginationControl($this->view->comments);
         $this->setupSortControl(
             array(
                 'comment_timestamp'     => $this->translate('Comment Timestamp'),
@@ -418,8 +425,10 @@ class ListController extends Controller
                 'comment_type'          => $this->translate('Comment Type'),
                 'comment_expiration'    => $this->translate('Expiration')
             ),
-            $query
+            $comments
         );
+
+        $this->view->comments = $comments;
 
         if ($this->Auth()->hasPermission('monitoring/command/comment/delete')) {
             $this->view->delCommentForm = new DeleteCommentCommandForm();
