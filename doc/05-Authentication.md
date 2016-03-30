@@ -18,24 +18,55 @@ The order of entries in the authentication configuration determines the order of
 If the current authentication method errors or if the current authentication method does not know the account being
 authenticated, the next authentication method will be used.
 
-### <a id="authentication-configuration-external-authentication"></a> External Authentication
+## <a id="authentication-configuration-external-authentication"></a> External Authentication
 
 For delegating authentication to the web server simply add `autologin` to your authentication configuration:
 
-````
+```
 [autologin]
 backend = external
-````
+```
 
-If your web server is not configured for authentication though the `autologin` section has no effect.
+If your web server is not configured for authentication though, the `autologin` section has no effect.
 
-### <a id="authentication-configuration-ad-or-ldap-authentication"></a> Active Directory or LDAP Authentication
+### <a id="authentication-configuration-external-authentication-example"></a> Example Configuration for Apache and Basic Authentication
+
+The following example will show you how to enable external authentication in Apache
+using **Basic access authentication**.
+
+**Creating Users**
+
+To create users for **basic access authentication** you can use the tool `htpasswd`. In this example **.http-users** is
+the name of the file containing the user credentials.
+
+The following command creates a new file with the user **icingaadmin**. `htpasswd` will prompt you for a password.
+If you want to add more users to the file you have to omit the `-c` switch to not overwrite the file.
+
+```
+sudo htpasswd -c /etc/icingaweb2/.http-users icingaadmin
+```
+
+**Configuring the Web Server**
+
+Add the following configuration to the **&lt;Directory&gt; Directive** in the **icingaweb.conf** web server
+configuration file.
+
+```
+AuthType Basic
+AuthName "Icinga Web 2"
+AuthUserFile /etc/icingaweb2/.http-users
+Require valid-user
+```
+
+Restart your web server to apply the changes.
+
+## <a id="authentication-configuration-ad-or-ldap-authentication"></a> Active Directory or LDAP Authentication
 
 If you want to authenticate against Active Directory or LDAP, you have to define a
-[LDAP resource](resources.md#resources-configuration-ldap) which will be referenced as data source for the Active Directory
-or LDAP configuration method.
+[LDAP resource](resources.md#resources-configuration-ldap) which will be referenced as data source for the
+Active Directory or LDAP configuration method.
 
-#### <a id="authentication-configuration-ldap-authentication"></a> LDAP
+### <a id="authentication-configuration-ldap-authentication"></a> LDAP
 
 Directive               | Description
 ------------------------|------------
@@ -60,7 +91,7 @@ Note that in case the set *user_name_attribute* holds multiple values it is requ
 values are unique. Additionally, a user will be logged in using the exact user id used to authenticate
 with Icinga Web 2 (e.g. an alias) no matter what the primary user id might actually be.
 
-#### <a id="authentication-configuration-ad-authentication"></a> Active Directory
+### <a id="authentication-configuration-ad-authentication"></a> Active Directory
 
 Directive               | Description
 ------------------------|------------
@@ -75,7 +106,7 @@ backend  = msldap
 resource = my_ad
 ```
 
-### <a id="authentication-configuration-db-authentication"></a> Database Authentication
+## <a id="authentication-configuration-db-authentication"></a> Database Authentication
 
 If you want to authenticate against a MySQL or a PostgreSQL database, you have to define a
 [database resource](resources.md#resources-configuration-database) which will be referenced as data source for the database
@@ -94,7 +125,7 @@ backend  = db
 resource = icingaweb-mysql
 ```
 
-#### <a id="authentication-configuration-db-setup"></a> Database Setup
+### <a id="authentication-configuration-db-setup"></a> Database Setup
 
 For authenticating against a database, you have to import one of the following database schemas:
 
@@ -108,14 +139,14 @@ After that you have to define the [database resource](resources.md#resources-con
 Icinga Web 2 uses the MD5 based BSD password algorithm. For generating a password hash, please use the following
 command:
 
-````
+```
 openssl passwd -1 password
-````
+```
 
 > Note: The switch to `openssl passwd` is the **number one** (`-1`) for using the MD5 based BSD password algorithm.
 
 Insert the user into the database using the generated password hash:
 
-````
+```
 INSERT INTO icingaweb_user (name, active, password_hash) VALUES ('icingaadmin', 1, 'hash from openssl');
-````
+```
