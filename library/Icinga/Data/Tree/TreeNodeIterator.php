@@ -92,6 +92,6 @@ class TreeNodeIterator implements RecursiveIterator
      */
     public function isEmpty()
     {
-        return empty($this->children);
+        return ! $this->children->count();
     }
 }
