@@ -4,6 +4,7 @@
 namespace Icinga\Module\Doc;
 
 use CachingIterator;
+use RecursiveIteratorIterator;
 use SplFileObject;
 use SplStack;
 use Icinga\Data\Tree\SimpleTree;
@@ -61,7 +62,7 @@ class DocParser
             );
         }
         $this->path = $path;
-        $this->docIterator = new DirectoryIterator($path, 'md');
+        $this->docIterator = new DirectoryIterator($path, 'md', DirectoryIterator::FILES_FIRST);
     }
 
     /**
@@ -117,7 +118,33 @@ class DocParser
         } else {
             $id = null;
         }
+        /** @noinspection PhpUndefinedVariableInspection */
         return array($header, $id, $level, $headerStyle);
+    }
+
+    /**
+     * Generate unique section ID
+     *
+     * @param   string      $id
+     * @param   string      $filename
+     * @param   SimpleTree  $tree
+     *
+     * @return  string
+     */
+    protected function uuid($id, $filename, SimpleTree $tree)
+    {
+        if ($tree->getNode($id) !== null) {
+            $id = $id . '-' . md5($filename);
+        }
+        $offset = 0;
+        while ($tree->getNode($id)) {
+            if ($offset++ === 0) {
+                $id .= '-' . $offset;
+            } else {
+                $id = substr($id, 0, -1) . $offset;
+            }
+        }
+        return $id;
     }
 
     /**
@@ -128,7 +155,7 @@ class DocParser
     public function getDocTree()
     {
         $tree = new SimpleTree();
-        foreach ($this->docIterator as $filename) {
+        foreach (new RecursiveIteratorIterator($this->docIterator) as $filename) {
             $file = new SplFileObject($filename);
             $lastLine = null;
             $stack = new SplStack();
@@ -154,9 +181,9 @@ class DocParser
                     } else {
                         $noFollow = false;
                     }
-                    if ($tree->getNode($id) !== null) {
-                        $id = uniqid($id);
-                    }
+
+                    $id = $this->uuid($id, $filename, $tree);
+
                     $section = new DocSection();
                     $section
                         ->setId($id)
@@ -178,10 +205,7 @@ class DocParser
                 } else {
                     if ($stack->isEmpty()) {
                         $title = ucfirst($file->getBasename('.' . pathinfo($file->getFilename(), PATHINFO_EXTENSION)));
-                        $id = $title;
-                        if ($tree->getNode($id) !== null) {
-                            $id = uniqid($id);
-                        }
+                        $id = $this->uuid($title, $filename, $tree);
                         $section = new DocSection();
                         $section
                             ->setId($id)
