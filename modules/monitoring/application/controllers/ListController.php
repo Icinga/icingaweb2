@@ -114,10 +114,16 @@ class ListController extends Controller
     }
 
     /**
-     * Display service list
+     * List services
      */
     public function servicesAction()
     {
+        $this->addTitleTab(
+            'services',
+            $this->translate('Services'),
+            $this->translate('List services')
+        );
+
         // Handle soft and hard states
         if (strtolower($this->params->shift('stateType', 'soft')) === 'hard') {
             $stateColumn = 'service_hard_state';
@@ -127,14 +133,9 @@ class ListController extends Controller
             $stateChangeColumn = 'service_last_state_change';
         }
 
-        $this->addTitleTab('services', $this->translate('Services'), $this->translate('List services'));
-        $this->view->showHost = true;
-        if (strpos($this->params->get('host_name', '*'), '*') === false) {
-            $this->view->showHost = false;
-        }
         $this->setAutorefreshInterval(10);
 
-        $columns = array_merge(array(
+        $services = $this->backend->select()->from('servicestatus', array_merge(array(
             'host_name',
             'host_display_name',
             'host_state',
@@ -157,14 +158,12 @@ class ListController extends Controller
             'service_notifications_enabled',
             'service_active_checks_enabled',
             'service_passive_checks_enabled'
-        ), $this->addColumns());
-        $query = $this->backend->select()->from('servicestatus', $columns);
-        $this->applyRestriction('monitoring/filter/objects', $query);
-        $this->filterQuery($query);
-        $this->view->services = $query;
+        ), $this->addColumns()));
+        $this->applyRestriction('monitoring/filter/objects', $services);
+        $this->filterQuery($services);
 
+        $this->setupPaginationControl($services);
         $this->setupLimitControl();
-        $this->setupPaginationControl($this->view->services);
         $this->setupSortControl(array(
             'service_severity'          => $this->translate('Service Severity'),
             'service_state'             => $this->translate('Current Service State'),
@@ -176,7 +175,7 @@ class ListController extends Controller
             'host_display_name'         => $this->translate('Hostname'),
             'host_address'              => $this->translate('Host Address'),
             'host_last_check'           => $this->translate('Last Host Check')
-        ), $query);
+        ), $services);
 
         $stats = $this->backend->select()->from('servicestatussummary', array(
             'services_critical',
@@ -193,7 +192,14 @@ class ListController extends Controller
             'services_warning_unhandled'
         ));
         $this->applyRestriction('monitoring/filter/objects', $stats);
+
+        $this->view->services = $services;
         $this->view->stats = $stats;
+        if (strpos($this->params->get('host_name', '*'), '*') === false) {
+            $this->view->showHost = false;
+        } else {
+            $this->view->showHost = true;
+        }
     }
 
     /**
