@@ -5,14 +5,12 @@ use Icinga\Module\Monitoring\Object\Service;
 if (! $this->compact): ?>
 <div class="controls">
     <?= $this->tabs ?>
-    <div class="grid">
-        <?= $this->render('list/components/servicesummary.phtml') ?>
-        <?= $this->render('list/components/selectioninfo.phtml') ?>
-    </div>
-    <div class="grid">
-        <?= $this->sortBox ?>
+    <?= $this->render('list/components/servicesummary.phtml') ?>
+    <?= $this->render('list/components/selectioninfo.phtml') ?>
+    <?= $this->paginator ?>
+    <div class="sort-controls-container">
         <?= $this->limiter ?>
-        <?= $this->paginator ?>
+        <?= $this->sortBox ?>
     </div>
     <?= $this->filterEditor ?>
 </div>
@@ -101,16 +99,16 @@ if (! $this->compact): ?>
     </tbody>
     </table>
 <?php if ($services->hasMore()): ?>
-    <div class="text-right">
-        <?= $this->qlink(
-            $this->translate('Show More'),
-            $this->url()->without(array('view', 'limit')),
-            null,
-            array(
-                'data-base-target'  => '_next',
-                'class'             => 'action-link'
-            )
-        ) ?>
-    </div>
+<div class="action-links">
+    <?= $this->qlink(
+        $this->translate('Show More'),
+        $this->url()->without(array('view', 'limit')),
+        null,
+        array(
+            'class'             => 'action-link',
+            'data-base-target'  => '_next'
+        )
+    ) ?>
+</div>
 <?php endif ?>
 </div>
