@@ -342,6 +342,9 @@ class ListController extends Controller
         $this->view->orientation = $orientation;
     }
 
+    /**
+     * List contact groups
+     */
     public function contactgroupsAction()
     {
         $this->addTitleTab(
@@ -350,39 +353,22 @@ class ListController extends Controller
             $this->translate('List contact groups')
         );
 
-        $query = $this->backend->select()->from('contactgroup', array(
+        $contactGroups = $this->backend->select()->from('contactgroup', array(
             'contactgroup_name',
             'contactgroup_alias',
-            'contact_name',
-            'contact_alias',
-            'contact_email',
-            'contact_pager'
+            'contact_count'
         ));
-        $this->applyRestriction('monitoring/filter/objects', $query);
-        $this->filterQuery($query);
+        $this->applyRestriction('monitoring/filter/objects', $contactGroups);
+        $this->filterQuery($contactGroups);
 
+        $this->setupPaginationControl($contactGroups);
+        $this->setupLimitControl();
         $this->setupSortControl(array(
             'contactgroup_name'     => $this->translate('Contactgroup Name'),
             'contactgroup_alias'    => $this->translate('Contactgroup Alias')
-        ), $query);
+        ), $contactGroups);
 
-        // Fetch and prepare all contact groups:
-        $contactgroups = $query->getQuery()->fetchAll();
-        $groupData = array();
-        foreach ($contactgroups as $c) {
-            if (!array_key_exists($c->contactgroup_name, $groupData)) {
-                $groupData[$c->contactgroup_name] = array(
-                    'alias'     => $c->contactgroup_alias,
-                    'contacts'  => array()
-                );
-            }
-            if (isset ($c->contact_name)) {
-                $groupData[$c->contactgroup_name]['contacts'][] = $c;
-            }
-        }
-
-        // TODO: Find a better naming
-        $this->view->groupData = $groupData;
+        $this->view->contactGroups = $contactGroups;
     }
 
     /**

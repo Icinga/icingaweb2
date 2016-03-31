@@ -16,12 +16,12 @@ class ContactgroupQuery extends IdoQuery
     /**
      * {@inheritdoc}
      */
-    protected $groupBase = array('contactgroups' => array('cg.contactgroup_id', 'cgo.object_id'));
+    protected $groupBase = array('contactgroups' => array('cg.contactgroup_id'));
 
     /**
      * {@inheritdoc}
      */
-    protected $groupOrigin = array('contacts', 'hosts', 'services');
+    protected $groupOrigin = array('hosts', 'members', 'services');
 
     /**
      * {@inheritdoc}
@@ -32,28 +32,8 @@ class ContactgroupQuery extends IdoQuery
             'contactgroup_name'     => 'cgo.name1',
             'contactgroup_alias'    => 'cg.alias COLLATE latin1_general_ci'
         ),
-        'contacts' => array(
-            'contact_id'                        => 'c.contact_id',
-            'contact'                           => 'co.name1 COLLATE latin1_general_ci',
-            'contact_name'                      => 'co.name1',
-            'contact_alias'                     => 'c.alias COLLATE latin1_general_ci',
-            'contact_email'                     => 'c.email_address COLLATE latin1_general_ci',
-            'contact_pager'                     => 'c.pager_address',
-            'contact_object_id'                 => 'c.contact_object_id',
-            'contact_has_host_notfications'     => 'c.host_notifications_enabled',
-            'contact_has_service_notfications'  => 'c.service_notifications_enabled',
-            'contact_can_submit_commands'       => 'c.can_submit_commands',
-            'contact_notify_service_recovery'   => 'c.notify_service_recovery',
-            'contact_notify_service_warning'    => 'c.notify_service_warning',
-            'contact_notify_service_critical'   => 'c.notify_service_critical',
-            'contact_notify_service_unknown'    => 'c.notify_service_unknown',
-            'contact_notify_service_flapping'   => 'c.notify_service_flapping',
-            'contact_notify_service_downtime'   => 'c.notify_service_recovery',
-            'contact_notify_host_recovery'      => 'c.notify_host_recovery',
-            'contact_notify_host_down'          => 'c.notify_host_down',
-            'contact_notify_host_unreachable'   => 'c.notify_host_unreachable',
-            'contact_notify_host_flapping'      => 'c.notify_host_flapping',
-            'contact_notify_host_downtime'      => 'c.notify_host_downtime'
+        'members' => array(
+            'contact_count' => 'COUNT(cgm.contactgroup_member_id)'
         ),
         'hostgroups' => array(
             'hostgroup'         => 'hgo.name1 COLLATE latin1_general_ci',
@@ -99,21 +79,17 @@ class ContactgroupQuery extends IdoQuery
     }
 
     /**
-     * Join contacts
+     * Join contact group members
      */
-    protected function joinContacts()
+    protected function joinMembers()
     {
         $this->select->joinLeft(
             array('cgm' => $this->prefix . 'contactgroup_members'),
             'cgm.contactgroup_id = cg.contactgroup_id',
             array()
-        )->joinLeft(
+        )->join(
             array('co' => $this->prefix . 'objects'),
             'co.object_id = cgm.contact_object_id AND co.is_active = 1 AND co.objecttype_id = 10',
-            array()
-        )->joinLeft(
-            array('c' => $this->prefix . 'contacts'),
-            'c.contact_object_id = co.object_id',
             array()
         );
     }
