@@ -39,10 +39,18 @@ class ListController extends Controller
     }
 
     /**
-     * Display host list
+     * List hosts
      */
     public function hostsAction()
     {
+        $this->addTitleTab(
+            'hosts',
+            $this->translate('Hosts'),
+            $this->translate('List hosts')
+        );
+
+        $this->setAutorefreshInterval(10);
+
         // Handle soft and hard states
         if (strtolower($this->params->shift('stateType', 'soft')) === 'hard') {
             $stateColumn = 'host_hard_state';
@@ -51,9 +59,8 @@ class ListController extends Controller
             $stateColumn = 'host_state';
             $stateChangeColumn = 'host_last_state_change';
         }
-        $this->addTitleTab('hosts', $this->translate('Hosts'), $this->translate('List hosts'));
-        $this->setAutorefreshInterval(10);
-        $query = $this->backend->select()->from('hoststatus', array_merge(array(
+
+        $hosts = $this->backend->select()->from('hoststatus', array_merge(array(
             'host_icon_image',
             'host_icon_image_alt',
             'host_name',
@@ -71,9 +78,20 @@ class ListController extends Controller
             'host_active_checks_enabled',
             'host_passive_checks_enabled'
         ), $this->addColumns()));
-        $this->applyRestriction('monitoring/filter/objects', $query);
-        $this->filterQuery($query);
-        $this->view->hosts = $query;
+        $this->applyRestriction('monitoring/filter/objects', $hosts);
+        $this->filterQuery($hosts);
+
+        $this->setupPaginationControl($hosts);
+        $this->setupLimitControl();
+        $this->setupSortControl(array(
+            'host_severity'             => $this->translate('Severity'),
+            'host_state'                => $this->translate('Current State'),
+            'host_display_name'         => $this->translate('Hostname'),
+            'host_address'              => $this->translate('Address'),
+            'host_last_check'           => $this->translate('Last Check'),
+            'host_last_state_change'    => $this->translate('Last State Change')
+        ), $hosts);
+
         $stats = $this->backend->select()->from('hoststatussummary', array(
             'hosts_total',
             'hosts_up',
@@ -86,20 +104,12 @@ class ListController extends Controller
             'hosts_pending',
         ));
         $this->applyRestriction('monitoring/filter/objects', $stats);
-        $this->view->stats = $stats;
-        $this->setupLimitControl();
-        $this->setupPaginationControl($this->view->hosts);
-        $this->setupSortControl(array(
-            'host_severity'             => $this->translate('Severity'),
-            'host_state'                => $this->translate('Current State'),
-            'host_display_name'         => $this->translate('Hostname'),
-            'host_address'              => $this->translate('Address'),
-            'host_last_check'           => $this->translate('Last Check'),
-            'host_last_state_change'    => $this->translate('Last State Change')
-        ), $query);
 
-        $summary = $query->getQuery()->queryServiceProblemSummary();
+        $summary = $hosts->getQuery()->queryServiceProblemSummary();
         $this->applyRestriction('monitoring/filter/objects', $summary);
+
+        $this->view->hosts = $hosts;
+        $this->view->stats = $stats;
         $this->view->summary = $summary->fetchPairs();
     }
 
@@ -468,6 +478,9 @@ class ListController extends Controller
         ), $query);
     }
 
+    /**
+     * List host groups
+     */
     public function hostgroupsAction()
     {
         $this->addTitleTab(
