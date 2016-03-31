@@ -187,14 +187,19 @@ class ListController extends Controller
     }
 
     /**
-     * Fetch the current downtimes and put them into the view property `downtimes`
+     * List downtimes
      */
     public function downtimesAction()
     {
-        $this->addTitleTab('downtimes', $this->translate('Downtimes'), $this->translate('List downtimes'));
+        $this->addTitleTab(
+            'downtimes',
+            $this->translate('Downtimes'),
+            $this->translate('List downtimes')
+        );
+
         $this->setAutorefreshInterval(12);
 
-        $query = $this->backend->select()->from('downtime', array(
+        $downtimes = $this->backend->select()->from('downtime', array(
             'id'              => 'downtime_internal_id',
             'objecttype'      => 'object_type',
             'comment'         => 'downtime_comment',
@@ -215,13 +220,11 @@ class ListController extends Controller
             'host_display_name',
             'service_display_name'
         ));
-        $this->applyRestriction('monitoring/filter/objects', $query);
-        $this->filterQuery($query);
+        $this->applyRestriction('monitoring/filter/objects', $downtimes);
+        $this->filterQuery($downtimes);
 
-        $this->view->downtimes = $query;
-
+        $this->setupPaginationControl($downtimes);
         $this->setupLimitControl();
-        $this->setupPaginationControl($this->view->downtimes);
         $this->setupSortControl(array(
             'downtime_is_in_effect'     => $this->translate('Is In Effect'),
             'host_display_name'         => $this->translate('Host'),
@@ -233,7 +236,9 @@ class ListController extends Controller
             'downtime_scheduled_start'  => $this->translate('Scheduled Start'),
             'downtime_scheduled_end'    => $this->translate('Scheduled End'),
             'downtime_duration'         => $this->translate('Duration')
-        ), $query);
+        ), $downtimes);
+
+        $this->view->downtimes = $downtimes;
 
         if ($this->Auth()->hasPermission('monitoring/command/downtime/delete')) {
             $this->view->delDowntimeForm = new DeleteDowntimeCommandForm();
