@@ -510,7 +510,7 @@ class ListController extends Controller
             'services_total'    => $this->translate('Total Services')
         ), $hostGroups);
 
-        $this->view->hostgroups = $hostGroups;
+        $this->view->hostGroups = $hostGroups;
     }
 
     public function eventhistoryAction()
