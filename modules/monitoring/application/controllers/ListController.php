@@ -274,11 +274,18 @@ class ListController extends Controller
         ), $query);
     }
 
+    /**
+     * List contacts
+     */
     public function contactsAction()
     {
-        $this->addTitleTab('contacts', $this->translate('Contacts'), $this->translate('List contacts'));
+        $this->addTitleTab(
+            'contacts',
+            $this->translate('Contacts'),
+            $this->translate('List contacts')
+        );
 
-        $query = $this->backend->select()->from('contact', array(
+        $contacts = $this->backend->select()->from('contact', array(
             'contact_name',
             'contact_alias',
             'contact_email',
@@ -286,20 +293,21 @@ class ListController extends Controller
             'contact_notify_service_timeperiod',
             'contact_notify_host_timeperiod'
         ));
-        $this->applyRestriction('monitoring/filter/objects', $query);
-        $this->filterQuery($query);
-        $this->view->contacts = $query;
+        $this->applyRestriction('monitoring/filter/objects', $contacts);
+        $this->filterQuery($contacts);
 
+        $this->setupPaginationControl($contacts);
         $this->setupLimitControl();
-        $this->setupPaginationControl($this->view->contacts);
         $this->setupSortControl(array(
-            'contact_name' => $this->translate('Name'),
+            'contact_name'  => $this->translate('Name'),
             'contact_alias' => $this->translate('Alias'),
             'contact_email' => $this->translate('Email'),
             'contact_pager' => $this->translate('Pager Address / Number'),
             'contact_notify_service_timeperiod' => $this->translate('Service Notification Timeperiod'),
             'contact_notify_host_timeperiod' => $this->translate('Host Notification Timeperiod')
-        ), $query);
+        ), $contacts);
+
+        $this->view->contacts = $contacts;
     }
 
     public function eventgridAction()
