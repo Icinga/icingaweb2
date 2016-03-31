@@ -1,13 +1,13 @@
 <?php
 use Icinga\Module\Monitoring\Web\Widget\StateBadges;
-/** @var \Icinga\Module\Monitoring\DataView\Hostgroup $hostgroups */
+
 if (! $this->compact): ?>
 <div class="controls">
-    <?= $tabs ?>
-    <div class="grid">
+    <?= $this->tabs ?>
+    <?= $this->paginator ?>
+    <div class="sort-controls-container">
         <?= $this->sortBox ?>
         <?= $this->limiter ?>
-        <?= $this->paginator ?>
     </div>
     <?= $this->filterEditor ?>
 </div>
