@@ -302,9 +302,7 @@ class ListController extends Controller
             'contact_name'  => $this->translate('Name'),
             'contact_alias' => $this->translate('Alias'),
             'contact_email' => $this->translate('Email'),
-            'contact_pager' => $this->translate('Pager Address / Number'),
-            'contact_notify_service_timeperiod' => $this->translate('Service Notification Timeperiod'),
-            'contact_notify_host_timeperiod' => $this->translate('Host Notification Timeperiod')
+            'contact_pager' => $this->translate('Pager Address / Number')
         ), $contacts);
 
         $this->view->contacts = $contacts;
