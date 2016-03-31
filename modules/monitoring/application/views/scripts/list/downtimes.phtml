@@ -3,51 +3,56 @@ use Icinga\Module\Monitoring\Object\Host;
 use Icinga\Module\Monitoring\Object\Service;
 
 if (! $this->compact): ?>
-<div class="controls separated">
-    <?= $tabs ?>
+<div class="controls">
+    <?= $this->tabs ?>
     <?= $this->render('list/components/selectioninfo.phtml') ?>
-    <div class="grid">
-        <?= $this->sortBox ?>
+    <?= $this->paginator ?>
+    <div class="sort-controls-container">
         <?= $this->limiter ?>
-        <?= $this->paginator ?>
+        <?= $this->sortBox ?>
     </div>
     <?= $this->filterEditor ?>
 </div>
 <?php endif ?>
 <div class="content">
-  <table data-base-target="_next"
-         class="table-row-selectable state-table multiselect common-table"
-         data-icinga-multiselect-url="<?= $this->href('monitoring/downtimes/show'); ?>"
-         data-icinga-multiselect-controllers="<?= $this->href("monitoring/downtimes") ?>"
-         data-icinga-multiselect-data="downtime_id">
+<?php if (! $downtimes->hasResult()): ?>
+    <p><?= $this->translate('No downtimes found matching the filter.') ?></p>
+</div>
+<?php return; endif ?>
+    <table class="common-table state-table table-row-selectable multiselect"
+           data-base-target="_next"
+           data-icinga-multiselect-url="<?= $this->href('monitoring/downtimes/show') ?>"
+           data-icinga-multiselect-controllers="<?= $this->href("monitoring/downtimes") ?>"
+           data-icinga-multiselect-data="downtime_id">
     <tbody>
     <?php foreach ($downtimes->peekAhead($this->compact) as $downtime):
-      if (isset($downtime->service_description)) {
-          $this->isService = true;
-          $this->stateName = Service::getStateText($downtime->service_state);
-      } else {
-          $this->isService = false;
-          $this->stateName = Host::getStateText($downtime->host_state);
-      }
-      $this->downtime = $downtime;
-    ?>
-    <tr href="<?= $this->href('monitoring/downtime/show', array('downtime_id' => $downtime->id)) ?>">
-      <?= $this->render('partials/downtime/downtime-header.phtml'); ?>
-    </tr>
+        if (isset($downtime->service_description)) {
+            $this->isService = true;
+            $this->stateName = Service::getStateText($downtime->service_state);
+        } else {
+            $this->isService = false;
+            $this->stateName = Host::getStateText($downtime->host_state);
+        }
+        // Set downtime for partials
+        $this->downtime = $downtime;
+        ?>
+        <tr href="<?= $this->href('monitoring/downtime/show', array('downtime_id' => $downtime->id)) ?>">
+            <?= $this->render('partials/downtime/downtime-header.phtml') ?>
+        </tr>
     <?php endforeach ?>
     </tbody>
-  </table>
-<?php if (! $downtimes->hasResult()): ?>
-  <?= $this->translate('No downtimes found matching the filter, maybe the downtime already expired.'); ?>
-<?php elseif ($downtimes->hasMore()): ?>
-  <?= $this->qlink(
-    $this->translate('Show More'),
-    $this->url()->without(array('view', 'limit')),
-    null,
-    array(
-      'data-base-target'    => '_next',
-      'class'               => 'pull-right action-link'
-    )
-  ); ?>
+    </table>
+<?php if ($downtimes->hasMore()): ?>
+    <div class="action-links">
+        <?= $this->qlink(
+            $this->translate('Show More'),
+            $this->url()->without(array('view', 'limit')),
+            null,
+            array(
+                'class'             => 'action-link',
+                'data-base-target'  => '_next'
+            )
+        ) ?>
+    </div>
 <?php endif ?>
 </div>

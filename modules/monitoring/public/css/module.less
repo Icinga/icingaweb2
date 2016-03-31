@@ -47,17 +47,6 @@
   }
 }
 
-// Multi-selection info
-.selection-info {
-  float: right;
-  font-size: @font-size-small;
-  padding: @vertical-padding / 2 0;
-
-  &:hover {
-    cursor: help;
-  }
-}
-
 // Performance data pie charts
 .sparkline {
   height: 1em;
@@ -77,6 +66,11 @@
   > .state-badges {
     vertical-align: middle;
   }
+}
+
+.controls > .hosts-summary,
+.controls > .services-summary {
+  float: left;
 }
 
 // State table in the host and service multi-selection and detail views
