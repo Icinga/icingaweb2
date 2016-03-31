@@ -257,7 +257,7 @@ class ListController extends Controller
     }
 
     /**
-     * Display notification overview
+     * List notifications
      */
     public function notificationsAction()
     {
@@ -266,9 +266,10 @@ class ListController extends Controller
             $this->translate('Notifications'),
             $this->translate('List notifications')
         );
+
         $this->setAutorefreshInterval(15);
 
-        $query = $this->backend->select()->from('notification', array(
+        $notifications = $this->backend->select()->from('notification', array(
             'host_name',
             'service_description',
             'notification_output',
@@ -278,15 +279,16 @@ class ListController extends Controller
             'host_display_name',
             'service_display_name'
         ));
-        $this->applyRestriction('monitoring/filter/objects', $query);
-        $this->filterQuery($query);
-        $this->view->notifications = $query;
+        $this->applyRestriction('monitoring/filter/objects', $notifications);
+        $this->filterQuery($notifications);
 
+        $this->setupPaginationControl($notifications);
         $this->setupLimitControl();
-        $this->setupPaginationControl($this->view->notifications);
         $this->setupSortControl(array(
             'notification_start_time' => $this->translate('Notification Start')
-        ), $query);
+        ), $notifications);
+
+        $this->view->notifications = $notifications;
     }
 
     /**
