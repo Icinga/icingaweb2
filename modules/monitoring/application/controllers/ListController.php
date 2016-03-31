@@ -470,10 +470,15 @@ class ListController extends Controller
 
     public function hostgroupsAction()
     {
-        $this->addTitleTab('hostgroups', $this->translate('Host Groups'), $this->translate('List host groups'));
+        $this->addTitleTab(
+            'hostgroups',
+            $this->translate('Host Groups'),
+            $this->translate('List host groups')
+        );
+
         $this->setAutorefreshInterval(12);
 
-        $query = $this->backend->select()->from('hostgroupsummary', array(
+        $hostGroups = $this->backend->select()->from('hostgroupsummary', array(
             'hostgroup_alias',
             'hostgroup_name',
             'hosts_down_handled',
@@ -493,18 +498,19 @@ class ListController extends Controller
             'services_warning_handled',
             'services_warning_unhandled'
         ));
-        $this->applyRestriction('monitoring/filter/objects', $query);
-        $this->filterQuery($query);
-        $this->view->hostgroups = $query;
+        $this->applyRestriction('monitoring/filter/objects', $hostGroups);
+        $this->filterQuery($hostGroups);
 
+        $this->setupPaginationControl($hostGroups);
         $this->setupLimitControl();
-        $this->setupPaginationControl($this->view->hostgroups);
         $this->setupSortControl(array(
             'hosts_severity'    => $this->translate('Severity'),
             'hostgroup_alias'   => $this->translate('Host Group Name'),
             'hosts_total'       => $this->translate('Total Hosts'),
             'services_total'    => $this->translate('Total Services')
-        ), $query);
+        ), $hostGroups);
+
+        $this->view->hostgroups = $hostGroups;
     }
 
     public function eventhistoryAction()
