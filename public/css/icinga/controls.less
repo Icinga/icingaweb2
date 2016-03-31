@@ -1,20 +1,34 @@
 /*! Icinga Web 2 | (c) 2015 Icinga Development Team | GPLv2+ */
 
+// TODO(el): Rename .filter to .filter-control
+
+// Backend selection control in user and group list views
 .backend-selection {
   float: left;
 }
 
-.filter {
-  clear: both;
+.backend-selection,
+.pagination-control,
+.selection-info,
+.sort-controls-container {
+  margin-bottom: 0.5em;
 }
 
-.limiter-control,
-.sort-control {
-  display: inline-block;
+.backend-selection,
+.pagination-control,
+.sort-controls-container {
+  // Select controls may not respect font-size thus leading to improperly vertical alignment w/o big enough line-height
+  line-height: 2em;
+}
+
+.filter {
+  // Display filter control on a new line
+  clear: both;
 }
 
 .limiter-control > .control-group {
   padding: 0;
+  // Note that the sort-control form does not have padding as it's utilizing different decorators
 
   > .control-label-group {
     text-align: left;
@@ -31,7 +45,14 @@
   }
 }
 
+.limiter-control,
+.sort-control {
+  // Display limiter and sort control both on the same line; floating could be used here too to achieve the same
+  display: inline-block;
+}
+
 .pagination-control {
+  // Display the pagination-control on a new line
   clear: both;
   float: left;
 
@@ -73,7 +94,19 @@
   }
 }
 
+// Multi-selection info
+.selection-info {
+  float: right;
+  font-size: @font-size-small;
+
+  &:hover {
+    cursor: help;
+  }
+}
+
 .sort-control {
+  margin-left: 0.25em;
+
   label {
     width: auto;
     margin-right: 0.5em;
@@ -97,6 +130,11 @@
 .sort-controls-container {
   clear: right;
   float: right;
+}
+
+.sort-direction-control {
+  margin-left: 0.25em;
+  width: 1em;
 }
 
 html.no-js .sort-control form {
