@@ -4,11 +4,11 @@ use Icinga\Module\Monitoring\Object\Service;
 
 if (! $this->compact): ?>
 <div class="controls">
-    <?= $tabs ?>
-    <div class="grid">
-        <?= $this->sortBox ?>
+    <?= $this->tabs ?>
+    <?= $this->paginator ?>
+    <div class="sort-controls-container">
         <?= $this->limiter ?>
-        <?= $this->paginator ?>
+        <?= $this->sortBox ?>
     </div>
     <?= $this->filterEditor ?>
 </div>
@@ -77,7 +77,7 @@ if (! $this->compact): ?>
     </tbody>
     </table>
 <?php if ($notifications->hasMore()): ?>
-    <div class="text-right">
+    <div class="action-links">
         <?= $this->qlink(
             $this->translate('Show More'),
             $this->url(isset($notificationsUrl) ? $notificationsUrl : null)->without(array('view', 'limit')),
