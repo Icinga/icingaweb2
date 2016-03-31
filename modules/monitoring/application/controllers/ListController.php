@@ -445,6 +445,9 @@ class ListController extends Controller
         }
     }
 
+    /**
+     * List service groups
+     */
     public function servicegroupsAction()
     {
         $this->addTitleTab(
@@ -452,9 +455,10 @@ class ListController extends Controller
             $this->translate('Service Groups'),
             $this->translate('List service groups')
         );
+
         $this->setAutorefreshInterval(12);
 
-        $query = $this->backend->select()->from('servicegroupsummary', array(
+        $serviceGroups = $this->backend->select()->from('servicegroupsummary', array(
             'servicegroup_alias',
             'servicegroup_name',
             'services_critical_handled',
@@ -467,17 +471,18 @@ class ListController extends Controller
             'services_warning_handled',
             'services_warning_unhandled'
         ));
-        $this->applyRestriction('monitoring/filter/objects', $query);
-        $this->filterQuery($query);
-        $this->view->servicegroups = $query;
+        $this->applyRestriction('monitoring/filter/objects', $serviceGroups);
+        $this->filterQuery($serviceGroups);
 
+        $this->setupPaginationControl($serviceGroups);
         $this->setupLimitControl();
-        $this->setupPaginationControl($this->view->servicegroups);
         $this->setupSortControl(array(
             'services_severity'     => $this->translate('Severity'),
             'servicegroup_alias'    => $this->translate('Service Group Name'),
             'services_total'        => $this->translate('Total Services')
-        ), $query);
+        ), $serviceGroups);
+
+        $this->view->serviceGroups = $serviceGroups;
     }
 
     /**
