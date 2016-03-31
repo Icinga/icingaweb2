@@ -1,10 +1,10 @@
 <?php if (! $this->compact): ?>
 <div class="controls">
     <?= $tabs ?>
-    <div class="grid">
-        <?= $this->sortBox ?>
+    <?= $this->paginator ?>
+    <div class="sort-controls-container">
         <?= $this->limiter ?>
-        <?= $this->paginator ?>
+        <?= $this->sortBox ?>
     </div>
     <?= $this->filterEditor ?>
 </div>
