@@ -222,7 +222,9 @@ class DirectoryIterator implements RecursiveIterator
     public function rewind()
     {
         if ($this->files === null) {
-            $this->files = new ArrayIterator(scandir($this->path));
+            $files = scandir($this->path);
+            natcasesort($files);
+            $this->files = new ArrayIterator($files);
         }
         $this->files->rewind();
         $this->queue = array();
