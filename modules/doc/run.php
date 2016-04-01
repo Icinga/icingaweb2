@@ -43,7 +43,22 @@ $docModulePdf = new Zend_Controller_Router_Route(
     )
 );
 
+$docModuleImg = new Zend_Controller_Router_Route_Regex(
+    'doc/module/([^/]+)/image/(.+)',
+    array(
+        'controller'    => 'module',
+        'action'        => 'image',
+        'module'        => 'doc'
+    ),
+    array(
+        'moduleName'    => 1,
+        'image'         => 2
+    ),
+    'doc/module/%s/image/%s'
+);
+
 $this->addRoute('doc/module/chapter', $docModuleChapter);
 $this->addRoute('doc/icingaweb/chapter', $docIcingaWebChapter);
 $this->addRoute('doc/module/toc', $docModuleToc);
 $this->addRoute('doc/module/pdf', $docModulePdf);
+$this->addRoute('doc/module/img', $docModuleImg);

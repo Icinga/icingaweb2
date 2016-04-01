@@ -20,6 +20,9 @@ class DocController extends Controller
         if ($this->hasParam('chapter')) {
             $this->params->set('chapter', $this->getParam('chapter'));
         }
+        if ($this->hasParam('image')) {
+            $this->params->set('image', $this->getParam('image'));
+        }
         if ($this->hasParam('moduleName')) {
             $this->params->set('moduleName', $this->getParam('moduleName'));
         }
@@ -31,16 +34,18 @@ class DocController extends Controller
      * @param string    $path       Path to the documentation
      * @param string    $chapter    ID of the chapter
      * @param string    $url        URL to replace links with
+     * @param string    $imageUrl   URL to images
      * @param array     $urlParams  Additional URL parameters
      */
-    protected function renderChapter($path, $chapter, $url, array $urlParams = array())
+    protected function renderChapter($path, $chapter, $url, $imageUrl = null, array $urlParams = array())
     {
         $parser = new DocParser($path);
         $section = new DocSectionRenderer($parser->getDocTree(), DocSectionRenderer::decodeUrlParam($chapter));
         $this->view->section = $section
+            ->setHighlightSearch($this->params->get('highlight-search'))
+            ->setImageUrl($imageUrl)
             ->setUrl($url)
-            ->setUrlParams($urlParams)
-            ->setHighlightSearch($this->params->get('highlight-search'));
+            ->setUrlParams($urlParams);
         $this->view->title = $chapter;
         $this->getTabs()->add('toc', array(
             'active'    => true,

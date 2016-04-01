@@ -190,7 +190,20 @@ class DocSectionRenderer extends DocRenderer
         $xpath = new DOMXPath($doc);
         $img = $xpath->query('//img[1]')->item(0);
         /** @var \DOMElement $img */
-        $img->setAttribute('src', Url::fromPath($img->getAttribute('src'))->getAbsoluteUrl());
+        $path = $this->getView()->getHelper('Url')->url(
+            array_merge(
+                array(
+                    'image' => $img->getAttribute('src')
+                ),
+                $this->urlParams
+            ),
+            $this->imageUrl,
+            false,
+            false
+        );
+        $url = $this->getView()->url($path);
+        /** @var \Icinga\Web\Url $url */
+        $img->setAttribute('src', $url->getAbsoluteUrl());
         return substr_replace($doc->saveXML($img), '', -2, 1);  // Replace '/>' with '>'
     }
 

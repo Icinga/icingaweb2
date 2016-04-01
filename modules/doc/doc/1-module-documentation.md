@@ -1,6 +1,6 @@
 # <a id="module-documentation"></a> Writing Module Documentation
 
-![Markdown](/img/doc/doc/markdown.png)
+![Markdown](img/markdown.png)
 
 Icinga Web 2 is capable of viewing your module's documentation, if the documentation is written in
 [Markdown](http://en.wikipedia.org/wiki/Markdown). Please refer to
@@ -50,13 +50,15 @@ This syntax is also supported in Icinga Web 2.
 
 ## <a id="images"></a> Including Images
 
-Images must placed in the `img` directory beneath your module's `public` directory, e.g.:
+Images must placed in the `doc` directory beneath your module's root directory, e.g.:
 
-    example-module/public/img/doc
+    /path/to/icingaweb2/modules/example-module/doc/img/example.png
+
+Note that the `img` sub directory is not mandatory but good for organizing your directory structure.
 
 Module images can be accessed using the following URL:
 
-    {baseURL}/img/{moduleName}/{file} e.g. icingaweb/img/example-module/doc/example.png
+    {baseURL}/doc/module/{moduleName}/image/{image} e.g. icingaweb2/doc/module/example-module/image/img/example.png
 
 Markdown's image syntax is very similar to Markdown's link syntax, but prefixed with an exclamation mark, e.g.:
 
@@ -64,4 +66,4 @@ Markdown's image syntax is very similar to Markdown's link syntax, but prefixed 
 
 URLs to images inside your Markdown documentation files must be specified without the base URL, e.g.:
 
-    ![Example](/img/example-module/doc/example.png)
+    ![Example](img/example.png)
