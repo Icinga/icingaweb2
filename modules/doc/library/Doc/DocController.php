@@ -71,10 +71,10 @@ class DocController extends Controller
             ->setUrl($url)
             ->setUrlParams($urlParams);
         $name = ucfirst($name);
-        $this->view->title = sprintf($this->translate('%s Documentation'), $name);
+        $title = sprintf($this->translate('%s Documentation'), $name);
         $this->getTabs()->add('toc', array(
             'active'    => true,
-            'title'     => $name,
+            'title'     => $title,
             'url'       => Url::fromRequest()
         ));
         $this->render('toc', null, true);

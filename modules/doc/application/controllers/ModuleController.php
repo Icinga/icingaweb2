@@ -90,11 +90,12 @@ class ModuleController extends DocController
     {
         $module = $this->params->getRequired('moduleName');
         $this->assertModuleInstalled($module);
-        $this->view->moduleName = $module;
+        $moduleManager = Icinga::app()->getModuleManager();
+        $name = $moduleManager->getModule($module)->getTitle();
         try {
             $this->renderToc(
                 $this->getPath($module, Icinga::app()->getModuleManager()->getModuleDir($module, '/doc')),
-                $module,
+                $name,
                 'doc/module/chapter',
                 array('moduleName' => $module)
             );
