@@ -46,10 +46,15 @@ class DocController extends Controller
             ->setImageUrl($imageUrl)
             ->setUrl($url)
             ->setUrlParams($urlParams);
-        $this->view->title = $chapter;
+        $first = null;
+        foreach ($section as $first) {
+            break;
+        }
+        $title = $first === null ? ucfirst($chapter) : $first->getTitle();
+        $this->view->title = $title;
         $this->getTabs()->add('toc', array(
             'active'    => true,
-            'title'     => ucfirst($chapter),
+            'title'     => $title,
             'url'       => Url::fromRequest()
         ));
         $this->render('chapter', null, true);
