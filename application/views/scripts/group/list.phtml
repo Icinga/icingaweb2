@@ -82,8 +82,9 @@ if (! isset($backend)) {
                             'group'     => $group->group_name
                         ),
                         array(
+                            'class'     => 'action-link',
                             'title'     => sprintf($this->translate('Remove user group %s'), $group->group_name),
-                            'icon'      => 'trash'
+                            'icon'      => 'cancel'
                         )
                     ); ?>
                 </td>
