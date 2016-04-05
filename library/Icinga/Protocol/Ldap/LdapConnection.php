@@ -6,6 +6,7 @@ namespace Icinga\Protocol\Ldap;
 use Exception;
 use LogicException;
 use ArrayIterator;
+use stdClass;
 use Icinga\Application\Config;
 use Icinga\Application\Logger;
 use Icinga\Data\ConfigObject;
@@ -547,6 +548,23 @@ class LdapConnection implements Selectable, Inspectable
         }
 
         return $pairs;
+    }
+
+    /**
+     * Fetch an LDAP entry by its DN
+     *
+     * @param  string        $dn
+     * @param  array|null    $fields
+     *
+     * @return StdClass|bool
+     */
+    public function fetchByDn($dn, array $fields = null)
+    {
+        return $this->select()
+            ->from('*', $fields)
+            ->setBase($dn)
+            ->setScope('base')
+            ->fetchRow();
     }
 
     /**
