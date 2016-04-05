@@ -4,6 +4,7 @@
 namespace Icinga\Protocol\Ldap;
 
 use Exception;
+use LogicException;
 use ArrayIterator;
 use Icinga\Application\Config;
 use Icinga\Application\Logger;
@@ -1179,6 +1180,8 @@ class LdapConnection implements Selectable, Inspectable
      * @param   int         $deref
      *
      * @return  resource|bool               A search result identifier or false on error
+     *
+     * @throws  LogicException              If the LDAP query search scope is unsupported
      */
     public function ldapSearch(
         LdapQuery $query,
@@ -1190,6 +1193,7 @@ class LdapConnection implements Selectable, Inspectable
     ) {
         $queryString = (string) $query;
         $baseDn = $query->getBase() ?: $this->getDn();
+        $scope = $query->getScope();
 
         if (Logger::getInstance()->getLevel() === Logger::DEBUG) {
             // We're checking the level by ourself to avoid rendering the ldapsearch commandline for nothing
@@ -1213,11 +1217,12 @@ class LdapConnection implements Selectable, Inspectable
             }
 
             Logger::debug("Issueing LDAP search. Use '%s' to reproduce.", sprintf(
-                'ldapsearch -P 3%s -H "%s"%s -b "%s" -s "sub" -z %u -l %u -a "%s"%s%s%s',
+                'ldapsearch -P 3%s -H "%s"%s -b "%s" -s "%s" -z %u -l %u -a "%s"%s%s%s',
                 $starttlsParam,
                 $ldapUrl,
                 $bindParams,
                 $baseDn,
+                $scope,
                 $sizelimit,
                 $timelimit,
                 $derefName,
@@ -1227,7 +1232,21 @@ class LdapConnection implements Selectable, Inspectable
             ));
         }
 
-        return @ldap_search(
+        switch($scope) {
+            case LdapQuery::SCOPE_SUB:
+                $function = 'ldap_search';
+                break;
+            case LdapQuery::SCOPE_ONE:
+                $function = 'ldap_list';
+                break;
+            case LdapQuery::SCOPE_BASE:
+                $function = 'ldap_read';
+                break;
+            default:
+                throw new LogicException('LDAP scope %s not supported by ldapSearch', $scope);
+        }
+
+        return @$function(
             $this->getConnection(),
             $baseDn,
             $queryString,
