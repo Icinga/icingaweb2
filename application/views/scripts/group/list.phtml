@@ -43,8 +43,7 @@ if (! isset($backend)) {
 <?php if (! $groups->hasResult()): ?>
     <p><?= $this->translate('No user groups found matching the filter'); ?></p>
 </div>
-<?php endif ?>
-
+<?php return; endif ?>
     <table data-base-target="_next" class="table-row-selectable common-table">
         <thead>
             <tr>
