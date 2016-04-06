@@ -2,9 +2,24 @@
 
 // TODO(el): Rename .filter to .filter-control
 
+// Hide auto sumbit info in controls but keep information for screen readers
+.controls .autosubmit-info {
+  .sr-only();
+}
+
+
 // Backend selection control in user and group list views
 .backend-selection {
   float: left;
+
+  > .control-group {
+    padding: 0;
+
+    > .control-label-group {
+      text-align: left;
+      width: auto;
+    }
+  }
 }
 
 .backend-selection,
@@ -120,10 +135,6 @@
   select[name=dir] {
     width: 8em;
     margin-left: 0;
-  }
-
-  > form > i {
-    .sr-only();
   }
 }
 
