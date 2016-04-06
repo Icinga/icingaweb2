@@ -100,9 +100,6 @@
                 var $oldLink = $(this);
                 if ($oldLink.hasAttr('type') && $oldLink.attr('type').indexOf('css') > -1) {
                     var base = location.protocol + '//' + location.host;
-                    if (location.port) {
-                        base += location.port;
-                    }
                     var url = icinga.utils.addUrlParams(
                         $(this).attr('href'),
                         { id: new Date().getTime() }
