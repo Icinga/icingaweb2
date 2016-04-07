@@ -10,18 +10,21 @@
      * @param {event} e - Event
      */
     function onLayoutRendered(e) {
-        console.log('layout render');
         var _this = e.data.self;
-        _this.containerData = {};
-        $('#col1, #col2').each( function() {
-            var $container = $(this);
-            var containerData = {
-                breakIndex: false,
-                breakPoints: [],
-                isRendered: true
-            };
-            _this.containerData[$container.attr('id')] = containerData;
-        });
+        if (!_this.layoutRendered) {
+            console.log('layout render');
+            _this.containerData = {};
+            $('#col1, #col2').each( function() {
+                var $container = $(this);
+                var containerData = {
+                    breakIndex: false,
+                    breakPoints: [],
+                    isToRender: true
+                };
+                _this.containerData[$container.attr('id')] = containerData;
+            });
+            _this.layoutRendered = true;
+        }
     }
 
     /**
@@ -30,9 +33,10 @@
      * @param {event} e - Event
      */
     function onRendered(e) {
+        console.log(e.type);
         var _this = e.data.self;
         var $container = $(this);
-        _this.containerData[$container.attr('id')].isRendered = true;
+        _this.containerData[$container.attr('id')].isToRender = true;
     }
 
     /**
@@ -41,6 +45,7 @@
      * @param {event} e - Event
      */
     function onWindowResized(e) {
+        console.log(e.type);
         var _this = e.data.self;
         $('#col1, #col2').each(function() {
             var $this = $(this);
@@ -55,16 +60,20 @@
      * @param {event} e - Event
      */
     function onFixControls(e) {
+        console.log(e.type);
         var $container = $(this);
         var _this = e.data.self;
-        if (_this.containerData && _this.containerData[$container.attr('id')] && _this.containerData[$container.attr('id')].isRendered) {
-            console.log("fix");
-
-            if ($container.find('.tabs')) {
-                updateBreakIndex($container, _this);
+        $('#col1, #col2').each(function() {
+            var $container = $(this);
+            if (_this.containerData && _this.containerData[$container.attr('id')] && _this.containerData[$container.attr('id')].isToRender) {
+                console.log("fix", $container, $container.find('.tabs').length > 0);
+                if ($container.find('.tabs').length > 0) {
+                    console.log('fix 2', $container);
+                    cacheBreakpoints($container, _this);
+                    updateBreakIndex($container, _this);
+                }
             }
-            _this.containerData[$container.attr('id')].isRendered = false;
-        }
+        });
     }
 
     /**
@@ -75,14 +84,15 @@
      * @param {object} e - The behavior
      */
     function cacheBreakpoints($container, e) {
+        console.log("cache");
         var containerData = {};
         var w = $container.find('.dropdown-nav-item').outerWidth(true)+1;
-        containerData.isRendered = false;
         containerData.breakPoints = [];
         $container.find('.tabs').not('.cloned').show().children('li').not('.dropdown-nav-item').each(function() {
             containerData.breakPoints.push(w += $(this).outerWidth(true) + 1);
         });
         e.containerData[$container.attr('id')] = containerData;
+        e.containerData[$container.attr('id')].isToRender = true;
     }
 
     /**
@@ -93,6 +103,7 @@
      * @param {object} e - The behavior
      */
     function updateBreakIndex($container, e) {
+        console.log("update");
         var b = false;
         var breakPoints = e.containerData[$container.attr('id')].breakPoints;
         for (var i = 0; i < breakPoints.length; i++) {
@@ -115,6 +126,7 @@
      */
     function setBreakIndex($container, newIndex, e) {
         var containerData = e.containerData[$container.attr('id')];
+        console.log('old : new', containerData.breakIndex, newIndex)
         if (newIndex === containerData.breakIndex) {
             return;
         } else {
@@ -131,6 +143,7 @@
      * @param {object} e - The behavior
      */
     function renderTabs($container, e) {
+        console.log("render tabs", $container);
         var breakIndex = e.containerData[$container.attr('id')].breakIndex;
 
         $container.find('.tabs.cloned').remove();
@@ -161,6 +174,7 @@
             //breakIndex false: No need for cloned tabs
             $container.find('.tabs').not('.cloned').show();
         }
+        e.containerData[$container.attr('id')].isToRender = false;
     }
 
     Icinga.Behaviors = Icinga.Behaviors || {};
