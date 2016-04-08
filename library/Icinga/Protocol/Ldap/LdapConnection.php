@@ -3,20 +3,20 @@
 
 namespace Icinga\Protocol\Ldap;
 
+use ArrayIterator;
 use Exception;
 use LogicException;
-use ArrayIterator;
 use stdClass;
 use Icinga\Application\Config;
 use Icinga\Application\Logger;
 use Icinga\Data\ConfigObject;
+use Icinga\Data\Filter\Filter;
+use Icinga\Data\Filter\FilterChain;
+use Icinga\Data\Filter\FilterExpression;
 use Icinga\Data\Inspectable;
 use Icinga\Data\Inspection;
 use Icinga\Data\Selectable;
 use Icinga\Data\Sortable;
-use Icinga\Data\Filter\Filter;
-use Icinga\Data\Filter\FilterChain;
-use Icinga\Data\Filter\FilterExpression;
 use Icinga\Exception\ProgrammingError;
 
 /**
