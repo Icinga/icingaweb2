@@ -16,7 +16,6 @@ use Icinga\Data\Filter\Filter;
 use Icinga\Data\Filter\FilterChain;
 use Icinga\Data\Filter\FilterExpression;
 use Icinga\Exception\ProgrammingError;
-use Icinga\Protocol\Ldap\LdapException;
 
 /**
  * Encapsulate LDAP connections and query creation
@@ -706,7 +705,7 @@ class LdapConnection implements Selectable, Inspectable
                         'value' => $this->encodeSortRules($query->getOrder())
                     )
                 ));
-            } else {
+            } elseif (! empty($fields)) {
                 foreach ($query->getOrder() as $rule) {
                     if (! in_array($rule[0], $fields, true)) {
                         $fields[] = $rule[0];
@@ -825,7 +824,7 @@ class LdapConnection implements Selectable, Inspectable
         $ds = $this->getConnection();
 
         $serverSorting = false;//$this->getCapabilities()->hasOid(LdapCapabilities::LDAP_SERVER_SORT_OID);
-        if (! $serverSorting && $query->hasOrder()) {
+        if (! $serverSorting && $query->hasOrder() && ! empty($fields)) {
             foreach ($query->getOrder() as $rule) {
                 if (! in_array($rule[0], $fields, true)) {
                     $fields[] = $rule[0];
