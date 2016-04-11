@@ -80,13 +80,17 @@ a {
   color: inherit;
   text-decoration: none;
 
-  &:focus {
-    outline-color: @icinga-blue;
-  }
-
   &:hover {
     text-decoration: underline;
   }
+}
+
+a:focus,
+button:focus,
+input[type="checkbox"]:focus {
+  outline-color: @icinga-blue;
+  outline-style: solid; // IE
+  outline-style: auto;
 }
 
 // Default margin for block text
