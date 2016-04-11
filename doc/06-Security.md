@@ -157,12 +157,12 @@ through a group) all permissions are added together to get the users actual perm
 
 ### Global Permissions
 
-Name                | Permits
---------------- ----|--------------------------------------------------------
-*                   | Allow everything, including module-specific permissions
-config/*            | Allow all configuration actions
-config/modules      | Allow enabling or disabling modules
-module/<moduleName> | Allow access to module <moduleName>
+Name                      | Permits
+--------------------------|--------------------------------------------------------
+*                         | Allow everything, including module-specific permissions
+config/*                  | Allow all configuration actions
+config/modules            | Allow enabling or disabling modules
+module/&lt;moduleName&gt; | Allow access to module &lt;moduleName&gt;
 
 
 ### Monitoring Module Permissions
