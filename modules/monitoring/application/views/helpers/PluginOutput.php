@@ -51,6 +51,14 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
             $isHtml = false;
         }
         $output = $this->fixLinks($output);
+        // Help browsers to break words in plugin output
+        $output = trim($output);
+        // Add space after comma where missing
+        $output = preg_replace('/,[^\s]/', ', ', $output);
+        // Add zero width space after ')', ']', ':', '.', '_' and '-' if not surrounded by whitespaces
+        $output = preg_replace('/([^\s])([\\)\\]:._-])([^\s])/', '$1$2&#8203;$3', $output);
+        // Add zero width space before '(' and '[' if not surrounded by whitespaces
+        $output = preg_replace('/([^\s])([([])([^\s])/', '$1&#8203;$2$3', $output);
 
         if (! $raw) {
             if ($isHtml) {

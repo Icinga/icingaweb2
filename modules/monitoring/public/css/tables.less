@@ -78,13 +78,32 @@
   font-size: @font-size-small;
 }
 
-// Plugin output in overviews
+// Plugin output in detail views
+.plugin-output,
+// Plugin output in overvies
+.overview-plugin-output {
+  -webkit-hyphens: auto;
+     -moz-hyphens: auto;
+      -ms-hyphens: auto;
+          hyphens: auto;
+
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
+
+// Plugin output in overvies
 .overview-plugin-output {
   color: @text-color-light;
   font-family: @font-family-fixed;
   font-size: @font-size-small;
   margin: 0;
   white-space: pre-wrap;
+  // Long text in table cells overflows the table's width if the table's layout is not fixed.
+  // Thus overflow-wrap will not have any effect. But w/ the following we set a width of any value
+  // plus a min-width of 100% to consume the full width nonetheless which seems to always
+  // instruct browsers to not overflow the table. Ridiculous.
+  min-width: 100%;
+  width: 1em;
 }
 
 // Table for performance data in detail views
