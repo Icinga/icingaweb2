@@ -38,18 +38,18 @@ class ExternalBackend implements UserBackendInterface
     /**
      * {@inheritdoc}
      */
-    public function setName($name)
+    public function getName()
     {
-        $this->name = $name;
-        return $this;
+        return $this->name;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getName()
+    public function setName($name)
     {
-        return $this->name;
+        $this->name = $name;
+        return $this;
     }
 
 
