@@ -240,10 +240,10 @@ class Auth
     public function authenticateFromSession()
     {
         $this->user = Session::getSession()->get('user');
-        if ($this->user !== null && $this->user->isExternalUser() === true) {
+        if ($this->user !== null && $this->user->isExternalUser()) {
             list($originUsername, $field) = $this->user->getExternalUserInformation();
-            $username = getenv($field); // usually REMOTE_USER here
-            if ( !$username || $username !== $originUsername) {
+            $username = ExternalBackend::getRemoteUser($field);
+            if ($username === null || $username !== $originUsername) {
                 $this->removeAuthorization();
             }
         }
