@@ -55,6 +55,20 @@
      * @returns {string|NULL}           The content to be rendered, or NULL, when nothing should be changed
      */
     Form.prototype.renderHook = function(content, $container, action, autorefresh) {
+        if ($container.attr('id') === 'menu') {
+            var $search = $container.find('#search');
+            if ($search[0] === document.activeElement) {
+                return null;
+            }
+            var search = $container.find('#search').val();
+            if (search.length) {
+                var $content = $('<div></div>').append(content);
+                $content.find('#search').attr('value', search).addClass('active');
+                return $content.html();
+            }
+            return content;
+        }
+
         var origFocus = document.activeElement;
         var containerId = $container.attr('id');
         var icinga = this.icinga;
