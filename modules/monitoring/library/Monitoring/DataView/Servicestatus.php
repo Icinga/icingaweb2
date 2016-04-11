@@ -67,6 +67,7 @@ class ServiceStatus extends DataView
             'service_host_name',
             'service_in_downtime',
             'service_is_flapping',
+            'service_is_reachable',
             'service_last_check',
             'service_last_hard_state',
             'service_last_hard_state_change',
