@@ -1,4 +1,4 @@
-RELEASE=1.5.0
+RELEASE=1.6.0
 PARSEDOWN=parsedown-$RELEASE
 curl https://codeload.github.com/erusev/parsedown/tar.gz/${RELEASE} -o ${PARSEDOWN}.tar.gz
 tar xfz ${PARSEDOWN}.tar.gz --strip-components 1 ${PARSEDOWN}/Parsedown.php ${PARSEDOWN}/LICENSE.txt
