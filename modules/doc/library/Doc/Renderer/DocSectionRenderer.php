@@ -287,7 +287,7 @@ class DocSectionRenderer extends DocRenderer
                 $html
             );
             $html = preg_replace_callback(
-                '#<blockquote>.+</blockquote>#ms',
+                '#<blockquote>.+?</blockquote>#ms',
                 array($this, 'markupNotes'),
                 $html
             );
