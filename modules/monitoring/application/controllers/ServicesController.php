@@ -41,6 +41,7 @@ class ServicesController extends Controller
             'host_name',
             'host_problem',
             'host_state',
+            'instance_name',
             'service_acknowledged',
             'service_active_checks_enabled',
             'service_description',

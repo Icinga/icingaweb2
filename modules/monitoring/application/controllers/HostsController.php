@@ -49,7 +49,8 @@ class HostsController extends Controller
             'host_obsessing',
             'host_passive_checks_enabled',
             'host_problem',
-            'host_state'
+            'host_state',
+            'instance_name'
         ));
         $this->view->baseFilter = $this->hostList->getFilter();
         $this->getTabs()->add(
