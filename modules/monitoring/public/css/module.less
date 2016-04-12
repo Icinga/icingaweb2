@@ -45,6 +45,28 @@
       padding-right: 0;
     }
   }
+
+  .state-badge-group li {
+    margin-right: 1px;
+  }
+
+  .state-badge-group li:last-child {
+    margin-right: 0;
+  }
+
+  .state-badge-group .badge {
+    border-radius: 0;
+  }
+
+  .state-badge-group li:first-child > .badge {
+    border-top-left-radius: 0.4em;
+    border-bottom-left-radius: 0.4em;
+  }
+
+  .state-badge-group li:last-child > .badge {
+    border-top-right-radius: 0.4em;
+    border-bottom-right-radius: 0.4em;
+  }
 }
 
 // Performance data pie charts
