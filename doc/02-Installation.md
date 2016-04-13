@@ -451,46 +451,20 @@ Finally visit Icinga Web 2 in your browser to login as `icingaadmin` user: `/ici
 
 # <a id="upgrading"></a> Upgrading Icinga Web 2
 
-## <a id="upgrading-to-beta2"></a> Upgrading to Icinga Web 2 Beta 2
+## <a id="upgrading-to-2.3.0"></a> Upgrading to Icinga Web 2 2.3.0
 
-Icinga Web 2 Beta 2 introduces access control based on roles for secured actions. If you've already set up Icinga Web 2,
-you are required to create the file **roles.ini** beneath Icinga Web 2's configuration directory with the following
-content:
-```
-[administrators]
-users = "your_user_name, another_user_name"
-permissions = "*"
-```
+* Icinga Web 2 version 2.3.0 does not introduce any backward incompatible change.
 
-After please log out from Icinga Web 2 and log in again for having all permissions granted.
+## <a id="upgrading-to-2.2.0"></a> Upgrading to Icinga Web 2 2.2.0
 
-If you delegated authentication to your web server using the `autologin` backend, you have to switch to the `external`
-authentication backend to be able to log in again. The new name better reflects what’s going on. A similar change
-affects environments that opted for not storing preferences, your new backend is `none`.
+* The menu entry `Authorization` beneath `Config` has been renamed to `Authentication`. The role, user backend and user
+  group backend configuration which was previously found beneath `Authentication` has been moved to `Application`.
+  
+## <a id="upgrading-to-2.1.x"></a> Upgrading to Icinga Web 2 2.1.x
 
-## <a id="upgrading-to-beta3"></a> Upgrading to Icinga Web 2 Beta 3
-
-Because Icinga Web 2 Beta 3 does not introduce any backward incompatible change you don't have to change your
-configuration files after upgrading to Icinga Web 2 Beta 3.
-
-## <a id="upgrading-to-rc1"></a> Upgrading to Icinga Web 2 Release Candidate 1
-
-The first release candidate of Icinga Web 2 introduces the following non-backward compatible changes:
-
-* The database schema has been adjusted and the tables `icingaweb_group` and
-  `icingaweb_group_membership` were altered to ensure referential integrity.
-  Please use the upgrade script located in **etc/schema/** to update your
-  database schema
-
-* Users who are using PostgreSQL < v9.1 are required to upgrade their
-  environment to v9.1+ as this is the new minimum required version
-  for utilizing PostgreSQL as database backend
-
-* The restrictions `monitoring/hosts/filter` and `monitoring/services/filter`
-  provided by the monitoring module were merged together. The new
-  restriction is called `monitoring/filter/objects` and supports only a
-  predefined subset of filter columns. Please see the module's security
-  related documentation for more details.
+* Since Icinga Web 2 version 2.1.3 LDAP user group backends respect the configuration option `group_filter`.
+  Users who changed the configuration manually and used the option `filter` instead
+  have to change it back to `group_filter`.
 
 ## <a id="upgrading-to-2.0.0"></a> Upgrading to Icinga Web 2 2.0.0
 
@@ -514,13 +488,43 @@ The first release candidate of Icinga Web 2 introduces the following non-backwar
   **&lt;config-dir&gt;/preferences/&lt;username&gt;/config.ini**.
   The content of the file remains unchanged.
 
-## <a id="upgrading-to-2.1.x"></a> Upgrading to Icinga Web 2 2.1.x
+## <a id="upgrading-to-rc1"></a> Upgrading to Icinga Web 2 Release Candidate 1
 
-* Since Icinga Web 2 version 2.1.3 LDAP user group backends respect the configuration option `group_filter`.
-  Users who changed the configuration manually and used the option `filter` instead
-  have to change it back to `group_filter`.
+The first release candidate of Icinga Web 2 introduces the following non-backward compatible changes:
 
-## <a id="upgrading-to-2.2.0"></a> Upgrading to Icinga Web 2 2.2.0
+* The database schema has been adjusted and the tables `icingaweb_group` and
+  `icingaweb_group_membership` were altered to ensure referential integrity.
+  Please use the upgrade script located in **etc/schema/** to update your
+  database schema
 
-* The menu entry `Authorization` beneath `Config` has been renamed to `Authentication`. The role, user backend and user
-  group backend configuration which was previously found beneath `Authentication` has been moved to `Application`.
+* Users who are using PostgreSQL < v9.1 are required to upgrade their
+  environment to v9.1+ as this is the new minimum required version
+  for utilizing PostgreSQL as database backend
+
+* The restrictions `monitoring/hosts/filter` and `monitoring/services/filter`
+  provided by the monitoring module were merged together. The new
+  restriction is called `monitoring/filter/objects` and supports only a
+  predefined subset of filter columns. Please see the module's security
+  related documentation for more details.
+
+## <a id="upgrading-to-beta3"></a> Upgrading to Icinga Web 2 Beta 3
+
+Because Icinga Web 2 Beta 3 does not introduce any backward incompatible change you don't have to change your
+configuration files after upgrading to Icinga Web 2 Beta 3.
+
+## <a id="upgrading-to-beta2"></a> Upgrading to Icinga Web 2 Beta 2
+
+Icinga Web 2 Beta 2 introduces access control based on roles for secured actions. If you've already set up Icinga Web 2,
+you are required to create the file **roles.ini** beneath Icinga Web 2's configuration directory with the following
+content:
+```
+[administrators]
+users = "your_user_name, another_user_name"
+permissions = "*"
+```
+
+After please log out from Icinga Web 2 and log in again for having all permissions granted.
+
+If you delegated authentication to your web server using the `autologin` backend, you have to switch to the `external`
+authentication backend to be able to log in again. The new name better reflects what’s going on. A similar change
+affects environments that opted for not storing preferences, your new backend is `none`.
