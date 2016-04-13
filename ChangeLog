@@ -1,5 +1,39 @@
 # Icinga Web 2 Changelog
 
+## What's New in Version 2.3.0
+
+#### Features
+
+* Feature 10887: lib: Provide User::getRoles()
+* Feature 10965: Roles: Restrict visibility of custom variables
+* Feature 11404: Add is_reachable filter column to host and service data views
+* Feature 11485: lib/LDAP: Support scopes base and one
+* Feature 11495: Support data URIs in href
+* Feature 11529: Don't offer command disable notifications /w expire time if backend is Icinga 2
+
+#### Bugfixes
+
+* Bug 9386: Improve order of documentation chapters
+* Bug 10820: Style problems with long plugin output lines
+* Bug 11078: Can't remove default dashboards
+* Bug 11099: Mobile menu icon is mispositioned
+* Bug 11128: Menu stops refreshing when there is text in the search field
+* Bug 11145: Pagination compontents should not float around
+* Bug 11171: Icinga Web 2 tries to load an ifont which results in 404
+* Bug 11245: icingacli monitoring list --problems throws an exception
+* Bug 11264: Cannot execute queries while other unbuffered queries are active
+* Bug 11277: external auth with PHP internal webserver still buggy
+* Bug 11279: Restrict access to Applicationlog
+* Bug 11299: Icon images no longer prepend img/icons
+* Bug 11391: External auth reads REMOTE_USER from process environment instead of request
+* Bug 11414: Doc module does not render images with relative path
+* Bug 11465: Stylesheet remains unchanged when module CSS/LESS files have been changed
+* Bug 11489: lib/LDAP: ordering does explicitly set fields
+* Bug 11490: lib/LDAP: LdapUtils::explodeDN replace deprecated use of eval in preg_replace
+* Bug 11516: Accessibility: Focus in Tactical Overview barely visible
+* Bug 11558: Missing ) in the documentation
+* Bug 11568: Docs: Global permissions table is broken
+
 ## What's New in Version 2.2.0
 
 #### Features
