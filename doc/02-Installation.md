@@ -4,7 +4,7 @@ The preferred way of installing Icinga Web 2 is to use the official package repo
 system and distribution you are running. But it is also possible to install Icinga Web 2 directly from source.
 
 In case you are upgrading from an older version of Icinga Web 2
-please make sure to read the [upgrading](installation.md#upgrading) section
+please make sure to read the [upgrading](02-Installation.md#upgrading) section
 thoroughly.
 
 ## <a id="installing-requirements"></a> Installing Requirements
@@ -179,7 +179,7 @@ git clone git://git.icinga.org/icingaweb2.git
 
 ### <a id="installing-from-source-requirements"></a> Installing Requirements from Source
 
-You will need to install certain dependencies depending on your setup listed [here](installation.md#installing-requirements).
+You will need to install certain dependencies depending on your setup listed [here](02-Installation.md#installing-requirements).
 
 The following example installs Apache2 as web server, MySQL as RDBMS and uses the PHP adapter for MySQL.
 Adopt the package requirements to your needs (e.g. adding ldap for authentication) and distribution.
@@ -318,7 +318,7 @@ Puppet, Ansible, Chef, etc. modules.
 > Read the documentation on the respective linked configuration sections before
 > deploying the configuration manually.
 >
-> If you are unsure about certain settings, use the [setup wizard](installation.md#web-setup-wizard-from-source) once
+> If you are unsure about certain settings, use the [setup wizard](02-Installation.md#web-setup-wizard-from-source) once
 > and then collect the generated configuration as well as sql dumps.
 
 #### <a id="web-setup-manual-from-source-database"></a> Icinga Web 2 Manual Database Setup
@@ -336,7 +336,7 @@ mysql -p icingaweb2 < /usr/share/icingaweb2/etc/schema/mysql.schema.sql
 ```
 
 
-Then generate a new password hash as described in the [authentication docs](authentication.md#authentication-configuration-db-setup)
+Then generate a new password hash as described in the [authentication docs](05-Authentication.md#authentication-configuration-db-setup)
 and use it to insert a new user called `icingaadmin` into the database.
 
 ```
@@ -349,7 +349,7 @@ quit
 #### <a id="web-setup-manual-from-source-config"></a> Icinga Web 2 Manual Configuration
 
 
-[resources.ini](resources.md#resources) providing the details for the Icinga Web 2 and
+[resources.ini](04-Resources.md#resources) providing the details for the Icinga Web 2 and
 Icinga 2 IDO database configuration. Example for MySQL:
 
 ```
@@ -375,7 +375,7 @@ username            = "icinga"
 password            = "icinga"
 ```
 
-[config.ini](configuration.md#configuration) defining general application settings.
+[config.ini](03-Configuration.md#configuration) defining general application settings.
 
 ```
 vim /etc/icingaweb2/config.ini
@@ -391,7 +391,7 @@ type                = "db"
 resource            = "icingaweb2"
 ```
 
-[authentication.ini](authentication.md#authentication) for e.g. using the previously created database.
+[authentication.ini](05-Authentication.md#authentication) for e.g. using the previously created database.
 
 ```
 vim /etc/icingaweb2/authentication.ini
@@ -402,7 +402,7 @@ resource            = "icingaweb2"
 ```
 
 
-[roles.ini](security.md#security) granting the previously added `icingaadmin` user all permissions.
+[roles.ini](06-Security.md#security) granting the previously added `icingaadmin` user all permissions.
 
 ```
 vim /etc/icingaweb2/roles.ini
@@ -415,7 +415,7 @@ permissions         = "*"
 #### <a id="web-setup-manual-from-source-config-monitoring-module"></a> Icinga Web 2 Manual Configuration Monitoring Module
 
 
-[config.ini](../modules/monitoring/doc/configuration.md#configuration) defining additional security settings.
+**config.ini** defining additional security settings.
 
 ```
 vim /etc/icingaweb2/modules/monitoring/config.ini
@@ -424,7 +424,7 @@ vim /etc/icingaweb2/modules/monitoring/config.ini
 protected_customvars = "*pw*,*pass*,community"
 ```
 
-[backends.ini](../modules/monitoring/doc/configuration.md#configuration) referencing the Icinga 2 DB IDO resource.
+**backends.ini** referencing the Icinga 2 DB IDO resource.
 
 ```
 vim /etc/icingaweb2/modules/monitoring/backends.ini
@@ -434,7 +434,7 @@ type                = "ido"
 resource            = "icinga2"
 ```
 
-[commandtransports.ini](../modules/monitoring/doc/commandtransports.md#commandtransports) defining the Icinga 2 command pipe.
+**commandtransports.ini** defining the Icinga command pipe.
 
 ```
 vim /etc/icingaweb2/modules/monitoring/commandtransports.ini
