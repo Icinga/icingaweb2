@@ -201,12 +201,6 @@ class Dashboard extends AbstractWidget
     {
         /** @var $pane Pane  */
         foreach ($panes as $pane) {
-            if ($pane->getDisabled()) {
-                if ($this->hasPane($pane->getTitle()) === true) {
-                    $this->removePane($pane->getTitle());
-                }
-                continue;
-            }
             if ($this->hasPane($pane->getTitle()) === true) {
                 /** @var $current Pane */
                 $current = $this->panes[$pane->getName()];
@@ -231,6 +225,9 @@ class Dashboard extends AbstractWidget
             $this->tabs = new Tabs();
 
             foreach ($this->panes as $key => $pane) {
+                if ($pane->getDisabled()) {
+                    continue;
+                }
                 $this->tabs->add(
                     $key,
                     array(
