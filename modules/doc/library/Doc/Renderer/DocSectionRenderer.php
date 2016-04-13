@@ -208,15 +208,49 @@ class DocSectionRenderer extends DocRenderer
     }
 
     /**
-     * Replace link
+     * Replace chapter link
      *
      * @param   array $match
      *
      * @return  string
      */
-    protected function replaceLink($match)
+    protected function replaceChapterLink($match)
     {
-        if (($section = $this->tree->getNode($this->decodeAnchor($match['fragment']))) === null) {
+        if (($chapter = $this->tree->getNode($this->decodeAnchor($match['chapter']))) === null) {
+            return $match[0];
+        }
+        /** @var \Icinga\Module\Doc\DocSection $section */
+        $path = $this->getView()->getHelper('Url')->url(
+            array_merge(
+                $this->urlParams,
+                array(
+                    'chapter' => $this->encodeUrlParam($chapter->getChapter()->getId())
+                )
+            ),
+            $this->url,
+            false,
+            false
+        );
+        $url = $this->getView()->url($path);
+        /** @var \Icinga\Web\Url $url */
+        return sprintf(
+            '<a %s%shref="%s"',
+            strlen($match['attribs']) ? trim($match['attribs']) . ' ' : '',
+            $chapter->getNoFollow() ? 'rel="nofollow" ' : '',
+            $url->getAbsoluteUrl()
+        );
+    }
+
+    /**
+     * Replace section link
+     *
+     * @param   array $match
+     *
+     * @return  string
+     */
+    protected function replaceSectionLink($match)
+    {
+        if (($section = $this->tree->getNode($this->decodeAnchor($match['section']))) === null) {
             return $match[0];
         }
         /** @var \Icinga\Module\Doc\DocSection $section */
@@ -292,8 +326,13 @@ class DocSectionRenderer extends DocRenderer
                 $html
             );
             $html = preg_replace_callback(
-                '/<a\s+(?P<attribs>[^>]*?\s+)?href="(?:(?!http:\/\/)[^"#]*)#(?P<fragment>[^"]+)"/',
-                array($this, 'replaceLink'),
+                '/<a\s+(?P<attribs>[^>]*?\s+)?href="(?:(?!http:\/\/)[^"#]*)#(?P<section>[^"]+)"/',
+                array($this, 'replaceSectionLink'),
+                $html
+            );
+            $html = preg_replace_callback(
+                '/<a\s+(?P<attribs>[^>]*?\s+)?href="(?:\d+-)?(?P<chapter>[^\/"#]+).md"/',
+                array($this, 'replaceChapterLink'),
                 $html
             );
             if ($search !== null) {
