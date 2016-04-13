@@ -49,7 +49,7 @@ EOT;
      * @var string
      */
     private $closeTpl = <<< 'EOT'
-<li class="dropdown" style="float: right;">
+<li class="dropdown" style="float: right; ">
   <a href="#" title="{TITLE}" aria-label="{TITLE}" class="close-container-control">
     <i aria-hidden="true" class="icon-cancel"></i>
   </a>
@@ -377,8 +377,8 @@ EOT;
             array(
                 $tabs,
                 $drop,
-                $close,
-                $refresh
+                $refresh,
+                $close
             ),
             $this->baseTpl
         );
