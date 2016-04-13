@@ -161,7 +161,6 @@
             //breakIndex false: No need for cloned tabs
             $container.find('.tabs').not('.cloned').show();
         }
-        e.containerData[$container.attr('id')].isToRender = false;
     }
 
     Icinga.Behaviors = Icinga.Behaviors || {};
