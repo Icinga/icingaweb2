@@ -5,12 +5,14 @@ namespace Icinga\Module\Monitoring\Object;
 
 use stdClass;
 use InvalidArgumentException;
+use Icinga\Authentication\Auth;
 use Icinga\Application\Config;
 use Icinga\Data\Filter\Filter;
 use Icinga\Data\Filterable;
 use Icinga\Exception\InvalidPropertyException;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Module\Monitoring\Backend\MonitoringBackend;
+use Icinga\Util\GlobFilter;
 use Icinga\Web\UrlParams;
 
 /**
@@ -146,6 +148,13 @@ abstract class MonitoredObject implements Filterable
      * @var object
      */
     protected $stats;
+
+    /**
+     * The properties to hide from the user
+     *
+     * @var GlobFilter
+     */
+    protected $blacklistedProperties = null;
 
     /**
      * Create a monitored object, i.e. host or service
@@ -457,7 +466,9 @@ abstract class MonitoredObject implements Filterable
             $customvars = $this->hostVariables;
         }
 
-        $this->customvars = $this->obfuscateCustomVars($customvars, $blacklistPattern);
+        $this->customvars = $customvars;
+        $this->hideBlacklistedProperties();
+        $this->customvars = $this->obfuscateCustomVars($this->customvars, $blacklistPattern);
 
         return $this;
     }
@@ -483,6 +494,25 @@ abstract class MonitoredObject implements Filterable
             }
         }
         return $customvars instanceof stdClass ? (object) $obfuscatedCustomVars : $obfuscatedCustomVars;
+    }
+
+    /**
+     * Hide all blacklisted properties from the user as restricted by monitoring/blacklist/properties
+     *
+     * Currently this only affects the custom variables
+     */
+    protected function hideBlacklistedProperties()
+    {
+        if ($this->blacklistedProperties === null) {
+            $this->blacklistedProperties = new GlobFilter(
+                Auth::getInstance()->getRestrictions('monitoring/blacklist/properties')
+            );
+        }
+
+        $allProperties = $this->blacklistedProperties->removeMatching(
+            array($this->type => array('vars' => $this->customvars))
+        );
+        $this->customvars = isset($allProperties[$this->type]['vars']) ? $allProperties[$this->type]['vars'] : array();
     }
 
     /**

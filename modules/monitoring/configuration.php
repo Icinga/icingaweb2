@@ -84,6 +84,10 @@ $this->provideRestriction(
     'monitoring/filter/objects',
     $this->translate('Restrict views to the Icinga objects that match the filter')
 );
+$this->provideRestriction(
+    'monitoring/blacklist/properties',
+    $this->translate('Hide the properties of monitored objects that match the filter')
+);
 
 $this->provideConfigTab('backends', array(
     'title' => $this->translate('Configure how to retrieve monitoring information'),
