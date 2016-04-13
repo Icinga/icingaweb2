@@ -3,20 +3,21 @@
 
 namespace Icinga\Protocol\Ldap;
 
-use Exception;
 use ArrayIterator;
+use Exception;
+use LogicException;
+use stdClass;
 use Icinga\Application\Config;
 use Icinga\Application\Logger;
 use Icinga\Data\ConfigObject;
+use Icinga\Data\Filter\Filter;
+use Icinga\Data\Filter\FilterChain;
+use Icinga\Data\Filter\FilterExpression;
 use Icinga\Data\Inspectable;
 use Icinga\Data\Inspection;
 use Icinga\Data\Selectable;
 use Icinga\Data\Sortable;
-use Icinga\Data\Filter\Filter;
-use Icinga\Data\Filter\FilterChain;
-use Icinga\Data\Filter\FilterExpression;
 use Icinga\Exception\ProgrammingError;
-use Icinga\Protocol\Ldap\LdapException;
 
 /**
  * Encapsulate LDAP connections and query creation
@@ -549,6 +550,23 @@ class LdapConnection implements Selectable, Inspectable
     }
 
     /**
+     * Fetch an LDAP entry by its DN
+     *
+     * @param  string        $dn
+     * @param  array|null    $fields
+     *
+     * @return StdClass|bool
+     */
+    public function fetchByDn($dn, array $fields = null)
+    {
+        return $this->select()
+            ->from('*', $fields)
+            ->setBase($dn)
+            ->setScope('base')
+            ->fetchRow();
+    }
+
+    /**
      * Test the given LDAP credentials by establishing a connection and attempting a LDAP bind
      *
      * @param   string  $bindDn
@@ -706,7 +724,7 @@ class LdapConnection implements Selectable, Inspectable
                         'value' => $this->encodeSortRules($query->getOrder())
                     )
                 ));
-            } else {
+            } elseif (! empty($fields)) {
                 foreach ($query->getOrder() as $rule) {
                     if (! in_array($rule[0], $fields, true)) {
                         $fields[] = $rule[0];
@@ -825,7 +843,7 @@ class LdapConnection implements Selectable, Inspectable
         $ds = $this->getConnection();
 
         $serverSorting = false;//$this->getCapabilities()->hasOid(LdapCapabilities::LDAP_SERVER_SORT_OID);
-        if (! $serverSorting && $query->hasOrder()) {
+        if (! $serverSorting && $query->hasOrder() && ! empty($fields)) {
             foreach ($query->getOrder() as $rule) {
                 if (! in_array($rule[0], $fields, true)) {
                     $fields[] = $rule[0];
@@ -1179,6 +1197,8 @@ class LdapConnection implements Selectable, Inspectable
      * @param   int         $deref
      *
      * @return  resource|bool               A search result identifier or false on error
+     *
+     * @throws  LogicException              If the LDAP query search scope is unsupported
      */
     public function ldapSearch(
         LdapQuery $query,
@@ -1190,6 +1210,7 @@ class LdapConnection implements Selectable, Inspectable
     ) {
         $queryString = (string) $query;
         $baseDn = $query->getBase() ?: $this->getDn();
+        $scope = $query->getScope();
 
         if (Logger::getInstance()->getLevel() === Logger::DEBUG) {
             // We're checking the level by ourself to avoid rendering the ldapsearch commandline for nothing
@@ -1213,11 +1234,12 @@ class LdapConnection implements Selectable, Inspectable
             }
 
             Logger::debug("Issueing LDAP search. Use '%s' to reproduce.", sprintf(
-                'ldapsearch -P 3%s -H "%s"%s -b "%s" -s "sub" -z %u -l %u -a "%s"%s%s%s',
+                'ldapsearch -P 3%s -H "%s"%s -b "%s" -s "%s" -z %u -l %u -a "%s"%s%s%s',
                 $starttlsParam,
                 $ldapUrl,
                 $bindParams,
                 $baseDn,
+                $scope,
                 $sizelimit,
                 $timelimit,
                 $derefName,
@@ -1227,7 +1249,21 @@ class LdapConnection implements Selectable, Inspectable
             ));
         }
 
-        return @ldap_search(
+        switch($scope) {
+            case LdapQuery::SCOPE_SUB:
+                $function = 'ldap_search';
+                break;
+            case LdapQuery::SCOPE_ONE:
+                $function = 'ldap_list';
+                break;
+            case LdapQuery::SCOPE_BASE:
+                $function = 'ldap_read';
+                break;
+            default:
+                throw new LogicException('LDAP scope %s not supported by ldapSearch', $scope);
+        }
+
+        return @$function(
             $this->getConnection(),
             $baseDn,
             $queryString,

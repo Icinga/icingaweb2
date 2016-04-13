@@ -377,8 +377,8 @@ EOT;
             array(
                 $tabs,
                 $drop,
-                $close,
-                $refresh
+                $refresh,
+                $close
             ),
             $this->baseTpl
         );

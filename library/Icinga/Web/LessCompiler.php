@@ -70,7 +70,7 @@ class LessCompiler
      */
     public function addLessFile($lessFile)
     {
-        $this->lessFiles[] = $lessFile;
+        $this->lessFiles[] = realpath($lessFile);
         return $this;
     }
 
@@ -87,7 +87,7 @@ class LessCompiler
         if (! isset($this->moduleLessFiles[$moduleName])) {
             $this->moduleLessFiles[$moduleName] = array();
         }
-        $this->moduleLessFiles[$moduleName][] = $lessFile;
+        $this->moduleLessFiles[$moduleName][] = realpath($lessFile);
         return $this;
     }
 
@@ -98,9 +98,12 @@ class LessCompiler
      */
     public function getLessFiles()
     {
-        $lessFiles = iterator_to_array(new RecursiveIteratorIterator(new RecursiveArrayIterator(
-                $this->lessFiles + $this->moduleLessFiles
-        )));
+        $lessFiles = $this->lessFiles;
+
+        foreach ($this->moduleLessFiles as $moduleLessFiles) {
+            $lessFiles = array_merge($lessFiles, $moduleLessFiles);
+        }
+
         if ($this->theme !== null) {
             $lessFiles[] = $this->theme;
         }

@@ -14,6 +14,13 @@ use Icinga\Web\View;
 abstract class DocRenderer extends RecursiveIteratorIterator
 {
     /**
+     * URL to images
+     *
+     * @var string
+     */
+    protected $imageUrl;
+
+    /**
      * URL to replace links with
      *
      * @var string
@@ -35,6 +42,38 @@ abstract class DocRenderer extends RecursiveIteratorIterator
     protected $view;
 
     /**
+     * Get the URL to images
+     *
+     * @return string
+     */
+    public function getImageUrl()
+    {
+        return $this->imageUrl;
+    }
+
+    /**
+     * Set the URL to images
+     *
+     * @param   string  $imageUrl
+     *
+     * @return  $this
+     */
+    public function setImageUrl($imageUrl)
+    {
+        $this->imageUrl = (string) $imageUrl;
+        return $this;
+    }
+    /**
+     * Get the URL to replace links with
+     *
+     * @return string
+     */
+    public function getUrl()
+    {
+        return $this->url;
+    }
+
+    /**
      * Set the URL to replace links with
      *
      * @param   string  $url
@@ -48,13 +87,13 @@ abstract class DocRenderer extends RecursiveIteratorIterator
     }
 
     /**
-     * Get the URL to replace links with
+     * Get additional URL parameters
      *
-     * @return string
+     * @return array
      */
-    public function getUrl()
+    public function getUrlParams()
     {
-        return $this->url;
+        return $this->urlParams;
     }
 
     /**
@@ -71,13 +110,16 @@ abstract class DocRenderer extends RecursiveIteratorIterator
     }
 
     /**
-     * Get additional URL parameters
+     * Get the view
      *
-     * @return array
+     * @return View
      */
-    public function getUrlParams()
+    public function getView()
     {
-        return $this->urlParams;
+        if ($this->view === null) {
+            $this->view = Icinga::app()->getViewRenderer()->view;
+        }
+        return $this->view;
     }
 
     /**
@@ -91,19 +133,6 @@ abstract class DocRenderer extends RecursiveIteratorIterator
     {
         $this->view = $view;
         return $this;
-    }
-
-    /**
-     * Get the view
-     *
-     * @return View
-     */
-    public function getView()
-    {
-        if ($this->view === null) {
-            $this->view = Icinga::app()->getViewRenderer()->view;
-        }
-        return $this->view;
     }
 
     /**

@@ -45,16 +45,27 @@
       padding-right: 0;
     }
   }
-}
 
-// Multi-selection info
-.selection-info {
-  float: right;
-  font-size: @font-size-small;
-  padding: @vertical-padding / 2 0;
+  .state-badge-group li {
+    margin-right: 1px;
+  }
 
-  &:hover {
-    cursor: help;
+  .state-badge-group li:last-child {
+    margin-right: 0;
+  }
+
+  .state-badge-group .badge {
+    border-radius: 0;
+  }
+
+  .state-badge-group li:first-child > .badge {
+    border-top-left-radius: 0.4em;
+    border-bottom-left-radius: 0.4em;
+  }
+
+  .state-badge-group li:last-child > .badge {
+    border-top-right-radius: 0.4em;
+    border-bottom-right-radius: 0.4em;
   }
 }
 
@@ -79,6 +90,11 @@
   }
 }
 
+.controls > .hosts-summary,
+.controls > .services-summary {
+  float: left;
+}
+
 // State table in the host and service multi-selection and detail views
 .host-detail-state,
 .service-detail-state {
@@ -93,10 +109,6 @@
 }
 
 /* Generic box element */
-
-.boxview a {
-  text-decoration: none;
-}
 
 .boxview > div.box {
   text-align: center;
@@ -126,7 +138,6 @@
 /* Any line of a box entry */
 .boxview div.box.entry a {
   display: block;
-  color: inherit;
 }
 
 .boxview  div.box.badge {
@@ -370,13 +381,7 @@ div.timeline {
 
       a {
         font-weight: bold;
-        text-decoration: none;
         white-space: nowrap;
-
-        &:hover {
-          text-decoration: underline;
-
-        }
       }
     }
 

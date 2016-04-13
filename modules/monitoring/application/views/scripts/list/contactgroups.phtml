@@ -2,52 +2,49 @@
 
 if (! $this->compact): ?>
 <div class="controls">
-    <?= $tabs ?>
-    <div class="grid">
-        <?= $this->sortBox ?>
+    <?= $this->tabs ?>
+    <?= $this->paginator ?>
+    <div class="sort-controls-container">
         <?= $this->limiter ?>
-        <?= $this->paginator ?>
+        <?= $this->sortBox ?>
     </div>
     <?= $this->filterEditor ?>
 </div>
 <?php endif ?>
 <div class="content">
-<?php
-if (count($groupData) === 0) {
-    echo $this->translate('No contactgroups found matching the filter') . '</div>';
-    return;
-}
-?>
-    <table class="action table-row-selectable common-table" data-base-target="_next">
+<?php if (! $contactGroups->hasResult()): ?>
+    <p><?= $this->translate('No contact groups found matching the filter') ?></p>
+</div>
+<?php return; endif ?>
+    <table class="common-table table-row-selectable" data-base-target="_next">
         <thead>
-        <tr>
-            <th></th>
-            <th><?= $this->translate('Contact Group ') ?></th>
-            <th><?= $this->translate('Alias') ?></th>
-        </tr>
+            <tr>
+                <th></th>
+                <th><?= $this->translate('Contact Group ') ?></th>
+                <th><?= $this->translate('Alias') ?></th>
+            </tr>
         </thead>
         <tbody>
-
-        <?php foreach ($groupData as $groupName => $groupInfo): ?>
-        <tr>
-            <td class="count-col">
-                <span class="badge"><?= count($groupInfo['contacts'])  ?></span>
-            </td>
+        <?php foreach ($contactGroups as $contactGroup): ?>
+            <tr>
+                <td class="count-col">
+                    <span class="badge"><?= $contactGroup->contact_count ?></span>
+                </td>
+                <td>
+                    <?= $this->qlink(
+                        $contactGroup->contactgroup_name,
+                        'monitoring/list/contacts',
+                        array('contactgroup_name' => $contactGroup->contactgroup_name),
+                        array('title' => sprintf(
+                            $this->translate('Show detailed information about %s'),
+                            $contactGroup->contactgroup_name
+                        ))
+                    ) ?>
+                </td>
             <td>
-                <?= $this->qlink(
-                    $groupName,
-                    'monitoring/list/contacts',
-                    array('contactgroup_name' => $groupName),
-                    array('title' => sprintf(
-                        $this->translate('Show detailed information about %s'),
-                        $groupName
-                    ))
-                ) ?>
-            </td>
-            <td>
-                <?php if ($groupInfo['alias'] !== $groupName): ?>
-                    <?= $groupInfo['alias'] ?>
-                <?php endif ?>
+            <?php if ($contactGroup->contactgroup_name !== $contactGroup->contactgroup_alias): ?>
+                <?= $contactGroup->contactgroup_alias ?>
+            <?php endif ?>
             </td>
         </tr>
         <?php endforeach ?>

@@ -44,7 +44,7 @@
 @tr-hover-color: #F5FDFF;
 
 // Font families
-@font-family: Calibri, Helvetica, sans-serif;
+@font-family: Calibri, "Lucida Grande", sans-serif;
 @font-family-fixed: "Liberation Mono", "Lucida Console", Courier, monospace;
 @font-family-wide: Tahoma, Verdana, sans-serif;
 
@@ -80,13 +80,17 @@ a {
   color: inherit;
   text-decoration: none;
 
-  &:focus {
-    outline-color: @icinga-blue;
-  }
-
   &:hover {
     text-decoration: underline;
   }
+}
+
+a:focus,
+button:focus,
+input[type="checkbox"]:focus {
+  outline-color: @icinga-blue;
+  outline-style: solid; // IE
+  outline-style: auto;
 }
 
 // Default margin for block text

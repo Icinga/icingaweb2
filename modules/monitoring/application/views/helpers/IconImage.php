@@ -27,7 +27,7 @@ class Zend_View_Helper_IconImage extends Zend_View_Helper_Abstract
     public function host($object)
     {
         if ($object->host_icon_image && ! preg_match('/[\'"]/', $object->host_icon_image)) {
-            return $this->view->img(
+            return $this->view->icon(
                 Macro::resolveMacros($object->host_icon_image, $object),
                 null,
                 array(
@@ -50,7 +50,7 @@ class Zend_View_Helper_IconImage extends Zend_View_Helper_Abstract
     public function service($object)
     {
         if ($object->service_icon_image && ! preg_match('/[\'"]/', $object->service_icon_image)) {
-            return $this->view->img(
+            return $this->view->icon(
                 Macro::resolveMacros($object->service_icon_image, $object),
                 null,
                 array(

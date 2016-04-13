@@ -40,7 +40,7 @@ class Pane extends UserWidget
      *
      * @var bool
      */
-    private $disabled;
+    private $disabled = false;
 
     /**
      * Create a new pane

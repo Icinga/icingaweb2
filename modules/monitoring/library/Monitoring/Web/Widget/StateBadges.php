@@ -257,6 +257,7 @@ class StateBadges extends AbstractWidget
             $groupItem = new NavigationItem(
                 uniqid(),
                 array(
+                    'cssClass'  => 'state-badge-group',
                     'label'     => '',
                     'priority'  => $this->priority++
                 )

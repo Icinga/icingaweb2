@@ -21,9 +21,8 @@ things to which access can be managed: actions and objects.
 ### Actions
 
 Actions are all the things an Icinga Web 2 user can do, like changing a certain configuration,
-changing permissions or sending a command to the Icinga instance through the
-<a href="http://docs.icinga.org/icinga2/latest/doc/module/icinga2/toc#!/icinga2/latest/doc/module/icinga2/chapter/getting-started#setting-up-external-command-pipe">Command Pipe</a>
-in the monitoring module. All actions must be be **allowed explicitly** using permissions.
+changing permissions or sending a command to the Icinga instance through the Icinga command pipe.
+All actions must be be **allowed explicitly** using permissions.
 
 A permission is a simple list of identifiers of actions a user is
 allowed to do. Permissions are described in greater detail in the
@@ -47,7 +46,7 @@ using Active Directory, and a user **icingaadmin** that is authenticated using a
 In the configuration, both can be referenced to by using their user names **icingaadmin** or **jdoe**.
 
 Icinga Web 2 users and groups are not configured by a configuration file, but provided by
-an **authentication backend**. For extended information on setting up authentication backends and managing users, please read the chapter [Authentication](authentication.md#authentication).
+an **authentication backend**. For extended information on setting up authentication backends and managing users, please read the chapter [Authentication](05-Authentication.md#authentication).
 
 
 <div class="info-box">
@@ -59,7 +58,7 @@ an **authentication backend**. For extended information on setting up authentica
 #### Managing Users
 
 When using a [Database
-as authentication backend](authentication.md#authentication-configuration-db-authentication), it is possible to create, add and delete users directly in the frontend. This configuration
+as authentication backend](05-Authentication.md#authentication-configuration-db-authentication), it is possible to create, add and delete users directly in the frontend. This configuration
 can be found at **Configuration > Authentication > Users **.
 
 ### Groups
@@ -70,12 +69,12 @@ A user can be member of multiple groups and will inherit all permissions and res
 
 Like users, groups are identified solely by their **name** that is provided by
  a **group backend**. For extended information on setting up group backends,
- please read the chapter [Authentication](authentication.md#authentication).
+ please read the chapter [Authentication](05-Authentication.md#authentication).
 
 
 #### Managing Groups
 
-When using a [Database as an authentication backend](#authentication.md#authentication-configuration-db-authentication),
+When using a [Database as an authentication backend](05-Authentication.md#authentication-configuration-db-authentication),
 it is possible to manage groups and group memberships directly in the frontend. This configuration
 can be found at **Configuration > Authentication > Groups **.
 
@@ -157,18 +156,18 @@ through a group) all permissions are added together to get the users actual perm
 
 ### Global Permissions
 
-Name                | Permits
---------------- ----|--------------------------------------------------------
-*                   | Allow everything, including module-specific permissions
-config/*            | Allow all configuration actions
-config/modules      | Allow enabling or disabling modules
-module/<moduleName> | Allow access to module <moduleName>
+Name                      | Permits
+--------------------------|--------------------------------------------------------
+*                         | Allow everything, including module-specific permissions
+config/*                  | Allow all configuration actions
+config/modules            | Allow enabling or disabling modules
+module/&lt;moduleName&gt; | Allow access to module &lt;moduleName&gt;
 
 
 ### Monitoring Module Permissions
 
 The built-in monitoring module defines an additional set of permissions, that
-is described in detail in the [monitoring module documentation](/icingaweb2/doc/module/doc/chapter/monitoring-security#monitoring-security).
+is described in detail in the monitoring module documentation.
 
 
 ## <a id="restrictions"></a> Restrictions
@@ -187,7 +186,7 @@ mentioned in the section [Syntax](#syntax).
 ### Filter Expressions
 
 Filters operate on columns. A complete list of all available filter columns on hosts and services can be found in
-the [monitoring module documentation](/icingaweb2/doc/module/doc/chapter/monitoring-security#monitoring-security-restrictions).
+the monitoring module documentation.
 
 Any filter expression that is allowed in the filtered view, is also an allowed filter expression.
 This means, that it is possible to define negations, wildcards, and even nested

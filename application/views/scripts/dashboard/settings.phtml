@@ -18,6 +18,7 @@
         </thead>
         <tbody>
             <?php foreach ($this->dashboard->getPanes() as $pane): ?>
+                <?php if ($pane->getDisabled()) continue; ?>
                 <tr style="background-color: #f1f1f1;">
                     <th colspan="2" style="text-align: left; padding: 0.5em;">
                         <?= $this->escape($pane->getName()) ?>
@@ -43,7 +44,7 @@
                     </tr>
                 <?php else: ?>
                     <?php foreach ($dashlets as $dashlet): ?>
-                    <?php if ($dashlet->getDisabled() === true) continue; ?>
+                    <?php if ($dashlet->getDisabled()) continue; ?>
                         <tr>
                             <td>
                                 <?= $this->qlink(

@@ -3,11 +3,11 @@
 if (! $this->compact): ?>
 <div class="controls">
     <?= $this->tabs ?>
-    <div class="grid">
-        <?= $this->sortBox ?>
+    <div class="sort-controls-container">
         <?= $this->limiter ?>
-        <?= $this->filterEditor ?>
+        <?= $this->sortBox ?>
     </div>
+    <?= $this->filterEditor ?>
 </div>
 <?php endif ?>
 <?= $this->partial(

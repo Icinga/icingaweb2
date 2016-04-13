@@ -3,14 +3,22 @@
 
 namespace Icinga\Util;
 
+use ArrayIterator;
 use InvalidArgumentException;
-use Iterator;
+use RecursiveIterator;
 
 /**
  * Iterator for traversing a directory
  */
-class DirectoryIterator implements Iterator
+class DirectoryIterator implements RecursiveIterator
 {
+    /**
+     * Iterate files first
+     *
+     * @var int
+     */
+    const FILES_FIRST = 1;
+
     /**
      * Current directory item
      *
@@ -26,11 +34,18 @@ class DirectoryIterator implements Iterator
     protected $extension;
 
     /**
-     * Directory handle
+     * Scanned files
      *
-     * @var resource
+     * @var ArrayIterator
      */
-    private $handle;
+    private $files;
+
+    /**
+     * Iterator flags
+     *
+     * @var int
+     */
+    protected $flags;
 
     /**
      * Current key
@@ -45,6 +60,13 @@ class DirectoryIterator implements Iterator
      * @var string
      */
     protected $path;
+
+    /**
+     * Directory queue if FILES_FIRST flag is set
+     *
+     * @var array
+     */
+    private $queue;
 
     /**
      * Whether to skip empty files
@@ -72,8 +94,9 @@ class DirectoryIterator implements Iterator
      *
      * @param   string  $path       The path of the directory to traverse
      * @param   string  $extension  The file extension to filter for. A leading dot is optional
+     * @param   int     $flags      Iterator flags
      */
-    public function __construct($path, $extension = null)
+    public function __construct($path, $extension = null, $flags = null)
     {
         if (empty($path)) {
             throw new InvalidArgumentException('The path can\'t be empty');
@@ -81,6 +104,9 @@ class DirectoryIterator implements Iterator
         $this->path = $path;
         if (! empty($extension)) {
             $this->extension = '.' . ltrim($extension, '.');
+        }
+        if ($flags !== null) {
+            $this->flags = $flags;
         }
     }
 
@@ -99,6 +125,23 @@ class DirectoryIterator implements Iterator
     /**
      * {@inheritdoc}
      */
+    public function hasChildren()
+    {
+        return static::isReadable($this->current);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getChildren()
+    {
+        return new static($this->current, $this->extension, $this->flags);
+    }
+
+
+    /**
+     * {@inheritdoc}
+     */
     public function current()
     {
         return $this->current;
@@ -110,12 +153,14 @@ class DirectoryIterator implements Iterator
     public function next()
     {
         do {
-            $file = readdir($this->handle);
-            if ($file === false) {
-                $key = false;
+            $this->files->next();
+            $skip = false;
+            if (! $this->files->valid()) {
+                $file = false;
+                $path = false;
                 break;
             } else {
-                $skip = false;
+                $file = $this->files->current();
                 do {
                     if ($this->skipHidden && $file[0] === '.') {
                         $skip = true;
@@ -125,7 +170,10 @@ class DirectoryIterator implements Iterator
                     $path = $this->path . '/' . $file;
 
                     if (is_dir($path)) {
-                        $skip = true;
+                        if ($this->flags & static::FILES_FIRST === static::FILES_FIRST) {
+                            $this->queue[] = array($path, $file);
+                            $skip = true;
+                        }
                         break;
                     }
 
@@ -138,16 +186,18 @@ class DirectoryIterator implements Iterator
                         $skip = true;
                         break;
                     }
-
-                    $key = $file;
-                    $file = $path;
                 } while (0);
             }
         } while ($skip);
 
-        $this->current = $file;
         /** @noinspection PhpUndefinedVariableInspection */
-        $this->key = $key;
+
+        if ($path === false && ! empty($this->queue)) {
+            list($path, $file) = array_shift($this->queue);
+        }
+
+        $this->current = $path;
+        $this->key = $file;
     }
 
     /**
@@ -171,21 +221,13 @@ class DirectoryIterator implements Iterator
      */
     public function rewind()
     {
-        if ($this->handle === null) {
-            $this->handle = opendir($this->path);
-        } else {
-            rewinddir($this->handle);
+        if ($this->files === null) {
+            $files = scandir($this->path);
+            natcasesort($files);
+            $this->files = new ArrayIterator($files);
         }
+        $this->files->rewind();
+        $this->queue = array();
         $this->next();
-    }
-
-    /**
-     * Close directory handle if created
-     */
-    public function __destruct()
-    {
-        if ($this->handle !== null) {
-            closedir($this->handle);
-        }
     }
 }

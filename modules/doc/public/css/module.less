@@ -25,6 +25,7 @@ pre > code {
 
 .chapter a {
   border-bottom: 1px @gray-light dotted;
+  font-weight: @font-weight-bold;
 
   &:hover {
     border-bottom: 1px @text-color solid;
@@ -60,14 +61,11 @@ pre > code {
 
     a {
       &:before {
-        .rounded-corners();
-
-        background-color: @icinga-blue;
-        color: @text-color-on-icinga-blue;
-        content: counter(li) ".";
+        color: @icinga-blue;
+        content: counters(li,".") " ";
         display: inline-block;
         font-size: small;
-        margin-right: 0.25em;
+        font-weight: @font-weight-bold;
         min-width: 1.5em;
         padding: 0.25em;
         text-align: center;

@@ -4,12 +4,8 @@ use Icinga\Web\Widget\Chart\HistoryColorGrid;
 
 if (! $this->compact): ?>
 <div class="controls">
-  <?= $this->tabs; ?>
-  <?= $this->sortBox; ?>
-  <?= $this->limiter; ?>
-  <?= $this->paginator; ?>
-  <?= $this->filterEditor; ?>
-  <?= $form; ?>
+    <?= $this->tabs ?>
+    <?= $this->form ?>
 </div>
 <?php endif ?>
 <div class="content" data-base-target="_next">

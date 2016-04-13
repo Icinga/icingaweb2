@@ -28,9 +28,11 @@ class LdapUtils
         $res = ldap_explode_dn($dn, $with_type ? 0 : 1);
 
         foreach ($res as $k => $v) {
-            $res[$k] = preg_replace(
-                '/\\\([0-9a-f]{2})/ei',
-                "chr(hexdec('\\1'))",
+            $res[$k] = preg_replace_callback(
+                '/\\\([0-9a-f]{2})/i',
+                function ($m) {
+                    return chr(hexdec($m[1]));
+                },
                 $v
             );
         }

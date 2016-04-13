@@ -55,6 +55,9 @@ class ListCommand extends Command
             $query->limit($limit, $this->params->shift('offset'));
         }
         foreach ($this->params->getParams() as $col => $filter) {
+            if (strtolower($col) === 'problems') {
+                $col = 'service_problem';
+            }
             $query->where($col, $filter);
         }
         // $query->applyFilters($this->params->getParams());

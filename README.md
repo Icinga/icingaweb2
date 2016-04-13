@@ -16,7 +16,7 @@ Icinga Core and any other monitoring backend compatible with the IDO database.
 
 ## Installation
 
-For installing Icinga Web 2 please read [doc/installation.md](doc/installation.md).
+For installing Icinga Web 2 please read [doc/02-Installation.md](doc/02-Installation.md).
 
 ## Support
 

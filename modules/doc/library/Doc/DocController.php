@@ -20,6 +20,9 @@ class DocController extends Controller
         if ($this->hasParam('chapter')) {
             $this->params->set('chapter', $this->getParam('chapter'));
         }
+        if ($this->hasParam('image')) {
+            $this->params->set('image', $this->getParam('image'));
+        }
         if ($this->hasParam('moduleName')) {
             $this->params->set('moduleName', $this->getParam('moduleName'));
         }
@@ -31,20 +34,27 @@ class DocController extends Controller
      * @param string    $path       Path to the documentation
      * @param string    $chapter    ID of the chapter
      * @param string    $url        URL to replace links with
+     * @param string    $imageUrl   URL to images
      * @param array     $urlParams  Additional URL parameters
      */
-    protected function renderChapter($path, $chapter, $url, array $urlParams = array())
+    protected function renderChapter($path, $chapter, $url, $imageUrl = null, array $urlParams = array())
     {
         $parser = new DocParser($path);
         $section = new DocSectionRenderer($parser->getDocTree(), DocSectionRenderer::decodeUrlParam($chapter));
         $this->view->section = $section
+            ->setHighlightSearch($this->params->get('highlight-search'))
+            ->setImageUrl($imageUrl)
             ->setUrl($url)
-            ->setUrlParams($urlParams)
-            ->setHighlightSearch($this->params->get('highlight-search'));
-        $this->view->title = $chapter;
+            ->setUrlParams($urlParams);
+        $first = null;
+        foreach ($section as $first) {
+            break;
+        }
+        $title = $first === null ? ucfirst($chapter) : $first->getTitle();
+        $this->view->title = $title;
         $this->getTabs()->add('toc', array(
             'active'    => true,
-            'title'     => ucfirst($chapter),
+            'title'     => $title,
             'url'       => Url::fromRequest()
         ));
         $this->render('chapter', null, true);
@@ -66,10 +76,10 @@ class DocController extends Controller
             ->setUrl($url)
             ->setUrlParams($urlParams);
         $name = ucfirst($name);
-        $this->view->title = sprintf($this->translate('%s Documentation'), $name);
+        $title = sprintf($this->translate('%s Documentation'), $name);
         $this->getTabs()->add('toc', array(
             'active'    => true,
-            'title'     => $name,
+            'title'     => $title,
             'url'       => Url::fromRequest()
         ));
         $this->render('toc', null, true);

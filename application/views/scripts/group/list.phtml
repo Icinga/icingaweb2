@@ -5,16 +5,14 @@ use Icinga\Data\Reducible;
 
 if (! $this->compact): ?>
 <div class="controls separated">
-    <?= $tabs; ?>
-    <div class="grid">
-        <?= $this->sortBox ?>
+    <?= $this->tabs ?>
+    <?= $this->paginator ?>
+    <div class="sort-controls-container">
         <?= $this->limiter ?>
-        <?= $this->paginator ?>
+        <?= $this->sortBox ?>
     </div>
-    <div>
-        <?= $this->backendSelection; ?>
-        <?= $this->filterEditor; ?>
-    </div>
+    <?= $this->backendSelection ?>
+    <?= $this->filterEditor ?>
 </div>
 <?php endif ?>
 <div class="content">
@@ -45,8 +43,7 @@ if (! isset($backend)) {
 <?php if (! $groups->hasResult()): ?>
     <p><?= $this->translate('No user groups found matching the filter'); ?></p>
 </div>
-<?php endif ?>
-
+<?php return; endif ?>
     <table data-base-target="_next" class="table-row-selectable common-table">
         <thead>
             <tr>
@@ -85,8 +82,9 @@ if (! isset($backend)) {
                             'group'     => $group->group_name
                         ),
                         array(
+                            'class'     => 'action-link',
                             'title'     => sprintf($this->translate('Remove user group %s'), $group->group_name),
-                            'icon'      => 'trash'
+                            'icon'      => 'cancel'
                         )
                     ); ?>
                 </td>

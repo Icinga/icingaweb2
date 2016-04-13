@@ -38,6 +38,14 @@ class ExternalBackend implements UserBackendInterface
     /**
      * {@inheritdoc}
      */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function setName($name)
     {
         $this->name = $name;
@@ -45,11 +53,22 @@ class ExternalBackend implements UserBackendInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Get the remote user from environment or $_SERVER, if any
+     *
+     * @param   string  $variable   The name variable where to read the user from
+     *
+     * @return  string|null
      */
-    public function getName()
+    public static function getRemoteUser($variable = 'REMOTE_USER')
     {
-        return $this->name;
+        $username = getenv($variable);
+        if ($username !== false) {
+            return $username;
+        }
+        if (array_key_exists($variable, $_SERVER)) {
+            return $_SERVER[$variable];
+        }
+        return null;
     }
 
 
@@ -58,8 +77,8 @@ class ExternalBackend implements UserBackendInterface
      */
     public function authenticate(User $user, $password = null)
     {
-        $username = getenv('REMOTE_USER');
-        if ($username !== false) {
+        $username = static::getRemoteUser();
+        if ($username !== null) {
             $user->setExternalUserInformation($username, 'REMOTE_USER');
 
             if ($this->stripUsernameRegexp) {

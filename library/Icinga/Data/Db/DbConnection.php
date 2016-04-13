@@ -152,11 +152,12 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
                  */
                 $driverOptions[PDO::MYSQL_ATTR_INIT_COMMAND] =
                     'SET SESSION SQL_MODE=\'STRICT_ALL_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,'
-                    . 'NO_AUTO_CREATE_USER,ANSI_QUOTES,PIPES_AS_CONCAT,NO_ENGINE_SUBSTITUTION\';';
-                if (array_key_exists('charset', $adapterParamaters) && $adapterParamaters['charset']) {
-                    $driverOptions[PDO::MYSQL_ATTR_INIT_COMMAND] .= 'SET NAMES ' . $adapterParamaters['charset']. ';';
+                    . 'NO_AUTO_CREATE_USER,ANSI_QUOTES,PIPES_AS_CONCAT,NO_ENGINE_SUBSTITUTION\'';
+                if (isset($adapterParamaters['charset'])) {
+                    $driverOptions[PDO::MYSQL_ATTR_INIT_COMMAND] .= ', NAMES ' . $adapterParamaters['charset'];
                     unset($adapterParamaters['charset']);
                 }
+                $driverOptions[PDO::MYSQL_ATTR_INIT_COMMAND] .=';';
 
                 $adapterParamaters['port'] = $this->config->get('port', 3306);
                 break;

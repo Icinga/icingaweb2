@@ -1,11 +1,11 @@
 <?php if (! $this->compact): ?>
 <div class="controls">
-    <?= $tabs ?>
+    <?= $this->tabs ?>
     <?= $this->render('list/components/selectioninfo.phtml') ?>
-    <div class="grid">
-        <?= $this->sortBox ?>
+    <?= $this->paginator ?>
+    <div class="sort-controls-container">
         <?= $this->limiter ?>
-        <?= $this->paginator ?>
+        <?= $this->sortBox ?>
     </div>
     <?= $this->filterEditor ?>
 </div>

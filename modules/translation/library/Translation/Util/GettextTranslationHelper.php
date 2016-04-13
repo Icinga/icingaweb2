@@ -284,6 +284,7 @@ class GettextTranslationHelper
                     '--keyword=translatePlural:1,2',
                     '--keyword=translatePlural:1,2,4c',
                     '--keyword=mt:2',
+                    '--keyword=mt:2,3c',
                     '--keyword=mtp:2,3',
                     '--keyword=mtp:2,3,5c',
                     '--keyword=t',

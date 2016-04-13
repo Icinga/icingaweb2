@@ -244,20 +244,35 @@ class DashboardController extends ActionController
         if (! $this->dashboard->hasPanes()) {
             $this->view->title = 'Dashboard';
         } else {
-            if ($this->_getParam('pane')) {
-                $pane = $this->_getParam('pane');
-                $this->dashboard->activate($pane);
-            }
-            if ($this->dashboard === null) {
-                $this->view->title = 'Dashboard';
-            } else {
-                $this->view->title = $this->dashboard->getActivePane()->getTitle() . ' :: Dashboard';
-                if ($this->hasParam('remove')) {
-                    $this->dashboard->getActivePane()->removeDashlet($this->getParam('remove'));
-                    $this->dashboard->getConfig()->saveIni();
-                    $this->redirectNow(URL::fromRequest()->remove('remove'));
+            $panes = array_filter(
+                $this->dashboard->getPanes(),
+                function ($pane) {
+                    return ! $pane->getDisabled();
                 }
-                $this->view->dashboard = $this->dashboard;
+            );
+            if (empty($panes)) {
+                $this->view->title = 'Dashboard';
+                $this->getTabs()->add('dashboard', array(
+                    'active'    => true,
+                    'title'     => $this->translate('Dashboard'),
+                    'url'       => Url::fromRequest()
+                ));
+            } else {
+                if ($this->_getParam('pane')) {
+                    $pane = $this->_getParam('pane');
+                    $this->dashboard->activate($pane);
+                }
+                if ($this->dashboard === null) {
+                    $this->view->title = 'Dashboard';
+                } else {
+                    $this->view->title = $this->dashboard->getActivePane()->getTitle() . ' :: Dashboard';
+                    if ($this->hasParam('remove')) {
+                        $this->dashboard->getActivePane()->removeDashlet($this->getParam('remove'));
+                        $this->dashboard->getConfig()->saveIni();
+                        $this->redirectNow(URL::fromRequest()->remove('remove'));
+                    }
+                    $this->view->dashboard = $this->dashboard;
+                }
             }
         }
     }

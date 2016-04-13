@@ -21,6 +21,7 @@
 }
 
 .icon-col {
+  text-align: center;
   width: 1em;
 }
 
@@ -68,6 +69,16 @@ a:hover > .icon-cancel {
 
 .button-link {
   .action-link();
+  .rounded-corners(3px);
+
+  background: @gray-lighter;
+  display: inline-block;
+  padding: 0.25em 0.5em;
+
+  &:hover {
+    background: @gray-lightest;
+    text-decoration: none;
+  }
 }
 
 // List styles
@@ -175,41 +186,6 @@ a:hover > .icon-cancel {
   text-align: left;
   vertical-align: top;
   width: @name-value-table-name-width;
-}
-
-// TODO(el): Fix
-.controls {
-  .limiter-control {
-    float: right;
-    padding: @vertical-padding / 2 0;
-    margin-bottom: 0.25em;
-  }
-
-  .pagination-control {
-    padding: @vertical-padding / 2 0;
-    margin-bottom: 0.25em;
-  }
-
-  .sort-control {
-    float: right;
-    padding: @vertical-padding / 2 0;
-    margin-bottom: 0.25em;
-    margin-left: 0.5em;
-  }
-
-  .sort-direction-control {
-    margin-bottom: 0.5em;
-    margin-left: 0.5em;
-    width: 1em;
-  }
-
-  .filter {
-    margin-bottom: 0.5em;
-  }
-
-  .selection-info {
-    margin-left: 0.5em;
-  }
 }
 
 /* Styles for centering content of unknown width and height both horizontally and vertically
