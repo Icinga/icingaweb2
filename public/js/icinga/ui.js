@@ -652,8 +652,6 @@
                 return;
             }
 
-            $($container).trigger('fix-controls');
-
             if ($container.parent('.dashboard').length) {
                 return;
             }
