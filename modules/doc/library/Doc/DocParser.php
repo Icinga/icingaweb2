@@ -133,9 +133,11 @@ class DocParser
      */
     protected function uuid($id, $filename, SimpleTree $tree)
     {
-        if ($tree->getNode($id) !== null) {
-            $id = $id . '-' . md5($filename);
+        $id = str_replace(' ', '-', $id);
+        if ($tree->getNode($id) === null) {
+            return $id;
         }
+        $id = $id . '-' . md5($filename);
         $offset = 0;
         while ($tree->getNode($id)) {
             if ($offset++ === 0) {
