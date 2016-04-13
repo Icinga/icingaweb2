@@ -3,7 +3,7 @@
 %define revision 1
 
 Name:           icingaweb2
-Version:        2.2.0
+Version:        2.3.0
 Release:        %{revision}%{?dist}
 Summary:        Icinga Web 2
 Group:          Applications/System
