@@ -421,7 +421,7 @@
             var $target;
             var formerUrl;
             var remote = /^(?:[a-z]+:)\/\//;
-            if (href.match(/^(mailto|javascript):/)) {
+            if (href.match(/^(mailto|javascript|data):/)) {
                 return true;
             }
 
