@@ -5,86 +5,77 @@
     'use strict';
 
     /**
-     * Initialize container data
+     * Initialize container break points, if event is not bubbling
      *
      * @param {event} e - Event
      */
-    function onLayoutRendered(e) {
+    function onInitialize(e) {
+        if (this !== e.target) {
+            return;
+        }
         var _this = e.data.self;
-        if (!_this.layoutRendered) {
-            console.log('layout render');
-            _this.containerData = {};
-            $('#col1, #col2').each( function() {
-                var $container = $(this);
+        _this.containerData = {};
+        $('#col1, #col2').each( function() {
+            var $this = $(this);
+            if ($this.find('.tabs').length) {
                 var containerData = {
                     breakIndex: false,
                     breakPoints: [],
-                    isToRender: true
                 };
-                _this.containerData[$container.attr('id')] = containerData;
-            });
-            _this.layoutRendered = true;
-        }
-    }
-
-    /**
-     * Flag container as being rendered
-     *
-     * @param {event} e - Event
-     */
-    function onRendered(e) {
-        console.log(e.type);
-        var _this = e.data.self;
-        var $container = $(this);
-        _this.containerData[$container.attr('id')].isToRender = true;
-    }
-
-    /**
-     * Cache break points for #col1 and #col2
-     *
-     * @param {event} e - Event
-     */
-    function onWindowResized(e) {
-        console.log(e.type);
-        var _this = e.data.self;
-        $('#col1, #col2').each(function() {
-            var $this = $(this);
-            cacheBreakpoints($this, _this);
-            updateBreakIndex($this, _this);
-        });
-    }
-
-    /**
-     * Update container's break index if it has been already rendered
-     *
-     * @param {event} e - Event
-     */
-    function onFixControls(e) {
-        console.log(e.type);
-        var $container = $(this);
-        var _this = e.data.self;
-        $('#col1, #col2').each(function() {
-            var $container = $(this);
-            if (_this.containerData && _this.containerData[$container.attr('id')] && _this.containerData[$container.attr('id')].isToRender) {
-                console.log("fix", $container, $container.find('.tabs').length > 0);
-                if ($container.find('.tabs').length > 0) {
-                    console.log('fix 2', $container);
-                    cacheBreakpoints($container, _this);
-                    updateBreakIndex($container, _this);
-                }
+                _this.containerData[$this.attr('id')] = containerData;
+                window.setTimeout(function() {
+                    cacheBreakpoints($this, _this);
+                    updateBreakIndex($this, _this);
+                }, 0);
             }
         });
     }
 
     /**
-     * Cache tab break points in container
+     * Update container break points, if event is not bubbling
+     *
+     * @param {event} e - Event
+     */
+    function onColumnRendered(e) {
+        var _this = e.data.self;
+        if (this !== e.target) {
+            return;
+        }
+        $('#col1, #col2').each(function() {
+            var $this = $(this);
+            if ($this.find('.tabs').length) {
+                window.setTimeout(function() {
+                    cacheBreakpoints($this, _this);
+                    updateBreakIndex($this, _this);
+                }, 0);
+            }
+        });
+    }
+
+    /**
+     * Update container break points
+     *
+     * @param {event} e - Event
+     */
+    function onWindowResized(e) {
+        var _this = e.data.self;
+        $('#col1, #col2').each(function() {
+            var $this = $(this);
+            if ($this.find('.tabs').length) {
+                cacheBreakpoints($this, _this);
+                updateBreakIndex($this, _this);
+            }
+        });
+    }
+
+    /**
+     * Cache tab break points for container
      *
      * @param {jQuery} $container - Element containing the tabs
      *
      * @param {object} e - The behavior
      */
     function cacheBreakpoints($container, e) {
-        console.log("cache");
         var containerData = {};
         var w = $container.find('.dropdown-nav-item').outerWidth(true)+1;
         containerData.breakPoints = [];
@@ -92,18 +83,16 @@
             containerData.breakPoints.push(w += $(this).outerWidth(true) + 1);
         });
         e.containerData[$container.attr('id')] = containerData;
-        e.containerData[$container.attr('id')].isToRender = true;
     }
 
     /**
-     * Check Breakpoints and accordingly set the breakIndex
+     * Check break points and accordingly set the break index
      *
      * @param {jQuery} $container - Element containing the tabs
      *
      * @param {object} e - The behavior
      */
     function updateBreakIndex($container, e) {
-        console.log("update");
         var b = false;
         var breakPoints = e.containerData[$container.attr('id')].breakPoints;
         for (var i = 0; i < breakPoints.length; i++) {
@@ -116,7 +105,7 @@
     }
 
     /**
-     * Set the breakIndex and if value has changed render Tabs
+     * Set the break index and if value has changed render Tabs
      *
      * @param {jQuery} $container - Element containing the tabs
      *
@@ -126,7 +115,6 @@
      */
     function setBreakIndex($container, newIndex, e) {
         var containerData = e.containerData[$container.attr('id')];
-        console.log('old : new', containerData.breakIndex, newIndex)
         if (newIndex === containerData.breakIndex) {
             return;
         } else {
@@ -143,7 +131,6 @@
      * @param {object} e - The behavior
      */
     function renderTabs($container, e) {
-        console.log("render tabs", $container);
         var breakIndex = e.containerData[$container.attr('id')].breakIndex;
 
         $container.find('.tabs.cloned').remove();
@@ -192,9 +179,10 @@
     var ResponsiveTabBar = function(icinga) {
         Icinga.EventListener.call(this, icinga);
 
-        this.on('rendered', '#layout', onLayoutRendered, this);
-        this.on('rendered', '#col1, #col2', onRendered, this);
-        this.on('fix-controls', '#col1, #col2', onFixControls, this);
+        this.on('rendered', '#layout', onInitialize, this);
+        this.on('rendered', '#col1, #col2', onColumnRendered, this);
+        this.on('close-column', '#col1, #col2', onColumnRendered, this);
+
         $(window).resize({self: this}, onWindowResized);
     };
 
