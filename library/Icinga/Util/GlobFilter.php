@@ -86,8 +86,10 @@ class GlobFilter
                     unset($pattern[$i]);
                 } elseif ($subPattern === '.*.*') {
                     $pattern[$i] = '**';
-                } else {
+                } elseif ($subPattern === '.*') {
                     $pattern[$i] = '/^' . $subPattern . '$/';
+                } else {
+                    $pattern[$i] = '/^' . trim($subPattern) . '$/i';
                 }
             }
 
