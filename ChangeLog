@@ -1,6 +1,8 @@
 # Icinga Web 2 Changelog
 
-## What's New in Version 2.3.0
+## What's New
+
+### What's New in Version 2.3.0
 
 #### Features
 
@@ -34,7 +36,7 @@
 * Bug 11558: Missing ) in the documentation
 * Bug 11568: Docs: Global permissions table is broken
 
-## What's New in Version 2.2.0
+### What's New in Version 2.2.0
 
 #### Features
 
@@ -95,7 +97,7 @@
 * Bug 11197: Menu items without url should ignore the target configuration
 * Bug 11260: Scheduling downtimes through the API not working
 
-## What's New in Version 2.1.1
+### What's New in Version 2.1.1
 
 #### Features
 
@@ -127,7 +129,7 @@
 * Bug 10886: "impacted" container is no longer fading out
 * Bug 10892: Wrong mask for FileCache's temp directory
 
-## What's New in Version 2.1.0
+### What's New in Version 2.1.0
 
 #### Features
 
@@ -168,9 +170,9 @@
 * Bug 10614: Class loader: hardcode module and Zend prefixes
 * Bug 10623: Acknowledging multiple selected objects erroneous
 
-## What's New in Version 2.0.0
+### What's New in Version 2.0.0
 
-### Changes
+#### Changes
 
 
 Upgrading to Icinga Web 2 2.0.0
@@ -372,9 +374,9 @@ The location of a user's preferences has been changed from config-dir/preference
 * Bug 10246: Use a separate configuration file for each type of navigation item
 * Bug 10263: Forms with target=_next remain unusable after first submission
 
-## What's New in Version 2.0.0-rc1
+### What's New in Version 2.0.0-rc1
 
-### Changes
+#### Changes
 
 * Improve layout and look and feel in many ways
 * Apply host, service and custom variable restrictions to all monitoring objects

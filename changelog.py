@@ -1,22 +1,20 @@
 #!/usr/bin/env python
-#/******************************************************************************
-# * Icinga 2                                                                   *
-# * Copyright (C) 2012-2015 Icinga Development Team (http://www.icinga.org)    *
-# *                                                                            *
-# * This program is free software; you can redistribute it and/or              *
-# * modify it under the terms of the GNU General Public License                *
-# * as published by the Free Software Foundation; either version 2             *
-# * of the License, or (at your option) any later version.                     *
-# *                                                                            *
-# * This program is distributed in the hope that it will be useful,            *
-# * but WITHOUT ANY WARRANTY; without even the implied warranty of             *
-# * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the              *
-# * GNU General Public License for more details.                               *
-# *                                                                            *
-# * You should have received a copy of the GNU General Public License          *
-# * along with this program; if not, write to the Free Software Foundation     *
-# * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.             *
-# ******************************************************************************/
+# Icinga 2
+# Copyright (C) 2012-2016 Icinga Development Team (https://www.icinga.org/)
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software Foundation
+# Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 
 import urllib2, json, sys, string
 from argparse import ArgumentParser
@@ -27,7 +25,7 @@ ISSUE_URL= "https://dev.icinga.org/issues/"
 ISSUE_PROJECT="icingaweb2"
 
 arg_parser = ArgumentParser(description= "%s (Version: %s)" % (DESCRIPTION, VERSION))
-arg_parser.add_argument('-V', '--version', type=str, help="define version to query")
+arg_parser.add_argument('-V', '--version', required=True, type=str, help="define version to query")
 arg_parser.add_argument('-p', '--project', type=str, help="add urls to issues")
 arg_parser.add_argument('-l', '--links', action='store_true', help="add urls to issues")
 arg_parser.add_argument('-H', '--html', action='store_true', help="print html output (defaults to markdown)")
@@ -53,6 +51,21 @@ def format_logentry(log_entry, args = args, issue_url = ISSUE_URL):
            return "<li>%s %d: %s</li>" % log_entry
        else:
            return "* %s %d: %s" % log_entry
+
+def print_category(category, entries):
+    if len(entries) > 0:
+        print ""
+        print format_header(category, 4)
+        print ""
+        if args.html:
+            print "<ul>"
+
+        for entry in sorted(entries):
+            print format_logentry(entry)
+
+        if args.html:
+            print "</ul>"
+            print ""
 
 
 version_name = args.version
@@ -84,18 +97,20 @@ if "custom_fields" in version:
 
     changes = string.join(string.split(changes, "\r\n"), "\n")
 
-print format_header("What's New in Version %s" % (version_name), 2)
+print format_header("What's New in Version %s" % (version_name), 3)
 print ""
 
 if changes:
-    print format_header("Changes", 3)
+    print format_header("Changes", 4)
     print ""
     print changes
     print ""
 
 offset = 0
 
-log_entries = []
+features = []
+bugfixes = []
+support = []
 
 while True:
     # We could filter using &cf_13=1, however this doesn't currently work because the custom field isn't set
@@ -120,29 +135,18 @@ while True:
             if ignore_issue:
                 continue
 
-        log_entries.append((issue["tracker"]["name"], issue["id"], issue["subject"].strip()))
+        entry = (issue["tracker"]["name"], issue["id"], issue["subject"].strip())
 
-for p in range(2):
-    not_empty = False
+	if issue["tracker"]["name"] == "Feature":
+            features.append(entry)
+	elif issue["tracker"]["name"] == "Bug":
+            bugfixes.append(entry)
+	elif issue["tracker"]["name"] == "Support":
+            support.append(entry)
 
-    for log_entry in log_entries:
-        if (p == 0 and log_entry[0] == "Feature") or (p == 1 and log_entry[0] != "Feature"):
-            not_empty = True
+print_category("Feature", features)
+print_category("Bugfixes", bugfixes)
+print_category("Support", support)
 
-    if not_empty:
-        print format_header("Features", 4) if p == 0 else format_header("Bugfixes", 4)
-        print ""
-	if args.html:
-            print "<ul>"
-
-    for log_entry in sorted(log_entries):
-        if (p == 0 and log_entry[0] == "Feature") or (p == 1 and log_entry[0] != "Feature"):
-            print format_logentry(log_entry)
-
-    if not_empty:
-	if args.html:
-            print "</ul>"
-
-        print ""
 
 sys.exit(0)
