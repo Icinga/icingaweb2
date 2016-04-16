@@ -16,7 +16,10 @@ class ContactgroupQuery extends IdoQuery
     /**
      * {@inheritdoc}
      */
-    protected $groupBase = array('contactgroups' => array('cg.contactgroup_id'));
+    protected $groupBase = array(
+        'contactgroups' => array('cg.contactgroup_id'),
+        'contactgroup_name' => array('cgo.name1')
+    );
 
     /**
      * {@inheritdoc}
