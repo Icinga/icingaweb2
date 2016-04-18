@@ -113,6 +113,16 @@ class DateTimePicker extends FormElement
     }
 
     /**
+     * Get the expected date and time format of any user input
+     *
+     * @return string
+     */
+    public function getFormat()
+    {
+        return $this->local ? 'Y-m-d\TH:i:s' : DateTime::RFC3339;
+    }
+
+    /**
      * Is the date and time valid?
      *
      * @param   string|DateTime     $value
@@ -127,7 +137,7 @@ class DateTimePicker extends FormElement
         }
 
         if (! $value instanceof DateTime) {
-            $format = $this->local === true ? 'Y-m-d\TH:i:s' : DateTime::RFC3339;
+            $format = $this->getFormat();
             $dateTime = DateTime::createFromFormat($format, $value);
             if ($dateTime === false) {
                 $dateTime = DateTime::createFromFormat(substr($format, 0, strrpos($format, ':')), $value);
