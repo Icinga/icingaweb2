@@ -3,6 +3,7 @@
 
 namespace Icinga\Module\Monitoring\Forms\Command\Object;
 
+use DateTime;
 use Icinga\Module\Monitoring\Command\Object\PropagateHostDowntimeCommand;
 use Icinga\Module\Monitoring\Command\Object\ScheduleHostDowntimeCommand;
 use Icinga\Module\Monitoring\Command\Object\ScheduleServiceDowntimeCommand;
