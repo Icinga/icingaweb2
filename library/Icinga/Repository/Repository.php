@@ -903,8 +903,9 @@ abstract class Repository implements Selectable
         $blacklist = $this->getBlacklistedQueryColumns();
         $columns = array();
         foreach ($queryColumns[$table] as $alias => $column) {
-            if (! in_array(is_string($alias) ? $alias : $column, $blacklist)) {
-                $columns[$alias] = $this->resolveQueryColumnAlias($table, $alias);
+            $name = is_string($alias) ? $alias : $column;
+            if (! in_array($name, $blacklist)) {
+                $columns[$alias] = $this->resolveQueryColumnAlias($table, $name);
             }
         }
 
