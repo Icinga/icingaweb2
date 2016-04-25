@@ -9,6 +9,7 @@ use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\NotFoundError;
 use Icinga\Forms\ConfirmRemovalForm;
 use Icinga\Web\Notification;
+use Icinga\Module\Monitoring\Backend;
 use Icinga\Module\Monitoring\Controller;
 use Icinga\Module\Monitoring\Forms\Config\BackendConfigForm;
 use Icinga\Module\Monitoring\Forms\Config\SecurityConfigForm;
@@ -199,7 +200,11 @@ class ConfigController extends Controller
         $form->setRedirectUrl('monitoring/config');
         $form->setTitle(sprintf($this->translate('Edit Command Transport %s'), $transportName));
         $form->setIniConfig($this->Config('commandtransports'));
-        $form->setInstanceNames($this->backend->select()->from('instance', array('instance_name'))->fetchColumn());
+        $form->setInstanceNames(
+            Backend::createBackend($this->_getParam('backend'))->select()->from(
+                'instance', array('instance_name')
+            )->fetchColumn()
+        );
         $form->setOnSuccess(function (TransportConfigForm $form) use ($transportName) {
             try {
                 $form->edit($transportName, array_map(
@@ -241,7 +246,11 @@ class ConfigController extends Controller
         $form->setRedirectUrl('monitoring/config');
         $form->setTitle($this->translate('Create New Command Transport'));
         $form->setIniConfig($this->Config('commandtransports'));
-        $form->setInstanceNames($this->backend->select()->from('instance', array('instance_name'))->fetchColumn());
+        $form->setInstanceNames(
+            Backend::createBackend($this->_getParam('backend'))->select()->from(
+                'instance', array('instance_name')
+            )->fetchColumn()
+        );
         $form->setOnSuccess(function (TransportConfigForm $form) {
             try {
                 $form->add(array_filter($form->getValues()));
