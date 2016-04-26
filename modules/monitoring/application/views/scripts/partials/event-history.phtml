@@ -31,6 +31,10 @@ $history->limit($limit * $page);
     <p><?= $this->translate('No historical events found matching the filter.') ?></p>
 </div>
 <?php return; endif ?>
+<?php
+$dateFormat = $this->translate('%A, %B %e, %Y', 'date.verbose');
+$lastDate = null;
+?>
     <table class="state-table" data-base-target="_next"<?php if (isset($tableCssClass)): ?> class="<?=$tableCssClass ?>"<?php endif ?>>
     <tbody>
     <?php foreach ($history->peekAhead() as $event):
@@ -104,6 +108,15 @@ $history->limit($limit * $page);
                 $label = $this->translate('DOWNTIME END');
                 break;
         } ?>
+        <?php
+        $currentDate = strftime($dateFormat, (int) $event->timestamp);
+        if ($currentDate !== $lastDate):
+            $lastDate = $currentDate;
+        ?>
+            <tr>
+                <th colspan="2"><?= $currentDate ?></th>
+            </tr>
+        <?php endif ?>
         <tr>
             <td class="state-col state-<?= $stateName ?>">
             <?php if ($history->getIteratorPosition() % $limit === 0): ?>

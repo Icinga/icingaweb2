@@ -2,21 +2,21 @@
 # Copyright (C) 2016 Icinga Development Team
 # This file is distributed under the same license as Monitoring Module.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# 
-#, fuzzy
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: Monitoring Module (2.1.2)\n"
 "Report-Msgid-Bugs-To: dev@icinga.org\n"
 "POT-Creation-Date: 2016-02-29 14:40+0000\n"
-"PO-Revision-Date: 2015-11-16 14:50+0100\n"
+"PO-Revision-Date: 2016-04-26 12:08+0200\n"
 "Last-Translator: Thomas Gelf <thomas@gelf.net>\n"
 "Language: de_DE\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language-Team: \n"
+"X-Generator: Poedit 1.8.7.1\n"
 
 #: /vagrant/modules/monitoring/application/controllers/ChartController.php:375
 msgid " Down Hosts (Handled)"
@@ -4386,6 +4386,11 @@ msgstr "nicht erreichbar"
 #: /vagrant/modules/monitoring/application/views/scripts/show/components/checksource.phtml:9
 msgid "is reachable"
 msgstr "erreichbar"
+
+#: /vagrant/modules/monitoring/application/views/scripts/partials/event-history.phtml:41
+msgctxt "date.verbose"
+msgid "%A, %B %e, %Y"
+msgstr "%A, %e. %B %Y"
 
 #: /vagrant/modules/monitoring/application/views/scripts/alertsummary/index.phtml:35
 msgid "notifications per hour"
