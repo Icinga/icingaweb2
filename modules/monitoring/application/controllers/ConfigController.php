@@ -201,9 +201,7 @@ class ConfigController extends Controller
         $form->setTitle(sprintf($this->translate('Edit Command Transport %s'), $transportName));
         $form->setIniConfig($this->Config('commandtransports'));
         $form->setInstanceNames(
-            Backend::createBackend($this->_getParam('backend'))->select()->from(
-                'instance', array('instance_name')
-            )->fetchColumn()
+            Backend::createBackend()->select()->from('instance', array('instance_name'))->fetchColumn()
         );
         $form->setOnSuccess(function (TransportConfigForm $form) use ($transportName) {
             try {
@@ -247,9 +245,7 @@ class ConfigController extends Controller
         $form->setTitle($this->translate('Create New Command Transport'));
         $form->setIniConfig($this->Config('commandtransports'));
         $form->setInstanceNames(
-            Backend::createBackend($this->_getParam('backend'))->select()->from(
-                'instance', array('instance_name')
-            )->fetchColumn()
+            Backend::createBackend()->select()->from('instance', array('instance_name'))->fetchColumn()
         );
         $form->setOnSuccess(function (TransportConfigForm $form) {
             try {
