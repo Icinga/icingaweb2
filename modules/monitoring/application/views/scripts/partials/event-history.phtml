@@ -110,7 +110,7 @@ $history->limit($limit * $page);
                 <a id="page-<?= $history->getIteratorPosition() / $limit + 1 ?>"></a>
             <?php endif ?>
                 <div class="state-label"><?= $this->escape($label) ?></div>
-                <div class="state-meta"><?= $this->timeAgo($event->timestamp, $this->compact) ?></div>
+                <div class="state-meta"><?= $this->formatTime($event->timestamp) ?></div>
             </td>
             <td>
                 <?php if ($this->isOverview): ?>
