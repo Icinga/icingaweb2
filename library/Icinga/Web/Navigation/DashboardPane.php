@@ -17,6 +17,8 @@ class DashboardPane extends NavigationItem
      */
     protected $dashlets;
 
+    protected $disabled;
+
     /**
      * Set this pane's dashlets
      *
@@ -71,5 +73,25 @@ class DashboardPane extends NavigationItem
             $this->getDashlets(false),
             $item->getDashlets(false)
         ));
+    }
+
+    /**
+     * Set disabled state for pane
+     *
+     * @param bool $disabled
+     */
+    public function setDisabled($disabled=true)
+    {
+        $this->disabled = (bool) $disabled;
+    }
+
+    /**
+     * Get disabled state for pane
+     *
+     * @return bool
+     */
+    public function getDisabled()
+    {
+        return $this->disabled;
     }
 }

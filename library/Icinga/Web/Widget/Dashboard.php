@@ -373,8 +373,15 @@ class Dashboard extends AbstractWidget
      */
     private function setDefaultPane()
     {
-        reset($this->panes);
-        $active = key($this->panes);
+        $active = null;
+
+        foreach ($this->panes as $key=>$pane) {
+            if ($pane->getDisabled() === false) {
+                $active = $key;
+                break;
+            }
+        }
+
         if ($active !== null) {
             $this->activate($active);
         }
