@@ -41,7 +41,7 @@ class ThresholdRange
         $range = new static();
 
         $rawRange = ltrim($rawRange);
-        if (strpos($rawRange, '@') === 0) {
+        if (substr($rawRange, 0, 1) === '@') {
             $range->setInverted(true);
             $rawRange = substr($rawRange, 1);
         }
