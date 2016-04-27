@@ -111,7 +111,7 @@ class Perfdata
     {
         if (empty($perfdata)) {
             throw new InvalidArgumentException('Perfdata::fromString expects a string with content');
-        } elseif (false === strpos($perfdata, '=')) {
+        } elseif (strpos($perfdata, '=') === false) {
             throw new InvalidArgumentException(
                 'Perfdata::fromString expects a key=value formatted string. Got "' . $perfdata . '" instead'
             );
@@ -211,8 +211,8 @@ class Perfdata
         }
 
         if ($this->maxValue !== null) {
-            $minValue = $this->minValue !== null ? $this->minValue : 0;
-            if ((float) ($this->maxValue - $minValue) === 0.0) {
+            $minValue = $this->minValue !== null ? $this->minValue : 0.0;
+            if ($this->maxValue == $minValue) {
                 return null;
             }
 
