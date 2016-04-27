@@ -9,14 +9,14 @@ namespace Icinga\Module\Monitoring\Plugin;
 class ThresholdRange
 {
     /**
-     * The least value inside the range (null stands for -∞)
+     * The smallest value inside the range (null stands for -∞)
      *
      * @var float|null
      */
     protected $min;
 
     /**
-     * The greatest value inside the range (null stands for ∞)
+     * The biggest value inside the range (null stands for ∞)
      *
      * @var float|null
      */
@@ -73,7 +73,7 @@ class ThresholdRange
     }
 
     /**
-     * Set the least value inside the range (null stands for -∞)
+     * Set the smallest value inside the range (null stands for -∞)
      *
      * @param   float|null  $min
      *
@@ -86,7 +86,7 @@ class ThresholdRange
     }
 
     /**
-     * Get the least value inside the range (null stands for -∞)
+     * Get the smallest value inside the range (null stands for -∞)
      *
      * @return  float|null
      */
@@ -96,7 +96,7 @@ class ThresholdRange
     }
 
     /**
-     * Set the greatest value inside the range (null stands for ∞)
+     * Set the biggest value inside the range (null stands for ∞)
      *
      * @param   float|null  $max
      *
@@ -109,7 +109,7 @@ class ThresholdRange
     }
 
     /**
-     * Get the greatest value inside the range (null stands for ∞)
+     * Get the biggest value inside the range (null stands for ∞)
      *
      * @return  float|null
      */
@@ -142,9 +142,11 @@ class ThresholdRange
     }
 
     /**
+     * Return whether $value is inside $this
+     *
      * @param   float   $value
      *
-     * @return  bool    Whether $value is inside $this
+     * @return  bool
      */
     public function contains($value)
     {
@@ -154,7 +156,9 @@ class ThresholdRange
     }
 
     /**
-     * @return  string  The textual representation of $this, suitable for fromString()
+     * Return the textual representation of $this, suitable for fromString()
+     *
+     * @return  string
      */
     public function __toString()
     {
