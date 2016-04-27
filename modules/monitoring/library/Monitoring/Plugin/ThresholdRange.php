@@ -48,7 +48,7 @@ class ThresholdRange
 
         if (strpos($rawRange, ':') === false) {
             $min = 0.0;
-            $max = trim(floatval($rawRange));
+            $max = floatval(trim($rawRange));
         } else {
             list($min, $max) = explode(':', $rawRange, 2);
             $min = trim($min);
