@@ -40,6 +40,7 @@ class ThresholdRange
     {
         $range = new static();
 
+        $rawRange = ltrim($rawRange);
         if (strpos($rawRange, '@') === 0) {
             $range->setInverted(true);
             $rawRange = substr($rawRange, 1);
@@ -47,9 +48,11 @@ class ThresholdRange
 
         if (strpos($rawRange, ':') === false) {
             $min = 0.0;
-            $max = floatval($rawRange);
+            $max = trim(floatval($rawRange));
         } else {
             list($min, $max) = explode(':', $rawRange, 2);
+            $min = trim($min);
+            $max = trim($max);
 
             switch ($min) {
                 case '':
