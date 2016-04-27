@@ -323,7 +323,7 @@ class FilterEditor extends AbstractWidget
                 if ($request->get('cancel') === 'Cancel') {
                     $this->redirectNow($this->preservedUrl()->without('modifyFilter'));
                 }
-                if ($request->get('submit') === 'Apply') {
+                if ($request->get('formUID') === 'FilterEditor') {
                     $filter = $this->applyChanges($request->getPost());
                     $url = $this->url()->setQueryString($filter->toQueryString())->addParams($preserve);
                     $url->getParams()->add('modifyFilter');
@@ -781,6 +781,7 @@ class FilterEditor extends AbstractWidget
             . '<input type="submit" name="submit" value="Apply" />'
             . '<input type="submit" name="cancel" value="Cancel" />'
             . '</div>'
+            . '<input type="hidden" name="formUID" value="FilterEditor">'
             . '</form>'
             . '</div>';
     }
