@@ -323,12 +323,11 @@ class FilterEditor extends AbstractWidget
                 if ($request->get('cancel') === 'Cancel') {
                     $this->redirectNow($this->preservedUrl()->without('modifyFilter'));
                 }
-                if ($request->get('apply') === 'Apply') {
-                    $filter = $this->applyChanges($request->getPost());
-                    $url = $this->url()->setQueryString($filter->toQueryString())->addParams($preserve);
-                    $url->getParams()->add('modifyFilter');
-                    $this->redirectNow($url);
-                }
+
+                $filter = $this->applyChanges($request->getPost());
+                $url = $this->url()->setQueryString($filter->toQueryString())->addParams($preserve);
+                $url->getParams()->add('modifyFilter');
+                $this->redirectNow($url);
             }
             $this->url()->getParams()->add('modifyFilter');
         }
