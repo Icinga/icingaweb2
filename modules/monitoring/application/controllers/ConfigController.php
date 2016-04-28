@@ -20,6 +20,15 @@ use Icinga\Module\Monitoring\Forms\Config\TransportConfigForm;
 class ConfigController extends Controller
 {
     /**
+     * {@inheritdoc}
+     */
+    public function init()
+    {
+        $this->assertPermission('config/modules');
+        parent::init();
+    }
+
+    /**
      * Display a list of available backends and command transports
      */
     public function indexAction()
