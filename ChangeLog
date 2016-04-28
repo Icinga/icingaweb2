@@ -1,5 +1,19 @@
 # Icinga Web 2 Changelog
 
+### What's New in Version 2.3.2
+
+#### Feature
+
+* Feature 11629: Simplified event-history date and time representation
+
+#### Bugfixes
+
+* Fix a privilege escalation issue in the monitoring module for authenticated users
+* Bug 10486: Menu rendering fails when no monitoring backend was configured
+* Bug 10847: Warn about illogical dates
+* Bug 10848: Can't change items per page if filter is in modify state
+* Bug 11392: Can't configure monitoring backend via the web interface when no monitoring backend was configured
+
 ## What's New
 
 ### What's New in Version 2.3.1
