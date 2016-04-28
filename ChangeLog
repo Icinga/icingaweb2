@@ -1,5 +1,11 @@
 # Icinga Web 2 Changelog
 
+## What's New in Version 2.1.3
+
+#### Bugfixes
+
+* Fix a privilege escalation issue in the monitoring module for authenticated users
+
 ## What's New in Version 2.1.1
 
 #### Features
