@@ -30,6 +30,13 @@ class ThresholdRange
     protected $inverted = false;
 
     /**
+     * The unmodified range as passed to fromString()
+     *
+     * @var string
+     */
+    protected $raw;
+
+    /**
      * Create a new instance based on a threshold range conforming to <https://nagios-plugins.org/doc/guidelines.html>
      *
      * @param   string  $rawRange
@@ -39,6 +46,7 @@ class ThresholdRange
     public static function fromString($rawRange = '')
     {
         $range = new static();
+        $range->raw = $rawRange;
 
         if ($rawRange === '') {
             return $range;
@@ -166,13 +174,6 @@ class ThresholdRange
      */
     public function __toString()
     {
-        if ($this->min === null) {
-            $res = '~:';
-        } else {
-            $res = $this->min === 0.0 ? '' : $this->min . ':';
-        }
-        $res .= $this->max === null ? '' : $this->max;
-
-        return ($this->inverted ? '@' : '') . (empty($res) ? '0:' : $res);
+        return (string) $this->raw;
     }
 }

@@ -73,20 +73,6 @@ class Perfdata
     protected $criticalThreshold;
 
     /**
-     * The WARNING threshold as got from the plugin
-     *
-     * @var string
-     */
-    protected $rawWarningThreshold;
-
-    /**
-     * The CRITICAL threshold as got from the plugin
-     *
-     * @var string
-     */
-    protected $rawCriticalThreshold;
-
-    /**
      * Create a new Perfdata object based on the given performance data label and value
      *
      * @param   string      $label      The perfdata label
@@ -321,27 +307,23 @@ class Perfdata
                 }
             /* @noinspection PhpMissingBreakStatementInspection */
             case 3:
-                $this->rawCriticalThreshold = trim($parts[2]);
                 $this->criticalThreshold = self::convert(
-                    ThresholdRange::fromString($this->rawCriticalThreshold),
+                    ThresholdRange::fromString(trim($parts[2])),
                     $this->unit
                 );
                 // Fallthrough
             case 2:
-                $this->rawWarningThreshold = trim($parts[1]);
                 $this->warningThreshold = self::convert(
-                    ThresholdRange::fromString($this->rawWarningThreshold),
+                    ThresholdRange::fromString(trim($parts[1])),
                     $this->unit
                 );
         }
 
         if ($this->warningThreshold === null) {
             $this->warningThreshold = new ThresholdRange();
-            $this->rawWarningThreshold = '';
         }
         if ($this->criticalThreshold === null) {
             $this->criticalThreshold = new ThresholdRange();
-            $this->rawCriticalThreshold = '';
         }
     }
 
@@ -469,14 +451,14 @@ class Perfdata
             $max = $this->warningThreshold->getMax();
             $warn = $max === null ? '∞' : $this->format($max);
         } else {
-            $warn = $this->rawWarningThreshold;
+            $warn = (string) $this->warningThreshold;
         }
 
         if ($this->criticalThreshold->getMin() === null) {
             $max = $this->criticalThreshold->getMax();
             $crit = $max === null ? '∞' : $this->format($max);
         } else {
-            $crit = $this->rawCriticalThreshold;
+            $crit = (string) $this->criticalThreshold;
         }
 
         return array(
