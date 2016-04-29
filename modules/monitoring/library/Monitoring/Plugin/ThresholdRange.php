@@ -43,7 +43,7 @@ class ThresholdRange
      *
      * @return  ThresholdRange
      */
-    public static function fromString($rawRange = '')
+    public static function fromString($rawRange)
     {
         $range = new static();
         $range->raw = $rawRange;
