@@ -230,21 +230,21 @@ class Perfdata
     /**
      * Return this performance data's warning treshold
      *
-     * @return  string
+     * @return  ThresholdRange
      */
     public function getWarningThreshold()
     {
-        return (string) $this->warningThreshold;
+        return $this->warningThreshold;
     }
 
     /**
      * Return this performance data's critical treshold
      *
-     * @return  string
+     * @return  ThresholdRange
      */
     public function getCriticalThreshold()
     {
-        return (string) $this->criticalThreshold;
+        return $this->criticalThreshold;
     }
 
     /**
