@@ -48,7 +48,7 @@ class ThresholdRange
         $range = new static();
         $range->raw = $rawRange;
 
-        if ($rawRange === '') {
+        if ($rawRange == '') {
             return $range;
         }
 
