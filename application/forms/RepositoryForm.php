@@ -149,7 +149,7 @@ abstract class RepositoryForm extends Form
      *
      * @return  $this
      */
-    public function add(array $data = array())
+    public function add(array $data = null)
     {
         $this->mode = static::MODE_INSERT;
         $this->data = $data;
@@ -164,7 +164,7 @@ abstract class RepositoryForm extends Form
      *
      * @return  $this
      */
-    public function edit($name, array $data = array())
+    public function edit($name, array $data = null)
     {
         $this->mode = static::MODE_UPDATE;
         $this->identifier = $name;
@@ -239,7 +239,7 @@ abstract class RepositoryForm extends Form
     protected function onUpdateRequest()
     {
         $data = $this->getData();
-        if (empty($data)) {
+        if ($data === null) {
             $row = $this->repository
                 ->select()
                 ->from($this->getBaseTable())
