@@ -36,9 +36,13 @@ class ThresholdRange
      *
      * @return  ThresholdRange
      */
-    public static function fromString($rawRange)
+    public static function fromString($rawRange = '')
     {
         $range = new static();
+
+        if ($rawRange === '') {
+            return $range;
+        }
 
         $rawRange = ltrim($rawRange);
         if (substr($rawRange, 0, 1) === '@') {

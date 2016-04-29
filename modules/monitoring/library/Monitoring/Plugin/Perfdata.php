@@ -323,14 +323,14 @@ class Perfdata
             case 3:
                 $this->rawCriticalThreshold = trim($parts[2]);
                 $this->criticalThreshold = self::convert(
-                    ThresholdRange::fromString($this->rawCriticalThreshold ?: '~:'),
+                    ThresholdRange::fromString($this->rawCriticalThreshold),
                     $this->unit
                 );
                 // Fallthrough
             case 2:
                 $this->rawWarningThreshold = trim($parts[1]);
                 $this->warningThreshold = self::convert(
-                    ThresholdRange::fromString($this->rawWarningThreshold ?: '~:'),
+                    ThresholdRange::fromString($this->rawWarningThreshold),
                     $this->unit
                 );
         }
