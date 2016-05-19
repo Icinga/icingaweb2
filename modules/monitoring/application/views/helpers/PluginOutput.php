@@ -27,6 +27,16 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
         '@@@@@@',
     );
 
+    /**
+     * @var string
+     */
+    protected $zeroWidthSpace;
+
+    public function __construct()
+    {
+        $this->zeroWidthSpace = html_entity_decode('&#8203;', ENT_NOQUOTES, 'UTF-8');
+    }
+
     public function pluginOutput($output, $raw = false)
     {
         if (empty($output)) {
@@ -50,15 +60,11 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
             );
             $isHtml = false;
         }
-        $output = $this->fixLinks($output);
+        $output = $this->fixLinksAndWrapping($output);
         // Help browsers to break words in plugin output
         $output = trim($output);
         // Add space after comma where missing
         $output = preg_replace('/,[^\s]/', ', ', $output);
-        // Add zero width space after ')', ']', ':', '.', '_' and '-' if not surrounded by whitespaces
-        $output = preg_replace('/([^\s])([\\)\\]:._-])([^\s])/', '$1$2&#8203;$3', $output);
-        // Add zero width space before '(' and '[' if not surrounded by whitespaces
-        $output = preg_replace('/([^\s])([([])([^\s])/', '$1&#8203;$2$3', $output);
 
         if (! $raw) {
             if ($isHtml) {
@@ -70,13 +76,14 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
         return $output;
     }
 
-    protected function fixLinks($html)
+    protected function fixLinksAndWrapping($html)
     {
 
         $ret = array();
         $dom = new DOMDocument;
         $dom->loadXML('<div>' . $html . '</div>', LIBXML_NOERROR | LIBXML_NOWARNING);
         $dom->preserveWhiteSpace = false;
+
         $links = $dom->getElementsByTagName('a');
         foreach ($links as $tag)
         {
@@ -93,6 +100,9 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
             }
             //$ret[$tag->getAttribute('href')] = $tag->childNodes->item(0)->nodeValue;
         }
+
+        $this->fixWrappingRecursive($dom);
+
         return substr($dom->saveHTML(), 5, -7);
     }
 
@@ -118,5 +128,24 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
             self::$purifier = new HTMLPurifier($config);
         }
         return self::$purifier;
+    }
+
+    /**
+     * Add zero width space to all text in the DOM to make wrapping easier for the user agent
+     *
+     * @param   DOMNode $node
+     */
+    protected function fixWrappingRecursive(DOMNode $node)
+    {
+        if ($node instanceof DOMText) {
+            // Add zero width space after ')', ']', ':', '.', '_' and '-' if not surrounded by whitespaces
+            $data = preg_replace('/([^\s])([\\)\\]:._-])([^\s])/', '$1$2' . $this->zeroWidthSpace . '$3', $node->data);
+            // Add zero width space before '(' and '[' if not surrounded by whitespaces
+            $node->data = preg_replace('/([^\s])([([])([^\s])/', '$1' . $this->zeroWidthSpace . '$2$3', $data);
+        } elseif ($node->childNodes !== null) {
+            foreach ($node->childNodes as $childNode) {
+                $this->fixWrappingRecursive($childNode);
+            }
+        }
     }
 }
