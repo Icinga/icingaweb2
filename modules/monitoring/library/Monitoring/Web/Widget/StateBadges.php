@@ -321,7 +321,10 @@ class StateBadges extends AbstractWidget
                 array(static::STATE_UNREACHABLE, static::STATE_UNREACHABLE_HANDLED),
                 $badges
             )
-            ->createBadge(static::STATE_UNKNOWN, $badges)
+            ->createBadgeGroup(
+                array(static::STATE_UNKNOWN, static::STATE_UNKNOWN_HANDLED),
+                $badges
+            )
             ->createBadge(static::STATE_OK, $badges)
             ->createBadge(static::STATE_UP, $badges)
             ->createBadge(static::STATE_PENDING, $badges);
