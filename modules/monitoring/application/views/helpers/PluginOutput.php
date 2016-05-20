@@ -53,13 +53,20 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
     protected $zeroWidthSpace;
 
     /**
+     * The encoded character &#8203;
+     *
+     * @var string
+     */
+    protected $zeroWidthSpaceEnt = '&#8203;';
+
+    /**
      * Create a new Zend_View_Helper_PluginOutput
      */
     public function __construct()
     {
         // This is actually not required as the value is constant,
         // but as its (visual) length is 0, it's likely to be mixed up with the empty string.
-        $this->zeroWidthSpace = html_entity_decode('&#8203;', ENT_NOQUOTES, 'UTF-8');
+        $this->zeroWidthSpace = html_entity_decode($this->zeroWidthSpaceEnt, ENT_NOQUOTES, 'UTF-8');
     }
 
     /**
@@ -84,16 +91,23 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
                 $this->getPurifier()->purify($output)
             );
             $isHtml = true;
+            $useDom = true;
         } else {
             // Plaintext
+            $count = 0;
             $output = preg_replace(
                 self::$txtPatterns,
                 self::$txtReplacements,
-                $this->view->escape($output)
+                $this->view->escape($output),
+                -1,
+                $count
             );
             $isHtml = false;
+            $useDom = (bool) $count;
         }
-        $output = $this->fixLinksAndWrapping($output);
+
+        $output = $useDom ? $this->fixLinksAndWrapping($output) : $this->fixWrapping($output, $this->zeroWidthSpaceEnt);
+
         // Help browsers to break words in plugin output
         $output = trim($output);
         // Add space after comma where missing
@@ -184,14 +198,27 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
     protected function fixWrappingRecursive(DOMNode $node)
     {
         if ($node instanceof DOMText) {
-            // Add zero width space after ')', ']', ':', '.', '_' and '-' if not surrounded by whitespaces
-            $data = preg_replace('/([^\s])([\\)\\]:._-])([^\s])/', '$1$2' . $this->zeroWidthSpace . '$3', $node->data);
-            // Add zero width space before '(' and '[' if not surrounded by whitespaces
-            $node->data = preg_replace('/([^\s])([([])([^\s])/', '$1' . $this->zeroWidthSpace . '$2$3', $data);
+            $node->data = $this->fixWrapping($node->data, $this->zeroWidthSpace);
         } elseif ($node->childNodes !== null) {
             foreach ($node->childNodes as $childNode) {
                 $this->fixWrappingRecursive($childNode);
             }
         }
+    }
+
+    /**
+     * Add zero width space to make wrapping easier for the user agent
+     *
+     * @param   string  $output
+     * @param   string  $zeroWidthSpace
+     *
+     * @return  string
+     */
+    protected function fixWrapping($output, $zeroWidthSpace)
+    {
+        // Add zero width space after ')', ']', ':', '.', '_' and '-' if not surrounded by whitespaces
+        $output = preg_replace('/([^\s])([\\)\\]:._-])([^\s])/', '$1$2' . $zeroWidthSpace . '$3', $output);
+        // Add zero width space before '(' and '[' if not surrounded by whitespaces
+        return preg_replace('/([^\s])([([])([^\s])/', '$1' . $zeroWidthSpace . '$2$3', $output);
     }
 }
