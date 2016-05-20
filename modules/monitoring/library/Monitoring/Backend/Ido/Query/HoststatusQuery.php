@@ -148,11 +148,6 @@ class HoststatusQuery extends IdoQuery
                             ELSE 4
                         END
                 END
-            END
-            +
-            CASE WHEN hs.state_type = 1
-                THEN 8
-                ELSE 0
             END',
             'host_state'                => 'CASE WHEN hs.has_been_checked = 0 OR hs.has_been_checked IS NULL THEN 99 ELSE hs.current_state END',
             'host_state_type'           => 'hs.state_type',
