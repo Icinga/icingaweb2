@@ -1,10 +1,23 @@
 <?php
 /* Icinga Web 2 | (c) 2013 Icinga Development Team | GPLv2+ */
 
+/**
+ * Plugin output renderer
+ */
 class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
 {
+    /**
+     * The return value of getPurifier()
+     *
+     * @var HTMLPurifier
+     */
     protected static $purifier;
 
+    /**
+     * Patterns to be replaced in plain text plugin output
+     *
+     * @var array
+     */
     protected static $txtPatterns = array(
         '~\\\n~',
         '~\\\t~',
@@ -16,6 +29,11 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
         '~\@{6,}~'
     );
 
+    /**
+     * Replacements for $txtPatterns
+     *
+     * @var array
+     */
     protected static $txtReplacements = array(
         "\n",
         "\t",
@@ -28,15 +46,30 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
     );
 
     /**
+     * The character &#8203;
+     *
      * @var string
      */
     protected $zeroWidthSpace;
 
+    /**
+     * Create a new Zend_View_Helper_PluginOutput
+     */
     public function __construct()
     {
+        // This is actually not required as the value is constant,
+        // but as its (visual) length is 0, it's likely to be mixed up with the empty string.
         $this->zeroWidthSpace = html_entity_decode('&#8203;', ENT_NOQUOTES, 'UTF-8');
     }
 
+    /**
+     * Render plugin output
+     *
+     * @param   string  $output
+     * @param   bool    $raw
+     *
+     * @return  string
+     */
     public function pluginOutput($output, $raw = false)
     {
         if (empty($output)) {
@@ -76,6 +109,14 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
         return $output;
     }
 
+    /**
+     * Replace classic Icinga CGI links with Icinga Web 2 links and
+     * add zero width space to make wrapping easier for the user agent
+     *
+     * @param   string  $html
+     *
+     * @return  string
+     */
     protected function fixLinksAndWrapping($html)
     {
 
@@ -106,6 +147,11 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
         return substr($dom->saveHTML(), 5, -7);
     }
 
+    /**
+     * Initialize and return self::$purifier
+     *
+     * @return HTMLPurifier
+     */
     protected function getPurifier()
     {
         if (self::$purifier === null) {
