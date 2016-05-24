@@ -487,6 +487,111 @@ form.instance-features span.description, form.object-features span.description {
   }
 }
 
+#layout.compact-layout .performance-data-table {
+  display: block;
+  overflow: auto;
+}
+
+#layout.twocols:not(.wide-layout) .performance-data-table,
+#layout.poor-layout .performance-data-table,
+#layout.minimal-layout .performance-data-table {
+
+  display: block;
+  width: 100%;
+
+  tbody, tr, td {
+	  display: block;
+	  width: 100%;
+	  padding: 0;
+  }
+
+  > tbody > tr {
+	  position: relative;
+	  padding: 0.545em 0.545em 0.545em 2.181em;
+	  text-align: right;
+  }
+
+  > tbody > tr > td:not(:first-child):not(:nth-child(2)) span:before {
+	  display: inline-block;
+	  font-family: "ifont";
+	  margin-right: 0.273em;
+  }
+
+  > tbody > tr > td:nth-child(4),
+  > tbody > tr > td:nth-child(5),
+  > tbody > tr > td:nth-child(6) {
+	  display: inline-block;
+	  width: auto;
+	  font-size: 0.875em;
+	  color: @text-color-light;
+	  padding-top: 0.545em;
+	  margin-left: 1.091em;
+  }
+
+  // sparkline-col
+  > tbody > tr > td:nth-child(1) {
+	  position: absolute;
+	  width: auto;
+	  left: 0.545em;
+	  top:  0.727em;
+  }
+
+  > tbody > tr > td:nth-child(1) span {
+	  height: 100%;
+	  width: 100%;
+  }
+  // END sparkline-col
+
+  // Label
+  > tbody > tr > td:nth-child(2) {
+	  font-weight: bold;
+	  text-align: left;
+	  padding-right: 6.545em;
+  }
+
+  > tbody > tr > td:nth-child(2) span {
+	  display: block;
+	  white-space: nowrap;
+	  overflow: hidden;
+	  text-overflow: ellipsis;
+  }
+
+  // Value
+  > tbody > tr > td:nth-child(3) {
+	  width: auto;
+	  position: absolute;
+	  top:   0.545em;
+	  right: 0.545em;
+	  font-size: 1em;
+  }
+
+  > tbody > tr > td:nth-child(3) span {
+	  font-weight: bold;
+	  color: @text-color;
+  }
+
+  > tbody > tr > td:nth-child(4) span:before {
+	  content: "\e878";
+  }
+
+  > tbody > tr > td:nth-child(5) span:before {
+	  content: "\e881";
+  }
+
+  > tbody > tr > td:nth-child(6) span:before {
+	  content: "\e84d";
+  }
+
+  > tbody > tr > td span {
+	  display: block;
+	  width: 100%;
+  }
+
+  thead {
+	  display: none;
+  }
+}
+
 //p.pluginoutput {
 //  width: 100%;
 //  white-space: pre-wrap;

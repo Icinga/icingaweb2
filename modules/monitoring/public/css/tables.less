@@ -114,10 +114,37 @@
     text-align: left;
   }
 
+  > tbody > tr {
+	border-bottom: 1px solid #e3e3e3;
+  }
+
+  > tbody > tr:last-child {
+	border-bottom: none
+  }
+
+  > tbody > tr > td {
+	white-space: nowrap;
+	vertical-align: top;
+	padding: 3px 6px;
+  }
+
+  > tbody > tr > td:nth-child(2) {
+	white-space: normal;
+  }
+
   > thead > tr > th:first-child,
   > tbody > tr > td:first-child {
     // Reset base padding
     padding-left: 0;
+    vertical-align: middle;
+  }
+
+  > thead > tr > th {
+	text-align: center;
+  }
+
+  > thead > tr > th:nth-child(2) {
+	text-align: left;
   }
 }
 
