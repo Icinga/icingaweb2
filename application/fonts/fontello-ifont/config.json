@@ -779,6 +779,12 @@
       "css": "flapping",
       "code": 59485,
       "src": "mfglabs"
+    },
+    {
+      "uid": "8f28d948aa6379b1a69d2a090e7531d4",
+      "css": "warning-empty",
+      "code": 59521,
+      "src": "typicons"
     }
   ]
 }
