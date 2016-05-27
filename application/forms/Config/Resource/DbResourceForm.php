@@ -42,6 +42,8 @@ class DbResourceForm extends Form
         if (Platform::hasOciSupport()) {
             $dbChoices['oci'] = 'Oracle (OCI8)';
         }
+
+        $encryptionChoices = array();
         $offerPostgres = false;
         $offerMysql = false;
         if (isset($formData['db'])) {
@@ -49,6 +51,9 @@ class DbResourceForm extends Form
                 $offerPostgres = true;
             } elseif ($formData['db'] === 'mysql') {
                 $offerMysql = true;
+                if (version_compare(Platform::getPhpVersion(), '5.4.0', '>=')) {
+                    $encryptionChoices['ssl'] = 'SSL';
+                }
             }
         } else {
             $dbChoice = key($dbChoices);
@@ -56,8 +61,12 @@ class DbResourceForm extends Form
                 $offerPostgres = true;
             } elseif ($dbChoice === 'mysql') {
                 $offerMysql = true;
+                if (version_compare(Platform::getPhpVersion(), '5.4.0', '>=')) {
+                    $encryptionChoices['ssl'] = 'SSL';
+                }
             }
         }
+
         $socketInfo = '';
         if ($offerPostgres) {
             $socketInfo = $this->translate(
@@ -68,6 +77,7 @@ class DbResourceForm extends Form
                 'For using unix domain sockets, specify localhost'
             );
         }
+
         $this->addElement(
             'text',
             'name',
@@ -138,52 +148,66 @@ class DbResourceForm extends Form
                 'description'       => $this->translate('The password to use for authentication')
             )
         );
-        if ($offerMysql) {
+        if (! empty($encryptionChoices)) {
             $this->addElement(
-                'text',
-                'ssl_key',
+                'select',
+                'encryption',
                 array(
-                    'required'          => false,
-                    'label'             => $this->translate('SSL Key'),
-                    'description'       => $this->translate('The SSL client key file path')
+                    'autosubmit'    => true,
+                    'label'         => $this->translate('Encryption'),
+                    'description'   => $this->translate(
+                        'Whether to encrypt the connection or to authenticate using certificates'
+                    ),
+                    'multiOptions'  => array_merge(
+                        array('none' => $this->translate('None', 'db connection encryption')),
+                        $encryptionChoices
+                    )
                 )
             );
-            $this->addElement(
-                'text',
-                'ssl_cert',
-                array(
-                    'required'          => false,
-                    'label'             => $this->translate('SSL Certificate'),
-                    'description'       => $this->translate('The SSL certificate file path')
-                )
-            );
-            $this->addElement(
-                'text',
-                'ssl_ca',
-                array(
-                    'required'          => false,
-                    'label'             => $this->translate('SSL CA'),
-                    'description'       => $this->translate('The SSL Certificate Authority certificate file path')
-                )
-            );
-            $this->addElement(
-                'text',
-                'ssl_capath',
-                array(
-                    'required'          => false,
-                    'label'             => $this->translate('SSL CA Path'),
-                    'description'       => $this->translate('The SSL trusted SSL CA certificates in PEM format directory path')
-                )
-            );
-            $this->addElement(
-                'text',
-                'ssl_cipher',
-                array(
-                    'required'          => false,
-                    'label'             => $this->translate('SSL Cipher'),
-                    'description'       => $this->translate('The SSL list of permissible ciphers')
-                )
-            );
+            if (isset($formData['encryption']) && $formData['encryption'] === 'ssl') {
+                $this->addElement(
+                    'text',
+                    'ssl_key',
+                    array(
+                        'label'             => $this->translate('SSL Key'),
+                        'description'       => $this->translate('The client key file path')
+                    )
+                );
+                $this->addElement(
+                    'text',
+                    'ssl_cert',
+                    array(
+                        'label'             => $this->translate('SSL Certificate'),
+                        'description'       => $this->translate('The certificate file path')
+                    )
+                );
+                $this->addElement(
+                    'text',
+                    'ssl_ca',
+                    array(
+                        'label'             => $this->translate('SSL CA'),
+                        'description'       => $this->translate('The CA certificate file path')
+                    )
+                );
+                $this->addElement(
+                    'text',
+                    'ssl_capath',
+                    array(
+                        'label'             => $this->translate('SSL CA Path'),
+                        'description'       => $this->translate(
+                            'The trusted CA certificates in PEM format directory path'
+                        )
+                    )
+                );
+                $this->addElement(
+                    'text',
+                    'ssl_cipher',
+                    array(
+                        'label'             => $this->translate('SSL Cipher'),
+                        'description'       => $this->translate('The list of permissible ciphers')
+                    )
+                );
+            }
         }
         $this->addElement(
             'text',

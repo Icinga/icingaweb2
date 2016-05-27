@@ -262,12 +262,7 @@ class DbTool
         );
 
         if ($this->config['db'] === 'mysql') {
-            if ($this->config['ssl_key']
-                || $this->config['ssl_cert']
-                || $this->config['ssl_ca']
-                || $this->config['ssl_capath']
-                || $this->config['ssl_cipher']
-            ) {
+            if (isset($this->config['encryption']) && $this->config['encryption'] === 'ssl') {
                 $this->config['driver_options'] = array();
                 # The presence of these keys as empty strings or null cause non-ssl connections to fail
                 if ($this->config['ssl_key']) {
@@ -315,12 +310,10 @@ class DbTool
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
         );
 
-        if ($this->config['db'] == 'mysql'
-            && ($this->config['ssl_key']
-                || $this->config['ssl_cert']
-                || $this->config['ssl_ca']
-                || $this->config['ssl_capath']
-                || $this->config['ssl_cipher'])
+        if (
+            $this->config['db'] === 'mysql'
+            && isset($this->config['encryption'])
+            && $this->config['encryption'] === 'ssl'
         ) {
             # The presence of these keys as empty strings or null cause non-ssl connections to fail
             if ($this->config['ssl_key']) {
