@@ -54,7 +54,7 @@ class DbResourceForm extends Form
             $dbChoice = key($dbChoices);
             if ($dbChoice === 'pgsql') {
                 $offerPostgres = true;
-            } elseif ($dbChoices === 'mysql') {
+            } elseif ($dbChoice === 'mysql') {
                 $offerMysql = true;
             }
         }
