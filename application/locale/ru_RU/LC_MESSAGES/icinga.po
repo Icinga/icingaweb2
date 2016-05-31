@@ -2581,7 +2581,7 @@ msgstr ""
 #: /vagrant/library/Icinga/Web/Form.php:951
 #: /vagrant/library/Icinga/Web/Form/Decorator/Autosubmit.php:100
 msgid ""
-"Upon its value has changed, this field issues an automatic update of this "
+"Upon its value changing, this field issues an automatic update of this "
 "page."
 msgstr "В случае изменения значения поля страница будет обновлена"
 
