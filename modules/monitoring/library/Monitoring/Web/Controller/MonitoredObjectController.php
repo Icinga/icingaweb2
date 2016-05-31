@@ -129,6 +129,7 @@ abstract class MonitoredObjectController extends Controller
         $this->view->form = $form;
         $this->view->object = $this->object;
         $this->view->tabs->remove('dashboard');
+        $this->view->tabs->remove('menu-entry');
         $this->_helper->viewRenderer('partials/command/object-command-form', null, true);
         return $form;
     }
