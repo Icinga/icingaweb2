@@ -16,7 +16,6 @@
 @text-color: #191919;
 @text-color-light: #555555;
 
-
 .badge {
   background-color: @text-color-light;
 }
@@ -63,4 +62,64 @@
 .boxview a:focus {
     color: @text-color;
     text-decoration: underline;
+}
+
+.icinga-module.module-monitoring {
+  @timeline-notification-color: #1650CF;
+  @timeline-hard-state-color: #A24600;
+  @timeline-comment-color: #346964;
+  @timeline-ack-color: #855D18;
+  @timeline-downtime-start-color: #515151;
+  @timeline-downtime-end-color: #5e5e2f;
+
+  // Unfortunately it does not suffice to only override the timeline colors here, because our less compiler seems to
+  // have the related style block in module.less already evaluated
+
+  .timeline-notification {
+    background-color: @timeline-notification-color;
+
+    &.extrapolated {
+      background-color: lighten(@timeline-notification-color, 20%);
+    }
+  }
+
+  .timeline-hard-state {
+    background-color: @timeline-hard-state-color;
+
+    &.extrapolated {
+      background-color: lighten(@timeline-hard-state-color, 20%);
+    }
+  }
+
+  .timeline-comment {
+    background-color: @timeline-comment-color;
+
+    &.extrapolated {
+      background-color: lighten(@timeline-comment-color, 20%);
+    }
+  }
+
+  .timeline-ack {
+    background-color: @timeline-ack-color;
+
+    &.extrapolated {
+      background-color: lighten(@timeline-ack-color, 20%);
+    }
+  }
+
+  .timeline-downtime-start {
+    background-color: @timeline-downtime-start-color;
+
+    &.extrapolated {
+      background-color: lighten(@timeline-downtime-start-color, 20%);
+    }
+  }
+
+  .timeline-downtime-end {
+    background-color: @timeline-downtime-end-color;
+
+    &.extrapolated {
+      background-color: lighten(@timeline-downtime-end-color, 20%);
+    }
+  }
 }
