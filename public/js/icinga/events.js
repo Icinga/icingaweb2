@@ -420,8 +420,8 @@
             var linkTarget = $a.attr('target');
             var $target;
             var formerUrl;
-            var remote = /^(?:[a-z]+:)\/\//;
-            if (href.match(/^(mailto|javascript|data):/)) {
+            if (href.match(/^(?:(?:mailto|javascript|data):|[a-z]+:\/\/)/)) {
+                event.stopPropagation();
                 return true;
             }
 
@@ -439,10 +439,6 @@
                 }
             }
 
-            // Let remote links pass through
-            if  (href.match(remote)) {
-                return true;
-            }
             // window.open is used as return true; didn't work reliable
             if (linkTarget === '_blank' || linkTarget === '_self') {
                 window.open(href, linkTarget);
