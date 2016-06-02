@@ -97,7 +97,7 @@ class Autosubmit extends Zend_Form_Decorator_Abstract
             $isForm = $this->getElement() instanceof Form;
             $warning = $isForm
                 ? t('Upon any of this form\'s fields were changed, this page is being updated automatically.')
-                : t('Upon its value has changed, this field issues an automatic update of this page.');
+                : t('Upon its value changing, this field issues an automatic update of this page.');
             $content .= $this->getView()->icon('cw', $warning, array(
                 'aria-hidden'   => $isForm ? 'false' : 'true',
                 'class'         => 'spinner autosubmit-info'
