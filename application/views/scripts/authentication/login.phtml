@@ -1,5 +1,12 @@
 <div id="login" class="centered-ghost">
     <div class="centered-content" data-base-target="layout">
+        <div role="status" class="sr-only">
+            <?= $this->translate(
+                'Welcome to Icinga Web 2. For users of the screen reader Jaws full and expectant compliant'
+                . ' accessibility is possible only with use of the Firefox browser. VoiceOver on Mac OS X is tested on'
+                . ' Chrome, Safari and Firefox.'
+            ) ?>
+        </div>
         <div id="icinga-logo" aria-hidden="true"></div>
         <?php if ($requiresSetup): ?>
             <p class="config-note"><?= sprintf(
