@@ -53,6 +53,9 @@
 
       <?php if (isset($delDowntimeForm)) {
           // Form is unset if the current user lacks the respective permission
+          $uniqId = uniqid();
+          $buttonId = 'delete-downtime-' . $uniqId;
+          $textId = 'downtime-' . $uniqId;
           $deleteButton = clone $delDowntimeForm;
           /** @var \Icinga\Module\Monitoring\Forms\Command\Object\DeleteDowntimeCommandForm $deleteButton */
           $deleteButton->setAttrib('class', $deleteButton->getAttrib('class') . ' remove-action');
@@ -62,11 +65,15 @@
                   'downtime_is_service' => isset($downtime->service_description)
               )
           );
+          $deleteButton->getElement('btn_submit')
+              ->setAttrib('aria-label', $this->translate('Delete downtime'))
+              ->setAttrib('id', $buttonId)
+              ->setAttrib('aria-describedby', $buttonId . ' ' . $textId);
           echo $deleteButton;
       } ?>
     </span>
   </div>
-  <p class="comment-text">
+  <p class="comment-text"<?php if (isset($textId)): ?> id="<?= $textId ?>"<?php endif ?>>
     <?= $this->nl2br($this->escapeComment($downtime->comment)) ?>
   </p>
 </td>
