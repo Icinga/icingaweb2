@@ -1,10 +1,23 @@
 <?php
 /* Icinga Web 2 | (c) 2013 Icinga Development Team | GPLv2+ */
 
+/**
+ * Plugin output renderer
+ */
 class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
 {
+    /**
+     * The return value of getPurifier()
+     *
+     * @var HTMLPurifier
+     */
     protected static $purifier;
 
+    /**
+     * Patterns to be replaced in plain text plugin output
+     *
+     * @var array
+     */
     protected static $txtPatterns = array(
         '~\\\n~',
         '~\\\t~',
@@ -16,6 +29,11 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
         '~\@{6,}~'
     );
 
+    /**
+     * Replacements for $txtPatterns
+     *
+     * @var array
+     */
     protected static $txtReplacements = array(
         "\n",
         "\t",
@@ -27,6 +45,38 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
         '@@@@@@',
     );
 
+    /**
+     * The character &#8203;
+     *
+     * @var string
+     */
+    protected $zeroWidthSpace;
+
+    /**
+     * The encoded character &#8203;
+     *
+     * @var string
+     */
+    protected $zeroWidthSpaceEnt = '&#8203;';
+
+    /**
+     * Create a new Zend_View_Helper_PluginOutput
+     */
+    public function __construct()
+    {
+        // This is actually not required as the value is constant,
+        // but as its (visual) length is 0, it's likely to be mixed up with the empty string.
+        $this->zeroWidthSpace = html_entity_decode($this->zeroWidthSpaceEnt, ENT_NOQUOTES, 'UTF-8');
+    }
+
+    /**
+     * Render plugin output
+     *
+     * @param   string  $output
+     * @param   bool    $raw
+     *
+     * @return  string
+     */
     public function pluginOutput($output, $raw = false)
     {
         if (empty($output)) {
@@ -41,24 +91,26 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
                 $this->getPurifier()->purify($output)
             );
             $isHtml = true;
+            $useDom = true;
         } else {
             // Plaintext
+            $count = 0;
             $output = preg_replace(
                 self::$txtPatterns,
                 self::$txtReplacements,
-                $this->view->escape($output)
+                $this->view->escape($output),
+                -1,
+                $count
             );
             $isHtml = false;
+            $useDom = (bool) $count;
         }
-        $output = $this->fixLinks($output);
+
         // Help browsers to break words in plugin output
         $output = trim($output);
         // Add space after comma where missing
         $output = preg_replace('/,(?=[^\s])/', ', ', $output);
-        // Add zero width space after ')', ']', ':', '.', '_' and '-' if not surrounded by whitespaces
-        $output = preg_replace('/([^\s])([\\)\\]:._-])([^\s])/', '$1$2&#8203;$3', $output);
-        // Add zero width space before '(' and '[' if not surrounded by whitespaces
-        $output = preg_replace('/([^\s])([([])([^\s])/', '$1&#8203;$2$3', $output);
+        $output = $useDom ? $this->fixLinksAndWrapping($output) : $this->fixWrapping($output, $this->zeroWidthSpaceEnt);
 
         if (! $raw) {
             if ($isHtml) {
@@ -70,13 +122,22 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
         return $output;
     }
 
-    protected function fixLinks($html)
+    /**
+     * Replace classic Icinga CGI links with Icinga Web 2 links and
+     * add zero width space to make wrapping easier for the user agent
+     *
+     * @param   string  $html
+     *
+     * @return  string
+     */
+    protected function fixLinksAndWrapping($html)
     {
 
         $ret = array();
         $dom = new DOMDocument;
         $dom->loadXML('<div>' . $html . '</div>', LIBXML_NOERROR | LIBXML_NOWARNING);
         $dom->preserveWhiteSpace = false;
+
         $links = $dom->getElementsByTagName('a');
         foreach ($links as $tag)
         {
@@ -93,9 +154,17 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
             }
             //$ret[$tag->getAttribute('href')] = $tag->childNodes->item(0)->nodeValue;
         }
+
+        $this->fixWrappingRecursive($dom);
+
         return substr($dom->saveHTML(), 5, -7);
     }
 
+    /**
+     * Initialize and return self::$purifier
+     *
+     * @return HTMLPurifier
+     */
     protected function getPurifier()
     {
         if (self::$purifier === null) {
@@ -118,5 +187,37 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
             self::$purifier = new HTMLPurifier($config);
         }
         return self::$purifier;
+    }
+
+    /**
+     * Add zero width space to all text in the DOM to make wrapping easier for the user agent
+     *
+     * @param   DOMNode $node
+     */
+    protected function fixWrappingRecursive(DOMNode $node)
+    {
+        if ($node instanceof DOMText) {
+            $node->data = $this->fixWrapping($node->data, $this->zeroWidthSpace);
+        } elseif ($node->childNodes !== null) {
+            foreach ($node->childNodes as $childNode) {
+                $this->fixWrappingRecursive($childNode);
+            }
+        }
+    }
+
+    /**
+     * Add zero width space to make wrapping easier for the user agent
+     *
+     * @param   string  $output
+     * @param   string  $zeroWidthSpace
+     *
+     * @return  string
+     */
+    protected function fixWrapping($output, $zeroWidthSpace)
+    {
+        // Add zero width space after ')', ']', ':', '.', '_' and '-' if not surrounded by whitespaces
+        $output = preg_replace('/([^\s])([\\)\\]:._-])([^\s])/', '$1$2' . $zeroWidthSpace . '$3', $output);
+        // Add zero width space before '(' and '[' if not surrounded by whitespaces
+        return preg_replace('/([^\s])([([])([^\s])/', '$1' . $zeroWidthSpace . '$2$3', $output);
     }
 }
