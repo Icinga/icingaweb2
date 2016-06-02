@@ -131,11 +131,6 @@ class ServicestatusQuery extends IdoQuery
                             ELSE 4
                         END
                 END
-            END
-            +
-            CASE WHEN hs.state_type = 1
-                THEN 8
-                ELSE 0
             END',
             'host_state'                            => 'CASE WHEN hs.has_been_checked = 0 OR hs.has_been_checked IS NULL THEN 99 ELSE hs.current_state END',
             'host_state_type'                       => 'hs.state_type',
@@ -271,11 +266,6 @@ class ServicestatusQuery extends IdoQuery
                                  END
                          END
                      END
-            END
-            +
-            CASE WHEN ss.state_type = 1
-                THEN 8
-                ELSE 0
             END',
             'service_state'                             => 'CASE WHEN ss.has_been_checked = 0 OR ss.has_been_checked IS NULL THEN 99 ELSE ss.current_state END',
             'service_state_type'                        => 'ss.state_type',
