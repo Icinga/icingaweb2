@@ -4,6 +4,7 @@
 namespace Icinga\Data\Db;
 
 use Exception;
+use Zend_Db_Expr;
 use Zend_Db_Select;
 use Icinga\Application\Logger;
 use Icinga\Data\Filter\FilterAnd;
@@ -306,19 +307,13 @@ class DbQuery extends SimpleQuery
             throw new QueryException('Unable to render array expressions with operators other than equal or not equal');
         } elseif ($sign === '=' && strpos($expression, '*') !== false) {
             if ($expression === '*') {
-                // We'll ignore such filters as it prevents index usage and because "*" means anything, anything means
-                // all whereas all means that whether we use a filter to match anything or no filter at all makes no
-                // difference, except for performance reasons...
-                return '';
+                return new Zend_Db_Expr('TRUE');
             }
 
             return $col . ' LIKE ' . $this->escapeForSql($this->escapeWildcards($expression));
         } elseif ($sign === '!=' && strpos($expression, '*') !== false) {
             if ($expression === '*') {
-                // We'll ignore such filters as it prevents index usage and because "*" means nothing, so whether we're
-                // using a real column with a valid comparison here or just an expression which cannot be evaluated to
-                // true makes no difference, except for performance reasons...
-                return $this->escapeForSql(0);
+                return new Zend_Db_Expr('FALSE');
             }
 
             return $col . ' NOT LIKE ' . $this->escapeForSql($this->escapeWildcards($expression));
