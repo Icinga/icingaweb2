@@ -174,7 +174,8 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
 
             $config = HTMLPurifier_Config::createDefault();
             $config->set('Core.EscapeNonASCIICharacters', true);
-            $config->set('HTML.Allowed', 'p,br,b,a[href],i,table,tr,td[colspan],div,*[class]');
+            $config->set('HTML.Allowed', 'p,br,b,a[href|target],i,table,tr,td[colspan],div,*[class]');
+            $config->set('Attr.AllowedFrameTargets', array('_blank'));
             // This avoids permission problems:
             // $config->set('Core.DefinitionCache', null);
             $config->set('Cache.DefinitionImpl', null);
