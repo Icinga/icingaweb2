@@ -671,6 +671,8 @@ class Module
                             $metadata->description .= $line;
                             continue;
                         }
+                    } elseif (empty($line)) {
+                        continue;
                     }
 
                     list($key, $val) = preg_split('/:\s+/', $line, 2);
