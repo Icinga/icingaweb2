@@ -15,8 +15,10 @@
         var $containers = $('.collapsible-container');
         $containers.each(function() {
             var $container = $(this);
+            if ($container.outerHeight() > 100) {
                 if ($container.children('.collapsible-control').length < 1) {
                     $container.append($('#collapsible-control-ghost').clone().removeAttr('id'));
+                }
                 updateCollapseState($container, _this);
             }
         });
