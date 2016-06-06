@@ -78,14 +78,15 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
                             continue;
                         }
                         $text = $this->view->escape(empty($value) ? '-' : $value);
-                        $data []= sprintf(
-                            '<span title="%s">%s</span>',
+                        $data[] = sprintf(
+                            '</td><td class="%s-col"><span title="%s">%s</span>',
+                            $column,
                             $text,
                             $text
                         );
                     }
                 }
-                $table []= '<tr><td class="sparkline-col">' . implode('</td><td>', $data) . '</td></tr>';
+                $table []= '<tr><td class="sparkline-col">' . implode($data) . '</td></tr>';
             }
         }
         $table[] = '</tbody>';
