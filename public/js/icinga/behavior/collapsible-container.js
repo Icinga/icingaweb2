@@ -15,10 +15,10 @@
         var $containers = $('.collapsible-container');
         $containers.each(function() {
             var $container = $(this);
-            if ($container.children('.collapsible-control').length < 1 ) {
-                $container.append($('#collapsible-control-ghost').clone().removeAttr('id'));
+                if ($container.children('.collapsible-control').length < 1) {
+                    $container.append($('#collapsible-control-ghost').clone().removeAttr('id'));
+                updateCollapseState($container, _this);
             }
-            updateCollapseState($container, _this);
         });
     }
 
@@ -34,22 +34,22 @@
             if (classes.indexOf('perf-data') > -1) {
                 var $button = $container.find('.collapsible-control');
                 $container.addClass('collapsed');
-                $container.find('.collapsible-control').text($button.data('labels').collapsed);
+                $button.attr('title', $button.attr('data-label-expand'))
             } else {
                 var $button = $container.find('.collapsible-control');
                 $container.removeClass('collapsed');
-                $container.find('.collapsible-control').text($button.data('labels').def);
+                $button.attr('title', $button.attr('aria-label'))
             }
         }
         if ($container.hasClass('custom-vars')) {
             if (classes.indexOf('custom-vars') > -1) {
                 var $button = $container.find('.collapsible-control');
                 $container.addClass('collapsed');
-                $container.find('.collapsible-control').text($button.data('labels').collapsed);
+                $button.attr('title', $button.attr('data-label-expand'))
             } else {
                 var $button = $container.find('.collapsible-control');
                 $container.removeClass('collapsed');
-                $container.find('.collapsible-control').text($button.data('labels').def);
+                $button.attr('title', $button.attr('aria-label'))
             }
         }
     }
@@ -98,7 +98,7 @@
     var collapsibleContainer = function(icinga) {
         Icinga.EventListener.call(this, icinga);
         this.on('rendered', '#col2', onRendered, this);
-        this.on('click', '#col2 .collapsible-container .collapsible-control', onControlClicked, this);
+        this.on('click', '.collapsible-container .collapsible-control', onControlClicked, this);
         this.collapsedClasses = ['perf-data', 'custom-vars'];
     };
 
