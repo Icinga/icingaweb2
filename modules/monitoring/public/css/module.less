@@ -500,95 +500,88 @@ form.instance-features span.description, form.object-features span.description {
   width: 100%;
 
   tbody, tr, td {
-	  display: block;
-	  width: 100%;
-	  padding: 0;
+    display: block;
+    width: 100%;
+    padding: 0;
   }
 
   > tbody > tr {
-	  position: relative;
-	  padding: 0.545em 0.545em 0.545em 2.181em;
-	  text-align: right;
+    position: relative;
+    padding: 0.545em 0.545em 0.545em 2.181em;
+    text-align: right;
   }
 
-  > tbody > tr > td:not(:first-child):not(:nth-child(2)) span:before {
-	  display: inline-block;
-	  font-family: "ifont";
-	  margin-right: 0.273em;
+  > tbody > tr > td.max-col,
+  > tbody > tr > td.warn-col,
+  > tbody > tr > td.crit-col {
+    display: inline-block;
+    width: auto;
+    font-size: 0.875em;
+    color: @text-color-light;
+    padding-top: 0.545em;
+    margin-left: 1.091em;
   }
 
-  > tbody > tr > td:nth-child(4),
-  > tbody > tr > td:nth-child(5),
-  > tbody > tr > td:nth-child(6) {
-	  display: inline-block;
-	  width: auto;
-	  font-size: 0.875em;
-	  color: @text-color-light;
-	  padding-top: 0.545em;
-	  margin-left: 1.091em;
+  > tbody > tr > td.max-col span:before,
+  > tbody > tr > td.warn-col span:before,
+  > tbody > tr > td.crit-col span:before {
+    display: inline-block;
+    font-family: "ifont";
+    margin-right: @table-column-padding;
   }
 
-  // sparkline-col
-  > tbody > tr > td:nth-child(1) {
-	  position: absolute;
-	  width: auto;
-	  left: 0.545em;
-	  top:  0.727em;
+  > tbody > tr > td.sparkline-col {
+    position: absolute;
+    width: auto;
+    left: @vertical-padding;
+    top:  @vertical-padding;
   }
 
-  > tbody > tr > td:nth-child(1) span {
-	  height: 100%;
-	  width: 100%;
-  }
-  // END sparkline-col
-
-  // Label
-  > tbody > tr > td:nth-child(2) {
-	  font-weight: bold;
-	  text-align: left;
-	  padding-right: 6.545em;
+  > tbody > tr > td.label-col {
+    font-weight: bold;
+    text-align: left;
+    padding-right: 6.545em;
   }
 
-  > tbody > tr > td:nth-child(2) span {
-	  display: block;
-	  white-space: nowrap;
-	  overflow: hidden;
-	  text-overflow: ellipsis;
+  > tbody > tr > td.label-col span {
+    display: block;
+    word-break: break-all;
   }
 
-  // Value
-  > tbody > tr > td:nth-child(3) {
-	  width: auto;
-	  position: absolute;
-	  top:   0.545em;
-	  right: 0.545em;
-	  font-size: 1em;
+  > tbody > tr > td.value-col {
+    width: auto;
+    position: absolute;
+    top: @vertical-padding;
+    right: @vertical-padding;
   }
 
-  > tbody > tr > td:nth-child(3) span {
-	  font-weight: bold;
-	  color: @text-color;
+  > tbody > tr > td.value-col span {
+    font-weight: bold;
+    color: @text-color;
   }
 
-  > tbody > tr > td:nth-child(4) span:before {
-	  content: "\e878";
+  // @ToDo: Icons should be rendered in markup to avoid them
+  // accidentially change
+  > tbody > tr > td.max-col span:before {
+    content: "\e878"; // .icon-up-small
   }
 
-  > tbody > tr > td:nth-child(5) span:before {
-	  content: "\e881";
+  > tbody > tr > td.warn-col span:before {
+    content: "\e881"; // .icon-warning-empty
   }
 
-  > tbody > tr > td:nth-child(6) span:before {
-	  content: "\e84d";
+  > tbody > tr > td.crit-col span:before {
+    content: "\e84d"; // .icon-attention-alt
   }
+  // END @ToDo
 
   > tbody > tr > td span {
-	  display: block;
-	  width: 100%;
+    display: block;
+    width: 100%;
   }
 
   thead {
-	  display: none;
+    display: none;
   }
 }
 
