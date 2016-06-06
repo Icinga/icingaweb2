@@ -81,7 +81,7 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
                         $data[] = sprintf(
                             '</td><td class="%s-col"><span title="%s">%s</span>',
                             $column,
-                            $text,
+                            $labels[$column] . ': ' . $text,
                             $text
                         );
                     }
