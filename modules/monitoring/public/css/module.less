@@ -546,6 +546,8 @@ form.instance-features span.description, form.object-features span.description {
   > tbody > tr > td.label-col span {
     display: block;
     word-break: break-all;
+    font-size: 1em;
+    line-height: 1.667em;
   }
 
   > tbody > tr > td.value-col {
@@ -558,6 +560,16 @@ form.instance-features span.description, form.object-features span.description {
   > tbody > tr > td.value-col span {
     font-weight: bold;
     color: @text-color;
+    font-size: 1.5em;
+    line-height: 1em;
+  }
+
+  > tbody > tr > td.warn-col {
+    color: @color-warning
+  }
+
+  > tbody > tr > td.crit-col {
+    color: @color-critical
   }
 
   // @ToDo: Icons should be rendered in markup to avoid them
