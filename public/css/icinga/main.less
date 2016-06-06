@@ -217,47 +217,86 @@ a:hover > .icon-cancel {
 }
 
 .collapsible-container {
-    overflow: hidden;
-    position: relative;
-    padding-bottom: 24px;
+  overflow: hidden;
+  position: relative;
+  padding-bottom: 24px;
+
+  &.collapsed {
+    height: 100px;
 
     &:after {
-        content: "";
-        height: 48px;
-        width: 100%;
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        background: white;
-        background: -webkit-linear-gradient(top,       rgba(255,255,255,0) 0, #ffffff 90%);
-        background:    -moz-linear-gradient(top,       rgba(255,255,255,0) 0, #ffffff 90%);
-        background:     -ms-linear-gradient(top,       rgba(255,255,255,0) 0, #ffffff 90%);
-        background:         linear-gradient(to bottom, rgba(255,255,255,0) 0, #ffffff 90%);
-
+      content: "";
+      height: 48px;
+      width: 100%;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      background-color: white;
+      background: -webkit-linear-gradient(bottom,       white 17px, rgba(255,255,255,0) 100%);
+      background:    -moz-linear-gradient(bottom,       white 17px, rgba(255,255,255,0) 100%);
+      background:     -ms-linear-gradient(bottom,       white 17px, rgba(255,255,255,0) 100%);
+      background:         linear-gradient(to top,       white 17px, rgba(255,255,255,0) 100%);
     }
+  }
 
-    &.collapsed {
-        height: 40px;
-    }
-
-    .collapsible-control {
-        position: absolute;
-        right: 0;
-        bottom: 0;
-        padding: 0 1em;
-        border: none;
-        background: none;
-        -webkit-appearance: none;
+  .collapsible-control {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    z-index: 100;
+    background: none;
+    color: @icinga-blue;
+    border: none;
+    border-bottom-left-radius: 3px;
+    border-bottom-right-radius: 3px;
+/*
+    font-size: 2em;
+    line-height: 0.5em;
+*/
+    -webkit-appearance: none;
+       -moz-appearance: none;
         -ms-appearance: none;
-        -moz-appearance: none;
-        appearance: none;
-        color: @icinga-blue;
-        z-index: 2;
-    }
+            appearance: none;
+    padding-right: 0;
+  }
 
-    .collapsible-control:hover {
-        text-decoration: underline;
+  .collapsible-control {
+    background: white;
+    border: none;
+    padding: 1px 0 0 0;
+
+    &:before {
+      content: "\e81e"; // .icon-up-dir
+      font-family: "ifont";
+      display: block;
+      color: @gray;
+      text-align: right;
+      border-top: 1px solid @gray-light;
+      text-align: center;
+      width: 100%;
     }
+  }
+
+  // Reset styles for ie8
+  .collapsible-control:focus {
+      border: none;
+      outline: none;
+  }
+
+  .collapsible-control:hover:before {
+    color: @icinga-blue;
+    border-color: @icinga-blue;
+  }
+
+  &.collapsed .collapsible-control  {
+    &:before {
+      content: '\e81d'; // .icon-down-dir
+      font-family: "ifont";
+      display: block;
+    }
+  }
 }
 
 #collapsible-control-ghost {
