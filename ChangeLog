@@ -1,5 +1,11 @@
 # Icinga Web 2 Changelog
 
+## What's New in Version 2.2.2
+
+#### Bugfixes
+
+* Fix remote code execution via remote command transport
+
 ## What's New in Version 2.2.1
 
 #### Bugfixes
