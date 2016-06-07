@@ -24,13 +24,14 @@ $innerLayoutScript = $this->layout()->innerLayout . '.phtml';
 <html class="no-js<?= $iframeClass ?>" lang="<?= $lang ?>"> <!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <meta content="width=320; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;"/>
   <meta name="google" value="notranslate">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
   <meta http-equiv="cleartype" content="on">
   <title><?= $this->title ? $this->escape($this->title) : 'Icinga Web' ?></title>
-  <!-- TODO: viewport and scale settings make no sense for us, fix this -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="application-name" content="Icinga Web 2">
+  <meta name="apple-mobile-web-app-title" content="Icinga">
 <?php if ($isIframe): ?>
   <base target="_parent"/>
 <?php else: ?>
@@ -47,6 +48,7 @@ $innerLayoutScript = $this->layout()->innerLayout . '.phtml';
   <script src="<?= $this->baseUrl('js/vendor/respond.min.js');?>"></script>
   <![endif]-->
   <link type="image/png" rel="shortcut icon" href="<?= $this->baseUrl('img/favicon.png') ?>" />
+  <link rel="apple-touch-icon" href="<?= $this->baseUrl('img/touch-icon.png') ?>">
 </head>
 <body id="body" class="loading">
 <pre id="responsive-debug"></pre>
