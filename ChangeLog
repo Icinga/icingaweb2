@@ -1,5 +1,25 @@
 # Icinga Web 2 Changelog
 
+## What's New
+
+### What's New in Version 2.3.3
+
+#### Bugfixes
+
+* Bug 11267: Links in plugin output don't behave as expected
+* Bug 11348: Host aliases are not shown in detail area
+* Bug 11728: First non whitespace character after comma stripped from plugin output
+* Bug 11729: Sort by severity depends on state type
+* Bug 11737: Zero width space characters destroy state highlighting in plugin output
+* Bug 11796: Zero width space characters may destroy links in plugin output
+* Bug 11831: module.info parsing fails in case it contains newlines that are not part of the module's description
+* Bug 11850: "Add to menu" tab unnecessarily appears in command forms
+* Bug 11871: Colors used in the timeline are not accessible
+* Bug 11883: Delete action on comments and downtimes in list views not accessible because they lack context
+* Bug 11885: Database: Asterisk filters ignored when combined w/ other filters
+* Bug 11910: Web 2 lacks mobile meta tags
+* Fix remote code execution via remote command transport
+
 ### What's New in Version 2.3.2
 
 #### Feature
@@ -13,8 +33,6 @@
 * Bug 10847: Warn about illogical dates
 * Bug 10848: Can't change items per page if filter is in modify state
 * Bug 11392: Can't configure monitoring backend via the web interface when no monitoring backend was configured
-
-## What's New
 
 ### What's New in Version 2.3.1
 
