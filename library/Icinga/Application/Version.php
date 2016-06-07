@@ -8,7 +8,7 @@ namespace Icinga\Application;
  */
 class Version
 {
-    const VERSION = '2.1.3';
+    const VERSION = '2.1.4';
 
     /**
      * Get the version of this instance of Icinga Web 2
