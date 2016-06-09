@@ -341,24 +341,6 @@ class RemoteCommandFile implements CommandTransportInterface
                     'Failed to write the whole command to the remote command pipe'
                 );
             }
-            fclose($this->sshPipes[0]);
-            $readBuffer = $read = array($this->sshPipes[2]);
-            $write = null;
-            $except = null;
-            $stderr = '';
-            while (
-                false !== (stream_select($readBuffer, $write, $exceptBuffer, 0, 20000))
-                && $this->getSshProcessStatus('running')
-            ) {
-                if (! empty($readBuffer)) {
-                    $stderr .= stream_get_contents($readBuffer[0]);
-                }
-                // Reset buffer
-                $readBuffer = $read;
-            }
-            if (! empty($stderr)) {
-                throw new CommandTransportException('Can\'t send external Icinga command: %s', trim($stderr));
-            }
         } else {
             $this->throwSshFailure();
         }
@@ -436,7 +418,7 @@ class RemoteCommandFile implements CommandTransportInterface
 
         if (! is_resource($this->sshProcess)) {
             throw new CommandTransportException(
-                'Can\'t send external Icinga command, failed to fork SSH'
+                'Can\'t send external Icinga command: Failed to fork SSH'
             );
         }
     }
@@ -473,9 +455,7 @@ class RemoteCommandFile implements CommandTransportInterface
     public function __destruct()
     {
         if (is_resource($this->sshProcess)) {
-            if (is_resource($this->sshPipes[0])) {
-                fclose($this->sshPipes[0]);
-            }
+            fclose($this->sshPipes[0]);
             fclose($this->sshPipes[1]);
             fclose($this->sshPipes[2]);
 
