@@ -735,11 +735,16 @@ class FilterEditor extends AbstractWidget
 
     public function renderSearch()
     {
-        $html = ' <form method="post" class="search inline" action="'
+        $html = ' <form method="post" class="search" action="'
               . $this->preservedUrl()
-              . '"><input type="text" name="q" style="width: 8em" class="search" value="" placeholder="'
+              . '">'
+              . '<div class="input-btn-grp">'
+              . '<i aria-hidden="true" class="icon-search"></i>'
+              . '<input type="text" name="q" style="width: 8em" class="search" value="" placeholder="'
               . t('Search...')
-              . '" /></form>';
+              . '">'
+              . '</div>'
+              . '</form>';
 
         if ($this->filter->isEmpty()) {
             $title = t('Filter this list');
@@ -750,6 +755,7 @@ class FilterEditor extends AbstractWidget
             }
         }
         return $html
+        	. '<div class="btn-grp">'
             . '<a href="'
             . $this->preservedUrl()->with('modifyFilter', true)
             . '" aria-label="'
@@ -758,7 +764,8 @@ class FilterEditor extends AbstractWidget
             . $title
             . '">'
             . '<i aria-hidden="true" class="icon-filter"></i>'
-            . '</a>';
+            . '</a>'
+            . '</div>';
     }
 
     public function render()
