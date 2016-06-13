@@ -1,0 +1,30 @@
+<div class="controls">
+    <?= $tabs ?>
+    <?= $limiter ?>
+    <?= $sortBox ?>
+    <?= $paginator ?>
+    <?= $filterEditor ?>
+</div>
+<div class="content">
+    <table class="action" data-base-target="_next">
+        <thead>
+        <tr>
+            <th><?= $this->translate('Name') ?></th>
+            <th><?= $this->translate('Value') ?></th>
+        </tr>
+        </thead>
+        <tbody>
+        <?php foreach ($rows as $row): ?>
+        <tr>
+            <td>
+                <?= $this->escape($row->name) ?>
+                <div class="hidden">
+                    <a href="<?= $this->url('example/example/detail', array('name' => $row->name)) ?>"></a>
+                </div>
+            </td>
+            <td><?= $this->escape($row->value) ?></td>
+        </tr>
+        <?php endforeach ?>
+        </tbody>
+    </table>
+</div>

@@ -1,0 +1,17 @@
+<div class="controls">
+    <?= $tabs ?>
+</div>
+<div class="content">
+    <?= $this->qlink(
+        $this->translate('Create a New Resource') ,
+        'config/createresource',
+        null,
+        array(
+            'class'             => 'button-link',
+            'data-base-target'  => '_next',
+            'icon'              => 'plus',
+            'title'             => $this->translate('Create a new resource')
+        )
+    ) ?>
+    <?= $form ?>
+</div>

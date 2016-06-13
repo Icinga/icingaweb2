@@ -1,0 +1,47 @@
+<div class="controls">
+    <?= $this->tabs ?>
+    <?= $this->qlink(
+        $this->translate('Comment / Acknowledge') ,
+        $this->url()->setPath('eventdb/comments/new'),
+        null,
+        array(
+            'class'             => 'button-link',
+            'data-base-target'  => '_self',
+            'icon'              => 'comment',
+            'title'             => $this->translate('Comment / Acknowledge')
+        )
+    ) ?>
+    <?= $this->paginator ?>
+    <div class="sort-controls-container">
+        <?= $this->limiter ?>
+        <?= $this->sortBox ?>
+    </div>
+    <?= $this->filterEditor ?>
+</div>
+<div class="content">
+    <?php if (! $comments->hasResult()): ?>
+    <p><?= $this->translate('No comments recorded for this event yet.') ?></p>
+</div>
+<?php return; endif ?>
+    <table class="common-table">
+        <thead>
+            <tr>
+                <th><?= $this->escape($this->translate('Type')) ?></th>
+                <th><?= $this->escape($this->translate('Comment')) ?></th>
+                <th><?= $this->escape($this->translate('Created')) ?></th>
+                <th><?= $this->escape($this->translate('Author')) ?></th>
+            </tr>
+        </thead>
+        <tbody>
+        <?php foreach ($comments as $comment): ?>
+            <tr>
+                <td><?= $this->escape($comment->type) ?></td>
+                <td><?= $this->escape($comment->message) ?></td>
+                <td><?= $this->escape($comment->created) ?></td>
+                <td><?= $this->escape($comment->user) ?></td>
+            </tr>
+        <?php endforeach ?>
+        </tbody>
+    </table>
+</div>
+
