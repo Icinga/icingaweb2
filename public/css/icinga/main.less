@@ -226,16 +226,17 @@ a:hover > .icon-cancel {
 
     &:after {
       content: "";
-      height: 48px;
+      display: block;
+      height: 24px;
       width: 100%;
       position: absolute;
-      bottom: 0;
+      bottom: 22px;
       left: 0;
       background-color: white;
-      background: -webkit-linear-gradient(bottom,       white 17px, rgba(255,255,255,0) 100%);
-      background:    -moz-linear-gradient(bottom,       white 17px, rgba(255,255,255,0) 100%);
-      background:     -ms-linear-gradient(bottom,       white 17px, rgba(255,255,255,0) 100%);
-      background:         linear-gradient(to top,       white 17px, rgba(255,255,255,0) 100%);
+      background: -webkit-linear-gradient(bottom, white 0, rgba(255,255,255,0) 100%);
+      background:    -moz-linear-gradient(bottom, white 0, rgba(255,255,255,0) 100%);
+      background:     -ms-linear-gradient(bottom, white 0, rgba(255,255,255,0) 100%);
+      background:         linear-gradient(to top, white 0, rgba(255,255,255,0) 100%);
     }
   }
 
@@ -245,16 +246,12 @@ a:hover > .icon-cancel {
     left: 0;
     right: 0;
     width: 100%;
-    z-index: 100;
-    background: none;
+    z-index: 2;
+    background: white;
     color: @icinga-blue;
     border: none;
-    border-bottom-left-radius: 3px;
-    border-bottom-right-radius: 3px;
-/*
-    font-size: 2em;
-    line-height: 0.5em;
-*/
+    border-top: 1px solid @gray-light;
+    color: @gray;
     -webkit-appearance: none;
        -moz-appearance: none;
         -ms-appearance: none;
@@ -262,40 +259,16 @@ a:hover > .icon-cancel {
     padding-right: 0;
   }
 
-  .collapsible-control {
-    background: white;
-    border: none;
-    padding: 1px 0 0 0;
-
-    &:before {
-      content: "\e81e"; // .icon-up-dir
-      font-family: "ifont";
-      display: block;
-      color: @gray;
-      text-align: right;
-      border-top: 1px solid @gray-light;
-      text-align: center;
-      width: 100%;
-    }
-  }
-
   // Reset styles for ie8
   .collapsible-control:focus {
-      border: none;
-      outline: none;
+    border: none;
+    border-top: 1px solid @gray-light;
+    outline: none;
   }
 
-  .collapsible-control:hover:before {
+  .collapsible-control:hover {
     color: @icinga-blue;
     border-color: @icinga-blue;
-  }
-
-  &.collapsed .collapsible-control  {
-    &:before {
-      content: '\e81d'; // .icon-down-dir
-      font-family: "ifont";
-      display: block;
-    }
   }
 }
 

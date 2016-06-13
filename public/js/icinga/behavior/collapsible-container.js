@@ -36,11 +36,14 @@
             if (classes.indexOf('perf-data') > -1) {
                 var $button = $container.find('.collapsible-control');
                 $container.addClass('collapsed');
-                $button.attr('title', $button.attr('data-label-expand'))
+                $button.children('i').removeClass('icon-up-dir');
+                $button.children('i').addClass('icon-down-dir');
             } else {
                 var $button = $container.find('.collapsible-control');
                 $container.removeClass('collapsed');
-                $button.attr('title', $button.attr('aria-label'))
+                $button.attr('title', $button.attr('aria-label'));
+                $button.children('i').removeClass('icon-down-dir');
+                $button.children('i').addClass('icon-up-dir');
             }
         }
         if ($container.hasClass('custom-vars')) {
@@ -48,10 +51,14 @@
                 var $button = $container.find('.collapsible-control');
                 $container.addClass('collapsed');
                 $button.attr('title', $button.attr('data-label-expand'))
+                $button.children('i').removeClass('icon-up-dir');
+                $button.children('i').addClass('icon-down-dir');
             } else {
                 var $button = $container.find('.collapsible-control');
                 $container.removeClass('collapsed');
                 $button.attr('title', $button.attr('aria-label'))
+                $button.children('i').removeClass('icon-down-dir');
+                $button.children('i').addClass('icon-up-dir');
             }
         }
     }
