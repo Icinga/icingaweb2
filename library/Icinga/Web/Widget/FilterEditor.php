@@ -733,39 +733,64 @@ class FilterEditor extends AbstractWidget
         return $filter;
     }
 
-    public function renderSearch()
+    public function renderFilterBuilder()
     {
-        $html = ' <form method="post" class="search" action="'
-              . $this->preservedUrl()
-              . '">'
-              . '<div class="input-btn-grp">'
-              . '<i aria-hidden="true" class="icon-search"></i>'
-              . '<input type="text" name="q" style="width: 8em" class="search" value="" placeholder="'
-              . t('Search...')
-              . '">'
-              . '</div>'
-              . '</form>';
+        return '<form action="'
+            . Url::fromRequest()
+            . '" class="editor" method="POST">'
+            . '<ul class="tree">'
+            . '<li>'
+            . $this->renderFilter($this->filter)
+            . '</li>'
+            . '</ul>'
+            . '<div class="buttons">'
+            . '<input type="submit" name="submit" value="Apply" />'
+            . '<input type="submit" name="cancel" value="Cancel" />'
+            . '</div>'
+            . '<input type="hidden" name="formUID" value="FilterEditor">'
+            . '</form>';
+    }
 
+    public function renderFilterField($filter = '')
+    {
+        $class = '';
         if ($this->filter->isEmpty()) {
             $title = t('Filter this list');
+            $filter = t('Filter …');
+            $class = 'empty';
         } else {
             $title = t('Modify this filter');
             if (! $this->filter->isEmpty()) {
                 $title .= ': ' . $this->view()->escape($this->filter);
             }
         }
-        return $html
-        	. '<div class="btn-grp">'
+
+        return '<div class="btn-grp filter-field ' . $class . '">'
             . '<a href="'
-            . $this->preservedUrl()->with('modifyFilter', true)
+            . $this->preservedUrl()->with('modifyFilter', ! $this->preservedUrl()->getParam('modifyFilter') )
             . '" aria-label="'
             . $title
             . '" title="'
             . $title
             . '">'
             . '<i aria-hidden="true" class="icon-filter"></i>'
+            . '<span>' . $filter . '</span>'
             . '</a>'
             . '</div>';
+    }
+
+    public function renderSearch()
+    {
+        return '<form method="post" class="search search-form" action="'
+            . $this->preservedUrl()
+            . '">'
+            . '<div class="input-btn-grp">'
+            . '<i aria-hidden="true" class="icon-search"></i>'
+            . '<input type="text" name="q" style="width: 8em" class="search" value="" placeholder="'
+            . t('Search...')
+            . '">'
+            . '</div>'
+            . '</form>';
     }
 
     public function render()
@@ -774,22 +799,15 @@ class FilterEditor extends AbstractWidget
             return '';
         }
         if (! $this->preservedUrl()->getParam('modifyFilter')) {
-            return '<div class="filter">' . $this->renderSearch() . $this->view()->escape($this->shorten($this->filter, 50)) . '</div>';
+            return '<div class="filter modify">'
+                . $this->renderSearch()
+                . $this->renderFilterField($this->filter)
+                . '</div>';
         }
-        return  '<div class="filter">'
+        return '<div class="filter">'
             . $this->renderSearch()
-            . '<form action="'
-            . Url::fromRequest()
-            . '" class="editor" method="POST">'
-            . '<ul class="tree"><li>'
-            . $this->renderFilter($this->filter)
-            . '</li></ul>'
-            . '<div class="buttons">'
-            . '<input type="submit" name="submit" value="Apply" />'
-            . '<input type="submit" name="cancel" value="Cancel" />'
-            . '</div>'
-            . '<input type="hidden" name="formUID" value="FilterEditor">'
-            . '</form>'
+            . $this->renderFilterField($this->filter)
+            . $this->renderFilterBuilder()
             . '</div>';
     }
 
