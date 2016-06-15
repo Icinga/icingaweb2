@@ -214,29 +214,144 @@ ul.tree input {
 
   &.one {
     ul {
-        padding: 0 0 @vertical-padding 0;
+      padding: 0 0 @vertical-padding 0;
     }
 
     li {
-        .rounded-corners();
-        max-width: none;
-        line-height: 18px;
-        background: @icinga-blue;
-        color: white;
-        display: inline-block;
-        width: auto;
-        padding: @vertical-padding @horizontal-padding;
+      .rounded-corners();
+      max-width: none;
+      line-height: 18px;
+      background: @icinga-blue;
+      color: white;
+      display: inline-block;
+      width: auto;
+      padding: @vertical-padding @horizontal-padding;
     }
 
     li > i {
-        font-size: 18px;
-        display: inline-block;
+      font-size: 18px;
+      display: inline-block;
     }
 
     li > a {
-        display: block;
-        height: 100%;
-        width: 100%;
+      display: block;
+      height: 100%;
+      width: 100%;
     }
   }
+}
+
+#layout.minimal-layout .responsive-table,
+#layout.poor-layout .responsive-table,
+#layout.twocols .responsive-table {
+    display: block;
+    overflow: auto;
+
+    thead {
+        display: none;
+    }
+
+    tbody {
+        display: block;
+        width: 100%;
+    }
+
+    tr,
+    td {
+      display: block;
+      padding: 0;
+      margin: 0;
+    }
+
+    tr {
+      width: 100%;
+      position: relative;
+      padding-top: 3.5em;
+      padding-bottom: @vertical-padding;
+      border-left: 0;
+    }
+
+    // ack
+    td:nth-child(1) {
+        position: absolute;
+        top: 0; left: 12px;
+        color: transparent;
+    }
+
+    // ack: @todo class needed for status
+    td:nth-child(1):before {
+        content: '\e87b';
+        font-family: "ifont";
+        color: @icinga-blue;
+    }
+
+    // type
+    td:nth-child(2) {
+        display: inline-block;
+        margin-left: @horizontal-padding;
+    }
+
+    // host-name
+    td:nth-child(3) {
+        display: inline-block;
+        margin-left: @horizontal-padding;
+    }
+
+    // priority
+    td:nth-child(4) {
+        position: absolute;
+        top: 0; bottom: 0; left: 0;
+        width: 4px;
+        color: transparent;
+    }
+
+    // message
+    td:nth-child(5) {
+        font-weight: bold;
+        position: absolute;
+        top: 1.75em;
+        left: 0px;
+        padding-left: @horizontal-padding;;
+        max-width: 100%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    // program
+    td:nth-child(6) {
+        display: inline-block;
+        margin-left: @horizontal-padding;
+    }
+
+    // facility
+    td:nth-child(7) {
+        display: inline-block;
+        margin-left: @horizontal-padding;
+    }
+
+    // created
+    td:nth-child(8) {
+        position: absolute;
+        top: @vertical-padding; right: 0;
+        padding-right: @horizontal-padding;
+        max-width: 100%;
+        padding-left: 17px;
+    }
+
+    td.priority-CRITICAL {
+        background: @color-critical;
+    }
+
+    td.priority-ERROR {
+        background: @color-error;
+    }
+
+    td.priority-WARNING {
+        background: @color-warning;
+    }
+
+    td.priority-ALERT {
+        background: @color-pending ;
+    }
 }
