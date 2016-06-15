@@ -32,7 +32,7 @@ if (! $this->compact): ?>
     <p><?= $this->translate('No events recorded yet.') ?></p>
 </div>
 <?php return; endif ?>
-    <table class="common-table table-row-selectable multiselect"
+    <table class="common-table table-row-selectable multiselect responsive-table"
            data-base-target="_next"
            data-icinga-multiselect-url="<?= $this->href('eventdb/events/details') ?>"
            data-icinga-multiselect-controllers="<?= $this->href('eventdb/events') ?>"
