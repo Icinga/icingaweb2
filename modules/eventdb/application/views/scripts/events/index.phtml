@@ -9,13 +9,15 @@ if (! $this->compact): ?>
         'Multi-selection help'
     );
     ?>
-    <div class="selection-info" title="<?= $this->escape($helpMessage) ?>">
-        <?= sprintf(
-            /// TRANSLATORS: Please leave %s as it is because the selection counter is wrapped in a span tag for updating
-            /// the counter via JavaScript
-            $this->translate('%s row(s) selected', 'Multi-selection count'),
-            '<span class="selection-info-count">0</span>'
-        ) ?>
+    <div class="status-bar">
+        <div class="selection-info" title="<?= $this->escape($helpMessage) ?>">
+            <?= sprintf(
+                /// TRANSLATORS: Please leave %s as it is because the selection counter is wrapped in a span tag for updating
+                /// the counter via JavaScript
+                $this->translate('%s row(s) selected', 'Multi-selection count'),
+                '<span class="selection-info-count">0</span>'
+            ) ?>
+        </div>
     </div>
     <?= $this->filterEditor ?>
     <?= $this->paginator ?>
