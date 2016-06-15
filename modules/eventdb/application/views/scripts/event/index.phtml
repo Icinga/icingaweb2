@@ -1,22 +1,27 @@
 <div class="controls">
     <?= $this->tabs ?>
-    <?= $this->qlink(
-        $this->translate('Comment / Acknowledge') ,
-        $this->url()->setPath('eventdb/comments/new'),
-        null,
-        array(
-            'class'             => 'button-link',
-            'data-base-target'  => '_self',
-            'icon'              => 'comment',
-            'title'             => $this->translate('Comment / Acknowledge')
-        )
-    ) ?>
     <?= $this->paginator ?>
     <div class="sort-controls-container">
         <?= $this->limiter ?>
         <?= $this->sortBox ?>
     </div>
     <?= $this->filterEditor ?>
+    <div class="toolbar one">
+        <ul>
+            <li
+            <?= $this->qlink(
+                $this->translate('Comment / Acknowledge') ,
+                $this->url()->setPath('eventdb/comments/new'),
+                null,
+                array(
+                    'data-base-target'  => '_self',
+                    'icon'              => 'comment',
+                    'title'             => $this->translate('Comment / Acknowledge')
+                )
+            ) ?>
+            </li>
+        </ul>
+    </div>
 </div>
 <div class="content">
     <?php if (! $comments->hasResult()): ?>

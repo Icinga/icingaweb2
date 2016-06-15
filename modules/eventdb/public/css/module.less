@@ -96,5 +96,65 @@ div.filter form.editor ul.tree li .datafilter li.active.active {
 	background: -webkit-linear-gradient(rgba(255,255,255,0) 0%, #ffffff 100%);
 	position: absolute;
 	top: -12px; left: 0; right: 0;
+.toolbar {
+
+  clear: both;
+
+  ul {
+    text-align: center;
+    padding-left: 0;
+    margin: 0 -6px;
+  }
+
+  li {
+    display: inline-block;
+    padding: 0px 12px;
+    color:  #0095bf;
+    word-break:break-word;
+    max-width: 19%;
+    vertical-align: top
+  }
+
+  li a {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  li > i {
+    display: block;
+    font-size: 24px;
+  }
+
+  li:hover i {
+    color: gray;
+  }
+
+  &.one {
+    ul {
+        padding: 0 0 @vertical-padding 0;
+    }
+
+    li {
+        .rounded-corners();
+        max-width: none;
+        line-height: 18px;
+        background: @icinga-blue;
+        color: white;
+        display: inline-block;
+        width: auto;
+        padding: @vertical-padding @horizontal-padding;
+    }
+
+    li > i {
+        font-size: 18px;
+        display: inline-block;
+    }
+
+    li > a {
+        display: block;
+        height: 100%;
+        width: 100%;
+    }
+  }
 }
-*/
