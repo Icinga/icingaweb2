@@ -75,27 +75,38 @@ div.filter form.editor ul.tree li .datafilter li.active.active {
 		width: 100%;
 		height: 100%;
 	}
+.status-bar {
+  .clearfix();
+  position: fixed;
+  bottom: 0;
+  background: white;
+  margin-bottom: 0;
+  padding: @vertical-padding @horizontal-padding;
+  border-top: 1px solid @gray-lighter;
+
+  &:before {
+  	content: "";
+  	display: block;
+  	width: 100%;
+  	position: absolute;
+  	top: -13px;
+  	margin-left: -@horizontal-padding;
+  	height: 12px;
+  	background: -webkit-linear-gradient(bottom, #ffffff 0%, rgba(255,255,255,0) 100%);
+      background:    -moz-linear-gradient(bottom, #ffffff 0%, rgba(255,255,255,0) 100%);
+      background:     -ms-linear-gradient(bottom, #ffffff 0%, rgba(255,255,255,0) 100%);
+      background:         linear-gradient(bottom, #ffffff 0%, rgba(255,255,255,0) 100%);
+  }
+
+  .selection-info {
+  	float: right;
+  }
 }
 
-.selection-info {
-	position: fixed;
-	bottom: 0;
-	width: 100%;
-	background: white;
-	margin-bottom: 0;
-	padding: @vertical-padding 0;
-	border-top: 1px solid @gray-lighter;
 }
 
-/*
-.selection-info:before {
-	content: "";
-	display: block;
-	height: 12px;
-	width: 100%;
-	background: -webkit-linear-gradient(rgba(255,255,255,0) 0%, #ffffff 100%);
-	position: absolute;
-	top: -12px; left: 0; right: 0;
+}
+
 .toolbar {
 
   clear: both;
