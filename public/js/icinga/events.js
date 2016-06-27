@@ -129,6 +129,7 @@
             $(document).on('click', 'a', { self: this }, this.linkClicked);
             $(document).on('click', 'tr[href]', { self: this }, this.linkClicked);
 
+            $(document).on('click', 'input[type="submit"], button[type="submit"]', this.rememberSubmitButton);
             // We catch all form submit events
             $(document).on('submit', 'form', { self: this }, this.submitForm);
 
@@ -197,6 +198,12 @@
             return self.autoSubmitForm(event);
         },
 
+        rememberSubmitButton: function(e) {
+            var $button = $(this);
+            var $form = $button.closest('form');
+            $form.data('submitButton', $button);
+        },
+
         autoSubmitForm: function (event) {
             return event.data.self.submitForm(event, true);
         },
@@ -216,6 +223,14 @@
             var progressTimer;
             var $target;
             var data;
+
+            var $rememberedSubmittButton = $form.data('submitButton');
+            if (typeof $rememberedSubmittButton != 'undefined') {
+                if ($form.has($rememberedSubmittButton)) {
+                    $button = $rememberedSubmittButton;
+                }
+                $form.removeData('submitButton');
+            }
 
             if ($button.length === 0) {
                 var $el;
