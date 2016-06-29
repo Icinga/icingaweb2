@@ -98,11 +98,11 @@ abstract class IniRepository extends Repository implements Extensible, Updatable
         }
 
         $newSection = null;
-        foreach (iterator_to_array($this->ds) as $section => $config) {
-            if ($filter !== null && !$filter->matches($config)) {
-                continue;
-            }
 
+        $query = $this->ds->select();
+        $query->addFilter($filter);
+
+        foreach ($query as $section => $config) {
             if ($newSection !== null) {
                 throw new StatementException(
                     t('Cannot update. Column "%s" holds a section\'s name which must be unique'),
@@ -150,12 +150,13 @@ abstract class IniRepository extends Repository implements Extensible, Updatable
             $filter = $this->requireFilter($target, $filter);
         }
 
-        foreach (iterator_to_array($this->ds) as $section => $config) {
-            if ($filter === null || $filter->matches($config)) {
-                $this->ds->removeSection($section);
-            }
-        }
+        $query = $this->ds->select();
+        $query->addFilter($filter);
 
+        foreach ($query as $section => $config) {
+            $this->ds->removeSection($section);
+        }
+        
         try {
             $this->ds->saveIni();
         } catch (Exception $e) {
