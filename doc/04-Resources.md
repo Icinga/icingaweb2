@@ -68,6 +68,7 @@ Directive       | Description
 **root_dn**     | Root object of the tree, e.g. "ou=people,dc=icinga,dc=org"
 **bind_dn**     | The user to use when connecting to the server.
 **bind_pw**     | The password to use when connecting to the server.
+**encryption**  | Type of encryption to use: `none` (default), `starttls`, `ldaps`.
 
 **Example:**
 
