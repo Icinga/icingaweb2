@@ -37,7 +37,7 @@ Below is a list of official package repositories for installing Icinga Web 2 for
 
 Distribution            | Repository
 ------------------------|---------------------------
-Debian                  | [debmon](http://debmon.org/packages/debmon-wheezy/icingaweb2), [Icinga Repository](http://packages.icinga.org/debian/)
+Debian                  | [debmon](http://debmon.org/packages/debmon-jessie/icingaweb2), [Icinga Repository](http://packages.icinga.org/debian/)
 Ubuntu                  | [Icinga Repository](http://packages.icinga.org/ubuntu/)
 RHEL/CentOS             | [Icinga Repository](http://packages.icinga.org/epel/)
 openSUSE                | [Icinga Repository](http://packages.icinga.org/openSUSE/)
@@ -57,7 +57,7 @@ Below is a list with examples for various distributions.
 **Debian (debmon)**:
 ```
 wget -O - http://debmon.org/debmon/repo.key 2>/dev/null | apt-key add -
-echo 'deb http://debmon.org/debmon debmon-wheezy main' >/etc/apt/sources.list.d/debmon.list
+echo 'deb http://debmon.org/debmon debmon-jessie main' >/etc/apt/sources.list.d/debmon.list
 apt-get update
 ```
 
@@ -111,12 +111,6 @@ The packages for RHEL/CentOS depend on other packages which are distributed as p
 > Please note that installing Icinga Web 2 on **RHEL/CentOS 5** is not supported due to EOL versions of PHP and
 > PostgreSQL.
 
-#### <a id="package-repositories-wheezy-notes"></a> Debian wheezy Notes
-
-The packages for Debian wheezy depend on other packages which are distributed as part of the
-[wheezy-backports](http://backports.debian.org/) repository. Please make sure to enable this repository by following
-[these instructions](http://backports.debian.org/Instructions/).
-
 ### <a id="installing-from-package-example"></a> Installing Icinga Web 2
 
 You can install Icinga Web 2 by using your distribution's package manager to install the `icingaweb2` package.
@@ -126,7 +120,6 @@ Below is a list with examples for various distributions. The additional package 
 ```
 apt-get install icingaweb2
 ```
-For Debian wheezy please read the [package repositories notes](#package-repositories-wheezy-notes).
 
 **RHEL, CentOS and Fedora**:
 ```
@@ -449,24 +442,24 @@ path                = "/var/run/icinga2/cmd/icinga2.cmd"
 Finally visit Icinga Web 2 in your browser to login as `icingaadmin` user: `/icingaweb2`.
 
 
-# <a id="upgrading"></a> Upgrading Icinga Web 2
+## <a id="upgrading"></a> Upgrading Icinga Web 2
 
-## <a id="upgrading-to-2.3.x"></a> Upgrading to Icinga Web 2 2.3.x
+### <a id="upgrading-to-2.3.x"></a> Upgrading to Icinga Web 2 2.3.x
 
 * Icinga Web 2 version 2.3.x does not introduce any backward incompatible change.
 
-## <a id="upgrading-to-2.2.0"></a> Upgrading to Icinga Web 2 2.2.0
+### <a id="upgrading-to-2.2.0"></a> Upgrading to Icinga Web 2 2.2.0
 
 * The menu entry `Authorization` beneath `Config` has been renamed to `Authentication`. The role, user backend and user
   group backend configuration which was previously found beneath `Authentication` has been moved to `Application`.
   
-## <a id="upgrading-to-2.1.x"></a> Upgrading to Icinga Web 2 2.1.x
+### <a id="upgrading-to-2.1.x"></a> Upgrading to Icinga Web 2 2.1.x
 
 * Since Icinga Web 2 version 2.1.3 LDAP user group backends respect the configuration option `group_filter`.
   Users who changed the configuration manually and used the option `filter` instead
   have to change it back to `group_filter`.
 
-## <a id="upgrading-to-2.0.0"></a> Upgrading to Icinga Web 2 2.0.0
+### <a id="upgrading-to-2.0.0"></a> Upgrading to Icinga Web 2 2.0.0
 
 * Icinga Web 2 installations from package on RHEL/CentOS 7 now depend on `php-ZendFramework` which is available through
   the [EPEL repository](http://fedoraproject.org/wiki/EPEL). Before, Zend was installed as Icinga Web 2 vendor library
@@ -488,7 +481,7 @@ Finally visit Icinga Web 2 in your browser to login as `icingaadmin` user: `/ici
   **&lt;config-dir&gt;/preferences/&lt;username&gt;/config.ini**.
   The content of the file remains unchanged.
 
-## <a id="upgrading-to-rc1"></a> Upgrading to Icinga Web 2 Release Candidate 1
+### <a id="upgrading-to-rc1"></a> Upgrading to Icinga Web 2 Release Candidate 1
 
 The first release candidate of Icinga Web 2 introduces the following non-backward compatible changes:
 
@@ -507,12 +500,12 @@ The first release candidate of Icinga Web 2 introduces the following non-backwar
   predefined subset of filter columns. Please see the module's security
   related documentation for more details.
 
-## <a id="upgrading-to-beta3"></a> Upgrading to Icinga Web 2 Beta 3
+### <a id="upgrading-to-beta3"></a> Upgrading to Icinga Web 2 Beta 3
 
 Because Icinga Web 2 Beta 3 does not introduce any backward incompatible change you don't have to change your
 configuration files after upgrading to Icinga Web 2 Beta 3.
 
-## <a id="upgrading-to-beta2"></a> Upgrading to Icinga Web 2 Beta 2
+### <a id="upgrading-to-beta2"></a> Upgrading to Icinga Web 2 Beta 2
 
 Icinga Web 2 Beta 2 introduces access control based on roles for secured actions. If you've already set up Icinga Web 2,
 you are required to create the file **roles.ini** beneath Icinga Web 2's configuration directory with the following
@@ -526,5 +519,6 @@ permissions = "*"
 After please log out from Icinga Web 2 and log in again for having all permissions granted.
 
 If you delegated authentication to your web server using the `autologin` backend, you have to switch to the `external`
-authentication backend to be able to log in again. The new name better reflects what’s going on. A similar change
+authentication backend to be able to log in again. The new name better reflects 
+what's going on. A similar change
 affects environments that opted for not storing preferences, your new backend is `none`.
