@@ -120,6 +120,33 @@ class View extends Zend_View_Abstract
     }
 
     /**
+     * Set or overwrite a helper function
+     *
+     * @param   string  $name
+     * @param   Closure $function
+     *
+     * @return  $this
+     */
+    public function setHelperFunction($name, Closure $function)
+    {
+        $this->helperFunctions[$name] = $function;
+        return $this;
+    }
+
+    /**
+     * Drop a helper function
+     *
+     * @param   string  $name
+     *
+     * @return  $this
+     */
+    public function dropHelperFunction($name)
+    {
+        unset($this->helperFunctions[$name]);
+        return $this;
+    }
+
+    /**
      * Call a helper function
      *
      * @param  string  $name The desired function name
