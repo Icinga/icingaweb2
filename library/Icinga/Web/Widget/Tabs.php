@@ -315,7 +315,7 @@ EOT;
 
     private function renderRefreshTab()
     {
-        $url = Icinga::app()->getRequest()->getUrl();
+        $url = Url::fromRequest();
         $tab = $this->get($this->getActiveName());
 
         if ($tab !== null) {
