@@ -4,7 +4,10 @@
 namespace Icinga\Controllers;
 
 use Icinga\Application\Config;
+use Icinga\Authentication\User\UserBackend;
 use Icinga\Data\ConfigObject;
+use Icinga\Exception\ConfigurationError;
+use Icinga\Forms\Account\ChangePasswordForm;
 use Icinga\Forms\PreferenceForm;
 use Icinga\User\Preferences\PreferencesStore;
 use Icinga\Web\Controller;
@@ -39,6 +42,20 @@ class AccountController extends Controller
     {
         $config = Config::app()->getSection('global');
         $user = $this->Auth()->getUser();
+        if ($user->getAdditional('backend_type') === 'db') {
+            try {
+                $userBackend = UserBackend::create($user->getAdditional('backend_name'));
+            } catch (ConfigurationError $e) {
+                $userBackend = null;
+            }
+            if ($userBackend !== null) {
+                $changePasswordForm = new ChangePasswordForm();
+                $changePasswordForm
+                    ->setBackend($userBackend)
+                    ->handleRequest();
+                $this->view->changePasswordForm = $changePasswordForm;
+            }
+        }
 
         $form = new PreferenceForm();
         $form->setPreferences($user->getPreferences());

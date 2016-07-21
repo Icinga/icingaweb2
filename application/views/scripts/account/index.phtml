@@ -1,6 +1,11 @@
 <div class="controls">
-    <?= $tabs; ?>
+    <?= $tabs ?>
 </div>
 <div class="content">
-    <?= $form; ?>
+<?php if (isset($changePasswordForm)): ?>
+    <h1><?= $this->translate('Account') ?></h1>
+    <?= $changePasswordForm ?>
+<?php endif ?>
+    <h1><?= $this->translate('Preferences') ?></h1>
+    <?= $form ?>
 </div>
