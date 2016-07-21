@@ -128,11 +128,11 @@ class NavigationController extends Controller
 
         $this->getTabs()
         ->add(
-            'preferences',
+            'account',
             array(
-                'title' => $this->translate('Adjust the preferences of Icinga Web 2 according to your needs'),
-                'label' => $this->translate('Preferences'),
-                'url'   => 'preference'
+                'title' => $this->translate('Update your account'),
+                'label' => $this->translate('My Account'),
+                'url'   => 'account'
             )
         )
         ->add(
