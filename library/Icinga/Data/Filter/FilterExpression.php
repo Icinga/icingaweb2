@@ -107,6 +107,10 @@ class FilterExpression extends Filter
 
     public function __toString()
     {
+        if ($this->isBooleanTrue()) {
+            return $this->column;
+        }
+
         $expression = is_array($this->expression) ?
              '( ' . implode(' | ', $this->expression) . ' )' :
              $this->expression;
@@ -121,11 +125,20 @@ class FilterExpression extends Filter
 
     public function toQueryString()
     {
+        if ($this->isBooleanTrue()) {
+            return $this->column;
+        }
+
         $expression = is_array($this->expression) ?
              '(' . implode('|', array_map('rawurlencode', $this->expression)) . ')' :
              rawurlencode($this->expression);
 
         return $this->column . $this->sign . $expression;
+    }
+
+    protected function isBooleanTrue()
+    {
+        return $this->sign === '=' && $this->expression === true;
     }
 
     /**
