@@ -18,7 +18,6 @@ ho.is_active = 1 AND ho.objecttype_id = 1
  INNER JOIN icinga_hoststatus AS hs ON hs.host_object_id = ho.object_id
 ORDER BY h.display_name COLLATE latin1_general_ci ASC LIMIT 25;
 
-
 # +------+-------------+-------+--------+----------------------------------------------------------+-----------+---------+--------------------------+------+-----------------------------+
 # | id   | select_type | table | type   | possible_keys                                            | key       | key_len | ref                      | rows | Extra                       |
 # +------+-------------+-------+--------+----------------------------------------------------------+-----------+---------+--------------------------+------+-----------------------------+
@@ -58,3 +57,15 @@ ORDER BY h.display_name ASC LIMIT 25;
 # |    1 | SIMPLE      | ho    | eq_ref | PRIMARY,objecttype_id,objects_objtype_id_idx,sla_idx_obj | PRIMARY                | 8       | icinga2.h.host_object_id |    1 | Using where |
 # |    1 | SIMPLE      | hs    | ref    | object_id                                                | object_id              | 9       | icinga2.h.host_object_id |    1 |             |
 # +------+-------------+-------+--------+----------------------------------------------------------+------------------------+---------+--------------------------+------+-------------+
+
+#
+# w/ modifications for join type eq_ref applied (same query as above)
+#
+
+# +------+-------------+-------+--------+----------------------------------------------------------+-------------------------------+---------+--------------------------+------+-------------+
+# | id   | select_type | table | type   | possible_keys                                            | key                           | key_len | ref                      | rows | Extra       |
+# +------+-------------+-------+--------+----------------------------------------------------------+-------------------------------+---------+--------------------------+------+-------------+
+# |    1 | SIMPLE      | h     | index  | idx_hosts_host_object_id                                 | idx_hosts_display_name        | 258     | NULL                     |   25 |             |
+# |    1 | SIMPLE      | ho    | eq_ref | PRIMARY,objecttype_id,objects_objtype_id_idx,sla_idx_obj | PRIMARY                       | 8       | icinga2.h.host_object_id |    1 | Using where |
+# |    1 | SIMPLE      | hs    | eq_ref | idx_hoststatus_host_object_id                            | idx_hoststatus_host_object_id | 8       | icinga2.h.host_object_id |    1 |             |
+# +------+-------------+-------+--------+----------------------------------------------------------+-------------------------------+---------+--------------------------+------+-------------+

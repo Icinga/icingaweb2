@@ -10,8 +10,44 @@
 # [ido]
 # use_optimized_queries=1
 
+################
+# DROP INDICES #
+################
+
+# Why?
+# Some indices are created twice.
+# They don't follow any naming scheme.
+# Most indices are useless.
+# Most indices are on low cardinality columns.
+# Better indices relevant for Web 2 and Icinga 2 will be re-added.
+# New indices will be introduced.
+
+-- ALTER TABLE icinga_hosts DROP INDEX instance_id;
+ALTER TABLE icinga_hosts DROP INDEX host_object_id;
+-- ALTER TABLE icinga_hosts DROP INDEX hosts_i_id_idx;
+ALTER TABLE icinga_hosts DROP INDEX hosts_host_object_id_idx;
+
+ALTER TABLE icinga_hoststatus DROP INDEX object_id;
+-- ALTER TABLE icinga_hoststatus DROP INDEX hoststatus_i_id_idx;
+-- ALTER TABLE icinga_hoststatus DROP INDEX hoststatus_stat_upd_time_idx;
+-- ALTER TABLE icinga_hoststatus DROP INDEX hoststatus_current_state_idx;
+-- ALTER TABLE icinga_hoststatus DROP INDEX hoststatus_check_type_idx;
+-- ALTER TABLE icinga_hoststatus DROP INDEX hoststatus_state_type_idx;
+-- ALTER TABLE icinga_hoststatus DROP INDEX hoststatus_last_state_chg_idx;
+-- ALTER TABLE icinga_hoststatus DROP INDEX hoststatus_notif_enabled_idx;
+-- ALTER TABLE icinga_hoststatus DROP INDEX hoststatus_problem_ack_idx;
+-- ALTER TABLE icinga_hoststatus DROP INDEX hoststatus_act_chks_en_idx;
+-- ALTER TABLE icinga_hoststatus DROP INDEX hoststatus_pas_chks_en_idx;
+-- ALTER TABLE icinga_hoststatus DROP INDEX hoststatus_event_hdl_en_idx;
+-- ALTER TABLE icinga_hoststatus DROP INDEX hoststatus_flap_det_en_idx;
+-- ALTER TABLE icinga_hoststatus DROP INDEX hoststatus_is_flapping_idx;
+-- ALTER TABLE icinga_hoststatus DROP INDEX hoststatus_p_state_chg_idx;
+-- ALTER TABLE icinga_hoststatus DROP INDEX hoststatus_latency_idx;
+-- ALTER TABLE icinga_hoststatus DROP INDEX hoststatus_ex_time_idx;
+-- ALTER TABLE icinga_hoststatus DROP INDEX hoststatus_sch_downt_d_idx;
+
 ############################
-# display_name performance #
+# DISPLAY_NAME PERFORMANCE #
 ############################
 
 # Icinga Web 2's queries which filter for or order by host and service display_name are performed in a case-insensitive
@@ -20,11 +56,33 @@
 
 ALTER TABLE icinga_hosts MODIFY display_name VARCHAR(255) CHARACTER SET latin1 COLLATE latin1_general_ci;
 ALTER TABLE icinga_hosts ADD INDEX idx_hosts_display_name (display_name);
-ANALYZE TABLE icinga_hosts;
 
 ALTER TABLE icinga_services MODIFY display_name VARCHAR(255) CHARACTER SET latin1 COLLATE latin1_general_ci;
 ALTER TABLE icinga_services ADD INDEX idx_services_display_name (display_name);
+
+####################
+# JOIN PERFORMANCE #
+####################
+
+# The best possible join type in MySQL is `eq_ref` which is used when all parts of an index are used by the join and
+# the index is a PRIMARY KEY or UNIQUE NOT NULL index.
+# The IDO schema already has some UNIQUE indices for joins but lacks NOT NULL in the column definitions. Fix it.
+
+ALTER TABLE icinga_hosts MODIFY host_object_id BIGINT UNSIGNED NOT NULL;
+ALTER TABLE icinga_hosts ADD UNIQUE INDEX idx_hosts_host_object_id (host_object_id);
+
+ALTER TABLE icinga_hoststatus MODIFY host_object_id BIGINT UNSIGNED NOT NULL;
+ALTER TABLE icinga_hoststatus ADD UNIQUE INDEX idx_hoststatus_host_object_id (host_object_id);
+
+###################
+# OPTIMIZE TABLES #
+###################
+
+ALTER TABLE icinga_hosts ENGINE=InnoDB;
+ANALYZE TABLE icinga_hosts;
+
+ALTER TABLE icinga_services ENGINE=InnoDB;
 ANALYZE TABLE icinga_services;
 
-
-
+ALTER TABLE icinga_hoststatus ENGINE=InnoDB;
+ANALYZE TABLE icinga_hoststatus;
