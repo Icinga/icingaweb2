@@ -46,6 +46,31 @@ ALTER TABLE icinga_hoststatus DROP INDEX object_id;
 -- ALTER TABLE icinga_hoststatus DROP INDEX hoststatus_ex_time_idx;
 -- ALTER TABLE icinga_hoststatus DROP INDEX hoststatus_sch_downt_d_idx;
 
+-- ALTER TABLE icinga_services DROP INDEX instance_id;
+ALTER TABLE icinga_services DROP INDEX service_object_id;
+-- ALTER TABLE icinga_services DROP INDEX services_i_id_idx;
+ALTER TABLE icinga_services DROP INDEX services_host_object_id_idx;
+ALTER TABLE icinga_services DROP INDEX services_combined_object_idx;
+
+ALTER TABLE icinga_servicestatus DROP INDEX object_id;
+-- ALTER TABLE icinga_servicestatus DROP INDEX servicestatus_i_id_idx;
+-- ALTER TABLE icinga_servicestatus DROP INDEX srvcstatus_stat_upd_time_idx;
+-- ALTER TABLE icinga_servicestatus DROP INDEX srvcstatus_current_state_idx;
+-- ALTER TABLE icinga_servicestatus DROP INDEX srvcstatus_check_type_idx;
+-- ALTER TABLE icinga_servicestatus DROP INDEX srvcstatus_state_type_idx;
+-- ALTER TABLE icinga_servicestatus DROP INDEX srvcstatus_last_state_chg_idx;
+-- ALTER TABLE icinga_servicestatus DROP INDEX srvcstatus_notif_enabled_idx;
+-- ALTER TABLE icinga_servicestatus DROP INDEX srvcstatus_problem_ack_idx;
+-- ALTER TABLE icinga_servicestatus DROP INDEX srvcstatus_act_chks_en_idx;
+-- ALTER TABLE icinga_servicestatus DROP INDEX srvcstatus_pas_chks_en_idx;
+-- ALTER TABLE icinga_servicestatus DROP INDEX srvcstatus_event_hdl_en_idx;
+-- ALTER TABLE icinga_servicestatus DROP INDEX srvcstatus_flap_det_en_idx;
+-- ALTER TABLE icinga_servicestatus DROP INDEX srvcstatus_is_flapping_idx;
+-- ALTER TABLE icinga_servicestatus DROP INDEX srvcstatus_p_state_chg_idx;
+-- ALTER TABLE icinga_servicestatus DROP INDEX srvcstatus_latency_idx;
+-- ALTER TABLE icinga_servicestatus DROP INDEX srvcstatus_ex_time_idx;
+-- ALTER TABLE icinga_servicestatus DROP INDEX srvcstatus_sch_downt_d_idx;
+
 ############################
 # DISPLAY_NAME PERFORMANCE #
 ############################
@@ -74,6 +99,13 @@ ALTER TABLE icinga_hosts ADD UNIQUE INDEX idx_hosts_host_object_id (host_object_
 ALTER TABLE icinga_hoststatus MODIFY host_object_id BIGINT UNSIGNED NOT NULL;
 ALTER TABLE icinga_hoststatus ADD UNIQUE INDEX idx_hoststatus_host_object_id (host_object_id);
 
+ALTER TABLE icinga_services MODIFY service_object_id BIGINT UNSIGNED NOT NULL;
+ALTER TABLE icinga_services MODIFY host_object_id BIGINT UNSIGNED NOT NULL;
+ALTER TABLE icinga_services ADD UNIQUE INDEX idx_services_service_object_id (service_object_id, host_object_id);
+
+ALTER TABLE icinga_servicestatus MODIFY service_object_id BIGINT UNSIGNED NOT NULL;
+ALTER TABLE icinga_servicestatus ADD UNIQUE INDEX idx_servicestatus_service_object_id (service_object_id);
+
 ###################
 # OPTIMIZE TABLES #
 ###################
@@ -86,3 +118,6 @@ ANALYZE TABLE icinga_services;
 
 ALTER TABLE icinga_hoststatus ENGINE=InnoDB;
 ANALYZE TABLE icinga_hoststatus;
+
+ALTER TABLE icinga_servicestatus ENGINE=InnoDB;
+ANALYZE TABLE icinga_servicestatus;
