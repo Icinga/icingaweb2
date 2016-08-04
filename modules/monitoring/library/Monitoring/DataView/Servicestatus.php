@@ -73,6 +73,7 @@ class ServiceStatus extends DataView
             'service_last_hard_state_change',
             'service_last_notification',
             'service_last_state_change',
+            'service_last_state_change_ts',
             'service_last_time_critical',
             'service_last_time_ok',
             'service_last_time_unknown',
@@ -122,6 +123,9 @@ class ServiceStatus extends DataView
                 'order' => self::SORT_DESC
             ),
             'service_last_state_change' => array(
+                'columns' => array(
+                    'service_last_state_change_ts'
+                ),
                 'order' => self::SORT_DESC
             ),
             'host_severity' => array(
