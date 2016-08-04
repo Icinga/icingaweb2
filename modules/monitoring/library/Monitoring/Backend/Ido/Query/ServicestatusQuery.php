@@ -3,6 +3,8 @@
 
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
+use Icinga\Application\Config;
+
 /**
  * Query for service status
  */
@@ -287,6 +289,10 @@ class ServicestatusQuery extends IdoQuery
         if (version_compare($this->getIdoVersion(), '1.13.0', '<')) {
             $this->columnMap['hoststatus']['host_is_reachable'] = '(NULL)';
             $this->columnMap['servicestatus']['service_is_reachable'] = '(NULL)';
+        }
+        if ((bool) Config::module('monitoring')->get('ido', 'use_optimized_queries', false)) {
+            $this->columnMap['hosts']['host_display_name'] = 'h.display_name';
+            $this->columnMap['services']['service_display_name'] = 's.display_name';
         }
 
         $this->select->from(
