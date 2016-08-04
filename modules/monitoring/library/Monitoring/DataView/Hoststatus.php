@@ -40,6 +40,7 @@ class HostStatus extends DataView
             'host_last_check',
             'host_last_notification',
             'host_last_state_change',
+            'host_last_state_change_ts',
             'host_long_output',
             'host_max_check_attempts',
             'host_modified_host_attributes',
@@ -119,6 +120,9 @@ class HostStatus extends DataView
                 'order' => self::SORT_ASC
             ),
             'host_last_state_change' => array(
+                'columns' => array(
+                    'host_last_state_change_ts'
+                ),
                 'order' => self::SORT_DESC
             )
         );
