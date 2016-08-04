@@ -346,10 +346,10 @@ class Web extends EmbeddedWeb
                     'icon'      => 'user',
                     'priority'  => 900,
                     'children'  => array(
-                        'preferences' => array(
-                            'label'     => t('Preferences'),
+                        'account' => array(
+                            'label'     => t('My Account'),
                             'priority'  => 100,
-                            'url'       => 'preference'
+                            'url'       => 'account'
                         ),
                         'logout' => array(
                             'label'         => t('Logout'),

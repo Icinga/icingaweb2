@@ -118,6 +118,8 @@ class AuthChain implements Authenticatable, Iterator
                 continue;
             }
             if ($authenticated) {
+                $user->setAdditional('backend_name', $backend->getName());
+                $user->setAdditional('backend_type', $this->config->current()->get('backend'));
                 return true;
             }
         }
