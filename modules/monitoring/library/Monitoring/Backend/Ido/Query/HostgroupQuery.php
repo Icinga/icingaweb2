@@ -21,37 +21,27 @@ class HostgroupQuery extends IdoQuery
     /**
      * {@inheritdoc}
      */
-    protected $groupOrigin = array('hostobjects');
+    protected $groupOrigin = array('members');
 
     /**
      * {@inheritdoc}
      */
     protected $columnMap = array(
         'hostgroups' => array(
-            'hostgroup'         => 'hgo.name1 COLLATE latin1_general_ci',
             'hostgroup_alias'   => 'hg.alias COLLATE latin1_general_ci',
             'hostgroup_name'    => 'hgo.name1'
-        ),
-        'hostobjects' => array(
-            'host'                  => 'ho.name1 COLLATE latin1_general_ci',
-            'host_name'             => 'ho.name1'
-        ),
-        'hosts' => array(
-            'host_alias'            => 'h.alias',
-            'host_display_name'     => 'h.display_name COLLATE latin1_general_ci',
         ),
         'instances' => array(
             'instance_name' => 'i.instance_name'
         ),
+        'members' => array(
+            'host_name' => 'ho.name1'
+        ),
         'servicegroups' => array(
-            'servicegroup'          => 'sgo.name1 COLLATE latin1_general_ci',
-            'servicegroup_alias'    => 'sg.alias COLLATE latin1_general_ci',
-            'servicegroup_name'     => 'sgo.name1'
+            'servicegroup_name' => 'sgo.name1'
         ),
         'services' => array(
-            'service'                => 'so.name2 COLLATE latin1_general_ci',
-            'service_description'    => 'so.name2',
-            'service_display_name'   => 's.display_name COLLATE latin1_general_ci'
+            'service_description' => 'so.name2'
         )
     );
 
@@ -73,27 +63,11 @@ class HostgroupQuery extends IdoQuery
     }
 
     /**
-     * Join host objects
-     */
-    protected function joinHostobjects()
-    {
-        $this->select->joinLeft(
-            array('hgm' => $this->prefix . 'hostgroup_members'),
-            'hgm.hostgroup_id = hg.hostgroup_id',
-            array()
-        )->joinLeft(
-            array('ho' => $this->prefix . 'objects'),
-            'hgm.host_object_id = ho.object_id AND ho.is_active = 1 AND ho.objecttype_id = 1',
-            array()
-        );
-    }
-
-    /**
      * Join hosts
      */
     protected function joinHosts()
     {
-        $this->requireVirtualTable('hostobjects');
+        $this->requireVirtualTable('members');
         $this->select->joinLeft(
             array('h' => $this->prefix . 'hosts'),
             'h.host_object_id = ho.object_id',
@@ -114,6 +88,22 @@ class HostgroupQuery extends IdoQuery
     }
 
     /**
+     * Join members
+     */
+    protected function joinMembers()
+    {
+        $this->select->joinLeft(
+            array('hgm' => $this->prefix . 'hostgroup_members'),
+            'hgm.hostgroup_id = hg.hostgroup_id',
+            array()
+        )->joinLeft(
+            array('ho' => $this->prefix . 'objects'),
+            'hgm.host_object_id = ho.object_id AND ho.is_active = 1 AND ho.objecttype_id = 1',
+            array()
+        );
+    }
+
+    /**
      * Join service groups
      */
     protected function joinServicegroups()
@@ -125,7 +115,7 @@ class HostgroupQuery extends IdoQuery
             array()
         )->joinLeft(
             array('sg' => $this->prefix . 'servicegroups'),
-            'sgm.servicegroup_id = sg.' . $this->servicegroup_id,
+            'sgm.servicegroup_id = sg.servicegroup_id',
             array()
         )->joinLeft(
             array('sgo' => $this->prefix . 'objects'),

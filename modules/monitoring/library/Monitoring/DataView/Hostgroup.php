@@ -26,10 +26,7 @@ class Hostgroup extends DataView
     public function getStaticFilterColumns()
     {
         return array(
-            'host', 'host_alias', 'host_display_name', 'host_name',
-            'hostgroup',
-            'service', 'service_description', 'service_display_name',
-            'servicegroup', 'servicegroup_alias', 'servicegroup_name'
+            'host_name', 'service_description', 'servicegroup_name'
         );
     }
 }
