@@ -62,11 +62,11 @@ class HostgroupQuery extends IdoQuery
     protected function joinBaseTables()
     {
         $this->select->from(
-            array('hg' => $this->prefix . 'hostgroups'),
+            array('hgo' => $this->prefix . 'objects'),
             array()
         )->join(
-            array('hgo' => $this->prefix . 'objects'),
-            'hgo.object_id = hg.hostgroup_object_id AND hgo.is_active = 1 AND hgo.objecttype_id = 3',
+            array('hg' => $this->prefix . 'hostgroups'),
+            'hg.hostgroup_object_id = hgo.object_id AND hgo.is_active = 1 AND hgo.objecttype_id = 3',
             array()
         );
         $this->joinedVirtualTables['hostgroups'] = true;
