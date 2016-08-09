@@ -13,7 +13,16 @@ class Servicegroup extends DataView
         return array(
             'instance_name',
             'servicegroup_alias',
-            'servicegroup_name'
+            'servicegroup_name',
+            'services_critical_handled',
+            'services_critical_unhandled',
+            'services_ok',
+            'services_pending',
+            'services_total',
+            'services_unknown_handled',
+            'services_unknown_unhandled',
+            'services_warning_handled',
+            'services_warning_unhandled'
         );
     }
 

@@ -84,6 +84,12 @@ ALTER TABLE icinga_objects DROP INDEX objects_name2_idx;
 -- ALTER TABLE icinga_objects DROP INDEX objects_inst_id_idx;
 ALTER TABLE icinga_objects DROP INDEX sla_idx_obj;
 
+-- ALTER TABLE icinga_servicegroups DROP INDEX instance_id;
+ALTER TABLE icinga_servicegroups DROP INDEX servicegroups_i_id_idx;
+
+-- ALTER TABLE icinga_servicegroup_members DROP INDEX servicegroup_members_i_id_idx;
+ALTER TABLE icinga_servicegroup_members DROP INDEX sgmbrs_sgid_soid;
+
 ############################
 # DISPLAY_NAME PERFORMANCE #
 ############################
@@ -142,6 +148,13 @@ ALTER TABLE icinga_hostgroup_members MODIFY hostgroup_id BIGINT UNSIGNED NOT NUL
 ALTER TABLE icinga_hostgroup_members MODIFY host_object_id BIGINT UNSIGNED NOT NULL;
 ALTER TABLE icinga_hostgroup_members ADD UNIQUE INDEX idx_icinga_hostgroup_members_host_object_id (host_object_id, hostgroup_id);
 
+ALTER TABLE icinga_servicegroups MODIFY servicegroup_object_id BIGINT UNSIGNED NOT NULL;
+ALTER TABLE icinga_servicegroups ADD UNIQUE INDEX idx_servicegroups_servicegroup_object_id (servicegroup_object_id);
+
+ALTER TABLE icinga_servicegroup_members MODIFY servicegroup_id BIGINT UNSIGNED NOT NULL;
+ALTER TABLE icinga_servicegroup_members MODIFY service_object_id BIGINT UNSIGNED NOT NULL;
+ALTER TABLE icinga_servicegroup_members ADD UNIQUE INDEX idx_icinga_servicegroup_members_service_object_id (service_object_id, servicegroup_id);
+
 ######################
 # FILTER PERFORMANCE #
 ######################
@@ -178,3 +191,6 @@ ANALYZE TABLE icinga_objects;
 
 ALTER TABLE icinga_servicegroups ENGINE=InnoDB;
 ANALYZE TABLE icinga_servicegroups;
+
+ALTER TABLE icinga_servicegroup_members ENGINE=InnoDB;
+ANALYZE TABLE icinga_servicegroup_members;

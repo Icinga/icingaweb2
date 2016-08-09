@@ -483,7 +483,6 @@ class ListController extends Controller
         $this->setupPaginationControl($serviceGroups);
         $this->setupLimitControl();
         $this->setupSortControl(array(
-            'services_severity'     => $this->translate('Severity'),
             'servicegroup_alias'    => $this->translate('Service Group Name'),
             'services_total'        => $this->translate('Total Services')
         ), $serviceGroups);
