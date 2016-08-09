@@ -71,6 +71,19 @@ ALTER TABLE icinga_servicestatus DROP INDEX object_id;
 -- ALTER TABLE icinga_servicestatus DROP INDEX srvcstatus_ex_time_idx;
 -- ALTER TABLE icinga_servicestatus DROP INDEX srvcstatus_sch_downt_d_idx;
 
+-- ALTER TABLE icinga_hostgroups DROP INDEX instance_id;
+ALTER TABLE icinga_hostgroups DROP INDEX hostgroups_i_id_idx;
+
+-- ALTER TABLE icinga_hostgroup_members DROP INDEX hostgroup_members_i_id_idx;
+ALTER TABLE icinga_hostgroup_members DROP INDEX hstgrpmbrs_hgid_hoid;
+
+ALTER TABLE icinga_objects DROP INDEX objecttype_id;
+ALTER TABLE icinga_objects DROP INDEX objects_objtype_id_idx;
+ALTER TABLE icinga_objects DROP INDEX objects_name1_idx;
+ALTER TABLE icinga_objects DROP INDEX objects_name2_idx;
+-- ALTER TABLE icinga_objects DROP INDEX objects_inst_id_idx;
+ALTER TABLE icinga_objects DROP INDEX sla_idx_obj;
+
 ############################
 # DISPLAY_NAME PERFORMANCE #
 ############################
@@ -92,6 +105,10 @@ ALTER TABLE icinga_services ADD INDEX idx_services_display_name (display_name);
 # The best possible join type in MySQL is `eq_ref` which is used when all parts of an index are used by the join and
 # the index is a PRIMARY KEY or UNIQUE NOT NULL index.
 # The IDO schema already has some UNIQUE indices for joins but lacks NOT NULL in the column definitions. Fix it.
+# In addition, this script modifies columns to NOT NULL where appropriate for the following reasons
+# a) NOT NULL enables MySQL to efficiently use indices
+# b) NOT NULL requires less space
+# c) NOT NULL columns must be not null
 
 ALTER TABLE icinga_hosts MODIFY host_object_id BIGINT UNSIGNED NOT NULL;
 ALTER TABLE icinga_hosts ADD UNIQUE INDEX idx_hosts_host_object_id (host_object_id);
@@ -101,10 +118,27 @@ ALTER TABLE icinga_hoststatus ADD UNIQUE INDEX idx_hoststatus_host_object_id (ho
 
 ALTER TABLE icinga_services MODIFY service_object_id BIGINT UNSIGNED NOT NULL;
 ALTER TABLE icinga_services MODIFY host_object_id BIGINT UNSIGNED NOT NULL;
-ALTER TABLE icinga_services ADD UNIQUE INDEX idx_services_service_object_id (service_object_id, host_object_id);
+ALTER TABLE icinga_services ADD UNIQUE INDEX idx_services_service_object_id (service_object_id, host_object_id);  # Service based joins
+ALTER TABLE icinga_services ADD UNIQUE INDEX idx_services_host_object_id (host_object_id, service_object_id);     # Host based joins
 
 ALTER TABLE icinga_servicestatus MODIFY service_object_id BIGINT UNSIGNED NOT NULL;
 ALTER TABLE icinga_servicestatus ADD UNIQUE INDEX idx_servicestatus_service_object_id (service_object_id);
+
+ALTER TABLE icinga_hostgroups MODIFY hostgroup_object_id BIGINT UNSIGNED NOT NULL;
+ALTER TABLE icinga_hostgroups ADD UNIQUE INDEX idx_hostgroups_hostgroup_object_id (hostgroup_object_id);
+
+ALTER TABLE icinga_hostgroup_members MODIFY hostgroup_id BIGINT UNSIGNED NOT NULL;
+ALTER TABLE icinga_hostgroup_members MODIFY host_object_id BIGINT UNSIGNED NOT NULL;
+ALTER TABLE icinga_hostgroup_members ADD UNIQUE INDEX idx_icinga_hostgroup_members_host_object_id (host_object_id, hostgroup_id);
+
+######################
+# FILTER PERFORMANCE #
+######################
+
+ALTER TABLE icinga_objects MODIFY objecttype_id BIGINT UNSIGNED NOT NULL;
+ALTER TABLE icinga_objects MODIFY is_active TINYINT NOT NULL;
+ALTER TABLE icinga_objects MODIFY name1 varchar(128) CHARACTER SET latin1 COLLATE latin1_general_cs NOT NULL;
+ALTER TABLE icinga_objects ADD UNIQUE INDEX idx_objects_objecttype_id (objecttype_id, is_active, name1, name2);
 
 ###################
 # OPTIMIZE TABLES #
@@ -121,3 +155,12 @@ ANALYZE TABLE icinga_hoststatus;
 
 ALTER TABLE icinga_servicestatus ENGINE=InnoDB;
 ANALYZE TABLE icinga_servicestatus;
+
+ALTER TABLE icinga_hostgroups ENGINE=InnoDB;
+ANALYZE TABLE icinga_hostgroups;
+
+ALTER TABLE icinga_hostgroup_members ENGINE=InnoDB;
+ANALYZE TABLE icinga_hostgroup_members;
+
+ALTER TABLE icinga_objects ENGINE=InnoDB;
+ANALYZE TABLE icinga_objects;
