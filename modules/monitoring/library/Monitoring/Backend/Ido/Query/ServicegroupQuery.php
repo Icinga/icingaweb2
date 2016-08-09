@@ -3,6 +3,8 @@
 
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
+use Icinga\Application\Config;
+
 class ServicegroupQuery extends IdoQuery
 {
     /**
@@ -49,6 +51,10 @@ class ServicegroupQuery extends IdoQuery
      */
     protected function joinBaseTables()
     {
+        if ((bool) Config::module('monitoring')->get('ido', 'use_optimized_queries', false)) {
+            $this->columnMap['servicegroups']['servicegroup_alias'] = 'sg.alias';
+        }
+
         $this->select->from(
             array('sgo' => $this->prefix . 'objects'),
             array()

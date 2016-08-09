@@ -20,6 +20,18 @@ class Servicegroup extends DataView
     /**
      * {@inheritdoc}
      */
+    public function getSortRules()
+    {
+        return array(
+            'servicegroup_alias' => array(
+                'order' => self::SORT_ASC
+            )
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getStaticFilterColumns()
     {
         return array(

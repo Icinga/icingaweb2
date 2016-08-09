@@ -107,6 +107,7 @@ ALTER TABLE icinga_services ADD INDEX idx_services_display_name (display_name);
 # insensitive collation.
 
 ALTER TABLE icinga_hostgroups MODIFY alias VARCHAR(255) CHARACTER SET latin1 COLLATE latin1_general_ci;
+ALTER TABLE icinga_servicegroups MODIFY alias VARCHAR(255) CHARACTER SET latin1 COLLATE latin1_general_ci;
 
 ####################
 # JOIN PERFORMANCE #
@@ -174,3 +175,6 @@ ANALYZE TABLE icinga_hostgroup_members;
 
 ALTER TABLE icinga_objects ENGINE=InnoDB;
 ANALYZE TABLE icinga_objects;
+
+ALTER TABLE icinga_servicegroups ENGINE=InnoDB;
+ANALYZE TABLE icinga_servicegroups;
