@@ -16,7 +16,7 @@ class HostgroupQuery extends IdoQuery
     /**
      * {@inheritdoc}
      */
-    protected $groupBase = array('hostgroups' => array('hg.hostgroup_id', 'hgo.object_id'));
+    protected $groupBase = array('hostgroups' => array('hg.hostgroup_id'));
 
     /**
      * {@inheritdoc}
