@@ -15,7 +15,7 @@ class ServicegroupQuery extends IdoQuery
     /**
      * {@inheritdoc}
      */
-    protected $groupBase = array('servicegroups' => array('sg.servicegroup_id', 'sgo.object_id'));
+    protected $groupBase = array('servicegroups' => array('sg.servicegroup_id'));
 
     /**
      * {@inheritdoc}
