@@ -529,7 +529,6 @@ class ListController extends Controller
         $this->setupPaginationControl($hostGroups);
         $this->setupLimitControl();
         $this->setupSortControl(array(
-            'hosts_severity'    => $this->translate('Severity'),
             'hostgroup_alias'   => $this->translate('Host Group Name'),
             'hosts_total'       => $this->translate('Total Hosts'),
             'services_total'    => $this->translate('Total Services')
