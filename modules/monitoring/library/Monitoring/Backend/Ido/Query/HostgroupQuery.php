@@ -3,6 +3,8 @@
 
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
+use Icinga\Application\Config;
+
 /**
  * Query for host groups
  */
@@ -51,6 +53,10 @@ class HostgroupQuery extends IdoQuery
      */
     protected function joinBaseTables()
     {
+        if ((bool) Config::module('monitoring')->get('ido', 'use_optimized_queries', false)) {
+            $this->columnMap['hostgroups']['hostgroup_alias'] = 'hg.alias';
+        }
+
         $this->select->from(
             array('hgo' => $this->prefix . 'objects'),
             array()

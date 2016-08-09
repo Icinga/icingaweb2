@@ -98,6 +98,16 @@ ALTER TABLE icinga_hosts ADD INDEX idx_hosts_display_name (display_name);
 ALTER TABLE icinga_services MODIFY display_name VARCHAR(255) CHARACTER SET latin1 COLLATE latin1_general_ci;
 ALTER TABLE icinga_services ADD INDEX idx_services_display_name (display_name);
 
+#####################
+# ALIAS PERFORMANCE #
+#####################
+
+# Icinga 2.5 already sets alias columns from text to varchar(255). This is a good start. But Web 2's queries filter for
+# or order by host and service group alias are performed in a case-insensitive manner. So, let's add the case
+# insensitive collation.
+
+ALTER TABLE icinga_hostgroups MODIFY alias VARCHAR(255) CHARACTER SET latin1 COLLATE latin1_general_ci;
+
 ####################
 # JOIN PERFORMANCE #
 ####################

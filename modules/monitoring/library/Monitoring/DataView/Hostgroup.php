@@ -23,6 +23,18 @@ class Hostgroup extends DataView
     /**
      * {@inheritdoc}
      */
+    public function getSortRules()
+    {
+        return array(
+            'hostgroup_alias' => array(
+                'order' => self::SORT_ASC
+            )
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getStaticFilterColumns()
     {
         return array(
