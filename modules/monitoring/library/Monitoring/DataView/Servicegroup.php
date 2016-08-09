@@ -11,7 +11,6 @@ class Servicegroup extends DataView
     public function getColumns()
     {
         return array(
-            'instance_name',
             'servicegroup_alias',
             'servicegroup_name',
             'services_critical_handled',
@@ -44,7 +43,7 @@ class Servicegroup extends DataView
     public function getStaticFilterColumns()
     {
         return array(
-            'host_name', 'hostgroup_name', 'service_description'
+            'instance_name', 'host_name', 'hostgroup_name', 'service_description'
         );
     }
 }
