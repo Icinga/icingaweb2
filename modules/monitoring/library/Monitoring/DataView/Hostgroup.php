@@ -14,7 +14,6 @@ class Hostgroup extends DataView
     public function getColumns()
     {
         return array(
-            'instance_name',
             'hostgroup_alias',
             'hostgroup_name'
         );
@@ -38,7 +37,7 @@ class Hostgroup extends DataView
     public function getStaticFilterColumns()
     {
         return array(
-            'host_name', 'service_description', 'servicegroup_name'
+            'instance_name', 'host_name', 'service_description', 'servicegroup_name'
         );
     }
 }
