@@ -58,11 +58,11 @@ class ServicegroupQuery extends IdoQuery
     protected function joinBaseTables()
     {
         $this->select->from(
-            array('sg' => $this->prefix . 'servicegroups'),
+            array('sgo' => $this->prefix . 'objects'),
             array()
         )->join(
-            array('sgo' => $this->prefix . 'objects'),
-            'sg.servicegroup_object_id = sgo.object_id AND sgo.is_active = 1 AND sgo.objecttype_id = 4',
+            array('sg' => $this->prefix . 'servicegroups'),
+            'sg.servicegroup_object_id = sgo.object_id AND sgo.objecttype_id = 4 AND sgo.is_active = 1',
             array()
         );
         $this->joinedVirtualTables = array('servicegroups' => true);
