@@ -67,6 +67,7 @@ class HostgroupQuery extends IdoQuery
     {
         if ((bool) Config::module('monitoring')->get('ido', 'use_optimized_queries', false)) {
             $this->columnMap['hostgroups']['hostgroup_alias'] = 'hg.alias';
+            $this->columnMap['servicestatus']['service_state'] = 'ss.current_state';
         }
 
         $this->select->from(

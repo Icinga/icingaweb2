@@ -164,6 +164,32 @@ ALTER TABLE icinga_objects MODIFY is_active TINYINT NOT NULL;
 ALTER TABLE icinga_objects MODIFY name1 varchar(128) CHARACTER SET latin1 COLLATE latin1_general_cs NOT NULL;
 ALTER TABLE icinga_objects ADD UNIQUE INDEX idx_objects_objecttype_id (objecttype_id, is_active, name1, name2);
 
+# At the moment it's impossible for Web 2 queries which filter for host or service state to use indices because they
+# respect the virtual state PENDING. A host or service is PENDING if it has not been checked yet. Instead of calculating
+# the state on query execution, we store it for every record taking PENDING into consideration. This reduces database
+# load and enables MySQL to use possible indices.
+
+ALTER TABLE icinga_servicestatus MODIFY current_state TINYINT NOT NULL;
+ALTER TABLE icinga_servicestatus MODIFY has_been_checked TINYINT NOT NULL;
+
+# Set service state to PENDING for all services that have not been checked
+UPDATE icinga_servicestatus SET current_state = 99 WHERE has_been_checked = 0;
+
+# Create trigger for updating the service state if the service has not been checked yet
+DELIMITER //
+CREATE TRIGGER t_set_pending_service_state BEFORE INSERT ON icinga_servicestatus
+FOR EACH ROW
+  BEGIN
+    IF NEW.has_been_checked = 0 THEN
+      SET NEW.current_state = 99;
+    END IF;
+  END;//
+DELIMITER ;
+
+# Add indices for prominent service list filters, e.g. recently recovered services
+ALTER TABLE icinga_servicestatus ADD INDEX idx_servicestatus_current_state_last_state_change (current_state, last_state_change);
+ALTER TABLE icinga_servicestatus ADD INDEX idx_servicestatus_current_state_last_check (current_state, last_check);
+
 ###################
 # OPTIMIZE TABLES #
 ###################

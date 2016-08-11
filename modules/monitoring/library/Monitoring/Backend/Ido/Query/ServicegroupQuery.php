@@ -53,6 +53,7 @@ class ServicegroupQuery extends IdoQuery
     {
         if ((bool) Config::module('monitoring')->get('ido', 'use_optimized_queries', false)) {
             $this->columnMap['servicegroups']['servicegroup_alias'] = 'sg.alias';
+            $this->columnMap['servicestatus']['service_state'] = 'ss.current_state';
         }
 
         $this->select->from(

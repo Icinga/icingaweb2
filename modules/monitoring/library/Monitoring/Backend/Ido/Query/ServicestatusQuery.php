@@ -293,6 +293,7 @@ class ServicestatusQuery extends IdoQuery
         if ((bool) Config::module('monitoring')->get('ido', 'use_optimized_queries', false)) {
             $this->columnMap['hosts']['host_display_name'] = 'h.display_name';
             $this->columnMap['services']['service_display_name'] = 's.display_name';
+            $this->columnMap['servicestatus']['service_state'] = 'ss.current_state';
         }
 
         $this->select->from(
