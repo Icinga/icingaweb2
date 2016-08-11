@@ -183,6 +183,7 @@ class HoststatusQuery extends IdoQuery
         }
         if ((bool) Config::module('monitoring')->get('ido', 'use_optimized_queries', false)) {
             $this->columnMap['hosts']['host_display_name'] = 'h.display_name';
+            $this->columnMap['hoststatus']['host_state'] = 'hs.current_state';
         }
 
         $this->select->from(

@@ -294,6 +294,7 @@ class ServicestatusQuery extends IdoQuery
             $this->columnMap['hosts']['host_display_name'] = 'h.display_name';
             $this->columnMap['services']['service_display_name'] = 's.display_name';
             $this->columnMap['servicestatus']['service_state'] = 'ss.current_state';
+            $this->columnMap['hoststatus']['host_state'] = 'hs.current_state';
         }
 
         $this->select->from(

@@ -190,6 +190,27 @@ DELIMITER ;
 ALTER TABLE icinga_servicestatus ADD INDEX idx_servicestatus_current_state_last_state_change (current_state, last_state_change);
 ALTER TABLE icinga_servicestatus ADD INDEX idx_servicestatus_current_state_last_check (current_state, last_check);
 
+ALTER TABLE icinga_hoststatus MODIFY current_state TINYINT NOT NULL;
+ALTER TABLE icinga_hoststatus MODIFY has_been_checked TINYINT NOT NULL;
+
+# Set host state to PENDING for all hosts that have not been checked
+UPDATE icinga_hoststatus SET current_state = 99 WHERE has_been_checked = 0;
+
+# Create trigger for updating the host state if the host has not been checked yet
+DELIMITER //
+CREATE TRIGGER t_set_pending_host_state BEFORE INSERT ON icinga_hoststatus
+FOR EACH ROW
+  BEGIN
+    IF NEW.has_been_checked = 0 THEN
+      SET NEW.current_state = 99;
+    END IF;
+  END;//
+DELIMITER ;
+
+# Add indices for prominent host list filters
+ALTER TABLE icinga_hoststatus ADD INDEX idx_hoststatus_current_state_last_state_change (current_state, last_state_change);
+ALTER TABLE icinga_hoststatus ADD INDEX idx_hoststatus_current_state_last_check (current_state, last_check);
+
 ###################
 # OPTIMIZE TABLES #
 ###################
