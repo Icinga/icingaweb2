@@ -520,7 +520,7 @@ msgid ""
 "modules."
 msgstr ""
 "Enthält die Verzeichnisse, die nach verfügbaren Modulen durchsucht werden "
-"(kommasepariert). Module, die nicht in diesen Verzeichnissen vorhanden sind, "
+"(getrennt durch Doppelpunkte). Module, die nicht in diesen Verzeichnissen vorhanden sind, "
 "können trotzdem in den Modulordner gesymlinkt werden. Diese werden "
 "allerdings nicht in der der deaktivierten Module angezeigt."
 
