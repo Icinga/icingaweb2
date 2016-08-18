@@ -370,9 +370,13 @@ abstract class Repository implements Selectable
             $this->legacyBlacklistedQueryColumns = is_int(key($this->blacklistedQueryColumns));
         }
 
-        return $this->legacyBlacklistedQueryColumns
-            ? $this->blacklistedQueryColumns
-            : $this->blacklistedQueryColumns[$table];
+        if ($this->legacyBlacklistedQueryColumns) {
+            return $this->blacklistedQueryColumns;
+        } elseif (! isset($this->blacklistedQueryColumns[$table])) {
+            $this->blacklistedQueryColumns[$table] = $this->initializeBlacklistedQueryColumns($table);
+        }
+
+        return $this->blacklistedQueryColumns[$table];
     }
 
     /**
@@ -415,7 +419,13 @@ abstract class Repository implements Selectable
             $this->legacyFilterColumns = empty($foundTables);
         }
 
-        return $this->legacyFilterColumns ? $this->filterColumns : $this->filterColumns[$table];
+        if ($this->legacyFilterColumns) {
+            return $this->filterColumns;
+        } elseif (! isset($this->filterColumns[$table])) {
+            $this->filterColumns[$table] = $this->initializeFilterColumns($table);
+        }
+
+        return $this->filterColumns[$table];
     }
 
     /**
@@ -456,7 +466,13 @@ abstract class Repository implements Selectable
             $this->legacySearchColumns = is_int(key($this->searchColumns));
         }
 
-        return $this->legacySearchColumns ? $this->searchColumns : $this->searchColumns[$table];
+        if ($this->legacySearchColumns) {
+            return $this->searchColumns;
+        } elseif (! isset($this->searchColumns[$table])) {
+            $this->searchColumns[$table] = $this->initializeSearchColumns($table);
+        }
+
+        return $this->searchColumns[$table];
     }
 
     /**
@@ -499,7 +515,13 @@ abstract class Repository implements Selectable
             $this->legacyFilterColumns = empty($foundTables);
         }
 
-        return $this->legacySortRules ? $this->sortRules : $this->sortRules[$table];
+        if ($this->legacySortRules) {
+            return $this->sortRules;
+        } elseif (! isset($this->sortRules[$table])) {
+            $this->sortRules[$table] = $this->initializeSortRules($table);
+        }
+
+        return $this->sortRules[$table];
     }
 
     /**
