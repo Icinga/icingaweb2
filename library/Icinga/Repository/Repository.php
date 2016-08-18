@@ -91,6 +91,13 @@ abstract class Repository implements Selectable
     protected $blacklistedQueryColumns;
 
     /**
+     * Whether the blacklisted query columns are in the legacy format
+     *
+     * @var bool
+     */
+    protected $legacyBlacklistedQueryColumns;
+
+    /**
      * The filter columns being provided
      *
      * This may be intialized by concrete repository implementations, in the following format
@@ -106,11 +113,25 @@ abstract class Repository implements Selectable
     protected $filterColumns;
 
     /**
+     * Whether the provided filter columns are in the legacy format
+     *
+     * @var bool
+     */
+    protected $legacyFilterColumns;
+
+    /**
      * The search columns (or aliases) being provided
      *
      * @var array   An array of strings
      */
     protected $searchColumns;
+
+    /**
+     * Whether the provided search columns are in the legacy format
+     *
+     * @var bool
+     */
+    protected $legacySearchColumns;
 
     /**
      * The sort rules to be applied on a query
@@ -139,6 +160,13 @@ abstract class Repository implements Selectable
      * @var array
      */
     protected $sortRules;
+
+    /**
+     * Whether the provided sort rules are in the legacy format
+     *
+     * @var bool
+     */
+    protected $legacySortRules;
 
     /**
      * The value conversion rules to apply on a query or statement
@@ -330,10 +358,21 @@ abstract class Repository implements Selectable
     public function getBlacklistedQueryColumns($table = null)
     {
         if ($this->blacklistedQueryColumns === null) {
-            $this->blacklistedQueryColumns = $this->initializeBlacklistedQueryColumns($table);
+            $this->legacyBlacklistedQueryColumns = false;
+
+            $blacklistedQueryColumns = $this->initializeBlacklistedQueryColumns($table);
+            if (is_int(key($blacklistedQueryColumns))) {
+                $this->blacklistedQueryColumns[$table] = $blacklistedQueryColumns;
+            } else {
+                $this->blacklistedQueryColumns = $blacklistedQueryColumns;
+            }
+        } elseif ($this->legacyBlacklistedQueryColumns === null) {
+            $this->legacyBlacklistedQueryColumns = is_int(key($this->blacklistedQueryColumns));
         }
 
-        return $this->blacklistedQueryColumns;
+        return $this->legacyBlacklistedQueryColumns
+            ? $this->blacklistedQueryColumns
+            : $this->blacklistedQueryColumns[$table];
     }
 
     /**
@@ -362,10 +401,21 @@ abstract class Repository implements Selectable
     public function getFilterColumns($table = null)
     {
         if ($this->filterColumns === null) {
-            $this->filterColumns = $this->initializeFilterColumns($table);
+            $this->legacyFilterColumns = false;
+
+            $filterColumns = $this->initializeFilterColumns($table);
+            $foundTables = array_intersect_key($this->getQueryColumns(), $filterColumns);
+            if (empty($foundTables)) {
+                $this->filterColumns[$table] = $filterColumns;
+            } else {
+                $this->filterColumns = $filterColumns;
+            }
+        } elseif ($this->legacyFilterColumns === null) {
+            $foundTables = array_intersect_key($this->getQueryColumns(), $this->filterColumns);
+            $this->legacyFilterColumns = empty($foundTables);
         }
 
-        return $this->filterColumns;
+        return $this->legacyFilterColumns ? $this->filterColumns : $this->filterColumns[$table];
     }
 
     /**
@@ -394,10 +444,19 @@ abstract class Repository implements Selectable
     public function getSearchColumns($table = null)
     {
         if ($this->searchColumns === null) {
-            $this->searchColumns = $this->initializeSearchColumns($table);
+            $this->legacySearchColumns = false;
+
+            $searchColumns = $this->initializeSearchColumns($table);
+            if (is_int(key($searchColumns))) {
+                $this->searchColumns[$table] = $searchColumns;
+            } else {
+                $this->searchColumns = $searchColumns;
+            }
+        } elseif ($this->legacySearchColumns === null) {
+            $this->legacySearchColumns = is_int(key($this->searchColumns));
         }
 
-        return $this->searchColumns;
+        return $this->legacySearchColumns ? $this->searchColumns : $this->searchColumns[$table];
     }
 
     /**
@@ -426,10 +485,21 @@ abstract class Repository implements Selectable
     public function getSortRules($table = null)
     {
         if ($this->sortRules === null) {
-            $this->sortRules = $this->initializeSortRules($table);
+            $this->legacySortRules = false;
+
+            $sortRules = $this->initializeSortRules($table);
+            $foundTables = array_intersect_key($this->getQueryColumns(), $sortRules);
+            if (empty($foundTables)) {
+                $this->sortRules[$table] = $sortRules;
+            } else {
+                $this->sortRules = $sortRules;
+            }
+        } elseif ($this->legacySortRules === null) {
+            $foundTables = array_intersect_key($this->getQueryColumns(), $this->sortRules);
+            $this->legacyFilterColumns = empty($foundTables);
         }
 
-        return $this->sortRules;
+        return $this->legacySortRules ? $this->sortRules : $this->sortRules[$table];
     }
 
     /**
