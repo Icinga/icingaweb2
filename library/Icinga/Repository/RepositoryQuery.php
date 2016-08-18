@@ -204,7 +204,7 @@ class RepositoryQuery implements QueryInterface, SortRules, FilterColumns, Itera
      */
     public function getFilterColumns()
     {
-        return $this->repository->getFilterColumns();
+        return $this->repository->getFilterColumns($this->target);
     }
 
     /**
@@ -214,7 +214,7 @@ class RepositoryQuery implements QueryInterface, SortRules, FilterColumns, Itera
      */
     public function getSearchColumns()
     {
-        return $this->repository->getSearchColumns();
+        return $this->repository->getSearchColumns($this->target);
     }
 
     /**
@@ -294,7 +294,7 @@ class RepositoryQuery implements QueryInterface, SortRules, FilterColumns, Itera
      */
     public function getSortRules()
     {
-        return $this->repository->getSortRules();
+        return $this->repository->getSortRules($this->target);
     }
 
     /**

@@ -323,25 +323,30 @@ abstract class Repository implements Selectable
      *
      * Calls $this->initializeBlacklistedQueryColumns() in case $this->blacklistedQueryColumns is null.
      *
+     * @param   string  $table
+     *
      * @return  array
      */
-    public function getBlacklistedQueryColumns()
+    public function getBlacklistedQueryColumns($table = null)
     {
         if ($this->blacklistedQueryColumns === null) {
-            $this->blacklistedQueryColumns = $this->initializeBlacklistedQueryColumns();
+            $this->blacklistedQueryColumns = $this->initializeBlacklistedQueryColumns($table);
         }
 
         return $this->blacklistedQueryColumns;
     }
 
     /**
-     * Overwrite this in your repository implementation in case you
-     * need to initialize the blacklisted query columns lazily
+     * Overwrite this in your repository implementation in case you need to initialize the
+     * blacklisted query columns lazily or dependent on a query's current base table
+     *
+     * @param   string  $table
      *
      * @return  array
      */
     protected function initializeBlacklistedQueryColumns()
     {
+        // $table is not part of the signature due to PHP strict standards
         return array();
     }
 
@@ -350,24 +355,30 @@ abstract class Repository implements Selectable
      *
      * Calls $this->initializeFilterColumns() in case $this->filterColumns is null.
      *
+     * @param   string  $table
+     *
      * @return  array
      */
-    public function getFilterColumns()
+    public function getFilterColumns($table = null)
     {
         if ($this->filterColumns === null) {
-            $this->filterColumns = $this->initializeFilterColumns();
+            $this->filterColumns = $this->initializeFilterColumns($table);
         }
 
         return $this->filterColumns;
     }
 
     /**
-     * Overwrite this in your repository implementation in case you need to initialize the filter columns lazily
+     * Overwrite this in your repository implementation in case you need to initialize
+     * the filter columns lazily or dependent on a query's current base table
+     *
+     * @param   string  $table
      *
      * @return  array
      */
     protected function initializeFilterColumns()
     {
+        // $table is not part of the signature due to PHP strict standards
         return array();
     }
 
@@ -376,24 +387,30 @@ abstract class Repository implements Selectable
      *
      * Calls $this->initializeSearchColumns() in case $this->searchColumns is null.
      *
+     * @param   string  $table
+     *
      * @return  array
      */
-    public function getSearchColumns()
+    public function getSearchColumns($table = null)
     {
         if ($this->searchColumns === null) {
-            $this->searchColumns = $this->initializeSearchColumns();
+            $this->searchColumns = $this->initializeSearchColumns($table);
         }
 
         return $this->searchColumns;
     }
 
     /**
-     * Overwrite this in your repository implementation in case you need to initialize the search columns lazily
+     * Overwrite this in your repository implementation in case you need to initialize
+     * the search columns lazily or dependent on a query's current base table
+     *
+     * @param   string  $table
      *
      * @return  array
      */
     protected function initializeSearchColumns()
     {
+        // $table is not part of the signature due to PHP strict standards
         return array();
     }
 
@@ -402,24 +419,30 @@ abstract class Repository implements Selectable
      *
      * Calls $this->initializeSortRules() in case $this->sortRules is null.
      *
+     * @param   string  $table
+     *
      * @return  array
      */
-    public function getSortRules()
+    public function getSortRules($table = null)
     {
         if ($this->sortRules === null) {
-            $this->sortRules = $this->initializeSortRules();
+            $this->sortRules = $this->initializeSortRules($table);
         }
 
         return $this->sortRules;
     }
 
     /**
-     * Overwrite this in your repository implementation in case you need to initialize the sort rules lazily
+     * Overwrite this in your repository implementation in case you need to initialize
+     * the sort rules lazily or dependent on a query's current base table
+     *
+     * @param   string  $table
      *
      * @return  array
      */
     protected function initializeSortRules()
     {
+        // $table is not part of the signature due to PHP strict standards
         return array();
     }
 
@@ -900,7 +923,7 @@ abstract class Repository implements Selectable
             throw new ProgrammingError('Table name "%s" not found', $table);
         }
 
-        $blacklist = $this->getBlacklistedQueryColumns();
+        $blacklist = $this->getBlacklistedQueryColumns($table);
         $columns = array();
         foreach ($queryColumns[$table] as $alias => $column) {
             $name = is_string($alias) ? $alias : $column;
@@ -994,7 +1017,7 @@ abstract class Repository implements Selectable
             return false;
         }
 
-        return !in_array($alias, $this->getBlacklistedQueryColumns())
+        return !in_array($alias, $this->getBlacklistedQueryColumns($table))
             && $this->validateQueryColumnAssociation($table, $name);
     }
 
@@ -1019,7 +1042,7 @@ abstract class Repository implements Selectable
             throw new QueryException(t('Query column "%s" not found'), $name);
         }
 
-        if (in_array($alias, $this->getBlacklistedQueryColumns())) {
+        if (in_array($alias, $this->getBlacklistedQueryColumns($table))) {
             throw new QueryException(t('Column "%s" cannot be queried'), $name);
         }
 
@@ -1107,7 +1130,7 @@ abstract class Repository implements Selectable
             throw new StatementException('Statement column "%s" not found', $name);
         }
 
-        if (in_array($alias, $this->getBlacklistedQueryColumns())) {
+        if (in_array($alias, $this->getBlacklistedQueryColumns($table))) {
             throw new StatementException('Column "%s" cannot be referenced in a statement', $name);
         }
 
