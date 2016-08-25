@@ -60,10 +60,9 @@
             if ($search[0] === document.activeElement) {
                 return null;
             }
-            var search = $container.find('#search').val();
-            if (search.length) {
+            if ($search.length) {
                 var $content = $('<div></div>').append(content);
-                $content.find('#search').attr('value', search).addClass('active');
+                $content.find('#search').attr('value', $search.val()).addClass('active');
                 return $content.html();
             }
             return content;
