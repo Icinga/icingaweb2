@@ -47,7 +47,10 @@
     <?php endif ?>
     <tr>
       <th><?= $this->escape($this->translate('Description')) ?></th>
-      <td><?= nl2br($this->escape($module->getDescription())) ?></td>
+      <td>
+        <strong><?= $this->escape($module->getTitle()) ?></strong><br>
+        <?= nl2br($this->escape($module->getDescription())) ?>
+      </td>
     </tr>
     <tr>
       <th><?= $this->escape($this->translate('Dependencies')) ?></th>
