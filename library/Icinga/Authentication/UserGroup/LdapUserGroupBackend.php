@@ -94,6 +94,13 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
     protected $groupFilter;
 
     /**
+     * ActiveDirectory nested group on the user?
+     *
+     * @var bool
+     */
+    protected $nestedGroupSearchInAD;
+
+    /**
      * The columns which are not permitted to be queried
      *
      * @var array
@@ -365,6 +372,33 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
     }
 
     /**
+     * Set nestedGroupSearchInAD for the group query
+     *
+     * @param string $enable
+     *
+     * @return bool
+     */
+    public function setNestedGroupSearchInAD($enable)
+    {
+        if ($enable == "1") {
+           $this->nestedGroupSearchInAD = true;
+        } else {
+           $this->nestedGroupSearchInAD = false;
+        }
+        return $this;
+    }
+
+    /**
+     * Get nestedGroupSearchInAD for the group query
+     *
+     * @return bool
+     */
+    public function getNestedGroupSearchInAD()
+    {
+        return $this->nestedGroupSearchInAD;
+    }
+
+    /**
      * Return whether the attribute name where to find a group's member holds ambiguous values
      *
      * @return  bool
@@ -620,10 +654,16 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
             }
         }
 
+	if ($this->nestedGroupSearchInAD) {
+                $groupMemberAttribute = $this->groupMemberAttribute . ':1.2.840.113556.1.4.1941:';
+        } else {
+                $groupMemberAttribute = $this->groupMemberAttribute;
+        }
+
         $groupQuery = $this->ds
             ->select()
             ->from($this->groupClass, array($this->groupNameAttribute))
-            ->where($this->groupMemberAttribute, $queryValue)
+            ->where($groupMemberAttribute, $queryValue)
             ->setBase($this->groupBaseDn);
         if ($this->groupFilter) {
             $groupQuery->setNativeFilter($this->groupFilter);
@@ -706,7 +746,8 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
             ->setUserNameAttribute($config->get('user_name_attribute', $defaults->user_name_attribute))
             ->setGroupMemberAttribute($config->get('group_member_attribute', $defaults->group_member_attribute))
             ->setGroupFilter($config->group_filter)
-            ->setUserFilter($config->user_filter);
+            ->setUserFilter($config->user_filter)
+            ->setNestedGroupSearchInAD($config->get('nested_group_search_in_ad', $defaults->nested_group_search_in_ad));
     }
 
     /**
@@ -721,7 +762,8 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
             'user_class'                => 'inetOrgPerson',
             'group_name_attribute'      => 'gid',
             'user_name_attribute'       => 'uid',
-            'group_member_attribute'    => 'member'
+            'group_member_attribute'    => 'member',
+            'nested_group_search_in_ad' => '0'
         ));
     }
 
@@ -737,7 +779,8 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
             'user_class'                => 'user',
             'group_name_attribute'      => 'sAMAccountName',
             'user_name_attribute'       => 'sAMAccountName',
-            'group_member_attribute'    => 'member'
+            'group_member_attribute'    => 'member',
+            'nested_group_search_in_ad' => '0'
         ));
     }
 }
