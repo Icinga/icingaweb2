@@ -38,6 +38,7 @@ class HostdowntimeQuery extends IdoQuery
             'downtime_is_fixed'         => 'sd.is_fixed',
             'downtime_is_flexible'      => 'CASE WHEN sd.is_fixed = 0 THEN 1 ELSE 0 END',
             'downtime_is_in_effect'     => 'sd.is_in_effect',
+            'downtime_name'             => 'sd.name',
             'downtime_scheduled_end'    => 'UNIX_TIMESTAMP(sd.scheduled_end_time)',
             'downtime_scheduled_start'  => 'UNIX_TIMESTAMP(sd.scheduled_start_time)',
             'downtime_start'            => 'UNIX_TIMESTAMP(CASE WHEN UNIX_TIMESTAMP(sd.trigger_time) > 0 then sd.trigger_time ELSE sd.scheduled_start_time END)',
@@ -78,6 +79,9 @@ class HostdowntimeQuery extends IdoQuery
      */
     protected function joinBaseTables()
     {
+        if (version_compare($this->getIdoVersion(), '1.14.0', '<')) {
+            $this->columnMap['downtimes']['downtime_name'] = '(NULL)';
+        }
         $this->select->from(
             array('sd' => $this->prefix . 'scheduleddowntime'),
             array()
