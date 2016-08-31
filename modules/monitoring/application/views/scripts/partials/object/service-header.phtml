@@ -18,7 +18,8 @@ use Icinga\Module\Monitoring\Object\Service;
             echo $this->iconImage()->host($object);
             echo '<span class="selectable">' . $this->escape($object->host_display_name) . '</span>';
             if ($object->host_display_name !== $object->host_name) {
-                echo ' <span class="selectable host-meta">&#40;' . $this->escape($object->host_name) . '&#41;</span>';
+                echo ' <span class="host-meta">&#40;<span class="selectable">' . $this->escape($object->host_name)
+                    . '</span>&#41;</span>';
             }
             echo $this->render('partials/host/statusicons.phtml');
             if ($object->host_address6 && $object->host_address6 !== $object->host_name) {
@@ -48,7 +49,8 @@ use Icinga\Module\Monitoring\Object\Service;
             echo $this->translate('Service')
                 . '&#58; <span class="selectable">' . $this->escape($object->service_display_name) . '</span>';
             if ($object->service_display_name !== $object->service_description) {
-                echo ' <span class="selectable service-meta">&#40;' . $this->escape($object->service_description) . '&#41;</span>';
+                echo ' <span class="service-meta">&#40;<span class="selectable">'
+                    . $this->escape($object->service_description) . '</span>&#41;</span>';
             }
             echo $this->render('partials/service/statusicons.phtml');
         ?></td>

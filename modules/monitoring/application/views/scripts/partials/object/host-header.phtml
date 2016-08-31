@@ -17,7 +17,8 @@ use Icinga\Module\Monitoring\Object\Host;
             echo $this->iconImage()->host($object);
             echo '<span class="selectable">' . $this->escape($object->host_display_name) . '</span>';
             if ($object->host_display_name !== $object->host_name) {
-                echo ' <span class="selectable host-meta">&#40;' . $this->escape($object->host_name) . '&#41;</span>';
+                echo ' <span class="host-meta">&#40;<span class="selectable">' . $this->escape($object->host_name)
+                    . '</span>&#41;</span>';
             }
             if ($object->host_alias !== $object->host_display_name && $object->host_alias !== $object->host_name) {
                 echo '<div class="selectable host-meta">'
