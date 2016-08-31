@@ -61,8 +61,9 @@
           $deleteButton->setAttrib('class', $deleteButton->getAttrib('class') . ' remove-action');
           $deleteButton->populate(
               array(
-                  'downtime_id' => $downtime->id,
-                  'downtime_is_service' => isset($downtime->service_description)
+                  'downtime_id'         => $downtime->id,
+                  'downtime_is_service' => isset($downtime->service_description),
+                  'downtime_name'       => $downtime->name
               )
           );
           $deleteButton->getElement('btn_submit')
