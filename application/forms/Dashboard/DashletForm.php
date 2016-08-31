@@ -3,6 +3,7 @@
 
 namespace Icinga\Forms\Dashboard;
 
+use Icinga\Web\Form\Validator\InternalUrlValidator;
 use Icinga\Web\Widget\Dashboard;
 use Icinga\Web\Form;
 use Icinga\Web\Form\Validator\UrlValidator;
@@ -70,7 +71,7 @@ class DashletForm extends Form
                 'description'   => $this->translate(
                     'Enter url being loaded in the dashlet. You can paste the full URL, including filters.'
                 ),
-                'validators'    => array(new UrlValidator())
+                'validators'    => array(new UrlValidator(), new InternalUrlValidator())
             )
         );
         $this->addElement(
