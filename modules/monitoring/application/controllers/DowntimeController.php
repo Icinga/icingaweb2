@@ -44,6 +44,7 @@ class DowntimeController extends Controller
             'is_fixed'        => 'downtime_is_fixed',
             'is_in_effect'    => 'downtime_is_in_effect',
             'entry_time'      => 'downtime_entry_time',
+            'name'            => 'downtime_name',
             'host_state',
             'service_state',
             'host_name',
@@ -91,6 +92,7 @@ class DowntimeController extends Controller
                 ->populate(array(
                     'downtime_id'           => $this->downtime->id,
                     'downtime_is_service'   => $isService,
+                    'downtime_name'         => $this->downtime->name,
                     'redirect'              => Url::fromPath('monitoring/list/downtimes'),
                 ))
                 ->handleRequest();
