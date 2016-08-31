@@ -72,6 +72,7 @@ class DeleteCommentsCommandForm extends CommandForm
             $cmd = new DeleteCommentCommand();
             $cmd
                 ->setCommentId($comment->id)
+                ->setCommentName($comment->name)
                 ->setIsService(isset($comment->service_description));
             $this->getTransport($this->request)->send($cmd);
         }
