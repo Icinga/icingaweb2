@@ -23,6 +23,7 @@ class CommentQuery extends IdoQuery
             'comment_expiration'    => 'c.comment_expiration',
             'comment_internal_id'   => 'c.comment_internal_id',
             'comment_is_persistent' => 'c.comment_is_persistent',
+            'comment_name'          => 'c.comment_name',
             'comment_timestamp'     => 'c.comment_timestamp',
             'comment_type'          => 'c.comment_type',
             'instance_name'         => 'c.instance_name',
@@ -85,6 +86,9 @@ class CommentQuery extends IdoQuery
      */
     protected function joinBaseTables()
     {
+        if (version_compare($this->getIdoVersion(), '1.14.0', '<')) {
+            $this->columnMap['comments']['comment_name'] = '(NULL)';
+        }
         $this->commentQuery = $this->db->select();
         $this->select->from(
             array('c' => $this->commentQuery),
