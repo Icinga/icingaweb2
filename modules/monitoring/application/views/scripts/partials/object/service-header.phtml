@@ -14,24 +14,24 @@ use Icinga\Module\Monitoring\Object\Service;
             <?php endif ?>
             </div>
         </td>
-        <td>
-            <?= $this->iconImage()->host($object) ?>
-            <span class="selectable"><?= $this->escape($object->host_display_name) ?></span>
-        <?php if ($object->host_display_name !== $object->host_name): ?>
-            <span class="selectable host-meta">&#40;<?= $this->escape($object->host_name) ?>&#41;</span>
-        <?php endif ?>
-            <?= $this->render('partials/host/statusicons.phtml') ?>
-        <?php if ($object->host_address6 && $object->host_address6 !== $object->host_name): ?>
-            <div class="selectable host-meta" title="<?= $this->translate('IPv6 address') ?>">
-                <?= $this->escape($object->host_address6) ?>
-            </div>
-        <?php endif ?>
-        <?php if ($object->host_address && $object->host_address !== $object->host_name): ?>
-            <div class="selectable host-meta" title="<?= $this->translate('IPv4 address') ?>">
-                <?= $this->escape($object->host_address) ?>
-            </div>
-        <?php endif ?>
-        </td>
+        <td><?php
+            echo $this->iconImage()->host($object);
+            echo '<span class="selectable">' . $this->escape($object->host_display_name) . '</span>';
+            if ($object->host_display_name !== $object->host_name) {
+                echo ' <span class="selectable host-meta">&#40;' . $this->escape($object->host_name) . '&#41;</span>';
+            }
+            echo $this->render('partials/host/statusicons.phtml');
+            if ($object->host_address6 && $object->host_address6 !== $object->host_name) {
+                echo '<div class="selectable host-meta" title="' . $this->translate('IPv6 address') . '">'
+                    . $this->escape($object->host_address6)
+                    . '</div>';
+            }
+            if ($object->host_address && $object->host_address !== $object->host_name) {
+                echo '<div class="selectable host-meta" title="' . $this->translate('IPv4 address') . '">'
+                    . $this->escape($object->host_address)
+                    . '</div>';
+            }
+        ?></td>
     </tr>
     <tr>
         <td class="state-col state-<?= Service::getStateText($object->service_state) ?><?= $object->service_handled ? ' handled' : '' ?>">
@@ -43,13 +43,14 @@ use Icinga\Module\Monitoring\Object\Service;
             <?php endif ?>
             </div>
         </td>
-        <td>
-            <?= $this->iconImage()->service($object) ?>
-            <?= $this->translate('Service') ?>&#58; <span class="selectable"><?= $this->escape($object->service_display_name) ?></span>
-            <?php if ($object->service_display_name !== $object->service_description): ?>
-                <span class="selectable service-meta">&#40;<?= $this->escape($object->service_description) ?>&#41;</span>
-            <?php endif ?>
-            <?= $this->render('partials/service/statusicons.phtml') ?>
-        </td>
+        <td><?php
+            echo $this->iconImage()->service($object);
+            echo $this->translate('Service')
+                . '&#58; <span class="selectable">' . $this->escape($object->service_display_name) . '</span>';
+            if ($object->service_display_name !== $object->service_description) {
+                echo ' <span class="selectable service-meta">&#40;' . $this->escape($object->service_description) . '&#41;</span>';
+            }
+            echo $this->render('partials/service/statusicons.phtml');
+        ?></td>
     </tr>
 </table>
