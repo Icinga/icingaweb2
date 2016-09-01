@@ -33,8 +33,8 @@
         // TODO: What's this?
         applyHandlers: function (event) {
             var $target = $(event.target);
-            var self = event.data.self;
-            var icinga = self.icinga;
+            var _this = event.data.self;
+            var icinga = _this.icinga;
 
             if (! icinga) {
                 // Attempt to catch a rare error, race condition, whatever
@@ -42,7 +42,7 @@
                 return;
             }
 
-            if (self.initializeModules) {
+            if (_this.initializeModules) {
                 var loaded = false;
                 var moduleName = $target.data('icingaModule');
                 if (moduleName) {
@@ -63,7 +63,7 @@
                     // so we need to ensure that it is called the first time they are
                     // initialized
                     event.stopImmediatePropagation();
-                    self.initializeModules = false;
+                    _this.initializeModules = false;
 
                     var $container = $target.closest('.container');
                     if (! $container.length) {
@@ -79,7 +79,7 @@
                     return false;
                 }
             } else {
-                self.initializeModules = true;
+                _this.initializeModules = true;
             }
 
             $('.dashboard > div', $target).each(function(idx, el) {
@@ -93,7 +93,7 @@
             var $searchField = $('#menu input.search', $target);
             // Remember initial search field value if any
             if ($searchField.length && $searchField.val().length) {
-                self.searchValue = $searchField.val();
+                _this.searchValue = $searchField.val();
             }
         },
 
@@ -190,12 +190,12 @@
         },
 
         autoSubmitSearch: function(event) {
-            var self = event.data.self;
-            if ($('#menu input.search').val() === self.searchValue) {
+            var _this = event.data.self;
+            if ($('#menu input.search').val() === _this.searchValue) {
                 return;
             }
-            self.searchValue = $('#menu input.search').val();
-            return self.autoSubmitForm(event);
+            _this.searchValue = $('#menu input.search').val();
+            return _this.autoSubmitForm(event);
         },
 
         rememberSubmitButton: function(e) {
@@ -212,8 +212,8 @@
          *
          */
         submitForm: function (event, autosubmit) {
-            var self   = event.data.self;
-            var icinga = self.icinga;
+            var _this   = event.data.self;
+            var icinga = _this.icinga;
             // .closest is not required unless subelements to trigger this
             var $form = $(event.currentTarget).closest('form');
             var url = $form.attr('action');
@@ -277,9 +277,9 @@
                     $button.addClass('active');
                 }
 
-                $target = self.getLinkTargetFor($button);
+                $target = _this.getLinkTargetFor($button);
             } else {
-                $target = self.getLinkTargetFor($form);
+                $target = _this.getLinkTargetFor($form);
             }
 
             if (! url) {
@@ -427,8 +427,8 @@
          * Someone clicked a link or tr[href]
          */
         linkClicked: function (event) {
-            var self   = event.data.self;
-            var icinga = self.icinga;
+            var _this   = event.data.self;
+            var icinga = _this.icinga;
             var $a = $(this);
             var $eventTarget = $(event.target);
             var href = $a.attr('href');
@@ -512,7 +512,7 @@
                     }
                     return false;
                 }
-                $target = self.getLinkTargetFor($a);
+                $target = _this.getLinkTargetFor($a);
 
                 formerUrl = $target.data('icingaUrl');
                 if (typeof formerUrl !== 'undefined' && formerUrl.split(/#/)[0] === href.split(/#/)[0]) {
@@ -524,7 +524,7 @@
                     return false;
                 }
             } else {
-                $target = self.getLinkTargetFor($a);
+                $target = _this.getLinkTargetFor($a);
             }
 
             // Load link URL
