@@ -97,8 +97,7 @@ Roles can be changed either through the icingaweb2 interface, by navigation
 to the page **Configuration > Authentication > Roles**, or through editing the
 configuration file:
 
-
-        /etc/icingaweb2/roles.ini
+    /etc/icingaweb2/roles.ini
 
 
 #### <a id="security-roles-configuration-example"></a>Introducing Example
@@ -125,12 +124,12 @@ Each role is defined as a section, with the name of the role as section name. Th
 attributes can be defined for each role in a default Icinga Web 2 installation:
 
 
- Directive                 | Description
-:--------------------------|:----------------
- **users**                     | a comma-separated list of user **user names** that are affected by this role
- **groups**                    | a comma-separated list of **group names** that are affected by this role
- **permissions**               | a comma-separated list of **permissions** granted by this role
- **monitoring/filter/objects** | a **filter expression** that restricts the access to services and hosts
+| Directive                     | Description |
+| ----------------------------- | ----------- |
+| **users**                     | a comma-separated list of user **user names** that are affected by this role |
+| **groups**                    | a comma-separated list of **group names** that are affected by this role |
+| **permissions**               | a comma-separated list of **permissions** granted by this role |
+| **monitoring/filter/objects** | a **filter expression** that restricts the access to services and hosts |
 
 
 
@@ -156,12 +155,12 @@ through a group) all permissions are added together to get the users actual perm
 
 ### <a id="permissions-global"></a> Global Permissions
 
-Name        | Permits
-:-----------|:------------
-**\***       | allow everything, including module-specific permissions
-**config/\***   | allow all configuration actions
-**config/modules**    | allow enabling or disabling modules
-**module/&lt;moduleName&gt;** | allow access to module &lt;moduleName&gt;
+| Name                          | Permits      |
+| ----------------------------- | ------------ |
+| **\***                        | allow everything, including module-specific permissions |
+| **config/\***                 | allow all configuration actions |
+| **config/modules**            | allow enabling or disabling modules |
+| **module/&lt;moduleName&gt;** | allow access to module &lt;moduleName&gt; |
 
 
 ### <a id="permissions-module"></a> Monitoring Module Permissions

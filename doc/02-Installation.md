@@ -35,16 +35,16 @@ pagespeed Disallow "*/icingaweb2/*";
 
 Below is a list of official package repositories for installing Icinga Web 2 for various operating systems.
 
-Distribution            | Repository
-------------------------|---------------------------
-Debian                  | [debmon](http://debmon.org/packages/debmon-jessie/icingaweb2), [Icinga Repository](http://packages.icinga.org/debian/)
-Ubuntu                  | [Icinga Repository](http://packages.icinga.org/ubuntu/)
-RHEL/CentOS             | [Icinga Repository](http://packages.icinga.org/epel/)
-openSUSE                | [Icinga Repository](http://packages.icinga.org/openSUSE/)
-SLES                    | [Icinga Repository](http://packages.icinga.org/SUSE/)
-Gentoo                  | -
-FreeBSD                 | -
-ArchLinux               | [Upstream](https://aur.archlinux.org/packages/icingaweb2)
+| Distribution  | Repository |
+| ------------- | ---------- |
+| Debian        | [debmon](http://debmon.org/packages/debmon-jessie/icingaweb2), [Icinga Repository](http://packages.icinga.org/debian/) |
+| Ubuntu        | [Icinga Repository](http://packages.icinga.org/ubuntu/) |
+| RHEL/CentOS   | [Icinga Repository](http://packages.icinga.org/epel/) |
+| openSUSE      | [Icinga Repository](http://packages.icinga.org/openSUSE/) |
+| SLES          | [Icinga Repository](http://packages.icinga.org/SUSE/) |
+| Gentoo        | - |
+| FreeBSD       | - |
+| ArchLinux     | [Upstream](https://aur.archlinux.org/packages/icingaweb2) |
 
 Packages for distributions other than the ones listed above may also be available.
 Please contact your distribution packagers.
