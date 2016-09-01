@@ -459,7 +459,7 @@
          */
         initializeTriStates: function ($html) {
             var self = this;
-            $('div.tristate', $html).each(function(index, item) {
+            $html.find('div.tristate').each(function(index, item) {
                 var $target  = $(item);
 
                 // hide input boxess and remove text nodes
