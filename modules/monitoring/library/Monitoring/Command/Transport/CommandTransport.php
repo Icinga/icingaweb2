@@ -65,6 +65,9 @@ class CommandTransport implements CommandTransportInterface
             case RemoteCommandFile::TRANSPORT:
                 $transport = new RemoteCommandFile();
                 break;
+            case ApiCommandTransport::TRANSPORT:
+                $transport = new ApiCommandTransport();
+                break;
             case LocalCommandFile::TRANSPORT:
             case '':  // Casting null to string is the empty string
                 $transport = new LocalCommandFile();
@@ -74,12 +77,13 @@ class CommandTransport implements CommandTransportInterface
                     mt(
                         'monitoring',
                         'Cannot create command transport "%s". Invalid transport'
-                        . ' defined in "%s". Use one of "%s" or "%s".'
+                        . ' defined in "%s". Use one of "%s", "%s" or "%s".'
                     ),
                     $config->transport,
                     static::getConfig()->getConfigFile(),
                     LocalCommandFile::TRANSPORT,
-                    RemoteCommandFile::TRANSPORT
+                    RemoteCommandFile::TRANSPORT,
+                    ApiCommandTransport::TRANSPORT
                 );
         }
 
