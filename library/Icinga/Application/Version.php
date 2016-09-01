@@ -25,24 +25,46 @@ class Version
             }
         }
 
-        $gitDir = Icinga::app()->getBaseDir('.git');
-        $gitHead = @file_get_contents($gitDir . DIRECTORY_SEPARATOR . 'HEAD');
-        if (false !== $gitHead) {
+        $gitCommitId = static::getGitHead(Icinga::app()->getBaseDir());
+        if ($gitCommitId !== false) {
+            $version['gitCommitID'] = $gitCommitId;
+        }
+
+        return $version;
+    }
+
+    /**
+     * Get the hexadecimal ID of the HEAD commit of the Git repository in $repoDir
+     *
+     * @param   string  $repoDir
+     * @param   bool    $bare       Whether the repository has been created with
+     *                              $ git init|clone --bare
+     *
+     * @return  string|bool         false if not available
+     */
+    public static function getGitHead($repoDir, $bare = false)
+    {
+        if (! $bare) {
+            $repoDir .= DIRECTORY_SEPARATOR . '.git';
+        }
+
+        $gitHead = @ file_get_contents($repoDir . DIRECTORY_SEPARATOR . 'HEAD');
+        if ($gitHead !== false) {
             $matches = array();
-            if (@preg_match('/(?<!.)ref:\s+(.+?)$/ms', $gitHead, $matches)) {
-                $gitCommitID = @file_get_contents($gitDir . DIRECTORY_SEPARATOR . $matches[1]);
+            if (preg_match('/(?<!.)ref:\s+(.+?)$/ms', $gitHead, $matches)) {
+                $gitCommitID = @ file_get_contents($repoDir . DIRECTORY_SEPARATOR . $matches[1]);
             } else {
                 $gitCommitID = $gitHead;
             }
 
-            if (false !== $gitCommitID) {
+            if ($gitCommitID !== false) {
                 $matches = array();
-                if (@preg_match('/(?<!.)(?P<gitCommitID>[0-9a-f]+)$/ms', $gitCommitID, $matches)) {
-                    return array_merge($version, $matches);
+                if (preg_match('/(?<!.)([0-9a-f]+)$/ms', $gitCommitID, $matches)) {
+                    return $matches[1];
                 }
             }
         }
 
-        return $version;
+        return false;
     }
 }
