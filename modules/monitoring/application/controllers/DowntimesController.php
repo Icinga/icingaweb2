@@ -51,6 +51,7 @@ class DowntimesController extends Controller
             'is_fixed'        => 'downtime_is_fixed',
             'is_in_effect'    => 'downtime_is_in_effect',
             'entry_time'      => 'downtime_entry_time',
+            'name'            => 'downtime_name',
             'host_state',
             'service_state',
             'host_name',

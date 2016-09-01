@@ -19,6 +19,7 @@ class Comment extends DataView
             'comment_expiration',
             'comment_internal_id',
             'comment_is_persistent',
+            'comment_name',
             'comment_timestamp',
             'comment_type',
             'host_display_name',
