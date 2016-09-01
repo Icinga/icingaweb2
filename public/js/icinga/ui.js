@@ -211,16 +211,16 @@
          * Our window got resized, let's fix our UI
          */
         onWindowResize: function (event) {
-            var self = event.data.self;
+            var _this = event.data.self;
 
-            if (self.layoutHasBeenChanged()) {
-                self.icinga.logger.info(
+            if (_this.layoutHasBeenChanged()) {
+                _this.icinga.logger.info(
                     'Layout change detected, switching to',
-                    self.currentLayout
+                    _this.currentLayout
                 );
             }
-            self.fixControls();
-            self.refreshDebug();
+            _this.fixControls();
+            _this.refreshDebug();
         },
 
         /**
@@ -458,7 +458,6 @@
          * Initialize all TriStateCheckboxes in the given html
          */
         initializeTriStates: function ($html) {
-            var self = this;
             $('div.tristate', $html).each(function(index, item) {
                 var $target  = $(item);
 
