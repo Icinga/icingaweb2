@@ -28,7 +28,7 @@ to handle authentication and authorization, monitoring data or user preferences.
 
 #### <a id="resources-configuration-database-example"></a> Example
 
-````
+```
 [icingaweb-mysql-tcp]
 type      = db
 db        = mysql
@@ -54,8 +54,7 @@ port      = 5432
 username  = icingaweb
 password  = icingaweb
 dbname    = icingaweb
-
-````
+```
 
 ### <a id="resources-configuration-ldap"></a> LDAP
 
@@ -73,7 +72,7 @@ A LDAP resource represents a tree in a LDAP directory. LDAP is usually used for 
 
 #### <a id="resources-configuration-ldap-example"></a> Example
 
-````
+```
 [ad]
 type        = ldap
 hostname    = localhost
@@ -81,8 +80,7 @@ port        = 389
 root_dn     = "ou=people,dc=icinga,dc=org"
 bind_dn     = "cn=admin,ou=people,dc=icinga,dc=org"
 bind_pw     = admin
-
-````
+```
 
 ### <a id="resources-configuration-ssh"></a> SSH
 
@@ -97,11 +95,10 @@ ssh authentication.
 
 #### <a id="resources-configuration-ssh-example"></a> Example
 
-````
+```
 
 [ssh]
 type        = "ssh"
 user        = "ssh-user"
 private_key = "/etc/icingaweb2/ssh/ssh-user"
-
-````
+```

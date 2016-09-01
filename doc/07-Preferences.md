@@ -22,7 +22,7 @@ For storing preferences in INI files you have to add the following section to th
 ```
 [preferences]
 type = ini
-````
+```
 
 ### <a id="preferences-configuration-db"></a> Store Preferences in a Database
 

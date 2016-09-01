@@ -22,11 +22,11 @@ the order of sections in the commandtransports.ini.
 
 A local Icinga instance requires the following directives:
 
-````
+```
 [icinga2]
-transport = local
-path = /var/run/icinga2/cmd/icinga2.cmd
-````
+transport   = local
+path        = /var/run/icinga2/cmd/icinga2.cmd
+```
 
 When sending commands to the Icinga instance, Icinga Web 2 opens the file found
 on the local filesystem underneath 'path' and writes the external command to it.
@@ -36,14 +36,14 @@ on the local filesystem underneath 'path' and writes the external command to it.
 A command pipe on a remote host's filesystem can be accessed by configuring a
 SSH based command transport and requires the following directives:
 
-````
+```
 [icinga2]
-transport = remote
-path = /var/run/icinga2/cmd/icinga2.cmd
-host = example.tld
-;port = 22                              ; Optional. The default is 22
-user = icinga
-````
+transport   = remote
+path        = /var/run/icinga2/cmd/icinga2.cmd
+host        = example.tld
+user        = icinga
+;port        = 22 ; Optional. The default is 22
+```
 
 To make this example work, you'll need to permit your web-server's user
 public-key based access to the defined remote host so that Icinga Web 2 can
@@ -56,23 +56,23 @@ key file on the local filesystem that is used to access the remote host.
 To accomplish this, a new resource is required that is defined in your
 transport's configuration instead of a user:
 
-````
+```
 [icinga2]
-transport = remote
-path = /var/run/icinga2/cmd/icinga2.cmd
-host = example.tld
-;port = 22                              ; Optional. The default is 22
-resource = example.tld-icinga2
-````
+transport   = remote
+path        = /var/run/icinga2/cmd/icinga2.cmd
+host        = example.tld
+resource    = example.tld-icinga2
+;port        = 22 ; Optional. The default is 22
+```
 
 The resource's configuration needs to be put into the resources.ini file:
 
-````
+```
 [example.tld-icinga2]
-type = ssh
-user = icinga
+type        = ssh
+user        = icinga
 private_key = /etc/icingaweb2/ssh/icinga
-````
+```
 
 ## Configuring transports for different Icinga instances
 
@@ -81,7 +81,7 @@ define which transport belongs to which Icinga instance by providing the
 directive 'instance'. This directive should contain the name of the Icinga
 instance you want to assign to the transport:
 
-````
+```
 [icinga1]
 ...
 instance = icinga1
@@ -89,7 +89,7 @@ instance = icinga1
 [icinga2]
 ...
 instance = icinga2
-````
+```
 
 Associating a transport to a specific Icinga instance causes this transport to
 be used to send commands to the linked instance only. Transports without a

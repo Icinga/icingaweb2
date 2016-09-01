@@ -25,9 +25,9 @@ environment. This enables developers and users to test Livestatus,
 MySQL and PostgreSQL backends as well as the LDAP authentication. All you
 have to do is install Vagrant and run:
 
-````
+```
 vagrant up
-````
+```
 
 > **Note:** The first boot of the vm takes a fairly long time because
 > you'll download a plain CentOS base box and Vagrant will automatically
@@ -56,6 +56,6 @@ Both LDAP and a MySQL are configured as authentication backend. Please use one o
 All software required to run tests is installed in the virtual machine.
 In order to run all tests you have to execute the following command:
 
-````
+```
 vagrant ssh -c "icingacli test php unit"
-````
+```
