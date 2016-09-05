@@ -37,7 +37,7 @@ Below is a list of official package repositories for installing Icinga Web 2 for
 
 | Distribution  | Repository |
 | ------------- | ---------- |
-| Debian        | [debmon](http://debmon.org/packages/debmon-jessie/icingaweb2), [Icinga Repository](http://packages.icinga.org/debian/) |
+| Debian        | [Icinga Repository](http://packages.icinga.org/debian/) |
 | Ubuntu        | [Icinga Repository](http://packages.icinga.org/ubuntu/) |
 | RHEL/CentOS   | [Icinga Repository](http://packages.icinga.org/epel/) |
 | openSUSE      | [Icinga Repository](http://packages.icinga.org/openSUSE/) |
@@ -52,23 +52,29 @@ Please contact your distribution packagers.
 ### <a id="package-repositories"></a> Setting up Package Repositories
 
 You need to add the Icinga repository to your package management configuration for installing Icinga Web 2.
-Below is a list with examples for various distributions.
+If you've already configured your OS to use the Icinga repository for installing Icinga 2, you may skip this step.
+Below is a list with **examples** for various distributions.
 
-**Debian (debmon)**:
-```
-wget -O - http://debmon.org/debmon/repo.key 2>/dev/null | apt-key add -
-echo 'deb http://debmon.org/debmon debmon-jessie main' >/etc/apt/sources.list.d/debmon.list
-apt-get update
-```
-
-**Ubuntu Trusty**:
+**Debian Jessie**:
 ```
 wget -O - http://packages.icinga.org/icinga.key | apt-key add -
-add-apt-repository 'deb http://packages.icinga.org/ubuntu icinga-trusty main'
+echo 'deb http://packages.icinga.org/debian icinga-jessie main' >/etc/apt/sources.list.d/icinga.list
 apt-get update
 ```
 
-For other Ubuntu versions just replace trusty with your distribution\'s code name.
+> INFO
+>
+> For other Debian versions just replace jessie with your distribution's code name.
+
+**Ubuntu Xenial**:
+```
+wget -O - http://packages.icinga.org/icinga.key | apt-key add -
+add-apt-repository 'deb http://packages.icinga.org/ubuntu icinga-xenial main'
+apt-get update
+```
+> INFO
+>
+> For other Ubuntu versions just replace xenial with your distribution's code name.
 
 **RHEL and CentOS**:
 ```
