@@ -42,8 +42,8 @@ Below is a list of official package repositories for installing Icinga Web 2 for
 | RHEL/CentOS   | [Icinga Repository](http://packages.icinga.org/epel/) |
 | openSUSE      | [Icinga Repository](http://packages.icinga.org/openSUSE/) |
 | SLES          | [Icinga Repository](http://packages.icinga.org/SUSE/) |
-| Gentoo        | - |
-| FreeBSD       | - |
+| Gentoo        | [Upstream](https://packages.gentoo.org/packages/www-apps/icingaweb2) |
+| FreeBSD       | [Upstream](http://portsmon.freebsd.org/portoverview.py?category=net-mgmt&portname=icingaweb2) |
 | ArchLinux     | [Upstream](https://aur.archlinux.org/packages/icingaweb2) |
 
 Packages for distributions other than the ones listed above may also be available.
