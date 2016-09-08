@@ -91,8 +91,10 @@ class SendCustomNotificationCommandForm extends ObjectsCommandForm
                 ->setObject($object)
                 ->setComment($this->getElement('comment')->getValue())
                 ->setAuthor($this->request->getUser()->getUsername())
-                ->setForced($this->getElement('forced')->isChecked())
-                ->setBroadcast($this->getElement('broadcast')->isChecked());
+                ->setForced($this->getElement('forced')->isChecked());
+            if (($broadcast = $this->getElement('broadcast')) !== null) {
+                $notification->setBroadcast($broadcast->isChecked());
+            }
             $this->getTransport($this->request)->send($notification);
         }
         Notification::success($this->translatePlural(
