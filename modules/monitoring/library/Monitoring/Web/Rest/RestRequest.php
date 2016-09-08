@@ -4,6 +4,7 @@
 namespace Icinga\Module\Monitoring\Web\Rest;
 
 use Exception;
+use Icinga\Application\Logger;
 
 /**
  * REST Request
@@ -206,26 +207,45 @@ class RestRequest
             CURLOPT_RETURNTRANSFER  => true
         );
 
+        // Record cURL command line for debugging
+        $curlCmd = array('curl', '-s', '-X', $this->method, '-H', escapeshellarg('Accept: application/json'));
+
         if ($this->strictSsl) {
             $options[CURLOPT_SSL_VERIFYHOST] = 2;
             $options[CURLOPT_SSL_VERIFYPEER] = true;
         } else {
             $options[CURLOPT_SSL_VERIFYHOST] = false;
             $options[CURLOPT_SSL_VERIFYPEER] = false;
+            $curlCmd[] = '-k';
         }
 
         if ($this->hasBasicAuth) {
             $options[CURLOPT_USERPWD] = sprintf('%s:%s', $this->username, $this->password);
+            $curlCmd[] = sprintf('-u %s:%s', escapeshellarg($this->username), escapeshellarg($this->password));
         }
 
         if (! empty($this->payload)) {
             $payload = $this->serializePayload($this->payload, $this->contentType);
             $options[CURLOPT_POSTFIELDS] = $payload;
+            $curlCmd[] = sprintf('-d %s', escapeshellarg($payload));
         }
 
         $options[CURLOPT_HTTPHEADER] = $headers;
 
+        $stream = null;
+        if (Logger::getInstance()->getLevel() === Logger::DEBUG) {
+            $stream = fopen('php://temp', 'w');
+            $options[CURLOPT_VERBOSE] = true;
+            $options[CURLOPT_STDERR] = $stream;
+        }
+
         curl_setopt_array($ch, $options);
+
+        Logger::debug(
+            'Executing %s %s',
+            implode(' ', $curlCmd),
+            escapeshellarg($this->uri)
+        );
 
         $result = curl_exec($ch);
 
@@ -234,6 +254,12 @@ class RestRequest
         }
 
         curl_close($ch);
+
+        if (is_resource($stream)) {
+            rewind($stream);
+            Logger::debug(stream_get_contents($stream));
+            fclose($stream);
+        }
 
         $response = @json_decode($result, true);
 
