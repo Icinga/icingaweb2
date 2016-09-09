@@ -4,6 +4,7 @@
 namespace Icinga\Controllers;
 
 use Exception;
+use Icinga\Application\Version;
 use InvalidArgumentException;
 use Icinga\Application\Config;
 use Icinga\Application\Icinga;
@@ -122,6 +123,7 @@ class ConfigController extends Controller
 
             $this->view->module = $module;
             $this->view->tabs = $module->getConfigTabs()->activate('info');
+            $this->view->moduleGitCommitId = Version::getGitHead($module->getBaseDir());
         } else {
             $this->view->module = false;
             $this->view->tabs = null;

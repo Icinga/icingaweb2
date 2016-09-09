@@ -25,24 +25,38 @@ class Version
             }
         }
 
-        $gitDir = Icinga::app()->getBaseDir('.git');
-        $gitHead = @file_get_contents($gitDir . DIRECTORY_SEPARATOR . 'HEAD');
-        if (false !== $gitHead) {
-            $matches = array();
-            if (@preg_match('/(?<!.)ref:\s+(.+?)$/ms', $gitHead, $matches)) {
-                $gitCommitID = @file_get_contents($gitDir . DIRECTORY_SEPARATOR . $matches[1]);
-            } else {
-                $gitCommitID = $gitHead;
-            }
-
-            if (false !== $gitCommitID) {
-                $matches = array();
-                if (@preg_match('/(?<!.)(?P<gitCommitID>[0-9a-f]+)$/ms', $gitCommitID, $matches)) {
-                    return array_merge($version, $matches);
-                }
-            }
+        $gitCommitId = static::getGitHead(Icinga::app()->getBaseDir());
+        if ($gitCommitId !== false) {
+            $version['gitCommitID'] = $gitCommitId;
         }
 
         return $version;
+    }
+
+    /**
+     * Get the current commit of the Git repository in the given path
+     *
+     * @param   string  $repo       Path to the Git repository
+     * @param   bool    $bare       Whether the Git repository is bare
+     *
+     * @return  string|bool         False if not available
+     */
+    public static function getGitHead($repo, $bare = false)
+    {
+        if (! $bare) {
+            $repo .= '/.git';
+        }
+
+        $head = @file_get_contents($repo . '/HEAD');
+
+        if ($head !== false) {
+            if (preg_match('/^ref: (.+)/', $head, $matches)) {
+                return @file_get_contents($repo . '/' . $matches[1]);
+            }
+
+            return $head;
+        }
+
+        return false;
     }
 }
