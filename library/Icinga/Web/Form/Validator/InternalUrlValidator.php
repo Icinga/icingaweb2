@@ -3,8 +3,8 @@
 
 namespace Icinga\Web\Form\Validator;
 
-use Icinga\Web\Url;
 use Zend_Validate_Abstract;
+use Icinga\Web\Url;
 
 /**
  * Validator that checks whether a textfield doesn't contain an external URL
