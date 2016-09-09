@@ -16,11 +16,13 @@ class InternalUrlValidator extends Zend_Validate_Abstract
      */
     public function isValid($value)
     {
-        $isExternal = Url::fromPath($value)->isExternal();
-        if ($isExternal) {
+        if (Url::fromPath($value)->isExternal()) {
             $this->_error('IS_EXTERNAL');
+
+            return false;
         }
-        return ! $isExternal;
+
+        return true;
     }
 
     /**
