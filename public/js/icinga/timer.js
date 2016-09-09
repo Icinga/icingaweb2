@@ -49,8 +49,8 @@
          * The initialization function starts our ticker
          */
         initialize: function () {
-            var self = this;
-            this.ticker = setInterval(function () { self.tick(); }, this.interval);
+            var _this = this;
+            this.ticker = setInterval(function () { _this.tick(); }, this.interval);
         },
 
         /**

@@ -13,7 +13,7 @@
     Tristate.prototype = new Icinga.EventListener();
 
     Tristate.prototype.clickTriState = function (event) {
-        var self = event.data.self;
+        var _this = event.data.self;
         var $tristate = $(this);
         var triState  = parseInt($tristate.data('icinga-tristate'), 10);
 
@@ -42,7 +42,7 @@
         } else {
             $tristate.parent().find('b.tristate-changed').css('visibility', 'hidden');
         }
-        self.icinga.ui.setTriState(value.toString(), $tristate);
+        _this.icinga.ui.setTriState(value.toString(), $tristate);
     };
 
     Icinga.Behaviors.Tristate = Tristate;

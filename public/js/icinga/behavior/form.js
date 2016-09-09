@@ -71,15 +71,15 @@
         var origFocus = document.activeElement;
         var containerId = $container.attr('id');
         var icinga = this.icinga;
-        var self = this.icinga.behaviors.form;
+        var _this = this.icinga.behaviors.form;
         var changed = false;
         $container.find('form').each(function () {
-            var form = self.uniqueFormName(this);
+            var form = _this.uniqueFormName(this);
             if (autorefresh) {
                 // check if an element in this container was changed
                 $(this).find('input').each(function () {
                     var name = this.name;
-                    if (self.inputs[form] && self.inputs[form][name]) {
+                    if (_this.inputs[form] && _this.inputs[form][name]) {
                         icinga.logger.debug(
                             'form input: ' + form + '.' + name + ' was changed and aborts reload...'
                         );
@@ -88,7 +88,7 @@
                 });
             } else {
                 // user-triggered reload, forget all changes to forms in this container
-                self.inputs[form] = null;
+                _this.inputs[form] = null;
             }
         });
         if (changed) {

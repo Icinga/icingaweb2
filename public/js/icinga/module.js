@@ -80,16 +80,16 @@
         },
 
         applyHandlers: function () {
-            var self = this;
+            var _this = this;
 
             $.each(this.registeredHandlers, function (key, on) {
-                self.bindEventHandler(
+                _this.bindEventHandler(
                     on.event,
                     on.filter,
                     on.handler
                 );
             });
-            self = null;
+            _this = null;
 
             return this;
         },
@@ -98,10 +98,10 @@
          * Effectively bind the given event handler
          */
         bindEventHandler: function (event, filter, handler) {
-            var self = this;
+            var _this = this;
             this.icinga.logger.debug('Bound ' + filter + ' .' + event + '()');
             this.handlers.push([event, filter, handler]);
-            $(document).on(event, filter, handler.bind(self.object));
+            $(document).on(event, filter, handler.bind(_this.object));
         },
 
         /**

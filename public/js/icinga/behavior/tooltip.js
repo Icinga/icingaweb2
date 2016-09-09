@@ -21,7 +21,7 @@
     };
 
     Tooltip.prototype.onRendered = function(evt) {
-        var self = evt.data.self, icinga = evt.data.icinga, el = evt.target;
+        var _this = evt.data.self, icinga = evt.data.icinga, el = evt.target;
 
         $('[title]', el).each(function () {
             var $el = $(this);
@@ -63,7 +63,7 @@
                 return;
             }
             var title = $(this).find('.tipsy-inner').html();
-            var atMouse = document.elementFromPoint(self.mouseX, self.mouseY);
+            var atMouse = document.elementFromPoint(_this.mouseX, _this.mouseY);
             var nearestTip = $(atMouse).closest('[original-title="' + title + '"]')[0];
             if (nearestTip) {
                 var tipsy = $.data(nearestTip, 'tipsy');

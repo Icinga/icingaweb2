@@ -108,14 +108,14 @@
         var $a = $(this);
         var href = $a.attr('href');
         var $li;
-        var self = event.data.self;
-        var icinga = self.icinga;
+        var _this = event.data.self;
+        var icinga = _this.icinga;
 
-        self.hovered = null;
+        _this.hovered = null;
         if (href.match(/#/)) {
             // ...it may be a menu section without a dedicated link.
             // Switch the active menu item:
-            self.setActive($a);
+            _this.setActive($a);
             $li = $a.closest('li');
             if ($li.hasClass('hover')) {
                 $li.removeClass('hover');
@@ -128,7 +128,7 @@
                 return;
             }
         } else {
-            self.setActive($(event.target));
+            _this.setActive($(event.target));
         }
         // update target url of the menu container to the clicked link
         var $menu = $('#menu');
@@ -276,9 +276,9 @@
 
         var $li = $(this),
             delay = 800,
-            self = event.data.self;
+            _this = event.data.self;
 
-        self.hovered = null;
+        _this.hovered = null;
         if ($li.hasClass('active')) {
             $li.siblings().removeClass('hover');
             return;
@@ -315,14 +315,14 @@
                     $sibling.removeClass('hover');
                 }
             });
-            self.hoverElement($li);
+            _this.hoverElement($li);
         }, delay);
     };
 
     Navigation.prototype.leaveSidebar = function (event) {
         var $sidebar = $(this),
             $li = $sidebar.find('li.hover'),
-            self = event.data.self;
+            _this = event.data.self;
         if (! $li.length) {
             $('#layout').removeClass('hoveredmenu');
             return;
@@ -337,7 +337,7 @@
             $li.removeClass('hover');
             $('#layout').removeClass('hoveredmenu');
         }, 500);
-        self.hovered = null;
+        _this.hovered = null;
     };
 
     Navigation.prototype.hoverElement = function ($li)  {
@@ -356,7 +356,7 @@
 
     Navigation.prototype.dropdownLeave = function (event) {
         var $li = $(this),
-            self = event.data.self;
+            _this = event.data.self;
         setTimeout(function () {
             // TODO: make this behave well together with keyboard navigation
             try {
@@ -365,7 +365,7 @@
                 }
             } catch(e) { /* Bypass because if IE8 */ }
         }, 300);
-        self.hovered = null;
+        _this.hovered = null;
     };
     Icinga.Behaviors.Navigation = Navigation;
 
