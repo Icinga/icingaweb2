@@ -105,7 +105,7 @@
             // Note: It is important that this is the first handler for this event!
             $(document).on('rendered', { self: this }, this.applyHandlers);
 
-            $.each(self.icinga.behaviors, function (name, behavior) {
+            $.each(this.icinga.behaviors, function (name, behavior) {
                 behavior.bind($(document));
             });
 
@@ -577,11 +577,11 @@
                 } else if (targetId === '_main') {
                     targetId = 'col1';
                     $target = $('#' + targetId);
-                    self.icinga.ui.layout1col();
+                    this.icinga.ui.layout1col();
                 } else {
                     $target = $('#' + targetId);
                     if (! $target.length) {
-                        self.icinga.logger.warn('Link target "#' + targetId + '" does not exist in DOM.');
+                        this.icinga.logger.warn('Link target "#' + targetId + '" does not exist in DOM.');
                     }
                 }
 
@@ -596,7 +596,7 @@
         },
 
         unbindGlobalHandlers: function () {
-            $.each(self.icinga.behaviors, function (name, behavior) {
+            $.each(this.icinga.behaviors, function (name, behavior) {
                 behavior.unbind($(document));
             });
             $(window).off('resize', this.onWindowResize);
