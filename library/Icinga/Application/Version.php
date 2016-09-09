@@ -34,35 +34,27 @@ class Version
     }
 
     /**
-     * Get the hexadecimal ID of the HEAD commit of the Git repository in $repoDir
+     * Get the current commit of the Git repository in the given path
      *
-     * @param   string  $repoDir
-     * @param   bool    $bare       Whether the repository has been created with
-     *                              $ git init|clone --bare
+     * @param   string  $repo       Path to the Git repository
+     * @param   bool    $bare       Whether the Git repository is bare
      *
-     * @return  string|bool         false if not available
+     * @return  string|bool         False if not available
      */
-    public static function getGitHead($repoDir, $bare = false)
+    public static function getGitHead($repo, $bare = false)
     {
         if (! $bare) {
-            $repoDir .= DIRECTORY_SEPARATOR . '.git';
+            $repo .= '/.git';
         }
 
-        $gitHead = @ file_get_contents($repoDir . DIRECTORY_SEPARATOR . 'HEAD');
-        if ($gitHead !== false) {
-            $matches = array();
-            if (preg_match('/(?<!.)ref:\s+(.+?)$/ms', $gitHead, $matches)) {
-                $gitCommitID = @ file_get_contents($repoDir . DIRECTORY_SEPARATOR . $matches[1]);
-            } else {
-                $gitCommitID = $gitHead;
+        $head = @file_get_contents($repo . '/HEAD');
+
+        if ($head !== false) {
+            if (preg_match('/^ref: (.+)/', $head, $matches)) {
+                return @file_get_contents($repo . '/' . $matches[1]);
             }
 
-            if ($gitCommitID !== false) {
-                $matches = array();
-                if (preg_match('/(?<!.)([0-9a-f]+)$/ms', $gitCommitID, $matches)) {
-                    return $matches[1];
-                }
-            }
+            return $head;
         }
 
         return false;
