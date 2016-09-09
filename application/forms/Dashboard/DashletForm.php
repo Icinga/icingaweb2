@@ -3,11 +3,11 @@
 
 namespace Icinga\Forms\Dashboard;
 
-use Icinga\Web\Form\Validator\InternalUrlValidator;
-use Icinga\Web\Widget\Dashboard;
 use Icinga\Web\Form;
+use Icinga\Web\Form\Validator\InternalUrlValidator;
 use Icinga\Web\Form\Validator\UrlValidator;
 use Icinga\Web\Url;
+use Icinga\Web\Widget\Dashboard;
 use Icinga\Web\Widget\Dashboard\Dashlet;
 
 /**
