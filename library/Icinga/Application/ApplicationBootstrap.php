@@ -487,6 +487,7 @@ abstract class ApplicationBootstrap
                 case E_NOTICE:
                 case E_WARNING:
                 case E_STRICT:
+                case E_RECOVERABLE_ERROR:
                     throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
             }
             return false; // Continue with the normal error handler
