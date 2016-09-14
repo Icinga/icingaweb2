@@ -3,94 +3,134 @@
 
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
+use Zend_Db_Expr;
+use Zend_Db_Select;
+use Icinga\Data\Filter\Filter;
+
+/**
+ * Query for host and service notification history
+ */
 class NotificationhistoryQuery extends IdoQuery
 {
+    /**
+     * {@inheritdoc}
+     */
+    protected $allowCustomVars = true;
+
+    /**
+     * {@inheritdoc}
+     */
     protected $columnMap = array(
         'history' => array(
-            'state_time'            => 'n.start_time',
-            'timestamp'             => 'UNIX_TIMESTAMP(n.start_time)',
-            'raw_timestamp'         => 'n.start_time',
-            'object_id'             => 'n.object_id',
-            'type'                  => "('notify')",
-            'state'                 => 'n.state',
-            'state_type'            => '(NULL)',
-            'output'                => null,
-            'attempt'               => '(NULL)',
-            'max_attempts'          => '(NULL)',
-
-            'host'                  => 'o.name1 COLLATE latin1_general_ci',
-            'service'               => 'o.name2 COLLATE latin1_general_ci',
-            'host_name'             => 'o.name1',
-            'service_description'   => 'o.name2',
-            'object_type'           => "CASE WHEN o.objecttype_id = 1 THEN 'host' ELSE 'service' END"
+            'object_type'   => 'n.object_type',
+            'output'        => 'n.output',
+            'state'         => 'n.state',
+            'timestamp'     => 'n.timestamp',
+            'type'          => "('notify')"
+        ),
+        'hosts' => array(
+            'host_display_name' => 'n.host_display_name',
+            'host_name'         => 'n.host_name'
+        ),
+        'services' => array(
+            'service_description'   => 'n.service_description',
+            'service_display_name'  => 'n.service_display_name',
+            'service_host_name'     => 'n.service_host_name'
         )
     );
 
-    public function whereToSql($col, $sign, $expression)
-    {
-        if ($col === 'UNIX_TIMESTAMP(n.start_time)') {
-            return 'n.start_time ' . $sign . ' ' . $this->timestampForSql($this->valueToTimestamp($expression));
-        } else {
-            return parent::whereToSql($col, $sign, $expression);
-        }
-    }
+    /**
+     * The union
+     *
+     * @var Zend_Db_Select
+     */
+    protected $notificationQuery;
 
+    /**
+     * Subqueries used for the notification query
+     *
+     * @var IdoQuery[]
+     */
+    protected $subQueries = array();
+
+    /**
+     * {@inheritdoc}
+     */
     protected function joinBaseTables()
     {
-        switch ($this->ds->getDbType()) {
-            case 'mysql':
-                $concattedContacts = "GROUP_CONCAT(co.name1 ORDER BY co.name1 SEPARATOR ', ') COLLATE latin1_general_ci";
-                break;
-            case 'pgsql':
-                // TODO: Find a way to order the contact alias list:
-                $concattedContacts = "ARRAY_TO_STRING(ARRAY_AGG(co.name1), ', ')";
-                break;
-            case 'oracle':
-                // TODO: This is only valid for Oracle >= 11g Release 2
-                $concattedContacts = "LISTAGG(co.name1, ', ') WITHIN GROUP (ORDER BY co.name1)";
-                // Alternatives:
-                //
-                //   RTRIM(XMLAGG(XMLELEMENT(e, column_name, ',').EXTRACT('//text()')),
-                //
-                //   not supported and not documented but works since 10.1,
-                //   however it is NOT always present:
-                //   WM_CONCAT(c.alias)
-                break;
-        }
-
-        $this->columnMap['history']['output'] = "('[' || $concattedContacts || '] ' || n.output)";
-
+        $this->notificationQuery = $this->db->select();
         $this->select->from(
-            array('o' => $this->prefix . 'objects'),
+            array('n' => $this->notificationQuery),
             array()
-        )->join(
-            array('n' => $this->prefix . 'notifications'),
-            'o.' . $this->object_id . ' = n.' . $this->object_id . ' AND o.is_active = 1',
-            array()
-        )->join(
-            array('cn' => $this->prefix . 'contactnotifications'),
-            'cn.notification_id = n.notification_id',
-            array()
-        )->joinLeft(
-            array('co' => $this->prefix . 'objects'),
-            'cn.contact_object_id = co.object_id',
-            array()
-        )->joinLeft(
-            array('c' => $this->prefix . 'contacts'),
-            'co.object_id = c.contact_object_id',
-            array()
-        )->group('cn.notification_id');
-
-        // TODO: hmmmm...
-        if ($this->ds->getDbType() === 'pgsql') {
-            $this->select->group('n.object_id')
-                ->group('n.start_time')
-                ->group('n.output')
-                ->group('n.state')
-                ->group('o.objecttype_id');
-        }
-
-        $this->joinedVirtualTables = array('history' => true);
+        );
+        $this->joinedVirtualTables['history'] = true;
     }
 
+    /**
+     * Join hosts
+     */
+    protected function joinHosts()
+    {
+        $columns = $this->desiredColumns;
+        $columns = array_combine($columns, $columns);
+        foreach ($this->columnMap['services'] as $column => $_) {
+            if (isset($columns[$column])) {
+                $columns[$column] = new Zend_Db_Expr('NULL');
+            }
+        }
+        if (isset($columns['type'])) {
+            unset($columns['type']);
+        }
+        $hosts = $this->createSubQuery('hostnotification', $columns);
+        $this->subQueries[] = $hosts;
+        $this->notificationQuery->union(array($hosts), Zend_Db_Select::SQL_UNION_ALL);
+    }
+
+    /**
+     * Join services
+     */
+    protected function joinServices()
+    {
+        $columns = array_flip($this->desiredColumns);
+        if (isset($columns['type'])) {
+            unset($columns['type']);
+        }
+        $services = $this->createSubQuery('servicenotification', array_flip($columns));
+        $this->subQueries[] = $services;
+        $this->notificationQuery->union(array($services), Zend_Db_Select::SQL_UNION_ALL);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function addFilter(Filter $filter)
+    {
+        foreach ($this->subQueries as $sub) {
+            $sub->applyFilter(clone $filter);
+        }
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function order($columnOrAlias, $dir = null)
+    {
+        foreach ($this->subQueries as $sub) {
+            $sub->requireColumn($columnOrAlias);
+        }
+        return parent::order($columnOrAlias, $dir);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function where($condition, $value = null)
+    {
+        $this->requireColumn($condition);
+        foreach ($this->subQueries as $sub) {
+            $sub->where($condition, $value);
+        }
+        return $this;
+    }
 }

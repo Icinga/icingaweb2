@@ -277,13 +277,13 @@ class ListController extends Controller
         $this->setAutorefreshInterval(15);
 
         $notifications = $this->backend->select()->from('notification', array(
-            'host_name',
-            'service_description',
-            'notification_output',
-            'notification_contact_name',
-            'notification_start_time',
-            'notification_state',
             'host_display_name',
+            'host_name',
+            'notification_contact_name',
+            'notification_output',
+            'notification_state',
+            'notification_timestamp',
+            'service_description',
             'service_display_name'
         ));
         $this->applyRestriction('monitoring/filter/objects', $notifications);
