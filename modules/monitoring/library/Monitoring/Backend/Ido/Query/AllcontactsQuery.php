@@ -27,7 +27,7 @@ class AllcontactsQuery extends IdoQuery
             'contact_notify_service_critical'  => 'c.notify_service_critical',
             'contact_notify_service_unknown'   => 'c.notify_service_unknown',
             'contact_notify_service_flapping'  => 'c.notify_service_flapping',
-            'contact_notify_service_downtime'  => 'c.notify_service_recovery',
+            'contact_notify_service_downtime'  => 'c.notify_service_downtime',
             'contact_notify_host_recovery'     => 'c.notify_host_recovery',
             'contact_notify_host_down'         => 'c.notify_host_down',
             'contact_notify_host_unreachable'  => 'c.notify_host_unreachable',

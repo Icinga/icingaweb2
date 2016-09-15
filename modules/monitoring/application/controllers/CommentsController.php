@@ -46,6 +46,7 @@ class CommentsController extends Controller
             'type'       => 'comment_type',
             'persistent' => 'comment_is_persistent',
             'expiration' => 'comment_expiration',
+            'name'       => 'comment_name',
             'host_name',
             'service_description',
             'host_display_name',

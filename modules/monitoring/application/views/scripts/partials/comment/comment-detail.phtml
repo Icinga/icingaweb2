@@ -53,7 +53,8 @@
         $deleteButton->populate(
             array(
                 'comment_id'            => $comment->id,
-                'comment_is_service'    => isset($comment->service_description)
+                'comment_is_service'    => isset($comment->service_description),
+                'comment_name'          => $comment->name
             )
         );
         $deleteButton->getElement('btn_submit')

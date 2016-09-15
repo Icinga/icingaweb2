@@ -3,6 +3,8 @@
 
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
+use Icinga\Application\Config;
+
 class CustomvarQuery extends IdoQuery
 {
     protected $columnMap = array(
@@ -44,8 +46,14 @@ class CustomvarQuery extends IdoQuery
             $this->columnMap['customvariablestatus']['is_json'] = '(0)';
         }
 
+        if (! (bool) Config::module('monitoring')->get('ido', 'use_customvar_status_table', true)) {
+            $table = 'customvariables';
+        } else {
+            $table = 'customvariablestatus';
+        }
+
         $this->select->from(
-            array('cvs' => $this->prefix . 'customvariablestatus'),
+            array('cvs' => $this->prefix . $table),
             array()
         )->join(
             array('cvo' => $this->prefix . 'objects'),

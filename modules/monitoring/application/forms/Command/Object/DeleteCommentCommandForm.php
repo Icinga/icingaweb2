@@ -23,42 +23,6 @@ class DeleteCommentCommandForm extends CommandForm
     /**
      * {@inheritdoc}
      */
-    public function createElements(array $formData = array())
-    {
-         $this->addElements(
-            array(
-                array(
-                    'hidden',
-                    'comment_id',
-                    array(
-                        'required' => true,
-                        'validators' => array('NotEmpty'),
-                        'decorators' => array('ViewHelper')
-                    )
-                ),
-                array(
-                    'hidden',
-                    'comment_is_service',
-                    array(
-                        'filters' => array('Boolean'),
-                        'decorators' => array('ViewHelper')
-                    )
-                ),
-                array(
-                    'hidden',
-                    'redirect',
-                    array(
-                        'decorators' => array('ViewHelper')
-                    )
-                )
-            )
-        );
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function addSubmitButton()
     {
         $this->addElement(
@@ -83,11 +47,56 @@ class DeleteCommentCommandForm extends CommandForm
     /**
      * {@inheritdoc}
      */
+    public function createElements(array $formData = array())
+    {
+         $this->addElements(
+            array(
+                array(
+                    'hidden',
+                    'comment_id',
+                    array(
+                        'required' => true,
+                        'validators' => array('NotEmpty'),
+                        'decorators' => array('ViewHelper')
+                    )
+                ),
+                array(
+                    'hidden',
+                    'comment_is_service',
+                    array(
+                        'filters' => array('Boolean'),
+                        'decorators' => array('ViewHelper')
+                    )
+                ),
+                array(
+                    'hidden',
+                    'comment_name',
+                    array(
+                        'decorators' => array('ViewHelper')
+                    )
+                ),
+                array(
+                    'hidden',
+                    'redirect',
+                    array(
+                        'decorators' => array('ViewHelper')
+                    )
+                )
+            )
+        );
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function onSuccess()
     {
         $cmd = new DeleteCommentCommand();
-        $cmd->setIsService($this->getElement('comment_is_service')->getValue())
-             ->setCommentId($this->getElement('comment_id')->getValue());
+        $cmd
+            ->setCommentId($this->getElement('comment_id')->getValue())
+            ->setCommentName($this->getElement('comment_name')->getValue())
+            ->setIsService($this->getElement('comment_is_service')->getValue());
         $this->getTransport($this->request)->send($cmd);
         $redirect = $this->getElement('redirect')->getValue();
         if (! empty($redirect)) {

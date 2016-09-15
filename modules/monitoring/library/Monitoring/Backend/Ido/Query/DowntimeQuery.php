@@ -27,6 +27,7 @@ class DowntimeQuery extends IdoQuery
             'downtime_is_fixed'         => 'd.downtime_is_fixed',
             'downtime_is_flexible'      => 'd.downtime_is_flexible',
             'downtime_is_in_effect'     => 'd.downtime_is_in_effect',
+            'downtime_name'             => 'd.downtime_name',
             'downtime_scheduled_end'    => 'd.downtime_scheduled_end',
             'downtime_scheduled_start'  => 'd.downtime_scheduled_start',
             'downtime_start'            => 'd.downtime_start',
@@ -90,6 +91,9 @@ class DowntimeQuery extends IdoQuery
      */
     protected function joinBaseTables()
     {
+        if (version_compare($this->getIdoVersion(), '1.14.0', '<')) {
+            $this->columnMap['downtimes']['downtime_name'] = '(NULL)';
+        }
         $this->downtimeQuery = $this->db->select();
         $this->select->from(
             array('d' => $this->downtimeQuery),

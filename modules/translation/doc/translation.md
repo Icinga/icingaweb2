@@ -93,15 +93,15 @@ configuration under the Preferences.
 
 __Personalize__: Please provide your Name and E-Mail under Identity.
 
-![Personalize](img/translation/doc/poedit_001.png)
+![Personalize](img/poedit_001.png)
 
 __Editor__: Under the Behavior the Automatically compile .mo files on save, should be disabled.
 
-![Editor](/img/translation/doc/poedit_002.png)
+![Editor](img/poedit_002.png)
 
 __Translations Memory__: Under the Database please add your languages, for which are you writing translations.
 
-![Translations Memory](img/translation/doc/poedit_003.png)
+![Translations Memory](img/poedit_003.png)
 
 When you are done, just save your new settings.
 
@@ -113,12 +113,12 @@ translation strings for the core application. Each module names its translation 
 module called __yourmodule__ the .po translation file will be named `yourmodule.po`.
 
 
-![Full list of strings](img/translation/doc/poedit_004.png)
+![Full list of strings](img/poedit_004.png)
 
 Now you can make changes and when there is no translation available, Poedit would mark it with a blue color, as shown
 below.
 
-![Untranslated strings](img/translation/doc/poedit_005.png)
+![Untranslated strings](img/poedit_005.png)
 
 And when you want to test your changes, please read more about under the chapter
 [Testing Translations](Testing Translations).

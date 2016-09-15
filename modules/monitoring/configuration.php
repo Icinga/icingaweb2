@@ -223,7 +223,7 @@ $section->add(N_('Event Overview'), array(
 ));
 $section->add(N_('Notifications'), array(
     'priority'  => 30,
-    'url'       => 'monitoring/list/notifications',
+    'url'       => 'monitoring/list/notifications?notification_timestamp>=-7%20days',
 ));
 $section->add(N_('Timeline'), array(
     'priority'  => 40,

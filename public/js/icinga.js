@@ -69,10 +69,10 @@
          */
         this.modules = {};
 
-        var self = this;
+        var _this = this;
         $(document).ready(function () {
-            self.initialize();
-            self = null;
+            _this.initialize();
+            _this = null;
         });
     };
 
@@ -94,9 +94,9 @@
             this.loader     = new Icinga.Loader(this);
             this.events     = new Icinga.Events(this);
             this.history    = new Icinga.History(this);
-            var self = this;
+            var _this = this;
             $.each(Icinga.Behaviors, function(name, Behavior) {
-                self.behaviors[name.toLowerCase()] = new Behavior(self);
+                _this.behaviors[name.toLowerCase()] = new Behavior(_this);
             });
 
             this.timezone.initialize();

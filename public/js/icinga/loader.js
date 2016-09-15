@@ -114,13 +114,13 @@
                 contentType = false;
             }
 
-            var self = this;
+            var _this = this;
             var req = $.ajax({
                 type   : method,
                 url    : url,
                 data   : data,
                 headers: headers,
-                context: self,
+                context: _this,
                 contentType: contentType,
                 processData: ! isFormData
             });
@@ -153,9 +153,9 @@
          * @param {object} $target  The target container
          */
         submitFormToIframe: function ($form, action, $target) {
-            var self = this;
+            var _this = this;
 
-            $form.prop('action', self.icinga.utils.addUrlParams(action, {
+            $form.prop('action', _this.icinga.utils.addUrlParams(action, {
                 '_frameUpload': true
             }));
             $form.prop('target', 'fileupload-frame-target');
@@ -165,10 +165,10 @@
 
                 var $redirectMeta = $contents.find('meta[name="redirectUrl"]');
                 if ($redirectMeta.length) {
-                    self.redirectToUrl($redirectMeta.attr('content'), $target);
+                    _this.redirectToUrl($redirectMeta.attr('content'), $target);
                 } else {
                     // Fetch the frame's new content and paste it into the target
-                    self.renderContentToContainer(
+                    _this.renderContentToContainer(
                         $contents.find('body').html(),
                         $target,
                         'replace'
@@ -208,16 +208,16 @@
         },
 
         autorefresh: function () {
-            var self = this;
-            if (self.autorefreshEnabled !== true) {
+            var _this = this;
+            if (_this.autorefreshEnabled !== true) {
                 return;
             }
 
             $('.container').filter(this.filterAutorefreshingContainers).each(function (idx, el) {
                 var $el = $(el);
                 var id = $el.attr('id');
-                if (typeof self.requests[id] !== 'undefined') {
-                    self.icinga.logger.debug('No refresh, request pending for ', id);
+                if (typeof _this.requests[id] !== 'undefined') {
+                    _this.icinga.logger.debug('No refresh, request pending for ', id);
                     return;
                 }
 
@@ -225,12 +225,12 @@
                 var lastUpdate = $el.data('lastUpdate');
 
                 if (typeof interval === 'undefined' || ! interval) {
-                    self.icinga.logger.info('No interval, setting default', id);
+                    _this.icinga.logger.info('No interval, setting default', id);
                     interval = 10;
                 }
 
                 if (typeof lastUpdate === 'undefined' || ! lastUpdate) {
-                    self.icinga.logger.info('No lastUpdate, setting one', id);
+                    _this.icinga.logger.info('No lastUpdate, setting one', id);
                     $el.data('lastUpdate',(new Date()).getTime());
                     return;
                 }
@@ -248,12 +248,12 @@
                     return;
                 }
 
-                if (self.loadUrl($el.data('icingaUrl'), $el, undefined, undefined, undefined, true) === false) {
-                    self.icinga.logger.debug(
+                if (_this.loadUrl($el.data('icingaUrl'), $el, undefined, undefined, undefined, true) === false) {
+                    _this.icinga.logger.debug(
                         'NOT autorefreshing ' + id + ', even if ' + interval + ' ms passed. Request pending?'
                     );
                 } else {
-                    self.icinga.logger.debug(
+                    _this.icinga.logger.debug(
                         'Autorefreshing ' + id + ' ' + interval + ' ms passed'
                     );
                 }
@@ -277,12 +277,12 @@
 
         processNotificationHeader: function(req) {
             var header = req.getResponseHeader('X-Icinga-Notification');
-            var self = this;
+            var _this = this;
             if (! header) return false;
             var list = header.split('&');
             $.each(list, function(idx, el) {
                 var parts = decodeURIComponent(el).split(' ');
-                self.createNotice(parts.shift(), parts.join(' '));
+                _this.createNotice(parts.shift(), parts.join(' '));
             });
             return true;
         },
@@ -406,15 +406,15 @@
             // TODO: this is just a prototype, disabled for now
             return;
 
-            var self = this;
+            var _this = this;
             $('img.icon', $container).each(function(idx, img) {
                 var src = $(img).attr('src');
-                if (typeof self.iconCache[src] !== 'undefined') {
+                if (typeof _this.iconCache[src] !== 'undefined') {
                     return;
                 }
                 var cache = new Image();
                 cache.src = src
-                self.iconCache[src] = cache;
+                _this.iconCache[src] = cache;
             });
         },
 
@@ -422,7 +422,7 @@
          * Handle successful XHR response
          */
         onResponse: function (data, textStatus, req) {
-            var self = this;
+            var _this = this;
             if (this.failureNotice !== null) {
                 if (! this.failureNotice.hasClass('fading-out')) {
                     this.failureNotice.remove();
@@ -540,7 +540,7 @@
                     var title = $('h1', $el).first();
                     $('h1', targets[i]).first().replaceWith(title);
 
-                    self.loadUrl(url, targets[i]);
+                    _this.loadUrl(url, targets[i]);
                     i++;
                 });
                 rendered = true;
@@ -569,7 +569,7 @@
             if (newBody) {
                 this.icinga.ui.fixDebugVisibility().triggerWindowResize();
             }
-            self.cacheLoadedIcons(req.$target);
+            _this.cacheLoadedIcons(req.$target);
         },
 
         /**
@@ -586,7 +586,7 @@
                 var url = req.url;
 
                 if (req.$target[0].id === 'col1') {
-                    self.icinga.behaviors.navigation.trySetActiveByUrl(url);
+                    this.icinga.behaviors.navigation.trySetActiveByUrl(url);
                 }
 
                 var $forms = $('[action="' + this.icinga.utils.parseUrl(url).path + '"]');
@@ -735,7 +735,7 @@
         renderContentToContainer: function (content, $container, action, autorefresh, forceFocus) {
             // Container update happens here
             var scrollPos = false;
-            var self = this;
+            var _this = this;
             var containerId = $container.attr('id');
 
             var activeElementPath = false;
@@ -772,7 +772,7 @@
             $container.trigger('beforerender');
 
             var discard = false;
-            $.each(self.icinga.behaviors, function(name, behavior) {
+            $.each(_this.icinga.behaviors, function(name, behavior) {
                 if (behavior.renderHook) {
                     var changed = behavior.renderHook(content, $container, action, autorefresh);
                     if (!changed) {
@@ -798,7 +798,7 @@
             // });
 
             $('.container', $container).each(function() {
-                self.stopPendingRequestsFor($(this));
+                _this.stopPendingRequestsFor($(this));
             });
 
             if (false &&

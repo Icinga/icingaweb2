@@ -59,8 +59,11 @@ class SendCustomNotificationCommandForm extends ObjectsCommandForm
                         . ' whether or not notifications are enabled.'
                     )
                 )
-            ),
-            array(
+            )
+        ));
+
+        if (! $this->getBackend()->isIcinga2()) {
+            $this->addElement(
                 'checkbox',
                 'broadcast',
                 array(
@@ -70,8 +73,9 @@ class SendCustomNotificationCommandForm extends ObjectsCommandForm
                         'If you check this option, the notification is sent out to all normal and escalated contacts.'
                     )
                 )
-            )
-        ));
+            );
+        }
+
         return $this;
     }
 
@@ -87,8 +91,10 @@ class SendCustomNotificationCommandForm extends ObjectsCommandForm
                 ->setObject($object)
                 ->setComment($this->getElement('comment')->getValue())
                 ->setAuthor($this->request->getUser()->getUsername())
-                ->setForced($this->getElement('forced')->isChecked())
-                ->setBroadcast($this->getElement('broadcast')->isChecked());
+                ->setForced($this->getElement('forced')->isChecked());
+            if (($broadcast = $this->getElement('broadcast')) !== null) {
+                $notification->setBroadcast($broadcast->isChecked());
+            }
             $this->getTransport($this->request)->send($notification);
         }
         Notification::success($this->translatePlural(

@@ -66,7 +66,12 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
     {
         // This is actually not required as the value is constant,
         // but as its (visual) length is 0, it's likely to be mixed up with the empty string.
-        $this->zeroWidthSpace = html_entity_decode($this->zeroWidthSpaceEnt, ENT_NOQUOTES, 'UTF-8');
+        $this->zeroWidthSpace = '<span style="visibility:hidden; display:none;">'
+            . html_entity_decode($this->zeroWidthSpaceEnt, ENT_NOQUOTES, 'UTF-8')
+            . '</span>';
+        $this->zeroWidthSpaceEnt = '<span style="visibility:hidden; display:none;">'
+            . $this->zeroWidthSpaceEnt
+            . '</span>';
     }
 
     /**

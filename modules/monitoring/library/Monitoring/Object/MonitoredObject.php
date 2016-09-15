@@ -332,6 +332,7 @@ abstract class MonitoredObject implements Filterable
             'comment'           => 'comment_data',
             'expiration'        => 'comment_expiration',
             'id'                => 'comment_internal_id',
+            'name'              => 'comment_name',
             'persistent'        => 'comment_is_persistent',
             'timestamp'         => 'comment_timestamp',
             'type'              => 'comment_type'
@@ -584,19 +585,20 @@ abstract class MonitoredObject implements Filterable
     public function fetchDowntimes()
     {
         $downtimes = $this->backend->select()->from('downtime', array(
-            'id'                => 'downtime_internal_id',
-            'objecttype'        => 'object_type',
-            'comment'           => 'downtime_comment',
             'author_name'       => 'downtime_author_name',
-            'start'             => 'downtime_start',
-            'scheduled_start'   => 'downtime_scheduled_start',
-            'scheduled_end'     => 'downtime_scheduled_end',
-            'end'               => 'downtime_end',
+            'comment'           => 'downtime_comment',
             'duration'          => 'downtime_duration',
-            'is_flexible'       => 'downtime_is_flexible',
+            'end'               => 'downtime_end',
+            'entry_time'        => 'downtime_entry_time',
+            'id'                => 'downtime_internal_id',
             'is_fixed'          => 'downtime_is_fixed',
+            'is_flexible'       => 'downtime_is_flexible',
             'is_in_effect'      => 'downtime_is_in_effect',
-            'entry_time'        => 'downtime_entry_time'
+            'name'              => 'downtime_name',
+            'objecttype'        => 'object_type',
+            'scheduled_end'     => 'downtime_scheduled_end',
+            'scheduled_start'   => 'downtime_scheduled_start',
+            'start'             => 'downtime_start'
         ))
             ->where('object_type', $this->type)
             ->order('downtime_is_in_effect', 'DESC')

@@ -92,7 +92,7 @@
                 ); ?>
                 <span class="config-label-meta">&#40;<?= sprintf(
                     $this->translate('Type: %s'),
-                    $config->host !== null ? $this->translate('Remote') : $this->translate('Local')
+                    ucfirst($config->get('transport', 'local'))
                 ) ?>&#41;
                 </span>
             </td>
