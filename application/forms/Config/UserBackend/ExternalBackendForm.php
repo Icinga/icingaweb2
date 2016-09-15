@@ -56,6 +56,15 @@ class ExternalBackendForm extends Form
             )
         );
         $this->addElement(
+            'text',
+            'server_variable',
+            array(
+                'label'         => $this->translate('Server Variable'),
+                'description'   => $this->translate(
+                    'Key used to search in the _SERVER variable.')
+            )
+        );
+        $this->addElement(
             'hidden',
             'backend',
             array(
