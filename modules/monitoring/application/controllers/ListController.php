@@ -292,7 +292,7 @@ class ListController extends Controller
         $this->setupPaginationControl($notifications);
         $this->setupLimitControl();
         $this->setupSortControl(array(
-            'notification_start_time' => $this->translate('Notification Start')
+            'notification_timestamp' => $this->translate('Notification Start')
         ), $notifications);
 
         $this->view->notifications = $notifications;
