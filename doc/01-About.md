@@ -19,20 +19,20 @@ Most such actions (like rescheduling a check) can be done with just a single cli
 Icinga Web 2 can be installed easily from packages from the official package repositories.
 Setting it up is also easy with the web based setup wizard.
 
-See [here](installation#installation) for more information about the installation.
+See [here](02-Installation.md#installation) for more information about the installation.
 
 ## <a id="about-configuration"></a> Configuration
 
 Icinga Web 2 can be configured via the user interface and .ini files.
 
-See [here](configuration#configuration) for more information about the configuration.
+See [here](03-Configuration.md#configuration) for more information about the configuration.
 
 ## <a id="about-authentication"></a> Authentication
 
 With Icinga Web 2 you can authenticate against relational databases, LDAP and more.
 These authentication methods can be easily configured (via the corresponding .ini file).
 
-See [here](authentication#authentication) for more information about
+See [here](05-Authentication.md#authentication) for more information about
 the different authentication methods available and how to configure them.
 
 ## <a id="about-authorization"></a> Authorization
@@ -41,7 +41,7 @@ In Icinga Web 2 there are permissions and restrictions to allow and deny (respec
 roles to view or to do certain things.
 These roles can be assigned to users and groups.
 
-See [here](security#security) for more information about authorization
+See [here](06-Security.md#security) for more information about authorization
 and how to configure roles.
 
 ## <a id="about-preferences"></a> User preferences
@@ -50,7 +50,7 @@ Besides the global configuration each user has individual configuration options
 like the interface's language or the current timezone.
 They can be stored either in a database or in .ini files.
 
-See [here](preferences#preferences) for more information about a user's preferences
+See [here](07-Preferences.md#preferences) for more information about a user's preferences
 and how to configure their storage type.
 
 ## <a id="about-documentation"></a> Documentation
