@@ -1,7 +1,8 @@
 # WARNING
 # You should only apply the following IDO schema changes if you're using Icinga 2 in combination w/ Icinga Web 2.
 # The aim of the changes is to boost query performance of Icinga 2 and Icinga Web 2.
-# Query performance of other applications using IDO MAY DROP. Applying the changes may take some time.
+# Query performance of other applications using IDO MAY DROP. Applying all changes may take some time.
+# Future updates to the IDO schema provided by Icinga 2 may fail.
 # You have been warned.
 
 # For using optimized queries in Web 2 matching the optimized schema you have to add the following configuration in
@@ -22,73 +23,73 @@
 # Better indices relevant for Web 2 and Icinga 2 will be re-added.
 # New indices will be introduced.
 
--- ALTER TABLE icinga_hosts DROP INDEX instance_id;
-ALTER TABLE icinga_hosts DROP INDEX host_object_id;
--- ALTER TABLE icinga_hosts DROP INDEX hosts_i_id_idx;
-ALTER TABLE icinga_hosts DROP INDEX hosts_host_object_id_idx;
+-- CALL drop_index('icinga_hosts', 'instance_id');
+CALL drop_index('icinga_hosts', 'host_object_id');
+-- CALL drop_index('icinga_hosts', 'hosts_i_id_idx');
+CALL drop_index('icinga_hosts', 'hosts_host_object_id_idx');
 
-ALTER TABLE icinga_hoststatus DROP INDEX object_id;
--- ALTER TABLE icinga_hoststatus DROP INDEX hoststatus_i_id_idx;
--- ALTER TABLE icinga_hoststatus DROP INDEX hoststatus_stat_upd_time_idx;
--- ALTER TABLE icinga_hoststatus DROP INDEX hoststatus_current_state_idx;
--- ALTER TABLE icinga_hoststatus DROP INDEX hoststatus_check_type_idx;
--- ALTER TABLE icinga_hoststatus DROP INDEX hoststatus_state_type_idx;
--- ALTER TABLE icinga_hoststatus DROP INDEX hoststatus_last_state_chg_idx;
--- ALTER TABLE icinga_hoststatus DROP INDEX hoststatus_notif_enabled_idx;
--- ALTER TABLE icinga_hoststatus DROP INDEX hoststatus_problem_ack_idx;
--- ALTER TABLE icinga_hoststatus DROP INDEX hoststatus_act_chks_en_idx;
--- ALTER TABLE icinga_hoststatus DROP INDEX hoststatus_pas_chks_en_idx;
--- ALTER TABLE icinga_hoststatus DROP INDEX hoststatus_event_hdl_en_idx;
--- ALTER TABLE icinga_hoststatus DROP INDEX hoststatus_flap_det_en_idx;
--- ALTER TABLE icinga_hoststatus DROP INDEX hoststatus_is_flapping_idx;
--- ALTER TABLE icinga_hoststatus DROP INDEX hoststatus_p_state_chg_idx;
--- ALTER TABLE icinga_hoststatus DROP INDEX hoststatus_latency_idx;
--- ALTER TABLE icinga_hoststatus DROP INDEX hoststatus_ex_time_idx;
--- ALTER TABLE icinga_hoststatus DROP INDEX hoststatus_sch_downt_d_idx;
+CALL drop_index('icinga_hoststatus', 'object_id');
+-- CALL drop_index('icinga_hoststatus', 'hoststatus_i_id_idx');
+-- CALL drop_index('icinga_hoststatus', 'hoststatus_stat_upd_time_idx');
+-- CALL drop_index('icinga_hoststatus', 'hoststatus_current_state_idx');
+-- CALL drop_index('icinga_hoststatus', 'hoststatus_check_type_idx');
+-- CALL drop_index('icinga_hoststatus', 'hoststatus_state_type_idx');
+-- CALL drop_index('icinga_hoststatus', 'hoststatus_last_state_chg_idx');
+-- CALL drop_index('icinga_hoststatus', 'hoststatus_notif_enabled_idx');
+-- CALL drop_index('icinga_hoststatus', 'hoststatus_problem_ack_idx');
+-- CALL drop_index('icinga_hoststatus', 'hoststatus_act_chks_en_idx');
+-- CALL drop_index('icinga_hoststatus', 'hoststatus_pas_chks_en_idx');
+-- CALL drop_index('icinga_hoststatus', 'hoststatus_event_hdl_en_idx');
+-- CALL drop_index('icinga_hoststatus', 'hoststatus_flap_det_en_idx');
+-- CALL drop_index('icinga_hoststatus', 'hoststatus_is_flapping_idx');
+-- CALL drop_index('icinga_hoststatus', 'hoststatus_p_state_chg_idx');
+-- CALL drop_index('icinga_hoststatus', 'hoststatus_latency_idx');
+-- CALL drop_index('icinga_hoststatus', 'hoststatus_ex_time_idx');
+-- CALL drop_index('icinga_hoststatus', 'hoststatus_sch_downt_d_idx');
 
--- ALTER TABLE icinga_services DROP INDEX instance_id;
-ALTER TABLE icinga_services DROP INDEX service_object_id;
--- ALTER TABLE icinga_services DROP INDEX services_i_id_idx;
-ALTER TABLE icinga_services DROP INDEX services_host_object_id_idx;
-ALTER TABLE icinga_services DROP INDEX services_combined_object_idx;
+-- CALL drop_index('icinga_services', 'instance_id');
+CALL drop_index('icinga_services', 'service_object_id');
+-- CALL drop_index('icinga_services', 'services_i_id_idx');
+CALL drop_index('icinga_services', 'services_host_object_id_idx');
+CALL drop_index('icinga_services', 'services_combined_object_idx');
 
-ALTER TABLE icinga_servicestatus DROP INDEX object_id;
--- ALTER TABLE icinga_servicestatus DROP INDEX servicestatus_i_id_idx;
--- ALTER TABLE icinga_servicestatus DROP INDEX srvcstatus_stat_upd_time_idx;
--- ALTER TABLE icinga_servicestatus DROP INDEX srvcstatus_current_state_idx;
--- ALTER TABLE icinga_servicestatus DROP INDEX srvcstatus_check_type_idx;
--- ALTER TABLE icinga_servicestatus DROP INDEX srvcstatus_state_type_idx;
--- ALTER TABLE icinga_servicestatus DROP INDEX srvcstatus_last_state_chg_idx;
--- ALTER TABLE icinga_servicestatus DROP INDEX srvcstatus_notif_enabled_idx;
--- ALTER TABLE icinga_servicestatus DROP INDEX srvcstatus_problem_ack_idx;
--- ALTER TABLE icinga_servicestatus DROP INDEX srvcstatus_act_chks_en_idx;
--- ALTER TABLE icinga_servicestatus DROP INDEX srvcstatus_pas_chks_en_idx;
--- ALTER TABLE icinga_servicestatus DROP INDEX srvcstatus_event_hdl_en_idx;
--- ALTER TABLE icinga_servicestatus DROP INDEX srvcstatus_flap_det_en_idx;
--- ALTER TABLE icinga_servicestatus DROP INDEX srvcstatus_is_flapping_idx;
--- ALTER TABLE icinga_servicestatus DROP INDEX srvcstatus_p_state_chg_idx;
--- ALTER TABLE icinga_servicestatus DROP INDEX srvcstatus_latency_idx;
--- ALTER TABLE icinga_servicestatus DROP INDEX srvcstatus_ex_time_idx;
--- ALTER TABLE icinga_servicestatus DROP INDEX srvcstatus_sch_downt_d_idx;
+CALL drop_index('icinga_servicestatus', 'object_id');
+-- CALL drop_index('icinga_servicestatus', 'servicestatus_i_id_idx');
+-- CALL drop_index('icinga_servicestatus', 'srvcstatus_stat_upd_time_idx');
+-- CALL drop_index('icinga_servicestatus', 'srvcstatus_current_state_idx');
+-- CALL drop_index('icinga_servicestatus', 'srvcstatus_check_type_idx');
+-- CALL drop_index('icinga_servicestatus', 'srvcstatus_state_type_idx');
+-- CALL drop_index('icinga_servicestatus', 'srvcstatus_last_state_chg_idx');
+-- CALL drop_index('icinga_servicestatus', 'srvcstatus_notif_enabled_idx');
+-- CALL drop_index('icinga_servicestatus', 'srvcstatus_problem_ack_idx');
+-- CALL drop_index('icinga_servicestatus', 'srvcstatus_act_chks_en_idx');
+-- CALL drop_index('icinga_servicestatus', 'srvcstatus_pas_chks_en_idx');
+-- CALL drop_index('icinga_servicestatus', 'srvcstatus_event_hdl_en_idx');
+-- CALL drop_index('icinga_servicestatus', 'srvcstatus_flap_det_en_idx');
+-- CALL drop_index('icinga_servicestatus', 'srvcstatus_is_flapping_idx');
+-- CALL drop_index('icinga_servicestatus', 'srvcstatus_p_state_chg_idx');
+-- CALL drop_index('icinga_servicestatus', 'srvcstatus_latency_idx');
+-- CALL drop_index('icinga_servicestatus', 'srvcstatus_ex_time_idx');
+-- CALL drop_index('icinga_servicestatus', 'srvcstatus_sch_downt_d_idx');
 
--- ALTER TABLE icinga_hostgroups DROP INDEX instance_id;
-ALTER TABLE icinga_hostgroups DROP INDEX hostgroups_i_id_idx;
+-- CALL drop_index('icinga_hostgroups', 'instance_id');
+CALL drop_index('icinga_hostgroups', 'hostgroups_i_id_idx');
 
--- ALTER TABLE icinga_hostgroup_members DROP INDEX hostgroup_members_i_id_idx;
-ALTER TABLE icinga_hostgroup_members DROP INDEX hstgrpmbrs_hgid_hoid;
+-- CALL drop_index('icinga_hostgroup_members', 'hostgroup_members_i_id_idx');
+CALL drop_index('icinga_hostgroup_members', 'hstgrpmbrs_hgid_hoid');
 
-ALTER TABLE icinga_objects DROP INDEX objecttype_id;
-ALTER TABLE icinga_objects DROP INDEX objects_objtype_id_idx;
-ALTER TABLE icinga_objects DROP INDEX objects_name1_idx;
-ALTER TABLE icinga_objects DROP INDEX objects_name2_idx;
--- ALTER TABLE icinga_objects DROP INDEX objects_inst_id_idx;
-ALTER TABLE icinga_objects DROP INDEX sla_idx_obj;
+CALL drop_index('icinga_objects', 'objecttype_id');
+CALL drop_index('icinga_objects', 'objects_objtype_id_idx');
+CALL drop_index('icinga_objects', 'objects_name1_idx');
+CALL drop_index('icinga_objects', 'objects_name2_idx');
+-- CALL drop_index('icinga_objects', 'objects_inst_id_idx');
+CALL drop_index('icinga_objects', 'sla_idx_obj');
 
--- ALTER TABLE icinga_servicegroups DROP INDEX instance_id;
-ALTER TABLE icinga_servicegroups DROP INDEX servicegroups_i_id_idx;
+-- CALL drop_index('icinga_servicegroups', 'instance_id');
+CALL drop_index('icinga_servicegroups', 'servicegroups_i_id_idx');
 
--- ALTER TABLE icinga_servicegroup_members DROP INDEX servicegroup_members_i_id_idx;
-ALTER TABLE icinga_servicegroup_members DROP INDEX sgmbrs_sgid_soid;
+-- CALL drop_index('icinga_servicegroup_members', 'servicegroup_members_i_id_idx');
+CALL drop_index('icinga_servicegroup_members', 'sgmbrs_sgid_soid');
 
 ############################
 # DISPLAY_NAME PERFORMANCE #
@@ -99,10 +100,10 @@ ALTER TABLE icinga_servicegroup_members DROP INDEX sgmbrs_sgid_soid;
 # Let's fix that.
 
 ALTER TABLE icinga_hosts MODIFY display_name VARCHAR(255) CHARACTER SET latin1 COLLATE latin1_general_ci;
-ALTER TABLE icinga_hosts ADD INDEX idx_hosts_display_name (display_name);
+CALL create_index('icinga_hosts', 'idx_hosts_display_name', 'display_name');
 
 ALTER TABLE icinga_services MODIFY display_name VARCHAR(255) CHARACTER SET latin1 COLLATE latin1_general_ci;
-ALTER TABLE icinga_services ADD INDEX idx_services_display_name (display_name);
+CALL create_index('icinga_services', 'idx_services_display_name', 'display_name');
 
 #####################
 # ALIAS PERFORMANCE #
@@ -128,32 +129,32 @@ ALTER TABLE icinga_servicegroups MODIFY alias VARCHAR(255) CHARACTER SET latin1 
 # c) NOT NULL columns must be not null
 
 ALTER TABLE icinga_hosts MODIFY host_object_id BIGINT UNSIGNED NOT NULL;
-ALTER TABLE icinga_hosts ADD UNIQUE INDEX idx_hosts_host_object_id (host_object_id);
+CALL create_unique_index('icinga_hosts', 'idx_hosts_host_object_id', 'host_object_id');
 
 ALTER TABLE icinga_hoststatus MODIFY host_object_id BIGINT UNSIGNED NOT NULL;
-ALTER TABLE icinga_hoststatus ADD UNIQUE INDEX idx_hoststatus_host_object_id (host_object_id);
+CALL create_unique_index('icinga_hoststatus', 'idx_hoststatus_host_object_id', 'host_object_id');
 
 ALTER TABLE icinga_services MODIFY service_object_id BIGINT UNSIGNED NOT NULL;
 ALTER TABLE icinga_services MODIFY host_object_id BIGINT UNSIGNED NOT NULL;
-ALTER TABLE icinga_services ADD UNIQUE INDEX idx_services_service_object_id (service_object_id, host_object_id);  # Service based joins
-ALTER TABLE icinga_services ADD UNIQUE INDEX idx_services_host_object_id (host_object_id, service_object_id);     # Host based joins
+CALL create_unique_index('icinga_services', 'idx_services_service_object_id', 'service_object_id, host_object_id');  # Service based joins
+CALL create_unique_index('icinga_services', 'idx_services_host_object_id', 'host_object_id, service_object_id');     # Host based joins
 
 ALTER TABLE icinga_servicestatus MODIFY service_object_id BIGINT UNSIGNED NOT NULL;
-ALTER TABLE icinga_servicestatus ADD UNIQUE INDEX idx_servicestatus_service_object_id (service_object_id);
+CALL create_unique_index('icinga_servicestatus', 'idx_servicestatus_service_object_id', 'service_object_id');
 
 ALTER TABLE icinga_hostgroups MODIFY hostgroup_object_id BIGINT UNSIGNED NOT NULL;
-ALTER TABLE icinga_hostgroups ADD UNIQUE INDEX idx_hostgroups_hostgroup_object_id (hostgroup_object_id);
+CALL create_unique_index('icinga_hostgroups', 'idx_hostgroups_hostgroup_object_id', 'hostgroup_object_id');
 
 ALTER TABLE icinga_hostgroup_members MODIFY hostgroup_id BIGINT UNSIGNED NOT NULL;
 ALTER TABLE icinga_hostgroup_members MODIFY host_object_id BIGINT UNSIGNED NOT NULL;
-ALTER TABLE icinga_hostgroup_members ADD UNIQUE INDEX idx_icinga_hostgroup_members_host_object_id (host_object_id, hostgroup_id);
+CALL create_unique_index('icinga_hostgroup_members', 'idx_icinga_hostgroup_members_host_object_id', 'host_object_id, hostgroup_id');
 
 ALTER TABLE icinga_servicegroups MODIFY servicegroup_object_id BIGINT UNSIGNED NOT NULL;
-ALTER TABLE icinga_servicegroups ADD UNIQUE INDEX idx_servicegroups_servicegroup_object_id (servicegroup_object_id);
+CALL create_unique_index('icinga_servicegroups', 'idx_servicegroups_servicegroup_object_id', 'servicegroup_object_id');
 
 ALTER TABLE icinga_servicegroup_members MODIFY servicegroup_id BIGINT UNSIGNED NOT NULL;
 ALTER TABLE icinga_servicegroup_members MODIFY service_object_id BIGINT UNSIGNED NOT NULL;
-ALTER TABLE icinga_servicegroup_members ADD UNIQUE INDEX idx_icinga_servicegroup_members_service_object_id (service_object_id, servicegroup_id);
+CALL create_unique_index('icinga_servicegroup_members', 'idx_icinga_servicegroup_members_service_object_id', 'service_object_id, servicegroup_id');
 
 ######################
 # FILTER PERFORMANCE #
@@ -162,7 +163,7 @@ ALTER TABLE icinga_servicegroup_members ADD UNIQUE INDEX idx_icinga_servicegroup
 ALTER TABLE icinga_objects MODIFY objecttype_id BIGINT UNSIGNED NOT NULL;
 ALTER TABLE icinga_objects MODIFY is_active TINYINT NOT NULL;
 ALTER TABLE icinga_objects MODIFY name1 varchar(128) CHARACTER SET latin1 COLLATE latin1_general_cs NOT NULL;
-ALTER TABLE icinga_objects ADD UNIQUE INDEX idx_objects_objecttype_id (objecttype_id, is_active, name1, name2);
+CALL create_unique_index('icinga_objects', 'idx_objects_objecttype_id', 'objecttype_id, is_active, name1, name2');
 
 # At the moment it's impossible for Web 2 queries which filter for host or service state to use indices because they
 # respect the virtual state PENDING. A host or service is PENDING if it has not been checked yet. Instead of calculating
@@ -177,18 +178,19 @@ UPDATE icinga_servicestatus SET current_state = 99 WHERE has_been_checked = 0;
 
 # Create trigger for updating the service state if the service has not been checked yet
 DELIMITER //
+DROP TRIGGER IF EXISTS t_set_pending_service_state //
 CREATE TRIGGER t_set_pending_service_state BEFORE INSERT ON icinga_servicestatus
 FOR EACH ROW
   BEGIN
     IF NEW.has_been_checked = 0 THEN
       SET NEW.current_state = 99;
     END IF;
-  END;//
+  END //
 DELIMITER ;
 
 # Add indices for prominent service list filters, e.g. recently recovered services
-ALTER TABLE icinga_servicestatus ADD INDEX idx_servicestatus_current_state_last_state_change (current_state, last_state_change);
-ALTER TABLE icinga_servicestatus ADD INDEX idx_servicestatus_current_state_last_check (current_state, last_check);
+CALL create_index('icinga_servicestatus', 'idx_servicestatus_current_state_last_state_change', 'current_state, last_state_change');
+CALL create_index('icinga_servicestatus', 'idx_servicestatus_current_state_last_check', 'current_state, last_check');
 
 ALTER TABLE icinga_hoststatus MODIFY current_state TINYINT NOT NULL;
 ALTER TABLE icinga_hoststatus MODIFY has_been_checked TINYINT NOT NULL;
@@ -198,46 +200,16 @@ UPDATE icinga_hoststatus SET current_state = 99 WHERE has_been_checked = 0;
 
 # Create trigger for updating the host state if the host has not been checked yet
 DELIMITER //
+DROP TRIGGER IF EXISTS t_set_pending_host_state //
 CREATE TRIGGER t_set_pending_host_state BEFORE INSERT ON icinga_hoststatus
 FOR EACH ROW
   BEGIN
     IF NEW.has_been_checked = 0 THEN
       SET NEW.current_state = 99;
     END IF;
-  END;//
+  END //
 DELIMITER ;
 
 # Add indices for prominent host list filters
-ALTER TABLE icinga_hoststatus ADD INDEX idx_hoststatus_current_state_last_state_change (current_state, last_state_change);
-ALTER TABLE icinga_hoststatus ADD INDEX idx_hoststatus_current_state_last_check (current_state, last_check);
-
-###################
-# OPTIMIZE TABLES #
-###################
-
-ALTER TABLE icinga_hosts ENGINE=InnoDB;
-ANALYZE TABLE icinga_hosts;
-
-ALTER TABLE icinga_services ENGINE=InnoDB;
-ANALYZE TABLE icinga_services;
-
-ALTER TABLE icinga_hoststatus ENGINE=InnoDB;
-ANALYZE TABLE icinga_hoststatus;
-
-ALTER TABLE icinga_servicestatus ENGINE=InnoDB;
-ANALYZE TABLE icinga_servicestatus;
-
-ALTER TABLE icinga_hostgroups ENGINE=InnoDB;
-ANALYZE TABLE icinga_hostgroups;
-
-ALTER TABLE icinga_hostgroup_members ENGINE=InnoDB;
-ANALYZE TABLE icinga_hostgroup_members;
-
-ALTER TABLE icinga_objects ENGINE=InnoDB;
-ANALYZE TABLE icinga_objects;
-
-ALTER TABLE icinga_servicegroups ENGINE=InnoDB;
-ANALYZE TABLE icinga_servicegroups;
-
-ALTER TABLE icinga_servicegroup_members ENGINE=InnoDB;
-ANALYZE TABLE icinga_servicegroup_members;
+CALL create_index('icinga_hoststatus', 'idx_hoststatus_current_state_last_state_change', 'current_state, last_state_change');
+CALL create_index('icinga_hoststatus', 'idx_hoststatus_current_state_last_check', 'current_state, last_check');
