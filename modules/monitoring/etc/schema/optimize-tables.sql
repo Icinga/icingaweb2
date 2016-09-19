@@ -28,3 +28,9 @@ ANALYZE TABLE icinga_servicegroups;
 
 ALTER TABLE icinga_servicegroup_members ENGINE=InnoDB;
 ANALYZE TABLE icinga_servicegroup_members;
+
+ANALYZE TABLE icinga_notifications;
+ALTER TABLE icinga_notifications ENGINE=InnoDB;
+
+ANALYZE TABLE icinga_contactnotifications;
+ALTER TABLE icinga_contactnotifications ENGINE=InnoDB;

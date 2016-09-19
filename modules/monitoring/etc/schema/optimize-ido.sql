@@ -91,6 +91,10 @@ CALL drop_index('icinga_servicegroups', 'servicegroups_i_id_idx');
 -- CALL drop_index('icinga_servicegroup_members', 'servicegroup_members_i_id_idx');
 CALL drop_index('icinga_servicegroup_members', 'sgmbrs_sgid_soid');
 
+CALL drop_index('icinga_notifications', 'instance_id');
+CALL drop_index('icinga_notifications', 'notification_idx');
+CALL drop_index('icinga_notifications', 'notification_object_id_idx');
+
 ############################
 # DISPLAY_NAME PERFORMANCE #
 ############################
@@ -156,6 +160,11 @@ ALTER TABLE icinga_servicegroup_members MODIFY servicegroup_id BIGINT UNSIGNED N
 ALTER TABLE icinga_servicegroup_members MODIFY service_object_id BIGINT UNSIGNED NOT NULL;
 CALL create_unique_index('icinga_servicegroup_members', 'idx_icinga_servicegroup_members_service_object_id', 'service_object_id, servicegroup_id');
 
+ALTER TABLE icinga_notifications MODIFY instance_id BIGINT UNSIGNED NOT NULL;
+ALTER TABLE icinga_notifications MODIFY object_id BIGINT UNSIGNED NOT NULL;
+CALL create_index('icinga_notifications', 'idx_notifications_instance_id', 'instance_id');
+CALL create_index('icinga_notifications', 'idx_notifications_object_id', 'object_id');
+
 ######################
 # FILTER PERFORMANCE #
 ######################
@@ -213,3 +222,6 @@ DELIMITER ;
 # Add indices for prominent host list filters
 CALL create_index('icinga_hoststatus', 'idx_hoststatus_current_state_last_state_change', 'current_state, last_state_change');
 CALL create_index('icinga_hoststatus', 'idx_hoststatus_current_state_last_check', 'current_state, last_check');
+
+# Add index for prominent notification filter
+CALL create_index('icinga_notifications', 'idx_notifications_start_time', 'start_time');
