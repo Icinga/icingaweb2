@@ -121,7 +121,7 @@ class JsonResponse extends Response
      */
     public function getFailData()
     {
-        return $this->failData;
+        return (! is_array($this->failData) || empty($this->failData)) ? null : $this->failData;
     }
 
     /**
@@ -173,9 +173,11 @@ class JsonResponse extends Response
         switch ($this->status) {
             case static::STATUS_ERROR:
                 $body['message'] = $this->getErrorMessage();
-                break;
             case static::STATUS_FAIL:
-                $body['data'] = $this->getFailData();
+                $failData = $this->getFailData();
+                if ($failData !== null || $this->status === static::STATUS_FAIL) {
+                    $body['data'] = $failData;
+                }
                 break;
             case static::STATUS_SUCCESS:
                 $body['data'] = $this->getSuccessData();
