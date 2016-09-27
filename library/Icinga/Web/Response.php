@@ -210,9 +210,11 @@ class Response extends Zend_Controller_Response_Http
      *
      * @return JsonResponse
      */
-    public static function json()
+    public function json()
     {
-        return new JsonResponse();
+        $response = new JsonResponse();
+        $response->setMetaDataFrom($this);
+        return $response;
     }
 
     /**
@@ -291,5 +293,21 @@ class Response extends Zend_Controller_Response_Http
             $this->sendCookies();
         }
         return parent::sendHeaders();
+    }
+
+    /**
+     * Copies non-body-related response data from $response
+     *
+     * @param   Response    $response
+     *
+     * @return  $this
+     */
+    protected function setMetaDataFrom(self $response)
+    {
+        $this->_headers = $response->_headers;
+        $this->_headersRaw = $response->_headersRaw;
+        $this->_httpResponseCode = $response->_httpResponseCode;
+        $this->headersSentThrowsException = $response->headersSentThrowsException;
+        return $this;
     }
 }
