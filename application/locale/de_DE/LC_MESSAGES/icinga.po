@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Icinga Web 2 (None)\n"
 "Report-Msgid-Bugs-To: dev@icinga.org\n"
-"POT-Creation-Date: 2016-06-02 14:11+0200\n"
-"PO-Revision-Date: 2016-06-02 15:45+0200\n"
+"POT-Creation-Date: 2016-09-27 09:09+0000\n"
+"PO-Revision-Date: 2016-09-27 11:15+0200\n"
 "Last-Translator: Eric Lippmann <eric.lippmann@netways.de>\n"
 "Language: de_DE\n"
 "MIME-Version: 1.0\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "Language-Team: \n"
-"X-Generator: Poedit 1.8.8\n"
+"X-Generator: Poedit 1.8.9\n"
 
 #: /vagrant/library/Icinga/Web/Form/Validator/InArray.php:16
 #, php-format
@@ -229,6 +229,10 @@ msgstr "Erlaubt die Einstellung zur Anzeige von Stacktraces"
 #: /vagrant/application/forms/Security/RoleForm.php:40
 msgid "Allow to share navigation items"
 msgstr "Erlaubt das Teilen von Navigationselemten"
+
+#: /vagrant/application/forms/Security/RoleForm.php:45
+msgid "Allow to view the application log"
+msgstr "Erlaubt das Einsehen des Anwendungslogs"
 
 #: /vagrant/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:135
 msgid ""
