@@ -61,7 +61,7 @@ class Monitoring_ActionsController extends Controller
         $filter = $this->getFilterOrExitIfEmpty();
         $downtimes = $this->backend
             ->select()
-            ->from('downtime', array('host_name', 'id' => 'downtime_internal_id'))
+            ->from('downtime', array('host_name', 'id' => 'downtime_internal_id', 'name' => 'downtime_name'))
             ->where('object_type', 'host')
             ->applyFilter($this->getRestriction('monitoring/filter/objects'))
             ->applyFilter($filter);
@@ -110,7 +110,10 @@ class Monitoring_ActionsController extends Controller
         $filter = $this->getFilterOrExitIfEmpty();
         $downtimes = $this->backend
             ->select()
-            ->from('downtime', array('host_name', 'service_description', 'id' => 'downtime_internal_id'))
+            ->from(
+                'downtime',
+                array('host_name', 'service_description', 'id' => 'downtime_internal_id', 'name' => 'downtime_name')
+            )
             ->where('object_type', 'service')
             ->applyFilter($this->getRestriction('monitoring/filter/objects'))
             ->applyFilter($filter);
