@@ -109,7 +109,7 @@ class AcknowledgeProblemCommandForm extends ObjectsCommandForm
                 'sticky',
                 array(
                     'label'         => $this->translate('Sticky Acknowledgement'),
-                    'value'         => true,
+                    'value'         => false,
                     'description'   => $this->translate(
                         'If you want the acknowledgement to remain until the host or service recovers even if the host'
                         . ' or service changes state, check this option.'
