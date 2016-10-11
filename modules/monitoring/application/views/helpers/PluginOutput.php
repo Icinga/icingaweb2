@@ -221,6 +221,8 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
      */
     protected function fixWrapping($output, $zeroWidthSpace)
     {
+        // TODO(el): Disabled until we find a bulletproof implementation
+        return $output;
         // Add zero width space after ')', ']', ':', '.', '_' and '-' if not surrounded by whitespaces
         $output = preg_replace('/([^\s])([\\)\\]:._-])([^\s])/', '$1$2' . $zeroWidthSpace . '$3', $output);
         // Add zero width space before '(' and '[' if not surrounded by whitespaces
