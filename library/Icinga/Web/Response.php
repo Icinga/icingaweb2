@@ -213,7 +213,7 @@ class Response extends Zend_Controller_Response_Http
     public function json()
     {
         $response = new JsonResponse();
-        $response->setMetaDataFrom($this);
+        $response->copyMetaDataFrom($this);
         return $response;
     }
 
@@ -302,7 +302,7 @@ class Response extends Zend_Controller_Response_Http
      *
      * @return  $this
      */
-    protected function setMetaDataFrom(self $response)
+    protected function copyMetaDataFrom(self $response)
     {
         $this->_headers = $response->_headers;
         $this->_headersRaw = $response->_headersRaw;
