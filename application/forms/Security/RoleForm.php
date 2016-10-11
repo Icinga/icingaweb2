@@ -42,6 +42,8 @@ class RoleForm extends ConfigForm
             'application/stacktraces'                       => $this->translate(
                 'Allow to adjust in the preferences whether to show stacktraces'
             ) . ' (application/stacktraces)',
+            'application/log'                               => $this->translate('Allow to view the application log')
+                . ' (application/log)',
             'config/*'                                      => $this->translate('Allow config access') . ' (config/*)'
         );
 
