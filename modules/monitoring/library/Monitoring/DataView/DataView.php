@@ -5,6 +5,7 @@ namespace Icinga\Module\Monitoring\DataView;
 
 use IteratorAggregate;
 use Icinga\Application\Hook;
+use Icinga\Authentication\Auth;
 use Icinga\Data\ConnectionInterface;
 use Icinga\Data\Filter\Filter;
 use Icinga\Data\Filter\FilterMatch;
@@ -264,12 +265,24 @@ abstract class DataView implements QueryInterface, SortRules, FilterColumns, Ite
             return $columns;
         }
 
+        $restriction = Filter::matchAny();
+        $restrictions = Auth::getInstance()->getRestrictions('monitoring/filter/objects');
+        foreach ($restrictions as $filter) {
+            if ($filter === '*') {
+                $restriction = Filter::matchAny();
+                break;
+            }
+            $restriction->addFilter(Filter::fromQueryString($filter));
+        }
+
         $query = MonitoringBackend::instance()
             ->select()
             ->from('customvar', array('varname', 'object_type'))
             ->where('is_json', 0)
             ->where('object_type_id', array(1, 2))
+            ->applyFilter($restriction)
             ->getQuery()->group(array('varname', 'object_type'));
+
         foreach ($query as $row) {
             if ($row->object_type === 'host') {
                 $label = t('Host') . ' ' . ucwords(str_replace('_', ' ', $row->varname));
