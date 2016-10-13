@@ -81,7 +81,7 @@ class ErrorController extends ActionController
                         break;
                     default:
                         $this->getResponse()->setHttpResponseCode(500);
-                        Logger::error($exception);
+                        Logger::error("%s\n%s", $exception, $exception->getTraceAsString());
                         break;
                 }
                 $this->view->message = $exception->getMessage();
