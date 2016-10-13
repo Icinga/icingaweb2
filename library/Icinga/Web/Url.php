@@ -52,6 +52,41 @@ class Url
      */
     protected $baseUrl = '';
 
+    /**
+     * The host of the Url
+     *
+     * @var string
+     */
+    protected $host;
+
+    /**
+     * The port auf the Url
+     *
+     * @var string
+     */
+    protected $port;
+
+    /**
+     * The scheme of the Url
+     *
+     * @var string
+     */
+    protected $scheme;
+
+    /**
+     * The username passed with the Url
+     *
+     * @var string
+     */
+    protected $username;
+
+    /**
+     * The password passed with the Url
+     *
+     * @var string
+     */
+    protected $password;
+
     protected function __construct()
     {
         $this->params = UrlParams::fromQueryString(''); // TODO: ::create()
@@ -228,6 +263,76 @@ class Url
         return $this;
     }
 
+
+    /**
+     * Overwrite the host
+     *
+     * @param   string  $host     New host of this Url
+     *
+     * @return  $this
+     */
+    public function setHost($host)
+    {
+        $this->host = $host;
+        return $this;
+    }
+
+    /**
+     * Return the host set for this Url
+     *
+     * @return  string
+     */
+    public function getHost()
+    {
+        return $this->host;
+    }
+
+    /**
+     * Overwrite the port
+     *
+     * @param   string  $port    New port of this Url
+     *
+     * @return  $this
+     */
+    public function setPort($port)
+    {
+        $this->port = $port;
+        return $this;
+    }
+
+    /**
+     * Return the port set for this url
+     *
+     * @return  string
+     */
+    public function getPort()
+    {
+        return $this->port;
+    }
+
+    /**
+     * Overwrite the scheme
+     *
+     * @param   string  $scheme    The scheme used for this url
+     *
+     * @return  $this
+     */
+    public function setScheme($scheme)
+    {
+        $this->scheme = $scheme;
+        return $this;
+    }
+
+    /**
+     * Return the scheme set for this url
+     *
+     * @return  string
+     */
+    public function getScheme()
+    {
+        return $this->scheme;
+    }
+
     /**
      * Overwrite the baseUrl
      *
@@ -297,6 +402,52 @@ class Url
     public function isExternal()
     {
         return $this->external;
+    }
+
+    /**
+     * Set the username passed with the url
+     *
+     * @param   string  $username   The username to set
+     *
+     * @return  $this
+     */
+    public function setUsername($username)
+    {
+        $this->username = $username;
+        return $this;
+    }
+
+    /**
+     * Return the username passed with the url
+     *
+     * @return  string
+     */
+    public function getUsername()
+    {
+        return $this->username;
+    }
+
+    /**
+     * Set the username passed with the url
+     *
+     * @param   string  $password   The password to set
+     *
+     * @return  $this
+     */
+    public function setPassword($password)
+    {
+        $this->password = $password;
+        return $this;
+    }
+
+    /**
+     * Return the password passed with the url
+     *
+     * @return  string
+     */
+    public function getPassword()
+    {
+        return $this->password;
     }
 
     /**
