@@ -446,7 +446,7 @@ abstract class MonitoredObject implements Filterable
         }
 
         $blacklist = array();
-        $blacklistPattern = '/^(.*pw.*|.*pass.*|community)$/i';
+            $blacklistPattern = '';
 
         if (($blacklistConfig = Config::module('monitoring')->get('security', 'protected_customvars', '')) !== '') {
             foreach (explode(',', $blacklistConfig) as $customvar) {
@@ -469,7 +469,10 @@ abstract class MonitoredObject implements Filterable
 
         $this->customvars = $customvars;
         $this->hideBlacklistedProperties();
-        $this->customvars = $this->obfuscateCustomVars($this->customvars, $blacklistPattern);
+
+        if ($blacklistPattern) {
+            $this->customvars = $this->obfuscateCustomVars($this->customvars, $blacklistPattern);
+        }
 
         return $this;
     }
