@@ -15,6 +15,7 @@ thoroughly.
 * Icinga 1.x w/ IDO; Icinga 2.x w/ IDO feature enabled
 * The IDO table prefix must be icinga_ which is the default
 * MySQL or PostgreSQL PHP libraries
+* cURL PHP library when using the Icinga 2 API for transmitting external commands
 
 ### <a id="pagespeed-incompatibility"></a> PageSpeed Module Incompatibility
 
