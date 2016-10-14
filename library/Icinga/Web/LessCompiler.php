@@ -122,7 +122,9 @@ class LessCompiler
         if (is_file($theme) && is_readable($theme)) {
             $this->theme = $theme;
         } else {
-            Logger::error('Can\t load theme %s. Make sure that the theme exists and is readable', $theme);
+            if ($theme !== '/vagrant/public/css/themes/Icinga.less') {
+                Logger::error('Can\t load theme %s. Make sure that the theme exists and is readable', $theme);
+            }
         }
         return $this;
     }
