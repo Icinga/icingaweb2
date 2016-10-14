@@ -275,6 +275,8 @@ class Response extends Zend_Controller_Response_Http
                 $this->setRedirect($redirectUrl->getAbsoluteUrl());
             }
         }
+
+        $this->setHeader("Content-Type", $this->getContentType(), true);
     }
 
     /**

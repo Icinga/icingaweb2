@@ -191,7 +191,7 @@ class JsonResponse extends Response
      */
     public function sendHeaders()
     {
-        $this->setHeader('Content-Type', 'application/json', true);
+        $this->setContentType('application/json');
         parent::sendHeaders();
     }
 
