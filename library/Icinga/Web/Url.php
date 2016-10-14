@@ -46,6 +46,13 @@ class Url
     protected $path = '';
 
     /**
+     * The basePath of this Url
+     *
+     * @var string
+     */
+    protected $basePath;
+
+    /**
      * The baseUrl that will be appended to @see Url::$path
      *
      * @var string
@@ -265,6 +272,29 @@ class Url
         return $this;
     }
 
+
+    /**
+     * Set the basePath for this url
+     *
+     * @param   string  $basePath     New basePath of this url
+     *
+     * @return  $this
+     */
+    public function setBasePath($basePath)
+    {
+        $this->basePath = $basePath;
+        return $this;
+    }
+
+    /**
+     * Return the basePath set for this url
+     *
+     * @return  string
+     */
+    public function getBasePath()
+    {
+        return $this->basePath;
+    }
 
     /**
      * Overwrite the host
