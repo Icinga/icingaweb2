@@ -206,27 +206,21 @@ class Url
         if (isset($urlParts['query'])) {
             $params = UrlParams::fromQueryString($urlParts['query'])->mergeValues($params);
         }
-
         if (isset($urlParts['fragment'])) {
             $urlObject->setAnchor($urlParts['fragment']);
         }
-
         if (isset($urlParts['host'])) {
             $urlObject->setHost($urlParts['host']);
         }
-
         if (isset($urlParts['port'])) {
             $urlObject->setPort($urlParts['port']);
         }
-
         if (isset($urlParts['scheme'])) {
             $urlObject->setScheme($urlParts['scheme']);
         }
-
         if (isset($urlParts['user'])) {
             $urlObject->setUsername($urlParts['user']);
         }
-
         if (isset($urlParts['pass'])) {
             $urlObject->setPassword($urlParts['pass']);
         }
@@ -310,7 +304,7 @@ class Url
     }
 
     /**
-     * Return the host set for this Url
+     * Return the host set for this url
      *
      * @return  string
      */
@@ -320,9 +314,9 @@ class Url
     }
 
     /**
-     * Overwrite the port
+     * Set the port for this url
      *
-     * @param   string  $port    New port of this Url
+     * @param   string  $port    New port of this url
      *
      * @return  $this
      */
@@ -343,7 +337,7 @@ class Url
     }
 
     /**
-     * Overwrite the scheme
+     * Set the scheme for this url
      *
      * @param   string  $scheme    The scheme used for this url
      *
@@ -366,11 +360,11 @@ class Url
     }
 
     /**
-     * Overwrite the baseUrl
+     * Set the baseUrl for this url
      *
      * @deprecated  Please create a new url from scratch instead
      *
-     * @param       string  $baseUrl    The url path to use as the Url Base
+     * @param       string  $baseUrl    The url path to use as the url base
      *
      * @return      $this
      */
@@ -392,6 +386,7 @@ class Url
         if (isset($urlParts["pass"])) {
             $this->setPassword($urlParts["pass"]);
         }
+
         return $this;
     }
 
@@ -407,6 +402,7 @@ class Url
         if (!$this->isExternal()) {
             return '';
         }
+
         return $this->getScheme() . '://' . $this->getHost() . ($this->getPort() ? (':' . $this->getPort()) : '');
     }
 
