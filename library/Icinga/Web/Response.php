@@ -55,6 +55,13 @@ class Response extends Zend_Controller_Response_Http
     protected $rerenderLayout = false;
 
     /**
+     * Content type of this response
+     *
+     * @var string
+     */
+    protected $contentType = 'text/html';
+
+    /**
      * Get the auto-refresh interval
      *
      * @return int
@@ -204,6 +211,30 @@ class Response extends Zend_Controller_Response_Http
         $this->rerenderLayout = (bool) $rerenderLayout;
         return $this;
     }
+
+    /**
+     * Set the content type of this response
+     *
+     * @param  string $contentType
+     *
+     * @return $this
+     */
+    public function setContentType($contentType)
+    {
+        $this->contentType = $contentType;
+        return $this;
+    }
+
+    /**
+     * Get the content type of this response
+     *
+     * @return string
+     */
+    public function getContentType()
+    {
+        return $this->contentType;
+    }
+
 
     /**
      * Entry point for HTTP responses in JSON format
