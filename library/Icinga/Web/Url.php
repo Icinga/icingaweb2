@@ -191,6 +191,8 @@ class Url
             || (isset($urlParts['port']) && $urlParts['port'] != $request->getServer('SERVER_PORT')))
         ) {
             $urlObject->setIsExternal();
+        } else {
+            $urlObject->setBasePath($request->getBaseUrl());
         }
 
         if (isset($urlParts['path'])) {
@@ -558,8 +560,12 @@ class Url
             return $path;
         }
 
+        $basePath = $this->getBasePath();
+        if (!$basePath) {
+           $basePath = '/';
+        }
         if (!$this->isExternal()) {
-            return '/icingaweb2/' . $path;
+            return $basePath . ($basePath !== '/' && $path ? '/' : '') . $path;
         }
 
         $urlString = '';
