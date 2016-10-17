@@ -12,6 +12,13 @@ use Icinga\User;
 class ExternalBackend implements UserBackendInterface
 {
     /**
+     * The configuration of this backend
+     *
+     * @var ConfigObject
+     */
+    protected $config;
+
+    /**
      * The name of this backend
      *
      * @var string
@@ -32,6 +39,7 @@ class ExternalBackend implements UserBackendInterface
      */
     public function __construct(ConfigObject $config)
     {
+        $this->config = $config;
         $this->stripUsernameRegexp = $config->get('strip_username_regexp');
     }
 
@@ -79,9 +87,10 @@ class ExternalBackend implements UserBackendInterface
      */
     public function authenticate(User $user, $password = null)
     {
-        $username = static::getRemoteUser(null);
+        $usernameEnvvar = $this->config->username_envvar;
+        $username = static::getRemoteUser($usernameEnvvar);
         if ($username !== null) {
-            $user->setExternalUserInformation($username, null);
+            $user->setExternalUserInformation($username, $usernameEnvvar);
 
             if ($this->stripUsernameRegexp) {
                 $stripped = preg_replace($this->stripUsernameRegexp, '', $username);
