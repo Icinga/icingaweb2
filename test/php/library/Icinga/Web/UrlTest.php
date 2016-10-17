@@ -9,7 +9,8 @@ use Icinga\Test\BaseTestCase;
 
 class UrlTest extends BaseTestCase
 {
-    public function testWhetherGetAbsoluteUrlReturnsTestUrl(){
+    public function testWhetherGetAbsoluteUrlReturnsTheGivenUsernameAndPassword()
+    {
         $url = Url::fromPath('http://testusername:testpassword@testsite.com/path/to/my/url.html');
         $this->assertEquals(
             'http://testusername:testpassword@testsite.com/path/to/my/url.html',
