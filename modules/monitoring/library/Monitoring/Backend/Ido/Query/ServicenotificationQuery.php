@@ -24,6 +24,7 @@ class ServicenotificationQuery extends IdoQuery
             'output'    => null,
             'state'     => 'sn.state',
             'timestamp' => 'UNIX_TIMESTAMP(sn.start_time)',
+            'type'      => '(\'notify\')'
         ),
         'hostgroups' => array(
             'hostgroup_name' => 'hgo.name1'
