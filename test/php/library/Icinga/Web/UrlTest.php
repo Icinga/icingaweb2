@@ -9,6 +9,15 @@ use Icinga\Test\BaseTestCase;
 
 class UrlTest extends BaseTestCase
 {
+    public function testWhetherGetAbsoluteUrlReturnsTestUrl(){
+        $url = Url::fromPath('http://testusername:testpassword@testsite.com/path/to/my/url.html');
+        $this->assertEquals(
+            'http://testusername:testpassword@testsite.com/path/to/my/url.html',
+            $url->getAbsoluteUrl(),
+            'Url::fromPath does not reassemble the correct url'
+        );
+    }
+
     public function testWhetherFromRequestWorksWithoutARequest()
     {
         $this->getRequestMock()->shouldReceive('getBaseUrl')->andReturn('/path/to')
