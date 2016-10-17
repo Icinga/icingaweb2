@@ -68,6 +68,13 @@ class JsonResponse extends Response
     protected $successData;
 
     /**
+     * Content type of this response
+     *
+     * @var string
+     */
+    protected $contentType = 'application/json';
+
+    /**
      * Get the JSON encoding options
      *
      * @return int
@@ -184,15 +191,6 @@ class JsonResponse extends Response
                 break;
         }
         echo json_encode($body, $this->getEncodingOptions());
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function sendHeaders()
-    {
-        $this->setContentType('application/json');
-        parent::sendHeaders();
     }
 
     /**
