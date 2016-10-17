@@ -3,6 +3,7 @@
 
 namespace Icinga\Module\Setup\Forms;
 
+use Icinga\Authentication\User\ExternalBackend;
 use Icinga\Web\Form;
 use Icinga\Application\Platform;
 
@@ -30,7 +31,8 @@ class AuthenticationPage extends Form
      */
     public function createElements(array $formData)
     {
-        if (isset($formData['type']) && $formData['type'] === 'external' && getenv('REMOTE_USER') === false) {
+        if (isset($formData['type']) && $formData['type'] === 'external'
+            && ExternalBackend::getRemoteUser(null) === null) {
             $this->info(
                 $this->translate(
                     'You\'re currently not authenticated using any of the web server\'s authentication '
