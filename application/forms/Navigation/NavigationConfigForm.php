@@ -426,11 +426,6 @@ class NavigationConfigForm extends ConfigForm
         }
 
         $itemConfig->merge($data);
-        foreach ($itemConfig->toArray() as $k => $v) {
-            if ($v === null) {
-                unset($itemConfig->$k);
-            }
-        }
 
         if ($shared) {
             // Share all descendant children
