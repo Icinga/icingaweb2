@@ -562,7 +562,7 @@ class Url
 
         $basePath = $this->getBasePath();
         if (!$basePath) {
-           $basePath = '/';
+            $basePath = '/';
         }
         if (!$this->isExternal()) {
             return $basePath . ($basePath !== '/' && $path ? '/' : '') . $path;
