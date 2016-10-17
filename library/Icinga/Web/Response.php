@@ -235,7 +235,6 @@ class Response extends Zend_Controller_Response_Http
         return $this->contentType;
     }
 
-
     /**
      * Entry point for HTTP responses in JSON format
      *
