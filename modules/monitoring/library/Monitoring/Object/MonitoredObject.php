@@ -446,7 +446,7 @@ abstract class MonitoredObject implements Filterable
         }
 
         $blacklist = array();
-            $blacklistPattern = '';
+        $blacklistPattern = '';
 
         if (($blacklistConfig = Config::module('monitoring')->get('security', 'protected_customvars', '')) !== '') {
             foreach (explode(',', $blacklistConfig) as $customvar) {
