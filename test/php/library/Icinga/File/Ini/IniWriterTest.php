@@ -409,9 +409,9 @@ EOD;
         $config->setSection('garbage', $section);
 
         $iniWriter = new IniWriter($config, '/dev/null');
-        $this->assertEquals(
-            0,
-            preg_match('/foobar/', $iniWriter->render()),
+        $this->assertNotContains(
+            'foobar',
+            $iniWriter->render(),
             'IniWriter persists section keys with null values'
         );
     }
@@ -424,9 +424,9 @@ EOD;
         $config->setSection('garbage', $section);
 
         $iniWriter = new IniWriter($config, '/dev/null');
-        $this->assertEquals(
-            1,
-            preg_match('/foobar/', $iniWriter->render()),
+        $this->assertContains(
+            'foobar',
+            $iniWriter->render(),
             'IniWriter doesn\'t persist section keys with empty values'
         );
     }
@@ -441,9 +441,9 @@ EOD;
         $section = $config->getSection('garbage');
         $section->foobar = null;
         $iniWriter = new IniWriter($config, $filename);
-        $this->assertEquals(
-            0,
-            preg_match('/foobar/', $iniWriter->render()),
+        $this->assertNotContains(
+            'foobar',
+            $iniWriter->render(),
             'IniWriter doesn\'t remove section keys with null values'
         );
 
