@@ -412,7 +412,7 @@ class Url
     public function getBaseUrl()
     {
         if (!$this->isExternal()) {
-            return '';
+            return $this->getBasePath();
         }
 
         return $this->getScheme() . '://' . $this->getHost() . ($this->getPort() ? (':' . $this->getPort()) : '');
