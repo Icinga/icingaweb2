@@ -154,12 +154,12 @@ class Response extends Zend_Controller_Response_Http
     }
 
     /**
-     * Get an array of every header value with a specified name
+     * Get an array of all header values for the given name
      *
-     * @param  string $name
-     * @param  bool $lastOnly  If this is true, the last value will be returned as a string.
+     * @param   string  $name       The name of the header
+     * @param   bool    $lastOnly   If this is true, the last value will be returned as a string
      *
-     * @return null|array|string
+     * @return  null|array|string
      */
     public function getHeader($name, $lastOnly = false)
     {
@@ -300,7 +300,7 @@ class Response extends Zend_Controller_Response_Http
             }
         }
 
-        if (!$this->getHeader('Content-Type', true)) {
+        if (! $this->getHeader('Content-Type', true)) {
             $this->setHeader('Content-Type', $this->getContentType());
         }
     }
