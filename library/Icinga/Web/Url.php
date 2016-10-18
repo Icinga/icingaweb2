@@ -586,28 +586,31 @@ class Url
         }
 
         $basePath = $this->getBasePath();
-        if (!$basePath) {
+        if (! $basePath) {
             $basePath = '/';
         }
-        if (!$this->isExternal()) {
+
+        if ($this->getUsername() || $this->isExternal()) {
+            $urlString = '';
+            if ($this->getScheme()) {
+                $urlString .= $this->getScheme() . '://';
+            }
+            if ($this->getPassword()) {
+                $urlString .= $this->getUsername() . ':' . $this->getPassword() . '@';
+            } elseif ($this->getUsername()) {
+                $urlString .= $this->getUsername() . '@';
+            }
+            if ($this->getHost()) {
+                $urlString .= $this->getHost();
+            }
+            if ($this->getPort()) {
+                $urlString .= ':' . $this->getPort();
+            }
+
+            return $urlString . '/' . $path;
+        } else {
             return $basePath . ($basePath !== '/' && $path ? '/' : '') . $path;
         }
-
-        $urlString = '';
-        if ($this->getScheme()) {
-            $urlString = $urlString . $this->getScheme() . '://';
-        }
-        if ($this->getUsername() && $this->getPassword()) {
-            $urlString = $urlString . $this->getUsername() . ':' . $this->getPassword() . "@";
-        }
-        if ($this->getHost()) {
-            $urlString = $urlString . $this->getHost();
-        }
-        if ($this->getPort()) {
-            $urlString = $urlString . $this->getPort();
-        }
-
-        return $urlString . '/' . $path;
     }
 
     /**
