@@ -154,6 +154,31 @@ class Response extends Zend_Controller_Response_Http
     }
 
     /**
+     * Get an array of every header value with a specified name
+     *
+     * @param  string $name
+     * @param  bool $lastOnly  If this is true, the last value will be returned as a string.
+     *
+     * @return null|array|string
+     */
+    public function getHeader($name, $lastOnly = false)
+    {
+        $result = ($lastOnly ? null : array());
+        $headers = $this->getHeaders();
+        foreach ($headers as $header) {
+            if ($header['name'] === $name) {
+                if ($lastOnly) {
+                    $result = $header['value'];
+                } else {
+                    $result[] = $header['value'];
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    /**
      * Get the request
      *
      * @return Request
