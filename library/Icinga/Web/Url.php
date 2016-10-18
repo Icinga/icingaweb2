@@ -281,7 +281,7 @@ class Url
      */
     public function setBasePath($basePath)
     {
-        $this->basePath = $basePath;
+        $this->basePath = rtrim($basePath, '/ ');
         return $this;
     }
 
