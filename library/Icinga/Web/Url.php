@@ -53,13 +53,6 @@ class Url
     protected $basePath;
 
     /**
-     * The baseUrl that will be appended to @see Url::$path
-     *
-     * @var string
-     */
-    protected $baseUrl = '';
-
-    /**
      * The host of the Url
      *
      * @var string
