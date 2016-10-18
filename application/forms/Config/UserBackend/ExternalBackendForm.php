@@ -56,6 +56,18 @@ class ExternalBackendForm extends Form
             )
         );
         $this->addElement(
+            'text',
+            'username_envvar',
+            array(
+                'label'         => $this->translate('Username Environment Variable'),
+                'description'   => $this->translate(
+                    'The environment variable the webserver assigns the authenticated user\'s name to.'
+                ),
+                'required'      => true,
+                'value'         => 'REMOTE_USER'
+            )
+        );
+        $this->addElement(
             'hidden',
             'backend',
             array(
