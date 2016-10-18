@@ -385,14 +385,17 @@ class Url
         if (isset($urlParts["port"])) {
             $this->setPort($urlParts["port"]);
         }
-        if (isset($urlParts["scheme"])) {
-            $this->setScheme($urlParts["scheme"]);
+        if (isset($urlParts['scheme'])) {
+            $this->setScheme($urlParts['scheme']);
         }
-        if (isset($urlParts["user"])) {
-            $this->setUsername($urlParts["user"]);
+        if (isset($urlParts['user'])) {
+            $this->setUsername($urlParts['user']);
         }
-        if (isset($urlParts["pass"])) {
-            $this->setPassword($urlParts["pass"]);
+        if (isset($urlParts['pass'])) {
+            $this->setPassword($urlParts['pass']);
+        }
+        if (isset($urlParts['path'])) {
+            $this->setBasePath($urlParts['path']);
         }
 
         return $this;
