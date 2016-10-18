@@ -3,6 +3,7 @@
 
 namespace Icinga\Forms\Config\UserBackend;
 
+use Icinga\Authentication\User\ExternalBackend;
 use Zend_Validate_Callback;
 use Icinga\Web\Form;
 
@@ -55,6 +56,12 @@ class ExternalBackendForm extends Form
                 'validators'    => array($callbackValidator)
             )
         );
+
+        foreach (array('REDIRECT_REMOTE_USER', 'REMOTE_USER') as $envvar) {
+            if (ExternalBackend::getRemoteUser($envvar) !== null) {
+                break;
+            }
+        }
         $this->addElement(
             'text',
             'username_envvar',
@@ -64,9 +71,10 @@ class ExternalBackendForm extends Form
                     'The environment variable the webserver assigns the authenticated user\'s name to.'
                 ),
                 'required'      => true,
-                'value'         => 'REMOTE_USER'
+                'value'         => $envvar
             )
         );
+
         $this->addElement(
             'hidden',
             'backend',
