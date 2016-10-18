@@ -410,11 +410,27 @@ class Url
      */
     public function getBaseUrl()
     {
-        if (!$this->isExternal()) {
+        if (! $this->isExternal()) {
             return $this->getBasePath();
         }
 
-        return $this->getScheme() . '://' . $this->getHost() . ($this->getPort() ? (':' . $this->getPort()) : '');
+        $urlString = '';
+        if ($this->getScheme()) {
+            $urlString .= $this->getScheme() . '://';
+        }
+        if ($this->getPassword()) {
+            $urlString .= $this->getUsername() . ':' . $this->getPassword() . '@';
+        } elseif ($this->getUsername()) {
+            $urlString .= $this->getUsername() . '@';
+        }
+        if ($this->getHost()) {
+            $urlString .= $this->getHost();
+        }
+        if ($this->getPort()) {
+            $urlString .= ':' . $this->getPort();
+        }
+
+        return $urlString;
     }
 
     /**
