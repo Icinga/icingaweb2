@@ -55,6 +55,13 @@ class Response extends Zend_Controller_Response_Http
     protected $rerenderLayout = false;
 
     /**
+     * Content type of this response
+     *
+     * @var string
+     */
+    protected $contentType = 'text/html';
+
+    /**
      * Get the auto-refresh interval
      *
      * @return int
@@ -147,6 +154,31 @@ class Response extends Zend_Controller_Response_Http
     }
 
     /**
+     * Get an array of all header values for the given name
+     *
+     * @param   string  $name       The name of the header
+     * @param   bool    $lastOnly   If this is true, the last value will be returned as a string
+     *
+     * @return  null|array|string
+     */
+    public function getHeader($name, $lastOnly = false)
+    {
+        $result = ($lastOnly ? null : array());
+        $headers = $this->getHeaders();
+        foreach ($headers as $header) {
+            if ($header['name'] === $name) {
+                if ($lastOnly) {
+                    $result = $header['value'];
+                } else {
+                    $result[] = $header['value'];
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    /**
      * Get the request
      *
      * @return Request
@@ -206,6 +238,29 @@ class Response extends Zend_Controller_Response_Http
     }
 
     /**
+     * Set the content type of this response
+     *
+     * @param  string $contentType
+     *
+     * @return $this
+     */
+    public function setContentType($contentType)
+    {
+        $this->contentType = $contentType;
+        return $this;
+    }
+
+    /**
+     * Get the content type of this response
+     *
+     * @return string
+     */
+    public function getContentType()
+    {
+        return $this->contentType;
+    }
+
+    /**
      * Entry point for HTTP responses in JSON format
      *
      * @return JsonResponse
@@ -243,6 +298,10 @@ class Response extends Zend_Controller_Response_Http
             if ($redirectUrl !== null) {
                 $this->setRedirect($redirectUrl->getAbsoluteUrl());
             }
+        }
+
+        if (! $this->getHeader('Content-Type', true)) {
+            $this->setHeader('Content-Type', $this->getContentType());
         }
     }
 

@@ -197,7 +197,7 @@ class StyleSheet
         $response
             ->setHeader('Cache-Control', 'public', true)
             ->setHeader('ETag', $etag, true)
-            ->setHeader('Content-Type', 'text/css', true);
+            ->setContentType('text/css');
 
         $cacheFile = 'icinga-' . $etag . ($minified ? '.min' : '') . '.css';
         $cache = FileCache::instance();
