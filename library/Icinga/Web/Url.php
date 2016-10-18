@@ -53,35 +53,35 @@ class Url
     protected $basePath;
 
     /**
-     * The host of the Url
+     * The host of this Url
      *
      * @var string
      */
     protected $host;
 
     /**
-     * The port auf the Url
+     * The port of this Url
      *
      * @var string
      */
     protected $port;
 
     /**
-     * The scheme of the Url
+     * The scheme of this Url
      *
      * @var string
      */
     protected $scheme;
 
     /**
-     * The username passed with the Url
+     * The username passed with this Url
      *
      * @var string
      */
     protected $username;
 
     /**
-     * The password passed with the Url
+     * The password passed with this Url
      *
      * @var string
      */
@@ -460,7 +460,7 @@ class Url
     }
 
     /**
-     * Set the username passed with the url
+     * Set the username passed with this url
      *
      * @param   string  $username   The username to set
      *
@@ -473,7 +473,7 @@ class Url
     }
 
     /**
-     * Return the username passed with the url
+     * Return the username passed with this url
      *
      * @return  string
      */
@@ -483,7 +483,7 @@ class Url
     }
 
     /**
-     * Set the username passed with the url
+     * Set the username passed with this url
      *
      * @param   string  $password   The password to set
      *
@@ -496,7 +496,7 @@ class Url
     }
 
     /**
-     * Return the password passed with the url
+     * Return the password passed with this url
      *
      * @return  string
      */
