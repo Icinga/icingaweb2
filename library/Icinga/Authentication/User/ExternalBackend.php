@@ -83,6 +83,15 @@ class ExternalBackend implements UserBackendInterface
         return null;
     }
 
+    /**
+     * Get possible variables where to read the user from
+     *
+     * @return  string[]
+     */
+    public static function getRemoteUserEnvvars()
+    {
+        return array('REDIRECT_REMOTE_USER', 'REMOTE_USER');
+    }
 
     /**
      * {@inheritdoc}
