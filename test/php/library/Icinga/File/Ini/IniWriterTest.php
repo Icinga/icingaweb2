@@ -400,4 +400,53 @@ EOD;
         file_put_contents($this->tempFile, $config);
         return $this->tempFile;
     }
+
+    public function testWhetherNullValuesGetPersisted()
+    {
+        $config = Config::fromArray(array());
+        $section = $config->getSection('garbage');
+        $section->foobar = null;
+        $config->setSection('garbage', $section);
+
+        $iniWriter = new IniWriter($config, '/dev/null');
+        $this->assertNotContains(
+            'foobar',
+            $iniWriter->render(),
+            'IniWriter persists section keys with null values'
+        );
+    }
+
+    public function testWhetherEmptyValuesGetPersisted()
+    {
+        $config = Config::fromArray(array());
+        $section = $config->getSection('garbage');
+        $section->foobar = '';
+        $config->setSection('garbage', $section);
+
+        $iniWriter = new IniWriter($config, '/dev/null');
+        $this->assertContains(
+            'foobar',
+            $iniWriter->render(),
+            'IniWriter doesn\'t persist section keys with empty values'
+        );
+    }
+
+    public function testExplicitRemove()
+    {
+        $filename = tempnam(sys_get_temp_dir(), 'iw2');
+        $config = Config::fromArray(array('garbage' => array('foobar' => 'lolcat')));
+        $iniWriter = new IniWriter($config, $filename);
+        $iniWriter->write();
+
+        $section = $config->getSection('garbage');
+        $section->foobar = null;
+        $iniWriter = new IniWriter($config, $filename);
+        $this->assertNotContains(
+            'foobar',
+            $iniWriter->render(),
+            'IniWriter doesn\'t remove section keys with null values'
+        );
+
+        unlink($filename);
+    }
 }

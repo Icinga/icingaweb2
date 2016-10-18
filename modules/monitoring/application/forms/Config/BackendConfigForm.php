@@ -147,12 +147,6 @@ class BackendConfigForm extends ConfigForm
         }
 
         $backendConfig->merge($data);
-        foreach ($backendConfig->toArray() as $k => $v) {
-            if ($v === null) {
-                unset($backendConfig->$k);
-            }
-        }
-
         $this->config->setSection($name, $backendConfig);
         return $this;
     }

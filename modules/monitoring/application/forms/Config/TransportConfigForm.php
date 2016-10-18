@@ -167,12 +167,6 @@ class TransportConfigForm extends ConfigForm
         }
 
         $transportConfig->merge($data);
-        foreach ($transportConfig->toArray() as $k => $v) {
-            if ($v === null) {
-                unset($transportConfig->$k);
-            }
-        }
-
         $this->config->setSection($name, $transportConfig);
         return $this;
     }

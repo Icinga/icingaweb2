@@ -149,6 +149,10 @@ class IniWriter
                 $domSection = $doc->getSection($section);
             }
             foreach ($directives as $key => $value) {
+                if ($value === null) {
+                    continue;
+                }
+
                 if ($value instanceof ConfigObject) {
                     throw new ProgrammingError('Cannot diff recursive configs');
                 }

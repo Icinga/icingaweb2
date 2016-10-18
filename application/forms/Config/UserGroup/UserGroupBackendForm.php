@@ -127,14 +127,7 @@ class UserGroupBackendForm extends ConfigForm
             unset($data['name']);
         }
 
-        $backendConfig->merge($data);
-        foreach ($backendConfig->toArray() as $k => $v) {
-            if ($v === null) {
-                unset($backendConfig->$k);
-            }
-        }
-
-        $this->config->setSection($name, $backendConfig);
+        $this->config->setSection($name, $backendConfig->merge($data));
         return $this;
     }
 
