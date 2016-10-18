@@ -300,7 +300,9 @@ class Response extends Zend_Controller_Response_Http
             }
         }
 
-        $this->setHeader('Content-Type', $this->getContentType(), false);
+        if (!$this->getHeader('Content-Type', true)) {
+            $this->setHeader('Content-Type', $this->getContentType());
+        }
     }
 
     /**
