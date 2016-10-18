@@ -214,20 +214,23 @@ class Url
         if (isset($urlParts['fragment'])) {
             $urlObject->setAnchor($urlParts['fragment']);
         }
-        if (isset($urlParts['host'])) {
-            $urlObject->setHost($urlParts['host']);
-        }
-        if (isset($urlParts['port'])) {
-            $urlObject->setPort($urlParts['port']);
-        }
-        if (isset($urlParts['scheme'])) {
-            $urlObject->setScheme($urlParts['scheme']);
-        }
-        if (isset($urlParts['user'])) {
-            $urlObject->setUsername($urlParts['user']);
-        }
-        if (isset($urlParts['pass'])) {
-            $urlObject->setPassword($urlParts['pass']);
+
+        if (isset($urlParts['user']) || $urlObject->isExternal()) {
+            if (isset($urlParts['user'])) {
+                $urlObject->setUsername($urlParts['user']);
+            }
+            if (isset($urlParts['host'])) {
+                $urlObject->setHost($urlParts['host']);
+            }
+            if (isset($urlParts['port'])) {
+                $urlObject->setPort($urlParts['port']);
+            }
+            if (isset($urlParts['scheme'])) {
+                $urlObject->setScheme($urlParts['scheme']);
+            }
+            if (isset($urlParts['pass'])) {
+                $urlObject->setPassword($urlParts['pass']);
+            }
         }
 
         $urlObject->setParams($params);
