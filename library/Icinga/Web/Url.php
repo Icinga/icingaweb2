@@ -133,7 +133,7 @@ class Url
             $urlParams->set($k, $v);
         }
         $url->setParams($urlParams);
-        $url->setBaseUrl($request->getBaseUrl());
+        $url->setBasePath($request->getBaseUrl());
         return $url;
     }
 
@@ -191,17 +191,27 @@ class Url
             || (isset($urlParts['port']) && $urlParts['port'] != $request->getServer('SERVER_PORT')))
         ) {
             $urlObject->setIsExternal();
-        } else {
-            $urlObject->setBasePath($request->getBaseUrl());
         }
 
         if (isset($urlParts['path'])) {
             $urlPath = $urlParts['path'];
             if ($urlPath && $urlPath[0] === '/') {
-                $urlPath = substr($urlPath, 1);
+                if ($urlObject->isExternal()) {
+                    $urlPath = substr($urlPath, 1);
+                } else {
+                    $requestBaseUrl = $request->getBaseUrl();
+                    if ($requestBaseUrl && $requestBaseUrl !== '/' && strpos($urlPath, $requestBaseUrl) === 0) {
+                        $urlPath = substr($urlPath, strlen($requestBaseUrl) + 1);
+                        $urlObject->setBasePath($requestBaseUrl);
+                    }
+                }
+            } elseif (!$urlObject->isExternal()) {
+                $urlObject->setBasePath($request->getBaseUrl());
             }
 
             $urlObject->setPath($urlPath);
+        } elseif (!$urlObject->isExternal()) {
+            $urlObject->setBasePath($request->getBaseUrl());
         }
 
         // TODO: This has been used by former filter implementation, remove it:
