@@ -565,7 +565,7 @@ class Navigation implements ArrayAccess, Countable, IteratorAggregate
     {
         $navigation = new static();
         foreach ($array as $name => $properties) {
-            $navigation->addItem($name, $properties);
+            $navigation->addItem((string) $name, $properties);
         }
 
         return $navigation;
