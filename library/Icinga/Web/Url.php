@@ -189,7 +189,7 @@ class Url
         if (isset($urlParts['path'])) {
             $urlPath = $urlParts['path'];
             if ($urlPath && $urlPath[0] === '/') {
-                if ($urlObject->isExternal()) {
+                if ($urlObject->isExternal() || isset($urlParts['user'])) {
                     $urlPath = substr($urlPath, 1);
                 } else {
                     $requestBaseUrl = $request->getBaseUrl();
@@ -198,12 +198,12 @@ class Url
                         $urlObject->setBasePath($requestBaseUrl);
                     }
                 }
-            } elseif (!$urlObject->isExternal()) {
+            } elseif (! $urlObject->isExternal()) {
                 $urlObject->setBasePath($request->getBaseUrl());
             }
 
             $urlObject->setPath($urlPath);
-        } elseif (!$urlObject->isExternal()) {
+        } elseif (! $urlObject->isExternal()) {
             $urlObject->setBasePath($request->getBaseUrl());
         }
 
