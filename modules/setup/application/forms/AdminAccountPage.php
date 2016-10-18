@@ -270,7 +270,7 @@ class AdminAccountPage extends Form
      */
     protected function getUsername()
     {
-        $name = ExternalBackend::getRemoteUser(null);
+        $name = ExternalBackend::getRemoteUser($this->backendConfig['username_envvar']);
         if ($name === null) {
             return '';
         }
