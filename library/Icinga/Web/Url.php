@@ -609,7 +609,7 @@ class Url
                 $urlString .= ':' . $this->getPort();
             }
 
-            return $urlString . '/' . $path;
+            return $urlString . $basePath . ($basePath !== '/' && $path ? '/' : '') . $path;
         } else {
             return $basePath . ($basePath !== '/' && $path ? '/' : '') . $path;
         }
