@@ -37,6 +37,7 @@ class LoggingConfigForm extends Form
                 'label'         => $this->translate('Logging Type'),
                 'description'   => $this->translate('The type of logging to utilize.'),
                 'multiOptions'  => array(
+                    'php'       => $this->translate('Webserver Log', 'app.config.logging.type'),
                     'syslog'    => 'Syslog',
                     'file'      => $this->translate('File', 'app.config.logging.type'),
                     'none'      => $this->translate('None', 'app.config.logging.type')
