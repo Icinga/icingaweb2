@@ -428,6 +428,9 @@ class Url
         if ($this->getPort()) {
             $urlString .= ':' . $this->getPort();
         }
+        if ($this->getBasePath()) {
+            $urlString .= $this->getBasePath();
+        }
 
         return $urlString;
     }
