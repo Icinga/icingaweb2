@@ -274,7 +274,6 @@ class Url
         return $this;
     }
 
-
     /**
      * Set the basePath for this url
      *
@@ -299,7 +298,7 @@ class Url
     }
 
     /**
-     * Overwrite the host
+     * Set the host for this url
      *
      * @param   string  $host     New host of this Url
      *
