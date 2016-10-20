@@ -54,7 +54,7 @@ class NavigationItemForm extends Form
                 'label'         => $this->translate('Url'),
                 'description'   => $this->translate(
                     'The url of this navigation item. Leave blank if you only want the'
-                    . ' name being displayed. For external urls, make sure to prepend'
+                    . ' name being displayed. For internal urls with password and username in them and for all external urls, make sure to prepend'
                     . ' an appropriate protocol identifier (e.g. http://example.tld)'
                 )
             )

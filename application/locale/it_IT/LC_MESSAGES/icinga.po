@@ -2517,16 +2517,6 @@ msgstr "Tipo del backend gruppo utenti"
 msgid "The unique name of this resource"
 msgstr "Nome univoco per questa risorsa"
 
-#: /usr/share/icingaweb2/application/forms/Navigation/NavigationItemForm.php:56
-msgid ""
-"The url of this navigation item. Leave blank if you only want the name being "
-"displayed. For external urls, make sure to prepend an appropriate protocol "
-"identifier (e.g. http://example.tld)"
-msgstr ""
-"La url di questo oggetto di navigazione. Lasciare vuoto se si vuole solo "
-"mostrare il nome. Per url esterne ricordare di anteporre l'appropriato "
-"identificatore di protocollo (ex. http://esempio.tld)"
-
 #: /usr/share/icingaweb2/application/forms/Navigation/DashletForm.php:29
 msgid ""
 "The url to load in the dashlet. For external urls, make sure to prepend an "
