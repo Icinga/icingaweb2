@@ -4,7 +4,6 @@
 namespace Icinga\Application\Modules;
 
 use Exception;
-use Icinga\Authentication\Auth;
 use Zend_Controller_Router_Route;
 use Zend_Controller_Router_Route_Abstract;
 use Zend_Controller_Router_Route_Regex;
@@ -1283,22 +1282,19 @@ class Module
      */
     protected function provideHook($name, $implementation = null, $key = null)
     {
-        if (Auth::getInstance()->hasPermission('module/' . $this->name)) {
-            if ($implementation === null) {
-                $implementation = $name;
-            }
-
-            if (strpos($implementation, '\\') === false) {
-                $class = $this->getNamespace()
-                    . '\\ProvidedHook\\'
-                    . $this->slashesToNamespace($implementation);
-            } else {
-                $class = $implementation;
-            }
-
-            Hook::register($name, $class, $class);
+        if ($implementation === null) {
+            $implementation = $name;
         }
 
+        if (strpos($implementation, '\\') === false) {
+            $class = $this->getNamespace()
+                   . '\\ProvidedHook\\'
+                   . $this->slashesToNamespace($implementation);
+        } else {
+            $class = $implementation;
+        }
+
+        Hook::register($name, $class, $class);
         return $this;
     }
 
