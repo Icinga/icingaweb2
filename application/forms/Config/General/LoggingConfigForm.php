@@ -4,6 +4,7 @@
 namespace Icinga\Forms\Config\General;
 
 use Icinga\Application\Logger;
+use Icinga\Application\Platform;
 use Icinga\Web\Form;
 
 /**
@@ -90,22 +91,50 @@ class LoggingConfigForm extends Form
                     )
                 )
             );
-            /*
-             * Note(el): Since we provide only one possible value for the syslog facility, I opt against exposing
-             * this configuration.
-             */
-//            $this->addElement(
-//                'select',
-//                'logging_facility',
-//                array(
-//                    'required'      => true,
-//                    'label'         => $this->translate('Facility'),
-//                    'description'   => $this->translate('The syslog facility to utilize.'),
-//                    'multiOptions'  => array(
-//                        'user' => 'LOG_USER'
-//                    )
-//                )
-//            );
+
+            if (Platform::isWindows()) {
+                /* @see https://secure.php.net/manual/en/function.openlog.php */
+                $this->addElement(
+                    'hidden',
+                    'logging_facility',
+                    array(
+                        'value'     => 'user',
+                        'disabled'  => true
+                    )
+                );
+            } else {
+                $this->addElement(
+                    'select',
+                    'logging_facility',
+                    array(
+                        'required'      => true,
+                        'label'         => $this->translate('Facility'),
+                        'description'   => $this->translate('The syslog facility to utilize.'),
+                        'value'         => 'user',
+                        'multiOptions'  => array(
+                            'auth'      => 'LOG_AUTH',
+                            'authpriv'  => 'LOG_AUTHPRIV',
+                            'cron'      => 'LOG_CRON',
+                            'daemon'    => 'LOG_DAEMON',
+                            'kern'      => 'LOG_KERN',
+                            'local0'    => 'LOG_LOCAL0',
+                            'local1'    => 'LOG_LOCAL1',
+                            'local2'    => 'LOG_LOCAL2',
+                            'local3'    => 'LOG_LOCAL3',
+                            'local4'    => 'LOG_LOCAL4',
+                            'local5'    => 'LOG_LOCAL5',
+                            'local6'    => 'LOG_LOCAL6',
+                            'local7'    => 'LOG_LOCAL7',
+                            'lpr'       => 'LOG_LPR',
+                            'mail'      => 'LOG_MAIL',
+                            'news'      => 'LOG_NEWS',
+                            'syslog'    => 'LOG_SYSLOG',
+                            'user'      => 'LOG_USER',
+                            'uucp'      => 'LOG_UUCP'
+                        )
+                    )
+                );
+            }
         } elseif (isset($formData['logging_log']) && $formData['logging_log'] === 'file') {
             $this->addElement(
                 'text',

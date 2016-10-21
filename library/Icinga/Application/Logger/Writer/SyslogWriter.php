@@ -6,6 +6,7 @@ namespace Icinga\Application\Logger\Writer;
 use Icinga\Data\ConfigObject;
 use Icinga\Application\Logger;
 use Icinga\Application\Logger\LogWriter;
+use Icinga\Exception\ConfigurationError;
 
 /**
  * Log to the syslog service
@@ -32,7 +33,25 @@ class SyslogWriter extends LogWriter
      * @var array
      */
     public static $facilities = array(
-        'user' => LOG_USER
+        'auth'      => LOG_AUTH,
+        'authpriv'  => LOG_AUTHPRIV,
+        'cron'      => LOG_CRON,
+        'daemon'    => LOG_DAEMON,
+        'kern'      => LOG_KERN,
+        'local0'    => LOG_LOCAL0,
+        'local1'    => LOG_LOCAL1,
+        'local2'    => LOG_LOCAL2,
+        'local3'    => LOG_LOCAL3,
+        'local4'    => LOG_LOCAL4,
+        'local5'    => LOG_LOCAL5,
+        'local6'    => LOG_LOCAL6,
+        'local7'    => LOG_LOCAL7,
+        'lpr'       => LOG_LPR,
+        'mail'      => LOG_MAIL,
+        'news'      => LOG_NEWS,
+        'syslog'    => LOG_SYSLOG,
+        'user'      => LOG_USER,
+        'uucp'      => LOG_UUCP
     );
 
     /**
@@ -55,7 +74,16 @@ class SyslogWriter extends LogWriter
     public function __construct(ConfigObject $config)
     {
         $this->ident = $config->get('application', 'icingaweb2');
-        $this->facility = static::$facilities['user'];
+
+        $configuredFacility = $config->get('facility', 'user');
+        if (! isset(static::$facilities[$configuredFacility])) {
+            throw new ConfigurationError(
+                'Invalid logging facility: "%s" (expected one of: %s)',
+                $configuredFacility,
+                implode(', ', array_keys(static::$facilities))
+            );
+        }
+        $this->facility = static::$facilities[$configuredFacility];
     }
 
     /**
