@@ -4,6 +4,7 @@
 namespace Icinga\Forms\Config\General;
 
 use Icinga\Application\Logger;
+use Icinga\Application\Logger\Writer\SyslogWriter;
 use Icinga\Application\Platform;
 use Icinga\Web\Form;
 
@@ -103,6 +104,7 @@ class LoggingConfigForm extends Form
                     )
                 );
             } else {
+                $facilities = array_keys(SyslogWriter::$facilities);
                 $this->addElement(
                     'select',
                     'logging_facility',
@@ -111,17 +113,7 @@ class LoggingConfigForm extends Form
                         'label'         => $this->translate('Facility'),
                         'description'   => $this->translate('The syslog facility to utilize.'),
                         'value'         => 'user',
-                        'multiOptions'  => array(
-                            'user'      => 'LOG_USER',
-                            'local0'    => 'LOG_LOCAL0',
-                            'local1'    => 'LOG_LOCAL1',
-                            'local2'    => 'LOG_LOCAL2',
-                            'local3'    => 'LOG_LOCAL3',
-                            'local4'    => 'LOG_LOCAL4',
-                            'local5'    => 'LOG_LOCAL5',
-                            'local6'    => 'LOG_LOCAL6',
-                            'local7'    => 'LOG_LOCAL7'
-                        )
+                        'multiOptions'  => array_combine($facilities, $facilities)
                     )
                 );
             }
