@@ -33,11 +33,7 @@ class SyslogWriter extends LogWriter
      * @var array
      */
     public static $facilities = array(
-        'auth'      => LOG_AUTH,
-        'authpriv'  => LOG_AUTHPRIV,
-        'cron'      => LOG_CRON,
-        'daemon'    => LOG_DAEMON,
-        'kern'      => LOG_KERN,
+        'user'      => LOG_USER,
         'local0'    => LOG_LOCAL0,
         'local1'    => LOG_LOCAL1,
         'local2'    => LOG_LOCAL2,
@@ -45,13 +41,7 @@ class SyslogWriter extends LogWriter
         'local4'    => LOG_LOCAL4,
         'local5'    => LOG_LOCAL5,
         'local6'    => LOG_LOCAL6,
-        'local7'    => LOG_LOCAL7,
-        'lpr'       => LOG_LPR,
-        'mail'      => LOG_MAIL,
-        'news'      => LOG_NEWS,
-        'syslog'    => LOG_SYSLOG,
-        'user'      => LOG_USER,
-        'uucp'      => LOG_UUCP
+        'local7'    => LOG_LOCAL7
     );
 
     /**
