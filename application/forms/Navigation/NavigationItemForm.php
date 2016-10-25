@@ -53,9 +53,9 @@ class NavigationItemForm extends Form
                 'allowEmpty'    => true,
                 'label'         => $this->translate('Url'),
                 'description'   => $this->translate(
-                    'The url of this navigation item. Leave blank if you only want the'
-                    . ' name being displayed. For internal urls with password and username in them and for all external urls, make sure to prepend'
-                    . ' an appropriate protocol identifier (e.g. http://example.tld)'
+                    'The url of this navigation item. Leave blank if only the name should be displayed.'
+                    . ' For urls with username and password and for all external urls,'
+                    . ' make sure to prepend an appropriate protocol identifier (e.g. http://example.tld)'
                 )
             )
         );
