@@ -118,6 +118,9 @@ abstract class IniRepository extends Repository implements Extensible, Updatable
                 }
             }
 
+            // This is necessary as the query result set contains the key column.
+            unset($config->$keyColumn);
+
             if ($newSection) {
                 if ($this->ds->hasSection($newSection)) {
                     throw new StatementException(t('Cannot update. Section "%s" does already exist'), $newSection);
