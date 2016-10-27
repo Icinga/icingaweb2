@@ -93,15 +93,12 @@ abstract class IniRepository extends Repository implements Extensible, Updatable
             );
         }
 
+        $query = $this->ds->select();
         if ($filter !== null) {
-            $filter = $this->requireFilter($target, $filter);
+            $query->addFilter($this->requireFilter($target, $filter));
         }
 
         $newSection = null;
-
-        $query = $this->ds->select();
-        $query->addFilter($filter);
-
         foreach ($query as $section => $config) {
             if ($newSection !== null) {
                 throw new StatementException(
@@ -149,17 +146,15 @@ abstract class IniRepository extends Repository implements Extensible, Updatable
      */
     public function delete($target, Filter $filter = null)
     {
-        if ($filter !== null) {
-            $filter = $this->requireFilter($target, $filter);
-        }
-
         $query = $this->ds->select();
-        $query->addFilter($filter);
+        if ($filter !== null) {
+            $query->addFilter($this->requireFilter($target, $filter));
+        }
 
         foreach ($query as $section => $config) {
             $this->ds->removeSection($section);
         }
-        
+
         try {
             $this->ds->saveIni();
         } catch (Exception $e) {
