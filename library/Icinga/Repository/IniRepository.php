@@ -5,6 +5,7 @@ namespace Icinga\Repository;
 
 use Exception;
 use Icinga\Application\Config;
+use Icinga\Data\ConfigObject;
 use Icinga\Data\Extensible;
 use Icinga\Data\Filter\Filter;
 use Icinga\Data\Updatable;
@@ -18,6 +19,7 @@ use Icinga\Exception\StatementException;
  * Additionally provided features:
  * <ul>
  *  <li>Insert, update and delete capabilities</li>
+ *  <li>Triggers for inserts, updates and deletions</li>
  * </ul>
  */
 abstract class IniRepository extends Repository implements Extensible, Updatable, Reducible
@@ -28,6 +30,19 @@ abstract class IniRepository extends Repository implements Extensible, Updatable
      * @var Config
      */
     protected $ds;
+
+    /**
+     * The tables for which triggers are available when inserting, updating or deleting rows
+     *
+     * This may be initialized by concrete repository implementations and describes for which table names triggers
+     * are available. The repository attempts to find a method depending on the type of event and table for which
+     * to run the trigger. The name of such a method is expected to be declared using lowerCamelCase.
+     * (e.g. group_membership will be translated to onUpdateGroupMembership and groupmembership will be translated
+     * to onUpdateGroupmembership) The available events are onInsert, onUpdate and onDelete.
+     *
+     * @var array
+     */
+    protected $triggers;
 
     /**
      * Create a new INI repository object
@@ -43,6 +58,119 @@ abstract class IniRepository extends Repository implements Extensible, Updatable
         if (! $ds->getConfigObject()->getKeyColumn()) {
             throw new ProgrammingError('INI repositories require their data source to provide a valid key column');
         }
+    }
+
+    /**
+     * Return the tables for which triggers are available when inserting, updating or deleting rows
+     *
+     * Calls $this->initializeTriggers() in case $this->triggers is null.
+     *
+     * @return  array
+     */
+    public function getTriggers()
+    {
+        if ($this->triggers === null) {
+            $this->triggers = $this->initializeTriggers();
+        }
+
+        return $this->triggers;
+    }
+
+    /**
+     * Overwrite this in your repository implementation in case you need to initialize the triggers lazily
+     *
+     * @return  array
+     */
+    protected function initializeTriggers()
+    {
+        return array();
+    }
+
+    /**
+     * Run a trigger for the given table and row which is about to be inserted
+     *
+     * @param   string          $table
+     * @param   ConfigObject    $new
+     *
+     * @return  ConfigObject
+     */
+    public function onInsert($table, ConfigObject $new)
+    {
+        $trigger = $this->getTrigger($table, 'onInsert');
+        if ($trigger !== null) {
+            $row = $this->$trigger($new);
+            if ($row !== null) {
+                $new = $row;
+            }
+        }
+
+        return $new;
+    }
+
+    /**
+     * Run a trigger for the given table and row which is about to be updated
+     *
+     * @param   string          $table
+     * @param   ConfigObject    $old
+     * @param   ConfigObject    $new
+     *
+     * @return  ConfigObject
+     */
+    public function onUpdate($table, ConfigObject $old, ConfigObject $new)
+    {
+        $trigger = $this->getTrigger($table, 'onUpdate');
+        if ($trigger !== null) {
+            $row = $this->$trigger($old, $new);
+            if ($row !== null) {
+                $new = $row;
+            }
+        }
+
+        return $new;
+    }
+
+    /**
+     * Run a trigger for the given table and row which has been deleted
+     *
+     * @param   string          $table
+     * @param   ConfigObject    $old
+     *
+     * @return  ConfigObject
+     */
+    public function onDelete($table, ConfigObject $old)
+    {
+        $trigger = $this->getTrigger($table, 'onDelete');
+        if ($trigger !== null) {
+            $this->$trigger($old);
+        }
+    }
+
+    /**
+     * Return the name of the trigger method for the given table and event-type
+     *
+     * @param   string  $table  The table name for which to return a trigger method
+     * @param   string  $event  The name of the event type
+     *
+     * @return  string
+     *
+     * @throws  ProgrammingError    In case the table is registered as having triggers but not any trigger is found
+     */
+    protected function getTrigger($table, $event)
+    {
+        if (! in_array($table, $this->getTriggers())) {
+            return;
+        }
+
+        $identifier = join('', array_map('ucfirst', explode('_', $table)));
+        if (! method_exists($this, $event . $identifier)) {
+            throw new ProgrammingError(
+                'Cannot find any trigger for table "%s". Add a trigger or remove the table from %s::$triggers',
+                $table,
+                get_class($this)
+            );
+        }
+
+        return $event . $identifier;
     }
 
     /**
@@ -64,7 +192,7 @@ abstract class IniRepository extends Repository implements Extensible, Updatable
             throw new StatementException(t('Cannot insert. Section "%s" does already exist'), $section);
         }
 
-        $this->ds->setSection($section, $newData);
+        $this->ds->setSection($section, $this->onInsert($target, new ConfigObject($newData)));
 
         try {
             $this->ds->saveIni();
@@ -98,6 +226,7 @@ abstract class IniRepository extends Repository implements Extensible, Updatable
             $query->addFilter($this->requireFilter($target, $filter));
         }
 
+        /** @var ConfigObject $config */
         $newSection = null;
         foreach ($query as $section => $config) {
             if ($newSection !== null) {
@@ -107,25 +236,32 @@ abstract class IniRepository extends Repository implements Extensible, Updatable
                 );
             }
 
+            $newConfig = clone $config;
             foreach ($newData as $column => $value) {
                 if ($column === $keyColumn) {
                     $newSection = $value;
                 } else {
-                    $config->$column = $value;
+                    $newConfig->$column = $value;
                 }
             }
 
             // This is necessary as the query result set contains the key column.
-            unset($config->$keyColumn);
+            unset($newConfig->$keyColumn);
 
             if ($newSection) {
                 if ($this->ds->hasSection($newSection)) {
                     throw new StatementException(t('Cannot update. Section "%s" does already exist'), $newSection);
                 }
 
-                $this->ds->removeSection($section)->setSection($newSection, $config);
+                $this->ds->removeSection($section)->setSection(
+                    $newSection,
+                    $this->onUpdate($target, $config, $newConfig)
+                );
             } else {
-                $this->ds->setSection($section, $config);
+                $this->ds->setSection(
+                    $section,
+                    $this->onUpdate($target, $config, $newConfig)
+                );
             }
         }
 
@@ -151,8 +287,10 @@ abstract class IniRepository extends Repository implements Extensible, Updatable
             $query->addFilter($this->requireFilter($target, $filter));
         }
 
+        /** @var ConfigObject $config */
         foreach ($query as $section => $config) {
             $this->ds->removeSection($section);
+            $this->onDelete($target, $config);
         }
 
         try {
