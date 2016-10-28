@@ -456,6 +456,7 @@
         this.tables().each(function () {
             new Selection(this, _this.icinga).clear();
         });
+        $('.selection-info-count').text('0');
     };
 
     Icinga.Behaviors.ActionTable = ActionTable;
