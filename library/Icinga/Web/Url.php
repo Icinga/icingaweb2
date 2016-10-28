@@ -4,7 +4,6 @@
 namespace Icinga\Web;
 
 use Icinga\Application\Icinga;
-use Icinga\Cli\FakeRequest;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Data\Filter\Filter;
 
@@ -139,7 +138,9 @@ class Url
     {
         $app = Icinga::app();
         if ($app->isCli()) {
-            return new FakeRequest();
+            throw new ProgrammingError(
+                'Url::fromRequest and Url::fromPath are currently not supported for CLI operations'
+            );
         } else {
             return $app->getRequest();
         }
