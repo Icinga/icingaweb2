@@ -2564,14 +2564,12 @@ msgstr "Der eindeutige Name dieser Ressource"
 
 #: /vagrant/application/forms/Navigation/NavigationItemForm.php:56
 msgid ""
-"The url of this navigation item. Leave blank if you only want the name being "
-"displayed. For external urls, make sure to prepend an appropriate protocol "
-"identifier (e.g. http://example.tld)"
+"The url of this navigation item. Leave blank if only the name should be displayed. For urls with username and password and "
+"for all external urls, make sure to prepend an appropriate protocol identifier (e.g. http://example.tld)"
 msgstr ""
-"Die URL dieses Navigationselementes. Dies kann leer gelassen werden, wenn "
-"nur der Name angezeigt werden soll. Stellen Sie für externe URLs sicher, "
-"dass Sie einen passenden Protokollnamen voran stellen (z.B. http://example."
-"tld)"
+"Die URL dieses Navigationselementes. Dies kann leer gelassen werden, wenn nur der Name angezeigt werden soll. Stelle für URLs "
+"mit Benutzername und Passwort sowie alle externen URLs sicher, dass eine passender Protokollnamen voran gestellt ist (z.B. "
+"http://example.tld)"
 
 #: /vagrant/application/forms/Navigation/DashletForm.php:29
 msgid ""
