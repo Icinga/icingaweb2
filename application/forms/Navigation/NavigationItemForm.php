@@ -56,6 +56,24 @@ class NavigationItemForm extends Form
                     'The url of this navigation item. Leave blank if only the name should be displayed.'
                     . ' For urls with username and password and for all external urls,'
                     . ' make sure to prepend an appropriate protocol identifier (e.g. http://example.tld)'
+                ),
+                'validators'    => array(
+                    array(
+                        'Callback',
+                        false,
+                        array(
+                            'callback' => function($url) {
+                                // Matches if the given url contains obviously
+                                // a username but not any protocol identifier
+                                return !preg_match('#^((?=[^/@]).)+@.*$#', $url);
+                            },
+                            'messages' => array(
+                                'callbackValue' => $this->translate(
+                                    'Missing protocol identifier'
+                                )
+                            )
+                        )
+                    )
                 )
             )
         );
