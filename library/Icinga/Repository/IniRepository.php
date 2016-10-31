@@ -186,13 +186,14 @@ abstract class IniRepository extends Repository implements Extensible, Updatable
     public function insert($target, array $data)
     {
         $newData = $this->requireStatementColumns($target, $data);
-        $section = $this->extractSectionName($newData);
+        $config = $this->onInsert($target, new ConfigObject($newData));
+        $section = $this->extractSectionName($config);
 
         if ($this->ds->hasSection($section)) {
             throw new StatementException(t('Cannot insert. Section "%s" does already exist'), $section);
         }
 
-        $this->ds->setSection($section, $this->onInsert($target, new ConfigObject($newData)));
+        $this->ds->setSection($section, $config);
 
         try {
             $this->ds->saveIni();
@@ -301,23 +302,25 @@ abstract class IniRepository extends Repository implements Extensible, Updatable
     }
 
     /**
-     * Extract and return the section name off of the given $data
+     * Extract and return the section name off of the given $config
      *
-     * @param   array   $data
+     * @param   array|ConfigObject  $config
      *
      * @return  string
      *
      * @throws  ProgrammingError    In case no valid section name is available
      */
-    protected function extractSectionName(array & $data)
+    protected function extractSectionName( & $config)
     {
         $keyColumn = $this->ds->getConfigObject()->getKeyColumn();
-        if (! isset($data[$keyColumn])) {
-            throw new ProgrammingError('$data does not provide a value for key column "%s"', $keyColumn);
+        if (! is_array($config) && !$config instanceof ConfigObject) {
+            throw new ProgrammingError('$config is neither an array nor a ConfigObject');
+        } elseif (! isset($config[$keyColumn])) {
+            throw new ProgrammingError('$config does not provide a value for key column "%s"', $keyColumn);
         }
 
-        $section = $data[$keyColumn];
-        unset($data[$keyColumn]);
+        $section = $config[$keyColumn];
+        unset($config[$keyColumn]);
         return $section;
     }
 }
