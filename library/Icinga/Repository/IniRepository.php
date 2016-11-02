@@ -152,8 +152,6 @@ abstract class IniRepository extends Repository implements Extensible, Updatable
      * @param   string  $event  The name of the event type
      *
      * @return  string
-     *
-     * @throws  ProgrammingError    In case the table is registered as having triggers but not any trigger is found
      */
     protected function getTrigger($table, $event)
     {
@@ -162,15 +160,9 @@ abstract class IniRepository extends Repository implements Extensible, Updatable
         }
 
         $identifier = join('', array_map('ucfirst', explode('_', $table)));
-        if (! method_exists($this, $event . $identifier)) {
-            throw new ProgrammingError(
-                'Cannot find any trigger for table "%s". Add a trigger or remove the table from %s::$triggers',
-                $table,
-                get_class($this)
-            );
+        if (method_exists($this, $event . $identifier)) {
+            return $event . $identifier;
         }
-
-        return $event . $identifier;
     }
 
     /**
