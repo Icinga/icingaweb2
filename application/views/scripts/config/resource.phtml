@@ -58,16 +58,20 @@
             ) ?>
         </td>
         <td class="icon-col text-right">
-            <?= $this->qlink(
-                '',
-                'config/removeresource',
-                array('resource' => $name),
-                array(
-                    'class'   => 'action-link',
-                    'icon'    => 'cancel',
-                    'title'   => sprintf($this->translate('Remove resource %s'), $name)
-                )
-            ) ?>
+            <?php
+            if (! in_array($name, $unremovableResources)) {
+                echo $this->qlink(
+                    '',
+                    'config/removeresource',
+                    array('resource' => $name),
+                    array(
+                        'class'   => 'action-link',
+                        'icon'    => 'cancel',
+                        'title'   => sprintf($this->translate('Remove resource %s'), $name)
+                    )
+                );
+            }
+            ?>
         </td>
     </tr>
 <?php endforeach ?>
