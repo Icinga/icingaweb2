@@ -23,77 +23,77 @@
 # Better indices relevant for Web 2 and Icinga 2 will be re-added.
 # New indices will be introduced.
 
--- CALL drop_index('icinga_hosts', 'instance_id');
-CALL drop_index('icinga_hosts', 'host_object_id');
--- CALL drop_index('icinga_hosts', 'hosts_i_id_idx');
-CALL drop_index('icinga_hosts', 'hosts_host_object_id_idx');
+-- CALL m_drop_index('icinga_hosts', 'instance_id');
+CALL m_drop_index('icinga_hosts', 'host_object_id');
+-- CALL m_drop_index('icinga_hosts', 'hosts_i_id_idx');
+CALL m_drop_index('icinga_hosts', 'hosts_host_object_id_idx');
 
-CALL drop_index('icinga_hoststatus', 'object_id');
--- CALL drop_index('icinga_hoststatus', 'hoststatus_i_id_idx');
--- CALL drop_index('icinga_hoststatus', 'hoststatus_stat_upd_time_idx');
--- CALL drop_index('icinga_hoststatus', 'hoststatus_current_state_idx');
--- CALL drop_index('icinga_hoststatus', 'hoststatus_check_type_idx');
--- CALL drop_index('icinga_hoststatus', 'hoststatus_state_type_idx');
--- CALL drop_index('icinga_hoststatus', 'hoststatus_last_state_chg_idx');
--- CALL drop_index('icinga_hoststatus', 'hoststatus_notif_enabled_idx');
--- CALL drop_index('icinga_hoststatus', 'hoststatus_problem_ack_idx');
--- CALL drop_index('icinga_hoststatus', 'hoststatus_act_chks_en_idx');
--- CALL drop_index('icinga_hoststatus', 'hoststatus_pas_chks_en_idx');
--- CALL drop_index('icinga_hoststatus', 'hoststatus_event_hdl_en_idx');
--- CALL drop_index('icinga_hoststatus', 'hoststatus_flap_det_en_idx');
--- CALL drop_index('icinga_hoststatus', 'hoststatus_is_flapping_idx');
--- CALL drop_index('icinga_hoststatus', 'hoststatus_p_state_chg_idx');
--- CALL drop_index('icinga_hoststatus', 'hoststatus_latency_idx');
--- CALL drop_index('icinga_hoststatus', 'hoststatus_ex_time_idx');
--- CALL drop_index('icinga_hoststatus', 'hoststatus_sch_downt_d_idx');
+CALL m_drop_index('icinga_hoststatus', 'object_id');
+-- CALL m_drop_index('icinga_hoststatus', 'hoststatus_i_id_idx');
+-- CALL m_drop_index('icinga_hoststatus', 'hoststatus_stat_upd_time_idx');
+-- CALL m_drop_index('icinga_hoststatus', 'hoststatus_current_state_idx');
+-- CALL m_drop_index('icinga_hoststatus', 'hoststatus_check_type_idx');
+-- CALL m_drop_index('icinga_hoststatus', 'hoststatus_state_type_idx');
+-- CALL m_drop_index('icinga_hoststatus', 'hoststatus_last_state_chg_idx');
+-- CALL m_drop_index('icinga_hoststatus', 'hoststatus_notif_enabled_idx');
+-- CALL m_drop_index('icinga_hoststatus', 'hoststatus_problem_ack_idx');
+-- CALL m_drop_index('icinga_hoststatus', 'hoststatus_act_chks_en_idx');
+-- CALL m_drop_index('icinga_hoststatus', 'hoststatus_pas_chks_en_idx');
+-- CALL m_drop_index('icinga_hoststatus', 'hoststatus_event_hdl_en_idx');
+-- CALL m_drop_index('icinga_hoststatus', 'hoststatus_flap_det_en_idx');
+-- CALL m_drop_index('icinga_hoststatus', 'hoststatus_is_flapping_idx');
+-- CALL m_drop_index('icinga_hoststatus', 'hoststatus_p_state_chg_idx');
+-- CALL m_drop_index('icinga_hoststatus', 'hoststatus_latency_idx');
+-- CALL m_drop_index('icinga_hoststatus', 'hoststatus_ex_time_idx');
+-- CALL m_drop_index('icinga_hoststatus', 'hoststatus_sch_downt_d_idx');
 
--- CALL drop_index('icinga_services', 'instance_id');
-CALL drop_index('icinga_services', 'service_object_id');
--- CALL drop_index('icinga_services', 'services_i_id_idx');
-CALL drop_index('icinga_services', 'services_host_object_id_idx');
-CALL drop_index('icinga_services', 'services_combined_object_idx');
+-- CALL m_drop_index('icinga_services', 'instance_id');
+CALL m_drop_index('icinga_services', 'service_object_id');
+-- CALL m_drop_index('icinga_services', 'services_i_id_idx');
+CALL m_drop_index('icinga_services', 'services_host_object_id_idx');
+CALL m_drop_index('icinga_services', 'services_combined_object_idx');
 
-CALL drop_index('icinga_servicestatus', 'object_id');
--- CALL drop_index('icinga_servicestatus', 'servicestatus_i_id_idx');
--- CALL drop_index('icinga_servicestatus', 'srvcstatus_stat_upd_time_idx');
--- CALL drop_index('icinga_servicestatus', 'srvcstatus_current_state_idx');
--- CALL drop_index('icinga_servicestatus', 'srvcstatus_check_type_idx');
--- CALL drop_index('icinga_servicestatus', 'srvcstatus_state_type_idx');
--- CALL drop_index('icinga_servicestatus', 'srvcstatus_last_state_chg_idx');
--- CALL drop_index('icinga_servicestatus', 'srvcstatus_notif_enabled_idx');
--- CALL drop_index('icinga_servicestatus', 'srvcstatus_problem_ack_idx');
--- CALL drop_index('icinga_servicestatus', 'srvcstatus_act_chks_en_idx');
--- CALL drop_index('icinga_servicestatus', 'srvcstatus_pas_chks_en_idx');
--- CALL drop_index('icinga_servicestatus', 'srvcstatus_event_hdl_en_idx');
--- CALL drop_index('icinga_servicestatus', 'srvcstatus_flap_det_en_idx');
--- CALL drop_index('icinga_servicestatus', 'srvcstatus_is_flapping_idx');
--- CALL drop_index('icinga_servicestatus', 'srvcstatus_p_state_chg_idx');
--- CALL drop_index('icinga_servicestatus', 'srvcstatus_latency_idx');
--- CALL drop_index('icinga_servicestatus', 'srvcstatus_ex_time_idx');
--- CALL drop_index('icinga_servicestatus', 'srvcstatus_sch_downt_d_idx');
+CALL m_drop_index('icinga_servicestatus', 'object_id');
+-- CALL m_drop_index('icinga_servicestatus', 'servicestatus_i_id_idx');
+-- CALL m_drop_index('icinga_servicestatus', 'srvcstatus_stat_upd_time_idx');
+-- CALL m_drop_index('icinga_servicestatus', 'srvcstatus_current_state_idx');
+-- CALL m_drop_index('icinga_servicestatus', 'srvcstatus_check_type_idx');
+-- CALL m_drop_index('icinga_servicestatus', 'srvcstatus_state_type_idx');
+-- CALL m_drop_index('icinga_servicestatus', 'srvcstatus_last_state_chg_idx');
+-- CALL m_drop_index('icinga_servicestatus', 'srvcstatus_notif_enabled_idx');
+-- CALL m_drop_index('icinga_servicestatus', 'srvcstatus_problem_ack_idx');
+-- CALL m_drop_index('icinga_servicestatus', 'srvcstatus_act_chks_en_idx');
+-- CALL m_drop_index('icinga_servicestatus', 'srvcstatus_pas_chks_en_idx');
+-- CALL m_drop_index('icinga_servicestatus', 'srvcstatus_event_hdl_en_idx');
+-- CALL m_drop_index('icinga_servicestatus', 'srvcstatus_flap_det_en_idx');
+-- CALL m_drop_index('icinga_servicestatus', 'srvcstatus_is_flapping_idx');
+-- CALL m_drop_index('icinga_servicestatus', 'srvcstatus_p_state_chg_idx');
+-- CALL m_drop_index('icinga_servicestatus', 'srvcstatus_latency_idx');
+-- CALL m_drop_index('icinga_servicestatus', 'srvcstatus_ex_time_idx');
+-- CALL m_drop_index('icinga_servicestatus', 'srvcstatus_sch_downt_d_idx');
 
--- CALL drop_index('icinga_hostgroups', 'instance_id');
-CALL drop_index('icinga_hostgroups', 'hostgroups_i_id_idx');
+-- CALL m_drop_index('icinga_hostgroups', 'instance_id');
+CALL m_drop_index('icinga_hostgroups', 'hostgroups_i_id_idx');
 
--- CALL drop_index('icinga_hostgroup_members', 'hostgroup_members_i_id_idx');
-CALL drop_index('icinga_hostgroup_members', 'hstgrpmbrs_hgid_hoid');
+-- CALL m_drop_index('icinga_hostgroup_members', 'hostgroup_members_i_id_idx');
+CALL m_drop_index('icinga_hostgroup_members', 'hstgrpmbrs_hgid_hoid');
 
-CALL drop_index('icinga_objects', 'objecttype_id');
-CALL drop_index('icinga_objects', 'objects_objtype_id_idx');
-CALL drop_index('icinga_objects', 'objects_name1_idx');
-CALL drop_index('icinga_objects', 'objects_name2_idx');
--- CALL drop_index('icinga_objects', 'objects_inst_id_idx');
-CALL drop_index('icinga_objects', 'sla_idx_obj');
+CALL m_drop_index('icinga_objects', 'objecttype_id');
+CALL m_drop_index('icinga_objects', 'objects_objtype_id_idx');
+CALL m_drop_index('icinga_objects', 'objects_name1_idx');
+CALL m_drop_index('icinga_objects', 'objects_name2_idx');
+-- CALL m_drop_index('icinga_objects', 'objects_inst_id_idx');
+CALL m_drop_index('icinga_objects', 'sla_idx_obj');
 
--- CALL drop_index('icinga_servicegroups', 'instance_id');
-CALL drop_index('icinga_servicegroups', 'servicegroups_i_id_idx');
+-- CALL m_drop_index('icinga_servicegroups', 'instance_id');
+CALL m_drop_index('icinga_servicegroups', 'servicegroups_i_id_idx');
 
--- CALL drop_index('icinga_servicegroup_members', 'servicegroup_members_i_id_idx');
-CALL drop_index('icinga_servicegroup_members', 'sgmbrs_sgid_soid');
+-- CALL m_drop_index('icinga_servicegroup_members', 'servicegroup_members_i_id_idx');
+CALL m_drop_index('icinga_servicegroup_members', 'sgmbrs_sgid_soid');
 
-CALL drop_index('icinga_notifications', 'instance_id');
-CALL drop_index('icinga_notifications', 'notification_idx');
-CALL drop_index('icinga_notifications', 'notification_object_id_idx');
+CALL m_drop_index('icinga_notifications', 'instance_id');
+CALL m_drop_index('icinga_notifications', 'notification_idx');
+CALL m_drop_index('icinga_notifications', 'notification_object_id_idx');
 
 ############################
 # DISPLAY_NAME PERFORMANCE #
@@ -104,10 +104,10 @@ CALL drop_index('icinga_notifications', 'notification_object_id_idx');
 # Let's fix that.
 
 ALTER TABLE icinga_hosts MODIFY display_name VARCHAR(255) CHARACTER SET latin1 COLLATE latin1_general_ci;
-CALL create_index('icinga_hosts', 'idx_hosts_display_name', 'display_name');
+CALL m_create_index('icinga_hosts', 'idx_hosts_display_name', 'display_name');
 
 ALTER TABLE icinga_services MODIFY display_name VARCHAR(255) CHARACTER SET latin1 COLLATE latin1_general_ci;
-CALL create_index('icinga_services', 'idx_services_display_name', 'display_name');
+CALL m_create_index('icinga_services', 'idx_services_display_name', 'display_name');
 
 #####################
 # ALIAS PERFORMANCE #
@@ -133,37 +133,37 @@ ALTER TABLE icinga_servicegroups MODIFY alias VARCHAR(255) CHARACTER SET latin1 
 # c) NOT NULL columns must be not null
 
 ALTER TABLE icinga_hosts MODIFY host_object_id BIGINT UNSIGNED NOT NULL;
-CALL create_unique_index('icinga_hosts', 'idx_hosts_host_object_id', 'host_object_id');
+CALL m_create_unique_index('icinga_hosts', 'idx_hosts_host_object_id', 'host_object_id');
 
 ALTER TABLE icinga_hoststatus MODIFY host_object_id BIGINT UNSIGNED NOT NULL;
-CALL create_unique_index('icinga_hoststatus', 'idx_hoststatus_host_object_id', 'host_object_id');
+CALL m_create_unique_index('icinga_hoststatus', 'idx_hoststatus_host_object_id', 'host_object_id');
 
 ALTER TABLE icinga_services MODIFY service_object_id BIGINT UNSIGNED NOT NULL;
 ALTER TABLE icinga_services MODIFY host_object_id BIGINT UNSIGNED NOT NULL;
-CALL create_unique_index('icinga_services', 'idx_services_service_object_id', 'service_object_id, host_object_id');  # Service based joins
-CALL create_unique_index('icinga_services', 'idx_services_host_object_id', 'host_object_id, service_object_id');     # Host based joins
+CALL m_create_unique_index('icinga_services', 'idx_services_service_object_id', 'service_object_id, host_object_id');  # Service based joins
+CALL m_create_unique_index('icinga_services', 'idx_services_host_object_id', 'host_object_id, service_object_id');     # Host based joins
 
 ALTER TABLE icinga_servicestatus MODIFY service_object_id BIGINT UNSIGNED NOT NULL;
-CALL create_unique_index('icinga_servicestatus', 'idx_servicestatus_service_object_id', 'service_object_id');
+CALL m_create_unique_index('icinga_servicestatus', 'idx_servicestatus_service_object_id', 'service_object_id');
 
 ALTER TABLE icinga_hostgroups MODIFY hostgroup_object_id BIGINT UNSIGNED NOT NULL;
-CALL create_unique_index('icinga_hostgroups', 'idx_hostgroups_hostgroup_object_id', 'hostgroup_object_id');
+CALL m_create_unique_index('icinga_hostgroups', 'idx_hostgroups_hostgroup_object_id', 'hostgroup_object_id');
 
 ALTER TABLE icinga_hostgroup_members MODIFY hostgroup_id BIGINT UNSIGNED NOT NULL;
 ALTER TABLE icinga_hostgroup_members MODIFY host_object_id BIGINT UNSIGNED NOT NULL;
-CALL create_unique_index('icinga_hostgroup_members', 'idx_icinga_hostgroup_members_host_object_id', 'host_object_id, hostgroup_id');
+CALL m_create_unique_index('icinga_hostgroup_members', 'idx_icinga_hostgroup_members_host_object_id', 'host_object_id, hostgroup_id');
 
 ALTER TABLE icinga_servicegroups MODIFY servicegroup_object_id BIGINT UNSIGNED NOT NULL;
-CALL create_unique_index('icinga_servicegroups', 'idx_servicegroups_servicegroup_object_id', 'servicegroup_object_id');
+CALL m_create_unique_index('icinga_servicegroups', 'idx_servicegroups_servicegroup_object_id', 'servicegroup_object_id');
 
 ALTER TABLE icinga_servicegroup_members MODIFY servicegroup_id BIGINT UNSIGNED NOT NULL;
 ALTER TABLE icinga_servicegroup_members MODIFY service_object_id BIGINT UNSIGNED NOT NULL;
-CALL create_unique_index('icinga_servicegroup_members', 'idx_icinga_servicegroup_members_service_object_id', 'service_object_id, servicegroup_id');
+CALL m_create_unique_index('icinga_servicegroup_members', 'idx_icinga_servicegroup_members_service_object_id', 'service_object_id, servicegroup_id');
 
 ALTER TABLE icinga_notifications MODIFY instance_id BIGINT UNSIGNED NOT NULL;
 ALTER TABLE icinga_notifications MODIFY object_id BIGINT UNSIGNED NOT NULL;
-CALL create_index('icinga_notifications', 'idx_notifications_instance_id', 'instance_id');
-CALL create_index('icinga_notifications', 'idx_notifications_object_id', 'object_id');
+CALL m_create_index('icinga_notifications', 'idx_notifications_instance_id', 'instance_id');
+CALL m_create_index('icinga_notifications', 'idx_notifications_object_id', 'object_id');
 
 ######################
 # FILTER PERFORMANCE #
@@ -172,7 +172,7 @@ CALL create_index('icinga_notifications', 'idx_notifications_object_id', 'object
 ALTER TABLE icinga_objects MODIFY objecttype_id BIGINT UNSIGNED NOT NULL;
 ALTER TABLE icinga_objects MODIFY is_active TINYINT NOT NULL;
 ALTER TABLE icinga_objects MODIFY name1 varchar(128) CHARACTER SET latin1 COLLATE latin1_general_cs NOT NULL;
-CALL create_unique_index('icinga_objects', 'idx_objects_objecttype_id', 'objecttype_id, is_active, name1, name2');
+CALL m_create_unique_index('icinga_objects', 'idx_objects_objecttype_id', 'objecttype_id, is_active, name1, name2');
 
 # At the moment it's impossible for Web 2 queries which filter for host or service state to use indices because they
 # respect the virtual state PENDING. A host or service is PENDING if it has not been checked yet. Instead of calculating
@@ -198,8 +198,8 @@ FOR EACH ROW
 DELIMITER ;
 
 # Add indices for prominent service list filters, e.g. recently recovered services
-CALL create_index('icinga_servicestatus', 'idx_servicestatus_current_state_last_state_change', 'current_state, last_state_change');
-CALL create_index('icinga_servicestatus', 'idx_servicestatus_current_state_last_check', 'current_state, last_check');
+CALL m_create_index('icinga_servicestatus', 'idx_servicestatus_current_state_last_state_change', 'current_state, last_state_change');
+CALL m_create_index('icinga_servicestatus', 'idx_servicestatus_current_state_last_check', 'current_state, last_check');
 
 ALTER TABLE icinga_hoststatus MODIFY current_state TINYINT NOT NULL;
 ALTER TABLE icinga_hoststatus MODIFY has_been_checked TINYINT NOT NULL;
@@ -220,8 +220,8 @@ FOR EACH ROW
 DELIMITER ;
 
 # Add indices for prominent host list filters
-CALL create_index('icinga_hoststatus', 'idx_hoststatus_current_state_last_state_change', 'current_state, last_state_change');
-CALL create_index('icinga_hoststatus', 'idx_hoststatus_current_state_last_check', 'current_state, last_check');
+CALL m_create_index('icinga_hoststatus', 'idx_hoststatus_current_state_last_state_change', 'current_state, last_state_change');
+CALL m_create_index('icinga_hoststatus', 'idx_hoststatus_current_state_last_check', 'current_state, last_check');
 
 # Add index for prominent notification filter
-CALL create_index('icinga_notifications', 'idx_notifications_start_time', 'start_time');
+CALL m_create_index('icinga_notifications', 'idx_notifications_start_time', 'start_time');
