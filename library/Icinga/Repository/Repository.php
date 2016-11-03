@@ -263,7 +263,7 @@ abstract class Repository implements Selectable
     }
 
     /**
-     * Return the datasource being used for the table $table
+     * Return the datasource being used for the given table
      *
      * @param   string  $table
      *

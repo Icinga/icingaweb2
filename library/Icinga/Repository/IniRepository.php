@@ -27,7 +27,13 @@ abstract class IniRepository extends Repository implements Extensible, Updatable
     /**
      * Per-table datasources
      *
-     * @var Config[string]
+     * <code>
+     * array(
+     *   $table => $datasource
+     * )
+     * </code>
+     *
+     * @var Config[]
      */
     protected $datasources = array();
 
@@ -58,6 +64,14 @@ abstract class IniRepository extends Repository implements Extensible, Updatable
         if (! $ds->getConfigObject()->getKeyColumn()) {
             throw new ProgrammingError('INI repositories require their data source to provide a valid key column');
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getDataSource($table = null)
+    {
+        return isset($this->datasources[$table]) ? $this->datasources[$table] : parent::getDataSource($table);
     }
 
     /**
@@ -315,13 +329,5 @@ abstract class IniRepository extends Repository implements Extensible, Updatable
         $section = $config[$keyColumn];
         unset($config[$keyColumn]);
         return $section;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getDataSource($table = null)
-    {
-        return isset($this->datasources[$table]) ? $this->datasources[$table] : parent::getDataSource($table);
     }
 }
