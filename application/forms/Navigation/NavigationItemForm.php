@@ -99,8 +99,10 @@ class NavigationItemForm extends Form
         $values = parent::getValues($suppressArrayNotation);
         if (isset($values['url']) && $values['url']) {
             $url = Url::fromPath($values['url']);
-            if (! $url->isExternal() && ($relativePath = $url->getRelativeUrl())) {
-                $values['url'] = $relativePath;
+            if ($url->getBasePath() === $this->getRequest()->getBasePath()) {
+                $values['url'] = $url->getRelativeUrl();
+            } else {
+                $values['url'] = $url->getAbsoluteUrl();
             }
         }
 
