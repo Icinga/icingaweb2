@@ -5,6 +5,7 @@ namespace Icinga\Application\Logger\Writer;
 
 use Icinga\Application\Logger;
 use Icinga\Application\Logger\LogWriter;
+use Icinga\Data\ConfigObject;
 use Icinga\Exception\NotWritableError;
 
 /**
@@ -15,11 +16,29 @@ use Icinga\Exception\NotWritableError;
 class PhpWriter extends LogWriter
 {
     /**
+     * Prefix to prepend to each message
+     *
+     * @var string
+     */
+    protected $ident;
+
+    /**
+     * {@inheritDoc}
+     */
+    public function __construct(ConfigObject $config)
+    {
+        parent::__construct($config);
+        $this->ident = $config->get('application', 'icingaweb2');
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function log($severity, $message)
     {
-        if (! error_log(Logger::$levels[$severity] . ' - ' . str_replace("\n", '    ', $message))) {
+        if (! error_log(
+            $this->ident . ': ' . Logger::$levels[$severity] . ' - ' . str_replace("\n", '    ', $message)
+        )) {
             throw new NotWritableError('Could not log to ' . (ini_get('error_log') ?: 'SAPI'));
         }
     }

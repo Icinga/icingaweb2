@@ -63,7 +63,7 @@ class LoggingConfigForm extends Form
             );
         }
 
-        if (false === isset($formData['logging_log']) || $formData['logging_log'] === 'syslog') {
+        if (false === isset($formData['logging_log']) || in_array($formData['logging_log'], array('syslog', 'php'))) {
             $this->addElement(
                 'text',
                 'logging_application',
@@ -71,7 +71,7 @@ class LoggingConfigForm extends Form
                     'required'      => true,
                     'label'         => $this->translate('Application Prefix'),
                     'description'   => $this->translate(
-                        'The name of the application by which to prefix syslog messages.'
+                        'The name of the application by which to prefix log messages.'
                     ),
                     'requirement'   => $this->translate('The application prefix must not contain whitespace.'),
                     'value'         => 'icingaweb2',
