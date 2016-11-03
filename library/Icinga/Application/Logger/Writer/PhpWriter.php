@@ -36,9 +36,9 @@ class PhpWriter extends LogWriter
      */
     public function log($severity, $message)
     {
-        if (! error_log(
-            $this->ident . ': ' . Logger::$levels[$severity] . ' - ' . str_replace("\n", '    ', $message)
-        )) {
+        if (! error_log($this->ident . ': ' . Logger::$levels[$severity] . ' - ' . (
+            ini_get('error_log') === 'syslog' ? str_replace("\n", '    ', $message) : $message
+        ))) {
             throw new NotWritableError('Could not log to ' . (ini_get('error_log') ?: 'SAPI'));
         }
     }
