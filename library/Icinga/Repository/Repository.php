@@ -263,11 +263,13 @@ abstract class Repository implements Selectable
     }
 
     /**
-     * Return the datasource being used
+     * Return the datasource being used for the table $table
+     *
+     * @param   string  $table
      *
      * @return  Selectable
      */
-    public function getDataSource()
+    public function getDataSource($table = null)
     {
         return $this->ds;
     }
