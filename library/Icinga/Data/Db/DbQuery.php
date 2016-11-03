@@ -301,7 +301,7 @@ class DbQuery extends SimpleQuery
             if ($sign === '=') {
                 return $col . ' IN (' . $this->escapeForSql($expression) . ')';
             } elseif ($sign === '!=') {
-                return $col . ' NOT IN (' . $this->escapeForSql($expression) . ')';
+                return $col . ' NOT IN (' . $this->escapeForSql($expression) . ') OR ' . $col . ' IS NULL';
             }
 
             throw new QueryException('Unable to render array expressions with operators other than equal or not equal');
@@ -316,9 +316,12 @@ class DbQuery extends SimpleQuery
                 return new Zend_Db_Expr('FALSE');
             }
 
-            return $col . ' NOT LIKE ' . $this->escapeForSql($this->escapeWildcards($expression));
+            return $col . ' NOT LIKE ' . $this->escapeForSql($this->escapeWildcards($expression))
+                . ' OR ' . $col . ' IS NULL';
         } else {
-            return $col . ' ' . $sign . ' ' . $this->escapeForSql($expression);
+            return $col . ' ' . $sign . ' ' . $this->escapeForSql($expression) . (
+                $sign === '!=' ? ' OR ' . $col . ' IS NULL' : ''
+            );
         }
     }
 
