@@ -214,9 +214,10 @@ abstract class Repository implements Selectable
     /**
      * Create a new repository object
      *
-     * @param   Selectable  $ds     The datasource to use
+     * @param   Selectable|null $ds The datasource to use.
+     *                              Only pass null if you have overridden {@link getDataSource()}!
      */
-    public function __construct(Selectable $ds)
+    public function __construct(Selectable $ds = null)
     {
         $this->ds = $ds;
         $this->aliasTableMap = array();
@@ -271,6 +272,9 @@ abstract class Repository implements Selectable
      */
     public function getDataSource($table = null)
     {
+        if ($this->ds === null) {
+            throw new ProgrammingError('No data source available');
+        }
         return $this->ds;
     }
 
