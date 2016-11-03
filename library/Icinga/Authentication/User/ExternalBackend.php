@@ -26,6 +26,14 @@ class ExternalBackend implements UserBackendInterface
     protected $stripUsernameRegexp;
 
     /**
+     * Key used for lookup in _SERVER array
+     * Examples: HTTP_USER, Default: REMOTE_USER
+     *
+     * @var string
+     */
+    protected $serverVariable = 'REMOTE_USER';
+
+    /**
      * Create new authentication backend of type "external"
      *
      * @param ConfigObject $config
@@ -33,6 +41,7 @@ class ExternalBackend implements UserBackendInterface
     public function __construct(ConfigObject $config)
     {
         $this->stripUsernameRegexp = $config->get('strip_username_regexp');
+        $this->serverVariable = $config->get('server_variable', 'REMOTE_USER');
     }
 
     /**
@@ -71,15 +80,14 @@ class ExternalBackend implements UserBackendInterface
         return null;
     }
 
-
     /**
      * {@inheritdoc}
      */
     public function authenticate(User $user, $password = null)
     {
-        $username = static::getRemoteUser();
+        $username = static::getRemoteUser($this->serverVariable);
         if ($username !== null) {
-            $user->setExternalUserInformation($username, 'REMOTE_USER');
+            $user->setExternalUserInformation($username, $this->serverVariable);
 
             if ($this->stripUsernameRegexp) {
                 $stripped = preg_replace($this->stripUsernameRegexp, '', $username);
