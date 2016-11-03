@@ -33,6 +33,7 @@ BEGIN
     PREPARE stmt FROM @m_drop_index_sql;
     EXECUTE stmt;
     DEALLOCATE PREPARE stmt;
+    SET @m_drop_index_sql = NULL;
   END IF;
 END //
 DELIMITER ;
@@ -53,6 +54,7 @@ BEGIN
     PREPARE stmt FROM @m_create_index_sql;
     EXECUTE stmt;
     DEALLOCATE PREPARE stmt;
+    SET @m_create_index_sql = NULL;
   END IF;
 END //
 DELIMITER ;
@@ -73,6 +75,7 @@ BEGIN
     PREPARE stmt FROM @m_create_index_sql;
     EXECUTE stmt;
     DEALLOCATE PREPARE stmt;
+    SET @m_create_index_sql = NULL;
   END IF;
 END //
 DELIMITER ;
@@ -110,6 +113,7 @@ BEGIN
     PREPARE stmt FROM @m_drop_column_sql;
     EXECUTE stmt;
     DEALLOCATE PREPARE stmt;
+    SET @m_drop_column_sql = NULL;
   END IF;
 END //
 DELIMITER ;
@@ -124,12 +128,13 @@ CREATE PROCEDURE m_add_column (
 BEGIN
   IF NOT m_column_exists(p_table_name, p_column_name)
   THEN
-    SET m_add_column_sql = CONCAT(
+    SET @m_add_column_sql = CONCAT(
       'ALTER TABLE `', SCHEMA(), '`.`', p_table_name, '` ADD COLUMN `', p_column_name, '` ', p_column_definition
     );
     PREPARE stmt FROM @m_add_column_sql;
     EXECUTE stmt;
     DEALLOCATE PREPARE stmt;
+    SET @m_add_column_sql = NULL;
   END IF;
 END //
 DELIMITER ;
