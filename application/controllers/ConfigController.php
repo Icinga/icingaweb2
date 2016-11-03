@@ -315,8 +315,6 @@ class ConfigController extends Controller
     {
         $this->assertPermission('config/application/resources');
         $this->view->resources = Config::app('resources', true);
-        $configResource = Config::app()->get('global', 'config_resource');
-        $this->view->unremovableResources = $configResource === null ? array() : array($configResource);
         $this->createApplicationTabs()->activate('resource');
     }
 
