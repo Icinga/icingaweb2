@@ -16,7 +16,8 @@ class PhpWriter extends LogWriter
     /**
      * {@inheritdoc}
      */
-    public function log($severity, $message) {
+    public function log($severity, $message)
+    {
         error_log(Logger::$levels[$severity] . ' - ' . str_replace("\n", '    ', $message));
     }
 }
