@@ -5,6 +5,7 @@ namespace Icinga\Application\Logger\Writer;
 
 use Icinga\Application\Logger;
 use Icinga\Application\Logger\LogWriter;
+use Icinga\Exception\NotWritableError;
 
 /**
  * Log to the webserver log, a file or syslog
@@ -18,6 +19,8 @@ class PhpWriter extends LogWriter
      */
     public function log($severity, $message)
     {
-        error_log(Logger::$levels[$severity] . ' - ' . str_replace("\n", '    ', $message));
+        if (! error_log(Logger::$levels[$severity] . ' - ' . str_replace("\n", '    ', $message))) {
+            throw new NotWritableError('Could not log to ' . (ini_get('error_log') ?: 'SAPI'));
+        }
     }
 }
