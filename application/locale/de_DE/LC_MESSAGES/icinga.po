@@ -2981,6 +2981,11 @@ msgctxt "app.config.logging.level"
 msgid "Warning"
 msgstr "Warnung"
 
+#: /vagrant/application/forms/Config/General/LoggingConfigForm.php:40
+msgctxt "app.config.logging.type"
+msgid "Webserver Log"
+msgstr "Webserver-Log"
+
 #: /vagrant/application/views/scripts/authentication/login.phtml:5
 msgid ""
 "Welcome to Icinga Web 2. For users of the screen reader Jaws full and "
