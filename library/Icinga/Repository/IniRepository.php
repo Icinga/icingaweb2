@@ -25,17 +25,22 @@ use Icinga\Exception\StatementException;
 abstract class IniRepository extends Repository implements Extensible, Updatable, Reducible
 {
     /**
-     * Per-table datasources
+     * Per-table configs
      *
+     * Example:
      * <code>
      * array(
-     *   $table => $datasource
+     *   'event-type' => array(
+     *     'module'    => 'elasticsearch',
+     *     'path'      => 'event-types',
+     *     'keyColumn' => 'name'
+     *   )
      * )
      * </code>
      *
-     * @var Config[]
+     * @var array
      */
-    protected $datasources = array();
+    protected $configs = null;
 
     /**
      * The tables for which triggers are available when inserting, updating or deleting rows
@@ -53,15 +58,15 @@ abstract class IniRepository extends Repository implements Extensible, Updatable
     /**
      * Create a new INI repository object
      *
-     * @param   Config  $ds         The data source to use
+     * @param   Config|null $ds     The data source to use
      *
      * @throws  ProgrammingError    In case the given data source does not provide a valid key column
      */
-    public function __construct(Config $ds)
+    public function __construct(Config $ds = null)
     {
         parent::__construct($ds); // First! Due to init().
 
-        if (! $ds->getConfigObject()->getKeyColumn()) {
+        if (! ($ds === null || $ds->getConfigObject()->getKeyColumn())) {
             throw new ProgrammingError('INI repositories require their data source to provide a valid key column');
         }
     }
@@ -71,7 +76,56 @@ abstract class IniRepository extends Repository implements Extensible, Updatable
      */
     public function getDataSource($table = null)
     {
-        return isset($this->datasources[$table]) ? $this->datasources[$table] : parent::getDataSource($table);
+        if ($this->ds === null) {
+            if ($table === null) {
+                $table = $this->getBaseTable();
+            }
+
+            if ($this->configs === null) {
+                $this->configs = $this->initializeConfigs();
+                if ($this->configs === null) {
+                    throw new ProgrammingError('Per-table configs missing');
+                }
+            }
+
+            if (! isset($this->configs[$table])) {
+                throw new ProgrammingError('Config for table "%s" missing', $table);
+            }
+
+            $config = $this->configs[$table];
+            if ($config instanceof Config) {
+                if (! $config->getConfigObject()->getKeyColumn()) {
+                    throw new ProgrammingError(
+                        'INI repositories require their data source to provide a valid key column'
+                    );
+                }
+            } elseif (is_array($config)) {
+                if (! isset($config['path'])) {
+                    throw new ProgrammingError('Path to config for table "%s" missing', $table);
+                }
+                if (! isset($config['keyColumn'])) {
+                    throw new ProgrammingError(
+                        'INI repositories require their data source to provide a valid key column'
+                    );
+                }
+
+                $newConfig = isset($config['module'])
+                    ? Config::module($config['module'], $config['path'])
+                    : Config::app($config['path']);
+                $newConfig->getConfigObject()->setKeyColumn($config['keyColumn']);
+                $this->configs[$table] = $config = $newConfig;
+            } else {
+                throw new ProgrammingError(
+                    'Config for table "%s" is a %s, expected either Icinga\Application\Config or an associative array',
+                    $table,
+                    is_object($config) ? get_class($config) : gettype($config)
+                );
+            }
+
+            return $config;
+        } else {
+            return parent::getDataSource($table);
+        }
     }
 
     /**
@@ -98,6 +152,15 @@ abstract class IniRepository extends Repository implements Extensible, Updatable
     protected function initializeTriggers()
     {
         return array();
+    }
+
+    /**
+     * Overwrite this in your INI repository implementation in case you need to initialize the configs lazily
+     *
+     * @return array
+     */
+    protected function initializeConfigs()
+    {
     }
 
     /**
