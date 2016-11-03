@@ -25,11 +25,11 @@ use Icinga\Exception\StatementException;
 abstract class IniRepository extends Repository implements Extensible, Updatable, Reducible
 {
     /**
-     * The datasource being used
+     * Per-table datasources
      *
-     * @var Config
+     * @var Config[string]
      */
-    protected $ds;
+    protected $datasources = array();
 
     /**
      * The tables for which triggers are available when inserting, updating or deleting rows
@@ -179,16 +179,16 @@ abstract class IniRepository extends Repository implements Extensible, Updatable
     {
         $newData = $this->requireStatementColumns($target, $data);
         $config = $this->onInsert($target, new ConfigObject($newData));
-        $section = $this->extractSectionName($config);
+        $section = $this->extractSectionName($config, $target);
 
-        if ($this->ds->hasSection($section)) {
+        if ($this->getDataSource($target)->hasSection($section)) {
             throw new StatementException(t('Cannot insert. Section "%s" does already exist'), $section);
         }
 
-        $this->ds->setSection($section, $config);
+        $this->getDataSource($target)->setSection($section, $config);
 
         try {
-            $this->ds->saveIni();
+            $this->getDataSource($target)->saveIni();
         } catch (Exception $e) {
             throw new StatementException(t('Failed to insert. An error occurred: %s'), $e->getMessage());
         }
@@ -206,7 +206,7 @@ abstract class IniRepository extends Repository implements Extensible, Updatable
     public function update($target, array $data, Filter $filter = null)
     {
         $newData = $this->requireStatementColumns($target, $data);
-        $keyColumn = $this->ds->getConfigObject()->getKeyColumn();
+        $keyColumn = $this->getDataSource($target)->getConfigObject()->getKeyColumn();
         if ($filter === null && isset($newData[$keyColumn])) {
             throw new StatementException(
                 t('Cannot update. Column "%s" holds a section\'s name which must be unique'),
@@ -214,7 +214,7 @@ abstract class IniRepository extends Repository implements Extensible, Updatable
             );
         }
 
-        $query = $this->ds->select();
+        $query = $this->getDataSource($target)->select();
         if ($filter !== null) {
             $query->addFilter($this->requireFilter($target, $filter));
         }
@@ -242,16 +242,16 @@ abstract class IniRepository extends Repository implements Extensible, Updatable
             unset($newConfig->$keyColumn);
 
             if ($newSection) {
-                if ($this->ds->hasSection($newSection)) {
+                if ($this->getDataSource($target)->hasSection($newSection)) {
                     throw new StatementException(t('Cannot update. Section "%s" does already exist'), $newSection);
                 }
 
-                $this->ds->removeSection($section)->setSection(
+                $this->getDataSource($target)->removeSection($section)->setSection(
                     $newSection,
                     $this->onUpdate($target, $config, $newConfig)
                 );
             } else {
-                $this->ds->setSection(
+                $this->getDataSource($target)->setSection(
                     $section,
                     $this->onUpdate($target, $config, $newConfig)
                 );
@@ -259,7 +259,7 @@ abstract class IniRepository extends Repository implements Extensible, Updatable
         }
 
         try {
-            $this->ds->saveIni();
+            $this->getDataSource($target)->saveIni();
         } catch (Exception $e) {
             throw new StatementException(t('Failed to update. An error occurred: %s'), $e->getMessage());
         }
@@ -275,19 +275,19 @@ abstract class IniRepository extends Repository implements Extensible, Updatable
      */
     public function delete($target, Filter $filter = null)
     {
-        $query = $this->ds->select();
+        $query = $this->getDataSource($target)->select();
         if ($filter !== null) {
             $query->addFilter($this->requireFilter($target, $filter));
         }
 
         /** @var ConfigObject $config */
         foreach ($query as $section => $config) {
-            $this->ds->removeSection($section);
+            $this->getDataSource($target)->removeSection($section);
             $this->onDelete($target, $config);
         }
 
         try {
-            $this->ds->saveIni();
+            $this->getDataSource($target)->saveIni();
         } catch (Exception $e) {
             throw new StatementException(t('Failed to delete. An error occurred: %s'), $e->getMessage());
         }
@@ -297,14 +297,15 @@ abstract class IniRepository extends Repository implements Extensible, Updatable
      * Extract and return the section name off of the given $config
      *
      * @param   array|ConfigObject  $config
+     * @param   string              $target The table whose datasource to get the key column from
      *
      * @return  string
      *
      * @throws  ProgrammingError    In case no valid section name is available
      */
-    protected function extractSectionName( & $config)
+    protected function extractSectionName( & $config, $target)
     {
-        $keyColumn = $this->ds->getConfigObject()->getKeyColumn();
+        $keyColumn = $this->getDataSource($target)->getConfigObject()->getKeyColumn();
         if (! is_array($config) && !$config instanceof ConfigObject) {
             throw new ProgrammingError('$config is neither an array nor a ConfigObject');
         } elseif (! isset($config[$keyColumn])) {
@@ -314,5 +315,13 @@ abstract class IniRepository extends Repository implements Extensible, Updatable
         $section = $config[$keyColumn];
         unset($config[$keyColumn]);
         return $section;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getDataSource($table = null)
+    {
+        return isset($this->datasources[$table]) ? $this->datasources[$table] : parent::getDataSource($table);
     }
 }
