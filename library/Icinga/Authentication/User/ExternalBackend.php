@@ -12,6 +12,13 @@ use Icinga\User;
 class ExternalBackend implements UserBackendInterface
 {
     /**
+     * Possible variables where to read the user from
+     *
+     * @var string[]
+     */
+    public static $remoteUserEnvvars = array('REDIRECT_REMOTE_USER', 'REMOTE_USER');
+
+    /**
      * The name of this backend
      *
      * @var string
@@ -81,16 +88,6 @@ class ExternalBackend implements UserBackendInterface
             return $_SERVER[$variable];
         }
         return null;
-    }
-
-    /**
-     * Get possible variables where to read the user from
-     *
-     * @return  string[]
-     */
-    public static function getRemoteUserEnvvars()
-    {
-        return array('REDIRECT_REMOTE_USER', 'REMOTE_USER');
     }
 
     /**

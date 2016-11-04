@@ -33,7 +33,7 @@ class AuthenticationPage extends Form
     {
         if (isset($formData['type']) && $formData['type'] === 'external') {
             $hasRemoteUser = false;
-            foreach (ExternalBackend::getRemoteUserEnvvars() as $envvar) {
+            foreach (ExternalBackend::$remoteUserEnvvars as $envvar) {
                 if (ExternalBackend::getRemoteUser($envvar) !== null) {
                     $hasRemoteUser = true;
                     break;

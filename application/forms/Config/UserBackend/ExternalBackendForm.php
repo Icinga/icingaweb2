@@ -57,7 +57,7 @@ class ExternalBackendForm extends Form
             )
         );
 
-        foreach (ExternalBackend::getRemoteUserEnvvars() as $envvar) {
+        foreach (ExternalBackend::$remoteUserEnvvars as $envvar) {
             if (ExternalBackend::getRemoteUser($envvar) !== null) {
                 break;
             }
