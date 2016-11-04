@@ -94,29 +94,31 @@ class LoggingConfigForm extends Form
                 )
             );
 
-            if (Platform::isWindows()) {
-                /* @see https://secure.php.net/manual/en/function.openlog.php */
-                $this->addElement(
-                    'hidden',
-                    'logging_facility',
-                    array(
-                        'value'     => 'user',
-                        'disabled'  => true
-                    )
-                );
-            } else {
-                $facilities = array_keys(SyslogWriter::$facilities);
-                $this->addElement(
-                    'select',
-                    'logging_facility',
-                    array(
-                        'required'      => true,
-                        'label'         => $this->translate('Facility'),
-                        'description'   => $this->translate('The syslog facility to utilize.'),
-                        'value'         => 'user',
-                        'multiOptions'  => array_combine($facilities, $facilities)
-                    )
-                );
+            if (! isset($formData['logging_log']) || $formData['logging_log'] === 'syslog') {
+                if (Platform::isWindows()) {
+                    /* @see https://secure.php.net/manual/en/function.openlog.php */
+                    $this->addElement(
+                        'hidden',
+                        'logging_facility',
+                        array(
+                            'value' => 'user',
+                            'disabled' => true
+                        )
+                    );
+                } else {
+                    $facilities = array_keys(SyslogWriter::$facilities);
+                    $this->addElement(
+                        'select',
+                        'logging_facility',
+                        array(
+                            'required' => true,
+                            'label' => $this->translate('Facility'),
+                            'description' => $this->translate('The syslog facility to utilize.'),
+                            'value' => 'user',
+                            'multiOptions' => array_combine($facilities, $facilities)
+                        )
+                    );
+                }
             }
         } elseif (isset($formData['logging_log']) && $formData['logging_log'] === 'file') {
             $this->addElement(
