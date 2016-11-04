@@ -39,7 +39,6 @@ class LoggingConfigForm extends Form
                 'label'         => $this->translate('Logging Type'),
                 'description'   => $this->translate('The type of logging to utilize.'),
                 'multiOptions'  => array(
-                    'php'       => $this->translate('Webserver Log', 'app.config.logging.type'),
                     'syslog'    => 'Syslog',
                     'file'      => $this->translate('File', 'app.config.logging.type'),
                     'none'      => $this->translate('None', 'app.config.logging.type')
@@ -65,7 +64,7 @@ class LoggingConfigForm extends Form
             );
         }
 
-        if (false === isset($formData['logging_log']) || in_array($formData['logging_log'], array('syslog', 'php'))) {
+        if (false === isset($formData['logging_log']) || $formData['logging_log'] === 'syslog') {
             $this->addElement(
                 'text',
                 'logging_application',
@@ -73,7 +72,7 @@ class LoggingConfigForm extends Form
                     'required'      => true,
                     'label'         => $this->translate('Application Prefix'),
                     'description'   => $this->translate(
-                        'The name of the application by which to prefix log messages.'
+                        'The name of the application by which to prefix syslog messages.'
                     ),
                     'requirement'   => $this->translate('The application prefix must not contain whitespace.'),
                     'value'         => 'icingaweb2',
