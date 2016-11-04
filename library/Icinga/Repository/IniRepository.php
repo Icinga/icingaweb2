@@ -378,6 +378,34 @@ abstract class IniRepository extends Repository implements Extensible, Updatable
     }
 
     /**
+     * Create and return a Config for the given meta and table
+     *
+     * @param   array   $meta
+     * @param   string  $table
+     *
+     * @return  Config
+     *
+     * @throws  ProgrammingError    In case the given meta is invalid
+     */
+    protected function createConfig(array $meta, $table)
+    {
+        if (! isset($meta['name'])) {
+            throw new ProgrammingError('Config file name missing for table "%s"', $table);
+        } elseif (! isset($meta['keyColumn'])) {
+            throw new ProgrammingError('Config key column name missing for table "%s"', $table);
+        }
+
+        if (isset($meta['module'])) {
+            $config = Config::module($meta['module'], $meta['name']);
+        } else {
+            $config = Config::app($meta['name']);
+        }
+
+        $config->getConfigObject()->setKeyColumn($meta['keyColumn']);
+        return $config;
+    }
+
+    /**
      * Extract and return the section name off of the given $config
      *
      * @param   array|ConfigObject  $config
