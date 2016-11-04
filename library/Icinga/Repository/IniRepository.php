@@ -255,18 +255,20 @@ abstract class IniRepository extends Repository implements Extensible, Updatable
      */
     public function insert($target, array $data)
     {
+        $ds = $this->getDataSource($target);
         $newData = $this->requireStatementColumns($target, $data);
-        $config = $this->onInsert($target, new ConfigObject($newData));
-        $section = $this->extractSectionName($config, $this->getDataSource($target)->getConfigObject()->getKeyColumn());
 
-        if ($this->getDataSource($target)->hasSection($section)) {
+        $config = $this->onInsert($target, new ConfigObject($newData));
+        $section = $this->extractSectionName($config, $ds->getConfigObject()->getKeyColumn());
+
+        if ($ds->hasSection($section)) {
             throw new StatementException(t('Cannot insert. Section "%s" does already exist'), $section);
         }
 
-        $this->getDataSource($target)->setSection($section, $config);
+        $ds->setSection($section, $config);
 
         try {
-            $this->getDataSource($target)->saveIni();
+            $ds->saveIni();
         } catch (Exception $e) {
             throw new StatementException(t('Failed to insert. An error occurred: %s'), $e->getMessage());
         }
@@ -283,8 +285,10 @@ abstract class IniRepository extends Repository implements Extensible, Updatable
      */
     public function update($target, array $data, Filter $filter = null)
     {
+        $ds = $this->getDataSource($target);
         $newData = $this->requireStatementColumns($target, $data);
-        $keyColumn = $this->getDataSource($target)->getConfigObject()->getKeyColumn();
+
+        $keyColumn = $ds->getConfigObject()->getKeyColumn();
         if ($filter === null && isset($newData[$keyColumn])) {
             throw new StatementException(
                 t('Cannot update. Column "%s" holds a section\'s name which must be unique'),
@@ -292,7 +296,7 @@ abstract class IniRepository extends Repository implements Extensible, Updatable
             );
         }
 
-        $query = $this->getDataSource($target)->select();
+        $query = $ds->select();
         if ($filter !== null) {
             $query->addFilter($this->requireFilter($target, $filter));
         }
@@ -320,16 +324,16 @@ abstract class IniRepository extends Repository implements Extensible, Updatable
             unset($newConfig->$keyColumn);
 
             if ($newSection) {
-                if ($this->getDataSource($target)->hasSection($newSection)) {
+                if ($ds->hasSection($newSection)) {
                     throw new StatementException(t('Cannot update. Section "%s" does already exist'), $newSection);
                 }
 
-                $this->getDataSource($target)->removeSection($section)->setSection(
+                $ds->removeSection($section)->setSection(
                     $newSection,
                     $this->onUpdate($target, $config, $newConfig)
                 );
             } else {
-                $this->getDataSource($target)->setSection(
+                $ds->setSection(
                     $section,
                     $this->onUpdate($target, $config, $newConfig)
                 );
@@ -337,7 +341,7 @@ abstract class IniRepository extends Repository implements Extensible, Updatable
         }
 
         try {
-            $this->getDataSource($target)->saveIni();
+            $ds->saveIni();
         } catch (Exception $e) {
             throw new StatementException(t('Failed to update. An error occurred: %s'), $e->getMessage());
         }
@@ -353,19 +357,21 @@ abstract class IniRepository extends Repository implements Extensible, Updatable
      */
     public function delete($target, Filter $filter = null)
     {
-        $query = $this->getDataSource($target)->select();
+        $ds = $this->getDataSource($target);
+
+        $query = $ds->select();
         if ($filter !== null) {
             $query->addFilter($this->requireFilter($target, $filter));
         }
 
         /** @var ConfigObject $config */
         foreach ($query as $section => $config) {
-            $this->getDataSource($target)->removeSection($section);
+            $ds->removeSection($section);
             $this->onDelete($target, $config);
         }
 
         try {
-            $this->getDataSource($target)->saveIni();
+            $ds->saveIni();
         } catch (Exception $e) {
             throw new StatementException(t('Failed to delete. An error occurred: %s'), $e->getMessage());
         }
