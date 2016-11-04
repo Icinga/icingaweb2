@@ -70,12 +70,24 @@ class GeneralConfigStep extends Step
             $loggingHtml = '<p>' . mt('setup', 'Logging will be disabled.') . '</p>';
         } else {
             $level = $this->data['generalConfig']['logging_level'];
+            switch ($type) {
+                case 'syslog':
+                    $typeText = t('Syslog', 'app.config.logging.type');
+                    break;
+                case 'php':
+                    $typeText = t('Webserver Log', 'app.config.logging.type');
+                    break;
+                case 'file':
+                    $typeText = t('File', 'app.config.logging.type');
+                    break;
+            }
+
             $loggingHtml = ''
                 . '<table>'
                 . '<tbody>'
                 . '<tr>'
                 . '<td><strong>' . t('Type', 'app.config.logging') . '</strong></td>'
-                . '<td>' . ($type === 'syslog' ? 'Syslog' : t('File', 'app.config.logging.type')) . '</td>'
+                . '<td>' . $typeText . '</td>'
                 . '</tr>'
                 . '<tr>'
                 . '<td><strong>' . t('Level', 'app.config.logging') . '</strong></td>'
@@ -88,7 +100,7 @@ class GeneralConfigStep extends Step
                 )) . '</td>'
                 . '</tr>'
                 . '<tr>'
-                . ($type === 'syslog' ? (
+                . ($type !== 'file' ? (
                     '<td><strong>' . t('Application Prefix') . '</strong></td>'
                     . '<td>' . $this->data['generalConfig']['logging_application'] . '</td>'
                 ) : (
