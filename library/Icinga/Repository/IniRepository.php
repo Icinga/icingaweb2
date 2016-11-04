@@ -74,59 +74,56 @@ abstract class IniRepository extends Repository implements Extensible, Updatable
 
     /**
      * {@inheritDoc}
+     *
+     * @return  Config
      */
     public function getDataSource($table = null)
     {
-        if ($this->ds === null) {
-            if ($table === null) {
-                $table = $this->getBaseTable();
-            }
-
-            if ($this->configs === null) {
-                $this->configs = $this->initializeConfigs();
-                if ($this->configs === null) {
-                    throw new ProgrammingError('Per-table configs missing');
-                }
-            }
-
-            if (! isset($this->configs[$table])) {
-                throw new ProgrammingError('Config for table "%s" missing', $table);
-            }
-
-            $config = $this->configs[$table];
-            if ($config instanceof Config) {
-                if (! $config->getConfigObject()->getKeyColumn()) {
-                    throw new ProgrammingError(
-                        'INI repositories require their data source to provide a valid key column'
-                    );
-                }
-            } elseif (is_array($config)) {
-                if (! isset($config['path'])) {
-                    throw new ProgrammingError('Path to config for table "%s" missing', $table);
-                }
-                if (! isset($config['keyColumn'])) {
-                    throw new ProgrammingError(
-                        'INI repositories require their data source to provide a valid key column'
-                    );
-                }
-
-                $newConfig = isset($config['module'])
-                    ? Config::module($config['module'], $config['path'])
-                    : Config::app($config['path']);
-                $newConfig->getConfigObject()->setKeyColumn($config['keyColumn']);
-                $this->configs[$table] = $config = $newConfig;
-            } else {
-                throw new ProgrammingError(
-                    'Config for table "%s" is a %s, expected either Icinga\Application\Config or an associative array',
-                    $table,
-                    is_object($config) ? get_class($config) : gettype($config)
-                );
-            }
-
-            return $config;
-        } else {
+        if ($this->ds !== null) {
             return parent::getDataSource($table);
         }
+
+        $table = $table ?: $this->getBaseTable();
+        $configs = $this->getConfigs();
+        if (! isset($configs[$table])) {
+            throw new ProgrammingError('Config for table "%s" missing', $table);
+        } elseif (! $configs[$table] instanceof Config) {
+            $configs[$table] = $this->createConfig($configs[$table], $table);
+        }
+
+        if (! $configs[$table]->getConfigObject()->getKeyColumn()) {
+            throw new ProgrammingError(
+                'INI repositories require their data source to provide a valid key column'
+            );
+        }
+
+        return $configs[$table];
+    }
+
+    /**
+     * Return the configuration files used as table specific datasources
+     *
+     * Calls $this->initializeConfigs() in case $this->configs is null.
+     *
+     * @return  array
+     */
+    public function getConfigs()
+    {
+        if ($this->configs === null) {
+            $this->configs = $this->initializeConfigs();
+        }
+
+        return $this->configs;
+    }
+
+    /**
+     * Overwrite this in your repository implementation in case you need to initialize the configs lazily
+     *
+     * @return  array
+     */
+    protected function initializeConfigs()
+    {
+        return array();
     }
 
     /**
@@ -153,15 +150,6 @@ abstract class IniRepository extends Repository implements Extensible, Updatable
     protected function initializeTriggers()
     {
         return array();
-    }
-
-    /**
-     * Overwrite this in your INI repository implementation in case you need to initialize the configs lazily
-     *
-     * @return array
-     */
-    protected function initializeConfigs()
-    {
     }
 
     /**
