@@ -257,7 +257,7 @@ abstract class IniRepository extends Repository implements Extensible, Updatable
     {
         $newData = $this->requireStatementColumns($target, $data);
         $config = $this->onInsert($target, new ConfigObject($newData));
-        $section = $this->extractSectionName($config, $target);
+        $section = $this->extractSectionName($config, $this->getDataSource($target)->getConfigObject()->getKeyColumn());
 
         if ($this->getDataSource($target)->hasSection($section)) {
             throw new StatementException(t('Cannot insert. Section "%s" does already exist'), $section);
@@ -375,15 +375,14 @@ abstract class IniRepository extends Repository implements Extensible, Updatable
      * Extract and return the section name off of the given $config
      *
      * @param   array|ConfigObject  $config
-     * @param   string              $target The table whose datasource to get the key column from
+     * @param   string              $keyColumn
      *
      * @return  string
      *
      * @throws  ProgrammingError    In case no valid section name is available
      */
-    protected function extractSectionName( & $config, $target)
+    protected function extractSectionName( & $config, $keyColumn)
     {
-        $keyColumn = $this->getDataSource($target)->getConfigObject()->getKeyColumn();
         if (! is_array($config) && !$config instanceof ConfigObject) {
             throw new ProgrammingError('$config is neither an array nor a ConfigObject');
         } elseif (! isset($config[$keyColumn])) {
