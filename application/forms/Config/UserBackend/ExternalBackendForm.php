@@ -57,11 +57,17 @@ class ExternalBackendForm extends Form
             )
         );
 
+        $hasRemoteUser = false;
         foreach (ExternalBackend::$remoteUserEnvvars as $envvar) {
             if (ExternalBackend::getRemoteUser($envvar) !== null) {
+                $hasRemoteUser = true;
                 break;
             }
         }
+        if (! $hasRemoteUser) {
+            $envvar = 'REMOTE_USER';
+        }
+
         $this->addElement(
             'text',
             'username_envvar',
