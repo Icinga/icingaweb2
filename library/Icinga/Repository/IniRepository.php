@@ -67,7 +67,7 @@ abstract class IniRepository extends Repository implements Extensible, Updatable
     {
         parent::__construct($ds); // First! Due to init().
 
-        if (! ($ds === null || $ds->getConfigObject()->getKeyColumn())) {
+        if ($ds !== null && !$ds->getConfigObject()->getKeyColumn()) {
             throw new ProgrammingError('INI repositories require their data source to provide a valid key column');
         }
     }
