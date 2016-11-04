@@ -20,27 +20,28 @@ use Icinga\Exception\StatementException;
  * <ul>
  *  <li>Insert, update and delete capabilities</li>
  *  <li>Triggers for inserts, updates and deletions</li>
+ *  <li>Lazy initialization of table specific configs</li>
  * </ul>
  */
 abstract class IniRepository extends Repository implements Extensible, Updatable, Reducible
 {
     /**
-     * Per-table configs
+     * The configuration files used as table specific datasources
      *
-     * Example:
+     * This must be initialized by concrete repository implementations, in the following format
      * <code>
      * array(
-     *   'event-type' => array(
-     *     'module'    => 'elasticsearch',
-     *     'path'      => 'event-types',
-     *     'keyColumn' => 'name'
+     *   'table_name' => array(
+     *     'config'    => 'name_of_the_ini_file_without_extension',
+     *     'keyColumn' => 'the_name_of_the_column_to_use_as_key_column',
+     *    ['module'    => 'the_name_of_the_module_if_any']
      *   )
      * )
      * </code>
      *
      * @var array
      */
-    protected $configs = null;
+    protected $configs;
 
     /**
      * The tables for which triggers are available when inserting, updating or deleting rows
