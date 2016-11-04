@@ -269,12 +269,18 @@ abstract class Repository implements Selectable
      * @param   string  $table
      *
      * @return  Selectable
+     *
+     * @throws  ProgrammingError    In case no datasource is available
      */
     public function getDataSource($table = null)
     {
         if ($this->ds === null) {
-            throw new ProgrammingError('No data source available');
+            throw new ProgrammingError(
+                'No data source available. It is required to either pass it'
+                . ' at initialization time or by overriding this method.'
+            );
         }
+
         return $this->ds;
     }
 
