@@ -99,6 +99,8 @@ class ActionController extends Zend_Controller_Action
         Zend_Controller_Response_Abstract $response,
         array $invokeArgs = array()
     ) {
+        /** @var \Icinga\Web\Request $request */
+        /** @var \Icinga\Web\Response $response */
         $this->params = UrlParams::fromQueryString();
 
         $this->setRequest($request)
@@ -124,7 +126,11 @@ class ActionController extends Zend_Controller_Action
             $this->_helper->layout()->disableLayout();
         }
 
+        // $auth->authenticate($request, $response, $this->requiresLogin());
         if ($this->requiresLogin()) {
+            if (! $request->isXmlHttpRequest() && $request->isApiRequest()) {
+                Auth::getInstance()->challengeHttp();
+            }
             $this->redirectToLogin(Url::fromRequest());
         }
 
@@ -255,8 +261,9 @@ class ActionController extends Zend_Controller_Action
     /**
      * Return restriction information for an eventually authenticated user
      *
-     * @param  string  $name Permission name
-     * @return Array
+     * @param   string  $name   Restriction name
+     *
+     * @return  array
      */
     public function getRestrictions($name)
     {
@@ -268,15 +275,14 @@ class ActionController extends Zend_Controller_Action
      * user is currently not authenticated
      *
      * @return  bool
-     * @see     requiresAuthentication
      */
     protected function requiresLogin()
     {
-        if (!$this->requiresAuthentication) {
+        if (! $this->requiresAuthentication) {
             return false;
         }
 
-        return !$this->Auth()->isAuthenticated();
+        return ! $this->Auth()->isAuthenticated();
     }
 
     /**

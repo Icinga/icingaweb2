@@ -411,6 +411,10 @@ class Web extends EmbeddedWeb
     private function setupUser()
     {
         $auth = Auth::getInstance();
+        $auth->authenticate();
+        if (! $this->request->isXmlHttpRequest() && $this->request->isApiRequest() && ! $auth->isAuthenticated()) {
+            $auth->authHttp();
+        }
         if ($auth->isAuthenticated()) {
             $user = $auth->getUser();
             $this->getRequest()->setUser($user);
