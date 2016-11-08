@@ -10,6 +10,7 @@ use Icinga\Module\Monitoring\Command\Object\AddCommentCommand;
 use Icinga\Module\Monitoring\Command\Object\DeleteCommentCommand;
 use Icinga\Module\Monitoring\Command\Object\DeleteDowntimeCommand;
 use Icinga\Module\Monitoring\Command\Object\ProcessCheckResultCommand;
+use Icinga\Module\Monitoring\Command\Object\PropagateHostDowntimeCommand;
 use Icinga\Module\Monitoring\Command\Object\RemoveAcknowledgementCommand;
 use Icinga\Module\Monitoring\Command\Object\ScheduleServiceCheckCommand;
 use Icinga\Module\Monitoring\Command\Object\ScheduleServiceDowntimeCommand;
@@ -148,6 +149,12 @@ class IcingaApiCommandRenderer implements IcingaCommandRendererInterface
             'fixed'         => $command->getFixed(),
             'trigger_name'  => $command->getTriggerId()
         );
+        if ($command->getObject()->getType() === $command::TYPE_HOST
+            && $command instanceof PropagateHostDowntimeCommand
+        ) {
+            /** @var \Icinga\Module\Monitoring\Command\Object\PropagateHostDowntimeCommand $command */
+            $data['child_options'] = $command->getTriggered() ? 1 : 2;
+        }
         $this->applyFilter($data, $command->getObject());
         return IcingaApiCommand::create($endpoint, $data);
     }
