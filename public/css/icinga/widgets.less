@@ -51,6 +51,23 @@ table.multiselect tr[href] td {
 
 #main div.filter {
   form.editor {
+    clear: both;
+    padding: @vertical-padding 0;
+
+    .buttons {
+      .clearfix();
+      margin-top: @vertical-padding;
+      float: right;
+    }
+
+    .buttons > input[name=submit] {
+      float: right
+    }
+
+    .buttons > input[name=cancel] {
+      margin-right: @horizontal-padding;
+    }
+
     input[type=text], select {
       width: 12em;
     }
@@ -58,10 +75,127 @@ table.multiselect tr[href] td {
     ul.tree li.active {
       background-color: #eee;
     }
+  }
+}
 
-    div.buttons {
-      float: right;
-    }
+.filter-field {
+  width: auto;
+  display: block;
+
+  > i {
+  	padding: 0.25em 0;
+  	display: inline-block;
+  }
+
+  > a > span {
+    color: @text-color;
+    padding: .25em .5em;
+    display: inline-block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
+
+  > a {
+      display: block;
+      text-decoration: none;
+  }
+
+  > a > i {
+    color: @icinga-blue;
+  }
+
+  &.empty > a > span {
+    color: @gray-light;
+  }
+
+  input.search:focus {
+    background-image: none !important;
+  }
+}
+
+.input-btn-grp {
+  .rounded-corners();
+  background: @gray-lighter;
+  color: @icinga-blue;
+  padding: 0 @horizontal-padding;
+  float: right;
+
+  > i {
+  	padding: 0.25em 0;
+  	display: inline-block;
+  }
+
+  input.search {
+    background: none;
+    border-bottom: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    -ms-appearance: none;
+    appearance: none;
+    padding-left: 0;
+    min-width: 8em;
+    width: auto;
+    line-height: inherit;
+    padding: .25em .5em;
+  }
+
+  input.search::-webkit-input-placeholder {
+    color: @gray-light;
+  }
+
+  input.search:-moz-placeholder {
+    color: @gray-light;
+  }
+
+  input.search::-moz-placeholder {
+    color: @gray-light;
+  }
+
+  input.search:-ms-input-placeholder {
+    color: @gray-light;
+  }
+
+  input.search::input-placeholder {
+    color: @gray-light;
+  }
+
+  input.search:focus {
+    background-image: none !important;
+  }
+}
+
+.btn-grp {
+
+  .rounded-corners();
+  background: @gray-lighter;
+  color: @icinga-blue;
+  padding: 0 @horizontal-padding;
+  float: left;
+
+  > a {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.controls {
+  border-bottom: 1px solid @gray-lighter;
+
+  &:after {
+    content: "";
+    display: block;
+    width: 100%;
+    height: 12px;
+    position: absolute;
+    bottom: -13px;
+    margin-left: -@horizontal-padding;
+    background: -webkit-linear-gradient(top, #ffffff 0%, rgba(255,255,255,0) 100%);
+    background:    -moz-linear-gradient(top, #ffffff 0%, rgba(255,255,255,0) 100%);
+    background:     -ms-linear-gradient(top, #ffffff 0%, rgba(255,255,255,0) 100%);
+    background:         linear-gradient(top, #ffffff 0%, rgba(255,255,255,0) 100%);
   }
 }
 
@@ -206,4 +340,13 @@ ul.tree li a.error:hover {
   &:nth-child(3) {
     animation-delay: .4s;
   }
+}
+
+div.filter form.editor ul.tree li.active {
+  background: none !important;
+}
+
+ul.tree input {
+  margin-bottom: 0.3em;
+  margin-left: 1em;
 }
