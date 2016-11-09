@@ -657,6 +657,7 @@
             $container.find('.controls').each(function() {
                 var $controls = $(this);
                 var $fakeControls = $controls.next('.fake-controls');
+                var $statusBar = $controls.siblings('.status-bar');
 
                 $controls.css({
                     top: $container.offset().top,
@@ -664,6 +665,15 @@
                 });
 
                 $fakeControls.height($controls.height());
+
+                $statusBar.css({
+                    left: $container.offset().left,
+                    width: $container.width()
+                });
+
+                $container.css({
+                    paddingBottom: $statusBar.outerHeight(true)
+                });
             });
         },
 
