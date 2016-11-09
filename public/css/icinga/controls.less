@@ -9,11 +9,13 @@
 
 .controls {
 
+  border-bottom: 1px solid @gray-lighter;
+
   &:after {
     content: "";
     display: block;
     position: absolute;
-    right: 0; bottom: -12px; left: 0;
+    right: 0; bottom: -13px; left: 0;
     height: 1em;
     background: lime;
     background: -webkit-linear-gradient(top, #ffffff 0%, rgba(255,255,255,0) 100%);
@@ -21,7 +23,6 @@
     background:     -ms-linear-gradient(top, #ffffff 0%, rgba(255,255,255,0) 100%);
     background:         linear-gradient(top, #ffffff 0%, rgba(255,255,255,0) 100%);
   }
-
 }
 
 // Backend selection control in user and group list views
