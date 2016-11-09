@@ -4,12 +4,12 @@ use Icinga\Module\Monitoring\Object\Host;
 if (! $this->compact): ?>
 <div class="controls">
     <?= $this->tabs ?>
+    <?= $this->filterEditor ?>
     <?= $this->paginator ?>
     <div class="sort-controls-container">
         <?= $this->limiter ?>
         <?= $this->sortBox ?>
     </div>
-    <?= $this->filterEditor ?>
 </div>
 <?php endif ?>
 <div class="content">
