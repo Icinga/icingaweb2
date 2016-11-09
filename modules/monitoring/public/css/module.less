@@ -108,6 +108,31 @@
   }
 }
 
+// Quick actions
+.quick-actions {
+  ul {
+    // Center horizontally
+    display: table;
+    margin: 0 auto;
+  }
+
+  li {
+    border-right: 1px solid fade(@icinga-blue, 50%);
+    color: @icinga-blue;
+    padding: 0 0.6em;
+  }
+
+  li:last-child {
+    border-right: none;
+    padding-right: 0;
+  }
+
+  li i {
+    font-size: 1.2em;
+    vertical-align: middle;
+  }
+}
+
 /* Generic box element */
 
 .boxview > div.box {
