@@ -13,6 +13,13 @@ use Icinga\Web\Response\JsonResponse;
 class Response extends Zend_Controller_Response_Http
 {
     /**
+     * The default content type being used for responses
+     *
+     * @var string
+     */
+    const DEFAULT_CONTENT_TYPE = 'text/html';
+
+    /**
      * Auto-refresh interval
      *
      * @var int
@@ -53,13 +60,6 @@ class Response extends Zend_Controller_Response_Http
      * @var bool
      */
     protected $rerenderLayout = false;
-
-    /**
-     * Content type of this response
-     *
-     * @var string
-     */
-    protected $contentType = 'text/html';
 
     /**
      * Get the auto-refresh interval
@@ -238,29 +238,6 @@ class Response extends Zend_Controller_Response_Http
     }
 
     /**
-     * Set the content type of this response
-     *
-     * @param  string $contentType
-     *
-     * @return $this
-     */
-    public function setContentType($contentType)
-    {
-        $this->contentType = $contentType;
-        return $this;
-    }
-
-    /**
-     * Get the content type of this response
-     *
-     * @return string
-     */
-    public function getContentType()
-    {
-        return $this->contentType;
-    }
-
-    /**
      * Entry point for HTTP responses in JSON format
      *
      * @return JsonResponse
@@ -301,7 +278,7 @@ class Response extends Zend_Controller_Response_Http
         }
 
         if (! $this->getHeader('Content-Type', true)) {
-            $this->setHeader('Content-Type', $this->getContentType());
+            $this->setHeader('Content-Type', static::DEFAULT_CONTENT_TYPE);
         }
     }
 

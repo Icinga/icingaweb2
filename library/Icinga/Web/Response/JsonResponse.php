@@ -12,6 +12,11 @@ use Icinga\Web\Response;
 class JsonResponse extends Response
 {
     /**
+     * {@inheritdoc}
+     */
+    const DEFAULT_CONTENT_TYPE = 'application/json';
+
+    /**
      * Status identifier for failed API calls due to an error on the server
      *
      * @var string
@@ -66,13 +71,6 @@ class JsonResponse extends Response
      * @var array|null
      */
     protected $successData;
-
-    /**
-     * Content type of this response
-     *
-     * @var string
-     */
-    protected $contentType = 'application/json';
 
     /**
      * Get the JSON encoding options
