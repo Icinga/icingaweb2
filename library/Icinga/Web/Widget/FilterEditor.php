@@ -733,7 +733,7 @@ class FilterEditor extends AbstractWidget
         return $filter;
     }
 
-    public function public function renderFilterBuilder()
+    public function renderFilterBuilder()
     {
         return '<form action="'
             . Url::fromRequest()
@@ -806,18 +806,6 @@ class FilterEditor extends AbstractWidget
         }
         return '<div class="filter">'
             . $this->renderSearch()
-            . '<form action="'
-            . Url::fromRequest()
-            . '" class="editor" method="POST">'
-            . '<ul class="tree"><li>'
-            . $this->renderFilter($this->filter)
-            . '</li></ul>'
-            . '<div class="buttons">'
-            . '<input type="submit" name="submit" value="Apply" />'
-            . '<input type="submit" name="cancel" value="Cancel" />'
-            . '</div>'
-            . '<input type="hidden" name="formUID" value="FilterEditor">'
-            . '</form>'
             . $this->renderFilterField($this->filter)
             . $this->renderFilterBuilder()
             . '</div>';
