@@ -4,8 +4,6 @@ use Icinga\Module\Monitoring\Object\Host;
 if (! $this->compact): ?>
 <div class="controls">
     <?= $this->tabs ?>
-    <?= $this->render('list/components/hostssummary.phtml') ?>
-    <?= $this->render('list/components/selectioninfo.phtml') ?>
     <?= $this->paginator ?>
     <div class="sort-controls-container">
         <?= $this->limiter ?>
@@ -106,4 +104,8 @@ if (! $this->compact): ?>
         ) ?>
     </div>
 <?php endif ?>
+</div>
+<div class="status-bar">
+	<?= $this->render('list/components/hostssummary.phtml') ?>
+	<?= $this->render('list/components/selectioninfo.phtml') ?>
 </div>
