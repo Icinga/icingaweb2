@@ -42,7 +42,7 @@ Requires: apache2-mod_php5
 Requires:                       %{name}-common = %{version}-%{release}
 Requires:                       php-Icinga = %{version}-%{release}
 Requires:                       %{name}-vendor-dompdf = 0.7.0-1%{?dist}
-Requires:                       %{name}-vendor-HTMLPurifier
+Requires:                       %{name}-vendor-HTMLPurifier = 4.8.0-1%{?dist}
 Requires:                       %{name}-vendor-JShrink
 Requires:                       %{name}-vendor-lessphp
 Requires:                       %{name}-vendor-Parsedown
@@ -118,7 +118,7 @@ Icinga Web 2 vendor library dompdf
 
 
 %package vendor-HTMLPurifier
-Version:    4.7.0
+Version:    4.8.0
 Release:    1%{?dist}
 Summary:    Icinga Web 2 vendor library HTMLPurifier
 Group:      Development/Libraries
