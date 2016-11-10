@@ -88,9 +88,8 @@ a {
 a:focus,
 button:focus,
 input[type="checkbox"]:focus {
-  outline-color: @icinga-blue;
-  outline-style: solid; // IE
-  outline-style: auto;
+  outline: 3px solid fade(@icinga-blue, 50%);
+  outline-offset: 1px;
 }
 
 // Default margin for block text
