@@ -44,7 +44,7 @@ Requires:                       php-Icinga = %{version}-%{release}
 Requires:                       %{name}-vendor-dompdf = 0.7.0-1%{?dist}
 Requires:                       %{name}-vendor-HTMLPurifier = 4.8.0-1%{?dist}
 Requires:                       %{name}-vendor-JShrink = 1.1.0-1%{?dist}
-Requires:                       %{name}-vendor-lessphp
+Requires:                       %{name}-vendor-lessphp = 0.4.0-1%{?dist}
 Requires:                       %{name}-vendor-Parsedown
 
 
