@@ -43,7 +43,7 @@ Requires:                       %{name}-common = %{version}-%{release}
 Requires:                       php-Icinga = %{version}-%{release}
 Requires:                       %{name}-vendor-dompdf = 0.7.0-1%{?dist}
 Requires:                       %{name}-vendor-HTMLPurifier = 4.8.0-1%{?dist}
-Requires:                       %{name}-vendor-JShrink
+Requires:                       %{name}-vendor-JShrink = 1.1.0-1%{?dist}
 Requires:                       %{name}-vendor-lessphp
 Requires:                       %{name}-vendor-Parsedown
 
@@ -130,7 +130,7 @@ Icinga Web 2 vendor library HTMLPurifier
 
 
 %package vendor-JShrink
-Version:    1.0.1
+Version:    1.1.0
 Release:    1%{?dist}
 Summary:    Icinga Web 2 vendor library JShrink
 Group:      Development/Libraries
