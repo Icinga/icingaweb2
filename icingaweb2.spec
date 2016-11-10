@@ -41,7 +41,7 @@ Requires: apache2-mod_php5
 %{?suse_version:Requires(pre):  pwdutils}
 Requires:                       %{name}-common = %{version}-%{release}
 Requires:                       php-Icinga = %{version}-%{release}
-Requires:                       %{name}-vendor-dompdf
+Requires:                       %{name}-vendor-dompdf = 0.7.0-1%{?dist}
 Requires:                       %{name}-vendor-HTMLPurifier
 Requires:                       %{name}-vendor-JShrink
 Requires:                       %{name}-vendor-lessphp
@@ -106,7 +106,7 @@ Icinga CLI
 
 
 %package vendor-dompdf
-Version:    0.6.2
+Version:    0.7.0
 Release:    1%{?dist}
 Summary:    Icinga Web 2 vendor library dompdf
 Group:      Development/Libraries

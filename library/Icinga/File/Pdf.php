@@ -3,28 +3,16 @@
 
 namespace Icinga\File;
 
-use DOMPDF;
-use DOMDocument;
-use DOMXPath;
-use Font_Metrics;
+use Dompdf\Dompdf;
+use Dompdf\Options;
 use Icinga\Application\Icinga;
-use Icinga\Web\StyleSheet;
-use Icinga\Web\Url;
 use Icinga\Exception\ProgrammingError;
+use Icinga\Web\Url;
 
-require_once 'dompdf/dompdf_config.inc.php';
-require_once 'dompdf/include/autoload.inc.php';
+require_once 'dompdf/autoload.inc.php';
 
-class Pdf extends DOMPDF
+class Pdf
 {
-    public $paginateTable = false;
-
-    public function __construct()
-    {
-        $this->set_paper('A4', 'portrait');
-        parent::__construct();
-    }
-
     protected function assertNoHeadersSent()
     {
         if (headers_sent()) {
@@ -50,12 +38,15 @@ class Pdf extends DOMPDF
         $html = $layout->render();
         $imgDir = Url::fromPath('img');
         $html = preg_replace('~src="' . $imgDir . '/~', 'src="' . Icinga::app()->getBootstrapDirectory() . '/img/', $html);
-        $this->load_html($html);
-        $this->render();
+        $options = new Options();
+        $options->set('defaultPaperSize', 'A4');
+        $dompdf = new Dompdf($options);
+        $dompdf->loadHtml($html);
+        $dompdf->render();
         $request = $controller->getRequest();
-        $this->stream(
+        $dompdf->stream(
             sprintf(
-                '%s-%s-%d.pdf',
+                '%s-%s-%d',
                 $request->getControllerName(),
                 $request->getActionName(),
                 time()
