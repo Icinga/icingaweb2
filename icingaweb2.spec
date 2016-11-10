@@ -45,7 +45,7 @@ Requires:                       %{name}-vendor-dompdf = 0.7.0-1%{?dist}
 Requires:                       %{name}-vendor-HTMLPurifier = 4.8.0-1%{?dist}
 Requires:                       %{name}-vendor-JShrink = 1.1.0-1%{?dist}
 Requires:                       %{name}-vendor-lessphp = 0.4.0-1%{?dist}
-Requires:                       %{name}-vendor-Parsedown
+Requires:                       %{name}-vendor-Parsedown = 1.6.0-1%{?dist}
 
 
 %description
@@ -154,7 +154,7 @@ Icinga Web 2 vendor library lessphp
 
 
 %package vendor-Parsedown
-Version:    1.0.0
+Version:    1.6.0
 Release:    1%{?dist}
 Summary:    Icinga Web 2 vendor library Parsedown
 Group:      Development/Libraries
