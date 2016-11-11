@@ -281,9 +281,9 @@ class LdapUserGroupBackendForm extends Form
     }
 
     /**
-     * Create and add all elements to this form required for the user configuration as hidden
+     * Create and add all elements for the user configuration as hidden inputs
      *
-     * This is required to purge already present options when changing the type form LDAP to MS AD.
+     * This is required to purge already present options when unlinking a group backend with a user backend.
      */
     protected function createHiddenUserConfigElements()
     {
