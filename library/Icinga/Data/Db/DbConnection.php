@@ -444,7 +444,7 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
             if ($sign === '=') {
                 return $column . ' IN (' . $this->dbAdapter->quote($value) . ')';
             } elseif ($sign === '!=') {
-                return $column . ' NOT IN (' . $this->dbAdapter->quote($value) . ')';
+                return sprintf('(%1$s NOT IN (%2$s) OR %1$s IS NULL)', $column, $this->dbAdapter->quote($value));
             }
 
             throw new ProgrammingError(
@@ -467,9 +467,15 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
                 return $this->dbAdapter->quote(0);
             }
 
-            return $column . ' NOT LIKE ' . $this->dbAdapter->quote(preg_replace('~\*~', '%', $value));
+            return sprintf(
+                '(%1$s NOT LIKE %2$s OR %1$s IS NULL)',
+                $column,
+                $this->dbAdapter->quote(preg_replace('~\*~', '%', $value))
+            );
+        } elseif ($sign === '!=') {
+            return sprintf('(%1$s != %2$s OR %1$s IS NULL)', $column, $this->dbAdapter->quote($value));
         } else {
-            return $column . ' ' . $sign . ' ' . $this->dbAdapter->quote($value);
+            return sprintf('%s %s %s', $column, $sign, $this->dbAdapter->quote($value));
         }
     }
 
