@@ -254,7 +254,7 @@ class DbUserGroupBackend extends DbRepository implements UserGroupBackendInterfa
             $this->requireTable('group_membership'),
             'g.id = gm.group_id',
             array()
-        );
+        )->group('g.id');
     }
 
     /**
