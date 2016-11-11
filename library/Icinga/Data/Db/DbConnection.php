@@ -9,8 +9,8 @@ use Icinga\Data\Inspection;
 use PDO;
 use Iterator;
 use Zend_Db;
+use Zend_Db_Expr;
 use Icinga\Data\ConfigObject;
-use Icinga\Data\Db\DbQuery;
 use Icinga\Data\Extensible;
 use Icinga\Data\Filter\Filter;
 use Icinga\Data\Filter\FilterAnd;
@@ -452,10 +452,10 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
             );
         } elseif ($sign === '=' && strpos($value, '*') !== false) {
             if ($value === '*') {
-                // We'll ignore such filters as it prevents index usage and because "*" means anything, anything means
-                // all whereas all means that whether we use a filter to match anything or no filter at all makes no
-                // difference, except for performance reasons...
-                return '';
+                // We'll ignore such filters as it prevents index usage and because "*" means anything, so whether we're
+                // using a real column with a valid comparison here or just an expression which can only be evaluated to
+                // true makes no difference, except for performance reasons...
+                return new Zend_Db_Expr('TRUE');
             }
 
             return $column . ' LIKE ' . $this->dbAdapter->quote(preg_replace('~\*~', '%', $value));
@@ -464,7 +464,7 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
                 // We'll ignore such filters as it prevents index usage and because "*" means nothing, so whether we're
                 // using a real column with a valid comparison here or just an expression which cannot be evaluated to
                 // true makes no difference, except for performance reasons...
-                return $this->dbAdapter->quote(0);
+                return new Zend_Db_Expr('FALSE');
             }
 
             return sprintf(
