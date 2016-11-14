@@ -4,7 +4,8 @@
 namespace Icinga\Application;
 
 use Exception;
-use Icinga\Application\Logger;
+use Icinga\Authentication\Auth;
+use Icinga\Application\Modules\Manager;
 use Icinga\Exception\ProgrammingError;
 
 /**
@@ -149,6 +150,46 @@ class Hook
     }
 
     /**
+     * Extract the Icinga module name from a given namespaced class name
+     *
+     * Does no validation, prefix must have been checked before
+     *
+     * Shameless copy of ClassLoader::extractModuleName()
+     *
+     * @param   string  $class  The hook's class path
+     *
+     * @return string
+     */
+    protected static function extractModuleName($class)
+    {
+        return lcfirst(
+            substr(
+                $class,
+                ClassLoader::MODULE_PREFIX_LENGTH,
+                strpos(
+                    $class,
+                    ClassLoader::NAMESPACE_SEPARATOR,
+                    ClassLoader::MODULE_PREFIX_LENGTH + 1
+                ) - ClassLoader::MODULE_PREFIX_LENGTH
+            )
+        );
+    }
+
+    /**
+     * Return whether the user has the permission to access the module which provides the given hook
+     *
+     * @param   string  $class  The hook's class path
+     *
+     * @return  bool
+     */
+    protected static function hasPermission($class)
+    {
+        return Auth::getInstance()->hasPermission(
+            Manager::MODULE_PERMISSION_NS . self::extractModuleName($class)
+        );
+    }
+
+    /**
      * Test for a valid class name
      *
      * @param   mixed   $instance
@@ -213,17 +254,19 @@ class Hook
     public static function all($name)
     {
         $name = self::normalizeHookName($name);
-        if (!self::has($name)) {
+        if (! self::has($name)) {
             return array();
         }
 
         foreach (self::$hooks[$name] as $key => $hook) {
-            if (self::createInstance($name, $key) === null) {
-                return array();
+            if (self::hasPermission($key)) {
+                if (self::createInstance($name, $key) === null) {
+                    return array();
+                }
             }
         }
 
-        return self::$instances[$name];
+        return isset(self::$instances[$name]) ? self::$instances[$name] : array();
     }
 
     /**
@@ -238,7 +281,11 @@ class Hook
         $name = self::normalizeHookName($name);
 
         if (self::has($name)) {
-            return self::createInstance($name, key(self::$hooks[$name]));
+            foreach (self::$hooks[$name] as $key => $hook) {
+                if (self::hasPermission($key)) {
+                    return self::createInstance($name, $key);
+                }
+            }
         }
     }
 
