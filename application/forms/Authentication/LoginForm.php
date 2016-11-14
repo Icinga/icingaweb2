@@ -39,9 +39,10 @@ class LoginForm extends Form
             'text',
             'username',
             array(
-                'required'      => true,
-                'label'         => $this->translate('Username'),
-                'class'         => false === isset($formData['username']) ? 'autofocus' : ''
+                'autocapitalize'    => 'off',
+                'class'             => false === isset($formData['username']) ? 'autofocus' : '',
+                'label'             => $this->translate('Username'),
+                'required'          => true
             )
         );
         $this->addElement(
