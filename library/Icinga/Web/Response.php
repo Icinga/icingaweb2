@@ -17,7 +17,7 @@ class Response extends Zend_Controller_Response_Http
      *
      * @var string
      */
-    const DEFAULT_CONTENT_TYPE = 'text/html';
+    const DEFAULT_CONTENT_TYPE = 'text/html; charset=UTF-8';
 
     /**
      * Auto-refresh interval
