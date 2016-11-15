@@ -95,6 +95,93 @@
   float: left;
 }
 
+.controls > .state-table-detail {
+  position: relative;
+  padding-left: 16px;
+  margin: @horizontal-padding 0;
+  clear: both;
+
+  &:before {
+    content: "";
+    display: block;
+    width:  .667em;
+    height: .667em;
+    top: .5em; left: .3em;
+    position: absolute;
+  }
+
+  > .title-left {
+    float: left;
+  }
+
+  > .title-right {
+    float: right;
+  }
+
+  &.state-ok,
+  &.state-up {
+    &:before { background: @color-ok }
+  }
+
+  &.state-critical:before,
+  &.state-down {
+    &:before { background: @color-critical }
+
+    &.handled:before { background: @color-critical-handled }
+  }
+
+  &.state-warning {
+    &:before { background: @color-critical }
+  }
+
+  &.state-warning-handled {
+    &:before { background: @color-critical-handled }
+  }
+
+  &.state-unreachable {
+    &:before { background: @color-unreachable }
+
+    &.handled:before { background: @color-unreachable-handled }
+  }
+
+  &.state-unreachable {
+    &:before { background: @color-unreachable }
+
+    &.handled:before { background: @color-unreachable-handled };
+  }
+
+  &.state-pending:before {
+    background: @color-pending;
+  }
+
+  &.state-unknown {
+    &:before { background: @color-unknown }
+
+    &.handled:before { background: @color-unknown-handled }
+  }
+
+  &.state-no-state {
+    &:before { @text-color-light }
+  }
+
+  table {
+    clear: both;
+  }
+
+  table td {
+    color: @gray;
+    padding: 0 @horizontal-padding;
+
+    &:first-child {
+      padding-left: 0;
+    }
+
+    &:last-child {
+      padding-right: 0;
+    }
+  }
+}
+
 // State table in the host and service multi-selection and detail views
 .host-detail-state,
 .service-detail-state {
