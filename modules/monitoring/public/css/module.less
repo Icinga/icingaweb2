@@ -101,6 +101,10 @@
   margin: @horizontal-padding 0;
   clear: both;
 
+  &:last-child {
+    margin-bottom: 0;
+  }
+
   &:before {
     content: "";
     display: block;
@@ -123,7 +127,7 @@
     &:before { background: @color-ok }
   }
 
-  &.state-critical:before,
+  &.state-critical,
   &.state-down {
     &:before { background: @color-critical }
 
@@ -171,6 +175,10 @@
   table td {
     color: @gray;
     padding: 0 @horizontal-padding;
+
+    &.host-meta {
+      white-space: nowrap;
+    }
 
     &:first-child {
       padding-left: 0;
