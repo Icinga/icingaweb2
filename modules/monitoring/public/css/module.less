@@ -82,11 +82,20 @@
 .hosts-summary,
 .services-summary {
   margin-bottom: 0.5em;
+  background: @gray-lighter;
+  .rounded-corners(@border-radius: 0.4em);
+  line-height: 1.4;
 
   > .hosts-link,
-  > .services-link,
-  > .state-badges {
-    vertical-align: middle;
+  > .services-link {
+    font-weight: bold;
+    display: inline-block;
+    vertical-align: top;
+
+    > a {
+      padding: .095em .25em .095em @vertical-padding;
+      display: inline-block;
+    }
   }
 }
 

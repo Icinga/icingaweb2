@@ -9,7 +9,7 @@ if (! $stats instanceof stdClass) {
 ?>
 <div class="hosts-summary dont-print">
     <span class="hosts-link"><?= $this->qlink(
-        sprintf($this->translatePlural('%u Host', '%u Hosts', $stats->hosts_total), $stats->hosts_total),
+        sprintf($this->translatePlural('%u', '%u', $stats->hosts_total), $stats->hosts_total),
         // @TODO(el): Fix that
         Url::fromPath('monitoring/list/hosts')->setParams(isset($baseFilter) ? $baseFilter->getUrlParams() : array()),
         null,
@@ -17,7 +17,7 @@ if (! $stats instanceof stdClass) {
             $this->translatePlural('List %u host', 'List all %u hosts', $stats->hosts_total),
             $stats->hosts_total
         ))
-    ) ?>&#58;</span>
+    ) ?></span>
 <?php
 $stateBadges = new StateBadges();
 $stateBadges

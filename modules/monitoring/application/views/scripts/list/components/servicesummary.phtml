@@ -10,7 +10,7 @@ if (! $stats instanceof stdClass) {
 <div class="services-summary dont-print">
     <span class="services-link"><?= $this->qlink(
         sprintf($this->translatePlural(
-            '%u Service', '%u Services', $stats->services_total),
+            '%u', '%u', $stats->services_total),
             $stats->services_total
         ),
         // @TODO(el): Fix that
@@ -20,7 +20,7 @@ if (! $stats instanceof stdClass) {
             $this->translatePlural('List %u service', 'List all %u services', $stats->services_total),
             $stats->services_total
         ))
-    ) ?>&#58;</span>
+    ) ?></span>
 <?php
 $stateBadges = new StateBadges();
 $stateBadges
