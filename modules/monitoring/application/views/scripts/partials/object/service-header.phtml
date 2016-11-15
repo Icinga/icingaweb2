@@ -3,6 +3,60 @@ use Icinga\Module\Monitoring\Object\Host;
 use Icinga\Module\Monitoring\Object\Service;
 /** @var \Icinga\Module\Monitoring\Object\MonitoredObject $object */
 ?>
+<div class="state-table-detail host-detail-state state-<?= Host::getStateText($object->host_state) ?><?= $object->host_handled ? ' handled' : '' ?> clearfix">
+    <div class="title-left">
+        <?= $this->iconImage()->host($object) ?>
+        <?= $this->escape($object->host_display_name) ?>
+    </div>
+    <div class="title-right">
+    <?php if ($object->host_display_name !== $object->host_name): ?>
+        &#40;<?= $this->escape($object->host_name) ?>&#41;
+    <?php endif ?>
+    <?php if ($object->host_alias !== $object->host_display_name && $object->host_alias !== $object->host_name): ?>
+            <?= $this->escape($this->translate('Alias', 'host') . ': ' . $object->host_alias) ?>
+    <?php endif ?>
+        <?= $this->render('partials/host/statusicons.phtml') ?>
+    </div>
+    <table>
+        <tr>
+            <td class="host-meta"><?= $this->timeSince($object->host_last_state_change) ?></td>
+        <?php if ($object->host_address && $object->host_address !== $object->host_name): ?>
+            <td class="host-meta"><?= $this->escape($object->host_address) ?></td>
+        <?php endif ?>
+        <?php if ($object->host_address6 && $object->host_address6 !== $object->host_name): ?>
+            <td class="host-meta"><?= $this->escape($object->host_address6) ?></td>
+        <?php endif ?>
+        </tr>
+    </table>
+</div>
+<div class="state-table-detail host-detail-state state-<?= Host::getStateText($object->host_state) ?><?= $object->host_handled ? ' handled' : '' ?> clearfix">
+    <div class="title-left">
+        <?= $this->iconImage()->host($object) ?>
+        <?= $this->escape($object->host_display_name) ?>
+    </div>
+    <div class="title-right">
+    <?php if ($object->host_display_name !== $object->host_name): ?>
+        &#40;<?= $this->escape($object->host_name) ?>&#41;
+    <?php endif ?>
+    <?php if ($object->host_alias !== $object->host_display_name && $object->host_alias !== $object->host_name): ?>
+            <?= $this->escape($this->translate('Alias', 'host') . ': ' . $object->host_alias) ?>
+    <?php endif ?>
+        <?= $this->render('partials/host/statusicons.phtml') ?>
+    </div>
+    <table>
+        <tr>
+            <td class="host-meta"><?= $this->timeSince($object->host_last_state_change) ?></td>
+        <?php if ($object->host_address && $object->host_address !== $object->host_name): ?>
+            <td class="host-meta"><?= $this->escape($object->host_address) ?></td>
+        <?php endif ?>
+        <?php if ($object->host_address6 && $object->host_address6 !== $object->host_name): ?>
+            <td class="host-meta"><?= $this->escape($object->host_address6) ?></td>
+        <?php endif ?>
+        </tr>
+    </table>
+</div>
+
+
 <table class="state-table service-detail-state">
     <tr>
         <td class="state-col state-<?= Host::getStateText($object->host_state) ?><?= $object->host_handled ? ' handled' : '' ?>">
