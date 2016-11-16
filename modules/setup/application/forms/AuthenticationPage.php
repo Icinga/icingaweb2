@@ -32,14 +32,8 @@ class AuthenticationPage extends Form
     public function createElements(array $formData)
     {
         if (isset($formData['type']) && $formData['type'] === 'external') {
-            $hasRemoteUser = false;
-            foreach (ExternalBackend::$remoteUserEnvvars as $envvar) {
-                if (ExternalBackend::getRemoteUser($envvar) !== null) {
-                    $hasRemoteUser = true;
-                    break;
-                }
-            }
-            if (! $hasRemoteUser) {
+            list($username, $_) = ExternalBackend::getRemoteUserInformation();
+            if ($username === null) {
                 $this->info(
                     $this->translate(
                         'You\'re currently not authenticated using any of the web server\'s authentication '
