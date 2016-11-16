@@ -249,6 +249,13 @@ input[type=text].search-input {
   display: block;
 }
 
+.search-input:invalid,
+.search-input:-moz-submit-invalid,
+.search-input:-moz-ui-invalid {
+  // Disable glow
+  box-shadow: none;
+}
+
 @keyframes search-reset-in {
   0% {
     opacity: 0;
