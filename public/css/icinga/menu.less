@@ -225,6 +225,22 @@ input[type=text].search-input {
   text-overflow: ellipsis;
 }
 
+.search-input:-moz-placeholder { // FF 18-
+  color: @gray-light;
+}
+
+.search-input::-moz-placeholder { // FF 19+
+  color: @gray-light;
+}
+
+.search-input:-ms-input-placeholder {
+  color: @gray-light;
+}
+
+.search-input::-webkit-input-placeholder {
+  color: @gray-light;
+}
+
 .search-input:valid ~ .search-reset {
   animation-duration: .4s;
   animation-name: search-reset-in;
