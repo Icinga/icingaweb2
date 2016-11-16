@@ -16,7 +16,7 @@ class ExternalBackend implements UserBackendInterface
      *
      * @var string[]
      */
-    public static $remoteUserEnvvars = array('REDIRECT_REMOTE_USER', 'REMOTE_USER');
+    public static $remoteUserEnvvars = array('REMOTE_USER', 'REDIRECT_REMOTE_USER');
 
     /**
      * The name of this backend
@@ -33,13 +33,6 @@ class ExternalBackend implements UserBackendInterface
     protected $stripUsernameRegexp;
 
     /**
-     * The name variable where to read the user from
-     *
-     * @var string|null
-     */
-    protected $usernameEnvvar;
-
-    /**
      * Create new authentication backend of type "external"
      *
      * @param ConfigObject $config
@@ -47,7 +40,6 @@ class ExternalBackend implements UserBackendInterface
     public function __construct(ConfigObject $config)
     {
         $this->stripUsernameRegexp = $config->get('strip_username_regexp');
-        $this->usernameEnvvar = $config->get('username_envvar');
     }
 
     /**
@@ -70,24 +62,37 @@ class ExternalBackend implements UserBackendInterface
     /**
      * Get the remote user from environment or $_SERVER, if any
      *
-     * @param   string|null $variable   The name variable where to read the user from
+     * @param   string  $variable   The name of the variable where to read the user from
      *
      * @return  string|null
      */
-    public static function getRemoteUser($variable = null)
+    public static function getRemoteUser($variable = 'REMOTE_USER')
     {
-        if ($variable === null) {
-            $variable = 'REMOTE_USER';
-        }
-
         $username = getenv($variable);
         if ($username !== false) {
             return $username;
         }
+
         if (array_key_exists($variable, $_SERVER)) {
             return $_SERVER[$variable];
         }
-        return null;
+    }
+
+    /**
+     * Get the remote user information from environment or $_SERVER, if any
+     *
+     * @return  array   Contains always two entries, the username and origin which may both set to null.
+     */
+    public static function getRemoteUserInformation()
+    {
+        foreach (static::$remoteUserEnvvars as $envVar) {
+            $username = static::getRemoteUser($envVar);
+            if ($username !== null) {
+                return array($username, $envVar);
+            }
+        }
+
+        return array(null, null);
     }
 
     /**
@@ -95,9 +100,9 @@ class ExternalBackend implements UserBackendInterface
      */
     public function authenticate(User $user, $password = null)
     {
-        $username = static::getRemoteUser($this->usernameEnvvar);
+        list($username, $field) = static::getRemoteUserInformation();
         if ($username !== null) {
-            $user->setExternalUserInformation($username, $this->usernameEnvvar);
+            $user->setExternalUserInformation($username, $field);
 
             if ($this->stripUsernameRegexp) {
                 $stripped = preg_replace($this->stripUsernameRegexp, '', $username);
