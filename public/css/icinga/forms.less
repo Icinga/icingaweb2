@@ -125,7 +125,7 @@ label {
 }
 
 .control-group {
-  margin: @vertical-padding 0;
+  margin: @vertical-padding 0 @vertical-padding * 1.5 0;
   position: relative;
 
   .errors {
@@ -135,7 +135,7 @@ label {
   input[type="checkbox"] {
     float: left;
     margin-right: @horizontal-padding / 2;
-    margin-top: 2px; margin-left: 1px;
+    margin-top: .190em; margin-left: .095em;
   }
 
   input:not([type]),
@@ -154,20 +154,35 @@ label {
   }
 }
 
-.controls .control-group {
-  input:not([type]),
-  input[type=text],
-  input[type=date],
-  input[type=datetime-local],
-  input[type=email],
-  input[type=number],
-  input[type=password],
-  input[type=search],
-  input[type=tel],
-  input[type=time],
-  input[type=url],
-  select, textarea {
+.controls {
+
+  .control-label-group {
     display: inline-block;
+  }
+
+  label {
+    margin-right: @horizontal-padding / 2;
+  }
+
+  .control-group {
+    margin: 0;
+    display: inline-block;
+
+    input:not([type]),
+    input[type=text],
+    input[type=date],
+    input[type=datetime-local],
+    input[type=email],
+    input[type=number],
+    input[type=password],
+    input[type=search],
+    input[type=tel],
+    input[type=time],
+    input[type=url],
+    select, textarea {
+      display: inline-block;
+      width: auto;
+    }
   }
 }
 
