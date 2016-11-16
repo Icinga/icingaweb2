@@ -827,7 +827,10 @@
                         if (typeof $container.attr('tabindex') === 'undefined') {
                             $container.attr('tabindex', -1);
                         }
-                        $container.focus();
+                        // Do not touch focus in case a module or component already placed it
+                        if ($(document.activeElement).closest('.container').attr('id') !== containerId) {
+                            $container.focus();
+                        }
                     }, 0);
                 }
             } else {
