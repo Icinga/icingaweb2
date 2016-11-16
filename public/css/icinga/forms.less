@@ -13,21 +13,20 @@ input[type=time],
 input[type=url] {
   .box-shadow(0 1px 0 0 @gray-light);
   .transition(border 0.3s ease);
+  min-width: 30em;
 
   border: none;
-  border-bottom: 1px solid @gray-light;
+  border: 1px solid @gray-lighter;
   outline: none;
-  padding: @vertical-padding / 2 @horizontal-padding / 2;
+  padding: @vertical-padding @horizontal-padding;
 
   &:focus:not([readonly]) {
     border-color: @icinga-blue;
   }
-
-  width: 20em;
 }
 
 select, textarea {
-  width: 20em;
+  width: 30em;
 }
 
 .control-button,
@@ -105,22 +104,70 @@ button:hover .icon-cancel {
 }
 
 label {
-  color: @text-color-light;
   font-size: @font-size-small;
 }
 
 .control-label-group {
+  .clearfix();
+  clear: both;
   display: inline-block;
-  padding-right: @horizontal-padding;
-  text-align: right;
-  width: 10em;
+
+  label {
+      font-weight: bold;
+      color: @gray;
+  }
+
+  & + input,
+  & + select,
+  & + textarea {
+    margin-top: 4px;
+  }
 }
 
 .control-group {
-  padding: @vertical-padding @horizontal-padding;
+  margin: @vertical-padding 0;
+  position: relative;
 
   .errors {
     color: @color-critical;
+  }
+
+  input[type="checkbox"] {
+    float: left;
+    margin-right: @horizontal-padding / 2;
+    margin-top: 2px; margin-left: 1px;
+  }
+
+  input:not([type]),
+  input[type=text],
+  input[type=date],
+  input[type=datetime-local],
+  input[type=email],
+  input[type=number],
+  input[type=password],
+  input[type=search],
+  input[type=tel],
+  input[type=time],
+  input[type=url],
+  select, textarea {
+    display: block
+  }
+}
+
+.controls .control-group {
+  input:not([type]),
+  input[type=text],
+  input[type=date],
+  input[type=datetime-local],
+  input[type=email],
+  input[type=number],
+  input[type=password],
+  input[type=search],
+  input[type=tel],
+  input[type=time],
+  input[type=url],
+  select, textarea {
+    display: inline-block;
   }
 }
 
