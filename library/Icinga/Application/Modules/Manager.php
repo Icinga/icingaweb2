@@ -249,6 +249,15 @@ class Manager
             );
         }
 
+        if (strtolower(substr($name, 0, 18)) === 'icingaweb2-module-') {
+            throw new ConfigurationError(
+                'Cannot enable module "%s": Directory name does not match the module\'s name.'
+                . ' Please rename the module to "%s" before enabling.',
+                $name,
+                substr($name, 18)
+            );
+        }
+
         clearstatcache(true);
         $target = $this->installedBaseDirs[$name];
         $link = $this->enableDir . DIRECTORY_SEPARATOR . $name;
