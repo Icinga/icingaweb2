@@ -12,6 +12,7 @@
 #menu {
   height: 100%;
   overflow: auto;
+  position: relative;
 }
 
 #menu a {
@@ -82,10 +83,6 @@
   line-height: 1;
   margin: 0 0.2em;
   width: 1em;
-}
-
-#menu .user-nav-item {
-  background-color: @gray-light;
 }
 
 #menu input.search {
@@ -163,6 +160,54 @@
 
   #menu {
     overflow: visible;
+  }
+}
+
+// Exception for admin navigation menu
+
+#menu .nav-level-1 .user-nav-item,
+#menu .nav-level-1 .user-nav-item.hover,
+#menu .nav-level-1 .user-nav-item.active {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  border-left: none;
+  padding-left: 5px;
+
+  > .nav-level-2 {
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+
+  > .nav-level-2 li {
+    width: 2em;
+    overflow: hidden;
+    display: inline-block;
+    white-space: nowrap;
+    font-size: 1.091em;
+  }
+
+  > .nav-level-2 li.no-icon {
+    margin-left: 0;
+  }
+
+  > .nav-level-2 li a {
+    padding: @vertical-padding;
+  }
+
+  > .nav-level-2 li a:before {
+    font-size: 14px;
+    font-family: 'ifont';
+    margin-right: 100px;
+    width: 1.5em;
+  }
+
+  > .nav-level-2 li:first-child a:before {
+    content: '\e83d';
+  }
+
+  > .nav-level-2 li:last-child  a:before {
+    content: '\e815';
   }
 }
 
