@@ -83,7 +83,7 @@ class ExternalBackend implements UserBackendInterface
 
             if ($this->stripUsernameRegexp) {
                 $stripped = preg_replace($this->stripUsernameRegexp, '', $username);
-                if ($stripped !== false) {
+                if ($stripped !== null) {
                     // TODO(el): PHP issues a warning when PHP cannot compile the regular expression. Should we log an
                     // additional message in that case?
                     $username = $stripped;
