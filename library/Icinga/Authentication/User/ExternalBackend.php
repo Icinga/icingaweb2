@@ -3,6 +3,7 @@
 
 namespace Icinga\Authentication\User;
 
+use Icinga\Application\Logger;
 use Icinga\Data\ConfigObject;
 use Icinga\User;
 
@@ -105,12 +106,13 @@ class ExternalBackend implements UserBackendInterface
             $user->setExternalUserInformation($username, $field);
 
             if ($this->stripUsernameRegexp) {
-                $stripped = preg_replace($this->stripUsernameRegexp, '', $username);
-                if ($stripped !== false) {
-                    // TODO(el): PHP issues a warning when PHP cannot compile the regular expression. Should we log an
-                    // additional message in that case?
-                    $username = $stripped;
+                $stripped = @preg_replace($this->stripUsernameRegexp, '', $username);
+                if ($stripped === false) {
+                    Logger::error('Failed to strip external username. The configured regular expression is invalid.');
+                    return false;
                 }
+
+                $username = $stripped;
             }
 
             $user->setUsername($username);
