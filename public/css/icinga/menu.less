@@ -167,7 +167,6 @@
 }
 
 // Accessibility skip links
-
 .skip-links {
   position: relative;
   ul {
@@ -197,4 +196,48 @@
 #sidebar.expanded {
   bottom: 0 !important;
   height: auto !important;
+}
+
+.search-control {
+  position: relative;
+}
+
+.search-reset {
+  background: none;
+  border: 0;
+  cursor: pointer;
+  display: none;
+  height: 100%;
+  padding: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  user-select: none;
+}
+
+.search-reset:focus {
+  outline: 0;
+}
+
+// Override forms.less
+input[type=text].search-input {
+  padding-right: 1.4em;
+  text-overflow: ellipsis;
+}
+
+.search-input:valid ~ .search-reset {
+  animation-duration: .4s;
+  animation-name: search-reset-in;
+  display: block;
+}
+
+@keyframes search-reset-in {
+  0% {
+    opacity: 0;
+    transform: translate3d(-20%, 0, 0);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+  }
 }
