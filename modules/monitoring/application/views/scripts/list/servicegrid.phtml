@@ -81,7 +81,7 @@ $hostFilter = '(host_name=' . implode('|host_name=', array_keys($pivotData)) . '
                             $service->service_display_name,
                             $service->host_display_name
                         ),
-                        'class'               => 'bg-color-' . Service::getStateText($service->service_state) . ($service->service_handled ? ' handled' : ''),
+                        'class'               => 'service-grid-link state-' . Service::getStateText($service->service_state) . ($service->service_handled ? ' handled' : ''),
                         'title'               => $service->service_output
                     )
                 ) ?>
