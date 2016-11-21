@@ -166,7 +166,7 @@ $section->add(N_('Current Downtimes'), array(
  * Overview Section
  */
 $section = $this->menuSection(N_('Overview'), array(
-    'icon'      => 'sitemap',
+    'icon'      => 'binoculars',
     'priority'  => 30
 ));
 $section->add(N_('Tactical Overview'), array(
