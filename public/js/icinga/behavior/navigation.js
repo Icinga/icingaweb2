@@ -56,7 +56,7 @@
             // of the navigation after the page has been opened.
 
             // initialise the menu selected by the backend as active.
-            var $menus = $('#menu li.active', e.target);
+            var $menus = $(e.target).find('#menu li.active');
             if ($menus.length) {
                 $menus.each(function() {
                     _this.setActive($(this));
@@ -179,10 +179,10 @@
      */
     Navigation.prototype.clear = function() {
         // menu items
-        $('#menu li.active', this.element).removeClass('active');
+        $(this.element).find('#menu li.active').removeClass('active');
 
         // search fields
-        $('#menu input.active', this.element).removeClass('active');
+        $(this.element).find('#menu input.active').removeClass('active');
     };
 
     /**
