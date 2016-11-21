@@ -210,7 +210,7 @@ $section->add(N_('Downtimes'), array(
  * History Section
  */
 $section = $this->menuSection(N_('History'), array(
-    'icon'      => 'rewind',
+    'icon'      => 'history',
     'priority'  => 90
 ));
 $section->add(N_('Event Grid'), array(
