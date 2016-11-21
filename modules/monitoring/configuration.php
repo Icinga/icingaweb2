@@ -126,7 +126,7 @@ $section = $this->menuSection(N_('Problems'), array(
         'SummaryNavigationItemRenderer',
         'state' => 'critical'
     ),
-    'icon'      => 'block',
+    'icon'      => 'attention-circled',
     'priority'  => 20
 ));
 $section->add(N_('Host Problems'), array(
