@@ -51,7 +51,7 @@
                     }
                 }
 
-                $target.find('.icinga-module').each(function(idx, mod) {
+                $('.icinga-module', $target).each(function(idx, mod) {
                     moduleName = $(mod).data('icingaModule');
                     if (icinga.hasModule(moduleName) && !icinga.isLoadedModule(moduleName)) {
                         loaded |= icinga.loadModule(moduleName);
@@ -82,7 +82,7 @@
                 _this.initializeModules = true;
             }
 
-            $target.find('.dashboard > div').each(function(idx, el) {
+            $('.dashboard > div', $target).each(function(idx, el) {
                 var $element = $(el);
                 var $url = $element.data('icingaUrl');
                 if (typeof $url !== 'undefined') {
@@ -90,7 +90,7 @@
                 }
             });
 
-            var $searchField = $target.find('#menu input.search');
+            var $searchField = $('#menu input.search', $target);
             // Remember initial search field value if any
             if ($searchField.length && $searchField.val().length) {
                 _this.searchValue = $searchField.val();
@@ -154,7 +154,7 @@
         treeNodeToggle: function () {
             var $parent = $(this).closest('li');
             if ($parent.hasClass('collapsed')) {
-                $parent.find('li').addClass('collapsed');
+                $('li', $parent).addClass('collapsed');
                 $parent.removeClass('collapsed');
             } else {
                 $parent.addClass('collapsed');
@@ -219,7 +219,7 @@
             var url = $form.attr('action');
             var method = $form.attr('method');
             var encoding = $form.attr('enctype');
-            var $button = $form.find('input[type=submit]:focus').add('button[type=submit]:focus', $form);
+            var $button = $('input[type=submit]:focus', $form).add('button[type=submit]:focus', $form);
             var progressTimer;
             var $target;
             var data;
@@ -268,7 +268,7 @@
             }
 
             if ($button.length === 0) {
-                $button = $form.find('input[type=submit]').add('button[type=submit]', $form).first();
+                $button = $('input[type=submit]', $form).add('button[type=submit]', $form).first();
             }
 
             if ($button.length) {
@@ -389,14 +389,14 @@
                     }
                 }, null, 100);
             } else if ($button.length && $button.next().hasClass('spinner')) {
-                $button.next().find('i').addClass('active');
+                $('i', $button.next()).addClass('active');
             } else if ($form.attr('data-progress-element')) {
                 var $progressElement = $('#' + $form.attr('data-progress-element'));
                 if ($progressElement.length) {
                     if ($progressElement.hasClass('spinner')) {
-                        $progressElement.find('i').addClass('active');
+                        $('i', $progressElement).addClass('active');
                     } else {
-                        $progressElement.find('i.spinner').addClass('active');
+                        $('i.spinner', $progressElement).addClass('active');
                     }
                 }
             }

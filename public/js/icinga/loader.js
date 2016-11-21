@@ -407,7 +407,7 @@
             return;
 
             var _this = this;
-            $container.find('img.icon').each(function(idx, img) {
+            $('img.icon', $container).each(function(idx, img) {
                 var src = $(img).attr('src');
                 if (typeof _this.iconCache[src] !== 'undefined') {
                     return;
@@ -453,7 +453,7 @@
 
             if (req.autorefresh) {
                 // TODO: next container url
-                active = req.$target.find('[href].active').attr('href');
+                active = $('[href].active', req.$target).attr('href');
             }
 
             var target = req.getResponseHeader('X-Icinga-Container');
@@ -519,26 +519,26 @@
             // Handle search requests, still hardcoded.
             if (req.url.match(/^\/search/) &&
                 req.$target.data('icingaUrl').match(/^\/search/) &&
-                $resp.find('.dashboard').length > 0 &&
-                req.$target.find('.dashboard .container').length > 0)
+                $('.dashboard', $resp).length > 0 &&
+                $('.dashboard .container', req.$target).length > 0)
             {
                 // TODO: We need dashboard pane and container identifiers (not ids)
                 var targets = [];
-                req.$target.find('.dashboard .container').each(function (idx, el) {
+                $('.dashboard .container', req.$target).each(function (idx, el) {
                     targets.push($(el));
                 });
 
                 var i = 0;
                 // Searching for '.dashboard .container' in $resp doesn't dork?!
-                $resp.find('.dashboard .container').each(function (idx, el) {
+                $('.dashboard .container', $resp).each(function (idx, el) {
                     var $el = $(el);
                     if ($el.hasClass('dashboard')) {
                         return;
                     }
                     var url = $el.data('icingaUrl');
                     targets[i].data('icingaUrl', url);
-                    var title = $el.find('h1').first();
-                    $(targets[i]).find('h1').first().replaceWith(title);
+                    var title = $('h1', $el).first();
+                    $('h1', targets[i]).first().replaceWith(title);
 
                     _this.loadUrl(url, targets[i]);
                     i++;
@@ -595,7 +595,7 @@
                     var $el = $(el);
                     if ($el.closest('#menu').length) {
                         if ($el.is('form')) {
-                            $el.find('input').addClass('active');
+                            $('input', $el).addClass('active');
                         }
                         // Interrupt .each, only one menu item shall be active
                         return false;
@@ -797,20 +797,20 @@
             //     event.preventDefault();
             // });
 
-            $container.find('.container').each(function() {
+            $('.container', $container).each(function() {
                 _this.stopPendingRequestsFor($(this));
             });
 
             if (false &&
-                $content.find('.dashboard').length > 0 &&
-                $container.find('.dashboard').length === 0
+                $('.dashboard', $content).length > 0 &&
+                $('.dashboard', $container).length === 0
             ) {
-                // $content.find('.dashboard')
+                // $('.dashboard', $content)
                 // $container.html(content);
 
             } else {
                 if ($container.closest('.dashboard').length) {
-                    var title = $container.find('h1').first().detach();
+                    var title = $('h1', $container).first().detach();
                     $container.html(title).append(content);
                 } else if (action === 'replace') {
                     $container.html(content);

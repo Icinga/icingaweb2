@@ -417,11 +417,11 @@
         var _this = evt.data.self;
 
         // initialize all rows with the correct row action
-        $(container).find('table.action tr, table.table-row-selectable tr').each(function(idx, el) {
+        $('table.action tr, table.table-row-selectable tr', container).each(function(idx, el) {
 
             // decide which row action to use: links declared with the class rowaction take
             // the highest precedence before hrefs defined in the tr itself and regular links
-            var $a = $(el).find('a[href].rowaction').first();
+            var $a = $('a[href].rowaction', el).first();
             if ($a.length) {
                 // TODO: Find out whether we leak memory on IE with this:
                 $(el).attr('href', $a.attr('href'));
@@ -430,14 +430,14 @@
             if ($(el).attr('href') && $(el).attr('href').length) {
                 return;
             }
-            $a = $(el).find('a[href]').first();
+            $a = $('a[href]', el).first();
             if ($a.length) {
                 $(el).attr('href', $a.attr('href'));
             }
         });
 
         // IE will not ignore user-select unless we cancel selectstart
-        $(container).find('table.action.multiselect tr, table.table-row-selectable.multiselect tr').each(function(idx, el) {
+        $('table.action.multiselect tr, table.table-row-selectable.multiselect tr', container).each(function(idx, el) {
             $(el).on('selectstart', false);
         });
 

@@ -458,7 +458,7 @@
          * Initialize all TriStateCheckboxes in the given html
          */
         initializeTriStates: function ($html) {
-            $html.find('div.tristate').each(function(index, item) {
+            $('div.tristate', $html).each(function(index, item) {
                 var $target  = $(item);
 
                 // hide input boxess and remove text nodes

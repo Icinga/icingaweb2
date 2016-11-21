@@ -23,13 +23,13 @@
     Tooltip.prototype.onRendered = function(evt) {
         var _this = evt.data.self, icinga = evt.data.icinga, el = evt.target;
 
-        $(el).find('[title]').each(function () {
+        $('[title]', el).each(function () {
             var $el = $(this);
             $el.attr('title', $el.data('title-rich') || $el.attr('title'));
         });
-        $(el).find('svg .chart-data').tipsy({ gravity: 'se', html: true });
-        $(el).find('i[title]').tipsy({ gravity: $.fn.tipsy.autoNS, offset: 2 });
-        $(el).find('[title]').each(function (i, el) {
+        $('svg .chart-data', el).tipsy({ gravity: 'se', html: true });
+        $('i[title]', el).tipsy({ gravity: $.fn.tipsy.autoNS, offset: 2 });
+        $('[title]', el).each(function (i, el) {
            var $el = $(el);
            var delay, gravity;
            if ($el.data('tooltip-delay') !== undefined) {
@@ -54,7 +54,7 @@
 
         // migrate or remove all orphaned tooltips
         $('.tipsy').each(function () {
-            var arrow = $(this).find('.tipsy-arrow')[0];
+            var arrow = $('.tipsy-arrow', this)[0];
             if (!icinga.utils.elementsOverlap(arrow, $('#main')[0])) {
                 $(this).remove();
                 return;

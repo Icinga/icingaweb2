@@ -18,7 +18,7 @@
 
         rendered: function(event) {
             var $container = $(event.currentTarget);
-            if ($($container).find('> .content.styleguide').length) {
+            if ($('> .content.styleguide', $container).length) {
                 $container.removeClass('module-doc');
             }
         }
