@@ -118,6 +118,7 @@ class Service extends MonitoredObject
             'host_display_name',
             'host_handled',
             'host_in_downtime',
+            'host_is_flapping',
             'host_last_state_change',
             'host_name',
             'host_notifications_enabled',

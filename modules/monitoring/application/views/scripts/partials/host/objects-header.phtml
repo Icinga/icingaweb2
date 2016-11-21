@@ -20,7 +20,7 @@ if (! ($hostCount = count($objects))): return; endif ?>
                 $host->host_name,
                 $host->host_display_name
             ) ?>
-            <?= implode(' ', $this->hostFlags($host)) ?>
+            <?= $this->hostFlags($host) ?>
         </td>
     </tr>
 <?php endforeach ?>

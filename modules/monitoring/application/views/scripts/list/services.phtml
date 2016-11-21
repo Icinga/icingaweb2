@@ -82,7 +82,7 @@ if (! $this->compact): ?>
                             'class' => 'rowaction'
                         )
                     ) ?>
-                    <span class="state-icons"><?= implode(' ', $this->serviceFlags($service)) ?></span>
+                    <span class="state-icons"><?= $this->serviceFlags($service) ?></span>
                 </div>
                 <div class="overview-plugin-output-container">
                     <div class="overview-performance-data">

@@ -82,7 +82,7 @@ if (! $this->compact): ?>
                           )
                     ) ?>&#41;</span>
                 <?php endif ?>
-                    <span class="state-icons"><?= implode(' ', $this->hostFlags($host)) ?></span>
+                    <span class="state-icons"><?= $this->hostFlags($host) ?></span>
                 </div>
                 <p class="overview-plugin-output"><?= $this->pluginOutput($this->ellipsis($host->host_output, 10000), true) ?></p>
             </td>
