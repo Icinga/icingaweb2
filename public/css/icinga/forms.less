@@ -13,7 +13,6 @@ input[type=time],
 input[type=url] {
   .box-shadow(0 1px 0 0 @gray-light);
   .transition(border 0.3s ease);
-  min-width: 30em;
 
   border: none;
   border: 1px solid @gray-lighter;
@@ -22,6 +21,23 @@ input[type=url] {
 
   &:focus:not([readonly]) {
     border-color: @icinga-blue;
+  }
+}
+
+#col1,
+#col2 {
+  input:not([type]),
+  input[type=text],
+  input[type=date],
+  input[type=datetime-local],
+  input[type=email],
+  input[type=number],
+  input[type=password],
+  input[type=search],
+  input[type=tel],
+  input[type=time],
+  input[type=url] {
+    min-width: 30em;
   }
 }
 
