@@ -13,7 +13,6 @@ use Icinga\Exception\ProgrammingError;
 use Icinga\Security\SecurityException;
 use Icinga\Util\Translator;
 use Icinga\Web\Form\ErrorLabeller;
-use Icinga\Web\Form\Decorator\Autosubmit;
 use Icinga\Web\Form\Element\CsrfCounterMeasure;
 
 /**
@@ -223,6 +222,7 @@ class Form extends Zend_Form
     public static $defaultElementDecorators = array(
         array('Label', array('tag'=>'span', 'separator' => '', 'class' => 'control-label')),
         array('Help', array('placement' => 'APPEND')),
+        array('Autosubmit', array('placement' => 'APPEND')),
         array(array('labelWrap' => 'HtmlTag'), array('tag' => 'div', 'class' => 'control-label-group')),
         array('ViewHelper', array('separator' => '')),
         array('Errors', array('separator' => '')),
@@ -944,50 +944,50 @@ class Form extends Zend_Form
             $el->setAttrib('id', $this->getRequest()->protectId($this->getId(false) . '_' . $el->getId()));
         }
 
-        if ($el->getAttrib('autosubmit')) {
-            if ($this->getUseFormAutosubmit()) {
-                $warningId = 'autosubmit_warning_' . $el->getId();
-                $warningText = $this->getView()->escape($this->translate(
-                    'Upon its value changing, this field issues an automatic update of this page.'
-                ));
-                $autosubmitDecorator = $this->_getDecorator('Callback', array(
-                    'placement' => 'PREPEND',
-                    'callback'  => function ($content) use ($warningId, $warningText) {
-                        return '<span class="sr-only" id="' . $warningId . '">' . $warningText . '</span>';
-                    }
-                ));
-            } else {
-                $autosubmitDecorator = new Autosubmit();
-                $autosubmitDecorator->setAccessible();
-                $warningId = $autosubmitDecorator->getWarningId($el);
-            }
-
-            $decorators = $el->getDecorators();
-            $pos = array_search('Zend_Form_Decorator_ViewHelper', array_keys($decorators), true) + 1;
-            $el->setDecorators(
-                array_slice($decorators, 0, $pos, true)
-                + array('autosubmit' => $autosubmitDecorator)
-                + array_slice($decorators, $pos, count($decorators) - $pos, true)
-            );
-
-            if (($describedBy = $el->getAttrib('aria-describedby')) !== null) {
-                $el->setAttrib('aria-describedby', $describedBy . ' ' . $warningId);
-            } else {
-                $el->setAttrib('aria-describedby', $warningId);
-            }
-
-            $class = $el->getAttrib('class');
-            if (is_array($class)) {
-                $class[] = 'autosubmit';
-            } elseif ($class === null) {
-                $class = 'autosubmit';
-            } else {
-                $class .= ' autosubmit';
-            }
-            $el->setAttrib('class', $class);
-
-            unset($el->autosubmit);
-        }
+//        if ($el->getAttrib('autosubmit')) {
+//            if ($this->getUseFormAutosubmit()) {
+//                $warningId = 'autosubmit_warning_' . $el->getId();
+//                $warningText = $this->getView()->escape($this->translate(
+//                    'Upon its value changing, this field issues an automatic update of this page.'
+//                ));
+//                $autosubmitDecorator = $this->_getDecorator('Callback', array(
+//                    'placement' => 'PREPEND',
+//                    'callback'  => function ($content) use ($warningId, $warningText) {
+//                        return '<span class="sr-only" id="' . $warningId . '">' . $warningText . '</span>';
+//                    }
+//                ));
+//            } else {
+//                $autosubmitDecorator = new Autosubmit();
+//                $autosubmitDecorator->setAccessible();
+//                $warningId = $autosubmitDecorator->getWarningId($el);
+//            }
+//
+//            $decorators = $el->getDecorators();
+//            $pos = array_search('Zend_Form_Decorator_ViewHelper', array_keys($decorators), true) + 1;
+//            $el->setDecorators(
+//                array_slice($decorators, 0, $pos, true)
+//                + array('autosubmit' => $autosubmitDecorator)
+//                + array_slice($decorators, $pos, count($decorators) - $pos, true)
+//            );
+//
+//            if (($describedBy = $el->getAttrib('aria-describedby')) !== null) {
+//                $el->setAttrib('aria-describedby', $describedBy . ' ' . $warningId);
+//            } else {
+//                $el->setAttrib('aria-describedby', $warningId);
+//            }
+//
+//            $class = $el->getAttrib('class');
+//            if (is_array($class)) {
+//                $class[] = 'autosubmit';
+//            } elseif ($class === null) {
+//                $class = 'autosubmit';
+//            } else {
+//                $class .= ' autosubmit';
+//            }
+//            $el->setAttrib('class', $class);
+//
+//            unset($el->autosubmit);
+//        }
 
         if ($el->getAttrib('preserveDefault')) {
             $el->addDecorator(
