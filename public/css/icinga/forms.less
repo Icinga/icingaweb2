@@ -18,31 +18,17 @@ input[type=url] {
   border: 1px solid @gray-lighter;
   outline: none;
   padding: @vertical-padding @horizontal-padding;
+  width: 30em;
+  max-width: 100%;
 
   &:focus:not([readonly]) {
     border-color: @icinga-blue;
   }
 }
 
-#col1,
-#col2 {
-  input:not([type]),
-  input[type=text],
-  input[type=date],
-  input[type=datetime-local],
-  input[type=email],
-  input[type=number],
-  input[type=password],
-  input[type=search],
-  input[type=tel],
-  input[type=time],
-  input[type=url] {
-    min-width: 30em;
-  }
-}
-
 select, textarea {
   width: 30em;
+  max-width: 100%;
 }
 
 .control-button,
@@ -125,7 +111,6 @@ label {
 
 .control-label-group {
   .clearfix();
-  clear: both;
   display: inline-block;
 
   label {
@@ -149,9 +134,8 @@ label {
   }
 
   input[type="checkbox"] {
-    float: left;
     margin-right: @horizontal-padding / 2;
-    margin-top: .190em; margin-left: .095em;
+    margin-left: .095em;
   }
 
   input:not([type]),
