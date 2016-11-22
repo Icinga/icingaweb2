@@ -97,7 +97,7 @@
 
 .controls > .state-table-detail {
   position: relative;
-  padding-left: 24px;
+  padding-left: 1.5em;
   margin: @horizontal-padding 0;
   clear: both;
 
@@ -105,15 +105,18 @@
     margin-bottom: 0;
   }
 
-  > i {
+  &:before {
     content: "";
     display: block;
-    width:  1em;
-    height: 1em;
-    font-size: 18px;
-    line-height: 18px;
-    top: 0; left: 0;
+    width:  .667em;
+    height: .667em;
+    top: .5em; left: 0;
     position: absolute;
+  }
+
+  .icon-service,
+  .icon-host {
+    color: @gray;
   }
 
   > .title-left {
@@ -126,40 +129,40 @@
 
   &.state-ok,
   &.state-up {
-    > i { color: @color-ok }
+    &:before { background: @color-ok }
   }
 
   &.state-critical,
   &.state-down {
-    > i { color: @color-critical }
+    &:before { background: @color-critical }
 
-    &.handled > i { color: @color-critical-handled }
+    &.handled:before { background: @color-critical-handled }
   }
 
   &.state-warning {
-    > i { color: @color-warning }
+    &:before { background: @color-warning }
 
-    &.handled > i { color: @color-warning-handled }
+    &.handled:before { background: @color-warning-handled }
   }
 
   &.state-unreachable {
-    > i { color: @color-unreachable }
+    &:before { background: @color-unreachable }
 
-    &.handled { color: @color-unreachable-handled };
+    &.handled:before { background: @color-unreachable-handled };
   }
 
   &.state-pending {
-    > i { color: @color-pending }
+    &:before { background: @color-pending }
   }
 
   &.state-unknown {
-    > i { background: @color-unknown }
+    &:before { background: @color-unknown }
 
-    &.handled > i { color: @color-unknown-handled }
+    &.handled:before { background: @color-unknown-handled }
   }
 
   &.state-no-state {
-    > i { @text-color-light }
+    &:before { @text-color-light }
   }
 
   table {

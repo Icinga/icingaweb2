@@ -4,8 +4,8 @@ use Icinga\Module\Monitoring\Object\Service;
 /** @var \Icinga\Module\Monitoring\Object\MonitoredObject $object */
 ?>
 <div class="state-table-detail host-detail-state state-<?= Host::getStateText($object->host_state) ?><?= $object->host_handled ? ' handled' : '' ?> clearfix">
-    <i class="icon-host"></i>
     <div class="title-left">
+        <i class="icon-host"></i>
         <?= $this->iconImage()->host($object) ?>
         <?= $this->escape($object->host_display_name) ?>
         <?= $this->render('partials/host/statusicons.phtml') ?>
@@ -31,8 +31,8 @@ use Icinga\Module\Monitoring\Object\Service;
     </table>
 </div>
 <div class="state-table-detail service-detail-state state-<?= Service::getStateText($object->service_state) ?><?= $object->service_handled ? ' handled' : '' ?> clearfix">
-    <i class="icon-service"></i>
     <div class="title-left">
+        <i class="icon-service"></i>
         <?= $this->iconImage()->service($object) ?>
         <span class="selectable"><?= $this->escape($object->service_display_name) ?></span>
         <?= $this->render('partials/service/statusicons.phtml') ?>

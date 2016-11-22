@@ -3,8 +3,8 @@ use Icinga\Module\Monitoring\Object\Host;
 /** @var Host $object */
 ?>
 <div class="state-table-detail host-detail-state state-<?= Host::getStateText($object->host_state) ?><?= $object->host_handled ? ' handled' : '' ?> clearfix">
-    <i class="icon-host"></i>
     <div class="title-left">
+        <i class="icon-host"></i>
         <?= $this->iconImage()->host($object) ?>
         <?= $this->escape($object->host_display_name) ?>
         <?= $this->render('partials/host/statusicons.phtml') ?>
