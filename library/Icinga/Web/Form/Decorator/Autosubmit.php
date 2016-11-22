@@ -93,7 +93,7 @@ class Autosubmit extends Zend_Form_Decorator_Abstract
      */
     public function render($content = '')
     {
-        if ($content) {
+        if ($content && $this->getElement()->getAttrib('autosubmit')) {
             $isForm = $this->getElement() instanceof Form;
             $warning = $isForm
                 ? t('Upon any of this form\'s fields were changed, this page is being updated automatically.')
