@@ -224,7 +224,7 @@ class Form extends Zend_Form
         array('Help', array('placement' => 'APPEND')),
         array('Autosubmit', array('placement' => 'APPEND')),
         array(array('labelWrap' => 'HtmlTag'), array('tag' => 'div', 'class' => 'control-label-group')),
-        array('ViewHelper', array('separator' => '')),
+        'ViewHelper' => array('ViewHelper', array('separator' => '')),
         array('Errors', array('separator' => '')),
         array('HtmlTag', array('tag' => 'div', 'class' => 'control-group'))
     );
@@ -927,6 +927,10 @@ class Form extends Zend_Form
             } elseif ($type === 'hidden') {
                 $options['decorators'] = array('ViewHelper');
             }
+        }
+
+        if ($type === 'checkbox' || $type === 'radio') {
+            $options['decorators']['ViewHelper'][1]['placement'] = 'PREPEND';
         }
 
         $el = parent::createElement($type, $name, $options);
