@@ -4,9 +4,11 @@ use Icinga\Module\Monitoring\Object\Service;
 /** @var \Icinga\Module\Monitoring\Object\MonitoredObject $object */
 ?>
 <div class="state-table-detail host-detail-state state-<?= Host::getStateText($object->host_state) ?><?= $object->host_handled ? ' handled' : '' ?> clearfix">
+    <i class="icon-host"></i>
     <div class="title-left">
         <?= $this->iconImage()->host($object) ?>
         <?= $this->escape($object->host_display_name) ?>
+        <?= $this->render('partials/host/statusicons.phtml') ?>
     </div>
     <div class="title-right">
     <?php if ($object->host_display_name !== $object->host_name): ?>
@@ -15,7 +17,6 @@ use Icinga\Module\Monitoring\Object\Service;
     <?php if ($object->host_alias !== $object->host_display_name && $object->host_alias !== $object->host_name): ?>
             <?= $this->escape($this->translate('Alias', 'host') . ': ' . $object->host_alias) ?>
     <?php endif ?>
-        <?= $this->render('partials/host/statusicons.phtml') ?>
     </div>
     <table>
         <tr>
@@ -30,15 +31,16 @@ use Icinga\Module\Monitoring\Object\Service;
     </table>
 </div>
 <div class="state-table-detail service-detail-state state-<?= Service::getStateText($object->service_state) ?><?= $object->service_handled ? ' handled' : '' ?> clearfix">
+    <i class="icon-service"></i>
     <div class="title-left">
         <?= $this->iconImage()->service($object) ?>
-        <?= $this->translate('Service') ?>&#58; <span class="selectable"><?= $this->escape($object->service_display_name) ?></span>
+        <span class="selectable"><?= $this->escape($object->service_display_name) ?></span>
+        <?= $this->render('partials/service/statusicons.phtml') ?>
     </div>
     <div class="title-right">
     <?php if ($object->service_display_name !== $object->service_description): ?>
         <span class="selectable service-meta">&#40;<?= $this->escape($object->service_description) ?>&#41;</span>
     <?php endif ?>
-        <?= $this->render('partials/service/statusicons.phtml') ?>
     </div>
     <table>
         <tr>

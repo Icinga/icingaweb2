@@ -97,7 +97,7 @@
 
 .controls > .state-table-detail {
   position: relative;
-  padding-left: 16px;
+  padding-left: 24px;
   margin: @horizontal-padding 0;
   clear: both;
 
@@ -105,12 +105,14 @@
     margin-bottom: 0;
   }
 
-  &:before {
+  > i {
     content: "";
     display: block;
-    width:  .667em;
-    height: .667em;
-    top: .5em; left: 0;
+    width:  1em;
+    height: 1em;
+    font-size: 18px;
+    line-height: 18px;
+    top: 0; left: 0;
     position: absolute;
   }
 
@@ -124,48 +126,40 @@
 
   &.state-ok,
   &.state-up {
-    &:before { background: @color-ok }
+    > i { color: @color-ok }
   }
 
   &.state-critical,
   &.state-down {
-    &:before { background: @color-critical }
+    > i { color: @color-critical }
 
-    &.handled:before { background: @color-critical-handled }
+    &.handled > i { color: @color-critical-handled }
   }
 
   &.state-warning {
-    &:before { background: @color-critical }
-  }
+    > i { color: @color-warning }
 
-  &.state-warning-handled {
-    &:before { background: @color-critical-handled }
-  }
-
-  &.state-unreachable {
-    &:before { background: @color-unreachable }
-
-    &.handled:before { background: @color-unreachable-handled }
+    &.handled > i { color: @color-warning-handled }
   }
 
   &.state-unreachable {
-    &:before { background: @color-unreachable }
+    > i { color: @color-unreachable }
 
-    &.handled:before { background: @color-unreachable-handled };
+    &.handled { color: @color-unreachable-handled };
   }
 
-  &.state-pending:before {
-    background: @color-pending;
+  &.state-pending {
+    > i { color: @color-pending }
   }
 
   &.state-unknown {
-    &:before { background: @color-unknown }
+    > i { background: @color-unknown }
 
-    &.handled:before { background: @color-unknown-handled }
+    &.handled > i { color: @color-unknown-handled }
   }
 
   &.state-no-state {
-    &:before { @text-color-light }
+    > i { @text-color-light }
   }
 
   table {
