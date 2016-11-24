@@ -657,14 +657,21 @@
             $container.find('.controls').each(function() {
                 var $controls = $(this);
                 var $fakeControls = $controls.next('.fake-controls');
-
                 $controls.css({
                     top: $container.offset().top,
                     width: $fakeControls.outerWidth()
                 });
-
                 $fakeControls.height($controls.height());
             });
+
+            var $statusBar = $container.children('.monitoring-statusbar');
+            if ($statusBar.length) {
+                $statusBar.css({
+                    left: $container.offset().left,
+                    width: $container.width()
+                });
+                $statusBar.prev('.monitoring-statusbar-ghost').height($statusBar.outerHeight(true));
+            }
         },
 
         toggleFullscreen: function () {
