@@ -104,6 +104,7 @@
 // Host and service summaries in detail and list views
 .hosts-summary,
 .services-summary {
+  display: inline-block;
   margin-bottom: 0.5em;
 
   > .hosts-link,
@@ -111,11 +112,6 @@
   > .state-badges {
     vertical-align: middle;
   }
-}
-
-.controls > .hosts-summary,
-.controls > .services-summary {
-  float: left;
 }
 
 // State table in the host and service multi-selection and detail views
@@ -128,6 +124,31 @@
   .hosts-summary,
   .services-summary {
     float: left;
+  }
+}
+
+// Quick actions
+.quick-actions {
+  ul {
+    // Center horizontally
+    display: table;
+    margin: 0 auto;
+  }
+
+  li {
+    border-right: 1px solid fade(@icinga-blue, 50%);
+    color: @icinga-blue;
+    padding: 0 0.6em;
+  }
+
+  li:last-child {
+    border-right: none;
+    padding-right: 0;
+  }
+
+  li i {
+    font-size: 1.2em;
+    vertical-align: middle;
   }
 }
 
