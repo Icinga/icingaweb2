@@ -70,8 +70,8 @@ class RemoveAcknowledgementCommandForm extends ObjectsCommandForm
                 'ignore'        => true,
                 'label'         => $this->getSubmitLabel(),
                 'title'         => $this->translatePlural(
-                    'Remove problem acknowledgement',
-                    'Remove problem acknowledgements',
+                    'Remove acknowledgement',
+                    'Remove acknowledgements',
                     count($this->objects)
                 ),
                 'type'          => 'submit'
@@ -89,8 +89,8 @@ class RemoveAcknowledgementCommandForm extends ObjectsCommandForm
         $label = $this->getView()->icon('cancel');
         if ($this->isLabelEnabled()) {
             $label .= $this->translatePlural(
-                'Remove problem acknowledgement',
-                'Remove problem acknowledgements',
+                'Remove acknowledgement',
+                'Remove acknowledgements',
                 count($this->objects)
             );
         }
@@ -111,8 +111,8 @@ class RemoveAcknowledgementCommandForm extends ObjectsCommandForm
         }
         Notification::success(mtp(
             'monitoring',
-            'Removing problem acknowledgement..',
-            'Removing problem acknowledgements..',
+            'Removing acknowledgement..',
+            'Removing acknowledgements..',
             count($this->objects)
         ));
 
