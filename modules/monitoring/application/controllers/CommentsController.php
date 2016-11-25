@@ -59,7 +59,7 @@ class CommentsController extends Controller
         $this->getTabs()->add(
             'comments',
             array(
-                'icon'  => 'comment',
+                'icon'  => 'comment-empty',
                 'label' => $this->translate('Comments') . sprintf(' (%d)', $query->count()),
                 'title' => $this->translate(
                     'Display detailed information about multiple comments.'

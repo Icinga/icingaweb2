@@ -57,7 +57,7 @@ $lastDate = null;
                 $stateName = $isService ? Service::getStateText($event->state) : Host::getStateText($event->state);
                 break;
             case 'comment':
-                $icon = 'comment';
+                $icon = 'comment-empty';
                 $iconTitle = $this->translate('Comment', 'tooltip');
                 $label = $this->translate('COMMENT');
                 break;
