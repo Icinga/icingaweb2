@@ -81,20 +81,25 @@
 // Host and service summaries in detail and list views
 .hosts-summary,
 .services-summary {
-  margin-bottom: 0.5em;
-  background: @gray-lighter;
   .rounded-corners(@border-radius: 0.4em);
+  background: @gray-lighter;
+  margin-bottom: 0.5em;
+  letter-spacing: -0.417em;
   line-height: 1.4;
+
+  > * {
+    letter-spacing: normal;
+  }
 
   > .hosts-link,
   > .services-link {
-    font-weight: bold;
     display: inline-block;
+    font-weight: bold;
     vertical-align: top;
 
     > a {
-      padding: .095em .25em .095em @vertical-padding;
       display: inline-block;
+      padding: @badge-padding @vertical-padding;
     }
   }
 }
