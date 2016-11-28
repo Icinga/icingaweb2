@@ -29,6 +29,26 @@ input[type=url] {
 select, textarea {
   width: 30em;
   max-width: 100%;
+  border: 1px solid @gray-lighter;
+  padding: @vertical-padding @horizontal-padding;
+  -webkit-appearance: none;
+     -moz-appearance: none;
+      -ms-appearance: none;
+          appearance: none;
+}
+
+select {
+  background: url(../img/select-icon.svg) right center no-repeat;
+  background-size: contain;
+
+  // Hide original dropdown icon in IE
+  &::-ms-expand {
+    display: none;
+  }
+}
+
+.controls select {
+  padding: 0 @horizontal-padding;
 }
 
 .control-button,
