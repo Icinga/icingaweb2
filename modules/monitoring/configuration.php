@@ -238,10 +238,6 @@ $section = $this->menuSection(N_('Reporting'), array(
     'priority'  => 100
 ));
 
-$section->add(N_('Alert Summary'), array(
-   'url'    => 'monitoring/alertsummary/index'
-));
-
 /*
  * System Section
  */
