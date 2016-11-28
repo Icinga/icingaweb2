@@ -154,11 +154,11 @@
 
 #layout.hoveredmenu {
   #main {
-   z-index: 2;
+    z-index: 2;
   }
 
   #sidebar {
-   z-index: 3;
+    z-index: 3;
   }
 
   #menu {
@@ -228,19 +228,19 @@ input[type=text].search-input {
   transition: none;
 }
 
-.search-input:-moz-placeholder { // FF 18-
+.search-input:focus:-moz-placeholder { // FF 18-
   color: @gray-light;
 }
 
-.search-input::-moz-placeholder { // FF 19+
+.search-input:focus::-moz-placeholder { // FF 19+
   color: @gray-light;
 }
 
-.search-input:-ms-input-placeholder {
+.search-input:focus:-ms-input-placeholder {
   color: @gray-light;
 }
 
-.search-input::-webkit-input-placeholder {
+.search-input:focus::-webkit-input-placeholder {
   color: @gray-light;
 }
 
