@@ -267,8 +267,10 @@ class StateBadges extends AbstractWidget
             foreach (array_keys($group) as $state) {
                 $this->createBadge($state, $groupBadges);
             }
-            $groupItem->setChildren($groupBadges);
-            $badges->addItem($groupItem);
+            if (! $groupBadges->isEmpty()) {
+                $groupItem->setChildren($groupBadges);
+                $badges->addItem($groupItem);
+            }
         }
         return $this;
     }
