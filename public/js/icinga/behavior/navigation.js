@@ -10,8 +10,6 @@
         Icinga.EventListener.call(this, icinga);
         this.on('click', '#menu a', this.linkClicked, this);
         this.on('click', '#menu tr[href]', this.linkClicked, this);
-        this.on('mouseenter', 'li.dropdown', this.dropdownHover, this);
-        this.on('mouseleave', 'li.dropdown', this.dropdownLeave, this);
         this.on('mouseenter', '#menu > nav > ul > li', this.menuTitleHovered, this);
         this.on('mouseleave', '#sidebar', this.leaveSidebar, this);
         this.on('rendered', this.onRendered, this);
@@ -350,23 +348,6 @@
         }
     };
 
-    Navigation.prototype.dropdownHover = function () {
-        $(this).addClass('hover');
-    };
-
-    Navigation.prototype.dropdownLeave = function (event) {
-        var $li = $(this),
-            self = event.data.self;
-        setTimeout(function () {
-            // TODO: make this behave well together with keyboard navigation
-            try {
-                if (!$li.is('li:hover') /*&& ! $li.find('a:focus')*/) {
-                    $li.removeClass('hover');
-                }
-            } catch(e) { /* Bypass because if IE8 */ }
-        }, 300);
-        self.hovered = null;
-    };
     Icinga.Behaviors.Navigation = Navigation;
 
 }) (Icinga, jQuery);
