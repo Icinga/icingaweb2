@@ -445,6 +445,10 @@
                 return;
             }
 
+            if (req.getResponseHeader('X-Icinga-Announcements') === 'refresh') {
+                _this.loadUrl(_this.url('/layout/announcements'), $('#announcements'));
+            }
+
             // div helps getting an XML tree
             var $resp = $('<div>' + req.responseText + '</div>');
             var active = false;

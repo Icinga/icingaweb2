@@ -304,7 +304,12 @@ class Web extends EmbeddedWeb
                         'about' => array(
                             'label'     => t('About'),
                             'url'       => 'about',
-                            'priority'  => 701
+                            'priority'  => 700
+                        ),
+                        'announcements' => array(
+                            'label'      => t('Announcements'),
+                            'url'        => 'announcements',
+                            'priority'   => 710
                         )
                     )
                 ),
@@ -366,7 +371,7 @@ class Web extends EmbeddedWeb
                     'label'      => t('Application Log'),
                     'url'        => 'list/applicationlog',
                     'permission' => 'application/log',
-                    'priority'   => 710
+                    'priority'   => 900
                 );
             }
         } else {

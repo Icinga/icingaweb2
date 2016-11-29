@@ -44,6 +44,9 @@ class RoleForm extends ConfigForm
             ) . ' (application/stacktraces)',
             'application/log'                               => $this->translate('Allow to view the application log')
                 . ' (application/log)',
+            'admin'                                         => $this->translate(
+                'Grant admin permissions, e.g. manage announcements'
+            ) . ' (admin)',
             'config/*'                                      => $this->translate('Allow config access') . ' (config/*)'
         );
 
