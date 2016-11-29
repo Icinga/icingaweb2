@@ -117,9 +117,12 @@ class AnnouncementIniRepository extends IniRepository
     public function getEtag()
     {
         $file = $this->getDataSource('announcement')->getConfigFile();
-        $mtime = filemtime($file);
-        $size = filesize($file);
-        return hash('crc32', $mtime . $size);
+        if (@is_readable($file)) {
+            $mtime = filemtime($file);
+            $size = filesize($file);
+            return hash('crc32', $mtime . $size);
+        }
+        return null;
     }
 
     /**
