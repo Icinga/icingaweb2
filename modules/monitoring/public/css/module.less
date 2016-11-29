@@ -129,20 +129,16 @@
 
 // Quick actions
 .quick-actions {
-  ul {
-    // Center horizontally
-    display: table;
-    margin: 0 auto;
-  }
-
   li {
-    border-right: 1px solid fade(@icinga-blue, 50%);
     color: @icinga-blue;
     padding: 0 0.6em;
   }
 
+  li:first-child {
+    padding-left: 0;
+  }
+
   li:last-child {
-    border-right: none;
     padding-right: 0;
   }
 }
