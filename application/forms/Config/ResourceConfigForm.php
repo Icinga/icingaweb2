@@ -181,10 +181,10 @@ class ResourceConfigForm extends ConfigForm
                         return false;
                     }
                 }
-                $this->add(array_filter($this->getValues()));
+                $this->add(static::transformEmptyValuesToNull($this->getValues()));
                 $message = $this->translate('Resource "%s" has been successfully created');
             } else { // edit existing resource
-                $this->edit($resource, array_filter($this->getValues()));
+                $this->edit($resource, static::transformEmptyValuesToNull($this->getValues()));
                 $message = $this->translate('Resource "%s" has been successfully changed');
             }
         } catch (InvalidArgumentException $e) {

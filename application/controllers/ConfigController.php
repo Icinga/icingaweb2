@@ -215,7 +215,7 @@ class ConfigController extends Controller
 
         $form->setOnSuccess(function (UserBackendConfigForm $form) {
             try {
-                $form->add(array_filter($form->getValues()));
+                $form->add($form::transformEmptyValuesToNull($form->getValues()));
             } catch (Exception $e) {
                 $form->error($e->getMessage());
                 return false;
@@ -246,12 +246,7 @@ class ConfigController extends Controller
         $form->setIniConfig(Config::app('authentication'));
         $form->setOnSuccess(function (UserBackendConfigForm $form) use ($backendName) {
             try {
-                $form->edit($backendName, array_map(
-                    function ($v) {
-                        return $v !== '' ? $v : null;
-                    },
-                    $form->getValues()
-                ));
+                $form->edit($backendName, $form::transformEmptyValuesToNull($form->getValues()));
             } catch (Exception $e) {
                 $form->error($e->getMessage());
                 return false;

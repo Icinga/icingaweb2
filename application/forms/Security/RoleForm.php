@@ -289,7 +289,7 @@ class RoleForm extends ConfigForm
      */
     public function getValues($suppressArrayNotation = false)
     {
-        $values = array_filter(parent::getValues($suppressArrayNotation));
+        $values = static::transformEmptyValuesToNull(parent::getValues($suppressArrayNotation));
         if (isset($values['permissions'])) {
             $values['permissions'] = implode(', ', $values['permissions']);
         }
