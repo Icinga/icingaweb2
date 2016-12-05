@@ -174,13 +174,6 @@ abstract class MonitoredObject implements Filterable
     abstract protected function getDataView();
 
     /**
-     * Get the notes for this monitored object
-     *
-     * @return string The notes as a string
-     */
-    public abstract function getNotes();
-
-    /**
      * Get all note urls configured for this monitored object
      *
      * @return array All note urls as a string

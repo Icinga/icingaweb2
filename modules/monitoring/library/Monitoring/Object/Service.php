@@ -214,9 +214,4 @@ class Service extends MonitoredObject
             MonitoredObject::parseAttributeUrls($this->service_notes_url)
         );
     }
-
-    public function getNotes()
-    {
-        return $this->service_notes;
-    }
 }
