@@ -2,16 +2,10 @@
 
 use Icinga\Web\Navigation\Navigation;
 
-$navigation = new Navigation();
-//$navigation->load($object->getType() . '-note');
-foreach ($navigation as $item) {
-    $item->setObject($object);
-}
+/** @var \Icinga\Module\Monitoring\Object\MonitoredObject $object */
 
-$notes = trim($object->getNotes());
-if ($notes) {
-    $navigation->addItem($notes);
-}
+$navigation = new Navigation();
+$notes = trim($object->notes);
 
 $links = $object->getNotesUrls();
 if (! empty($links)) {
@@ -35,11 +29,16 @@ if (! empty($links)) {
     }
 }
 
-if ($navigation->isEmpty() || !$navigation->hasRenderableItems()) {
+if (($navigation->isEmpty() || ! $navigation->hasRenderableItems()) && $notes === '') {
     return;
 }
 ?>
 <tr>
-    <th><?= $this->translate('Notes'); ?></th>
-    <?= $navigation->getRenderer()->setElementTag('td')->setCssClass('notes'); ?>
+    <th><?= $this->translate('Notes') ?></th>
+    <td>
+        <?= $navigation->getRenderer() ?>
+    <?php if ($notes !== ''): ?>
+        <p><?= $this->nl2br($this->escape($notes)) ?></p>
+    <?php endif ?>
+    </td>
 </tr>
