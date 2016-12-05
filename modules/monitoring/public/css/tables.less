@@ -108,7 +108,9 @@
 
 // Table for performance data in detail views
 .performance-data-table {
-  width: 100%;
+  display: block;
+  overflow-x: auto;
+  position: relative;
 
   > thead > tr > th {
     text-align: left;
@@ -118,6 +120,11 @@
   > tbody > tr > td:first-child {
     // Reset base padding
     padding-left: 0;
+  }
+
+  > thead > tr > th,
+  > tbody > tr > td {
+    white-space: nowrap;
   }
 }
 
