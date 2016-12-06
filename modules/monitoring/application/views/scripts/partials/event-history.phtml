@@ -34,6 +34,7 @@ $history->limit($limit * $page);
 <?php
 $dateFormat = $this->translate('%A, %B %e, %Y', 'date.verbose');
 $lastDate = null;
+$flappingMsg = $this->translate('Flapping with a %.2f%% state change rate');
 ?>
     <table class="state-table" data-base-target="_next"<?php if (isset($tableCssClass)): ?> class="<?=$tableCssClass ?>"<?php endif ?>>
     <tbody>
@@ -92,12 +93,14 @@ $lastDate = null;
                 $icon = 'flapping';
                 $iconTitle = $this->translate('Flapping started', 'tooltip');
                 $label = $this->translate('FLAPPING');
+                $msg = sprintf($flappingMsg, $msg);
                 break;
             case 'flapping_deleted':
                 $icon = 'flapping';
                 $iconCssClass = 'icon-strikethrough';
                 $iconTitle = $this->translate('Flapping stopped', 'tooltip');
                 $label = $this->translate('FLAPPING STOPPED');
+                $msg = sprintf($flappingMsg, $msg);
                 break;
             case 'hard_state':
                 if ((int) $event->state === 0) {
