@@ -1,6 +1,8 @@
 <?php
 /* Icinga Web 2 | (c) 2013 Icinga Development Team | GPLv2+ */
 
+use Icinga\Web\Dom\DomNodeIterator;
+
 /**
  * Plugin output renderer
  */
@@ -81,7 +83,7 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
         $output = preg_replace('/,(?=[^\s])/', ', ', $output);
         if (! $raw) {
             if ($isHtml) {
-                $output = $this->fixLinks($output);
+                $output = $this->processHtml($output);
                 $output = '<div class="plugin-output">' . $output . '</div>';
             } else {
                 $output = '<div class="plugin-output preformatted">' . $output . '</div>';
@@ -91,32 +93,60 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
     }
 
     /**
-     * Replace classic Icinga CGI links with Icinga Web 2 links
+     * Replace classic Icinga CGI links with Icinga Web 2 links and color state information, if any
      *
      * @param   string  $html
      *
      * @return  string
      */
-    protected function fixLinks($html)
+    protected function processHtml($html)
     {
-        $dom = new DOMDocument();
-        $dom->loadXML('<div>' . $html . '</div>', LIBXML_NOERROR | LIBXML_NOWARNING);
-        $dom->preserveWhiteSpace = false;
-        $links = $dom->getElementsByTagName('a');
-        foreach ($links as $link) {
-            /** @var \DOMElement $link */
-            $href = $link->getAttribute('href');
-            if (preg_match('~^/cgi\-bin/status\.cgi\?(.+)$~', $href, $m)) {
-                parse_str($m[1], $params);
-                if (isset($params['host'])) {
-                    $link->setAttribute('href', $this->view->baseUrl(
-                        '/monitoring/host/show?host=' . urlencode($params['host']
-                    )));
+        $pattern = '/[([](OK|WARNING|CRITICAL|UNKNOWN)[)\]]/';
+        $doc = new DOMDocument();
+        $doc->loadXML('<div>' . $html . '</div>', LIBXML_NOERROR | LIBXML_NOWARNING);
+        $dom = new RecursiveIteratorIterator(new DomNodeIterator($doc), RecursiveIteratorIterator::SELF_FIRST);
+        $nodesToRemove = array();
+        foreach ($dom as $node) {
+            /** @var \DOMNode $node */
+            if ($node->nodeType === XML_TEXT_NODE) {
+                $start = 0;
+                while (preg_match($pattern, $node->nodeValue, $match, PREG_OFFSET_CAPTURE, $start)) {
+                    $offsetLeft = $match[0][1];
+                    $matchLength = strlen($match[0][0]);
+                    $leftLength = $offsetLeft - $start;
+                    if ($leftLength) {
+                        $text = new DOMText(substr($node->nodeValue, $start, $leftLength));
+                        $node->parentNode->insertBefore($text, $node);
+                    }
+                    $span = $doc->createElement('span', $match[0][0]);
+                    $span->setAttribute('class', 'state-' . strtolower($match[1][0]));
+                    $node->parentNode->insertBefore($span, $node);
+                    $start = $offsetLeft + $matchLength;
+                }
+                if ($start) {
+                    $nodesToRemove[] = $node;
+                }
+            } elseif ($node->nodeType === XML_ELEMENT_NODE) {
+                /** @var \DOMElement $node */
+                if ($node->tagName === 'a'
+                    && preg_match('~^/cgi\-bin/status\.cgi\?(.+)$~', $node->getAttribute('href'), $match)
+                ) {
+                    parse_str($match[1], $params);
+                    if (isset($params['host'])) {
+                        $node->setAttribute(
+                            'href',
+                            $this->view->baseUrl('/monitoring/host/show?host=' . urlencode($params['host']))
+                        );
+                    }
                 }
             }
         }
+        foreach ($nodesToRemove as $node) {
+            /** @var \DOMNode $node */
+            $node->parentNode->removeChild($node);
+        }
 
-        return substr($dom->saveHTML(), 5, -7);
+        return substr($doc->saveHTML(), 5, -7);
     }
 
     /**
