@@ -79,29 +79,20 @@ class Auth
     }
 
     /**
-     * Authenticate the user
-     *
-     * @return bool
-     */
-    public function authenticate()
-    {
-        if ($this->user === null) {
-            $this->authenticateFromSession();
-        }
-        if ($this->user === null && ! $this->authExternal()) {
-            return false;
-        }
-        return true;
-    }
-
-    /**
      * Get whether the user is authenticated
      *
      * @return bool
      */
     public function isAuthenticated()
     {
-        return $this->user !== null;
+        if ($this->user !== null) {
+            return true;
+        }
+        $this->authenticateFromSession();
+        if ($this->user === null && ! $this->authExternal()) {
+            return false;
+        }
+        return true;
     }
 
     public function setAuthenticated(User $user, $persist = true)
