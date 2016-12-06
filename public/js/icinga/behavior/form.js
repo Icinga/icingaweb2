@@ -100,6 +100,7 @@
             && ! $(origFocus).hasClass('autofocus')
             && ! $(origFocus).hasClass('autosubmit')
             && $(origFocus).closest('form').length
+            && $(origFocus).not(':input[type=button], :input[type=submit], :input[type=reset]').length
         ) {
             icinga.logger.debug('Not changing content for ' + containerId + ' form has focus');
             return null;
