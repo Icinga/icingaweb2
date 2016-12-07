@@ -92,7 +92,7 @@ class LdapUserGroupBackendForm extends Form
         if ($formData['type'] === 'msldap') {
             $this->addElement(
                 'checkbox',
-                'nested_group_search_in_ad',
+                'nested_group_search',
                 array(
                     'description'   => $this->translate(
                         'Check this box for nested group search in Active Directory based on the user'
@@ -100,6 +100,9 @@ class LdapUserGroupBackendForm extends Form
                     'label'         => $this->translate('Nested Group Search')
                 )
             );
+        } else {
+            // This is required to purge already present options
+            $this->addElement('hidden', 'nested_group_search', array('disabled' => true));
         }
 
         $this->createGroupConfigElements($defaults, $groupConfigDisabled);
