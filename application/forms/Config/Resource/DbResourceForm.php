@@ -131,7 +131,6 @@ class DbResourceForm extends Form
             'password',
             'password',
             array(
-                'required'          => true,
                 'renderPassword'    => true,
                 'label'             => $this->translate('Password'),
                 'description'       => $this->translate('The password to use for authentication')
