@@ -4,6 +4,7 @@
 namespace Icinga\Module\Monitoring;
 
 use Exception;
+use Icinga\Exception\ProgrammingError;
 use Icinga\Module\Setup\Step;
 use Icinga\Application\Config;
 use Icinga\Exception\IcingaException;
@@ -40,47 +41,83 @@ class TransportStep extends Step
 
     public function getSummary()
     {
-        $pageTitle = '<h2>' . mt('monitoring', 'Command Transport', 'setup.page.title') . '</h2>';
-
-        if (isset($this->data['transportConfig']['host'])) {
-            $pipeHtml = '<p>' . sprintf(
-                mt(
-                    'monitoring',
-                    'Icinga Web 2 will use the named pipe located on a remote machine at "%s" to send commands'
-                    . ' to your monitoring instance by using the connection details listed below:'
-                ),
-                $this->data['transportConfig']['path']
-            ) . '</p>';
-
-            $pipeHtml .= ''
-                . '<table>'
-                . '<tbody>'
-                . '<tr>'
-                . '<td><strong>' . mt('monitoring', 'Remote Host') . '</strong></td>'
-                . '<td>' . $this->data['transportConfig']['host'] . '</td>'
-                . '</tr>'
-                . '<tr>'
-                . '<td><strong>' . mt('monitoring', 'Remote SSH Port') . '</strong></td>'
-                . '<td>' . $this->data['transportConfig']['port'] . '</td>'
-                . '</tr>'
-                . '<tr>'
-                . '<td><strong>' . mt('monitoring', 'Remote SSH User') . '</strong></td>'
-                . '<td>' . $this->data['transportConfig']['user'] . '</td>'
-                . '</tr>'
-                . '</tbody>'
-                . '</table>';
-        } else {
-            $pipeHtml = '<p>' . sprintf(
-                mt(
-                    'monitoring',
-                    'Icinga Web 2 will use the named pipe located at "%s"'
-                    . ' to send commands to your monitoring instance.'
-                ),
-                $this->data['transportConfig']['path']
-            ) . '</p>';
+        switch ($this->data['transportConfig']['transport']) {
+            case 'local':
+                $details = '<p>' . sprintf(
+                    mt(
+                        'monitoring',
+                        'Icinga Web 2 will use the named pipe located at "%s"'
+                            . ' to send commands to your monitoring instance.'
+                    ),
+                    $this->data['transportConfig']['path']
+                ) . '</p>';
+                break;
+            case 'remote':
+                $details = '<p>'
+                    . sprintf(
+                        mt(
+                            'monitoring',
+                            'Icinga Web 2 will use the named pipe located on a remote machine at "%s" to send commands'
+                                . ' to your monitoring instance by using the connection details listed below:'
+                        ),
+                        $this->data['transportConfig']['path']
+                    )
+                    . '</p>'
+                    . '<table>'
+                    . '<tbody>'
+                    . '<tr>'
+                    . '<td><strong>' . mt('monitoring', 'Remote Host') . '</strong></td>'
+                    . '<td>' . $this->data['transportConfig']['host'] . '</td>'
+                    . '</tr>'
+                    . '<tr>'
+                    . '<td><strong>' . mt('monitoring', 'Remote SSH Port') . '</strong></td>'
+                    . '<td>' . $this->data['transportConfig']['port'] . '</td>'
+                    . '</tr>'
+                    . '<tr>'
+                    . '<td><strong>' . mt('monitoring', 'Remote SSH User') . '</strong></td>'
+                    . '<td>' . $this->data['transportConfig']['user'] . '</td>'
+                    . '</tr>'
+                    . '</tbody>'
+                    . '</table>';
+                break;
+            case 'api':
+                $details = '<p>'
+                    . mt(
+                        'monitoring',
+                        'Icinga Web 2 will use the Icinga 2 API to send commands'
+                            . ' to your monitoring instance by using the connection details listed below:'
+                    )
+                    . '</p>'
+                    . '<table>'
+                    . '<tbody>'
+                    . '<tr>'
+                    . '<td><strong>' . mt('monitoring', 'Host') . '</strong></td>'
+                    . '<td>' . $this->data['transportConfig']['host'] . '</td>'
+                    . '</tr>'
+                    . '<tr>'
+                    . '<td><strong>' . mt('monitoring', 'Port') . '</strong></td>'
+                    . '<td>' . $this->data['transportConfig']['port'] . '</td>'
+                    . '</tr>'
+                    . '<tr>'
+                    . '<td><strong>' . mt('monitoring', 'Username') . '</strong></td>'
+                    . '<td>' . $this->data['transportConfig']['username'] . '</td>'
+                    . '</tr>'
+                    . '<tr>'
+                    . '<td><strong>' . mt('monitoring', 'Password') . '</strong></td>'
+                    . '<td>' . str_repeat('*', strlen($this->data['transportConfig']['password'])) . '</td>'
+                    . '</tr>'
+                    . '</tbody>'
+                    . '</table>';
+                break;
+            default:
+                throw new ProgrammingError(
+                    'Unknown command transport type: %s',
+                    $this->data['transportConfig']['transport']
+                );
         }
 
-        return $pageTitle . '<div class="topic">' . $pipeHtml . '</div>';
+        return '<h2>' . mt('monitoring', 'Command Transport', 'setup.page.title') . '</h2>'
+            . '<div class="topic">' . $details . '</div>';
     }
 
     public function getReport()
