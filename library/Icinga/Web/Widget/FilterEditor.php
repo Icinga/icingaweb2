@@ -749,9 +749,12 @@ class FilterEditor extends AbstractWidget
                 $title .= ': ' . $this->view()->escape($this->filter);
             }
         }
+        
+        $addOrPurgeModifyFilter = !($this->preservedUrl()->getParam('modifyFilter'));
+        
         return $html
             . '<a href="'
-            . $this->preservedUrl()->with('modifyFilter', true)
+            . $this->preservedUrl()->with('modifyFilter', $addOrPurgeModifyFilter)
             . '" aria-label="'
             . $title
             . '" title="'
