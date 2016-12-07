@@ -12,6 +12,7 @@ use Icinga\Module\Monitoring\Command\Object\DeleteDowntimeCommand;
 use Icinga\Module\Monitoring\Command\Object\ProcessCheckResultCommand;
 use Icinga\Module\Monitoring\Command\Object\PropagateHostDowntimeCommand;
 use Icinga\Module\Monitoring\Command\Object\RemoveAcknowledgementCommand;
+use Icinga\Module\Monitoring\Command\Object\ScheduleHostDowntimeCommand;
 use Icinga\Module\Monitoring\Command\Object\ScheduleServiceCheckCommand;
 use Icinga\Module\Monitoring\Command\Object\ScheduleServiceDowntimeCommand;
 use Icinga\Module\Monitoring\Command\Object\SendCustomNotificationCommand;
@@ -149,14 +150,27 @@ class IcingaApiCommandRenderer implements IcingaCommandRendererInterface
             'fixed'         => $command->getFixed(),
             'trigger_name'  => $command->getTriggerId()
         );
-        if ($command->getObject()->getType() === $command::TYPE_HOST
-            && $command instanceof PropagateHostDowntimeCommand
-        ) {
+        $commandData = $data;
+        if ($command instanceof PropagateHostDowntimeCommand) {
             /** @var \Icinga\Module\Monitoring\Command\Object\PropagateHostDowntimeCommand $command */
-            $data['child_options'] = $command->getTriggered() ? 1 : 2;
+            $commandData['child_options'] = $command->getTriggered() ? 1 : 2;
         }
-        $this->applyFilter($data, $command->getObject());
-        return IcingaApiCommand::create($endpoint, $data);
+        $this->applyFilter($commandData, $command->getObject());
+        $apiCommand = IcingaApiCommand::create($endpoint, $commandData);
+        if ($command instanceof ScheduleHostDowntimeCommand
+            /** @var \Icinga\Module\Monitoring\Command\Object\ScheduleHostDowntimeCommand $command */
+            && $command->getForAllServices()
+        ) {
+            $commandData = $data + array(
+                'type'          => 'Service',
+                'filter'        => 'host.name == host_name',
+                'filter_vars'   => array(
+                    'host_name' => $command->getObject()->getName()
+                )
+            );
+            $apiCommand->setNext(IcingaApiCommand::create($endpoint, $commandData));
+        }
+        return $apiCommand;
     }
 
     public function renderAcknowledgeProblem(AcknowledgeProblemCommand $command)
