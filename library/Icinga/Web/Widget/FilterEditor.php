@@ -735,8 +735,10 @@ class FilterEditor extends AbstractWidget
 
     public function renderSearch()
     {
+        $preservedUrl = $this->preservedUrl();
+
         $html = ' <form method="post" class="search inline" action="'
-              . $this->preservedUrl()
+              . $preservedUrl
               . '"><input type="text" name="q" style="width: 8em" class="search" value="" placeholder="'
               . t('Search...')
               . '" /></form>';
@@ -749,9 +751,10 @@ class FilterEditor extends AbstractWidget
                 $title .= ': ' . $this->view()->escape($this->filter);
             }
         }
+
         return $html
             . '<a href="'
-            . $this->preservedUrl()->with('modifyFilter', true)
+            . $preservedUrl->with('modifyFilter', ! $preservedUrl->getParam('modifyFilter'))
             . '" aria-label="'
             . $title
             . '" title="'
