@@ -262,6 +262,30 @@ class DbTool
         );
 
         if ($this->config['db'] === 'mysql') {
+            if ($this->config['ssl_key']
+                || $this->config['ssl_cert']
+                || $this->config['ssl_ca']
+                || $this->config['ssl_capath']
+                || $this->config['ssl_cipher']
+            ) {
+                $this->config['driver_options'] = array();
+                # The presence of these keys as empty strings or null cause non-ssl connections to fail
+                if ($this->config['ssl_key']) {
+                    $config['driver_options'][PDO::MYSQL_ATTR_SSL_KEY] = $this->config['ssl_key'];
+                }
+                if ($this->config['ssl_cert']) {
+                    $config['driver_options'][PDO::MYSQL_ATTR_SSL_CERT] = $this->config['ssl_cert'];
+                }
+                if ($this->config['ssl_ca']) {
+                    $config['driver_options'][PDO::MYSQL_ATTR_SSL_CA] = $this->config['ssl_ca'];
+                }
+                if ($this->config['ssl_capath']) {
+                    $config['driver_options'][PDO::MYSQL_ATTR_SSL_CAPATH] = $this->config['ssl_capath'];
+                }
+                if ($this->config['ssl_cipher']) {
+                    $config['driver_options'][PDO::MYSQL_ATTR_SSL_CIPHER] = $this->config['ssl_cipher'];
+                }
+            }
             $this->zendConn = new Zend_Db_Adapter_Pdo_Mysql($config);
         } elseif ($this->config['db'] === 'pgsql') {
             $this->zendConn = new Zend_Db_Adapter_Pdo_Pgsql($config);
@@ -286,11 +310,41 @@ class DbTool
             return;
         }
 
+        $driver_options = array(
+            PDO::ATTR_TIMEOUT => 1,
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+        );
+
+        if ($this->config['db'] == 'mysql'
+            && ($this->config['ssl_key']
+                || $this->config['ssl_cert']
+                || $this->config['ssl_ca']
+                || $this->config['ssl_capath']
+                || $this->config['ssl_cipher'])
+        ) {
+            # The presence of these keys as empty strings or null cause non-ssl connections to fail
+            if ($this->config['ssl_key']) {
+                $driver_options[PDO::MYSQL_ATTR_SSL_KEY] = $this->config['ssl_key'];
+            }
+            if ($this->config['ssl_cert']) {
+                $driver_options[PDO::MYSQL_ATTR_SSL_CERT] = $this->config['ssl_cert'];
+            }
+            if ($this->config['ssl_ca']) {
+                $driver_options[PDO::MYSQL_ATTR_SSL_CA] = $this->config['ssl_ca'];
+            }
+            if ($this->config['ssl_capath']) {
+                $driver_options[PDO::MYSQL_ATTR_SSL_CAPATH] = $this->config['ssl_capath'];
+            }
+            if ($this->config['ssl_cipher']) {
+                $driver_options[PDO::MYSQL_ATTR_SSL_CIPHER] = $this->config['ssl_cipher'];
+            }
+        }
+
         $this->pdoConn = new PDO(
             $this->buildDsn($this->config['db'], $dbname),
             $this->config['username'],
             $this->config['password'],
-            array(PDO::ATTR_TIMEOUT => 1, PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION)
+            $driver_options
         );
     }
 
