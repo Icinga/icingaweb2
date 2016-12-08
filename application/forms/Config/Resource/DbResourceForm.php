@@ -43,7 +43,7 @@ class DbResourceForm extends Form
             $dbChoices['oci'] = 'Oracle (OCI8)';
         }
 
-        $encryptionChoices = array();
+        $offerSsl = false;
         $offerPostgres = false;
         $offerMysql = false;
         $dbChoice = isset($formData['db']) ? $formData['db'] : key($dbChoices);
@@ -52,7 +52,7 @@ class DbResourceForm extends Form
         } elseif ($dbChoice === 'mysql') {
             $offerMysql = true;
             if (version_compare(Platform::getPhpVersion(), '5.4.0', '>=')) {
-                $encryptionChoices['ssl'] = 'SSL';
+                $offerSsl = true;
             }
         }
 
@@ -156,23 +156,19 @@ class DbResourceForm extends Form
                 'label'         => $this->translate('Persistent')
             )
         );
-        if (! empty($encryptionChoices)) {
+        if ($offerSsl) {
             $this->addElement(
-                'select',
-                'encryption',
+                'checkbox',
+                'use_ssl',
                 array(
                     'autosubmit'    => true,
-                    'label'         => $this->translate('Encryption'),
+                    'label'         => $this->translate('Use SSL'),
                     'description'   => $this->translate(
                         'Whether to encrypt the connection or to authenticate using certificates'
-                    ),
-                    'multiOptions'  => array_merge(
-                        array('none' => $this->translate('None', 'db connection encryption')),
-                        $encryptionChoices
                     )
                 )
             );
-            if (isset($formData['encryption']) && $formData['encryption'] === 'ssl') {
+            if (isset($formData['use_ssl']) && $formData['use_ssl']) {
                 $this->addElement(
                     'text',
                     'ssl_key',

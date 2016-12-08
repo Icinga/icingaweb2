@@ -262,7 +262,7 @@ class DbTool
         );
 
         if ($this->config['db'] === 'mysql') {
-            if (isset($this->config['encryption']) && $this->config['encryption'] === 'ssl') {
+            if (isset($this->config['use_ssl']) && $this->config['use_ssl']) {
                 $this->config['driver_options'] = array();
                 # The presence of these keys as empty strings or null cause non-ssl connections to fail
                 if ($this->config['ssl_key']) {
@@ -312,8 +312,8 @@ class DbTool
 
         if (
             $this->config['db'] === 'mysql'
-            && isset($this->config['encryption'])
-            && $this->config['encryption'] === 'ssl'
+            && isset($this->config['use_ssl'])
+            && $this->config['use_ssl']
         ) {
             # The presence of these keys as empty strings or null cause non-ssl connections to fail
             if ($this->config['ssl_key']) {

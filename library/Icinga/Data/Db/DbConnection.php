@@ -143,7 +143,7 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
                 break;
             case 'mysql':
                 $adapter = 'Pdo_Mysql';
-                if ($this->config->encryption === 'ssl') {
+                if ($this->config->use_ssl) {
                     # The presence of these keys as empty strings or null cause non-ssl connections to fail
                     if ($this->config->ssl_key) {
                         $adapterParamaters['driver_options'][PDO::MYSQL_ATTR_SSL_KEY] = $this->config->ssl_key;
