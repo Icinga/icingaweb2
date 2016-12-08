@@ -517,14 +517,14 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
                         'IN (\'version\', \'protocol_version\', \'version_compile_os\', \'have_ssl\');'
                     )->fetchAll();
                     $sqlinsp = new Inspection('MySQL');
-                    $have_ssl = false;
+                    $hasSsl = false;
                     foreach ($rows as $row) {
                         $sqlinsp->write($row->variable_name . ': ' . $row->value);
                         if ($row->variable_name === 'have_ssl' && $row->value === 'YES') {
-                            $have_ssl = true;
+                            $hasSsl = true;
                         }
                     }
-                    if ($have_ssl) {
+                    if ($hasSsl) {
                         $ssl_rows = $this->dbAdapter->query(
                             'SHOW STATUS WHERE variable_name ' .
                             'IN (\'Ssl_Cipher\');'

@@ -305,7 +305,7 @@ class DbTool
             return;
         }
 
-        $driver_options = array(
+        $driverOptions = array(
             PDO::ATTR_TIMEOUT => 1,
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
         );
@@ -317,19 +317,19 @@ class DbTool
         ) {
             # The presence of these keys as empty strings or null cause non-ssl connections to fail
             if ($this->config['ssl_key']) {
-                $driver_options[PDO::MYSQL_ATTR_SSL_KEY] = $this->config['ssl_key'];
+                $driverOptions[PDO::MYSQL_ATTR_SSL_KEY] = $this->config['ssl_key'];
             }
             if ($this->config['ssl_cert']) {
-                $driver_options[PDO::MYSQL_ATTR_SSL_CERT] = $this->config['ssl_cert'];
+                $driverOptions[PDO::MYSQL_ATTR_SSL_CERT] = $this->config['ssl_cert'];
             }
             if ($this->config['ssl_ca']) {
-                $driver_options[PDO::MYSQL_ATTR_SSL_CA] = $this->config['ssl_ca'];
+                $driverOptions[PDO::MYSQL_ATTR_SSL_CA] = $this->config['ssl_ca'];
             }
             if ($this->config['ssl_capath']) {
-                $driver_options[PDO::MYSQL_ATTR_SSL_CAPATH] = $this->config['ssl_capath'];
+                $driverOptions[PDO::MYSQL_ATTR_SSL_CAPATH] = $this->config['ssl_capath'];
             }
             if ($this->config['ssl_cipher']) {
-                $driver_options[PDO::MYSQL_ATTR_SSL_CIPHER] = $this->config['ssl_cipher'];
+                $driverOptions[PDO::MYSQL_ATTR_SSL_CIPHER] = $this->config['ssl_cipher'];
             }
         }
 
@@ -337,7 +337,7 @@ class DbTool
             $this->buildDsn($this->config['db'], $dbname),
             $this->config['username'],
             $this->config['password'],
-            $driver_options
+            $driverOptions
         );
     }
 
