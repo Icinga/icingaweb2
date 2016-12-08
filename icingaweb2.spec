@@ -19,13 +19,11 @@ Packager:       Icinga Team <info@icinga.org>
 %define php_cli         php-cli
 %define wwwconfigdir    %{_sysconfdir}/httpd/conf.d
 %define wwwuser         apache
-%define zend            php-ZendFramework
 %endif
 
 %if 0%{?suse_version}
 %define wwwconfigdir    %{_sysconfdir}/apache2/conf.d
 %define wwwuser         wwwrun
-%define zend            %{name}-vendor-Zend
 %if 0%{?suse_version} == 1110
 %define php php53
 Requires: apache2-mod_php53
@@ -78,14 +76,11 @@ Summary:                    Icinga Web 2 PHP library
 Group:                      Development/Libraries
 Requires:                   %{php} >= 5.3.0
 Requires:                   %{php}-gd %{php}-intl
+Requires:                   %{name}-vendor-zf1 = 1.12.20-1%{?dist}
 %{?amzn:Requires:           %{php}-pecl-imagick}
 %{?fedora:Requires:         php-pecl-imagick}
 %{?rhel:Requires:           php-pecl-imagick}
 %{?suse_version:Requires:   %{php}-gettext %{php}-json %{php}-openssl %{php}-posix}
-Requires:                   %{zend}
-%{?amzn:Requires:           %{zend}-Db-Adapter-Pdo-Mysql %{zend}-Db-Adapter-Pdo-Pgsql}
-%{?fedora:Requires:         %{zend}-Db-Adapter-Pdo-Mysql %{zend}-Db-Adapter-Pdo-Pgsql}
-%{?rhel:Requires:           %{zend}-Db-Adapter-Pdo-Mysql %{zend}-Db-Adapter-Pdo-Pgsql}
 
 %description -n php-Icinga
 Icinga Web 2 PHP library
@@ -165,16 +160,17 @@ Requires:   %{php} >= 5.3.0
 Icinga Web 2 vendor library Parsedown
 
 
-%package vendor-Zend
-Version:    1.12.15
+%package vendor-zf1
+Version:    1.12.20
 Release:    1%{?dist}
-Summary:    Icinga Web 2 vendor library Zend Framework
+Summary:    Icinga Web 2's fork of Zend Framework 1
 Group:      Development/Libraries
 License:    BSD
 Requires:   %{php} >= 5.3.0
+Obsoletes:  %{name}-vendor-Zend
 
-%description vendor-Zend
-Icinga Web 2 vendor library Zend
+%description vendor-zf1
+Icinga Web 2's fork of Zend Framework 1
 
 
 %prep
@@ -281,6 +277,6 @@ exit 0
 %{basedir}/library/vendor/Parsedown
 
 
-%files vendor-Zend
+%files vendor-zf1
 %defattr(-,root,root)
 %{basedir}/library/vendor/Zend
