@@ -3,15 +3,17 @@
 
 namespace Icinga\File;
 
+use Traversable;
+
 class Csv
 {
     protected $query;
 
     protected function __construct() {}
 
-    public static function fromQuery($query)
+    public static function fromQuery(Traversable $query)
     {
-        $csv = new Csv();
+        $csv = new static();
         $csv->query = $query;
         return $csv;
     }
@@ -26,7 +28,7 @@ class Csv
     {
         $first = true;
         $csv = '';
-        foreach ($this->query->fetchAll() as $row) {
+        foreach ($this->query as $row) {
             if ($first) {
                 $csv .= implode(',', array_keys((array) $row)) . "\r\n";
                 $first = false;

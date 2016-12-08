@@ -4,6 +4,7 @@
 namespace Icinga\Controllers;
 
 use Exception;
+use Icinga\Application\Version;
 use InvalidArgumentException;
 use Icinga\Application\Config;
 use Icinga\Application\Icinga;
@@ -122,6 +123,7 @@ class ConfigController extends Controller
 
             $this->view->module = $module;
             $this->view->tabs = $module->getConfigTabs()->activate('info');
+            $this->view->moduleGitCommitId = Version::getGitHead($module->getBaseDir());
         } else {
             $this->view->module = false;
             $this->view->tabs = null;
@@ -213,7 +215,7 @@ class ConfigController extends Controller
 
         $form->setOnSuccess(function (UserBackendConfigForm $form) {
             try {
-                $form->add(array_filter($form->getValues()));
+                $form->add($form::transformEmptyValuesToNull($form->getValues()));
             } catch (Exception $e) {
                 $form->error($e->getMessage());
                 return false;
@@ -244,12 +246,7 @@ class ConfigController extends Controller
         $form->setIniConfig(Config::app('authentication'));
         $form->setOnSuccess(function (UserBackendConfigForm $form) use ($backendName) {
             try {
-                $form->edit($backendName, array_map(
-                    function ($v) {
-                        return $v !== '' ? $v : null;
-                    },
-                    $form->getValues()
-                ));
+                $form->edit($backendName, $form::transformEmptyValuesToNull($form->getValues()));
             } catch (Exception $e) {
                 $form->error($e->getMessage());
                 return false;
@@ -393,15 +390,26 @@ class ConfigController extends Controller
         $authConfig = Config::app('authentication');
         foreach ($authConfig as $backendName => $config) {
             if ($config->get('resource') === $resource) {
-                $form->addDescription(sprintf(
+                $form->warning(sprintf(
                     $this->translate(
-                        'The resource "%s" is currently utilized for authentication by user backend "%s". ' .
-                        'Removing the resource can result in noone being able to log in any longer.'
+                        'The resource "%s" is currently utilized for authentication by user backend "%s".'
+                        . ' Removing the resource can result in noone being able to log in any longer.'
                     ),
                     $resource,
                     $backendName
                 ));
             }
+        }
+
+        // Check if selected resource is currently used as user preferences backend
+        if (Config::app()->get('global', 'config_resource') === $resource) {
+            $form->warning(sprintf(
+                $this->translate(
+                    'The resource "%s" is currently utilized to store user preferences. Removing the'
+                    . ' resource causes all current user preferences not being available any longer.'
+                ),
+                $resource
+            ));
         }
 
         $this->view->form = $form;

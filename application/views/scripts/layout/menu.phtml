@@ -6,11 +6,11 @@ $searchDashboard = new SearchDashboard();
 $searchDashboard->setUser($this->Auth()->getUser());
 
 if ($searchDashboard->search('dummy')->getPane('search')->hasDashlets()): ?>
-    <form action="<?= $this->href('search') ?>" method="get" role="search">
-        <input
-            type="text" name="q" id="search" class="search" placeholder="<?= $this->translate('Search') ?> &hellip;"
-            autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
-        />
+    <form action="<?= $this->href('search') ?>" method="get" role="search" class="search-control">
+        <input type="text" name="q" id="search" class="search search-input"
+               placeholder="<?= $this->translate('Search') ?> &hellip;"
+               autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" required="required">
+        <button class="search-reset icon-cancel" type="reset"></button>
     </form>
 <?php endif; ?>
 <?= $menuRenderer->setCssClass('primary-nav')->setElementTag('nav')->setHeading(t('Navigation')); ?>

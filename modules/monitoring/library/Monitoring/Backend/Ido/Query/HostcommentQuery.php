@@ -34,6 +34,7 @@ class HostcommentQuery extends IdoQuery
             'comment_expiration'    => 'CASE c.expires WHEN 1 THEN UNIX_TIMESTAMP(c.expiration_time) ELSE NULL END',
             'comment_internal_id'   => 'c.internal_comment_id',
             'comment_is_persistent' => 'c.is_persistent',
+            'comment_name'          => 'c.name',
             'comment_timestamp'     => 'UNIX_TIMESTAMP(c.comment_time)',
             'comment_type'          => "CASE c.entry_type WHEN 1 THEN 'comment' WHEN 2 THEN 'downtime' WHEN 3 THEN 'flapping' WHEN 4 THEN 'ack' END",
             'host'                  => 'ho.name1 COLLATE latin1_general_ci',
@@ -72,6 +73,9 @@ class HostcommentQuery extends IdoQuery
      */
     protected function joinBaseTables()
     {
+        if (version_compare($this->getIdoVersion(), '1.14.0', '<')) {
+            $this->columnMap['comments']['comment_name'] = '(NULL)';
+        }
         $this->select->from(
             array('c' => $this->prefix . 'comments'),
             array()

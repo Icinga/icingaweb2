@@ -46,34 +46,33 @@ class TimelineController extends Controller
             ),
             array(
                 'notify'        => array(
+                    'class'     => 'timeline-notification',
                     'detailUrl' => $detailUrl,
-                    'label'     => mt('monitoring', 'Notifications'),
-                    'color'     => '#3a71ea'
+                    'label'     => mt('monitoring', 'Notifications')
                 ),
                 'hard_state'    => array(
+                    'class'     => 'timeline-hard-state',
                     'detailUrl' => $detailUrl,
-                    'label'     => mt('monitoring', 'Hard state changes'),
-                    'color'     => '#ff7000'
+                    'label'     => mt('monitoring', 'Hard state changes')
                 ),
                 'comment'       => array(
+                    'class'     => 'timeline-comment',
                     'detailUrl' => $detailUrl,
-                    'label'     => mt('monitoring', 'Comments'),
-                    'color'     => '#79bdba'
+                    'label'     => mt('monitoring', 'Comments')
                 ),
                 'ack'           => array(
-                    'detailUrl' => $detailUrl,
-                    'label'     => mt('monitoring', 'Acknowledgements'),
-                    'color'     => '#a2721d'
+                    'class'     => 'timeline-ack',
+                    'label'     => mt('monitoring', 'Acknowledgements')
                 ),
                 'dt_start'      => array(
+                    'class'     => 'timeline-downtime-start',
                     'detailUrl' => $detailUrl,
-                    'label'     => mt('monitoring', 'Started downtimes'),
-                    'color'     => '#8e8e8e'
+                    'label'     => mt('monitoring', 'Started downtimes')
                 ),
                 'dt_end'        => array(
+                    'class'     => 'timeline-downtime-end',
                     'detailUrl' => $detailUrl,
-                    'label'     => mt('monitoring', 'Ended downtimes'),
-                    'color'     => '#d5d6ad'
+                    'label'     => mt('monitoring', 'Ended downtimes')
                 )
             )
         );

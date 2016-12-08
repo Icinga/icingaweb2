@@ -249,7 +249,7 @@ EOT;
         if ($this->has($name)) {
             unset($this->tabs[$name]);
             if (($dropdownIndex = array_search($name, $this->dropdownTabs, true)) !== false) {
-                array_splice($this->dropdownTabs, $dropdownIndex, 2);
+                array_splice($this->dropdownTabs, $dropdownIndex, 1);
             }
         }
 
@@ -315,7 +315,7 @@ EOT;
 
     private function renderRefreshTab()
     {
-        $url = Icinga::app()->getRequest()->getUrl();
+        $url = Url::fromRequest();
         $tab = $this->get($this->getActiveName());
 
         if ($tab !== null) {

@@ -37,6 +37,7 @@ class CommentController extends Controller
             'type'       => 'comment_type',
             'persistent' => 'comment_is_persistent',
             'expiration' => 'comment_expiration',
+            'name'       => 'comment_name',
             'host_name',
             'service_description',
             'host_display_name',
@@ -51,7 +52,7 @@ class CommentController extends Controller
         $this->getTabs()->add(
             'comment',
             array(
-                'icon'  => 'comment',
+                'icon'  => 'comment-empty',
                 'label' => $this->translate('Comment'),
                 'title' => $this->translate('Display detailed information about a comment.'),
                 'url'   =>'monitoring/comments/show'
@@ -73,6 +74,7 @@ class CommentController extends Controller
                 ->populate(array(
                     'comment_id'            => $this->comment->id,
                     'comment_is_service'    => isset($this->comment->service_description),
+                    'comment_name'          => $this->comment->name,
                     'redirect'              => $listUrl
                 ))
                 ->handleRequest();

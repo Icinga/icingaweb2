@@ -3,6 +3,7 @@
 
 namespace Icinga\Module\Monitoring\Forms\Command\Object;
 
+use Icinga\Application\Config;
 use Icinga\Module\Monitoring\Command\Object\SendCustomNotificationCommand;
 use Icinga\Web\Notification;
 
@@ -34,6 +35,8 @@ class SendCustomNotificationCommandForm extends ObjectsCommandForm
      */
     public function createElements(array $formData = array())
     {
+        $config = Config::module('monitoring');
+
         $this->addElements(array(
             array(
                 'textarea',
@@ -53,25 +56,29 @@ class SendCustomNotificationCommandForm extends ObjectsCommandForm
                 'forced',
                 array(
                     'label'         => $this->translate('Forced'),
-                    'value'         => false,
+                    'value'         => (bool) $config->get('settings', 'custom_notification_forced', false),
                     'description'   => $this->translate(
                         'If you check this option, the notification is sent out regardless of time restrictions and'
                         . ' whether or not notifications are enabled.'
                     )
                 )
-            ),
-            array(
+            )
+        ));
+
+        if (! $this->getBackend()->isIcinga2()) {
+            $this->addElement(
                 'checkbox',
                 'broadcast',
                 array(
                     'label'         => $this->translate('Broadcast'),
-                    'value'         => false,
+                    'value'         => (bool) $config->get('settings', 'custom_notification_broadcast', false),
                     'description'   => $this->translate(
                         'If you check this option, the notification is sent out to all normal and escalated contacts.'
                     )
                 )
-            )
-        ));
+            );
+        }
+
         return $this;
     }
 
@@ -87,8 +94,10 @@ class SendCustomNotificationCommandForm extends ObjectsCommandForm
                 ->setObject($object)
                 ->setComment($this->getElement('comment')->getValue())
                 ->setAuthor($this->request->getUser()->getUsername())
-                ->setForced($this->getElement('forced')->isChecked())
-                ->setBroadcast($this->getElement('broadcast')->isChecked());
+                ->setForced($this->getElement('forced')->isChecked());
+            if (($broadcast = $this->getElement('broadcast')) !== null) {
+                $notification->setBroadcast($broadcast->isChecked());
+            }
             $this->getTransport($this->request)->send($notification);
         }
         Notification::success($this->translatePlural(

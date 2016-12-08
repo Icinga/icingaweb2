@@ -127,7 +127,7 @@ class StyleSheet
             }
         }
 
-        if ($theme) {
+        if ($theme && $theme !== self::DEFAULT_THEME) {
             if (($pos = strpos($theme, '/')) !== false) {
                 $moduleName = substr($theme, 0, $pos);
                 $theme = substr($theme, $pos + 1);

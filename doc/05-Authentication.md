@@ -68,13 +68,13 @@ Active Directory or LDAP configuration method.
 
 ### <a id="authentication-configuration-ldap-authentication"></a> LDAP
 
-Directive               | Description
-------------------------|------------
-**backend**             | `ldap`
-**resource**            | The name of the LDAP resource defined in [resources.ini](04-Resources.md#resources).
-**user_class**          | LDAP user class.
-**user_name_attribute** | LDAP attribute which contains the username.
-**filter**              | LDAP search filter.
+| Directive                 | Description |
+| ------------------------- | ----------- |
+| **backend**               | `ldap` |
+| **resource**              | The name of the LDAP resource defined in [resources.ini](04-Resources.md#resources). |
+| **user_class**            | LDAP user class. |
+| **user_name_attribute**   | LDAP attribute which contains the username. |
+| **filter**                | LDAP search filter. |
 
 **Example:**
 
@@ -93,10 +93,10 @@ with Icinga Web 2 (e.g. an alias) no matter what the primary user id might actua
 
 ### <a id="authentication-configuration-ad-authentication"></a> Active Directory
 
-Directive               | Description
-------------------------|------------
-**backend**             | `msldap`
-**resource**            | The name of the LDAP resource defined in [resources.ini](04-Resources.md#resources).
+| Directive     | Description |
+| ------------- | ----------- |
+| **backend**   | `msldap` |
+| **resource**  | The name of the LDAP resource defined in [resources.ini](04-Resources.md#resources). |
 
 **Example:**
 
@@ -112,10 +112,10 @@ If you want to authenticate against a MySQL or a PostgreSQL database, you have t
 [database resource](04-Resources.md#resources-configuration-database) which will be referenced as data source for the database
 authentication method.
 
-Directive               | Description
-------------------------|------------
-**backend**             | `db`
-**resource**            | The name of the database resource defined in [resources.ini](04-Resources.md#resources).
+| Directive               | Description |
+| ------------------------| ----------- |
+| **backend**             | `db` |
+| **resource**            | The name of the database resource defined in [resources.ini](04-Resources.md#resources). |
 
 **Example:**
 

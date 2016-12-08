@@ -1,0 +1,142 @@
+<div class="quick-actions">
+    <ul class="nav tab-nav">
+    <?php if (isset($removeAckForm)): ?>
+        <li>
+            <?php
+            $removeAckForm = clone $removeAckForm;
+            $removeAckForm->setLabelEnabled(true);
+            echo $removeAckForm;
+            ?>
+        </li>
+    <?php elseif /** @var \Icinga\Module\Monitoring\Object\MonitoredObject $object */   ($this->hasPermission('monitoring/command/acknowledge-problem') && ! (in_array((int) $object->state, array(0, 99))) ): ?>
+        <li>
+        <?php if ($object->getType() === $object::TYPE_HOST) {
+            echo $this->qlink(
+                $this->translate('Acknowledge'),
+                'monitoring/host/acknowledge-problem',
+                array('host' => $object->getName()),
+                array(
+                    'class'             => 'action-link',
+                    'data-base-target'  => '_self',
+                    'icon'              => 'edit',
+                    'title'             => $this->translate(
+                        'Acknowledge this problem, suppress all future notifications for it and tag it as being handled'
+                    )
+                )
+            );
+        } else {
+            echo $this->qlink(
+                $this->translate('Acknowledge'),
+                'monitoring/service/acknowledge-problem',
+                array('host' => $object->getHost()->getName(), 'service' => $object->getName()),
+                array(
+                    'class'             => 'action-link',
+                    'data-base-target'  => '_self',
+                    'icon'              => 'edit',
+                    'title'             => $this->translate(
+                        'Acknowledge this problem, suppress all future notifications for it and tag it as being handled'
+                    )
+                )
+            );
+        } ?>
+        </li>
+    <?php endif ?>
+    <?php if (isset($checkNowForm)): // Form is unset if the current user lacks the respective permission ?>
+        <li><?= $checkNowForm ?></li>
+    <?php endif ?>
+    <?php if ($this->hasPermission('monitoring/command/comment/add')): ?>
+        <li>
+        <?php if ($object->getType() === $object::TYPE_HOST) {
+            echo $this->qlink(
+                $this->translate('Comment'),
+                'monitoring/host/add-comment',
+                array('host' => $object->getName()),
+                array(
+                    'class'             => 'action-link',
+                    'data-base-target'  => '_self',
+                    'icon'              => 'comment-empty',
+                    'title'             => $this->translate('Add a new comment to this host')
+                )
+            );
+        } else {
+            echo $this->qlink(
+                $this->translate('Comment'),
+                'monitoring/service/add-comment',
+                array('host' => $object->getHost()->getName(), 'service' => $object->getName()),
+                array(
+                    'class'             => 'action-link',
+                    'data-base-target'  => '_self',
+                    'icon'              => 'comment-empty',
+                    'title'             => $this->translate('Add a new comment to this service')
+                )
+            );
+        } ?>
+        </li>
+    <?php endif ?>
+    <?php if ($this->hasPermission('monitoring/command/send-custom-notification')): ?>
+        <li>
+        <?php if ($object->getType() === $object::TYPE_HOST) {
+            echo $this->qlink(
+                $this->translate('Notification'),
+                'monitoring/host/send-custom-notification',
+                array('host' => $object->getName()),
+                array(
+                    'class'             => 'action-link',
+                    'data-base-target'  => '_self',
+                    'icon'              => 'bell',
+                    'title'             => $this->translate(
+                        'Send a custom notification to contacts responsible for this host'
+                    )
+                )
+            );
+        } else {
+            echo $this->qlink(
+                $this->translate('Notification'),
+                'monitoring/service/send-custom-notification',
+                array('host' => $object->getHost()->getName(), 'service' => $object->getName()),
+                array(
+                    'class'             => 'action-link',
+                    'data-base-target'  => '_self',
+                    'icon'              => 'bell',
+                    'title'             => $this->translate(
+                        'Send a custom notification to contacts responsible for this service'
+                    )
+                )
+            );
+        } ?>
+        </li>
+    <?php endif ?>
+    <?php if ($this->hasPermission('monitoring/command/downtime/schedule')): ?>
+        <li><?php if ($object->getType() === $object::TYPE_HOST) {
+            echo $this->qlink(
+                $this->translate('Downtime'),
+                'monitoring/host/schedule-downtime',
+                array('host' => $object->getName()),
+                array(
+                    'class'             => 'action-link',
+                    'data-base-target'  => '_self',
+                    'icon'              => 'plug',
+                    'title'             => $this->translate(
+                        'Schedule a downtime to suppress all problem notifications within a specific period of time'
+                    )
+                )
+            );
+        } else {
+            echo $this->qlink(
+                $this->translate('Downtime'),
+                'monitoring/service/schedule-downtime',
+                array('host' => $object->getHost()->getName(), 'service' => $object->getName()),
+                array(
+                    'class'             => 'action-link',
+                    'data-base-target'  => '_self',
+                    'icon'              => 'plug',
+                    'title'             => $this->translate(
+                        'Schedule a downtime to suppress all problem notifications within a specific period of time'
+                    )
+                )
+            );
+        } ?>
+        </li>
+    <?php endif ?>
+    </ul>
+</div>

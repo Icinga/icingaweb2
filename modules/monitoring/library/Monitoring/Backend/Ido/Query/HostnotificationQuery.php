@@ -17,51 +17,35 @@ class HostnotificationQuery extends IdoQuery
      * {@inheritdoc}
      */
     protected $columnMap = array(
+        'contactnotifications' => array(
+            'notification_contact_name' => 'co.name1'
+        ),
+        'hostgroups' => array(
+            'hostgroup_name' => 'hgo.name1'
+        ),
+        'hosts' => array(
+            'host_display_name' => 'h.display_name COLLATE latin1_general_ci'
+        ),
+        'history' => array(
+            'output'    => null,
+            'state'     => 'hn.state',
+            'timestamp' => 'UNIX_TIMESTAMP(hn.start_time)',
+            'type'      => '(\'notify\')'
+        ),
         'instances' => array(
             'instance_name' => 'i.instance_name'
         ),
         'notifications' => array(
-            'notification_output'       => 'hn.output',
-            'notification_start_time'   => 'UNIX_TIMESTAMP(hn.start_time)',
-            'notification_state'        => 'hn.state',
-            'notification_object_id'    => 'hn.object_id',
-            'host'                      => 'ho.name1 COLLATE latin1_general_ci',
             'host_name'                 => 'ho.name1',
+            'notification_output'       => 'hn.output',
+            'notification_state'        => 'hn.state',
+            'notification_timestamp'    => 'UNIX_TIMESTAMP(hn.start_time)',
             'object_type'               => '(\'host\')'
         ),
-        'history' => array(
-            'type'      => "('notify')",
-            'timestamp' => 'UNIX_TIMESTAMP(hn.start_time)',
-            'object_id' => 'hn.object_id',
-            'state'     => 'hn.state',
-            'output'    => null
-        ),
-        'contactnotifications' => array(
-            'contact'                   => 'cno.name1 COLLATE latin1_general_ci',
-            'notification_contact_name' => 'cno.name1',
-            'contact_object_id'         => 'cno.object_id'
-        ),
-        'acknowledgements' => array(
-            'acknowledgement_entry_time'    => 'UNIX_TIMESTAMP(a.entry_time)',
-            'acknowledgement_author_name'   => 'a.author_name',
-            'acknowledgement_comment_data'  => 'a.comment_data'
-        ),
-        'hostgroups' => array(
-            'hostgroup'         => 'hgo.name1 COLLATE latin1_general_ci',
-            'hostgroup_alias'   => 'hg.alias COLLATE latin1_general_ci',
-            'hostgroup_name'    => 'hgo.name1'
-        ),
-        'hosts' => array(
-            'host_alias'        => 'h.alias',
-            'host_display_name' => 'h.display_name COLLATE latin1_general_ci'
-        ),
         'servicegroups' => array(
-            'servicegroup'          => 'sgo.name1 COLLATE latin1_general_ci',
-            'servicegroup_name'     => 'sgo.name1',
-            'servicegroup_alias'    => 'sg.alias COLLATE latin1_general_ci'
+            'servicegroup_name' => 'sgo.name1'
         ),
         'services' => array(
-            'service'               => 'so.name2 COLLATE latin1_general_ci',
             'service_description'   => 'so.name2',
             'service_display_name'  => 's.display_name COLLATE latin1_general_ci',
             'service_host_name'     => 'so.name1'
@@ -88,26 +72,14 @@ class HostnotificationQuery extends IdoQuery
         switch ($this->ds->getDbType()) {
             case 'mysql':
                 $concattedContacts = "GROUP_CONCAT("
-                    . "DISTINCT cno.name1 ORDER BY cno.name1 SEPARATOR ', '"
+                    . "DISTINCT co.name1 ORDER BY co.name1 SEPARATOR ', '"
                     . ") COLLATE latin1_general_ci";
                 break;
             case 'pgsql':
                 // TODO: Find a way to order the contact alias list:
-                $concattedContacts = "ARRAY_TO_STRING(ARRAY_AGG(DISTINCT cno.name1), ', ')";
-                break;
-            case 'oracle':
-                // TODO: This is only valid for Oracle >= 11g Release 2
-                $concattedContacts = "LISTAGG(cno.name1, ', ') WITHIN GROUP (ORDER BY cno.name1)";
-                // Alternatives:
-                //
-                //   RTRIM(XMLAGG(XMLELEMENT(e, column_name, ',').EXTRACT('//text()')),
-                //
-                //   not supported and not documented but works since 10.1,
-                //   however it is NOT always present:
-                //   WM_CONCAT(c.alias)
+                $concattedContacts = "ARRAY_TO_STRING(ARRAY_AGG(DISTINCT co.name1), ', ')";
                 break;
         }
-
         $this->columnMap['history']['output'] = "('[' || $concattedContacts || '] ' || hn.output)";
 
         $this->select->from(
@@ -140,20 +112,8 @@ class HostnotificationQuery extends IdoQuery
             array()
         );
         $this->select->joinLeft(
-            array('cno' => $this->prefix . 'objects'),
-            'cno.object_id = cn.contact_object_id',
-            array()
-        );
-    }
-
-    /**
-     * Join acknowledgements
-     */
-    protected function joinAcknowledgements()
-    {
-        $this->select->joinLeft(
-            array('a' => $this->prefix . 'acknowledgements'),
-            'a.object_id = hn.object_id',
+            array('co' => $this->prefix . 'objects'),
+            'co.object_id = cn.contact_object_id AND co.is_active = 1 AND co.objecttype_id = 10',
             array()
         );
     }
@@ -244,6 +204,8 @@ class HostnotificationQuery extends IdoQuery
      */
     public function getGroup()
     {
+        $group = array();
+
         if (
             $this->hasJoinedVirtualTable('history')
             || $this->hasJoinedVirtualTable('services')
@@ -251,19 +213,15 @@ class HostnotificationQuery extends IdoQuery
         ) {
             $group = array('hn.notification_id', 'ho.object_id');
             if ($this->hasJoinedVirtualTable('contactnotifications') && !$this->hasJoinedVirtualTable('history')) {
-                $group[] = 'cno.object_id';
+                $group[] = 'co.object_id';
             }
         } elseif ($this->hasJoinedVirtualTable('contactnotifications')) {
-            $group = array('hn.notification_id', 'cno.object_id', 'ho.object_id');
+            $group = array('hn.notification_id', 'co.object_id', 'ho.object_id');
         }
 
         if (! empty($group)) {
             if ($this->hasJoinedVirtualTable('hosts')) {
                 $group[] = 'h.host_id';
-            }
-
-            if ($this->hasJoinedVirtualTable('acknowledgements')) {
-                $group[] = 'a.acknowledgement_id';
             }
 
             if ($this->hasJoinedVirtualTable('instances')) {

@@ -128,11 +128,11 @@ class NavigationController extends Controller
 
         $this->getTabs()
         ->add(
-            'preferences',
+            'account',
             array(
-                'title' => $this->translate('Adjust the preferences of Icinga Web 2 according to your needs'),
-                'label' => $this->translate('Preferences'),
-                'url'   => 'preference'
+                'title' => $this->translate('Update your account'),
+                'label' => $this->translate('My Account'),
+                'url'   => 'account'
             )
         )
         ->add(
@@ -219,7 +219,7 @@ class NavigationController extends Controller
         $form->setDefaultUrl(rawurldecode($this->params->get('url', '')));
 
         $form->setOnSuccess(function (NavigationConfigForm $form) {
-            $data = array_filter($form->getValues());
+            $data = $form::transformEmptyValuesToNull($form->getValues());
 
             try {
                 $form->add($data);
@@ -266,12 +266,7 @@ class NavigationController extends Controller
         $form->setUserConfig(Config::navigation($itemType, $itemOwner));
         $form->setRedirectUrl($referrer === 'shared' ? 'navigation/shared' : 'navigation');
         $form->setOnSuccess(function (NavigationConfigForm $form) use ($itemName) {
-            $data = array_map(
-                function ($v) {
-                    return $v !== '' ? $v : null;
-                },
-                $form->getValues()
-            );
+            $data = $form::transformEmptyValuesToNull($form->getValues());
 
             try {
                 $form->edit($itemName, $data);

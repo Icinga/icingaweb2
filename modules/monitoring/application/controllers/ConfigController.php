@@ -106,7 +106,7 @@ class ConfigController extends Controller
 
         $form->setOnSuccess(function (BackendConfigForm $form) {
             try {
-                $form->add(array_filter($form->getValues()));
+                $form->add($form::transformEmptyValuesToNull($form->getValues()));
             } catch (Exception $e) {
                 $form->error($e->getMessage());
                 return false;
@@ -258,7 +258,7 @@ class ConfigController extends Controller
         );
         $form->setOnSuccess(function (TransportConfigForm $form) {
             try {
-                $form->add(array_filter($form->getValues()));
+                $form->add($form::transformEmptyValuesToNull($form->getValues()));
             } catch (Exception $e) {
                 $form->error($e->getMessage());
                 return false;

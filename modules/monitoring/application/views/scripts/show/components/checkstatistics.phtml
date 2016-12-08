@@ -9,7 +9,7 @@ $activeChecksEnabled = (bool) $object->active_checks_enabled;
 <?php if ((int) $object->state !== 99): ?>
         <?= $this->timeAgo($object->last_check) ?>
     <?php if ($object->next_update < time()): ?>
-        <?= $this->icon('circle', $this->translate('Check result is late'), array('class' => 'check-result-late')) ?>
+        <?= $this->icon('circle', $this->translate('Check result is late'), array('class' => 'icon-stateful state-critical')) ?>
     <?php endif ?>
 <?php endif ?>
     <?php if (isset($checkNowForm)) { // Form is unset if the current user lacks the respective permission
@@ -37,7 +37,7 @@ $activeChecksEnabled = (bool) $object->active_checks_enabled;
                 array(
                     'class'             => 'action-link',
                     'data-base-target'  => '_self',
-                    'icon'              => 'reschedule',
+                    'icon'              => 'calendar-empty',
                     'title'             => $this->translate(
                         'Schedule the next active check at a different time than the current one'
                     )
@@ -51,7 +51,7 @@ $activeChecksEnabled = (bool) $object->active_checks_enabled;
                 array(
                     'class'             => 'action-link',
                     'data-base-target'  => '_self',
-                    'icon'              => 'reschedule',
+                    'icon'              => 'calendar-empty',
                     'title'             => $this->translate(
                         'Schedule the next active check at a different time than the current one'
                     )

@@ -1,10 +1,25 @@
 <?php
 /* Icinga Web 2 | (c) 2013 Icinga Development Team | GPLv2+ */
 
+use Icinga\Web\Dom\DomNodeIterator;
+
+/**
+ * Plugin output renderer
+ */
 class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
 {
+    /**
+     * The return value of getPurifier()
+     *
+     * @var HTMLPurifier
+     */
     protected static $purifier;
 
+    /**
+     * Patterns to be replaced in plain text plugin output
+     *
+     * @var array
+     */
     protected static $txtPatterns = array(
         '~\\\n~',
         '~\\\t~',
@@ -16,6 +31,11 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
         '~\@{6,}~'
     );
 
+    /**
+     * Replacements for $txtPatterns
+     *
+     * @var array
+     */
     protected static $txtReplacements = array(
         "\n",
         "\t",
@@ -27,6 +47,14 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
         '@@@@@@',
     );
 
+    /**
+     * Render plugin output
+     *
+     * @param   string  $output
+     * @param   bool    $raw
+     *
+     * @return  string
+     */
     public function pluginOutput($output, $raw = false)
     {
         if (empty($output)) {
@@ -50,18 +78,12 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
             );
             $isHtml = false;
         }
-        $output = $this->fixLinks($output);
-        // Help browsers to break words in plugin output
         $output = trim($output);
-        // Add space after comma where missing
-        $output = preg_replace('/,[^\s]/', ', ', $output);
-        // Add zero width space after ')', ']', ':', '.', '_' and '-' if not surrounded by whitespaces
-        $output = preg_replace('/([^\s])([\\)\\]:._-])([^\s])/', '$1$2&#8203;$3', $output);
-        // Add zero width space before '(' and '[' if not surrounded by whitespaces
-        $output = preg_replace('/([^\s])([([])([^\s])/', '$1&#8203;$2$3', $output);
-
+        // Add space after comma where missing, to help browsers to break words in plugin output
+        $output = preg_replace('/,(?=[^\s])/', ', ', $output);
         if (! $raw) {
             if ($isHtml) {
+                $output = $this->processHtml($output);
                 $output = '<div class="plugin-output">' . $output . '</div>';
             } else {
                 $output = '<div class="plugin-output preformatted">' . $output . '</div>';
@@ -70,32 +92,68 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
         return $output;
     }
 
-    protected function fixLinks($html)
+    /**
+     * Replace classic Icinga CGI links with Icinga Web 2 links and color state information, if any
+     *
+     * @param   string  $html
+     *
+     * @return  string
+     */
+    protected function processHtml($html)
     {
-
-        $ret = array();
-        $dom = new DOMDocument;
-        $dom->loadXML('<div>' . $html . '</div>', LIBXML_NOERROR | LIBXML_NOWARNING);
-        $dom->preserveWhiteSpace = false;
-        $links = $dom->getElementsByTagName('a');
-        foreach ($links as $tag)
-        {
-            $href = $tag->getAttribute('href');
-            if (preg_match('~^/cgi\-bin/status\.cgi\?(.+)$~', $href, $m)) {
-                parse_str($m[1], $params);
-                if (isset($params['host'])) {
-                    $tag->setAttribute('href', $this->view->baseUrl(
-                        '/monitoring/host/show?host=' . urlencode($params['host']
-                    )));
+        $pattern = '/[([](OK|WARNING|CRITICAL|UNKNOWN)[)\]]/';
+        $doc = new DOMDocument();
+        $doc->loadXML('<div>' . $html . '</div>', LIBXML_NOERROR | LIBXML_NOWARNING);
+        $dom = new RecursiveIteratorIterator(new DomNodeIterator($doc), RecursiveIteratorIterator::SELF_FIRST);
+        $nodesToRemove = array();
+        foreach ($dom as $node) {
+            /** @var \DOMNode $node */
+            if ($node->nodeType === XML_TEXT_NODE) {
+                $start = 0;
+                while (preg_match($pattern, $node->nodeValue, $match, PREG_OFFSET_CAPTURE, $start)) {
+                    $offsetLeft = $match[0][1];
+                    $matchLength = strlen($match[0][0]);
+                    $leftLength = $offsetLeft - $start;
+                    if ($leftLength) {
+                        $text = new DOMText(substr($node->nodeValue, $start, $leftLength));
+                        $node->parentNode->insertBefore($text, $node);
+                    }
+                    $span = $doc->createElement('span', $match[0][0]);
+                    $span->setAttribute('class', 'state-' . strtolower($match[1][0]));
+                    $node->parentNode->insertBefore($span, $node);
+                    $start = $offsetLeft + $matchLength;
                 }
-            } else {
-                // ignoring
+                if ($start) {
+                    $nodesToRemove[] = $node;
+                }
+            } elseif ($node->nodeType === XML_ELEMENT_NODE) {
+                /** @var \DOMElement $node */
+                if ($node->tagName === 'a'
+                    && preg_match('~^/cgi\-bin/status\.cgi\?(.+)$~', $node->getAttribute('href'), $match)
+                ) {
+                    parse_str($match[1], $params);
+                    if (isset($params['host'])) {
+                        $node->setAttribute(
+                            'href',
+                            $this->view->baseUrl('/monitoring/host/show?host=' . urlencode($params['host']))
+                        );
+                    }
+                }
             }
-            //$ret[$tag->getAttribute('href')] = $tag->childNodes->item(0)->nodeValue;
         }
-        return substr($dom->saveHTML(), 5, -7);
+        foreach ($nodesToRemove as $node) {
+            /** @var \DOMNode $node */
+            $node->parentNode->removeChild($node);
+        }
+
+        return substr($doc->saveHTML(), 5, -7);
     }
 
+    /**
+     * Initialize and return self::$purifier
+     *
+     * @return HTMLPurifier
+     */
     protected function getPurifier()
     {
         if (self::$purifier === null) {
@@ -105,7 +163,8 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
 
             $config = HTMLPurifier_Config::createDefault();
             $config->set('Core.EscapeNonASCIICharacters', true);
-            $config->set('HTML.Allowed', 'p,br,b,a[href],i,table,tr,td[colspan],div,*[class]');
+            $config->set('HTML.Allowed', 'p,br,b,a[href|target],i,table,tr,th[colspan],td[colspan],div,*[class]');
+            $config->set('Attr.AllowedFrameTargets', array('_blank'));
             // This avoids permission problems:
             // $config->set('Core.DefinitionCache', null);
             $config->set('Cache.DefinitionImpl', null);

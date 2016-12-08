@@ -26,7 +26,8 @@ class ModuleActionController extends ActionController
     protected function prepareInit()
     {
         $this->moduleInit();
-        if ($this->getFrontController()->getDefaultModule() !== $this->getModuleName()) {
+        if (($this->Auth()->isAuthenticated() || $this->requiresLogin())
+            && $this->getFrontController()->getDefaultModule() !== $this->getModuleName()) {
             $this->assertPermission(Manager::MODULE_PERMISSION_NS . $this->getModuleName());
         }
     }

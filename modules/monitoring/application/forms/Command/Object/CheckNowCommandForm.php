@@ -39,7 +39,7 @@ class CheckNowCommandForm extends ObjectsCommandForm
                     ),
                     'escape'        => false,
                     'ignore'        => true,
-                    'label'         => $this->getView()->icon('reschedule') . $this->translate('Check now'),
+                    'label'         => $this->getView()->icon('arrows-cw') . $this->translate('Check now'),
                     'type'          => 'submit',
                     'title'         => $this->translate('Schedule the next active check to run immediately'),
                     'value'         => $this->translate('Check now')

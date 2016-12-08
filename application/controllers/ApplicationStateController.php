@@ -4,6 +4,8 @@
 namespace Icinga\Controllers;
 
 use Icinga\Application\Icinga;
+use Icinga\Web\Announcement\AnnouncementCookie;
+use Icinga\Web\Announcement\AnnouncementIniRepository;
 use Icinga\Web\Controller;
 use Icinga\Web\Session;
 
@@ -14,6 +16,7 @@ class ApplicationStateController extends Controller
 {
     public function indexAction()
     {
+        $this->_helper->layout()->disableLayout();
         if (isset($_COOKIE['icingaweb2-session'])) {
             $last = (int) $_COOKIE['icingaweb2-session'];
         } else {
@@ -34,6 +37,23 @@ class ApplicationStateController extends Controller
             );
             $_COOKIE['icingaweb2-session'] = $now;
         }
-        Icinga::app()->getResponse()->setHeader('X-Icinga-Container', 'ignore', true);
+        $announcementCookie = new AnnouncementCookie();
+        $announcementRepo = new AnnouncementIniRepository();
+        if ($announcementCookie->getEtag() !== $announcementRepo->getEtag()) {
+            $announcementCookie
+                ->setEtag($announcementRepo->getEtag())
+                ->setNextActive($announcementRepo->findNextActive());
+            $this->getResponse()->setCookie($announcementCookie);
+            $this->getResponse()->setHeader('X-Icinga-Announcements', 'refresh', true);
+        } else {
+            $nextActive = $announcementCookie->getNextActive();
+            if ($nextActive && $nextActive <= $now) {
+                $announcementCookie->setNextActive($announcementRepo->findNextActive());
+                $this->getResponse()->setCookie($announcementCookie);
+                $this->getResponse()->setHeader('X-Icinga-Announcements', 'refresh', true);
+            }
+        }
+
+        $this->getResponse()->setHeader('X-Icinga-Container', 'ignore', true);
     }
 }

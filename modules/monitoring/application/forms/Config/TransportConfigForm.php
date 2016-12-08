@@ -7,8 +7,10 @@ use InvalidArgumentException;
 use Icinga\Exception\IcingaException;
 use Icinga\Exception\NotFoundError;
 use Icinga\Forms\ConfigForm;
+use Icinga\Module\Monitoring\Command\Transport\ApiCommandTransport;
 use Icinga\Module\Monitoring\Command\Transport\LocalCommandFile;
 use Icinga\Module\Monitoring\Command\Transport\RemoteCommandFile;
+use Icinga\Module\Monitoring\Forms\Config\Transport\ApiTransportForm;
 use Icinga\Module\Monitoring\Forms\Config\Transport\LocalTransportForm;
 use Icinga\Module\Monitoring\Forms\Config\Transport\RemoteTransportForm;
 
@@ -68,7 +70,7 @@ class TransportConfigForm extends ConfigForm
      *
      * @param   string  $type               The transport type for which to return a form
      *
-     * @return  Form
+     * @return  \Icinga\Web\Form
      *
      * @throws  InvalidArgumentException    In case the given transport type is invalid
      */
@@ -79,6 +81,8 @@ class TransportConfigForm extends ConfigForm
                 return new LocalTransportForm();
             case RemoteCommandFile::TRANSPORT;
                 return new RemoteTransportForm();
+            case ApiCommandTransport::TRANSPORT:
+                return new ApiTransportForm();
             default:
                 throw new InvalidArgumentException(
                     sprintf($this->translate('Invalid command transport type "%s" given'), $type)
@@ -163,12 +167,6 @@ class TransportConfigForm extends ConfigForm
         }
 
         $transportConfig->merge($data);
-        foreach ($transportConfig->toArray() as $k => $v) {
-            if ($v === null) {
-                unset($transportConfig->$k);
-            }
-        }
-
         $this->config->setSection($name, $transportConfig);
         return $this;
     }
@@ -223,7 +221,8 @@ class TransportConfigForm extends ConfigForm
 
         $transportTypes = array(
             LocalCommandFile::TRANSPORT     => $this->translate('Local Command File'),
-            RemoteCommandFile::TRANSPORT    => $this->translate('Remote Command File')
+            RemoteCommandFile::TRANSPORT    => $this->translate('Remote Command File'),
+            ApiCommandTransport::TRANSPORT  => $this->translate('Icinga 2 API')
         );
 
         $transportType = isset($formData['transport']) ? $formData['transport'] : null;

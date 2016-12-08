@@ -126,7 +126,7 @@ $section = $this->menuSection(N_('Problems'), array(
         'SummaryNavigationItemRenderer',
         'state' => 'critical'
     ),
-    'icon'      => 'block',
+    'icon'      => 'attention-circled',
     'priority'  => 20
 ));
 $section->add(N_('Host Problems'), array(
@@ -166,7 +166,7 @@ $section->add(N_('Current Downtimes'), array(
  * Overview Section
  */
 $section = $this->menuSection(N_('Overview'), array(
-    'icon'      => 'sitemap',
+    'icon'      => 'binoculars',
     'priority'  => 30
 ));
 $section->add(N_('Tactical Overview'), array(
@@ -210,7 +210,7 @@ $section->add(N_('Downtimes'), array(
  * History Section
  */
 $section = $this->menuSection(N_('History'), array(
-    'icon'      => 'rewind',
+    'icon'      => 'history',
     'priority'  => 90
 ));
 $section->add(N_('Event Grid'), array(
@@ -223,7 +223,7 @@ $section->add(N_('Event Overview'), array(
 ));
 $section->add(N_('Notifications'), array(
     'priority'  => 30,
-    'url'       => 'monitoring/list/notifications',
+    'url'       => 'monitoring/list/notifications?notification_timestamp>=-7%20days',
 ));
 $section->add(N_('Timeline'), array(
     'priority'  => 40,
@@ -236,10 +236,6 @@ $section->add(N_('Timeline'), array(
 $section = $this->menuSection(N_('Reporting'), array(
     'icon'      => 'barchart',
     'priority'  => 100
-));
-
-$section->add(N_('Alert Summary'), array(
-   'url'    => 'monitoring/alertsummary/index'
 ));
 
 /*

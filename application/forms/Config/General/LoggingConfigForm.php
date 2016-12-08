@@ -4,6 +4,8 @@
 namespace Icinga\Forms\Config\General;
 
 use Icinga\Application\Logger;
+use Icinga\Application\Logger\Writer\SyslogWriter;
+use Icinga\Application\Platform;
 use Icinga\Web\Form;
 
 /**
@@ -90,22 +92,33 @@ class LoggingConfigForm extends Form
                     )
                 )
             );
-            /*
-             * Note(el): Since we provide only one possible value for the syslog facility, I opt against exposing
-             * this configuration.
-             */
-//            $this->addElement(
-//                'select',
-//                'logging_facility',
-//                array(
-//                    'required'      => true,
-//                    'label'         => $this->translate('Facility'),
-//                    'description'   => $this->translate('The syslog facility to utilize.'),
-//                    'multiOptions'  => array(
-//                        'user' => 'LOG_USER'
-//                    )
-//                )
-//            );
+
+            if (! isset($formData['logging_log']) || $formData['logging_log'] === 'syslog') {
+                if (Platform::isWindows()) {
+                    /* @see https://secure.php.net/manual/en/function.openlog.php */
+                    $this->addElement(
+                        'hidden',
+                        'logging_facility',
+                        array(
+                            'value' => 'user',
+                            'disabled' => true
+                        )
+                    );
+                } else {
+                    $facilities = array_keys(SyslogWriter::$facilities);
+                    $this->addElement(
+                        'select',
+                        'logging_facility',
+                        array(
+                            'required' => true,
+                            'label' => $this->translate('Facility'),
+                            'description' => $this->translate('The syslog facility to utilize.'),
+                            'value' => 'user',
+                            'multiOptions' => array_combine($facilities, $facilities)
+                        )
+                    );
+                }
+            }
         } elseif (isset($formData['logging_log']) && $formData['logging_log'] === 'file') {
             $this->addElement(
                 'text',

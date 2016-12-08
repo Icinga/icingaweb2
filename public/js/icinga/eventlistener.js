@@ -41,14 +41,14 @@
      *                             'on' to register listeners
      */
     EventListener.prototype.bind = function (emitter) {
-        var self = this;
+        var _this = this;
         $.each(this.handlers, function(i, handler) {
-            self.icinga.logger.debug('bind: ' + handler.evt + '(' + handler.cond + ')');
+            _this.icinga.logger.debug('bind: ' + handler.evt + '(' + handler.cond + ')');
             emitter.on(
                 handler.evt, handler.cond,
                 {
                     self: handler.scope || emitter,
-                    icinga: self.icinga
+                    icinga: _this.icinga
                 }, handler.fn
             );
         });
@@ -61,9 +61,9 @@
      *                              'off' to un-register listeners.
      */
     EventListener.prototype.unbind = function (emitter) {
-        var self = this;
+        var _this = this;
         $.each(this.handlers, function(i, handler) {
-            self.icinga.logger.debug('unbind: ' + handler.evt + '(' + handler.cond + ')');
+            _this.icinga.logger.debug('unbind: ' + handler.evt + '(' + handler.cond + ')');
             emitter.off(handler.evt, handler.cond, handler.fn);
         });
     };

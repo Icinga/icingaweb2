@@ -144,8 +144,8 @@
          */
         onHistoryChange: function (event) {
 
-            var self   = event.data.self,
-                icinga = self.icinga;
+            var _this   = event.data.self,
+                icinga = _this.icinga;
 
             icinga.logger.debug('Got a history change');
 
@@ -157,9 +157,9 @@
             }
 
             // keep the last pushed url in sync with history changes
-            self.lastPushUrl = location.href;
+            _this.lastPushUrl = location.href;
 
-            self.applyLocationBar();
+            _this.applyLocationBar();
 
             // notify behaviors of the state change
             $.each(this.icinga.behaviors, function (i, behavior) {

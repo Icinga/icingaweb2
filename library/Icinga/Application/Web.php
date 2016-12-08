@@ -304,7 +304,12 @@ class Web extends EmbeddedWeb
                         'about' => array(
                             'label'     => t('About'),
                             'url'       => 'about',
-                            'priority'  => 701
+                            'priority'  => 700
+                        ),
+                        'announcements' => array(
+                            'label'      => t('Announcements'),
+                            'url'        => 'announcements',
+                            'priority'   => 710
                         )
                     )
                 ),
@@ -346,10 +351,10 @@ class Web extends EmbeddedWeb
                     'icon'      => 'user',
                     'priority'  => 900,
                     'children'  => array(
-                        'preferences' => array(
-                            'label'     => t('Preferences'),
+                        'account' => array(
+                            'label'     => t('My Account'),
                             'priority'  => 100,
-                            'url'       => 'preference'
+                            'url'       => 'account'
                         ),
                         'logout' => array(
                             'label'         => t('Logout'),
@@ -366,7 +371,7 @@ class Web extends EmbeddedWeb
                     'label'      => t('Application Log'),
                     'url'        => 'list/applicationlog',
                     'permission' => 'application/log',
-                    'priority'   => 710
+                    'priority'   => 900
                 );
             }
         } else {
@@ -411,6 +416,9 @@ class Web extends EmbeddedWeb
     private function setupUser()
     {
         $auth = Auth::getInstance();
+        if (! $this->request->isXmlHttpRequest() && $this->request->isApiRequest() && ! $auth->isAuthenticated()) {
+            $auth->authHttp();
+        }
         if ($auth->isAuthenticated()) {
             $user = $auth->getUser();
             $this->getRequest()->setUser($user);

@@ -43,19 +43,28 @@
             $this->formatTime($comment->expiration)
         )) : '' ?>
     <?php if (isset($delCommentForm)) {
+        // Form is unset if the current user lacks the respective permission
+        $uniqId = uniqid();
+        $buttonId = 'delete-comment-' . $uniqId;
+        $textId = 'comment-' . $uniqId;
         $deleteButton = clone $delCommentForm;
         /** @var \Icinga\Module\Monitoring\Forms\Command\Object\DeleteCommentCommandForm $deleteButton */
         $deleteButton->setAttrib('class', $deleteButton->getAttrib('class') . ' remove-action');
         $deleteButton->populate(
             array(
                 'comment_id'            => $comment->id,
-                'comment_is_service'    => isset($comment->service_description)
+                'comment_is_service'    => isset($comment->service_description),
+                'comment_name'          => $comment->name
             )
         );
+        $deleteButton->getElement('btn_submit')
+            ->setAttrib('aria-label', $this->translate('Delete comment'))
+            ->setAttrib('id', $buttonId)
+            ->setAttrib('aria-describedby', $buttonId . ' ' . $textId);
         echo $deleteButton;
     } ?>
     </span>
 </div>
-<p class="comment-text">
+<p class="comment-text"<?php if (isset($textId)): ?> id="<?= $textId ?>"<?php endif ?>>
     <?= $this->nl2br($this->escapeComment($comment->comment)) ?>
 </p>

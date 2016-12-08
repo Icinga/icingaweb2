@@ -362,25 +362,28 @@ class Module
     public function getMenu()
     {
         $this->launchConfigScript();
-        return $this->createMenu($this->menuItems);
+        return Navigation::fromArray($this->createMenu($this->menuItems));
     }
 
     /**
-     * Create and return a new navigation for the given menu items
+     * Create and return an array structure for the given menu items
      *
      * @param   MenuItemContainer[]     $items
      *
-     * @return  Navigation
+     * @return  array
      */
     private function createMenu(array $items)
     {
-        $navigation = new Navigation();
+        $navigation = array();
         foreach ($items as $item) {
             /** @var MenuItemContainer $item */
-            $navigationItem = $navigation->createItem($item->getName(), $item->getProperties());
-            $navigationItem->setChildren($this->createMenu($item->getChildren()));
-            $navigationItem->setLabel($this->translate($item->getName()));
-            $navigation->addItem($navigationItem);
+            $properties = $item->getProperties();
+            $properties['children'] = $this->createMenu($item->getChildren());
+            if (! isset($properties['label'])) {
+                $properties['label'] = $this->translate($item->getName());
+            }
+
+            $navigation[$item->getName()] = $properties;
         }
 
         return $navigation;
@@ -671,6 +674,8 @@ class Module
                             $metadata->description .= $line;
                             continue;
                         }
+                    } elseif (empty($line)) {
+                        continue;
                     }
 
                     list($key, $val) = preg_split('/:\s+/', $line, 2);

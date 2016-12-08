@@ -18,6 +18,9 @@ if ($this->layout()->autorefreshInterval) {
 
 ?>
 <div id="header">
+  <div id="announcements" class="container">
+    <?= $this->widget('announcements') ?>
+  </div>
   <div id="header-logo-container">
     <?= $this->qlink(
       '',

@@ -42,6 +42,11 @@ class RoleForm extends ConfigForm
             'application/stacktraces'                       => $this->translate(
                 'Allow to adjust in the preferences whether to show stacktraces'
             ) . ' (application/stacktraces)',
+            'application/log'                               => $this->translate('Allow to view the application log')
+                . ' (application/log)',
+            'admin'                                         => $this->translate(
+                'Grant admin permissions, e.g. manage announcements'
+            ) . ' (admin)',
             'config/*'                                      => $this->translate('Allow config access') . ' (config/*)'
         );
 
@@ -284,7 +289,7 @@ class RoleForm extends ConfigForm
      */
     public function getValues($suppressArrayNotation = false)
     {
-        $values = array_filter(parent::getValues($suppressArrayNotation));
+        $values = static::transformEmptyValuesToNull(parent::getValues($suppressArrayNotation));
         if (isset($values['permissions'])) {
             $values['permissions'] = implode(', ', $values['permissions']);
         }

@@ -20,4 +20,9 @@ class LayoutController extends ActionController
         $this->_helper->layout()->disableLayout();
         $this->view->menuRenderer = Icinga::app()->getMenu()->getRenderer();
     }
+
+    public function announcementsAction()
+    {
+        $this->_helper->layout()->disableLayout();
+    }
 }

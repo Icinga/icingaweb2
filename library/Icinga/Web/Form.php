@@ -948,7 +948,7 @@ class Form extends Zend_Form
             if ($this->getUseFormAutosubmit()) {
                 $warningId = 'autosubmit_warning_' . $el->getId();
                 $warningText = $this->getView()->escape($this->translate(
-                    'Upon its value has changed, this field issues an automatic update of this page.'
+                    'Upon its value changing, this field issues an automatic update of this page.'
                 ));
                 $autosubmitDecorator = $this->_getDecorator('Callback', array(
                     'placement' => 'PREPEND',
@@ -1576,30 +1576,38 @@ class Form extends Zend_Form
     }
 
     /**
-     * Add a error notification and prevent the form from being successfully validated
+     * Add a error notification
      *
-     * @param   string|array    $message    The notification message
+     * @param   string|array    $message        The notification message
+     * @param   bool            $markAsError    Whether to prevent the form from being successfully validated or not
      *
      * @return  $this
      */
-    public function error($message)
+    public function error($message, $markAsError = true)
     {
         $this->addNotification($message, self::NOTIFICATION_ERROR);
-        $this->markAsError();
+        if ($markAsError) {
+            $this->markAsError();
+        }
+
         return $this;
     }
 
     /**
-     * Add a warning notification and prevent the form from being successfully validated
+     * Add a warning notification
      *
-     * @param   string|array    $message    The notification message
+     * @param   string|array    $message        The notification message
+     * @param   bool            $markAsError    Whether to prevent the form from being successfully validated or not
      *
      * @return  $this
      */
-    public function warning($message)
+    public function warning($message, $markAsError = true)
     {
         $this->addNotification($message, self::NOTIFICATION_WARNING);
-        $this->markAsError();
+        if ($markAsError) {
+            $this->markAsError();
+        }
+
         return $this;
     }
 

@@ -198,6 +198,20 @@ class FilterTest extends BaseTestCase
         $this->assertNotEquals((string) $c, (string) $d);
     }
 
+    public function testBooleanExpressionIsRenderedCorrectly()
+    {
+        $filter = Filter::fromQueryString('a&!b');
+        $this->assertEquals(
+            $filter->toQueryString(),
+            'a&!b'
+        );
+        $this->assertEquals(
+            (string) $filter,
+            // TODO: I'd prefer to see 'a & !b' here:
+            'a & (! b)'
+        );
+    }
+
     public function testLeadingAndTrailingWhitespaces()
     {
         $columnWithWhitespaces = Filter::where(' host ', 'localhost');

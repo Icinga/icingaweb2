@@ -3,7 +3,7 @@ Font license info
 
 ## Font Awesome
 
-   Copyright (C) 2012 by Dave Gandy
+   Copyright (C) 2016 by Dave Gandy
 
    Author:    Dave Gandy
    License:   SIL ()
@@ -17,15 +17,6 @@ Font license info
    Author:    P.J. Onori
    License:   SIL (http://scripts.sil.org/OFL)
    Homepage:  http://somerandomdude.com/work/iconic/
-
-
-## MFG Labs
-
-   Copyright (C) 2012 by Daniel Bruce
-
-   Author:    MFG Labs
-   License:   SIL (http://scripts.sil.org/OFL)
-   Homepage:  http://www.mfglabs.com/
 
 
 ## Entypo

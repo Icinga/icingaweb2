@@ -282,7 +282,7 @@ class Perfdata
         $parts = explode(';', $this->perfdataValue);
 
         $matches = array();
-        if (preg_match('@^(\d+(\.\d+)?)([a-zA-Z%]{1,2})$@', $parts[0], $matches)) {
+        if (preg_match('@^(-?\d+(\.\d+)?)([a-zA-Z%]{1,2})$@', $parts[0], $matches)) {
             $this->unit = strtolower($matches[3]);
             $this->value = self::convert($matches[1], $this->unit);
         } else {

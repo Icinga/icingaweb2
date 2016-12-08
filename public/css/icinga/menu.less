@@ -17,7 +17,7 @@
 #menu a {
   &:focus {
     color: @icinga-blue;
-    outline-offset: -0.25em;
+    outline-offset: -3px;
   }
 
   &:hover {
@@ -138,6 +138,7 @@
 
     > .nav-item {
       display: block;
+      margin-left: 0.5em;
 
       > a:hover {
         color: @text-color-inverted;
@@ -153,11 +154,11 @@
 
 #layout.hoveredmenu {
   #main {
-   z-index: 2;
+    z-index: 2;
   }
 
   #sidebar {
-   z-index: 3;
+    z-index: 3;
   }
 
   #menu {
@@ -166,7 +167,6 @@
 }
 
 // Accessibility skip links
-
 .skip-links {
   position: relative;
   ul {
@@ -177,13 +177,15 @@
       display: block;
       a, button[type="submit"] {
         background-color: @body-bg-color;
+        border: none;
         left: -999px;
         padding: @vertical-padding @horizontal-padding;
         position: absolute;
         width: 100%;
+        z-index: 1;
         &:focus {
           left: 0;
-          outline: 1px dotted black;
+          outline-offset: -3px;
         }
       }
       button[type="submit"] {
@@ -196,4 +198,72 @@
 #sidebar.expanded {
   bottom: 0 !important;
   height: auto !important;
+}
+
+.search-control {
+  position: relative;
+}
+
+.search-reset {
+  background: none;
+  border: 0;
+  cursor: pointer;
+  display: none;
+  height: 100%;
+  padding: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  user-select: none;
+}
+
+.search-reset:focus {
+  outline: 0;
+}
+
+// Override forms.less
+input[type=text].search-input {
+  padding-right: 1.4em;
+  text-overflow: ellipsis;
+  transition: none;
+}
+
+.search-input:focus:-moz-placeholder { // FF 18-
+  color: @gray-light;
+}
+
+.search-input:focus::-moz-placeholder { // FF 19+
+  color: @gray-light;
+}
+
+.search-input:focus:-ms-input-placeholder {
+  color: @gray-light;
+}
+
+.search-input:focus::-webkit-input-placeholder {
+  color: @gray-light;
+}
+
+.search-input:valid ~ .search-reset {
+  animation-duration: .4s;
+  animation-name: search-reset-in;
+  display: block;
+}
+
+.search-input:invalid,
+.search-input:-moz-submit-invalid,
+.search-input:-moz-ui-invalid {
+  // Disable glow
+  box-shadow: none;
+}
+
+@keyframes search-reset-in {
+  0% {
+    opacity: 0;
+    transform: translate3d(-20%, 0, 0);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+  }
 }

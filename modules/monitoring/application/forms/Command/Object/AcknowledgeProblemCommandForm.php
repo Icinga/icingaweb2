@@ -5,6 +5,7 @@ namespace Icinga\Module\Monitoring\Forms\Command\Object;
 
 use DateTime;
 use DateInterval;
+use Icinga\Application\Config;
 use Icinga\Module\Monitoring\Command\Object\AcknowledgeProblemCommand;
 use Icinga\Web\Notification;
 
@@ -40,6 +41,8 @@ class AcknowledgeProblemCommandForm extends ObjectsCommandForm
      */
     public function createElements(array $formData = array())
     {
+        $config = Config::module('monitoring');
+
         $this->addElements(array(
             array(
                 'textarea',
@@ -59,6 +62,7 @@ class AcknowledgeProblemCommandForm extends ObjectsCommandForm
                 'persistent',
                 array(
                     'label'         => $this->translate('Persistent Comment'),
+                    'value'         => (bool) $config->get('settings', 'acknowledge_persistent', false),
                     'description'   => $this->translate(
                         'If you would like the comment to remain even when the acknowledgement is removed, check this'
                         . ' option.'
@@ -70,6 +74,7 @@ class AcknowledgeProblemCommandForm extends ObjectsCommandForm
                 'expire',
                 array(
                     'label'         => $this->translate('Use Expire Time'),
+                    'value'         => (bool) $config->get('settings', 'acknowledge_expire', false),
                     'description'   => $this->translate(
                         'If the acknowledgement should expire, check this option.'
                     ),
@@ -109,7 +114,7 @@ class AcknowledgeProblemCommandForm extends ObjectsCommandForm
                 'sticky',
                 array(
                     'label'         => $this->translate('Sticky Acknowledgement'),
-                    'value'         => true,
+                    'value'         => (bool) $config->get('settings', 'acknowledge_sticky', false),
                     'description'   => $this->translate(
                         'If you want the acknowledgement to remain until the host or service recovers even if the host'
                         . ' or service changes state, check this option.'
@@ -121,7 +126,7 @@ class AcknowledgeProblemCommandForm extends ObjectsCommandForm
                 'notify',
                 array(
                     'label'         => $this->translate('Send Notification'),
-                    'value'         => true,
+                    'value'         => (bool) $config->get('settings', 'acknowledge_notify', true),
                     'description'   => $this->translate(
                         'If you do not want an acknowledgement notification to be sent out to the appropriate contacts,'
                         . ' uncheck this option.'

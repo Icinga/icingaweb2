@@ -10,7 +10,7 @@ if ($this->hasPermission('monitoring/command/comment/add')) {
             array(
                 'class'             => 'action-link',
                 'data-base-target'  => '_self',
-                'icon'              => 'comment',
+                'icon'              => 'comment-empty',
                 'title'             => $this->translate('Add a new comment to this host')
             )
         );
@@ -22,7 +22,7 @@ if ($this->hasPermission('monitoring/command/comment/add')) {
             array(
                 'class'             => 'action-link',
                 'data-base-target'  => '_self',
-                'icon'              => 'comment',
+                'icon'              => 'comment-empty',
                 'title'             => $this->translate('Add a new comment to this service')
             )
         );
@@ -60,7 +60,8 @@ if (empty($object->comments) && ! $addLink) {
                     $deleteButton->populate(
                         array(
                             'comment_id'            => $comment->id,
-                            'comment_is_service'    => isset($comment->service_description)
+                            'comment_is_service'    => isset($comment->service_description),
+                            'comment_name'          => $comment->name
                         )
                     );
                     echo $deleteButton;

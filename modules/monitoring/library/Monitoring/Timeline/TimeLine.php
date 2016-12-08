@@ -200,7 +200,7 @@ class TimeLine implements IteratorAggregate
     }
 
     /**
-     * Return all known group types (identifiers) with their respective labels and colors as array
+     * Return all known group types (identifiers) with their respective labels and classess as array
      *
      * @return  array
      */
@@ -208,8 +208,8 @@ class TimeLine implements IteratorAggregate
     {
         $groupInfo = array();
         foreach ($this->identifiers as $name => $attributes) {
+            $groupInfo[$name]['class'] = $attributes['class'];
             $groupInfo[$name]['label'] = $attributes['label'];
-            $groupInfo[$name]['color'] = $attributes['color'];
         }
 
         return $groupInfo;

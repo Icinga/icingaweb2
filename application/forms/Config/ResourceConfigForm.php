@@ -3,6 +3,7 @@
 
 namespace Icinga\Forms\Config;
 
+use Icinga\Application\Config;
 use InvalidArgumentException;
 use Icinga\Application\Platform;
 use Icinga\Exception\ConfigurationError;
@@ -21,6 +22,13 @@ use Icinga\Web\Notification;
 
 class ResourceConfigForm extends ConfigForm
 {
+    /**
+     * If the global config must be updated because a resource has been changed, this is the updated global config
+     *
+     * @var Config|null
+     */
+    protected $updatedAppConfig = null;
+
     /**
      * Initialize this form
      */
@@ -104,6 +112,16 @@ class ResourceConfigForm extends ConfigForm
         $this->config->removeSection($name);
         unset($values['name']);
         $this->config->setSection($newName, $resourceConfig->merge($values));
+
+        if ($newName !== $name) {
+            $appConfig = Config::app();
+            $section = $appConfig->getSection('global');
+            if ($section->config_resource === $name) {
+                $section->config_resource = $newName;
+                $this->updatedAppConfig = $appConfig->setSection('global', $section);
+            }
+        }
+
         return $resourceConfig;
     }
 
@@ -163,10 +181,10 @@ class ResourceConfigForm extends ConfigForm
                         return false;
                     }
                 }
-                $this->add(array_filter($this->getValues()));
+                $this->add(static::transformEmptyValuesToNull($this->getValues()));
                 $message = $this->translate('Resource "%s" has been successfully created');
             } else { // edit existing resource
-                $this->edit($resource, array_filter($this->getValues()));
+                $this->edit($resource, static::transformEmptyValuesToNull($this->getValues()));
                 $message = $this->translate('Resource "%s" has been successfully changed');
             }
         } catch (InvalidArgumentException $e) {
@@ -375,5 +393,16 @@ class ResourceConfigForm extends ConfigForm
         );
 
         return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function writeConfig(Config $config)
+    {
+        parent::writeConfig($config);
+        if ($this->updatedAppConfig !== null) {
+            $this->updatedAppConfig->saveIni();
+        }
     }
 }

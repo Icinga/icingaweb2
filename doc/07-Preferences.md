@@ -22,7 +22,7 @@ For storing preferences in INI files you have to add the following section to th
 ```
 [preferences]
 type = ini
-````
+```
 
 ### <a id="preferences-configuration-db"></a> Store Preferences in a Database
 
@@ -30,10 +30,10 @@ In order to be more flexible in distributed setups you can store preferences in 
 For storing preferences in a database, you have to define a [database resource](04-Resources.md#resources-configuration-database)
 which will be referenced as resource for the preferences storage.
 
-Directive               | Description
-------------------------|------------
-**type**                | `db`
-**resource**            | The name of the database resource defined in [resources.ini](04-Resources.md#resources).
+| Directive     | Description |
+| ------------- | ----------- |
+| **type**      | `db` |
+| **resource**  | The name of the database resource defined in [resources.ini](04-Resources.md#resources). |
 
 **Example:**
 

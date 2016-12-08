@@ -71,8 +71,7 @@ class StatehistoryForm extends Form
                     strtotime('midnight 8 months ago') => $this->translate('8 Months'),
                     strtotime('midnight 12 months ago') => $this->translate('1 Year'),
                     strtotime('midnight 24 months ago') => $this->translate('2 Years')
-                ),
-                'class' => 'autosubmit'
+                )
             )
         );
         $this->addElement(
@@ -83,8 +82,7 @@ class StatehistoryForm extends Form
                 'value' => $this->getRequest()->getParam('to', time()),
                 'multiOptions' => array(
                     time() => $this->translate('Today')
-                ),
-                'class' => 'autosubmit'
+                )
             )
         );
 
@@ -98,8 +96,7 @@ class StatehistoryForm extends Form
                 'multiOptions' => array(
                     'services' => $this->translate('Services'),
                     'hosts' => $this->translate('Hosts')
-                ),
-                'class' => 'autosubmit'
+                )
             )
         );
         if ($objectType === 'services') {
@@ -118,8 +115,7 @@ class StatehistoryForm extends Form
                         'cnt_warning_hard' => $this->translate('Warning'),
                         'cnt_unknown_hard' => $this->translate('Unknown'),
                         'cnt_ok' => $this->translate('Ok')
-                    ),
-                    'class' => 'autosubmit'
+                    )
                 )
             );
         } else {
@@ -137,8 +133,7 @@ class StatehistoryForm extends Form
                         'cnt_up' => $this->translate('Up'),
                         'cnt_down_hard' => $this->translate('Down'),
                         'cnt_unreachable_hard' => $this->translate('Unreachable')
-                    ),
-                    'class' => 'autosubmit'
+                    )
                 )
             );
         }

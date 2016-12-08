@@ -1,9 +1,6 @@
 <?php
 /* Icinga Web 2 | (c) 2015 Icinga Development Team | GPLv2+ */
 
-/**
- * Generate icons to describe a given hosts state
- */
 class Zend_View_Helper_HostFlags extends Zend_View_Helper_Abstract
 {
     public function hostFlags($host)
@@ -31,6 +28,6 @@ class Zend_View_Helper_HostFlags extends Zend_View_Helper_Abstract
                 $icons[] = $this->view->icon('eye-off', $this->view->translate('Active Checks Disabled'));
             }
         }
-        return $icons;
+        return implode(' ', $icons);
     }
 }

@@ -16,7 +16,7 @@
 # along with this program; if not, write to the Free Software Foundation
 # Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
 
-import urllib2, json, sys, string
+import urllib2, json, sys, string, collections
 from argparse import ArgumentParser
 
 DESCRIPTION="update release changes"
@@ -43,14 +43,14 @@ def format_header(text, lvl, ftype = ftype):
 def format_logentry(log_entry, args = args, issue_url = ISSUE_URL):
    if args.links:
        if args.html:
-           return "<li> {0} <a href=\"{3}{1}\">{1}</a>: {2}</li>".format(log_entry[0], log_entry[1], log_entry[2], issue_url)
+           return "<li> {0} <a href=\"{4}{1}\">{1}</a> ({2}): {3}</li>".format(log_entry[0], log_entry[1], log_entry[2], log_entry[3],issue_url)
        else:
-           return "* {0} [{1}]({3}{1} \"{0} {1}\"): {2}".format(log_entry[0], log_entry[1], log_entry[2], issue_url)
+           return "* {0} [{1}]({4}{1} \"{0} {1}\") ({2}): {3}".format(log_entry[0], log_entry[1], log_entry[2], log_entry[3], issue_url)
    else:
        if args.html:
-           return "<li>%s %d: %s</li>" % log_entry
+           return "<li>%s %d (%s): %s</li>" % log_entry
        else:
-           return "* %s %d: %s" % log_entry
+           return "* %s %d (%s): %s" % log_entry
 
 def print_category(category, entries):
     if len(entries) > 0:
@@ -60,8 +60,11 @@ def print_category(category, entries):
         if args.html:
             print "<ul>"
 
-        for entry in sorted(entries):
-            print format_logentry(entry)
+        tmp_entries = collections.OrderedDict(sorted(entries.items()))
+
+        for cat, entry_list in tmp_entries.iteritems():
+            for entry in entry_list:
+                print format_logentry(entry)
 
         if args.html:
             print "</ul>"
@@ -108,9 +111,10 @@ if changes:
 
 offset = 0
 
-features = []
-bugfixes = []
-support = []
+features = {}
+bugfixes = {}
+support = {}
+category = ""
 
 while True:
     # We could filter using &cf_13=1, however this doesn't currently work because the custom field isn't set
@@ -135,14 +139,29 @@ while True:
             if ignore_issue:
                 continue
 
-        entry = (issue["tracker"]["name"], issue["id"], issue["subject"].strip())
+        if "category" in issue:
+            category = str(issue["category"]["name"])
+        else:
+            category = "no category"
+
+        # the order is important for print_category()
+        entry = (issue["tracker"]["name"], issue["id"], category, issue["subject"].strip())
 
 	if issue["tracker"]["name"] == "Feature":
-            features.append(entry)
+            try:
+                features[category].append(entry)
+            except KeyError:
+                features[category] = [ entry ]
 	elif issue["tracker"]["name"] == "Bug":
-            bugfixes.append(entry)
+            try:
+                bugfixes[category].append(entry)
+            except KeyError:
+                bugfixes[category] = [ entry ]
 	elif issue["tracker"]["name"] == "Support":
-            support.append(entry)
+            try:
+                support[category].append(entry)
+            except KeyError:
+                support[category] = [ entry ]
 
 print_category("Feature", features)
 print_category("Bugfixes", bugfixes)

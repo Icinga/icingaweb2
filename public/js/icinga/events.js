@@ -33,8 +33,8 @@
         // TODO: What's this?
         applyHandlers: function (event) {
             var $target = $(event.target);
-            var self = event.data.self;
-            var icinga = self.icinga;
+            var _this = event.data.self;
+            var icinga = _this.icinga;
 
             if (! icinga) {
                 // Attempt to catch a rare error, race condition, whatever
@@ -42,7 +42,7 @@
                 return;
             }
 
-            if (self.initializeModules) {
+            if (_this.initializeModules) {
                 var loaded = false;
                 var moduleName = $target.data('icingaModule');
                 if (moduleName) {
@@ -63,7 +63,7 @@
                     // so we need to ensure that it is called the first time they are
                     // initialized
                     event.stopImmediatePropagation();
-                    self.initializeModules = false;
+                    _this.initializeModules = false;
 
                     var $container = $target.closest('.container');
                     if (! $container.length) {
@@ -79,7 +79,7 @@
                     return false;
                 }
             } else {
-                self.initializeModules = true;
+                _this.initializeModules = true;
             }
 
             $('.dashboard > div', $target).each(function(idx, el) {
@@ -93,7 +93,7 @@
             var $searchField = $('#menu input.search', $target);
             // Remember initial search field value if any
             if ($searchField.length && $searchField.val().length) {
-                self.searchValue = $searchField.val();
+                _this.searchValue = $searchField.val();
             }
         },
 
@@ -105,7 +105,7 @@
             // Note: It is important that this is the first handler for this event!
             $(document).on('rendered', { self: this }, this.applyHandlers);
 
-            $.each(self.icinga.behaviors, function (name, behavior) {
+            $.each(this.icinga.behaviors, function (name, behavior) {
                 behavior.bind($(document));
             });
 
@@ -129,6 +129,7 @@
             $(document).on('click', 'a', { self: this }, this.linkClicked);
             $(document).on('click', 'tr[href]', { self: this }, this.linkClicked);
 
+            $(document).on('click', 'input[type="submit"], button[type="submit"]', this.rememberSubmitButton);
             // We catch all form submit events
             $(document).on('submit', 'form', { self: this }, this.submitForm);
 
@@ -189,12 +190,18 @@
         },
 
         autoSubmitSearch: function(event) {
-            var self = event.data.self;
-            if ($('#menu input.search').val() === self.searchValue) {
+            var _this = event.data.self;
+            if ($('#menu input.search').val() === _this.searchValue) {
                 return;
             }
-            self.searchValue = $('#menu input.search').val();
-            return self.autoSubmitForm(event);
+            _this.searchValue = $('#menu input.search').val();
+            return _this.autoSubmitForm(event);
+        },
+
+        rememberSubmitButton: function(e) {
+            var $button = $(this);
+            var $form = $button.closest('form');
+            $form.data('submitButton', $button);
         },
 
         autoSubmitForm: function (event) {
@@ -205,8 +212,8 @@
          *
          */
         submitForm: function (event, autosubmit) {
-            var self   = event.data.self;
-            var icinga = self.icinga;
+            var _this   = event.data.self;
+            var icinga = _this.icinga;
             // .closest is not required unless subelements to trigger this
             var $form = $(event.currentTarget).closest('form');
             var url = $form.attr('action');
@@ -216,6 +223,14 @@
             var progressTimer;
             var $target;
             var data;
+
+            var $rememberedSubmittButton = $form.data('submitButton');
+            if (typeof $rememberedSubmittButton != 'undefined') {
+                if ($form.has($rememberedSubmittButton)) {
+                    $button = $rememberedSubmittButton;
+                }
+                $form.removeData('submitButton');
+            }
 
             if ($button.length === 0) {
                 var $el;
@@ -262,9 +277,9 @@
                     $button.addClass('active');
                 }
 
-                $target = self.getLinkTargetFor($button);
+                $target = _this.getLinkTargetFor($button);
             } else {
-                $target = self.getLinkTargetFor($form);
+                $target = _this.getLinkTargetFor($form);
             }
 
             if (! url) {
@@ -412,16 +427,16 @@
          * Someone clicked a link or tr[href]
          */
         linkClicked: function (event) {
-            var self   = event.data.self;
-            var icinga = self.icinga;
+            var _this   = event.data.self;
+            var icinga = _this.icinga;
             var $a = $(this);
             var $eventTarget = $(event.target);
             var href = $a.attr('href');
             var linkTarget = $a.attr('target');
             var $target;
             var formerUrl;
-            var remote = /^(?:[a-z]+:)\/\//;
-            if (href.match(/^(mailto|javascript|data):/)) {
+            if (href.match(/^(?:(?:mailto|javascript|data):|[a-z]+:\/\/)/)) {
+                event.stopPropagation();
                 return true;
             }
 
@@ -439,10 +454,6 @@
                 }
             }
 
-            // Let remote links pass through
-            if  (href.match(remote)) {
-                return true;
-            }
             // window.open is used as return true; didn't work reliable
             if (linkTarget === '_blank' || linkTarget === '_self') {
                 window.open(href, linkTarget);
@@ -501,7 +512,7 @@
                     }
                     return false;
                 }
-                $target = self.getLinkTargetFor($a);
+                $target = _this.getLinkTargetFor($a);
 
                 formerUrl = $target.data('icingaUrl');
                 if (typeof formerUrl !== 'undefined' && formerUrl.split(/#/)[0] === href.split(/#/)[0]) {
@@ -513,7 +524,7 @@
                     return false;
                 }
             } else {
-                $target = self.getLinkTargetFor($a);
+                $target = _this.getLinkTargetFor($a);
             }
 
             // Load link URL
@@ -566,11 +577,11 @@
                 } else if (targetId === '_main') {
                     targetId = 'col1';
                     $target = $('#' + targetId);
-                    self.icinga.ui.layout1col();
+                    this.icinga.ui.layout1col();
                 } else {
                     $target = $('#' + targetId);
                     if (! $target.length) {
-                        self.icinga.logger.warn('Link target "#' + targetId + '" does not exist in DOM.');
+                        this.icinga.logger.warn('Link target "#' + targetId + '" does not exist in DOM.');
                     }
                 }
 
@@ -585,7 +596,7 @@
         },
 
         unbindGlobalHandlers: function () {
-            $.each(self.icinga.behaviors, function (name, behavior) {
+            $.each(this.icinga.behaviors, function (name, behavior) {
                 behavior.unbind($(document));
             });
             $(window).off('resize', this.onWindowResize);

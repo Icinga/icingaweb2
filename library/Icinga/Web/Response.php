@@ -13,6 +13,13 @@ use Icinga\Web\Response\JsonResponse;
 class Response extends Zend_Controller_Response_Http
 {
     /**
+     * The default content type being used for responses
+     *
+     * @var string
+     */
+    const DEFAULT_CONTENT_TYPE = 'text/html; charset=UTF-8';
+
+    /**
      * Auto-refresh interval
      *
      * @var int
@@ -147,6 +154,31 @@ class Response extends Zend_Controller_Response_Http
     }
 
     /**
+     * Get an array of all header values for the given name
+     *
+     * @param   string  $name       The name of the header
+     * @param   bool    $lastOnly   If this is true, the last value will be returned as a string
+     *
+     * @return  null|array|string
+     */
+    public function getHeader($name, $lastOnly = false)
+    {
+        $result = ($lastOnly ? null : array());
+        $headers = $this->getHeaders();
+        foreach ($headers as $header) {
+            if ($header['name'] === $name) {
+                if ($lastOnly) {
+                    $result = $header['value'];
+                } else {
+                    $result[] = $header['value'];
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    /**
      * Get the request
      *
      * @return Request
@@ -210,9 +242,11 @@ class Response extends Zend_Controller_Response_Http
      *
      * @return JsonResponse
      */
-    public static function json()
+    public function json()
     {
-        return new JsonResponse();
+        $response = new JsonResponse();
+        $response->copyMetaDataFrom($this);
+        return $response;
     }
 
     /**
@@ -241,6 +275,10 @@ class Response extends Zend_Controller_Response_Http
             if ($redirectUrl !== null) {
                 $this->setRedirect($redirectUrl->getAbsoluteUrl());
             }
+        }
+
+        if (! $this->getHeader('Content-Type', true)) {
+            $this->setHeader('Content-Type', static::DEFAULT_CONTENT_TYPE);
         }
     }
 
@@ -291,5 +329,21 @@ class Response extends Zend_Controller_Response_Http
             $this->sendCookies();
         }
         return parent::sendHeaders();
+    }
+
+    /**
+     * Copies non-body-related response data from $response
+     *
+     * @param   Response    $response
+     *
+     * @return  $this
+     */
+    protected function copyMetaDataFrom(self $response)
+    {
+        $this->_headers = $response->_headers;
+        $this->_headersRaw = $response->_headersRaw;
+        $this->_httpResponseCode = $response->_httpResponseCode;
+        $this->headersSentThrowsException = $response->headersSentThrowsException;
+        return $this;
     }
 }

@@ -211,16 +211,16 @@
          * Our window got resized, let's fix our UI
          */
         onWindowResize: function (event) {
-            var self = event.data.self;
+            var _this = event.data.self;
 
-            if (self.layoutHasBeenChanged()) {
-                self.icinga.logger.info(
+            if (_this.layoutHasBeenChanged()) {
+                _this.icinga.logger.info(
                     'Layout change detected, switching to',
-                    self.currentLayout
+                    _this.currentLayout
                 );
             }
-            self.fixControls();
-            self.refreshDebug();
+            _this.fixControls();
+            _this.refreshDebug();
         },
 
         /**
@@ -458,7 +458,6 @@
          * Initialize all TriStateCheckboxes in the given html
          */
         initializeTriStates: function ($html) {
-            var self = this;
             $('div.tristate', $html).each(function(index, item) {
                 var $target  = $(item);
 
@@ -658,14 +657,21 @@
             $container.find('.controls').each(function() {
                 var $controls = $(this);
                 var $fakeControls = $controls.next('.fake-controls');
-
                 $controls.css({
                     top: $container.offset().top,
                     width: $fakeControls.outerWidth()
                 });
-
                 $fakeControls.height($controls.height());
             });
+
+            var $statusBar = $container.children('.monitoring-statusbar');
+            if ($statusBar.length) {
+                $statusBar.css({
+                    left: $container.offset().left,
+                    width: $container.width()
+                });
+                $statusBar.prev('.monitoring-statusbar-ghost').height($statusBar.outerHeight(true));
+            }
         },
 
         toggleFullscreen: function () {

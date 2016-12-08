@@ -19,7 +19,12 @@ use Icinga\Module\Monitoring\Object\Host;
         <?php if ($object->host_display_name !== $object->host_name): ?>
             <span class="selectable host-meta">&#40;<?= $this->escape($object->host_name) ?>&#41;</span>
         <?php endif ?>
-            <?= $this->render('partials/host/statusicons.phtml') ?>
+        <?php if ($object->host_alias !== $object->host_display_name && $object->host_alias !== $object->host_name): ?>
+            <div class="selectable host-meta">
+                <?= $this->escape($this->translate('Alias', 'host') . ': ' . $object->host_alias) ?>
+            </div>
+        <?php endif ?>
+            <?= $this->hostFlags($object) ?>
         <?php if ($object->host_address6 && $object->host_address6 !== $object->host_name): ?>
             <div class="selectable host-meta" title="<?= $this->translate('IPv6 address') ?>">
                 <?= $this->escape($object->host_address6) ?>

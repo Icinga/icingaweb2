@@ -60,10 +60,9 @@
             if ($search[0] === document.activeElement) {
                 return null;
             }
-            var search = $container.find('#search').val();
-            if (search.length) {
+            if ($search.length) {
                 var $content = $('<div></div>').append(content);
-                $content.find('#search').attr('value', search).addClass('active');
+                $content.find('#search').attr('value', $search.val()).addClass('active');
                 return $content.html();
             }
             return content;
@@ -72,15 +71,15 @@
         var origFocus = document.activeElement;
         var containerId = $container.attr('id');
         var icinga = this.icinga;
-        var self = this.icinga.behaviors.form;
+        var _this = this.icinga.behaviors.form;
         var changed = false;
         $container.find('form').each(function () {
-            var form = self.uniqueFormName(this);
+            var form = _this.uniqueFormName(this);
             if (autorefresh) {
                 // check if an element in this container was changed
                 $(this).find('input').each(function () {
                     var name = this.name;
-                    if (self.inputs[form] && self.inputs[form][name]) {
+                    if (_this.inputs[form] && _this.inputs[form][name]) {
                         icinga.logger.debug(
                             'form input: ' + form + '.' + name + ' was changed and aborts reload...'
                         );
@@ -89,7 +88,7 @@
                 });
             } else {
                 // user-triggered reload, forget all changes to forms in this container
-                self.inputs[form] = null;
+                _this.inputs[form] = null;
             }
         });
         if (changed) {
@@ -101,6 +100,7 @@
             && ! $(origFocus).hasClass('autofocus')
             && ! $(origFocus).hasClass('autosubmit')
             && $(origFocus).closest('form').length
+            && $(origFocus).not(':input[type=button], :input[type=submit], :input[type=reset]').length
         ) {
             icinga.logger.debug('Not changing content for ' + containerId + ' form has focus');
             return null;

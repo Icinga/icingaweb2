@@ -89,7 +89,8 @@ if (empty($object->comments) && ! $addLink) {
                     $deleteButton->populate(
                         array(
                             'downtime_id'           => $downtime->id,
-                            'downtime_is_service'   => $object->getType() === $object::TYPE_SERVICE
+                            'downtime_is_service'   => $object->getType() === $object::TYPE_SERVICE,
+                            'downtime_name'         => $downtime->name
                         )
                     );
                     echo $deleteButton;

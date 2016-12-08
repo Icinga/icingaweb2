@@ -79,19 +79,18 @@ class Auth
     }
 
     /**
-     * Whether the user is authenticated
-     *
-     * @param  bool $ignoreSession True to prevent session authentication
+     * Get whether the user is authenticated
      *
      * @return bool
      */
-    public function isAuthenticated($ignoreSession = false)
+    public function isAuthenticated()
     {
-        if ($this->user === null && ! $ignoreSession) {
-            $this->authenticateFromSession();
+        if ($this->user !== null) {
+            return true;
         }
+        $this->authenticateFromSession();
         if ($this->user === null && ! $this->authExternal()) {
-            return $this->authHttp();
+            return false;
         }
         return true;
     }
@@ -275,15 +274,12 @@ class Auth
      *
      * @return bool
      */
-    protected function authHttp()
+    public function authHttp()
     {
         $request = $this->getRequest();
-        if ($request->isXmlHttpRequest() || ! $request->isApiRequest()) {
-            return false;
-        }
         $header = $request->getHeader('Authorization');
         if (empty($header)) {
-            $this->challengeHttp();
+            return false;
         }
         list($scheme) = explode(' ', $header, 2);
         if ($scheme !== 'Basic') {
@@ -294,7 +290,7 @@ class Auth
         $credentials = array_filter(explode(':', $credentials, 2));
         if (count($credentials) !== 2) {
             // Deny empty username and/or password
-            $this->challengeHttp();
+            return false;
         }
         $user = new User($credentials[0]);
         $password = $credentials[1];
@@ -303,7 +299,7 @@ class Auth
             $user->setIsHttpUser(true);
             return true;
         } else {
-            $this->challengeHttp();
+            return false;
         }
     }
 
@@ -312,7 +308,7 @@ class Auth
      *
      * Sends the response w/ the 401 Unauthorized status code and WWW-Authenticate header.
      */
-    protected function challengeHttp()
+    public function challengeHttp()
     {
         $response = $this->getResponse();
         $response->setHttpResponseCode(401);

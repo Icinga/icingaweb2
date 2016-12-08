@@ -29,7 +29,6 @@ class ShowController extends Controller
             'contact_alias',
             'contact_email',
             'contact_pager',
-            'contact_object_id',
             'contact_notify_service_timeperiod',
             'contact_notify_service_recovery',
             'contact_notify_service_warning',
@@ -61,13 +60,13 @@ class ShowController extends Controller
                 'service_description',
                 'notification_output',
                 'notification_contact_name',
-                'notification_start_time',
+                'notification_timestamp',
                 'notification_state',
                 'host_display_name',
                 'service_display_name'
             ));
 
-            $notifications->where('contact_object_id', $contact->contact_object_id);
+            $notifications->where('notification_contact_name', $contactName);
             $this->applyRestriction('monitoring/filter/objects', $notifications);
             $this->view->notifications = $notifications;
             $this->setupLimitControl();

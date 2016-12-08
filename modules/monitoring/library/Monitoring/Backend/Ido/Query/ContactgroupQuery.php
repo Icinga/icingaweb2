@@ -87,7 +87,7 @@ class ContactgroupQuery extends IdoQuery
             array('cgm' => $this->prefix . 'contactgroup_members'),
             'cgm.contactgroup_id = cg.contactgroup_id',
             array()
-        )->join(
+        )->joinLeft(
             array('co' => $this->prefix . 'objects'),
             'co.object_id = cgm.contact_object_id AND co.is_active = 1 AND co.objecttype_id = 10',
             array()

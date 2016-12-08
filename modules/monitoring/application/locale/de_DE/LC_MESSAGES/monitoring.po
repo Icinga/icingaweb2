@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Monitoring Module (2.1.2)\n"
 "Report-Msgid-Bugs-To: dev@icinga.org\n"
 "POT-Creation-Date: 2016-02-29 14:40+0000\n"
-"PO-Revision-Date: 2016-04-26 12:08+0200\n"
+"PO-Revision-Date: 2016-12-07 17:02+0100\n"
 "Last-Translator: Thomas Gelf <thomas@gelf.net>\n"
 "Language: de_DE\n"
 "MIME-Version: 1.0\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "Language-Team: \n"
-"X-Generator: Poedit 1.8.7.1\n"
+"X-Generator: Poedit 1.8.11\n"
 
 #: /vagrant/modules/monitoring/application/controllers/ChartController.php:375
 msgid " Down Hosts (Handled)"
@@ -1816,7 +1816,16 @@ msgstr ""
 "Backend mit dem Namen “%s” und die weiter unten spezifizierte Ressourcen "
 "abrufen:"
 
-#: /vagrant/modules/monitoring/library/Monitoring/TransportStep.php:76
+#: /vagrant/modules/monitoring/library/Monitoring/TransportStep.php:87
+msgid ""
+"Icinga Web 2 will use the Icinga 2 API to send commands to your monitoring "
+"instance by using the connection details listed below:"
+msgstr ""
+"Icinga Web 2 wird die Icinga 2 API verwenden, um Kommandos an Ihre "
+"Monitoringinstanz zu senden. Dazu werden die folgenden "
+"Verbindungseinstellungen verwendet:"
+
+#: /vagrant/modules/monitoring/library/Monitoring/TransportStep.php:49
 #, php-format
 msgid ""
 "Icinga Web 2 will use the named pipe located at \"%s\" to send commands to "
@@ -1919,8 +1928,8 @@ msgstr ""
 #: /vagrant/modules/monitoring/application/forms/Command/Object/SendCustomNotificationCommandForm.php:45
 msgid ""
 "If you work with other administrators, you may find it useful to share "
-"information about the the host or service that is having problems. Make sure "
-"you enter a brief description of what you are doing."
+"information about the host or service that is having problems. Make sure you "
+"enter a brief description of what you are doing."
 msgstr ""
 "Wenn Sie mit anderen Administratoren zusammenarbeiten, werden Sie es "
 "nützlich finden, Informationen zu Hosts oder Services mit Problemen "

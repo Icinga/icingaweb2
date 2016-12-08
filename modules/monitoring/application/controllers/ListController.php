@@ -229,6 +229,7 @@ class ListController extends Controller
             'is_fixed'        => 'downtime_is_fixed',
             'is_in_effect'    => 'downtime_is_in_effect',
             'entry_time'      => 'downtime_entry_time',
+            'name'            => 'downtime_name',
             'host_state',
             'service_state',
             'host_name',
@@ -276,13 +277,13 @@ class ListController extends Controller
         $this->setAutorefreshInterval(15);
 
         $notifications = $this->backend->select()->from('notification', array(
-            'host_name',
-            'service_description',
-            'notification_output',
-            'notification_contact_name',
-            'notification_start_time',
-            'notification_state',
             'host_display_name',
+            'host_name',
+            'notification_contact_name',
+            'notification_output',
+            'notification_state',
+            'notification_timestamp',
+            'service_description',
             'service_display_name'
         ));
         $this->applyRestriction('monitoring/filter/objects', $notifications);
@@ -291,7 +292,7 @@ class ListController extends Controller
         $this->setupPaginationControl($notifications);
         $this->setupLimitControl();
         $this->setupSortControl(array(
-            'notification_start_time' => $this->translate('Notification Start')
+            'notification_timestamp' => $this->translate('Notification Start')
         ), $notifications);
 
         $this->view->notifications = $notifications;
@@ -422,6 +423,7 @@ class ListController extends Controller
             'type'       => 'comment_type',
             'persistent' => 'comment_is_persistent',
             'expiration' => 'comment_expiration',
+            'name'       => 'comment_name',
             'host_name',
             'service_description',
             'host_display_name',

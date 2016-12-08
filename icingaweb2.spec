@@ -3,7 +3,7 @@
 %define revision 1
 
 Name:           icingaweb2
-Version:        2.3.2
+Version:        2.3.4
 Release:        %{revision}%{?dist}
 Summary:        Icinga Web 2
 Group:          Applications/System
@@ -41,11 +41,11 @@ Requires: apache2-mod_php5
 %{?suse_version:Requires(pre):  pwdutils}
 Requires:                       %{name}-common = %{version}-%{release}
 Requires:                       php-Icinga = %{version}-%{release}
-Requires:                       %{name}-vendor-dompdf
-Requires:                       %{name}-vendor-HTMLPurifier
-Requires:                       %{name}-vendor-JShrink
-Requires:                       %{name}-vendor-lessphp
-Requires:                       %{name}-vendor-Parsedown
+Requires:                       %{name}-vendor-dompdf = 0.7.0-1%{?dist}
+Requires:                       %{name}-vendor-HTMLPurifier = 4.8.0-1%{?dist}
+Requires:                       %{name}-vendor-JShrink = 1.1.0-1%{?dist}
+Requires:                       %{name}-vendor-lessphp = 0.4.0-1%{?dist}
+Requires:                       %{name}-vendor-Parsedown = 1.6.0-1%{?dist}
 
 
 %description
@@ -106,7 +106,7 @@ Icinga CLI
 
 
 %package vendor-dompdf
-Version:    0.6.2
+Version:    0.7.0
 Release:    1%{?dist}
 Summary:    Icinga Web 2 vendor library dompdf
 Group:      Development/Libraries
@@ -118,7 +118,7 @@ Icinga Web 2 vendor library dompdf
 
 
 %package vendor-HTMLPurifier
-Version:    4.7.0
+Version:    4.8.0
 Release:    1%{?dist}
 Summary:    Icinga Web 2 vendor library HTMLPurifier
 Group:      Development/Libraries
@@ -130,7 +130,7 @@ Icinga Web 2 vendor library HTMLPurifier
 
 
 %package vendor-JShrink
-Version:    1.0.1
+Version:    1.1.0
 Release:    1%{?dist}
 Summary:    Icinga Web 2 vendor library JShrink
 Group:      Development/Libraries
@@ -154,7 +154,7 @@ Icinga Web 2 vendor library lessphp
 
 
 %package vendor-Parsedown
-Version:    1.0.0
+Version:    1.6.0
 Release:    1%{?dist}
 Summary:    Icinga Web 2 vendor library Parsedown
 Group:      Development/Libraries

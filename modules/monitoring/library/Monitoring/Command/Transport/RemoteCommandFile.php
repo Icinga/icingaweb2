@@ -74,6 +74,20 @@ class RemoteCommandFile implements CommandTransportInterface
     protected $renderer;
 
     /**
+     * SSH subprocess pipes
+     *
+     * @var array
+     */
+    protected $sshPipes;
+
+    /**
+     * SSH subprocess
+     *
+     * @var resource
+     */
+    protected $sshProcess;
+
+    /**
      * Create a new remote command file command transport
      */
     public function __construct()
@@ -274,26 +288,178 @@ class RemoteCommandFile implements CommandTransportInterface
             $this->port,
             $this->path
         );
-        $ssh = sprintf('ssh -o BatchMode=yes -p %u', $this->port);
+        return $this->sendCommandString($commandString);
+    }
+
+    /**
+     * Get the SSH command
+     *
+     * @return  string
+     */
+    protected function sshCommand()
+    {
+        $cmd = sprintf(
+            'exec ssh -o BatchMode=yes -p %u',
+            $this->port
+        );
         // -o BatchMode=yes for disabling interactive authentication methods
+
         if (isset($this->user)) {
-            $ssh .= sprintf(' -l %s', escapeshellarg($this->user));
+            $cmd .= ' -l ' . escapeshellarg($this->user);
         }
+
         if (isset($this->privateKey)) {
-            $ssh .= sprintf(' -o StrictHostKeyChecking=no -i %s', escapeshellarg($this->privateKey));
+            // TODO: StrictHostKeyChecking=no for compat only, must be removed
+            $cmd .= ' -o StrictHostKeyChecking=no'
+                  . ' -i ' . escapeshellarg($this->privateKey);
         }
-        $ssh .= sprintf(
-            ' %s "echo %s > %s" 2>&1', // Redirect stderr to stdout
+
+        $cmd .= sprintf(
+            ' %s "cat > %s"',
             escapeshellarg($this->host),
-            escapeshellarg($commandString),
             escapeshellarg($this->path)
         );
-        exec($ssh, $output, $status);
-        if ($status !== 0) {
+
+        return $cmd;
+    }
+
+    /**
+     * Send the command over SSH
+     *
+     * @param   string  $commandString
+     *
+     * @throws  CommandTransportException
+     */
+    protected function sendCommandString($commandString)
+    {
+        if ($this->isSshAlive()) {
+            $ret = fwrite($this->sshPipes[0], $commandString . "\n");
+            if ($ret === false) {
+                $this->throwSshFailure('Cannot write to the remote command pipe');
+            } elseif ($ret !== strlen($commandString) + 1) {
+                $this->throwSshFailure(
+                    'Failed to write the whole command to the remote command pipe'
+                );
+            }
+        } else {
+            $this->throwSshFailure();
+        }
+    }
+
+    /**
+     * Get the pipes of the SSH subprocess
+     *
+     * @return  array
+     */
+    protected function getSshPipes()
+    {
+        if ($this->sshPipes === null) {
+            $this->forkSsh();
+        }
+
+        return $this->sshPipes;
+    }
+
+    /**
+     * Get the SSH subprocess
+     *
+     * @return  resource
+     */
+    protected function getSshProcess()
+    {
+        if ($this->sshProcess === null) {
+            $this->forkSsh();
+        }
+
+        return $this->sshProcess;
+    }
+
+    /**
+     * Get the status of the SSH subprocess
+     *
+     * @param   string  $what
+     *
+     * @return  mixed
+     */
+    protected function getSshProcessStatus($what = null)
+    {
+        $status = proc_get_status($this->getSshProcess());
+        if ($what === null) {
+            return $status;
+        } else {
+            return $status[$what];
+        }
+    }
+
+    /**
+     * Get whether the SSH subprocess is alive
+     *
+     * @return  bool
+     */
+    protected function isSshAlive()
+    {
+        return $this->getSshProcessStatus('running');
+    }
+
+    /**
+     * Fork SSH subprocess
+     *
+     * @throws  CommandTransportException   If fork fails
+     */
+    protected function forkSsh()
+    {
+        $descriptors = array(
+            0 => array('pipe', 'r'),
+            1 => array('pipe', 'w'),
+            2 => array('pipe', 'w')
+        );
+
+        $this->sshProcess = proc_open($this->sshCommand(), $descriptors, $this->sshPipes);
+
+        if (! is_resource($this->sshProcess)) {
             throw new CommandTransportException(
-                'Can\'t send external Icinga command: %s',
-                implode(' ', $output)
+                'Can\'t send external Icinga command: Failed to fork SSH'
             );
+        }
+    }
+
+    /**
+     * Read from STDERR
+     *
+     * @return  string
+     */
+    protected function readStderr()
+    {
+        return stream_get_contents($this->sshPipes[2]);
+    }
+
+    /**
+     * Throw SSH failure
+     *
+     * @param   string  $msg
+     *
+     * @throws  CommandTransportException
+     */
+    protected function throwSshFailure($msg = 'Can\'t send external Icinga command')
+    {
+        throw new CommandTransportException(
+            '%s: %s',
+            $msg,
+            $this->readStderr() . var_export($this->getSshProcessStatus(), true)
+        );
+    }
+
+    /**
+     * Close SSH pipes and SSH subprocess
+     */
+    public function __destruct()
+    {
+        if (is_resource($this->sshProcess)) {
+            fclose($this->sshPipes[0]);
+            fclose($this->sshPipes[1]);
+            fclose($this->sshPipes[2]);
+
+            proc_close($this->sshProcess);
         }
     }
 }

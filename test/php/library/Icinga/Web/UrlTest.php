@@ -9,6 +9,78 @@ use Icinga\Test\BaseTestCase;
 
 class UrlTest extends BaseTestCase
 {
+    public function testWhetherFromPathCutsOfTheFirstCharOfThePathIfUrlIsInternalAndHasAUsernameInIt()
+    {
+        $this->getRequestMock()->shouldReceive('getServer')->with("SERVER_NAME")->andReturn('localhost')
+            ->shouldReceive('getServer')->with("SERVER_PORT")->andReturn('8080');
+
+        $url = Url::fromPath('http://testusername:testpassword@localhost:8080/path/to/my/url.html');
+        $this->assertEquals(
+            'path/to/my/url.html',
+            $url->getPath(),
+            'Url::fromPath does not cut of the first char of path if the url is internal and has a username in it'
+        );
+    }
+
+    public function testWhetherGetAbsoluteUrlReturnsTheBasePathIfUrlIsInternalAndHasAUsernameInIt()
+    {
+        $this->getRequestMock()->shouldReceive('getServer')->with("SERVER_NAME")->andReturn('localhost')
+            ->shouldReceive('getServer')->with("SERVER_PORT")->andReturn('8080');
+
+        $url = Url::fromPath('http://testusername:testpassword@localhost:8080/path/to/my/url.html');
+        $this->assertEquals(
+            'http://testusername:testpassword@localhost:8080/path/to/my/url.html',
+            $url->getAbsoluteUrl(),
+            'Url::getAbsoluteUrl does not reassemble the correct basePath'
+        );
+    }
+
+    public function testWhetherGetAbsoluteUrlReturnsTheBasePathIfUrlIsInternalAndHasNoUsernameInIt()
+    {
+        $url = Url::fromPath('/path/to/my/url.html');
+        $this->assertEquals(
+            '/path/to/my/url.html',
+            $url->getAbsoluteUrl(),
+            'Url::getAbsoluteUrl does not reassemble the correct basePath'
+        );
+    }
+
+    public function testWhetherGetAbsoluteUrlReturnsTheBasePathIfUrlIsExternalAndHasAUsernameInIt()
+    {
+        $this->getRequestMock()->shouldReceive('getServer')->with("SERVER_NAME")->andReturn('localhost')
+            ->shouldReceive('getServer')->with("SERVER_PORT")->andReturn('8080');
+
+        $url = Url::fromPath('http://testusername:testpassword@testhost/path/to/my/url.html');
+        $this->assertEquals(
+            'http://testusername:testpassword@testhost/path/to/my/url.html',
+            $url->getAbsoluteUrl(),
+            'Url::getAbsoluteUrl does not reassemble the correct basePath'
+        );
+    }
+
+    public function testWhetherGetAbsoluteUrlReturnsTheBasePathIfUrlIsExternalAndHasNoUsernameInIt()
+    {
+        $this->getRequestMock()->shouldReceive('getServer')->with("SERVER_NAME")->andReturn('localhost')
+            ->shouldReceive('getServer')->with("SERVER_PORT")->andReturn('8080');
+
+        $url = Url::fromPath('http://testhost/path/to/my/url.html');
+        $this->assertEquals(
+            'http://testhost/path/to/my/url.html',
+            $url->getAbsoluteUrl(),
+            'Url::getAbsoluteUrl does not reassemble the correct basePath'
+        );
+    }
+
+    public function testWhetherGetAbsoluteUrlReturnsTheGivenUsernameAndPassword()
+    {
+        $url = Url::fromPath('http://testusername:testpassword@testsite.com/path/to/my/url.html');
+        $this->assertEquals(
+            'http://testusername:testpassword@testsite.com/path/to/my/url.html',
+            $url->getAbsoluteUrl(),
+            'Url::fromPath does not reassemble the correct url'
+        );
+    }
+
     public function testWhetherFromRequestWorksWithoutARequest()
     {
         $this->getRequestMock()->shouldReceive('getBaseUrl')->andReturn('/path/to')
@@ -83,8 +155,8 @@ class UrlTest extends BaseTestCase
 
         $this->assertEquals(
             '',
-            $url->getBaseUrl(),
-            'Url::fromPath does not recognize the correct base url'
+            $url->getBasePath(),
+            'Url::fromPath does not recognize the correct base path'
         );
         $this->assertEquals(
             '/my/test/url.html',

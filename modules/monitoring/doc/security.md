@@ -13,7 +13,7 @@ commands when using the monitoring module.
 
 
 | Name                                        | Permits                                                                     |
-|---------------------------------------------|-----------------------------------------------------------------------------|
+| ------------------------------------------- | --------------------------------------------------------------------------- |
 | monitoring/command/*                        | Allow all commands                                                          |
 | monitoring/command/schedule-check           | Allow scheduling host and service checks'                                   |
 | monitoring/command/acknowledge-problem      | Allow acknowledging host and service problems                               |
@@ -33,7 +33,7 @@ The monitoring module allows filtering objects:
 
 
 | Keys                       | Restricts                                     |
-|----------------------------|-----------------------------------------------|
+| ---------------------------|---------------------------------------------- |
 | monitoring/filter/objects  | Applies a filter to all hosts and services    |
 
 
@@ -48,7 +48,7 @@ The following filter column names are available in filter expressions:
 
 
 | Column                                                       |
-|--------------------------------------------------------------|
+| ------------------------------------------------------------ |
 | instance_name                                                |
 | host_name                                                    |
 | hostgroup_name                                               |

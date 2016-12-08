@@ -75,6 +75,7 @@ abstract class MonitoredObjectController extends Controller
             }
         }
         $this->object->populate();
+        $this->handleFormatRequest();
         $toggleFeaturesForm = new ToggleObjectFeaturesCommandForm(array(
             'backend'   => $this->backend,
             'objects'   => $this->object
@@ -129,8 +130,29 @@ abstract class MonitoredObjectController extends Controller
         $this->view->form = $form;
         $this->view->object = $this->object;
         $this->view->tabs->remove('dashboard');
+        $this->view->tabs->remove('menu-entry');
         $this->_helper->viewRenderer('partials/command/object-command-form', null, true);
         return $form;
+    }
+
+    /**
+     * Export to JSON if requested
+     */
+    protected function handleFormatRequest($query = null)
+    {
+        if ($this->params->get('format') === 'json'
+            || $this->getRequest()->getHeader('Accept') === 'application/json'
+        ) {
+            $payload = (array) $this->object->properties;
+            $payload += array(
+                'contacts'          => $this->object->contacts->fetchPairs(),
+                'contact_groups'    => $this->object->contactgroups->fetchPairs(),
+                'vars'              => $this->object->customvars
+            );
+            $groupName = $this->object->getType() . 'groups';
+            $payload[$groupName] = $this->object->$groupName;
+            $this->getResponse()->json()->setSuccessData($payload)->sendResponse();
+        }
     }
 
     /**
