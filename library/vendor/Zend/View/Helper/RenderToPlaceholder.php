@@ -21,7 +21,6 @@
  */
 
 /** Zend_View_Helper_Abstract.php */
-require_once 'Zend/View/Helper/Abstract.php';
 
 /**
  * Renders a template and stores the rendered output as a placeholder

@@ -21,7 +21,6 @@
  */
 
 /** Zend_View_Helper_Placeholder_Container_Abstract */
-require_once 'Zend/View/Helper/Placeholder/Container/Abstract.php';
 
 /**
  * Container for placeholder values

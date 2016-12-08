@@ -22,7 +22,6 @@
 
 
 /** Zend_View_Exception */
-require_once 'Zend/View/Exception.php';
 
 
 /**

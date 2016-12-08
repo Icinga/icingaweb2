@@ -407,7 +407,7 @@ class Zend_Db_Adapter_Pdo_Mssql extends Zend_Db_Adapter_Pdo_Abstract
     public function getServerVersion()
     {
         try {
-            $stmt = $this->query("SELECT SERVERPROPERTY('productversion')");
+            $stmt = $this->query("SELECT CAST(SERVERPROPERTY('productversion') AS VARCHAR)");
             $result = $stmt->fetchAll(Zend_Db::FETCH_NUM);
             if (count($result)) {
                 return $result[0][0];
@@ -416,5 +416,20 @@ class Zend_Db_Adapter_Pdo_Mssql extends Zend_Db_Adapter_Pdo_Abstract
         } catch (PDOException $e) {
             return null;
         }
+    }
+
+    /**
+     * Quote a raw string.
+     *
+     * @param string $value     Raw string
+     * @return string           Quoted string
+     */
+    protected function _quote($value)
+    {
+        if (!is_int($value) && !is_float($value)) {
+            // Fix for null-byte injection
+            $value = addcslashes($value, "\000\032");
+        }
+        return parent::_quote($value);
     }
 }
