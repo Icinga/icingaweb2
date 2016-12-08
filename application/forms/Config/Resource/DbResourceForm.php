@@ -46,24 +46,13 @@ class DbResourceForm extends Form
         $encryptionChoices = array();
         $offerPostgres = false;
         $offerMysql = false;
-        if (isset($formData['db'])) {
-            if ($formData['db'] === 'pgsql') {
-                $offerPostgres = true;
-            } elseif ($formData['db'] === 'mysql') {
-                $offerMysql = true;
-                if (version_compare(Platform::getPhpVersion(), '5.4.0', '>=')) {
-                    $encryptionChoices['ssl'] = 'SSL';
-                }
-            }
-        } else {
-            $dbChoice = key($dbChoices);
-            if ($dbChoice === 'pgsql') {
-                $offerPostgres = true;
-            } elseif ($dbChoice === 'mysql') {
-                $offerMysql = true;
-                if (version_compare(Platform::getPhpVersion(), '5.4.0', '>=')) {
-                    $encryptionChoices['ssl'] = 'SSL';
-                }
+        $dbChoice = isset($formData['db']) ? $formData['db'] : key($dbChoices);
+        if ($dbChoice === 'pgsql') {
+            $offerPostgres = true;
+        } elseif ($dbChoice === 'mysql') {
+            $offerMysql = true;
+            if (version_compare(Platform::getPhpVersion(), '5.4.0', '>=')) {
+                $encryptionChoices['ssl'] = 'SSL';
             }
         }
 
