@@ -3,6 +3,7 @@
 
 namespace Icinga\Module\Monitoring\Forms\Command\Object;
 
+use Icinga\Application\Config;
 use Icinga\Module\Monitoring\Command\Object\ScheduleHostCheckCommand;
 use Icinga\Web\Notification;
 
@@ -17,6 +18,8 @@ class ScheduleHostCheckCommandForm extends ScheduleServiceCheckCommandForm
      */
     public function createElements(array $formData = array())
     {
+        $config = Config::module('monitoring');
+
         parent::createElements($formData);
         $this->addElements(array(
             array(
@@ -24,6 +27,7 @@ class ScheduleHostCheckCommandForm extends ScheduleServiceCheckCommandForm
                 'all_services',
                 array(
                     'label'         => $this->translate('All Services'),
+                    'value'         => (bool) $config->get('settings', 'hostcheck_all_services', false),
                     'description'   => $this->translate(
                         'Schedule check for all services on the hosts and the hosts themselves.'
                     )

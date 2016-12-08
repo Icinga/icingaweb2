@@ -3,6 +3,7 @@
 
 namespace Icinga\Module\Monitoring\Forms\Command\Object;
 
+use Icinga\Application\Config;
 use Icinga\Module\Monitoring\Command\Object\AddCommentCommand;
 use Icinga\Web\Notification;
 
@@ -53,7 +54,7 @@ class AddCommentCommandForm extends ObjectsCommandForm
                 'persistent',
                 array(
                     'label'         => $this->translate('Persistent'),
-                    'value'         => true,
+                    'value'         => (bool) Config::module('monitoring')->get('settings', 'comment_persistent', true),
                     'description'   => $this->translate(
                         'If you uncheck this option, the comment will automatically be deleted the next time Icinga is'
                         . ' restarted.'
