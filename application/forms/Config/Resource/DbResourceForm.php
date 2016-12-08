@@ -148,6 +148,25 @@ class DbResourceForm extends Form
                 'description'       => $this->translate('The password to use for authentication')
             )
         );
+        $this->addElement(
+            'text',
+            'charset',
+            array (
+                'description'   => $this->translate('The character set for the database'),
+                'label'         => $this->translate('Character Set')
+            )
+        );
+        $this->addElement(
+            'checkbox',
+            'persistent',
+            array(
+                'description'   => $this->translate(
+                    'Check this box for persistent database connections. Persistent connections are not closed at the'
+                    . ' end of a request, but are cached and re-used. This is experimental'
+                ),
+                'label'         => $this->translate('Persistent')
+            )
+        );
         if (! empty($encryptionChoices)) {
             $this->addElement(
                 'select',
@@ -209,25 +228,6 @@ class DbResourceForm extends Form
                 );
             }
         }
-        $this->addElement(
-            'text',
-            'charset',
-            array (
-                'description'   => $this->translate('The character set for the database'),
-                'label'         => $this->translate('Character Set')
-            )
-        );
-        $this->addElement(
-            'checkbox',
-            'persistent',
-            array(
-                'description'   => $this->translate(
-                    'Check this box for persistent database connections. Persistent connections are not closed at the'
-                    . ' end of a request, but are cached and re-used. This is experimental'
-                ),
-                'label'         => $this->translate('Persistent')
-            )
-        );
 
         return $this;
     }
