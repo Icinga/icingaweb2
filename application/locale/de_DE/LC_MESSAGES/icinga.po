@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Icinga Web 2 (None)\n"
 "Report-Msgid-Bugs-To: dev@icinga.org\n"
-"POT-Creation-Date: 2016-12-09 13:11+0000\n"
-"PO-Revision-Date: 2016-12-09 14:11+0100\n"
+"POT-Creation-Date: 2016-12-09 13:27+0000\n"
+"PO-Revision-Date: 2016-12-09 15:33+0100\n"
 "Language: de_DE\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -130,16 +130,15 @@ msgstr "Barrierefreiheit Links überspringen"
 
 #: /vagrant/application/views/scripts/account/index.phtml:6
 msgid "Account"
-msgstr ""
+msgstr "Benutzerkonto"
 
 #: /vagrant/application/forms/Account/ChangePasswordForm.php:77
-#, fuzzy
 msgid "Account updated"
-msgstr "Rolle aktualisiert"
+msgstr "Benutzerkonto aktualisiert"
 
 #: /vagrant/application/forms/Announcement/AcknowledgeAnnouncementForm.php:38
 msgid "Acknowledge this announcement"
-msgstr ""
+msgstr "Diese Bekanntmachung bestätigen"
 
 #: /vagrant/application/views/scripts/user/show.phtml:33
 #: /vagrant/application/controllers/UserController.php:70
@@ -260,30 +259,26 @@ msgstr ""
 "Verbindung. Leer lassen, um keine Filter zu verwenden."
 
 #: /vagrant/application/forms/Announcement/AnnouncementForm.php:94
-#, fuzzy
 msgid "Announcement created"
-msgstr "Rolle angelegt"
+msgstr "Bekanntmachung erstellt"
 
 #: /vagrant/application/controllers/AnnouncementsController.php:59
 #: /vagrant/application/controllers/AnnouncementsController.php:75
-#, fuzzy
 msgid "Announcement not found"
-msgstr "Seite nicht gefunden."
+msgstr "Bekanntmachung nicht gefunden"
 
 #: /vagrant/application/forms/Announcement/AnnouncementForm.php:114
-#, fuzzy
 msgid "Announcement removed"
-msgstr "Rolle entfernt"
+msgstr "Bekanntmachung entfernt"
 
 #: /vagrant/application/forms/Announcement/AnnouncementForm.php:104
-#, fuzzy
 msgid "Announcement updated"
-msgstr "Rolle aktualisiert"
+msgstr "Bekanntmachung aktualisiert"
 
 #: /vagrant/application/controllers/AnnouncementsController.php:24
 #: /vagrant/library/Icinga/Application/Web.php:310
 msgid "Announcements"
-msgstr ""
+msgstr "Bekanntmachungen"
 
 #: /vagrant/library/Icinga/Application/Web.php:323
 #: /vagrant/library/Icinga/Web/Menu.php:274
@@ -324,9 +319,8 @@ msgid "Authentication order updated"
 msgstr "Authentifizierungsreihenfolge wurde aktualisiert"
 
 #: /vagrant/application/views/scripts/announcements/index.phtml:27
-#, fuzzy
 msgid "Author"
-msgstr "Autorisierung"
+msgstr "Autor"
 
 #: /vagrant/application/forms/AutoRefreshForm.php:44
 msgid "Auto refresh successfully disabled"
@@ -543,9 +537,8 @@ msgid "Configure which resources are being utilized by Icinga Web 2"
 msgstr "Konfiguration der Ressourcen für Icinga Web 2"
 
 #: /vagrant/application/forms/Account/ChangePasswordForm.php:57
-#, fuzzy
 msgid "Confirm New Password"
-msgstr "Bind Kennwort"
+msgstr "Neues Passwort bestätigen"
 
 #: /vagrant/application/forms/ConfirmRemovalForm.php:19
 msgid "Confirm Removal"
@@ -609,9 +602,8 @@ msgid "Create Role"
 msgstr "Rolle erstellen"
 
 #: /vagrant/application/views/scripts/announcements/index.phtml:9
-#, fuzzy
 msgid "Create a New Announcement"
-msgstr "Neue Ressource erstellen"
+msgstr "Neue Bekanntmachung erstellen"
 
 #: /vagrant/application/views/scripts/navigation/index.phtml:12
 msgid "Create a New Navigation Item"
@@ -635,9 +627,8 @@ msgstr "Neues Backend für Benutzergruppen erstellen"
 
 #: /vagrant/application/views/scripts/announcements/index.phtml:16
 #: /vagrant/application/forms/Announcement/AnnouncementForm.php:57
-#, fuzzy
 msgid "Create a new announcement"
-msgstr "Neue Ressource erstellen"
+msgstr "Neue Bekanntmachung erstellen"
 
 #: /vagrant/application/controllers/ConfigController.php:200
 msgid ""
@@ -825,9 +816,9 @@ msgid "Edit User"
 msgstr "Nutzer bearbeiten"
 
 #: /vagrant/application/forms/Announcement/AnnouncementForm.php:67
-#, fuzzy, php-format
+#, php-format
 msgid "Edit announcement %s"
-msgstr "Ressource %s bearbeiten"
+msgstr "Bekanntmachung %s bearbeiten"
 
 #: /vagrant/application/views/scripts/dashboard/settings.phtml:54
 #, php-format
@@ -898,7 +889,7 @@ msgstr "Verschlüsselung"
 #: /vagrant/application/views/scripts/announcements/index.phtml:30
 #: /vagrant/application/forms/Announcement/AnnouncementForm.php:52
 msgid "End"
-msgstr ""
+msgstr "Ende"
 
 #: /vagrant/application/forms/Dashboard/DashletForm.php:83
 msgid "Enter a title for the dashlet."
@@ -953,7 +944,7 @@ msgstr "Konnte Benutzer nicht hinzufügen"
 
 #: /vagrant/application/forms/Announcement/AnnouncementForm.php:95
 msgid "Failed to create announcement"
-msgstr ""
+msgstr "Erstellung der Bekanntmachung fehlgeschlagen"
 
 #: /vagrant/library/Icinga/Repository/IniRepository.php:364
 #, php-format
@@ -1010,9 +1001,8 @@ msgid "Failed to insert. An error occurred: %s"
 msgstr "Einfügen nicht möglich. Ein Fehler ist aufgetreten: %s"
 
 #: /vagrant/application/forms/Announcement/AnnouncementForm.php:115
-#, fuzzy
 msgid "Failed to remove announcement"
-msgstr "Benutzer “%s” konnte nicht entfernt werden"
+msgstr "Bekanntmachung “%s” konnte nicht entfernt werden"
 
 #: /vagrant/application/forms/Config/UserGroup/UserGroupForm.php:123
 #, php-format
@@ -1037,9 +1027,8 @@ msgstr ""
 "Teilen des Navigationselementes “%s” konnte nicht rückgängig gemacht werden"
 
 #: /vagrant/application/forms/Announcement/AnnouncementForm.php:105
-#, fuzzy
 msgid "Failed to update announcement"
-msgstr "Aktualisierung fehlgeschlagen. Ein Fehler ist aufgetreten: %s"
+msgstr "Bekanntmachung konnte nicht aktualisiert werden"
 
 #: /vagrant/library/Icinga/Repository/IniRepository.php:334
 #, php-format
@@ -1126,6 +1115,8 @@ msgstr "Git Commit Datum"
 #: /vagrant/application/forms/Security/RoleForm.php:48
 msgid "Grant admin permissions, e.g. manage announcements"
 msgstr ""
+"Verleiht Administratorrechte, erlaubt z. B. das Verwalten von "
+"Bekanntmachungen"
 
 #: /vagrant/library/Icinga/Chart/GridChart.php:89
 msgid "Grid Chart"
@@ -1367,7 +1358,7 @@ msgstr "Leer lassen, um das Passwort unverändert zu lassen"
 
 #: /vagrant/application/controllers/AnnouncementsController.php:25
 msgid "List All Announcements"
-msgstr ""
+msgstr "Alle Bekanntmachungen auflisten"
 
 #: /vagrant/application/controllers/NavigationController.php:192
 msgid "List and configure shared navigation items"
@@ -1453,7 +1444,7 @@ msgstr "Menüeintrag"
 #: /vagrant/application/views/scripts/announcements/index.phtml:28
 #: /vagrant/application/forms/Announcement/AnnouncementForm.php:34
 msgid "Message"
-msgstr ""
+msgstr "Nachricht"
 
 #: /vagrant/library/Icinga/Web/Controller/ActionController.php:255
 msgid "Method Not Allowed"
@@ -1461,7 +1452,7 @@ msgstr "Nicht zulässig"
 
 #: /vagrant/application/forms/Navigation/NavigationItemForm.php:72
 msgid "Missing protocol identifier"
-msgstr ""
+msgstr "Protokoll-Kennung fehlt"
 
 #: /vagrant/library/Icinga/Web/Widget/FilterWidget.php:94
 #: /vagrant/library/Icinga/Web/Widget/FilterEditor.php:749
@@ -1529,7 +1520,7 @@ msgstr "Benutzerbackend %s nach oben schieben"
 #: /vagrant/application/controllers/AccountController.php:28
 #: /vagrant/library/Icinga/Application/Web.php:355
 msgid "My Account"
-msgstr ""
+msgstr "Mein Benutzerkonto"
 
 #: /vagrant/application/views/scripts/about/index.phtml:108
 #: /vagrant/application/views/scripts/config/module.phtml:16
@@ -1582,9 +1573,8 @@ msgid "Nested Group Search"
 msgstr "Suche in verschachtelten Gruppen"
 
 #: /vagrant/application/controllers/AnnouncementsController.php:45
-#, fuzzy
 msgid "New Announcement"
-msgstr "Neue Spalte anlegen"
+msgstr "Neue Bekanntmachung"
 
 #: /vagrant/application/forms/Navigation/NavigationItemForm.php:42
 msgid "New Column"
@@ -1603,9 +1593,8 @@ msgid "New Navigation Item"
 msgstr "Neues Navigationselement erstellen"
 
 #: /vagrant/application/forms/Account/ChangePasswordForm.php:49
-#, fuzzy
 msgid "New Password"
-msgstr "Kennwort"
+msgstr "Neues Passwort"
 
 #: /vagrant/application/controllers/ConfigController.php:323
 msgid "New Resource"
@@ -1669,9 +1658,8 @@ msgid "No LDAP resources available. Please configure an LDAP resource first."
 msgstr "Keine LDAP-Ressource verfügbar. Bitte zuerst eine konfigurieren."
 
 #: /vagrant/application/views/scripts/announcements/index.phtml:21
-#, fuzzy
 msgid "No announcements found."
-msgstr "Es wurden keine Rollen gefunden"
+msgstr "Es wurden keine Bekanntmachungen gefunden."
 
 #: /vagrant/application/forms/Authentication/LoginForm.php:100
 msgid ""
@@ -1748,13 +1736,12 @@ msgstr ""
 "automatisch entzogen wird."
 
 #: /vagrant/application/forms/Account/ChangePasswordForm.php:41
-#, fuzzy
 msgid "Old Password"
-msgstr "Bind Kennwort"
+msgstr "Altes Passwort"
 
 #: /vagrant/application/forms/Account/ChangePasswordForm.php:93
 msgid "Old password is invalid"
-msgstr ""
+msgstr "Altes Passwort ist ungültig"
 
 #: /vagrant/application/forms/Config/ResourceConfigForm.php:104
 msgid "Old resource name missing"
@@ -1927,9 +1914,8 @@ msgid "Remove"
 msgstr "Entfernen"
 
 #: /vagrant/application/controllers/AnnouncementsController.php:77
-#, fuzzy
 msgid "Remove Announcement"
-msgstr "Ressource entfernen"
+msgstr "Bekanntmachung entfernen"
 
 #: /vagrant/application/controllers/DashboardController.php:228
 msgid "Remove Dashboard"
@@ -1973,9 +1959,9 @@ msgid "Remove User Group Backend"
 msgstr "Backend für Benutzergruppen entfernen"
 
 #: /vagrant/application/forms/Announcement/AnnouncementForm.php:76
-#, fuzzy, php-format
+#, php-format
 msgid "Remove announcement %s?"
-msgstr "Dashboard %s entfernen"
+msgstr "Bekanntmachung %s entfernen?"
 
 #: /vagrant/application/views/scripts/dashboard/settings.phtml:72
 #, php-format
@@ -2013,9 +1999,8 @@ msgid "Remove the %s resource"
 msgstr "Ressource %s entfernen"
 
 #: /vagrant/application/views/scripts/announcements/index.phtml:53
-#, fuzzy
 msgid "Remove this announcement"
-msgstr "Dieses Mitglied entfernen"
+msgstr "Diese Bekanntmachung entfernen"
 
 #: /vagrant/library/Icinga/Web/Widget/FilterWidget.php:98
 msgid "Remove this filter"
@@ -2376,7 +2361,7 @@ msgstr "Sortieren nach"
 #: /vagrant/application/views/scripts/announcements/index.phtml:29
 #: /vagrant/application/forms/Announcement/AnnouncementForm.php:43
 msgid "Start"
-msgstr ""
+msgstr "Beginn"
 
 #: /vagrant/application/views/scripts/user/show.phtml:32
 #: /vagrant/application/views/scripts/config/module.phtml:20
@@ -2572,7 +2557,7 @@ msgstr ""
 
 #: /vagrant/application/forms/Announcement/AnnouncementForm.php:35
 msgid "The message to display to users"
-msgstr ""
+msgstr "Die Nachricht, die den Benutzern angezeigt werden soll"
 
 #: /vagrant/application/forms/Config/General/LoggingConfigForm.php:75
 msgid "The name of the application by which to prefix syslog messages."
@@ -2719,20 +2704,19 @@ msgstr ""
 "führen, dass kein Login mehr möglich ist."
 
 #: /vagrant/application/controllers/ConfigController.php:408
-#, fuzzy, php-format
+#, php-format
 msgid ""
 "The resource \"%s\" is currently utilized to store user preferences. "
 "Removing the resource causes all current user preferences not being "
 "available any longer."
 msgstr ""
-"Die Ressource “%s” wird momentan für die Authentifizierung durch das "
-"Benutzerbackend “%s” verwendet. Das Entfernen dieser Ressource kann dazu "
-"führen, dass kein Login mehr möglich ist."
+"Die Ressource “%s” wird momentan für die Speicherung von "
+"Benutzereinstellungen verwendet. Das Entfernen dieser Ressource kann dazu "
+"führen, dass keine Benutzereinstellungen mehr verfügbar sind."
 
 #: /vagrant/application/forms/Config/General/LoggingConfigForm.php:115
-#, fuzzy
 msgid "The syslog facility to utilize."
-msgstr "Die zu benutzende Syslog-Facility"
+msgstr "Die zu benutzende Syslog-Facility."
 
 #: /vagrant/application/forms/Navigation/NavigationItemForm.php:39
 msgid "The target where to open this navigation item's url"
@@ -2740,11 +2724,11 @@ msgstr "Das Target der URL dieses Navigationselementes"
 
 #: /vagrant/application/forms/Announcement/AnnouncementForm.php:44
 msgid "The time to display the announcement from"
-msgstr ""
+msgstr "Zeitpunkt, ab dem die Bekanntmachung angezeigt werden soll"
 
 #: /vagrant/application/forms/Announcement/AnnouncementForm.php:53
 msgid "The time to display the announcement until"
-msgstr ""
+msgstr "Zeitpunkt, ab dem die Bekanntmachung nicht mehr angezeigt werden soll"
 
 #: /vagrant/application/forms/Config/Resource/DbResourceForm.php:202
 msgid "The trusted CA certificates in PEM format directory path"
@@ -2787,7 +2771,7 @@ msgstr "Der eindeutige Name dieser Ressource"
 
 #: /vagrant/library/Icinga/Web/Form/Validator/InternalUrlValidator.php:34
 msgid "The url must not be external."
-msgstr ""
+msgstr "Die URL darf nicht extern sein."
 
 #: /vagrant/application/forms/Navigation/NavigationItemForm.php:56
 msgid ""
@@ -2940,14 +2924,12 @@ msgid "Unshare this navigation item"
 msgstr "Freigabe dieses Navigationselementes aufheben"
 
 #: /vagrant/application/forms/Account/ChangePasswordForm.php:29
-#, fuzzy
 msgid "Update Account"
-msgstr "Rolle aktualisieren"
+msgstr "Benutzerkonto aktualisieren"
 
 #: /vagrant/application/controllers/AnnouncementsController.php:61
-#, fuzzy
 msgid "Update Announcement"
-msgstr "Ressource aktualisieren"
+msgstr "Bekanntmachung aktualisieren"
 
 #: /vagrant/application/controllers/DashboardController.php:86
 #: /vagrant/application/controllers/DashboardController.php:92
@@ -2985,9 +2967,8 @@ msgstr "Backend für Benutzergruppe aktualisieren"
 
 #: /vagrant/application/controllers/NavigationController.php:133
 #: /vagrant/application/controllers/AccountController.php:27
-#, fuzzy
 msgid "Update your account"
-msgstr "Ressource aktualisieren"
+msgstr "Das eigene Benutzerkonto aktualisieren"
 
 #: /vagrant/library/Icinga/Web/Form/Decorator/Autosubmit.php:99
 msgid ""
@@ -3303,6 +3284,9 @@ msgid ""
 "corresponding locale. Make sure to install the correct language pack and "
 "restart your web server afterwards."
 msgstr ""
+"Die eingestellte Sprache wird nicht verwendet, weil der Plattform das "
+"entsprechende Gebietsschema fehlt. Um das zu beheben, muss das korrekte "
+"Sprachpaket installiert und der Web-Server neugestartet werden."
 
 #: /vagrant/library/Icinga/Date/DateFormatter.php:176
 #, php-format
