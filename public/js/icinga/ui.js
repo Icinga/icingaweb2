@@ -273,6 +273,7 @@
             $('#layout').removeClass('twocols');
             this.closeContainer($('#col2'));
             // one-column layouts never have any selection active
+            $('#col1').removeData('icinga-actiontable-former-href');
             this.icinga.behaviors.actiontable.clearAll();
         },
 

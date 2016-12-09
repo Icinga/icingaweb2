@@ -255,15 +255,36 @@
          * @param   url     {String}    The target url
          */
         selectUrl: function(url) {
+            var formerHref = this.$el.closest('.container').data('icinga-actiontable-former-href')
+
             var $row = this.rows().filter('[href="' + url + '"]');
+
             if ($row.length) {
+               this.clear();
                $row.addClass('active');
             } else {
-                // rows sometimes need to be displayed as active when related actions
-                // like command actions are being opened. Do not do this for col2, as it
-                // would always select the opened URL itself.
                 if (this.col !== 'col2') {
-                    this.rows().filter('[href$="' + icinga.utils.parseUrl(url).query + '"]').addClass('active');
+                    // rows sometimes need to be displayed as active when related actions
+                    // like command actions are being opened. Do not do this for col2, as it
+                    // would always select the opened URL itself.
+                    var $row = this.rows().filter('[href$="' + icinga.utils.parseUrl(url).query + '"]');
+                    if ($row.length) {
+                        this.clear();
+                        $row.addClass('active');
+                    } else {
+                        var $row = this.rows().filter('[href$="' + formerHref + '"]');
+                        if ($row.length) {
+                            this.clear();
+                            $row.addClass('active');
+                        } else {
+                            var tbl = this.$el;
+                            if (ActionTable.prototype.tables(
+                                tbl.closest('.dashboard').find('.container')).not(tbl).find('tr.active').length
+                            ) {
+                                this.clear();
+                            }
+                        }
+                    }
                 }
             }
         },
@@ -298,11 +319,11 @@
          * Refresh the displayed active columns using the current page location
          */
         refresh: function() {
-            this.clear();
             var hash = icinga.history.getCol2State().replace(/^#!/, '');
             if (this.hasMultiselection()) {
                 var query = parseSelectionQuery(hash);
                 if (query.length > 1 && this.hasMultiselectionUrl(this.icinga.utils.parseUrl(hash).path)) {
+                    this.clear();
                     // select all rows with matching filters
                     var _this = this;
                     $.each(query, function(i, selection) {
@@ -330,6 +351,7 @@
         this.loading = false;
 
         this.on('rendered', this.onRendered, this);
+        this.on('beforerender', this.beforeRender, this);
         this.on('click', 'table.action tr[href], table.table-row-selectable tr[href]', this.onRowClicked, this);
     };
     ActionTable.prototype = new Icinga.EventListener();
@@ -449,6 +471,16 @@
         // update displayed selection counter
         var table = new Selection(_this.tables(container).first());
         $(container).find('.selection-info-count').text(table.selections().size());
+    };
+
+    ActionTable.prototype.beforeRender = function(evt) {
+        var container = evt.target;
+        var _this = evt.data.self;
+
+        var active = _this.tables().find('tr.active');
+        if (active.length) {
+            $(container).data('icinga-actiontable-former-href', active.attr('href'));
+        }
     };
 
     ActionTable.prototype.clearAll = function () {
