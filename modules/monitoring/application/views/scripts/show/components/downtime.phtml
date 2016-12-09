@@ -60,15 +60,21 @@ if (empty($object->comments) && ! $addLink) {
                         $this->translate('ends %s', 'Last format parameter represents the end time'),
                         $this->timeUntil($downtime->is_flexible ? $downtime->scheduled_end : $downtime->end)
                     );
-                } elseif ((bool) $downtime->is_fixed) {
-                    $state = sprintf(
-                        $this->translate('scheduled %s', 'Last format parameter represents the time scheduled'),
-                        $this->timeUntil($downtime->start)
-                    );
                 } else {
-                    $state = sprintf(
-                        $this->translate('scheduled flexible %s', 'Last format parameter represents the time scheduled'),
-                        $this->timeUntil($downtime->start)
+                    if ((bool) $downtime->is_fixed) {
+                        $state = sprintf(
+                            $this->translate('scheduled %s', 'Last format parameter represents the time scheduled'),
+                            $this->timeUntil($downtime->start)
+                        );
+                    } else {
+                        $state = sprintf(
+                            $this->translate('scheduled flexible %s', 'Last format parameter represents the time scheduled'),
+                            $this->timeUntil($downtime->start)
+                        );
+                    }
+                    $state .= ' ' . sprintf(
+                        $this->translate('expires %s', 'Last format parameter represents the downtime expire time'),
+                        $this->timeUntil($downtime->end)
                     );
                 }
             }
