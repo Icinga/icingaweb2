@@ -42,6 +42,9 @@
         <?= $this->translate('by') ?>
         <?= $this->escape($downtime->author_name) ?>
     </span>
+  <?php if (! $downtime->is_in_effect && $downtime->start >= time()): ?>
+    <span><?= sprintf($this->translate('expires %s'), $this->timeUntil($downtime->end)) ?></span>
+  <?php endif ?>
     <span class="comment-icons">
       <?php if ($downtime->is_flexible): ?>
           <?= $this->icon('magic', $this->translate('This downtime is flexible')); ?>

@@ -7,14 +7,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Icinga Web 2 (None)\n"
 "Report-Msgid-Bugs-To: dev@icinga.org\n"
-"POT-Creation-Date: 2016-12-08 17:23+0000\n"
-"PO-Revision-Date: 2016-12-08 18:36+0100\n"
-"Last-Translator: Eric Lippmann <eric.lippmann@netways.de>\n"
+"POT-Creation-Date: 2016-12-09 13:11+0000\n"
+"PO-Revision-Date: 2016-12-09 14:11+0100\n"
 "Language: de_DE\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Last-Translator: \n"
 "Language-Team: \n"
 "X-Generator: Poedit 1.8.11\n"
 
@@ -242,7 +242,7 @@ msgstr "Erlaubt das Teilen von Navigationselemten"
 msgid "Allow to view the application log"
 msgstr "Erlaubt das Einsehen des Anwendungslogs"
 
-#: /vagrant/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:137
+#: /vagrant/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:153
 msgid ""
 "An additional filter to use when looking up groups using the specified "
 "connection. Leave empty to not to use any additional filter rules."
@@ -250,7 +250,7 @@ msgstr ""
 "Ein zusätzlicher Filter für die Suche nach Gruppen für die angegebene "
 "Verbindung. Leer lassen, um keine Filter zu verwenden."
 
-#: /vagrant/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:230
+#: /vagrant/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:246
 #: /vagrant/application/forms/Config/UserBackend/LdapBackendForm.php:153
 msgid ""
 "An additional filter to use when looking up users using the specified "
@@ -455,6 +455,13 @@ msgid ""
 msgstr ""
 "Checkbox auswählen um Benutzeranpassung zu verbieten. Die Standardtheme wird "
 "für alle Benutzer angezeigt."
+
+#: /vagrant/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:98
+msgid ""
+"Check this box for nested group search in Active Directory based on the user"
+msgstr ""
+"Häkchen setzen, um in Active Directory anhand des Benutzers in "
+"verschachtelten Gruppen zu suchen"
 
 #: /vagrant/application/forms/Config/Resource/DbResourceForm.php:153
 msgid ""
@@ -677,7 +684,7 @@ msgstr "Mitgliedschaften für %s erstellen"
 
 #: /vagrant/library/Icinga/Authentication/User/LdapUserBackend.php:257
 #: /vagrant/library/Icinga/Authentication/User/DbUserBackend.php:120
-#: /vagrant/library/Icinga/Authentication/UserGroup/LdapUserGroupBackend.php:466
+#: /vagrant/library/Icinga/Authentication/UserGroup/LdapUserGroupBackend.php:496
 #: /vagrant/library/Icinga/Authentication/UserGroup/DbUserGroupBackend.php:122
 msgid "Created At"
 msgstr "Erstellt am"
@@ -1301,47 +1308,47 @@ msgstr "LDAP Verbindung"
 msgid "LDAP Filter"
 msgstr "LDAP Filter"
 
-#: /vagrant/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:192
+#: /vagrant/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:208
 msgid "LDAP Group Base DN"
 msgstr "LDAP Basis-DN für Gruppen"
 
-#: /vagrant/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:135
+#: /vagrant/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:151
 msgid "LDAP Group Filter"
 msgstr "LDAP Filter für Gruppen"
 
-#: /vagrant/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:182
+#: /vagrant/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:198
 msgid "LDAP Group Member Attribute"
 msgstr "LDAP-Attribut für die Gruppenmitgliedschaft"
 
-#: /vagrant/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:168
+#: /vagrant/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:184
 msgid "LDAP Group Name Attribute"
 msgstr "LDAP-Attribut für den Gruppennamen"
 
-#: /vagrant/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:124
+#: /vagrant/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:140
 msgid "LDAP Group Object Class"
 msgstr "LDAP Objektklasse für die Gruppe"
 
-#: /vagrant/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:273
+#: /vagrant/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:289
 msgid "LDAP User Base DN"
 msgstr "LDAP Basis-DN für Benutzer"
 
-#: /vagrant/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:228
+#: /vagrant/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:244
 msgid "LDAP User Filter"
 msgstr "LDAP Filter für den Benutzer"
 
-#: /vagrant/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:261
+#: /vagrant/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:277
 #: /vagrant/application/forms/Config/UserBackend/LdapBackendForm.php:189
 msgid "LDAP User Name Attribute"
 msgstr "LDAP-Attribut für den Benutzernamen"
 
-#: /vagrant/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:217
+#: /vagrant/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:233
 #: /vagrant/application/forms/Config/UserBackend/LdapBackendForm.php:139
 msgid "LDAP User Object Class"
 msgstr "LDAP Objektklasse für den Benutzer"
 
 #: /vagrant/library/Icinga/Authentication/User/LdapUserBackend.php:258
 #: /vagrant/library/Icinga/Authentication/User/DbUserBackend.php:121
-#: /vagrant/library/Icinga/Authentication/UserGroup/LdapUserGroupBackend.php:467
+#: /vagrant/library/Icinga/Authentication/UserGroup/LdapUserGroupBackend.php:497
 #: /vagrant/library/Icinga/Authentication/UserGroup/DbUserGroupBackend.php:123
 msgid "Last Modified"
 msgstr "Zuletzt verändert"
@@ -1570,6 +1577,10 @@ msgstr "Navigationselement “%s” erfolgreich aktualisiert"
 msgid "Navigation item successfully created"
 msgstr "Navigationselement “%s” erfolgreich angelegt"
 
+#: /vagrant/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:100
+msgid "Nested Group Search"
+msgstr "Suche in verschachtelten Gruppen"
+
 #: /vagrant/application/controllers/AnnouncementsController.php:45
 #, fuzzy
 msgid "New Announcement"
@@ -1653,7 +1664,7 @@ msgstr "Nächste Seite"
 msgid "No"
 msgstr "Nein"
 
-#: /vagrant/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:312
+#: /vagrant/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:328
 msgid "No LDAP resources available. Please configure an LDAP resource first."
 msgstr "Keine LDAP-Ressource verfügbar. Bitte zuerst eine konfigurieren."
 
@@ -2414,19 +2425,19 @@ msgstr ""
 msgid "The application prefix must not contain whitespace."
 msgstr "Das Applikationspräfix darf keine Leerzeichen enthalten."
 
-#: /vagrant/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:183
+#: /vagrant/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:199
 msgid "The attribute name used for storing a group's members."
 msgstr ""
 "Der Attributname welcher benutzt wird, um Gruppenmitglieder auf dem LDAP-"
 "Server abzulegen"
 
-#: /vagrant/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:170
+#: /vagrant/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:186
 msgid "The attribute name used for storing a group's name on the LDAP server."
 msgstr ""
 "Der Attributname welcher benutzt wird, um Gruppennamen auf dem LDAP-Server "
 "abzulegen"
 
-#: /vagrant/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:263
+#: /vagrant/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:279
 msgid "The attribute name used for storing a user's name on the LDAP server."
 msgstr ""
 "Der Attributname welcher benutzt wird, um einen Benutzernamen auf dem LDAP-"
@@ -2489,13 +2500,13 @@ msgstr "Die Datei aus welcher Informationen gelesen werden sollen"
 msgid "The filter is invalid. Please check your syntax."
 msgstr "Der Filter ist ungültig. Bitte überprüfen Sie Ihre Syntax."
 
-#: /vagrant/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:153
-#: /vagrant/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:246
+#: /vagrant/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:169
+#: /vagrant/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:262
 msgid "The filter must not be wrapped in parantheses."
 msgstr "Der Filter darf nicht in Klammern eingeschlossen sein."
 
-#: /vagrant/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:141
-#: /vagrant/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:234
+#: /vagrant/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:157
+#: /vagrant/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:250
 msgid ""
 "The filter needs to be expressed as standard LDAP expression, without outer "
 "parentheses. (e.g. &(foo=bar)(bar=foo) or foo=bar)"
@@ -2606,13 +2617,13 @@ msgid ""
 "others"
 msgstr "Der eindeutige Name dieses Benutzergruppenbackends"
 
-#: /vagrant/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:125
+#: /vagrant/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:141
 msgid "The object class used for storing groups on the LDAP server."
 msgstr ""
 "Die Objekt-Klasse welche benutzt wird, um Gruppen auf diesem LDAP-Server "
 "abzulegen"
 
-#: /vagrant/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:218
+#: /vagrant/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:234
 #: /vagrant/application/forms/Config/UserBackend/LdapBackendForm.php:140
 msgid "The object class used for storing users on the LDAP server."
 msgstr ""
@@ -2650,7 +2661,7 @@ msgstr ""
 "Der Pfad zu Ihrem Live-Status Socket, über welchen Monitoring-Daten "
 "abgefragt werden sollen"
 
-#: /vagrant/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:194
+#: /vagrant/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:210
 msgid ""
 "The path where groups can be found on the LDAP server. Leave empty to select "
 "all users available using the specified connection."
@@ -2659,7 +2670,7 @@ msgstr ""
 "lassen, um alle verfügbaren Benutzer für die angegebene Verbindung "
 "auszuwählen."
 
-#: /vagrant/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:275
+#: /vagrant/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:291
 #: /vagrant/application/forms/Config/UserBackend/LdapBackendForm.php:212
 msgid ""
 "The path where users can be found on the LDAP server. Leave empty to select "
@@ -3061,7 +3072,7 @@ msgstr "Backends für Benutzer"
 #: /vagrant/application/views/scripts/group/list.phtml:50
 #: /vagrant/application/controllers/GroupController.php:69
 #: /vagrant/application/controllers/UserController.php:101
-#: /vagrant/library/Icinga/Authentication/UserGroup/LdapUserGroupBackend.php:465
+#: /vagrant/library/Icinga/Authentication/UserGroup/LdapUserGroupBackend.php:495
 #: /vagrant/library/Icinga/Authentication/UserGroup/DbUserGroupBackend.php:115
 #: /vagrant/library/Icinga/Authentication/UserGroup/DbUserGroupBackend.php:120
 msgid "User Group"
@@ -3157,7 +3168,7 @@ msgstr "Benutzergruppen"
 #: /vagrant/library/Icinga/Authentication/User/LdapUserBackend.php:255
 #: /vagrant/library/Icinga/Authentication/User/DbUserBackend.php:115
 #: /vagrant/library/Icinga/Authentication/User/DbUserBackend.php:118
-#: /vagrant/library/Icinga/Authentication/UserGroup/LdapUserGroupBackend.php:464
+#: /vagrant/library/Icinga/Authentication/UserGroup/LdapUserGroupBackend.php:494
 #: /vagrant/library/Icinga/Authentication/UserGroup/DbUserGroupBackend.php:114
 #: /vagrant/library/Icinga/Authentication/UserGroup/DbUserGroupBackend.php:118
 msgid "Username"
@@ -3386,42 +3397,14 @@ msgstr "umschalten"
 #~ msgid "Update Dashboard"
 #~ msgstr "Dashboard aktualisieren"
 
+#~ msgid "%d to %d of %d"
+#~ msgstr "%d bis %d von %d"
+
+#~ msgid "...and your password"
+#~ msgstr "...und dein Kennwort ein"
+
 #~ msgid "Add New Pane Or Dashlet"
 #~ msgstr "Neues Dashboard"
-
-#~ msgctxt "sort direction"
-#~ msgid "Ascending"
-#~ msgstr "Aufsteigend [ Sortierreihenfolge ]"
-
-#~ msgid "Configure how users are associated with groups by Icinga Web 2"
-#~ msgstr ""
-#~ "Konfiguration der Verknüpfung von Nutzern und Gruppen durch Icinga Web 2"
-
-#~ msgid "Configure how users authenticate with and log into Icinga Web 2"
-#~ msgstr "Konfiguration der Nutzerauthentifizierung für Icinga Web 2"
-
-#~ msgctxt "sort direction"
-#~ msgid "Descending"
-#~ msgstr "Absteigend"
-
-#~ msgctxt "sort direction"
-#~ msgid "Direction"
-#~ msgstr "Richtung"
-
-#~ msgid "Limiter"
-#~ msgstr "Begrenzer"
-
-#~ msgid "Show %u rows on this page"
-#~ msgstr "Zeige %u Zeilen pro Seite"
-
-#~ msgid "Show all items on this page"
-#~ msgstr "Zeige alle Elemente auf dieser Seite"
-
-#~ msgid "The Icinga logo"
-#~ msgstr "Das Icinga Logo"
-
-#~ msgid "all"
-#~ msgstr "alle"
 
 #, fuzzy
 #~ msgid "Add User to Group"
@@ -3435,43 +3418,16 @@ msgstr "umschalten"
 #~ msgid "Add user to user group"
 #~ msgstr "Mitglied der Gruppe %s hinzufügen"
 
+#~ msgctxt "sort direction"
+#~ msgid "Ascending"
+#~ msgstr "Aufsteigend [ Sortierreihenfolge ]"
+
 #, fuzzy
 #~ msgid "Authentication Backend"
 #~ msgstr "Der Name dieses Authentifizierungsbackends"
 
-#, fuzzy
-#~ msgid "Create a new user"
-#~ msgstr "Neue Rolle erstellen"
-
-#, fuzzy
-#~ msgid "Create a new user group"
-#~ msgstr "Neues Backend für Benutzergruppen erstellen"
-
-#~ msgid "...and your password"
-#~ msgstr "...und dein Kennwort ein"
-
-#~ msgid "Create New User Backend"
-#~ msgstr "Neue Backend für Benutzer erstellen"
-
-#, fuzzy
-#~ msgid "General Configuration"
-#~ msgstr "Konfiguration"
-
-#~ msgid "License"
-#~ msgstr "Lizenz"
-
-#~ msgid "Page"
-#~ msgstr "Seite"
-
-#~ msgid "Please enter your username..."
-#~ msgstr "Bitte gib deinen Benutzernamen..."
-
-#~ msgid "Prev"
-#~ msgstr "Zurück"
-
-#, fuzzy
-#~ msgid "Remove %s %s"
-#~ msgstr "Diesen Filter entfernen"
+#~ msgid "Authorization"
+#~ msgstr "Autorisierung"
 
 #~ msgid "Check this to enable logging."
 #~ msgstr "Aktiviere dieses Häkchen um das Logging zu aktivieren."
@@ -3483,6 +3439,13 @@ msgstr "umschalten"
 #~ msgid "Click to add another operator below this one"
 #~ msgstr ""
 #~ "Hier klicken, um unterhalb dieses Operators einen weiteren hinzuzufügen"
+
+#~ msgid "Configure how users are associated with groups by Icinga Web 2"
+#~ msgstr ""
+#~ "Konfiguration der Verknüpfung von Nutzern und Gruppen durch Icinga Web 2"
+
+#~ msgid "Configure how users authenticate with and log into Icinga Web 2"
+#~ msgstr "Konfiguration der Nutzerauthentifizierung für Icinga Web 2"
 
 #~ msgid "Connection Validation Failed: "
 #~ msgstr "Überprüfung der Verbindung fehlgeschlagen: "
@@ -3497,8 +3460,43 @@ msgstr "umschalten"
 #~ "Deine authentication.ini konnte nicht gelesen werden, darum sind keine "
 #~ "Authentifizierungsmethoden verfügbar."
 
+#~ msgid "Create New User Backend"
+#~ msgstr "Neue Backend für Benutzer erstellen"
+
+#, fuzzy
+#~ msgid "Create a new user"
+#~ msgstr "Neue Rolle erstellen"
+
+#, fuzzy
+#~ msgid "Create a new user group"
+#~ msgstr "Neues Backend für Benutzergruppen erstellen"
+
+#~ msgctxt "sort direction"
+#~ msgid "Descending"
+#~ msgstr "Absteigend"
+
+#~ msgctxt "sort direction"
+#~ msgid "Direction"
+#~ msgstr "Richtung"
+
 #~ msgid "Expression"
 #~ msgstr "Ausdruck"
+
+#, fuzzy
+#~ msgid "General Configuration"
+#~ msgstr "Konfiguration"
+
+#~ msgid "Icinga Users Login"
+#~ msgstr "Icinga Benutzeranmeldung"
+
+#~ msgid "Installation"
+#~ msgstr "Installation"
+
+#~ msgid "License"
+#~ msgstr "Lizenz"
+
+#~ msgid "Limiter"
+#~ msgstr "Begrenzer"
 
 #~ msgid "Location of your icinga objects.cache file"
 #~ msgstr "Pfad zur Datei objects.cache von Icinga"
@@ -3515,8 +3513,21 @@ msgstr "umschalten"
 #~ msgid "Operator"
 #~ msgstr "Operator"
 
+#~ msgid "Page"
+#~ msgstr "Seite"
+
 #~ msgid "Please enter a number."
 #~ msgstr "Bitte eine Nummer eingeben."
+
+#~ msgid "Please enter your username..."
+#~ msgstr "Bitte gib deinen Benutzernamen..."
+
+#~ msgid "Prev"
+#~ msgstr "Zurück"
+
+#, fuzzy
+#~ msgid "Remove %s %s"
+#~ msgstr "Diesen Filter entfernen"
 
 #~ msgid "Security check failed, please submit your form again"
 #~ msgstr "Sicherheitscheck fehlgeschlagen, bitte sende das Formular erneut ab"
@@ -3527,6 +3538,18 @@ msgstr "umschalten"
 #~ msgstr ""
 #~ "Die zu benutzende Standard-Sprache. Kann von Benutzern in deren "
 #~ "Einstellungen überschrieben werden."
+
+#~ msgid "Show %u rows on this page"
+#~ msgstr "Zeige %u Zeilen pro Seite"
+
+#~ msgid "Show all items on this page"
+#~ msgstr "Zeige alle Elemente auf dieser Seite"
+
+#~ msgid "The Icinga logo"
+#~ msgstr "Das Icinga Logo"
+
+#~ msgid "The Syslog facility to utilize."
+#~ msgstr "Die zu benutzende Syslog-Facility"
 
 #~ msgid "The path where users can be found on the ldap server"
 #~ msgstr ""
@@ -3573,14 +3596,8 @@ msgstr "umschalten"
 #~ "Um PostgreSQL Datenbank-Ressourcen nutzen zu können müssen die PHP-"
 #~ "Erweiterung \"pqsql\" sowie die Zend_Pdo_Pgsql Klassen installiert sein."
 
+#~ msgid "all"
+#~ msgstr "alle"
+
 #~ msgid "for"
 #~ msgstr "für"
-
-#~ msgid "%d to %d of %d"
-#~ msgstr "%d bis %d von %d"
-
-#~ msgid "Installation"
-#~ msgstr "Installation"
-
-#~ msgid "Icinga Users Login"
-#~ msgstr "Icinga Benutzeranmeldung"
