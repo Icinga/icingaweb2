@@ -655,11 +655,15 @@ abstract class IdoQuery extends DbQuery
                     '(CASE WHEN $1 ~ \'(?:[0-9]{1,3}\\\\.){3}[0-9]{1,3}\' THEN $1::inet - \'0.0.0.0\' ELSE NULL END)',
                     $column
                 );
-                $column = preg_replace(
-                    '/UNIX_TIMESTAMP(\((?>[^()]|(?-1))*\))/i',
-                    'CASE WHEN ($1 < \'1970-01-03 00:00:00+00\'::timestamp with time zone) THEN 0 ELSE UNIX_TIMESTAMP($1) END',
-                    $column
-                );
+                if (version_compare($this->getIdoVersion(), '1.14.2', '>=')) {
+                    $column = str_replace('NOW()', 'localtimestamp', $column);
+                } else {
+                    $column = preg_replace(
+                        '/UNIX_TIMESTAMP(\((?>[^()]|(?-1))*\))/i',
+                        'CASE WHEN ($1 < \'1970-01-03 00:00:00+00\'::timestamp with time zone) THEN 0 ELSE UNIX_TIMESTAMP($1) END',
+                        $column
+                    );
+                }
             }
         }
     }
