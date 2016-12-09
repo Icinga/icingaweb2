@@ -112,7 +112,45 @@ class BackendStep extends Step
                 . '<tr>'
                 . '<td><strong>' . t('Password') . '</strong></td>'
                 . '<td>' . str_repeat('*', strlen($this->data['resourceConfig']['password'])) . '</td>'
-                . '</tr>'
+                . '</tr>';
+
+            if (isset($this->data['resourceConfig']['ssl_key']) && $this->data['resourceConfig']['ssl_key']) {
+                $resourceHtml .= ''
+                    .'<tr>'
+                    . '<td><strong>' . t('SSL Key') . '</strong></td>'
+                    . '<td>' . $this->data['resourceConfig']['ssl_key'] . '</td>'
+                    . '</tr>';
+            }
+            if (isset($this->data['resourceConfig']['ssl_cert']) && $this->data['resourceConfig']['ssl_cert']) {
+                $resourceHtml .= ''
+                    . '<tr>'
+                    . '<td><strong>' . t('SSL Cert') . '</strong></td>'
+                    . '<td>' . $this->data['resourceConfig']['ssl_cert'] . '</td>'
+                    . '</tr>';
+            }
+            if (isset($this->data['resourceConfig']['ssl_ca']) && $this->data['resourceConfig']['ssl_ca']) {
+                $resourceHtml .= ''
+                    . '<tr>'
+                    . '<td><strong>' . t('CA') . '</strong></td>'
+                    . '<td>' . $this->data['resourceConfig']['ssl_ca'] . '</td>'
+                    . '</tr>';
+            }
+            if (isset($this->data['resourceConfig']['ssl_capath']) && $this->data['resourceConfig']['ssl_capath']) {
+                $resourceHtml .= ''
+                    . '<tr>'
+                    . '<td><strong>' . t('CA Path') . '</strong></td>'
+                    . '<td>' . $this->data['resourceConfig']['ssl_capath'] . '</td>'
+                    . '</tr>';
+            }
+            if (isset($this->data['resourceConfig']['ssl_cipher']) && $this->data['resourceConfig']['ssl_cipher']) {
+                $resourceHtml .= ''
+                    . '<tr>'
+                    . '<td><strong>' . t('Cipher') . '</strong></td>'
+                    . '<td>' . $this->data['resourceConfig']['ssl_cipher'] . '</td>'
+                    . '</tr>';
+            }
+
+            $resourceHtml .= ''
                 . '</tbody>'
                 . '</table>';
         } else { // $this->data['resourceConfig']['type'] === 'livestatus'
