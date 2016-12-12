@@ -480,38 +480,40 @@
                 newBody = true;
             }
 
-            var moduleName = req.getResponseHeader('X-Icinga-Module');
-            classes = $.grep(req.$target.classes(), function (el) {
-               if (el === 'icinga-module' || el.match(/^module\-/)) {
-                   return false;
-               }
-               return true;
-            });
-            if (moduleName) {
-                req.$target.data('icingaModule', moduleName);
-                classes.push('icinga-module');
-                classes.push('module-' + moduleName);
-            } else {
-                req.$target.removeData('icingaModule');
-                if (req.$target.attr('data-icinga-module')) {
-                    req.$target.removeAttr('data-icinga-module');
+            if (target !== 'layout') {
+                var moduleName = req.getResponseHeader('X-Icinga-Module');
+                classes = $.grep(req.$target.classes(), function (el) {
+                    if (el === 'icinga-module' || el.match(/^module\-/)) {
+                        return false;
+                    }
+                    return true;
+                });
+                if (moduleName) {
+                    req.$target.data('icingaModule', moduleName);
+                    classes.push('icinga-module');
+                    classes.push('module-' + moduleName);
+                } else {
+                    req.$target.removeData('icingaModule');
+                    if (req.$target.attr('data-icinga-module')) {
+                        req.$target.removeAttr('data-icinga-module');
+                    }
+                }
+                req.$target.attr('class', classes.join(' '));
+
+                var refresh = req.autoRefreshInterval || req.getResponseHeader('X-Icinga-Refresh');
+                if (refresh) {
+                    req.$target.data('icingaRefresh', refresh);
+                } else {
+                    req.$target.removeData('icingaRefresh');
+                    if (req.$target.attr('data-icinga-refresh')) {
+                        req.$target.removeAttr('data-icinga-refresh');
+                    }
                 }
             }
-            req.$target.attr('class', classes.join(' '));
 
             var title = req.getResponseHeader('X-Icinga-Title');
             if (title && ! req.autorefresh && req.$target.closest('.dashboard').length === 0) {
                 this.icinga.ui.setTitle(decodeURIComponent(title));
-            }
-
-            var refresh = req.autoRefreshInterval || req.getResponseHeader('X-Icinga-Refresh');
-            if (refresh) {
-                req.$target.data('icingaRefresh', refresh);
-            } else {
-                req.$target.removeData('icingaRefresh');
-                if (req.$target.attr('data-icinga-refresh')) {
-                    req.$target.removeAttr('data-icinga-refresh');
-                }
             }
 
             // Set a window identifier if the server asks us to do so
