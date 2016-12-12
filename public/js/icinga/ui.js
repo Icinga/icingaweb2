@@ -579,10 +579,6 @@
                 var $search = $('#search');
                 var $sidebar = $('#sidebar');
 
-                $header.css({
-                    height: 'auto'
-                });
-
                 if ($layout.hasClass('minimal-layout')) {
                     if (! this.mobileMenu && $sidebar.length) {
                         $header.css({
