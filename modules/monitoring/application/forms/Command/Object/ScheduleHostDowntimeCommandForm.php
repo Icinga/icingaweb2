@@ -33,22 +33,26 @@ class ScheduleHostDowntimeCommandForm extends ScheduleServiceDowntimeCommandForm
             )
         );
 
-        $this->addElement(
-            'select',
-            'child_hosts',
-            array(
-                'description' => $this->translate(
-                    'Define what should be done with the child hosts of the hosts.'
-                ),
-                'label'        => $this->translate('Child Hosts'),
-                'multiOptions' => array(
-                    0 => $this->translate('Do nothing with child hosts'),
-                    1 => $this->translate('Schedule triggered downtime for all child hosts'),
-                    2 => $this->translate('Schedule non-triggered downtime for all child hosts')
-                ),
-                'value'         => 0
-            )
-        );
+        if (! $this->getBackend()->isIcinga2()
+            || version_compare($this->getBackend()->getProgramVersion(), '2.6.0', '>=')
+        ) {
+            $this->addElement(
+                'select',
+                'child_hosts',
+                array(
+                    'description' => $this->translate(
+                        'Define what should be done with the child hosts of the hosts.'
+                    ),
+                    'label'        => $this->translate('Child Hosts'),
+                    'multiOptions' => array(
+                        0 => $this->translate('Do nothing with child hosts'),
+                        1 => $this->translate('Schedule triggered downtime for all child hosts'),
+                        2 => $this->translate('Schedule non-triggered downtime for all child hosts')
+                    ),
+                    'value'         => 0
+                )
+            );
+        }
 
         return $this;
     }
