@@ -46,7 +46,8 @@ class LdapResourceForm extends Form
                 'required'      => true,
                 'label'         => $this->translate('Host'),
                 'description'   => $this->translate(
-                    'The hostname or address of the LDAP server to use for authentication'
+                    'The hostname or address of the LDAP server to use for authentication.'
+                    . ' You can also provide multiple hosts separated by a space'
                 ),
                 'value'         => 'localhost'
             )

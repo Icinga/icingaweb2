@@ -63,7 +63,7 @@ A LDAP resource represents a tree in a LDAP directory. LDAP is usually used for 
 | Directive         | Description |
 | ----------------- | ----------- |
 | **type**          | `ldap` |
-| **hostname**      | Connect to the LDAP server on the given host. |
+| **hostname**      | Connect to the LDAP server on the given host. You can also provide multiple hosts separated by a space. |
 | **port**          | Port number to use for the connection. |
 | **root_dn**       | Root object of the tree, e.g. `ou=people,dc=icinga,dc=org` |
 | **bind_dn**       | The user to use when connecting to the server. |
