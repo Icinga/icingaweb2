@@ -49,9 +49,7 @@
     Navigation.prototype.onRendered = function(e) {
         var _this = e.data.self;
 
-        if (! _this.$menu) {
-            _this.$menu = $(e.target);
-        }
+        _this.$menu = $(e.target);
 
         if (! _this.active) {
             // There is no stored menu item, therefore it is assumed that this is the first rendering
@@ -180,11 +178,7 @@
      * Remove all active elements
      */
     Navigation.prototype.clear = function() {
-        // menu items
-        this.$menu.find('li.active').removeClass('active');
-
-        // search fields
-        this.$menu.find('input.active').removeClass('active');
+        this.$menu.find('.active').removeClass('active');
     };
 
     /**
