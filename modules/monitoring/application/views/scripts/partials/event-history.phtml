@@ -40,7 +40,6 @@ $flappingMsg = $this->translate('Flapping with a %.2f%% state change rate');
     <tbody>
     <?php foreach ($history->peekAhead() as $event):
         $icon = '';
-        $iconCssClass = '';
         $iconTitle = null;
         $isService = isset($event->service_description);
         $msg = $event->output;
@@ -74,7 +73,6 @@ $flappingMsg = $this->translate('Flapping with a %.2f%% state change rate');
                 break;
             case 'ack_deleted':
                 $icon = 'ok';
-                $iconCssClass = 'icon-strikethrough';
                 $iconTitle = $this->translate('Acknowledgement removed', 'tooltip');
                 $label = $this->translate('ACKNOWLEDGEMENT REMOVED');
                 break;
@@ -85,7 +83,6 @@ $flappingMsg = $this->translate('Flapping with a %.2f%% state change rate');
                 break;
             case 'dt_comment_deleted':
                 $icon = 'plug';
-                $iconCssClass = 'icon-strikethrough';
                 $iconTitle = $this->translate('Downtime removed', 'tooltip');
                 $label = $this->translate('DOWNTIME DELETED');
                 break;
@@ -97,7 +94,6 @@ $flappingMsg = $this->translate('Flapping with a %.2f%% state change rate');
                 break;
             case 'flapping_deleted':
                 $icon = 'flapping';
-                $iconCssClass = 'icon-strikethrough';
                 $iconTitle = $this->translate('Flapping stopped', 'tooltip');
                 $label = $this->translate('FLAPPING STOPPED');
                 $msg = sprintf($flappingMsg, $msg);
@@ -125,7 +121,6 @@ $flappingMsg = $this->translate('Flapping with a %.2f%% state change rate');
                 break;
             case 'dt_end':
                 $icon = 'plug';
-                $iconCssClass = 'icon-strikethrough';
                 $iconTitle = $this->translate('Downtime ended', 'tooltip');
                 $label = $this->translate('DOWNTIME END');
                 break;
@@ -179,7 +174,7 @@ $flappingMsg = $this->translate('Flapping with a %.2f%% state change rate');
                     <?php endif ?>
                 <?php endif ?>
                 <p class="overview-plugin-output"><?php if ($icon) {
-                    echo $this->icon($icon, $iconTitle, $iconCssClass ? array('class' => $iconCssClass) : array());
+                    echo $this->icon($icon, $iconTitle);
                 } ?><?= $this->nl2br($this->createTicketLinks($this->escapeComment($msg)))
                 // TODO(ak): this allows only a[href] in messages, but plugin output allows more
                 ?></p>
