@@ -39,7 +39,7 @@
         <tr>
     <?php endif ?>
             <td><?= $this->escape($announcement->author) ?></td>
-            <td><?= $this->ellipsis($announcement->message, 100) ?></td>
+            <td><?= $this->ellipsis($this->escape($announcement->message), 100) ?></td>
             <td><?= $this->formatDateTime($announcement->start->getTimestamp()) ?></td>
             <td><?= $this->formatDateTime($announcement->end->getTimestamp()) ?></td>
         <?php if ($this->hasPermission('admin')): ?>
