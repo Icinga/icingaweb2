@@ -339,7 +339,7 @@ class MonitoringBackend implements Selectable, Queryable, ConnectionInterface
      */
     public function getProgramVersion()
     {
-        return $this->select()->from('programstatus', array('program_version'))->fetchOne();
+        return preg_replace('/^[vr]/', '', $this->select()->from('programstatus', array('program_version'))->fetchOne());
     }
 
     /**
