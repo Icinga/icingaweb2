@@ -44,7 +44,6 @@
 }
 
 #header-logo {
-  background-image: url('../img/icinga-logo.png');
   background-image: url('../img/icinga-logo.svg');
   background-position: left center;
   background-repeat: no-repeat;
@@ -54,7 +53,6 @@
 }
 
 #icinga-logo {
-  background-image: url('../img/icinga-logo-big.png');
   background-image: url('../img/icinga-logo-big.svg');
   background-position: center bottom;
   background-repeat: no-repeat;
@@ -62,6 +60,16 @@
   height: 177px;
   margin-bottom: 2em;
   width: 100%;
+}
+
+.ie8 {
+  #header-logo {
+    background-image: url('../img/icinga-logo.png');
+  }
+
+  #icinga-logo {
+    background-image: url('../img/icinga-logo-big.png');
+  }
 }
 
 #layout {
