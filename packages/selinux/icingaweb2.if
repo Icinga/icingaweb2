@@ -1,0 +1,45 @@
+########################################
+## <summary>
+##      Allow the specified domain to read
+##      icingaweb2 configuration files.
+## </summary>
+## <param name="domain">
+##      <summary>
+##      Domain allowed access.
+##      </summary>
+## </param>
+## <rolecap/>
+#
+interface(`icingaweb2_read_config',`
+        gen_require(`
+                type icingaweb2_config_t;
+        ')
+
+        files_search_etc($1)
+        list_dirs_pattern($1, icingaweb2_config_t, icingaweb2_config_t)
+        read_files_pattern($1, icingaweb2_config_t, icingaweb2_config_t)
+	read_lnk_files_pattern($1, icingaweb2_config_t, icingaweb2_config_t)
+')
+
+########################################
+## <summary>
+##      Allow the specified domain to read
+##      and write icingaweb2 configuration files.
+## </summary>
+## <param name="domain">
+##      <summary>
+##      Domain allowed access.
+##      </summary>
+## </param>
+## <rolecap/>
+#
+interface(`icingaweb2_manage_config',`
+        gen_require(`
+                type icingaweb2_config_t;
+        ')
+
+        files_search_etc($1)
+        manage_dirs_pattern($1, icingaweb2_config_t, icingaweb2_config_t)
+        manage_files_pattern($1, icingaweb2_config_t, icingaweb2_config_t)
+	manage_lnk_files_pattern($1, icingaweb2_config_t, icingaweb2_config_t)
+')
