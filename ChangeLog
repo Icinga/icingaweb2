@@ -2,6 +2,91 @@
 
 ## What's New
 
+### What's New in Version 2.4.0
+
+#### Feature
+
+* Feature 12598 (Authentication & Authorization): Support nested AD groups for Roles and not just login
+* Feature 11809 (Authentication & Authorization): Test and document multiple LDAP-URIs separated by space in LDAP ressources
+* Feature 10616 (Authentication & Authorization): Users w/o administrative permissions should be allowed to change their password
+* Feature 13381 (CLI): Allow to configure the default listen address for the CLI command web serve
+* Feature 11820 (Configuration): Check whether chosen locale is available
+* Feature 11214 (Configuration): Logger: Allow to configure the Syslog Facility
+* Feature 13117 (Framework): Add charset UTF-8 to default content type
+* Feature 12634 (Framework): Possibitlity to fold and unfold filter by click
+* Feature 11198 (Framework): Announce banner
+* Feature 11115 (Framework): Add SSL support to MySQL database resources
+* Feature 8270 (Installation): Add SELinux policy for Icinga Web 2
+* Feature 13187 (Monitoring): Command toolbar in the host and service detail views
+* Feature 12873 (Monitoring): Change default for sticky option of acknowledgements from true to false
+* Feature 12820 (Monitoring): Export detail views to JSON
+* Feature 12766 (Monitoring): Show flapping events in the host and service history views
+* Feature 12764 (Monitoring): Display downtime end even if it hasn't been started yet
+* Feature 12125 (Monitoring): Allow th in plugin output
+* Feature 11952 (Monitoring): Allow changing default of 'sticky' in acknowledgement and other command options
+* Feature 11398 (Monitoring): Send commands over Icinga 2's API
+* Feature 11835 (UI): Add clear button to search field
+* Feature 11792 (UI): Show hint if notifications are disabled globally
+* Feature 11664 (UI): Show git HEAD for modules if available
+* Feature 13461 (Vendor Libraries): Use Icinga's fork of Zend Framework 1 icingaweb2-vendor-zf1
+
+#### Bugfixes
+
+* Bug 12396 (Authentication & Authorization): Hooks don't respect module permissions
+* Bug 12164 (Authentication & Authorization): REDIRECT_REMOTE_USER not evaluated during external auth
+* Bug 12108 (Authentication & Authorization): assertPermission allows everything for unauthenticated requests
+* Bug 13357 (Configuration): Persistent database resources cannot be made non-persistent
+* Bug 12848 (Configuration): Empty "Protected Custom Variables" falls back to defaults
+* Bug 12655 (Configuration): Permission application/log is not configurable
+* Bug 12170 (Configuration): Adding a DB resource via webinterface requires one to enter a password
+* Bug 10401 (Configuration): LdapUserGroupBackendForm: user_* settings not purged
+* Bug 9804 (Configuration): Renaming the resource used for the config backend does not update the global configuration
+* Bug 11920 (Dashboard): Add to dashboard: wrong url makes whole dashboard unusable
+* Bug 13387 (Documentation): Can't display documentation of disabled modules
+* Bug 12923 (Framework): Navigation Item name must be of type string or NavigationItem
+* Bug 12852 (Framework): Hosts without any services are hidden from roles with monitoring/filter/objects set
+* Bug 12760 (Framework): Do not log exceptions other than those resulting in a HTTP 500 status-code
+* Bug 12583 (Framework): Unhandled exceptions while handling REST requests will silently drop the http response code
+* Bug 12580 (Framework): REST requests cannot be anonymous
+* Bug 12557 (Framework): Module description cannot be on a single line
+* Bug 12299 (Framework): FilterExpression renders a&!b as a=1&b!=1
+* Bug 12161 (Framework): Icinga Web 2 doesn't set Content-Type
+* Bug 12065 (Framework): IniRepository: update/delete not possible with iterator
+* Bug 11743 (Framework): INI writer must not persist section keys with a null value
+* Bug 11185 (Framework): SummaryNavigationItemRenderer should show worst state
+* Bug 10361 (Framework): Handle E_RECOVERABLE_ERROR
+* Bug 13459 (Installation): Setup: Can't view monitoring config summary with Icinga 2 API as command transport
+* Bug 13467 (JavaScript): renderLayout has  side-effects
+* Bug 13115 (JavaScript): actiontable should not clear active row in case there is no newer one
+* Bug 12541 (JavaScript): Menu not reloaded in case no search is available
+* Bug 12328 (JavaScript): Separate vendor JavaScript libraries w/ semicolons and newlines on import
+* Bug 10704 (JavaScript): JS: Always use the jQuery find method w/ node context when selecting elements
+* Bug 10703 (JavaScript): JS: Don't use var self = this, but var _this = this
+* Bug 11431 (Modules): Modules can't require permission on menu items
+* Bug 10870 (Modules): Refuse erroneous module folder names when enabling the module
+* Bug 13243 (Monitoring): Inconsistent host and service flags
+* Bug 12889 (Monitoring): Timeline broken
+* Bug 12810 (Monitoring): Scheduling a downtime for all services of a host does not work w/ the Icinga 2 API as command transport
+* Bug 12313 (Monitoring): Multi-line strings within host.notes are being displayed as single line
+* Bug 12223 (Monitoring): State not highlighted in plugin output if it contains HTML
+* Bug 12019 (Monitoring): Contact view shows service filters with 'Downtime' even if not set
+* Bug 11915 (Monitoring): Performance data: negative values not handled
+* Bug 11859 (Monitoring): Can't separate between SOFT and HARD states in the history views
+* Bug 11766 (Monitoring): Performance data: Fit label column to show as much text as possible
+* Bug 11744 (Monitoring): Empty user groups are not displayed
+* Bug 10774 (Monitoring): Scheduling downtimes for child hosts doesn't work w/ Icinga 2.x (waiting for Icinga 2)
+* Bug 10537 (Monitoring): Filtering with not-equal on custom variable doesn't show hosts without this cv
+* Bug 7755 (Monitoring): Remove autosubmit in eventgrid
+* Bug 12133 (Navigation): Username and password not being passed in navigation item URLs
+* Bug 12776 (Print & Export): dompdf fails when border-style is set to auto
+* Bug 12723 (Print & Export): Allowed memory size exhausted when exporting the history view to CSV
+* Bug 12660 (QA): Choosing the Icinga theme floods the log with error messages
+* Bug 12774 (UI): Lot's of <span style="visibility:hidden; display:none;"></span> in Output
+* Bug 12134 (UI): Copy and paste: Plugin output contains unicode zero-width space characters
+* Bug 10691 (UI): Closing the detail area does not update the rows selected counter
+* Bug 13095 (Vagrant VM): TicketSalt constant missing
+* Bug 12717 (Vagrant VM): PluginContribDir constant removed during vagrant provisioning
+
 ### What's New in Version 2.3.4/2.3.3
 
 #### Bugfixes
