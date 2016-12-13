@@ -48,6 +48,9 @@ class AddCommentCommandForm extends ObjectsCommandForm
                 )
             )
         );
+
+        $this->getElement('comment')->setAttrib('class', 'autofocus');
+
         if (! $this->getBackend()->isIcinga2()) {
             $this->addElement(
                 'checkbox',

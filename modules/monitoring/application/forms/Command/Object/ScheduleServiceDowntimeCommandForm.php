@@ -117,6 +117,9 @@ class ScheduleServiceDowntimeCommandForm extends ObjectsCommandForm
                 )
             )
         ));
+
+        $this->getElement('comment')->setAttrib('class', 'autofocus');
+
         $this->addDisplayGroup(
             array('start', 'end'),
             'start-end',
