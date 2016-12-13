@@ -105,7 +105,7 @@ Requires:                   php-Icinga = %{version}-%{release}
 Icinga CLI
 
 
-%if 0%{selinux}
+%if 0%{?selinux}
 %package selinux
 Summary:        SELinux policy for Icinga Web 2
 BuildRequires:  checkpolicy, selinux-policy-devel, /usr/share/selinux/devel/policyhelp, hardlink
@@ -196,13 +196,13 @@ Icinga Web 2's fork of Zend Framework 1
 
 %prep
 %setup -q
-%if 0%{selinux}
+%if 0%{?selinux}
 mkdir selinux
 cp -p packages/selinux/icingaweb2.{fc,if,te} selinux
 %endif
 
 %build
-%if 0%{selinux}
+%if 0%{?selinux}
 cd selinux
 for selinuxvariant in %{selinux_variants}
 do
@@ -227,7 +227,7 @@ cp -pv packages/files/bin/icingacli %{buildroot}/%{bindir}
 cp -pv packages/files/public/index.php %{buildroot}/%{basedir}/public
 cp -prv etc/schema %{buildroot}/%{docsdir}
 cp -prv packages/files/config/modules/{setup,translation} %{buildroot}/%{configdir}/modules
-%if 0%{selinux}
+%if 0%{?selinux}
 cd selinux
 for selinuxvariant in %{selinux_variants}
 do
@@ -295,7 +295,7 @@ exit 0
 %attr(0755,root,root) %{bindir}/icingacli
 
 
-%if 0%{selinux}
+%if 0%{?selinux}
 %post selinux
 for selinuxvariant in %{selinux_variants}
 do
