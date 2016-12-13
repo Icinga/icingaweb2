@@ -3,7 +3,9 @@
 
 namespace Icinga\Forms\Announcement;
 
+use Icinga\Data\Filter\Filter;
 use Icinga\Web\Announcement\AnnouncementCookie;
+use Icinga\Web\Announcement\AnnouncementIniRepository;
 use Icinga\Web\Form;
 
 class AcknowledgeAnnouncementForm extends Form
@@ -70,7 +72,17 @@ class AcknowledgeAnnouncementForm extends Form
     public function onSuccess()
     {
         $cookie = new AnnouncementCookie();
-        $acknowledged = $cookie->getAcknowledged();
+        $repo = new AnnouncementIniRepository();
+        $query = $repo->findActive();
+        $filter = array();
+        foreach ($cookie->getAcknowledged() as $hash) {
+            $filter[] = Filter::expression('hash', '=', $hash);
+        }
+        $query->addFilter(Filter::matchAny($filter));
+        $acknowledged = array();
+        foreach ($query as $row) {
+            $acknowledged[] = $row->hash;
+        }
         $acknowledged[] = $this->getElement('hash')->getValue();
         $cookie->setAcknowledged($acknowledged);
         $this->getResponse()->setCookie($cookie);
