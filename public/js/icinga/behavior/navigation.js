@@ -178,7 +178,9 @@
      * Remove all active elements
      */
     Navigation.prototype.clear = function() {
-        this.$menu.find('.active').removeClass('active');
+        if (this.$menu) {
+            this.$menu.find('.active').removeClass('active');
+        }
     };
 
     /**

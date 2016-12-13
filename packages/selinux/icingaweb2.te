@@ -1,0 +1,29 @@
+policy_module(icingaweb2, 0.0.1)
+
+########################################
+#
+# Declarations
+#
+
+require {
+	type httpd_t;
+}
+
+## <desc>
+## <p>
+## Allow Apache to manage icingaweb2 configuration
+## </p>
+## </desc>
+gen_tunable(httpd_can_manage_icingaweb2_config, true)
+
+type icingaweb2_config_t;
+files_config_file(icingaweb2_config_t)
+
+optional_policy(`
+	apache_content_template(icingaweb2)
+	icingaweb2_read_config(httpd_t)
+	tunable_policy(`httpd_can_manage_icingaweb2_config',`
+		icingaweb2_manage_config(httpd_t)
+	')
+')
+
