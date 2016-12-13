@@ -112,7 +112,9 @@ BuildRequires:  checkpolicy, selinux-policy-devel, /usr/share/selinux/devel/poli
 %if "%{_selinux_policy_version}" != ""
 Requires:       selinux-policy >= %{_selinux_policy_version}
 %endif
-Requires:       %{name} = %{version}-%{release}
+Requires:           %{name} = %{version}-%{release}
+Requires(post):     policycoreutils
+Requires(postun):   policycoreutils
 
 %description selinux
 SELinux policy for Icinga Web 2
@@ -297,21 +299,21 @@ exit 0
 %post selinux
 for selinuxvariant in %{selinux_variants}
 do
-  /usr/sbin/semodule -s ${selinuxvariant} -i %{_datadir}/selinux/${selinuxvariant}/icingaweb2.pp &> /dev/null || :
+  %{_sbindir}/semodule -s ${selinuxvariant} -i %{_datadir}/selinux/${selinuxvariant}/icingaweb2.pp &> /dev/null || :
 done
-/sbin/restorecon -R %{basedir} || :
-/sbin/restorecon -R %{configdir} || :
-/sbin/restorecon -R %{logdir} || :
+%{_sbindir}/restorecon -R %{basedir} &> /dev/null || :
+%{_sbindir}/restorecon -R %{configdir} &> /dev/null || :
+%{_sbindir}/restorecon -R %{logdir} &> /dev/null || :
 
 %postun selinux
 if [ $1 -eq 0 ] ; then
   for selinuxvariant in %{selinux_variants}
   do
-     /usr/sbin/semodule -s ${selinuxvariant} -r icingaweb2 &> /dev/null || :
+     %{_sbindir}/semodule -s ${selinuxvariant} -r icingaweb2 &> /dev/null || :
   done
-  [ -d %{basedir} ] && /sbin/restorecon -R %{basedir} &> /dev/null || :
-  [ -d %{configdir} ] && /sbin/restorecon -R %{configdir} &> /dev/null || :
-  [ -d %{logdir} ] && /sbin/restorecon -R %{logdir} &> /dev/null || :
+  [ -d %{basedir} ] && %{_sbindir}/restorecon -R %{basedir} &> /dev/null || :
+  [ -d %{configdir} ] && %{_sbindir}/restorecon -R %{configdir} &> /dev/null || :
+  [ -d %{logdir} ] && %{_sbindir}/restorecon -R %{logdir} &> /dev/null || :
 fi
 
 %files selinux
