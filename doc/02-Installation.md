@@ -451,6 +451,10 @@ Finally visit Icinga Web 2 in your browser to login as `icingaadmin` user: `/ici
 
 ## <a id="upgrading"></a> Upgrading Icinga Web 2
 
+### <a id="upgrading-to-2.4.0"></a> Upgrading to Icinga Web 2 2.4.0
+
+* Icinga Web 2 version 2.4.0 does not introduce any backward incompatible change.
+
 ### <a id="upgrading-to-2.3.x"></a> Upgrading to Icinga Web 2 2.3.x
 
 * Icinga Web 2 version 2.3.x does not introduce any backward incompatible change.
