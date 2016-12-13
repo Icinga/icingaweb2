@@ -152,11 +152,19 @@ class AnnouncementIniRepository extends IniRepository
     {
         $now = new DateTime();
         $query = $this
-            ->select(array('start'))
-            ->setFilter(Filter::expression('start', '>', $now))
-            ->order('start')
-            ->limit(1);
-        $nextActive = $query->fetchRow();
-        return $nextActive !== false ? $nextActive->start->getTimestamp() : null;
+            ->select(array('start', 'end'))
+            ->setFilter(Filter::matchAny(array(
+                Filter::expression('start', '>', $now), Filter::expression('end', '>', $now)
+            )));
+        $refresh = null;
+        foreach ($query as $row) {
+            $min = min($row->start->getTimestamp(), $row->end->getTimestamp());
+            if ($refresh === null) {
+                $refresh = $min;
+            } else {
+                $refresh = min($refresh, $min);
+            }
+        }
+        return $refresh;
     }
 }
