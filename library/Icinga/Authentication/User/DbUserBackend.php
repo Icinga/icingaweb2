@@ -117,8 +117,8 @@ class DbUserBackend extends DbRepository implements UserBackendInterface, Inspec
             $userLabel          => 'user',
             t('Username')       => 'user_name',
             t('Active')         => 'is_active',
-            t('Created At')     => 'created_at',
-            t('Last Modified')  => 'last_modified'
+            t('Created at')     => 'created_at',
+            t('Last modified')  => 'last_modified'
         );
     }
 

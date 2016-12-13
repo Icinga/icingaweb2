@@ -10,19 +10,27 @@ class ClassRequirement extends Requirement
 {
     protected function evaluate()
     {
-        $classNameOrPath = $this->getCondition();
-        if (Platform::classExists($classNameOrPath)) {
-            $this->setStateText(sprintf(
-                mt('setup', 'The %s is available.', 'setup.requirement.class'),
-                $this->getAlias() ?: $classNameOrPath . ' ' . mt('setup', 'class', 'setup.requirement.class')
-            ));
-            return true;
-        } else {
-            $this->setStateText(sprintf(
-                mt('setup', 'The %s is missing.', 'setup.requirement.class'),
-                $this->getAlias() ?: $classNameOrPath . ' ' . mt('setup', 'class', 'setup.requirement.class')
-            ));
-            return false;
+        return Platform::classExists($this->getCondition());
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getStateText()
+    {
+        $stateText = parent::getStateText();
+        if ($stateText === null) {
+            $alias = $this->getAlias();
+            if ($this->getState()) {
+                $stateText = $alias === null
+                    ? sprintf(mt('setup', 'The %s class is available.', 'setup.requirement.class'), $this->getCondition())
+                    : sprintf(mt('setup', 'The %s is available.', 'setup.requirement.class'), $alias);
+            } else {
+                $stateText = $alias === null
+                    ? sprintf(mt('setup', 'The %s class is missing.', 'setup.requirement.class'), $this->getCondition())
+                    : sprintf(mt('setup', 'The %s is missing.', 'setup.requirement.class'), $alias);
+            }
         }
+        return $stateText;
     }
 }

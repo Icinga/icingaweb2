@@ -120,7 +120,7 @@ class DbUserGroupBackend extends DbRepository implements UserGroupBackendInterfa
             t('User Group')     => 'group_name',
             t('Parent')         => 'parent',
             t('Created At')     => 'created_at',
-            t('Last Modified')  => 'last_modified'
+            t('Last modified')  => 'last_modified'
         );
     }
 

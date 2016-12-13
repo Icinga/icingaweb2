@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Icinga Web 2 (None)\n"
 "Report-Msgid-Bugs-To: dev@icinga.org\n"
-"POT-Creation-Date: 2016-12-09 13:27+0000\n"
-"PO-Revision-Date: 2016-12-09 15:33+0100\n"
+"POT-Creation-Date: 2016-12-12 09:32+0000\n"
+"PO-Revision-Date: 2016-12-12 10:32+0100\n"
 "Language: de_DE\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -46,6 +46,11 @@ msgstr "%s (%%value%%) hat den falschen MIME-Type \"%%type%%\""
 #, php-format
 msgid "%s (%%value%%) has no MIME type"
 msgstr "%s (%%value%%) hat keinen MIME-Typ"
+
+#: /vagrant/library/Icinga/Web/Form/Decorator/FormHints.php:61
+#, php-format
+msgid "%s Required field"
+msgstr ""
 
 #: /vagrant/library/Icinga/Date/DateFormatter.php:171
 #, php-format
@@ -585,7 +590,8 @@ msgstr ""
 "legen Sie als Erstes eine Ressource für die Authentifizierung an."
 
 #: /vagrant/application/views/scripts/dashboard/error.phtml:2
-msgid "Could not persist dashboard"
+#, fuzzy
+msgid "Could not save dashboard"
 msgstr "Konnte Dashboard nicht speichern"
 
 #: /vagrant/application/forms/Announcement/AnnouncementForm.php:58
@@ -674,7 +680,6 @@ msgid "Create memberships for %s"
 msgstr "Mitgliedschaften für %s erstellen"
 
 #: /vagrant/library/Icinga/Authentication/User/LdapUserBackend.php:257
-#: /vagrant/library/Icinga/Authentication/User/DbUserBackend.php:120
 #: /vagrant/library/Icinga/Authentication/UserGroup/LdapUserGroupBackend.php:496
 #: /vagrant/library/Icinga/Authentication/UserGroup/DbUserGroupBackend.php:122
 msgid "Created At"
@@ -685,6 +690,7 @@ msgstr "Erstellt am"
 #: /vagrant/application/controllers/GroupController.php:70
 #: /vagrant/application/controllers/GroupController.php:106
 #: /vagrant/application/controllers/UserController.php:71
+#: /vagrant/library/Icinga/Authentication/User/DbUserBackend.php:120
 msgid "Created at"
 msgstr "Erstellt am"
 
@@ -901,11 +907,11 @@ msgstr "Titel für das Dashboard eingeben"
 
 #: /vagrant/application/forms/Dashboard/DashletForm.php:72
 msgid ""
-"Enter url being loaded in the dashlet. You can paste the full URL, including "
+"Enter url to be loaded in the dashlet. You can paste the full URL, including "
 "filters."
 msgstr ""
-"URL angeben, die in dem Dashlet geladen werden soll. Es sind vollständige "
-"URLs mit Filtern möglich."
+"URL angeben, die in dem Dashlet geladen werden soll. Es kann die "
+"vollständige URL mit Filtern eingefügt werden."
 
 #: /vagrant/application/controllers/ErrorController.php:108
 msgid "Error"
@@ -1337,18 +1343,15 @@ msgstr "LDAP-Attribut für den Benutzernamen"
 msgid "LDAP User Object Class"
 msgstr "LDAP Objektklasse für den Benutzer"
 
-#: /vagrant/library/Icinga/Authentication/User/LdapUserBackend.php:258
-#: /vagrant/library/Icinga/Authentication/User/DbUserBackend.php:121
-#: /vagrant/library/Icinga/Authentication/UserGroup/LdapUserGroupBackend.php:497
-#: /vagrant/library/Icinga/Authentication/UserGroup/DbUserGroupBackend.php:123
-msgid "Last Modified"
-msgstr "Zuletzt verändert"
-
 #: /vagrant/application/views/scripts/user/show.phtml:40
 #: /vagrant/application/views/scripts/group/show.phtml:37
 #: /vagrant/application/controllers/GroupController.php:71
 #: /vagrant/application/controllers/GroupController.php:107
 #: /vagrant/application/controllers/UserController.php:72
+#: /vagrant/library/Icinga/Authentication/User/LdapUserBackend.php:258
+#: /vagrant/library/Icinga/Authentication/User/DbUserBackend.php:121
+#: /vagrant/library/Icinga/Authentication/UserGroup/LdapUserGroupBackend.php:497
+#: /vagrant/library/Icinga/Authentication/UserGroup/DbUserGroupBackend.php:123
 msgid "Last modified"
 msgstr "Zuletzt verändert"
 
@@ -3366,11 +3369,24 @@ msgstr "umschalten"
 #~ msgid "Adjust the preferences of Icinga Web 2 according to your needs"
 #~ msgstr "Anpassung von Icinga Web 2 an individuelle Bedürfnisse"
 
+#~ msgid "Could not persist dashboard"
+#~ msgstr "Konnte Dashboard nicht speichern"
+
 #~ msgid "Disable the dashboard"
 #~ msgstr "Dashboard deaktivieren"
 
 #~ msgid "Disabled"
 #~ msgstr "Deaktiviert"
+
+#~ msgid ""
+#~ "Enter url being loaded in the dashlet. You can paste the full URL, "
+#~ "including filters."
+#~ msgstr ""
+#~ "URL angeben, die in dem Dashlet geladen werden soll. Es sind vollständige "
+#~ "URLs mit Filtern möglich."
+
+#~ msgid "Last Modified"
+#~ msgstr "Zuletzt verändert"
 
 #~ msgid "Title"
 #~ msgstr "Titel"
@@ -3543,9 +3559,26 @@ msgstr "umschalten"
 #~ msgid "The type of SQL database you want to create."
 #~ msgstr "Der Typ der zu benutzenden SQL Datenbank."
 
+#~ msgid ""
+#~ "The url of this navigation item. Leave blank if you only want the name "
+#~ "being displayed. For external urls, make sure to prepend an appropriate "
+#~ "protocol identifier (e.g. http://example.tld)"
+#~ msgstr ""
+#~ "Die URL dieses Navigationselementes. Dies kann leer gelassen werden, wenn "
+#~ "nur der Name angezeigt werden soll. Stellen Sie für externe URLs sicher, "
+#~ "dass Sie einen passenden Protokollnamen voran stellen (z.B. http://"
+#~ "example.tld)"
+
 #~ msgid "The user dn to use for querying the ldap server"
 #~ msgstr ""
 #~ "Die DN des Benutzers mit welchem dieser LDAP-Server befragt werden soll"
+
+#~ msgid ""
+#~ "Upon its value has changed, this field issues an automatic update of this "
+#~ "page."
+#~ msgstr ""
+#~ "Dieses Feld löst eine automatische Aktualisierung dieser Seite aus, wenn "
+#~ "sein Inhalt geändert wird."
 
 #~ msgid "Use Default Language"
 #~ msgstr "Standardsprache verwenden"

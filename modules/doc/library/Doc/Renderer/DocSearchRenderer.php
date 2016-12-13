@@ -109,18 +109,24 @@ class DocSearchRenderer extends DocRenderer
             $url->setAnchor($this->encodeAnchor($section->getId()));
             $urlAttributes = array(
                 'data-base-target'  => '_next',
-                'title'             => sprintf(
-                    $this->getView()->translate(
-                        'Show all matches of "%s" in %sthe chapter "%s"',
-                        'search.render.section.link'
-                    ),
-                    $this->getInnerIterator()->getSearch()->getInput(),
-                    $section->getId() !== $section->getChapter()->getId() ? sprintf(
-                        $this->getView()->translate('the section "%s" of ', 'search.render.section.link'),
-                        $section->getTitle()
-                    ) : '',
-                    $section->getChapter()->getTitle()
-                )
+                'title'             => $section->getId() === $section->getChapter()->getId()
+                    ? sprintf(
+                        $this->getView()->translate(
+                            'Show all matches of "%s" in the chapter "%s"',
+                            'search.render.section.link'
+                        ),
+                        $this->getInnerIterator()->getSearch()->getInput(),
+                        $section->getChapter()->getTitle()
+                    )
+                    : sprintf(
+                        $this->getView()->translate(
+                            'Show all matches of "%s" in the section "%s" of the chapter "%s"',
+                            'search.render.section.link'
+                        ),
+                        $this->getInnerIterator()->getSearch()->getInput(),
+                        $section->getTitle(),
+                        $section->getChapter()->getTitle()
+                    )
             );
             if ($section->getNoFollow()) {
                 $urlAttributes['rel'] = 'nofollow';

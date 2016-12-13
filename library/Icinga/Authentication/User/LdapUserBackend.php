@@ -255,7 +255,7 @@ class LdapUserBackend extends LdapRepository implements UserBackendInterface, In
             t('Username')       => 'user_name',
             t('Active')         => 'is_active',
             t('Created At')     => 'created_at',
-            t('Last Modified')  => 'last_modified'
+            t('Last modified')  => 'last_modified'
         );
     }
 

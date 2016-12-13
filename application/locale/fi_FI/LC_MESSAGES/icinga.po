@@ -244,7 +244,7 @@ msgid "Could not find any resources for authentication"
 msgstr "Yhtään tunnistautumisresurssia ei löytynyt"
 
 #: /usr/share/icingaweb2/application/views/scripts/dashboard/error.phtml:2
-msgid "Could not persist dashboard"
+msgid "Could not save dashboard"
 msgstr "Kojelauta ei pysy"
 
 #: /usr/share/icingaweb2/application/controllers/AuthenticationController.php:62
@@ -395,7 +395,7 @@ msgstr "Ruudun otsikko"
 
 #: /usr/share/icingaweb2/application/forms/Dashboard/DashletForm.php:70
 msgid ""
-"Enter url being loaded in the dashlet. You can paste the full URL, including filters."
+"Enter url to be loaded in the dashlet. You can paste the full URL, including filters."
 msgstr "Anna url, jonka haluat ladattavan dashletiin. Voit käyttää copy-pastea."
 
 #: /usr/share/icingaweb2/application/forms/Config/General/LoggingConfigForm.php:51

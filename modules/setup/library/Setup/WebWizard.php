@@ -654,6 +654,16 @@ class WebWizard extends Wizard implements SetupWizard
             'description'   => mt(
                 'setup',
                 'The Zend database adapter for MySQL is required to access a MySQL database.'
+            ),
+            'textAvailable' => mt(
+                'setup',
+                'The Zend database adapter for MySQL is available.',
+                'setup.requirement.class'
+            ),
+            'textMissing'   => mt(
+                'setup',
+                'The Zend database adapter for MySQL is missing.',
+                'setup.requirement.class'
             )
         )));
         $set->merge($mysqlSet);
@@ -675,6 +685,16 @@ class WebWizard extends Wizard implements SetupWizard
             'description'   => mt(
                 'setup',
                 'The Zend database adapter for PostgreSQL is required to access a PostgreSQL database.'
+            ),
+            'textAvailable' => mt(
+                'setup',
+                'The Zend database adapter for PostgreSQL is available.',
+                'setup.requirement.class'
+            ),
+            'textMissing'   => mt(
+                'setup',
+                'The Zend database adapter for PostgreSQL is missing.',
+                'setup.requirement.class'
             )
         )));
         $set->merge($pgsqlSet);

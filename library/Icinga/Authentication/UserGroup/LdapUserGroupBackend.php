@@ -494,7 +494,7 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
             t('Username')       => 'user_name',
             t('User Group')     => 'group_name',
             t('Created At')     => 'created_at',
-            t('Last Modified')  => 'last_modified'
+            t('Last modified')  => 'last_modified'
         );
     }
 
