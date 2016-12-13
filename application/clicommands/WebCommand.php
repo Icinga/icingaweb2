@@ -26,8 +26,7 @@ class WebCommand extends Command
 
         // TODO: Sanity check!!
         if ($socket === null) {
-            $socket = '0.0.0.0:80';
-            // throw new IcingaException('Socket is required');
+            $socket = $this->Config()->get('standalone','listen','0.0.0.0:80');
         }
         if ($documentRoot === null) {
             $documentRoot = Icinga::app()->getBaseDir('public');
@@ -40,7 +39,7 @@ class WebCommand extends Command
         if ($fork) {
             $this->forkAndExit();
         }
-        echo "Serving Icingaweb from $documentRoot\n";
+        echo "Serving Icinga Web 2 from directory $documentRoot and listening on $socket\n";
         $cmd = sprintf(
             '%s -S %s -t %s %s',
             readlink('/proc/self/exe'),
