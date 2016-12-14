@@ -225,7 +225,7 @@ EOD;
         $replaceTokens = array(
             $url,
             $iframeUrl,
-            $url->getUrlWithout(array('view', 'limit')),
+            $url->without(array('view', 'limit'))->setParam('dashlet', $this->pane->getTitle() . '.' . $this->title),
             sprintf($view->translate('Show %s', 'dashboard.dashlet.tooltip'), $view->escape($this->getTitle())),
             $view->escape($this->getTitle()),
             $view->translate('Dashlet') . ': ',
