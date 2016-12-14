@@ -25,7 +25,7 @@ class LimiterControlForm extends Form
     const DEFAULT_LIMIT = 50;
 
     /**
-     * Selectable limits
+     * Selectable default limits
      *
      * @var int[]
      */
@@ -71,7 +71,14 @@ class LimiterControlForm extends Form
      */
     public function setDefaultLimit($defaultLimit)
     {
-        $this->defaultLimit = (int) $defaultLimit;
+        $defaultLimit = (int) $defaultLimit;
+
+        if (! isset(static::$limits[$defaultLimit])) {
+            static::$limits[$defaultLimit] = $defaultLimit;
+        }
+
+        $this->defaultLimit = $defaultLimit;
+
         return $this;
     }
 
@@ -90,6 +97,13 @@ class LimiterControlForm extends Form
      */
     public function createElements(array $formData)
     {
+        $options = static::$limits;
+        $pageSize = (int) $this->getRequest()->getUrl()->getParam('limit', $this->getDefaultLimit());
+
+        if (! isset($options[$pageSize])) {
+            $options[$pageSize] = $pageSize;
+        }
+
         $this->addElement(
             'select',
             'limit',
@@ -97,8 +111,8 @@ class LimiterControlForm extends Form
                 'autosubmit'    => true,
                 'escape'        => false,
                 'label'         => '#',
-                'multiOptions'  => static::$limits,
-                'value'         => $this->getRequest()->getUrl()->getParam('limit', $this->getDefaultLimit())
+                'multiOptions'  => $options,
+                'value'         => $pageSize
             )
         );
     }

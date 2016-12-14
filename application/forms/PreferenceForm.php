@@ -263,6 +263,16 @@ class PreferenceForm extends Form
             )
         );
 
+        $this->addElement(
+            'number',
+            'default_page_size',
+            array(
+                'label'         => $this->translate('Default page size'),
+                'description'   => $this->translate('Default number of items per page for list views'),
+                'step'          => 1
+            )
+        );
+
         if ($this->store) {
             $this->addElement(
                 'submit',
