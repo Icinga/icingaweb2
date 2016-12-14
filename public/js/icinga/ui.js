@@ -545,23 +545,6 @@
                 return;
             }
 
-            $container.find('.controls').each(function() {
-                var $controls = $(this);
-                if (! $controls.next('.fake-controls').length) {
-                    var $tabs = $controls.find('.tabs', $controls);
-                    if ($tabs.length && $controls.children().length > 1 && ! $tabs.next('.tabs-spacer').length) {
-                        $tabs.after($('<div class="tabs-spacer"></div>'));
-                    }
-                    var $fakeControls = $('<div class="fake-controls"></div>');
-                    $fakeControls.height($controls.height()).css({
-                        display: 'block'
-                    });
-                    $controls.css({
-                        position: 'fixed'
-                    }).after($fakeControls);
-                }
-            });
-
             this.fixControls($container);
         },
 
@@ -655,12 +638,10 @@
 
             $container.find('.controls').each(function() {
                 var $controls = $(this);
-                var $fakeControls = $controls.next('.fake-controls');
                 $controls.css({
                     top: $container.offset().top,
-                    width: $fakeControls.outerWidth()
+                    width: $container.width()
                 });
-                $fakeControls.height($controls.height());
             });
 
             var $statusBar = $container.children('.monitoring-statusbar');
@@ -669,7 +650,6 @@
                     left: $container.offset().left,
                     width: $container.width()
                 });
-                $statusBar.prev('.monitoring-statusbar-ghost').height($statusBar.outerHeight(true));
             }
         },
 
