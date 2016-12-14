@@ -32,6 +32,11 @@
   line-height: @line-height;
 }
 
+#main > .container {
+  position: relative;
+  overflow: hidden;
+}
+
 #header {
   background-color: @icinga-blue;
 }
@@ -100,9 +105,13 @@
     & > .content {
       padding: @gutter;
       z-index: 2;
+      position: absolute;
+      overflow: auto;
+      width: 100%;
     }
 
     & > .controls {
+      background-color: @gray-lighter;
       z-index: 3;
 
       padding-left: @gutter;

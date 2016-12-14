@@ -651,6 +651,11 @@
                     width: $container.width()
                 });
             }
+
+            $container.find('.content').css({ /* should be content-wrapper */
+                top: $container.find('.controls').outerHeight(true),
+                bottom: $statusBar.outerHeight(true)
+            })
         },
 
         toggleFullscreen: function () {
