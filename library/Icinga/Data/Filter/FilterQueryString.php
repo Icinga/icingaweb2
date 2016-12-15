@@ -52,14 +52,20 @@ class FilterQueryString
 
     protected function readNextValue()
     {
+        $tolerateCharPairs = array(
+            '(' => ')',
+            '[' => ']',
+            '{' => '}',
+            '<' => '>'
+        );
         if ($this->nextChar() === '(') {
             $this->readChar();
-            $var = preg_split('~\|~', $this->readUnless(')'));
+            $var = preg_split('~\|~', $this->readUnless(')', $tolerateCharPairs));
             if ($this->readChar() !== ')') {
                 $this->parseError(null, 'Expected ")"');
             }
         } else {
-            $var = rawurldecode($this->readUnless(array(')', '&', '|', '>', '<')));
+            $var = rawurldecode($this->readUnless(array(')', '&', '|', '>', '<'), $tolerateCharPairs));
         }
         return $var;
     }
@@ -260,20 +266,23 @@ class FilterQueryString
         return $this->readFilters();
     }
 
-    protected function readUnless($char)
+    protected function readUnless($char, array $tolerateCharPairs = array())
     {
+        if (! is_array($char)) {
+            $char = array($char);
+        }
+
         $buffer = '';
+        $tolerateCharStack = array();
+        $tolerateCharStackLastIndex = -1;
         while (false !== ($c = $this->readChar())) {
-            if (is_array($char)) {
-                if (in_array($c, $char)) {
-                    $this->pos--;
-                    break;
-                }
-            } else {
-                if ($c === $char) {
-                    $this->pos--;
-                    break;
-                }
+            if (isset($tolerateCharPairs[$c])) {
+                $tolerateCharStack[++$tolerateCharStackLastIndex] = $tolerateCharPairs[$c];
+            } elseif ($tolerateCharStackLastIndex >= 0 && $c === $tolerateCharStack[$tolerateCharStackLastIndex]) {
+                unset($tolerateCharStack[$tolerateCharStackLastIndex--]);
+            } elseif (in_array($c, $char)) {
+                $this->pos--;
+                break;
             }
             $buffer .= $c;
         }
