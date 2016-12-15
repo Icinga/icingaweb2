@@ -237,18 +237,6 @@ class DbUserBackend extends DbRepository implements UserBackendInterface, Inspec
     }
 
     /**
-     * Extract salt from the given password hash
-     *
-     * @param   string  $hash   The hashed password
-     *
-     * @return  string
-     */
-    protected function getSalt($hash)
-    {
-        return substr($hash, strlen(self::HASH_ALGORITHM), self::SALT_LENGTH);
-    }
-
-    /**
      * Return a random salt
      *
      * The returned salt is safe to be used for hashing a user's password
