@@ -222,8 +222,8 @@ class GettextTranslationHelper
         $moduleObject = $this->moduleMgr->getModule($module);
         $this->version = $moduleObject->getVersion();
         $this->moduleName = $moduleObject->getName();
-        $this->moduleTitle = $moduleObject->getTitle();
-        $this->moduleDescription = $moduleObject->getDescription();
+        $this->moduleTitle = $moduleObject->getTitle(false);
+        $this->moduleDescription = $moduleObject->getDescription(false);
         if ($this->moduleDescription === t('This module has no description')) {
             $this->moduleDescription = null;
         }
