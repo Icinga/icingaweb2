@@ -1,6 +1,11 @@
 <?php
+use Icinga\Data\Filter\FilterQueryString;
 use Icinga\Module\Monitoring\Object\Host;
 use Icinga\Module\Monitoring\Object\Service;
+use Icinga\Web\Url;
+
+/** @var \Icinga\Module\Monitoring\DataView\DataView $services */
+$hasResult = $services->hasResult();
 
 if (! $this->compact): ?>
 <div class="controls">
@@ -11,10 +16,23 @@ if (! $this->compact): ?>
         <?= $this->sortBox ?>
     </div>
     <?= $this->filterEditor ?>
+    <?php if ($hasResult): ?>
+        <div class="services-link"><?= $this->qlink(
+            $this->translate('Show all services'),
+            Url::fromPath('monitoring/services/show')->setParams(
+                FilterQueryString::parse(Url::fromRequest()->getQueryString())->getUrlParams()
+            ),
+            null,
+            array(
+                'data-base-target'  => '_next',
+                'icon'              => 'forward'
+            )
+        ) ?></div>
+    <?php endif ?>
 </div>
 <?php endif ?>
 <div class="content">
-<?php if (! $services->hasResult()): ?>
+<?php if (! $hasResult): ?>
     <p><?= $this->translate('No services found matching the filter.') ?></p>
 </div>
 <?php return; endif ?>

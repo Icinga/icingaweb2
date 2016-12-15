@@ -1,5 +1,10 @@
 <?php
+use Icinga\Data\Filter\FilterQueryString;
 use Icinga\Module\Monitoring\Object\Host;
+use Icinga\Web\Url;
+
+/** @var \Icinga\Module\Monitoring\DataView\DataView $hosts */
+$hasResult = $hosts->hasResult();
 
 if (! $this->compact): ?>
 <div class="controls">
@@ -10,10 +15,23 @@ if (! $this->compact): ?>
         <?= $this->sortBox ?>
     </div>
     <?= $this->filterEditor ?>
+    <?php if ($hasResult): ?>
+        <div class="hosts-link"><?= $this->qlink(
+            $this->translate('Show all hosts'),
+            Url::fromPath('monitoring/hosts/show')->setParams(
+                FilterQueryString::parse(Url::fromRequest()->getQueryString())->getUrlParams()
+            ),
+            null,
+            array(
+                'data-base-target'  => '_next',
+                'icon'              => 'forward'
+            )
+        ) ?></div>
+    <?php endif ?>
 </div>
 <?php endif ?>
 <div class="content">
-<?php if (! $hosts->hasResult()): ?>
+<?php if (! $hasResult): ?>
     <p><?= $this->translate('No hosts found matching the filter.') ?></p>
 </div>
 <?php return; endif ?>
