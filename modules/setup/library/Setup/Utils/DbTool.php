@@ -583,7 +583,7 @@ class DbTool
             $to = sprintf(
                 ' TO %s@%s',
                 $this->quoteIdentifier($username),
-                str_replace('%', '%%', $this->quoteIdentifier($host))
+                $this->quoteIdentifier($host)
             );
 
             $dbPrivileges = array();
