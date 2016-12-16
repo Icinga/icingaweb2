@@ -52,6 +52,8 @@ class Controller extends IcingaWebController
                     . '</pre>';
                 exit;
             case 'json':
+                $json = Json::create($query);
+
                 $response = $this->getResponse();
                 $response
                     ->setHeader('Content-Type', 'application/json')
@@ -65,10 +67,12 @@ class Controller extends IcingaWebController
                 while (ob_get_level()) {
                     ob_end_clean();
                 }
-                Json::create($query)->dump();
+                $json->dump();
 
                 exit;
             case 'csv':
+                $csv = Csv::fromQuery($query);
+
                 $response = $this->getResponse();
                 $response
                     ->setHeader('Content-Type', 'text/csv')
@@ -82,7 +86,7 @@ class Controller extends IcingaWebController
                 while (ob_get_level()) {
                     ob_end_clean();
                 }
-                Csv::fromQuery($query)->dump();
+                $csv->dump();
 
                 exit;
         }

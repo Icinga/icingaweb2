@@ -25,6 +25,7 @@ class Csv
     {
         $csv = new static();
         $csv->query = $query;
+        $csv->render();
         return $csv;
     }
 
@@ -50,10 +51,10 @@ class Csv
             $first = true;
             foreach ($this->query as $row) {
                 if ($first) {
-                    $this->renderBuffer->append($this->renderRow(array_keys((array)$row)));
+                    $this->renderBuffer->append($this->renderRow(array_keys((array) $row)));
                     $first = false;
                 }
-                $this->renderBuffer->append($this->renderRow(array_values((array)$row)));
+                $this->renderBuffer->append($this->renderRow(array_values((array) $row)));
             }
         }
 

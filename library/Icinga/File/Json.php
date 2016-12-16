@@ -35,6 +35,7 @@ class Json
     protected function __construct(Traversable $query)
     {
         $this->query = $query;
+        $this->render();
     }
 
     /**
