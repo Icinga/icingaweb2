@@ -184,6 +184,10 @@ class Hook
      */
     protected static function hasPermission($class)
     {
+        if (Icinga::app()->isCli()) {
+            return true;
+        }
+
         return Auth::getInstance()->hasPermission(
             Manager::MODULE_PERMISSION_NS . self::extractModuleName($class)
         );
