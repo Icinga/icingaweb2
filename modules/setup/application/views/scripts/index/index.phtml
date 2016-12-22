@@ -52,6 +52,9 @@ if ($notifications->hasMessages()) {
           <td class="middle"><div class="bubble <?= $stateClass; ?>"></div></td>
           <td class="right"><div class="line right <?= $stateClass; ?>"></div></td>
         </tr></tbody></table>
+        <?php if (($maxProgress < $currentPos && $currentPos === 1) || ($maxProgress >= $currentPos && $maxProgress === 1)): ?>
+          <?= $this->restartForm ?>
+        <?php endif ?>
       </div>
       <div class="step" style="width: 10%;">
         <h1><?= $this->translate('Requirements', 'setup.progress'); ?></h1>
@@ -65,6 +68,9 @@ if ($notifications->hasMessages()) {
           <td class="middle"><div class="bubble<?= $stateClass; ?>"></div></td>
           <td class="right"><div class="line right<?= $stateClass; ?>"></div></td>
         </tr></tbody></table>
+        <?php if (($maxProgress < $currentPos && $currentPos === 2) || ($maxProgress >= $currentPos && $maxProgress === 2)): ?>
+          <?= $this->restartForm ?>
+        <?php endif ?>
       </div>
       <div class="step" style="width: 60%;">
         <h1><?= $this->translate('Configuration', 'setup.progress'); ?></h1>
@@ -122,6 +128,9 @@ if ($notifications->hasMessages()) {
           <?php endforeach ?>
           </td>
         </tr></tbody></table>
+        <?php if ($maxProgress > 2 || $currentPos > 2): ?>
+          <?= $this->restartForm ?>
+        <?php endif ?>
       </div>
       <div class="step" style="width: 10%;">
         <h1><?= $this->translate('Finish', 'setup.progress'); ?></h1>
