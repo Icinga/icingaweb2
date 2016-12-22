@@ -79,7 +79,7 @@ class IndexController extends Controller
         $form = new Form(array(
             'onSuccess' => function () {
                 $wizard = new WebWizard();
-                $wizard->clearSession();
+                $wizard->clearSession(false);
             }
         ));
         $form->setUidDisabled();

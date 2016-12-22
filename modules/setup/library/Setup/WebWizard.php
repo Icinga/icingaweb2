@@ -380,15 +380,19 @@ class WebWizard extends Wizard implements SetupWizard
     }
 
     /**
-     * Clear the session being used by this wizard and drop the setup token
+     * Clear the session being used by this wizard
+     *
+     * @param   bool    $removeToken    If true, the setup token will be removed
      */
-    public function clearSession()
+    public function clearSession($removeToken = true)
     {
         parent::clearSession();
 
-        $tokenPath = Config::resolvePath('setup.token');
-        if (file_exists($tokenPath)) {
-            @unlink($tokenPath);
+        if ($removeToken) {
+            $tokenPath = Config::resolvePath('setup.token');
+            if (file_exists($tokenPath)) {
+                @unlink($tokenPath);
+            }
         }
     }
 
