@@ -1,0 +1,60 @@
+# Icinga Web 2 - Head for multiple monitoring backends.
+# Copyright (C) 2017 Icinga Development Team
+# This file is distributed under the same license as Translation Module.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Translation Module (2.4.0)\n"
+"Report-Msgid-Bugs-To: dev@icinga.com\n"
+"POT-Creation-Date: 2017-02-07 09:55+0000\n"
+"PO-Revision-Date: 2017-02-07 10:57+0100\n"
+"Last-Translator: Jennifer Mourek <jennifer.mourek@netways.de>\n"
+"Language: de_DE\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-Basepath: .\n"
+"Language-Team: \n"
+"X-Generator: Poedit 1.8.7.1\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: ../../../../modules/translation/application/clicommands/StatisticsCommand.php:134
+#, php-format
+msgid "'%s' is an unknown locale code."
+msgstr "'%s' ist ein unbekannter locale Code."
+
+#: ../../../../modules/translation/application/clicommands/StatisticsCommand.php:169
+#, php-format
+msgid "Failed to read %s. An error occurred: %s"
+msgstr "Konnte %s nicht lesen. Ein Fehler ist aufgetreten: %s"
+
+#: ../../../../modules/translation/application/clicommands/StatisticsCommand.php:129
+#, php-format
+msgid "Locale code '%s' is not valid. Expected format is: ll_CC"
+msgstr "Locale Code '%s' ist nicht gültig. Erwartetes format ist: ll_CC"
+
+#: ../../../../modules/translation/application/clicommands/StatisticsCommand.php:274
+msgid "No language given."
+msgstr "Keine Sprache angegeben."
+
+#: ../../../../modules/translation/application/clicommands/StatisticsCommand.php:268
+msgid "No module given."
+msgstr "Kein Modul angegeben."
+
+#: ../../../../modules/translation/application/clicommands/StatisticsCommand.php:264
+msgid "Options --module and --language cannot be used at the same time."
+msgstr ""
+"Die Optionen --module und --language können nicht gleichzeitig genutzt "
+"werden."
+
+#: ../../../../modules/translation/application/clicommands/StatisticsCommand.php:155
+#, php-format
+msgid "Please make sure the module \"%s\" is loaded"
+msgstr "Bitte sicherstellen, dass das Modul \"%s\" geladen ist."
+
+#: ../../../../modules/translation/application/clicommands/StatisticsCommand.php:161
+#, php-format
+msgid "There are no translations for module \"%s\""
+msgstr "Es sind keine Übersetzungen für das Modul \"%s\" vorhanden"

@@ -780,6 +780,16 @@ class Module
     }
 
     /**
+     * Get this module's locale path
+     *
+     * @return string
+     */
+    public function getLocaleDir()
+    {
+        return $this->localedir;
+    }
+
+    /**
      * Get the module's configuration directory
      *
      * @return string
