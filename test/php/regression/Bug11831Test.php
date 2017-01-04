@@ -30,7 +30,8 @@ EOT;
         $reflection = new ReflectionClass($module);
         $prop = $reflection->getProperty('metadataFile');
         $prop->setAccessible(true);
-        $prop->setValue($module, stream_get_meta_data($moduleInfoFile)['uri']);
+        $meta = stream_get_meta_data($moduleInfoFile);
+        $prop->setValue($module, $meta['uri']);
         $this->assertEquals($module->getVersion(), '1.0.0');
         fclose($moduleInfoFile);
     }
