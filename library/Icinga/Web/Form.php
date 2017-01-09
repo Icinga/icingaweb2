@@ -1276,6 +1276,30 @@ class Form extends Zend_Form
         return parent::isValid($formData);
     }
 
+    public function getValues($suppressArrayNotation = false)
+    {
+        $values = parent::getValues($suppressArrayNotation);
+        $eBelongTo = null;
+
+        if ($this->isArray()) {
+            $eBelongTo = $this->getElementsBelongTo();
+        }
+
+        foreach ($this->getElements() as $key => $element) {
+            if ($element->getIgnore() && $element->getDecorator('preserveDefault')) {
+                if (($belongsTo = $element->getBelongsTo()) !== $eBelongTo) {
+                    if ('' !== (string)$belongsTo) {
+                        $key = $belongsTo . '[' . $key . ']';
+                    }
+                }
+                $merge = $this->_attachToArray(null, $key);
+                $values = $this->_array_replace_recursive($values, $merge);
+            }
+        }
+
+        return $values;
+    }
+
     /**
      * Remove all elements of this form
      *
