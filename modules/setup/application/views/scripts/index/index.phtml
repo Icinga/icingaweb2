@@ -4,7 +4,7 @@ use Icinga\Web\Notification;
 
 $pages = $wizard->getPages();
 $finished = isset($success);
-$configPages = array_slice($pages, 3, count($pages) - 1, true);
+$configPages = array_slice($pages, 3, count($pages) - 4, true);
 $currentPos = array_search($wizard->getCurrentPage(), $pages, true);
 list($configPagesLeft, $configPagesRight) = array_chunk($configPages, count($configPages) / 2, true);
 
@@ -125,7 +125,7 @@ if ($notifications->hasMessages()) {
       </div>
       <div class="step" style="width: 10%;">
         <h1><?= $this->translate('Finish', 'setup.progress'); ?></h1>
-        <?php $stateClass = $finished ? ' active' : ''; ?>
+        <?php $stateClass = $finished ? ' complete' : ($pages[$currentPos] === end($pages) ? ' active' : ''); ?>
         <table><tbody><tr>
           <td class="left"><div class="line left<?= $stateClass; ?>"></div></td>
           <td class="middle"><div class="bubble<?= $stateClass; ?>"></div></td>
