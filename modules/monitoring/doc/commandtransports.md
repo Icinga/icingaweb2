@@ -32,11 +32,11 @@ to the host where you want to send the commands to. We recommend to create/edit 
 ```
 object ApiUser "web2" {
   password = "bea11beb7b810ea9ce6ea" // Change this!
-  permissions = [ "actions/*", "objects/modify/hosts", "objects/modify/services", "objects/modify/icingaapplications" ]
+  permissions = [ "actions/*", "objects/modify/hosts", "objects/modify/services", "objects/modify/icingaapplication" ]
 }
 ```
 
-The permissions `actions/*`, `objects/modify/hosts`, `objects/modify/services`, `objects/modify/icingaapplications` are
+The permissions `actions/*`, `objects/modify/hosts`, `objects/modify/services`, `objects/modify/icingaapplication` are
 mandatory in order to submit all external commands from within Icinga Web 2.
 
 **Restart Icinga 2** for the changes to take effect.
