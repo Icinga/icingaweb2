@@ -1,7 +1,7 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-# Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+
+# Icinga Web 2 | (c) 2013 Icinga Development Team | GPLv2+
 
 VAGRANTFILE_API_VERSION = "2"
 VAGRANT_REQUIRED_VERSION = "1.5.0"
