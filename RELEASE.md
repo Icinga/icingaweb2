@@ -1,7 +1,7 @@
 # Quality Assurance
 
 Review and test the changes and issues for this version.
-https://dev.icinga.com/projects/icingaweb2/roadmap
+https://github.com/icinga/icingaweb2
 
 # Release Workflow
 
