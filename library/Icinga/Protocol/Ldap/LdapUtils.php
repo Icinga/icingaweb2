@@ -6,8 +6,8 @@ namespace Icinga\Protocol\Ldap;
 /**
  * This class provides useful LDAP-related functions
  *
- * @copyright  Copyright (c) 2013 Icinga-Web Team <info@icinga.org>
- * @author     Icinga-Web Team <info@icinga.org>
+ * @copyright  Copyright (c) 2013 Icinga-Web Team <info@icinga.com>
+ * @author     Icinga-Web Team <info@icinga.com>
  * @package    Icinga\Protocol\Ldap
  * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License
  */

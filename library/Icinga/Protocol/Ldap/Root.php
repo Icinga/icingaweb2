@@ -8,8 +8,8 @@ use Icinga\Exception\IcingaException;
 /**
  * This class is a special node object, representing your connections root node
  *
- * @copyright  Copyright (c) 2013 Icinga-Web Team <info@icinga.org>
- * @author     Icinga-Web Team <info@icinga.org>
+ * @copyright  Copyright (c) 2013 Icinga-Web Team <info@icinga.com>
+ * @author     Icinga-Web Team <info@icinga.com>
  * @package    Icinga\Protocol\Ldap
  * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License
  * @package Icinga\Protocol\Ldap

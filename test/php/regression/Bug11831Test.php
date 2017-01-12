@@ -13,7 +13,7 @@ use Icinga\Test\BaseTestCase;
  *
  * Empty lines in module.info must be ignored if they're not part of the module's description
  *
- * @see https://dev.icinga.org/issues/11831
+ * @see https://dev.icinga.com/issues/11831
  */
 class Bug11831Test extends BaseTestCase
 {

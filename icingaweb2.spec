@@ -8,11 +8,11 @@ Release:        %{revision}%{?dist}
 Summary:        Icinga Web 2
 Group:          Applications/System
 License:        GPLv2+ and MIT and BSD
-URL:            https://icinga.org
+URL:            https://icinga.com
 Source0:        https://github.com/Icinga/%{name}/archive/v%{version}.tar.gz
 BuildArch:      noarch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}
-Packager:       Icinga Team <info@icinga.org>
+Packager:       Icinga Team <info@icinga.com>
 
 %if 0%{?fedora} || 0%{?rhel} || 0%{?amzn}
 %define php             php

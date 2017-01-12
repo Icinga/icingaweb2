@@ -17,8 +17,8 @@ use Icinga\Exception\ProgrammingError;
  * $tabs = Widget::create('tabs');
  * </code>
  *
- * @copyright  Copyright (c) 2013 Icinga-Web Team <info@icinga.org>
- * @author     Icinga-Web Team <info@icinga.org>
+ * @copyright  Copyright (c) 2013 Icinga-Web Team <info@icinga.com>
+ * @author     Icinga-Web Team <info@icinga.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License
  */
 class Widget

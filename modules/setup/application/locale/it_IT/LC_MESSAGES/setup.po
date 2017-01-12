@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Setup Module (2.1.0)\n"
-"Report-Msgid-Bugs-To: dev@icinga.org\n"
+"Report-Msgid-Bugs-To: dev@icinga.com\n"
 "POT-Creation-Date: 2015-11-24 23:39+0100\n"
 "PO-Revision-Date: 2015-11-24 23:38+0100\n"
 "Last-Translator: Davide Demuru <davide.demuru@gmail.com>\n"
