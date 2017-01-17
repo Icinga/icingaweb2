@@ -209,6 +209,13 @@ class Form extends Zend_Form
     protected $useFormAutosubmit = false;
 
     /**
+     * Default values of form elements
+     *
+     * @var array
+     */
+    protected $defaultValues = array();
+
+    /**
      * Authentication manager
      *
      * @var Auth|null
@@ -760,6 +767,18 @@ class Form extends Zend_Form
     }
 
     /**
+     * Return default value of a form element
+     *
+     * @param   string  $name   Name of the form element to get the default value from
+     *
+     * @return  mixed
+     */
+    public function getDefaultValue($name)
+    {
+        return $this->defaultValues[$name];
+    }
+
+    /**
      * Create this form
      *
      * @param   array   $formData   The data sent by the user
@@ -1003,6 +1022,21 @@ class Form extends Zend_Form
             unset($el->preserveDefault);
         }
 
+        if (method_exists($el, 'isChecked')) {
+            $this->defaultValues[$el->getName()] = $el->isChecked();
+        } else if (method_exists($el, 'getMultiOptions')) {
+            $multiOptions = $el->getMultiOptions();
+            reset($multiOptions);
+            if (! empty($multiOptions)) {
+                $this->defaultValues[$el->getName()] = key($multiOptions);
+            } else {
+                $this->defaultValues[$el->getName()] = $el->getValue();
+            }
+        } else {
+            $this->defaultValues[$el->getName()] = $el->getValue();
+        }
+
+
         return $this->ensureElementAccessibility($el);
     }
 
@@ -1097,6 +1131,30 @@ class Form extends Zend_Form
         $this->create($defaults);
         $this->preserveDefaults($this, $defaults);
         return parent::populate($defaults);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getValues($suppressArrayNotation = false)
+    {
+        $values = parent::getValues($suppressArrayNotation);
+        foreach ($values as $key => & $value) {
+            $el = $this->getElement($key);
+            if ($el && $el->getAttrib('ignoreDefault')) {
+                if (method_exists($el, 'isChecked')) {
+                    if ($el->isChecked() === $this->getDefaultValue($key)) {
+                        $value = null;
+                    }
+                } else {
+                    if ($value === $this->getDefaultValue($key)) {
+                        $value = null;
+                    }
+                }
+            }
+        }
+
+        return $values;
     }
 
     /**

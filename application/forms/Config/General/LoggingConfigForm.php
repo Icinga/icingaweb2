@@ -35,6 +35,7 @@ class LoggingConfigForm extends Form
             'logging_log',
             array(
                 'required'      => true,
+                'ignoreDefault' => true,
                 'autosubmit'    => true,
                 'label'         => $this->translate('Logging Type'),
                 'description'   => $this->translate('The type of logging to utilize.'),
@@ -52,6 +53,7 @@ class LoggingConfigForm extends Form
                 'logging_level',
                 array(
                     'required'      => true,
+                    'ignoreDefault' => true,
                     'label'         => $this->translate('Logging Level'),
                     'description'   => $this->translate('The maximum logging level to emit.'),
                     'multiOptions'  => array(
@@ -70,6 +72,7 @@ class LoggingConfigForm extends Form
                 'logging_application',
                 array(
                     'required'      => true,
+                    'ignoreDefault' => true,
                     'label'         => $this->translate('Application Prefix'),
                     'description'   => $this->translate(
                         'The name of the application by which to prefix syslog messages.'
@@ -111,6 +114,7 @@ class LoggingConfigForm extends Form
                         'logging_facility',
                         array(
                             'required' => true,
+                            'ignoreDefault' => true,
                             'label' => $this->translate('Facility'),
                             'description' => $this->translate('The syslog facility to utilize.'),
                             'value' => 'user',

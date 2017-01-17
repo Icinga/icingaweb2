@@ -39,6 +39,7 @@ class ThemingConfigForm extends Form
             array(
                 'description'   => $this->translate('The default theme', 'Form element description'),
                 'disabled'      => count($themes) < 2 ? 'disabled' : null,
+                'ignoreDefault' => true,
                 'label'         => $this->translate('Default Theme', 'Form element label'),
                 'multiOptions'  => $themes,
                 'value'         => StyleSheet::DEFAULT_THEME
@@ -54,25 +55,11 @@ class ThemingConfigForm extends Form
                     . ' used nonetheless',
                     'Form element description'
                 ),
+                'ignoreDefault' => true,
                 'label'         => $this->translate('Users Can\'t Change Theme', 'Form element label')
             )
         );
 
         return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getValues($suppressArrayNotation = false)
-    {
-        $values = parent::getValues($suppressArrayNotation);
-        if ($values['themes_default'] === '' || $values['themes_default'] === StyleSheet::DEFAULT_THEME) {
-            $values['themes_default'] = null;
-        }
-        if (! $values['themes_disabled']) {
-            $values['themes_disabled'] = null;
-        }
-        return $values;
     }
 }
