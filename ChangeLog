@@ -2,6 +2,20 @@
 
 ## What's New
 
+### What's New in Version 2.4.1
+
+Our public repositories and issue tracker have been migrated to GitHub.
+
+#### Bugfixes
+
+* Bug 2651: [dev.icinga.com #13607] Displayed times messed up in Icinga Web 2.4.0 w/ PostgreSQL
+* Bug 2654: [dev.icinga.com #13615] Setup wizard: Not possible to setup Icinga Web 2 with an external database
+* Bug 2663: [dev.icinga.com #13691] Hook::all() is broken on CLI
+* Bug 2669: [dev.icinga.com #13735] Setup wizard: Progress bar isn't shown correctly, if setup is at finish step
+* Bug 2681: [dev.icinga.com #13957] Support failover API command transport configuration
+* Bug 2686: Granular module permissions do not work for hooks
+* Bug 2687: Update URLs to icinga.com, remove wiki & update to GitHub
+
 ### What's New in Version 2.4.0
 
 #### Feature
