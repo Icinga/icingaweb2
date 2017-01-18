@@ -171,6 +171,16 @@ class Section
     }
 
     /**
+     * Return whether this section is empty
+     *
+     * @return bool
+     */
+    public function isEmpty()
+    {
+        return empty($this->directives);
+    }
+
+    /**
      * Convert $this to an array
      *
      * @return  array
