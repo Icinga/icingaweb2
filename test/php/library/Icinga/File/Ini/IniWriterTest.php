@@ -3,6 +3,7 @@
 
 namespace Tests\Icinga\Config;
 
+use Icinga\Data\ConfigObject;
 use Icinga\File\Ini\IniWriter;
 use Icinga\Test\BaseTestCase;
 use Icinga\Application\Config;
@@ -130,24 +131,38 @@ EOD;
         $config = <<<'EOD'
 ; comment 1
 [one]
+key1 = "1"
+key2 = "2"
 
 ; comment 2
 [two]
+key1 = "1"
+key2 = "2"
 EOD;
 
         $reverted = <<<'EOD'
 ; comment 2
 [two]
+key1 = "1"
+key2 = "2"
 
 ; comment 1
 [one]
+key1 = "1"
+key2 = "2"
 EOD;
         $target = $this->writeConfigToTemporaryFile($config);
         $writer = new IniWriter(
             Config::fromArray(
                 array(
-                    'two' => array(),
-                    'one' => array()
+                    'two' => array(
+                        'key1' => '1',
+                        'key2' => '2'
+                    ),
+                    'one' => array(
+                        'key1' => '1',
+                        'key2' => '2'
+                    )
                 )
             ),
             $target
@@ -387,6 +402,71 @@ EOD;
             'IniWriter does not delete sections properly'
         );
     }
+
+    public function testSectionDeletedWhenEmpty()
+    {
+        $config = <<<'EOD'
+[section 1]
+guard = "1"
+
+[section 2]
+guard = "2"
+
+EOD;
+        $deleted = <<<'EOD'
+[section 1]
+guarg = "1"
+EOD;
+
+        $target = $this->writeConfigToTemporaryFile($config);
+        $writer = new IniWriter(
+            Config::fromArray(array(
+                'section 1' => array('guarg' => 1),
+                'section 2' => array()
+            )),
+            $target
+        );
+
+        $this->assertEquals(
+            trim($deleted),
+            trim($writer->render()),
+            'IniWriter does not delete empty sections properly'
+        );
+    }
+
+    public function testSectionNotDeletedWhenEmptyButHasKeyColumn()
+    {
+        $config = <<<'EOD'
+[section 1]
+guard = "1"
+
+[section 2]
+guard = "2"
+
+EOD;
+        $deleted = <<<'EOD'
+[section 1]
+
+[section 2]
+EOD;
+
+        $target = $this->writeConfigToTemporaryFile($config);
+        $writer = new IniWriter(
+            new Config(
+                (new ConfigObject(array(
+                    'section 1' => array(),
+                    'section 2' => array()
+                )))->setKeyColumn('name')
+            ), $target
+        );
+
+        $this->assertEquals(
+            trim($deleted),
+            trim($writer->render()),
+            'IniWriter does not keep empty sections if they have a keyColumn'
+        );
+    }
+
 
     /**
      * Write a INI-configuration string to a temporary file and return its path
