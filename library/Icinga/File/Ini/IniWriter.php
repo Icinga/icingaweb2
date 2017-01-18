@@ -144,7 +144,6 @@ class IniWriter
             }
             if (!$doc->hasSection($section)) {
                 $domSection = new Section($section);
-                $doc->addSection($domSection);
             } else {
                 $domSection = $doc->getSection($section);
             }
@@ -163,6 +162,14 @@ class IniWriter
                     $dir->setValue($value);
                     $domSection->addDirective($dir);
                 }
+            }
+
+            if (! $domSection->isEmpty() || $newconfig->getConfigObject()->getKeyColumn() !== null) {
+                if (! $doc->hasSection($section)) {
+                    $doc->addSection($domSection);
+                }
+            } else {
+                $newconfig->removeSection($section);
             }
         }
     }
@@ -196,6 +203,11 @@ class IniWriter
                     if (null === $newSection->get($key) && $oldDomSection->hasDirective($key)) {
                         $oldDomSection->removeDirective($key);
                     }
+                }
+
+                if ($newconfig->getConfigObject()->getKeyColumn() === null && $oldDomSection->isEmpty()) {
+                    $doc->removeSection($section);
+                    $newconfig->removeSection($section);
                 }
             } else {
                 $doc->removeSection($section);
