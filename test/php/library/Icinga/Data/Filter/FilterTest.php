@@ -124,7 +124,7 @@ class FilterTest extends BaseTestCase
     public function testWildcardFilterMatchesEnding()
     {
         $this->assertTrue(
-            Filter::where('service', '*org')->matches($this->row(1))
+            Filter::where('service', '*com')->matches($this->row(1))
         );
     }
 
