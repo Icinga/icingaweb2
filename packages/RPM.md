@@ -35,7 +35,7 @@ Navigate to `/icingaweb/setup` and follow the on-screen instructions.
 
 ## Support
 
-Please use one of the listed support channels at https://support.icinga.org
+Please use one of the listed support channels at https://support.icinga.com
 
 
 ## Manual Setup

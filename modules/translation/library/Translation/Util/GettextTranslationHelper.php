@@ -319,7 +319,7 @@ class GettextTranslationHelper
             'author_year' => 'YEAR',
             'project_name' => $this->moduleName ? ucfirst($this->moduleName) . ' Module' : 'Icinga Web 2',
             'project_version' => $this->version,
-            'project_bug_mail' => 'dev@icinga.org',
+            'project_bug_mail' => 'dev@icinga.com',
             'pot_creation_date' => date('Y-m-d H:iO'),
             'po_revision_date' => 'YEAR-MO-DA HO:MI+ZONE',
             'translator_name' => 'FULL NAME',

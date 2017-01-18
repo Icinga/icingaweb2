@@ -39,11 +39,11 @@ Below is a list of official package repositories for installing Icinga Web 2 for
 
 | Distribution  | Repository |
 | ------------- | ---------- |
-| Debian        | [Icinga Repository](http://packages.icinga.org/debian/) |
-| Ubuntu        | [Icinga Repository](http://packages.icinga.org/ubuntu/) |
-| RHEL/CentOS   | [Icinga Repository](http://packages.icinga.org/epel/) |
-| openSUSE      | [Icinga Repository](http://packages.icinga.org/openSUSE/) |
-| SLES          | [Icinga Repository](http://packages.icinga.org/SUSE/) |
+| Debian        | [Icinga Repository](http://packages.icinga.com/debian/) |
+| Ubuntu        | [Icinga Repository](http://packages.icinga.com/ubuntu/) |
+| RHEL/CentOS   | [Icinga Repository](http://packages.icinga.com/epel/) |
+| openSUSE      | [Icinga Repository](http://packages.icinga.com/openSUSE/) |
+| SLES          | [Icinga Repository](http://packages.icinga.com/SUSE/) |
 | Gentoo        | [Upstream](https://packages.gentoo.org/packages/www-apps/icingaweb2) |
 | FreeBSD       | [Upstream](http://portsmon.freebsd.org/portoverview.py?category=net-mgmt&portname=icingaweb2) |
 | ArchLinux     | [Upstream](https://aur.archlinux.org/packages/icingaweb2) |
@@ -59,8 +59,8 @@ Below is a list with **examples** for various distributions.
 
 **Debian Jessie**:
 ```
-wget -O - http://packages.icinga.org/icinga.key | apt-key add -
-echo 'deb http://packages.icinga.org/debian icinga-jessie main' >/etc/apt/sources.list.d/icinga.list
+wget -O - http://packages.icinga.com/icinga.key | apt-key add -
+echo 'deb http://packages.icinga.com/debian icinga-jessie main' >/etc/apt/sources.list.d/icinga.list
 apt-get update
 ```
 
@@ -70,8 +70,8 @@ apt-get update
 
 **Ubuntu Xenial**:
 ```
-wget -O - http://packages.icinga.org/icinga.key | apt-key add -
-add-apt-repository 'deb http://packages.icinga.org/ubuntu icinga-xenial main'
+wget -O - http://packages.icinga.com/icinga.key | apt-key add -
+add-apt-repository 'deb http://packages.icinga.com/ubuntu icinga-xenial main'
 apt-get update
 ```
 > INFO
@@ -80,33 +80,33 @@ apt-get update
 
 **RHEL and CentOS**:
 ```
-rpm --import http://packages.icinga.org/icinga.key
-curl -o /etc/yum.repos.d/ICINGA-release.repo http://packages.icinga.org/epel/ICINGA-release.repo
+rpm --import http://packages.icinga.com/icinga.key
+curl -o /etc/yum.repos.d/ICINGA-release.repo http://packages.icinga.com/epel/ICINGA-release.repo
 yum makecache
 ```
 
 **Fedora**:
 ```
-rpm --import http://packages.icinga.org/icinga.key
-curl -o /etc/yum.repos.d/ICINGA-release.repo http://packages.icinga.org/fedora/ICINGA-release.repo
+rpm --import http://packages.icinga.com/icinga.key
+curl -o /etc/yum.repos.d/ICINGA-release.repo http://packages.icinga.com/fedora/ICINGA-release.repo
 yum makecache
 ```
 
 **SLES 11**:
 ```
-zypper ar http://packages.icinga.org/SUSE/ICINGA-release-11.repo
+zypper ar http://packages.icinga.com/SUSE/ICINGA-release-11.repo
 zypper ref
 ```
 
 **SLES 12**:
 ```
-zypper ar http://packages.icinga.org/SUSE/ICINGA-release.repo
+zypper ar http://packages.icinga.com/SUSE/ICINGA-release.repo
 zypper ref
 ```
 
 **openSUSE**:
 ```
-zypper ar http://packages.icinga.org/openSUSE/ICINGA-release.repo
+zypper ar http://packages.icinga.com/openSUSE/ICINGA-release.repo
 zypper ref
 ```
 
@@ -166,15 +166,15 @@ directly from source.
 First of all, you need to download the sources. Icinga Web 2 is available through a Git repository. You can clone this
 repository either via git or http protocol using the following URLs:
 
-  * git://git.icinga.org/icingaweb2.git
-  * http://git.icinga.org/icingaweb2.git
+  * git://git.icinga.com/icingaweb2.git
+  * http://git.icinga.com/icingaweb2.git
 
 There is also a browsable version available at
-[git.icinga.org](https://git.icinga.org/?p=icingaweb2.git;a=summary "Icinga Web 2 Git Repository").
+[git.icinga.com](https://git.icinga.com/?p=icingaweb2.git;a=summary "Icinga Web 2 Git Repository").
 This version also offers snapshots for easy download which you can use if you do not have git present on your system.
 
 ```
-git clone git://git.icinga.org/icingaweb2.git
+git clone git://git.icinga.com/icingaweb2.git
 ```
 
 ### <a id="installing-from-source-requirements"></a> Installing Requirements from Source

@@ -1,7 +1,7 @@
 # Quality Assurance
 
 Review and test the changes and issues for this version.
-https://dev.icinga.org/projects/icingaweb2/roadmap
+https://github.com/icinga/icingaweb2
 
 # Release Workflow
 
@@ -84,6 +84,6 @@ https://github.com/Icinga/icingaweb2/releases
 
 ## Announcement
 
-* Create a new blog post on www.icinga.org/blog
+* Create a new blog post on www.icinga.com/blog
 * Send announcement mail to icinga-announce@lists.icinga.org
 * Social media: [Twitter](https://twitter.com/icinga), [Facebook](https://www.facebook.com/icinga), [G+](http://plus.google.com/+icinga), [Xing](https://www.xing.com/communities/groups/icinga-da4b-1060043), [LinkedIn](https://www.linkedin.com/groups/Icinga-1921830/about)

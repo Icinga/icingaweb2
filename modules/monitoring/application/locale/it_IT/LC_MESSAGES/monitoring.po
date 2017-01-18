@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Monitoring Module (2.0.0)\n"
-"Report-Msgid-Bugs-To: dev@icinga.org\n"
+"Report-Msgid-Bugs-To: dev@icinga.com\n"
 "POT-Creation-Date: 2015-11-09 15:01+0100\n"
 "PO-Revision-Date: 2015-11-09 15:00+0100\n"
 "Last-Translator: Davide Demuru <davide.demuru@gmail.com>\n"

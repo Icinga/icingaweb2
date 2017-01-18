@@ -11,7 +11,7 @@ use Icinga\Web\Url;
  *
  * href-helper drops URL fragments.
  *
- * @see https://dev.icinga.org/issues/6284
+ * @see https://dev.icinga.com/issues/6284
  */
 class Bug6284Test extends BaseTestCase
 {

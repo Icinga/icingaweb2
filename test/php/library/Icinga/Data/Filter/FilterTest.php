@@ -75,14 +75,14 @@ class FilterTest extends BaseTestCase
             (object) array(
                 'host'    => 'localhost',
                 'problem' => '1',
-                'service' => 'www.icinga.org',
+                'service' => 'www.icinga.com',
                 'state'   => '0',
                 'handled' => '0'
             ),
             (object) array(
                 'host'    => 'localhost',
                 'problem' => '1',
-                'service' => 'www.icinga.org',
+                'service' => 'www.icinga.com',
                 'state'   => '1',
                 'handled' => '0'
             )
@@ -124,7 +124,7 @@ class FilterTest extends BaseTestCase
     public function testWildcardFilterMatchesEnding()
     {
         $this->assertTrue(
-            Filter::where('service', '*org')->matches($this->row(1))
+            Filter::where('service', '*com')->matches($this->row(1))
         );
     }
 
@@ -138,7 +138,7 @@ class FilterTest extends BaseTestCase
     public function testWildcardFilterMatchesDot()
     {
         $this->assertTrue(
-            Filter::where('service', 'www*icinga.org')->matches($this->row(1))
+            Filter::where('service', 'www*icinga.com')->matches($this->row(1))
         );
     }
 
@@ -169,7 +169,7 @@ class FilterTest extends BaseTestCase
             Filter::matchAny(
                 Filter::where('service', 'ping'),
                 Filter::matchAll(
-                    Filter::where('service', 'www.icinga.org'),
+                    Filter::where('service', 'www.icinga.com'),
                     Filter::where('state', '0')
                 )
             )

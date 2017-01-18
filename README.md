@@ -1,6 +1,6 @@
 # Icinga Web 2
 
-![Icinga Logo](https://www.icinga.org/wp-content/uploads/2014/06/icinga_logo.png)
+![Icinga Logo](https://www.icinga.com/wp-content/uploads/2014/06/icinga_logo.png)
 
 1. [About](#about)
 2. [License](#license)
@@ -12,7 +12,7 @@
 ## About
 
 **Icinga Web 2** is the next generation open source monitoring web interface, framework
-and command-line interface developed by the [Icinga Project](https://www.icinga.org/), supporting Icinga 2,
+and command-line interface developed by the [Icinga Project](https://www.icinga.com/), supporting Icinga 2,
 Icinga Core and any other monitoring backend compatible with the IDO database.
 
 ![Icinga Web 2](https://www.icinga.com/wp-content/uploads/2016/12/Icinga-Web-2-v2.4.0.png "Icinga Web 2")

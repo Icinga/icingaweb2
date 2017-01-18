@@ -43,7 +43,7 @@ class Bug6088CommandFileCommandRenderer extends IcingaCommandFileCommandRenderer
  *
  * Multi-line comments don't work
  *
- * @see https://dev.icinga.org/issues/6088
+ * @see https://dev.icinga.com/issues/6088
  */
 class Bug6088Test extends BaseTestCase
 {
