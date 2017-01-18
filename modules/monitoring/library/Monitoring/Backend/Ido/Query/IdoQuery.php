@@ -656,7 +656,7 @@ abstract class IdoQuery extends DbQuery
                     $column
                 );
                 if (version_compare($this->getIdoVersion(), '1.14.2', '>=')) {
-                    $column = str_replace('NOW()', 'localtimestamp', $column);
+                    $column = str_replace('NOW()', 'NOW() AT TIME ZONE \'UTC\'', $column);
                 } else {
                     $column = preg_replace(
                         '/UNIX_TIMESTAMP(\((?>[^()]|(?-1))*\))/i',
