@@ -10,7 +10,7 @@ use Icinga\Web\Controller;
 use Icinga\Web\Session;
 
 /**
- * @TODO(el): https://dev.icinga.org/issues/10646
+ * @TODO(el): https://dev.icinga.com/issues/10646
  */
 class ApplicationStateController extends Controller
 {

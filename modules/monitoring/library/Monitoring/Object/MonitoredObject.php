@@ -750,7 +750,7 @@ abstract class MonitoredObject implements Filterable
      * Find all occurences of http links, separated by whitespaces and quoted
      * by single or double-ticks.
      *
-     * @link http://docs.icinga.org/latest/de/objectdefinitions.html
+     * @link http://docs.icinga.com/latest/de/objectdefinitions.html
      *
      * @param   string  $urlString  A string containing one or more urls
      * @return  array                   Array of urls as strings

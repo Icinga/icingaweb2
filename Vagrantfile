@@ -47,7 +47,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.provider :virtualbox do |vb, override|
     override.vm.box = "centos-71-x64-vbox"
-    override.vm.box_url = "http://boxes.icinga.org/centos-71-x64-vbox.box"
+    override.vm.box_url = "http://boxes.icinga.com/centos-71-x64-vbox.box"
 
     vb.customize ["modifyvm", :id, "--memory", "1024"]
     vb.customize ["modifyvm", :id, "--cpus", "2"]

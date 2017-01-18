@@ -562,7 +562,7 @@ class NavigationConfigForm extends ConfigForm
         $itemType = isset($formData['type']) ? $formData['type'] : key($itemTypes);
         if ($itemType === null) {
             throw new ProgrammingError(
-                'This should actually not happen. Create a bug report at dev.icinga.org'
+                'This should actually not happen. Create a bug report at https://github.com/icinga/icingaweb2'
                 . ' or remove this assertion if you know what you\'re doing'
             );
         }
