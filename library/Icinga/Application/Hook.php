@@ -263,7 +263,7 @@ class Hook
         }
 
         foreach (self::$hooks[$name] as $key => $hook) {
-            if (self::hasPermission($key)) {
+            if (self::hasPermission($hook)) {
                 if (self::createInstance($name, $key) === null) {
                     return array();
                 }
@@ -286,7 +286,7 @@ class Hook
 
         if (self::has($name)) {
             foreach (self::$hooks[$name] as $key => $hook) {
-                if (self::hasPermission($key)) {
+                if (self::hasPermission($hook)) {
                     return self::createInstance($name, $key);
                 }
             }
@@ -308,6 +308,8 @@ class Hook
         if (!isset(self::$hooks[$name])) {
             self::$hooks[$name] = array();
         }
+
+        $class = ltrim($class, ClassLoader::NAMESPACE_SEPARATOR);
 
         self::$hooks[$name][$key] = $class;
     }
