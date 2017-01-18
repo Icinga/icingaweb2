@@ -146,7 +146,6 @@ class LdapBackendForm extends Form
             'filter',
             array(
                 'preserveDefault'   => true,
-                'ignoreDefault'     => true,
                 'allowEmpty'        => true,
                 'value'             => $filter,
                 'label'             => $this->translate('LDAP Filter'),
