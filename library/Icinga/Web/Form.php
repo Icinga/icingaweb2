@@ -1024,7 +1024,7 @@ class Form extends Zend_Form
 
         if (method_exists($el, 'isChecked')) {
             $this->defaultValues[$el->getName()] = $el->isChecked();
-        } else if (method_exists($el, 'getMultiOptions')) {
+        } elseif (method_exists($el, 'getMultiOptions')) {
             $multiOptions = $el->getMultiOptions();
             reset($multiOptions);
             if (! empty($multiOptions)) {
@@ -1035,7 +1035,6 @@ class Form extends Zend_Form
         } else {
             $this->defaultValues[$el->getName()] = $el->getValue();
         }
-
 
         return $this->ensureElementAccessibility($el);
     }
@@ -1146,10 +1145,8 @@ class Form extends Zend_Form
                     if ($el->isChecked() === $this->getDefaultValue($key)) {
                         $value = null;
                     }
-                } else {
-                    if ($value === $this->getDefaultValue($key)) {
-                        $value = null;
-                    }
+                } elseif ($value === $this->getDefaultValue($key)) {
+                    $value = null;
                 }
             }
         }
