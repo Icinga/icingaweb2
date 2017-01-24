@@ -122,6 +122,20 @@ class GettextTranslationHelper
     }
 
     /**
+     * Cleanup temporary files
+     */
+    public function __destruct()
+    {
+        if ($this->catalogPath !== null && file_exists($this->catalogPath)) {
+            unlink($this->catalogPath);
+        }
+
+        if ($this->templatePath !== null && file_exists($this->templatePath)) {
+            unlink($this->templatePath);
+        }
+    }
+
+    /**
      * Get the config
      *
      * @return Config
@@ -251,7 +265,7 @@ class GettextTranslationHelper
     {
         if (is_file($this->tablePath)) {
             shell_exec(sprintf(
-                '%s --update %s %s 2>&1',
+                '%s --update --backup=none %s %s 2>&1',
                 $this->getConfig()->get('translation', 'msgmerge', '/usr/bin/env msgmerge'),
                 $this->tablePath,
                 $this->templatePath
