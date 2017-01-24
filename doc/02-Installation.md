@@ -47,6 +47,7 @@ Below is a list of official package repositories for installing Icinga Web 2 for
 | Gentoo        | [Upstream](https://packages.gentoo.org/packages/www-apps/icingaweb2) |
 | FreeBSD       | [Upstream](http://portsmon.freebsd.org/portoverview.py?category=net-mgmt&portname=icingaweb2) |
 | ArchLinux     | [Upstream](https://aur.archlinux.org/packages/icingaweb2) |
+| Alpine Linux  | [Upstream](http://git.alpinelinux.org/cgit/aports/tree/community/icingaweb2/APKBUILD) |
 
 Packages for distributions other than the ones listed above may also be available.
 Please contact your distribution packagers.
@@ -110,6 +111,13 @@ zypper ar http://packages.icinga.com/openSUSE/ICINGA-release.repo
 zypper ref
 ```
 
+**Alpine Linux**:
+```
+echo "http://dl-cdn.alpinelinux.org/alpine/v3.5/community" >> /etc/apk/repos
+apk	update
+apk add icingaweb2
+```
+
 #### <a id="package-repositories-rhel-notes"></a> RHEL/CentOS Notes
 
 The packages for RHEL/CentOS depend on other packages which are distributed as part of the
@@ -117,6 +125,12 @@ The packages for RHEL/CentOS depend on other packages which are distributed as p
 [these instructions](http://fedoraproject.org/wiki/EPEL#How_can_I_use_these_extra_packages.3F).
 
 > Please note that installing Icinga Web 2 on **RHEL/CentOS 5** is not supported due to EOL versions of PHP and PostgreSQL.
+
+
+#### <a id="package-repositories-alpine-notes"></a> Alpine Linux Notes
+
+The example provided suppose that you are running Alpine v3.5, which is the latest stable.
+In order to correctly manage your repository, please follow [these instructions](https://wiki.alpinelinux.org/wiki/Alpine_Linux_package_management)
 
 ### <a id="installing-from-package-example"></a> Installing Icinga Web 2
 
@@ -138,6 +152,12 @@ For RHEL/CentOS please read the [package repositories notes](#package-repositori
 ```
 zypper install icingaweb2 icingacli
 ```
+
+**Alpine Linux**:
+```
+apk add icingaweb2
+```
+For Alpine Linux please read the [package repositories notes](#package-repositories-alpine-notes).
 
 ### <a id="preparing-web-setup-from-package"></a> Preparing Web Setup
 
