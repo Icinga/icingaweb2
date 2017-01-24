@@ -10,6 +10,7 @@ use Icinga\Module\Monitoring\Forms\Command\Object\DeleteDowntimeCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\ObjectsCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\RemoveAcknowledgementCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\ToggleObjectFeaturesCommandForm;
+use Icinga\Module\Monitoring\Hook\DetailviewExtensionHook;
 use Icinga\Web\Hook;
 use Icinga\Web\Url;
 use Icinga\Web\Widget\Tabextension\DashboardAction;
@@ -96,6 +97,12 @@ abstract class MonitoredObjectController extends Controller
         }
         $this->view->showInstance = $this->backend->select()->from('instance')->count() > 1;
         $this->view->object = $this->object;
+
+        $this->view->extensionsHtml = array();
+        foreach (Hook::all('Monitoring\DetailviewExtension') as $hook) {
+            /** @var DetailviewExtensionHook $hook */
+            $this->view->extensionsHtml[] = $hook->getHtmlForObject($this->object);
+        }
     }
 
     /**
