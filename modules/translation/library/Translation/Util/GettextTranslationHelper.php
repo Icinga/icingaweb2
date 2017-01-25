@@ -280,6 +280,7 @@ class GettextTranslationHelper
             }
         }
         $this->updateHeader($this->tablePath);
+        $this->fixSourceLocations($this->tablePath);
     }
 
     /**
@@ -400,10 +401,26 @@ class GettextTranslationHelper
                     '"Content-Type: text/plain; charset=' . $headerInfo['charset'] . '\n"',
                     '"Content-Transfer-Encoding: 8bit\n"',
                     '"Plural-Forms: nplurals=2; plural=(n != 1);\n"',
+                    '"X-Poedit-Basepath: .\n"',
+                    '"X-Poedit-SearchPath-0: .\n"',
                     ''
                 )
             ) . PHP_EOL . substr($content, strpos($content, '#: '))
         );
+    }
+
+    /**
+     * Adjust all absolute source file paths so that they're all relative to the catalog's location
+     *
+     * @param   string  $path
+     */
+    protected function fixSourceLocations($path)
+    {
+        shell_exec(sprintf(
+            "sed -i 's;%s;../../../..;g' %s",
+            dirname($this->appDir),
+            $path
+        ));
     }
 
     /**
