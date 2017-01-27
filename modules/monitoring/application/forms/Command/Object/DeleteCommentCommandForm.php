@@ -49,7 +49,7 @@ class DeleteCommentCommandForm extends CommandForm
      */
     public function createElements(array $formData = array())
     {
-         $this->addElements(
+        $this->addElements(
             array(
                 array(
                     'hidden',

@@ -152,7 +152,9 @@ namespace Icinga\Test {
                 ->shouldReceive('getBaseUrl')->andReturn('/')->byDefault()
                 ->shouldReceive('getQuery')->andReturn(array())->byDefault()
                 ->shouldReceive('getParam')->with(Mockery::type('string'), Mockery::type('string'))
-                ->andReturnUsing(function ($name, $default) { return $default; })->byDefault();
+                ->andReturnUsing(function ($name, $default) {
+                    return $default;
+                })->byDefault();
 
             $responseMock = Mockery::mock('Icinga\Web\Response')->shouldDeferMissing();
             // Can't express this as demeter chains. See: https://github.com/padraic/mockery/issues/59

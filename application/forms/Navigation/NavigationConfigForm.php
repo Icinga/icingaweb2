@@ -213,8 +213,7 @@ class NavigationConfigForm extends ConfigForm
 
         $names = array();
         foreach ($this->getShareConfig($type) as $sectionName => $sectionConfig) {
-            if (
-                $sectionName !== $this->itemToLoad
+            if ($sectionName !== $this->itemToLoad
                 && $sectionConfig->owner === ($owner ?: $this->getUser()->getUsername())
                 && !in_array($sectionName, $children, true)
             ) {
@@ -223,8 +222,7 @@ class NavigationConfigForm extends ConfigForm
         }
 
         foreach ($this->getUserConfig($type) as $sectionName => $sectionConfig) {
-            if (
-                $sectionName !== $this->itemToLoad
+            if ($sectionName !== $this->itemToLoad
                 && !in_array($sectionName, $children, true)
             ) {
                 $names[] = $sectionName;
@@ -581,8 +579,7 @@ class NavigationConfigForm extends ConfigForm
             )
         );
 
-        if (
-            (! $itemForm->requiresParentSelection() || !isset($formData['parent']) || !$formData['parent'])
+        if ((! $itemForm->requiresParentSelection() || !isset($formData['parent']) || !$formData['parent'])
             && $this->getUser()->can('application/share/navigation')
         ) {
             $checked = isset($formData['shared']) ? null : (isset($formData['users']) || isset($formData['groups']));
@@ -781,8 +778,7 @@ class NavigationConfigForm extends ConfigForm
         if ($this->getUserConfig()->hasSection($name)) {
             return $this->getUserConfig();
         } elseif ($this->getShareConfig()->hasSection($name)) {
-            if (
-                $this->getShareConfig()->get($name, 'owner') === $this->getUser()->getUsername()
+            if ($this->getShareConfig()->get($name, 'owner') === $this->getUser()->getUsername()
                 || $this->getUser()->can('config/application/navigation')
             ) {
                 return $this->getShareConfig();

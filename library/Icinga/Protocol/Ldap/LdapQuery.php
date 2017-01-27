@@ -284,11 +284,11 @@ class LdapQuery extends SimpleQuery
         if (! in_array($scope, static::$scopes)) {
             throw new LogicException(
                 'Can\'t set scope %d, it is is invalid. Use one of %s or LdapQuery\'s constants.',
-                $scope, implode(', ', static::$scopes)
+                $scope,
+                implode(', ', static::$scopes)
             );
         }
         $this->scope = $scope;
         return $this;
     }
-
 }

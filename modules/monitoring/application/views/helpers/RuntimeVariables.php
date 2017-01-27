@@ -19,7 +19,7 @@ class Zend_View_Helper_RuntimeVariables extends Zend_View_Helper_Abstract
     /**
      * Create a condensed row of object data
      *
-     * @param   $result      	    stdClass
+     * @param   $result             stdClass
      *
      * @return  stdClass            Condensed row
      */

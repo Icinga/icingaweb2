@@ -18,4 +18,3 @@ class DropdownItem extends NavigationItem
         $this->children->setLayout(Navigation::LAYOUT_DROPDOWN);
     }
 }
-

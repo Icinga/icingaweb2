@@ -235,7 +235,6 @@ abstract class Repository implements Selectable
      */
     protected function init()
     {
-
     }
 
     /**
@@ -937,8 +936,7 @@ abstract class Repository implements Selectable
             return $value;
         }
 
-        if (
-            ($dateTime = DateTime::createFromFormat('YmdHis.uO', $value)) !== false
+        if (($dateTime = DateTime::createFromFormat('YmdHis.uO', $value)) !== false
             || ($dateTime = DateTime::createFromFormat('YmdHis.uZ', $value)) !== false
             || ($dateTime = DateTime::createFromFormat('YmdHis.u', $value)) !== false
             || ($dateTime = DateTime::createFromFormat('YmdHis', $value)) !== false

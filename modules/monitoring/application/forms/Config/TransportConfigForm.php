@@ -79,7 +79,7 @@ class TransportConfigForm extends ConfigForm
         switch (strtolower($type)) {
             case LocalCommandFile::TRANSPORT:
                 return new LocalTransportForm();
-            case RemoteCommandFile::TRANSPORT;
+            case RemoteCommandFile::TRANSPORT:
                 return new RemoteTransportForm();
             case ApiCommandTransport::TRANSPORT:
                 return new ApiTransportForm();

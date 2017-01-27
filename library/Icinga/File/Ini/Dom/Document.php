@@ -73,7 +73,7 @@ class Document
      */
     public function removeSection($name)
     {
-        unset ($this->sections[trim($name)]);
+        unset($this->sections[trim($name)]);
     }
 
     /**

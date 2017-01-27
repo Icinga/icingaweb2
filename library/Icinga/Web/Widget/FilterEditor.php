@@ -509,7 +509,6 @@ class FilterEditor extends AbstractWidget
                  . $this->removeLink($filter)
                  . $this->addLink($filter)
                  ;
-
         }
     }
 
@@ -689,7 +688,7 @@ class FilterEditor extends AbstractWidget
                 $parent = $filter->getById($addTo);
                 $f = Filter::expression($add['column'], $add['sign'], $add['value']);
                 if (isset($add['operator'])) {
-                    switch($add['operator']) {
+                    switch ($add['operator']) {
                         case 'AND':
                             if ($parent->isExpression()) {
                                 if ($parent->isRootNode()) {
@@ -770,7 +769,10 @@ class FilterEditor extends AbstractWidget
             return '';
         }
         if (! $this->preservedUrl()->getParam('modifyFilter')) {
-            return '<div class="filter">' . $this->renderSearch() . $this->view()->escape($this->shorten($this->filter, 50)) . '</div>';
+            return '<div class="filter">'
+                . $this->renderSearch()
+                . $this->view()->escape($this->shorten($this->filter, 50))
+                . '</div>';
         }
         return  '<div class="filter">'
             . $this->renderSearch()

@@ -5,5 +5,6 @@ namespace Icinga\Data;
 
 use Countable;
 
-interface Paginatable extends Limitable, Countable {};
-
+interface Paginatable extends Limitable, Countable
+{
+}

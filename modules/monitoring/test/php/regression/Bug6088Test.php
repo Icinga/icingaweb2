@@ -7,7 +7,6 @@ use Icinga\Test\BaseTestCase;
 use Icinga\Module\Monitoring\Command\IcingaCommand;
 use Icinga\Module\Monitoring\Command\Renderer\IcingaCommandFileCommandRenderer;
 
-
 /**
  * A command that has a hardcoded parameter with newlines
  */

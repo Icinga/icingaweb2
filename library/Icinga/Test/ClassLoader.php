@@ -59,10 +59,10 @@ class ClassLoader
         foreach ($this->namespaces as $namespace => $dir) {
             if ($class === strstr($class, $namespace)) {
                 $classPath = str_replace(
-                        self::NAMESPACE_SEPARATOR,
-                        DIRECTORY_SEPARATOR,
-                        substr($class, strlen($namespace))
-                    ) . '.php';
+                    self::NAMESPACE_SEPARATOR,
+                    DIRECTORY_SEPARATOR,
+                    substr($class, strlen($namespace))
+                ) . '.php';
                 if (file_exists($file = $dir . $classPath)) {
                     return $file;
                 }

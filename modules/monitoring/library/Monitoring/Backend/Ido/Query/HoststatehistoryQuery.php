@@ -79,8 +79,7 @@ class HoststatehistoryQuery extends IdoQuery
     {
         if ($col === 'UNIX_TIMESTAMP(hh.state_time)') {
             return 'hh.state_time ' . $sign . ' ' . $this->timestampForSql($this->valueToTimestamp($expression));
-        } elseif (
-            $col === $this->columnMap['statehistory']['type']
+        } elseif ($col === $this->columnMap['statehistory']['type']
             && ! is_array($expression)
             && array_key_exists($expression, $this->types)
         ) {

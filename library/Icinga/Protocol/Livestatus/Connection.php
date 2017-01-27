@@ -125,7 +125,7 @@ class Connection
      */
     public function count(Query $query)
     {
-    return 100;
+        return 100;
         $count = clone($query);
         // WTF? $count->count();
         Benchmark::measure('Sending Livestatus Count Query');
@@ -197,7 +197,9 @@ class Connection
         while ($row = $this->fetchRowFromSocket()) {
             $r = new ResponseRow($row, $query);
             $res = $query->resultRow($row);
-            if ($filter !== null && ! $filter->matches($res)) continue;
+            if ($filter !== null && ! $filter->matches($res)) {
+                continue;
+            }
             $result[] = $res;
         }
 
@@ -282,13 +284,17 @@ class Connection
         $col = 0;
         while (false !== ($pos = strpos($line, self::FIELD_SEPARATOR, $start))) {
 // TODO: safety measure for not killing the SPL. To be removed once code is clean
-if ($col > $size -1 ) return $res;  // ???
+            if ($col > $size -1) {
+                return $res;  // ???
+            }
             $res[$col] = substr($line, $start, $pos - $start);
             $start = $pos + 1;
             $col++;
         }
 // TODO: safety measure for not killing the SPL. To be removed once code is clean
-if ($col > $size - 1) return $res;
+        if ($col > $size - 1) {
+            return $res;
+        }
         $res[$col] = rtrim(substr($line, $start), "\r\n");
         return $res;
     }
@@ -421,8 +427,7 @@ if ($col > $size - 1) return $res;
     public function disconnect()
     {
         if (is_resource($this->connection)
-            && get_resource_type($this->connection) === 'Socket')
-        {
+            && get_resource_type($this->connection) === 'Socket') {
             Benchmark::measure('Disconnecting livestatus...');
             socket_close($this->connection);
             Benchmark::measure('...socket closed');

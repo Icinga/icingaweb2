@@ -86,7 +86,8 @@ class Platform
 
         foreach (array('/etc/os-release', '/usr/lib/os-release') as $osReleaseFile) {
             if (false === ($osRelease = @file(
-                $osReleaseFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES
+                $osReleaseFile,
+                FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES
             ))) {
                 continue;
             }

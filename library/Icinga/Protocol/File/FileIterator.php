@@ -67,7 +67,7 @@ class FileIterator extends EnumeratingFilterIterator
 
         if ($matched === false) {
             throw new FileReaderException('Failed parsing regular expression!');
-        } else if ($matched === 1) {
+        } elseif ($matched === 1) {
             foreach ($data as $key => $value) {
                 if (is_int($key)) {
                     unset($data[$key]);

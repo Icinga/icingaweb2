@@ -18,7 +18,9 @@ class WelcomePage extends Form
             'note',
             'welcome',
             array(
-                'value'         => $this->translate('Welcome to the configuration of the monitoring module for Icinga Web 2!'),
+                'value'         => $this->translate(
+                    'Welcome to the configuration of the monitoring module for Icinga Web 2!'
+                ),
                 'decorators'    => array(
                     'ViewHelper',
                     array('HtmlTag', array('tag' => 'h2'))

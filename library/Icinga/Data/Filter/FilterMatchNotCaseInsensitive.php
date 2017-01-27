@@ -5,7 +5,8 @@ namespace Icinga\Data\Filter;
 
 class FilterMatchNotCaseInsensitive extends FilterMatchNot
 {
-    public function __construct($column, $sign, $expression) {
+    public function __construct($column, $sign, $expression)
+    {
         parent::__construct($column, $sign, $expression);
         $this->caseSensitive = false;
     }

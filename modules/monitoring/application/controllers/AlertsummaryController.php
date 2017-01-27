@@ -638,7 +638,7 @@ class AlertsummaryController extends Controller
             case '1d':
                 return $this->translate('Hour');
                 break;
-            case '1w';
+            case '1w':
                 return $this->translate('Day');
                 break;
             case '1m':

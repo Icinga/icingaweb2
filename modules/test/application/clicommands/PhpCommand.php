@@ -135,7 +135,9 @@ class PhpCommand extends Command
         if (!empty($exclude)) {
             $options[] = '--ignore=' . join(',', $exclude);
         }
-        $arguments = array_filter(array_map(function ($p) { return realpath($p); }, $include));
+        $arguments = array_filter(array_map(function ($p) {
+            return realpath($p);
+        }, $include));
         if (empty($arguments)) {
             $arguments = array(
                 realpath(__DIR__ . '/../../../../application'),

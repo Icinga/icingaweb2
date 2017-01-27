@@ -805,7 +805,6 @@ class Form extends Zend_Form
      */
     public function createElements(array $formData)
     {
-
     }
 
     /**
@@ -827,7 +826,6 @@ class Form extends Zend_Form
      */
     public function onRequest()
     {
-
     }
 
     /**
@@ -1108,8 +1106,7 @@ class Form extends Zend_Form
     protected function preserveDefaults(Zend_Form $form, array & $defaults)
     {
         foreach ($form->getElements() as $name => $_) {
-            if (
-                array_key_exists($name, $defaults)
+            if (array_key_exists($name, $defaults)
                 && array_key_exists($name . static::DEFAULT_SUFFIX, $defaults)
                 && $defaults[$name] === $defaults[$name . static::DEFAULT_SUFFIX]
             ) {
@@ -1243,8 +1240,7 @@ class Form extends Zend_Form
                     // Ensure that disabled elements are not overwritten
                     // (http://www.zendframework.com/issues/browse/ZF-6909)
                     $formData[$name] = $element->getValue();
-                } elseif (
-                    array_key_exists($name . static::DEFAULT_SUFFIX, $formData)
+                } elseif (array_key_exists($name . static::DEFAULT_SUFFIX, $formData)
                     && $formData[$name] === $formData[$name . static::DEFAULT_SUFFIX]
                 ) {
                     unset($formData[$name]);

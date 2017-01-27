@@ -12,7 +12,6 @@ use Icinga\Data\Selectable;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\ProgrammingError;
 
-
 class MonitoringBackend implements Selectable, Queryable, ConnectionInterface
 {
     /**
@@ -74,7 +73,6 @@ class MonitoringBackend implements Selectable, Queryable, ConnectionInterface
     public static function instance($name = null)
     {
         if (! array_key_exists($name, self::$instances)) {
-
             list($foundName, $config) = static::loadConfig($name);
             $type = $config->get('type');
             $class = implode(
@@ -162,7 +160,6 @@ class MonitoringBackend implements Selectable, Queryable, ConnectionInterface
         $backends = Config::module('monitoring', 'backends');
 
         if ($name === null) {
-
             $count = 0;
 
             foreach ($backends as $name => $config) {
@@ -179,9 +176,7 @@ class MonitoringBackend implements Selectable, Queryable, ConnectionInterface
             }
 
             throw new ConfigurationError($message);
-
         } else {
-
             $config = $backends->getSection($name);
 
             if ($config->isEmpty()) {
@@ -339,7 +334,11 @@ class MonitoringBackend implements Selectable, Queryable, ConnectionInterface
      */
     public function getProgramVersion()
     {
-        return preg_replace('/^[vr]/', '', $this->select()->from('programstatus', array('program_version'))->fetchOne());
+        return preg_replace(
+            '/^[vr]/',
+            '',
+            $this->select()->from('programstatus', array('program_version'))->fetchOne()
+        );
     }
 
     /**

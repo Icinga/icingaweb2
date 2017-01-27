@@ -79,7 +79,6 @@ class Wizard
      */
     protected function init()
     {
-
     }
 
     /**
@@ -245,7 +244,6 @@ class Wizard
      */
     public function setupPage(Form $page, Request $request)
     {
-
     }
 
     /**
@@ -430,8 +428,7 @@ class Wizard
             if (! $this->hasPageData($requestedPage) && ($index = array_search($page, $pages, true)) > 0) {
                 $previousPage = $pages[$index - 1];
                 if ($originPage === null || ($previousPage->getName() !== $originPage->getName()
-                    && array_search($originPage, $pages, true) < $index))
-                {
+                    && array_search($originPage, $pages, true) < $index)) {
                     $permitted = $this->hasPageData($previousPage->getName());
                 }
             }

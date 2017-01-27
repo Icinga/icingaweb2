@@ -203,8 +203,7 @@ class ServicenotificationQuery extends IdoQuery
     {
         $group = array();
 
-        if (
-            $this->hasJoinedVirtualTable('history')
+        if ($this->hasJoinedVirtualTable('history')
             || $this->hasJoinedVirtualTable('hostgroups')
             || $this->hasJoinedVirtualTable('servicegroups')
         ) {

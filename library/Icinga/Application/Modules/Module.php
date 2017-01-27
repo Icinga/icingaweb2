@@ -660,7 +660,6 @@ class Module
             );
 
             if (file_exists($this->metadataFile)) {
-
                 $key = null;
                 $file = new File($this->metadataFile, 'r');
                 foreach ($file as $line) {
@@ -682,7 +681,6 @@ class Module
                     $key = lcfirst($key);
 
                     switch ($key) {
-
                         case 'depends':
                             if (strpos($val, ' ') === false) {
                                 $metadata->depends[$val] = true;
@@ -710,7 +708,6 @@ class Module
 
                         default:
                             $metadata->{$key} = $val;
-
                     }
                 }
             }

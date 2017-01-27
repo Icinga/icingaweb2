@@ -28,7 +28,7 @@ class DocSearchRenderer extends DocRenderer
      *
      * @param DocSearchIterator $iterator
      */
-    public function __construct (DocSearchIterator $iterator)
+    public function __construct(DocSearchIterator $iterator)
     {
         parent::__construct($iterator, RecursiveIteratorIterator::SELF_FIRST);
     }

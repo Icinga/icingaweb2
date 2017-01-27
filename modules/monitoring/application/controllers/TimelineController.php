@@ -37,7 +37,8 @@ class TimelineController extends Controller
         $timeline = new TimeLine(
             $this->applyRestriction(
                 'monitoring/filter/objects',
-                $this->backend->select()->from('eventhistory',
+                $this->backend->select()->from(
+                    'eventhistory',
                     array(
                         'name' => 'type',
                         'time' => 'timestamp'
@@ -119,8 +120,7 @@ class TimelineController extends Controller
      */
     private function getTimelineInterval()
     {
-        switch ($this->view->intervalBox->getInterval())
-        {
+        switch ($this->view->intervalBox->getInterval()) {
             case '1d':
                 return new DateInterval('P1D');
             case '1w':
@@ -141,8 +141,7 @@ class TimelineController extends Controller
      */
     private function getIntervalFormat()
     {
-        switch ($this->view->intervalBox->getInterval())
-        {
+        switch ($this->view->intervalBox->getInterval()) {
             case '1d':
                 return $this->getDateFormat();
             case '1w':
@@ -165,8 +164,7 @@ class TimelineController extends Controller
      */
     private function getPreloadInterval(DateTime $dateTime)
     {
-        switch ($this->view->intervalBox->getInterval())
-        {
+        switch ($this->view->intervalBox->getInterval()) {
             case '1d':
                 return DateInterval::createFromDateString('1 week -1 second');
             case '1w':
@@ -195,8 +193,7 @@ class TimelineController extends Controller
      */
     private function extrapolateDateTime(DateTime &$dateTime)
     {
-        switch ($this->view->intervalBox->getInterval())
-        {
+        switch ($this->view->intervalBox->getInterval()) {
             case '1d':
                 $dateTime->setTimestamp(strtotime('tomorrow', $dateTime->getTimestamp()) - 1);
                 break;

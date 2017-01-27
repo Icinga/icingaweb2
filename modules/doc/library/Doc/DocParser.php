@@ -90,8 +90,7 @@ class DocParser
                 return null;
             }
             $headerStyle = static::HEADER_ATX;
-        } elseif (
-            $nextLine
+        } elseif ($nextLine
             && ($nextLine[0] === '=' || $nextLine[0] === '-')
             && preg_match('/^[=-]+\s*$/', $nextLine, $match) === 1
         ) {

@@ -16,7 +16,11 @@ class DimensionTest extends BaseTestCase
 
         $d = Dimension::fromString("40%");
         $this->assertEquals(40, $d->getValue(), "Asserting the numeric value of % input to be correctly parsed");
-        $this->assertEquals(Dimension::UNIT_PERCENT, $d->getUnit(), "Asserting the unit of % input to be correctly parsed");
+        $this->assertEquals(
+            Dimension::UNIT_PERCENT,
+            $d->getUnit(),
+            "Asserting the unit of % input to be correctly parsed"
+        );
 
         $d = Dimension::fromString("4044em");
         $this->assertEquals(4044, $d->getValue(), "Asserting the numeric value of em input to be correctly parsed");

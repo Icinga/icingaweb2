@@ -23,12 +23,24 @@ class ClassRequirement extends Requirement
             $alias = $this->getAlias();
             if ($this->getState()) {
                 $stateText = $alias === null
-                    ? sprintf(mt('setup', 'The %s class is available.', 'setup.requirement.class'), $this->getCondition())
-                    : sprintf(mt('setup', 'The %s is available.', 'setup.requirement.class'), $alias);
+                    ? sprintf(
+                        mt('setup', 'The %s class is available.', 'setup.requirement.class'),
+                        $this->getCondition()
+                    )
+                    : sprintf(
+                        mt('setup', 'The %s is available.', 'setup.requirement.class'),
+                        $alias
+                    );
             } else {
                 $stateText = $alias === null
-                    ? sprintf(mt('setup', 'The %s class is missing.', 'setup.requirement.class'), $this->getCondition())
-                    : sprintf(mt('setup', 'The %s is missing.', 'setup.requirement.class'), $alias);
+                    ? sprintf(
+                        mt('setup', 'The %s class is missing.', 'setup.requirement.class'),
+                        $this->getCondition()
+                    )
+                    : sprintf(
+                        mt('setup', 'The %s is missing.', 'setup.requirement.class'),
+                        $alias
+                    );
             }
         }
         return $stateText;

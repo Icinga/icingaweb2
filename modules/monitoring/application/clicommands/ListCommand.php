@@ -76,7 +76,7 @@ class ListCommand extends Command
     protected function showFormatted($query, $format, $columns)
     {
         $query = $query->getQuery();
-        switch($format) {
+        switch ($format) {
             case 'json':
                 echo json_encode($query->fetchAll());
                 break;
@@ -294,9 +294,9 @@ class ListCommand extends Command
             }
 
             $wrappedOutput = wordwrap(
-                    preg_replace('~\@{3,}~', '@@@', $row->service_output),
-                    $maxCols - 13
-                ) . "\n";
+                preg_replace('~\@{3,}~', '@@@', $row->service_output),
+                $maxCols - 13
+            ) . "\n";
             $out .= sprintf(
                 " %1s─ %s%s (%s)",
                 $leaf,
@@ -336,6 +336,4 @@ class ListCommand extends Command
             $last = $circle;
         }
     }
-
 }
-

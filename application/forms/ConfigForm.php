@@ -137,6 +137,8 @@ class ConfigForm extends Form
      */
     public static function transformEmptyValuesToNull(array $values)
     {
-        return array_map(function ($v) { return empty($v) ? null : $v; }, $values);
+        return array_map(function ($v) {
+            return empty($v) ? null : $v;
+        }, $values);
     }
 }

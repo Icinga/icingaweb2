@@ -13,4 +13,3 @@ $this->addHelperFunction('auth', function () {
 $this->addHelperFunction('widget', function ($name, $options = null) {
     return Widget::create($name, $options);
 });
-

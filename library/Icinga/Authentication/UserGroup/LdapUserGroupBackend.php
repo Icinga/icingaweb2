@@ -713,8 +713,7 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
                 throw new ConfigurationError('User backend "%s" is not of type LDAP', $config->user_backend);
             }
 
-            if (
-                $this->ds->getHostname() !== $userBackend->getDataSource()->getHostname()
+            if ($this->ds->getHostname() !== $userBackend->getDataSource()->getHostname()
                 || $this->ds->getPort() !== $userBackend->getDataSource()->getPort()
             ) {
                 // TODO(jom): Elaborate whether it makes sense to link directories on different hosts

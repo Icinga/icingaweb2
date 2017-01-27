@@ -94,7 +94,6 @@ class RemoteTransportForm extends Form
         }
 
         if ($useResource) {
-
             $this->loadResources();
 
             $decorators = static::$defaultElementDecorators;

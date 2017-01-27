@@ -153,7 +153,6 @@ class NavigationItem implements IteratorAggregate
      */
     public function init()
     {
-
     }
 
     /**

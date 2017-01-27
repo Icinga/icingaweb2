@@ -62,7 +62,7 @@ class NavigationItemForm extends Form
                         'Callback',
                         false,
                         array(
-                            'callback' => function($url) {
+                            'callback' => function ($url) {
                                 // Matches if the given url contains obviously
                                 // a username but not any protocol identifier
                                 return !preg_match('#^((?=[^/@]).)+@.*$#', $url);

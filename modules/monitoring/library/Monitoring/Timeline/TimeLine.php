@@ -376,7 +376,9 @@ class TimeLine implements IteratorAggregate
         $range = $this->displayRange;
         return array_filter(
             $this->resultset,
-            function ($e) use ($range) { return $range->validateTime($e->time); }
+            function ($e) use ($range) {
+                return $range->validateTime($e->time);
+            }
         );
     }
 
@@ -394,7 +396,9 @@ class TimeLine implements IteratorAggregate
         $range = $this->forecastRange;
         return array_filter(
             $this->resultset,
-            function ($e) use ($range) { return $range->validateTime($e->time); }
+            function ($e) use ($range) {
+                return $range->validateTime($e->time);
+            }
         );
     }
 

@@ -322,7 +322,13 @@ class ActionController extends Zend_Controller_Action
      */
     public function translatePlural($textSingular, $textPlural, $number, $context = null)
     {
-        return Translator::translatePlural($textSingular, $textPlural, $number, $this->view->translationDomain, $context);
+        return Translator::translatePlural(
+            $textSingular,
+            $textPlural,
+            $number,
+            $this->view->translationDomain,
+            $context
+        );
     }
 
     protected function ignoreXhrBody()

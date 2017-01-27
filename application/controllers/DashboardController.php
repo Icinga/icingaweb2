@@ -181,7 +181,7 @@ class DashboardController extends ActionController
             try {
                 $dashboardConfig->saveIni();
                 Notification::success(t('Dashlet has been removed from') . ' ' . $pane->getTitle());
-            }  catch (Exception $e) {
+            } catch (Exception $e) {
                 $action->view->error = $e;
                 $action->view->config = $dashboardConfig;
                 $action->render('error');
@@ -217,7 +217,7 @@ class DashboardController extends ActionController
             try {
                 $dashboardConfig->saveIni();
                 Notification::success(t('Dashboard has been removed') . ': ' . $pane->getTitle());
-            }  catch (Exception $e) {
+            } catch (Exception $e) {
                 $action->view->error = $e;
                 $action->view->config = $dashboardConfig;
                 $action->render('error');

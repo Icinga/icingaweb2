@@ -148,8 +148,7 @@ class IdoResourcePage extends Form
         }
 
         $configObject = new ConfigObject($this->getValues());
-        if (
-            ! BackendConfigForm::isValidIdoSchema($this, $configObject)
+        if (! BackendConfigForm::isValidIdoSchema($this, $configObject)
             || !BackendConfigForm::isValidIdoInstance($this, $configObject)
         ) {
             return false;

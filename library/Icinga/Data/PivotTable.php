@@ -341,8 +341,7 @@ class PivotTable implements Sortable
      */
     public function toArray()
     {
-        if (
-            ($this->xAxisFilter === null && $this->yAxisFilter === null)
+        if (($this->xAxisFilter === null && $this->yAxisFilter === null)
             || ($this->xAxisFilter !== null && $this->yAxisFilter !== null)
         ) {
             $xAxis = $this->queryXAxis()->fetchPairs();
@@ -370,13 +369,13 @@ class PivotTable implements Sortable
         if (! empty($xAxis) && ! empty($yAxis)) {
             $this->baseQuery
                 ->where($this->xAxisColumn, array_map(
-                    function($key) {
+                    function ($key) {
                         return (string) $key;
                     },
                     $xAxisKeys
                 ))
                 ->where($this->yAxisColumn, array_map(
-                    function($key) {
+                    function ($key) {
                         return (string) $key;
                     },
                     $yAxisKeys

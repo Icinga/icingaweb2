@@ -10,5 +10,5 @@ $this->addHelperFunction('ellipsis', function ($string, $maxLength, $ellipsis = 
 });
 
 $this->addHelperFunction('nl2br', function ($string) {
-   return nl2br(str_replace(array('\r\n', '\r', '\n'), '<br>', $string), false);
+    return nl2br(str_replace(array('\r\n', '\r', '\n'), '<br>', $string), false);
 });

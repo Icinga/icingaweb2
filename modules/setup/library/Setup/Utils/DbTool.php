@@ -221,9 +221,9 @@ class DbTool
      */
     public function connect($dbname = null)
     {
-        $this->_pdoConnect($dbname);
+        $this->pdoConnect($dbname);
         if ($dbname !== null) {
-            $this->_zendConnect($dbname);
+            $this->zendConnect($dbname);
             $this->dbFromConfig = $dbname === $this->config['dbname'];
         }
     }
@@ -247,7 +247,7 @@ class DbTool
      *
      * @throws  ConfigurationError  In case the resource type is not a supported PDO driver name
      */
-    protected function _zendConnect($dbname)
+    private function zendConnect($dbname)
     {
         if ($this->zendConn !== null) {
             return;
@@ -299,7 +299,7 @@ class DbTool
      *
      * @param   string  $dbname     The name of the database to connect with
      */
-    protected function _pdoConnect($dbname)
+    private function pdoConnect($dbname)
     {
         if ($this->pdoConn !== null) {
             return;
@@ -310,8 +310,7 @@ class DbTool
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
         );
 
-        if (
-            $this->config['db'] === 'mysql'
+        if ($this->config['db'] === 'mysql'
             && isset($this->config['use_ssl'])
             && $this->config['use_ssl']
         ) {

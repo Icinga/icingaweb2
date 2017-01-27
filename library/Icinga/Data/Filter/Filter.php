@@ -143,16 +143,23 @@ abstract class Filter
     public static function expression($col, $op, $expression)
     {
         switch ($op) {
-            case '=': return new FilterMatch($col, $op, $expression);
-            case '<': return new FilterLessThan($col, $op, $expression);
-            case '>': return new FilterGreaterThan($col, $op, $expression);
-            case '>=': return new FilterEqualOrGreaterThan($col, $op, $expression);
-            case '<=': return new FilterEqualOrLessThan($col, $op, $expression);
-            case '!=': return new FilterMatchNot($col, $op, $expression);
-            default: throw new ProgrammingError(
-                'There is no such filter sign: %s',
-                $op
-            );
+            case '=':
+                return new FilterMatch($col, $op, $expression);
+            case '<':
+                return new FilterLessThan($col, $op, $expression);
+            case '>':
+                return new FilterGreaterThan($col, $op, $expression);
+            case '>=':
+                return new FilterEqualOrGreaterThan($col, $op, $expression);
+            case '<=':
+                return new FilterEqualOrLessThan($col, $op, $expression);
+            case '!=':
+                return new FilterMatchNot($col, $op, $expression);
+            default:
+                throw new ProgrammingError(
+                    'There is no such filter sign: %s',
+                    $op
+                );
         }
     }
 
@@ -213,9 +220,12 @@ abstract class Filter
     public static function chain($operator, $filters = array())
     {
         switch ($operator) {
-            case 'AND': return self::matchAll($filters);
-            case 'OR' : return self::matchAny($filters);
-            case 'NOT': return self::not($filters);
+            case 'AND':
+                return self::matchAll($filters);
+            case 'OR':
+                return self::matchAny($filters);
+            case 'NOT':
+                return self::not($filters);
         }
         throw new ProgrammingError(
             '"%s" is not a valid filter chain operator',

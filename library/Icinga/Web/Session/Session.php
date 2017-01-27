@@ -32,7 +32,8 @@ abstract class Session extends SessionNamespace
     /**
      * Persists changes to the underlying session implementation
      */
-    public function write() {
+    public function write()
+    {
         throw new NotImplementedError('You are required to implement write() in your session implementation');
     }
 

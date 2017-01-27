@@ -944,8 +944,7 @@ class LdapConnection implements Selectable, Inspectable
                         );
                     }
                 }
-            } while (
-                (! $serverSorting || $limit === 0 || $limit !== count($entries))
+            } while ((! $serverSorting || $limit === 0 || $limit !== count($entries))
                 && ($entry = ldap_next_entry($ds, $entry))
             );
 
@@ -1053,8 +1052,7 @@ class LdapConnection implements Selectable, Inspectable
             }
         }
 
-        if (
-            $unfoldAttribute !== null
+        if ($unfoldAttribute !== null
             && isset($cleanedAttributes[$unfoldAttribute])
             && is_array($cleanedAttributes[$unfoldAttribute])
         ) {
@@ -1110,7 +1108,6 @@ class LdapConnection implements Selectable, Inspectable
             if ($attributeOctets >= 127) {
                 // Use the indefinite form of the length octets (the long form would be another option)
                 $attributeType = '0440' . $attributeType . '0000';
-
             } else {
                 $attributeType = '04' . str_pad(dechex($attributeOctets), 2, '0', STR_PAD_LEFT) . $attributeType;
             }
@@ -1177,7 +1174,6 @@ class LdapConnection implements Selectable, Inspectable
             if (! ldap_start_tls($ds)) {
                 throw new LdapException('LDAP STARTTLS failed: %s', ldap_error($ds));
             }
-
         } elseif ($this->encryption !== static::LDAPS) {
             $this->encrypted = false;
             $info->write('Connect without encryption');
@@ -1249,7 +1245,7 @@ class LdapConnection implements Selectable, Inspectable
             ));
         }
 
-        switch($scope) {
+        switch ($scope) {
             case LdapQuery::SCOPE_SUB:
                 $function = 'ldap_search';
                 break;

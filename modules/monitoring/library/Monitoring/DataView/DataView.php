@@ -176,7 +176,6 @@ abstract class DataView implements QueryInterface, SortRules, FilterColumns, Ite
         }
 
         if (isset($params['sort'])) {
-
             $order = isset($params['order']) ? $params['order'] : null;
             if ($order !== null) {
                 if (strtolower($order) === 'desc') {

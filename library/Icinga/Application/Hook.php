@@ -226,7 +226,6 @@ class Hook
         }
 
         if (!$instance instanceof $base_class) {
-
             // This is a compatibility check. Should be removed one far day:
             if ($module !== null) {
                 $compat_class = 'Icinga\\Module\\'

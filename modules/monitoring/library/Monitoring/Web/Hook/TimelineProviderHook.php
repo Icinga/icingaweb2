@@ -10,4 +10,6 @@ use Icinga\Module\Monitoring\Hook\TimelineProviderHook as BaseHook;
  *
  * Please implement hooks in our Hook direcory
  */
-abstract class TimelineProviderHook extends BaseHook {}
+abstract class TimelineProviderHook extends BaseHook
+{
+}

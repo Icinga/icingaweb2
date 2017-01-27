@@ -33,7 +33,8 @@ class FileQuery extends SimpleQuery
      * Nothing to do here
      */
     public function applyFilter(Filter $filter)
-    {}
+    {
+    }
 
     /**
      * Sort query result chronological

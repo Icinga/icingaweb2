@@ -112,7 +112,8 @@ class LogFileIterator implements Iterator
         $this->valid = null;
         while ($this->file->valid()) {
             if (false === ($res = preg_match(
-                $this->fields, $current = $this->file->current()
+                $this->fields,
+                $current = $this->file->current()
             ))) {
                 throw new IcingaException('Failed at preg_match()');
             }
@@ -120,7 +121,7 @@ class LogFileIterator implements Iterator
                 if ($res === 1) {
                     $message[] = $current;
                 }
-            } else if ($res === 1) {
+            } elseif ($res === 1) {
                 $this->next = $current;
                 $this->valid = true;
                 break;
@@ -139,7 +140,9 @@ class LogFileIterator implements Iterator
             while (! empty($message)) {
                 $matches = array();
                 if (false === ($res = preg_match(
-                    $this->fields, implode(PHP_EOL, $message), $matches
+                    $this->fields,
+                    implode(PHP_EOL, $message),
+                    $matches
                 ))) {
                     throw new IcingaException('Failed at preg_match()');
                 }

@@ -242,7 +242,9 @@ class AuthChain implements Authenticatable, Iterator
         } catch (ConfigurationError $e) {
             Logger::error(
                 new ConfigurationError(
-                    'Can\'t create authentication backend "%s". An exception was thrown:',  $name,  $e
+                    'Can\'t create authentication backend "%s". An exception was thrown:',
+                    $name,
+                    $e
                 )
             );
             $this->next();

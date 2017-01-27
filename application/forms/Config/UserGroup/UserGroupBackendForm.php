@@ -40,8 +40,7 @@ class UserGroupBackendForm extends ConfigForm
      */
     public function getBackendForm($type)
     {
-        switch ($type)
-        {
+        switch ($type) {
             case 'db':
                 return new DbUserGroupBackendForm();
             case 'ldap':

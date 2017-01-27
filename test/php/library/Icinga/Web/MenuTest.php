@@ -21,7 +21,9 @@ class MenuTest extends BaseTestCase
 
         $this->assertEquals(
             array('aaa', 'bb', 'bbb', 'ccc', 'ccc2', 'ccc5'),
-            array_map(function ($m) { return $m->getTitle(); }, iterator_to_array($menu->order())),
+            array_map(function ($m) {
+                return $m->getTitle();
+            }, iterator_to_array($menu->order())),
             'Menu::order() does not return its elements in natural order'
         );
     }

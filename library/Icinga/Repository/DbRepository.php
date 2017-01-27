@@ -544,8 +544,7 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
             return;
         }
 
-        if (
-            ! ($query !== null && $this->validateQueryColumnAssociation($table, $name))
+        if (! ($query !== null && $this->validateQueryColumnAssociation($table, $name))
             && !($query === null && $this->validateStatementColumnAssociation($table, $name))
         ) {
             $table = $this->findTableName($name);
@@ -620,8 +619,7 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
     public function reassembleQueryColumnAlias($table, $column)
     {
         $alias = parent::reassembleQueryColumnAlias($table, $column);
-        if (
-            $alias === null
+        if ($alias === null
             && !$this->validateQueryColumnAssociation($table, $column)
             && ($tableName = $this->findTableName($column))
         ) {
@@ -836,8 +834,7 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
      */
     public function hasStatementColumn($table, $name)
     {
-        if (
-            ($this->resolveStatementColumnAlias($table, $name) === null
+        if (($this->resolveStatementColumnAlias($table, $name) === null
              && $this->reassembleStatementColumnAlias($table, $name) === null)
             || !$this->validateStatementColumnAssociation($table, $name)
         ) {

@@ -603,8 +603,7 @@ class RepositoryQuery implements QueryInterface, SortRules, FilterColumns, Itera
                 $aliases[1] !== 1 ? $this->getNativeAlias($aliases[1]) : $columns[1]
             );
 
-            if (
-                $this->repository->providesValueConversion($this->target, $colOne)
+            if ($this->repository->providesValueConversion($this->target, $colOne)
                 || $this->repository->providesValueConversion($this->target, $colTwo)
             ) {
                 $newResults = array();

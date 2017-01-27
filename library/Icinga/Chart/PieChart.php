@@ -208,7 +208,6 @@ class PieChart extends Chart
                 if (!$this->noCaption && isset($pie['labels'])) {
                     $slice->setCaption($pie['labels'][$labelPos++])
                         ->setLabelGroup($labelBox);
-
                 }
                 $lastRadius += $dataset;
             }
@@ -305,4 +304,3 @@ class PieChart extends Chart
         $clipBox->addElement($rect);
     }
 }
-

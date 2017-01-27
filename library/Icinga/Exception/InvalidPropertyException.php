@@ -6,4 +6,6 @@ namespace Icinga\Exception;
 /**
  * Exception thrown if a property does not exist
  */
-class InvalidPropertyException extends IcingaException {}
+class InvalidPropertyException extends IcingaException
+{
+}

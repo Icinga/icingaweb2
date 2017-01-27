@@ -95,13 +95,13 @@ class BarGraph extends Styleable implements Drawable
      * Draw a single rectangle
      *
      * @param array     $point          The
-     * @param null      $index
      * @param string    $fill           The fill color to use
      * @param           $strokeWidth
+     * @param null      $index
      *
      * @return Rect
      */
-    private function drawSingleBar($point, $index = null, $fill, $strokeWidth)
+    private function drawSingleBar($point, $fill, $strokeWidth, $index = null)
     {
         $rect = new Rect($point[0] - ($this->barWidth / 2), $point[1], $this->barWidth, 100 - $point[1]);
         $rect->setFill($fill);
@@ -137,11 +137,11 @@ class BarGraph extends Styleable implements Drawable
 
         foreach ($this->dataSet as $x => $point) {
             // add white background bar, to prevent other bars from altering transparency effects
-            $bar = $this->drawSingleBar($point, $idx++, 'white', $this->strokeWidth, $idx)->toSvg($ctx);
+            $bar = $this->drawSingleBar($point, 'white', $this->strokeWidth, $idx++)->toSvg($ctx);
             $group->appendChild($bar);
 
             // draw actual bar
-            $bar = $this->drawSingleBar($point, null, $this->fill, $this->strokeWidth, $idx)->toSvg($ctx);
+            $bar = $this->drawSingleBar($point, $this->fill, $this->strokeWidth)->toSvg($ctx);
             $bar->setAttribute('class', 'chart-data');
             if (isset($this->tooltips[$x])) {
                 $data = array(
