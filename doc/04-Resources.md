@@ -25,6 +25,7 @@ to handle authentication and authorization, monitoring data or user preferences.
 | **username**  | The username to use when connecting to the server. |
 | **password**  | The password to use when connecting to the server. |
 | **dbname**    | The database to use. |
+| **charset**   | The character set to use for the database connection. |
 
 #### <a id="resources-configuration-database-example"></a> Example
 
