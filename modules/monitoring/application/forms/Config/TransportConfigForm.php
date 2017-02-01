@@ -220,9 +220,9 @@ class TransportConfigForm extends ConfigForm
         );
 
         $transportTypes = array(
+            ApiCommandTransport::TRANSPORT  => $this->translate('Icinga 2 API'),
             LocalCommandFile::TRANSPORT     => $this->translate('Local Command File'),
-            RemoteCommandFile::TRANSPORT    => $this->translate('Remote Command File'),
-            ApiCommandTransport::TRANSPORT  => $this->translate('Icinga 2 API')
+            RemoteCommandFile::TRANSPORT    => $this->translate('Remote Command File')
         );
 
         $transportType = isset($formData['transport']) ? $formData['transport'] : null;
