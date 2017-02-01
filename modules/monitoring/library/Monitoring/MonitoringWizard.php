@@ -214,6 +214,15 @@ class MonitoringWizard extends Wizard implements SetupWizard
         )));
         $backendSet->merge($pgsqlSet);
         $set->merge($backendSet);
+        $set->add(new PhpModuleRequirement(array(
+            'optional'      => true,
+            'condition'     => 'curl',
+            'alias'         => 'cURL',
+            'description'   => mt(
+                'monitoring',
+                'To send external commands over Icinga 2\'s API the cURL module for PHP is required.'
+            )
+        )));
 
         return $set;
     }
