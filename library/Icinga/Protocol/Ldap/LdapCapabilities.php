@@ -291,8 +291,8 @@ class LdapCapabilities
         $result = @ldap_read($ds, '', (string) $connection->select()->from('*', $fields), $fields);
         if (! $result) {
             throw new LdapException(
-                'Capability query failed (%s:%d): %s. Check if hostname and port of the'
-                . ' ldap resource are correct and if anonymous access is permitted.',
+                'Capability query failed (%s; Default port: %d): %s. Check if hostname and port'
+                . ' of the ldap resource are correct and if anonymous access is permitted.',
                 $connection->getHostname(),
                 $connection->getPort(),
                 ldap_error($ds)
@@ -302,7 +302,7 @@ class LdapCapabilities
         $entry = ldap_first_entry($ds, $result);
         if ($entry === false) {
             throw new LdapException(
-                'Capabilities not available (%s:%d): %s. Discovery of root DSE probably not permitted.',
+                'Capabilities not available (%s; Default port: %d): %s. Discovery of root DSE probably not permitted.',
                 $connection->getHostname(),
                 $connection->getPort(),
                 ldap_error($ds)

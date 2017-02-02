@@ -4,6 +4,7 @@
 namespace Icinga\Forms\Config\Resource;
 
 use Icinga\Web\Form;
+use Icinga\Web\Url;
 use Icinga\Protocol\Ldap\LdapConnection;
 
 /**
@@ -20,9 +21,7 @@ class LdapResourceForm extends Form
     }
 
     /**
-     * Create and add elements to this form
-     *
-     * @param   array   $formData   The data sent by the user
+     * {@inheritdoc}
      */
     public function createElements(array $formData)
     {
@@ -49,7 +48,38 @@ class LdapResourceForm extends Form
                     'The hostname or address of the LDAP server to use for authentication.'
                     . ' You can also provide multiple hosts separated by a space'
                 ),
-                'value'         => 'localhost'
+                'value'         => 'localhost',
+                'validators'    => array(
+                    array(
+                        'Callback',
+                        false,
+                        array(
+                            'callback'  => function ($v) {
+                                $withoutScheme = $withScheme = false;
+                                foreach (explode(' ', $v) as $uri) {
+                                    if (preg_match('~^(?<!://)[^:]+:\d+$~', $uri)) {
+                                        return false;
+                                    }
+
+                                    $url = Url::fromPath($uri);
+                                    if ($url->getScheme()) {
+                                        $withScheme = true;
+                                    } else {
+                                        $withoutScheme = true;
+                                    }
+                                }
+
+                                return $withScheme ^ $withoutScheme;
+                            },
+                            'messages'  => array(
+                                'callbackValue' => $this->translate(
+                                    'A protocol scheme such as ldap:// or ldaps:// is mandatory for URIs with a given'
+                                    . ' port and for all other URIs as well once a scheme is given for a single one.'
+                                )
+                            )
+                        )
+                    )
+                )
             )
         );
         $this->addElement(
