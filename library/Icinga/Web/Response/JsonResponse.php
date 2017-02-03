@@ -4,6 +4,7 @@
 namespace Icinga\Web\Response;
 
 use Zend_Controller_Action_HelperBroker;
+use Icinga\Application\Logger;
 use Icinga\Web\Response;
 
 /**
@@ -42,7 +43,7 @@ class JsonResponse extends Response
      *
      * @var int
      */
-    protected $encodingOptions = 0;
+    protected $encodingOptions;
 
     /**
      * Error message if the API call failed due to a server error
@@ -79,6 +80,13 @@ class JsonResponse extends Response
      */
     public function getEncodingOptions()
     {
+        if ($this->encodingOptions === null) {
+            // PHP 5.5+ does never emit a warning and only replaces non-UTF8 strings with
+            // NULL if the option JSON_PARTIAL_OUTPUT_ON_ERROR is used. We're using this
+            // as the default here to emulate PHP <= 5.4's behaviour.
+            return defined('JSON_PARTIAL_OUTPUT_ON_ERROR') ? JSON_PARTIAL_OUTPUT_ON_ERROR : 0;
+        }
+
         return $this->encodingOptions;
     }
 
@@ -188,7 +196,26 @@ class JsonResponse extends Response
                 $body['data'] = $this->getSuccessData();
                 break;
         }
-        echo json_encode($body, $this->getEncodingOptions());
+
+        // Since we're enabling display_errors in our bootstrapper, PHP <= 5.4 won't emit any warning or log
+        // message if it encounters non-UTF8 characters. It will simply replace such strings with NULL.
+        $json = json_encode($body, $this->getEncodingOptions());
+        if (($errNo = json_last_error()) > 0) {
+            Logger::error(
+                'Failed to render route "%s" as JSON: %s',
+                $this->getRequest()->getUrl()->getAbsoluteUrl(),
+                function_exists('json_last_error_msg') ? json_last_error_msg() : "Error #$errNo"
+            );
+
+            // JSON_PARTIAL_OUTPUT_ON_ERROR may have not been in use..
+            if ($json === false) {
+                // Since the headers have already been sent at this stage we
+                // can only output NULL to signal an error to the client
+                $json = 'null';
+            }
+        }
+
+        echo $json;
     }
 
     /**
