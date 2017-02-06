@@ -36,10 +36,11 @@ class ApiTransportForm extends Form
                 'number',
                 'port',
                 array(
-                    'required'      => true,
-                    'label'         => $this->translate('Port'),
-                    'description'   => $this->translate('SSH port to connect to on the remote Icinga instance'),
-                    'value'         => 5665
+                    'required'          => true,
+                    'preserveDefault'   => true,
+                    'label'             => $this->translate('Port'),
+                    'description'       => $this->translate('SSH port to connect to on the remote Icinga instance'),
+                    'value'             => 5665
                 )
             ),
             array(

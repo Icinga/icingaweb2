@@ -113,4 +113,3 @@ class Controller extends IcingaWebController
         return $restriction;
     }
 }
-

@@ -61,7 +61,6 @@ class ModuleController extends DocController
             'title'     => $this->translate('Module Documentation', 'Tab title'),
             'url'       => Url::fromRequest()
         ));
-
     }
 
     /**

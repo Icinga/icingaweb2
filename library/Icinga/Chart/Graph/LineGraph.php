@@ -162,39 +162,38 @@ class LineGraph extends Styleable implements Drawable
         $path->setId($this->id);
         $group = $path->toSvg($ctx);
 
-            foreach ($this->dataset as $x => $point) {
-
-                if ($this->showDataPoints === true) {
-                    $dot = new Circle($point[0], $point[1], $this->dotWith);
-                    $dot->setFill($this->strokeColor);
-                    $group->appendChild($dot->toSvg($ctx));
-                }
-
-                // Draw invisible circle for tooltip hovering
-                $invisible = new Circle($point[0], $point[1], 20);
-                $invisible->setFill($this->strokeColor);
-                $invisible->setAdditionalStyle('opacity: 0.0;');
-                $invisible->setAttribute('class', 'chart-data');
-                if (isset($this->tooltips[$x])) {
-                    $data = array(
-                        'label' => isset($this->graphs[$this->order]['label']) ?
-                                strtolower($this->graphs[$this->order]['label']) : '',
-                        'color' => isset($this->graphs[$this->order]['color']) ?
-                                strtolower($this->graphs[$this->order]['color']) : '#fff'
-                    );
-                    $format = isset($this->graphs[$this->order]['tooltip'])
-                        ? $this->graphs[$this->order]['tooltip'] : null;
-                    $invisible->setAttribute(
-                        'title',
-                        $this->tooltips[$x]->renderNoHtml($this->order, $data, $format)
-                    );
-                    $invisible->setAttribute(
-                        'data-title-rich',
-                        $this->tooltips[$x]->render($this->order, $data, $format)
-                    );
-                }
-                $group->appendChild($invisible->toSvg($ctx));
+        foreach ($this->dataset as $x => $point) {
+            if ($this->showDataPoints === true) {
+                $dot = new Circle($point[0], $point[1], $this->dotWith);
+                $dot->setFill($this->strokeColor);
+                $group->appendChild($dot->toSvg($ctx));
             }
+
+            // Draw invisible circle for tooltip hovering
+            $invisible = new Circle($point[0], $point[1], 20);
+            $invisible->setFill($this->strokeColor);
+            $invisible->setAdditionalStyle('opacity: 0.0;');
+            $invisible->setAttribute('class', 'chart-data');
+            if (isset($this->tooltips[$x])) {
+                $data = array(
+                    'label' => isset($this->graphs[$this->order]['label']) ?
+                            strtolower($this->graphs[$this->order]['label']) : '',
+                    'color' => isset($this->graphs[$this->order]['color']) ?
+                            strtolower($this->graphs[$this->order]['color']) : '#fff'
+                );
+                $format = isset($this->graphs[$this->order]['tooltip'])
+                    ? $this->graphs[$this->order]['tooltip'] : null;
+                $invisible->setAttribute(
+                    'title',
+                    $this->tooltips[$x]->renderNoHtml($this->order, $data, $format)
+                );
+                $invisible->setAttribute(
+                    'data-title-rich',
+                    $this->tooltips[$x]->render($this->order, $data, $format)
+                );
+            }
+            $group->appendChild($invisible->toSvg($ctx));
+        }
 
         return $group;
     }

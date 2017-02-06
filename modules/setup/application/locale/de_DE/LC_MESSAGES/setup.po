@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Setup Module (2.3.4)\n"
-"Report-Msgid-Bugs-To: dev@icinga.org\n"
+"Report-Msgid-Bugs-To: dev@icinga.com\n"
 "POT-Creation-Date: 2016-12-12 09:32+0000\n"
 "PO-Revision-Date: 2016-12-13 12:10+0100\n"
 "Language: de_DE\n"

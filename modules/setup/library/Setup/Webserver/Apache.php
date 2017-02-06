@@ -55,6 +55,5 @@ Alias {urlPath} "{documentRoot}"
     </IfModule>
 </Directory>
 EOD;
-
     }
 }

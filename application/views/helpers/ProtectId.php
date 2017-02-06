@@ -6,7 +6,8 @@
  */
 class Zend_View_Helper_ProtectId extends Zend_View_Helper_Abstract
 {
-    public function protectId($id) {
+    public function protectId($id)
+    {
         return Zend_Controller_Front::getInstance()->getRequest()->protectId($id);
     }
 }

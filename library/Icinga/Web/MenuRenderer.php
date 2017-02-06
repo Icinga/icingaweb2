@@ -182,8 +182,12 @@ class MenuRenderer extends RecursiveIteratorIterator
      */
     protected function isActive(Menu $child)
     {
-        if (! $this->url) return false;
-        if (! ($childUrl = $child->getUrl())) return false;
+        if (! $this->url) {
+            return false;
+        }
+        if (! ($childUrl = $child->getUrl())) {
+            return false;
+        }
 
         return $this->url && $this->url->matches($childUrl);
     }

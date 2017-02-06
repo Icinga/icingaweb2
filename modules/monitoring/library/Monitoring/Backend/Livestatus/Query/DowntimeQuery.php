@@ -4,6 +4,7 @@
 namespace Icinga\Module\Monitoring\Backend\Livestatus\Query;
 
 use Icinga\Protocol\Livestatus\Query;
+
 // TODO: still VERRRRY ugly
 class DowntimeQuery extends Query
 {
@@ -41,5 +42,4 @@ class DowntimeQuery extends Query
     {
         return $res['is_service'] ? 'service' : 'host';
     }
-
 }

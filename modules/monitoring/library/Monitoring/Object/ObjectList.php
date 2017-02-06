@@ -222,7 +222,7 @@ abstract class ObjectList implements Countable, IteratorAggregate, Filterable
     /**
      * @return ObjectList
      */
-    public abstract function getUnacknowledgedObjects();
+    abstract public function getUnacknowledgedObjects();
 
     /**
      * Create a ObjectList from an array of hosts without querying a backend
@@ -246,7 +246,7 @@ abstract class ObjectList implements Countable, IteratorAggregate, Filterable
      *
      * @return  Filter
      */
-    abstract function objectsFilter($columns = array());
+    abstract public function objectsFilter($columns = array());
 
     /**
      * Get the feature status

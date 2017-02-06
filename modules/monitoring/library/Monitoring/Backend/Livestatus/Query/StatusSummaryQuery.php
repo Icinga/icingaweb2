@@ -41,24 +41,24 @@ class StatusSummaryQuery extends Query
             'services_not_checked'                      => 'active_checks_enabled = 0 & accept_passive_checks = 0',
       );
 
-      protected function columnsToString()
-      {
-          $parts = array();
-          foreach ($this->columns as $col) {
-if (! array_key_exists($col, $this->available_columns)) {
-  throw new ProgrammingError('No such column: %s', $col);
-}
-              $filter = $this->filterStringToFilter($this->available_columns[$col]);
+    protected function columnsToString()
+    {
+        $parts = array();
+        foreach ($this->columns as $col) {
+            if (! array_key_exists($col, $this->available_columns)) {
+                          throw new ProgrammingError('No such column: %s', $col);
+            }
+            $filter = $this->filterStringToFilter($this->available_columns[$col]);
 
-              //Filter::fromQueryString(str_replace(' ', '',  $this->available_columns[$col]));
-              $parts[] = $this->renderFilter( $filter, 'Stats', 0, false);
-          }
+            //Filter::fromQueryString(str_replace(' ', '',  $this->available_columns[$col]));
+            $parts[] = $this->renderFilter($filter, 'Stats', 0, false);
+        }
         $this->preparedHeaders = $this->columns;
-          return implode("\n", $parts);
-      }
+        return implode("\n", $parts);
+    }
 
-      protected function renderkkFilter($filter, $type = 'Filter', $level = 0, $keylookup = true)
-      {
-          return parent::renderFilter($filter, 'Stats', $level, $keylookup);
-      }
+    protected function renderkkFilter($filter, $type = 'Filter', $level = 0, $keylookup = true)
+    {
+        return parent::renderFilter($filter, 'Stats', $level, $keylookup);
+    }
 }

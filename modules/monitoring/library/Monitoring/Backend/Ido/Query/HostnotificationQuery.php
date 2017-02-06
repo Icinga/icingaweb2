@@ -206,8 +206,7 @@ class HostnotificationQuery extends IdoQuery
     {
         $group = array();
 
-        if (
-            $this->hasJoinedVirtualTable('history')
+        if ($this->hasJoinedVirtualTable('history')
             || $this->hasJoinedVirtualTable('services')
             || $this->hasJoinedVirtualTable('hostgroups')
         ) {

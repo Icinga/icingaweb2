@@ -32,31 +32,34 @@ $this->addHelperFunction('url', function ($path = null, $params = null) {
     return $url;
 });
 
-$this->addHelperFunction('qlink', function ($title, $url, $params = null, $properties = null, $escape = true) use ($view) {
-    $icon = '';
-    if ($properties) {
-        if (array_key_exists('title', $properties) && !array_key_exists('aria-label', $properties)) {
-            $properties['aria-label'] = $properties['title'];
+$this->addHelperFunction(
+    'qlink',
+    function ($title, $url, $params = null, $properties = null, $escape = true) use ($view) {
+        $icon = '';
+        if ($properties) {
+            if (array_key_exists('title', $properties) && !array_key_exists('aria-label', $properties)) {
+                $properties['aria-label'] = $properties['title'];
+            }
+
+            if (array_key_exists('icon', $properties)) {
+                $icon = $view->icon($properties['icon']);
+                unset($properties['icon']);
+            }
+
+            if (array_key_exists('img', $properties)) {
+                $icon = $view->img($properties['img']);
+                unset($properties['img']);
+            }
         }
 
-        if (array_key_exists('icon', $properties)) {
-            $icon = $view->icon($properties['icon']);
-            unset($properties['icon']);
-        }
-
-        if (array_key_exists('img', $properties)) {
-            $icon = $view->img($properties['img']);
-            unset($properties['img']);
-        }
+        return sprintf(
+            '<a href="%s"%s>%s</a>',
+            $view->url($url, $params),
+            $view->propertiesToString($properties),
+            $icon . ($escape ? $view->escape($title) : $title)
+        );
     }
-
-    return sprintf(
-        '<a href="%s"%s>%s</a>',
-        $view->url($url, $params),
-        $view->propertiesToString($properties),
-        $icon . ($escape ? $view->escape($title) : $title)
-    );
-});
+);
 
 $this->addHelperFunction('img', function ($url, $params = null, array $properties = array()) use ($view) {
     if (! array_key_exists('alt', $properties)) {
@@ -153,4 +156,3 @@ $this->addHelperFunction('attributeToString', function ($key, $value) use ($view
         $view->escape($value)
     );
 });
-

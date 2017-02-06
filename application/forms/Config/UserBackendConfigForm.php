@@ -100,8 +100,7 @@ class UserBackendConfigForm extends ConfigForm
      */
     public function getBackendForm($type)
     {
-        switch ($type)
-        {
+        switch ($type) {
             case 'db':
                 $form = new DbBackendForm();
                 $form->setResources(isset($this->resources['db']) ? $this->resources['db'] : array());

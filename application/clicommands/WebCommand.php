@@ -26,7 +26,7 @@ class WebCommand extends Command
 
         // TODO: Sanity check!!
         if ($socket === null) {
-            $socket = $this->Config()->get('standalone','listen','0.0.0.0:80');
+            $socket = $this->Config()->get('standalone', 'listen', '0.0.0.0:80');
         }
         if ($documentRoot === null) {
             $documentRoot = Icinga::app()->getBaseDir('public');
@@ -68,7 +68,7 @@ class WebCommand extends Command
         $pid = pcntl_fork();
         if ($pid == -1) {
              throw new IcingaException('Could not fork');
-        } else if ($pid) {
+        } elseif ($pid) {
             echo $this->screen->colorize('[OK]')
                . " Icinga Web server forked successfully\n";
             fclose(STDIN);

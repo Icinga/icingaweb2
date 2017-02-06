@@ -80,7 +80,9 @@ class MenuItemRenderer
             '<a href="%s"%s>%s%s<span></span></a>',
             $menu->getUrl() ? : '#',
             $attributes,
-            $menu->getIcon() ? '<img aria-hidden="true" src="' . Url::fromPath($menu->getIcon()) . '" class="icon" /> ' : '',
+            $menu->getIcon()
+                ? '<img aria-hidden="true" src="' . Url::fromPath($menu->getIcon()) . '" class="icon" /> '
+                : '',
             $this->getView()->escape($menu->getTitle())
         );
     }

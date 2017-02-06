@@ -171,7 +171,7 @@ Now you can open the __yourmodule.po__ and you will see something similar:
     msgid ""
     msgstr ""
     "Project-Id-Version: Development Module (0.0.1)\n"
-    "Report-Msgid-Bugs-To: dev@icinga.org\n"
+    "Report-Msgid-Bugs-To: dev@icinga.com\n"
     "POT-Creation-Date: 2014-09-09 10:12+0200\n"
     "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
     "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"

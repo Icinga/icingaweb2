@@ -403,7 +403,7 @@ abstract class IniRepository extends Repository implements Extensible, Updatable
      *
      * @throws  ProgrammingError    In case no valid section name is available
      */
-    protected function extractSectionName( & $config, $keyColumn)
+    protected function extractSectionName(& $config, $keyColumn)
     {
         if (! is_array($config) && !$config instanceof ConfigObject) {
             throw new ProgrammingError('$config is neither an array nor a ConfigObject');

@@ -297,8 +297,7 @@ class WebWizard extends Wizard implements SetupWizard
             $configData = $this->getPageData('setup_general_config');
             $skip = $authData['type'] === 'db' || $configData['global_config_backend'] !== 'db';
         } elseif (in_array($newPage->getName(), array('setup_auth_db_creation', 'setup_config_db_creation'))) {
-            if (
-                ($newPage->getName() === 'setup_auth_db_creation' || $this->hasPageData('setup_config_db_resource'))
+            if (($newPage->getName() === 'setup_auth_db_creation' || $this->hasPageData('setup_config_db_resource'))
                 && (($config = $this->getPageData('setup_auth_db_resource')) !== null
                     || ($config = $this->getPageData('setup_config_db_resource')) !== null)
                     && !$config['skip_validation']
@@ -351,9 +350,13 @@ class WebWizard extends Wizard implements SetupWizard
         $pages = $this->getPages();
         $index = array_search($page, $pages, true);
         if ($index === 0) {
-            $page->getElement(static::BTN_NEXT)->setLabel(mt('setup', 'Start', 'setup.welcome.btn.next'));
+            $page->getElement(static::BTN_NEXT)->setLabel(
+                mt('setup', 'Start', 'setup.welcome.btn.next')
+            );
         } elseif ($index === count($pages) - 1) {
-            $page->getElement(static::BTN_NEXT)->setLabel(mt('setup', 'Setup Icinga Web 2', 'setup.summary.btn.finish'));
+            $page->getElement(static::BTN_NEXT)->setLabel(
+                mt('setup', 'Setup Icinga Web 2', 'setup.summary.btn.finish')
+            );
         }
 
         $authData = $this->getPageData('setup_authentication_type');
@@ -406,8 +409,7 @@ class WebWizard extends Wizard implements SetupWizard
         $pageData = $this->getPageData();
         $setup = new Setup();
 
-        if (
-            isset($pageData['setup_auth_db_resource'])
+        if (isset($pageData['setup_auth_db_resource'])
             && !$pageData['setup_auth_db_resource']['skip_validation']
             && (! isset($pageData['setup_auth_db_creation'])
                 || !$pageData['setup_auth_db_creation']['skip_validation']
@@ -428,8 +430,7 @@ class WebWizard extends Wizard implements SetupWizard
                         ->get('schema', 'path', Icinga::app()->getBaseDir('etc' . DIRECTORY_SEPARATOR . 'schema'))
                 ))
             );
-        } elseif (
-            isset($pageData['setup_config_db_resource'])
+        } elseif (isset($pageData['setup_config_db_resource'])
             && !$pageData['setup_config_db_resource']['skip_validation']
             && (! isset($pageData['setup_config_db_creation'])
                 || !$pageData['setup_config_db_creation']['skip_validation']
@@ -509,8 +510,7 @@ class WebWizard extends Wizard implements SetupWizard
             );
         }
 
-        if (
-            isset($pageData['setup_auth_db_resource'])
+        if (isset($pageData['setup_auth_db_resource'])
             || isset($pageData['setup_config_db_resource'])
             || isset($pageData['setup_ldap_resource'])
         ) {

@@ -9,7 +9,9 @@ class Csv
 {
     protected $query;
 
-    protected function __construct() {}
+    protected function __construct()
+    {
+    }
 
     public static function fromQuery(Traversable $query)
     {

@@ -18,6 +18,7 @@ use Icinga\Data\Inspection;
 use Icinga\Data\Selectable;
 use Icinga\Data\Sortable;
 use Icinga\Exception\ProgrammingError;
+use Icinga\Web\Url;
 
 /**
  * Encapsulate LDAP connections and query creation
@@ -316,11 +317,11 @@ class LdapConnection implements Selectable, Inspectable
         $success = @ldap_bind($ds, $this->bindDn, $this->bindPw);
         if (! $success) {
             throw new LdapException(
-                'LDAP connection to %s:%s (%s / %s) failed: %s',
-                $this->hostname,
-                $this->port,
+                'LDAP bind (%s / %s) to %s with default port %s failed: %s',
                 $this->bindDn,
                 '***' /* $this->bindPw */,
+                $this->hostname,
+                $this->port,
                 ldap_error($ds)
             );
         }
@@ -944,8 +945,7 @@ class LdapConnection implements Selectable, Inspectable
                         );
                     }
                 }
-            } while (
-                (! $serverSorting || $limit === 0 || $limit !== count($entries))
+            } while ((! $serverSorting || $limit === 0 || $limit !== count($entries))
                 && ($entry = ldap_next_entry($ds, $entry))
             );
 
@@ -1053,8 +1053,7 @@ class LdapConnection implements Selectable, Inspectable
             }
         }
 
-        if (
-            $unfoldAttribute !== null
+        if ($unfoldAttribute !== null
             && isset($cleanedAttributes[$unfoldAttribute])
             && is_array($cleanedAttributes[$unfoldAttribute])
         ) {
@@ -1110,7 +1109,6 @@ class LdapConnection implements Selectable, Inspectable
             if ($attributeOctets >= 127) {
                 // Use the indefinite form of the length octets (the long form would be another option)
                 $attributeType = '0440' . $attributeType . '0000';
-
             } else {
                 $attributeType = '04' . str_pad(dechex($attributeOctets), 2, '0', STR_PAD_LEFT) . $attributeType;
             }
@@ -1158,7 +1156,18 @@ class LdapConnection implements Selectable, Inspectable
         $hostname = $this->hostname;
         if ($this->encryption === static::LDAPS) {
             $info->write('Connect using LDAPS');
-            $hostname = 'ldaps://' . $hostname;
+            $ldapUrls = explode(' ', $hostname);
+            if (count($ldapUrls) > 1) {
+                foreach ($ldapUrls as & $uri) {
+                    if (strpos($uri, '://') === false) {
+                        $uri = 'ldaps://' . $uri;
+                    }
+                }
+
+                $hostname = implode(' ', $ldapUrls);
+            } else {
+                $hostname = 'ldaps://' . $hostname;
+            }
         }
 
         $ds = ldap_connect($hostname, $this->port);
@@ -1177,7 +1186,6 @@ class LdapConnection implements Selectable, Inspectable
             if (! ldap_start_tls($ds)) {
                 throw new LdapException('LDAP STARTTLS failed: %s', ldap_error($ds));
             }
-
         } elseif ($this->encryption !== static::LDAPS) {
             $this->encrypted = false;
             $info->write('Connect without encryption');
@@ -1213,12 +1221,27 @@ class LdapConnection implements Selectable, Inspectable
         $scope = $query->getScope();
 
         if (Logger::getInstance()->getLevel() === Logger::DEBUG) {
-            // We're checking the level by ourself to avoid rendering the ldapsearch commandline for nothing
+            // We're checking the level by ourselves to avoid rendering the ldapsearch commandline for nothing
             $starttlsParam = $this->encryption === static::STARTTLS ? ' -ZZ' : '';
-            $ldapUrl = ($this->encryption === static::LDAPS ? 'ldaps://' : 'ldap://')
-                . $this->hostname
-                . ($this->port ? ':' . $this->port : '');
 
+            $ldapUrls = array();
+            $defaultScheme = $this->encryption === static::LDAPS ? 'ldaps://' : 'ldap://';
+            foreach (explode(' ', $this->hostname) as $uri) {
+                $url = Url::fromPath($uri);
+                if (! $url->getScheme()) {
+                    $uri = $defaultScheme . $uri . ($this->port ? ':' . $this->port : '');
+                } else {
+                    if ($url->getPort() === null) {
+                        $url->setPort($this->port);
+                    }
+
+                    $uri = $url->getAbsoluteUrl();
+                }
+
+                $ldapUrls[] = $uri;
+            }
+
+            $bindParams = '';
             if ($this->bound) {
                 $bindParams = ' -D "' . $this->bindDn . '"' . ($this->bindPw ? ' -W' : '');
             }
@@ -1236,7 +1259,7 @@ class LdapConnection implements Selectable, Inspectable
             Logger::debug("Issueing LDAP search. Use '%s' to reproduce.", sprintf(
                 'ldapsearch -P 3%s -H "%s"%s -b "%s" -s "%s" -z %u -l %u -a "%s"%s%s%s',
                 $starttlsParam,
-                $ldapUrl,
+                implode(' ', $ldapUrls),
                 $bindParams,
                 $baseDn,
                 $scope,
@@ -1249,7 +1272,7 @@ class LdapConnection implements Selectable, Inspectable
             ));
         }
 
-        switch($scope) {
+        switch ($scope) {
             case LdapQuery::SCOPE_SUB:
                 $function = 'ldap_search';
                 break;
@@ -1456,11 +1479,11 @@ class LdapConnection implements Selectable, Inspectable
         // Try a bind-command with the given user credentials, this must not fail
         $success = @ldap_bind($ds, $this->bindDn, $this->bindPw);
         $msg = sprintf(
-            'LDAP bind to %s:%s (%s / %s)',
-            $this->hostname,
-            $this->port,
+            'LDAP bind (%s / %s) to %s with default port %s',
             $this->bindDn,
-            '***' /* $this->bindPw */
+            '***' /* $this->bindPw */,
+            $this->hostname,
+            $this->port
         );
         if (! $success) {
             // ldap_error does not return any proper error messages in case of certificate errors. Connecting

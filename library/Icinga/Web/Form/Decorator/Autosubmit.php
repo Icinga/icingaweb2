@@ -103,7 +103,12 @@ class Autosubmit extends Zend_Form_Decorator_Abstract
                 'class'         => 'spinner autosubmit-info'
             ));
             if (! $isForm && $this->getAccessible()) {
-                $content = '<span id="' . $this->getWarningId() . '" class="sr-only">' . $warning . '</span>' . $content;
+                $content = '<span id="'
+                    . $this->getWarningId()
+                    . '" class="sr-only">'
+                    . $warning
+                    . '</span>'
+                    . $content;
             }
 
             $content .= sprintf(

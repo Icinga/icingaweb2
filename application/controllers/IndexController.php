@@ -17,7 +17,7 @@ class IndexController extends ActionController
     public function preDispatch()
     {
         if ($this->getRequest()->getActionName() !== 'welcome') {
-            // @TODO(el): Avoid landing page redirects: https://dev.icinga.org/issues/9656
+            // @TODO(el): Avoid landing page redirects: https://dev.icinga.com/issues/9656
             $this->redirectNow(Url::fromRequest()->setPath('dashboard'));
         }
     }

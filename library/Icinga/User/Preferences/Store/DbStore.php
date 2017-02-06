@@ -74,7 +74,6 @@ class DbStore extends PreferencesStore
      */
     protected function init()
     {
-
     }
 
     /**

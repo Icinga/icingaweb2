@@ -1,6 +1,8 @@
 <?php
 /* Icinga Web 2 | (c) 2015 Icinga Development Team | GPLv2+ */
 
+namespace Icinga\Module\Monitoring\Controllers;
+
 use Icinga\Data\Filter\Filter;
 use Icinga\Module\Monitoring\Controller;
 use Icinga\Module\Monitoring\Forms\Command\Object\DeleteDowntimesCommandForm;
@@ -12,7 +14,7 @@ use Icinga\Module\Monitoring\Object\ServiceList;
 /**
  * Monitoring API
  */
-class Monitoring_ActionsController extends Controller
+class ActionsController extends Controller
 {
     /**
      * Get the filter from URL parameters or exit immediately if the filter is empty

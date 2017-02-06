@@ -656,7 +656,7 @@ abstract class IdoQuery extends DbQuery
                     $column
                 );
                 if (version_compare($this->getIdoVersion(), '1.14.2', '>=')) {
-                    $column = str_replace('NOW()', 'localtimestamp', $column);
+                    $column = str_replace('NOW()', 'NOW() AT TIME ZONE \'UTC\'', $column);
                 } else {
                     $column = preg_replace(
                         '/UNIX_TIMESTAMP(\((?>[^()]|(?-1))*\))/i',
@@ -680,7 +680,9 @@ abstract class IdoQuery extends DbQuery
 
         foreach (Hook::all('monitoring/idoQueryExtension') as $hook) {
             $extensions = $hook->extendColumnMap($this);
-            if (! is_array($extensions)) continue;
+            if (! is_array($extensions)) {
+                continue;
+            }
 
             foreach ($extensions as $vTable => $cols) {
                 if (! array_key_exists($vTable, $this->columnMap)) {
@@ -1219,8 +1221,7 @@ abstract class IdoQuery extends DbQuery
     {
         // TODO: For god's sake, make this being a mapping
         //       (instead of matching a ton of properties using a ridiculous long switch case)
-        switch ($table)
-        {
+        switch ($table) {
             case 'instances':
                 return $this->instance_id;
             case 'objects':

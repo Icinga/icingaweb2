@@ -61,7 +61,7 @@ abstract class RepositoryForm extends Form
     /**
      * The data of the entry to pre-populate the form with when in mode insert or update
      *
-     * @var type
+     * @var array
      */
     protected $data;
 
@@ -187,6 +187,59 @@ abstract class RepositoryForm extends Form
     }
 
     /**
+     * Fetch and return the entry to pre-populate the form with when in mode update
+     *
+     * @return false|object
+     */
+    protected function fetchEntry()
+    {
+        return $this->repository
+            ->select()
+            ->from($this->getBaseTable())
+            ->applyFilter($this->createFilter())
+            ->fetchRow();
+    }
+
+    /**
+     * Return whether the entry supposed to be removed exists
+     *
+     * @return bool
+     */
+    protected function entryExists()
+    {
+        $count = $this->repository
+            ->select()
+            ->from($this->getBaseTable())
+            ->addFilter($this->createFilter())
+            ->count();
+        return $count > 0;
+    }
+
+    /**
+     * Insert the new entry
+     */
+    protected function insertEntry()
+    {
+        $this->repository->insert($this->getBaseTable(), $this->getValues());
+    }
+
+    /**
+     * Update the entry
+     */
+    protected function updateEntry()
+    {
+        $this->repository->update($this->getBaseTable(), $this->getValues(), $this->createFilter());
+    }
+
+    /**
+     * Delete the entry
+     */
+    protected function deleteEntry()
+    {
+        $this->repository->delete($this->getBaseTable(), $this->createFilter());
+    }
+
+    /**
      * Create and add elements to this form
      *
      * @param   array   $formData   The data sent by the user
@@ -240,11 +293,7 @@ abstract class RepositoryForm extends Form
     {
         $data = $this->getData();
         if ($data === null) {
-            $row = $this->repository
-                ->select()
-                ->from($this->getBaseTable())
-                ->applyFilter($this->createFilter())
-                ->fetchRow();
+            $row = $this->fetchEntry();
             if ($row === false) {
                 throw new NotFoundError('Entry "%s" not found', $this->getIdentifier());
             }
@@ -264,12 +313,7 @@ abstract class RepositoryForm extends Form
      */
     protected function onDeleteRequest()
     {
-        $count = $this->repository
-            ->select()
-            ->from($this->getBaseTable())
-            ->addFilter($this->createFilter())
-            ->count();
-        if ($count === 0) {
+        if (! $this->entryExists()) {
             throw new NotFoundError('Entry "%s" not found', $this->getIdentifier());
         }
     }
@@ -298,7 +342,7 @@ abstract class RepositoryForm extends Form
     protected function onInsertSuccess()
     {
         try {
-            $this->repository->insert($this->getBaseTable(), $this->getValues());
+            $this->insertEntry();
         } catch (Exception $e) {
             Notification::error($this->getInsertMessage(false));
             $this->error($e->getMessage());
@@ -317,7 +361,7 @@ abstract class RepositoryForm extends Form
     protected function onUpdateSuccess()
     {
         try {
-            $this->repository->update($this->getBaseTable(), $this->getValues(), $this->createFilter());
+            $this->updateEntry();
         } catch (Exception $e) {
             Notification::error($this->getUpdateMessage(false));
             $this->error($e->getMessage());
@@ -336,7 +380,7 @@ abstract class RepositoryForm extends Form
     protected function onDeleteSuccess()
     {
         try {
-            $this->repository->delete($this->getBaseTable(), $this->createFilter());
+            $this->deleteEntry();
         } catch (Exception $e) {
             Notification::error($this->getDeleteMessage(false));
             $this->error($e->getMessage());

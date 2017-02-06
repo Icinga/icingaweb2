@@ -483,7 +483,7 @@ abstract class ApplicationBootstrap
                 // Error was suppressed with the @-operator
                 return false; // Continue with the normal error handler
             }
-            switch($errno) {
+            switch ($errno) {
                 case E_NOTICE:
                 case E_WARNING:
                 case E_STRICT:
@@ -554,7 +554,7 @@ abstract class ApplicationBootstrap
      *
      * @return $this
      */
-    protected final function setupTimezone()
+    final protected function setupTimezone()
     {
         $timezone = $this->detectTimeZone();
         if ($timezone === null || @date_default_timezone_set($timezone) === false) {
@@ -582,7 +582,7 @@ abstract class ApplicationBootstrap
      *
      * @return $this
      */
-    protected final function setupInternationalization()
+    final protected function setupInternationalization()
     {
         if ($this->hasLocales()) {
             Translator::registerDomain(Translator::DEFAULT_DOMAIN, $this->getLocaleDir());

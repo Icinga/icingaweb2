@@ -3,4 +3,6 @@
 
 namespace Icinga\Data;
 
-interface ConnectionInterface extends Selectable, Queryable {};
+interface ConnectionInterface extends Selectable, Queryable
+{
+}

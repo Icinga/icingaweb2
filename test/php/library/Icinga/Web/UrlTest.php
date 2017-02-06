@@ -392,14 +392,14 @@ class UrlTest extends BaseTestCase
     }
 
     /**
-     * @depends testWhetherGetAbsoluteUrlReturnsTheAbsoluteUrlForHtmlAttributes
+     * @depends testWhetherGetAbsoluteUrlReturnsTheAbsoluteUrl
      */
-    public function testWhetherToStringConversionReturnsTheAbsoluteUrlForHtmlAttribures()
+    public function testWhetherToStringConversionReturnsTheAbsoluteUrlForHtmlAttributes()
     {
         $url = Url::fromPath('/my/test/url.html?param=val&param2=val2&param3=val3');
 
         $this->assertEquals(
-            'my/test/url.html?param=val&amp;param2=val2&amp;param3=val3',
+            '/my/test/url.html?param=val&amp;param2=val2&amp;param3=val3',
             (string) $url,
             'Converting a url to string does not return the absolute url'
         );

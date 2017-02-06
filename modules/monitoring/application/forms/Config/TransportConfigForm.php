@@ -4,6 +4,7 @@
 namespace Icinga\Module\Monitoring\Forms\Config;
 
 use InvalidArgumentException;
+use Icinga\Application\Platform;
 use Icinga\Exception\IcingaException;
 use Icinga\Exception\NotFoundError;
 use Icinga\Forms\ConfigForm;
@@ -79,7 +80,7 @@ class TransportConfigForm extends ConfigForm
         switch (strtolower($type)) {
             case LocalCommandFile::TRANSPORT:
                 return new LocalTransportForm();
-            case RemoteCommandFile::TRANSPORT;
+            case RemoteCommandFile::TRANSPORT:
                 return new RemoteTransportForm();
             case ApiCommandTransport::TRANSPORT:
                 return new ApiTransportForm();
@@ -220,10 +221,13 @@ class TransportConfigForm extends ConfigForm
         );
 
         $transportTypes = array(
+            ApiCommandTransport::TRANSPORT  => $this->translate('Icinga 2 API'),
             LocalCommandFile::TRANSPORT     => $this->translate('Local Command File'),
-            RemoteCommandFile::TRANSPORT    => $this->translate('Remote Command File'),
-            ApiCommandTransport::TRANSPORT  => $this->translate('Icinga 2 API')
+            RemoteCommandFile::TRANSPORT    => $this->translate('Remote Command File')
         );
+        if (! Platform::extensionLoaded('curl')) {
+            unset($transportTypes[ApiCommandTransport::TRANSPORT]);
+        }
 
         $transportType = isset($formData['transport']) ? $formData['transport'] : null;
         if ($transportType === null) {

@@ -337,7 +337,7 @@ class Auth
      */
     public function persistCurrentUser()
     {
-        // @TODO(el): https://dev.icinga.org/issues/10646
+        // @TODO(el): https://dev.icinga.com/issues/10646
         $params = session_get_cookie_params();
         setcookie(
             'icingaweb2-session',

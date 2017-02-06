@@ -55,6 +55,4 @@ class Zend_View_Helper_Customvar extends Zend_View_Helper_Abstract
         }
         return $out . "</ul>}";
     }
-
 }
-

@@ -92,6 +92,5 @@ class Inline
         if (array_key_exists('height', $_GET)) {
             $this->height = (int)$_GET['height'];
         }
-
     }
 }

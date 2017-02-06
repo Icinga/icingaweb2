@@ -91,7 +91,9 @@ class FormTest extends BaseTestCase
     {
         $this->getRequestMock()->shouldReceive('getPathInfo')->andReturn('default/route');
         $this->getResponseMock()->shouldReceive('redirectAndExit')->atLeast()->once()
-            ->with(Mockery::on(function ($url) { return $url->getRelativeUrl() === 'default/route'; }));
+            ->with(Mockery::on(function ($url) {
+                return $url->getRelativeUrl() === 'default/route';
+            }));
 
         $form = new SuccessfulForm();
         $form->setTokenDisabled();
@@ -102,7 +104,9 @@ class FormTest extends BaseTestCase
     public function testWhetherAnExplicitlySetRedirectUrlIsUsedForRedirection()
     {
         $this->getResponseMock()->shouldReceive('redirectAndExit')->atLeast()->once()
-            ->with(Mockery::on(function ($url) { return $url->getRelativeUrl() === 'special/route'; }));
+            ->with(Mockery::on(function ($url) {
+                return $url->getRelativeUrl() === 'special/route';
+            }));
 
         $form = new SuccessfulForm();
         $form->setTokenDisabled();
@@ -264,7 +268,10 @@ class FormTest extends BaseTestCase
     {
         $request = new Request();
         $form = new Form(array(
-            'onSuccess' => function ($form) { $form->getRequest()->setParam('test', 'tset'); return false; }
+            'onSuccess' => function ($form) {
+                $form->getRequest()->setParam('test', 'tset');
+                return false;
+            }
         ));
         $form->setTokenDisabled();
         $form->setUidDisabled();

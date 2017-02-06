@@ -1,7 +1,7 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-# Icinga Web 2 | (c) 2013-2015 Icinga Development Team | GPLv2+
+# Icinga Web 2 | (c) 2013 Icinga Development Team | GPLv2+
 
 VAGRANTFILE_API_VERSION = "2"
 VAGRANT_REQUIRED_VERSION = "1.5.0"
@@ -47,7 +47,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.provider :virtualbox do |vb, override|
     override.vm.box = "centos-71-x64-vbox"
-    override.vm.box_url = "http://boxes.icinga.org/centos-71-x64-vbox.box"
+    override.vm.box_url = "http://boxes.icinga.com/centos-71-x64-vbox.box"
 
     vb.customize ["modifyvm", :id, "--memory", "1024"]
     vb.customize ["modifyvm", :id, "--cpus", "2"]

@@ -93,7 +93,7 @@ abstract class TicketHook
 
             // Remove preg_offset from match for the ticket pattern
             $carry = array();
-            array_walk($match, function ($value, $key) use (&$carry)  {
+            array_walk($match, function ($value, $key) use (&$carry) {
                 $carry[$key] = $value[0];
             }, $carry);
             $ticketPattern->setMatch($carry);

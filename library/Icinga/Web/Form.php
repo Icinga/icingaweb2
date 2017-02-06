@@ -824,7 +824,6 @@ class Form extends Zend_Form
      */
     public function createElements(array $formData)
     {
-
     }
 
     /**
@@ -846,7 +845,6 @@ class Form extends Zend_Form
      */
     public function onRequest()
     {
-
     }
 
     /**
@@ -1299,8 +1297,7 @@ class Form extends Zend_Form
                     // Ensure that disabled elements are not overwritten
                     // (http://www.zendframework.com/issues/browse/ZF-6909)
                     $formData[$name] = $element->getValue();
-                } elseif (
-                    array_key_exists($name . static::DEFAULT_SUFFIX, $formData)
+                } elseif (array_key_exists($name . static::DEFAULT_SUFFIX, $formData)
                     && $formData[$name] === $formData[$name . static::DEFAULT_SUFFIX]
                 ) {
                     unset($formData[$name]);

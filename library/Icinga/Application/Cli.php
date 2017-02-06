@@ -140,7 +140,6 @@ class Cli extends ApplicationBootstrap
         } else {
             $this->dispatchEndless();
         }
-
     }
 
     protected function dispatchOnce()

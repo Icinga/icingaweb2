@@ -69,7 +69,6 @@ class FileCache
     public function store($file, $content)
     {
         if (! $this->enabled) {
-
             return false;
         }
 
@@ -87,26 +86,22 @@ class FileCache
     public function has($file, $newerThan = null)
     {
         if (! $this->enabled) {
-
             return false;
         }
 
         $filename = $this->filename($file);
 
         if (! file_exists($filename) || ! is_readable($filename)) {
-
             return false;
         }
 
         if ($newerThan === null) {
-
             return true;
         }
 
         $info = stat($file);
 
         if ($info === false) {
-
             return false;
         }
 

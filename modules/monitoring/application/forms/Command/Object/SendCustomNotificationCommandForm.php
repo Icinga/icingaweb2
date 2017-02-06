@@ -27,7 +27,7 @@ class SendCustomNotificationCommandForm extends ObjectsCommandForm
      */
     public function getSubmitLabel()
     {
-        return $this->translatePlural('Send custom notification',  'Send custom notifications',  count($this->objects));
+        return $this->translatePlural('Send custom notification', 'Send custom notifications', count($this->objects));
     }
 
     /**

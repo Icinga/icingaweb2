@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Icinga Web 2 (None)\n"
-"Report-Msgid-Bugs-To: dev@icinga.org\n"
+"Report-Msgid-Bugs-To: dev@icinga.com\n"
 "POT-Creation-Date: 2015-02-11 15:47+0100\n"
 "PO-Revision-Date: 2015-02-28 01:56+0200\n"
 "Last-Translator: Mikko Peltokangas <mikko@peltokangas.org>\n"

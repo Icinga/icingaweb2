@@ -6,8 +6,8 @@ namespace Icinga\Protocol\Ldap;
 use Icinga\Data\ConfigObject;
 use Icinga\Protocol\Dns;
 
-class Discovery {
-
+class Discovery
+{
     /**
      * @var LdapConnection
      */

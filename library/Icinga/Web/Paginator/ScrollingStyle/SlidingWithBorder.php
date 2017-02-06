@@ -39,7 +39,7 @@ class Icinga_Web_Paginator_ScrollingStyle_SlidingWithBorder implements Zend_Pagi
             foreach (array(1, 2) as $i) {
                 $range[$i] = $i;
             }
-            if ($pageNumber < 6 ) {
+            if ($pageNumber < 6) {
                 // We are on page 1-5 from
                 for ($i = 1; $i <= 7; $i++) {
                     $range[$i] = $i;
@@ -69,7 +69,6 @@ class Icinga_Web_Paginator_ScrollingStyle_SlidingWithBorder implements Zend_Pagi
             foreach (array($pageCount - 1, $pageCount) as $i) {
                 $range[$i] = $i;
             }
-
         }
         if (empty($range)) {
             $range[] = 1;

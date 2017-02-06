@@ -350,8 +350,7 @@ class LdapUserGroupBackendForm extends Form
         foreach (UserBackend::getBackendConfigs() as $name => $config) {
             if (in_array(strtolower($config->backend), array('ldap', 'msldap'))) {
                 $backendResource = ResourceFactory::create($config->resource);
-                if (
-                    $backendResource->getHostname() === $resource->getHostname()
+                if ($backendResource->getHostname() === $resource->getHostname()
                     && $backendResource->getPort() === $resource->getPort()
                 ) {
                     $names[] = $name;

@@ -3,4 +3,6 @@
 
 namespace Icinga\Data;
 
-interface QueryInterface extends Fetchable, Filterable, Paginatable, Sortable {};
+interface QueryInterface extends Fetchable, Filterable, Paginatable, Sortable
+{
+}

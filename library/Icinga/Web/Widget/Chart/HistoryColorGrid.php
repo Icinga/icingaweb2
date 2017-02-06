@@ -12,8 +12,8 @@ use Icinga\Web\Widget\AbstractWidget;
  * Display a colored grid that visualizes a set of values for each day
  * on a given time-frame.
  */
-class HistoryColorGrid extends AbstractWidget {
-
+class HistoryColorGrid extends AbstractWidget
+{
     const CAL_GROW_INTO_PAST = 'past';
     const CAL_GROW_INTO_PRESENT = 'present';
 
@@ -32,7 +32,8 @@ class HistoryColorGrid extends AbstractWidget {
     private $color;
     public $opacity = 1.0;
 
-    public function __construct($color = '#51e551', $start = null, $end = null) {
+    public function __construct($color = '#51e551', $start = null, $end = null)
+    {
         $this->setColor($color);
         if (isset($start)) {
             $this->start = $this->tsToDateStr($start);

@@ -143,7 +143,6 @@ class Manager
         if (($dh = opendir($this->enableDir)) !== false) {
             $this->enabledDirs = array();
             while (($file = readdir($dh)) !== false) {
-
                 if ($file[0] === '.' || $file === 'README') {
                     continue;
                 }

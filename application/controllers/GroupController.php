@@ -27,7 +27,9 @@ class GroupController extends AuthBackendController
         $this->assertPermission('config/authentication/groups/show');
         $this->createListTabs()->activate('group/list');
         $backendNames = array_map(
-            function ($b) { return $b->getName(); },
+            function ($b) {
+                return $b->getName();
+            },
             $this->loadUserGroupBackends('Icinga\Data\Selectable')
         );
         if (empty($backendNames)) {

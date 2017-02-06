@@ -119,7 +119,7 @@ class Directive
     public function render()
     {
         $str = '';
-        if (! empty ($this->commentsPre)) {
+        if (! empty($this->commentsPre)) {
             $comments = array();
             foreach ($this->commentsPre as $comment) {
                 $comments[] = $comment->render();
@@ -127,7 +127,7 @@ class Directive
             $str = implode(PHP_EOL, $comments) . PHP_EOL;
         }
         $str .= sprintf('%s = "%s"', $this->sanitizeKey($this->key), $this->sanitizeValue($this->value));
-        if (isset ($this->commentPost)) {
+        if (isset($this->commentPost)) {
             $str .= ' ' . $this->commentPost->render();
         }
         return $str;

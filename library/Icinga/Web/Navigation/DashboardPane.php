@@ -80,7 +80,7 @@ class DashboardPane extends NavigationItem
      *
      * @param bool $disabled
      */
-    public function setDisabled($disabled=true)
+    public function setDisabled($disabled = true)
     {
         $this->disabled = (bool) $disabled;
     }

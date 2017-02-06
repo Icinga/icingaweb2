@@ -27,7 +27,9 @@ class UserController extends AuthBackendController
         $this->assertPermission('config/authentication/users/show');
         $this->createListTabs()->activate('user/list');
         $backendNames = array_map(
-            function ($b) { return $b->getName(); },
+            function ($b) {
+                return $b->getName();
+            },
             $this->loadUserBackends('Icinga\Data\Selectable')
         );
         if (empty($backendNames)) {

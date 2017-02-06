@@ -21,5 +21,4 @@ class Command extends DataView
             'command_name'
         );
     }
-
 }
