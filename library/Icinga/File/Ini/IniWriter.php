@@ -76,7 +76,7 @@ class IniWriter
      */
     public function render()
     {
-        if (empty($this->renderCache)) {
+        if ($this->renderCache === null) {
             if (file_exists($this->filename)) {
                 $oldconfig = Config::fromIni($this->filename);
                 $content = trim(file_get_contents($this->filename));
