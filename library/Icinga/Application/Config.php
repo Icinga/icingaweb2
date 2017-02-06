@@ -358,7 +358,7 @@ class Config implements Countable, Iterator, Selectable
 
             $writer->write();
         } else {
-            if (! file_exists($filePath)) {
+            if (file_exists($filePath)) {
                 unlink($filePath);
             }
         }
