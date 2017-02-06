@@ -46,6 +46,13 @@ class IniWriter
     protected $filename;
 
     /**
+     * The cache for method render
+     *
+     * @var string
+     */
+    protected $renderCache;
+
+    /**
      * Create a new INI writer
      *
      * @param Config    $config    The configuration to write
@@ -69,18 +76,22 @@ class IniWriter
      */
     public function render()
     {
-        if (file_exists($this->filename)) {
-            $oldconfig = Config::fromIni($this->filename);
-            $content = trim(file_get_contents($this->filename));
-        } else {
-            $oldconfig = Config::fromArray(array());
-            $content = '';
+        if (empty($this->renderCache)) {
+            if (file_exists($this->filename)) {
+                $oldconfig = Config::fromIni($this->filename);
+                $content = trim(file_get_contents($this->filename));
+            } else {
+                $oldconfig = Config::fromArray(array());
+                $content = '';
+            }
+            $doc = IniParser::parseIni($content);
+            $this->diffPropertyUpdates($this->config, $doc);
+            $this->diffPropertyDeletions($oldconfig, $this->config, $doc);
+            $doc = $this->updateSectionOrder($this->config, $doc);
+            $this->renderCache = $doc->render();
         }
-        $doc = IniParser::parseIni($content);
-        $this->diffPropertyUpdates($this->config, $doc);
-        $this->diffPropertyDeletions($oldconfig, $this->config, $doc);
-        $doc = $this->updateSectionOrder($this->config, $doc);
-        return $doc->render();
+
+        return $this->renderCache;
     }
 
     /**
