@@ -48,13 +48,14 @@ class AttributeTest extends BaseTestCase
             )
         );
 
+        $values = $form->getValues();
         $this->assertNull(
-            $form->getValues()['test'],
+            $values['test'],
             'Form: getValues does not ignore default values correctly'
         );
         $this->assertEquals(
             'testvalue2',
-            $form->getValues()['test2'],
+            $values['test2'],
             'Form: getValues should not ignore default values without attribute ignoreDefault'
         );
     }
