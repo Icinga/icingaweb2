@@ -70,47 +70,9 @@
             'title'   => $this->translate('Create a new command transport')
         )
     ) ?>
-    <table class="table-row-selectable common-table">
-    <thead>
-    <tr>
-        <th><?= $this->translate('Transport') ?></th>
-        <th></th>
-    </tr>
-    </thead>
-    <tbody>
-    <?php foreach ($this->transportConfig as $transportName => $config): ?>
-        <tr>
-            <td>
-                <?= $this->qlink(
-                    $transportName,
-                    'monitoring/config/edittransport',
-                    array('transport' => $transportName),
-                    array(
-                        'icon'  => 'edit',
-                        'title' => sprintf($this->translate('Edit command transport %s'), $transportName)
-                    )
-                ); ?>
-                <span class="config-label-meta">&#40;<?= sprintf(
-                    $this->translate('Type: %s'),
-                    ucfirst($config->get('transport', 'local'))
-                ) ?>&#41;
-                </span>
-            </td>
-            <td class="text-right">
-                <?= $this->qlink(
-                    '',
-                    'monitoring/config/removetransport',
-                    array('transport' => $transportName),
-                    array(
-                        'class' => 'action-link',
-                        'icon'  => 'cancel',
-                        'title' => sprintf($this->translate('Remove command transport %s'), $transportName)
-                    )
-                ); ?>
-            </td>
-        </tr>
-    <?php endforeach ?>
-    </tbody>
-    </table>
+    <?php
+    /** @var \Icinga\Module\Monitoring\Forms\Config\TransportReorderForm $commandTransportReorderForm */
+    echo $commandTransportReorderForm;
+    ?>
     </div>
 </div>
