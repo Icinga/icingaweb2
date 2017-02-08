@@ -4,6 +4,16 @@
 # Except those related to git and vagrant
 !.git*
 !.puppet*
+!.travis.yml
+!.mailmap
+
+# Testing - created by test/setup_vendor.sh
+/vendor/
+/Hamcrest*
+/Mockery*
+/Icinga
+/Zend
+/*.phar
 
 # Exclude application log files
 var/log/*

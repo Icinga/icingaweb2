@@ -1,0 +1,39 @@
+language: php
+#dist: trusty
+sudo: required
+
+php:
+  - '5.3'
+  - '5.4'
+  - '5.5'
+  - '5.6'
+  - '7.0'
+  - '7.1'
+
+services:
+  - mysql
+  - postgresql
+
+cache:
+  directories:
+    - vendor
+
+branches:
+  only:
+  - master
+  - /^v\d/
+
+notifications:
+  email: false
+
+# also see: test/setup_vendor.sh
+before_script:
+  - sudo locale-gen en_US.UTF-8 de_DE.UTF-8 fr_FR.UTF-8
+  - test/travis_database.sh
+  - test/setup_vendor.sh
+
+script:
+  # also see: modules/test/application/clicommands/PhpCommand.php
+  # phpcs is disabled until fixed...
+  # - php phpcs.phar -p --standard=icingaweb2.ruleset.xml --extensions=php --encoding=utf-8 application/ library/Icinga modules/ test/
+  - php phpunit.phar -c modules/test/phpunit.xml --verbose
