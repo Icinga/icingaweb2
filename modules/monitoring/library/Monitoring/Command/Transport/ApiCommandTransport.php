@@ -8,6 +8,7 @@ use Icinga\Module\Monitoring\Command\IcingaApiCommand;
 use Icinga\Module\Monitoring\Command\IcingaCommand;
 use Icinga\Module\Monitoring\Command\Renderer\IcingaApiCommandRenderer;
 use Icinga\Module\Monitoring\Exception\CommandTransportException;
+use Icinga\Module\Monitoring\Exception\JsonDecodeException;
 use Icinga\Module\Monitoring\Web\Rest\RestRequest;
 
 /**
@@ -193,12 +194,18 @@ class ApiCommandTransport implements CommandTransportInterface
             $this->getHost(),
             $this->getPort()
         );
-        $response = RestRequest::post($this->getUriFor($command->getEndpoint()))
-            ->authenticateWith($this->getUsername(), $this->getPassword())
-            ->sendJson()
-            ->noStrictSsl()
-            ->setPayload($command->getData())
-            ->send();
+
+        try {
+            $response = RestRequest::post($this->getUriFor($command->getEndpoint()))
+                ->authenticateWith($this->getUsername(), $this->getPassword())
+                ->sendJson()
+                ->noStrictSsl()
+                ->setPayload($command->getData())
+                ->send();
+        } catch (JsonDecodeException $e) {
+            throw new CommandTransportException('Got invalid JSON response from the Icinga 2 API: %s', $e->getMessage());
+        }
+
         if (isset($response['error'])) {
             throw new CommandTransportException(
                 'Can\'t send external Icinga command: %u %s',
