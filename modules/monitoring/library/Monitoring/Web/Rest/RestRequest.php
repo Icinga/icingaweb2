@@ -5,7 +5,7 @@ namespace Icinga\Module\Monitoring\Web\Rest;
 
 use Exception;
 use Icinga\Application\Logger;
-use Icinga\Module\Monitoring\Exception\JsonDecodeException;
+use Icinga\Util\Json;
 
 /**
  * REST Request
@@ -262,12 +262,6 @@ class RestRequest
             fclose($stream);
         }
 
-        $response = @json_decode($result, true);
-
-        if ($response === null) {
-            throw new JsonDecodeException($result);
-        }
-
-        return $response;
+        return Json::decode($result, true);
     }
 }

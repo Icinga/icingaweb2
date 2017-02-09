@@ -4,11 +4,11 @@
 namespace Icinga\Module\Monitoring\Command\Transport;
 
 use Icinga\Application\Logger;
+use Icinga\Exception\Json\JsonDecodeException;
 use Icinga\Module\Monitoring\Command\IcingaApiCommand;
 use Icinga\Module\Monitoring\Command\IcingaCommand;
 use Icinga\Module\Monitoring\Command\Renderer\IcingaApiCommandRenderer;
 use Icinga\Module\Monitoring\Exception\CommandTransportException;
-use Icinga\Module\Monitoring\Exception\JsonDecodeException;
 use Icinga\Module\Monitoring\Web\Rest\RestRequest;
 
 /**
