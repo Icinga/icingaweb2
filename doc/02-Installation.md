@@ -111,11 +111,14 @@ zypper ar http://packages.icinga.com/openSUSE/ICINGA-release.repo
 zypper ref
 ```
 
+> INFO
+>
+> Latest version of Icingaweb2 is in the edge repository, which is the -dev branch.
+
 **Alpine Linux**:
 ```
-echo "http://dl-cdn.alpinelinux.org/alpine/v3.5/community" >> /etc/apk/repos
-apk	update
-apk add icingaweb2
+echo "http://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repos
+apk update
 ```
 
 #### <a id="package-repositories-rhel-notes"></a> RHEL/CentOS Notes
@@ -129,7 +132,8 @@ The packages for RHEL/CentOS depend on other packages which are distributed as p
 
 #### <a id="package-repositories-alpine-notes"></a> Alpine Linux Notes
 
-The example provided suppose that you are running Alpine v3.5, which is the latest stable.
+The example provided suppose that you are running Alpine edge, which is the -dev branch and is a rolling release.
+If you are using a stable version (latest is v3.5), in order to use the latest icingaweb2 you should use "pin" the edge repository.
 In order to correctly manage your repository, please follow [these instructions](https://wiki.alpinelinux.org/wiki/Alpine_Linux_package_management)
 
 ### <a id="installing-from-package-example"></a> Installing Icinga Web 2
@@ -254,6 +258,10 @@ Example for Apache on Debian Jessie:
 a2enconf icingaweb2
 ```
 
+Example for Apache on Alpine Linux:
+```
+icingacli setup config webserver apache --document-root /usr/share/webapps/icingaweb2/public > /etc/apache2/conf.d/icingaweb2.conf
+```
 ### <a id="preparing-web-setup-from-source"></a> Preparing Icinga Web 2 Setup
 
 You can set up Icinga Web 2 quickly and easily with the Icinga Web 2 setup wizard which is available the first time
@@ -293,6 +301,12 @@ service apache2 restart
 ```
 usermod -a -G icingaweb2 www-data
 service apache2 restart
+```
+
+**Alpine Linux**:
+```
+gpasswd -a apache icingaweb2
+rc-service apache2 restart
 ```
 
 
