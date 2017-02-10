@@ -521,7 +521,7 @@ class FilterEditor extends AbstractWidget
         return sprintf(
             '<input type="text" name="%s" value="%s" />',
             $this->elementId('value', $filter),
-            $value
+            $this->view()->escape($value)
         );
     }
 
