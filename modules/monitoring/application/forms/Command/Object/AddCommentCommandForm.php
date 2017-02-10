@@ -45,7 +45,8 @@ class AddCommentCommandForm extends ObjectsCommandForm
                     'If you work with other administrators, you may find it useful to share information about the'
                     . ' the host or service that is having problems. Make sure you enter a brief description of'
                     . ' what you are doing.'
-                )
+                ),
+                'attribs'       => array('class' => 'autofocus')
             )
         );
         if (! $this->getBackend()->isIcinga2()) {
