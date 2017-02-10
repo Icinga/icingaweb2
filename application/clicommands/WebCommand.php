@@ -9,6 +9,25 @@ use Icinga\Exception\IcingaException;
 
 class WebCommand extends Command
 {
+    /**
+     * Serve Icinga Web 2 with PHP's built-in web server
+     *
+     * USAGE
+     *
+     *   icingacli web serve [options] [<document-root>]
+     *
+     * OPTIONS
+     *
+     *   --daemonize            Run in background
+     *   --port=<port>          The port to listen on
+     *   --listen=<host:port>   The address to listen on
+     *   <document-root>        The document root directory of Icinga Web 2 (e.g. ./public)
+     *
+     * EXAMPLES
+     *
+     *   icingacli web serve --port=8080
+     *   icingacli web serve --listen=127.0.0.1:8080 ./public
+     */
     public function serveAction()
     {
         $minVersion = '5.4.0';
@@ -21,10 +40,15 @@ class WebCommand extends Command
         }
 
         $fork = $this->params->get('daemonize');
+        $listen = $this->params->get('listen');
+        $port = $this->params->get('port');
         $documentRoot = $this->params->shift();
-        $socket  = $this->params->shift();
+        if ($listen === null) {
+            $socket = $port === null ? $this->params->shift() : '0.0.0.0:' . $port;
+        } else {
+            $socket = $listen;
+        }
 
-        // TODO: Sanity check!!
         if ($socket === null) {
             $socket = $this->Config()->get('standalone', 'listen', '0.0.0.0:80');
         }
