@@ -3,6 +3,9 @@
 
 namespace Icinga\Module\Monitoring\Forms\Config;
 
+use Icinga\Data\ConfigObject;
+use Icinga\Module\Monitoring\Command\Transport\CommandTransport;
+use Icinga\Module\Monitoring\Exception\CommandTransportException;
 use InvalidArgumentException;
 use Icinga\Application\Platform;
 use Icinga\Exception\IcingaException;
@@ -33,6 +36,11 @@ class TransportConfigForm extends ConfigForm
      * @var array
      */
     protected $instanceNames;
+
+    /**
+     * @var bool
+     */
+    protected $validatePartial = true;
 
     /**
      * Initialize this form
@@ -251,6 +259,59 @@ class TransportConfigForm extends ConfigForm
     }
 
     /**
+     * Add a submit button to this form and one to manually validate the configuration
+     *
+     * Calls parent::addSubmitButton() to add the submit button.
+     *
+     * @return  $this
+     */
+    public function addSubmitButton()
+    {
+        parent::addSubmitButton();
+
+        if ($this->getSubForm('transport_form') instanceof ApiTransportForm) {
+            $this->getElement('btn_submit')
+                ->setDecorators(array('ViewHelper'));
+
+            $this->addElement(
+                'submit',
+                'transport_validation',
+                array(
+                    'ignore' => true,
+                    'label' => $this->translate('Validate Configuration'),
+                    'data-progress-label' => $this->translate('Validation In Progress'),
+                    'decorators' => array('ViewHelper')
+                )
+            );
+
+            $this->setAttrib('data-progress-element', 'transport-progress');
+            $this->addElement(
+                'note',
+                'transport-progress',
+                array(
+                    'decorators' => array(
+                        'ViewHelper',
+                        array('Spinner', array('id' => 'transport-progress'))
+                    )
+                )
+            );
+
+            $this->addDisplayGroup(
+                array('btn_submit', 'transport_validation', 'transport-progress'),
+                'submit_validation',
+                array(
+                    'decorators' => array(
+                        'FormElements',
+                        array('HtmlTag', array('tag' => 'div', 'class' => 'control-group form-controls'))
+                    )
+                )
+            );
+        }
+
+        return $this;
+    }
+
+    /**
      * Populate the configuration of the transport to load
      */
     public function onRequest()
@@ -260,5 +321,58 @@ class TransportConfigForm extends ConfigForm
             $data['name'] = $this->transportToLoad;
             $this->populate($data);
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isValidPartial(array $formData)
+    {
+        $isValidPartial =  parent::isValidPartial($formData);
+
+        $transportValidation = $this->getElement('transport_validation');
+        if ($transportValidation !== null && $transportValidation->isChecked() && $this->isValid($formData)) {
+            $this->info($this->translate('The configuration has been successfully validated.'));
+        }
+
+        return $isValidPartial;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isValid($formData)
+    {
+        if (! parent::isValid($formData)) {
+            return false;
+        }
+
+        if (! ($this->getElement('transport_validation') === null || (
+            $this->isSubmitted() && isset($formData['force_creation']) && $formData['force_creation'])
+        )) {
+            try {
+                CommandTransport::createTransport(new ConfigObject($this->getValues()))->probe();
+            } catch (CommandTransportException $e) {
+                $this->error(sprintf(
+                    $this->translate('Failed to successfully validate the configuration: %s'),
+                    $e->getMessage()
+                ));
+
+                $this->addElement(
+                    'checkbox',
+                    'force_creation',
+                    array(
+                        'order'         => 0,
+                        'ignore'        => true,
+                        'label'         => $this->translate('Force Changes'),
+                        'description'   => $this->translate('Check this box to enforce changes without connectivity validation')
+                    )
+                );
+
+                return false;
+            }
+        }
+
+        return true;
     }
 }

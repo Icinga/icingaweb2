@@ -6,6 +6,7 @@ namespace Icinga\Module\Monitoring\Web\Rest;
 use Exception;
 use Icinga\Application\Logger;
 use Icinga\Util\Json;
+use Icinga\Module\Monitoring\Exception\CurlException;
 
 /**
  * REST Request
@@ -74,6 +75,21 @@ class RestRequest
      * @var int
      */
     protected $timeout = 30;
+
+    /**
+     * Create a GET REST request
+     *
+     * @param   string  $uri
+     *
+     * @return  static
+     */
+    public static function get($uri)
+    {
+        $request = new static;
+        $request->uri = $uri;
+        $request->method = 'GET';
+        return $request;
+    }
 
     /**
      * Create a POST REST request
@@ -251,7 +267,7 @@ class RestRequest
         $result = curl_exec($ch);
 
         if ($result === false) {
-            throw new Exception(curl_error($ch));
+            throw new CurlException('%s', curl_error($ch));
         }
 
         curl_close($ch);
