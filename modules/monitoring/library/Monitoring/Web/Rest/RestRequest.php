@@ -213,15 +213,12 @@ class RestRequest
             'Expect:'
         );
 
-        $ch = curl_init();
-
         $options = array(
             CURLOPT_URL     => $this->uri,
             CURLOPT_TIMEOUT => $this->timeout,
             // Ignore proxy settings
             CURLOPT_PROXY           => '',
-            CURLOPT_CUSTOMREQUEST   => $this->method,
-            CURLOPT_RETURNTRANSFER  => true
+            CURLOPT_CUSTOMREQUEST   => $this->method
         );
 
         // Record cURL command line for debugging
@@ -250,13 +247,12 @@ class RestRequest
         $options[CURLOPT_HTTPHEADER] = $headers;
 
         $stream = null;
-        if (Logger::getInstance()->getLevel() === Logger::DEBUG) {
+        $logger = Logger::getInstance();
+        if ($logger !== null && $logger->getLevel() === Logger::DEBUG) {
             $stream = fopen('php://temp', 'w');
             $options[CURLOPT_VERBOSE] = true;
             $options[CURLOPT_STDERR] = $stream;
         }
-
-        curl_setopt_array($ch, $options);
 
         Logger::debug(
             'Executing %s %s',
@@ -264,13 +260,7 @@ class RestRequest
             escapeshellarg($this->uri)
         );
 
-        $result = curl_exec($ch);
-
-        if ($result === false) {
-            throw new CurlException('%s', curl_error($ch));
-        }
-
-        curl_close($ch);
+        $result = $this->curlExec($options);
 
         if (is_resource($stream)) {
             rewind($stream);
@@ -279,5 +269,29 @@ class RestRequest
         }
 
         return Json::decode($result, true);
+    }
+
+    /**
+     * Set up a new cURL handle with the given options and call {@link curl_exec()}
+     *
+     * @param   array   $options
+     *
+     * @return  string  The response
+     *
+     * @throws  CurlException
+     */
+    protected function curlExec(array $options)
+    {
+        $ch = curl_init();
+        $options[CURLOPT_RETURNTRANSFER] = true;
+        curl_setopt_array($ch, $options);
+        $result = curl_exec($ch);
+
+        if ($result === false) {
+            throw new CurlException('%s', curl_error($ch));
+        }
+
+        curl_close($ch);
+        return $result;
     }
 }
