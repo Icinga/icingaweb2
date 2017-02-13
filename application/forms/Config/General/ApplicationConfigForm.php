@@ -35,6 +35,7 @@ class ApplicationConfigForm extends Form
             array(
                 'required'      => true,
                 'value'         => true,
+                'ignoreDefault' => true,
                 'label'         => $this->translate('Show Stacktraces'),
                 'description'   => $this->translate(
                     'Set whether to show an exception\'s stacktrace by default. This can also'
@@ -49,6 +50,7 @@ class ApplicationConfigForm extends Form
             array(
                 'label'         => $this->translate('Module Path'),
                 'required'      => true,
+                'ignoreDefault' => true,
                 'value'         => implode(':', Icinga::app()->getModuleManager()->getModuleDirs()),
                 'description'   => $this->translate(
                     'Contains the directories that will be searched for available modules, separated by '
@@ -64,6 +66,7 @@ class ApplicationConfigForm extends Form
             array(
                 'required'      => true,
                 'autosubmit'    => true,
+                'ignoreDefault' => true,
                 'label'         => $this->translate('User Preference Storage Type'),
                 'multiOptions'  => array(
                     'ini'   => $this->translate('File System (INI Files)'),

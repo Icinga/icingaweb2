@@ -350,11 +350,18 @@ class Config implements Countable, Iterator, Selectable
             throw new LogicException('You need to pass $filePath or set a path using Config::setConfigFile()');
         }
 
-        if (! file_exists($filePath)) {
-            File::create($filePath, $fileMode);
-        }
+        $writer = $this->getIniWriter($filePath, $fileMode);
+        if ($writer->render() !== '') {
+            if (! file_exists($filePath)) {
+                File::create($filePath, $fileMode);
+            }
 
-        $this->getIniWriter($filePath, $fileMode)->write();
+            $writer->write();
+        } else {
+            if (file_exists($filePath)) {
+                unlink($filePath);
+            }
+        }
     }
 
     /**

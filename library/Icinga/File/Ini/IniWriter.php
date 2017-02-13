@@ -46,6 +46,13 @@ class IniWriter
     protected $filename;
 
     /**
+     * The cache for method render
+     *
+     * @var string
+     */
+    protected $renderCache;
+
+    /**
      * Create a new INI writer
      *
      * @param Config    $config    The configuration to write
@@ -69,18 +76,22 @@ class IniWriter
      */
     public function render()
     {
-        if (file_exists($this->filename)) {
-            $oldconfig = Config::fromIni($this->filename);
-            $content = trim(file_get_contents($this->filename));
-        } else {
-            $oldconfig = Config::fromArray(array());
-            $content = '';
+        if ($this->renderCache === null) {
+            if (file_exists($this->filename)) {
+                $oldconfig = Config::fromIni($this->filename);
+                $content = trim(file_get_contents($this->filename));
+            } else {
+                $oldconfig = Config::fromArray(array());
+                $content = '';
+            }
+            $doc = IniParser::parseIni($content);
+            $this->diffPropertyUpdates($this->config, $doc);
+            $this->diffPropertyDeletions($oldconfig, $this->config, $doc);
+            $doc = $this->updateSectionOrder($this->config, $doc);
+            $this->renderCache = $doc->render();
         }
-        $doc = IniParser::parseIni($content);
-        $this->diffPropertyUpdates($this->config, $doc);
-        $this->diffPropertyDeletions($oldconfig, $this->config, $doc);
-        $doc = $this->updateSectionOrder($this->config, $doc);
-        return $doc->render();
+
+        return $this->renderCache;
     }
 
     /**
@@ -144,7 +155,6 @@ class IniWriter
             }
             if (!$doc->hasSection($section)) {
                 $domSection = new Section($section);
-                $doc->addSection($domSection);
             } else {
                 $domSection = $doc->getSection($section);
             }
@@ -163,6 +173,14 @@ class IniWriter
                     $dir->setValue($value);
                     $domSection->addDirective($dir);
                 }
+            }
+
+            if (! $domSection->isEmpty() || $newconfig->getConfigObject()->getKeyColumn() !== null) {
+                if (! $doc->hasSection($section)) {
+                    $doc->addSection($domSection);
+                }
+            } else {
+                $newconfig->removeSection($section);
             }
         }
     }
@@ -196,6 +214,11 @@ class IniWriter
                     if (null === $newSection->get($key) && $oldDomSection->hasDirective($key)) {
                         $oldDomSection->removeDirective($key);
                     }
+                }
+
+                if ($newconfig->getConfigObject()->getKeyColumn() === null && $oldDomSection->isEmpty()) {
+                    $doc->removeSection($section);
+                    $newconfig->removeSection($section);
                 }
             } else {
                 $doc->removeSection($section);

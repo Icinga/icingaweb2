@@ -133,8 +133,8 @@ class LdapBackendForm extends Form
             'user_class',
             array(
                 'preserveDefault'   => true,
+                'ignoreDefault'     => true,
                 'required'          => ! $isAd,
-                'ignore'            => $isAd,
                 'disabled'          => $isAd ?: null,
                 'label'             => $this->translate('LDAP User Object Class'),
                 'description'       => $this->translate('The object class used for storing users on the LDAP server.'),
@@ -183,8 +183,8 @@ class LdapBackendForm extends Form
             'user_name_attribute',
             array(
                 'preserveDefault'   => true,
+                'ignoreDefault'     => true,
                 'required'          => ! $isAd,
-                'ignore'            => $isAd,
                 'disabled'          => $isAd ?: null,
                 'label'             => $this->translate('LDAP User Name Attribute'),
                 'description'       => $this->translate(
@@ -206,6 +206,7 @@ class LdapBackendForm extends Form
             'base_dn',
             array(
                 'preserveDefault'   => true,
+                'ignoreDefault'     => true,
                 'required'          => false,
                 'label'             => $this->translate('LDAP Base DN'),
                 'description'       => $this->translate(
