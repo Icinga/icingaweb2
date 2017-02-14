@@ -1105,10 +1105,11 @@ class Form extends Zend_Form
      */
     protected function preserveDefaults(Zend_Form $form, array & $defaults)
     {
-        foreach ($form->getElements() as $name => $_) {
-            if (array_key_exists($name, $defaults)
-                && array_key_exists($name . static::DEFAULT_SUFFIX, $defaults)
-                && $defaults[$name] === $defaults[$name . static::DEFAULT_SUFFIX]
+        foreach ($form->getElements() as $name => $element) {
+            if ((array_key_exists($name, $defaults)
+                    && array_key_exists($name . static::DEFAULT_SUFFIX, $defaults)
+                    && $defaults[$name] === $defaults[$name . static::DEFAULT_SUFFIX])
+                || $element->getAttrib('disabled')
             ) {
                 unset($defaults[$name]);
             }
