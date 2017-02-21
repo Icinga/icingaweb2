@@ -4,6 +4,7 @@
 namespace Icinga\Module\Monitoring\Hook;
 
 use Icinga\Module\Monitoring\Object\MonitoredObject;
+use Icinga\Web\View;
 
 /**
  * Base class for hooks extending the detail view of monitored objects
@@ -12,6 +13,13 @@ use Icinga\Module\Monitoring\Object\MonitoredObject;
  */
 abstract class DetailviewExtensionHook
 {
+    /**
+     * The view the generated HTML will be included in
+     *
+     * @var View
+     */
+    private $view;
+
     /**
      * Create a new hook
      *
@@ -37,4 +45,27 @@ abstract class DetailviewExtensionHook
      * @return  string
      */
     abstract public function getHtmlForObject(MonitoredObject $object);
+
+    /**
+     * Get {@link view}
+     *
+     * @return View
+     */
+    public function getView()
+    {
+        return $this->view;
+    }
+
+    /**
+     * Set {@link view}
+     *
+     * @param   View $view
+     *
+     * @return  $this
+     */
+    public function setView($view)
+    {
+        $this->view = $view;
+        return $this;
+    }
 }

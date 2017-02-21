@@ -101,7 +101,7 @@ abstract class MonitoredObjectController extends Controller
         $this->view->extensionsHtml = array();
         foreach (Hook::all('Monitoring\DetailviewExtension') as $hook) {
             /** @var DetailviewExtensionHook $hook */
-            $this->view->extensionsHtml[] = $hook->getHtmlForObject($this->object);
+            $this->view->extensionsHtml[] = $hook->setView($this->view)->getHtmlForObject($this->object);
         }
     }
 
