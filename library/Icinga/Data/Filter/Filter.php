@@ -133,7 +133,7 @@ abstract class Filter
      * @param string $filter  Filter expression
      *
      * @throws FilterException
-     * @return FilterWhere
+     * @return FilterExpression
      */
     public static function where($col, $filter)
     {

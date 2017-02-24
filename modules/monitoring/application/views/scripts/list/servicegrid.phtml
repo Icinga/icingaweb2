@@ -1,12 +1,42 @@
 <?php
+use Icinga\Data\Filter\Filter;
 use Icinga\Module\Monitoring\Object\Service;
 use Icinga\Web\Url;
+use Icinga\Web\Widget\FilterQuickEditor;
 
 if (! $this->compact): ?>
 <div class="controls">
     <?= $this->tabs ?>
     <?= $this->sortBox ?>
     <?= $this->filterEditor ?>
+    <?= FilterQuickEditor::create(array(
+        array(
+            Filter::where('service_handled', 0),
+            $this->translate('hide handled services'),
+            $this->translate('show handled services')
+        ),
+        array(
+            Filter::where('service_handled', 1),
+            $this->translate('hide unhandled services'),
+            $this->translate('show unhandled services')
+        ),
+        array(
+            array(
+                Filter::where('service_active_checks_enabled', 0),
+                Filter::where('service_passive_checks_enabled', 0)
+            ),
+            $this->translate('hide services being checked'),
+            $this->translate('show services being checked')
+        ),
+        array(
+            array(
+                Filter::where('service_active_checks_enabled', 1),
+                Filter::where('service_passive_checks_enabled', 1)
+            ),
+            $this->translate('hide services not being checked'),
+            $this->translate('show services not being checked')
+        )
+    )) ?>
 </div>
 <?php endif ?>
 <div class="content" data-base-target="_next">
