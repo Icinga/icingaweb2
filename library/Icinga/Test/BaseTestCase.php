@@ -117,18 +117,22 @@ namespace Icinga\Test {
          */
         public static function setupDirectories()
         {
-            $baseDir = realpath(__DIR__ . '/../../../');
-
+            $baseDir = getenv('ICINGAWEB_BASEDIR') ?: realpath(__DIR__ . '/../../../');
             if ($baseDir === false) {
                 throw new RuntimeException('Application base dir not found');
             }
 
+            $libDir = getenv('ICINGAWEB_ICINGA_LIB') ?: realpath($baseDir . '/library/Icinga');
+            if ($libDir === false) {
+                throw new RuntimeException('Icinga library dir not found');
+            }
+
             self::$appDir = $baseDir . '/application';
-            self::$libDir = $baseDir . '/library/Icinga';
+            self::$libDir = $libDir;
             self::$etcDir = $baseDir . '/etc';
             self::$testDir = $baseDir . '/test/php';
             self::$shareDir = $baseDir . '/share/icinga2-web';
-            self::$moduleDir = $baseDir . '/modules';
+            self::$moduleDir = getenv('ICINGAWEB_MODULES_DIR') ?: $baseDir . '/modules';
         }
 
         /**

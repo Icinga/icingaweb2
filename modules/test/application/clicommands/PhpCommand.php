@@ -70,7 +70,10 @@ class PhpCommand extends Command
         }
 
         chdir(realpath(__DIR__ . '/../..'));
-        $command = $phpUnit . ' ' . join(' ', array_merge($options, $this->params->getAllStandalone()));
+        $command = $this->getEnvironmentVariables() . $phpUnit . ' ' . join(
+            ' ',
+            array_merge($options, $this->params->getAllStandalone())
+        );
         if ($this->isVerbose) {
             $res = `$command`;
             foreach (preg_split('/\n/', $res) as $line) {
@@ -172,5 +175,23 @@ class PhpCommand extends Command
         }
 
         return $path;
+    }
+
+    /**
+     * Setup some required environment variables
+     */
+    protected function getEnvironmentVariables()
+    {
+        $vars = array();
+        $vars[] = sprintf('ICINGAWEB_BASEDIR=%s', $this->app->getBaseDir());
+        $vars[] = sprintf('ICINGAWEB_ICINGA_LIB=%s', $this->app->getLibraryDir('Icinga'));
+
+        // Disabled as the bootstrap.php for PHPUnit and class BaseTestCase can't handle multiple paths yet
+        /*$vars[] = sprintf(
+            'ICINGAWEB_MODULES_DIR=%s',
+            implode(PATH_SEPARATOR, $this->app->getModuleManager()->getModuleDirs())
+        );*/
+
+        return join(' ', $vars) . ' ';
     }
 }
