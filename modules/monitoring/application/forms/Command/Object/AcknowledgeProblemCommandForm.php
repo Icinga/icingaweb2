@@ -82,6 +82,9 @@ class AcknowledgeProblemCommandForm extends ObjectsCommandForm
                 )
             )
         ));
+
+        $this->getElement('comment')->setAttrib('class', 'autofocus');
+
         if (isset($formData['expire']) && (bool) $formData['expire'] === true) {
             $expireTime = new DateTime();
             $expireTime->add(new DateInterval('PT1H'));
