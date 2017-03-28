@@ -39,8 +39,12 @@
         ); ?>
     <?php endif ?>
     <span class="comment-time">
-        <?= $this->translate('by') ?>
-        <?= $this->escape($downtime->author_name) ?>
+        <?= $this->escape(sprintf(
+            $downtime->is_flexible
+                ? $this->translate('Flexible downtime by %s')
+                : $this->translate('Fixed downtime by %s'),
+            $downtime->author_name
+        )) ?>
     </span>
   <?php if (! $downtime->is_in_effect && $downtime->start >= time()): ?>
     <span><?= sprintf($this->translate('expires %s'), $this->timeUntil($downtime->end)) ?></span>
