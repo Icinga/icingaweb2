@@ -1,4 +1,5 @@
 <?php
+use Icinga\Data\Filter\Filter;
 use Icinga\Module\Monitoring\Object\Service;
 use Icinga\Web\Url;
 
@@ -14,7 +15,10 @@ if (! $this->compact): ?>
     <p><?= $this->translate('No services found matching the filter.') ?></p>
 </div>
 <?php return; endif;
-$hostFilter = '(host_name=' . implode('|host_name=', array_keys($pivotData)) . ')';
+$hostFilter = Filter::matchAny();
+foreach ($pivotData as $hostName => $_) {
+    $hostFilter->orFilter(Filter::where('host_name', $hostName));
+}
 ?>
     <table class="service-grid-table">
     <thead>
@@ -30,8 +34,10 @@ $hostFilter = '(host_name=' . implode('|host_name=', array_keys($pivotData)) . '
         <?php foreach ($pivotHeader['cols'] as $serviceDescription => $serviceDisplayName): ?>
             <th class="rotate-45"><div><span><?= $this->qlink(
                 $this->ellipsis($serviceDisplayName, 18),
-                'monitoring/list/services?' . $hostFilter,
-                array('service_description' => $serviceDescription),
+                Url::fromPath('monitoring/list/services')->addFilter(
+                    Filter::matchAll($hostFilter, Filter::where('service_description', $serviceDescription))
+                ),
+                null,
                 array('title' => sprintf(
                     $this->translate('List all services with the name "%s" on all reported hosts'),
                     $serviceDisplayName
@@ -47,12 +53,16 @@ $hostFilter = '(host_name=' . implode('|host_name=', array_keys($pivotData)) . '
     <?php foreach ($pivotHeader['rows'] as $hostName => $hostDisplayName): ?>
         <tr>
             <th><?php
-                $services = $pivotData[$hostName];
-                $serviceFilter = '(service_description=' . implode('|service_description=', array_keys($services)) . ')';
+                $serviceFilter = Filter::matchAny();
+                foreach ($pivotData[$hostName] as $serviceName => $_) {
+                    $serviceFilter->orFilter(Filter::where('service_description', $serviceName));
+                }
                 echo $this->qlink(
                     $hostDisplayName,
-                    'monitoring/list/services?' . $serviceFilter,
-                    array('host_name' => $hostName),
+                    Url::fromPath('monitoring/list/services')->addFilter(
+                        Filter::matchAll($serviceFilter, Filter::where('host_name', $hostName))
+                    ),
+                    null,
                     array('title' => sprintf($this->translate('List all reported services on host %s'), $hostDisplayName))
                 );
             ?></th>
