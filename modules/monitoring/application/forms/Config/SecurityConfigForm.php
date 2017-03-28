@@ -52,7 +52,7 @@ class SecurityConfigForm extends ConfigForm
             'protected_customvars',
             array(
                 'allowEmpty'    => true,
-                'value'         => '*pw*,*pass*,community',
+                'attribs'       => array('placeholder' => $this->getDefaultProtectedCustomvars()),
                 'label'         => $this->translate('Protected Custom Variables'),
                 'description'   => $this->translate(
                     'Comma separated case insensitive list of protected custom variables.'
@@ -61,5 +61,15 @@ class SecurityConfigForm extends ConfigForm
                 )
             )
         );
+    }
+
+    /**
+     * Return the customvars to suggest to protect when none are protected
+     *
+     * @return string
+     */
+    public function getDefaultProtectedCustomvars()
+    {
+        return '*pw*,*pass*,community';
     }
 }
