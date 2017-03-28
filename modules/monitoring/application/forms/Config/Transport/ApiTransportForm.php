@@ -64,7 +64,8 @@ class ApiTransportForm extends Form
                     'description'   => $this->translate(
                         'User to log in as on the remote Icinga instance. Please note that key-based SSH login must be'
                         . ' possible for this user'
-                    )
+                    ),
+                    'renderPassword'    => true
                 )
             )
         ));
