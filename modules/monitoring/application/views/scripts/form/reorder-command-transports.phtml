@@ -1,0 +1,93 @@
+<?php
+/** @var \Icinga\Web\View $this */
+/** @var \Icinga\Module\Monitoring\Forms\Config\TransportReorderForm $form */
+?>
+<form id="<?=
+    $form->getId()
+?>" name="<?=
+    $form->getName()
+?>" enctype="<?=
+    $form->getEncType()
+?>" method="<?=
+    $form->getMethod()
+?>" action="<?=
+    $form->getAction()
+?>">
+    <table class="table-row-selectable common-table" data-base-target="_next">
+        <thead>
+            <tr>
+                <th><?= $this->translate('Transport') ?></th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        <?php
+        $i = -1;
+        $transportConfig = $form->getConfig();
+        $total = $transportConfig->count();
+        foreach ($transportConfig as $transportName => $config):
+            ++$i;
+        ?>
+            <tr>
+                <td>
+                    <?= $this->qlink(
+                        $transportName,
+                        'monitoring/config/edittransport',
+                        array('transport' => $transportName),
+                        array(
+                            'icon'  => 'edit',
+                            'title' => sprintf($this->translate('Edit command transport %s'), $transportName)
+                        )
+                    ); ?>
+                    <span class="config-label-meta">&#40;<?= sprintf(
+                            $this->translate('Type: %s'),
+                            ucfirst($config->get('transport', 'local'))
+                        ) ?>&#41;
+                    </span>
+                </td>
+                <td class="text-right">
+                    <?= $this->qlink(
+                        '',
+                        'monitoring/config/removetransport',
+                        array('transport' => $transportName),
+                        array(
+                            'class' => 'action-link',
+                            'icon'  => 'cancel',
+                            'title' => sprintf($this->translate('Remove command transport %s'), $transportName)
+                        )
+                    ); ?>
+                </td>
+                <td class="icon-col text-right" data-base-target="_self">
+                    <?php if ($i > 0): ?>
+                        <button type="submit" name="transport_newpos" class="link-button icon-only animated move-up" value="<?= $this->escape(
+                            ($i - 1) . '|' . $transportName
+                        ) ?>" title="<?= $this->translate(
+                            'Move up in order'
+                        ) ?>" aria-label="<?= $this->escape(sprintf(
+                            $this->translate('Move command transport %s upwards'),
+                            $transportName
+                        )) ?>"><?=
+                            $this->icon('up-small')
+                        ?></button>
+                    <?php endif ?>
+                    <?php if ($i + 1 < $total): ?>
+                        <button type="submit" name="transport_newpos" class="link-button icon-only animated move-down" value="<?= $this->escape(
+                            ($i + 1) . '|' . $transportName
+                        ) ?>" title="<?= $this->translate(
+                            'Move down in order'
+                        ) ?>" aria-label="<?= $this->escape(sprintf(
+                            $this->translate('Move command transport %s downwards'),
+                            $transportName
+                        )) ?>"><?=
+                            $this->icon('down-small')
+                        ?></button>
+                    <?php endif ?>
+                </td>
+            </tr>
+        <?php endforeach ?>
+        </tbody>
+    </table>
+    <?= $form->getElement($form->getTokenElementName()) ?>
+    <?= $form->getElement($form->getUidElementName()) ?>
+</form>

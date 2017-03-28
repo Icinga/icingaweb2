@@ -8,6 +8,7 @@ use Icinga\Data\ResourceFactory;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\NotFoundError;
 use Icinga\Forms\ConfirmRemovalForm;
+use Icinga\Module\Monitoring\Forms\Config\TransportReorderForm;
 use Icinga\Web\Controller;
 use Icinga\Web\Notification;
 use Icinga\Module\Monitoring\Backend;
@@ -34,8 +35,10 @@ class ConfigController extends Controller
      */
     public function indexAction()
     {
+        $this->view->commandTransportReorderForm = $form = new TransportReorderForm();
+        $form->handleRequest();
+
         $this->view->backendsConfig = $this->Config('backends');
-        $this->view->transportConfig = $this->Config('commandtransports');
         $this->view->tabs = $this->Module()->getConfigTabs()->activate('backends');
     }
 
