@@ -261,6 +261,20 @@ class FilterTest extends BaseTestCase
         );
     }
 
+    /**
+     * Test whether special characters inside values are URL-encoded, but the other ones aren't
+     */
+    public function testSpecialCharacterEscaping()
+    {
+        $this->assertSame(
+            Filter::matchAll(
+                Filter::expression('host', '!=', 'localhost'),
+                Filter::matchAny(Filter::where('service', 'ping4'), Filter::where('specialchars', '(|&!=)'))
+            )->toQueryString(),
+            'host!=localhost&(service=ping4|specialchars=%28%7C%26%21%3D%29)'
+        );
+    }
+
     private function row($idx)
     {
         return $this->sampleData[$idx];
