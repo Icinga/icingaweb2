@@ -10,7 +10,7 @@ thoroughly.
 ## <a id="installing-requirements"></a> Installing Requirements
 
 * A web server, e.g. Apache or nginx
-* PHP >= 5.3.0 w/ gettext, intl and OpenSSL support
+* PHP >= 5.3.0 w/ gettext, intl, mbstring and OpenSSL support
 * Default time zone configured for PHP in the php.ini file
 * LDAP PHP library when using Active Directory or LDAP for authentication
 * Icinga 1.x w/ IDO; Icinga 2.x w/ IDO feature enabled
