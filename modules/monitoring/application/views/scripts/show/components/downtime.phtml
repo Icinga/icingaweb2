@@ -80,7 +80,12 @@ if (empty($object->comments) && ! $addLink) {
             }
         ?>
             <dt>
-                <?= $this->escape($downtime->author_name) ?>
+                <?= $this->escape(sprintf(
+                    $downtime->is_flexible
+                        ? $this->translate('Flexible downtime by %s')
+                        : $this->translate('Fixed downtime by %s'),
+                    $downtime->author_name
+                )) ?>
                 <span class="comment-time">
                     <?= $this->translate('created') ?>
                     <?= $this->timeAgo($downtime->entry_time) ?>
