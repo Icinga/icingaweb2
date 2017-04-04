@@ -214,7 +214,9 @@ class ApiCommandTransport implements CommandTransportInterface
             );
         }
         $result = array_pop($response['results']);
-        if ($result['code'] < 200 || $result['code'] >= 300) {
+        if (! empty($result)
+            && ($result['code'] < 200 || $result['code'] >= 300)
+        ) {
             throw new CommandTransportException(
                 'Can\'t send external Icinga command: %u %s',
                 $result['code'],
