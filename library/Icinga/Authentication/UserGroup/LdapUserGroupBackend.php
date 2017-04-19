@@ -422,7 +422,7 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
                 ->setUnfoldAttribute($this->groupMemberAttribute)
                 ->setBase($this->groupBaseDn)
                 ->fetchOne();
-            $this->ambiguousMemberAttribute = !$this->isRelatedDn($sampleValue);
+            $this->ambiguousMemberAttribute = !$this->isRelatedDn($sampleValue, $this->getUserBaseDn());
         }
 
         return $this->ambiguousMemberAttribute;
