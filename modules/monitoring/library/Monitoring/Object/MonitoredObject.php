@@ -616,12 +616,13 @@ abstract class MonitoredObject implements Filterable
      *
      * @return $this
      */
-    public function fetchEventhistory()
+    public function fetchEventhistory($hideDowntimes = false)
     {
+        $hideDowntimes = (bool) $hideDowntimes;
         $eventHistory = $this->backend
             ->select()
             ->from(
-                'eventhistory',
+                $hideDowntimes ? 'eventhistoryhidedowntimes' : 'eventhistory',
                 array(
                     'object_type',
                     'host_name',

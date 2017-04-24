@@ -38,3 +38,39 @@ use Icinga\Module\Monitoring\Object\Host;
         </td>
     </tr>
 </table>
+<div class="quick-actions">
+    <ul class="nav tab-nav">
+        <li><?php
+            $hideDowntimes = (bool) $this->url()->getParam('hideDowntimes', 0);
+            if ($hideDowntimes == 1) {
+                echo $this->qlink(
+                    $this->translate('Show Downtimes'),
+                    'monitoring/host/history',
+                    array('host' => $object->getName()),
+                    array(
+                        'class'             => 'action-link',
+                        'data-base-target'  => '_self',
+                        'icon'              => 'plug',
+                        'title'             => $this->translate(
+                            'Include downtime start and end event records'
+                        )
+                    )
+                );
+            } else {
+                echo $this->qlink(
+                    $this->translate('Hide Downtimes'),
+                    'monitoring/host/history',
+                    array('host' => $object->getName(), 'hideDowntimes' => 1),
+                    array(
+                        'class'             => 'action-link',
+                        'data-base-target'  => '_self',
+                        'icon'              => 'plug',
+                        'title'             => $this->translate(
+                            'Hide downtime start and end event records'
+                        )
+                    )
+                );
+            } ?>
+        </li>
+    </ul>
+</div>
