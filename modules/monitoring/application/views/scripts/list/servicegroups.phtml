@@ -82,7 +82,7 @@ if (! $this->compact): ?>
                         ),
                         'List %s service that is currently in state CRITICAL (Acknowledged) in service group "%s"',
                         'List %s services which are currently in state CRITICAL (Acknowledged) in service group "%s"',
-                        array($serviceGroup->services_critical_unhandled, $serviceGroup->servicegroup_alias)
+                        array($serviceGroup->services_critical_handled, $serviceGroup->servicegroup_alias)
                     )
                     ->add(
                         StateBadges::STATE_UNKNOWN,
