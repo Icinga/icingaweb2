@@ -353,7 +353,6 @@ use Icinga\Module\Monitoring\Object\Service;
         $services_pending . ' ' . Service::getStateText(99, true),
         'monitoring/list/services',
         array(
-            'host_problem'      => $host_problem,
             'service_state'     => 99
         ),
         array('title' => sprintf(
@@ -378,7 +377,6 @@ use Icinga\Module\Monitoring\Object\Service;
         'monitoring/list/services',
         array(
             'service_state'                     => 99,
-            'host_problem'                      => $host_problem,
             'service_active_checks_enabled'     => 0,
             'service_passive_checks_enabled'    => 0
         ),
