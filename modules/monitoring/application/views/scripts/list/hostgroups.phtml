@@ -186,7 +186,7 @@ if (! $this->compact): ?>
                         ),
                         'List %u service that is currently in state CRITICAL (Acknowledged) on hosts in the host group "%s"',
                         'List %u services which are currently in state CRITICAL (Acknowledged) on hosts in the host group "%s"',
-                        array($hostGroup->services_critical_unhandled, $hostGroup->hostgroup_alias)
+                        array($hostGroup->services_critical_handled, $hostGroup->hostgroup_alias)
                     )
                     ->add(
                         StateBadges::STATE_UNKNOWN,
