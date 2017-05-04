@@ -38,6 +38,7 @@ class HostnotificationQuery extends IdoQuery
         'notifications' => array(
             'host_name'                 => 'ho.name1',
             'notification_output'       => 'hn.output',
+            'notification_reason'       => 'hn.notification_reason',
             'notification_state'        => 'hn.state',
             'notification_timestamp'    => 'UNIX_TIMESTAMP(hn.start_time)',
             'object_type'               => '(\'host\')'

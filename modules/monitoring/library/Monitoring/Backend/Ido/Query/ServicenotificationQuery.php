@@ -38,6 +38,7 @@ class ServicenotificationQuery extends IdoQuery
         'notifications' => array(
             'host_name'                 => 'so.name1',
             'notification_output'       => 'sn.output',
+            'notification_reason'       => 'sn.notification_reason',
             'notification_state'        => 'sn.state',
             'notification_timestamp'    => 'UNIX_TIMESTAMP(sn.start_time)',
             'object_type'               => '(\'service\')',
