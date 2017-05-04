@@ -34,7 +34,7 @@ if (! $this->compact): ?>
                 <?= $this->qlink(
                     $serviceGroup->servicegroup_alias,
                     'monitoring/list/services',
-                    array('servicegroup_name' =>  $serviceGroup->servicegroup_name),
+                    array('servicegroup_name' =>  $serviceGroup->servicegroup_name, 'sort' => 'service_severity'),
                     array('title' => sprintf($this->translate('List all services in the group "%s"'),  $serviceGroup->servicegroup_alias))
                 ) ?>
             </th>
