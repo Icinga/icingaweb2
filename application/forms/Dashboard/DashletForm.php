@@ -63,7 +63,7 @@ class DashletForm extends Form
         );
 
         $this->addElement(
-            'text',
+            'textarea',
             'url',
             array(
                 'required'      => true,
