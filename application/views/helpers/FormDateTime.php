@@ -43,6 +43,9 @@ class Zend_View_Helper_FormDateTime extends Zend_View_Helper_FormElement
             // If value was valid, it's a DateTime object
             $value = $this->formatDate($value, $attribs['local']);
         }
+        if (isset($attribs['placeholder']) && $attribs['placeholder'] instanceof DateTime) {
+            $attribs['placeholder'] = $this->formatDate($attribs['placeholder'], $attribs['local']);
+        }
         $min = '';
         if (! empty($attribs['min'])) {
             $min = sprintf(' min="%s"', $this->formatDate($attribs['min'], $attribs['local']));

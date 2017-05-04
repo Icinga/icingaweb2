@@ -3,6 +3,7 @@
 
 namespace Icinga\Forms\Announcement;
 
+use DateTime;
 use Icinga\Authentication\Auth;
 use Icinga\Data\Filter\Filter;
 use Icinga\Forms\RepositoryForm;
@@ -21,43 +22,44 @@ class AnnouncementForm extends RepositoryForm
             'text',
             'author',
             array(
+                'disabled'  => true,
                 'required'  => true,
-                'value'     => Auth::getInstance()->getUser()->getUsername(),
-                'disabled'  => true
+                'value'     => Auth::getInstance()->getUser()->getUsername()
             )
         );
         $this->addElement(
             'textarea',
             'message',
             array(
-                'required'      => true,
+                'description'   => $this->translate('The message to display to users'),
                 'label'         => $this->translate('Message'),
-                'description'   => $this->translate('The message to display to users')
+                'required'      => true
             )
         );
         $this->addElement(
             'dateTimePicker',
             'start',
             array(
-                'required'      => true,
+                'description'   => $this->translate('The time to display the announcement from'),
                 'label'         => $this->translate('Start'),
-                'description'   => $this->translate('The time to display the announcement from')
+                'placeholder'   => new DateTime('tomorrow'),
+                'required'      => true
             )
         );
         $this->addElement(
             'dateTimePicker',
             'end',
             array(
-                'required'      => true,
+                'description'   => $this->translate('The time to display the announcement until'),
                 'label'         => $this->translate('End'),
-                'description'   => $this->translate('The time to display the announcement until')
+                'placeholder'   => new DateTime('tomorrow +1day'),
+                'required'      => true
             )
         );
 
         $this->setTitle($this->translate('Create a new announcement'));
         $this->setSubmitLabel($this->translate('Create'));
     }
-
     /**
      * {@inheritDoc}
      */
