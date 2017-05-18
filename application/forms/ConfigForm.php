@@ -58,7 +58,7 @@ class ConfigForm extends Form
     {
         $sections = array();
         foreach ($this->getValues() as $sectionAndPropertyName => $value) {
-            if ($value === '' || (is_array($value) && empty($value))) {
+            if ($value === '' || $value === false || $value === []) {
                 $value = null; // Causes the config writer to unset it
             }
 
@@ -137,6 +137,8 @@ class ConfigForm extends Form
      */
     public static function transformEmptyValuesToNull(array $values)
     {
-        return array_map(function ($v) { return ($v === '' || (is_array($v) && empty($v))) ? null : $v; }, $values);
+        return array_map(function ($v) {
+            return ($v === '' || $v === false || $v === []) ? null : $v;
+        }, $values);
     }
 }
