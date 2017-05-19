@@ -467,10 +467,13 @@ class GettextTranslationHelper
 
         $subdirs = array();
         while (($filename = readdir($directoryHandle)) !== false) {
+            if (substr($filename, 0, 1) === '.' || $filename === 'vendor') {
+                continue;
+            }
             $filepath = $directory . DIRECTORY_SEPARATOR . $filename;
             if (preg_match('@^[^\.].+\.(' . implode('|', $this->sourceExtensions) . ')$@', $filename)) {
                 $file->fwrite($filepath . PHP_EOL);
-            } elseif (is_dir($filepath) && !preg_match('@^(\.|\.\.)$@', $filename)) {
+            } elseif (is_dir($filepath)) {
                 $subdirs[] = $filepath;
             }
         }
