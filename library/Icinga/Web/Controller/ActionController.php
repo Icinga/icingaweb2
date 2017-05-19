@@ -42,6 +42,11 @@ use Icinga\Web\Window;
 class ActionController extends Zend_Controller_Action
 {
     /**
+     * The login route to use when requiring authentication
+     */
+    const LOGIN_ROUTE = 'authentication/login';
+
+    /**
      * Whether the controller requires the user to be authenticated
      *
      * @var bool
@@ -370,7 +375,7 @@ class ActionController extends Zend_Controller_Action
      */
     protected function redirectToLogin($redirect = null)
     {
-        $login = Url::fromPath('authentication/login');
+        $login = Url::fromPath(static::LOGIN_ROUTE);
         if ($this->isXhr()) {
             if ($redirect !== null) {
                 $login->setParam('redirect', '__SELF__');
