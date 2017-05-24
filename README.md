@@ -39,6 +39,8 @@ or ask an Icinga partner for [professional support](https://www.icinga.com/servi
 
 ## Contributing
 
-There are many ways to contribute to Icinga -- whether it be creating pull requests on
-[GitHub](https://github.com/Icinga/icingaweb2), sending patches, testing, reporting bugs,
-or reviewing and updating the documentation. Every contribution is appreciated.
+There are many ways to contribute to Icinga -- whether it be sending patches,
+testing, reporting bugs, or reviewing and updating the documentation. Every
+contribution is appreciated!
+
+Please continue reading in the [contributing chapter](CONTRIBUTING.md).
