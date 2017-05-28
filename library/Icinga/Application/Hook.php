@@ -165,12 +165,12 @@ class Hook
         return lcfirst(
             substr(
                 $class,
-                ClassLoader::MODULE_PREFIX_LENGTH,
+                ClassLoader::MODULE_PREFIX_LENGTH + 1,
                 strpos(
                     $class,
                     ClassLoader::NAMESPACE_SEPARATOR,
                     ClassLoader::MODULE_PREFIX_LENGTH + 1
-                ) - ClassLoader::MODULE_PREFIX_LENGTH
+                ) - ClassLoader::MODULE_PREFIX_LENGTH - 1
             )
         );
     }
