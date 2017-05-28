@@ -71,8 +71,8 @@ class CheckNowCommandForm extends ObjectsCommandForm
         }
         Notification::success(mtp(
             'monitoring',
-            'Scheduling check..',
-            'Scheduling checks..',
+            'Scheduling check.',
+            'Scheduling checks.',
             count($this->objects)
         ));
         return true;
