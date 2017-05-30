@@ -20,7 +20,9 @@ if (! $this->compact): ?>
         <div class="services-link"><?= $this->qlink(
             $this->translate('Select all services'),
             Url::fromPath('monitoring/services/show')->setParams(
-                FilterQueryString::parse(Url::fromRequest()->getQueryString())->getUrlParams()
+                FilterQueryString::parse(
+                    Url::fromRequest()->without(array('sort', 'dir'))->getQueryString()
+                )->getUrlParams()
             ),
             null,
             array(

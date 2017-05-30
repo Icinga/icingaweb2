@@ -19,7 +19,9 @@ if (! $this->compact): ?>
         <div class="hosts-link"><?= $this->qlink(
             $this->translate('Select all hosts'),
             Url::fromPath('monitoring/hosts/show')->setParams(
-                FilterQueryString::parse(Url::fromRequest()->getQueryString())->getUrlParams()
+                FilterQueryString::parse(
+                    Url::fromRequest()->without(array('sort', 'dir'))->getQueryString()
+                )->getUrlParams()
             ),
             null,
             array(
