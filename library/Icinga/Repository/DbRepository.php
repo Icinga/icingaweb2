@@ -26,6 +26,8 @@ use Icinga\Util\StringHelper;
  *  <li>Differentiation between statement and query columns</li>
  *  <li>Capability to join additional tables depending on the columns being selected or used in a filter</li>
  * </ul>
+ *
+ * @method DbConnection getDataSource($table = null)
  */
 abstract class DbRepository extends Repository implements Extensible, Updatable, Reducible
 {
@@ -262,8 +264,8 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
      */
     protected function applyTableAlias($table, $virtualTable = null)
     {
-        $tableAliases = $this->getTableAliases();
         if (! is_array($table)) {
+            $tableAliases = $this->getTableAliases();
             if ($virtualTable !== null && isset($tableAliases[$virtualTable])) {
                 return array($tableAliases[$virtualTable] => $table);
             }
@@ -588,6 +590,12 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
             }
 
             $table = $newTable;
+        } else {
+            $virtualTables = $this->getVirtualTables();
+            if (isset($virtualTables[$table])) {
+                $virtualTable = $table;
+                $table = $virtualTables[$table];
+            }
         }
 
         return $this->prependTablePrefix($this->applyTableAlias($table, $virtualTable));
