@@ -270,9 +270,6 @@ class TransportConfigForm extends ConfigForm
         parent::addSubmitButton();
 
         if ($this->getSubForm('transport_form') instanceof ApiTransportForm) {
-            $this->getElement('btn_submit')
-                ->setDecorators(array('ViewHelper'));
-
             $this->addElement(
                 'submit',
                 'transport_validation',
@@ -296,8 +293,15 @@ class TransportConfigForm extends ConfigForm
                 )
             );
 
+            $btnSubmit = $this->getElement('btn_submit');
+            $elements = array('transport_validation', 'transport-progress');
+            if ($btnSubmit !== null) {
+                // In the setup wizard $this is being used as a subform which doesn't have a submit button.
+                $btnSubmit->setDecorators(array('ViewHelper'));
+                array_unshift($elements, 'btn_submit');
+            }
             $this->addDisplayGroup(
-                array('btn_submit', 'transport_validation', 'transport-progress'),
+                $elements,
                 'submit_validation',
                 array(
                     'decorators' => array(
