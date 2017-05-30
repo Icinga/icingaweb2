@@ -18,7 +18,7 @@ if (! $this->compact): ?>
     <?= $this->filterEditor ?>
     <?php if ($hasResult): ?>
         <div class="services-link"><?= $this->qlink(
-            $this->translate('Show all services'),
+            $this->translate('Select all services'),
             Url::fromPath('monitoring/services/show')->setParams(
                 FilterQueryString::parse(Url::fromRequest()->getQueryString())->getUrlParams()
             ),

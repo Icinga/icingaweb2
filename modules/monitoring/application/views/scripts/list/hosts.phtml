@@ -17,7 +17,7 @@ if (! $this->compact): ?>
     <?= $this->filterEditor ?>
     <?php if ($hasResult): ?>
         <div class="hosts-link"><?= $this->qlink(
-            $this->translate('Show all hosts'),
+            $this->translate('Select all hosts'),
             Url::fromPath('monitoring/hosts/show')->setParams(
                 FilterQueryString::parse(Url::fromRequest()->getQueryString())->getUrlParams()
             ),
