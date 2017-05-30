@@ -146,6 +146,16 @@ abstract class Command
         return $this->defaultActionName;
     }
 
+    /**
+     * Get {@link moduleName}
+     *
+     * @return string
+     */
+    public function getModuleName()
+    {
+        return $this->moduleName;
+    }
+
     public function hasDefaultActionName()
     {
         return $this->hasActionName($this->defaultActionName);
