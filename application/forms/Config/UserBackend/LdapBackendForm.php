@@ -221,11 +221,11 @@ class LdapBackendForm extends Form
 
         $this->addElement(
             'text',
-            'domains',
+            'domain',
             array(
-                'label'         => $this->translate('Domains'),
+                'label'         => $this->translate('Domain'),
                 'description'   => $this->translate(
-                    'The comma-separated domains the LDAP server is responsible for.'
+                    'The domain the LDAP server is responsible for.'
                 ),
                 'decorators'    => array(
                     array('Label', array('tag'=>'span', 'separator' => '', 'class' => 'control-label')),
@@ -240,13 +240,13 @@ class LdapBackendForm extends Form
 
         $this->addElement(
             'button',
-            'btn_discover_domains',
+            'btn_discover_domain',
             array(
                 'escape'        => false,
                 'ignore'        => true,
                 'label'         => $this->getView()->icon('binoculars'),
                 'type'          => 'submit',
-                'title'         => $this->translate('Discover the domains'),
+                'title'         => $this->translate('Discover the domain'),
                 'value'         => $this->translate('Discover'),
                 'decorators'    => array(
                     array('Help', array('placement' => 'APPEND')),
@@ -263,58 +263,52 @@ class LdapBackendForm extends Form
      */
     public function isValidPartial(array $formData)
     {
-        if (isset($formData['btn_discover_domains']) && parent::isValid($formData)) {
-            return $this->populateDomains(ResourceFactory::create($this->getElement('resource')->getValue()));
+        if (isset($formData['btn_discover_domain']) && parent::isValid($formData)) {
+            return $this->populateDomain(ResourceFactory::create($this->getElement('resource')->getValue()));
         }
 
         return true;
     }
 
     /**
-     * Discover the domains the LDAP server is responsible for and fill them in the form
+     * Discover the domain the LDAP server is responsible for and fill it in the form
      *
      * @param   LdapConnection  $connection
      *
      * @return  bool            Whether the discovery succeeded
      */
-    public function populateDomains(LdapConnection $connection)
+    public function populateDomain(LdapConnection $connection)
     {
         try {
-            $domains = $this->discoverDomains($connection);
+            $domain = $this->discoverDomain($connection);
         } catch (LdapException $e) {
-            $this->_elements['btn_discover_domains']->addError($e->getMessage());
+            $this->_elements['btn_discover_domain']->addError($e->getMessage());
             return false;
         }
 
-        $this->_elements['domains']->setValue(implode(',', $domains));
+        $this->_elements['domain']->setValue($domain);
         return true;
     }
 
     /**
-     * Discover the domains the LDAP server is responsible for
+     * Discover the domain the LDAP server is responsible for
      *
      * @param   LdapConnection  $connection
      *
-     * @return  string[]
+     * @return  string
      */
-    protected function discoverDomains(LdapConnection $connection)
+    protected function discoverDomain(LdapConnection $connection)
     {
-        $domains = array();
         $cap = LdapCapabilities::discoverCapabilities($connection);
 
         if ($cap->isActiveDirectory()) {
             $netBiosName = $cap->getNetBiosName();
             if ($netBiosName !== null) {
-                $domains[] = $netBiosName;
+                return $netBiosName;
             }
         }
 
-        $fqdn = $this->defaultNamingContextToFQDN($cap);
-        if ($fqdn !== null) {
-            $domains[] = $fqdn;
-        }
-
-        return $domains;
+        return $this->defaultNamingContextToFQDN($cap);
     }
 
     /**
