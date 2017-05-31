@@ -90,7 +90,7 @@ class LdapCapabilities
      *
      * @var array
      */
-    private $oids = array();
+    private $oids;
 
     /**
      * Construct a new capability
@@ -99,7 +99,18 @@ class LdapCapabilities
      */
     public function __construct($attributes = null)
     {
+        $this->setAttributes($attributes);
+    }
+
+    /**
+     * Set the attributes and (re)build the OIDs
+     *
+     * @param $attributes   StdClass    The attributes returned, may be null for guessing default capabilities
+     */
+    protected function setAttributes($attributes)
+    {
         $this->attributes = $attributes;
+        $this->oids = array();
 
         $keys = array('supportedControl', 'supportedExtension', 'supportedFeatures', 'supportedCapabilities');
         foreach ($keys as $key) {
@@ -216,6 +227,18 @@ class LdapCapabilities
     }
 
     /**
+     * Get the NetBIOS name
+     *
+     * @return string|null
+     */
+    public function getNetBiosName()
+    {
+        if (isset($this->attributes->nETBIOSName)) {
+            return $this->attributes->nETBIOSName;
+        }
+    }
+
+    /**
      * Fetch the namingContexts
      *
      * @return array    the available naming contexts
@@ -323,7 +346,59 @@ class LdapCapabilities
         }
 
         $cap = new LdapCapabilities($connection->cleanupAttributes(ldap_get_attributes($ds, $entry), $fields));
+        $cap->discoverAdConfigOptions($connection);
         return $cap;
+    }
+
+    /**
+     * Discover the AD-specific configuration options of the given LDAP server
+     *
+     * @param   LdapConnection  $connection The ldap connection to use
+     *
+     * @throws  LdapException       In case the configuration options query has failed
+     */
+    protected function discoverAdConfigOptions(LdapConnection $connection)
+    {
+        if ($this->isActiveDirectory()) {
+            $configurationNamingContext = $this->getConfigurationNamingContext();
+            $defaultNamingContext = $this->getDefaultNamingContext();
+            if (!($configurationNamingContext === null || $defaultNamingContext === null)) {
+                $ds = $connection->bind()->getConnection();
+                $adFields = array('nETBIOSName');
+                $partitions = 'CN=Partitions,' . $configurationNamingContext;
+
+                $result = @ldap_list(
+                    $ds,
+                    $partitions,
+                    (string) $connection->select()->from('*', $adFields)->where('nCName', $defaultNamingContext),
+                    $adFields
+                );
+                if (! $result) {
+                    throw new LdapException(
+                        'Configuration options query failed (%s:%d): %s. Check if hostname and port of the'
+                        . ' ldap resource are correct and if anonymous access is permitted.',
+                        $connection->getHostname(),
+                        $connection->getPort(),
+                        ldap_error($ds)
+                    );
+                }
+
+                $entry = ldap_first_entry($ds, $result);
+                if ($entry === false) {
+                    throw new LdapException(
+                        'Configuration options not available (%s:%d). Discovery of "'
+                        . $partitions . '" probably not permitted.',
+                        $connection->getHostname(),
+                        $connection->getPort()
+                    );
+                }
+
+                $this->setAttributes((object) array_merge(
+                    (array) $this->attributes,
+                    (array) $connection->cleanupAttributes(ldap_get_attributes($ds, $entry), $adFields)
+                ));
+            }
+        }
     }
 
     /**

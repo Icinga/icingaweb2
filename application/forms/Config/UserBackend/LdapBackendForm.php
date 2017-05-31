@@ -303,7 +303,7 @@ class LdapBackendForm extends Form
         $cap = LdapCapabilities::discoverCapabilities($connection);
 
         if ($cap->isActiveDirectory()) {
-            $netBiosName = $this->discoverADConfigOption($connection, 'nETBIOSName', $cap);
+            $netBiosName = $cap->getNetBiosName();
             if ($netBiosName !== null) {
                 $domains[] = $netBiosName;
             }
@@ -333,35 +333,6 @@ class LdapBackendForm extends Form
                 $splitMatches = array();
                 preg_match_all('/dc=([^,]+)/', $validationMatches[0], $splitMatches);
                 return implode('.', $splitMatches[1]);
-            }
-        }
-    }
-
-    /**
-     * Discover an AD-specific configuration option (e.g. nETBIOSName)
-     *
-     * @param   LdapConnection          $connection     A connection to the AD
-     * @param   string                  $option         The option to discover
-     * @param   LdapCapabilities|null   $cap            The AD's capabilities if already discovered
-     *
-     * @return  string|null                             The value of the option
-     */
-    protected function discoverADConfigOption(LdapConnection $connection, $option, LdapCapabilities $cap = null)
-    {
-        if ($cap === null) {
-            $cap = LdapCapabilities::discoverCapabilities($connection);
-        }
-
-        $configurationNamingContext = $cap->getConfigurationNamingContext();
-        $defaultNamingContext = $cap->getDefaultNamingContext();
-        if (!($configurationNamingContext === null || $defaultNamingContext === null)) {
-            $value = $connection->select()
-                ->setBase('CN=Partitions,' . $configurationNamingContext)
-                ->from('*', array($option))
-                ->where('nCName', $defaultNamingContext)
-                ->fetchOne();
-            if ($value !== false) {
-                return $value;
             }
         }
     }
