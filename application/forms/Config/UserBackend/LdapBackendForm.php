@@ -5,6 +5,9 @@ namespace Icinga\Forms\Config\UserBackend;
 
 use Exception;
 use Icinga\Data\ResourceFactory;
+use Icinga\Protocol\Ldap\LdapCapabilities;
+use Icinga\Protocol\Ldap\LdapConnection;
+use Icinga\Protocol\Ldap\LdapException;
 use Icinga\Web\Form;
 
 /**
@@ -215,5 +218,138 @@ class LdapBackendForm extends Form
                 'value'             => $baseDn
             )
         );
+
+        $this->addElement(
+            'text',
+            'domains',
+            array(
+                'label'         => $this->translate('Domains'),
+                'description'   => $this->translate(
+                    'The comma-separated domains the LDAP server is responsible for.'
+                ),
+                'decorators'    => array(
+                    array('Label', array('tag'=>'span', 'separator' => '', 'class' => 'control-label')),
+                    array('Help', array('placement' => 'APPEND')),
+                    array(array('labelWrap' => 'HtmlTag'), array('tag' => 'div', 'class' => 'control-label-group')),
+                    array('ViewHelper', array('separator' => '')),
+                    array('Errors', array('separator' => '')),
+                    array('HtmlTag', array('tag' => 'div', 'class' => 'control-group', 'openOnly' => true))
+                )
+            )
+        );
+
+        $this->addElement(
+            'button',
+            'btn_discover_domains',
+            array(
+                'escape'        => false,
+                'ignore'        => true,
+                'label'         => $this->getView()->icon('binoculars'),
+                'type'          => 'submit',
+                'title'         => $this->translate('Discover the domains'),
+                'value'         => $this->translate('Discover'),
+                'decorators'    => array(
+                    array('Help', array('placement' => 'APPEND')),
+                    array('ViewHelper', array('separator' => '')),
+                    array('Errors', array('separator' => '')),
+                    array('HtmlTag', array('tag' => 'div', 'class' => 'control-group', 'closeOnly' => true))
+                )
+            )
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isValidPartial(array $formData)
+    {
+        if (isset($formData['btn_discover_domains']) && parent::isValid($formData)) {
+            try {
+                $domains = $this->discoverDomains(ResourceFactory::create($this->getElement('resource')->getValue()));
+            } catch (LdapException $e) {
+                $this->_elements['btn_discover_domains']->addError($e->getMessage());
+                return false;
+            }
+
+            $this->_elements['domains']->setValue(implode(',', $domains));
+        }
+
+        return true;
+    }
+
+    /**
+     * Discover the domains the LDAP server is responsible for
+     *
+     * @param   LdapConnection  $connection
+     *
+     * @return  string[]
+     */
+    protected function discoverDomains(LdapConnection $connection)
+    {
+        $domains = array();
+        $cap = LdapCapabilities::discoverCapabilities($connection);
+
+        if ($cap->isActiveDirectory()) {
+            $netBiosName = $this->discoverADConfigOption($connection, 'nETBIOSName', $cap);
+            if ($netBiosName !== null) {
+                $domains[] = $netBiosName;
+            }
+        }
+
+        $fqdn = $this->defaultNamingContextToFQDN($cap);
+        if ($fqdn !== null) {
+            $domains[] = $fqdn;
+        }
+
+        return $domains;
+    }
+
+    /**
+     * Get the default naming context as FQDN
+     *
+     * @param   LdapCapabilities    $cap
+     *
+     * @return  string|null
+     */
+    protected function defaultNamingContextToFQDN(LdapCapabilities $cap)
+    {
+        $defaultNamingContext = $cap->getDefaultNamingContext();
+        if ($defaultNamingContext !== null) {
+            $validationMatches = array();
+            if (preg_match('/\bdc=[^,]+(?:,dc=[^,]+)*$/', strtolower($defaultNamingContext), $validationMatches)) {
+                $splitMatches = array();
+                preg_match_all('/dc=([^,]+)/', $validationMatches[0], $splitMatches);
+                return implode('.', $splitMatches[1]);
+            }
+        }
+    }
+
+    /**
+     * Discover an AD-specific configuration option (e.g. nETBIOSName)
+     *
+     * @param   LdapConnection          $connection     A connection to the AD
+     * @param   string                  $option         The option to discover
+     * @param   LdapCapabilities|null   $cap            The AD's capabilities if already discovered
+     *
+     * @return  string|null                             The value of the option
+     */
+    protected function discoverADConfigOption(LdapConnection $connection, $option, LdapCapabilities $cap = null)
+    {
+        if ($cap === null) {
+            $cap = LdapCapabilities::discoverCapabilities($connection);
+        }
+
+        $configurationNamingContext = $cap->getConfigurationNamingContext();
+        $defaultNamingContext = $cap->getDefaultNamingContext();
+        if (!($configurationNamingContext === null || $defaultNamingContext === null)) {
+            $value = $connection->select()
+                ->setBase('CN=Partitions,' . $configurationNamingContext)
+                ->from('*', array($option))
+                ->where('nCName', $defaultNamingContext)
+                ->fetchOne();
+            if ($value !== false) {
+                return $value;
+            }
+        }
     }
 }

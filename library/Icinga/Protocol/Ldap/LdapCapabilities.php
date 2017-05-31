@@ -204,6 +204,18 @@ class LdapCapabilities
     }
 
     /**
+     * Get the configuration naming context
+     *
+     * @return string|null
+     */
+    public function getConfigurationNamingContext()
+    {
+        if (isset($this->attributes->configurationNamingContext)) {
+            return $this->attributes->configurationNamingContext;
+        }
+    }
+
+    /**
      * Fetch the namingContexts
      *
      * @return array    the available naming contexts
@@ -273,6 +285,7 @@ class LdapCapabilities
         $ds = $connection->getConnection();
 
         $fields = array(
+            'configurationNamingContext',
             'defaultNamingContext',
             'namingContexts',
             'vendorName',
