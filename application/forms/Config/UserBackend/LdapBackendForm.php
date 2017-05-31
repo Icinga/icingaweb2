@@ -264,16 +264,29 @@ class LdapBackendForm extends Form
     public function isValidPartial(array $formData)
     {
         if (isset($formData['btn_discover_domains']) && parent::isValid($formData)) {
-            try {
-                $domains = $this->discoverDomains(ResourceFactory::create($this->getElement('resource')->getValue()));
-            } catch (LdapException $e) {
-                $this->_elements['btn_discover_domains']->addError($e->getMessage());
-                return false;
-            }
-
-            $this->_elements['domains']->setValue(implode(',', $domains));
+            return $this->populateDomains(ResourceFactory::create($this->getElement('resource')->getValue()));
         }
 
+        return true;
+    }
+
+    /**
+     * Discover the domains the LDAP server is responsible for and fill them in the form
+     *
+     * @param   LdapConnection  $connection
+     *
+     * @return  bool            Whether the discovery succeeded
+     */
+    public function populateDomains(LdapConnection $connection)
+    {
+        try {
+            $domains = $this->discoverDomains($connection);
+        } catch (LdapException $e) {
+            $this->_elements['btn_discover_domains']->addError($e->getMessage());
+            return false;
+        }
+
+        $this->_elements['domains']->setValue(implode(',', $domains));
         return true;
     }
 
