@@ -62,6 +62,7 @@ class TimelineController extends Controller
                 ),
                 'ack'           => array(
                     'class'     => 'timeline-ack',
+                    'detailUrl' => $detailUrl,
                     'label'     => mt('monitoring', 'Acknowledgements')
                 ),
                 'dt_start'      => array(
