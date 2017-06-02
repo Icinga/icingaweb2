@@ -3,8 +3,6 @@
 
 namespace Icinga\Util;
 
-use Icinga\Application\Platform;
-
 /**
  * Retrieve timezone information from cookie
  */
@@ -52,19 +50,17 @@ class TimezoneDetect
             return;
         }
 
-        if (Platform::isCli() === false && array_key_exists(self::$cookieName, $_COOKIE)) {
-            $cookieValue = $_COOKIE[self::$cookieName];
-            list($offset, $dst) = explode(
-                strpos($cookieValue, ',') === false ? '-' : ',',
-                $cookieValue
-            );
-            $timezoneName = timezone_name_from_abbr('', (int)$offset, (int)$dst);
+        if (array_key_exists(self::$cookieName, $_COOKIE)) {
+            $matches = array();
+            if (preg_match('/\A(-?\d+)[\-,](\d+)\z/', $_COOKIE[self::$cookieName], $matches)) {
+                $offset = $matches[1];
+                $timezoneName = timezone_name_from_abbr('', (int) $offset, (int) $matches[2]);
 
-            self::$success = (bool)$timezoneName;
-
-            if (self::$success === true) {
-                self::$offset = $offset;
-                self::$timezoneName = $timezoneName;
+                self::$success = (bool) $timezoneName;
+                if (self::$success) {
+                    self::$offset = $offset;
+                    self::$timezoneName = $timezoneName;
+                }
             }
         }
     }

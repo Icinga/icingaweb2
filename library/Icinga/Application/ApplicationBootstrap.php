@@ -344,7 +344,7 @@ abstract class ApplicationBootstrap
      */
     public function setupAutoloader()
     {
-        require $this->libDir . '/Icinga/Application/ClassLoader.php';
+        require_once $this->libDir . '/Icinga/Application/ClassLoader.php';
 
         $this->loader = new ClassLoader();
         $this->loader->registerNamespace('Icinga', $this->libDir . '/Icinga');
