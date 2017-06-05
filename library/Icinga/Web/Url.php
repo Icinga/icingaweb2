@@ -106,6 +106,11 @@ class Url
     {
         if ($request === null) {
             $request = self::getRequest();
+            if ($request === null) {
+                throw new ProgrammingError(
+                    'Url::fromRequest is not supported for CLI operations'
+                );
+            }
         }
 
         $url = new Url();
@@ -132,18 +137,12 @@ class Url
     /**
      * Return a request object that should be used for determining the URL
      *
-     * @return  Zend_Abstract_Request
+     * @return  Request|null
      */
     protected static function getRequest()
     {
         $app = Icinga::app();
-        if ($app->isCli()) {
-            throw new ProgrammingError(
-                'Url::fromRequest and Url::fromPath are currently not supported for CLI operations'
-            );
-        } else {
-            return $app->getRequest();
-        }
+        return $app->isCli() ? null : $app->getRequest();
     }
 
     /**
@@ -179,7 +178,7 @@ class Url
         }
 
         $urlParts = parse_url($url);
-        if (isset($urlParts['scheme']) && (
+        if ($request === null || isset($urlParts['scheme']) && (
             $urlParts['scheme'] !== $request->getScheme()
             || (isset($urlParts['host']) && $urlParts['host'] !== $request->getServer('SERVER_NAME'))
             || (isset($urlParts['port']) && $urlParts['port'] != $request->getServer('SERVER_PORT')))
@@ -192,7 +191,7 @@ class Url
             if ($urlPath && $urlPath[0] === '/') {
                 if ($urlObject->isExternal() || isset($urlParts['user'])) {
                     $urlPath = substr($urlPath, 1);
-                } else {
+                } elseif ($request !== null) {
                     $requestBaseUrl = $request->getBaseUrl();
                     if ($requestBaseUrl && $requestBaseUrl !== '/' && strpos($urlPath, $requestBaseUrl) === 0) {
                         $urlPath = substr($urlPath, strlen($requestBaseUrl) + 1);
