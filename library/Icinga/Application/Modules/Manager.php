@@ -6,6 +6,7 @@ namespace Icinga\Application\Modules;
 use Icinga\Application\ApplicationBootstrap;
 use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
+use Icinga\Application\Version;
 use Icinga\Data\DataArray\ArrayDatasource;
 use Icinga\Data\SimpleQuery;
 use Icinga\Exception\ConfigurationError;
@@ -184,7 +185,43 @@ class Manager
     public function loadEnabledModules()
     {
         if (! $this->loadedAllEnabledModules) {
+            $enabledModules = array();
             foreach ($this->listEnabledModules() as $name) {
+                $module = new Module($this->app, $name, $this->getModuleDir($name));
+                $dependencies = $module->getDependencies();
+                foreach ($dependencies as $dependency => & $version) {
+                    if ($version !== true) {
+                        $matches = array();
+                        $version = preg_match('/^((?:>?=)?)\s*(\d+(?:\.\d+)*)$/', $version, $matches)
+                            ? (object) array(
+                                'op'        => $matches[1] === '' ? '=' : $matches[1],
+                                'version'   => $matches[2]
+                            )
+                            : true;
+                    }
+                }
+
+                $enabledModules[$name] = (object) array(
+                    'version'       => $module->getVersion(),
+                    'dependencies'  => $dependencies
+                );
+            }
+
+            foreach ($enabledModules as $name => $module) {
+                foreach ($module->dependencies as $dependency => $version) {
+                    if ($dependency === 'icingaweb2') {
+                        $actualVersion = Version::VERSION;
+                    } elseif (isset($enabledModules[$dependency])) {
+                        $actualVersion = $enabledModules[$dependency]->version;
+                    } else {
+                        continue 2; // dependency not present at all – skip to next module
+                    }
+
+                    if (!($version === true || version_compare($actualVersion, $version->version, $version->op))) {
+                        continue 2; // dependency doesn't meet the version requirement – skip to next module
+                    }
+                }
+
                 $this->loadModule($name);
             }
 
