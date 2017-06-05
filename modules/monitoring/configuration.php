@@ -332,6 +332,14 @@ $dashboard->add(
     'monitoring/list/hosts?host_acknowledgement_type=2&host_problem=1&sort=host_severity&limit=10'
 );
 
+$dashboard = $this->dashboard(N_('Production issues'), array('priority' => 80));
+foreach (array(51, 101, 151) as $id){
+    $dashboard->add(
+        N_("Cluster $id"),
+        "/monitoring/list/services?hostgroup=cluster $id&service_state=2&service_handled=0"
+    );
+}
+
 /*
  * Activity Stream
  */
