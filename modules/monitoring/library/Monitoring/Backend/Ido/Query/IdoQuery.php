@@ -976,6 +976,9 @@ abstract class IdoQuery extends DbQuery
             $joinOn,
             array()
         );
+        if ($this->ds->getDbType() === 'pgsql') {
+            $this->select->group($alias . '.customvariablestatus_id');
+        }
 
         return $this;
     }
