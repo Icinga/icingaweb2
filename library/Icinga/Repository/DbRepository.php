@@ -54,7 +54,7 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
      *
      * This may be initialized by repositories which are going to make use of table aliases. It allows to provide
      * alias-less column names to be used for a statement. The array needs to be in the following format:
-     * <pre><code>
+     * <code>
      *  array(
      *      'table_name' => array(
      *          'column1',
@@ -62,7 +62,7 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
      *          'alias2' => 'column3'
      *      )
      *  )
-     * <pre><code>
+     * </code>
      *
      * @var array
      */
@@ -823,13 +823,17 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
             return $statementAliasTableMap[$alias] === $table;
         }
 
+        $prefixedAlias = $table . '.' . $alias;
+        if (isset($statementAliasTableMap[$prefixedAlias])) {
+            return true;
+        }
+
         $statementColumnTableMap = $this->getStatementColumnTableMap();
         if (isset($statementColumnTableMap[$alias])) {
             return $statementColumnTableMap[$alias] === $table;
         }
 
-        $prefixedAlias = $table . '.' . $alias;
-        return isset($statementAliasTableMap[$prefixedAlias]) || isset($statementColumnTableMap[$prefixedAlias]);
+        return isset($statementColumnTableMap[$prefixedAlias]);
     }
 
     /**
