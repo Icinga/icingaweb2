@@ -319,6 +319,7 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
     /**
      * Insert a table row with the given data
      *
+     * Note that the base implementation does not perform any quoting on the $table argument.
      * Pass an array with a column name (the same as in $bind) and a PDO::PARAM_* constant as value
      * as third parameter $types to define a different type than string for a particular column.
      *
@@ -330,13 +331,19 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
      */
     public function insert($table, array $bind, array $types = array())
     {
-        $values = array();
-        foreach ($bind as $column => $_) {
-            $values[] = ':' . $column;
+        $columns = $values = array();
+        foreach ($bind as $column => $value) {
+            $columns[] = $column;
+            if ($value instanceof Zend_Db_Expr) {
+                $values[] = (string) $value;
+                unset($bind[$column]);
+            } else {
+                $values[] = ':' . $column;
+            }
         }
 
         $sql = 'INSERT INTO ' . $table
-            . ' (' . join(', ', array_keys($bind)) . ') '
+            . ' (' . join(', ', $columns) . ') '
             . 'VALUES (' . join(', ', $values) . ')';
         $statement = $this->dbAdapter->prepare($sql);
 
@@ -352,6 +359,7 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
     /**
      * Update table rows with the given data, optionally limited by using a filter
      *
+     * Note that the base implementation does not perform any quoting on the $table argument.
      * Pass an array with a column name (the same as in $bind) and a PDO::PARAM_* constant as value
      * as fourth parameter $types to define a different type than string for a particular column.
      *
@@ -365,8 +373,13 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
     public function update($table, array $bind, Filter $filter = null, array $types = array())
     {
         $set = array();
-        foreach ($bind as $column => $_) {
-            $set[] = $column . ' = :' . $column;
+        foreach ($bind as $column => $value) {
+            if ($value instanceof Zend_Db_Expr) {
+                $set[] = $column . ' = ' . $value;
+                unset($bind[$column]);
+            } else {
+                $set[] = $column . ' = :' . $column;
+            }
         }
 
         $sql = 'UPDATE ' . $table
