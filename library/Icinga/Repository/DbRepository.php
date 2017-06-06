@@ -348,29 +348,43 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
     /**
      * Insert a table row with the given data
      *
+     * Note that the base implementation does not perform any quoting on the $table argument.
+     * Pass an array with a column name (the same as in $bind) and a PDO::PARAM_* constant as value
+     * as third parameter $types to define a different type than string for a particular column.
+     *
      * @param   string  $table
      * @param   array   $bind
+     * @param   array   $types
      *
      * @return  int             The number of affected rows
      */
-    public function insert($table, array $bind)
+    public function insert($table, array $bind, array $types = array())
     {
-        return $this->ds->insert(
-            $this->clearTableAlias($this->requireTable($table)),
-            $this->requireStatementColumns($table, $bind)
-        );
+        $realTable = $this->clearTableAlias($this->requireTable($table));
+
+        foreach ($types as $alias => $type) {
+            unset($types[$alias]);
+            $types[$this->requireStatementColumn($table, $alias)] = $type;
+        }
+
+        return $this->ds->insert($realTable, $this->requireStatementColumns($table, $bind), $types);
     }
 
     /**
      * Update table rows with the given data, optionally limited by using a filter
      *
+     * Note that the base implementation does not perform any quoting on the $table argument.
+     * Pass an array with a column name (the same as in $bind) and a PDO::PARAM_* constant as value
+     * as fourth parameter $types to define a different type than string for a particular column.
+     *
      * @param   string  $table
      * @param   array   $bind
      * @param   Filter  $filter
+     * @param   array   $types
      *
      * @return  int             The number of affected rows
      */
-    public function update($table, array $bind, Filter $filter = null)
+    public function update($table, array $bind, Filter $filter = null, array $types = array())
     {
         $realTable = $this->clearTableAlias($this->requireTable($table));
 
@@ -378,7 +392,12 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
             $filter = $this->requireFilter($table, $filter);
         }
 
-        return $this->ds->update($realTable, $this->requireStatementColumns($table, $bind), $filter);
+        foreach ($types as $alias => $type) {
+            unset($types[$alias]);
+            $types[$this->requireStatementColumn($table, $alias)] = $type;
+        }
+
+        return $this->ds->update($realTable, $this->requireStatementColumns($table, $bind), $filter, $types);
     }
 
     /**
