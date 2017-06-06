@@ -355,9 +355,8 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
      */
     public function insert($table, array $bind)
     {
-        $this->requireTable($table);
         return $this->ds->insert(
-            $this->prependTablePrefix($table),
+            $this->clearTableAlias($this->requireTable($table)),
             $this->requireStatementColumns($table, $bind)
         );
     }
@@ -373,17 +372,13 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
      */
     public function update($table, array $bind, Filter $filter = null)
     {
-        $this->requireTable($table);
+        $realTable = $this->clearTableAlias($this->requireTable($table));
 
         if ($filter) {
             $filter = $this->requireFilter($table, $filter);
         }
 
-        return $this->ds->update(
-            $this->prependTablePrefix($table),
-            $this->requireStatementColumns($table, $bind),
-            $filter
-        );
+        return $this->ds->update($realTable, $this->requireStatementColumns($table, $bind), $filter);
     }
 
     /**
@@ -396,13 +391,13 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
      */
     public function delete($table, Filter $filter = null)
     {
-        $this->requireTable($table);
+        $realTable = $this->clearTableAlias($this->requireTable($table));
 
         if ($filter) {
             $filter = $this->requireFilter($table, $filter);
         }
 
-        return $this->ds->delete($this->prependTablePrefix($table), $filter);
+        return $this->ds->delete($realTable, $filter);
     }
 
     /**
