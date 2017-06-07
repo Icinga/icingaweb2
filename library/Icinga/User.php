@@ -7,6 +7,7 @@ use DateTimeZone;
 use InvalidArgumentException;
 use Icinga\Application\Config;
 use Icinga\Authentication\Role;
+use Icinga\Exception\ProgrammingError;
 use Icinga\User\Preferences;
 use Icinga\Web\Navigation\Navigation;
 
@@ -370,22 +371,44 @@ class User
     }
 
     /**
-     * Setter for domain
+     * Set the domain
      *
      * @param   string      $domain
+     *
+     * @return  $this
      */
     public function setDomain($domain)
     {
         $this->domain = $domain;
+
+        return $this;
     }
 
     /**
-     * Getter for domain
+     * Get whether the user has a domain
+     *
+     * @return  bool
+     */
+    public function hasDomain()
+    {
+        return $this->domain !== null;
+    }
+
+    /**
+     * Get the domain
      *
      * @return  string
+     *
+     * @throws  ProgrammingError    If the user does not have a domain
      */
     public function getDomain()
     {
+        if ($this->domain === null) {
+            throw new ProgrammingError(
+                'User does not have a domain.'
+                . ' Use User::hasDomain() to check whether the user has a domain beforehand.'
+            );
+        }
         return $this->domain;
     }
 
