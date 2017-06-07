@@ -226,14 +226,6 @@ class LdapBackendForm extends Form
                 'label'         => $this->translate('Domain'),
                 'description'   => $this->translate(
                     'The domain the LDAP server is responsible for.'
-                ),
-                'decorators'    => array(
-                    array('Label', array('tag'=>'span', 'separator' => '', 'class' => 'control-label')),
-                    array('Help', array('placement' => 'APPEND')),
-                    array(array('labelWrap' => 'HtmlTag'), array('tag' => 'div', 'class' => 'control-label-group')),
-                    array('ViewHelper', array('separator' => '')),
-                    array('Errors', array('separator' => '')),
-                    array('HtmlTag', array('tag' => 'div', 'class' => 'control-group', 'openOnly' => true))
                 )
             )
         );
@@ -242,18 +234,19 @@ class LdapBackendForm extends Form
             'button',
             'btn_discover_domain',
             array(
-                'escape'        => false,
-                'ignore'        => true,
-                'label'         => $this->getView()->icon('binoculars'),
-                'type'          => 'submit',
-                'title'         => $this->translate('Discover the domain'),
-                'value'         => $this->translate('Discover'),
-                'decorators'    => array(
-                    array('Help', array('placement' => 'APPEND')),
+                'class'             => 'control-button',
+                'type'              => 'submit',
+                'value'             => 'discovery_btn',
+                'label'             => $this->translate('Discover the domain'),
+                'title'             => $this->translate(
+                    'Push to disover and fill in the domain of the LDAP server.'
+                ),
+                'decorators'        => array(
                     array('ViewHelper', array('separator' => '')),
-                    array('Errors', array('separator' => '')),
-                    array('HtmlTag', array('tag' => 'div', 'class' => 'control-group', 'closeOnly' => true))
-                )
+                    array('Spinner'),
+                    array('HtmlTag', array('tag' => 'div', 'class' => 'control-group form-controls'))
+                ),
+                'formnovalidate'    => 'formnovalidate'
             )
         );
     }
