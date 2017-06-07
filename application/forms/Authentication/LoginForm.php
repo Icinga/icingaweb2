@@ -3,6 +3,7 @@
 
 namespace Icinga\Forms\Authentication;
 
+use Icinga\Application\Config;
 use Icinga\Authentication\Auth;
 use Icinga\Authentication\User\ExternalBackend;
 use Icinga\User;
@@ -87,6 +88,9 @@ class LoginForm extends Form
         $authChain = $auth->getAuthChain();
         $authChain->setSkipExternalBackends(true);
         $user = new User($this->getElement('username')->getValue());
+        if (! $user->hasDomain()) {
+            $user->setDomain(Config::app()->get('authentication', 'default_domain'));
+        }
         $password = $this->getElement('password')->getValue();
         $authenticated = $authChain->authenticate($user, $password);
         if ($authenticated) {
