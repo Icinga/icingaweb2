@@ -31,7 +31,7 @@ class DefaultAuthenticationDomainConfigForm extends Form
             'text',
             'authentication_default_domain',
             array(
-                'label'         => $this->translate('Default Domain'),
+                'label'         => $this->translate('Default Login Domain'),
                 'description'   => $this->translate(
                     'If a user logs in without specifying any domain (e.g. "jdoe" instead of "jdoe@example.com"),'
                     . ' this default domain will be assumed.'
