@@ -47,6 +47,11 @@ class ActionController extends Zend_Controller_Action
     const LOGIN_ROUTE = 'authentication/login';
 
     /**
+     * The default page title to use
+     */
+    const DEFAULT_TITLE = 'Icinga Web';
+
+    /**
      * Whether the controller requires the user to be authenticated
      *
      * @var bool
@@ -115,6 +120,7 @@ class ActionController extends Zend_Controller_Action
 
         $this->handlerBrowserWindows();
         $moduleName = $this->getModuleName();
+        $this->view->defaultTitle = static::DEFAULT_TITLE;
         $this->view->translationDomain = $moduleName !== 'default' ? $moduleName : 'icinga';
         $this->_helper->layout()->isIframe = $request->getUrl()->shift('isIframe');
         $this->_helper->layout()->showFullscreen = $request->getUrl()->shift('showFullscreen');
@@ -526,11 +532,11 @@ class ActionController extends Zend_Controller_Action
             }
             $resp->setHeader(
                 'X-Icinga-Title',
-                rawurlencode($this->view->title . ' :: Icinga Web'),
+                rawurlencode($this->view->title . ' :: ' . static::DEFAULT_TITLE),
                 true
             );
         } else {
-            $resp->setHeader('X-Icinga-Title', rawurlencode('Icinga Web'), true);
+            $resp->setHeader('X-Icinga-Title', rawurlencode(static::DEFAULT_TITLE), true);
         }
 
         if ($this->rerenderLayout) {
