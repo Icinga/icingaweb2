@@ -3,7 +3,6 @@
 
 namespace Tests\Icinga\Modules\Monitoring\Web\Rest;
 
-use Icinga\Exception\Json\JsonDecodeException;
 use Icinga\Module\Monitoring\Web\Rest\RestRequest;
 use Icinga\Test\BaseTestCase;
 
@@ -18,7 +17,7 @@ class MockedRestRequest extends RestRequest
 class RestRequestTest extends BaseTestCase
 {
     /**
-     * @expectedException JsonDecodeException
+     * @expectedException \Icinga\Exception\Json\JsonDecodeException
      */
     public function testInvalidServerResponseHandling()
     {
