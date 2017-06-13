@@ -43,7 +43,12 @@ class Json
      */
     public static function decode($json, $assoc = false, $depth = 512, $options = 0)
     {
-        $decoded = json_decode($json, $assoc, $depth, $options);
+        if (version_compare(phpversion(), '5.4.0', '<')) {
+            $decoded = json_decode($json, $assoc, $depth);
+        } else {
+            $decoded = json_decode($json, $assoc, $depth, $options);
+        }
+
         if (json_last_error() !== JSON_ERROR_NONE) {
             throw new JsonDecodeException('%s: %s', static::lastErrorMsg(), var_export($json, true));
         }
