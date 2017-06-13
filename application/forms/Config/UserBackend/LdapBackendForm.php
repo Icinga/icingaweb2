@@ -225,7 +225,13 @@ class LdapBackendForm extends Form
             array(
                 'label'         => $this->translate('Domain'),
                 'description'   => $this->translate(
-                    'The domain the LDAP server is responsible for.'
+                    'The domain the LDAP server is responsible for upon authentication.'
+                    . ' Note that if you specify a domain here,'
+                    . ' the LDAP backend only authenticates users who specify a domain upon login.'
+                    . ' If the domain of the user matches the domain configured here, this backend is responsible for'
+                    . ' authenticating the user based on the username without the domain part.'
+                    . ' If your LDAP backend holds usernames with a domain part or if it is not necessary in your setup'
+                    . ' to authenticate users based on their domains, leave this field empty.'
                 )
             )
         );
