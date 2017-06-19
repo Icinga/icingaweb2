@@ -415,33 +415,15 @@ class ActionController extends Zend_Controller_Action
 
     protected function redirectXhr($url)
     {
-        if (! $url instanceof Url) {
-            $url = Url::fromPath($url);
-        }
-
-        if ($this->rerenderLayout) {
-            $this->getResponse()->setHeader('X-Icinga-Rerender-Layout', 'yes');
-        }
-        if ($this->reloadCss) {
-            $this->getResponse()->setHeader('X-Icinga-Reload-Css', 'now');
-        }
-
-        $this->shutdownSession();
-
         $this->getResponse()
-            ->setHeader('X-Icinga-Redirect', rawurlencode($url->getAbsoluteUrl()))
-            ->sendHeaders();
-
-        exit;
+            ->setReloadCss($this->reloadCss)
+            ->setRerenderLayout($this->rerenderLayout)
+            ->redirectAndExit($url);
     }
 
     protected function redirectHttp($url)
     {
-        if (! $url instanceof Url) {
-            $url = Url::fromPath($url);
-        }
-        $this->shutdownSession();
-        $this->_helper->Redirector->gotoUrlAndExit($url->getRelativeUrl());
+        $this->getResponse()->redirectAndExit($url);
     }
 
     /**
