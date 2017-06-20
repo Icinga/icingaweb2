@@ -236,6 +236,29 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
     }
 
     /**
+     * Initialize table, column and alias maps
+     *
+     * @throws  ProgrammingError    In case $this->queryColumns does not provide any column information
+     */
+    protected function initializeAliasMaps()
+    {
+        parent::initializeAliasMaps();
+
+        foreach ($this->aliasTableMap as $alias => $table) {
+            if ($table !== null) {
+                if (strpos($alias, '.') !== false) {
+                    $prefixedAlias = str_replace('.', '_', $alias);
+                } else {
+                    $prefixedAlias = $table . '_' . $alias;
+                }
+
+                $this->aliasTableMap[$prefixedAlias] = $table;
+                $this->aliasColumnMap[$prefixedAlias] = $this->aliasColumnMap[$alias];
+            }
+        }
+    }
+
+    /**
      * Return the given table with the datasource's prefix being prepended
      *
      * @param   array|string    $table

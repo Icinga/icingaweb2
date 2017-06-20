@@ -645,11 +645,6 @@ abstract class Repository implements Selectable
 
         foreach ($queryColumns as $table => $columns) {
             foreach ($columns as $alias => $column) {
-                $alias = is_string($alias) ? $alias : $column;
-                $columns[$table . '_' . $alias] = $column;
-            }
-
-            foreach ($columns as $alias => $column) {
                 if (! is_string($alias)) {
                     $key = $column;
                 } else {
