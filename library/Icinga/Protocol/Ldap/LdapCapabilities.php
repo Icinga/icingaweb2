@@ -373,30 +373,34 @@ class LdapCapabilities
                     (string) $connection->select()->from('*', $adFields)->where('nCName', $defaultNamingContext),
                     $adFields
                 );
-                if (! $result) {
-                    throw new LdapException(
-                        'Configuration options query failed (%s:%d): %s. Check if hostname and port of the'
-                        . ' ldap resource are correct and if anonymous access is permitted.',
-                        $connection->getHostname(),
-                        $connection->getPort(),
-                        ldap_error($ds)
-                    );
-                }
+                if ($result) {
+                    $entry = ldap_first_entry($ds, $result);
+                    if ($entry === false) {
+                        throw new LdapException(
+                            'Configuration options not available (%s:%d). Discovery of "%s" probably not permitted.',
+                            $connection->getHostname(),
+                            $connection->getPort(),
+                            $partitions
+                        );
+                    }
 
-                $entry = ldap_first_entry($ds, $result);
-                if ($entry === false) {
-                    throw new LdapException(
-                        'Configuration options not available (%s:%d). Discovery of "'
-                        . $partitions . '" probably not permitted.',
-                        $connection->getHostname(),
-                        $connection->getPort()
-                    );
-                }
+                    $this->setAttributes((object) array_merge(
+                        (array) $this->attributes,
+                        (array) $connection->cleanupAttributes(ldap_get_attributes($ds, $entry), $adFields)
+                    ));
+                } else {
+                    if (ldap_errno($ds) !== 1) {
+                        // One stands for "operations error" which occurs if not bound non-anonymously.
 
-                $this->setAttributes((object) array_merge(
-                    (array) $this->attributes,
-                    (array) $connection->cleanupAttributes(ldap_get_attributes($ds, $entry), $adFields)
-                ));
+                        throw new LdapException(
+                            'Configuration options query failed (%s:%d): %s. Check if hostname and port of the'
+                            . ' ldap resource are correct and if anonymous access is permitted.',
+                            $connection->getHostname(),
+                            $connection->getPort(),
+                            ldap_error($ds)
+                        );
+                    }
+                }
             }
         }
     }
