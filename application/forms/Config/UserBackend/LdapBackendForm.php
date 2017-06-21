@@ -232,7 +232,8 @@ class LdapBackendForm extends Form
                     . ' authenticating the user based on the username without the domain part.'
                     . ' If your LDAP backend holds usernames with a domain part or if it is not necessary in your setup'
                     . ' to authenticate users based on their domains, leave this field empty.'
-                )
+                ),
+                'preserveDefault' => true
             )
         );
 
@@ -255,26 +256,16 @@ class LdapBackendForm extends Form
                 'formnovalidate'    => 'formnovalidate'
             )
         );
-    }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function isValidPartial(array $formData)
-    {
-        if (isset($formData['btn_discover_domain']) && parent::isValid($formData)) {
-            return $this->populateDomain(ResourceFactory::create($this->getElement('resource')->getValue()));
+        if ($this->getElement('btn_discover_domain')->isChecked() && isset($formData['resource'])) {
+            $this->populateDomain(ResourceFactory::create($formData['resource']));
         }
-
-        return true;
     }
 
     /**
      * Discover the domain the LDAP server is responsible for and fill it in the form
      *
      * @param   LdapConnection  $connection
-     *
-     * @return  bool            Whether the discovery succeeded
      */
     public function populateDomain(LdapConnection $connection)
     {
@@ -282,11 +273,9 @@ class LdapBackendForm extends Form
             $domain = $this->discoverDomain($connection);
         } catch (LdapException $e) {
             $this->_elements['btn_discover_domain']->addError($e->getMessage());
-            return false;
         }
 
         $this->_elements['domain']->setValue($domain);
-        return true;
     }
 
     /**
