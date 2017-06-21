@@ -390,6 +390,10 @@ class UserBackendConfigForm extends ConfigForm
      */
     public function isValidPartial(array $formData)
     {
+        if (! parent::isValidPartial($formData)) {
+            return false;
+        }
+
         if ($this->getElement('backend_validation')->isChecked() && parent::isValid($formData)) {
             $inspection = static::inspectUserBackend($this);
             if ($inspection !== null) {

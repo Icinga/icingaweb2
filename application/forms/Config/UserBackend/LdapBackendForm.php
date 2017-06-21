@@ -5,6 +5,9 @@ namespace Icinga\Forms\Config\UserBackend;
 
 use Exception;
 use Icinga\Data\ResourceFactory;
+use Icinga\Protocol\Ldap\LdapCapabilities;
+use Icinga\Protocol\Ldap\LdapConnection;
+use Icinga\Protocol\Ldap\LdapException;
 use Icinga\Web\Form;
 
 /**
@@ -215,5 +218,115 @@ class LdapBackendForm extends Form
                 'value'             => $baseDn
             )
         );
+
+        $this->addElement(
+            'text',
+            'domain',
+            array(
+                'label'         => $this->translate('Domain'),
+                'description'   => $this->translate(
+                    'The domain the LDAP server is responsible for upon authentication.'
+                    . ' Note that if you specify a domain here,'
+                    . ' the LDAP backend only authenticates users who specify a domain upon login.'
+                    . ' If the domain of the user matches the domain configured here, this backend is responsible for'
+                    . ' authenticating the user based on the username without the domain part.'
+                    . ' If your LDAP backend holds usernames with a domain part or if it is not necessary in your setup'
+                    . ' to authenticate users based on their domains, leave this field empty.'
+                )
+            )
+        );
+
+        $this->addElement(
+            'button',
+            'btn_discover_domain',
+            array(
+                'class'             => 'control-button',
+                'type'              => 'submit',
+                'value'             => 'discovery_btn',
+                'label'             => $this->translate('Discover the domain'),
+                'title'             => $this->translate(
+                    'Push to disover and fill in the domain of the LDAP server.'
+                ),
+                'decorators'        => array(
+                    array('ViewHelper', array('separator' => '')),
+                    array('Spinner'),
+                    array('HtmlTag', array('tag' => 'div', 'class' => 'control-group form-controls'))
+                ),
+                'formnovalidate'    => 'formnovalidate'
+            )
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isValidPartial(array $formData)
+    {
+        if (isset($formData['btn_discover_domain']) && parent::isValid($formData)) {
+            return $this->populateDomain(ResourceFactory::create($this->getElement('resource')->getValue()));
+        }
+
+        return true;
+    }
+
+    /**
+     * Discover the domain the LDAP server is responsible for and fill it in the form
+     *
+     * @param   LdapConnection  $connection
+     *
+     * @return  bool            Whether the discovery succeeded
+     */
+    public function populateDomain(LdapConnection $connection)
+    {
+        try {
+            $domain = $this->discoverDomain($connection);
+        } catch (LdapException $e) {
+            $this->_elements['btn_discover_domain']->addError($e->getMessage());
+            return false;
+        }
+
+        $this->_elements['domain']->setValue($domain);
+        return true;
+    }
+
+    /**
+     * Discover the domain the LDAP server is responsible for
+     *
+     * @param   LdapConnection  $connection
+     *
+     * @return  string
+     */
+    protected function discoverDomain(LdapConnection $connection)
+    {
+        $cap = LdapCapabilities::discoverCapabilities($connection);
+
+        if ($cap->isActiveDirectory()) {
+            $netBiosName = $cap->getNetBiosName();
+            if ($netBiosName !== null) {
+                return $netBiosName;
+            }
+        }
+
+        return $this->defaultNamingContextToFQDN($cap);
+    }
+
+    /**
+     * Get the default naming context as FQDN
+     *
+     * @param   LdapCapabilities    $cap
+     *
+     * @return  string|null
+     */
+    protected function defaultNamingContextToFQDN(LdapCapabilities $cap)
+    {
+        $defaultNamingContext = $cap->getDefaultNamingContext();
+        if ($defaultNamingContext !== null) {
+            $validationMatches = array();
+            if (preg_match('/\bdc=[^,]+(?:,dc=[^,]+)*$/', strtolower($defaultNamingContext), $validationMatches)) {
+                $splitMatches = array();
+                preg_match_all('/dc=([^,]+)/', $validationMatches[0], $splitMatches);
+                return implode('.', $splitMatches[1]);
+            }
+        }
     }
 }

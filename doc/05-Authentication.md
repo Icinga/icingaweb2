@@ -150,3 +150,64 @@ Insert the user into the database using the generated password hash:
 ```
 INSERT INTO icingaweb_user (name, active, password_hash) VALUES ('icingaadmin', 1, 'hash from openssl');
 ```
+
+## <a id="domain-aware-auth"></a> Domain-aware Authentication
+
+If there are multiple LDAP/AD authentication backends with distinct domains, you should make Icinga Web 2 aware of the
+domains. This is possible since version 2.5 and can be done by configuring each LDAP/AD backend's domain. You can also
+use the GUI for this purpose. This enables you to automatically discover a suitable value based on your LDAP server's
+configuration. (AD: NetBIOS name, other LDAP: domain in DNS-notation)
+
+**Example:**
+
+```
+[auth_icinga]
+backend             = ldap
+resource            = icinga_ldap
+user_class          = inetOrgPerson
+user_name_attribute = uid
+filter              = "memberOf=cn=icinga_users,cn=groups,cn=accounts,dc=icinga,dc=com"
+domain              = "icinga.com"
+
+[auth_example]
+backend  = msldap
+resource = example_ad
+domain   = EXAMPLE
+```
+
+If you configure the domains like above, the icinga.com user "jdoe" will have to log in as "jdoe@icinga.com" and the
+EXAMPLE employee "rroe" will have to log in as "rroe@EXAMPLE". They could also log in as "EXAMPLE\\rroe", but this gets
+converted to "rroe@EXAMPLE" as soon as the user logs in.
+
+**Caution!**
+
+Enabling domain-awareness or changing domains in existing setups requires migration of the usernames in the Icinga Web 2
+configuration. Consult `icingacli --help migrate config users` for details.
+
+### <a id="default-auth-domain"></a> Default Domain
+
+For the sake of simplicity a default domain can be configured (in `config.ini`).
+
+**Example:**
+
+```
+[authentication]
+default_domain = "icinga.com"
+```
+
+If you configure the default domain like above, the user "jdoe@icinga.com" will be able to just type "jdoe" as username
+while logging in.
+
+### <a id="domain-aware-auth-process"></a> How it works
+
+### <a id="domain-aware-auth-ad"></a> Active Directory
+
+When the user "jdoe@ICINGA" logs in, Icinga Web 2 walks through all configured authentication backends until it finds
+one which is responsible for that user -- e.g. an Active Directory backend with the domain "ICINGA". Then Icinga Web 2
+asks that backend to authenticate the user with the sAMAccountName "jdoe".
+
+### <a id="domain-aware-auth-sqldb"></a> SQL Database
+
+When the user "jdoe@icinga.com" logs in, Icinga Web 2 walks through all configured authentication backends until it
+finds one which is responsible for that user -- e.g. a MySQL backend (SQL database backends aren't domain-aware). Then
+Icinga Web 2 asks that backend to authenticate the user with the username "jdoe@icinga.com".

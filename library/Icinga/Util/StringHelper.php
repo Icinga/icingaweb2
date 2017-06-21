@@ -13,12 +13,19 @@ class StringHelper
      *
      * @param   string  $value
      * @param   string  $delimiter
+     * @param   int     $limit
      *
      * @return array
      */
-    public static function trimSplit($value, $delimiter = ',')
+    public static function trimSplit($value, $delimiter = ',', $limit = null)
     {
-        return array_map('trim', explode($delimiter, $value));
+        if ($limit !== null) {
+            $exploded = explode($delimiter, $value, $limit);
+        } else {
+            $exploded = explode($delimiter, $value);
+        }
+
+        return array_map('trim', $exploded);
     }
 
     /**
