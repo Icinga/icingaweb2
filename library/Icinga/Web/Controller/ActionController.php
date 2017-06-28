@@ -63,17 +63,17 @@ class ActionController extends Zend_Controller_Action
      *
      * @var string
      */
-    private $moduleName;
+    protected $moduleName;
 
-    private $autorefreshInterval;
+    protected $autorefreshInterval;
 
-    private $reloadCss = false;
+    protected $reloadCss = false;
 
-    private $window;
+    protected $window;
 
-    private $rerenderLayout = false;
+    protected $rerenderLayout = false;
 
-    private $xhrLayout = 'inline';
+    protected $xhrLayout = 'inline';
 
     /**
      * The inner layout (inside the body) to use
@@ -87,7 +87,7 @@ class ActionController extends Zend_Controller_Action
      *
      * @var Auth|null
      */
-    private $auth;
+    protected $auth;
 
     /**
      * URL parameters

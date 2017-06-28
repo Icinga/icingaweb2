@@ -13,11 +13,11 @@ use Icinga\Application\Modules\Module;
  */
 class ModuleActionController extends ActionController
 {
-    private $config;
+    protected $config;
 
-    private $configs = array();
+    protected $configs = array();
 
-    private $module;
+    protected $module;
 
     /**
      * (non-PHPDoc)
