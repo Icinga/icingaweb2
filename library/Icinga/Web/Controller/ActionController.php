@@ -73,7 +73,12 @@ class ActionController extends Zend_Controller_Action
 
     protected $rerenderLayout = false;
 
-    protected $xhrLayout = 'inline';
+    /**
+     * The inline layout (inside columns) to use
+     *
+     * @var string
+     */
+    protected $inlineLayout = 'inline';
 
     /**
      * The inner layout (inside the body) to use
@@ -130,9 +135,7 @@ class ActionController extends Zend_Controller_Action
         if ($request->getUrl()->shift('showCompact')) {
             $this->view->compact = true;
         }
-        if ($this->rerenderLayout = $request->getUrl()->shift('renderLayout')) {
-            $this->xhrLayout = $this->innerLayout;
-        }
+        $this->rerenderLayout = $request->getUrl()->shift('renderLayout');
         if ($request->getUrl()->shift('_disableLayout')) {
             $this->_helper->layout()->disableLayout();
         }
@@ -404,7 +407,6 @@ class ActionController extends Zend_Controller_Action
     protected function rerenderLayout()
     {
         $this->rerenderLayout = true;
-        $this->xhrLayout = 'layout';
         return $this;
     }
 
@@ -462,6 +464,7 @@ class ActionController extends Zend_Controller_Action
         $req = $this->getRequest();
         $layout = $this->_helper->layout();
         $layout->innerLayout = $this->innerLayout;
+        $layout->inlineLayout = $this->inlineLayout;
 
         if ($user = $req->getUser()) {
             if ((bool) $user->getPreferences()->getValue('icingaweb', 'show_benchmark', false)) {
@@ -490,8 +493,6 @@ class ActionController extends Zend_Controller_Action
 
     protected function postDispatchXhr()
     {
-        $layout = $this->_helper->layout();
-        $layout->setLayout($this->xhrLayout);
         $resp = $this->getResponse();
 
         $notifications = Notification::getInstance();
@@ -521,8 +522,12 @@ class ActionController extends Zend_Controller_Action
             $resp->setHeader('X-Icinga-Title', rawurlencode(static::DEFAULT_TITLE), true);
         }
 
+        $layout = $this->_helper->layout();
         if ($this->rerenderLayout) {
+            $layout->setLayout($this->innerLayout);
             $this->getResponse()->setHeader('X-Icinga-Container', 'layout', true);
+        } else {
+            $layout->setLayout($this->inlineLayout);
         }
 
         if ($this->autorefreshInterval !== null) {

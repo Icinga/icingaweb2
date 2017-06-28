@@ -16,6 +16,8 @@ if ($this->layout()->autorefreshInterval) {
     $refresh = ' data-icinga-refresh="' . $this->layout()->autorefreshInterval . '"';
 }
 
+$inlineLayoutScript = $this->layout()->inlineLayout . '.phtml';
+
 ?>
 <div id="header">
   <div id="announcements" class="container">
@@ -41,7 +43,7 @@ if ($this->layout()->autorefreshInterval) {
 <?php endif ?>
 <div id="main" role="main">
   <div id="col1" class="container<?= $moduleClass ?>"<?php if ($moduleName): ?> data-icinga-module="<?= $moduleName ?>" <?php endif ?> data-icinga-url="<?= Url::fromRequest()->without('renderLayout'); ?>"<?= $refresh; ?> style="display: block">
-    <?= $this->render('inline.phtml') ?>
+    <?= $this->render($inlineLayoutScript) ?>
   </div>
   <div id="col2" class="container">
   </div>
