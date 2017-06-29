@@ -25,6 +25,14 @@ class ErrorController extends ActionController
     protected $requiresAuthentication = false;
 
     /**
+     * {@inheritdoc}
+     */
+    public function init()
+    {
+        $this->rerenderLayout = $this->params->has('renderLayout');
+    }
+
+    /**
      * Display exception
      */
     public function errorAction()
