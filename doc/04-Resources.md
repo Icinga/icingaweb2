@@ -25,6 +25,7 @@ to handle authentication and authorization, monitoring data or user preferences.
 | **username**  | The username to use when connecting to the server. |
 | **password**  | The password to use when connecting to the server. |
 | **dbname**    | The database to use. |
+| **charset**   | The character set to use for the database connection. |
 
 #### <a id="resources-configuration-database-example"></a> Example
 
@@ -63,7 +64,7 @@ A LDAP resource represents a tree in a LDAP directory. LDAP is usually used for 
 | Directive         | Description |
 | ----------------- | ----------- |
 | **type**          | `ldap` |
-| **hostname**      | Connect to the LDAP server on the given host. |
+| **hostname**      | Connect to the LDAP server on the given host. You can also provide multiple hosts separated by a space. |
 | **port**          | Port number to use for the connection. |
 | **root_dn**       | Root object of the tree, e.g. `ou=people,dc=icinga,dc=org` |
 | **bind_dn**       | The user to use when connecting to the server. |

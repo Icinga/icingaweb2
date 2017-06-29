@@ -94,7 +94,6 @@ class RemoteTransportForm extends Form
         }
 
         if ($useResource) {
-
             $this->loadResources();
 
             $decorators = static::$defaultElementDecorators;
@@ -146,10 +145,11 @@ class RemoteTransportForm extends Form
                 'number',
                 'port',
                 array(
-                    'required'      => true,
-                    'label'         => $this->translate('Port'),
-                    'description'   => $this->translate('SSH port to connect to on the remote Icinga instance'),
-                    'value'         => 22
+                    'required'          => true,
+                    'preserveDefault'   => true,
+                    'label'             => $this->translate('Port'),
+                    'description'       => $this->translate('SSH port to connect to on the remote Icinga instance'),
+                    'value'             => 22
                 )
             )
         ));

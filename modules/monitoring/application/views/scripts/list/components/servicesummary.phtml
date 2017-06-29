@@ -56,7 +56,7 @@ $stateBadges
         ),
         'List %u handled service that is currently in state CRITICAL',
         'List %u handled services which are currently in state CRITICAL',
-        array($stats->services_critical_unhandled)
+        array($stats->services_critical_handled)
     )
     ->add(
         StateBadges::STATE_UNKNOWN,

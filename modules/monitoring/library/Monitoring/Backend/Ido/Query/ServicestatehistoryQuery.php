@@ -62,7 +62,7 @@ class ServicestatehistoryQuery extends IdoQuery
             'host_name'             => 'so.name1',
             'object_id'             => 'sh.object_id',
             'object_type'           => '(\'service\')',
-            'output'                => "('[ ' || sh.current_check_attempt || '/' || sh.max_check_attempts || ' ] ' || sh.output)",
+            'output'                => '(CASE WHEN sh.state_type = 1 THEN sh.output ELSE \'[ \' || sh.current_check_attempt || \'/\' || sh.max_check_attempts || \' ] \' || sh.output END)',
             'service'               => 'so.name2 COLLATE latin1_general_ci',
             'service_description'   => 'so.name2',
             'service_host'          => 'so.name1 COLLATE latin1_general_ci',
@@ -80,8 +80,7 @@ class ServicestatehistoryQuery extends IdoQuery
     {
         if ($col === 'UNIX_TIMESTAMP(sh.state_time)') {
             return 'sh.state_time ' . $sign . ' ' . $this->timestampForSql($this->valueToTimestamp($expression));
-        } elseif (
-            $col === $this->columnMap['statehistory']['type']
+        } elseif ($col === $this->columnMap['statehistory']['type']
             && ! is_array($expression)
             && array_key_exists($expression, $this->types)
         ) {

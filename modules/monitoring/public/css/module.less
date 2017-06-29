@@ -1,19 +1,47 @@
 /*! Icinga Web 2 | (c) 2014 Icinga Development Team | GPLv2+ */
 
-// Styles for the icon displayed if a check source is reachable
-.check-source-reachable {
-  color: @color-ok;
+// Styles for the bottom status bar in the host and service list views
+.monitoring-statusbar-ghost {
+  display: block;
+  visibility: hidden;
 }
 
-// Styles for the icon displayed if a check source is not reachable
-.check-source-not-reachable {
-  color: @color-critical;
+.monitoring-statusbar {
+  background-color: @body-bg-color;
+  border-top: 1px solid @gray-lighter;
+  bottom: 0;
+  padding: .25em @gutter;
+  position: fixed;
+
+  &:before {
+    background: -webkit-linear-gradient(bottom, @body-bg-color 0%, rgba(255,255,255,0) 100%);
+    background:    -moz-linear-gradient(bottom, @body-bg-color 0%, rgba(255,255,255,0) 100%);
+    background:     -ms-linear-gradient(bottom, @body-bg-color 0%, rgba(255,255,255,0) 100%);
+    background:      -o-linear-gradient(bottom, @body-bg-color 0%, rgba(255,255,255,0) 100%);
+    background:         linear-gradient(bottom, @body-bg-color 0%, rgba(255,255,255,0) 100%);
+    content: "";
+    display: block;
+    height: 6px;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: -7px;
+  }
+
+  .services-summary,
+  .hosts-summary {
+    float: right;
+    margin-bottom: 0;
+  }
+
+  .selection-info {
+    float: left;
+    margin-top: 0.182em;
+  }
 }
 
 // Styles for the icon displayed if a check result is late
 .check-result-late {
-  color: @color-critical;
-
   &:before {
     // Remove right margin because the check now form may be displayed right next to the icon and we already have a gap
     // because of inline-blocks
@@ -81,6 +109,7 @@
 // Host and service summaries in detail and list views
 .hosts-summary,
 .services-summary {
+  display: inline-block;
   margin-bottom: 0.5em;
 
   > .hosts-link,
@@ -88,11 +117,6 @@
   > .state-badges {
     vertical-align: middle;
   }
-}
-
-.controls > .hosts-summary,
-.controls > .services-summary {
-  float: left;
 }
 
 // State table in the host and service multi-selection and detail views
@@ -104,7 +128,23 @@
 .grid {
   .hosts-summary,
   .services-summary {
-    .pull-left();
+    float: left;
+  }
+}
+
+// Quick actions
+.quick-actions {
+  li {
+    color: @icinga-blue;
+    padding: 0 0.6em;
+  }
+
+  li:first-child {
+    padding-left: 0;
+  }
+
+  li:last-child {
+    padding-right: 0;
   }
 }
 
@@ -317,10 +357,6 @@ div.box.stats {
 
 .stats > table > thead{
   color: @gray;
-}
-
-.stats > .pull-left  {
-  float: none;
 }
 
 .stats > h3 {

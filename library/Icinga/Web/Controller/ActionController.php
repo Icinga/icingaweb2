@@ -42,6 +42,16 @@ use Icinga\Web\Window;
 class ActionController extends Zend_Controller_Action
 {
     /**
+     * The login route to use when requiring authentication
+     */
+    const LOGIN_ROUTE = 'authentication/login';
+
+    /**
+     * The default page title to use
+     */
+    const DEFAULT_TITLE = 'Icinga Web';
+
+    /**
      * Whether the controller requires the user to be authenticated
      *
      * @var bool
@@ -53,17 +63,22 @@ class ActionController extends Zend_Controller_Action
      *
      * @var string
      */
-    private $moduleName;
+    protected $moduleName;
 
-    private $autorefreshInterval;
+    protected $autorefreshInterval;
 
-    private $reloadCss = false;
+    protected $reloadCss = false;
 
-    private $window;
+    protected $window;
 
-    private $rerenderLayout = false;
+    protected $rerenderLayout = false;
 
-    private $xhrLayout = 'inline';
+    /**
+     * The inline layout (inside columns) to use
+     *
+     * @var string
+     */
+    protected $inlineLayout = 'inline';
 
     /**
      * The inner layout (inside the body) to use
@@ -77,7 +92,7 @@ class ActionController extends Zend_Controller_Action
      *
      * @var Auth|null
      */
-    private $auth;
+    protected $auth;
 
     /**
      * URL parameters
@@ -99,6 +114,8 @@ class ActionController extends Zend_Controller_Action
         Zend_Controller_Response_Abstract $response,
         array $invokeArgs = array()
     ) {
+        /** @var \Icinga\Web\Request $request */
+        /** @var \Icinga\Web\Response $response */
         $this->params = UrlParams::fromQueryString();
 
         $this->setRequest($request)
@@ -108,6 +125,7 @@ class ActionController extends Zend_Controller_Action
 
         $this->handlerBrowserWindows();
         $moduleName = $this->getModuleName();
+        $this->view->defaultTitle = static::DEFAULT_TITLE;
         $this->view->translationDomain = $moduleName !== 'default' ? $moduleName : 'icinga';
         $this->_helper->layout()->isIframe = $request->getUrl()->shift('isIframe');
         $this->_helper->layout()->showFullscreen = $request->getUrl()->shift('showFullscreen');
@@ -117,14 +135,16 @@ class ActionController extends Zend_Controller_Action
         if ($request->getUrl()->shift('showCompact')) {
             $this->view->compact = true;
         }
-        if ($this->rerenderLayout = $request->getUrl()->shift('renderLayout')) {
-            $this->xhrLayout = $this->innerLayout;
-        }
+        $this->rerenderLayout = $request->getUrl()->shift('renderLayout');
         if ($request->getUrl()->shift('_disableLayout')) {
             $this->_helper->layout()->disableLayout();
         }
 
+        // $auth->authenticate($request, $response, $this->requiresLogin());
         if ($this->requiresLogin()) {
+            if (! $request->isXmlHttpRequest() && $request->isApiRequest()) {
+                Auth::getInstance()->challengeHttp();
+            }
             $this->redirectToLogin(Url::fromRequest());
         }
 
@@ -255,8 +275,9 @@ class ActionController extends Zend_Controller_Action
     /**
      * Return restriction information for an eventually authenticated user
      *
-     * @param  string  $name Permission name
-     * @return Array
+     * @param   string  $name   Restriction name
+     *
+     * @return  array
      */
     public function getRestrictions($name)
     {
@@ -268,15 +289,14 @@ class ActionController extends Zend_Controller_Action
      * user is currently not authenticated
      *
      * @return  bool
-     * @see     requiresAuthentication
      */
     protected function requiresLogin()
     {
-        if (!$this->requiresAuthentication) {
+        if (! $this->requiresAuthentication) {
             return false;
         }
 
-        return !$this->Auth()->isAuthenticated();
+        return ! $this->Auth()->isAuthenticated();
     }
 
     /**
@@ -316,7 +336,13 @@ class ActionController extends Zend_Controller_Action
      */
     public function translatePlural($textSingular, $textPlural, $number, $context = null)
     {
-        return Translator::translatePlural($textSingular, $textPlural, $number, $this->view->translationDomain, $context);
+        return Translator::translatePlural(
+            $textSingular,
+            $textPlural,
+            $number,
+            $this->view->translationDomain,
+            $context
+        );
     }
 
     protected function ignoreXhrBody()
@@ -358,7 +384,7 @@ class ActionController extends Zend_Controller_Action
      */
     protected function redirectToLogin($redirect = null)
     {
-        $login = Url::fromPath('authentication/login');
+        $login = Url::fromPath(static::LOGIN_ROUTE);
         if ($this->isXhr()) {
             if ($redirect !== null) {
                 $login->setParam('redirect', '__SELF__');
@@ -381,7 +407,6 @@ class ActionController extends Zend_Controller_Action
     protected function rerenderLayout()
     {
         $this->rerenderLayout = true;
-        $this->xhrLayout = 'layout';
         return $this;
     }
 
@@ -392,33 +417,15 @@ class ActionController extends Zend_Controller_Action
 
     protected function redirectXhr($url)
     {
-        if (! $url instanceof Url) {
-            $url = Url::fromPath($url);
-        }
-
-        if ($this->rerenderLayout) {
-            $this->getResponse()->setHeader('X-Icinga-Rerender-Layout', 'yes');
-        }
-        if ($this->reloadCss) {
-            $this->getResponse()->setHeader('X-Icinga-Reload-Css', 'now');
-        }
-
-        $this->shutdownSession();
-
         $this->getResponse()
-            ->setHeader('X-Icinga-Redirect', rawurlencode($url->getAbsoluteUrl()))
-            ->sendHeaders();
-
-        exit;
+            ->setReloadCss($this->reloadCss)
+            ->setRerenderLayout($this->rerenderLayout)
+            ->redirectAndExit($url);
     }
 
     protected function redirectHttp($url)
     {
-        if (! $url instanceof Url) {
-            $url = Url::fromPath($url);
-        }
-        $this->shutdownSession();
-        $this->_helper->Redirector->gotoUrlAndExit($url->getRelativeUrl());
+        $this->getResponse()->redirectAndExit($url);
     }
 
     /**
@@ -457,6 +464,7 @@ class ActionController extends Zend_Controller_Action
         $req = $this->getRequest();
         $layout = $this->_helper->layout();
         $layout->innerLayout = $this->innerLayout;
+        $layout->inlineLayout = $this->inlineLayout;
 
         if ($user = $req->getUser()) {
             if ((bool) $user->getPreferences()->getValue('icingaweb', 'show_benchmark', false)) {
@@ -485,8 +493,6 @@ class ActionController extends Zend_Controller_Action
 
     protected function postDispatchXhr()
     {
-        $layout = $this->_helper->layout();
-        $layout->setLayout($this->xhrLayout);
         $resp = $this->getResponse();
 
         $notifications = Notification::getInstance();
@@ -509,15 +515,19 @@ class ActionController extends Zend_Controller_Action
             }
             $resp->setHeader(
                 'X-Icinga-Title',
-                rawurlencode($this->view->title . ' :: Icinga Web'),
+                rawurlencode($this->view->title . ' :: ' . static::DEFAULT_TITLE),
                 true
             );
         } else {
-            $resp->setHeader('X-Icinga-Title', rawurlencode('Icinga Web'), true);
+            $resp->setHeader('X-Icinga-Title', rawurlencode(static::DEFAULT_TITLE), true);
         }
 
+        $layout = $this->_helper->layout();
         if ($this->rerenderLayout) {
+            $layout->setLayout($this->innerLayout);
             $this->getResponse()->setHeader('X-Icinga-Container', 'layout', true);
+        } else {
+            $layout->setLayout($this->inlineLayout);
         }
 
         if ($this->autorefreshInterval !== null) {

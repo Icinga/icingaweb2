@@ -9,8 +9,8 @@ use Icinga\Data\Inspection;
 use PDO;
 use Iterator;
 use Zend_Db;
+use Zend_Db_Expr;
 use Icinga\Data\ConfigObject;
-use Icinga\Data\Db\DbQuery;
 use Icinga\Data\Extensible;
 use Icinga\Data\Filter\Filter;
 use Icinga\Data\Filter\FilterAnd;
@@ -143,6 +143,24 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
                 break;
             case 'mysql':
                 $adapter = 'Pdo_Mysql';
+                if ($this->config->use_ssl) {
+                    # The presence of these keys as empty strings or null cause non-ssl connections to fail
+                    if ($this->config->ssl_key) {
+                        $adapterParamaters['driver_options'][PDO::MYSQL_ATTR_SSL_KEY] = $this->config->ssl_key;
+                    }
+                    if ($this->config->ssl_cert) {
+                        $adapterParamaters['driver_options'][PDO::MYSQL_ATTR_SSL_CERT] = $this->config->ssl_cert;
+                    }
+                    if ($this->config->ssl_ca) {
+                        $adapterParamaters['driver_options'][PDO::MYSQL_ATTR_SSL_CA] = $this->config->ssl_ca;
+                    }
+                    if ($this->config->ssl_capath) {
+                        $adapterParamaters['driver_options'][PDO::MYSQL_ATTR_SSL_CAPATH] = $this->config->ssl_capath;
+                    }
+                    if ($this->config->ssl_cipher) {
+                        $adapterParamaters['driver_options'][PDO::MYSQL_ATTR_SSL_CIPHER] = $this->config->ssl_cipher;
+                    }
+                }
                 /*
                  * Set MySQL server SQL modes to behave as closely as possible to Oracle and PostgreSQL. Note that the
                  * ONLY_FULL_GROUP_BY mode is left on purpose because MySQL requires you to specify all non-aggregate
@@ -301,6 +319,7 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
     /**
      * Insert a table row with the given data
      *
+     * Note that the base implementation does not perform any quoting on the $table argument.
      * Pass an array with a column name (the same as in $bind) and a PDO::PARAM_* constant as value
      * as third parameter $types to define a different type than string for a particular column.
      *
@@ -312,13 +331,19 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
      */
     public function insert($table, array $bind, array $types = array())
     {
-        $values = array();
-        foreach ($bind as $column => $_) {
-            $values[] = ':' . $column;
+        $columns = $values = array();
+        foreach ($bind as $column => $value) {
+            $columns[] = $column;
+            if ($value instanceof Zend_Db_Expr) {
+                $values[] = (string) $value;
+                unset($bind[$column]);
+            } else {
+                $values[] = ':' . $column;
+            }
         }
 
         $sql = 'INSERT INTO ' . $table
-            . ' (' . join(', ', array_keys($bind)) . ') '
+            . ' (' . join(', ', $columns) . ') '
             . 'VALUES (' . join(', ', $values) . ')';
         $statement = $this->dbAdapter->prepare($sql);
 
@@ -334,6 +359,7 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
     /**
      * Update table rows with the given data, optionally limited by using a filter
      *
+     * Note that the base implementation does not perform any quoting on the $table argument.
      * Pass an array with a column name (the same as in $bind) and a PDO::PARAM_* constant as value
      * as fourth parameter $types to define a different type than string for a particular column.
      *
@@ -347,8 +373,13 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
     public function update($table, array $bind, Filter $filter = null, array $types = array())
     {
         $set = array();
-        foreach ($bind as $column => $_) {
-            $set[] = $column . ' = :' . $column;
+        foreach ($bind as $column => $value) {
+            if ($value instanceof Zend_Db_Expr) {
+                $set[] = $column . ' = ' . $value;
+                unset($bind[$column]);
+            } else {
+                $set[] = $column . ' = :' . $column;
+            }
         }
 
         $sql = 'UPDATE ' . $table
@@ -444,7 +475,7 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
             if ($sign === '=') {
                 return $column . ' IN (' . $this->dbAdapter->quote($value) . ')';
             } elseif ($sign === '!=') {
-                return $column . ' NOT IN (' . $this->dbAdapter->quote($value) . ')';
+                return sprintf('(%1$s NOT IN (%2$s) OR %1$s IS NULL)', $column, $this->dbAdapter->quote($value));
             }
 
             throw new ProgrammingError(
@@ -452,10 +483,10 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
             );
         } elseif ($sign === '=' && strpos($value, '*') !== false) {
             if ($value === '*') {
-                // We'll ignore such filters as it prevents index usage and because "*" means anything, anything means
-                // all whereas all means that whether we use a filter to match anything or no filter at all makes no
-                // difference, except for performance reasons...
-                return '';
+                // We'll ignore such filters as it prevents index usage and because "*" means anything, so whether we're
+                // using a real column with a valid comparison here or just an expression which can only be evaluated to
+                // true makes no difference, except for performance reasons...
+                return new Zend_Db_Expr('TRUE');
             }
 
             return $column . ' LIKE ' . $this->dbAdapter->quote(preg_replace('~\*~', '%', $value));
@@ -464,12 +495,18 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
                 // We'll ignore such filters as it prevents index usage and because "*" means nothing, so whether we're
                 // using a real column with a valid comparison here or just an expression which cannot be evaluated to
                 // true makes no difference, except for performance reasons...
-                return $this->dbAdapter->quote(0);
+                return new Zend_Db_Expr('FALSE');
             }
 
-            return $column . ' NOT LIKE ' . $this->dbAdapter->quote(preg_replace('~\*~', '%', $value));
+            return sprintf(
+                '(%1$s NOT LIKE %2$s OR %1$s IS NULL)',
+                $column,
+                $this->dbAdapter->quote(preg_replace('~\*~', '%', $value))
+            );
+        } elseif ($sign === '!=') {
+            return sprintf('(%1$s != %2$s OR %1$s IS NULL)', $column, $this->dbAdapter->quote($value));
         } else {
-            return $column . ' ' . $sign . ' ' . $this->dbAdapter->quote($value);
+            return sprintf('%s %s %s', $column, $sign, $this->dbAdapter->quote($value));
         }
     }
 
@@ -490,11 +527,24 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
                 case 'mysql':
                     $rows = $this->dbAdapter->query(
                         'SHOW VARIABLES WHERE variable_name ' .
-                        'IN (\'version\', \'protocol_version\', \'version_compile_os\');'
+                        'IN (\'version\', \'protocol_version\', \'version_compile_os\', \'have_ssl\');'
                     )->fetchAll();
                     $sqlinsp = new Inspection('MySQL');
+                    $hasSsl = false;
                     foreach ($rows as $row) {
                         $sqlinsp->write($row->variable_name . ': ' . $row->value);
+                        if ($row->variable_name === 'have_ssl' && $row->value === 'YES') {
+                            $hasSsl = true;
+                        }
+                    }
+                    if ($hasSsl) {
+                        $ssl_rows = $this->dbAdapter->query(
+                            'SHOW STATUS WHERE variable_name ' .
+                            'IN (\'Ssl_Cipher\');'
+                        )->fetchAll();
+                        foreach ($ssl_rows as $ssl_row) {
+                            $sqlinsp->write($ssl_row->variable_name . ': ' . $ssl_row->value);
+                        }
                     }
                     $insp->write($sqlinsp);
                     break;

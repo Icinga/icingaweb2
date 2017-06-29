@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<!-- PHP Codesniffer ruleset configuration -->
+<ruleset name="icingaweb2">
+    <description>The default PSR-2 standard with specifically excluded non-critical sniffs</description>
+    <!-- Include the whole PSR-2 standard -->
+    <rule ref="PSR2" />
+    <!-- Exclude patterns for PSR-2 Sniffs -->
+    <rule ref="PSR1.Classes.ClassDeclaration.MultipleClasses">
+        <exclude-pattern>*/test/php/*</exclude-pattern>
+    </rule>
+    <rule ref="PSR1.Files.SideEffects.FoundWithSymbols">
+        <exclude-pattern>*/test/php/*</exclude-pattern>
+    </rule>
+    <rule ref="PSR2.Namespaces.UseDeclaration.UseAfterNamespace">
+        <exclude-pattern>*/test/php/*</exclude-pattern>
+        <exclude-pattern>*/library/Icinga/Test/BaseTestCase.php</exclude-pattern>
+    </rule>
+    <rule ref="PSR1.Classes.ClassDeclaration.MissingNamespace">
+        <exclude-pattern>*/application/views/helpers/*</exclude-pattern>
+        <exclude-pattern>*/library/Icinga/Web/Paginator/ScrollingStyle/SlidingWithBorder.php</exclude-pattern>
+    </rule>
+    <rule ref="Squiz.Classes.ValidClassName.NotCamelCaps">
+        <exclude-pattern>*/application/views/helpers/*</exclude-pattern>
+        <exclude-pattern>*/library/Icinga/Web/Paginator/ScrollingStyle/SlidingWithBorder.php</exclude-pattern>
+    </rule>
+    <rule ref="Generic.Files.LineLength.TooLong">
+        <exclude-pattern>*/modules/monitoring/library/Monitoring/Backend/Ido/Query/*</exclude-pattern>
+    </rule>
+</ruleset>

@@ -61,7 +61,6 @@ class ModuleController extends DocController
             'title'     => $this->translate('Module Documentation', 'Tab title'),
             'url'       => Url::fromRequest()
         ));
-
     }
 
     /**
@@ -91,7 +90,7 @@ class ModuleController extends DocController
         $module = $this->params->getRequired('moduleName');
         $this->assertModuleInstalled($module);
         $moduleManager = Icinga::app()->getModuleManager();
-        $name = $moduleManager->getModule($module)->getTitle();
+        $name = $moduleManager->getModule($module, false)->getTitle();
         try {
             $this->renderToc(
                 $this->getPath($module, Icinga::app()->getModuleManager()->getModuleDir($module, '/doc')),

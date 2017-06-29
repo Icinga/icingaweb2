@@ -24,7 +24,7 @@
   font-size: 2em;
 }
 
-#header-logo-container,
+#header,
 #login,
 #main > .container,
 #menu {
@@ -37,16 +37,14 @@
 }
 
 #header-logo-container {
-  height: 4em;
-  margin-bottom: 0.2em;
-  margin-left: 1.5em;
-  margin-top: 0.2em;
+  height: 2.667em;
+  margin: .1667em 0 .1667em .7em;
   width: 100px;
 }
 
 #header-logo {
-  background-image: url('../img/logo_icinga-inv.png');
-  background-position: center;
+  background-image: url('../img/icinga-logo.svg');
+  background-position: left center;
   background-repeat: no-repeat;
   background-size: contain;
   display: block;
@@ -54,13 +52,23 @@
 }
 
 #icinga-logo {
-  background-image: url('../img/logo_icinga_big.png');
-  background-position: center;
+  background-image: url('../img/icinga-logo-big.svg');
+  background-position: center bottom;
   background-repeat: no-repeat;
   background-size: contain; // Does not work in IE < 10
   height: 177px;
   margin-bottom: 2em;
   width: 100%;
+}
+
+.ie8 {
+  #header-logo {
+    background-image: url('../img/icinga-logo.png');
+  }
+
+  #icinga-logo {
+    background-image: url('../img/icinga-logo-big.png');
+  }
 }
 
 #layout {

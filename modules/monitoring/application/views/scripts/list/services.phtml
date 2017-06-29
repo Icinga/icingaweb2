@@ -5,8 +5,6 @@ use Icinga\Module\Monitoring\Object\Service;
 if (! $this->compact): ?>
 <div class="controls">
     <?= $this->tabs ?>
-    <?= $this->render('list/components/servicesummary.phtml') ?>
-    <?= $this->render('list/components/selectioninfo.phtml') ?>
     <?= $this->paginator ?>
     <div class="sort-controls-container">
         <?= $this->limiter ?>
@@ -82,7 +80,7 @@ if (! $this->compact): ?>
                             'class' => 'rowaction'
                         )
                     ) ?>
-                    <span class="state-icons"><?= implode(' ', $this->serviceFlags($service)) ?></span>
+                    <span class="state-icons"><?= $this->serviceFlags($service) ?></span>
                 </div>
                 <div class="overview-plugin-output-container">
                     <div class="overview-performance-data">
@@ -112,3 +110,10 @@ if (! $this->compact): ?>
 </div>
 <?php endif ?>
 </div>
+<?php if (! $this->compact): ?>
+<div class="monitoring-statusbar-ghost dont-print"></div>
+<div class="monitoring-statusbar dont-print">
+    <?= $this->render('list/components/servicesummary.phtml') ?>
+    <?= $this->render('list/components/selectioninfo.phtml') ?>
+</div>
+<?php endif ?>

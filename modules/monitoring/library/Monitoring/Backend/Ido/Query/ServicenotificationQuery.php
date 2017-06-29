@@ -24,6 +24,7 @@ class ServicenotificationQuery extends IdoQuery
             'output'    => null,
             'state'     => 'sn.state',
             'timestamp' => 'UNIX_TIMESTAMP(sn.start_time)',
+            'type'      => '(\'notify\')'
         ),
         'hostgroups' => array(
             'hostgroup_name' => 'hgo.name1'
@@ -37,6 +38,7 @@ class ServicenotificationQuery extends IdoQuery
         'notifications' => array(
             'host_name'                 => 'so.name1',
             'notification_output'       => 'sn.output',
+            'notification_reason'       => 'sn.notification_reason',
             'notification_state'        => 'sn.state',
             'notification_timestamp'    => 'UNIX_TIMESTAMP(sn.start_time)',
             'object_type'               => '(\'service\')',
@@ -202,8 +204,7 @@ class ServicenotificationQuery extends IdoQuery
     {
         $group = array();
 
-        if (
-            $this->hasJoinedVirtualTable('history')
+        if ($this->hasJoinedVirtualTable('history')
             || $this->hasJoinedVirtualTable('hostgroups')
             || $this->hasJoinedVirtualTable('servicegroups')
         ) {

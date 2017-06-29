@@ -149,7 +149,8 @@ class HostsController extends Controller
                     ->toQueryString()
             );
         $this->view->commentsLink = Url::fromRequest()->setPath('monitoring/list/comments');
-        $this->view->sendCustomNotificationLink = Url::fromRequest()->setPath('monitoring/hosts/send-custom-notification');
+        $this->view->sendCustomNotificationLink = Url::fromRequest()
+            ->setPath('monitoring/hosts/send-custom-notification');
     }
 
     /**

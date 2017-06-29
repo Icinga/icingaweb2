@@ -10,4 +10,6 @@ use Icinga\Application\Hook\TicketHook as BaseHook;
  *
  * Please implement hooks in Icinga\Application\Hook
  */
-abstract class TicketHook extends BaseHook {}
+abstract class TicketHook extends BaseHook
+{
+}

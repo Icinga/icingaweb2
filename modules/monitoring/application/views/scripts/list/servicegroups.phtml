@@ -34,7 +34,7 @@ if (! $this->compact): ?>
                 <?= $this->qlink(
                     $serviceGroup->servicegroup_alias,
                     'monitoring/list/services',
-                    array('servicegroup_name' =>  $serviceGroup->servicegroup_name),
+                    array('servicegroup_name' =>  $serviceGroup->servicegroup_name, 'sort' => 'service_severity'),
                     array('title' => sprintf($this->translate('List all services in the group "%s"'),  $serviceGroup->servicegroup_alias))
                 ) ?>
             </th>
@@ -82,7 +82,7 @@ if (! $this->compact): ?>
                         ),
                         'List %s service that is currently in state CRITICAL (Acknowledged) in service group "%s"',
                         'List %s services which are currently in state CRITICAL (Acknowledged) in service group "%s"',
-                        array($serviceGroup->services_critical_unhandled, $serviceGroup->servicegroup_alias)
+                        array($serviceGroup->services_critical_handled, $serviceGroup->servicegroup_alias)
                     )
                     ->add(
                         StateBadges::STATE_UNKNOWN,

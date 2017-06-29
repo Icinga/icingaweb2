@@ -17,7 +17,9 @@ The order in which Icinga Web 2 processes the configured transports is defined b
 
 If you're running Icinga 2 it's best to use the Icinga 2 API for transmitting external commands.
 
-First, you have to enable the `api` feature on the Icinga 2 host where you want to send the commands to:
+First, please make sure that your server running Icinga Web 2 has the `PHP cURL` extension installed and enabled.
+
+Second, you have to enable the `api` feature on the Icinga 2 host where you want to send the commands to:
 
 ```
 icinga2 feature enable api
@@ -30,11 +32,11 @@ to the host where you want to send the commands to. We recommend to create/edit 
 ```
 object ApiUser "web2" {
   password = "bea11beb7b810ea9ce6ea" // Change this!
-  permissions = [ "actions/*", "objects/modify/hosts", "objects/modify/services", "objects/modify/icingaapplications" ]
+  permissions = [ "actions/*", "objects/modify/hosts", "objects/modify/services", "objects/modify/icingaapplication" ]
 }
 ```
 
-The permissions `actions/*`, `objects/modify/hosts`, `objects/modify/services`, `objects/modify/icingaapplications` are
+The permissions `actions/*`, `objects/modify/hosts`, `objects/modify/services`, `objects/modify/icingaapplication` are
 mandatory in order to submit all external commands from within Icinga Web 2.
 
 **Restart Icinga 2** for the changes to take effect.

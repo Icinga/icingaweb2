@@ -122,6 +122,20 @@ class GettextTranslationHelper
     }
 
     /**
+     * Cleanup temporary files
+     */
+    public function __destruct()
+    {
+        if ($this->catalogPath !== null && file_exists($this->catalogPath)) {
+            unlink($this->catalogPath);
+        }
+
+        if ($this->templatePath !== null && file_exists($this->templatePath)) {
+            unlink($this->templatePath);
+        }
+    }
+
+    /**
      * Get the config
      *
      * @return Config
@@ -251,7 +265,7 @@ class GettextTranslationHelper
     {
         if (is_file($this->tablePath)) {
             shell_exec(sprintf(
-                '%s --update %s %s 2>&1',
+                '%s --update --backup=none %s %s 2>&1',
                 $this->getConfig()->get('translation', 'msgmerge', '/usr/bin/env msgmerge'),
                 $this->tablePath,
                 $this->templatePath
@@ -266,6 +280,7 @@ class GettextTranslationHelper
             }
         }
         $this->updateHeader($this->tablePath);
+        $this->fixSourceLocations($this->tablePath);
     }
 
     /**
@@ -319,7 +334,7 @@ class GettextTranslationHelper
             'author_year' => 'YEAR',
             'project_name' => $this->moduleName ? ucfirst($this->moduleName) . ' Module' : 'Icinga Web 2',
             'project_version' => $this->version,
-            'project_bug_mail' => 'dev@icinga.org',
+            'project_bug_mail' => 'dev@icinga.com',
             'pot_creation_date' => date('Y-m-d H:iO'),
             'po_revision_date' => 'YEAR-MO-DA HO:MI+ZONE',
             'translator_name' => 'FULL NAME',
@@ -386,10 +401,26 @@ class GettextTranslationHelper
                     '"Content-Type: text/plain; charset=' . $headerInfo['charset'] . '\n"',
                     '"Content-Transfer-Encoding: 8bit\n"',
                     '"Plural-Forms: nplurals=2; plural=(n != 1);\n"',
+                    '"X-Poedit-Basepath: .\n"',
+                    '"X-Poedit-SearchPath-0: .\n"',
                     ''
                 )
             ) . PHP_EOL . substr($content, strpos($content, '#: '))
         );
+    }
+
+    /**
+     * Adjust all absolute source file paths so that they're all relative to the catalog's location
+     *
+     * @param   string  $path
+     */
+    protected function fixSourceLocations($path)
+    {
+        shell_exec(sprintf(
+            "sed -i 's;%s;../../../..;g' %s",
+            dirname($this->appDir),
+            $path
+        ));
     }
 
     /**

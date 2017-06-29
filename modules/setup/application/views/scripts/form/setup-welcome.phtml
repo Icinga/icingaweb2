@@ -72,7 +72,7 @@ if (! (false === ($distro = Platform::getLinuxDistro(1)) || $distro === 'linux')
     </div>
   </form>
   <div class="note">
-    <h3>Generating a New Setup Token</h3>
+    <h3><?= $this->translate('Generating a New Setup Token'); ?></h3>
     <div>
       <p><?=
         $this->translate(
@@ -105,7 +105,7 @@ if (! (false === ($distro = Platform::getLinuxDistro(1)) || $distro === 'linux')
       </div>
       <p><?= sprintf(
         $this->translate('Please see the %s for an extensive description on how to access and use this wizard.'),
-        '<a href="http://docs.icinga.org/">' . $this->translate('Icinga Web 2 documentation') . '</a>' // TODO: Add link to iw2 docs which points to the installation topic
+        '<a href="http://docs.icinga.com/">' . $this->translate('Icinga Web 2 documentation') . '</a>' // TODO: Add link to iw2 docs which points to the installation topic
       ); ?></p>
     </div>
   </div>

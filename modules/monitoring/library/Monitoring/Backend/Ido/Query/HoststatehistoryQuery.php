@@ -65,7 +65,7 @@ class HoststatehistoryQuery extends IdoQuery
             'host_name'     => 'ho.name1',
             'object_id'     => 'hh.object_id',
             'object_type'   => '(\'host\')',
-            'output'        => "('[ ' || hh.current_check_attempt || '/' || hh.max_check_attempts || ' ] ' || hh.output)",
+            'output'        => '(CASE WHEN hh.state_type = 1 THEN hh.output ELSE \'[ \' || hh.current_check_attempt || \'/\' || hh.max_check_attempts || \' ] \' || hh.output END)',
             'state'         => 'hh.state',
             'timestamp'     => 'UNIX_TIMESTAMP(hh.state_time)',
             'type'          => "(CASE WHEN hh.state_type = 1 THEN 'hard_state' ELSE 'soft_state' END)"
@@ -79,8 +79,7 @@ class HoststatehistoryQuery extends IdoQuery
     {
         if ($col === 'UNIX_TIMESTAMP(hh.state_time)') {
             return 'hh.state_time ' . $sign . ' ' . $this->timestampForSql($this->valueToTimestamp($expression));
-        } elseif (
-            $col === $this->columnMap['statehistory']['type']
+        } elseif ($col === $this->columnMap['statehistory']['type']
             && ! is_array($expression)
             && array_key_exists($expression, $this->types)
         ) {

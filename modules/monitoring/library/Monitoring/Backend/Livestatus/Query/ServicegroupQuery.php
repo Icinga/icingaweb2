@@ -4,6 +4,7 @@
 namespace Icinga\Module\Monitoring\Backend\Livestatus\Query;
 
 use Icinga\Protocol\Livestatus\Query;
+
 // SHITTY IT IS
 class ServicegroupQuery extends Query
 {
@@ -21,15 +22,15 @@ class ServicegroupQuery extends Query
 
     public function xxcombineResult_service_host_name(& $row, & $res)
     {
-    return;
-    var_dump($res);
+        return;
+        var_dump($res);
         die('Here you go');
     }
 
 
     public function completeRow(& $row)
     {
-    die('FU');
+        die('FU');
         $row->severity = 12;
     }
 }

@@ -13,10 +13,11 @@
   border: 2px solid @color;
   color: @color;
   cursor: pointer;
+  line-height: normal;
   outline: none;
   padding: @vertical-padding @horizontal-padding;
 
-  // Transition mixin does not work w/ comma-separated transistions
+  // Transition mixin does not work w/ comma-separated transitions
   -webkit-transition: background 0.3s ease, color 0.3s ease;
      -moz-transition: background 0.3s ease, color 0.3s ease;
        -o-transition: background 0.3s ease, color 0.3s ease;
@@ -42,9 +43,7 @@
 }
 
 .opacity(@opacity: 0.6) {
-  -webkit-opacity: @opacity;
-     -moz-opacity: @opacity;
-          opacity: @opacity;
+  opacity: @opacity;
 }
 
 .transform(@transform) {
@@ -116,88 +115,88 @@
           animation-fill-mode: forwards;
 }
 
-// Color mixins
-
-.bg-color-ok,
-.bg-color-up {
-  background-color: @color-ok;
-}
-
-.bg-color-warning {
-  background-color: @color-warning;
-
-  &.handled {
-    background-color: @color-warning-handled;
+// Mixin for stateful foreground colors, e.g. text or icons
+.fg-stateful {
+  &.state-ok {
+    color: @color-ok;
+  }
+  &.state-up {
+    color: @color-up;
+  }
+  &.state-warning {
+    color: @color-warning;
+    &.handled {
+      color: @color-warning-handled;
+    }
+  }
+  &.state-critical {
+    color: @color-critical;
+    &.handled {
+      color: @color-critical-handled;
+    }
+  }
+  &.state-down {
+    color: @color-down;
+    &.handled {
+      color: @color-down-handled;
+    }
+  }
+  &.state-unreachable {
+    color: @color-unreachable;
+    &.handled {
+      color: @color-unreachable-handled;
+    }
+  }
+  &.state-unknown {
+    color: @color-unknown;
+    &.handled {
+      color: @color-unknown-handled;
+    }
+  }
+  &.state-pending {
+    color: @color-pending;
   }
 }
 
-.bg-color-critical,
-.bg-color-down {
-  background-color: @color-critical;
-
-  &.handled {
-    background-color: @color-critical-handled;
+// Mixin for stateful background colors
+.bg-stateful {
+  &.state-ok {
+    background-color: @color-ok;
   }
-}
-
-.bg-color-unreachable {
-  background-color: @color-unreachable;
-
-  &.handled {
-    background-color: @color-unreachable-handled;
+  &.state-up {
+    background-color: @color-up;
   }
-}
-
-.bg-color-unknown {
-  background-color: @color-unknown;
-
-  &.handled {
-    background-color: @color-unknown-handled;
+  &.state-warning {
+    background-color: @color-warning;
+    &.handled {
+      background-color: @color-warning-handled;
+    }
   }
-}
-
-.bg-color-pending {
-  background-color: @color-pending;
-}
-
-.fg-color-ok,
-.fg-color-up {
-  color: @color-ok;
-}
-
-.fg-color-warning {
-  color: @color-warning;
-
-  &.handled {
-    color: @color-warning-handled;
+  &.state-critical {
+    background-color: @color-critical;
+    &.handled {
+      background-color: @color-critical-handled;
+    }
   }
-}
-
-.fg-color-critical,
-.fg-color-down {
-  color: @color-critical;
-
-  &.handled {
-    color: @color-critical-handled;
+  &.state-down {
+    background-color: @color-down;
+    &.handled {
+      background-color: @color-down-handled;
+    }
   }
-}
-
-.fg-color-unreachable {
-  color: @color-unreachable;
-
-  &.handled {
-    color: @color-unreachable-handled;
+  &.state-unreachable {
+    background-color: @color-unreachable;
+    &.handled {
+      background-color: @color-unreachable-handled;
+    }
   }
-}
-
-.fg-color-unknown {
-  color: @color-unknown;
-
-  &.handled {
-    color: @color-unknown-handled;
+  &.state-unknown {
+    background-color: @color-unknown;
+    &.handled {
+      background-color: @color-unknown-handled;
+    }
   }
-}
-
-.fg-color-pending {
-  color: @color-pending;
+  &.state-pending {
+    background-color: @color-pending;
+  }
 }

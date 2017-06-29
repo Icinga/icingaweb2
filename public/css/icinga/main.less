@@ -25,17 +25,9 @@
   width: 1em;
 }
 
-.icon-strikethrough {
-  text-decoration: line-through;
-}
-
 .preformatted {
   font-family: @font-family-fixed;
   white-space: pre-wrap;
-}
-
-.pull-left {
-  float: left;
 }
 
 .pull-right {
@@ -63,6 +55,10 @@
 
 a:hover > .icon-cancel {
   color: @color-critical;
+}
+
+.icon-stateful {
+  .fg-stateful();
 }
 
 // Link styles
@@ -206,7 +202,7 @@ a:hover > .icon-cancel {
 .centered-ghost {
   height: 100%;
   text-align: center;
-  letter-spacing: -1em; // Remove gap between content and ghost
+  letter-spacing: -0.417em; // Remove gap between content and ghost
 }
 
 .centered-ghost > * {

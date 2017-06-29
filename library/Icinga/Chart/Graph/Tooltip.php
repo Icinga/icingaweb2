@@ -64,7 +64,7 @@ class Tooltip
      * @param array     $data   Map of global properties
      * @param string    $format The default format string
      */
-    public function __construct (
+    public function __construct(
         $data = array(),
         $format = '<b>{title}</b>: {value} {label}'
     ) {

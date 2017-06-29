@@ -10,4 +10,6 @@ use Icinga\Module\Monitoring\Hook\HostActionsHook as BaseHook;
  *
  * Please implement hooks in our Hook direcory
  */
-abstract class HostActionsHook extends BaseHook {}
+abstract class HostActionsHook extends BaseHook
+{
+}

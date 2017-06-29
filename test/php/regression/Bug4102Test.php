@@ -10,7 +10,7 @@ use Icinga\Test\BaseTestCase;
  *
  * Bogus regression test
  *
- * @see https://dev.icinga.org/issues/4102
+ * @see https://dev.icinga.com/issues/4102
  */
 class Bug4102Test extends BaseTestCase
 {

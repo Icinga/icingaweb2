@@ -1,11 +1,13 @@
 <?php
 /* Icinga Web 2 | (c) 2014 Icinga Development Team | GPLv2+ */
 
-$applicationPath = realpath(dirname(__FILE__) . '/../../application/');
-$modulePath = realpath(dirname(__FILE__) . '/../../modules/');
-$libraryPath = realpath(dirname(__FILE__) . '/../../library/');
-$testLibraryPath = realpath(dirname(__FILE__) . '/library/');
-$configPath = realpath($libraryPath . '/../config');
+$basePath = getenv('ICINGAWEB_BASEDIR') ?: realpath(dirname(__FILE__) . '/../..');
+$applicationPath = $basePath . '/application';
+$modulePath = getenv('ICINGAWEB_MODULES_DIR') ?: ($basePath . '/modules');
+$icingaLibPath = getenv('ICINGAWEB_ICINGA_LIB') ?: ($basePath . '/library/Icinga');
+$libraryPath = $basePath . '/library';
+$testLibraryPath = realpath(dirname(__FILE__) . '/library');
+$configPath = $basePath . '/../config';
 
 // Is usually done in the application's bootstrap and is used by some of our internals
 if (!defined('ICINGAWEB_APPDIR')) {
@@ -22,11 +24,15 @@ require_once 'Mockery/Loader.php';
 $mockeryLoader = new \Mockery\Loader;
 $mockeryLoader->register();
 
-require_once($libraryPath . '/Icinga/Test/ClassLoader.php');
+require_once($icingaLibPath . '/Test/ClassLoader.php');
+
+if (! class_exists('PHPUnit_Framework_TestCase')) {
+    require_once __DIR__ . '/phpunit-compat.php';
+}
 
 $loader = new Icinga\Test\ClassLoader();
 $loader->registerNamespace('Tests', $testLibraryPath);
-$loader->registerNamespace('Icinga', $libraryPath . '/Icinga');
+$loader->registerNamespace('Icinga', $icingaLibPath);
 $loader->registerNamespace('Icinga\\Forms', $applicationPath . '/forms');
 
 $modules = scandir($modulePath);

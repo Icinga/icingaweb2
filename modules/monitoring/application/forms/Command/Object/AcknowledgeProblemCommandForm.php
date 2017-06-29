@@ -5,6 +5,7 @@ namespace Icinga\Module\Monitoring\Forms\Command\Object;
 
 use DateTime;
 use DateInterval;
+use Icinga\Application\Config;
 use Icinga\Module\Monitoring\Command\Object\AcknowledgeProblemCommand;
 use Icinga\Web\Notification;
 
@@ -40,6 +41,10 @@ class AcknowledgeProblemCommandForm extends ObjectsCommandForm
      */
     public function createElements(array $formData = array())
     {
+        $config = Config::module('monitoring');
+
+        $acknowledgeExpire = (bool) $config->get('settings', 'acknowledge_expire', false);
+
         $this->addElements(array(
             array(
                 'textarea',
@@ -51,7 +56,8 @@ class AcknowledgeProblemCommandForm extends ObjectsCommandForm
                         'If you work with other administrators, you may find it useful to share information about the'
                         . ' the host or service that is having problems. Make sure you enter a brief description of'
                         . ' what you are doing.'
-                    )
+                    ),
+                    'attribs'       => array('class' => 'autofocus')
                 )
             ),
             array(
@@ -59,6 +65,7 @@ class AcknowledgeProblemCommandForm extends ObjectsCommandForm
                 'persistent',
                 array(
                     'label'         => $this->translate('Persistent Comment'),
+                    'value'         => (bool) $config->get('settings', 'acknowledge_persistent', false),
                     'description'   => $this->translate(
                         'If you would like the comment to remain even when the acknowledgement is removed, check this'
                         . ' option.'
@@ -70,6 +77,7 @@ class AcknowledgeProblemCommandForm extends ObjectsCommandForm
                 'expire',
                 array(
                     'label'         => $this->translate('Use Expire Time'),
+                    'value'         => $acknowledgeExpire,
                     'description'   => $this->translate(
                         'If the acknowledgement should expire, check this option.'
                     ),
@@ -77,7 +85,8 @@ class AcknowledgeProblemCommandForm extends ObjectsCommandForm
                 )
             )
         ));
-        if (isset($formData['expire']) && (bool) $formData['expire'] === true) {
+        $expire = isset($formData['expire']) ? $formData['expire'] : $acknowledgeExpire;
+        if ($expire) {
             $expireTime = new DateTime();
             $expireTime->add(new DateInterval('PT1H'));
             $this->addElement(
@@ -109,7 +118,7 @@ class AcknowledgeProblemCommandForm extends ObjectsCommandForm
                 'sticky',
                 array(
                     'label'         => $this->translate('Sticky Acknowledgement'),
-                    'value'         => true,
+                    'value'         => (bool) $config->get('settings', 'acknowledge_sticky', false),
                     'description'   => $this->translate(
                         'If you want the acknowledgement to remain until the host or service recovers even if the host'
                         . ' or service changes state, check this option.'
@@ -121,7 +130,7 @@ class AcknowledgeProblemCommandForm extends ObjectsCommandForm
                 'notify',
                 array(
                     'label'         => $this->translate('Send Notification'),
-                    'value'         => true,
+                    'value'         => (bool) $config->get('settings', 'acknowledge_notify', true),
                     'description'   => $this->translate(
                         'If you do not want an acknowledgement notification to be sent out to the appropriate contacts,'
                         . ' uncheck this option.'

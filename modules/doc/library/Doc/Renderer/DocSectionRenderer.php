@@ -65,7 +65,8 @@ class DocSectionRenderer extends DocRenderer
             $filter = new DocSectionFilterIterator($tree->getIterator(), $chapter);
             if ($filter->isEmpty()) {
                 throw new ChapterNotFoundException(
-                    mt('doc', 'Chapter %s not found'), $chapter
+                    mt('doc', 'Chapter %s not found'),
+                    $chapter
                 );
             }
             parent::__construct(

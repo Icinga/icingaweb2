@@ -38,7 +38,7 @@ if (! $this->compact): ?>
                 <?= $this->qlink(
                     $hostGroup->hostgroup_alias,
                     'monitoring/list/hosts',
-                    array('hostgroup_name' => $hostGroup->hostgroup_name),
+                    array('hostgroup_name' => $hostGroup->hostgroup_name, 'sort' => 'host_severity'),
                     array('title' => sprintf(
                         $this->translate('List all hosts in the group "%s"'),
                         $hostGroup->hostgroup_alias
@@ -136,7 +136,7 @@ if (! $this->compact): ?>
                 <?= $this->qlink(
                     $hostGroup->services_total,
                     'monitoring/list/services',
-                    array('hostgroup_name' => $hostGroup->hostgroup_name),
+                    array('hostgroup_name' => $hostGroup->hostgroup_name, 'sort' => 'service_severity'),
                     array('title' => sprintf(
                         $this->translate('List all services of all hosts in host group "%s"'),
                         $hostGroup->hostgroup_alias
@@ -186,7 +186,7 @@ if (! $this->compact): ?>
                         ),
                         'List %u service that is currently in state CRITICAL (Acknowledged) on hosts in the host group "%s"',
                         'List %u services which are currently in state CRITICAL (Acknowledged) on hosts in the host group "%s"',
-                        array($hostGroup->services_critical_unhandled, $hostGroup->hostgroup_alias)
+                        array($hostGroup->services_critical_handled, $hostGroup->hostgroup_alias)
                     )
                     ->add(
                         StateBadges::STATE_UNKNOWN,

@@ -4,7 +4,6 @@
 
 namespace Icinga\Chart\Unit;
 
-
 class StaticAxis implements AxisUnit
 {
     private $items = array();

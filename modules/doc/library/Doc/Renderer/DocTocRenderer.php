@@ -108,14 +108,16 @@ class DocTocRenderer extends DocRenderer
             }
             $urlAttributes = array(
                 'data-base-target'  => '_next',
-                'title'             => sprintf(
-                    $this->getView()->translate('Show the %schapter "%s"', 'toc.render.section.link'),
-                    $section->getId() !== $section->getChapter()->getId() ? sprintf(
-                        $this->getView()->translate('section "%s" of the ', 'toc.render.section.link'),
-                        $section->getTitle()
-                    ) : '',
-                    $section->getChapter()->getTitle()
-                )
+                'title'             => $section->getId() === $section->getChapter()->getId()
+                    ? sprintf(
+                        $view->translate('Show the chapter "%s"', 'toc.render.section.link'),
+                        $section->getChapter()->getTitle()
+                    )
+                    : sprintf(
+                        $view->translate('Show the section "%s" of the chapter "%s"', 'toc.render.section.link'),
+                        $section->getTitle(),
+                        $section->getChapter()->getTitle()
+                    )
             );
             if ($section->getNoFollow()) {
                 $urlAttributes['rel'] = 'nofollow';

@@ -13,7 +13,7 @@ use Zend_View_Helper_PluginOutput;
  *
  * Plugin output renderer must not destroy links by adding zero width space characters.
  *
- * @see https://dev.icinga.org/issues/11796
+ * @see https://dev.icinga.com/issues/11796
  */
 class Bug11796Test extends BaseTestCase
 {

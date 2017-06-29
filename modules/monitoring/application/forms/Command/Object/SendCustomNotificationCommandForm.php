@@ -3,6 +3,7 @@
 
 namespace Icinga\Module\Monitoring\Forms\Command\Object;
 
+use Icinga\Application\Config;
 use Icinga\Module\Monitoring\Command\Object\SendCustomNotificationCommand;
 use Icinga\Web\Notification;
 
@@ -26,7 +27,7 @@ class SendCustomNotificationCommandForm extends ObjectsCommandForm
      */
     public function getSubmitLabel()
     {
-        return $this->translatePlural('Send custom notification',  'Send custom notifications',  count($this->objects));
+        return $this->translatePlural('Send custom notification', 'Send custom notifications', count($this->objects));
     }
 
     /**
@@ -34,6 +35,8 @@ class SendCustomNotificationCommandForm extends ObjectsCommandForm
      */
     public function createElements(array $formData = array())
     {
+        $config = Config::module('monitoring');
+
         $this->addElements(array(
             array(
                 'textarea',
@@ -53,7 +56,7 @@ class SendCustomNotificationCommandForm extends ObjectsCommandForm
                 'forced',
                 array(
                     'label'         => $this->translate('Forced'),
-                    'value'         => false,
+                    'value'         => (bool) $config->get('settings', 'custom_notification_forced', false),
                     'description'   => $this->translate(
                         'If you check this option, the notification is sent out regardless of time restrictions and'
                         . ' whether or not notifications are enabled.'
@@ -68,7 +71,7 @@ class SendCustomNotificationCommandForm extends ObjectsCommandForm
                 'broadcast',
                 array(
                     'label'         => $this->translate('Broadcast'),
-                    'value'         => false,
+                    'value'         => (bool) $config->get('settings', 'custom_notification_broadcast', false),
                     'description'   => $this->translate(
                         'If you check this option, the notification is sent out to all normal and escalated contacts.'
                     )

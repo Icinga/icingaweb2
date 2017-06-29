@@ -35,7 +35,7 @@ Navigate to `/icingaweb/setup` and follow the on-screen instructions.
 
 ## Support
 
-Please use one of the listed support channels at https://support.icinga.org
+Please use one of the listed support channels at https://support.icinga.com
 
 
 ## Manual Setup
@@ -63,7 +63,7 @@ Decide whether to use MySQL or PostgreSQL.
     postgres=#  CREATE DATABASE icingaweb;
     postgres=#  \q
 
-Add the `cingaweb` user for trusted authentication to your `pg_hba.conf` file
+Add the `icingaweb` user for trusted authentication to your `pg_hba.conf` file
 in `/var/lib/pgsql/data/pg_hba.conf` and restart the PostgreSQL server.
 
     local   icingaweb      icingaweb                            trust

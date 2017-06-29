@@ -34,18 +34,20 @@ $history->limit($limit * $page);
 <?php
 $dateFormat = $this->translate('%A, %B %e, %Y', 'date.verbose');
 $lastDate = null;
+$flappingMsg = $this->translate('Flapping with a %.2f%% state change rate');
 ?>
     <table class="state-table" data-base-target="_next"<?php if (isset($tableCssClass)): ?> class="<?=$tableCssClass ?>"<?php endif ?>>
     <tbody>
     <?php foreach ($history->peekAhead() as $event):
         $icon = '';
-        $iconCssClass = '';
+        $iconTitle = null;
         $isService = isset($event->service_description);
         $msg = $event->output;
         $stateName = 'no-state';
         switch ($event->type) {
             case 'notify':
-                $icon = 'bell-alt';
+                $icon = 'bell';
+                $iconTitle = $this->translate('Notification', 'tooltip');
                 $label = $this->translate('NOTIFICATION');
                 $msg = $msg ? preg_replace_callback(
                     '/^\[([^\]]+)\]/',
@@ -55,56 +57,71 @@ $lastDate = null;
                 $stateName = $isService ? Service::getStateText($event->state) : Host::getStateText($event->state);
                 break;
             case 'comment':
-                $icon = 'comment';
+                $icon = 'comment-empty';
+                $iconTitle = $this->translate('Comment', 'tooltip');
                 $label = $this->translate('COMMENT');
                 break;
             case 'comment_deleted':
                 $icon = 'cancel';
+                $iconTitle = $this->translate('Comment removed', 'tooltip');
                 $label = $this->translate('COMMENT DELETED');
                 break;
             case 'ack':
                 $icon = 'ok';
+                $iconTitle = $this->translate('Acknowledged', 'tooltip');
                 $label = $this->translate('ACKNOWLEDGED');
                 break;
             case 'ack_deleted':
                 $icon = 'ok';
-                $iconCssClass = 'icon-strikethrough';
+                $iconTitle = $this->translate('Acknowledgement removed', 'tooltip');
                 $label = $this->translate('ACKNOWLEDGEMENT REMOVED');
                 break;
             case 'dt_comment':
-                // TODO(el): Does not appear in history
                 $icon = 'plug';
+                $iconTitle = $this->translate('Downtime scheduled', 'tooltip');
                 $label = $this->translate('SCHEDULED DOWNTIME');
                 break;
             case 'dt_comment_deleted':
-                // TODO(el): Does not appear in history
                 $icon = 'plug';
-                $iconCssClass = 'icon-strikethrough';
+                $iconTitle = $this->translate('Downtime removed', 'tooltip');
                 $label = $this->translate('DOWNTIME DELETED');
                 break;
             case 'flapping':
-                // TODO(el): Icon
+                $icon = 'flapping';
+                $iconTitle = $this->translate('Flapping started', 'tooltip');
                 $label = $this->translate('FLAPPING');
+                $msg = sprintf($flappingMsg, $msg);
                 break;
             case 'flapping_deleted':
-                // TODO(el): Icon
+                $icon = 'flapping';
+                $iconTitle = $this->translate('Flapping stopped', 'tooltip');
                 $label = $this->translate('FLAPPING STOPPED');
+                $msg = sprintf($flappingMsg, $msg);
                 break;
             case 'hard_state':
+                if ((int) $event->state === 0) {
+                    $icon = 'thumbs-up';
+                } else {
+                    $icon = 'warning-empty';
+                }
+                $iconTitle = $this->translate('Hard state', 'tooltip');
                 $label = $isService ? Service::getStateText($event->state, true) : Host::getStateText($event->state, true);
                 $stateName = $isService ? Service::getStateText($event->state) : Host::getStateText($event->state);
                 break;
             case 'soft_state':
+                $icon = 'spinner';
+                $iconTitle = $this->translate('Soft state', 'tooltip');
                 $label = $isService ? Service::getStateText($event->state, true) : Host::getStateText($event->state, true);
                 $stateName = $isService ? Service::getStateText($event->state) : Host::getStateText($event->state);
                 break;
             case 'dt_start':
                 $icon = 'plug';
+                $iconTitle = $this->translate('Downtime started', 'tooltip');
                 $label = $this->translate('DOWNTIME START');
                 break;
             case 'dt_end':
                 $icon = 'plug';
-                $iconCssClass = 'icon-strikethrough';
+                $iconTitle = $this->translate('Downtime ended', 'tooltip');
                 $label = $this->translate('DOWNTIME END');
                 break;
         } ?>
@@ -157,7 +174,7 @@ $lastDate = null;
                     <?php endif ?>
                 <?php endif ?>
                 <p class="overview-plugin-output"><?php if ($icon) {
-                    echo $this->icon($icon, null, $iconCssClass ? array('class' => $iconCssClass) : array());
+                    echo $this->icon($icon, $iconTitle);
                 } ?><?= $this->nl2br($this->createTicketLinks($this->escapeComment($msg)))
                 // TODO(ak): this allows only a[href] in messages, but plugin output allows more
                 ?></p>

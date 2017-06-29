@@ -45,7 +45,8 @@ class DateTimePicker extends FormElement
     public function init()
     {
         $this->addValidator(
-            new DateTimeValidator($this->local), true  // true for breaking the validator chain on failure
+            new DateTimeValidator($this->local),
+            true  // true for breaking the validator chain on failure
         );
         if ($this->min !== null) {
             $this->addValidator('GreaterThan', true, array('min' => $this->min));

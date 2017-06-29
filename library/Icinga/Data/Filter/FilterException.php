@@ -10,4 +10,6 @@ use Icinga\Exception\IcingaException;
  *
  * Filter Exceptions should be thrown on filter parse errors or similar
  */
-class FilterException extends IcingaException {}
+class FilterException extends IcingaException
+{
+}

@@ -27,10 +27,7 @@ class ListController extends Controller
     {
         $this->getTabs()->add($action, array(
             'label' => ucfirst($action),
-            'url' => Url::fromPath(
-                    'list/'
-                    . str_replace(' ', '', $action)
-                )
+            'url'   => Url::fromPath('list/' . str_replace(' ', '', $action))
         ))->extend(new OutputFormat())->extend(new DashboardAction())->extend(new MenuAction())->activate($action);
     }
 

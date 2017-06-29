@@ -805,7 +805,6 @@ class Form extends Zend_Form
      */
     public function createElements(array $formData)
     {
-
     }
 
     /**
@@ -827,7 +826,6 @@ class Form extends Zend_Form
      */
     public function onRequest()
     {
-
     }
 
     /**
@@ -1107,11 +1105,11 @@ class Form extends Zend_Form
      */
     protected function preserveDefaults(Zend_Form $form, array & $defaults)
     {
-        foreach ($form->getElements() as $name => $_) {
-            if (
-                array_key_exists($name, $defaults)
-                && array_key_exists($name . static::DEFAULT_SUFFIX, $defaults)
-                && $defaults[$name] === $defaults[$name . static::DEFAULT_SUFFIX]
+        foreach ($form->getElements() as $name => $element) {
+            if ((array_key_exists($name, $defaults)
+                    && array_key_exists($name . static::DEFAULT_SUFFIX, $defaults)
+                    && $defaults[$name] === $defaults[$name . static::DEFAULT_SUFFIX])
+                || $element->getAttrib('disabled')
             ) {
                 unset($defaults[$name]);
             }
@@ -1243,8 +1241,7 @@ class Form extends Zend_Form
                     // Ensure that disabled elements are not overwritten
                     // (http://www.zendframework.com/issues/browse/ZF-6909)
                     $formData[$name] = $element->getValue();
-                } elseif (
-                    array_key_exists($name . static::DEFAULT_SUFFIX, $formData)
+                } elseif (array_key_exists($name . static::DEFAULT_SUFFIX, $formData)
                     && $formData[$name] === $formData[$name . static::DEFAULT_SUFFIX]
                 ) {
                     unset($formData[$name]);
@@ -1576,30 +1573,38 @@ class Form extends Zend_Form
     }
 
     /**
-     * Add a error notification and prevent the form from being successfully validated
+     * Add a error notification
      *
-     * @param   string|array    $message    The notification message
+     * @param   string|array    $message        The notification message
+     * @param   bool            $markAsError    Whether to prevent the form from being successfully validated or not
      *
      * @return  $this
      */
-    public function error($message)
+    public function error($message, $markAsError = true)
     {
         $this->addNotification($message, self::NOTIFICATION_ERROR);
-        $this->markAsError();
+        if ($markAsError) {
+            $this->markAsError();
+        }
+
         return $this;
     }
 
     /**
-     * Add a warning notification and prevent the form from being successfully validated
+     * Add a warning notification
      *
-     * @param   string|array    $message    The notification message
+     * @param   string|array    $message        The notification message
+     * @param   bool            $markAsError    Whether to prevent the form from being successfully validated or not
      *
      * @return  $this
      */
-    public function warning($message)
+    public function warning($message, $markAsError = true)
     {
         $this->addNotification($message, self::NOTIFICATION_WARNING);
-        $this->markAsError();
+        if ($markAsError) {
+            $this->markAsError();
+        }
+
         return $this;
     }
 

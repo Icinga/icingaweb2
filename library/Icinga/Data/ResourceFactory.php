@@ -56,14 +56,25 @@ class ResourceFactory implements ConfigAwareFactory
     }
 
     /**
-     * Return the configuration of all existing resources, or get all resources of a given type.
+     * Get the configuration of all existing resources, or all resources of the given type
      *
-     * @return Config          The configuration containing all resources
+     * @param   string  $type   Filter for resource type
+     *
+     * @return  Config          The resources configuration
      */
-    public static function getResourceConfigs()
+    public static function getResourceConfigs($type = null)
     {
         self::assertResourcesExist();
-        return self::$resources;
+        if ($type === null) {
+            return self::$resources;
+        }
+        $resources = array();
+        foreach (self::$resources as $name => $resource) {
+            if ($resource->get('type') === $type) {
+                $resources[$name] = $resource;
+            }
+        }
+        return Config::fromArray($resources);
     }
 
     /**

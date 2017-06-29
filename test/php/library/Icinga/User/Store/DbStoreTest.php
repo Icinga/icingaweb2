@@ -43,17 +43,17 @@ class FaultyDatabaseMock extends DatabaseMock
 {
     public function insert($table, $row)
     {
-        throw new NotWritableError();
+        throw new NotWritableError('Mocked insert');
     }
 
     public function update($table, $columns, $where)
     {
-        throw new NotWritableError();
+        throw new NotWritableError('Mocked update');
     }
 
     public function delete($table, $where)
     {
-        throw new NotWritableError();
+        throw new NotWritableError('Mocked delete');
     }
 }
 

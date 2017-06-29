@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Icinga Web 2 (None)\n"
-"Report-Msgid-Bugs-To: dev@icinga.org\n"
+"Report-Msgid-Bugs-To: dev@icinga.com\n"
 "POT-Creation-Date: 2015-02-11 15:47+0100\n"
 "PO-Revision-Date: 2015-02-28 01:56+0200\n"
 "Last-Translator: Mikko Peltokangas <mikko@peltokangas.org>\n"
@@ -244,7 +244,7 @@ msgid "Could not find any resources for authentication"
 msgstr "Yhtään tunnistautumisresurssia ei löytynyt"
 
 #: /usr/share/icingaweb2/application/views/scripts/dashboard/error.phtml:2
-msgid "Could not persist dashboard"
+msgid "Could not save dashboard"
 msgstr "Kojelauta ei pysy"
 
 #: /usr/share/icingaweb2/application/controllers/AuthenticationController.php:62
@@ -395,7 +395,7 @@ msgstr "Ruudun otsikko"
 
 #: /usr/share/icingaweb2/application/forms/Dashboard/DashletForm.php:70
 msgid ""
-"Enter url being loaded in the dashlet. You can paste the full URL, including filters."
+"Enter url to be loaded in the dashlet. You can paste the full URL, including filters."
 msgstr "Anna url, jonka haluat ladattavan dashletiin. Voit käyttää copy-pastea."
 
 #: /usr/share/icingaweb2/application/forms/Config/General/LoggingConfigForm.php:51

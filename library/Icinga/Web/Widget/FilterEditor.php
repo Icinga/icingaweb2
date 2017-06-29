@@ -509,7 +509,6 @@ class FilterEditor extends AbstractWidget
                  . $this->removeLink($filter)
                  . $this->addLink($filter)
                  ;
-
         }
     }
 
@@ -522,7 +521,7 @@ class FilterEditor extends AbstractWidget
         return sprintf(
             '<input type="text" name="%s" value="%s" />',
             $this->elementId('value', $filter),
-            $value
+            $this->view()->escape($value)
         );
     }
 
@@ -689,7 +688,7 @@ class FilterEditor extends AbstractWidget
                 $parent = $filter->getById($addTo);
                 $f = Filter::expression($add['column'], $add['sign'], $add['value']);
                 if (isset($add['operator'])) {
-                    switch($add['operator']) {
+                    switch ($add['operator']) {
                         case 'AND':
                             if ($parent->isExpression()) {
                                 if ($parent->isRootNode()) {
@@ -735,8 +734,10 @@ class FilterEditor extends AbstractWidget
 
     public function renderSearch()
     {
+        $preservedUrl = $this->preservedUrl();
+
         $html = ' <form method="post" class="search inline" action="'
-              . $this->preservedUrl()
+              . $preservedUrl
               . '"><input type="text" name="q" style="width: 8em" class="search" value="" placeholder="'
               . t('Search...')
               . '" /></form>';
@@ -749,9 +750,10 @@ class FilterEditor extends AbstractWidget
                 $title .= ': ' . $this->view()->escape($this->filter);
             }
         }
+
         return $html
             . '<a href="'
-            . $this->preservedUrl()->with('modifyFilter', true)
+            . $preservedUrl->with('modifyFilter', ! $preservedUrl->getParam('modifyFilter'))
             . '" aria-label="'
             . $title
             . '" title="'
@@ -767,7 +769,10 @@ class FilterEditor extends AbstractWidget
             return '';
         }
         if (! $this->preservedUrl()->getParam('modifyFilter')) {
-            return '<div class="filter">' . $this->renderSearch() . $this->view()->escape($this->shorten($this->filter, 50)) . '</div>';
+            return '<div class="filter">'
+                . $this->renderSearch()
+                . $this->view()->escape($this->shorten($this->filter, 50))
+                . '</div>';
         }
         return  '<div class="filter">'
             . $this->renderSearch()

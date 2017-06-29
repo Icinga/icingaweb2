@@ -174,18 +174,11 @@ abstract class MonitoredObject implements Filterable
     abstract protected function getDataView();
 
     /**
-     * Get the notes for this monitored object
-     *
-     * @return string The notes as a string
-     */
-    public abstract function getNotes();
-
-    /**
      * Get all note urls configured for this monitored object
      *
      * @return array All note urls as a string
      */
-    public abstract function getNotesUrls();
+    abstract public function getNotesUrls();
 
     /**
      * {@inheritdoc}
@@ -446,7 +439,7 @@ abstract class MonitoredObject implements Filterable
         }
 
         $blacklist = array();
-        $blacklistPattern = '/^(.*pw.*|.*pass.*|community)$/i';
+        $blacklistPattern = '';
 
         if (($blacklistConfig = Config::module('monitoring')->get('security', 'protected_customvars', '')) !== '') {
             foreach (explode(',', $blacklistConfig) as $customvar) {
@@ -469,7 +462,10 @@ abstract class MonitoredObject implements Filterable
 
         $this->customvars = $customvars;
         $this->hideBlacklistedProperties();
-        $this->customvars = $this->obfuscateCustomVars($this->customvars, $blacklistPattern);
+
+        if ($blacklistPattern) {
+            $this->customvars = $this->obfuscateCustomVars($this->customvars, $blacklistPattern);
+        }
 
         return $this;
     }
@@ -754,7 +750,7 @@ abstract class MonitoredObject implements Filterable
      * Find all occurences of http links, separated by whitespaces and quoted
      * by single or double-ticks.
      *
-     * @link http://docs.icinga.org/latest/de/objectdefinitions.html
+     * @link http://docs.icinga.com/latest/de/objectdefinitions.html
      *
      * @param   string  $urlString  A string containing one or more urls
      * @return  array                   Array of urls as strings
@@ -875,13 +871,17 @@ abstract class MonitoredObject implements Filterable
                     $this->fetchContacts();
                 }
 
-                return array_map(function ($el) { return $el->contact_name; }, $this->contacts);
+                return array_map(function ($el) {
+                    return $el->contact_name;
+                }, $this->contacts);
             } elseif ($name === 'contactgroup_name') {
                 if ($this->contactgroups === null) {
                     $this->fetchContactgroups();
                 }
 
-                return array_map(function ($el) { return $el->contactgroup_name; }, $this->contactgroups);
+                return array_map(function ($el) {
+                    return $el->contactgroup_name;
+                }, $this->contactgroups);
             } elseif ($name === 'hostgroup_name') {
                 if ($this->hostgroups === null) {
                     $this->fetchHostgroups();

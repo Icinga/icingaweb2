@@ -94,6 +94,20 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
     protected $groupFilter;
 
     /**
+     * ActiveDirectory nested group on the user?
+     *
+     * @var bool
+     */
+    protected $nestedGroupSearch;
+
+    /**
+     * The domain the backend is responsible for
+     *
+     * @var string
+     */
+    protected $domain;
+
+    /**
      * The columns which are not permitted to be queried
      *
      * @var array
@@ -365,6 +379,63 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
     }
 
     /**
+     * Set nestedGroupSearch for the group query
+     *
+     * @param   bool    $enable
+     *
+     * @return  $this
+     */
+    public function setNestedGroupSearch($enable = true)
+    {
+        $this->nestedGroupSearch = $enable;
+        return $this;
+    }
+
+    /**
+     * Get nestedGroupSearch for the group query
+     *
+     * @return bool
+     */
+    public function getNestedGroupSearch()
+    {
+        return $this->nestedGroupSearch;
+    }
+
+    /**
+     * Get the domain the backend is responsible for
+     *
+     * If the LDAP group backend is linked with a LDAP user backend,
+     * the domain of the user backend will be returned.
+     *
+     * @return string
+     */
+    public function getDomain()
+    {
+        return $this->userBackend !== null ? $this->userBackend->getDomain() : $this->domain;
+    }
+
+    /**
+     * Set the domain the backend is responsible for
+     *
+     * If the LDAP group backend is linked with a LDAP user backend,
+     * the domain of the user backend will be used nonetheless.
+     *
+     * @param   string  $domain
+     *
+     * @return  $this
+     */
+    public function setDomain($domain)
+    {
+        $domain = trim($domain);
+
+        if (strlen($domain)) {
+            $this->domain = $domain;
+        }
+
+        return $this;
+    }
+
+    /**
      * Return whether the attribute name where to find a group's member holds ambiguous values
      *
      * @return  bool
@@ -464,7 +535,7 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
             t('Username')       => 'user_name',
             t('User Group')     => 'group_name',
             t('Created At')     => 'created_at',
-            t('Last Modified')  => 'last_modified'
+            t('Last modified')  => 'last_modified'
         );
     }
 
@@ -602,13 +673,25 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
      */
     public function getMemberships(User $user)
     {
+        $domain = $this->getDomain();
+
+        if ($domain !== null) {
+            if (! $user->hasDomain() || strtolower($user->getDomain()) !== $domain) {
+                return array();
+            }
+
+            $username = $user->getLocalUsername();
+        } else {
+            $username = $user->getUsername();
+        }
+
         if ($this->isMemberAttributeAmbiguous()) {
-            $queryValue = $user->getUsername();
+            $queryValue = $username;
         } elseif (($queryValue = $user->getAdditional('ldap_dn')) === null) {
             $userQuery = $this->ds
                 ->select()
                 ->from($this->userClass)
-                ->where($this->userNameAttribute, $user->getUsername())
+                ->where($this->userNameAttribute, $username)
                 ->setBase($this->userBaseDn)
                 ->setUsePagedResults(false);
             if ($this->userFilter) {
@@ -620,10 +703,16 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
             }
         }
 
+        if ($this->nestedGroupSearch) {
+            $groupMemberAttribute = $this->groupMemberAttribute . ':1.2.840.113556.1.4.1941:';
+        } else {
+            $groupMemberAttribute = $this->groupMemberAttribute;
+        }
+
         $groupQuery = $this->ds
             ->select()
             ->from($this->groupClass, array($this->groupNameAttribute))
-            ->where($this->groupMemberAttribute, $queryValue)
+            ->where($groupMemberAttribute, $queryValue)
             ->setBase($this->groupBaseDn);
         if ($this->groupFilter) {
             $groupQuery->setNativeFilter($this->groupFilter);
@@ -677,8 +766,7 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
                 throw new ConfigurationError('User backend "%s" is not of type LDAP', $config->user_backend);
             }
 
-            if (
-                $this->ds->getHostname() !== $userBackend->getDataSource()->getHostname()
+            if ($this->ds->getHostname() !== $userBackend->getDataSource()->getHostname()
                 || $this->ds->getPort() !== $userBackend->getDataSource()->getPort()
             ) {
                 // TODO(jom): Elaborate whether it makes sense to link directories on different hosts
@@ -706,7 +794,9 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
             ->setUserNameAttribute($config->get('user_name_attribute', $defaults->user_name_attribute))
             ->setGroupMemberAttribute($config->get('group_member_attribute', $defaults->group_member_attribute))
             ->setGroupFilter($config->group_filter)
-            ->setUserFilter($config->user_filter);
+            ->setUserFilter($config->user_filter)
+            ->setNestedGroupSearch((bool) $config->get('nested_group_search', $defaults->nested_group_search))
+            ->setDomain($config->domain);
     }
 
     /**
@@ -721,7 +811,8 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
             'user_class'                => 'inetOrgPerson',
             'group_name_attribute'      => 'gid',
             'user_name_attribute'       => 'uid',
-            'group_member_attribute'    => 'member'
+            'group_member_attribute'    => 'member',
+            'nested_group_search'       => '0'
         ));
     }
 
@@ -737,7 +828,8 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
             'user_class'                => 'user',
             'group_name_attribute'      => 'sAMAccountName',
             'user_name_attribute'       => 'sAMAccountName',
-            'group_member_attribute'    => 'member'
+            'group_member_attribute'    => 'member',
+            'nested_group_search'       => '0'
         ));
     }
 }

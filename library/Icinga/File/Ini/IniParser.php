@@ -260,6 +260,6 @@ class IniParser
             throw new NotReadableError('Couldn\'t read the file `%s\'', $path);
         }
 
-        return Config::fromArray(self::parseIni($content)->toArray())->setConfigFile($file);
+        return Config::fromArray(parse_ini_string($content, true))->setConfigFile($file);
     }
 }

@@ -4,7 +4,6 @@
 namespace Icinga\Web;
 
 use Icinga\Application\Icinga;
-use Icinga\Cli\FakeRequest;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Data\Filter\Filter;
 
@@ -46,11 +45,46 @@ class Url
     protected $path = '';
 
     /**
-     * The baseUrl that will be appended to @see Url::$path
+     * The basePath of this Url
      *
      * @var string
      */
-    protected $baseUrl = '';
+    protected $basePath;
+
+    /**
+     * The host of this Url
+     *
+     * @var string
+     */
+    protected $host;
+
+    /**
+     * The port of this Url
+     *
+     * @var string
+     */
+    protected $port;
+
+    /**
+     * The scheme of this Url
+     *
+     * @var string
+     */
+    protected $scheme;
+
+    /**
+     * The username passed with this Url
+     *
+     * @var string
+     */
+    protected $username;
+
+    /**
+     * The password passed with this Url
+     *
+     * @var string
+     */
+    protected $password;
 
     protected function __construct()
     {
@@ -91,7 +125,7 @@ class Url
             $urlParams->set($k, $v);
         }
         $url->setParams($urlParams);
-        $url->setBaseUrl($request->getBaseUrl());
+        $url->setBasePath($request->getBaseUrl());
         return $url;
     }
 
@@ -104,7 +138,9 @@ class Url
     {
         $app = Icinga::app();
         if ($app->isCli()) {
-            return new FakeRequest();
+            throw new ProgrammingError(
+                'Url::fromRequest and Url::fromPath are currently not supported for CLI operations'
+            );
         } else {
             return $app->getRequest();
         }
@@ -148,45 +184,56 @@ class Url
             || (isset($urlParts['host']) && $urlParts['host'] !== $request->getServer('SERVER_NAME'))
             || (isset($urlParts['port']) && $urlParts['port'] != $request->getServer('SERVER_PORT')))
         ) {
-            $baseUrl = $urlParts['scheme'] . '://' . $urlParts['host'] . (isset($urlParts['port'])
-                ? (':' . $urlParts['port'])
-                : '');
             $urlObject->setIsExternal();
-        } else {
-            $baseUrl = '';
         }
 
         if (isset($urlParts['path'])) {
             $urlPath = $urlParts['path'];
             if ($urlPath && $urlPath[0] === '/') {
-                if ($baseUrl) {
+                if ($urlObject->isExternal() || isset($urlParts['user'])) {
                     $urlPath = substr($urlPath, 1);
                 } else {
                     $requestBaseUrl = $request->getBaseUrl();
                     if ($requestBaseUrl && $requestBaseUrl !== '/' && strpos($urlPath, $requestBaseUrl) === 0) {
                         $urlPath = substr($urlPath, strlen($requestBaseUrl) + 1);
-                        $baseUrl = $requestBaseUrl;
+                        $urlObject->setBasePath($requestBaseUrl);
                     }
                 }
-            } elseif (! $baseUrl) {
-                $baseUrl = $request->getBaseUrl();
+            } elseif (! $urlObject->isExternal()) {
+                $urlObject->setBasePath($request->getBaseUrl());
             }
 
             $urlObject->setPath($urlPath);
-        } elseif (! $baseUrl) {
-            $baseUrl = $request->getBaseUrl();
+        } elseif (! $urlObject->isExternal()) {
+            $urlObject->setBasePath($request->getBaseUrl());
         }
 
         // TODO: This has been used by former filter implementation, remove it:
         if (isset($urlParts['query'])) {
             $params = UrlParams::fromQueryString($urlParts['query'])->mergeValues($params);
         }
-
         if (isset($urlParts['fragment'])) {
             $urlObject->setAnchor($urlParts['fragment']);
         }
 
-        $urlObject->setBaseUrl($baseUrl);
+        if (isset($urlParts['user']) || $urlObject->isExternal()) {
+            if (isset($urlParts['user'])) {
+                $urlObject->setUsername($urlParts['user']);
+            }
+            if (isset($urlParts['host'])) {
+                $urlObject->setHost($urlParts['host']);
+            }
+            if (isset($urlParts['port'])) {
+                $urlObject->setPort($urlParts['port']);
+            }
+            if (isset($urlParts['scheme'])) {
+                $urlObject->setScheme($urlParts['scheme']);
+            }
+            if (isset($urlParts['pass'])) {
+                $urlObject->setPassword($urlParts['pass']);
+            }
+        }
+
         $urlObject->setParams($params);
         return $urlObject;
     }
@@ -229,26 +276,164 @@ class Url
     }
 
     /**
-     * Overwrite the baseUrl
+     * Set the basePath for this url
      *
-     * @param   string  $baseUrl    The url path to use as the Url Base
+     * @param   string  $basePath     New basePath of this url
      *
      * @return  $this
      */
-    public function setBaseUrl($baseUrl)
+    public function setBasePath($basePath)
     {
-        $this->baseUrl = rtrim($baseUrl, '/ ');
+        $this->basePath = rtrim($basePath, '/ ');
         return $this;
     }
 
     /**
-     * Return the baseUrl set for this url
+     * Return the basePath set for this url
+     *
+     * @return  string
+     */
+    public function getBasePath()
+    {
+        return $this->basePath;
+    }
+
+    /**
+     * Set the host for this url
+     *
+     * @param   string  $host     New host of this Url
+     *
+     * @return  $this
+     */
+    public function setHost($host)
+    {
+        $this->host = $host;
+        return $this;
+    }
+
+    /**
+     * Return the host set for this url
+     *
+     * @return  string
+     */
+    public function getHost()
+    {
+        return $this->host;
+    }
+
+    /**
+     * Set the port for this url
+     *
+     * @param   string  $port    New port of this url
+     *
+     * @return  $this
+     */
+    public function setPort($port)
+    {
+        $this->port = $port;
+        return $this;
+    }
+
+    /**
+     * Return the port set for this url
+     *
+     * @return  string
+     */
+    public function getPort()
+    {
+        return $this->port;
+    }
+
+    /**
+     * Set the scheme for this url
+     *
+     * @param   string  $scheme    The scheme used for this url
+     *
+     * @return  $this
+     */
+    public function setScheme($scheme)
+    {
+        $this->scheme = $scheme;
+        return $this;
+    }
+
+    /**
+     * Return the scheme set for this url
+     *
+     * @return  string
+     */
+    public function getScheme()
+    {
+        return $this->scheme;
+    }
+
+    /**
+     * Set the baseUrl for this url
+     *
+     * @deprecated  Please create a new url from scratch instead
+     *
+     * @param       string  $baseUrl    The url path to use as the url base
+     *
+     * @return      $this
+     */
+    public function setBaseUrl($baseUrl)
+    {
+        $urlParts = parse_url($baseUrl);
+        if (isset($urlParts["host"])) {
+            $this->setHost($urlParts["host"]);
+        }
+        if (isset($urlParts["port"])) {
+            $this->setPort($urlParts["port"]);
+        }
+        if (isset($urlParts['scheme'])) {
+            $this->setScheme($urlParts['scheme']);
+        }
+        if (isset($urlParts['user'])) {
+            $this->setUsername($urlParts['user']);
+        }
+        if (isset($urlParts['pass'])) {
+            $this->setPassword($urlParts['pass']);
+        }
+        if (isset($urlParts['path'])) {
+            $this->setBasePath($urlParts['path']);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Return the baseUrl for this url
+     *
+     * @deprecated
      *
      * @return  string
      */
     public function getBaseUrl()
     {
-        return $this->baseUrl;
+        if (! $this->isExternal()) {
+            return $this->getBasePath();
+        }
+
+        $urlString = '';
+        if ($this->getScheme()) {
+            $urlString .= $this->getScheme() . '://';
+        }
+        if ($this->getPassword()) {
+            $urlString .= $this->getUsername() . ':' . $this->getPassword() . '@';
+        } elseif ($this->getUsername()) {
+            $urlString .= $this->getUsername() . '@';
+        }
+        if ($this->getHost()) {
+            $urlString .= $this->getHost();
+        }
+        if ($this->getPort()) {
+            $urlString .= ':' . $this->getPort();
+        }
+        if ($this->getBasePath()) {
+            $urlString .= $this->getBasePath();
+        }
+
+        return $urlString;
     }
 
     /**
@@ -297,6 +482,52 @@ class Url
     public function isExternal()
     {
         return $this->external;
+    }
+
+    /**
+     * Set the username passed with this url
+     *
+     * @param   string  $username   The username to set
+     *
+     * @return  $this
+     */
+    public function setUsername($username)
+    {
+        $this->username = $username;
+        return $this;
+    }
+
+    /**
+     * Return the username passed with this url
+     *
+     * @return  string
+     */
+    public function getUsername()
+    {
+        return $this->username;
+    }
+
+    /**
+     * Set the username passed with this url
+     *
+     * @param   string  $password   The password to set
+     *
+     * @return  $this
+     */
+    public function setPassword($password)
+    {
+        $this->password = $password;
+        return $this;
+    }
+
+    /**
+     * Return the password passed with this url
+     *
+     * @return  string
+     */
+    public function getPassword()
+    {
+        return $this->password;
     }
 
     /**
@@ -357,12 +588,32 @@ class Url
             return $path;
         }
 
-        $baseUrl = $this->getBaseUrl();
-        if (! $baseUrl) {
-            $baseUrl = '/';
+        $basePath = $this->getBasePath();
+        if (! $basePath) {
+            $basePath = '/';
         }
 
-        return $baseUrl . ($baseUrl !== '/' && $path ? '/' : '') . $path;
+        if ($this->getUsername() || $this->isExternal()) {
+            $urlString = '';
+            if ($this->getScheme()) {
+                $urlString .= $this->getScheme() . '://';
+            }
+            if ($this->getPassword()) {
+                $urlString .= $this->getUsername() . ':' . $this->getPassword() . '@';
+            } elseif ($this->getUsername()) {
+                $urlString .= $this->getUsername() . '@';
+            }
+            if ($this->getHost()) {
+                $urlString .= $this->getHost();
+            }
+            if ($this->getPort()) {
+                $urlString .= ':' . $this->getPort();
+            }
+
+            return $urlString . $basePath . ($basePath !== '/' && $path ? '/' : '') . $path;
+        } else {
+            return $basePath . ($basePath !== '/' && $path ? '/' : '') . $path;
+        }
     }
 
     /**

@@ -3,6 +3,7 @@
 
 namespace Icinga\Forms\Config;
 
+use Icinga\Application\Config;
 use InvalidArgumentException;
 use Icinga\Application\Platform;
 use Icinga\Exception\ConfigurationError;
@@ -21,6 +22,20 @@ use Icinga\Web\Notification;
 
 class ResourceConfigForm extends ConfigForm
 {
+    /**
+     * Bogus password when inspecting password elements
+     *
+     * @var string
+     */
+    protected static $dummyPassword = '_web_form_5847ed1b5b8ca';
+
+    /**
+     * If the global config must be updated because a resource has been changed, this is the updated global config
+     *
+     * @var Config|null
+     */
+    protected $updatedAppConfig = null;
+
     /**
      * Initialize this form
      */
@@ -104,6 +119,16 @@ class ResourceConfigForm extends ConfigForm
         $this->config->removeSection($name);
         unset($values['name']);
         $this->config->setSection($newName, $resourceConfig->merge($values));
+
+        if ($newName !== $name) {
+            $appConfig = Config::app();
+            $section = $appConfig->getSection('global');
+            if ($section->config_resource === $name) {
+                $section->config_resource = $newName;
+                $this->updatedAppConfig = $appConfig->setSection('global', $section);
+            }
+        }
+
         return $resourceConfig;
     }
 
@@ -163,10 +188,10 @@ class ResourceConfigForm extends ConfigForm
                         return false;
                     }
                 }
-                $this->add(array_filter($this->getValues()));
+                $this->add(static::transformEmptyValuesToNull($this->getValues()));
                 $message = $this->translate('Resource "%s" has been successfully created');
             } else { // edit existing resource
-                $this->edit($resource, array_filter($this->getValues()));
+                $this->edit($resource, static::transformEmptyValuesToNull($this->getValues()));
                 $message = $this->translate('Resource "%s" has been successfully changed');
             }
         } catch (InvalidArgumentException $e) {
@@ -197,10 +222,14 @@ class ResourceConfigForm extends ConfigForm
             } elseif (! $this->config->hasSection($resource)) {
                 throw new ConfigurationError($this->translate('Unknown resource provided'));
             }
-
             $configValues = $this->config->getSection($resource)->toArray();
             $configValues['name'] = $resource;
             $this->populate($configValues);
+            foreach ($this->getElements() as $element) {
+                if ($element->getType() === 'Zend_Form_Element_Password' && strlen($element->getValue())) {
+                    $element->setValue(static::$dummyPassword);
+                }
+            }
         }
     }
 
@@ -375,5 +404,42 @@ class ResourceConfigForm extends ConfigForm
         );
 
         return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getValues($suppressArrayNotation = false)
+    {
+        $values = parent::getValues($suppressArrayNotation);
+        $resource = $this->request->getQuery('resource');
+        if ($resource !== null && $this->config->hasSection($resource)) {
+            $resourceConfig = $this->config->getSection($resource)->toArray();
+            foreach ($this->getElements() as $element) {
+                if ($element->getType() === 'Zend_Form_Element_Password') {
+                    $name = $element->getName();
+                    if (isset($values[$name]) && $values[$name] === static::$dummyPassword) {
+                        if (isset($resourceConfig[$name])) {
+                            $values[$name] = $resourceConfig[$name];
+                        } else {
+                            unset($values[$name]);
+                        }
+                    }
+                }
+            }
+        }
+
+        return $values;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function writeConfig(Config $config)
+    {
+        parent::writeConfig($config);
+        if ($this->updatedAppConfig !== null) {
+            $this->updatedAppConfig->saveIni();
+        }
     }
 }

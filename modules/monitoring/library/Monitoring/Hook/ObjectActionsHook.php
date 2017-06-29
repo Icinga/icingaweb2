@@ -43,5 +43,5 @@ abstract class ObjectActionsHook
         return empty($actions) ? new Navigation() : Navigation::fromArray($actions);
     }
 
-    abstract function getActionsForObject(MonitoredObject $object);
+    abstract public function getActionsForObject(MonitoredObject $object);
 }

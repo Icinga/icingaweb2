@@ -20,6 +20,13 @@ class IcingaApiCommand
     protected $endpoint;
 
     /**
+     * Next Icinga API command to be sent, if any
+     *
+     * @var static
+     */
+    protected $next;
+
+    /**
      * Create a new Icinga 2 API command
      *
      * @param   string  $endpoint
@@ -82,5 +89,38 @@ class IcingaApiCommand
         $this->endpoint = $endpoint;
 
         return $this;
+    }
+
+    /**
+     * Get whether another Icinga API command should be sent after this one
+     *
+     * @return bool
+     */
+    public function hasNext()
+    {
+        return $this->next !== null;
+    }
+
+    /**
+     * Get the next Icinga API command
+     *
+     * @return IcingaApiCommand
+     */
+    public function getNext()
+    {
+        return $this->next;
+    }
+
+    /**
+     * Set the next Icinga API command
+     *
+     * @param   IcingaApiCommand    $next
+     *
+     * @return  IcingaApiCommand
+     */
+    public function setNext(IcingaApiCommand $next)
+    {
+        $this->next = $next;
+        return $next;
     }
 }

@@ -219,7 +219,7 @@ class NavigationController extends Controller
         $form->setDefaultUrl(rawurldecode($this->params->get('url', '')));
 
         $form->setOnSuccess(function (NavigationConfigForm $form) {
-            $data = array_filter($form->getValues());
+            $data = $form::transformEmptyValuesToNull($form->getValues());
 
             try {
                 $form->add($data);
@@ -266,12 +266,7 @@ class NavigationController extends Controller
         $form->setUserConfig(Config::navigation($itemType, $itemOwner));
         $form->setRedirectUrl($referrer === 'shared' ? 'navigation/shared' : 'navigation');
         $form->setOnSuccess(function (NavigationConfigForm $form) use ($itemName) {
-            $data = array_map(
-                function ($v) {
-                    return $v !== '' ? $v : null;
-                },
-                $form->getValues()
-            );
+            $data = $form::transformEmptyValuesToNull($form->getValues());
 
             try {
                 $form->edit($itemName, $data);

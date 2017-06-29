@@ -1,0 +1,4346 @@
+# Icinga Web 2 - Head for multiple monitoring backends.
+# Copyright (C) 2016 Icinga Development Team
+# This file is distributed under the same license as Monitoring Module.
+#
+# Munzir Taha <munzirtaha@gmail.com>, 2016.
+msgid ""
+msgstr ""
+"Project-Id-Version: Monitoring Module (2.3.2)\n"
+"Report-Msgid-Bugs-To: dev@icinga.com\n"
+"POT-Creation-Date: 2016-05-25 05:05+0300\n"
+"PO-Revision-Date: 2016-06-02 10:09+0300\n"
+"Last-Translator: Munzir Taha <munzirtaha@gmail.com>\n"
+"Language: ar_SA\n"
+"Language-Team: English <trans-ar@lists.fedoraproject.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Lokalize 2.0\n"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ChartController.php:375
+msgid " Down Hosts (Handled)"
+msgstr "أجهزة مضيفة متوقفة (عولجت)"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ChartController.php:376
+msgid " Down Hosts (Unhandled)"
+msgstr "أجهزة مضيفة متوقفة ( لم تعالج)"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ChartController.php:343
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ChartController.php:397
+msgid " Down Services (Handled)"
+msgstr "خدمات متوقفة (عُولجت)"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ChartController.php:344
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ChartController.php:398
+msgid " Down Services (Unhandled)"
+msgstr "خدمات متوقفة (لم تُعالج)"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ChartController.php:379
+msgid " Pending Hosts"
+msgstr "أجهزة مضيفة معلقة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ChartController.php:347
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ChartController.php:401
+msgid " Pending Services"
+msgstr "خدمات معلقة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ChartController.php:377
+msgid " Unreachable Hosts (Handled)"
+msgstr "أجهزة مضيفة لا يمكن الوصول إليها (عُولجت)"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ChartController.php:378
+msgid " Unreachable Hosts (Unhandled)"
+msgstr "أجهزة مضيفة لا يمكن الوصول إليها (لم تُعالج)"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ChartController.php:345
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ChartController.php:399
+msgid " Unreachable Services (Handled)"
+msgstr "حدمات لا يمكن الوصول إليها (عولجت)"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ChartController.php:346
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ChartController.php:400
+msgid " Unreachable Services (Unhandled)"
+msgstr "حدمات لا يمكن الوصول إليها (لم تُعالج)"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ChartController.php:374
+msgid " Up Hosts"
+msgstr "أجهزة مضيفة قيد التشغيل"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ChartController.php:394
+msgid " Up Services"
+msgstr "خدمات قيد التشغيل"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ChartController.php:341
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ChartController.php:395
+msgid " Warning Services (Handled)"
+msgstr "خدمات تحذيرية (عولجت)"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ChartController.php:342
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ChartController.php:396
+msgid " Warning Services (Unhandled)"
+msgstr "خدمات تحذيرية (لم تعالج)"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/health/info.phtml:65
+#, php-format
+msgctxt "Last format parameter represents the time running"
+msgid "%1$s has been up and running with PID %2$d %3$s"
+msgstr "%1$s ما زالت قيد التشغيل ب PID %2$d %3$s"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/partials/event-history.phtml:35
+msgctxt "date.verbose"
+msgid "%A, %B %e, %Y"
+msgstr "%A, %B %e, %Y"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/hostservicechecks.phtml:75
+#, php-format
+msgid "%d Active"
+msgid_plural "%d Active"
+msgstr[0] "%d نشطة"
+msgstr[1] "%d نشطة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/hostservicechecks.phtml:55
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/hostservicechecks.phtml:111
+#, php-format
+msgid "%d Disabled"
+msgid_plural "%d Disabled"
+msgstr[0] "%d متعطلة"
+msgstr[1] "%d متعطلة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/hostservicechecks.phtml:37
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/hostservicechecks.phtml:93
+#, php-format
+msgid "%d Passive"
+msgid_plural "%d Passive"
+msgstr[0] "%d سلبية"
+msgstr[1] "%d سلبية"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/list/eventgrid.phtml:38
+#, php-format
+msgid "%d hosts down on %s"
+msgstr "%d أجهزة مضيفة متوقفة على %s"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/list/eventgrid.phtml:16
+#, php-format
+msgid "%d hosts ok on %s"
+msgstr "%d أجهزة مضيفة سليمة على %s"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/list/eventgrid.phtml:21
+#, php-format
+msgid "%d hosts unreachable on %s"
+msgstr "%d أجهزة مضيفة لا يمكن الوصول إليها على %s"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/helpers/Perfdata.php:97
+#, php-format
+msgid "%d more ..."
+msgstr "%d المزيد ..."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/components/notifications.phtml:54
+#, php-format
+msgid "%d notifications have been sent for this issue."
+msgstr "%d من الإخطارات أرسلت بخصوص هذه المشكلة."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/hosts/show.phtml:118
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/services/show.phtml:117
+#, php-format
+msgid "%d scheduled downtime"
+msgid_plural "%d scheduled downtimes"
+msgstr[0] "%d زمن توقف مجدول"
+msgstr[1] "%d من أزمنة التوقف المجدولة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/list/eventgrid.phtml:26
+#, php-format
+msgid "%d services critical on %s"
+msgstr "%d من الخدمات الضرورية على %s"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/list/eventgrid.phtml:48
+#, php-format
+msgid "%d services ok on %s"
+msgstr "%d من الخدمات سليمة على %s"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/list/eventgrid.phtml:43
+#, php-format
+msgid "%d services unknown on %s"
+msgstr "%d من الخدمات مجهولة على %s"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/list/eventgrid.phtml:32
+#, php-format
+msgid "%d services warning on %s"
+msgstr "%d من الخدمات التحذيرية على %s"
+
+#: /usr/share/icingaweb2/modules/monitoring/configuration.php:136
+#, php-format
+msgid "%d unhandled hosts down"
+msgstr "%d أجهزة مضيفة لم تُعالج"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/hosts/show.phtml:27
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/services/show.phtml:27
+#, php-format
+msgid "%d unhandled problems"
+msgstr "%d مشاكل لم تُعالج"
+
+#: /usr/share/icingaweb2/modules/monitoring/configuration.php:148
+#, php-format
+msgid "%d unhandled services critical"
+msgstr "%d من الخدمات غير المعالجة ضرورية"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/hosts/show.phtml:46
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/services/show.phtml:44
+#, php-format
+msgid "%s acknowledgement"
+msgid_plural "%s acknowledgements"
+msgstr[0] "%s إشعار"
+msgstr[1] "%s من الإشعارات"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/hosts/show.phtml:80
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/services/show.phtml:79
+#, php-format
+msgid "%s comment"
+msgid_plural "%s comments"
+msgstr[0] "%s تعليق"
+msgstr[1] "%s من التعليقات"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/health/not-running.phtml:7
+#, php-format
+msgid "%s is currently not up and running"
+msgstr "%s حاليا لا تعمل"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/list/components/selectioninfo.phtml:12
+#, php-format
+msgctxt "Multi-selection count"
+msgid "%s row(s) selected"
+msgstr "%s من الصفوف تم اختيارها"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/hostservicechecks.phtml:19
+#, php-format
+msgid "%u Active"
+msgid_plural "%u Active"
+msgstr[0] "%u نشطة"
+msgstr[1] "%u نشطة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/list/components/hostssummary.phtml:12
+#, php-format
+msgid "%u Host"
+msgid_plural "%u Hosts"
+msgstr[0] "%u مضيف"
+msgstr[1] "%u أجهزة مضيفة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/problem_hosts.phtml:11
+#, php-format
+msgid "%u Host DOWN"
+msgid_plural "%u Hosts DOWN"
+msgstr[0] "%u مضيف متوقف"
+msgstr[1] "%u أجهزة مضيفة متوقفة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:20
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:141
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:220
+#, php-format
+msgid "%u Host Disabled"
+msgid_plural "%u Hosts Disabled"
+msgstr[0] "%u مضيف معطل"
+msgstr[1] "%u من الأجهزة المضيفة معطلة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:50
+#, php-format
+msgid "%u Host Flapping"
+msgid_plural "%u Hosts Flapping"
+msgstr[0] "%u مضيف مذبذب"
+msgstr[1] "%u أجهزة مضيفة مذبذبة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/ok_hosts.phtml:34
+#, php-format
+msgid "%u Host PENDING"
+msgid_plural "%u Hosts PENDING"
+msgstr[0] "%u مضيف معلق"
+msgstr[1] "%u أجهزة مضيفة معلقة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/problem_hosts.phtml:30
+#, php-format
+msgid "%u Host UNREACHABLE"
+msgid_plural "%u Hosts UNREACHABLE"
+msgstr[0] "%u مضيف لا يمكن الوصول إليه"
+msgstr[1] "%u من الأجهزة المضيفة لا يمكن الوصول إليها"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/ok_hosts.phtml:16
+#, php-format
+msgid "%u Host UP"
+msgid_plural "%u Hosts UP"
+msgstr[0] "%u مضيف سليم"
+msgstr[1] "%u أجهزة مضيفة سليمة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/list/components/servicesummary.phtml:13
+#, php-format
+msgid "%u Service"
+msgid_plural "%u Services"
+msgstr[0] "%u خدمة"
+msgstr[1] "%u من الخدمات"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:75
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:175
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:254
+#, php-format
+msgid "%u Service Disabled"
+msgid_plural "%u Services Disabled"
+msgstr[0] "%u خدمة متعطلة"
+msgstr[1] "%u من الخدمات متعطلة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:105
+#, php-format
+msgid "%u Service Flapping"
+msgid_plural "%u Services Flapping"
+msgstr[0] "%u خدمة مذبذبة"
+msgstr[1] "%u من الخدمات مذبذبة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:80
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:179
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:278
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:325
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:372
+#, php-format
+msgid "%u is not checked at all"
+msgid_plural "%u are not checked at all"
+msgstr[0] "%u لم يتم فحصها مطلقا"
+msgstr[1] "%u لم يتم فحصها مطلقا"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:53
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:152
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:251
+#, php-format
+msgid "%u is passively checked"
+msgid_plural "%u are passively checked"
+msgstr[0] "%u تم فحصها سلبيا"
+msgstr[1] "%u تم فحصها سلبيا"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/list/hosts.phtml:62
+#, php-format
+msgid "%u unhandled service"
+msgid_plural "%u unhandled services"
+msgstr[0] "%u خدمة لم تُعالج"
+msgstr[1] "%u من الخدمات لم تُعالج"
+
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/DataView/DataView.php:235
+msgid "(Case insensitive)"
+msgstr "(غير حساسة لحالة الأحرف)"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/StatehistoryForm.php:72
+msgid "1 Year"
+msgstr "سنة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/StatehistoryForm.php:73
+msgid "2 Years"
+msgstr "سنتان"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/StatehistoryForm.php:69
+msgid "3 Months"
+msgstr "3 أشهر"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/TimelineController.php:103
+msgid "4 Hours"
+msgstr "4 ساعات"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/StatehistoryForm.php:70
+msgid "4 Months"
+msgstr "4 أشهر"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/StatehistoryForm.php:71
+msgid "8 Months"
+msgstr "8 أشهر"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/AlertsummaryController.php:448
+msgid "<b>{title}:</b> {value}m max. reaction time"
+msgstr "<b>{title}:</b> {value}m أقصى زمن رد فعل"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/AlertsummaryController.php:438
+msgid "<b>{title}:</b> {value}m min. reaction time"
+msgstr "<b>{title}:</b> {value}m أدنى زمن رد فعل"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ChartController.php:289
+msgid "<b>{title}:</b><br> {value} of {sum} hosts are {label}"
+msgstr "<b>{title}:</b><br> {value} من {sum} أجهزة مضيفة {label}"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ChartController.php:240
+msgid "<b>{title}:</b><br>{value} of {sum} services are {label}"
+msgstr "<b>{title}:</b><br>{value} من {sum} خدمات {label}"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Config/TransportConfigForm.php:129
+#, php-format
+msgid "A command transport with the name \"%s\" does already exist"
+msgstr "ناقل أمر باسم \"%s\" موجود مسبقا"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/downtime/show.phtml:46
+msgid ""
+"A comment, as entered by the author, associated with the scheduled downtime"
+msgstr "تعليق مدخل من قبل المؤلف له ارتباط بزمن التوقف المجدول"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/ScheduleHostDowntimeCommandForm.php:77
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/ScheduleServiceDowntimeCommandForm.php:212
+msgid "A downtime must not be in the past"
+msgstr "زمن التوقف لا يجب أن يكون في الماضي"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Config/BackendConfigForm.php:113
+#, php-format
+msgid "A monitoring backend with the name \"%s\" does already exist"
+msgstr " خلفية المراقبة المسماة \"%s\" موجودة مسبقا"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/components/notifications.phtml:49
+#, php-format
+msgid "A notification has been sent for this issue %s."
+msgstr "أُرسل إشعار بخصوص هذه المشكلة %s."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/partials/event-history.phtml:67
+msgid "ACKNOWLEDGED"
+msgstr "معروف"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/partials/event-history.phtml:72
+msgid "ACKNOWLEDGEMENT REMOVED"
+msgstr "تمت إزالة إشعار المعرفة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/hosts/show.phtml:30
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/services/show.phtml:29
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/components/acknowledgement.phtml:77
+msgid "Acknowledge"
+msgstr "يعرف"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/HostController.php:118
+msgid "Acknowledge Host Problem"
+msgstr "تعرف على مشكلة مضيف"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/HostsController.php:175
+msgid "Acknowledge Host Problems"
+msgstr "تعرف على مشاكل الأجهزة المضيفة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ServiceController.php:76
+msgid "Acknowledge Service Problem"
+msgstr "تعرف على مشكلة خدمة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ServicesController.php:178
+msgid "Acknowledge Service Problems"
+msgstr "تعرف على مشاكل خدمة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/AcknowledgeProblemCommandForm.php:34
+msgid "Acknowledge problem"
+msgid_plural "Acknowledge problems"
+msgstr[0] "تعرف مشكلة"
+msgstr[1] "تعرف مشاكل"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/components/acknowledgement.phtml:85
+msgid ""
+"Acknowledge this problem, suppress all future notifications for it and tag "
+"it as being handled"
+msgstr ""
+"تعرف على هذه المشكلة، واخمد كل الإشعارات المستقبلية لها وضع علامة أنه تم"
+" معالجتها"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/partials/service/statusicons.phtml:9
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/partials/host/statusicons.phtml:9
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/components/acknowledgement.phtml:15
+#: /usr/share/icingaweb2/modules/monitoring/application/views/helpers/HostFlags.php:16
+#: /usr/share/icingaweb2/modules/monitoring/application/views/helpers/ServiceFlags.php:12
+msgid "Acknowledged"
+msgstr "معروف"
+
+#: /usr/share/icingaweb2/modules/monitoring/configuration.php:335
+msgid "Acknowledged Problem Hosts"
+msgstr "مضيفون بمشاكل معروفة"
+
+#: /usr/share/icingaweb2/modules/monitoring/configuration.php:331
+msgid "Acknowledged Problem Services"
+msgstr "خدمات بمشاكل معروفة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/partials/comment/comment-description.phtml:20
+msgid "Acknowledgement"
+msgstr "إشعار استلام"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/components/acknowledgement.phtml:35
+#, php-format
+msgid ""
+"Acknowledgement remains until the %1$s recovers even if the %1$s changes "
+"state"
+msgstr "ستبقى الإشعارات حتى تتعافي %1$s حتى ولو غيرت %1$s حالتها"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/TimelineController.php:65
+msgid "Acknowledgements"
+msgstr "إشعارات استلام"
+
+#: /usr/share/icingaweb2/modules/monitoring/configuration.php:302
+msgid "Acknowledgements Active For At Least Three Days"
+msgstr "الإشعارات النشطة لثلاثة أيام على الأقل"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/AcknowledgeProblemCommandForm.php:157
+msgid "Acknowledging problem.."
+msgid_plural "Acknowledging problems.."
+msgstr[0] "اعتراف بمشكلة.."
+msgstr[1] "اعتراف بمشاكل.."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/components/actions.phtml:41
+msgid "Actions"
+msgstr "أفعال"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/partials/service/statusicons.phtml:24
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/partials/host/statusicons.phtml:24
+#: /usr/share/icingaweb2/modules/monitoring/application/views/helpers/HostFlags.php:29
+#: /usr/share/icingaweb2/modules/monitoring/application/views/helpers/ServiceFlags.php:25
+msgid "Active And Passive Checks Disabled"
+msgstr "تم تعطيل الفحوصات النشطة والسالبة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/ToggleObjectFeaturesCommandForm.php:38
+msgid "Active Checks"
+msgstr "الفحوصات النشطة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/partials/service/statusicons.phtml:22
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/partials/host/statusicons.phtml:22
+#: /usr/share/icingaweb2/modules/monitoring/application/views/helpers/HostFlags.php:31
+#: /usr/share/icingaweb2/modules/monitoring/application/views/helpers/ServiceFlags.php:27
+msgid "Active Checks Disabled"
+msgstr "تم تعطيل الفحوصات النشطة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/health/info.phtml:54
+msgid "Active Endpoint"
+msgstr "نقطة نهاية نشطة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Instance/ToggleInstanceFeaturesCommandForm.php:90
+msgid "Active Host Checks"
+msgstr "فحوصات المضيف النشطة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Instance/ToggleInstanceFeaturesCommandForm.php:99
+msgid "Active Service Checks"
+msgstr "فحوصات الخدمة نشطة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/health/stats.phtml:109
+msgid "Active checks"
+msgstr "فحوصات نشطة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/downtime/show.phtml:145
+msgid "Actual end time"
+msgstr "زمن النهاية الفعلي "
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/downtime/show.phtml:140
+msgid "Actual start time"
+msgstr "زمن البدء الفعلي"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/HostController.php:130
+msgid "Add Host Comment"
+msgstr "إضافة تعليق مضيف"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/HostsController.php:163
+msgid "Add Host Comments"
+msgstr "إضافة تعليقات مضيف"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ServiceController.php:88
+msgid "Add Service Comment"
+msgstr "إضافة تعليق خدمة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ServicesController.php:166
+msgid "Add Service Comments"
+msgstr "إضافة تعليقات خدمة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/components/comments.phtml:14
+msgid "Add a new comment to this host"
+msgstr "إضافة تعليق جديد لهذا المضيف"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/components/comments.phtml:26
+msgid "Add a new comment to this service"
+msgstr "إضافة تعليق جديد لهذه الخدمة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/components/comments.phtml:7
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/components/comments.phtml:19
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/AddCommentCommandForm.php:28
+msgid "Add comment"
+msgid_plural "Add comments"
+msgstr[0] "إضافة تعليق"
+msgstr[1] "إضافة تعليقات"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/hosts/show.phtml:62
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/services/show.phtml:61
+msgid "Add comments"
+msgstr "إضافة تعليقات"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/AddCommentCommandForm.php:85
+msgid "Adding comment.."
+msgid_plural "Adding comments.."
+msgstr[0] "إضافة تعليق.."
+msgstr[1] "إضافة تعليقات.."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ListController.php:90
+msgid "Address"
+msgstr "عنوان"
+
+#: /usr/share/icingaweb2/modules/monitoring/configuration.php:241
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/AlertsummaryController.php:54
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/AlertsummaryController.php:58
+msgid "Alert Summary"
+msgstr "ملخص التحذيرات"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/alertsummary/index.phtml:11
+msgid "Alert summary"
+msgstr "ملخص التحذيرات"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/list/contactgroups.phtml:24
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ListController.php:326
+msgid "Alias"
+msgstr "اسم مستعار"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:39
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:160
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:239
+msgid "All Hosts Enabled"
+msgstr "كل المضيفون نشطاء"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/ScheduleHostDowntimeCommandForm.php:32
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/ScheduleHostCheckCommandForm.php:26
+msgid "All Services"
+msgstr "كل الخدمات"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:94
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:194
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:273
+msgid "All Services Enabled"
+msgstr "كل الخدمات مفعلة"
+
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/Backend/MonitoringBackend.php:178
+msgid "All backends are disabled"
+msgstr "كل الخلفيات متعطلة"
+
+#: /usr/share/icingaweb2/modules/monitoring/configuration.php:16
+msgid "Allow acknowledging host and service problems"
+msgstr "السماح بالتعرف على مشاكل الخدمة والمضيف"
+
+#: /usr/share/icingaweb2/modules/monitoring/configuration.php:24
+msgid "Allow adding and deleting host and service comments"
+msgstr "السماح بإضافة وحذف تعليقات الخدمة والمضيف"
+
+#: /usr/share/icingaweb2/modules/monitoring/configuration.php:8
+msgid "Allow all commands"
+msgstr "السماح بكل الأوامر"
+
+#: /usr/share/icingaweb2/modules/monitoring/configuration.php:28
+msgid "Allow commenting on hosts and services"
+msgstr "السماح بالتعليق على الخدمات والمضيفين"
+
+#: /usr/share/icingaweb2/modules/monitoring/configuration.php:32
+msgid "Allow deleting host and service comments"
+msgstr "السماح بحذف تعليقات على المضيف والخدمة"
+
+#: /usr/share/icingaweb2/modules/monitoring/configuration.php:44
+msgid "Allow deleting host and service downtimes"
+msgstr "السماح بحذف أزمنة توقف المضيف والخدمة"
+
+#: /usr/share/icingaweb2/modules/monitoring/configuration.php:60
+msgid ""
+"Allow processing commands for toggling active checks on host and service "
+"objects"
+msgstr ""
+"السماح بمعالجة الأوامر لتبديل الفحوصات النشطة على كائنات المضيف والخدمة"
+
+#: /usr/share/icingaweb2/modules/monitoring/configuration.php:72
+msgid ""
+"Allow processing commands for toggling event handlers on host and service "
+"objects"
+msgstr ""
+"السماح بمعالجة الأوامر لتبديل الفحوصات النشطة على كائنات المضيف والخدمة"
+
+#: /usr/share/icingaweb2/modules/monitoring/configuration.php:52
+msgid ""
+"Allow processing commands for toggling features on an instance-wide basis"
+msgstr ""
+"السماح بمعالجة الأوامر لتبديل الفحوصات النشطة على كائنات المضيف والخدمة"
+
+#: /usr/share/icingaweb2/modules/monitoring/configuration.php:56
+msgid ""
+"Allow processing commands for toggling features on host and service objects"
+msgstr "السماح بمعالجة الأوامر لتبديل المميزات على كائنات المضيف والخدمة"
+
+#: /usr/share/icingaweb2/modules/monitoring/configuration.php:76
+msgid ""
+"Allow processing commands for toggling flap detection on host and service "
+"objects"
+msgstr "السماح بمعالجة الأوامر لتبديل فحص التقلب على كائنات المضيف والخدمة"
+
+#: /usr/share/icingaweb2/modules/monitoring/configuration.php:68
+msgid ""
+"Allow processing commands for toggling notifications on host and service "
+"objects"
+msgstr "السماح بمعالجة الأوامر لتبديل التنبيهات على كائنات المضيف والخدمة"
+
+#: /usr/share/icingaweb2/modules/monitoring/configuration.php:64
+msgid ""
+"Allow processing commands for toggling passive checks on host and service "
+"objects"
+msgstr ""
+"السماح بمعالجة الأوامر لتبديل الفحوصات السالبة على كائنات المضيف والخدمة"
+
+#: /usr/share/icingaweb2/modules/monitoring/configuration.php:48
+msgid "Allow processing host and service check results"
+msgstr "السماح بمعالجة نتائج فحص المضيف والخدمة"
+
+#: /usr/share/icingaweb2/modules/monitoring/configuration.php:20
+msgid "Allow removing problem acknowledgements"
+msgstr "السماح بإزالة إشعارات المشكلة"
+
+#: /usr/share/icingaweb2/modules/monitoring/configuration.php:36
+msgid "Allow scheduling and deleting host and service downtimes"
+msgstr "السماح بجدولة وحذف أزمنة توقف المضيف والخدمة"
+
+#: /usr/share/icingaweb2/modules/monitoring/configuration.php:12
+msgid "Allow scheduling host and service checks"
+msgstr "السماح بجدولة فحوصات المضيف والخدمة"
+
+#: /usr/share/icingaweb2/modules/monitoring/configuration.php:40
+msgid "Allow scheduling host and service downtimes"
+msgstr "السماح بجدولة زمن توقف المضيف والخدمة"
+
+#: /usr/share/icingaweb2/modules/monitoring/configuration.php:80
+msgid "Allow sending custom notifications for hosts and services"
+msgstr "السماح بإرسال تنبيهات مخصصة للأجهزة المضيفة والخدمات"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/StatehistoryForm.php:20
+msgid "Apply"
+msgstr "تطبيق"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/downtime/show.phtml:39
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/comment/show.phtml:42
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ListController.php:249
+msgid "Author"
+msgstr "المؤلف"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/alertsummary/index.phtml:33
+msgid "Average"
+msgstr "المتوسط"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/AlertsummaryController.php:434
+msgid "Avg (min)"
+msgstr "المتوسط (الأدنى)"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/health/info.phtml:74
+#, php-format
+msgid "Backend %s is not running"
+msgstr "الخلفية %s لا تعمل"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Setup/BackendPage.php:28
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Config/BackendConfigForm.php:193
+msgid "Backend Name"
+msgstr "اسم الخلفية"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Setup/BackendPage.php:44
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Config/BackendConfigForm.php:221
+msgid "Backend Type"
+msgstr "نوع الخلفية"
+
+#: /usr/share/icingaweb2/modules/monitoring/configuration.php:94
+msgid "Backends"
+msgstr "الخلفيات"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/SendCustomNotificationCommandForm.php:67
+msgid "Broadcast"
+msgstr "بث"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/partials/event-history.phtml:59
+msgid "COMMENT"
+msgstr "تعليق"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/partials/event-history.phtml:63
+msgid "COMMENT DELETED"
+msgstr "حذف التعليق"
+
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/Object/Service.php:196
+msgid "CRITICAL"
+msgstr "ضروري"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/ProcessCheckResultCommandForm.php:58
+msgctxt "icinga.state"
+msgid "CRITICAL"
+msgstr "ضروري"
+
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/Command/Transport/RemoteCommandFile.php:214
+msgid "Can't send external Icinga Command. Remote user is missing"
+msgstr "لا يمكن إرسال أمر \"إسنجا\" خارجي. مستخدم بعيد مفقود"
+
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/Command/Transport/RemoteCommandFile.php:219
+msgid ""
+"Can't send external Icinga Command. The private key for the remote user is "
+"missing"
+msgstr ""
+"لا يمكن إرسال أمر \"إسنجا\" خارجي. المفتاح الخاص بالمستخدم البعيد مفقود"
+
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/Controller.php:97
+#, php-format
+msgid ""
+"Cannot apply restriction %s using the filter %s. You can only use the "
+"following columns: %s"
+msgstr ""
+"لا يمكن تطبيق تقييد %s باستخدام المرشح %s. يمكنك استخدام الأعمدة التالية: %s"
+
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/Command/Transport/CommandTransport.php:76
+#, php-format
+msgid ""
+"Cannot create command transport \"%s\". Invalid transport defined in \"%s\". "
+"Use one of \"%s\" or \"%s\"."
+msgstr ""
+"لا يمكن إنشاء ناقل أمر \"%s\". نقل غير صالح معرف في \"%s\". استخدم واحدا من \""
+"%s\" أو \"%s\"."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Config/BackendConfigForm.php:350
+msgid ""
+"Cannot find the IDO schema. Please verify that the given database contains "
+"the schema and that the configured user has access to it."
+msgstr ""
+"تعذر العثور على مخطط IDO. الرجاء التأكد أن قاعدة البيانات المعطاة تحتوي على"
+" المخطط وأن المستخدم المعد له صلاحية عليه"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/hosts/show.phtml:158
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/services/show.phtml:160
+msgid "Check Execution"
+msgstr "فحص التنفيذ"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/health/stats.phtml:113
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/health/stats.phtml:140
+msgid "Check Performance"
+msgstr "فحص الأداء"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/components/checksource.phtml:4
+msgid "Check Source"
+msgstr "فحص المصدر"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/ScheduleServiceCheckCommandForm.php:51
+msgid "Check Time"
+msgstr "فحص الزمن"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/components/checktimeperiod.phtml:4
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/components/checktimeperiod.phtml:15
+msgid "Check Timeperiod"
+msgstr "فحص المدة الزمنية"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/components/checkstatistics.phtml:66
+msgid "Check attempts"
+msgstr "فحص المحاولات"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/partials/object/detail-content.phtml:32
+msgid "Check execution"
+msgstr "فحص التنفيذ"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/components/checkstatistics.phtml:75
+msgid "Check execution time"
+msgstr "فحص زمن التنفيذ"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/components/checkstatistics.phtml:82
+msgid "Check latency"
+msgstr "فحص التأخير"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/CheckNowCommandForm.php:42
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/CheckNowCommandForm.php:45
+msgid "Check now"
+msgstr "الفحص الآن"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/components/checkstatistics.phtml:12
+msgid "Check result is late"
+msgstr "فحص كون النتيجة متأخرة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Setup/LivestatusResourcePage.php:78
+msgid ""
+"Check this to not to validate connectivity with the given Livestatus socket"
+msgstr "حدد هذا الخيار لعدم التحقق من صحة الاتصال مع مقبس Livestatus معين"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Config/BackendConfigForm.php:329
+msgid "Check this to not to validate the IDO schema of the chosen resource."
+msgstr "حدد هذا الخيار لعدم التحقق من صحة المخطط IDO للمورد الذي تم اختياره."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Setup/IdoResourcePage.php:185
+msgid "Check this to not to validate the configuration"
+msgstr "حدد هذا الخيار لعدم التحقق من الإعداد"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/health/stats.phtml:114
+msgid "Checks"
+msgstr "فحوصات"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/ScheduleHostDowntimeCommandForm.php:45
+msgid "Child Hosts"
+msgstr "مضيفون تابعون"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Config/SecurityConfigForm.php:58
+msgid ""
+"Comma separated case insensitive list of protected custom variables. Use * "
+"as a placeholder for zero or more wildcard characters. Existance of those "
+"custom variables will be shown, but their values will be masked."
+msgstr ""
+"قائمة مفصولة بفواصل لمتغيرات مخصصة ومحمية غير حساسة لحالة الأحرف. "
+"استخدم * كعلامة نائبة عن أي عدد من المحارف. وسيظهر ما إذا كانت تلك "
+"المتغيرات المخصصة موجودة لكن قيمها ستحجب."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/hosts/show.phtml:163
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/services/show.phtml:165
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/components/command.phtml:12
+msgid "Command"
+msgstr "أمر"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Config/Transport/RemoteTransportForm.php:177
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Config/Transport/LocalTransportForm.php:30
+msgid "Command File"
+msgstr "أمر ملف"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Setup/TransportPage.php:14
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/TransportStep.php:43
+msgctxt "setup.page.title"
+msgid "Command Transport"
+msgstr "ناقل الأمر"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/config/index.phtml:62
+msgid "Command Transports"
+msgstr "نواقل الأمر"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ConfigController.php:240
+#, php-format
+msgid "Command transport \"%s\" not found"
+msgstr "ناقل الأمر \"%s\" غير موجود"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/CommandForm.php:65
+#, php-format
+msgid "Command transport \"%s\" not found."
+msgstr "ناقل الأمر \"%s\" غير موجود."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ConfigController.php:189
+#, php-format
+msgid "Command transport \"%s\" successfully removed"
+msgstr "تم إزالة ناقل الأمر \"%s\""
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ConfigController.php:229
+#, php-format
+msgid "Command transport \"%s\" successfully updated"
+msgstr "تم تحديث ناقل الأمر \"%s\""
+
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/TransportStep.php:98
+#, php-format
+msgid ""
+"Command transport configuration could not be written to: %s. An error "
+"occured:"
+msgstr "إعداد ناقل الأمر لا يمكن كتابته على: %s. حدث خطأ:"
+
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/TransportStep.php:90
+#, php-format
+msgid "Command transport configuration has been successfully created: %s"
+msgstr "تم إنشاء إعداد ناقل الأمر: %s"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ConfigController.php:268
+msgid "Command transport successfully created"
+msgstr "تم إنشاء ناقل الأمر بنجاح"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/downtime/show.phtml:163
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/comment/show.phtml:70
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/downtimes/show.phtml:9
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/contact.phtml:51
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/comments/show.phtml:9
+msgid "Commands"
+msgstr "أوامر"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/downtime/show.phtml:47
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/AddCommentCommandForm.php:42
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/SendCustomNotificationCommandForm.php:43
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/ScheduleServiceDowntimeCommandForm.php:65
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/AcknowledgeProblemCommandForm.php:49
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/CommentController.php:55
+msgid "Comment"
+msgstr "تعليق"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ListController.php:437
+msgid "Comment Timestamp"
+msgstr "زمن التعليق"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ListController.php:440
+msgid "Comment Type"
+msgstr "نوع التعليق"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/comment/show.phtml:12
+msgid "Comment detail information"
+msgstr "معلومات التعليق التفصيلية"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/CommentController.php:48
+msgid "Comment not found"
+msgstr "تعليق غير موجود"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/partials/comment/comment-description.phtml:16
+msgid "Comment was caused by a downtime"
+msgstr "تعليق بسبب زمن التوقف"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/partials/comment/comment-description.phtml:6
+msgid "Comment was caused by a flapping host or service"
+msgstr "تعليق بسبب خدمة أو مضيف مذبذب"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/partials/comment/comment-description.phtml:21
+msgid "Comment was caused by an acknowledgement"
+msgstr "تعليق بسبب إشعار"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/partials/comment/comment-description.phtml:11
+msgid "Comment was created by an user"
+msgstr "تعليق منشأ من قبل مستخدم"
+
+#: /usr/share/icingaweb2/modules/monitoring/configuration.php:200
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/hosts/show.phtml:59
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/services/show.phtml:58
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/components/comments.phtml:37
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/EventOverviewForm.php:64
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/CommentsController.php:62
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/TimelineController.php:60
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ListController.php:410
+msgid "Comments"
+msgstr "تعليقات"
+
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/Backend/MonitoringBackend.php:196
+#, php-format
+msgid "Configuration for backend %s is disabled"
+msgstr "إعداد الخلفية %s معطل"
+
+#: /usr/share/icingaweb2/modules/monitoring/configuration.php:98
+msgid ""
+"Configure how to protect your monitoring environment against prying eyes"
+msgstr "إعداد كيفية حماية بيئة المراقبة ضد أعين المتطفلين"
+
+#: /usr/share/icingaweb2/modules/monitoring/configuration.php:93
+msgid "Configure how to retrieve monitoring information"
+msgstr "إعداد كيفية استعادة معلومات المراقبة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/CommentsController.php:95
+#, php-format
+msgid "Confirm removal of %d comments."
+msgstr "تأكيد إزالة %d من التعليقات."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/DowntimesController.php:99
+#, php-format
+msgid "Confirm removal of %d downtimes."
+msgstr "إعداد إزالة %d من أزمنة التوقف."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/list/contactgroups.phtml:23
+msgid "Contact Group "
+msgstr "مجموعة الاتصال"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ListController.php:381
+msgid "Contact Groups"
+msgstr "مجموعات الاتصال"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/contact.phtml:6
+msgid "Contact details"
+msgstr "تفاصيل الاتصال"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ListController.php:397
+msgid "Contactgroup Alias"
+msgstr "اسم مجموعة الاتصال المستعار"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ListController.php:396
+msgid "Contactgroup Name"
+msgstr "اسم مجموعة الاتصال"
+
+#: /usr/share/icingaweb2/modules/monitoring/configuration.php:196
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/components/contacts.phtml:35
+msgid "Contactgroups"
+msgstr "مجموعات الاتصال"
+
+#: /usr/share/icingaweb2/modules/monitoring/configuration.php:192
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/components/contacts.phtml:17
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ListController.php:307
+msgid "Contacts"
+msgstr "جهات الاتصال"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ChartController.php:292
+msgid "Contains host states of each service group."
+msgstr "يحتوي على حالات المضيف لكل مجموعة خدمة."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ChartController.php:233
+msgid "Contains service states for each service group."
+msgstr "يحتوي حالات الخدمة لكل مجموعة خدمة."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Config/Transport/RemoteTransportForm.php:47
+msgid "Could not find any valid SSH resources"
+msgstr "تعذر العثور على موارد SSH صالحة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Config/BackendConfigForm.php:65
+msgid ""
+"Could not find any valid monitoring backend resources. Please configure a "
+"database resource first."
+msgstr ""
+"تعذر العثور على موارد مراقبة خلفية صالحة. الرجاء إعداد "
+"مورد لقاعدة البيانات أولا."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ConfigController.php:254
+msgid "Create New Command Transport"
+msgstr "إنشاء  ناقل أمر جديد"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ConfigController.php:93
+msgid "Create New Monitoring Backend"
+msgstr "إنشاء خلفية مراقبة جديدة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/config/index.phtml:64
+msgid "Create a New Command Transport"
+msgstr "إنشاء  ناقل أمر جديد"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/config/index.phtml:9
+msgid "Create a New Monitoring Backend"
+msgstr "إنشاء خلفية مراقبة جديدة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/config/index.phtml:70
+msgid "Create a new command transport"
+msgstr "إنشاء  ناقل أمر جديد"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/config/index.phtml:15
+msgid "Create a new monitoring backend"
+msgstr "إنشاء خلفية مراقبة جديدة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/comment/show.phtml:52
+msgid "Created"
+msgstr "أُنشيء"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/helpers/Perfdata.php:41
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/StatehistoryForm.php:117
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ChartController.php:257
+msgid "Critical"
+msgstr "ضروري"
+
+#: /usr/share/icingaweb2/modules/monitoring/configuration.php:160
+msgid "Current Downtimes"
+msgstr "أزمنة التوقف الحالية"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ListController.php:174
+msgid "Current Host State"
+msgstr "حالة المضيفين الحالية"
+
+#: /usr/share/icingaweb2/modules/monitoring/configuration.php:258
+msgid "Current Incidents"
+msgstr "الحوادث الحالية"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ListController.php:169
+msgid "Current Service State"
+msgstr "حالة الخدمة الحالية"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ListController.php:88
+msgid "Current State"
+msgstr "الحالة الحالية"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/partials/object/detail-content.phtml:43
+msgid "Custom Variables"
+msgstr "متغيرات مخصصة"
+
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/Object/Host.php:185
+msgid "DOWN"
+msgstr "متوقف"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/ProcessCheckResultCommandForm.php:124
+msgctxt "icinga.state"
+msgid "DOWN"
+msgstr "متوقف"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/partials/event-history.phtml:83
+msgid "DOWNTIME DELETED"
+msgstr "حُذف زمن التوقف"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/partials/event-history.phtml:108
+msgid "DOWNTIME END"
+msgstr "نهاية زمن التوقف"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/partials/event-history.phtml:103
+msgid "DOWNTIME START"
+msgstr "بداية زمن التوقف"
+
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/BackendStep.php:105
+msgid "Database Name"
+msgstr "اسم قاعدة البيانات"
+
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/BackendStep.php:84
+msgid "Database Resource"
+msgstr "مورد قاعدة بيانات"
+
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/BackendStep.php:93
+msgid "Database Type"
+msgstr "نوع قاعدة البيانات"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/downtime/show.phtml:42
+msgid "Date and time this downtime was entered"
+msgstr "تاريخ ووقت إدخال زمن التوقف هذا"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/AlertsummaryController.php:642
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/AlertsummaryController.php:645
+msgid "Day"
+msgstr "يوم"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/AlertsummaryController.php:463
+msgid "Defect Chart"
+msgstr "رسم بياني للعيوب"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/AlertsummaryController.php:484
+msgid "Defects"
+msgstr "العيوب"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/ScheduleHostDowntimeCommandForm.php:43
+msgid "Define what should be done with the child hosts of the hosts."
+msgstr "عرف ما يتحتم عمله مع المضيفين التابعين."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/DeleteCommentCommandForm.php:76
+msgid "Delete this comment"
+msgstr "احذف هذا التعليق"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/DeleteDowntimeCommandForm.php:40
+msgid "Delete this downtime"
+msgstr "حذف زمن التوقف هذا"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/DeleteCommentCommandForm.php:96
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/DeleteCommentsCommandForm.php:83
+msgid "Deleting comment.."
+msgid_plural "Deleting comments.."
+msgstr[0] "حذف تعليق.."
+msgstr[1] "حذف تعليقات.."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/DeleteDowntimeCommandForm.php:97
+msgid "Deleting downtime."
+msgstr "حذف زمن التوقف."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/DeleteDowntimesCommandForm.php:83
+msgid "Deleting downtime.."
+msgid_plural "Deleting downtimes.."
+msgstr[0] "حذف زمن التوقف.."
+msgstr[1] "حذف أزمنة التوقف.."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/downtime/show.phtml:10
+msgid "Details"
+msgstr "تفاصيل"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Instance/DisableNotificationsExpireCommandForm.php:24
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/HealthController.php:172
+msgid "Disable Notifications"
+msgstr "تعطيل التنبيهات"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Config/BackendConfigForm.php:185
+msgid "Disable This Backend"
+msgstr "تعطيل هذه الخلفية"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Instance/ToggleInstanceFeaturesCommandForm.php:69
+msgid "Disable notifications for a specific time on a program-wide basis"
+msgstr "تعطيل التنبيهات لوقت محدد على أساس البرنامج بأكمله"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Instance/ToggleInstanceFeaturesCommandForm.php:71
+msgid "Disable temporarily"
+msgstr "تعطيل مؤقت"
+
+#: /usr/share/icingaweb2/modules/monitoring/configuration.php:327
+msgid "Disabled Host Checks"
+msgstr "تعطيل فحوصات المضيف"
+
+#: /usr/share/icingaweb2/modules/monitoring/configuration.php:319
+msgid "Disabled Host Notifications"
+msgstr "تنبيهات المضيف المعطلة"
+
+#: /usr/share/icingaweb2/modules/monitoring/configuration.php:323
+msgid "Disabled Service Checks"
+msgstr "فحوصات الخدمة المعطلة"
+
+#: /usr/share/icingaweb2/modules/monitoring/configuration.php:315
+msgid "Disabled Service Notifications"
+msgstr "تنبيهات الخدمة المعطلة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/ToggleObjectFeaturesCommandForm.php:130
+msgid "Disabling active checks.."
+msgstr "تعطيل الفحوصات النشطة.."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Instance/ToggleInstanceFeaturesCommandForm.php:222
+msgid "Disabling active host checks.."
+msgstr "تعطيل فحوصات المضيف النشطة.."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Instance/ToggleInstanceFeaturesCommandForm.php:226
+msgid "Disabling active service checks.."
+msgstr "تعطيل فحوصات الخدمة النشطة.."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/ToggleObjectFeaturesCommandForm.php:146
+msgid "Disabling event handler.."
+msgstr "تعطيل معالج الحدث.."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Instance/ToggleInstanceFeaturesCommandForm.php:230
+msgid "Disabling event handlers.."
+msgstr "تعطيل معالجات الحدث.."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/ToggleObjectFeaturesCommandForm.php:150
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Instance/ToggleInstanceFeaturesCommandForm.php:234
+msgid "Disabling flap detection.."
+msgstr "تعطيل فحص التذبذب.."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Instance/DisableNotificationsExpireCommandForm.php:61
+msgid "Disabling host and service notifications.."
+msgstr "تعطيل تنبيهات المضيف والخدمة.."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/ToggleObjectFeaturesCommandForm.php:142
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Instance/ToggleInstanceFeaturesCommandForm.php:238
+msgid "Disabling notifications.."
+msgstr "تعطيل التنبيهات.."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Instance/ToggleInstanceFeaturesCommandForm.php:242
+msgid "Disabling obsessing over hosts.."
+msgstr "تعطيل التوجس على المضيفين.."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Instance/ToggleInstanceFeaturesCommandForm.php:246
+msgid "Disabling obsessing over services.."
+msgstr "تعطيل التوجس على الخدمات.."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/ToggleObjectFeaturesCommandForm.php:138
+msgid "Disabling obsessing.."
+msgstr "تعطيل التوجس.."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/ToggleObjectFeaturesCommandForm.php:134
+msgid "Disabling passive checks.."
+msgstr "تعطيل الفحوصات السلبية.."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Instance/ToggleInstanceFeaturesCommandForm.php:250
+msgid "Disabling passive host checks.."
+msgstr "تعطيل فحوصات المضيف السلبية.."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Instance/ToggleInstanceFeaturesCommandForm.php:254
+msgid "Disabling passive service checks.."
+msgstr "تعطيل فحوصات الخدمة السلبية.."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Instance/ToggleInstanceFeaturesCommandForm.php:258
+msgid "Disabling performance data.."
+msgstr "تعطيل بيانات الأداء.."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/CommentController.php:56
+msgid "Display detailed information about a comment."
+msgstr "عرض معلومات مفصلة عن تعليق."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/DowntimeController.php:66
+msgid "Display detailed information about a downtime."
+msgstr "عرض معلومات مفصلة عن توقف."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/CommentsController.php:64
+msgid "Display detailed information about multiple comments."
+msgstr "عرض معلومات تفصيلية عن تعليقات متعددة."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/DowntimesController.php:70
+msgid "Display detailed information about multiple downtimes."
+msgstr "عرض معلومات تفصيلية عن توقفات متعددة."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Navigation/ActionForm.php:26
+msgid ""
+"Display this action only for objects matching this filter. Leave it blank if "
+"you want this action being displayed regardless of the object"
+msgstr ""
+"عرض هذا الفعل فقط للكائنات الموافقة لهذا المرشح. اتركه فارغا "
+"إذا كنت تريد لهذا الفعل أن يعرض بغض النظر عن الكائن"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/ScheduleHostDowntimeCommandForm.php:47
+msgid "Do nothing with child hosts"
+msgstr "لا تفعل شيئا بالمضيفين التابعين"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/StatehistoryForm.php:138
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ChartController.php:307
+msgid "Down"
+msgstr "متوقف"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/partials/comment/comment-description.phtml:15
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/DowntimeController.php:65
+msgid "Downtime"
+msgstr "زمن التوقف"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/DowntimeController.php:57
+msgid "Downtime not found"
+msgstr "زمن التوقف غير موجود"
+
+#: /usr/share/icingaweb2/modules/monitoring/configuration.php:204
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/hosts/show.phtml:96
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/services/show.phtml:95
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/components/downtime.phtml:41
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/EventOverviewForm.php:54
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/DowntimesController.php:69
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ListController.php:212
+msgid "Downtimes"
+msgstr "أزمنة التوقف"
+
+#: /usr/share/icingaweb2/modules/monitoring/configuration.php:306
+msgid "Downtimes Active For More Than Three Days"
+msgstr "أزمنة التوقف النشطة لأكثر من ثلاثة أيام"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/downtime/show.phtml:53
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/downtime/show.phtml:135
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ListController.php:254
+msgid "Duration"
+msgstr "المدة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/partials/downtime/downtime-header.phtml:3
+msgctxt "Downtime status"
+msgid "ENDS"
+msgstr "نهايات"
+
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/BackendStep.php:155
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/BackendStep.php:168
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/SecurityStep.php:80
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/TransportStep.php:102
+#, php-format
+msgid "ERROR: %s"
+msgstr "خطأ: %s"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/partials/downtime/downtime-header.phtml:6
+msgctxt "Downtime status"
+msgid "EXPIRES"
+msgstr "انتهاء صلاحية"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ConfigController.php:210
+#, php-format
+msgid "Edit Command Transport %s"
+msgstr "تحرير ناقل الأمر %s"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ConfigController.php:51
+#, php-format
+msgid "Edit Monitoring Backend %s"
+msgstr "تحرير  خلفية المراقبة %s"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/config/index.phtml:90
+#, php-format
+msgid "Edit command transport %s"
+msgstr "تحرير ناقل الأمر %s"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/config/index.phtml:35
+#, php-format
+msgid "Edit monitoring backend %s"
+msgstr "تحرير  خلفية المراقبة %s"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/contact.phtml:24
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/list/contacts.phtml:21
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/list/contacts.phtml:42
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ListController.php:327
+msgid "Email"
+msgstr "بريد إلكتروني"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/ToggleObjectFeaturesCommandForm.php:129
+msgid "Enabling active checks.."
+msgstr "تفعيل فحوصات نشطة.."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Instance/ToggleInstanceFeaturesCommandForm.php:221
+msgid "Enabling active host checks.."
+msgstr "تفعيل فحوصات مضيف نشطة.."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Instance/ToggleInstanceFeaturesCommandForm.php:225
+msgid "Enabling active service checks.."
+msgstr "تفعيل فحوصات الخدمة النشطة.."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/ToggleObjectFeaturesCommandForm.php:145
+msgid "Enabling event handler.."
+msgstr "تفعيل معالج حدث.."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Instance/ToggleInstanceFeaturesCommandForm.php:229
+msgid "Enabling event handlers.."
+msgstr "تفعيل معالجات حدث.."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/ToggleObjectFeaturesCommandForm.php:149
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Instance/ToggleInstanceFeaturesCommandForm.php:233
+msgid "Enabling flap detection.."
+msgstr "تفعيل كشف التذبذب.."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/ToggleObjectFeaturesCommandForm.php:141
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Instance/ToggleInstanceFeaturesCommandForm.php:237
+msgid "Enabling notifications.."
+msgstr "تفعيل التنبيهات.."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Instance/ToggleInstanceFeaturesCommandForm.php:241
+msgid "Enabling obsessing over hosts.."
+msgstr "تعطيل التوجس على المضيفين.."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Instance/ToggleInstanceFeaturesCommandForm.php:245
+msgid "Enabling obsessing over services.."
+msgstr "تعطيل التوجس على الخدمات.."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/ToggleObjectFeaturesCommandForm.php:137
+msgid "Enabling obsessing.."
+msgstr "تعطيل التوجس.."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/ToggleObjectFeaturesCommandForm.php:133
+msgid "Enabling passive checks.."
+msgstr "تفعيل فحوصات سلبية.."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Instance/ToggleInstanceFeaturesCommandForm.php:249
+msgid "Enabling passive host checks.."
+msgstr "تفعيل فحوصات مضيف سلبية.."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Instance/ToggleInstanceFeaturesCommandForm.php:253
+msgid "Enabling passive service checks.."
+msgstr "تفعيل فحوصات الخدمة السلبية.."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Instance/ToggleInstanceFeaturesCommandForm.php:257
+msgid "Enabling performance data.."
+msgstr "تفعيل بيانات الأداء.."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/ScheduleServiceDowntimeCommandForm.php:88
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ListController.php:251
+msgid "End Time"
+msgstr "زمن الانتهاء"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/TimelineController.php:75
+msgid "Ended downtimes"
+msgstr "أزمنة التوقف المنتهية"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/ScheduleServiceDowntimeCommandForm.php:159
+msgid ""
+"Enter here the duration of the downtime. The downtime will be automatically "
+"deleted after this time expired."
+msgstr ""
+"أدخل وقت التوقف هنا. سيتم حذف زمن التوقف تلقائيا "
+"بعد انقضاء هذا الوقت."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/AcknowledgeProblemCommandForm.php:90
+msgid ""
+"Enter the expire date and time for this acknowledgement here. Icinga will "
+"delete the acknowledgement after this time expired."
+msgstr ""
+"أدخل تاريخ الانتهاء ووقت هذا الإشعار هنا. \"إسنجا\" سيحذف "
+"هذا الإشعار بعد انتهاء هذا الوقت."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/downtime/show.phtml:43
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ListController.php:248
+msgid "Entry Time"
+msgstr "زمن الدخول"
+
+#: /usr/share/icingaweb2/modules/monitoring/configuration.php:216
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ListController.php:336
+msgid "Event Grid"
+msgstr "شبكة الحدث"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/ToggleObjectFeaturesCommandForm.php:54
+msgid "Event Handler"
+msgstr "معالج الحدث"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:208
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:210
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Instance/ToggleInstanceFeaturesCommandForm.php:108
+msgid "Event Handlers"
+msgstr "معالجات الحدث"
+
+#: /usr/share/icingaweb2/modules/monitoring/configuration.php:220
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ListController.php:546
+msgid "Event Overview"
+msgstr "نظرة عامة على الحدث"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/health/stats.phtml:116
+msgid "Execution time"
+msgstr "وقت التنفيذ"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ListController.php:441
+msgid "Expiration"
+msgstr "انتهاء الصلاحية"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/AcknowledgeProblemCommandForm.php:87
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Instance/DisableNotificationsExpireCommandForm.php:43
+msgid "Expire Time"
+msgstr "وقت انتهاء الصلاحية"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/comment/show.phtml:57
+msgid "Expires"
+msgstr "انتهاء صلاحية"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/components/acknowledgement.phtml:27
+#, php-format
+msgid "Expires %s"
+msgstr "انتهاء صلاحية %s"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/partials/event-history.phtml:87
+msgid "FLAPPING"
+msgstr "تذبذب"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/partials/event-history.phtml:91
+msgid "FLAPPING STOPPED"
+msgstr "توقف التذبذب"
+
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/Command/Transport/CommandTransport.php:138
+msgid ""
+"Failed to send external Icinga command. No transport has been configured for "
+"this instance. Please contact your Icinga Web administrator."
+msgstr ""
+"فشل في إرسال أمر \"إسنجا\" الخارجي. لم يتم إعداد نقل "
+"لهذه الحالة. يرجى الاتصال بمدير الوب الخاص بإسنجا"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Setup/IdoResourcePage.php:143
+#, php-format
+msgid "Failed to successfully validate the configuration: %s"
+msgstr "فشل التحقق من صحة الإعداد بنجاح: %s"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/health/info.phtml:79
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/hosts/show.phtml:200
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/services/show.phtml:202
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/components/flags.phtml:2
+msgid "Feature Commands"
+msgstr "أوامر ميزة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Navigation/ActionForm.php:24
+msgid "Filter"
+msgstr "مرشح"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/downtime/show.phtml:60
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/ScheduleServiceDowntimeCommandForm.php:107
+msgid "Fixed"
+msgstr "ثابت"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/downtime/show.phtml:66
+msgid "Fixed downtimes have a static start and end time."
+msgstr "أزمنة التوقف الثابتة لها بداية ونهاية ثابتة."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:8
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:10
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/ToggleObjectFeaturesCommandForm.php:58
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Instance/ToggleInstanceFeaturesCommandForm.php:117
+msgid "Flap Detection"
+msgstr "كشف التذبذب"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/partials/comment/comment-description.phtml:5
+#: /usr/share/icingaweb2/modules/monitoring/application/views/helpers/HostFlags.php:19
+#: /usr/share/icingaweb2/modules/monitoring/application/views/helpers/ServiceFlags.php:15
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/EventOverviewForm.php:84
+msgid "Flapping"
+msgstr "التذبذب"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/downtime/show.phtml:60
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/ScheduleServiceDowntimeCommandForm.php:108
+msgid "Flexible"
+msgstr "مرن"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/ScheduleServiceDowntimeCommandForm.php:157
+msgid "Flexible Duration"
+msgstr "مدة مرنة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/downtime/show.phtml:63
+msgid ""
+"Flexible downtimes have a hard start and end time, but also an additional "
+"restriction on the duration in which  the host or service may actually be "
+"down."
+msgstr ""
+"أزمنة التوقف المرنة لديها زمن بداية ونهاية صعب، ولكن أيضا لها تقييد إضافي "
+"على المدة التي يكون فيها المضيف أو الخدمة متوقفا."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/ScheduleServiceCheckCommandForm.php:62
+msgid "Force Check"
+msgstr "فحص مفروض"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/SendCustomNotificationCommandForm.php:55
+msgid "Forced"
+msgstr "مفروض"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/StatehistoryForm.php:66
+msgid "From"
+msgstr "من"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/health/info.phtml:48
+msgid "Global Host Event Handler"
+msgstr "معالج حدث المضيف العالمي"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/health/info.phtml:42
+msgid "Global Service Event Handler"
+msgstr "معالج حدث الخدمة العالمي"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:31
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:130
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:229
+msgid "Handled"
+msgstr "مُعالج"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/TimelineController.php:55
+msgid "Hard state changes"
+msgstr "تغييرات حالة صعبة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/AlertsummaryController.php:325
+msgid "Healing Chart"
+msgstr "رسم الصحة البياني"
+
+#: /usr/share/icingaweb2/modules/monitoring/configuration.php:89
+msgid "Hide the properties of monitored objects that match the filter"
+msgstr "إخفاء خصائص الكائنات المراقبة التي توافق المرشح"
+
+#: /usr/share/icingaweb2/modules/monitoring/configuration.php:212
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/alertsummary/index.phtml:69
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/Web/Controller/MonitoredObjectController.php:229
+msgid "History"
+msgstr "المحفوظات"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/downtime/show.phtml:15
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/downtime/show.phtml:30
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/comment/show.phtml:29
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/comment/show.phtml:31
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/partials/comment/comment-detail.phtml:20
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/list/notifications.phtml:53
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Config/Transport/RemoteTransportForm.php:139
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ListController.php:246
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ListController.php:438
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/BackendStep.php:97
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/Web/Controller/MonitoredObjectController.php:185
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/DataView/DataView.php:275
+msgid "Host"
+msgstr "مضيف"
+
+#: /usr/share/icingaweb2/modules/monitoring/configuration.php:115
+msgid "Host Action"
+msgstr "فعل المضيف"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ListController.php:176
+msgid "Host Address"
+msgstr "عنوان المضيف"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/health/stats.phtml:61
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/health/stats.phtml:121
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/health/stats.phtml:148
+msgid "Host Checks"
+msgstr "فحوصات المضيف"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/list/hostgroups.phtml:25
+msgid "Host Group"
+msgstr "مجموعة المضيف"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ChartController.php:291
+msgid "Host Group Chart"
+msgstr "رسم بياني لمجموعة المضيف"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ListController.php:534
+msgid "Host Group Name"
+msgstr "اسم مجموعة المضيف"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ListController.php:501
+msgid "Host Groups"
+msgstr "مجموعات المضيف"
+
+#: /usr/share/icingaweb2/modules/monitoring/configuration.php:132
+#: /usr/share/icingaweb2/modules/monitoring/configuration.php:268
+msgid "Host Problems"
+msgstr "مشاكل المضيف"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/health/stats.phtml:35
+msgid "Host Problems:"
+msgstr "مشاكل المضيف:"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ListController.php:173
+msgid "Host Severity"
+msgstr "خطورة المضيف"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/list/hostgroups.phtml:26
+msgid "Host States"
+msgstr "حالات المضيف"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/hostservicechecks.phtml:3
+msgid "Host and Service Checks"
+msgstr "فحوصات المضيف والخدمة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/health/disable-notifications.phtml:10
+msgid "Host and service notifications are already disabled."
+msgstr "تنبيهات المضيف والخدمة تم تعطيلها مسبقا."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/HostController.php:33
+msgid "Host not found"
+msgstr "المضيف غير موجود"
+
+#: /usr/share/icingaweb2/modules/monitoring/configuration.php:109
+#: /usr/share/icingaweb2/modules/monitoring/configuration.php:188
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/components/hostgroups.phtml:16
+msgid "Hostgroups"
+msgstr "مجموعات المضيف"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ListController.php:89
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ListController.php:175
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ListController.php:598
+msgid "Hostname"
+msgstr "اسم المضيف"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Config/Transport/RemoteTransportForm.php:141
+msgid "Hostname or address of the remote Icinga instance"
+msgstr "اسم المضيف وعنوان حالة \"إسنجا\" البعيدة"
+
+#: /usr/share/icingaweb2/modules/monitoring/configuration.php:107
+#: /usr/share/icingaweb2/modules/monitoring/configuration.php:176
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/hostservicechecks.phtml:9
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/contact.phtml:39
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/StatehistoryForm.php:100
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ChartController.php:295
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/HostsController.php:59
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ListController.php:48
+msgid "Hosts"
+msgstr "المضيفون"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/AlertsummaryController.php:639
+msgid "Hour"
+msgstr "ساعة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/ScheduleServiceDowntimeCommandForm.php:137
+msgid "Hours"
+msgstr "ساعات"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/partials/object/service-header.phtml:30
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/partials/object/host-header.phtml:29
+msgid "IPv4 address"
+msgstr "عنوان Ipv4"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/partials/object/service-header.phtml:25
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/partials/object/host-header.phtml:24
+msgid "IPv6 address"
+msgstr "عنوان IPv6"
+
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/SecurityStep.php:45
+msgid ""
+"Icinga Web 2 will protect your monitoring environment against prying eyes "
+"using the configuration specified below:"
+msgstr ""
+"واجهة وب إسنجا 2 ستحمي بيئة المراقبة الخاصة بك ضد أعين "
+"المتطفلين باستخدام الإعداد المحدد أدناه:"
+
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/BackendStep.php:77
+#, php-format
+msgid ""
+"Icinga Web 2 will retrieve information from your monitoring environment "
+"using a backend called \"%s\" and the specified resource below:"
+msgstr ""
+"واجهة وب إسنجا 2 ستسترد المعلومات من بيئة المراقبة الخاصة بك "
+"باستخدام الخلفية المسماة \"%s\" والمورد المحدد أدناه:"
+
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/TransportStep.php:76
+#, php-format
+msgid ""
+"Icinga Web 2 will use the named pipe located at \"%s\" to send commands to "
+"your monitoring instance."
+msgstr ""
+"واجهة وب إسنجا 2 ستستخدم الأنبوب المسمى الواقع على \"%s\" لإرسال أوامر "
+"إلى مثال المراقبة الخاصة بك."
+
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/TransportStep.php:49
+#, php-format
+msgid ""
+"Icinga Web 2 will use the named pipe located on a remote machine at \"%s\" "
+"to send commands to your monitoring instance by using the connection details "
+"listed below:"
+msgstr ""
+"واجهة وب إسنجا 2 ستستخدم \"الأنبوب المسمى\" الواقع على الجهاز البعيد \"%s\""
+" لإرسال أوامر "
+"إلى مثال المراقبة الخاصة بك باستخدام تفاصيل الاتصال المدونة أدناه:"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/AcknowledgeProblemCommandForm.php:74
+msgid "If the acknowledgement should expire, check this option."
+msgstr "إذا كان الإشعار ستنتهي صلاحيته فحدد هذا الخيار."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/SendCustomNotificationCommandForm.php:58
+msgid ""
+"If you check this option, the notification is sent out regardless of time "
+"restrictions and whether or not notifications are enabled."
+msgstr ""
+"إذا قمت بتحديد هذا الخيار، فإن التنبيه سيرسل بغض النظر عن تقييدات "
+"الوقت وكون التنبيهات مفعلة أم لا."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/SendCustomNotificationCommandForm.php:70
+msgid ""
+"If you check this option, the notification is sent out to all normal and "
+"escalated contacts."
+msgstr ""
+"إذا قمت بتحديد هذا الخيار، فإن التنبيه سيرسل لكل جهات "
+"الاتصال العادية والمصعّدة."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/AcknowledgeProblemCommandForm.php:126
+msgid ""
+"If you do not want an acknowledgement notification to be sent out to the "
+"appropriate contacts, uncheck this option."
+msgstr ""
+"إذا كنت تريد لتنبيه الإشعار أن يرسل لجهة الاتصال المناسبة "
+"فقم بإلغاء هذا الخيار."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/ScheduleServiceDowntimeCommandForm.php:101
+msgid ""
+"If you select the fixed option, the downtime will be in effect between the "
+"start and end times you specify whereas a flexible downtime starts when the "
+"host or service enters a problem state sometime between the start and end "
+"times you specified and lasts as long as the duration time you enter. The "
+"duration fields do not apply for fixed downtimes."
+msgstr ""
+"إذا قمت بتحديد الخيار الثابت، فإن زمن التوقف يكون ساري المفعول بين"
+"أزمنة البداية والنهاية التي تحددها في حين يبدأ التوقف المرن عندما يدخل"
+"مضيف أو خدمة إلى حالة مشكلة في وقت ما بين زمن البداية والنهاية "
+"الذين حددتهما ويستمر طيلة المدة الزمنية التي تدخلها. حقول الزمن "
+"لا تنطبق على أزمنة التوقف الثابتة."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/ScheduleServiceCheckCommandForm.php:64
+msgid ""
+"If you select this option, Icinga will force a check regardless of both what "
+"time the scheduled check occurs and whether or not checks are enabled."
+msgstr ""
+"إذا قمت بتحديد هذا الخيار، فإن إسنجا ستفرض اختبارا بغض النظر عن"
+"زمن حدوث الاختبار المجدول وعما إذا كانت الاختبارات مفعلة."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ConfigController.php:175
+msgid ""
+"If you still have any environments or views referring to this transport, you "
+"won't be able to send commands anymore after deletion."
+msgstr ""
+"إذا كان لديك أي بيئات أو عروض تشير إلى هذا النقل، فلن "
+"لن تكون قادرا على إرسال الأوامر مرة أخرى بعد الحذف."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/AddCommentCommandForm.php:58
+msgid ""
+"If you uncheck this option, the comment will automatically be deleted the "
+"next time Icinga is restarted."
+msgstr ""
+"إذا قمت بإلغاء تحديد هذا الخيار، سيتم تلقائيا حذف التعليق"
+"في المرة القادمة التي سيعاد فيها تشغيل إسنجا."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/AcknowledgeProblemCommandForm.php:114
+msgid ""
+"If you want the acknowledgement to remain until the host or service recovers "
+"even if the host or service changes state, check this option."
+msgstr ""
+"ذا كنت ترغب في بقاء الإشعار حتى يتعافى المضيف أو الخدمة"
+"حتى إذا تغيرت حالة المضيف أو الخدمة، فاختر هذا الخيار."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/AddCommentCommandForm.php:44
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/SendCustomNotificationCommandForm.php:45
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/ScheduleServiceDowntimeCommandForm.php:67
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/AcknowledgeProblemCommandForm.php:51
+msgid ""
+"If you work with other administrators, you may find it useful to share "
+"information about the the host or service that is having problems. Make sure "
+"you enter a brief description of what you are doing."
+msgstr ""
+"إذا كنت تعمل مع المسؤولين الآخرين، قد تجد أنه من المفيد تبادل "
+"المعلومات حول المضيف أو الخدمة التي تواجه مشاكل. تأكد "
+"من إدخال وصفا موجزا لما تقوم به."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/AcknowledgeProblemCommandForm.php:63
+msgid ""
+"If you would like the comment to remain even when the acknowledgement is "
+"removed, check this option."
+msgstr ""
+"إذا كنت ترغب في بقاء التعليق حتى عندما يُزال الإقرار "
+"فاختر هذا الخيار."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/partials/service/statusicons.phtml:17
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/partials/host/statusicons.phtml:17
+#: /usr/share/icingaweb2/modules/monitoring/application/views/helpers/HostFlags.php:25
+#: /usr/share/icingaweb2/modules/monitoring/application/views/helpers/ServiceFlags.php:21
+msgid "In Downtime"
+msgstr "في زمن التوقف"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/downtime/show.phtml:151
+msgid "In effect"
+msgstr "ساري المفعول"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/downtime/show.phtml:131
+msgid ""
+"Indicates the number of seconds that the scheduled downtime should last. "
+"This is usually only needed if this is a flexible downtime, which can start "
+"at a variable time, but lasts for the specified duration"
+msgstr ""
+"يشير إلى عدد الثواني التي يستمرها زمن التوقف المجدول. عادة "
+"ما تكون هناك حاجة إليها إذا كان هذا هو وقت التوقف المرن، "
+"الذي يمكن أن يبدأ في وقت متغير، ولكن يستمر للمدة المحددة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/components/command.phtml:7
+msgid "Instance"
+msgstr "حالة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Config/TransportConfigForm.php:203
+msgid "Instance Link"
+msgstr "رابط الحالة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Config/TransportConfigForm.php:84
+#, php-format
+msgid "Invalid command transport type \"%s\" given"
+msgstr "نوع ناقل الأمر المعطى \"%s\" غير صالح "
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Navigation/ActionForm.php:61
+#, php-format
+msgid "Invalid filter provided. You can only use the following columns: %s"
+msgstr "تم تزويد مرشح غير صالح. تستطيع استخدام الأعمدة التالية فقط: %s"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ListController.php:245
+msgid "Is In Effect"
+msgstr "ساري المفعول"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/components/checksource.phtml:11
+msgid "Is reachable"
+msgstr "يمكن الوصول إليه"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Setup/WelcomePage.php:43
+msgid ""
+"It offers various status and reporting views with powerful filter "
+"capabilities that allow you to keep track of the most important events in "
+"your monitoring environment."
+msgstr ""
+"ويقدم الوضع عروض مختلفة للحالة والتقارير مع قدرات تصفية قوية "
+"تسمح لك بتتبع أهم الأحداث في بيئة المراقبة الخاصة بك."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/helpers/Perfdata.php:36
+msgid "Label"
+msgstr "عنوان"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ListController.php:91
+msgid "Last Check"
+msgstr "آخر فحص"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/health/info.phtml:32
+msgid "Last External Command Check"
+msgstr "آخر فحص أمر خارجي"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ListController.php:177
+msgid "Last Host Check"
+msgstr "آخر فحص لمضيف"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/health/info.phtml:36
+msgid "Last Log File Rotation"
+msgstr "آخر تدوير لملف السحل"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ListController.php:171
+msgid "Last Service Check"
+msgstr "آخر فحص لخدمة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ListController.php:92
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ListController.php:172
+msgid "Last State Change"
+msgstr "آخر تغيير حالة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/health/info.phtml:28
+msgid "Last Status Update"
+msgstr "آخر تحديث للحالة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/components/checkstatistics.phtml:7
+msgid "Last check"
+msgstr "آخر فحص"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/components/checkstatistics.phtml:7
+msgid "Last update"
+msgstr "آخر تحديث"
+
+#: /usr/share/icingaweb2/modules/monitoring/configuration.php:294
+msgid "Late Host Check Results"
+msgstr "آخر نتائج لفحص المضيف"
+
+#: /usr/share/icingaweb2/modules/monitoring/configuration.php:298
+msgid "Late Service Check Results"
+msgstr "آخر نتائج لفحص الخدمة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/health/stats.phtml:115
+msgid "Latency"
+msgstr "تأخير"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/timeline/index.phtml:15
+msgid "Legend"
+msgstr "الدليل"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/components/notes.phtml:23
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/components/notes.phtml:24
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/components/actions.phtml:17
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/components/actions.phtml:18
+msgid "Link opens in new window"
+msgstr "يفتح الرابط في نافذة جديدة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/list/hosts.phtml:75
+#, php-format
+msgid "List %s unhandled service problem on host %s"
+msgid_plural "List %s unhandled service problems on host %s"
+msgstr[0] "سرد مشكلة الخدمة غير المعالجة %s على المضيف %s"
+msgstr[1] "سرد مشاكل الخدمة غير المعالجة %s على المضيف %s"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/timeline/index.phtml:112
+#, php-format
+msgctxt "timeline.link.title"
+msgid "List %u %s registered %s"
+msgstr "سرد %u %s مسجلة %s"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/hostservicechecks.phtml:26
+#, php-format
+msgid "List %u actively checked host"
+msgid_plural "List %u actively checked hosts"
+msgstr[0] "سرد %u مضيف مفحوص بطريقة نشطة"
+msgstr[1] "سرد %u من المضيفين المفحوصين بطريقة نشطة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/hostservicechecks.phtml:82
+#, php-format
+msgid "List %u actively checked service"
+msgid_plural "List %u actively checked services"
+msgstr[0] "سرد الخدمة %u المفحوصة بطريقة نشطة"
+msgstr[1] "سرد الخدمات %u المفحوصة بطريقة نشطة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/list/components/hostssummary.phtml:17
+#, php-format
+msgid "List %u host"
+msgid_plural "List all %u hosts"
+msgstr[0] "سرد %u مضيف"
+msgstr[1] "سرد %u من المضيفين"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:29
+#, php-format
+msgid "List %u host for which flap detection has been disabled"
+msgid_plural "List %u hosts for which flap detection has been disabled"
+msgstr[0] "سرد %u مضيف عطل فيه كشف التذبذب"
+msgstr[1] "سرد %u من المضيفين الذين عطل فيهم كشف التذبذب"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:150
+#, php-format
+msgid "List %u host for which notifications are suppressed"
+msgid_plural "List %u hosts for which notifications are suppressed"
+msgstr[0] "سرد %u مضيف حيث أُخمدت التنبيهات"
+msgstr[1] "سرد %u  من المضيفين حيث أُخمدت التنبيهات"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:59
+#, php-format
+msgid "List %u host that is currently flapping"
+msgid_plural "List %u hosts which are currently flapping"
+msgstr[0] "سرد %u مضيف يتذبذب حاليا"
+msgstr[1] "سرد %u مضيف يتذبذب حاليا"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/problem_hosts.phtml:18
+#, php-format
+msgid "List %u host that is currently in state DOWN"
+msgid_plural "List %u hosts which are currently in state DOWN"
+msgstr[0] "سرد %u مضيف حاليا في حالة \"متوقف\""
+msgstr[1] "سرد %u من المضيفين حاليا في حالة \"متوقف\""
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/ok_hosts.phtml:41
+#, php-format
+msgid "List %u host that is currently in state PENDING"
+msgid_plural "List %u hosts which are currently in state PENDING"
+msgstr[0] "سرد %u مضيف حاليا في حالة \"معلق\""
+msgstr[1] "سرد %u من المضيفين حاليا في حالة \"معلق\""
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/problem_hosts.phtml:40
+#, php-format
+msgid "List %u host that is currently in state UNREACHABLE"
+msgid_plural "List %u hosts which are currently in state UNREACHABLE"
+msgstr[0] "سرد %u مضيف حاليا في حالة \"لا يمكن الوصول\""
+msgstr[1] "سرد %u من المضيفين حاليا في حالة \"لا يمكن الوصول\""
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/ok_hosts.phtml:23
+#, php-format
+msgid "List %u host that is currently in state UP"
+msgid_plural "List %u hosts which are currently in state UP"
+msgstr[0] "سرد %u مضيف حاليا في حالة \"سليم\""
+msgstr[1] "سرد %u من المضيفين حاليا في حالة \"سليمة\""
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/hostservicechecks.phtml:62
+#, php-format
+msgid "List %u host that is not being checked at all"
+msgid_plural "List %u hosts which are not being checked at all"
+msgstr[0] "سرد %u مضيف لم يتم فحصه مطلقا"
+msgstr[1] "سرد %u من المضيفين لم يتم فحصها مطلقا"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:229
+#, php-format
+msgid "List %u host that is not processing any event handlers"
+msgid_plural "List %u hosts which are not processing any event handlers"
+msgstr[0] "سرد %u مضيف لا تقوم بمعالجة أي معالجات حدث"
+msgstr[1] "سرد %u من المضيفين لا تقوم بمعالجة أي معالجات حدث"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/hostservicechecks.phtml:44
+#, php-format
+msgid "List %u passively checked host"
+msgid_plural "List %u passively checked hosts"
+msgstr[0] "سرد %u مضيف مفحوص بطريقة سالبة"
+msgstr[1] "سرد %u من المضيفين المفحوصين بطريقة سالبة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/hostservicechecks.phtml:100
+#, php-format
+msgid "List %u passively checked service"
+msgid_plural "List %u passively checked services"
+msgstr[0] "سرد %u خدمة مفحوصة بطريقة سالبة"
+msgstr[1] "سرد %u من الخدمات المفحوصة بطريقة سالبة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/list/components/servicesummary.phtml:20
+#, php-format
+msgid "List %u service"
+msgid_plural "List all %u services"
+msgstr[0] "سرد %u خدمة"
+msgstr[1] "سرد %u من الخدمات"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:84
+#, php-format
+msgid "List %u service for which flap detection has been disabled"
+msgid_plural "List %u services for which flap detection has been disabled"
+msgstr[0] "سرد %u خدمة عطل فيه كشف التذبذب"
+msgstr[1] "سرد %u من الخدمات التي عطل فيها كشف التذبذب"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:184
+#, php-format
+msgid "List %u service for which notifications are suppressed"
+msgid_plural "List %u services for which notifications are suppressed"
+msgstr[0] "سرد %u خدمة حيث أُخمدت التنبيهات"
+msgstr[1] "سرد %u من الخدمات حيث أُخمدت التنبيهات"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:114
+#, php-format
+msgid "List %u service that is currently flapping"
+msgid_plural "List %u services which are currently flapping"
+msgstr[0] "سرد %u خدمة مذبذبة حاليا"
+msgstr[1] "سرد %u من الخدمات مذبذبة حاليا"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:20
+#, php-format
+msgid "List %u service that is currently in state CRITICAL"
+msgid_plural "List %u services which are currently in state CRITICAL"
+msgstr[0] "سرد %u خدمة حاليا في حالة \"ضرورية\""
+msgstr[1] "سرد %u من الخدمات حاليا في حالة \"ضرورية\""
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:41
+#, php-format
+msgid "List %u service that is currently in state CRITICAL (Handled)"
+msgid_plural "List %u services which are currently in state CRITICAL (Handled)"
+msgstr[0] "سرد %u خدمة حاليا في حالة \"ضرورية\" (مُعالجة)"
+msgstr[1] "سرد %u من الخدمات حاليا في حالة \"ضرورية\" (مُعالجة)"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:95
+#, php-format
+msgid ""
+"List %u service that is currently in state CRITICAL and not checked at all"
+msgid_plural ""
+"List %u services which are currently in state CRITICAL and not checked at all"
+msgstr[0] "سرد %u خدمة حاليا في حالة \"ضرورية\" ولم يتم فحصها مطلقا"
+msgstr[1] "سرد %u من الخدمات حاليا في حالة \"ضرورية\" ولم يتم فحصها مطلقا"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:68
+#, php-format
+msgid ""
+"List %u service that is currently in state CRITICAL and passively checked"
+msgid_plural ""
+"List %u services which are currently in state CRITICAL and passively checked"
+msgstr[0] "سرد %u خدمة حاليا في حالة \"ضرورية\" وتم فحصها سلبيا"
+msgstr[1] "سرد %u من الخدمات حاليا في حالة \"ضرورية\" وتم فحصها سلبيا"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:314
+#, php-format
+msgid "List %u service that is currently in state OK"
+msgid_plural "List %u services which are currently in state OK"
+msgstr[0] "سرد %u خدمة حاليا في حالة \"سليمة\""
+msgstr[1] "سرد %u من الخدمات حاليا في حالة \"سليمة\""
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:340
+#, php-format
+msgid "List %u service that is currently in state OK and not checked at all"
+msgid_plural ""
+"List %u services which are currently in state OK and not checked at all"
+msgstr[0] "سرد %u خدمة حاليا في حالة \"سليمة\" ولم يتم فحصها مطلقا"
+msgstr[1] "سرد %u من الخدمات حاليا في حالة \"سليمة\" ولم يتم فحصها مطلقا"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:361
+#, php-format
+msgid "List %u service that is currently in state PENDING"
+msgid_plural "List %u services which are currently in state PENDING"
+msgstr[0] "سرد %u خدمة حاليا في حالة \"معلقة\""
+msgstr[1] "سرد %u من الخدمات حاليا في حالة \"معلقة\""
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:387
+#, php-format
+msgid ""
+"List %u service that is currently in state PENDING and not checked at all"
+msgid_plural ""
+"List %u services which are currently in state PENDING and not checked at all"
+msgstr[0] "سرد %u خدمة حاليا في حالة \"معلقة\" ولم يتم فحصها مطلقا"
+msgstr[1] "سرد %u من الخدمات حاليا في حالة \"معلقة\" ولم يتم فحصها مطلقا"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:218
+#, php-format
+msgid "List %u service that is currently in state UNKNOWN"
+msgid_plural "List %u services which are currently in state UNKNOWN"
+msgstr[0] "سرد %u خدمة حاليا في حالة \"مجهولة\""
+msgstr[1] "سرد %u من الخدمات حاليا في حالة \"مجهولة\""
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:239
+#, php-format
+msgid "List %u service that is currently in state UNKNOWN (Handled)"
+msgid_plural "List %u services which are currently in state UNKNOWN (Handled)"
+msgstr[0] "سرد %u خدمة حاليا في حالة \"مجهولة\" (معالجة)"
+msgstr[1] "سرد %u من الخدمات حاليا في حالة \"مجهولة\" (مُعالجة)"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:293
+#, php-format
+msgid ""
+"List %u service that is currently in state UNKNOWN and not checked at all"
+msgid_plural ""
+"List %u services which are currently in state UNKNOWN and not checked at all"
+msgstr[0] "سرد %u خدمة حاليا في حالة \"مجهولة\" ولم يتم فحصها مطلقا"
+msgstr[1] "سرد %u من الخدمات حاليا في حالة \"مجهولة\" ولم يتم فحصها مطلقا"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:266
+#, php-format
+msgid ""
+"List %u service that is currently in state UNKNOWN and passively checked"
+msgid_plural ""
+"List %u services which are currently in state UNKNOWN and passively checked"
+msgstr[0] "سرد %u خدمة حاليا في حالة \"مجهولة\" وتم فحصها سلبيا"
+msgstr[1] "سرد %u من الخدمات حاليا في حالة \"مجهولة\" وتم فحصها سلبيا"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:119
+#, php-format
+msgid "List %u service that is currently in state WARNING"
+msgid_plural "List %u services which are currently in state WARNING"
+msgstr[0] "سرد %u خدمة حاليا في حالة \"تحذير\""
+msgstr[1] "سرد %u من الخدمات حاليا في حالة \"تحذير\""
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:140
+#, php-format
+msgid "List %u service that is currently in state WARNING (Handled)"
+msgid_plural "List %u services which are currently in state WARNING (Handled)"
+msgstr[0] "سرد %u خدمة حاليا في حالة \"تحذير\" (مُعالجة)"
+msgstr[1] "سرد %u من الخدمات حاليا في حالة \"تحذير\" (مُعالجة)"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:194
+#, php-format
+msgid ""
+"List %u service that is currently in state WARNING and not checked at all"
+msgid_plural ""
+"List %u services which are currently in state WARNING and not checked at all"
+msgstr[0] "سرد %u خدمة حاليا في حالة \"تحذير\" ولم يتم فحصها مطلقا"
+msgstr[1] "سرد %u من الخدمات حاليا في حالة \"تحذير\" ولم يتم فحصها مطلقا"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:167
+#, php-format
+msgid ""
+"List %u service that is currently in state WARNING and passively checked"
+msgid_plural ""
+"List %u services which are currently in state WARNING and passively checked"
+msgstr[0] "سرد %u خدمة حاليا في حالة \"تحذير\" وتم فحصها سلبيا"
+msgstr[1] "سرد %u من الخدمات حاليا في حالة \"تحذير\" وتم فحصها سلبيا"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/hostservicechecks.phtml:118
+#, php-format
+msgid "List %u service that is not being checked at all"
+msgid_plural "List %u services which are not being checked at all"
+msgstr[0] "سرد %u خدمة لم يتم فحصها مطلقا"
+msgstr[1] "سرد %u من الخدمات التي لم يتم فحصها مطلقا"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:263
+#, php-format
+msgid "List %u service that is not processing any event handlers"
+msgid_plural "List %u services which are not processing any event handlers"
+msgstr[0] "سرد %u خدمة لا تقوم بمعالجة أي معالجات حدث"
+msgstr[1] "سرد %u من الخدمات التي لا تقوم بمعالجة أي معالجات حدث"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/partials/comment/comments-header.phtml:23
+#, php-format
+msgid "List all %d comments"
+msgstr "سرد جميع التعليقات %d"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/partials/downtime/downtimes-header.phtml:31
+#, php-format
+msgid "List all %d downtimes"
+msgstr "سرد جميع أزمنة التوقف %d"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/partials/host/objects-header.phtml:32
+#, php-format
+msgid "List all %d hosts"
+msgstr "سرد جميع المضيفين %d"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/partials/service/objects-header.phtml:36
+#, php-format
+msgid "List all %d services"
+msgstr "سرد جميع الخدمات %d"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/timeline/index.phtml:74
+#, php-format
+msgctxt "timeline.link.title"
+msgid "List all event records registered %s"
+msgstr "سرد جميع سجلات الأحداث المسجلة %s"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/components/hostgroups.phtml:11
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/list/hostgroups.phtml:43
+#, php-format
+msgid "List all hosts in the group \"%s\""
+msgstr "سرد جميع المضيفين في مجموعة \"%s\""
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:43
+msgid "List all hosts, for which flap detection is enabled entirely"
+msgstr "سرد جميع المضيفين الذين فُعل لهم كشف التذبذب بصورة كاملة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:164
+msgid "List all hosts, for which notifications are enabled entirely"
+msgstr "سرد جميع المضيفين الذين فُعلت لهم التنبيهات بصورة كاملة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:243
+msgid "List all hosts, which are processing event handlers entirely"
+msgstr "سرد جميع المضيفين الذين يقومون بمعالجة معالجات الحدث بصورة كاملة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/list/servicegrid.phtml:56
+#, php-format
+msgid "List all reported services on host %s"
+msgstr "سرد جميع الخدمات المذكورة على المضيف %s"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/components/servicegroups.phtml:11
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/list/servicegroups.phtml:38
+#, php-format
+msgid "List all services in the group \"%s\""
+msgstr "سرد جميع الخدمات في مجموعة \"%s\""
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/list/hostgroups.phtml:141
+#, php-format
+msgid "List all services of all hosts in host group \"%s\""
+msgstr "سرد جميع الخدمات لكل المضيفين في مجموعة المضيف \"%s\""
+
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/Web/Controller/MonitoredObjectController.php:209
+#, php-format
+msgid "List all services on host %s"
+msgstr "سرد جميع الخدمات على المضيف %s"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/list/servicegrid.phtml:36
+#, php-format
+msgid "List all services with the name \"%s\" on all reported hosts"
+msgstr "سرد جميع الخدمات باسم \"%s\" على جميع المضيفين المذكورين"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:98
+msgid "List all services, for which flap detection is enabled entirely"
+msgstr "سرد جميع الخدمات اللاتي فُعّل لها كشف التذبذب بصورة كاملة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:198
+msgid "List all services, for which notifications are enabled entirely"
+msgstr "سرد جميع الخدمات اللاتي فُعّلت لها التنبيهات بصورة كاملة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:277
+msgid "List all services, which are processing event handlers entirely"
+msgstr "سرد جميع الخدمات اللاتي تُعالج معالجات الحدث بصورة كاملة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ListController.php:411
+msgid "List comments"
+msgstr "سرد التعليقات"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ListController.php:382
+msgid "List contact groups"
+msgstr "سرد مجموعات جهة الاتصال"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ListController.php:308
+msgid "List contacts"
+msgstr "سرد جهات الاتصال"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/components/contacts.phtml:29
+#, php-format
+msgid "List contacts in contact-group \"%s\""
+msgstr "سرد جهات الاتصال في مجموعة الاتصال \"%s\""
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ListController.php:213
+msgid "List downtimes"
+msgstr "سرد أزمنة التوقف"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ListController.php:547
+msgid "List event records"
+msgstr "سرد سجلات الحدث"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ListController.php:502
+msgid "List host groups"
+msgstr "سرد مجموعات المضيف"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ListController.php:49
+msgid "List hosts"
+msgstr "سرد المضيفين"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ListController.php:273
+msgid "List notifications"
+msgstr "سرد التنبيهات"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ListController.php:462
+msgid "List service groups"
+msgstr "سرد مجموعات الخدمة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ListController.php:124
+msgid "List services"
+msgstr "سرد الخدمات"
+
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/BackendStep.php:119
+msgid "Livestatus Resource"
+msgstr "مورد Livestatus"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/partials/event-history.phtml:183
+msgid "Load More"
+msgstr "تحميل أكثر"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/list/servicegrid.phtml:93
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/list/servicegrid.phtml:114
+msgid "Load more"
+msgstr "تحميل أكثر"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/config/index.phtml:95
+msgid "Local"
+msgstr "محلي"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Config/TransportConfigForm.php:225
+msgid "Local Command File"
+msgstr "ملف أمر محلي"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Config/Transport/RemoteTransportForm.php:89
+msgid "Make use of the ssh identity resource"
+msgstr "استخدم مورد الهوية ssh"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/helpers/Perfdata.php:39
+msgid "Max"
+msgstr "أقصى"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/AlertsummaryController.php:444
+msgid "Max (min)"
+msgstr "أقصى (أدنى)"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/helpers/Perfdata.php:38
+msgid "Min"
+msgstr "أدنى"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/ScheduleServiceDowntimeCommandForm.php:147
+msgid "Minutes"
+msgstr "دقائق"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/config/index.phtml:21
+msgid "Monitoring Backend"
+msgstr "مراقبة الخلفية"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Setup/BackendPage.php:14
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/BackendStep.php:73
+msgctxt "setup.page.title"
+msgid "Monitoring Backend"
+msgstr "مراقبة الخلفية"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/config/index.phtml:7
+msgid "Monitoring Backends"
+msgstr "مراقبة الخلفيات"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:3
+msgid "Monitoring Features"
+msgstr "مراقبة المميزات"
+
+#: /usr/share/icingaweb2/modules/monitoring/configuration.php:249
+msgid "Monitoring Health"
+msgstr "مراقبة الصحة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Setup/IdoResourcePage.php:21
+msgctxt "setup.page.title"
+msgid "Monitoring IDO Resource"
+msgstr "مراقبة مورد IDO"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Setup/LivestatusResourcePage.php:14
+msgctxt "setup.page.title"
+msgid "Monitoring Livestatus Resource"
+msgstr "مراقبة مورد Livestatus"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Setup/SecurityPage.php:14
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/SecurityStep.php:42
+msgctxt "setup.page.title"
+msgid "Monitoring Security"
+msgstr "مراقبة  الأمان"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ConfigController.php:79
+#, php-format
+msgid "Monitoring backend \"%s\" not found"
+msgstr "مراقبة الخلفية \"%s\" غير موجود"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ConfigController.php:149
+#, php-format
+msgid "Monitoring backend \"%s\" successfully removed"
+msgstr "تمت إزالة مراقبة الخلفية \"%s\" بنجاح"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ConfigController.php:68
+#, php-format
+msgid "Monitoring backend \"%s\" successfully updated"
+msgstr "تم تحديث مراقبة الخلفية \"%s\" بنجاح"
+
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/Web/Navigation/Renderer/BackendAvailabilityNavigationItemRenderer.php:66
+#, php-format
+msgid "Monitoring backend %s is not running"
+msgstr "الخلفية %s لا تعمل"
+
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/BackendStep.php:151
+#, php-format
+msgid ""
+"Monitoring backend configuration could not be written to: %s. An error "
+"occured:"
+msgstr "إعداد خلفية المراقبة لم يُتمكن من كتابته إلى: %s. حدث خطأ:"
+
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/BackendStep.php:144
+#, php-format
+msgid "Monitoring backend configuration has been successfully written to: %s"
+msgstr "إعداد خلفية المراقبة تمت كتابته إلى: %s بنجاح"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ConfigController.php:116
+msgid "Monitoring backend successfully created"
+msgstr "تم إنشاء خلفية المراقبة بنجاح"
+
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/SecurityStep.php:76
+#, php-format
+msgid ""
+"Monitoring security configuration could not be written to: %s. An error "
+"occured:"
+msgstr "إعداد مراقبة الأمان لم يُتمكن من كتابته إلى: %s. حدث خطأ:"
+
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/SecurityStep.php:68
+#, php-format
+msgid "Monitoring security configuration has been successfully created: %s"
+msgstr "إعداد مراقبة الأمان تم إنشاؤه بنجاح: %s"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/AlertsummaryController.php:648
+msgid "Month"
+msgstr "شهر"
+
+#: /usr/share/icingaweb2/modules/monitoring/configuration.php:313
+msgid "Muted"
+msgstr "صامت"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/health/info.phtml:21
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/health/info.phtml:39
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/health/info.phtml:45
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/health/info.phtml:51
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/health/info.phtml:57
+msgid "N/A"
+msgstr "غير متوفر"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/partials/event-history.phtml:49
+msgid "NOTIFICATION"
+msgstr "تنبيه"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/list/contacts.phtml:20
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ListController.php:325
+msgid "Name"
+msgstr "اسم"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Config/SecurityConfigForm.php:31
+msgid "New security configuration has successfully been stored"
+msgstr "تم تخزين إعداد الأمان الجديد بنجاح"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/components/checkstatistics.phtml:22
+msgid "Next check"
+msgstr "الفحص التالي"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/components/checkstatistics.phtml:22
+msgid "Next update"
+msgstr "التحديث التالي"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/downtime/show.phtml:155
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/comment/show.phtml:48
+msgid "No"
+msgstr "لا"
+
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/Backend/MonitoringBackend.php:176
+msgid "No backend has been configured"
+msgstr "لم يتمّ تهيئة أيّة خلفية"
+
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/Command/Transport/CommandTransport.php:41
+#, php-format
+msgid "No command transports have been configured in \"%s\"."
+msgstr "لم يتمّ تهيئة أيّ أمر نواقل في: \"%s\""
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/list/comments.phtml:15
+msgid "No comments found matching the filter"
+msgstr "لا توجد تعليقات توافق المرشح"
+
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/Backend/MonitoringBackend.php:189
+#, php-format
+msgid "No configuration for backend %s"
+msgstr "لا يوجد إعداد للخلفية %s"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/list/contactgroups.phtml:16
+msgid "No contact groups found matching the filter"
+msgstr "لا توجد مجموعات توافق المرشح"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/list/contacts.phtml:14
+msgid "No contacts found matching the filter"
+msgstr "لا توجد جهات اتصال توافق المرشح"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/list/downtimes.phtml:19
+msgid "No downtimes found matching the filter."
+msgstr "لا يوجد أزمنة توقف توافق المرشح."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/partials/event-history.phtml:31
+msgid "No historical events found matching the filter."
+msgstr "لا توجد أحداث تاريخية توافق المرشح."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/list/hostgroups.phtml:18
+msgid "No host groups found matching the filter."
+msgstr "لا توجد مجموعات مضيف توافق المرشح."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/hosts/show.phtml:18
+msgid "No hosts found matching the filter"
+msgstr "لا يوجد مضيفين يوافقون المرشح"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/list/hosts.phtml:19
+msgid "No hosts found matching the filter."
+msgstr "لا يوجد مضيفين يوافقون المرشح."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/components/notifications.phtml:62
+msgid "No notification has been sent for this issue."
+msgstr "لم تُرسَل أي تنبيهات لهذه المشكلة."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/list/notifications.phtml:18
+msgid "No notifications found matching the filter."
+msgstr "لا يوجد تنبيهات توافق المرشح."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/contact.phtml:69
+msgid "No notifications have been sent for this contact"
+msgstr "لم تُرسَل أي تنبيهات لجهة الاتصال هذه"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/list/servicegroups.phtml:16
+msgid "No service groups found matching the filter."
+msgstr "لا توجد مجموعات خدمة توافق المرشح."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/services/show.phtml:20
+msgid "No services found matching the filter"
+msgstr "لا توجد خدمات توافق المرشح"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/list/services.phtml:20
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/list/servicegrid.phtml:14
+msgid "No services found matching the filter."
+msgstr "لا توجد خدمات توافق المرشح."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/list/eventgrid.phtml:77
+msgid "No state changes in the selected time period."
+msgstr "ليس هناك تغييرات حالة في الفترة الزمنية المحددة."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/contact.phtml:12
+msgid "No such contact"
+msgstr "جهة الاتصال غير موجودة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Config/TransportConfigForm.php:198
+msgctxt "command transport instance association"
+msgid "None"
+msgstr "لا شيء"
+
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/SecurityStep.php:56
+msgctxt "monitoring.protected_customvars"
+msgid "None"
+msgstr "لا شيء"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/components/acknowledgement.phtml:57
+msgid "Not acknowledged"
+msgstr "غير معترف به"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/components/checksource.phtml:13
+msgid "Not reachable"
+msgstr "لا يمكن الوصول إليه"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/list/notifications.phtml:68
+msgid "Not sent out to any contact"
+msgstr "لم يتم إرساله لأي جهة اتصال"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/components/notes.phtml:43
+msgid "Notes"
+msgstr "ملاحظات"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ListController.php:294
+msgid "Notification Start"
+msgstr "بداية التنبيه"
+
+#: /usr/share/icingaweb2/modules/monitoring/configuration.php:224
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:129
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:131
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/hosts/show.phtml:137
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/hosts/show.phtml:141
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/partials/object/detail-content.phtml:24
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/services/show.phtml:138
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/services/show.phtml:143
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/components/notifications.phtml:2
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/EventOverviewForm.php:74
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/ToggleObjectFeaturesCommandForm.php:50
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Instance/ToggleInstanceFeaturesCommandForm.php:126
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/AlertsummaryController.php:329
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/AlertsummaryController.php:424
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/AlertsummaryController.php:467
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/AlertsummaryController.php:474
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/TimelineController.php:50
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ListController.php:272
+msgid "Notifications"
+msgstr "تنبيهات"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/partials/service/statusicons.phtml:13
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/partials/host/statusicons.phtml:13
+#: /usr/share/icingaweb2/modules/monitoring/application/views/helpers/HostFlags.php:22
+#: /usr/share/icingaweb2/modules/monitoring/application/views/helpers/ServiceFlags.php:18
+msgid "Notifications Disabled"
+msgstr "التنبيهات معطلة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/alertsummary/index.phtml:15
+msgid "Notifications and Problems"
+msgstr "التنبيهات والمشاكل"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/AlertsummaryController.php:326
+msgid "Notifications and average reaction time per hour."
+msgstr "التنبيهات ومتوسط زمن رد الفعل في الساعة."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/AlertsummaryController.php:464
+msgid "Notifications and defects per hour"
+msgstr "التنبيهات والعيوب في الساعة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/contact.phtml:58
+msgid "Notifications sent to this contact"
+msgstr "التنبيهات المرسلة لجهة الاتصال"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Instance/ToggleInstanceFeaturesCommandForm.php:78
+#, php-format
+msgid "Notifications will be re-enabled in <strong>%s</strong>"
+msgstr "سيعاد تفعيل التنبيهات في <strong>%s</strong>"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/health/disable-notifications.phtml:13
+#, php-format
+msgid "Notifications will be re-enabled in <strong>%s</strong>."
+msgstr "سيعاد تفعيل التنبيهات في <strong>%s</strong>."
+
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/Object/Service.php:190
+msgid "OK"
+msgstr "سليم"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/ProcessCheckResultCommandForm.php:56
+msgctxt "icinga.state"
+msgid "OK"
+msgstr "سليم"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/StatehistoryForm.php:96
+msgid "Object type"
+msgstr "نوع الكائن"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/ToggleObjectFeaturesCommandForm.php:46
+msgid "Obsessing"
+msgstr "توجس"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Instance/ToggleInstanceFeaturesCommandForm.php:149
+msgid "Obsessing Over Hosts"
+msgstr "توجس على المضيفين"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Instance/ToggleInstanceFeaturesCommandForm.php:158
+msgid "Obsessing Over Services"
+msgstr "توجس على الخدمات"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ListController.php:568
+msgid "Occurence"
+msgstr "حدوث"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/StatehistoryForm.php:120
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ChartController.php:243
+msgid "Ok"
+msgstr "سليم"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/AlertsummaryController.php:535
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/TimelineController.php:104
+msgid "One day"
+msgstr "يوم واحد"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/AlertsummaryController.php:537
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/TimelineController.php:106
+msgid "One month"
+msgstr "شهر واحد"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/AlertsummaryController.php:536
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/TimelineController.php:105
+msgid "One week"
+msgstr "أسبوع واحد"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/AlertsummaryController.php:538
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/TimelineController.php:107
+msgid "One year"
+msgstr "سنة واحدة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/ProcessCheckResultCommandForm.php:68
+msgid "Output"
+msgstr "مخرج"
+
+#: /usr/share/icingaweb2/modules/monitoring/configuration.php:292
+msgid "Overdue"
+msgstr "متأخر"
+
+#: /usr/share/icingaweb2/modules/monitoring/configuration.php:168
+msgid "Overview"
+msgstr "نظرة عامة"
+
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/Object/Host.php:191
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/Object/Service.php:202
+msgid "PENDING"
+msgstr "معلق"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/contact.phtml:34
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/list/contacts.phtml:22
+msgid "Pager"
+msgstr "جهاز إخطار"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ListController.php:328
+msgid "Pager Address / Number"
+msgstr "عنوان / رقم جهاز الإخطار"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/health/stats.phtml:141
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/ToggleObjectFeaturesCommandForm.php:42
+msgid "Passive Checks"
+msgstr "اختبارات سلبية"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Instance/ToggleInstanceFeaturesCommandForm.php:167
+msgid "Passive Host Checks"
+msgstr "فحوصات مضيف سلبية"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Instance/ToggleInstanceFeaturesCommandForm.php:176
+msgid "Passive Service Checks"
+msgstr "فحوصات الخدمة السلبية"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/health/stats.phtml:136
+msgid "Passive checks"
+msgstr "فحوصات سلبية"
+
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/BackendStep.php:113
+msgid "Password"
+msgstr "كلمة مرور"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Config/Transport/RemoteTransportForm.php:179
+msgid "Path to the Icinga command file on the remote Icinga instance"
+msgstr "مسار ملف أمر إسنجا على حالة إسنجا البعيدة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Config/Transport/LocalTransportForm.php:32
+msgid "Path to the local Icinga command file"
+msgstr "مسار ملف أمر إسنجا المحلي"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/health/stats.phtml:88
+msgid "Per Host"
+msgstr "لكل مضيف"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/ProcessCheckResultCommandForm.php:77
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Instance/ToggleInstanceFeaturesCommandForm.php:187
+msgid "Performance Data"
+msgstr "بيانات الأداء"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/components/perfdata.phtml:2
+msgid "Performance data"
+msgstr "بيانات الأداء"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/comment/show.phtml:47
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/AddCommentCommandForm.php:55
+msgid "Persistent"
+msgstr "دائم"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/AcknowledgeProblemCommandForm.php:61
+msgid "Persistent Comment"
+msgstr "تعليق دائم"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Setup/BackendPage.php:16
+msgid ""
+"Please configure below how Icinga Web 2 should retrieve monitoring "
+"information."
+msgstr "الرجاء إعداد كيفية استعادة معلومات المراقبة من قبل إسنجا وب 2"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Setup/TransportPage.php:16
+msgid ""
+"Please define below how you want to send commands to your monitoring "
+"instance."
+msgstr "الرجاء تعريف كيف تريد إرسال أوامر لحالة المراقبة خاصتك."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Setup/IdoResourcePage.php:23
+msgid ""
+"Please fill out the connection details below to access the IDO database of "
+"your monitoring environment."
+msgstr "الرجاء تعبئة تفاصيل الاتصال أدناه للوصول لقاعدة بيانات بيئة المراقبة."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Setup/LivestatusResourcePage.php:16
+msgid ""
+"Please fill out the connection details below to access the Livestatus socket "
+"interface for your monitoring environment."
+msgstr ""
+"الرجاء تعبئة تفاصيل الاتصال أدناه للوصول لواجهة مقبس Livestatus لبيئة"
+" المراقبة خاصتك."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/components/output.phtml:1
+msgid "Plugin Output"
+msgstr "مخرج التوصيل"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Config/Transport/RemoteTransportForm.php:150
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/BackendStep.php:101
+msgid "Port"
+msgstr "المنفذ"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/list/components/selectioninfo.phtml:3
+msgctxt "Multi-selection help"
+msgid ""
+"Press and hold the Ctrl key while clicking on rows to select multiple rows "
+"or press and hold the Shift key to select a range of rows"
+msgstr ""
+"اضغط باستمرار على مفتاح Ctrl أثناء الضغط على صفوف لاختيار صفوف متعددة "
+"أو الضغط باستمرار مع مفتاح Shift لاختيار مدى من الصفوف"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/hosts/show.phtml:20
+msgid "Problem Handling"
+msgstr "معالجة المشكلة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/partials/object/detail-content.phtml:5
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/services/show.phtml:22
+msgid "Problem handling"
+msgstr "معالجة المشكلة"
+
+#: /usr/share/icingaweb2/modules/monitoring/configuration.php:124
+msgid "Problems"
+msgstr "المشاكل"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/health/info.phtml:14
+msgid "Process Info"
+msgstr "معلومات العملية"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/HealthController.php:33
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/HealthController.php:55
+msgid "Process Information"
+msgstr "معلومات العملية"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/hosts/show.phtml:166
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/services/show.phtml:168
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/components/command.phtml:21
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/components/command.phtml:33
+msgid "Process check result"
+msgstr "معالجة نتيجة الفحص"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/ProcessCheckResultCommandForm.php:107
+msgid "Processing check result.."
+msgid_plural "Processing check results.."
+msgstr[0] "معالجة نتيجة الفحص.."
+msgstr[1] "معالجة نتائج الفحص.."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/health/info.phtml:24
+msgid "Program Start Time"
+msgstr "زمن بداية البرنامج"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/health/info.phtml:18
+msgid "Program Version"
+msgstr "إصدار البرنامج"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Config/SecurityConfigForm.php:56
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/SecurityStep.php:53
+msgid "Protected Custom Variables"
+msgstr "متغيرات مخصصة محمية"
+
+#: /usr/share/icingaweb2/modules/monitoring/configuration.php:264
+msgid "Recently Recovered Services"
+msgstr "خدمات تعافت مؤخرا"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/config/index.phtml:95
+msgid "Remote"
+msgstr "بعيد"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Config/TransportConfigForm.php:226
+msgid "Remote Command File"
+msgstr "ملف أمر بعيد"
+
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/TransportStep.php:59
+msgid "Remote Host"
+msgstr "مضيف بعيد"
+
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/TransportStep.php:63
+msgid "Remote SSH Port"
+msgstr "منفذ SSH بعيد"
+
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/TransportStep.php:67
+msgid "Remote SSH User"
+msgstr "مستخدم SSH بعيد"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/DeleteDowntimesCommandForm.php:63
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/DeleteCommentsCommandForm.php:63
+msgid "Remove"
+msgid_plural "Remove All"
+msgstr[0] "إزالة"
+msgstr[1] "إزالة الكل"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/comments/show.phtml:11
+#, php-format
+msgid "Remove %d comments"
+msgstr "إزالة %d من التعليقات"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ConfigController.php:172
+#, php-format
+msgid "Remove Command Transport %s"
+msgstr "إزالة ناقل أمر %s"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ConfigController.php:139
+#, php-format
+msgid "Remove Monitoring Backend %s"
+msgstr "إزالة خلفية مراقبة %s"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/downtimes/show.phtml:11
+#, php-format
+msgid "Remove all %d scheduled downtimes"
+msgstr "إزالة كل أزمنة المجدولة %d"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/CommentsController.php:93
+msgid "Remove all Comments"
+msgstr "إزالة كل التعليقات"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/DowntimesController.php:97
+msgid "Remove all Downtimes"
+msgstr "إزالة كل أزمنة التوقف"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/comments/show.phtml:16
+msgid "Remove all selected comments"
+msgstr "إزالة كل التعليقات المحددة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/downtimes/show.phtml:16
+msgid "Remove all selected downtimes"
+msgstr "إزالة كل أزمنة التوقف المحددة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/config/index.phtml:107
+#, php-format
+msgid "Remove command transport %s"
+msgstr "إزالة ناقل الأمر %s"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/config/index.phtml:52
+#, php-format
+msgid "Remove monitoring backend %s"
+msgstr "إزالة خلفية المراقبة %s"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/RemoveAcknowledgementCommandForm.php:73
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/RemoveAcknowledgementCommandForm.php:92
+msgid "Remove problem acknowledgement"
+msgid_plural "Remove problem acknowledgements"
+msgstr[0] "إزالة إشعار مشكلة"
+msgstr[1] "إزالة إشعارات مشكلة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/RemoveAcknowledgementCommandForm.php:114
+msgid "Removing problem acknowledgement.."
+msgid_plural "Removing problem acknowledgements.."
+msgstr[0] "إزالة إشعار مشكلة.."
+msgstr[1] "إزالة إشعارات مشكلة.."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/AlertsummaryController.php:540
+msgid "Report interval"
+msgstr "فترة التقرير"
+
+#: /usr/share/icingaweb2/modules/monitoring/configuration.php:236
+msgid "Reporting"
+msgstr "التقارير"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/hosts/show.phtml:188
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/services/show.phtml:190
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/components/checkstatistics.phtml:34
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/components/checkstatistics.phtml:48
+msgid "Reschedule"
+msgstr "إعادة الجدولة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/HostController.php:142
+msgid "Reschedule Host Check"
+msgstr "إعادة جدولة فحص المضيف"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/HostsController.php:187
+msgid "Reschedule Host Checks"
+msgstr "إعادة جدولة فحص المضيفين"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ServiceController.php:100
+msgid "Reschedule Service Check"
+msgstr "إعادة جدولة فحص الخدمة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ServicesController.php:190
+msgid "Reschedule Service Checks"
+msgstr "إعادة جدولة فحوصات الخدمة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Config/BackendConfigForm.php:236
+msgid "Resource"
+msgstr "مورد"
+
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/BackendStep.php:89
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/BackendStep.php:124
+msgid "Resource Name"
+msgstr "اسم المورد"
+
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/BackendStep.php:165
+#, php-format
+msgid "Resource configuration could not be udpated: %s. An error occured:"
+msgstr "إعداد المورد لا يُمكن تحديثه: %s. حدث خطأ:"
+
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/BackendStep.php:160
+#, php-format
+msgid "Resource configuration has been successfully updated: %s"
+msgstr "إعداد المورد تم تحديثه بنجاح: %s"
+
+#: /usr/share/icingaweb2/modules/monitoring/configuration.php:85
+msgid "Restrict views to the Icinga objects that match the filter"
+msgstr "تقييد العروض بكائنات إسنجا التي توافق المرشح"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/health/stats.phtml:60
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/health/stats.phtml:86
+msgid "Runtime Variables"
+msgstr "متغيرات وقت التشغيل"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/partials/event-history.phtml:77
+msgid "SCHEDULED DOWNTIME"
+msgstr "زمن توقف مجدول"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Config/Transport/RemoteTransportForm.php:108
+msgid "SSH Identity"
+msgstr "هوية SSH"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Config/Transport/RemoteTransportForm.php:151
+msgid "SSH port to connect to on the remote Icinga instance"
+msgstr "منفذ SSH المُتصل به على حالة إسنجا البعيدة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/partials/downtime/downtime-header.phtml:6
+msgctxt "Downtime status"
+msgid "STARTS"
+msgstr "يبدأ"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Config/TransportConfigForm.php:40
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Config/BackendConfigForm.php:42
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Config/SecurityConfigForm.php:20
+msgid "Save Changes"
+msgstr "حفظ التغييرات"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/hosts/show.phtml:179
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/services/show.phtml:181
+msgid "Schedule Check"
+msgstr "فحص مجدول"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/HostController.php:154
+msgid "Schedule Host Downtime"
+msgstr "زمن توقف مضيف مجدول"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/HostsController.php:199
+msgid "Schedule Host Downtimes"
+msgstr "أزمنة توقف مضيف مجدولة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ServiceController.php:112
+msgid "Schedule Service Downtime"
+msgstr "زمن توقف خدمة مجدول"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ServicesController.php:202
+msgid "Schedule Service Downtimes"
+msgstr "أزمنة توقف خدمة مجدولة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/components/downtime.phtml:15
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/components/downtime.phtml:29
+msgid ""
+"Schedule a downtime to suppress all problem notifications within a specific "
+"period of time"
+msgstr "جدولة زمن توقف لإخماد كل تنبيهات المشكلة ضمن نطاق زمني محدد"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/ScheduleServiceCheckCommandForm.php:34
+msgid "Schedule check"
+msgid_plural "Schedule checks"
+msgstr[0] "جدولة فحص"
+msgstr[1] "جدولة فحوصات"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/ScheduleHostCheckCommandForm.php:28
+msgid "Schedule check for all services on the hosts and the hosts themselves."
+msgstr "جدولة فحص لكل خدمات المضيفين والمضيفين أنفسهم."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/components/downtime.phtml:7
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/components/downtime.phtml:21
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/ScheduleServiceDowntimeCommandForm.php:47
+msgid "Schedule downtime"
+msgid_plural "Schedule downtimes"
+msgstr[0] "زمن توقف مجدول"
+msgstr[1] "أزمنة توقف مجدولة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/ScheduleHostDowntimeCommandForm.php:30
+msgid ""
+"Schedule downtime for all services on the hosts and the hosts themselves."
+msgstr "جدولة فحص لكل خدمات المضيفين والمضيفين أنفسهم."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/hosts/show.phtml:100
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/services/show.phtml:99
+msgid "Schedule downtimes"
+msgstr "جدولة أزمنة توقف"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/ScheduleHostDowntimeCommandForm.php:49
+msgid "Schedule non-triggered downtime for all child hosts"
+msgstr "جدولة زمن توقف لا يمكن تشغيله لكل المضيفين التابعين"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/components/checkstatistics.phtml:42
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/components/checkstatistics.phtml:56
+msgid "Schedule the next active check at a different time than the current one"
+msgstr "جدول الفحص التالي النشط في زمن مختلف عن الزمن الحالي"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/CheckNowCommandForm.php:44
+msgid "Schedule the next active check to run immediately"
+msgstr "جدول الفحص التالي النشط ليعمل حالا"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/ScheduleHostDowntimeCommandForm.php:48
+msgid "Schedule triggered downtime for all child hosts"
+msgstr "جدولة زمن توقف يمكن تشغيله لكل المضيفين التابعين"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/health/stats.phtml:72
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/health/stats.phtml:100
+msgid "Scheduled"
+msgstr "مجدول"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ListController.php:253
+msgid "Scheduled End"
+msgstr "نهاية الجدولة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ListController.php:252
+msgid "Scheduled Start"
+msgstr "بداية الجدولة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/downtime/show.phtml:127
+msgid "Scheduled end"
+msgstr "نهاية الجدولة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/downtime/show.phtml:120
+msgid "Scheduled start"
+msgstr "بداية الجدولة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/CheckNowCommandForm.php:74
+msgid "Scheduling check.."
+msgid_plural "Scheduling checks.."
+msgstr[0] "جدولة الفحص.."
+msgstr[1] "جدولة الفحص.."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/ScheduleHostCheckCommandForm.php:51
+msgid "Scheduling host check.."
+msgid_plural "Scheduling host checks.."
+msgstr[0] "جدولة فحص المضيف.."
+msgstr[1] "جدولة فحص المضيفين.."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/ScheduleHostDowntimeCommandForm.php:111
+msgid "Scheduling host downtime.."
+msgid_plural "Scheduling host downtimes.."
+msgstr[0] "جدولة زمن توقف المضيف.."
+msgstr[1] "جدولة أزمنة توقف المضيف.."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/ScheduleServiceCheckCommandForm.php:100
+msgid "Scheduling service check.."
+msgid_plural "Scheduling service checks.."
+msgstr[0] "جدولة فحص خدمة.."
+msgstr[1] "جدولة فحوصات خدمة.."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/ScheduleServiceDowntimeCommandForm.php:223
+msgid "Scheduling service downtime.."
+msgid_plural "Scheduling service downtimes.."
+msgstr[0] "جدولة زمن توقف خدمة.."
+msgstr[1] "جدولة أزمنة توقف خدمة.."
+
+#: /usr/share/icingaweb2/modules/monitoring/configuration.php:99
+msgid "Security"
+msgstr "أمان"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/HostsController.php:223
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/HostController.php:178
+msgid "Send Custom Host Notification"
+msgstr "إرسال تنبيهات مضيف مخصصة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ServiceController.php:136
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ServicesController.php:226
+msgid "Send Custom Service Notification"
+msgstr "إرسال تنبيهات خدمة مخصصة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/AcknowledgeProblemCommandForm.php:123
+msgid "Send Notification"
+msgstr "إرسال تنبيهات"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/components/notifications.phtml:18
+msgid "Send a custom notification to contacts responsible for this host"
+msgstr "إرسال تنبيه مخصص لجهات الاتصال المسئولة عن هذا المضيف"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/components/notifications.phtml:33
+msgid "Send a custom notification to contacts responsible for this service"
+msgstr "إرسال تنبيه مخصص لجهات الاتصال المسئولة عن هذا الخدمة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/contact.phtml:26
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/list/contacts.phtml:44
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/list/contacts.phtml:45
+#, php-format
+msgid "Send a mail to %s"
+msgstr "إرسال بريد إلى %s"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/SendCustomNotificationCommandForm.php:29
+msgid "Send custom notification"
+msgid_plural "Send custom notifications"
+msgstr[0] "إرسال تنبيه مخصص"
+msgstr[1] "إرسال تنبيهات مخصصة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/components/notifications.phtml:10
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/components/notifications.phtml:25
+msgid "Send notification"
+msgstr "إرسال تنبيه"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/hosts/show.phtml:144
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/services/show.phtml:146
+msgid "Send notifications"
+msgstr "إرسال تنبيهات"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/SendCustomNotificationCommandForm.php:95
+msgid "Sending custom notification.."
+msgid_plural "Sending custom notifications.."
+msgstr[0] "إرسال تنبيه مخصص.."
+msgstr[1] "إرسال تنبيهات مخصصة.."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/list/notifications.phtml:60
+#, php-format
+msgid "Sent to %s"
+msgstr "إرسال إلى %s"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/downtime/show.phtml:15
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/downtime/show.phtml:26
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/comment/show.phtml:17
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/comment/show.phtml:19
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/partials/downtime/downtime-header.phtml:13
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/partials/comment/comment-detail.phtml:3
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/partials/object/service-header.phtml:48
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/list/notifications.phtml:44
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ListController.php:247
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ListController.php:439
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/Web/Controller/MonitoredObjectController.php:199
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/DataView/DataView.php:278
+msgid "Service"
+msgstr "خدمة"
+
+#: /usr/share/icingaweb2/modules/monitoring/configuration.php:116
+msgid "Service Action"
+msgstr "فعل خدمة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/health/stats.phtml:87
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/health/stats.phtml:127
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/health/stats.phtml:152
+msgid "Service Checks"
+msgstr "فحوصات الخدمة"
+
+#: /usr/share/icingaweb2/modules/monitoring/configuration.php:156
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ListController.php:574
+msgid "Service Grid"
+msgstr "شبكة الخدمة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/list/servicegroups.phtml:23
+msgid "Service Group"
+msgstr "مجموعة خدمة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ChartController.php:232
+msgid "Service Group Chart"
+msgstr "مخطط مجموعة خدمة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ListController.php:487
+msgid "Service Group Name"
+msgstr "اسم مجموعة خدمة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ListController.php:461
+msgid "Service Groups"
+msgstr "مجموعات الخدمة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ListController.php:170
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ListController.php:599
+msgid "Service Name"
+msgstr "اسم الخدمة"
+
+#: /usr/share/icingaweb2/modules/monitoring/configuration.php:144
+#: /usr/share/icingaweb2/modules/monitoring/configuration.php:260
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/ok_hosts.phtml:78
+msgid "Service Problems"
+msgstr "مشاكل الخدمة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/health/stats.phtml:20
+msgid "Service Problems:"
+msgstr "مشاكل الخدمة:"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ListController.php:168
+msgid "Service Severity"
+msgstr "خطورة الخدمة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/list/hostgroups.phtml:28
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/list/servicegroups.phtml:24
+msgid "Service States"
+msgstr "حالات الخدمة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ServiceController.php:36
+msgid "Service not found"
+msgstr "الخدمة غير موجودة"
+
+#: /usr/share/icingaweb2/modules/monitoring/configuration.php:110
+#: /usr/share/icingaweb2/modules/monitoring/configuration.php:184
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/components/servicegroups.phtml:17
+msgid "Servicegroups"
+msgstr "مجموعات خدمة"
+
+#: /usr/share/icingaweb2/modules/monitoring/configuration.php:108
+#: /usr/share/icingaweb2/modules/monitoring/configuration.php:180
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/tactical/components/hostservicechecks.phtml:10
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/contact.phtml:44
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/StatehistoryForm.php:99
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ChartController.php:236
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ServicesController.php:66
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ListController.php:123
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/Web/Controller/MonitoredObjectController.php:212
+msgid "Services"
+msgstr "الخدمات"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/ScheduleServiceCheckCommandForm.php:53
+msgid "Set the date and time when the check should be scheduled."
+msgstr "ضبط التاريخ والوقت الذي ينبغي جدولة الفحص فيه."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/ScheduleServiceDowntimeCommandForm.php:89
+msgid "Set the end date and time for the downtime."
+msgstr "ضبط التاريخ والوقت لزمن التوقف."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Instance/DisableNotificationsExpireCommandForm.php:44
+msgid "Set the expire time."
+msgstr "ضبط وقت انتهاء الصلاحية."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/ScheduleServiceDowntimeCommandForm.php:79
+msgid "Set the start date and time for the downtime."
+msgstr "ضبط تاريخ البداية والوقت لزمن التوقف."
+
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/MonitoringWizard.php:114
+msgctxt "setup.summary.btn.finish"
+msgid "Setup the monitoring module for Icinga Web 2"
+msgstr "ضبط وحدة المراقبة لـ إسنجا وب 2"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ListController.php:87
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ListController.php:486
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ListController.php:533
+msgid "Severity"
+msgstr "الخطورة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/partials/show-more.phtml:6
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/partials/event-history.phtml:173
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/list/notifications.phtml:82
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/list/hostgroups.phtml:270
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/list/comments.phtml:45
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/list/servicegroups.phtml:166
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/list/hosts.phtml:99
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/list/services.phtml:104
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/list/downtimes.phtml:48
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/list/contacts.phtml:73
+msgid "Show More"
+msgstr "عرض المزيد"
+
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/Web/Controller/MonitoredObjectController.php:227
+#, php-format
+msgid "Show all event records of host %s"
+msgstr "عرض كل سجلات الحدث للمضيف %s"
+
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/Web/Controller/MonitoredObjectController.php:223
+#, php-format
+msgid "Show all event records of service %s on host %s"
+msgstr "عرض كل سجلات الحدث للخدمة %s على المضيف %s"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/TacticalController.php:20
+msgid ""
+"Show an overview of all hosts and services, their current states and "
+"monitoring feature utilisation"
+msgstr ""
+"عرض نظرة عامة عن كل الخدمات والمضيفين، وحالاتهم الحالية "
+"واستخدام ميزة المراقبة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/partials/event-history.phtml:12
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/components/contacts.phtml:11
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/list/contactgroups.phtml:39
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/list/contacts.phtml:35
+#, php-format
+msgid "Show detailed information about %s"
+msgstr "عرض معلومات تفصيلية عن %s"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/partials/event-history.phtml:137
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/list/hosts.phtml:52
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/list/services.phtml:67
+#: /usr/share/icingaweb2/modules/monitoring/application/views/helpers/Link.php:37
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/Web/Controller/MonitoredObjectController.php:182
+#, php-format
+msgid "Show detailed information for host %s"
+msgstr "عرض معلومات تفصيلية عن المضيف %s"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/partials/event-history.phtml:151
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/list/services.phtml:78
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/list/servicegrid.phtml:80
+#: /usr/share/icingaweb2/modules/monitoring/application/views/helpers/Link.php:63
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/Web/Controller/MonitoredObjectController.php:195
+#, php-format
+msgid "Show detailed information for service %s on host %s"
+msgstr "عرض معلومات تفصيلية عن الخدمة %s على المضيف %s"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/partials/comment/comment-detail.phtml:27
+#, php-format
+msgid "Show detailed information for this comment about host %s"
+msgstr "عرض معلومات تفصيلية لهذا التعليق عن المضيف %s"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/partials/comment/comment-detail.phtml:13
+#, php-format
+msgid "Show detailed information for this comment about service %s on host %s"
+msgstr "عرض معلومات تفصيلية لهذا التعليق عن الخدمة %s على المضيف %s"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/partials/downtime/downtime-header.phtml:35
+#, php-format
+msgid "Show detailed information for this downtime scheduled for host %s"
+msgstr "عرض معلومات تفصيلية عن زمن التوقف المجدول هذا للمضيف %s"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/partials/downtime/downtime-header.phtml:22
+#, php-format
+msgid ""
+"Show detailed information for this downtime scheduled for service %s on host "
+"%s"
+msgstr ""
+"عرض معلومات تفصيلية عن زمن التوقف المجدول هذا للخدمة %s على المضيف"
+"%s"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/HealthController.php:30
+msgid ""
+"Show information about the current monitoring instance's process and it's "
+"performance as well as available features"
+msgstr ""
+"أظهر معلومات عن عملية حالة المراقبة الحالية "
+"وأدائها فضلا عن الميزات المتوفرة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/AlertsummaryController.php:51
+msgid ""
+"Show recent alerts and visualize notifications and problems based on their "
+"amount and chronological distribution"
+msgstr ""
+"عرض التنبيهات الأخيرة وتصور الإنذارات والمشاكل على أساس كميتها وتوزيعها الزمني"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Config/BackendConfigForm.php:255
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Config/Transport/RemoteTransportForm.php:127
+msgid "Show resource configuration"
+msgstr "عرض إعداد المورد"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/HealthController.php:41
+msgid "Show statistics about the monitored objects"
+msgstr "عرض إحصائيات عن الكائنات المراقبة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/HostsController.php:61
+#, php-format
+msgid "Show summarized information for %u hosts"
+msgstr "عرض معلومات مختصرة عن مضيفين %u"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ServicesController.php:68
+#, php-format
+msgid "Show summarized information for %u services"
+msgstr "عرض معلومات مختصرة عن خدمات %u"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ListController.php:336
+msgid "Show the Event Grid"
+msgstr "عرض شبكة الحدث"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ListController.php:574
+msgid "Show the Service Grid"
+msgstr "عرض شبكة الخدمة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Config/BackendConfigForm.php:254
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Config/Transport/RemoteTransportForm.php:126
+#, php-format
+msgid "Show the configuration of the %s resource"
+msgstr "عرض إعداد المورد %s"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/TimelineController.php:24
+msgid "Show the number of historical event records grouped by time and type"
+msgstr "عرض عدد سجلات الأحداث التاريخية والتي تم تجميعها حسب الوقت والنوع"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Setup/LivestatusResourcePage.php:76
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Setup/IdoResourcePage.php:184
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Config/BackendConfigForm.php:327
+msgid "Skip Validation"
+msgstr "تخطي التحقق"
+
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/BackendStep.php:128
+msgid "Socket"
+msgstr "مقبس"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/partials/object/service-header.phtml:13
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/partials/object/service-header.phtml:42
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/partials/object/host-header.phtml:12
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/list/hosts.phtml:38
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/list/services.phtml:51
+msgctxt "Soft state"
+msgid "Soft"
+msgstr "ناعم"
+
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/MonitoringWizard.php:111
+msgctxt "setup.welcome.btn.next"
+msgid "Start"
+msgstr "بداية"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/ScheduleServiceDowntimeCommandForm.php:78
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ListController.php:250
+msgid "Start Time"
+msgstr "زمن البداية"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/TimelineController.php:70
+msgid "Started downtimes"
+msgstr "بداية أزمنة التوقف"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/StatehistoryForm.php:114
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/StatehistoryForm.php:134
+msgid "State"
+msgstr "حالة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/EventOverviewForm.php:44
+msgid "State Changes"
+msgstr "تغييرات الحالة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/HealthController.php:43
+msgid "Stats"
+msgstr "إحصائيات"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/ProcessCheckResultCommandForm.php:53
+msgid "Status"
+msgstr "الحالة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/AcknowledgeProblemCommandForm.php:111
+msgid "Sticky Acknowledgement"
+msgstr "إشعار مثبت"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/ProcessCheckResultCommandForm.php:31
+msgid "Submit Passive Check Result"
+msgid_plural "Submit Passive Check Results"
+msgstr[0] "تسليم نتيجة الفحص السلبي"
+msgstr[1] "تسليم نتائج الفحص السلبي"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/HostController.php:166
+msgid "Submit Passive Host Check Result"
+msgstr "تسليم نتيجة فحص المضيف السلبي"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/HostsController.php:211
+msgid "Submit Passive Host Check Results"
+msgstr "تسليم نتائج فحص المضيف السلبي"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ServiceController.php:124
+msgid "Submit Passive Service Check Result"
+msgstr "تسليم نتيجة فحص الخدمة السلبي"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ServicesController.php:214
+msgid "Submit Passive Service Check Results"
+msgstr "تسليم نتائج فحص الخدمة السلبي"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/components/command.phtml:17
+#, php-format
+msgid "Submit a one time or so called passive result for the %s check"
+msgstr "تسليم لمرة واحدة أو ما يسمى بالنتيجة السلبية للفحص %s"
+
+#: /usr/share/icingaweb2/modules/monitoring/configuration.php:248
+msgid "System"
+msgstr "نظام"
+
+#: /usr/share/icingaweb2/modules/monitoring/configuration.php:172
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/TacticalController.php:23
+msgid "Tactical Overview"
+msgstr "نظرة عامة تكتيكية"
+
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/MonitoringWizard.php:192
+msgid ""
+"The Zend database adapter for MySQL is required to access a MySQL database."
+msgstr "مطلوب محول قاعدة بيانات زند لـ MySQL للوصول إلى قاعدة بيانات MySQL."
+
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/MonitoringWizard.php:212
+msgid ""
+"The Zend database adapter for PostgreSQL is required to access a PostgreSQL "
+"database."
+msgstr ""
+"مطلوب محول قاعدة بيانات زند لـ PostgreSQL للوصول إلى قاعدة بيانات PostgreSQL."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Setup/IdoResourcePage.php:102
+msgid "The configuration has been successfully validated."
+msgstr "تم التحقق من الإعداد بنجاح."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Setup/BackendPage.php:46
+msgid "The data source used for retrieving monitoring information"
+msgstr "مصدر البيانات المستخدم لاسترجاع معلومات المراقبة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/downtime/show.phtml:143
+msgid "The date/time the scheduled downtime actually ended"
+msgstr "تاريخ ووقت انتهاء زمن التوقف المجدول الفعلي"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/downtime/show.phtml:123
+msgid ""
+"The date/time the scheduled downtime is supposed to end. If this is a "
+"flexible (non-fixed) downtime, this refers to the last possible time that "
+"the downtime can start"
+msgstr ""
+"التاريخ/الوقت الذي يفترض انتهاء زمن التوقف المجدول فيه. إذا كان "
+"زمنا مرنا (غير ثابت)، فإنه يشير إلى آخر وقت من الممكن أن يبدأ "
+"فيه زمن التوقف"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/downtime/show.phtml:116
+msgid ""
+"The date/time the scheduled downtime is supposed to start. If this is a "
+"flexible (non-fixed) downtime, this refers to the earliest possible time "
+"that the downtime can start"
+msgstr ""
+"التاريخ/الوقت الذي يفترض ابتداء زمن التوقف فيه. إذا كان زمنا "
+"مرنا (غير ثابت)، فإنه يشير إلى أول وقت من الممكن أن يبدأ "
+"فيه زمن التوقف"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/ScheduleHostDowntimeCommandForm.php:69
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/ScheduleServiceDowntimeCommandForm.php:204
+msgid "The end time must be greater than the start time"
+msgstr "زمن النهاية يجب أن يكون أكبر من زمن البداية"
+
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/DataView/DataView.php:448
+#, php-format
+msgid "The filter column \"%s\" is not allowed here."
+msgstr "لا يُسمح هنا بعمود المرشح \"%s\""
+
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/MonitoringWizard.php:66
+msgid "The given resource name is already in use."
+msgstr "اسم المورد المعطى مستخدم سابقا."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Setup/BackendPage.php:29
+msgid "The identifier of this backend"
+msgstr "رقم التعريف لهذه الخلفية"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/components/notifications.phtml:57
+#, php-format
+msgid "The last one was sent %s."
+msgstr "تم إرسال آخر %s."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Config/TransportConfigForm.php:205
+msgid ""
+"The name of the Icinga instance this transport should exclusively transfer "
+"commands to."
+msgstr "اسم حالة \"إسنجا\" التي يتحتم على هذا النقل حصريا نقل الأوامر إليها."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/downtime/show.phtml:38
+msgid "The name of the person who scheduled this downtime"
+msgstr "اسم الشخص الذي جدول زمن التوقف هذا"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Config/TransportConfigForm.php:219
+msgid ""
+"The name of this command transport that is used to differentiate it from "
+"others"
+msgstr "اسم ناقل الأمر هذا الذي يستخدم للتفرقة بينه وبين الآخرين"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Config/BackendConfigForm.php:195
+msgid ""
+"The name of this monitoring backend that is used to differentiate it from "
+"others"
+msgstr "اسم خلفية المراقبة هذه التي تستخدم للتفرقة بينها وبين الآخرين"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/ProcessCheckResultCommandForm.php:79
+msgid ""
+"The performance data of this check result. Leave empty if this check result "
+"has no performance data"
+msgstr ""
+"بيانات الأداء لنتيجة الفحص هذه. دعها فارغة إذا لم يكن لنتيجة الفحص هذه "
+"بيانات أداء"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/ProcessCheckResultCommandForm.php:69
+msgid "The plugin output of this check result"
+msgstr "مخرج التوصيل لنتيجة الفحص هذه"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Config/BackendConfigForm.php:237
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Config/Transport/RemoteTransportForm.php:109
+msgid "The resource to use"
+msgstr "المورد المراد استخدامه"
+
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/DataView/DataView.php:357
+#, php-format
+msgid "The sort column \"%s\" is not allowed in \"%s\"."
+msgstr "عمود الفرز \"%s\" لا يُسمح به في \"%s\"."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/ProcessCheckResultCommandForm.php:54
+msgid "The state this check result should report"
+msgstr "حالة نتيجة الفحص التي يجب أن تكون في التقرير"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Config/BackendConfigForm.php:223
+msgid "The type of data source used for retrieving monitoring information"
+msgstr "نوع مصدر البيانات المستخدم لاسترجاع معلومات المراقبة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Config/BackendConfigForm.php:381
+msgid ""
+"There is currently more than one icinga instance writing to the IDO. You'll "
+"see all objects from all instances without any differentation. If this is "
+"not desired, consider setting up a separate IDO for each instance."
+msgstr ""
+"يوجد حاليا أكثر من حالة icinga تقوم بالكتابة على IDO. سترى "
+"كل الكائنات من جميع الحالات دون أي اختلاف. إن لم يكن هذا "
+"هو المطلوب، فانظر في إنشاء IDO منفصلة لكل حالة."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Config/BackendConfigForm.php:375
+msgid ""
+"There is currently no icinga instance writing to the IDO. Make sure that a "
+"icinga instance is configured and able to write to the IDO."
+msgstr ""
+"لا يوجد حاليا أي حالة إسنجا تقوم بالكتابة على IDO. تأكد من "
+"أن حالة إسنجا تم إعدادها وقادرة على الكتابة على IDO."
+
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/Backend/MonitoringBackend.php:91
+#, php-format
+msgid "There is no \"%s\" monitoring backend"
+msgstr "لا يوحد خلفية مراقبة \"%s\""
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/AcknowledgeProblemCommandForm.php:22
+msgid ""
+"This command is used to acknowledge host or service problems. When a problem "
+"is acknowledged, future notifications about problems are temporarily "
+"disabled until the host or service recovers."
+msgstr ""
+"يستخدم هذا الأمر للإشعار بمشاكل المضيف أو الخدمة. عندما يتم الإشعار "
+"بمشكلة، فإن الإخطارات المستقبلية حول المشاكل سيتم تعطيلها مؤقتا "
+"حتى يتعافى المضيف أو الخدمة."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/AddCommentCommandForm.php:19
+msgid "This command is used to add host or service comments."
+msgstr "يستخدم هذا الأمر لإضافة تعليقات على المضيف أو الخدمة."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Instance/DisableNotificationsExpireCommandForm.php:26
+msgid ""
+"This command is used to disable host and service notifications for a "
+"specific time."
+msgstr "يستخدم هذا الأمر لتعطيل التنبيهات على المضيف والخدمة لوقت محدد."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/ScheduleServiceDowntimeCommandForm.php:33
+msgid ""
+"This command is used to schedule host and service downtimes. During the "
+"specified downtime, Icinga will not send notifications out about the hosts "
+"and services. When the scheduled downtime expires, Icinga will send out "
+"notifications for the hosts and services as it normally would. Scheduled "
+"downtimes are preserved across program shutdowns and restarts."
+msgstr ""
+"يستخدم هذا الأمر لجدولة أزمنة التوقف للمضيف والخدمة. خلال فترة التوقف "
+"المحددة لن يرسل إسنجا أي إخطارات عن المضيفين والخدمات. عند انتهاء"
+"صلاحية زمن التوقف المجدول، ستقوم إسنجا بإرسال إخطارات للمضيفين "
+"والخدمات كالمعتاد. يتم الاحتفاظ بأزمنة التوقف المجدول خلال إغلاق "
+"البرنامج وإعادة تشغيله."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/ScheduleServiceCheckCommandForm.php:23
+msgid ""
+"This command is used to schedule the next check of hosts or services. Icinga "
+"will re-queue the hosts or services to be checked at the time you specify."
+msgstr ""
+"يستخدم هذا الأمر لجدولة الفحص التالي للمضيفين والخدمات. ستقوم إسنجا "
+"بإعادة قائمة الانتظار للمضيفين والخدمات لتُفحص في الوقت الذي تحدده."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/SendCustomNotificationCommandForm.php:20
+msgid ""
+"This command is used to send custom notifications about hosts or services."
+msgstr "يستخدم هذا الأمر لإرسال تنبيهات مخصصة حول المضيفين والخدمات."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/ProcessCheckResultCommandForm.php:20
+msgid "This command is used to submit passive host or service check results."
+msgstr "يستخدم هذا الأمر لتسليم نتائج فحص المضيف أو الخدمة السلبي."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/comment/show.phtml:63
+msgid "This comment does not expire."
+msgstr "هذا التعليق لا تنتهي صلاحيته."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/partials/comment/comment-detail.phtml:41
+#, php-format
+msgid "This comment expires on %s at %s"
+msgstr "هذا التعليق تنتهي صلاحيته في %s في %s"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/comment/show.phtml:60
+#, php-format
+msgid "This comment expires on %s at %s."
+msgstr "هذا التعليق تنتهي صلاحيته في %s في %s."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/partials/downtime/downtime-header.phtml:47
+msgid "This downtime is flexible"
+msgstr "زمن التوقف هذا مرن"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/partials/downtime/downtime-header.phtml:51
+msgid "This downtime is in effect"
+msgstr "زمن التوقف هذا ساري المفعول"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/downtime/show.phtml:106
+#, php-format
+msgid ""
+"This fixed host downtime has been scheduled to start on %s at %s and to end "
+"on %s at %s."
+msgstr ""
+"زمن توقف المضيف الثابت هذا تمت جدولته ليبدأ في %s في %s "
+"وينتهي في %s في %s."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/downtime/show.phtml:96
+#, php-format
+msgid ""
+"This fixed host downtime was started on %s at %s and expires on %s at %s."
+msgstr ""
+"زمن توقف المضيف الثابت هذا بدأ في %s في %s "
+"وينتهي في %s في %s."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/downtime/show.phtml:105
+#, php-format
+msgid ""
+"This fixed service downtime has been scheduled to start on %s at %s and to "
+"end on %s at %s."
+msgstr ""
+"زمن توقف الخدمة الثابت هذه تمت جدولته ليبدأ في %s في %s "
+"وينتهي في %s في %s."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/downtime/show.phtml:95
+#, php-format
+msgid ""
+"This fixed service downtime was started on %s at %s and expires on %s at %s."
+msgstr "زمن توقف الخدمة الثابت هذا بدأ في %s في %s وينتهي في %s في %s."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/downtime/show.phtml:85
+#, php-format
+msgid ""
+"This flexible host downtime has been scheduled to start between %s - %s and "
+"to last for %s."
+msgstr ""
+"زمن توقف المضيف المرن هذا تمت جدولته ليبدأ بين %s - %s "
+"ويستمر إلى %s."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/downtime/show.phtml:74
+#, php-format
+msgid ""
+"This flexible host downtime was started on %s at %s and lasts for %s until "
+"%s at %s."
+msgstr ""
+"زمن توقف المضيف المرن هذا بدأ في s في %s ويستمر حتى %s "
+"إلى %s في %s."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/downtime/show.phtml:84
+#, php-format
+msgid ""
+"This flexible service downtime has been scheduled to start between %s - %s "
+"and to last for %s."
+msgstr ""
+"زمن توقف الخدمة المرن هذا تمت جدولته ليبدأ بين %s - %s "
+"ويستمر إلى %s."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/downtime/show.phtml:73
+#, php-format
+msgid ""
+"This flexible service downtime was started on %s at %s and lasts for %s "
+"until %s at %s."
+msgstr ""
+"زمن توقف الخدمة المرن هذا بدأ في s في %s ويستمر حتى %s "
+"إلى %s في %s."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Setup/WelcomePage.php:33
+msgid "This is the core module for Icinga Web 2."
+msgstr "هذه هي الوحدة الأساسية في إسنجا وب 2."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/partials/event-history.phtml:54
+msgid "This notification was not sent out to any contact."
+msgstr "لم يتم إرسال هذا التنبيه لأي جهة اتصال."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/alertsummary/index.phtml:22
+msgid "Time to Reaction (Ack, Recover)"
+msgstr "وقت رد الفعل (إشعار، استرداد)"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/TimelineController.php:109
+msgid "TimeLine interval"
+msgstr "فترة الجدول الزمني"
+
+#: /usr/share/icingaweb2/modules/monitoring/configuration.php:228
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/TimelineController.php:25
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/TimelineController.php:29
+msgid "Timeline"
+msgstr "الجدول الزمني"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/StatehistoryForm.php:82
+msgid "To"
+msgstr "إلى"
+
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/MonitoringWizard.php:183
+msgid ""
+"To access the IDO stored in a MySQL database the PDO-MySQL module for PHP is "
+"required."
+msgstr ""
+"للوصول إلى الـ IDO المخزنة في قاعدة بيانات \"ماي سيكول\" فإن وحدة PDO-MySQL"
+" للـ PHP "
+"مطلوبة."
+
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/MonitoringWizard.php:203
+msgid ""
+"To access the IDO stored in a PostgreSQL database the PDO-PostgreSQL module "
+"for PHP is required."
+msgstr ""
+"للوصول إلى الـ IDO المخزنة في قاعدة بيانات PostgreSQL فإن وحدة PDO-PostgreSQL "
+"للـ PHP مطلوبة."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Setup/SecurityPage.php:16
+msgid ""
+"To protect your monitoring environment against prying eyes please fill out "
+"the settings below."
+msgstr ""
+"لحماية بيئة المراقبة الخاصة بك ضد أعين المتطفلين الرجاء تعبئة "
+"الإعدادات أدناه."
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/StatehistoryForm.php:85
+msgid "Today"
+msgstr "اليوم"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/alertsummary/index.phtml:56
+msgid "Top 5 Recent Alerts"
+msgstr "آخر أعلى 5 إنذارات"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/health/stats.phtml:68
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/health/stats.phtml:94
+msgid "Total"
+msgstr "الكلي"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ListController.php:535
+msgid "Total Hosts"
+msgstr "إجمالي المضيفين"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ListController.php:488
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ListController.php:536
+msgid "Total Services"
+msgstr "إجمالي الخدمات"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/config/index.phtml:76
+msgid "Transport"
+msgstr "النقل"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Config/TransportConfigForm.php:217
+msgid "Transport Name"
+msgstr "اسم النقل"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Config/TransportConfigForm.php:241
+msgid "Transport Type"
+msgstr "نوع النقل"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/alertsummary/index.phtml:29
+msgid "Trend"
+msgstr "اتجاه"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/alertsummary/index.phtml:39
+msgid "Trend for the last 24h"
+msgstr "الاتجاه في آخر 24 ساعة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/ScheduleServiceDowntimeCommandForm.php:99
+msgid "Type"
+msgstr "نوع"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/config/index.phtml:39
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/config/index.phtml:94
+#, php-format
+msgid "Type: %s"
+msgstr "نوع: %s"
+
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/Object/Service.php:199
+msgid "UNKNOWN"
+msgstr "مجهول"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/ProcessCheckResultCommandForm.php:59
+msgctxt "icinga.state"
+msgid "UNKNOWN"
+msgstr "مجهول"
+
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/Object/Host.php:188
+msgid "UNREACHABLE"
+msgstr "لا يمكن الوصول إليه"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/ProcessCheckResultCommandForm.php:128
+msgctxt "icinga.state"
+msgid "UNREACHABLE"
+msgstr "لا يمكن الوصول للوجهة"
+
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/Object/Host.php:182
+msgid "UP"
+msgstr "قيد التشغيل"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/ProcessCheckResultCommandForm.php:123
+msgctxt "icinga.state"
+msgid "UP"
+msgstr "قيد التشغيل"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/partials/service/statusicons.phtml:5
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/partials/host/statusicons.phtml:5
+#: /usr/share/icingaweb2/modules/monitoring/application/views/helpers/HostFlags.php:13
+#: /usr/share/icingaweb2/modules/monitoring/application/views/helpers/ServiceFlags.php:9
+msgid "Unhandled"
+msgstr "غير مُعالج"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/health/stats.phtml:14
+msgid "Unhandled Problems:"
+msgstr "مشاكل غير معالجة:"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/StatehistoryForm.php:119
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ChartController.php:264
+msgid "Unknown"
+msgstr "مجهول"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/StatehistoryForm.php:139
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ChartController.php:314
+msgid "Unreachable"
+msgstr "لا يمكن الوصول إليه"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/StatehistoryForm.php:137
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ChartController.php:300
+msgid "Up"
+msgstr "قيد التشغيل"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/AcknowledgeProblemCommandForm.php:72
+msgid "Use Expire Time"
+msgstr "استخدام وقت انتهاء الصلاحية"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Config/Transport/RemoteTransportForm.php:88
+msgid "Use SSH Identity"
+msgstr "استخدام هوية SSH"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/downtime/show.phtml:40
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/comment/show.phtml:43
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Config/Transport/RemoteTransportForm.php:163
+msgid "User"
+msgstr "مستخدم"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/partials/comment/comment-description.phtml:10
+msgid "User Comment"
+msgstr "تعليق مستخدم"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Config/Transport/RemoteTransportForm.php:165
+msgid ""
+"User to log in as on the remote Icinga instance. Please note that key-based "
+"SSH login must be possible for this user"
+msgstr ""
+"المستخدم الذي يمكن الدخول بواسطته لحالة إسنجا البعيدة. يرجى ملاحظة أن "
+"دخول SSH المبني على المفاتيح يجب أن يكون متاحا لهذا المستخدم"
+
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/BackendStep.php:109
+msgid "Username"
+msgstr "اسم المستخدم"
+
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/MonitoringWizard.php:124
+msgid "Validate Configuration"
+msgstr "التحقق من الإعداد"
+
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/MonitoringWizard.php:125
+msgid "Validation In Progress"
+msgstr "جار التحقق"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Setup/IdoResourcePage.php:131
+msgid "Validation Log"
+msgstr "سجل التحقق"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/helpers/Perfdata.php:37
+msgid "Value"
+msgstr "قيمة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/AlertsummaryController.php:623
+msgid "Value for interval not valid"
+msgstr "قيمة الفترة ليست صالحة"
+
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/Object/Service.php:193
+msgid "WARNING"
+msgstr "تحذير"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/ProcessCheckResultCommandForm.php:57
+msgctxt "icinga.state"
+msgid "WARNING"
+msgstr "تحذير"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/helpers/Perfdata.php:40
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/StatehistoryForm.php:118
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/ChartController.php:250
+msgid "Warning"
+msgstr "تحذير"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Setup/WelcomePage.php:21
+msgid "Welcome to the configuration of the monitoring module for Icinga Web 2!"
+msgstr "مرحبا بك في إعداد وحدة المراقبة لـ إسنجا وب 2!"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/downtime/show.phtml:155
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/comment/show.phtml:48
+msgid "Yes"
+msgstr "نعم"
+
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/MonitoringWizard.php:189
+msgid "Zend database adapter for MySQL"
+msgstr "محول زند لقاعدة بيانات ماي سيكول"
+
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/MonitoringWizard.php:209
+msgid "Zend database adapter for PostgreSQL"
+msgstr "محول زند لقاعدة بيانات بوستجرى إس كيو إل"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/components/acknowledgement.phtml:22
+msgid "acknowledged"
+msgstr "معترف به"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/timeline/index.phtml:60
+#, php-format
+msgctxt "timeline.link.title.datetime.twice"
+msgid "between %s and %s"
+msgstr "بين %s و%s"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/partials/downtime/downtime-header.phtml:42
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/partials/comment/comment-detail.phtml:34
+msgid "by"
+msgstr "بواسطة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/ToggleObjectFeaturesCommandForm.php:80
+msgid "changed"
+msgstr "غُيِّر"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/components/comments.phtml:51
+msgid "commented"
+msgstr "عُلِّق"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/components/downtime.phtml:79
+msgid "created"
+msgstr "أُنشيء"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/ToggleObjectFeaturesCommandForm.php:84
+msgid "disable"
+msgstr "تعطيل"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/AlertsummaryController.php:194
+msgid "down"
+msgstr "متوقف"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/forms/Command/Object/ToggleObjectFeaturesCommandForm.php:85
+msgid "enable"
+msgstr "تفعيل"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/components/downtime.phtml:60
+#, php-format
+msgctxt "Last format parameter represents the end time"
+msgid "ends %s"
+msgstr "انتهاء %s"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/components/checkstatistics.phtml:28
+#, php-format
+msgid "expected %s"
+msgstr "متوقع %s"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/components/downtime.phtml:54
+#, php-format
+msgctxt "Last format parameter represents the downtime expire time"
+msgid "expires %s"
+msgstr "تنتهي صلاحيته %s"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/components/checkstatistics.phtml:69
+msgid "hard state"
+msgstr "حالة صعبة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/downtime/show.phtml:138
+msgid "he date/time the scheduled downtime was actually started"
+msgstr "التاريخ والوقت الذي ابتدأ فيه فعليا زمن التوقف المجدول"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/partials/downtime/downtime-header.phtml:29
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/Object/MonitoredObject.php:735
+msgid "host"
+msgstr "مضيف"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/timeline/index.phtml:48
+#, php-format
+msgctxt "timeline.link.title.month.and.year"
+msgid "in %s"
+msgstr "في %s"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/timeline/index.phtml:54
+#, php-format
+msgctxt "timeline.link.title.year"
+msgid "in %s"
+msgstr "في %s"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/alertsummary/index.phtml:37
+msgid "in the last hour"
+msgstr "في الساعة الأخيرة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/timeline/index.phtml:41
+#, php-format
+msgctxt "timeline.link.title.week.and.year"
+msgid "in week %s of %s"
+msgstr "في الاسبوع %s من %s"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/components/checksource.phtml:9
+msgid "is not reachable"
+msgstr "لا يمكن الوصول إليه"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/components/checksource.phtml:9
+msgid "is reachable"
+msgstr "يمكن الوصول إليه"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/alertsummary/index.phtml:35
+msgid "notifications per hour"
+msgstr "التنبيهات في الساعة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/timeline/index.phtml:35
+#, php-format
+msgctxt "timeline.link.title.time"
+msgid "on %s"
+msgstr "في %s"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/components/downtime.phtml:65
+#, php-format
+msgctxt "Last format parameter represents the time scheduled"
+msgid "scheduled %s"
+msgstr "مجدول في %s"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/components/downtime.phtml:70
+#, php-format
+msgctxt "Last format parameter represents the time scheduled"
+msgid "scheduled flexible %s"
+msgstr "مجدول بصورة مرنة في %s"
+
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/Object/MonitoredObject.php:738
+msgid "service"
+msgstr "خدمة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/views/scripts/show/components/checkstatistics.phtml:69
+msgid "soft state"
+msgstr "حالة ناعمة"
+
+#: /usr/share/icingaweb2/modules/monitoring/library/Monitoring/MonitoringWizard.php:53
+msgctxt "setup.summary.subject"
+msgid "the monitoring module"
+msgstr "وحدة المراقبة"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/AlertsummaryController.php:192
+msgid "unchanged"
+msgstr "دون تغيير"
+
+#: /usr/share/icingaweb2/modules/monitoring/application/controllers/AlertsummaryController.php:196
+msgid "up"
+msgstr "قيد التشغيل"
+
+

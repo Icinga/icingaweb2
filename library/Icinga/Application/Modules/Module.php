@@ -362,25 +362,28 @@ class Module
     public function getMenu()
     {
         $this->launchConfigScript();
-        return $this->createMenu($this->menuItems);
+        return Navigation::fromArray($this->createMenu($this->menuItems));
     }
 
     /**
-     * Create and return a new navigation for the given menu items
+     * Create and return an array structure for the given menu items
      *
      * @param   MenuItemContainer[]     $items
      *
-     * @return  Navigation
+     * @return  array
      */
     private function createMenu(array $items)
     {
-        $navigation = new Navigation();
+        $navigation = array();
         foreach ($items as $item) {
             /** @var MenuItemContainer $item */
-            $navigationItem = $navigation->createItem($item->getName(), $item->getProperties());
-            $navigationItem->setChildren($this->createMenu($item->getChildren()));
-            $navigationItem->setLabel($this->translate($item->getName()));
-            $navigation->addItem($navigationItem);
+            $properties = $item->getProperties();
+            $properties['children'] = $this->createMenu($item->getChildren());
+            if (! isset($properties['label'])) {
+                $properties['label'] = $this->translate($item->getName());
+            }
+
+            $navigation[$item->getName()] = $properties;
         }
 
         return $navigation;
@@ -657,7 +660,6 @@ class Module
             );
 
             if (file_exists($this->metadataFile)) {
-
                 $key = null;
                 $file = new File($this->metadataFile, 'r');
                 foreach ($file as $line) {
@@ -679,7 +681,6 @@ class Module
                     $key = lcfirst($key);
 
                     switch ($key) {
-
                         case 'depends':
                             if (strpos($val, ' ') === false) {
                                 $metadata->depends[$val] = true;
@@ -707,7 +708,6 @@ class Module
 
                         default:
                             $metadata->{$key} = $val;
-
                     }
                 }
             }
@@ -1248,7 +1248,7 @@ class Module
      *
      * @return  $this
      *
-     * @deprecated              Deprecated in favor of {@link provideHook()}. Will be removed in version 2.2.0
+     * @deprecated              Deprecated since 2.1.1. Use {@link provideHook()} instead
      */
     protected function registerHook($name, $class, $key = null)
     {
@@ -1269,15 +1269,14 @@ class Module
      * Provide a hook implementation
      *
      * @param   string  $name           Name of the hook for which to provide an implementation
-     * @param   string  $implementation [optional] Fully qualified name of the class providing the hook implementation.
+     * @param   string  $implementation Fully qualified name of the class providing the hook implementation.
      *                                  Defaults to the module's ProvidedHook namespace plus the hook's name for the
-     *                                  class name. Web 2's namespace separator is \\ (double backslash) at the moment
-     * @param   string  $key            No-op arg for compatibility reasons. This argument is deprecated and will be
-     *                                  removed in version 2.2.0
+     *                                  class name
+     * @param   string  $deprecated     DEPRECATED - No-op arg for compatibility reasons
      *
      * @return  $this
      */
-    protected function provideHook($name, $implementation = null, $key = null)
+    protected function provideHook($name, $implementation = null, $deprecated = null)
     {
         if ($implementation === null) {
             $implementation = $name;

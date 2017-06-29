@@ -137,11 +137,8 @@ class ClassLoader
         $namespace = $this->extractModuleNamespace($class);
 
         if ($this->hasNamespace($namespace)) {
-
             return $this->buildClassFilename($class, $namespace);
-
         } elseif (! $modules->loadedAllEnabledModules()) {
-
             $moduleName = $this->extractModuleName($class);
 
             if ($modules->hasEnabled($moduleName)) {

@@ -3,13 +3,15 @@
 
 class Zend_View_Helper_ContactFlags extends Zend_View_Helper_Abstract
 {
-
     /**
      * Get the human readable flag name for the given contact notification option
      *
-     * @param string $tableName the name of the option table
+     * @param   string  $tableName  The name of the option table
+     *
+     * @return  string
      */
-    public function getNotificationOptionName($tableName) {
+    public function getNotificationOptionName($tableName)
+    {
         $exploded = explode('_', $tableName);
         $name = end($exploded);
         return ucfirst($name);
@@ -26,14 +28,13 @@ class Zend_View_Helper_ContactFlags extends Zend_View_Helper_Abstract
      */
     public function contactFlags($contact, $type, $glue = ', ')
     {
-
         $optionName = 'contact_' . $type . '_notification_options';
         if (isset($contact->$optionName)) {
             return $contact->$optionName;
         }
         $out = array();
         foreach ($contact as $key => $value) {
-            if (preg_match('/^contact_notify_' . $type . '_.*/', $key) && $value == True) {
+            if (preg_match('/^contact_notify_' . $type . '_.*/', $key) && $value == true) {
                 $option = $this->getNotificationOptionName($key);
                 if (strtolower($option) != 'timeperiod') {
                     array_push($out, $option);
@@ -43,4 +44,3 @@ class Zend_View_Helper_ContactFlags extends Zend_View_Helper_Abstract
         return implode($glue, $out);
     }
 }
-

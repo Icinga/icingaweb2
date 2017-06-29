@@ -63,7 +63,6 @@ class NavigationItemRenderer
      */
     public function init()
     {
-
     }
 
     /**

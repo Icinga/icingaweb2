@@ -655,11 +655,15 @@ abstract class IdoQuery extends DbQuery
                     '(CASE WHEN $1 ~ \'(?:[0-9]{1,3}\\\\.){3}[0-9]{1,3}\' THEN $1::inet - \'0.0.0.0\' ELSE NULL END)',
                     $column
                 );
-                $column = preg_replace(
-                    '/UNIX_TIMESTAMP(\((?>[^()]|(?-1))*\))/i',
-                    'CASE WHEN ($1 < \'1970-01-03 00:00:00+00\'::timestamp with time zone) THEN 0 ELSE UNIX_TIMESTAMP($1) END',
-                    $column
-                );
+                if (version_compare($this->getIdoVersion(), '1.14.2', '>=')) {
+                    $column = str_replace('NOW()', 'NOW() AT TIME ZONE \'UTC\'', $column);
+                } else {
+                    $column = preg_replace(
+                        '/UNIX_TIMESTAMP(\((?>[^()]|(?-1))*\))/i',
+                        'CASE WHEN ($1 < \'1970-01-03 00:00:00+00\'::timestamp with time zone) THEN 0 ELSE UNIX_TIMESTAMP($1) END',
+                        $column
+                    );
+                }
             }
         }
     }
@@ -676,7 +680,9 @@ abstract class IdoQuery extends DbQuery
 
         foreach (Hook::all('monitoring/idoQueryExtension') as $hook) {
             $extensions = $hook->extendColumnMap($this);
-            if (! is_array($extensions)) continue;
+            if (! is_array($extensions)) {
+                continue;
+            }
 
             foreach ($extensions as $vTable => $cols) {
                 if (! array_key_exists($vTable, $this->columnMap)) {
@@ -1218,8 +1224,7 @@ abstract class IdoQuery extends DbQuery
     {
         // TODO: For god's sake, make this being a mapping
         //       (instead of matching a ton of properties using a ridiculous long switch case)
-        switch ($table)
-        {
+        switch ($table) {
             case 'instances':
                 return $this->instance_id;
             case 'objects':

@@ -1,5 +1,49 @@
 /*! Icinga Web 2 | (c) 2014 Icinga Development Team | GPLv2+ */
 
+#announcements > ul {
+  background-color: @body-bg-color;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  > li:before {
+    color: @icinga-blue;
+    content: "\e811";
+    font-family: 'ifont';
+    left: 1em;
+    margin-top: -1em;
+    padding: 0.3em;
+    position: absolute;
+    text-align: center;
+    top: 50%;
+  }
+
+  > li {
+    border-bottom: 1px solid @gray-lighter;
+    padding: 1em 3em;
+    position: relative;
+  }
+
+  > li .message {
+    display: inline-block;
+    vertical-align: middle;
+  }
+
+  > li:last-child {
+    border-bottom: none;
+  }
+
+  .acknowledge-announcement-control {
+    background: none;
+    border: none;
+    display: block;
+    margin-top: -0.6em;
+    position: absolute;
+    right: 1em;
+    top: 50%;
+  }
+}
+
 table.historycolorgrid {
   font-size: 1.5em;
 }

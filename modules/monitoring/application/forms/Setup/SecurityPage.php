@@ -22,5 +22,6 @@ class SecurityPage extends Form
         $securityConfigForm = new SecurityConfigForm();
         $securityConfigForm->createElements($formData);
         $this->addElements($securityConfigForm->getElements());
+        $this->getElement('protected_customvars')->setValue($securityConfigForm->getDefaultProtectedCustomvars());
     }
 }

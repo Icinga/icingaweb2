@@ -1,7 +1,10 @@
-curl https://codeload.github.com/ezyang/htmlpurifier/tar.gz/v4.7.0 -o htmlpurifier-4.7.0.tar.gz
-tar xzf htmlpurifier-4.7.0.tar.gz --strip-components 1 htmlpurifier-4.7.0/LICENSE
-tar xzf htmlpurifier-4.7.0.tar.gz --strip-components 1 htmlpurifier-4.7.0/VERSION
-tar xzf htmlpurifier-4.7.0.tar.gz -C ../ --strip-components 2 htmlpurifier-4.7.0/library/HTMLPurifier.php
-tar xzf htmlpurifier-4.7.0.tar.gz -C ../ --strip-components 2 htmlpurifier-4.7.0/library/HTMLPurifier.autoload.php
-tar xzf htmlpurifier-4.7.0.tar.gz --strip-components 3 htmlpurifier-4.7.0/library/HTMLPurifier/*
-rm htmlpurifier-4.7.0.tar.gz
+GLOBIGNORE=$0; rm -rf *
+rm ../HTMLPurifier*.php
+
+curl https://codeload.github.com/ezyang/htmlpurifier/tar.gz/v4.8.0 -o htmlpurifier-4.8.0.tar.gz
+tar xzf htmlpurifier-4.8.0.tar.gz --strip-components 1 htmlpurifier-4.8.0/LICENSE
+tar xzf htmlpurifier-4.8.0.tar.gz --strip-components 1 htmlpurifier-4.8.0/VERSION
+tar xzf htmlpurifier-4.8.0.tar.gz -C ../ --strip-components 2 htmlpurifier-4.8.0/library/HTMLPurifier.php
+tar xzf htmlpurifier-4.8.0.tar.gz -C ../ --strip-components 2 htmlpurifier-4.8.0/library/HTMLPurifier.autoload.php
+tar xzf htmlpurifier-4.8.0.tar.gz --strip-components 3 htmlpurifier-4.8.0/library/HTMLPurifier/*
+rm htmlpurifier-4.8.0.tar.gz

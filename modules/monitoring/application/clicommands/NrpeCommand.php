@@ -56,4 +56,3 @@ class NrpeCommand extends Command
         }
     }
 }
-

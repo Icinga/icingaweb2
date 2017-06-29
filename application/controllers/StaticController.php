@@ -3,13 +3,12 @@
 
 namespace Icinga\Controllers;
 
-use Icinga\Web\Controller;
 use Icinga\Application\Icinga;
-use Icinga\Application\Logger;
+use Icinga\Web\Controller;
 use Icinga\Web\FileCache;
 
 /**
- * Delivery static content to clients
+ * Deliver static content to clients
  */
 class StaticController extends Controller
 {
@@ -31,43 +30,49 @@ class StaticController extends Controller
 
     public function gravatarAction()
     {
+        $response = $this->getResponse();
+        $response->setHeader('Pragma', 'cache')
+            ->setHeader('Cache-Control', 'public');
+
         $cache = FileCache::instance();
-        $filename = md5(strtolower(trim($this->_request->getParam('email'))));
+        $filename = md5(strtolower(trim($this->getParam('email'))));
         $cacheFile = 'gravatar-' . $filename;
-        header('Cache-Control: public');
-        header('Pragma: cache');
         if ($etag = $cache->etagMatchesCachedFile($cacheFile)) {
-            header("HTTP/1.1 304 Not Modified");
+            $response->setHttpResponseCode(304);
             return;
         }
 
-        header('Content-Type: image/jpg');
+        $response->setHeader('Content-Type', 'image/jpg');
         if ($cache->has($cacheFile)) {
-            header('ETag: "' . $cache->etagForCachedFile($cacheFile) . '"');
+            $response->setHeader('ETag', sprintf('"%s"', $cache->etagForCachedFile($cacheFile)));
             $cache->send($cacheFile);
             return;
         }
+
         $img = file_get_contents('http://www.gravatar.com/avatar/' . $filename . '?s=120&d=mm');
         $cache->store($cacheFile, $img);
-        header('ETag: "' . $cache->etagForCachedFile($cacheFile) . '"');
+        $response->setHeader('ETag', sprintf('"%s"', $cache->etagForCachedFile($cacheFile)));
+
         echo $img;
     }
 
     /**
-     * Return an image from the application's or the module's public folder
+     * Return an image from a module's public folder
      */
     public function imgAction()
     {
-        // TODO(el): I think this action only retrieves images from modules
-        $module = $this->_getParam('module_name');
-        $file   = $this->_getParam('file');
-        $basedir = Icinga::app()->getModuleManager()->getModule($module)->getBaseDir();
+        $moduleRoot = Icinga::app()
+            ->getModuleManager()
+            ->getModule($this->getParam('module_name'))
+            ->getBaseDir();
 
-        $filePath = realpath($basedir . '/public/img/' . $file);
+        $file = $this->getParam('file');
+        $filePath = realpath($moduleRoot . '/public/img/' . $file);
 
         if ($filePath === false) {
             $this->httpNotFound('%s does not exist', $filePath);
         }
+
         if (preg_match('/\.([a-z]+)$/i', $file, $m)) {
             $extension = $m[1];
             if ($extension === 'svg') {
@@ -78,11 +83,12 @@ class StaticController extends Controller
         }
 
         $s = stat($filePath);
-        header('Content-Type: image/' . $extension);
-        header(sprintf('ETag: "%x-%x-%x"', $s['ino'], $s['size'], (float) str_pad($s['mtime'], 16, '0')));
-        header('Cache-Control: public, max-age=3600');
-        header('Pragma: cache');
-        header('Last-Modified: ' . gmdate('D, d M Y H:i:s', $s['mtime']) . ' GMT');
+        $this->getResponse()
+            ->setHeader('Pragma', 'cache')
+            ->setHeader('Content-Type', 'image/' . $extension)
+            ->setHeader('Cache-Control', 'public, max-age=3600')
+            ->setHeader('Last-Modified', gmdate('D, d M Y H:i:s', $s['mtime']) . ' GMT')
+            ->setHeader('ETag', sprintf('%x-%x-%x', $s['ino'], $s['size'], (float) str_pad($s['mtime'], 16, '0')));
 
         readfile($filePath);
     }

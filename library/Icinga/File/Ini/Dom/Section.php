@@ -68,7 +68,7 @@ class Section
      */
     public function removeDirective($key)
     {
-        unset ($this->directives[$key]);
+        unset($this->directives[$key]);
     }
 
     /**

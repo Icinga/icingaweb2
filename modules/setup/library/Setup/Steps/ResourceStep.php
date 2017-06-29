@@ -89,7 +89,45 @@ class ResourceStep extends Step
                 . '<tr>'
                 . '<td><strong>' . t('Password') . '</strong></td>'
                 . '<td>' . str_repeat('*', strlen($this->data['dbResourceConfig']['password'])) . '</td>'
-                . '</tr>'
+                . '</tr>';
+
+            if (isset($this->data['dbResourceConfig']['ssl_key']) && $this->data['dbResourceConfig']['ssl_key']) {
+                $dbHtml .= ''
+                    .'<tr>'
+                    . '<td><strong>' . t('SSL Key') . '</strong></td>'
+                    . '<td>' . $this->data['dbResourceConfig']['ssl_key'] . '</td>'
+                    . '</tr>';
+            }
+            if (isset($this->data['dbResourceConfig']['ssl_cert']) && $this->data['dbResourceConfig']['ssl_cert']) {
+                $dbHtml .= ''
+                    . '<tr>'
+                    . '<td><strong>' . t('SSL Cert') . '</strong></td>'
+                    . '<td>' . $this->data['dbResourceConfig']['ssl_cert'] . '</td>'
+                    . '</tr>';
+            }
+            if (isset($this->data['dbResourceConfig']['ssl_ca']) && $this->data['dbResourceConfig']['ssl_ca']) {
+                $dbHtml .= ''
+                    . '<tr>'
+                    . '<td><strong>' . t('CA') . '</strong></td>'
+                    . '<td>' . $this->data['dbResourceConfig']['ssl_ca'] . '</td>'
+                    . '</tr>';
+            }
+            if (isset($this->data['dbResourceConfig']['ssl_capath']) && $this->data['dbResourceConfig']['ssl_capath']) {
+                $dbHtml .= ''
+                    . '<tr>'
+                    . '<td><strong>' . t('CA Path') . '</strong></td>'
+                    . '<td>' . $this->data['dbResourceConfig']['ssl_capath'] . '</td>'
+                    . '</tr>';
+            }
+            if (isset($this->data['dbResourceConfig']['ssl_cipher']) && $this->data['dbResourceConfig']['ssl_cipher']) {
+                $dbHtml .= ''
+                    . '<tr>'
+                    . '<td><strong>' . t('Cipher') . '</strong></td>'
+                    . '<td>' . $this->data['dbResourceConfig']['ssl_cipher'] . '</td>'
+                    . '</tr>';
+            }
+
+            $dbHtml .= ''
                 . '</tbody>'
                 . '</table>';
         }

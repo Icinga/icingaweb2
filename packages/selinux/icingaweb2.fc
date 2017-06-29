@@ -1,0 +1,7 @@
+/etc/icingaweb2(/.*)?           gen_context(system_u:object_r:icingaweb2_config_t,s0)
+
+/usr/share/icingaweb2(/.*)?           gen_context(system_u:object_r:icingaweb2_content_t,s0)
+
+/var/log/icingaweb2(/.*)?         gen_context(system_u:object_r:icingaweb2_rw_content_t,s0)
+/var/cache/icingaweb2(/.*)?         gen_context(system_u:object_r:icingaweb2_rw_content_t,s0)
+/var/lib/icingaweb2(/.*)?         gen_context(system_u:object_r:icingaweb2_rw_content_t,s0)

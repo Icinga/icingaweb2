@@ -303,7 +303,6 @@ class HoststatusQuery extends IdoQuery
             ->columns(array(
                 'host_name',
                 'unhandled_service_count'
-            )
-        );
+            ));
     }
 }

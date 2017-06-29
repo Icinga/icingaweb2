@@ -99,7 +99,7 @@
 .icon-bell-off-empty:before { content: '\e861'; } /* '' */
 .icon-plug:before { content: '\e862'; } /* '' */
 .icon-eye-off:before { content: '\e863'; } /* '' */
-.icon-reschedule:before { content: '\e864'; } /* '' */
+.icon-arrows-cw:before { content: '\e864'; } /* '' */
 .icon-cw:before { content: '\e865'; } /* '' */
 .icon-host:before { content: '\e866'; } /* '' */
 .icon-thumbs-up:before { content: '\e867'; } /* '' */
@@ -128,3 +128,9 @@
 .icon-twitter:before { content: '\e87e'; } /* '' */
 .icon-facebook-squared:before { content: '\e87f'; } /* '' */
 .icon-gplus-squared:before { content: '\e880'; } /* '' */
+.icon-attention-circled:before { content: '\e881'; } /* '' */
+.icon-check:before { content: '\e883'; } /* '' */
+.icon-reschedule:before { content: '\e884'; } /* '' */
+.icon-warning-empty:before { content: '\e885'; } /* '' */
+.icon-history:before { content: '\f1da'; } /* '' */
+.icon-binoculars:before { content: '\f1e5'; } /* '' */

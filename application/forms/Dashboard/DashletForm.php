@@ -63,13 +63,13 @@ class DashletForm extends Form
         );
 
         $this->addElement(
-            'text',
+            'textarea',
             'url',
             array(
                 'required'      => true,
                 'label'         => $this->translate('Url'),
                 'description'   => $this->translate(
-                    'Enter url being loaded in the dashlet. You can paste the full URL, including filters.'
+                    'Enter url to be loaded in the dashlet. You can paste the full URL, including filters.'
                 ),
                 'validators'    => array(new UrlValidator(), new InternalUrlValidator())
             )

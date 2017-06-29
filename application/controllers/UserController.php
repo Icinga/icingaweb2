@@ -5,6 +5,7 @@ namespace Icinga\Controllers;
 
 use Exception;
 use Icinga\Application\Logger;
+use Icinga\Authentication\User\DomainAwareInterface;
 use Icinga\Data\DataArray\ArrayDatasource;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\NotFoundError;
@@ -27,7 +28,9 @@ class UserController extends AuthBackendController
         $this->assertPermission('config/authentication/users/show');
         $this->createListTabs()->activate('user/list');
         $backendNames = array_map(
-            function ($b) { return $b->getName(); },
+            function ($b) {
+                return $b->getName();
+            },
             $this->loadUserBackends('Icinga\Data\Selectable')
         );
         if (empty($backendNames)) {
@@ -94,7 +97,12 @@ class UserController extends AuthBackendController
             $this->httpNotFound(sprintf($this->translate('User "%s" not found'), $userName));
         }
 
-        $memberships = $this->loadMemberships(new User($userName))->select();
+        $userObj = new User($userName);
+        if ($backend instanceof DomainAwareInterface) {
+            $userObj->setDomain($backend->getDomain());
+        }
+
+        $memberships = $this->loadMemberships($userObj)->select();
 
         $this->setupFilterControl(
             $memberships,

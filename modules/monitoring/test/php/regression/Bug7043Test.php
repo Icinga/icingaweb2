@@ -13,7 +13,6 @@ use Icinga\Module\Monitoring\Backend;
 use Icinga\Test\BaseTestCase;
 use Mockery;
 
-
 class ConfigWithSetModuleConfig extends Config
 {
     public static function setModuleConfig($moduleName, $configName, $config)

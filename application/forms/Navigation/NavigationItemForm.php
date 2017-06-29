@@ -53,9 +53,27 @@ class NavigationItemForm extends Form
                 'allowEmpty'    => true,
                 'label'         => $this->translate('Url'),
                 'description'   => $this->translate(
-                    'The url of this navigation item. Leave blank if you only want the'
-                    . ' name being displayed. For external urls, make sure to prepend'
-                    . ' an appropriate protocol identifier (e.g. http://example.tld)'
+                    'The url of this navigation item. Leave blank if only the name should be displayed.'
+                    . ' For urls with username and password and for all external urls,'
+                    . ' make sure to prepend an appropriate protocol identifier (e.g. http://example.tld)'
+                ),
+                'validators'    => array(
+                    array(
+                        'Callback',
+                        false,
+                        array(
+                            'callback' => function ($url) {
+                                // Matches if the given url contains obviously
+                                // a username but not any protocol identifier
+                                return !preg_match('#^((?=[^/@]).)+@.*$#', $url);
+                            },
+                            'messages' => array(
+                                'callbackValue' => $this->translate(
+                                    'Missing protocol identifier'
+                                )
+                            )
+                        )
+                    )
                 )
             )
         );
@@ -79,10 +97,15 @@ class NavigationItemForm extends Form
     public function getValues($suppressArrayNotation = false)
     {
         $values = parent::getValues($suppressArrayNotation);
-        if (isset($values['url']) && $values['url']) {
+        // The regex here specifically matches the port-macro as it's the only one preventing Url::fromPath() from
+        // successfully parsing the given url. Any other macro such as for the scheme or host simply gets identified
+        // as path which is just fine in this case.
+        if (isset($values['url']) && $values['url'] && !preg_match('~://.+:(\$.+\$)~', $values['url'])) {
             $url = Url::fromPath($values['url']);
-            if (! $url->isExternal() && ($relativePath = $url->getRelativeUrl())) {
-                $values['url'] = $relativePath;
+            if ($url->getBasePath() === $this->getRequest()->getBasePath()) {
+                $values['url'] = $url->getRelativeUrl();
+            } else {
+                $values['url'] = $url->getAbsoluteUrl();
             }
         }
 

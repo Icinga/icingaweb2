@@ -1,0 +1,3015 @@
+# Icinga Web 2 - Head for multiple monitoring backends.
+# Copyright (C) 2016 Icinga Development Team
+# This file is distributed under the same license as Icinga Web 2.
+#
+# Munzir Taha <munzirtaha@gmail.com>, 2016.
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: dev@icinga.com\n"
+"POT-Creation-Date: 2016-05-23 20:16+0300\n"
+"PO-Revision-Date: 2016-06-02 10:02+0300\n"
+"Last-Translator: Munzir Taha <munzirtaha@gmail.com>\n"
+"Language-Team: Arabic <trans-ar@lists.fedoraproject.org>\n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 &&"
+" n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+"X-Generator: Lokalize 2.0\n"
+
+#: /usr/share/php/Icinga/Web/Form/Validator/InArray.php:16
+#, php-format
+msgid "\"%s\" is not in the list of allowed values."
+msgstr "\"%s\" ليست ضمن قائمة القيم المتاحة."
+
+#: /usr/share/php/Icinga/Web/Form/Validator/InArray.php:19
+#, php-format
+msgid ""
+"\"%s\" is not in the list of allowed values. Did you mean one of the "
+"following?: %s"
+msgstr "\"%s\" ليست ضمن قائمة القيم المتاحة. هل تعني إحدى؟: %s"
+
+#: /usr/share/icingaweb2/application/forms/Config/UserBackend/ExternalBackendForm.php:42
+#: /usr/share/icingaweb2/application/forms/Config/Resource/FileResourceForm.php:50
+msgid "\"%value%\" is not a valid regular expression."
+msgstr "\"%value%\" ليست خياراً صالحاً."
+
+#: /usr/share/php/Icinga/Web/Form/ErrorLabeller.php:48
+#, php-format
+msgid "%s (%%value%%) has a false MIME type of \"%%type%%\""
+msgstr "%s (%%value%%) لها نوع MIME خاطئ هو \"%%type%%\""
+
+#: /usr/share/php/Icinga/Web/Form/ErrorLabeller.php:51
+#, php-format
+msgid "%s (%%value%%) has no MIME type"
+msgstr "%s (%%value%%) ليس لها نوع MIME"
+
+#: /usr/share/php/Icinga/Date/DateFormatter.php:171
+#, php-format
+msgctxt "An event that happened the given time interval ago"
+msgid "%s ago"
+msgstr "قبل %s"
+
+#: /usr/share/php/Icinga/Web/Form/ErrorLabeller.php:53
+#, php-format
+msgctxt "config.path"
+msgid "%s does not exist"
+msgstr "%s غير موجود"
+
+#: /usr/share/php/Icinga/Web/Form/ErrorLabeller.php:54
+#, php-format
+msgctxt "config.path"
+msgid "%s is not readable"
+msgstr "%s غير مقروءة"
+
+#: /usr/share/php/Icinga/Web/Form/ErrorLabeller.php:52
+#, php-format
+msgctxt "config.path"
+msgid "%s is not writable"
+msgstr "%s غير قابلة للكتابة"
+
+#: /usr/share/php/Icinga/Web/Form/ErrorLabeller.php:46
+#, php-format
+msgid "%s is required and must not be empty"
+msgstr "%s مطلوبة ويجب ألا تكون خالية"
+
+#: /usr/share/php/Icinga/Web/Form/ErrorLabeller.php:56
+#, php-format
+msgid "%s not in the expected format: %%value%%"
+msgstr "%s ليست على النسق المتوقع: %%value%%"
+
+#: /usr/share/icingaweb2/application/views/scripts/pivottablePagination.phtml:9
+#, php-format
+msgid "%s: %d to %d of %d (on the %s-axis)"
+msgstr "%s: %d إلى %d من %d (على محور-%s)"
+
+#: /usr/share/icingaweb2/application/views/scripts/joystickPagination.phtml:9
+#, php-format
+msgctxt "pagination.joystick"
+msgid "%s: Show %s %u to %u out of %u"
+msgstr "%s: عرض %s %u إلى %u من %u"
+
+#: /usr/share/php/Icinga/Web/Form/Element/Number.php:138
+#, php-format
+msgid "'%s' is not a valid number"
+msgstr "'%s' ليس رقما صالحا"
+
+#: /usr/share/php/Icinga/Authentication/User/DbUserBackend.php:115
+#: /usr/share/php/Icinga/Authentication/UserGroup/DbUserGroupBackend.php:114
+#: /usr/share/php/Icinga/Authentication/UserGroup/DbUserGroupBackend.php:115
+msgid "(Case insensitive)"
+msgstr "(غير حساس لحالة الأحرف)"
+
+#: /usr/share/icingaweb2/application/forms/Navigation/NavigationConfigForm.php:334
+#: /usr/share/icingaweb2/application/forms/Navigation/NavigationConfigForm.php:419
+#, php-format
+msgid "A navigation item with the name \"%s\" does already exist"
+msgstr "عنصر تنقل باسم \"%s\" موجود مسبقا"
+
+#: /usr/share/icingaweb2/application/forms/Config/UserBackendConfigForm.php:166
+#, php-format
+msgid "A user backend with the name \"%s\" does already exist"
+msgstr "خدمة مستخدم باسم \"%s\" موجودة مسبقا"
+
+#: /usr/share/icingaweb2/application/controllers/AboutController.php:19
+#: /usr/share/php/Icinga/Web/Menu.php:257
+#: /usr/share/php/Icinga/Application/Web.php:305
+msgid "About"
+msgstr "حول"
+
+#: /usr/share/icingaweb2/application/controllers/AboutController.php:20
+msgid "About Icinga Web 2"
+msgstr "حول إسنجا وب 2"
+
+#: /usr/share/icingaweb2/application/layouts/scripts/parts/navigation.phtml:12
+msgid "Accessibility Skip Links"
+msgstr "Accessibility Skip Links"
+
+#: /usr/share/icingaweb2/application/views/scripts/user/show.phtml:33
+#: /usr/share/icingaweb2/application/forms/Config/User/UserForm.php:24
+#: /usr/share/icingaweb2/application/controllers/UserController.php:70
+#: /usr/share/php/Icinga/Authentication/User/LdapUserBackend.php:256
+#: /usr/share/php/Icinga/Authentication/User/DbUserBackend.php:119
+msgid "Active"
+msgstr "نَشِط"
+
+#: /usr/share/icingaweb2/application/forms/Config/User/UserForm.php:46
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/AddMemberForm.php:126
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/UserGroupForm.php:29
+msgid "Add"
+msgstr "إضافة"
+
+#: /usr/share/php/Icinga/Web/Widget/Tabextension/DashboardSettings.php:25
+msgid "Add Dashlet"
+msgstr "إضافة لوحة مصغرة"
+
+#: /usr/share/icingaweb2/application/controllers/DashboardController.php:76
+msgid "Add Dashlet To Dashboard"
+msgstr "إضافة لوحة مصغرة للوحة المعلومات"
+
+#: /usr/share/icingaweb2/application/views/scripts/group/show.phtml:54
+msgid "Add New Member"
+msgstr "إضافة عضو جديد"
+
+#: /usr/share/icingaweb2/application/forms/Dashboard/DashletForm.php:29
+#: /usr/share/php/Icinga/Web/Widget/Tabextension/DashboardAction.php:27
+msgid "Add To Dashboard"
+msgstr "إضافة إلى لوحة المعلومات"
+
+#: /usr/share/php/Icinga/Web/Widget/Tabextension/MenuAction.php:27
+msgid "Add To Menu"
+msgstr "إضافة إلى القائمة"
+
+#: /usr/share/icingaweb2/application/views/scripts/user/list.phtml:32
+msgid "Add a New User"
+msgstr "إضافة مستخدم جديد"
+
+#: /usr/share/icingaweb2/application/views/scripts/group/list.phtml:32
+msgid "Add a New User Group"
+msgstr "إضافة مجموعة مستخدمين جديدة"
+
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/UserGroupForm.php:28
+msgid "Add a new group"
+msgstr "إضافة مجموعة جديدة"
+
+#: /usr/share/icingaweb2/application/forms/Config/User/UserForm.php:45
+msgid "Add a new user"
+msgstr "إضافة مستخدم جديد"
+
+#: /usr/share/php/Icinga/Web/Widget/FilterEditor.php:410
+msgid "Add another filter"
+msgstr "إضافة مرشِّح جديد"
+
+#: /usr/share/php/Icinga/Web/Widget/FilterWidget.php:80
+msgid "Add filter..."
+msgstr "إضافة مرشح ..."
+
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/AddMemberForm.php:125
+#, php-format
+msgid "Add members for group %s"
+msgstr "إضافة أعضاء للمجموعة %s"
+
+#: /usr/share/icingaweb2/application/controllers/ConfigController.php:37
+msgid "Adjust the general configuration of Icinga Web 2"
+msgstr "ضبط الإعدادات العاملة ل  إسنجا وب 2"
+
+#: /usr/share/icingaweb2/application/controllers/NavigationController.php:133
+#: /usr/share/icingaweb2/application/controllers/PreferenceController.php:32
+msgid "Adjust the preferences of Icinga Web 2 according to your needs"
+msgstr "ضبط إعدادات إسنجا وب 2 حسب حاجتك"
+
+#: /usr/share/icingaweb2/application/forms/Authentication/LoginForm.php:105
+msgid ""
+"All configured authentication methods failed. Please check the system log or "
+"Icinga Web 2 log for more information."
+msgstr ""
+"فشلت جميع طرق التحقق. رجاء قم بفحص سجلات النظام أو سجلات إسنجا وب 2 للمزيد"
+" من المعلومات."
+
+#: /usr/share/icingaweb2/application/forms/Security/RoleForm.php:68
+#, php-format
+msgid "Allow access to module %s"
+msgstr "السمحا بالوصول للوحدة %s"
+
+#: /usr/share/icingaweb2/application/forms/Security/RoleForm.php:45
+msgid "Allow config access"
+msgstr "السماح بالوصول للإعدادات"
+
+#: /usr/share/icingaweb2/application/forms/Security/RoleForm.php:39
+msgid "Allow everything"
+msgstr "السماح بكل شيء"
+
+#: /usr/share/icingaweb2/application/forms/Security/RoleForm.php:43
+msgid "Allow to adjust in the preferences whether to show stacktraces"
+msgstr "السماح بضبط الإعدادات لتسمح بعرض تتبعات المكدس (stacktraces)"
+
+#: /usr/share/icingaweb2/application/forms/Security/RoleForm.php:40
+msgid "Allow to share navigation items"
+msgstr "السماح بمشاركة عناصر التنقل"
+
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:135
+msgid ""
+"An additional filter to use when looking up groups using the specified "
+"connection. Leave empty to not to use any additional filter rules."
+msgstr ""
+"مرشح إضافة لاستخدامه عند البحث عن المجموعات باستخدام الاتصال المحدد. دعه"
+" فارغا حتى لا تستخدم أي قوانين مرشحات إضافية."
+
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:228
+#: /usr/share/icingaweb2/application/forms/Config/UserBackend/LdapBackendForm.php:153
+msgid ""
+"An additional filter to use when looking up users using the specified "
+"connection. Leave empty to not to use any additional filter rules."
+msgstr ""
+"مرشح إضافة لاستخدامه عند البحث عن المستخدمين باستخدام الاتصال المحدد. دعه"
+" فارغا حتى لا تستخدم أي قوانين مرشحات إضافية."
+
+#: /usr/share/php/Icinga/Web/Menu.php:274
+#: /usr/share/php/Icinga/Application/Web.php:318
+msgid "Application"
+msgstr "التطبيق"
+
+#: /usr/share/php/Icinga/Web/Menu.php:262
+#: /usr/share/php/Icinga/Application/Web.php:366
+msgid "Application Log"
+msgstr "سجل التطبيق"
+
+#: /usr/share/icingaweb2/application/forms/Config/General/LoggingConfigForm.php:71
+msgid "Application Prefix"
+msgstr "بادئة التطبيق"
+
+#: /usr/share/php/Icinga/Web/Form/Decorator/Autosubmit.php:122
+msgid "Apply"
+msgstr "تطبيق"
+
+#: /usr/share/icingaweb2/application/controllers/ConfigController.php:50
+#: /usr/share/php/Icinga/Web/Menu.php:279
+#: /usr/share/php/Icinga/Application/Web.php:324
+msgid "Authentication"
+msgstr "المصادقة"
+
+#: /usr/share/php/Icinga/Web/Controller/AuthBackendController.php:69
+#, php-format
+msgid "Authentication backend \"%s\" is not %s"
+msgstr "خدمة المصادقة \"%s\" ليست %s"
+
+#: /usr/share/php/Icinga/Web/Controller/AuthBackendController.php:62
+#, php-format
+msgid "Authentication backend \"%s\" not found"
+msgstr "خدمة المصادقة \"%s\" لا توجد"
+
+#: /usr/share/icingaweb2/application/forms/Config/UserBackendReorderForm.php:65
+msgid "Authentication order updated"
+msgstr "حُدِّث ترتيب المصادقة"
+
+#: /usr/share/icingaweb2/application/forms/AutoRefreshForm.php:44
+msgid "Auto refresh successfully disabled"
+msgstr "عُطِّل التحديث التلقائي"
+
+#: /usr/share/icingaweb2/application/forms/AutoRefreshForm.php:41
+msgid "Auto refresh successfully enabled"
+msgstr "فُعِّل التحديث التلقائي"
+
+#: /usr/share/php/Icinga/Web/Wizard.php:626
+#: /usr/share/php/Icinga/Web/Wizard.php:650
+msgid "Back"
+msgstr "خلف"
+
+#: /usr/share/icingaweb2/application/views/scripts/config/userbackend/reorder.phtml:35
+#: /usr/share/icingaweb2/application/views/scripts/form/reorder-authbackend.phtml:4
+msgid "Backend"
+msgstr "خلفية"
+
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:39
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/DbUserGroupBackendForm.php:34
+#: /usr/share/icingaweb2/application/forms/Config/UserBackend/LdapBackendForm.php:57
+#: /usr/share/icingaweb2/application/forms/Config/UserBackend/DbBackendForm.php:53
+#: /usr/share/icingaweb2/application/forms/Config/UserBackend/ExternalBackendForm.php:32
+msgid "Backend Name"
+msgstr "اسم الخلفية"
+
+#: /usr/share/icingaweb2/application/forms/Config/UserBackendConfigForm.php:295
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/UserGroupBackendForm.php:180
+msgid "Backend Type"
+msgstr "نوع الخلفية"
+
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/AddMemberForm.php:104
+msgid "Backend Users"
+msgstr "مستخدمي الخلفية"
+
+#: /usr/share/icingaweb2/application/forms/Config/Resource/LdapResourceForm.php:99
+msgid "Bind DN"
+msgstr "ربط الاسم المميز"
+
+#: /usr/share/icingaweb2/application/forms/Config/Resource/LdapResourceForm.php:111
+msgid "Bind Password"
+msgstr "كلمة مرور Bind"
+
+#: /usr/share/icingaweb2/application/forms/PreferenceForm.php:181
+#: /usr/share/icingaweb2/application/forms/PreferenceForm.php:187
+#, php-format
+msgctxt "preferences.form"
+msgid "Browser (%s)"
+msgstr "متصفح (%s)"
+
+#: /usr/share/icingaweb2/application/forms/Security/RoleForm.php:214
+#, php-format
+msgid "Can't add role '%s'. Role already exists"
+msgstr "لا يمكن إضافة الدور '%s'. الدور موجود مسبقا"
+
+#: /usr/share/icingaweb2/application/forms/Security/RoleForm.php:173
+#, php-format
+msgid "Can't load role '%s'. Role does not exist"
+msgstr "لا يمكن تحميل الدور '%s'. الدور غير موجود"
+
+#: /usr/share/icingaweb2/application/forms/Security/RoleForm.php:240
+#, php-format
+msgid "Can't remove role '%s'. Role does not exist"
+msgstr "لا يمكن إزالة الدور '%s'. الدور غير موجود"
+
+#: /usr/share/icingaweb2/application/forms/Security/RoleForm.php:273
+#, php-format
+msgid "Can't update role '%s'. Role does not exist"
+msgstr "لا يمكن تحديث الدور '%s'. الدور غير موجود"
+
+#: /usr/share/icingaweb2/application/views/scripts/user/show.phtml:79
+msgctxt "group.membership"
+msgid "Cancel"
+msgstr "إلغاء"
+
+#: /usr/share/icingaweb2/application/controllers/UserController.php:148
+msgid "Cancel this membership"
+msgstr "إلغاء العضوية"
+
+#: /usr/share/php/Icinga/Web/Widget/FilterEditor.php:436
+msgid "Cancel this operation"
+msgstr "إلغاء العملية"
+
+#: /usr/share/php/Icinga/Repository/IniRepository.php:64
+#, php-format
+msgid "Cannot insert. Section \"%s\" does already exist"
+msgstr "لا يمكن الإدراج. المقطع \"%s\" موجود مسبقا"
+
+#: /usr/share/php/Icinga/Application/Config.php:328
+#, php-format
+msgid "Cannot read config file \"%s\". Permission denied"
+msgstr "لا يمكن قراءة ملف الإعدادات \"%s\". الصلاحيات ممنوعة"
+
+#: /usr/share/php/Icinga/Web/Widget/FilterEditor.php:283
+msgid "Cannot search here"
+msgstr "لا يمكن البحث هنا"
+
+#: /usr/share/php/Icinga/Repository/IniRepository.php:91
+#: /usr/share/php/Icinga/Repository/IniRepository.php:108
+#, php-format
+msgid ""
+"Cannot update. Column \"%s\" holds a section's name which must be unique"
+msgstr "تعذر التحديث. العمود \"%s\" يحوي اسم المقطع الذي يجب أن يكون وحيدا"
+
+#: /usr/share/php/Icinga/Repository/IniRepository.php:123
+#, php-format
+msgid "Cannot update. Section \"%s\" does already exist"
+msgstr "تعذر التحديث. المقطع \"%s\" موجود مسبقا"
+
+#: /usr/share/php/Icinga/Web/Widget/SortBox.php:251
+msgid "Change sort direction"
+msgstr "تغيير اتجاه الترتيب"
+
+#: /usr/share/icingaweb2/application/forms/Config/Resource/DbResourceForm.php:146
+msgid "Character Set"
+msgstr "مجموعة المحارف"
+
+#: /usr/share/icingaweb2/application/forms/Config/General/ThemingConfigForm.php:53
+msgctxt "Form element description"
+msgid ""
+"Check this box for disallowing users to change the theme. If a default theme "
+"is set, it will be used nonetheless"
+msgstr ""
+"اختر هذا المربع لمنع المستخدمين من تغيير السمة. إذا تم تعيين سمة افتراضية،"
+" سيتم استخدامها في جميع الحالات"
+
+#: /usr/share/icingaweb2/application/forms/Config/Resource/DbResourceForm.php:154
+msgid ""
+"Check this box for persistent database connections. Persistent connections "
+"are not closed at the end of a request, but are cached and re-used. This is "
+"experimental"
+msgstr ""
+"حدد هذا المربع لاتصالات قاعدة البيانات الثابتة. لا يتم إغلاق الاتصالات "
+"المستمرة في نهاية الطلب، ولكنها تخزن في ذاكرة مؤقتة ويعاد "
+"استخدامها. وهذه خاصية تجريبية"
+
+#: /usr/share/icingaweb2/application/forms/Dashboard/DashletForm.php:101
+msgid "Check this box if you want to add the dashlet to a new dashboard"
+msgstr "حدد هذا المربع إذا كنت ترغب في إضافة لوحة مصغرة للوحة المعلومات"
+
+#: /usr/share/icingaweb2/application/forms/Config/ResourceConfigForm.php:222
+msgid "Check this box to enforce changes without connectivity validation"
+msgstr "حدد هذا المربع لفرض تغييرات دون تحقق من صحة الاتصال"
+
+#: /usr/share/icingaweb2/application/forms/Config/UserBackendConfigForm.php:383
+msgid ""
+"Check this box to enforce changes without validating that authentication is "
+"possible."
+msgstr "حدد هذا المربع لفرض تغييرات دون تحقق من إمكانية المصادقة."
+
+#: /usr/share/php/Icinga/Web/Widget/FilterWidget.php:68
+msgid "Click to remove this part of your filter"
+msgstr "انقر لإزالة هذا الجزء من المرشح"
+
+#: /usr/share/php/Icinga/Repository/Repository.php:1023
+#, php-format
+msgid "Column \"%s\" cannot be queried"
+msgstr "العمود \"%s\" لا يمكن الاستعلام عنه"
+
+#: /usr/share/icingaweb2/application/forms/Navigation/NavigationConfigForm.php:625
+msgid "Comma separated list of group names to share this item with"
+msgstr "قائمة أسماء مجموعة مفصولة بفواصل لمشاركة هذا البند معها"
+
+#: /usr/share/icingaweb2/application/forms/Navigation/NavigationConfigForm.php:615
+msgid "Comma separated list of usernames to share this item with"
+msgstr "قائمة أسماء مستخدمين مفصولة بفواصل لمشاركة هذا البند معها"
+
+#: /usr/share/icingaweb2/application/forms/Security/RoleForm.php:126
+msgid "Comma-separated list of groups that are assigned to the role"
+msgstr "قائمة مجموعات مفصولة بفواصل تم إسناد هذا الدور لها"
+
+#: /usr/share/icingaweb2/application/forms/Security/RoleForm.php:118
+msgid "Comma-separated list of users that are assigned to the role"
+msgstr "قائمة مستخدمين مفصولة بفواصل تم إسناد هذا الدور لها"
+
+#: /usr/share/php/Icinga/Web/Menu.php:269
+#: /usr/share/php/Icinga/Application/Web.php:312
+msgid "Configuration"
+msgstr "إعدادات"
+
+#: /usr/share/icingaweb2/application/controllers/UserController.php:312
+#: /usr/share/icingaweb2/application/controllers/GroupController.php:346
+#: /usr/share/icingaweb2/application/controllers/RoleController.php:155
+msgid ""
+"Configure roles to permit or restrict users and groups accessing Icinga Web 2"
+msgstr ""
+"إعداد الأدوار للسماح أو منع المستخدمين والمجموعات من الوصول إلى إسنجا وب 2"
+
+#: /usr/share/icingaweb2/application/controllers/ConfigController.php:49
+msgid "Configure the user and group backends"
+msgstr "إعداد خلفيات المستخدم والمجموعة"
+
+#: /usr/share/icingaweb2/application/controllers/ConfigController.php:43
+msgid "Configure which resources are being utilized by Icinga Web 2"
+msgstr "إعداد الموارد التي تستخدمها إسنجا وب 2"
+
+#: /usr/share/icingaweb2/application/forms/ConfirmRemovalForm.php:19
+msgid "Confirm Removal"
+msgstr "تأكيد الإزالة"
+
+#: /usr/share/icingaweb2/application/forms/Config/Resource/LivestatusResourceForm.php:79
+msgid ""
+"Connectivity validation failed, connection to the given resource not "
+"possible."
+msgstr "فشل التحقق من الاتصال، الاتصال بالمورد المعطى غير ممكن."
+
+#: /usr/share/php/Icinga/Chart/GridChart.php:90
+msgid "Contains data in a bar or line chart."
+msgstr "يحتوي على البيانات في شريط أو خط رسم بياني."
+
+#: /usr/share/php/Icinga/Chart/PieChart.php:56
+msgid "Contains data in a pie chart."
+msgstr "يحتوي على البيانات في مخطط دائري."
+
+#: /usr/share/icingaweb2/application/forms/Config/General/ApplicationConfigForm.php:54
+msgid ""
+"Contains the directories that will be searched for available modules, "
+"separated by colons. Modules that don't exist in these directories can still "
+"be symlinked in the module folder, but won't show up in the list of disabled "
+"modules."
+msgstr ""
+"يحتوي على المجلدات التي سيتم البحث فيها عن الوحدات المتاحة، "
+"مفصولة بنقطتين. الوحدات التي لا وجود لها في هذه المجلدات يظل "
+"بالإمكان ربطها من مجلد الوحدة، لكنها لن تظهر في قائمة الوحدات "
+"المعطلة."
+
+#: /usr/share/icingaweb2/application/views/scripts/about/index.phtml:25
+msgid "Copyright"
+msgstr "حقوق النسخ"
+
+#: /usr/share/icingaweb2/application/forms/Config/UserBackendConfigForm.php:82
+msgid ""
+"Could not find any valid user backend resources. Please configure a resource "
+"for authentication first."
+msgstr ""
+"لا يمكن العثور على أي موارد لخلفية المستخدم صالحة. يرجى إعداد مورد "
+"للمصادقة أولا."
+
+#: /usr/share/icingaweb2/application/views/scripts/dashboard/error.phtml:2
+msgid "Could not persist dashboard"
+msgstr "لا يمكن للوحة المعلومات أن تستمر"
+
+#: /usr/share/icingaweb2/application/forms/Config/User/CreateMembershipForm.php:89
+msgid "Create"
+msgstr "إنشاء"
+
+#: /usr/share/icingaweb2/application/views/scripts/user/show.phtml:57
+msgid "Create New Membership"
+msgstr "إنشاء عضوية حديدة"
+
+#: /usr/share/icingaweb2/application/controllers/RoleController.php:59
+msgid "Create Role"
+msgstr "إنشاء دور"
+
+#: /usr/share/icingaweb2/application/views/scripts/navigation/index.phtml:12
+msgid "Create a New Navigation Item"
+msgstr "إنشاء عنصر تنقل جديد"
+
+#: /usr/share/icingaweb2/application/views/scripts/config/resource.phtml:6
+msgid "Create a New Resource"
+msgstr "إنشاء مورد جديد"
+
+#: /usr/share/icingaweb2/application/views/scripts/role/list.phtml:6
+msgid "Create a New Role"
+msgstr "إنشاء دور جديد"
+
+#: /usr/share/icingaweb2/application/views/scripts/config/userbackend/reorder.phtml:7
+msgid "Create a New User Backend"
+msgstr "إنشاء خلفية مستخدم جديد"
+
+#: /usr/share/icingaweb2/application/views/scripts/config/userbackend/reorder.phtml:21
+msgid "Create a New User Group Backend"
+msgstr "إنشاء خلفية مجموعة مستخدمين جديدة"
+
+#: /usr/share/icingaweb2/application/controllers/ConfigController.php:198
+msgid ""
+"Create a new backend for authenticating your users. This backend will be "
+"added at the end of your authentication order."
+msgstr ""
+"إنشاء خلفية جديدة لمصادقة المستخدمين. ستضاف هذه الخلفية "
+"في نهاية ترتيب المصادقة الخاصة بك."
+
+#: /usr/share/icingaweb2/application/controllers/UsergroupbackendController.php:42
+msgid "Create a new backend to associate users and groups with."
+msgstr "إنشاء خلفية جديدة لربطها بالمستخدمين والمجموعات."
+
+#: /usr/share/icingaweb2/application/views/scripts/navigation/index.phtml:19
+msgid "Create a new navigation item"
+msgstr "إنشاء عنصر تنقل جديد"
+
+#: /usr/share/icingaweb2/application/controllers/NavigationController.php:216
+msgid "Create a new navigation item, such as a menu entry or dashlet."
+msgstr "إنشاء عنصر تنقل جديد، مثل مدخل قائمة أو لوحة مصغرة."
+
+#: /usr/share/icingaweb2/application/views/scripts/config/resource.phtml:13
+msgid "Create a new resource"
+msgstr "إنشاء مورد جديد"
+
+#: /usr/share/icingaweb2/application/views/scripts/role/list.phtml:13
+msgid "Create a new role"
+msgstr "إنشاء دور جديد"
+
+#: /usr/share/icingaweb2/application/views/scripts/config/userbackend/reorder.phtml:14
+msgid "Create a new user backend"
+msgstr "إنشاء خلفية مستخدم جديد"
+
+#: /usr/share/icingaweb2/application/views/scripts/config/userbackend/reorder.phtml:28
+msgid "Create a new user group backend"
+msgstr "إنشاء خلفية مجموعة مستخدمين جديدة"
+
+#: /usr/share/icingaweb2/application/forms/Config/User/CreateMembershipForm.php:88
+#, php-format
+msgid "Create memberships for %s"
+msgstr "إنشاء عضوية لأجل %s"
+
+#: /usr/share/php/Icinga/Authentication/User/LdapUserBackend.php:257
+#: /usr/share/php/Icinga/Authentication/User/DbUserBackend.php:120
+#: /usr/share/php/Icinga/Authentication/UserGroup/LdapUserGroupBackend.php:466
+#: /usr/share/php/Icinga/Authentication/UserGroup/DbUserGroupBackend.php:122
+msgid "Created At"
+msgstr "أُنشئ في"
+
+#: /usr/share/icingaweb2/application/views/scripts/group/show.phtml:33
+#: /usr/share/icingaweb2/application/views/scripts/user/show.phtml:36
+#: /usr/share/icingaweb2/application/controllers/UserController.php:71
+#: /usr/share/icingaweb2/application/controllers/GroupController.php:70
+#: /usr/share/icingaweb2/application/controllers/GroupController.php:106
+msgid "Created at"
+msgstr "أنشئ في"
+
+#: /usr/share/icingaweb2/application/forms/Navigation/NavigationItemForm.php:44
+msgid "Current Column"
+msgstr "العمود الحالي"
+
+#: /usr/share/icingaweb2/application/views/scripts/dashboard/index.phtml:16
+msgid ""
+"Currently there is no dashlet available. Please contact the administrator."
+msgstr "لا يوجد حاليا لوحة مصغرة متاحة. يُرجى الاتصال بالمسئول."
+
+#: /usr/share/icingaweb2/application/views/scripts/dashboard/index.phtml:20
+#, php-format
+msgid ""
+"Currently there is no dashlet available. This might change once you enabled "
+"some of the available %s."
+msgstr ""
+"لا يوجد حاليا لوحة مصغرة متاحة. يمكن لهذا أن يتغير بمجرد "
+"تفعيلك لبعض الـ %s المتوفرة."
+
+#: /usr/share/icingaweb2/application/forms/Dashboard/DashletForm.php:120
+#: /usr/share/icingaweb2/application/controllers/DashboardController.php:257
+#: /usr/share/php/Icinga/Web/Menu.php:243
+#: /usr/share/php/Icinga/Application/Web.php:290
+msgid "Dashboard"
+msgstr "لوحة المعلومات"
+
+#: /usr/share/icingaweb2/application/views/scripts/dashboard/settings.phtml:5
+msgid "Dashboard Settings"
+msgstr "إعدادات لوحة المعلومات"
+
+#: /usr/share/icingaweb2/application/controllers/DashboardController.php:219
+msgid "Dashboard has been removed"
+msgstr "تم إزالة لوحة المعلومات"
+
+#: /usr/share/icingaweb2/application/views/scripts/dashboard/settings.phtml:11
+msgid "Dashlet Name"
+msgstr "اسم اللوحة المصغرة"
+
+#: /usr/share/icingaweb2/application/forms/Dashboard/DashletForm.php:81
+msgid "Dashlet Title"
+msgstr "عنوان اللوحة المصغرة"
+
+#: /usr/share/icingaweb2/application/controllers/DashboardController.php:73
+msgid "Dashlet created"
+msgstr "أنشئت لوحة مصغرة"
+
+#: /usr/share/icingaweb2/application/controllers/DashboardController.php:183
+msgid "Dashlet has been removed from"
+msgstr "أُزيلت اللوحة المصغرة من"
+
+#: /usr/share/icingaweb2/application/controllers/DashboardController.php:140
+msgid "Dashlet updated"
+msgstr "حُدثت اللوحة المصغرة"
+
+#: /usr/share/icingaweb2/application/forms/Config/UserBackendConfigForm.php:267
+#: /usr/share/icingaweb2/application/forms/Config/General/ApplicationConfigForm.php:70
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/UserGroupBackendForm.php:163
+msgid "Database"
+msgstr "قاعدة البيانات"
+
+#: /usr/share/icingaweb2/application/forms/Config/General/ApplicationConfigForm.php:90
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/DbUserGroupBackendForm.php:47
+#: /usr/share/icingaweb2/application/forms/Config/UserBackend/DbBackendForm.php:64
+msgid "Database Connection"
+msgstr "اتصال قاعدة البيانات"
+
+#: /usr/share/icingaweb2/application/forms/Config/Resource/DbResourceForm.php:118
+msgid "Database Name"
+msgstr "اسم قاعدة البيانات"
+
+#: /usr/share/icingaweb2/application/forms/Config/Resource/DbResourceForm.php:86
+msgid "Database Type"
+msgstr "نوع قاعدة البيانات"
+
+#: /usr/share/icingaweb2/application/forms/Config/General/LoggingConfigForm.php:59
+msgctxt "app.config.logging.level"
+msgid "Debug"
+msgstr "فحص الأخطاء"
+
+#: /usr/share/icingaweb2/application/forms/Config/General/ThemingConfigForm.php:42
+msgctxt "Form element label"
+msgid "Default Theme"
+msgstr "السمة الافتراضية"
+
+#: /usr/share/icingaweb2/application/views/scripts/config/module.phtml:46
+msgid "Dependencies"
+msgstr "الاعتمادات"
+
+#: /usr/share/icingaweb2/application/views/scripts/config/module.phtml:42
+msgid "Description"
+msgstr "الوصف"
+
+#: /usr/share/icingaweb2/application/views/scripts/showConfiguration.phtml:19
+msgid ""
+"Details can be found in the application log. (If you don't have access to "
+"this log, call your administrator in this case)"
+msgstr ""
+"يمكن الاطلاع على التفاصيل في سجل التطبيق. (إذا لم يكن لديك "
+"وصولا إلى هذا السجل، اتصل بالمسؤول في هذه الحالة)"
+
+#: /usr/share/icingaweb2/application/forms/AutoRefreshForm.php:65
+msgid "Disable auto refresh"
+msgstr "تعطيل التحديث التلقائي"
+
+#: /usr/share/icingaweb2/application/views/scripts/config/module.phtml:26
+#, php-format
+msgid "Disable the %s module"
+msgstr "تعطيل وحدة %s"
+
+#: /usr/share/icingaweb2/application/forms/Config/UserBackend/LdapBackendForm.php:88
+msgctxt "A button to discover LDAP capabilities"
+msgid "Discover"
+msgstr "اكتشاف"
+
+#: /usr/share/icingaweb2/application/forms/Config/General/ApplicationConfigForm.php:71
+msgid "Don't Store Preferences"
+msgstr "عدم تخزين التفضيلات"
+
+#: /usr/share/icingaweb2/application/controllers/DashboardController.php:143
+msgid "Edit Dashlet"
+msgstr "تحرير لوحة صغيرة"
+
+#: /usr/share/icingaweb2/application/views/scripts/user/show.phtml:16
+msgid "Edit User"
+msgstr "تحرير مستخدم"
+
+#: /usr/share/icingaweb2/application/views/scripts/dashboard/settings.phtml:54
+#, php-format
+msgid "Edit dashlet %s"
+msgstr "تحرير لوحة صغيرة %s"
+
+#: /usr/share/icingaweb2/application/views/scripts/group/show.phtml:18
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/UserGroupForm.php:31
+#, php-format
+msgid "Edit group %s"
+msgstr "تحرير محموعة %s"
+
+#: /usr/share/icingaweb2/application/views/scripts/navigation/index.phtml:47
+#, php-format
+msgid "Edit navigation item %s"
+msgstr "تحرير عنصر تنقل %s"
+
+#: /usr/share/icingaweb2/application/views/scripts/config/resource.phtml:56
+#, php-format
+msgid "Edit resource %s"
+msgstr "تحرير مورد %s"
+
+#: /usr/share/icingaweb2/application/views/scripts/role/list.phtml:36
+#, php-format
+msgid "Edit role %s"
+msgstr "تحرير دور %s"
+
+#: /usr/share/icingaweb2/application/views/scripts/navigation/shared.phtml:37
+#, php-format
+msgid "Edit shared navigation item %s"
+msgstr "تحرير عنصر تنقل مشترك %s"
+
+#: /usr/share/icingaweb2/application/views/scripts/user/show.phtml:25
+#: /usr/share/icingaweb2/application/forms/Config/User/UserForm.php:67
+#, php-format
+msgid "Edit user %s"
+msgstr "تحرير مستخدم %s"
+
+#: /usr/share/icingaweb2/application/views/scripts/form/reorder-authbackend.phtml:25
+#, php-format
+msgid "Edit user backend %s"
+msgstr "تحرير خلفية مستخدم %s"
+
+#: /usr/share/icingaweb2/application/views/scripts/config/userbackend/reorder.phtml:51
+#, php-format
+msgid "Edit user group backend %s"
+msgstr "تحرير خلفية مجموعة مستخدم %s"
+
+#: /usr/share/icingaweb2/application/forms/AutoRefreshForm.php:63
+#: /usr/share/icingaweb2/application/forms/PreferenceForm.php:243
+msgid "Enable auto refresh"
+msgstr "تفعيل التحديث التلقائي"
+
+#: /usr/share/icingaweb2/application/views/scripts/config/module.phtml:34
+#, php-format
+msgid "Enable the %s module"
+msgstr "تفعيل الوحدة %s"
+
+#: /usr/share/icingaweb2/application/controllers/ErrorController.php:55
+#, php-format
+msgid "Enabling the \"%s\" module might help!"
+msgstr "قد يساعدك تفعيل الوحدة \"%s!"
+
+#: /usr/share/icingaweb2/application/forms/Config/Resource/LdapResourceForm.php:71
+msgid "Encryption"
+msgstr "التشفير"
+
+#: /usr/share/icingaweb2/application/forms/Dashboard/DashletForm.php:82
+msgid "Enter a title for the dashlet."
+msgstr "أدخل عنوانا للوحة المصغرة."
+
+#: /usr/share/icingaweb2/application/forms/Dashboard/DashletForm.php:111
+msgid "Enter a title for the new dashboard"
+msgstr "أدخل عنوانا للوحة المعلومات الجديدة"
+
+#: /usr/share/icingaweb2/application/forms/Dashboard/DashletForm.php:71
+msgid ""
+"Enter url being loaded in the dashlet. You can paste the full URL, including "
+"filters."
+msgstr ""
+"أدخل الرابط الذي تم تحميله في اللوحة المصغرة. يمكنك لصق عنوان URL الكامل، بما"
+" في ذلك "
+"المرشحات."
+
+#: /usr/share/icingaweb2/application/controllers/ErrorController.php:109
+msgid "Error"
+msgstr "خطأ"
+
+#: /usr/share/icingaweb2/application/forms/Config/General/LoggingConfigForm.php:56
+msgctxt "app.config.logging.level"
+msgid "Error"
+msgstr "خطأ"
+
+#: /usr/share/icingaweb2/application/views/scripts/dashboard/error.phtml:11
+msgid "Error details"
+msgstr "تفاصيل الخطأ"
+
+#: /usr/share/icingaweb2/application/forms/Config/UserBackendConfigForm.php:281
+msgid "External"
+msgstr "خارجي"
+
+#: /usr/share/icingaweb2/application/forms/Config/User/CreateMembershipForm.php:128
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/AddMemberForm.php:163
+#, php-format
+msgid "Failed to add \"%s\" as group member for \"%s\""
+msgstr "فَشِل في إضافة \"%s\" كعضو مجموعة عن \"%s\""
+
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/UserGroupForm.php:91
+msgid "Failed to add group"
+msgstr "فشل في إضافة مجموعة"
+
+#: /usr/share/icingaweb2/application/forms/Config/User/UserForm.php:141
+msgid "Failed to add user"
+msgstr "فشل في إضافة مستخدم"
+
+#: /usr/share/php/Icinga/Repository/IniRepository.php:162
+#, php-format
+msgid "Failed to delete. An error occurred: %s"
+msgstr "فشل في الحذف. حدث خطأ: %s"
+
+#: /usr/share/icingaweb2/application/forms/Config/UserBackend/LdapBackendForm.php:112
+#, php-format
+msgid "Failed to discover the chosen LDAP connection: %s"
+msgstr "فشل في اكتشاف اتصال LDAP المختار: %s"
+
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/UserGroupForm.php:107
+#, php-format
+msgid "Failed to edit group \"%s\""
+msgstr "فشل في تحرير مجموعة \"%s\""
+
+#: /usr/share/icingaweb2/application/forms/Config/User/UserForm.php:157
+#, php-format
+msgid "Failed to edit user \"%s\""
+msgstr "فشل في تحرير مستخدم \"%s\""
+
+#: /usr/share/icingaweb2/application/forms/Config/User/CreateMembershipForm.php:183
+#, php-format
+msgid "Failed to fetch any groups from backend %s. Please check your log"
+msgstr "فشل في إحضار أي مجموعات للخلفية %s. يُرجى فحص ملف السجل الخاص بك"
+
+#: /usr/share/icingaweb2/application/controllers/GroupController.php:304
+#, php-format
+msgid "Failed to fetch any users from backend %s. Please check your log"
+msgstr "فشل في إحضار أي مستخدمين للخلفية %s. يُرجى فحص ملف السجل الخاص بك"
+
+#: /usr/share/icingaweb2/application/controllers/UserController.php:270
+#, php-format
+msgid "Failed to fetch memberships from backend %s. Please check your log"
+msgstr "فشل في إحضار أي عضوية للخلفية %s. يُرجى فحص ملف السجل الخاص بك"
+
+#: /usr/share/php/Icinga/Web/Navigation/Navigation.php:547
+#, php-format
+msgid ""
+"Failed to fully parse navigation configuration. Ensure that all referenced "
+"parents are existing navigation items: %s"
+msgstr ""
+"فشل في إجراء تحليل كامل لإعداد التنقل. تأكد من أن جميع الآباء المشار "
+"لهم هم عناصر تنقل موجودة: %s"
+
+#: /usr/share/php/Icinga/Repository/IniRepository.php:72
+#, php-format
+msgid "Failed to insert. An error occurred: %s"
+msgstr "فشل في إدراج. حدث خطأ: %s"
+
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/UserGroupForm.php:123
+#, php-format
+msgid "Failed to remove group \"%s\""
+msgstr "فَشِل في حَذف مجموعة \"%s\""
+
+#: /usr/share/icingaweb2/application/forms/Config/User/UserForm.php:173
+#, php-format
+msgid "Failed to remove user \"%s\""
+msgstr "فَشِل في حَذف مستخدم \"%s\""
+
+#: /usr/share/icingaweb2/application/forms/Config/ResourceConfigForm.php:317
+#: /usr/share/icingaweb2/application/forms/Config/UserBackendConfigForm.php:422
+#, php-format
+msgid "Failed to successfully validate the configuration: %s"
+msgstr "فَشِل في التحقق من الإعداد بنجاح: %s"
+
+#: /usr/share/icingaweb2/application/controllers/NavigationController.php:386
+#, php-format
+msgid "Failed to unshare navigation item \"%s\""
+msgstr "فشل في إلغاء مشاركة عنصر التنقل \"%s\""
+
+#: /usr/share/php/Icinga/Repository/IniRepository.php:135
+#, php-format
+msgid "Failed to update. An error occurred: %s"
+msgstr "فشل في التحديث. حديث خطأ: %s"
+
+#: /usr/share/icingaweb2/application/forms/Config/ResourceConfigForm.php:235
+msgid "File"
+msgstr "ملف"
+
+#: /usr/share/icingaweb2/application/forms/Config/General/LoggingConfigForm.php:41
+msgctxt "app.config.logging.type"
+msgid "File"
+msgstr "ملف"
+
+#: /usr/share/icingaweb2/application/forms/Config/General/ApplicationConfigForm.php:69
+msgid "File System (INI Files)"
+msgstr "نظام الملفات (INI Files)"
+
+#: /usr/share/icingaweb2/application/forms/Config/General/LoggingConfigForm.php:115
+msgid "File path"
+msgstr "مسار الملف"
+
+#: /usr/share/icingaweb2/application/forms/Config/Resource/FileResourceForm.php:41
+msgid "Filepath"
+msgstr "مسار الملف"
+
+#: /usr/share/icingaweb2/application/forms/Config/UserBackend/ExternalBackendForm.php:49
+msgid "Filter Pattern"
+msgstr "نمط المرشح"
+
+#: /usr/share/php/Icinga/Repository/Repository.php:1067
+#, php-format
+msgid "Filter column \"%s\" not found"
+msgstr "لم يتم العثور على عمود المرشح \"%s\""
+
+#: /usr/share/php/Icinga/Repository/Repository.php:1071
+#, php-format
+msgid "Filter column \"%s\" not found in table \"%s\""
+msgstr "لم يتم العثور على عمود المرشح \"%s\" في الجدول \"%s\""
+
+#: /usr/share/php/Icinga/Web/Widget/FilterWidget.php:89
+#: /usr/share/php/Icinga/Web/Widget/FilterEditor.php:745
+msgid "Filter this list"
+msgstr "تصفية هذه القائمة"
+
+#: /usr/share/php/Icinga/Web/Widget/FilterWidget.php:93
+msgid "Filtered"
+msgstr "مُرشَّح"
+
+#: /usr/share/php/Icinga/Web/Wizard.php:662
+msgid "Finish"
+msgstr "نهاية"
+
+#: /usr/share/icingaweb2/application/forms/Config/Resource/DbResourceForm.php:68
+msgid "For using unix domain sockets, specify localhost"
+msgstr "لاستخدام مآخذ نطاق يونيكس، اختر localhost"
+
+#: /usr/share/icingaweb2/application/forms/Config/Resource/DbResourceForm.php:64
+msgid ""
+"For using unix domain sockets, specify the path to the unix domain socket "
+"directory"
+msgstr "لاستخدام مآخذ نطاق يونيكس، اختر مسار مجلد مأخد نطاق يونيكس"
+
+#: /usr/share/icingaweb2/application/forms/Config/ResourceConfigForm.php:221
+msgid "Force Changes"
+msgstr "فرض التغييرات"
+
+#: /usr/share/icingaweb2/application/controllers/ConfigController.php:38
+msgid "General"
+msgstr "عام"
+
+#: /usr/share/icingaweb2/application/views/scripts/about/index.phtml:18
+msgid "Git commit"
+msgstr "Git commit"
+
+#: /usr/share/icingaweb2/application/views/scripts/about/index.phtml:22
+msgid "Git commit date"
+msgstr "تاريخ Git commit"
+
+#: /usr/share/php/Icinga/Chart/GridChart.php:89
+msgid "Grid Chart"
+msgstr "مخطط الشبكة"
+
+#: /usr/share/icingaweb2/application/views/scripts/user/show.phtml:78
+#: /usr/share/icingaweb2/application/controllers/UserController.php:109
+#: /usr/share/icingaweb2/application/controllers/GroupController.php:326
+msgid "Group"
+msgstr "مجموعة"
+
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/UserGroupForm.php:105
+#, php-format
+msgid "Group \"%s\" has been edited"
+msgstr "تم تحرير المجموعة \"%s\""
+
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/UserGroupForm.php:121
+#, php-format
+msgid "Group \"%s\" has been removed"
+msgstr "تمت إزالة المجموعة \"%s\""
+
+#: /usr/share/icingaweb2/application/controllers/GroupController.php:92
+#: /usr/share/icingaweb2/application/controllers/GroupController.php:180
+#: /usr/share/icingaweb2/application/controllers/GroupController.php:202
+#: /usr/share/icingaweb2/application/controllers/GroupController.php:229
+#: /usr/share/icingaweb2/application/controllers/GroupController.php:284
+#, php-format
+msgid "Group \"%s\" not found"
+msgstr "عُثر على المجموعة \"%s\""
+
+#: /usr/share/icingaweb2/application/views/scripts/user/show.phtml:45
+msgid "Group Memberships"
+msgstr "عضوية المجموعة"
+
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/UserGroupForm.php:23
+msgid "Group Name"
+msgstr "اسم المجموعة"
+
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/UserGroupForm.php:89
+msgid "Group added successfully"
+msgstr "تم إضافة المجموعة بنجاح"
+
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/AddMemberForm.php:175
+#, php-format
+msgid "Group member \"%s\" added successfully"
+msgstr "تم إضافة عضو المجموعة \"%s\" بنجاح"
+
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/AddMemberForm.php:177
+msgid "Group members added successfully"
+msgstr "تم إضافة أعضاء للمجموعة بنجاح"
+
+#: /usr/share/icingaweb2/application/views/scripts/role/list.phtml:24
+#: /usr/share/icingaweb2/application/forms/Navigation/NavigationConfigForm.php:623
+#: /usr/share/icingaweb2/application/forms/Security/RoleForm.php:125
+#: /usr/share/icingaweb2/application/forms/Config/User/CreateMembershipForm.php:79
+msgid "Groups"
+msgstr "مجموعات"
+
+#: /usr/share/icingaweb2/application/views/scripts/search/hint.phtml:3
+msgid "Hint"
+msgstr "تلميح"
+
+#: /usr/share/icingaweb2/application/forms/Config/Resource/DbResourceForm.php:96
+#: /usr/share/icingaweb2/application/forms/Config/Resource/LdapResourceForm.php:47
+msgid "Host"
+msgstr "مضيف"
+
+#: /usr/share/icingaweb2/application/views/scripts/pivottablePagination.phtml:28
+msgid "Hosts"
+msgstr "مضيفون"
+
+#: /usr/share/icingaweb2/application/views/scripts/search/hint.phtml:2
+msgid "I'm ready to search, waiting for your input"
+msgstr "أنا مستعد للبحث، في انتظار مدخلاتكم"
+
+#: /usr/share/icingaweb2/application/views/scripts/about/index.phtml:106
+msgid "Icinga Documentation"
+msgstr "مستندات مساعدة إسنجا"
+
+#: /usr/share/icingaweb2/application/views/scripts/authentication/login.phtml:11
+msgid "Icinga Web 2 Documentation"
+msgstr "مستندات مساعدة إسنجا وب 2"
+
+#: /usr/share/icingaweb2/application/controllers/AuthenticationController.php:53
+msgid "Icinga Web 2 Login"
+msgstr "دخول إسنجا وب 2"
+
+#: /usr/share/icingaweb2/application/views/scripts/authentication/login.phtml:12
+msgid "Icinga Web 2 Setup-Wizard"
+msgstr "معالج تثبيت إسنجا وب 2"
+
+#: /usr/share/icingaweb2/application/views/scripts/about/index.phtml:96
+msgid "Icinga Wiki"
+msgstr "ويكي إسنجا"
+
+#: /usr/share/icingaweb2/application/views/scripts/authentication/login.phtml:37
+#: /usr/share/icingaweb2/application/views/scripts/about/index.phtml:55
+msgid "Icinga on Facebook"
+msgstr "إسنجا على فيسبوك"
+
+#: /usr/share/icingaweb2/application/views/scripts/authentication/login.phtml:46
+#: /usr/share/icingaweb2/application/views/scripts/about/index.phtml:64
+msgid "Icinga on Google+"
+msgstr "إسنجا على قوقل+"
+
+#: /usr/share/icingaweb2/application/views/scripts/authentication/login.phtml:27
+#: /usr/share/icingaweb2/application/views/scripts/about/index.phtml:46
+msgid "Icinga on Twitter"
+msgstr "إسنجا على تويتر"
+
+#: /usr/share/icingaweb2/application/forms/Navigation/NavigationItemForm.php:68
+msgid "Icon"
+msgstr "أيقونة"
+
+#: /usr/share/icingaweb2/application/views/scripts/authentication/logout.phtml:15
+msgid ""
+"If this message does not disappear, it might be necessary to quit the "
+"current session manually by clearing the cache, or by closing the current "
+"browser session."
+msgstr ""
+"إذا لم تختفي هذه الرسالة، فقد يكون من اللازم إنهاء "
+"الجلسة الحالية يدويا بتنظيف الذاكرة المخبأة أو بإغلاق "
+"جلسة المتصفح الحالية."
+
+#: /usr/share/icingaweb2/application/views/scripts/showConfiguration.phtml:21
+msgid ""
+"In case you can access the file by yourself, you can open it and insert the "
+"config manually:"
+msgstr ""
+"في حال كان بإمكانك الوصول إلى الملف بنفسك، يمكنك فتحه وإدراج "
+"الإعداد يدويا:"
+
+#: /usr/share/icingaweb2/application/views/scripts/user/show.phtml:33
+msgid "Inactive"
+msgstr "غير نشط"
+
+#: /usr/share/icingaweb2/application/forms/Authentication/LoginForm.php:117
+msgid "Incorrect username or password"
+msgstr "اسم المستخدم أو كلمة المرور غير صحيح"
+
+#: /usr/share/icingaweb2/application/forms/Config/General/LoggingConfigForm.php:58
+msgctxt "app.config.logging.level"
+msgid "Information"
+msgstr "معلومات"
+
+#: /usr/share/icingaweb2/application/forms/Config/UserBackendConfigForm.php:119
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/UserGroupBackendForm.php:52
+#, php-format
+msgid "Invalid backend type \"%s\" provided"
+msgstr "نوع الخلفية المعطى \"%s\" غير صالح"
+
+#: /usr/share/icingaweb2/application/forms/Config/ResourceConfigForm.php:54
+#, php-format
+msgid "Invalid resource type \"%s\" provided"
+msgstr "نوع المورد المعطى \"%s\" غير صالح"
+
+#: /usr/share/icingaweb2/application/views/scripts/authentication/login.phtml:7
+#, php-format
+msgid ""
+"It appears that you did not configure Icinga Web 2 yet so it's not possible "
+"to log in without any defined authentication method. Please define a "
+"authentication method by following the instructions in the %1$sdocumentation"
+"%3$s or by using our %2$sweb-based setup-wizard%3$s."
+msgstr ""
+"يبدو أنك لم تقوم بإعداد إسنجا الويب 2 بعد لذلك فأنه من غير الممكن "
+"الدخول دون أي أسلوب مصادقة معرف. يرجى تعريف أسلوب "
+"مصادقة من خلال اتباع التعليمات في %1$sdocumentation "
+"%3$s أو  عن طريق استخدام معالج التثبيت%3$s المبني على الوب الخاص بنا%2$"
+
+#: /usr/share/icingaweb2/application/forms/Config/UserBackend/LdapBackendForm.php:210
+msgid "LDAP Base DN"
+msgstr "اسم LDAP المميز الأساسي "
+
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:53
+#: /usr/share/icingaweb2/application/forms/Config/UserBackend/LdapBackendForm.php:68
+msgid "LDAP Connection"
+msgstr "اتصال LDAP"
+
+#: /usr/share/icingaweb2/application/forms/Config/UserBackend/LdapBackendForm.php:151
+msgid "LDAP Filter"
+msgstr "مرشح LDAP"
+
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:190
+msgid "LDAP Group Base DN"
+msgstr "اسم مجموعة LDAP المميز الأساسي"
+
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:133
+msgid "LDAP Group Filter"
+msgstr "مرشح مجموعة LDAP"
+
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:180
+msgid "LDAP Group Member Attribute"
+msgstr "سمة عضو مجموعة LDAP"
+
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:166
+msgid "LDAP Group Name Attribute"
+msgstr "سمة اسم مجموعة LDAP"
+
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:122
+msgid "LDAP Group Object Class"
+msgstr "فئة كائن مجموعة LDAP"
+
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:271
+msgid "LDAP User Base DN"
+msgstr "اسم مستخدم LDAP المميز الأساسي "
+
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:226
+msgid "LDAP User Filter"
+msgstr "مرشح مستخدم LDAP"
+
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:259
+#: /usr/share/icingaweb2/application/forms/Config/UserBackend/LdapBackendForm.php:189
+msgid "LDAP User Name Attribute"
+msgstr "سمة اسم مستخدم LDAP"
+
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:215
+#: /usr/share/icingaweb2/application/forms/Config/UserBackend/LdapBackendForm.php:139
+msgid "LDAP User Object Class"
+msgstr "فئة كائن مستخدم LDAP"
+
+#: /usr/share/php/Icinga/Authentication/User/LdapUserBackend.php:258
+#: /usr/share/php/Icinga/Authentication/User/DbUserBackend.php:121
+#: /usr/share/php/Icinga/Authentication/UserGroup/LdapUserGroupBackend.php:467
+#: /usr/share/php/Icinga/Authentication/UserGroup/DbUserGroupBackend.php:123
+msgid "Last Modified"
+msgstr "آخر تعديل"
+
+#: /usr/share/icingaweb2/application/views/scripts/group/show.phtml:37
+#: /usr/share/icingaweb2/application/views/scripts/user/show.phtml:40
+#: /usr/share/icingaweb2/application/controllers/UserController.php:72
+#: /usr/share/icingaweb2/application/controllers/GroupController.php:71
+#: /usr/share/icingaweb2/application/controllers/GroupController.php:107
+msgid "Last modified"
+msgstr "آخر تعديل"
+
+#: /usr/share/icingaweb2/application/forms/Config/User/UserForm.php:62
+msgid "Leave empty for not updating the user's password"
+msgstr "دعها فارغة لعدم تحديث كلمة مرور المستخدم"
+
+#: /usr/share/icingaweb2/application/controllers/NavigationController.php:192
+msgid "List and configure shared navigation items"
+msgstr "سرد وإعداد عناصر التنقل المشتركة"
+
+#: /usr/share/icingaweb2/application/controllers/NavigationController.php:142
+#: /usr/share/icingaweb2/application/controllers/PreferenceController.php:37
+msgid "List and configure your own navigation items"
+msgstr "سرد وإعداد عناصر التنقل الخاصة بك"
+
+#: /usr/share/icingaweb2/application/controllers/UserController.php:329
+#: /usr/share/icingaweb2/application/controllers/GroupController.php:363
+#: /usr/share/icingaweb2/application/controllers/RoleController.php:172
+msgid "List groups of user group backends"
+msgstr "سرد مجموعات لخلفيات مجموعة المستخدمين"
+
+#: /usr/share/icingaweb2/application/controllers/ConfigController.php:97
+msgid "List intalled modules"
+msgstr "سرد الوحدات المثبتة"
+
+#: /usr/share/icingaweb2/application/controllers/UserController.php:321
+#: /usr/share/icingaweb2/application/controllers/GroupController.php:355
+#: /usr/share/icingaweb2/application/controllers/RoleController.php:164
+msgid "List users of authentication backends"
+msgstr "سرد المستخدمين لخلفيات المصادقة"
+
+#: /usr/share/icingaweb2/application/views/scripts/about/index.phtml:110
+msgid "Loaded modules"
+msgstr "الوحدات المحملة"
+
+#: /usr/share/icingaweb2/application/forms/Config/General/LoggingConfigForm.php:53
+msgid "Logging Level"
+msgstr "مستوى التسجيل"
+
+#: /usr/share/icingaweb2/application/forms/Config/General/LoggingConfigForm.php:37
+msgid "Logging Type"
+msgstr "نوع التسجيل"
+
+#: /usr/share/icingaweb2/application/forms/Authentication/LoginForm.php:30
+msgid "Logging in"
+msgstr "الدخول"
+
+#: /usr/share/icingaweb2/application/views/scripts/authentication/logout.phtml:12
+msgid "Logging out..."
+msgstr "تسخيل الخروج..."
+
+#: /usr/share/icingaweb2/application/views/scripts/authentication/logout.phtml:22
+#: /usr/share/icingaweb2/application/forms/Authentication/LoginForm.php:29
+msgid "Login"
+msgstr "دخول"
+
+#: /usr/share/php/Icinga/Web/Menu.php:314
+#: /usr/share/php/Icinga/Application/Web.php:355
+msgid "Logout"
+msgstr "خروج"
+
+#: /usr/share/icingaweb2/application/views/scripts/authentication/logout.phtml:44
+msgid "Logout successful!"
+msgstr "خروج ناجح"
+
+#: /usr/share/icingaweb2/application/views/scripts/dashboard/error.phtml:7
+msgid "Make sure that the webserver can write to this file."
+msgstr "تأكد من أن خادم  الوب يمكنه الكتابة على هذا الملف."
+
+#: /usr/share/icingaweb2/application/views/scripts/group/show.phtml:42
+msgid "Members"
+msgstr "أعضاء"
+
+#: /usr/share/icingaweb2/application/forms/Config/User/CreateMembershipForm.php:141
+#, php-format
+msgid "Membership for group %s created successfully"
+msgstr "عضوية المجموعة %s أنشئت بنجاح"
+
+#: /usr/share/icingaweb2/application/forms/Config/User/CreateMembershipForm.php:144
+msgid "Memberships created successfully"
+msgstr "أُنشئت العضوية بنجاح"
+
+#: /usr/share/php/Icinga/Web/Navigation/Navigation.php:465
+msgid "Menu Entry"
+msgstr "مدخل قائمة"
+
+#: /usr/share/php/Icinga/Web/Controller/ActionController.php:249
+msgid "Method Not Allowed"
+msgstr "الطّريقة غير مسموح بها"
+
+#: /usr/share/php/Icinga/Web/Widget/FilterWidget.php:94
+#: /usr/share/php/Icinga/Web/Widget/FilterEditor.php:747
+msgid "Modify this filter"
+msgstr "تعديل هذا المرشح"
+
+#: /usr/share/icingaweb2/application/views/scripts/config/modules.phtml:11
+msgid "Module"
+msgstr "وحدة"
+
+#: /usr/share/icingaweb2/application/controllers/ConfigController.php:161
+#, php-format
+msgid "Module \"%s\" disabled"
+msgstr "عُطّلت الوحدة \"%s\""
+
+#: /usr/share/icingaweb2/application/controllers/ConfigController.php:141
+#, php-format
+msgid "Module \"%s\" enabled"
+msgstr "فُعّلت الوحدة \"%s\""
+
+#: /usr/share/icingaweb2/application/views/scripts/config/modules.phtml:23
+#, php-format
+msgid "Module %s has failed to load"
+msgstr "فشل تحميل الوحدة %s"
+
+#: /usr/share/icingaweb2/application/views/scripts/config/modules.phtml:21
+#, php-format
+msgid "Module %s is disabled"
+msgstr "عُطّلت الوحدة %s"
+
+#: /usr/share/icingaweb2/application/views/scripts/config/modules.phtml:19
+#, php-format
+msgid "Module %s is enabled"
+msgstr "فُعّلت الوحدة %s"
+
+#: /usr/share/icingaweb2/application/forms/Config/General/ApplicationConfigForm.php:50
+msgid "Module Path"
+msgstr "مسار الوحدة"
+
+#: /usr/share/icingaweb2/application/controllers/ConfigController.php:96
+#: /usr/share/php/Icinga/Web/Menu.php:299
+#: /usr/share/php/Icinga/Application/Web.php:336
+msgid "Modules"
+msgstr "الوحدات"
+
+#: /usr/share/icingaweb2/application/views/scripts/form/reorder-authbackend.phtml:58
+msgid "Move down in authentication order"
+msgstr "تحرك للأسفل في ترتيب المصادقة"
+
+#: /usr/share/icingaweb2/application/views/scripts/form/reorder-authbackend.phtml:46
+msgid "Move up in authentication order"
+msgstr "تحرك للأعلى في ترتيب المصادقة"
+
+#: /usr/share/icingaweb2/application/views/scripts/form/reorder-authbackend.phtml:60
+#, php-format
+msgid "Move user backend %s downwards"
+msgstr "تحريك خلفية المستخدم %s للأسفل"
+
+#: /usr/share/icingaweb2/application/views/scripts/form/reorder-authbackend.phtml:48
+#, php-format
+msgid "Move user backend %s upwards"
+msgstr "تحريك خلفية المستخدم %s للأعلى"
+
+#: /usr/share/icingaweb2/application/views/scripts/config/module.phtml:16
+#: /usr/share/icingaweb2/application/views/scripts/role/list.phtml:22
+#: /usr/share/icingaweb2/application/views/scripts/about/index.phtml:114
+#: /usr/share/icingaweb2/application/forms/Navigation/NavigationConfigForm.php:582
+msgid "Name"
+msgstr "الاسم"
+
+#: /usr/share/icingaweb2/application/views/scripts/pivottablePagination.phtml:16
+#: /usr/share/icingaweb2/application/views/scripts/navigation/index.phtml:29
+#: /usr/share/icingaweb2/application/views/scripts/layout/menu.phtml:16
+#: /usr/share/icingaweb2/application/controllers/NavigationController.php:143
+#: /usr/share/icingaweb2/application/controllers/NavigationController.php:151
+#: /usr/share/icingaweb2/application/controllers/PreferenceController.php:38
+msgid "Navigation"
+msgstr "التنقل"
+
+#: /usr/share/icingaweb2/application/controllers/NavigationController.php:327
+#, php-format
+msgid "Navigation Item \"%s\" not found. No action required"
+msgstr "لم يُعثر على عنصر التنقل \"%s\". ليس مطلوبا أي إجراء"
+
+#: /usr/share/icingaweb2/application/controllers/NavigationController.php:339
+#, php-format
+msgid "Navigation Item \"%s\" successfully removed"
+msgstr "أُزيل عنصر التنقل \"%s\" بنجاح"
+
+#: /usr/share/icingaweb2/application/controllers/NavigationController.php:379
+#, php-format
+msgid "Navigation item \"%s\" has been unshared"
+msgstr "إزيلت مشاركة عنصر التنقل \"%s\""
+
+#: /usr/share/icingaweb2/application/controllers/NavigationController.php:301
+#: /usr/share/icingaweb2/application/controllers/NavigationController.php:412
+#, php-format
+msgid "Navigation item \"%s\" not found"
+msgstr "لم يُعثر على عنصر التنقل \"%s\""
+
+#: /usr/share/icingaweb2/application/controllers/NavigationController.php:290
+#, php-format
+msgid "Navigation item \"%s\" successfully updated"
+msgstr "تم تحديث عنصر التنقل \"%s\" بنجاح"
+
+#: /usr/share/icingaweb2/application/controllers/NavigationController.php:236
+msgid "Navigation item successfully created"
+msgstr "أُنشئ عنصر التنقل بنجاح"
+
+#: /usr/share/icingaweb2/application/forms/Navigation/NavigationItemForm.php:42
+msgid "New Column"
+msgstr "عمود جديد"
+
+#: /usr/share/icingaweb2/application/forms/Dashboard/DashletForm.php:110
+msgid "New Dashboard Title"
+msgstr "عنوان لوحة معلومات جديد"
+
+#: /usr/share/icingaweb2/application/controllers/DashboardController.php:42
+msgid "New Dashlet"
+msgstr "لوحة مصغرة جديدة"
+
+#: /usr/share/icingaweb2/application/controllers/NavigationController.php:244
+msgid "New Navigation Item"
+msgstr "عنصر تنقل جديد"
+
+#: /usr/share/icingaweb2/application/controllers/ConfigController.php:326
+msgid "New Resource"
+msgstr "مورد جديد"
+
+#: /usr/share/icingaweb2/application/controllers/RoleController.php:63
+msgid "New Role"
+msgstr "دور جديد"
+
+#: /usr/share/icingaweb2/application/controllers/UserController.php:166
+msgid "New User"
+msgstr "مستخدم جديد"
+
+#: /usr/share/icingaweb2/application/controllers/ConfigController.php:231
+msgid "New User Backend"
+msgstr "خلفية مستخدم جديد"
+
+#: /usr/share/icingaweb2/application/controllers/GroupController.php:159
+msgid "New User Group"
+msgstr "مجموعة مستخدم جديدة"
+
+#: /usr/share/icingaweb2/application/controllers/UsergroupbackendController.php:61
+msgid "New User Group Backend"
+msgstr "خلفية مجموعة مستخدم جديدة"
+
+#: /usr/share/icingaweb2/application/controllers/GroupController.php:232
+msgid "New User Group Member"
+msgstr "عضو مجموعة مستخدم جديد"
+
+#: /usr/share/icingaweb2/application/forms/Navigation/NavigationItemForm.php:41
+msgid "New Window"
+msgstr "نافذة جديدة"
+
+#: /usr/share/icingaweb2/application/forms/ConfigForm.php:74
+msgid "New configuration has successfully been stored"
+msgstr "تم تخزين إعداد جديد بنجاح"
+
+#: /usr/share/icingaweb2/application/forms/Dashboard/DashletForm.php:100
+msgid "New dashboard"
+msgstr "لوحة معلومات جديدة"
+
+#: /usr/share/icingaweb2/application/forms/Config/ResourceConfigForm.php:98
+msgid "New resource name missing"
+msgstr "اسم مورد جديد مفقود"
+
+#: /usr/share/php/Icinga/Web/Wizard.php:614
+#: /usr/share/php/Icinga/Web/Wizard.php:638
+msgid "Next"
+msgstr "التالي"
+
+#: /usr/share/icingaweb2/application/views/scripts/mixedPagination.phtml:77
+msgid "Next page"
+msgstr "الصفحة التالية"
+
+#: /usr/share/icingaweb2/application/views/scripts/navigation/index.phtml:57
+msgid "No"
+msgstr "لا"
+
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:297
+msgid "No LDAP resources available. Please configure an LDAP resource first."
+msgstr "لا يوجد موارد LDAP متوفرة. يُرجى إعداد مورد LDAP أولا."
+
+#: /usr/share/icingaweb2/application/forms/Authentication/LoginForm.php:99
+msgid ""
+"No authentication methods available. Did you create authentication.ini when "
+"setting up Icinga Web 2?"
+msgstr ""
+"لا يُوجد طرق مصادقة متوفرة. هل قمت بإنشاء authentication.ini "
+"عند إعداد إسنجا وب 2؟"
+
+#: /usr/share/icingaweb2/application/views/scripts/group/list.phtml:22
+msgid "No backend found which is able to list user groups"
+msgstr "لم يُعثر على خلفية قادرة على سرد مجموعات المستخدم"
+
+#: /usr/share/icingaweb2/application/views/scripts/user/list.phtml:22
+msgid "No backend found which is able to list users"
+msgstr "لم يُعثر على خلفية قادرة على سرد المستخدمين"
+
+#: /usr/share/icingaweb2/application/views/scripts/dashboard/settings.phtml:42
+msgid "No dashlets added to dashboard"
+msgstr "لم تُضاف لوحات صغيرة للوحة المعلومات"
+
+#: /usr/share/icingaweb2/application/views/scripts/group/show.phtml:68
+msgid "No group member found matching the filter"
+msgstr "لم يُعثر على عضو مجموعة يوافق المرشح"
+
+#: /usr/share/icingaweb2/application/views/scripts/user/show.phtml:71
+msgid "No memberships found matching the filter"
+msgstr "لم يُعثر على عضوية توافق المرشح"
+
+#: /usr/share/icingaweb2/application/views/scripts/role/list.phtml:17
+msgid "No roles found."
+msgstr "لم يُعثر على أدوار."
+
+#: /usr/share/icingaweb2/application/views/scripts/group/list.phtml:44
+msgid "No user groups found matching the filter"
+msgstr "لم يُعثر على مجموعة مستخدمين توافق المرشح"
+
+#: /usr/share/icingaweb2/application/views/scripts/user/list.phtml:44
+msgid "No users found matching the filter"
+msgstr "لم يُعثر على مستخدمين يوافقون المرشح"
+
+#: /usr/share/icingaweb2/application/forms/Navigation/NavigationConfigForm.php:674
+msgctxt "No parent for a navigation item"
+msgid "None"
+msgstr "بلا"
+
+#: /usr/share/icingaweb2/application/forms/Config/General/LoggingConfigForm.php:42
+msgctxt "app.config.logging.type"
+msgid "None"
+msgstr "بلا"
+
+#: /usr/share/icingaweb2/application/forms/Config/Resource/LdapResourceForm.php:77
+msgctxt "resource.ldap.encryption"
+msgid "None"
+msgstr "بلا"
+
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:67
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:69
+msgctxt "usergroupbackend.ldap.user_backend"
+msgid "None"
+msgstr "بلا"
+
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/UserGroupForm.php:63
+msgid ""
+"Note that all users that are currently a member of this group will have "
+"their membership cleared automatically."
+msgstr ""
+"لاحظ أن جميع المستخدمين الذين هم حاليا أعضاء في هذه المجموعة ستحذف "
+"عضويتهم تلقائيا."
+
+#: /usr/share/icingaweb2/application/forms/Config/ResourceConfigForm.php:96
+msgid "Old resource name missing"
+msgstr "اسم مورد قديم مفقود"
+
+#: /usr/share/icingaweb2/application/forms/Config/Resource/LdapResourceForm.php:91
+msgid "Only the root and its child nodes will be accessible on this resource."
+msgstr "فقط الجذر والعقد التابعة له سوف تكون متاحة في هذا المورد."
+
+#: /usr/share/icingaweb2/application/views/scripts/navigation/shared.phtml:21
+#: /usr/share/icingaweb2/application/controllers/NavigationController.php:200
+msgid "Owner"
+msgstr "المالك"
+
+#: /usr/share/php/Icinga/Web/Widget/SearchDashboard.php:91
+msgid "Page not found"
+msgstr "الصفحة غير موجودة"
+
+#: /usr/share/icingaweb2/application/controllers/ErrorController.php:51
+msgid "Page not found."
+msgstr "الصفحة غير موجودة."
+
+#: /usr/share/icingaweb2/application/views/scripts/mixedPagination.phtml:7
+msgid "Pagination"
+msgstr "تعدد الصفحات"
+
+#: /usr/share/icingaweb2/application/forms/Navigation/DashletForm.php:18
+msgid "Pane"
+msgstr "جزء"
+
+#: /usr/share/icingaweb2/application/forms/Navigation/NavigationConfigForm.php:668
+#: /usr/share/php/Icinga/Authentication/UserGroup/DbUserGroupBackend.php:121
+msgid "Parent"
+msgstr "أب"
+
+#: /usr/share/icingaweb2/application/forms/Authentication/LoginForm.php:52
+#: /usr/share/icingaweb2/application/forms/Config/User/UserForm.php:41
+#: /usr/share/icingaweb2/application/forms/Config/User/UserForm.php:63
+#: /usr/share/icingaweb2/application/forms/Config/Resource/DbResourceForm.php:137
+msgid "Password"
+msgstr "كلمة مرور"
+
+#: /usr/share/icingaweb2/application/forms/Config/Resource/FileResourceForm.php:58
+msgid "Pattern"
+msgstr "نمط"
+
+#: /usr/share/icingaweb2/application/views/scripts/config/module.phtml:58
+msgid "Permissions"
+msgstr "أذونات"
+
+#: /usr/share/icingaweb2/application/forms/Security/RoleForm.php:133
+msgid "Permissions Set"
+msgstr "طقم الأذونات"
+
+#: /usr/share/icingaweb2/application/forms/Config/Resource/DbResourceForm.php:157
+msgid "Persistent"
+msgstr "ثابت"
+
+#: /usr/share/php/Icinga/Chart/PieChart.php:55
+msgid "Pie Chart"
+msgstr "مخطط دائري"
+
+#: /usr/share/icingaweb2/application/views/scripts/dashboard/error.phtml:4
+msgid "Please copy the following dashboard snippet to "
+msgstr "يرجى نسخ مقتطف لوحة المعلومات التالية ل"
+
+#: /usr/share/icingaweb2/application/forms/Authentication/LoginForm.php:112
+msgid ""
+"Please note that not all authentication methods were available. Check the "
+"system log or Icinga Web 2 log for more information."
+msgstr ""
+"يرجى ملاحظة أن ليس كل أساليب المصادقة متاحة. تحقق من سجل "
+"النظام أو سجل إسنجا الويب 2 لمزيد من المعلومات."
+
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/AddMemberForm.php:143
+msgid ""
+"Please provide at least one username, either by choosing one in the list or "
+"by manually typing one in the text box below"
+msgstr ""
+"يرجى تقديم اسم مستخدم واحد على الأقل، إما عن طريق اختيار واحد من القائمة أو "
+"عن طريق كتابة واحد يدويا في مربع النص أدناه"
+
+#: /usr/share/icingaweb2/application/views/scripts/search/hint.phtml:4
+msgid ""
+"Please use the asterisk (*) as a placeholder for wildcard searches. For "
+"convenience I'll always add a wildcard in front and after your search string."
+msgstr ""
+"الرجاء استخدام علامة النجمة (*) كعنصر نائب لعمليات بحث أحرف البدل. تسهيلا "
+"للعمل سأقوم دائما بإضافة أحرف البدل في المقدمة وبعد سلسلة البحث الخاصة بك."
+
+#: /usr/share/icingaweb2/application/forms/Config/Resource/DbResourceForm.php:107
+#: /usr/share/icingaweb2/application/forms/Config/Resource/LdapResourceForm.php:60
+msgid "Port"
+msgstr "منفذ"
+
+#: /usr/share/icingaweb2/application/controllers/NavigationController.php:134
+#: /usr/share/icingaweb2/application/controllers/PreferenceController.php:33
+#: /usr/share/php/Icinga/Web/Menu.php:309
+#: /usr/share/php/Icinga/Application/Web.php:350
+msgid "Preferences"
+msgstr "تفضيلات"
+
+#: /usr/share/icingaweb2/application/forms/PreferenceForm.php:123
+msgid "Preferences successfully saved"
+msgstr "حُفظت الإعدادات بنجاح"
+
+#: /usr/share/icingaweb2/application/forms/PreferenceForm.php:125
+msgid "Preferences successfully saved for the current session"
+msgstr "حُفظت الإعدادات بنجاح للجلسة الحالية"
+
+#: /usr/share/icingaweb2/application/forms/Config/User/UserForm.php:25
+msgid "Prevents the user from logging in if unchecked"
+msgstr "منع المستخدم من تسجيل الدخول إذا لم يلغ الاختيار"
+
+#: /usr/share/icingaweb2/application/views/scripts/mixedPagination.phtml:27
+msgid "Previous page"
+msgstr "الصفحة السابقة"
+
+#: /usr/share/icingaweb2/application/forms/Config/Resource/SshResourceForm.php:71
+#: /usr/share/icingaweb2/application/forms/Config/Resource/SshResourceForm.php:84
+msgid "Private Key"
+msgstr "المفتاح الخاص"
+
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/AddMemberForm.php:120
+msgid "Provide one or more usernames separated by comma to add as group member"
+msgstr "تقديم اسم مستخدم واحد أو أكثر مفصولة بفواصل للإضافة كعضو مجموعة"
+
+#: /usr/share/php/Icinga/Web/Form/Decorator/Autosubmit.php:120
+msgid ""
+"Push this button to update the form to reflect the change that was made in "
+"the field on the left"
+msgstr ""
+"ضغط هذا الزر لتحديث النموذج لعكس التغيير الذي تم إجراؤه في "
+"الحقل على اليسار"
+
+#: /usr/share/php/Icinga/Web/Form/Decorator/Autosubmit.php:119
+msgid ""
+"Push this button to update the form to reflect the changes that were made "
+"below"
+msgstr "ضغط هذا الزر لتحديث النموذج لعكس التغييرات التي تم إجراؤها أدناه"
+
+#: /usr/share/icingaweb2/application/forms/Config/UserBackend/LdapBackendForm.php:90
+msgid "Push to fill in the chosen connection's default settings."
+msgstr "الضغط لتعبئة الإعدادات الافتراضية للاتصال الذي تم اختياره."
+
+#: /usr/share/php/Icinga/Repository/Repository.php:1019
+#, php-format
+msgid "Query column \"%s\" not found"
+msgstr "لم يتم العثور على عمود الاستعلام \"%s\""
+
+#: /usr/share/php/Icinga/Repository/Repository.php:1027
+#, php-format
+msgid "Query column \"%s\" not found in table \"%s\""
+msgstr "لم يتم العثور على عمود الاستعلام \"%s\" في الجدول \"%s\""
+
+#: /usr/share/php/Icinga/Web/Widget/SearchDashboard.php:61
+msgid "Ready to search"
+msgstr "مستعد للبحث"
+
+#: /usr/share/icingaweb2/application/views/scripts/group/show.phtml:77
+#: /usr/share/icingaweb2/application/views/scripts/group/list.phtml:52
+#: /usr/share/icingaweb2/application/views/scripts/user/list.phtml:53
+msgid "Remove"
+msgstr "إزالة"
+
+#: /usr/share/icingaweb2/application/controllers/DashboardController.php:228
+msgid "Remove Dashboard"
+msgstr "إزالة لوحة  المعلومات"
+
+#: /usr/share/icingaweb2/application/controllers/DashboardController.php:158
+msgid "Remove Dashlet"
+msgstr "إزالة لوحة مصغرة"
+
+#: /usr/share/icingaweb2/application/controllers/DashboardController.php:192
+msgid "Remove Dashlet From Dashboard"
+msgstr "إزالة لوحة مصغرة من لوحة المعلومات"
+
+#: /usr/share/icingaweb2/application/controllers/NavigationController.php:347
+msgid "Remove Navigation Item"
+msgstr "إزالة عنصر تنقل"
+
+#: /usr/share/icingaweb2/application/controllers/ConfigController.php:365
+msgid "Remove Resource"
+msgstr "إزالة مورد"
+
+#: /usr/share/icingaweb2/application/controllers/RoleController.php:137
+#: /usr/share/icingaweb2/application/controllers/RoleController.php:140
+msgid "Remove Role"
+msgstr "إزالة دور"
+
+#: /usr/share/icingaweb2/application/controllers/UserController.php:210
+msgid "Remove User"
+msgstr "إزالة مستخدم"
+
+#: /usr/share/icingaweb2/application/controllers/ConfigController.php:306
+msgid "Remove User Backend"
+msgstr "إزالة خلفية مستخدم"
+
+#: /usr/share/icingaweb2/application/controllers/GroupController.php:205
+msgid "Remove User Group"
+msgstr "إزالة مجموعة مستخدم"
+
+#: /usr/share/icingaweb2/application/controllers/UsergroupbackendController.php:133
+msgid "Remove User Group Backend"
+msgstr "إزالة خلفية مجموعة مستخدم"
+
+#: /usr/share/icingaweb2/application/views/scripts/dashboard/settings.phtml:72
+#, php-format
+msgid "Remove dashlet %s from pane %s"
+msgstr "إزالة لوحة مصغرة %s من الجزء %s"
+
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/UserGroupForm.php:61
+#, php-format
+msgid "Remove group %s?"
+msgstr "إزالة المجموعة %s؟"
+
+#: /usr/share/icingaweb2/application/views/scripts/navigation/index.phtml:70
+#, php-format
+msgid "Remove navigation item %s"
+msgstr "إزالة عنصر التنقل %s"
+
+#: /usr/share/icingaweb2/application/views/scripts/dashboard/settings.phtml:33
+#, php-format
+msgid "Remove pane %s"
+msgstr "إزالة الجزء %s"
+
+#: /usr/share/icingaweb2/application/views/scripts/config/resource.phtml:68
+#, php-format
+msgid "Remove resource %s"
+msgstr "إزالة المورد %s"
+
+#: /usr/share/icingaweb2/application/views/scripts/role/list.phtml:49
+#, php-format
+msgid "Remove role %s"
+msgstr "إزالة الدور %s"
+
+#: /usr/share/icingaweb2/application/forms/Config/Resource/SshResourceForm.php:89
+#, php-format
+msgid "Remove the %s resource"
+msgstr "إزالة المورد %s"
+
+#: /usr/share/php/Icinga/Web/Widget/FilterWidget.php:98
+msgid "Remove this filter"
+msgstr "إزالة هذا المرشح"
+
+#: /usr/share/icingaweb2/application/controllers/GroupController.php:141
+msgid "Remove this member"
+msgstr "إزالة هذا العضو"
+
+#: /usr/share/php/Icinga/Web/Widget/FilterEditor.php:397
+msgid "Remove this part of your filter"
+msgstr "إزالة هذا الجزء من مرشحك"
+
+#: /usr/share/icingaweb2/application/views/scripts/user/list.phtml:82
+#, php-format
+msgid "Remove user %s"
+msgstr "إزالة مستخدم %s"
+
+#: /usr/share/icingaweb2/application/forms/Config/User/UserForm.php:115
+#, php-format
+msgid "Remove user %s?"
+msgstr "إزالة مستخدم %s؟"
+
+#: /usr/share/icingaweb2/application/views/scripts/form/reorder-authbackend.phtml:37
+#, php-format
+msgid "Remove user backend %s"
+msgstr "إزالة خلفية مستخدم %s"
+
+#: /usr/share/icingaweb2/application/views/scripts/group/list.phtml:86
+#, php-format
+msgid "Remove user group %s"
+msgstr "إزالة مجموعة مستخدم %s"
+
+#: /usr/share/icingaweb2/application/views/scripts/config/userbackend/reorder.phtml:63
+#, php-format
+msgid "Remove user group backend %s"
+msgstr "إزالة خلفية مجموعة مستخدم %s"
+
+#: /usr/share/icingaweb2/application/views/scripts/about/index.phtml:76
+msgid "Report a bug"
+msgstr "إبلاغ عن مشكلة"
+
+#: /usr/share/php/Icinga/Web/UrlParams.php:65
+#: /usr/share/php/Icinga/Web/UrlParams.php:160
+#: /usr/share/php/Icinga/Cli/Params.php:183
+#: /usr/share/php/Icinga/Cli/Params.php:285
+#, php-format
+msgid "Required parameter '%s' missing"
+msgstr "المعامل المطلوب '%s' مفقود"
+
+#: /usr/share/icingaweb2/application/views/scripts/config/resource.phtml:19
+msgid "Resource"
+msgstr "مَوْرد"
+
+#: /usr/share/icingaweb2/application/forms/Config/ResourceConfigForm.php:170
+#, php-format
+msgid "Resource \"%s\" has been successfully changed"
+msgstr "تم تغيير المورد \"%s\" بنجاح"
+
+#: /usr/share/icingaweb2/application/forms/Config/ResourceConfigForm.php:167
+#, php-format
+msgid "Resource \"%s\" has been successfully created"
+msgstr "أُنشئ المورد \"%s\" بنجاح"
+
+#: /usr/share/icingaweb2/application/controllers/ConfigController.php:382
+#, php-format
+msgid "Resource \"%s\" has been successfully removed"
+msgstr "أُزيل المورد \"%s\" بنجاح"
+
+#: /usr/share/icingaweb2/application/forms/Config/Resource/DbResourceForm.php:76
+#: /usr/share/icingaweb2/application/forms/Config/Resource/LdapResourceForm.php:38
+#: /usr/share/icingaweb2/application/forms/Config/Resource/LivestatusResourceForm.php:35
+#: /usr/share/icingaweb2/application/forms/Config/Resource/FileResourceForm.php:32
+#: /usr/share/icingaweb2/application/forms/Config/Resource/SshResourceForm.php:36
+msgid "Resource Name"
+msgstr "اسم المورد"
+
+#: /usr/share/icingaweb2/application/forms/Config/ResourceConfigForm.php:252
+msgid "Resource Type"
+msgstr "نوع المورد"
+
+#: /usr/share/icingaweb2/application/forms/Config/ResourceConfigForm.php:75
+msgid "Resource already exists"
+msgstr "المورد موجود مسبقا"
+
+#: /usr/share/icingaweb2/application/forms/Config/ResourceConfigForm.php:73
+#: /usr/share/icingaweb2/application/forms/Config/ResourceConfigForm.php:122
+#: /usr/share/icingaweb2/application/forms/Config/ResourceConfigForm.php:196
+msgid "Resource name missing"
+msgstr "اسم المورد مفقود"
+
+#: /usr/share/icingaweb2/application/controllers/ConfigController.php:44
+msgid "Resources"
+msgstr "الموارد"
+
+#: /usr/share/icingaweb2/application/controllers/ConfigController.php:330
+msgid "Resources are entities that provide data to Icinga Web 2."
+msgstr "الموارد هي كيانات توفر البيانات لإسنجا وب 2."
+
+#: /usr/share/icingaweb2/application/forms/Security/RoleForm.php:59
+msgid "Restrict which groups this role can share items and information with"
+msgstr "تقييد المجموعات التي يمكن لهذا الدور أن يشارك معها العناصر والمعلومات"
+
+#: /usr/share/icingaweb2/application/forms/Security/RoleForm.php:53
+msgid "Restrict which users this role can share items and information with"
+msgstr ""
+"تقييد المستخدمين الذين يمكن لهذا الدور أن يشارك معهم العناصر والمعلومات"
+
+#: /usr/share/icingaweb2/application/views/scripts/config/module.phtml:68
+msgid "Restrictions"
+msgstr "تقييدات"
+
+#: /usr/share/icingaweb2/application/forms/Security/RoleForm.php:108
+msgid "Role Name"
+msgstr "اسم الدور"
+
+#: /usr/share/icingaweb2/application/controllers/RoleController.php:52
+msgid "Role created"
+msgstr "أُنشئ الدور"
+
+#: /usr/share/icingaweb2/application/controllers/RoleController.php:130
+msgid "Role removed"
+msgstr "أُزيل الدور"
+
+#: /usr/share/icingaweb2/application/controllers/RoleController.php:96
+msgid "Role updated"
+msgstr "حُدّث الدور"
+
+#: /usr/share/icingaweb2/application/controllers/UserController.php:310
+#: /usr/share/icingaweb2/application/controllers/GroupController.php:344
+#: /usr/share/icingaweb2/application/controllers/RoleController.php:153
+#: /usr/share/php/Icinga/Web/Menu.php:284
+msgid "Roles"
+msgstr "أدوار"
+
+#: /usr/share/icingaweb2/application/forms/Config/Resource/LdapResourceForm.php:89
+msgid "Root DN"
+msgstr "الاسم المميز الأصل"
+
+#: /usr/share/icingaweb2/application/forms/Config/ResourceConfigForm.php:243
+msgid "SQL Database"
+msgstr "قاعدة بيانات"
+
+#: /usr/share/icingaweb2/application/forms/Config/ResourceConfigForm.php:237
+msgid "SSH Identity"
+msgstr "هوية SSH"
+
+#: /usr/share/icingaweb2/application/forms/Config/User/UserForm.php:68
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/UserGroupForm.php:32
+msgid "Save"
+msgstr "حفظ"
+
+#: /usr/share/icingaweb2/application/forms/Navigation/NavigationConfigForm.php:85
+#: /usr/share/icingaweb2/application/forms/Config/GeneralConfigForm.php:22
+#: /usr/share/icingaweb2/application/forms/Config/ResourceConfigForm.php:30
+#: /usr/share/icingaweb2/application/forms/Config/UserBackendConfigForm.php:46
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/UserGroupBackendForm.php:29
+msgid "Save Changes"
+msgstr "حفظ التغييرات"
+
+#: /usr/share/icingaweb2/application/forms/PreferenceForm.php:266
+msgid "Save for the current Session"
+msgstr "حفظ للجلسة  الحالية"
+
+#: /usr/share/icingaweb2/application/forms/PreferenceForm.php:255
+msgid "Save to the Preferences"
+msgstr "حفظ للتفضيلات"
+
+#: /usr/share/icingaweb2/application/views/scripts/showConfiguration.phtml:2
+msgid "Saving Configuration Failed"
+msgstr "فشل حفظ الإعدادات"
+
+#: /usr/share/icingaweb2/application/views/scripts/layout/menu.phtml:11
+#: /usr/share/php/Icinga/Web/Widget/SearchDashboard.php:33
+#: /usr/share/php/Icinga/Web/Widget/SearchDashboard.php:50
+msgid "Search"
+msgstr "بحث"
+
+#: /usr/share/icingaweb2/application/forms/LdapDiscoveryForm.php:27
+msgid "Search Domain"
+msgstr "بحث النطاق"
+
+#: /usr/share/icingaweb2/application/forms/LdapDiscoveryForm.php:28
+msgid "Search this domain for records of available servers."
+msgstr "بحث هذا النطاق عن سجلات الخوادم الموجودة."
+
+#: /usr/share/php/Icinga/Web/Widget/FilterEditor.php:741
+msgid "Search..."
+msgstr "بحث..."
+
+#: /usr/share/php/Icinga/Web/Widget/SearchDashboard.php:75
+msgid "Searching"
+msgstr "جار البحث"
+
+#: /usr/share/icingaweb2/application/forms/Dashboard/DashletForm.php:122
+msgid "Select a dashboard you want to add the dashlet to"
+msgstr "اختر لوحة المعلومات التي تريد إضافة اللوحة الصغيرة لها"
+
+#: /usr/share/icingaweb2/application/forms/Config/User/CreateMembershipForm.php:81
+#, php-format
+msgid "Select one or more groups where to add %s as member"
+msgstr "اختر مجموعة أو أكثر حيث تضاف %s كعضو"
+
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/AddMemberForm.php:106
+msgid ""
+"Select one or more users (fetched from your user backends) to add as group "
+"member"
+msgstr ""
+"اختيار مستخدم واحد أو أكثر (جلبت من خلفيات المستخدم الخاص بك) لإضافته كعضو في "
+"المجموعة"
+
+#: /usr/share/icingaweb2/application/views/scripts/pivottablePagination.phtml:35
+msgid "Services"
+msgstr "خدمات"
+
+#: /usr/share/icingaweb2/application/forms/Config/General/ApplicationConfigForm.php:40
+msgid ""
+"Set whether to show an exception's stacktrace by default. This can also be "
+"set in a user's preferences with the appropriate permission."
+msgstr ""
+"اختيار هل يظهر تتبع مكدس الاستثناء بشكل افتراضي. يمكن أيضا "
+"تعيينه في تفضيلات المستخدم مع الإذن المناسب."
+
+#: /usr/share/icingaweb2/application/forms/PreferenceForm.php:224
+msgid "Set whether to show an exception's stacktrace."
+msgstr "اختيار هل يظهر تتبع مكدس الاستثناء."
+
+#: /usr/share/php/Icinga/Web/Widget/Tabextension/DashboardSettings.php:34
+msgid "Settings"
+msgstr "إعدادات"
+
+#: /usr/share/icingaweb2/application/views/scripts/navigation/index.phtml:31
+#: /usr/share/icingaweb2/application/forms/Navigation/NavigationConfigForm.php:602
+#: /usr/share/icingaweb2/application/controllers/NavigationController.php:150
+msgid "Shared"
+msgstr "مشترك"
+
+#: /usr/share/icingaweb2/application/views/scripts/navigation/shared.phtml:19
+#: /usr/share/icingaweb2/application/controllers/NavigationController.php:193
+#: /usr/share/icingaweb2/application/controllers/NavigationController.php:201
+#: /usr/share/php/Icinga/Application/Web.php:330
+msgid "Shared Navigation"
+msgstr "التنقل المشترك"
+
+#: /usr/share/php/Icinga/Web/Widget/Dashboard.php:235
+#, php-format
+msgctxt "dashboard.pane.tooltip"
+msgid "Show %s"
+msgstr "عرض %s"
+
+#: /usr/share/php/Icinga/Web/Widget/SearchDashboard.php:32
+msgctxt "dashboard.pane.tooltip"
+msgid "Show Search"
+msgstr "عرض البحث"
+
+#: /usr/share/icingaweb2/application/forms/PreferenceForm.php:223
+#: /usr/share/icingaweb2/application/forms/Config/General/ApplicationConfigForm.php:38
+msgid "Show Stacktraces"
+msgstr "عرض تتبعات المكدس"
+
+#: /usr/share/icingaweb2/application/views/scripts/dashboard/settings.phtml:62
+#, php-format
+msgid "Show dashlet %s"
+msgstr "عرض لوحة صغيرة %s"
+
+#: /usr/share/icingaweb2/application/views/scripts/group/show.phtml:93
+#: /usr/share/icingaweb2/application/views/scripts/user/list.phtml:68
+#, php-format
+msgid "Show detailed information about %s"
+msgstr "عرض معلومات تفصيلية عن %s"
+
+#: /usr/share/icingaweb2/application/views/scripts/user/show.phtml:91
+#, php-format
+msgid "Show detailed information for group %s"
+msgstr "عرض معلومات تفصيلية عن المجموعة %s"
+
+#: /usr/share/icingaweb2/application/views/scripts/group/list.phtml:69
+#, php-format
+msgid "Show detailed information for user group %s"
+msgstr "عرض معلومات تفصيلية عن مجموعة المستخدمين %s"
+
+#: /usr/share/icingaweb2/application/controllers/GroupController.php:325
+#, php-format
+msgid "Show group %s"
+msgstr "عرض المجموعة %s"
+
+#: /usr/share/icingaweb2/application/views/scripts/mixedPagination.phtml:11
+#: /usr/share/icingaweb2/application/views/scripts/mixedPagination.phtml:44
+#: /usr/share/icingaweb2/application/views/scripts/mixedPagination.phtml:61
+#, php-format
+msgid "Show rows %u to %u of %u"
+msgstr "عرض الصفوف %u إلى %u من %u"
+
+#: /usr/share/icingaweb2/application/views/scripts/config/modules.phtml:32
+#: /usr/share/icingaweb2/application/views/scripts/about/index.phtml:127
+#, php-format
+msgid "Show the overview of the %s module"
+msgstr "عرض ملخص عام للوحدة %s"
+
+#: /usr/share/icingaweb2/application/controllers/UserController.php:291
+#, php-format
+msgid "Show user %s"
+msgstr "عرض المستخدم %s"
+
+#: /usr/share/icingaweb2/application/forms/Navigation/NavigationItemForm.php:43
+msgid "Single Column"
+msgstr "عمود واحد"
+
+#: /usr/share/icingaweb2/application/forms/Config/UserBackendConfigForm.php:381
+msgid "Skip Validation"
+msgstr "تخطي التحقق"
+
+#: /usr/share/icingaweb2/application/layouts/scripts/parts/navigation.phtml:15
+msgid "Skip to Content"
+msgstr "تخطي للمحتوى"
+
+#: /usr/share/icingaweb2/application/forms/Config/Resource/LivestatusResourceForm.php:44
+msgid "Socket"
+msgstr "مقبس"
+
+#: /usr/share/icingaweb2/application/views/scripts/showConfiguration.phtml:14
+msgid "Something went wrong while writing the file"
+msgstr "حدث خطأ أثناء كتابة الملف"
+
+#: /usr/share/php/Icinga/Web/Widget/SortBox.php:196
+msgid "Sort by"
+msgstr "فرز بواسطة"
+
+#: /usr/share/icingaweb2/application/views/scripts/config/module.phtml:20
+#: /usr/share/icingaweb2/application/views/scripts/user/show.phtml:32
+msgid "State"
+msgstr "حالة"
+
+#: /usr/share/php/Icinga/Web/Widget/FilterEditor.php:423
+msgid "Strip this filter"
+msgstr "تجريد هذا المرشح"
+
+#: /usr/share/icingaweb2/application/views/scripts/about/index.phtml:86
+msgid "Support / Mailinglists"
+msgstr "الدعم / القوائم البريدية"
+
+#: /usr/share/php/Icinga/Web/Menu.php:249
+#: /usr/share/php/Icinga/Application/Web.php:296
+msgid "System"
+msgstr "النظام"
+
+#: /usr/share/icingaweb2/application/forms/Navigation/NavigationItemForm.php:38
+msgid "Target"
+msgstr "الهدف"
+
+#: /usr/share/icingaweb2/application/views/scripts/authentication/login.phtml:19
+#: /usr/share/icingaweb2/application/views/scripts/about/index.phtml:29
+msgid "The Icinga Project"
+msgstr "مشروع إسنجا"
+
+#: /usr/share/icingaweb2/application/forms/Config/UserBackend/LdapBackendForm.php:70
+msgid "The LDAP connection to use for authenticating with this provider."
+msgstr "اتصال LDAP المستخدم للمصادقة مع هذا المزود"
+
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:54
+msgid "The LDAP connection to use for this backend."
+msgstr "اتصال LDAP المستخدم لهذه الخلفية"
+
+#: /usr/share/icingaweb2/application/forms/Config/General/LoggingConfigForm.php:75
+#: /usr/share/icingaweb2/application/forms/Config/General/LoggingConfigForm.php:85
+msgid "The application prefix must not contain whitespace."
+msgstr "يتحتم على بادئة البرنامج ألا تحتوى على مسافات"
+
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:181
+msgid "The attribute name used for storing a group's members."
+msgstr "اسم السمة المستخدمة لتخزين أعضاء المجموعة."
+
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:168
+msgid "The attribute name used for storing a group's name on the LDAP server."
+msgstr "اسم السمة المستخدمة لتخزين أسم المجموعة على خادم LDAP."
+
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:261
+msgid "The attribute name used for storing a user's name on the LDAP server."
+msgstr "اسم السمة المستخدمة لتخزين أسم المستخدم على خادم LDAP."
+
+#: /usr/share/icingaweb2/application/forms/Config/UserBackend/LdapBackendForm.php:191
+msgid "The attribute name used for storing the user name on the LDAP server."
+msgstr "اسم السمة المستخدمة لتخزين أسم المستخدم على خادم LDAP."
+
+#: /usr/share/icingaweb2/application/forms/Config/Resource/DbResourceForm.php:145
+msgid "The character set for the database"
+msgstr "طقم محارف قاعدة البيانات"
+
+#: /usr/share/icingaweb2/application/forms/Config/Resource/FileResourceForm.php:60
+msgid "The column pattern must be a valid regular expression."
+msgstr "يجب أن يكون نمط العمود تعبيرا عاديا صالحا."
+
+#: /usr/share/icingaweb2/application/forms/Config/ResourceConfigForm.php:324
+#: /usr/share/icingaweb2/application/forms/Config/UserBackendConfigForm.php:429
+msgid "The configuration has been successfully validated."
+msgstr "تم التحقق بنجاح من الإعدادات"
+
+#: /usr/share/icingaweb2/application/forms/Config/UserBackend/DbBackendForm.php:66
+msgid "The database connection to use for authenticating with this provider"
+msgstr "اتصال قاعدة البيانات المستخدم للمصادقة مع هذا المزود"
+
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/DbUserGroupBackendForm.php:48
+msgid "The database connection to use for this backend"
+msgstr "اتصال قاعدة البيانات المستخدم لهذه الخلفية"
+
+#: /usr/share/icingaweb2/application/forms/Config/General/ThemingConfigForm.php:40
+msgctxt "Form element description"
+msgid "The default theme"
+msgstr "السمة الافتراضية"
+
+#: /usr/share/icingaweb2/application/views/scripts/showConfiguration.phtml:5
+#, php-format
+msgid "The file %s couldn't be stored. (Error: \"%s\")"
+msgstr "لا يمكن تخزين الملف %s. (خطأ: \"%s\")"
+
+#: /usr/share/icingaweb2/application/forms/Config/Resource/FileResourceForm.php:42
+msgid "The filename to fetch information from"
+msgstr "اسم الملف لجلب المعلومات منه"
+
+#: /usr/share/icingaweb2/application/forms/Config/UserBackend/LdapBackendForm.php:174
+msgid "The filter is invalid. Please check your syntax."
+msgstr "المرشح غير صالح. يُرجى فحص البنية"
+
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:151
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:244
+msgid "The filter must not be wrapped in parantheses."
+msgstr "يجب ألا يكون المرشح بين قوسين."
+
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:139
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:232
+msgid ""
+"The filter needs to be expressed as standard LDAP expression, without outer "
+"parentheses. (e.g. &(foo=bar)(bar=foo) or foo=bar)"
+msgstr ""
+"يحتاج المرشح أن يعبر عنه كتعبير LDAP قياسي، دون الأقواس "
+"الخارجية. (مثلا: &(foo=bar)(bar=foo) or foo=bar)"
+
+#: /usr/share/icingaweb2/application/forms/Config/UserBackend/LdapBackendForm.php:157
+msgid ""
+"The filter needs to be expressed as standard LDAP expression. (e.g. "
+"&(foo=bar)(bar=foo) or foo=bar)"
+msgstr ""
+"يحتاج المرشح أن يعبر عنه كتعبير LDAP قياسي، "
+"(مثلا: &(foo=bar)(bar=foo) or foo=bar)"
+
+#: /usr/share/icingaweb2/application/forms/Config/UserBackend/ExternalBackendForm.php:54
+msgid "The filter pattern must be a valid regular expression."
+msgstr "يجب أن يكون نمط المرشح تعبيرا عاديا صالحا."
+
+#: /usr/share/icingaweb2/application/forms/Config/UserBackend/ExternalBackendForm.php:51
+msgid ""
+"The filter to use to strip specific parts off from usernames. Leave empty if "
+"you do not want to strip off anything."
+msgstr ""
+"الفلتر المستخدم لتجريد أجزاء معينة من من أسماء المستخدمين. دعه فارغا إذا "
+"كنت لا تريد تجريد أي شيء."
+
+#: /usr/share/icingaweb2/application/forms/Config/General/LoggingConfigForm.php:116
+msgid "The full path to the log file to write messages to."
+msgstr "المسار الكامل لملف السجل لكتابة الرسائل إليه."
+
+#: /usr/share/icingaweb2/application/forms/Config/Resource/SshResourceForm.php:62
+msgid "The given SSH key is invalid"
+msgstr "مفتاح SSH المعطى غير صالح"
+
+#: /usr/share/icingaweb2/application/forms/Config/Resource/DbResourceForm.php:97
+msgid "The hostname of the database"
+msgstr "اسم مضيف قاعدة البيانات"
+
+#: /usr/share/icingaweb2/application/forms/Config/Resource/LdapResourceForm.php:49
+msgid "The hostname or address of the LDAP server to use for authentication"
+msgstr "اسم المضيف أو العنوان لخادم LDAP لاستخدامه للمصادقة"
+
+#: /usr/share/icingaweb2/application/forms/Navigation/NavigationItemForm.php:70
+msgid ""
+"The icon of this navigation item. Leave blank if you do not want a icon "
+"being displayed"
+msgstr ""
+"أيقونة عنصر التنقل هذا. دعها فارغة إن لم ترد "
+"عرض الأيقونة"
+
+#: /usr/share/icingaweb2/application/forms/Config/General/LoggingConfigForm.php:54
+msgid "The maximum logging level to emit."
+msgstr "مستوى التسجيل الأقصى للبث"
+
+#: /usr/share/icingaweb2/application/forms/Config/General/LoggingConfigForm.php:73
+msgid "The name of the application by which to prefix syslog messages."
+msgstr "اسم التطبيق الذي يمكن من خلاله وضع بادئة لرسائل .syslog"
+
+#: /usr/share/icingaweb2/application/forms/Navigation/DashletForm.php:19
+msgid "The name of the dashboard pane in which to display this dashlet"
+msgstr "اسم جزء لوحة المعلومات حيث تعرض هذه اللوحة الصغيرة"
+
+#: /usr/share/icingaweb2/application/forms/Config/Resource/DbResourceForm.php:119
+msgid "The name of the database to use"
+msgstr "اسم قاعدة البيانات للاستخدام"
+
+#: /usr/share/icingaweb2/application/forms/Security/RoleForm.php:109
+msgid "The name of the role"
+msgstr "اسم الدور"
+
+#: /usr/share/icingaweb2/application/forms/Config/UserBackend/DbBackendForm.php:55
+#: /usr/share/icingaweb2/application/forms/Config/UserBackend/ExternalBackendForm.php:34
+msgid ""
+"The name of this authentication provider that is used to differentiate it "
+"from others"
+msgstr ""
+"اسم مزود المصادقة لاستخدامه في التفرقة "
+"بينه وبين الآخرين"
+
+#: /usr/share/icingaweb2/application/forms/Config/UserBackend/LdapBackendForm.php:59
+msgid ""
+"The name of this authentication provider that is used to differentiate it "
+"from others."
+msgstr ""
+"اسم مزود المصادقة لاستخدامه في التفرقة "
+"بينه وبين الآخرين."
+
+#: /usr/share/icingaweb2/application/forms/Navigation/NavigationConfigForm.php:584
+msgid ""
+"The name of this navigation item that is used to differentiate it from others"
+msgstr "اسم عنصر التنقل لاستخدامه في التفرقة بينه وبين الآخرين"
+
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:41
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/DbUserGroupBackendForm.php:36
+msgid ""
+"The name of this user group backend that is used to differentiate it from "
+"others"
+msgstr ""
+"اسم خلفية مجموعة المستخدم لاستخدامه في التفرقة بينه وبين "
+"الآخرين"
+
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:123
+msgid "The object class used for storing groups on the LDAP server."
+msgstr "فئة الكائن المستخدمة لتخزين المجموعات على خادم LDAP."
+
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:216
+#: /usr/share/icingaweb2/application/forms/Config/UserBackend/LdapBackendForm.php:140
+msgid "The object class used for storing users on the LDAP server."
+msgstr "فئة الكائن المستخدمة لتخزين المستخدمين على خادم LDAP."
+
+#: /usr/share/icingaweb2/application/forms/Navigation/NavigationConfigForm.php:670
+msgid ""
+"The parent item to assign this navigation item to. Select \"None\" to make "
+"this a main navigation item"
+msgstr ""
+"العنصر الأصل لتعيين بند التنقل هذا إليه. اختر \"بلا\" لجعل "
+"بند التنقل هذا رئيسيا"
+
+#: /usr/share/icingaweb2/application/forms/Navigation/MenuItemForm.php:27
+msgid ""
+"The parent menu to assign this menu entry to. Select \"None\" to make this a "
+"main menu entry"
+msgstr ""
+"القائمة الأم لتعيين مدخل القائمة هذا إليه. اختر \"بلا\" لجعل "
+"مدخل القائمة هذا رئيسيا"
+
+#: /usr/share/icingaweb2/application/forms/Config/Resource/DbResourceForm.php:138
+msgid "The password to use for authentication"
+msgstr "كلمة المرور لاستخدامها في المصادقة"
+
+#: /usr/share/icingaweb2/application/forms/Config/Resource/LdapResourceForm.php:112
+msgid "The password to use for querying the ldap server"
+msgstr "كلمة المرور لاستخدامها في الاستعلام عن خادم ldap"
+
+#: /usr/share/icingaweb2/application/forms/Config/Resource/LivestatusResourceForm.php:45
+msgid "The path to your livestatus socket used for querying monitoring data"
+msgstr ""
+"المسار إلى مقبس livestatus الخاصة بك لاستخدامه في الاستعلام عن بيانات المراقبة"
+
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:192
+msgid ""
+"The path where groups can be found on the LDAP server. Leave empty to select "
+"all users available using the specified connection."
+msgstr ""
+"المسار حيث يمكن العثور على مجموعات على خادم LDAP. اتركه فارغا لتحديد "
+"جميع المستخدمين المتوفرين باستخدام الاتصال المحدد."
+
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:273
+#: /usr/share/icingaweb2/application/forms/Config/UserBackend/LdapBackendForm.php:212
+msgid ""
+"The path where users can be found on the LDAP server. Leave empty to select "
+"all users available using the specified connection."
+msgstr ""
+"المسار حيث يمكن العثور على مستخدمين على خادم LDAP. اتركه فارغا لتحديد "
+"جميع المستخدمين المتوفرين باستخدام الاتصال المحدد."
+
+#: /usr/share/icingaweb2/application/forms/Config/Resource/FileResourceForm.php:59
+msgid "The pattern by which to identify columns."
+msgstr "النمط الذي يمكن من خلاله تحديد الأعمدة."
+
+#: /usr/share/icingaweb2/application/forms/Security/RoleForm.php:135
+msgid "The permissions to grant. You may select more than one permission"
+msgstr "الأذونات التي بالإمكان منحها. بإمكانك اختيار أكثر من إذن واحد"
+
+#: /usr/share/icingaweb2/application/forms/Config/Resource/LdapResourceForm.php:61
+msgid "The port of the LDAP server to use for authentication"
+msgstr "منفذ خادم LDAP لاستخدامه للمصادقة"
+
+#: /usr/share/icingaweb2/application/forms/Config/Resource/DbResourceForm.php:106
+msgid "The port to use"
+msgstr "المنفذ المستخدم"
+
+#: /usr/share/icingaweb2/application/forms/Config/Resource/SshResourceForm.php:136
+#, php-format
+msgid "The private key for the user \"%s\" is already exists."
+msgstr "المفتاح الخاص للمستخدم \"%s\" موجود مسبقا."
+
+#: /usr/share/icingaweb2/application/forms/Config/Resource/SshResourceForm.php:72
+msgid "The private key which will be used for the SSH connections"
+msgstr "المفتاح الخاص الذي سيستخدم لاتصالات SSH"
+
+#: /usr/share/icingaweb2/application/controllers/ConfigController.php:398
+#, php-format
+msgid ""
+"The resource \"%s\" is currently utilized for authentication by user backend "
+"\"%s\". Removing the resource can result in noone being able to log in any "
+"longer."
+msgstr ""
+"المورد \"%s\" يستخدم حاليا للمصادقة من قبل خلفية المستخدم \"%s\". "
+"إزالة المورد يؤدي إلى عدم قدرة أي أحد على الدخول لفترة أطول."
+
+#: /usr/share/icingaweb2/application/forms/Navigation/NavigationItemForm.php:39
+msgid "The target where to open this navigation item's url"
+msgstr "الهدف حيث سيفتح رابط عنصر التنقل هذا"
+
+#: /usr/share/icingaweb2/application/forms/Config/Resource/DbResourceForm.php:87
+msgid "The type of SQL database"
+msgstr "نوع قاعدة بيانات SQL"
+
+#: /usr/share/icingaweb2/application/forms/Config/General/LoggingConfigForm.php:38
+msgid "The type of logging to utilize."
+msgstr "نوع التسجيل المراد استخدامه."
+
+#: /usr/share/icingaweb2/application/forms/Config/ResourceConfigForm.php:253
+msgid "The type of resource"
+msgstr "نوع المورد"
+
+#: /usr/share/icingaweb2/application/forms/Config/UserBackendConfigForm.php:297
+msgid "The type of the resource to use for this authenticaton provider"
+msgstr "نوع المورد المراد استخدامه لمزود المصادقة هذا"
+
+#: /usr/share/icingaweb2/application/forms/Navigation/NavigationConfigForm.php:648
+msgid "The type of this navigation item"
+msgstr "نوع عنصر التنقل هذا"
+
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/UserGroupBackendForm.php:181
+msgid "The type of this user group backend"
+msgstr "نوع خلفية مجموعة هذا المستخدم"
+
+#: /usr/share/icingaweb2/application/forms/Config/Resource/DbResourceForm.php:77
+#: /usr/share/icingaweb2/application/forms/Config/Resource/LdapResourceForm.php:39
+#: /usr/share/icingaweb2/application/forms/Config/Resource/LivestatusResourceForm.php:36
+#: /usr/share/icingaweb2/application/forms/Config/Resource/FileResourceForm.php:33
+#: /usr/share/icingaweb2/application/forms/Config/Resource/SshResourceForm.php:37
+msgid "The unique name of this resource"
+msgstr "الاسم الوحيد لهذا المورد"
+
+#: /usr/share/icingaweb2/application/forms/Navigation/NavigationItemForm.php:56
+msgid ""
+"The url of this navigation item. Leave blank if you only want the name being "
+"displayed. For external urls, make sure to prepend an appropriate protocol "
+"identifier (e.g. http://example.tld)"
+msgstr ""
+"عنوان الموقع في بند التنقل هذا. اتركه فارغا إذا كنت تريد فقط للاسم أن يُعرض. "
+"لعناوين المواقع الخارجية، تأكد من إلحاقها بمعرف بروتوكول مناسب "
+"(مثل: http: //example.tld)"
+
+#: /usr/share/icingaweb2/application/forms/Navigation/DashletForm.php:29
+msgid ""
+"The url to load in the dashlet. For external urls, make sure to prepend an "
+"appropriate protocol identifier (e.g. http://example.tld)"
+msgstr ""
+"عنوان الموقع لتحميله في اللوحة الصغيرة. لعناوين المواقع الخارجية، تأكد من"
+" إلحاقها "
+"بمعرف بروتوكول مناسب (مثل: http://example.tld)"
+
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:78
+msgid "The user backend to link with this user group backend."
+msgstr "خلفية المستخدم لربطها مع خلفة مجموعة المستخدم."
+
+#: /usr/share/icingaweb2/application/forms/Config/Resource/LdapResourceForm.php:101
+msgid ""
+"The user dn to use for querying the ldap server. Leave the dn and password "
+"empty for attempting an anonymous bind"
+msgstr ""
+"الاسم المميز للمستخدم لاستخدامه في استعلام خادم ldap. اترك الاسم المميز وكلمة"
+" المرور "
+"فارغين لمحاولة الربط المجهول"
+
+#: /usr/share/icingaweb2/application/forms/Config/Resource/DbResourceForm.php:128
+msgid "The user name to use for authentication"
+msgstr "اسم المستخدم لاستخدامه في المصادقة"
+
+#: /usr/share/icingaweb2/application/forms/PreferenceForm.php:170
+msgctxt "Form element label"
+msgid "Theme"
+msgstr "السمة"
+
+#: /usr/share/icingaweb2/application/views/scripts/navigation/shared.phtml:15
+msgid "There are currently no navigation items being shared"
+msgstr "لا يوجد حاليا عناصر تنقل يجري مشاركتها"
+
+#: /usr/share/icingaweb2/application/views/scripts/config/module.phtml:6
+msgid "There is no such module installed."
+msgstr "لا توحد مثل هذه الوحدة مثبتة."
+
+#: /usr/share/icingaweb2/application/views/scripts/showConfiguration.phtml:15
+msgid ""
+"There's an application error preventing you from persisting the configuration"
+msgstr "هناك خطأ في التطبيق يمنعك من تثبيت الإعدادات"
+
+#: /usr/share/icingaweb2/application/views/scripts/showConfiguration.phtml:10
+msgid "This could have one or more of the following reasons:"
+msgstr "هذا قد يكون بسبب واحد أو أكثر من الأسباب التالية:"
+
+#: /usr/share/icingaweb2/application/views/scripts/navigation/shared.phtml:49
+#, php-format
+msgid ""
+"This is a child of the navigation item %1$s. You can only unshare this item "
+"by unsharing %1$s"
+msgstr ""
+"هذا تابع لعنصر التنقل %1$s. يمكنك فقط إلغاء مشارك هذا العنصر "
+"بإلغاء مشاركة %1$s"
+
+#: /usr/share/icingaweb2/application/views/scripts/config/module.phtml:50
+msgid "This module has no dependencies"
+msgstr "هذه الوحدة ليس لها اعتمادات"
+
+#: /usr/share/php/Icinga/Application/Modules/Module.php:721
+msgid "This module has no description"
+msgstr "هذه الوحدة ليس لها وصف"
+
+#: /usr/share/icingaweb2/application/forms/PreferenceForm.php:244
+msgid ""
+"This option allows you to enable or to disable the global page content auto "
+"refresh"
+msgstr ""
+"هذا الخيار يسمح لك بتفعيل أو تعطيل التحديث "
+"التلقائي لمحتوى الصفحة الكامل"
+
+#: /usr/share/icingaweb2/application/forms/Navigation/NavigationConfigForm.php:603
+msgid "Tick this box to share this item with others"
+msgstr "ضع علامة في هذا المربع لمشاركة هذا البند مع الآخرين"
+
+#: /usr/share/icingaweb2/application/forms/Config/Resource/SshResourceForm.php:91
+msgid "To modify the private key you must recreate this resource."
+msgstr "لتعديل المفتاح الخاص يجب عليك إعادة إنشاء هذا المورد"
+
+#: /usr/share/icingaweb2/application/views/scripts/navigation/index.phtml:30
+#: /usr/share/icingaweb2/application/views/scripts/navigation/shared.phtml:20
+#: /usr/share/icingaweb2/application/forms/Navigation/NavigationConfigForm.php:647
+#: /usr/share/icingaweb2/application/controllers/NavigationController.php:149
+#: /usr/share/icingaweb2/application/controllers/NavigationController.php:199
+msgid "Type"
+msgstr "النوع"
+
+#: /usr/share/icingaweb2/application/views/scripts/config/devtools.phtml:5
+msgid "UI Debug"
+msgstr "واجهة مستخدم تصحيح الأخطاء"
+
+#: /usr/share/icingaweb2/application/forms/Navigation/NavigationConfigForm.php:486
+#, php-format
+msgid ""
+"Unable to delete navigation item \"%s\". There are other items dependent "
+"from it: %s"
+msgstr ""
+"غير قادر على حذف عنصر التنقل \"%s\". هناك عناصر أخرى "
+"تابعة له: %s"
+
+#: /usr/share/icingaweb2/application/forms/Navigation/NavigationConfigForm.php:526
+#, php-format
+msgid ""
+"Unable to unshare navigation item \"%s\". It is dependent from item \"%s\". "
+"Dependent items can only be unshared by unsharing their parent"
+msgstr ""
+"غير قادر على إلغاء مشاركة عنصر التنقل \"%s\". فهو تابع للعنصر \"%s\". "
+"العناصر التابعة يمكن إلغاء مشاركتها فقط بإلغاء مشاركة أصلها"
+
+#: /usr/share/icingaweb2/application/views/scripts/navigation/index.phtml:54
+#: /usr/share/icingaweb2/application/views/scripts/navigation/shared.phtml:42
+msgid "Unknown"
+msgstr "مجهول"
+
+#: /usr/share/icingaweb2/application/forms/Config/ResourceConfigForm.php:100
+#: /usr/share/icingaweb2/application/forms/Config/ResourceConfigForm.php:124
+#: /usr/share/icingaweb2/application/forms/Config/ResourceConfigForm.php:198
+msgid "Unknown resource provided"
+msgstr "تم تقديم مورد مجهول"
+
+#: /usr/share/icingaweb2/application/views/scripts/navigation/shared.phtml:22
+msgid "Unshare"
+msgstr "إلغاء مشاركة"
+
+#: /usr/share/icingaweb2/application/controllers/NavigationController.php:182
+msgid "Unshare this navigation item"
+msgstr "إلغاء مشاركة عنصر تنقل"
+
+#: /usr/share/icingaweb2/application/controllers/DashboardController.php:86
+#: /usr/share/icingaweb2/application/controllers/DashboardController.php:92
+msgid "Update Dashlet"
+msgstr "تحديث لوحة مصغرة"
+
+#: /usr/share/icingaweb2/application/controllers/NavigationController.php:304
+msgid "Update Navigation Item"
+msgstr "تحديث عنصر تنقل"
+
+#: /usr/share/icingaweb2/application/controllers/ConfigController.php:346
+msgid "Update Resource"
+msgstr "تحديث مورد"
+
+#: /usr/share/icingaweb2/application/controllers/RoleController.php:76
+#: /usr/share/icingaweb2/application/controllers/RoleController.php:103
+msgid "Update Role"
+msgstr "تحديث دور"
+
+#: /usr/share/icingaweb2/application/controllers/UserController.php:188
+msgid "Update User"
+msgstr "تحديث مستخدم"
+
+#: /usr/share/icingaweb2/application/controllers/ConfigController.php:274
+msgid "Update User Backend"
+msgstr "تحديث خلفية مستخدم"
+
+#: /usr/share/icingaweb2/application/controllers/GroupController.php:183
+msgid "Update User Group"
+msgstr "تحديث مجموعة مستخدم"
+
+#: /usr/share/icingaweb2/application/controllers/UsergroupbackendController.php:102
+msgid "Update User Group Backend"
+msgstr "تحديث خلفية مجموعة مستخدم"
+
+#: /usr/share/php/Icinga/Web/Form/Decorator/Autosubmit.php:99
+msgid ""
+"Upon any of this form's fields were changed, this page is being updated "
+"automatically."
+msgstr ""
+" عند تغيير أي من حقول هذا النموذج، فإن هذه الصفحة يتم تحديثها "
+"تلقائيا."
+
+#: /usr/share/php/Icinga/Web/Form.php:951
+#: /usr/share/php/Icinga/Web/Form/Decorator/Autosubmit.php:100
+msgid ""
+"Upon its value has changed, this field issues an automatic update of this "
+"page."
+msgstr ""
+"عند تغيير قيمتها، فإن هذا الحقل يصدر تحديث تلقائي لهذه "
+"الصفحة."
+
+#: /usr/share/icingaweb2/application/views/scripts/dashboard/settings.phtml:14
+#: /usr/share/icingaweb2/application/forms/Navigation/NavigationItemForm.php:54
+#: /usr/share/icingaweb2/application/forms/Navigation/DashletForm.php:27
+#: /usr/share/icingaweb2/application/forms/Dashboard/DashletForm.php:69
+msgid "Url"
+msgstr "رابط"
+
+#: /usr/share/icingaweb2/application/forms/PreferenceForm.php:234
+msgid "Use benchmark"
+msgstr "استخدام مؤشر أداء"
+
+#: /usr/share/icingaweb2/application/forms/PreferenceForm.php:198
+msgid "Use the following language to display texts and messages"
+msgstr "استخدم اللغة التالية لعرض النصوص والرسائل"
+
+#: /usr/share/icingaweb2/application/forms/PreferenceForm.php:210
+msgid "Use the following timezone for dates and times"
+msgstr "استخدم المنطقة الزمنية التالية لعرض التواريخ والأزمنة"
+
+#: /usr/share/icingaweb2/application/forms/Config/Resource/SshResourceForm.php:45
+#: /usr/share/icingaweb2/application/controllers/UserController.php:292
+msgid "User"
+msgstr "المستخدم"
+
+#: /usr/share/icingaweb2/application/forms/Config/User/UserForm.php:155
+#, php-format
+msgid "User \"%s\" has been edited"
+msgstr "تم تحرير المستخدم \"%s\""
+
+#: /usr/share/icingaweb2/application/forms/Config/User/UserForm.php:171
+#, php-format
+msgid "User \"%s\" has been removed"
+msgstr "تمت إزالة المستخدم \"%s\""
+
+#: /usr/share/icingaweb2/application/controllers/GroupController.php:257
+#, php-format
+msgid "User \"%s\" has been removed from group \"%s\""
+msgstr "تمت إزالة المستخدم \"%s\" من المجموعة \"%s\""
+
+#: /usr/share/icingaweb2/application/controllers/UserController.php:94
+#: /usr/share/icingaweb2/application/controllers/UserController.php:185
+#: /usr/share/icingaweb2/application/controllers/UserController.php:207
+#: /usr/share/icingaweb2/application/controllers/UserController.php:223
+#, php-format
+msgid "User \"%s\" not found"
+msgstr "لم يُعثر على المستخدم \"%s\""
+
+#: /usr/share/icingaweb2/application/forms/Config/User/CreateMembershipForm.php:98
+#, php-format
+msgid "User %s is already a member of all groups"
+msgstr "المستخدم \"%s\" هو عضو في كل المجموعات مسبقا"
+
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:77
+#: /usr/share/icingaweb2/application/controllers/UserController.php:47
+msgid "User Backend"
+msgstr "خلفية المستخدم"
+
+#: /usr/share/icingaweb2/application/views/scripts/config/userbackend/reorder.phtml:5
+msgid "User Backends"
+msgstr "خلفيات المستخدم"
+
+#: /usr/share/icingaweb2/application/views/scripts/group/list.phtml:50
+#: /usr/share/icingaweb2/application/controllers/UserController.php:101
+#: /usr/share/icingaweb2/application/controllers/GroupController.php:69
+#: /usr/share/php/Icinga/Authentication/UserGroup/LdapUserGroupBackend.php:465
+#: /usr/share/php/Icinga/Authentication/UserGroup/DbUserGroupBackend.php:115
+#: /usr/share/php/Icinga/Authentication/UserGroup/DbUserGroupBackend.php:120
+msgid "User Group"
+msgstr "مجموعة المستخدم"
+
+#: /usr/share/icingaweb2/application/controllers/GroupController.php:47
+msgid "User Group Backend"
+msgstr "خلفية مجموعة المستخدم"
+
+#: /usr/share/icingaweb2/application/views/scripts/config/userbackend/reorder.phtml:19
+msgid "User Group Backends"
+msgstr "خلفيات مجموعة المستخدم"
+
+#: /usr/share/icingaweb2/application/controllers/UserController.php:330
+#: /usr/share/icingaweb2/application/controllers/GroupController.php:364
+#: /usr/share/icingaweb2/application/controllers/RoleController.php:173
+msgid "User Groups"
+msgstr "مجموعات المستخدم"
+
+#: /usr/share/icingaweb2/application/forms/Config/General/ApplicationConfigForm.php:67
+msgid "User Preference Storage Type"
+msgstr "نوع تخزين تفضيلات المستخدم"
+
+#: /usr/share/icingaweb2/application/forms/Config/User/UserForm.php:139
+msgid "User added successfully"
+msgstr "أُضيف المستخدم بنجاح"
+
+#: /usr/share/icingaweb2/application/forms/Config/UserBackendReorderForm.php:70
+#: /usr/share/icingaweb2/application/controllers/ConfigController.php:271
+#, php-format
+msgid "User backend \"%s\" not found"
+msgstr "لم يُعثر على خلفية المستخدم \"%s\""
+
+#: /usr/share/icingaweb2/application/controllers/ConfigController.php:298
+#, php-format
+msgid "User backend \"%s\" successfully removed"
+msgstr "أُزيلت خلفية المستخدم \"%s\" بنجاح"
+
+#: /usr/share/icingaweb2/application/controllers/ConfigController.php:259
+#, php-format
+msgid "User backend \"%s\" successfully updated"
+msgstr "حُدثت خلفية المستخدم \"%s\" بنجاح"
+
+#: /usr/share/icingaweb2/application/controllers/ConfigController.php:223
+msgid "User backend successfully created"
+msgstr "أُنشئت خلفية المستخدم بنجاح"
+
+#: /usr/share/php/Icinga/Web/Controller/AuthBackendController.php:127
+#, php-format
+msgid "User group backend \"%s\" is not %s"
+msgstr "خلفية مجموعة المستخدم \"%s\" ليست %s"
+
+#: /usr/share/icingaweb2/application/controllers/UsergroupbackendController.php:99
+#: /usr/share/php/Icinga/Web/Controller/AuthBackendController.php:120
+#, php-format
+msgid "User group backend \"%s\" not found"
+msgstr "لم يُعثر على خلفية المجموعة \"%s\""
+
+#: /usr/share/icingaweb2/application/controllers/UsergroupbackendController.php:125
+#, php-format
+msgid "User group backend \"%s\" successfully removed"
+msgstr "أُزيلت خلفية المجموعة \"%s\" بنجاح"
+
+#: /usr/share/icingaweb2/application/controllers/UsergroupbackendController.php:88
+#, php-format
+msgid "User group backend \"%s\" successfully updated"
+msgstr "حُدثت خلفية المجموعة \"%s\" بنجاح"
+
+#: /usr/share/icingaweb2/application/controllers/UsergroupbackendController.php:53
+msgid "User group backend successfully created"
+msgstr "أُنشئت خلفية المجموعة بنجاح"
+
+#: /usr/share/icingaweb2/application/forms/Config/Resource/SshResourceForm.php:47
+msgid ""
+"User to log in as on the remote Icinga instance. Please note that key-based "
+"SSH login must be possible for this user"
+msgstr ""
+"الاسم المستخدم لتسجيل الدخول به لحالة إسنجا البعيدة. يرجى ملاحظة أن "
+"دخول SSH القائم على مفتاح يجب أن يكون متاحا لهذا المستخدم"
+
+#: /usr/share/php/Icinga/Web/Menu.php:294
+msgid "Usergroups"
+msgstr "مجموعات المستخدمين"
+
+#: /usr/share/icingaweb2/application/views/scripts/group/show.phtml:75
+#: /usr/share/icingaweb2/application/views/scripts/user/list.phtml:51
+#: /usr/share/icingaweb2/application/forms/Authentication/LoginForm.php:43
+#: /usr/share/icingaweb2/application/forms/Config/User/UserForm.php:33
+#: /usr/share/icingaweb2/application/forms/Config/Resource/DbResourceForm.php:127
+#: /usr/share/icingaweb2/application/controllers/UserController.php:69
+#: /usr/share/icingaweb2/application/controllers/GroupController.php:105
+#: /usr/share/php/Icinga/Authentication/User/LdapUserBackend.php:255
+#: /usr/share/php/Icinga/Authentication/User/DbUserBackend.php:115
+#: /usr/share/php/Icinga/Authentication/User/DbUserBackend.php:118
+#: /usr/share/php/Icinga/Authentication/UserGroup/LdapUserGroupBackend.php:464
+#: /usr/share/php/Icinga/Authentication/UserGroup/DbUserGroupBackend.php:114
+#: /usr/share/php/Icinga/Authentication/UserGroup/DbUserGroupBackend.php:118
+msgid "Username"
+msgstr "اسم المستخدم"
+
+#: /usr/share/icingaweb2/application/views/scripts/role/list.phtml:23
+#: /usr/share/icingaweb2/application/forms/Navigation/NavigationConfigForm.php:613
+#: /usr/share/icingaweb2/application/forms/Security/RoleForm.php:117
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/AddMemberForm.php:118
+#: /usr/share/icingaweb2/application/controllers/UserController.php:322
+#: /usr/share/icingaweb2/application/controllers/GroupController.php:356
+#: /usr/share/icingaweb2/application/controllers/RoleController.php:165
+#: /usr/share/php/Icinga/Web/Menu.php:289
+msgid "Users"
+msgstr "المستخدمون"
+
+#: /usr/share/icingaweb2/application/forms/Config/General/ThemingConfigForm.php:57
+msgctxt "Form element label"
+msgid "Users Can't Change Theme"
+msgstr "المستخدمون لا يستطيعون تغيير السمة"
+
+#: /usr/share/icingaweb2/application/forms/Config/ResourceConfigForm.php:348
+#: /usr/share/icingaweb2/application/forms/Config/UserBackendConfigForm.php:453
+msgid "Validate Configuration"
+msgstr "تحقق من الإعدادات"
+
+#: /usr/share/icingaweb2/application/forms/Config/ResourceConfigForm.php:349
+#: /usr/share/icingaweb2/application/forms/Config/UserBackendConfigForm.php:454
+msgid "Validation In Progress"
+msgstr "جار التحقق"
+
+#: /usr/share/icingaweb2/application/forms/Config/ResourceConfigForm.php:306
+#: /usr/share/icingaweb2/application/forms/Config/UserBackendConfigForm.php:411
+msgid "Validation Log"
+msgstr "سجل التحقق"
+
+#: /usr/share/icingaweb2/application/views/scripts/config/module.phtml:39
+#: /usr/share/icingaweb2/application/views/scripts/about/index.phtml:14
+#: /usr/share/icingaweb2/application/views/scripts/about/index.phtml:115
+msgid "Version"
+msgstr "إصدار"
+
+#: /usr/share/icingaweb2/application/forms/Config/General/LoggingConfigForm.php:57
+msgctxt "app.config.logging.level"
+msgid "Warning"
+msgstr "تحذير"
+
+#: /usr/share/icingaweb2/application/views/scripts/dashboard/index.phtml:12
+msgid "Welcome to Icinga Web!"
+msgstr "أهلاً بكم في نظام إسنجا وب!"
+
+#: /usr/share/icingaweb2/application/forms/Config/Resource/LdapResourceForm.php:73
+msgid ""
+"Whether to encrypt communication. Choose STARTTLS or LDAPS for encrypted "
+"communication or none for unencrypted communication"
+msgstr ""
+"سواء لتشفير الاتصالات أو عدمه. اختر STARTTLS أو LDAPS للاتصال "
+"المشفر أو \"بلا\" للاتصال غير المشفر"
+
+#: /usr/share/icingaweb2/application/views/scripts/joystickPagination.phtml:70
+#: /usr/share/icingaweb2/application/views/scripts/joystickPagination.phtml:96
+msgctxt "pagination.joystick"
+msgid "X-Axis"
+msgstr "محور-س"
+
+#: /usr/share/icingaweb2/application/views/scripts/joystickPagination.phtml:42
+#: /usr/share/icingaweb2/application/views/scripts/joystickPagination.phtml:125
+msgctxt "pagination.joystick"
+msgid "Y-Axis"
+msgstr "محور-ص"
+
+#: /usr/share/icingaweb2/application/views/scripts/navigation/index.phtml:57
+#: /usr/share/icingaweb2/application/forms/Config/User/UserForm.php:116
+#: /usr/share/icingaweb2/application/forms/Config/UserGroup/UserGroupForm.php:66
+msgid "Yes"
+msgstr "نعم"
+
+#: /usr/share/icingaweb2/application/views/scripts/navigation/index.phtml:23
+msgid "You did not create any navigation item yet."
+msgstr "لم تقم بإنشاء أ عنصر تنقل بعد."
+
+#: /usr/share/icingaweb2/application/views/scripts/showConfiguration.phtml:13
+msgid "You don't have file-system permissions to write to the file"
+msgstr "ليس لديك أذونات في نظام الملفات للكتابة في الملف"
+
+#: /usr/share/icingaweb2/application/controllers/UserController.php:229
+msgid ""
+"You'll need to configure at least one user group backend first that allows "
+"to create new memberships"
+msgstr ""
+"ستحتاج لإعداد خلفية مجموعة مستخدم واحدة على الأقل أولا تسمح "
+"بإنشاء عضوية جديدة"
+
+#: /usr/share/icingaweb2/application/forms/Authentication/LoginForm.php:138
+msgid ""
+"You're currently not authenticated using any of the web server's "
+"authentication mechanisms. Make sure you'll configure such, otherwise you'll "
+"not be able to login."
+msgstr ""
+"لا يمكنك حاليا المصادقة باستخدام أي من آليات مصادقة "
+"خادم الوب. تأكد من أنك سوف تقوم بإعداد واحدة، "
+"وإلا فسوف لن تكون قادرا على الدخول."
+
+#: /usr/share/icingaweb2/application/forms/PreferenceForm.php:197
+msgid "Your Current Language"
+msgstr "لغتك الحالية"
+
+#: /usr/share/icingaweb2/application/forms/PreferenceForm.php:209
+msgid "Your Current Timezone"
+msgstr "منطقتك الزمنية الحالية"
+
+#: /usr/share/php/Icinga/Date/DateFormatter.php:176
+#, php-format
+msgctxt "An event happened at the given time"
+msgid "at %s"
+msgstr "عند %s"
+
+#: /usr/share/php/Icinga/Date/DateFormatter.php:250
+#, php-format
+msgctxt "An event will happen at the given time"
+msgid "at %s"
+msgstr "عند %s"
+
+#: /usr/share/icingaweb2/application/forms/PreferenceForm.php:164
+#: /usr/share/icingaweb2/application/forms/Config/General/ThemingConfigForm.php:34
+msgid "default"
+msgstr "افتراضي"
+
+#: /usr/share/icingaweb2/application/views/scripts/config/module.phtml:23
+msgid "disable"
+msgstr "تَعطيل"
+
+#: /usr/share/icingaweb2/application/views/scripts/config/module.phtml:31
+msgid "enable"
+msgstr "تفعيل"
+
+#: /usr/share/php/Icinga/Date/DateFormatter.php:199
+#, php-format
+msgctxt "A status is lasting for the given time interval"
+msgid "for %s"
+msgstr "لـ %s"
+
+#: /usr/share/icingaweb2/application/views/scripts/joystickPagination.phtml:43
+#: /usr/share/icingaweb2/application/views/scripts/joystickPagination.phtml:126
+msgctxt "pagination.joystick"
+msgid "hosts"
+msgstr "مضيفون"
+
+#: /usr/share/php/Icinga/Date/DateFormatter.php:245
+#, php-format
+msgctxt "An event will happen after the given time interval has elapsed"
+msgid "in %s"
+msgstr "في %s"
+
+#: /usr/share/icingaweb2/application/views/scripts/dashboard/index.phtml:21
+msgid "modules"
+msgstr "وحدات"
+
+#: /usr/share/php/Icinga/Date/DateFormatter.php:165
+#, php-format
+msgctxt "An event happened on the given date or date and time"
+msgid "on %s"
+msgstr "عند %s"
+
+#: /usr/share/php/Icinga/Date/DateFormatter.php:239
+#, php-format
+msgctxt "An event will happen on the given date or date and time"
+msgid "on %s"
+msgstr "عند %s"
+
+#: /usr/share/icingaweb2/application/views/scripts/joystickPagination.phtml:71
+#: /usr/share/icingaweb2/application/views/scripts/joystickPagination.phtml:97
+msgctxt "pagination.joystick"
+msgid "services"
+msgstr "خدمات"
+
+#: /usr/share/php/Icinga/Date/DateFormatter.php:209
+#, php-format
+msgctxt "A status is lasting since the given time, date or date and time"
+msgid "since %s"
+msgstr "منذ %s"
+
+#: /usr/share/icingaweb2/application/views/scripts/config/devtools.phtml:5
+msgid "toggle"
+msgstr "تبديل"
+
+

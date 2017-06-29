@@ -231,4 +231,55 @@ class UserBackend implements ConfigAwareFactory
         $backend->setName($name);
         return $backend;
     }
+
+    /**
+     * Return whether the given backend is responsible for authenticating the given user (based on their domains)
+     *
+     * @param   UserBackendInterface    $backend
+     * @param   User                    $user
+     *
+     * @return  bool
+     */
+    public static function isBackendResponsibleForUser(UserBackendInterface $backend, User $user)
+    {
+        $backendDomain = static::getBackendDomain($backend);
+        $userDomain = $user->getDomain();
+
+        if ($userDomain === null) {
+            // The user logs in as "jdoe", not as "jdoe@example.com" and there's no default domain.
+            // The backend is only responsible if its domain is also missing.
+            return $backendDomain === null;
+        } else {
+            // The user logs in as "jdoe@example.com" or "jdoe" with a default domain being configured.
+            return strtolower($userDomain) === strtolower($backendDomain);
+        }
+    }
+
+    /**
+     * Get the domain the given backend is responsible for (fall back to the default domain if any)
+     *
+     * @param   UserBackendInterface    $backend
+     *
+     * @return  string|null
+     */
+    public static function getBackendDomain(UserBackendInterface $backend)
+    {
+        $backendDomain = Config::app('authentication')->get($backend->getName(), 'domain');
+        return $backendDomain === null ? Config::app()->get('authentication', 'default_domain') : $backendDomain;
+    }
+
+    /**
+     * Get the user from the given username without its domain and the backend as fully assembled {@link User} object
+     *
+     * @param   string                  $localUsername
+     * @param   UserBackendInterface    $backend
+     *
+     * @return  User
+     */
+    public static function getUserFromBackend($localUsername, UserBackendInterface $backend)
+    {
+        $user = new User($localUsername);
+        $user->setDomain(static::getBackendDomain($backend));
+        return $user->setDefaultDomainIfNeeded();
+    }
 }

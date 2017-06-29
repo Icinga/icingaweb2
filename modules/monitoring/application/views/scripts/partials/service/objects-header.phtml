@@ -24,7 +24,7 @@ if (! ($serviceCount = count($objects))): return; endif ?>
                 $service->host_display_name
                     . ($service->host_state != 0 ? ' (' . Host::getStateText($service->host_state, true) . ')' : '')
             ) ?>
-            <?= implode(' ', $this->serviceFlags($service)) ?>
+            <?= $this->serviceFlags($service) ?>
         </td>
     </tr>
 <?php endforeach ?>

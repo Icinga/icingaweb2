@@ -51,7 +51,6 @@ class SshResourceForm extends Form
         );
 
         if ($this->getRequest()->getActionName() != 'editresource') {
-
             $callbackValidator = new Zend_Validate_Callback(function ($value) {
                 if (openssl_pkey_get_private($value) === false) {
                     return false;

@@ -153,7 +153,6 @@ class NavigationItem implements IteratorAggregate
      */
     public function init()
     {
-
     }
 
     /**
@@ -340,7 +339,7 @@ class NavigationItem implements IteratorAggregate
      */
     public function hasChildren()
     {
-        return !$this->getChildren()->isEmpty();
+        return ! $this->getChildren()->isEmpty();
     }
 
     /**
@@ -791,7 +790,7 @@ class NavigationItem implements IteratorAggregate
     public function getRender()
     {
         if ($this->render === null) {
-            return true;
+            return $this->getUrl() !== null;
         }
 
         return $this->render;

@@ -4,7 +4,7 @@ use Icinga\Web\Notification;
 
 $pages = $wizard->getPages();
 $finished = isset($success);
-$configPages = array_slice($pages, 3, count($pages) - 1, true);
+$configPages = array_slice($pages, 3, count($pages) - 4, true);
 $currentPos = array_search($wizard->getCurrentPage(), $pages, true);
 list($configPagesLeft, $configPagesRight) = array_chunk($configPages, count($configPages) / 2, true);
 
@@ -27,7 +27,7 @@ if ($notifications->hasMessages()) {
 ?></ul>
 <div id="setup" data-base-target="layout">
   <div class="header">
-    <?= $this->img('img/logo_icinga_big.png'); ?>
+    <?= $this->img('img/icinga-logo-big.png'); ?>
     <div class="progress-bar">
       <div class="step" style="width: 10%;">
         <h1><?= $this->translate('Welcome', 'setup.progress'); ?></h1>
@@ -52,6 +52,9 @@ if ($notifications->hasMessages()) {
           <td class="middle"><div class="bubble <?= $stateClass; ?>"></div></td>
           <td class="right"><div class="line right <?= $stateClass; ?>"></div></td>
         </tr></tbody></table>
+        <?php if (($maxProgress < $currentPos && $currentPos === 1) || ($maxProgress >= $currentPos && $maxProgress === 1)): ?>
+          <?= $this->restartForm ?>
+        <?php endif ?>
       </div>
       <div class="step" style="width: 10%;">
         <h1><?= $this->translate('Requirements', 'setup.progress'); ?></h1>
@@ -65,6 +68,9 @@ if ($notifications->hasMessages()) {
           <td class="middle"><div class="bubble<?= $stateClass; ?>"></div></td>
           <td class="right"><div class="line right<?= $stateClass; ?>"></div></td>
         </tr></tbody></table>
+        <?php if (($maxProgress < $currentPos && $currentPos === 2) || ($maxProgress >= $currentPos && $maxProgress === 2)): ?>
+          <?= $this->restartForm ?>
+        <?php endif ?>
       </div>
       <div class="step" style="width: 60%;">
         <h1><?= $this->translate('Configuration', 'setup.progress'); ?></h1>
@@ -122,10 +128,13 @@ if ($notifications->hasMessages()) {
           <?php endforeach ?>
           </td>
         </tr></tbody></table>
+        <?php if ($maxProgress > 2 || $currentPos > 2): ?>
+          <?= $this->restartForm ?>
+        <?php endif ?>
       </div>
       <div class="step" style="width: 10%;">
         <h1><?= $this->translate('Finish', 'setup.progress'); ?></h1>
-        <?php $stateClass = $finished ? ' active' : ''; ?>
+        <?php $stateClass = $finished ? ' complete' : ($pages[$currentPos] === end($pages) ? ' active' : ''); ?>
         <table><tbody><tr>
           <td class="left"><div class="line left<?= $stateClass; ?>"></div></td>
           <td class="middle"><div class="bubble<?= $stateClass; ?>"></div></td>

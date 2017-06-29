@@ -5,24 +5,10 @@
   white-space: nowrap;
 
   td {
+    color: @gray-light;
+    padding: 0.2em;
     text-align: center;
-    width: 1.0em;
-    color: @gray-lighter;
-    padding: 1px 2px;
-
-    a {
-      .rounded-corners(0.4em);
-      display: block;
-      height: 1.5em;
-      width: 1.5em;
-    }
-
-    i {
-      .rounded-corners(0.4em);
-      display: block;
-      height: 1.5em;
-      width: 1.5em;
-    }
+    width: 1em;
   }
 
   .rotate-45 {
@@ -42,6 +28,26 @@
   }
 }
 
-.joystick-pagination a {
-  color: @text-color;
+.joystick-pagination {
+  margin: 0 auto;
+
+  a {
+    color: @text-color;
+  }
+
+  i {
+    display: block;
+    height: 1.5em;
+    width: 1.5em;
+  }
+}
+
+.service-grid-link {
+  .bg-stateful();
+  .rounded-corners();
+
+  display: inline-block;
+  height: 1.5em;
+  vertical-align: middle;
+  width: 1.5em;
 }

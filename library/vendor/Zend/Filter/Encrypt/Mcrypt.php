@@ -23,6 +23,8 @@
  * @see Zend_Filter_Encrypt_Interface
  */
 
+/** @see Zend_Crypt_Math */
+
 /**
  * Encryption adapter for mcrypt
  *
@@ -342,9 +344,8 @@ class Zend_Filter_Encrypt_Mcrypt implements Zend_Filter_Encrypt_Interface
         if (version_compare(PHP_VERSION, '5.3.0', '>=')) {
             return;
         }
-
         if (!self::$_srandCalled) {
-            srand((double) microtime() * 1000000);
+            srand(Zend_Crypt_Math::randInteger(0, PHP_INT_MAX));
             self::$_srandCalled = true;
         }
     }

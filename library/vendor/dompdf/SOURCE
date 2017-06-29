@@ -1,9 +1,16 @@
-curl https://codeload.github.com/dompdf/dompdf/tar.gz/v0.6.2 -o dompdf-0.6.2.tar.gz
-tar xzf dompdf-0.6.2.tar.gz --strip-components 1 --wildcards dompdf-0.6.2/{include/\*.php,lib,dompdf\*.php,LICENSE.LGPL}
-rm dompdf-0.6.2.tar.gz
+GLOBIGNORE=$0; rm -rf *
+
+curl https://codeload.github.com/dompdf/dompdf/tar.gz/v0.7.0 -o dompdf-0.7.0.tar.gz
+tar xzf dompdf-0.7.0.tar.gz --strip-components 1 dompdf-0.7.0/{lib,src,autoload.inc.php,LICENSE.LGPL}
+rm dompdf-0.7.0.tar.gz
 mv LICENSE.LGPL LICENSE
 
 curl https://codeload.github.com/PhenX/php-font-lib/tar.gz/0.4 -o php-font-lib-0.4.tar.gz
-mkdir -p lib/php-font-lib/classes
-tar xzf php-font-lib-0.4.tar.gz --strip-components 3 -C lib/php-font-lib/classes php-font-lib-0.4/src/FontLib
+mkdir -p lib/php-font-lib
+tar xzf php-font-lib-0.4.tar.gz --strip-components 1 -C lib/php-font-lib php-font-lib-0.4/{src,LICENSE}
 rm php-font-lib-0.4.tar.gz
+
+curl https://codeload.github.com/PhenX/php-svg-lib/tar.gz/v0.1 -o php-svg-lib-0.1.tar.gz
+mkdir -p lib/php-svg-lib
+tar xzf php-svg-lib-0.1.tar.gz --strip-components 1 -C lib/php-svg-lib php-svg-lib-0.1/src
+rm php-svg-lib-0.1.tar.gz

@@ -28,7 +28,9 @@ class ProcessCheckResultCommandForm extends ObjectsCommandForm
     public function getSubmitLabel()
     {
         return $this->translatePlural(
-            'Submit Passive Check Result', 'Submit Passive Check Results', count($this->objects)
+            'Submit Passive Check Result',
+            'Submit Passive Check Results',
+            count($this->objects)
         );
     }
 

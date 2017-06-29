@@ -11,7 +11,7 @@ use Icinga\Util\Translator;
  *
  * Translating strings must not throw an exception even if the given domain is not valid.
  *
- * @see https://dev.icinga.org/issues/6432
+ * @see https://dev.icinga.com/issues/6432
  */
 class Bug6432Test extends BaseTestCase
 {

@@ -15,7 +15,7 @@
                     . 'authentication method. Please define a authentication method by following the instructions in the'
                     . ' %1$sdocumentation%3$s or by using our %2$sweb-based setup-wizard%3$s.'
                 ),
-                '<a href="http://docs.icinga.org/" title="' . $this->translate('Icinga Web 2 Documentation') . '">', // TODO: More exact documentation link
+                '<a href="http://docs.icinga.com/" title="' . $this->translate('Icinga Web 2 Documentation') . '">', // TODO: More exact documentation link
                 '<a href="' . $this->href('setup') . '" title="' . $this->translate('Icinga Web 2 Setup-Wizard') . '">',
                 '</a>'
             ) ?></p>
@@ -23,7 +23,7 @@
         <?= $this->form ?>
         <div id="login-footer">
             <p>Icinga Web 2 &copy; 2013-<?= date('Y') ?></p>
-            <?= $this->qlink($this->translate('The Icinga Project'), 'https://www.icinga.org') ?>
+            <?= $this->qlink($this->translate('The Icinga Project'), 'https://www.icinga.com') ?>
             <?= $this->qlink(
                 null,
                 'http://www.twitter.com/icinga',

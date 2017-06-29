@@ -81,7 +81,7 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
                         $data []= sprintf(
                             '<span title="%s">%s</span>',
                             $text,
-                            StringHelper::ellipsisCenter($text, 24)
+                            $text
                         );
                     }
                 }

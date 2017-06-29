@@ -4,8 +4,6 @@ use Icinga\Module\Monitoring\Object\Host;
 if (! $this->compact): ?>
 <div class="controls">
     <?= $this->tabs ?>
-    <?= $this->render('list/components/hostssummary.phtml') ?>
-    <?= $this->render('list/components/selectioninfo.phtml') ?>
     <?= $this->paginator ?>
     <div class="sort-controls-container">
         <?= $this->limiter ?>
@@ -82,7 +80,7 @@ if (! $this->compact): ?>
                           )
                     ) ?>&#41;</span>
                 <?php endif ?>
-                    <span class="state-icons"><?= implode(' ', $this->hostFlags($host)) ?></span>
+                    <span class="state-icons"><?= $this->hostFlags($host) ?></span>
                 </div>
                 <p class="overview-plugin-output"><?= $this->pluginOutput($this->ellipsis($host->host_output, 10000), true) ?></p>
             </td>
@@ -107,3 +105,10 @@ if (! $this->compact): ?>
     </div>
 <?php endif ?>
 </div>
+<?php if (! $this->compact): ?>
+<div class="monitoring-statusbar-ghost dont-print"></div>
+<div class="monitoring-statusbar dont-print">
+    <?= $this->render('list/components/hostssummary.phtml') ?>
+    <?= $this->render('list/components/selectioninfo.phtml') ?>
+</div>
+<?php endif ?>

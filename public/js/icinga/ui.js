@@ -273,6 +273,7 @@
             $('#layout').removeClass('twocols');
             this.closeContainer($('#col2'));
             // one-column layouts never have any selection active
+            $('#col1').removeData('icinga-actiontable-former-href');
             this.icinga.behaviors.actiontable.clearAll();
         },
 
@@ -578,9 +579,7 @@
                 var $search = $('#search');
                 var $sidebar = $('#sidebar');
 
-                $header.css({
-                    height: 'auto'
-                });
+                $header.css({ height: 'auto'});
 
                 if ($layout.hasClass('minimal-layout')) {
                     if (! this.mobileMenu && $sidebar.length) {
@@ -657,14 +656,21 @@
             $container.find('.controls').each(function() {
                 var $controls = $(this);
                 var $fakeControls = $controls.next('.fake-controls');
-
                 $controls.css({
                     top: $container.offset().top,
                     width: $fakeControls.outerWidth()
                 });
-
                 $fakeControls.height($controls.height());
             });
+
+            var $statusBar = $container.children('.monitoring-statusbar');
+            if ($statusBar.length) {
+                $statusBar.css({
+                    left: $container.offset().left,
+                    width: $container.width()
+                });
+                $statusBar.prev('.monitoring-statusbar-ghost').height($statusBar.outerHeight(true));
+            }
         },
 
         toggleFullscreen: function () {

@@ -51,12 +51,10 @@ $special = array(
 );
 
 if (in_array($path, $special)) {
-
     include_once __DIR__ . '/EmbeddedWeb.php';
     EmbeddedWeb::start();
 
-    switch($path) {
-
+    switch ($path) {
         case 'css/icinga.css':
             Stylesheet::send();
             exit;
@@ -79,7 +77,6 @@ if (in_array($path, $special)) {
         default:
             return false;
     }
-
 } elseif ($path === 'svg/chart.php') {
     if (!array_key_exists('data', $_GET)) {
         return false;
@@ -90,7 +87,6 @@ if (in_array($path, $special)) {
     $pie = new PieChart();
     $pie->initFromRequest();
     $pie->toSvg();
-
 } elseif ($path === 'png/chart.php') {
     if (!array_key_exists('data', $_GET)) {
         return false;
@@ -101,11 +97,9 @@ if (in_array($path, $special)) {
     $pie = new PieChart();
     $pie->initFromRequest();
     $pie->toPng();
-
 } elseif (file_exists($baseDir . '/' . $path) && is_file($baseDir . '/' . $path)) {
     return false;
 } else {
     include __DIR__ . '/Web.php';
     Web::start()->dispatch();
 }
-

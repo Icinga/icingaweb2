@@ -5,7 +5,9 @@ namespace Icinga\Web\Hook;
 
 use Icinga\Web\Hook;
 
-class TestHook extends Hook {}
+class TestHook extends Hook
+{
+}
 
 namespace Tests\Icinga\Web;
 
@@ -14,9 +16,15 @@ use Icinga\Web\Hook;
 use Icinga\Web\Hook\TestHook;
 use Exception;
 
-class NoHook {}
-class MyHook extends TestHook {}
-class AnotherHook extends TestHook {}
+class NoHook
+{
+}
+class MyHook extends TestHook
+{
+}
+class AnotherHook extends TestHook
+{
+}
 class FailingHook extends TestHook
 {
     public function __construct()

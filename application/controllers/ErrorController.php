@@ -25,6 +25,14 @@ class ErrorController extends ActionController
     protected $requiresAuthentication = false;
 
     /**
+     * {@inheritdoc}
+     */
+    public function init()
+    {
+        $this->rerenderLayout = $this->params->has('renderLayout');
+    }
+
+    /**
      * Display exception
      */
     public function errorAction()
@@ -32,8 +40,6 @@ class ErrorController extends ActionController
         $error      = $this->_getParam('error_handler');
         $exception  = $error->exception;
         /** @var \Exception $exception */
-        Logger::error($exception);
-        Logger::error('Stacktrace: %s', $exception->getTraceAsString());
 
         if (! ($isAuthenticated = $this->Auth()->isAuthenticated())) {
             $this->innerLayout = 'guest-error';
@@ -83,6 +89,7 @@ class ErrorController extends ActionController
                         break;
                     default:
                         $this->getResponse()->setHttpResponseCode(500);
+                        Logger::error("%s\n%s", $exception, $exception->getTraceAsString());
                         break;
                 }
                 $this->view->message = $exception->getMessage();

@@ -26,6 +26,8 @@ use Icinga\Util\StringHelper;
  *  <li>Differentiation between statement and query columns</li>
  *  <li>Capability to join additional tables depending on the columns being selected or used in a filter</li>
  * </ul>
+ *
+ * @method DbConnection getDataSource($table = null)
  */
 abstract class DbRepository extends Repository implements Extensible, Updatable, Reducible
 {
@@ -48,11 +50,30 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
     protected $tableAliases;
 
     /**
+     * The join probability rules
+     *
+     * This may be initialized by repositories which make use of the table join capability. It allows to define
+     * probability rules to enhance control how ambiguous column aliases are associated with the correct table.
+     * To define a rule use the name of a base table as key and another array of table names as probable join
+     * targets ordered by priority. (Ascending: Lower means higher priority)
+     * <code>
+     *  array(
+     *      'table_name' => array('target1', 'target2', 'target3')
+     *  )
+     * </code>
+     *
+     * @todo    Support for tree-ish rules
+     *
+     * @var array
+     */
+    protected $joinProbabilities;
+
+    /**
      * The statement columns being provided
      *
      * This may be initialized by repositories which are going to make use of table aliases. It allows to provide
      * alias-less column names to be used for a statement. The array needs to be in the following format:
-     * <pre><code>
+     * <code>
      *  array(
      *      'table_name' => array(
      *          'column1',
@@ -60,7 +81,7 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
      *          'alias2' => 'column3'
      *      )
      *  )
-     * <pre><code>
+     * </code>
      *
      * @var array
      */
@@ -167,6 +188,32 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
     }
 
     /**
+     * Return the join probability rules
+     *
+     * Calls $this->initializeJoinProbabilities() in case $this->joinProbabilities is null.
+     *
+     * @return  array
+     */
+    public function getJoinProbabilities()
+    {
+        if ($this->joinProbabilities === null) {
+            $this->joinProbabilities = $this->initializeJoinProbabilities();
+        }
+
+        return $this->joinProbabilities;
+    }
+
+    /**
+     * Overwrite this in your repository implementation in case you need to initialize the join probabilities lazily
+     *
+     * @return  array
+     */
+    protected function initializeJoinProbabilities()
+    {
+        return array();
+    }
+
+    /**
      * Remove each COLLATE SQL-instruction from all given query columns
      *
      * @param   array   $queryColumns
@@ -186,6 +233,29 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
         }
 
         return $queryColumns;
+    }
+
+    /**
+     * Initialize table, column and alias maps
+     *
+     * @throws  ProgrammingError    In case $this->queryColumns does not provide any column information
+     */
+    protected function initializeAliasMaps()
+    {
+        parent::initializeAliasMaps();
+
+        foreach ($this->aliasTableMap as $alias => $table) {
+            if ($table !== null) {
+                if (strpos($alias, '.') !== false) {
+                    $prefixedAlias = str_replace('.', '_', $alias);
+                } else {
+                    $prefixedAlias = $table . '_' . $alias;
+                }
+
+                $this->aliasTableMap[$prefixedAlias] = $table;
+                $this->aliasColumnMap[$prefixedAlias] = $this->aliasColumnMap[$alias];
+            }
+        }
     }
 
     /**
@@ -262,8 +332,8 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
      */
     protected function applyTableAlias($table, $virtualTable = null)
     {
-        $tableAliases = $this->getTableAliases();
         if (! is_array($table)) {
+            $tableAliases = $this->getTableAliases();
             if ($virtualTable !== null && isset($tableAliases[$virtualTable])) {
                 return array($tableAliases[$virtualTable] => $table);
             }
@@ -301,42 +371,56 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
     /**
      * Insert a table row with the given data
      *
+     * Note that the base implementation does not perform any quoting on the $table argument.
+     * Pass an array with a column name (the same as in $bind) and a PDO::PARAM_* constant as value
+     * as third parameter $types to define a different type than string for a particular column.
+     *
      * @param   string  $table
      * @param   array   $bind
+     * @param   array   $types
      *
      * @return  int             The number of affected rows
      */
-    public function insert($table, array $bind)
+    public function insert($table, array $bind, array $types = array())
     {
-        $this->requireTable($table);
-        return $this->ds->insert(
-            $this->prependTablePrefix($table),
-            $this->requireStatementColumns($table, $bind)
-        );
+        $realTable = $this->clearTableAlias($this->requireTable($table));
+
+        foreach ($types as $alias => $type) {
+            unset($types[$alias]);
+            $types[$this->requireStatementColumn($table, $alias)] = $type;
+        }
+
+        return $this->ds->insert($realTable, $this->requireStatementColumns($table, $bind), $types);
     }
 
     /**
      * Update table rows with the given data, optionally limited by using a filter
      *
+     * Note that the base implementation does not perform any quoting on the $table argument.
+     * Pass an array with a column name (the same as in $bind) and a PDO::PARAM_* constant as value
+     * as fourth parameter $types to define a different type than string for a particular column.
+     *
      * @param   string  $table
      * @param   array   $bind
      * @param   Filter  $filter
+     * @param   array   $types
      *
      * @return  int             The number of affected rows
      */
-    public function update($table, array $bind, Filter $filter = null)
+    public function update($table, array $bind, Filter $filter = null, array $types = array())
     {
-        $this->requireTable($table);
+        $realTable = $this->clearTableAlias($this->requireTable($table));
 
         if ($filter) {
             $filter = $this->requireFilter($table, $filter);
         }
 
-        return $this->ds->update(
-            $this->prependTablePrefix($table),
-            $this->requireStatementColumns($table, $bind),
-            $filter
-        );
+        foreach ($types as $alias => $type) {
+            unset($types[$alias]);
+            $types[$this->requireStatementColumn($table, $alias)] = $type;
+        }
+
+        return $this->ds->update($realTable, $this->requireStatementColumns($table, $bind), $filter, $types);
     }
 
     /**
@@ -349,13 +433,13 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
      */
     public function delete($table, Filter $filter = null)
     {
-        $this->requireTable($table);
+        $realTable = $this->clearTableAlias($this->requireTable($table));
 
         if ($filter) {
             $filter = $this->requireFilter($table, $filter);
         }
 
-        return $this->ds->delete($this->prependTablePrefix($table), $filter);
+        return $this->ds->delete($realTable, $filter);
     }
 
     /**
@@ -511,7 +595,7 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
                 return parent::providesValueConversion($table, $column);
             }
 
-            if (($tableName = $this->findTableName($column))) {
+            if (($tableName = $this->findTableName($column, $table))) {
                 return parent::providesValueConversion($tableName, $column);
             }
 
@@ -544,11 +628,10 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
             return;
         }
 
-        if (
-            ! ($query !== null && $this->validateQueryColumnAssociation($table, $name))
+        if (! ($query !== null && $this->validateQueryColumnAssociation($table, $name))
             && !($query === null && $this->validateStatementColumnAssociation($table, $name))
         ) {
-            $table = $this->findTableName($name);
+            $table = $this->findTableName($name, $table);
             if (! $table) {
                 if ($query !== null) {
                     // It may be an aliased Zend_Db_Expr
@@ -589,6 +672,12 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
             }
 
             $table = $newTable;
+        } else {
+            $virtualTables = $this->getVirtualTables();
+            if (isset($virtualTables[$table])) {
+                $virtualTable = $table;
+                $table = $virtualTables[$table];
+            }
         }
 
         return $this->prependTablePrefix($this->applyTableAlias($table, $virtualTable));
@@ -620,10 +709,9 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
     public function reassembleQueryColumnAlias($table, $column)
     {
         $alias = parent::reassembleQueryColumnAlias($table, $column);
-        if (
-            $alias === null
+        if ($alias === null
             && !$this->validateQueryColumnAssociation($table, $column)
-            && ($tableName = $this->findTableName($column))
+            && ($tableName = $this->findTableName($column, $table))
         ) {
             return parent::reassembleQueryColumnAlias($tableName, $column);
         }
@@ -733,7 +821,7 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
 
         if (! empty($this->caseInsensitiveColumns)) {
             if ($joined) {
-                $table = $this->findTableName($name);
+                $table = $this->findTableName($name, $table);
             }
 
             if ($column === $name) {
@@ -817,13 +905,17 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
             return $statementAliasTableMap[$alias] === $table;
         }
 
+        $prefixedAlias = $table . '.' . $alias;
+        if (isset($statementAliasTableMap[$prefixedAlias])) {
+            return true;
+        }
+
         $statementColumnTableMap = $this->getStatementColumnTableMap();
         if (isset($statementColumnTableMap[$alias])) {
             return $statementColumnTableMap[$alias] === $table;
         }
 
-        $prefixedAlias = $table . '.' . $alias;
-        return isset($statementAliasTableMap[$prefixedAlias]) || isset($statementColumnTableMap[$prefixedAlias]);
+        return isset($statementColumnTableMap[$prefixedAlias]);
     }
 
     /**
@@ -836,8 +928,7 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
      */
     public function hasStatementColumn($table, $name)
     {
-        if (
-            ($this->resolveStatementColumnAlias($table, $name) === null
+        if (($this->resolveStatementColumnAlias($table, $name) === null
              && $this->reassembleStatementColumnAlias($table, $name) === null)
             || !$this->validateStatementColumnAssociation($table, $name)
         ) {
@@ -889,7 +980,7 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
      */
     public function joinColumn($name, $target, RepositoryQuery $query)
     {
-        if (! ($tableName = $this->findTableName($name))) {
+        if (! ($tableName = $this->findTableName($name, $target))) {
             return;
         }
 
@@ -921,24 +1012,45 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
     /**
      * Return the table name for the given alias or column name
      *
-     * @param   string  $column
+     * @param   string  $column     The alias or column name
+     * @param   string  $origin     The base table of a SELECT query
      *
      * @return  string|null         null in case no table is found
      */
-    protected function findTableName($column)
+    protected function findTableName($column, $origin)
     {
+        // First, try to produce an exact match since it's faster and cheaper
         $aliasTableMap = $this->getAliasTableMap();
         if (isset($aliasTableMap[$column])) {
-            return $aliasTableMap[$column];
+            $table = $aliasTableMap[$column];
+        } else {
+            $columnTableMap = $this->getColumnTableMap();
+            if (isset($columnTableMap[$column])) {
+                $table = $columnTableMap[$column];
+            }
         }
 
-        $columnTableMap = $this->getColumnTableMap();
-        if (isset($columnTableMap[$column])) {
-            return $columnTableMap[$column];
+        // But only return it if it's a probable join...
+        $joinProbabilities = $this->getJoinProbabilities();
+        if (isset($joinProbabilities[$origin])) {
+            $probableJoins = $joinProbabilities[$origin];
         }
 
-        // TODO(jom): Elaborate whether it makes sense to throw ProgrammingError
-        //            instead (duplicate aliases in different tables?)
+        // ...if probability can be determined
+        if (isset($table) && (empty($probableJoins) || in_array($table, $probableJoins, true))) {
+            return $table;
+        }
+
+        // Without a proper exact match, there is only one fast and cheap way to find a suitable table..
+        if (! empty($probableJoins)) {
+            foreach ($probableJoins as $table) {
+                if (isset($aliasTableMap[$table . '.' . $column])) {
+                    return $table;
+                }
+            }
+        }
+
+        // Last chance to find a table. Though, this usually ends up with a QueryException..
         foreach ($aliasTableMap as $prefixedAlias => $table) {
             if (strpos($prefixedAlias, '.') !== false) {
                 list($_, $alias) = explode('.', $prefixedAlias, 2);

@@ -3,29 +3,27 @@
 %define revision 1
 
 Name:           icingaweb2
-Version:        2.3.4
+Version:        2.4.1
 Release:        %{revision}%{?dist}
 Summary:        Icinga Web 2
 Group:          Applications/System
 License:        GPLv2+ and MIT and BSD
-URL:            https://icinga.org
+URL:            https://icinga.com
 Source0:        https://github.com/Icinga/%{name}/archive/v%{version}.tar.gz
 BuildArch:      noarch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}
-Packager:       Icinga Team <info@icinga.org>
+Packager:       Icinga Team <info@icinga.com>
 
 %if 0%{?fedora} || 0%{?rhel} || 0%{?amzn}
 %define php             php
 %define php_cli         php-cli
 %define wwwconfigdir    %{_sysconfdir}/httpd/conf.d
 %define wwwuser         apache
-%define zend            php-ZendFramework
 %endif
 
 %if 0%{?suse_version}
 %define wwwconfigdir    %{_sysconfdir}/apache2/conf.d
 %define wwwuser         wwwrun
-%define zend            %{name}-vendor-Zend
 %if 0%{?suse_version} == 1110
 %define php php53
 Requires: apache2-mod_php53
@@ -41,16 +39,17 @@ Requires: apache2-mod_php5
 %{?suse_version:Requires(pre):  pwdutils}
 Requires:                       %{name}-common = %{version}-%{release}
 Requires:                       php-Icinga = %{version}-%{release}
-Requires:                       %{name}-vendor-dompdf
-Requires:                       %{name}-vendor-HTMLPurifier
-Requires:                       %{name}-vendor-JShrink
-Requires:                       %{name}-vendor-lessphp
-Requires:                       %{name}-vendor-Parsedown
+Requires:                       %{name}-vendor-dompdf = 0.7.0-1%{?dist}
+Requires:                       %{name}-vendor-HTMLPurifier = 4.8.0-1%{?dist}
+Requires:                       %{name}-vendor-JShrink = 1.1.0-1%{?dist}
+Requires:                       %{name}-vendor-lessphp = 0.4.0-1%{?dist}
+Requires:                       %{name}-vendor-Parsedown = 1.6.0-1%{?dist}
 
-
-%description
-Icinga Web 2
-
+%if "%{_vendor}" == "redhat" && !(0%{?el5} || 0%{?rhel} == 5 || "%{?dist}" == ".el5" || 0%{?el6} || 0%{?rhel} == 6 || "%{?dist}" == ".el6")
+%define selinux 1
+%define selinux_variants mls targeted
+%{!?_selinux_policy_version: %define _selinux_policy_version %(sed -e 's,.*selinux-policy-\\([^/]*\\)/.*,\\1,' /usr/share/selinux/devel/policyhelp 2>/dev/null)}
+%endif
 
 %define basedir         %{_datadir}/%{name}
 %define bindir          %{_bindir}
@@ -59,6 +58,10 @@ Icinga Web 2
 %define phpdir          %{_datadir}/php
 %define icingawebgroup  icingaweb2
 %define docsdir         %{_datadir}/doc/%{name}
+
+
+%description
+Icinga Web 2
 
 
 %package common
@@ -78,14 +81,11 @@ Summary:                    Icinga Web 2 PHP library
 Group:                      Development/Libraries
 Requires:                   %{php} >= 5.3.0
 Requires:                   %{php}-gd %{php}-intl
+Requires:                   %{name}-vendor-zf1 = 1.12.20-1%{?dist}
 %{?amzn:Requires:           %{php}-pecl-imagick}
 %{?fedora:Requires:         php-pecl-imagick}
 %{?rhel:Requires:           php-pecl-imagick}
 %{?suse_version:Requires:   %{php}-gettext %{php}-json %{php}-openssl %{php}-posix}
-Requires:                   %{zend}
-%{?amzn:Requires:           %{zend}-Db-Adapter-Pdo-Mysql %{zend}-Db-Adapter-Pdo-Pgsql}
-%{?fedora:Requires:         %{zend}-Db-Adapter-Pdo-Mysql %{zend}-Db-Adapter-Pdo-Pgsql}
-%{?rhel:Requires:           %{zend}-Db-Adapter-Pdo-Mysql %{zend}-Db-Adapter-Pdo-Pgsql}
 
 %description -n php-Icinga
 Icinga Web 2 PHP library
@@ -105,8 +105,24 @@ Requires:                   php-Icinga = %{version}-%{release}
 Icinga CLI
 
 
+%if 0%{?selinux}
+%package selinux
+Summary:        SELinux policy for Icinga Web 2
+BuildRequires:  checkpolicy, selinux-policy-devel, /usr/share/selinux/devel/policyhelp, hardlink
+%if "%{_selinux_policy_version}" != ""
+Requires:       selinux-policy >= %{_selinux_policy_version}
+%endif
+Requires:           %{name} = %{version}-%{release}
+Requires(post):     policycoreutils
+Requires(postun):   policycoreutils
+
+%description selinux
+SELinux policy for Icinga Web 2
+%endif
+
+
 %package vendor-dompdf
-Version:    0.6.2
+Version:    0.7.0
 Release:    1%{?dist}
 Summary:    Icinga Web 2 vendor library dompdf
 Group:      Development/Libraries
@@ -118,7 +134,7 @@ Icinga Web 2 vendor library dompdf
 
 
 %package vendor-HTMLPurifier
-Version:    4.7.0
+Version:    4.8.0
 Release:    1%{?dist}
 Summary:    Icinga Web 2 vendor library HTMLPurifier
 Group:      Development/Libraries
@@ -130,7 +146,7 @@ Icinga Web 2 vendor library HTMLPurifier
 
 
 %package vendor-JShrink
-Version:    1.0.1
+Version:    1.1.0
 Release:    1%{?dist}
 Summary:    Icinga Web 2 vendor library JShrink
 Group:      Development/Libraries
@@ -154,7 +170,7 @@ Icinga Web 2 vendor library lessphp
 
 
 %package vendor-Parsedown
-Version:    1.0.0
+Version:    1.6.0
 Release:    1%{?dist}
 Summary:    Icinga Web 2 vendor library Parsedown
 Group:      Development/Libraries
@@ -165,22 +181,37 @@ Requires:   %{php} >= 5.3.0
 Icinga Web 2 vendor library Parsedown
 
 
-%package vendor-Zend
-Version:    1.12.15
+%package vendor-zf1
+Version:    1.12.20
 Release:    1%{?dist}
-Summary:    Icinga Web 2 vendor library Zend Framework
+Summary:    Icinga Web 2's fork of Zend Framework 1
 Group:      Development/Libraries
 License:    BSD
 Requires:   %{php} >= 5.3.0
+Obsoletes:  %{name}-vendor-Zend
 
-%description vendor-Zend
-Icinga Web 2 vendor library Zend
+%description vendor-zf1
+Icinga Web 2's fork of Zend Framework 1
 
 
 %prep
 %setup -q
+%if 0%{?selinux}
+mkdir selinux
+cp -p packages/selinux/icingaweb2.{fc,if,te} selinux
+%endif
 
 %build
+%if 0%{?selinux}
+cd selinux
+for selinuxvariant in %{selinux_variants}
+do
+  make NAME=${selinuxvariant} -f /usr/share/selinux/devel/Makefile
+  mv icingaweb2.pp icingaweb2.pp.${selinuxvariant}
+  make NAME=${selinuxvariant} -f /usr/share/selinux/devel/Makefile clean
+done
+cd -
+%endif
 
 %install
 rm -rf %{buildroot}
@@ -196,6 +227,16 @@ cp -pv packages/files/bin/icingacli %{buildroot}/%{bindir}
 cp -pv packages/files/public/index.php %{buildroot}/%{basedir}/public
 cp -prv etc/schema %{buildroot}/%{docsdir}
 cp -prv packages/files/config/modules/{setup,translation} %{buildroot}/%{configdir}/modules
+%if 0%{?selinux}
+cd selinux
+for selinuxvariant in %{selinux_variants}
+do
+  install -d %{buildroot}%{_datadir}/selinux/${selinuxvariant}
+  install -p -m 644 icingaweb2.pp.${selinuxvariant} %{buildroot}%{_datadir}/selinux/${selinuxvariant}/icingaweb2.pp
+done
+cd -
+/usr/sbin/hardlink -cv %{buildroot}%{_datadir}/selinux
+%endif
 
 %pre
 getent group icingacmd >/dev/null || groupadd -r icingacmd
@@ -254,6 +295,34 @@ exit 0
 %attr(0755,root,root) %{bindir}/icingacli
 
 
+%if 0%{?selinux}
+%post selinux
+for selinuxvariant in %{selinux_variants}
+do
+  %{_sbindir}/semodule -s ${selinuxvariant} -i %{_datadir}/selinux/${selinuxvariant}/icingaweb2.pp &> /dev/null || :
+done
+%{_sbindir}/restorecon -R %{basedir} &> /dev/null || :
+%{_sbindir}/restorecon -R %{configdir} &> /dev/null || :
+%{_sbindir}/restorecon -R %{logdir} &> /dev/null || :
+
+%postun selinux
+if [ $1 -eq 0 ] ; then
+  for selinuxvariant in %{selinux_variants}
+  do
+     %{_sbindir}/semodule -s ${selinuxvariant} -r icingaweb2 &> /dev/null || :
+  done
+  [ -d %{basedir} ] && %{_sbindir}/restorecon -R %{basedir} &> /dev/null || :
+  [ -d %{configdir} ] && %{_sbindir}/restorecon -R %{configdir} &> /dev/null || :
+  [ -d %{logdir} ] && %{_sbindir}/restorecon -R %{logdir} &> /dev/null || :
+fi
+
+%files selinux
+%defattr(-,root,root,0755)
+%doc selinux/*
+%{_datadir}/selinux/*/icingaweb2.pp
+%endif
+
+
 %files vendor-dompdf
 %defattr(-,root,root)
 %{basedir}/library/vendor/dompdf
@@ -281,6 +350,6 @@ exit 0
 %{basedir}/library/vendor/Parsedown
 
 
-%files vendor-Zend
+%files vendor-zf1
 %defattr(-,root,root)
 %{basedir}/library/vendor/Zend

@@ -156,6 +156,16 @@ class PreferenceForm extends Form
      */
     public function createElements(array $formData)
     {
+        if (setlocale(LC_ALL, 0) === 'C') {
+            $this->warning(
+                $this->translate(
+                    'Your language setting is not applied because your platform is missing the corresponding locale.'
+                    . ' Make sure to install the correct language pack and restart your web server afterwards.'
+                ),
+                false
+            );
+        }
+
         if (! (bool) Config::app()->get('themes', 'disabled', false)) {
             $themes = Icinga::app()->getThemes();
             if (count($themes) > 1) {
@@ -170,7 +180,9 @@ class PreferenceForm extends Form
                         'label'         => $this->translate('Theme', 'Form element label'),
                         'multiOptions'  => $themes,
                         'value'         => $this->preferences->getValue(
-                            'icingaweb', 'theme', $defaultTheme
+                            'icingaweb',
+                            'theme',
+                            $defaultTheme
                         )
                     )
                 );
@@ -184,7 +196,10 @@ class PreferenceForm extends Form
         }
 
         $tzList = array();
-        $tzList['autodetect'] = sprintf($this->translate('Browser (%s)', 'preferences.form'), $this->getDefaultTimezone());
+        $tzList['autodetect'] = sprintf(
+            $this->translate('Browser (%s)', 'preferences.form'),
+            $this->getDefaultTimezone()
+        );
         foreach (DateTimeZone::listIdentifiers() as $tz) {
             $tzList[$tz] = $tz;
         }
@@ -241,7 +256,9 @@ class PreferenceForm extends Form
             array(
                 'required'      => false,
                 'label'         => $this->translate('Enable auto refresh'),
-                'description'   => $this->translate('This option allows you to enable or to disable the global page content auto refresh'),
+                'description'   => $this->translate(
+                    'This option allows you to enable or to disable the global page content auto refresh'
+                ),
                 'value'         => 1
             )
         );

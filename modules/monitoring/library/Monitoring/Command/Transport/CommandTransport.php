@@ -3,6 +3,7 @@
 
 namespace Icinga\Module\Monitoring\Command\Transport;
 
+use Exception;
 use Icinga\Application\Config;
 use Icinga\Application\Logger;
 use Icinga\Data\ConfigObject;
@@ -122,7 +123,7 @@ class CommandTransport implements CommandTransportInterface
             if ($this->transferPossible($command, $transport)) {
                 try {
                     $transport->send($command, $now);
-                } catch (CommandTransportException $e) {
+                } catch (Exception $e) {
                     Logger::error($e);
                     $errors[] = sprintf('%s: %s.', $name, rtrim($e->getMessage(), '.'));
                     continue; // Try the next transport

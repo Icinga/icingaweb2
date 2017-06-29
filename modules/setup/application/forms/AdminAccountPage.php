@@ -5,6 +5,7 @@ namespace Icinga\Module\Setup\Forms;
 
 use Exception;
 use Icinga\Application\Config;
+use Icinga\Authentication\User\ExternalBackend;
 use Icinga\Authentication\User\UserBackend;
 use Icinga\Authentication\User\DbUserBackend;
 use Icinga\Authentication\User\LdapUserBackend;
@@ -269,8 +270,8 @@ class AdminAccountPage extends Form
      */
     protected function getUsername()
     {
-        $name = getenv('REMOTE_USER');
-        if ($name === false) {
+        list($name, $_) = ExternalBackend::getRemoteUserInformation();
+        if ($name === null) {
             return '';
         }
 

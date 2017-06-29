@@ -51,12 +51,10 @@ class MonitoringWizard extends Wizard implements SetupWizard
         } elseif ($page->getName() === 'setup_monitoring_summary') {
             $page->setSummary($this->getSetup()->getSummary());
             $page->setSubjectTitle(mt('monitoring', 'the monitoring module', 'setup.summary.subject'));
-        } elseif (
-            $this->getDirection() === static::FORWARD
+        } elseif ($this->getDirection() === static::FORWARD
             && ($page->getName() === 'setup_monitoring_ido' || $page->getName() === 'setup_monitoring_livestatus')
         ) {
-            if (
-                (($authDbResourceData = $this->getPageData('setup_auth_db_resource')) !== null
+            if ((($authDbResourceData = $this->getPageData('setup_auth_db_resource')) !== null
                  && $authDbResourceData['name'] === $request->getPost('name'))
                 || (($configDbResourceData = $this->getPageData('setup_config_db_resource')) !== null
                     && $configDbResourceData['name'] === $request->getPost('name'))
@@ -214,6 +212,15 @@ class MonitoringWizard extends Wizard implements SetupWizard
         )));
         $backendSet->merge($pgsqlSet);
         $set->merge($backendSet);
+        $set->add(new PhpModuleRequirement(array(
+            'optional'      => true,
+            'condition'     => 'curl',
+            'alias'         => 'cURL',
+            'description'   => mt(
+                'monitoring',
+                'To send external commands over Icinga 2\'s API the cURL module for PHP is required.'
+            )
+        )));
 
         return $set;
     }

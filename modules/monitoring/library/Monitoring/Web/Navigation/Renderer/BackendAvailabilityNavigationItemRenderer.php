@@ -4,15 +4,22 @@
 namespace Icinga\Module\Monitoring\Web\Navigation\Renderer;
 
 use Exception;
-use Icinga\Web\Navigation\Renderer\BadgeNavigationItemRenderer;
 use Icinga\Module\Monitoring\Backend\MonitoringBackend;
+use Icinga\Web\Navigation\Renderer\BadgeNavigationItemRenderer;
 
 class BackendAvailabilityNavigationItemRenderer extends BadgeNavigationItemRenderer
 {
     /**
+     * Cached count
+     *
+     * @var int
+     */
+    protected $count;
+
+    /**
      * Get whether or not the monitoring backend is currently running
      *
-     * @return bool
+     * @return  object
      */
     protected function isCurrentlyRunning()
     {
@@ -20,51 +27,50 @@ class BackendAvailabilityNavigationItemRenderer extends BadgeNavigationItemRende
             ->select()
             ->from(
                 'programstatus',
-                array('is_currently_running')
+                array('is_currently_running', 'notifications_enabled')
             )
-            ->fetchOne();
-        return $programStatus !== false ? (bool) $programStatus : false;
+            ->fetchRow();
+        return $programStatus;
     }
 
     /**
-     * The css class of the badge
-     *
-     * @return string
-     */
-    public function getState()
-    {
-        return self::STATE_CRITICAL;
-    }
-
-    /**
-     *  The amount of items to display in the badge
-     *
-     * @return int
+     * {@inheritdoc}
      */
     public function getCount()
     {
-        try {
-            if ($this->isCurrentlyRunning()) {
-                return 0;
+        if ($this->count === null) {
+            try {
+                $count = 0;
+                $programStatus = $this->isCurrentlyRunning();
+                $titles = array();
+                if (! (bool) $programStatus->notifications_enabled) {
+                    $count = 1;
+                    $this->state = static::STATE_WARNING;
+                    $titles[] = mt('monitoring', 'Notifications are disabled');
+                }
+                if (! (bool) $programStatus->is_currently_running) {
+                    $count = 1;
+                    $this->state = static::STATE_CRITICAL;
+                    array_unshift($titles, sprintf(
+                        mt('monitoring', 'Monitoring backend %s is not running'),
+                        MonitoringBackend::instance()->getName()
+                    ));
+                }
+                $this->count = $count;
+                $this->title = implode('. ', $titles);
+            } catch (Exception $_) {
+                $this->count = 1;
             }
-        } catch (Exception $_) {
-            // pass
         }
 
-        return 1;
+        return $this->count;
     }
 
     /**
-     * The tooltip title
-     *
-     * @return string
-     * @throws \Icinga\Exception\ConfigurationError
+     * {@inheritdoc}
      */
-    public function getTitle()
+    public function getState()
     {
-        return sprintf(
-            mt('monitoring', 'Monitoring backend %s is not running'),
-            MonitoringBackend::instance()->getName()
-        );
+        return $this->state;
     }
 }

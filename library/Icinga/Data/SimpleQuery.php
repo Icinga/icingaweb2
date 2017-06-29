@@ -131,7 +131,9 @@ class SimpleQuery implements QueryInterface, Queryable, Iterator
      * Overwrite this instead of __construct (it's called at the end of the construct) to
      * implement custom initialization logic on construction time
      */
-    protected function init() {}
+    protected function init()
+    {
+    }
 
     /**
      * Get the data source

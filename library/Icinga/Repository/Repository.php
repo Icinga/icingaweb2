@@ -67,7 +67,7 @@ abstract class Repository implements Selectable
      * The query columns being provided
      *
      * This must be initialized by concrete repository implementations, in the following format
-     * <pre><code>
+     * <code>
      *  array(
      *      'baseTable' => array(
      *          'column1',
@@ -75,7 +75,7 @@ abstract class Repository implements Selectable
      *          'alias2' => 'column3'
      *      )
      *  )
-     * </code></pre>
+     * </code>
      *
      * @var array
      */
@@ -101,12 +101,12 @@ abstract class Repository implements Selectable
      * The filter columns being provided
      *
      * This may be intialized by concrete repository implementations, in the following format
-     * <pre><code>
+     * <code>
      *  array(
      *      'alias_or_column_name',
      *      'label_to_show_in_the_filter_editor' => 'alias_or_column_name'
      *  )
-     * </code></pre>
+     * </code>
      *
      * @var array
      */
@@ -137,7 +137,7 @@ abstract class Repository implements Selectable
      * The sort rules to be applied on a query
      *
      * This may be initialized by concrete repository implementations, in the following format
-     * <pre><code>
+     * <code>
      *  array(
      *      'alias_or_column_name' => array(
      *          'order'     => 'asc'
@@ -154,7 +154,7 @@ abstract class Repository implements Selectable
      *          // Ascendant sort by default
      *      )
      *  )
-     * </code></pre>
+     * </code>
      * Note that it's mandatory to supply the alias name in case there is one.
      *
      * @var array
@@ -214,9 +214,10 @@ abstract class Repository implements Selectable
     /**
      * Create a new repository object
      *
-     * @param   Selectable  $ds     The datasource to use
+     * @param   Selectable|null $ds The datasource to use.
+     *                              Only pass null if you have overridden {@link getDataSource()}!
      */
-    public function __construct(Selectable $ds)
+    public function __construct(Selectable $ds = null)
     {
         $this->ds = $ds;
         $this->aliasTableMap = array();
@@ -234,7 +235,6 @@ abstract class Repository implements Selectable
      */
     protected function init()
     {
-
     }
 
     /**
@@ -263,12 +263,23 @@ abstract class Repository implements Selectable
     }
 
     /**
-     * Return the datasource being used
+     * Return the datasource being used for the given table
+     *
+     * @param   string  $table
      *
      * @return  Selectable
+     *
+     * @throws  ProgrammingError    In case no datasource is available
      */
-    public function getDataSource()
+    public function getDataSource($table = null)
     {
+        if ($this->ds === null) {
+            throw new ProgrammingError(
+                'No data source available. It is required to either pass it'
+                . ' at initialization time or by overriding this method.'
+            );
+        }
+
         return $this->ds;
     }
 
@@ -925,8 +936,7 @@ abstract class Repository implements Selectable
             return $value;
         }
 
-        if (
-            ($dateTime = DateTime::createFromFormat('YmdHis.uO', $value)) !== false
+        if (($dateTime = DateTime::createFromFormat('YmdHis.uO', $value)) !== false
             || ($dateTime = DateTime::createFromFormat('YmdHis.uZ', $value)) !== false
             || ($dateTime = DateTime::createFromFormat('YmdHis.u', $value)) !== false
             || ($dateTime = DateTime::createFromFormat('YmdHis', $value)) !== false
@@ -1084,13 +1094,17 @@ abstract class Repository implements Selectable
             return $aliasTableMap[$alias] === $table;
         }
 
+        $prefixedAlias = $table . '.' . $alias;
+        if (isset($aliasTableMap[$prefixedAlias])) {
+            return true;
+        }
+
         $columnTableMap = $this->getColumnTableMap();
         if (isset($columnTableMap[$alias])) {
             return $columnTableMap[$alias] === $table;
         }
 
-        $prefixedAlias = $table . '.' . $alias;
-        return isset($aliasTableMap[$prefixedAlias]) || isset($columnTableMap[$prefixedAlias]);
+        return isset($columnTableMap[$prefixedAlias]);
     }
 
     /**

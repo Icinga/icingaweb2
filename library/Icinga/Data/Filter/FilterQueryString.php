@@ -21,8 +21,17 @@ class FilterQueryString
 
     protected function debug($msg, $level = 0, $op = null)
     {
-        if ($op === null) $op = 'NULL';
-        $this->debug[] = sprintf('%s[%d=%s] (%s): %s', str_repeat('* ', $level), $this->pos, $this->string[$this->pos - 1], $op, $msg);
+        if ($op === null) {
+            $op = 'NULL';
+        }
+        $this->debug[] = sprintf(
+            '%s[%d=%s] (%s): %s',
+            str_repeat('* ', $level),
+            $this->pos,
+            $this->string[$this->pos - 1],
+            $op,
+            $msg
+        );
     }
 
     public static function parse($string)
@@ -63,7 +72,9 @@ class FilterQueryString
 
         foreach (array('<', '>') as $sign) {
             if (false !== ($pos = strpos($key, $sign))) {
-                if ($this->nextChar() === '=') break;
+                if ($this->nextChar() === '=') {
+                    break;
+                }
                 $var = substr($key, $pos + 1);
                 $key = substr($key, 0, $pos);
                 return Filter::expression($key, $sign, $var);
@@ -123,7 +134,6 @@ class FilterQueryString
     {
         $filters = array();
         while ($this->pos < $this->length) {
-
             if ($op === '!' && count($filters) === 1) {
                 break;
             }
@@ -132,7 +142,6 @@ class FilterQueryString
 
 
             if ($filter === false) {
-
                 $this->debug('Got no next expression, next is ' . $next, $nestingLevel, $op);
                 if ($next === '!') {
                     $not = $this->readFilters($nestingLevel + 1, '!');
@@ -171,7 +180,6 @@ class FilterQueryString
                     continue;
                 }
                 $this->parseError($next, "$op level $nestingLevel");
-
             } else {
                 $this->debug('Got new expression: ' . $filter, $nestingLevel, $op);
 
@@ -225,11 +233,16 @@ class FilterQueryString
         $this->debug(sprintf('Got %d filters, returning', count($filters)), $nestingLevel, $op);
 
         switch ($op) {
-            case '&': return Filter::matchAll($filters);
-            case '|': return Filter::matchAny($filters);
-            case '!': return Filter::not($filters);
-            case null: return Filter::matchAll();
-            default: $this->parseError($op);
+            case '&':
+                return Filter::matchAll($filters);
+            case '|':
+                return Filter::matchAny($filters);
+            case '!':
+                return Filter::not($filters);
+            case null:
+                return Filter::matchAll();
+            default:
+                $this->parseError($op);
         }
     }
 

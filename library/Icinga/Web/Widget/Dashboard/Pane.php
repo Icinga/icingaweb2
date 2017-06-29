@@ -323,6 +323,4 @@ class Pane extends UserWidget
     {
         return $this->disabled;
     }
-
-
 }

@@ -1,21 +1,18 @@
 <?php use Icinga\Data\Filter\Filter; ?>
-
 <div class="controls">
-  <?php if (! $this->compact): ?>
-    <?= $this->tabs; ?>
-  <?php endif ?>
-  <?php if ($object->getType() === $object::TYPE_HOST): ?>
-    <?= $this->render('partials/object/host-header.phtml'); ?>
-    <?php
+<?php if (! $this->compact): ?>
+    <?= $this->tabs ?>
+<?php endif ?>
+<?php if ($object->getType() === $object::TYPE_HOST) {
+    echo $this->render('partials/object/host-header.phtml');
     $this->baseFilter = Filter::where('host', $object->host_name);
     $this->stats = $object->stats;
     echo $this->render('list/components/servicesummary.phtml');
-    ?>
-  <?php else: ?>
-    <?= $this->render('partials/object/service-header.phtml'); ?>
-    <hr class="command-separator">
-  <?php endif ?>
+} else {
+    echo $this->render('partials/object/service-header.phtml');
+} ?>
+<?= $this->render('partials/object/quick-actions.phtml') ?>
 </div>
 <div class="content object-command">
-    <?= $form; ?>
+    <?= $form ?>
 </div>

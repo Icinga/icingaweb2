@@ -1,6 +1,6 @@
 /*! Icinga Web 2 | (c) 2015 Icinga Development Team | GPLv2+ */
 
-// @TODO(el): https://dev.icinga.org/issues/10646
+// @TODO(el): https://dev.icinga.com/issues/10646
 (function(Icinga, $) {
 
     'use strict';

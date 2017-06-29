@@ -23,6 +23,13 @@ use Icinga\Web\Navigation\Renderer\SummaryNavigationItemRenderer;
 class MonitoringBadgeNavigationItemRenderer extends SummaryNavigationItemRenderer
 {
     /**
+     * Cached count
+     *
+     * @var int
+     */
+    protected $count;
+
+    /**
      * Caches the responses for all executed summaries
      *
      * @var array
@@ -164,20 +171,24 @@ class MonitoringBadgeNavigationItemRenderer extends SummaryNavigationItemRendere
      */
     public function getCount()
     {
-        try {
-            $summary = self::summary($this->getDataView());
-        } catch (Exception $_) {
-            return 0;
-        }
-
-        $count = 0;
-        foreach ($this->getColumns() as $column => $title) {
-            if (isset($summary->$column) && $summary->$column > 0) {
-                $this->titles[] = sprintf($title, $summary->$column);
-                $count += $summary->$column;
+        if ($this->count === null) {
+            try {
+                $summary = self::summary($this->getDataView());
+            } catch (Exception $_) {
+                $this->count = 0;
             }
+            $count = 0;
+            $titles = array();
+            foreach ($this->getColumns() as $column => $title) {
+                if (isset($summary->$column) && $summary->$column > 0) {
+                    $titles[] = sprintf($title, $summary->$column);
+                    $count += $summary->$column;
+                }
+            }
+            $this->count = $count;
+            $this->title = implode('. ', $titles);
         }
 
-        return $count;
+        return $this->count;
     }
 }

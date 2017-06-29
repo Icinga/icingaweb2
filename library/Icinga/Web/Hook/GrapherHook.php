@@ -10,4 +10,6 @@ use Icinga\Application\Hook\GrapherHook as BaseHook;
  *
  * Please implement hooks in Icinga\Application\Hook
  */
-abstract class GrapherHook extends BaseHook {}
+abstract class GrapherHook extends BaseHook
+{
+}

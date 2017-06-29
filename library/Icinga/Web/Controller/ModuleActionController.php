@@ -13,11 +13,11 @@ use Icinga\Application\Modules\Module;
  */
 class ModuleActionController extends ActionController
 {
-    private $config;
+    protected $config;
 
-    private $configs = array();
+    protected $configs = array();
 
-    private $module;
+    protected $module;
 
     /**
      * (non-PHPDoc)
@@ -26,7 +26,7 @@ class ModuleActionController extends ActionController
     protected function prepareInit()
     {
         $this->moduleInit();
-        if ($this->requiresLogin()
+        if (($this->Auth()->isAuthenticated() || $this->requiresLogin())
             && $this->getFrontController()->getDefaultModule() !== $this->getModuleName()) {
             $this->assertPermission(Manager::MODULE_PERMISSION_NS . $this->getModuleName());
         }

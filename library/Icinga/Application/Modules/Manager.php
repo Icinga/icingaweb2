@@ -143,7 +143,6 @@ class Manager
         if (($dh = opendir($this->enableDir)) !== false) {
             $this->enabledDirs = array();
             while (($file = readdir($dh)) !== false) {
-
                 if ($file[0] === '.' || $file === 'README') {
                     continue;
                 }
@@ -246,6 +245,15 @@ class Manager
             throw new ConfigurationError(
                 'Cannot enable module "%s". Module is not installed.',
                 $name
+            );
+        }
+
+        if (strtolower(substr($name, 0, 18)) === 'icingaweb2-module-') {
+            throw new ConfigurationError(
+                'Cannot enable module "%s": Directory name does not match the module\'s name.'
+                . ' Please rename the module to "%s" before enabling.',
+                $name,
+                substr($name, 18)
             );
         }
 

@@ -43,7 +43,7 @@ class UsergroupbackendController extends Controller
         $form->setIniConfig(Config::app('groups'));
         $form->setOnSuccess(function (UserGroupBackendForm $form) {
             try {
-                $form->add(array_filter($form->getValues()));
+                $form->add($form::transformEmptyValuesToNull($form->getValues()));
             } catch (Exception $e) {
                 $form->error($e->getMessage());
                 return false;
@@ -73,12 +73,7 @@ class UsergroupbackendController extends Controller
         $form->setIniConfig(Config::app('groups'));
         $form->setOnSuccess(function (UserGroupBackendForm $form) use ($backendName) {
             try {
-                $form->edit($backendName, array_map(
-                    function ($v) {
-                        return $v !== '' ? $v : null;
-                    },
-                    $form->getValues()
-                ));
+                $form->edit($backendName, $form::transformEmptyValuesToNull($form->getValues()));
             } catch (Exception $e) {
                 $form->error($e->getMessage());
                 return false;

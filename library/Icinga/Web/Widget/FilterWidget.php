@@ -42,9 +42,9 @@ class FilterWidget extends AbstractWidget
         $url = Url::fromRequest();
         if ($filter instanceof FilterChain) {
             if ($level === 0) {
-            $op = '</li><li>)' . $filter->getOperatorName() . ' (';
+                $op = '</li><li>)' . $filter->getOperatorName() . ' (';
             } else {
-            $op = '</li><li>) ' . $filter->getOperatorName() . ' ( ';
+                $op = '</li><li>) ' . $filter->getOperatorName() . ' ( ';
             }
             $parts = array();
             foreach ($filter->filters() as $f) {
@@ -85,7 +85,7 @@ class FilterWidget extends AbstractWidget
 
         $editorUrl = clone $url;
         $editorUrl->setParam('modifyFilter', true);
-        if  ($this->filter->isEmpty()) {
+        if ($this->filter->isEmpty()) {
             $title = t('Filter this list');
             $txt = $view->icon('plus');
             $remove = '';

@@ -10,4 +10,6 @@ use Icinga\Module\Monitoring\Hook\ServiceActionsHook as BaseHook;
  *
  * Please implement hooks in our Hook direcory
  */
-abstract class ServiceActionsHook extends BaseHook {}
+abstract class ServiceActionsHook extends BaseHook
+{
+}

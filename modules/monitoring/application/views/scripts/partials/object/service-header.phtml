@@ -20,7 +20,7 @@ use Icinga\Module\Monitoring\Object\Service;
         <?php if ($object->host_display_name !== $object->host_name): ?>
             <span class="selectable host-meta">&#40;<?= $this->escape($object->host_name) ?>&#41;</span>
         <?php endif ?>
-            <?= $this->render('partials/host/statusicons.phtml') ?>
+            <?= $this->hostFlags($object) ?>
         <?php if ($object->host_address6 && $object->host_address6 !== $object->host_name): ?>
             <div class="selectable host-meta" title="<?= $this->translate('IPv6 address') ?>">
                 <?= $this->escape($object->host_address6) ?>
@@ -49,7 +49,7 @@ use Icinga\Module\Monitoring\Object\Service;
             <?php if ($object->service_display_name !== $object->service_description): ?>
                 <span class="selectable service-meta">&#40;<?= $this->escape($object->service_description) ?>&#41;</span>
             <?php endif ?>
-            <?= $this->render('partials/service/statusicons.phtml') ?>
+            <?= $this->serviceFlags($object) ?>
         </td>
     </tr>
 </table>

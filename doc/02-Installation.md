@@ -10,11 +10,13 @@ thoroughly.
 ## <a id="installing-requirements"></a> Installing Requirements
 
 * A web server, e.g. Apache or nginx
-* PHP >= 5.3.0 w/ gettext, intl and OpenSSL support
+* PHP >= 5.3.0 w/ gettext, intl, mbstring and OpenSSL support
+* Default time zone configured for PHP in the php.ini file
 * LDAP PHP library when using Active Directory or LDAP for authentication
 * Icinga 1.x w/ IDO; Icinga 2.x w/ IDO feature enabled
 * The IDO table prefix must be icinga_ which is the default
 * MySQL or PostgreSQL PHP libraries
+* cURL PHP library when using the Icinga 2 API for transmitting external commands
 
 ### <a id="pagespeed-incompatibility"></a> PageSpeed Module Incompatibility
 
@@ -37,14 +39,15 @@ Below is a list of official package repositories for installing Icinga Web 2 for
 
 | Distribution  | Repository |
 | ------------- | ---------- |
-| Debian        | [Icinga Repository](http://packages.icinga.org/debian/) |
-| Ubuntu        | [Icinga Repository](http://packages.icinga.org/ubuntu/) |
-| RHEL/CentOS   | [Icinga Repository](http://packages.icinga.org/epel/) |
-| openSUSE      | [Icinga Repository](http://packages.icinga.org/openSUSE/) |
-| SLES          | [Icinga Repository](http://packages.icinga.org/SUSE/) |
+| Debian        | [Icinga Repository](http://packages.icinga.com/debian/) |
+| Ubuntu        | [Icinga Repository](http://packages.icinga.com/ubuntu/) |
+| RHEL/CentOS   | [Icinga Repository](http://packages.icinga.com/epel/) |
+| openSUSE      | [Icinga Repository](http://packages.icinga.com/openSUSE/) |
+| SLES          | [Icinga Repository](http://packages.icinga.com/SUSE/) |
 | Gentoo        | [Upstream](https://packages.gentoo.org/packages/www-apps/icingaweb2) |
 | FreeBSD       | [Upstream](http://portsmon.freebsd.org/portoverview.py?category=net-mgmt&portname=icingaweb2) |
 | ArchLinux     | [Upstream](https://aur.archlinux.org/packages/icingaweb2) |
+| Alpine Linux  | [Upstream](http://git.alpinelinux.org/cgit/aports/tree/community/icingaweb2/APKBUILD) |
 
 Packages for distributions other than the ones listed above may also be available.
 Please contact your distribution packagers.
@@ -57,19 +60,18 @@ Below is a list with **examples** for various distributions.
 
 **Debian Jessie**:
 ```
-wget -O - http://packages.icinga.org/icinga.key | apt-key add -
-echo 'deb http://packages.icinga.org/debian icinga-jessie main' >/etc/apt/sources.list.d/icinga.list
+wget -O - http://packages.icinga.com/icinga.key | apt-key add -
+echo 'deb http://packages.icinga.com/debian icinga-jessie main' >/etc/apt/sources.list.d/icinga.list
 apt-get update
 ```
-
 > INFO
 >
 > For other Debian versions just replace jessie with your distribution's code name.
 
 **Ubuntu Xenial**:
 ```
-wget -O - http://packages.icinga.org/icinga.key | apt-key add -
-add-apt-repository 'deb http://packages.icinga.org/ubuntu icinga-xenial main'
+wget -O - http://packages.icinga.com/icinga.key | apt-key add -
+add-apt-repository 'deb http://packages.icinga.com/ubuntu icinga-xenial main'
 apt-get update
 ```
 > INFO
@@ -78,35 +80,44 @@ apt-get update
 
 **RHEL and CentOS**:
 ```
-rpm --import http://packages.icinga.org/icinga.key
-curl -o /etc/yum.repos.d/ICINGA-release.repo http://packages.icinga.org/epel/ICINGA-release.repo
+rpm --import http://packages.icinga.com/icinga.key
+curl -o /etc/yum.repos.d/ICINGA-release.repo http://packages.icinga.com/epel/ICINGA-release.repo
 yum makecache
 ```
 
 **Fedora**:
 ```
-rpm --import http://packages.icinga.org/icinga.key
-curl -o /etc/yum.repos.d/ICINGA-release.repo http://packages.icinga.org/fedora/ICINGA-release.repo
+rpm --import http://packages.icinga.com/icinga.key
+curl -o /etc/yum.repos.d/ICINGA-release.repo http://packages.icinga.com/fedora/ICINGA-release.repo
 yum makecache
 ```
 
 **SLES 11**:
 ```
-zypper ar http://packages.icinga.org/SUSE/ICINGA-release-11.repo
+zypper ar http://packages.icinga.com/SUSE/ICINGA-release-11.repo
 zypper ref
 ```
 
 **SLES 12**:
 ```
-zypper ar http://packages.icinga.org/SUSE/ICINGA-release.repo
+zypper ar http://packages.icinga.com/SUSE/ICINGA-release.repo
 zypper ref
 ```
 
 **openSUSE**:
 ```
-zypper ar http://packages.icinga.org/openSUSE/ICINGA-release.repo
+zypper ar http://packages.icinga.com/openSUSE/ICINGA-release.repo
 zypper ref
 ```
+
+**Alpine Linux**:
+```
+echo "http://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repos
+apk update
+```
+> INFO
+>
+> Latest version of Icinga Web 2 is in the edge repository, which is the -dev branch.
 
 #### <a id="package-repositories-rhel-notes"></a> RHEL/CentOS Notes
 
@@ -115,6 +126,14 @@ The packages for RHEL/CentOS depend on other packages which are distributed as p
 [these instructions](http://fedoraproject.org/wiki/EPEL#How_can_I_use_these_extra_packages.3F).
 
 > Please note that installing Icinga Web 2 on **RHEL/CentOS 5** is not supported due to EOL versions of PHP and PostgreSQL.
+
+
+#### <a id="package-repositories-alpine-notes"></a> Alpine Linux Notes
+
+The example provided suppose that you are running Alpine edge, which is the -dev branch and is a rolling release.
+If you are using a stable version, in order to use the latest Icinga Web 2 version you should "pin" the edge repository.
+In order to correctly manage your repository, please follow
+[these instructions](https://wiki.alpinelinux.org/wiki/Alpine_Linux_package_management).
 
 ### <a id="installing-from-package-example"></a> Installing Icinga Web 2
 
@@ -136,6 +155,12 @@ For RHEL/CentOS please read the [package repositories notes](#package-repositori
 ```
 zypper install icingaweb2 icingacli
 ```
+
+**Alpine Linux**:
+```
+apk add icingaweb2
+```
+For Alpine Linux please read the [package repositories notes](#package-repositories-alpine-notes).
 
 ### <a id="preparing-web-setup-from-package"></a> Preparing Web Setup
 
@@ -164,15 +189,15 @@ directly from source.
 First of all, you need to download the sources. Icinga Web 2 is available through a Git repository. You can clone this
 repository either via git or http protocol using the following URLs:
 
-  * git://git.icinga.org/icingaweb2.git
-  * http://git.icinga.org/icingaweb2.git
+  * git://git.icinga.com/icingaweb2.git
+  * http://git.icinga.com/icingaweb2.git
 
 There is also a browsable version available at
-[git.icinga.org](https://git.icinga.org/?p=icingaweb2.git;a=summary "Icinga Web 2 Git Repository").
+[git.icinga.com](https://git.icinga.com/?p=icingaweb2.git;a=summary "Icinga Web 2 Git Repository").
 This version also offers snapshots for easy download which you can use if you do not have git present on your system.
 
 ```
-git clone git://git.icinga.org/icingaweb2.git
+git clone git://git.icinga.com/icingaweb2.git
 ```
 
 ### <a id="installing-from-source-requirements"></a> Installing Requirements from Source
@@ -232,6 +257,10 @@ Example for Apache on Debian Jessie:
 a2enconf icingaweb2
 ```
 
+Example for Apache on Alpine Linux:
+```
+icingacli setup config webserver apache --document-root /usr/share/webapps/icingaweb2/public > /etc/apache2/conf.d/icingaweb2.conf
+```
 ### <a id="preparing-web-setup-from-source"></a> Preparing Icinga Web 2 Setup
 
 You can set up Icinga Web 2 quickly and easily with the Icinga Web 2 setup wizard which is available the first time
@@ -271,6 +300,12 @@ service apache2 restart
 ```
 usermod -a -G icingaweb2 www-data
 service apache2 restart
+```
+
+**Alpine Linux**:
+```
+gpasswd -a apache icingaweb2
+rc-service apache2 restart
 ```
 
 
@@ -330,7 +365,7 @@ CREATE DATABASE icingaweb2;
 GRANT SELECT, INSERT, UPDATE, DELETE, DROP, CREATE VIEW, INDEX, EXECUTE ON icingaweb2.* TO 'icingaweb2'@'localhost' IDENTIFIED BY 'icingaweb2';
 quit
 
-mysql -p icingaweb2 < /usr/share/icingaweb2/etc/schema/mysql.schema.sql
+mysql -p icingaweb2 < /usr/share/doc/icingaweb2/schema/mysql.schema.sql
 ```
 
 
@@ -448,6 +483,10 @@ Finally visit Icinga Web 2 in your browser to login as `icingaadmin` user: `/ici
 
 
 ## <a id="upgrading"></a> Upgrading Icinga Web 2
+
+### <a id="upgrading-to-2.4.x"></a> Upgrading to Icinga Web 2 2.4.x
+
+* Icinga Web 2 version 2.4.x does not introduce any backward incompatible change.
 
 ### <a id="upgrading-to-2.3.x"></a> Upgrading to Icinga Web 2 2.3.x
 

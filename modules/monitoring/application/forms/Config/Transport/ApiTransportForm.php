@@ -36,10 +36,11 @@ class ApiTransportForm extends Form
                 'number',
                 'port',
                 array(
-                    'required'      => true,
-                    'label'         => $this->translate('Port'),
-                    'description'   => $this->translate('SSH port to connect to on the remote Icinga instance'),
-                    'value'         => 5665
+                    'required'          => true,
+                    'preserveDefault'   => true,
+                    'label'             => $this->translate('Port'),
+                    'description'       => $this->translate('SSH port to connect to on the remote Icinga instance'),
+                    'value'             => 5665
                 )
             ),
             array(
@@ -63,7 +64,8 @@ class ApiTransportForm extends Form
                     'description'   => $this->translate(
                         'User to log in as on the remote Icinga instance. Please note that key-based SSH login must be'
                         . ' possible for this user'
-                    )
+                    ),
+                    'renderPassword'    => true
                 )
             )
         ));

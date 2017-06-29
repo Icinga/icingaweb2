@@ -53,7 +53,7 @@ class LogarithmicUnit implements AxisUnit
      * @param int $nrOfTicks The number of ticks to use
      */
     public function __construct($base = 10)
-    {;
+    {
         $this->base = $base;
         $this->minExp = PHP_INT_MAX;
         $this->maxExp = ~PHP_INT_MAX;

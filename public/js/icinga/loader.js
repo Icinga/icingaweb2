@@ -445,6 +445,10 @@
                 return;
             }
 
+            if (req.getResponseHeader('X-Icinga-Announcements') === 'refresh') {
+                _this.loadUrl(_this.url('/layout/announcements'), $('#announcements'));
+            }
+
             // div helps getting an XML tree
             var $resp = $('<div>' + req.responseText + '</div>');
             var active = false;
@@ -476,38 +480,40 @@
                 newBody = true;
             }
 
-            var moduleName = req.getResponseHeader('X-Icinga-Module');
-            classes = $.grep(req.$target.classes(), function (el) {
-               if (el === 'icinga-module' || el.match(/^module\-/)) {
-                   return false;
-               }
-               return true;
-            });
-            if (moduleName) {
-                req.$target.data('icingaModule', moduleName);
-                classes.push('icinga-module');
-                classes.push('module-' + moduleName);
-            } else {
-                req.$target.removeData('icingaModule');
-                if (req.$target.attr('data-icinga-module')) {
-                    req.$target.removeAttr('data-icinga-module');
+            if (target !== 'layout') {
+                var moduleName = req.getResponseHeader('X-Icinga-Module');
+                classes = $.grep(req.$target.classes(), function (el) {
+                    if (el === 'icinga-module' || el.match(/^module\-/)) {
+                        return false;
+                    }
+                    return true;
+                });
+                if (moduleName) {
+                    req.$target.data('icingaModule', moduleName);
+                    classes.push('icinga-module');
+                    classes.push('module-' + moduleName);
+                } else {
+                    req.$target.removeData('icingaModule');
+                    if (req.$target.attr('data-icinga-module')) {
+                        req.$target.removeAttr('data-icinga-module');
+                    }
+                }
+                req.$target.attr('class', classes.join(' '));
+
+                var refresh = req.autoRefreshInterval || req.getResponseHeader('X-Icinga-Refresh');
+                if (refresh) {
+                    req.$target.data('icingaRefresh', refresh);
+                } else {
+                    req.$target.removeData('icingaRefresh');
+                    if (req.$target.attr('data-icinga-refresh')) {
+                        req.$target.removeAttr('data-icinga-refresh');
+                    }
                 }
             }
-            req.$target.attr('class', classes.join(' '));
 
             var title = req.getResponseHeader('X-Icinga-Title');
             if (title && ! req.autorefresh && req.$target.closest('.dashboard').length === 0) {
                 this.icinga.ui.setTitle(decodeURIComponent(title));
-            }
-
-            var refresh = req.autoRefreshInterval || req.getResponseHeader('X-Icinga-Refresh');
-            if (refresh) {
-                req.$target.data('icingaRefresh', refresh);
-            } else {
-                req.$target.removeData('icingaRefresh');
-                if (req.$target.attr('data-icinga-refresh')) {
-                    req.$target.removeAttr('data-icinga-refresh');
-                }
             }
 
             // Set a window identifier if the server asks us to do so
@@ -827,7 +833,10 @@
                         if (typeof $container.attr('tabindex') === 'undefined') {
                             $container.attr('tabindex', -1);
                         }
-                        $container.focus();
+                        // Do not touch focus in case a module or component already placed it
+                        if ($(document.activeElement).closest('.container').attr('id') !== containerId) {
+                            $container.focus();
+                        }
                     }, 0);
                 }
             } else {
@@ -836,6 +845,15 @@
 
                     if ($activeElement.length && $activeElement.is(':visible')) {
                         $activeElement.focus();
+                        if ($activeElement.is('input[type=text]')) {
+                            if (typeof $activeElement[0].setSelectionRange === 'function') {
+                                // Place focus after the last character. Could be extended to other
+                                // input types, would require some \r\n "magic" to work around issues
+                                // with some browsers
+                                var len = $activeElement.val().length;
+                                $activeElement[0].setSelectionRange(len, len);
+                            }
+                        }
                     } else if (! autorefresh) {
                         if (focusFallback) {
                             $(focusFallback.parent).find(focusFallback.child).focus();

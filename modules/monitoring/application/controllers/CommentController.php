@@ -52,7 +52,7 @@ class CommentController extends Controller
         $this->getTabs()->add(
             'comment',
             array(
-                'icon'  => 'comment',
+                'icon'  => 'comment-empty',
                 'label' => $this->translate('Comment'),
                 'title' => $this->translate('Display detailed information about a comment.'),
                 'url'   =>'monitoring/comments/show'

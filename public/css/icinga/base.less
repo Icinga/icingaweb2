@@ -12,14 +12,17 @@
 // Icinga colors
 @icinga-blue: #0095BF;
 @color-ok: #44bb77;
+@color-up: @color-ok;
 @color-warning: #ffaa44;
 @color-warning-handled: #ffcc66;
 @color-critical: #ff5566;
 @color-critical-handled: #ff99aa;
+@color-down: @color-critical;
+@color-down-handled: @color-critical-handled;
 @color-unknown: #aa44ff;
 @color-unknown-handled: #cc77ff;
-@color-unreachable: #aa44ff;
-@color-unreachable-handled: #cc77ff;
+@color-unreachable: @color-unknown;
+@color-unreachable-handled: @color-unknown-handled;
 @color-pending: #77aaff;
 
 // Notification colors
@@ -44,7 +47,7 @@
 @tr-hover-color: #F5FDFF;
 
 // Font families
-@font-family: Calibri, "Lucida Grande", sans-serif;
+@font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 @font-family-fixed: "Liberation Mono", "Lucida Console", Courier, monospace;
 @font-family-wide: Tahoma, Verdana, sans-serif;
 
@@ -88,9 +91,8 @@ a {
 a:focus,
 button:focus,
 input[type="checkbox"]:focus {
-  outline-color: @icinga-blue;
-  outline-style: solid; // IE
-  outline-style: auto;
+  outline: 3px solid fade(@icinga-blue, 50%);
+  outline-offset: 1px;
 }
 
 // Default margin for block text

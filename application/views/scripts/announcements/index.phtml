@@ -1,0 +1,61 @@
+<?php if (! $compact): ?>
+<div class="controls">
+    <?= $tabs ?>
+</div>
+<?php endif ?>
+<div class="content">
+<?php if ($this->hasPermission('admin')) {
+    echo $this->qlink(
+        $this->translate('Create a New Announcement') ,
+        'announcements/new',
+        null,
+        array(
+            'class'             => 'button-link',
+            'data-base-target'  => '_next',
+            'icon'              => 'plus',
+            'title'             => $this->translate('Create a new announcement')
+        )
+    );
+} ?>
+<?php if (! $announcements->hasResult()): ?>
+    <p><?= $this->translate('No announcements found.') ?></p>
+</div>
+<?php return; endif ?>
+    <table data-base-target="_next" class="table-row-selectable common-table">
+    <thead>
+        <tr>
+            <th><?= $this->translate('Author') ?></th>
+            <th><?= $this->translate('Message') ?></th>
+            <th><?= $this->translate('Start') ?></th>
+            <th><?= $this->translate('End') ?></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+    <?php foreach ($announcements as $announcement): /** @var object $announcement */ ?>
+    <?php if ($this->hasPermission('admin')): ?>
+        <tr href="<?= $this->href('announcements/update', array('id' => $announcement->id)) ?>">
+    <?php else: ?>
+        <tr>
+    <?php endif ?>
+            <td><?= $this->escape($announcement->author) ?></td>
+            <td><?= $this->ellipsis($this->escape($announcement->message), 100) ?></td>
+            <td><?= $this->formatDateTime($announcement->start->getTimestamp()) ?></td>
+            <td><?= $this->formatDateTime($announcement->end->getTimestamp()) ?></td>
+        <?php if ($this->hasPermission('admin')): ?>
+            <td class="icon-col"><?= $this->qlink(
+                null,
+                'announcements/remove',
+                array('id' => $announcement->id),
+                array(
+                    'class' => 'action-link',
+                    'icon'  => 'cancel',
+                    'title' => $this->translate('Remove this announcement')
+                )
+            ) ?></td>
+        <?php endif ?>
+        </tr>
+    <?php endforeach ?>
+    </tbody>
+    </table>
+</div>

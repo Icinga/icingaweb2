@@ -202,9 +202,4 @@ class Host extends MonitoredObject
             MonitoredObject::parseAttributeUrls($this->host_notes_url)
         );
     }
-
-    public function getNotes()
-    {
-        return $this->host_notes;
-    }
 }

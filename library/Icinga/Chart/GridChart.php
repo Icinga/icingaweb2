@@ -193,14 +193,13 @@ class GridChart extends Chart
     private function initTooltips($data)
     {
         foreach ($data as &$graph) {
-            foreach  ($graph['data'] as $x => $point) {
+            foreach ($graph['data'] as $x => $point) {
                 if (!array_key_exists($x, $this->tooltips)) {
                     $this->tooltips[$x] = new Tooltip(
                         array(
                             'color' => $graph['color'],
 
                         )
-
                     );
                 }
                 $this->tooltips[$x]->addDataPoint($point);
