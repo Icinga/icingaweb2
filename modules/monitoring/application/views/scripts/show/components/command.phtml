@@ -12,7 +12,7 @@ if ($showInstance): ?>
     <th><?= $this->translate('Command') ?></th>
     <td>
         <?= $this->escape($command) ?>
-        <?php if ($this->hasPermission('monitoring/command/schedule-check') && $object->passive_checks_enabled) {
+        <?php if ($this->hasPermission('monitoring/command/process-check-result') && $object->passive_checks_enabled) {
             $title = sprintf(
                 $this->translate('Submit a one time or so called passive result for the %s check'), $command
             );
