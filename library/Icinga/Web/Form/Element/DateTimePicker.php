@@ -25,20 +25,6 @@ class DateTimePicker extends FormElement
     protected $local = true;
 
     /**
-     * The expected lower bound for the element’s value
-     *
-     * @var DateTime|null
-     */
-    protected $min;
-
-    /**
-     * The expected upper bound for the element’s
-     *
-     * @var DateTime|null
-     */
-    protected $max;
-
-    /**
      * (non-PHPDoc)
      * @see Zend_Form_Element::init() For the method documentation.
      */
@@ -48,69 +34,6 @@ class DateTimePicker extends FormElement
             new DateTimeValidator($this->local),
             true  // true for breaking the validator chain on failure
         );
-        if ($this->min !== null) {
-            $this->addValidator('GreaterThan', true, array('min' => $this->min));
-        }
-        if ($this->max !== null) {
-            $this->addValidator('LessThan', true, array('max' => $this->max));
-        }
-    }
-
-    public function setLocal($local)
-    {
-        $this->local = (bool) $local;
-        return $this;
-    }
-
-    public function getLocal()
-    {
-        return $this->local;
-    }
-
-    /**
-     * Set the expected lower bound for the element’s value
-     *
-     * @param   DateTime $min
-     *
-     * @return  $this
-     */
-    public function setMin(DateTime $min)
-    {
-        $this->min = $min;
-        return $this;
-    }
-
-    /**
-     * Get the expected lower bound for the element’s value
-     *
-     * @return DateTime|null
-     */
-    public function getMin()
-    {
-        return $this->min;
-    }
-
-    /**
-     * Set the expected upper bound for the element’s value
-     *
-     * @param   DateTime $max
-     *
-     * @return  $this
-     */
-    public function setMax(DateTime $max)
-    {
-        $this->max = $max;
-        return $this;
-    }
-
-    /**
-     * Get the expected upper bound for the element’s value
-     *
-     * @return DateTime|null
-     */
-    public function getMax()
-    {
-        return $this->max;
     }
 
     /**

@@ -46,26 +46,14 @@ class Zend_View_Helper_FormDateTime extends Zend_View_Helper_FormElement
         if (isset($attribs['placeholder']) && $attribs['placeholder'] instanceof DateTime) {
             $attribs['placeholder'] = $this->formatDate($attribs['placeholder'], $attribs['local']);
         }
-        $min = '';
-        if (! empty($attribs['min'])) {
-            $min = sprintf(' min="%s"', $this->formatDate($attribs['min'], $attribs['local']));
-        }
-        unset($attribs['min']);  // Unset min to not render it again in $this->_htmlAttribs($attribs)
-        $max = '';
-        if (! empty($attribs['max'])) {
-            $max = sprintf(' max="%s"', $this->formatDate($attribs['max'], $attribs['local']));
-        }
-        unset($attribs['max']);  // Unset max to not render it again in $this->_htmlAttribs($attribs)
         $type = $attribs['local'] === true ? 'datetime-local' : 'datetime';
         unset($attribs['local']);  // Unset local to not render it again in $this->_htmlAttribs($attribs)
         $html5 =  sprintf(
-            '<input type="%s" name="%s" id="%s" step="1" value="%s"%s%s%s%s%s',
+            '<input type="%s" name="%s" id="%s" step="1" value="%s"%s%s%s',
             $type,
             $this->view->escape($name),
             $this->view->escape($id),
             $this->view->escape($value),
-            $min,
-            $max,
             $disabled,
             $this->_htmlAttribs($attribs),
             $this->getClosingBracket()
