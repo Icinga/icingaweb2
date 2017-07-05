@@ -6,14 +6,9 @@ namespace Icinga\Exception\Http;
 /**
  * Exception thrown if the HTTP method is not allowed
  */
-class HttpMethodNotAllowedException extends HttpException
+class HttpMethodNotAllowedException extends BaseHttpException
 {
-    /**
-     * Allowed HTTP methods
-     *
-     * @var string
-     */
-    protected $allowedMethods;
+    protected $statusCode = 405;
 
     /**
      * Get the allowed HTTP methods
@@ -22,7 +17,8 @@ class HttpMethodNotAllowedException extends HttpException
      */
     public function getAllowedMethods()
     {
-        return $this->allowedMethods;
+        $headers = $this->getHeaders();
+        return isset($headers['Allow']) ? $headers['Allow'] : null;
     }
 
     /**
@@ -34,7 +30,7 @@ class HttpMethodNotAllowedException extends HttpException
      */
     public function setAllowedMethods($allowedMethods)
     {
-        $this->allowedMethods = (string) $allowedMethods;
+        $this->setHeader('Allow', (string) $allowedMethods);
         return $this;
     }
 }
