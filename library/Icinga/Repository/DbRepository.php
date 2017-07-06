@@ -252,8 +252,22 @@ abstract class DbRepository extends Repository implements Extensible, Updatable,
                     $prefixedAlias = $table . '_' . $alias;
                 }
 
-                $this->aliasTableMap[$prefixedAlias] = $table;
-                $this->aliasColumnMap[$prefixedAlias] = $this->aliasColumnMap[$alias];
+                if (array_key_exists($prefixedAlias, $this->aliasTableMap)) {
+                    if ($this->aliasTableMap[$prefixedAlias] !== null) {
+                        $existingTable = $this->aliasTableMap[$prefixedAlias];
+                        $existingColumn = $this->aliasColumnMap[$prefixedAlias];
+                        $this->aliasTableMap[$existingTable . '.' . $prefixedAlias] = $existingTable;
+                        $this->aliasColumnMap[$existingTable . '.' . $prefixedAlias] = $existingColumn;
+                        $this->aliasTableMap[$prefixedAlias] = null;
+                        $this->aliasColumnMap[$prefixedAlias] = null;
+                    }
+
+                    $this->aliasTableMap[$table . '.' . $prefixedAlias] = $table;
+                    $this->aliasColumnMap[$table . '.' . $prefixedAlias] = $this->aliasColumnMap[$alias];
+                } else {
+                    $this->aliasTableMap[$prefixedAlias] = $table;
+                    $this->aliasColumnMap[$prefixedAlias] = $this->aliasColumnMap[$alias];
+                }
             }
         }
     }
