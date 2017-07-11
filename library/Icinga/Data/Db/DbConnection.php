@@ -140,6 +140,7 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
             case 'mssql':
                 $adapter = 'Pdo_Mssql';
                 $adapterParamaters['pdoType'] = $this->config->get('pdoType', 'dblib');
+                $defaultPort = 1433;
                 break;
             case 'mysql':
                 $adapter = 'Pdo_Mysql';
@@ -176,8 +177,7 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
                     unset($adapterParamaters['charset']);
                 }
                 $driverOptions[PDO::MYSQL_ATTR_INIT_COMMAND] .=';';
-
-                $adapterParamaters['port'] = $this->config->get('port', 3306);
+                $defaultPort = 3306;
                 break;
             case 'oci':
                 $adapter = 'Oracle';
@@ -186,13 +186,15 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
                 $adapterParamaters['driver_options'] = array(
                     'lob_as_string' => true
                 );
+                $defaultPort = 1521;
                 break;
             case 'oracle':
                 $adapter = 'Pdo_Oci';
+                $defaultPort = 1521;
                 break;
             case 'pgsql':
                 $adapter = 'Pdo_Pgsql';
-                $adapterParamaters['port'] = $this->config->get('port', 5432);
+                $defaultPort = 5432;
                 break;
             default:
                 throw new ConfigurationError(
@@ -200,6 +202,7 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
                     $this->dbType
                 );
         }
+        $adapterParamaters['port'] = $this->config->get('port', $defaultPort);
         $this->dbAdapter = Zend_Db::factory($adapter, $adapterParamaters);
         $this->dbAdapter->setFetchMode(Zend_Db::FETCH_OBJ);
         // TODO(el/tg): The profiler is disabled per default, why do we disable the profiler explicitly?
