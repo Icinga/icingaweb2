@@ -218,6 +218,7 @@ class UserBackend implements ConfigAwareFactory
                 $backend->setUserClass($backendConfig->get('user_class', 'user'));
                 $backend->setUserNameAttribute($backendConfig->get('user_name_attribute', 'sAMAccountName'));
                 $backend->setFilter($backendConfig->filter);
+                $backend->setDomain($backendConfig->domain);
                 break;
             case 'ldap':
                 $backend = new LdapUserBackend($resource);
@@ -225,6 +226,7 @@ class UserBackend implements ConfigAwareFactory
                 $backend->setUserClass($backendConfig->get('user_class', 'inetOrgPerson'));
                 $backend->setUserNameAttribute($backendConfig->get('user_name_attribute', 'uid'));
                 $backend->setFilter($backendConfig->filter);
+                $backend->setDomain($backendConfig->domain);
                 break;
         }
 
