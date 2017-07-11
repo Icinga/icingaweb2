@@ -205,23 +205,6 @@ class LdapUserBackend extends LdapRepository implements UserBackendInterface, Do
     }
 
     /**
-     * Apply the given configuration to this backend
-     *
-     * @param   ConfigObject    $config
-     *
-     * @return  $this
-     */
-    public function setConfig(ConfigObject $config)
-    {
-        return $this
-            ->setBaseDn($config->base_dn)
-            ->setUserClass($config->user_class)
-            ->setUserNameAttribute($config->user_name_attribute)
-            ->setFilter($config->filter)
-            ->setDomain($config->domain);
-    }
-
-    /**
      * Initialize this repository's virtual tables
      *
      * @return  array
