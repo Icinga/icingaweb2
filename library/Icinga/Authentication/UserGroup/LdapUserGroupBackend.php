@@ -781,7 +781,8 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
                 'user_base_dn'          => $userBackend->getBaseDn(),
                 'user_class'            => $userBackend->getUserClass(),
                 'user_name_attribute'   => $userBackend->getUserNameAttribute(),
-                'user_filter'           => $userBackend->getFilter()
+                'user_filter'           => $userBackend->getFilter(),
+                'domain'                => $userBackend->getDomain()
             ));
         }
 
@@ -796,7 +797,7 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
             ->setGroupFilter($config->group_filter)
             ->setUserFilter($config->user_filter)
             ->setNestedGroupSearch((bool) $config->get('nested_group_search', $defaults->nested_group_search))
-            ->setDomain($config->domain);
+            ->setDomain($defaults->get('domain', $config->domain));
     }
 
     /**
