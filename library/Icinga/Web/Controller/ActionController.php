@@ -527,7 +527,9 @@ class ActionController extends Zend_Controller_Action
             $layout->setLayout($this->innerLayout);
             $this->getResponse()->setHeader('X-Icinga-Container', 'layout', true);
         } else {
-            $layout->setLayout($this->inlineLayout);
+            // The layout may be disabled and there's no indication that the layout is explicitly desired,
+            // that's why we're passing false as second parameter to setLayout
+            $layout->setLayout($this->inlineLayout, false);
         }
 
         if ($this->autorefreshInterval !== null) {
