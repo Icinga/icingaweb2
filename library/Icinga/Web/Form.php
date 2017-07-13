@@ -1580,7 +1580,12 @@ class Form extends Zend_Form
      */
     public function error($message, $markAsError = true)
     {
-        $this->addNotification($message, self::NOTIFICATION_ERROR);
+        if ($this->getIsApiTarget()) {
+            $this->addErrorMessage($message);
+        } else {
+            $this->addNotification($message, self::NOTIFICATION_ERROR);
+        }
+
         if ($markAsError) {
             $this->markAsError();
         }
@@ -1598,7 +1603,12 @@ class Form extends Zend_Form
      */
     public function warning($message, $markAsError = true)
     {
-        $this->addNotification($message, self::NOTIFICATION_WARNING);
+        if ($this->getIsApiTarget()) {
+            $this->addErrorMessage($message);
+        } else {
+            $this->addNotification($message, self::NOTIFICATION_WARNING);
+        }
+
         if ($markAsError) {
             $this->markAsError();
         }
@@ -1616,7 +1626,12 @@ class Form extends Zend_Form
      */
     public function info($message, $markAsError = true)
     {
-        $this->addNotification($message, self::NOTIFICATION_INFO);
+        if ($this->getIsApiTarget()) {
+            $this->addErrorMessage($message);
+        } else {
+            $this->addNotification($message, self::NOTIFICATION_INFO);
+        }
+
         if ($markAsError) {
             $this->markAsError();
         }
