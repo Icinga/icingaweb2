@@ -17,7 +17,6 @@ use Icinga\File\Pdf;
 use Icinga\Forms\AutoRefreshForm;
 use Icinga\Security\SecurityException;
 use Icinga\Util\Translator;
-use Icinga\Web\Notification;
 use Icinga\Web\Session;
 use Icinga\Web\Url;
 use Icinga\Web\UrlParams;
@@ -495,17 +494,8 @@ class ActionController extends Zend_Controller_Action
     {
         $resp = $this->getResponse();
 
-        $notifications = Notification::getInstance();
-        if ($notifications->hasMessages()) {
-            $notificationList = array();
-            foreach ($notifications->popMessages() as $m) {
-                $notificationList[] = rawurlencode($m->type . ' ' . $m->message);
-            }
-            $resp->setHeader('X-Icinga-Notification', implode('&', $notificationList), true);
-        }
-
         if ($this->reloadCss) {
-            $resp->setHeader('X-Icinga-CssReload', 'now', true);
+            $resp->setReloadCss(true);
         }
 
         if ($this->view->title) {
@@ -525,7 +515,7 @@ class ActionController extends Zend_Controller_Action
         $layout = $this->_helper->layout();
         if ($this->rerenderLayout) {
             $layout->setLayout($this->innerLayout);
-            $this->getResponse()->setHeader('X-Icinga-Container', 'layout', true);
+            $resp->setRerenderLayout(true);
         } else {
             // The layout may be disabled and there's no indication that the layout is explicitly desired,
             // that's why we're passing false as second parameter to setLayout
@@ -533,7 +523,7 @@ class ActionController extends Zend_Controller_Action
         }
 
         if ($this->autorefreshInterval !== null) {
-            $resp->setHeader('X-Icinga-Refresh', $this->autorefreshInterval, true);
+            $resp->setAutoRefreshInterval($this->autorefreshInterval);
         }
     }
 

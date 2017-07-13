@@ -271,6 +271,15 @@ class Response extends Zend_Controller_Response_Http
             if (($autoRefreshInterval = $this->getAutoRefreshInterval()) !== null) {
                 $this->setHeader('X-Icinga-Refresh', $autoRefreshInterval, true);
             }
+
+            $notifications = Notification::getInstance();
+            if ($notifications->hasMessages()) {
+                $notificationList = array();
+                foreach ($notifications->popMessages() as $m) {
+                    $notificationList[] = rawurlencode($m->type . ' ' . $m->message);
+                }
+                $this->setHeader('X-Icinga-Notification', implode('&', $notificationList), true);
+            }
         } else {
             if ($redirectUrl !== null) {
                 $this->setRedirect($redirectUrl->getAbsoluteUrl());
