@@ -1102,21 +1102,22 @@ class Form extends Zend_Form
      *
      * @param   Zend_Form   $form
      * @param   array       $defaults
+     * @param   bool        $ignoreDisabled
      */
-    protected function preserveDefaults(Zend_Form $form, array & $defaults)
+    protected function preserveDefaults(Zend_Form $form, array & $defaults, $ignoreDisabled = true)
     {
         foreach ($form->getElements() as $name => $element) {
             if ((array_key_exists($name, $defaults)
                     && array_key_exists($name . static::DEFAULT_SUFFIX, $defaults)
                     && $defaults[$name] === $defaults[$name . static::DEFAULT_SUFFIX])
-                || $element->getAttrib('disabled')
+                || (! $ignoreDisabled && $element->getAttrib('disabled'))
             ) {
                 unset($defaults[$name]);
             }
         }
 
         foreach ($form->getSubForms() as $_ => $subForm) {
-            $this->preserveDefaults($subForm, $defaults);
+            $this->preserveDefaults($subForm, $defaults, $ignoreDisabled);
         }
     }
 
@@ -1143,6 +1144,11 @@ class Form extends Zend_Form
             if (($frameUpload = (bool) $request->getUrl()->shift('_frameUpload', false))) {
                 $this->getView()->layout()->setLayout('wrapped');
             }
+
+            // To prevent a BC, this is here. The proper fix is to extend populate()
+            // and pass $ignoreDisabled through to preserveDefaults()
+            $this->create($formData)->preserveDefaults($this, $formData, false);
+
             $this->populate($formData); // Necessary to get isSubmitted() to work
             if (! $this->getSubmitLabel() || $this->isSubmitted()) {
                 if ($this->isValid($formData)
