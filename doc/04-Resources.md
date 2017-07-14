@@ -1,17 +1,17 @@
-# <a id="resources"></a> Resources
+# Resources <a id="resources"></a>
 
 The configuration file `config/resources.ini` contains information about data sources that can be referenced in other
 configuration files. This allows you to manage all data sources at one central place, avoiding the need to edit several
 different files, when the information about a data source changes.
 
-## <a id="resources-configuration"></a> Configuration
+## Configuration <a id="resources-configuration"></a>
 
 Each section in `config/resources.ini` represents a data source with the section name being the identifier used to
 reference this specific data source. Depending on the data source type, the sections define different directives.
 The available data source types are *db*, *ldap*, *ssh* and *livestatus* which will described in detail in the following
 paragraphs.
 
-### <a id="resources-configuration-database"></a> Database
+### Database <a id="resources-configuration-database"></a>
 
 A Database resource defines a connection to a SQL databases which can contain users and groups
 to handle authentication and authorization, monitoring data or user preferences.
@@ -27,7 +27,7 @@ to handle authentication and authorization, monitoring data or user preferences.
 | **dbname**    | The database to use. |
 | **charset**   | The character set to use for the database connection. |
 
-#### <a id="resources-configuration-database-example"></a> Example
+#### Example <a id="resources-configuration-database-example"></a>
 
 ```
 [icingaweb-mysql-tcp]
@@ -57,7 +57,7 @@ password  = icingaweb
 dbname    = icingaweb
 ```
 
-### <a id="resources-configuration-ldap"></a> LDAP
+### LDAP <a id="resources-configuration-ldap"></a>
 
 A LDAP resource represents a tree in a LDAP directory. LDAP is usually used for authentication and authorization.
 
@@ -71,7 +71,7 @@ A LDAP resource represents a tree in a LDAP directory. LDAP is usually used for 
 | **bind_pw**       | The password to use when connecting to the server. |
 | **encryption**    | Type of encryption to use: `none` (default), `starttls`, `ldaps`. |
 
-#### <a id="resources-configuration-ldap-example"></a> Example
+#### Example <a id="resources-configuration-ldap-example"></a>
 
 ```
 [ad]
@@ -83,7 +83,7 @@ bind_dn     = "cn=admin,ou=people,dc=icinga,dc=org"
 bind_pw     = admin
 ```
 
-### <a id="resources-configuration-ssh"></a> SSH
+### SSH <a id="resources-configuration-ssh"></a>
 
 A SSH resource contains the information about the user and the private key location, which can be used for the key-based
 ssh authentication.
@@ -94,7 +94,7 @@ ssh authentication.
 | **user**          | The username to use when connecting to the server. |
 | **private_key**   | The path to the private key of the user. |
 
-#### <a id="resources-configuration-ssh-example"></a> Example
+#### Example <a id="resources-configuration-ssh-example"></a>
 
 ```
 

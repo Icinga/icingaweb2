@@ -1,6 +1,6 @@
-# <a id="selinux"></a> SELinux
+# SELinux <a id="selinux"></a>
 
-## <a id="selinux-introduction"></a> Introduction
+## Introduction <a id="selinux-introduction"></a>
 
 SELinux is a mandatory access control (MAC) system on Linux which adds a fine granular permission system for access
 to all resources on the system such as files, devices, networks and inter-process communication.
@@ -11,7 +11,7 @@ For more details on SELinux and how to actually use and administrate it on your 
 For a simplified (and funny) introduction download the [SELinux Coloring Book](https://github.com/mairin/selinux-coloring-book).
 
 
-## <a id="selinux-policy"></a> Policy
+## Policy <a id="selinux-policy"></a>
 
 Icinga Web 2 is providing its own SELinux policy for Red Hat Enterprise Linux 7 and its derivates running the targeted
 policy which confines Icinga Web 2 with support for all its modules. All other distributions will require some tweaks.
@@ -20,7 +20,7 @@ It is not upstreamed to the reference policies yet.
 The policy for Icinga Web 2 will also require the policy for Icinga 2 which provides access to its interfaces.
 It covers only the scenario running Icinga Web 2 in Apache HTTP Server with mod_php.
 
-## <a id="selinux-policy-installation"></a> Installation
+## Installation <a id="selinux-policy-installation"></a>
 
 There are two ways to install the SELinux Policy for Icinga Web 2 on Enterprise Linux 7.
 Either install it from the provided package which is the preferred option or intall the policy manually, if you need
@@ -42,13 +42,13 @@ Verify that the system runs in enforcing mode.
 If problems occur, you can set icinga2 or httpd to run to run its domain in permissive mode.
 You can change the configured mode by editing `/etc/selinux/config` and the current mode by executing `setenforce 0`.
 
-### <a id="selinux-policy-installation-package"></a> Package installation
+### Package installation <a id="selinux-policy-installation-package"></a>
 
 Simply add the `selinux` subpackage to your installation.
 
     yum install icingaweb2-selinux
 
-### <a id="selinux-policy-installation-manual"></a> Manual installation
+### Manual installation <a id="selinux-policy-installation-manual"></a>
 
 This section describes the manual installation to support development and testing.
 
@@ -73,19 +73,19 @@ Verify that Apache runs in its own domain `httpd_t` and the Icinga Web 2 configu
     ls -ldZ /etc/icingaweb2/
     # drwxrws---. root icingaweb2 system_u:object_r:icingaweb2_config_t:s0 /etc/icingaweb2/
 
-## <a id="selinux-policy-general"></a> General
+## General <a id="selinux-policy-general"></a>
 
 When the SELinux policy package for Icinga Web 2 is installed, it creates its own type of apache content and labels its
 configuration `icingaweb2_config_t` to allow confining access to it.
 
-## <a id="selinux-policy-types"></a> Types
+## Types <a id="selinux-policy-types"></a>
 
 The configuration is labeled `icingaweb2_config_t` and other services can request access to it by using the interfaces
 `icingaweb2_read_config` and `icingaweb2_manage_config`.
 Files requiring read access are labeled `icingaweb2_content_t`. Files requiring write access are labeled
 `icingaweb2_rw_content_t`.
 
-## <a id="selinux-policy-booleans"></a> Booleans
+## Booleans <a id="selinux-policy-booleans"></a>
 
 SELinux is based on the least level of access required for a service to run. Using booleans you can grant more access in
 a defined way. The Icinga Web 2 policy package provides the following booleans.
@@ -96,7 +96,7 @@ Having this boolean enabled allows httpd to write to the configuration labeled `
 default. If not needed, you can disable it for more security. But this will disable all web based configuration of
 Icinga Web 2.
 
-## <a id="selinux-bugreports"></a> Bugreports
+## Bugreports <a id="selinux-bugreports"></a>
 
 If you experience any problems while running SELinux in enforcing mode try to reproduce it in permissive mode. If the
 problem persists, it is not related to SELinux because in permissive mode SELinux will not deny anything.

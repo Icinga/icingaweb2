@@ -1,4 +1,4 @@
-# <a id="installation"></a> Installation
+# Installation <a id="installation"></a>
 
 The preferred way of installing Icinga Web 2 is to use the official package repositories depending on which operating
 system and distribution you are running. But it is also possible to install Icinga Web 2 directly from source.
@@ -7,7 +7,7 @@ In case you are upgrading from an older version of Icinga Web 2
 please make sure to read the [upgrading](02-Installation.md#upgrading) section
 thoroughly.
 
-## <a id="installing-requirements"></a> Installing Requirements
+## Installing Requirements <a id="installing-requirements"></a>
 
 * A web server, e.g. Apache or nginx
 * PHP >= 5.3.0 w/ gettext, intl, mbstring and OpenSSL support
@@ -18,7 +18,7 @@ thoroughly.
 * MySQL or PostgreSQL PHP libraries
 * cURL PHP library when using the Icinga 2 API for transmitting external commands
 
-### <a id="pagespeed-incompatibility"></a> PageSpeed Module Incompatibility
+### PageSpeed Module Incompatibility <a id="pagespeed-incompatibility"></a>
 
 It seems that Web 2 is not compatible with the PageSpeed module. Please disable the PageSpeed module using one of the
 following methods.
@@ -33,7 +33,7 @@ ModPagespeedDisallow "*/icingaweb2/*"
 pagespeed Disallow "*/icingaweb2/*";
 ```
 
-## <a id="installing-from-package"></a> Installing Icinga Web 2 from Package
+## Installing Icinga Web 2 from Package <a id="installing-from-package"></a>
 
 Below is a list of official package repositories for installing Icinga Web 2 for various operating systems.
 
@@ -52,7 +52,7 @@ Below is a list of official package repositories for installing Icinga Web 2 for
 Packages for distributions other than the ones listed above may also be available.
 Please contact your distribution packagers.
 
-### <a id="package-repositories"></a> Setting up Package Repositories
+### Setting up Package Repositories <a id="package-repositories"></a>
 
 You need to add the Icinga repository to your package management configuration for installing Icinga Web 2.
 If you've already configured your OS to use the Icinga repository for installing Icinga 2, you may skip this step.
@@ -119,7 +119,7 @@ apk update
 >
 > Latest version of Icinga Web 2 is in the edge repository, which is the -dev branch.
 
-#### <a id="package-repositories-rhel-notes"></a> RHEL/CentOS Notes
+#### RHEL/CentOS Notes <a id="package-repositories-rhel-notes"></a>
 
 The packages for RHEL/CentOS depend on other packages which are distributed as part of the
 [EPEL repository](http://fedoraproject.org/wiki/EPEL). Please make sure to enable this repository by following
@@ -128,14 +128,14 @@ The packages for RHEL/CentOS depend on other packages which are distributed as p
 > Please note that installing Icinga Web 2 on **RHEL/CentOS 5** is not supported due to EOL versions of PHP and PostgreSQL.
 
 
-#### <a id="package-repositories-alpine-notes"></a> Alpine Linux Notes
+#### Alpine Linux Notes <a id="package-repositories-alpine-notes"></a>
 
 The example provided suppose that you are running Alpine edge, which is the -dev branch and is a rolling release.
 If you are using a stable version, in order to use the latest Icinga Web 2 version you should "pin" the edge repository.
 In order to correctly manage your repository, please follow
 [these instructions](https://wiki.alpinelinux.org/wiki/Alpine_Linux_package_management).
 
-### <a id="installing-from-package-example"></a> Installing Icinga Web 2
+### Installing Icinga Web 2 <a id="installing-from-package-example"></a>
 
 You can install Icinga Web 2 by using your distribution's package manager to install the `icingaweb2` package.
 Below is a list with examples for various distributions. The additional package `icingacli` is necessary on RPM based systems for being able to follow further steps in this guide. In DEB based systems, the icingacli binary is included in the icingaweb2 package.
@@ -162,7 +162,7 @@ apk add icingaweb2
 ```
 For Alpine Linux please read the [package repositories notes](#package-repositories-alpine-notes).
 
-### <a id="preparing-web-setup-from-package"></a> Preparing Web Setup
+### Preparing Web Setup <a id="preparing-web-setup-from-package"></a>
 
 You can set up Icinga Web 2 quickly and easily with the Icinga Web 2 setup wizard which is available the first time
 you visit Icinga Web 2 in your browser. When using the web setup you are required to authenticate using a token.
@@ -179,12 +179,12 @@ icingacli setup token show
 Finally visit Icinga Web 2 in your browser to access the setup wizard and complete the installation:
 `/icingaweb2/setup`.
 
-## <a id="installing-from-source"></a> Installing Icinga Web 2 from Source
+## Installing Icinga Web 2 from Source <a id="installing-from-source"></a>
 
 Although the preferred way of installing Icinga Web 2 is to use packages, it is also possible to install Icinga Web 2
 directly from source.
 
-### <a id="getting-the-source"></a> Getting the Source
+### Getting the Source <a id="getting-the-source"></a>
 
 First of all, you need to download the sources. Icinga Web 2 is available through a Git repository. You can clone this
 repository either via git or http protocol using the following URLs:
@@ -200,7 +200,7 @@ This version also offers snapshots for easy download which you can use if you do
 git clone git://git.icinga.com/icingaweb2.git
 ```
 
-### <a id="installing-from-source-requirements"></a> Installing Requirements from Source
+### Installing Requirements from Source <a id="installing-from-source-requirements"></a>
 
 You will need to install certain dependencies depending on your setup listed [here](02-Installation.md#installing-requirements).
 
@@ -217,7 +217,7 @@ yum install php php-gd php-intl php-ZendFramework php-ZendFramework-Db-Adapter-P
 The setup wizard will check the pre-requisites later on.
 
 
-### <a id="installing-from-source-example"></a> Installing Icinga Web 2
+### Installing Icinga Web 2 <a id="installing-from-source-example"></a>
 
 Choose a target directory and move Icinga Web 2 there.
 
@@ -225,7 +225,7 @@ Choose a target directory and move Icinga Web 2 there.
 mv icingaweb2 /usr/share/icingaweb2
 ```
 
-### <a id="configuring-web-server"></a> Configuring the Web Server
+### Configuring the Web Server <a id="configuring-web-server"></a>
 
 Use `icingacli` to generate web server configuration for either Apache or nginx.
 
@@ -261,7 +261,7 @@ Example for Apache on Alpine Linux:
 ```
 icingacli setup config webserver apache --document-root /usr/share/webapps/icingaweb2/public > /etc/apache2/conf.d/icingaweb2.conf
 ```
-### <a id="preparing-web-setup-from-source"></a> Preparing Icinga Web 2 Setup
+### Preparing Icinga Web 2 Setup <a id="preparing-web-setup-from-source"></a>
 
 You can set up Icinga Web 2 quickly and easily with the Icinga Web 2 setup wizard which is available the first time
 you visit Icinga Web 2 in your browser. Please follow the steps listed below for preparing the web setup.
@@ -326,7 +326,7 @@ In case you do not remember the token you can show it using the `icingacli`:
 ./bin/icingacli setup token show
 ```
 
-### <a id="web-setup-from-source-wizard"></a> Icinga Web 2 Setup Wizard
+### Icinga Web 2 Setup Wizard <a id="web-setup-from-source-wizard"></a>
 
 Finally visit Icinga Web 2 in your browser to access the setup wizard and complete the installation:
 `/icingaweb2/setup`.
@@ -334,7 +334,7 @@ Finally visit Icinga Web 2 in your browser to access the setup wizard and comple
 Paste the previously generated token and follow the steps on-screen. Then you are done here.
 
 
-### <a id="web-setup-manual-from-source"></a> Icinga Web 2 Manual Setup
+### Icinga Web 2 Manual Setup <a id="web-setup-manual-from-source"></a>
 
 If you have chosen not to run the setup wizard, you will need further knowledge
 about
@@ -354,7 +354,7 @@ Puppet, Ansible, Chef, etc. modules.
 > If you are unsure about certain settings, use the [setup wizard](02-Installation.md#web-setup-wizard-from-source) once
 > and then collect the generated configuration as well as sql dumps.
 
-#### <a id="web-setup-manual-from-source-database"></a> Icinga Web 2 Manual Database Setup
+#### Icinga Web 2 Manual Database Setup <a id="web-setup-manual-from-source-database"></a>
 
 Create the database and add a new user as shown below for MySQL:
 
@@ -379,7 +379,7 @@ INSERT INTO icingaweb_user (name, active, password_hash) VALUES ('icingaadmin', 
 quit
 ```
 
-#### <a id="web-setup-manual-from-source-config"></a> Icinga Web 2 Manual Configuration
+#### Icinga Web 2 Manual Configuration <a id="web-setup-manual-from-source-config"></a>
 
 
 [resources.ini](04-Resources.md#resources) providing the details for the Icinga Web 2 and
@@ -445,7 +445,7 @@ users               = "icingaadmin"
 permissions         = "*"
 ```
 
-#### <a id="web-setup-manual-from-source-config-monitoring-module"></a> Icinga Web 2 Manual Configuration Monitoring Module
+#### Icinga Web 2 Manual Configuration Monitoring Module <a id="web-setup-manual-from-source-config-monitoring-module"></a>
 
 
 **config.ini** defining additional security settings.
@@ -477,33 +477,33 @@ transport           = "local"
 path                = "/var/run/icinga2/cmd/icinga2.cmd"
 ```
 
-#### <a id="web-setup-manual-from-source-login"></a> Icinga Web 2 Manual Setup Login
+#### Icinga Web 2 Manual Setup Login <a id="web-setup-manual-from-source-login"></a>
 
 Finally visit Icinga Web 2 in your browser to login as `icingaadmin` user: `/icingaweb2`.
 
 
-## <a id="upgrading"></a> Upgrading Icinga Web 2
+## Upgrading Icinga Web 2 <a id="upgrading"></a>
 
-### <a id="upgrading-to-2.4.x"></a> Upgrading to Icinga Web 2 2.4.x
+### Upgrading to Icinga Web 2 2.4.x <a id="upgrading-to-2.4.x"></a>
 
 * Icinga Web 2 version 2.4.x does not introduce any backward incompatible change.
 
-### <a id="upgrading-to-2.3.x"></a> Upgrading to Icinga Web 2 2.3.x
+### Upgrading to Icinga Web 2 2.3.x <a id="upgrading-to-2.3.x"></a>
 
 * Icinga Web 2 version 2.3.x does not introduce any backward incompatible change.
 
-### <a id="upgrading-to-2.2.0"></a> Upgrading to Icinga Web 2 2.2.0
+### Upgrading to Icinga Web 2 2.2.0 <a id="upgrading-to-2.2.0"></a>
 
 * The menu entry `Authorization` beneath `Config` has been renamed to `Authentication`. The role, user backend and user
   group backend configuration which was previously found beneath `Authentication` has been moved to `Application`.
   
-### <a id="upgrading-to-2.1.x"></a> Upgrading to Icinga Web 2 2.1.x
+### Upgrading to Icinga Web 2 2.1.x <a id="upgrading-to-2.1.x"></a>
 
 * Since Icinga Web 2 version 2.1.3 LDAP user group backends respect the configuration option `group_filter`.
   Users who changed the configuration manually and used the option `filter` instead
   have to change it back to `group_filter`.
 
-### <a id="upgrading-to-2.0.0"></a> Upgrading to Icinga Web 2 2.0.0
+### Upgrading to Icinga Web 2 2.0.0 <a id="upgrading-to-2.0.0"></a>
 
 * Icinga Web 2 installations from package on RHEL/CentOS 7 now depend on `php-ZendFramework` which is available through
   the [EPEL repository](http://fedoraproject.org/wiki/EPEL). Before, Zend was installed as Icinga Web 2 vendor library
@@ -525,7 +525,7 @@ Finally visit Icinga Web 2 in your browser to login as `icingaadmin` user: `/ici
   **&lt;config-dir&gt;/preferences/&lt;username&gt;/config.ini**.
   The content of the file remains unchanged.
 
-### <a id="upgrading-to-rc1"></a> Upgrading to Icinga Web 2 Release Candidate 1
+### Upgrading to Icinga Web 2 Release Candidate 1 <a id="upgrading-to-rc1"></a>
 
 The first release candidate of Icinga Web 2 introduces the following non-backward compatible changes:
 
@@ -544,12 +544,12 @@ The first release candidate of Icinga Web 2 introduces the following non-backwar
   predefined subset of filter columns. Please see the module's security
   related documentation for more details.
 
-### <a id="upgrading-to-beta3"></a> Upgrading to Icinga Web 2 Beta 3
+### Upgrading to Icinga Web 2 Beta 3 <a id="upgrading-to-beta3"></a>
 
 Because Icinga Web 2 Beta 3 does not introduce any backward incompatible change you don't have to change your
 configuration files after upgrading to Icinga Web 2 Beta 3.
 
-### <a id="upgrading-to-beta2"></a> Upgrading to Icinga Web 2 Beta 2
+### Upgrading to Icinga Web 2 Beta 2 <a id="upgrading-to-beta2"></a>
 
 Icinga Web 2 Beta 2 introduces access control based on roles for secured actions. If you've already set up Icinga Web 2,
 you are required to create the file **roles.ini** beneath Icinga Web 2's configuration directory with the following
