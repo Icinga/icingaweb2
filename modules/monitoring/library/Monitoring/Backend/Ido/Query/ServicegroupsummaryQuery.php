@@ -61,7 +61,7 @@ class ServicegroupsummaryQuery extends IdoQuery
     {
         // TODO(el): Allow to switch between hard and soft service_states
         $subQuery = $this->createSubQuery(
-            'Servicegroup',
+            'Servicestatus',
             array(
                 'servicegroup_alias',
                 'servicegroup_name',
@@ -70,6 +70,7 @@ class ServicegroupsummaryQuery extends IdoQuery
             )
         );
         $subQuery->setIsSubQuery(true);
+        $subQuery->select()->where('sgo.name1 IS NOT NULL');
         $this->subQuery = $subQuery;
         $this->select->from(array('servicesgroupsummary' => $this->subQuery), array());
         $this->group(array('servicegroup_name'));
