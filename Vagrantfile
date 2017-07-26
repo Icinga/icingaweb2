@@ -28,8 +28,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
     p.name = "Icinga Web 2 Development"
 
-    # Update Parallels Tools automatically
-    p.update_guest_tools = true
+    # Update Parallels Tools automatically ...
+    p.update_guest_tools = false
+    # ... but don't fail completely. (see the shell script)
+    override.vm.provision :shell, :run => "always", :path => ".puppet/manifests/parallels-upgrade-guest-tools.sh"
 
     # Set power consumption mode to "Better Performance"
     p.optimize_power_consumption = false
