@@ -175,17 +175,16 @@ class HoststatusQuery extends IdoQuery
         if (version_compare($this->getIdoVersion(), '1.10.0', '<')) {
             $this->columnMap['hoststatus']['host_check_source'] = '(NULL)';
         }
-
         if (version_compare($this->getIdoVersion(), '1.13.0', '<')) {
             $this->columnMap['hoststatus']['host_is_reachable'] = '(NULL)';
         }
 
         $this->select->from(
-            array('h' => $this->prefix . 'hosts'),
+            array('ho' => $this->prefix . 'objects'),
             array()
         )->join(
-            array('ho' => $this->prefix . 'objects'),
-            'ho.object_id = h.host_object_id AND ho.is_active = 1 AND ho.objecttype_id = 1',
+            array('h' => $this->prefix . 'hosts'),
+            'h.host_object_id = ho.object_id AND ho.is_active = 1 AND ho.objecttype_id = 1',
             array()
         );
         $this->joinedVirtualTables['hosts'] = true;
