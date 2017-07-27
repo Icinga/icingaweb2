@@ -1468,7 +1468,7 @@ msgstr "Ihre PHP-Version: %s."
 #: /vagrant/modules/setup/application/forms/LdapDiscoveryPage.php:33
 msgid ""
 "You can use this page to discover LDAP or ActiveDirectory servers  for "
-"authentication. If you don' want to execute a discovery, just skip this step."
+"authentication. If you don't want to execute a discovery, just skip this step."
 msgstr ""
 "Diese Seite kann genutzt werden, um LDAP- oder ActiveDirectory-Server für "
 "die Authentifizierung zu suchen. Wenn eine solche Suche nicht erwünscht ist, "

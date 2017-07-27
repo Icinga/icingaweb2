@@ -1417,7 +1417,7 @@ msgstr "Stai utilizzando PHP %s"
 #: /usr/share/icingaweb2/modules/setup/application/forms/LdapDiscoveryPage.php:32
 msgid ""
 "You can use this page to discover LDAP or ActiveDirectory servers  for "
-"authentication. If you don' want to execute a discovery, just skip this step."
+"authentication. If you don't want to execute a discovery, just skip this step."
 msgstr ""
 "Utilizza questa pagina per la ricerca di server LDAP o ActiveDirectory. Se "
 "non vuoi eseguire una ricerca automatica, salta questo passaggio."
