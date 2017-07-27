@@ -8,7 +8,7 @@ use Icinga\Authentication\Auth;
 use Icinga\Data\Filter\Filter;
 use Icinga\Data\Filterable;
 use Icinga\Module\Monitoring\Backend\MonitoringBackend;
-use Icinga\Web\Navigation\Renderer\SummaryNavigationItemRenderer;
+use Icinga\Web\Navigation\Renderer\BadgeNavigationItemRenderer;
 
 /**
  * Render generic dataView columns as badges in MenuItems
@@ -20,7 +20,7 @@ use Icinga\Web\Navigation\Renderer\SummaryNavigationItemRenderer;
  * column to fetch using the option 'column' and the dataView from which the columns
  * will be fetched using the option 'dataView'.
  */
-class MonitoringBadgeNavigationItemRenderer extends SummaryNavigationItemRenderer
+class MonitoringBadgeNavigationItemRenderer extends BadgeNavigationItemRenderer
 {
     /**
      * Cached count
