@@ -78,6 +78,7 @@ class HoststatusQuery extends IdoQuery
             'host_last_hard_state_change'           => 'UNIX_TIMESTAMP(hs.last_hard_state_change)',
             'host_last_notification'                => 'UNIX_TIMESTAMP(hs.last_notification)',
             'host_last_state_change'                => 'UNIX_TIMESTAMP(hs.last_state_change)',
+            'host_last_state_change_ts'             => 'hs.last_state_change',
             'host_last_time_down'                   => 'UNIX_TIMESTAMP(hs.last_time_down)',
             'host_last_time_unreachable'            => 'UNIX_TIMESTAMP(hs.last_time_unreachable)',
             'host_last_time_up'                     => 'UNIX_TIMESTAMP(hs.last_time_up)',
