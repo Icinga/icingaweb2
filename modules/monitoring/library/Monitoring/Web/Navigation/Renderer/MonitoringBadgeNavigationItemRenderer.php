@@ -4,6 +4,7 @@
 namespace Icinga\Module\Monitoring\Web\Navigation\Renderer;
 
 use Exception;
+use Icinga\Application\Logger;
 use Icinga\Authentication\Auth;
 use Icinga\Data\Filter\Filter;
 use Icinga\Data\Filterable;
@@ -142,8 +143,12 @@ class MonitoringBadgeNavigationItemRenderer extends BadgeNavigationItemRenderer
         if ($this->count === null) {
             try {
                 $summary = $this->fetchDataView();
-            } catch (Exception $_) {
-                $this->count = 0;
+            } catch (Exception $e) {
+                Logger::debug($e);
+                $this->count = 1;
+                $this->state = static::STATE_UNKNOWN;
+                $this->title = $e->getMessage();
+                return $this->count;
             }
             $count = 0;
             $titles = array();
