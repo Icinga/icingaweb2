@@ -192,6 +192,7 @@ class ServicestatusQuery extends IdoQuery
             'service_last_hard_state_change'            => 'UNIX_TIMESTAMP(ss.last_hard_state_change)',
             'service_last_notification'                 => 'UNIX_TIMESTAMP(ss.last_notification)',
             'service_last_state_change'                 => 'UNIX_TIMESTAMP(ss.last_state_change)',
+            'service_last_state_change_ts'              => 'ss.last_state_change',
             'service_last_time_critical'                => 'ss.last_time_critical',
             'service_last_time_ok'                      => 'ss.last_time_ok',
             'service_last_time_unknown'                 => 'ss.last_time_unknown',
