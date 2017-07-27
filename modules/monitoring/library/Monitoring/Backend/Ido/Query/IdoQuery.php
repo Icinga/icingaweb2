@@ -1152,6 +1152,9 @@ abstract class IdoQuery extends DbQuery
 
         $groupedTables = array();
         foreach ($this->groupBase as $baseTable => $aliasedPks) {
+            if (! $this->hasJoinedVirtualTable($baseTable)) {
+                continue;
+            }
             $groupedTables[$baseTable] = true;
             foreach ($aliasedPks as $aliasedPk) {
                 $group[] = $aliasedPk;
