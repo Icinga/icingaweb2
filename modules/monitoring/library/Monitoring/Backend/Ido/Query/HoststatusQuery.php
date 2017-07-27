@@ -3,8 +3,6 @@
 
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
-use Zend_Db_Expr;
-
 class HoststatusQuery extends IdoQuery
 {
     /**
