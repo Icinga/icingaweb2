@@ -136,7 +136,7 @@ $section->add(N_('Host Problems'), array(
             'hosts_down_unhandled' => $this->translate('%d unhandled hosts down')
         ),
         'state'    => 'critical',
-        'dataView' => 'statussummary'
+        'dataView' => 'unhandledhostproblems'
     ),
     'url'       => 'monitoring/list/hosts?host_problem=1&sort=host_severity',
     'priority'  => 50
@@ -148,7 +148,7 @@ $section->add(N_('Service Problems'), array(
             'services_critical_unhandled' => $this->translate('%d unhandled services critical')
         ),
         'state'    => 'critical',
-        'dataView' => 'statussummary'
+        'dataView' => 'unhandledserviceproblems'
     ),
     'url'       => 'monitoring/list/services?service_problem=1&sort=service_severity&dir=desc',
     'priority'  => 60
