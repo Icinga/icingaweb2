@@ -108,8 +108,7 @@ class HostStatus extends DataView
             'host_severity' => array(
                 'columns' => array(
                     'host_severity',
-                    'host_last_state_change DESC',
-                    'host_display_name ASC'
+                    'host_last_state_change DESC'
                 ),
                 'order' => self::SORT_DESC
             ),
