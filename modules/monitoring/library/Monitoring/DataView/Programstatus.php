@@ -41,16 +41,4 @@ class Programstatus extends DataView
             'global_service_event_handler',
         );
     }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getSortRules()
-    {
-        return array(
-            'id' => array(
-                'order' => self::SORT_DESC
-            )
-        );
-    }
 }
