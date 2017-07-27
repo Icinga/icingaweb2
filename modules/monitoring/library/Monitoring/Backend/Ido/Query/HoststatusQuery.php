@@ -134,8 +134,8 @@ class HoststatusQuery extends IdoQuery
                 END
             ELSE
                 CASE WHEN hs.has_been_checked = 0 OR hs.has_been_checked IS NULL THEN 16
-                     WHEN hs.current_state = 1 THEN 32
-                     WHEN hs.current_state = 2 THEN 64
+                     WHEN hs.current_state = 1 THEN 64
+                     WHEN hs.current_state = 2 THEN 32
                      ELSE 256
                 END
                 +
