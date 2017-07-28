@@ -1,4 +1,4 @@
-# <a id="security"></a> Security
+# Security <a id="security"></a>
 
 Access control is a vital part of configuring Icinga Web 2 in a secure way.
 It is important that not every user that has access to Icinga Web 2 is able
@@ -11,7 +11,7 @@ environment they are in charge of.
 This chapter will describe how to do the security configuration of Icinga Web 2
 and how to apply permissions and restrictions to users or groups of users.
 
-## <a id="security-basics"></a> Basics
+## Basics <a id="security-basics"></a>
 
 Icinga Web 2 access control is done by defining **roles** that associate permissions
 and restrictions with **users** and **groups**. There are two general kinds of
@@ -28,7 +28,7 @@ A permission is a simple list of identifiers of actions a user is
 allowed to do. Permissions are described in greater detail in the
 section [Permissions](#permissions).
 
-### <a id="security-basics-objects"></a> Objects
+### Objects <a id="security-basics-objects"></a>
 
 There are all kinds of different objects in Icinga Web 2: Hosts, Services, Notifications, Downtimes and Events.
 
@@ -118,7 +118,7 @@ allows the hosts and services that match the filter `host_name=*win*` to be disp
 by this role.
 
 
-#### <a id="syntax"></a> Syntax
+#### Syntax <a id="syntax"></a>
 
 Each role is defined as a section, with the name of the role as section name. The following
 attributes can be defined for each role in a default Icinga Web 2 installation:
@@ -133,7 +133,7 @@ attributes can be defined for each role in a default Icinga Web 2 installation:
 
 
 
-## <a id="permissions"></a> Permissions
+## Permissions <a id="permissions"></a>
 
 Permissions can be used to allow users or groups certain **actions**. By default,
 all actions are **prohibited** and must be allowed explicitly by a role for any user.
@@ -153,7 +153,7 @@ a module permission in the format `module/<moduleName>` for each installed modul
 When multiple roles assign permissions to the same user (either directly or indirectly
 through a group) all permissions are added together to get the users actual permission set.
 
-### <a id="permissions-global"></a> Global Permissions
+### Global Permissions <a id="permissions-global"></a>
 
 | Name                          | Permits      |
 | ----------------------------- | ------------ |
@@ -163,13 +163,13 @@ through a group) all permissions are added together to get the users actual perm
 | **module/&lt;moduleName&gt;** | allow access to module &lt;moduleName&gt; |
 
 
-### <a id="permissions-module"></a> Monitoring Module Permissions
+### Monitoring Module Permissions <a id="permissions-module"></a>
 
 The built-in monitoring module defines an additional set of permissions, that
 is described in detail in the monitoring module documentation.
 
 
-## <a id="restrictions"></a> Restrictions
+## Restrictions <a id="restrictions"></a>
 
 Restrictions can be used to define what a user or group can see by specifying
 a filter expression that applies to a defined set of data. By default, when no
@@ -213,7 +213,7 @@ results of this query instead:
          +--- service_handled = 0
 
 
-#### <a id="stacking-filters"></a> Stacking Filters
+#### Stacking Filters <a id="stacking-filters"></a>
 
 When multiple roles assign restrictions to the same user, either directly or indirectly
 through a group, all filters will be combined using an **OR-Clause**, resulting in the final

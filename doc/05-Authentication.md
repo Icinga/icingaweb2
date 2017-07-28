@@ -1,4 +1,4 @@
-# <a id="authentication"></a> Authentication
+# Authentication <a id="authentication"></a>
 
 **Choosing the Authentication Method**
 
@@ -8,7 +8,7 @@ authentication to the web server.
 Authentication methods can be chained to set up fallback authentication methods
 or if users are spread over multiple places.
 
-## <a id="authentication-configuration"></a> Configuration
+## Configuration <a id="authentication-configuration"></a>
 
 Authentication methods are configured in the INI file **config/authentication.ini**.
 
@@ -18,7 +18,7 @@ The order of entries in the authentication configuration determines the order of
 If the current authentication method errors or if the current authentication method does not know the account being
 authenticated, the next authentication method will be used.
 
-## <a id="authentication-configuration-external-authentication"></a> External Authentication
+## External Authentication <a id="authentication-configuration-external-authentication"></a>
 
 For delegating authentication to the web server simply add `autologin` to your authentication configuration:
 
@@ -29,7 +29,7 @@ backend = external
 
 If your web server is not configured for authentication though, the `autologin` section has no effect.
 
-### <a id="authentication-configuration-external-authentication-example"></a> Example Configuration for Apache and Basic Authentication
+### Example Configuration for Apache and Basic Authentication <a id="authentication-configuration-external-authentication-example"></a>
 
 The following example will show you how to enable external authentication in Apache
 using **Basic access authentication**.
@@ -60,13 +60,13 @@ Require valid-user
 
 Restart your web server to apply the changes.
 
-## <a id="authentication-configuration-ad-or-ldap-authentication"></a> Active Directory or LDAP Authentication
+## Active Directory or LDAP Authentication <a id="authentication-configuration-ad-or-ldap-authentication"></a>
 
 If you want to authenticate against Active Directory or LDAP, you have to define a
 [LDAP resource](04-Resources.md#resources-configuration-ldap) which will be referenced as data source for the
 Active Directory or LDAP configuration method.
 
-### <a id="authentication-configuration-ldap-authentication"></a> LDAP
+### LDAP <a id="authentication-configuration-ldap-authentication"></a>
 
 | Directive                 | Description |
 | ------------------------- | ----------- |
@@ -91,7 +91,7 @@ Note that in case the set *user_name_attribute* holds multiple values it is requ
 values are unique. Additionally, a user will be logged in using the exact user id used to authenticate
 with Icinga Web 2 (e.g. an alias) no matter what the primary user id might actually be.
 
-### <a id="authentication-configuration-ad-authentication"></a> Active Directory
+### Active Directory <a id="authentication-configuration-ad-authentication"></a>
 
 | Directive     | Description |
 | ------------- | ----------- |
@@ -106,7 +106,7 @@ backend  = msldap
 resource = my_ad
 ```
 
-## <a id="authentication-configuration-db-authentication"></a> Database Authentication
+## Database Authentication <a id="authentication-configuration-db-authentication"></a>
 
 If you want to authenticate against a MySQL or a PostgreSQL database, you have to define a
 [database resource](04-Resources.md#resources-configuration-database) which will be referenced as data source for the database
@@ -125,7 +125,7 @@ backend  = db
 resource = icingaweb-mysql
 ```
 
-### <a id="authentication-configuration-db-setup"></a> Database Setup
+### Database Setup <a id="authentication-configuration-db-setup"></a>
 
 For authenticating against a database, you have to import one of the following database schemas:
 
@@ -151,7 +151,7 @@ Insert the user into the database using the generated password hash:
 INSERT INTO icingaweb_user (name, active, password_hash) VALUES ('icingaadmin', 1, 'hash from openssl');
 ```
 
-## <a id="domain-aware-auth"></a> Domain-aware Authentication
+## Domain-aware Authentication <a id="domain-aware-auth"></a>
 
 If there are multiple LDAP/AD authentication backends with distinct domains, you should make Icinga Web 2 aware of the
 domains. This is possible since version 2.5 and can be done by configuring each LDAP/AD backend's domain. You can also
@@ -184,7 +184,7 @@ converted to "rroe@EXAMPLE" as soon as the user logs in.
 Enabling domain-awareness or changing domains in existing setups requires migration of the usernames in the Icinga Web 2
 configuration. Consult `icingacli --help migrate config users` for details.
 
-### <a id="default-auth-domain"></a> Default Domain
+### Default Domain <a id="default-auth-domain"></a>
 
 For the sake of simplicity a default domain can be configured (in `config.ini`).
 
@@ -198,15 +198,15 @@ default_domain = "icinga.com"
 If you configure the default domain like above, the user "jdoe@icinga.com" will be able to just type "jdoe" as username
 while logging in.
 
-### <a id="domain-aware-auth-process"></a> How it works
+### How it works <a id="domain-aware-auth-process"></a>
 
-### <a id="domain-aware-auth-ad"></a> Active Directory
+### Active Directory <a id="domain-aware-auth-ad"></a>
 
 When the user "jdoe@ICINGA" logs in, Icinga Web 2 walks through all configured authentication backends until it finds
 one which is responsible for that user -- e.g. an Active Directory backend with the domain "ICINGA". Then Icinga Web 2
 asks that backend to authenticate the user with the sAMAccountName "jdoe".
 
-### <a id="domain-aware-auth-sqldb"></a> SQL Database
+### SQL Database <a id="domain-aware-auth-sqldb"></a>
 
 When the user "jdoe@icinga.com" logs in, Icinga Web 2 walks through all configured authentication backends until it
 finds one which is responsible for that user -- e.g. a MySQL backend (SQL database backends aren't domain-aware). Then

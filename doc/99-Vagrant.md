@@ -1,4 +1,4 @@
-# <a id="vagrant"></a> Vagrant
+# Vagrant <a id="vagrant"></a>
 
 This chapter shows how to set up and use our [Icinga Vagrant
 boxes](https://github.com/icinga/icinga-vagrant) that we've created for
