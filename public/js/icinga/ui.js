@@ -600,12 +600,7 @@
                             )
                             .prepend(
                                 $('<div id="mobile-menu-toggle"><button><i class="icon-menu"></i></button></div>')
-                            )
-                            .css({
-                                paddingBottom: $('#mobile-menu-toggle').height(),
-                                top: 0,
-                                zIndex: 3
-                            });
+                            );
                         $search.on('keypress', this.closeMobileMenu);
 
                         this.mobileMenu = true;
