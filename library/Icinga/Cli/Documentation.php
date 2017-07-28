@@ -91,6 +91,12 @@ class Documentation
         return $d;
     }
 
+    /**
+     * @param   Command $command
+     * @param   string  $name
+     *
+     * @return  string
+     */
     protected function showCommandActions($command, $name)
     {
         $actions = $command->listActions();
@@ -103,7 +109,11 @@ class Documentation
                 $this->getMethodTitle($command, $action)
             );
         }
-        $d .= "\nShow help on a specific action: icingacli help $name <action>\n";
+        $d .= "\nShow help on a specific action: icingacli help ";
+        if ($command->isModule()) {
+            $d .= $command->getModuleName() . ' ';
+        }
+        $d .= "$name <action>\n";
         return $d;
     }
 
