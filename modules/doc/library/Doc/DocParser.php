@@ -109,7 +109,7 @@ class DocParser
         if ($header === null) {
             return null;
         }
-        if ($header[0] === '<'
+        if (strpos($header, '<') !== false
             && preg_match('#(?:<(?P<tag>a|span) (?:id|name)="(?P<id>.+)"></(?P=tag)>)\s*#u', $header, $match)
         ) {
             $header = str_replace($match[0], '', $header);
