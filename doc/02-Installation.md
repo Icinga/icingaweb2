@@ -344,7 +344,7 @@ about
 * additional configuration for the monitoring module (e.g. the IDO database and external command pipe from Icinga 2)
 
 This comes in handy if you are planning to deploy Icinga Web 2 automatically using
-Puppet, Ansible, Chef, etc. modules.
+Puppet, Ansible, Chef, etc.
 
 > **Warning**
 >
@@ -356,7 +356,7 @@ Puppet, Ansible, Chef, etc. modules.
 
 #### Icinga Web 2 Manual Database Setup <a id="web-setup-manual-from-source-database"></a>
 
-Create the database and add a new user as shown below for MySQL:
+Create the database and add a new user as shown below for MySQL/MariaDB:
 
 ```
 sudo mysql -p
@@ -467,20 +467,68 @@ type                = "ido"
 resource            = "icinga2"
 ```
 
-**commandtransports.ini** defining the Icinga command pipe.
+**commandtransports.ini** defining the Icinga 2 API command transport.
 
 ```
 vim /etc/icingaweb2/modules/monitoring/commandtransports.ini
 
 [icinga2]
-transport           = "local"
-path                = "/var/run/icinga2/cmd/icinga2.cmd"
+transport = "api"
+host = "localhost"
+port = "5665"
+username = "api"
+password = "api"
 ```
 
 #### Icinga Web 2 Manual Setup Login <a id="web-setup-manual-from-source-login"></a>
 
 Finally visit Icinga Web 2 in your browser to login as `icingaadmin` user: `/icingaweb2`.
 
+## Automating the Installation of Icinga Web 2
+
+If you are automating the installation of Icinga Web 2, you may want to skip the wizard and do things yourself.
+These are the steps you'd need to take assuming you are using MySQL/MariaDB. If you are using PostgreSQL please adapt
+accordingly. Note you need to have successfully completed the Icinga 2 installation, installed the Icinga Web 2 packages
+and all the other steps described above first.
+
+1. Install PHP dependencies: `php`, `php-intl`, `php-imagick`, `php-gd`, `php-mysql`, `php-curl`, `php-mbstring` used
+by Icinga Web 2.
+2. Set a timezone in `php.ini` configuration file.
+3. Create a database for Icinga Web 2, i.e. `icingaweb2`.
+4. Import the database schema: `mysql -D icingaweb2 < /usr/share/icingaweb2/etc/schema/mysql.schema.sql`.
+5. Insert administrator user in the `icingaweb2` database:
+`INSERT INTO icingaweb_user (name, active, password_hash) VALUES ('admin', 1, '<hash>')`, where `<hash>` is the output
+of `openssl passwd -1 <password>`.
+5. Make sure the `ido-mysql` and `api` features are enabled in Icinga 2: `icinga2 feature enable ido-mysql` and 
+`icinga2 feature enable api`.
+6. Generate Apache/nginx config. This command will print an apacahe config for you on stdout:
+`icingacli setup config webserver apache`. Similarly for nginx. You need to place that configuration in the right place,
+for example `/etc/apache2/sites-enabled/icingaweb2.conf`.
+7. Add `www-data` user to `icingaweb2` group if not done already (`usermod -a -G icingaweb2 www-data`).
+8. Create the Icinga Web 2 configuration in `/etc/icingaweb2`. The directory can be easily created with:
+`icingacli setup config webserver`. This command ensures that the directory has the appropriate ownership and
+permissions. If you want to create the directory manually, make sure to chown the group to `icingaweb2` and set the
+access mode to `2770`.
+
+The structure of the configurations looks like the following:
+
+```
+/etc/icingaweb2/
+/etc/icingaweb2/authentication.ini
+/etc/icingaweb2/modules
+/etc/icingaweb2/modules/monitoring
+/etc/icingaweb2/modules/monitoring/config.ini
+/etc/icingaweb2/modules/monitoring/instances.ini
+/etc/icingaweb2/modules/monitoring/backends.ini
+/etc/icingaweb2/roles.ini
+/etc/icingaweb2/config.ini
+/etc/icingaweb2/enabledModules
+/etc/icingaweb2/enabledModules/monitoring
+/etc/icingaweb2/enabledModules/doc
+/etc/icingaweb2/resources.ini
+```
+
+Have a look [here](#web-setup-manual-from-source-config) for the contents of the files.
 
 ## Upgrading Icinga Web 2 <a id="upgrading"></a>
 
