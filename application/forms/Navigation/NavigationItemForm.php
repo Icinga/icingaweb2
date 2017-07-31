@@ -47,7 +47,7 @@ class NavigationItemForm extends Form
         );
 
         $this->addElement(
-            'text',
+            'textarea',
             'url',
             array(
                 'allowEmpty'    => true,

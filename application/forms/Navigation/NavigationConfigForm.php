@@ -599,7 +599,7 @@ class NavigationConfigForm extends ConfigForm
             if ($checked || (isset($formData['shared']) && $formData['shared'])) {
                 $shared = true;
                 $this->addElement(
-                    'text',
+                    'textarea',
                     'users',
                     array(
                         'label'         => $this->translate('Users'),
@@ -609,7 +609,7 @@ class NavigationConfigForm extends ConfigForm
                     )
                 );
                 $this->addElement(
-                    'text',
+                    'textarea',
                     'groups',
                     array(
                         'label'         => $this->translate('Groups'),
