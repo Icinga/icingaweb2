@@ -721,6 +721,9 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
         $groups = array();
         foreach ($groupQuery as $row) {
             $groups[] = $row->{$this->groupNameAttribute};
+            if ($domain !== null) {
+                $groups[] = $row->{$this->groupNameAttribute} . "@$domain";
+            }
         }
 
         return $groups;
