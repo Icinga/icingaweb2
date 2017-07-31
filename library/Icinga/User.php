@@ -143,10 +143,13 @@ class User
      * Setter for preferences
      *
      * @param   Preferences     $preferences
+     *
+     * @return  $this
      */
     public function setPreferences(Preferences $preferences)
     {
         $this->preferences = $preferences;
+        return $this;
     }
 
     /**
@@ -177,10 +180,13 @@ class User
      * Set the groups this user belongs to
      *
      * @param   array   $groups
+     *
+     * @return  $this
      */
     public function setGroups(array $groups)
     {
         $this->groups = $groups;
+        return $this;
     }
 
     /**
@@ -287,6 +293,8 @@ class User
      * Setter for username
      *
      * @param   string      $name
+     *
+     * @return  $this
      */
     public function setUsername($name)
     {
@@ -302,6 +310,8 @@ class User
                 $this->domain = null;
             }
         }
+
+        return $this;
     }
 
     /**
@@ -318,10 +328,13 @@ class User
      * Setter for firstname
      *
      * @param   string      $name
+     *
+     * @return  $this
      */
     public function setFirstname($name)
     {
         $this->firstname = $name;
+        return $this;
     }
 
     /**
@@ -338,10 +351,13 @@ class User
      * Setter for lastname
      *
      * @param   string      $name
+     *
+     * @return  $this
      */
     public function setLastname($name)
     {
         $this->lastname = $name;
+        return $this;
     }
 
     /**
@@ -359,15 +375,20 @@ class User
      *
      * @param   string      $mail
      *
+     * @return  $this
+     *
      * @throws  InvalidArgumentException    When an invalid mail is provided
      */
     public function setEmail($mail)
     {
-        if (filter_var($mail, FILTER_VALIDATE_EMAIL)) {
-            $this->email = $mail;
-        } else {
-            throw new InvalidArgumentException('Invalid mail given for user ' . $this->getUsername() . ': $mail');
+        if ($mail !== null && !filter_var($mail, FILTER_VALIDATE_EMAIL)) {
+            throw new InvalidArgumentException(
+                sprintf('Invalid mail given for user %s: %s', $this->getUsername(), $mail)
+            );
         }
+
+        $this->email = $mail;
+        return $this;
     }
 
     /**
@@ -431,10 +452,13 @@ class User
      *
      * @param   string      $key
      * @param   string      $value
+     *
+     * @return  $this
      */
     public function setAdditional($key, $value)
     {
         $this->additionalInformation[$key] = $value;
+        return $this;
     }
 
     /**
@@ -474,10 +498,13 @@ class User
      *
      * @param string    $username
      * @param string    $field
+     *
+     * @return  $this
      */
     public function setExternalUserInformation($username, $field)
     {
         $this->externalUserInformation = array($username, $field);
+        return $this;
     }
 
     /**
