@@ -45,7 +45,7 @@ You need to add the Icinga repository to your package management configuration f
 If you've already configured your OS to use the Icinga repository for installing Icinga 2, you may skip this step.
 Below is a list with **examples** for various distributions.
 
-**Debian Jessie**:
+**Debian Stretch**:
 ```
 wget -O - http://packages.icinga.com/icinga.key | apt-key add -
 echo 'deb http://packages.icinga.com/debian icinga-stretch main' >/etc/apt/sources.list.d/icinga.list
