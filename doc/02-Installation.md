@@ -67,12 +67,12 @@ apt-get update
 
 **RHEL and CentOS 7**:
 ```
-yum install https://packages.icinga.com/epel/7/release/noarch/icinga-rpm-release-7-2.el7.centos.noarch.rpm
+yum install https://packages.icinga.com/epel/icinga-rpm-release-7-latest.noarch.rpm
 ```
 
-**Fedora 25**:
+**Fedora 26**:
 ```
-dnf install https://packages.icinga.com/fedora/25/release/noarch/icinga-rpm-release-25-1.fc25.noarch.rpm
+dnf install https://packages.icinga.com/fedora/icinga-rpm-release-26-latest.noarch.rpm
 ```
 
 **SLES 11**:
