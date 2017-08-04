@@ -13,25 +13,12 @@ thoroughly.
 * PHP >= 5.3.0 w/ gettext, intl, mbstring and OpenSSL support
 * Default time zone configured for PHP in the php.ini file
 * LDAP PHP library when using Active Directory or LDAP for authentication
-* Icinga 1.x w/ IDO; Icinga 2.x w/ IDO feature enabled
+* Icinga 2.x w/ IDO feature enabled or Icinga 1.x w/ IDO
 * The IDO table prefix must be icinga_ which is the default
 * MySQL or PostgreSQL PHP libraries
 * cURL PHP library when using the Icinga 2 API for transmitting external commands
 
-### PageSpeed Module Incompatibility <a id="pagespeed-incompatibility"></a>
 
-It seems that Web 2 is not compatible with the PageSpeed module. Please disable the PageSpeed module using one of the
-following methods.
-
-**Apache**:
-```
-ModPagespeedDisallow "*/icingaweb2/*"
-```
-
-**Nginx**:
-```
-pagespeed Disallow "*/icingaweb2/*";
-```
 
 ## Installing Icinga Web 2 from Package <a id="installing-from-package"></a>
 
@@ -58,15 +45,15 @@ You need to add the Icinga repository to your package management configuration f
 If you've already configured your OS to use the Icinga repository for installing Icinga 2, you may skip this step.
 Below is a list with **examples** for various distributions.
 
-**Debian Jessie**:
+**Debian Stretch**:
 ```
 wget -O - http://packages.icinga.com/icinga.key | apt-key add -
-echo 'deb http://packages.icinga.com/debian icinga-jessie main' >/etc/apt/sources.list.d/icinga.list
+echo 'deb http://packages.icinga.com/debian icinga-stretch main' >/etc/apt/sources.list.d/icinga.list
 apt-get update
 ```
 > INFO
 >
-> For other Debian versions just replace jessie with your distribution's code name.
+> For other Debian versions just replace `stretch` with your distribution's code name.
 
 **Ubuntu Xenial**:
 ```
@@ -78,18 +65,14 @@ apt-get update
 >
 > For other Ubuntu versions just replace xenial with your distribution's code name.
 
-**RHEL and CentOS**:
+**RHEL and CentOS 7**:
 ```
-rpm --import http://packages.icinga.com/icinga.key
-curl -o /etc/yum.repos.d/ICINGA-release.repo http://packages.icinga.com/epel/ICINGA-release.repo
-yum makecache
+yum install https://packages.icinga.com/epel/7/release/noarch/icinga-rpm-release-7-2.el7.centos.noarch.rpm
 ```
 
-**Fedora**:
+**Fedora 25**:
 ```
-rpm --import http://packages.icinga.com/icinga.key
-curl -o /etc/yum.repos.d/ICINGA-release.repo http://packages.icinga.com/fedora/ICINGA-release.repo
-yum makecache
+dnf install https://packages.icinga.com/fedora/25/release/noarch/icinga-rpm-release-25-1.fc25.noarch.rpm
 ```
 
 **SLES 11**:
@@ -120,10 +103,16 @@ apk update
 > Latest version of Icinga Web 2 is in the edge repository, which is the -dev branch.
 
 #### RHEL/CentOS Notes <a id="package-repositories-rhel-notes"></a>
+The packages for RHEL/CentOS depend on other packages which are distributed
+as part of the [EPEL repository](https://fedoraproject.org/wiki/EPEL).
 
-The packages for RHEL/CentOS depend on other packages which are distributed as part of the
-[EPEL repository](http://fedoraproject.org/wiki/EPEL). Please make sure to enable this repository by following
-[these instructions](http://fedoraproject.org/wiki/EPEL#How_can_I_use_these_extra_packages.3F).
+CentOS 7/6:
+```
+yum install epel-release
+```
+
+If you are using RHEL you need enable the `optional` repository and then install
+the [EPEL rpm package](https://fedoraproject.org/wiki/EPEL#How_can_I_use_these_extra_packages.3F).
 
 > Please note that installing Icinga Web 2 on **RHEL/CentOS 5** is not supported due to EOL versions of PHP and PostgreSQL.
 
@@ -483,6 +472,24 @@ password = "api"
 #### Icinga Web 2 Manual Setup Login <a id="web-setup-manual-from-source-login"></a>
 
 Finally visit Icinga Web 2 in your browser to login as `icingaadmin` user: `/icingaweb2`.
+
+## Troubleshooting <a id="troubleshooting"></a>
+
+### PageSpeed Module Incompatibility <a id="pagespeed-incompatibility"></a>
+
+It seems that Web 2 is not compatible with the PageSpeed module. Please disable the PageSpeed module using one of the
+following methods.
+
+**Apache**:
+```
+ModPagespeedDisallow "*/icingaweb2/*"
+```
+
+**Nginx**:
+```
+pagespeed Disallow "*/icingaweb2/*";
+```
+
 
 ## Automating the Installation of Icinga Web 2
 
