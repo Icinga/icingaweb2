@@ -14,7 +14,7 @@ thoroughly.
 * Default time zone configured for PHP in the php.ini file
 * LDAP PHP library when using Active Directory or LDAP for authentication
 * Icinga 2.x w/ IDO feature enabled or Icinga 1.x w/ IDO
-* The IDO table prefix must be icinga_ which is the default
+* The IDO table prefix must be `icinga_` which is the default
 * MySQL or PostgreSQL PHP libraries
 * cURL PHP library when using the Icinga 2 API for transmitting external commands
 
@@ -103,6 +103,7 @@ apk update
 > Latest version of Icinga Web 2 is in the edge repository, which is the -dev branch.
 
 #### RHEL/CentOS Notes <a id="package-repositories-rhel-notes"></a>
+
 The packages for RHEL/CentOS depend on other packages which are distributed
 as part of the [EPEL repository](https://fedoraproject.org/wiki/EPEL).
 
@@ -113,8 +114,6 @@ yum install epel-release
 
 If you are using RHEL you need enable the `optional` repository and then install
 the [EPEL rpm package](https://fedoraproject.org/wiki/EPEL#How_can_I_use_these_extra_packages.3F).
-
-> Please note that installing Icinga Web 2 on **RHEL/CentOS 5** is not supported due to EOL versions of PHP and PostgreSQL.
 
 
 #### Alpine Linux Notes <a id="package-repositories-alpine-notes"></a>
@@ -165,8 +164,28 @@ In case you do not remember the token you can show it using the `icingacli`:
 icingacli setup token show
 ```
 
+#### Preparing Web Setup on Debian <a id="preparing-web-setup-from-package-debian"></a>
+
+On Debian, you need to manually create a database and a database user prior to starting the web wizard.
+This is due to local security restrictions whereas the web wizard cannot create a database/user through
+a local unix domain socket.
+
+```
+MariaDB [mysql]> CREATE DATABASE icingaweb2;
+
+MariaDB [mysql]> GRANT ALL ON icingaweb2.* TO icingaweb2@localhost IDENTIFIED BY 'CHANGEME';
+```
+
+You may also create a separate administrative account with all privileges instead.
+
+> Note: This is only required if you are using a local database as authentication type.
+
+### Starting Web Setup <a id="starting-web-setup-from-package"></a>
+
 Finally visit Icinga Web 2 in your browser to access the setup wizard and complete the installation:
 `/icingaweb2/setup`.
+
+Note for Debian: Use the same database, user and password details created above when asked.
 
 ## Installing Icinga Web 2 from Source <a id="installing-from-source"></a>
 
