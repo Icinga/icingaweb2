@@ -26,7 +26,7 @@ All actions must be be **allowed explicitly** using permissions.
 
 A permission is a simple list of identifiers of actions a user is
 allowed to do. Permissions are described in greater detail in the
-section [Permissions](#permissions).
+section [Permissions](06-Security.md#permissions).
 
 ### Objects <a id="security-basics-objects"></a>
 
@@ -35,7 +35,7 @@ There are all kinds of different objects in Icinga Web 2: Hosts, Services, Notif
 By default, a user can **see everything**, but it is possible to **explicitly restrict** what each user can see using restrictions.
 
 Restrictions are complex filter queries that describe what objects should be displayed to a user. Restrictions are described
-in greater detail in the section [Restrictions](#restrictions).
+in greater detail in the section [Restrictions](06-Security.md#restrictions).
 
 ### <a id="security-basics-users"></a>Users
 
@@ -89,7 +89,7 @@ that match a specific query.
 The actual permission of a certain user will be determined by merging the permissions
 and restrictions of the user itself and all the groups the user is member of. Permissions can
 be simply added up, while restrictions follow a slighty more complex pattern, that is described
-in the section [Stacking Filters](#stacking-filters).
+in the section [Stacking Filters](06-Security.md#stacking-filters).
 
 ### <a id="security-roles-configuration"></a>Configuration
 
@@ -180,7 +180,7 @@ data the filter is applied to. The **filter directive** is a simple identifier, 
 defined in an Icinga Web 2 module. The only filter directive that is available
 in a default installation, is the `monitoring/filter/objects` directive, defined by the monitoring module,
 that can be used to apply filter to hosts and services. This directive was previously
-mentioned in the section [Syntax](#syntax).
+mentioned in the section [Syntax](06-Security.md#syntax).
 
 ### <a id="restrictions-filter"></a>Filter Expressions
 
