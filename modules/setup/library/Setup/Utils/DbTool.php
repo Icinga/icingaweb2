@@ -378,7 +378,12 @@ class DbTool
         } catch (PDOException $e) {
             if ($this->config['db'] === 'mysql') {
                 $code = $e->getCode();
-                if ($code !== 1040 && $code !== 1045) {
+                /*
+                 * 1040 .. Too many connections
+                 * 1045 .. Access denied for user '%s'@'%s' (using password: %s)
+                 * 1698 .. Access denied for user '%s'@'%s'
+                 */
+                if ($code !== 1040 && $code !== 1045 && $code !== 1698) {
                     throw $e;
                 }
             } elseif ($this->config['db'] === 'pgsql') {
