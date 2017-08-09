@@ -179,10 +179,12 @@ class IcingaApiCommandRenderer implements IcingaCommandRendererInterface
         $data = array(
             'author'        => $command->getAuthor(),
             'comment'       => $command->getComment(),
-            'expiry'        => $command->getExpireTime(),
             'sticky'        => $command->getSticky(),
             'notify'        => $command->getNotify()
         );
+        if ($command->getExpireTime() !== null) {
+            $data['expiry'] = $command->getExpireTime();
+        }
         $this->applyFilter($data, $command->getObject());
         return IcingaApiCommand::create($endpoint, $data);
     }
