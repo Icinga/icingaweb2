@@ -49,6 +49,10 @@
   }
 }
 
+.empty {
+  color: @gray-light;
+}
+
 .section {
   margin-bottom: 2em;
 }
@@ -172,6 +176,10 @@ a:hover > .icon-cancel {
 
 .name-value-table {
   width: 100%;
+
+  p.empty {
+    margin-bottom: 0;
+  }
 }
 
 .name-value-table > tbody > tr > th {
@@ -179,7 +187,8 @@ a:hover > .icon-cancel {
   // Reset default font-weight
   font-weight: normal;
   padding-left: 0;
-  text-align: left;
+  padding-right: 1em;
+  text-align: right;
   vertical-align: top;
   width: @name-value-table-name-width;
 }
