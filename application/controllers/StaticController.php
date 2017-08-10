@@ -86,13 +86,24 @@ class StaticController extends Controller
         }
 
         $s = stat($filePath);
-        $this->getResponse()
-            ->setHeader('Pragma', 'cache')
-            ->setHeader('Content-Type', 'image/' . $extension)
-            ->setHeader('Cache-Control', 'public, max-age=3600')
-            ->setHeader('Last-Modified', gmdate('D, d M Y H:i:s', $s['mtime']) . ' GMT')
-            ->setHeader('ETag', sprintf('%x-%x-%x', $s['ino'], $s['size'], (float) str_pad($s['mtime'], 16, '0')));
+        $eTag = sprintf('%x-%x-%x', $s['ino'], $s['size'], (float) str_pad($s['mtime'], 16, '0'));
 
-        readfile($filePath);
+        $this->getResponse()->setHeader(
+            'Cache-Control',
+            'public, max-age=1814400, stale-while-revalidate=604800',
+            true
+        );
+
+        if ($this->getRequest()->getServer('HTTP_IF_NONE_MATCH') === $eTag) {
+            $this->getResponse()
+                ->setHttpResponseCode(304);
+        } else {
+            $this->getResponse()
+                ->setHeader('ETag', $eTag)
+                ->setHeader('Content-Type', 'image/' . $extension, true)
+                ->setHeader('Last-Modified', gmdate('D, d M Y H:i:s', $s['mtime']) . ' GMT');
+
+            readfile($filePath);
+        }
     }
 }
