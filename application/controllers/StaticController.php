@@ -31,19 +31,22 @@ class StaticController extends Controller
     public function gravatarAction()
     {
         $response = $this->getResponse();
-        $response->setHeader('Pragma', 'cache')
-            ->setHeader('Cache-Control', 'public');
+        $response->setHeader('Cache-Control', 'public, max-age=1814400, stale-while-revalidate=604800', true);
+
+        $noCache = $this->getRequest()->getHeader('Cache-Control') === 'no-cache'
+            || $this->getRequest()->getHeader('Pragma') === 'no-cache';
 
         $cache = FileCache::instance();
         $filename = md5(strtolower(trim($this->getParam('email'))));
         $cacheFile = 'gravatar-' . $filename;
-        if ($etag = $cache->etagMatchesCachedFile($cacheFile)) {
-            $response->setHttpResponseCode(304);
-            return;
-        }
 
-        $response->setHeader('Content-Type', 'image/jpg');
-        if ($cache->has($cacheFile)) {
+        if (! $noCache && $cache->has($cacheFile, time() - 1814400)) {
+            if ($cache->etagMatchesCachedFile($cacheFile)) {
+                $response->setHttpResponseCode(304);
+                return;
+            }
+
+            $response->setHeader('Content-Type', 'image/jpg', true);
             $response->setHeader('ETag', sprintf('"%s"', $cache->etagForCachedFile($cacheFile)));
             $cache->send($cacheFile);
             return;
