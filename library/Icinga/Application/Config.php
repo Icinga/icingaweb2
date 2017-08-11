@@ -416,13 +416,12 @@ class Config implements Countable, Iterator, Selectable
             self::$modules[$modulename] = array();
         }
 
-        $moduleConfigs = self::$modules[$modulename];
-        if (! isset($moduleConfigs[$configname]) || $fromDisk) {
-            $moduleConfigs[$configname] = static::fromIni(
+        if (! isset(self::$modules[$modulename][$configname]) || $fromDisk) {
+            self::$modules[$modulename][$configname] = static::fromIni(
                 static::resolvePath('modules/' . $modulename . '/' . $configname . '.ini')
             );
         }
-        return $moduleConfigs[$configname];
+        return self::$modules[$modulename][$configname];
     }
 
     /**
