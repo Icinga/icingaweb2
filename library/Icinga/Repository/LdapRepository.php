@@ -74,6 +74,9 @@ abstract class LdapRepository extends Repository
      *
      * Will use the current connection's root DN if $baseDn is not given.
      *
+     * @deprecated This was only used by LdapUserGroupBackend::isMemberAttributeAmbiguous
+     *             It will be removed with 2.6.0!
+     *
      * @param   string  $dn         The object DN to check
      * @param   string  $baseDn     The base DN to compare the object DN with
      *
