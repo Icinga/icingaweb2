@@ -201,6 +201,11 @@ class FileCache
             return false;
         }
 
+        if (preg_match('/([0-9a-f]{8}-[0-9a-f]{8}-[0-9a-f]{8})-\w+/i', $match, $matches)) {
+            // Removes compression suffixes as our custom algorithm can't handle compressed cache files anyway
+            $match = $matches[1];
+        }
+
         $etag = self::etagForFiles($files);
         return $match === $etag ? $etag : false;
     }
