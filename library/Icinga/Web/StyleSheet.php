@@ -182,6 +182,7 @@ class StyleSheet
 
         $request = $styleSheet->app->getRequest();
         $response = $styleSheet->app->getResponse();
+        $response->setHeader('Cache-Control', 'public', true);
 
         $noCache = $request->getHeader('Cache-Control') === 'no-cache' || $request->getHeader('Pragma') === 'no-cache';
 
@@ -194,9 +195,7 @@ class StyleSheet
 
         $etag = FileCache::etagForFiles($styleSheet->lessCompiler->getLessFiles());
 
-        $response
-            ->setHeader('Cache-Control', 'public', true)
-            ->setHeader('ETag', $etag, true)
+        $response->setHeader('ETag', $etag, true)
             ->setHeader('Content-Type', 'text/css', true);
 
         $cacheFile = 'icinga-' . $etag . ($minified ? '.min' : '') . '.css';
