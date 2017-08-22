@@ -99,7 +99,7 @@ class FileCache
             return true;
         }
 
-        $info = stat($file);
+        $info = stat($filename);
 
         if ($info === false) {
             return false;
