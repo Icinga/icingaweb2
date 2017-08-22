@@ -31,19 +31,22 @@ class StaticController extends Controller
     public function gravatarAction()
     {
         $response = $this->getResponse();
-        $response->setHeader('Pragma', 'cache')
-            ->setHeader('Cache-Control', 'public');
+        $response->setHeader('Cache-Control', 'public, max-age=1814400, stale-while-revalidate=604800', true);
+
+        $noCache = $this->getRequest()->getHeader('Cache-Control') === 'no-cache'
+            || $this->getRequest()->getHeader('Pragma') === 'no-cache';
 
         $cache = FileCache::instance();
         $filename = md5(strtolower(trim($this->getParam('email'))));
         $cacheFile = 'gravatar-' . $filename;
-        if ($etag = $cache->etagMatchesCachedFile($cacheFile)) {
-            $response->setHttpResponseCode(304);
-            return;
-        }
 
-        $response->setHeader('Content-Type', 'image/jpg');
-        if ($cache->has($cacheFile)) {
+        if (! $noCache && $cache->has($cacheFile, time() - 1814400)) {
+            if ($cache->etagMatchesCachedFile($cacheFile)) {
+                $response->setHttpResponseCode(304);
+                return;
+            }
+
+            $response->setHeader('Content-Type', 'image/jpg', true);
             $response->setHeader('ETag', sprintf('"%s"', $cache->etagForCachedFile($cacheFile)));
             $cache->send($cacheFile);
             return;
@@ -83,13 +86,24 @@ class StaticController extends Controller
         }
 
         $s = stat($filePath);
-        $this->getResponse()
-            ->setHeader('Pragma', 'cache')
-            ->setHeader('Content-Type', 'image/' . $extension)
-            ->setHeader('Cache-Control', 'public, max-age=3600')
-            ->setHeader('Last-Modified', gmdate('D, d M Y H:i:s', $s['mtime']) . ' GMT')
-            ->setHeader('ETag', sprintf('%x-%x-%x', $s['ino'], $s['size'], (float) str_pad($s['mtime'], 16, '0')));
+        $eTag = sprintf('%x-%x-%x', $s['ino'], $s['size'], (float) str_pad($s['mtime'], 16, '0'));
 
-        readfile($filePath);
+        $this->getResponse()->setHeader(
+            'Cache-Control',
+            'public, max-age=1814400, stale-while-revalidate=604800',
+            true
+        );
+
+        if ($this->getRequest()->getServer('HTTP_IF_NONE_MATCH') === $eTag) {
+            $this->getResponse()
+                ->setHttpResponseCode(304);
+        } else {
+            $this->getResponse()
+                ->setHeader('ETag', $eTag)
+                ->setHeader('Content-Type', 'image/' . $extension, true)
+                ->setHeader('Last-Modified', gmdate('D, d M Y H:i:s', $s['mtime']) . ' GMT');
+
+            readfile($filePath);
+        }
     }
 }

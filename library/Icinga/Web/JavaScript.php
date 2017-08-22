@@ -98,13 +98,13 @@ class JavaScript
         $request = Icinga::app()->getRequest();
         $noCache = $request->getHeader('Cache-Control') === 'no-cache' || $request->getHeader('Pragma') === 'no-cache';
 
+        header('Cache-Control: public');
         if (! $noCache && FileCache::etagMatchesFiles($files)) {
             header("HTTP/1.1 304 Not Modified");
             return;
         } else {
             $etag = FileCache::etagForFiles($files);
         }
-        header('Cache-Control: public');
         header('ETag: "' . $etag . '"');
         header('Content-Type: application/javascript');
 
