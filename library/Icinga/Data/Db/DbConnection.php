@@ -203,6 +203,10 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
                 $adapter = 'Pdo_Pgsql';
                 $defaultPort = 5432;
                 break;
+            case 'ibm':
+                $adapter = 'Pdo_Ibm';
+                $defaultPort = 50000;
+                break;
             default:
                 throw new ConfigurationError(
                     'Backend "%s" is not supported',
