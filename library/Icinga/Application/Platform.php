@@ -367,6 +367,18 @@ class Platform
     }
 
     /**
+     * Return whether it's possible to connect to a IBM DB2 database
+     *
+     * Checks whether the ibm pdo extension has been loaded and the Zend framework adapter for IBM is available
+     *
+     * @return  bool
+     */
+    public static function hasIbmSupport()
+    {
+        return static::extensionLoaded('pdo_ibm') && static::classExists('Zend_Db_Adapter_Pdo_Ibm');
+    }
+
+    /**
      * Return whether it's possible to connect to a Oracle database using OCI8
      *
      * Checks whether the OCI8 extension has been loaded and the Zend framework adapter for Oracle is available
