@@ -39,9 +39,15 @@ class Controller extends IcingaWebController
         }
         if ($this->_getParam('format') === 'json'
             || $this->_request->getHeader('Accept') === 'application/json') {
+            $url = explode('/', rtrim(parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH), '/'));
+            $filename = end($url) . ".json";
             header('Content-type: application/json');
+            header("Content-Disposition: attachment; filename=$filename");
+            header("Pragma: no-cache");
+            header("Expires: 0");
             echo json_encode($query->getQuery()->fetchAll());
             exit;
+
         }
         if ($this->_getParam('format') === 'csv'
             || $this->_request->getHeader('Accept') === 'text/csv') {
