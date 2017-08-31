@@ -22,7 +22,12 @@ class Csv
 
     public function dump()
     {
-        header('Content-type: text/csv');
+        $url = parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH);
+        $filename = array_slice(explode('/', rtrim($url, '/')), -1)[0] . ".csv";
+        header("Content-type: application/csv");
+        header("Content-Disposition: attachment; filename=$filename");
+        header("Pragma: no-cache");
+        header("Expires: 0");
         echo (string) $this;
     }
 
