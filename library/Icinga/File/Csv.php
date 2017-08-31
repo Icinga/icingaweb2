@@ -23,7 +23,7 @@ class Csv
     public function dump()
     {
         $url = explode('/', rtrim(parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH), '/'));
-        $filename = end($url) . ".json";
+        $filename = end($url) . ".csv";
         header("Content-type: application/csv");
         header("Content-Disposition: attachment; filename=$filename");
         header("Pragma: no-cache");
