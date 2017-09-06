@@ -31,6 +31,11 @@ class Controller extends IcingaWebController
 
     protected function handleFormatRequest($query)
     {
+        $limit = intval($this->_request->getParam("limit"));
+        if ($limit > 0) {
+            $query->getQuery()->limit($limit);
+        }
+        
         if ($this->_getParam('format') === 'sql') {
             echo '<pre>'
                 . htmlspecialchars(wordwrap($query->dump()))
