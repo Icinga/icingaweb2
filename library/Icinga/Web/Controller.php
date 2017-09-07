@@ -17,6 +17,8 @@ use Icinga\Web\Widget\SortBox;
  * This is the controller all modules should inherit from
  * We will flip code with the ModuleActionController as soon as a couple
  * of pending feature branches are merged back to the master.
+ *
+ * @property View $view
  */
 class Controller extends ModuleActionController
 {

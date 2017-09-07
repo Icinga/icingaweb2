@@ -11,6 +11,45 @@ use Icinga\Util\Translator;
 
 /**
  * Icinga view
+ *
+ * @method Url href($path = null, $params = null) {
+ *  @param  Url|string|null     $path
+ *  @param  string[string]|null $params
+ * }
+ *
+ * @method Url url($path = null, $params = null) {
+ *  @param  Url|string|null     $path
+ *  @param  string[string]|null $params
+ * }
+ *
+ * @method Url qlink($title, $url, $params = null, $properties = null, $escape = true) {
+ *  @param  string              $title
+ *  @param  Url|string|null     $url
+ *  @param  string[string]|null $params
+ *  @param  string[string]|null $properties
+ *  @param  bool                $escape
+ * }
+ *
+ * @method string img($url, $params = null, array $properties = array()) {
+ *  @param  Url|string|null     $url
+ *  @param  string[string]|null $params
+ *  @param  string[string]      $properties
+ * }
+ *
+ * @method string icon($img, $title = null, array $properties = array()) {
+ *  @param  string          $img
+ *  @param  string|null     $title
+ *  @param  string[string]  $properties
+ * }
+ *
+ * @method string propertiesToString($properties) {
+ *  @param  string[string]  $properties
+ * }
+ *
+ * @method string attributeToString($key, $value) {
+ *  @param  string  $key
+ *  @param  string  $value
+ * }
  */
 class View extends Zend_View_Abstract
 {
