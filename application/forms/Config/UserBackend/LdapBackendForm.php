@@ -257,7 +257,9 @@ class LdapBackendForm extends Form
             )
         );
 
-        if ($this->getElement('btn_discover_domain')->isChecked() && isset($formData['resource'])) {
+        if ((
+            $this->getElement('btn_discover_domain')->isChecked() || isset($formData['btn_discover_domain'])
+        ) && isset($formData['resource'])) {
             $this->populateDomain(ResourceFactory::create($formData['resource']));
         }
     }
