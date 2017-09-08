@@ -554,7 +554,7 @@ class Web extends EmbeddedWeb
         ) {
             return $locale;
         }
-        if (isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
+        if (isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) && $this->config->get('global', 'use_accept_language', true)) {
             return Translator::getPreferredLocaleCode($_SERVER['HTTP_ACCEPT_LANGUAGE']);
         }
         return Translator::DEFAULT_LOCALE;
