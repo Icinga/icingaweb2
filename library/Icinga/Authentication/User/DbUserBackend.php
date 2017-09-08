@@ -19,14 +19,14 @@ class DbUserBackend extends DbRepository implements UserBackendInterface, Inspec
      *
      * @var string
      */
-    const HASH_ALGORITHM = '$1$'; // MD5
+    const HASH_ALGORITHM = '$6$'; // SHA-512
 
     /**
      * The length of the salt to use when hashing a password
      *
      * @var int
      */
-    const SALT_LENGTH = 12; // 12 is required by MD5
+    const SALT_LENGTH = 16; // required by algorithm
 
     /**
      * The query columns being provided
@@ -225,9 +225,7 @@ class DbUserBackend extends DbRepository implements UserBackendInterface, Inspec
     {
         try {
             $passwordHash = $this->getPasswordHash($user->getUsername());
-            $passwordSalt = $this->getSalt($passwordHash);
-            $hashToCompare = $this->hashPassword($password, $passwordSalt);
-            return $hashToCompare === $passwordHash;
+            return crypt($password, $passwordHash) === $passwordHash;
         } catch (Exception $e) {
             throw new AuthenticationException(
                 'Failed to authenticate user "%s" against backend "%s". An exception was thrown:',
@@ -236,18 +234,6 @@ class DbUserBackend extends DbRepository implements UserBackendInterface, Inspec
                 $e
             );
         }
-    }
-
-    /**
-     * Extract salt from the given password hash
-     *
-     * @param   string  $hash   The hashed password
-     *
-     * @return  string
-     */
-    protected function getSalt($hash)
-    {
-        return substr($hash, strlen(self::HASH_ALGORITHM), self::SALT_LENGTH);
     }
 
     /**
@@ -266,13 +252,12 @@ class DbUserBackend extends DbRepository implements UserBackendInterface, Inspec
      * Hash a password
      *
      * @param   string  $password
-     * @param   string  $salt
      *
      * @return  string
      */
-    protected function hashPassword($password, $salt = null)
+    protected function hashPassword($password)
     {
-        return crypt($password, self::HASH_ALGORITHM . ($salt !== null ? $salt : $this->generateSalt()));
+        return crypt($password, self::HASH_ALGORITHM . 'rounds=' . mt_rand(5001, 10000) . '$' . $this->generateSalt());
     }
 
     /**
