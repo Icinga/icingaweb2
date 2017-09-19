@@ -36,7 +36,9 @@ EOT;
      */
     private $dropdownTpl = <<< 'EOT'
 <li class="dropdown-nav-item">
-  <a href="#" class="dropdown-toggle" title="{TITLE}" aria-label="{TITLE}"><i aria-hidden="true" class="icon-down-open"></i></a>
+  <a href="#" class="dropdown-toggle" title="{TITLE}" aria-label="{TITLE}">
+    <i aria-hidden="true" class="icon-down-open"></i>
+  </a>
   <ul class="nav">
     {TABS}
   </ul>

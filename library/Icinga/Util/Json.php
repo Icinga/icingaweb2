@@ -25,7 +25,7 @@ class Json
     {
         if (version_compare(phpversion(), '5.4.0', '<')) {
             $encoded = json_encode($value);
-        } else if (version_compare(phpversion(), '5.5.0', '<')) {
+        } elseif (version_compare(phpversion(), '5.5.0', '<')) {
             $encoded = json_encode($value, $options);
         } else {
             $encoded = json_encode($value, $options, $depth);

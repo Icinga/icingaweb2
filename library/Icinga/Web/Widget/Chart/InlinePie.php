@@ -74,14 +74,15 @@ class InlinePie extends AbstractWidget
      * @var string
      */
     private $template =<<<'EOD'
-<span sparkType="pie" class="sparkline {class}" title="{title}" role="img" aria-label="{title}" sparkSliceColors="[{colors}]" values="{data}">
-</span>
+<span sparkType="pie" class="sparkline {class}" title="{title}" role="img" aria-label="{title}"
+      sparkSliceColors="[{colors}]" values="{data}"></span>
 {noscript}
 EOD;
 
     private $noscript =<<<'EOD'
 <noscript>
-  <img width={size} height={size} class="inlinepie {class}" title="{title}" role="img" aria-label="{title}" src="{url}" data-icinga-colors="{colors}" data-icinga-values="{data}"/>
+  <img width={size} height={size} class="inlinepie {class}" title="{title}" role="img" aria-label="{title}"
+       src="{url}" data-icinga-colors="{colors}" data-icinga-values="{data}"/>
 </noscript>
 EOD;
 

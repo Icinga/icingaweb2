@@ -369,7 +369,9 @@ class TransportConfigForm extends ConfigForm
                         'order'         => 0,
                         'ignore'        => true,
                         'label'         => $this->translate('Force Changes'),
-                        'description'   => $this->translate('Check this box to enforce changes without connectivity validation')
+                        'description'   => $this->translate(
+                            'Check this box to enforce changes without connectivity validation'
+                        )
                     )
                 );
 

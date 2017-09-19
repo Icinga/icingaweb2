@@ -96,7 +96,8 @@ class ConfigCommand extends Command
      *
      *  --path=<urlpath>                    The URL path to Icinga Web 2 [/icingaweb2]
      *
-     *  --root|--document-root=<directory>  The directory from which the webserver will serve files [/path/to/icingaweb2/public]
+     *  --root|--document-root=<directory>  The directory from which the webserver will serve files
+     *                                      [/path/to/icingaweb2/public]
      *
      *  --config=<directory>                Path to Icinga Web 2's configuration files [/etc/icingaweb2]
      *
@@ -106,9 +107,13 @@ class ConfigCommand extends Command
      *
      *  icingacli setup config webserver apache
      *
-     *  icingacli setup config webserver apache --path=/icingaweb2 --document-root=/usr/share/icingaweb2/public --config=/etc/icingaweb2
+     *  icingacli setup config webserver apache \
+     *    --path=/icingaweb2 \
+     *    --document-root=/usr/share/icingaweb2/public \
+     *    --config=/etc/icingaweb2
      *
-     *  icingacli setup config webserver apache --file=/etc/apache2/conf.d/icingaweb2.conf
+     *  icingacli setup config webserver apache \
+     *    --file=/etc/apache2/conf.d/icingaweb2.conf
      *
      *  icingacli setup config webserver nginx
      */

@@ -772,7 +772,8 @@ class Form extends Zend_Form
                     $action = $action->without(array_keys($this->getElements()));
                 }
 
-                // TODO(el): Re-evalute this necessity. JavaScript could use the container's URL if there's no action set.
+                // TODO(el): Re-evalute this necessity.
+                // JavaScript could use the container'sURL if there's no action set.
                 // We MUST set an action as JS gets confused otherwise, if
                 // this form is being displayed in an additional column
                 $this->setAction($action);
