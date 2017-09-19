@@ -3,8 +3,27 @@
 <ruleset name="icingaweb2">
     <description>The default PSR-2 standard with specifically excluded non-critical sniffs</description>
     <!-- Include the whole PSR-2 standard -->
-    <rule ref="PSR2" />
+    <rule ref="PSR2"/>
     <!-- Exclude patterns for PSR-2 Sniffs -->
+    <rule ref="PSR2.Methods.MethodDeclaration.Underscore">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PSR2.Classes.PropertyDeclaration.Underscore">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PSR1.Methods.CamelCapsMethodName.NotCamelCaps">
+        <severity>0</severity>
+    </rule>
+    <rule ref="PSR1.Files.SideEffects.FoundWithSymbols">
+        <exclude-pattern>library/Icinga/Application/Cli.php</exclude-pattern>
+        <exclude-pattern>library/Icinga/Application/EmbeddedWeb.php</exclude-pattern>
+        <exclude-pattern>library/Icinga/Application/functions.php</exclude-pattern>
+        <exclude-pattern>library/Icinga/Application/LegacyWeb.php</exclude-pattern>
+        <exclude-pattern>library/Icinga/Application/Web.php</exclude-pattern>
+        <exclude-pattern>library/Icinga/File/Pdf.php</exclude-pattern>
+        <exclude-pattern>modules/doc/library/Doc/Renderer/DocSectionRenderer.php</exclude-pattern>
+        <exclude-pattern>modules/monitoring/library/Monitoring/Plugin.php</exclude-pattern>
+    </rule>
     <rule ref="PSR1.Classes.ClassDeclaration.MultipleClasses">
         <exclude-pattern>*/test/php/*</exclude-pattern>
     </rule>
@@ -25,5 +44,6 @@
     </rule>
     <rule ref="Generic.Files.LineLength.TooLong">
         <exclude-pattern>*/modules/monitoring/library/Monitoring/Backend/Ido/Query/*</exclude-pattern>
+        <exclude-pattern>*/modules/monitoring/library/Monitoring/Backend/Livestatus/Query/*</exclude-pattern>
     </rule>
 </ruleset>
