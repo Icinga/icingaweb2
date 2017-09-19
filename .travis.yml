@@ -1,6 +1,6 @@
 language: php
 dist: trusty
-sudo: required
+sudo: false
 
 php:
   - '5.4'
@@ -13,7 +13,10 @@ matrix:
   include:
   - php: '5.3'
     dist: precise
+    sudo: required
     env:
+    - PHPCS_VERSION=2.9.1
+    - LOCALE_GEN=1
     - ENABLE_LDAP=1
 
 services:
@@ -35,7 +38,7 @@ notifications:
 # also see: test/setup_vendor.sh
 before_script:
   - php -m
-  - sudo locale-gen en_US.UTF-8 de_DE.UTF-8 fr_FR.UTF-8
+  - sh -c '[ -z $LOCALE_GEN ] || sudo locale-gen en_US.UTF-8 de_DE.UTF-8 fr_FR.UTF-8'
   - sh -c '[ -z $ENABLE_LDAP ] || phpenv config-add test/travis-ldap.ini'
   - test/travis_database.sh
   - test/setup_vendor.sh
