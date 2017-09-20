@@ -277,9 +277,9 @@ class FilterTest extends BaseTestCase
         $this->assertSame(
             Filter::matchAll(
                 Filter::expression('host', '!=', 'localhost'),
-                Filter::matchAny(Filter::where('service', 'ping4'), Filter::where('specialchars', '(|&!=)'))
+                Filter::matchAny(Filter::where('service', 'ping4'), Filter::where('specialchars', '(|&!=)#'))
             )->toQueryString(),
-            'host!=localhost&(service=ping4|specialchars=%28%7C%26%21%3D%29)'
+            'host!=localhost&(service=ping4|specialchars=%28%7C%26%21%3D%29%23)'
         );
     }
 
