@@ -174,7 +174,7 @@ class ClassLoader
      *
      * @return string
      */
-    protected function extractModuleName($class)
+    public static function extractModuleName($class)
     {
         return lcfirst(
             substr(
@@ -194,7 +194,7 @@ class ClassLoader
      *
      * @return boolean
      */
-    protected function classBelongsToModule($class)
+    public static function classBelongsToModule($class)
     {
         return substr($class, 0, self::MODULE_PREFIX_LENGTH) === self::MODULE_PREFIX;
     }
