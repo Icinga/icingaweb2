@@ -167,19 +167,20 @@ class ModuleController extends DocController
             }
         }
 
-        header('ETag: "' . $ETag . '"');
-        header('Cache-Control: no-transform,public,max-age=3600');
-        header('Last-Modified: ' . $lastModified);
-        // Set additional headers for compatibility reasons (Cache-Control should have precedence) in case
-        // session.cache_limiter is set to no cache
-        header('Pragma: cache');
-        header('Expires: ' . gmdate('D, d M Y H:i:s T', time() + 3600));
+        $finfo = new finfo();
+        $this->getResponse()
+            ->setHeader('ETag', $ETag)
+            ->setHeader('Cache-Control', 'no-transform,public,max-age=3600', true)
+            ->setHeader('Last-Modified', $lastModified, true)
+            // Set additional headers for compatibility reasons (Cache-Control should have precedence) in case
+            // session.cache_limiter is set to no cache
+            ->setHeader('Pragma', 'cache', true)
+            ->setHeader('Expires', gmdate('D, d M Y H:i:s T', time() + 3600), true)
+            ->setHeader('Content-Type', $finfo->file($imagePath, FILEINFO_MIME_TYPE));
 
         if ($match) {
-            header('HTTP/1.1 304 Not Modified');
+            $this->getResponse()->setHttpResponseCode(304);
         } else {
-            $finfo = new finfo();
-            header('Content-Type: ' . $finfo->file($imagePath, FILEINFO_MIME_TYPE));
             readfile($imagePath);
         }
     }
