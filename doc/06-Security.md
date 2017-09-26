@@ -21,7 +21,7 @@ things to which access can be managed: actions and objects.
 ### <a id="security-basics-actions"></a>Actions
 
 Actions are all the things an Icinga Web 2 user can do, like changing a certain configuration,
-changing permissions or sending a command to the Icinga instance through the Icinga command pipe.
+changing permissions or sending a command to an Icinga 2 instance.
 All actions must be be **allowed explicitly** using permissions.
 
 A permission is a simple list of identifiers of actions a user is
@@ -49,11 +49,11 @@ Icinga Web 2 users and groups are not configured by a configuration file, but pr
 an **authentication backend**. For extended information on setting up authentication backends and managing users, please read the chapter [Authentication](05-Authentication.md#authentication).
 
 
-<div class="info-box">
-  Since Icinga Web 2, users in the Icinga configuration and the web authentication are separated, to allow
-  use of external authentication providers. This means that users and groups defined in the Icinga configuration are not available to Icinga Web 2. Instead it uses its own authentication
-  backend to fetch users and groups from, which must be configured separately.
-</div>
+> **Note**
+>
+> Since Icinga Web 2, users in the Icinga configuration and the web authentication are separated, to allow
+> use of external authentication providers. This means that users and groups defined in the Icinga configuration are not available to Icinga Web 2. Instead it uses its own authentication
+> backend to fetch users and groups from, which must be configured separately.
 
 #### <a id="security-basics-users-managing"></a>Managing Users
 
@@ -76,7 +76,7 @@ Like users, groups are identified solely by their **name** that is provided by
 
 When using a [Database as an authentication backend](05-Authentication.md#authentication-configuration-db-authentication),
 it is possible to manage groups and group memberships directly in the frontend. This configuration
-can be found at **Configuration > Authentication > Groups **.
+can be found at **Configuration > Authentication > User Groups **.
 
 ## <a id="security-roles"></a>Roles
 
@@ -97,19 +97,21 @@ Roles can be changed either through the icingaweb2 interface, by navigation
 to the page **Configuration > Authentication > Roles**, or through editing the
 configuration file:
 
-    /etc/icingaweb2/roles.ini
-
+```
+vim /etc/icingaweb2/roles.ini
+```
 
 #### <a id="security-roles-configuration-example"></a>Introducing Example
 
 To get you a quick start, here is an example of what a role definition could look like:
 
-
-    [winadmin]
-    users = "jdoe, janedoe"
-    groups = "admin"
-    permissions = "config/*, monitoring/commands/schedule-check"
-    monitoring/filter/objects = "host_name=*win*"
+```
+[winadmin]
+users = "jdoe, janedoe"
+groups = "admin"
+permissions = "config/*, monitoring/commands/schedule-check"
+monitoring/filter/objects = "host_name=*win*"
+```
 
 
 This example creates a role called **winadmin**, that grants all permissions in `config/*` and `monitoring/commands/schedule-check` and additionally only
@@ -124,12 +126,12 @@ Each role is defined as a section, with the name of the role as section name. Th
 attributes can be defined for each role in a default Icinga Web 2 installation:
 
 
-| Directive                     | Description |
-| ----------------------------- | ----------- |
-| **users**                     | a comma-separated list of user **user names** that are affected by this role |
-| **groups**                    | a comma-separated list of **group names** that are affected by this role |
-| **permissions**               | a comma-separated list of **permissions** granted by this role |
-| **monitoring/filter/objects** | a **filter expression** that restricts the access to services and hosts |
+Name                      | Description
+--------------------------|-----------------------------------------------
+users                     | Comma-separated list of user **user names** that are affected by this role.
+groups                    | Comma-separated list of **group names** that are affected by this role.
+permissions               | Comma-separated list of **permissions** granted by this role.
+monitoring/filter/objects | **Filter expression** that restricts the access to services and hosts.
 
 
 
@@ -155,12 +157,12 @@ through a group) all permissions are added together to get the users actual perm
 
 ### Global Permissions <a id="permissions-global"></a>
 
-| Name                          | Permits      |
-| ----------------------------- | ------------ |
-| **\***                        | allow everything, including module-specific permissions |
-| **config/\***                 | allow all configuration actions |
-| **config/modules**            | allow enabling or disabling modules |
-| **module/&lt;moduleName&gt;** | allow access to module &lt;moduleName&gt; |
+Name                      | Permits
+--------------------------|-----------------------------------------------
+\*                        | allow everything, including module-specific permissions
+config/\*                 | allow all configuration actions
+config/modules            | allow enabling or disabling modules
+module/&lt;moduleName&gt; | allow access to module &lt;moduleName&gt;
 
 
 ### Monitoring Module Permissions <a id="permissions-module"></a>
@@ -236,15 +238,19 @@ the filter expressions. The following examples will show the usefulness of this 
 
 #### <a id="restrictions-filter-example1"></a>Example 1: Negation
 
-    [winadmin]
-    groups = "windows-admins"
-    monitoring/filter/objects = "host_name=*win*"
+```
+[winadmin]
+groups = "windows-admins"
+monitoring/filter/objects = "host_name=*win*"
+```
 
 Will display only hosts and services whose host name contains  **win**.
 
-    [webadmin]
-    groups = "web-admins"
-    monitoring/filter/objects = "host_name!=*win*"
+```
+[webadmin]
+groups = "web-admins"
+monitoring/filter/objects = "host_name!=*win*"
+```
 
 Will only match hosts and services whose host name does **not** contain **win**
 
@@ -252,9 +258,11 @@ Notice that because of the behavior of two stacking filters, a user that is memb
 
 #### <a id="restrictions-filter-example2"></a>Example 2: Hostgroups
 
-    [unix-server]
-    groups = "unix-admins"
-    monitoring/filter/objects = "(hostgroup_name=bsd-servers|hostgroup_name=linux-servers)"
+```
+[unix-server]
+groups = "unix-admins"
+monitoring/filter/objects = "(hostgroup_name=bsd-servers|hostgroup_name=linux-servers)"
+```
 
 This role allows all members of the group unix-admins to see hosts and services
 that are part of the host-group linux-servers or the host-group bsd-servers.

@@ -1,20 +1,20 @@
-# <a id="detailviewextension"></a> Detail View Extension Hook
+# Monitoring Module Hooks <a id="monitoring-module-hooks"></a>
 
-## About
+## Detail View Extension Hook <a id="monitoring-module-hooks-detailviewextension"></a>
 
 This hook can be used to easily extend the detail view of monitored objects (hosts and services).
 
-## How it works
+### How it works <a id="monitoring-module-hooks-detailviewextension-how-it-works"></a>
 
-### Directory structure
+#### Directory structure <a id="monitoring-module-hooks-detailviewextension-directory-structure"></a>
 
 * `icingaweb2/modules/example`
     * `library/Example/ProvidedHook/Monitoring/DetailviewExtension/Simple.php`
     * `run.php`
 
-### Files
+#### Files <a id="monitoring-module-hooks-detailviewextension-files"></a>
 
-#### run.php
+##### run.php <a id="monitoring-module-hooks-detailviewextension-files-run-php"></a>
 
 ```php
 <?php
@@ -26,7 +26,7 @@ $this->provideHook(
 );
 ```
 
-#### Simple.php
+##### Simple.php <a id="monitoring-module-hooks-detailviewextension-files-simple-php"></a>
 
 ```php
 <?php
@@ -71,6 +71,6 @@ class Simple extends DetailviewExtensionHook
 }
 ```
 
-## How it looks like
+### How it looks <a id="monitoring-module-hooks-detailviewextension-how-it-looks"></a>
 
-![Screenshot](res/detailviewextension-01.png)
+![Screenshot](img/hooks-detailviewextension-01.png)
