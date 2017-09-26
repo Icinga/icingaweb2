@@ -7,12 +7,14 @@ It's fast, responsive, accessible and easily extensible with modules.
 
 This is the core module for most Icinga Web 2 users.
 
-It provides an intuitive user interface for monitoring with Icinga (1 and 2).
+It provides an intuitive user interface for monitoring with Icinga 2.
 Especially there are lots of list and detail views (e.g. for hosts and services)
 you can sort and filter depending on what you want to see.
 
 You can also control the monitoring process itself by sending external commands to Icinga.
 Most such actions (like rescheduling a check) can be done with just a single click.
+
+More details about this module can be found in [this chapter](../modules/monitoring/doc/01-About.md#monitoring-module-about).
 
 ## Installation <a id="about-installation"></a>
 
@@ -59,6 +61,8 @@ With the documentation module you can read the documentation of the framework (a
 
 The module can also export the documentation to PDF.
 
+More details about this module can be found in [this chapter](../modules/doc/doc/01-About.md#doc-module-about).
+
 ## Translation <a id="about-translation"></a>
 
 With the translation module every piece of text in the user interface (of the framework itself and any module) can be translated to a language of your choice.
@@ -68,3 +72,5 @@ Currently provided languages:
 * German
 * Italian
 * Portuguese
+
+More details about this module can be found in [this chapter](../modules/translation/doc/01-About.md#translation-module-about).

@@ -1,8 +1,6 @@
 # Authentication <a id="authentication"></a>
 
-**Choosing the Authentication Method**
-
-With Icinga Web 2 you can authenticate against Active Directory, LDAP, a MySQL or a PostgreSQL database or delegate
+You can authenticate against Active Directory, LDAP, a MySQL or a PostgreSQL database or delegate
 authentication to the web server.
 
 Authentication methods can be chained to set up fallback authentication methods
@@ -10,7 +8,7 @@ or if users are spread over multiple places.
 
 ## Configuration <a id="authentication-configuration"></a>
 
-Authentication methods are configured in the INI file **config/authentication.ini**.
+Authentication methods are configured in the `authentication.ini` file in `/etc/icingaweb2`.
 
 Each section in the authentication configuration represents a single authentication method.
 
@@ -20,7 +18,8 @@ authenticated, the next authentication method will be used.
 
 ## External Authentication <a id="authentication-configuration-external-authentication"></a>
 
-For delegating authentication to the web server simply add `autologin` to your authentication configuration:
+Authentication to the web server can be delegated with the `autologin` section
+which specifies an external backend.
 
 ```
 [autologin]
@@ -32,23 +31,24 @@ If your web server is not configured for authentication though, the `autologin` 
 ### Example Configuration for Apache and Basic Authentication <a id="authentication-configuration-external-authentication-example"></a>
 
 The following example will show you how to enable external authentication in Apache
-using **Basic access authentication**.
+using basic authentication.
 
-**Creating Users**
+#### Create Basic Auth User <a id="authentication-configuration-external-authentication-example-user"></a>
 
-To create users for **basic access authentication** you can use the tool `htpasswd`. In this example **.http-users** is
-the name of the file containing the user credentials.
+You can use the tool `htpasswd` to generate basic authentication credentials. This example writes the
+user credentials into the `.http-users` file.
 
-The following command creates a new file with the user **icingaadmin**. `htpasswd` will prompt you for a password.
+The following command creates a new file which adds the user `icingaadmin`.
+`htpasswd` will prompt you for a password.
 If you want to add more users to the file you have to omit the `-c` switch to not overwrite the file.
 
 ```
 sudo htpasswd -c /etc/icingaweb2/.http-users icingaadmin
 ```
 
-**Configuring the Web Server**
+#### Apache Configuration <a id="authentication-configuration-external-authentication-example-apache"></a>
 
-Add the following configuration to the **&lt;Directory&gt; Directive** in the **icingaweb.conf** web server
+Add the following configuration to the `&lt;Directory&gt;` directive in the `icingaweb2.conf` web server
 configuration file.
 
 ```
@@ -60,23 +60,29 @@ Require valid-user
 
 Restart your web server to apply the changes.
 
+Example on CentOS 7:
+
+```
+systemctl restart httpd
+```
+
 ## Active Directory or LDAP Authentication <a id="authentication-configuration-ad-or-ldap-authentication"></a>
 
-If you want to authenticate against Active Directory or LDAP, you have to define a
-[LDAP resource](04-Resources.md#resources-configuration-ldap) which will be referenced as data source for the
-Active Directory or LDAP configuration method.
+If you want to authenticate against Active Directory or LDAP, you have to define an
+[LDAP resource](04-Resources.md#resources-configuration-ldap).
+This is referenced as data source for the Active Directory or LDAP configuration method.
 
 ### LDAP <a id="authentication-configuration-ldap-authentication"></a>
 
-| Directive                 | Description |
-| ------------------------- | ----------- |
-| **backend**               | `ldap` |
-| **resource**              | The name of the LDAP resource defined in [resources.ini](04-Resources.md#resources). |
-| **user_class**            | LDAP user class. |
-| **user_name_attribute**   | LDAP attribute which contains the username. |
-| **filter**                | LDAP search filter. |
+Option                   | Description
+-------------------------|-----------------------------------------------
+backend                  | **Required.** Specifies the backend type. Must be set to `ldap`.
+resource                 | **Required.** The name of the LDAP resource defined in [resources.ini](04-Resources.md#resources).
+user\_class              | **Optional.** LDAP user class. Defaults to `inetOrgPerson`.
+user\_name\_attribute    | **Optional.** LDAP attribute which contains the username. Defaults to `uid`.
+filter                   | **Optional.** LDAP search filter.
 
-**Example:**
+Example:
 
 ```
 [auth_ldap]
@@ -87,18 +93,21 @@ user_name_attribute = uid
 filter              = "memberOf=cn=icinga_users,cn=groups,cn=accounts,dc=icinga,dc=org"
 ```
 
-Note that in case the set *user_name_attribute* holds multiple values it is required that all of its
-values are unique. Additionally, a user will be logged in using the exact user id used to authenticate
-with Icinga Web 2 (e.g. an alias) no matter what the primary user id might actually be.
+If `user_name_attribute` specifies multiple values all of them must be unique.
+Please keep in mind that a user will be logged in with the exact user id used to authenticate
+with Icinga Web 2 (e.g. an alias) ignoring the actual primary user id.
 
 ### Active Directory <a id="authentication-configuration-ad-authentication"></a>
 
-| Directive     | Description |
-| ------------- | ----------- |
-| **backend**   | `msldap` |
-| **resource**  | The name of the LDAP resource defined in [resources.ini](04-Resources.md#resources). |
+Option                   | Description
+-------------------------|-----------------------------------------------
+backend                  | **Required.** Specifies the backend type. Must be set to `msldap`.
+resource                 | **Required.** The name of the LDAP resource defined in [resources.ini](04-Resources.md#resources).
+user\_class              | **Optional.** LDAP user class. Defaults to `user`.
+user\_name\_attribute    | **Optional.** LDAP attribute which contains the username. Defaults to `sAMAccountName`.
+filter                   | **Optional.** LDAP search filter.
 
-**Example:**
+Example:
 
 ```
 [auth_ad]
@@ -112,12 +121,12 @@ If you want to authenticate against a MySQL or a PostgreSQL database, you have t
 [database resource](04-Resources.md#resources-configuration-database) which will be referenced as data source for the database
 authentication method.
 
-| Directive               | Description |
-| ------------------------| ----------- |
-| **backend**             | `db` |
-| **resource**            | The name of the database resource defined in [resources.ini](04-Resources.md#resources). |
+Option                   | Description
+-------------------------|-----------------------------------------------
+backend                  | **Required.** Specifies the backend type. Must be set to `db`.
+resource                 | **Required.** The name of the database resource defined in [resources.ini](04-Resources.md#resources). |
 
-**Example:**
+Example:
 
 ```
 [auth_db]
@@ -125,31 +134,8 @@ backend  = db
 resource = icingaweb-mysql
 ```
 
-### Database Setup <a id="authentication-configuration-db-setup"></a>
-
-For authenticating against a database, you have to import one of the following database schemas:
-
-* **etc/schema/preferences.mysql.sql** (for **MySQL** database)
-* **etc/schema/preferences.pgsql.sql** (for **PostgreSQL** databases)
-
-After that you have to define the [database resource](04-Resources.md#resources-configuration-database).
-
-**Manually Creating Users**
-
-Icinga Web 2 uses the MD5 based BSD password algorithm. For generating a password hash, please use the following
-command:
-
-```
-openssl passwd -1 password
-```
-
-> Note: The switch to `openssl passwd` is the **number one** (`-1`) for using the MD5 based BSD password algorithm.
-
-Insert the user into the database using the generated password hash:
-
-```
-INSERT INTO icingaweb_user (name, active, password_hash) VALUES ('icingaadmin', 1, 'hash from openssl');
-```
+Please read [this chapter](20-Advanced-Topics.md#advanced-topics-authentication-tips-manual-user-database-auth)
+in order to manually create users directly inside the database.
 
 ## Domain-aware Authentication <a id="domain-aware-auth"></a>
 
