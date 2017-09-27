@@ -2,9 +2,39 @@
 
 This chapter provides details for advanced Icinga Web 2 topics.
 
+* [Global URL parameters](20-Advanced-Topics.md#global-url-parameters)
 * [VirtualHost configuration](20-Advanced-Topics.md#virtualhost-configuration)
 * [Source installation](20-Advanced-Topics.md#installing-from-source)
 * [Automated setup](20-Advanced-Topics.md#web-setup-automation)
+
+## Global URL Parameters <a id="global-url-parameters"></a>
+
+Parameters starting with `_` are for development purposes only.
+
+Parameter         | Value         | Description
+------------------|---------------|--------------------------------
+showFullscreen    | -             | Hides the left menu and optimizes the layout for full screen resolution.
+showCompact       | -             | Provides a compact view. Hides the title and upper menu. This is helpful to embed a dashboard item into an external iframe.
+format            | json/csv/sql  | Selected views can be exported as JSON or CSV. This also is available in the upper menu. You can also export the SQL queries for manual analysis.
+\_dev             | 0/1           | Whether the server should return compressed or full JS/CSS files. This helps debugging browser console errors.
+
+
+
+Examples for `showFullscreen`:
+
+http://localhost/icingaweb2/dashboard?showFullscreen
+http://localhost/icingaweb2/monitoring/list/services?service_problem=1&sort=service_severity&showFullscreen
+
+Examples for `showCompact`:
+
+http://localhost/icingaweb2/dashboard?showCompact&showFullscreen
+http://localhost/icingaweb2/monitoring/list/services?service_problem=1&sort=service_severity&showCompact
+
+Examples for `format`:
+
+http://localhost/icingaweb2/monitoring/list/services?format=json
+http://localhost/icingaweb2/monitoring/list/services?service_problem=1&sort=service_severity&dir=desc&format=csv
+
 
 ## VirtualHost Configuration <a id="virtualhost-configuration"></a>
 
