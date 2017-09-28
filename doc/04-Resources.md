@@ -33,6 +33,12 @@ username                 | **Required.** The database username.
 password                 | **Required.** The database password.
 dbname                   | **Required.** The database name.
 charset                  | **Optional.** The character set for the database connection.
+ssl\_cert                | **Optional.** The file path to the SSL certificate. Only available for the `mysql` database.
+ssl\_key                 | **Optional.** The file path to the SSL key. Only available for the `mysql` database.
+ssl\_ca                  | **Optional.** The file path to the SSL certificate authority. Only available for the `mysql` database.
+ssl\_capath              | **Optional.** The file path to the directory that contains the trusted SSL CA certificates, which are stored in PEM format.Only available for the `mysql` database.
+ssl\_cipher              | **Optional.** A list of one or more permissible ciphers to use for SSL encryption, in a format understood by OpenSSL. For example: `DHE-RSA-AES256-SHA:AES128-SHA`. Only available for the `mysql` database.
+
 
 #### Example <a id="resources-configuration-database-example"></a>
 
