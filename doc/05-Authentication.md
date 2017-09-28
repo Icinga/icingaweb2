@@ -8,7 +8,9 @@ or if users are spread over multiple places.
 
 ## Configuration <a id="authentication-configuration"></a>
 
-Authentication methods are configured in the `authentication.ini` file in `/etc/icingaweb2`.
+Navigate into **Configuration > Application > Authentication **.
+
+Authentication methods are configured in the `/etc/icingaweb2/authentication.ini` file.
 
 Each section in the authentication configuration represents a single authentication method.
 
@@ -21,7 +23,16 @@ authenticated, the next authentication method will be used.
 Authentication to the web server can be delegated with the `autologin` section
 which specifies an external backend.
 
+Option                   | Description
+-------------------------|-----------------------------------------------
+backend                  | **Required.** Specifies the backend type. Must be set to `external`.
+strip\_username\_regexp  | **Optional.** Regular expression to strip off specific user name parts.
+
+Example:
+
 ```
+# vim /etc/icingaweb2/authentication.ini
+
 [autologin]
 backend = external
 ```
@@ -80,11 +91,14 @@ backend                  | **Required.** Specifies the backend type. Must be set
 resource                 | **Required.** The name of the LDAP resource defined in [resources.ini](04-Resources.md#resources).
 user\_class              | **Optional.** LDAP user class. Defaults to `inetOrgPerson`.
 user\_name\_attribute    | **Optional.** LDAP attribute which contains the username. Defaults to `uid`.
-filter                   | **Optional.** LDAP search filter.
+filter                   | **Optional.** LDAP search filter. Requires `user_class` and `user_name_attribute`.
+
 
 Example:
 
 ```
+# vim /etc/icingaweb2/authentication.ini
+
 [auth_ldap]
 backend             = ldap
 resource            = my_ldap
@@ -105,11 +119,13 @@ backend                  | **Required.** Specifies the backend type. Must be set
 resource                 | **Required.** The name of the LDAP resource defined in [resources.ini](04-Resources.md#resources).
 user\_class              | **Optional.** LDAP user class. Defaults to `user`.
 user\_name\_attribute    | **Optional.** LDAP attribute which contains the username. Defaults to `sAMAccountName`.
-filter                   | **Optional.** LDAP search filter.
+filter                   | **Optional.** LDAP search filter. Requires `user_class` and `user_name_attribute`.
 
 Example:
 
 ```
+# vim /etc/icingaweb2/authentication.ini
+
 [auth_ad]
 backend  = msldap
 resource = my_ad
@@ -129,6 +145,8 @@ resource                 | **Required.** The name of the database resource defin
 Example:
 
 ```
+# vim /etc/icingaweb2/authentication.ini
+
 [auth_db]
 backend  = db
 resource = icingaweb-mysql
@@ -136,6 +154,71 @@ resource = icingaweb-mysql
 
 Please read [this chapter](20-Advanced-Topics.md#advanced-topics-authentication-tips-manual-user-database-auth)
 in order to manually create users directly inside the database.
+
+
+## Groups <a id="authentication-configuration-groups"></a>
+
+Navigate into **Configuration > Application > Authentication **.
+
+Group configuration is stored in the `/etc/icingaweb2/groups.ini` file.
+
+### LDAP Groups <a id="authentication-configuration-groups-ldap"></a>
+
+Option                   | Description
+-------------------------|-----------------------------------------------
+backend                  | **Required.** Specifies the backend type. Can be set to `ldap`, `msldap`.
+resource                 | **Required.** The name of the LDAP resource defined in [resources.ini](04-Resources.md#resources).
+user\_class              | **Optional.** LDAP user class. Defaults to `user`.
+user\_name\_attribute    | **Optional.** LDAP attribute which contains the username. Defaults to `sAMAccountName` with `msldap` and `uid` with `ldap`.
+group\_class             | **Optional.** LDAP group class. Defaults to `group`.
+group\_name\_attribute   | **Optional.** LDAP attribute which contains the groupname. Defaults to `sAMAccountName` with `msldap` and `gid` with `ldap`.
+group\_filter            | **Optional.** LDAP group search filter. Requires `group_class` and `group_name_attribute`.
+nested\_group\_search    | **Optional.** Enable nested group search in Active Directory based on the user. Defaults to `0`. Only available with `backend` type `msldap`.
+
+Example for Active Directory groups:
+
+```
+# vim /etc/icingaweb2/groups.ini
+
+[active directory]
+backend = "msldap"
+resource = "auth_ad"
+group_class = "group"
+user_class = "user"
+user_name_attribute = "userPrincipalName"
+```
+
+Example for Active Directory using the group backend resource `ad_company`.
+It also references the defined user backend resource `ad_users_company`.
+
+```
+# vim /etc/icingaweb2/groups.ini
+
+[ad_groups_company]
+backend = "msldap"
+resource = "ad_company"
+user_backend = "ad_users_company"
+nested_group_search = "1"
+base_dn = "ou=Icinga,ou=Groups,dc=company,dc=com"
+```
+
+### Database Groups <a id="authentication-configuration-groups-database"></a>
+
+Option                   | Description
+-------------------------|-----------------------------------------------
+backend                  | **Required.** Specifies the backend type. Must be set to `db`.
+resource                 | **Required.** The name of the database resource defined in [resources.ini](04-Resources.md#resources).
+
+Example:
+
+```
+# vim /etc/icingaweb2/groups.ini
+
+[icingaweb2]
+backend = "db"
+resource = "icingaweb_db"
+```
+
 
 ## Domain-aware Authentication <a id="domain-aware-auth"></a>
 
@@ -147,6 +230,8 @@ configuration. (AD: NetBIOS name, other LDAP: domain in DNS-notation)
 **Example:**
 
 ```
+# vim /etc/icingaweb2/authentication.ini
+
 [auth_icinga]
 backend             = ldap
 resource            = icinga_ldap
@@ -165,10 +250,10 @@ If you configure the domains like above, the icinga.com user "jdoe" will have to
 EXAMPLE employee "rroe" will have to log in as "rroe@EXAMPLE". They could also log in as "EXAMPLE\\rroe", but this gets
 converted to "rroe@EXAMPLE" as soon as the user logs in.
 
-**Caution!**
-
-Enabling domain-awareness or changing domains in existing setups requires migration of the usernames in the Icinga Web 2
-configuration. Consult `icingacli --help migrate config users` for details.
+> **Caution!**
+>
+> Enabling domain-awareness or changing domains in existing setups requires migration of the usernames in the Icinga Web 2
+> configuration. Consult `icingacli --help migrate config users` for details.
 
 ### Default Domain <a id="default-auth-domain"></a>
 
@@ -177,6 +262,8 @@ For the sake of simplicity a default domain can be configured (in `config.ini`).
 **Example:**
 
 ```
+# vim /etc/icingaweb2/config.ini
+
 [authentication]
 default_domain = "icinga.com"
 ```
