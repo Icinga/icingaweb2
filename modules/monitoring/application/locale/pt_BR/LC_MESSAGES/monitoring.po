@@ -8,15 +8,15 @@ msgstr ""
 "Project-Id-Version: Monitoring Module (2.0.0~alpha4)\n"
 "Report-Msgid-Bugs-To: dev@icinga.com\n"
 "POT-Creation-Date: 2014-12-03 09:10-0200\n"
-"PO-Revision-Date: 2014-12-03 09:13-0300\n"
-"Last-Translator: Carlos Cesario <carloscesario@gmail.com>\n"
+"PO-Revision-Date: 2017-09-28 15:31+0200\n"
+"Last-Translator: Michael Friedrich <michael.friedrich@icinga.com>\n"
 "Language: pt_BR\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 1.5.4\n"
+"X-Generator: Poedit 2.0.3\n"
+"Language-Team: \n"
 
 #: /usr/local/icingaweb/modules/monitoring/application/controllers/ChartController.php:278
 msgid " Down Hosts (Handled)"
@@ -1553,8 +1553,8 @@ msgstr ""
 #: /usr/local/icingaweb/modules/monitoring/application/forms/Command/Object/ScheduleServiceDowntimeCommandForm.php:73
 msgid ""
 "If you work with other administrators, you may find it useful to share "
-"information about the host or service that is having problems. Make sure "
-"you enter a brief description of what you are doing."
+"information about the host or service that is having problems. Make sure you "
+"enter a brief description of what you are doing."
 msgstr ""
 "Se você trabalha com outros administradores, você pode achar isso útil para "
 "compartilhar informações sobre um host ou serviço que está tendo problemas. "
@@ -1693,10 +1693,6 @@ msgstr "Listar todos"
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/multi/components/objectlist.phtml:52
 msgid "List all selected objects"
 msgstr "Listar todos objetos selecionados"
-
-#: /usr/local/icingaweb/modules/monitoring/library/Monitoring/BackendStep.php:128
-msgid "Livestatus Resource"
-msgstr "Recurso livestatus"
 
 #: /usr/local/icingaweb/modules/monitoring/application/views/scripts/config/index.phtml:58
 msgid "Local"

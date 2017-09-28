@@ -8,15 +8,15 @@ msgstr ""
 "Project-Id-Version: Icinga Web 2 (None)\n"
 "Report-Msgid-Bugs-To: dev@icinga.com\n"
 "POT-Creation-Date: 2014-12-03 09:11-0200\n"
-"PO-Revision-Date: 2014-12-03 09:19-0300\n"
-"Last-Translator: Carlos Cesario <carloscesario@gmail.com>\n"
+"PO-Revision-Date: 2017-09-28 15:07+0200\n"
+"Last-Translator: Michael Friedrich <michael.friedrich@icinga.com>\n"
 "Language: pt_BR\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 1.5.4\n"
+"X-Generator: Poedit 2.0.3\n"
+"Language-Team: \n"
 
 #: /usr/local/icingaweb/library/Icinga/Web/Menu/MonitoringMenuItemRenderer.php:41
 #, php-format
@@ -1171,12 +1171,6 @@ msgstr "A senha a ser utilizada para a autenticação"
 #: /usr/local/icingaweb/application/forms/Config/Resource/LdapResourceForm.php:84
 msgid "The password to use for querying the ldap server"
 msgstr "A senha a ser utilizada para consultar o servidor ldap"
-
-#: /usr/local/icingaweb/application/forms/Config/Resource/LivestatusResourceForm.php:46
-msgid "The path to your livestatus socket used for querying monitoring data"
-msgstr ""
-"O caminho para o soquete livestatus utilizado para consultar os dados de "
-"monitoramento"
 
 #: /usr/local/icingaweb/application/forms/Config/Authentication/LdapBackendForm.php:109
 msgid ""
