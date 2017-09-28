@@ -8,16 +8,16 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: dev@icinga.com\n"
 "POT-Creation-Date: 2016-05-23 20:16+0300\n"
-"PO-Revision-Date: 2016-06-02 10:02+0300\n"
-"Last-Translator: Munzir Taha <munzirtaha@gmail.com>\n"
+"PO-Revision-Date: 2017-09-28 15:05+0200\n"
+"Last-Translator: Michael Friedrich <michael.friedrich@icinga.com>\n"
 "Language-Team: Arabic <trans-ar@lists.fedoraproject.org>\n"
 "Language: ar\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 &&"
-" n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
-"X-Generator: Lokalize 2.0\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && "
+"n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+"X-Generator: Poedit 2.0.3\n"
 
 #: /usr/share/php/Icinga/Web/Form/Validator/InArray.php:16
 #, php-format
@@ -180,7 +180,7 @@ msgstr "إضافة مستخدم جديد"
 
 #: /usr/share/php/Icinga/Web/Widget/FilterEditor.php:410
 msgid "Add another filter"
-msgstr "إضافة مرشِّح جديد"
+msgstr "إضافة مرشِّح جديد"
 
 #: /usr/share/php/Icinga/Web/Widget/FilterWidget.php:80
 msgid "Add filter..."
@@ -205,8 +205,8 @@ msgid ""
 "All configured authentication methods failed. Please check the system log or "
 "Icinga Web 2 log for more information."
 msgstr ""
-"فشلت جميع طرق التحقق. رجاء قم بفحص سجلات النظام أو سجلات إسنجا وب 2 للمزيد"
-" من المعلومات."
+"فشلت جميع طرق التحقق. رجاء قم بفحص سجلات النظام أو سجلات إسنجا وب 2 للمزيد من "
+"المعلومات."
 
 #: /usr/share/icingaweb2/application/forms/Security/RoleForm.php:68
 #, php-format
@@ -234,8 +234,8 @@ msgid ""
 "An additional filter to use when looking up groups using the specified "
 "connection. Leave empty to not to use any additional filter rules."
 msgstr ""
-"مرشح إضافة لاستخدامه عند البحث عن المجموعات باستخدام الاتصال المحدد. دعه"
-" فارغا حتى لا تستخدم أي قوانين مرشحات إضافية."
+"مرشح إضافة لاستخدامه عند البحث عن المجموعات باستخدام الاتصال المحدد. دعه "
+"فارغا حتى لا تستخدم أي قوانين مرشحات إضافية."
 
 #: /usr/share/icingaweb2/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:228
 #: /usr/share/icingaweb2/application/forms/Config/UserBackend/LdapBackendForm.php:153
@@ -243,8 +243,8 @@ msgid ""
 "An additional filter to use when looking up users using the specified "
 "connection. Leave empty to not to use any additional filter rules."
 msgstr ""
-"مرشح إضافة لاستخدامه عند البحث عن المستخدمين باستخدام الاتصال المحدد. دعه"
-" فارغا حتى لا تستخدم أي قوانين مرشحات إضافية."
+"مرشح إضافة لاستخدامه عند البحث عن المستخدمين باستخدام الاتصال المحدد. دعه "
+"فارغا حتى لا تستخدم أي قوانين مرشحات إضافية."
 
 #: /usr/share/php/Icinga/Web/Menu.php:274
 #: /usr/share/php/Icinga/Application/Web.php:318
@@ -282,15 +282,15 @@ msgstr "خدمة المصادقة \"%s\" لا توجد"
 
 #: /usr/share/icingaweb2/application/forms/Config/UserBackendReorderForm.php:65
 msgid "Authentication order updated"
-msgstr "حُدِّث ترتيب المصادقة"
+msgstr "حُدِّث ترتيب المصادقة"
 
 #: /usr/share/icingaweb2/application/forms/AutoRefreshForm.php:44
 msgid "Auto refresh successfully disabled"
-msgstr "عُطِّل التحديث التلقائي"
+msgstr "عُطِّل التحديث التلقائي"
 
 #: /usr/share/icingaweb2/application/forms/AutoRefreshForm.php:41
 msgid "Auto refresh successfully enabled"
-msgstr "فُعِّل التحديث التلقائي"
+msgstr "فُعِّل التحديث التلقائي"
 
 #: /usr/share/php/Icinga/Web/Wizard.php:626
 #: /usr/share/php/Icinga/Web/Wizard.php:650
@@ -384,8 +384,7 @@ msgstr "لا يمكن البحث هنا"
 #: /usr/share/php/Icinga/Repository/IniRepository.php:91
 #: /usr/share/php/Icinga/Repository/IniRepository.php:108
 #, php-format
-msgid ""
-"Cannot update. Column \"%s\" holds a section's name which must be unique"
+msgid "Cannot update. Column \"%s\" holds a section's name which must be unique"
 msgstr "تعذر التحديث. العمود \"%s\" يحوي اسم المقطع الذي يجب أن يكون وحيدا"
 
 #: /usr/share/php/Icinga/Repository/IniRepository.php:123
@@ -407,8 +406,8 @@ msgid ""
 "Check this box for disallowing users to change the theme. If a default theme "
 "is set, it will be used nonetheless"
 msgstr ""
-"اختر هذا المربع لمنع المستخدمين من تغيير السمة. إذا تم تعيين سمة افتراضية،"
-" سيتم استخدامها في جميع الحالات"
+"اختر هذا المربع لمنع المستخدمين من تغيير السمة. إذا تم تعيين سمة افتراضية، "
+"سيتم استخدامها في جميع الحالات"
 
 #: /usr/share/icingaweb2/application/forms/Config/Resource/DbResourceForm.php:154
 msgid ""
@@ -417,8 +416,8 @@ msgid ""
 "experimental"
 msgstr ""
 "حدد هذا المربع لاتصالات قاعدة البيانات الثابتة. لا يتم إغلاق الاتصالات "
-"المستمرة في نهاية الطلب، ولكنها تخزن في ذاكرة مؤقتة ويعاد "
-"استخدامها. وهذه خاصية تجريبية"
+"المستمرة في نهاية الطلب، ولكنها تخزن في ذاكرة مؤقتة ويعاد استخدامها. وهذه "
+"خاصية تجريبية"
 
 #: /usr/share/icingaweb2/application/forms/Dashboard/DashletForm.php:101
 msgid "Check this box if you want to add the dashlet to a new dashboard"
@@ -486,8 +485,7 @@ msgstr "تأكيد الإزالة"
 
 #: /usr/share/icingaweb2/application/forms/Config/Resource/LivestatusResourceForm.php:79
 msgid ""
-"Connectivity validation failed, connection to the given resource not "
-"possible."
+"Connectivity validation failed, connection to the given resource not possible."
 msgstr "فشل التحقق من الاتصال، الاتصال بالمورد المعطى غير ممكن."
 
 #: /usr/share/php/Icinga/Chart/GridChart.php:90
@@ -505,10 +503,9 @@ msgid ""
 "be symlinked in the module folder, but won't show up in the list of disabled "
 "modules."
 msgstr ""
-"يحتوي على المجلدات التي سيتم البحث فيها عن الوحدات المتاحة، "
-"مفصولة بنقطتين. الوحدات التي لا وجود لها في هذه المجلدات يظل "
-"بالإمكان ربطها من مجلد الوحدة، لكنها لن تظهر في قائمة الوحدات "
-"المعطلة."
+"يحتوي على المجلدات التي سيتم البحث فيها عن الوحدات المتاحة، مفصولة بنقطتين. "
+"الوحدات التي لا وجود لها في هذه المجلدات يظل بالإمكان ربطها من مجلد الوحدة، "
+"لكنها لن تظهر في قائمة الوحدات المعطلة."
 
 #: /usr/share/icingaweb2/application/views/scripts/about/index.phtml:25
 msgid "Copyright"
@@ -519,8 +516,8 @@ msgid ""
 "Could not find any valid user backend resources. Please configure a resource "
 "for authentication first."
 msgstr ""
-"لا يمكن العثور على أي موارد لخلفية المستخدم صالحة. يرجى إعداد مورد "
-"للمصادقة أولا."
+"لا يمكن العثور على أي موارد لخلفية المستخدم صالحة. يرجى إعداد مورد للمصادقة "
+"أولا."
 
 #: /usr/share/icingaweb2/application/views/scripts/dashboard/error.phtml:2
 msgid "Could not persist dashboard"
@@ -563,8 +560,8 @@ msgid ""
 "Create a new backend for authenticating your users. This backend will be "
 "added at the end of your authentication order."
 msgstr ""
-"إنشاء خلفية جديدة لمصادقة المستخدمين. ستضاف هذه الخلفية "
-"في نهاية ترتيب المصادقة الخاصة بك."
+"إنشاء خلفية جديدة لمصادقة المستخدمين. ستضاف هذه الخلفية في نهاية ترتيب "
+"المصادقة الخاصة بك."
 
 #: /usr/share/icingaweb2/application/controllers/UsergroupbackendController.php:42
 msgid "Create a new backend to associate users and groups with."
@@ -629,8 +626,8 @@ msgid ""
 "Currently there is no dashlet available. This might change once you enabled "
 "some of the available %s."
 msgstr ""
-"لا يوجد حاليا لوحة مصغرة متاحة. يمكن لهذا أن يتغير بمجرد "
-"تفعيلك لبعض الـ %s المتوفرة."
+"لا يوجد حاليا لوحة مصغرة متاحة. يمكن لهذا أن يتغير بمجرد تفعيلك لبعض الـ %s "
+"المتوفرة."
 
 #: /usr/share/icingaweb2/application/forms/Dashboard/DashletForm.php:120
 #: /usr/share/icingaweb2/application/controllers/DashboardController.php:257
@@ -710,8 +707,8 @@ msgid ""
 "Details can be found in the application log. (If you don't have access to "
 "this log, call your administrator in this case)"
 msgstr ""
-"يمكن الاطلاع على التفاصيل في سجل التطبيق. (إذا لم يكن لديك "
-"وصولا إلى هذا السجل، اتصل بالمسؤول في هذه الحالة)"
+"يمكن الاطلاع على التفاصيل في سجل التطبيق. (إذا لم يكن لديك وصولا إلى هذا "
+"السجل، اتصل بالمسؤول في هذه الحالة)"
 
 #: /usr/share/icingaweb2/application/forms/AutoRefreshForm.php:65
 msgid "Disable auto refresh"
@@ -818,9 +815,8 @@ msgid ""
 "Enter url being loaded in the dashlet. You can paste the full URL, including "
 "filters."
 msgstr ""
-"أدخل الرابط الذي تم تحميله في اللوحة المصغرة. يمكنك لصق عنوان URL الكامل، بما"
-" في ذلك "
-"المرشحات."
+"أدخل الرابط الذي تم تحميله في اللوحة المصغرة. يمكنك لصق عنوان URL الكامل، بما "
+"في ذلك المرشحات."
 
 #: /usr/share/icingaweb2/application/controllers/ErrorController.php:109
 msgid "Error"
@@ -894,8 +890,8 @@ msgid ""
 "Failed to fully parse navigation configuration. Ensure that all referenced "
 "parents are existing navigation items: %s"
 msgstr ""
-"فشل في إجراء تحليل كامل لإعداد التنقل. تأكد من أن جميع الآباء المشار "
-"لهم هم عناصر تنقل موجودة: %s"
+"فشل في إجراء تحليل كامل لإعداد التنقل. تأكد من أن جميع الآباء المشار لهم هم "
+"عناصر تنقل موجودة: %s"
 
 #: /usr/share/php/Icinga/Repository/IniRepository.php:72
 #, php-format
@@ -970,7 +966,7 @@ msgstr "تصفية هذه القائمة"
 
 #: /usr/share/php/Icinga/Web/Widget/FilterWidget.php:93
 msgid "Filtered"
-msgstr "مُرشَّح"
+msgstr "مُرشَّح"
 
 #: /usr/share/php/Icinga/Web/Wizard.php:662
 msgid "Finish"
@@ -1117,21 +1113,19 @@ msgstr "أيقونة"
 
 #: /usr/share/icingaweb2/application/views/scripts/authentication/logout.phtml:15
 msgid ""
-"If this message does not disappear, it might be necessary to quit the "
-"current session manually by clearing the cache, or by closing the current "
-"browser session."
+"If this message does not disappear, it might be necessary to quit the current "
+"session manually by clearing the cache, or by closing the current browser "
+"session."
 msgstr ""
-"إذا لم تختفي هذه الرسالة، فقد يكون من اللازم إنهاء "
-"الجلسة الحالية يدويا بتنظيف الذاكرة المخبأة أو بإغلاق "
-"جلسة المتصفح الحالية."
+"إذا لم تختفي هذه الرسالة، فقد يكون من اللازم إنهاء الجلسة الحالية يدويا "
+"بتنظيف الذاكرة المخبأة أو بإغلاق جلسة المتصفح الحالية."
 
 #: /usr/share/icingaweb2/application/views/scripts/showConfiguration.phtml:21
 msgid ""
 "In case you can access the file by yourself, you can open it and insert the "
 "config manually:"
 msgstr ""
-"في حال كان بإمكانك الوصول إلى الملف بنفسك، يمكنك فتحه وإدراج "
-"الإعداد يدويا:"
+"في حال كان بإمكانك الوصول إلى الملف بنفسك، يمكنك فتحه وإدراج الإعداد يدويا:"
 
 #: /usr/share/icingaweb2/application/views/scripts/user/show.phtml:33
 msgid "Inactive"
@@ -1165,10 +1159,10 @@ msgid ""
 "authentication method by following the instructions in the %1$sdocumentation"
 "%3$s or by using our %2$sweb-based setup-wizard%3$s."
 msgstr ""
-"يبدو أنك لم تقوم بإعداد إسنجا الويب 2 بعد لذلك فأنه من غير الممكن "
-"الدخول دون أي أسلوب مصادقة معرف. يرجى تعريف أسلوب "
-"مصادقة من خلال اتباع التعليمات في %1$sdocumentation "
-"%3$s أو  عن طريق استخدام معالج التثبيت%3$s المبني على الوب الخاص بنا%2$"
+"يبدو أنك لم تقوم بإعداد إسنجا الويب 2 بعد لذلك فأنه من غير الممكن الدخول دون "
+"أي أسلوب مصادقة معرف. يرجى تعريف أسلوب مصادقة من خلال اتباع التعليمات في "
+"%1$sdocumentation %3$s أو  عن طريق استخدام معالج التثبيت%3$s المبني على الوب "
+"الخاص بنا%2$"
 
 #: /usr/share/icingaweb2/application/forms/Config/UserBackend/LdapBackendForm.php:210
 msgid "LDAP Base DN"
@@ -1514,8 +1508,8 @@ msgid ""
 "No authentication methods available. Did you create authentication.ini when "
 "setting up Icinga Web 2?"
 msgstr ""
-"لا يُوجد طرق مصادقة متوفرة. هل قمت بإنشاء authentication.ini "
-"عند إعداد إسنجا وب 2؟"
+"لا يُوجد طرق مصادقة متوفرة. هل قمت بإنشاء authentication.ini عند إعداد إسنجا "
+"وب 2؟"
 
 #: /usr/share/icingaweb2/application/views/scripts/group/list.phtml:22
 msgid "No backend found which is able to list user groups"
@@ -1572,11 +1566,11 @@ msgstr "بلا"
 
 #: /usr/share/icingaweb2/application/forms/Config/UserGroup/UserGroupForm.php:63
 msgid ""
-"Note that all users that are currently a member of this group will have "
-"their membership cleared automatically."
+"Note that all users that are currently a member of this group will have their "
+"membership cleared automatically."
 msgstr ""
-"لاحظ أن جميع المستخدمين الذين هم حاليا أعضاء في هذه المجموعة ستحذف "
-"عضويتهم تلقائيا."
+"لاحظ أن جميع المستخدمين الذين هم حاليا أعضاء في هذه المجموعة ستحذف عضويتهم "
+"تلقائيا."
 
 #: /usr/share/icingaweb2/application/forms/Config/ResourceConfigForm.php:96
 msgid "Old resource name missing"
@@ -1648,8 +1642,8 @@ msgid ""
 "Please note that not all authentication methods were available. Check the "
 "system log or Icinga Web 2 log for more information."
 msgstr ""
-"يرجى ملاحظة أن ليس كل أساليب المصادقة متاحة. تحقق من سجل "
-"النظام أو سجل إسنجا الويب 2 لمزيد من المعلومات."
+"يرجى ملاحظة أن ليس كل أساليب المصادقة متاحة. تحقق من سجل النظام أو سجل إسنجا "
+"الويب 2 لمزيد من المعلومات."
 
 #: /usr/share/icingaweb2/application/forms/Config/UserGroup/AddMemberForm.php:143
 msgid ""
@@ -1709,8 +1703,7 @@ msgid ""
 "Push this button to update the form to reflect the change that was made in "
 "the field on the left"
 msgstr ""
-"ضغط هذا الزر لتحديث النموذج لعكس التغيير الذي تم إجراؤه في "
-"الحقل على اليسار"
+"ضغط هذا الزر لتحديث النموذج لعكس التغيير الذي تم إجراؤه في الحقل على اليسار"
 
 #: /usr/share/php/Icinga/Web/Form/Decorator/Autosubmit.php:119
 msgid ""
@@ -1922,8 +1915,7 @@ msgstr "تقييد المجموعات التي يمكن لهذا الدور أن
 
 #: /usr/share/icingaweb2/application/forms/Security/RoleForm.php:53
 msgid "Restrict which users this role can share items and information with"
-msgstr ""
-"تقييد المستخدمين الذين يمكن لهذا الدور أن يشارك معهم العناصر والمعلومات"
+msgstr "تقييد المستخدمين الذين يمكن لهذا الدور أن يشارك معهم العناصر والمعلومات"
 
 #: /usr/share/icingaweb2/application/views/scripts/config/module.phtml:68
 msgid "Restrictions"
@@ -2037,8 +2029,8 @@ msgid ""
 "Set whether to show an exception's stacktrace by default. This can also be "
 "set in a user's preferences with the appropriate permission."
 msgstr ""
-"اختيار هل يظهر تتبع مكدس الاستثناء بشكل افتراضي. يمكن أيضا "
-"تعيينه في تفضيلات المستخدم مع الإذن المناسب."
+"اختيار هل يظهر تتبع مكدس الاستثناء بشكل افتراضي. يمكن أيضا تعيينه في تفضيلات "
+"المستخدم مع الإذن المناسب."
 
 #: /usr/share/icingaweb2/application/forms/PreferenceForm.php:224
 msgid "Set whether to show an exception's stacktrace."
@@ -2251,16 +2243,16 @@ msgid ""
 "The filter needs to be expressed as standard LDAP expression, without outer "
 "parentheses. (e.g. &(foo=bar)(bar=foo) or foo=bar)"
 msgstr ""
-"يحتاج المرشح أن يعبر عنه كتعبير LDAP قياسي، دون الأقواس "
-"الخارجية. (مثلا: &(foo=bar)(bar=foo) or foo=bar)"
+"يحتاج المرشح أن يعبر عنه كتعبير LDAP قياسي، دون الأقواس الخارجية. (مثلا: "
+"&(foo=bar)(bar=foo) or foo=bar)"
 
 #: /usr/share/icingaweb2/application/forms/Config/UserBackend/LdapBackendForm.php:157
 msgid ""
-"The filter needs to be expressed as standard LDAP expression. (e.g. "
-"&(foo=bar)(bar=foo) or foo=bar)"
+"The filter needs to be expressed as standard LDAP expression. (e.g. &(foo=bar)"
+"(bar=foo) or foo=bar)"
 msgstr ""
-"يحتاج المرشح أن يعبر عنه كتعبير LDAP قياسي، "
-"(مثلا: &(foo=bar)(bar=foo) or foo=bar)"
+"يحتاج المرشح أن يعبر عنه كتعبير LDAP قياسي، (مثلا: &(foo=bar)(bar=foo) or "
+"foo=bar)"
 
 #: /usr/share/icingaweb2/application/forms/Config/UserBackend/ExternalBackendForm.php:54
 msgid "The filter pattern must be a valid regular expression."
@@ -2271,8 +2263,8 @@ msgid ""
 "The filter to use to strip specific parts off from usernames. Leave empty if "
 "you do not want to strip off anything."
 msgstr ""
-"الفلتر المستخدم لتجريد أجزاء معينة من من أسماء المستخدمين. دعه فارغا إذا "
-"كنت لا تريد تجريد أي شيء."
+"الفلتر المستخدم لتجريد أجزاء معينة من من أسماء المستخدمين. دعه فارغا إذا كنت "
+"لا تريد تجريد أي شيء."
 
 #: /usr/share/icingaweb2/application/forms/Config/General/LoggingConfigForm.php:116
 msgid "The full path to the log file to write messages to."
@@ -2292,11 +2284,9 @@ msgstr "اسم المضيف أو العنوان لخادم LDAP لاستخدام
 
 #: /usr/share/icingaweb2/application/forms/Navigation/NavigationItemForm.php:70
 msgid ""
-"The icon of this navigation item. Leave blank if you do not want a icon "
-"being displayed"
-msgstr ""
-"أيقونة عنصر التنقل هذا. دعها فارغة إن لم ترد "
-"عرض الأيقونة"
+"The icon of this navigation item. Leave blank if you do not want a icon being "
+"displayed"
+msgstr "أيقونة عنصر التنقل هذا. دعها فارغة إن لم ترد عرض الأيقونة"
 
 #: /usr/share/icingaweb2/application/forms/Config/General/LoggingConfigForm.php:54
 msgid "The maximum logging level to emit."
@@ -2323,17 +2313,13 @@ msgstr "اسم الدور"
 msgid ""
 "The name of this authentication provider that is used to differentiate it "
 "from others"
-msgstr ""
-"اسم مزود المصادقة لاستخدامه في التفرقة "
-"بينه وبين الآخرين"
+msgstr "اسم مزود المصادقة لاستخدامه في التفرقة بينه وبين الآخرين"
 
 #: /usr/share/icingaweb2/application/forms/Config/UserBackend/LdapBackendForm.php:59
 msgid ""
 "The name of this authentication provider that is used to differentiate it "
 "from others."
-msgstr ""
-"اسم مزود المصادقة لاستخدامه في التفرقة "
-"بينه وبين الآخرين."
+msgstr "اسم مزود المصادقة لاستخدامه في التفرقة بينه وبين الآخرين."
 
 #: /usr/share/icingaweb2/application/forms/Navigation/NavigationConfigForm.php:584
 msgid ""
@@ -2345,9 +2331,7 @@ msgstr "اسم عنصر التنقل لاستخدامه في التفرقة بي
 msgid ""
 "The name of this user group backend that is used to differentiate it from "
 "others"
-msgstr ""
-"اسم خلفية مجموعة المستخدم لاستخدامه في التفرقة بينه وبين "
-"الآخرين"
+msgstr "اسم خلفية مجموعة المستخدم لاستخدامه في التفرقة بينه وبين الآخرين"
 
 #: /usr/share/icingaweb2/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:123
 msgid "The object class used for storing groups on the LDAP server."
@@ -2363,16 +2347,16 @@ msgid ""
 "The parent item to assign this navigation item to. Select \"None\" to make "
 "this a main navigation item"
 msgstr ""
-"العنصر الأصل لتعيين بند التنقل هذا إليه. اختر \"بلا\" لجعل "
-"بند التنقل هذا رئيسيا"
+"العنصر الأصل لتعيين بند التنقل هذا إليه. اختر \"بلا\" لجعل بند التنقل هذا "
+"رئيسيا"
 
 #: /usr/share/icingaweb2/application/forms/Navigation/MenuItemForm.php:27
 msgid ""
 "The parent menu to assign this menu entry to. Select \"None\" to make this a "
 "main menu entry"
 msgstr ""
-"القائمة الأم لتعيين مدخل القائمة هذا إليه. اختر \"بلا\" لجعل "
-"مدخل القائمة هذا رئيسيا"
+"القائمة الأم لتعيين مدخل القائمة هذا إليه. اختر \"بلا\" لجعل مدخل القائمة هذا "
+"رئيسيا"
 
 #: /usr/share/icingaweb2/application/forms/Config/Resource/DbResourceForm.php:138
 msgid "The password to use for authentication"
@@ -2382,18 +2366,13 @@ msgstr "كلمة المرور لاستخدامها في المصادقة"
 msgid "The password to use for querying the ldap server"
 msgstr "كلمة المرور لاستخدامها في الاستعلام عن خادم ldap"
 
-#: /usr/share/icingaweb2/application/forms/Config/Resource/LivestatusResourceForm.php:45
-msgid "The path to your livestatus socket used for querying monitoring data"
-msgstr ""
-"المسار إلى مقبس livestatus الخاصة بك لاستخدامه في الاستعلام عن بيانات المراقبة"
-
 #: /usr/share/icingaweb2/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:192
 msgid ""
 "The path where groups can be found on the LDAP server. Leave empty to select "
 "all users available using the specified connection."
 msgstr ""
-"المسار حيث يمكن العثور على مجموعات على خادم LDAP. اتركه فارغا لتحديد "
-"جميع المستخدمين المتوفرين باستخدام الاتصال المحدد."
+"المسار حيث يمكن العثور على مجموعات على خادم LDAP. اتركه فارغا لتحديد جميع "
+"المستخدمين المتوفرين باستخدام الاتصال المحدد."
 
 #: /usr/share/icingaweb2/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:273
 #: /usr/share/icingaweb2/application/forms/Config/UserBackend/LdapBackendForm.php:212
@@ -2401,8 +2380,8 @@ msgid ""
 "The path where users can be found on the LDAP server. Leave empty to select "
 "all users available using the specified connection."
 msgstr ""
-"المسار حيث يمكن العثور على مستخدمين على خادم LDAP. اتركه فارغا لتحديد "
-"جميع المستخدمين المتوفرين باستخدام الاتصال المحدد."
+"المسار حيث يمكن العثور على مستخدمين على خادم LDAP. اتركه فارغا لتحديد جميع "
+"المستخدمين المتوفرين باستخدام الاتصال المحدد."
 
 #: /usr/share/icingaweb2/application/forms/Config/Resource/FileResourceForm.php:59
 msgid "The pattern by which to identify columns."
@@ -2436,8 +2415,8 @@ msgid ""
 "\"%s\". Removing the resource can result in noone being able to log in any "
 "longer."
 msgstr ""
-"المورد \"%s\" يستخدم حاليا للمصادقة من قبل خلفية المستخدم \"%s\". "
-"إزالة المورد يؤدي إلى عدم قدرة أي أحد على الدخول لفترة أطول."
+"المورد \"%s\" يستخدم حاليا للمصادقة من قبل خلفية المستخدم \"%s\". إزالة "
+"المورد يؤدي إلى عدم قدرة أي أحد على الدخول لفترة أطول."
 
 #: /usr/share/icingaweb2/application/forms/Navigation/NavigationItemForm.php:39
 msgid "The target where to open this navigation item's url"
@@ -2482,17 +2461,16 @@ msgid ""
 "identifier (e.g. http://example.tld)"
 msgstr ""
 "عنوان الموقع في بند التنقل هذا. اتركه فارغا إذا كنت تريد فقط للاسم أن يُعرض. "
-"لعناوين المواقع الخارجية، تأكد من إلحاقها بمعرف بروتوكول مناسب "
-"(مثل: http: //example.tld)"
+"لعناوين المواقع الخارجية، تأكد من إلحاقها بمعرف بروتوكول مناسب (مثل: http: //"
+"example.tld)"
 
 #: /usr/share/icingaweb2/application/forms/Navigation/DashletForm.php:29
 msgid ""
 "The url to load in the dashlet. For external urls, make sure to prepend an "
 "appropriate protocol identifier (e.g. http://example.tld)"
 msgstr ""
-"عنوان الموقع لتحميله في اللوحة الصغيرة. لعناوين المواقع الخارجية، تأكد من"
-" إلحاقها "
-"بمعرف بروتوكول مناسب (مثل: http://example.tld)"
+"عنوان الموقع لتحميله في اللوحة الصغيرة. لعناوين المواقع الخارجية، تأكد من "
+"إلحاقها بمعرف بروتوكول مناسب (مثل: http://example.tld)"
 
 #: /usr/share/icingaweb2/application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:78
 msgid "The user backend to link with this user group backend."
@@ -2503,9 +2481,8 @@ msgid ""
 "The user dn to use for querying the ldap server. Leave the dn and password "
 "empty for attempting an anonymous bind"
 msgstr ""
-"الاسم المميز للمستخدم لاستخدامه في استعلام خادم ldap. اترك الاسم المميز وكلمة"
-" المرور "
-"فارغين لمحاولة الربط المجهول"
+"الاسم المميز للمستخدم لاستخدامه في استعلام خادم ldap. اترك الاسم المميز وكلمة "
+"المرور فارغين لمحاولة الربط المجهول"
 
 #: /usr/share/icingaweb2/application/forms/Config/Resource/DbResourceForm.php:128
 msgid "The user name to use for authentication"
@@ -2539,8 +2516,8 @@ msgid ""
 "This is a child of the navigation item %1$s. You can only unshare this item "
 "by unsharing %1$s"
 msgstr ""
-"هذا تابع لعنصر التنقل %1$s. يمكنك فقط إلغاء مشارك هذا العنصر "
-"بإلغاء مشاركة %1$s"
+"هذا تابع لعنصر التنقل %1$s. يمكنك فقط إلغاء مشارك هذا العنصر بإلغاء مشاركة "
+"%1$s"
 
 #: /usr/share/icingaweb2/application/views/scripts/config/module.phtml:50
 msgid "This module has no dependencies"
@@ -2555,8 +2532,7 @@ msgid ""
 "This option allows you to enable or to disable the global page content auto "
 "refresh"
 msgstr ""
-"هذا الخيار يسمح لك بتفعيل أو تعطيل التحديث "
-"التلقائي لمحتوى الصفحة الكامل"
+"هذا الخيار يسمح لك بتفعيل أو تعطيل التحديث التلقائي لمحتوى الصفحة الكامل"
 
 #: /usr/share/icingaweb2/application/forms/Navigation/NavigationConfigForm.php:603
 msgid "Tick this box to share this item with others"
@@ -2581,11 +2557,9 @@ msgstr "واجهة مستخدم تصحيح الأخطاء"
 #: /usr/share/icingaweb2/application/forms/Navigation/NavigationConfigForm.php:486
 #, php-format
 msgid ""
-"Unable to delete navigation item \"%s\". There are other items dependent "
-"from it: %s"
-msgstr ""
-"غير قادر على حذف عنصر التنقل \"%s\". هناك عناصر أخرى "
-"تابعة له: %s"
+"Unable to delete navigation item \"%s\". There are other items dependent from "
+"it: %s"
+msgstr "غير قادر على حذف عنصر التنقل \"%s\". هناك عناصر أخرى تابعة له: %s"
 
 #: /usr/share/icingaweb2/application/forms/Navigation/NavigationConfigForm.php:526
 #, php-format
@@ -2593,8 +2567,8 @@ msgid ""
 "Unable to unshare navigation item \"%s\". It is dependent from item \"%s\". "
 "Dependent items can only be unshared by unsharing their parent"
 msgstr ""
-"غير قادر على إلغاء مشاركة عنصر التنقل \"%s\". فهو تابع للعنصر \"%s\". "
-"العناصر التابعة يمكن إلغاء مشاركتها فقط بإلغاء مشاركة أصلها"
+"غير قادر على إلغاء مشاركة عنصر التنقل \"%s\". فهو تابع للعنصر \"%s\". العناصر "
+"التابعة يمكن إلغاء مشاركتها فقط بإلغاء مشاركة أصلها"
 
 #: /usr/share/icingaweb2/application/views/scripts/navigation/index.phtml:54
 #: /usr/share/icingaweb2/application/views/scripts/navigation/shared.phtml:42
@@ -2653,18 +2627,14 @@ msgstr "تحديث خلفية مجموعة مستخدم"
 msgid ""
 "Upon any of this form's fields were changed, this page is being updated "
 "automatically."
-msgstr ""
-" عند تغيير أي من حقول هذا النموذج، فإن هذه الصفحة يتم تحديثها "
-"تلقائيا."
+msgstr " عند تغيير أي من حقول هذا النموذج، فإن هذه الصفحة يتم تحديثها تلقائيا."
 
 #: /usr/share/php/Icinga/Web/Form.php:951
 #: /usr/share/php/Icinga/Web/Form/Decorator/Autosubmit.php:100
 msgid ""
 "Upon its value has changed, this field issues an automatic update of this "
 "page."
-msgstr ""
-"عند تغيير قيمتها، فإن هذا الحقل يصدر تحديث تلقائي لهذه "
-"الصفحة."
+msgstr "عند تغيير قيمتها، فإن هذا الحقل يصدر تحديث تلقائي لهذه الصفحة."
 
 #: /usr/share/icingaweb2/application/views/scripts/dashboard/settings.phtml:14
 #: /usr/share/icingaweb2/application/forms/Navigation/NavigationItemForm.php:54
@@ -2808,8 +2778,8 @@ msgid ""
 "User to log in as on the remote Icinga instance. Please note that key-based "
 "SSH login must be possible for this user"
 msgstr ""
-"الاسم المستخدم لتسجيل الدخول به لحالة إسنجا البعيدة. يرجى ملاحظة أن "
-"دخول SSH القائم على مفتاح يجب أن يكون متاحا لهذا المستخدم"
+"الاسم المستخدم لتسجيل الدخول به لحالة إسنجا البعيدة. يرجى ملاحظة أن دخول SSH "
+"القائم على مفتاح يجب أن يكون متاحا لهذا المستخدم"
 
 #: /usr/share/php/Icinga/Web/Menu.php:294
 msgid "Usergroups"
@@ -2882,8 +2852,8 @@ msgid ""
 "Whether to encrypt communication. Choose STARTTLS or LDAPS for encrypted "
 "communication or none for unencrypted communication"
 msgstr ""
-"سواء لتشفير الاتصالات أو عدمه. اختر STARTTLS أو LDAPS للاتصال "
-"المشفر أو \"بلا\" للاتصال غير المشفر"
+"سواء لتشفير الاتصالات أو عدمه. اختر STARTTLS أو LDAPS للاتصال المشفر أو \"بلا"
+"\" للاتصال غير المشفر"
 
 #: /usr/share/icingaweb2/application/views/scripts/joystickPagination.phtml:70
 #: /usr/share/icingaweb2/application/views/scripts/joystickPagination.phtml:96
@@ -2913,11 +2883,10 @@ msgstr "ليس لديك أذونات في نظام الملفات للكتابة
 
 #: /usr/share/icingaweb2/application/controllers/UserController.php:229
 msgid ""
-"You'll need to configure at least one user group backend first that allows "
-"to create new memberships"
+"You'll need to configure at least one user group backend first that allows to "
+"create new memberships"
 msgstr ""
-"ستحتاج لإعداد خلفية مجموعة مستخدم واحدة على الأقل أولا تسمح "
-"بإنشاء عضوية جديدة"
+"ستحتاج لإعداد خلفية مجموعة مستخدم واحدة على الأقل أولا تسمح بإنشاء عضوية جديدة"
 
 #: /usr/share/icingaweb2/application/forms/Authentication/LoginForm.php:138
 msgid ""
@@ -2925,9 +2894,8 @@ msgid ""
 "authentication mechanisms. Make sure you'll configure such, otherwise you'll "
 "not be able to login."
 msgstr ""
-"لا يمكنك حاليا المصادقة باستخدام أي من آليات مصادقة "
-"خادم الوب. تأكد من أنك سوف تقوم بإعداد واحدة، "
-"وإلا فسوف لن تكون قادرا على الدخول."
+"لا يمكنك حاليا المصادقة باستخدام أي من آليات مصادقة خادم الوب. تأكد من أنك "
+"سوف تقوم بإعداد واحدة، وإلا فسوف لن تكون قادرا على الدخول."
 
 #: /usr/share/icingaweb2/application/forms/PreferenceForm.php:197
 msgid "Your Current Language"
@@ -3011,5 +2979,3 @@ msgstr "منذ %s"
 #: /usr/share/icingaweb2/application/views/scripts/config/devtools.phtml:5
 msgid "toggle"
 msgstr "تبديل"
-
-

@@ -140,9 +140,6 @@ class Host extends MonitoredObject
             'host_state_type',
             'instance_name'
         );
-        if ($this->backend->getType() === 'livestatus') {
-            $columns[] = 'host_contacts';
-        }
         return $this->backend->select()->from('hoststatus', $columns)
             ->where('host_name', $this->host);
     }

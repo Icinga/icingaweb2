@@ -6,9 +6,9 @@ different files, when the information about a data source changes.
 
 ## Configuration <a id="resources-configuration"></a>
 
-Each section in `config/resources.ini` represents a data source with the section name being the identifier used to
+Each section in `resources.ini` represents a data source with the section name being the identifier used to
 reference this specific data source. Depending on the data source type, the sections define different directives.
-The available data source types are *db*, *ldap*, *ssh* and *livestatus* which will described in detail in the following
+The available data source types are `db`, `ldap` and `ssh` which will described in detail in the following
 paragraphs.
 
 ### Database <a id="resources-configuration-database"></a>
