@@ -139,7 +139,7 @@ apt-get install icingaweb2
 ```
 yum install icingaweb2 icingacli
 ```
-If you have [SELinux](90-SELinux.md) enabled, the package `icingaweb2-selinux` is also required.
+If you have [SELinux](90-SELinux.md) enabled, the package `icingaweb2-selinux` and `icinga2-selinux` is also required.
 For RHEL/CentOS please read the [package repositories notes](02-Installation.md#package-repositories-rhel-notes).
 
 **SLES and openSUSE**:
