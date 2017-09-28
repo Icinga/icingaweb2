@@ -2,6 +2,41 @@
 
 ## What's New
 
+### What's New in Version 2.4.2
+
+#### Bugfixes
+
+* Bug 2965: Transport config: Default port not changing upon auto-submit
+* Bug 2926: Wrong order when sorting by host_severity
+* Bug 2923: Number fields should be valid when empty
+* Bug 2919: Fix cached loading of module config
+* Bug 2911: Acknowledgements are not working without an expiry time
+* Bug 2878: process-check-result Button is visible even when user isn't allowed to use it
+* Bug 2850: Link to acknowledgements is wrong in the timeline
+* Bug 2841: Wrong menu height when switching back from mobile layout
+* Bug 2806: Wrong service state count in hostgroup overview
+* Bug 2805: Response from the Icinga 2 API w/ an empty result set leads to exception
+* Bug 2801: Wrong help text for the director in the icingacli
+* Bug 2784: Module and gravatar images are not served with their proper MIME type
+* Bug 2776: Defaults not respected when acknowledging problems
+* Bug 2767: Monitoring module: Config field protected vars not updated after zeroing config.ini
+* Bug 2728: Gracefully handle invalid Icinga 2 API response types
+* Bug 2718: Hide check attempt for hard states in history views
+* Bug 2716: Web 2 doesn't detect the browser time zone if the time zone offset is negative
+* Bug 2714: icingacli module disable fails on consecutive calls
+* Bug 2695: Macros cannot be used for a navigation item's url-port
+* Bug 2684: [dev.icinga.com #14027] Translation module should not write absolute path to .po files
+* Bug 2683: [dev.icinga.com #14025] Translation module should remove temp files
+* Bug 2661: [dev.icinga.com #13651] Don't offer the Icinga 2 API as transport if PHP cURL is missing
+* Bug 2660: [dev.icinga.com #13649] Make the Icinga 2 API the default command transport
+* Bug 2656: [dev.icinga.com #13627] Wrong count of handled critical service in the hover text
+* Bug 2645: [dev.icinga.com #13539] Improve error handling and validation of multiple LDAP URIs
+* Bug 2598: [dev.icinga.com #12977] Adding an empty user backend fails
+* Bug 2545: [dev.icinga.com #12640] MSSQL ressource not working
+* Bug 2523: [dev.icinga.com #12410] Click on Host in Service Grid can cause "Invalid Filter" error
+* Bug 2519: [dev.icinga.com #12330] Filter editor may show wrong values after searching
+* Bug 2509: [dev.icinga.com #12295] group_name_attribute should be "sAMAccountName" by default
+
 ### What's New in Version 2.4.1
 
 Our public repositories and issue tracker have been migrated to GitHub.
