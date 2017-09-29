@@ -9,7 +9,7 @@ if ($searchDashboard->search('dummy')->getPane('search')->hasDashlets()): ?>
     <form action="<?= $this->href('search') ?>" method="get" role="search" class="search-control">
         <input type="text" name="q" id="search" class="search search-input"
                placeholder="<?= $this->translate('Search') ?> &hellip;"
-               autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" required="required">
+               autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
         <button class="search-reset icon-cancel" type="reset"></button>
     </form>
 <?php endif; ?>

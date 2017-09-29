@@ -302,7 +302,9 @@ abstract class IniRepository extends Repository implements Extensible, Updatable
             $newConfig = clone $config;
             foreach ($newData as $column => $value) {
                 if ($column === $keyColumn) {
-                    $newSection = $value;
+                    if ($value !== $config->get($keyColumn)) {
+                        $newSection = $value;
+                    }
                 } else {
                     $newConfig->$column = $value;
                 }

@@ -1,7 +1,137 @@
 # Advanced Topics <a id="advanced-topics"></a>
 
-This chapter contains advanced Icinga Web 2 topics such as source installation
-or automation hints.
+This chapter provides details for advanced Icinga Web 2 topics.
+
+* [Global URL parameters](20-Advanced-Topics.md#global-url-parameters)
+* [VirtualHost configuration](20-Advanced-Topics.md#virtualhost-configuration)
+* [Source installation](20-Advanced-Topics.md#installing-from-source)
+* [Automated setup](20-Advanced-Topics.md#web-setup-automation)
+
+## Global URL Parameters <a id="global-url-parameters"></a>
+
+Parameters starting with `_` are for development purposes only.
+
+Parameter         | Value         | Description
+------------------|---------------|--------------------------------
+showFullscreen    | -             | Hides the left menu and optimizes the layout for full screen resolution.
+showCompact       | -             | Provides a compact view. Hides the title and upper menu. This is helpful to embed a dashboard item into an external iframe.
+format            | json/csv/sql  | Selected views can be exported as JSON or CSV. This also is available in the upper menu. You can also export the SQL queries for manual analysis.
+\_dev             | 0/1           | Whether the server should return compressed or full JS/CSS files. This helps debugging browser console errors.
+
+
+
+Examples for `showFullscreen`:
+
+http://localhost/icingaweb2/dashboard?showFullscreen
+http://localhost/icingaweb2/monitoring/list/services?service_problem=1&sort=service_severity&showFullscreen
+
+Examples for `showCompact`:
+
+http://localhost/icingaweb2/dashboard?showCompact&showFullscreen
+http://localhost/icingaweb2/monitoring/list/services?service_problem=1&sort=service_severity&showCompact
+
+Examples for `format`:
+
+http://localhost/icingaweb2/monitoring/list/services?format=json
+http://localhost/icingaweb2/monitoring/list/services?service_problem=1&sort=service_severity&dir=desc&format=csv
+
+
+## VirtualHost Configuration <a id="virtualhost-configuration"></a>
+
+This describes how to run Icinga Web 2 on your FQDN's `/` entry point without
+any redirect to `/icingaweb2`.
+
+### VirtualHost Configuration for Apache <a id="virtualhost-configuration-apache"></a>
+
+Use the setup CLI commands to generate the default Apache configuration which serves
+Icinga Web 2 underneath `/icingaweb2`.
+
+The next steps are to create the VirtualHost configuration:
+
+* Copy the `<Directory "/usr/share/icingaweb2/public">` into the main VHost configuration. Don't forget to correct the indent.
+* Set the `DocumentRoot` variable to look into `/usr/share/icingaweb2/public`
+* Modify the `RewriteBase` variable to use `/` instead of `/icingaweb2`
+
+Example on RHEL/CentOS:
+
+```
+vim /etc/httpd/conf.d/web.icinga.com.conf
+
+<VirtualHost *:80>
+  ServerName web.icinga.com
+
+  ## Vhost docroot
+  # modified for Icinga Web 2
+  DocumentRoot "/usr/share/icingaweb2/public"
+
+  ## Rewrite rules
+  RewriteEngine On
+
+  <Directory "/usr/share/icingaweb2/public">
+      Options SymLinksIfOwnerMatch
+      AllowOverride None
+
+      <IfModule mod_authz_core.c>
+          # Apache 2.4
+          <RequireAll>
+              Require all granted
+          </RequireAll>
+      </IfModule>
+
+      <IfModule !mod_authz_core.c>
+          # Apache 2.2
+          Order allow,deny
+          Allow from all
+      </IfModule>
+
+      SetEnv ICINGAWEB_CONFIGDIR "/etc/icingaweb2"
+
+      EnableSendfile Off
+
+      <IfModule mod_rewrite.c>
+          RewriteEngine on
+          # modified base
+          RewriteBase /
+          RewriteCond %{REQUEST_FILENAME} -s [OR]
+          RewriteCond %{REQUEST_FILENAME} -l [OR]
+          RewriteCond %{REQUEST_FILENAME} -d
+          RewriteRule ^.*$ - [NC,L]
+          RewriteRule ^.*$ index.php [NC,L]
+      </IfModule>
+
+      <IfModule !mod_rewrite.c>
+          DirectoryIndex error_norewrite.html
+          ErrorDocument 404 /error_norewrite.html
+      </IfModule>
+  </Directory>
+</VirtualHost>
+```
+
+Reload Apache and open the FQDN in your web browser.
+
+```
+systemctl reload httpd
+```
+
+## Advanced Authentication Tips <a id="advanced-topics-authentication-tips"></a>
+
+### Manual User Creation for Database Authentication Backend <a id="advanced-topics-authentication-tips-manual-user-database-auth"></a>
+
+Icinga Web 2 uses the MD5 based BSD password algorithm. For generating a password hash, please use the following
+command:
+
+```
+openssl passwd -1 password
+```
+
+> Note: The switch to `openssl passwd` is the **number one** (`-1`) for using the MD5 based BSD password algorithm.
+
+Insert the user into the database using the generated password hash:
+
+```
+INSERT INTO icingaweb_user (name, active, password_hash) VALUES ('icingaadmin', 1, 'hash from openssl');
+```
+
 
 ## Installing Icinga Web 2 from Source <a id="installing-from-source"></a>
 
@@ -312,7 +442,7 @@ password = "api"
 
 Finally visit Icinga Web 2 in your browser to login as `icingaadmin` user: `/icingaweb2`.
 
-## Automating the Installation of Icinga Web 2
+## Automating the Installation of Icinga Web 2 <a id="web-setup-automation"></a>
 
 If you are automating the installation of Icinga Web 2, you may want to skip the wizard and do things yourself.
 These are the steps you'd need to take assuming you are using MySQL/MariaDB. If you are using PostgreSQL please adapt

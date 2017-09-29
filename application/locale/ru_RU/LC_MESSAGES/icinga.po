@@ -3,6 +3,13 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "MIME-Version: 1.0\n"
 "Language: ru_RU\n"
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: Michael Friedrich <michael.friedrich@icinga.com>\n"
+"Language-Team: \n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.0.3\n"
 
 #, php-format
 msgid "\"%s\" is not in the list of allowed values."
@@ -1683,9 +1690,6 @@ msgid "The password to use for authentication"
 msgstr "Пароль для аутентификации"
 
 msgid "The password to use for querying the ldap server"
-msgstr ""
-
-msgid "The path to your livestatus socket used for querying monitoring data"
 msgstr ""
 
 msgid ""

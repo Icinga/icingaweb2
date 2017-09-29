@@ -7,7 +7,6 @@ use Icinga\Application\Config;
 use Icinga\Util\ConfigAwareFactory;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Data\Db\DbConnection;
-use Icinga\Protocol\Livestatus\Connection as LivestatusConnection;
 use Icinga\Protocol\Ldap\LdapConnection;
 use Icinga\Protocol\File\FileReader;
 
@@ -110,9 +109,6 @@ class ResourceFactory implements ConfigAwareFactory
 
                 $resource = new LdapConnection($config);
                 break;
-            case 'livestatus':
-                $resource = new LivestatusConnection($config->socket);
-                break;
             case 'file':
                 $resource = new FileReader($config);
                 break;
@@ -133,7 +129,7 @@ class ResourceFactory implements ConfigAwareFactory
      * Create a resource from name
      *
      * @param   string  $resourceName
-     * @return  DbConnection|LdapConnection|LivestatusConnection
+     * @return  DbConnection|LdapConnection
      */
     public static function create($resourceName)
     {

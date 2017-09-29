@@ -36,6 +36,9 @@ class DbResourceForm extends Form
         if (Platform::hasMssqlSupport()) {
             $dbChoices['mssql'] = 'MSSQL';
         }
+        if (Platform::hasIbmSupport()) {
+            $dbChoices['ibm'] = 'IBM (DB2)';
+        }
         if (Platform::hasOracleSupport()) {
             $dbChoices['oracle'] = 'Oracle';
         }
@@ -45,6 +48,7 @@ class DbResourceForm extends Form
 
         $offerSsl = false;
         $offerPostgres = false;
+        $offerIbm = false;
         $offerMysql = false;
         $dbChoice = isset($formData['db']) ? $formData['db'] : key($dbChoices);
         if ($dbChoice === 'pgsql') {
@@ -54,6 +58,8 @@ class DbResourceForm extends Form
             if (version_compare(Platform::getPhpVersion(), '5.4.0', '>=')) {
                 $offerSsl = true;
             }
+        } elseif ($dbChoice === 'ibm') {
+            $offerIbm = true;
         }
 
         $socketInfo = '';

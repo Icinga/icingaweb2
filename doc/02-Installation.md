@@ -12,14 +12,13 @@ chapter.
 
 ## Installing Requirements <a id="installing-requirements"></a>
 
-* A web server, e.g. Apache or nginx
-* PHP >= 5.3.0 w/ gettext, intl, mbstring and OpenSSL support
+* [Icinga 2](https://www.icinga.com/products/icinga-2/) with the IDO database backend (MySQL or PostgreSQL)
+* A web server, e.g. Apache or Nginx
+* PHP >= 5.3.0 with gettext, intl, mbstring and OpenSSL support
 * Default time zone configured for PHP in the php.ini file
 * LDAP PHP library when using Active Directory or LDAP for authentication
-* Icinga 2.x w/ IDO feature enabled or Icinga 1.x w/ IDO
-* The IDO table prefix must be `icinga_` which is the default
 * MySQL or PostgreSQL PHP libraries
-* cURL PHP library when using the Icinga 2 API for transmitting external commands
+* cURL PHP library when using the Icinga 2 API as resource
 
 
 ## Installing Icinga Web 2 from Package <a id="installing-from-package"></a>
@@ -139,6 +138,8 @@ apt-get install icingaweb2
 ```
 yum install icingaweb2 icingacli
 ```
+
+If you have [SELinux](90-SELinux.md) enabled, the package `icingaweb2-selinux` is also required.
 For RHEL/CentOS please read the [package repositories notes](02-Installation.md#package-repositories-rhel-notes).
 
 **SLES and openSUSE**:
@@ -187,6 +188,12 @@ You may also create a separate administrative account with all privileges instea
 Finally visit Icinga Web 2 in your browser to access the setup wizard and complete the installation:
 `/icingaweb2/setup`.
 
-Note for Debian: Use the same database, user and password details created above when asked.
+> **Note for Debian**
+>
+> Use the same database, user and password details created above when asked.
 
+The setup wizard automatically detects the required packages. In case one of them is missing,
+e.g. a PHP module, please install the package, restart your webserver and reload the setup page.
 
+If you have SELinux enabled, please ensure to either have the selinux package for Icinga Web 2
+installed, or disable it.

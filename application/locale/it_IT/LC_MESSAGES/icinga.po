@@ -4,6 +4,13 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Language: it_IT\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: Michael Friedrich <michael.friedrich@icinga.com>\n"
+"Language-Team: \n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.0.3\n"
 
 #, php-format
 msgid "\"%s\" is not in the list of allowed values."
@@ -1779,11 +1786,6 @@ msgstr "Password da usare per l'autenticazione"
 
 msgid "The password to use for querying the ldap server"
 msgstr "Password da usare per interrogare il server ldap"
-
-msgid "The path to your livestatus socket used for querying monitoring data"
-msgstr ""
-"Percorso del socket di livestatus usato per il recupero dei dati di "
-"monitoraggio"
 
 msgid ""
 "The path where groups can be found on the LDAP server. Leave empty to select "

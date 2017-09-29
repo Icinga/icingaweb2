@@ -117,37 +117,28 @@ class HoststatusQuery extends IdoQuery
             'host_process_performance_data'         => 'hs.process_performance_data',
             'host_retry_check_interval'             => 'hs.retry_check_interval',
             'host_scheduled_downtime_depth'         => 'hs.scheduled_downtime_depth',
-            'host_severity'                         => 'CASE WHEN hs.current_state = 0
-            THEN
-                CASE WHEN hs.has_been_checked = 0 OR hs.has_been_checked IS NULL
-                     THEN 16
-                     ELSE 0
-                END
-                +
-                CASE WHEN hs.problem_has_been_acknowledged = 1
-                     THEN 2
-                     ELSE
-                        CASE WHEN hs.scheduled_downtime_depth > 0
-                            THEN 1
-                            ELSE 4
+            'host_severity'                         => '
+                CASE
+                    WHEN hs.has_been_checked = 0 OR hs.has_been_checked IS NULL
+                    THEN 16
+                ELSE
+                    CASE 
+                        WHEN hs.current_state = 0
+                        THEN 1
+                    ELSE
+                        CASE
+                            WHEN hs.current_state = 1 THEN 64
+                            WHEN hs.current_state = 2 THEN 32
+                            ELSE 256
                         END
-                END
-            ELSE
-                CASE WHEN hs.has_been_checked = 0 OR hs.has_been_checked IS NULL THEN 16
-                     WHEN hs.current_state = 1 THEN 64
-                     WHEN hs.current_state = 2 THEN 32
-                     ELSE 256
-                END
-                +
-                CASE WHEN hs.problem_has_been_acknowledged = 1
-                     THEN 2
-                     ELSE
-                        CASE WHEN hs.scheduled_downtime_depth > 0
-                            THEN 1
-                            ELSE 4
+                        +
+                        CASE 
+                            WHEN hs.problem_has_been_acknowledged = 1 THEN 2
+                            WHEN hs.scheduled_downtime_depth > 0 THEN 1
+                            ELSE 256
                         END
-                END
-            END',
+                    END
+                END',
             'host_state'                => 'CASE WHEN hs.has_been_checked = 0 OR hs.has_been_checked IS NULL THEN 99 ELSE hs.current_state END',
             'host_state_type'           => 'hs.state_type',
             'host_status_update_time'   => 'hs.status_update_time',

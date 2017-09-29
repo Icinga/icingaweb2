@@ -200,10 +200,6 @@ class BackendConfigForm extends ConfigForm
 
         if ($resourceType === null) {
             $resourceType = key($resourceTypes);
-        } elseif ($resourceType === 'livestatus') {
-            throw new ConfigurationError(
-                'We\'ve disabled livestatus support for now because it\'s not feature complete yet'
-            );
         }
 
         $this->addElement(

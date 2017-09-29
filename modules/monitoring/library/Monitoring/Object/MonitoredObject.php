@@ -315,11 +315,6 @@ abstract class MonitoredObject implements Filterable
      */
     public function fetchComments()
     {
-        if ($this->backend->is('livestatus')) {
-            $this->comments = array();
-            return $this;
-        }
-
         $commentsView = $this->backend->select()->from('comment', array(
             'author'            => 'comment_author_name',
             'comment'           => 'comment_data',
@@ -377,11 +372,6 @@ abstract class MonitoredObject implements Filterable
      */
     public function fetchContactgroups()
     {
-        if ($this->backend->is('livestatus')) {
-            $this->contactgroups = array();
-            return $this;
-        }
-
         $contactsGroups = $this->backend->select()->from('contactgroup', array(
             'contactgroup_name',
             'contactgroup_alias'
@@ -404,11 +394,6 @@ abstract class MonitoredObject implements Filterable
      */
     public function fetchContacts()
     {
-        if ($this->backend->is('livestatus')) {
-            $this->contacts = array();
-            return $this;
-        }
-
         $contacts = $this->backend->select()->from('contact', array(
             'contact_name',
             'contact_alias',
@@ -433,11 +418,6 @@ abstract class MonitoredObject implements Filterable
      */
     public function fetchCustomvars()
     {
-        if ($this->backend->is('livestatus')) {
-            $this->customvars = array();
-            return $this;
-        }
-
         $blacklist = array();
         $blacklistPattern = '';
 
