@@ -34,7 +34,6 @@ class BackendPage extends Form
         if (Platform::hasMysqlSupport() || Platform::hasPostgresqlSupport()) {
             $resourceTypes['ido'] = 'IDO';
         }
-        // $resourceTypes['livestatus'] = 'Livestatus';
 
         $this->addElement(
             'select',

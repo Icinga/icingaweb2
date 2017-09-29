@@ -15,7 +15,6 @@ use Icinga\Forms\ConfigForm;
 use Icinga\Forms\Config\Resource\DbResourceForm;
 use Icinga\Forms\Config\Resource\FileResourceForm;
 use Icinga\Forms\Config\Resource\LdapResourceForm;
-use Icinga\Forms\Config\Resource\LivestatusResourceForm;
 use Icinga\Forms\Config\Resource\SshResourceForm;
 use Icinga\Web\Form;
 use Icinga\Web\Notification;
@@ -59,8 +58,6 @@ class ResourceConfigForm extends ConfigForm
             return new DbResourceForm();
         } elseif ($type === 'ldap') {
             return new LdapResourceForm();
-        } elseif ($type === 'livestatus') {
-            return new LivestatusResourceForm();
         } elseif ($type === 'file') {
             return new FileResourceForm();
         } elseif ($type === 'ssh') {
@@ -262,7 +259,6 @@ class ResourceConfigForm extends ConfigForm
 
         $resourceTypes = array(
             'file'          => $this->translate('File'),
-            'livestatus'    => 'Livestatus',
             'ssh'           => $this->translate('SSH Identity'),
         );
         if ($resourceType === 'ldap' || Platform::hasLdapSupport()) {

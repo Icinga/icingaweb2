@@ -153,21 +153,6 @@ class BackendStep extends Step
             $resourceHtml .= ''
                 . '</tbody>'
                 . '</table>';
-        } else { // $this->data['resourceConfig']['type'] === 'livestatus'
-            $resourceTitle = '<h3>' . mt('monitoring', 'Livestatus Resource') . '</h3>';
-            $resourceHtml = ''
-                . '<table>'
-                . '<tbody>'
-                . '<tr>'
-                . '<td><strong>' . t('Resource Name') . '</strong></td>'
-                . '<td>' . $this->data['resourceConfig']['name'] . '</td>'
-                . '</tr>'
-                . '<tr>'
-                . '<td><strong>' . t('Socket') . '</strong></td>'
-                . '<td>' . $this->data['resourceConfig']['socket'] . '</td>'
-                . '</tr>'
-                . '</tbody>'
-                . '</table>';
         }
 
         return $pageTitle . '<div class="topic">' . $backendDescription . $resourceTitle . $resourceHtml . '</div>';
