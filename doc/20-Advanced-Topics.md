@@ -113,6 +113,25 @@ Reload Apache and open the FQDN in your web browser.
 systemctl reload httpd
 ```
 
+## Advanced Authentication Tips <a id="advanced-topics-authentication-tips"></a>
+
+### Manual User Creation for Database Authentication Backend <a id="advanced-topics-authentication-tips-manual-user-database-auth"></a>
+
+Icinga Web 2 uses the MD5 based BSD password algorithm. For generating a password hash, please use the following
+command:
+
+```
+openssl passwd -1 password
+```
+
+> Note: The switch to `openssl passwd` is the **number one** (`-1`) for using the MD5 based BSD password algorithm.
+
+Insert the user into the database using the generated password hash:
+
+```
+INSERT INTO icingaweb_user (name, active, password_hash) VALUES ('icingaadmin', 1, 'hash from openssl');
+```
+
 
 ## Installing Icinga Web 2 from Source <a id="installing-from-source"></a>
 

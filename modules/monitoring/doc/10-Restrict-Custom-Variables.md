@@ -1,7 +1,7 @@
-# Restrict Access to Custom Variables (WIP)
+# Restrict Access to Custom Variables <a id="monitoring-module-restrict-access-custom-variables"></a>
 
 * Restriction name: monitoring/blacklist/properties
-* Restriction value: Comma separated list of GLOB like filters 
+* Restriction value: Comma separated list of GLOB like filters
 
 Imagine the following host custom variable structure.
 
@@ -27,7 +27,7 @@ host.vars.
 
 `host.vars.cmdb_name`
 
-Blacklists cmdb_name in the first level of the custom variable structure only.
+Blacklists `cmdb_name` in the first level of the custom variable structure only.
 `host.vars.legacy.cmdb_name` is not blacklisted.
 
 
@@ -65,7 +65,7 @@ the following restriction.
 
 `host.vars.**.*password,service.vars.**.*password`
 
-## Escape Meta Characters
+## Escape Meta Characters <a id="restrict-access-custom-variables-escape-meta-chars"></a>
 
 Use backslash to escape the meta characters
 
