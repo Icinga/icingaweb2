@@ -1,0 +1,177 @@
+/*! Icinga Web 2 | (c) 2017 Icinga Development Team | GPLv2+ */
+
+/* solarized colors: http://simianuprising.com/wp-content/uploads/2012/08/solarized-reference-horizontal.png */
+
+@base01: #586e75;
+@base00: #657b83;
+@base02: #073645;
+@base03: #002b36;
+@base0: #839496;
+@base1: #93a1a1;
+@base2: #eee8d5;
+
+@icinga-blue: @base02;
+@body-bg-color: @base03;
+
+@color-ok: #859900;
+@color-critical: #dc322f;
+@color-critical-handled: #a82523;
+@color-warning: #cf9b00;
+@color-warning-handled: #b58900;
+@color-unknown: #6c71c4;
+@color-unknown-handled: #444f83;
+@color-unreachable: #2aa198;
+@color-unreachable-handled: #1d736c;
+@color-pending: #268bd2;
+
+@text-color: @base2;
+@text-color-light: @base1;
+@text-color-on-icinga-blue: @base2;
+@text-color-inverted: @base2;
+
+@link-color: @base0;
+
+@gray: @base02;
+@gray-light: @base1;
+@gray-lighter: #00222b;
+@gray-lightest: @base2;
+
+@tr-active-color: @base01;
+@tr-hover-color: @base02;
+
+.tabs > li > a {
+  color: @base00;
+}
+
+.action-link {
+  color: @link-color;
+}
+
+input, select {
+  background-color: @body-bg-color;
+}
+
+#login .control-label {
+  color: @base0;
+}
+
+#login-footer {
+  color: @base01;
+}
+
+#login input[type=submit] {
+  color: @base0;
+}
+
+textarea {
+  background-color: @base01;
+}
+
+.control-button, input[type="submit"] {
+  color: @base0;
+}
+
+.badge.handled {
+  background-color: @body-bg-color !important;
+  color: @text-color;
+
+  &.state-warning {
+    border: 1px solid @color-warning-handled;
+    margin-top: -1px;
+  }
+
+  &.state-critical {
+    border: 1px solid @color-critical-handled;
+    margin-top: -1px;
+  }
+
+  &.state-down {
+    border: 1px solid @color-critical-handled;
+    margin-top: -1px;
+  }
+
+  &.state-unreachable {
+    border: 1px solid @color-unreachable-handled;
+    margin-top: -1px;
+  }
+
+  &.state-unknown {
+    border: 1px solid @color-unknown-handled;
+    margin-top: -1px;
+  }
+}
+
+#menu a:hover {
+  color: @body-bg-color;
+  background-color: @base1;
+}
+
+#menu .active > a {
+  text-decoration: underline;
+  background-color: #657b83;
+}
+
+.boxview a:focus {
+    color: @text-color;
+    text-decoration: underline;
+}
+
+.icinga-module.module-monitoring {
+  @timeline-notification-color: #1650CF;
+  @timeline-hard-state-color: #A24600;
+  @timeline-comment-color: #346964;
+  @timeline-ack-color: #855D18;
+  @timeline-downtime-start-color: #515151;
+  @timeline-downtime-end-color: #5e5e2f;
+
+  // Unfortunately it does not suffice to only override the timeline colors here, because our less compiler seems to
+  // have the related style block in module.less already evaluated
+
+  .timeline-notification {
+    background-color: @timeline-notification-color;
+
+    &.extrapolated {
+      background-color: lighten(@timeline-notification-color, 20%);
+    }
+  }
+
+  .timeline-hard-state {
+    background-color: @timeline-hard-state-color;
+
+    &.extrapolated {
+      background-color: lighten(@timeline-hard-state-color, 20%);
+    }
+  }
+
+  .timeline-comment {
+    background-color: @timeline-comment-color;
+
+    &.extrapolated {
+      background-color: lighten(@timeline-comment-color, 20%);
+    }
+  }
+
+  .timeline-ack {
+    background-color: @timeline-ack-color;
+
+    &.extrapolated {
+      background-color: lighten(@timeline-ack-color, 20%);
+    }
+  }
+
+  .timeline-downtime-start {
+    background-color: @timeline-downtime-start-color;
+
+    &.extrapolated {
+      background-color: lighten(@timeline-downtime-start-color, 20%);
+    }
+  }
+
+  .timeline-downtime-end {
+    background-color: @timeline-downtime-end-color;
+
+    &.extrapolated {
+      background-color: lighten(@timeline-downtime-end-color, 20%);
+    }
+  }
+}
