@@ -138,7 +138,7 @@ class WebWizard extends Wizard implements SetupWizard
             } elseif ($authData['type'] === 'ldap') {
                 $page->setResourceConfig($this->getPageData('setup_ldap_resource'));
 
-                if (! $this->hasPageData('setup_authentication_backend')) {
+                if (! $this->hasPageData('setup_authentication_backend') && ! $request->isPost()) {
                     $suggestions = $this->getPageData('setup_ldap_discovery');
                     if (isset($suggestions['backend'])) {
                         $page->populate($suggestions['backend']);
