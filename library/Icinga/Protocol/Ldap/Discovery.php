@@ -46,12 +46,14 @@ class Discovery
     {
         if ($this->isAd()) {
             return array(
+                'backend' => 'msldap',
                 'base_dn' => $this->connection->getCapabilities()->getDefaultNamingContext(),
                 'user_class' => 'user',
                 'user_name_attribute' => 'sAMAccountName'
             );
         } else {
             return array(
+                'backend' => 'ldap',
                 'base_dn' => $this->connection->getCapabilities()->getDefaultNamingContext(),
                 'user_class' => 'inetOrgPerson',
                 'user_name_attribute' => 'uid'
