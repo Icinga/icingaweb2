@@ -8,6 +8,7 @@ use Icinga\Exception\QueryException;
 use Icinga\Data\Filter\Filter;
 use Icinga\Data\Filterable;
 use Icinga\File\Csv;
+use Icinga\Util\Json;
 use Icinga\Web\Controller as IcingaWebController;
 use Icinga\Web\Url;
 
@@ -39,8 +40,13 @@ class Controller extends IcingaWebController
         }
         if ($this->_getParam('format') === 'json'
             || $this->_request->getHeader('Accept') === 'application/json') {
-            header('Content-type: application/json');
-            echo json_encode($query->getQuery()->fetchAll());
+            $response = $this->getResponse();
+            $response
+                ->setHeader('Content-Type', 'application/json')
+                ->setHeader('Cache-Control', 'no-store')
+                ->setHeader('Content-Disposition', 'inline; filename=' . $this->getRequest()->getActionName() . '.json')
+                ->appendBody(Json::encode($query->getQuery()->fetchAll()))
+                ->sendResponse();
             exit;
         }
         if ($this->_getParam('format') === 'csv'
