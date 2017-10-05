@@ -33,7 +33,7 @@ class ContactgroupQuery extends IdoQuery
             'contactgroup_alias'    => 'cg.alias COLLATE latin1_general_ci'
         ),
         'members' => array(
-            'contact_count' => 'COUNT(cgm.contactgroup_member_id)'
+            'contact_count' => 'SUM(CASE WHEN cgmo.object_id IS NOT NULL THEN 1 ELSE 0 END)'
         ),
         'hostgroups' => array(
             'hostgroup'         => 'hgo.name1 COLLATE latin1_general_ci',
@@ -88,8 +88,8 @@ class ContactgroupQuery extends IdoQuery
             'cgm.contactgroup_id = cg.contactgroup_id',
             array()
         )->joinLeft(
-            array('co' => $this->prefix . 'objects'),
-            'co.object_id = cgm.contact_object_id AND co.is_active = 1 AND co.objecttype_id = 10',
+            array('cgmo' => $this->prefix . 'objects'),
+            'cgmo.object_id = cgm.contact_object_id AND cgmo.is_active = 1 AND cgmo.objecttype_id = 10',
             array()
         );
     }
