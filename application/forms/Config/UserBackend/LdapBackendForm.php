@@ -87,7 +87,6 @@ class LdapBackendForm extends Form
             )
         );
 
-        $hasAdOid = false;
         if (! $isAd && !empty($this->resources)) {
             $this->addElement(
                 'button',
@@ -108,35 +107,6 @@ class LdapBackendForm extends Form
                     'formnovalidate'    => 'formnovalidate'
                 )
             );
-
-            if ($this->getElement('discovery_btn')->isChecked()) {
-                $connection = ResourceFactory::create(
-                    isset($formData['resource']) ? $formData['resource'] : reset($this->resources)
-                );
-
-                try {
-                    $capabilities = $connection->bind()->getCapabilities();
-                    $baseDn = $capabilities->getDefaultNamingContext();
-                    $hasAdOid = $capabilities->isActiveDirectory();
-                } catch (Exception $e) {
-                    $this->warning(sprintf(
-                        $this->translate('Failed to discover the chosen LDAP connection: %s'),
-                        $e->getMessage()
-                    ));
-                }
-            }
-        }
-
-        if ($isAd || $hasAdOid) {
-            // ActiveDirectory defaults
-            $userClass = 'user';
-            $filter = '!(objectClass=computer)';
-            $userNameAttribute = 'sAMAccountName';
-        } else {
-            // OpenLDAP defaults
-            $userClass = 'inetOrgPerson';
-            $filter = null;
-            $userNameAttribute = 'uid';
         }
 
         $this->addElement(
@@ -149,7 +119,7 @@ class LdapBackendForm extends Form
                 'disabled'          => $isAd ?: null,
                 'label'             => $this->translate('LDAP User Object Class'),
                 'description'       => $this->translate('The object class used for storing users on the LDAP server.'),
-                'value'             => $this->getSuggestion('user_class', $userClass)
+                'value'             => $this->getSuggestion('user_class')
             )
         );
         $this->addElement(
@@ -158,7 +128,7 @@ class LdapBackendForm extends Form
             array(
                 'preserveDefault'   => true,
                 'allowEmpty'        => true,
-                'value'             => $this->getSuggestion('filter', $filter),
+                'value'             => $this->getSuggestion('filter'),
                 'label'             => $this->translate('LDAP Filter'),
                 'description'       => $this->translate(
                     'An additional filter to use when looking up users using the specified connection. '
@@ -201,7 +171,7 @@ class LdapBackendForm extends Form
                 'description'       => $this->translate(
                     'The attribute name used for storing the user name on the LDAP server.'
                 ),
-                'value'             => $this->getSuggestion('user_name_attribute', $userNameAttribute)
+                'value'             => $this->getSuggestion('user_name_attribute')
             )
         );
         $this->addElement(
@@ -223,7 +193,7 @@ class LdapBackendForm extends Form
                     'The path where users can be found on the LDAP server. Leave ' .
                     'empty to select all users available using the specified connection.'
                 ),
-                'value'             => isset($baseDn) ? $baseDn : $this->getSuggestion('base_dn')
+                'value'             => $this->getSuggestion('base_dn')
             )
         );
 
@@ -269,6 +239,58 @@ class LdapBackendForm extends Form
         if ($this->getElement('btn_discover_domain')->isChecked() && isset($formData['resource'])) {
             $this->populateDomain(ResourceFactory::create($formData['resource']));
         }
+    }
+
+    public function isValidPartial(array $formData)
+    {
+        $isAd = isset($formData['type']) && $formData['type'] === 'msldap';
+        $baseDn = null;
+        $hasAdOid = false;
+        $discoverySuccessful = false;
+
+        if (! $isAd && ! empty($this->resources) && isset($formData['discovery_btn'])
+            && $formData['discovery_btn'] === 'discovery_btn') {
+            $connection = ResourceFactory::create(
+                isset($formData['resource']) ? $formData['resource'] : reset($this->resources)
+            );
+
+            $discoverySuccessful = true;
+            try {
+                $capabilities = $connection->bind()->getCapabilities();
+                $baseDn = $capabilities->getDefaultNamingContext();
+                $hasAdOid = $capabilities->isActiveDirectory();
+            } catch (Exception $e) {
+                $this->warning(sprintf(
+                    $this->translate('Failed to discover the chosen LDAP connection: %s'),
+                    $e->getMessage()
+                ));
+                $discoverySuccessful = false;
+            }
+        }
+
+        if ($discoverySuccessful) {
+            if ($isAd || $hasAdOid) {
+                // ActiveDirectory defaults
+                $userClass = 'user';
+                $filter = '!(objectClass=computer)';
+                $userNameAttribute = 'sAMAccountName';
+            } else {
+                // OpenLDAP defaults
+                $userClass = 'inetOrgPerson';
+                $filter = null;
+                $userNameAttribute = 'uid';
+            }
+
+            $formData['user_class'] = $userClass;
+            $formData['filter'] = $filter;
+            $formData['user_name_attribute'] = $userNameAttribute;
+
+            if ($baseDn !== null) {
+                $formData['base_dn'] = $baseDn;
+            }
+        }
+
+        return parent::isValidPartial($formData);
     }
 
     /**
