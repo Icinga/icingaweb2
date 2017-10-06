@@ -87,7 +87,6 @@ class LdapBackendForm extends Form
             )
         );
 
-        $baseDn = null;
         $hasAdOid = false;
         if (! $isAd && !empty($this->resources)) {
             $this->addElement(
@@ -224,7 +223,7 @@ class LdapBackendForm extends Form
                     'The path where users can be found on the LDAP server. Leave ' .
                     'empty to select all users available using the specified connection.'
                 ),
-                'value'             => $this->getSuggestion('base_dn', $baseDn)
+                'value'             => isset($baseDn) ? $baseDn : $this->getSuggestion('base_dn')
             )
         );
 
