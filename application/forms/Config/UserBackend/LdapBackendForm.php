@@ -30,6 +30,13 @@ class LdapBackendForm extends Form
     protected $suggestions = array();
 
     /**
+     * Cache for {@link getLdapCapabilities()}
+     *
+     * @var LdapCapabilities
+     */
+    protected $ldapCapabilities;
+
+    /**
      * Initialize this form
      */
     public function init()
@@ -235,10 +242,6 @@ class LdapBackendForm extends Form
                 'formnovalidate'    => 'formnovalidate'
             )
         );
-
-        if ($this->getElement('btn_discover_domain')->isChecked() && isset($formData['resource'])) {
-            $this->populateDomain(ResourceFactory::create($formData['resource']));
-        }
     }
 
     public function isValidPartial(array $formData)
@@ -250,13 +253,9 @@ class LdapBackendForm extends Form
 
         if (! $isAd && ! empty($this->resources) && isset($formData['discovery_btn'])
             && $formData['discovery_btn'] === 'discovery_btn') {
-            $connection = ResourceFactory::create(
-                isset($formData['resource']) ? $formData['resource'] : reset($this->resources)
-            );
-
             $discoverySuccessful = true;
             try {
-                $capabilities = $connection->bind()->getCapabilities();
+                $capabilities = $this->getLdapCapabilities($formData);
                 $baseDn = $capabilities->getDefaultNamingContext();
                 $hasAdOid = $capabilities->isActiveDirectory();
             } catch (Exception $e) {
@@ -290,35 +289,45 @@ class LdapBackendForm extends Form
             }
         }
 
+        if (isset($formData['btn_discover_domain']) && $formData['btn_discover_domain'] === 'discovery_btn') {
+            try {
+                $formData['domain'] = $this->discoverDomain($formData);
+            } catch (LdapException $e) {
+                $this->error($e->getMessage());
+            }
+        }
+
         return parent::isValidPartial($formData);
     }
 
     /**
-     * Discover the domain the LDAP server is responsible for and fill it in the form
+     * Get the LDAP capabilities of either the resource specified by the user or the default one
      *
-     * @param   LdapConnection  $connection
+     * @param   string[]    $formData
+     *
+     * @return  LdapCapabilities
      */
-    public function populateDomain(LdapConnection $connection)
+    protected function getLdapCapabilities(array $formData)
     {
-        try {
-            $domain = $this->discoverDomain($connection);
-        } catch (LdapException $e) {
-            $this->_elements['btn_discover_domain']->addError($e->getMessage());
+        if ($this->ldapCapabilities === null) {
+            $this->ldapCapabilities = ResourceFactory::create(
+                isset($formData['resource']) ? $formData['resource'] : reset($this->resources)
+            )->bind()->getCapabilities();
         }
 
-        $this->_elements['domain']->setValue($domain);
+        return $this->ldapCapabilities;
     }
 
     /**
      * Discover the domain the LDAP server is responsible for
      *
-     * @param   LdapConnection  $connection
+     * @param   string[]    $formData
      *
      * @return  string
      */
-    protected function discoverDomain(LdapConnection $connection)
+    protected function discoverDomain(array $formData)
     {
-        $cap = LdapCapabilities::discoverCapabilities($connection);
+        $cap = $this->getLdapCapabilities($formData);
 
         if ($cap->isActiveDirectory()) {
             $netBiosName = $cap->getNetBiosName();
