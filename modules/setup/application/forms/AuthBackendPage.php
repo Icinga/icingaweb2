@@ -110,6 +110,13 @@ class AuthBackendPage extends Form
                     'value'             => $type
                 )
             );
+
+            foreach ($this->suggestions as $key => $suggestion) {
+                $element = $backendForm->getElement($key);
+                if ($element !== null) {
+                    $element->setValue($suggestion);
+                }
+            }
         } else { // $this->config['type'] === 'external'
             $backendForm = new ExternalBackendForm();
             $backendForm->create($formData);
@@ -117,13 +124,6 @@ class AuthBackendPage extends Form
                 'You\'ve chosen to authenticate using a web server\'s mechanism so it may be necessary'
                 . ' to adjust usernames before any permissions, restrictions, etc. are being applied.'
             ));
-        }
-
-        foreach ($this->suggestions as $key => $suggestion) {
-            $element = $backendForm->getElement($key);
-            if ($element !== null) {
-                $element->setValue($suggestion);
-            }
         }
 
         $backendForm->getElement('name')->setValue('icingaweb2');
