@@ -24,6 +24,13 @@ class AuthBackendPage extends Form
     protected $config;
 
     /**
+     * Default values for the subform's elements suggested by a previous step
+     *
+     * @var string[]
+     */
+    protected $suggestions = array();
+
+    /**
      * Initialize this page
      */
     public function init()
@@ -78,6 +85,7 @@ class AuthBackendPage extends Form
             }
 
             $backendForm = new LdapBackendForm();
+            $backendForm->setSuggestions($this->suggestions);
             $backendForm->setResources(array($this->config['name']));
             $backendForm->create($formData);
             $backendForm->getElement('resource')->setIgnore(true);
@@ -230,5 +238,29 @@ class AuthBackendPage extends Form
                 'description'   => $this->translate('Check this to not to validate authentication using this backend')
             )
         );
+    }
+
+    /**
+     * Get default values for the subform's elements suggested by a previous step
+     *
+     * @return string[]
+     */
+    public function getSuggestions()
+    {
+        return $this->suggestions;
+    }
+
+    /**
+     * Set default values for the subform's elements suggested by a previous step
+     *
+     * @param string[] $suggestions
+     *
+     * @return $this
+     */
+    public function setSuggestions(array $suggestions)
+    {
+        $this->suggestions = $suggestions;
+
+        return $this;
     }
 }

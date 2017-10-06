@@ -132,17 +132,17 @@ class WebWizard extends Wizard implements SetupWizard
         if ($page->getName() === 'setup_requirements') {
             $page->setWizard($this);
         } elseif ($page->getName() === 'setup_authentication_backend') {
+            /** @var AuthBackendPage $page */
+
             $authData = $this->getPageData('setup_authentication_type');
             if ($authData['type'] === 'db') {
                 $page->setResourceConfig($this->getPageData('setup_auth_db_resource'));
             } elseif ($authData['type'] === 'ldap') {
                 $page->setResourceConfig($this->getPageData('setup_ldap_resource'));
 
-                if (! $this->hasPageData('setup_authentication_backend')) {
-                    $suggestions = $this->getPageData('setup_ldap_discovery');
-                    if (isset($suggestions['backend'])) {
-                        $page->populate($suggestions['backend']);
-                    }
+                $suggestions = $this->getPageData('setup_ldap_discovery');
+                if (isset($suggestions['backend'])) {
+                    $page->setSuggestions($suggestions['backend']);
                 }
 
                 if ($this->getDirection() === static::FORWARD) {
