@@ -24,6 +24,13 @@ class AuthBackendPage extends Form
     protected $config;
 
     /**
+     * Default values for the subform's elements suggested by a previous step
+     *
+     * @var string[]
+     */
+    protected $suggestions = array();
+
+    /**
      * Initialize this page
      */
     public function init()
@@ -110,6 +117,13 @@ class AuthBackendPage extends Form
                 'You\'ve chosen to authenticate using a web server\'s mechanism so it may be necessary'
                 . ' to adjust usernames before any permissions, restrictions, etc. are being applied.'
             ));
+        }
+
+        foreach ($this->suggestions as $key => $suggestion) {
+            $element = $backendForm->getElement($key);
+            if ($element !== null) {
+                $element->setValue($suggestion);
+            }
         }
 
         $backendForm->getElement('name')->setValue('icingaweb2');
@@ -230,5 +244,29 @@ class AuthBackendPage extends Form
                 'description'   => $this->translate('Check this to not to validate authentication using this backend')
             )
         );
+    }
+
+    /**
+     * Get default values for the subform's elements suggested by a previous step
+     *
+     * @return string[]
+     */
+    public function getSuggestions()
+    {
+        return $this->suggestions;
+    }
+
+    /**
+     * Set default values for the subform's elements suggested by a previous step
+     *
+     * @param string[] $suggestions
+     *
+     * @return $this
+     */
+    public function setSuggestions(array $suggestions)
+    {
+        $this->suggestions = $suggestions;
+
+        return $this;
     }
 }
