@@ -85,6 +85,7 @@ class AuthBackendPage extends Form
             }
 
             $backendForm = new LdapBackendForm();
+            $backendForm->setSuggestions($this->suggestions);
             $backendForm->setResources(array($this->config['name']));
             $backendForm->create($formData);
             $backendForm->getElement('resource')->setIgnore(true);
@@ -110,13 +111,6 @@ class AuthBackendPage extends Form
                     'value'             => $type
                 )
             );
-
-            foreach ($this->suggestions as $key => $suggestion) {
-                $element = $backendForm->getElement($key);
-                if ($element !== null) {
-                    $element->setValue($suggestion);
-                }
-            }
         } else { // $this->config['type'] === 'external'
             $backendForm = new ExternalBackendForm();
             $backendForm->create($formData);
