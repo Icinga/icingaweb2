@@ -282,14 +282,24 @@ class LdapBackendForm extends Form
         if ($discoverySuccessful) {
             if ($isAd || $hasAdOid) {
                 // ActiveDirectory defaults
+                $type = 'msldap';
                 $userClass = 'user';
                 $filter = '!(objectClass=computer)';
                 $userNameAttribute = 'sAMAccountName';
             } else {
                 // OpenLDAP defaults
+                $type = 'ldap';
                 $userClass = 'inetOrgPerson';
                 $filter = null;
                 $userNameAttribute = 'uid';
+            }
+
+            $parent = $this->getParent();
+            if ($parent !== null) {
+                $element = $parent->getElement('type');
+                if ($element !== null) {
+                    $element->setValue($type);
+                }
             }
 
             $formData['user_class'] = $userClass;
