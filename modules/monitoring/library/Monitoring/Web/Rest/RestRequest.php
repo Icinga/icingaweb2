@@ -14,6 +14,13 @@ use Icinga\Module\Monitoring\Exception\CurlException;
 class RestRequest
 {
     /**
+     * cURL handle wrapper (for persistent connections)
+     *
+     * @var Curl
+     */
+    protected static $curl;
+
+    /**
      * Request URI
      *
      * @var string
@@ -209,6 +216,7 @@ class RestRequest
             "Host: {$url['host']}",
             "Content-Type: {$this->contentType}",
             'Accept: application/json',
+            'Connection: keep-alive',
             // Bypass "Expect: 100-continue" timeouts
             'Expect:'
         );
@@ -282,16 +290,10 @@ class RestRequest
      */
     protected function curlExec(array $options)
     {
-        $ch = curl_init();
-        $options[CURLOPT_RETURNTRANSFER] = true;
-        curl_setopt_array($ch, $options);
-        $result = curl_exec($ch);
-
-        if ($result === false) {
-            throw new CurlException('%s', curl_error($ch));
+        if (static::$curl === null) {
+            static::$curl = new Curl();
         }
 
-        curl_close($ch);
-        return $result;
+        return static::$curl->exec($options);
     }
 }
