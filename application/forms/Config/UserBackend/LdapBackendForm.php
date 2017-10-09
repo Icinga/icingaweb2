@@ -116,6 +116,18 @@ class LdapBackendForm extends Form
             );
         }
 
+        if ($isAd) {
+            // ActiveDirectory defaults
+            $userClass = 'user';
+            $filter = '!(objectClass=computer)';
+            $userNameAttribute = 'sAMAccountName';
+        } else {
+            // OpenLDAP defaults
+            $userClass = 'inetOrgPerson';
+            $filter = null;
+            $userNameAttribute = 'uid';
+        }
+
         $this->addElement(
             'text',
             'user_class',
@@ -126,7 +138,7 @@ class LdapBackendForm extends Form
                 'disabled'          => $isAd ?: null,
                 'label'             => $this->translate('LDAP User Object Class'),
                 'description'       => $this->translate('The object class used for storing users on the LDAP server.'),
-                'value'             => $this->getSuggestion('user_class')
+                'value'             => $this->getSuggestion('user_class', $userClass)
             )
         );
         $this->addElement(
@@ -135,7 +147,7 @@ class LdapBackendForm extends Form
             array(
                 'preserveDefault'   => true,
                 'allowEmpty'        => true,
-                'value'             => $this->getSuggestion('filter'),
+                'value'             => $this->getSuggestion('filter', $filter),
                 'label'             => $this->translate('LDAP Filter'),
                 'description'       => $this->translate(
                     'An additional filter to use when looking up users using the specified connection. '
@@ -178,7 +190,7 @@ class LdapBackendForm extends Form
                 'description'       => $this->translate(
                     'The attribute name used for storing the user name on the LDAP server.'
                 ),
-                'value'             => $this->getSuggestion('user_name_attribute')
+                'value'             => $this->getSuggestion('user_name_attribute', $userNameAttribute)
             )
         );
         $this->addElement(
