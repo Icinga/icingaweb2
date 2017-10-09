@@ -3,8 +3,8 @@
 use Icinga\Module\Monitoring\Object\Service;
 
 ?>
-<?php if ($services_critical_handled || $services_critical_unhandled): ?>
-<div class="box badge entry state-<?= Service::getStateText(2); ?> <?= $services_critical_unhandled ? '' : 'handled'; ?>">
+<?php if ($services_critical_unhandled): ?>
+<div class="box badge entry state-<?= Service::getStateText(2); ?> <?= $services_critical_unhandled ? '' : 'unhandled'; ?>">
 <?php if ($services_critical_unhandled): ?>
     <?= $this->qlink(
         $services_critical_unhandled . ' ' . Service::getStateText(2, true),
@@ -353,6 +353,7 @@ use Icinga\Module\Monitoring\Object\Service;
         $services_pending . ' ' . Service::getStateText(99, true),
         'monitoring/list/services',
         array(
+            'host_problem'      => $host_problem,
             'service_state'     => 99
         ),
         array('title' => sprintf(
@@ -377,6 +378,7 @@ use Icinga\Module\Monitoring\Object\Service;
         'monitoring/list/services',
         array(
             'service_state'                     => 99,
+            'host_problem'                      => $host_problem,
             'service_active_checks_enabled'     => 0,
             'service_passive_checks_enabled'    => 0
         ),
