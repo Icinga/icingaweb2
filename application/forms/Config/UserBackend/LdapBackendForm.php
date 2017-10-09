@@ -281,10 +281,14 @@ class LdapBackendForm extends Form
             }
 
             $formData['user_class'] = $userClass;
-            $formData['filter'] = $filter;
+
+            if (! isset($formData['filter']) || $formData['filter'] === '') {
+                $formData['filter'] = $filter;
+            }
+
             $formData['user_name_attribute'] = $userNameAttribute;
 
-            if ($baseDn !== null) {
+            if ($baseDn !== null && (! isset($formData['base_dn']) || $formData['base_dn'] === '')) {
                 $formData['base_dn'] = $baseDn;
             }
         }
