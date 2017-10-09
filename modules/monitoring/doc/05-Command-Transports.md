@@ -13,7 +13,7 @@ You can define multiple command transports in the `commandtransports.ini` file. 
 containing its name, followed by the config directives for this transport in the standard INI-format.
 
 Icinga Web 2 will try one transport after another to send a command until the command is successfully sent.
-If [configured](02-Command-Transports.md#commandtransports-multiple-instances), Icinga Web 2 will take different instances into account.
+If [configured](05-Command-Transports.md#commandtransports-multiple-instances), Icinga Web 2 will take different instances into account.
 The order in which Icinga Web 2 processes the configured transports is defined by the order of sections in
 `commandtransports.ini`.
 
