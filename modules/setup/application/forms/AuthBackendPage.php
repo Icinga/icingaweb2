@@ -79,9 +79,12 @@ class AuthBackendPage extends Form
             ));
         } elseif ($this->config['type'] === 'ldap') {
             $type = null;
-            if (! isset($formData['type']) && isset($formData['backend'])) {
-                $type = $formData['backend'];
-                $formData['type'] = $type;
+            if (! isset($formData['type'])) {
+                if (isset($formData['backend'])) {
+                    $formData['type'] = $type = $formData['backend'];
+                } elseif (isset($this->suggestions['backend'])) {
+                    $formData['type'] = $type = $this->suggestions['backend'];
+                }
             }
 
             $backendForm = new LdapBackendForm();
