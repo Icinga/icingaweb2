@@ -28,7 +28,7 @@ Description: Icingaweb documentation module
 
 Package: icingaweb-module-monitoring
 Architecture: any
-Depends: icingaweb-common
+Depends: icingaweb-common, php-xml
 Description: Icingaweb monitoring module
  Use this module to visualize your monitoring environment in Icingaweb
 
