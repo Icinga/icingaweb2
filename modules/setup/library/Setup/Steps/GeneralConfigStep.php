@@ -70,12 +70,32 @@ class GeneralConfigStep extends Step
             $loggingHtml = '<p>' . mt('setup', 'Logging will be disabled.') . '</p>';
         } else {
             $level = $this->data['generalConfig']['logging_level'];
+
+            switch ($type) {
+                case 'php':
+                    $typeDescription = t('Webserver Log', 'app.config.logging.type');
+                    $typeSpecificHtml = '';
+                    break;
+
+                case 'syslog':
+                    $typeDescription = 'Syslog';
+                    $typeSpecificHtml = '<td><strong>' . t('Application Prefix') . '</strong></td>'
+                        . '<td>' . $this->data['generalConfig']['logging_application'] . '</td>';
+                    break;
+
+                case 'file':
+                    $typeDescription = t('File', 'app.config.logging.type');
+                    $typeSpecificHtml = '<td><strong>' . t('Filepath') . '</strong></td>'
+                        . '<td>' . $this->data['generalConfig']['logging_file'] . '</td>';
+                    break;
+            }
+
             $loggingHtml = ''
                 . '<table>'
                 . '<tbody>'
                 . '<tr>'
                 . '<td><strong>' . t('Type', 'app.config.logging') . '</strong></td>'
-                . '<td>' . ($type === 'syslog' ? 'Syslog' : t('File', 'app.config.logging.type')) . '</td>'
+                . '<td>' . $typeDescription . '</td>'
                 . '</tr>'
                 . '<tr>'
                 . '<td><strong>' . t('Level', 'app.config.logging') . '</strong></td>'
@@ -88,13 +108,7 @@ class GeneralConfigStep extends Step
                 )) . '</td>'
                 . '</tr>'
                 . '<tr>'
-                . ($type === 'syslog' ? (
-                    '<td><strong>' . t('Application Prefix') . '</strong></td>'
-                    . '<td>' . $this->data['generalConfig']['logging_application'] . '</td>'
-                ) : (
-                    '<td><strong>' . t('Filepath') . '</strong></td>'
-                    . '<td>' . $this->data['generalConfig']['logging_file'] . '</td>'
-                ))
+                . $typeSpecificHtml
                 . '</tr>'
                 . '</tbody>'
                 . '</table>';
