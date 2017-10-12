@@ -71,6 +71,13 @@ class RestRequest
     protected $strictSsl = true;
 
     /**
+     * Whether to verify the remote TLS certificate's CN
+     *
+     * @var bool
+     */
+    protected $strictCn = true;
+
+    /**
      * Request timeout
      *
      * @var int
@@ -191,6 +198,18 @@ class RestRequest
     }
 
     /**
+     * Disable strict TLS CN
+     *
+     * @return $this
+     */
+    public function noStrictTlsCn()
+    {
+        $this->strictCn = false;
+
+        return $this;
+    }
+
+    /**
      * Set our TLS certificate and private key
      *
      * @param   string  $cert   Certificate, either PEM or an absolute path to a PEM file
@@ -302,7 +321,7 @@ class RestRequest
         $curlCmd = array('curl', '-s', '-X', $this->method, '-H', escapeshellarg('Accept: application/json'));
 
         if ($this->strictSsl) {
-            $options[CURLOPT_SSL_VERIFYHOST] = 2;
+            $options[CURLOPT_SSL_VERIFYHOST] = $this->strictCn ? 2 : 0;
             $options[CURLOPT_SSL_VERIFYPEER] = true;
 
             if ($this->tlsServerCert !== null) {
