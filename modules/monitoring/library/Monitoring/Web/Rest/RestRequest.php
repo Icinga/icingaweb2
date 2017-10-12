@@ -5,6 +5,7 @@ namespace Icinga\Module\Monitoring\Web\Rest;
 
 use Exception;
 use Icinga\Application\Logger;
+use Icinga\Module\Monitoring\Util\TemporaryDirectory;
 use Icinga\Util\Json;
 use Icinga\Module\Monitoring\Exception\CurlException;
 
@@ -75,6 +76,34 @@ class RestRequest
      * @var int
      */
     protected $timeout = 30;
+
+    /**
+     * Our TLS client certificate file
+     *
+     * @var string|null
+     */
+    protected $tlsClientCert;
+
+    /**
+     * Our TLS private key file
+     *
+     * @var string|null
+     */
+    protected $tlsClientKey;
+
+    /**
+     * A file with the server's TLS certificate or the issuer CA
+     *
+     * @var string|null
+     */
+    protected $tlsServerCert;
+
+    /**
+     * A temporary directory for TLS certificates and private keys
+     *
+     * @var TemporaryDirectory|null
+     */
+    protected $tempDir;
 
     /**
      * Create a GET REST request
@@ -162,6 +191,54 @@ class RestRequest
     }
 
     /**
+     * Set our TLS certificate and private key
+     *
+     * @param   string  $cert   Certificate, either PEM or an absolute path to a PEM file
+     * @param   string  $key    Private key, either PEM or an absolute path to a PEM file
+     *
+     * @return  $this
+     */
+    public function setTlsClient($cert, $key)
+    {
+        if (substr($cert, 0, 1) === '-') {
+            $certPath = $this->getTempDir() . DIRECTORY_SEPARATOR . 'client.crt';
+            file_put_contents($certPath, $cert);
+            $cert = $certPath;
+        }
+
+        if (substr($key, 0, 1) === '-') {
+            $keyPath = $this->getTempDir() . DIRECTORY_SEPARATOR . 'client.key';
+            file_put_contents($keyPath, $key);
+            $key = $keyPath;
+        }
+
+        $this->tlsClientCert = $cert;
+        $this->tlsClientKey = $key;
+
+        return $this;
+    }
+
+    /**
+     * Set the remote's TLS certificate or the issuer CA
+     *
+     * @param   string  $cert   Certificate, either PEM or an absolute path to a PEM file
+     *
+     * @return  $this
+     */
+    public function setTlsServer($cert)
+    {
+        if (substr($cert, 0, 1) === '-') {
+            $certPath = $this->getTempDir() . DIRECTORY_SEPARATOR . 'server.crt';
+            file_put_contents($certPath, $cert);
+            $cert = $certPath;
+        }
+
+        $this->tlsServerCert = $cert;
+
+        return $this;
+    }
+
+    /**
      * Serialize payload according to content type
      *
      * @param   mixed   $payload
@@ -227,10 +304,19 @@ class RestRequest
         if ($this->strictSsl) {
             $options[CURLOPT_SSL_VERIFYHOST] = 2;
             $options[CURLOPT_SSL_VERIFYPEER] = true;
+
+            if ($this->tlsServerCert !== null) {
+                $options[CURLOPT_CAINFO] = $this->tlsServerCert;
+            }
         } else {
             $options[CURLOPT_SSL_VERIFYHOST] = false;
             $options[CURLOPT_SSL_VERIFYPEER] = false;
             $curlCmd[] = '-k';
+        }
+
+        if ($this->tlsClientCert !== null) {
+            $options[CURLOPT_SSLCERT] = $this->tlsClientCert;
+            $options[CURLOPT_SSLKEY] = $this->tlsClientKey;
         }
 
         if ($this->hasBasicAuth) {
@@ -293,5 +379,19 @@ class RestRequest
 
         curl_close($ch);
         return $result;
+    }
+
+    /**
+     * Get {@link tempDir}
+     *
+     * @return TemporaryDirectory
+     */
+    protected function getTempDir()
+    {
+        if ($this->tempDir === null) {
+            $this->tempDir = new TemporaryDirectory();
+        }
+
+        return $this->tempDir;
     }
 }
