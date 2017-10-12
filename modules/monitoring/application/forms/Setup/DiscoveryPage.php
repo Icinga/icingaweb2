@@ -143,40 +143,14 @@ class DiscoveryPage extends Form
             return false;
         }
 
-        if ($this->getValue('tls_client_cert_file') !== null) {
-            $this->getElement('tls_client_cert')->setValue(
-                file_get_contents($this->getElement('tls_client_cert_file')->getFileName())
-            );
-        }
-
-        if ($this->getValue('tls_client_key_file') !== null) {
-            $this->getElement('tls_client_key')->setValue(
-                file_get_contents($this->getElement('tls_client_key_file')->getFileName())
-            );
-        }
+        $this->persistTlsClientFiles();
 
         $serverTlsCert = $this->fetchServerTlsCert();
         if ($serverTlsCert === false) {
             return false;
         }
 
-        $fingerprint = openssl_x509_fingerprint($serverTlsCert, 'sha256');
-        $acceptedTlsCert = isset($formData['tls_server_cert'])
-            && openssl_x509_fingerprint($formData['tls_server_cert'], 'sha256') === $fingerprint
-            && ((isset($formData['tls_server_cert_accept']) && $formData['tls_server_cert_accept']) || (
-                isset($formData['tls_server_cert_accepted_fingerprint'])
-                    && $formData['tls_server_cert_accepted_fingerprint'] === $fingerprint
-            ));
-
-        if ($acceptedTlsCert) {
-            $this->getElement('tls_server_cert_accepted_fingerprint')->setValue($fingerprint);
-        } else {
-            $this->addElement($this->createTlsServerCertInfoNote($serverTlsCert));
-            $this->addElement($this->createAcceptTlsServerCertCheckbox());
-            $this->getElement('tls_server_cert')->setValue($serverTlsCert);
-        }
-
-        return $acceptedTlsCert;
+        return $this->processTlsServerCertAcceptance($formData, $serverTlsCert);
     }
 
     public function getValues($suppressArrayNotation = false)
@@ -297,6 +271,24 @@ class DiscoveryPage extends Form
     }
 
     /**
+     * Copy our TLS client certificate and key from the files into the hidden fields
+     */
+    protected function persistTlsClientFiles()
+    {
+        if ($this->getValue('tls_client_cert_file') !== null) {
+            $this->getElement('tls_client_cert')->setValue(
+                file_get_contents($this->getElement('tls_client_cert_file')->getFileName())
+            );
+        }
+
+        if ($this->getValue('tls_client_key_file') !== null) {
+            $this->getElement('tls_client_key')->setValue(
+                file_get_contents($this->getElement('tls_client_key_file')->getFileName())
+            );
+        }
+    }
+
+    /**
      * Try to fetch Icinga 2's TLS certificate
      *
      * @return string|false
@@ -336,5 +328,34 @@ class DiscoveryPage extends Form
         $params = stream_context_get_params($context);
         openssl_x509_export($params['options']['ssl']['peer_certificate'], $cert);
         return $cert;
+    }
+
+    /**
+     * If the user accepted Icinga 2's TLS certificate, save this info – if not, ask the user to accept
+     *
+     * @param   string[]    $formData
+     * @param   string      $serverTlsCert
+     *
+     * @return  bool        Whether the user accepted
+     */
+    protected function processTlsServerCertAcceptance(array $formData, $serverTlsCert)
+    {
+        $fingerprint = openssl_x509_fingerprint($serverTlsCert, 'sha256');
+        $acceptedTlsCert = isset($formData['tls_server_cert'])
+            && openssl_x509_fingerprint($formData['tls_server_cert'], 'sha256') === $fingerprint
+            && ((isset($formData['tls_server_cert_accept']) && $formData['tls_server_cert_accept']) || (
+                    isset($formData['tls_server_cert_accepted_fingerprint'])
+                    && $formData['tls_server_cert_accepted_fingerprint'] === $fingerprint
+                ));
+
+        if ($acceptedTlsCert) {
+            $this->getElement('tls_server_cert_accepted_fingerprint')->setValue($fingerprint);
+        } else {
+            $this->addElement($this->createTlsServerCertInfoNote($serverTlsCert));
+            $this->addElement($this->createAcceptTlsServerCertCheckbox());
+            $this->getElement('tls_server_cert')->setValue($serverTlsCert);
+        }
+
+        return $acceptedTlsCert;
     }
 }
