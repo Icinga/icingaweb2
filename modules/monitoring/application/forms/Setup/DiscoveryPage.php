@@ -6,7 +6,7 @@ namespace Icinga\Module\Monitoring\Forms\Setup;
 use DateTime;
 use DateTimeZone;
 use ErrorException;
-use Icinga\Module\Monitoring\Util\TlsClient;
+use Icinga\Module\Monitoring\Util\TemporaryDirectory;
 use Icinga\Module\Monitoring\Web\Form\Validator\TlsCertFileValidator;
 use Icinga\Module\Monitoring\Web\Form\Validator\TlsCertValidator;
 use Icinga\Module\Monitoring\Web\Form\Validator\TlsKeyFileValidator;
@@ -302,8 +302,14 @@ class DiscoveryPage extends Form
         );
 
         if (! ($this->getValue('tls_client_cert') === null || $this->getValue('tls_client_key') === null)) {
-            $tlsClient = new TlsClient($this->getValue('tls_client_cert'), $this->getValue('tls_client_key'));
-            $tlsOpts['local_cert'] = $tlsClient->getCertAndKey();
+            $tempDir = new TemporaryDirectory();
+            $certAndKey = $tempDir . DIRECTORY_SEPARATOR . 'cert-and-key.pem';
+            file_put_contents(
+                $certAndKey,
+                $this->getValue('tls_client_cert') . PHP_EOL . $this->getValue('tls_client_key')
+            );
+
+            $tlsOpts['local_cert'] = $certAndKey;
         }
 
         $errno = null;
