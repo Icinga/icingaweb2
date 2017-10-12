@@ -13,7 +13,6 @@ use Icinga\Module\Monitoring\Web\Form\Validator\TlsKeyFileValidator;
 use Icinga\Module\Monitoring\Web\Form\Validator\TlsKeyValidator;
 use Icinga\Util\TimezoneDetect;
 use Icinga\Web\Form;
-use Icinga\Web\Form\Element\Note;
 use Zend_Form_Element_Checkbox;
 
 class DiscoveryPage extends Form
@@ -127,6 +126,17 @@ class DiscoveryPage extends Form
             'hidden',
             'tls_server_cert_accepted_fingerprint'
         );
+
+        $this->addElement(
+            'hidden',
+            'tls_server_cacert',
+            array('validators' => array(new TlsCertValidator()))
+        );
+
+        $this->addElement(
+            'hidden',
+            'tls_server_cacert_accepted_fingerprint'
+        );
     }
 
     public function isValid($formData)
@@ -145,12 +155,12 @@ class DiscoveryPage extends Form
 
         $this->persistTlsClientFiles();
 
-        $serverTlsCert = $this->fetchServerTlsCert();
-        if ($serverTlsCert === false) {
+        $serverTlsCertChain = $this->fetchServerTlsCertChain();
+        if ($serverTlsCertChain === false) {
             return false;
         }
 
-        return $this->processTlsServerCertAcceptance($formData, $serverTlsCert);
+        return $this->processTlsServerCertAcceptance($formData, $serverTlsCertChain);
     }
 
     public function getValues($suppressArrayNotation = false)
@@ -162,20 +172,45 @@ class DiscoveryPage extends Form
     }
 
     /**
-     * Create form element for Icinga 2's TLS certificate's info
+     * Add form elements for Icinga 2's TLS certificate chain's info
      *
      * @param   string  $serverTlsCert  Icinga 2's TLS certificate
-     *
-     * @return  Note
+     * @param   string  $caTlsCert      Icinga 2's TLS CA certificate
      */
-    protected function createTlsServerCertInfoNote($serverTlsCert)
+    protected function addTlsServerCertInfoNotes($serverTlsCert, $caTlsCert)
     {
         $timezoneDetect = new TimezoneDetect();
         $timeZone = new DateTimeZone(
             $timezoneDetect->success() ? $timezoneDetect->getTimezoneName() : date_default_timezone_get()
         );
-        $parsedServerTlsCert = openssl_x509_parse($serverTlsCert);
+
+        $this->addTlsServerCertInfoNote(
+            $caTlsCert,
+            'tls_server_cacert_info',
+            $this->translate('Icinga 2\'s TLS CA certificate'),
+            $timeZone
+        );
+
+        $this->addTlsServerCertInfoNote(
+            $serverTlsCert,
+            'tls_server_cert_info',
+            $this->translate('Icinga 2\'s TLS certificate'),
+            $timeZone
+        );
+    }
+
+    /**
+     * Add form element for the given TLS certificate's info
+     *
+     * @param   string          $tlsCert
+     * @param   string          $name
+     * @param   string          $label
+     * @param   DateTimeZone    $timeZone
+     */
+    protected function addTlsServerCertInfoNote($tlsCert, $name, $label, DateTimeZone $timeZone)
+    {
         $view = $this->getView();
+        $parsedServerTlsCert = openssl_x509_parse($tlsCert);
 
         $subject = array();
         foreach ($parsedServerTlsCert['subject'] as $key => $value) {
@@ -187,12 +222,12 @@ class DiscoveryPage extends Form
             $issuer[] = $view->escape("$key = " . var_export($value, true));
         }
 
-        return $this->createElement(
+        $this->addElement(
             'note',
-            'tls_server_cert_info',
+            $name,
             array(
                 'escape'    => false,
-                'label'     => $this->translate('Icinga 2\'s TLS certificate'),
+                'label'     => $label,
                 'value'     => sprintf(
                     '<table class="name-value-list">' . str_repeat('<tr><td>%s</td><td>%s</td></tr>', 6) . '</table>',
                     $view->escape($this->translate('Subject', 'x509.certificate')),
@@ -213,11 +248,11 @@ class DiscoveryPage extends Form
                     ),
                     $view->escape($this->translate('SHA256 fingerprint', 'x509.certificate')),
                     $view->escape(
-                        implode(' ', str_split(strtoupper(openssl_x509_fingerprint($serverTlsCert, 'sha256')), 2))
+                        implode(' ', str_split(strtoupper(openssl_x509_fingerprint($tlsCert, 'sha256')), 2))
                     ),
                     $view->escape($this->translate('SHA1 fingerprint', 'x509.certificate')),
                     $view->escape(
-                        implode(' ', str_split(strtoupper(openssl_x509_fingerprint($serverTlsCert, 'sha1')), 2))
+                        implode(' ', str_split(strtoupper(openssl_x509_fingerprint($tlsCert, 'sha1')), 2))
                     )
                 )
             )
@@ -289,16 +324,16 @@ class DiscoveryPage extends Form
     }
 
     /**
-     * Try to fetch Icinga 2's TLS certificate
+     * Try to fetch Icinga 2's TLS certificate chain
      *
-     * @return string|false
+     * @return string[]|false
      */
-    protected function fetchServerTlsCert()
+    protected function fetchServerTlsCertChain()
     {
         $tlsOpts = array(
-            'verify_peer'       => false,
-            'verify_peer_name'  => false,
-            'capture_peer_cert' => true
+            'verify_peer'               => false,
+            'verify_peer_name'          => false,
+            'capture_peer_cert_chain'   => true
         );
 
         if (! ($this->getValue('tls_client_cert') === null || $this->getValue('tls_client_key') === null)) {
@@ -330,36 +365,72 @@ class DiscoveryPage extends Form
             return false;
         }
 
-        $cert = false;
+        $certs = array();
         $params = stream_context_get_params($context);
-        openssl_x509_export($params['options']['ssl']['peer_certificate'], $cert);
-        return $cert;
+        foreach ($params['options']['ssl']['peer_certificate_chain'] as $index => $cert) {
+            $certs[$index] = null;
+            openssl_x509_export($cert, $certs[$index]);
+        }
+
+        return $certs;
     }
 
     /**
      * If the user accepted Icinga 2's TLS certificate, save this info – if not, ask the user to accept
      *
      * @param   string[]    $formData
-     * @param   string      $serverTlsCert
+     * @param   string[]    $serverTlsCertChain
      *
      * @return  bool        Whether the user accepted
      */
-    protected function processTlsServerCertAcceptance(array $formData, $serverTlsCert)
+    protected function processTlsServerCertAcceptance(array $formData, array $serverTlsCertChain)
     {
-        $fingerprint = openssl_x509_fingerprint($serverTlsCert, 'sha256');
-        $acceptedTlsCert = isset($formData['tls_server_cert'])
-            && openssl_x509_fingerprint($formData['tls_server_cert'], 'sha256') === $fingerprint
-            && ((isset($formData['tls_server_cert_accept']) && $formData['tls_server_cert_accept']) || (
-                    isset($formData['tls_server_cert_accepted_fingerprint'])
-                    && $formData['tls_server_cert_accepted_fingerprint'] === $fingerprint
-                ));
+        $certs = array();
+        $issuers = array();
+        foreach ($serverTlsCertChain as $cert) {
+            $parsed = openssl_x509_parse($cert);
+            $certs[$parsed['subject']['CN']] = $cert;
+
+            if ($parsed['issuer']['CN'] === $parsed['subject']['CN']) {
+                $serverCn = $rootCn = $parsed['issuer']['CN'];
+            } else {
+                $issuers[$parsed['issuer']['CN']] = $parsed['subject']['CN'];
+            }
+        }
+
+        while (isset($issuers[$serverCn])) {
+            $serverCn = $issuers[$serverCn];
+        }
+
+        $fingerprint = openssl_x509_fingerprint($certs[$serverCn], 'sha256');
+        $fingerprintCA = openssl_x509_fingerprint($certs[$rootCn], 'sha256');
+
+        $serverOk = isset($formData['tls_server_cert'])
+            && $formData['tls_server_cert'] !== ''
+            && openssl_x509_fingerprint($formData['tls_server_cert'], 'sha256') === $fingerprint;
+
+        $caOk = isset($formData['tls_server_cacert'])
+            && $formData['tls_server_cacert'] !== ''
+            && openssl_x509_fingerprint($formData['tls_server_cacert'], 'sha256') === $fingerprintCA;
+
+        $acceptedNow = isset($formData['tls_server_cert_accept']) && $formData['tls_server_cert_accept'];
+
+        $alreadyAcceptedServer = isset($formData['tls_server_cert_accepted_fingerprint'])
+            && $formData['tls_server_cert_accepted_fingerprint'] === $fingerprint;
+
+        $alreadyAcceptedCA = isset($formData['tls_server_cacert_accepted_fingerprint'])
+            && $formData['tls_server_cacert_accepted_fingerprint'] === $fingerprintCA;
+
+        $acceptedTlsCert = $serverOk && $caOk && ($acceptedNow || ($alreadyAcceptedServer && $alreadyAcceptedCA));
 
         if ($acceptedTlsCert) {
             $this->getElement('tls_server_cert_accepted_fingerprint')->setValue($fingerprint);
+            $this->getElement('tls_server_cacert_accepted_fingerprint')->setValue($fingerprintCA);
         } else {
-            $this->addElement($this->createTlsServerCertInfoNote($serverTlsCert));
+            $this->addTlsServerCertInfoNotes($certs[$serverCn], $certs[$rootCn]);
             $this->addElement($this->createAcceptTlsServerCertCheckbox());
-            $this->getElement('tls_server_cert')->setValue($serverTlsCert);
+            $this->getElement('tls_server_cert')->setValue($certs[$serverCn]);
+            $this->getElement('tls_server_cacert')->setValue($certs[$rootCn]);
         }
 
         return $acceptedTlsCert;
