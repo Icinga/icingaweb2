@@ -41,7 +41,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   end
 
   config.vm.provider :vmware_workstation do |v, override|
-    override.vm.box = "bento/centos-7.1"
+    override.vm.box = "bento/centos-7.4"
 
     v.vmx["memsize"] = "1024"
     v.vmx["numvcpus"] = "1"
