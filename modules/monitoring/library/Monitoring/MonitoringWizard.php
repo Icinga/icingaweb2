@@ -3,6 +3,7 @@
 
 namespace Icinga\Module\Monitoring;
 
+use Icinga\Module\Monitoring\Forms\Setup\DiscoveryPage;
 use Icinga\Web\Form;
 use Icinga\Web\Wizard;
 use Icinga\Web\Request;
@@ -29,6 +30,7 @@ class MonitoringWizard extends Wizard implements SetupWizard
     public function init()
     {
         $this->addPage(new WelcomePage());
+        $this->addPage(new DiscoveryPage());
         $this->addPage(new BackendPage());
         $this->addPage(new IdoResourcePage());
         $this->addPage(new TransportPage());
