@@ -6,7 +6,7 @@ namespace Icinga\Module\Monitoring\Forms\Setup;
 use DateTime;
 use DateTimeZone;
 use ErrorException;
-use Icinga\Module\Monitoring\TlsClient;
+use Icinga\Module\Monitoring\Util\TlsClient;
 use Icinga\Module\Monitoring\Web\Form\Validator\TlsCertFileValidator;
 use Icinga\Module\Monitoring\Web\Form\Validator\TlsCertValidator;
 use Icinga\Module\Monitoring\Web\Form\Validator\TlsKeyFileValidator;
