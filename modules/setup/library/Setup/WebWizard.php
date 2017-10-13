@@ -3,6 +3,7 @@
 
 namespace Icinga\Module\Setup;
 
+use Icinga\Module\Setup\Requirement\DirectoryRequirement;
 use PDOException;
 use Icinga\Web\Form;
 use Icinga\Web\Wizard;
@@ -35,7 +36,6 @@ use Icinga\Module\Setup\Requirement\ClassRequirement;
 use Icinga\Module\Setup\Requirement\PhpConfigRequirement;
 use Icinga\Module\Setup\Requirement\PhpModuleRequirement;
 use Icinga\Module\Setup\Requirement\PhpVersionRequirement;
-use Icinga\Module\Setup\Requirement\ConfigDirectoryRequirement;
 
 /**
  * Icinga Web 2 Setup Wizard
@@ -703,13 +703,28 @@ class WebWizard extends Wizard implements SetupWizard
         )));
         $set->merge($pgsqlSet);
 
-        $set->add(new ConfigDirectoryRequirement(array(
+        $set->add(new DirectoryRequirement(array(
+            'title'         => mt('setup', 'Read- and writable configuration directory'),
             'condition'     => Icinga::app()->getConfigDir(),
             'description'   => mt(
                 'setup',
                 'The Icinga Web 2 configuration directory defaults to "/etc/icingaweb2", if' .
                 ' not explicitly set in the environment variable "ICINGAWEB_CONFIGDIR".'
             )
+        )));
+
+        $set->add(new DirectoryRequirement(array(
+            'title'         => mt('setup', 'Read- and writable storage directory'),
+            'condition'     => Icinga::app()->getStorageDir(),
+            'description'   => mt(
+                'setup',
+                'The Icinga Web 2 storage directory defaults to "/var/lib/icingaweb2", if' .
+                ' not explicitly set in the environment variable "ICINGAWEB_STORAGEDIR".' .
+                ' May be created with the following command:'
+            )
+                . '<br>'
+                . (realpath(Icinga::app()->getApplicationDir() . '/../bin/icingacli') ?: 'icingacli')
+                . ' setup storage directory;'
         )));
 
         if (! $skipModules) {
