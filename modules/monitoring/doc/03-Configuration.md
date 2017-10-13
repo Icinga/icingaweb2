@@ -6,9 +6,9 @@ The module specific configuration is stored in `/etc/icingaweb2/modules/monitori
 
 File/Directory                                                        | Description
 ----------------------------------------------------------------------|---------------------------------
-[config.ini](01-Configuration.md#monitoring-module-configuration-general) | Security settings (e.g. protected custom vars) for the `monitoring` module |
-[backends.ini](02-Backends.md#monitoring-module-backends)             | Data backend (e.g. the IDO database [resource](../../../doc/04-Resources.md#resources-configuration-database) name).
-[commandtransports.ini](03-Command-Transports.md#commandtransports)   | Command transports for specific Icinga instances
+config.ini                                                            | Security settings (e.g. protected custom vars) for the `monitoring` module |
+[backends.ini](04-Backends.md#monitoring-module-backends)             | Data backend (e.g. the IDO database [resource](../../../doc/04-Resources.md#resources-configuration-database) name).
+[commandtransports.ini](05-Command-Transports.md)                     | Command transports for specific Icinga instances
 
 
 ## General Configuration <a id="monitoring-module-configuration-general"></a>
