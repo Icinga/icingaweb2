@@ -78,6 +78,13 @@ abstract class ApplicationBootstrap
     protected $configDir;
 
     /**
+     * File storage directory
+     *
+     * @var string
+     */
+    protected $storageDir;
+
+    /**
      * Icinga class loader
      *
      * @var ClassLoader
@@ -122,10 +129,11 @@ abstract class ApplicationBootstrap
     /**
      * Constructor
      *
-     * @param string $baseDir   Icinga Web 2 base directory
-     * @param string $configDir Path to Icinga Web 2's configuration files
+     * @param   string  $baseDir    Icinga Web 2 base directory
+     * @param   string  $configDir  Path to Icinga Web 2's configuration files
+     * @param   string  $storageDir Path to Icinga Web 2's non-configuration files
      */
-    protected function __construct($baseDir = null, $configDir = null)
+    protected function __construct($baseDir = null, $configDir = null, $storageDir = null)
     {
         if ($baseDir === null) {
             $baseDir = dirname($this->getBootstrapDirectory());
@@ -147,6 +155,15 @@ abstract class ApplicationBootstrap
         }
         $canonical = realpath($configDir);
         $this->configDir = $canonical ? $canonical : $configDir;
+
+        if ($storageDir === null) {
+            $storageDir = getenv('ICINGAWEB_STORAGEDIR');
+            if ($storageDir === false) {
+                $storageDir = Platform::isWindows() ? "$baseDir/storage" : '/var/lib/icingaweb2';
+            }
+        }
+
+        $this->storageDir = realpath($storageDir) ?: $storageDir;
 
         set_include_path(
             implode(
@@ -285,6 +302,18 @@ abstract class ApplicationBootstrap
     }
 
     /**
+     * Get the file storage directory
+     *
+     * @param   string $subDir Optional sub directory to get
+     *
+     * @return  string
+     */
+    public function getStorageDir($subDir = null)
+    {
+        return $this->getDirWithSubDir($this->storageDir, $subDir);
+    }
+
+    /**
      * Get the Icinga library directory
      *
      * @param   string $subDir Optional sub directory to get
@@ -327,12 +356,13 @@ abstract class ApplicationBootstrap
      *
      * @param   string $baseDir     Icinga Web 2 base directory
      * @param   string $configDir   Path to Icinga Web 2's configuration files
+     * @param   string $storageDir  Path to Icinga Web 2's non-configuration files
      *
      * @return  static
      */
-    public static function start($baseDir = null, $configDir = null)
+    public static function start($baseDir = null, $configDir = null, $storageDir = null)
     {
-        $application = new static($baseDir, $configDir);
+        $application = new static($baseDir, $configDir, $storageDir);
         $application->bootstrap();
         return $application;
     }
