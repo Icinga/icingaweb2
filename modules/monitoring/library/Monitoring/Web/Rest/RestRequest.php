@@ -99,11 +99,11 @@ class RestRequest
     protected $tlsClientKey;
 
     /**
-     * A file with the server's TLS certificate or the issuer CA
+     * A file with the server's TLS certificate's root CA certificate
      *
      * @var string|null
      */
-    protected $tlsServerCert;
+    protected $tlsServerCaCert;
 
     /**
      * A temporary directory for TLS certificates and private keys
@@ -238,13 +238,13 @@ class RestRequest
     }
 
     /**
-     * Set the remote's TLS certificate or the issuer CA
+     * Set the remote's TLS certificate's root CA certificate
      *
      * @param   string  $cert   Certificate, either PEM or an absolute path to a PEM file
      *
      * @return  $this
      */
-    public function setTlsServer($cert)
+    public function setTlsServerRootCA($cert)
     {
         if (substr($cert, 0, 1) === '-') {
             $certPath = $this->getTempDir() . DIRECTORY_SEPARATOR . 'server.crt';
@@ -252,7 +252,7 @@ class RestRequest
             $cert = $certPath;
         }
 
-        $this->tlsServerCert = $cert;
+        $this->tlsServerCaCert = $cert;
 
         return $this;
     }
@@ -324,8 +324,8 @@ class RestRequest
             $options[CURLOPT_SSL_VERIFYHOST] = $this->strictCn ? 2 : 0;
             $options[CURLOPT_SSL_VERIFYPEER] = true;
 
-            if ($this->tlsServerCert !== null) {
-                $options[CURLOPT_CAINFO] = $this->tlsServerCert;
+            if ($this->tlsServerCaCert !== null) {
+                $options[CURLOPT_CAINFO] = $this->tlsServerCaCert;
             }
         } else {
             $options[CURLOPT_SSL_VERIFYHOST] = false;
