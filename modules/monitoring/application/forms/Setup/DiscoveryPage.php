@@ -398,8 +398,18 @@ class DiscoveryPage extends Form
             }
         }
 
+        if (! isset($rootCn)) {
+            $this->addError($this->translate('Icinga 2 didn\'t provide any TLS root CA certificate'));
+            return false;
+        }
+
         while (isset($issuers[$serverCn])) {
             $serverCn = $issuers[$serverCn];
+        }
+
+        if ($serverCn === $rootCn) {
+            $this->addError($this->translate('Icinga 2 didn\'t provide any non-self-signed TLS certificate'));
+            return false;
         }
 
         $fingerprint = openssl_x509_fingerprint($certs[$serverCn], 'sha256');
