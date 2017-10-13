@@ -473,7 +473,7 @@ class GettextTranslationHelper
             $filepath = $directory . DIRECTORY_SEPARATOR . $filename;
             if (preg_match('@^[^\.].+\.(' . implode('|', $this->sourceExtensions) . ')$@', $filename)) {
                 $file->fwrite($filepath . PHP_EOL);
-            } elseif (is_dir($filepath)) {
+            } elseif (! is_link($filepath) && is_dir($filepath)) {
                 $subdirs[] = $filepath;
             }
         }
