@@ -9,6 +9,8 @@
 
     "use strict";
 
+    var columnContainerIdPattern = /^col/;
+
     function SubContainer(icinga) {
         Icinga.EventListener.call(this, icinga);
 
@@ -18,15 +20,21 @@
     SubContainer.prototype = Object.create(Icinga.EventListener.prototype);
 
     SubContainer.prototype.onRendered = function(e) {
-        var root = $(e.target);
-
-        if (root.hasClass("collapsible")) {
-            return;
+        if ($(e.target).hasClass("collapsible")) {
+            SubContainer.prototype.onRenderedCollapsible.call(this, e);
+        } else {
+            SubContainer.prototype.onRenderedDefault.call(this, e);
         }
+    };
 
+    SubContainer.prototype.onRenderedCollapsible = function(e) {
+        SubContainer.prototype.backupSubContainer($(e.target));
+    };
+
+    SubContainer.prototype.onRenderedDefault = function(e) {
         var loader = icinga.loader;
 
-        $(".subcontainer", root).each(function() {
+        $(".subcontainer", $(e.target)).each(function() {
             var subcontainer = $(this);
             var collapsibles = $(".collapsible", subcontainer).first();
 
@@ -44,6 +52,8 @@
                             true
                         );
                     } else {
+                        SubContainer.prototype.unbackupSubContainer(collapsible);
+
                         collapsible.empty();
                     }
                 });
@@ -51,6 +61,59 @@
                 collapsibles.toggleClass("collapsed");
             });
         });
+    };
+
+    SubContainer.prototype.backupSubContainer = function(collapsible) {
+        var backupPath = SubContainer.prototype.getPathToBackup(collapsible);
+
+        if (backupPath.subcontainerId === null || backupPath.columnId === null) {
+            return;
+        }
+
+        SubContainer.prototype.provisionPathToBackup(backupPath);
+
+        window.SubContainerBackups[backupPath.columnId][backupPath.subcontainerId] = collapsible.get(0);
+    };
+
+    SubContainer.prototype.unbackupSubContainer = function(collapsible) {
+        var backupPath = SubContainer.prototype.getPathToBackup(collapsible);
+
+        if (backupPath.subcontainerId === null || backupPath.columnId === null) {
+            return;
+        }
+
+        SubContainer.prototype.provisionPathToBackup(backupPath);
+
+        delete window.SubContainerBackups[backupPath.columnId][backupPath.subcontainerId];
+    };
+
+    SubContainer.prototype.provisionPathToBackup = function(backupPath) {
+        if (typeof window.SubContainerBackups === 'undefined') {
+            window.SubContainerBackups = Object.create(null);
+        }
+
+        if (typeof window.SubContainerBackups[backupPath.columnId] === "undefined") {
+            window.SubContainerBackups[backupPath.columnId] = Object.create(null);
+        }
+    };
+
+    SubContainer.prototype.getPathToBackup = function(collapsible) {
+        var backupPath = {columnId: null, subcontainerId: null};
+
+        collapsible.parents().each(function() {
+            var parent = $(this);
+
+            if (parent.hasClass("subcontainer")) {
+                if (backupPath.subcontainerId === null) {
+                    backupPath.subcontainerId = parent.attr("id");
+                }
+            } else if (parent.hasClass("container") && columnContainerIdPattern.exec(parent.attr("id")) !== null
+                && backupPath.columnId === null) {
+                backupPath.columnId = parent.attr("id");
+            }
+        });
+
+        return backupPath;
     };
 
     Icinga.Behaviors = Icinga.Behaviors || {};
