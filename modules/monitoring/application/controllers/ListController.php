@@ -79,10 +79,8 @@ class ListController extends Controller
             'host_passive_checks_enabled'
         ), $this->addColumns()));
         $this->applyRestriction('monitoring/filter/objects', $hosts);
-        $this->filterQuery($hosts);
 
         $this->setupPaginationControl($hosts);
-        $this->setupLimitControl();
         $this->setupSortControl(array(
             'host_severity'             => $this->translate('Severity'),
             'host_state'                => $this->translate('Current State'),
@@ -91,6 +89,8 @@ class ListController extends Controller
             'host_last_check'           => $this->translate('Last Check'),
             'host_last_state_change'    => $this->translate('Last State Change')
         ), $hosts);
+        $this->filterQuery($hosts);
+        $this->setupLimitControl();
 
         $stats = $this->backend->select()->from('hoststatussummary', array(
             'hosts_total',
@@ -160,10 +160,8 @@ class ListController extends Controller
             'service_passive_checks_enabled'
         ), $this->addColumns()));
         $this->applyRestriction('monitoring/filter/objects', $services);
-        $this->filterQuery($services);
 
         $this->setupPaginationControl($services);
-        $this->setupLimitControl();
         $this->setupSortControl(array(
             'service_severity'          => $this->translate('Service Severity'),
             'service_state'             => $this->translate('Current Service State'),
@@ -176,6 +174,8 @@ class ListController extends Controller
             'host_address'              => $this->translate('Host Address'),
             'host_last_check'           => $this->translate('Last Host Check')
         ), $services);
+        $this->filterQuery($services);
+        $this->setupLimitControl();
 
         $stats = $this->backend->select()->from('servicestatussummary', array(
             'services_critical',
@@ -238,10 +238,8 @@ class ListController extends Controller
             'service_display_name'
         ));
         $this->applyRestriction('monitoring/filter/objects', $downtimes);
-        $this->filterQuery($downtimes);
 
         $this->setupPaginationControl($downtimes);
-        $this->setupLimitControl();
         $this->setupSortControl(array(
             'downtime_is_in_effect'     => $this->translate('Is In Effect'),
             'host_display_name'         => $this->translate('Host'),
@@ -254,6 +252,8 @@ class ListController extends Controller
             'downtime_scheduled_end'    => $this->translate('Scheduled End'),
             'downtime_duration'         => $this->translate('Duration')
         ), $downtimes);
+        $this->filterQuery($downtimes);
+        $this->setupLimitControl();
 
         $this->view->downtimes = $downtimes;
 
@@ -287,13 +287,13 @@ class ListController extends Controller
             'service_display_name'
         ));
         $this->applyRestriction('monitoring/filter/objects', $notifications);
-        $this->filterQuery($notifications);
 
         $this->setupPaginationControl($notifications);
-        $this->setupLimitControl();
         $this->setupSortControl(array(
             'notification_timestamp' => $this->translate('Notification Start')
         ), $notifications);
+        $this->filterQuery($notifications);
+        $this->setupLimitControl();
 
         $this->view->notifications = $notifications;
     }
@@ -318,16 +318,16 @@ class ListController extends Controller
             'contact_notify_host_timeperiod'
         ));
         $this->applyRestriction('monitoring/filter/objects', $contacts);
-        $this->filterQuery($contacts);
 
         $this->setupPaginationControl($contacts);
-        $this->setupLimitControl();
         $this->setupSortControl(array(
             'contact_name'  => $this->translate('Name'),
             'contact_alias' => $this->translate('Alias'),
             'contact_email' => $this->translate('Email'),
             'contact_pager' => $this->translate('Pager Address / Number')
         ), $contacts);
+        $this->filterQuery($contacts);
+        $this->setupLimitControl();
 
         $this->view->contacts = $contacts;
     }
@@ -389,14 +389,14 @@ class ListController extends Controller
             'contact_count'
         ));
         $this->applyRestriction('monitoring/filter/objects', $contactGroups);
-        $this->filterQuery($contactGroups);
 
         $this->setupPaginationControl($contactGroups);
-        $this->setupLimitControl();
         $this->setupSortControl(array(
             'contactgroup_name'     => $this->translate('Contactgroup Name'),
             'contactgroup_alias'    => $this->translate('Contactgroup Alias')
         ), $contactGroups);
+        $this->filterQuery($contactGroups);
+        $this->setupLimitControl();
 
         $this->view->contactGroups = $contactGroups;
     }
@@ -430,10 +430,8 @@ class ListController extends Controller
             'service_display_name'
         ));
         $this->applyRestriction('monitoring/filter/objects', $comments);
-        $this->filterQuery($comments);
 
         $this->setupPaginationControl($comments);
-        $this->setupLimitControl();
         $this->setupSortControl(
             array(
                 'comment_timestamp'     => $this->translate('Comment Timestamp'),
@@ -444,6 +442,8 @@ class ListController extends Controller
             ),
             $comments
         );
+        $this->filterQuery($comments);
+        $this->setupLimitControl();
 
         $this->view->comments = $comments;
 
@@ -480,14 +480,14 @@ class ListController extends Controller
             'services_warning_unhandled'
         ));
         $this->applyRestriction('monitoring/filter/objects', $serviceGroups);
-        $this->filterQuery($serviceGroups);
 
         $this->setupPaginationControl($serviceGroups);
-        $this->setupLimitControl();
         $this->setupSortControl(array(
             'servicegroup_alias'    => $this->translate('Service Group Name'),
             'services_total'        => $this->translate('Total Services')
         ), $serviceGroups);
+        $this->filterQuery($serviceGroups);
+        $this->setupLimitControl();
 
         $this->view->serviceGroups = $serviceGroups;
     }
@@ -526,15 +526,15 @@ class ListController extends Controller
             'services_warning_unhandled'
         ));
         $this->applyRestriction('monitoring/filter/objects', $hostGroups);
-        $this->filterQuery($hostGroups);
 
         $this->setupPaginationControl($hostGroups);
-        $this->setupLimitControl();
         $this->setupSortControl(array(
             'hostgroup_alias'   => $this->translate('Host Group Name'),
             'hosts_total'       => $this->translate('Total Hosts'),
             'services_total'    => $this->translate('Total Services')
         ), $hostGroups);
+        $this->filterQuery($hostGroups);
+        $this->setupLimitControl();
 
         $this->view->hostGroups = $hostGroups;
     }
@@ -560,13 +560,13 @@ class ListController extends Controller
         ));
 
         $this->applyRestriction('monitoring/filter/objects', $query);
-        $this->filterQuery($query);
         $this->view->history = $query;
 
-        $this->setupLimitControl();
         $this->setupSortControl(array(
             'timestamp' => $this->translate('Occurence')
         ), $query);
+        $this->filterQuery($query);
+        $this->setupLimitControl();
     }
 
     public function servicegridAction()
