@@ -36,6 +36,11 @@
 
         $(".subcontainer", $(e.target)).each(function() {
             var subcontainer = $(this);
+
+            $(".collapsible", subcontainer).first().each(function() {
+                SubContainer.prototype.restoreSubContainer($(this));
+            });
+
             var collapsibles = $(".collapsible", subcontainer).first();
 
             $(".toggle", subcontainer).on("click", function() {
@@ -72,7 +77,7 @@
 
         SubContainer.prototype.provisionPathToBackup(backupPath);
 
-        window.SubContainerBackups[backupPath.columnId][backupPath.subcontainerId] = collapsible.get(0);
+        window.SubContainerBackups[backupPath.columnId][backupPath.subcontainerId] = collapsible;
     };
 
     SubContainer.prototype.unbackupSubContainer = function(collapsible) {
@@ -85,6 +90,20 @@
         SubContainer.prototype.provisionPathToBackup(backupPath);
 
         delete window.SubContainerBackups[backupPath.columnId][backupPath.subcontainerId];
+    };
+
+    SubContainer.prototype.restoreSubContainer = function(collapsible) {
+        var backupPath = SubContainer.prototype.getPathToBackup(collapsible);
+
+        if (backupPath.subcontainerId === null || backupPath.columnId === null) {
+            return;
+        }
+
+        SubContainer.prototype.provisionPathToBackup(backupPath);
+
+        if (typeof window.SubContainerBackups[backupPath.columnId][backupPath.subcontainerId] !== "undefined") {
+            collapsible.replaceWith(window.SubContainerBackups[backupPath.columnId][backupPath.subcontainerId]);
+        }
     };
 
     SubContainer.prototype.provisionPathToBackup = function(backupPath) {
