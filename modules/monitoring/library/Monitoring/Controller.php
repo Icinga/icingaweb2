@@ -60,7 +60,7 @@ class Controller extends IcingaWebController
                         'Content-Disposition',
                         'inline; filename=' . $this->getRequest()->getActionName() . '.json'
                     )
-                    ->appendBody(Json::encode($query->getQuery()->fetchAll()))
+                    ->appendBody(Json::encode($query->fetchAll()))
                     ->sendResponse();
                 exit;
             case 'csv':
