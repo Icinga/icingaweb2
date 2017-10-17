@@ -1,7 +1,7 @@
 /* Icinga Web 2 | (c) 2017 Icinga Development Team | GPLv2+ */
 
 /**
- * Icinga.Behavior.SubContainer
+ * Icinga.Behavior.Subcontainer
  *
  * A toggleable container
  */
@@ -10,14 +10,14 @@
     'use strict';
 
     var columnContainerIdPattern = /^col/;
-    var subContainerBackups = Object.create(null);
+    var subcontainerBackups = Object.create(null);
 
-    subContainerBackups.col1 = Object.create(null);
-    subContainerBackups.col2 = Object.create(null);
-    subContainerBackups.col3 = Object.create(null);
+    subcontainerBackups.col1 = Object.create(null);
+    subcontainerBackups.col2 = Object.create(null);
+    subcontainerBackups.col3 = Object.create(null);
 
     function onRenderedCollapsible(event) {
-        backupSubContainer($(event.target));
+        backupSubcontainer($(event.target));
     }
 
     function onRenderedDefault(event) {
@@ -27,7 +27,7 @@
             var subcontainer = $(this);
 
             $('.collapsible', subcontainer).first().each(function() {
-                restoreSubContainer($(this));
+                restoreSubcontainer($(this));
             });
 
             var collapsibles = $('.collapsible', subcontainer).first();
@@ -46,7 +46,7 @@
                             true
                         );
                     } else {
-                        unbackupSubContainer(collapsible);
+                        unbackupSubcontainer(collapsible);
 
                         collapsible.empty();
                     }
@@ -57,35 +57,35 @@
         });
     }
 
-    function backupSubContainer(collapsible) {
+    function backupSubcontainer(collapsible) {
         var backupPath = getPathToBackup(collapsible);
 
         if (backupPath.subcontainerId === null || backupPath.columnId === null) {
             return;
         }
 
-        subContainerBackups[backupPath.columnId][backupPath.subcontainerId] = collapsible;
+        subcontainerBackups[backupPath.columnId][backupPath.subcontainerId] = collapsible;
     }
 
-    function unbackupSubContainer(collapsible) {
+    function unbackupSubcontainer(collapsible) {
         var backupPath = getPathToBackup(collapsible);
 
         if (backupPath.subcontainerId === null || backupPath.columnId === null) {
             return;
         }
 
-        delete subContainerBackups[backupPath.columnId][backupPath.subcontainerId];
+        delete subcontainerBackups[backupPath.columnId][backupPath.subcontainerId];
     }
 
-    function restoreSubContainer(collapsible) {
+    function restoreSubcontainer(collapsible) {
         var backupPath = getPathToBackup(collapsible);
 
         if (backupPath.subcontainerId === null || backupPath.columnId === null) {
             return;
         }
 
-        if (typeof subContainerBackups[backupPath.columnId][backupPath.subcontainerId] !== 'undefined') {
-            collapsible.replaceWith(subContainerBackups[backupPath.columnId][backupPath.subcontainerId]);
+        if (typeof subcontainerBackups[backupPath.columnId][backupPath.subcontainerId] !== 'undefined') {
+            collapsible.replaceWith(subcontainerBackups[backupPath.columnId][backupPath.subcontainerId]);
         }
     }
 
@@ -108,15 +108,15 @@
         return backupPath;
     }
 
-    function SubContainer(icinga) {
+    function Subcontainer(icinga) {
         Icinga.EventListener.call(this, icinga);
 
         this.on('rendered', this.onRendered, this);
     }
 
-    SubContainer.prototype = Object.create(Icinga.EventListener.prototype);
+    Subcontainer.prototype = Object.create(Icinga.EventListener.prototype);
 
-    SubContainer.prototype.onRendered = function(event) {
+    Subcontainer.prototype.onRendered = function(event) {
         if ($(event.target).hasClass('collapsible')) {
             onRenderedCollapsible(event);
         } else {
@@ -126,6 +126,6 @@
 
     Icinga.Behaviors = Icinga.Behaviors || {};
 
-    Icinga.Behaviors.SubContainer = SubContainer;
+    Icinga.Behaviors.Subcontainer = Subcontainer;
 
 }) (Icinga, jQuery);
