@@ -10,6 +10,11 @@
     "use strict";
 
     var columnContainerIdPattern = /^col/;
+    var subContainerBackups = Object.create(null);
+
+    subContainerBackups.col1 = Object.create(null);
+    subContainerBackups.col2 = Object.create(null);
+    subContainerBackups.col3 = Object.create(null);
 
     function onRenderedCollapsible(event) {
         backupSubContainer($(event.target));
@@ -59,9 +64,7 @@
             return;
         }
 
-        provisionPathToBackup(backupPath);
-
-        window.SubContainerBackups[backupPath.columnId][backupPath.subcontainerId] = collapsible;
+        subContainerBackups[backupPath.columnId][backupPath.subcontainerId] = collapsible;
     }
 
     function unbackupSubContainer(collapsible) {
@@ -71,9 +74,7 @@
             return;
         }
 
-        provisionPathToBackup(backupPath);
-
-        delete window.SubContainerBackups[backupPath.columnId][backupPath.subcontainerId];
+        delete subContainerBackups[backupPath.columnId][backupPath.subcontainerId];
     }
 
     function restoreSubContainer(collapsible) {
@@ -83,20 +84,8 @@
             return;
         }
 
-        provisionPathToBackup(backupPath);
-
-        if (typeof window.SubContainerBackups[backupPath.columnId][backupPath.subcontainerId] !== "undefined") {
-            collapsible.replaceWith(window.SubContainerBackups[backupPath.columnId][backupPath.subcontainerId]);
-        }
-    }
-
-    function provisionPathToBackup(backupPath) {
-        if (typeof window.SubContainerBackups === 'undefined') {
-            window.SubContainerBackups = Object.create(null);
-        }
-
-        if (typeof window.SubContainerBackups[backupPath.columnId] === "undefined") {
-            window.SubContainerBackups[backupPath.columnId] = Object.create(null);
+        if (typeof subContainerBackups[backupPath.columnId][backupPath.subcontainerId] !== "undefined") {
+            collapsible.replaceWith(subContainerBackups[backupPath.columnId][backupPath.subcontainerId]);
         }
     }
 
