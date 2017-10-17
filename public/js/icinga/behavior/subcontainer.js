@@ -7,7 +7,7 @@
  */
 (function(Icinga, $) {
 
-    "use strict";
+    'use strict';
 
     var columnContainerIdPattern = /^col/;
     var subContainerBackups = Object.create(null);
@@ -23,20 +23,20 @@
     function onRenderedDefault(event) {
         var loader = icinga.loader;
 
-        $(".subcontainer", $(event.target)).each(function() {
+        $('.subcontainer', $(event.target)).each(function() {
             var subcontainer = $(this);
 
-            $(".collapsible", subcontainer).first().each(function() {
+            $('.collapsible', subcontainer).first().each(function() {
                 restoreSubContainer($(this));
             });
 
-            var collapsibles = $(".collapsible", subcontainer).first();
+            var collapsibles = $('.collapsible', subcontainer).first();
 
-            $(".toggle", subcontainer).on("click", function() {
+            $('.toggle', subcontainer).on('click', function() {
                 collapsibles.each(function() {
                     var collapsible = $(this);
 
-                    if (collapsible.hasClass("collapsed")) {
+                    if (collapsible.hasClass('collapsed')) {
                         loader.loadUrl(
                             collapsible.data('icingaUrl'),
                             collapsible,
@@ -52,7 +52,7 @@
                     }
                 });
 
-                collapsibles.toggleClass("collapsed");
+                collapsibles.toggleClass('collapsed');
             });
         });
     }
@@ -84,7 +84,7 @@
             return;
         }
 
-        if (typeof subContainerBackups[backupPath.columnId][backupPath.subcontainerId] !== "undefined") {
+        if (typeof subContainerBackups[backupPath.columnId][backupPath.subcontainerId] !== 'undefined') {
             collapsible.replaceWith(subContainerBackups[backupPath.columnId][backupPath.subcontainerId]);
         }
     }
@@ -95,13 +95,13 @@
         collapsible.parents().each(function() {
             var parent = $(this);
 
-            if (parent.hasClass("subcontainer")) {
+            if (parent.hasClass('subcontainer')) {
                 if (backupPath.subcontainerId === null) {
-                    backupPath.subcontainerId = parent.attr("id");
+                    backupPath.subcontainerId = parent.attr('id');
                 }
-            } else if (parent.hasClass("container") && columnContainerIdPattern.exec(parent.attr("id")) !== null
+            } else if (parent.hasClass('container') && columnContainerIdPattern.exec(parent.attr('id')) !== null
                 && backupPath.columnId === null) {
-                backupPath.columnId = parent.attr("id");
+                backupPath.columnId = parent.attr('id');
             }
         });
 
@@ -117,7 +117,7 @@
     SubContainer.prototype = Object.create(Icinga.EventListener.prototype);
 
     SubContainer.prototype.onRendered = function(event) {
-        if ($(event.target).hasClass("collapsible")) {
+        if ($(event.target).hasClass('collapsible')) {
             onRenderedCollapsible(event);
         } else {
             onRenderedDefault(event);
