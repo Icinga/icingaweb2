@@ -11,14 +11,14 @@
 
     var subcontainerBackups = Object.create(null);
 
-    function onRenderedCollapsible(event) {
-        backupSubcontainer($(event.target));
+    function onRenderedCollapsible(event, eventTarget) {
+        backupSubcontainer(eventTarget);
     }
 
-    function onRenderedDefault(event) {
+    function onRenderedDefault(event, eventTarget) {
         var loader = icinga.loader;
 
-        $(event.target).find('.subcontainer').each(function() {
+        eventTarget.find('.subcontainer').each(function() {
             var subcontainer = $(this);
 
             subcontainer.find('.collapsible').first().each(function() {
@@ -97,10 +97,12 @@
     Subcontainer.prototype = Object.create(Icinga.EventListener.prototype);
 
     Subcontainer.prototype.onRendered = function(event) {
-        if ($(event.target).hasClass('collapsible')) {
-            onRenderedCollapsible(event);
+        var eventTarget = $(event.target);
+
+        if (eventTarget.hasClass('collapsible')) {
+            onRenderedCollapsible(event, eventTarget);
         } else {
-            onRenderedDefault(event);
+            onRenderedDefault(event, eventTarget);
         }
     };
 
