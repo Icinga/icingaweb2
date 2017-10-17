@@ -23,16 +23,16 @@
     function onRenderedDefault(event) {
         var loader = icinga.loader;
 
-        $('.subcontainer', $(event.target)).each(function() {
+        $(event.target).find('.subcontainer').each(function() {
             var subcontainer = $(this);
 
-            $('.collapsible', subcontainer).first().each(function() {
+            subcontainer.find('.collapsible').first().each(function() {
                 restoreSubcontainer($(this));
             });
 
-            var collapsibles = $('.collapsible', subcontainer).first();
+            var collapsibles = subcontainer.find('.collapsible').first();
 
-            $('.toggle', subcontainer).on('click', function() {
+            subcontainer.find('.toggle').on('click', function() {
                 collapsibles.each(function() {
                     var collapsible = $(this);
 
