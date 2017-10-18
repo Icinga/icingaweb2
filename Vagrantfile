@@ -57,4 +57,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     puppet.manifest_file = "site.pp"
     puppet.options = "--parser=future"
   end
+
+  if File.exists?(".Vagrantfile.local") then
+    eval(IO.read(".Vagrantfile.local"), binding)
+  end
 end
