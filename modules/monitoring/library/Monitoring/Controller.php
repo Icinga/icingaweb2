@@ -45,7 +45,13 @@ class Controller extends IcingaWebController
         }
         if ($this->_getParam('format') === 'csv'
             || $this->_request->getHeader('Accept') === 'text/csv') {
-            Csv::fromQuery($query)->dump();
+            $response = $this->getResponse();
+            $response
+                ->setHeader('Content-Type', 'text/csv')
+                ->setHeader('Cache-Control', 'no-store')
+                ->setHeader('Content-Disposition', 'attachment; filename=' . $this->getRequest()->getActionName() . '.csv')
+                ->appendBody((string) Csv::fromQuery($query))
+                ->sendResponse();
             exit;
         }
     }
