@@ -16,38 +16,9 @@
     }
 
     function onRenderedDefault(event, eventTarget) {
-        var loader = icinga.loader;
-
         eventTarget.find('.subcontainer').each(function() {
-            var subcontainer = $(this);
-
-            subcontainer.find('.collapsible').first().each(function() {
+            $(this).find('.collapsible').first().each(function() {
                 restoreSubcontainer($(this));
-            });
-
-            var collapsibles = subcontainer.find('.collapsible').first();
-
-            subcontainer.find('.toggle').on('click', function() {
-                collapsibles.each(function() {
-                    var collapsible = $(this);
-
-                    if (collapsible.hasClass('collapsed')) {
-                        loader.loadUrl(
-                            collapsible.data('icingaUrl'),
-                            collapsible,
-                            undefined,
-                            undefined,
-                            undefined,
-                            true
-                        );
-                    } else {
-                        unbackupSubcontainer(collapsible);
-
-                        collapsible.empty();
-                    }
-                });
-
-                collapsibles.toggleClass('collapsed');
             });
         });
     }
@@ -92,6 +63,8 @@
         Icinga.EventListener.call(this, icinga);
 
         this.on('rendered', this.onRendered, this);
+
+        $(document).on('click', '.subcontainer .toggle', this.onToggle);
     }
 
     Subcontainer.prototype = Object.create(Icinga.EventListener.prototype);
@@ -104,6 +77,29 @@
         } else {
             onRenderedDefault(event, eventTarget);
         }
+    };
+
+    Subcontainer.prototype.onToggle = function(event) {
+        $(event.target).parents('.subcontainer').first().find('.collapsible').first().each(function() {
+            var collapsible = $(this);
+
+            if (collapsible.hasClass('collapsed')) {
+                icinga.loader.loadUrl(
+                    collapsible.data('icingaUrl'),
+                    collapsible,
+                    undefined,
+                    undefined,
+                    undefined,
+                    true
+                );
+            } else {
+                unbackupSubcontainer(collapsible);
+
+                collapsible.empty();
+            }
+
+            collapsible.toggleClass('collapsed');
+        });
     };
 
     Icinga.Behaviors = Icinga.Behaviors || {};
