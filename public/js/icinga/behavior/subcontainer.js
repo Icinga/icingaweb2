@@ -38,10 +38,8 @@
     function getSubcontainerId(collapsible) {
         var subcontainerId = null;
 
-        collapsible.parents('subcontainer').each(function() {
-            if (subcontainerId === null) {
-                subcontainerId = $(this).attr('id');
-            }
+        collapsible.parents('.subcontainer').first().each(function() {
+            subcontainerId = $(this).attr('id');
         });
 
         return subcontainerId;
