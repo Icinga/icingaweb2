@@ -11,18 +11,6 @@
 
     var subcontainerBackups = Object.create(null);
 
-    function onRenderedCollapsible(event, eventTarget) {
-        backupSubcontainer(eventTarget);
-    }
-
-    function onRenderedDefault(event, eventTarget) {
-        eventTarget.find('.subcontainer').each(function() {
-            $(this).find('.collapsible').first().each(function() {
-                restoreSubcontainer($(this));
-            });
-        });
-    }
-
     function backupSubcontainer(collapsible) {
         var subcontainerId = getSubcontainerId(collapsible);
 
@@ -73,9 +61,13 @@
         var eventTarget = $(event.target);
 
         if (eventTarget.hasClass('collapsible')) {
-            onRenderedCollapsible(event, eventTarget);
+            backupSubcontainer(eventTarget);
         } else {
-            onRenderedDefault(event, eventTarget);
+            eventTarget.find('.subcontainer').each(function() {
+                $(this).find('.collapsible').first().each(function() {
+                    restoreSubcontainer($(this));
+                });
+            });
         }
     };
 
