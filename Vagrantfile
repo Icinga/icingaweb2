@@ -21,11 +21,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.network "forwarded_port", guest: 443, host: 8443,
     auto_correct: true
 
+  config.vm.box = "boxcutter/centos7"
+
   config.vm.provision :shell, :path => ".puppet/manifests/puppet.sh"
 
   config.vm.provider :parallels do |p, override|
-    override.vm.box = "parallels/centos-7.2"
-
     p.name = "Icinga Web 2 Development"
 
     # Update Parallels Tools automatically ...
@@ -41,16 +41,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   end
 
   config.vm.provider :vmware_workstation do |v, override|
-    override.vm.box = "bento/centos-7.4"
-
     v.vmx["memsize"] = "1024"
     v.vmx["numvcpus"] = "1"
   end
 
   config.vm.provider :virtualbox do |vb, override|
-    override.vm.box = "centos-71-x64-vbox"
-    override.vm.box_url = "http://boxes.icinga.com/centos-71-x64-vbox.box"
-
     vb.customize ["modifyvm", :id, "--memory", "1024"]
     vb.customize ["modifyvm", :id, "--cpus", "2"]
   end
@@ -61,5 +56,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     puppet.manifests_path = ".puppet/manifests"
     puppet.manifest_file = "site.pp"
     puppet.options = "--parser=future"
+  end
+
+  if File.exists?(".Vagrantfile.local") then
+    eval(IO.read(".Vagrantfile.local"), binding)
   end
 end
