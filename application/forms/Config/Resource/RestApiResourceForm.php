@@ -4,7 +4,7 @@
 namespace Icinga\Forms\Config\Resource;
 
 use Icinga\Web\Form;
-use Icinga\Web\Form\Validator\UrlValidator;
+use Icinga\Web\Form\Validator\RestApiUrlValidator;
 
 /**
  * Form class for adding/modifying ReST API resources
@@ -35,7 +35,7 @@ class RestApiResourceForm extends Form
                 'label'         => $this->translate('Base URL'),
                 'description'   => $this->translate('http[s]://<HOST>[:<PORT>][/<BASE_LOCATION>]'),
                 'required'      => true,
-                'validators'    => array(new UrlValidator())
+                'validators'    => array(new RestApiUrlValidator())
             )
         );
 
