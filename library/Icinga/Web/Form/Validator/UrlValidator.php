@@ -11,15 +11,14 @@ use Zend_Validate_Abstract;
 class UrlValidator extends Zend_Validate_Abstract
 {
     /**
-     * Error templates
-     *
-     * @var array
-     *
-     * @see Zend_Validate_Abstract::$_messageTemplates
+     * Constructor
      */
-    protected $_messageTemplates = array(
-        'HAS_QUOTES' => 'The url must not contain raw double quotes. If you really need double quotes, use %22 instead.'
-    );
+    public function __construct()
+    {
+        $this->_messageTemplates = array('HAS_QUOTES' => t(
+            'The url must not contain raw double quotes. If you really need double quotes, use %22 instead.'
+        ));
+    }
 
     /**
      * Validate the input value
