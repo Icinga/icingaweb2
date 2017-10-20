@@ -46,7 +46,6 @@ class RestApiResourceForm extends Form
                 'label'         => $this->translate('Username'),
                 'description'   => $this->translate(
                     'A user with access to the above URL via HTTP basic authentication'
-                        . ' (not required if the user is authenticated only via TLS client certificate)'
                 )
             )
         );
@@ -56,10 +55,7 @@ class RestApiResourceForm extends Form
             'password',
             array(
                 'label'         => $this->translate('Password'),
-                'description'   => $this->translate(
-                    'The above user\'s password'
-                        . ' (not required if the user is authenticated only via TLS client certificate)'
-                )
+                'description'   => $this->translate('The above user\'s password')
             )
         );
 
