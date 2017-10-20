@@ -6,7 +6,7 @@ namespace Icinga\Module\Translation\Clicommands;
 use Exception;
 use Icinga\Application\Logger;
 use Icinga\Exception\IcingaException;
-use Icinga\Module\Translation\Statistics\Statistics;
+use Icinga\Module\Translation\Statistics;
 use Icinga\Module\Translation\Cli\TranslationCommand;
 use Icinga\Util\Translator;
 

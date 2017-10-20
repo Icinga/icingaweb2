@@ -1,9 +1,8 @@
 <?php
 /* Icinga Web 2 | (c) 2016 Icinga Development Team | GPLv2+ */
 
-namespace Icinga\Module\Translation\Statistics;
+namespace Icinga\Module\Translation;
 
-use Exception;
 use Icinga\Exception\IcingaException;
 
 /**
@@ -72,6 +71,7 @@ class Statistics
      */
     protected function getStatistics()
     {
+        //TODO (JeM): Remove hardcoded path to msdfmt
         $line = '/usr/bin/msgfmt ' . $this->path . ' --statistics -cf';
         $descriptorSpec = array(
             0 => array('pipe', 'r'),
