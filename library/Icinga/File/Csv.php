@@ -3,11 +3,19 @@
 
 namespace Icinga\File;
 
+use Icinga\Util\Buffer;
 use Traversable;
 
 class Csv
 {
     protected $query;
+
+    /**
+     * Cache for {@link render()}
+     *
+     * @var Buffer|null
+     */
+    protected $renderBuffer;
 
     protected function __construct()
     {
@@ -22,26 +30,49 @@ class Csv
 
     public function dump()
     {
-        header('Content-type: text/csv');
-        echo (string) $this;
+        $this->render()->fpassthru();
     }
 
     public function __toString()
     {
-        $first = true;
-        $csv = '';
-        foreach ($this->query as $row) {
-            if ($first) {
-                $csv .= implode(',', array_keys((array) $row)) . "\r\n";
-                $first = false;
+        return (string) $this->render();
+    }
+
+    /**
+     * Return the rendered CSV
+     *
+     * @return Buffer
+     */
+    protected function render()
+    {
+        if ($this->renderBuffer === null) {
+            $this->renderBuffer = new Buffer();
+            $first = true;
+            foreach ($this->query as $row) {
+                if ($first) {
+                    $this->renderBuffer->append($this->renderRow(array_keys((array)$row)));
+                    $first = false;
+                }
+                $this->renderBuffer->append($this->renderRow(array_values((array)$row)));
             }
-            $out = array();
-            foreach ($row as & $val) {
-                $out[] = '"' . $val . '"';
-            }
-            $csv .= implode(',', $out) . "\r\n";
         }
 
-        return $csv;
+        return $this->renderBuffer;
+    }
+
+    /**
+     * Return a single CSV row string representing the given columns
+     *
+     * @param   array   $columns
+     *
+     * @return  string
+     */
+    protected function renderRow(array $columns)
+    {
+        $quoted = array();
+        foreach ($columns as $column) {
+            $quoted[] = '"' . str_replace('"', '""', $column) . '"';
+        }
+        return implode(',', $quoted) . "\r\n";
     }
 }
