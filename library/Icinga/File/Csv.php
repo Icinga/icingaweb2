@@ -3,83 +3,51 @@
 
 namespace Icinga\File;
 
-use Exception;
-use Icinga\Util\Buffer;
+use Icinga\Data\StreamInterface;
 use Traversable;
 
+/**
+ * Generates CSV from a query result
+ */
 class Csv
 {
-    protected $query;
-
     /**
-     * Cache for {@link render()}
+     * Render the result of the given query as CSV and write the rendered CSV to the given stream
      *
-     * @var Buffer|null
-     */
-    protected $renderBuffer;
-
-    protected function __construct()
-    {
-    }
-
-    public static function fromQuery(Traversable $query)
-    {
-        $csv = new static();
-        $csv->query = $query;
-        $csv->render();
-        return $csv;
-    }
-
-    public function dump()
-    {
-        $this->render()->rewind();
-        $this->renderBuffer->fpassthru();
-    }
-
-    public function __toString()
-    {
-        try {
-            return (string) $this->render();
-        } catch (Exception $e) {
-            return (string) $e;
-        }
-    }
-
-    /**
-     * Return the rendered CSV
+     * @param   Traversable     $query
+     * @param   StreamInterface $stream
      *
-     * @return Buffer
+     * @return  StreamInterface The given stream
      */
-    protected function render()
+    public static function queryToStream(Traversable $query, StreamInterface $stream)
     {
-        if ($this->renderBuffer === null) {
-            $this->renderBuffer = new Buffer();
-            $first = true;
-            foreach ($this->query as $row) {
-                if ($first) {
-                    $this->renderBuffer->write($this->renderRow(array_keys((array) $row)));
-                    $first = false;
-                }
-                $this->renderBuffer->write($this->renderRow(array_values((array) $row)));
+        $first = true;
+        foreach ($query as $row) {
+            if ($first) {
+                $stream->write(static::renderRow(array_keys((array) $row)));
+                $first = false;
             }
+
+            $stream->write(static::renderRow(array_values((array) $row)));
         }
 
-        return $this->renderBuffer;
+        return $stream;
     }
 
     /**
      * Return a single CSV row string representing the given columns
      *
-     * @param   array   $columns
+     * @param   string[]    $columns
      *
      * @return  string
      */
-    protected function renderRow(array $columns)
+    protected static function renderRow(array $columns)
     {
         $quoted = array();
         foreach ($columns as $column) {
             $quoted[] = '"' . str_replace('"', '""', $column) . '"';
         }
+
         return implode(',', $quoted) . "\r\n";
     }
 }

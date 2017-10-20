@@ -3,6 +3,7 @@
 
 namespace Icinga\Module\Monitoring\Clicommands;
 
+use Icinga\File\Json;
 use Icinga\Module\Monitoring\Backend;
 use Icinga\Module\Monitoring\Cli\CliUtils;
 use Icinga\Date\DateFormatter;
@@ -10,6 +11,7 @@ use Icinga\Cli\Command;
 use Icinga\File\Csv;
 use Icinga\Module\Monitoring\Plugin\PerfdataSet;
 use Exception;
+use Icinga\Util\Buffer;
 
 /**
  * Icinga monitoring objects
@@ -78,10 +80,16 @@ class ListCommand extends Command
         $query = $query->getQuery();
         switch ($format) {
             case 'json':
-                echo json_encode($query->fetchAll());
+                /** @var Buffer $buffer */
+                $buffer = Json::queryToStream($query, new Buffer());
+                $buffer->rewind();
+                $buffer->fpassthru();
                 break;
             case 'csv':
-                Csv::fromQuery($query)->dump();
+                /** @var Buffer $buffer */
+                $buffer = Csv::queryToStream($query, new Buffer());
+                $buffer->rewind();
+                $buffer->fpassthru();
                 break;
             default:
                 preg_match_all('~\$([a-z0-9_-]+)\$~', $format, $m);

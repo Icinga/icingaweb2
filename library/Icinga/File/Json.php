@@ -3,7 +3,7 @@
 
 namespace Icinga\File;
 
-use Exception;
+use Icinga\Data\StreamInterface;
 use Icinga\Exception\IcingaException;
 use Icinga\Util\Buffer;
 use stdClass;
@@ -15,90 +15,30 @@ use Traversable;
 class Json
 {
     /**
-     * The query to generate JSON from the result of
+     * Render the result of the given query as JSON and write the rendered JSON to the given stream
      *
-     * @var Traversable
-     */
-    protected $query;
-
-    /**
-     * Cache for {@link render()}
+     * @param   Traversable     $query
+     * @param   StreamInterface $stream
      *
-     * @var Buffer|null
+     * @return  StreamInterface The given stream
      */
-    protected $renderBuffer;
-
-    /**
-     * Json constructor
-     *
-     * @param   Traversable $query  The query to generate JSON from the result of
-     */
-    protected function __construct(Traversable $query)
+    public static function queryToStream(Traversable $query, StreamInterface $stream)
     {
-        $this->query = $query;
-        $this->render();
-    }
+        $stream->write('[');
 
-    /**
-     * Factory
-     *
-     * @param   Traversable $query  The query to generate JSON from the result of
-     *
-     * @return  static
-     */
-    public static function create(Traversable $query)
-    {
-        return new static($query);
-    }
-
-    /**
-     * Render JSON and pass it to the user agent (as with {@link fpassthru()})
-     */
-    public function dump()
-    {
-        $this->render()->rewind();
-        $this->renderBuffer->fpassthru();
-    }
-
-    /**
-     * Return the rendered JSON
-     *
-     * @return string
-     */
-    public function __toString()
-    {
-        try {
-            return (string) $this->render();
-        } catch (Exception $e) {
-            return (string) $e;
-        }
-    }
-
-    /**
-     * Return the rendered JSON
-     *
-     * @return Buffer
-     */
-    protected function render()
-    {
-        if ($this->renderBuffer === null) {
-            $this->renderBuffer = new Buffer();
-            $this->renderBuffer->write('[');
-
-            $first = true;
-            foreach ($this->query as $row) {
-                if ($first) {
-                    $first = false;
-                } else {
-                    $this->renderBuffer->write(',');
-                }
-                $this->renderBuffer->write($this->renderRow($row));
+        $first = true;
+        foreach ($query as $row) {
+            if ($first) {
+                $first = false;
+            } else {
+                $stream->write(',');
             }
-
-            $this->renderBuffer->write(']');
+            $stream->write(static::renderRow($row));
         }
 
-        return $this->renderBuffer;
+        $stream->write(']');
+
+        return $stream;
     }
 
     /**
@@ -110,7 +50,7 @@ class Json
      *
      * @throws  IcingaException     In case of an error
      */
-    protected function renderRow(stdClass $columns)
+    protected static function renderRow(stdClass $columns)
     {
         $result = json_encode($columns);
         if ($result === false) {
