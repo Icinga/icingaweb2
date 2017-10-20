@@ -4,6 +4,7 @@
 namespace Icinga\Forms\Config;
 
 use Icinga\Application\Config;
+use Icinga\Forms\Config\Resource\RestApiResourceForm;
 use InvalidArgumentException;
 use Icinga\Application\Platform;
 use Icinga\Exception\ConfigurationError;
@@ -62,6 +63,8 @@ class ResourceConfigForm extends ConfigForm
             return new FileResourceForm();
         } elseif ($type === 'ssh') {
             return new SshResourceForm();
+        } elseif ($type === 'restapi') {
+            return new RestApiResourceForm();
         } else {
             throw new InvalidArgumentException(sprintf($this->translate('Invalid resource type "%s" provided'), $type));
         }
@@ -260,6 +263,7 @@ class ResourceConfigForm extends ConfigForm
         $resourceTypes = array(
             'file'          => $this->translate('File'),
             'ssh'           => $this->translate('SSH Identity'),
+            'restapi'       => $this->translate('ReST API')
         );
         if ($resourceType === 'ldap' || Platform::hasLdapSupport()) {
             $resourceTypes['ldap'] = 'LDAP';
