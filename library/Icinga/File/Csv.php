@@ -3,7 +3,7 @@
 
 namespace Icinga\File;
 
-use Icinga\Data\StreamInterface;
+use Psr\Http\Message\StreamInterface;
 use Traversable;
 
 /**

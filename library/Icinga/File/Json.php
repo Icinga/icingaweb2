@@ -3,9 +3,9 @@
 
 namespace Icinga\File;
 
-use Icinga\Data\StreamInterface;
 use Icinga\Exception\IcingaException;
 use Icinga\Util\Buffer;
+use Psr\Http\Message\StreamInterface;
 use stdClass;
 use Traversable;
 

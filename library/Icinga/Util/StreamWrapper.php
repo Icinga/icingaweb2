@@ -4,7 +4,7 @@
 namespace Icinga\Util;
 
 use Exception;
-use Icinga\Data\StreamInterface;
+use Psr\Http\Message\StreamInterface;
 use RuntimeException;
 
 /**
