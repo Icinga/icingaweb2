@@ -302,7 +302,7 @@ class ResourceConfigForm extends ConfigForm
      */
     public static function inspectResource(Form $form)
     {
-        if ($form->getValue('type') !== 'ssh') {
+        if (! in_array($form->getValue('type'), array('ssh', 'restapi'))) {
             $resource = ResourceFactory::createResource(new ConfigObject($form->getValues()));
             if ($resource instanceof Inspectable) {
                 return $resource->inspect();
