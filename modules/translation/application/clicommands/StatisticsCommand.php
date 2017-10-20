@@ -15,12 +15,12 @@ class StatisticsCommand extends TranslationCommand
     /**
      * Colors for translation status indicators
      */
-    protected $colors = array(
+    protected $colors = [
         'untranslated'  => 'purple',
         'translated'    => 'green',
         'fuzzy'         => 'blue',
         'faulty'        => 'red'
-    );
+    ];
 
     /**
      * Calculates the percentages from the statistics
@@ -31,7 +31,7 @@ class StatisticsCommand extends TranslationCommand
      */
     protected function calculatePercentages($numbers)
     {
-        $percentages = array();
+        $percentages = [];
         $percentages['translated'] = $this->roundPercentage($numbers['translatedCount'], $numbers['messageCount']);
         $percentages['fuzzy'] = $this->roundPercentage($numbers['fuzzyCount'], $numbers['messageCount']);
         $percentages['faulty'] = $this->roundPercentage($numbers['faultyCount'], $numbers['messageCount']);
@@ -73,7 +73,7 @@ class StatisticsCommand extends TranslationCommand
      */
     protected function getMessageCounts(Statistics $statistics)
     {
-        $numbers = array();
+        $numbers = [];
         $numbers['messageCount'] =  $statistics->countEntries();
         $numbers['untranslatedCount'] = $statistics->countUntranslatedEntries();
         $numbers['translatedCount'] = $statistics->countTranslatedEntries();
@@ -104,22 +104,22 @@ class StatisticsCommand extends TranslationCommand
         if (! $language) {
             $locales = $allLocales;
         } else {
-            $locales = array($language);
+            $locales = [$language];
         }
 
-        $paths = array();
+        $paths = [];
         foreach ($locales as $locale) {
             if (! $language || in_array($locale, $allLocales)) {
                 $paths[] = implode(
                     DIRECTORY_SEPARATOR,
-                    array($this->app->getLocaleDir(), $locale, 'LC_MESSAGES', 'icinga.po')
+                    [$this->app->getLocaleDir(), $locale, 'LC_MESSAGES', 'icinga.po']
                 );
                 foreach ($this->app->getModuleManager()->listEnabledModules() as $module) {
                     $localeDir = $this->app->getModuleManager()->getModule($module)->getLocaleDir();
                     if (is_dir($localeDir)) {
                         $paths[] = implode(
                             DIRECTORY_SEPARATOR,
-                            array($localeDir, $locale, 'LC_MESSAGES', $module . '.po')
+                            [$localeDir, $locale, 'LC_MESSAGES', $module . '.po']
                         );
                     }
                 }
@@ -163,7 +163,7 @@ class StatisticsCommand extends TranslationCommand
         }
 
         try {
-            $locales = array_diff(scandir($localeDir), array('.', '..'));
+            $locales = array_diff(scandir($localeDir), ['.', '..']);
         } catch (Exception $e) {
             Logger::error(sprintf(
                 $this->translate('Failed to read %s. An error occurred: %s'),
@@ -173,9 +173,9 @@ class StatisticsCommand extends TranslationCommand
             exit(1);
         }
 
-        $paths = array();
+        $paths = [];
         foreach ($locales as $locale) {
-            $paths[] = implode(DIRECTORY_SEPARATOR, array($localeDir, $locale, 'LC_MESSAGES', $module . '.po'));
+            $paths[] = implode(DIRECTORY_SEPARATOR, [$localeDir, $locale, 'LC_MESSAGES', $module . '.po']);
         }
 
         return $paths;
@@ -277,7 +277,7 @@ class StatisticsCommand extends TranslationCommand
             $paths = $this->getLanguagePaths($language);
         }
 
-        $dataPackages = array();
+        $dataPackages = [];
         foreach ($paths as $path) {
             if (! file_exists($path)) {
                 continue;
@@ -286,7 +286,7 @@ class StatisticsCommand extends TranslationCommand
             try {
                 $data = $this->getMessageCounts(new Statistics($path));
             } catch (IcingaException $e) {
-                // TODO: error handling
+                // TODO (JeM): error handling
                 Logger::error($e);
                 continue;
             }
