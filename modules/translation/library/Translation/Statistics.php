@@ -73,12 +73,12 @@ class Statistics
     {
         //TODO (JeM): Remove hardcoded path to msdfmt
         $line = '/usr/bin/msgfmt ' . $this->path . ' --statistics -cf';
-        $descriptorSpec = array(
-            0 => array('pipe', 'r'),
-            1 => array('pipe', 'w'),
-            2 => array('pipe', 'w')
-        );
-        $env = array('LANG' => 'en_GB');
+        $descriptorSpec = [
+            0 => ['pipe', 'r'],
+            1 => ['pipe', 'w'],
+            2 => ['pipe', 'w']
+        ];
+        $env = ['LANG' => 'en_GB'];
         $process = proc_open(
             $line,
             $descriptorSpec,
