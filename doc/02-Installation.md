@@ -14,11 +14,10 @@ chapter.
 
 * [Icinga 2](https://www.icinga.com/products/icinga-2/) with the IDO database backend (MySQL or PostgreSQL)
 * A web server, e.g. Apache or Nginx
-* PHP >= 5.3.0 with gettext, intl, mbstring and OpenSSL support
+* PHP >= 5.3.0 with the following modules installed: cURL, gettext, intl, mbstring, OpenSSL and xml
 * Default time zone configured for PHP in the php.ini file
 * LDAP PHP library when using Active Directory or LDAP for authentication
 * MySQL or PostgreSQL PHP libraries
-* cURL PHP library when using the Icinga 2 API as resource
 
 
 ## Installing Icinga Web 2 from Package <a id="installing-from-package"></a>
