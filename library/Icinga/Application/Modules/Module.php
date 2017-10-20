@@ -616,21 +616,27 @@ class Module
     /**
      * Get the module description
      *
-     * @return string
+     * @param   bool    $translate  Whether to translate the description
+     *
+     * @return  string
      */
-    public function getDescription()
+    public function getDescription($translate = true)
     {
-        return $this->metadata()->description;
+        $description = $this->metadata()->description;
+        return $translate ? mt($this->name, $description, 'module description') : $description;
     }
 
     /**
      * Get the module title (short description)
      *
-     * @return string
+     * @param   bool    $translate  Whether to translate the title
+     *
+     * @return  string
      */
-    public function getTitle()
+    public function getTitle($translate = true)
     {
-        return $this->metadata()->title;
+        $title = $this->metadata()->title;
+        return $translate ? mt($this->name, $title, 'module title') : $title;
     }
 
     /**

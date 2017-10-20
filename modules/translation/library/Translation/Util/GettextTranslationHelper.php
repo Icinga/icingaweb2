@@ -59,6 +59,20 @@ class GettextTranslationHelper
     private $moduleName;
 
     /**
+     * The description of the module if any
+     *
+     * @var string
+     */
+    private $moduleDescription;
+
+    /**
+     * The title of the module if any
+     *
+     * @var string
+     */
+    private $moduleTitle;
+
+    /**
      * The locale used by this helper
      *
      * @var string
@@ -106,6 +120,16 @@ class GettextTranslationHelper
      * @var string
      */
     private $tablePath;
+
+    /**
+     * The path to the file with module metadata to translate
+     *
+     * As currently module metadata isn't stored in PHP files,
+     * it is written to this PHP file temporarily so xgettext can parse it easily.
+     *
+     * @var string
+     */
+    private $moduleMetadataPath;
 
     /**
      * Create a new TranslationHelper object
@@ -193,8 +217,16 @@ class GettextTranslationHelper
     {
         $this->catalogPath = tempnam(sys_get_temp_dir(), 'IcingaTranslation_');
         $this->templatePath = tempnam(sys_get_temp_dir(), 'IcingaPot_');
-        $this->version = $this->moduleMgr->getModule($module)->getVersion();
-        $this->moduleName = $this->moduleMgr->getModule($module)->getName();
+        $this->moduleMetadataPath = tempnam(sys_get_temp_dir(), 'IcingaModuleMetadata_');
+
+        $moduleObject = $this->moduleMgr->getModule($module);
+        $this->version = $moduleObject->getVersion();
+        $this->moduleName = $moduleObject->getName();
+        $this->moduleTitle = $moduleObject->getTitle(false);
+        $this->moduleDescription = $moduleObject->getDescription(false);
+        if ($this->moduleDescription === t('This module has no description')) {
+            $this->moduleDescription = null;
+        }
 
         $this->moduleDir = $this->moduleMgr->getModuleDir($module);
         $this->tablePath = implode(
@@ -210,8 +242,36 @@ class GettextTranslationHelper
         );
 
         $this->createFileCatalog();
+        $this->populateModuleMetadataFile();
         $this->createTemplateFile();
         $this->updateTranslationTable();
+    }
+
+    /**
+     * Populates {@link moduleMetadataPath} as needed
+     */
+    protected function populateModuleMetadataFile()
+    {
+        $prefix = 'mt(' . $this->escapePhpString($this->moduleName) . ',';
+        $file = new File($this->moduleMetadataPath, 'w');
+        $file->fwrite(
+            '<?php '
+            . $prefix . $this->escapePhpString($this->moduleTitle) . ',\'module title\');'
+            . $prefix . $this->escapePhpString($this->moduleDescription) . ',\'module description\');'
+        );
+        $file->fflush();
+    }
+
+    /**
+     * Return a PHP string literal representing the given string
+     *
+     * @param   string  $raw
+     *
+     * @return  string
+     */
+    protected function escapePhpString($raw)
+    {
+        return '\'' . str_replace(array('\'', '\\'), array('\\\'', '\\\\'), $raw) . '\'';
     }
 
     /**
@@ -435,11 +495,13 @@ class GettextTranslationHelper
         try {
             if ($this->moduleDir) {
                 $this->getSourceFileNames($this->moduleDir, $catalog);
+                $catalog->fwrite($this->moduleMetadataPath . PHP_EOL);
             } else {
                 $this->getSourceFileNames($this->appDir, $catalog);
                 $this->getSourceFileNames($this->libDir, $catalog);
             }
         } catch (Exception $error) {
+            // TODO(ak): Why?!
             throw $error;
         }
 
