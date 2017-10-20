@@ -125,15 +125,13 @@ class StatisticsCommand extends TranslationCommand
                 }
             } else {
                 if (! preg_match('@[a-z]{2}_[A-Z]{2}@', $locale)) {
-                    Logger::error(
+                    $this->fail(
                         sprintf($this->translate('Locale code \'%s\' is not valid. Expected format is: ll_CC'), $locale)
                     );
-                    exit(1);
                 } else {
-                    Logger::warning(
+                    $this->fail(
                         sprintf($this->translate('\'%s\' is an unknown locale code.'), $locale)
                     );
-                    exit(1);
                 }
             }
         }
@@ -152,25 +150,22 @@ class StatisticsCommand extends TranslationCommand
     {
         $this->app->getModuleManager()->loadEnabledModules();
         if (! $this->app->getModuleManager()->hasLoaded($module)) {
-            Logger::error(sprintf($this->translate('Please make sure the module "%s" is loaded'), $module));
-            exit(1);
+            $this->fail(sprintf($this->translate('Please make sure the module "%s" is loaded'), $module));
         }
         $localeDir = $this->app->getModuleManager()->loadEnabledModules()->getModule($module)->getLocaleDir();
 
         if (! is_dir($localeDir)) {
-            Logger::warning(sprintf($this->translate('There are no translations for module "%s"'), $module));
-            exit(1);
+            $this->fail(sprintf($this->translate('There are no translations for module "%s"'), $module));
         }
 
         try {
             $locales = array_diff(scandir($localeDir), ['.', '..']);
         } catch (Exception $e) {
-            Logger::error(sprintf(
+            $this->fail(sprintf(
                 $this->translate('Failed to read %s. An error occurred: %s'),
                 $localeDir,
                 $e->getMessage()
             ));
-            exit(1);
         }
 
         $paths = [];
@@ -261,18 +256,15 @@ class StatisticsCommand extends TranslationCommand
         $language = $this->params->get('language');
 
         if ($module && $language) {
-            Logger::error($this->translate('Options --module and --language cannot be used at the same time.'));
-            exit(1);
+            $this->fail($this->translate('Options --module and --language cannot be used at the same time.'));
         } elseif ($module) {
             if ($module === true) {
-                Logger::warning($this->translate('No module given.'));
-                exit(1);
+                $this->fail($this->translate('No module given.'));
             }
             $paths = $this->getModulePaths($module);
         } else {
             if ($language === true) {
-                Logger::warning($this->translate('No language given.'));
-                exit(1);
+                $this->fail($this->translate('No language given.'));
             }
             $paths = $this->getLanguagePaths($language);
         }
