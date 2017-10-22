@@ -198,7 +198,7 @@ $section->add(N_('Contactgroups'), array(
     'priority' => 70
 ));
 $section->add(N_('Comments'), array(
-    'url'      => 'monitoring/list/comments?comment_type=(comment|ack)',
+    'url'      => 'monitoring/list/comments?comment_type=comment|comment_type=ack',
     'priority' => 80
 ));
 $section->add(N_('Downtimes'), array(
