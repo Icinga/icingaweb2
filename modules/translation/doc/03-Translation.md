@@ -166,7 +166,7 @@ If we haven't yet any translations strings in our .po file or even the .po file,
 job for us:
 
 ```
-icingacli translation refresh module development ll_CC
+icingacli translation refresh module yourmodule ll_CC
 ```
 
 This will go through all .php and .phtml files inside the module and a look after `$this->translate()` if there is
@@ -210,7 +210,7 @@ msgstr "Attrappe"
 The last step is to compile the `yourmodule.po` to the `yourmodule.mo`:
 
 ```
-icingacli translation compile module development ll_CC
+icingacli translation compile module yourmodule ll_CC
 ```
 
 At this moment, everywhere in the module where the `Dummy` should be translated, it would returns the translated
