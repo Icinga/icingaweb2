@@ -74,11 +74,11 @@ class StatisticsCommand extends TranslationCommand
     protected function getMessageCounts(Statistics $statistics)
     {
         $numbers = [];
-        $numbers['messageCount'] =  $statistics->countEntries();
-        $numbers['untranslatedCount'] = $statistics->countUntranslatedEntries();
-        $numbers['translatedCount'] = $statistics->countTranslatedEntries();
-        $numbers['fuzzyCount'] = $statistics->countFuzzyEntries();
-        $numbers['faultyCount'] = $statistics->countFaultyEntries();
+        $numbers['messageCount'] =  $statistics->getEntryCount();
+        $numbers['untranslatedCount'] = $statistics->getUntranslatedEntryCount();
+        $numbers['translatedCount'] = $statistics->getTranslatedEntryCount();
+        $numbers['fuzzyCount'] = $statistics->getFuzzyEntryCount();
+        $numbers['faultyCount'] = $statistics->getFaultyEntryCount();
 
         return $numbers;
     }
@@ -271,7 +271,7 @@ class StatisticsCommand extends TranslationCommand
             }
 
             try {
-                $data = $this->getMessageCounts(new Statistics($path));
+                $data = $this->getMessageCounts(Statistics::load($path));
             } catch (IcingaException $e) {
                 // TODO (JeM): error handling
                 Logger::error($e);

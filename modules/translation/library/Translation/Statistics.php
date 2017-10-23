@@ -64,35 +64,12 @@ class Statistics
         $this->path = $path;
     }
 
-    /**
-     * Run msgfmt from the gettext tools and output the gathered statistics
-     *
-     * @return string
-     */
-    protected function getStatistics()
+    public static function load($path)
     {
-        //TODO (JeM): Remove hardcoded path to msdfmt
-        $line = '/usr/bin/msgfmt ' . $this->path . ' --statistics -cf';
-        $descriptorSpec = [
-            0 => ['pipe', 'r'],
-            1 => ['pipe', 'w'],
-            2 => ['pipe', 'w']
-        ];
-        $env = ['LANG' => 'en_GB'];
-        $process = proc_open(
-            $line,
-            $descriptorSpec,
-            $pipes,
-            null,
-            $env,
-            null
-        );
+        $statistics = new static($path);
+        $statistics->sortNumbers();
 
-        $info = stream_get_contents($pipes[2]);
-
-        proc_close($process);
-
-        return $info;
+        return $statistics;
     }
 
     /**
@@ -100,9 +77,9 @@ class Statistics
      *
      * @throws  IcingaException     In case it's not possible to parse msgfmt's output
      */
-    protected function sortNumbers()
+    public function sortNumbers()
     {
-        $info = explode('msgfmt: found ', $this->getStatistics());
+        $info = explode('msgfmt: found ', $this->getRawStatistics());
         $relevant = end($info);
         if ($relevant === false) {
             throw new IcingaException('Cannot parse the output given by msgfmt for path %s', $this->path);
@@ -134,15 +111,43 @@ class Statistics
     }
 
     /**
+     * Run msgfmt from the gettext tools and output the gathered statistics
+     *
+     * @return string
+     */
+    protected function getRawStatistics()
+    {
+        //TODO (JeM): Remove hardcoded path to msdfmt
+        $line = '/usr/bin/msgfmt ' . $this->path . ' --statistics -cf';
+        $descriptorSpec = [
+            0 => ['pipe', 'r'],
+            1 => ['pipe', 'w'],
+            2 => ['pipe', 'w']
+        ];
+        $env = ['LANG' => 'en_GB'];
+        $process = proc_open(
+            $line,
+            $descriptorSpec,
+            $pipes,
+            null,
+            $env,
+            null
+        );
+
+        $info = stream_get_contents($pipes[2]);
+
+        proc_close($process);
+
+        return $info;
+    }
+
+    /**
      * Count all Entries of these statistics
      *
      * @return int
      */
-    public function countEntries()
+    public function getEntryCount()
     {
-        if ($this->entryCount === null) {
-            $this->sortNumbers();
-        }
         return $this->entryCount;
     }
 
@@ -151,11 +156,8 @@ class Statistics
      *
      * @return int
      */
-    public function countUntranslatedEntries()
+    public function getUntranslatedEntryCount()
     {
-        if ($this->untranslatedEntryCount === null) {
-            $this->sortNumbers();
-        }
         return $this->untranslatedEntryCount;
     }
 
@@ -164,11 +166,8 @@ class Statistics
      *
      * @return int
      */
-    public function countTranslatedEntries()
+    public function getTranslatedEntryCount()
     {
-        if ($this->translatedEntryCount === null) {
-            $this->sortNumbers();
-        }
         return $this->translatedEntryCount;
     }
 
@@ -177,11 +176,8 @@ class Statistics
      *
      * @return int
      */
-    public function countFuzzyEntries()
+    public function getFuzzyEntryCount()
     {
-        if ($this->fuzzyEntryCount === null) {
-            $this->sortNumbers();
-        }
         return $this->fuzzyEntryCount;
     }
 
@@ -190,11 +186,8 @@ class Statistics
      *
      * @return int
      */
-    public function countFaultyEntries()
+    public function getFaultyEntryCount()
     {
-        if ($this->faultyEntryCount === null) {
-            $this->sortNumbers();
-        }
         return $this->faultyEntryCount;
     }
 }
