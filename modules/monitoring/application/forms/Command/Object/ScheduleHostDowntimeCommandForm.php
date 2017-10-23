@@ -4,6 +4,7 @@
 namespace Icinga\Module\Monitoring\Forms\Command\Object;
 
 use DateTime;
+use Icinga\Application\Config;
 use Icinga\Module\Monitoring\Command\Object\PropagateHostDowntimeCommand;
 use Icinga\Module\Monitoring\Command\Object\ScheduleHostDowntimeCommand;
 use Icinga\Module\Monitoring\Command\Object\ScheduleServiceDowntimeCommand;
@@ -22,6 +23,8 @@ class ScheduleHostDowntimeCommandForm extends ScheduleServiceDowntimeCommandForm
     {
         parent::createElements($formData);
 
+        $config = Config::module('monitoring');
+
         $this->addElement(
             'checkbox',
             'all_services',
@@ -29,7 +32,8 @@ class ScheduleHostDowntimeCommandForm extends ScheduleServiceDowntimeCommandForm
                 'description'   => $this->translate(
                     'Schedule downtime for all services on the hosts and the hosts themselves.'
                 ),
-                'label'         => $this->translate('All Services')
+                'label'         => $this->translate('All Services'),
+                'value'         => (bool) $config->get('settings', 'hostdowntime_all_services', false)
             )
         );
 
