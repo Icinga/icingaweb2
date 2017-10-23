@@ -4,35 +4,19 @@
 namespace Icinga\Forms\Config\Resource;
 
 use Zend_Validate_Callback;
-use Icinga\Web\Form;
 
 /**
  * Form class for adding/modifying file resources
  */
-class FileResourceForm extends Form
+class FileResourceForm extends ResourceForm
 {
-    /**
-     * Initialize this form
-     */
-    public function init()
-    {
-        $this->setName('form_config_resource_file');
-    }
-
     /**
      * @see Form::createElements()
      */
     public function createElements(array $formData)
     {
-        $this->addElement(
-            'text',
-            'name',
-            array(
-                'required'      => true,
-                'label'         => $this->translate('Resource Name'),
-                'description'   => $this->translate('The unique name of this resource')
-            )
-        );
+        parent::createElements($formData);
+
         $this->addElement(
             'text',
             'filename',
