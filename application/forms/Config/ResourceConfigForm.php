@@ -166,7 +166,7 @@ class ResourceConfigForm extends ConfigForm
      */
     public function onSuccess()
     {
-        $resourceForm = $this->getResourceForm($this->getElement('type')->getValue());
+        $resourceForm = $this->getSubForm('form_config_resource_details');
 
         if (($el = $this->getElement('force_creation')) === null || false === $el->isChecked()) {
             $inspection = static::inspectResource($this);
@@ -197,7 +197,9 @@ class ResourceConfigForm extends ConfigForm
         }
 
         if ($this->save()) {
-            Notification::success(sprintf($message, $this->getElement('name')->getValue()));
+            Notification::success(
+                sprintf($message, $this->getSubForm('form_config_resource_details')->getElement('name')->getValue())
+            );
         } else {
             return false;
         }
@@ -286,7 +288,10 @@ class ResourceConfigForm extends ConfigForm
             $this->addElement($this->getForceCreationCheckbox());
         }
 
-        $this->addElements($this->getResourceForm($resourceType)->createElements($formData)->getElements());
+        /** @var Form $resourceForm */
+        $resourceForm = $this->getResourceForm($resourceType)->setName('form_config_resource_details');
+        $resourceForm->create($formData);
+        $this->addSubForm($resourceForm);
     }
 
     /**
