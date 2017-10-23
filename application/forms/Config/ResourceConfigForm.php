@@ -21,6 +21,8 @@ use Icinga\Web\Notification;
 
 class ResourceConfigForm extends ConfigForm
 {
+    use ResourceConfigFormTrait;
+
     /**
      * Bogus password when inspecting password elements
      *
@@ -255,6 +257,8 @@ class ResourceConfigForm extends ConfigForm
      */
     public function createElements(array $formData)
     {
+        $this->addElement($this->createNameElement());
+
         $resourceType = isset($formData['type']) ? $formData['type'] : 'db';
 
         $resourceTypes = array(

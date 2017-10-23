@@ -3,6 +3,7 @@
 
 namespace Icinga\Module\Setup\Forms;
 
+use Icinga\Forms\Config\ResourceConfigFormTrait;
 use Icinga\Web\Form;
 use Icinga\Forms\Config\ResourceConfigForm;
 use Icinga\Forms\Config\Resource\LdapResourceForm;
@@ -12,6 +13,8 @@ use Icinga\Forms\Config\Resource\LdapResourceForm;
  */
 class LdapResourcePage extends Form
 {
+    use ResourceConfigFormTrait;
+
     /**
      * Initialize this page
      */
@@ -52,6 +55,8 @@ class LdapResourcePage extends Form
                 )
             );
         }
+
+        $this->addElement($this->createNameElement());
 
         $resourceForm = new LdapResourceForm();
         $this->addElements($resourceForm->createElements($formData)->getElements());
