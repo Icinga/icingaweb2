@@ -3,8 +3,10 @@
 
 namespace Icinga\Forms\Config\Resource;
 
+use ErrorException;
 use Icinga\Web\Form;
 use Icinga\Web\Form\Validator\RestApiUrlValidator;
+use Icinga\Web\Url;
 
 /**
  * Form class for adding/modifying ReST API resources
@@ -66,7 +68,7 @@ class RestApiResourceForm extends Form
         if (empty($tlsClientIdentities)) {
             $this->addElement(
                 'note',
-                'tls_client_identity',
+                'tls_client_identities_missing',
                 array(
                     'label'         => $this->translate('TLS Client Identity'),
                     'description'   => $this->translate('TLS X509 client certificate with its private key (PEM)'),
@@ -102,5 +104,72 @@ class RestApiResourceForm extends Form
         // TODO: remote TLS cert chain discovery
 
         return $this;
+    }
+
+    public function isValid($formData)
+    {
+        if (! parent::isValid($formData)) {
+            return false;
+        }
+
+        if (Url::fromPath($this->getValue('baseurl'))->getScheme() === 'https') {
+            $serverTlsCertChain = $this->fetchServerTlsCertChain();
+            if ($serverTlsCertChain === false) {
+                return false;
+            }
+
+            // TODO: remote TLS cert chain review
+        }
+
+        return true;
+    }
+
+    /**
+     * Try to fetch the remote's TLS certificate chain
+     *
+     * @return string[]|false
+     */
+    protected function fetchServerTlsCertChain()
+    {
+        $tlsOpts = array(
+            'verify_peer'               => false,
+            'verify_peer_name'          => false,
+            'capture_peer_cert_chain'   => true
+        );
+
+        if ($this->getValue('tls_client_identity') !== null) {
+            $tlsOpts['local_cert'] = null; // TODO
+        }
+
+        $errno = null;
+        $errstr = null;
+        $context = stream_context_create(array('ssl' => $tlsOpts));
+        $baseurl = Url::fromPath($this->getValue('baseurl'));
+        $port = $baseurl->getPort();
+
+        try {
+            fclose(stream_socket_client(
+                'tls://' . $baseurl->getHost() . ':' . (
+                    $port === null ? $baseurl->getScheme() === 'https' ? '443' : '80' : $port
+                ),
+                $errno,
+                $errstr,
+                ini_get('default_socket_timeout'),
+                STREAM_CLIENT_CONNECT,
+                $context
+            ));
+        } catch (ErrorException $e) {
+            $this->addError($e->getMessage());
+            return false;
+        }
+
+        $certs = array();
+        $params = stream_context_get_params($context);
+        foreach ($params['options']['ssl']['peer_certificate_chain'] as $index => $cert) {
+            $certs[$index] = null;
+            openssl_x509_export($cert, $certs[$index]);
+        }
+
+        return $certs;
     }
 }
