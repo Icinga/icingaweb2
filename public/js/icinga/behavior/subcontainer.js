@@ -31,7 +31,9 @@
         var subcontainerId = getSubcontainerId(collapsible);
 
         if (subcontainerId !== null && typeof subcontainerBackups[subcontainerId] !== 'undefined') {
-            collapsible.replaceWith(subcontainerBackups[subcontainerId]);
+            var backup = subcontainerBackups[subcontainerId];
+            backup.detach();
+            collapsible.replaceWith(backup);
             collapsible.remove();
         }
     }
