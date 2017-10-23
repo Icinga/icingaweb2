@@ -36,6 +36,7 @@ class GeneralConfigPage extends Form
         $this->addElements($appConfigForm->getElements());
 
         $loggingConfigForm = new LoggingConfigForm();
-        $this->addElements($loggingConfigForm->createElements($formData)->getElements());
+        $loggingConfigForm->createElements($formData);
+        $this->addElements($loggingConfigForm->getElements());
     }
 }

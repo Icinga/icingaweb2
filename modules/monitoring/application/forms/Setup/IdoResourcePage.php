@@ -56,7 +56,8 @@ class IdoResourcePage extends Form
         }
 
         $dbResourceForm = new DbResourceForm();
-        $this->addElements($dbResourceForm->createElements($formData)->getElements());
+        $dbResourceForm->createElements($formData);
+        $this->addElements($dbResourceForm->getElements());
         $this->getElement('name')->setValue('icinga_ido');
     }
 

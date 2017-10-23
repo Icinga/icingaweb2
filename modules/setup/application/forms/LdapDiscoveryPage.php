@@ -41,7 +41,8 @@ class LdapDiscoveryPage extends Form
     public function createElements(array $formData)
     {
         $discoveryForm = new LdapDiscoveryForm();
-        $this->addElements($discoveryForm->createElements($formData)->getElements());
+        $discoveryForm->createElements($formData);
+        $this->addElements($discoveryForm->getElements());
 
         $this->addElement(
             'checkbox',

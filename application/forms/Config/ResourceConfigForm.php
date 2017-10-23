@@ -286,7 +286,9 @@ class ResourceConfigForm extends ConfigForm
             $this->addElement($this->getForceCreationCheckbox());
         }
 
-        $this->addElements($this->getResourceForm($resourceType)->createElements($formData)->getElements());
+        $resourceForm = $this->getResourceForm($resourceType);
+        $resourceForm->createElements($formData);
+        $this->addElements($resourceForm->getElements());
     }
 
     /**
