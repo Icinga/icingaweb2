@@ -59,11 +59,11 @@
     Subcontainer.prototype.onRendered = function(event) {
         var eventTarget = $(event.target);
 
-        if (eventTarget.hasClass('collapsible')) {
+        if (eventTarget.hasClass('subcontainer-content')) {
             backupSubcontainer(eventTarget);
         } else {
             eventTarget.find('.subcontainer').each(function() {
-                $(this).find('.collapsible').first().each(function() {
+                $(this).find('.subcontainer-content').first().each(function() {
                     restoreSubcontainer($(this));
                 });
             });
@@ -71,7 +71,7 @@
     };
 
     Subcontainer.prototype.onToggle = function(event) {
-        $(event.target).parents('.subcontainer').first().find('.collapsible').first().each(function() {
+        $(event.target).parents('.subcontainer').first().find('.subcontainer-content').first().each(function() {
             var collapsible = $(this);
 
             if (collapsible.hasClass('collapsed')) {
