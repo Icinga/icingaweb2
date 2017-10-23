@@ -31,15 +31,6 @@ class LdapResourceForm extends Form
 
         $this->addElement(
             'text',
-            'name',
-            array(
-                'required'      => true,
-                'label'         => $this->translate('Resource Name'),
-                'description'   => $this->translate('The unique name of this resource')
-            )
-        );
-        $this->addElement(
-            'text',
             'hostname',
             array(
                 'required'      => true,

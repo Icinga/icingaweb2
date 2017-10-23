@@ -4,6 +4,7 @@
 namespace Icinga\Module\Setup\Forms;
 
 use Exception;
+use Icinga\Forms\Config\ResourceConfigFormTrait;
 use Icinga\Web\Form;
 use Icinga\Forms\Config\Resource\DbResourceForm;
 use Icinga\Module\Setup\Utils\DbTool;
@@ -13,6 +14,8 @@ use Icinga\Module\Setup\Utils\DbTool;
  */
 class DbResourcePage extends Form
 {
+    use ResourceConfigFormTrait;
+
     /**
      * Initialize this page
      */
@@ -48,6 +51,8 @@ class DbResourcePage extends Form
                 )
             );
         }
+
+        $this->addElement($this->createNameElement());
 
         $resourceForm = new DbResourceForm();
         $this->addElements($resourceForm->createElements($formData)->getElements());
