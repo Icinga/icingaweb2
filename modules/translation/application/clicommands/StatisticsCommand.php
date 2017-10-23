@@ -124,15 +124,10 @@ class StatisticsCommand extends TranslationCommand
                     }
                 }
             } else {
-                if (! preg_match('@[a-z]{2}_[A-Z]{2}@', $locale)) {
-                    $this->fail(
-                        sprintf($this->translate('Locale code \'%s\' is not valid. Expected format is: ll_CC'), $locale)
-                    );
-                } else {
-                    $this->fail(
-                        sprintf($this->translate('\'%s\' is an unknown locale code.'), $locale)
-                    );
-                }
+                $this->validateLocaleCode($locale);
+                $this->fail(
+                    sprintf($this->translate('\'%s\' is an unknown locale code.'), $locale)
+                );
             }
         }
 
