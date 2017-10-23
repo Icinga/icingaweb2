@@ -19,8 +19,9 @@ class LdapUtils
      * UTF-8 chars like German umlauts would otherwise be escaped and shown
      * as backslash-prefixed hexcode-sequenzes.
      *
-     * @param  string  DN
-     * @param  boolean Returns 'type=value' when true and 'value' when false
+     * @param  string  $dn        DN
+     * @param  boolean $with_type Returns 'type=value' when true and 'value' when false
+     *
      * @return string
      */
     public static function explodeDN($dn, $with_type = true)
@@ -45,7 +46,8 @@ class LdapUtils
      *
      * TODO: throw away, this is not how it shall be done
      *
-     * @param  string DN-component
+     * @param  array $parts DN-component
+     *
      * @return string
      */
     public static function implodeDN($parts)
@@ -62,11 +64,27 @@ class LdapUtils
     }
 
     /**
+     * Test if supplied value looks like a DN
+     *
+     * @param  mixed $value
+     *
+     * @return bool
+     */
+    public static function isDn($value)
+    {
+        if (is_string($value)) {
+            return ldap_dn2ufn($value) !== false;
+        }
+        return false;
+    }
+
+    /**
      * Quote a string that should be used in a DN
      *
      * Special characters will be escaped
      *
-     * @param  string DN-component
+     * @param  string $str DN-component
+     *
      * @return string
      */
     public static function quoteForDN($str)

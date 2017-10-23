@@ -10,6 +10,7 @@ use Icinga\Data\ConfigObject;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Protocol\Ldap\LdapException;
+use Icinga\Protocol\Ldap\LdapUtils;
 use Icinga\Repository\LdapRepository;
 use Icinga\Repository\RepositoryQuery;
 use Icinga\User;
@@ -438,6 +439,11 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
     /**
      * Return whether the attribute name where to find a group's member holds ambiguous values
      *
+     * This tries to detect if the member attribute of groups contain:
+     *
+     *  full DN -> distinguished name of another object
+     *  other   -> ambiguous field referencing the member by userNameAttribute
+     *
      * @return  bool
      *
      * @throws  ProgrammingError    In case either $this->groupClass or $this->groupMemberAttribute
@@ -463,7 +469,8 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
                 ->setUnfoldAttribute($this->groupMemberAttribute)
                 ->setBase($this->groupBaseDn)
                 ->fetchOne();
-            $this->ambiguousMemberAttribute = !$this->isRelatedDn($sampleValue);
+
+            $this->ambiguousMemberAttribute = ! LdapUtils::isDn($sampleValue);
         }
 
         return $this->ambiguousMemberAttribute;
