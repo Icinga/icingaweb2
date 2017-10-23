@@ -6,37 +6,21 @@ namespace Icinga\Forms\Config\Resource;
 use Icinga\Application\Icinga;
 use Icinga\Data\ConfigObject;
 use Icinga\Forms\Config\ResourceConfigForm;
-use Icinga\Web\Form;
 use Icinga\Util\File;
 use Zend_Validate_Callback;
 
 /**
  * Form class for adding/modifying ssh identity resources
  */
-class SshResourceForm extends Form
+class SshResourceForm extends ResourceForm
 {
-    /**
-     * Initialize this form
-     */
-    public function init()
-    {
-        $this->setName('form_config_resource_ssh');
-    }
-
     /**
      * @see Form::createElements()
      */
     public function createElements(array $formData)
     {
-        $this->addElement(
-            'text',
-            'name',
-            array(
-                'required'      => true,
-                'label'         => $this->translate('Resource Name'),
-                'description'   => $this->translate('The unique name of this resource')
-            )
-        );
+        parent::createElements($formData);
+
         $this->addElement(
             'text',
             'user',

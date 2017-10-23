@@ -4,21 +4,12 @@
 namespace Icinga\Forms\Config\Resource;
 
 use Icinga\Application\Platform;
-use Icinga\Web\Form;
 
 /**
  * Form class for adding/modifying database resources
  */
-class DbResourceForm extends Form
+class DbResourceForm extends ResourceForm
 {
-    /**
-     * Initialize this form
-     */
-    public function init()
-    {
-        $this->setName('form_config_resource_db');
-    }
-
     /**
      * Create and add elements to this form
      *
@@ -73,15 +64,8 @@ class DbResourceForm extends Form
             );
         }
 
-        $this->addElement(
-            'text',
-            'name',
-            array(
-                'required'      => true,
-                'label'         => $this->translate('Resource Name'),
-                'description'   => $this->translate('The unique name of this resource')
-            )
-        );
+        parent::createElements($formData);
+
         $this->addElement(
             'select',
             'db',

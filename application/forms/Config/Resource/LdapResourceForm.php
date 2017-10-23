@@ -3,23 +3,14 @@
 
 namespace Icinga\Forms\Config\Resource;
 
-use Icinga\Web\Form;
 use Icinga\Web\Url;
 use Icinga\Protocol\Ldap\LdapConnection;
 
 /**
  * Form class for adding/modifying ldap resources
  */
-class LdapResourceForm extends Form
+class LdapResourceForm extends ResourceForm
 {
-    /**
-     * Initialize this form
-     */
-    public function init()
-    {
-        $this->setName('form_config_resource_ldap');
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -29,15 +20,8 @@ class LdapResourceForm extends Form
             ? 389
             : 636;
 
-        $this->addElement(
-            'text',
-            'name',
-            array(
-                'required'      => true,
-                'label'         => $this->translate('Resource Name'),
-                'description'   => $this->translate('The unique name of this resource')
-            )
-        );
+        parent::createElements($formData);
+
         $this->addElement(
             'text',
             'hostname',
