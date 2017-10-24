@@ -3,9 +3,9 @@
 
 namespace Icinga\Module\Translation\Clicommands;
 
-use Icinga\Module\Translation\Cli\TranslationCommand;
+use Icinga\Module\Translation\Cli\TranslationStatisticsCommand;
 
-class StatisticsCommand extends TranslationCommand
+class StatisticsCommand extends TranslationStatisticsCommand
 {    /**
      * Generates statistics
      *
