@@ -318,7 +318,7 @@ class TranslationCommand extends Command
             $locale = $pathParts[count($pathParts) - 3];
             $data['locale'] = $locale;
 
-            $data['moduleName'] = $pathParts[count($pathParts) - 1];
+            $data['moduleName'] = substr($pathParts[count($pathParts) - 1], 0, -3); //trims the '.po'
             $dataPackages[] = $data;
         }
 
