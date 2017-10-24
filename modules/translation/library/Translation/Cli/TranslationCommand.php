@@ -161,7 +161,11 @@ class TranslationCommand extends Command
 
         $paths = [];
         foreach ($locales as $locale) {
-            $paths[] = implode(DIRECTORY_SEPARATOR, [$localeDir, $locale, 'LC_MESSAGES', $module . '.po']);
+            $path = implode(DIRECTORY_SEPARATOR, [$localeDir, $locale, 'LC_MESSAGES', $module . '.po']);
+            if (!file_exists($path)) {
+                continue;
+            }
+            $paths[] = $path;
         }
 
         return $paths;
@@ -220,10 +224,14 @@ class TranslationCommand extends Command
                 foreach ($this->app->getModuleManager()->listEnabledModules() as $module) {
                     $localeDir = $this->app->getModuleManager()->getModule($module)->getLocaleDir();
                     if (is_dir($localeDir)) {
-                        $paths[] = implode(
+                        $path = implode(
                             DIRECTORY_SEPARATOR,
                             [$localeDir, $locale, 'LC_MESSAGES', $module . '.po']
                         );
+                        if (!file_exists($path)) {
+                            continue;
+                        }
+                        $paths[] = $path;
                     }
                 }
             } else {
@@ -296,16 +304,12 @@ class TranslationCommand extends Command
         echo PHP_EOL;
     }
 
-    public function extendShowActionLanguages($language)
+    public function extendShowActionLanguages($language = true)
     {
         $paths = $this->getLanguagePaths($language);
 
         $dataPackages = [];
         foreach ($paths as $path) {
-            if (! file_exists($path)) {
-                continue;
-            }
-
             try {
                 $data = $this->getMessageCounts(Statistics::load($path));
             } catch (IcingaException $e) {
@@ -314,6 +318,7 @@ class TranslationCommand extends Command
                 continue;
             }
 
+            // TODO (JeM): Displaying the locale when you sort by specific locale is superfluous
             $pathParts = explode('/', $path);
             $locale = $pathParts[count($pathParts) - 3];
             $data['locale'] = $locale;
@@ -327,41 +332,29 @@ class TranslationCommand extends Command
         }
     }
 
-    public function extendShowActionModules($module)
+    public function extendShowActionModules($module = true)
     {
-        $paths = $this->getModulePaths($module);
+        if ($module === true) {
+            $paths = $this->getLanguagePaths();
+            //TODO (JeM): Sort by modules and add up counts for all languages
+        } else {
+            $paths = $this->getModulePaths($module);
 
-        $dataPackages = [];
-        foreach ($paths as $path) {
-            if (! file_exists($path)) {
-                continue;
-            }
-
-            try {
-                $data = $this->getMessageCounts(Statistics::load($path));
-            } catch (IcingaException $e) {
-                // TODO (JeM): error handling
-                Logger::error($e);
-                continue;
-            }
-
-            $pathParts = explode('/', $path);
-            $locale = $pathParts[count($pathParts) - 3];
-            $data['locale'] = $locale;
-
-            if (isset($dataPackages[$locale])) {
-                foreach ($dataPackages[$locale] as $key => $value) {
-                    if ($key !== 'locale') {
-                        $dataPackages[$locale][$key] += $data[$key];
-                    }
+            foreach ($paths as $path) {
+                try {
+                    $data = $this->getMessageCounts(Statistics::load($path));
+                } catch (IcingaException $e) {
+                    // TODO (JeM): error handling
+                    Logger::error($e);
+                    continue;
                 }
-            } else {
-                $dataPackages[$locale] = $data;
-            }
-        }
 
-        foreach ($dataPackages as $data) {
-            $this->printOutput($data);
+                $pathParts = explode('/', $path);
+                $locale = $pathParts[count($pathParts) - 3];
+                $data['locale'] = $locale;
+
+                $this->printOutput($data);
+            }
         }
     }
 }
