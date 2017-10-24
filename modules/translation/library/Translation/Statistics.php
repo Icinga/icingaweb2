@@ -67,7 +67,7 @@ class Statistics
     public static function load($path)
     {
         $statistics = new static($path);
-        $statistics->sortNumbers();
+        $statistics->parseStatistics();
 
         return $statistics;
     }
@@ -77,7 +77,7 @@ class Statistics
      *
      * @throws  IcingaException     In case it's not possible to parse msgfmt's output
      */
-    public function sortNumbers()
+    public function parseStatistics()
     {
         $info = explode('msgfmt: found ', $this->getRawStatistics());
         $relevant = end($info);
