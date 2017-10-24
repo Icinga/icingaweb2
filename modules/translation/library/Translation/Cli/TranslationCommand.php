@@ -112,18 +112,18 @@ class TranslationCommand extends Command
 
 
     /**
-     * Rounds the percentage so that it always is a full percent
+     * Rounds the percentage so that it always is a full percent and at least one
      *
      * @param   int   $number     The percentage value
      * @param   int   $maxCount   The fundamental value
      *
-     * @return  int
+     * @return  int|string
      */
     public function roundPercentage($number, $maxCount)
     {
         $percentage = $number / $maxCount * 100;
         if ($percentage !== 0 && $percentage < 1) {
-            return 1;
+            return "> 1";
         }
 
         return round($percentage);
@@ -255,7 +255,7 @@ class TranslationCommand extends Command
         $percentages = $this->calculatePercentages($data);
 
         foreach ($percentages as $key => $value) {
-            echo $this->screen->colorize(str_repeat('█', $value), $this->colors[$key]);
+            echo $this->screen->colorize(str_repeat('█', $value !== "> 1" ? $value : 1), $this->colors[$key]);
         }
 
         if (array_key_exists('moduleName', $data) && array_key_exists('locale', $data)) {
@@ -274,28 +274,28 @@ class TranslationCommand extends Command
         }
 
         printf(
-            "\t %s: %d%% (%d messages)" . PHP_EOL,
+            "\t %s: %s%% (%d messages)" . PHP_EOL,
             $this->screen->colorize('Translated', $this->colors['translated']),
             $percentages['translated'],
             $data['translatedCount']
         );
 
         printf(
-            "\t %s: %d%% (%d messages)" . PHP_EOL,
+            "\t %s: %s%% (%d messages)" . PHP_EOL,
             $this->screen->colorize('Fuzzy', $this->colors['fuzzy']),
             $percentages['fuzzy'],
             $data['fuzzyCount']
         );
 
         printf(
-            "\t %s: %d%% (%d messages)" . PHP_EOL,
+            "\t %s: %s%% (%d messages)" . PHP_EOL,
             $this->screen->colorize('Faulty', $this->colors['faulty']),
             $percentages['faulty'],
             $data['faultyCount']
         );
 
         printf(
-            "\t %s: %d%% (%d messages)" . PHP_EOL . PHP_EOL,
+            "\t %s: %s%% (%d messages)" . PHP_EOL . PHP_EOL,
             $this->screen->colorize('Untranslated', $this->colors['untranslated']),
             $percentages['untranslated'],
             $data['untranslatedCount']
@@ -345,6 +345,7 @@ class TranslationCommand extends Command
                     $dataPackages[$locale]['translatedCount'] += $data['translatedCount'];
                     $dataPackages[$locale]['fuzzyCount'] += $data['fuzzyCount'];
                     $dataPackages[$locale]['faultyCount'] += $data['faultyCount'];
+                    $dataPackages[$locale]['untranslatedCount'] += $data['untranslatedCount'];
                 } else {
                     $dataPackages[$locale] = $data;
                 }
@@ -364,19 +365,41 @@ class TranslationCommand extends Command
     {
         if ($module === true) {
             $paths = $this->getLanguagePaths();
-            //TODO (JeM): Sort by modules and add up counts for all languages
         } else {
             $paths = $this->getModulePaths($module);
+        }
 
-            foreach ($paths as $path) {
-                try {
-                    $data = $this->getMessageCounts(Statistics::load($path));
-                } catch (IcingaException $e) {
-                    // TODO (JeM): error handling
-                    Logger::error($e);
-                    continue;
+        $dataPackages = [];
+        foreach ($paths as $path) {
+            try {
+                $data = $this->getMessageCounts(Statistics::load($path));
+            } catch (IcingaException $e) {
+                // TODO (JeM): error handling
+                Logger::error($e);
+                continue;
+            }
+
+            $data = array_merge($data, $this->extractMetaData($path));
+
+            if ($module === true) {
+                $moduleName = $data['moduleName'];
+                unset($data['locale']);
+                if (array_key_exists($moduleName, $dataPackages)) {
+                    $dataPackages[$moduleName]['messageCount'] += $data['messageCount'];
+                    $dataPackages[$moduleName]['translatedCount'] += $data['translatedCount'];
+                    $dataPackages[$moduleName]['fuzzyCount'] += $data['fuzzyCount'];
+                    $dataPackages[$moduleName]['faultyCount'] += $data['faultyCount'];
+                    $dataPackages[$moduleName]['untranslatedCount'] += $data['untranslatedCount'];
+                } else {
+                    $dataPackages[$moduleName] = $data;
                 }
-                $data = array_merge($data, $this->extractMetaData($path));
+            } else {
+                $this->printOutput($data);
+            }
+        }
+
+        if (! empty($dataPackages)) {
+            foreach ($dataPackages as $data) {
                 $this->printOutput($data);
             }
         }
