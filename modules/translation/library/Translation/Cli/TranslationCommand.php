@@ -258,17 +258,17 @@ class TranslationCommand extends Command
             echo $this->screen->colorize(str_repeat('█', $value), $this->colors[$key]);
         }
 
-        if (array_key_exists('moduleName', $data)) {
+        if (array_key_exists('moduleName', $data) && array_key_exists('locale', $data)) {
             printf(
                 PHP_EOL . '↳ %s: %s (%s messages)' . PHP_EOL . PHP_EOL,
                 $data['locale'],
                 $data['moduleName'],
                 $data['messageCount']
             );
-        } else {
+        } elseif (array_key_exists('moduleName', $data)) {
             printf(
                 PHP_EOL . '↳ %s (%s messages)' . PHP_EOL . PHP_EOL,
-                $data['locale'],
+                $data['moduleName'],
                 $data['messageCount']
             );
         }
@@ -304,6 +304,24 @@ class TranslationCommand extends Command
         echo PHP_EOL;
     }
 
+    /**
+     * Extracts the locale and module name for the po-file of the given path
+     *
+     * @param   string  $path   Path to a po-file
+     *
+     * @return  array
+     */
+    protected function extractMetaData($path)
+    {
+        $metaData = [];
+        $pathParts = explode('/', $path);
+        $metaData['locale'] = $pathParts[count($pathParts) - 3];
+        $metaData['moduleName'] = substr($pathParts[count($pathParts) - 1], 0, -3); //trims the '.po'
+
+
+        return $metaData;
+    }
+
     public function extendShowActionLanguages($language = true)
     {
         $paths = $this->getLanguagePaths($language);
@@ -318,17 +336,27 @@ class TranslationCommand extends Command
                 continue;
             }
 
-            // TODO (JeM): Displaying the locale when you sort by specific locale is superfluous
-            $pathParts = explode('/', $path);
-            $locale = $pathParts[count($pathParts) - 3];
-            $data['locale'] = $locale;
+            $data = array_merge($data, $this->extractMetaData($path));
 
-            $data['moduleName'] = substr($pathParts[count($pathParts) - 1], 0, -3); //trims the '.po'
-            $dataPackages[] = $data;
+            if ($language === true) {
+                $locale = $data['locale'];
+                if (array_key_exists($locale, $dataPackages)) {
+                    $dataPackages[$locale]['messageCount'] += $data['messageCount'];
+                    $dataPackages[$locale]['translatedCount'] += $data['translatedCount'];
+                    $dataPackages[$locale]['fuzzyCount'] += $data['fuzzyCount'];
+                    $dataPackages[$locale]['faultyCount'] += $data['faultyCount'];
+                } else {
+                    $dataPackages[$locale] = $data;
+                }
+            } else {
+                $this->printOutput($data);
+            }
         }
 
-        foreach ($dataPackages as $data) {
-            $this->printOutput($data);
+        if (! empty($dataPackages)) {
+            foreach ($dataPackages as $data) {
+                $this->printOutput($data);
+            }
         }
     }
 
@@ -348,11 +376,7 @@ class TranslationCommand extends Command
                     Logger::error($e);
                     continue;
                 }
-
-                $pathParts = explode('/', $path);
-                $locale = $pathParts[count($pathParts) - 3];
-                $data['locale'] = $locale;
-
+                $data = array_merge($data, $this->extractMetaData($path));
                 $this->printOutput($data);
             }
         }
