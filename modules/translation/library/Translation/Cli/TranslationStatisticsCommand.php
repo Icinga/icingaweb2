@@ -49,7 +49,7 @@ class TranslationStatisticsCommand extends TranslationCommand
     {
         $percentage = $number / $maxCount * 100;
         if ($percentage !== 0 && $percentage < 1) {
-            return "> 1";
+            return "<1";
         }
 
         return round($percentage);
@@ -181,7 +181,7 @@ class TranslationStatisticsCommand extends TranslationCommand
         $percentages = $this->calculatePercentages($data);
 
         foreach ($percentages as $key => $value) {
-            echo $this->screen->colorize(str_repeat('█', $value !== "> 1" ? $value : 1), $this->colors[$key]);
+            echo $this->screen->colorize(str_repeat('█', $value !== "<1" ? $value : 1), $this->colors[$key]);
         }
 
         if (array_key_exists('moduleName', $data) && array_key_exists('locale', $data)) {
@@ -195,6 +195,12 @@ class TranslationStatisticsCommand extends TranslationCommand
             printf(
                 PHP_EOL . '↳ %s (%s messages)' . PHP_EOL . PHP_EOL,
                 $data['moduleName'],
+                $data['messageCount']
+            );
+        } else {
+            printf(
+                PHP_EOL . '↳ %s (%s messages)' . PHP_EOL . PHP_EOL,
+                $data['locale'],
                 $data['messageCount']
             );
         }
@@ -266,6 +272,7 @@ class TranslationStatisticsCommand extends TranslationCommand
 
             if ($language === true) {
                 $locale = $data['locale'];
+                unset($data['moduleName']);
                 if (array_key_exists($locale, $dataPackages)) {
                     $dataPackages[$locale]['messageCount'] += $data['messageCount'];
                     $dataPackages[$locale]['translatedCount'] += $data['translatedCount'];
