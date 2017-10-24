@@ -28,12 +28,8 @@ class StatisticsCommand extends TranslationStatisticsCommand
 
         if ($module && $language) {
             $this->fail($this->translate('Options --module and --language cannot be used at the same time.'));
-        } elseif ($language) {
-            $this->extendShowActionLanguages($language);
-        } elseif ($module) {
-            $this->extendShowActionModules($module);
         } else {
-            $this->extendShowActionModules();
+            $this->showStatistics($module, $language);
         }
     }
 }

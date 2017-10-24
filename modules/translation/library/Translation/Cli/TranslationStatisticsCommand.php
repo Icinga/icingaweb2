@@ -254,49 +254,18 @@ class TranslationStatisticsCommand extends TranslationCommand
         return $metaData;
     }
 
-    public function extendShowActionLanguages($language = true)
+    /**
+     * Takes input from the show command and prints the statistics
+     *
+     * @param   string  $module
+     * @param   string  $language
+     */
+    public function showStatistics($module = null, $language = null)
     {
-        $paths = $this->getLanguagePaths($language);
-
-        $dataPackages = [];
-        foreach ($paths as $path) {
-            try {
-                $data = $this->getMessageCounts(Statistics::load($path));
-            } catch (IcingaException $e) {
-                // TODO (JeM): error handling
-                Logger::error($e);
-                continue;
-            }
-
-            $data = array_merge($data, $this->extractMetaData($path));
-
-            if ($language === true) {
-                $locale = $data['locale'];
-                unset($data['moduleName']);
-                if (array_key_exists($locale, $dataPackages)) {
-                    $dataPackages[$locale]['messageCount'] += $data['messageCount'];
-                    $dataPackages[$locale]['translatedCount'] += $data['translatedCount'];
-                    $dataPackages[$locale]['fuzzyCount'] += $data['fuzzyCount'];
-                    $dataPackages[$locale]['faultyCount'] += $data['faultyCount'];
-                    $dataPackages[$locale]['untranslatedCount'] += $data['untranslatedCount'];
-                } else {
-                    $dataPackages[$locale] = $data;
-                }
-            } else {
-                $this->printOutput($data);
-            }
-        }
-
-        if (! empty($dataPackages)) {
-            foreach ($dataPackages as $data) {
-                $this->printOutput($data);
-            }
-        }
-    }
-
-    public function extendShowActionModules($module = true)
-    {
-        if ($module === true) {
+        if ($language !== null) {
+            $paths = $this->getLanguagePaths($language);
+        } elseif ($module === true || $module === null) {
+            $module = true;
             $paths = $this->getLanguagePaths();
         } else {
             $paths = $this->getModulePaths($module);
@@ -314,17 +283,19 @@ class TranslationStatisticsCommand extends TranslationCommand
 
             $data = array_merge($data, $this->extractMetaData($path));
 
-            if ($module === true) {
-                $moduleName = $data['moduleName'];
-                unset($data['locale']);
-                if (array_key_exists($moduleName, $dataPackages)) {
-                    $dataPackages[$moduleName]['messageCount'] += $data['messageCount'];
-                    $dataPackages[$moduleName]['translatedCount'] += $data['translatedCount'];
-                    $dataPackages[$moduleName]['fuzzyCount'] += $data['fuzzyCount'];
-                    $dataPackages[$moduleName]['faultyCount'] += $data['faultyCount'];
-                    $dataPackages[$moduleName]['untranslatedCount'] += $data['untranslatedCount'];
+            if ($module === true || $language === true) {
+                $groupByModule = (bool)$module;
+                $attribute = $data[$groupByModule ? 'moduleName' : 'locale'];
+
+                unset($data[$groupByModule ? 'locale' : 'moduleName']);
+                if (array_key_exists($attribute, $dataPackages)) {
+                    $dataPackages[$attribute]['messageCount'] += $data['messageCount'];
+                    $dataPackages[$attribute]['translatedCount'] += $data['translatedCount'];
+                    $dataPackages[$attribute]['fuzzyCount'] += $data['fuzzyCount'];
+                    $dataPackages[$attribute]['faultyCount'] += $data['faultyCount'];
+                    $dataPackages[$attribute]['untranslatedCount'] += $data['untranslatedCount'];
                 } else {
-                    $dataPackages[$moduleName] = $data;
+                    $dataPackages[$attribute] = $data;
                 }
             } else {
                 $this->printOutput($data);
@@ -337,5 +308,4 @@ class TranslationStatisticsCommand extends TranslationCommand
             }
         }
     }
-
 }
