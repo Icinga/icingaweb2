@@ -117,7 +117,6 @@ class Statistics
      */
     protected function getRawStatistics()
     {
-        // TODO (JeM): Make a get- and setConfig? Maybe use the translation helper
         $msgfmtPath = Config::module('translation')
             ->get('translation', 'msgfmt', '/usr/bin/env msgfmt');
 
