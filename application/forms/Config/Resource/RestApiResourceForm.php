@@ -15,11 +15,24 @@ use Zend_Form_Element_Checkbox;
 class RestApiResourceForm extends Form
 {
     /**
-     * The next unused form element order
+     * Not neccessarily present checkboxes
+     *
+     * @var string[]
+     */
+    protected $optionalCheckboxes = array(
+        'force_creation',
+        'tls_server_insecure',
+        'tls_server_discover_rootca',
+        'tls_server_accept_rootca',
+        'tls_server_accept_cn'
+    );
+
+    /**
+     * The next unused checkbox order
      *
      * @var int
      */
-    protected $nextElementOrder = -1;
+    protected $nextCheckboxOrder = -1;
 
     public function init()
     {
@@ -110,112 +123,81 @@ class RestApiResourceForm extends Form
             );
         }
 
-        if (isset($formData['force_creation'])) {
-            $this->addForceCreationCheckbox();
-        }
-
-        if (isset($formData['tls_server_insecure'])) {
-            $this->addTlsInsecureCheckbox();
-        }
-
-        if (isset($formData['tls_server_discover_rootca'])) {
-            $this->addTlsDiscoverRootCaCheckbox();
-        }
-
-        if (isset($formData['tls_server_accept_rootca'])) {
-            $this->addTlsAcceptRootCaCheckbox();
-        }
-
-        if (isset($formData['tls_server_accept_cn'])) {
-            $this->addTlsAcceptCnCheckbox();
-        }
-
-        return $this;
+        return $this->ensureOnlyCheckboxes(array_intersect($this->optionalCheckboxes, array_keys($formData)));
     }
 
     /**
+     * Ensure that only the given checkboxes are present
+     *
      * @return $this
      */
-    protected function addForceCreationCheckbox()
+    protected function ensureOnlyCheckboxes(array $checkboxes = array())
     {
-        if ($this->getElement('force_creation') === null) {
-            $this->addElement('checkbox', 'force_creation', array(
-                'order'         => ++$this->nextElementOrder,
-                'ignore'        => true,
-                'label'         => $this->translate('Force Changes'),
-                'description'   => $this->translate(
-                    'Check this box to enforce changes without connectivity validation'
-                )
-            ));
+        foreach (array_diff($this->optionalCheckboxes, $checkboxes) as $checkbox) {
+            $this->removeElement($checkbox);
         }
 
-        return $this;
-    }
+        $this->nextCheckboxOrder = -1;
 
-    /**
-     * @return $this
-     */
-    protected function addTlsInsecureCheckbox()
-    {
-        if ($this->getElement('tls_server_insecure') === null) {
-            $this->addElement('checkbox', 'tls_server_insecure', array(
-                'order'         => ++$this->nextElementOrder,
-                'label'         => $this->translate('Insecure Connection'),
-                'description'   => $this->translate('Don\'t validate the remote\'s TLS certificate chain at all')
-            ));
-        }
+        foreach ($checkboxes as $checkbox) {
+            $element = $this->getElement($checkbox);
 
-        return $this;
-    }
+            if ($element === null) {
+                switch ($checkbox) {
+                    case 'force_creation':
+                        $this->addElement('checkbox', 'force_creation', array(
+                            'order'         => ++$this->nextCheckboxOrder,
+                            'ignore'        => true,
+                            'label'         => $this->translate('Force Changes'),
+                            'description'   => $this->translate(
+                                'Check this box to enforce changes without connectivity validation'
+                            )
+                        ));
+                        break;
 
-    /**
-     * @return $this
-     */
-    protected function addTlsDiscoverRootCaCheckbox()
-    {
-        if ($this->getElement('tls_server_discover_rootca') === null) {
-            $this->addElement('checkbox', 'tls_server_discover_rootca', array(
-                'order'         => ++$this->nextElementOrder,
-                'ignore'        => true,
-                'label'         => $this->translate('Discover Root CA'),
-                'description'   => $this->translate(
-                    'Discover the remote\'s TLS certificate\'s root CA (makes sense only in case of an isolated PKI)'
-                )
-            ));
-        }
+                    case 'tls_server_insecure':
+                        $this->addElement('checkbox', 'tls_server_insecure', array(
+                            'order'         => ++$this->nextCheckboxOrder,
+                            'label'         => $this->translate('Insecure Connection'),
+                            'description'   => $this->translate(
+                                'Don\'t validate the remote\'s TLS certificate chain at all'
+                            )
+                        ));
+                        break;
 
-        return $this;
-    }
+                    case 'tls_server_discover_rootca':
+                        $this->addElement('checkbox', 'tls_server_discover_rootca', array(
+                            'order'         => ++$this->nextCheckboxOrder,
+                            'ignore'        => true,
+                            'label'         => $this->translate('Discover Root CA'),
+                            'description'   => $this->translate(
+                                'Discover the remote\'s TLS certificate\'s root CA'
+                                    . ' (makes sense only in case of an isolated PKI)'
+                            )
+                        ));
+                        break;
 
-    /**
-     * @return $this
-     */
-    protected function addTlsAcceptRootCaCheckbox()
-    {
-        if ($this->getElement('tls_server_accept_rootca') === null) {
-            $this->addElement('checkbox', 'tls_server_accept_rootca', array(
-                'order'         => ++$this->nextElementOrder,
-                'ignore'        => true,
-                'label'         => $this->translate('Accept the remote\'s root CA'),
-                'description'   => $this->translate('Trust the remote\'s TLS certificate\'s root CA')
-            ));
-        }
+                    case 'tls_server_accept_rootca':
+                        $this->addElement('checkbox', 'tls_server_accept_rootca', array(
+                            'order'         => ++$this->nextCheckboxOrder,
+                            'ignore'        => true,
+                            'label'         => $this->translate('Accept the remote\'s root CA'),
+                            'description'   => $this->translate('Trust the remote\'s TLS certificate\'s root CA')
+                        ));
+                        break;
 
-        return $this;
-    }
-
-    /**
-     * @return $this
-     */
-    protected function addTlsAcceptCnCheckbox()
-    {
-        if ($this->getElement('tls_server_accept_cn') === null) {
-            $this->addElement('checkbox', 'tls_server_accept_cn', array(
-                'order'         => ++$this->nextElementOrder,
-                'ignore'        => true,
-                'label'         => $this->translate('Accept the remote\'s CN'),
-                'description'   => $this->translate('Accept the remote\'s TLS certificate\'s CN')
-            ));
+                    case 'tls_server_accept_cn':
+                        $this->addElement('checkbox', 'tls_server_accept_cn', array(
+                            'order'         => ++$this->nextCheckboxOrder,
+                            'ignore'        => true,
+                            'label'         => $this->translate('Accept the remote\'s CN'),
+                            'description'   => $this->translate('Accept the remote\'s TLS certificate\'s CN')
+                        ));
+                        break;
+                }
+            } else {
+                $element->setOrder(++$this->nextCheckboxOrder);
+            }
         }
 
         return $this;
@@ -232,13 +214,13 @@ class RestApiResourceForm extends Form
         }
 
         if (! $this->probeTcpConnection()) {
-            $this->addForceCreationCheckbox();
+            $this->ensureOnlyCheckboxes(array('force_creation'));
             return false;
         }
 
         if (Url::fromPath($this->getValue('baseurl'))->getScheme() === 'https') {
             if (! $this->probeInsecureTlsConnection()) {
-                $this->addForceCreationCheckbox();
+                $this->ensureOnlyCheckboxes(array('force_creation'));
                 return false;
             }
 
@@ -266,9 +248,9 @@ class RestApiResourceForm extends Form
             }
 
             if (! $this->probeSecureTlsConnection()) {
-                $this->addForceCreationCheckbox()
-                    ->addTlsInsecureCheckbox()
-                    ->addTlsDiscoverRootCaCheckbox();
+                $this->ensureOnlyCheckboxes(
+                    array('force_creation', 'tls_server_insecure', 'tls_server_discover_rootca')
+                );
                 return false;
             }
         }
