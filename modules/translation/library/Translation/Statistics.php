@@ -3,6 +3,7 @@
 
 namespace Icinga\Module\Translation;
 
+use Icinga\Application\Config;
 use Icinga\Exception\IcingaException;
 
 /**
@@ -117,8 +118,11 @@ class Statistics
      */
     protected function getRawStatistics()
     {
-        //TODO (JeM): Remove hardcoded path to msdfmt
-        $line = '/usr/bin/msgfmt ' . $this->path . ' --statistics -cf';
+        // TODO (JeM): Make a get- and setConfig? Maybe use the translation helper
+        $msgfmtPath = Config::module('translation')
+            ->get('translation', 'msgfmt', '/usr/bin/env msgfmt');
+
+        $line = $msgfmtPath . ' ' . $this->path . ' --statistics -cf';
         $descriptorSpec = [
             0 => ['pipe', 'r'],
             1 => ['pipe', 'w'],
