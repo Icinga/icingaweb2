@@ -105,8 +105,7 @@ class Statistics
             }
         }
 
-        $this->entryCount = $this->faultyEntryCount
-            + $this->translatedEntryCount
+        $this->entryCount =  $this->translatedEntryCount
             + $this->fuzzyEntryCount
             + $this->untranslatedEntryCount;
     }

@@ -11,7 +11,6 @@ use Icinga\Util\Translator;
 
 class TranslationStatisticsCommand extends TranslationCommand
 {
-
     /**
      * Calculates the percentages from the statistics
      *
@@ -24,37 +23,37 @@ class TranslationStatisticsCommand extends TranslationCommand
         $percentages = [];
         $percentages['translated'] = $this->roundPercentage($numbers['translatedCount'], $numbers['messageCount']);
         $percentages['fuzzy'] = $this->roundPercentage($numbers['fuzzyCount'], $numbers['messageCount']);
-        $percentages['faulty'] = $this->roundPercentage($numbers['faultyCount'], $numbers['messageCount']);
         $percentages['untranslated'] = $this->roundPercentage($numbers['untranslatedCount'], $numbers['messageCount']);
 
-        $percentageSum = array_sum($percentages);
+        $percentageSum = $percentages['translated'][0]
+            + $percentages['fuzzy'][0]
+            + $percentages['untranslated'][0];
         if ($percentageSum != 100) {
             $toAdapt = array_search(max($percentages), $percentages);
-            $percentages[$toAdapt] += 100 - $percentageSum;
+            $percentages[($toAdapt)][0] += 100 - $percentageSum;
         }
+
+        $percentages['faulty'] = $this->roundPercentage($numbers['faultyCount'], $numbers['messageCount']);
 
         return $percentages;
     }
 
-
     /**
      * Rounds the percentage so that it always is a full percent and at least one
      *
-     * @param   int   $number     The percentage value
-     * @param   int   $maxCount   The fundamental value
+     * @param   int     $number     The percentage value
+     * @param   int     $maxCount   The fundamental value
      *
-     * @return  int|string
+     * @return  array               The first index is for drawing (whole numbers), the second is the precise percentage.
      */
     public function roundPercentage($number, $maxCount)
     {
         $percentage = $number / $maxCount * 100;
         if ($percentage !== 0 && $percentage < 1) {
-            return "<1";
+            return [1, round($percentage, 2)];
         }
-
-        return round($percentage);
+        return [round($percentage), round($percentage, 2)];
     }
-
 
     /**
      * Get all paths for the input module
@@ -111,6 +110,7 @@ class TranslationStatisticsCommand extends TranslationCommand
         $numbers['untranslatedCount'] = $statistics->getUntranslatedEntryCount();
         $numbers['translatedCount'] = $statistics->getTranslatedEntryCount();
         $numbers['fuzzyCount'] = $statistics->getFuzzyEntryCount();
+
         $numbers['faultyCount'] = $statistics->getFaultyEntryCount();
 
         return $numbers;
@@ -181,25 +181,39 @@ class TranslationStatisticsCommand extends TranslationCommand
         $percentages = $this->calculatePercentages($data);
 
         foreach ($percentages as $key => $value) {
-            echo $this->screen->colorize(str_repeat('█', $value !== "<1" ? $value : 1), $this->colors[$key]);
+            if ($key !== 'faulty') {
+                echo $this->screen->colorize(str_repeat('█', $value[0]), $this->colors[$key]);
+            }
+        }
+
+        if ($percentages['faulty'][0] > 0){
+            echo PHP_EOL
+                . $this->screen->colorize(str_repeat('█', $percentages['faulty'][0]), $this->colors['faulty']);
+            printf(
+                " %s: %s%% (%d messages)",
+                $this->screen->colorize('Faulty', $this->colors['faulty']),
+                $percentages['faulty'][1],
+                $data['faultyCount']
+            );
+
         }
 
         if (array_key_exists('moduleName', $data) && array_key_exists('locale', $data)) {
             printf(
-                PHP_EOL . '↳ %s: %s (%s messages)' . PHP_EOL . PHP_EOL,
+                PHP_EOL . '↳ %s: %s (%s messages)' . PHP_EOL,
                 $data['locale'],
                 $data['moduleName'],
                 $data['messageCount']
             );
         } elseif (array_key_exists('moduleName', $data)) {
             printf(
-                PHP_EOL . '↳ %s (%s messages)' . PHP_EOL . PHP_EOL,
+                PHP_EOL . '↳ %s (%s messages)' . PHP_EOL,
                 $data['moduleName'],
                 $data['messageCount']
             );
         } else {
             printf(
-                PHP_EOL . '↳ %s (%s messages)' . PHP_EOL . PHP_EOL,
+                PHP_EOL . '↳ %s (%s messages)' . PHP_EOL,
                 $data['locale'],
                 $data['messageCount']
             );
@@ -208,28 +222,21 @@ class TranslationStatisticsCommand extends TranslationCommand
         printf(
             "\t %s: %s%% (%d messages)" . PHP_EOL,
             $this->screen->colorize('Translated', $this->colors['translated']),
-            $percentages['translated'],
+            $percentages['translated'][1],
             $data['translatedCount']
         );
 
         printf(
             "\t %s: %s%% (%d messages)" . PHP_EOL,
             $this->screen->colorize('Fuzzy', $this->colors['fuzzy']),
-            $percentages['fuzzy'],
+            $percentages['fuzzy'][1],
             $data['fuzzyCount']
-        );
-
-        printf(
-            "\t %s: %s%% (%d messages)" . PHP_EOL,
-            $this->screen->colorize('Faulty', $this->colors['faulty']),
-            $percentages['faulty'],
-            $data['faultyCount']
         );
 
         printf(
             "\t %s: %s%% (%d messages)" . PHP_EOL . PHP_EOL,
             $this->screen->colorize('Untranslated', $this->colors['untranslated']),
-            $percentages['untranslated'],
+            $percentages['untranslated'][1],
             $data['untranslatedCount']
         );
 
