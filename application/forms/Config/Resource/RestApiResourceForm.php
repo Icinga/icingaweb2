@@ -213,11 +213,6 @@ class RestApiResourceForm extends Form
             return true;
         }
 
-        if (! $this->probeTcpConnection()) {
-            $this->ensureOnlyCheckboxes(array('force_creation'));
-            return false;
-        }
-
         if (Url::fromPath($this->getValue('baseurl'))->getScheme() === 'https') {
             if (! $this->probeInsecureTlsConnection()) {
                 $this->ensureOnlyCheckboxes(array('force_creation'));
@@ -253,6 +248,9 @@ class RestApiResourceForm extends Form
                 );
                 return false;
             }
+        } elseif (! $this->probeTcpConnection()) {
+            $this->ensureOnlyCheckboxes(array('force_creation'));
+            return false;
         }
 
         return true;
