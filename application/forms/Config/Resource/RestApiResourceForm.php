@@ -3,7 +3,10 @@
 
 namespace Icinga\Forms\Config\Resource;
 
+use DateTime;
+use DateTimeZone;
 use ErrorException;
+use Icinga\Util\TimezoneDetect;
 use Icinga\Web\Form;
 use Icinga\Web\Form\Validator\RestApiUrlValidator;
 use Icinga\Web\Url;
@@ -203,6 +206,60 @@ class RestApiResourceForm extends Form
         return $this;
     }
 
+    /**
+     * Add form element with the given TLS root CA certificate's info
+     *
+     * @param   array   $cert
+     */
+    protected function addRootCaInfo($cert)
+    {
+        $timezoneDetect = new TimezoneDetect();
+        $timeZone = new DateTimeZone(
+            $timezoneDetect->success() ? $timezoneDetect->getTimezoneName() : date_default_timezone_get()
+        );
+        $view = $this->getView();
+
+        $subject = array();
+        foreach ($cert['parsed']['subject'] as $key => $value) {
+            $subject[] = $view->escape("$key = " . var_export($value, true));
+        }
+
+        $this->addElement(
+            'note',
+            'tls_server_rootca_info',
+            array(
+                'order'     => ++$this->nextCheckboxOrder,
+                'escape'    => false,
+                'label'     => $this->translate('Root CA'),
+                'value'     => sprintf(
+                    '<table class="name-value-list">' . str_repeat('<tr><td>%s</td><td>%s</td></tr>', 6) . '</table>',
+                    $view->escape($this->translate('Subject', 'x509.certificate')),
+                    $view->escape(implode('<br>', $subject)),
+                    $view->escape($this->translate('Valid from', 'x509.certificate')),
+                    $view->escape(
+                        DateTime::createFromFormat('U', $cert['parsed']['validFrom_time_t'])
+                            ->setTimezone($timeZone)
+                            ->format(DateTime::ISO8601)
+                    ),
+                    $view->escape($this->translate('Valid until', 'x509.certificate')),
+                    $view->escape(
+                        DateTime::createFromFormat('U', $cert['parsed']['validTo_time_t'])
+                            ->setTimezone($timeZone)
+                            ->format(DateTime::ISO8601)
+                    ),
+                    $view->escape($this->translate('SHA256 fingerprint', 'x509.certificate')),
+                    $view->escape(
+                        implode(' ', str_split(strtoupper(openssl_x509_fingerprint($cert['x509'], 'sha256')), 2))
+                    ),
+                    $view->escape($this->translate('SHA1 fingerprint', 'x509.certificate')),
+                    $view->escape(
+                        implode(' ', str_split(strtoupper(openssl_x509_fingerprint($cert['x509'], 'sha1')), 2))
+                    )
+                )
+            )
+        );
+    }
+
     public function isValid($formData)
     {
         if (! parent::isValid($formData)) {
@@ -239,7 +296,18 @@ class RestApiResourceForm extends Form
                     return false;
                 }
 
-                // TODO: remote TLS root CA review
+                $this->ensureOnlyCheckboxes(array(
+                    'force_creation',
+                    'tls_server_insecure',
+                    'tls_server_discover_rootca',
+                    'tls_server_accept_rootca'
+                ));
+                $this->addRootCaInfo($certs['root']);
+                return false;
+            }
+
+            if ($this->isBoxChecked('tls_server_accept_rootca')) {
+                return true;
             }
 
             if (! $this->probeSecureTlsConnection()) {
