@@ -9,8 +9,10 @@ use ErrorException;
 use Icinga\Util\TimezoneDetect;
 use Icinga\Web\Form;
 use Icinga\Web\Form\Validator\RestApiUrlValidator;
+use Icinga\Web\Form\Validator\TlsCertValidator;
 use Icinga\Web\Url;
 use Zend_Form_Element_Checkbox;
+use Zend_Form_Element_Hidden;
 
 /**
  * Form class for adding/modifying ReST API resources
@@ -126,7 +128,13 @@ class RestApiResourceForm extends Form
             );
         }
 
-        return $this->ensureOnlyCheckboxes(array_intersect($this->optionalCheckboxes, array_keys($formData)));
+        $this->ensureOnlyCheckboxes(array_intersect($this->optionalCheckboxes, array_keys($formData)));
+
+        if (isset($formData['tls_server_rootca_cert'])) {
+            $this->addRootCaCertCache();
+        }
+
+        return $this;
     }
 
     /**
@@ -260,6 +268,27 @@ class RestApiResourceForm extends Form
         );
     }
 
+    /**
+     * Add and return form element for the discovered TLS root CA certificate
+     *
+     * @return Zend_Form_Element_Hidden
+     */
+    protected function addRootCaCertCache()
+    {
+        $element = $this->getElement('tls_server_rootca_cert');
+        if ($element === null) {
+            $this->addElement(
+                'hidden',
+                'tls_server_rootca_cert',
+                array('validators' => array(new TlsCertValidator()))
+            );
+
+            return $this->getElement('tls_server_rootca_cert');
+        }
+
+        return $element;
+    }
+
     public function isValid($formData)
     {
         if (! parent::isValid($formData)) {
@@ -281,6 +310,8 @@ class RestApiResourceForm extends Form
             }
 
             if ($this->isBoxChecked('tls_server_discover_rootca')) {
+                $this->removeElement('tls_server_rootca_cert');
+
                 $certs = $this->fetchServerTlsCertChain();
                 if ($certs === false) {
                     return false;
@@ -303,6 +334,7 @@ class RestApiResourceForm extends Form
                     'tls_server_accept_rootca'
                 ));
                 $this->addRootCaInfo($certs['root']);
+                $this->addRootCaCertCache()->setValue($certs['root']['x509']);
                 return false;
             }
 
