@@ -256,6 +256,11 @@ class RestApiResourceForm extends Form
         return true;
     }
 
+    /**
+     * Return whether a TCP connection to the remote is possible and eventually add form errors
+     *
+     * @return bool
+     */
     protected function probeTcpConnection()
     {
         try {
@@ -268,6 +273,11 @@ class RestApiResourceForm extends Form
         return true;
     }
 
+    /**
+     * Return whether an insecure TLS connection to the remote is possible and eventually add form errors
+     *
+     * @return bool
+     */
     protected function probeInsecureTlsConnection()
     {
         try {
@@ -283,6 +293,11 @@ class RestApiResourceForm extends Form
         return true;
     }
 
+    /**
+     * Return whether a secure TLS connection to the remote is possible and eventually add form errors
+     *
+     * @return bool
+     */
     protected function probeSecureTlsConnection()
     {
         try {
@@ -295,6 +310,13 @@ class RestApiResourceForm extends Form
         return true;
     }
 
+    /**
+     * Add the TLS client certificate to use (if any) to the given stream context options and return them
+     *
+     * @param   array   $contextOptions
+     *
+     * @return  array
+     */
     protected function includeTlsClientIdentity(array $contextOptions)
     {
         if ($this->getValue('tls_client_identity') !== null) {
@@ -304,6 +326,13 @@ class RestApiResourceForm extends Form
         return $contextOptions;
     }
 
+    /**
+     * Create a TLS stream to the remote with the the given stream context 
+     *
+     * @param   resource    $context
+     *
+     * @return  resource
+     */
     protected function createTlsStream($context)
     {
         return stream_socket_client(
@@ -316,6 +345,11 @@ class RestApiResourceForm extends Form
         );
     }
 
+    /**
+     * Get <HOST>:<PORT>
+     *
+     * @return string
+     */
     protected function getTcpEndpoint()
     {
         $baseurl = Url::fromPath($this->getValue('baseurl'));
@@ -324,6 +358,13 @@ class RestApiResourceForm extends Form
         return $baseurl->getHost() . ':' . ($port === null ? '443' : $port);
     }
 
+    /**
+     * Return whether the given checkbox is present and checked
+     *
+     * @param   string  $name
+     *
+     * @return  bool
+     */
     protected function isBoxChecked($name)
     {
         /** @var Zend_Form_Element_Checkbox $checkbox */
