@@ -74,6 +74,8 @@ class LdapDiscoveryPage extends Form
                 $this->discovery = Discovery::discoverDomain($data['domain']);
                 if ($this->discovery->isSuccess()) {
                     return true;
+                } else {
+                    $this->error($this->discovery->getError()->getMessage());
                 }
             } catch (Exception $e) {
                 $this->error(sprintf(
