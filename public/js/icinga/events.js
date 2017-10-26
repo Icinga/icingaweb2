@@ -177,12 +177,16 @@
         onVisibilityChange: function (event) {
             var icinga = event.data.self.icinga;
 
-            if !!(document.visibilityState === undefined || document.visibilityState === 'visible') {
-                icinga.logger.info('Page visible, enabling auto-refresh');
-                icinga.loader.enableAutorefresh()
-            } else {
-                icinga.logger.info('Page invisible, disabling auto-refresh');
-                icinga.loader.disableAutorefresh()
+            if (icinga.loader.autorefreshEnabled === true || icinga.autorefreshSuspended === true) {
+                if (document.visibilityState === undefined || document.visibilityState === 'visible') {
+                    icinga.autorefreshSuspended = false;
+                    icinga.logger.info('Page visible, enabling auto-refresh');
+                    icinga.loader.enableAutorefresh()
+                } else {
+                    icinga.autorefreshSuspended = true;
+                    icinga.logger.info('Page invisible, disabling auto-refresh');
+                    icinga.loader.disableAutorefresh()
+                }
             }
         },
 

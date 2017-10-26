@@ -31,6 +31,8 @@
         this.iconCache = {};
 
         this.autorefreshEnabled = true;
+
+        this.autorefreshSuspended = false;
     };
 
     Icinga.Loader.prototype = {
