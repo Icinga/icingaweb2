@@ -30,7 +30,15 @@
 
         this.iconCache = {};
 
+        /**
+         * Whether auto-refresh is enabled
+         */
         this.autorefreshEnabled = true;
+
+        /**
+         * Whether auto-refresh is suspended due to visibility of page
+         */
+        this.autorefreshSuspended = false;
     };
 
     Icinga.Loader.prototype = {
@@ -209,7 +217,7 @@
 
         autorefresh: function () {
             var _this = this;
-            if (_this.autorefreshEnabled !== true) {
+            if (! _this.autorefreshEnabled || _this.autorefreshSuspended) {
                 return;
             }
 
