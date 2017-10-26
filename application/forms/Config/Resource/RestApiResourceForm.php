@@ -356,12 +356,12 @@ class RestApiResourceForm extends Form
                 }
 
                 if ($certs['leaf']['parsed']['subject']['CN'] === $certs['leaf']['parsed']['issuer']['CN']) {
-                    $this->addError($this->translate('The remote didn\'t provide any non-self-signed TLS certificate'));
+                    $this->error($this->translate('The remote didn\'t provide any non-self-signed TLS certificate'));
                     return false;
                 }
 
                 if (! isset($certs['root'])) {
-                    $this->addError($this->translate('The remote didn\'t provide any root CA certificate'));
+                    $this->error($this->translate('The remote didn\'t provide any root CA certificate'));
                     return false;
                 }
 
@@ -412,7 +412,7 @@ class RestApiResourceForm extends Form
         try {
             fclose(stream_socket_client('tcp://' . $this->getTcpEndpoint()));
         } catch (ErrorException $element) {
-            $this->addError($element->getMessage());
+            $this->error($element->getMessage());
             return false;
         }
 
@@ -432,7 +432,7 @@ class RestApiResourceForm extends Form
                 'verify_peer_name'  => false
             ))))));
         } catch (ErrorException $element) {
-            $this->addError($element->getMessage());
+            $this->error($element->getMessage());
             return false;
         }
 
@@ -451,7 +451,7 @@ class RestApiResourceForm extends Form
         try {
             fclose($this->createTlsStream(stream_context_create($this->includeTlsClientIdentity(array()))));
         } catch (ErrorException $element) {
-            $this->addError($element->getMessage());
+            $this->error($element->getMessage());
             return false;
         }
 
@@ -536,7 +536,7 @@ class RestApiResourceForm extends Form
         try {
             fclose($this->createTlsStream($context));
         } catch (ErrorException $e) {
-            $this->addError($e->getMessage());
+            $this->error($e->getMessage());
             return false;
         }
 
