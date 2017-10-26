@@ -154,6 +154,13 @@ class LdapConnection implements Selectable, Inspectable
     protected $discoverySuccess;
 
     /**
+     * The cause of the discovery's failure
+     *
+     * @var Exception|null
+     */
+    private $discoveryError;
+
+    /**
      * Whether the current connection is encrypted
      *
      * @var bool
@@ -250,11 +257,13 @@ class LdapConnection implements Selectable, Inspectable
             try {
                 $this->capabilities = LdapCapabilities::discoverCapabilities($this);
                 $this->discoverySuccess = true;
+                $this->discoveryError = null;
             } catch (LdapException $e) {
                 Logger::debug($e);
                 Logger::warning('LADP discovery failed, assuming default LDAP capabilities.');
                 $this->capabilities = new LdapCapabilities(); // create empty default capabilities
                 $this->discoverySuccess = false;
+                $this->discoveryError = $e;
             }
         }
 
@@ -273,6 +282,16 @@ class LdapConnection implements Selectable, Inspectable
         }
 
         return $this->discoverySuccess;
+    }
+
+    /**
+     * Get discovery error if any
+     *
+     * @return Exception|null
+     */
+    public function getDiscoveryError()
+    {
+        return $this->discoveryError;
     }
 
     /**
