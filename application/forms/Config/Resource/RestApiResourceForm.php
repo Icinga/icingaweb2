@@ -6,6 +6,7 @@ namespace Icinga\Forms\Config\Resource;
 use DateTime;
 use DateTimeZone;
 use ErrorException;
+use Icinga\File\Storage\TemporaryLocalFileStorage;
 use Icinga\Util\TimezoneDetect;
 use Icinga\Web\Form;
 use Icinga\Web\Form\Validator\RestApiUrlValidator;
@@ -379,15 +380,24 @@ class RestApiResourceForm extends Form
 
             $rootCaCert = $this->getValue('tls_server_rootca_cert');
 
-            if (! $this->probeSecureTlsConnection(
-                $rootCaCert !== null && $this->isBoxChecked('tls_server_accept_rootca') ? $rootCaCert : null
-            )) {
+            if ($rootCaCert !== null && $this->isBoxChecked('tls_server_accept_rootca')) {
+                $temporaryLocalFileStorage = new TemporaryLocalFileStorage();
+                $temporaryLocalFileStorage->create('rootca.pem', $rootCaCert);
+                $rootCaPath = $temporaryLocalFileStorage->resolvePath('rootca.pem');
+            } else {
+                $rootCaPath = null;
+            }
+
+            if ($rootCaCert !== null) {
+                $this->addRootCaInfo(array(
+                    'x509'      => $rootCaCert,
+                    'parsed'    => openssl_x509_parse($rootCaCert),
+                ));
+            }
+
+            if (! $this->probeSecureTlsConnection($rootCaPath)) {
                 $checkboxes = array('force_creation', 'tls_server_insecure', 'tls_server_discover_rootca');
                 if ($rootCaCert !== null) {
-                    $this->addRootCaInfo(array(
-                        'x509'      => $rootCaCert,
-                        'parsed'    => openssl_x509_parse($rootCaCert),
-                    ));
                     $checkboxes[] = 'tls_server_accept_rootca';
                 }
 
@@ -442,14 +452,16 @@ class RestApiResourceForm extends Form
     /**
      * Return whether a secure TLS connection to the remote is possible and eventually add form errors
      *
-     * TODO: custom root CA
+     * @param   string  $rootCaPath     Path to custom root CA to use
      *
-     * @return bool
+     * @return  bool
      */
-    protected function probeSecureTlsConnection()
+    protected function probeSecureTlsConnection($rootCaPath = null)
     {
         try {
-            fclose($this->createTlsStream(stream_context_create($this->includeTlsClientIdentity(array()))));
+            fclose($this->createTlsStream(stream_context_create($this->includeTlsClientIdentity(
+                $rootCaPath === null ? array() : array('ssl' => array('cafile' => $rootCaPath))
+            ))));
         } catch (ErrorException $element) {
             $this->error($element->getMessage());
             return false;
