@@ -240,9 +240,9 @@ class RestApiResourceForm extends Form
                 'escape'    => false,
                 'label'     => $this->translate('Root CA'),
                 'value'     => sprintf(
-                    '<table class="name-value-list">' . str_repeat('<tr><td>%s</td><td>%s</td></tr>', 6) . '</table>',
+                    '<table class="name-value-list">' . str_repeat('<tr><td>%s</td><td>%s</td></tr>', 5) . '</table>',
                     $view->escape($this->translate('Subject', 'x509.certificate')),
-                    $view->escape(implode('<br>', $subject)),
+                    implode('<br>', $subject),
                     $view->escape($this->translate('Valid from', 'x509.certificate')),
                     $view->escape(
                         DateTime::createFromFormat('U', $cert['parsed']['validFrom_time_t'])
@@ -335,17 +335,25 @@ class RestApiResourceForm extends Form
                 ));
                 $this->addRootCaInfo($certs['root']);
                 $this->addRootCaCertCache()->setValue($certs['root']['x509']);
+                $this->getElement('tls_server_discover_rootca')->setValue(null);
                 return false;
             }
 
-            if ($this->isBoxChecked('tls_server_accept_rootca')) {
-                return true;
-            }
+            $rootCaCert = $this->getValue('tls_server_rootca_cert');
 
-            if (! $this->probeSecureTlsConnection()) {
-                $this->ensureOnlyCheckboxes(
-                    array('force_creation', 'tls_server_insecure', 'tls_server_discover_rootca')
-                );
+            if (! $this->probeSecureTlsConnection(
+                $rootCaCert !== null && $this->isBoxChecked('tls_server_accept_rootca') ? $rootCaCert : null
+            )) {
+                $checkboxes = array('force_creation', 'tls_server_insecure', 'tls_server_discover_rootca');
+                if ($rootCaCert !== null) {
+                    $this->addRootCaInfo(array(
+                        'x509'      => $rootCaCert,
+                        'parsed'    => openssl_x509_parse($rootCaCert),
+                    ));
+                    $checkboxes[] = 'tls_server_accept_rootca';
+                }
+
+                $this->ensureOnlyCheckboxes($checkboxes);
                 return false;
             }
         } elseif (! $this->probeTcpConnection()) {
@@ -395,6 +403,8 @@ class RestApiResourceForm extends Form
 
     /**
      * Return whether a secure TLS connection to the remote is possible and eventually add form errors
+     *
+     * TODO: custom root CA
      *
      * @return bool
      */
