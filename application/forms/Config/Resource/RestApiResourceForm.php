@@ -11,6 +11,7 @@ use Icinga\Web\Form;
 use Icinga\Web\Form\Validator\RestApiUrlValidator;
 use Icinga\Web\Form\Validator\TlsCertValidator;
 use Icinga\Web\Url;
+use Zend_Form_Element;
 use Zend_Form_Element_Checkbox;
 use Zend_Form_Element_Hidden;
 
@@ -33,11 +34,18 @@ class RestApiResourceForm extends Form
     );
 
     /**
-     * The next unused checkbox order
+     * Form elements which have to be above all others, in this order
      *
-     * @var int
+     * @var string[]
      */
-    protected $nextCheckboxOrder = -1;
+    protected $priorizedElements = array(
+        'force_creation',
+        'tls_server_insecure',
+        'tls_server_discover_rootca',
+        'tls_server_rootca_info',
+        'tls_server_accept_rootca',
+        'tls_server_accept_cn'
+    );
 
     public function init()
     {
@@ -134,7 +142,7 @@ class RestApiResourceForm extends Form
             $this->addRootCaCertCache();
         }
 
-        return $this;
+        return $this->priorizeElements();
     }
 
     /**
@@ -148,8 +156,6 @@ class RestApiResourceForm extends Form
             $this->removeElement($checkbox);
         }
 
-        $this->nextCheckboxOrder = -1;
-
         foreach ($checkboxes as $checkbox) {
             $element = $this->getElement($checkbox);
 
@@ -157,7 +163,6 @@ class RestApiResourceForm extends Form
                 switch ($checkbox) {
                     case 'force_creation':
                         $this->addElement('checkbox', 'force_creation', array(
-                            'order'         => ++$this->nextCheckboxOrder,
                             'ignore'        => true,
                             'label'         => $this->translate('Force Changes'),
                             'description'   => $this->translate(
@@ -168,7 +173,6 @@ class RestApiResourceForm extends Form
 
                     case 'tls_server_insecure':
                         $this->addElement('checkbox', 'tls_server_insecure', array(
-                            'order'         => ++$this->nextCheckboxOrder,
                             'label'         => $this->translate('Insecure Connection'),
                             'description'   => $this->translate(
                                 'Don\'t validate the remote\'s TLS certificate chain at all'
@@ -178,7 +182,6 @@ class RestApiResourceForm extends Form
 
                     case 'tls_server_discover_rootca':
                         $this->addElement('checkbox', 'tls_server_discover_rootca', array(
-                            'order'         => ++$this->nextCheckboxOrder,
                             'ignore'        => true,
                             'label'         => $this->translate('Discover Root CA'),
                             'description'   => $this->translate(
@@ -190,7 +193,6 @@ class RestApiResourceForm extends Form
 
                     case 'tls_server_accept_rootca':
                         $this->addElement('checkbox', 'tls_server_accept_rootca', array(
-                            'order'         => ++$this->nextCheckboxOrder,
                             'ignore'        => true,
                             'label'         => $this->translate('Accept the remote\'s root CA'),
                             'description'   => $this->translate('Trust the remote\'s TLS certificate\'s root CA')
@@ -199,15 +201,12 @@ class RestApiResourceForm extends Form
 
                     case 'tls_server_accept_cn':
                         $this->addElement('checkbox', 'tls_server_accept_cn', array(
-                            'order'         => ++$this->nextCheckboxOrder,
                             'ignore'        => true,
                             'label'         => $this->translate('Accept the remote\'s CN'),
                             'description'   => $this->translate('Accept the remote\'s TLS certificate\'s CN')
                         ));
                         break;
                 }
-            } else {
-                $element->setOrder(++$this->nextCheckboxOrder);
             }
         }
 
@@ -236,7 +235,7 @@ class RestApiResourceForm extends Form
             'note',
             'tls_server_rootca_info',
             array(
-                'order'     => ++$this->nextCheckboxOrder,
+                'ignore'    => true,
                 'escape'    => false,
                 'label'     => $this->translate('Root CA'),
                 'value'     => sprintf(
@@ -289,12 +288,51 @@ class RestApiResourceForm extends Form
         return $element;
     }
 
+    /**
+     * Reorder form elements as needed
+     */
+    protected function priorizeElements()
+    {
+        $priorizedElements = array();
+        foreach ($this->priorizedElements as $priorizedElement) {
+            $element = $this->getElement($priorizedElement);
+            if ($element !== null) {
+                $element->setOrder(null);
+                $priorizedElements[] = $element;
+            }
+        }
+
+        $nextOrder = -1;
+        foreach ($priorizedElements as $priorizedElement) {
+            /** @var Zend_Form_Element $priorizedElement */
+            $priorizedElement->setOrder(++$nextOrder);
+        }
+
+        foreach ($this->getElements() as $name => $element) {
+            $this->_order[$name] = $element->getOrder();
+        }
+
+        return $this;
+    }
+
     public function isValid($formData)
     {
         if (! parent::isValid($formData)) {
             return false;
         }
 
+        $result = $this->isEndpointValid();
+        $this->priorizeElements();
+        return $result;
+    }
+
+    /**
+     * Return whether the configured endpoint is valid
+     *
+     * @return bool
+     */
+    protected function isEndpointValid()
+    {
         if ($this->isBoxChecked('force_creation')) {
             return true;
         }
