@@ -57,16 +57,6 @@ class RestApiResourceForm extends Form
     {
         $this->addElement(
             'text',
-            'name',
-            array(
-                'required'      => true,
-                'label'         => $this->translate('Resource Name'),
-                'description'   => $this->translate('The unique name of this resource')
-            )
-        );
-
-        $this->addElement(
-            'text',
             'baseurl',
             array(
                 'label'         => $this->translate('Base URL'),

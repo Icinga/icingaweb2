@@ -287,6 +287,16 @@ class ResourceConfigForm extends ConfigForm
             )
         );
 
+        $this->addElement(
+            'text',
+            'name',
+            array(
+                'required'      => true,
+                'label'         => $this->translate('Resource Name'),
+                'description'   => $this->translate('The unique name of this resource')
+            )
+        );
+
         if (isset($formData['force_creation']) && $formData['force_creation']) {
             // In case another error occured and the checkbox was displayed before
             $this->addElement($this->getForceCreationCheckbox());

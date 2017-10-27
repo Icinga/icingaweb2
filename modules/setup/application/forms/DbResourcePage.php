@@ -49,6 +49,16 @@ class DbResourcePage extends Form
             );
         }
 
+        $this->addElement(
+            'text',
+            'name',
+            array(
+                'required'      => true,
+                'label'         => $this->translate('Resource Name'),
+                'description'   => $this->translate('The unique name of this resource')
+            )
+        );
+
         $resourceForm = new DbResourceForm();
         $this->addElements($resourceForm->createElements($formData)->getElements());
         $this->getElement('name')->setValue('icingaweb_db');
