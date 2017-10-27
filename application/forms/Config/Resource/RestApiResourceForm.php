@@ -137,13 +137,17 @@ class RestApiResourceForm extends Form
             );
         }
 
-        $this->ensureOnlyErrorHandlingOptions(
-            array_intersect($this->optionalErrorHandlingOptions, array_keys($formData))
-        );
+        $optionalErrorHandlingOptions = array_intersect($this->optionalErrorHandlingOptions, array_keys($formData));
 
         if (isset($formData['tls_server_rootca_cert'])) {
             $this->addRootCaCertCache();
+
+            if (! in_array('tls_server_discover_rootca', $optionalErrorHandlingOptions)) {
+                $optionalErrorHandlingOptions[] = 'tls_server_discover_rootca';
+            }
         }
+
+        $this->ensureOnlyErrorHandlingOptions($optionalErrorHandlingOptions);
 
         return $this->priorizeElements();
     }
@@ -424,9 +428,16 @@ class RestApiResourceForm extends Form
                 $this->ensureOnlyErrorHandlingOptions($optionalErrorHandlingOptions);
                 return false;
             }
-        } elseif (! $this->probeTcpConnection()) {
-            $this->ensureOnlyErrorHandlingOptions(array('force_creation'));
-            return false;
+
+            $this->removeElement('force_creation');
+            $this->removeElement('tls_server_insecure');
+        } else {
+            if (! $this->probeTcpConnection()) {
+                $this->ensureOnlyErrorHandlingOptions(array('force_creation'));
+                return false;
+            }
+
+            $this->ensureOnlyErrorHandlingOptions(array());
         }
 
         return true;
