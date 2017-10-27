@@ -35,6 +35,11 @@ use Icinga\Web\Form\Element\CsrfCounterMeasure;
  *     {@inheritdoc}
  *     @return \Zend_Form_Element[]
  * }
+ *
+ * @method Form[] getSubForms() {
+ *     {@inheritdoc}
+ *     @return Form[]
+ * }
  */
 class Form extends Zend_Form
 {

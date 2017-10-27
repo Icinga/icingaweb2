@@ -356,9 +356,19 @@ class ResourceConfigForm extends ConfigForm
             }
 
             $this->info($this->translate('The configuration has been successfully validated.'));
-        }
 
-        return true;
+            return true;
+        } else {
+            $isValidPartial = true;
+
+            foreach ($this->getSubForms() as $subForm) {
+                if ($subForm->getValidatePartial()) {
+                    $isValidPartial = $subForm->isValidPartial($formData) && $isValidPartial;
+                }
+            }
+
+            return $isValidPartial;
+        }
     }
 
     /**
