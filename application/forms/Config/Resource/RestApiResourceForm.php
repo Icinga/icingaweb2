@@ -29,9 +29,9 @@ class RestApiResourceForm extends Form
     protected $optionalCheckboxes = array(
         'force_creation',
         'tls_server_insecure',
+        'tls_server_ignore_cn',
         'tls_server_discover_rootca',
-        'tls_server_accept_rootca',
-        'tls_server_accept_cn'
+        'tls_server_accept_rootca'
     );
 
     /**
@@ -42,10 +42,10 @@ class RestApiResourceForm extends Form
     protected $priorizedElements = array(
         'force_creation',
         'tls_server_insecure',
+        'tls_server_ignore_cn',
         'tls_server_discover_rootca',
         'tls_server_rootca_info',
-        'tls_server_accept_rootca',
-        'tls_server_accept_cn'
+        'tls_server_accept_rootca'
     );
 
     public function init()
@@ -181,6 +181,14 @@ class RestApiResourceForm extends Form
                         ));
                         break;
 
+                    case 'tls_server_ignore_cn':
+                        $this->addElement('checkbox', 'tls_server_ignore_cn', array(
+                            'ignore'        => true,
+                            'label'         => $this->translate('Ignore Remote CN'),
+                            'description'   => $this->translate('Ignore the remote\'s TLS certificate\'s CN')
+                        ));
+                        break;
+
                     case 'tls_server_discover_rootca':
                         $this->addElement('checkbox', 'tls_server_discover_rootca', array(
                             'ignore'        => true,
@@ -197,14 +205,6 @@ class RestApiResourceForm extends Form
                             'ignore'        => true,
                             'label'         => $this->translate('Accept the remote\'s root CA'),
                             'description'   => $this->translate('Trust the remote\'s TLS certificate\'s root CA')
-                        ));
-                        break;
-
-                    case 'tls_server_accept_cn':
-                        $this->addElement('checkbox', 'tls_server_accept_cn', array(
-                            'ignore'        => true,
-                            'label'         => $this->translate('Accept the remote\'s CN'),
-                            'description'   => $this->translate('Accept the remote\'s TLS certificate\'s CN')
                         ));
                         break;
                 }
@@ -369,6 +369,7 @@ class RestApiResourceForm extends Form
                 $this->ensureOnlyCheckboxes(array(
                     'force_creation',
                     'tls_server_insecure',
+                    'tls_server_ignore_cn',
                     'tls_server_discover_rootca',
                     'tls_server_accept_rootca'
                 ));
@@ -395,8 +396,13 @@ class RestApiResourceForm extends Form
                 ));
             }
 
-            if (! $this->probeSecureTlsConnection($rootCaPath)) {
-                $checkboxes = array('force_creation', 'tls_server_insecure', 'tls_server_discover_rootca');
+            if (! $this->probeSecureTlsConnection($this->isBoxChecked('tls_server_ignore_cn'), $rootCaPath)) {
+                $checkboxes = array(
+                    'force_creation',
+                    'tls_server_insecure',
+                    'tls_server_ignore_cn',
+                    'tls_server_discover_rootca'
+                );
                 if ($rootCaCert !== null) {
                     $checkboxes[] = 'tls_server_accept_rootca';
                 }
@@ -452,16 +458,23 @@ class RestApiResourceForm extends Form
     /**
      * Return whether a secure TLS connection to the remote is possible and eventually add form errors
      *
+     * @param   bool    $ignoreCn       Whether to ignore the remote's TLS certificate's CN
      * @param   string  $rootCaPath     Path to custom root CA to use
      *
      * @return  bool
      */
-    protected function probeSecureTlsConnection($rootCaPath = null)
+    protected function probeSecureTlsConnection($ignoreCn = false, $rootCaPath = null)
     {
+        $options = array();
+        if ($rootCaPath !== null) {
+            $options['ssl']['cafile'] = $rootCaPath;
+        }
+        if ($ignoreCn) {
+            $options['ssl']['verify_peer_name'] = false;
+        }
+
         try {
-            fclose($this->createTlsStream(stream_context_create($this->includeTlsClientIdentity(
-                $rootCaPath === null ? array() : array('ssl' => array('cafile' => $rootCaPath))
-            ))));
+            fclose($this->createTlsStream(stream_context_create($this->includeTlsClientIdentity($options))));
         } catch (ErrorException $element) {
             $this->error($element->getMessage());
             return false;
