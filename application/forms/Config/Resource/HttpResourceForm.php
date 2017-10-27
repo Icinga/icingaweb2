@@ -9,14 +9,14 @@ use ErrorException;
 use Icinga\File\Storage\TemporaryLocalFileStorage;
 use Icinga\Util\TimezoneDetect;
 use Icinga\Web\Form;
-use Icinga\Web\Form\Validator\RestApiUrlValidator;
+use Icinga\Web\Form\Validator\HttpUrlValidator;
 use Icinga\Web\Form\Validator\TlsCertValidator;
 use Icinga\Web\Url;
 
 /**
- * Form class for adding/modifying ReST API resources
+ * Form class for adding/modifying HTTP(S) resources
  */
-class RestApiResourceForm extends Form
+class HttpResourceForm extends Form
 {
     /**
      * Not neccessarily present error handling options
@@ -47,7 +47,7 @@ class RestApiResourceForm extends Form
 
     public function init()
     {
-        $this->setName('form_config_resource_restapi');
+        $this->setName('form_config_resource_http');
         $this->setValidatePartial(true);
     }
 
@@ -60,7 +60,7 @@ class RestApiResourceForm extends Form
                 'label'         => $this->translate('Base URL'),
                 'description'   => $this->translate('http[s]://<HOST>[:<PORT>][/<BASE_LOCATION>]'),
                 'required'      => true,
-                'validators'    => array(new RestApiUrlValidator())
+                'validators'    => array(new HttpUrlValidator())
             )
         );
 

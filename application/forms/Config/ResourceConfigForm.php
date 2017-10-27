@@ -4,7 +4,7 @@
 namespace Icinga\Forms\Config;
 
 use Icinga\Application\Config;
-use Icinga\Forms\Config\Resource\RestApiResourceForm;
+use Icinga\Forms\Config\Resource\HttpResourceForm;
 use InvalidArgumentException;
 use Icinga\Application\Platform;
 use Icinga\Exception\ConfigurationError;
@@ -63,8 +63,8 @@ class ResourceConfigForm extends ConfigForm
             return new FileResourceForm();
         } elseif ($type === 'ssh') {
             return new SshResourceForm();
-        } elseif ($type === 'restapi') {
-            return new RestApiResourceForm();
+        } elseif ($type === 'http') {
+            return new HttpResourceForm();
         } else {
             throw new InvalidArgumentException(sprintf($this->translate('Invalid resource type "%s" provided'), $type));
         }
@@ -265,7 +265,7 @@ class ResourceConfigForm extends ConfigForm
         $resourceTypes = array(
             'file'          => $this->translate('File'),
             'ssh'           => $this->translate('SSH Identity'),
-            'restapi'       => $this->translate('ReST API')
+            'http'          => $this->translate('HTTP(S)')
         );
         if ($resourceType === 'ldap' || Platform::hasLdapSupport()) {
             $resourceTypes['ldap'] = 'LDAP';
@@ -317,7 +317,7 @@ class ResourceConfigForm extends ConfigForm
      */
     public static function inspectResource(Form $form)
     {
-        if (! in_array($form->getValue('type'), array('ssh', 'restapi'))) {
+        if (! in_array($form->getValue('type'), array('ssh', 'http'))) {
             $resource = ResourceFactory::createResource(new ConfigObject($form->getValues()));
             if ($resource instanceof Inspectable) {
                 return $resource->inspect();

@@ -8,7 +8,7 @@ use Icinga\Web\Url;
 /**
  * Validator that checks whether a textfield's value matches the pattern http[s]://<HOST>[:<PORT>][/<BASE_LOCATION>]
  */
-class RestApiUrlValidator extends UrlValidator
+class HttpUrlValidator extends UrlValidator
 {
     /**
      * Constructor
