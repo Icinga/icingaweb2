@@ -201,7 +201,7 @@ class ResourceConfigForm extends ConfigForm
 
         if ($this->save()) {
             Notification::success(
-                sprintf($message, $this->getSubForm('form_config_resource_details')->getElement('name')->getValue())
+                sprintf($message, $this->getElement('name')->getValue())
             );
         } else {
             return false;
