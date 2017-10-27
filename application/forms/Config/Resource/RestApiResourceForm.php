@@ -343,7 +343,7 @@ class RestApiResourceForm extends Form
      */
     protected function isEndpointValid()
     {
-        if ($this->isElementChecked('force_creation')) {
+        if ($this->isElementChecked('force_creation') || $this->getValue('baseurl') === null) {
             return true;
         }
 
