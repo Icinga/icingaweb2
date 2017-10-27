@@ -367,6 +367,11 @@ class HttpResourceForm extends Form
             if ($this->isElementChecked('tls_server_discover_rootca')) {
                 $this->removeElement('tls_server_rootca_cert');
 
+                $element = $this->getElement('tls_server_accept_rootca');
+                if ($element !== null) {
+                    $element->setValue(null);
+                }
+
                 $certs = $this->fetchServerTlsCertChain();
                 if ($certs === false) {
                     return false;
