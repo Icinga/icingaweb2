@@ -13,7 +13,6 @@ use Icinga\Web\Form\Validator\RestApiUrlValidator;
 use Icinga\Web\Form\Validator\TlsCertValidator;
 use Icinga\Web\Url;
 use Zend_Form_Element;
-use Zend_Form_Element_Checkbox;
 use Zend_Form_Element_Hidden;
 
 /**
@@ -22,11 +21,11 @@ use Zend_Form_Element_Hidden;
 class RestApiResourceForm extends Form
 {
     /**
-     * Not neccessarily present checkboxes
+     * Not neccessarily present error handling options
      *
      * @var string[]
      */
-    protected $optionalCheckboxes = array(
+    protected $optionalErrorHandlingOptions = array(
         'force_creation',
         'tls_server_insecure',
         'tls_server_ignore_cn',
@@ -51,6 +50,7 @@ class RestApiResourceForm extends Form
     public function init()
     {
         $this->setName('form_config_resource_restapi');
+        $this->setValidatePartial(true);
     }
 
     public function createElements(array $formData)
@@ -137,7 +137,9 @@ class RestApiResourceForm extends Form
             );
         }
 
-        $this->ensureOnlyCheckboxes(array_intersect($this->optionalCheckboxes, array_keys($formData)));
+        $this->ensureOnlyErrorHandlingOptions(
+            array_intersect($this->optionalErrorHandlingOptions, array_keys($formData))
+        );
 
         if (isset($formData['tls_server_rootca_cert'])) {
             $this->addRootCaCertCache();
@@ -147,21 +149,23 @@ class RestApiResourceForm extends Form
     }
 
     /**
-     * Ensure that only the given checkboxes are present
+     * Ensure that only the given error handling options are present
+     *
+     * @param   string[]    $optionalErrorHandlingOptions
      *
      * @return $this
      */
-    protected function ensureOnlyCheckboxes(array $checkboxes = array())
+    protected function ensureOnlyErrorHandlingOptions(array $optionalErrorHandlingOptions = array())
     {
-        foreach (array_diff($this->optionalCheckboxes, $checkboxes) as $checkbox) {
-            $this->removeElement($checkbox);
+        foreach (array_diff($this->optionalErrorHandlingOptions, $optionalErrorHandlingOptions) as $option) {
+            $this->removeElement($option);
         }
 
-        foreach ($checkboxes as $checkbox) {
-            $element = $this->getElement($checkbox);
+        foreach ($optionalErrorHandlingOptions as $option) {
+            $element = $this->getElement($option);
 
             if ($element === null) {
-                switch ($checkbox) {
+                switch ($option) {
                     case 'force_creation':
                         $this->addElement('checkbox', 'force_creation', array(
                             'ignore'        => true,
@@ -190,7 +194,7 @@ class RestApiResourceForm extends Form
                         break;
 
                     case 'tls_server_discover_rootca':
-                        $this->addElement('checkbox', 'tls_server_discover_rootca', array(
+                        $this->addElement('submit', 'tls_server_discover_rootca', array(
                             'ignore'        => true,
                             'label'         => $this->translate('Discover Root CA'),
                             'description'   => $this->translate(
@@ -316,6 +320,17 @@ class RestApiResourceForm extends Form
         return $this;
     }
 
+    public function isValidPartial(array $formData)
+    {
+        if (! parent::isValidPartial($formData)) {
+            return false;
+        }
+
+        $result = $this->isEndpointValid();
+        $this->priorizeElements();
+        return $result;
+    }
+
     public function isValid($formData)
     {
         if (! parent::isValid($formData)) {
@@ -334,21 +349,21 @@ class RestApiResourceForm extends Form
      */
     protected function isEndpointValid()
     {
-        if ($this->isBoxChecked('force_creation')) {
+        if ($this->isElementChecked('force_creation')) {
             return true;
         }
 
         if (Url::fromPath($this->getValue('baseurl'))->getScheme() === 'https') {
             if (! $this->probeInsecureTlsConnection()) {
-                $this->ensureOnlyCheckboxes(array('force_creation'));
+                $this->ensureOnlyErrorHandlingOptions(array('force_creation'));
                 return false;
             }
 
-            if ($this->isBoxChecked('tls_server_insecure')) {
+            if ($this->isElementChecked('tls_server_insecure')) {
                 return true;
             }
 
-            if ($this->isBoxChecked('tls_server_discover_rootca')) {
+            if ($this->isElementChecked('tls_server_discover_rootca')) {
                 $this->removeElement('tls_server_rootca_cert');
 
                 $certs = $this->fetchServerTlsCertChain();
@@ -366,7 +381,7 @@ class RestApiResourceForm extends Form
                     return false;
                 }
 
-                $this->ensureOnlyCheckboxes(array(
+                $this->ensureOnlyErrorHandlingOptions(array(
                     'force_creation',
                     'tls_server_insecure',
                     'tls_server_ignore_cn',
@@ -375,13 +390,12 @@ class RestApiResourceForm extends Form
                 ));
                 $this->addRootCaInfo($certs['root']);
                 $this->addRootCaCertCache()->setValue($certs['root']['x509']);
-                $this->getElement('tls_server_discover_rootca')->setValue(null);
                 return false;
             }
 
             $rootCaCert = $this->getValue('tls_server_rootca_cert');
 
-            if ($rootCaCert !== null && $this->isBoxChecked('tls_server_accept_rootca')) {
+            if ($rootCaCert !== null && $this->isElementChecked('tls_server_accept_rootca')) {
                 $temporaryLocalFileStorage = new TemporaryLocalFileStorage();
                 $temporaryLocalFileStorage->create('rootca.pem', $rootCaCert);
                 $rootCaPath = $temporaryLocalFileStorage->resolvePath('rootca.pem');
@@ -396,22 +410,22 @@ class RestApiResourceForm extends Form
                 ));
             }
 
-            if (! $this->probeSecureTlsConnection($this->isBoxChecked('tls_server_ignore_cn'), $rootCaPath)) {
-                $checkboxes = array(
+            if (! $this->probeSecureTlsConnection($this->isElementChecked('tls_server_ignore_cn'), $rootCaPath)) {
+                $optionalErrorHandlingOptions = array(
                     'force_creation',
                     'tls_server_insecure',
                     'tls_server_ignore_cn',
                     'tls_server_discover_rootca'
                 );
                 if ($rootCaCert !== null) {
-                    $checkboxes[] = 'tls_server_accept_rootca';
+                    $optionalErrorHandlingOptions[] = 'tls_server_accept_rootca';
                 }
 
-                $this->ensureOnlyCheckboxes($checkboxes);
+                $this->ensureOnlyErrorHandlingOptions($optionalErrorHandlingOptions);
                 return false;
             }
         } elseif (! $this->probeTcpConnection()) {
-            $this->ensureOnlyCheckboxes(array('force_creation'));
+            $this->ensureOnlyErrorHandlingOptions(array('force_creation'));
             return false;
         }
 
@@ -532,17 +546,17 @@ class RestApiResourceForm extends Form
     }
 
     /**
-     * Return whether the given checkbox is present and checked
+     * Return whether the given element is present and checked
      *
      * @param   string  $name
      *
      * @return  bool
      */
-    protected function isBoxChecked($name)
+    protected function isElementChecked($name)
     {
-        /** @var Zend_Form_Element_Checkbox $checkbox */
-        $checkbox = $this->getElement($name);
-        return $checkbox !== null && $checkbox->isChecked();
+        /** @var \Zend_Form_Element_Checkbox|\Zend_Form_Element_Submit $element */
+        $element = $this->getElement($name);
+        return $element !== null && $element->isChecked();
     }
 
     /**
