@@ -4,6 +4,7 @@
 namespace Icinga\Data;
 
 use Icinga\Application\Config;
+use Icinga\Protocol\Http\HttpConnection;
 use Icinga\Util\ConfigAwareFactory;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Data\Db\DbConnection;
@@ -108,6 +109,9 @@ class ResourceFactory implements ConfigAwareFactory
                 }
 
                 $resource = new LdapConnection($config);
+                break;
+            case 'http':
+                $resource = new HttpConnection($config);
                 break;
             case 'file':
                 $resource = new FileReader($config);
