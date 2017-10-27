@@ -130,12 +130,22 @@ class RestApiResourceForm extends Form
         if (isset($formData['tls_server_rootca_cert'])) {
             $this->addRootCaCertCache();
 
-            if (! in_array('tls_server_discover_rootca', $optionalErrorHandlingOptions)) {
-                $optionalErrorHandlingOptions[] = 'tls_server_discover_rootca';
-            }
+            $optionalErrorHandlingOptions = array_merge(
+                $optionalErrorHandlingOptions,
+                array('tls_server_discover_rootca', 'tls_server_accept_rootca')
+            );
+
+            $this->addRootCaInfo(array(
+                'x509'      => $formData['tls_server_rootca_cert'],
+                'parsed'    => openssl_x509_parse($formData['tls_server_rootca_cert']),
+            ));
         }
 
         $this->ensureOnlyErrorHandlingOptions($optionalErrorHandlingOptions);
+
+        if (isset($formData['tls_server_rootca_cert']) && $this->getRequest()->getMethod() === 'GET') {
+            $this->getElement('tls_server_accept_rootca')->setValue(1);
+        }
 
         return $this->priorizeElements();
     }
@@ -179,7 +189,6 @@ class RestApiResourceForm extends Form
 
                     case 'tls_server_ignore_cn':
                         $this->addElement('checkbox', 'tls_server_ignore_cn', array(
-                            'ignore'        => true,
                             'label'         => $this->translate('Ignore Remote CN'),
                             'description'   => $this->translate('Ignore the remote\'s TLS certificate\'s CN')
                         ));
