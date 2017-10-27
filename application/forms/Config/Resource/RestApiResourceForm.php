@@ -12,8 +12,6 @@ use Icinga\Web\Form;
 use Icinga\Web\Form\Validator\RestApiUrlValidator;
 use Icinga\Web\Form\Validator\TlsCertValidator;
 use Icinga\Web\Url;
-use Zend_Form_Element;
-use Zend_Form_Element_Hidden;
 
 /**
  * Form class for adding/modifying ReST API resources
@@ -269,7 +267,7 @@ class RestApiResourceForm extends Form
     /**
      * Add and return form element for the discovered TLS root CA certificate
      *
-     * @return Zend_Form_Element_Hidden
+     * @return \Zend_Form_Element_Hidden
      */
     protected function addRootCaCertCache()
     {
@@ -303,7 +301,7 @@ class RestApiResourceForm extends Form
 
         $nextOrder = -1;
         foreach ($priorizedElements as $priorizedElement) {
-            /** @var Zend_Form_Element $priorizedElement */
+            /** @var \Zend_Form_Element $priorizedElement */
             $priorizedElement->setOrder(++$nextOrder);
         }
 
