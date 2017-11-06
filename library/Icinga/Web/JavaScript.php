@@ -24,7 +24,6 @@ class JavaScript
         'js/icinga/timezone.js',
         'js/icinga/behavior/application-state.js',
         'js/icinga/behavior/autofocus.js',
-        'js/icinga/behavior/tooltip.js',
         'js/icinga/behavior/sparkline.js',
         'js/icinga/behavior/tristate.js',
         'js/icinga/behavior/dropdown.js',
@@ -36,14 +35,12 @@ class JavaScript
 
     protected static $vendorFiles = array(
         'js/vendor/jquery-2.1.0',
-        'js/vendor/jquery.sparkline',
-        'js/vendor/jquery.tipsy'
+        'js/vendor/jquery.sparkline'
     );
 
     protected static $ie8VendorFiles = array(
         'js/vendor/jquery-1.11.0',
-        'js/vendor/jquery.sparkline',
-        'js/vendor/jquery.tipsy'
+        'js/vendor/jquery.sparkline'
     );
 
     public static function sendMinified()
