@@ -278,7 +278,7 @@ abstract class RepositoryForm extends Form
     {
         $data = $this->getData();
         if (! empty($data)) {
-            $this->populate($data);
+            $this->setDefaults($data);
         }
     }
 
@@ -301,7 +301,7 @@ abstract class RepositoryForm extends Form
             $data = get_object_vars($row);
         }
 
-        $this->populate($data);
+        $this->setDefaults($data);
     }
 
     /**
