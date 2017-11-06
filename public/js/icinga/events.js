@@ -105,6 +105,8 @@
             // Note: It is important that this is the first handler for this event!
             $(document).on('rendered', { self: this }, this.applyHandlers);
 
+            $(document).on('visibilitychange', { self: this }, this.onVisibilityChange);
+
             $.each(this.icinga.behaviors, function (name, behavior) {
                 behavior.bind($(document));
             });
@@ -170,6 +172,18 @@
             var icinga = event.data.self.icinga;
             icinga.logger.info('Unloading Icinga');
             icinga.destroy();
+        },
+
+        onVisibilityChange: function (event) {
+            var icinga = event.data.self.icinga;
+
+            if (document.visibilityState === undefined || document.visibilityState === 'visible') {
+                icinga.loader.autorefreshSuspended = false;
+                icinga.logger.debug('Page visible, enabling auto-refresh');
+            } else {
+                icinga.loader.autorefreshSuspended = true;
+                icinga.logger.debug('Page invisible, disabling auto-refresh');
+            }
         },
 
         /**
@@ -610,6 +624,7 @@
             $(document).off('change', 'form input.autosubmit', this.submitForm);
             $(document).off('focus', 'form select[data-related-radiobtn]', this.autoCheckRadioButton);
             $(document).off('focus', 'form input[data-related-radiobtn]', this.autoCheckRadioButton);
+            $(document).off('visibilitychange', this.onVisibilityChange);
         },
 
         destroy: function() {
