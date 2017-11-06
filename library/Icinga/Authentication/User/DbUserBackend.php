@@ -225,9 +225,7 @@ class DbUserBackend extends DbRepository implements UserBackendInterface, Inspec
     {
         try {
             $passwordHash = $this->getPasswordHash($user->getUsername());
-            $passwordSalt = $this->getSalt($passwordHash);
-            $hashToCompare = $this->hashPassword($password, $passwordSalt);
-            return $hashToCompare === $passwordHash;
+            return crypt($password, $passwordHash) === $passwordHash;
         } catch (Exception $e) {
             throw new AuthenticationException(
                 'Failed to authenticate user "%s" against backend "%s". An exception was thrown:',
@@ -236,18 +234,6 @@ class DbUserBackend extends DbRepository implements UserBackendInterface, Inspec
                 $e
             );
         }
-    }
-
-    /**
-     * Extract salt from the given password hash
-     *
-     * @param   string  $hash   The hashed password
-     *
-     * @return  string
-     */
-    protected function getSalt($hash)
-    {
-        return substr($hash, strlen(self::HASH_ALGORITHM), self::SALT_LENGTH);
     }
 
     /**
