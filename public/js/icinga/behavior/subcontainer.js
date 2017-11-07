@@ -9,7 +9,7 @@
 
     'use strict';
 
-    var subcontainerBackups = Object.create(null);
+    var subcontainerBackups = {};
 
     function backupSubcontainer(collapsible) {
         var subcontainerId = getSubcontainerId(collapsible);
@@ -41,7 +41,7 @@
     function getSubcontainerId(collapsible) {
         var subcontainerId = collapsible.parents('.subcontainer').attr('id');
 
-        return typeof subcontainerId === 'undefined' ? null : subcontainerId;
+        return typeof subcontainerId === 'undefined' ? null : 'subcontainer-' + subcontainerId;
     }
 
     function Subcontainer(icinga) {
@@ -52,7 +52,7 @@
         $(document).on('click', '.subcontainer .subcontainer-toggle', this.onToggle);
     }
 
-    Subcontainer.prototype = Object.create(Icinga.EventListener.prototype);
+    Subcontainer.prototype = new Icinga.EventListener();
 
     Subcontainer.prototype.onRendered = function(event) {
         var eventTarget = $(event.target);
