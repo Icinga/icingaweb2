@@ -16,27 +16,15 @@ use Icinga\Web\Announcement;
  */
 class AnnouncementIniRepository extends IniRepository
 {
-    /**
-     * {@inheritdoc}
-     */
     protected $queryColumns = array('announcement' => array('id', 'author', 'message', 'hash', 'start', 'end'));
 
-    /**
-     * {@inheritdoc}
-     */
     protected $triggers = array('announcement');
 
-    /**
-     * {@inheritDoc}
-     */
     protected $configs = array('announcement' => array(
         'name'      => 'announcements',
         'keyColumn' => 'id'
     ));
 
-    /**
-     * {@inheritDoc}
-     */
     protected $conversionRules = array('announcement' => array(
         'start' => 'timestamp',
         'end'   => 'timestamp'
