@@ -15,7 +15,9 @@
     <?php foreach ($modules as $module): ?>
         <tr>
             <td>
-                <?php if ($module->enabled && $module->loaded) {
+                <?php if (! $module->installed) {
+                    $this->icon('flash', sprintf($this->translate('Module %s is dangling'), $module->name));
+                } elseif ($module->enabled && $module->loaded) {
                     echo $this->icon('thumbs-up', sprintf($this->translate('Module %s is enabled'), $module->name));
                 } elseif (! $module->enabled) {
                     echo $this->icon('block', sprintf($this->translate('Module %s is disabled'), $module->name));
