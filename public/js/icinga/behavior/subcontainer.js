@@ -49,7 +49,7 @@
 
         this.on('rendered', this.onRendered, this);
 
-        $(document).on('click', '.subcontainer .toggle', this.onToggle);
+        $(document).on('click', '.subcontainer .subcontainer-toggle', this.onToggle);
     }
 
     Subcontainer.prototype = Object.create(Icinga.EventListener.prototype);
