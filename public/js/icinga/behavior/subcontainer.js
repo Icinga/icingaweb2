@@ -73,7 +73,7 @@
     Subcontainer.prototype.onToggle = function(event) {
         var collapsible = $(event.target).parents('.subcontainer').first().find('.subcontainer-content').first();
 
-        if (subcontainerContent.length > 0) {
+        if (collapsible.length > 0) {
             if (collapsible.hasClass('collapsed')) {
                 icinga.loader.loadUrl(
                     collapsible.data('icingaUrl'),
