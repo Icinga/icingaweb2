@@ -93,6 +93,10 @@ class Help extends Zend_Form_Decorator_Abstract
                     . '</span>';
             }
 
+            $helpContent = '<span class="description">' . $description . '</span>';
+            /*
+             * old help content for (i) icon
+             *
             $helpContent = $this->getView()->icon(
                 'info-circled',
                 $description . ($description && $requirement ? ' ' : '') . $requirement,
@@ -101,6 +105,7 @@ class Help extends Zend_Form_Decorator_Abstract
                     'aria-hidden'   => $this->accessible ? 'true' : 'false'
                 )
             ) . $helpContent;
+            */
         }
 
         switch ($this->getPlacement()) {

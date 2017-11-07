@@ -87,14 +87,21 @@ form.inline,
 button:hover .icon-cancel {
   color: @color-critical;
 }
-
+/*
 .control-info {
+  cursor: pointer;
+  //.opacity(0);
   color: @text-color-light;
   margin-left: 0.2em;
 
   &:hover {
-    .opacity(0.6);
+  //  .opacity(0);
   }
+}
+*/
+
+.description {
+  display: none;
 }
 
 .control-label {
@@ -109,8 +116,19 @@ label {
 .control-label-group {
   display: inline-block;
   padding-right: @horizontal-padding;
-  text-align: right;
-  width: 10em;
+  text-align: left;
+  min-width: 20em;
+}
+
+.checkbox-group {
+  border: none;
+  margin: 0;
+  padding: 0;
+}
+
+input[type="checkbox"] {
+  float: left;
+  margin: 0 1em;
 }
 
 .control-group {
