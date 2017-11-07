@@ -39,13 +39,9 @@
     }
 
     function getSubcontainerId(collapsible) {
-        var subcontainerId = null;
+        var subcontainerId = collapsible.parents('.subcontainer').attr('id');
 
-        collapsible.parents('.subcontainer').first().each(function() {
-            subcontainerId = $(this).attr('id');
-        });
-
-        return subcontainerId;
+        return typeof subcontainerId === 'undefined' ? null : subcontainerId;
     }
 
     function Subcontainer(icinga) {
@@ -65,17 +61,19 @@
             backupSubcontainer(eventTarget);
         } else {
             eventTarget.find('.subcontainer').each(function() {
-                $(this).find('.subcontainer-content').first().each(function() {
-                    restoreSubcontainer($(this));
-                });
+                var subcontainerContent = $(this).find('.subcontainer-content').first();
+
+                if (subcontainerContent.length > 0) {
+                    restoreSubcontainer(subcontainerContent);
+                }
             });
         }
     };
 
     Subcontainer.prototype.onToggle = function(event) {
-        $(event.target).parents('.subcontainer').first().find('.subcontainer-content').first().each(function() {
-            var collapsible = $(this);
+        var collapsible = $(event.target).parents('.subcontainer').first().find('.subcontainer-content').first();
 
+        if (subcontainerContent.length > 0) {
             if (collapsible.hasClass('collapsed')) {
                 icinga.loader.loadUrl(
                     collapsible.data('icingaUrl'),
@@ -92,7 +90,7 @@
             }
 
             collapsible.toggleClass('collapsed');
-        });
+        }
     };
 
     Icinga.Behaviors = Icinga.Behaviors || {};
