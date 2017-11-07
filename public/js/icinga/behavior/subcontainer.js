@@ -19,7 +19,7 @@
         }
     }
 
-    function unbackupSubcontainer(collapsible) {
+    function removeSubcontainer(collapsible) {
         var subcontainerId = getSubcontainerId(collapsible);
 
         if (subcontainerId !== null) {
@@ -86,7 +86,7 @@
                     true
                 );
             } else {
-                unbackupSubcontainer(collapsible);
+                removeSubcontainer(collapsible);
 
                 collapsible.empty();
             }
