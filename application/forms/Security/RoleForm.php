@@ -35,20 +35,20 @@ class RoleForm extends ConfigForm
      */
     public function init()
     {
-        $this->providedPermissions = array(
-            '*'                                             => $this->translate('Allow everything') . ' (*)',
-            'application/share/navigation'                  => $this->translate('Allow to share navigation items')
-                . ' (application/share/navigation)',
-            'application/stacktraces'                       => $this->translate(
-                'Allow to adjust in the preferences whether to show stacktraces'
-            ) . ' (application/stacktraces)',
-            'application/log'                               => $this->translate('Allow to view the application log')
-                . ' (application/log)',
-            'admin'                                         => $this->translate(
-                'Grant admin permissions, e.g. manage announcements'
-            ) . ' (admin)',
-            'config/*'                                      => $this->translate('Allow config access') . ' (config/*)'
-        );
+        $this->providedPermissions = array('General' =>
+            array(
+            //todo changed '*' to 'all', does that change anything..?
+            'all'                                           => $this->translate('Everything'),
+            'admin'                                         => $this->translate('Grant admin permissions, e.g. manage announcements'),
+            'config/*'                                      => $this->translate('Config access')
+        ));
+
+        $this->providedPermissions['Application'] =
+            array(
+                'application/share/navigation'                  => $this->translate('Share navigation items'),
+                'application/stacktraces'                       => $this->translate('Adjust in the preferences whether to show stacktraces'),
+                'application/log'                               => $this->translate('View the application log')
+            );
 
         $helper = new Zend_Form_Element('bogus');
         $this->providedRestrictions = array(
@@ -66,20 +66,21 @@ class RoleForm extends ConfigForm
             )
         );
 
+        $this->providedPermissions['Module'] = array();
         $mm = Icinga::app()->getModuleManager();
         foreach ($mm->listInstalledModules() as $moduleName) {
+
             $modulePermission = $mm::MODULE_PERMISSION_NS . $moduleName;
-            $this->providedPermissions[$modulePermission] = sprintf(
-                $this->translate('Allow access to module %s') . ' (%s)',
-                $moduleName,
-                $modulePermission
+            $this->providedPermissions['Module'][$modulePermission] = sprintf(
+                $this->translate('Allow access to module %s'),
+                $moduleName
             );
 
             $module = $mm->getModule($moduleName, false);
+            $modulePermissions = array();
             foreach ($module->getProvidedPermissions() as $permission) {
                 /** @var object $permission */
-                $this->providedPermissions[$permission->name] = $permission->description
-                    . ' (' . $permission->name . ')';
+                $modulePermissions[$permission->name] = $permission->description;
             }
             foreach ($module->getProvidedRestrictions() as $restriction) {
                 /** @var object $restriction */
@@ -96,7 +97,16 @@ class RoleForm extends ConfigForm
                     'name'        => $restriction->name
                 );
             }
+
+            if ($modulePermissions) {
+                $this->providedPermissions[$moduleName] = $modulePermissions;
+            }
         }
+
+        /*/ todo: look at array structure
+        var_dump($this->providedPermissions);
+        exit;
+        */
     }
 
     /**
@@ -131,19 +141,31 @@ class RoleForm extends ConfigForm
                     'description'   => $this->translate('Comma-separated list of groups that are assigned to the role')
                 ),
             ),
-            array(
-                'multiselect',
-                'permissions',
-                array(
-                    'label'         => $this->translate('Permissions Set'),
-                    'description'   => $this->translate(
-                        'The permissions to grant. You may select more than one permission'
-                    ),
-                    'multiOptions'  => $this->providedPermissions,
-                    'class'         => 'grant-permissions'
-                )
-            )
+
         ));
+
+        $elements = array();
+        foreach ($this->providedPermissions as $name => $module) {
+            //TODO (JeM): add label for foldables?
+            foreach ($module as $location => $label) {
+                $elements[] = $this->createElement(
+                    'checkbox',
+                    $label,
+                    array(
+                        'label'         => $label,
+                        'description'   => $location
+                    )
+                );
+            }
+            if (! empty($elements)) {
+                $name = ucfirst($name);
+                $this->addDisplayGroup($elements, $name, array('class'=>'checkbox-group'));
+                $this->getDisplayGroup($name)->removeDecorator('DtDdWrapper');
+                $elements = array();
+            }
+        }
+
+
         foreach ($this->providedRestrictions as $name => $spec) {
             $this->addElement(
                 'text',
@@ -154,6 +176,7 @@ class RoleForm extends ConfigForm
                 )
             );
         }
+
         return $this;
     }
 
