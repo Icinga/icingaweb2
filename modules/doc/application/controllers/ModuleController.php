@@ -148,14 +148,14 @@ class ModuleController extends DocController
 
         $imageInfo = new SplFileInfo($imagePath);
 
-        $ETag = md5($imageInfo->getMTime() . $imagePath);
+        $etag = md5($imageInfo->getMTime() . $imagePath);
         $lastModified = gmdate('D, d M Y H:i:s T', $imageInfo->getMTime());
         $match = false;
 
         if (isset($_SERER['HTTP_IF_NONE_MATCH'])) {
             $ifNoneMatch = explode(', ', stripslashes($_SERVER['HTTP_IF_NONE_MATCH']));
             foreach ($ifNoneMatch as $tag) {
-                if ($tag === $ETag) {
+                if ($tag === $etag) {
                     $match = true;
                     break;
                 }
@@ -167,19 +167,16 @@ class ModuleController extends DocController
             }
         }
 
-        header('ETag: "' . $ETag . '"');
-        header('Cache-Control: no-transform,public,max-age=3600');
-        header('Last-Modified: ' . $lastModified);
-        // Set additional headers for compatibility reasons (Cache-Control should have precedence) in case
-        // session.cache_limiter is set to no cache
-        header('Pragma: cache');
-        header('Expires: ' . gmdate('D, d M Y H:i:s T', time() + 3600));
+        $this->getResponse()
+            ->setHeader('ETag', $etag)
+            ->setHeader('Cache-Control', 'no-transform,public,max-age=3600,must-revalidate', true);
 
         if ($match) {
-            header('HTTP/1.1 304 Not Modified');
+            $this->getResponse()->setHttpResponseCode(304);
         } else {
             $finfo = new finfo();
-            header('Content-Type: ' . $finfo->file($imagePath, FILEINFO_MIME_TYPE));
+            $this->getResponse()
+                ->setHeader('Content-Type', $finfo->file($imagePath, FILEINFO_MIME_TYPE));
             readfile($imagePath);
         }
     }
