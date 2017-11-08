@@ -74,7 +74,7 @@
         var collapsible = $(event.target).closest('.subcontainer').find('.subcontainer-content:first');
 
         if (collapsible.length > 0) {
-            if (collapsible.hasClass('collapsed')) {
+            if (! collapsible.hasClass('expanded')) {
                 icinga.loader.loadUrl(
                     collapsible.data('icingaUrl'),
                     collapsible,
@@ -89,7 +89,7 @@
                 collapsible.empty();
             }
 
-            collapsible.toggleClass('collapsed');
+            collapsible.toggleClass('expanded');
         }
     };
 
