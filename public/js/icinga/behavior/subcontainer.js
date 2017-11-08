@@ -71,7 +71,7 @@
     };
 
     Subcontainer.prototype.onToggle = function(event) {
-        var collapsible = $(event.target).parents('.subcontainer').first().find('.subcontainer-content').first();
+        var collapsible = $(event.target).closest('.subcontainer').find('.subcontainer-content').first();
 
         if (collapsible.length > 0) {
             if (collapsible.hasClass('collapsed')) {
