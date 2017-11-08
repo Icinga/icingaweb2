@@ -45,8 +45,7 @@ class Controller extends IcingaWebController
             $query->limit();  // Resets any default limit and offset
         }
 
-        switch ($desiredFormat)
-        {
+        switch ($desiredFormat) {
             case 'sql':
                 echo '<pre>'
                     . htmlspecialchars(wordwrap($query->dump()))
@@ -57,7 +56,10 @@ class Controller extends IcingaWebController
                 $response
                     ->setHeader('Content-Type', 'application/json')
                     ->setHeader('Cache-Control', 'no-store')
-                    ->setHeader('Content-Disposition', 'inline; filename=' . $this->getRequest()->getActionName() . '.json')
+                    ->setHeader(
+                        'Content-Disposition',
+                        'inline; filename=' . $this->getRequest()->getActionName() . '.json'
+                    )
                     ->appendBody(Json::encode($query->getQuery()->fetchAll()))
                     ->sendResponse();
                 exit;
@@ -66,7 +68,10 @@ class Controller extends IcingaWebController
                 $response
                     ->setHeader('Content-Type', 'text/csv')
                     ->setHeader('Cache-Control', 'no-store')
-                    ->setHeader('Content-Disposition', 'attachment; filename=' . $this->getRequest()->getActionName() . '.csv')
+                    ->setHeader(
+                        'Content-Disposition',
+                        'attachment; filename=' . $this->getRequest()->getActionName() . '.csv'
+                    )
                     ->appendBody((string) Csv::fromQuery($query))
                     ->sendResponse();
                 exit;
