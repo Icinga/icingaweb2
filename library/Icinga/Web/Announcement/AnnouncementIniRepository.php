@@ -16,27 +16,15 @@ use Icinga\Web\Announcement;
  */
 class AnnouncementIniRepository extends IniRepository
 {
-    /**
-     * {@inheritdoc}
-     */
     protected $queryColumns = array('announcement' => array('id', 'author', 'message', 'hash', 'start', 'end'));
 
-    /**
-     * {@inheritdoc}
-     */
     protected $triggers = array('announcement');
 
-    /**
-     * {@inheritDoc}
-     */
     protected $configs = array('announcement' => array(
         'name'      => 'announcements',
         'keyColumn' => 'id'
     ));
 
-    /**
-     * {@inheritDoc}
-     */
     protected $conversionRules = array('announcement' => array(
         'start' => 'timestamp',
         'end'   => 'timestamp'
@@ -54,8 +42,10 @@ class AnnouncementIniRepository extends IniRepository
         if ($timestamp !== null) {
             $dateTime = new DateTime();
             $dateTime->setTimestamp($timestamp);
+
             return $dateTime;
         }
+
         return null;
     }
 
@@ -83,6 +73,7 @@ class AnnouncementIniRepository extends IniRepository
         if (! isset($new->id)) {
             $new->id = uniqid();
         }
+
         if (! isset($new->hash)) {
             $announcement = new Announcement($new->toArray());
             $new->hash = $announcement->getHash();
@@ -117,11 +108,14 @@ class AnnouncementIniRepository extends IniRepository
     public function getEtag()
     {
         $file = $this->getDataSource('announcement')->getConfigFile();
+
         if (@is_readable($file)) {
             $mtime = filemtime($file);
             $size = filesize($file);
+
             return hash('crc32', $mtime . $size);
         }
+
         return null;
     }
 
@@ -133,6 +127,7 @@ class AnnouncementIniRepository extends IniRepository
     public function findActive()
     {
         $now = new DateTime();
+
         $query = $this
             ->select(array('hash', 'message'))
             ->setFilter(new FilterAnd(array(
@@ -140,6 +135,7 @@ class AnnouncementIniRepository extends IniRepository
                 Filter::expression('end', '>=', $now)
             )))
             ->order('start');
+
         return $query;
     }
 
@@ -151,20 +147,25 @@ class AnnouncementIniRepository extends IniRepository
     public function findNextActive()
     {
         $now = new DateTime();
+
         $query = $this
             ->select(array('start', 'end'))
             ->setFilter(Filter::matchAny(array(
                 Filter::expression('start', '>', $now), Filter::expression('end', '>', $now)
             )));
+
         $refresh = null;
+
         foreach ($query as $row) {
             $min = min($row->start->getTimestamp(), $row->end->getTimestamp());
+
             if ($refresh === null) {
                 $refresh = $min;
             } else {
                 $refresh = min($refresh, $min);
             }
         }
+
         return $refresh;
     }
 }
