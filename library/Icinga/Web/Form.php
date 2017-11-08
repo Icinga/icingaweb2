@@ -218,6 +218,20 @@ class Form extends Zend_Form
     );
 
     /**
+     * Decorator for styled checkboxes
+     *
+     * @var array
+     */
+    public static $checkboxDecorators = array(
+        array('Help', array('placement' => 'APPEND')),
+        array('ViewHelper', array('separator' => '')),
+        array('Errors', array('separator' => '')),
+        array('Label', array('placement' => 'APPEND')),
+        array('Description', array('tag' => 'span', 'placement' => 'APPEND', 'class' => 'description')),
+        array('HtmlTag', array('tag' => 'div', 'class' => 'control-group'))
+    );
+
+    /**
      * (non-PHPDoc)
      * @see \Zend_Form::construct() For the method documentation.
      */
@@ -904,6 +918,8 @@ class Form extends Zend_Form
                     array_splice($options['decorators'], 1, 0, array(array('Spinner', array('separator' => ''))));
                 } elseif ($type === 'hidden') {
                     $options['decorators'] = array('ViewHelper');
+                } elseif ($type === 'checkbox') {
+                    $options['decorators'] = static::$checkboxDecorators;
                 }
             }
         } else {
@@ -912,6 +928,8 @@ class Form extends Zend_Form
                 array_splice($options['decorators'], 1, 0, array(array('Spinner', array('separator' => ''))));
             } elseif ($type === 'hidden') {
                 $options['decorators'] = array('ViewHelper');
+            } elseif ($type === 'checkbox') {
+                $options = array('decorators' => static::$checkboxDecorators);
             }
         }
 

@@ -146,7 +146,6 @@ class RoleForm extends ConfigForm
 
         $elements = array();
         foreach ($this->providedPermissions as $name => $module) {
-            //TODO (JeM): add label for foldables?
             foreach ($module as $location => $label) {
                 $elements[] = $this->createElement(
                     'checkbox',
@@ -159,8 +158,10 @@ class RoleForm extends ConfigForm
             }
             if (! empty($elements)) {
                 $name = ucfirst($name);
+                //TODO (JeM): add label for foldables?
                 $this->addDisplayGroup($elements, $name, array('class'=>'checkbox-group'));
                 $this->getDisplayGroup($name)->removeDecorator('DtDdWrapper');
+                $this->getDisplayGroup($name)->removeDecorator('HtmlTag');
                 $elements = array();
             }
         }
