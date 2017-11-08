@@ -61,7 +61,7 @@
             backupSubcontainer(eventTarget);
         } else {
             eventTarget.find('.subcontainer').each(function() {
-                var subcontainerContent = $(this).find('.subcontainer-content').first();
+                var subcontainerContent = $(this).find('.subcontainer-content:first');
 
                 if (subcontainerContent.length > 0) {
                     restoreSubcontainer(subcontainerContent);
@@ -71,7 +71,7 @@
     };
 
     Subcontainer.prototype.onToggle = function(event) {
-        var collapsible = $(event.target).closest('.subcontainer').find('.subcontainer-content').first();
+        var collapsible = $(event.target).closest('.subcontainer').find('.subcontainer-content:first');
 
         if (collapsible.length > 0) {
             if (collapsible.hasClass('collapsed')) {
