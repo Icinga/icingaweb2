@@ -290,16 +290,20 @@ class Perfdata
         }
 
         switch (count($parts)) {
+            /* @noinspection PhpMissingBreakStatementInspection */
             case 5:
                 if ($parts[4] !== '') {
                     $this->maxValue = self::convert($parts[4], $this->unit);
                 }
+            /* @noinspection PhpMissingBreakStatementInspection */
             case 4:
                 if ($parts[3] !== '') {
                     $this->minValue = self::convert($parts[3], $this->unit);
                 }
+            /* @noinspection PhpMissingBreakStatementInspection */
             case 3:
                 $this->criticalThreshold = trim($parts[2]) ? trim($parts[2]) : null;
+                // Fallthrough
             case 2:
                 $this->warningThreshold = trim($parts[1]) ? trim($parts[1]) : null;
         }

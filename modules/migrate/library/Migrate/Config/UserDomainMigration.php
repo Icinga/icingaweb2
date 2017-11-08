@@ -127,7 +127,6 @@ class UserDomainMigration
                 rename($from, $to);
             }
         }
-
     }
 
     protected function migrateNavigation()

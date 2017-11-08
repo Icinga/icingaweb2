@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<ruleset name="PHP_CodeSniffer">
+    <description>Sniff our code a while</description>
+
+    <file>application/</file>
+    <file>library/Icinga</file>
+    <file>modules/</file>
+    <file>test/</file>
+
+    <exclude-pattern>vendor/*</exclude-pattern>
+    <exclude-pattern>application/fonts/fontello-ifont/*</exclude-pattern>
+
+    <arg value="wps"/>
+    <arg name="colors"/>
+    <arg name="report-width" value="auto"/>
+    <arg name="report-full"/>
+    <arg name="report-gitblame"/>
+    <arg name="report-summary"/>
+    <arg name="encoding" value="UTF-8"/>
+    <arg name="extensions" value="php"/>
+
+    <rule ref="icingaweb2.ruleset.xml" />
+</ruleset>

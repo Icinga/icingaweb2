@@ -204,7 +204,10 @@ class ApiCommandTransport implements CommandTransportInterface
                 ->setPayload($command->getData())
                 ->send();
         } catch (JsonDecodeException $e) {
-            throw new CommandTransportException('Got invalid JSON response from the Icinga 2 API: %s', $e->getMessage());
+            throw new CommandTransportException(
+                'Got invalid JSON response from the Icinga 2 API: %s',
+                $e->getMessage()
+            );
         }
 
         if (isset($response['error'])) {
@@ -256,9 +259,15 @@ class ApiCommandTransport implements CommandTransportInterface
         try {
             $response = $request->send();
         } catch (CurlException $e) {
-            throw new CommandTransportException('Couldn\'t connect to the Icinga 2 API: %s', $e->getMessage());
+            throw new CommandTransportException(
+                'Couldn\'t connect to the Icinga 2 API: %s',
+                $e->getMessage()
+            );
         } catch (JsonDecodeException $e) {
-            throw new CommandTransportException('Got invalid JSON response from the Icinga 2 API: %s', $e->getMessage());
+            throw new CommandTransportException(
+                'Got invalid JSON response from the Icinga 2 API: %s',
+                $e->getMessage()
+            );
         }
 
         if (isset($response['error'])) {

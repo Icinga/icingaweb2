@@ -3,7 +3,6 @@
 
 namespace Icinga\Exception\Http;
 
-
 interface HttpExceptionInterface
 {
     /**

@@ -148,7 +148,8 @@ class ListCommand extends Command
      *   icingacli monitoring list --problems
      *   icingacli monitoring list --problems --service_state_type 0
      *   icingacli monitoring list --host=local* --service=*disk*
-     *   icingacli monitoring list --columns 'host,service,service_output' --format='$host$: $service$ ($service_output$)'
+     *   icingacli monitoring list --columns 'host,service,service_output' \
+           --format='$host$: $service$ ($service_output$)'
      */
     public function statusAction()
     {

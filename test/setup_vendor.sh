@@ -4,7 +4,7 @@ set -ex
 
 ICINGAWEB_HOME=${ICINGAWEB_HOME:="$(dirname "$(readlink -f $(dirname "$0"))")"}
 PHP_VERSION="$(php -r 'echo phpversion();')"
-PHPCS_VERSION=${PHPCS_VERSION:=2.9.1}
+PHPCS_VERSION=${PHPCS_VERSION:=3.0.2}
 MOCKERY_VERSION=${MOCKERY_VERSION:=0.9.9}
 HAMCREST_VERSION=${HAMCREST_VERSION:=2.0.0}
 
@@ -32,6 +32,12 @@ if [ ! -e "${phpcs_path}".phar ]; then
     https://github.com/squizlabs/PHP_CodeSniffer/releases/download/${PHPCS_VERSION}/phpcs.phar
 fi
 ln -svf "${phpcs_path}".phar phpcs.phar
+phpcbf_path="vendor/phpcbf-${PHPCS_VERSION}"
+if [ ! -e "${phpcbf_path}".phar ]; then
+  wget -O "${phpcbf_path}".phar \
+    https://github.com/squizlabs/PHP_CodeSniffer/releases/download/${PHPCS_VERSION}/phpcbf.phar
+fi
+ln -svf "${phpcbf_path}".phar phpcbf.phar
 
 # mockery
 mockery_path="vendor/mockery-${MOCKERY_VERSION}"

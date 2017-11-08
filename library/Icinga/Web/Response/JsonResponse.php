@@ -176,8 +176,10 @@ class JsonResponse extends Response
             'status' => $this->status
         );
         switch ($this->status) {
+            /** @noinspection PhpMissingBreakStatementInspection */
             case static::STATUS_ERROR:
                 $body['message'] = $this->getErrorMessage();
+                // Fallthrough
             case static::STATUS_FAIL:
                 $failData = $this->getFailData();
                 if ($failData !== null || $this->status === static::STATUS_FAIL) {
