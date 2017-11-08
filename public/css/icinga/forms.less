@@ -1,5 +1,123 @@
 /*! Icinga Web 2 | (c) 2014 Icinga Development Team | GPLv2+ */
 
+
+@blue-dark: #006F8F;
+@blue: #0095bf;
+@blue-light: #67c3dd;
+@blue-lighter: #e5f9ff;
+@blue-lightest: #f3faff;
+
+@border-width : 1px;
+
+* {
+  outline: none;
+}
+
+// TODO(el): .form-controls-inline control-group { display: inline-block; }
+form.inline,
+.form-inline {
+  .control-group {
+    padding: 0;
+  }
+  .form-controls {
+    margin: 0;
+  }
+  display: inline-block;
+}
+
+.form-controls {
+  margin-left: 10em;
+}
+
+.autosubmit-info {
+  margin-left: 0.5em;
+}
+
+button:hover .icon-cancel {
+  color: @color-critical;
+}
+
+.description {
+  display: none;
+}
+
+.control-label {
+  display: inline-block;
+}
+
+label {
+  color: @text-color;
+  font-size: @font-size-small;
+}
+
+.control-label-group {
+  display: inline-block;
+  padding-right: @horizontal-padding;
+  text-align: left;
+  min-width: 20em;
+}
+
+.checkbox-group {
+  border: none;
+  margin: 0;
+  padding: 0;
+  //TODO (JeM): remove when js foldables are implemented
+  border-top: solid 1px @icinga-blue;
+}
+
+.control-group {
+  padding: @vertical-padding @horizontal-padding;
+
+  .errors {
+    color: @color-critical;
+  }
+}
+
+/************************************************* INPUT, TEXTAREA, SELECT *************************************************/
+
+input[type="text"],
+textarea,
+select {
+  //border-left: @border-width solid @gray-light;
+  //background-color: @gray-lightest;
+  border: none;
+  background: none;
+  border-bottom: @border-width  solid @gray-light;
+}
+
+input[type="text"]:hover,
+textarea:hover,
+select:hover {
+  //border-left: @border-width solid @blue-light;
+  background-color: @blue-lightest;
+  border-bottom: @border-width  solid @blue-light;
+}
+
+input[type="text"]:focus,
+input[type="text"]:active,
+textarea:focus,
+textarea:active,
+select:focus {
+  //border-left: @border-width solid @blue;
+  background: @blue-lighter;
+  border-bottom: @border-width  solid @blue;
+}
+
+// Resize only vertically
+textarea {
+  overflow: auto;
+  resize: vertical;
+  width: 100%;
+  min-height: 2em;
+  height: 4em;
+}
+
+// Hide browser-styling in IE10
+select::-ms-expand {
+  display: none;
+}
+
+// todo: if this is to also affect the search bar, should it be in the forms.css? - too broad
 input:not([type]),
 input[type=text],
 input[type=date],
@@ -11,18 +129,17 @@ input[type=search],
 input[type=tel],
 input[type=time],
 input[type=url] {
-  .box-shadow(0 1px 0 0 @gray-light);
-  .transition(border 0.3s ease);
+  box-shadow(0 1px 0 0 @gray-light); //todo what's up with this?
+  //transition(border 0.3s ease);
 
   border: none;
   border-bottom: 1px solid @gray-light;
-  outline: none;
   padding: @vertical-padding / 2 @horizontal-padding / 2;
 
   &:focus:not([readonly]) {
     border-color: @icinga-blue;
   }
-
+// todo: deal with the width 20 em
   width: 20em;
 }
 
@@ -64,80 +181,77 @@ input.search {
   }
 }
 
-// TODO(el): .form-controls-inline control-group { display: inline-block; }
-form.inline,
-.form-inline {
-  .control-group {
-    padding: 0;
+/************************************************* CHECKBOX, RADIO *************************************************/
+
+//input[type="checkbox"]:not(.toggle-box),
+input[type="checkbox"],
+input[type="radio"] {
+  position: absolute; // take it out of document flow
+  opacity: 0; // hide it
+  // Box for Checkbox
+  & + label:before {
+    margin-right: 0.5em;
+    width: 1em;
+    height: 1em;
+    content: "";
+    display: inline-block;
+    vertical-align: text-top;
+    border: @border-width solid @gray-light;
   }
-  .form-controls {
-    margin: 0;
+  &:hover:enabled + label:before,
+  &:focus + label:before {
+    background: @blue-lighter;
+    border: @border-width solid @blue-light;
   }
-  display: inline-block;
-}
-
-.form-controls {
-  margin-left: 10em;
-}
-
-.autosubmit-info {
-  margin-left: 0.5em;
-}
-
-button:hover .icon-cancel {
-  color: @color-critical;
-}
-/*
-.control-info {
-  cursor: pointer;
-  //.opacity(0);
-  color: @text-color-light;
-  margin-left: 0.2em;
-
-  &:hover {
-  //  .opacity(0);
+  &:focus + label:before {
+    box-shadow: 0 0 0 2px @gray-light;
   }
-}
-*/
+  &:checked:enabled + label:before {
+    background: @blue;
+    border: @border-width solid @blue;
+  }
+  &:disabled + label:before {
+    box-shadow: none;
+    background: @gray-lighter;
+  }
 
-.description {
-  display: none;
-}
+  // Actual label
+  & + label {
+    display: block;
+    position: relative;
+    cursor: pointer;
+    padding: 0px;
+  }
+  &:disabled + label {
+    color: @gray-light;
+    cursor: auto;
+  }
 
-.control-label {
-  display: inline-block;
-}
+  // Tick TODO (JeM): should be replaced with an icon
+  &:checked + label:after {
+    content: "";
+    position: absolute;
+    left: 0.2em;
+    top: 0.6em;
+    background: white;
+    width: 2px;
+    height: 2px;
+    box-shadow:
+      0px 0px 0 white,
+      2px -0px 0 white,
+      2px -2px 0 white,
+      2px -4px 0 white;
+    transform: rotate(45deg);
 
-label {
-  color: @text-color-light;
-  font-size: @font-size-small;
-}
-
-.control-label-group {
-  display: inline-block;
-  padding-right: @horizontal-padding;
-  text-align: left;
-  min-width: 20em;
-}
-
-.checkbox-group {
-  border: none;
-  margin: 0;
-  padding: 0;
-}
-
-input[type="checkbox"] {
-  float: left;
-  margin: 0 1em;
-}
-
-.control-group {
-  padding: @vertical-padding @horizontal-padding;
-
-  .errors {
-    color: @color-critical;
   }
 }
+
+// Make box a circle for radio
+input[type="radio"] + label:before {
+  border-radius: 10px;
+}
+
+/************************************************* ORIGINAL *************************************************/
 
 .link-button {
   .action-link();
@@ -153,14 +267,13 @@ input[type="checkbox"] {
   }
 }
 
-// @TODO(el): Fix that
 .form-description, .form-description ul,
 .form-info, .form-info ul,
 .form-notifications, .form-notifications ul,
 .form-errors, .form-errors ul,
 form .errors, form .errors ul {
   // Reset defaults
-  margin: 5 0;
+  margin: 0.5em 0;
   padding: 0;
   list-style-type: none;
 }
@@ -207,10 +320,6 @@ button.animated.active {
   &.move-down i:before {
     .animate(move-vertical 500ms infinite linear reverse);
   }
-}
-
-textarea {
-  height: 8em;
 }
 
 select.grant-permissions {
