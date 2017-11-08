@@ -27,7 +27,7 @@ class Servicegroupsummary extends DataView
 
     public function getSearchColumns()
     {
-        return array('servicegroup_name', 'servicegroup_alias');
+        return array('servicegroup', 'servicegroup_alias');
     }
 
     public function getSortRules()

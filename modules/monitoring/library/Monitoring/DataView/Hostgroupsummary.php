@@ -34,7 +34,7 @@ class Hostgroupsummary extends DataView
 
     public function getSearchColumns()
     {
-        return array('hostgroup_name', 'hostgroup_alias');
+        return array('hostgroup', 'hostgroup_alias');
     }
 
     public function getSortRules()

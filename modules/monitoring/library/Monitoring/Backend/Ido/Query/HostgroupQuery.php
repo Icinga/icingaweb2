@@ -20,6 +20,7 @@ class HostgroupQuery extends IdoQuery
 
     protected $columnMap = array(
         'hostgroups' => array(
+            'hostgroup'         => 'hgo.name1 COLLATE latin1_general_ci',
             'hostgroup_alias'   => 'hg.alias COLLATE latin1_general_ci',
             'hostgroup_name'    => 'hgo.name1'
         ),
