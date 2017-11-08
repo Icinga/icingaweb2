@@ -78,7 +78,9 @@ class ModuleCommand extends Command
                 "%-14s %-9s %-9s %s\n",
                 $module,
                 $mod->getVersion(),
-                ($type === 'enabled' || $this->modules->hasEnabled($module)) ? 'enabled' : 'disabled',
+                ($type === 'enabled' || $this->modules->hasEnabled($module))
+                    ? $this->modules->hasInstalled($module) ? 'enabled' : 'dangling'
+                    : 'disabled',
                 $dir
             );
         }
