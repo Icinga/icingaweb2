@@ -9,7 +9,9 @@
     var Navigation = function (icinga) {
         Icinga.EventListener.call(this, icinga);
         this.on('click', '#menu a', this.linkClicked, this);
+        this.on('focus', '#menu input', this.inputFocussed, this);
         this.on('click', '#menu tr[href]', this.linkClicked, this);
+        this.on('click', '#collapse-sidebar', this.toggleSidebar, this);
         this.on('mouseenter', '#menu > nav > ul > li', this.menuTitleHovered, this);
         this.on('mouseleave', '#menu > nav > ul > li', this.menuTitleHovered, this);
         this.on('mouseleave', '#sidebar', this.leaveSidebar, this);
@@ -39,8 +41,35 @@
          * @type {jQuery}
          */
         this.$menu = null;
+
+        this.buttonLabels = [$('#collapse-sidebar').html(),  '<i class="' + $('#collapse-sidebar').attr('data-open-icon') + '"></i> ' + $('#collapse-sidebar').attr('data-open-label') ]
     };
     Navigation.prototype = new Icinga.EventListener();
+
+    /**
+     * Collapse or expand sidebar
+     *
+     * @param {Object} e Event
+     */
+    Navigation.prototype.toggleSidebar = function(e) {
+        var $button = $(e.target),
+            $sidebar = $button.closest('#sidebar'),
+            $this = $(e.data.self);
+
+        $sidebar.toggleClass('collapsed');
+        if ($sidebar.is('.collapsed')) {
+            $button.empty().html(e.data.self.buttonLabels[1])
+        } else {
+            $button.empty().html(e.data.self.buttonLabels[0])
+        }
+
+        $('#menu .hover').removeClass('hover');
+        $(window).trigger('resize');
+    }
+
+    Navigation.prototype.inputFocussed = function(e) {
+        $('#sidebar').removeClass('collapsed');
+    }
 
     /**
      * Activate menu items if their class is set to active or if the current URL matches their link
@@ -106,28 +135,26 @@
      * @param event
      */
     Navigation.prototype.linkClicked = function(event) {
-        var $a = $(this);
-        var href = $a.attr('href');
-        var $li;
-        var _this = event.data.self;
-        var icinga = _this.icinga;
+        var $a = $(this),
+            href = $a.attr('href'),
+            $li,
+            _this = event.data.self,
+            icinga = _this.icinga;
 
-        _this.hovered = null;
         if (href.match(/#/)) {
             // ...it may be a menu section without a dedicated link.
             // Switch the active menu item:
-            _this.setActive($a);
             $li = $a.closest('li');
-            if ($li.hasClass('hover')) {
-                $li.removeClass('hover');
+
+            if ($('#sidebar').is('.collapsed')) {
+                $li.addClass('hover');
+            } else {
+                _this.setActive($a);
+                $li.removeClass('hover').addClass('active');
             }
-            if (href === '#') {
-                // Allow to access dropdown menu by keyboard
-                if ($a.hasClass('dropdown-toggle')) {
-                    $a.closest('li').toggleClass('hover');
-                }
-                return;
-            }
+
+            if (href === '#') { return }
+
         } else {
             _this.setActive($(event.target));
         }
@@ -201,8 +228,7 @@
             // unfold the containing menu
             var $outerMenu = $selectedMenu.parent().closest('li');
             if ($outerMenu.length) {
-                $outerMenu.addClass('active');
-                $outerMenu.removeClass('hover');
+                $outerMenu.removeClass('hover').addClass('active');
             }
         } else if ($input.length) {
             $input.addClass('active');
@@ -300,6 +326,7 @@
             top: ''
         })
 
+        // position level-2 submenus
         $li.addClass('hover');
         $li.find('.nav-level-2').css({
             left: $li.offset().left + $li.width() + 4,
@@ -316,6 +343,7 @@
         }
 
         $li.removeClass('hover');
+        // reset applied styles
         $li.find('.nav-level-2').css({
             left: '',
             top: ''
@@ -324,11 +352,6 @@
 
     Navigation.prototype.hoverElement = function ($li)  {
         $li.addClass('hover');
-        if ($li[0]) {
-            this.hovered = this.icinga.utils.getDomPath($li[0]);
-        } else {
-            this.hovered = null;
-        }
     };
 
     Icinga.Behaviors.Navigation = Navigation;
