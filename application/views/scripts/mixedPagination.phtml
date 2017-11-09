@@ -1,8 +1,4 @@
-<?php
-use Icinga\Web\Url;
-
-if ($this->pageCount <= 1) return;
-?>
+<?php if ($this->pageCount <= 1) return; ?>
 <div class="pagination-control" role="navigation">
     <h2 id="<?= $this->protectId('pagination') ?>" class="sr-only" tabindex="-1"><?= $this->translate('Pagination') ?></h2>
     <ul class="nav tab-nav">
@@ -14,7 +10,7 @@ if ($this->pageCount <= 1) return;
             $this->totalItemCount
         ) ?>
         <li class="nav-item">
-            <a  href="<?= Url::fromRequest()->overwriteParams(array('page' => $this->previous)) ?>"
+            <a  href="<?= $this->url()->overwriteParams(array('page' => $this->previous)) ?>"
                 title="<?= $label ?>"
                 aria-label="<?= $label ?>"
                 class="previous-page">
@@ -48,7 +44,7 @@ if ($this->pageCount <= 1) return;
             );
             ?>
             <li<?= $page === $this->current ? ' class="active nav-item"' : ' class="nav-item"' ?>>
-                <a  href="<?= Url::fromRequest()->overwriteParams(array('page' => $page)) ?>"
+                <a  href="<?= $this->url()->overwriteParams(array('page' => $page)) ?>"
                     title="<?= $label ?>"
                     aria-label="<?= $label ?>">
                     <?= $page ?>
@@ -64,7 +60,7 @@ if ($this->pageCount <= 1) return;
             $this->totalItemCount
         ) ?>
         <li class="nav-item">
-            <a  href="<?= Url::fromRequest()->overwriteParams(array('page' => $this->next)) ?>"
+            <a  href="<?= $this->url()->overwriteParams(array('page' => $this->next)) ?>"
                 title="<?= $label ?>"
                 aria-label="<?= $label ?>"
                 class="next-page">
