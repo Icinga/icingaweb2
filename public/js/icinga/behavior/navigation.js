@@ -59,8 +59,10 @@
         $sidebar.toggleClass('collapsed');
         if ($sidebar.is('.collapsed')) {
             $button.empty().html(e.data.self.buttonLabels[1])
+            $('#header-logo').addClass('compact');
         } else {
             $button.empty().html(e.data.self.buttonLabels[0])
+            $('#header-logo').removeClass('compact')
         }
 
         $('#menu .hover').removeClass('hover');
