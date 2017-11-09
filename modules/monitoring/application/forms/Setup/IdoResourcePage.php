@@ -158,11 +158,11 @@ class IdoResourcePage extends Form
             $db = new DbTool($this->getValues());
             $version = $db->connectToDb()->getServerVersion();
             if (version_compare($version, '9.1', '<')) {
-                $this->error($this->translate(sprintf(
-                    'The server\'s version %s is too old. The minimum required version is %s.',
+                $this->error(sprintf(
+                    $this->translate('The server\'s version %s is too old. The minimum required version is %s.'),
                     $version,
                     '9.1'
-                )));
+                ));
                 return false;
             }
         }
