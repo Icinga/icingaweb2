@@ -28,6 +28,8 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
         '~(\[|\()WARNING(\]|\))~',
         '~(\[|\()CRITICAL(\]|\))~',
         '~(\[|\()UNKNOWN(\]|\))~',
+        '~(\[|\()UP(\]|\))~',
+        '~(\[|\()DOWN(\]|\))~',
         '~\@{6,}~'
     );
 
@@ -44,6 +46,8 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
         '<span class="state-warning">$1WARNING$2</span>',
         '<span class="state-critical">$1CRITICAL$2</span>',
         '<span class="state-unknown">$1UNKNOWN$2</span>',
+        '<span class="state-up">$1UP$2</span>',
+        '<span class="state-down">$1DOWN$2</span>',
         '@@@@@@',
     );
 
@@ -101,7 +105,7 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
      */
     protected function processHtml($html)
     {
-        $pattern = '/[([](OK|WARNING|CRITICAL|UNKNOWN)[)\]]/';
+        $pattern = '/[([](OK|WARNING|CRITICAL|UNKNOWN|UP|DOWN)[)\]]/';
         $doc = new DOMDocument();
         $doc->loadXML('<div>' . $html . '</div>', LIBXML_NOERROR | LIBXML_NOWARNING);
         $dom = new RecursiveIteratorIterator(new DomNodeIterator($doc), RecursiveIteratorIterator::SELF_FIRST);
