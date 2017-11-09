@@ -12,6 +12,7 @@
 #menu {
   height: 100%;
   overflow: auto;
+  padding-bottom: 24px;
 }
 
 #menu a {
@@ -30,6 +31,8 @@
   position: absolute;
   bottom: 0; left: 0; right: 0;
   white-space: nowrap;
+  color: @gray;
+  border: none;
 }
 
 #menu .active > a {
@@ -124,6 +127,16 @@
 // Hovered menu
 
 .collapsed #menu .nav-level-1 {
+
+  > .nav-item i {
+    font-size: 1.5em;
+    margin-right: .5em;
+  }
+
+  > .nav-item .badge {
+    display: none;
+  }
+
   > .nav-item .nav-level-2 > li {
     display: none;
   }
@@ -215,6 +228,14 @@
 
 .search-control {
   position: relative;
+}
+
+.collapsed .search-control .search-input:valid ~ .search-reset {
+  display: none;
+}
+
+.collapsed .search-input {
+  font-size: 1.25em;
 }
 
 .search-reset {
