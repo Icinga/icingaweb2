@@ -70,7 +70,11 @@
     }
 
     Navigation.prototype.inputFocussed = function(e) {
-        $('#sidebar').removeClass('collapsed');
+        var $sidebar = $('#sidebar');
+        if ($sidebar.is('collapsed')) {
+            $sidebar.removeClass('collapsed');
+            $('#header-logo').removeClass('compact')
+        }
     }
 
     /**
