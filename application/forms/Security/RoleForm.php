@@ -158,10 +158,23 @@ class RoleForm extends ConfigForm
             }
             if (! empty($elements)) {
                 $name = ucfirst($name);
-                //TODO (JeM): add label for foldables?
-                $this->addDisplayGroup($elements, $name, array('class'=>'checkbox-group'));
+                $this->addDisplayGroup($elements, $name, array('class' => 'checkbox-group toggle-checkbox-content'));
                 $this->getDisplayGroup($name)->removeDecorator('DtDdWrapper');
                 $this->getDisplayGroup($name)->removeDecorator('HtmlTag');
+                $this->getDisplayGroup($name)->addDecorator(
+                    'ToggleCheckbox',
+                    array(
+                        'id'        => $name,
+                        'label'     => $name
+                    )
+                );
+                $this->getDisplayGroup($name)->addDecorator(
+                    'HtmlTag',
+                    array(
+                        'tag' => 'div',
+                        'class' => 'control-group toggle-checkbox'
+                    ));
+
                 $elements = array();
             }
         }
