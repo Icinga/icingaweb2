@@ -11,6 +11,7 @@
         this.on('click', '#menu a', this.linkClicked, this);
         this.on('click', '#menu tr[href]', this.linkClicked, this);
         this.on('mouseenter', '#menu > nav > ul > li', this.menuTitleHovered, this);
+        this.on('mouseleave', '#menu > nav > ul > li', this.menuTitleHovered, this);
         this.on('mouseleave', '#sidebar', this.leaveSidebar, this);
         this.on('rendered', '#menu', this.onRendered, this);
 
@@ -190,8 +191,8 @@
      */
     Navigation.prototype.select = function($item) {
         // support selecting the url of the menu entry
-        var $input = $item.find('input');
-        $item = $item.closest('li');
+        var $input = $item.find('input'),
+        	    $item = $item.closest('li');
 
         if ($item.length) {
             // select the current item
@@ -201,6 +202,7 @@
             var $outerMenu = $selectedMenu.parent().closest('li');
             if ($outerMenu.length) {
                 $outerMenu.addClass('active');
+                $outerMenu.removeClass('hover');
             }
         } else if ($input.length) {
             $input.addClass('active');
@@ -273,14 +275,18 @@
         }
 
         var $li = $(this),
-            delay = 800,
             _this = event.data.self;
 
-        _this.hovered = null;
-        if ($li.hasClass('active')) {
+        if (event.type == 'mouseleave') {
+            $li.removeClass('hover');
+            return;
+        }
+
+        if ($li.hasClass('active') && !$('#sidebar').is('.collapsed')) {
             $li.siblings().removeClass('hover');
             return;
         }
+
         if ($li.children('ul').children('li').length === 0) {
             return;
         }
@@ -288,33 +294,17 @@
             return;
         }
 
-        if ($('#layout').hasClass('hoveredmenu')) {
-            delay = 0;
-        }
+        $li.siblings('.hover').removeClass('hover');
+        $li.siblings('.hover').find('.nav-level-2').css({
+            left: '',
+            top: ''
+        })
 
-        setTimeout(function () {
-            try {
-                if (!$li.is('li:hover')) {
-                    return;
-                }
-                if ($li.hasClass('active')) {
-                    return;
-                }
-            } catch(e) { /* Bypass because if IE8 */ }
-
-            $li.siblings().each(function () {
-                var $sibling = $(this);
-                try {
-                    if ($sibling.is('li:hover')) {
-                        return;
-                    }
-                } catch(e) { /* Bypass because if IE8 */ };
-                if ($sibling.hasClass('hover')) {
-                    $sibling.removeClass('hover');
-                }
-            });
-            _this.hoverElement($li);
-        }, delay);
+        $li.addClass('hover');
+        $li.find('.nav-level-2').css({
+            left: $li.offset().left + $li.width() + 4,
+            top: $li.offset().top
+        })
     };
 
     Navigation.prototype.leaveSidebar = function (event) {
@@ -322,24 +312,17 @@
             $li = $sidebar.find('li.hover'),
             _this = event.data.self;
         if (! $li.length) {
-            $('#layout').removeClass('hoveredmenu');
             return;
         }
 
-        setTimeout(function () {
-            try {
-                if ($li.is('li:hover') || $sidebar.is('sidebar:hover')) {
-                    return;
-                }
-            } catch(e) { /* Bypass because if IE8 */ };
-            $li.removeClass('hover');
-            $('#layout').removeClass('hoveredmenu');
-        }, 500);
-        _this.hovered = null;
+        $li.removeClass('hover');
+        $li.find('.nav-level-2').css({
+            left: '',
+            top: ''
+        })
     };
 
     Navigation.prototype.hoverElement = function ($li)  {
-        $('#layout').addClass('hoveredmenu');
         $li.addClass('hover');
         if ($li[0]) {
             this.hovered = this.icinga.utils.getDomPath($li[0]);
