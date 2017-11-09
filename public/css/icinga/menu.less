@@ -26,6 +26,12 @@
   }
 }
 
+#collapse-sidebar {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  white-space: nowrap;
+}
+
 #menu .active > a {
   color: @icinga-blue;
 }
@@ -33,6 +39,7 @@
 #menu .nav-level-1 > .nav-item {
   border-left: 5px solid transparent;
   line-height: 2.167em; // 26 px
+  white-space: nowrap;
 
   &.active {
     > a > .badge {
@@ -115,54 +122,59 @@
 
 // Hovered menu
 
+.collapsed #menu .nav-level-1 {
+  > .nav-item .nav-level-2 > li {
+    display: none;
+  }
+}
+
 #menu .nav-level-1 > .nav-item.hover {
   position: relative;
-
-  &:before {
-    border: 0.5em solid rgba(0, 0, 0, 0);
-    border-right-color: @text-color;
-    content: "";
-    position: absolute;
-    right: 0;
-    top: 30%;
-  }
 
   > .nav-level-2 {
     background-color: @text-color;
     color: @text-color-inverted;
-    left: 100%;
     padding: @vertical-padding 0;
-    position: absolute;
-    top: 0;
+    position: fixed;
     width: 14em;
+    border: 1px solid rgba(0,0,0,.8);
+
+    &:before {
+      content: "";
+      display: block;
+      width: 1em;
+      height: 1em;
+      position: absolute;
+      background: @text-color;
+      margin-left: -.5em;
+      border-left:   1px solid rgba(0,0,0,.8);
+      border-bottom: 1px solid rgba(0,0,0,.8);
+      top: 1em;
+      left: 0;
+      z-index: -1;
+      -webkit-transform: rotate(45deg);
+         -moz-transform: rotate(45deg);
+          -ms-transform: rotate(45deg);
+              transform: rotate(45deg);
+    }
 
     > .nav-item {
       display: block;
-      margin-left: 0.5em;
+      margin-left: 0;
+
+      > a {
+        padding-left: 1em;
+      }
 
       > a:hover {
         color: @text-color-inverted;
-        text-decoration: underline;
+        background: rgba(0,0,0,.2);
       }
     }
   }
 
   > a > .badge {
     display: none;
-  }
-}
-
-#layout.hoveredmenu {
-  #main {
-    z-index: 2;
-  }
-
-  #sidebar {
-    z-index: 3;
-  }
-
-  #menu {
-    overflow: visible;
   }
 }
 

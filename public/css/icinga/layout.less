@@ -85,6 +85,7 @@
 
 // x-column-layout
 #main {
+  z-index: 2;
   .clearfix();
 
   & > .container {
@@ -134,6 +135,15 @@
 
 #sidebar {
   background-color: @gray-lighter;
+  z-index: 3;
+
+  &.collapsed {
+    width: 2.5em;
+  }
+}
+
+#sidebar.collapsed + #main {
+  left: 2.5em;
 }
 
 .container,
