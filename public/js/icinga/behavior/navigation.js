@@ -52,8 +52,8 @@
      * @param {Object} e Event
      */
     Navigation.prototype.toggleSidebar = function(e) {
-        var $button = $(e.target),
-            $sidebar = $button.closest('#sidebar'),
+        var $button = $('#collapse-sidebar'),
+            $sidebar = $('#sidebar'),
             $this = $(e.data.self);
 
         $sidebar.toggleClass('collapsed');
@@ -71,9 +71,8 @@
 
     Navigation.prototype.inputFocussed = function(e) {
         var $sidebar = $('#sidebar');
-        if ($sidebar.is('collapsed')) {
-            $sidebar.removeClass('collapsed');
-            $('#header-logo').removeClass('compact')
+        if ($sidebar.is('.collapsed')) {
+            e.data.self.toggleSidebar(e);
         }
     }
 
