@@ -156,7 +156,11 @@ class CommandTransport implements CommandTransportInterface
      */
     protected function transferPossible($command, $transport)
     {
-        if (! method_exists($transport, 'getInstance') || !$command instanceof ObjectCommand) {
+        if (
+            ! method_exists($transport, 'getInstance')
+            || !$command instanceof ObjectCommand
+            || $command->getObject() === null
+        ) {
             return true;
         }
 

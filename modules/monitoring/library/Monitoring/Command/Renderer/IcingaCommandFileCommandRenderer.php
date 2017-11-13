@@ -323,18 +323,22 @@ class IcingaCommandFileCommandRenderer implements IcingaCommandRendererInterface
 
     public function renderDeleteComment(DeleteCommentCommand $command)
     {
+        $object = $command->getObject();
+        $isService = $command->getIsService() || $object !== null && $object->getType() === $command::TYPE_SERVICE;
         return sprintf(
             '%s;%u',
-            $command->getIsService() ? 'DEL_SVC_COMMENT' : 'DEL_HOST_COMMENT',
+            $isService ? 'DEL_SVC_COMMENT' : 'DEL_HOST_COMMENT',
             $command->getCommentId()
         );
     }
 
     public function renderDeleteDowntime(DeleteDowntimeCommand $command)
     {
+        $object = $command->getObject();
+        $isService = $command->getIsService() || $object !== null && $object->getType() === $command::TYPE_SERVICE;
         return sprintf(
             '%s;%u',
-            $command->getIsService() ? 'DEL_SVC_DOWNTIME' : 'DEL_HOST_DOWNTIME',
+            $isService ? 'DEL_SVC_DOWNTIME' : 'DEL_HOST_DOWNTIME',
             $command->getDowntimeId()
         );
     }

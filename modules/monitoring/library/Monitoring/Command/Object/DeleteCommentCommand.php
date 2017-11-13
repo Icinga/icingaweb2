@@ -3,13 +3,20 @@
 
 namespace Icinga\Module\Monitoring\Command\Object;
 
-use Icinga\Module\Monitoring\Command\IcingaCommand;
-
 /**
  * Delete a host or service comment
  */
-class DeleteCommentCommand extends IcingaCommand
+class DeleteCommentCommand extends ObjectCommand
 {
+    /**
+     * (non-PHPDoc)
+     * @see \Icinga\Module\Monitoring\Command\Object\ObjectCommand::$allowedObjects For the property documentation.
+     */
+    protected $allowedObjects = array(
+        self::TYPE_HOST,
+        self::TYPE_SERVICE
+    );
+
     /**
      * ID of the comment that is to be deleted
      *
@@ -86,6 +93,10 @@ class DeleteCommentCommand extends IcingaCommand
     /**
      * Get whether the command affects a service comment
      *
+     * @deprecated Please add the object to the command instead of
+     *             just marking it as service. This is required
+     *             for instances to work!
+     *
      * @return boolean
      */
     public function getIsService()
@@ -97,6 +108,10 @@ class DeleteCommentCommand extends IcingaCommand
      * Set whether the command affects a service comment
      *
      * @param   bool $isService
+     *
+     * @deprecated Please add the object to the command instead of
+     *             just marking it as service. This is required
+     *             for instances to work!
      *
      * @return  $this
      */

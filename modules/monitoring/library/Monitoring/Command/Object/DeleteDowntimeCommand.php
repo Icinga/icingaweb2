@@ -3,13 +3,20 @@
 
 namespace Icinga\Module\Monitoring\Command\Object;
 
-use Icinga\Module\Monitoring\Command\IcingaCommand;
-
 /**
  * Delete a host or service downtime
  */
-class DeleteDowntimeCommand extends IcingaCommand
+class DeleteDowntimeCommand extends ObjectCommand
 {
+    /**
+     * (non-PHPDoc)
+     * @see \Icinga\Module\Monitoring\Command\Object\ObjectCommand::$allowedObjects For the property documentation.
+     */
+    protected $allowedObjects = array(
+        self::TYPE_HOST,
+        self::TYPE_SERVICE
+    );
+
     /**
      * ID of the downtime that is to be deleted
      *
@@ -86,6 +93,10 @@ class DeleteDowntimeCommand extends IcingaCommand
     /**
      * Get whether the command affects a service
      *
+     * @deprecated Please add the object to the command instead of
+     *             just marking it as service. This is required
+     *             for instances to work!
+     *
      * @return bool
      */
     public function getIsService()
@@ -97,6 +108,10 @@ class DeleteDowntimeCommand extends IcingaCommand
      * Set whether the command affects a service
      *
      * @param   bool $isService
+     *
+     * @deprecated Please add the object to the command instead of
+     *             just marking it as service. This is required
+     *             for instances to work!
      *
      * @return  $this
      */
