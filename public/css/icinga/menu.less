@@ -42,12 +42,19 @@
 }
 
 #menu .nav-level-1 > .nav-item {
-  border-left: 5px solid transparent;
   line-height: 2.167em; // 26 px
   white-space: nowrap;
   cursor: pointer;
+  color: @text-color-inverted;
 
   &.active {
+    > a {
+      color: white;
+      background: @icinga-blue;
+      font-weight: bold;
+      letter-spacing: .02em;
+    }
+
     > a > .badge {
       display: none;
     }
@@ -57,8 +64,7 @@
       display: block;
     }
 
-    background-color: @body-bg-color;
-    border-color: @icinga-blue;
+    background-color: @deep-black;
   }
 
   &.no-icon > a {
@@ -66,7 +72,11 @@
   }
 
   > a {
-    padding: 0.5em 0.5em; // 6px 6px
+    padding: 0.5em 0.5em 0.5em .75em; // 6px 6px
+  }
+
+  > a > i {
+    opacity: 0.8
   }
 
   > a:active ~ .nav-level-2 > li {
@@ -82,7 +92,17 @@
 
   > a {
     font-size: @font-size-small;
-    padding: 0.364em 0.545em; // 4px 6px
+    color: #c4c4c4;
+    padding: 0.364em 0.545em 0.364em .8em; // 4px 6px
+  }
+
+  &:hover > a {
+    background: @deep-black;
+  }
+
+  &.active > a {
+    color: white;
+    font-weight: bold;
   }
 }
 
@@ -98,7 +118,7 @@
 }
 
 #menu .user-nav-item {
-  background-color: @gray-light;
+//   background-color: @gray-light;
 }
 
 #menu input.search {
@@ -251,6 +271,7 @@
   right: 0;
   top: 0;
   user-select: none;
+  color: @text-color-inverted;
 }
 
 .search-reset:focus {
