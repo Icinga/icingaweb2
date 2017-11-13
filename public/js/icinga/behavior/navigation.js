@@ -42,7 +42,7 @@
          */
         this.$menu = null;
 
-        this.buttonLabels = [$('#collapse-sidebar').html(),  '<i class="' + $('#collapse-sidebar').attr('data-open-icon') + '"></i> ' + $('#collapse-sidebar').attr('data-open-label') ]
+        this.buttonLabels = [$('#collapse-sidebar').html(),  '<i class="' + $('#collapse-sidebar').attr('data-open-icon') + '"></i> ']
     };
     Navigation.prototype = new Icinga.EventListener();
 

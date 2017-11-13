@@ -14,6 +14,6 @@ if ($searchDashboard->search('dummy')->getPane('search')->hasDashlets()): ?>
     </form>
 <?php endif; ?>
 <?= $menuRenderer->setCssClass('primary-nav')->setElementTag('nav')->setHeading(t('Navigation')); ?>
-<button id="collapse-sidebar" data-open-label="" data-open-icon="icon-right-dir">
+<button id="collapse-sidebar" data-open-icon="icon-right-dir">
     <i class="icon-left-dir"></i> <?= $this->translate('Collapse Menu') ?>
 </button>
