@@ -42,7 +42,7 @@
          */
         this.$menu = null;
 
-        this.buttonLabels = [$('#collapse-sidebar').html(),  '<i class="' + $('#collapse-sidebar').attr('data-open-icon') + '"></i> ']
+        this.buttonLabels = [$('#collapse-sidebar').html(),  '<i class="' + $('#collapse-sidebar').attr('data-open-icon') + '"></i> '];
     };
     Navigation.prototype = new Icinga.EventListener();
 
@@ -58,11 +58,11 @@
 
         $sidebar.toggleClass('collapsed');
         if ($sidebar.is('.collapsed')) {
-            $button.empty().html(e.data.self.buttonLabels[1])
+            $button.empty().html(e.data.self.buttonLabels[1]);
             $('#header-logo').addClass('compact');
         } else {
-            $button.empty().html(e.data.self.buttonLabels[0])
-            $('#header-logo').removeClass('compact')
+            $button.empty().html(e.data.self.buttonLabels[0]);
+            $('#header-logo').removeClass('compact');
         }
 
         $('#menu .hover').removeClass('hover');
@@ -158,8 +158,9 @@
                 $li.removeClass('hover').addClass('active');
             }
 
-            if (href === '#') { return }
-
+            if (href === '#') {
+                return;
+            }
         } else {
             _this.setActive($(event.target));
         }
@@ -224,7 +225,7 @@
     Navigation.prototype.select = function($item) {
         // support selecting the url of the menu entry
         var $input = $item.find('input'),
-        	    $item = $item.closest('li');
+            $item = $item.closest('li');
 
         if ($item.length) {
             // select the current item
@@ -313,7 +314,7 @@
             return;
         }
 
-        if ($li.hasClass('active') && !$('#sidebar').is('.collapsed')) {
+        if ($li.hasClass('active') && ! $('#sidebar').is('.collapsed')) {
             $li.siblings().removeClass('hover');
             return;
         }
@@ -329,14 +330,14 @@
         $li.siblings('.hover').find('.nav-level-2').css({
             left: '',
             top: ''
-        })
+        });
 
         // position level-2 submenus
         $li.addClass('hover');
         $li.find('.nav-level-2').css({
             left: $li.offset().left + $li.width() + 4,
             top: $li.offset().top
-        })
+        });
     };
 
     Navigation.prototype.leaveSidebar = function (event) {
@@ -352,7 +353,7 @@
         $li.find('.nav-level-2').css({
             left: '',
             top: ''
-        })
+        });
     };
 
     Navigation.prototype.hoverElement = function ($li)  {

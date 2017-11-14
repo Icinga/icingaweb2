@@ -636,9 +636,9 @@
                 }
 
                 if (this.mobileMenu) {
-                    $('#collapse-sidebar').hide()
+                    $('#collapse-sidebar').hide();
                 } else {
-                    $('#collapse-sidebar').show()
+                    $('#collapse-sidebar').show();
                 }
 
                 var _this = this;
