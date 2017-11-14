@@ -26,7 +26,7 @@ form.inline,
 }
 
 .form-controls {
-  margin-left: 10em;
+  //margin-left: 10em;
 }
 
 .autosubmit-info {
@@ -46,7 +46,7 @@ button:hover .icon-cancel {
 }
 
 label {
-  color: @text-color;
+  color: @gray;
   font-size: @font-size-small;
 }
 
@@ -54,7 +54,9 @@ label {
   display: inline-block;
   padding-right: @horizontal-padding;
   text-align: left;
-  min-width: 20em;
+  min-width: 15em;
+  max-width: 25em;
+  width: 50%;
 }
 
 .checkbox-group {
@@ -71,6 +73,12 @@ label {
   }
 }
 
+form {
+  min-width: 20em;
+  max-width: 45em;
+  width: 80%;
+}
+
 /************************************************* INPUT, TEXTAREA, SELECT *************************************************/
 
 input[type="text"],
@@ -78,9 +86,9 @@ textarea,
 select {
   //border-left: @border-width solid @gray-light;
   //background-color: @gray-lightest;
-  border: none;
   background: none;
-  border-bottom: @border-width  solid @gray-light;
+  border: @border-width  solid @gray-lighter;
+  border-bottom: @border-width solid @gray-light;
 }
 
 input[type="text"]:hover,
@@ -114,7 +122,6 @@ textarea {
 select::-ms-expand {
   display: none;
 }
-
 input:not([type]),
 input[type=text],
 input[type=date],
@@ -126,27 +133,33 @@ input[type=search],
 input[type=tel],
 input[type=time],
 input[type=url] {
+/*
   .box-shadow(0 1px 0 0 @gray-light); //todo: what's up with this? why are they marked as classes
   .transition(border 0.3s ease);
 
   border: none;
   border-bottom: 1px solid @gray-light;
+  */
   padding: @vertical-padding / 2 @horizontal-padding / 2;
 
   &:focus:not([readonly]) {
     border-color: @icinga-blue;
   }
-// todo: deal with the width 20 em
-  width: 20em;
+  min-width: 15em;
+  max-width: 25em;
+  width: 50%;
 }
 
 select, textarea {
-  width: 20em;
+  min-width: 15em;
+  max-width: 25em;
+  width: 50%;
 }
 
 .control-button,
 input[type="submit"] {
   .button();
+  width: 100%;
 }
 
 input:-moz-placeholder { // FF 18-
@@ -374,6 +387,7 @@ button.animated.active {
   }
 }
 
+//todo: whats this?
 select.grant-permissions {
   height: 20em;
   width: auto;
