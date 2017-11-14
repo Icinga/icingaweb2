@@ -77,7 +77,6 @@ form {
   min-width: 20em;
   max-width: 45em;
   width: 80%;
-  margin: auto;
 }
 
 /************************************************* INPUT, TEXTAREA, SELECT *************************************************/
@@ -160,9 +159,7 @@ select, textarea {
 .control-button,
 input[type="submit"] {
   .button();
-  width: 30%;
-  min-width: fit-content;
-  float: right;
+  width: 100%;
 }
 
 input:-moz-placeholder { // FF 18-
@@ -354,8 +351,6 @@ form .errors, form .errors ul {
 .form-info {
   color: @text-color-light;
   font-size: @font-size-small;
-  text-align: right;
-  padding: 0.5em 1em;
 }
 
 .form-notifications {
