@@ -159,7 +159,9 @@ select, textarea {
 .control-button,
 input[type="submit"] {
   .button();
-  width: 100%;
+  width: 30%;
+  min-width: fit-content;
+  float: right;
 }
 
 input:-moz-placeholder { // FF 18-
@@ -351,6 +353,8 @@ form .errors, form .errors ul {
 .form-info {
   color: @text-color-light;
   font-size: @font-size-small;
+  text-align: right;
+  padding: 0.5em 1em;
 }
 
 .form-notifications {
