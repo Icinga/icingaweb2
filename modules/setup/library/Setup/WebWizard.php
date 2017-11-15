@@ -3,6 +3,7 @@
 
 namespace Icinga\Module\Setup;
 
+use InvalidArgumentException;
 use PDOException;
 use Icinga\Web\Form;
 use Icinga\Web\Wizard;
@@ -23,6 +24,7 @@ use Icinga\Module\Setup\Forms\GeneralConfigPage;
 use Icinga\Module\Setup\Forms\AuthenticationPage;
 use Icinga\Module\Setup\Forms\DatabaseCreationPage;
 use Icinga\Module\Setup\Forms\UserGroupBackendPage;
+use Icinga\Module\Setup\ProvidedHook\Setup\Requirements;
 use Icinga\Module\Setup\Steps\DatabaseStep;
 use Icinga\Module\Setup\Steps\GeneralConfigStep;
 use Icinga\Module\Setup\Steps\ResourceStep;
@@ -30,12 +32,6 @@ use Icinga\Module\Setup\Steps\AuthenticationStep;
 use Icinga\Module\Setup\Steps\UserGroupStep;
 use Icinga\Module\Setup\Utils\EnableModuleStep;
 use Icinga\Module\Setup\Utils\DbTool;
-use Icinga\Module\Setup\Requirement\OSRequirement;
-use Icinga\Module\Setup\Requirement\ClassRequirement;
-use Icinga\Module\Setup\Requirement\PhpConfigRequirement;
-use Icinga\Module\Setup\Requirement\PhpModuleRequirement;
-use Icinga\Module\Setup\Requirement\PhpVersionRequirement;
-use Icinga\Module\Setup\Requirement\ConfigDirectoryRequirement;
 
 /**
  * Icinga Web 2 Setup Wizard
@@ -114,6 +110,7 @@ class WebWizard extends Wizard implements SetupWizard
         $this->addPage(new SummaryPage(array('name' => 'setup_summary')));
 
         if (($modulePageData = $this->getPageData('setup_modules')) !== null) {
+            /** @var ModulePage $modulePage */
             $modulePage = $this->getPage('setup_modules')->populate($modulePageData);
             foreach ($modulePage->getModuleWizards() as $moduleWizard) {
                 $this->addPage($moduleWizard);
@@ -130,6 +127,7 @@ class WebWizard extends Wizard implements SetupWizard
     public function setupPage(Form $page, Request $request)
     {
         if ($page->getName() === 'setup_requirements') {
+            /** @var RequirementsPage $page */
             $page->setWizard($this);
         } elseif ($page->getName() === 'setup_authentication_backend') {
             /** @var AuthBackendPage $page */
@@ -174,9 +172,11 @@ class WebWizard extends Wizard implements SetupWizard
                 . ' it is going to be created once the wizard is about to be finished.'
             ));
         } elseif ($page->getName() === 'setup_usergroup_backend') {
+            /** @var UserGroupBackendPage $page */
             $page->setResourceConfig($this->getPageData('setup_ldap_resource'));
             $page->setBackendConfig($this->getPageData('setup_authentication_backend'));
         } elseif ($page->getName() === 'setup_admin_account') {
+            /** @var AdminAccountPage $page */
             $page->setBackendConfig($this->getPageData('setup_authentication_backend'));
             $page->setGroupConfig($this->getPageData('setup_usergroup_backend'));
             $authData = $this->getPageData('setup_authentication_type');
@@ -186,6 +186,7 @@ class WebWizard extends Wizard implements SetupWizard
                 $page->setResourceConfig($this->getPageData('setup_ldap_resource'));
             }
         } elseif ($page->getName() === 'setup_auth_db_creation' || $page->getName() === 'setup_config_db_creation') {
+            /** @var DatabaseCreationPage $page */
             $page->setDatabaseSetupPrivileges(
                 array_unique(array_merge($this->databaseCreationPrivileges, $this->databaseSetupPrivileges))
             );
@@ -194,6 +195,7 @@ class WebWizard extends Wizard implements SetupWizard
                 $this->getPageData('setup_auth_db_resource') ?: $this->getPageData('setup_config_db_resource')
             );
         } elseif ($page->getName() === 'setup_summary') {
+            /** @var SummaryPage $page */
             $page->setSubjectTitle('Icinga Web 2');
             $page->setSummary($this->getSetup()->getSummary());
         } elseif ($page->getName() === 'setup_config_db_resource') {
@@ -529,13 +531,16 @@ class WebWizard extends Wizard implements SetupWizard
             );
         }
 
+        /** @var SetupWizard|Wizard $wizard */
         foreach ($this->getWizards() as $wizard) {
             if ($wizard->isComplete()) {
                 $setup->addSteps($wizard->getSetup()->getSteps());
             }
         }
 
-        $setup->addStep(new EnableModuleStep(array_keys($this->getPage('setup_modules')->getCheckedModules())));
+        /** @var ModulePage $modulePage */
+        $modulePage = $this->getPage('setup_modules');
+        $setup->addStep(new EnableModuleStep(array_keys($modulePage->getCheckedModules())));
 
         return $setup;
     }
@@ -547,172 +552,11 @@ class WebWizard extends Wizard implements SetupWizard
      */
     public function getRequirements($skipModules = false)
     {
-        $set = new RequirementSet();
-
-        $set->add(new PhpVersionRequirement(array(
-            'condition'     => array('>=', '5.3.2'),
-            'description'   => mt(
-                'setup',
-                'Running Icinga Web 2 requires PHP version 5.3.2. Advanced features'
-                . ' like the built-in web server require PHP version 5.4.'
-            )
-        )));
-
-        $set->add(new PhpConfigRequirement(array(
-            'condition'     => array('date.timezone', true),
-            'title'         => mt('setup', 'Default Timezone'),
-            'description'   => sprintf(
-                mt('setup', 'It is required that a default timezone has been set using date.timezone in %s.'),
-                php_ini_loaded_file() ?: 'php.ini'
-            ),
-        )));
-
-        $set->add(new OSRequirement(array(
-            'optional'      => true,
-            'condition'     => 'linux',
-            'description'   => mt(
-                'setup',
-                'Icinga Web 2 is developed for and tested on Linux. While we cannot'
-                . ' guarantee they will, other platforms may also perform as well.'
-            )
-        )));
-
-        $set->add(new PhpModuleRequirement(array(
-            'condition'     => 'OpenSSL',
-            'description'   => mt(
-                'setup',
-                'The PHP module for OpenSSL is required to generate cryptographically safe password salts.'
-            )
-        )));
-
-        $set->add(new PhpModuleRequirement(array(
-            'optional'      => true,
-            'condition'     => 'JSON',
-            'description'   => mt(
-                'setup',
-                'The JSON module for PHP is required for various export functionalities as well as APIs.'
-            )
-        )));
-
-        $set->add(new PhpModuleRequirement(array(
-            'optional'      => true,
-            'condition'     => 'LDAP',
-            'description'   => mt(
-                'setup',
-                'If you\'d like to authenticate users using LDAP the corresponding PHP module is required.'
-            )
-        )));
-
-        $set->add(new PhpModuleRequirement(array(
-            'optional'      => true,
-            'condition'     => 'INTL',
-            'description'   => mt(
-                'setup',
-                'If you want your users to benefit from language, timezone and date/time'
-                . ' format negotiation, the INTL module for PHP is required.'
-            )
-        )));
-
-        // TODO(6172): Remove this requirement once we do not ship dompdf with Icinga Web 2 anymore
-        $set->add(new PhpModuleRequirement(array(
-            'optional'      => true,
-            'condition'     => 'DOM',
-            'description'   => mt(
-                'setup',
-                'To be able to export views and reports to PDF, the DOM module for PHP is required.'
-            )
-        )));
-
-        $set->add(new PhpModuleRequirement(array(
-            'optional'      => true,
-            'condition'     => 'GD',
-            'description'   => mt(
-                'setup',
-                'In case you want views being exported to PDF, you\'ll need the GD extension for PHP.'
-            )
-        )));
-
-        $set->add(new PhpModuleRequirement(array(
-            'optional'      => true,
-            'condition'     => 'Imagick',
-            'description'   => mt(
-                'setup',
-                'In case you want graphs being exported to PDF as well, you\'ll need the ImageMagick extension for PHP.'
-            )
-        )));
-
-        $mysqlSet = new RequirementSet(true);
-        $mysqlSet->add(new PhpModuleRequirement(array(
-            'optional'      => true,
-            'condition'     => 'pdo_mysql',
-            'alias'         => 'PDO-MySQL',
-            'description'   => mt(
-                'setup',
-                'To store users or preferences in a MySQL database the PDO-MySQL module for PHP is required.'
-            )
-        )));
-        $mysqlSet->add(new ClassRequirement(array(
-            'optional'      => true,
-            'condition'     => 'Zend_Db_Adapter_Pdo_Mysql',
-            'alias'         => mt('setup', 'Zend database adapter for MySQL'),
-            'description'   => mt(
-                'setup',
-                'The Zend database adapter for MySQL is required to access a MySQL database.'
-            ),
-            'textAvailable' => mt(
-                'setup',
-                'The Zend database adapter for MySQL is available.',
-                'setup.requirement.class'
-            ),
-            'textMissing'   => mt(
-                'setup',
-                'The Zend database adapter for MySQL is missing.',
-                'setup.requirement.class'
-            )
-        )));
-        $set->merge($mysqlSet);
-
-        $pgsqlSet = new RequirementSet(true);
-        $pgsqlSet->add(new PhpModuleRequirement(array(
-            'optional'      => true,
-            'condition'     => 'pdo_pgsql',
-            'alias'         => 'PDO-PostgreSQL',
-            'description'   => mt(
-                'setup',
-                'To store users or preferences in a PostgreSQL database the PDO-PostgreSQL module for PHP is required.'
-            )
-        )));
-        $pgsqlSet->add(new ClassRequirement(array(
-            'optional'      => true,
-            'condition'     => 'Zend_Db_Adapter_Pdo_Pgsql',
-            'alias'         => mt('setup', 'Zend database adapter for PostgreSQL'),
-            'description'   => mt(
-                'setup',
-                'The Zend database adapter for PostgreSQL is required to access a PostgreSQL database.'
-            ),
-            'textAvailable' => mt(
-                'setup',
-                'The Zend database adapter for PostgreSQL is available.',
-                'setup.requirement.class'
-            ),
-            'textMissing'   => mt(
-                'setup',
-                'The Zend database adapter for PostgreSQL is missing.',
-                'setup.requirement.class'
-            )
-        )));
-        $set->merge($pgsqlSet);
-
-        $set->add(new ConfigDirectoryRequirement(array(
-            'condition'     => Icinga::app()->getConfigDir(),
-            'description'   => mt(
-                'setup',
-                'The Icinga Web 2 configuration directory defaults to "/etc/icingaweb2", if' .
-                ' not explicitly set in the environment variable "ICINGAWEB_CONFIGDIR".'
-            )
-        )));
+        $req = new Requirements();
+        $set = $req->getRequirements();
 
         if (! $skipModules) {
+            /** @var SetupWizard|Wizard $wizard */
             foreach ($this->getWizards() as $wizard) {
                 $set->merge($wizard->getRequirements());
             }
