@@ -18,6 +18,9 @@ interface SetupWizard
     /**
      * Return the requirements of this wizard
      *
+     * Also see \Icinga\Module\Setup\Hook\RequirementsHook,
+     * you should call the module hook here.
+     *
      * @return  RequirementSet
      */
     public function getRequirements();
