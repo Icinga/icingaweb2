@@ -92,10 +92,11 @@ class Hook
      *
      * TODO: Should return some kind of a hook interface
      *
-     * @param   string  $name   One of the predefined hook names
-     * @param   string  $key    The identifier of a specific subtype
+     * @param   string $name One of the predefined hook names
+     * @param   string $key  The identifier of a specific subtype
      *
-     * @return  mixed
+     * @return Hook
+     * @throws ProgrammingError
      */
     public static function createInstance($name, $key)
     {
@@ -250,11 +251,12 @@ class Hook
     /**
      * Return all instances of a specific name
      *
-     * @param   string  $name   One of the predefined hook names
+     * @param  string  $name              One of the predefined hook names
+     * @param  bool    $bypassPermission  Don't check for permissions
      *
      * @return  array
      */
-    public static function all($name)
+    public static function all($name, $bypassPermission = false)
     {
         $name = self::normalizeHookName($name);
         if (! self::has($name)) {
@@ -262,7 +264,7 @@ class Hook
         }
 
         foreach (self::$hooks[$name] as $key => $hook) {
-            if (self::hasPermission($hook)) {
+            if ($bypassPermission || self::hasPermission($hook)) {
                 if (self::createInstance($name, $key) === null) {
                     return array();
                 }
@@ -275,21 +277,23 @@ class Hook
     /**
      * Get the first hook
      *
-     * @param   string  $name   One of the predefined hook names
+     * @param  string  $name              One of the predefined hook names
+     * @param  bool    $bypassPermission  Don't check for permissions
      *
-     * @return  null|mixed
+     * @return mixed|null
      */
-    public static function first($name)
+    public static function first($name, $bypassPermission = false)
     {
         $name = self::normalizeHookName($name);
 
         if (self::has($name)) {
             foreach (self::$hooks[$name] as $key => $hook) {
-                if (self::hasPermission($hook)) {
+                if ($bypassPermission || self::hasPermission($hook)) {
                     return self::createInstance($name, $key);
                 }
             }
         }
+        return null;
     }
 
     /**
