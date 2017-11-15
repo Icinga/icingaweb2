@@ -103,6 +103,10 @@
         }
 
         _this.refresh();
+        if ($('#sidebar').is('.collapsed')) {
+            $('#collapse-sidebar').empty().html(e.data.self.buttonLabels[1]);
+            $('#header-logo').addClass('compact');
+        }
     };
 
     /**
