@@ -1129,7 +1129,11 @@ abstract class IdoQuery extends DbQuery
                 $groupedColumns[] = 'st.timeperiod_id';
                 break;
             default:
-                return;
+                if ($this->getDatasource()->getDbType() === 'pgsql' && preg_match('/^(?:hcv|scv)_/', $table)) {
+                    $groupedColumns[] = $table . '.varvalue';
+                } else {
+                    return;
+                }
         }
 
         $groupedTables[$table] = true;
@@ -1164,6 +1168,13 @@ abstract class IdoQuery extends DbQuery
         foreach (new ColumnFilterIterator($this->columns) as $desiredAlias => $desiredColumn) {
             $alias = is_string($desiredAlias) ? $this->customAliasToAlias($desiredAlias) : $desiredColumn;
             $table = $this->aliasToTableName($alias);
+
+            if (!$table && $this->getDatasource()->getDbType() === 'pgsql') {
+                list($type, $name) = $this->customvarNameToTypeName($alias);
+                $table = ($type === 'host' ? 'hcv' : 'scv') . '_' . $name;
+
+            }
+
             if ($table && !isset($groupedTables[$table]) && (
                 in_array($table, $joinedOrigins, true) || $this->getDatasource()->getDbType() === 'pgsql')
             ) {
