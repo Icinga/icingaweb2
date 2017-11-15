@@ -423,6 +423,21 @@ class Web extends EmbeddedWeb
             $user = $auth->getUser();
             $this->getRequest()->setUser($user);
             $this->user = $user;
+
+            if ($user->can('application/stacktraces')) {
+                $displayExceptions = $this->user->getPreferences()->getValue(
+                    'icingaweb',
+                    'show_stacktraces'
+                );
+
+                if ($displayExceptions !== null) {
+                    $this->frontController->setParams(
+                        array(
+                            'displayExceptions' => $displayExceptions
+                        )
+                    );
+                }
+            }
         }
         return $this;
     }
@@ -462,13 +477,6 @@ class Web extends EmbeddedWeb
         $this->frontController->setControllerDirectory($this->getApplicationDir('/controllers'));
 
         $displayExceptions = $this->config->get('global', 'show_stacktraces', true);
-        if ($this->user !== null && $this->user->can('application/stacktraces')) {
-            $displayExceptions = $this->user->getPreferences()->getValue(
-                'icingaweb',
-                'show_stacktraces',
-                $displayExceptions
-            );
-        }
 
         $this->frontController->setParams(
             array(
