@@ -31,11 +31,16 @@
     box-shadow: 0 0 4em 2em rgba(0,0,0,.4);
   }
 
-  #icinga-logo {
-    width: 80%;
+  .logo-wrapper {
     position: absolute;
-    top: 1em; left: 10%;
+    top: 1em; right: 1em; left: 1em;
+  }
+
+  #icinga-logo {
+    width: 100%;
+    max-width: 18em;
     height: auto;
+    margin: 0 auto;
 
     &:after {
       content: "";
