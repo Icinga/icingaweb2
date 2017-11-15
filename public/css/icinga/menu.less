@@ -31,10 +31,19 @@
   position: absolute;
   bottom: 0; left: 0;
   width: 100%;
-  white-space: nowrap;
-  color: @text-color;
+  text-align: left;
   border: none;
-  background: @gray-light;
+  -webkit-appearance: none;
+     -moz-appearance: none;
+      -ms-appearance: none;
+          appearance: none;
+  padding: .5em .5em .25em .75em;
+  line-height: 1;
+
+  i {
+    width: @icon-width;
+    margin-right: -.417em;
+  }
 }
 
 #menu .active > a {
@@ -50,7 +59,6 @@
   &.active {
     > a {
       color: white;
-      background: @icinga-blue;
       font-weight: bold;
       letter-spacing: .02em;
     }
@@ -75,6 +83,7 @@
     padding: 0.5em 0.5em 0.5em .75em; // 6px 6px
   }
 
+  // Balance icon weight for non active menu items
   &:not(.active) > a > i {
     opacity: 0.8
   }
@@ -82,6 +91,10 @@
   > a:active ~ .nav-level-2 > li {
     display: block;
   }
+}
+
+.collapsed #menu .nav-level-1 > .nav-item.active {
+  background: @icinga-blue;
 }
 
 #menu .nav-level-2 > .nav-item {
@@ -97,7 +110,28 @@
   }
 
   &:hover > a {
-    background: @deep-black;
+    color: @body-bg-color;
+  }
+
+  &.active {
+    margin-left: 0;
+    background: @icinga-blue;
+    padding-left: 1.75em;
+    position: relative;
+  }
+
+  // little caret on active level-2 item
+  &.active:after {
+    content: "";
+    display: block;
+    position: absolute;
+    top: 8px;
+    right: -8px;
+    background: white;
+    transform: rotate(45deg);
+    width: 12px;
+    height: 12px;
+    box-shadow: 0 0 12px 0 rgba(0,0,0,.6)
   }
 
   &.active > a {
@@ -125,10 +159,6 @@
   margin: 0 0.5em -.25em 0.25em;
   font-size: 1.5em;
   margin-right: 1.25em;
-}
-
-#menu .user-nav-item {
-//   background-color: @gray-light;
 }
 
 #menu input.search {
