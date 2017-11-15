@@ -6,7 +6,11 @@
 
   height: 100%;
   background-color: @icinga-blue;
-  background-image: radial-gradient(#2CABD7 20%, #01527F 100%);
+  background-repeat:  no-repeat;
+  background-position: center center;
+  background-image: url(../img/icingaweb2-background.jpg);
+  // fallback ie 9
+  background-size: 100% 100%;
   background-size: cover;
 
   .login-wrapper {
@@ -142,7 +146,7 @@
     i {
       font-size: 3em;
       color: white;
-      text-shadow: 0 0 .5em @deep-black;
+      text-shadow: 0 0 .5em #01507B;
     }
   }
 
