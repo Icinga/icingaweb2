@@ -141,6 +141,7 @@ class Wizard
                 return $page;
             }
         }
+        return null;
     }
 
     /**
@@ -153,7 +154,7 @@ class Wizard
     public function addPage($page)
     {
         if (! $page instanceof Form && ! $page instanceof self) {
-            throw InvalidArgumentException(
+            throw new InvalidArgumentException(
                 'The $page argument must be an instance of Icinga\Web\Form '
                 . 'or Icinga\Web\Wizard but is of type: ' . get_class($page)
             );
@@ -316,12 +317,13 @@ class Wizard
                 return $wizard;
             }
         }
+        return null;
     }
 
     /**
      * Return this wizard's child wizards
      *
-     * @return  array
+     * @return  Wizard[]
      */
     protected function getWizards()
     {
@@ -370,6 +372,7 @@ class Wizard
         } elseif (isset($requestData[static::BTN_PREV])) {
             return $requestData[static::BTN_PREV];
         }
+        return null;
     }
 
     /**
