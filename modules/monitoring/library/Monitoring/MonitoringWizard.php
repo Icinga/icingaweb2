@@ -3,6 +3,7 @@
 
 namespace Icinga\Module\Monitoring;
 
+use Icinga\Module\Monitoring\ProvidedHook\Setup\Requirements;
 use Icinga\Web\Form;
 use Icinga\Web\Wizard;
 use Icinga\Web\Request;
@@ -162,59 +163,7 @@ class MonitoringWizard extends Wizard implements SetupWizard
      */
     public function getRequirements()
     {
-        $set = new RequirementSet();
-        $backendSet = new RequirementSet(false, RequirementSet::MODE_OR);
-        $mysqlSet = new RequirementSet(true);
-        $mysqlSet->add(new PhpModuleRequirement(array(
-            'optional'      => true,
-            'condition'     => 'pdo_mysql',
-            'alias'         => 'PDO-MySQL',
-            'description'   => mt(
-                'monitoring',
-                'To access the IDO stored in a MySQL database the PDO-MySQL module for PHP is required.'
-            )
-        )));
-        $mysqlSet->add(new ClassRequirement(array(
-            'optional'      => true,
-            'condition'     => 'Zend_Db_Adapter_Pdo_Mysql',
-            'alias'         => mt('monitoring', 'Zend database adapter for MySQL'),
-            'description'   => mt(
-                'monitoring',
-                'The Zend database adapter for MySQL is required to access a MySQL database.'
-            )
-        )));
-        $backendSet->merge($mysqlSet);
-        $pgsqlSet = new RequirementSet(true);
-        $pgsqlSet->add(new PhpModuleRequirement(array(
-            'optional'      => true,
-            'condition'     => 'pdo_pgsql',
-            'alias'         => 'PDO-PostgreSQL',
-            'description'   => mt(
-                'monitoring',
-                'To access the IDO stored in a PostgreSQL database the PDO-PostgreSQL module for PHP is required.'
-            )
-        )));
-        $pgsqlSet->add(new ClassRequirement(array(
-            'optional'      => true,
-            'condition'     => 'Zend_Db_Adapter_Pdo_Pgsql',
-            'alias'         => mt('monitoring', 'Zend database adapter for PostgreSQL'),
-            'description'   => mt(
-                'monitoring',
-                'The Zend database adapter for PostgreSQL is required to access a PostgreSQL database.'
-            )
-        )));
-        $backendSet->merge($pgsqlSet);
-        $set->merge($backendSet);
-        $set->add(new PhpModuleRequirement(array(
-            'optional'      => true,
-            'condition'     => 'curl',
-            'alias'         => 'cURL',
-            'description'   => mt(
-                'monitoring',
-                'To send external commands over Icinga 2\'s API the cURL module for PHP is required.'
-            )
-        )));
-
-        return $set;
+        $req = new Requirements();
+        return $req->getRequirements();
     }
 }
