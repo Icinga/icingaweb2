@@ -178,7 +178,7 @@ class RequirementSet implements RecursiveIterator
     /**
      * Return all registered requirements
      *
-     * @return  array
+     * @return  Requirement[]|RequirementSet
      */
     public function getAll()
     {
@@ -328,6 +328,18 @@ class RequirementSet implements RecursiveIterator
     public function __toString()
     {
         $renderer = new RequirementsRenderer($this);
+        return (string) $renderer;
+    }
+
+
+    /**
+     * Return this set of requirements rendered as text
+     *
+     * @return  string
+     */
+    public function toText()
+    {
+        $renderer = new RequirementsTextRenderer($this);
         return (string) $renderer;
     }
 }
