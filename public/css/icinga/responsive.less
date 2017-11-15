@@ -98,6 +98,41 @@
   }
 }
 
+#layout.wide-layout {
+
+  .login-wrapper {
+    // use as centered-ghost
+    text-align: center;
+    vertical-align: middle;
+    letter-spacing: -.417em;
+  }
+
+  // use as centered-ghost
+  .login-wrapper:before {
+    content: "";
+    display: inline-block;
+    height: 100%;
+    vertical-align: middle;
+  }
+
+  // use as centered-ghost
+  .login-wrapper > * {
+    letter-spacing: normal;
+  }
+
+  .login-form {
+    // use as centered-content
+    display: inline-block;
+    vertical-align: middle;
+
+    // Style as box
+    width: 30em;
+    margin: 0;
+    border-radius: 1em;
+    height: auto;
+    padding: 12.5em 0 4em 0;
+  }
+}
 
 // Dashboard
 
