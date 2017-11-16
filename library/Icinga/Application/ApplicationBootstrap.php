@@ -78,6 +78,13 @@ abstract class ApplicationBootstrap
     protected $configDir;
 
     /**
+     * Common storage directory
+     *
+     * @var string
+     */
+    protected $storageDir;
+
+    /**
      * Icinga class loader
      *
      * @var ClassLoader
@@ -122,10 +129,11 @@ abstract class ApplicationBootstrap
     /**
      * Constructor
      *
-     * @param string $baseDir   Icinga Web 2 base directory
-     * @param string $configDir Path to Icinga Web 2's configuration files
+     * @param string $baseDir       Icinga Web 2 base directory
+     * @param string $configDir     Path to Icinga Web 2's configuration files
+     * @param string $storageDir    Path to Icinga Web 2's stored files
      */
-    protected function __construct($baseDir = null, $configDir = null)
+    protected function __construct($baseDir = null, $configDir = null, $storageDir = null)
     {
         if ($baseDir === null) {
             $baseDir = dirname($this->getBootstrapDirectory());
@@ -147,6 +155,17 @@ abstract class ApplicationBootstrap
         }
         $canonical = realpath($configDir);
         $this->configDir = $canonical ? $canonical : $configDir;
+
+        if ($storageDir === null) {
+            $storageDir = getenv('ICINGAWEB_STORAGEDIR');
+            if ($storageDir === false) {
+                $storageDir = Platform::isWindows()
+                    ? $baseDir . '/storage'
+                    : '/var/lib/icingaweb2';
+            }
+        }
+        $canonical = realpath($storageDir);
+        $this->storageDir = $canonical ? $canonical : $storageDir;
 
         set_include_path(
             implode(
@@ -282,6 +301,18 @@ abstract class ApplicationBootstrap
     public function getConfigDir($subDir = null)
     {
         return $this->getDirWithSubDir($this->configDir, $subDir);
+    }
+
+    /**
+     * Get the common storage directory
+     *
+     * @param   string $subDir Optional sub directory to get
+     *
+     * @return  string
+     */
+    public function getStorageDir($subDir = null)
+    {
+        return $this->getDirWithSubDir($this->storageDir, $subDir);
     }
 
     /**
