@@ -339,7 +339,7 @@
         // position level-2 submenus
         $li.addClass('hover');
         $li.find('.nav-level-2').css({
-            left: $li.offset().left + $li.width() + 4,
+            left: $li.offset().left + $li.width(),
             top: $li.offset().top
         });
     };
