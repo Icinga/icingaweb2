@@ -1163,6 +1163,14 @@ abstract class IdoQuery extends DbQuery
 
         foreach (new ColumnFilterIterator($this->columns) as $desiredAlias => $desiredColumn) {
             $alias = is_string($desiredAlias) ? $this->customAliasToAlias($desiredAlias) : $desiredColumn;
+            if ($this->isCustomVar($alias) && $this->getDatasource()->getDbType() === 'pgsql') {
+                $table = $this->customVars[$alias];
+                if (! isset($groupedTables[$table])) {
+                    $group[] = $this->getCustomvarColumnName($alias);
+                    $groupedTables[$table] = true;
+                }
+                continue;
+            }
             $table = $this->aliasToTableName($alias);
             if ($table && !isset($groupedTables[$table]) && (
                 in_array($table, $joinedOrigins, true) || $this->getDatasource()->getDbType() === 'pgsql')
@@ -1173,6 +1181,14 @@ abstract class IdoQuery extends DbQuery
 
         if (! empty($group) && $this->getDatasource()->getDbType() === 'pgsql') {
             foreach (new ColumnFilterIterator($this->orderColumns) as $alias) {
+                if ($this->isCustomVar($alias)) {
+                    $table = $this->customVars[$alias];
+                    if (! isset($groupedTables[$table])) {
+                        $group[] = $this->getCustomvarColumnName($alias);
+                        $groupedTables[$table] = true;
+                    }
+                    continue;
+                }
                 $table = $this->aliasToTableName($alias);
                 if ($table && !isset($groupedTables[$table])
                     && !in_array($this->getMappedField($alias), $this->columns, true)
