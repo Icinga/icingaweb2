@@ -29,12 +29,29 @@
 
 #collapse-sidebar {
   position: absolute;
-  bottom: 0; left: 0;
-  width: 100%;
-  white-space: nowrap;
-  color: @text-color;
+  bottom: 0; left: 0; right: 0;
+  color: @gray-light;
   border: none;
-  background: @gray-light;
+  text-align: right;
+  padding: .5em 0 .25em .25em;
+  overflow: hidden;
+  background: none;
+
+  i {
+    width: 2em;
+    box-shadow: 0 0 .5em 0 rgba(0,0,0,.1);
+    background: @body-bg-color;
+    font-size: 1.5em;
+    padding: 0 .5em 0 .25em;
+    display: inline-block;
+    border-radius: .25em 0 0 .25em;
+  }
+
+  &:hover {
+    i {
+      color: @icinga-blue;
+    }
+  }
 }
 
 #menu .active > a {
