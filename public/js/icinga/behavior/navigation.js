@@ -70,7 +70,7 @@
 
     Navigation.prototype.inputFocussed = function(e) {
         var $sidebar = $('#sidebar');
-        if ($layout.is('.sidebar-collapsed')) {
+        if ($('#layout').is('.sidebar-collapsed')) {
             e.data.self.toggleSidebar(e);
         }
     }
