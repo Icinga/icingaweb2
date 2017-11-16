@@ -341,3 +341,121 @@ ul.tree li a.error:hover {
     right: 6px;
   }
 }
+
+.slice-state-ok {
+  stroke: @color-ok;
+  background: @color-ok;
+}
+
+.slice-state-warning-handled {
+  stroke: @color-warning-handled;
+  background: @color-warning-handled;
+}
+
+.slice-state-warning {
+  stroke: @color-warning;
+  background: @color-unreachable-handled;
+}
+
+.slice-state-critical-handled {
+  stroke: @color-critical-handled;
+  background: @color-critical-handled;
+}
+
+.slice-state-critical {
+  stroke: @color-critical;
+  background: @color-critical;
+}
+
+.slice-state-unknown-handled {
+  stroke: @color-unknown-handled;
+  background: @color-unknown-handled;
+}
+
+.slice-state-unknown {
+  stroke: @color-unknown;
+  background: @color-unknown;
+}
+
+.slice-state-unreachable-handled {
+  stroke: @color-unreachable-handled;
+  background: @color-unreachable-handled;
+}
+
+.slice-state-unreachable {
+  stroke: @color-unreachable;
+  background: @color-unreachable;
+}
+
+.slice-state-pending {
+  stroke: @color-pending;
+  background: @color-pending;
+}
+
+.slice-state-not-checked {
+  stroke: @gray-light;
+  background: @gray-light;
+}
+
+.donut {
+  width: 22em;
+  height: 22em;
+  min-width: 11.5em;
+  display: table;
+}
+
+.donut-graph {
+  width: 22em;
+  height: 22em;
+}
+
+.donut-label {
+  font-weight: bold;
+  fill: @text-color;
+}
+
+.donut-label {
+  margin-top: -12.5em;
+  text-align: center;
+}
+
+.donut-label-big {
+  color: @color-critical;
+  font-size: 6em;
+  line-height: 0;
+  text-anchor: middle;
+  &:hover {
+    text-decoration: none;
+  }
+}
+
+.donut-label-small {
+  fill: @text-color;
+  font-size: 1.2em;
+  text-transform: lowercase;
+  text-anchor: middle;
+  -moz-transform: translateY(0.35em);
+  -ms-transform: translateY(0.35em);
+  -webkit-transform: translateY(0.35em);
+  transform: translateY(0.35em);
+}
+
+.donut-container {
+  display: inline-block;
+  width: 36em;
+  height: 36em;
+  position: relative;
+}
+
+.donut-table {
+  max-width: 45%;
+  display: inline-block;
+  position: absolute;
+  top: 23em;
+  left: 17.5em;
+
+  & > tbody > tr:hover {
+    text-decoration: underline;
+    cursor: pointer;
+  }
+}
