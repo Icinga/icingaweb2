@@ -137,11 +137,12 @@
   }
 }
 
-#sidebar {
-  background-color: @gray-lighter;
-  z-index: 3;
+#layout.sidebar-collapsed {
+  #main {
+    left: 3em;
+  }
 
-  &.collapsed {
+  #sidebar {
     width: 3em;
 
     #menu {
@@ -151,8 +152,9 @@
   }
 }
 
-#sidebar.collapsed + #main {
-  left: 3em;
+#sidebar {
+  background-color: @gray-lighter;
+  z-index: 3;
 }
 
 .container,
