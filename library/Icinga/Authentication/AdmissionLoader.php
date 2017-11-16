@@ -28,6 +28,9 @@ class AdmissionLoader
         $username = strtolower($username);
         if (! empty($section->users)) {
             $users = array_map('strtolower', StringHelper::trimSplit($section->users));
+            if (in_array('*', $users)) {
+                return true;
+            }
             if (in_array($username, $users)) {
                 return true;
             }
