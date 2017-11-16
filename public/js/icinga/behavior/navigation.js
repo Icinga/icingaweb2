@@ -54,15 +54,14 @@
     Navigation.prototype.toggleSidebar = function(e) {
         var $button = $('#collapse-sidebar'),
             $sidebar = $('#sidebar'),
-            $this = $(e.data.self);
+            $this = $(e.data.self),
+            $layout = $('#layout');
 
-        $sidebar.toggleClass('collapsed');
-        if ($sidebar.is('.collapsed')) {
-            $button.empty().html(e.data.self.buttonLabels[1]);
-            $('#header-logo').addClass('compact');
+        $layout.toggleClass('sidebar-collapsed');
+        if ($layout.is('.sidebar-collapsed')) {
+            $button.empty().html(e.data.self.buttonLabels[1])
         } else {
             $button.empty().html(e.data.self.buttonLabels[0]);
-            $('#header-logo').removeClass('compact');
         }
 
         $('#menu .hover').removeClass('hover');
@@ -71,7 +70,7 @@
 
     Navigation.prototype.inputFocussed = function(e) {
         var $sidebar = $('#sidebar');
-        if ($sidebar.is('.collapsed')) {
+        if ($layout.is('.sidebar-collapsed')) {
             e.data.self.toggleSidebar(e);
         }
     }
@@ -155,7 +154,7 @@
             // Switch the active menu item:
             $li = $a.closest('li');
 
-            if ($('#sidebar').is('.collapsed')) {
+            if ($('#layout').is('.sidebar-collapsed')) {
                 $li.addClass('hover');
             } else {
                 _this.setActive($a);
@@ -318,7 +317,7 @@
             return;
         }
 
-        if ($li.hasClass('active') && ! $('#sidebar').is('.collapsed')) {
+        if ($li.hasClass('active') && !$('#layout').is('.sidebar-collapsed')) {
             $li.siblings().removeClass('hover');
             return;
         }

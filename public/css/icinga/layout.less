@@ -51,10 +51,6 @@
   height: 100%;
 }
 
-#header-logo.compact {
-  background-image: url('../img/icinga-logo-compact.svg');
-}
-
 #icinga-logo {
   background-image: url('../img/icinga-logo-big.svg');
   background-position: center bottom;
@@ -137,11 +133,16 @@
   }
 }
 
-#sidebar {
-  background-color: #494949;
-  z-index: 3;
+#layout.sidebar-collapsed {
+  #header-logo {
+    background-image: url('../img/icinga-logo-compact.svg');
+  }
 
-  &.collapsed {
+  #main {
+    left: 3em;
+  }
+
+  #sidebar {
     width: 3em;
 
     #menu {
@@ -151,8 +152,9 @@
   }
 }
 
-#sidebar.collapsed + #main {
-  left: 3em;
+#sidebar {
+  background-color: @gray-lighter;
+  z-index: 3;
 }
 
 .container,

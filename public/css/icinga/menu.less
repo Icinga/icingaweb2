@@ -36,20 +36,30 @@
 
 #collapse-sidebar {
   position: absolute;
-  bottom: 0; left: 0;
-  width: 100%;
-  text-align: left;
+  bottom: 0; left: 0; right: 0;
+  color: @gray-light;
   border: none;
-  -webkit-appearance: none;
-     -moz-appearance: none;
-      -ms-appearance: none;
-          appearance: none;
+  text-align: right;
+  padding: .5em 0 .25em .25em;
+  overflow: hidden;
+  background: none;
   padding: .5em .5em .25em .75em;
   line-height: 1;
 
   i {
-    width: @icon-width;
-    margin-right: -.417em;
+    width: 2em;
+    box-shadow: 0 0 .5em 0 rgba(0,0,0,.1);
+    background: @body-bg-color;
+    font-size: 1.5em;
+    padding: 0 .5em 0 .25em;
+    display: inline-block;
+    border-radius: .25em 0 0 .25em;
+  }
+
+  &:hover {
+    i {
+      color: @icinga-blue;
+    }
   }
 }
 
@@ -87,6 +97,7 @@
   }
 
   // Balance icon weight for non active menu items
+    padding: 0.5em 0.5em; // 6px 6px
   &:not(.active) > a > i {
     opacity: 0.8
   }
@@ -164,7 +175,7 @@
   opacity: .6;
 }
 
-.collapsed #menu img.icon {
+.sidebar-collapsed #menu img.icon {
   margin: 0 0.5em -.25em 0.25em;
   font-size: 1.5em;
   margin-right: 1.25em;
@@ -197,7 +208,7 @@
 
 // Hovered menu
 
-.collapsed #menu .nav-level-1 {
+.sidebar-collapsed #menu .nav-level-1 {
 
   > .nav-item i {
     font-size: 1.5em;
@@ -301,11 +312,11 @@
   position: relative;
 }
 
-.collapsed .search-control .search-input:valid ~ .search-reset {
+.sidebar-collapsed .search-control .search-input:valid ~ .search-reset {
   display: none;
 }
 
-.collapsed .search-input {
+.sidebar-collapsed .search-input {
   font-size: 1.25em;
 }
 
