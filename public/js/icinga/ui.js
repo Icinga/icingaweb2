@@ -635,6 +635,12 @@
                     }
                 }
 
+                if (this.mobileMenu) {
+                    $('#collapse-sidebar').hide()
+                } else {
+                    $('#collapse-sidebar').show()
+                }
+
                 var _this = this;
                 $('.container').each(function () {
                     _this.fixControls($(this));

@@ -85,6 +85,7 @@
 
 // x-column-layout
 #main {
+  z-index: 2;
   .clearfix();
 
   & > .container {
@@ -132,8 +133,28 @@
   }
 }
 
+#layout.sidebar-collapsed {
+  #header-logo {
+    background-image: url('../img/icinga-logo-compact.svg');
+  }
+
+  #main {
+    left: 3em;
+  }
+
+  #sidebar {
+    width: 3em;
+
+    #menu {
+      max-width: 100%;
+      overflow-x: hidden;
+    }
+  }
+}
+
 #sidebar {
   background-color: @gray-lighter;
+  z-index: 3;
 }
 
 .container,

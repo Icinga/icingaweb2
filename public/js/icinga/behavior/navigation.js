@@ -9,8 +9,11 @@
     var Navigation = function (icinga) {
         Icinga.EventListener.call(this, icinga);
         this.on('click', '#menu a', this.linkClicked, this);
+        this.on('focus', '#menu input', this.inputFocussed, this);
         this.on('click', '#menu tr[href]', this.linkClicked, this);
+        this.on('click', '#collapse-sidebar', this.toggleSidebar, this);
         this.on('mouseenter', '#menu > nav > ul > li', this.menuTitleHovered, this);
+        this.on('mouseleave', '#menu > nav > ul > li', this.menuTitleHovered, this);
         this.on('mouseleave', '#sidebar', this.leaveSidebar, this);
         this.on('rendered', '#menu', this.onRendered, this);
 
@@ -38,8 +41,39 @@
          * @type {jQuery}
          */
         this.$menu = null;
+
+        this.buttonLabels = [$('#collapse-sidebar').html(),  '<i class="' + $('#collapse-sidebar').attr('data-open-icon') + '"></i> ']
     };
     Navigation.prototype = new Icinga.EventListener();
+
+    /**
+     * Collapse or expand sidebar
+     *
+     * @param {Object} e Event
+     */
+    Navigation.prototype.toggleSidebar = function(e) {
+        var $button = $('#collapse-sidebar'),
+            $sidebar = $('#sidebar'),
+            $this = $(e.data.self),
+            $layout = $('#layout');
+
+        $layout.toggleClass('sidebar-collapsed');
+        if ($layout.is('.sidebar-collapsed')) {
+            $button.empty().html(e.data.self.buttonLabels[1])
+        } else {
+            $button.empty().html(e.data.self.buttonLabels[0])
+        }
+
+        $('#menu .hover').removeClass('hover');
+        $(window).trigger('resize');
+    }
+
+    Navigation.prototype.inputFocussed = function(e) {
+        var $sidebar = $('#sidebar');
+        if ($('#layout').is('.sidebar-collapsed')) {
+            e.data.self.toggleSidebar(e);
+        }
+    }
 
     /**
      * Activate menu items if their class is set to active or if the current URL matches their link
@@ -105,28 +139,26 @@
      * @param event
      */
     Navigation.prototype.linkClicked = function(event) {
-        var $a = $(this);
-        var href = $a.attr('href');
-        var $li;
-        var _this = event.data.self;
-        var icinga = _this.icinga;
+        var $a = $(this),
+            href = $a.attr('href'),
+            $li,
+            _this = event.data.self,
+            icinga = _this.icinga;
 
-        _this.hovered = null;
         if (href.match(/#/)) {
             // ...it may be a menu section without a dedicated link.
             // Switch the active menu item:
-            _this.setActive($a);
             $li = $a.closest('li');
-            if ($li.hasClass('hover')) {
-                $li.removeClass('hover');
+
+            if ($('#layout').is('.sidebar-collapsed')) {
+                $li.addClass('hover');
+            } else {
+                _this.setActive($a);
+                $li.removeClass('hover').addClass('active');
             }
-            if (href === '#') {
-                // Allow to access dropdown menu by keyboard
-                if ($a.hasClass('dropdown-toggle')) {
-                    $a.closest('li').toggleClass('hover');
-                }
-                return;
-            }
+
+            if (href === '#') { return }
+
         } else {
             _this.setActive($(event.target));
         }
@@ -190,8 +222,8 @@
      */
     Navigation.prototype.select = function($item) {
         // support selecting the url of the menu entry
-        var $input = $item.find('input');
-        $item = $item.closest('li');
+        var $input = $item.find('input'),
+        	    $item = $item.closest('li');
 
         if ($item.length) {
             // select the current item
@@ -200,7 +232,7 @@
             // unfold the containing menu
             var $outerMenu = $selectedMenu.parent().closest('li');
             if ($outerMenu.length) {
-                $outerMenu.addClass('active');
+                $outerMenu.removeClass('hover').addClass('active');
             }
         } else if ($input.length) {
             $input.addClass('active');
@@ -273,14 +305,18 @@
         }
 
         var $li = $(this),
-            delay = 800,
             _this = event.data.self;
 
-        _this.hovered = null;
-        if ($li.hasClass('active')) {
+        if (event.type == 'mouseleave') {
+            $li.removeClass('hover');
+            return;
+        }
+
+        if ($li.hasClass('active') && !$('#layout').is('.sidebar-collapsed')) {
             $li.siblings().removeClass('hover');
             return;
         }
+
         if ($li.children('ul').children('li').length === 0) {
             return;
         }
@@ -288,33 +324,18 @@
             return;
         }
 
-        if ($('#layout').hasClass('hoveredmenu')) {
-            delay = 0;
-        }
+        $li.siblings('.hover').removeClass('hover');
+        $li.siblings('.hover').find('.nav-level-2').css({
+            left: '',
+            top: ''
+        })
 
-        setTimeout(function () {
-            try {
-                if (!$li.is('li:hover')) {
-                    return;
-                }
-                if ($li.hasClass('active')) {
-                    return;
-                }
-            } catch(e) { /* Bypass because if IE8 */ }
-
-            $li.siblings().each(function () {
-                var $sibling = $(this);
-                try {
-                    if ($sibling.is('li:hover')) {
-                        return;
-                    }
-                } catch(e) { /* Bypass because if IE8 */ };
-                if ($sibling.hasClass('hover')) {
-                    $sibling.removeClass('hover');
-                }
-            });
-            _this.hoverElement($li);
-        }, delay);
+        // position level-2 submenus
+        $li.addClass('hover');
+        $li.find('.nav-level-2').css({
+            left: $li.offset().left + $li.width() + 4,
+            top: $li.offset().top
+        })
     };
 
     Navigation.prototype.leaveSidebar = function (event) {
@@ -322,30 +343,19 @@
             $li = $sidebar.find('li.hover'),
             _this = event.data.self;
         if (! $li.length) {
-            $('#layout').removeClass('hoveredmenu');
             return;
         }
 
-        setTimeout(function () {
-            try {
-                if ($li.is('li:hover') || $sidebar.is('sidebar:hover')) {
-                    return;
-                }
-            } catch(e) { /* Bypass because if IE8 */ };
-            $li.removeClass('hover');
-            $('#layout').removeClass('hoveredmenu');
-        }, 500);
-        _this.hovered = null;
+        $li.removeClass('hover');
+        // reset applied styles
+        $li.find('.nav-level-2').css({
+            left: '',
+            top: ''
+        })
     };
 
     Navigation.prototype.hoverElement = function ($li)  {
-        $('#layout').addClass('hoveredmenu');
         $li.addClass('hover');
-        if ($li[0]) {
-            this.hovered = this.icinga.utils.getDomPath($li[0]);
-        } else {
-            this.hovered = null;
-        }
     };
 
     Icinga.Behaviors.Navigation = Navigation;
