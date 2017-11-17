@@ -235,3 +235,60 @@ html.no-js .controls > .tabs {
 #sidebar {
   z-index: 2;
 }
+
+// Collpased sidebar
+#layout.sidebar-collapsed {
+  #header-logo {
+    background-image: url('../img/icinga-logo-compact.svg');
+  }
+
+  #main {
+    left: 3em;
+  }
+
+  #sidebar {
+    width: 3em;
+  }
+
+  #open-sidebar {
+    display: inline;
+  }
+
+  #close-sidebar {
+    display: none;
+  }
+
+  #menu {
+    .badge {
+      display: none;
+    }
+
+    img.icon {
+      margin: 0 1.25em -.25em 0.25em;
+      font-size: 1.5em;
+    }
+
+    .nav-item {
+      white-space: nowrap;
+    }
+
+    .nav-level-1 > .nav-item i {
+      font-size: 1.5em;
+      margin-right: .5em;
+    }
+  }
+
+  .search-input {
+    font-size: 1.25em;
+  }
+
+  .search-reset {
+    display: none;
+  }
+
+  .skip-links {
+    a, button {
+      width: 20em;
+    }
+  }
+}

@@ -48,11 +48,6 @@
       display: none;
     }
 
-    .nav-level-2 > li {
-      // Expand menu if active
-      display: block;
-    }
-
     background-color: @body-bg-color;
     border-color: @icinga-blue;
   }
@@ -79,6 +74,17 @@
   > a {
     font-size: @font-size-small;
     padding: 0.364em 0.545em; // 4px 6px
+  }
+}
+
+#layout:not(.sidebar-collapsed) {
+  #menu .nav-level-1 > .nav-item {
+    &.active {
+      .nav-level-2 > li {
+        // Expand menu if active
+        display: block;
+      }
+    }
   }
 }
 
@@ -117,6 +123,7 @@
 }
 
 // Hovered menu
+#layout.sidebar-collapsed #menu .nav-level-1 > .nav-item:hover,
 #menu .nav-level-1 > .nav-item:not(.active):hover {
   > .nav-level-2 {
     &:before {
@@ -133,8 +140,6 @@
     color: @text-color-inverted;
     padding: @vertical-padding 0;
     position: fixed;
-    margin-left: 15.583em;
-    margin-top: -3.2em;
     width: 14em;
 
     > .nav-item {
@@ -150,6 +155,22 @@
 
   > a > .badge {
     display: none;
+  }
+}
+
+#menu .nav-level-1 > .nav-item:not(.active):hover {
+  > .nav-level-2 {
+    // Position relative to parent
+    margin-left: 15.583em;
+    margin-top: -3.167em;
+  }
+}
+
+#layout.sidebar-collapsed #menu .nav-level-1 > .nav-item:hover {
+  > .nav-level-2 {
+    // Position relative to parent
+    margin-left: 3.583em;
+    margin-top: -3.333em;
   }
 }
 
@@ -253,4 +274,35 @@ input[type=text].search-input {
     opacity: 1;
     transform: none;
   }
+}
+
+// Toggle sidebar button
+#layout:not(.minimal-layout) #toggle-sidebar {
+  // Reset button styles
+  background: none;
+  border: none;
+  padding: 0;
+
+  color: @gray-light;
+
+  position: absolute;
+  bottom: 0;
+  right: 0;
+
+  i {
+    background: @body-bg-color;
+    border-radius: .25em 0 0 .25em;
+    font-size: 1.5em;
+    width: 2em;
+  }
+
+  &:hover {
+    i {
+      color: @icinga-blue;
+    }
+  }
+}
+
+#open-sidebar {
+  display: none;
 }

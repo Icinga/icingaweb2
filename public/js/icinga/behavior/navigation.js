@@ -11,6 +11,7 @@
         this.on('click', '#menu a', this.linkClicked, this);
         this.on('click', '#menu tr[href]', this.linkClicked, this);
         this.on('rendered', '#menu', this.onRendered, this);
+        this.on('click', '#toggle-sidebar', this.toggleSidebar, this);
 
         /**
          * The DOM-Path of the active item
@@ -233,6 +234,16 @@
      */
     Navigation.prototype.onPushState = function () {
         return this.active;
+    };
+
+    /**
+     * Collapse or expand sidebar
+     *
+     * @param {Object} e Event
+     */
+    Navigation.prototype.toggleSidebar = function(e) {
+        $('#layout').toggleClass('sidebar-collapsed');
+        $(window).trigger('resize');
     };
 
     Icinga.Behaviors.Navigation = Navigation;
