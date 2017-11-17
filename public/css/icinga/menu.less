@@ -14,29 +14,43 @@
   overflow: auto;
 }
 
-#menu a {
-  &:focus {
-    color: @icinga-blue;
-    outline-offset: -3px;
-  }
-
-  &:hover {
-    color: @icinga-blue;
-    text-decoration: none;
-  }
-}
-
-#menu .active > a {
-  color: @icinga-blue;
+#layout:not(.minimal-layout) #menu {
+  padding-bottom: 2.25em;
 }
 
 #menu .nav-item {
   vertical-align: middle;
 
   > a {
-    overflow: hidden;
-    text-overflow: ellipsis;
+    &:focus {
+      color: @icinga-blue;
+      outline: -3px;
+    }
+
+    &:hover {
+      color: @icinga-blue;
+      text-decoration: none;
+    }
   }
+
+  &.active {
+    > a {
+      color: @icinga-blue;
+    }
+  }
+}
+
+#layout:not(.sidebar-collapsed) #menu .nav-item > a {
+  // Respect overflowing content
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#layout.sidebar-collapsed #menu .nav-level-1 > .nav-item > a {
+  // Clip overflowing content
+  overflow: hidden;
+  width: 4em;
 }
 
 #menu .nav-level-1 > .nav-item {
@@ -46,11 +60,6 @@
   &.active {
     > a > .badge {
       display: none;
-    }
-
-    .nav-level-2 > li {
-      // Expand menu if active
-      display: block;
     }
 
     background-color: @body-bg-color;
@@ -85,6 +94,17 @@
 .no-js #menu .nav-level-2 > .nav-item {
   // Expand menu if JavaScript is disabled
   display: block;
+}
+
+#layout:not(.sidebar-collapsed) {
+  #menu .nav-level-1 > .nav-item {
+    &.active {
+      .nav-level-2 > li {
+        // Expand menu if active
+        display: block;
+      }
+    }
+  }
 }
 
 #menu img.icon {
@@ -122,6 +142,7 @@
 }
 
 // Hovered menu
+#layout.sidebar-collapsed #menu .nav-level-1 > .nav-item:hover,
 #menu .nav-level-1 > .nav-item:not(.active):hover {
   > .nav-level-2 {
     &:before {
@@ -138,8 +159,6 @@
     color: @text-color-inverted;
     padding: @vertical-padding 0;
     position: fixed;
-    margin-left: 15.583em;
-    margin-top: -3.2em;
     width: 14em;
 
     > .nav-item {
@@ -155,6 +174,22 @@
 
   > a > .badge {
     display: none;
+  }
+}
+
+#menu .nav-level-1 > .nav-item:not(.active):hover {
+  > .nav-level-2 {
+    // Position relative to parent
+    margin-left: 15.583em;
+    margin-top: -3.167em;
+  }
+}
+
+#layout.sidebar-collapsed #menu .nav-level-1 > .nav-item:hover {
+  > .nav-level-2 {
+    // Position relative to parent
+    margin-left: 3.583em;
+    margin-top: -3.333em;
   }
 }
 
@@ -258,4 +293,39 @@ input[type=text].search-input {
     opacity: 1;
     transform: none;
   }
+}
+
+// Toggle sidebar button
+#toggle-sidebar {
+  // Reset button styles
+  background: none;
+  border: none;
+  padding: 0;
+
+  color: @gray-light;
+
+  position: absolute;
+  bottom: 0;
+  right: 0;
+
+  i {
+    background: @body-bg-color;
+    border-radius: .25em 0 0 .25em;
+    font-size: 1.5em;
+    width: 2em;
+  }
+
+  &:hover {
+    i {
+      color: @icinga-blue;
+    }
+  }
+}
+
+#layout.minimal-layout #toggle-sidebar {
+  display: none;
+}
+
+#open-sidebar {
+  display: none;
 }

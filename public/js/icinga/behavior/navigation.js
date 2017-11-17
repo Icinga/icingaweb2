@@ -12,6 +12,7 @@
         this.on('click', '#menu tr[href]', this.linkClicked, this);
         this.on('rendered', '#menu', this.onRendered, this);
         this.on('mouseenter', '#menu .nav-level-1 > .nav-item', this.fixFlyoutPosition, this);
+        this.on('click', '#toggle-sidebar', this.toggleSidebar, this);
 
         /**
          * The DOM-Path of the active item
@@ -220,6 +221,16 @@
     };
 
     /**
+     * Collapse or expand sidebar
+     *
+     * @param {Object} e Event
+     */
+    Navigation.prototype.toggleSidebar = function(e) {
+        $('#layout').toggleClass('sidebar-collapsed');
+        $(window).trigger('resize');
+    };
+
+    /**
      * Called when the history changes
      *
      * @param url   The url of the new state
@@ -255,4 +266,4 @@
 
     Icinga.Behaviors.Navigation = Navigation;
 
-}) (Icinga, jQuery);
+})(Icinga, jQuery);
