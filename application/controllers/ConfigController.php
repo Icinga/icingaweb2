@@ -298,7 +298,7 @@ class ConfigController extends Controller
         $rootCaCollections = array();
         foreach (LocalFileStorage::common('tls/rootcacollections') as $rootCaCollection) {
             $matches = array();
-            if (preg_match('~\A([0-9a-f]{2}+)\.pem\z~i', $rootCaCollection, $matches)) {
+            if (preg_match('~\A((?:[0-9a-f]{2})+)\.pem\z~', $rootCaCollection, $matches)) {
                 $rootCaCollections[hex2bin($matches[1])] = null;
             }
         }
@@ -309,7 +309,7 @@ class ConfigController extends Controller
         $clientIdentities = array();
         foreach (LocalFileStorage::common('tls/clientidentities') as $clientIdentity) {
             $matches = array();
-            if (preg_match('~\A([0-9a-f]{2}+)\.pem\z~i', $clientIdentity, $matches)) {
+            if (preg_match('~\A((?:[0-9a-f]{2})+)\.pem\z~', $clientIdentity, $matches)) {
                 $clientIdentities[hex2bin($matches[1])] = null;
             }
         }
