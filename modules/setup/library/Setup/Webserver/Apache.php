@@ -53,14 +53,14 @@ Alias {urlPath} "{documentRoot}"
 
     <IfModule !mod_rewrite.c>
         DirectoryIndex error_norewrite.html
-        ErrorDocument 404 /error_norewrite.html
+        ErrorDocument 404 {urlPath}/error_norewrite.html
     </IfModule>
     
     # forwarding PHP requests to FPM
     # remove comments if you want to use FPM
     #<FilesMatch "\.php$">
     #    SetHandler "proxy:fcgi://127.0.0.1:9000"
-    #    ErrorDocument 503 /icingaweb2/error_unavailable.html
+    #    ErrorDocument 503 {urlPath}/error_unavailable.html
     #</FilesMatch>
 </Directory>
 EOD;
