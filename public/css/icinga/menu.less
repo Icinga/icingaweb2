@@ -30,6 +30,15 @@
   color: @icinga-blue;
 }
 
+#menu .nav-item {
+  vertical-align: middle;
+
+  > a {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
 #menu .nav-level-1 > .nav-item {
   border-left: 5px solid transparent;
   line-height: 2.167em; // 26 px
@@ -104,7 +113,6 @@
 }
 
 // Badge offset correction
-
 #menu > nav > .nav-level-1 > .badge-nav-item > a > .badge {
   margin-top: 0.2em;
 }
@@ -114,26 +122,24 @@
 }
 
 // Hovered menu
-
-#menu .nav-level-1 > .nav-item.hover {
-  position: relative;
-
-  &:before {
-    border: 0.5em solid rgba(0, 0, 0, 0);
-    border-right-color: @text-color;
-    content: "";
-    position: absolute;
-    right: 0;
-    top: 30%;
-  }
-
+#menu .nav-level-1 > .nav-item:not(.active):hover {
   > .nav-level-2 {
+    &:before {
+      border: 0.5em solid rgba(0, 0, 0, 0);
+      border-right-color: @text-color;
+      content: "";
+      width: 1em;
+      position: fixed;
+      margin-left: -1em;
+      margin-top: 0.5em;
+    }
+
     background-color: @text-color;
     color: @text-color-inverted;
-    left: 100%;
     padding: @vertical-padding 0;
-    position: absolute;
-    top: 0;
+    position: fixed;
+    margin-left: 15.583em;
+    margin-top: -3.2em;
     width: 14em;
 
     > .nav-item {
@@ -149,20 +155,6 @@
 
   > a > .badge {
     display: none;
-  }
-}
-
-#layout.hoveredmenu {
-  #main {
-    z-index: 2;
-  }
-
-  #sidebar {
-    z-index: 3;
-  }
-
-  #menu {
-    overflow: visible;
   }
 }
 
