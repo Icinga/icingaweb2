@@ -296,9 +296,9 @@ class ConfigController extends Controller
         $this->createApplicationTabs()->activate('tls');
 
         $rootCaCollections = array();
-        foreach (new LocalFileStorage(Icinga::app()->getStorageDir('framework/tls/rootcacollections')) as $ca) {
+        foreach (LocalFileStorage::common('tls/rootcacollections') as $rootCaCollection) {
             $matches = array();
-            if (preg_match('~\A([0-9a-f]{2}+)\.pem\z~i', $ca, $matches)) {
+            if (preg_match('~\A([0-9a-f]{2}+)\.pem\z~i', $rootCaCollection, $matches)) {
                 $rootCaCollections[hex2bin($matches[1])] = null;
             }
         }
@@ -307,9 +307,9 @@ class ConfigController extends Controller
         $this->view->rootCaCollections = array_keys($rootCaCollections);
 
         $clientIdentities = array();
-        foreach (new LocalFileStorage(Icinga::app()->getStorageDir('framework/tls/clientidentities')) as $client) {
+        foreach (LocalFileStorage::common('tls/clientidentities') as $clientIdentity) {
             $matches = array();
-            if (preg_match('~\A([0-9a-f]{2}+)\.pem\z~i', $client, $matches)) {
+            if (preg_match('~\A([0-9a-f]{2}+)\.pem\z~i', $clientIdentity, $matches)) {
                 $clientIdentities[hex2bin($matches[1])] = null;
             }
         }
