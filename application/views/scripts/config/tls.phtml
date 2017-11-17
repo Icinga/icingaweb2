@@ -1,0 +1,119 @@
+<?php
+/** @var \Icinga\Web\Widget\Tabs $tabs */
+/** @var string[] $rootCaCollections */
+/** @var string[] $clientIdentities */
+?>
+<div class="controls">
+    <?= $tabs ?>
+</div>
+<div class="content">
+    <h1><?= $this->translate('TLS Root CA Certificate Collections') ?></h1>
+
+    <?= $this->qlink(
+        $this->translate('Create A New TLS Root CA Certificate Collection') ,
+        'tlsrootcacollection/create',
+        null,
+        array(
+            'class'             => 'button-link',
+            'data-base-target'  => '_next',
+            'icon'              => 'plus',
+            'title'             => $this->translate('Create a new TLS root CA certificate collection')
+        )
+    ) ?>
+
+    <?php if (! empty($rootCaCollections)): ?>
+        <table class="table-row-selectable common-table" data-base-target="_next">
+            <thead>
+                <tr>
+                    <th><?= $this->translate('Certificate Collection Name') ?></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            <?php foreach ($rootCaCollections as $name): ?>
+                <tr>
+                    <td><?= $this->qlink(
+                        $name,
+                        'tlsrootcacollection/edit',
+                        array('name' => $name),
+                        array(
+                            'title' => sprintf(
+                                $this->translate('Edit TLS root CA certificate collection "%s"'),
+                                $name
+                            )
+                        )
+                    ) ?></td>
+                    <td class="icon-col text-right"><?= $this->qlink(
+                        null,
+                        'tlsrootcacollection/remove',
+                        array('name' => $name),
+                        array(
+                            'class' => 'action-link',
+                            'icon'  => 'cancel',
+                            'title' => sprintf(
+                                $this->translate('Remove TLS root CA certificate collection "%s"'),
+                                $name
+                            )
+                        )
+                    ) ?></td>
+                </tr>
+            <?php endforeach ?>
+            </tbody>
+        </table>
+    <?php endif; ?>
+
+    <h1><?= $this->translate('TLS Client Identities') ?></h1>
+
+    <?= $this->qlink(
+        $this->translate('Create A New TLS Client Identity') ,
+        'tlsclientidentity/create',
+        null,
+        array(
+            'class'             => 'button-link',
+            'data-base-target'  => '_next',
+            'icon'              => 'plus',
+            'title'             => $this->translate('Create a new TLS client identity')
+        )
+    ) ?>
+
+    <?php if (! empty($clientIdentities)): ?>
+        <table class="table-row-selectable common-table" data-base-target="_next">
+            <thead>
+                <tr>
+                    <th><?= $this->translate('Client Identity Name') ?></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            <?php foreach ($clientIdentities as $name): ?>
+                <tr>
+                    <td><?= $this->qlink(
+                        $name,
+                        'tlsclientidentity/edit',
+                        array('name' => $name),
+                        array(
+                            'title' => sprintf(
+                                $this->translate('Edit TLS client identity "%s"'),
+                                $name
+                            )
+                        )
+                    ) ?></td>
+                    <td class="icon-col text-right"><?= $this->qlink(
+                        null,
+                        'tlsclientidentity/remove',
+                        array('name' => $name),
+                        array(
+                            'class' => 'action-link',
+                            'icon'  => 'cancel',
+                            'title' => sprintf(
+                                $this->translate('Remove TLS client identity "%s"'),
+                                $name
+                            )
+                        )
+                    ) ?></td>
+                </tr>
+            <?php endforeach ?>
+            </tbody>
+        </table>
+    <?php endif; ?>
+</div>
