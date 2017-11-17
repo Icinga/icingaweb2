@@ -21,7 +21,7 @@
   > a {
     &:focus {
       color: @icinga-blue;
-      outline: -3px;
+      outline: none;
     }
 
     &:hover {
@@ -303,7 +303,11 @@ input[type=text].search-input {
     width: 2em;
   }
 
-  &:hover {
+  &:focus {
+    outline: none;
+  }
+
+  &:hover, &:focus {
     i {
       color: @icinga-blue;
     }

@@ -23,21 +23,21 @@ $inlineLayoutScript = $this->layout()->inlineLayout . '.phtml';
   <div id="announcements" class="container">
     <?= $this->widget('announcements') ?>
   </div>
-  <div id="header-logo-container">
-    <?= $this->qlink(
-      '',
-      Auth::getInstance()->isAuthenticated() ? 'dashboard' : '',
-      null,
-      array(
-        'aria-hidden'       => 'true',
-        'data-base-target'  => '_main',
-        'id'                => 'header-logo'
-      )
-    ); ?>
-  </div>
 </div>
 <?php if (! $this->layout()->isIframe): ?>
 <div id="sidebar">
+  <div id="header-logo-container">
+  <?= $this->qlink(
+    '',
+    Auth::getInstance()->isAuthenticated() ? 'dashboard' : '',
+    null,
+    array(
+      'aria-hidden'      => 'true',
+      'data-base-target' => '_main',
+      'id'               => 'header-logo'
+    )
+  ) ?>
+  </div>
   <?= $this->render('parts/navigation.phtml'); ?>
 </div>
 <?php endif ?>

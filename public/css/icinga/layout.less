@@ -37,18 +37,24 @@
 }
 
 #header-logo-container {
-  height: 2.667em;
-  margin: .1667em 0 .1667em .7em;
-  width: 100px;
+  background-color: @icinga-blue;
+  height: 3em;
+  padding: 0.5em 0.125em;
 }
 
 #header-logo {
   background-image: url('../img/icinga-logo.svg');
-  background-position: left center;
+  background-position: center center;
   background-repeat: no-repeat;
   background-size: contain;
   display: block;
   height: 100%;
+  width: 100%;
+
+  &:focus {
+    outline: none;
+    opacity: .6;
+  }
 }
 
 #icinga-logo {
@@ -149,9 +155,13 @@
   background-color: @body-bg-color;
 
   > .tabs {
-    height: 2.6em;
-    margin-top: -2.6em;
+    background-color: @icinga-blue;
+    height: 3em;
     overflow: hidden;
+
+    > li {
+      margin-top: 0.4em;
+    }
   }
 
   > .tabs-spacer {
