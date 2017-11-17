@@ -1,5 +1,35 @@
 # Upgrading Icinga Web 2 <a id="upgrading"></a>
 
+## Upgrading to Icinga Web 2 2.5.x <a id="upgrading-to-2.5.x"></a>
+
+**Attention:** Icinga Web 2 now requires **at least PHP 5.6**
+
+**Changes in packaging and dependencies**
+
+Valid for distributions:
+
+* RHEL / CentOS 6 + 7
+  * Upgrading to PHP 7.0 / 7.1 via RedHat SCL (new dependency)
+  * See [Upgrading to FPM](02-Installation.md#upgrading-to-fpm) for manual steps that
+    are required
+* SUSE SLE 12
+  * Upgrading PHP to >= 5.6.0 via the alternative packages.
+    You might have to confirm the replacement of PHP < 5.6 - but that
+    should work with any other PHP app as well.
+  * Make sure to enable the new Apache module `a2enmod php7` and restart `apache2`
+
+**Discontinuing package updates**
+
+For the following distributions Icinga Web 2 won't be updated past 2.4.x anymore.
+
+* Debian 7 wheezy
+* Ubuntu 14.04 LTS (trusty)
+* SUSE SLE 11 (all service packs)
+
+Please think about replacing your central Icinga system to a newer distribution release.
+
+Also see [packages.icinga.com] for the currently supported distributions.
+
 ## Upgrading to Icinga Web 2 2.4.x <a id="upgrading-to-2.4.x"></a>
 
 * Icinga Web 2 version 2.4.x does not introduce any backward incompatible change.
@@ -82,3 +112,5 @@ If you delegated authentication to your web server using the `autologin` backend
 authentication backend to be able to log in again. The new name better reflects 
 what's going on. A similar change
 affects environments that opted for not storing preferences, your new backend is `none`.
+
+[packages.icinga.com]: https://packages.icinga.com

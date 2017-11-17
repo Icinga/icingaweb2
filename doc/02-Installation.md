@@ -14,7 +14,7 @@ chapter.
 
 * [Icinga 2](https://www.icinga.com/products/icinga-2/) with the IDO database backend (MySQL or PostgreSQL)
 * A web server, e.g. Apache or Nginx
-* PHP >= 5.3.0 with the following modules installed: cURL, gettext, intl, mbstring, OpenSSL and xml
+* PHP >= 5.3.2 with the following modules installed: cURL, gettext, intl, mbstring, OpenSSL and xml
 * Default time zone configured for PHP in the php.ini file
 * LDAP PHP library when using Active Directory or LDAP for authentication
 * MySQL or PostgreSQL PHP libraries
@@ -75,12 +75,6 @@ yum install https://packages.icinga.com/epel/icinga-rpm-release-7-latest.noarch.
 dnf install https://packages.icinga.com/fedora/icinga-rpm-release-26-latest.noarch.rpm
 ```
 
-**SLES 11**:
-```
-zypper ar http://packages.icinga.com/SUSE/ICINGA-release-11.repo
-zypper ref
-```
-
 **SLES 12**:
 ```
 zypper ar http://packages.icinga.com/SUSE/ICINGA-release.repo
@@ -104,17 +98,46 @@ apk update
 
 #### RHEL/CentOS Notes <a id="package-repositories-rhel-notes"></a>
 
-The packages for RHEL/CentOS depend on other packages which are distributed
-as part of the [EPEL repository](https://fedoraproject.org/wiki/EPEL).
+Our packages are build on and with packages from the **[EPEL repository](https://fedoraproject.org/wiki/EPEL)**.
+Please enable it prior installing the Icinga packages.
 
 CentOS 7/6:
 ```
 yum install epel-release
 ```
 
-If you are using RHEL you need enable the `optional` repository and then install
-the [EPEL rpm package](https://fedoraproject.org/wiki/EPEL#How_can_I_use_these_extra_packages.3F).
+RedHat 7:
+```
+yum install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+```
 
+If you are using RHEL you need enable the **optional repository** in order to use some
+contents of EPEL.
+
+RedHat:
+```
+subscription-manager repos --enable rhel-7-server-optional-rpms
+# or
+subscription-manager repos --enable rhel-6-server-optional-rpms
+```
+
+Since version 2.5.0 we also require a **newer PHP version** than what is available
+in RedHat itself. You need to enable the SCL repository, so that the dependencies
+can pull in the newer PHP.
+
+CentOS:
+```
+yum install centos-release-scl
+```
+
+RedHat:
+```
+subscription-manager repos --enable rhel-server-rhscl-7-rpms
+# or
+subscription-manager repos --enable rhel-server-rhscl-6-rpms
+```
+
+Make sure to also read the chapter on [Setting up FPM](02-Installation.md#setting-up-fpm).
 
 #### Alpine Linux Notes <a id="package-repositories-alpine-notes"></a>
 
@@ -151,6 +174,145 @@ zypper install icingaweb2 icingacli
 apk add icingaweb2
 ```
 For Alpine Linux please read the [package repositories notes](02-Installation.md#package-repositories-alpine-notes).
+
+### Setting up FPM <a id="setting-up-fpm"></a>
+
+If you are on CentOS / RedHat 6 or 7, or just want to run Icinga Web 2 with PHP-FPM instead
+of the Apache module.
+
+| Operating System    | FPM configuration path            |
+|---------------------|-----------------------------------|
+| RedHat 7 (with SCL) | `/etc/opt/rh/rh-php71/php-fpm.d/` |
+| RedHat 6 (with SCL) | `/etc/opt/rh/rh-php70/php-fpm.d/` |
+| Debian/Ubuntu       | `/etc/php*/*/fpm/pool.d/`         |
+
+The default pool `www` should be sufficient for Icinga Web 2.
+
+On RedHat you need to start and enable the FPM service.
+
+RedHat / CentOS 7 (SCL package):
+```
+systemctl start rh-php71-php-fpm.service
+systemctl enable rh-php71-php-fpm.service
+```
+
+RedHat / CentOS 6 (SCL package):
+```
+service rh-php70-php-fpm start
+chkconfig rh-php70-php-fpm on
+```
+
+All module packages for PHP have this SCL prefix, so you can install a
+database module like this:
+```
+yum install rh-php71-php-mysqlnd
+# or
+yum install rh-php71-php-pgsql
+
+# on el6
+yum install rh-php70-php-mysqlnd
+# or
+yum install rh-php70-php-pgsql
+```
+
+On RedHat / CentOS 6 you also need to install `mod_proxy_fcgi` for httpd:
+```
+yum install mod_proxy_fcgi
+```
+
+Depending on your web server installation, we might have installed or
+updated the config file for icingaweb2 with defaults for FPM.
+
+Check `/etc/httpd/conf.d/icingaweb2.conf` or `/etc/apache2/conf.d/icingaweb2.conf`.
+And `*.rpm*` `*.dpkg*` files there with updates.
+
+Make sure that the `FilesMatch` part is included for Apache.
+
+Also see the example from icingacli:
+```
+icingacli setup config webserver apache
+```
+
+### Upgrading to FPM <a id="upgrading-to-fpm"></a>
+
+Valid for:
+
+* RedHat / CentOS 6
+* RedHat / CentOS 7
+
+Other distributions are also possible if preferred, but not included here.
+
+Some upgrading work needs to be done manually, while we install PHP FPM
+as dependency, you need to start the service, and configure some things.
+
+Please read [Setting up FPM](02-Installation.md#setting-up-fpm) first.
+
+**php.ini settings** you have tuned in the past needs to be migrated to a SCL installation
+of PHP.
+
+Check these directories:
+
+* `/etc/php.ini`
+* `/etc/php.d/*.ini`
+
+Most important for icingaweb2 is `date.timezone`.
+
+PHP settings should be stored to:
+
+* RedHat / CentOS 7: `/etc/opt/rh/rh-php71/php.d/`
+* RedHat / CentOS 6: `/etc/opt/rh/rh-php70/php.d/`
+
+Make sure to **install the required database modules**
+
+RedHat / CentOS 7:
+```
+yum install rh-php71-php-mysqlnd
+# or
+yum install rh-php71-php-pgsql
+```
+
+RedHat / CentOS 6:
+```
+yum install rh-php70-php-mysqlnd
+# or
+yum install rh-php70-php-pgsql
+```
+
+After any PHP related change you now need to **restart FPM**:
+
+RedHat / CentOS 7:
+```
+systemctl restart rh-php71-php-fpm.service
+```
+
+RedHat / CentOS 6:
+```
+service rh-php70-php-fpm restart
+```
+
+If you don't need mod_php for other apps on the server, you should disable it in Apache.
+
+Disable PHP in Apache httpd:
+```
+cd /etc/httpd
+cp conf.d/php.conf{,.bak}
+: >conf.d/php.conf
+
+# ONLY on el7!
+cp conf.modules.d/10-php.conf{,.bak}
+: >conf.modules.d/10-php.conf
+
+systemctl restart httpd.service
+# or on el6
+service httpd restart
+```
+
+You can also uninstall the mod_php package, or all non-SCL PHP related packages.
+```
+yum remove php
+# or
+yum remove php-common
+```
 
 ### Preparing Web Setup <a id="preparing-web-setup-from-package"></a>
 
