@@ -89,6 +89,13 @@ class NavigationItem implements IteratorAggregate
     protected $label;
 
     /**
+     * The item's description
+     *
+     * @var string
+     */
+    protected $description;
+
+    /**
      * This item's parent
      *
      * @var NavigationItem
@@ -478,6 +485,30 @@ class NavigationItem implements IteratorAggregate
     public function setLabel($label)
     {
         $this->label = $label;
+        return $this;
+    }
+
+    /**
+     * Get the item's description
+     *
+     * @return  string
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    /**
+     * Set the item's description
+     *
+     * @param   string  $description
+     *
+     * @return  $this
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
+
         return $this;
     }
 
