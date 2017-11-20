@@ -4,30 +4,17 @@
 namespace Icinga\Authentication\User;
 
 use Exception;
+use Icinga\Authentication\PasswordHelper;
 use Icinga\Data\Inspectable;
 use Icinga\Data\Inspection;
-use PDO;
 use Icinga\Data\Filter\Filter;
 use Icinga\Exception\AuthenticationException;
 use Icinga\Repository\DbRepository;
 use Icinga\User;
+use PDO;
 
 class DbUserBackend extends DbRepository implements UserBackendInterface, Inspectable
 {
-    /**
-     * The algorithm to use when hashing passwords
-     *
-     * @var string
-     */
-    const HASH_ALGORITHM = '$1$'; // MD5
-
-    /**
-     * The length of the salt to use when hashing a password
-     *
-     * @var int
-     */
-    const SALT_LENGTH = 12; // 12 is required by MD5
-
     /**
      * The query columns being provided
      *
@@ -125,8 +112,10 @@ class DbUserBackend extends DbRepository implements UserBackendInterface, Inspec
     /**
      * Insert a table row with the given data
      *
-     * @param   string  $table
-     * @param   array   $bind
+     * @param   string $table
+     * @param   array  $bind
+     *
+     * @return void
      */
     public function insert($table, array $bind)
     {
@@ -177,7 +166,7 @@ class DbUserBackend extends DbRepository implements UserBackendInterface, Inspec
      */
     protected function persistPassword($value)
     {
-        return $this->hashPassword($value);
+        return PasswordHelper::hash($value);
     }
 
     /**
@@ -224,8 +213,10 @@ class DbUserBackend extends DbRepository implements UserBackendInterface, Inspec
     public function authenticate(User $user, $password)
     {
         try {
-            $passwordHash = $this->getPasswordHash($user->getUsername());
-            return crypt($password, $passwordHash) === $passwordHash;
+            return PasswordHelper::verify(
+                $password,
+                $this->getPasswordHash($user->getUsername())
+            );
         } catch (Exception $e) {
             throw new AuthenticationException(
                 'Failed to authenticate user "%s" against backend "%s". An exception was thrown:',
@@ -234,31 +225,6 @@ class DbUserBackend extends DbRepository implements UserBackendInterface, Inspec
                 $e
             );
         }
-    }
-
-    /**
-     * Return a random salt
-     *
-     * The returned salt is safe to be used for hashing a user's password
-     *
-     * @return  string
-     */
-    protected function generateSalt()
-    {
-        return openssl_random_pseudo_bytes(self::SALT_LENGTH);
-    }
-
-    /**
-     * Hash a password
-     *
-     * @param   string  $password
-     * @param   string  $salt
-     *
-     * @return  string
-     */
-    protected function hashPassword($password, $salt = null)
-    {
-        return crypt($password, self::HASH_ALGORITHM . ($salt !== null ? $salt : $this->generateSalt()));
     }
 
     /**
