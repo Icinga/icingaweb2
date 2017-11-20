@@ -10,11 +10,14 @@
 @icon-width: 1.7em; // 1.5em width + 0.2em right margin
 
 #menu {
+  background-color: @menu-bg-color;
+  box-shadow: inset -.5em 0 1em rgba(0, 0, 0, .3);
   height: 100%;
   overflow: auto;
 }
 
 #layout:not(.minimal-layout) #menu {
+  // Space for the #toggle-sidebar button
   padding-bottom: 2.25em;
 }
 
@@ -23,19 +26,11 @@
 
   > a {
     &:focus {
-      color: @icinga-blue;
       outline: none;
     }
 
     &:hover {
-      color: @icinga-blue;
       text-decoration: none;
-    }
-  }
-
-  &.active {
-    > a {
-      color: @icinga-blue;
     }
   }
 }
@@ -54,28 +49,37 @@
 }
 
 #menu .nav-level-1 > .nav-item {
-  border-left: 5px solid transparent;
   line-height: 2.167em; // 26 px
+  color: @menu-color;
 
   &.active {
-    > a > .badge {
-      display: none;
+    > a {
+      font-weight: @font-weight-bold;
+      letter-spacing: .02em;
+
+      > .badge {
+        display: none;
+      }
     }
 
-    background-color: @body-bg-color;
-    border-color: @icinga-blue;
+    background-color: @menu-active-bg-color;
   }
 
   &.no-icon > a {
-    margin-left: @icon-width;
+    padding-left: @icon-width;
   }
 
   > a {
-    padding: 0.5em 0.5em; // 6px 6px
+    padding: 0.5em 0.5em 0.5em .75em;
+
+    &:focus, &:hover {
+      color: @menu-highlight-color;
+    }
   }
 
-  > a:active ~ .nav-level-2 > li {
-    display: block;
+  // Balance icon weight for non active menu items
+  &:not(.active) > a > i {
+    opacity: 0.8
   }
 }
 
@@ -83,11 +87,49 @@
   // Collapse menu by default
   display: none;
   line-height: 1.833em; // 22px
-  margin-left: @icon-width;
+  padding-left: @icon-width;
 
   > a {
+    color: @menu-2ndlvl-color;
     font-size: @font-size-small;
-    padding: 0.364em 0.545em; // 4px 6px
+    padding: 0.364em 0.545em 0.364em .8em;
+
+    &:hover, &:focus {
+      color: @menu-2ndlvl-highlight-color;
+    }
+  }
+
+  &.active {
+    background-color: @menu-highlight-color;
+    overflow: hidden;
+    position: relative;
+
+    > a {
+      &:focus, &:hover {
+        font-weight: @font-weight-bold;
+      }
+    }
+  }
+
+  // Little caret on active level-2 item
+  &.active:after {
+    background-color: @body-bg-color;
+    box-shadow: 0 0 1em 0 rgba(0,0,0,.6);
+    content: "";
+    display: block;
+    height: 1.25em;
+    width: 1.25em;
+    -webkit-transform: rotate(45deg);
+       -moz-transform: rotate(45deg);
+        -ms-transform: rotate(45deg);
+            transform: rotate(45deg);
+    position: absolute;
+    top: .5em;
+    right: -.75em;
+  }
+
+  &.active > a {
+    color: @menu-color;
   }
 }
 
@@ -111,10 +153,14 @@
   line-height: 1;
   margin: 0 0.5em -.05em 0.25em;
   width: 1em;
+  -webkit-filter: invert(100%);
+     -moz-filter: invert(100%);
+      -ms-filter: invert(100%);
+          filter: invert(100%);
 }
 
-#menu .user-nav-item {
-  background-color: @gray-light;
+.nav-item:hover img.icon {
+  opacity: .6;
 }
 
 #menu input.search {
@@ -122,13 +168,13 @@
   background-size: 1em auto;
   border: none;
   border-left: 5px solid transparent;
+  color: @menu-color;
   line-height: 2.167em;
   padding-left: @icon-width + 0.5em;
   width: 100%;
 
   &.active {
-    background-color: @body-bg-color;
-    border-color: @icinga-blue;
+    background-color: @menu-active-bg-color;
   }
 }
 
@@ -139,6 +185,7 @@
 
 #menu .nav-level-2 > .badge-nav-item > a > .badge {
   margin-top: 0.2em;
+  margin-right: .5em
 }
 
 // Hovered menu
@@ -146,28 +193,52 @@
 #layout:not(.minimal-layout) #menu .nav-level-1 > .nav-item:not(.active):hover {
   > .nav-level-2 {
     &:before {
-      border: 0.5em solid rgba(0, 0, 0, 0);
-      border-right-color: @text-color;
+      background-color: @menu-flyout-bg-color;
+      border-bottom: 1px solid @gray-light;
+      border-left:   1px solid @gray-light;
       content: "";
+      height: 1em;
+      margin-left: -.5em;
+      margin-top: 0.625em;
+      transform: rotate(45deg);
       width: 1em;
-      position: fixed;
-      margin-left: -1em;
-      margin-top: 0.5em;
+      position: absolute;
     }
 
-    background-color: @text-color;
-    color: @text-color-inverted;
+    background-color: @menu-flyout-bg-color;
+    border: 1px solid @gray-light;
+    border-radius: .25em;
+    box-shadow: 0 0 1em 0 rgba(0,0,0,.3);
     padding: @vertical-padding 0;
-    position: fixed;
     width: 14em;
+    position: fixed;
 
     > .nav-item {
       display: block;
-      margin-left: 0.5em;
+      padding-left: 0;
+      position: relative;
 
-      > a:hover {
-        color: @text-color-inverted;
-        text-decoration: underline;
+      > a {
+        color: @menu-flyout-color;
+        padding-left: 1.5em;
+
+        &:hover, &:focus {
+          background-color: @tr-active-color;
+        }
+      }
+
+      &.active > a {
+        color: @menu-color;
+
+        &:focus, &:hover {
+          background-color: @menu-highlight-color;
+          font-weight: @font-weight-bold;
+        }
+      }
+
+      // Hide activity caret when displayed as flyout
+      &:after {
+        display: none;
       }
     }
   }
@@ -184,7 +255,7 @@
 #layout:not(.minimal-layout) #menu .nav-level-1 > .nav-item:not(.active):hover {
   > .nav-level-2 {
     // Position relative to parent
-    margin-left: 15.583em;
+    margin-left: 16em;
     margin-top: -3.167em;
   }
 }
@@ -192,7 +263,7 @@
 #layout:not(.minimal-layout).sidebar-collapsed #menu .nav-level-1 > .nav-item:hover {
   > .nav-level-2 {
     // Position relative to parent
-    margin-left: 3.583em;
+    margin-left: 4em;
     margin-top: -3.333em;
   }
 }
@@ -238,18 +309,20 @@
 .search-reset {
   background: none;
   border: 0;
+  color: @menu-color;
   cursor: pointer;
   display: none;
   height: 100%;
   padding: 0;
+  user-select: none;
   position: absolute;
   right: 0;
   top: 0;
-  user-select: none;
-}
 
-.search-reset:focus {
-  outline: 0;
+  &:focus, &:hover {
+    color: @menu-highlight-color;
+    outline: none;
+  }
 }
 
 // Override forms.less
@@ -305,15 +378,13 @@ input[type=text].search-input {
   background: none;
   border: none;
   padding: 0;
-
   color: @gray-light;
-
   position: absolute;
   bottom: 0;
   right: 0;
 
   i {
-    background: @body-bg-color;
+    background-color: @body-bg-color;
     border-radius: .25em 0 0 .25em;
     font-size: 1.5em;
     width: 2em;
@@ -325,7 +396,7 @@ input[type=text].search-input {
 
   &:hover, &:focus {
     i {
-      color: @icinga-blue;
+      color: @menu-highlight-color;
     }
   }
 }
