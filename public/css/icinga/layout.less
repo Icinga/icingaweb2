@@ -138,10 +138,6 @@
   }
 }
 
-#sidebar {
-  background-color: @gray-lighter;
-}
-
 .container,
 .error-message {
   // Don't outline containers and error messages when focused because they receive focus for accessibility only
@@ -243,6 +239,7 @@ html.no-js .controls > .tabs {
 }
 
 #sidebar {
+  background: #494949;
   z-index: 2;
 }
 
@@ -282,15 +279,31 @@ html.no-js .controls > .tabs {
       white-space: nowrap;
     }
 
+    .nav-item > a {
+      text-overflow: clip;
+    }
+
     .nav-level-1 > .nav-item i {
       font-size: 1.5em;
       margin-right: .5em;
     }
+
+    .search-control {
+      height: 3.333em;
+      background: none;
+      overflow: hidden;
+    }
+
+    #toggle-sidebar {
+      left: 1.5em;
+    }
   }
 
   #search:focus {
-    background-color: @gray-lighter;
+    background-color: @deep-black;
+    color: @text-color-inverted;
     box-shadow: 0 0 .25em 0 rgba(0, 0, 0, .2);
+    border-radius: 0 .25em .25em 0;
     padding-left: 3.75em;
     position: fixed;
     width: 20em;
