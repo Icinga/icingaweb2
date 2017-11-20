@@ -130,7 +130,9 @@ $section = $this->menuSection(N_('Problems'), array(
     'priority'  => 20
 ));
 $section->add(N_('Host Problems'), array(
-    'renderer'  => array(
+    'icon'        => 'host',
+    'description' => $this->translate('List current host problems'),
+    'renderer'    => array(
         'MonitoringBadgeNavigationItemRenderer',
         'columns' => array(
             'hosts_down_unhandled' => $this->translate('%d unhandled hosts down')
@@ -142,7 +144,9 @@ $section->add(N_('Host Problems'), array(
     'priority'  => 50
 ));
 $section->add(N_('Service Problems'), array(
-    'renderer'  => array(
+    'icon'        => 'service',
+    'description' => $this->translate('List current service problems'),
+    'renderer'    => array(
         'MonitoringBadgeNavigationItemRenderer',
         'columns' => array(
             'services_critical_unhandled' => $this->translate('%d unhandled services critical')
@@ -154,12 +158,16 @@ $section->add(N_('Service Problems'), array(
     'priority'  => 60
 ));
 $section->add(N_('Service Grid'), array(
-    'url'       => 'monitoring/list/servicegrid?problems',
-    'priority'  => 70
+    'icon'        => 'services',
+    'description' => $this->translate('Display service problems as grid'),
+    'url'         => 'monitoring/list/servicegrid?problems',
+    'priority'    => 70
 ));
 $section->add(N_('Current Downtimes'), array(
-    'url'       => 'monitoring/list/downtimes?downtime_is_in_effect=1',
-    'priority'  => 80
+    'icon'        => 'plug',
+    'description' => $this->translate('List current downtimes'),
+    'url'         => 'monitoring/list/downtimes?downtime_is_in_effect=1',
+    'priority'    => 80
 ));
 
 /*
@@ -170,40 +178,58 @@ $section = $this->menuSection(N_('Overview'), array(
     'priority'  => 30
 ));
 $section->add(N_('Tactical Overview'), array(
-    'url'      => 'monitoring/tactical',
-    'priority' => 40
+    'icon'        => 'chart-pie',
+    'description' => $this->translate('Open tactical overview'),
+    'url'         => 'monitoring/tactical',
+    'priority'    => 40
 ));
 $section->add(N_('Hosts'), array(
-    'url'      => 'monitoring/list/hosts',
-    'priority' => 50
+    'icon'        => 'host',
+    'description' => $this->translate('List hosts'),
+    'url'         => 'monitoring/list/hosts',
+    'priority'    => 50
 ));
 $section->add(N_('Services'), array(
-    'url'      => 'monitoring/list/services',
-    'priority' => 50
+    'icon'        => 'service',
+    'description' => $this->translate('List services'),
+    'url'         => 'monitoring/list/services',
+    'priority'    => 50
 ));
 $section->add(N_('Servicegroups'), array(
-    'url'      => 'monitoring/list/servicegroups',
-    'priority' => 60
+    'icon'        => 'services',
+    'description' => $this->translate('List service groups'),
+    'url'         => 'monitoring/list/servicegroups',
+    'priority'    => 60
 ));
 $section->add(N_('Hostgroups'), array(
-    'url'      => 'monitoring/list/hostgroups',
-    'priority' => 60
+    'icon'        => 'host',
+    'description' => $this->translate('List host groups'),
+    'url'         => 'monitoring/list/hostgroups',
+    'priority'    => 60
 ));
 $section->add(N_('Contacts'), array(
-    'url'      => 'monitoring/list/contacts',
-    'priority' => 70
+    'icon'        => 'user',
+    'description' => $this->translate('List contacts'),
+    'url'         => 'monitoring/list/contacts',
+    'priority'    => 70
 ));
 $section->add(N_('Contactgroups'), array(
-    'url'      => 'monitoring/list/contactgroups',
-    'priority' => 70
+    'icon'        => 'users',
+    'description' => $this->translate('List users'),
+    'url'         => 'monitoring/list/contactgroups',
+    'priority'    => 70
 ));
 $section->add(N_('Comments'), array(
-    'url'      => 'monitoring/list/comments?comment_type=comment|comment_type=ack',
-    'priority' => 80
+    'icon'        => 'chat-empty',
+    'description' => $this->translate('List comments'),
+    'url'         => 'monitoring/list/comments?comment_type=comment|comment_type=ack',
+    'priority'    => 80
 ));
 $section->add(N_('Downtimes'), array(
-    'url'      => 'monitoring/list/downtimes',
-    'priority' => 80
+    'icon'        => 'plug',
+    'description' => $this->translate('List downtimes'),
+    'url'         => 'monitoring/list/downtimes',
+    'priority'    => 80
 ));
 
 /*
@@ -214,20 +240,28 @@ $section = $this->menuSection(N_('History'), array(
     'priority'  => 90
 ));
 $section->add(N_('Event Grid'), array(
-    'priority'  => 10,
-    'url'       => 'monitoring/list/eventgrid'
+    'icon'        => 'history',
+    'description' => $this->translate('Open event grid'),
+    'priority'    => 10,
+    'url'         => 'monitoring/list/eventgrid'
 ));
 $section->add(N_('Event Overview'), array(
-    'priority'  => 20,
-    'url'       => 'monitoring/list/eventhistory?timestamp>=-7%20days'
+    'icon'        => 'history',
+    'description' => $this->translate('Open event overview'),
+    'priority'    => 20,
+    'url'         => 'monitoring/list/eventhistory?timestamp>=-7%20days'
 ));
 $section->add(N_('Notifications'), array(
-    'priority'  => 30,
-    'url'       => 'monitoring/list/notifications?notification_timestamp>=-7%20days',
+    'icon'        => 'bell',
+    'description' => $this->translate('List notifications'),
+    'priority'    => 30,
+    'url'         => 'monitoring/list/notifications?notification_timestamp>=-7%20days',
 ));
 $section->add(N_('Timeline'), array(
-    'priority'  => 40,
-    'url'       => 'monitoring/timeline'
+    'icon'        => 'clock',
+    'description' => $this->translate('Open timeline'),
+    'priority'    => 40,
+    'url'         => 'monitoring/timeline'
 ));
 
 /*
@@ -243,9 +277,11 @@ $section = $this->menuSection(N_('Reporting'), array(
  */
 $section = $this->menuSection(N_('System'));
 $section->add(N_('Monitoring Health'), array(
-    'url'      => 'monitoring/health/info',
-    'priority' => 720,
-    'renderer' => 'BackendAvailabilityNavigationItemRenderer'
+    'icon'        => 'check',
+    'description' => $this->translate('Open monitoring health'),
+    'url'         => 'monitoring/health/info',
+    'priority'    => 720,
+    'renderer'    => 'BackendAvailabilityNavigationItemRenderer'
 ));
 
 /*
