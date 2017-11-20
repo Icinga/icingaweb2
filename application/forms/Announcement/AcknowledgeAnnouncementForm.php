@@ -7,6 +7,7 @@ use Icinga\Data\Filter\Filter;
 use Icinga\Web\Announcement\AnnouncementCookie;
 use Icinga\Web\Announcement\AnnouncementIniRepository;
 use Icinga\Web\Form;
+use Icinga\Web\Url;
 
 class AcknowledgeAnnouncementForm extends Form
 {
@@ -15,7 +16,7 @@ class AcknowledgeAnnouncementForm extends Form
      */
     public function init()
     {
-        $this->setAction('announcements/acknowledge');
+        $this->setAction(Url::fromPath('announcements/acknowledge'));
         $this->setAttrib('class', 'form-inline acknowledge-announcement-control');
         $this->setRedirectUrl('layout/announcements');
     }
