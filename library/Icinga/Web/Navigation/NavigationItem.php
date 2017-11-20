@@ -543,7 +543,7 @@ class NavigationItem implements IteratorAggregate
     public function getUrl()
     {
         if ($this->url === null && $this->hasChildren()) {
-            $this->setUrl(Url::fromPath('#'));
+            $this->setUrl(Url::fromPath('navigation/dashboard', array('name' => strtolower($this->getName()))));
         }
 
         return $this->url;
