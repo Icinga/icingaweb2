@@ -366,7 +366,7 @@ class WebWizard extends Wizard implements SetupWizard
             'setup_auth_db_resource',
             'setup_config_db_resource',
             'setup_ldap_resource',
-            'setup_monitoring_ido'
+            'setup_monitoring_ido', // TODO(mf): This should be handled by MonitoringWizard
         ))) {
             $page->addElement(
                 'submit',
@@ -379,6 +379,21 @@ class WebWizard extends Wizard implements SetupWizard
                 )
             );
             $page->getDisplayGroup('buttons')->addElement($page->getElement('backend_validation'));
+        }
+
+        // TODO(mf): This should be handled by MonitoringWizard
+        if ($page->getName() === 'setup_command_transport') {
+            $page->addElement(
+                'submit',
+                'transport_validation',
+                array(
+                    'ignore'                => true,
+                    'label'                 => t('Validate Configuration'),
+                    'data-progress-label'   => t('Validation In Progress'),
+                    'decorators'            => array('ViewHelper')
+                )
+            );
+            $page->getDisplayGroup('buttons')->addElement($page->getElement('transport_validation'));
         }
     }
 

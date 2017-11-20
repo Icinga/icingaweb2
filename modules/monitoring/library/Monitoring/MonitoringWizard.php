@@ -92,6 +92,9 @@ class MonitoringWizard extends Wizard implements SetupWizard
      * Add buttons to the given page based on its position in the page-chain
      *
      * @param   Form    $page   The page to add the buttons to
+     *
+     * @todo This is never called, because its a sub-wizard only
+     * @see WebWizard::addButtons which does some of the needed work
      */
     protected function addButtons(Form $page)
     {
