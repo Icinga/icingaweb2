@@ -37,18 +37,24 @@
 }
 
 #header-logo-container {
-  height: 2.667em;
-  margin: .1667em 0 .1667em .7em;
-  width: 100px;
+  background-color: @icinga-blue;
+  height: 3em;
+  padding: 0.5em 0.125em;
 }
 
 #header-logo {
   background-image: url('../img/icinga-logo.svg');
-  background-position: left center;
+  background-position: center center;
   background-repeat: no-repeat;
   background-size: contain;
   display: block;
   height: 100%;
+  width: 100%;
+
+  &:focus {
+    outline: none;
+    opacity: .6;
+  }
 }
 
 #icinga-logo {
@@ -132,10 +138,6 @@
   }
 }
 
-#sidebar {
-  background-color: @gray-lighter;
-}
-
 .container,
 .error-message {
   // Don't outline containers and error messages when focused because they receive focus for accessibility only
@@ -149,9 +151,13 @@
   background-color: @body-bg-color;
 
   > .tabs {
-    height: 2.6em;
-    margin-top: -2.6em;
+    background-color: @icinga-blue;
+    height: 3em;
     overflow: hidden;
+
+    > li {
+      margin-top: 0.4em;
+    }
   }
 
   > .tabs-spacer {
@@ -224,5 +230,96 @@ html.no-js .controls > .tabs {
 
   &.warning {
     background-color: @color-notification-warning;
+  }
+}
+
+// Z-Index correction
+#main {
+  z-index: 1;
+}
+
+#sidebar {
+  background: #494949;
+  z-index: 2;
+}
+
+// Collpased sidebar
+#layout.sidebar-collapsed {
+  #header-logo {
+    background-image: url('../img/icinga-logo-compact.svg');
+  }
+
+  #main {
+    left: 3em;
+  }
+
+  #sidebar {
+    width: 3em;
+  }
+
+  #open-sidebar {
+    display: inline;
+  }
+
+  #close-sidebar {
+    display: none;
+  }
+
+  #menu {
+    .badge {
+      display: none;
+    }
+
+    img.icon {
+      margin: 0 1.25em -.25em 0.25em;
+      font-size: 1.5em;
+    }
+
+    .nav-item {
+      white-space: nowrap;
+    }
+
+    .nav-item > a {
+      text-overflow: clip;
+    }
+
+    .nav-level-1 > .nav-item i {
+      font-size: 1.5em;
+      margin-right: .5em;
+    }
+
+    .search-control {
+      height: 3.333em;
+      background: none;
+      overflow: hidden;
+    }
+
+    #toggle-sidebar {
+      left: 1.5em;
+    }
+  }
+
+  #search:focus {
+    background-color: @deep-black;
+    color: @text-color-inverted;
+    box-shadow: 0 0 .25em 0 rgba(0, 0, 0, .2);
+    border-radius: 0 .25em .25em 0;
+    padding-left: 3.75em;
+    position: fixed;
+    width: 20em;
+  }
+
+  .search-input {
+    font-size: 1.25em;
+  }
+
+  .search-reset {
+    display: none;
+  }
+
+  .skip-links {
+    a, button {
+      width: 20em;
+    }
   }
 }

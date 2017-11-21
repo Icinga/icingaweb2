@@ -579,7 +579,7 @@
 
             if (typeof $container === 'undefined') {
                 var $header = $('#header');
-                var $headerLogo = $('#header-logo');
+                var $headerLogo = $('#header-logo-container');
                 var $main = $('#main');
                 var $search = $('#search');
                 var $sidebar = $('#sidebar');

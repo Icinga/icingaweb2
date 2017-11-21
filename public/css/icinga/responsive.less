@@ -106,6 +106,16 @@
 #layout.twocols #col2 {
   border-left: 1px solid @gray-lighter;
   display: block;
+
+  > .controls > .tabs:before {
+    background-color: @icinga-blue;
+    content: "";
+    display: block;
+    height: 3em;
+    margin-left: -1px;
+    width: 1px;
+    position: fixed;
+  }
 }
 
 #layout.twocols > #main > .container {

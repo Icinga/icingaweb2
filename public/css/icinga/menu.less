@@ -10,14 +10,16 @@
 @icon-width: 1.7em; // 1.5em width + 0.2em right margin
 
 #menu {
+  box-shadow: inset -.5em 0 1em rgba(0,0,0,.3);
   height: 100%;
   overflow: auto;
+  padding-bottom: 2.25em;
 }
 
 #menu a {
   &:focus {
     color: @icinga-blue;
-    outline-offset: -3px;
+    outline: none;
   }
 
   &:hover {
@@ -27,25 +29,52 @@
 }
 
 #menu .active > a {
-  color: @icinga-blue;
+  //color: @icinga-blue;
+}
+
+#menu .nav-item {
+  vertical-align: middle;
+
+  > a {
+    &:focus {
+      color: @icinga-blue;
+      outline: none;
+    }
+
+    &:hover {
+      color: @icinga-blue;
+      text-decoration: none;
+    }
+  }
+
+  &.active {
+    > a {
+      color: @icinga-blue;
+    }
+  }
+}
+
+#layout:not(.sidebar-collapsed) #menu .nav-item > {
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 #menu .nav-level-1 > .nav-item {
-  border-left: 5px solid transparent;
   line-height: 2.167em; // 26 px
+  color: @text-color-inverted;
 
   &.active {
+    > a {
+      color: white;
+      font-weight: bold;
+      letter-spacing: .02em;
+    }
+
     > a > .badge {
       display: none;
     }
 
-    .nav-level-2 > li {
-      // Expand menu if active
-      display: block;
-    }
-
-    background-color: @body-bg-color;
-    border-color: @icinga-blue;
+    background-color: @deep-black;
   }
 
   &.no-icon > a {
@@ -53,7 +82,12 @@
   }
 
   > a {
-    padding: 0.5em 0.5em; // 6px 6px
+    padding: 0.5em 0.5em 0.5em .75em; // 6px 6px
+  }
+
+  // Balance icon weight for non active menu items
+  &:not(.active) > a > i {
+    opacity: 0.8
   }
 
   > a:active ~ .nav-level-2 > li {
@@ -61,31 +95,91 @@
   }
 }
 
+.collapsed #menu .nav-level-1 > .nav-item.active {
+  background: @icinga-blue;
+}
+
 #menu .nav-level-2 > .nav-item {
   // Collapse menu by default
   display: none;
   line-height: 1.833em; // 22px
-  margin-left: @icon-width;
+
+  &.no-icon {
+    padding-left: @icon-width;
+  }
 
   > a {
     font-size: @font-size-small;
-    padding: 0.364em 0.545em; // 4px 6px
+    color: #c4c4c4;
+    padding: 0.364em 0.545em 0.364em .8em; // 4px 6px
+  }
+
+  &:hover > a {
+    color: @body-bg-color;
+  }
+
+  &.active {
+    margin-left: 0;
+    background: @icinga-blue;
+    padding-left: 1.7em;
+    overflow: hidden;
+    position: relative;
+  }
+
+  // little caret on active level-2 item
+  &.active:after {
+    content: "";
+    display: block;
+    position: absolute;
+    top: .5em;
+    right: -.75em;
+    background: @body-bg-color;
+    width: 1.25em;
+    height: 1.25em;
+    box-shadow: 0 0 1em 0 rgba(0,0,0,.6);
+    -webkit-transform: rotate(45deg);
+       -moz-transform: rotate(45deg);
+        -ms-transform: rotate(45deg);
+            transform: rotate(45deg)
+  }
+
+  &.active > a {
+    color: white;
+    font-weight: bold;
   }
 }
 
-.no-js #menu .nav-level-2 > .nav-item {
-  // Expand menu if JavaScript is disabled
-  display: block;
+#menu .nav-level-1 > .nav-item:hover .nav-level-2 > .nav-item.active {
+  background: @icinga-blue;
+
+  > a {
+    color: white !important;
+  }
+}
+
+#layout:not(.sidebar-collapsed) {
+  #menu .nav-level-1 > .nav-item {
+    &.active {
+      .nav-level-2 > li {
+        // Expand menu if active
+        display: block;
+      }
+    }
+  }
 }
 
 #menu img.icon {
   line-height: 1;
-  margin: 0 0.2em;
+  margin: 0 0.5em -.05em 0.25em;
   width: 1em;
+  -webkit-filter: invert(100%);
+     -moz-filter: invert(100%);
+      -ms-filter: invert(100%);
+          filter: invert(100%);
 }
 
-#menu .user-nav-item {
-  background-color: @gray-light;
+.nav-item:hover img.icon {
+  opacity: .6;
 }
 
 #menu input.search {
@@ -104,45 +198,62 @@
 }
 
 // Badge offset correction
-
 #menu > nav > .nav-level-1 > .badge-nav-item > a > .badge {
   margin-top: 0.2em;
 }
 
 #menu .nav-level-2 > .badge-nav-item > a > .badge {
   margin-top: 0.2em;
+  margin-right: .5em
 }
 
 // Hovered menu
-
-#menu .nav-level-1 > .nav-item.hover {
-  position: relative;
-
-  &:before {
-    border: 0.5em solid rgba(0, 0, 0, 0);
-    border-right-color: @text-color;
-    content: "";
-    position: absolute;
-    right: 0;
-    top: 30%;
-  }
-
+#layout.sidebar-collapsed #menu .nav-level-1 > .nav-item:hover,
+#menu .nav-level-1 > .nav-item:not(.active):hover {
   > .nav-level-2 {
-    background-color: @text-color;
-    color: @text-color-inverted;
-    left: 100%;
+    &:before {
+      content: "";
+      width:  1em;
+      height: 1em;
+      background: @text-color-inverted;
+      position: absolute;
+      margin-left: -.5em;
+      margin-top: 0.625em;
+      transform: rotate(45deg);
+      border-left:   1px solid @gray-light;
+      border-bottom: 1px solid @gray-light;
+    }
+
+    background-color: @text-color-inverted;
+    box-shadow: 0 0 1em 0 rgba(0,0,0,.3);
+    border-radius: .25em;
+    border: 1px solid @gray-light;
+    color: @text-color;
     padding: @vertical-padding 0;
-    position: absolute;
-    top: 0;
+    position: fixed;
     width: 14em;
 
     > .nav-item {
       display: block;
-      margin-left: 0.5em;
+      position: relative;
+      padding-left: .5em;
 
-      > a:hover {
-        color: @text-color-inverted;
-        text-decoration: underline;
+      > a {
+        padding-left: 1em;
+        color: @text-color-light;
+      }
+
+      // Hide activity caret when displayes as flyout
+      &:after {
+        display: none;
+      }
+
+      &.active:hover {
+        background: @icinga-blue;
+      }
+
+      &:hover {
+        background: @tr-active-color;
       }
     }
   }
@@ -150,19 +261,25 @@
   > a > .badge {
     display: none;
   }
+
+  img.icon {
+    opacity: .6;
+  }
 }
 
-#layout.hoveredmenu {
-  #main {
-    z-index: 2;
+#menu .nav-level-1 > .nav-item:not(.active):hover {
+  > .nav-level-2 {
+    // Position relative to parent
+    margin-left: 16em;
+    margin-top: -3.167em;
   }
+}
 
-  #sidebar {
-    z-index: 3;
-  }
-
-  #menu {
-    overflow: visible;
+#layout.sidebar-collapsed #menu .nav-level-1 > .nav-item:hover {
+  > .nav-level-2 {
+    // Position relative to parent
+    margin-left: 4em;
+    margin-top: -3.333em;
   }
 }
 
@@ -215,6 +332,7 @@
   right: 0;
   top: 0;
   user-select: none;
+  color: @text-color-inverted;
 }
 
 .search-reset:focus {
@@ -266,4 +384,39 @@ input[type=text].search-input {
     opacity: 1;
     transform: none;
   }
+}
+
+// Toggle sidebar button
+#layout:not(.minimal-layout) #toggle-sidebar {
+  // Reset button styles
+  background: none;
+  border: none;
+  padding: 0;
+
+  color: @gray-light;
+
+  position: absolute;
+  bottom: 0;
+  right: 0;
+
+  i {
+    background: @body-bg-color;
+    border-radius: .25em 0 0 .25em;
+    font-size: 1.5em;
+    width: 2em;
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  &:hover, &:focus {
+    i {
+      color: @icinga-blue;
+    }
+  }
+}
+
+#open-sidebar {
+  display: none;
 }
