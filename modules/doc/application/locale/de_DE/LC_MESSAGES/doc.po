@@ -1,0 +1,155 @@
+# Icinga Web 2 - Head for multiple monitoring backends.
+# Copyright (C) 2017 Icinga Development Team
+# This file is distributed under the same license as Doc Module.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Doc Module (2.4.2)\n"
+"Report-Msgid-Bugs-To: dev@icinga.com\n"
+"POT-Creation-Date: 2017-11-09 13:18+0000\n"
+"PO-Revision-Date: 2017-11-09 14:34+0100\n"
+"Language: de_DE\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-Basepath: .\n"
+"Last-Translator: Markus Frosch <markus.frosch@icinga.com>\n"
+"Language-Team: \n"
+"X-Generator: Poedit 1.8.11\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: ../../../../modules/doc/library/Doc/DocController.php:79
+#: ../../../../modules/doc/library/Doc/DocController.php:107
+#, php-format
+msgid "%s Documentation"
+msgstr "%s Dokumentation"
+
+#: ../../../../modules/doc/application/views/scripts/style/guide.phtml:101
+msgid "Blockquote"
+msgstr "Zitat"
+
+#: ../../../../modules/doc/library/Doc/Renderer/DocSectionRenderer.php:68
+#, php-format
+msgid "Chapter %s not found"
+msgstr "Kapitel %s nicht gefunden"
+
+#: ../../../../modules/doc/application/views/scripts/style/guide.phtml:69
+msgid "Comment List"
+msgstr "Kommentar Liste"
+
+#: ../../../../modules/doc/configuration.php:19
+msgid "Developer - Style"
+msgstr "Entwickler - Style"
+
+#: ../../../../modules/doc/configuration.php:24
+msgid "Doc"
+msgstr "Doku"
+
+#: ../../../../modules/doc/configuration.php:6
+msgid "Documentation"
+msgstr "Dokumentation"
+
+#: ../../../../modules/doc/application/controllers/IndexController.php:23
+msgctxt "Tab title"
+msgid "Documentation"
+msgstr "Dokumentation"
+
+#: ../../../../modules/doc/library/Doc/DocParser.php:60
+#, php-format
+msgid "Documentation directory '%s' is not readable"
+msgstr "Dokumentations Verzeichnis '%s' ist nicht lesbar"
+
+#: ../../../../modules/doc/application/controllers/SearchController.php:95
+#: ../../../../modules/doc/application/controllers/IcingawebController.php:29
+msgid "Documentation for Icinga Web 2 is not available"
+msgstr "Dokumentation für Icinga Web 2 ist nicht verfügbar"
+
+#: ../../../../modules/doc/application/controllers/ModuleController.php:42
+#, php-format
+msgid "Documentation for module '%s' is not available"
+msgstr "Dokumentation für Modul '%s' ist nicht verfügbar"
+
+#: ../../../../modules/doc/library/Doc/Renderer/DocTocRenderer.php:88
+msgid "Documentation is empty."
+msgstr "Dokumentation ist leer"
+
+#: ../../../../modules/doc/application/controllers/StyleController.php:35
+msgid "Icons"
+msgstr "Icons"
+
+#: ../../../../modules/doc/application/controllers/StyleController.php:36
+msgid "List all available icons"
+msgstr "Liste alles verfügbaren Icons"
+
+#: ../../../../modules/doc/application/views/scripts/index/index.phtml:16
+msgid "List all modules for which documentation is available"
+msgstr "Liste aller Module für die Dokumentation verfügbar ist"
+
+#: ../../../../modules/doc/application/controllers/ModuleController.php:77
+#, php-format
+msgid "Module '%s' is not installed"
+msgstr "Modul '%s' ist nicht installiert"
+
+#: ../../../../modules/doc/application/controllers/ModuleController.php:61
+msgctxt "Tab title"
+msgid "Module Documentation"
+msgstr "Modul Dokumentation"
+
+#: ../../../../modules/doc/application/views/scripts/index/index.phtml:13
+msgid "Module documentations"
+msgstr "Modul Dokumentationen"
+
+#: ../../../../modules/doc/application/views/scripts/search/index.phtml:5
+msgid "No documentation found matching the filter"
+msgstr "Keine Dokumentation gefunden die auf diesen Filter passt"
+
+#: ../../../../modules/doc/library/Doc/Renderer/DocSearchRenderer.php:115
+#, php-format
+msgctxt "search.render.section.link"
+msgid "Show all matches of \"%s\" in the chapter \"%s\""
+msgstr "Alle Treffer von \"%s\" in Kapitel \"%s\" anzeigen"
+
+#: ../../../../modules/doc/library/Doc/Renderer/DocSearchRenderer.php:123
+#, php-format
+msgctxt "search.render.section.link"
+msgid "Show all matches of \"%s\" in the section \"%s\" of the chapter \"%s\""
+msgstr "Alle Treffer von \"%s\" in Abschnitt \"%s\" von Kapitel \"%s\" anzeigen"
+
+#: ../../../../modules/doc/library/Doc/Renderer/DocTocRenderer.php:113
+#, php-format
+msgctxt "toc.render.section.link"
+msgid "Show the chapter \"%s\""
+msgstr "Kapitel \"%s\" anzeigen"
+
+#: ../../../../modules/doc/application/views/scripts/index/index.phtml:10
+msgid "Show the documentation's table of contents for Icinga Web 2"
+msgstr "Inhaltsübersicht der Dokumentation von Icinga Web 2 anzeigen"
+
+#: ../../../../modules/doc/application/views/scripts/module/index.phtml:13
+#, php-format
+msgid "Show the documentation's table of contents for the %s"
+msgstr "Inhaltsübersicht der Dokumentation von %s anzeigen"
+
+#: ../../../../modules/doc/library/Doc/Renderer/DocTocRenderer.php:117
+#, php-format
+msgctxt "toc.render.section.link"
+msgid "Show the section \"%s\" of the chapter \"%s\""
+msgstr "Abschnitt \"%s\" von Kapitel \"%s\" anzeigen"
+
+#: ../../../../modules/doc/application/controllers/StyleController.php:29
+msgid "Style Guide"
+msgstr "Style Guide"
+
+# Nur aus Beispiel
+#: ../../../../modules/doc/application/views/scripts/style/guide.phtml:74
+#: ../../../../modules/doc/application/views/scripts/style/guide.phtml:87
+msgid "commented"
+msgstr ""
+
+# Nur aus Beispiel
+#: ../../../../modules/doc/application/views/scripts/style/guide.phtml:75
+#: ../../../../modules/doc/application/views/scripts/style/guide.phtml:88
+msgid "some time ago"
+msgstr ""

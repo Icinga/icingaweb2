@@ -215,7 +215,7 @@ class NavigationConfigForm extends ConfigForm
         foreach ($this->getShareConfig($type) as $sectionName => $sectionConfig) {
             if ($sectionName !== $this->itemToLoad
                 && $sectionConfig->owner === ($owner ?: $this->getUser()->getUsername())
-                && !in_array($sectionName, $children, true)
+                && ! in_array($sectionName, $children, true)
             ) {
                 $names[] = $sectionName;
             }
@@ -223,7 +223,7 @@ class NavigationConfigForm extends ConfigForm
 
         foreach ($this->getUserConfig($type) as $sectionName => $sectionConfig) {
             if ($sectionName !== $this->itemToLoad
-                && !in_array($sectionName, $children, true)
+                && ! in_array($sectionName, $children, true)
             ) {
                 $names[] = $sectionName;
             }
@@ -363,8 +363,8 @@ class NavigationConfigForm extends ConfigForm
         $shared = false;
         if ($this->hasBeenShared($name)) {
             if (isset($data['parent']) && $data['parent']
-                ? !$this->hasBeenShared($data['parent'])
-                : ((! isset($data['users']) || !$data['users']) && (! isset($data['groups']) || !$data['groups']))
+                ? ! $this->hasBeenShared($data['parent'])
+                : ((! isset($data['users']) || ! $data['users']) && (! isset($data['groups']) || ! $data['groups']))
             ) {
                 // It is shared but shouldn't anymore
                 $config = $this->unshare($name, isset($data['parent']) ? $data['parent'] : null);
@@ -579,7 +579,7 @@ class NavigationConfigForm extends ConfigForm
             )
         );
 
-        if ((! $itemForm->requiresParentSelection() || !isset($formData['parent']) || !$formData['parent'])
+        if ((! $itemForm->requiresParentSelection() || ! isset($formData['parent']) || ! $formData['parent'])
             && $this->getUser()->can('application/share/navigation')
         ) {
             $checked = isset($formData['shared']) ? null : (isset($formData['users']) || isset($formData['groups']));
@@ -719,10 +719,12 @@ class NavigationConfigForm extends ConfigForm
                 if (! empty($forbiddenUsers)) {
                     $valid = false;
                     $this->getElement('users')->addError(
-                        $this->translate(sprintf(
-                            'You are not permitted to share this navigation item with the following users: %s',
+                        sprintf(
+                            $this->translate(
+                                'You are not permitted to share this navigation item with the following users: %s'
+                            ),
                             implode(', ', $forbiddenUsers)
-                        ))
+                        )
                     );
                 }
             }
@@ -741,10 +743,12 @@ class NavigationConfigForm extends ConfigForm
                 if (! empty($forbiddenGroups)) {
                     $valid = false;
                     $this->getElement('groups')->addError(
-                        $this->translate(sprintf(
-                            'You are not permitted to share this navigation item with the following groups: %s',
+                        sprintf(
+                            $this->translate(
+                                'You are not permitted to share this navigation item with the following groups: %s'
+                            ),
                             implode(', ', $forbiddenGroups)
-                        ))
+                        )
                     );
                 }
             }

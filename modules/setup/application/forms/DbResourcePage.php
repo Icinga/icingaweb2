@@ -141,22 +141,22 @@ class DbResourcePage extends Form
 
         if ($this->getValue('db') === 'pgsql') {
             if ($connectionError !== null) {
-                $this->warning($this->translate(sprintf(
-                    'Unable to check the server\'s version. This is usually not a critical error as there is'
-                    . ' probably only access to the database permitted which does not exist yet. If you are'
+                $this->warning(sprintf(
+                    $this->translate('Unable to check the server\'s version. This is usually not a critical error'
+                    . ' as there is probably only access to the database permitted which does not exist yet. If you are'
                     . ' absolutely sure you are running PostgreSQL in a version equal to or newer than 9.1,'
-                    . ' you can skip the validation and safely proceed to the next step. The error was: %s',
+                    . ' you can skip the validation and safely proceed to the next step. The error was: %s'),
                     $connectionError->getMessage()
-                )));
+                ));
                 $state = false;
             } else {
                 $version = $db->getServerVersion();
                 if (version_compare($version, '9.1', '<')) {
-                    $this->error($this->translate(sprintf(
-                        'The server\'s version %s is too old. The minimum required version is %s.',
+                    $this->error(sprintf(
+                        $this->translate('The server\'s version %s is too old. The minimum required version is %s.'),
                         $version,
                         '9.1'
-                    )));
+                    ));
                     $state = false;
                 }
             }
