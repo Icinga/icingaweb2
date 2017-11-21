@@ -88,7 +88,7 @@ class AcknowledgeProblemCommandForm extends ObjectsCommandForm
         $expire = isset($formData['expire']) ? $formData['expire'] : $acknowledgeExpire;
         if ($expire) {
             $expireTime = new DateTime();
-            $expireTime->add(new DateInterval('PT1H'));
+            $expireTime->add(new DateInterval($config->get('settings', 'acknowledge_expire_time', 'PT1H')));
             $this->addElement(
                 'dateTimePicker',
                 'expire_time',
