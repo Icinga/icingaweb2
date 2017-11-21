@@ -3,7 +3,7 @@
 
 /** @var $this \Icinga\Application\Modules\Module */
 
-$section = $this->menuSection($this->translate('Documentation'), array(
+$section = $this->menuSection(N_('Documentation'), array(
     'title'    => 'Documentation',
     'icon'     => 'book',
     'url'      => 'doc',
@@ -16,7 +16,7 @@ $section->add('Icinga Web 2', array(
 $section->add('Module documentations', array(
     'url' => 'doc/module',
 ));
-$section->add($this->translate('Developer - Style'), array(
+$section->add(N_('Developer - Style'), array(
     'url' => 'doc/style/guide',
     'priority' => 790
 ));
