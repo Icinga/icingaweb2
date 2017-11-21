@@ -142,8 +142,8 @@
 }
 
 // Hovered menu
-#layout.sidebar-collapsed #menu .nav-level-1 > .nav-item:hover,
-#menu .nav-level-1 > .nav-item:not(.active):hover {
+#layout:not(.minimal-layout).sidebar-collapsed #menu .nav-level-1 > .nav-item:hover,
+#layout:not(.minimal-layout) #menu .nav-level-1 > .nav-item:not(.active):hover {
   > .nav-level-2 {
     &:before {
       border: 0.5em solid rgba(0, 0, 0, 0);
@@ -181,7 +181,7 @@
   }
 }
 
-#menu .nav-level-1 > .nav-item:not(.active):hover {
+#layout:not(.minimal-layout) #menu .nav-level-1 > .nav-item:not(.active):hover {
   > .nav-level-2 {
     // Position relative to parent
     margin-left: 15.583em;
@@ -189,7 +189,7 @@
   }
 }
 
-#layout.sidebar-collapsed #menu .nav-level-1 > .nav-item:hover {
+#layout:not(.minimal-layout).sidebar-collapsed #menu .nav-level-1 > .nav-item:hover {
   > .nav-level-2 {
     // Position relative to parent
     margin-left: 3.583em;
