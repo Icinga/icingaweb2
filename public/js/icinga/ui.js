@@ -354,6 +354,9 @@
         },
 
         refreshDebug: function () {
+            if (! this.debug) {
+                return;
+            }
 
             var size = this.getDefaultFontSize().toString();
             var winWidth = $( window ).width();
