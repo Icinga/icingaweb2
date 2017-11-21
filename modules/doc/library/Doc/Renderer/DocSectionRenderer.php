@@ -194,7 +194,7 @@ class DocSectionRenderer extends DocRenderer
         $path = $this->getView()->getHelper('Url')->url(
             array_merge(
                 array(
-                    'image' => $img->getAttribute('src')
+                    'image' => trim($img->getAttribute('src'))
                 ),
                 $this->urlParams
             ),
