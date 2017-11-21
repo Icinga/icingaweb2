@@ -270,46 +270,49 @@ class TransportConfigForm extends ConfigForm
         parent::addSubmitButton();
 
         if ($this->getSubForm('transport_form') instanceof ApiTransportForm) {
-            $this->addElement(
-                'submit',
-                'transport_validation',
-                array(
-                    'ignore' => true,
-                    'label' => $this->translate('Validate Configuration'),
-                    'data-progress-label' => $this->translate('Validation In Progress'),
-                    'decorators' => array('ViewHelper')
-                )
-            );
-
-            $this->setAttrib('data-progress-element', 'transport-progress');
-            $this->addElement(
-                'note',
-                'transport-progress',
-                array(
-                    'decorators' => array(
-                        'ViewHelper',
-                        array('Spinner', array('id' => 'transport-progress'))
-                    )
-                )
-            );
-
             $btnSubmit = $this->getElement('btn_submit');
-            $elements = array('transport_validation', 'transport-progress');
+
             if ($btnSubmit !== null) {
                 // In the setup wizard $this is being used as a subform which doesn't have a submit button.
+                $this->addElement(
+                    'submit',
+                    'transport_validation',
+                    array(
+                        'ignore' => true,
+                        'label' => $this->translate('Validate Configuration'),
+                        'data-progress-label' => $this->translate('Validation In Progress'),
+                        'decorators' => array('ViewHelper')
+                    )
+                );
+
+                $this->setAttrib('data-progress-element', 'transport-progress');
+                $this->addElement(
+                    'note',
+                    'transport-progress',
+                    array(
+                        'decorators' => array(
+                            'ViewHelper',
+                            array('Spinner', array('id' => 'transport-progress'))
+                        )
+                    )
+                );
+
+                $elements = array('transport_validation', 'transport-progress');
+
                 $btnSubmit->setDecorators(array('ViewHelper'));
                 array_unshift($elements, 'btn_submit');
-            }
-            $this->addDisplayGroup(
-                $elements,
-                'submit_validation',
-                array(
-                    'decorators' => array(
-                        'FormElements',
-                        array('HtmlTag', array('tag' => 'div', 'class' => 'control-group form-controls'))
+
+                $this->addDisplayGroup(
+                    $elements,
+                    'submit_validation',
+                    array(
+                        'decorators' => array(
+                            'FormElements',
+                            array('HtmlTag', array('tag' => 'div', 'class' => 'control-group form-controls'))
+                        )
                     )
-                )
-            );
+                );
+            }
         }
 
         return $this;
@@ -351,9 +354,14 @@ class TransportConfigForm extends ConfigForm
             return false;
         }
 
-        if (! ($this->getElement('transport_validation') === null || (
-            $this->isSubmitted() && isset($formData['force_creation']) && $formData['force_creation'])
-        )) {
+        if ($this->getSubForm('transport_form') instanceof ApiTransportForm) {
+            if (! isset($formData['transport_validation'])
+                && isset($formData['force_creation']) && $formData['force_creation']
+            ) {
+                // ignore any validation result
+                return true;
+            }
+
             try {
                 CommandTransport::createTransport(new ConfigObject($this->getValues()))->probe();
             } catch (CommandTransportException $e) {

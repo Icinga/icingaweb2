@@ -15,6 +15,7 @@ class TransportPage extends Form
         $this->addDescription($this->translate(
             'Please define below how you want to send commands to your monitoring instance.'
         ));
+        $this->setValidatePartial(true);
     }
 
     public function createElements(array $formData)
@@ -29,5 +30,26 @@ class TransportPage extends Form
     public function getValues($suppressArrayNotation = false)
     {
         return $this->getSubForm('transport_form')->getValues($suppressArrayNotation);
+    }
+
+    /**
+     * Run the configured backend's inspection checks and show the result, if necessary
+     *
+     * This will only run any validation if the user pushed the 'transport_validation' button.
+     *
+     * @param   array   $formData
+     *
+     * @return  bool
+     */
+    public function isValidPartial(array $formData)
+    {
+        if (isset($formData['transport_validation']) && parent::isValid($formData)) {
+            $this->info($this->translate('The configuration has been successfully validated.'));
+        } elseif (! isset($formData['transport_validation'])) {
+            // This is usually done by isValid(Partial), but as we're not calling any of these...
+            $this->populate($formData);
+        }
+
+        return true;
     }
 }
