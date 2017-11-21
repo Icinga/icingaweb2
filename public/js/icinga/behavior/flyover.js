@@ -28,6 +28,12 @@
             var $this = $(this);
 
             if (typeof expandedFlyovers['#' + $this.attr('id')] !== 'undefined') {
+                var $container = $this.closest('.container');
+
+                if ($this.offset().left - $container.offset().left > $container.innerWidth() / 2) {
+                    $this.addClass('flyover-right');
+                }
+
                 $this.toggleClass('flyover-expanded');
             }
         });
@@ -50,8 +56,16 @@
         $flyover.toggleClass('flyover-expanded');
 
         if ($flyover.hasClass('flyover-expanded')) {
+            var $container = $flyover.closest('.container');
+
+            if ($flyover.offset().left - $container.offset().left > $container.innerWidth() / 2) {
+                $flyover.addClass('flyover-right');
+            }
+
             expandedFlyovers['#' + $flyover.attr('id')] = null;
         } else {
+            $flyover.removeClass('flyover-right');
+
             delete expandedFlyovers['#' + $flyover.attr('id')];
         }
     };

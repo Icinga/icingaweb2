@@ -277,7 +277,17 @@ ul.tree li a.error:hover {
     width: 1em;
 
     position: absolute;
-    left: 4px;
+    left: 6px;
     top: -7px;
+  }
+
+  &.flyover-right .flyover-content {
+    left: auto;
+    right: 0;
+  }
+
+  &.flyover-arrow-top.flyover-right .flyover-content:before {
+    left: auto;
+    right: 6px;
   }
 }
