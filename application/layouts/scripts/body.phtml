@@ -16,7 +16,11 @@ if ($this->layout()->autorefreshInterval) {
     $refresh = ' data-icinga-refresh="' . $this->layout()->autorefreshInterval . '"';
 }
 
-$inlineLayoutScript = $this->layout()->inlineLayout . '.phtml';
+if ($this->layout()->inlineLayout) {
+    $inlineLayoutScript = $this->layout()->inlineLayout . '.phtml';
+} else {
+    $inlineLayoutScript = 'inline.phtml';
+}
 
 ?>
 <div id="header">
