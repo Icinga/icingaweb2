@@ -9,10 +9,8 @@ use LogicException;
 use Icinga\Application\Modules\Manager as ModuleManager;
 use Icinga\Authentication\User\UserBackend;
 use Icinga\Data\ConfigObject;
-use Icinga\Data\ResourceFactory;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\NotReadableError;
-use Icinga\Application\Logger;
 use Icinga\Util\Translator;
 use Icinga\Exception\IcingaException;
 
@@ -141,7 +139,11 @@ abstract class ApplicationBootstrap
         $this->baseDir = $baseDir;
         $this->appDir = $baseDir . '/application';
         $this->vendorDir = $baseDir . '/library/vendor';
-        $this->libDir = realpath(__DIR__ . '/../..');
+        if (substr(__DIR__, 0, 8) === 'phar:///') {
+            $this->libDir = dirname(dirname(__DIR__));
+        } else {
+            $this->libDir = realpath(__DIR__ . '/../..');
+        }
 
         $this->setupAutoloader();
 
@@ -403,12 +405,35 @@ abstract class ApplicationBootstrap
      */
     protected function setupModuleManager()
     {
+        $paths = $this->getAvailableModulePaths();
         $this->moduleManager = new ModuleManager(
             $this,
             $this->configDir . '/enabledModules',
-            explode(':', $this->config->get('global', 'module_path', $this->baseDir . '/modules'))
+            $paths
         );
         return $this;
+    }
+
+    protected function getAvailableModulePaths()
+    {
+        $paths = array();
+        $configured = $this->config->get('global', 'module_path', $this->baseDir . '/modules');
+        $nextIsPhar = false;
+        foreach (explode(':', $configured) as $path) {
+            if ($path === 'phar') {
+                $nextIsPhar = true;
+                continue;
+            }
+
+            if ($nextIsPhar) {
+                $nextIsPhar = false;
+                $paths[] = 'phar:' . $path;
+            } else {
+                $paths[] = $path;
+            }
+        }
+
+        return $paths;
     }
 
     /**
