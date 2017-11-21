@@ -355,7 +355,9 @@ class TransportConfigForm extends ConfigForm
         }
 
         if ($this->getSubForm('transport_form') instanceof ApiTransportForm) {
-            if (isset($formData['force_creation']) && $formData['force_creation']) {
+            if (! isset($formData['transport_validation'])
+                && isset($formData['force_creation']) && $formData['force_creation']
+            ) {
                 // ignore any validation result
                 return true;
             }
@@ -372,10 +374,10 @@ class TransportConfigForm extends ConfigForm
                     'checkbox',
                     'force_creation',
                     array(
-                        'order'       => 0,
-                        'ignore'      => true,
-                        'label'       => $this->translate('Force Changes'),
-                        'description' => $this->translate(
+                        'order'         => 0,
+                        'ignore'        => true,
+                        'label'         => $this->translate('Force Changes'),
+                        'description'   => $this->translate(
                             'Check this box to enforce changes without connectivity validation'
                         )
                     )
