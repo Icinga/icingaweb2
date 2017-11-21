@@ -27,6 +27,16 @@
          * @type {bool}
          */
         this.mobileMenu = false;
+
+        // detect currentLayout
+        var classList = $('#layout').attr('class').split(/\s+/);
+        var _this = this;
+        var matched;
+        $.each(classList, function(index, item) {
+            if (null !== (matched = item.match(/^([a-z]+)-layout$/))) {
+                _this.currentLayout = matched[1];
+            }
+        });
     };
 
     Icinga.UI.prototype = {
