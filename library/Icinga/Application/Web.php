@@ -302,14 +302,18 @@ class Web extends EmbeddedWeb
                     ),
                     'children'  => array(
                         'about' => array(
-                            'label'     => t('About'),
-                            'url'       => 'about',
-                            'priority'  => 700
+                            'icon'        => 'info',
+                            'description' => t('Open about page'),
+                            'label'       => t('About'),
+                            'url'         => 'about',
+                            'priority'    => 700
                         ),
                         'announcements' => array(
-                            'label'      => t('Announcements'),
-                            'url'        => 'announcements',
-                            'priority'   => 710
+                            'icon'        => 'megaphone',
+                            'description' => t('List announcements'),
+                            'label'       => t('Announcements'),
+                            'url'         => 'announcements',
+                            'priority'    => 710
                         )
                     )
                 ),
@@ -320,28 +324,36 @@ class Web extends EmbeddedWeb
                     'priority'      => 800,
                     'children'      => array(
                         'application' => array(
-                            'label'         => t('Application'),
-                            'url'           => 'config/general',
-                            'permission'    => 'config/application/*',
-                            'priority'      => 810
+                            'icon'        => 'wrench',
+                            'description' => t('Open application configuration'),
+                            'label'       => t('Application'),
+                            'url'         => 'config/general',
+                            'permission'  => 'config/application/*',
+                            'priority'    => 810
                         ),
                         'authentication' => array(
-                            'label'         => t('Authentication'),
-                            'permission'    => 'config/authentication/*',
-                            'priority'      => 830,
-                            'url'           => 'role/list'
+                            'icon'        => 'users',
+                            'description' => t('Open authentication configuration'),
+                            'label'       => t('Authentication'),
+                            'permission'  => 'config/authentication/*',
+                            'priority'    => 830,
+                            'url'         => 'role/list'
                         ),
                         'navigation' => array(
-                            'label'         => t('Shared Navigation'),
-                            'url'           => 'navigation/shared',
-                            'permission'    => 'config/application/navigation',
-                            'priority'      => 840,
+                            'icon'        => 'sitemap',
+                            'description' => t('Open shared navigation configuration'),
+                            'label'       => t('Shared Navigation'),
+                            'url'         => 'navigation/shared',
+                            'permission'  => 'config/application/navigation',
+                            'priority'    => 840,
                         ),
                         'modules' => array(
-                            'label'         => t('Modules'),
-                            'url'           => 'config/modules',
-                            'permission'    => 'config/modules',
-                            'priority'      => 890
+                            'icon'        => 'cubes',
+                            'description' => t('Open module configuration'),
+                            'label'       => t('Modules'),
+                            'url'         => 'config/modules',
+                            'permission'  => 'config/modules',
+                            'priority'    => 890
                         )
                     )
                 ),
@@ -352,15 +364,19 @@ class Web extends EmbeddedWeb
                     'priority'  => 900,
                     'children'  => array(
                         'account' => array(
-                            'label'     => t('My Account'),
-                            'priority'  => 100,
-                            'url'       => 'account'
+                            'icon'        => 'sliders',
+                            'description' => t('Open your account preferences'),
+                            'label'       => t('My Account'),
+                            'priority'    => 100,
+                            'url'         => 'account'
                         ),
                         'logout' => array(
-                            'label'         => t('Logout'),
-                            'priority'      => 200,
-                            'attributes'    => array('target' => '_self'),
-                            'url'           => 'authentication/logout'
+                            'icon'        => 'off',
+                            'description' => t('Log out'),
+                            'label'       => t('Logout'),
+                            'priority'    => 200,
+                            'attributes'  => array('target' => '_self'),
+                            'url'         => 'authentication/logout'
                         )
                     )
                 )
@@ -368,10 +384,12 @@ class Web extends EmbeddedWeb
 
             if (Logger::writesToFile()) {
                 $menu['system']['children']['application_log'] = array(
-                    'label'      => t('Application Log'),
-                    'url'        => 'list/applicationlog',
-                    'permission' => 'application/log',
-                    'priority'   => 900
+                    'icon'        => 'doc-text',
+                    'description' => t(''),
+                    'label'       => t('Application Log'),
+                    'url'         => 'list/applicationlog',
+                    'permission'  => 'application/log',
+                    'priority'    => 900
                 );
             }
         } else {

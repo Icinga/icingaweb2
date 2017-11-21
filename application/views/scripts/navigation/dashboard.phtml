@@ -1,0 +1,16 @@
+<div class="controls">
+    <?= $tabs ?>
+</div>
+<div class="content">
+    <?php foreach ($navigation as $item): /** @var \Icinga\Web\Navigation\NavigationItem $item */?>
+    <a class="dashboard-link" href="<?= $this->url($item->getUrl(), $item->getUrlParameters()) ?>">
+        <div class="link-icon">
+            <?= $this->icon($item->getIcon() ?: 'forward', null, array('aria-hidden' => true)) ?>
+        </div>
+        <div class="link-meta">
+            <div class="link-label"><?= $this->escape($item->getLabel()) ?></div>
+            <div class="link-description"><?= $this->escape($item->getDescription() ?: sprintf('Open %s', strtolower($item->getLabel()))) ?></div>
+        </div>
+    </a>
+    <?php endforeach ?>
+</div>

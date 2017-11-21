@@ -89,6 +89,13 @@ class NavigationItem implements IteratorAggregate
     protected $label;
 
     /**
+     * The item's description
+     *
+     * @var string
+     */
+    protected $description;
+
+    /**
      * This item's parent
      *
      * @var NavigationItem
@@ -482,6 +489,30 @@ class NavigationItem implements IteratorAggregate
     }
 
     /**
+     * Get the item's description
+     *
+     * @return  string
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    /**
+     * Set the item's description
+     *
+     * @param   string  $description
+     *
+     * @return  $this
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    /**
      * Set this item's url target
      *
      * @param   string  $target
@@ -512,7 +543,7 @@ class NavigationItem implements IteratorAggregate
     public function getUrl()
     {
         if ($this->url === null && $this->hasChildren()) {
-            $this->setUrl(Url::fromPath('#'));
+            $this->setUrl(Url::fromPath('navigation/dashboard', array('name' => strtolower($this->getName()))));
         }
 
         return $this->url;

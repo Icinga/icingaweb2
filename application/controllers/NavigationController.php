@@ -5,6 +5,7 @@ namespace Icinga\Controllers;
 
 use Exception;
 use Icinga\Application\Config;
+use Icinga\Application\Icinga;
 use Icinga\Exception\NotFoundError;
 use Icinga\Data\DataArray\ArrayDatasource;
 use Icinga\Data\Filter\FilterMatchCaseInsensitive;
@@ -406,5 +407,26 @@ class NavigationController extends Controller
         } catch (NotFoundError $_) {
             $this->httpNotFound(sprintf($this->translate('Navigation item "%s" not found'), $form->getValue('name')));
         }
+    }
+
+    public function dashboardAction()
+    {
+        $name = $this->params->getRequired('name');
+
+        $this->getTabs()->add('dashboard', array(
+            'active'    => true,
+            'label'     => ucwords($name),
+            'url'       => Url::fromRequest()
+        ));
+
+        $menu = Icinga::app()->getMenu();
+
+        $navigation = $menu->findItem($name);
+
+        if ($navigation === null) {
+            $this->httpNotFound($this->translate('Navigation not found'));
+        }
+
+        $this->view->navigation = $navigation;
     }
 }

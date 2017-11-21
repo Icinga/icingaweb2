@@ -44,6 +44,56 @@
   }
 }
 
+.dashboard-link {
+  .clearfix();
+  display: block;
+  max-width: 100%;
+  vertical-align: middle;
+  padding: 1em;
+  width: 36em;
+
+  &:hover {
+    -webkit-border-radius: 4px;
+       -moz-border-radius: 4px;
+            border-radius: 4px;
+
+    -webkit-background-clip: padding-box;
+       -moz-background-clip: padding;
+            background-clip: padding-box;
+
+    -webkit-box-shadow: 0 0 0.5em 0 rgba(0, 0, 0, 0.2);
+       -moz-box-shadow: 0 0 0.5em 0 rgba(0, 0, 0, 0.2);
+            box-shadow: 0 0 0.5em 0 rgba(0, 0, 0, 0.2);
+
+    background-color: @tr-hover-color;
+    text-decoration: none;
+  }
+}
+
+.link-meta {
+  display: table-cell;
+  vertical-align: middle;
+}
+
+.link-label {
+  font-weight: @font-weight-bold;
+}
+
+.link-description {
+  color: @text-color-light;
+}
+
+.link-icon {
+  display: table-cell;
+  padding-right: .5em;
+  vertical-align: middle;
+
+  > i {
+    font-size: 3em;
+    opacity: 0.7;
+  }
+}
+
 table.historycolorgrid {
   font-size: 1.5em;
 }

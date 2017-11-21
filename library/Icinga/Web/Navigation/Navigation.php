@@ -363,7 +363,7 @@ class Navigation implements ArrayAccess, Countable, IteratorAggregate
      *
      * @return  NavigationItem
      */
-    protected function findItem($name)
+    public function findItem($name)
     {
         $item = $this->getItem($name);
         if ($item !== null) {
