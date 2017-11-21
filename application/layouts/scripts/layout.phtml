@@ -56,7 +56,9 @@ $innerLayoutScript = $this->layout()->innerLayout . '.phtml';
 <div id="layout" class="default-layout<?php if ($showFullscreen): ?> fullscreen-layout<?php endif ?>">
 <?= $this->render($innerLayoutScript); ?>
 </div>
+<!--[if lt IE 10]>
 <iframe id="fileupload-frame-target" name="fileupload-frame-target"></iframe>
+<![endif]-->
 <!--[if IE 8]>
 <script type="text/javascript" src="<?= $this->href($ie8jsfile) ?>"></script>
 <![endif]-->
