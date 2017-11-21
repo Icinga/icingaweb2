@@ -251,3 +251,33 @@ ul.tree li a.error:hover {
     animation-delay: .4s;
   }
 }
+
+.flyover:not(.flyover-expanded) .flyover-content {
+  display: none;
+}
+
+.flyover {
+  position: relative;
+
+  .flyover-content {
+    background-color: @body-bg-color;
+    border: 1px solid @gray-lighter;
+    box-shadow: 0 0 .5em 0 rgba(0, 0, 0, 0.2);
+    position: absolute;
+  }
+
+  &.flyover-arrow-top .flyover-content:before {
+    background: @body-bg-color;
+    border-left: 1px solid @gray-lighter;
+    border-top: 1px solid @gray-lighter;
+    content: "";
+    height: 1em;
+    -ms-transform: rotate(45deg);
+        transform: rotate(45deg);
+    width: 1em;
+
+    position: absolute;
+    left: 4px;
+    top: -7px;
+  }
+}
