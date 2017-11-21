@@ -14,3 +14,7 @@ if ($searchDashboard->search('dummy')->getPane('search')->hasDashlets()): ?>
     </form>
 <?php endif; ?>
 <?= $menuRenderer->setCssClass('primary-nav')->setElementTag('nav')->setHeading(t('Navigation')); ?>
+<button id="toggle-sidebar" title="<?= $this->translate('Toggle Menu') ?>">
+    <i id="close-sidebar" class="icon-angle-double-left"></i>
+    <i id="open-sidebar" class="icon-angle-double-right"></i>
+</button>
