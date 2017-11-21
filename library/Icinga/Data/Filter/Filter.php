@@ -33,6 +33,14 @@ abstract class Filter
 
     abstract public function orFilter(Filter $filter);
 
+    /**
+     * Whether the give row matches this Filter
+     *
+     * @param mixed $row Preferrably an stdClass instance
+     * @return bool
+     */
+    abstract public function matches($row);
+
     public function getUrlParams()
     {
         return UrlParams::fromQueryString($this->toQueryString());
@@ -133,7 +141,7 @@ abstract class Filter
      * @param string $filter  Filter expression
      *
      * @throws FilterException
-     * @return FilterWhere
+     * @return FilterExpression
      */
     public static function where($col, $filter)
     {
