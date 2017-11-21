@@ -5,7 +5,7 @@
     <?= $this->img('img/icinga-logo-big-dark.png', null, array('width' => 320)) ?>
     <dl class="name-value-list">
     <?php if (isset($version['appVersion'])): ?>
-        <dt><?= $this->translate('Version') ?></dt>
+        <dt><?= $this->translate('Icinga Web 2 Version') ?></dt>
         <dd><?= $this->escape($version['appVersion']) ?></dd>
     <?php endif ?>
     <?php if (isset($version['gitCommitID'])): ?>
@@ -72,7 +72,7 @@
     ) ?>
     <?= $this->qlink(
         null,
-        'https://www.icinga.com/services/support',
+        'https://www.icinga.com/support/',
         null,
         array(
             'target'    => '_blank',
@@ -82,7 +82,7 @@
     ) ?>
         <?= $this->qlink(
             null,
-            'https://www.icinga.com/community/get-involved/',
+            'https://www.icinga.com/about/get-involved/',
             null,
             array(
                 'target'    => '_blank',
