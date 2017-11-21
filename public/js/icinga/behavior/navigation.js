@@ -215,7 +215,7 @@
 
         if ($flyout.length) {
             $flyout.css({
-                top: $target.position().top - parseInt($flyout.css('margin-top'), 10)
+                top: $target.offset().top + $target.outerHeight()
             });
         }
     };

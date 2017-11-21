@@ -37,14 +37,18 @@
 }
 
 #header-logo-container {
-  height: 2.667em;
-  margin: .1667em 0 .1667em .7em;
-  width: 100px;
+  background: inherit;
+  height: 6em;
+  padding: 1.25em;
+  width: 16em;
+  position: fixed;
+  left: 0;
+  margin-top: -3em;
 }
 
 #header-logo {
   background-image: url('../img/icinga-logo.svg');
-  background-position: left center;
+  background-position: center center;
   background-repeat: no-repeat;
   background-size: contain;
   display: block;
@@ -238,6 +242,12 @@ html.no-js .controls > .tabs {
 
 // Collpased sidebar
 #layout.sidebar-collapsed {
+  #header-logo-container {
+    height: 3.167em;
+    padding: 0.25em 0.125em;
+    width: 4em;
+  }
+
   #header-logo {
     background-image: url('../img/icinga-logo-compact.svg');
   }
@@ -247,6 +257,7 @@ html.no-js .controls > .tabs {
   }
 
   #sidebar {
+    top: 2.25em;
     width: 3em;
   }
 
