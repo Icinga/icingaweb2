@@ -62,14 +62,10 @@ class TacticalController extends Controller
             ->addSlice($summary->hosts_unreachable_unhandled, array('class' => 'slice-state-unreachable'))
             ->addSlice($summary->hosts_pending, array('class' => 'slice-state-pending'))
             ->addSlice($summary->hosts_not_checked, array('class' => 'slice-state-not-checked'));
-        if ($summary->hosts_down_unhandled > 1) {
+        if ($summary->hosts_down_unhandled > 0) {
             $hostSummaryChart
                 ->setLabelBig($summary->hosts_down_unhandled)
                 ->setLabelSmall($this->translate('hosts down'));
-        } elseif ($summary->hosts_down_unhandled === 1) {
-            $hostSummaryChart
-                ->setLabelBig($summary->hosts_down_unhandled)
-                ->setLabelSmall($this->translate('host down'));
         }
 
         $serviceSummaryChart = new Donut();
@@ -83,14 +79,10 @@ class TacticalController extends Controller
             ->addSlice($summary->services_unknown_unhandled, array('class' => 'slice-state-unknown'))
             ->addSlice($summary->services_pending, array('class' => 'slice-state-pending'))
             ->addSlice($summary->services_not_checked, array('class' => 'slice-state-not-checked'));
-        if ($summary->services_critical_unhandled > 1) {
+        if ($summary->services_critical_unhandled > 0) {
             $serviceSummaryChart
                 ->setLabelBig($summary->services_critical_unhandled)
                 ->setLabelSmall($this->translate('services critical'));
-        } elseif ($summary->services_critical_unhandled === 1) {
-            $hostSummaryChart
-                ->setLabelBig($summary->hosts_down_unhandled)
-                ->setLabelSmall($this->translate('service critical'));
         }
 
         $this->view->hostStatusSummaryChart = $hostSummaryChart
