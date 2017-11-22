@@ -3,26 +3,66 @@
 // Login page styles
 
 #login {
-  #icinga-logo {
-    .fadein();
+
+  height: 100%;
+  background-color: @icinga-blue;
+  background-repeat:  no-repeat;
+  background-position: center center;
+  background-image: url(../img/icingaweb2-background.jpg);
+  // fallback ie 9
+  background-size: 100% 100%;
+  background-size: cover;
+
+  .login-wrapper {
+    height: 100%;
+    max-width: 85em;
+    padding: 0 1em;
+    margin: 0 auto;
+    z-index: 2;
+    position: relative
   }
 
-  background-color: @icinga-blue;
+  .login-form {
+    position: relative;
+    background: white;
+    min-width: 288px;
+    height: 100%;
+    width: 33%;
+    box-shadow: 0 0 4em 1em rgba(0, 0, 0, 0.2);
+  }
+
+  .logo-wrapper {
+    position: absolute;
+    top: 1em; right: 1em; left: 1em;
+  }
+
+  #icinga-logo {
+    width: 100%;
+    max-width: 18em;
+    height: auto;
+    margin: 0 auto;
+
+    &:after {
+      content: "";
+      display: block;
+      width: 100%;
+      padding-bottom: 35%;
+    }
+  }
 
   .control-label {
-    color: @body-bg-color;
     font-size: 1em;
     line-height: @line-height;
   }
 
-  .errors {
+  .control-group .errors {
     background-color: @color-critical;
-    color: @body-bg-color;
     font-size: @font-size-small;
     margin: 2em 0 0 0;
 
     > li {
       padding: 1em;
+      color: @body-bg-color;
     }
   }
 
@@ -40,11 +80,7 @@
 
   input[type=password],
   input[type=text] {
-    background-color: @gray-light; // IE8 fallback
-    background-color: rgba(255,255,255,0.2);
-    border: none;
-    border-bottom: solid 3px @body-bg-color;
-    color: @body-bg-color;
+    border: solid 1px @gray-light;
     display: block;
     height: 2.5em;
     margin: 0;
@@ -53,12 +89,14 @@
 
     &:focus {
       .rounded-corners(3px);
-      background-color: @body-bg-color;
-      border: none;
       border-radius: 0;
-      color: @icinga-blue;
       padding-bottom: 3px;
     }
+  }
+
+  input:focus,
+  input[type="submit"]:focus {
+    outline: 3px solid fade(@icinga-blue, 50%);
   }
 
   .form-controls {
@@ -67,14 +105,20 @@
   }
 
   input[type=submit] {
-    .button(@icinga-blue, @body-bg-color);
+    border-radius: .25em;
+    background: @icinga-secondary;
+    color: white;
+    border: none;
     height: 2.5em;
     margin: 0;
     width: 100%;
+
+    &:hover {
+      background-color: darken(@icinga-secondary, 10)
+    }
   }
 
   .config-note {
-    color: white;
     background-color: @color-critical;
     margin: 0 auto 2em auto; // Center horizontally w/ bottom margin
     max-width: 50%;
@@ -88,16 +132,73 @@
   }
 }
 
+#social {
+  position: fixed;
+  right: 1em; bottom: 1em;
+  letter-spacing: -.417em;
+  margin: 0;
+
+  > * {
+    letter-spacing: normal;
+  }
+
+  > li {
+    display: inline-block;
+
+    a {
+      display: block;
+      text-decoration: none;
+      -webkit-transform: scale(1, 1);
+         -moz-transform: scale(1, 1);
+          -ms-transform: scale(1, 1);
+              transform: scale(1, 1);
+    }
+
+    i {
+      font-size: 3em;
+      color: white;
+      text-shadow: 0 0 .5em #01507B;
+    }
+  }
+
+  > li a:hover {
+    -webkit-transform: scale(1.2, 1.2);
+       -moz-transform: scale(1.2, 1.2);
+        -ms-transform: scale(1.2, 1.2);
+            transform: scale(1.2, 1.2);
+  }
+
+  li:not(:last-child) {
+    margin-right: 2em;
+  }
+}
+
 #login-footer {
-  color: @body-bg-color;
+  position: absolute;
+  right: 2em; bottom: .25em; left: 2em;
+  border-top: 1px solid @gray-light;
+  padding: .5em;
   font-size: @font-size-small;
 
-  a {
-    font-weight: @font-weight-bold;
+  &:after {
+    content: "";
+    display: block;
+    clear: both;
+  }
 
-    // Social links
-    &:hover > i {
-      color: @text-color;
+  p {
+    float: left;
+    margin-bottom: 0;
+  }
+
+  a {
+    float: right;
+    font-weight: @font-weight-bold;
+    color: @icinga-blue;
+
+    &:hover {
+      text-decoration: none;
+      color: darken(@icinga-blue, 10);
     }
   }
 }

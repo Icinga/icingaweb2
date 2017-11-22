@@ -1,58 +1,70 @@
-<div id="login" class="centered-ghost">
-    <div class="centered-content" data-base-target="layout">
-        <div role="status" class="sr-only">
-            <?= $this->translate(
-                'Welcome to Icinga Web 2. For users of the screen reader Jaws full and expectant compliant'
-                . ' accessibility is possible only with use of the Firefox browser. VoiceOver on Mac OS X is tested on'
-                . ' Chrome, Safari and Firefox.'
-            ) ?>
+<div id="login">
+    <div class="login-wrapper">
+        <div class="login-form centered-ghost" data-base-target="layout">
+            <div class="login-form-content centered-content">
+                <div role="status" class="sr-only">
+                    <?= $this->translate(
+                        'Welcome to Icinga Web 2. For users of the screen reader Jaws full and expectant compliant'
+                        . ' accessibility is possible only with use of the Firefox browser. VoiceOver on Mac OS X is tested on'
+                        . ' Chrome, Safari and Firefox.'
+                    ) ?>
+                </div>
+                <div class="logo-wrapper"><div id="icinga-logo" class="invert" aria-hidden="true"></div></div>
+                <?php if ($requiresSetup): ?>
+                    <p class="config-note"><?= sprintf(
+                        $this->translate(
+                            'It appears that you did not configure Icinga Web 2 yet so it\'s not possible to log in without any defined '
+                            . 'authentication method. Please define a authentication method by following the instructions in the'
+                            . ' %1$sdocumentation%3$s or by using our %2$sweb-based setup-wizard%3$s.'
+                        ),
+                        '<a href="http://docs.icinga.com/" title="' . $this->translate('Icinga Web 2 Documentation') . '">', // TODO: More exact documentation link
+                        '<a href="' . $this->href('setup') . '" title="' . $this->translate('Icinga Web 2 Setup-Wizard') . '">',
+                        '</a>'
+                    ) ?></p>
+                <?php endif ?>
+                <?= $this->form ?>
+                <div id="login-footer">
+                    <p>Icinga Web 2 &copy; 2013-<?= date('Y') ?></p>
+                    <?= $this->qlink($this->translate('icinga.com'), 'https://www.icinga.com') ?>
+                </div>
+            </div>
         </div>
-        <div id="icinga-logo" aria-hidden="true"></div>
-        <?php if ($requiresSetup): ?>
-            <p class="config-note"><?= sprintf(
-                $this->translate(
-                    'It appears that you did not configure Icinga Web 2 yet so it\'s not possible to log in without any defined '
-                    . 'authentication method. Please define a authentication method by following the instructions in the'
-                    . ' %1$sdocumentation%3$s or by using our %2$sweb-based setup-wizard%3$s.'
-                ),
-                '<a href="http://docs.icinga.com/" title="' . $this->translate('Icinga Web 2 Documentation') . '">', // TODO: More exact documentation link
-                '<a href="' . $this->href('setup') . '" title="' . $this->translate('Icinga Web 2 Setup-Wizard') . '">',
-                '</a>'
-            ) ?></p>
-        <?php endif ?>
-        <?= $this->form ?>
-        <div id="login-footer">
-            <p>Icinga Web 2 &copy; 2013-<?= date('Y') ?></p>
-            <?= $this->qlink($this->translate('The Icinga Project'), 'https://www.icinga.com') ?>
+        <ul id="social">
+            <li>
             <?= $this->qlink(
-                null,
-                'http://www.twitter.com/icinga',
-                null,
-                array(
-                    'target'  => '_blank',
-                    'icon'    => 'twitter',
-                    'title'   => $this->translate('Icinga on Twitter')
-                )
-            ) ?>
-            <?= $this->qlink(
-                null,
-                'http://www.facebook.com/icinga',
-                null,
-                array(
-                    'target'  => '_blank',
-                    'icon'     => 'facebook-squared',
-                    'title'    => $this->translate('Icinga on Facebook')
-                )
-            ) ?> <?= $this->qlink(
-                null,
-                'https://plus.google.com/+icinga',
-                null,
-                array(
-                    'target'    => '_blank',
-                    'icon'      => 'gplus-squared',
-                    'title'     => $this->translate('Icinga on Google+')
-                )
-            ) ?>
-        </div>
+                    null,
+                    'http://www.twitter.com/icinga',
+                    null,
+                    array(
+                        'target'  => '_blank',
+                        'icon'    => 'twitter',
+                        'title'   => $this->translate('Icinga on Twitter')
+                    )
+                ) ?>
+            </li>
+            <li>
+                <?= $this->qlink(
+                    null,
+                    'http://www.facebook.com/icinga',
+                    null,
+                    array(
+                        'target'  => '_blank',
+                        'icon'     => 'facebook-squared',
+                        'title'    => $this->translate('Icinga on Facebook')
+                    )
+                ) ?>
+            </li>
+            <li><?= $this->qlink(
+                    null,
+                    'https://github.com/Icinga',
+                    null,
+                    array(
+                        'target'    => '_blank',
+                        'icon'      => 'github-circled',
+                        'title'     => $this->translate('Icinga on GitHub')
+                    )
+                ) ?>
+            </li>
+        </ul>
     </div>
 </div>

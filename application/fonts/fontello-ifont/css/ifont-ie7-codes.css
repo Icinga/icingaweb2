@@ -132,5 +132,6 @@
 .icon-check { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe883;&nbsp;'); }
 .icon-reschedule { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe884;&nbsp;'); }
 .icon-warning-empty { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xe885;&nbsp;'); }
+.icon-github-circled { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xf09b;&nbsp;'); }
 .icon-history { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xf1da;&nbsp;'); }
 .icon-binoculars { *zoom: expression( this.runtimeStyle['zoom'] = '1', this.innerHTML = '&#xf1e5;&nbsp;'); }
