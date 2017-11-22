@@ -4,6 +4,7 @@
 namespace Icinga\Forms\Config\Tls\RootCaCollection;
 
 use Exception;
+use Icinga\Application\Hook;
 use Icinga\File\Storage\LocalFileStorage;
 use Icinga\Web\Form;
 
@@ -54,6 +55,29 @@ class EditForm extends Form
         $name = $this->getElement('name')->getValue();
 
         if ($name !== $this->oldName) {
+            /** @var Hook\TlsRootCACertificateCollectionHook[] $succeededCascades */
+            $succeededCascades = array();
+
+            foreach (Hook::all('TlsRootCACertificateCollection') as $hook) {
+                /** @var Hook\TlsRootCACertificateCollectionHook $hook */
+
+                try {
+                    $hook->beforeRename($this->oldName, $name);
+                } catch (Exception $e) {
+                    foreach ($succeededCascades as $succeededCascade) {
+                        try {
+                            $succeededCascade->beforeRename($name, $this->oldName);
+                        } catch (Exception $_) {
+                        }
+                    }
+
+                    $this->error($e->getMessage());
+                    return false;
+                }
+
+                $succeededCascades[] = $hook;
+            }
+
             try {
                 $rootCaCollections = LocalFileStorage::common('tls/rootcacollections');
                 $oldFileName = bin2hex($this->oldName) . '.pem';
@@ -61,6 +85,13 @@ class EditForm extends Form
                 $rootCaCollections->create(bin2hex($name) . '.pem', $rootCaCollections->read($oldFileName));
                 $rootCaCollections->delete($oldFileName);
             } catch (Exception $e) {
+                foreach ($succeededCascades as $succeededCascade) {
+                    try {
+                        $succeededCascade->beforeRename($name, $this->oldName);
+                    } catch (Exception $_) {
+                    }
+                }
+
                 $this->error($e->getMessage());
                 return false;
             }

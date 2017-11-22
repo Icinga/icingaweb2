@@ -4,6 +4,7 @@
 namespace Icinga\Controllers;
 
 use Exception;
+use Icinga\Application\Hook;
 use Icinga\Application\Icinga;
 use Icinga\File\Storage\LocalFileStorage;
 use Icinga\Forms\Config\Tls\RootCaCollection\AddCaForm;
@@ -106,6 +107,17 @@ class TlsrootcacollectionController extends Controller
 
         $this->view->form = $form = new ConfirmRemovalForm();
         $form->setOnSuccess(function (ConfirmRemovalForm $form) use ($name, $fileName, $rootCaCollections) {
+                foreach (Hook::all('TlsRootCACertificateCollection') as $hook) {
+                    /** @var Hook\TlsRootCACertificateCollectionHook $hook */
+
+                    try {
+                        $hook->beforeRemove($name);
+                    } catch (Exception $e) {
+                        $form->error($e->getMessage());
+                        return false;
+                    }
+                }
+
                 try {
                     $rootCaCollections->delete($fileName);
                 } catch (Exception $e) {
