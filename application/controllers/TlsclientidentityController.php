@@ -4,6 +4,7 @@
 namespace Icinga\Controllers;
 
 use Exception;
+use Icinga\Application\Hook;
 use Icinga\File\Storage\LocalFileStorage;
 use Icinga\Forms\Config\Tls\ClientIdentity\CreateForm;
 use Icinga\Forms\Config\Tls\ClientIdentity\EditForm;
@@ -88,6 +89,17 @@ class TlsclientidentityController extends Controller
 
         $this->view->form = $form = new ConfirmRemovalForm();
         $form->setOnSuccess(function (ConfirmRemovalForm $form) use ($name, $fileName, $clientIdentities) {
+                foreach (Hook::all('TlsClientIdentity') as $hook) {
+                    /** @var Hook\TlsClientIdentityHook $hook */
+
+                    try {
+                        $hook->beforeRemove($name);
+                    } catch (Exception $e) {
+                        $form->error($e->getMessage());
+                        return false;
+                    }
+                }
+
                 try {
                     $clientIdentities->delete($fileName);
                 } catch (Exception $e) {
