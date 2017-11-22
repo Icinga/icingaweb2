@@ -9,11 +9,25 @@
 
 @icon-width: 1.7em; // 1.5em width + 0.2em right margin
 
+// Disable scrollbars #1
+#menu-container {
+  height: 100%;
+  overflow: hidden;
+}
+
 #menu {
   background-color: @menu-bg-color;
   box-shadow: inset -.5em 0 1em rgba(0, 0, 0, .3);
   height: 100%;
-  overflow: auto;
+  // Disable scrollbars #2
+  margin-right: -16px;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+#menu > .search-control, #menu > .primary-nav {
+  // Disable scrollbars #3
+  margin-right: 16px;
 }
 
 #layout:not(.minimal-layout) #menu {
