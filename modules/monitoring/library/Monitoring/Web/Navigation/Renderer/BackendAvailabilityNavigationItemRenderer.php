@@ -31,6 +31,14 @@ class BackendAvailabilityNavigationItemRenderer extends BadgeNavigationItemRende
                 array('is_currently_running', 'notifications_enabled')
             )
             ->fetchRow();
+
+        if ($programStatus === false) {
+            throw new Exception(sprintf(
+                mt('monitoring', '%s is currently not up and running'),
+                MonitoringBackend::instance()->getName()
+            ));
+        }
+
         return $programStatus;
     }
 
