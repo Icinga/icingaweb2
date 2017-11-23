@@ -636,7 +636,7 @@ msgstr "Hosts filhos"
 #: /usr/local/icingaweb/modules/monitoring/application/forms/Config/SecurityConfigForm.php:59
 msgid ""
 "Comma separated case insensitive list of protected custom variables. Use * "
-"as a placeholder for zero or more wildcard characters. Existance of those "
+"as a placeholder for zero or more wildcard characters. Existence of those "
 "custom variables will be shown, but their values will be masked."
 msgstr ""
 "Lista protegida de variáveis personalizadas separadas por vírgula e case "
