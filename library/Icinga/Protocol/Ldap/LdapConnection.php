@@ -767,7 +767,7 @@ class LdapConnection implements Selectable, Inspectable
             $query,
             array_values($fields),
             0,
-            $serverSorting && $limit ? $offset + $limit : 0
+            ($serverSorting || ! $query->hasOrder()) && $limit ? $offset + $limit : 0
         );
         if ($results === false) {
             if (ldap_errno($ds) === self::LDAP_NO_SUCH_OBJECT) {
