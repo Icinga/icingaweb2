@@ -175,6 +175,52 @@ apk add icingaweb2
 ```
 For Alpine Linux please read the [package repositories notes](02-Installation.md#package-repositories-alpine-notes).
 
+## Installing the web server <a id="installing-the-web-server"></a>
+
+Depending on your OS you might have to install, and or configure the web server.
+We usually only require PHP as hard dependency. 
+
+We usually build on Apache httpd as the default web server, but you also can use nginx.
+
+**RedHat / CentOS / Fedora**
+
+Make sure to install httpd, start and enable it on boot.
+```
+yum install httpd
+
+systemctl start httpd.service
+systemctl enable httpd.service
+```
+
+Note for **EPEL 6 and 7**: See "Setting up FPM" below!
+
+Note for **Fedora >= 27**:
+ 
+You need to choose which httpd PHP mode you want to use!
+
+1. Enable mod_php: \
+   Edit `/etc/httpd/conf.modules.d/00-mpm.conf` and enable `prefork` instead of `event`
+2. or start php-fpm: \
+`systemctl start php-fpm.service` \
+`systemctl enable`
+
+**SUSE SLE / openSUSE**
+
+Make sure that web server is installed, and the required modules are loaded.
+```
+zypper install apache2
+
+a2enmod rewrite
+a2enmod php7
+
+systemctl start apache2.service
+systemctl enable apache2.service
+```
+    
+**Debian / Ubuntu**
+
+Your web server should be up and running after the installation.
+
 ### Setting up FPM <a id="setting-up-fpm"></a>
 
 If you are on CentOS / RedHat 6 or 7, or just want to run Icinga Web 2 with PHP-FPM instead
@@ -184,6 +230,7 @@ of the Apache module.
 |---------------------|-----------------------------------|
 | RedHat 7 (with SCL) | `/etc/opt/rh/rh-php71/php-fpm.d/` |
 | RedHat 6 (with SCL) | `/etc/opt/rh/rh-php70/php-fpm.d/` |
+| Fedora              | `/etc/php-fpm.d/`                 |
 | Debian/Ubuntu       | `/etc/php*/*/fpm/pool.d/`         |
 
 The default pool `www` should be sufficient for Icinga Web 2.
@@ -200,6 +247,12 @@ RedHat / CentOS 6 (SCL package):
 ```
 service rh-php70-php-fpm start
 chkconfig rh-php70-php-fpm on
+```
+
+Fedora:
+```
+systemctl start php-fpm.service
+systemctl enable php-fpm.service
 ```
 
 All module packages for PHP have this SCL prefix, so you can install a
