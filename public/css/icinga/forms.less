@@ -7,6 +7,7 @@
 @blue-lighter: #e5f9ff;
 @blue-lightest: #f3faff;
 
+@control-group-padding: 0.55em 0;
 @border-width : 1px;
 
 * {
@@ -54,9 +55,15 @@ label {
   display: inline-block;
   padding-right: @horizontal-padding;
   text-align: left;
-  min-width: 15em;
   max-width: 25em;
   width: 50%;
+}
+
+@media (max-width: 40em) {
+  .control-label-group {
+    max-width: 40em;
+    width: 100%;
+  }
 }
 
 .checkbox-group {
@@ -66,7 +73,7 @@ label {
 }
 
 .control-group {
-  padding: @vertical-padding @horizontal-padding;
+  padding: @control-group-padding;
 
   .errors {
     color: @color-critical;
@@ -74,9 +81,17 @@ label {
 }
 
 form {
-  min-width: 20em;
+  min-width: 25em;
   max-width: 45em;
   width: 80%;
+}
+
+
+/************************************************* SUBHEADINGS *************************************************/
+
+.form-sub-header {
+  font-size: 1.2em;
+  border-bottom: 1px solid @gray-light;
 }
 
 /************************************************* INPUT, TEXTAREA, SELECT *************************************************/
@@ -132,9 +147,12 @@ input[type=password],
 input[type=search],
 input[type=tel],
 input[type=time],
-input[type=url] {
+input[type=url],
+select,
+textarea {
 /*
-  .box-shadow(0 1px 0 0 @gray-light); //todo: what's up with this? why are they marked as classes
+  //todo: what's up with this? why are they marked as classes
+  .box-shadow(0 1px 0 0 @gray-light);
   .transition(border 0.3s ease);
 
   border: none;
@@ -145,16 +163,30 @@ input[type=url] {
   &:focus:not([readonly]) {
     border-color: @icinga-blue;
   }
-  min-width: 15em;
   max-width: 25em;
   width: 50%;
 }
 
-select, textarea {
-  min-width: 15em;
-  max-width: 25em;
-  width: 50%;
+
+@media (max-width: 40em) {
+  input:not([type]),
+  input[type=text],
+  input[type=date],
+  input[type=datetime-local],
+  input[type=email],
+  input[type=number],
+  input[type=password],
+  input[type=search],
+  input[type=tel],
+  input[type=time],
+  input[type=url],
+  textarea,
+  select {
+    width: 100%;
+    max-width: 40em;
+  }
 }
+
 
 .control-button,
 input[type="submit"] {
@@ -375,6 +407,11 @@ form .errors, form .errors ul {
       padding: @vertical-padding @horizontal-padding;
     }
   }
+}
+
+.form-controls {
+  min-width: 20em;
+  max-width: 45em;
 }
 
 button.animated.active {
