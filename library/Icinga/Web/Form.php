@@ -1342,6 +1342,7 @@ class Form extends Zend_Form
                 $this->addDecorator('FormDescriptions')
                     ->addDecorator('FormNotifications')
                     ->addDecorator('FormErrors', array('onlyCustomFormErrors' => true))
+                    //todo form hints should be in the form elements (?)
                     ->addDecorator('FormElements')
                     ->addDecorator('FormHints')
                     //->addDecorator('HtmlTag', array('tag' => 'dl', 'class' => 'zend_form'))

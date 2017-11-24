@@ -16,6 +16,7 @@ use Icinga\Util\StringHelper;
  */
 class RoleForm extends ConfigForm
 {
+    //todo(JeM): Split into sub-forms and give them sub-headings when used
     /**
      * Provided permissions by currently loaded modules
      *
@@ -37,7 +38,6 @@ class RoleForm extends ConfigForm
     {
         $this->providedPermissions = array('General' =>
             array(
-            //todo changed '*' to 'all', does that change anything..?
             'all'                                           => $this->translate('Everything'),
             'admin'                                         => $this->translate('Grant admin permissions, e.g. manage announcements'),
             'config/*'                                      => $this->translate('Config access')
@@ -102,11 +102,6 @@ class RoleForm extends ConfigForm
                 $this->providedPermissions[$moduleName] = $modulePermissions;
             }
         }
-
-        /*/ todo: look at array structure
-        var_dump($this->providedPermissions);
-        exit;
-        */
     }
 
     /**
