@@ -88,7 +88,9 @@ class TlsclientidentityController extends Controller
         $clientIdentities->resolvePath($fileName, true);
 
         $this->view->form = $form = new ConfirmRemovalForm();
-        $form->setOnSuccess(function (ConfirmRemovalForm $form) use ($name, $fileName, $clientIdentities) {
+        $form
+            ->setRedirectUrl('config/tls')
+            ->setOnSuccess(function (ConfirmRemovalForm $form) use ($name, $fileName, $clientIdentities) {
                 foreach (Hook::all('TlsClientIdentity') as $hook) {
                     /** @var Hook\TlsClientIdentityHook $hook */
 
@@ -112,7 +114,6 @@ class TlsclientidentityController extends Controller
                 );
                 return true;
             })
-            ->setRedirectUrl('config/tls')
             ->handleRequest();
 
         $this->addTitleTab(

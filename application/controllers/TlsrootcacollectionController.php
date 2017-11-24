@@ -78,7 +78,7 @@ class TlsrootcacollectionController extends Controller
             $cert['removalForm']->handleRequest();
         }
 
-        usort($certs, function($a, $b) {
+        usort($certs, function ($a, $b) {
             $a = $a['info']['name'];
             $b = $b['info']['name'];
 
@@ -106,7 +106,8 @@ class TlsrootcacollectionController extends Controller
         $rootCaCollections->resolvePath($fileName, true);
 
         $this->view->form = $form = new ConfirmRemovalForm();
-        $form->setOnSuccess(function (ConfirmRemovalForm $form) use ($name, $fileName, $rootCaCollections) {
+        $form->setRedirectUrl('config/tls')
+            ->setOnSuccess(function (ConfirmRemovalForm $form) use ($name, $fileName, $rootCaCollections) {
                 foreach (Hook::all('TlsRootCACertificateCollection') as $hook) {
                     /** @var Hook\TlsRootCACertificateCollectionHook $hook */
 
@@ -130,7 +131,6 @@ class TlsrootcacollectionController extends Controller
                 );
                 return true;
             })
-            ->setRedirectUrl('config/tls')
             ->handleRequest();
 
         $this->addTitleTab(
