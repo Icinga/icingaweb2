@@ -4,6 +4,7 @@
 namespace Icinga\Controllers;
 
 use Exception;
+use Icinga\Application\Hook;
 use Icinga\Application\Version;
 use InvalidArgumentException;
 use Icinga\Application\Config;
@@ -364,10 +365,21 @@ class ConfigController extends Controller
             'url'   => Url::fromRequest()
         ))->activate('resources/remove');
         $form = new ConfirmRemovalForm(array(
-            'onSuccess' => function ($form) {
+            'onSuccess' => function (ConfirmRemovalForm $form) {
                 $configForm = new ResourceConfigForm();
                 $configForm->setIniConfig(Config::app('resources'));
                 $resource = $form->getRequest()->getQuery('resource');
+
+                foreach (Hook::all('Resource') as $hook) {
+                    /** @var Hook\ResourceHook $hook */
+
+                    try {
+                        $hook->beforeRemove($resource);
+                    } catch (Exception $e) {
+                        $form->error($e->getMessage());
+                        return false;
+                    }
+                }
 
                 try {
                     $configForm->remove($resource);

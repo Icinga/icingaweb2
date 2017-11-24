@@ -3,7 +3,9 @@
 
 namespace Icinga\Forms\Config;
 
+use Exception;
 use Icinga\Application\Config;
+use Icinga\Application\Hook;
 use InvalidArgumentException;
 use Icinga\Application\Platform;
 use Icinga\Exception\ConfigurationError;
@@ -110,6 +112,29 @@ class ResourceConfigForm extends ConfigForm
             throw new InvalidArgumentException($this->translate('New resource name missing'));
         } elseif (! $this->config->hasSection($name)) {
             throw new InvalidArgumentException($this->translate('Unknown resource provided'));
+        }
+
+        if ($newName !== $name) {
+            $succeededCascades = array();
+
+            foreach (Hook::all('Resource') as $hook) {
+                /** @var Hook\ResourceHook $hook */
+
+                try {
+                    $hook->beforeRename($name, $newName);
+                } catch (Exception $e) {
+                    foreach ($succeededCascades as $succeededCascade) {
+                        try {
+                            $succeededCascade->beforeRename($newName, $name);
+                        } catch (Exception $_) {
+                        }
+                    }
+
+                    throw new InvalidArgumentException($e->getMessage());
+                }
+
+                $succeededCascades[] = $hook;
+            }
         }
 
         $resourceConfig = $this->config->getSection($name);
