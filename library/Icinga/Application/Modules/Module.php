@@ -874,9 +874,13 @@ class Module
             'urlParams' => array('name' => $this->getName()),
             'label'     => 'Module: ' . $this->getName()
         ));
-        foreach ($this->configTabs as $name => $config) {
-            $tabs->add($name, $config);
+
+        if ($this->app->getModuleManager()->hasEnabled($this->name)) {
+            foreach ($this->configTabs as $name => $config) {
+                $tabs->add($name, $config);
+            }
         }
+
         return $tabs;
     }
 
