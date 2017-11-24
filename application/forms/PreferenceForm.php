@@ -190,7 +190,12 @@ class PreferenceForm extends Form
         }
 
         $languages = array();
-        $languages['autodetect'] = sprintf($this->translate('Browser (%s)', 'preferences.form'), $this->getLocale());
+
+        $locale = $this->getLocale();
+        if ($locale !== null) {
+            $languages['autodetect'] = sprintf($this->translate('Browser (%s)', 'preferences.form'), $locale);
+        }
+
         foreach (Translator::getAvailableLocaleCodes() as $language) {
             $languages[$language] = $language;
         }
@@ -337,12 +342,13 @@ class PreferenceForm extends Form
     /**
      * Return the preferred locale based on the given HTTP header and the available translations
      *
-     * @return string
+     * @return string|null
      */
     protected function getLocale()
     {
-        $locale = Translator::getPreferredLocaleCode($_SERVER['HTTP_ACCEPT_LANGUAGE']);
-        return $locale;
+        return isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])
+            ? Translator::getPreferredLocaleCode($_SERVER['HTTP_ACCEPT_LANGUAGE'])
+            : null;
     }
 
     /**
