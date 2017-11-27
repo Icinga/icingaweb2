@@ -16,6 +16,34 @@
 @text-color: #191919;
 @text-color-light: #555555;
 
+@menu-highlight-color: white;
+@menu-2ndlvl-color: white;
+@menu-2ndlvl-highlight-color: white;
+
+#menu ul.nav-level-1 > .nav-item > a {
+  &:focus, &:hover {
+    text-decoration: underline;
+  }
+}
+
+#menu .nav-level-2 > .nav-item.active {
+  background-color: black;
+
+  > a:focus, > a:hover {
+    opacity: 1;
+  }
+}
+
+#menu .nav-level-2 > .nav-item > a {
+  &:hover, &:focus {
+    text-decoration: underline;
+  }
+}
+
+#menu .active > a {
+  text-decoration: underline;
+}
+
 .badge {
   background-color: @text-color-light;
 }
@@ -48,15 +76,6 @@
     border: 1px solid @color-unknown-handled;
     margin-top: -1px;
   }
-}
-
-#menu a:hover {
-  color: @body-bg-color;
-  background-color: @icinga-blue;
-}
-
-#menu .active > a {
-  text-decoration: underline;
 }
 
 .boxview a:focus {
