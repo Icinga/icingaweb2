@@ -1,6 +1,53 @@
 # Icinga Web 2 Changelog
 
+Please make sure to always read our [Upgrading](doc/80-Upgrading.md) documentation before switching to a new version.
+
 ## What's New
+
+### What's New in Version 2.5.0
+
+You can find issues and features related to this release on our [Roadmap](https://github.com/Icinga/icingaweb2/milestone/45?closed=1).
+
+#### Raised PHP Version Dependency
+
+Icinga Web 2 now requires at least PHP 5.6.
+
+#### UI Changes
+
+The style of the login screen and menu have been changed. Also, the menu of Icinga Web 2 is now collapsible.
+Browser tabs will not auto-refresh if they are inactive. Users are now allowed to change the default pagination limit
+via their preferences.
+
+#### Domain-aware Authentication for Active Directory and LDAP Backends
+
+If there are multiple AD/LDAP authentication backends with distinct domains, you are now able to make Icinga Web 2
+aware of the domains. This can be done by configuring each AD/LDAP backend's domain. You can also use the GUI for this
+purpose. Please read our [documentation](doc/05-Authentication.md#domain-aware-auth) for more information about this
+feature.
+
+#### Changes in Packaging and Dependencies
+
+Valid for distributions:
+
+* RHEL / CentOS 6 + 7
+  * Upgrading to PHP 7.0 / 7.1 via RedHat SCL (new dependency)
+  * See [Upgrading to FPM](doc/02-Installation.md#upgrading-to-fpm) for manual steps that are required
+* SUSE SLE 12
+  * Upgrading PHP to >= 5.6.0 via the alternative packages.
+    You might have to confirm the replacement of PHP < 5.6 - but that should work with any other PHP app as well
+  * Make sure to enable the new Apache module `a2enmod php7` and restart `apache2`
+
+#### Discontinued Package Updates
+
+For the following distributions Icinga Web 2 won't be updated past 2.4.x anymore:
+
+* Debian 7 wheezy
+* Ubuntu 14.04 LTS (trusty)
+* SUSE SLE 11 (all service packs)
+
+Please think about replacing your central Icinga system to a newer distribution release.
+
+Also see [packages.icinga.com](https://packages.icinga.com) for the currently supported distributions.
 
 ### What's New in Version 2.4.2
 
