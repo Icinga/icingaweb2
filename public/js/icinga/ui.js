@@ -626,7 +626,7 @@
                     $main.css({
                         top: $header.css('height')
                     });
-                    if (! $headerLogo.length) {
+                    if (!! $headerLogo.length) {
                         $sidebar.css({
                             top: $headerLogo.offset().top + $headerLogo.outerHeight()
                         });
