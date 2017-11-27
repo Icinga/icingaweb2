@@ -44,8 +44,10 @@
 
         if (! $target.closest('.flyover').length) {
             var _this = event.data.self;
-            $target.closest('.container').find('.flyover.flyover-expanded .flyover-toggle').each(function() {
-                _this.onClickFlyoverToggle({target: this});
+            $target.closest('.container').find('.flyover.flyover-expanded').each(function() {
+                $(this).find('.flyover-toggle:first').each(function() {
+                    _this.onClickFlyoverToggle({target: this});
+                });
             });
         }
     };
