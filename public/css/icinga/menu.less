@@ -25,7 +25,7 @@
   position: absolute;
 }
 
-#layout.sidebar-collapsed #menu {
+#layout:not(.minimal-layout).sidebar-collapsed #menu {
   min-width: 6em;
   width: auto;
 }
@@ -60,7 +60,7 @@
   white-space: nowrap;
 }
 
-#layout.sidebar-collapsed #menu .nav-level-1 > .nav-item > a {
+#layout:not(.minimal-layout).sidebar-collapsed #menu .nav-level-1 > .nav-item > a {
   // Clip overflowing content
   overflow: hidden;
   width: 4em;
