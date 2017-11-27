@@ -228,7 +228,7 @@ class Donut
             'attributes' => array(
                 'cx'   => 20,
                 'cy'   => 20,
-                'r'    => $this->radius,
+                'r'    => sprintf('%F', $this->radius),
                 'fill' => $this->getCenterColor()
             )
         );
@@ -239,7 +239,7 @@ class Donut
             'attributes' => array(
                 'cx'           => 20,
                 'cy'           => 20,
-                'r'            => $this->radius,
+                'r'            => sprintf('%F', $this->radius),
                 'fill'         => $this->getCenterColor(),
                 'stroke-width' => $this->getThickness(),
                 'class'        => 'slice-state-not-checked'
@@ -263,11 +263,11 @@ class Donut
                 'attributes' => $slice[1] + array(
                     'cx'                => 20,
                     'cy'                => 20,
-                    'r'                 => $this->radius,
+                    'r'                 => sprintf('%F', $this->radius),
                     'fill'              => 'transparent',
                     'stroke-width'      => $this->getThickness(),
-                    'stroke-dasharray'  => $slice[0] . ' ' . (99.9 - $slice[0]), // 99.9 prevents gaps (slight overlap)
-                    'stroke-dashoffset' => $offset
+                    'stroke-dasharray'  => sprintf('%F', $slice[0]) . ' ' . sprintf('%F', (99.9 - $slice[0])), // 99.9 prevents gaps (slight overlap)
+                    'stroke-dashoffset' => sprintf('%F', $offset)
                 )
             );
             // negative values shift in the clockwise direction
