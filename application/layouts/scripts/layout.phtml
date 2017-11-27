@@ -56,6 +56,25 @@ $innerLayoutScript = $this->layout()->innerLayout . '.phtml';
 <div id="layout" class="default-layout<?php if ($showFullscreen): ?> fullscreen-layout<?php endif ?>">
 <?= $this->render($innerLayoutScript); ?>
 </div>
+<script type="text/javascript">
+  (function() {
+    if (document.defaultView && document.defaultView.getComputedStyle) {
+      var matched;
+      var html = document.getElementsByTagName('html')[0];
+      var element = document.getElementById('layout');
+      var name = document.defaultView
+        .getComputedStyle(html)['font-family']
+        .replace(/['",]/g, '');
+
+      if (null !== (matched = name.match(/^([a-z]+)-layout$/))) {
+        element.className = element.className.replace('default-layout', name);
+        if ('object' === typeof window.console) {
+          window.console.log('Icinga Web 2: setting initial layout to ' + name);
+        }
+      }
+    }
+  }());
+</script>
 <!--[if lt IE 10]>
 <iframe id="fileupload-frame-target" name="fileupload-frame-target"></iframe>
 <![endif]-->
