@@ -8,6 +8,7 @@ use Icinga\Application\Config;
 use Icinga\Application\Hook\ConfigFormEventsHook;
 use Icinga\Authentication\UserGroup\UserGroupBackend;
 use Icinga\Data\Filter\Filter;
+use Icinga\Data\Reducible;
 use Icinga\Data\Updatable;
 use Icinga\Forms\RepositoryForm;
 use Icinga\Web\Notification;
@@ -115,6 +116,37 @@ class UserForm extends RepositoryForm
         }
 
         return false;
+    }
+
+    protected function onDeleteSuccess()
+    {
+        if (! parent::onDeleteSuccess()) {
+            return false;
+        }
+
+        $filter = Filter::where('user_name', $this->getIdentifier());
+
+        foreach (Config::app('groups') as $name => $config) {
+            try {
+                $groupBackend = UserGroupBackend::create($name, $config);
+            } catch (Exception $_) {
+                continue;
+            }
+
+            if ($groupBackend instanceof Reducible) {
+                try {
+                    $groupBackend->delete('group_membership', $filter);
+                } catch (Exception $e) {
+                }
+            }
+        }
+
+        if (isset($e)) {
+            $this->error($e->getMessage());
+            return false;
+        }
+
+        return true;
     }
 
     /**
