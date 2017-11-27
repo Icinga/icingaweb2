@@ -141,6 +141,7 @@ class Manager
             );
         }
         if (($dh = opendir($this->enableDir)) !== false) {
+            $isPhar = substr($this->enableDir, 0, 8) === 'phar:///';
             $this->enabledDirs = array();
             while (($file = readdir($dh)) !== false) {
                 if ($file[0] === '.' || $file === 'README') {
@@ -148,7 +149,7 @@ class Manager
                 }
 
                 $link = $this->enableDir . DIRECTORY_SEPARATOR . $file;
-                if (! is_link($link)) {
+                if (! $isPhar && ! is_link($link)) {
                     Logger::warning(
                         'Found invalid module in enabledModule directory "%s": "%s" is not a symlink',
                         $this->enableDir,
@@ -157,7 +158,7 @@ class Manager
                     continue;
                 }
 
-                $dir = realpath($link);
+                $dir = $isPhar ? $link : realpath($link);
                 if ($dir !== false && is_dir($dir)) {
                     $this->enabledDirs[$file] = $dir;
                 } else {
