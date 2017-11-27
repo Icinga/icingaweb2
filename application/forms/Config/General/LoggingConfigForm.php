@@ -65,7 +65,7 @@ class LoggingConfigForm extends Form
             );
         }
 
-        if (false === isset($formData['logging_log']) || in_array($formData['logging_log'], array('syslog', 'php'))) {
+        if (! isset($formData['logging_log']) || in_array($formData['logging_log'], array('syslog', 'php'))) {
             $this->addElement(
                 'text',
                 'logging_application',
@@ -94,7 +94,7 @@ class LoggingConfigForm extends Form
                 )
             );
 
-            if (! isset($formData['logging_log']) || $formData['logging_log'] === 'syslog') {
+            if (isset($formData['logging_log']) && $formData['logging_log'] === 'syslog') {
                 if (Platform::isWindows()) {
                     /* @see https://secure.php.net/manual/en/function.openlog.php */
                     $this->addElement(
