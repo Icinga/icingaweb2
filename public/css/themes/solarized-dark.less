@@ -111,18 +111,47 @@ textarea {
 }
 
 #menu {
-  a:hover {
-    color: @body-bg-color;
-    background-color: @base1;
-  }
+  background-color: @base02;
 
   input.search {
-    background-image: url(../img/icons/search_icinga_blue.png);
+    color: @text-color;
+    background-image: url(../img/icons/search_white.png);
+
+    &:focus {
+      background-image: url(../img/icons/search_white.png) !important;
+    }
   }
 
-  .active > a {
-    color: @text-color-on-icinga-blue;
-    background-color: @base01;
+  .nav-level-1 > .nav-item {
+    color: @text-color;
+
+    &.active, &:hover {
+      color: @text-color;
+      background-color: @base00;
+    }
+  }
+
+  .nav-level-2 > .nav-item {
+    color: @text-color;
+    background-color: @base03;
+
+    &.active, &:hover {
+      a {
+        color: @text-color;
+      }
+      background-color: @base00;
+    }
+  }
+
+
+  .nav-itemxx{
+    &:hover,
+    &:hover > a,
+    &.active,
+    &.active > a {
+      color: @text-color !important;
+      //background-color: @base01 !important;
+    }
   }
 }
 
