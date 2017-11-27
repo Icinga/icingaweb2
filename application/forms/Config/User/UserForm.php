@@ -3,8 +3,12 @@
 
 namespace Icinga\Forms\Config\User;
 
+use Exception;
+use Icinga\Application\Config;
 use Icinga\Application\Hook\ConfigFormEventsHook;
+use Icinga\Authentication\UserGroup\UserGroupBackend;
 use Icinga\Data\Filter\Filter;
+use Icinga\Data\Updatable;
 use Icinga\Forms\RepositoryForm;
 use Icinga\Web\Notification;
 
@@ -77,8 +81,34 @@ class UserForm extends RepositoryForm
     protected function onUpdateSuccess()
     {
         if (parent::onUpdateSuccess()) {
-            if (($newName = $this->getValue('user_name')) !== $this->getIdentifier()) {
+            $oldName = $this->getIdentifier();
+            $newName = $this->getValue('user_name');
+
+            if ($newName !== $oldName) {
                 $this->getRedirectUrl()->setParam('user', $newName);
+
+                $set = array('user_name' => $newName);
+                $filter = Filter::where('user_name', $oldName);
+
+                foreach (Config::app('groups') as $name => $config) {
+                    try {
+                        $groupBackend = UserGroupBackend::create($name, $config);
+                    } catch (Exception $_) {
+                        continue;
+                    }
+
+                    if ($groupBackend instanceof Updatable) {
+                        try {
+                            $groupBackend->update('group_membership', $set, $filter);
+                        } catch (Exception $e) {
+                        }
+                    }
+                }
+
+                if (isset($e)) {
+                    $this->error($e->getMessage());
+                    return false;
+                }
             }
 
             return true;
