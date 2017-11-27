@@ -616,9 +616,11 @@
                     $main.css({
                         top: $header.css('height')
                     });
-                    $sidebar.css({
-                        top: $headerLogo.offset().top + $headerLogo.outerHeight()
-                    });
+                    if (! $headerLogo.length) {
+                        $sidebar.css({
+                            top: $headerLogo.offset().top + $headerLogo.outerHeight()
+                        });
+                    }
 
                     if (this.mobileMenu) {
                         $header.css({

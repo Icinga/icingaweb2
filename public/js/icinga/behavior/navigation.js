@@ -117,19 +117,24 @@
      * @param url   {String}    The url to match
      */
     Navigation.prototype.setActiveByUrl = function(url) {
+        var $menu = $('#menu');
+
+        if (! $menu.length) {
+            return;
+        }
 
         // try to active the first item that has an exact URL match
-        this.setActive(this.$menu.find('[href="' + url + '"]'));
+        this.setActive($menu.find('[href="' + url + '"]'));
 
         // the url may point to the search field, which must be activated too
         if (! this.active) {
-            this.setActive(this.$menu.find('form[action="' + this.icinga.utils.parseUrl(url).path + '"]'));
+            this.setActive($menu.find('form[action="' + this.icinga.utils.parseUrl(url).path + '"]'));
         }
 
         // some urls may have custom filters which won't match any menu item, in that case search
         // for a menu item that points to the base action without any filters
         if (! this.active) {
-            this.setActive(this.$menu.find('[href="' + this.icinga.utils.parseUrl(url).path + '"]').first());
+            this.setActive($menu.find('[href="' + this.icinga.utils.parseUrl(url).path + '"]').first());
         }
     };
 
