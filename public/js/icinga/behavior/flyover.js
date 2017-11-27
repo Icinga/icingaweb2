@@ -44,7 +44,7 @@
 
         if (! $target.closest('.flyover').length) {
             var _this = event.data.self;
-            $target.closest('div#main').find('.flyover.flyover-expanded').each(function() {
+            $target.closest('#main').find('.flyover.flyover-expanded').each(function() {
                 $(this).find('.flyover-toggle:first').each(function() {
                     _this.onClickFlyoverToggle({target: this});
                 });
