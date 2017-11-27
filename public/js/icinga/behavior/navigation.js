@@ -11,7 +11,8 @@
         this.on('click', '#menu a', this.linkClicked, this);
         this.on('click', '#menu tr[href]', this.linkClicked, this);
         this.on('rendered', '#menu', this.onRendered, this);
-        this.on('mouseenter', '#menu .nav-level-1 > .nav-item', this.fixFlyoutPosition, this);
+        this.on('mouseenter', '#menu .nav-level-1 > .nav-item', this.showFlyoutMenu, this);
+        this.on('mouseleave', '#menu-container', this.hideFlyoutMenu, this);
         this.on('click', '#toggle-sidebar', this.toggleSidebar, this);
 
         /**
@@ -205,19 +206,83 @@
     };
 
     /**
-     * Fix top position of the flyout menu
+     * Show the fly-out menu
      *
      * @param e
      */
-    Navigation.prototype.fixFlyoutPosition = function(e) {
+    Navigation.prototype.showFlyoutMenu = function(e) {
+        var $layout = $('#layout');
+
+        if ($layout.hasClass('minimal-layout')) {
+            return;
+        }
+
         var $target = $(this);
         var $flyout = $target.find('.nav-level-2');
 
-        if ($flyout.length) {
+        if (! $flyout.length) {
+            $layout.removeClass('menu-hovered');
+            $target.siblings().not($target).removeClass('hover');
+            return;
+        }
+
+        var delay = 600;
+
+        if ($layout.hasClass('menu-hovered')) {
+            delay = 0;
+        }
+
+        setTimeout(function() {
+            try {
+                if (! $target.is(':hover')) {
+                    return;
+                }
+            } catch(e) { /* Bypass because if IE8 */ }
+
+            $layout.addClass('menu-hovered');
+            $target.siblings().not($target).removeClass('hover');
+            $target.addClass('hover');
+
             $flyout.css({
+                bottom: 'auto',
                 top: $target.offset().top + $target.outerHeight()
             });
+
+            var rect = $flyout[0].getBoundingClientRect();
+
+            if (rect.y + rect.height > window.innerHeight) {
+                $flyout.css({
+                    bottom: 0,
+                    top: 'auto'
+                });
+            }
+        }, delay);
+    };
+
+    /**
+     * Hide the fly-out menu
+     *
+     * @param e
+     */
+    Navigation.prototype.hideFlyoutMenu = function(e) {
+        var $layout = $('#layout');
+        var $hovered = $('#menu').find('.nav-level-1 > .nav-item.hover');
+
+        if (! $hovered.length) {
+            $layout.removeClass('menu-hovered');
+
+            return;
         }
+
+        setTimeout(function() {
+            try {
+                if ($hovered.is(':hover') || $('#menu-container').is(':hover')) {
+                    return;
+                }
+            } catch(e) { /* Bypass because if IE8 */ };
+            $hovered.removeClass('hover');
+            $layout.removeClass('menu-hovered');
+        }, 600);
     };
 
     /**

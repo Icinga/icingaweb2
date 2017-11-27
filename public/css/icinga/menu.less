@@ -9,16 +9,34 @@
 
 @icon-width: 1.7em; // 1.5em width + 0.2em right margin
 
+#menu-container {
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
 #menu {
   background-color: @menu-bg-color;
   box-shadow: inset -.5em 0 1em rgba(0, 0, 0, .3);
   height: 100%;
-  overflow: auto;
+  width: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  position: absolute;
+}
+
+#layout.sidebar-collapsed #menu {
+  min-width: 6em;
+  width: auto;
 }
 
 #layout:not(.minimal-layout) #menu {
   // Space for the #toggle-sidebar button
-  padding-bottom: 2.25em;
+  &:after {
+    content: "";
+    display: block;
+    padding-bottom: 2.25em;
+  }
 }
 
 #menu .nav-item {
@@ -189,22 +207,9 @@
 }
 
 // Hovered menu
-#layout:not(.minimal-layout).sidebar-collapsed #menu .nav-level-1 > .nav-item:hover,
-#layout:not(.minimal-layout) #menu .nav-level-1 > .nav-item:not(.active):hover {
+#layout:not(.minimal-layout).sidebar-collapsed #menu .nav-level-1 > .nav-item.hover,
+#layout:not(.minimal-layout) #menu .nav-level-1 > .nav-item:not(.active).hover {
   > .nav-level-2 {
-    &:before {
-      background-color: @menu-flyout-bg-color;
-      border-bottom: 1px solid @gray-light;
-      border-left:   1px solid @gray-light;
-      content: "";
-      height: 1em;
-      margin-left: -.5em;
-      margin-top: 0.625em;
-      transform: rotate(45deg);
-      width: 1em;
-      position: absolute;
-    }
-
     background-color: @menu-flyout-bg-color;
     border: 1px solid @gray-light;
     border-radius: .25em;
@@ -252,7 +257,7 @@
   }
 }
 
-#layout:not(.minimal-layout) #menu .nav-level-1 > .nav-item:not(.active):hover {
+#layout:not(.minimal-layout) #menu .nav-level-1 > .nav-item:not(.active).hover {
   > .nav-level-2 {
     // Position relative to parent
     margin-left: 16em;
@@ -260,7 +265,7 @@
   }
 }
 
-#layout:not(.minimal-layout).sidebar-collapsed #menu .nav-level-1 > .nav-item:hover {
+#layout:not(.minimal-layout).sidebar-collapsed #menu .nav-level-1 > .nav-item.hover {
   > .nav-level-2 {
     // Position relative to parent
     margin-left: 4em;
@@ -386,7 +391,7 @@ input[type=text].search-input {
   i {
     background-color: @body-bg-color;
     border-radius: .25em 0 0 .25em;
-    font-size: 1.5em;
+    font-size: 1.125em;
     width: 2em;
   }
 

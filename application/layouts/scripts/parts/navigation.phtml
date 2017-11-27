@@ -19,13 +19,19 @@ if (! $this->auth()->isAuthenticated()) {
         </li>
     </ul>
 </div>
-<div  id="menu" data-last-update="-1" data-base-target="_main" class="container"
-      data-icinga-url="<?= $this->href('layout/menu') ?>"  data-icinga-refresh="15">
-    <?= $this->partial(
-        'layout/menu.phtml',
-        'default',
-        array(
-            'menuRenderer' => Icinga::app()->getMenu()->getRenderer()->setUseStandardItemRenderer()
-        )
-    ) ?>
+<div id="menu-container">
+    <div  id="menu" data-last-update="-1" data-base-target="_main" class="container"
+          data-icinga-url="<?= $this->href('layout/menu') ?>"  data-icinga-refresh="15">
+        <?= $this->partial(
+            'layout/menu.phtml',
+            'default',
+            array(
+                'menuRenderer' => Icinga::app()->getMenu()->getRenderer()->setUseStandardItemRenderer()
+            )
+        ) ?>
+    </div>
 </div>
+<button id="toggle-sidebar" title="<?= $this->translate('Toggle Menu') ?>">
+    <i id="close-sidebar" class="icon-angle-double-left"></i>
+    <i id="open-sidebar" class="icon-angle-double-right"></i>
+</button>
