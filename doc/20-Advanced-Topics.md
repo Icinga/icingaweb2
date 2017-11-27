@@ -464,7 +464,7 @@ of `openssl passwd -1 <password>`.
 for example `/etc/apache2/sites-enabled/icingaweb2.conf`.
 7. Add `www-data` user to `icingaweb2` group if not done already (`usermod -a -G icingaweb2 www-data`).
 8. Create the Icinga Web 2 configuration in `/etc/icingaweb2`. The directory can be easily created with:
-`icingacli setup config webserver`. This command ensures that the directory has the appropriate ownership and
+`icingacli setup config directory`. This command ensures that the directory has the appropriate ownership and
 permissions. If you want to create the directory manually, make sure to chown the group to `icingaweb2` and set the
 access mode to `2770`.
 
