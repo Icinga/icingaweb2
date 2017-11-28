@@ -3,9 +3,12 @@
 
 namespace Icinga\Web\Session;
 
+use Icinga\Application\Config;
 use Icinga\Application\Logger;
+use Icinga\Data\ResourceFactory;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Web\Cookie;
+use Icinga\Web\Session\Handler\Redis;
 
 /**
  * Session implementation in PHP
@@ -94,6 +97,27 @@ class PhpSession extends Session
      */
     protected function open()
     {
+        $config = Config::app();
+
+        $type = $config->get('sessionbackend', 'type', 'builtin');
+        switch ($type) {
+            case 'builtin':
+                break;
+
+            case 'redis':
+                $resource = $config->get('sessionbackend', 'resource');
+
+                if ($resource === null) {
+                    throw new ConfigurationError('Resource of Redis session backend missing');
+                }
+
+                session_set_save_handler(new Redis(ResourceFactory::create($resource)));
+                break;
+
+            default:
+                throw new ConfigurationError('Bad session backend type: %s', var_export($type, true));
+        }
+
         session_name($this->sessionName);
 
         if ($this->hasBeenTouched) {
