@@ -4,6 +4,7 @@
 namespace Icinga\Forms\Config;
 
 use Icinga\Application\Config;
+use Icinga\Forms\Config\Resource\RedisResourceForm;
 use InvalidArgumentException;
 use Icinga\Application\Platform;
 use Icinga\Exception\ConfigurationError;
@@ -62,6 +63,8 @@ class ResourceConfigForm extends ConfigForm
             return new FileResourceForm();
         } elseif ($type === 'ssh') {
             return new SshResourceForm();
+        } elseif ($type === 'redis') {
+            return new RedisResourceForm();
         } else {
             throw new InvalidArgumentException(sprintf($this->translate('Invalid resource type "%s" provided'), $type));
         }
@@ -266,6 +269,9 @@ class ResourceConfigForm extends ConfigForm
         }
         if ($resourceType === 'db' || Platform::hasDatabaseSupport()) {
             $resourceTypes['db'] = $this->translate('SQL Database');
+        }
+        if ($resourceType === 'redis' || Platform::hasRedisSupport()) {
+            $resourceTypes['redis'] = $this->translate('Redis');
         }
 
         $this->addElement(

@@ -4,6 +4,7 @@
 namespace Icinga\Data;
 
 use Icinga\Application\Config;
+use Icinga\Protocol\Redis\RedisConnection;
 use Icinga\Util\ConfigAwareFactory;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Data\Db\DbConnection;
@@ -114,6 +115,9 @@ class ResourceFactory implements ConfigAwareFactory
                 break;
             case 'ini':
                 $resource = Config::fromIni($config->ini);
+                break;
+            case 'redis':
+                $resource = new RedisConnection($config);
                 break;
             default:
                 throw new ConfigurationError(

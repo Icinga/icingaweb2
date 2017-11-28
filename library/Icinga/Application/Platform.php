@@ -413,4 +413,16 @@ class Platform
     {
         return static::extensionLoaded('pdo_pgsql') && static::classExists('Zend_Db_Adapter_Pdo_Pgsql');
     }
+
+    /**
+     * Return whether it's possible to connect to a Redis server
+     *
+     * Checks whether the redis extension is loaded
+     *
+     * @return  bool
+     */
+    public static function hasRedisSupport()
+    {
+        return static::extensionLoaded('redis') && static::classExists('Redis');
+    }
 }
