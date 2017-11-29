@@ -34,7 +34,12 @@
         var matched;
         $.each(classList, function(index, item) {
             if (null !== (matched = item.match(/^([a-z]+)-layout$/))) {
-                _this.currentLayout = matched[1];
+                var layout = matched[1];
+                if (layout !== 'fullscreen') {
+                    _this.currentLayout = layout;
+                    // Break loop
+                    return false;
+                }
             }
         });
     };
