@@ -282,7 +282,8 @@ updated the config file for icingaweb2 with defaults for FPM.
 Check `/etc/httpd/conf.d/icingaweb2.conf` or `/etc/apache2/conf.d/icingaweb2.conf`.
 And `*.rpm*` `*.dpkg*` files there with updates.
 
-Make sure that the `FilesMatch` part is included for Apache.
+Make sure that the `FilesMatch` part is included for Apache >= 2.4. For Apache < 2.4 you have to include the
+`LocationMatch` block.
 
 Also see the example from icingacli:
 ```
