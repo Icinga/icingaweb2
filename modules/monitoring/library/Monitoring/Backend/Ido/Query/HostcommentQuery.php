@@ -28,7 +28,7 @@ class HostcommentQuery extends IdoQuery
      */
     protected $columnMap = array(
         'comments' => array(
-            'comment_author'        => 'c.author_name COLLATE latin1_general_ci',
+            'comment_author'        => 'c.author_name ',
             'comment_author_name'   => 'c.author_name',
             'comment_data'          => 'c.comment_data',
             'comment_expiration'    => 'CASE c.expires WHEN 1 THEN UNIX_TIMESTAMP(c.expiration_time) ELSE NULL END',
@@ -37,18 +37,18 @@ class HostcommentQuery extends IdoQuery
             'comment_name'          => 'c.name',
             'comment_timestamp'     => 'UNIX_TIMESTAMP(c.comment_time)',
             'comment_type'          => "CASE c.entry_type WHEN 1 THEN 'comment' WHEN 2 THEN 'downtime' WHEN 3 THEN 'flapping' WHEN 4 THEN 'ack' END",
-            'host'                  => 'ho.name1 COLLATE latin1_general_ci',
+            'host'                  => 'ho.name1 ',
             'host_name'             => 'ho.name1',
             'object_type'           => '(\'host\')'
         ),
         'hostgroups' => array(
-            'hostgroup'             => 'hgo.name1 COLLATE latin1_general_ci',
-            'hostgroup_alias'       => 'hg.alias COLLATE latin1_general_ci',
+            'hostgroup'             => 'hgo.name1 ',
+            'hostgroup_alias'       => 'hg.alias ',
             'hostgroup_name'        => 'hgo.name1'
         ),
         'hosts' => array(
             'host_alias'            => 'h.alias',
-            'host_display_name'     => 'h.display_name COLLATE latin1_general_ci'
+            'host_display_name'     => 'h.display_name '
         ),
         'hoststatus' => array(
             'host_state'            => 'CASE WHEN hs.has_been_checked = 0 OR hs.has_been_checked IS NULL THEN 99 ELSE hs.current_state END'
@@ -57,14 +57,14 @@ class HostcommentQuery extends IdoQuery
             'instance_name' => 'i.instance_name'
         ),
         'servicegroups' => array(
-            'servicegroup'          => 'sgo.name1 COLLATE latin1_general_ci',
+            'servicegroup'          => 'sgo.name1 ',
             'servicegroup_name'     => 'sgo.name1',
-            'servicegroup_alias'    => 'sg.alias COLLATE latin1_general_ci'
+            'servicegroup_alias'    => 'sg.alias '
         ),
         'services' => array(
-            'service'               => 'so.name2 COLLATE latin1_general_ci',
+            'service'               => 'so.name2 ',
             'service_description'   => 'so.name2',
-            'service_display_name'  => 's.display_name COLLATE latin1_general_ci',
+            'service_display_name'  => 's.display_name ',
         )
     );
 

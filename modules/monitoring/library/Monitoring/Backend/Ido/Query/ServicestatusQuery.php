@@ -28,19 +28,19 @@ class ServicestatusQuery extends IdoQuery
      */
     protected $columnMap = array(
         'checktimeperiods' => array(
-            'service_check_timeperiod' => 'ctp.alias COLLATE latin1_general_ci'
+            'service_check_timeperiod' => 'ctp.alias '
         ),
         'hostgroups' => array(
-            'hostgroup'         => 'hgo.name1 COLLATE latin1_general_ci',
-            'hostgroup_alias'   => 'hg.alias COLLATE latin1_general_ci',
+            'hostgroup'         => 'hgo.name1 ',
+            'hostgroup_alias'   => 'hg.alias ',
             'hostgroup_name'    => 'hgo.name1'
         ),
         'hosts' => array(
             'host_action_url'       => 'h.action_url',
             'host_address'          => 'h.address',
             'host_address6'         => 'h.address6',
-            'host_alias'            => 'h.alias COLLATE latin1_general_ci',
-            'host_display_name'     => 'h.display_name COLLATE latin1_general_ci',
+            'host_alias'            => 'h.alias ',
+            'host_display_name'     => 'h.display_name ',
             'host_icon_image'       => 'h.icon_image',
             'host_icon_image_alt'   => 'h.icon_image_alt',
             'host_ipv4'             => 'INET_ATON(h.address)',
@@ -133,14 +133,14 @@ class ServicestatusQuery extends IdoQuery
             'instance_name' => 'i.instance_name'
         ),
         'services' => array(
-            'host'                      => 'so.name1 COLLATE latin1_general_ci',
+            'host'                      => 'so.name1 ',
             'host_name'                 => 'so.name1',
             'object_type'               => '(\'service\')',
-            'service'                   => 'so.name2 COLLATE latin1_general_ci',
+            'service'                   => 'so.name2 ',
             'service_action_url'        => 's.action_url',
             'service_description'       => 'so.name2',
-            'service_display_name'      => 's.display_name COLLATE latin1_general_ci',
-            'service_host'              => 'so.name1 COLLATE latin1_general_ci',
+            'service_display_name'      => 's.display_name ',
+            'service_host'              => 'so.name1 ',
             'service_host_name'         => 'so.name1',
             'service_icon_image'        => 's.icon_image',
             'service_icon_image_alt'    => 's.icon_image_alt',
@@ -148,9 +148,9 @@ class ServicestatusQuery extends IdoQuery
             'service_notes'             => 's.notes'
         ),
         'servicegroups' => array(
-            'servicegroup'          => 'sgo.name1 COLLATE latin1_general_ci',
+            'servicegroup'          => 'sgo.name1 ',
             'servicegroup_name'     => 'sgo.name1',
-            'servicegroup_alias'    => 'sg.alias COLLATE latin1_general_ci'
+            'servicegroup_alias'    => 'sg.alias '
         ),
         'servicestatus' => array(
             'service_acknowledged'                      => 'ss.problem_has_been_acknowledged',

@@ -17,11 +17,11 @@ class CustomvarQuery extends IdoQuery
             'is_json'  => 'cvs.is_json',
         ),
         'objects' => array(
-            'host'                => 'cvo.name1 COLLATE latin1_general_ci',
+            'host'                => 'cvo.name1 ',
             'host_name'           => 'cvo.name1',
-            'service'             => 'cvo.name2 COLLATE latin1_general_ci',
+            'service'             => 'cvo.name2 ',
             'service_description' => 'cvo.name2',
-            'contact'             => 'cvo.name1 COLLATE latin1_general_ci',
+            'contact'             => 'cvo.name1 ',
             'contact_name'        => 'cvo.name1',
             'object_type'         => "CASE cvo.objecttype_id WHEN 1 THEN 'host' WHEN 2 THEN 'service' WHEN 10 THEN 'contact' ELSE 'invalid' END",
             'object_type_id'      => 'cvo.objecttype_id'

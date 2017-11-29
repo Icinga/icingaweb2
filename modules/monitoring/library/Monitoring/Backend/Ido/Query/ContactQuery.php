@@ -28,16 +28,16 @@ class ContactQuery extends IdoQuery
      */
     protected $columnMap = array(
         'contactgroups' => array(
-            'contactgroup'          => 'cgo.name1 COLLATE latin1_general_ci',
+            'contactgroup'          => 'cgo.name1 ',
             'contactgroup_name'     => 'cgo.name1',
-            'contactgroup_alias'    => 'cg.alias COLLATE latin1_general_ci'
+            'contactgroup_alias'    => 'cg.alias '
         ),
         'contacts' => array(
             'contact_id'                        => 'c.contact_id',
-            'contact'                           => 'co.name1 COLLATE latin1_general_ci',
+            'contact'                           => 'co.name1 ',
             'contact_name'                      => 'co.name1',
-            'contact_alias'                     => 'c.alias COLLATE latin1_general_ci',
-            'contact_email'                     => 'c.email_address COLLATE latin1_general_ci',
+            'contact_alias'                     => 'c.alias ',
+            'contact_email'                     => 'c.email_address ',
             'contact_pager'                     => 'c.pager_address',
             'contact_object_id'                 => 'c.contact_object_id',
             'contact_has_host_notfications'     => 'c.host_notifications_enabled',
@@ -56,33 +56,33 @@ class ContactQuery extends IdoQuery
             'contact_notify_host_downtime'      => 'c.notify_host_downtime'
         ),
         'hostgroups' => array(
-            'hostgroup'         => 'hgo.name1 COLLATE latin1_general_ci',
-            'hostgroup_alias'   => 'hg.alias COLLATE latin1_general_ci',
+            'hostgroup'         => 'hgo.name1 ',
+            'hostgroup_alias'   => 'hg.alias ',
             'hostgroup_name'    => 'hgo.name1'
         ),
         'hosts' => array(
-            'host'              => 'ho.name1 COLLATE latin1_general_ci',
+            'host'              => 'ho.name1 ',
             'host_name'         => 'ho.name1',
             'host_alias'        => 'h.alias',
-            'host_display_name' => 'h.display_name COLLATE latin1_general_ci'
+            'host_display_name' => 'h.display_name '
         ),
         'instances' => array(
             'instance_name' => 'i.instance_name'
         ),
         'servicegroups' => array(
-            'servicegroup'          => 'sgo.name1 COLLATE latin1_general_ci',
+            'servicegroup'          => 'sgo.name1 ',
             'servicegroup_name'     => 'sgo.name1',
-            'servicegroup_alias'    => 'sg.alias COLLATE latin1_general_ci'
+            'servicegroup_alias'    => 'sg.alias '
         ),
         'services' => array(
-            'service'               => 'so.name2 COLLATE latin1_general_ci',
+            'service'               => 'so.name2 ',
             'service_description'   => 'so.name2',
-            'service_display_name'  => 's.display_name COLLATE latin1_general_ci',
+            'service_display_name'  => 's.display_name ',
             'service_host_name'     => 'so.name1'
         ),
         'timeperiods' => array(
-            'contact_notify_host_timeperiod'    => 'ht.alias COLLATE latin1_general_ci',
-            'contact_notify_service_timeperiod' => 'st.alias COLLATE latin1_general_ci'
+            'contact_notify_host_timeperiod'    => 'ht.alias ',
+            'contact_notify_service_timeperiod' => 'st.alias '
         )
     );
 

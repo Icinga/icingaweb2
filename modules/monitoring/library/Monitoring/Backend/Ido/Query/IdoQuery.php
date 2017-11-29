@@ -107,7 +107,7 @@ abstract class IdoQuery extends DbQuery
      * @var string
      */
     private $customVarsJoinTemplate =
-        '%1$s = %2$s.object_id AND %2$s.varname = %3$s COLLATE latin1_general_ci';
+        '%1$s = %2$s.object_id AND %2$s.varname = %3$s ';
 
     /**
      * An array with all 'virtual' tables that are already joined
