@@ -28,38 +28,38 @@ class ServicedowntimestarthistoryQuery extends IdoQuery
      */
     protected $columnMap = array(
         'downtimehistory' => array(
-            'host'                  => 'so.name1 COLLATE latin1_general_ci',
+            'host'                  => 'so.name1 ',
             'host_name'             => 'so.name1',
             'object_id'             => 'sdh.object_id',
             'object_type'           => '(\'service\')',
             'output'                => "('[' || sdh.author_name || '] ' || sdh.comment_data)",
-            'service'               => 'so.name2 COLLATE latin1_general_ci',
+            'service'               => 'so.name2 ',
             'service_description'   => 'so.name2',
-            'service_host'          => 'so.name1 COLLATE latin1_general_ci',
+            'service_host'          => 'so.name1 ',
             'service_host_name'     => 'so.name1',
             'state'                 => '(-1)',
             'timestamp'             => 'UNIX_TIMESTAMP(sdh.actual_start_time)',
             'type'                  => "('dt_start')"
         ),
         'hostgroups' => array(
-            'hostgroup'         => 'hgo.name1 COLLATE latin1_general_ci',
-            'hostgroup_alias'   => 'hg.alias COLLATE latin1_general_ci',
+            'hostgroup'         => 'hgo.name1 ',
+            'hostgroup_alias'   => 'hg.alias ',
             'hostgroup_name'    => 'hgo.name1'
         ),
         'hosts' => array(
             'host_alias'        => 'h.alias',
-            'host_display_name' => 'h.display_name COLLATE latin1_general_ci'
+            'host_display_name' => 'h.display_name '
         ),
         'instances' => array(
             'instance_name' => 'i.instance_name'
         ),
         'servicegroups' => array(
-            'servicegroup'          => 'sgo.name1 COLLATE latin1_general_ci',
+            'servicegroup'          => 'sgo.name1 ',
             'servicegroup_name'     => 'sgo.name1',
-            'servicegroup_alias'    => 'sg.alias COLLATE latin1_general_ci'
+            'servicegroup_alias'    => 'sg.alias '
         ),
         'services' => array(
-            'service_display_name'  => 's.display_name COLLATE latin1_general_ci'
+            'service_display_name'  => 's.display_name '
         )
     );
 

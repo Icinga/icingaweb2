@@ -26,8 +26,8 @@ class ServicegroupQuery extends IdoQuery
             'service_description'   => 'so.name2'
         ),
         'servicegroups' => array(
-            'servicegroup'          => 'sgo.name1 COLLATE latin1_general_ci',
-            'servicegroup_alias'    => 'sg.alias COLLATE latin1_general_ci',
+            'servicegroup'          => 'sgo.name1 ',
+            'servicegroup_alias'    => 'sg.alias ',
             'servicegroup_name'     => 'sgo.name1'
         ),
         'servicestatus' => array(

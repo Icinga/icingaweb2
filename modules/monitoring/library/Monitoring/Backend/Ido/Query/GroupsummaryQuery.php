@@ -15,8 +15,8 @@ class GroupsummaryQuery extends IdoQuery
      */
     protected $columnMap = array(
         'hoststatussummary' => array(
-            'hostgroup'                                     => 'hostgroup COLLATE latin1_general_ci',
-            'hostgroup_alias'                               => 'hostgroup_alias COLLATE latin1_general_ci',
+            'hostgroup'                                     => 'hostgroup ',
+            'hostgroup_alias'                               => 'hostgroup_alias ',
             'hostgroup_name'                                => 'hostgroup_name',
             'hosts_up'                                      => 'SUM(CASE WHEN object_type = \'host\' AND state = 0 THEN 1 ELSE 0 END)',
             'hosts_unreachable'                             => 'SUM(CASE WHEN object_type = \'host\' AND state = 2 THEN 1 ELSE 0 END)',
@@ -36,8 +36,8 @@ class GroupsummaryQuery extends IdoQuery
             'hosts_up_last_state_change'                    => 'MAX(CASE WHEN object_type = \'host\' AND state = 0 THEN state_change ELSE 0 END)'
         ),
         'servicestatussummary' => array(
-            'servicegroup'                                  => 'servicegroup COLLATE latin1_general_ci',
-            'servicegroup_alias'                            => 'servicegroup_alias COLLATE latin1_general_ci',
+            'servicegroup'                                  => 'servicegroup ',
+            'servicegroup_alias'                            => 'servicegroup_alias ',
             'servicegroup_name'                             => 'servicegroup_name',
             'services_critical'                             => 'SUM(CASE WHEN object_type = \'service\' AND state = 2 THEN 1 ELSE 0 END)',
             'services_critical_handled'                     => 'SUM(CASE WHEN object_type = \'service\' AND state = 2 AND acknowledged + in_downtime + host_state > 0 THEN 1 ELSE 0 END)',

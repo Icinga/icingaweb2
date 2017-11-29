@@ -24,7 +24,7 @@ class HostnotificationQuery extends IdoQuery
             'hostgroup_name' => 'hgo.name1'
         ),
         'hosts' => array(
-            'host_display_name' => 'h.display_name COLLATE latin1_general_ci'
+            'host_display_name' => 'h.display_name '
         ),
         'history' => array(
             'output'    => null,
@@ -48,7 +48,7 @@ class HostnotificationQuery extends IdoQuery
         ),
         'services' => array(
             'service_description'   => 'so.name2',
-            'service_display_name'  => 's.display_name COLLATE latin1_general_ci',
+            'service_display_name'  => 's.display_name ',
             'service_host_name'     => 'so.name1'
         )
     );
@@ -74,7 +74,7 @@ class HostnotificationQuery extends IdoQuery
             case 'mysql':
                 $concattedContacts = "GROUP_CONCAT("
                     . "DISTINCT co.name1 ORDER BY co.name1 SEPARATOR ', '"
-                    . ") COLLATE latin1_general_ci";
+                    . ") ";
                 break;
             case 'pgsql':
                 // TODO: Find a way to order the contact alias list:
