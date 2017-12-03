@@ -152,7 +152,7 @@ In order to correctly manage your repository, please follow
 ### Installing Icinga Web 2 <a id="installing-from-package-example"></a>
 
 You can install Icinga Web 2 by using your distribution's package manager to install the `icingaweb2` package.
-Below is a list with examples for various distributions. The additional package `icingacli` is necessary on RPM based systems for being able to follow further steps in this guide. In DEB based systems, the icingacli binary is included in the icingaweb2 package.
+Below is a list with examples for various distributions. The additional package `icingacli` is necessary to follow further steps in this guide.
 
 **Debian and Ubuntu**:
 ```
