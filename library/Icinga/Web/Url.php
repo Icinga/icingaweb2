@@ -105,7 +105,7 @@ class Url
     public static function fromRequest($params = array(), $request = null)
     {
         if ($request === null) {
-            $request = self::getRequest();
+            $request = static::getRequest();
         }
 
         $url = new Url();
@@ -161,7 +161,7 @@ class Url
     public static function fromPath($url, array $params = array(), $request = null)
     {
         if ($request === null) {
-            $request = self::getRequest();
+            $request = static::getRequest();
         }
 
         if (! is_string($url)) {
