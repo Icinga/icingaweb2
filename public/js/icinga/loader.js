@@ -217,13 +217,17 @@
 
         autorefresh: function () {
             var _this = this;
-            if (! _this.autorefreshEnabled || _this.autorefreshSuspended) {
-                return;
-            }
 
             $('.container').filter(this.filterAutorefreshingContainers).each(function (idx, el) {
                 var $el = $(el);
                 var id = $el.attr('id');
+
+                // Always request application-state
+                if (id !== 'application-state' && (! _this.autorefreshEnabled || _this.autorefreshSuspended)) {
+                    // Continue
+                    return true;
+                }
+
                 if (typeof _this.requests[id] !== 'undefined') {
                     _this.icinga.logger.debug('No refresh, request pending for ', id);
                     return;
