@@ -105,10 +105,10 @@ class Url
     public static function fromRequest($params = array(), $request = null)
     {
         if ($request === null) {
-            $request = self::getRequest();
+            $request = static::getRequest();
         }
 
-        $url = new Url();
+        $url = new static();
         $url->setPath(ltrim($request->getPathInfo(), '/'));
 
         // $urlParams = UrlParams::fromQueryString($request->getQuery());
@@ -161,7 +161,7 @@ class Url
     public static function fromPath($url, array $params = array(), $request = null)
     {
         if ($request === null) {
-            $request = self::getRequest();
+            $request = static::getRequest();
         }
 
         if (! is_string($url)) {
@@ -171,7 +171,7 @@ class Url
             );
         }
 
-        $urlObject = new Url();
+        $urlObject = new static();
 
         if ($url === '#') {
             $urlObject->setPath($url);
@@ -250,7 +250,7 @@ class Url
      */
     public static function urlAddFilterOptional($url, $filter, $optional)
     {
-        $url = Url::fromPath($url);
+        $url = static::fromPath($url);
         $f = $filter;
         if (isset($optional)) {
             $f = Filter::matchAll($filter, $optional);
@@ -782,8 +782,8 @@ class Url
      */
     public function matches($url)
     {
-        if (! $url instanceof Url) {
-            $url = Url::fromPath($url);
+        if (! $url instanceof static) {
+            $url = static::fromPath($url);
         }
         return (string) $url === (string) $this;
     }
