@@ -61,7 +61,8 @@ Alias {urlPath} "{documentRoot}"
         ErrorDocument 404 {urlPath}/error_norewrite.html
     </IfModule>
 
-# Remove comments if you want to use PHP FPM and your Apache version is greater than or equal to 2.4
+# Remove comments if you want to use PHP FPM and your Apache version
+# is greater than or equal to 2.4
 #    <IfVersion >= 2.4>
 #        # Forward PHP requests to FPM
 #        <FilesMatch "\.php$">
