@@ -155,7 +155,7 @@ class FilterQueryString
                     }
                 }
 
-                if ($op === null && count($filters > 0) && ($next === '&' || $next === '|')) {
+                if ($op === null && count($filters) > 0 && ($next === '&' || $next === '|')) {
                     $op = $next;
                     continue;
                 }
