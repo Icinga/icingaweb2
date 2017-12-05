@@ -163,7 +163,13 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
         if (self::$purifier === null) {
             require_once 'HTMLPurifier/Bootstrap.php';
             require_once 'HTMLPurifier.php';
+
+            $oldErrorReportingLevel = error_reporting();
+            error_reporting($oldErrorReportingLevel & ~ E_DEPRECATED);
+
             require_once 'HTMLPurifier.autoload.php';
+
+            error_reporting($oldErrorReportingLevel);
 
             $config = HTMLPurifier_Config::createDefault();
             $config->set('Core.EscapeNonASCIICharacters', true);
