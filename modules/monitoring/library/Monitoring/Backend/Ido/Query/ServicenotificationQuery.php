@@ -21,6 +21,7 @@ class ServicenotificationQuery extends IdoQuery
             'notification_contact_name' => 'co.name1'
         ),
         'history' => array(
+            'id'        => 'sn.notification_id',
             'output'    => null,
             'state'     => 'sn.state',
             'timestamp' => 'UNIX_TIMESTAMP(sn.start_time)',

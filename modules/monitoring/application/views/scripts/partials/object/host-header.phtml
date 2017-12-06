@@ -1,6 +1,11 @@
 <?php
 use Icinga\Module\Monitoring\Object\Host;
+use Icinga\Web\Url;
+
 /** @var Host $object */
+
+$url = Url::fromRequest();
+$linkHostName = ! ($url->getPath() === 'monitoring/host/show' && $url->getParam('host') === $object->host_name);
 ?>
 <table class="state-table host-detail-state">
     <tr>
@@ -15,10 +20,20 @@ use Icinga\Module\Monitoring\Object\Host;
         </td>
         <td>
             <?= $this->iconImage()->host($object) ?>
+        <?php
+        if ($linkHostName) {
+            echo '<a href="' . Url::fromPath('monitoring/host/show', array('host' => $object->host_name)) . '">';
+        }
+        ?>
             <span class="selectable"><?= $this->escape($object->host_display_name) ?></span>
         <?php if ($object->host_display_name !== $object->host_name): ?>
             <span class="selectable host-meta">&#40;<?= $this->escape($object->host_name) ?>&#41;</span>
         <?php endif ?>
+        <?php
+        if ($linkHostName) {
+            echo '</a>';
+        }
+        ?>
         <?php if ($object->host_alias !== $object->host_display_name && $object->host_alias !== $object->host_name): ?>
             <div class="selectable host-meta">
                 <?= $this->escape($this->translate('Alias', 'host') . ': ' . $object->host_alias) ?>

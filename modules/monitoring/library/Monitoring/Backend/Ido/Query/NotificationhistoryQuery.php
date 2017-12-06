@@ -22,6 +22,7 @@ class NotificationhistoryQuery extends IdoQuery
      */
     protected $columnMap = array(
         'history' => array(
+            'id'            => 'n.id',
             'object_type'   => 'n.object_type',
             'output'        => 'n.output',
             'state'         => 'n.state',

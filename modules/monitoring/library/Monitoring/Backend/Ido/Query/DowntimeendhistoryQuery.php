@@ -17,6 +17,7 @@ class DowntimeendhistoryQuery extends IdoQuery
      */
     protected $columnMap = array(
         'downtimehistory' => array(
+            'id'          => 'deh.id',
             'object_type' => 'deh.object_type'
         ),
         'history' => array(

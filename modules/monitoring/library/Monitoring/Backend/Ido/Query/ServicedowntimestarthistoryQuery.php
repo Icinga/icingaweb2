@@ -28,6 +28,7 @@ class ServicedowntimestarthistoryQuery extends IdoQuery
      */
     protected $columnMap = array(
         'downtimehistory' => array(
+            'id'                    => 'sdh.downtimehistory_id',
             'host'                  => 'so.name1 COLLATE latin1_general_ci',
             'host_name'             => 'so.name1',
             'object_id'             => 'sdh.object_id',

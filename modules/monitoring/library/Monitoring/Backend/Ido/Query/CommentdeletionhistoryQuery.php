@@ -17,6 +17,7 @@ class CommentdeletionhistoryQuery extends IdoQuery
      */
     protected $columnMap = array(
         'commenthistory' => array(
+            'id'          => 'cdh.id',
             'object_type' => 'cdh.object_type'
         ),
         'history' => array(

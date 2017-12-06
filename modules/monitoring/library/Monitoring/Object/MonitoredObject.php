@@ -603,6 +603,7 @@ abstract class MonitoredObject implements Filterable
             ->from(
                 'eventhistory',
                 array(
+                    'id',
                     'object_type',
                     'host_name',
                     'host_display_name',

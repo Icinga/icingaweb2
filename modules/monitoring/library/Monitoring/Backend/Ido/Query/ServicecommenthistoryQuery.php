@@ -28,6 +28,7 @@ class ServicecommenthistoryQuery extends IdoQuery
      */
     protected $columnMap = array(
         'commenthistory' => array(
+            'id'                    => 'sch.commenthistory_id',
             'host'                  => 'so.name1 COLLATE latin1_general_ci',
             'host_name'             => 'so.name1',
             'object_id'             => 'sch.object_id',

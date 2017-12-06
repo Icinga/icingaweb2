@@ -17,6 +17,7 @@ class StatehistoryQuery extends IdoQuery
      */
     protected $columnMap = array(
         'statehistory' => array(
+            'id'          => 'sth.id',
             'object_type' => 'sth.object_type'
         ),
         'history' => array(
