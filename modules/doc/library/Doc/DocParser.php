@@ -161,10 +161,19 @@ class DocParser
             $lastLine = null;
             $stack = new SplStack();
             $cachingIterator = new CachingIterator($file, CachingIterator::TOSTRING_USE_CURRENT);
+            $insideFencedCodeBlock = false;
+
             for ($cachingIterator->rewind(); $line = $cachingIterator->valid(); $cachingIterator->next()) {
                 $fileIterator = $cachingIterator->getInnerIterator();
                 $line = $cachingIterator->current();
-                $header = $this->extractHeader($line, $fileIterator->valid() ? $fileIterator->current() : null);
+                $header = null;
+
+                if (substr($line, 0, 3) === '```') {
+                    $insideFencedCodeBlock = ! $insideFencedCodeBlock;
+                } elseif (! $insideFencedCodeBlock) {
+                    $header = $this->extractHeader($line, $fileIterator->valid() ? $fileIterator->current() : null);
+                }
+
                 if ($header !== null) {
                     list($title, $id, $level, $headerStyle) = $header;
                     while (! $stack->isEmpty() && $stack->top()->getLevel() >= $level) {
