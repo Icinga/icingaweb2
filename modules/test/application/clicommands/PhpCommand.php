@@ -3,8 +3,11 @@
 
 namespace Icinga\Module\Test\Clicommands;
 
+use ErrorException;
 use Icinga\Application\Icinga;
 use Icinga\Cli\Command;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
 
 /**
  * PHP unit- & style-tests
@@ -68,7 +71,7 @@ class PhpCommand extends Command
             . $phpUnit
             . ' -c modules/test/phpunit.xml'
             . ' ' . join(' ', array_merge($options, $this->params->getAllStandalone()));
-        
+
         if ($this->isVerbose) {
             $res = `$command`;
             foreach (preg_split('/\n/', $res) as $line) {
@@ -153,6 +156,96 @@ class PhpCommand extends Command
                 )
             )
         );
+    }
+
+    /**
+     * Run code-validity checks
+     *
+     * This command checks whether icingaweb and installed modules match PHP syntax.
+     *
+     * USAGE
+     *
+     * icingacli test php validity
+     */
+    public function validityAction()
+    {
+        $types = array(
+            T_CLASS     => 'class',
+            T_INTERFACE => 'interface'
+        );
+
+        if (version_compare(PHP_VERSION, '5.4.0') > -1) {
+            $types[T_TRAIT] = 'trait';
+        }
+
+        $files = array();
+        $baseDir = realpath(__DIR__ . '/../../../..');
+        $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($baseDir));
+
+        foreach ($iterator as $path => $info) {
+            /** @var \SplFileInfo $info */
+            if (preg_match(
+                '~\A(?:test|vendor|modules/[^/]+/test|library/Icinga/Test)(?:/|\z)~',
+                $iterator->getInnerIterator()->getSubPath()
+            ) || ! ($info->isFile() && preg_match('/\.php\z/', $path))) {
+                continue;
+            }
+
+            $content = file_get_contents("file://$path");
+            $lines = explode("\n", $content);
+            $tokens = token_get_all($content);
+            $lastDocComment = '';
+
+            foreach ($tokens as $token) {
+                if (! is_array($token)) {
+                    continue;
+                }
+
+                list($tokenNr, $raw, $lineNr) = $token;
+
+                if ($tokenNr === T_DOC_COMMENT) {
+                    $lastDocComment = $raw;
+                    continue;
+                }
+
+                if (array_key_exists($tokenNr, $types)) {
+                    $matches = array();
+                    if (preg_match('/\A\s*(\w+)\s+\w+/', $lines[$lineNr - 1], $matches)) {
+                        list($_, $type) = $matches;
+
+                        if ($type === $types[$tokenNr]) {
+                            // Valid definition header
+
+                            if (! preg_match('/@deprecated\b/', $lastDocComment)) {
+                                $files[] = $path;
+                            }
+                        }
+                    }
+
+                    // Bad definition header
+                    break;
+                }
+            }
+
+            // No definition header
+        }
+
+        define('ICINGA_LIBDIR', "$baseDir/library");
+
+        require_once 'HTMLPurifier/Bootstrap.php';
+        require_once 'HTMLPurifier.php';
+
+        $oldErrorReportingLevel = error_reporting();
+        error_reporting($oldErrorReportingLevel & ~ E_DEPRECATED);
+
+        require_once 'HTMLPurifier.autoload.php';
+
+        error_reporting($oldErrorReportingLevel);
+
+        foreach ($files as $file) {
+            printf('+ require_once %s;%s', var_export($file, true), PHP_EOL);
+            require_once $file;
+        }
     }
 
     /**
