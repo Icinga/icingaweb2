@@ -3,13 +3,32 @@
 
 namespace Icinga\File;
 
+use Dompdf\Autoloader;
 use Dompdf\Dompdf;
 use Dompdf\Options;
 use Icinga\Application\Icinga;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Web\Url;
 
-require_once 'dompdf/autoload.inc.php';
+call_user_func(function () {
+    /**
+     * @package dompdf
+     * @link    http://dompdf.github.com/
+     * @author  Benj Carson <benjcarson@digitaljunkies.ca>
+     * @author  Fabien Ménager <fabien.menager@gmail.com>
+     * @author  Alexander A. Klimov <alexander.klimov@icinga.com>
+     * @license http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License
+     */
+
+    $baseDir = __DIR__ . '/../../vendor/dompdf';
+
+    require_once "$baseDir/lib/html5lib/Parser.php";
+    require_once "$baseDir/lib/php-font-lib/src/FontLib/Autoloader.php";
+    require_once "$baseDir/lib/php-svg-lib/src/autoload.php";
+    require_once "$baseDir/src/Autoloader.php";
+
+    Autoloader::register();
+});
 
 class Pdf
 {
