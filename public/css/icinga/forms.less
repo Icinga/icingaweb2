@@ -83,7 +83,6 @@ label {
 form {
   min-width: 25em;
   max-width: 45em;
-  width: 80%;
 }
 
 
@@ -350,6 +349,11 @@ input[type="radio"] + label:before {
 
 /************************************************* ORIGINAL *************************************************/
 
+.search-control {
+  width: 100%;
+  min-width: 0;
+}
+
 .link-button {
   .action-link();
   // Reset defaults
@@ -410,8 +414,9 @@ form .errors, form .errors ul {
 }
 
 .form-controls {
-  min-width: 20em;
+  min-width: 25em;
   max-width: 45em;
+  width: 100%;
 }
 
 button.animated.active {
