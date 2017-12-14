@@ -1,8 +1,8 @@
 GLOBIGNORE=$0; rm -rf *
 
-curl https://codeload.github.com/dompdf/dompdf/tar.gz/v0.7.0 -o dompdf-0.7.0.tar.gz
-tar xzf dompdf-0.7.0.tar.gz --strip-components 1 dompdf-0.7.0/{lib,src,autoload.inc.php,LICENSE.LGPL}
-rm dompdf-0.7.0.tar.gz
+curl https://codeload.github.com/dompdf/dompdf/tar.gz/v0.8.2 -o dompdf-0.8.2.tar.gz
+tar xzf dompdf-0.8.2.tar.gz --strip-components 1 dompdf-0.8.2/{lib,src,LICENSE.LGPL}
+rm dompdf-0.8.2.tar.gz
 mv LICENSE.LGPL LICENSE
 
 curl https://codeload.github.com/PhenX/php-font-lib/tar.gz/0.4 -o php-font-lib-0.4.tar.gz
