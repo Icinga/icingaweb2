@@ -3,6 +3,8 @@
 
 namespace Icinga\Module\Monitoring;
 
+use Icinga\Application\Cli;
+
 require_once ICINGA_LIBDIR . '/Icinga/Application/Cli.php';
 
 class Plugin extends Cli
