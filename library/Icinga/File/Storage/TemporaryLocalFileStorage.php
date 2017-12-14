@@ -41,7 +41,7 @@ class TemporaryLocalFileStorage extends LocalFileStorage
         foreach ($directoryIterator as $path => $entry) {
             /** @var \SplFileInfo $entry */
 
-            if ($entry->isDir()) {
+            if ($entry->isDir() && ! $entry->isLink()) {
                 rmdir($path);
             } else {
                 unlink($path);
