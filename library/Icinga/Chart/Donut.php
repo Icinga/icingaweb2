@@ -344,7 +344,7 @@ class Donut
 
     protected function renderAttributes(array $attributes)
     {
-        $html = [];
+        $html = array();
 
         foreach ($attributes as $name => $value) {
             if ($value === null) {
