@@ -130,7 +130,7 @@ class DbUserGroupBackend extends DbRepository implements UserGroupBackendInterfa
      * @param   string  $table
      * @param   array   $bind
      */
-    public function insert($table, array $bind)
+    public function insert($table, array $bind, array $types = array())
     {
         $bind['created_at'] = date('Y-m-d H:i:s');
         parent::insert($table, $bind);
@@ -143,7 +143,7 @@ class DbUserGroupBackend extends DbRepository implements UserGroupBackendInterfa
      * @param   array   $bind
      * @param   Filter  $filter
      */
-    public function update($table, array $bind, Filter $filter = null)
+    public function update($table, array $bind, Filter $filter = null, array $types = array())
     {
         $bind['last_modified'] = date('Y-m-d H:i:s');
         parent::update($table, $bind, $filter);

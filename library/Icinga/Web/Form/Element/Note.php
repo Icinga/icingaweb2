@@ -48,7 +48,7 @@ class Note extends FormElement
      *
      * @return  bool            Always true
      */
-    public function isValid($value)
+    public function isValid($value, $context = null)
     {
         return true;
     }
