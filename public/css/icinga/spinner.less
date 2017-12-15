@@ -9,15 +9,15 @@ button.spinner.active > i,
 i.spinner.active {
   &:before {
     .animate(spin 2s infinite linear);
-
+    display: none;
     // icon-spin6
     content: '\e874';
   }
 }
 
 div.spinner {
-  display: inline-block;
   vertical-align: middle;
+  display: none;
 
   i {
     visibility: hidden;

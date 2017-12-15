@@ -26,10 +26,6 @@ form.inline,
   display: inline-block;
 }
 
-.form-controls {
-  //margin-left: 10em;
-}
-
 .autosubmit-info {
   margin-left: 0.5em;
 }
@@ -54,16 +50,9 @@ label {
 .control-label-group {
   display: inline-block;
   padding-right: @horizontal-padding;
-  text-align: left;
-  max-width: 25em;
-  width: 50%;
-}
-
-@media (max-width: 40em) {
-  .control-label-group {
-    max-width: 40em;
-    width: 100%;
-  }
+  text-align: right;
+  vertical-align: middle;
+  width: 16em;
 }
 
 .checkbox-group {
@@ -72,8 +61,9 @@ label {
   padding: 0;
 }
 
-.control-group {
+.control-group:not(.toggle-checkbox) {
   padding: @control-group-padding;
+  text-align: right;
 
   .errors {
     color: @color-critical;
@@ -89,53 +79,13 @@ form {
 /************************************************* SUBHEADINGS *************************************************/
 
 .form-sub-header {
-  font-size: 1.2em;
+  font-size: 1.3em;
   border-bottom: 1px solid @gray-light;
+  margin-left: 13.5em;
 }
 
 /************************************************* INPUT, TEXTAREA, SELECT *************************************************/
 
-input[type="text"],
-textarea,
-select {
-  //border-left: @border-width solid @gray-light;
-  //background-color: @gray-lightest;
-  background: none;
-  border: @border-width  solid @gray-lighter;
-  border-bottom: @border-width solid @gray-light;
-}
-
-input[type="text"]:hover,
-textarea:hover,
-select:hover {
-  //border-left: @border-width solid @blue-light;
-  background-color: @blue-lightest;
-  border-bottom: @border-width  solid @blue-light;
-}
-
-input[type="text"]:focus,
-input[type="text"]:active,
-textarea:focus,
-textarea:active,
-select:focus {
-  //border-left: @border-width solid @blue;
-  background: @blue-lighter;
-  border-bottom: @border-width  solid @blue;
-}
-
-// Resize only vertically
-textarea {
-  overflow: auto;
-  resize: vertical;
-  width: 100%;
-  min-height: 2em;
-  height: 4em;
-}
-
-// Hide browser-styling in IE10
-select::-ms-expand {
-  display: none;
-}
 input:not([type]),
 input[type=text],
 input[type=date],
@@ -149,48 +99,53 @@ input[type=time],
 input[type=url],
 select,
 textarea {
-/*
-  //todo: what's up with this? why are they marked as classes
-  .box-shadow(0 1px 0 0 @gray-light);
-  .transition(border 0.3s ease);
-
-  border: none;
-  border-bottom: 1px solid @gray-light;
-  */
+  background: @white-dark;
+  border: @border-width solid @gray-light;
   padding: @vertical-padding / 2 @horizontal-padding / 2;
+  height: 2.5em;
+  border-radius: 3px;
+  vertical-align: middle;
 
   &:focus:not([readonly]) {
     border-color: @icinga-blue;
   }
-  max-width: 25em;
-  width: 50%;
+  width: 28em;
 }
 
-
-@media (max-width: 40em) {
-  input:not([type]),
-  input[type=text],
-  input[type=date],
-  input[type=datetime-local],
-  input[type=email],
-  input[type=number],
-  input[type=password],
-  input[type=search],
-  input[type=tel],
-  input[type=time],
-  input[type=url],
-  textarea,
-  select {
-    width: 100%;
-    max-width: 40em;
-  }
+input[type="text"]:hover,
+textarea:hover,
+select:hover {
+  background-color: @blue-lightest;
+  border: @border-width  solid @blue-light;
 }
 
+input[type="text"]:focus,
+input[type="text"]:active,
+textarea:focus,
+textarea:active,
+select:focus {
+  background: @blue-lighter;
+  border: @border-width  solid @blue;
+}
+
+// Resize only vertically
+textarea {
+  overflow: auto;
+  resize: vertical;
+  width: 28em;
+  height: 5em;
+  padding: @vertical-padding * 1.5 @horizontal-padding / 2;
+}
+
+// Hide browser-styling in IE10
+select::-ms-expand {
+  display: none;
+}
 
 .control-button,
 input[type="submit"] {
   .button();
-  width: 100%;
+  // todo
 }
 
 input:-moz-placeholder { // FF 18-
@@ -263,12 +218,15 @@ input[type="radio"] {
     position: relative;
     cursor: pointer;
     padding: 0px;
+    margin-left: 17em;
+    text-align: left;
   }
   &:disabled + label {
     color: @gray-light;
     cursor: auto;
   }
 
+  // tick (?)
   &:checked + label:after {
     content: "";
     position: absolute;
@@ -325,6 +283,8 @@ input[type="radio"] + label:before {
     position: relative;
     cursor: pointer;
     padding: 0px;
+    font-size: 1.1em;
+    margin-left: 16em;
   }
 }
 
@@ -346,6 +306,41 @@ input[type="radio"] + label:before {
   padding-left: 0.5em;
 }
 
+/************************************************* MOBILE VIEW *************************************************/
+
+@media (max-width: 46em) {
+  .control-label-group {
+    text-align: left;
+    max-width: 45em;
+    width: 100%;
+  }
+
+  .form-sub-header {
+    margin-left: 0;
+  }
+
+  input:not([type]),
+     input[type=text],
+     input[type=date],
+     input[type=datetime-local],
+     input[type=email],
+     input[type=number],
+     input[type=password],
+     input[type=search],
+     input[type=tel],
+     input[type=time],
+     input[type=url],
+     textarea,
+     select {
+       width: 100%;
+       max-width: 45em;
+     }
+
+  input[type="checkbox"]:not(.toggle-checkbox) + label,
+  input[type="radio"] + label {
+    margin-left: 0;
+  }
+}
 
 /************************************************* ORIGINAL *************************************************/
 
