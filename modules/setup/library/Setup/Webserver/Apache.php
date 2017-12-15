@@ -18,6 +18,7 @@ Alias {urlPath} "{documentRoot}"
 # Remove comments if you want to use PHP FPM and your Apache version is older than 2.4
 #<IfVersion < 2.4>
 #    # Forward PHP requests to FPM
+#    SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1
 #    <LocationMatch "^{urlPath}/(.*\.php)$">
 #        ProxyPassMatch "fcgi://127.0.0.1:9000/{documentRoot}/$1"
 #    </LocationMatch>
@@ -61,9 +62,11 @@ Alias {urlPath} "{documentRoot}"
         ErrorDocument 404 {urlPath}/error_norewrite.html
     </IfModule>
 
-# Remove comments if you want to use PHP FPM and your Apache version is greater than or equal to 2.4
+# Remove comments if you want to use PHP FPM and your Apache version
+# is greater than or equal to 2.4
 #    <IfVersion >= 2.4>
 #        # Forward PHP requests to FPM
+#        SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1
 #        <FilesMatch "\.php$">
 #            SetHandler "proxy:fcgi://127.0.0.1:9000"
 #            ErrorDocument 503 {urlPath}/error_unavailable.html
