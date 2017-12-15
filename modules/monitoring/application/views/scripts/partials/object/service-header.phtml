@@ -22,14 +22,10 @@ use Icinga\Module\Monitoring\Object\Service;
         <?php endif ?>
             <?= $this->hostFlags($object) ?>
         <?php if ($object->host_address6 && $object->host_address6 !== $object->host_name): ?>
-            <div class="selectable host-meta" title="<?= $this->translate('IPv6 address') ?>">
-                <?= $this->escape($object->host_address6) ?>
-            </div>
+            <div class="selectable host-meta" title="<?= $this->translate('IPv6 address') ?>"><?= $this->escape($object->host_address6) ?></div>
         <?php endif ?>
         <?php if ($object->host_address && $object->host_address !== $object->host_name): ?>
-            <div class="selectable host-meta" title="<?= $this->translate('IPv4 address') ?>">
-                <?= $this->escape($object->host_address) ?>
-            </div>
+            <div class="selectable host-meta" title="<?= $this->translate('IPv4 address') ?>"><?= $this->escape($object->host_address) ?></div>
         <?php endif ?>
         </td>
     </tr>
