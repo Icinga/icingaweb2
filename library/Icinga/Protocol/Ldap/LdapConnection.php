@@ -427,10 +427,7 @@ class LdapConnection implements Selectable, Inspectable
     {
         $this->bind();
 
-        if ($query->getUsePagedResults()
-            && version_compare(PHP_VERSION, '5.4.0') >= 0
-            && $this->getCapabilities()->hasPagedResult()
-        ) {
+        if ($query->getUsePagedResults() && $this->getCapabilities()->hasPagedResult()) {
             return $this->runPagedQuery($query, $fields);
         } else {
             return $this->runQuery($query, $fields);
@@ -1156,11 +1153,7 @@ class LdapConnection implements Selectable, Inspectable
             $sequenceOf = '30' . str_pad(dechex($sequenceOfOctets), 2, '0', STR_PAD_LEFT) . $sequenceOf;
         }
 
-        if (version_compare(PHP_VERSION, '5.4.0') >= 0) {
-            return hex2bin($sequenceOf);
-        } else {
-            return pack('H*', $sequenceOf);
-        }
+        return hex2bin($sequenceOf);
     }
 
     /**

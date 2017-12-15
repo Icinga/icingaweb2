@@ -884,11 +884,9 @@ msgstr "Root DN"
 
 #: ../../../../modules/setup/library/Setup/WebWizard.php:556
 msgid ""
-"Running Icinga Web 2 requires PHP version 5.3.2. Advanced features like the "
-"built-in web server require PHP version 5.4."
+"Running Icinga Web 2 requires PHP version 5.4."
 msgstr ""
-"Der Betrieb von Icinga Web 2 erfordert die PHP-Version 5.3.2. Anspruchsvolle "
-"Funktionalitäten wie der eingebaute Webserver erfordern die PHP-Version 5.4."
+"Der Betrieb von Icinga Web 2 erfordert die PHP-Version 5.4."
 
 #: ../../../../modules/setup/library/Setup/Steps/ResourceStep.php:104
 msgid "SSL Cert"

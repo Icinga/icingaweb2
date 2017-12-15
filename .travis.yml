@@ -9,16 +9,6 @@ php:
   - '7.0'
   - '7.1'
 
-matrix:
-  include:
-  - php: '5.3'
-    dist: precise
-    sudo: required
-    env:
-    - PHPCS_VERSION=2.9.1
-    - LOCALE_GEN=1
-    - ENABLE_LDAP=1
-
 services:
   - mysql
   - postgresql
