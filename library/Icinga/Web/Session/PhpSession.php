@@ -34,20 +34,6 @@ class PhpSession extends Session
     protected $sessionName = 'Icingaweb2';
 
     /**
-     * Configuration for cookie options
-     *
-     * @var array
-     */
-    protected static $defaultCookieOptions = array(
-        'use_trans_sid'             => false,
-        'use_cookies'               => true,
-        'cookie_httponly'           => true,
-        'use_only_cookies'          => true,
-        'hash_function'             => true,
-        'hash_bits_per_character'   => 5,
-    );
-
-    /**
      * Create a new PHPSession object using the provided options (if any)
      *
      * @param   array   $options    An optional array of ini options to set
@@ -57,10 +43,24 @@ class PhpSession extends Session
      */
     public function __construct(array $options = null)
     {
-        if ($options !== null) {
-            $options = array_merge(self::$defaultCookieOptions, $options);
+        $defaultCookieOptions = array(
+            'use_trans_sid'     => false,
+            'use_cookies'       => true,
+            'cookie_httponly'   => true,
+            'use_only_cookies'  => true
+        );
+
+        if (version_compare(PHP_VERSION, '7.1.0') < 0) {
+            $defaultCookieOptions['hash_function'] = true;
+            $defaultCookieOptions['hash_bits_per_character'] = 5;
         } else {
-            $options = self::$defaultCookieOptions;
+            $defaultCookieOptions['sid_bits_per_character'] = 5;
+        }
+
+        if ($options !== null) {
+            $options = array_merge($defaultCookieOptions, $options);
+        } else {
+            $options = $defaultCookieOptions;
         }
 
         if (array_key_exists('test_session_name', $options)) {
