@@ -276,8 +276,6 @@ input.search {
 
 /************************************************* CHECKBOX, RADIO *************************************************/
 
-//todo (JeM): Use icons for boxes (a box..?) and tick (e.g. icon-ok)
-
 input[type="checkbox"]:not(.toggle-checkbox),
 input[type="radio"] {
   position: absolute; // take it out of document flow
@@ -323,27 +321,35 @@ input[type="radio"] {
     cursor: auto;
   }
 
-  // tick (?)
+//todo (JeM): Use icons for boxes (a box..?) and tick (e.g. icon-ok)
   &:checked + label:after {
-    content: "";
+    content: '\e803';
+    font-family: "ifont";
+    line-height: 1em;
+    color: @text-color-inverted;
     position: absolute;
-    left: 0.2em;
-    top: 0.6em;
-    background: white;
-    width: 2px;
-    height: 2px;
-    box-shadow:
-      0px 0px 0 white,
-      2px -0px 0 white,
-      2px -2px 0 white,
-      2px -4px 0 white;
-    transform: rotate(45deg);
+    left: 0.1em;
+    top: 0.3em;
+    font-size: 0.5em;
   }
 }
 
 // Make box a circle for radio
-input[type="radio"] + label:before {
+input[type="radio"] {
+  & + label:before {
   border-radius: 10px;
+  }
+
+  &:checked + label:after {
+    content: "\e87c";
+    font-family: "ifont";
+    line-height: 1em;
+    color: @text-color-inverted;
+    position: absolute;
+    left: 0.1em;
+    top: 0.3em;
+    font-size: 0.5em;
+  }
 }
 
 /************************************************* TOGGLE *************************************************/
