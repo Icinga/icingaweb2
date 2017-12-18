@@ -3,6 +3,7 @@
 
 namespace Icinga\Web;
 
+use Icinga\Web\Form\Element\Note;
 use Zend_Config;
 use Zend_Form;
 use Zend_Form_Element;
@@ -773,8 +774,31 @@ class Form extends Zend_Form
         if (! $this->created) {
             $this->createElements($formData);
             $this->addFormIdentification()
-                ->addCsrfCounterMeasure()
-                ->addSubmitButton();
+                ->addCsrfCounterMeasure();
+
+            $hasRequiredSubforms = false;
+            if ($this->getSubForms()) {
+                foreach ($this->getSubForms() as $subform) {
+                    if ($this->checkIfRequired($subform)) {
+                        $hasRequiredSubforms = true;
+                    }
+                }
+            }
+
+
+            if ($hasRequiredSubforms || $this->getSubmitLabel() !== null && $this->checkIfRequired($this)) {
+                $note = new Note('required_note', ['value' => sprintf(
+                    $this->getView()->translate('%s Required field'),
+                    $this->getRequiredCue()
+                )]);
+                $note->addDecorator('HtmlTag', [
+                    'tag'   => 'span',
+                    'class' => 'required-note',
+                ]);
+                $this->addElement($note);
+            }
+
+            $this->addSubmitButton();
 
             // Use Form::getAttrib() instead of Form::getAction() here because we want to explicitly check against
             // null. Form::getAction() would return the empty string '' if the action is not set.
@@ -797,6 +821,30 @@ class Form extends Zend_Form
         }
 
         return $this;
+    }
+
+    public function checkIfRequired(Form $form)
+    {
+        $blacklist = array(
+            'Zend_Form_Element_Hidden',
+            'Zend_Form_Element_Submit',
+            'Zend_Form_Element_Button',
+            'Icinga\Web\Form\Element\Note',
+            'Icinga\Web\Form\Element\Button',
+            'Icinga\Web\Form\Element\CsrfCounterMeasure'
+        );
+
+        $containsRequiredElement = false;
+
+        foreach ($form->getElements() as $element) {
+            if (! in_array($element->getType(), $blacklist)) {
+                if($element->isRequired()) {
+                    $containsRequiredElement = true;
+                }
+            }
+        }
+
+        return $containsRequiredElement;
     }
 
     /**
@@ -1342,7 +1390,6 @@ class Form extends Zend_Form
                 $this->addDecorator('FormDescriptions')
                     ->addDecorator('FormNotifications')
                     ->addDecorator('FormErrors', array('onlyCustomFormErrors' => true))
-                    //todo form hints should be in the form elements (?)
                     ->addDecorator('FormElements')
                     ->addDecorator('FormHints')
                     //->addDecorator('HtmlTag', array('tag' => 'dl', 'class' => 'zend_form'))
