@@ -528,7 +528,9 @@ class Module
     {
         $this->launchConfigScript();
         $files = $this->cssFiles;
-        $files[] = $this->getCssFilename();
+        if (file_exists($this->getCssFilename())) {
+            $files[] = $this->getCssFilename();
+        }
         return $files;
     }
 
