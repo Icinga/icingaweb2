@@ -18,6 +18,9 @@ class ServicegroupQuery extends IdoQuery
         'hostgroups' => array(
             'hostgroup_name' => 'hgo.name1'
         ),
+        'hosts' => array(
+            'h.host_object_id' => 's.host_object_id'
+        ),
         'instances' => array(
             'instance_name' => 'i.instance_name'
         ),
@@ -68,6 +71,16 @@ class ServicegroupQuery extends IdoQuery
             'hgo.object_id = hg.hostgroup_object_id AND hgo.objecttype_id = 3 AND hgo.is_active = 1',
             array()
         );
+    }
+
+    /**
+     * Join hosts
+     *
+     * This is required to make filters work which filter by host custom variables.
+     */
+    protected function joinHosts()
+    {
+        $this->requireVirtualTable('services');
     }
 
     /**
