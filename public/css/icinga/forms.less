@@ -8,7 +8,10 @@
 @blue-lightest: #f3faff;
 
 @control-group-padding: 0.55em 0;
-@border-width : 1px;
+@border-width: 1px;
+@label-width: 17em;
+
+/************************************************* GENERAL FORM LAYOUT *************************************************/
 
 * {
   outline: none;
@@ -43,8 +46,9 @@ button:hover .icon-cancel {
 }
 
 label {
-  color: @gray;
-  font-size: @font-size-small;
+  color: @text-color;
+  font-size: 1em;
+  font-weight: 500;
 }
 
 .control-label-group {
@@ -52,7 +56,7 @@ label {
   padding-right: @horizontal-padding;
   text-align: right;
   vertical-align: middle;
-  width: 16em;
+  width: @label-width;
 }
 
 .checkbox-group {
@@ -63,7 +67,6 @@ label {
 
 .control-group:not(.toggle-checkbox) {
   padding: @control-group-padding;
-  text-align: right;
 
   .errors {
     color: @color-critical;
@@ -75,13 +78,106 @@ form {
   max-width: 45em;
 }
 
+.search-control {
+  width: 100%;
+  min-width: 0;
+}
+
+.link-button {
+  .action-link();
+  // Reset defaults
+  background: none;
+  border: none;
+  padding: 0;
+
+  text-align: left;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.form-description, .form-description ul,
+.form-info, .form-info ul,
+.form-notifications, .form-notifications ul,
+.form-errors, .form-errors ul,
+form .errors, form .errors ul {
+  // Reset defaults
+  margin: 0.5em 0;
+  padding: 0;
+  list-style-type: none;
+}
+
+.form-errors {
+  background-color: @color-critical;
+  color: @text-color-inverted;
+}
+
+.form-info {
+  color: @text-color-light;
+  font-size: @font-size-small;
+}
+
+.form-notifications {
+  .notification-error {
+    background-color: @color-critical;
+    color: @text-color-inverted;
+    li {
+      padding: @vertical-padding @horizontal-padding;
+    }
+  }
+  .notification-info {
+    background-color: @color-pending;
+    color: @text-color-inverted;
+    li {
+      padding: @vertical-padding @horizontal-padding;
+    }
+  }
+  .notification-warning {
+    background-color: @color-warning;
+    color: @text-color-inverted;
+    li {
+      padding: @vertical-padding @horizontal-padding;
+    }
+  }
+}
+
+.form-controls {
+  min-width: 25em;
+  max-width: 45em;
+  width: 100%;
+}
+
+button.animated.active {
+  &.move-up i:before {
+    .animate(move-vertical 500ms infinite linear);
+  }
+
+  &.move-down i:before {
+    .animate(move-vertical 500ms infinite linear reverse);
+  }
+}
+
+//todo: whats this?
+select.grant-permissions {
+  height: 20em;
+  width: auto;
+}
+
+.required-note {
+  position: absolute;
+  display: inline-block;
+  margin-left: @label-width;
+  margin-top: 1em;
+  color: @gray;
+}
 
 /************************************************* SUBHEADINGS *************************************************/
 
 .form-sub-header {
   font-size: 1.3em;
   border-bottom: 1px solid @gray-light;
-  margin-left: 13.5em;
+  margin-left: @label-width * 0.75 + 0.5em;
 }
 
 /************************************************* INPUT, TEXTAREA, SELECT *************************************************/
@@ -145,7 +241,7 @@ select::-ms-expand {
 .control-button,
 input[type="submit"] {
   .button();
-  // todo
+  float: right;
 }
 
 input:-moz-placeholder { // FF 18-
@@ -218,7 +314,7 @@ input[type="radio"] {
     position: relative;
     cursor: pointer;
     padding: 0px;
-    margin-left: 17em;
+    margin-left: @label-width;
     text-align: left;
   }
   &:disabled + label {
@@ -340,92 +436,12 @@ input[type="radio"] + label:before {
   input[type="radio"] + label {
     margin-left: 0;
   }
-}
 
-/************************************************* ORIGINAL *************************************************/
-
-.search-control {
-  width: 100%;
-  min-width: 0;
-}
-
-.link-button {
-  .action-link();
-  // Reset defaults
-  background: none;
-  border: none;
-  padding: 0;
-
-  text-align: left;
-
-  &:hover {
-    text-decoration: underline;
-  }
-}
-
-.form-description, .form-description ul,
-.form-info, .form-info ul,
-.form-notifications, .form-notifications ul,
-.form-errors, .form-errors ul,
-form .errors, form .errors ul {
-  // Reset defaults
-  margin: 0.5em 0;
-  padding: 0;
-  list-style-type: none;
-}
-
-.form-errors {
-  background-color: @color-critical;
-  color: @text-color-inverted;
-}
-
-.form-info {
-  color: @text-color-light;
-  font-size: @font-size-small;
-}
-
-.form-notifications {
-  .notification-error {
-    background-color: @color-critical;
-    color: @text-color-inverted;
-    li {
-      padding: @vertical-padding @horizontal-padding;
-    }
-  }
-  .notification-info {
-    background-color: @color-pending;
-    color: @text-color-inverted;
-    li {
-      padding: @vertical-padding @horizontal-padding;
-    }
-  }
-  .notification-warning {
-    background-color: @color-warning;
-    color: @text-color-inverted;
-    li {
-      padding: @vertical-padding @horizontal-padding;
-    }
-  }
-}
-
-.form-controls {
-  min-width: 25em;
-  max-width: 45em;
-  width: 100%;
-}
-
-button.animated.active {
-  &.move-up i:before {
-    .animate(move-vertical 500ms infinite linear);
+  .required-note {
+    margin-left: 0;
   }
 
-  &.move-down i:before {
-    .animate(move-vertical 500ms infinite linear reverse);
+  .toggle-checkbox[type="checkbox"] + label {
+    margin-left: 0;
   }
-}
-
-//todo: whats this?
-select.grant-permissions {
-  height: 20em;
-  width: auto;
 }
