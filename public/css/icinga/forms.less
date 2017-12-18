@@ -146,6 +146,7 @@ form .errors, form .errors ul {
   min-width: 25em;
   max-width: 45em;
   width: 100%;
+  text-align: right;
 }
 
 button.animated.active {
@@ -165,9 +166,8 @@ select.grant-permissions {
 }
 
 .required-note {
-  position: absolute;
   display: inline-block;
-  margin-left: @label-width;
+  margin-left: 38em;
   margin-top: 1em;
   color: @gray;
 }
@@ -230,6 +230,7 @@ textarea {
   resize: vertical;
   width: 28em;
   height: 5em;
+  min-height: 2.5em;
   padding: @vertical-padding * 1.5 @horizontal-padding / 2;
 }
 
@@ -241,7 +242,7 @@ select::-ms-expand {
 .control-button,
 input[type="submit"] {
   .button();
-  float: right;
+  margin-left: 0.25em;
 }
 
 input:-moz-placeholder { // FF 18-
@@ -400,11 +401,37 @@ input[type="radio"] + label:before {
 .toggle-checkbox-content {
   font-size: 0.9em;
   padding-left: 0.5em;
+  margin-left: 2em;
+}
+
+/************************************************* LOGIN FORM *************************************************/
+
+#login {
+
+  .form-controls {
+    margin: .5em;
+  }
+
+  #icinga-logo {
+    max-width: 12em;
+  }
+
+  .login-wrapper {
+    padding: 0 1em;
+  }
+
+  .login-form {
+    width: 100%;
+  }
+
+  .login-form-content.centered-content {
+    max-width: 100%;
+  }
 }
 
 /************************************************* MOBILE VIEW *************************************************/
 
-@media (max-width: 46em) {
+@media (max-width: 45em) {
   .control-label-group {
     text-align: left;
     max-width: 45em;
@@ -442,6 +469,10 @@ input[type="radio"] + label:before {
   }
 
   .toggle-checkbox[type="checkbox"] + label {
+    margin-left: 0;
+  }
+
+  .toggle-checkbox-content {
     margin-left: 0;
   }
 }
