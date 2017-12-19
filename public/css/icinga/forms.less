@@ -1,12 +1,5 @@
 /*! Icinga Web 2 | (c) 2014 Icinga Development Team | GPLv2+ */
 
-
-@blue-dark: #006F8F;
-@blue: #0095bf;
-@blue-light: #67c3dd;
-@blue-lighter: #e5f9ff;
-@blue-lightest: #f3faff;
-
 @control-group-padding: 0.55em 0;
 @border-width: 1px;
 @label-width: 17em;
@@ -195,7 +188,7 @@ input[type=time],
 input[type=url],
 select,
 textarea {
-  background: @white-dark;
+  background: @white-dark; //todo(JeM): rename!
   border: @border-width solid @gray-light;
   padding: @vertical-padding / 2 @horizontal-padding / 2;
   height: 2.5em;
@@ -206,22 +199,18 @@ textarea {
     border-color: @icinga-blue;
   }
   width: 28em;
-}
 
-input[type="text"]:hover,
-textarea:hover,
-select:hover {
-  background-color: @blue-lightest;
-  border: @border-width  solid @blue-light;
-}
+  &:hover {
+    background-color: @icinga-blue-lightest;
+    border: @border-width  solid @icinga-blue-light;
 
-input[type="text"]:focus,
-input[type="text"]:active,
-textarea:focus,
-textarea:active,
-select:focus {
-  background: @blue-lighter;
-  border: @border-width  solid @blue;
+  }
+
+  &:focus,
+  &:active {
+    background: @icinga-blue-lighter;
+    border: @border-width  solid @icinga-blue;
+  }
 }
 
 // Resize only vertically
@@ -292,15 +281,15 @@ input[type="radio"] {
   }
   &:hover:enabled + label:before,
   &:focus + label:before {
-    background: @blue-lighter;
-    border: @border-width solid @blue-light;
+    background: @icinga-blue-lighter;
+    border: @border-width solid @icinga-blue-light;
   }
   &:focus + label:before {
     box-shadow: 0 0 0 2px @gray-light;
   }
   &:checked:enabled + label:before {
-    background: @blue;
-    border: @border-width solid @blue;
+    background: @icinga-blue;
+    border: @border-width solid @icinga-blue;
   }
   &:disabled + label:before {
     box-shadow: none;
@@ -373,10 +362,10 @@ input[type="radio"] {
   &:hover:enabled + label:before,
   &:focus:enabled + label:before,
   &:focus + label:before {
-    border: @border-width solid @blue-light;
+    border: @border-width solid @icinga-blue-light;
   }
   &:checked + label:before {
-    border: @border-width solid @blue;
+    border: @border-width solid @icinga-blue;
     transform: rotate(-45deg);
   }
 
