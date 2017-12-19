@@ -187,8 +187,10 @@ EOD;
      */
     public function toArray()
     {
+        $relativeUrl = $this->getUrl()->getRelativeUrl();
+
         $array = array(
-            'url'   => $this->getUrl()->getRelativeUrl(),
+            'url'   => $relativeUrl === '' ? $this->getUrl()->getAbsoluteUrl() : $relativeUrl,
             'title' => $this->getTitle()
         );
         if ($this->getDisabled() === true) {
