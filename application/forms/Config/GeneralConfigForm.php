@@ -32,17 +32,21 @@ class GeneralConfigForm extends ConfigForm
         $loggingConfigForm = new LoggingConfigForm();
         $themingConfigForm = new ThemingConfigForm();
         $domainConfigForm = new DefaultAuthenticationDomainConfigForm();
+
         $this->addSubForm($appConfigForm->create($formData));
         $appConfigForm->setTitle('Application');
-        $appConfigForm->setDecorators(array(array('Description', array('tag' => 'h2', 'class' => 'form-sub-header')), 'FormElements', 'Form'));
+        $appConfigForm->addDecorator('Description', array('tag' => 'h2', 'class' => 'form-sub-header', 'placement' => 'prepend'));
+
         $this->addSubForm($loggingConfigForm->create($formData));
         $loggingConfigForm->setTitle('Logging');
-        $loggingConfigForm->setDecorators(array(array('Description', array('tag' => 'h2', 'class' => 'form-sub-header')), 'FormElements', 'Form'));
+        $loggingConfigForm->addDecorator('Description', array('tag' => 'h2', 'class' => 'form-sub-header', 'placement' => 'prepend'));
+
         $this->addSubForm($themingConfigForm->create($formData));
         $themingConfigForm->setTitle('Theming');
-        $themingConfigForm->setDecorators(array(array('Description', array('tag' => 'h2', 'class' => 'form-sub-header')), 'FormElements', 'Form'));
+        $themingConfigForm->addDecorator('Description', array('tag' => 'h2', 'class' => 'form-sub-header', 'placement' => 'prepend'));
+
         $this->addSubForm($domainConfigForm->create($formData));
         $domainConfigForm->setTitle('Domain');
-        $domainConfigForm->setDecorators(array(array('Description', array('tag' => 'h2', 'class' => 'form-sub-header')), 'FormElements', 'Form'));
+        $domainConfigForm->addDecorator('Description', array('tag' => 'h2', 'class' => 'form-sub-header', 'placement' => 'prepend'));
     }
 }
