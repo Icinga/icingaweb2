@@ -62,9 +62,23 @@ label {
 
 .control-group:not(.toggle-checkbox) {
   padding: @control-group-padding;
+}
 
-  .errors {
-    color: @color-critical;
+ul.errors {
+  margin: 0!important;
+  & > li {
+    display: inline-block;
+    margin: 0 0 0 @label-width + 0.3em;
+    padding: 0.2em;
+    text-align: center;
+    font-weight: 500;
+    border: 1px solid @color-critical;
+    color: @text-color-inverted;
+    background: @color-critical;
+    width: (@max-width - @label-width - 0.6em);
+  }
+  & > li:last-child {
+    border-radius: 0 0 3px 3px;
   }
 }
 
@@ -474,4 +488,10 @@ input[type="radio"] {
   .toggle-checkbox-content {
     margin-left: 0;
   }
+
+  ul.errors  > li {
+    margin-left: 1%;
+    width: 98%;
+  }
+
 }
