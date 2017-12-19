@@ -6,9 +6,9 @@
 @max-width: 45em;
 @label-width: 17em;
 
-/************************************************* GENERAL FORM LAYOUT *************************************************/
+/************************************************ GENERAL FORM LAYOUT ************************************************/
 
-* {
+form * {
   outline: none;
 }
 
@@ -189,7 +189,7 @@ select.grant-permissions {
   margin-left: @label-width * 0.75 + 0.5em;
 }
 
-/************************************************* INPUT, TEXTAREA, SELECT *************************************************/
+/********************************************** INPUT, TEXTAREA, SELECT **********************************************/
 
 input:not([type]),
 input[type=text],
@@ -435,6 +435,29 @@ input[type="radio"] {
 
   .login-form-content.centered-content {
     max-width: 100%;
+  }
+}
+
+/************************************************ SETUP FORM RESETS ************************************************/
+
+#setup {
+  form {
+    min-width: 0;
+    max-width: none;
+  }
+
+  .clearfix .description {
+    display: block;
+  }
+
+  label {
+    color: @gray;
+    font-size: 0.917em;
+  }
+
+  #setup_modules input[type="checkbox"] {
+    position: relative;
+    opacity: 1;
   }
 }
 
