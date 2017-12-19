@@ -12,6 +12,11 @@ form * {
   outline: none;
 }
 
+form {
+  min-width: @min-width;
+  max-width: @max-width;
+}
+
 // TODO(el): .form-controls-inline control-group { display: inline-block; }
 form.inline,
 .form-inline {
@@ -32,6 +37,7 @@ button:hover .icon-cancel {
   color: @color-critical;
 }
 
+//todo(JeM): Make the JS descriptions
 .description {
   display: none;
 }
@@ -54,37 +60,8 @@ label {
   width: @label-width;
 }
 
-.checkbox-group {
-  border: none;
-  margin: 0;
-  padding: 0;
-}
-
 .control-group:not(.toggle-checkbox) {
   padding: @control-group-padding;
-}
-
-ul.errors {
-  margin: 0!important;
-  & > li {
-    display: inline-block;
-    margin: 0 0 0 @label-width + 0.3em;
-    padding: 0.2em;
-    text-align: center;
-    font-weight: 500;
-    border: 1px solid @color-critical;
-    color: @text-color-inverted;
-    background: @color-critical;
-    width: (@max-width - @label-width - 0.6em);
-  }
-  & > li:last-child {
-    border-radius: 0 0 3px 3px;
-  }
-}
-
-form {
-  min-width: @min-width;
-  max-width: @max-width;
 }
 
 .search-control {
@@ -105,6 +82,25 @@ form {
     text-decoration: underline;
   }
 }
+
+.form-controls {
+  min-width: @min-width;
+  max-width: @max-width;
+  width: 100%;
+  text-align: right;
+}
+
+button.animated.active {
+  &.move-up i:before {
+    .animate(move-vertical 500ms infinite linear);
+  }
+
+  &.move-down i:before {
+    .animate(move-vertical 500ms infinite linear reverse);
+  }
+}
+
+/******************************************** ERRORS, NOTIFICATIONS, INFOS *******************************************/
 
 .form-description, .form-description ul,
 .form-info, .form-info ul,
@@ -151,27 +147,23 @@ form .errors, form .errors ul {
   }
 }
 
-.form-controls {
-  min-width: @min-width;
-  max-width: @max-width;
-  width: 100%;
-  text-align: right;
-}
 
-button.animated.active {
-  &.move-up i:before {
-    .animate(move-vertical 500ms infinite linear);
+ul.errors {
+  margin: 0!important;
+  & > li {
+    display: inline-block;
+    margin: 0 0 0 @label-width + 0.3em;
+    padding: 0.2em;
+    text-align: center;
+    font-weight: 500;
+    border: 1px solid @color-critical;
+    color: @text-color-inverted;
+    background: @color-critical;
+    width: (@max-width - @label-width - 0.6em);
   }
-
-  &.move-down i:before {
-    .animate(move-vertical 500ms infinite linear reverse);
+  & > li:last-child {
+    border-radius: 0 0 3px 3px;
   }
-}
-
-//todo: whats this?
-select.grant-permissions {
-  height: 20em;
-  width: auto;
 }
 
 .required-note {
@@ -250,25 +242,23 @@ input[type="submit"] {
   margin-left: 0.25em;
 }
 
+// Placeholders
 input:-moz-placeholder { // FF 18-
   color: @gray-light;
   opacity: 1;
 }
-
 input::-moz-placeholder { // FF 19+
   color: @gray-light;
   opacity: 1;
 }
-
 input:-ms-input-placeholder {
   color: @gray-light;
 }
-
 input::-webkit-input-placeholder {
   color: @gray-light;
 }
 
-input.search {
+.search {
   background: transparent url("../img/icons/search.png") no-repeat scroll 0.1em center;
   background-size: 1em 1em;
   padding-left: 1.5em;
@@ -279,7 +269,19 @@ input.search {
   }
 }
 
+//todo(JeM): special select?
+select.grant-permissions {
+  height: 20em;
+  width: auto;
+}
+
 /************************************************* CHECKBOX, RADIO *************************************************/
+
+.checkbox-group {
+  border: none;
+  margin: 0;
+  padding: 0;
+}
 
 input[type="checkbox"]:not(.toggle-checkbox),
 input[type="radio"] {
@@ -416,7 +418,6 @@ input[type="radio"] {
 /************************************************* LOGIN FORM *************************************************/
 
 #login {
-
   .form-controls {
     margin: .5em;
   }
