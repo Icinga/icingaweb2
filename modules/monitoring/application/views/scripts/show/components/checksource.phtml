@@ -1,18 +1,6 @@
 <?php if ($object->check_source !== null): ?>
 <tr>
-    <th>
-        <?= $this->translate('Check Source') ?>
-    </th>
-    <td>
-        <?= $this->escape($object->check_source) ?>
-    <?php if ($object->is_reachable !== null): ?>
-        <span class="check-source-meta"><?= (bool) $object->is_reachable ? $this->translate('is reachable') : $this->translate('is not reachable') ?></span>
-        <?php if ((bool) $object->is_reachable) {
-            echo $this->icon('circle', $this->translate('Is reachable'), array('class' => 'icon-stateful state-ok'));
-        } else {
-            echo $this->icon('circle', $this->translate('Not reachable'), array('class' => 'icon-stateful state-critical'));
-        } ?>
-    <?php endif ?>
-    </td>
+    <th><?= $this->translate('Check Source') ?></th>
+    <td><?= $this->escape($object->check_source) ?></td>
 </tr>
 <?php endif ?>

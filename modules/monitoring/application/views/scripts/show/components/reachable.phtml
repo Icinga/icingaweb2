@@ -1,0 +1,15 @@
+<?php if ($object->is_reachable !== null): ?>
+<tr>
+    <th>
+        <?= $this->translate('Reachable') ?>
+    </th>
+    <td>
+        <span class="check-source-meta"><?= (bool) $object->is_reachable ? $this->translate('yes') : $this->translate('no') ?></span>
+        <?php if ((bool) $object->is_reachable) {
+            echo $this->icon('circle', $this->translate('Is reachable'), array('class' => 'icon-stateful state-ok'));
+        } else {
+            echo $this->icon('circle', $this->translate('Not reachable'), array('class' => 'icon-stateful state-critical'));
+        } ?>
+    </td>
+</tr>
+<?php endif ?>
