@@ -2,6 +2,8 @@
 
 @control-group-padding: 0.55em 0;
 @border-width: 1px;
+@min-width: 25em;
+@max-width: 45em;
 @label-width: 17em;
 
 /************************************************* GENERAL FORM LAYOUT *************************************************/
@@ -67,8 +69,8 @@ label {
 }
 
 form {
-  min-width: 25em;
-  max-width: 45em;
+  min-width: @min-width;
+  max-width: @max-width;
 }
 
 .search-control {
@@ -136,8 +138,8 @@ form .errors, form .errors ul {
 }
 
 .form-controls {
-  min-width: 25em;
-  max-width: 45em;
+  min-width: @min-width;
+  max-width: @max-width;
   width: 100%;
   text-align: right;
 }
@@ -160,7 +162,7 @@ select.grant-permissions {
 
 .required-note {
   display: inline-block;
-  margin-left: 38em;
+  margin-left: @label-width;
   margin-top: 1em;
   color: @gray;
 }
@@ -198,7 +200,7 @@ textarea {
   &:focus:not([readonly]) {
     border-color: @icinga-blue;
   }
-  width: 28em;
+  width: @max-width - @label-width;
 
   &:hover {
     background-color: @icinga-blue-lightest;
@@ -217,7 +219,7 @@ textarea {
 textarea {
   overflow: auto;
   resize: vertical;
-  width: 28em;
+  width: @max-width - @label-width;
   height: 5em;
   min-height: 2.5em;
   padding: @vertical-padding * 1.5 @horizontal-padding / 2;
@@ -259,7 +261,7 @@ input.search {
 
   &:focus {
     background-color: @body-bg-color;
-    background-image: url('../img/icons/search_icinga_blue.png') !important;
+    background-image: url('../img/icons/search_icinga_blue.png');
   }
 }
 
@@ -375,8 +377,7 @@ input[type="radio"] {
     position: relative;
     cursor: pointer;
     padding: 0px;
-    font-size: 1.1em;
-    margin-left: 16em;
+    margin-left: @label-width;
   }
 }
 
@@ -394,9 +395,8 @@ input[type="radio"] {
 }
 
 .toggle-checkbox-content {
-  font-size: 0.9em;
-  padding-left: 0.5em;
-  margin-left: 2em;
+  font-size: 0.95em;
+  margin-left: 1.5em;
 }
 
 /************************************************* LOGIN FORM *************************************************/
@@ -426,10 +426,14 @@ input[type="radio"] {
 
 /************************************************* MOBILE VIEW *************************************************/
 
-@media (max-width: 45em) {
+#layout.minimal-layout,
+#layout.poor-layout,
+#layout.compact-layout.twocols,
+#layout.default-layout.twocols,
+#layout.wide-layout.twocols #col1 {
   .control-label-group {
     text-align: left;
-    max-width: 45em;
+    max-width: @max-width;
     width: 100%;
   }
 
@@ -451,7 +455,7 @@ input[type="radio"] {
      textarea,
      select {
        width: 100%;
-       max-width: 45em;
+       max-width: @max-width;
      }
 
   input[type="checkbox"]:not(.toggle-checkbox) + label,
