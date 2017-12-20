@@ -1,25 +1,22 @@
 /*! Icinga Web 2 | (c) 2014 Icinga Development Team | GPLv2+ */
 
-@control-group-padding: 0.55em 0;
-@border-width: 1px;
-@min-width: 25em;
-@max-width: 45em;
-@label-width: 17em;
-
-
 /**********************************************************************************************************************
 [CONTENT]
 
 GENERAL FORM LAYOUT
 ERRORS, NOTIFICATIONS, INFOS, ...
-INPUT, TEXTAREA, SELECT
+LABELS
+INPUTS
 CHECKBOX, RADIO
 TOGGLE
-LOGIN FORM
-SETUP FORM RESETS
 SLIM VIEW
 **********************************************************************************************************************/
 
+@control-group-padding: 0.55em 0;
+@border-width: 1px;
+@min-width: 25em;
+@max-width: 45em;
+@label-width: 17em;
 
 /************************************************ GENERAL FORM LAYOUT ************************************************/
 
@@ -34,6 +31,7 @@ form {
 
 // TODO(el): .form-controls-inline control-group { display: inline-block; }
 form.inline,
+  //todo(JeM): form-inline is never visible (only used in the AcknowledgeAnnouncementForm) so far
 .form-inline {
   .control-group {
     padding: 0;
@@ -55,24 +53,6 @@ button:hover .icon-cancel {
 //todo(JeM): Make the JS descriptions
 .description {
   display: none;
-}
-
-.control-label {
-  display: inline-block;
-}
-
-label {
-  color: @text-color;
-  font-size: 1em;
-  font-weight: 500;
-}
-
-.control-label-group {
-  display: inline-block;
-  padding-right: @horizontal-padding;
-  text-align: right;
-  vertical-align: middle;
-  width: @label-width;
 }
 
 .control-group:not(.toggle-checkbox) {
@@ -194,7 +174,27 @@ ul.errors {
   color: @gray;
 }
 
-/********************************************** INPUT, TEXTAREA, SELECT **********************************************/
+/******************************************************* LABELS ******************************************************/
+
+.control-label {
+  display: inline-block;
+}
+
+label {
+  color: @text-color;
+  font-size: 1em;
+  font-weight: 500;
+}
+
+.control-label-group {
+  display: inline-block;
+  padding-right: @horizontal-padding;
+  text-align: right;
+  vertical-align: middle;
+  width: @label-width;
+}
+
+/******************************************************* INPUTS *******************************************************/
 
 input:not([type]),
 input[type=text],
@@ -301,7 +301,8 @@ input[type="radio"] {
   position: absolute; // take it out of document flow
   opacity: 0; // hide it
   // Box for Checkbox
-  & + label:before {
+  & + label:before,
+      & + noscript + label:before {
     margin-right: 0.5em;
     width: 1em;
     height: 1em;
@@ -311,14 +312,18 @@ input[type="radio"] {
     border: @border-width solid @gray-light;
   }
   &:hover:enabled + label:before,
-  &:focus + label:before {
+  &:focus + label:before,
+      &:hover:enabled + noscript + label:before,
+      &:focus + noscript + label:before {
     background: @icinga-blue-lighter;
     border: @border-width solid @icinga-blue-light;
   }
-  &:focus + label:before {
+  &:focus + label:before,
+      &:focus + noscript + label:before {
     box-shadow: 0 0 0 2px @gray-light;
   }
-  &:checked:enabled + label:before {
+  &:checked:enabled + label:before,
+      &:checked:enabled + noscript + label:before {
     background: @icinga-blue;
     border: @border-width solid @icinga-blue;
   }
@@ -328,7 +333,8 @@ input[type="radio"] {
   }
 
   // Actual label
-  & + label {
+  & + label,
+      & + noscript + label {
     display: block;
     position: relative;
     cursor: pointer;
@@ -336,13 +342,14 @@ input[type="radio"] {
     margin-left: @label-width;
     text-align: left;
   }
-  &:disabled + label {
+  &:disabled + label,
+      &:disabled + noscript + label {
     color: @gray-light;
     cursor: auto;
   }
 
-  //todo (JeM): Use icons for boxes (a box..?) and tick (e.g. icon-ok)
-  &:checked + label:after {
+  &:checked + label:after,
+      &:checked + noscript + label:after {
     content: '\e803';
     font-family: "ifont";
     line-height: 1em;
@@ -452,26 +459,19 @@ input[type="radio"] {
   }
 }
 
-/************************************************* SETUP FORM RESETS *************************************************/
-
-#setup {
-  form {
-    min-width: 0;
-    max-width: none;
+ul.errors {
+  margin: 0;
+  & > li {
+    display: inline-block;
+    padding: 0.2em;
+    text-align: center;
+    font-weight: 500;
+    border: 1px solid @color-critical;
+    color: @text-color-inverted;
+    background: @color-critical;
   }
-
-  .clearfix .description {
-    display: block;
-  }
-
-  label {
-    color: @gray;
-    font-size: 0.917em;
-  }
-
-  #setup_modules input[type="checkbox"] {
-    position: relative;
-    opacity: 1;
+  & > li:last-child {
+    border-radius: 0 0 3px 3px;
   }
 }
 
@@ -510,7 +510,9 @@ input[type="radio"] {
   }
 
   input[type="checkbox"]:not(.toggle-checkbox) + label,
-  input[type="radio"] + label {
+  input[type="radio"] + label,
+      input[type="checkbox"]:not(.toggle-checkbox) + noscript + label,
+      input[type="radio"] + noscript + label {
     margin-left: 0;
   }
 
