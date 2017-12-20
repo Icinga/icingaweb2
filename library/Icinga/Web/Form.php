@@ -838,7 +838,7 @@ class Form extends Zend_Form
 
         foreach ($form->getElements() as $element) {
             if (! in_array($element->getType(), $blacklist)) {
-                if($element->isRequired()) {
+                if ($element->isRequired()) {
                     $containsRequiredElement = true;
                 }
             }

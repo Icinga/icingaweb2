@@ -38,16 +38,22 @@ class RoleForm extends ConfigForm
     {
         $this->providedPermissions = array('General' =>
             array(
-            'all'                                           => $this->translate('Everything'),
-            'admin'                                         => $this->translate('Grant admin permissions, e.g. manage announcements'),
-            'config/*'                                      => $this->translate('Config access')
-        ));
+                'all'       => $this->translate('Everything'),
+                'admin'     => $this->translate('Grant admin permissions, e.g. manage announcements'),
+                'config/*'  => $this->translate('Config access')
+            ));
 
         $this->providedPermissions['Application'] =
             array(
-                'application/share/navigation'                  => $this->translate('Share navigation items'),
-                'application/stacktraces'                       => $this->translate('Adjust in the preferences whether to show stacktraces'),
-                'application/log'                               => $this->translate('View the application log')
+                'application/share/navigation'  => $this->translate(
+                    'Share navigation items'
+                ),
+                'application/stacktraces'       => $this->translate(
+                    'Adjust in the preferences whether to show stacktraces'
+                ),
+                'application/log'               => $this->translate(
+                    'View the application log'
+                )
             );
 
         $helper = new Zend_Form_Element('bogus');
@@ -69,7 +75,6 @@ class RoleForm extends ConfigForm
         $this->providedPermissions['Module'] = array();
         $mm = Icinga::app()->getModuleManager();
         foreach ($mm->listInstalledModules() as $moduleName) {
-
             $modulePermission = $mm::MODULE_PERMISSION_NS . $moduleName;
             $this->providedPermissions['Module'][$modulePermission] = sprintf(
                 $this->translate('Allow access to module %s'),
@@ -168,8 +173,8 @@ class RoleForm extends ConfigForm
                     array(
                         'tag' => 'div',
                         'class' => 'control-group toggle-checkbox'
-                    ));
-
+                    )
+                );
                 $elements = array();
             }
         }
