@@ -100,7 +100,13 @@ button.animated.active {
   }
 }
 
-/******************************************** ERRORS, NOTIFICATIONS, INFOS *******************************************/
+.form-sub-header {
+  font-size: 1.3em;
+  border-bottom: 1px solid @gray-light;
+  margin-left: @label-width * 0.75 + 0.5em;
+}
+
+/****************************************** ERRORS, NOTIFICATIONS, INFOS, ... *****************************************/
 
 .form-description, .form-description ul,
 .form-info, .form-info ul,
@@ -171,14 +177,6 @@ ul.errors {
   margin-left: @label-width;
   margin-top: 1em;
   color: @gray;
-}
-
-/************************************************* SUBHEADINGS *************************************************/
-
-.form-sub-header {
-  font-size: 1.3em;
-  border-bottom: 1px solid @gray-light;
-  margin-left: @label-width * 0.75 + 0.5em;
 }
 
 /********************************************** INPUT, TEXTAREA, SELECT **********************************************/
@@ -275,7 +273,7 @@ select.grant-permissions {
   width: auto;
 }
 
-/************************************************* CHECKBOX, RADIO *************************************************/
+/************************************************** CHECKBOX, RADIO **************************************************/
 
 .checkbox-group {
   border: none;
@@ -328,7 +326,7 @@ input[type="radio"] {
     cursor: auto;
   }
 
-//todo (JeM): Use icons for boxes (a box..?) and tick (e.g. icon-ok)
+  //todo (JeM): Use icons for boxes (a box..?) and tick (e.g. icon-ok)
   &:checked + label:after {
     content: '\e803';
     font-family: "ifont";
@@ -344,7 +342,7 @@ input[type="radio"] {
 // Make box a circle for radio
 input[type="radio"] {
   & + label:before {
-  border-radius: 10px;
+    border-radius: 10px;
   }
 
   &:checked + label:after {
@@ -359,7 +357,7 @@ input[type="radio"] {
   }
 }
 
-/************************************************* TOGGLE *************************************************/
+/******************************************************* TOGGLE *******************************************************/
 
 .toggle-checkbox[type="checkbox"] {
   position: absolute; // take it out of document flow
@@ -415,7 +413,7 @@ input[type="radio"] {
   margin-left: 1.5em;
 }
 
-/************************************************* LOGIN FORM *************************************************/
+/***************************************************** LOGIN FORM *****************************************************/
 
 #login {
   .form-controls {
@@ -439,7 +437,7 @@ input[type="radio"] {
   }
 }
 
-/************************************************ SETUP FORM RESETS ************************************************/
+/************************************************* SETUP FORM RESETS *************************************************/
 
 #setup {
   form {
@@ -462,7 +460,7 @@ input[type="radio"] {
   }
 }
 
-/************************************************* MOBILE VIEW *************************************************/
+/***************************************************** SLIM VIEW *****************************************************/
 
 #layout.minimal-layout,
 #layout.poor-layout,
@@ -480,21 +478,21 @@ input[type="radio"] {
   }
 
   input:not([type]),
-     input[type=text],
-     input[type=date],
-     input[type=datetime-local],
-     input[type=email],
-     input[type=number],
-     input[type=password],
-     input[type=search],
-     input[type=tel],
-     input[type=time],
-     input[type=url],
-     textarea,
-     select {
-       width: 100%;
-       max-width: @max-width;
-     }
+  input[type=text],
+  input[type=date],
+  input[type=datetime-local],
+  input[type=email],
+  input[type=number],
+  input[type=password],
+  input[type=search],
+  input[type=tel],
+  input[type=time],
+  input[type=url],
+  textarea,
+  select {
+    width: 100%;
+    max-width: @max-width;
+  }
 
   input[type="checkbox"]:not(.toggle-checkbox) + label,
   input[type="radio"] + label {
