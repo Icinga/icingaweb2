@@ -67,10 +67,9 @@ button:hover .icon-cancel {
 .link-button {
   .action-link();
   // Reset defaults
-  background: none;
   border: none;
   padding: 0;
-
+  background: none;
   text-align: left;
 
   &:hover {
@@ -96,9 +95,9 @@ button.animated.active {
 }
 
 .form-sub-header {
-  font-size: 1.3em;
   border-bottom: 1px solid @gray-light;
   margin-left: @label-width * 0.75 + 0.5em;
+  font-size: 1.3em;
 }
 
 /****************************************** ERRORS, NOTIFICATIONS, INFOS, ... *****************************************/
@@ -153,14 +152,16 @@ ul.errors {
   margin: 0!important;
   & > li {
     display: inline-block;
-    margin: 0 0 0 @label-width + 0.3em;
+    width: (@max-width - @label-width - 0.6em);
     padding: 0.2em;
+    margin: 0 0 0 @label-width + 0.3em;
+    border: 1px solid @color-critical;
+
+    background: @color-critical;
+    color: @text-color-inverted;
+
     text-align: center;
     font-weight: 500;
-    border: 1px solid @color-critical;
-    color: @text-color-inverted;
-    background: @color-critical;
-    width: (@max-width - @label-width - 0.6em);
   }
   & > li:last-child {
     border-radius: 0 0 3px 3px;
@@ -189,9 +190,9 @@ label {
 .control-label-group {
   display: inline-block;
   padding-right: @horizontal-padding;
+  width: @label-width;
   text-align: right;
   vertical-align: middle;
-  width: @label-width;
 }
 
 /******************************************************* INPUTS *******************************************************/
@@ -209,11 +210,11 @@ input[type=time],
 input[type=url],
 select,
 textarea {
-  background: @white-dark; //todo(JeM): rename!
-  border: @border-width solid @gray-light;
-  padding: @vertical-padding / 2 @horizontal-padding / 2;
   height: 2.5em;
+  padding: @vertical-padding / 2 @horizontal-padding / 2;
+  border: @border-width solid @gray-light;
   border-radius: 3px;
+  background: @white-dark; //todo(JeM): rename!
   vertical-align: middle;
 
   &:focus:not([readonly]) {
@@ -222,26 +223,26 @@ textarea {
   width: @max-width - @label-width;
 
   &:hover {
-    background-color: @icinga-blue-lightest;
     border: @border-width  solid @icinga-blue-light;
+    background-color: @icinga-blue-lightest;
 
   }
 
   &:focus,
   &:active {
-    background: @icinga-blue-lighter;
     border: @border-width  solid @icinga-blue;
+    background: @icinga-blue-lighter;
   }
 }
 
 // Resize only vertically
 textarea {
   overflow: auto;
-  resize: vertical;
-  width: @max-width - @label-width;
-  height: 5em;
-  min-height: 2.5em;
   padding: @vertical-padding * 1.5 @horizontal-padding / 2;
+  width: @max-width - @label-width;
+  min-height: 2.5em;
+  height: 5em;
+  resize: vertical;
 }
 
 // Hide browser-styling in IE10
@@ -272,9 +273,9 @@ input::-webkit-input-placeholder {
 }
 
 .search {
+  padding-left: 1.5em;
   background: transparent url("../img/icons/search.png") no-repeat scroll 0.1em center;
   background-size: 1em 1em;
-  padding-left: 1.5em;
 
   &:focus {
     background-color: @body-bg-color;
@@ -282,7 +283,7 @@ input::-webkit-input-placeholder {
   }
 }
 
-//todo(JeM): special select?
+//todo(JeM): special select => maybe turn into togglebox?
 select.grant-permissions {
   height: 20em;
   width: auto;
@@ -291,9 +292,9 @@ select.grant-permissions {
 /************************************************** CHECKBOX, RADIO **************************************************/
 //todo: rework dirty noscript quickfix from 3722bca
 .checkbox-group {
-  border: none;
   margin: 0;
   padding: 0;
+  border: none;
 }
 
 input[type="checkbox"]:not(.toggle-checkbox),
@@ -303,20 +304,20 @@ input[type="radio"] {
   // Box for Checkbox
   & + label:before,
       & + noscript + label:before {
+    display: inline-block;
     margin-right: 0.5em;
     width: 1.1em;
     height: 1.1em;
-    content: "";
-    display: inline-block;
-    vertical-align: text-top;
     border: @border-width solid @gray-light;
+    vertical-align: text-top;
+    content: "";
   }
   &:hover:enabled + label:before,
   &:focus + label:before,
       &:hover:enabled + noscript + label:before,
       &:focus + noscript + label:before {
-    background: @icinga-blue-lighter;
     border: @border-width solid @icinga-blue-light;
+    background: @icinga-blue-lighter;
   }
   &:focus + label:before,
       &:focus + noscript + label:before {
@@ -324,12 +325,12 @@ input[type="radio"] {
   }
   &:checked:enabled + label:before,
       &:checked:enabled + noscript + label:before {
-    background: @icinga-blue;
     border: @border-width solid @icinga-blue;
+    background: @icinga-blue;
   }
   &:disabled + label:before {
-    box-shadow: none;
     background: @gray-lighter;
+    box-shadow: none;
   }
 
   // Actual label
@@ -337,10 +338,10 @@ input[type="radio"] {
       & + noscript + label {
     display: block;
     position: relative;
-    cursor: pointer;
     padding: 0px;
     margin-left: @label-width;
     text-align: left;
+    cursor: pointer;
   }
   &:disabled + label,
       &:disabled + noscript + label {
@@ -350,14 +351,16 @@ input[type="radio"] {
 
   &:checked + label:after,
       &:checked + noscript + label:after {
-    content: '\e803';
-    font-family: "ifont";
-    line-height: 1em;
-    color: @text-color-inverted;
     position: absolute;
     left: 0.1em;
     top: 0.1em;
+
+    color: @text-color-inverted;
+
+    font-family: "ifont";
+    line-height: 1em;
     font-size: 1em;
+    content: '\e803';
   }
 }
 
@@ -368,14 +371,16 @@ input[type="radio"] {
   }
 
   &:checked + label:after {
-    content: "\e87c";
-    font-family: "ifont";
-    line-height: 1em;
-    color: @text-color-inverted;
     position: absolute;
     left: 0.3em;
     top: 0.3em;
+
+    color: @text-color-inverted;
+
+    font-family: "ifont";
+    line-height: 1em;
     font-size: 0.75em;
+    content: "\e87c";
   }
 }
 
@@ -388,14 +393,14 @@ input[type="radio"] {
   // todo (JeM): Use icon font (e.g. icon-plus)
   // Box for Checkbox
   & + label:before {
+    display: inline-block;
     margin-top: 0.25em;
     margin-right: 0.6em;
     height: 0.5em;
-    content: '';
-    transform: rotate(90deg);
-    display: inline-block;
-    vertical-align: text-top;
     border: @border-width solid @gray-light;
+    vertical-align: text-top;
+    transform: rotate(90deg);
+    content: '';
   }
   &:hover:enabled + label:before,
   &:focus:enabled + label:before,
@@ -409,11 +414,11 @@ input[type="radio"] {
 
   // Actual label
   & + label {
-    display: block;
     position: relative;
-    cursor: pointer;
+    display: block;
     padding: 0px;
     margin-left: @label-width;
+    cursor: pointer;
   }
 }
 
@@ -427,12 +432,11 @@ input[type="radio"] {
   display: block;
 }
 
-.toggle-checkbox-legend {
-}
+.toggle-checkbox-legend {}
 
 .toggle-checkbox-content {
-  font-size: 0.95em;
   margin-left: 1.5em;
+  font-size: 0.95em;
 }
 
 /***************************************************** LOGIN FORM *****************************************************/
@@ -464,11 +468,13 @@ ul.errors {
   & > li {
     display: inline-block;
     padding: 0.2em;
-    text-align: center;
-    font-weight: 500;
     border: 1px solid @color-critical;
+
     color: @text-color-inverted;
     background: @color-critical;
+
+    text-align: center;
+    font-weight: 500;
   }
   & > li:last-child {
     border-radius: 0 0 3px 3px;
@@ -483,9 +489,9 @@ ul.errors {
 #layout.default-layout.twocols,
 #layout.wide-layout.twocols #col1 {
   .control-label-group {
-    text-align: left;
-    max-width: @max-width;
     width: 100%;
+    max-width: @max-width;
+    text-align: left;
   }
 
   .form-sub-header {
