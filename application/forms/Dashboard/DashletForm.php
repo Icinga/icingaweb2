@@ -92,16 +92,6 @@ class DashletForm extends Form
                 )
             )
         );
-        $this->addElement(
-            'checkbox',
-            'create_new_pane',
-            array(
-                'autosubmit'    => true,
-                'required'      => false,
-                'label'         => $this->translate('New dashboard'),
-                'description'   => $this->translate('Check this box if you want to add the dashlet to a new dashboard')
-            )
-        );
         if (empty($panes) || ((isset($formData['create_new_pane']) && $formData['create_new_pane'] != false))) {
             $this->addElement(
                 'text',
@@ -124,6 +114,16 @@ class DashletForm extends Form
                 )
             );
         }
+        $this->addElement(
+            'checkbox',
+            'create_new_pane',
+            array(
+                'autosubmit'    => true,
+                'required'      => false,
+                'label'         => $this->translate('New dashboard'),
+                'description'   => $this->translate('Check this box if you want to add the dashlet to a new dashboard')
+            )
+        );
     }
 
     /**
