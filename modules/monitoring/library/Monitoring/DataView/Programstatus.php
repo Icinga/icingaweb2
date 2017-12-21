@@ -24,7 +24,6 @@ class Programstatus extends DataView
             'last_command_check',
             'last_log_rotation',
             'notifications_enabled',
-            'disable_notif_expire_time',
             'active_service_checks_enabled',
             'passive_service_checks_enabled',
             'active_host_checks_enabled',

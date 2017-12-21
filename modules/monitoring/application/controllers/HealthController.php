@@ -72,7 +72,6 @@ class HealthController extends Controller
                     'global_service_event_handler',
                     'global_host_event_handler',
                     'notifications_enabled',
-                    'disable_notif_expire_time',
                     'active_service_checks_enabled',
                     'passive_service_checks_enabled',
                     'active_host_checks_enabled',
@@ -175,8 +174,7 @@ class HealthController extends Controller
             ->from(
                 'programstatus',
                 array(
-                    'notifications_enabled',
-                    'disable_notif_expire_time'
+                    'notifications_enabled'
                 )
             )
             ->getQuery()

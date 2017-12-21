@@ -74,11 +74,6 @@ class ToggleInstanceFeaturesCommandForm extends CommandForm
                 } else {
                     $notificationDescription = null;
                 }
-            } elseif ($this->status->disable_notif_expire_time) {
-                $notificationDescription = sprintf(
-                    $this->translate('Notifications will be re-enabled in <strong>%s</strong>'),
-                    $this->getView()->timeUntil($this->status->disable_notif_expire_time)
-                );
             }
         }
 
@@ -126,18 +121,7 @@ class ToggleInstanceFeaturesCommandForm extends CommandForm
             array(
                 'label'         => $this->translate('Notifications'),
                 'autosubmit'    => true,
-                'description'   => $notificationDescription,
-                'decorators'    => array(
-                    array('Label', array('tag'=>'span', 'separator' => '', 'class' => 'control-label')),
-                    array(
-                        'Description',
-                        array('tag' => 'span', 'class' => 'description', 'escape' => false)
-                    ),
-                    array(array('labelWrap' => 'HtmlTag'), array('tag' => 'div', 'class' => 'control-label-group')),
-                    array('ViewHelper', array('separator' => '')),
-                    array('Errors', array('separator' => '')),
-                    array('HtmlTag', array('tag' => 'div', 'class' => 'control-group'))
-                ),
+                'Help'          => $notificationDescription, //todo(JeM): does that make sense?
                 'disabled'      => $toggleDisabled
             )
         );
