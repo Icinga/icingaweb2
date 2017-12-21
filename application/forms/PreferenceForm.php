@@ -313,7 +313,7 @@ class PreferenceForm extends Form
             array(
                 'decorators' => array(
                     'FormElements',
-                    array('HtmlTag', array('tag' => 'div', 'class' => 'control-group'))
+                    array('HtmlTag', array('tag' => 'div', 'class' => 'control-group form-controls'))
                 )
             )
         );
