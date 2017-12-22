@@ -53,6 +53,7 @@ class AccountController extends Controller
                 $changePasswordForm
                     ->setBackend($userBackend)
                     ->handleRequest();
+                $changePasswordForm->setTitle($this->translate('Account'));
                 $this->view->changePasswordForm = $changePasswordForm;
             }
         }
@@ -65,6 +66,7 @@ class AccountController extends Controller
                 'resource'  => $config->config_resource
             )), $user));
         }
+        $form->setTitle($this->translate('Preferences'));
         $form->handleRequest();
 
         $this->view->form = $form;

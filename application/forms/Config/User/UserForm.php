@@ -16,16 +16,6 @@ class UserForm extends RepositoryForm
     protected function createInsertElements(array $formData)
     {
         $this->addElement(
-            'checkbox',
-            'is_active',
-            array(
-                'required'      => true,
-                'value'         => true,
-                'label'         => $this->translate('Active'),
-                'description'   => $this->translate('Prevents the user from logging in if unchecked')
-            )
-        );
-        $this->addElement(
             'text',
             'user_name',
             array(
@@ -41,7 +31,16 @@ class UserForm extends RepositoryForm
                 'label'     => $this->translate('Password')
             )
         );
-
+        $this->addElement(
+            'checkbox',
+            'is_active',
+            array(
+                'required'      => true,
+                'value'         => true,
+                'label'         => $this->translate('Active'),
+                'description'   => $this->translate('Prevents the user from logging in if unchecked')
+            )
+        );
         $this->setTitle($this->translate('Add a new user'));
         $this->setSubmitLabel($this->translate('Add'));
     }

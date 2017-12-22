@@ -201,7 +201,8 @@ class ConfigController extends Controller
                 'Create a new backend for authenticating your users. This backend'
                 . ' will be added at the end of your authentication order.'
             ))
-            ->setIniConfig(Config::app('authentication'));
+            ->setIniConfig(Config::app('authentication'))
+            ->setTitle($this->translate('User Backend'));
 
         try {
             $form->setResourceConfig(ResourceFactory::getResourceConfigs());
@@ -325,6 +326,7 @@ class ConfigController extends Controller
             'url'   => Url::fromRequest()
         ))->activate('resources/new');
         $form = new ResourceConfigForm();
+        $form->setTitle($this->translate('Create Resource'));
         $form->addDescription($this->translate('Resources are entities that provide data to Icinga Web 2.'));
         $form->setIniConfig(Config::app('resources'));
         $form->setRedirectUrl('config/resource');
