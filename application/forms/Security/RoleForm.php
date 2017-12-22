@@ -116,7 +116,7 @@ class RoleForm extends ConfigForm
     {
         $generalRoleForm = new GeneralRoleForm();
         $this->addSubForm($generalRoleForm->create($formData));
-        $generalRoleForm->setTitle('General Information');
+        $generalRoleForm->setTitle($this->translate('General Information'));
         $generalRoleForm->addDecorator(
             'Description',
             array('tag' => 'h2', 'class' => 'form-sub-header', 'placement' => 'prepend')
@@ -124,7 +124,7 @@ class RoleForm extends ConfigForm
 
         $permissionRoleForm = new PermissionsRoleForm();
         $this->addSubForm($permissionRoleForm->create($formData));
-        $permissionRoleForm->setTitle('Permissions');
+        $permissionRoleForm->setTitle($this->translate('Permissions'));
         $permissionRoleForm->addDecorator(
             'Description',
             array('tag' => 'h2', 'class' => 'form-sub-header', 'placement' => 'prepend')
@@ -132,7 +132,7 @@ class RoleForm extends ConfigForm
 
         $restrictionRoleForm = new RestrictionsRoleForm();
         $this->addSubForm($restrictionRoleForm->create($formData));
-        $restrictionRoleForm->setTitle('Restrictions');
+        $restrictionRoleForm->setTitle($this->translate('Restrictions'));
         $restrictionRoleForm->addDecorator(
             'Description',
             array('tag' => 'h2', 'class' => 'form-sub-header', 'placement' => 'prepend')

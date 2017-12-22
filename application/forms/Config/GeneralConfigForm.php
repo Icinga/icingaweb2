@@ -34,28 +34,28 @@ class GeneralConfigForm extends ConfigForm
         $domainConfigForm = new DefaultAuthenticationDomainConfigForm();
 
         $this->addSubForm($appConfigForm->create($formData));
-        $appConfigForm->setTitle('Application');
+        $appConfigForm->setTitle($this->translate('Application'));
         $appConfigForm->addDecorator(
             'Description',
             array('tag' => 'h2', 'class' => 'form-sub-header', 'placement' => 'prepend')
         );
 
         $this->addSubForm($loggingConfigForm->create($formData));
-        $loggingConfigForm->setTitle('Logging');
+        $loggingConfigForm->setTitle($this->translate('Logging'));
         $loggingConfigForm->addDecorator(
             'Description',
             array('tag' => 'h2', 'class' => 'form-sub-header', 'placement' => 'prepend')
         );
 
         $this->addSubForm($themingConfigForm->create($formData));
-        $themingConfigForm->setTitle('Theming');
+        $themingConfigForm->setTitle($this->translate('Theming'));
         $themingConfigForm->addDecorator(
             'Description',
             array('tag' => 'h2', 'class' => 'form-sub-header', 'placement' => 'prepend')
         );
 
         $this->addSubForm($domainConfigForm->create($formData));
-        $domainConfigForm->setTitle('Domain');
+        $domainConfigForm->setTitle($this->translate('Domain'));
         $domainConfigForm->addDecorator(
             'Description',
             array('tag' => 'h2', 'class' => 'form-sub-header', 'placement' => 'prepend')

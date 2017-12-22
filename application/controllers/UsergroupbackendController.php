@@ -39,7 +39,7 @@ class UsergroupbackendController extends Controller
     {
         $form = new UserGroupBackendForm();
         $form->setRedirectUrl('config/userbackend');
-        $form->setTitle('Usergroup Backend');
+        $form->setTitle($this->translate('Usergroup Backend'));
         $form->addDescription($this->translate('Create a new backend to associate users and groups with.'));
         $form->setIniConfig(Config::app('groups'));
         $form->setOnSuccess(function (UserGroupBackendForm $form) {
