@@ -22,7 +22,6 @@ class ApplicationConfigForm extends Form
         $this->setName('form_config_general_application');
     }
 
-    //TODO (JeM): Move checkboxes to the bottom of forms
     /**
      * {@inheritdoc}
      *

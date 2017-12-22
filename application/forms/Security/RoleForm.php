@@ -16,7 +16,7 @@ use Icinga\Util\StringHelper;
  */
 class RoleForm extends ConfigForm
 {
-    //todo(JeM): Split into sub-forms and give them sub-headings when used
+    //todo(JeM): Split into sub-forms and give them sub-headings
     /**
      * Provided permissions by currently loaded modules
      *
@@ -114,82 +114,29 @@ class RoleForm extends ConfigForm
      */
     public function createElements(array $formData = array())
     {
-        $this->addElements(array(
-            array(
-                'text',
-                'name',
-                array(
-                    'required'      => true,
-                    'label'         => $this->translate('Role Name'),
-                    'description'   => $this->translate('The name of the role'),
-                    'ignore'        => true
-                ),
-            ),
-            array(
-                'textarea',
-                'users',
-                array(
-                    'label'         => $this->translate('Users'),
-                    'description'   => $this->translate('Comma-separated list of users that are assigned to the role')
-                ),
-            ),
-            array(
-                'textarea',
-                'groups',
-                array(
-                    'label'         => $this->translate('Groups'),
-                    'description'   => $this->translate('Comma-separated list of groups that are assigned to the role')
-                ),
-            ),
+        $generalRoleForm = new GeneralRoleForm();
+        $this->addSubForm($generalRoleForm->create($formData));
+        $generalRoleForm->setTitle('General Information');
+        $generalRoleForm->addDecorator(
+            'Description',
+            array('tag' => 'h2', 'class' => 'form-sub-header', 'placement' => 'prepend')
+        );
 
-        ));
+        $permissionRoleForm = new PermissionsRoleForm();
+        $this->addSubForm($permissionRoleForm->create($formData));
+        $permissionRoleForm->setTitle('Permissions');
+        $permissionRoleForm->addDecorator(
+            'Description',
+            array('tag' => 'h2', 'class' => 'form-sub-header', 'placement' => 'prepend')
+        );
 
-        $elements = array();
-        foreach ($this->providedPermissions as $name => $module) {
-            foreach ($module as $location => $label) {
-                $elements[] = $this->createElement(
-                    'checkbox',
-                    $label,
-                    array(
-                        'label'         => $label,
-                        'description'   => $location
-                    )
-                );
-            }
-            if (! empty($elements)) {
-                $name = ucfirst($name);
-                $this->addDisplayGroup($elements, $name, array('class' => 'checkbox-group toggle-checkbox-content'));
-                $this->getDisplayGroup($name)->removeDecorator('DtDdWrapper');
-                $this->getDisplayGroup($name)->removeDecorator('HtmlTag');
-                $this->getDisplayGroup($name)->addDecorator(
-                    'ToggleCheckbox',
-                    array(
-                        'id'        => $name,
-                        'label'     => $name
-                    )
-                );
-                $this->getDisplayGroup($name)->addDecorator(
-                    'HtmlTag',
-                    array(
-                        'tag' => 'div',
-                        'class' => 'control-group toggle-checkbox'
-                    )
-                );
-                $elements = array();
-            }
-        }
-
-
-        foreach ($this->providedRestrictions as $name => $spec) {
-            $this->addElement(
-                'text',
-                $name,
-                array(
-                    'label'         => $spec['name'],
-                    'description'   => $spec['description']
-                )
-            );
-        }
+        $restrictionRoleForm = new RestrictionsRoleForm();
+        $this->addSubForm($restrictionRoleForm->create($formData));
+        $restrictionRoleForm->setTitle('Restrictions');
+        $restrictionRoleForm->addDecorator(
+            'Description',
+            array('tag' => 'h2', 'class' => 'form-sub-header', 'placement' => 'prepend')
+        );
 
         return $this;
     }
