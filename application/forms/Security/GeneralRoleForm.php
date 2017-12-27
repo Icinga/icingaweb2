@@ -3,7 +3,6 @@
 
 namespace Icinga\Forms\Security;
 
-
 use Icinga\Forms\ConfigForm;
 
 class GeneralRoleForm extends ConfigForm
