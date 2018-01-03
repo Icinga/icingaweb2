@@ -248,11 +248,10 @@ class FilterQueryString
 
     protected function parseQueryString($string)
     {
+        $filter = urldecode($string);
         $this->pos = 0;
-
-        $this->string = $string;
-
-        $this->length = strlen($string);
+        $this->string = $filter;
+        $this->length = strlen($filter);
 
         if ($this->length === 0) {
             return Filter::matchAll();
