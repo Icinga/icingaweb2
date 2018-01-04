@@ -361,13 +361,16 @@ class ListController extends Controller
         );
         $orientationBox->applyRequest($this->getRequest());
 */
+        $objectType = $this->getParam('objecttype', 'services');
+        $from = date('c', $this->getParam('from', strtotime('midnight 3 months ago')));
         $query = $this->backend->select()->from(
-            'eventgrid',
+            'eventgrid' . $objectType,
             array('day', $form->getValue('state'))
         );
         $this->params->remove(array('objecttype', 'from', 'to', 'state', 'btn_submit'));
         $this->view->filter = Filter::fromQuerystring((string) $this->params);
         $query->applyFilter($this->view->filter);
+        $query->applyFilter(Filter::fromQuerystring('timestamp >= ' . $from));
         $this->applyRestriction('monitoring/filter/objects', $query);
         $this->view->summary = $query;
         $this->view->column = $form->getValue('state');
