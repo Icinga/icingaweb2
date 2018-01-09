@@ -10,10 +10,9 @@
 @gray-lightest: #F7F7F7;
 
 // Icinga colors
-@icinga-blue-dark: #006D8C;
 @icinga-blue: #0095BF;
-@icinga-blue-light: #67c3dd;
-@icinga-blue-lighter: #f3faff;
+@icinga-blue-light: mix(contrast(@icinga-blue, #000, #fff, 42), @icinga-blue, 50%);
+@icinga-blue-lighter: mix(contrast(@icinga-blue, #000, #fff, 42), @icinga-blue, 95%);
 
 @icinga-secondary: #EF4F98;
 
