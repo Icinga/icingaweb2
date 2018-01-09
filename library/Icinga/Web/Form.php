@@ -962,7 +962,7 @@ class Form extends Zend_Form
             ) {
                 $options['decorators'] = static::$defaultElementDecorators;
                 if (! isset($options['data-progress-label']) && ($type === 'submit'
-                    || ($type === 'button' && isset($options['type']) && $options['type'] === 'submit'))
+                        || ($type === 'button' && isset($options['type']) && $options['type'] === 'submit'))
                 ) {
                     array_splice($options['decorators'], 1, 0, array(array('Spinner', array('separator' => ''))));
                 } elseif ($type === 'hidden') {
@@ -1375,11 +1375,13 @@ class Form extends Zend_Form
                 ));
             } else {
                 $this->addDecorator(
-                    'Description', array(
-                    'tag' => 'h2',
-                    'class' => 'form-sub-header',
-                    'placement' => 'prepend'
-                    ));
+                    'Description',
+                    array(
+                        'tag' => 'h2',
+                        'class' => 'form-sub-header',
+                        'placement' => 'prepend'
+                    )
+                );
                 if ($this->getUseFormAutosubmit()) {
                     $this->getDecorator('Description')->setEscape(false);
                     $this->addDecorator(
