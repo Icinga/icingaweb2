@@ -964,6 +964,12 @@ abstract class IdoQuery extends DbQuery
             $leftcol = 'h.host_object_id';
         }
 
+        $mapped = $this->getMappedField($leftcol);
+        if ($mapped !== null) {
+            $this->requireColumn($leftcol);
+            $leftcol = $mapped;
+        }
+
         $joinOn = sprintf(
             $this->customVarsJoinTemplate,
             $leftcol,
