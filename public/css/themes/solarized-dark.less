@@ -2,13 +2,13 @@
 
 /* solarized colors: http://simianuprising.com/wp-content/uploads/2012/08/solarized-reference-horizontal.png */
 
+@base03: #002b36;
+@base02: #073645;
 @base01: #586e75;
 @base00: #657b83;
-@base02: #073645;
-@base03: #002b36;
-@base0: #839496;
-@base1: #93a1a1;
-@base2: #eee8d5;
+@base0:  #839496;
+@base1:  #93a1a1;
+@base2:  #eee8d5;
 
 @icinga-blue: @base1;
 @body-bg-color: @base03;
@@ -264,5 +264,29 @@ textarea {
 
   ul.main-actions li a {
     color: @icinga-blue;
+  }
+}
+
+input:not([type]),
+input[type=text],
+input[type=date],
+input[type=datetime-local],
+input[type=email],
+input[type=number],
+input[type=password],
+input[type=search],
+input[type=tel],
+input[type=time],
+input[type=url],
+select,
+textarea {
+  border-color: @text-color-light;
+  &:focus:not([readonly]) {
+    border-color: @text-color-light;
+    background-color: @base02;
+  }
+  &:focus,
+  &:active {
+    background: @base02;
   }
 }
