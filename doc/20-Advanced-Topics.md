@@ -459,7 +459,7 @@ by Icinga Web 2.
 of `openssl passwd -1 <password>`.
 5. Make sure the `ido-mysql` and `api` features are enabled in Icinga 2: `icinga2 feature enable ido-mysql` and 
 `icinga2 feature enable api`.
-6. Generate Apache/nginx config. This command will print an apacahe config for you on stdout:
+6. Generate Apache/nginx config. This command will print an apache config for you on stdout:
 `icingacli setup config webserver apache`. Similarly for nginx. You need to place that configuration in the right place,
 for example `/etc/apache2/sites-enabled/icingaweb2.conf`.
 7. Add `www-data` user to `icingaweb2` group if not done already (`usermod -a -G icingaweb2 www-data`).
