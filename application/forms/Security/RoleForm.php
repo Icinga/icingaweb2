@@ -16,7 +16,6 @@ use Icinga\Util\StringHelper;
  */
 class RoleForm extends ConfigForm
 {
-    //todo(JeM): Split into sub-forms and give them sub-headings
     /**
      * Provided permissions by currently loaded modules
      *
