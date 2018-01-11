@@ -1,0 +1,28 @@
+<?php
+use Icinga\Module\Monitoring\Object\Service;
+
+/** @var string[][] $details */
+/** @var \Icinga\Module\Monitoring\Object\MonitoredObject $object */
+/** @var \Icinga\Web\View $this */
+?>
+<div class="controls">
+<?php
+if (! $this->compact) {
+    echo $this->tabs;
+}
+
+echo $object instanceof Service
+    ? '<h2>' . $this->translate('Current Service State') . '</h2>' . $this->render('partials/object/service-header.phtml')
+    : '<h2>' . $this->translate('Current Host State') . '</h2>' . $this->render('partials/object/host-header.phtml');
+?>
+</div>
+<div class="content">
+    <h2><?= $this->escape($this->translate('Event Details')) ?></h2>
+    <table class="event-details name-value-table" data-base-target="_next">
+    <?php
+    foreach ($details as $detail) {
+        echo '<tr><th>' . $this->escape($detail[0]) . '</th><td>' . $detail[1] . '</td></tr>';
+    }
+    ?>
+    </table>
+</div>

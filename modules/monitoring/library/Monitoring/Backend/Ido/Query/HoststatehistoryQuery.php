@@ -61,6 +61,7 @@ class HoststatehistoryQuery extends IdoQuery
             'service_host_name'     => 'so.name1'
         ),
         'statehistory' => array(
+            'id'            => 'hh.statehistory_id',
             'host'          => 'ho.name1 COLLATE latin1_general_ci',
             'host_name'     => 'ho.name1',
             'object_id'     => 'hh.object_id',

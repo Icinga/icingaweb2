@@ -547,6 +547,7 @@ class ListController extends Controller
         );
 
         $query = $this->backend->select()->from('eventhistory', array(
+            'id',
             'host_name',
             'host_display_name',
             'service_description',

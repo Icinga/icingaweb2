@@ -28,6 +28,7 @@ class HostflappingstarthistoryQuery extends IdoQuery
      */
     protected $columnMap = array(
         'flappinghistory' => array(
+            'id'            => 'hfh.flappinghistory_id',
             'host_name'     => 'ho.name1',
             'object_id'     => 'hfh.object_id',
             'object_type'   => '(\'host\')',

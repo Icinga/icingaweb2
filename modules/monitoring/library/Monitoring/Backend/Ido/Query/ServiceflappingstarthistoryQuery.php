@@ -28,6 +28,7 @@ class ServiceflappingstarthistoryQuery extends IdoQuery
      */
     protected $columnMap = array(
         'flappinghistory' => array(
+            'id'                    => 'sfh.flappinghistory_id',
             'host_name'             => 'so.name1',
             'object_id'             => 'sfh.object_id',
             'object_type'           => '(\'service\')',

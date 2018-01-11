@@ -1,6 +1,8 @@
 <?php
 use Icinga\Module\Monitoring\Object\Host;
 use Icinga\Module\Monitoring\Object\Service;
+use Icinga\Web\Url;
+use Icinga\Web\UrlParams;
 
 function contactsLink($match, $view) {
     $links = array();
@@ -35,8 +37,9 @@ $history->limit($limit * $page);
 $dateFormat = $this->translate('%A, %B %e, %Y', 'date.verbose');
 $lastDate = null;
 $flappingMsg = $this->translate('Flapping with a %.2f%% state change rate');
+$rowAction = Url::fromPath('monitoring/event/show');
 ?>
-    <table class="state-table" data-base-target="_next"<?php if (isset($tableCssClass)): ?> class="<?=$tableCssClass ?>"<?php endif ?>>
+    <table class="table-row-selectable state-table" data-base-target="_next"<?php if (isset($tableCssClass)): ?> class="<?=$tableCssClass ?>"<?php endif ?>>
     <tbody>
     <?php foreach ($history->peekAhead() as $event):
         $icon = '';
@@ -44,6 +47,11 @@ $flappingMsg = $this->translate('Flapping with a %.2f%% state change rate');
         $isService = isset($event->service_description);
         $msg = $event->output;
         $stateName = 'no-state';
+
+        $rowAction->setParams(new UrlParams())->addParams(array(
+            'type' => $event->type,
+            'id' => $event->id
+        ));
         switch ($event->type) {
             case 'notify':
                 $icon = 'bell';
@@ -134,7 +142,7 @@ $flappingMsg = $this->translate('Flapping with a %.2f%% state change rate');
                 <th colspan="2"><?= $currentDate ?></th>
             </tr>
         <?php endif ?>
-        <tr>
+        <tr href="<?= $rowAction ?>">
             <td class="state-col state-<?= $stateName ?>">
             <?php if ($history->getIteratorPosition() % $limit === 0): ?>
                 <a id="page-<?= $history->getIteratorPosition() / $limit + 1 ?>"></a>
@@ -163,7 +171,6 @@ $flappingMsg = $this->translate('Flapping with a %.2f%% state change rate');
                                 'service'   => $event->service_description
                             ),
                             array(
-                                'class' => 'rowaction',
                                 'title' => sprintf(
                                     $this->translate('Show detailed information for service %s on host %s'),
                                     $event->service_display_name,

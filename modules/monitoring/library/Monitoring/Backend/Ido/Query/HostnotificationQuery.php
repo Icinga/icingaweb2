@@ -27,6 +27,7 @@ class HostnotificationQuery extends IdoQuery
             'host_display_name' => 'h.display_name COLLATE latin1_general_ci'
         ),
         'history' => array(
+            'id'        => 'hn.notification_id',
             'output'    => null,
             'state'     => 'hn.state',
             'timestamp' => 'UNIX_TIMESTAMP(hn.start_time)',

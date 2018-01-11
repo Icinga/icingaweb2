@@ -1,7 +1,12 @@
 <?php
 use Icinga\Module\Monitoring\Object\Host;
 use Icinga\Module\Monitoring\Object\Service;
+use Icinga\Web\Url;
+
 /** @var \Icinga\Module\Monitoring\Object\MonitoredObject $object */
+
+$url = Url::fromRequest();
+$linkServiceName = ! ($url->getPath() === 'monitoring/service/show' && $url->getParam('service') === $object->service_description);
 ?>
 <table class="state-table service-detail-state">
     <tr>
@@ -16,10 +21,12 @@ use Icinga\Module\Monitoring\Object\Service;
         </td>
         <td>
             <?= $this->iconImage()->host($object) ?>
-            <span class="selectable"><?= $this->escape($object->host_display_name) ?></span>
-        <?php if ($object->host_display_name !== $object->host_name): ?>
-            <span class="selectable host-meta">&#40;<?= $this->escape($object->host_name) ?>&#41;</span>
-        <?php endif ?>
+            <a href="<?= Url::fromPath('monitoring/host/show', array('host' => $object->host_name)) ?>">
+                <span class="selectable"><?= $this->escape($object->host_display_name) ?></span>
+            <?php if ($object->host_display_name !== $object->host_name): ?>
+                <span class="selectable host-meta">&#40;<?= $this->escape($object->host_name) ?>&#41;</span>
+            <?php endif ?>
+            </a>
             <?= $this->hostFlags($object) ?>
         <?php if ($object->host_address6 && $object->host_address6 !== $object->host_name): ?>
             <div class="selectable host-meta" title="<?= $this->translate('IPv6 address') ?>">
@@ -45,10 +52,24 @@ use Icinga\Module\Monitoring\Object\Service;
         </td>
         <td>
             <?= $this->iconImage()->service($object) ?>
-            <?= $this->translate('Service') ?>&#58; <span class="selectable"><?= $this->escape($object->service_display_name) ?></span>
-            <?php if ($object->service_display_name !== $object->service_description): ?>
-                <span class="selectable service-meta">&#40;<?= $this->escape($object->service_description) ?>&#41;</span>
-            <?php endif ?>
+            <?= $this->translate('Service') ?>&#58;
+            <?php
+            if ($linkServiceName) {
+                echo '<a href="' . Url::fromPath('monitoring/service/show', array(
+                    'host'      => $object->host_name,
+                    'service'   => $object->service_description
+                )) . '">';
+            }
+            ?>
+                <span class="selectable"><?= $this->escape($object->service_display_name) ?></span>
+                <?php if ($object->service_display_name !== $object->service_description): ?>
+                    <span class="selectable service-meta">&#40;<?= $this->escape($object->service_description) ?>&#41;</span>
+                <?php endif ?>
+            <?php
+            if ($linkServiceName) {
+                echo '</a>';
+            }
+            ?>
             <?= $this->serviceFlags($object) ?>
         </td>
     </tr>

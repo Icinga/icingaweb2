@@ -561,14 +561,14 @@ form.instance-features span.description, form.object-features span.description {
     background-color: @color-warning;
     color: @body-bg-color;
     padding: 0.2em;
-  }  
-  
+  }
+
   .state-down {
     background-color: @color-down;
     color: @body-bg-color;
     padding: 0.2em;
   }
-  
+
   .state-up {
     background-color: @color-up;
     color: @body-bg-color;
@@ -582,6 +582,17 @@ form.instance-features span.description, form.object-features span.description {
   &:hover {
     border-bottom: 1px @text-color solid;
     text-decoration: none;
+  }
+}
+
+.event-details {
+  .badge {
+    font-size: 0.6em;
+    margin-right: 0.5em;
+  }
+
+  .state-label {
+    vertical-align: middle;
   }
 }
 

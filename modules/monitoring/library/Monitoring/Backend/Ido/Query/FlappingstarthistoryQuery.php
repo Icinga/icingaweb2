@@ -17,6 +17,7 @@ class FlappingstarthistoryQuery extends IdoQuery
      */
     protected $columnMap = array(
         'flappinghistory' => array(
+            'id'          => 'fsh.id',
             'object_type' => 'fsh.object_type'
         ),
         'history' => array(

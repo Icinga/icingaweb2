@@ -11,6 +11,7 @@ class EventHistory extends DataView
     public function getColumns()
     {
         return array(
+            'id',
             'instance_name',
             'cnt_notification',
             'cnt_hard_state',
