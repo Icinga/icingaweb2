@@ -161,11 +161,13 @@ class Navigation implements ArrayAccess, Countable, IteratorAggregate
         }
 
         if ($item === null) {
-            Logger::debug(
-                'Failed to find custom navigation item class %s for item %s. Using base class NavigationItem now',
-                $itemType,
-                $name
-            );
+            if ($itemType !== 'MenuItem') {
+                Logger::debug(
+                    'Failed to find custom navigation item class %s for item %s. Using base class NavigationItem now',
+                    $itemType,
+                    $name
+                );
+            }
 
             $item = new NavigationItem($name, $properties);
             static::$types[$itemType] = 'Icinga\\Web\\Navigation\\NavigationItem';
