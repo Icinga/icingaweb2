@@ -1,9 +1,6 @@
 /*! Icinga Web 2 | (c) 2016 Icinga Development Team | GPLv2+ */
 
 @icinga-blue: #006D8C;
-@icinga-blue-light: @icinga-blue;
-@icinga-blue-lighter: white;
-
 
 @color-ok: #006400;
 @color-critical: #EE0000;
@@ -84,6 +81,30 @@
 .boxview a:focus {
     color: @text-color;
     text-decoration: underline;
+}
+
+input:not([type]),
+input[type=text],
+input[type=date],
+input[type=datetime-local],
+input[type=email],
+input[type=number],
+input[type=password],
+input[type=search],
+input[type=tel],
+input[type=time],
+input[type=url],
+select,
+textarea {
+  border-color: @text-color-light;
+  &:focus:not([readonly]) {
+    border-color: @text-color-light;
+    background-color: @icinga-blue-lighter;
+  }
+  &:focus,
+  &:active {
+    background: @body-bg-color;
+  }
 }
 
 .icinga-module.module-monitoring {
