@@ -70,6 +70,7 @@ class CreateMembershipForm extends Form
             $options[$row->backend_name . ';' . $row->group_name] = $row->group_name . ' (' . $row->backend_name . ')';
         }
 
+        //todo(JeM): Maybe transform into checkboxes??
         $this->addElement(
             'multiselect',
             'groups',
