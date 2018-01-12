@@ -393,25 +393,26 @@ input[type="radio"] {
   position: absolute; // take it out of document flow
   opacity: 0; // hide it
 
-  // todo (JeM): Use icon font (e.g. icon-plus)
   // Box for Checkbox
   & + label:before {
     display: inline-block;
     margin-top: 0.25em;
     margin-right: 0.6em;
-    height: 0.5em;
-    border: @border-width solid @gray-light;
     vertical-align: text-top;
-    transform: rotate(90deg);
-    content: '';
+    color: @gray-light;
+
+    font-family: "ifont";
+    line-height: 1em;
+    font-size: 0.75em;
+    content: "\e805";
   }
   &:hover:enabled + label:before,
   &:focus:enabled + label:before,
   &:focus + label:before {
-    border: @border-width solid @icinga-blue-light;
+    color: @icinga-blue-light;
   }
   &:checked + label:before {
-    border: @border-width solid @icinga-blue;
+    color: @icinga-blue;
     transform: rotate(-45deg);
   }
 
