@@ -9,6 +9,8 @@
 # Requires:
 #
 #   apache
+#   epel
+#   scl
 #
 # Sample Usage:
 #
@@ -18,11 +20,16 @@ class php {
 
   include apache
   include epel
+  include scl
 
-  package { 'php':
+  package { 'rh-php71-php-fpm':
     ensure  => latest,
     notify  => Service['apache'],
-    require => Package['apache'],
+    require => [ Class['scl'], Package['apache'] ],
+  }
+  -> service { 'rh-php71-php-fpm':
+    ensure => running,
+    enable => true,
   }
 
   package { 'php-pecl-xdebug':
