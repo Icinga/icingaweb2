@@ -310,7 +310,10 @@ class ConfigController extends Controller
     public function resourceAction()
     {
         $this->assertPermission('config/application/resources');
-        $this->view->resources = Config::app('resources', true);
+        $this->view->resources = Config::app('resources', true)->getConfigObject()
+            ->setKeyColumn('name')
+            ->select()
+            ->order('name');
         $this->createApplicationTabs()->activate('resource');
     }
 
