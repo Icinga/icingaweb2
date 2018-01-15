@@ -153,10 +153,18 @@ In order to correctly manage your repository, please follow
 
 You can install Icinga Web 2 by using your distribution's package manager to install the `icingaweb2` package.
 Below is a list with examples for various distributions. The additional package `icingacli` is necessary to follow further steps in this guide.
+The additional package `libapache2-mod-php` is necessary on Ubuntu to make
+Icinga Web 2 working out-of-the-box if you aren't sure or don't care about [PHP
+FPM](02-Installation.md#setting-up-fpm).
 
-**Debian and Ubuntu**:
+**Debian**:
 ```
 apt-get install icingaweb2 icingacli
+```
+
+**Ubuntu**:
+```
+apt-get install icingaweb2 libapache2-mod-php icingacli
 ```
 
 **RHEL, CentOS and Fedora**:
