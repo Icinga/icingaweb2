@@ -147,6 +147,8 @@
 
             $(document).on('click', '.tree .handle', { self: this }, this.treeNodeToggle);
 
+            $(document).on('click', '#search + .search-reset', this.clearSearch);
+
             // TBD: a global autocompletion handler
             // $(document).on('keyup', 'form.auto input', this.formChangeDelayed);
             // $(document).on('change', 'form.auto input', this.formChanged);
@@ -607,6 +609,10 @@
             }
 
             return $target;
+        },
+
+        clearSearch: function (event) {
+            $(event.target).parent().find('#search').attr('value', '');
         },
 
         unbindGlobalHandlers: function () {
