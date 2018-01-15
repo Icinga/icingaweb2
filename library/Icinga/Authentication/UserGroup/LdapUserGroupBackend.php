@@ -689,6 +689,9 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
 
             $username = $user->getLocalUsername();
         } else {
+            if ($user->hasDomain()) {
+                return array();
+            }
             $username = $user->getUsername();
         }
 
