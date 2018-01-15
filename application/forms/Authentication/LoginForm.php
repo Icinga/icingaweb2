@@ -7,6 +7,7 @@ use Icinga\Application\Config;
 use Icinga\Authentication\Auth;
 use Icinga\Authentication\User\ExternalBackend;
 use Icinga\User;
+use Icinga\Util\StringWrapper;
 use Icinga\Web\Form;
 use Icinga\Web\Url;
 
@@ -92,7 +93,7 @@ class LoginForm extends Form
             $user->setDomain(Config::app()->get('authentication', 'default_domain'));
         }
         $password = $this->getElement('password')->getValue();
-        $authenticated = $authChain->authenticate($user, $password);
+        $authenticated = $authChain->authenticate($user, new StringWrapper($password));
         if ($authenticated) {
             $auth->setAuthenticated($user);
             $this->getResponse()->setRerenderLayout(true);
