@@ -113,14 +113,14 @@ class ListCommand extends Command
     }
 
     /**
-     * List and filter monitored objects
+     * List and filter hosts
      *
-     * This command allows you to search and visualize your monitored objects in
+     * This command allows you to search and visualize your hosts in
      * different ways.
      *
      * USAGE
      *
-     * icingacli monitoring list [<type>] [options]
+     * icingacli monitoring list hosts [options]
      *
      * OPTIONS
      *
@@ -140,18 +140,72 @@ class ListCommand extends Command
      *     Only show unhandled problems (HARD state and not acknowledged/in downtime).
      *
      *   --columns='<comma separated list of host/service columns>'
-     *     Add a limited set of columns to the output. The following host/service
+     *     Add a limited set of columns to the output. The following host
      *     attributes can be fetched: state, handled, output, acknowledged, in_downtime, perfdata last_state_change
      *
      * EXAMPLES
      *
-     *   icingacli monitoring list --problems
-     *   icingacli monitoring list --problems --service_state_type 0
-     *   icingacli monitoring list --host=local* --service=*disk*
-     *   icingacli monitoring list --columns 'host,service,service_output' \
-           --format='$host$: $service$ ($service_output$)'
+     *   icingacli monitoring list hosts --problems
+     *   icingacli monitoring list hosts --problems --host_state_type 0
+     *   icingacli monitoring list hosts --host=local*
+     *   icingacli monitoring list hosts --columns 'host,host_output' \
+     *     --format='$host$ ($host_output$)'
      */
-    public function statusAction()
+    public function hostsAction()
+    {
+        $columns = array(
+            'host_name',
+            'host_state',
+            'host_output',
+            'host_handled',
+            'host_acknowledged',
+            'host_in_downtime'
+        );
+        $query = $this->getQuery('hoststatus', $columns)
+            ->order('host_name');
+        echo $this->renderStatusQuery($query);
+    }
+
+    /**
+     * List and filter services
+     *
+     * This command allows you to search and visualize your services in
+     * different ways.
+     *
+     * USAGE
+     *
+     * icingacli monitoring list services [options]
+     *
+     * OPTIONS
+     *
+     *   --verbose  Show detailled output
+     *   --showsql  Dump generated SQL query (DB backend only)
+     *
+     *   --format=<csv|json|<custom>>
+     *     Dump columns in the given format. <custom> format allows $column$
+     *     placeholders, e.g. --format='$host$: $service$'. This requires
+     *     that the columns are specified within the --columns parameter.
+     *
+     *   --<column>[=filter]
+     *     Filter given column by optional filter. Boolean (1/0) columns are
+     *     true if no filter value is given.
+     *
+     *   --problems
+     *     Only show unhandled problems (HARD state and not acknowledged/in downtime).
+     *
+     *   --columns='<comma separated list of host/service columns>'
+     *     Add a limited set of columns to the output. The following service
+     *     attributes can be fetched: state, handled, output, acknowledged, in_downtime, perfdata last_state_change
+     *
+     * EXAMPLES
+     *
+     *   icingacli monitoring list services --problems
+     *   icingacli monitoring list services --problems --service_state_type 0
+     *   icingacli monitoring list services --host=local* --service=*disk*
+     *   icingacli monitoring list services --columns 'host,service,service_output' \
+     *     --format='$host$: $service$ ($service_output$)'
+     */
+    public function servicesAction()
     {
         $columns = array(
             'host_name',
