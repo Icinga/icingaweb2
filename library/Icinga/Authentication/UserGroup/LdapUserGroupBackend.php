@@ -683,7 +683,7 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
         $domain = $this->getDomain();
 
         if ($domain !== null) {
-            if (! $user->hasDomain() || strtolower($user->getDomain()) !== $domain) {
+            if (! $user->hasDomain() || strtolower($user->getDomain()) !== strtolower($domain)) {
                 return array();
             }
 
