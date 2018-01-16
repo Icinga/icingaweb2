@@ -407,19 +407,15 @@
             table.select($tr);
         }
 
-        // update history
-        var state = icinga.history.getCol1State();
         var count = table.selections().length;
         if (count > 0) {
             var query = table.toQuery();
             _this.icinga.loader.loadUrl(query, _this.icinga.events.getLinkTargetFor($tr));
-            state += '#!' + query;
         } else {
             if (_this.icinga.events.getLinkTargetFor($tr).attr('id') === 'col2') {
                 _this.icinga.ui.layout1col();
             }
         }
-        _this.icinga.history.pushUrl(state);
 
         // redraw all table selections
         _this.tables().each(function () {
