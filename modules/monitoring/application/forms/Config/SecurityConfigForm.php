@@ -57,7 +57,7 @@ class SecurityConfigForm extends ConfigForm
                 'description'   => $this->translate(
                     'Comma separated case insensitive list of protected custom variables.'
                     . ' Use * as a placeholder for zero or more wildcard characters.'
-                    . ' Existance of those custom variables will be shown, but their values will be masked.'
+                    . ' Existence of those custom variables will be shown, but their values will be masked.'
                 )
             )
         );
