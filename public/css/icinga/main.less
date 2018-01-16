@@ -215,3 +215,21 @@ a:hover > .icon-cancel {
   height: 100%;
   vertical-align: middle;
 }
+
+// Responsive iFrames
+
+.iframe-container {
+  position: relative;
+  height: 0;
+  overflow: hidden;
+  padding-bottom: 75%;
+  width: 100%;
+
+  & > iframe {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 100%;
+  }
+}
