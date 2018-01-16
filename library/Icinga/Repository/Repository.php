@@ -523,7 +523,7 @@ abstract class Repository implements Selectable
             }
         } elseif ($this->legacySortRules === null) {
             $foundTables = array_intersect_key($this->getQueryColumns(), $this->sortRules);
-            $this->legacyFilterColumns = empty($foundTables);
+            $this->legacySortRules = empty($foundTables);
         }
 
         if ($this->legacySortRules) {

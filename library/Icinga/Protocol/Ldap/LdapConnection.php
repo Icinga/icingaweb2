@@ -767,7 +767,7 @@ class LdapConnection implements Selectable, Inspectable
             $query,
             array_values($fields),
             0,
-            $serverSorting && $limit ? $offset + $limit : 0
+            ($serverSorting || ! $query->hasOrder()) && $limit ? $offset + $limit : 0
         );
         if ($results === false) {
             if (ldap_errno($ds) === self::LDAP_NO_SUCH_OBJECT) {
@@ -823,8 +823,11 @@ class LdapConnection implements Selectable, Inspectable
             && ($entry = ldap_next_entry($ds, $entry))
         );
 
-        if (! $serverSorting && $query->hasOrder()) {
-            uasort($entries, array($query, 'compare'));
+        if (! $serverSorting) {
+            if ($query->hasOrder()) {
+                uasort($entries, array($query, 'compare'));
+            }
+
             if ($limit && $count > $limit) {
                 $entries = array_splice($entries, $query->hasOffset() ? $query->getOffset() : 0, $limit);
             }
@@ -902,7 +905,7 @@ class LdapConnection implements Selectable, Inspectable
                 $query,
                 array_values($fields),
                 0,
-                $serverSorting && $limit ? $offset + $limit : 0
+                ($serverSorting || ! $query->hasOrder()) && $limit ? $offset + $limit : 0
             );
             if ($results === false) {
                 if (ldap_errno($ds) === self::LDAP_NO_SUCH_OBJECT) {
@@ -994,8 +997,11 @@ class LdapConnection implements Selectable, Inspectable
             ldap_search($ds, $query->getBase() ?: $this->getDn(), (string) $query);
         }
 
-        if (! $serverSorting && $query->hasOrder()) {
-            uasort($entries, array($query, 'compare'));
+        if (! $serverSorting) {
+            if ($query->hasOrder()) {
+                uasort($entries, array($query, 'compare'));
+            }
+
             if ($limit && $count > $limit) {
                 $entries = array_splice($entries, $query->hasOffset() ? $query->getOffset() : 0, $limit);
             }
