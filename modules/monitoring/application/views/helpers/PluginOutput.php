@@ -52,6 +52,30 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
     );
 
     /**
+     * Patterns to be replaced in html plugin output
+     *
+     * @var array
+     */
+    protected static $htmlPatterns = array(
+        '~\\\n~',
+        '~\\\t~',
+        '~\\\n\\\n~',
+        '~<table~'
+    );
+
+    /**
+     * Replacements for $htmlPatterns
+     *
+     * @var array
+     */
+    protected static $htmlReplacements = array(
+        "\n",
+        "\t",
+        "\n",
+        '<table style="font-size: 0.75em"'
+    );
+
+    /**
      * Render plugin output
      *
      * @param   string  $output
@@ -68,8 +92,8 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
         if (preg_match('~<[^>]*["/\'][^>]*>~', $output)) {
             // HTML
             $output = preg_replace(
-                '~<table~',
-                '<table style="font-size: 0.75em"',
+                self::$htmlPatterns,
+                self::$htmlReplacements,
                 $this->getPurifier()->purify($output)
             );
             $isHtml = true;
