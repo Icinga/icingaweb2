@@ -274,6 +274,11 @@ class Donut
             $offset -= $slice[0];
         }
 
+        $result = array(
+            'tag'     => 'div',
+            'content' => array($svg)
+        );
+
         if ($this->getLabelBig() || $this->getLabelSmall()) {
             $labels = array(
                 'tag' => 'div',
@@ -307,10 +312,10 @@ class Donut
                 );
             }
 
-            $svg['content'][] = $labels;
+            $result['content'][] = $labels;
         }
 
-        return $svg;
+        return $result;
     }
 
     /**
