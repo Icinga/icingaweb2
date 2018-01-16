@@ -3,17 +3,21 @@
 
 namespace Icinga\Web\Widget;
 
+use Icinga\Authentication\Auth;
 use Icinga\Data\Filterable;
 use Icinga\Data\FilterColumns;
 use Icinga\Data\Filter\Filter;
 use Icinga\Data\Filter\FilterExpression;
 use Icinga\Data\Filter\FilterChain;
 use Icinga\Data\Filter\FilterOr;
+use Icinga\Web\Request;
 use Icinga\Web\Url;
 use Icinga\Application\Icinga;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Web\Notification;
 use Exception;
+use Icinga\Web\Widget\Dashboard\Dashlet;
+use Icinga\Web\Widget\Dashboard\Pane;
 
 /**
  * Filter
@@ -229,6 +233,11 @@ class FilterEditor extends AbstractWidget
         ) : true;
     }
 
+    /**
+     * @param   Request $request
+     *
+     * @return  $this
+     */
     public function handleRequest($request)
     {
         $this->setUrl($request->getUrl()->without($this->ignoreParams));
@@ -327,6 +336,41 @@ class FilterEditor extends AbstractWidget
                     $filter = $this->applyChanges($request->getPost());
                     $url = $this->url()->setQueryString($filter->toQueryString())->addParams($preserve);
                     $url->getParams()->add('modifyFilter');
+
+                    $user = Auth::getInstance()->getUser();
+                    if ($user !== null
+                        && $request->get('save-dashlet') === $this->view()->translate('Apply and save dashlet')
+                        && isset($this->preservedParams['dashlet'])) {
+                        $paneAndDashlet = explode('.', $this->preservedParams['dashlet'], 2);
+                        if (count($paneAndDashlet) === 2) {
+                            list($paneName, $dashletName) = $paneAndDashlet;
+
+                            $dashboard = new Dashboard();
+                            $dashboard->setUser($user);
+                            $dashboard->load();
+
+                            if ($dashboard->hasPane($paneName)) {
+                                $pane = $dashboard->getPane($paneName);
+                            } else {
+                                $pane = new Pane($paneName);
+                                $pane->setUserWidget();
+                                $dashboard->addPane($pane);
+                            }
+
+                            $saveUrl = $url->without(array('modifyFilter', 'dashlet'))->getRelativeUrl();
+
+                            if ($pane->hasDashlet($dashletName)) {
+                                $pane->getDashlet($dashletName)->setUrl($saveUrl);
+                            } else {
+                                $dashlet = new Dashlet($dashletName, $saveUrl, $pane);
+                                $dashlet->setUserWidget();
+                                $pane->addDashlet($dashlet);
+                            }
+
+                            $dashboard->getConfig()->saveIni();
+                        }
+                    }
+
                     $this->redirectNow($url);
                 }
             }
@@ -774,7 +818,8 @@ class FilterEditor extends AbstractWidget
                 . $this->view()->escape($this->shorten($this->filter, 50))
                 . '</div>';
         }
-        return  '<div class="filter">'
+
+        $rendered = '<div class="filter">'
             . $this->renderSearch()
             . '<form action="'
             . Url::fromRequest()
@@ -783,7 +828,27 @@ class FilterEditor extends AbstractWidget
             . $this->renderFilter($this->filter)
             . '</li></ul>'
             . '<div class="buttons">'
-            . '<input type="submit" name="submit" value="Apply" />'
+            . '<input type="submit" name="submit" value="Apply" />';
+
+        if (Auth::getInstance()->getUser() !== null && isset($this->preservedParams['dashlet'])) {
+            $dashlet = explode('.', $this->preservedParams['dashlet'], 2);
+            if (count($dashlet) === 2) {
+                /** @var \Icinga\Web\View $view */
+                $view = $this->view();
+
+                $rendered .= sprintf(
+                    '<input type="submit" name="save-dashlet" value="%s" title="%s">',
+                    $view->translate('Apply and save dashlet'),
+                    sprintf(
+                        $view->translate('Apply and save dashlet "%s" of pane "%s"'),
+                        $dashlet[1],
+                        $dashlet[0]
+                    )
+                );
+            }
+        }
+
+        return $rendered
             . '<input type="submit" name="cancel" value="Cancel" />'
             . '</div>'
             . '<input type="hidden" name="formUID" value="FilterEditor">'
