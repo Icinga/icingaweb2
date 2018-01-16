@@ -12,6 +12,11 @@ v2.3 to v2.5 requires to follow the instructions for v2.4 too.
 >
 > Icinga Web 2 v2.5 requires **at least PHP 5.6**.
 
+**Breaking changes**
+
+* Hash marks (`#`) in INI files are no longer recognized as comments by
+  [parse_ini_file](https://secure.php.net/manual/en/function.parse-ini-file.php) since PHP 7.0.
+
 **Changes in packaging and dependencies**
 
 Valid for distributions:
@@ -37,6 +42,8 @@ Icinga Web 2 v2.5+ is not supported on these platforms:
 Please consider an upgrade of your central Icinga system to a newer distribution release.
 
 [packages.icinga.com](https://packages.icinga.com) provides an overview about currently supported distributions.
+
+**Database schema**
 
 Icinga Web 2 v2.5.0 requires a schema update for the database. The database schema has been adjusted to support
 usernames up to 254 characters. This is necessary to support the new domain-aware authentication feature.
