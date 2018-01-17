@@ -222,7 +222,7 @@ $section->add(N_('Contactgroups'), array(
 $section->add(N_('Comments'), array(
     'icon'        => 'chat-empty',
     'description' => $this->translate('List comments'),
-    'url'         => 'monitoring/list/comments?comment_type=comment|comment_type=ack',
+    'url'      => 'monitoring/list/comments?comment_type=(comment|ack)',
     'priority'    => 80
 ));
 $section->add(N_('Downtimes'), array(

@@ -68,8 +68,7 @@ class CommentController extends Controller
         $this->view->comment = $this->comment;
 
         if ($this->hasPermission('monitoring/command/comment/delete')) {
-            $listUrl = Url::fromPath('monitoring/list/comments')
-                ->setQueryString('comment_type=comment|comment_type=ack');
+            $listUrl = Url::fromPath('monitoring/list/comments')->setQueryString('comment_type=(comment|ack)');
             $form = new DeleteCommentCommandForm();
             $form
                 ->populate(array(
