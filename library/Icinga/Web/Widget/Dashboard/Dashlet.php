@@ -70,6 +70,19 @@ class Dashlet extends UserWidget
 EOD;
 
     /**
+     * The template string used for rendering this widget in case of an error
+     *
+     * @var string
+     */
+    private $errorTemplate = <<<'EOD'
+
+    <div class="container">
+        <h1 title="{TOOLTIP}">{TITLE}</h1>
+        <p class="error-message">{ERROR_MESSAGE}</p>
+    </div>
+EOD;
+
+    /**
      * Create a new dashlet displaying the given url in the provided pane
      *
      * @param string $title     The title to use for this dashlet
@@ -80,12 +93,6 @@ EOD;
     {
         $this->title = $title;
         $this->pane = $pane;
-        if (! $url) {
-            throw new IcingaException(
-                'Cannot create dashboard dashlet "%s" without valid URL',
-                $title
-            );
-        }
         $this->url = $url;
     }
 
@@ -207,6 +214,25 @@ EOD;
         }
 
         $view = $this->view();
+
+        if (! $this->url) {
+            $searchTokens = array(
+                '{TOOLTIP}',
+                '{TITLE}',
+                '{ERROR_MESSAGE}'
+            );
+
+            $replaceTokens = array(
+                sprintf($view->translate('Show %s', 'dashboard.dashlet.tooltip'), $view->escape($this->getTitle())),
+                $view->escape($this->getTitle()),
+                $view->escape(
+                    sprintf($view->translate('Cannot create dashboard dashlet "%s" without valid URL'), $this->title)
+                )
+            );
+
+            return str_replace($searchTokens, $replaceTokens, $this->errorTemplate);
+        }
+
         $url = $this->getUrl();
         $url->setParam('view', 'compact');
         $iframeUrl = clone $url;
