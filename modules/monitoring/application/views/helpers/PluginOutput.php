@@ -52,6 +52,30 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
     );
 
     /**
+     * Patterns to be replaced in html plugin output
+     *
+     * @var array
+     */
+    protected static $htmlPatterns = array(
+        '~\\\n~',
+        '~\\\t~',
+        '~\\\n\\\n~',
+        '~<table~'
+    );
+
+    /**
+     * Replacements for $htmlPatterns
+     *
+     * @var array
+     */
+    protected static $htmlReplacements = array(
+        "\n",
+        "\t",
+        "\n",
+        '<table style="font-size: 0.75em"'
+    );
+
+    /**
      * Render plugin output
      *
      * @param   string  $output
@@ -68,8 +92,8 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
         if (preg_match('~<[^>]*["/\'][^>]*>~', $output)) {
             // HTML
             $output = preg_replace(
-                '~<table~',
-                '<table style="font-size: 0.75em"',
+                self::$htmlPatterns,
+                self::$htmlReplacements,
                 $this->getPurifier()->purify($output)
             );
             $isHtml = true;
@@ -167,8 +191,11 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
 
             $config = HTMLPurifier_Config::createDefault();
             $config->set('Core.EscapeNonASCIICharacters', true);
-            $config->set('HTML.Allowed', 'p,br,b,a[href|target],i,table,tr,th[colspan],td[colspan],div,*[class]');
             $config->set('Attr.AllowedFrameTargets', array('_blank'));
+            $config->set(
+                'HTML.Allowed',
+                'p,br,b,a[href|target],i,ul,ol,li,table,tr,th[colspan],td[colspan],div,*[class]'
+            );
             // This avoids permission problems:
             // $config->set('Core.DefinitionCache', null);
             $config->set('Cache.DefinitionImpl', null);
