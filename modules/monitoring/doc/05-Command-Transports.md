@@ -72,10 +72,10 @@ Example:
 
 [icinga2]
 transport = "api"
-host = "127.0.0.1" // Icinga 2 host
+host = "127.0.0.1" ; Icinga 2 host
 port = "5665"
 username = "icingaweb2"
-password = "bea11beb7b810ea9ce6ea" // Change that!
+password = "bea11beb7b810ea9ce6ea" ; Change this!
 ```
 
 ## Use a Local Command Pipe <a id="commandtransports-local-command-pipe"></a>
