@@ -516,7 +516,7 @@ class FilterEditor extends AbstractWidget
     {
         $value = $filter === null ? '' : $filter->getExpression();
         if (is_array($value)) {
-            $value = '(' . implode('|', $value) . ')';
+            $value = implode('|', $value);
         }
         return sprintf(
             '<input type="text" name="%s" value="%s" />',
@@ -582,19 +582,39 @@ class FilterEditor extends AbstractWidget
     protected function selectSign(Filter $filter = null)
     {
         $signs = array(
-            '='  => '=',
-            '!=' => '!=',
-            '>'  => '>',
-            '<'  => '<',
-            '>=' => '>=',
-            '<=' => '<=',
+            '='         => '=',
+            '!='        => '!=',
+            '>'         => '>',
+            '<'         => '<',
+            '>='        => '>=',
+            '<='        => '<=',
+            'in'        => 'IN',
+            'not in'    => 'NOT IN'
         );
+
+        $filterSign = null;
+        if ($filter !== null) {
+            if (is_array($filter->getExpression())) {
+                switch ($filter->getSign()) {
+                    case '=':
+                        $filterSign = 'in';
+                        break;
+                    case '!=':
+                        $filterSign = 'not in';
+                        break;
+                    default:
+                        throw new Exception('Huh? How could that happen!?');
+                }
+            } else {
+                $filterSign = $filter->getSign();
+            }
+        }
 
         return $this->select(
             $this->elementId('sign', $filter),
             $signs,
-            $filter === null ? null : $filter->getSign(),
-            array('style' => 'width: 4em')
+            $filterSign,
+            array('style' => 'width: 6em')
         );
     }
 
@@ -658,6 +678,27 @@ class FilterEditor extends AbstractWidget
             } else {
                 $f = $filter->getById($id);
                 $f->setColumn($fs['column']);
+
+                $toArray = false;
+                switch ($fs['sign']) {
+                    case 'in':
+                        $fs['sign'] = '=';
+                        $toArray = true;
+                        break;
+                    case 'not in':
+                        $fs['sign'] = '!=';
+                        $toArray = true;
+                        break;
+                }
+
+                if ($toArray) {
+                    if (strpos($fs['value'], '|')) {
+                        $fs['value'] = explode('|', $fs['value']);
+                    } elseif (strpos($fs['value'], ',')) {
+                        $fs['value'] = explode(',', $fs['value']);
+                    }
+                }
+
                 if ($f->getSign() !== $fs['sign']) {
                     if ($f->isRootNode()) {
                         $filter = $f->setSign($fs['sign']);
