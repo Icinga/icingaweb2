@@ -13,11 +13,6 @@ class EventHistory extends DataView
         return array(
             'id',
             'instance_name',
-            'cnt_notification',
-            'cnt_hard_state',
-            'cnt_soft_state',
-            'cnt_downtime_start',
-            'cnt_downtime_end',
             'host_name',
             'host_display_name',
             'service_description',
