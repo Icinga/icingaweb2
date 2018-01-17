@@ -212,6 +212,36 @@ abstract class Repository implements Selectable
     protected $columnAliasMap;
 
     /**
+     * "3.3.13. Generalized Time" syntax as specified by IETF RFC 4517
+     *
+     * @var string
+     *
+     * @see https://tools.ietf.org/html/rfc4517#section-3.3.13
+     */
+    protected $generalizedTimePattern = <<<EOD
+/\A
+    (?P<YmdH>
+        [0-9]{4}                    # century year
+        (?:0[1-9]|1[0-2])           # month
+        (?:0[1-9]|[12][0-9]|3[0-1]) # day
+        (?:[01][0-9]|2[0-3])        # hour
+    )
+    (?:
+        (?P<i>[0-5][0-9])           # minute
+        (?P<s>[0-5][0-9]|60)?       # second or leap-second
+    )?
+    (?:[.,](?P<frac>[0-9]+))?       # fraction
+    (?P<tz>                         # g-time-zone
+            Z
+        |
+            [-+]
+            (?:[01][0-9]|2[0-3])    # hour
+            (?:[0-5][0-9])?         # minute
+    )
+\z/x
+EOD;
+
+    /**
      * Create a new repository object
      *
      * @param   Selectable|null $ds The datasource to use.
@@ -929,6 +959,8 @@ abstract class Repository implements Selectable
      * @param   string|null     $value
      *
      * @return  int
+     *
+     * @see https://tools.ietf.org/html/rfc4517#section-3.3.13
      */
     protected function retrieveGeneralizedTime($value)
     {
@@ -936,21 +968,57 @@ abstract class Repository implements Selectable
             return $value;
         }
 
-        if (($dateTime = DateTime::createFromFormat('YmdHis.uO', $value)) !== false
-            || ($dateTime = DateTime::createFromFormat('YmdHis.uZ', $value)) !== false
-            || ($dateTime = DateTime::createFromFormat('YmdHis.u', $value)) !== false
-            || ($dateTime = DateTime::createFromFormat('YmdHis', $value)) !== false
-            || ($dateTime = DateTime::createFromFormat('YmdHi', $value)) !== false
-            || ($dateTime = DateTime::createFromFormat('YmdH', $value)) !== false
-        ) {
-            return $dateTime->getTimeStamp();
-        } else {
-            Logger::debug(sprintf(
-                'Failed to parse "%s" based on the ASN.1 standard (GeneralizedTime) in repository "%s".',
-                $value,
-                $this->getName()
-            ));
+        $matches = array();
+
+        if (preg_match($this->generalizedTimePattern, $value, $matches)) {
+            $dateTimeRaw = $matches['YmdH'];
+            $dateTimeFormat = 'YmdH';
+
+            if ($matches['i'] !== '') {
+                $dateTimeRaw .= $matches['i'];
+                $dateTimeFormat .= 'i';
+
+                if ($matches['s'] !== '') {
+                    $dateTimeRaw .= $matches['s'];
+                    $dateTimeFormat .= 's';
+                    $fractionOfSeconds = 1;
+                } else {
+                    $fractionOfSeconds = 60;
+                }
+            } else {
+                $fractionOfSeconds = 3600;
+            }
+
+            $dateTimeFormat .= 'O';
+
+            if ($matches['tz'] === 'Z') {
+                $dateTimeRaw .= '+0000';
+            } else {
+                $dateTimeRaw .= $matches['tz'];
+
+                if (strlen($matches['tz']) === 3) {
+                    $dateTimeRaw .= '00';
+                }
+            }
+
+            $dateTime = DateTime::createFromFormat($dateTimeFormat, $dateTimeRaw);
+
+            if ($dateTime !== false) {
+                $timestamp = $dateTime->getTimeStamp();
+
+                if (isset($matches['frac'])) {
+                    $timestamp += (int) round((float) ('0.' . $matches['frac']) * $fractionOfSeconds);
+                }
+
+                return $timestamp;
+            }
         }
+
+        Logger::debug(sprintf(
+            'Failed to parse "%s" based on the ASN.1 standard (GeneralizedTime) in repository "%s".',
+            $value,
+            $this->getName()
+        ));
     }
 
     /**
