@@ -387,7 +387,7 @@ class LdapUserBackend extends LdapRepository implements UserBackendInterface, Do
     public function authenticate(User $user, $password)
     {
         if ($this->domain !== null) {
-            if (! $user->hasDomain() || strtolower($user->getDomain()) !== $this->domain) {
+            if (! $user->hasDomain() || strtolower($user->getDomain()) !== strtolower($this->domain)) {
                 return false;
             }
 
