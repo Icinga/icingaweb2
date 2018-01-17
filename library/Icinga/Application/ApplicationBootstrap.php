@@ -460,10 +460,14 @@ abstract class ApplicationBootstrap
     {
         if (! @file_exists($this->config->resolvePath('authentication.ini'))) {
             $this->requiresSetup = true;
-            $this->moduleManager->loadModule('setup');
+            if ($this->moduleManager->hasInstalled('setup')) {
+                $this->moduleManager->loadModule('setup');
+            }
         } elseif ($this->setupTokenExists()) {
             // Load setup module but do not require setup
-            $this->moduleManager->loadModule('setup');
+            if ($this->moduleManager->hasInstalled('setup')) {
+                $this->moduleManager->loadModule('setup');
+            }
         }
         return $this;
     }
