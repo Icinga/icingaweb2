@@ -936,12 +936,30 @@ abstract class Repository implements Selectable
             return $value;
         }
 
-        if (($dateTime = DateTime::createFromFormat('YmdHis.uO', $value)) !== false
-            || ($dateTime = DateTime::createFromFormat('YmdHis.uZ', $value)) !== false
-            || ($dateTime = DateTime::createFromFormat('YmdHis.u', $value)) !== false
-            || ($dateTime = DateTime::createFromFormat('YmdHis', $value)) !== false
-            || ($dateTime = DateTime::createFromFormat('YmdHi', $value)) !== false
-            || ($dateTime = DateTime::createFromFormat('YmdH', $value)) !== false
+	$formatSuffix=""; // contains additional format options as suffix
+
+        if (strlen($value) > 10 ) {
+
+           if (strrpos($value,'.',10)) {
+               $formatSuffix.='.u';
+           }
+
+           if (strrpos($value,',',10)) {
+               $formatSuffix.=',u';
+           }
+
+           if (strrpos($value,'+',10) || strrpos($value,'-',10)) {
+               $formatSuffix.='O';
+           }
+
+           if (substr($value,-1)==='Z') {
+               $formatSuffix.='Z';
+           }
+	}
+
+        if (($dateTime=DateTime::createFromFormat('YmdH'.$formatSuffix,$value) ) !== false
+	   || ($dateTime=DateTime::createFromFormat('YmdHi'.$formatSuffix,$value) ) !== false
+	   || ($dateTime=DateTime::createFromFormat('YmdHis'.$formatSuffix,$value) ) !== false
         ) {
             return $dateTime->getTimeStamp();
         } else {
