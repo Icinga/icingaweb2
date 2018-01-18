@@ -61,12 +61,10 @@ class TacticalController extends Controller
             ->addSlice($summary->hosts_unreachable_handled, array('class' => 'slice-state-unreachable-handled'))
             ->addSlice($summary->hosts_unreachable_unhandled, array('class' => 'slice-state-unreachable'))
             ->addSlice($summary->hosts_pending, array('class' => 'slice-state-pending'))
-            ->addSlice($summary->hosts_not_checked, array('class' => 'slice-state-not-checked'));
-        if ($summary->hosts_down_unhandled > 0) {
-            $hostSummaryChart
-                ->setLabelBig($summary->hosts_down_unhandled)
-                ->setLabelSmall($this->translate('hosts down'));
-        }
+            ->addSlice($summary->hosts_not_checked, array('class' => 'slice-state-not-checked'))
+            ->setLabelBig($summary->hosts_down_unhandled)
+            ->setLabelBigEyeCatching($summary->hosts_down_unhandled > 0)
+            ->setLabelSmall($this->translate('hosts down'));
 
         $serviceSummaryChart = new Donut();
         $serviceSummaryChart
@@ -78,12 +76,10 @@ class TacticalController extends Controller
             ->addSlice($summary->services_unknown_handled, array('class' => 'slice-state-unknown-handled'))
             ->addSlice($summary->services_unknown_unhandled, array('class' => 'slice-state-unknown'))
             ->addSlice($summary->services_pending, array('class' => 'slice-state-pending'))
-            ->addSlice($summary->services_not_checked, array('class' => 'slice-state-not-checked'));
-        if ($summary->services_critical_unhandled > 0) {
-            $serviceSummaryChart
-                ->setLabelBig($summary->services_critical_unhandled)
-                ->setLabelSmall($this->translate('services critical'));
-        }
+            ->addSlice($summary->services_not_checked, array('class' => 'slice-state-not-checked'))
+            ->setLabelBig($summary->services_critical_unhandled)
+            ->setLabelBigEyeCatching($summary->services_critical_unhandled > 0)
+            ->setLabelSmall($this->translate('services critical'));
 
         $this->view->hostStatusSummaryChart = $hostSummaryChart
             ->setLabelBigUrl($this->view->url(

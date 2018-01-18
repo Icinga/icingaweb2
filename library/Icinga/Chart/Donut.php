@@ -23,6 +23,13 @@ class Donut
     protected $labelBigUrl;
 
     /**
+     * Whether the big label shall be eye-catching
+     *
+     * @var bool
+     */
+    protected $labelBigEyeCatching = true;
+
+    /**
      * Small label in the lower part of the donuts hole
      *
      * @var string
@@ -181,6 +188,30 @@ class Donut
     }
 
     /**
+     * Get whether the big label shall be eye-catching
+     *
+     * @return bool
+     */
+    public function getLabelBigEyeCatching()
+    {
+        return $this->labelBigEyeCatching;
+    }
+
+    /**
+     * Set whether the big label shall be eye-catching
+     *
+     * @param bool $labelBigEyeCatching
+     *
+     * @return $this
+     */
+    public function setLabelBigEyeCatching($labelBigEyeCatching = true)
+    {
+        $this->labelBigEyeCatching = $labelBigEyeCatching;
+
+        return $this;
+    }
+
+    /**
      * Set the text of the small label
      *
      * @param   string  $labelSmall
@@ -274,7 +305,15 @@ class Donut
             $offset -= $slice[0];
         }
 
-        if ($this->getLabelBig() || $this->getLabelSmall()) {
+        $result = array(
+            'tag'     => 'div',
+            'content' => array($svg)
+        );
+
+        $labelBig = (string) $this->getLabelBig();
+        $labelSmall = (string) $this->getLabelSmall();
+
+        if ($labelBig !== '' || $labelSmall !== '') {
             $labels = array(
                 'tag' => 'div',
                 'attributes' => array(
@@ -283,19 +322,21 @@ class Donut
                 'content' => array()
             );
 
-            if ($this->getLabelBig()) {
+            if ($labelBig !== '') {
                 $labels['content'][] =
                     array(
                         'tag' => 'a',
                         'attributes' => array(
                             'href' => $this->getLabelBigUrl() ? $this->getLabelBigUrl()->getAbsoluteUrl() : null,
-                            'class' => 'donut-label-big'
+                            'class' => $this->labelBigEyeCatching
+                                ? 'donut-label-big donut-label-big-eye-catching'
+                                : 'donut-label-big'
                         ),
-                        'content' => $this->shortenLabel($this->getLabelBig())
+                        'content' => $this->shortenLabel($labelBig)
                     );
             }
 
-            if ($this->getLabelSmall()) {
+            if ($labelSmall !== '') {
                 $labels['content'][] = array(
                     'tag' => 'p',
                     'attributes' => array(
@@ -303,14 +344,14 @@ class Donut
                         'x' => '50%',
                         'y' => '50%'
                     ),
-                    'content' => $this->getLabelSmall()
+                    'content' => $labelSmall
                 );
             }
 
-            $svg['content'][] = $labels;
+            $result['content'][] = $labels;
         }
 
-        return $svg;
+        return $result;
     }
 
     /**
