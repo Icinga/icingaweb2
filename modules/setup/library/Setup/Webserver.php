@@ -33,6 +33,13 @@ abstract class Webserver
     protected $configDir;
 
     /**
+     * Address or path where to pass requests to FPM
+     *
+     * @var string
+     */
+    protected $fpmUri;
+
+    /**
      * Create instance by type name
      *
      * @param   string $type
@@ -63,11 +70,13 @@ abstract class Webserver
             '{urlPath}',
             '{documentRoot}',
             '{configDir}',
+            '{fpmUri}'
         );
         $replaceTokens = array(
             $this->getUrlPath(),
             $this->getDocumentRoot(),
-            $this->getConfigDir()
+            $this->getConfigDir(),
+            $this->getFpmUri()
         );
         $template = str_replace($searchTokens, $replaceTokens, $template);
         return $template;
@@ -163,5 +172,29 @@ abstract class Webserver
             return Icinga::app()->getConfigDir();
         }
         return $this->configDir;
+    }
+
+    /**
+     * Get the address or path where to pass requests to FPM
+     *
+     * @return  string
+     */
+    public function getFpmUri()
+    {
+        return $this->fpmUri;
+    }
+
+    /**
+     * Set the address or path where to pass requests to FPM
+     *
+     * @param   string  $uri
+     *
+     * @return  $this
+     */
+    public function setFpmUri($uri)
+    {
+        $this->fpmUri = (string) $uri;
+
+        return $this;
     }
 }
