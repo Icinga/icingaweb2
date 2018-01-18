@@ -11,7 +11,9 @@ use Icinga\Data\Selectable;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Exception\QueryException;
 use Icinga\Exception\StatementException;
+use Icinga\Util\ASN1;
 use Icinga\Util\StringHelper;
+use InvalidArgumentException;
 
 /**
  * Abstract base class for concrete repository implementations
@@ -929,6 +931,8 @@ abstract class Repository implements Selectable
      * @param   string|null     $value
      *
      * @return  int
+     *
+     * @see https://tools.ietf.org/html/rfc4517#section-3.3.13
      */
     protected function retrieveGeneralizedTime($value)
     {
@@ -936,20 +940,10 @@ abstract class Repository implements Selectable
             return $value;
         }
 
-        if (($dateTime = DateTime::createFromFormat('YmdHis.uO', $value)) !== false
-            || ($dateTime = DateTime::createFromFormat('YmdHis.uZ', $value)) !== false
-            || ($dateTime = DateTime::createFromFormat('YmdHis.u', $value)) !== false
-            || ($dateTime = DateTime::createFromFormat('YmdHis', $value)) !== false
-            || ($dateTime = DateTime::createFromFormat('YmdHi', $value)) !== false
-            || ($dateTime = DateTime::createFromFormat('YmdH', $value)) !== false
-        ) {
-            return $dateTime->getTimeStamp();
-        } else {
-            Logger::debug(sprintf(
-                'Failed to parse "%s" based on the ASN.1 standard (GeneralizedTime) in repository "%s".',
-                $value,
-                $this->getName()
-            ));
+        try {
+            return ASN1::parseGeneralizedTime($value)->getTimeStamp();
+        } catch (InvalidArgumentException $e) {
+            Logger::debug(sprintf('Repository "%s": %s', $this->getName(), $e->getMessage()));
         }
     }
 
