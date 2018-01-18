@@ -176,7 +176,11 @@ class ModuleController extends DocController
         } else {
             $finfo = new finfo();
             $this->getResponse()
-                ->setHeader('Content-Type', $finfo->file($imagePath, FILEINFO_MIME_TYPE));
+                ->setHeader('Content-Type', $finfo->file($imagePath, FILEINFO_MIME_TYPE))
+                ->setHeader('Content-Length', $imageInfo->getSize())
+                ->sendHeaders();
+
+            ob_end_clean();
             readfile($imagePath);
         }
     }
