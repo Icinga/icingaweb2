@@ -93,6 +93,9 @@ user\_class              | **Optional.** LDAP user class. Defaults to `inetOrgPe
 user\_name\_attribute    | **Optional.** LDAP attribute which contains the username. Defaults to `uid`.
 filter                   | **Optional.** LDAP search filter. Requires `user_class` and `user_name_attribute`.
 
+> **Note for SELinux**
+>
+> If you run into problems connecting with LDAP and have SELinux enabled, take a look [here](90-SELinux.md#selinux-optional-booleans).
 
 Example:
 

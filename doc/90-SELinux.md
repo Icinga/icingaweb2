@@ -96,6 +96,15 @@ Having this boolean enabled allows httpd to write to the configuration labeled `
 default. If not needed, you can disable it for more security. But this will disable all web based configuration of
 Icinga Web 2.
 
+### Optional Booleans <a id="selinux-optional-booleans"></a>
+
+The Icinga Web 2 policy package does not enable booleans not required by default. In order to allow these things,
+you'll need to enable them manually. (i.e. with the tool `setsebool`)
+
+**Ldap**  
+If you want to allow httpd to connect to the ldap port, you must turn on the `httpd_can_connect_ldap` boolean.
+Disabled by default.
+
 ## Bugreports <a id="selinux-bugreports"></a>
 
 If you experience any problems while running SELinux in enforcing mode try to reproduce it in permissive mode. If the
