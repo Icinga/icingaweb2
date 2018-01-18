@@ -16,6 +16,8 @@ v2.3 to v2.5 requires to follow the instructions for v2.4 too.
 
 * Hash marks (`#`) in INI files are no longer recognized as comments by
   [parse_ini_file](https://secure.php.net/manual/en/function.parse-ini-file.php) since PHP 7.0.
+* Existing sessions of logged-in users do no longer work as expected due to a change in the `User` data structure.
+  Everyone who was logged in before the upgrade has to log out once.
 
 **Changes in packaging and dependencies**
 
