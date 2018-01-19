@@ -86,9 +86,22 @@ class ErrorController extends ActionController
                         Logger::error("%s\n%s", $exception, $exception->getTraceAsString());
                         break;
                 }
-                $this->view->message = $exception->getMessage();
+
+                $this->view->messages = array();
+
                 if ($this->getInvokeArg('displayExceptions')) {
-                    $this->view->stackTrace = $exception->getTraceAsString();
+                    $this->view->stackTraces = array();
+
+                    do {
+                        $this->view->messages[] = $exception->getMessage();
+                        $this->view->stackTraces[] = $exception->getTraceAsString();
+                        $exception = $exception->getPrevious();
+                    } while ($exception !== null);
+                } else {
+                    do {
+                        $this->view->messages[] = $exception->getMessage();
+                        $exception = $exception->getPrevious();
+                    } while ($exception !== null);
                 }
 
                 break;
