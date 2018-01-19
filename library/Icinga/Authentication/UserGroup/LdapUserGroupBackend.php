@@ -3,10 +3,14 @@
 
 namespace Icinga\Authentication\UserGroup;
 
+use Exception;
 use Icinga\Authentication\User\UserBackend;
 use Icinga\Authentication\User\LdapUserBackend;
 use Icinga\Application\Logger;
 use Icinga\Data\ConfigObject;
+use Icinga\Data\Inspectable;
+use Icinga\Data\Inspection;
+use Icinga\Exception\AuthenticationException;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Protocol\Ldap\LdapException;
@@ -15,7 +19,7 @@ use Icinga\Repository\LdapRepository;
 use Icinga\Repository\RepositoryQuery;
 use Icinga\User;
 
-class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInterface
+class LdapUserGroupBackend extends LdapRepository implements Inspectable, UserGroupBackendInterface
 {
     /**
      * The user backend being associated with this user group backend
@@ -845,5 +849,73 @@ class LdapUserGroupBackend extends LdapRepository implements UserGroupBackendInt
             'group_member_attribute'    => 'member',
             'nested_group_search'       => '0'
         ));
+    }
+
+    /**
+     * Inspect if this LDAP User Group Backend is working as expected by probing the backend
+     *
+     * Try to bind to the backend and fetch a single group to check if:
+     * <ul>
+     *  <li>Connection credentials are correct and the bind is possible</li>
+     *  <li>At least one group exists</li>
+     *  <li>The specified groupClass has the property specified by groupNameAttribute</li>
+     * </ul>
+     *
+     * @return  Inspection  Inspection result
+     */
+    public function inspect()
+    {
+        $result = new Inspection('Ldap User Group Backend');
+
+        // inspect the used connection to get more diagnostic info in case the connection is not working
+        $result->write($this->ds->inspect());
+
+        try {
+            try {
+                $groupQuery = $this->ds
+                    ->select()
+                    ->from($this->groupClass, array($this->groupNameAttribute))
+                    ->setBase($this->groupBaseDn);
+
+                if ($this->groupFilter) {
+                    $groupQuery->setNativeFilter($this->groupFilter);
+                }
+
+                $res = $groupQuery->fetchRow();
+            } catch (LdapException $e) {
+                throw new AuthenticationException('Connection not possible', $e);
+            }
+
+            $result->write('Searching for: ' . sprintf(
+                'objectClass "%s" in DN "%s" (Filter: %s)',
+                $this->groupClass,
+                $this->groupBaseDn ?: $this->ds->getDn(),
+                $this->groupFilter ?: 'None'
+            ));
+
+            if ($res === false) {
+                throw new AuthenticationException('Error, no groups found in backend');
+            }
+
+            $result->write(sprintf('%d groups found in backend', $groupQuery->count()));
+
+            if (! isset($res->{$this->groupNameAttribute})) {
+                throw new AuthenticationException(
+                    'GroupNameAttribute "%s" not existing in objectClass "%s"',
+                    $this->groupNameAttribute,
+                    $this->groupClass
+                );
+            }
+        } catch (AuthenticationException $e) {
+            if (($previous = $e->getPrevious()) !== null) {
+                $result->error($previous->getMessage());
+            } else {
+                $result->error($e->getMessage());
+            }
+        } catch (Exception $e) {
+            $result->error(sprintf('Unable to validate backend: %s', $e->getMessage()));
+        }
+
+        return $result;
     }
 }
