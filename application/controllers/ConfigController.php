@@ -5,6 +5,7 @@ namespace Icinga\Controllers;
 
 use Exception;
 use Icinga\Application\Version;
+use Icinga\Forms\Config\IFrameConfigForm;
 use InvalidArgumentException;
 use Icinga\Application\Config;
 use Icinga\Application\Icinga;
@@ -50,6 +51,12 @@ class ConfigController extends Controller
             'title' => $this->translate('Configure the user and group backends'),
             'label' => $this->translate('Authentication'),
             'url'   => 'config/userbackend',
+            'baseTarget' => '_main'
+        ));
+        $tabs->add('security', array(
+            'title' => $this->translate('Harden Icinga Web 2'),
+            'label' => $this->translate('Security'),
+            'url'   => 'config/security',
             'baseTarget' => '_main'
         ));
         return $tabs;
@@ -418,5 +425,16 @@ class ConfigController extends Controller
 
         $this->view->form = $form;
         $this->render('resource/remove');
+    }
+
+    public function securityAction()
+    {
+        $this->assertPermission('config/application/security');
+
+        $this->view->form = $form = new IFrameConfigForm();
+        $form->setIniConfig(Config::app())
+            ->handleRequest();
+
+        $this->createApplicationTabs()->activate('security');
     }
 }
