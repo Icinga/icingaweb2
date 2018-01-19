@@ -8,6 +8,7 @@ use Icinga\Data\Filter\Filter;
 use Icinga\Forms\Announcement\AcknowledgeAnnouncementForm;
 use Icinga\Web\Announcement\AnnouncementCookie;
 use Icinga\Web\Announcement\AnnouncementIniRepository;
+use Icinga\Web\Helper\HtmlPurifier;
 
 /**
  * Render announcements
@@ -35,12 +36,13 @@ class Announcements extends AbstractWidget
         $announcements = $repo->findActive();
         $announcements->applyFilter($acked);
         if ($announcements->hasResult()) {
+            $purifier = new HtmlPurifier(array('HTML.Allowed' => 'b,a[href|target],i,*[class]'));
             $html = '<ul role="alert" id="announcements">';
             foreach ($announcements as $announcement) {
                 $ackForm = new AcknowledgeAnnouncementForm();
                 $ackForm->populate(array('hash' => $announcement->hash));
                 $html .= '<li><div>'
-                    . $this->view()->escape($announcement->message)
+                    . $purifier->purify($announcement->message)
                     . '</div>'
                     . $ackForm
                     . '</li>';
