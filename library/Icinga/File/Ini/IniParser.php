@@ -3,6 +3,7 @@
 
 namespace Icinga\File\Ini;
 
+use ErrorException;
 use Icinga\File\Ini\Dom\Section;
 use Icinga\File\Ini\Dom\Comment;
 use Icinga\File\Ini\Dom\Document;
@@ -260,6 +261,12 @@ class IniParser
             throw new NotReadableError('Couldn\'t read the file `%s\'', $path);
         }
 
-        return Config::fromArray(parse_ini_string($content, true))->setConfigFile($file);
+        try {
+            $configArray = parse_ini_string($content, true);
+        } catch (ErrorException $e) {
+            throw new ConfigurationError('Couldn\'t parse the INI file `%s\'', $path, $e);
+        }
+
+        return Config::fromArray($configArray)->setConfigFile($file);
     }
 }
