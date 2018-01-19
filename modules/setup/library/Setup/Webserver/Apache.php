@@ -10,6 +10,8 @@ use Icinga\Module\Setup\Webserver;
  */
 class Apache extends Webserver
 {
+    protected $fpmUri = 'fgci://127.0.0.1:9000';
+
     protected function getTemplate()
     {
             return  <<<'EOD'
@@ -68,7 +70,7 @@ Alias {urlPath} "{documentRoot}"
 #        # Forward PHP requests to FPM
 #        SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1
 #        <FilesMatch "\.php$">
-#            SetHandler "proxy:fcgi://127.0.0.1:9000"
+#            SetHandler "proxy:{fpmUri}"
 #            ErrorDocument 503 {urlPath}/error_unavailable.html
 #        </FilesMatch>
 #    </IfVersion>

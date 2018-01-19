@@ -10,17 +10,13 @@ use Icinga\Module\Setup\Webserver;
  */
 class Nginx extends Webserver
 {
-    /**
-     * Specific template
-     *
-     * @return array|string
-     */
+    protected $fpmUri = '127.0.0.1:9000';
+
     protected function getTemplate()
     {
         return <<<'EOD'
 location ~ ^{urlPath}/index\.php(.*)$ {
-  # fastcgi_pass 127.0.0.1:9000;
-  fastcgi_pass unix:/var/run/php5-fpm.sock;
+  fastcgi_pass {fpmUri};
   fastcgi_index index.php;
   include fastcgi_params;
   fastcgi_param SCRIPT_FILENAME {documentRoot}/index.php;
