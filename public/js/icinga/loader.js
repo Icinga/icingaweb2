@@ -878,7 +878,7 @@
             }
 
             if (scrollPos !== false) {
-                $container.scrollTop(scrollPos);
+                setTimeout($container.scrollTop.bind($container), 0, scrollPos);
             }
             var icinga = this.icinga;
             //icinga.events.applyHandlers($container);
