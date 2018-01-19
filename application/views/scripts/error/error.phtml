@@ -4,9 +4,17 @@
 </div>
 <?php endif ?>
 <div class="content">
-    <p tabindex="-1" class="autofocus error-message"><?= nl2br($this->escape($message)) ?></p>
-<?php if (isset($stackTrace)): ?>
-    <hr>
-    <pre><?= $this->escape($stackTrace) ?></pre>
-<?php endif ?>
+<?php
+if (isset($stackTraces)) {
+    foreach ($messages as $i => $message) {
+        echo '<p tabindex="-1" class="autofocus error-message">' . nl2br($this->escape($message)) . '</p>'
+            . '<hr>'
+            . '<pre>' . $this->escape($stackTraces[$i]) . '</pre>';
+    }
+} else {
+    foreach ($messages as $message) {
+        echo '<p tabindex="-1" class="autofocus error-message">' . nl2br($this->escape($message)) . '</p>';
+    }
+}
+?>
 </div>
