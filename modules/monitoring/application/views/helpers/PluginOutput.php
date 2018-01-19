@@ -2,6 +2,7 @@
 /* Icinga Web 2 | (c) 2013 Icinga Development Team | GPLv2+ */
 
 use Icinga\Web\Dom\DomNodeIterator;
+use Icinga\Module\Monitoring\Web\Helper\PluginOutputPurifier;
 
 /**
  * Plugin output renderer
@@ -94,7 +95,7 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
             $output = preg_replace(
                 self::$htmlPatterns,
                 self::$htmlReplacements,
-                $this->getPurifier()->purify($output)
+                PluginOutputPurifier::process($output)
             );
             $isHtml = true;
         } else {
@@ -175,38 +176,5 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
         }
 
         return substr($doc->saveHTML(), 5, -7);
-    }
-
-    /**
-     * Initialize and return self::$purifier
-     *
-     * @return HTMLPurifier
-     */
-    protected function getPurifier()
-    {
-        if (self::$purifier === null) {
-            require_once 'HTMLPurifier/Bootstrap.php';
-            require_once 'HTMLPurifier.php';
-            require_once 'HTMLPurifier.autoload.php';
-
-            $config = HTMLPurifier_Config::createDefault();
-            $config->set('Core.EscapeNonASCIICharacters', true);
-            $config->set('Attr.AllowedFrameTargets', array('_blank'));
-            $config->set(
-                'HTML.Allowed',
-                'p,br,b,a[href|target],i,ul,ol,li,table,tr,th[colspan],td[colspan],div,*[class]'
-            );
-            // This avoids permission problems:
-            // $config->set('Core.DefinitionCache', null);
-            $config->set('Cache.DefinitionImpl', null);
-            // TODO: Use a cache directory:
-            // $config->set('Cache.SerializerPath', '/var/spool/whatever');
-
-            // $config->set('URI.Base', 'http://www.example.com');
-            // $config->set('URI.MakeAbsolute', true);
-            // $config->set('AutoFormat.AutoParagraph', true);
-            self::$purifier = new HTMLPurifier($config);
-        }
-        return self::$purifier;
     }
 }
