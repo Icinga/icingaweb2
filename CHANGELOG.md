@@ -4,6 +4,15 @@ Please make sure to always read our [Upgrading](doc/80-Upgrading.md) documentati
 
 ## What's New
 
+### What's New in Version 2.5.1
+
+You can find issues and features related to this release on our [Roadmap](https://github.com/Icinga/icingaweb2/milestone/47?closed=1).
+
+Besides many other bug fixes, Icinga Web 2 v2.5.1 fixes an issue where it was no longer possible to filter by host
+custom variables in service related views. Also, this release introduces detail views for the event history and
+improved upgrading docs. Furthermore, this version censors sensitive information (e.g. LDAP passwords) in exception
+stack traces.
+
 ### What's New in Version 2.5.0
 
 You can find issues and features related to this release on our [Roadmap](https://github.com/Icinga/icingaweb2/milestone/45?closed=1).
