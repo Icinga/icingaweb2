@@ -4,6 +4,7 @@
 namespace Icinga\Module\Doc\Renderer;
 
 use Exception;
+use Icinga\Exception\IcingaException;
 use RecursiveIteratorIterator;
 use Icinga\Application\Icinga;
 use Icinga\Web\View;
@@ -201,7 +202,7 @@ abstract class DocRenderer extends RecursiveIteratorIterator
         try {
             return $this->render();
         } catch (Exception $e) {
-            return $e->getMessage() . ': ' . $e->getTraceAsString();
+            return $e->getMessage() . ': ' . IcingaException::getConfidentialTraceAsString($e);
         }
     }
 }

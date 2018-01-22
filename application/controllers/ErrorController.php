@@ -3,6 +3,7 @@
 
 namespace Icinga\Controllers;
 
+use Icinga\Exception\IcingaException;
 use Zend_Controller_Plugin_ErrorHandler;
 use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
@@ -83,7 +84,7 @@ class ErrorController extends ActionController
                         break;
                     default:
                         $this->getResponse()->setHttpResponseCode(500);
-                        Logger::error("%s\n%s", $exception, $exception->getTraceAsString());
+                        Logger::error("%s\n%s", $exception, IcingaException::getConfidentialTraceAsString($exception));
                         break;
                 }
 
@@ -94,7 +95,7 @@ class ErrorController extends ActionController
 
                     do {
                         $this->view->messages[] = $exception->getMessage();
-                        $this->view->stackTraces[] = $exception->getTraceAsString();
+                        $this->view->stackTraces[] = IcingaException::getConfidentialTraceAsString($exception);
                         $exception = $exception->getPrevious();
                     } while ($exception !== null);
                 } else {
