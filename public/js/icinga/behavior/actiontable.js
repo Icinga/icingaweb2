@@ -375,7 +375,7 @@
     ActionTable.prototype.onRowClicked = function (event) {
         var _this = event.data.self;
         var $target = $(event.target);
-        var $tr = $target.closest('tr');
+        var $tr = $(event.currentTarget);
         var table = new Selection($tr.closest('table.action, table.table-row-selectable')[0], _this.icinga);
 
         // some rows may contain form actions that trigger a different action, pass those through
