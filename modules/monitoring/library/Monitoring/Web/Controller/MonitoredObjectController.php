@@ -92,8 +92,9 @@ abstract class MonitoredObjectController extends Controller
                 $html = $this->view->escape($e->getMessage());
             }
 
+            $module = $this->view->escape($hook->getModule()->getName());
             $this->view->extensionsHtml[] =
-                '<div class="icinga-module module-' . $this->view->escape($hook->getModule()->getName()) . '">'
+                '<div class="icinga-module module-' . $module . '" data-icinga-module="' . $module . '">'
                 . $html
                 . '</div>';
         }
