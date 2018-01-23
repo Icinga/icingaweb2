@@ -3,6 +3,7 @@
 
 namespace Icinga\Module\Monitoring\Controllers;
 
+use Exception;
 use Icinga\Data\Filter\Filter;
 use Icinga\Module\Monitoring\Controller;
 use Icinga\Module\Monitoring\Forms\Command\Object\AcknowledgeProblemCommandForm;
@@ -15,7 +16,9 @@ use Icinga\Module\Monitoring\Forms\Command\Object\ScheduleServiceCheckCommandFor
 use Icinga\Module\Monitoring\Forms\Command\Object\ScheduleServiceDowntimeCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\SendCustomNotificationCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\ToggleObjectFeaturesCommandForm;
+use Icinga\Module\Monitoring\Hook\DetailviewExtensionHook;
 use Icinga\Module\Monitoring\Object\ServiceList;
+use Icinga\Web\Hook;
 use Icinga\Web\Url;
 use Icinga\Web\Widget\Tabextension\DashboardAction;
 use Icinga\Web\Widget\Tabextension\MenuAction;
@@ -153,6 +156,24 @@ class ServicesController extends Controller
         $this->view->sendCustomNotificationLink = Url::fromRequest()->setPath(
             'monitoring/services/send-custom-notification'
         );
+
+        $this->view->extensionsHtml = array();
+        foreach (Hook::all('Monitoring\DetailviewExtension') as $hook) {
+            /** @var DetailviewExtensionHook $hook */
+            try {
+                $html = $hook->setView($this->view)->getHtmlForObjects($this->serviceList);
+            } catch (Exception $e) {
+                $html = $this->view->escape($e->getMessage());
+            }
+
+            if ($html) {
+                $module = $this->view->escape($hook->getModule()->getName());
+                $this->view->extensionsHtml[] =
+                    '<div class="icinga-module module-' . $module . '" data-icinga-module="' . $module . '">'
+                    . $html
+                    . '</div>';
+            }
+        }
     }
 
     /**

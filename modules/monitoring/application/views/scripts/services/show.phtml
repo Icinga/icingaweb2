@@ -19,6 +19,7 @@
     <?php if ($serviceCount === 0): ?>
         <?= $this->translate('No services found matching the filter') ?>
     <?php else: ?>
+        <?= $this->render('show/components/extensions.phtml') ?>
         <h2> <?= $this->translate('Problem handling') ?> </h2>
         <table class="name-value-table">
             <tbody>
