@@ -79,7 +79,7 @@ class PhpCommand extends Command
             . $phpUnit
             . " -c {$temp->resolvePath('phpunit.xml')}"
             . ' ' . join(' ', array_merge($options, $this->params->getAllStandalone()));
-        
+
         if ($this->isVerbose) {
             $res = `$command`;
             foreach (preg_split('/\n/', $res) as $line) {
