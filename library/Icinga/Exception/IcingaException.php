@@ -74,7 +74,9 @@ class IcingaException extends Exception
         $trace = array();
 
         foreach ($exception->getTrace() as $index => $frame) {
-            $trace[] = "#{$index} {$frame['file']}({$frame['line']}): ";
+            $trace[] = isset($frame['file'])
+                ? "#{$index} {$frame['file']}({$frame['line']}): "
+                : "#{$index} [internal function]: ";
 
             if (isset($frame['class'])) {
                 $trace[] = $frame['class'];
