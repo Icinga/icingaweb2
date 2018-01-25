@@ -156,11 +156,7 @@ class CommandTransport implements CommandTransportInterface
      */
     protected function transferPossible($command, $transport)
     {
-        if (
-            ! method_exists($transport, 'getInstance')
-            || !$command instanceof ObjectCommand
-            || $command->getObject() === null
-        ) {
+        if (! method_exists($transport, 'getInstance')) {
             return true;
         }
 
@@ -169,6 +165,22 @@ class CommandTransport implements CommandTransportInterface
             return true;
         }
 
-        return strtolower($transportInstance) === strtolower($command->getObject()->instance_name);
+        $ti = strtolower($transportInstance);
+        $object = null;
+        if ($command instanceof ObjectCommand) {
+            $object = $command->getObject();
+        }
+        $cmdInstance = $command->getInstance();
+
+        if ($object === null && $cmdInstance === null) {
+            // send to all if not set
+            return true;
+        } elseif ($object !== null && $ti === strtolower($object->instance_name)) {
+            return true;
+        } elseif ($cmdInstance !== null && $ti === strtolower($cmdInstance)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

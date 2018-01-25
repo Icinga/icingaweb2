@@ -3,6 +3,7 @@
 
 namespace Icinga\Module\Monitoring\Forms\Command\Object;
 
+use Icinga\Exception\ProgrammingError;
 use Icinga\Module\Monitoring\Forms\Command\CommandForm;
 use Icinga\Module\Monitoring\Object\MonitoredObject;
 
@@ -43,5 +44,22 @@ abstract class ObjectsCommandForm extends CommandForm
     public function getObjects()
     {
         return $this->objects;
+    }
+
+    /**
+     * Get the single object from set objects
+     *
+     * @return MonitoredObject|null
+     * @throws ProgrammingError When more than one object set
+     */
+    public function getObject()
+    {
+        if (empty($this->objects)) {
+            return null;
+        } elseif (count($this->objects) > 1) {
+            throw new ProgrammingError('More than one objects set to CommandForm!');
+        } else {
+            return current($this->objects);
+        }
     }
 }

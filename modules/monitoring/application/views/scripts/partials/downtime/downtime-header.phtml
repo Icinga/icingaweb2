@@ -63,8 +63,9 @@
           $uniqId = uniqid();
           $buttonId = 'delete-downtime-' . $uniqId;
           $textId = 'downtime-' . $uniqId;
-          $deleteButton = clone $delDowntimeForm;
           /** @var \Icinga\Module\Monitoring\Forms\Command\Object\DeleteDowntimeCommandForm $deleteButton */
+          $deleteButton = clone $delDowntimeForm;
+          $deleteButton->setInstance($downtime->instance_name);
           $deleteButton->setAttrib('class', $deleteButton->getAttrib('class') . ' remove-action');
           $deleteButton->populate(
               array(

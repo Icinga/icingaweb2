@@ -38,6 +38,7 @@ class CommentController extends Controller
             'persistent' => 'comment_is_persistent',
             'expiration' => 'comment_expiration',
             'name'       => 'comment_name',
+            'instance_name',
             'host_name',
             'service_description',
             'host_display_name',
@@ -78,6 +79,7 @@ class CommentController extends Controller
                     'comment_name'          => $this->comment->name,
                     'redirect'              => $listUrl
                 ))
+                ->setInstance($this->comment->instance_name)
                 ->handleRequest();
             $this->view->delCommentForm = $form;
         }

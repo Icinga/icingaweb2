@@ -45,6 +45,7 @@ class DowntimeController extends Controller
             'is_in_effect'    => 'downtime_is_in_effect',
             'entry_time'      => 'downtime_entry_time',
             'name'            => 'downtime_name',
+            'instance_name',
             'host_state',
             'service_state',
             'host_name',
@@ -95,6 +96,7 @@ class DowntimeController extends Controller
                     'downtime_name'         => $this->downtime->name,
                     'redirect'              => Url::fromPath('monitoring/list/downtimes'),
                 ))
+                ->setInstance($this->downtime->instance_name)
                 ->handleRequest();
             $this->view->delDowntimeForm = $form;
         }

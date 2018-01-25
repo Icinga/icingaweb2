@@ -4,13 +4,12 @@
 namespace Icinga\Module\Monitoring\Forms\Command\Object;
 
 use Icinga\Module\Monitoring\Command\Object\DeleteCommentCommand;
-use Icinga\Module\Monitoring\Forms\Command\CommandForm;
 use Icinga\Web\Notification;
 
 /**
  * Form for deleting host or service comments
  */
-class DeleteCommentCommandForm extends CommandForm
+class DeleteCommentCommandForm extends ObjectsCommandForm
 {
     /**
      * {@inheritdoc}
@@ -70,6 +69,13 @@ class DeleteCommentCommandForm extends CommandForm
                 ),
                 array(
                     'hidden',
+                    'comment_instance_name',
+                    array(
+                        'decorators'    => array('ViewHelper')
+                    )
+                ),
+                array(
+                    'hidden',
                     'comment_name',
                     array(
                         'decorators' => array('ViewHelper')
@@ -95,8 +101,17 @@ class DeleteCommentCommandForm extends CommandForm
         $cmd = new DeleteCommentCommand();
         $cmd
             ->setCommentId($this->getElement('comment_id')->getValue())
-            ->setCommentName($this->getElement('comment_name')->getValue())
-            ->setIsService($this->getElement('comment_is_service')->getValue());
+            ->setCommentName($this->getElement('comment_name')->getValue());
+
+        $isService = $this->getElement('comment_is_service')->getValue();
+        if (($obj = $this->getObject()) !== null) {
+            $cmd->setObject($obj);
+        } elseif (($instance = $this->getElement('comment_instance_name')->getValue()) !== null) {
+            $cmd->setInstance($instance);
+        } else {
+            $cmd->setIsService($isService);
+        }
+
         $this->getTransport($this->request)->send($cmd);
         $redirect = $this->getElement('redirect')->getValue();
         if (! empty($redirect)) {
@@ -104,5 +119,22 @@ class DeleteCommentCommandForm extends CommandForm
         }
         Notification::success($this->translate('Deleting comment..'));
         return true;
+    }
+
+    public function setInstance($instance)
+    {
+        if (($el = $this->getElement('comment_instance_name')) !== null) {
+            $el->setValue($instance);
+        }
+        return parent::setInstance($instance);
+    }
+
+    public function populate(array $defaults)
+    {
+        $k = 'comment_instance_name';
+        if (! array_key_exists($k, $defaults)) {
+            $defaults[$k] = $this->getInstance();
+        }
+        return parent::populate($defaults);
     }
 }

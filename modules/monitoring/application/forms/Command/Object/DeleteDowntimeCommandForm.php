@@ -10,7 +10,7 @@ use Icinga\Web\Notification;
 /**
  * Form for deleting host or service downtimes
  */
-class DeleteDowntimeCommandForm extends CommandForm
+class DeleteDowntimeCommandForm extends ObjectsCommandForm
 {
     /**
      * {@inheritdoc}
@@ -70,6 +70,13 @@ class DeleteDowntimeCommandForm extends CommandForm
                 ),
                 array(
                     'hidden',
+                    'downtime_instance_name',
+                    array(
+                        'decorators'    => array('ViewHelper')
+                    )
+                ),
+                array(
+                    'hidden',
                     'downtime_name',
                     array(
                         'decorators' => array('ViewHelper')
@@ -95,8 +102,16 @@ class DeleteDowntimeCommandForm extends CommandForm
         $cmd = new DeleteDowntimeCommand();
         $cmd
             ->setDowntimeId($this->getElement('downtime_id')->getValue())
-            ->setDowntimeName($this->getElement('downtime_name')->getValue())
-            ->setIsService($this->getElement('downtime_is_service')->getValue());
+            ->setDowntimeName($this->getElement('downtime_name')->getValue());
+
+        if (($obj = $this->getObject()) !== null) {
+            $cmd->setObject($obj);
+        } elseif (($instance = $this->getElement('downtime_instance_name')->getValue()) !== null) {
+            $cmd->setInstance($instance);
+        } else {
+            $cmd->setIsService($this->getElement('downtime_is_service')->getValue());
+        }
+
         $this->getTransport($this->request)->send($cmd);
 
         $redirect = $this->getElement('redirect')->getValue();
@@ -105,5 +120,22 @@ class DeleteDowntimeCommandForm extends CommandForm
         }
         Notification::success($this->translate('Deleting downtime.'));
         return true;
+    }
+
+    public function setInstance($instance)
+    {
+        if (($el = $this->getElement('downtime_instance_name')) !== null) {
+            $el->setValue($instance);
+        }
+        return parent::setInstance($instance);
+    }
+
+    public function populate(array $defaults)
+    {
+        $k = 'downtime_instance_name';
+        if (! array_key_exists($k, $defaults)) {
+            $defaults[$k] = $this->getInstance();
+        }
+        return parent::populate($defaults);
     }
 }

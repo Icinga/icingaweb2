@@ -72,10 +72,17 @@ class DeleteDowntimesCommandForm extends CommandForm
             $delDowntime = new DeleteDowntimeCommand();
             $delDowntime
                 ->setDowntimeId($downtime->id)
-                ->setDowntimeName($downtime->name)
-                ->setIsService(isset($downtime->service_description));
+                ->setDowntimeName($downtime->name);
+
+            if (isset($downtime->instance_name)) {
+                $delDowntime->setInstance($downtime->instance_name);
+            } else {
+                $delDowntime->setIsService(isset($downtime->service_description));
+            }
+
             $this->getTransport($this->request)->send($delDowntime);
         }
+
         $redirect = $this->getElement('redirect')->getValue();
         if (! empty($redirect)) {
             $this->setRedirectUrl($redirect);

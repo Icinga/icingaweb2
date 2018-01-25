@@ -72,10 +72,17 @@ class DeleteCommentsCommandForm extends CommandForm
             $cmd = new DeleteCommentCommand();
             $cmd
                 ->setCommentId($comment->id)
-                ->setCommentName($comment->name)
-                ->setIsService(isset($comment->service_description));
+                ->setCommentName($comment->name);
+
+            if (isset($comment->instance_name)) {
+                $cmd->setInstance($comment->instance_name);
+            } else {
+                $cmd->setIsService(isset($comment->service_description));
+            }
+
             $this->getTransport($this->request)->send($cmd);
         }
+
         $redirect = $this->getElement('redirect')->getValue();
         if (! empty($redirect)) {
             $this->setRedirectUrl($redirect);

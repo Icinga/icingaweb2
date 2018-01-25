@@ -23,6 +23,15 @@ abstract class CommandForm extends Form
     protected $backend;
 
     /**
+     * Name of the instance to sent the command to
+     *
+     * This is optional and might be overridden, e.g. by setting an object
+     *
+     * @var string
+     */
+    protected $instance;
+
+    /**
      * Set the monitoring backend
      *
      * @param   MonitoringBackend $backend
@@ -88,5 +97,28 @@ abstract class CommandForm extends Form
             $this->getResponse()->setAutoRefreshInterval(1);
         }
         return $redirectUrl;
+    }
+
+    /**
+     * Get the instance name
+     *
+     * @return string
+     */
+    public function getInstance()
+    {
+        return $this->instance;
+    }
+
+    /**
+     * Set the instance name
+     *
+     * @param string $instance
+     *
+     * @return $this
+     */
+    public function setInstance($instance)
+    {
+        $this->instance = $instance;
+        return $this;
     }
 }

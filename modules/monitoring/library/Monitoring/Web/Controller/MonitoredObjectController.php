@@ -70,12 +70,16 @@ abstract class MonitoredObjectController extends Controller
         $this->view->toggleFeaturesForm = $toggleFeaturesForm;
         if (! empty($this->object->comments) && $auth->hasPermission('monitoring/command/comment/delete')) {
             $delCommentForm = new DeleteCommentCommandForm();
-            $delCommentForm->handleRequest();
+            $delCommentForm
+                ->setObjects($this->object)
+                ->handleRequest();
             $this->view->delCommentForm = $delCommentForm;
         }
         if (! empty($this->object->downtimes) && $auth->hasPermission('monitoring/command/downtime/delete')) {
             $delDowntimeForm = new DeleteDowntimeCommandForm();
-            $delDowntimeForm->handleRequest();
+            $delDowntimeForm
+                ->setObjects($this->object)
+                ->handleRequest();
             $this->view->delDowntimeForm = $delDowntimeForm;
         }
         $this->view->showInstance = $this->backend->select()->from('instance')->count() > 1;
