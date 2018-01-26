@@ -53,10 +53,10 @@ class ErrorController extends ActionController
                 $path = preg_split('~/~', $path);
                 $path = array_shift($path);
                 $this->getResponse()->setHttpResponseCode(404);
-                $this->view->message = $this->translate('Page not found.');
+                $this->view->messages = array($this->translate('Page not found.'));
                 if ($isAuthenticated) {
                     if ($modules->hasInstalled($path) && ! $modules->hasEnabled($path)) {
-                        $this->view->message .= ' ' . sprintf(
+                        $this->view->messages[0] .= ' ' . sprintf(
                             $this->translate('Enabling the "%s" module might help!'),
                             $path
                         );
@@ -110,7 +110,7 @@ class ErrorController extends ActionController
 
         if ($this->getRequest()->isApiRequest()) {
             $this->getResponse()->json()
-                ->setErrorMessage($this->view->message)
+                ->setErrorMessage($this->view->messages[0])
                 ->sendResponse();
         }
 
