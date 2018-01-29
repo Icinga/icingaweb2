@@ -438,6 +438,20 @@ class User
     }
 
     /**
+     * Get whether the user's domain matches the given one
+     *
+     * @param   string|null $domain
+     *
+     * @return  bool
+     */
+    public function isInDomain($domain)
+    {
+        return $domain === null
+            ? $this->domain === null
+            : $this->domain !== null && strtolower($this->domain) === strtolower($domain);
+    }
+
+    /**
      * Get the local username, ie. the username without its domain
      *
      * @return string

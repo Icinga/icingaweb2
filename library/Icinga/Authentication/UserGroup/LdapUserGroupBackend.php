@@ -686,26 +686,17 @@ class LdapUserGroupBackend extends LdapRepository implements Inspectable, UserGr
     {
         $domain = $this->getDomain();
 
-        if ($domain !== null) {
-            if (! $user->hasDomain() || strtolower($user->getDomain()) !== strtolower($domain)) {
-                return array();
-            }
-
-            $username = $user->getLocalUsername();
-        } else {
-            if ($user->hasDomain()) {
-                return array();
-            }
-            $username = $user->getUsername();
+        if (! $user->isInDomain($domain)) {
+            return array();
         }
 
         if ($this->isMemberAttributeAmbiguous()) {
-            $queryValue = $username;
+            $queryValue = $user->getUsername();
         } elseif (($queryValue = $user->getAdditional('ldap_dn')) === null) {
             $userQuery = $this->ds
                 ->select()
                 ->from($this->userClass)
-                ->where($this->userNameAttribute, $username)
+                ->where($this->userNameAttribute, $user->getUsername())
                 ->setBase($this->userBaseDn)
                 ->setUsePagedResults(false);
             if ($this->userFilter) {

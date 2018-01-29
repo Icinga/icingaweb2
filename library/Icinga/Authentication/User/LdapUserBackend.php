@@ -386,19 +386,11 @@ class LdapUserBackend extends LdapRepository implements UserBackendInterface, Do
      */
     public function authenticate(User $user, $password)
     {
-        if ($this->domain !== null) {
-            if (! $user->hasDomain() || strtolower($user->getDomain()) !== strtolower($this->domain)) {
-                return false;
-            }
-
-            $username = $user->getLocalUsername();
-        } else {
-            if ($user->hasDomain()) {
-                return false;
-            }
-
-            $username = $user->getUsername();
+        if (! $user->isInDomain($this->domain)) {
+            return false;
         }
+
+        $username = $user->getUsername();
 
         try {
             $userDn = $this
