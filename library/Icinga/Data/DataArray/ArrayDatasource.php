@@ -5,7 +5,6 @@ namespace Icinga\Data\DataArray;
 
 use ArrayIterator;
 use Icinga\Data\Selectable;
-use Icinga\Data\SimpleQuery;
 
 class ArrayDatasource implements Selectable
 {
@@ -15,20 +14,6 @@ class ArrayDatasource implements Selectable
      * @var array
      */
     protected $data;
-
-    /**
-     * The current result
-     *
-     * @var array
-     */
-    protected $result;
-
-    /**
-     * The result of a counted query
-     *
-     * @var int
-     */
-    protected $count;
 
     /**
      * The name of the column to map array keys on
@@ -76,21 +61,21 @@ class ArrayDatasource implements Selectable
     /**
      * Provide a query for this data source
      *
-     * @return  SimpleQuery
+     * @return  ArrayQuery
      */
     public function select()
     {
-        return new SimpleQuery($this);
+        return new ArrayQuery($this);
     }
 
     /**
      * Fetch and return all rows of the given query's result set using an iterator
      *
-     * @param   SimpleQuery     $query
+     * @param   ArrayQuery     $query
      *
      * @return  ArrayIterator
      */
-    public function query(SimpleQuery $query)
+    public function query(ArrayQuery $query)
     {
         return new ArrayIterator($this->fetchAll($query));
     }
@@ -98,11 +83,11 @@ class ArrayDatasource implements Selectable
     /**
      * Fetch and return a column of all rows of the result set as an array
      *
-     * @param   SimpleQuery     $query
+     * @param   ArrayQuery     $query
      *
      * @return  array
      */
-    public function fetchColumn(SimpleQuery $query)
+    public function fetchColumn(ArrayQuery $query)
     {
         $result = array();
         foreach ($this->getResult($query) as $row) {
@@ -116,11 +101,11 @@ class ArrayDatasource implements Selectable
     /**
      * Fetch and return all rows of the given query's result as a flattened key/value based array
      *
-     * @param   SimpleQuery     $query
+     * @param   ArrayQuery     $query
      *
      * @return  array
      */
-    public function fetchPairs(SimpleQuery $query)
+    public function fetchPairs(ArrayQuery $query)
     {
         $result = array();
         $keys = null;
@@ -141,11 +126,11 @@ class ArrayDatasource implements Selectable
     /**
      * Fetch and return the first row of the given query's result
      *
-     * @param   SimpleQuery     $query
+     * @param   ArrayQuery     $query
      *
      * @return  object|false    The row or false in case the result is empty
      */
-    public function fetchRow(SimpleQuery $query)
+    public function fetchRow(ArrayQuery $query)
     {
         $result = $this->getResult($query);
         if (empty($result)) {
@@ -158,11 +143,11 @@ class ArrayDatasource implements Selectable
     /**
      * Fetch and return all rows of the given query's result as an array
      *
-     * @param   SimpleQuery     $query
+     * @param   ArrayQuery     $query
      *
      * @return  array
      */
-    public function fetchAll(SimpleQuery $query)
+    public function fetchAll(ArrayQuery $query)
     {
         return $this->getResult($query);
     }
@@ -170,27 +155,23 @@ class ArrayDatasource implements Selectable
     /**
      * Count all rows of the given query's result
      *
-     * @param   SimpleQuery     $query
+     * @param   ArrayQuery     $query
      *
      * @return  int
      */
-    public function count(SimpleQuery $query)
+    public function count(ArrayQuery $query)
     {
-        if ($this->count === null) {
-            $this->count = count($this->createResult($query));
-        }
-
-        return $this->count;
+        return count($this->getResult($query));
     }
 
     /**
      * Create and return the result for the given query
      *
-     * @param   SimpleQuery     $query
+     * @param   ArrayQuery     $query
      *
      * @return  array
      */
-    protected function createResult(SimpleQuery $query)
+    protected function createResult(ArrayQuery $query)
     {
         $columns = $query->getColumns();
         $filter = $query->getFilter();
@@ -254,41 +235,20 @@ class ArrayDatasource implements Selectable
     }
 
     /**
-     * Return whether a query result exists
-     *
-     * @return  bool
-     */
-    protected function hasResult()
-    {
-        return $this->result !== null;
-    }
-
-    /**
-     * Set the current result
-     *
-     * @param   array   $result
-     *
-     * @return  $this
-     */
-    protected function setResult(array $result)
-    {
-        $this->result = $result;
-        return $this;
-    }
-
-    /**
      * Return the result for the given query
      *
-     * @param   SimpleQuery     $query
+     * @param   ArrayQuery     $query
      *
      * @return  array
      */
-    protected function getResult(SimpleQuery $query)
+    protected function getResult(ArrayQuery $query)
     {
-        if (! $this->hasResult()) {
-            $this->setResult($this->createResult($query));
+        $result = $query->getResult();
+        if ($result === null) {
+            $result = $this->createResult($query);
+            $query->setResult($result);
         }
 
-        return $this->result;
+        return $result;
     }
 }
