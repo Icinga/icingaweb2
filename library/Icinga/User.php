@@ -448,7 +448,7 @@ class User
     {
         return $domain === null
             ? $this->domain === null
-            : $this->domain !== null && strtolower($this->domain) === strtolower($domain);
+            : $this->domain !== null && ($domain === '*' || strtolower($this->domain) === strtolower($domain));
     }
 
     /**
