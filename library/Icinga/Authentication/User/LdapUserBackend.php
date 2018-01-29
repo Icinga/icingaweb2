@@ -393,6 +393,10 @@ class LdapUserBackend extends LdapRepository implements UserBackendInterface, Do
 
             $username = $user->getLocalUsername();
         } else {
+            if ($user->hasDomain()) {
+                return false;
+            }
+
             $username = $user->getUsername();
         }
 
