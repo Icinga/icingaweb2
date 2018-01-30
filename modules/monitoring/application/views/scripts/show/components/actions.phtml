@@ -3,7 +3,7 @@
 use Icinga\Web\Navigation\Navigation;
 
 $navigation = new Navigation();
-$navigation->load($object->getType() . '-action');
+$navigation->load("monitoring/{$object->getType()}-action");
 foreach ($navigation as $item) {
     $item->setObject($object);
 }

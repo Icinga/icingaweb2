@@ -462,7 +462,22 @@ class Config implements Countable, Iterator, Selectable
     {
         $itemTypeConfig = Navigation::getItemTypeConfiguration();
         if (! isset($itemTypeConfig[$type])) {
-            throw new IcingaException('Invalid navigation item type %s provided', $type);
+            if (strpos($type, '/') === false) {
+                foreach (Icinga::app()->getModuleManager()->getLoadedModules() as $module) {
+                    $fullType = "{$module->getName()}/$type";
+                    if (isset($itemTypeConfig[$fullType])) {
+                        break;
+                    }
+
+                    unset($fullType);
+                }
+            }
+
+            if (! isset($fullType)) {
+                throw new IcingaException('Invalid navigation item type %s provided', $type);
+            }
+
+            $type = $fullType;
         }
 
         if (isset($itemTypeConfig[$type]['config'])) {

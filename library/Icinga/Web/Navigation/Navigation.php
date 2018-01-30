@@ -139,28 +139,35 @@ class Navigation implements ArrayAccess, Countable, IteratorAggregate
             return new static::$types[$itemType]($name, $properties);
         }
 
-        $classPath = 'Icinga\\' . static::NAVIGATION_NS . '\\' . $itemType;
+        $match = array();
+        if (preg_match('~\A(.+?)/(.+)\z~s', $itemType, $match)) {
+            $classPath = 'Icinga\\Module\\' . ucfirst($match[1]) . '\\' . static::NAVIGATION_NS . "\\$match[2]";
 
-        if (class_exists($classPath)) {
-            $item = new $classPath($name, $properties);
+            if (class_exists($classPath)) {
+                $item = new $classPath($name, $properties);
+            }
         } else {
-            $item = null;
+            $classPath = 'Icinga\\' . static::NAVIGATION_NS . '\\' . $itemType;
 
-            foreach (Icinga::app()->getModuleManager()->getLoadedModules() as $module) {
-                $classPath = 'Icinga\\Module\\'
-                    . ucfirst($module->getName())
-                    . '\\'
-                    . static::NAVIGATION_NS
-                    . '\\'
-                    . $itemType;
-                if (class_exists($classPath)) {
-                    $item = new $classPath($name, $properties);
-                    break;
+            if (class_exists($classPath)) {
+                $item = new $classPath($name, $properties);
+            } else {
+                foreach (Icinga::app()->getModuleManager()->getLoadedModules() as $module) {
+                    $classPath = 'Icinga\\Module\\'
+                        . ucfirst($module->getName())
+                        . '\\'
+                        . static::NAVIGATION_NS
+                        . '\\'
+                        . $itemType;
+                    if (class_exists($classPath)) {
+                        $item = new $classPath($name, $properties);
+                        break;
+                    }
                 }
             }
         }
 
-        if ($item === null) {
+        if (! isset($item)) {
             if ($itemType !== 'MenuItem') {
                 Logger::debug(
                     'Failed to find custom navigation item class %s for item %s. Using base class NavigationItem now',
@@ -479,7 +486,7 @@ class Navigation implements ArrayAccess, Countable, IteratorAggregate
             if (Auth::getInstance()->hasPermission($moduleManager::MODULE_PERMISSION_NS . $module->getName())) {
                 foreach ($module->getNavigationItems() as $type => $options) {
                     if (! isset($moduleItemTypes[$type])) {
-                        $moduleItemTypes[$type] = $options;
+                        $moduleItemTypes["{$module->getName()}/$type"] = $options;
                     }
                 }
             }
