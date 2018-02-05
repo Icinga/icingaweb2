@@ -5,6 +5,7 @@ namespace Icinga\Application;
 
 use ErrorException;
 use Exception;
+use Icinga\Web\Widget\Tabs;
 use LogicException;
 use Icinga\Application\Modules\Manager as ModuleManager;
 use Icinga\Authentication\User\UserBackend;
@@ -552,6 +553,25 @@ abstract class ApplicationBootstrap
             }
             return false; // Continue with the normal error handler
         });
+
+        register_shutdown_function(function () {
+            $error = error_get_last();
+
+            if ($error['type'] === E_ERROR) {
+                header('HTTP/1.1 500 Internal Server Error');
+
+                $tabs = new Tabs();
+                $tabs->add('fatal-error', array(
+                    'label'     => t('Fatal Error'),
+                    'title'     => t('Fatal PHP Error'),
+                    'active'    => true,
+                    'url'       => Icinga::app()->getRequest()->getUrl()
+                ));
+
+                echo "<div class=\"controls\">$tabs</div>";
+            }
+        });
+
         return $this;
     }
 
