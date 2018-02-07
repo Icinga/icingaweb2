@@ -15,17 +15,13 @@
 
     Sparkline.prototype.onRendered = function(e) {
         $(e.target).find('.sparkline').each(function() {
-            setTimeout(sparkline, 0, $(this));
+            $(this).sparkline('html', {
+                enableTagOptions: true,
+                disableTooltips: true
+            });
         });
     };
 
     Icinga.Behaviors.Sparkline = Sparkline;
-
-    function sparkline(selector) {
-        selector.sparkline('html', {
-            enableTagOptions: true,
-            disableTooltips: true
-        });
-    }
 
 })(Icinga, jQuery);
