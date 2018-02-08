@@ -148,6 +148,7 @@ if (! $this->compact): ?>
                 $stateBadges = new StateBadges();
                 $stateBadges
                     ->setUrl('monitoring/list/services')
+                    ->setBaseFilter($this->filterEditor->getFilter())
                     ->add(
                         StateBadges::STATE_OK,
                         $hostGroup->services_ok,
