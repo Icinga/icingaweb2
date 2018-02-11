@@ -10,7 +10,7 @@ use Icinga\Module\Setup\Webserver;
  */
 class Apache extends Webserver
 {
-    protected $fpmUri = 'fgci://127.0.0.1:9000';
+    protected $fpmUri = 'fcgi://127.0.0.1:9000';
 
     protected function getTemplate()
     {
