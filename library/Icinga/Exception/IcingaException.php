@@ -88,13 +88,15 @@ class IcingaException extends Exception
 
             $trace[] = "{$frame['function']}(";
 
-            $args = array();
-            foreach ($frame['args'] as $arg) {
-                $type = gettype($arg);
-                $args[] = $type === 'object' ? 'Object(' . get_class($arg) . ')' : ucfirst($type);
-            }
+            if (isset($frame['args'])) {
+                $args = array();
+                foreach ($frame['args'] as $arg) {
+                    $type = gettype($arg);
+                    $args[] = $type === 'object' ? 'Object(' . get_class($arg) . ')' : ucfirst($type);
+                }
 
-            $trace[] = implode(', ', $args);
+                $trace[] = implode(', ', $args);
+            }
             $trace[] = ")\n";
         }
 
