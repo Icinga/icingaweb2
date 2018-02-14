@@ -30,6 +30,7 @@ class icingaweb2_dev (
     'rh-php71-php-pgsql',
     'rh-php71-php-ldap',
     'rh-php71-php-xml',
+    'rh-php71-php-mbstring',
     'sclo-php71-php-pecl-xdebug',
     'sclo-php71-php-pecl-imagick',
     'php-phpunit-PHPUnit'
