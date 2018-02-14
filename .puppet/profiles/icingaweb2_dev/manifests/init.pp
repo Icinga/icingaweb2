@@ -22,6 +22,7 @@ class icingaweb2_dev (
 
   # TODO(el): icinga-gui is not a icingaweb2_dev package
   package { [
+    'rh-php71-php-cli',
     'rh-php71-php-gd',
     'rh-php71-php-intl',
     'rh-php71-php-pdo',
