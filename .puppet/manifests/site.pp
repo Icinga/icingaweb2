@@ -6,6 +6,7 @@ node default {
   class { 'epel':
     stage => repositories,
   }
+  include base
   include icinga2_dev
   include icingaweb2_dev
   include motd
