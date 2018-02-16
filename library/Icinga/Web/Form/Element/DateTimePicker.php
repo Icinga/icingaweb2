@@ -4,6 +4,7 @@
 namespace Icinga\Web\Form\Element;
 
 use DateTime;
+use DateTimeZone;
 use Icinga\Web\Form\FormElement;
 use Icinga\Web\Form\Validator\DateTimeValidator;
 
@@ -71,5 +72,14 @@ class DateTimePicker extends FormElement
         }
 
         return true;
+    }
+
+    public function setValue($value)
+    {
+        if ($value instanceof DateTime) {
+            $value->setTimezone(new DateTimeZone(date_default_timezone_get()));
+        }
+
+        return parent::setValue($value);
     }
 }
