@@ -8,9 +8,19 @@ use Icinga\Module\Monitoring\Controller;
 use Icinga\Web\Url;
 use Icinga\Web\Widget\Tabextension\DashboardAction;
 use Icinga\Web\Widget\Tabextension\MenuAction;
+use Icinga\Web\Widget\Tabextension\OutputFormat;
 
 class TacticalController extends Controller
 {
+    /**
+     * @see ActionController::init
+     */
+    public function init()
+    {
+        parent::init();
+        $this->createTabs();
+    }
+
     public function indexAction()
     {
         $this->setAutorefreshInterval(15);
@@ -51,6 +61,7 @@ class TacticalController extends Controller
         );
         $this->applyRestriction('monitoring/filter/objects', $stats);
 
+        $this->handleFormatRequest($stats);
         $summary = $stats->fetchRow();
 
         $hostSummaryChart = new Donut();
@@ -102,5 +113,16 @@ class TacticalController extends Controller
             ))
             ->render();
         $this->view->statusSummary = $summary;
+    }
+
+
+    /**
+     * Return all tabs for this controller
+     *
+     * @return Tabs
+     */
+    private function createTabs()
+    {
+        $this->getTabs()->extend(new OutputFormat(['pdf']));
     }
 }
