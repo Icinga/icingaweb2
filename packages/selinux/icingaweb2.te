@@ -1,4 +1,4 @@
-policy_module(icingaweb2, 0.0.1)
+policy_module(icingaweb2, 0.0.2)
 
 ########################################
 #
@@ -7,6 +7,7 @@ policy_module(icingaweb2, 0.0.1)
 
 require {
 	type httpd_t;
+	type icinga2_t;
 }
 
 ## <desc>
@@ -25,5 +26,18 @@ optional_policy(`
 	tunable_policy(`httpd_can_manage_icingaweb2_config',`
 		icingaweb2_manage_config(httpd_t)
 	')
-')
 
+        nagios_plugin_template(icingacli)
+#        The following interface does not work in an optional_policy block
+#        icinga2_execstrans(nagios_icingacli_plugin_exec_t, nagios_icingacli_plugin_t)
+        domtrans_pattern(icinga2_t, nagios_icingacli_plugin_exec_t, nagios_icingacli_plugin_t)
+        icingaweb2_read_config(nagios_icingacli_plugin_t)
+        list_dirs_pattern(nagios_icingacli_plugin_t, icingaweb2_content_t, icingaweb2_content_t)
+        read_files_pattern(nagios_icingacli_plugin_t, icingaweb2_content_t, icingaweb2_content_t)
+        read_lnk_files_pattern(nagios_icingacli_plugin_t, icingaweb2_content_t, icingaweb2_content_t)
+        corecmd_exec_bin(nagios_icingacli_plugin_t)
+        mysql_stream_connect(nagios_icingacli_plugin_t)
+        mysql_tcp_connect(nagios_icingacli_plugin_t)
+        postgresql_stream_connect(nagios_icingacli_plugin_t)
+        postgresql_tcp_connect(nagios_icingacli_plugin_t)
+')

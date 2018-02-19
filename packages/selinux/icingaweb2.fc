@@ -5,3 +5,5 @@
 /var/log/icingaweb2(/.*)?         gen_context(system_u:object_r:icingaweb2_rw_content_t,s0)
 /var/cache/icingaweb2(/.*)?         gen_context(system_u:object_r:icingaweb2_rw_content_t,s0)
 /var/lib/icingaweb2(/.*)?         gen_context(system_u:object_r:icingaweb2_rw_content_t,s0)
+
+/usr/bin/icingacli        gen_context(system_u:object_r:nagios_icingacli_plugin_exec_t,s0)
