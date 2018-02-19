@@ -12,9 +12,6 @@ use Icinga\Web\Widget\Tabextension\OutputFormat;
 
 class TacticalController extends Controller
 {
-    /**
-     * @see ActionController::init
-     */
     public function init()
     {
         parent::init();
@@ -115,13 +112,10 @@ class TacticalController extends Controller
         $this->view->statusSummary = $summary;
     }
 
-
     /**
-     * Return all tabs for this controller
-     *
-     * @return Tabs
+     * Create all tabs for this controller
      */
-    private function createTabs()
+    protected function createTabs()
     {
         $this->getTabs()->extend(new OutputFormat(['pdf']));
     }
