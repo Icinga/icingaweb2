@@ -17,7 +17,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-Basepath: .\n"
 "Language: de_DE\n"
-"X-Generator: Poedit 2.0.4\n"
+"X-Generator: Poedit 2.0.6\n"
 
 #: ../../../../library/Icinga/Web/Form/Validator/InArray.php:16
 #, php-format
@@ -3023,7 +3023,7 @@ msgstr "Die folgende Zeitzone für Datums- und Zeitangaben verwenden."
 #: ../../../../application/forms/Config/Resource/SshResourceForm.php:45
 #: ../../../../application/controllers/UserController.php:300
 msgid "User"
-msgstr "Benutzername"
+msgstr "Benutzer"
 
 #: ../../../../application/forms/Config/User/UserForm.php:155
 #, php-format
