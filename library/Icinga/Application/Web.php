@@ -5,6 +5,7 @@ namespace Icinga\Application;
 
 require_once __DIR__ . '/EmbeddedWeb.php';
 
+use ErrorException;
 use Zend_Controller_Action_HelperBroker;
 use Zend_Controller_Front;
 use Zend_Controller_Router_Route;
@@ -96,7 +97,8 @@ class Web extends EmbeddedWeb
             ->setupUser()
             ->setupTimezone()
             ->setupLogger()
-            ->setupInternationalization();
+            ->setupInternationalization()
+            ->setupFatalErrorHandling();
     }
 
     /**
@@ -544,6 +546,37 @@ class Web extends EmbeddedWeb
         Zend_View_Helper_PaginationControl::setDefaultViewPartial(
             array('mixedPagination.phtml', 'default')
         );
+        return $this;
+    }
+
+    /**
+     * Fatal error handling configuration
+     *
+     * @return $this
+     */
+    protected function setupFatalErrorHandling()
+    {
+        register_shutdown_function(function () {
+            $error = error_get_last();
+
+            if ($error !== null && $error['type'] === E_ERROR) {
+                $frontController = Icinga::app()->getFrontController();
+                $response = $frontController->getResponse();
+
+                $response->setException(new ErrorException(
+                    $error['message'],
+                    0,
+                    $error['type'],
+                    $error['file'],
+                    $error['line']
+                ));
+
+                // Clean PHP's fatal error stack trace and replace it with ours
+                ob_end_clean();
+                $frontController->dispatch($frontController->getRequest(), $response);
+            }
+        });
+
         return $this;
     }
 
