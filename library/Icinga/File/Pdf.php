@@ -20,7 +20,7 @@ call_user_func(function () {
      * @license http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License
      */
 
-    $baseDir = __DIR__ . '/../../vendor/dompdf';
+    $baseDir = Icinga::app()->getBaseDir('library/vendor/dompdf');
 
     require_once "$baseDir/lib/html5lib/Parser.php";
     require_once "$baseDir/lib/php-font-lib/src/FontLib/Autoloader.php";
