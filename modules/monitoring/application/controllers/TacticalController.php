@@ -51,6 +51,7 @@ class TacticalController extends Controller
         );
         $this->applyRestriction('monitoring/filter/objects', $stats);
 
+        $this->handleFormatRequest($stats);
         $summary = $stats->fetchRow();
 
         $hostSummaryChart = new Donut();
