@@ -112,7 +112,7 @@ class ClassLoader
         }
 
         foreach ($this->namespaces as $namespace => $dir) {
-            if ($class === strstr($class, $namespace)) {
+            if ($class === strstr($class, "$namespace\\")) {
                 return $this->buildClassFilename($class, $namespace);
             }
         }
