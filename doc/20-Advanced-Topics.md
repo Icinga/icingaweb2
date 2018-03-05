@@ -6,6 +6,7 @@ This chapter provides details for advanced Icinga Web 2 topics.
 * [VirtualHost configuration](20-Advanced-Topics.md#virtualhost-configuration)
 * [Source installation](20-Advanced-Topics.md#installing-from-source)
 * [Automated setup](20-Advanced-Topics.md#web-setup-automation)
+* [Building Urls](20-Advanced-Topics.md#building-urls)
 
 ## Global URL Parameters <a id="global-url-parameters"></a>
 
@@ -487,4 +488,28 @@ The structure of the configurations looks like the following:
 ```
 
 Have a look [here](20-Advanced-Topics.md#web-setup-manual-from-source-config) for the contents of the files.
+
+## Building Urls <a id="building-urls"></a>
+
+Macros are available to build custom urls for action_url and notes_url.
+These can be used to build urls to link back to internal documentation or other resources
+
+The following macros are available for use in notes_url and action_url
+
+```
+$host.name$
+$service.description$
+$host.address$ or $address$
+```
+
+For e.g: 
+The url "http://internaldoc.com/w/icinga2/hosts/$host.name$/" in configuration for the host_name "1.example.com" will be expanded as
+"http://internaldoc.com/w/icinga2/hosts/1.example.com/".
+
+Multiple urls can be included for a single object in icingaweb2 using the following method
+
+```
+notes_url = "'firstURL' 'secondURL' 'thirdURL'"
+notes_url = "onlyoneURL"
+```
 
