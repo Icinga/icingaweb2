@@ -4,7 +4,6 @@
 namespace Icinga\Module\Monitoring\Forms\Command\Object;
 
 use Icinga\Module\Monitoring\Command\Object\DeleteDowntimeCommand;
-use Icinga\Module\Monitoring\Forms\Command\CommandForm;
 use Icinga\Web\Notification;
 
 /**
@@ -108,7 +107,9 @@ class DeleteDowntimeCommandForm extends ObjectsCommandForm
             $cmd->setObject($obj);
         } elseif (($instance = $this->getElement('downtime_instance_name')->getValue()) !== null) {
             $cmd->setInstance($instance);
-        } else {
+        }
+
+        if ($obj === null) {
             $cmd->setIsService($this->getElement('downtime_is_service')->getValue());
         }
 

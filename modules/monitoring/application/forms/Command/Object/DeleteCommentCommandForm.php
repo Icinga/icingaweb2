@@ -103,13 +103,14 @@ class DeleteCommentCommandForm extends ObjectsCommandForm
             ->setCommentId($this->getElement('comment_id')->getValue())
             ->setCommentName($this->getElement('comment_name')->getValue());
 
-        $isService = $this->getElement('comment_is_service')->getValue();
         if (($obj = $this->getObject()) !== null) {
             $cmd->setObject($obj);
         } elseif (($instance = $this->getElement('comment_instance_name')->getValue()) !== null) {
             $cmd->setInstance($instance);
-        } else {
-            $cmd->setIsService($isService);
+        }
+
+        if ($obj === null) {
+            $cmd->setIsService($this->getElement('comment_is_service')->getValue());
         }
 
         $this->getTransport($this->request)->send($cmd);

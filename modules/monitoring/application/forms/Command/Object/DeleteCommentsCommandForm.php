@@ -76,9 +76,9 @@ class DeleteCommentsCommandForm extends CommandForm
 
             if (isset($comment->instance_name)) {
                 $cmd->setInstance($comment->instance_name);
-            } else {
-                $cmd->setIsService(isset($comment->service_description));
             }
+
+            $cmd->setIsService(isset($comment->service_description));
 
             $this->getTransport($this->request)->send($cmd);
         }

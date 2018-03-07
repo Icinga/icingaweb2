@@ -76,9 +76,9 @@ class DeleteDowntimesCommandForm extends CommandForm
 
             if (isset($downtime->instance_name)) {
                 $delDowntime->setInstance($downtime->instance_name);
-            } else {
-                $delDowntime->setIsService(isset($downtime->service_description));
             }
+
+            $delDowntime->setIsService(isset($downtime->service_description));
 
             $this->getTransport($this->request)->send($delDowntime);
         }
