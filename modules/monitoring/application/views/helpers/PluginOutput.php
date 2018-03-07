@@ -143,16 +143,28 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
                     $offsetLeft = $match[0][1];
                     $matchLength = strlen($match[0][0]);
                     $leftLength = $offsetLeft - $start;
+                    // if there is text before the match
                     if ($leftLength) {
+                        // create node for leading text
                         $text = new DOMText(substr($node->nodeValue, $start, $leftLength));
                         $node->parentNode->insertBefore($text, $node);
                     }
+                    // create the new element for the match
                     $span = $doc->createElement('span', $match[0][0]);
                     $span->setAttribute('class', 'state-' . strtolower($match[1][0]));
                     $node->parentNode->insertBefore($span, $node);
+
+                    // start for next match
                     $start = $offsetLeft + $matchLength;
                 }
                 if ($start) {
+                    // is there text left?
+                    if (strlen($node->nodeValue) > $start) {
+                        // create node for trailing text
+                        $text = new DOMText(substr($node->nodeValue, $start));
+                        $node->parentNode->insertBefore($text, $node);
+                    }
+                    // delete the old node later
                     $nodesToRemove[] = $node;
                 }
             } elseif ($node->nodeType === XML_ELEMENT_NODE) {
