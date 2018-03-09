@@ -197,6 +197,10 @@ class Url
                     if ($requestBaseUrl && $requestBaseUrl !== '/' && strpos($urlPath, $requestBaseUrl) === 0) {
                         $urlPath = substr($urlPath, strlen($requestBaseUrl) + 1);
                         $urlObject->setBasePath($requestBaseUrl);
+                    } else {
+                        // If the url start with "/" and does not start with the baseurl
+                        // it is an external url
+                        $urlObject->setIsExternal();
                     }
                 }
             } elseif (! $urlObject->isExternal()) {
