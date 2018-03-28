@@ -49,7 +49,7 @@ class UserDomainMigration
             return isset($this->map[$user->getUsername()]);
         }
 
-        if ($this->fromDomain !== null && $user->hasDomain() && $user->getDomain() !== $this->fromDomain) {
+        if ($this->fromDomain !== null && $user->hasDomain() && ! $user->isInDomain($this->fromDomain)) {
             return false;
         }
 

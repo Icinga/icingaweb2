@@ -307,7 +307,7 @@ class GroupController extends AuthBackendController
                 foreach ($backend->select(array('user_name')) as $user) {
                     $userObj = new User($user->user_name);
                     if ($domain !== null) {
-                        if ($userObj->hasDomain() && $userObj->getDomain() !== $domain) {
+                        if ($userObj->hasDomain() && ! $userObj->isInDomain($domain)) {
                             // Users listed in a user backend which is configured to be responsible for a domain should
                             // not have a domain in their username. Ultimately, if the username has a domain, it must
                             // not differ from the backend's domain. We could log here - but hey, who cares :)
