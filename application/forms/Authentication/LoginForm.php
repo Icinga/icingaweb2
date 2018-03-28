@@ -4,6 +4,7 @@
 namespace Icinga\Forms\Authentication;
 
 use Icinga\Application\Config;
+use Icinga\Application\Hook\AuthenticationHook;
 use Icinga\Authentication\Auth;
 use Icinga\Authentication\User\ExternalBackend;
 use Icinga\User;
@@ -95,6 +96,8 @@ class LoginForm extends Form
         $authenticated = $authChain->authenticate($user, $password);
         if ($authenticated) {
             $auth->setAuthenticated($user);
+            // Call provided AuthenticationHook(s) after successful login
+            AuthenticationHook::triggerLogin($user);
             $this->getResponse()->setRerenderLayout(true);
             return true;
         }
