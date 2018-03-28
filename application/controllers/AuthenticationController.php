@@ -3,6 +3,7 @@
 
 namespace Icinga\Controllers;
 
+use Icinga\Application\Hook\AuthenticationHook;
 use Icinga\Application\Icinga;
 use Icinga\Forms\Authentication\LoginForm;
 use Icinga\Web\Controller;
@@ -35,6 +36,9 @@ class AuthenticationController extends Controller
         }
         $form = new LoginForm();
         if ($this->Auth()->isAuthenticated()) {
+            // Call provided AuthenticationHook(s) when login action is called
+            // but icinga web user is already authenticated
+            AuthenticationHook::triggerLogin($this->Auth()->getUser());
             $this->redirectNow($form->getRedirectUrl());
         }
         if (! $requiresSetup) {
@@ -66,6 +70,8 @@ class AuthenticationController extends Controller
         // Get info whether the user is externally authenticated before removing authorization which destroys the
         // session and the user object
         $isExternalUser = $auth->getUser()->isExternalUser();
+        // Call provided AuthenticationHook(s) when logout action is called
+        AuthenticationHook::triggerLogout($auth->getUser());
         $auth->removeAuthorization();
         if ($isExternalUser) {
             $this->getResponse()->setHttpResponseCode(401);
