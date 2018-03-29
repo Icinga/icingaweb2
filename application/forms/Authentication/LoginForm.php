@@ -70,7 +70,11 @@ class LoginForm extends Form
      */
     public function getRedirectUrl()
     {
-        $redirect = null;
+        // if a hook returns a custom url, redirect the user to it
+        $redirect = AuthenticationHook::retrieveOnLoginRedirect($this->getRequest());
+        if ($redirect instanceof Url) {
+            return $redirect;
+        }
         if ($this->created) {
             $redirect = $this->getElement('redirect')->getValue();
         }
