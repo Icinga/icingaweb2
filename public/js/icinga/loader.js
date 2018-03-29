@@ -326,6 +326,12 @@
             }
 
             redirect = decodeURIComponent(redirect);
+
+            // full redirect browser when redirect url is external
+            if (redirect.match(/^[a-z]+:\/\//)) {
+                window.open(redirect, '_self');
+            }
+
             if (redirect.match(/__SELF__/)) {
                 if (req.autorefresh) {
                     // Redirect to the current window's URL in case it's an auto-refresh request. If authenticated
