@@ -4,6 +4,7 @@
 namespace Icinga\Authentication\UserGroup;
 
 use Exception;
+use Icinga\Authentication\User\DomainAwareInterface;
 use Icinga\Authentication\User\UserBackend;
 use Icinga\Authentication\User\LdapUserBackend;
 use Icinga\Application\Logger;
@@ -693,6 +694,12 @@ class LdapUserGroupBackend extends LdapRepository implements Inspectable, UserGr
 
             $username = $user->getLocalUsername();
         } else {
+            $userBackend = UserBackend::create($user->getAdditional('backend_name'));
+
+            if ($userBackend instanceof DomainAwareInterface && $userBackend->getDomain() !== null) {
+                return array();
+            }
+
             $username = $user->getUsername();
         }
 
