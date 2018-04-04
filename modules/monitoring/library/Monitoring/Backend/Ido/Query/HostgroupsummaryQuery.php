@@ -23,6 +23,7 @@ class HostgroupsummaryQuery extends IdoQuery
             'hosts_down_handled'                            => 'SUM(CASE WHEN host_state = 1 AND host_handled = 1 THEN 1 ELSE 0 END)',
             'hosts_down_unhandled'                          => 'SUM(CASE WHEN host_state = 1 AND host_handled = 0 THEN 1 ELSE 0 END)',
             'hosts_pending'                                 => 'SUM(CASE WHEN host_state = 99 THEN 1 ELSE 0 END)',
+            'hosts_severity'                                => 'MAX(host_severity)',
             'hosts_total'                                   => 'SUM(CASE WHEN host_state IS NOT NULL THEN 1 ELSE 0 END)',
             'hosts_unreachable'                             => 'SUM(CASE WHEN host_state = 2 THEN 1 ELSE 0 END)',
             'hosts_unreachable_handled'                     => 'SUM(CASE WHEN host_state = 2 AND host_handled = 1 THEN 1 ELSE 0 END)',
@@ -85,8 +86,10 @@ class HostgroupsummaryQuery extends IdoQuery
                 'hostgroup_alias',
                 'hostgroup_name',
                 'host_handled',
+                'host_severity',
                 'host_state',
                 'service_handled'   => new Zend_Db_Expr('NULL'),
+                'service_severity'  => new Zend_Db_Expr('0'),
                 'service_state'     => new Zend_Db_Expr('NULL'),
             )
         );
@@ -97,8 +100,10 @@ class HostgroupsummaryQuery extends IdoQuery
                 'hostgroup_alias',
                 'hostgroup_name',
                 'host_handled'  => new Zend_Db_Expr('NULL'),
+                'host_severity' => new Zend_Db_Expr('0'),
                 'host_state'    => new Zend_Db_Expr('NULL'),
                 'service_handled',
+                'service_severity',
                 'service_state'
             )
         );
