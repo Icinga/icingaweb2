@@ -100,7 +100,7 @@ class NavigationItemForm extends Form
         // The regex here specifically matches the port-macro as it's the only one preventing Url::fromPath() from
         // successfully parsing the given url. Any other macro such as for the scheme or host simply gets identified
         // as path which is just fine in this case.
-        if (isset($values['url']) && $values['url'] && !preg_match('~://.+:(\$.+\$)~', $values['url'])) {
+        if (isset($values['url']) && $values['url'] && !preg_match('~://.+:\d*?(\$.+\$)~', $values['url'])) {
             $url = Url::fromPath($values['url']);
             if ($url->getBasePath() === $this->getRequest()->getBasePath()) {
                 $values['url'] = $url->getRelativeUrl();
