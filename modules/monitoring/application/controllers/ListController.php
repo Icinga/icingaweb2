@@ -485,6 +485,7 @@ class ListController extends Controller
         $this->setupPaginationControl($serviceGroups);
         $this->setupSortControl(array(
             'servicegroup_alias'    => $this->translate('Service Group Name'),
+            'services_severity'     => $this->translate('Severity'),
             'services_total'        => $this->translate('Total Services')
         ), $serviceGroups);
         $this->filterQuery($serviceGroups);
@@ -531,6 +532,7 @@ class ListController extends Controller
         $this->setupPaginationControl($hostGroups);
         $this->setupSortControl(array(
             'hostgroup_alias'   => $this->translate('Host Group Name'),
+            'hosts_severity'    => $this->translate('Severity'),
             'hosts_total'       => $this->translate('Total Hosts'),
             'services_total'    => $this->translate('Total Services')
         ), $hostGroups);
