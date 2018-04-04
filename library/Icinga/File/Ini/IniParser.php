@@ -267,6 +267,11 @@ class IniParser
             throw new ConfigurationError('Couldn\'t parse the INI file `%s\'', $path, $e);
         }
 
-        return Config::fromArray($configArray)->setConfigFile($file);
+        $unescaped = array();
+        foreach ($configArray as $section => $options) {
+            $unescaped[preg_replace('/\\\\(.)/', '\1', $section)] = $options;
+        }
+
+        return Config::fromArray($unescaped)->setConfigFile($file);
     }
 }
