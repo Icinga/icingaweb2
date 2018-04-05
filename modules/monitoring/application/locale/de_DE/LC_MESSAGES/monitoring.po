@@ -3854,6 +3854,22 @@ msgstr "System"
 msgid "Tactical Overview"
 msgstr "Taktische Übersicht"
 
+#: ../../../../modules/monitoring/application/controllers/TacticalController.php:83
+msgid "Services Critical"
+msgstr "Services Kritisch"
+
+#: ../../../../modules/monitoring/application/controllers/TacticalController.php:68
+msgid "Hosts Down"
+msgstr "Hosts Down"
+
+#: ../../../../modules/monitoring/application/views/scripts/tactical/index.phtml:9
+msgid "Host Summary"
+msgstr "Host Übersicht"
+
+#: ../../../../modules/monitoring/application/views/scripts/tactical/index.phtml:61
+msgid "Service Summary"
+msgstr "Service Übersicht"
+
 #: ../../../../modules/monitoring/library/Monitoring/MonitoringWizard.php:183
 msgid ""
 "The Zend database adapter for MySQL is required to access a MySQL database."
