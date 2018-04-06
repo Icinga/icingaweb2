@@ -163,6 +163,8 @@
             } else {
                 $parent.addClass('collapsed');
             }
+
+            icinga.ui.fixControls($parent.closest('.container'));
         },
 
         onLoad: function (event) {
