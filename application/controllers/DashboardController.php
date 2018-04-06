@@ -6,6 +6,7 @@ namespace Icinga\Controllers;
 use Exception;
 use Zend_Controller_Action_Exception;
 use Icinga\Exception\ProgrammingError;
+use Icinga\Exception\Http\HttpNotFoundException;
 use Icinga\Forms\ConfirmRemovalForm;
 use Icinga\Forms\Dashboard\DashletForm;
 use Icinga\Web\Controller\ActionController;
@@ -195,6 +196,62 @@ class DashboardController extends ActionController
         $this->view->pane = $pane;
         $this->view->dashlet = $dashlet;
         $this->view->form = $form;
+    }
+
+    public function renamePaneAction()
+    {
+        $paneName = $this->params->getRequired('pane');
+        if (! $this->dashboard->hasPane($paneName)) {
+            throw new HttpNotFoundException('Pane not found');
+        }
+
+        $form = new Form();
+        $form->setRedirectUrl('dashboard/settings');
+        $form->setSubmitLabel($this->translate('Update Pane'));
+        $form->addElement(
+            'text',
+            'name',
+            array(
+                'required'  => true,
+                'label'     => $this->translate('Name')
+            )
+        );
+        $form->addElement(
+            'text',
+            'title',
+            array(
+                'required'  => true,
+                'label'     => $this->translate('Title')
+            )
+        );
+        $form->setDefaults(array(
+            'name'  => $paneName,
+            'title' => $this->dashboard->getPane($paneName)->getTitle()
+        ));
+        $form->setOnSuccess(function ($form) use ($paneName) {
+            $newName = $form->getValue('name');
+            $newTitle = $form->getValue('title');
+
+            $pane = $this->dashboard->getPane($paneName);
+            $pane->setName($newName);
+            $pane->setTitle($newTitle);
+            $this->dashboard->getConfig()->saveIni();
+
+            Notification::success(
+                sprintf($this->translate('Pane "%s" successfully renamed to "%s"'), $paneName, $newName)
+            );
+        });
+
+        $form->handleRequest();
+
+        $this->view->form = $form;
+        $this->getTabs()->add(
+            'update-pane',
+            array(
+                'title' => $this->translate('Update Pane'),
+                'url'   => $this->getRequest()->getUrl()
+            )
+        )->activate('update-pane');
     }
 
     public function removePaneAction()
