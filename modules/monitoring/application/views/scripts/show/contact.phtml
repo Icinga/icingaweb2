@@ -3,15 +3,16 @@
  <?php if (! $this->compact): ?>
   <?= $this->tabs; ?>
  <?php endif ?>
-  <h1><?= $this->translate('Contact details') ?></h1>
-  <div class="circular" style="background-image: url('<?=
-      $this->href('static/gravatar', array('email' => $contact->contact_email))
-  ?>')"></div>
 
 <?php if (! $contact): ?>
   <?= $this->translate('No such contact') ?>: <?= $contactName ?>
 </div>
 <?php return; endif ?>
+
+  <h1><?= $this->translate('Contact details') ?></h1>
+  <div class="circular" style="background-image: url('<?=
+      $this->href('static/gravatar', array('email' => $contact->contact_email))
+  ?>')"></div>
 
   <table class="avp" style="width: 70%">
     <tbody>
