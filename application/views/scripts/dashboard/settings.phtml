@@ -21,7 +21,16 @@
                 <?php if ($pane->getDisabled()) continue; ?>
                 <tr style="background-color: #f1f1f1;">
                     <th colspan="2" style="text-align: left; padding: 0.5em;">
+                    <?php if ($pane->isUserWidget()): ?>
+                        <?= $this->qlink(
+                            $pane->getName(),
+                            'dashboard/rename-pane',
+                            array('pane' => $pane->getName()),
+                            array('title' => sprintf($this->translate('Edit pane %s'), $pane->getName()))
+                        ) ?>
+                    <?php else: ?>
                         <?= $this->escape($pane->getName()) ?>
+                    <?php endif ?>
                     </th>
                     <th>
                         <?= $this->qlink(
