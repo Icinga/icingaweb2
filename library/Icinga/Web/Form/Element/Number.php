@@ -46,11 +46,12 @@ class Number extends FormElement
      */
     public function init()
     {
-        if ($this->min !== null) {
-            $this->addValidator('GreaterThan', true, array('min' => $this->min));
-        }
-        if ($this->max !== null) {
-            $this->addValidator('LessThan', true, array('max' => $this->max));
+        if ($this->min !== null || $this->max !== null) {
+            $this->addValidator('Between', true, array(
+                'min'       => $this->min === null ? -INF : $this->min,
+                'max'       => $this->max === null ? INF : $this->max,
+                'inclusive' => true
+            ));
         }
     }
 
@@ -86,7 +87,7 @@ class Number extends FormElement
      */
     public function setMax($max)
     {
-        $this->max = (int) $max;
+        $this->max = (float) $max;
         return $this;
     }
 
