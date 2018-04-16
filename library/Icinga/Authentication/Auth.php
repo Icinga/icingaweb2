@@ -5,6 +5,7 @@ namespace Icinga\Authentication;
 
 use Exception;
 use Icinga\Application\Config;
+use Icinga\Application\Hook\AuditHook;
 use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
 use Icinga\Authentication\User\ExternalBackend;
@@ -164,6 +165,7 @@ class Auth
         if ($persist) {
             $this->persistCurrentUser();
         }
+        AuditHook::logActivity('login', 'User {{username}} logged in', ['username' => $user->getUsername()]);
     }
 
     /**
@@ -362,6 +364,7 @@ class Auth
      */
     public function removeAuthorization()
     {
+        AuditHook::logActivity('logout', 'User {{username}} logged out', ['username' => $this->user->getUsername()]);
         $this->user = null;
         Session::getSession()->purge();
     }
