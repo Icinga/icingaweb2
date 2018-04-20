@@ -230,7 +230,7 @@ systemctl enable apache2.service
     
 **Debian / Ubuntu**
 
-Your web server should be up and running after the installation.
+Your web server should be up and running after the installation of Icinga Web 2.
 
 ### Setting up FPM <a id="setting-up-fpm"></a>
 
