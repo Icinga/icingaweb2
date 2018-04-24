@@ -857,15 +857,6 @@
 
                     if ($activeElement.length && $activeElement.is(':visible')) {
                         $activeElement.focus();
-                        if ($activeElement.is('input[type=text]')) {
-                            if (typeof $activeElement[0].setSelectionRange === 'function') {
-                                // Place focus after the last character. Could be extended to other
-                                // input types, would require some \r\n "magic" to work around issues
-                                // with some browsers
-                                var len = $activeElement.val().length;
-                                $activeElement[0].setSelectionRange(len, len);
-                            }
-                        }
                     } else if (! autorefresh) {
                         if (focusFallback) {
                             $(focusFallback.parent).find(focusFallback.child).focus();
