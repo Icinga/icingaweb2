@@ -3054,7 +3054,7 @@ msgid ""
 "Please define below how you want to send commands to your monitoring "
 "instance."
 msgstr ""
-"Bitte legen weiter unten fest, wie Befehle an die Monitoringinstanz gesendet "
+"Bitte lege weiter unten fest, wie Befehle an die Monitoringinstanz gesendet "
 "werden sollen."
 
 #: ../../../../modules/monitoring/application/forms/Setup/IdoResourcePage.php:23
