@@ -351,7 +351,8 @@ class Platform
      */
     public static function hasMssqlSupport()
     {
-        return static::extensionLoaded('mssql') && static::classExists('Zend_Db_Adapter_Pdo_Mssql');
+        return (static::extensionLoaded('mssql') || static::extensionLoaded('pdo_dblib'))
+            && static::classExists('Zend_Db_Adapter_Pdo_Mssql');
     }
 
     /**
