@@ -423,11 +423,14 @@ class RepositoryQuery implements QueryInterface, SortRules, FilterColumns, Itera
      * Enabling this causes the current query limit to be increased by one. The potential extra row being yielded will
      * be removed from the result set. Note that this only applies when fetching multiple results of limited queries.
      *
+     * @param   bool    $state
+     *
      * @return  $this
      */
     public function peekAhead($state = true)
     {
-        return $this->query->peekAhead($state);
+        $this->query->peekAhead($state);
+        return $this;
     }
 
     /**
