@@ -13,6 +13,7 @@
         this.icinga = icinga;
 
         this.searchValue = '';
+        this.searchTimer = null;
         this.initializeModules = true;
     };
 
@@ -213,7 +214,16 @@
                 return;
             }
             _this.searchValue = $('#menu input.search').val();
-            return _this.autoSubmitForm(event);
+
+            if (_this.searchTimer !== null) {
+                clearTimeout(_this.searchTimer);
+                _this.searchTimer = null;
+            }
+            var _event = $.extend({}, event);  // event seems gc'd once the timeout is over
+            _this.searchTimer = setTimeout(function () {
+                _this.submitForm(_event, true);
+                _this.searchTimer = null;
+            }, 500);
         },
 
         rememberSubmitButton: function(e) {
