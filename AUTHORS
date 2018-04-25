@@ -2,19 +2,26 @@ Aaron Collins <acollins@chegg.com>
 Alexander A. Klimov <alexander.klimov@icinga.com>
 Alexander Fuhr <alexander.fuhr@netways.de>
 Alexander Wirt <formorer@debian.org>
+ayoubabid <ayoubabid@users.noreply.github.com>
+baufrecht <baufrecht@users.noreply.github.com>
 Bence Nagy <bence@underyx.me>
 Benedikt Heine <bebe@bebehei.de>
 Bernd Erk <bernd.erk@icinga.com>
 Bernhard Friedreich <bernhard.friedreich@brz.gv.at>
 Blerim Sheqa <blerim.sheqa@icinga.com>
 Boden Garman <boden.garman@spintel.net.au>
+bradynathan <bradynathan@gmail.com>
 Carlos Cesario <carloscesario@gmail.com>
+Carsten <carsten.koebke@gmx.de>
 Chris Reeves <chris.reeves@york.ac.uk>
-Christoph Wiechert <wio@psitrax.de>
 Christopher Rüll <christopher.ruell@netways.de>
+Christoph Niemann <kordolan@googlemail.com>
+Christoph Wiechert <wio@psitrax.de>
 Cornelius Wachinger <cornelius@dercorn.com>
+cstegm <cstegm@users.noreply.github.com>
 Daniel <d.lorych@gmail.com>
 Daniel Shirley <aditaa@ig2ad.com>
+Davide Bizzarri <davide.bizzarri@wuerth-phoenix.com>
 Davide Demuru <davide.demuru@buongiorno.com>
 Dirk Goetz <dirk.goetz@netways.de>
 Emil Vikström <emil@pixelstore.se>
@@ -24,63 +31,62 @@ Florian Strohmaier <florian.strohmaier@icinga.com>
 Francesco Colista <fcolista@alpinelinux.org>
 Goran Rakic <grakic@devbase.net>
 Gunnar Beutner <gunnar.beutner@netways.de>
+hailthemelody@rm-laptop04 <hailthemelody@rm-laptop04>
 Hector Sanjuan <hector.sanjuan@nugg.ad>
 Heike Jurzik <huhn@lion-3.fritz.box>
 Ian Shearin <ishearin@womply.com>
 Jannis Moßhammer <jannis.mosshammer@netways.de>
 Jennifer Mourek <jennifer.mourek@icinga.com>
-Jo Rhett <jo@chegg.com>
 Joe Doherty <git@pjuu.com>
 Johannes Meyer <johannes.meyer@icinga.com>
 Joonas Kylmälä <joonas.kylmala@kirjastot.fi>
+Jo Rhett <jo@chegg.com>
 Ken Jungclaus <lum33n@web.de>
 Klaus Jrgensen <klaus@blackwoodseven.com>
 Lee Clemens <java@leeclemens.net>
 Louis Sautier <sautier.louis@gmail.com>
+mapa82 <maik.paetzold@akra.de>
 Marc DeTrano <marc@gridshield.net>
 Marcus Cobden <marcus@marcuscobden.co.uk>
 Marius Hein <marius.hein@netways.de>
 Markus Frosch <markus.frosch@icinga.com>
 Matthias Jentsch <matthias.jentsch@netways.de>
+Max Stephan <xam.stephan@web.de>
+mbaschnitzi <mbaschnitzi@users.noreply.github.com>
 Michael Friedrich <michael.friedrich@icinga.com>
+Michael T. DeGuzis <mdeguzis@users.noreply.github.com>
 Mikesch-mp <Mikesch-mp@koebbes.de>
 Mikko Peltokangas <mikko@peltokangas.org>
 Munzir Taha <munzirtaha@gmail.com>
 Nicolai Buchwitz <nicolai.buchwitz@enda.eu>
 Noah Hilverling <noah.hilverling@icinga.com>
+Paolo Schiro <paolo.schiro@kpnqwest.it>
 Paul Richards <paul@minimoo.org>
 Pavlos Daoglou <pdaoglou@gmail.com>
 Pieter Lexis <pieter.lexis@powerdns.com>
 Ramy Talal <ramy@thinkquality.nl>
 Raphael Bicker <raphael@bicker.ch>
+rbelinsky <rbelinsky@dalet.com>
+realitygaps <github@gapsinreality.com>
 Rene Moser <rene.moser@swisstxt.ch>
+rkcpi <thieme.sandra@gmail.com>
 Roland Hopferwieser <rhopfer@ica.jku.at>
 Rudy Gevaert <rudy.gevaert@ugent.be>
 Rune Darrud <theflyingcorpse@gmail.com>
 Russell Kubik <russkubik@3d-p.com>
 Sander Ferdinand <sa.ferdinand@gmail.com>
 Simone Orsi <simahawk@users.noreply.github.com>
+ss23 <stephen@zxsecurity.co.nz>
 Susanne Vestner-Ludwig <susanne.vestner-ludwig@inserteffect.com>
 Sylph Lin <sylph.lin@gmail.com>
+tfylling <torbfylling@gmail.com>
 Thomas Gelf <thomas.gelf@icinga.com>
 Tim Helfensdörfer <tim@visualappeal.de>
 Tobias von der Krone <tobias.vonderkrone@profitbricks.com>
-Tom Ford <exptom@users.noreply.github.com>
 Tomas Barton <barton.tomas@gmail.com>
+Tom Ford <exptom@users.noreply.github.com>
 Ulf Lange <mopp@gmx.net>
 Uwe Ebel <kobmaki@aol.com>
 Vladislav Ponomarev <vponomarev@team.mobile.de>
-Yuri Konotopov <ykonotopov@gmail.com>
-ayoubabid <ayoubabid@users.noreply.github.com>
-baufrecht <baufrecht@users.noreply.github.com>
-bradynathan <bradynathan@gmail.com>
-cstegm <cstegm@users.noreply.github.com>
-hailthemelody@rm-laptop04 <hailthemelody@rm-laptop04>
-mapa82 <maik.paetzold@akra.de>
-mbaschnitzi <mbaschnitzi@users.noreply.github.com>
-rbelinsky <rbelinsky@dalet.com>
-realitygaps <github@gapsinreality.com>
-rkcpi <thieme.sandra@gmail.com>
-ss23 <stephen@zxsecurity.co.nz>
-tfylling <torbfylling@gmail.com>
 xert <xert@users.noreply.github.com>
+Yuri Konotopov <ykonotopov@gmail.com>
