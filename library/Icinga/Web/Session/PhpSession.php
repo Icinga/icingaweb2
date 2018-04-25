@@ -94,7 +94,9 @@ class PhpSession extends Session
      */
     protected function open()
     {
-        session_name($this->sessionName);
+        if (!isset($_SESSION)) {
+            session_name($this->sessionName);
+        }
 
         if ($this->hasBeenTouched) {
             $cacheLimiter = ini_get('session.cache_limiter');
