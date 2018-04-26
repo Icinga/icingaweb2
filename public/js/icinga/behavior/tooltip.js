@@ -27,8 +27,8 @@
             var $el = $(this);
             $el.attr('title', $el.data('title-rich') || $el.attr('title'));
         });
-        $('svg .chart-data', el).tipsy({ gravity: 'se', html: true });
-        $('i[title]', el).tipsy({ gravity: $.fn.tipsy.autoNS, offset: 2 });
+        $('svg .chart-data', el).tipsy({ gravity: 'se', html: true, opacity: 1 });
+        $('i[title]', el).tipsy({ gravity: $.fn.tipsy.autoNS, offset: 2, opacity: 1 });
         $('[title]', el).each(function (i, el) {
            var $el = $(el);
            var delay, gravity;
@@ -48,7 +48,8 @@
            delay = delay === undefined ? 500 : delay;
            $el.tipsy({
                gravity: gravity || $.fn.tipsy.autoNS,
-               delayIn: delay
+               delayIn: delay,
+               opacity: 1
            });
         });
 
