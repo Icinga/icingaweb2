@@ -99,6 +99,16 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
     }
 
     /**
+     * Get the connection configuration
+     *
+     * @return  ConfigObject
+     */
+    public function getConfig()
+    {
+        return $this->config;
+    }
+
+    /**
      * Getter for database type
      *
      * @return string
