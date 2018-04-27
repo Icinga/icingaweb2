@@ -3,45 +3,51 @@
 
 namespace Icinga\File;
 
+use Psr\Http\Message\StreamInterface;
 use Traversable;
 
+/**
+ * Generates CSV from a query result
+ */
 class Csv
 {
-    protected $query;
-
-    protected function __construct()
-    {
-    }
-
-    public static function fromQuery(Traversable $query)
-    {
-        $csv = new static();
-        $csv->query = $query;
-        return $csv;
-    }
-
-    public function dump()
-    {
-        header('Content-type: text/csv');
-        echo (string) $this;
-    }
-
-    public function __toString()
+    /**
+     * Render the result of the given query as CSV and write the rendered CSV to the given stream
+     *
+     * @param   Traversable     $query
+     * @param   StreamInterface $stream
+     *
+     * @return  StreamInterface The given stream
+     */
+    public static function queryToStream(Traversable $query, StreamInterface $stream)
     {
         $first = true;
-        $csv = '';
-        foreach ($this->query as $row) {
+        foreach ($query as $row) {
             if ($first) {
-                $csv .= implode(',', array_keys((array) $row)) . "\r\n";
+                $stream->write(static::renderRow(array_keys((array) $row)));
                 $first = false;
             }
-            $out = array();
-            foreach ($row as & $val) {
-                $out[] = '"' . $val . '"';
-            }
-            $csv .= implode(',', $out) . "\r\n";
+
+            $stream->write(static::renderRow(array_values((array) $row)));
         }
 
-        return $csv;
+        return $stream;
+    }
+
+    /**
+     * Return a single CSV row string representing the given columns
+     *
+     * @param   string[]    $columns
+     *
+     * @return  string
+     */
+    protected static function renderRow(array $columns)
+    {
+        $quoted = array();
+        foreach ($columns as $column) {
+            $quoted[] = '"' . str_replace('"', '""', $column) . '"';
+        }
+
+        return implode(',', $quoted) . "\r\n";
     }
 }

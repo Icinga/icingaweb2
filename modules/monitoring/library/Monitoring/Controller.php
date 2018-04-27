@@ -8,7 +8,8 @@ use Icinga\Exception\QueryException;
 use Icinga\Data\Filter\Filter;
 use Icinga\Data\Filterable;
 use Icinga\File\Csv;
-use Icinga\Util\Json;
+use Icinga\File\Json;
+use Icinga\Util\Buffer;
 use Icinga\Web\Controller as IcingaWebController;
 use Icinga\Web\Url;
 
@@ -52,6 +53,8 @@ class Controller extends IcingaWebController
                     . '</pre>';
                 exit;
             case 'json':
+                $buffer = Json::queryToStream($query, new Buffer());
+
                 $response = $this->getResponse();
                 $response
                     ->setHeader('Content-Type', 'application/json')
@@ -60,10 +63,20 @@ class Controller extends IcingaWebController
                         'Content-Disposition',
                         'inline; filename=' . $this->getRequest()->getActionName() . '.json'
                     )
-                    ->appendBody(Json::encode($query->fetchAll()))
-                    ->sendResponse();
+                    ->sendHeaders();
+
+                while (ob_get_level()) {
+                    ob_end_clean();
+                }
+
+                /** @var Buffer $buffer */
+                $buffer->rewind();
+                $buffer->fpassthru();
+
                 exit;
             case 'csv':
+                $buffer = Csv::queryToStream($query, new Buffer());
+
                 $response = $this->getResponse();
                 $response
                     ->setHeader('Content-Type', 'text/csv')
@@ -72,8 +85,16 @@ class Controller extends IcingaWebController
                         'Content-Disposition',
                         'attachment; filename=' . $this->getRequest()->getActionName() . '.csv'
                     )
-                    ->appendBody((string) Csv::fromQuery($query))
-                    ->sendResponse();
+                    ->sendHeaders();
+
+                while (ob_get_level()) {
+                    ob_end_clean();
+                }
+
+                /** @var Buffer $buffer */
+                $buffer->rewind();
+                $buffer->fpassthru();
+
                 exit;
         }
     }
