@@ -3,6 +3,7 @@
 
 namespace Icinga\Web\Response;
 
+use Icinga\Util\Json;
 use Zend_Controller_Action_HelperBroker;
 use Icinga\Web\Response;
 
@@ -190,7 +191,7 @@ class JsonResponse extends Response
                 $body['data'] = $this->getSuccessData();
                 break;
         }
-        echo json_encode($body, $this->getEncodingOptions());
+        echo Json::encode($body, $this->getEncodingOptions());
     }
 
     /**

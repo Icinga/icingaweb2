@@ -10,6 +10,7 @@ use Icinga\Cli\Command;
 use Icinga\File\Csv;
 use Icinga\Module\Monitoring\Plugin\PerfdataSet;
 use Exception;
+use Icinga\Util\Json;
 
 /**
  * Icinga monitoring objects
@@ -78,7 +79,7 @@ class ListCommand extends Command
         $query = $query->getQuery();
         switch ($format) {
             case 'json':
-                echo json_encode($query->fetchAll());
+                echo Json::encode($query->fetchAll());
                 break;
             case 'csv':
                 Csv::fromQuery($query)->dump();

@@ -9,6 +9,7 @@ use Icinga\Application\Logger\Writer\FileWriter;
 use Icinga\Application\Logger\Writer\SyslogWriter;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\IcingaException;
+use Icinga\Util\Json;
 
 /**
  * Logger
@@ -251,7 +252,7 @@ class Logger
                 function ($a) {
                     return is_string($a) ? $a : ($a instanceof Exception
                         ? IcingaException::describe($a)
-                        : json_encode($a));
+                        : Json::encode($a));
                 },
                 $arguments
             )
