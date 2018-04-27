@@ -148,7 +148,6 @@ class ContactQuery extends IdoQuery
      */
     protected function joinHosts()
     {
-        $this->requireVirtualTable('services');
         $this->select->joinLeft(
             array('hc' => $this->prefix . 'host_contacts'),
             'hc.contact_object_id = c.contact_object_id',
@@ -159,7 +158,7 @@ class ContactQuery extends IdoQuery
             array()
         )->joinLeft(
             array('ho' => $this->prefix . 'objects'),
-            '(ho.object_id = h.host_object_id OR ho.object_id = s.host_object_id) AND ho.is_active = 1',
+            'ho.object_id = h.host_object_id AND ho.is_active = 1',
             array()
         );
     }
