@@ -45,6 +45,13 @@ if ($showInstance): ?>
     </td>
 </tr>
 
+<?php if (isset($this->executedCommand)): ?>
+    <tr>
+        <th><?= $this->escape($this->translate('Command Line')) ?></th>
+        <td><pre><?= nl2br($this->escape($this->executedCommand), false) ?></pre></td>
+    </tr>
+<?php endif; ?>
+
 <?php
 $row = "<tr>\n  <th>%s</th>\n  <td>%s</td>\n</tr>\n";
 for ($i = 0; $i < count($parts); $i++) {

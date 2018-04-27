@@ -83,6 +83,10 @@ $this->providePermission(
     'monitoring/command/send-custom-notification',
     $this->translate('Allow sending custom notifications for hosts and services')
 );
+$this->providePermission(
+    'monitoring/executed-command',
+    $this->translate('Allow viewing the last check result\'s command')
+);
 
 $this->provideRestriction(
     'monitoring/filter/objects',

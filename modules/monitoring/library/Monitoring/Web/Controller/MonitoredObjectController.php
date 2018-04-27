@@ -4,6 +4,9 @@
 namespace Icinga\Module\Monitoring\Web\Controller;
 
 use Exception;
+use Icinga\Data\Filter\Filter;
+use Icinga\Exception\ConfigurationError;
+use Icinga\Module\Monitoring\Backend\Icinga2Api;
 use Icinga\Module\Monitoring\Controller;
 use Icinga\Module\Monitoring\Forms\Command\Object\CheckNowCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\DeleteCommentCommandForm;
@@ -12,6 +15,8 @@ use Icinga\Module\Monitoring\Forms\Command\Object\ObjectsCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\RemoveAcknowledgementCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\ToggleObjectFeaturesCommandForm;
 use Icinga\Module\Monitoring\Hook\DetailviewExtensionHook;
+use Icinga\Module\Monitoring\Object\MonitoredObject;
+use Icinga\Module\Monitoring\Object\Service;
 use Icinga\Web\Hook;
 use Icinga\Web\Url;
 use Icinga\Web\Widget\Tabextension\DashboardAction;
@@ -99,6 +104,10 @@ abstract class MonitoredObjectController extends Controller
                     . $html
                     . '</div>';
             }
+        }
+
+        if ($this->hasPermission('monitoring/executed-command')) {
+            $this->view->executedCommand = $this->getCheckCommand();
         }
     }
 
@@ -290,5 +299,108 @@ abstract class MonitoredObjectController extends Controller
                 ->setObjects($this->object)
                 ->handleRequest();
         }
+    }
+
+    /**
+     * Get the monitored object's check command, i.e. the command executed during the last check
+     *
+     * Only available if there's at least one Icinga 2 API command transport
+     *
+     * @return string|null
+     */
+    protected function getCheckCommand()
+    {
+        try {
+            $api = Icinga2Api::fromTransport();
+        } catch (ConfigurationError $e) {
+            return null;
+        }
+
+        if ($this->object instanceof Service) {
+            $objects = $api->objects(
+                'services',
+                Filter::where('host.name', $this->object->getHost()->getName())->andFilter(
+                    Filter::where('service.name', $this->object->getName())
+                )
+            );
+        } else {
+            $objects = $api->objects('hosts', Filter::where('host.name', $this->object->getName()));
+        }
+
+        if (! isset($objects['results'][0]['attrs']['last_check_result']['command'])) {
+            return null;
+        }
+
+        $result = array();
+
+        $checkCommands = $api->objects('checkcommands', Filter::where(
+            'checkcommand.name',
+            $this->object instanceof Service
+                ? $this->object->service_check_command
+                : $this->object->host_check_command
+        ));
+
+        if (isset($checkCommands['results'][0]['attrs'])) {
+            $attrs = $checkCommands['results'][0]['attrs'];
+
+            if (! isset($attrs['vars'])) {
+                $attrs['vars'] = array();
+            }
+
+            if (isset($attrs['env'])) {
+                foreach ($attrs['env'] as $key => $value) {
+                    $result[] = "$key={$this->escapeShellArg($this->resolveCommandMacros($value, $this->object, $attrs['vars']))}";
+                }
+            }
+        }
+
+        foreach ($objects['results'][0]['attrs']['last_check_result']['command'] as $arg) {
+            $result[] = $this->escapeShellArg($arg);
+        }
+
+        return implode(' ', $result);
+    }
+
+    /**
+     * Resolve the given macro string with values from the given monitored object,
+     * fall back to the given custom variables of its check command
+     *
+     * @param   string              $input
+     * @param   MonitoredObject     $object
+     * @param   array               $commandVars
+     *
+     * @return  string|array|null
+     */
+    protected function resolveCommandMacros($input, MonitoredObject $object, array $commandVars)
+    {
+        return preg_replace_callback(
+            '@\$([^\$\s]+)\$@',
+            function (array $matches) use ($object, $commandVars) {
+                $macro = $matches[1];
+
+                try {
+                    $result = $object->$macro;
+                } catch (Exception $e) {
+                    $result = null;
+                }
+
+                return $result === null && isset($commandVars[$macro]) ? $commandVars[$macro] : $result;
+            },
+            $input
+        );
+    }
+
+    /**
+     * Quote the given string for the usage on any *nix shell
+     *
+     * ab'c => 'ab'"'"'c'
+     *
+     * @param   string  $arg
+     *
+     * @return  string
+     */
+    protected function escapeShellArg($arg)
+    {
+        return "'" . str_replace("'", "'\"'\"'", $arg) . "'";
     }
 }
