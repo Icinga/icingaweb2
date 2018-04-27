@@ -36,6 +36,12 @@
         <td><?= $this->escape($contact->contact_pager) ?></td>
       </tr>
 <?php endif ?>
+<?php foreach ($contactActions as $action): ?>
+      <tr>
+        <th><?= $action[0] ?></th>
+        <td><?= $action[1] ?></td>
+      </tr>
+<?php endforeach; ?>
       <tr>
         <th><?= $this->translate('Hosts') ?></th>
         <td><?= $this->escape($contactHelper->contactFlags($contact, 'host')) ?><br />
