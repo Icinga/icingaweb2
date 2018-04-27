@@ -21,7 +21,7 @@
                 if ($statusSummary->hosts_down_handled):?>
                 <tr href="<?= $this->url('monitoring/list/hosts', array('host_state' => 1, 'host_handled' => 1, 'sort' => 'host_last_check', 'dir' => 'asc')) ?>">
                     <th class="state slice-state-critical-handled badge"><?= $statusSummary->hosts_down_handled ?></th>
-                    <td><?= $this->translate('Down handled') ?></td>
+                    <td><?= $this->translate('Down') ?> (<?= $this->translate('Handled') ?>)</td>
                 </tr>
                 <?php endif;
                 if ($statusSummary->hosts_down_unhandled):?>
@@ -33,7 +33,7 @@
                 if ($statusSummary->hosts_unreachable_handled):?>
                 <tr href="<?= $this->url('monitoring/list/hosts', array('host_state' => 2, 'host_handled' => 1, 'sort' => 'host_last_check', 'dir' => 'asc')) ?>">
                     <th class="state slice-state-unreachable-handled badge"><?= $statusSummary->hosts_unreachable_handled ?></th>
-                    <td><?= $this->translate('Unreachable handled') ?></td>
+                    <td><?= $this->translate('Unreachable') ?> (<?= $this->translate('Handled') ?>)</td>
                 </tr>
                 <?php endif;
                 if ($statusSummary->hosts_unreachable_unhandled):?>
@@ -73,7 +73,7 @@
             if ($statusSummary->services_warning_handled):?>
                 <tr href="<?= $this->url('monitoring/list/services', array('service_state' => 1, 'service_handled' => 1, 'sort' => 'service_last_check', 'dir' => 'asc')) ?>">
                     <th class="state slice-state-warning-handled badge"><?= $statusSummary->services_warning_handled ?></th>
-                    <td><?= $this->translate('Warning handled') ?></td>
+                    <td><?= $this->translate('Warning') ?> (<?= $this->translate('Handled') ?>)</td>
                 </tr>
             <?php endif;
             if ($statusSummary->services_warning_unhandled):?>
@@ -85,7 +85,7 @@
             if ($statusSummary->services_critical_handled):?>
                 <tr href="<?= $this->url('monitoring/list/services', array('service_state' => 2, 'service_handled' => 1, 'sort' => 'service_last_check', 'dir' => 'asc')) ?>">
                     <th class="state slice-state-critical-handled badge"><?= $statusSummary->services_critical_handled ?></th>
-                    <td><?= $this->translate('Critical handled') ?></td>
+                    <td><?= $this->translate('Critical') ?> (<?= $this->translate('Handled') ?>)</td>
                 </tr>
             <?php endif;
             if ($statusSummary->services_critical_unhandled):?>
@@ -97,7 +97,7 @@
             if ($statusSummary->services_unknown_handled):?>
                 <tr href="<?= $this->url('monitoring/list/services', array('service_state' => 3, 'service_handled' => 1, 'sort' => 'service_last_check', 'dir' => 'asc')) ?>">
                     <th class="state slice-state-unknown-handled badge"><?= $statusSummary->services_unknown_handled ?></th>
-                    <td><?= $this->translate('Unknown handled') ?></td>
+                    <td><?= $this->translate('Unknown') ?> (<?= $this->translate('Handled') ?>)</td>
                 </tr>
             <?php endif;
             if ($statusSummary->services_unknown_unhandled):?>

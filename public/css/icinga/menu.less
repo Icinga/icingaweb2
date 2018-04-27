@@ -171,10 +171,15 @@
   line-height: 1;
   margin: 0 0.5em -.05em 0.25em;
   width: 1em;
-  -webkit-filter: invert(100%);
-     -moz-filter: invert(100%);
-      -ms-filter: invert(100%);
-          filter: invert(100%);
+}
+
+#menu img[src*="/img/icons/"] {
+  &:not([src$="tux.png"]):not([src$="win.png"]):not([src$="_white.png"]) {
+    -webkit-filter: invert(100%);
+    -moz-filter: invert(100%);
+    -ms-filter: invert(100%);
+    filter: invert(100%);
+  }
 }
 
 .nav-item:hover img.icon {

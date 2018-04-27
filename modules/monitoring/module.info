@@ -1,5 +1,5 @@
 Module: monitoring
-Version: 2.5.1
+Version: 2.5.3
 Description: Icinga monitoring module
  This is the core module for most Icingaweb users. It provides an
  abstraction layer for various Icinga data backends.

@@ -22,6 +22,7 @@ class ServicegroupsummaryQuery extends IdoQuery
             'services_critical_unhandled'                   => 'SUM(CASE WHEN service_state = 2 AND service_handled = 0 THEN 1 ELSE 0 END)',
             'services_ok'                                   => 'SUM(CASE WHEN service_state = 0 THEN 1 ELSE 0 END)',
             'services_pending'                              => 'SUM(CASE WHEN service_state = 99 THEN 1 ELSE 0 END)',
+            'services_severity'                             => 'MAX(service_severity)',
             'services_total'                                => 'SUM(CASE WHEN service_state IS NOT NULL THEN 1 ELSE 0 END)',
             'services_unknown'                              => 'SUM(CASE WHEN service_state = 3 THEN 1 ELSE 0 END)',
             'services_unknown_handled'                      => 'SUM(CASE WHEN service_state = 3 AND service_handled = 1 THEN 1 ELSE 0 END)',
@@ -65,6 +66,7 @@ class ServicegroupsummaryQuery extends IdoQuery
                 'servicegroup_alias',
                 'servicegroup_name',
                 'service_handled',
+                'service_severity',
                 'service_state'
             )
         );

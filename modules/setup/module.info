@@ -1,5 +1,5 @@
 Module: setup
-Version: 2.5.1
+Version: 2.5.3
 Description: Setup module
  Web based wizard for setting up Icinga Web 2 and its modules.
  This includes the data backends (e.g. relational database, LDAP),

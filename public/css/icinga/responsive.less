@@ -3,7 +3,7 @@
 // Not growing larger than 3840px at 1em=16px right now
 @media screen and (min-width: 240em) {
   #header {
-    width: 240em;
+    min-width: 240em;
   }
 
   #main {
@@ -151,19 +151,19 @@
 
 // Dashboard
 
-#layout.default-layout .dashboard > .container {
+.dashboard > .container {
+  padding-right: 0;
+  width: 100%;
+}
+
+#layout:not(.twocols).default-layout .dashboard > .container:not(:only-child) {
   padding-right: @gutter;
   width: 50%;
 }
 
-#layout.wide-layout .dashboard > .container {
+#layout:not(.twocols).wide-layout .dashboard > .container:not(:only-child) {
   padding-right: @gutter;
   width: 33.33%;
-}
-
-#layout.twocols .dashboard > .container {
-  padding-right: 0;
-  width: 100%;
 }
 
 // Columns

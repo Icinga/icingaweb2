@@ -4,6 +4,43 @@ Please make sure to always read our [Upgrading](doc/80-Upgrading.md) documentati
 
 ## What's New
 
+### What's New in Version 2.5.2
+
+You can find issues and features related to this release on our [Roadmap](https://github.com/Icinga/icingaweb2/milestone/49?closed=1).
+
+#### UI Changes
+
+The sidebar's search behaviour has been changed so that it does only react to user-input after the user stopped typing.
+Also, the cursor does not jump to the end of form-inputs anymore in case of an auto-refresh. We've also fixed an issue
+that caused [custom icons](https://github.com/Icinga/icingaweb2/issues/3181#issuecomment-378875462) to be inverted when
+placed in the sidebar. Last but not least, the header now expands its width beyond the 3840px mark and single dashlets
+do not show a horizontal scrollbar anymore.
+
+#### PHP7 MSSQL Compatibility
+
+Support for Microsoft's `sqlsrv` extension has been added. Also, it's now possible to setup MSSQL resources in the
+front-end using the `dblib` extension.
+
+#### Proper Error Responses
+
+An issue introduced with v2.5.1 has been resolved where some errors (especially HTTP 404 Not Found) were masked
+by another subsequent error.
+
+#### Broken LDAP Group Memberships
+
+An issue introduced with v2.5.1 has been resolved where users with a domain in their name were not associated with any
+LDAP groups.
+
+#### Monitoring Module
+
+Issuing a check using the "Check Now" action now properly causes a check being made by Icinga 2 even if outside the
+timeperiod. (Note: This issue was only present if using the Icinga 2 Api as command transport.)
+
+#### Login/Logout Expandability
+
+It's now possible for modules to provide hooks for the user authorization. This for example allows to transparently
+authenticate users in third-party applications such as [Grafana](https://github.com/Icinga/icingaweb2/pull/3401#issue-178030542).
+
 ### What's New in Version 2.5.1
 
 You can find issues and features related to this release on our [Roadmap](https://github.com/Icinga/icingaweb2/milestone/47?closed=1).

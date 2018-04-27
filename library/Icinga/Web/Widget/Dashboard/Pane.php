@@ -54,6 +54,16 @@ class Pane extends UserWidget
     }
 
     /**
+     * Set the name of this pane
+     *
+     * @param   string  $name
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
+
+    /**
      * Returns the name of this pane
      *
      * @return string

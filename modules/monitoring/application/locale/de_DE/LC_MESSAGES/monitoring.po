@@ -3054,7 +3054,7 @@ msgid ""
 "Please define below how you want to send commands to your monitoring "
 "instance."
 msgstr ""
-"Bitte legen weiter unten fest, wie Befehle an die Monitoringinstanz gesendet "
+"Bitte lege weiter unten fest, wie Befehle an die Monitoringinstanz gesendet "
 "werden sollen."
 
 #: ../../../../modules/monitoring/application/forms/Setup/IdoResourcePage.php:23
@@ -3853,6 +3853,22 @@ msgstr "System"
 #: ../../../../modules/monitoring/application/controllers/TacticalController.php:23
 msgid "Tactical Overview"
 msgstr "Taktische Übersicht"
+
+#: ../../../../modules/monitoring/application/controllers/TacticalController.php:83
+msgid "Services Critical"
+msgstr "Services Kritisch"
+
+#: ../../../../modules/monitoring/application/controllers/TacticalController.php:68
+msgid "Hosts Down"
+msgstr "Hosts Down"
+
+#: ../../../../modules/monitoring/application/views/scripts/tactical/index.phtml:9
+msgid "Host Summary"
+msgstr "Host Übersicht"
+
+#: ../../../../modules/monitoring/application/views/scripts/tactical/index.phtml:61
+msgid "Service Summary"
+msgstr "Service Übersicht"
 
 #: ../../../../modules/monitoring/library/Monitoring/MonitoringWizard.php:183
 msgid ""

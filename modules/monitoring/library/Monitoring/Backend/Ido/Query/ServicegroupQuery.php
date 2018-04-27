@@ -35,6 +35,43 @@ class ServicegroupQuery extends IdoQuery
         ),
         'servicestatus' => array(
             'service_handled'   => 'CASE WHEN (ss.problem_has_been_acknowledged + ss.scheduled_downtime_depth + COALESCE(hs.current_state, 0)) > 0 THEN 1 ELSE 0 END',
+            'service_severity'  => '
+                CASE WHEN ss.current_state = 0
+                THEN
+                    CASE WHEN ss.has_been_checked = 0 OR ss.has_been_checked IS NULL
+                         THEN 16
+                         ELSE 0
+                    END
+                    +
+                    CASE WHEN ss.problem_has_been_acknowledged = 1
+                         THEN 2
+                         ELSE
+                            CASE WHEN ss.scheduled_downtime_depth > 0
+                                THEN 1
+                                ELSE 4
+                            END
+                    END
+                ELSE
+                    CASE WHEN ss.has_been_checked = 0 OR ss.has_been_checked IS NULL THEN 16
+                         WHEN ss.current_state = 1 THEN 32
+                         WHEN ss.current_state = 2 THEN 128
+                         WHEN ss.current_state = 3 THEN 64
+                         ELSE 256
+                    END
+                    +
+                    CASE WHEN hs.current_state > 0
+                         THEN 1024
+                         ELSE
+                             CASE WHEN ss.problem_has_been_acknowledged = 1
+                                  THEN 512
+                                  ELSE
+                                     CASE WHEN ss.scheduled_downtime_depth > 0
+                                         THEN 256
+                                         ELSE 2048
+                                     END
+                             END
+                         END
+                END',
             'service_state'     => 'CASE WHEN ss.has_been_checked = 0 OR (ss.has_been_checked IS NULL AND ss.servicestatus_id IS NOT NULL) THEN 99 ELSE ss.current_state END'
         )
     );

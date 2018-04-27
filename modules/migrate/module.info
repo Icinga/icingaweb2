@@ -1,5 +1,5 @@
 Module: migrate
-Version: 2.5.1
+Version: 2.5.3
 Description: Migrate module
  This module was introduced with the domain-aware authentication feature in version 2.5.0.
  It helps you migrating users and user configurations according to a given domain.

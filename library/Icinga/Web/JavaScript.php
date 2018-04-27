@@ -34,6 +34,7 @@ class JavaScript
         'js/icinga/behavior/actiontable.js',
         'js/icinga/behavior/flyover.js',
         'js/icinga/behavior/expandable.js',
+        'js/icinga/behavior/filtereditor.js',
         'js/icinga/behavior/selectable.js'
     );
 

@@ -65,7 +65,7 @@ class TacticalController extends Controller
             ->addSlice($summary->hosts_not_checked, array('class' => 'slice-state-not-checked'))
             ->setLabelBig($summary->hosts_down_unhandled)
             ->setLabelBigEyeCatching($summary->hosts_down_unhandled > 0)
-            ->setLabelSmall($this->translate('hosts down'));
+            ->setLabelSmall($this->translate('Hosts Down'));
 
         $serviceSummaryChart = new Donut();
         $serviceSummaryChart
@@ -80,7 +80,7 @@ class TacticalController extends Controller
             ->addSlice($summary->services_not_checked, array('class' => 'slice-state-not-checked'))
             ->setLabelBig($summary->services_critical_unhandled)
             ->setLabelBigEyeCatching($summary->services_critical_unhandled > 0)
-            ->setLabelSmall($this->translate('services critical'));
+            ->setLabelSmall($this->translate('Services Critical'));
 
         $this->view->hostStatusSummaryChart = $hostSummaryChart
             ->setLabelBigUrl($this->view->url(

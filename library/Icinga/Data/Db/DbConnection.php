@@ -139,14 +139,23 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
         switch ($this->dbType) {
             case 'mssql':
                 $adapter = 'Pdo_Mssql';
-                $pdoType = $this->config->get('pdoType', 'dblib');
+                $pdoType = $this->config->get('pdoType');
+                if (empty($pdoType)) {
+                    if (extension_loaded('sqlsrv')) {
+                        $adapter = 'Sqlsrv';
+                    } else {
+                        $pdoType = 'dblib';
+                    }
+                }
                 if ($pdoType === 'dblib') {
                     // Driver does not support setting attributes
                     unset($adapterParamaters['persistent']);
                     unset($adapterParamaters['options']);
                     unset($adapterParamaters['driver_options']);
                 }
-                $adapterParamaters['pdoType'] = $pdoType;
+                if (! empty($pdoType)) {
+                    $adapterParamaters['pdoType'] = $pdoType;
+                }
                 $defaultPort = 1433;
                 break;
             case 'mysql':
