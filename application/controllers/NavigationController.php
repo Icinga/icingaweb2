@@ -5,7 +5,6 @@ namespace Icinga\Controllers;
 
 use Exception;
 use Icinga\Application\Config;
-use Icinga\Application\Icinga;
 use Icinga\Exception\NotFoundError;
 use Icinga\Data\DataArray\ArrayDatasource;
 use Icinga\Data\Filter\FilterMatchCaseInsensitive;
@@ -13,6 +12,7 @@ use Icinga\Forms\ConfirmRemovalForm;
 use Icinga\Forms\Navigation\NavigationConfigForm;
 use Icinga\Web\Controller;
 use Icinga\Web\Form;
+use Icinga\Web\Menu;
 use Icinga\Web\Navigation\Navigation;
 use Icinga\Web\Notification;
 use Icinga\Web\Url;
@@ -419,7 +419,7 @@ class NavigationController extends Controller
             'url'       => Url::fromRequest()
         ));
 
-        $menu = Icinga::app()->getMenu();
+        $menu = new Menu();
 
         $navigation = $menu->findItem($name);
 
