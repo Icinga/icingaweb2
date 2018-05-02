@@ -11,7 +11,11 @@ $xAxisPages = $xAxisPaginator->getPages('all');
 $yAxisPages = $yAxisPaginator->getPages('all');
 
 $flipUrl = Url::fromRequest();
-$flipUrl->setParam('flipped', (int) ! $flipUrl->getParam('flipped'));
+if ($flipUrl->hasParam('flipped')) {
+    $flipUrl->remove('flipped');
+} else {
+    $flipUrl->setParam('flipped');
+}
 if ($flipUrl->hasParam('page')) {
     $flipUrl->setParam('page', implode(',', array_reverse(explode(',', $flipUrl->getParam('page')))));
 }
