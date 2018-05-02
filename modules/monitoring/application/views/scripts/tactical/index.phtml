@@ -5,6 +5,10 @@
 </div>
 <?php endif ?>
 <div class="content tactical grid">
+<?php if (! count(array_filter((array) $statusSummary))): ?>
+    <p><?= $this->translate('No results found matching the filter.') ?></p>
+</div>
+<?php return; endif ?>
     <div class="boxview" data-base-target="_next">
         <div class="donut-container">
             <h2><?= $this->translate('Host Summary') ?></h2>
