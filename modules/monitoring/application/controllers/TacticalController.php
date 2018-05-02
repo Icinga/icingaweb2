@@ -51,6 +51,16 @@ class TacticalController extends Controller
         );
         $this->applyRestriction('monitoring/filter/objects', $stats);
 
+        $this->setupFilterControl($stats, null, ['host', 'service'], ['format']);
+        $this->view->setHelperFunction('filteredUrl', function ($path, array $params) {
+            $filter = clone $this->view->filterEditor->getFilter();
+            foreach ($params as $column => $value) {
+                $filter = $filter->andFilter($filter->where($column, $value));
+            }
+
+            return $this->view->url($path)->setQueryString($filter->toQueryString());
+        });
+
         $this->handleFormatRequest($stats);
         $summary = $stats->fetchRow();
 
@@ -83,16 +93,18 @@ class TacticalController extends Controller
             ->setLabelSmall($this->translate('Services Critical'));
 
         $this->view->hostStatusSummaryChart = $hostSummaryChart
-            ->setLabelBigUrl($this->view->url(
+            ->setLabelBigUrl($this->view->filteredUrl(
                 'monitoring/list/hosts',
                 array(
-                    'host_state' => 1, 'host_handled' => 0,
-                    'sort' => 'host_last_check', 'dir' => 'asc'
+                    'host_state' => 1,
+                    'host_handled' => 0,
+                    'sort' => 'host_last_check',
+                    'dir' => 'asc'
                 )
             ))
             ->render();
         $this->view->serviceStatusSummaryChart = $serviceSummaryChart
-            ->setLabelBigUrl($this->view->url(
+            ->setLabelBigUrl($this->view->filteredUrl(
                 'monitoring/list/services',
                 array(
                     'service_state' => 2,

@@ -1,9 +1,14 @@
 <?php if (!$this->compact): ?>
 <div class="controls">
     <?= $this->tabs ?>
+    <?= $this->filterEditor ?>
 </div>
 <?php endif ?>
 <div class="content tactical grid">
+<?php if (! count(array_filter((array) $statusSummary))): ?>
+    <p><?= $this->translate('No results found matching the filter.') ?></p>
+</div>
+<?php return; endif ?>
     <div class="boxview" data-base-target="_next">
         <div class="donut-container">
             <h2><?= $this->translate('Host Summary') ?></h2>
@@ -13,43 +18,43 @@
             <table class="donut-table">
             <tbody>
                 <?php if ($statusSummary->hosts_up): ?>
-                <tr href="<?= $this->url('monitoring/list/hosts', array('host_state' => 0, 'sort' => 'host_last_check', 'dir' => 'asc')) ?>">
+                <tr href="<?= $this->filteredUrl('monitoring/list/hosts', array('host_state' => 0, 'sort' => 'host_last_check', 'dir' => 'asc')) ?>">
                     <th class="state state-ok badge"><?= $statusSummary->hosts_up ?></th>
                     <td><?= $this->translate('Up') ?></td>
                 </tr>
                 <?php endif;
                 if ($statusSummary->hosts_down_handled):?>
-                <tr href="<?= $this->url('monitoring/list/hosts', array('host_state' => 1, 'host_handled' => 1, 'sort' => 'host_last_check', 'dir' => 'asc')) ?>">
+                <tr href="<?= $this->filteredUrl('monitoring/list/hosts', array('host_state' => 1, 'host_handled' => 1, 'sort' => 'host_last_check', 'dir' => 'asc')) ?>">
                     <th class="state slice-state-critical-handled badge"><?= $statusSummary->hosts_down_handled ?></th>
                     <td><?= $this->translate('Down') ?> (<?= $this->translate('Handled') ?>)</td>
                 </tr>
                 <?php endif;
                 if ($statusSummary->hosts_down_unhandled):?>
-                <tr href="<?= $this->url('monitoring/list/hosts', array('host_state' => 1, 'host_handled' => 0, 'sort' => 'host_last_check', 'dir' => 'asc')) ?>">
+                <tr href="<?= $this->filteredUrl('monitoring/list/hosts', array('host_state' => 1, 'host_handled' => 0, 'sort' => 'host_last_check', 'dir' => 'asc')) ?>">
                     <th class="state state-critical badge"><?= $statusSummary->hosts_down_unhandled ?></th>
                     <td><?= $this->translate('Down') ?></td>
                 </tr>
                 <?php endif;
                 if ($statusSummary->hosts_unreachable_handled):?>
-                <tr href="<?= $this->url('monitoring/list/hosts', array('host_state' => 2, 'host_handled' => 1, 'sort' => 'host_last_check', 'dir' => 'asc')) ?>">
+                <tr href="<?= $this->filteredUrl('monitoring/list/hosts', array('host_state' => 2, 'host_handled' => 1, 'sort' => 'host_last_check', 'dir' => 'asc')) ?>">
                     <th class="state slice-state-unreachable-handled badge"><?= $statusSummary->hosts_unreachable_handled ?></th>
                     <td><?= $this->translate('Unreachable') ?> (<?= $this->translate('Handled') ?>)</td>
                 </tr>
                 <?php endif;
                 if ($statusSummary->hosts_unreachable_unhandled):?>
-                <tr href="<?= $this->url('monitoring/list/hosts', array('host_state' => 2, 'host_handled' => 0, 'sort' => 'host_last_check', 'dir' => 'asc')) ?>">
+                <tr href="<?= $this->filteredUrl('monitoring/list/hosts', array('host_state' => 2, 'host_handled' => 0, 'sort' => 'host_last_check', 'dir' => 'asc')) ?>">
                     <th class="state state-unreachable badge"><?= $statusSummary->hosts_unreachable_unhandled ?></th>
                     <td><?= $this->translate('Unreachable') ?></td>
                 </tr>
                 <?php endif;
                 if ($statusSummary->hosts_pending):?>
-                <tr href="<?= $this->url('monitoring/list/hosts', array('host_state' => 99, 'sort' => 'host_last_check', 'dir' => 'asc')) ?>">
+                <tr href="<?= $this->filteredUrl('monitoring/list/hosts', array('host_state' => 99, 'sort' => 'host_last_check', 'dir' => 'asc')) ?>">
                     <th class="state state-pending badge"><?= $statusSummary->hosts_pending ?></th>
                     <td><?= $this->translate('Pending') ?></td>
                 </tr>
                 <?php endif;
                 if ($statusSummary->hosts_not_checked):?>
-                <tr href="<?= $this->url('monitoring/list/hosts', array('host_active_checks_enabled' => 0, 'host_passive_checks_enabled' => 0, 'sort' => 'host_last_check', 'dir' => 'asc')) ?>">
+                <tr href="<?= $this->filteredUrl('monitoring/list/hosts', array('host_active_checks_enabled' => 0, 'host_passive_checks_enabled' => 0, 'sort' => 'host_last_check', 'dir' => 'asc')) ?>">
                     <th class="state slice-state-not-checked badge"><?= $statusSummary->hosts_not_checked ?></th>
                     <td><?= $this->translate('Not Checked') ?></td>
                 </tr>
@@ -65,55 +70,55 @@
             <table class="donut-table">
             <tbody>
             <?php if ($statusSummary->services_ok):?>
-                <tr href="<?= $this->url('monitoring/list/services', array('service_state' => 0, 'sort' => 'service_last_check', 'dir' => 'asc')) ?>">
+                <tr href="<?= $this->filteredUrl('monitoring/list/services', array('service_state' => 0, 'sort' => 'service_last_check', 'dir' => 'asc')) ?>">
                     <th class="state state-ok badge"><?= $statusSummary->services_ok ?></th>
                     <td><?= $this->translate('Ok') ?></td>
                 </tr>
             <?php endif;
             if ($statusSummary->services_warning_handled):?>
-                <tr href="<?= $this->url('monitoring/list/services', array('service_state' => 1, 'service_handled' => 1, 'sort' => 'service_last_check', 'dir' => 'asc')) ?>">
+                <tr href="<?= $this->filteredUrl('monitoring/list/services', array('service_state' => 1, 'service_handled' => 1, 'sort' => 'service_last_check', 'dir' => 'asc')) ?>">
                     <th class="state slice-state-warning-handled badge"><?= $statusSummary->services_warning_handled ?></th>
                     <td><?= $this->translate('Warning') ?> (<?= $this->translate('Handled') ?>)</td>
                 </tr>
             <?php endif;
             if ($statusSummary->services_warning_unhandled):?>
-                <tr href="<?= $this->url('monitoring/list/services', array('service_state' => 1, 'service_handled' => 0, 'sort' => 'service_last_check', 'dir' => 'asc')) ?>">
+                <tr href="<?= $this->filteredUrl('monitoring/list/services', array('service_state' => 1, 'service_handled' => 0, 'sort' => 'service_last_check', 'dir' => 'asc')) ?>">
                     <th class="state state-warning badge"><?= $statusSummary->services_warning_unhandled ?></th>
                     <td><?= $this->translate('Warning') ?></td>
                 </tr>
             <?php endif;
             if ($statusSummary->services_critical_handled):?>
-                <tr href="<?= $this->url('monitoring/list/services', array('service_state' => 2, 'service_handled' => 1, 'sort' => 'service_last_check', 'dir' => 'asc')) ?>">
+                <tr href="<?= $this->filteredUrl('monitoring/list/services', array('service_state' => 2, 'service_handled' => 1, 'sort' => 'service_last_check', 'dir' => 'asc')) ?>">
                     <th class="state slice-state-critical-handled badge"><?= $statusSummary->services_critical_handled ?></th>
                     <td><?= $this->translate('Critical') ?> (<?= $this->translate('Handled') ?>)</td>
                 </tr>
             <?php endif;
             if ($statusSummary->services_critical_unhandled):?>
-                <tr href="<?= $this->url('monitoring/list/services', array('service_state' => 2, 'service_handled' => 0, 'sort' => 'service_last_check', 'dir' => 'asc')) ?>">
+                <tr href="<?= $this->filteredUrl('monitoring/list/services', array('service_state' => 2, 'service_handled' => 0, 'sort' => 'service_last_check', 'dir' => 'asc')) ?>">
                     <th class="state state-critical badge"><?= $statusSummary->services_critical_unhandled ?></th>
                     <td><?= $this->translate('Critical') ?></td>
                 </tr>
             <?php endif;
             if ($statusSummary->services_unknown_handled):?>
-                <tr href="<?= $this->url('monitoring/list/services', array('service_state' => 3, 'service_handled' => 1, 'sort' => 'service_last_check', 'dir' => 'asc')) ?>">
+                <tr href="<?= $this->filteredUrl('monitoring/list/services', array('service_state' => 3, 'service_handled' => 1, 'sort' => 'service_last_check', 'dir' => 'asc')) ?>">
                     <th class="state slice-state-unknown-handled badge"><?= $statusSummary->services_unknown_handled ?></th>
                     <td><?= $this->translate('Unknown') ?> (<?= $this->translate('Handled') ?>)</td>
                 </tr>
             <?php endif;
             if ($statusSummary->services_unknown_unhandled):?>
-                <tr href="<?= $this->url('monitoring/list/services', array('service_state' => 3, 'service_handled' => 0, 'sort' => 'service_last_check', 'dir' => 'asc')) ?>">
+                <tr href="<?= $this->filteredUrl('monitoring/list/services', array('service_state' => 3, 'service_handled' => 0, 'sort' => 'service_last_check', 'dir' => 'asc')) ?>">
                     <th class="state slice-state-unknown badge"><?= $statusSummary->services_unknown_unhandled ?></th>
                     <td><?= $this->translate('Unknown') ?></td>
                 </tr>
             <?php endif;
             if ($statusSummary->services_pending):?>
-                <tr href="<?= $this->url('monitoring/list/services', array('service_state' => 99, 'sort' => 'service_last_check', 'dir' => 'asc')) ?>">
+                <tr href="<?= $this->filteredUrl('monitoring/list/services', array('service_state' => 99, 'sort' => 'service_last_check', 'dir' => 'asc')) ?>">
                     <th class="state slice-state-pending badge"><?= $statusSummary->services_pending ?></th>
                     <td><?= $this->translate('Pending') ?></td>
                 </tr>
             <?php endif;
             if ($statusSummary->services_not_checked):?>
-                <tr href="<?= $this->url('monitoring/list/services', array('service_active_checks_enabled' => 0, 'service_passive_checks_enabled' => 0, 'sort' => 'service_last_check', 'dir' => 'asc')) ?>">
+                <tr href="<?= $this->filteredUrl('monitoring/list/services', array('service_active_checks_enabled' => 0, 'service_passive_checks_enabled' => 0, 'sort' => 'service_last_check', 'dir' => 'asc')) ?>">
                     <th class="state slice-state-not-checked badge"><?= $statusSummary->services_not_checked ?></th>
                     <td><?= $this->translate('Not Checked') ?></td>
                 </tr>
