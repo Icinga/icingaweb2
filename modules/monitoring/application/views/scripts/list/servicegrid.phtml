@@ -6,7 +6,9 @@ use Icinga\Web\Url;
 if (! $this->compact): ?>
 <div class="controls">
     <?= $this->tabs ?>
-    <?= $this->sortBox ?>
+    <div class="sort-controls-container">
+        <?= $this->sortBox ?>
+    </div>
     <?= $this->filterEditor ?>
 </div>
 <?php endif ?>
