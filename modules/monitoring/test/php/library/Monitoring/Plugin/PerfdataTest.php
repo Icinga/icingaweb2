@@ -189,12 +189,12 @@ class PerfdataTest extends BaseTestCase
     /**
      * @depends testWhetherFromStringParsesAGivenStringCorrectly
      */
-    public function testWhetherMissingValuesAreReturnedAsNull()
+    public function testWhetherMissingValuesAreProperlyHandled()
     {
         $perfdata = Perfdata::fromString('test=1;;3;5');
-        $this->assertNull(
-            $perfdata->getWarningThreshold(),
-            'Perfdata objects do not return null for missing warning tresholds'
+        $this->assertEmpty(
+            (string) $perfdata->getWarningThreshold(),
+            'Perfdata objects do not correctly identify omitted warning tresholds'
         );
         $this->assertNull(
             $perfdata->getMaximumValue(),
