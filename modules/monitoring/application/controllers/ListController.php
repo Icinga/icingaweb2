@@ -619,6 +619,9 @@ class ListController extends Controller
         list($pivotData, $pivotHeader) = $pivot->toArray();
         $this->view->pivotData = $pivotData;
         $this->view->pivotHeader = $pivotHeader;
+        if ($this->params->get('flipped')) {
+            $this->render('servicegrid-flipped');
+        }
     }
 
     /**
