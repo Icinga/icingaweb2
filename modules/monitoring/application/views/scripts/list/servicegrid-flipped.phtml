@@ -36,7 +36,7 @@ foreach ($pivotData as $serviceDescription => $_) {
             ) ?></th>
             <?php foreach ($pivotHeader['cols'] as $hostName => $hostAlias): ?>
             <th class="rotate-45"><div><span><?= $this->qlink(
-                $this->ellipsis($hostAlias, 18),
+                $this->ellipsis($hostAlias, 24),
                 Url::fromPath('monitoring/list/services')->addFilter(
                     Filter::matchAll($serviceFilter, Filter::where('host_name', $hostName))
                 ),
