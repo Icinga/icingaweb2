@@ -35,7 +35,7 @@ if (! $this->compact): ?>
             <td class="state-col state-<?= $stateName ?>">
                 <div class="state-label"><?= $stateLabel ?></div>
                 <div class="state-meta">
-                    <?= $this->timeAgo($notification->notification_timestamp, $this->compact) ?>
+                    <?= $this->formatDateTime($notification->notification_timestamp) ?>
                 </div>
             </td>
             <td>
