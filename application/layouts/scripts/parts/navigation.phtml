@@ -1,6 +1,6 @@
 <?php
 
-use Icinga\Application\Icinga;
+use Icinga\Web\Menu;
 
 // Don't render a menu for unauthenticated users unless menu is auth aware
 if (! $this->auth()->isAuthenticated()) {
@@ -26,7 +26,7 @@ if (! $this->auth()->isAuthenticated()) {
             'layout/menu.phtml',
             'default',
             array(
-                'menuRenderer' => Icinga::app()->getMenu()->getRenderer()->setUseStandardItemRenderer()
+                'menuRenderer' => (new Menu())->getRenderer()->setUseStandardItemRenderer()
             )
         ) ?>
     </div>
