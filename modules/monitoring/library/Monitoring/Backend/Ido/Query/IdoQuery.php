@@ -106,8 +106,7 @@ abstract class IdoQuery extends DbQuery
      *
      * @var string
      */
-    private $customVarsJoinTemplate =
-        '%1$s = %2$s.object_id AND %2$s.varname = %3$s COLLATE latin1_general_ci';
+    private $customVarsJoinTemplate = '%1$s = %2$s.object_id AND %2$s.varname = %3$s';
 
     /**
      * An array with all 'virtual' tables that are already joined
@@ -701,6 +700,9 @@ abstract class IdoQuery extends DbQuery
             $this->initializeForOracle();
         } elseif ($dbType === 'pgsql') {
             $this->initializeForPostgres();
+        } else {
+            $charset = $this->ds->getConfig()->get('charset') ?: 'latin1';
+            $this->customVarsJoinTemplate .= " COLLATE {$charset}_general_ci";
         }
         $this->joinBaseTables();
         $this->select->columns($this->columns);
