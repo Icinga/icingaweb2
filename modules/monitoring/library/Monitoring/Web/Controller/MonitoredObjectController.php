@@ -3,6 +3,7 @@
 
 namespace Icinga\Module\Monitoring\Web\Controller;
 
+use Exception;
 use Icinga\Module\Monitoring\Controller;
 use Icinga\Module\Monitoring\Forms\Command\Object\CheckNowCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\DeleteCommentCommandForm;
@@ -84,9 +85,16 @@ abstract class MonitoredObjectController extends Controller
         $this->view->extensionsHtml = array();
         foreach (Hook::all('Monitoring\DetailviewExtension') as $hook) {
             /** @var DetailviewExtensionHook $hook */
+
+            try {
+                $html = $hook->setView($this->view)->getHtmlForObject($this->object);
+            } catch (Exception $e) {
+                $html = $this->view->escape($e->getMessage());
+            }
+
             $this->view->extensionsHtml[] =
                 '<div class="icinga-module module-' . $this->view->escape($hook->getModule()->getName()) . '">'
-                . $hook->setView($this->view)->getHtmlForObject($this->object)
+                . $html
                 . '</div>';
         }
     }
