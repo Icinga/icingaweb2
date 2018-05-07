@@ -98,6 +98,8 @@ class Auth
     public function setAuthenticated(User $user, $persist = true)
     {
         $username = $user->getUsername();
+        // for SSO (LOGIN) with extern application (using apache mod_session module)
+        $this->getResponse()->setHeader('X-Replace-Session', "username=$username&login=true");
         try {
             $config = Config::app();
         } catch (NotReadableError $e) {
@@ -362,6 +364,8 @@ class Auth
      */
     public function removeAuthorization()
     {
+        // for SSO (LOGOUT) with extern application (using apache mod_session module)
+        $this->getResponse()->setHeader('X-Replace-Session', "login=false");
         $this->user = null;
         Session::getSession()->purge();
     }
