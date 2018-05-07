@@ -38,6 +38,21 @@ class PhpSession extends Session
      *
      * @param   array   $options    An optional array of ini options to set
      *
+     * @return  static
+     *
+     * @throws  ConfigurationError
+     * @see     http://php.net/manual/en/session.configuration.php
+     */
+    public static function create(array $options = null)
+    {
+        return version_compare(PHP_VERSION, '7.2.0') < 0 ? new self($options) : new Php72Session($options);
+    }
+
+    /**
+     * Create a new PHPSession object using the provided options (if any)
+     *
+     * @param   array   $options    An optional array of ini options to set
+     *
      * @throws  ConfigurationError
      * @see     http://php.net/manual/en/session.configuration.php
      */

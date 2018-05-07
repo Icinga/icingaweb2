@@ -13,7 +13,7 @@ class PhpSessionTest extends BaseTestCase
         if (!is_writable('/tmp')) {
             $this->markTestSkipped('Could not write to session directory');
         }
-        return new PhpSession(
+        return PhpSession::create(
             array(
                 'use_cookies'   => false,
                 'save_path'     => '/tmp',

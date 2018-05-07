@@ -29,7 +29,7 @@ class Session
     public static function create(BaseSession $session = null)
     {
         if ($session === null) {
-            self::$session = new PhpSession();
+            self::$session = PhpSession::create();
         } else {
             self::$session = $session;
         }
