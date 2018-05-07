@@ -2,10 +2,6 @@
 
 use Icinga\Web\Url;
 
-if ($xAxisPaginator->count() <= 1 && $yAxisPaginator->count() <= 1) {
-    return; // Display this pagination only if there are multiple pages
-}
-
 $showText = $this->translate('%s: Show %s %u to %u out of %u', 'pagination.joystick');
 $xAxisPages = $xAxisPaginator->getPages('all');
 $yAxisPages = $yAxisPaginator->getPages('all');
