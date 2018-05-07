@@ -589,7 +589,7 @@ class ListController extends Controller
         $this->applyRestriction('monitoring/filter/objects', $query);
         $this->filterQuery($query);
         $filter = (bool) $this->params->shift('problems', false) ? Filter::where('service_problem', 1) : null;
-        if ($this->params->has('flipped')) {
+        if ($this->params->get('flipped', false)) {
             $pivot = $query
                 ->pivot(
                     'host_name',
@@ -619,7 +619,7 @@ class ListController extends Controller
         list($pivotData, $pivotHeader) = $pivot->toArray();
         $this->view->pivotData = $pivotData;
         $this->view->pivotHeader = $pivotHeader;
-        if ($this->params->get('flipped')) {
+        if ($this->params->get('flipped', false)) {
             $this->render('servicegrid-flipped');
         }
     }

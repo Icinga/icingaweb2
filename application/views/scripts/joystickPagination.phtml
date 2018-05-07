@@ -7,7 +7,7 @@ $xAxisPages = $xAxisPaginator->getPages('all');
 $yAxisPages = $yAxisPaginator->getPages('all');
 
 $flipUrl = Url::fromRequest();
-if ($flipUrl->hasParam('flipped')) {
+if ($flipUrl->getParam('flipped')) {
     $flipUrl->remove('flipped');
 } else {
     $flipUrl->setParam('flipped');
