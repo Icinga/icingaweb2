@@ -4,7 +4,6 @@
 namespace Icinga\Authentication\User;
 
 use Exception;
-use Icinga\Authentication\PasswordHelper;
 use Icinga\Data\Inspectable;
 use Icinga\Data\Inspection;
 use Icinga\Data\Filter\Filter;
@@ -166,7 +165,7 @@ class DbUserBackend extends DbRepository implements UserBackendInterface, Inspec
      */
     protected function persistPassword($value)
     {
-        return PasswordHelper::hash($value);
+        return password_hash($value, PASSWORD_DEFAULT);
     }
 
     /**
@@ -213,7 +212,7 @@ class DbUserBackend extends DbRepository implements UserBackendInterface, Inspec
     public function authenticate(User $user, $password)
     {
         try {
-            return PasswordHelper::verify(
+            return password_verify(
                 $password,
                 $this->getPasswordHash($user->getUsername())
             );
