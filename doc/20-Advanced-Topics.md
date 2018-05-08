@@ -4,6 +4,7 @@ This chapter provides details for advanced Icinga Web 2 topics.
 
 * [Global URL parameters](20-Advanced-Topics.md#global-url-parameters)
 * [VirtualHost configuration](20-Advanced-Topics.md#virtualhost-configuration)
+* [Advanced Authentication Tips](20-Advanced-Topics.md#advanced-topics-authentication-tips)
 * [Source installation](20-Advanced-Topics.md#installing-from-source)
 * [Automated setup](20-Advanced-Topics.md#web-setup-automation)
 
@@ -117,20 +118,38 @@ systemctl reload httpd
 
 ### Manual User Creation for Database Authentication Backend <a id="advanced-topics-authentication-tips-manual-user-database-auth"></a>
 
-Icinga Web 2 uses the MD5 based BSD password algorithm. For generating a password hash, please use the following
-command:
+Icinga Web 2 v2.5+ uses the [native password hash algorithm](http://php.net/manual/en/faq.passwords.php)
+provided by PHP 5.6+.
+
+In order to generate a password, run the following command with the PHP CLI >= 5.6:
 
 ```
-openssl passwd -1 password
+php -r 'echo password_hash("yourtopsecretpassword", PASSWORD_DEFAULT);'
 ```
 
-> Note: The switch to `openssl passwd` is the **number one** (`-1`) for using the MD5 based BSD password algorithm.
+Please note that the hashed output changes each time. This is expected.
 
-Insert the user into the database using the generated password hash:
+Insert the user into the database using the generated password hash.
 
 ```
-INSERT INTO icingaweb_user (name, active, password_hash) VALUES ('icingaadmin', 1, 'hash from openssl');
+INSERT INTO icingaweb_user (name, active, password_hash) VALUES ('icingaadmin', 1, '$2y$10$bEKU6.1bRYjE7wxktqfeO.IGV9pYAkDBeXEbjMFSNs26lKTI0JQ1q');
 ```
+
+#### Puppet <a id="advanced-topics-authentication-tips-manual-user-database-auth-puppet"></a>
+
+Please do note that the `$` character needs to be escaped with a leading backslash in your
+Puppet manifests.
+
+Example from [puppet-icingaweb2](https://github.com/Icinga/puppet-icingaweb2):
+
+```
+        exec { 'create default user':
+          command     => "mysql -h '${db_host}' -P '${db_port}' -u '${db_username}' -p'${db_password}' '${db_name}' -Ns -e 'INSERT INTO icingaweb_user (name, active, password_hash) VALUES (\"icingaadmin\", 1, \"\$2y\$10\$QnXfBjl1RE6TqJcY85ZKJuP9AvAV3ont9QihMTFQ/D/vHmAWaz.lG\")'",
+          refreshonly => true,
+        }
+```
+
+
 
 
 ## Installing Icinga Web 2 from Source <a id="installing-from-source"></a>
@@ -442,7 +461,14 @@ password = "api"
 
 Finally visit Icinga Web 2 in your browser to login as `icingaadmin` user: `/icingaweb2`.
 
+
 ## Automating the Installation of Icinga Web 2 <a id="web-setup-automation"></a>
+
+Prior to creating your own script, please look into the official resources
+which may help you already:
+
+* [Puppet module](https://www.icinga.com/products/integrations/puppet/)
+* [Chef cookbook](https://www.icinga.com/products/integrations/chef/)
 
 If you are automating the installation of Icinga Web 2, you may want to skip the wizard and do things yourself.
 These are the steps you'd need to take assuming you are using MySQL/MariaDB. If you are using PostgreSQL please adapt
