@@ -2,7 +2,7 @@
 # Copyright (C) 2015 Icinga Development Team
 # This file is distributed under the same license as Setup Module.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# 
+#
 #, fuzzy
 msgid ""
 msgstr ""
@@ -862,9 +862,9 @@ msgstr "Root DN"
 
 #: /usr/share/icingaweb2/modules/setup/library/Setup/WebWizard.php:552
 msgid ""
-"Running Icinga Web 2 requires PHP version 5.4."
+"Running Icinga Web 2 requires PHP version 5.6."
 msgstr ""
-"Icinga Web 2 richiede PHP 5.4."
+"Icinga Web 2 richiede PHP 5.6."
 
 #: /usr/share/icingaweb2/modules/setup/library/Setup/WebWizard.php:356
 msgid "Setup Icinga Web 2"
