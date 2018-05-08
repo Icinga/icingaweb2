@@ -71,6 +71,6 @@ class Macro
             Logger::debug('Unable to resolve macro "%s". An error occured: %s', $macro, $e);
         }
 
-        return $value !== null ? $value : $macro;
+        return $value !== null ? static::resolveMacros($value, $object) : $macro;
     }
 }
