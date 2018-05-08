@@ -13,16 +13,16 @@ if (! $this->compact): ?>
 </div>
 <?php endif ?>
 <div class="content" data-base-target="_next">
-<?php if (empty($pivotData)): ?>
+    <?php if (empty($pivotData)): ?>
     <p><?= $this->translate('No services found matching the filter.') ?></p>
 </div>
 <?php return; endif;
-$hostFilter = Filter::matchAny();
-foreach ($pivotData as $hostName => $_) {
-    $hostFilter->orFilter(Filter::where('host_name', $hostName));
+$serviceFilter = Filter::matchAny();
+foreach ($pivotData as $serviceDescription => $_) {
+    $serviceFilter->orFilter(Filter::where('service_description', $serviceDescription));
 }
 ?>
-    <table class="service-grid-table">
+<table class="service-grid-table">
     <thead>
         <tr>
             <th><?= $this->partial(
@@ -34,49 +34,48 @@ foreach ($pivotData as $hostName => $_) {
                     'yAxisPaginator' => $verticalPaginator
                 )
             ) ?></th>
-        <?php foreach ($pivotHeader['cols'] as $serviceDescription => $serviceDisplayName): ?>
+            <?php foreach ($pivotHeader['cols'] as $hostName => $hostAlias): ?>
             <th class="rotate-45"><div><span><?= $this->qlink(
-                $this->ellipsis($serviceDisplayName, 24),
+                $this->ellipsis($hostAlias, 24),
                 Url::fromPath('monitoring/list/services')->addFilter(
-                    Filter::matchAll($hostFilter, Filter::where('service_description', $serviceDescription))
+                    Filter::matchAll($serviceFilter, Filter::where('host_name', $hostName))
                 ),
                 null,
-                array('title' => sprintf(
-                    $this->translate('List all services with the name "%s" on all reported hosts'),
-                    $serviceDisplayName
-                )),
+                array('title' => sprintf($this->translate('List all reported services on host %s'), $hostAlias)),
                 false
             ) ?></span></div></th>
-        <?php endforeach ?>
+            <?php endforeach ?>
         </tr>
     </thead>
     <tbody>
 
     <?php $i = 0 ?>
-    <?php foreach ($pivotHeader['rows'] as $hostName => $hostDisplayName): ?>
+    <?php foreach ($pivotHeader['rows'] as $serviceDescription => $serviceDisplayName): ?>
         <tr>
             <th><?php
-                $serviceFilter = Filter::matchAny();
-                foreach ($pivotData[$hostName] as $serviceName => $_) {
-                    $serviceFilter->orFilter(Filter::where('service_description', $serviceName));
+                $hostFilter = Filter::matchAny();
+                foreach ($pivotData[$serviceDescription] as $hostName => $_) {
+                    $hostFilter->orFilter(Filter::where('host_name', $hostName));
                 }
                 echo $this->qlink(
-                    $hostDisplayName,
+                    $serviceDisplayName,
                     Url::fromPath('monitoring/list/services')->addFilter(
-                        Filter::matchAll($serviceFilter, Filter::where('host_name', $hostName))
+                        Filter::matchAll($hostFilter, Filter::where('service_description', $serviceDescription))
                     ),
                     null,
-                    array('title' => sprintf($this->translate('List all reported services on host %s'), $hostDisplayName))
+                    array('title' => sprintf(
+                        $this->translate('List all services with the name "%s" on all reported hosts'),
+                        $serviceDisplayName
+                    ))
                 );
             ?></th>
-        <?php foreach (array_keys($pivotHeader['cols']) as $serviceDescription): ?>
-            <td>
-            <?php
-            $service = $pivotData[$hostName][$serviceDescription];
+        <?php foreach (array_keys($pivotHeader['cols']) as $hostName): ?>
+            <td><?php
+            $service = $pivotData[$serviceDescription][$hostName];
             if ($service === null): ?>
                 <span aria-hidden="true">&middot;</span>
-            <?php continue; endif ?>
-                <?php $ariaDescribedById = $this->protectId($service->host_name . '_' . $service->service_description . '_desc') ?>
+                <?php continue; endif ?>
+            <?php $ariaDescribedById = $this->protectId($service->host_name . '_' . $service->service_description . '_desc') ?>
                 <span class="sr-only" id="<?= $ariaDescribedById ?>">
                     <?= $this->escape($service->service_output) ?>
                 </span>
@@ -106,9 +105,9 @@ foreach ($pivotData as $hostName => $_) {
                     $this->translate('Load more'),
                     Url::fromRequest(),
                     array(
-                        'limit' => (
-                                $this->horizontalPaginator->getItemCountPerPage() + 20) . ','
-                             .  $this->verticalPaginator->getItemCountPerPage()
+                        'limit' => ($this->horizontalPaginator->getItemCountPerPage() + 20)
+                            . ','
+                            .  $this->verticalPaginator->getItemCountPerPage()
                     ),
                     array(
                         'class'             => 'action-link',
@@ -127,8 +126,9 @@ foreach ($pivotData as $hostName => $_) {
                     $this->translate('Load more'),
                     Url::fromRequest(),
                     array(
-                        'limit' => $this->horizontalPaginator->getItemCountPerPage() . ',' .
-                            ($this->verticalPaginator->getItemCountPerPage() + 20)
+                        'limit' => $this->horizontalPaginator->getItemCountPerPage()
+                            . ','
+                            . ($this->verticalPaginator->getItemCountPerPage() + 20)
                     ),
                     array(
                         'class'             => 'action-link',
@@ -139,5 +139,5 @@ foreach ($pivotData as $hostName => $_) {
         </tr>
     <?php endif ?>
     </tbody>
-    </table>
+</table>
 </div>

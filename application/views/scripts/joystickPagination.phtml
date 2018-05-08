@@ -2,13 +2,22 @@
 
 use Icinga\Web\Url;
 
-if ($xAxisPaginator->count() <= 1 && $yAxisPaginator->count() <= 1) {
-    return; // Display this pagination only if there are multiple pages
-}
-
 $showText = $this->translate('%s: Show %s %u to %u out of %u', 'pagination.joystick');
 $xAxisPages = $xAxisPaginator->getPages('all');
 $yAxisPages = $yAxisPaginator->getPages('all');
+
+$flipUrl = Url::fromRequest();
+if ($flipUrl->getParam('flipped')) {
+    $flipUrl->remove('flipped');
+} else {
+    $flipUrl->setParam('flipped');
+}
+if ($flipUrl->hasParam('page')) {
+    $flipUrl->setParam('page', implode(',', array_reverse(explode(',', $flipUrl->getParam('page')))));
+}
+if ($flipUrl->hasParam('limit')) {
+    $flipUrl->setParam('limit', implode(',', array_reverse(explode(',', $flipUrl->getParam('limit')))));
+}
 
 $totalYAxisPages = $yAxisPaginator->count();
 $currentYAxisPage = $yAxisPaginator->getCurrentPageNumber();
@@ -79,7 +88,20 @@ $nextXAxisPage = $currentXAxisPage < $totalXAxisPages ? $currentXAxisPage + 1 : 
         <?= $this->icon('left-open'); ?>
       <?php endif ?>
       </td>
+      <?php if ($this->flippable): ?>
+      <td><?= $this->qlink(
+        '',
+        $flipUrl,
+        null,
+        array(
+          'icon'                => 'arrows-cw',
+          'data-base-target'    => '_self',
+          'title'               => $this->translate('Flip grid axes')
+        )
+      ) ?></td>
+      <?php else: ?>
       <td>&nbsp;</td>
+      <?php endif ?>
       <td>
       <?php if ($nextXAxisPage): ?>
         <?= $this->qlink(

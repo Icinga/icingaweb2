@@ -589,15 +589,27 @@ class ListController extends Controller
         $this->applyRestriction('monitoring/filter/objects', $query);
         $this->filterQuery($query);
         $filter = (bool) $this->params->shift('problems', false) ? Filter::where('service_problem', 1) : null;
-        $pivot = $query
-            ->pivot(
-                'service_description',
-                'host_name',
-                $filter,
-                $filter ? clone $filter : null
-            )
-            ->setXAxisHeader('service_display_name')
-            ->setYAxisHeader('host_display_name');
+        if ($this->params->get('flipped', false)) {
+            $pivot = $query
+                ->pivot(
+                    'host_name',
+                    'service_description',
+                    $filter,
+                    $filter ? clone $filter : null
+                )
+                ->setYAxisHeader('service_display_name')
+                ->setXAxisHeader('host_display_name');
+        } else {
+            $pivot = $query
+                ->pivot(
+                    'service_description',
+                    'host_name',
+                    $filter,
+                    $filter ? clone $filter : null
+                )
+                ->setXAxisHeader('service_display_name')
+                ->setYAxisHeader('host_display_name');
+        }
         $this->setupSortControl(array(
             'host_display_name'     => $this->translate('Hostname'),
             'service_display_name'  => $this->translate('Service Name')
@@ -607,6 +619,9 @@ class ListController extends Controller
         list($pivotData, $pivotHeader) = $pivot->toArray();
         $this->view->pivotData = $pivotData;
         $this->view->pivotHeader = $pivotHeader;
+        if ($this->params->get('flipped', false)) {
+            $this->render('servicegrid-flipped');
+        }
     }
 
     /**
@@ -622,7 +637,8 @@ class ListController extends Controller
             'format', // handleFormatRequest()
             'stateType', // hostsAction() and servicesAction()
             'addColumns', // addColumns()
-            'problems' // servicegridAction()
+            'problems', // servicegridAction()
+            'flipped' // servicegridAction()
         ));
         $this->handleFormatRequest($dataView);
         return $dataView;
