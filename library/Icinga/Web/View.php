@@ -59,11 +59,6 @@ class View extends Zend_View_Abstract
     const CHARSET = 'UTF-8';
 
     /**
-     * The flags we use for htmlspecialchars depend on our PHP version
-     */
-    private $replaceFlags;
-
-    /**
      * Flag to register stream wrapper
      *
      * @var bool
@@ -97,12 +92,6 @@ class View extends Zend_View_Abstract
             }
         }
 
-        if (version_compare(PHP_VERSION, '5.4.0') >= 0) {
-            $this->replaceFlags = ENT_COMPAT | ENT_SUBSTITUTE | ENT_HTML5;
-        } else {
-            $this->replaceFlags = ENT_COMPAT | ENT_IGNORE;
-        }
-
         parent::__construct($config);
     }
 
@@ -124,7 +113,7 @@ class View extends Zend_View_Abstract
      */
     public function escape($value)
     {
-        return htmlspecialchars($value, $this->replaceFlags, self::CHARSET, true);
+        return htmlspecialchars($value, ENT_COMPAT | ENT_SUBSTITUTE | ENT_HTML5, self::CHARSET, true);
     }
 
     /**

@@ -862,11 +862,9 @@ msgstr "Root DN"
 
 #: /usr/share/icingaweb2/modules/setup/library/Setup/WebWizard.php:552
 msgid ""
-"Running Icinga Web 2 requires PHP version 5.3.2. Advanced features like the "
-"built-in web server require PHP version 5.4."
+"Running Icinga Web 2 requires PHP version 5.4."
 msgstr ""
-"Icinga Web 2 richiede PHP 5.3.2. Funzionalità avanzate come il web server "
-"integrato richiedono PHP 5.4."
+"Icinga Web 2 richiede PHP 5.4."
 
 #: /usr/share/icingaweb2/modules/setup/library/Setup/WebWizard.php:356
 msgid "Setup Icinga Web 2"

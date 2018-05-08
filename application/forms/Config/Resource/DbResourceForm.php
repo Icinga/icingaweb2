@@ -46,7 +46,6 @@ class DbResourceForm extends Form
             $dbChoices['oci'] = 'Oracle (OCI8)';
         }
 
-        $offerSsl = false;
         $offerPostgres = false;
         $offerIbm = false;
         $offerMysql = false;
@@ -55,9 +54,6 @@ class DbResourceForm extends Form
             $offerPostgres = true;
         } elseif ($dbChoice === 'mysql') {
             $offerMysql = true;
-            if (version_compare(Platform::getPhpVersion(), '5.4.0', '>=')) {
-                $offerSsl = true;
-            }
         } elseif ($dbChoice === 'ibm') {
             $offerIbm = true;
         }
@@ -161,62 +157,60 @@ class DbResourceForm extends Form
                 'label'         => $this->translate('Persistent')
             )
         );
-        if ($offerSsl) {
+        $this->addElement(
+            'checkbox',
+            'use_ssl',
+            array(
+                'autosubmit'    => true,
+                'label'         => $this->translate('Use SSL'),
+                'description'   => $this->translate(
+                    'Whether to encrypt the connection or to authenticate using certificates'
+                )
+            )
+        );
+        if (isset($formData['use_ssl']) && $formData['use_ssl']) {
             $this->addElement(
-                'checkbox',
-                'use_ssl',
+                'text',
+                'ssl_key',
                 array(
-                    'autosubmit'    => true,
-                    'label'         => $this->translate('Use SSL'),
-                    'description'   => $this->translate(
-                        'Whether to encrypt the connection or to authenticate using certificates'
+                    'label'             => $this->translate('SSL Key'),
+                    'description'       => $this->translate('The client key file path')
+                )
+            );
+            $this->addElement(
+                'text',
+                'ssl_cert',
+                array(
+                    'label'             => $this->translate('SSL Certificate'),
+                    'description'       => $this->translate('The certificate file path')
+                )
+            );
+            $this->addElement(
+                'text',
+                'ssl_ca',
+                array(
+                    'label'             => $this->translate('SSL CA'),
+                    'description'       => $this->translate('The CA certificate file path')
+                )
+            );
+            $this->addElement(
+                'text',
+                'ssl_capath',
+                array(
+                    'label'             => $this->translate('SSL CA Path'),
+                    'description'       => $this->translate(
+                        'The trusted CA certificates in PEM format directory path'
                     )
                 )
             );
-            if (isset($formData['use_ssl']) && $formData['use_ssl']) {
-                $this->addElement(
-                    'text',
-                    'ssl_key',
-                    array(
-                        'label'             => $this->translate('SSL Key'),
-                        'description'       => $this->translate('The client key file path')
-                    )
-                );
-                $this->addElement(
-                    'text',
-                    'ssl_cert',
-                    array(
-                        'label'             => $this->translate('SSL Certificate'),
-                        'description'       => $this->translate('The certificate file path')
-                    )
-                );
-                $this->addElement(
-                    'text',
-                    'ssl_ca',
-                    array(
-                        'label'             => $this->translate('SSL CA'),
-                        'description'       => $this->translate('The CA certificate file path')
-                    )
-                );
-                $this->addElement(
-                    'text',
-                    'ssl_capath',
-                    array(
-                        'label'             => $this->translate('SSL CA Path'),
-                        'description'       => $this->translate(
-                            'The trusted CA certificates in PEM format directory path'
-                        )
-                    )
-                );
-                $this->addElement(
-                    'text',
-                    'ssl_cipher',
-                    array(
-                        'label'             => $this->translate('SSL Cipher'),
-                        'description'       => $this->translate('The list of permissible ciphers')
-                    )
-                );
-            }
+            $this->addElement(
+                'text',
+                'ssl_cipher',
+                array(
+                    'label'             => $this->translate('SSL Cipher'),
+                    'description'       => $this->translate('The list of permissible ciphers')
+                )
+            );
         }
 
         return $this;

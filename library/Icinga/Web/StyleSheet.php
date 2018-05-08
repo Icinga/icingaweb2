@@ -80,10 +80,6 @@ class StyleSheet
      */
     public function __construct()
     {
-        // PHP had a rather conservative PCRE backtrack limit unless 5.3.7
-        if (version_compare(PHP_VERSION, '5.3.7') <= 0) {
-            ini_set('pcre.backtrack_limit', 1000000);
-        }
         $app = Icinga::app();
         $this->app = $app;
         $this->lessCompiler = new LessCompiler();

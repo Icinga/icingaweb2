@@ -374,13 +374,7 @@ class Donut
 
     protected function encode($content)
     {
-        if (version_compare(PHP_VERSION, '5.4.0') >= 0) {
-            $replaceFlags = ENT_COMPAT | ENT_SUBSTITUTE | ENT_HTML5;
-        } else {
-            $replaceFlags = ENT_COMPAT | ENT_IGNORE;
-        }
-
-        return htmlspecialchars($content, $replaceFlags, 'UTF-8', true);
+        return htmlspecialchars($content, ENT_COMPAT | ENT_SUBSTITUTE | ENT_HTML5, 'UTF-8', true);
     }
 
     protected function renderAttributes(array $attributes)

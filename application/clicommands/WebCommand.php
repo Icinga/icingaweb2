@@ -30,15 +30,6 @@ class WebCommand extends Command
      */
     public function serveAction()
     {
-        $minVersion = '5.4.0';
-        if (version_compare(PHP_VERSION, $minVersion) < 0) {
-            throw new IcingaException(
-                'You are running PHP %s, internal webserver requires %s.',
-                PHP_VERSION,
-                $minVersion
-            );
-        }
-
         $fork = $this->params->get('daemonize');
         $listen = $this->params->get('listen');
         $port = $this->params->get('port');
