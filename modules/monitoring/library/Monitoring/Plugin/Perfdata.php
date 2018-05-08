@@ -61,18 +61,14 @@ class Perfdata
     /**
      * The WARNING threshold
      *
-     * TODO: Should be parsed Range-Object instead of string
-     *
-     * @var string
+     * @var ThresholdRange
      */
     protected $warningThreshold;
 
     /**
      * The CRITICAL threshold
      *
-     * TODO: Should be parsed Range-Object instead of string
-     *
-     * @var string
+     * @var ThresholdRange
      */
     protected $criticalThreshold;
 
@@ -96,6 +92,15 @@ class Perfdata
                 $this->maxValue = 100.0;
             }
         }
+
+        $warn = $this->warningThreshold->getMax();
+        if ($warn !== null) {
+            $crit = $this->criticalThreshold->getMax();
+            if ($crit !== null && $warn > $crit) {
+                $this->warningThreshold->setInverted();
+                $this->criticalThreshold->setInverted();
+            }
+        }
     }
 
     /**
@@ -111,7 +116,7 @@ class Perfdata
     {
         if (empty($perfdata)) {
             throw new InvalidArgumentException('Perfdata::fromString expects a string with content');
-        } elseif (false === strpos($perfdata, '=')) {
+        } elseif (strpos($perfdata, '=') === false) {
             throw new InvalidArgumentException(
                 'Perfdata::fromString expects a key=value formatted string. Got "' . $perfdata . '" instead'
             );
@@ -211,8 +216,8 @@ class Perfdata
         }
 
         if ($this->maxValue !== null) {
-            $minValue = $this->minValue !== null ? $this->minValue : 0;
-            if ((float) ($this->maxValue - $minValue) === 0.0) {
+            $minValue = $this->minValue !== null ? $this->minValue : 0.0;
+            if ($this->maxValue == $minValue) {
                 return null;
             }
 
@@ -223,9 +228,9 @@ class Perfdata
     }
 
     /**
-     * Return this performance data's warning treshold or null if it is not available
+     * Return this performance data's warning treshold
      *
-     * @return  null|string
+     * @return  ThresholdRange
      */
     public function getWarningThreshold()
     {
@@ -233,9 +238,9 @@ class Perfdata
     }
 
     /**
-     * Return this performance data's critical treshold or null if it is not available
+     * Return this performance data's critical treshold
      *
-     * @return  null|string
+     * @return  ThresholdRange
      */
     public function getCriticalThreshold()
     {
@@ -302,10 +307,23 @@ class Perfdata
                 }
             /* @noinspection PhpMissingBreakStatementInspection */
             case 3:
-                $this->criticalThreshold = trim($parts[2]) ? trim($parts[2]) : null;
+                $this->criticalThreshold = self::convert(
+                    ThresholdRange::fromString(trim($parts[2])),
+                    $this->unit
+                );
                 // Fallthrough
             case 2:
-                $this->warningThreshold = trim($parts[1]) ? trim($parts[1]) : null;
+                $this->warningThreshold = self::convert(
+                    ThresholdRange::fromString(trim($parts[1])),
+                    $this->unit
+                );
+        }
+
+        if ($this->warningThreshold === null) {
+            $this->warningThreshold = new ThresholdRange();
+        }
+        if ($this->criticalThreshold === null) {
+            $this->criticalThreshold = new ThresholdRange();
         }
     }
 
@@ -319,6 +337,22 @@ class Perfdata
      */
     protected static function convert($value, $fromUnit = null)
     {
+        if ($value instanceof ThresholdRange) {
+            $value = clone $value;
+
+            $min = $value->getMin();
+            if ($min !== null) {
+                $value->setMin(self::convert($min, $fromUnit));
+            }
+
+            $max = $value->getMax();
+            if ($max !== null) {
+                $value->setMax(self::convert($max, $fromUnit));
+            }
+
+            return $value;
+        }
+
         if (is_numeric($value)) {
             switch ($fromUnit) {
                 case 'us':
@@ -343,52 +377,21 @@ class Perfdata
     {
         $rawValue = $this->getValue();
         $minValue = $this->getMinimumValue() !== null ? $this->getMinimumValue() : 0;
-        $maxValue = $this->getMaximumValue();
         $usedValue = ($rawValue - $minValue);
-        $unusedValue = ($maxValue - $minValue) - $usedValue;
 
-        $warningThreshold = $this->convert($this->warningThreshold, $this->unit);
-        $criticalThreshold = $this->convert($this->criticalThreshold, $this->unit);
-
-        $gray = $unusedValue;
         $green = $orange = $red = 0;
 
-        $pieState = self::PERFDATA_OK;
-        if ($warningThreshold > $criticalThreshold) {
-            // inverted threshold parsing OK > warning > critical
-            if (isset($warningThreshold) && $this->value <= $warningThreshold) {
-                $pieState = self::PERFDATA_WARNING;
-            }
-            if (isset($criticalThreshold) && $this->value <= $criticalThreshold) {
-                $pieState = self::PERFDATA_CRITICAL;
+        if ($this->criticalThreshold->contains($rawValue)) {
+            if ($this->warningThreshold->contains($rawValue)) {
+                $green = $usedValue;
+            } else {
+                $orange = $usedValue;
             }
         } else {
-            // TODO: Use standard perfdata range format to decide the state #8194
-
-            // regular threshold parsing  OK < warning < critical
-            if (isset($warningThreshold) && $rawValue > $warningThreshold) {
-                $pieState = self::PERFDATA_WARNING;
-            }
-            if (isset($criticalThreshold) && $rawValue > $criticalThreshold) {
-                $pieState = self::PERFDATA_CRITICAL;
-            }
+            $red = $usedValue;
         }
 
-        switch ($pieState) {
-            case self::PERFDATA_OK:
-                $green = $usedValue;
-                break;
-
-            case self::PERFDATA_CRITICAL:
-                $red = $usedValue;
-                break;
-
-            case self::PERFDATA_WARNING:
-                $orange = $usedValue;
-                break;
-        }
-
-        return array($green, $orange, $red, $gray);
+        return array($green, $orange, $red, ($this->getMaximumValue() - $minValue) - $usedValue);
     }
 
 
@@ -413,6 +416,15 @@ class Perfdata
      */
     protected function format($value)
     {
+        if ($value instanceof ThresholdRange) {
+            if ($value->getMin()) {
+                return (string) $value;
+            }
+
+            $max = $value->getMax();
+            return $max === null ? '' : $this->format($max);
+        }
+
         if ($this->isPercentage()) {
             return (string)$value . '%';
         }
@@ -444,7 +456,7 @@ class Perfdata
 
     public function toArray()
     {
-        $parts = array(
+        return array(
             'label' => $this->getLabel(),
             'value' => $this->format($this->getvalue()),
             'min' => isset($this->minValue) && !$this->isPercentage()
@@ -453,14 +465,9 @@ class Perfdata
             'max' => isset($this->maxValue) && !$this->isPercentage()
                 ? $this->format($this->maxValue)
                 : '',
-            'warn' => isset($this->warningThreshold)
-                ? $this->format(self::convert($this->warningThreshold, $this->unit))
-                : '',
-            'crit' => isset($this->criticalThreshold)
-                ? $this->format(self::convert($this->criticalThreshold, $this->unit))
-                : ''
+            'warn' => $this->format($this->warningThreshold),
+            'crit' => $this->format($this->criticalThreshold)
         );
-        return $parts;
     }
 
     /**
@@ -476,13 +483,11 @@ class Perfdata
             return Service::STATE_UNKNOWN;
         }
 
-        if (! ($this->criticalThreshold === null
-            || $this->value < $this->criticalThreshold)) {
+        if (! $this->criticalThreshold->contains($this->value)) {
             return Service::STATE_CRITICAL;
         }
 
-        if (! ($this->warningThreshold === null
-            || $this->value < $this->warningThreshold)) {
+        if (! $this->warningThreshold->contains($this->value)) {
             return Service::STATE_WARNING;
         }
 
