@@ -11,6 +11,7 @@ use Icinga\Data\Db\DbQuery;
 use Icinga\Data\Filter\Filter;
 use Icinga\Data\Filter\FilterExpression;
 use Icinga\Exception\IcingaException;
+use Icinga\Exception\NotImplementedError;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Exception\QueryException;
 use Icinga\Web\Session;
@@ -148,6 +149,13 @@ abstract class IdoQuery extends DbQuery
      * @var array
      */
     protected $groupOrigin = array();
+
+    /**
+     * Map of table names to query names for which to create subquery filters
+     *
+     * @var array
+     */
+    protected $subQueryTargets = array();
 
     /**
      * The primary key column for the instances table
@@ -492,6 +500,95 @@ abstract class IdoQuery extends DbQuery
         return $this;
     }
 
+    /**
+     * Prepare the given query so that it can be linked to the parent
+     *
+     * @param   IdoQuery    $query
+     * @param   string      $name
+     *
+     * @return  array       The first value is their, the second our key column
+     *
+     * @throws  NotImplementedError     In case the given query is unknown
+     */
+    protected function joinSubQuery(IdoQuery $query, $name)
+    {
+        throw new NotImplementedError('Query "%s" is unknown', $name);
+    }
+
+    /**
+     * Create and return a sub-query filter for the given filter expression
+     *
+     * @param   FilterExpression    $filter
+     * @param   string              $queryName
+     *
+     * @return  FilterExpression
+     *
+     * @throws  QueryException
+     */
+    protected function createSubQueryFilter(FilterExpression $filter, $queryName)
+    {
+        $subQuery = $this->createSubQuery($queryName);
+        $subQuery->setIsSubQuery();
+
+        list($theirs, $ours) = $this->joinSubQuery($subQuery, $queryName);
+
+        $zendSelect = $subQuery->select();
+        $fromPart = $zendSelect->getPart($zendSelect::FROM);
+        $zendSelect->reset($zendSelect::FROM);
+
+        foreach ($fromPart as $correlationName => $joinOptions) {
+            if (isset($joinOptions['joinCondition'])) {
+                $joinOptions['joinCondition'] = preg_replace(
+                    '/(?<=^|\s)\w+(?=\.)/',
+                    'sub_$0',
+                    $joinOptions['joinCondition']
+                );
+            }
+
+            $name = ['sub_' . $correlationName => $joinOptions['tableName']];
+            switch ($joinOptions['joinType']) {
+                case $zendSelect::FROM:
+                    $zendSelect->from($name);
+                    break;
+                case $zendSelect::INNER_JOIN:
+                    $zendSelect->joinInner($name, $joinOptions['joinCondition'], null);
+                    break;
+                case $zendSelect::LEFT_JOIN:
+                    $zendSelect->joinLeft($name, $joinOptions['joinCondition'], null);
+                    break;
+                default:
+                    // TODO: Add support for other join types if required?
+                    throw new QueryException(
+                        'Unsupported join type %s. Cannot create subquery filter.',
+                        $joinOptions['joinType']
+                    );
+            }
+        }
+
+        $groups = [];
+        foreach ($subQuery->getGroup() as $groupColumn) {
+            $groups[] = preg_replace('/(?<=^|\s)\w+(?=\.)/', 'sub_$0', $groupColumn);
+        }
+        // Clearing the rules prevents the wrong aliased ones from re-appearing
+        $subQuery->clearGroupingRules()->group($groups);
+
+        $filter = clone $filter;
+        $filter->setColumn(preg_replace(
+            '/(?<=^|\s)\w+(?=\.)/',
+            'sub_$0',
+            $subQuery->aliasToColumnName($filter->getColumn())
+        ));
+        $filter = $filter->andFilter(Filter::where(
+            preg_replace('/(?<=^|\s)\w+(?=\.)/', 'sub_$0', $theirs),
+            new Zend_Db_Expr($ours)
+        ));
+        $subQuery->setFilter($filter);
+
+        // EXISTS is the column name because without any column $this->isCustomVar() fails badly otherwise.
+        // Additionally it bypasses the non-required optimizations made by our filter rendering implementation.
+        return new FilterExpression('EXISTS', '', new Zend_Db_Expr($subQuery));
+    }
+
     protected function requireFilterColumns(Filter $filter)
     {
         if ($filter instanceof FilterExpression) {
@@ -500,6 +597,16 @@ abstract class IdoQuery extends DbQuery
             }
 
             $alias = $filter->getColumn();
+
+            $virtualTable = $this->aliasToTableName($alias);
+            if (isset($this->subQueryTargets[$virtualTable])) {
+                try {
+                    return $this->createSubQueryFilter($filter, $this->subQueryTargets[$virtualTable]);
+                } catch (NotImplementedError $e) {
+                    // We don't want to create subquery filters in all cases
+                }
+            }
+
             $this->requireColumn($alias);
 
             if ($this->isCustomvar($alias)) {
@@ -519,8 +626,12 @@ abstract class IdoQuery extends DbQuery
 
             $filter->setColumn($column);
         } else {
-            foreach ($filter->filters() as $filter) {
-                $this->requireFilterColumns($filter);
+            foreach ($filter->filters() as $child) {
+                $replacement = $this->requireFilterColumns($child);
+                if ($replacement !== null) {
+                    // setId($child->getId()) is performed because replaceById() doesn't already do it
+                    $filter->replaceById($child->getId(), $replacement->setId($child->getId()));
+                }
             }
         }
     }
@@ -531,8 +642,7 @@ abstract class IdoQuery extends DbQuery
     public function addFilter(Filter $filter)
     {
         $filter = clone $filter;
-        $this->requireFilterColumns($filter);
-        return parent::addFilter($filter);
+        return parent::addFilter($this->requireFilterColumns($filter) ?: $filter);
     }
 
     public function where($condition, $value = null)
