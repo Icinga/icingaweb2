@@ -181,6 +181,13 @@ class FilterExpression extends Filter
             return in_array($rowValue, $expression);
         }
 
+        // referencing another column using php variable notation
+        if(strlen($expression) > 2 && $expression[0] == '$' && $expression[1] == '{' && $expression[strlen($expression) - 1] == '}') {
+            $expression = substr($expression, 2, strlen($expression) - 3);
+            $expression = $row->$expression;
+            return (string) $rowValue === $expression;
+        }
+
         $expression = (string) $expression;
         if (strpos($expression, '*') === false) {
             if (is_array($rowValue)) {
