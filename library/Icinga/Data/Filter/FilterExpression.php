@@ -182,7 +182,8 @@ class FilterExpression extends Filter
         }
 
         // referencing another column using php variable notation
-        if (strlen($expression) > 2 && $expression[0] == '$' && $expression[1] == '{' && $expression[strlen($expression) - 1] == '}') {
+        if (strlen($expression) > 2 && $expression[0] == '$' && $expression[1] == '{'
+	    && $expression[strlen($expression) - 1] == '}') {
             $expression = substr($expression, 2, strlen($expression) - 3);
             $expression = $row->$expression;
             return (string) $rowValue === $expression;
