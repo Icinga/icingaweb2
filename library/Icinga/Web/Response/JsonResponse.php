@@ -46,6 +46,13 @@ class JsonResponse extends Response
     protected $encodingOptions = 0;
 
     /**
+     * Whether to automatically sanitize invalid UTF-8 (if any)
+     *
+     * @var bool
+     */
+    protected $autoSanitize = false;
+
+    /**
      * Error message if the API call failed due to a server error
      *
      * @var string|null
@@ -93,6 +100,30 @@ class JsonResponse extends Response
     public function setEncodingOptions($encodingOptions)
     {
         $this->encodingOptions = (int) $encodingOptions;
+        return $this;
+    }
+
+    /**
+     * Get whether to automatically sanitize invalid UTF-8 (if any)
+     *
+     * @return bool
+     */
+    public function getAutoSanitize()
+    {
+        return $this->autoSanitize;
+    }
+
+    /**
+     * Set whether to automatically sanitize invalid UTF-8 (if any)
+     *
+     * @param   bool    $autoSanitize
+     *
+     * @return  $this
+     */
+    public function setAutoSanitize($autoSanitize = true)
+    {
+        $this->autoSanitize = $autoSanitize;
+
         return $this;
     }
 
@@ -191,7 +222,7 @@ class JsonResponse extends Response
                 $body['data'] = $this->getSuccessData();
                 break;
         }
-        echo Json::encode($body, $this->getEncodingOptions());
+        echo Json::encode($body, $this->getEncodingOptions(), 512, $this->autoSanitize);
     }
 
     /**

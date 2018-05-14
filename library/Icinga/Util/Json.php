@@ -17,11 +17,12 @@ class Json
      * @param   mixed   $value
      * @param   int     $options
      * @param   int     $depth
+     * @param   bool    $autoSanitize   Automatically sanitize invalid UTF-8 (if any)
      *
      * @return  string
      * @throws  JsonEncodeException
      */
-    public static function encode($value, $options = 0, $depth = 512)
+    public static function encode($value, $options = 0, $depth = 512, $autoSanitize = false)
     {
         if (version_compare(phpversion(), '5.5.0', '<')) {
             $encoded = json_encode($value, $options);
@@ -33,8 +34,11 @@ class Json
             case JSON_ERROR_NONE:
                 return $encoded;
 
+            /** @noinspection PhpMissingBreakStatementInspection */
             case JSON_ERROR_UTF8:
-                return static::encode(static::sanitizeUtf8Recursive($value), $options, $depth);
+                if ($autoSanitize) {
+                    return static::encode(static::sanitizeUtf8Recursive($value), $options, $depth);
+                }
 
             default:
                 throw new JsonEncodeException('%s: %s', static::lastErrorMsg(), var_export($value, true));
