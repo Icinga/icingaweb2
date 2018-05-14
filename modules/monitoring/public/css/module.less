@@ -41,6 +41,41 @@
   }
 }
 
+// Hostgroup- and servicegroup-grid styles
+.group-grid {
+  display: grid;
+  grid-gap: 1em 3em;
+  grid-template-columns: repeat(auto-fit, 14em);
+
+  .group-grid-cell > a:last-child {
+    display: inline-block;
+    max-width: 10em;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    text-align: center;
+    vertical-align: middle;
+  }
+
+  .group-grid-cell > a:first-child,
+  .group-grid-cell > div.state-none {
+    .bg-stateful();
+    .rounded-corners();
+
+    display: inline-block;
+    margin-right: 1em;
+    padding: .5em;
+    height: 2.5em;
+    width: 2.5em;
+    text-align: center;
+    vertical-align: middle;
+    color: white;
+  }
+  .group-grid-cell > div.state-none {
+    background-color: @gray-light;
+  }
+}
+
 // Styles for the icon displayed if a check result is late
 .check-result-late {
   &:before {

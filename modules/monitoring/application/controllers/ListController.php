@@ -542,6 +542,43 @@ class ListController extends Controller
         $this->view->hostGroups = $hostGroups;
     }
 
+    /**
+     * List host groups
+     */
+    public function hostgroupGridAction()
+    {
+        $this->addTitleTab(
+            'hostgroup-grid',
+            $this->translate('Host Group Grid'),
+            $this->translate('Show the Host Group Grid')
+        );
+
+        $this->setAutorefreshInterval(15);
+
+        $hostGroups = $this->backend->select()->from('hostgroupsummary', [
+            'hostgroup_alias',
+            'hostgroup_name',
+            'hosts_down_handled',
+            'hosts_down_unhandled',
+            'hosts_pending',
+            'hosts_total',
+            'hosts_unreachable_handled',
+            'hosts_unreachable_unhandled',
+            'hosts_up'
+        ]);
+        $this->applyRestriction('monitoring/filter/objects', $hostGroups);
+        $this->filterQuery($hostGroups);
+
+        $this->setupSortControl([
+            'hosts_severity'    => $this->translate('Severity'),
+            'hostgroup_alias'   => $this->translate('Host Group Name'),
+            'hosts_total'       => $this->translate('Total Hosts'),
+            'services_total'    => $this->translate('Total Services')
+        ], $hostGroups, ['hosts_severity' => 'desc']);
+
+        $this->view->hostGroups = $hostGroups;
+    }
+
     public function eventhistoryAction()
     {
         $this->addTitleTab(
