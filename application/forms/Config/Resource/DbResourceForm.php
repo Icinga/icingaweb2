@@ -45,6 +45,9 @@ class DbResourceForm extends Form
         if (Platform::hasOciSupport()) {
             $dbChoices['oci'] = 'Oracle (OCI8)';
         }
+        if (Platform::hasSqliteSupport()) {
+            $dbChoices['sqlite'] = 'SQLite';
+        }
 
         $offerPostgres = false;
         $offerIbm = false;
@@ -89,117 +92,130 @@ class DbResourceForm extends Form
                 'multiOptions'  => $dbChoices
             )
         );
-        $this->addElement(
-            'text',
-            'host',
-            array (
-                'required'      => true,
-                'label'         => $this->translate('Host'),
-                'description'   => $this->translate('The hostname of the database')
-                    . ($socketInfo ? '. ' . $socketInfo : ''),
-                'value'         => 'localhost'
-            )
-        );
-        $this->addElement(
-            'number',
-            'port',
-            array(
-                'description'       => $this->translate('The port to use'),
-                'label'             => $this->translate('Port'),
-                'preserveDefault'   => true,
-                'required'          => $offerPostgres,
-                'value'             => $offerPostgres ? 5432 : null
-            )
-        );
-        $this->addElement(
-            'text',
-            'dbname',
-            array(
-                'required'      => true,
-                'label'         => $this->translate('Database Name'),
-                'description'   => $this->translate('The name of the database to use')
-            )
-        );
-        $this->addElement(
-            'text',
-            'username',
-            array (
-                'required'      => true,
-                'label'         => $this->translate('Username'),
-                'description'   => $this->translate('The user name to use for authentication')
-            )
-        );
-        $this->addElement(
-            'password',
-            'password',
-            array(
-                'renderPassword'    => true,
-                'label'             => $this->translate('Password'),
-                'description'       => $this->translate('The password to use for authentication')
-            )
-        );
-        $this->addElement(
-            'text',
-            'charset',
-            array (
-                'description'   => $this->translate('The character set for the database'),
-                'label'         => $this->translate('Character Set')
-            )
-        );
-        $this->addElement(
-            'checkbox',
-            'use_ssl',
-            array(
-                'autosubmit'    => true,
-                'label'         => $this->translate('Use SSL'),
-                'description'   => $this->translate(
-                    'Whether to encrypt the connection or to authenticate using certificates'
-                )
-            )
-        );
-        if (isset($formData['use_ssl']) && $formData['use_ssl']) {
+        if ($dbChoice === 'sqlite') {
             $this->addElement(
                 'text',
-                'ssl_key',
+                'dbname',
                 array(
-                    'label'             => $this->translate('SSL Key'),
-                    'description'       => $this->translate('The client key file path')
+                    'required'      => true,
+                    'label'         => $this->translate('Database Name'),
+                    'description'   => $this->translate('The name of the database to use')
+                )
+            );
+        } else {
+            $this->addElement(
+                'text',
+                'host',
+                array (
+                    'required'      => true,
+                    'label'         => $this->translate('Host'),
+                    'description'   => $this->translate('The hostname of the database')
+                        . ($socketInfo ? '. ' . $socketInfo : ''),
+                    'value'         => 'localhost'
+                )
+            );
+            $this->addElement(
+                'number',
+                'port',
+                array(
+                    'description'       => $this->translate('The port to use'),
+                    'label'             => $this->translate('Port'),
+                    'preserveDefault'   => true,
+                    'required'          => $offerPostgres,
+                    'value'             => $offerPostgres ? 5432 : null
                 )
             );
             $this->addElement(
                 'text',
-                'ssl_cert',
+                'dbname',
                 array(
-                    'label'             => $this->translate('SSL Certificate'),
-                    'description'       => $this->translate('The certificate file path')
+                    'required'      => true,
+                    'label'         => $this->translate('Database Name'),
+                    'description'   => $this->translate('The name of the database to use')
                 )
             );
             $this->addElement(
                 'text',
-                'ssl_ca',
+                'username',
+                array (
+                    'required'      => true,
+                    'label'         => $this->translate('Username'),
+                    'description'   => $this->translate('The user name to use for authentication')
+                )
+            );
+            $this->addElement(
+                'password',
+                'password',
                 array(
-                    'label'             => $this->translate('SSL CA'),
-                    'description'       => $this->translate('The CA certificate file path')
+                    'required'          => true,
+                    'renderPassword'    => true,
+                    'label'             => $this->translate('Password'),
+                    'description'       => $this->translate('The password to use for authentication')
                 )
             );
             $this->addElement(
                 'text',
-                'ssl_capath',
+                'charset',
+                array (
+                    'description'   => $this->translate('The character set for the database'),
+                    'label'         => $this->translate('Character Set')
+                )
+            );
+            $this->addElement(
+                'checkbox',
+                'use_ssl',
                 array(
-                    'label'             => $this->translate('SSL CA Path'),
-                    'description'       => $this->translate(
-                        'The trusted CA certificates in PEM format directory path'
+                    'autosubmit'    => true,
+                    'label'         => $this->translate('Use SSL'),
+                    'description'   => $this->translate(
+                        'Whether to encrypt the connection or to authenticate using certificates'
                     )
                 )
             );
-            $this->addElement(
-                'text',
-                'ssl_cipher',
-                array(
-                    'label'             => $this->translate('SSL Cipher'),
-                    'description'       => $this->translate('The list of permissible ciphers')
-                )
-            );
+            if (isset($formData['use_ssl']) && $formData['use_ssl']) {
+                $this->addElement(
+                    'text',
+                    'ssl_key',
+                    array(
+                        'label'             => $this->translate('SSL Key'),
+                        'description'       => $this->translate('The client key file path')
+                    )
+                );
+                $this->addElement(
+                    'text',
+                    'ssl_cert',
+                    array(
+                        'label'             => $this->translate('SSL Certificate'),
+                        'description'       => $this->translate('The certificate file path')
+                    )
+                );
+                $this->addElement(
+                    'text',
+                    'ssl_ca',
+                    array(
+                        'label'             => $this->translate('SSL CA'),
+                        'description'       => $this->translate('The CA certificate file path')
+                    )
+                );
+                $this->addElement(
+                    'text',
+                    'ssl_capath',
+                    array(
+                        'label'             => $this->translate('SSL CA Path'),
+                        'description'       => $this->translate(
+                            'The trusted CA certificates in PEM format directory path'
+                        )
+                    )
+                );
+                $this->addElement(
+                    'text',
+                    'ssl_cipher',
+                    array(
+                        'label'             => $this->translate('SSL Cipher'),
+                        'description'       => $this->translate('The list of permissible ciphers')
+                    )
+                );
+            }
         }
 
         return $this;
