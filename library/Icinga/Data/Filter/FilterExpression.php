@@ -186,7 +186,6 @@ class FilterExpression extends Filter
            && $expression[strlen($expression) - 1] == '}') {
             $expression = substr($expression, 2, strlen($expression) - 3);
             $expression = $row->$expression;
-            return (string) $rowValue === $expression;
         }
 
         $expression = (string) $expression;
