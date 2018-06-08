@@ -7,6 +7,7 @@ use Icinga\Module\Doc\Renderer\DocSectionRenderer;
 use Icinga\Module\Doc\Renderer\DocTocRenderer;
 use Icinga\Web\Controller;
 use Icinga\Web\Url;
+use Icinga\Web\Widget\Tabextension\OutputFormat;
 
 class DocController extends Controller
 {
@@ -52,11 +53,13 @@ class DocController extends Controller
         }
         $title = $first === null ? ucfirst($chapter) : $first->getTitle();
         $this->view->title = $title;
-        $this->getTabs()->add('toc', array(
-            'active'    => true,
-            'title'     => $title,
-            'url'       => Url::fromRequest()
-        ));
+        $this->getTabs()
+            ->add('toc', array(
+                'active'    => true,
+                'title'     => $title,
+                'url'       => Url::fromRequest()
+            ))
+            ->extend(new OutputFormat(array(OutputFormat::TYPE_CSV, OutputFormat::TYPE_JSON)));
         $this->render('chapter', null, true);
     }
 
@@ -77,11 +80,13 @@ class DocController extends Controller
             ->setUrlParams($urlParams);
         $name = ucfirst($name);
         $title = sprintf($this->translate('%s Documentation'), $name);
-        $this->getTabs()->add('toc', array(
-            'active'    => true,
-            'title'     => $title,
-            'url'       => Url::fromRequest()
-        ));
+        $this->getTabs()
+            ->add('toc', array(
+                'active'    => true,
+                'title'     => $title,
+                'url'       => Url::fromRequest()
+            ))
+            ->extend(new OutputFormat(array(OutputFormat::TYPE_CSV, OutputFormat::TYPE_JSON)));
         $this->render('toc', null, true);
     }
 
