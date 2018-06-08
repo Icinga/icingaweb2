@@ -50,15 +50,12 @@ class DbResourceForm extends Form
         }
 
         $offerPostgres = false;
-        $offerIbm = false;
         $offerMysql = false;
         $dbChoice = isset($formData['db']) ? $formData['db'] : key($dbChoices);
         if ($dbChoice === 'pgsql') {
             $offerPostgres = true;
         } elseif ($dbChoice === 'mysql') {
             $offerMysql = true;
-        } elseif ($dbChoice === 'ibm') {
-            $offerIbm = true;
         }
 
         $socketInfo = '';
