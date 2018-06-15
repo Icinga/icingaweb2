@@ -47,7 +47,7 @@ abstract class MonitoredObjectController extends Controller
             $this->view->tickets = Hook::first('ticket');
         }
         if (Hook::has('grapher')) {
-            $this->view->grapher = Hook::first('grapher');
+            $this->view->graphers = Hook::all('grapher');
         }
     }
 
