@@ -17,12 +17,42 @@ class Json
      * @param   mixed   $value
      * @param   int     $options
      * @param   int     $depth
+     *
+     * @return  string
+     * @throws  JsonEncodeException
+     */
+    public static function encode($value, $options = 0, $depth = 512)
+    {
+        return static::encodeAndSanitize($value, $options, $depth, false);
+    }
+
+    /**
+     * {@link json_encode()} wrapper, automatically sanitizes bad UTF-8
+     *
+     * @param   mixed   $value
+     * @param   int     $options
+     * @param   int     $depth
+     *
+     * @return  string
+     * @throws  JsonEncodeException
+     */
+    public static function sanitize($value, $options = 0, $depth = 512)
+    {
+        return static::encodeAndSanitize($value, $options, $depth, true);
+    }
+
+    /**
+     * {@link json_encode()} wrapper, sanitizes bad UTF-8
+     *
+     * @param   mixed   $value
+     * @param   int     $options
+     * @param   int     $depth
      * @param   bool    $autoSanitize   Automatically sanitize invalid UTF-8 (if any)
      *
      * @return  string
      * @throws  JsonEncodeException
      */
-    public static function encode($value, $options = 0, $depth = 512, $autoSanitize = false)
+    protected static function encodeAndSanitize($value, $options, $depth, $autoSanitize)
     {
         if (version_compare(phpversion(), '5.5.0', '<')) {
             $encoded = json_encode($value, $options);

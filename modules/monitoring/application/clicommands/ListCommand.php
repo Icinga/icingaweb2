@@ -79,7 +79,7 @@ class ListCommand extends Command
         $query = $query->getQuery();
         switch ($format) {
             case 'json':
-                echo Json::encode($query->fetchAll(), 0, 512, true);
+                echo Json::sanitize($query->fetchAll());
                 break;
             case 'csv':
                 Csv::fromQuery($query)->dump();

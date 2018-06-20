@@ -222,7 +222,9 @@ class JsonResponse extends Response
                 $body['data'] = $this->getSuccessData();
                 break;
         }
-        echo Json::encode($body, $this->getEncodingOptions(), 512, $this->autoSanitize);
+        echo $this->getAutoSanitize()
+            ? Json::sanitize($body, $this->getEncodingOptions())
+            : Json::encode($body, $this->getEncodingOptions());
     }
 
     /**
