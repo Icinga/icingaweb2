@@ -527,6 +527,14 @@ abstract class IdoQuery extends DbQuery
      */
     protected function createSubQueryFilter(FilterExpression $filter, $queryName)
     {
+        $expr = $filter->getExpression();
+        $op = $filter->getSign();
+
+        if (! is_array($expr) && $op !== '!=') {
+            // Fallback to standard filter behavior
+            throw new NotImplementedError('');
+        }
+
         $subQuery = $this->createSubQuery($queryName);
         $subQuery->setIsSubQuery();
 
@@ -565,28 +573,49 @@ abstract class IdoQuery extends DbQuery
             }
         }
 
-        $groups = [];
-        foreach ($subQuery->getGroup() as $groupColumn) {
-            $groups[] = preg_replace('/(?<=^|\s)\w+(?=\.)/', 'sub_$0', $groupColumn);
-        }
-        // Clearing the rules prevents the wrong aliased ones from re-appearing
-        $subQuery->clearGroupingRules()->group($groups);
+        $subQueryFilter = clone $filter;
 
-        $filter = clone $filter;
-        $filter->setColumn(preg_replace(
+        if ($op === '!=') {
+            $exists = 'NOT EXISTS';
+            if (! is_array($expr)) {
+                $expr = [$expr];
+            }
+            $subQueryFilter = $subQueryFilter->setSign('=');
+            $op = '=';
+        } else {
+            $exists = 'EXISTS';
+        }
+
+        $subQueryFilter->setColumn(preg_replace(
             '/(?<=^|\s)\w+(?=\.)/',
             'sub_$0',
             $subQuery->aliasToColumnName($filter->getColumn())
         ));
-        $filter = $filter->andFilter(Filter::where(
+
+        $and = count($expr) === 1 ? substr_count($expr[0], '&') + 1 : 0;
+
+        if ($op === '=' && $and) {
+            $subQueryFilter->setExpression(explode('&', $expr[0]));
+
+            $groups = $subQuery->getGroup();
+            $group = $groups[0];
+            $group = preg_replace('/(?<=^|\s)\w+(?=\.)/', 'sub_$0', $group);
+
+            $subQuery->select()->having("COUNT(DISTINCT $group) >= $and");
+        }
+
+        $subQueryFilter = $subQueryFilter->andFilter(Filter::where(
             preg_replace('/(?<=^|\s)\w+(?=\.)/', 'sub_$0', $theirs),
             new Zend_Db_Expr($ours)
         ));
-        $subQuery->setFilter($filter);
+
+        $subQuery
+            ->setFilter($subQueryFilter)
+            ->clearGroupingRules();
 
         // EXISTS is the column name because without any column $this->isCustomVar() fails badly otherwise.
         // Additionally it bypasses the non-required optimizations made by our filter rendering implementation.
-        return new FilterExpression('EXISTS', '', new Zend_Db_Expr($subQuery));
+        return new FilterExpression($exists, '', new Zend_Db_Expr($subQuery));
     }
 
     protected function requireFilterColumns(Filter $filter)
