@@ -62,8 +62,7 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
     private static $driverOptions = array(
         PDO::ATTR_TIMEOUT    => 10,
         PDO::ATTR_CASE       => PDO::CASE_LOWER,
-        PDO::ATTR_ERRMODE    => PDO::ERRMODE_EXCEPTION,
-        // TODO: allow configurable PDO::ATTR_PERSISTENT => true
+        PDO::ATTR_ERRMODE    => PDO::ERRMODE_EXCEPTION
     );
 
     /**
@@ -159,7 +158,6 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
                 }
                 if ($pdoType === 'dblib') {
                     // Driver does not support setting attributes
-                    unset($adapterParamaters['persistent']);
                     unset($adapterParamaters['options']);
                     unset($adapterParamaters['driver_options']);
                 }
