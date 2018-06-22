@@ -69,6 +69,7 @@ class Json
                 if ($autoSanitize) {
                     return static::encode(static::sanitizeUtf8Recursive($value), $options, $depth);
                 }
+                // Fallthrough
 
             default:
                 throw new JsonEncodeException('%s: %s', static::lastErrorMsg(), var_export($value, true));
