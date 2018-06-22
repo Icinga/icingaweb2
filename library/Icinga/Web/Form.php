@@ -1143,7 +1143,11 @@ class Form extends Zend_Form
         }
 
         $formData = $this->getRequestData();
-        if ($this->getIsApiTarget() || $this->getRequest()->isApiRequest() || $this->getUidDisabled() || $this->wasSent($formData)) {
+        if ($this->getIsApiTarget()
+            || $this->getRequest()->isApiRequest()
+            || $this->getUidDisabled()
+            || $this->wasSent($formData)
+        ) {
             if (($frameUpload = (bool) $request->getUrl()->shift('_frameUpload', false))) {
                 $this->getView()->layout()->setLayout('wrapped');
             }
