@@ -14,6 +14,11 @@ class ServicegroupQuery extends IdoQuery
 
     protected $allowCustomVars = true;
 
+    protected $subQueryTargets = array(
+        'hostgroups'    => 'hostgroup',
+        'servicegroups' => 'servicegroup'
+    );
+
     protected $columnMap = array(
         'hostgroups' => array(
             'hostgroup_name' => 'hgo.name1'
@@ -177,5 +182,22 @@ class ServicegroupQuery extends IdoQuery
             'ss.service_object_id = so.object_id',
             array()
         );
+    }
+
+    protected function joinSubQuery(IdoQuery $query, $name)
+    {
+        if ($name === 'hostgroup') {
+            $this->requireVirtualTable('members');
+
+            $query->joinVirtualTable('services');
+
+            return ['so.object_id', 'so.object_id'];
+        } elseif ($name === 'servicegroup') {
+            $query->joinVirtualTable('members');
+
+            return ['sgm.service_object_id', 'so.object_id'];
+        }
+
+        return parent::joinSubQuery($query, $name);
     }
 }
