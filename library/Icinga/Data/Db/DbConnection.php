@@ -62,7 +62,8 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
     private static $driverOptions = array(
         PDO::ATTR_TIMEOUT    => 10,
         PDO::ATTR_CASE       => PDO::CASE_LOWER,
-        PDO::ATTR_ERRMODE    => PDO::ERRMODE_EXCEPTION
+        PDO::ATTR_ERRMODE    => PDO::ERRMODE_EXCEPTION,
+        // TODO: allow configurable PDO::ATTR_PERSISTENT => true
     );
 
     /**
@@ -141,7 +142,6 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
             'password'          => $this->config->password,
             'dbname'            => $this->config->dbname,
             'charset'           => $this->config->charset ?: null,
-            'persistent'        => (bool) $this->config->get('persistent', false),
             'options'           => & $genericAdapterOptions,
             'driver_options'    => & $driverOptions
         );
