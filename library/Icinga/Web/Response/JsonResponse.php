@@ -3,6 +3,7 @@
 
 namespace Icinga\Web\Response;
 
+use Icinga\Util\Json;
 use Zend_Controller_Action_HelperBroker;
 use Icinga\Web\Response;
 
@@ -43,6 +44,13 @@ class JsonResponse extends Response
      * @var int
      */
     protected $encodingOptions = 0;
+
+    /**
+     * Whether to automatically sanitize invalid UTF-8 (if any)
+     *
+     * @var bool
+     */
+    protected $autoSanitize = false;
 
     /**
      * Error message if the API call failed due to a server error
@@ -92,6 +100,30 @@ class JsonResponse extends Response
     public function setEncodingOptions($encodingOptions)
     {
         $this->encodingOptions = (int) $encodingOptions;
+        return $this;
+    }
+
+    /**
+     * Get whether to automatically sanitize invalid UTF-8 (if any)
+     *
+     * @return bool
+     */
+    public function getAutoSanitize()
+    {
+        return $this->autoSanitize;
+    }
+
+    /**
+     * Set whether to automatically sanitize invalid UTF-8 (if any)
+     *
+     * @param   bool    $autoSanitize
+     *
+     * @return  $this
+     */
+    public function setAutoSanitize($autoSanitize = true)
+    {
+        $this->autoSanitize = $autoSanitize;
+
         return $this;
     }
 
@@ -190,7 +222,9 @@ class JsonResponse extends Response
                 $body['data'] = $this->getSuccessData();
                 break;
         }
-        echo json_encode($body, $this->getEncodingOptions());
+        echo $this->getAutoSanitize()
+            ? Json::sanitize($body, $this->getEncodingOptions())
+            : Json::encode($body, $this->getEncodingOptions());
     }
 
     /**

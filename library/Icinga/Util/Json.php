@@ -23,15 +23,57 @@ class Json
      */
     public static function encode($value, $options = 0, $depth = 512)
     {
+        return static::encodeAndSanitize($value, $options, $depth, false);
+    }
+
+    /**
+     * {@link json_encode()} wrapper, automatically sanitizes bad UTF-8
+     *
+     * @param   mixed   $value
+     * @param   int     $options
+     * @param   int     $depth
+     *
+     * @return  string
+     * @throws  JsonEncodeException
+     */
+    public static function sanitize($value, $options = 0, $depth = 512)
+    {
+        return static::encodeAndSanitize($value, $options, $depth, true);
+    }
+
+    /**
+     * {@link json_encode()} wrapper, sanitizes bad UTF-8
+     *
+     * @param   mixed   $value
+     * @param   int     $options
+     * @param   int     $depth
+     * @param   bool    $autoSanitize   Automatically sanitize invalid UTF-8 (if any)
+     *
+     * @return  string
+     * @throws  JsonEncodeException
+     */
+    protected static function encodeAndSanitize($value, $options, $depth, $autoSanitize)
+    {
         if (version_compare(phpversion(), '5.5.0', '<')) {
             $encoded = json_encode($value, $options);
         } else {
             $encoded = json_encode($value, $options, $depth);
         }
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new JsonEncodeException('%s: %s', static::lastErrorMsg(), var_export($value, true));
+
+        switch (json_last_error()) {
+            case JSON_ERROR_NONE:
+                return $encoded;
+
+            /** @noinspection PhpMissingBreakStatementInspection */
+            case JSON_ERROR_UTF8:
+                if ($autoSanitize) {
+                    return static::encode(static::sanitizeUtf8Recursive($value), $options, $depth);
+                }
+                // Fallthrough
+
+            default:
+                throw new JsonEncodeException('%s: %s', static::lastErrorMsg(), var_export($value, true));
         }
-        return $encoded;
     }
 
     /**
@@ -81,5 +123,61 @@ class Json
             default:
                 return 'Unknown error';
         }
+    }
+
+    /**
+     * Replace bad byte sequences in UTF-8 strings inside the given JSON-encodable structure with question marks
+     *
+     * @param   mixed   $value
+     *
+     * @return  mixed
+     */
+    protected static function sanitizeUtf8Recursive($value)
+    {
+        switch (gettype($value)) {
+            case 'string':
+                return static::sanitizeUtf8String($value);
+
+            case 'array':
+                $sanitized = array();
+
+                foreach ($value as $key => $val) {
+                    if (is_string($key)) {
+                        $key = static::sanitizeUtf8String($key);
+                    }
+
+                    $sanitized[$key] = static::sanitizeUtf8Recursive($val);
+                }
+
+                return $sanitized;
+
+            case 'object':
+                $sanitized = array();
+
+                foreach ($value as $key => $val) {
+                    if (is_string($key)) {
+                        $key = static::sanitizeUtf8String($key);
+                    }
+
+                    $sanitized[$key] = static::sanitizeUtf8Recursive($val);
+                }
+
+                return (object) $sanitized;
+
+            default:
+                return $value;
+        }
+    }
+
+    /**
+     * Replace bad byte sequences in the given UTF-8 string with question marks
+     *
+     * @param   string  $string
+     *
+     * @return  string
+     */
+    protected static function sanitizeUtf8String($string)
+    {
+        return mb_convert_encoding($string, 'UTF-8', 'UTF-8');
     }
 }

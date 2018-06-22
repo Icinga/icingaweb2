@@ -153,7 +153,10 @@ abstract class MonitoredObjectController extends Controller
             );
             $groupName = $this->object->getType() . 'groups';
             $payload[$groupName] = $this->object->$groupName;
-            $this->getResponse()->json()->setSuccessData($payload)->sendResponse();
+            $this->getResponse()->json()
+                ->setSuccessData($payload)
+                ->setAutoSanitize()
+                ->sendResponse();
         }
     }
 

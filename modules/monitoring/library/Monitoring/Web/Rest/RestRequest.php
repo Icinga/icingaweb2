@@ -173,7 +173,7 @@ class RestRequest
     {
         switch ($contentType) {
             case 'application/json':
-                $payload = json_encode($payload);
+                $payload = Json::encode($payload);
                 break;
         }
 

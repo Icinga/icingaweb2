@@ -3,6 +3,7 @@
 
 namespace Icinga\Web\Announcement;
 
+use Icinga\Util\Json;
 use Icinga\Web\Cookie;
 
 /**
@@ -128,7 +129,7 @@ class AnnouncementCookie extends Cookie
      */
     public function getValue()
     {
-        return json_encode(array(
+        return Json::encode(array(
             'acknowledged'  => $this->getAcknowledged(),
             'etag'          => $this->getEtag(),
             'next'          => $this->getNextActive()
