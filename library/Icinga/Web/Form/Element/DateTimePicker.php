@@ -56,6 +56,11 @@ class DateTimePicker extends FormElement
      */
     public function isValid($value, $context = null)
     {
+        if (is_scalar($value) && $value !== '' && ! preg_match('/\D/', $value)) {
+            $dateTime = new DateTime();
+            $value = $dateTime->setTimestamp($value)->format($this->getFormat());
+        }
+
         if (! parent::isValid($value, $context)) {
             return false;
         }

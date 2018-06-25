@@ -1143,7 +1143,11 @@ class Form extends Zend_Form
         }
 
         $formData = $this->getRequestData();
-        if ($this->getIsApiTarget() || $this->getUidDisabled() || $this->wasSent($formData)) {
+        if ($this->getIsApiTarget()
+            || $this->getRequest()->isApiRequest()
+            || $this->getUidDisabled()
+            || $this->wasSent($formData)
+        ) {
             if (($frameUpload = (bool) $request->getUrl()->shift('_frameUpload', false))) {
                 $this->getView()->layout()->setLayout('wrapped');
             }
@@ -1172,7 +1176,7 @@ class Form extends Zend_Form
                     } else {
                         $this->getView()->layout()->redirectUrl = $this->getRedirectUrl()->getAbsoluteUrl();
                     }
-                } elseif ($this->getIsApiTarget()) {
+                } elseif ($this->getIsApiTarget() || $this->getRequest()->isApiRequest()) {
                     $this->getResponse()->json()->setFailData($this->getMessages())->sendResponse();
                 }
             } elseif ($this->getValidatePartial()) {
@@ -1198,7 +1202,7 @@ class Form extends Zend_Form
         if (strtolower($this->getRequest()->getMethod()) !== $this->getMethod()) {
             return false;
         }
-        if ($this->getIsApiTarget()) {
+        if ($this->getIsApiTarget() || $this->getRequest()->isApiRequest()) {
             return true;
         }
         if ($this->getSubmitLabel()) {
