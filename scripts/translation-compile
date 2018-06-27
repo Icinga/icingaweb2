@@ -1,0 +1,38 @@
+#!/bin/bash
+
+set -e
+
+MODULES=(doc monitoring setup)
+BASE_DIR="$(dirname "$(dirname "$(readlink -f "$0")")")"
+
+cd "${BASE_DIR}"
+
+get_languages() {
+  local module="$1"
+  local path="application/locale"
+  if [ -n "$module" ]; then
+    path="modules/$module/$path"
+  fi
+
+  if [ -d "$path" ]; then
+    find "$path" -mindepth 1 -maxdepth 1 -type d \
+      | awk -F/ '{ print $NF }'
+  fi
+}
+
+echo "Compiling core"
+for lang in $(get_languages); do
+  echo -n "${lang}: "
+  icingacli translation compile icinga "$lang"
+  echo
+done
+
+for mod in "${MODULES[@]}"; do
+  echo "Compiling module $mod"
+  for lang in $(get_languages "$mod"); do
+    echo -n "${lang}: "
+    icingacli module enable "$mod"
+    icingacli translation compile module "$mod" "$lang"
+    echo
+  done
+done

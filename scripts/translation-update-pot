@@ -1,0 +1,14 @@
+#!/bin/bash
+
+set -e
+
+MODULES=(doc monitoring setup)
+
+echo "Refreshing core"
+icingacli translation refresh icinga
+
+for mod in "${MODULES[@]}"; do
+  echo "Refreshing module $mod"
+  icingacli module enable "$mod"
+  icingacli translation refresh module "$mod"
+done
