@@ -51,6 +51,7 @@ level                    | **Optional.** Specifies the logging level. Can be set
 file                     | **Optional.** Specifies the log file path if `log` is set to `file`.
 application              | **Optional.** Specifies the application name if `log` is set to `syslog`.
 facility                 | **Optional.** Specifies the syslog facility if `log` is set to `syslog`. Can be set to `user`, `local0` to `local7`. Defaults to `user`.
+log_auth_ip              | **Optional.** Whether to include source IP in authentication logging. Defaults to `0`.
 
 Example for more verbose debug logging into a file:
 
@@ -59,6 +60,7 @@ Example for more verbose debug logging into a file:
 log = "file"
 level = "DEBUG"
 file = "/usr/share/icingaweb2/log/icingaweb2.log"
+log_auth_ip = "1"
 ```
 
 ### Theme Configuration <a id="configuration-general-theme"></a>
