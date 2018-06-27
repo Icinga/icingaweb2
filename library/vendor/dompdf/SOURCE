@@ -5,12 +5,12 @@ tar xzf dompdf-0.8.2.tar.gz --strip-components 1 dompdf-0.8.2/{lib,src,LICENSE.L
 rm dompdf-0.8.2.tar.gz
 mv LICENSE.LGPL LICENSE
 
-curl https://codeload.github.com/PhenX/php-font-lib/tar.gz/0.4 -o php-font-lib-0.4.tar.gz
+curl https://codeload.github.com/PhenX/php-font-lib/tar.gz/0.5.1 -o php-font-lib-0.5.1.tar.gz
 mkdir -p lib/php-font-lib
-tar xzf php-font-lib-0.4.tar.gz --strip-components 1 -C lib/php-font-lib php-font-lib-0.4/{src,LICENSE}
-rm php-font-lib-0.4.tar.gz
+tar xzf php-font-lib-0.5.1.tar.gz --strip-components 1 -C lib/php-font-lib php-font-lib-0.5.1/{src,LICENSE}
+rm php-font-lib-0.5.1.tar.gz
 
-curl https://codeload.github.com/PhenX/php-svg-lib/tar.gz/v0.3 -o php-svg-lib-0.3.tar.gz
+curl https://codeload.github.com/PhenX/php-svg-lib/tar.gz/v0.3.2 -o php-svg-lib-0.3.2.tar.gz
 mkdir -p lib/php-svg-lib
-tar xzf php-svg-lib-0.3.tar.gz --strip-components 1 -C lib/php-svg-lib php-svg-lib-0.3/src
-rm php-svg-lib-0.3.tar.gz
+tar xzf php-svg-lib-0.3.2.tar.gz --strip-components 1 -C lib/php-svg-lib php-svg-lib-0.3.2/src
+rm php-svg-lib-0.3.2.tar.gz
