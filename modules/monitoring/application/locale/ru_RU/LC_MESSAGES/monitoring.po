@@ -14,9 +14,10 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.5.5\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11) ? 0 : ((n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20)) ? 1 : 2);\n"
+"X-Generator: Poedit 2.0.8\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) ||"
+" (n%100>=11 && n%100<=14)? 2 : 3);\n"
 
 #: /vagrant/modules/monitoring/application/controllers/ChartController.php:375
 msgid " Down Hosts (Handled)"
@@ -93,6 +94,8 @@ msgid "%d Active"
 msgid_plural "%d Active"
 msgstr[0] ""
 msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
 
 #: /vagrant/modules/monitoring/application/views/scripts/tactical/components/hostservicechecks.phtml:55
 #: /vagrant/modules/monitoring/application/views/scripts/tactical/components/hostservicechecks.phtml:111
@@ -101,6 +104,8 @@ msgid "%d Disabled"
 msgid_plural "%d Disabled"
 msgstr[0] ""
 msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
 
 #: /vagrant/modules/monitoring/application/views/scripts/tactical/components/hostservicechecks.phtml:37
 #: /vagrant/modules/monitoring/application/views/scripts/tactical/components/hostservicechecks.phtml:93
@@ -109,6 +114,8 @@ msgid "%d Passive"
 msgid_plural "%d Passive"
 msgstr[0] ""
 msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
 
 #: /vagrant/modules/monitoring/application/views/scripts/list/eventgrid.phtml:42
 #, php-format
@@ -144,6 +151,7 @@ msgid_plural "%d scheduled downtimes"
 msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
+msgstr[3] ""
 
 #: /vagrant/modules/monitoring/application/views/scripts/list/eventgrid.phtml:30
 #, php-format
@@ -189,6 +197,7 @@ msgid_plural "%s acknowledgements"
 msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
+msgstr[3] ""
 
 #: /vagrant/modules/monitoring/application/views/scripts/hosts/show.phtml:80
 #: /vagrant/modules/monitoring/application/views/scripts/services/show.phtml:79
@@ -198,6 +207,7 @@ msgid_plural "%s comments"
 msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
+msgstr[3] ""
 
 #: /vagrant/modules/monitoring/application/views/scripts/health/not-running.phtml:7
 #, php-format
@@ -218,6 +228,7 @@ msgid_plural "%u Active"
 msgstr[0] "%u активна"
 msgstr[1] "%u активны"
 msgstr[2] "%u активны"
+msgstr[3] "%u активны"
 
 #: /vagrant/modules/monitoring/application/views/scripts/list/components/hostssummary.phtml:12
 #, php-format
@@ -226,6 +237,7 @@ msgid_plural "%u Hosts"
 msgstr[0] "%u узел"
 msgstr[1] "%u узла"
 msgstr[2] "%u узлов"
+msgstr[3] "%u узлов"
 
 #: /vagrant/modules/monitoring/application/views/scripts/tactical/components/problem_hosts.phtml:11
 #, php-format
@@ -234,6 +246,7 @@ msgid_plural "%u Hosts DOWN"
 msgstr[0] "%u узел ОТКЛЮЧЕН"
 msgstr[1] "%u узла ОТКЛЮЧЕНЫ"
 msgstr[2] "%u узлов ОТКЛЮЧЕНЫ"
+msgstr[3] "%u узлов ОТКЛЮЧЕНЫ"
 
 #: /vagrant/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:20
 #: /vagrant/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:141
@@ -244,6 +257,7 @@ msgid_plural "%u Hosts Disabled"
 msgstr[0] "%u узел запрещён"
 msgstr[1] "%u узела запрещёны"
 msgstr[2] "%u узлов запрещёны"
+msgstr[3] "%u узлов запрещёны"
 
 #: /vagrant/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:50
 #, php-format
@@ -252,6 +266,7 @@ msgid_plural "%u Hosts Flapping"
 msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
+msgstr[3] ""
 
 #: /vagrant/modules/monitoring/application/views/scripts/tactical/components/ok_hosts.phtml:34
 #, php-format
@@ -259,6 +274,8 @@ msgid "%u Host PENDING"
 msgid_plural "%u Hosts PENDING"
 msgstr[0] ""
 msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
 
 #: /vagrant/modules/monitoring/application/views/scripts/tactical/components/problem_hosts.phtml:30
 #, php-format
@@ -267,6 +284,7 @@ msgid_plural "%u Hosts UNREACHABLE"
 msgstr[0] "%u узел НЕДОСТУПЕН"
 msgstr[1] "%u узла НЕДОСТУПНЫ"
 msgstr[2] "%u узлов НЕДОСТУПНЫ"
+msgstr[3] "%u узлов НЕДОСТУПНЫ"
 
 #: /vagrant/modules/monitoring/application/views/scripts/tactical/components/ok_hosts.phtml:16
 #, php-format
@@ -275,6 +293,7 @@ msgid_plural "%u Hosts UP"
 msgstr[0] "%u узел ВКЛЮЧЁН"
 msgstr[1] "%u узла ВКЛЮЧЕНЫ"
 msgstr[2] "%u узлов ВКЛЮЧЕНЫ"
+msgstr[3] "%u узлов ВКЛЮЧЕНЫ"
 
 #: /vagrant/modules/monitoring/application/views/scripts/list/components/servicesummary.phtml:13
 #, php-format
@@ -283,6 +302,7 @@ msgid_plural "%u Services"
 msgstr[0] "%u служба"
 msgstr[1] "%u службы"
 msgstr[2] "%u служб"
+msgstr[3] "%u служб"
 
 #: /vagrant/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:75
 #: /vagrant/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:175
@@ -293,6 +313,7 @@ msgid_plural "%u Services Disabled"
 msgstr[0] "%u служба запрещена"
 msgstr[1] "%u службы запрещены"
 msgstr[2] "%u служб запрещены"
+msgstr[3] "%u служб запрещены"
 
 #: /vagrant/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:105
 #, php-format
@@ -300,6 +321,8 @@ msgid "%u Service Flapping"
 msgid_plural "%u Services Flapping"
 msgstr[0] ""
 msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
 
 #: /vagrant/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:80
 #: /vagrant/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:179
@@ -311,6 +334,8 @@ msgid "%u is not checked at all"
 msgid_plural "%u are not checked at all"
 msgstr[0] ""
 msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
 
 #: /vagrant/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:53
 #: /vagrant/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:152
@@ -320,6 +345,8 @@ msgid "%u is passively checked"
 msgid_plural "%u are passively checked"
 msgstr[0] ""
 msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
 
 #: /vagrant/modules/monitoring/application/views/scripts/list/hosts.phtml:66
 #, php-format
@@ -328,6 +355,7 @@ msgid_plural "%u unhandled services"
 msgstr[0] "%u необработанная служба"
 msgstr[1] "%u необработанные службы"
 msgstr[2] "%u необработанных служб"
+msgstr[3] "%u необработанных служб"
 
 #: /vagrant/modules/monitoring/library/Monitoring/DataView/DataView.php:220
 msgid "(Case insensitive)"
@@ -428,6 +456,8 @@ msgid "Acknowledge problem"
 msgid_plural "Acknowledge problems"
 msgstr[0] ""
 msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
 
 #: /vagrant/modules/monitoring/application/views/scripts/show/components/acknowledgement.phtml:83
 msgid ""
@@ -481,6 +511,8 @@ msgid "Acknowledging problem.."
 msgid_plural "Acknowledging problems.."
 msgstr[0] ""
 msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
 
 #: /vagrant/modules/monitoring/application/views/scripts/show/components/actions.phtml:45
 msgid "Actions"
@@ -560,6 +592,7 @@ msgid_plural "Add comments"
 msgstr[0] "Добавить комментарий"
 msgstr[1] "Добавить комментария"
 msgstr[2] "Добавить комментариев"
+msgstr[3] "Добавить комментариев"
 
 #: /vagrant/modules/monitoring/application/views/scripts/hosts/show.phtml:62
 #: /vagrant/modules/monitoring/application/views/scripts/services/show.phtml:61
@@ -571,6 +604,8 @@ msgid "Adding comment.."
 msgid_plural "Adding comments.."
 msgstr[0] ""
 msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
 
 #: /vagrant/modules/monitoring/application/controllers/ListController.php:96
 msgid "Address"
@@ -1142,6 +1177,7 @@ msgid_plural "Deleting comments.."
 msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
+msgstr[3] ""
 
 #: /vagrant/modules/monitoring/application/forms/Command/Object/DeleteDowntimeCommandForm.php:97
 msgid "Deleting downtime."
@@ -1153,6 +1189,7 @@ msgid_plural "Deleting downtimes.."
 msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
+msgstr[3] ""
 
 #: /vagrant/modules/monitoring/application/views/scripts/downtime/show.phtml:10
 msgid "Details"
@@ -1819,8 +1856,8 @@ msgstr ""
 #: /vagrant/modules/monitoring/application/forms/Command/Object/SendCustomNotificationCommandForm.php:45
 msgid ""
 "If you work with other administrators, you may find it useful to share "
-"information about the host or service that is having problems. Make sure "
-"you enter a brief description of what you are doing."
+"information about the host or service that is having problems. Make sure you "
+"enter a brief description of what you are doing."
 msgstr ""
 
 #: /vagrant/modules/monitoring/application/forms/Command/Object/AcknowledgeProblemCommandForm.php:63
@@ -1954,6 +1991,8 @@ msgid "List %s unhandled service problem on host %s"
 msgid_plural "List %s unhandled service problems on host %s"
 msgstr[0] ""
 msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
 
 #: /vagrant/modules/monitoring/application/views/scripts/timeline/index.phtml:112
 #, php-format
@@ -1967,6 +2006,8 @@ msgid "List %u actively checked host"
 msgid_plural "List %u actively checked hosts"
 msgstr[0] ""
 msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
 
 #: /vagrant/modules/monitoring/application/views/scripts/tactical/components/hostservicechecks.phtml:82
 #, php-format
@@ -1974,6 +2015,8 @@ msgid "List %u actively checked service"
 msgid_plural "List %u actively checked services"
 msgstr[0] ""
 msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
 
 #: /vagrant/modules/monitoring/application/views/scripts/list/components/hostssummary.phtml:17
 #, php-format
@@ -1982,6 +2025,7 @@ msgid_plural "List all %u hosts"
 msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
+msgstr[3] ""
 
 #: /vagrant/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:29
 #, php-format
@@ -1989,6 +2033,8 @@ msgid "List %u host for which flap detection has been disabled"
 msgid_plural "List %u hosts for which flap detection has been disabled"
 msgstr[0] ""
 msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
 
 #: /vagrant/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:150
 #, php-format
@@ -1996,6 +2042,8 @@ msgid "List %u host for which notifications are suppressed"
 msgid_plural "List %u hosts for which notifications are suppressed"
 msgstr[0] ""
 msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
 
 #: /vagrant/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:59
 #, php-format
@@ -2003,6 +2051,8 @@ msgid "List %u host that is currently flapping"
 msgid_plural "List %u hosts which are currently flapping"
 msgstr[0] ""
 msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
 
 #: /vagrant/modules/monitoring/application/views/scripts/tactical/components/problem_hosts.phtml:18
 #, php-format
@@ -2010,6 +2060,8 @@ msgid "List %u host that is currently in state DOWN"
 msgid_plural "List %u hosts which are currently in state DOWN"
 msgstr[0] ""
 msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
 
 #: /vagrant/modules/monitoring/application/views/scripts/tactical/components/ok_hosts.phtml:41
 #, php-format
@@ -2017,6 +2069,8 @@ msgid "List %u host that is currently in state PENDING"
 msgid_plural "List %u hosts which are currently in state PENDING"
 msgstr[0] ""
 msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
 
 #: /vagrant/modules/monitoring/application/views/scripts/tactical/components/problem_hosts.phtml:40
 #, php-format
@@ -2024,6 +2078,8 @@ msgid "List %u host that is currently in state UNREACHABLE"
 msgid_plural "List %u hosts which are currently in state UNREACHABLE"
 msgstr[0] ""
 msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
 
 #: /vagrant/modules/monitoring/application/views/scripts/tactical/components/ok_hosts.phtml:23
 #, php-format
@@ -2031,6 +2087,8 @@ msgid "List %u host that is currently in state UP"
 msgid_plural "List %u hosts which are currently in state UP"
 msgstr[0] ""
 msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
 
 #: /vagrant/modules/monitoring/application/views/scripts/tactical/components/hostservicechecks.phtml:62
 #, php-format
@@ -2038,6 +2096,8 @@ msgid "List %u host that is not being checked at all"
 msgid_plural "List %u hosts which are not being checked at all"
 msgstr[0] ""
 msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
 
 #: /vagrant/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:229
 #, php-format
@@ -2045,6 +2105,8 @@ msgid "List %u host that is not processing any event handlers"
 msgid_plural "List %u hosts which are not processing any event handlers"
 msgstr[0] ""
 msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
 
 #: /vagrant/modules/monitoring/application/views/scripts/tactical/components/hostservicechecks.phtml:44
 #, php-format
@@ -2052,6 +2114,8 @@ msgid "List %u passively checked host"
 msgid_plural "List %u passively checked hosts"
 msgstr[0] ""
 msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
 
 #: /vagrant/modules/monitoring/application/views/scripts/tactical/components/hostservicechecks.phtml:100
 #, php-format
@@ -2059,6 +2123,8 @@ msgid "List %u passively checked service"
 msgid_plural "List %u passively checked services"
 msgstr[0] ""
 msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
 
 #: /vagrant/modules/monitoring/application/views/scripts/list/components/servicesummary.phtml:20
 #, php-format
@@ -2067,6 +2133,7 @@ msgid_plural "List all %u services"
 msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
+msgstr[3] ""
 
 #: /vagrant/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:84
 #, php-format
@@ -2074,6 +2141,8 @@ msgid "List %u service for which flap detection has been disabled"
 msgid_plural "List %u services for which flap detection has been disabled"
 msgstr[0] ""
 msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
 
 #: /vagrant/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:184
 #, php-format
@@ -2081,6 +2150,8 @@ msgid "List %u service for which notifications are suppressed"
 msgid_plural "List %u services for which notifications are suppressed"
 msgstr[0] ""
 msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
 
 #: /vagrant/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:114
 #, php-format
@@ -2088,6 +2159,8 @@ msgid "List %u service that is currently flapping"
 msgid_plural "List %u services which are currently flapping"
 msgstr[0] ""
 msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
 
 #: /vagrant/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:20
 #, php-format
@@ -2096,6 +2169,7 @@ msgid_plural "List %u services which are currently in state CRITICAL"
 msgstr[0] "Показать %u службу, находящуюся в состоянии КРИТИЧНО"
 msgstr[1] "Показать %u службы, находящиеся в состоянии КРИТИЧНО"
 msgstr[2] "Показать %u служб, находящихся в состоянии КРИТИЧНО"
+msgstr[3] "Показать %u служб, находящихся в состоянии КРИТИЧНО"
 
 #: /vagrant/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:41
 #, php-format
@@ -2105,6 +2179,7 @@ msgid_plural ""
 msgstr[0] "Показать %u службу, находящуюся в состоянии КРИТИЧНО (Подтверждено)"
 msgstr[1] "Показать %u службы, находящиеся в состоянии КРИТИЧНО (Подтверждено)"
 msgstr[2] "Показать %u служб, находящихся в состоянии КРИТИЧНО (Подтверждено)"
+msgstr[3] "Показать %u служб, находящихся в состоянии КРИТИЧНО (Подтверждено)"
 
 #: /vagrant/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:95
 #, php-format
@@ -2115,6 +2190,7 @@ msgid_plural ""
 msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
+msgstr[3] ""
 
 #: /vagrant/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:68
 #, php-format
@@ -2128,6 +2204,8 @@ msgstr[1] ""
 "Показать %u службы, находящиеся в состоянии КРИТИЧНО, и проверенные пассивно"
 msgstr[2] ""
 "Показать %u служб, находящихся в состоянии КРИТИЧНО, и проверенных пассивно"
+msgstr[3] ""
+"Показать %u служб, находящихся в состоянии КРИТИЧНО, и проверенных пассивно"
 
 #: /vagrant/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:314
 #, php-format
@@ -2136,6 +2214,7 @@ msgid_plural "List %u services which are currently in state OK"
 msgstr[0] "Показать %u службу, находящуюся в состоянии ОК"
 msgstr[1] "Показать %u службы, находящиеся в состоянии ОК"
 msgstr[2] "Показать %u служб, находящихся в состоянии ОК"
+msgstr[3] "Показать %u служб, находящихся в состоянии ОК"
 
 #: /vagrant/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:340
 #, php-format
@@ -2145,6 +2224,7 @@ msgid_plural ""
 msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
+msgstr[3] ""
 
 #: /vagrant/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:361
 #, php-format
@@ -2153,6 +2233,7 @@ msgid_plural "List %u services which are currently in state PENDING"
 msgstr[0] "Показать %u службу, находящуюся в состоянии ОЖИДАНИЕ"
 msgstr[1] "Показать %u службы, находящиеся в состоянии ОЖИДАНИЕ"
 msgstr[2] "Показать %u служб, находящихся в состоянии ОЖИДАНИЕ"
+msgstr[3] "Показать %u служб, находящихся в состоянии ОЖИДАНИЕ"
 
 #: /vagrant/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:387
 #, php-format
@@ -2162,6 +2243,8 @@ msgid_plural ""
 "List %u services which are currently in state PENDING and not checked at all"
 msgstr[0] ""
 msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
 
 #: /vagrant/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:218
 #, php-format
@@ -2170,6 +2253,7 @@ msgid_plural "List %u services which are currently in state UNKNOWN"
 msgstr[0] "Показать %u службу, находящуюся в состоянии НЕИЗВЕСТНО"
 msgstr[1] "Показать %u службы, находящиеся в состоянии НЕИЗВЕСТНО"
 msgstr[2] "Показать %u служб, находящихся в состоянии НЕИЗВЕСТНО"
+msgstr[3] "Показать %u служб, находящихся в состоянии НЕИЗВЕСТНО"
 
 #: /vagrant/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:239
 #, php-format
@@ -2182,6 +2266,8 @@ msgstr[1] ""
 "Показать %u службы, находящиеся в состоянии НЕИЗВЕСТНО (Подтверждено)"
 msgstr[2] ""
 "Показать %u служб, находящихся в состоянии НЕИЗВЕСТНО (Подтверждено)"
+msgstr[3] ""
+"Показать %u служб, находящихся в состоянии НЕИЗВЕСТНО (Подтверждено)"
 
 #: /vagrant/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:293
 #, php-format
@@ -2191,6 +2277,8 @@ msgid_plural ""
 "List %u services which are currently in state UNKNOWN and not checked at all"
 msgstr[0] ""
 msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
 
 #: /vagrant/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:266
 #, php-format
@@ -2206,6 +2294,8 @@ msgstr[1] ""
 "пассивно"
 msgstr[2] ""
 "Показать %u служб, находящихся в состоянии НЕИЗВЕСТНО, и проверенных пассивно"
+msgstr[3] ""
+"Показать %u служб, находящихся в состоянии НЕИЗВЕСТНО, и проверенных пассивно"
 
 #: /vagrant/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:119
 #, php-format
@@ -2214,6 +2304,7 @@ msgid_plural "List %u services which are currently in state WARNING"
 msgstr[0] "Показать %u службу, находящуюся в состоянии ВНИМАНИЕ"
 msgstr[1] "Показать %u службы, находящиеся в состоянии ВНИМАНИЕ"
 msgstr[2] "Показать %u служб, находящихся в состоянии ВНИМАНИЕ"
+msgstr[3] "Показать %u служб, находящихся в состоянии ВНИМАНИЕ"
 
 #: /vagrant/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:140
 #, php-format
@@ -2223,6 +2314,7 @@ msgid_plural ""
 msgstr[0] "Показать %u службу, находящуюся в состоянии ВНИМАНИЕ (Подтверждено)"
 msgstr[1] "Показать %u службы, находящиеся в состоянии ВНИМАНИЕ (Подтверждено)"
 msgstr[2] "Показать %u служб, находящихся в состоянии ВНИМАНИЕ (Подтверждено)"
+msgstr[3] "Показать %u служб, находящихся в состоянии ВНИМАНИЕ (Подтверждено)"
 
 #: /vagrant/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:194
 #, php-format
@@ -2232,6 +2324,8 @@ msgid_plural ""
 "List %u services which are currently in state WARNING and not checked at all"
 msgstr[0] ""
 msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
 
 #: /vagrant/modules/monitoring/application/views/scripts/tactical/components/parts/servicestatesummarybyhoststate.phtml:167
 #, php-format
@@ -2245,6 +2339,8 @@ msgstr[1] ""
 "Показать %u службы, находящиеся в состоянии ВНИМАНИЕ, и проверенные пассивно"
 msgstr[2] ""
 "Показать %u служб, находящихся в состоянии ВНИМАНИЕ, и проверенных пассивно"
+msgstr[3] ""
+"Показать %u служб, находящихся в состоянии ВНИМАНИЕ, и проверенных пассивно"
 
 #: /vagrant/modules/monitoring/application/views/scripts/tactical/components/hostservicechecks.phtml:118
 #, php-format
@@ -2252,6 +2348,8 @@ msgid "List %u service that is not being checked at all"
 msgid_plural "List %u services which are not being checked at all"
 msgstr[0] ""
 msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
 
 #: /vagrant/modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:263
 #, php-format
@@ -2259,6 +2357,8 @@ msgid "List %u service that is not processing any event handlers"
 msgid_plural "List %u services which are not processing any event handlers"
 msgstr[0] ""
 msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
 
 #: /vagrant/modules/monitoring/application/views/scripts/partials/comment/comments-header.phtml:23
 #, php-format
@@ -2927,6 +3027,8 @@ msgid "Processing check result.."
 msgid_plural "Processing check results.."
 msgstr[0] ""
 msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
 
 #: /vagrant/modules/monitoring/application/views/scripts/health/info.phtml:24
 msgid "Program Start Time"
@@ -2972,6 +3074,7 @@ msgid_plural "Remove All"
 msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
+msgstr[3] ""
 
 #: /vagrant/modules/monitoring/application/views/scripts/comments/show.phtml:11
 #, php-format
@@ -3024,12 +3127,16 @@ msgid "Remove problem acknowledgement"
 msgid_plural "Remove problem acknowledgements"
 msgstr[0] ""
 msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
 
 #: /vagrant/modules/monitoring/application/forms/Command/Object/RemoveAcknowledgementCommandForm.php:65
 msgid "Removing problem acknowledgement.."
 msgid_plural "Removing problem acknowledgements.."
 msgstr[0] ""
 msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
 
 #: /vagrant/modules/monitoring/application/controllers/AlertsummaryController.php:540
 msgid "Report interval"
@@ -3140,6 +3247,8 @@ msgid "Schedule check"
 msgid_plural "Schedule checks"
 msgstr[0] ""
 msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
 
 #: /vagrant/modules/monitoring/application/forms/Command/Object/ScheduleHostCheckCommandForm.php:28
 msgid "Schedule check for all services on the hosts and the hosts themselves."
@@ -3153,6 +3262,7 @@ msgid_plural "Schedule downtimes"
 msgstr[0] "Запланировать обслуживание"
 msgstr[1] "Запланировать обслуживания"
 msgstr[2] "Запланировать обслуживаний"
+msgstr[3] "Запланировать обслуживаний"
 
 #: /vagrant/modules/monitoring/application/forms/Command/Object/ScheduleHostDowntimeCommandForm.php:29
 msgid ""
@@ -3207,30 +3317,40 @@ msgid "Scheduling check.."
 msgid_plural "Scheduling checks.."
 msgstr[0] ""
 msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
 
 #: /vagrant/modules/monitoring/application/forms/Command/Object/ScheduleHostCheckCommandForm.php:51
 msgid "Scheduling host check.."
 msgid_plural "Scheduling host checks.."
 msgstr[0] ""
 msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
 
 #: /vagrant/modules/monitoring/application/forms/Command/Object/ScheduleHostDowntimeCommandForm.php:87
 msgid "Scheduling host downtime.."
 msgid_plural "Scheduling host downtimes.."
 msgstr[0] ""
 msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
 
 #: /vagrant/modules/monitoring/application/forms/Command/Object/ScheduleServiceCheckCommandForm.php:100
 msgid "Scheduling service check.."
 msgid_plural "Scheduling service checks.."
 msgstr[0] ""
 msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
 
 #: /vagrant/modules/monitoring/application/forms/Command/Object/ScheduleServiceDowntimeCommandForm.php:207
 msgid "Scheduling service downtime.."
 msgid_plural "Scheduling service downtimes.."
 msgstr[0] ""
 msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
 
 #: /vagrant/modules/monitoring/application/views/scripts/host/history.phtml:36
 #: /vagrant/modules/monitoring/application/views/scripts/list/eventhistory.phtml:22
@@ -3276,6 +3396,8 @@ msgid "Send custom notification"
 msgid_plural "Send custom notifications"
 msgstr[0] ""
 msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
 
 #: /vagrant/modules/monitoring/application/views/scripts/show/components/notifications.phtml:10
 #: /vagrant/modules/monitoring/application/views/scripts/show/components/notifications.phtml:25
@@ -3293,6 +3415,7 @@ msgid_plural "Sending custom notifications.."
 msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
+msgstr[3] ""
 
 #: /vagrant/modules/monitoring/application/views/scripts/list/notifications.phtml:53
 #, php-format
@@ -3604,6 +3727,8 @@ msgid "Submit Passive Check Result"
 msgid_plural "Submit Passive Check Results"
 msgstr[0] ""
 msgstr[1] ""
+msgstr[2] ""
+msgstr[3] ""
 
 #: /vagrant/modules/monitoring/application/controllers/HostController.php:169
 msgid "Submit Passive Host Check Result"
@@ -4260,6 +4385,7 @@ msgstr ""
 #~ msgstr[0] "%u настроенная служба"
 #~ msgstr[1] "%u настроенные службы"
 #~ msgstr[2] "%u настроенных служб"
+#~ msgstr[3] "%u настроенных служб"
 
 #~ msgid "Last Problem"
 #~ msgstr "Последняя проблема"
@@ -4277,6 +4403,10 @@ msgstr ""
 #~ "\""
 #~ msgstr[2] ""
 #~ "Показать %s служб, находящихся в состоянии ОЖИДАНИЕ, в группе служб \"%s\""
+#~ "\""
+#~ msgstr[3] ""
+#~ "Показать %s служб, находящихся в состоянии ОЖИДАНИЕ, в группе служб \"%s\""
+#~ "\""
 
 #~ msgid ""
 #~ "List %s service that is currently in state CRITICAL (Acknowledged) in "
@@ -4291,6 +4421,9 @@ msgstr ""
 #~ "Показать %s службы, находящиеся в состоянии КРИТИЧНО (Подтверждено), в "
 #~ "группе служб \"%s\""
 #~ msgstr[2] ""
+#~ "Показать %s служб, находящихся в состоянии КРИТИЧНО (Подтверждено), в "
+#~ "группе служб \"%s\""
+#~ msgstr[3] ""
 #~ "Показать %s служб, находящихся в состоянии КРИТИЧНО (Подтверждено), в "
 #~ "группе служб \"%s\""
 
@@ -4308,6 +4441,8 @@ msgstr ""
 #~ "\""
 #~ msgstr[2] ""
 #~ "Показать %s служб, находящихся в состоянии КРИТИЧНО, в группе служб \"%s\""
+#~ msgstr[3] ""
+#~ "Показать %s служб, находящихся в состоянии КРИТИЧНО, в группе служб \"%s\""
 
 #~ msgid ""
 #~ "List %s service that is currently in state OK in service group \"%s\""
@@ -4318,6 +4453,8 @@ msgstr ""
 #~ msgstr[1] ""
 #~ "Показать %s службу, находящуюся в состоянии ОК, в группе служб \"%s\""
 #~ msgstr[2] ""
+#~ "Показать %s служб, находящихся в состоянии ОК, в группе служб \"%s\""
+#~ msgstr[3] ""
 #~ "Показать %s служб, находящихся в состоянии ОК, в группе служб \"%s\""
 
 #~ msgid ""
@@ -4335,6 +4472,9 @@ msgstr ""
 #~ msgstr[2] ""
 #~ "Показать %s служб, находящихся в состоянии НЕИЗВЕСТНО (Подтверждено), в "
 #~ "группе служб \"%s\""
+#~ msgstr[3] ""
+#~ "Показать %s служб, находящихся в состоянии НЕИЗВЕСТНО (Подтверждено), в "
+#~ "группе служб \"%s\""
 
 #~ msgid ""
 #~ "List %s service that is currently in state UNKNOWN in service group \"%s\""
@@ -4348,6 +4488,9 @@ msgstr ""
 #~ "Показать %s службы, находящиеся в состоянии НЕИЗВЕСТНО, в группе служб "
 #~ "\"%s\""
 #~ msgstr[2] ""
+#~ "Показать %s служб, находящихся в состоянии НЕИЗВЕСТНО, в группе служб \"%s"
+#~ "\""
+#~ msgstr[3] ""
 #~ "Показать %s служб, находящихся в состоянии НЕИЗВЕСТНО, в группе служб \"%s"
 #~ "\""
 
@@ -4366,6 +4509,9 @@ msgstr ""
 #~ msgstr[2] ""
 #~ "Показать %s служб, находящихся в состоянии ВНИМАНИЕ (Подтверждено), в "
 #~ "группе служб \"%s\""
+#~ msgstr[3] ""
+#~ "Показать %s служб, находящихся в состоянии ВНИМАНИЕ (Подтверждено), в "
+#~ "группе служб \"%s\""
 
 #~ msgid ""
 #~ "List %s service that is currently in state WARNING in service group \"%s\""
@@ -4380,12 +4526,15 @@ msgstr ""
 #~ "\""
 #~ msgstr[2] ""
 #~ "Показать %s служб, находящихся в состоянии ВНИМАНИЕ, в группе служб \"%s\""
+#~ msgstr[3] ""
+#~ "Показать %s служб, находящихся в состоянии ВНИМАНИЕ, в группе служб \"%s\""
 
 #~ msgid "List %u service that is currently in state %s"
 #~ msgid_plural "List %u services which are currently in state %s"
 #~ msgstr[0] "Показать %u службу, находящуюся в состоянии %s"
 #~ msgstr[1] "Показать %u службы, находящиеся в состоянии %s"
 #~ msgstr[2] "Показать %u служб, находящихся в состоянии %s"
+#~ msgstr[3] "Показать %u служб, находящихся в состоянии %s"
 
 #~ msgid "List %u service that is currently in state %s (Acknowledged)"
 #~ msgid_plural ""
@@ -4393,6 +4542,7 @@ msgstr ""
 #~ msgstr[0] "Показать %u службу, находящуюся в состоянии %s (Подтверждено)"
 #~ msgstr[1] "Показать %u службы, находящиеся в состоянии %s (Подтверждено)"
 #~ msgstr[2] "Показать %u служб, находящихся в состоянии %s (Подтверждено)"
+#~ msgstr[3] "Показать %u служб, находящихся в состоянии %s (Подтверждено)"
 
 #~ msgid ""
 #~ "List %u service that is currently in state %s (Acknowledged) on host %s"
@@ -4404,12 +4554,15 @@ msgstr ""
 #~ "Показать %u службы, находящиеся в состоянии %s (Подтверждено), на узле %s"
 #~ msgstr[2] ""
 #~ "Показать %u служб, находящихся в состоянии %s (Подтверждено), на узле %s"
+#~ msgstr[3] ""
+#~ "Показать %u служб, находящихся в состоянии %s (Подтверждено), на узле %s"
 
 #~ msgid "List %u service that is currently in state %s on host %s"
 #~ msgid_plural "List %u services which are currently in state %s on host %s"
 #~ msgstr[0] "Показать %u службу, находящуюся в состоянии %s, на узле  %s"
 #~ msgstr[1] "Показать %u службы, находящиеся в состоянии %s, на узле  %s"
 #~ msgstr[2] "Показать %u служб, находящихся в состоянии %s, на узле  %s"
+#~ msgstr[3] "Показать %u служб, находящихся в состоянии %s, на узле  %s"
 
 #~ msgid ""
 #~ "List %u service that is currently in state CRITICAL (Acknowledged) on "
@@ -4424,6 +4577,9 @@ msgstr ""
 #~ "Показать %u службы, находящиеся в состоянии КРИТИЧНО (Подтверждено), на "
 #~ "узлах группы \"%s\""
 #~ msgstr[2] ""
+#~ "Показать %u служб, находящихся в состоянии КРИТИЧНО (Подтверждено), на "
+#~ "узлах группы \"%s\""
+#~ msgstr[3] ""
 #~ "Показать %u служб, находящихся в состоянии КРИТИЧНО (Подтверждено), на "
 #~ "узлах группы \"%s\""
 
@@ -4442,12 +4598,16 @@ msgstr ""
 #~ msgstr[2] ""
 #~ "Показать %u служб, находящихся в состоянии КРИТИЧНО, на узлах группы  \"%s"
 #~ "\""
+#~ msgstr[3] ""
+#~ "Показать %u служб, находящихся в состоянии КРИТИЧНО, на узлах группы  \"%s"
+#~ "\""
 
 #~ msgid "List %u service that is currently in state OK on host %s"
 #~ msgid_plural "List %u services which are currently in state OK on host %s"
 #~ msgstr[0] "Показать %u службу, находящуюся в состоянии ОК, на узле  %s"
 #~ msgstr[1] "Показать %u службы, находящиеся в состоянии ОК, на узле  %s"
 #~ msgstr[2] "Показать %u служб, находящихся в состоянии ОК, на узле  %s"
+#~ msgstr[3] "Показать %u служб, находящихся в состоянии ОК, на узле  %s"
 
 #~ msgid ""
 #~ "List %u service that is currently in state OK on hosts in the host group "
@@ -4461,6 +4621,8 @@ msgstr ""
 #~ "Показать %u службы, находящиеся в состоянии ОК, на узлах группы  \"%s\""
 #~ msgstr[2] ""
 #~ "Показать %u служб, находящихся в состоянии ОК, на узлах группы  \"%s\""
+#~ msgstr[3] ""
+#~ "Показать %u служб, находящихся в состоянии ОК, на узлах группы  \"%s\""
 
 #~ msgid "List %u service that is currently in state PENDING on host %s"
 #~ msgid_plural ""
@@ -4470,6 +4632,7 @@ msgstr ""
 #~ msgstr[1] ""
 #~ "Показать %u службы, находящиеся в состоянии ОЖИДАНИЕ, на узле  %s"
 #~ msgstr[2] "Показать %u служб, находящихся в состоянии ОЖИДАНИЕ, на узле  %s"
+#~ msgstr[3] "Показать %u служб, находящихся в состоянии ОЖИДАНИЕ, на узле  %s"
 
 #~ msgid ""
 #~ "List %u service that is currently in state PENDING on hosts in the host "
@@ -4484,6 +4647,9 @@ msgstr ""
 #~ "Показать %u службы, находящиеся в состоянии ОЖИДАНИЕ, на узлах группы  "
 #~ "\"%s\""
 #~ msgstr[2] ""
+#~ "Показать %u служб, находящихся в состоянии ОЖИДАНИЕ, на узлах группы  \"%s"
+#~ "\""
+#~ msgstr[3] ""
 #~ "Показать %u служб, находящихся в состоянии ОЖИДАНИЕ, на узлах группы  \"%s"
 #~ "\""
 
@@ -4502,6 +4668,9 @@ msgstr ""
 #~ msgstr[2] ""
 #~ "Показать %u служб, находящихся в состоянии НЕИЗВЕСТНО (Подтверждено), на "
 #~ "узлах группы \"%s\""
+#~ msgstr[3] ""
+#~ "Показать %u служб, находящихся в состоянии НЕИЗВЕСТНО (Подтверждено), на "
+#~ "узлах группы \"%s\""
 
 #~ msgid ""
 #~ "List %u service that is currently in state UNKNOWN on hosts in the host "
@@ -4516,6 +4685,9 @@ msgstr ""
 #~ "Показать %u службы, находящиеся в состоянии НЕИЗВЕСТНО, на узлах группы  "
 #~ "\"%s\""
 #~ msgstr[2] ""
+#~ "Показать %u служб, находящихся в состоянии НЕИЗВЕСТНО, на узлах группы  "
+#~ "\"%s\""
+#~ msgstr[3] ""
 #~ "Показать %u служб, находящихся в состоянии НЕИЗВЕСТНО, на узлах группы  "
 #~ "\"%s\""
 
@@ -4534,6 +4706,9 @@ msgstr ""
 #~ msgstr[2] ""
 #~ "Показать %u служб, находящихся в состоянии ВНИМАНИЕ (Подтверждено), на "
 #~ "узлах группы \"%s\""
+#~ msgstr[3] ""
+#~ "Показать %u служб, находящихся в состоянии ВНИМАНИЕ (Подтверждено), на "
+#~ "узлах группы \"%s\""
 
 #~ msgid ""
 #~ "List %u service that is currently in state WARNING on hosts in the host "
@@ -4548,6 +4723,9 @@ msgstr ""
 #~ "Показать %u службы, находящиеся в состоянии ВНИМАНИЕ, на узлах группы  "
 #~ "\"%s\""
 #~ msgstr[2] ""
+#~ "Показать %u служб, находящихся в состоянии ВНИМАНИЕ, на узлах группы  \"%s"
+#~ "\""
+#~ msgstr[3] ""
 #~ "Показать %u служб, находящихся в состоянии ВНИМАНИЕ, на узлах группы  \"%s"
 #~ "\""
 
