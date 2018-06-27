@@ -86,14 +86,15 @@ class LoginForm extends Form
      */
     public function onSuccess()
     {
-        $ip = NULL;
+        $ip = null;
         if (Config::app()->get('logging', 'log_auth_ip')) {
                 $ip = $_SERVER['REMOTE_ADDR'];
         }
         $auth = Auth::getInstance();
         $authChain = $auth->getAuthChain();
         $authChain->setSkipExternalBackends(true);
-        $user = new User($this->getElement('username')->getValue());
+		$username = $this->getElement('username')->getValue();
+        $user = new User($username);
         if (! $user->hasDomain()) {
             $user->setDomain(Config::app()->get('authentication', 'default_domain'));
         }
@@ -105,9 +106,9 @@ class LoginForm extends Form
             AuthenticationHook::triggerLogin($user);
             $this->getResponse()->setRerenderLayout(true);
             if (! is_null($ip)) {
-                Logger::debug('Successful login for user ' . $this->getElement('username')->getValue() . ' from ' . $ip);
+				Logger::debug('Successful login for user ' . $username . ' from ' . $ip);
             } else {
-                Logger::debug('Successful login for user ' . $this->getElement('username')->getValue());
+                Logger::debug('Successful login for user ' . $username);
             }
             return true;
         }
@@ -133,10 +134,10 @@ class LoginForm extends Form
                 // Move to default
             default:
                 $this->getElement('password')->addError($this->translate('Incorrect username or password'));
-                if (! is_null($ip)){
-                        Logger::warning('Failed login for user ' . $this->getElement('username')->getValue() . ' from ' . $ip);
+                if (! is_null($ip)) {
+                        Logger::warning('Failed login for user ' . $username . ' from ' . $ip);
                 } else {
-                        Logger::warning('Failed login for user ' . $this->getElement('username')->getValue());
+                        Logger::warning('Failed login for user ' . $username);
                 }
                 break;
         }
