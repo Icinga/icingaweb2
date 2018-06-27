@@ -86,6 +86,7 @@ class LoginForm extends Form
      */
     public function onSuccess()
     {
+        $ip = $_SERVER['REMOTE_ADDR'];
         $auth = Auth::getInstance();
         $authChain = $auth->getAuthChain();
         $authChain->setSkipExternalBackends(true);
@@ -100,6 +101,7 @@ class LoginForm extends Form
             // Call provided AuthenticationHook(s) after successful login
             AuthenticationHook::triggerLogin($user);
             $this->getResponse()->setRerenderLayout(true);
+            Logger::debug('Successful login for user ' . $this->getElement('username')->getValue() . ' from ' . $ip);
             return true;
         }
         switch ($authChain->getError()) {
@@ -124,7 +126,7 @@ class LoginForm extends Form
                 // Move to default
             default:
                 $this->getElement('password')->addError($this->translate('Incorrect username or password'));
-                Logger::error('Failed login for user ' . $this->getElement('username')->getValue() . ' from ' . $_SERVER['REMOTE_ADDR']);
+                Logger::error('Failed login for user ' . $this->getElement('username')->getValue() . ' from ' . $ip);
                 break;
         }
         return false;
