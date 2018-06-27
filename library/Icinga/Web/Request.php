@@ -124,9 +124,11 @@ class Request extends Zend_Controller_Request_Http
 
     public function getPost($key = null, $default = null)
     {
-        return $key === null && $this->isApiRequest()
-            ? Json::decode(file_get_contents('php://input'), true)
-            : parent::getPost($key, $default);
+        if ($key === null && $this->extractMediaType($this->getHeader('Content-Type')) === 'application/json') {
+            return Json::decode(file_get_contents('php://input'), true);
+        }
+
+        return parent::getPost($key, $default);
     }
 
     /**
