@@ -86,11 +86,15 @@ class LoginForm extends Form
      */
     public function onSuccess()
     {
-        $ip = $_SERVER['REMOTE_ADDR'];
+        $ip = null;
+        if (Config::app()->get('logging', 'log_auth_ip')) {
+                $ip = $_SERVER['REMOTE_ADDR'];
+        }
         $auth = Auth::getInstance();
         $authChain = $auth->getAuthChain();
         $authChain->setSkipExternalBackends(true);
-        $user = new User($this->getElement('username')->getValue());
+        $username = $this->getElement('username')->getValue();
+        $user = new User($username);
         if (! $user->hasDomain()) {
             $user->setDomain(Config::app()->get('authentication', 'default_domain'));
         }
@@ -101,7 +105,11 @@ class LoginForm extends Form
             // Call provided AuthenticationHook(s) after successful login
             AuthenticationHook::triggerLogin($user);
             $this->getResponse()->setRerenderLayout(true);
-            Logger::debug('Successful login for user ' . $this->getElement('username')->getValue() . ' from ' . $ip);
+            if (! is_null($ip)) {
+                Logger::debug('Successful login for user ' . $username . ' from ' . $ip);
+            } else {
+                Logger::debug('Successful login for user ' . $username);
+            }
             return true;
         }
         switch ($authChain->getError()) {
@@ -126,7 +134,11 @@ class LoginForm extends Form
                 // Move to default
             default:
                 $this->getElement('password')->addError($this->translate('Incorrect username or password'));
-                Logger::error('Failed login for user ' . $this->getElement('username')->getValue() . ' from ' . $ip);
+                if (! is_null($ip)) {
+                        Logger::warning('Failed login for user ' . $username . ' from ' . $ip);
+                } else {
+                        Logger::warning('Failed login for user ' . $username);
+                }
                 break;
         }
         return false;
