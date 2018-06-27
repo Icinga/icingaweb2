@@ -141,7 +141,6 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
             'password'          => $this->config->password,
             'dbname'            => $this->config->dbname,
             'charset'           => $this->config->charset ?: null,
-            'persistent'        => (bool) $this->config->get('persistent', false),
             'options'           => & $genericAdapterOptions,
             'driver_options'    => & $driverOptions
         );
@@ -159,7 +158,6 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
                 }
                 if ($pdoType === 'dblib') {
                     // Driver does not support setting attributes
-                    unset($adapterParamaters['persistent']);
                     unset($adapterParamaters['options']);
                     unset($adapterParamaters['driver_options']);
                 }

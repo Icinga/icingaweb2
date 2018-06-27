@@ -148,17 +148,6 @@ class DbResourceForm extends Form
         );
         $this->addElement(
             'checkbox',
-            'persistent',
-            array(
-                'description'   => $this->translate(
-                    'Check this box for persistent database connections. Persistent connections are not closed at the'
-                    . ' end of a request, but are cached and re-used. This is experimental'
-                ),
-                'label'         => $this->translate('Persistent')
-            )
-        );
-        $this->addElement(
-            'checkbox',
             'use_ssl',
             array(
                 'autosubmit'    => true,
