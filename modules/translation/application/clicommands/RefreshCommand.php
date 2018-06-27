@@ -23,45 +23,60 @@ class RefreshCommand extends TranslationCommand
     /**
      * Touch the global domain
      *
-     * This will create/update the PO-file of the global 'icinga' domain.
+     * This will create/update the POT-file of the global 'icinga' domain,
+     * and the PO-file when a locale is specified
      *
      * USAGE:
      *
-     *   icingacli translation refresh icinga <locale>
+     *   icingacli translation refresh icinga [<locale>]
      *
      * EXAMPLES:
      *
+     *   icingacli translation refresh icinga
      *   icingacli translation refresh icinga de_DE
      *   icingacli translation refresh icinga fr_FR
      */
     public function icingaAction()
     {
-        $locale = $this->validateLocaleCode($this->params->shift());
+        $locale = $this->params->shift();
 
         $helper = $this->getTranslationHelper($locale);
-        $helper->updateIcingaTranslations();
+
+        if ($locale) {
+            $this->validateLocaleCode($locale);
+            $helper->updateIcingaTranslations();
+        } else {
+            $helper->updateIcingaTemplate();
+        }
     }
 
     /**
      * Touch a module domain
      *
-     * This will create/update the PO-file of the given module domain.
+     * This will create/update the POT file for a given module domain,
+     * and the PO-file when a locale is specified
      *
      * USAGE:
      *
-     *   icingacli translation refresh module <module> <locale>
+     *   icingacli translation refresh module <module> [<locale>]
      *
      * EXAMPLES:
      *
+     *   icingacli translation refresh module monitoring
      *   icingacli translation refresh module monitoring de_DE
      *   icingacli translation refresh module monitoring fr_FR
      */
     public function moduleAction()
     {
         $module = $this->validateModuleName($this->params->shift());
-        $locale = $this->validateLocaleCode($this->params->shift());
+        $locale = $this->params->shift();
 
         $helper = $this->getTranslationHelper($locale);
-        $helper->updateModuleTranslations($module);
+        if ($locale) {
+            $this->validateLocaleCode($locale);
+            $helper->updateModuleTranslations($module);
+        } else {
+            $helper->updateModuleTemplate($module);
+        }
     }
 }

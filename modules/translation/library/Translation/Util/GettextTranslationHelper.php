@@ -110,8 +110,8 @@ class GettextTranslationHelper
     /**
      * Create a new TranslationHelper object
      *
-     * @param   ApplicationBootstrap    $bootstrap  The application's bootstrap object
-     * @param   string                  $locale     The locale to be used by this helper
+     * @param   ApplicationBootstrap $bootstrap The application's bootstrap object
+     * @param   string               $locale    The locale to be used by this helper
      */
     public function __construct(ApplicationBootstrap $bootstrap, $locale)
     {
@@ -128,10 +128,6 @@ class GettextTranslationHelper
     {
         if ($this->catalogPath !== null && file_exists($this->catalogPath)) {
             unlink($this->catalogPath);
-        }
-
-        if ($this->templatePath !== null && file_exists($this->templatePath)) {
-            unlink($this->templatePath);
         }
     }
 
@@ -158,16 +154,20 @@ class GettextTranslationHelper
         return $this;
     }
 
-    /**
-     * Update the translation table for the main application
-     */
-    public function updateIcingaTranslations()
+    protected function prepareIcinga()
     {
         $this->catalogPath = tempnam(sys_get_temp_dir(), 'IcingaTranslation_');
-        $this->templatePath = tempnam(sys_get_temp_dir(), 'IcingaPot_');
         $this->version = 'None'; // TODO: Access icinga version from a file or property
 
-        $this->moduleDir = null;
+        $this->templatePath = implode(
+            DIRECTORY_SEPARATOR,
+            array(
+                $this->appDir,
+                'locale',
+                'icinga.pot'
+            )
+        );
+
         $this->tablePath = implode(
             DIRECTORY_SEPARATOR,
             array(
@@ -179,24 +179,48 @@ class GettextTranslationHelper
             )
         );
 
-        $this->createFileCatalog();
-        $this->createTemplateFile();
-        $this->updateTranslationTable();
+        $this->moduleName = null;
+        $this->moduleDir = null;
     }
 
     /**
-     * Update the translation table for a particular module
-     *
-     * @param   string      $module     The name of the module for which to update the translation table
+     * Update the POT file for the main application
      */
-    public function updateModuleTranslations($module)
+    public function updateIcingaTemplate()
+    {
+        $this->prepareIcinga();
+        $this->createFileCatalog();
+        $this->createTemplateFile();
+    }
+
+    /**
+     * Update the translation table for the main application
+     */
+    public function updateIcingaTranslations()
+    {
+        $this->updateIcingaTemplate();
+        $this->updateTranslationTable();
+    }
+
+    protected function prepareModule($module)
     {
         $this->catalogPath = tempnam(sys_get_temp_dir(), 'IcingaTranslation_');
-        $this->templatePath = tempnam(sys_get_temp_dir(), 'IcingaPot_');
-        $this->version = $this->moduleMgr->getModule($module)->getVersion();
-        $this->moduleName = $this->moduleMgr->getModule($module)->getName();
 
-        $this->moduleDir = $this->moduleMgr->getModuleDir($module);
+        $mod = $this->moduleMgr->getModule($module);
+        $this->version = $mod->getVersion();
+        $this->moduleName = $mod->getName();
+        $this->moduleDir = $mod->getBaseDir();
+
+        $this->templatePath = implode(
+            DIRECTORY_SEPARATOR,
+            array(
+                $this->moduleDir,
+                'application',
+                'locale',
+                $module . '.pot'
+            )
+        );
+
         $this->tablePath = implode(
             DIRECTORY_SEPARATOR,
             array(
@@ -208,9 +232,28 @@ class GettextTranslationHelper
                 $module . '.po'
             )
         );
+    }
 
+    /**
+     * Update the POT file for a module
+     *
+     * @param   string $module The name of the module for which to update the translation table
+     */
+    public function updateModuleTemplate($module)
+    {
+        $this->prepareModule($module);
         $this->createFileCatalog();
         $this->createTemplateFile();
+    }
+
+    /**
+     * Update the translation table for a particular module
+     *
+     * @param   string $module The name of the module for which to update the translation table
+     */
+    public function updateModuleTranslations($module)
+    {
+        $this->updateModuleTemplate($module);
         $this->updateTranslationTable();
     }
 
@@ -236,7 +279,7 @@ class GettextTranslationHelper
     /**
      * Compile the translation table for a particular module
      *
-     * @param   string      $module     The name of the module for which to compile the translation table
+     * @param   string $module The name of the module for which to compile the translation table
      */
     public function compileModuleTranslation($module)
     {
@@ -271,8 +314,8 @@ class GettextTranslationHelper
                 $this->templatePath
             ));
         } else {
-            if ((!is_dir(dirname($this->tablePath)) && !@mkdir(dirname($this->tablePath), 0755, true)) ||
-                !rename($this->templatePath, $this->tablePath)) {
+            if ((! is_dir(dirname($this->tablePath)) && ! @mkdir(dirname($this->tablePath), 0755, true)) ||
+                ! rename($this->templatePath, $this->tablePath)) {
                 throw new IcingaException(
                     'Unable to create %s',
                     $this->tablePath
@@ -321,28 +364,28 @@ class GettextTranslationHelper
     /**
      * Create or update a gettext conformant header in the given file
      *
-     * @param   string  $path   The path to the file
+     * @param   string $path The path to the file
      */
     private function updateHeader($path)
     {
         $headerInfo = array(
-            'title' => 'Icinga Web 2 - Head for multiple monitoring backends',
-            'copyright_holder' => 'Icinga Development Team',
-            'copyright_year' => date('Y'),
-            'author_name' => 'FIRST AUTHOR',
-            'author_mail' => 'EMAIL@ADDRESS',
-            'author_year' => 'YEAR',
-            'project_name' => $this->moduleName ? ucfirst($this->moduleName) . ' Module' : 'Icinga Web 2',
-            'project_version' => $this->version,
-            'project_bug_mail' => 'dev@icinga.com',
-            'pot_creation_date' => date('Y-m-d H:iO'),
-            'po_revision_date' => 'YEAR-MO-DA HO:MI+ZONE',
-            'translator_name' => 'FULL NAME',
-            'translator_mail' => 'EMAIL@ADDRESS',
-            'language'  => $this->locale,
+            'title'              => 'Icinga Web 2 - Head for multiple monitoring backends',
+            'copyright_holder'   => 'Icinga Development Team',
+            'copyright_year'     => date('Y'),
+            'author_name'        => 'FIRST AUTHOR',
+            'author_mail'        => 'EMAIL@ADDRESS',
+            'author_year'        => 'YEAR',
+            'project_name'       => $this->moduleName ? ucfirst($this->moduleName) . ' Module' : 'Icinga Web 2',
+            'project_version'    => $this->version,
+            'project_bug_mail'   => 'dev@icinga.com',
+            'pot_creation_date'  => date('Y-m-d H:iO'),
+            'po_revision_date'   => 'YEAR-MO-DA HO:MI+ZONE',
+            'translator_name'    => 'FULL NAME',
+            'translator_mail'    => 'EMAIL@ADDRESS',
+            'language'           => $this->locale,
             'language_team_name' => 'LANGUAGE',
-            'language_team_url' => 'LL@li.org',
-            'charset' => self::FILE_ENCODING
+            'language_team_url'  => 'LL@li.org',
+            'charset'            => self::FILE_ENCODING
         );
 
         $content = file_get_contents($path);
@@ -412,7 +455,7 @@ class GettextTranslationHelper
     /**
      * Adjust all absolute source file paths so that they're all relative to the catalog's location
      *
-     * @param   string  $path
+     * @param   string $path
      */
     protected function fixSourceLocations($path)
     {
@@ -449,16 +492,16 @@ class GettextTranslationHelper
     /**
      * Recursively scan the given directory for translatable source files
      *
-     * @param   string      $directory      The directory where to search for sources
-     * @param   File        $file           The file where to write the results
-     * @param   array       $blacklist      A list of directories to omit
+     * @param   string $directory The directory where to search for sources
+     * @param   File   $file      The file where to write the results
+     * @param   array  $blacklist A list of directories to omit
      *
      * @throws  Exception                   In case the given directory is not readable
      */
     private function getSourceFileNames($directory, File $file)
     {
         $directoryHandle = opendir($directory);
-        if (!$directoryHandle) {
+        if (! $directoryHandle) {
             throw new IcingaException(
                 'Unable to read files from %s',
                 $directory
