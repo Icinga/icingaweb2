@@ -128,4 +128,18 @@ class Request extends Zend_Controller_Request_Http
             ? Json::decode(file_get_contents('php://input'), true)
             : parent::getPost($key, $default);
     }
+
+    /**
+     * Extract and return the media type from the given header value
+     *
+     * @param   string  $headerValue
+     *
+     * @return  string
+     */
+    protected function extractMediaType($headerValue)
+    {
+        // Pretty basic and does not care about parameters
+        $parts = explode(';', $headerValue, 2);
+        return strtolower(trim($parts[0]));
+    }
 }
