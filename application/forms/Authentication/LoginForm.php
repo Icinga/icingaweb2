@@ -93,7 +93,7 @@ class LoginForm extends Form
         $auth = Auth::getInstance();
         $authChain = $auth->getAuthChain();
         $authChain->setSkipExternalBackends(true);
-		$username = $this->getElement('username')->getValue();
+        $username = $this->getElement('username')->getValue();
         $user = new User($username);
         if (! $user->hasDomain()) {
             $user->setDomain(Config::app()->get('authentication', 'default_domain'));
@@ -106,7 +106,7 @@ class LoginForm extends Form
             AuthenticationHook::triggerLogin($user);
             $this->getResponse()->setRerenderLayout(true);
             if (! is_null($ip)) {
-				Logger::debug('Successful login for user ' . $username . ' from ' . $ip);
+                Logger::debug('Successful login for user ' . $username . ' from ' . $ip);
             } else {
                 Logger::debug('Successful login for user ' . $username);
             }
