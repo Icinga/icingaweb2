@@ -1,0 +1,131 @@
+#: /usr/share/icingaweb2/modules/doc/library/Doc/DocController.php:82
+#: /usr/share/icingaweb2/modules/doc/library/Doc/DocController.php:112
+#, php-format
+msgid "%s Documentation"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/doc/application/views/scripts/style/guide.phtml:101
+msgid "Blockquote"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/doc/library/Doc/Renderer/DocSectionRenderer.php:68
+#, php-format
+msgid "Chapter %s not found"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/doc/application/views/scripts/style/guide.phtml:69
+msgid "Comment List"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/doc/configuration.php:19
+msgid "Developer - Style"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/doc/configuration.php:24
+msgid "Doc"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/doc/configuration.php:6
+msgid "Documentation"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/doc/application/controllers/IndexController.php:23
+msgctxt "Tab title"
+msgid "Documentation"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/doc/library/Doc/DocParser.php:60
+#, php-format
+msgid "Documentation directory '%s' is not readable"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/doc/application/controllers/SearchController.php:95
+#: /usr/share/icingaweb2/modules/doc/application/controllers/IcingawebController.php:29
+msgid "Documentation for Icinga Web 2 is not available"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/doc/application/controllers/ModuleController.php:42
+#, php-format
+msgid "Documentation for module '%s' is not available"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/doc/library/Doc/Renderer/DocTocRenderer.php:88
+msgid "Documentation is empty."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/doc/application/controllers/StyleController.php:35
+msgid "Icons"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/doc/application/controllers/StyleController.php:36
+msgid "List all available icons"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/doc/application/views/scripts/index/index.phtml:16
+msgid "List all modules for which documentation is available"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/doc/application/controllers/ModuleController.php:77
+#, php-format
+msgid "Module '%s' is not installed"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/doc/application/controllers/ModuleController.php:61
+msgctxt "Tab title"
+msgid "Module Documentation"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/doc/application/views/scripts/index/index.phtml:13
+msgid "Module documentations"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/doc/application/views/scripts/search/index.phtml:5
+msgid "No documentation found matching the filter"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/doc/library/Doc/Renderer/DocSearchRenderer.php:115
+#, php-format
+msgctxt "search.render.section.link"
+msgid "Show all matches of \"%s\" in the chapter \"%s\""
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/doc/library/Doc/Renderer/DocSearchRenderer.php:123
+#, php-format
+msgctxt "search.render.section.link"
+msgid "Show all matches of \"%s\" in the section \"%s\" of the chapter \"%s\""
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/doc/library/Doc/Renderer/DocTocRenderer.php:113
+#, php-format
+msgctxt "toc.render.section.link"
+msgid "Show the chapter \"%s\""
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/doc/application/views/scripts/index/index.phtml:10
+msgid "Show the documentation's table of contents for Icinga Web 2"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/doc/application/views/scripts/module/index.phtml:13
+#, php-format
+msgid "Show the documentation's table of contents for the %s"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/doc/library/Doc/Renderer/DocTocRenderer.php:117
+#, php-format
+msgctxt "toc.render.section.link"
+msgid "Show the section \"%s\" of the chapter \"%s\""
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/doc/application/controllers/StyleController.php:29
+msgid "Style Guide"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/doc/application/views/scripts/style/guide.phtml:74
+#: /usr/share/icingaweb2/modules/doc/application/views/scripts/style/guide.phtml:87
+msgid "commented"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/doc/application/views/scripts/style/guide.phtml:75
+#: /usr/share/icingaweb2/modules/doc/application/views/scripts/style/guide.phtml:88
+msgid "some time ago"
+msgstr ""

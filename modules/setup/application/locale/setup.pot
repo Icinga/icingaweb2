@@ -1,0 +1,1387 @@
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Requirement/OSRequirement.php:15
+#, php-format
+msgid "%s Platform"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/views/scripts/form/setup-welcome.phtml:104
+msgid "<your-webserver-user>"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/views/scripts/form/setup-welcome.phtml:84
+msgid "A system group called \"icingaweb2\" exists"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/forms/DatabaseCreationPage.php:102
+msgid ""
+"A user which is able to create databases and/or touch the database schema"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/UserGroupStep.php:198
+#, php-format
+msgid ""
+"Account \"%s\" has been successfully added as member to user group \"%s\"."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/AuthenticationStep.php:203
+#, php-format
+msgid "Account \"%s\" has been successfully created."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/AuthenticationStep.php:216
+#, php-format
+msgid "Account \"%s\" has been successfully defined as initial administrator."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/forms/AdminAccountPage.php:52
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/AuthenticationStep.php:122
+msgctxt "setup.page.title"
+msgid "Administration"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/AuthenticationStep.php:167
+#, php-format
+msgid ""
+"Administrative rights will initially be granted to a new account called \"%s"
+"\"."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/AuthenticationStep.php:170
+#, php-format
+msgid ""
+"Administrative rights will initially be granted to an existing account "
+"called \"%s\"."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/AuthenticationStep.php:175
+#, php-format
+msgid ""
+"Administrative rights will initially be granted to members of the user group "
+"\"%s\"."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/AuthenticationStep.php:73
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/AuthenticationStep.php:83
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/UserGroupStep.php:83
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/UserGroupStep.php:105
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/UserGroupStep.php:186
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/UserGroupStep.php:191
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/UserGroupStep.php:200
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/UserGroupStep.php:206
+msgctxt "setup.role.name"
+msgid "Administrators"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/GeneralConfigStep.php:58
+msgid "An exception's stacktrace is hidden from every user by default."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/GeneralConfigStep.php:57
+msgid "An exception's stacktrace is shown to every user by default."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/forms/GeneralConfigPage.php:21
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/GeneralConfigStep.php:50
+msgctxt "setup.page.title"
+msgid "Application Configuration"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/GeneralConfigStep.php:82
+msgid "Application Prefix"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/clicommands/ConfigCommand.php:127
+msgid "Argument type is mandatory."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/forms/AuthBackendPage.php:77
+msgid ""
+"As you've chosen to use a database for authentication all you need to do now "
+"is defining a name for your first authentication backend."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/forms/AuthenticationPage.php:22
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/AuthenticationStep.php:120
+msgctxt "setup.page.title"
+msgid "Authentication"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/forms/AuthBackendPage.php:39
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/AuthenticationStep.php:121
+msgctxt "setup.page.title"
+msgid "Authentication Backend"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/forms/AuthenticationPage.php:63
+msgid "Authentication Type"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/AuthenticationStep.php:195
+#, php-format
+msgid ""
+"Authentication configuration could not be written to: %s. An error occured:"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/AuthenticationStep.php:190
+#, php-format
+msgid "Authentication configuration has been successfully written to: %s"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/views/scripts/index/parts/finish.phtml:20
+msgid "Back"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/AuthenticationStep.php:138
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/UserGroupStep.php:141
+msgid "Backend Name"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/forms/AuthBackendPage.php:106
+msgid "Backend Type"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/forms/AuthBackendPage.php:96
+msgid ""
+"Before you are able to authenticate using the LDAP connection defined "
+"earlier you need to provide some more information so that Icinga Web 2 is "
+"able to locate account details."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/ResourceStep.php:157
+msgid "Bind DN"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/ResourceStep.php:161
+msgid "Bind Password"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/forms/AdminAccountPage.php:104
+msgctxt "setup.admin"
+msgid "By Name"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/ResourceStep.php:111
+msgid "CA"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/ResourceStep.php:118
+msgid "CA Path"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/clicommands/ConfigCommand.php:78
+#, php-format
+msgid "Can't change the group of %s to %s: %s"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/clicommands/ConfigCommand.php:69
+#, php-format
+msgid "Can't change the mode of the configuration directory to %s: %s"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/clicommands/ConfigCommand.php:60
+#, php-format
+msgid "Can't create configuration directory %s: %s"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/clicommands/TokenCommand.php:84
+#, php-format
+msgid "Cannot change access mode of \"%s\" to %o."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Web/Form/Validator/TokenValidator.php:37
+#, php-format
+msgid "Cannot validate token, file \"%s\" is empty. Please define a token."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Web/Form/Validator/TokenValidator.php:32
+#, php-format
+msgid "Cannot validate token: %s (%s)"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/clicommands/TokenCommand.php:80
+#, php-format
+msgid "Cannot write setup token \"%s\" to disk."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/forms/AuthBackendPage.php:241
+msgid "Check this to not to validate authentication using this backend"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/forms/LdapResourcePage.php:147
+msgid ""
+"Check this to not to validate connectivity with the given directory service"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/forms/DatabaseCreationPage.php:203
+msgid ""
+"Check this to not to validate the ability to login and required privileges"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/forms/DbResourcePage.php:179
+msgid "Check this to not to validate the configuration"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/forms/AdminAccountPage.php:173
+msgctxt "setup.admin"
+msgid ""
+"Choose a user group reported by the LDAP backend to permit its members "
+"administrative access."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/forms/AdminAccountPage.php:191
+#, php-format
+msgctxt "setup.admin"
+msgid ""
+"Choose a user reported by the %s backend as the initial administrative "
+"account."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/forms/AdminAccountPage.php:133
+msgid "Choose how to define the desired account."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/ResourceStep.php:125
+msgid "Cipher"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/views/scripts/index/index.phtml:76
+msgctxt "setup.progress"
+msgid "Configuration"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/views/scripts/index/parts/finish.phtml:3
+msgid "Congratulations! Icinga Web 2 has been successfully set up."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/forms/LdapDiscoveryPage.php:82
+#, php-format
+msgid ""
+"Could not find any LDAP servers on the domain \"%s\". An error occurred: %s"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/clicommands/ConfigCommand.php:171
+msgid "Could not write to file"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/DatabaseStep.php:72
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/DatabaseStep.php:123
+msgid "Creating database schema..."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/DatabaseStep.php:79
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/DatabaseStep.php:130
+#, php-format
+msgid "Creating login \"%s\"..."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/DatabaseStep.php:64
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/DatabaseStep.php:112
+#, php-format
+msgid "Creating new database \"%s\"..."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/AuthenticationStep.php:147
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/UserGroupStep.php:149
+msgid "Custom Filter"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/forms/AuthenticationPage.php:50
+msgid "Database"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/ResourceStep.php:61
+msgctxt "setup.page.title"
+msgid "Database"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/ResourceStep.php:82
+msgid "Database Name"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/forms/DbResourcePage.php:21
+msgctxt "setup.page.title"
+msgid "Database Resource"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/forms/DatabaseCreationPage.php:41
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/DatabaseStep.php:245
+msgctxt "setup.page.title"
+msgid "Database Setup"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/ResourceStep.php:70
+msgid "Database Type"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/DatabaseStep.php:70
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/DatabaseStep.php:121
+msgid "Database schema already exists..."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/GeneralConfigStep.php:105
+msgctxt "app.config.logging.level"
+msgid "Debug"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/WebWizard.php:580
+msgid "Default Timezone"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/forms/AdminAccountPage.php:158
+msgid ""
+"Define the initial administrative account by providing a username that "
+"reflects a user created later or one that is authenticated using external "
+"mechanisms."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/forms/LdapDiscoveryPage.php:51
+msgid "Do not discover LDAP servers and enter all settings manually."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Utils/EnableModuleStep.php:61
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/AuthenticationStep.php:198
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/AuthenticationStep.php:211
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/AuthenticationStep.php:233
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/ResourceStep.php:185
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/GeneralConfigStep.php:134
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/UserGroupStep.php:180
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/UserGroupStep.php:193
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/UserGroupStep.php:208
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/DatabaseStep.php:257
+#, php-format
+msgid "ERROR: %s"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/forms/AdminAccountPage.php:223
+msgid "Enter the password to assign to the newly created account."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/forms/AdminAccountPage.php:211
+msgid ""
+"Enter the username to be used when creating an initial administrative "
+"account."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/GeneralConfigStep.php:102
+msgctxt "app.config.logging.level"
+msgid "Error"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/forms/AdminAccountPage.php:121
+msgctxt "setup.admin"
+msgid "Existing User"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/forms/AuthenticationPage.php:55
+msgid "External"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/DatabaseStep.php:256
+msgid "Failed to fully setup the database. An error occured:"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/forms/DbResourcePage.php:117
+#: /usr/share/icingaweb2/modules/setup/application/forms/AuthBackendPage.php:210
+#: /usr/share/icingaweb2/modules/setup/application/forms/LdapResourcePage.php:119
+#, php-format
+msgid "Failed to successfully validate the configuration: %s"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/GeneralConfigStep.php:87
+msgctxt "app.config.logging.type"
+msgid "File"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/clicommands/ConfigCommand.php:166
+#, php-format
+msgid "File %s already exists. Please delete it first."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/GeneralConfigStep.php:88
+msgid "Filepath"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/AuthenticationStep.php:158
+msgid "Filter Pattern"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/views/scripts/index/index.phtml:136
+msgctxt "setup.progress"
+msgid "Finish"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/forms/WelcomePage.php:38
+msgid ""
+"For security reasons we need to ensure that you are permitted to run this "
+"wizard. Please provide a token by following the instructions below."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/GeneralConfigStep.php:51
+msgctxt "app.config"
+msgid "General"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/GeneralConfigStep.php:131
+#, php-format
+msgid "General configuration could not be written to: %s. An error occured:"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/GeneralConfigStep.php:125
+#, php-format
+msgid "General configuration has been successfully written to: %s"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/views/scripts/form/setup-welcome.phtml:75
+msgid "Generating a New Setup Token"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/DatabaseStep.php:91
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/DatabaseStep.php:142
+#, php-format
+msgid "Granting required privileges to login \"%s\"..."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/UserGroupStep.php:157
+msgid "Group Member Attribute"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/forms/AdminAccountPage.php:171
+msgid "Group Name"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/UserGroupStep.php:153
+msgid "Group Name Attribute"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/UserGroupStep.php:145
+msgid "Group Object Class"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/ResourceStep.php:74
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/ResourceStep.php:145
+msgid "Host"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/views/scripts/form/setup-welcome.phtml:108
+msgid "Icinga Web 2 documentation"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/WebWizard.php:592
+msgid ""
+"Icinga Web 2 is developed for and tested on Linux. While we cannot guarantee "
+"they will, other platforms may also perform as well."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/WebWizard.php:628
+msgid ""
+"If you want your users to benefit from language, timezone and date/time "
+"format negotiation, the INTL module for PHP is required."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/WebWizard.php:619
+msgid ""
+"If you'd like to authenticate users using LDAP the corresponding PHP module "
+"is required."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/views/scripts/form/setup-welcome.phtml:97
+msgid "If you've got the IcingaCLI installed you can do the following:"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/views/scripts/form/setup-welcome.phtml:82
+msgid ""
+"In any case, make sure that all of the following applies to your environment:"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/views/scripts/form/setup-welcome.phtml:102
+msgid "In case the IcingaCLI is missing you can create the token manually:"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/WebWizard.php:657
+msgid ""
+"In case you want graphs being exported to PDF as well, you'll need the "
+"ImageMagick extension for PHP."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/WebWizard.php:648
+msgid ""
+"In case you want views being exported to PDF, you'll need the GD extension "
+"for PHP."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/GeneralConfigStep.php:104
+msgctxt "app.config.logging.level"
+msgid "Information"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Web/Form/Validator/TokenValidator.php:40
+msgid "Invalid token supplied."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/WebWizard.php:582
+#, php-format
+msgid ""
+"It is required that a default timezone has been set using date.timezone in "
+"%s."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/forms/DatabaseCreationPage.php:43
+msgid ""
+"It seems that either the database you defined earlier does not yet exist and "
+"cannot be created using the provided access credentials, the database does "
+"not have the required schema to be operated by Icinga Web 2 or the provided "
+"access credentials do not have the sufficient permissions to access the "
+"database. Please provide appropriate access credentials to solve this."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/forms/LdapDiscoveryPage.php:31
+msgctxt "setup.page.title"
+msgid "LDAP Discovery"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/forms/LdapDiscoveryConfirmPage.php:40
+msgctxt "setup.page.title"
+msgid "LDAP Discovery Results"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/forms/LdapResourcePage.php:21
+msgctxt "setup.page.title"
+msgid "LDAP Resource"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/GeneralConfigStep.php:101
+msgctxt "app.config.logging"
+msgid "Level"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/GeneralConfigStep.php:52
+msgctxt "app.config"
+msgid "Logging"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/GeneralConfigStep.php:70
+msgid "Logging will be disabled."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/DatabaseStep.php:77
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/DatabaseStep.php:128
+#, php-format
+msgid "Login \"%s\" already exists..."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/views/scripts/index/parts/finish.phtml:10
+msgid "Login to Icinga Web 2"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/views/scripts/form/setup-requirements.phtml:13
+msgid "Module"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Utils/EnableModuleStep.php:55
+#, php-format
+msgid "Module \"%s\" could not be enabled. An error occured:"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Utils/EnableModuleStep.php:54
+#, php-format
+msgid "Module \"%s\" has been successfully enabled."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/views/scripts/form/setup-modules.phtml:14
+msgctxt "setup.page.title"
+msgid "Modules"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/views/scripts/index/index.phtml:44
+msgctxt "setup.progress"
+msgid "Modules"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/forms/AdminAccountPage.php:114
+msgctxt "setup.admin"
+msgid "New User"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/DatabaseStep.php:239
+msgid ""
+"No connection to database host possible. You'll need to setup the database "
+"with the schema required by Icinga Web 2 manually."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/AuthenticationStep.php:148
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/UserGroupStep.php:150
+msgctxt "auth.ldap.filter"
+msgid "None"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/WebWizard.php:240
+msgid ""
+"Note that choosing \"Database\" as preference storage causes Icinga Web 2 to "
+"use the same database as for authentication."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/WebWizard.php:174
+#: /usr/share/icingaweb2/modules/setup/library/Setup/WebWizard.php:207
+msgid ""
+"Note that the database itself does not need to exist at this time as it is "
+"going to be created once the wizard is about to be finished."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/clicommands/TokenCommand.php:42
+msgid ""
+"Nothing to show. Please create a new setup token using the generateToken "
+"action."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/forms/AdminAccountPage.php:54
+msgid ""
+"Now it's time to configure your first administrative account or group for "
+"Icinga Web 2."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/forms/GeneralConfigPage.php:23
+msgid ""
+"Now please adjust all application and logging related configuration options "
+"to fit your needs."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/WebWizard.php:203
+msgid ""
+"Now please configure the database resource where to store user preferences."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/WebWizard.php:170
+msgid ""
+"Now please configure the database resource where to store users and user "
+"groups."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/forms/LdapResourcePage.php:23
+msgid ""
+"Now please configure your AD/LDAP resource. This will later be used to "
+"authenticate users logging in to Icinga Web 2."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Requirement/PhpModuleRequirement.php:19
+#, php-format
+msgid "PHP Module: %s"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Requirement/PhpVersionRequirement.php:15
+msgid "PHP Version"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/forms/DatabaseCreationPage.php:111
+#: /usr/share/icingaweb2/modules/setup/application/forms/AdminAccountPage.php:221
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/ResourceStep.php:90
+msgid "Password"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/forms/AuthenticationPage.php:24
+msgid ""
+"Please choose how you want to authenticate when accessing Icinga Web 2. "
+"Configuring backend specific details follows in a later step."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/forms/AdminAccountPage.php:235
+msgid "Please repeat the password given above to avoid typing errors."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/views/scripts/form/setup-welcome.phtml:107
+#, php-format
+msgid ""
+"Please see the %s for an extensive description on how to access and use this "
+"wizard."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/ResourceStep.php:78
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/ResourceStep.php:149
+msgid "Port"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/GeneralConfigStep.php:62
+#, php-format
+msgid "Preferences will be stored per user account in INI files at: %s"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/GeneralConfigStep.php:64
+msgid "Preferences will be stored using a database."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Requirement/ConfigDirectoryRequirement.php:14
+msgid "Read- and writable configuration directory"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/views/scripts/form/setup-requirements.phtml:37
+msgid "Refresh"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/views/scripts/form/setup-requirements.phtml:43
+#, php-format
+msgid "Refresh the page; %s"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/forms/AdminAccountPage.php:233
+msgid "Repeat password"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/DatabaseStep.php:86
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/DatabaseStep.php:137
+#, php-format
+msgid "Required privileges were already granted to login \"%s\"."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/views/scripts/index/index.phtml:60
+msgctxt "setup.progress"
+msgid "Requirements"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/ResourceStep.php:57
+msgctxt "setup.page.title"
+msgid "Resource"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/ResourceStep.php:66
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/ResourceStep.php:141
+msgid "Resource Name"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/ResourceStep.php:182
+#, php-format
+msgid "Resource configuration could not be written to: %s. An error occured:"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/ResourceStep.php:176
+#, php-format
+msgid "Resource configuration has been successfully written to: %s"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/ResourceStep.php:55
+msgctxt "setup.page.title"
+msgid "Resources"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/controllers/IndexController.php:61
+msgid "Restart the setup"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/ResourceStep.php:153
+msgid "Root DN"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/WebWizard.php:574
+msgid "Running Icinga Web 2 requires PHP version 5.4."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/ResourceStep.php:104
+msgid "SSL Cert"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/ResourceStep.php:97
+msgid "SSL Key"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/WebWizard.php:359
+msgctxt "setup.summary.btn.finish"
+msgid "Setup Icinga Web 2"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/forms/WelcomePage.php:36
+msgid "Setup Token"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/views/scripts/index/parts/finish.phtml:25
+msgid "Show previous wizard-page"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/views/scripts/index/parts/finish.phtml:15
+msgid "Show the login page of Icinga Web 2"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/forms/LdapDiscoveryPage.php:50
+msgid "Skip"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/forms/DatabaseCreationPage.php:201
+#: /usr/share/icingaweb2/modules/setup/application/forms/DbResourcePage.php:178
+#: /usr/share/icingaweb2/modules/setup/application/forms/AuthBackendPage.php:240
+#: /usr/share/icingaweb2/modules/setup/application/forms/LdapResourcePage.php:145
+msgid "Skip Validation"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/views/scripts/index/parts/finish.phtml:5
+msgid "Sorry! Failed to set up Icinga Web 2 successfully."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/WebWizard.php:355
+msgctxt "setup.welcome.btn.next"
+msgid "Start"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/DatabaseStep.php:59
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/DatabaseStep.php:107
+#, php-format
+msgid "Successfully connected to existing database \"%s\"..."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/clicommands/ConfigCommand.php:85
+#, php-format
+msgid "Successfully created configuration directory %s"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/clicommands/ConfigCommand.php:173
+#, php-format
+msgid "Successfully written %d bytes to file"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Requirement/ClassRequirement.php:27
+#, php-format
+msgctxt "setup.requirement.class"
+msgid "The %s class is available."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Requirement/ClassRequirement.php:37
+#, php-format
+msgctxt "setup.requirement.class"
+msgid "The %s class is missing."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Requirement/ClassRequirement.php:31
+#, php-format
+msgctxt "setup.requirement.class"
+msgid "The %s is available."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Requirement/ClassRequirement.php:41
+#, php-format
+msgctxt "setup.requirement.class"
+msgid "The %s is missing."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/WebWizard.php:727
+msgid ""
+"The Icinga Web 2 configuration directory defaults to \"/etc/icingaweb2\", if "
+"not explicitly set in the environment variable \"ICINGAWEB_CONFIGDIR\"."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/WebWizard.php:610
+msgid ""
+"The JSON module for PHP is required for various export functionalities as "
+"well as APIs."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Requirement/PhpConfigRequirement.php:18
+#, php-format
+msgid "The PHP config `%s' is not defined."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Requirement/PhpConfigRequirement.php:17
+#, php-format
+msgid "The PHP config `%s' is set to \"%s\"."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Requirement/PhpModuleRequirement.php:30
+#, php-format
+msgid "The PHP module %s is available."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Requirement/PhpModuleRequirement.php:36
+#, php-format
+msgid "The PHP module %s is missing."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/WebWizard.php:601
+msgid ""
+"The PHP module for OpenSSL is required to generate cryptographically safe "
+"password salts."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/WebWizard.php:681
+msgctxt "setup.requirement.class"
+msgid "The Zend database adapter for MySQL is available."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/WebWizard.php:686
+msgctxt "setup.requirement.class"
+msgid "The Zend database adapter for MySQL is missing."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/WebWizard.php:677
+msgid ""
+"The Zend database adapter for MySQL is required to access a MySQL database."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/WebWizard.php:712
+msgctxt "setup.requirement.class"
+msgid "The Zend database adapter for PostgreSQL is available."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/WebWizard.php:717
+msgctxt "setup.requirement.class"
+msgid "The Zend database adapter for PostgreSQL is missing."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/WebWizard.php:708
+msgid ""
+"The Zend database adapter for PostgreSQL is required to access a PostgreSQL "
+"database."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/clicommands/ConfigCommand.php:39
+#: /usr/share/icingaweb2/modules/setup/application/clicommands/ConfigCommand.php:149
+#: /usr/share/icingaweb2/modules/setup/application/clicommands/TokenCommand.php:35
+#: /usr/share/icingaweb2/modules/setup/application/clicommands/TokenCommand.php:67
+msgid ""
+"The argument --config expects a path to Icinga Web 2's configuration files"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/clicommands/ConfigCommand.php:155
+msgid ""
+"The argument --fpm-uri expects an address or path where to pass requests to "
+"FPM"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/clicommands/ConfigCommand.php:46
+msgid ""
+"The argument --group expects a owner group for the configuration directory"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/clicommands/ConfigCommand.php:53
+msgid ""
+"The argument --mode expects an access mode for the configuration directory"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/clicommands/ConfigCommand.php:136
+msgid "The argument --path expects a URL path"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/clicommands/ConfigCommand.php:143
+msgid ""
+"The argument --root/--document-root expects a directory from which the "
+"webserver will serve files"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/forms/DbResourcePage.php:96
+#: /usr/share/icingaweb2/modules/setup/application/forms/AuthBackendPage.php:217
+#: /usr/share/icingaweb2/modules/setup/application/forms/LdapResourcePage.php:126
+msgid "The configuration has been successfully validated."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/clicommands/TokenCommand.php:46
+#, php-format
+msgid "The current setup token is: %s\n"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/DatabaseStep.php:192
+#, php-format
+msgid ""
+"The database \"%s\" already seems to be fully set up. No action required."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/DatabaseStep.php:252
+msgid "The database has been fully set up!"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/DatabaseStep.php:216
+#, php-format
+msgid ""
+"The database user \"%s\" will be used to create the missing database \"%s\" "
+"with the schema required by Icinga Web 2 and to grant access to it to a new "
+"login called \"%s\"."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/DatabaseStep.php:204
+#, php-format
+msgid ""
+"The database user \"%s\" will be used to create the missing database \"%s\" "
+"with the schema required by Icinga Web 2 and to grant access to it to an "
+"existing login called \"%s\"."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/DatabaseStep.php:229
+#, php-format
+msgid ""
+"The database user \"%s\" will be used to create the missing database \"%s\" "
+"with the schema required by Icinga Web 2."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/DatabaseStep.php:172
+#, php-format
+msgid ""
+"The database user \"%s\" will be used to setup the missing schema required "
+"by Icinga Web 2 in database \"%s\" and to grant access to it to a new login "
+"called \"%s\"."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/DatabaseStep.php:183
+#, php-format
+msgid ""
+"The database user \"%s\" will be used to setup the missing schema required "
+"by Icinga Web 2 in database \"%s\"."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/forms/DbResourcePage.php:134
+msgid ""
+"The database you've configured to use for Icinga Web 2 seems to be the one "
+"of Icinga. Please be aware that this database configuration is supposed to "
+"be used for Icinga Web 2's configuration and that it is highly recommended "
+"to not mix different schemas in the same database. If this is intentional, "
+"you can skip the validation and ignore this warning. If not, please provide "
+"a different database."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Requirement/ConfigDirectoryRequirement.php:38
+#, php-format
+msgid "The directory %s does not exist."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Requirement/ConfigDirectoryRequirement.php:32
+#, php-format
+msgid "The directory %s is not readable."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Requirement/ConfigDirectoryRequirement.php:31
+#, php-format
+msgid "The directory %s is not writable."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Requirement/ConfigDirectoryRequirement.php:26
+#, php-format
+msgid "The directory %s is read- and writable."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/forms/LdapDiscoveryConfirmPage.php:82
+#, php-format
+msgid "The following directory service has been found on domain \"%s\"."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/views/scripts/form/setup-modules.phtml:15
+msgid ""
+"The following modules were found in your Icinga Web 2 installation. To "
+"enable and configure a module, just tick it and click \"Next\"."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/WebWizard.php:214
+msgid ""
+"The given resource name must be unique and is already in use by the LDAP "
+"resource"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/AuthenticationStep.php:219
+#, php-format
+msgid ""
+"The members of the user group \"%s\" were successfully defined as initial "
+"administrators."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/clicommands/TokenCommand.php:87
+#, php-format
+msgid "The newly generated setup token is: %s\n"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/forms/DatabaseCreationPage.php:112
+msgid "The password for the database user defined above"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/forms/DatabaseCreationPage.php:169
+msgid ""
+"The provided credentials cannot be used to create the database and/or the "
+"user."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/forms/DatabaseCreationPage.php:179
+#, php-format
+msgid ""
+"The provided credentials cannot be used to grant all required privileges to "
+"the login \"%s\"."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/forms/DbResourcePage.php:156
+#, php-format
+msgid "The server's version %s is too old. The minimum required version is %s."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/forms/AuthenticationPage.php:64
+msgid "The type of authentication to use when accessing Icinga Web 2"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/forms/AuthBackendPage.php:108
+msgid "The type of the resource being used for this authenticaton provider"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/views/scripts/form/setup-welcome.phtml:86
+#, php-format
+msgid "The user \"%s\" is a member of the system group \"icingaweb2\""
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/views/scripts/form/setup-welcome.phtml:62
+msgid ""
+"This wizard will guide you through the configuration of Icinga Web 2. Once "
+"completed and successfully finished you are able to log in and to explore "
+"all the new and stunning features!"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/forms/UserGroupBackendPage.php:39
+msgid ""
+"To allow Icinga Web 2 to associate users and groups, you'll need to provide "
+"some further information about the LDAP Connection that is already going to "
+"be used to locate account details."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/WebWizard.php:639
+msgid ""
+"To be able to export views and reports to PDF, the DOM module for PHP is "
+"required."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/views/scripts/form/setup-welcome.phtml:79
+msgid ""
+"To run this wizard a user needs to authenticate using a token which is "
+"usually provided to him by an administrator who'd followed the instructions "
+"below."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/WebWizard.php:668
+msgid ""
+"To store users or preferences in a MySQL database the PDO-MySQL module for "
+"PHP is required."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/WebWizard.php:699
+msgid ""
+"To store users or preferences in a PostgreSQL database the PDO-PostgreSQL "
+"module for PHP is required."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/GeneralConfigStep.php:97
+msgctxt "app.config.logging"
+msgid "Type"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/forms/AdminAccountPage.php:132
+msgid "Type Of Definition"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/UserGroupStep.php:204
+#, php-format
+msgid ""
+"Unable to add account \"%s\" as member to user group \"%s\". An error "
+"occured:"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/forms/DbResourcePage.php:145
+#, php-format
+msgid ""
+"Unable to check the server's version. This is usually not a critical error "
+"as there is probably only access to the database permitted which does not "
+"exist yet. If you are absolutely sure you are running PostgreSQL in a "
+"version equal to or newer than 9.1, you can skip the validation and safely "
+"proceed to the next step. The error was: %s"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/AuthenticationStep.php:208
+#, php-format
+msgid "Unable to create account \"%s\". An error occured:"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/UserGroupStep.php:190
+#, php-format
+msgid "Unable to create user group \"%s\". An error occured:"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/AuthenticationStep.php:224
+#, php-format
+msgid ""
+"Unable to define account \"%s\" as initial administrator. An error occured:"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/AuthenticationStep.php:229
+#, php-format
+msgid ""
+"Unable to define the members of the user group \"%s\" as initial "
+"administrators. An error occured:"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/clicommands/ConfigCommand.php:132
+msgid "Unknown type"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/forms/LdapDiscoveryConfirmPage.php:105
+msgid "Use this configuration?"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/forms/AdminAccountPage.php:110
+msgctxt "setup.admin"
+msgid "User Group"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/UserGroupStep.php:185
+#, php-format
+msgid "User Group \"%s\" has been successfully created."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/forms/UserGroupBackendPage.php:37
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/UserGroupStep.php:135
+msgctxt "setup.page.title"
+msgid "User Group Backend"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/UserGroupStep.php:177
+#, php-format
+msgid ""
+"User Group Backend configuration could not be written to: %s. An error "
+"occured:"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/UserGroupStep.php:172
+#, php-format
+msgid "User Group Backend configuration has been successfully written to: %s"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/UserGroupStep.php:134
+msgctxt "setup.page.title"
+msgid "User Groups"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/AuthenticationStep.php:151
+msgid "User Name Attribute"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/AuthenticationStep.php:143
+msgid "User Object Class"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/forms/DatabaseCreationPage.php:100
+#: /usr/share/icingaweb2/modules/setup/application/forms/AdminAccountPage.php:156
+#: /usr/share/icingaweb2/modules/setup/application/forms/AdminAccountPage.php:188
+#: /usr/share/icingaweb2/modules/setup/application/forms/AdminAccountPage.php:209
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/ResourceStep.php:86
+msgid "Username"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/forms/AdminAccountPage.php:259
+msgid "Username already exists."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/AuthenticationStep.php:126
+#, php-format
+msgctxt "setup.summary.auth"
+msgid "Users will authenticate using %s."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/WebWizard.php:377
+#: /usr/share/icingaweb2/modules/setup/library/Setup/WebWizard.php:393
+msgid "Validate Configuration"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/WebWizard.php:378
+#: /usr/share/icingaweb2/modules/setup/library/Setup/WebWizard.php:394
+msgid "Validation In Progress"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/forms/AuthBackendPage.php:199
+#: /usr/share/icingaweb2/modules/setup/application/forms/LdapResourcePage.php:108
+msgid "Validation Log"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/GeneralConfigStep.php:103
+msgctxt "app.config.logging.level"
+msgid "Warning"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/GeneralConfigStep.php:76
+msgctxt "app.config.logging.type"
+msgid "Webserver Log"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/views/scripts/index/index.phtml:33
+msgctxt "setup.progress"
+msgid "Welcome"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/views/scripts/form/setup-welcome.phtml:54
+msgid "Welcome to the configuration of Icinga Web 2!"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/clicommands/ConfigCommand.php:168
+#, php-format
+msgid "Write %s configuration to file: %s"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Requirement/OSRequirement.php:24
+#, php-format
+msgid "You are running PHP on a %s system."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Requirement/PhpVersionRequirement.php:24
+#, php-format
+msgid "You are running PHP version %s."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/forms/LdapDiscoveryPage.php:33
+msgid ""
+"You can use this page to discover LDAP or ActiveDirectory servers  for "
+"authentication. If you don't want to execute a discovery, just skip this "
+"step."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/views/scripts/form/setup-requirements.phtml:35
+msgid ""
+"You may also need to restart the web-server for the changes to take effect!"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/forms/AuthenticationPage.php:39
+msgid ""
+"You're currently not authenticated using any of the web server's "
+"authentication mechanisms. Make sure you'll configure such, otherwise you'll "
+"not be able to log into Icinga Web 2."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/views/scripts/form/setup-welcome.phtml:57
+msgid ""
+"You've already completed the configuration of Icinga Web 2. Note that most "
+"of your configuration files will be overwritten in case you'll re-configure "
+"Icinga Web 2 using this wizard!"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/forms/AuthBackendPage.php:121
+msgid ""
+"You've chosen to authenticate using a web server's mechanism so it may be "
+"necessary to adjust usernames before any permissions, restrictions, etc. are "
+"being applied."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/views/scripts/form/setup-summary.phtml:13
+#, php-format
+msgid ""
+"You've configured %1$s successfully. You can review the changes supposed to "
+"be made before setting it up. Make sure that everything is correct (Feel "
+"free to navigate back to make any corrections!) so that you can start using "
+"%1$s right after it has successfully been set up."
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/views/scripts/form/setup-welcome.phtml:88
+msgid "Your webserver's user is a member of the system group \"icingaweb2\""
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/WebWizard.php:674
+msgid "Zend database adapter for MySQL"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/WebWizard.php:705
+msgid "Zend database adapter for PostgreSQL"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/AuthenticationStep.php:127
+msgctxt "setup.summary.auth.type"
+msgid "a database"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/application/forms/AdminAccountPage.php:195
+msgctxt "setup.admin.authbackend"
+msgid "database"
+msgstr ""
+
+#: /usr/share/icingaweb2/modules/setup/library/Setup/Steps/AuthenticationStep.php:129
+msgctxt "setup.summary.auth.type"
+msgid "webserver authentication"
+msgstr ""
