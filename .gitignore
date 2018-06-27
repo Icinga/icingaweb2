@@ -6,6 +6,7 @@
 !.puppet*
 !.travis.yml
 !.mailmap
+!.tx/
 
 # Testing - created by test/setup_vendor.sh
 /vendor/

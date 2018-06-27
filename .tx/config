@@ -1,0 +1,30 @@
+[main]
+host = https://www.transifex.com
+
+[icingaweb2.core]
+file_filter = application/locale/<lang>/LC_MESSAGES/icinga.po
+minimum_perc = 0
+source_file = application/locale/icinga.pot
+source_lang = en
+type = PO
+
+[icingaweb2.monitoring]
+file_filter = modules/monitoring/application/locale/<lang>/LC_MESSAGES/monitoring.po
+minimum_perc = 0
+source_file = modules/monitoring/application/locale/monitoring.pot
+source_lang = en
+type = PO
+
+[icingaweb2.doc]
+file_filter = modules/doc/application/locale/<lang>/LC_MESSAGES/doc.po
+minimum_perc = 0
+source_file = modules/doc/application/locale/doc.pot
+source_lang = en
+type = PO
+
+[icingaweb2.setup]
+file_filter = modules/setup/application/locale/<lang>/LC_MESSAGES/setup.po
+minimum_perc = 0
+source_file = modules/setup/application/locale/setup.pot
+source_lang = en
+type = PO
