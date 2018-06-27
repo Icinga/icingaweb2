@@ -10,6 +10,7 @@ use Icinga\Authentication\User\ExternalBackend;
 use Icinga\User;
 use Icinga\Web\Form;
 use Icinga\Web\Url;
+use Icinga\Application\Logger;
 
 /**
  * Form for user authentication
@@ -123,6 +124,7 @@ class LoginForm extends Form
                 // Move to default
             default:
                 $this->getElement('password')->addError($this->translate('Incorrect username or password'));
+                Logger::error('Failed login for user ' . $this->getElement('username')->getValue() . ' from ' . $_SERVER['REMOTE_ADDR']);
                 break;
         }
         return false;
