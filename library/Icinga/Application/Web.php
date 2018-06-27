@@ -89,9 +89,6 @@ class Web extends EmbeddedWeb
             ->setupNotifications()
             ->setupResponse()
             ->setupZendMvc()
-            ->setupModuleManager()
-            ->loadSetupModuleIfNecessary()
-            ->loadEnabledModules()
             ->setupRoute()
             ->setupPagination()
             ->setupUserBackendFactory()
@@ -99,7 +96,10 @@ class Web extends EmbeddedWeb
             ->setupTimezone()
             ->setupLogger()
             ->setupInternationalization()
-            ->setupFatalErrorHandling();
+            ->setupFatalErrorHandling()
+            ->setupModuleManager()
+            ->loadSetupModuleIfNecessary()
+            ->loadEnabledModules();
     }
 
     /**
