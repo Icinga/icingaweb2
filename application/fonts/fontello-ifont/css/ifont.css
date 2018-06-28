@@ -1,11 +1,11 @@
 @font-face {
   font-family: 'ifont';
-  src: url('../font/ifont.eot?14085592');
-  src: url('../font/ifont.eot?14085592#iefix') format('embedded-opentype'),
-       url('../font/ifont.woff2?14085592') format('woff2'),
-       url('../font/ifont.woff?14085592') format('woff'),
-       url('../font/ifont.ttf?14085592') format('truetype'),
-       url('../font/ifont.svg?14085592#ifont') format('svg');
+  src: url('../font/ifont.eot?15561604');
+  src: url('../font/ifont.eot?15561604#iefix') format('embedded-opentype'),
+       url('../font/ifont.woff2?15561604') format('woff2'),
+       url('../font/ifont.woff?15561604') format('woff'),
+       url('../font/ifont.ttf?15561604') format('truetype'),
+       url('../font/ifont.svg?15561604#ifont') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -15,7 +15,7 @@
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: 'ifont';
-    src: url('../font/ifont.svg?14085592#ifont') format('svg');
+    src: url('../font/ifont.svg?15561604#ifont') format('svg');
   }
 }
 */
@@ -188,6 +188,8 @@
 .icon-check:before { content: '\e883'; } /* '' */
 .icon-reschedule:before { content: '\e884'; } /* '' */
 .icon-warning-empty:before { content: '\e885'; } /* '' */
+.icon-th-list:before { content: '\f009'; } /* '' */
+.icon-th-thumb-empty:before { content: '\f00b'; } /* '' */
 .icon-github-circled:before { content: '\f09b'; } /* '' */
 .icon-history:before { content: '\f1da'; } /* '' */
 .icon-binoculars:before { content: '\f1e5'; } /* '' */
