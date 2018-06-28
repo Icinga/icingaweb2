@@ -42,6 +42,26 @@
 }
 
 // Hostgroup- and servicegroup-grid styles
+
+.grid-toggle-link {
+  display: inline-block;
+  margin-left: 1em;
+  text-decoration: none;
+  vertical-align: middle;
+
+  > i {
+    font-size: 1.25em;
+
+    &.-active {
+      color: @icinga-blue;
+    }
+
+    &.-inactive {
+      color: @gray-light;
+    }
+  }
+}
+
 .group-grid {
   display: grid;
   grid-gap: 1em 3em;

@@ -7,6 +7,11 @@ if (! $this->compact): ?>
     <div class="sort-controls-container">
         <?= $this->limiter ?>
         <?= $this->sortBox ?>
+        <a href="<?= $this->href('monitoring/list/servicegroup-grid') ?>" class="grid-toggle-link"
+           title="<?= $this->translate('Toogle grid view mode') ?>">
+            <?= $this->icon('th-list', null, ['class' => '-active']) ?>
+            <?= $this->icon('th-thumb-empty', null, ['class' => '-inactive']) ?>
+        </a>
     </div>
     <?= $this->filterEditor ?>
 </div>

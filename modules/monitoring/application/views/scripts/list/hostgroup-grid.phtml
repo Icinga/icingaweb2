@@ -3,6 +3,11 @@
     <?= $this->tabs ?>
     <div class="sort-controls-container">
         <?= $this->sortBox ?>
+        <a href="<?= $this->href('monitoring/list/hostgroups') ?>" class="grid-toggle-link"
+           title="<?= $this->translate('Toogle grid view mode') ?>">
+            <?= $this->icon('th-list', null, ['class' => '-inactive']) ?>
+            <?= $this->icon('th-thumb-empty', null, ['class' => '-active']) ?>
+        </a>
     </div>
     <?= $this->filterEditor ?>
 </div>
