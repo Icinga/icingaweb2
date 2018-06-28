@@ -224,6 +224,10 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
                 $adapter = 'Pdo_Ibm';
                 $defaultPort = 50000;
                 break;
+            case 'sqlite':
+                $adapter = 'Pdo_Sqlite';
+                $defaultPort = 0; // Dummy port because a value is required
+                break;
             default:
                 throw new ConfigurationError(
                     'Backend "%s" is not supported',

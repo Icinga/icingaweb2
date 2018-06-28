@@ -420,4 +420,16 @@ class Platform
     {
         return static::extensionLoaded('pdo_pgsql') && static::classExists('Zend_Db_Adapter_Pdo_Pgsql');
     }
+
+    /**
+     * Return whether it's possible to connect to a SQLite database
+     *
+     * Checks whether the sqlite pdo extension has been loaded and the Zend framework adapter for SQLite is available
+     *
+     * @return  bool
+     */
+    public static function hasSqliteSupport()
+    {
+        return static::extensionLoaded('pdo_sqlite') && static::classExists('Zend_Db_Adapter_Pdo_Sqlite');
+    }
 }
