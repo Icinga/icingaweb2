@@ -180,7 +180,8 @@ class IcingaApiCommandRenderer implements IcingaCommandRendererInterface
             'author'        => $command->getAuthor(),
             'comment'       => $command->getComment(),
             'sticky'        => $command->getSticky(),
-            'notify'        => $command->getNotify()
+            'notify'        => $command->getNotify(),
+            'persistent'    => $command->getPersistent()
         );
         if ($command->getExpireTime() !== null) {
             $data['expiry'] = $command->getExpireTime();
