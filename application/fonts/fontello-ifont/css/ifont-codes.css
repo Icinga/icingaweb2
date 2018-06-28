@@ -132,6 +132,8 @@
 .icon-check:before { content: '\e883'; } /* '' */
 .icon-reschedule:before { content: '\e884'; } /* '' */
 .icon-warning-empty:before { content: '\e885'; } /* '' */
+.icon-th-list:before { content: '\f009'; } /* '' */
+.icon-th-thumb-empty:before { content: '\f00b'; } /* '' */
 .icon-github-circled:before { content: '\f09b'; } /* '' */
 .icon-history:before { content: '\f1da'; } /* '' */
 .icon-binoculars:before { content: '\f1e5'; } /* '' */
