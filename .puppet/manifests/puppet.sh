@@ -10,7 +10,7 @@ RELEASEVER=$(rpm -q --qf "%{VERSION}" $(rpm -q --whatprovides redhat-release))
 
 case $RELEASEVER in
     6|7)
-        PUPPET="http://yum.puppetlabs.com/puppetlabs-release-el-${RELEASEVER}.noarch.rpm"
+        PUPPET="https://yum.puppetlabs.com/puppetlabs-release-el-${RELEASEVER}.noarch.rpm"
         ;;
     *)
         echo "Unknown release version: $RELEASEVER" >&2
