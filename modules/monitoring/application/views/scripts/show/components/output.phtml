@@ -1,3 +1,3 @@
 <h2><?= $this->translate('Plugin Output') ?></h2>
-<?= $this->pluginOutput($object->output) ?>
-<?= $this->pluginOutput($object->long_output) ?>
+<?= $this->pluginOutput($object->output, false, $object->check_command) ?>
+<?= $this->pluginOutput($object->long_output, false, $object->check_command) ?>

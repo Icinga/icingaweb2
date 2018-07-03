@@ -74,3 +74,88 @@ class Simple extends DetailviewExtensionHook
 ### How it looks <a id="monitoring-module-hooks-detailviewextension-how-it-looks"></a>
 
 ![Screenshot](img/hooks-detailviewextension-01.png)
+
+## Plugin Output Hook <a id="monitoring-module-hooks-pluginoutput"></a>
+
+The Plugin Output Hook allows you to rewrite the plugin output based on check commands. You have to implement the
+following methods:
+
+* `getCommands()`
+* and `render()`
+
+With `getCommands()` you specify for which commands the provided hook is responsible for. You may return a single
+command as string or a list of commands as array. If you want your hook to be responsible for every command, you have to
+specify the `*`.
+
+In `render()` you rewrite the plugin output based on check commands. The parameter `$command` specifies the check
+command of the host or service and `$output` specifies the plugin output. The parameter `$detail` tells you
+whether the output is requested from the detail area of the host or service.
+
+Do not use complex logic for rewriting plugin output in list views because of the performance impact!
+
+You have to return the rewritten plugin output as string. It is also possible to return a HTML string here.
+Please refer to `\Icinga\Module\Monitoring\Web\Helper\PluginOutputPurifier` for a list of allowed tags.
+
+Please also have a look at the following examples.
+
+**Example hook which is responsible for disk checks:**
+
+```php
+<?php
+
+namespace Icinga\Module\Example\ProvidedHook\Monitoring;
+
+use Icinga\Module\Monitoring\Hook\PluginOutputHook;
+
+class PluginOutput extends PluginOutputHook
+{
+    public function getCommands()
+    {
+        return ['disk'];
+    }
+
+    public function render($command, $output, $detail)
+    {
+        if (! $detail) {
+            // Don't rewrite plugin output in list views
+            return $output;
+        }
+        return implode('<br>', explode(';', $output));
+    }
+}
+```
+
+**Example hook which is responsible for disk and procs checks:**
+
+```php
+<?php
+
+namespace Icinga\Module\Example\ProvidedHook\Monitoring;
+
+use Icinga\Module\Monitoring\Hook\PluginOutputHook;
+
+class PluginOutput extends PluginOutputHook
+{
+    public function getCommands()
+    {
+        return ['disk', 'procs'];
+    }
+
+    public function render($command, $output, $detail)
+    {
+        switch ($command) {
+            case 'disk':
+                if ($detail) {
+                    // Only rewrite plugin output in the detail area
+                    $output = implode('<br>', explode(';', $output));
+                }
+                break;
+            case 'procs':
+                $output = preg_replace('/(\d)+/', '<b>$1</b>', $output);
+                break;
+        }
+
+        return $output;
+    }
+}
+```
