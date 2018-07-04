@@ -611,7 +611,10 @@ abstract class IdoQuery extends DbQuery
 
         $subQuery
             ->setFilter($subQueryFilter)
-            ->clearGroupingRules();
+            ->clearGroupingRules()
+            ->select()
+            ->reset('columns')
+            ->columns([new Zend_Db_Expr('1')]);
 
         // EXISTS is the column name because without any column $this->isCustomVar() fails badly otherwise.
         // Additionally it bypasses the non-required optimizations made by our filter rendering implementation.
