@@ -343,6 +343,12 @@
                 }
             }
 
+            var useHttp = req.getResponseHeader('X-Icinga-Redirect-Http');
+            if (useHttp === 'yes') {
+                window.location.replace(redirect);
+                return true;
+            }
+
             this.redirectToUrl(
                 redirect, req.$target, req.url, req.getResponseHeader('X-Icinga-Rerender-Layout'), req.forceFocus,
                 req.getResponseHeader('X-Icinga-Refresh')

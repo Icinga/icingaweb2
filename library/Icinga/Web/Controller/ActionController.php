@@ -424,6 +424,10 @@ class ActionController extends Zend_Controller_Action
 
     protected function redirectHttp($url)
     {
+        if ($this->isXhr()) {
+            $this->getResponse()->setHeader('X-Icinga-Redirect-Http', 'yes');
+        }
+
         $this->getResponse()->redirectAndExit($url);
     }
 
