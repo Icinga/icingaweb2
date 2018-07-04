@@ -13,12 +13,12 @@
 #   include epel
 #
 class epel {
-
-  yumrepo { 'epel':
-    mirrorlist => "http://mirrors.fedoraproject.org/mirrorlist?repo=epel-${::operatingsystemmajrelease}&arch=${::architecture}",
-    enabled    => '1',
-    gpgcheck   => '0',
-    descr      => "Extra Packages for Enterprise Linux ${::operatingsystemmajrelease} - ${::architecture}"
+  exec { 'rpm --import RPM-GPG-KEY-EPEL':
+    command => '/bin/rpm --import https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-7',
+  }
+  -> exec { 'yum install epel-release-latest':
+    command => '/bin/yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm',
+    creates => '/etc/yum.repos.d/epel.repo',
   }
 }
 
