@@ -4,10 +4,9 @@
 namespace Icinga\File;
 
 use Dompdf\Autoloader;
-use Dompdf\Dompdf;
-use Dompdf\Options;
 use Icinga\Application\Icinga;
 use Icinga\Exception\ProgrammingError;
+use Icinga\Util\ChromeHeadless;
 use Icinga\Web\Url;
 
 call_user_func(function () {
@@ -61,19 +60,33 @@ class Pdf
             'src="' . Icinga::app()->getBootstrapDirectory() . '/img/',
             $html
         );
-        $options = new Options();
-        $options->set('defaultPaperSize', 'A4');
-        $dompdf = new Dompdf($options);
-        $dompdf->loadHtml($html);
-        $dompdf->render();
-        $request = $controller->getRequest();
-        $dompdf->stream(
-            sprintf(
-                '%s-%s-%d',
-                $request->getControllerName(),
-                $request->getActionName(),
-                time()
-            )
+
+        $pdfName = sprintf(
+            '/%s-%s-%d',
+            $controller->getRequest()->getControllerName(),
+            $controller->getRequest()->getActionName(),
+            time()
         );
+
+        $tempInput = tempnam(sys_get_temp_dir(), $pdfName);
+        {
+            $tempInputPath = $tempInput . '.html';
+            file_put_contents($tempInputPath, $html);
+
+            $tempOutputPath = sys_get_temp_dir() . $pdfName . '.pdf';
+
+            $chrome = new ChromeHeadless();
+            $chrome
+                ->setInputHtml($tempInputPath)
+                ->setOutputPath($tempOutputPath)
+                ->exportPdf();
+
+            unlink($tempInputPath);
+        }
+        unlink($tempInput);
+
+        header("Content-Type: application/pdf");
+        header("Content-Length: " . filesize($tempOutputPath));
+        readfile($tempOutputPath);
     }
 }
