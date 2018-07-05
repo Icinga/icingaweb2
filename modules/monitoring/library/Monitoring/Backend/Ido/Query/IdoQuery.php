@@ -1132,10 +1132,6 @@ abstract class IdoQuery extends DbQuery
             case 'servicestatus':
                 $groupedColumns[] = 'ss.servicestatus_id';
                 break;
-            case 'timeperiods':
-                $groupedColumns[] = 'ht.timeperiod_id';
-                $groupedColumns[] = 'st.timeperiod_id';
-                break;
             default:
                 return;
         }

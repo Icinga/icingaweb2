@@ -394,7 +394,7 @@ abstract class MonitoredObject implements Filterable
      */
     public function fetchContacts()
     {
-        $contacts = $this->backend->select()->from('contact', array(
+        $contacts = $this->backend->select()->from("{$this->type}contact", array(
             'contact_name',
             'contact_alias',
             'contact_email',
