@@ -16,11 +16,11 @@ class Zend_View_Helper_Customvar extends Zend_View_Helper_Abstract
     public function customvar($struct)
     {
         if (is_scalar($struct)) {
-            return $this->view->escape(
+            return $this->view->nl2br($this->view->escape(
                 is_string($struct)
                     ? $struct
                     : var_export($struct, true)
-            );
+            ));
         } elseif (is_array($struct)) {
             return $this->renderArray($struct);
         } elseif (is_object($struct)) {
