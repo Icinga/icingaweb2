@@ -530,7 +530,7 @@ abstract class IdoQuery extends DbQuery
         $expr = $filter->getExpression();
         $op = $filter->getSign();
 
-        if (! is_array($expr) && $op !== '!=') {
+        if ($op !== '=' && ! is_array($expr) && $op === '!=') {
             // Fallback to standard filter behavior
             throw new NotImplementedError('');
         }
@@ -576,14 +576,13 @@ abstract class IdoQuery extends DbQuery
         $subQueryFilter = clone $filter;
 
         if ($op === '!=') {
-            $exists = 'NOT EXISTS';
+            $negate = true;
             if (! is_array($expr)) {
                 $expr = [$expr];
             }
             $subQueryFilter = $subQueryFilter->setSign('=');
-            $op = '=';
         } else {
-            $exists = 'EXISTS';
+            $negate = false;
         }
 
         $subQueryFilter->setColumn(preg_replace(
@@ -592,16 +591,23 @@ abstract class IdoQuery extends DbQuery
             $subQuery->aliasToColumnName($filter->getColumn())
         ));
 
-        $and = count($expr) === 1 ? substr_count($expr[0], '&') + 1 : 0;
+        if (count($expr) === 1 && strpos($expr[0], '&') !== false) {
+            $expr = explode('&', $expr[0]);
+            $subQueryFilter->setExpression($expr);
+            $and = true;
+        } else {
+            $and = false;
+        }
 
-        if ($op === '=' && $and) {
-            $subQueryFilter->setExpression(explode('&', $expr[0]));
-
+        if ($and || $negate && ! $and) {
+            // e.g. hostgroup_name=(ping&linux), hostgroup_name!=ping, hostgroup_name!=(ping|linux)
             $groups = $subQuery->getGroup();
             $group = $groups[0];
             $group = preg_replace('/(?<=^|\s)\w+(?=\.)/', 'sub_$0', $group);
 
-            $subQuery->select()->having("COUNT(DISTINCT $group) >= $and");
+            $cnt = count($expr);
+
+            $subQuery->select()->having("COUNT(DISTINCT $group) >= $cnt");
         }
 
         $subQueryFilter = $subQueryFilter->andFilter(Filter::where(
@@ -618,7 +624,7 @@ abstract class IdoQuery extends DbQuery
 
         // EXISTS is the column name because without any column $this->isCustomVar() fails badly otherwise.
         // Additionally it bypasses the non-required optimizations made by our filter rendering implementation.
-        return new FilterExpression($exists, '', new Zend_Db_Expr($subQuery));
+        return new FilterExpression($negate ? 'NOT EXISTS' : 'EXISTS', '', new Zend_Db_Expr($subQuery));
     }
 
     protected function requireFilterColumns(Filter $filter)
