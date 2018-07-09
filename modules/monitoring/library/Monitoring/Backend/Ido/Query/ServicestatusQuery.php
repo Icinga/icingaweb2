@@ -262,7 +262,8 @@ class ServicestatusQuery extends IdoQuery
             'service_state'                             => 'CASE WHEN ss.has_been_checked = 0 OR ss.has_been_checked IS NULL THEN 99 ELSE ss.current_state END',
             'service_state_type'                        => 'ss.state_type',
             'service_status_update_time'                => 'ss.status_update_time',
-            'service_unhandled'                         => 'CASE WHEN (ss.problem_has_been_acknowledged + ss.scheduled_downtime_depth + COALESCE(hs.current_state, 0)) = 0 THEN 1 ELSE 0 END'
+            'service_unhandled'                         => 'CASE WHEN (ss.problem_has_been_acknowledged + ss.scheduled_downtime_depth + COALESCE(hs.current_state, 0)) = 0 THEN 1 ELSE 0 END',
+            'problems'                                  => 'CASE WHEN COALESCE(ss.current_state, 0) = 0 THEN 0 ELSE 1 END'
         )
     );
 
