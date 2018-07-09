@@ -8,11 +8,11 @@ if (! $this->compact): ?>
 </div>
 <?php endif ?>
 
-<div class="content processinfo grid">
+<div class="content processinfo">
     <div class="boxview">
-        <div class="box process col-1-2">
+        <div class="box process">
             <h2 tabindex="0"><?= $this->translate('Process Info') ?></h2>
-            <table class="avp">
+            <table class="name-value-table">
                 <tbody>
                 <tr>
                     <th><?= $this->translate('Program Version') ?></th>
@@ -75,7 +75,7 @@ if (! $this->compact): ?>
                 </div>
             <?php endif ?>
         </div>
-        <div class="box features col-1-2">
+        <div class="box features">
             <h2 tabindex="0"><?= $this->translate('Feature Commands') ?></h2>
             <?= $this->toggleFeaturesForm ?>
         </div>
