@@ -54,11 +54,7 @@ class Json
      */
     protected static function encodeAndSanitize($value, $options, $depth, $autoSanitize)
     {
-        if (version_compare(phpversion(), '5.5.0', '<')) {
-            $encoded = json_encode($value, $options);
-        } else {
-            $encoded = json_encode($value, $options, $depth);
-        }
+        $encoded = json_encode($value, $options, $depth);
 
         switch (json_last_error()) {
             case JSON_ERROR_NONE:
@@ -72,7 +68,7 @@ class Json
                 // Fallthrough
 
             default:
-                throw new JsonEncodeException('%s: %s', static::lastErrorMsg(), var_export($value, true));
+                throw new JsonEncodeException('%s: %s', json_last_error_msg(), var_export($value, true));
         }
     }
 
@@ -92,37 +88,9 @@ class Json
         $decoded = json_decode($json, $assoc, $depth, $options);
 
         if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new JsonDecodeException('%s: %s', static::lastErrorMsg(), var_export($json, true));
+            throw new JsonDecodeException('%s: %s', json_last_error_msg(), var_export($json, true));
         }
         return $decoded;
-    }
-
-    /**
-     * {@link json_last_error_msg()} replacement for PHP < 5.5.0
-     *
-     * @return string
-     */
-    protected static function lastErrorMsg()
-    {
-        if (version_compare(PHP_VERSION, '5.5.0', '>=')) {
-            return json_last_error_msg();
-        }
-
-        // All possible error codes before PHP 5.5.0 (except JSON_ERROR_NONE)
-        switch (json_last_error()) {
-            case JSON_ERROR_DEPTH:
-                return 'Maximum stack depth exceeded';
-            case JSON_ERROR_STATE_MISMATCH:
-                return 'State mismatch (invalid or malformed JSON)';
-            case JSON_ERROR_CTRL_CHAR:
-                return 'Control character error, possibly incorrectly encoded';
-            case JSON_ERROR_SYNTAX:
-                return 'Syntax error';
-            case JSON_ERROR_UTF8:
-                return 'Malformed UTF-8 characters, possibly incorrectly encoded';
-            default:
-                return 'Unknown error';
-        }
     }
 
     /**
