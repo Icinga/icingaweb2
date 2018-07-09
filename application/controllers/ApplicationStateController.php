@@ -3,11 +3,12 @@
 
 namespace Icinga\Controllers;
 
-use Icinga\Application\Icinga;
+use Icinga\Forms\AcknowledgeApplicationStateMessageForm;
 use Icinga\Web\Announcement\AnnouncementCookie;
 use Icinga\Web\Announcement\AnnouncementIniRepository;
 use Icinga\Web\Controller;
 use Icinga\Web\Session;
+use Icinga\Web\Widget;
 
 /**
  * @TODO(el): https://dev.icinga.com/issues/10646
@@ -16,10 +17,14 @@ class ApplicationStateController extends Controller
 {
     protected $requiresAuthentication = false;
 
+    public function init()
+    {
+        $this->_helper->layout->disableLayout();
+        $this->_helper->viewRenderer->setNoRender(true);
+    }
+
     public function indexAction()
     {
-        $this->_helper->layout()->disableLayout();
-
         if ($this->Auth()->isAuthenticated()) {
             if (isset($_COOKIE['icingaweb2-session'])) {
                 $last = (int) $_COOKIE['icingaweb2-session'];
@@ -59,6 +64,31 @@ class ApplicationStateController extends Controller
             }
         }
 
+        $this->setAutorefreshInterval(60);
+    }
+
+    public function summaryAction()
+    {
+        if ($this->Auth()->isAuthenticated()) {
+            $this->getResponse()->setBody((string) Widget::create('ApplicationStateMessages'));
+        }
+
+        $this->setAutorefreshInterval(60);
+    }
+
+    public function acknowledgeMessageAction()
+    {
+        if (! $this->Auth()->isAuthenticated()) {
+            $this->getResponse()
+                ->setHttpResponseCode(401)
+                ->sendHeaders();
+            exit;
+        }
+
+        $this->assertHttpMethod('POST');
+
         $this->getResponse()->setHeader('X-Icinga-Container', 'ignore', true);
+
+        (new AcknowledgeApplicationStateMessageForm())->handleRequest();
     }
 }
