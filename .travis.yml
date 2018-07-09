@@ -11,6 +11,10 @@ php:
   - '7.2'
   - nightly
 
+env:
+  global:
+    - secure: "HPrbKBgJTctoebpG/lBxPQ/6Jt0nqAYPG+G/9Qkvzbo5LS7XyCjfkARNY2aRvaOcaDo/RmyBx3OdxVXXVY/DxwlF0J/E1VoxD5w/lQOnOHGRK5CrH+L1ztLyp/mvQcI091oZgkAsJeeb7bQzyLXb/5ayFz2UKiYdIn2E7MpgjqI="
+
 matrix:
   allow_failures:
     - php: nightly
@@ -43,3 +47,10 @@ script:
   # also see: modules/test/application/clicommands/PhpCommand.php
   - php phpcs.phar
   - php phpunit.phar -c modules/test/phpunit.xml --verbose
+
+deploy:
+  # Push to transifex
+  - provider: script
+    script: ./scripts/transifex-travis-push
+    #on:
+    #  branch: master

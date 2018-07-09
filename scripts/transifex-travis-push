@@ -1,0 +1,31 @@
+#!/bin/bash
+
+set -e
+
+: ${TRANSIFEX_API_TOKEN:=}
+
+export ICINGAWEB_CONFIGDIR="$HOME/.localconfig"
+
+if [ -z "${TRANSIFEX_API_TOKEN}" ]; then
+  echo "TRANSIFEX_API_TOKEN is not set!" >&2
+  exit 1
+fi
+
+echo "Writing $HOME/.transifexrc"
+cat >"$HOME/.transifexrc" <<EOF
+[https://www.transifex.com]
+api_hostname = https://api.transifex.com
+hostname = https://www.transifex.com
+password = ${TRANSIFEX_API_TOKEN}
+username = api
+EOF
+
+echo "Installing transifex-client via pip"
+pip install transifex-client
+
+echo "Updating POT files"
+./bin/icingacli module enable translation
+./scripts/translation-update-pot
+
+echo "Pushing to Transifex"
+tx push -s

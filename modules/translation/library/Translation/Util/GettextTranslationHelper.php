@@ -66,6 +66,13 @@ class GettextTranslationHelper
     private $locale;
 
     /**
+     * Base installation directory
+     *
+     * @var string
+     */
+    private $baseDir;
+
+    /**
      * The path to the Zend application root
      *
      * @var string
@@ -108,17 +115,27 @@ class GettextTranslationHelper
     private $tablePath;
 
     /**
+     * Use relative paths for files
+     *
+     * @var bool
+     */
+    private $relative;
+
+    /**
      * Create a new TranslationHelper object
      *
      * @param   ApplicationBootstrap $bootstrap The application's bootstrap object
      * @param   string               $locale    The locale to be used by this helper
+     * @param   bool                 $relative  Use relative paths for files
      */
-    public function __construct(ApplicationBootstrap $bootstrap, $locale)
+    public function __construct(ApplicationBootstrap $bootstrap, $locale, $relative = false)
     {
         $this->moduleMgr = $bootstrap->getModuleManager()->loadEnabledModules();
+        $this->baseDir = $bootstrap->getBaseDir();
         $this->appDir = $bootstrap->getApplicationDir();
         $this->libDir = $bootstrap->getLibraryDir('Icinga');
         $this->locale = $locale;
+        $this->relative = $relative;
     }
 
     /**
@@ -475,18 +492,34 @@ class GettextTranslationHelper
     {
         $catalog = new File($this->catalogPath, 'w');
 
+        $oldPwd = getcwd();
+
+        if ($this->relative) {
+            $appDir = $this->trimPath($this->appDir);
+            $libDir = $this->trimPath($this->libDir);
+            $moduleDir = $this->moduleDir;
+            if ($moduleDir) {
+                $moduleDir = $this->trim
+            }
+        } else {
+            $moduleDir = $this->moduleDir;
+            $appDir = $this->appDir;
+            $libDir = $this->libDir;
+        }
+
         try {
-            if ($this->moduleDir) {
-                $this->getSourceFileNames($this->moduleDir, $catalog);
+            if ($moduleDir) {
+                $this->getSourceFileNames($moduleDir, $catalog);
             } else {
-                $this->getSourceFileNames($this->appDir, $catalog);
-                $this->getSourceFileNames($this->libDir, $catalog);
+                $this->getSourceFileNames($appDir, $catalog);
+                $this->getSourceFileNames($libDir, $catalog);
             }
         } catch (Exception $error) {
             throw $error;
         }
 
         $catalog->fflush();
+        chdir($oldPwd);
     }
 
     /**
@@ -494,7 +527,6 @@ class GettextTranslationHelper
      *
      * @param   string $directory The directory where to search for sources
      * @param   File   $file      The file where to write the results
-     * @param   array  $blacklist A list of directories to omit
      *
      * @throws  Exception                   In case the given directory is not readable
      */
@@ -543,5 +575,24 @@ class GettextTranslationHelper
                 )
             )
         );
+    }
+
+    private function trimPath($path, $base = null)
+    {
+        if ($base === null) {
+            $base = $this->baseDir;
+        }
+        if (strpos($path, $base) === 0) {
+            return substr($path, strlen($base) + 1);
+        } else {
+            // Note: this happens only when running in relative path modes
+            // Language files should only be updated in development environment
+            // (where icingaweb2 and all modules are below the same path)
+            throw new IcingaException(
+                'Path %s is not below base dir %s - can not trim',
+                $path,
+                $this->baseDir
+            );
+        }
     }
 }
