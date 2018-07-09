@@ -44,6 +44,20 @@ class ApplicationConfigForm extends Form
         );
 
         $this->addElement(
+            'checkbox',
+            'global_show_application_state_messages',
+            array(
+                'required'      => true,
+                'value'         => true,
+                'label'         => $this->translate('Show Application State Messages'),
+                'description'   => $this->translate(
+                    "Set whether to show application state messages."
+                    . " This can also be set in a user's preferences."
+                )
+            )
+        );
+
+        $this->addElement(
             'text',
             'global_module_path',
             array(

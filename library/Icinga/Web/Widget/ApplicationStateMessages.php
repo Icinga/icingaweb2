@@ -3,7 +3,9 @@
 
 namespace Icinga\Web\Widget;
 
+use Icinga\Application\Config;
 use Icinga\Application\Hook\ApplicationStateHook;
+use Icinga\Authentication\Auth;
 use Icinga\Forms\AcknowledgeApplicationStateMessageForm;
 use Icinga\Web\ApplicationStateCookie;
 use Icinga\Web\Helper\HtmlPurifier;
@@ -33,6 +35,19 @@ class ApplicationStateMessages extends AbstractWidget
 
     public function render()
     {
+        $enabled = Auth::getInstance()
+            ->getUser()
+            ->getPreferences()
+            ->getValue('icingaweb', 'show_application_state_messages', 'system');
+
+        if ($enabled === 'system') {
+            $enabled = Config::app()->get('global', 'show_application_state_messages', true);
+        }
+
+        if (! (bool) $enabled) {
+            return '<div style="display: none;"></div>';
+        }
+
         $active = $this->getMessages();
 
         if (empty($active)) {
