@@ -186,9 +186,15 @@ class PhpCommand extends Command
      */
     protected function getEnvironmentVariables()
     {
+        $modulePaths = [];
+        foreach (Icinga::app()->getModuleManager()->getModuleInfo() as $module) {
+            $modulePaths[] = $module->path;
+        }
+
         $vars = array();
         $vars[] = sprintf('ICINGAWEB_BASEDIR=%s', $this->app->getBaseDir());
         $vars[] = sprintf('ICINGAWEB_ICINGA_LIB=%s', $this->app->getLibraryDir('Icinga'));
+        $vars[] = sprintf('ICINGAWEB_MODULE_DIRS=%s', implode(':', $modulePaths));
 
         // Disabled as the bootstrap.php for PHPUnit and class BaseTestCase can't handle multiple paths yet
         /*$vars[] = sprintf(
