@@ -316,10 +316,12 @@ div.box.hostservicechecks th {
 /* Monitoring health - PROCESS - element styles */
 
 div.box.process {
+  width: 100%;
+  max-width: 50em;
   border: 1px solid @gray-lighter;
   border-left: 15px solid @gray;
-  min-height: 30em;
-  min-width: 30em;
+  margin-bottom: 1em;
+  margin-right: 1em;
 }
 
 .process div.box.header {
@@ -329,19 +331,22 @@ div.box.process {
 
 .process > .boxview > div.box {
   min-height: 30em;
-  min-width: 30em;
 }
 
 .process h2 {
-  padding-bottom: 15px;
+  margin-top: 0;
+  margin-bottom: 1em;
+  padding-bottom: 1em;
   border-bottom:1px solid @gray-lighter;
 }
 
 .process th {
+  width: 50%;
   text-align: right;
 }
 
 .process td {
+  width: 50%;
   padding-left: 2em;
   text-align: left;
 }
@@ -369,10 +374,10 @@ div.backend-not-running {
 /* Monitoring health - FEATURE - element styles */
 
 div.box.features {
+  width: 100%;
+  max-width: 50em;
   border: 1px solid @gray-lighter;
   border-left: 15px solid @gray;
-  min-height: 30em;
-  min-width: 30em;
 }
 
 .features div.box.header {
@@ -382,11 +387,12 @@ div.box.features {
 
 .features > .boxview > div.box {
   min-height: 30em;
-  min-width: 30em;
 }
 
 .features h2 {
-  padding-bottom: 15px;
+  margin-top: 0;
+  margin-bottom: 1em;
+  padding-bottom: 1em;
   border-bottom:1px solid @gray-lighter;
 }
 
@@ -394,6 +400,8 @@ div.box.features {
 /* Monitoring health - STATS - element styles */
 
 div.box.stats {
+  width: 100%;
+  max-width: 50em;
   border: 1px solid @gray-lighter;
   border-left: 15px solid @gray;
   color: @text-color;
@@ -403,23 +411,30 @@ div.box.stats {
   min-height: 30em;
 }
 
-.stats > .avp > tbody {
+.stats > .name-value-table {
+  table-layout: fixed;
   text-align: left;
 }
 
-.stats > table {
-  padding-bottom: 15px;
-}
-
-.stats > table > thead{
+.stats > table > thead {
   color: @gray;
 }
 
-.stats > h3 {
-  color: @gray;
+.stats > h2 {
   text-align: left;
-  border-bottom:1px solid @gray-lighter;
-  padding-bottom: 15px;
+  border-bottom: 1px solid @gray-lighter;
+
+  > .hosts-summary,
+  > .services-summary {
+    width: 100%;
+    > .state-badges {
+      float: right;
+    }
+  }
+}
+
+.tinystatesummary .badge {
+  font-weight: normal;
 }
 
 /* Monitoring timeline styles */
