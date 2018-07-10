@@ -233,6 +233,23 @@ class PreferenceForm extends Form
             )
         );
 
+        $this->addElement(
+            'select',
+            'show_application_state_messages',
+            array(
+                'required'      => true,
+                'label'         => $this->translate('Show application state messages'),
+                'description'   => $this->translate('Whether to show application state messages.'),
+                'multiOptions'  => [
+                    'system' => (bool) Config::app()->get('global', 'show_application_state_messages', true)
+                        ? $this->translate('System (Yes)')
+                        : $this->translate('System (No)'),
+                    1        => $this->translate('Yes'),
+                    0        => $this->translate('No')],
+                'value'         => 'system'
+            )
+        );
+
         if (Auth::getInstance()->hasPermission('application/stacktraces')) {
             $this->addElement(
                 'checkbox',
