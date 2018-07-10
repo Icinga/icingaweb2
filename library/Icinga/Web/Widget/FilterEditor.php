@@ -778,6 +778,7 @@ class FilterEditor extends AbstractWidget
             . '<form action="'
             . Url::fromRequest()
             . '" class="editor" method="POST">'
+            . '<input type="submit" name="submit" value="Apply" style="display:none;"/>'
             . '<ul class="tree"><li>'
             . $this->renderFilter($this->filter)
             . '</li></ul>'
