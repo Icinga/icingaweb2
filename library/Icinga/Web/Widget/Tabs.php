@@ -342,7 +342,7 @@ EOT;
                 '{LABEL}'
             ),
             array(
-                $url,
+                htmlspecialchars($url),
                 $title,
                 $label
             ),
