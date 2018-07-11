@@ -211,12 +211,12 @@ msgstr "Weiteren Filter hinzufügen"
 
 #: ../../../../library/Icinga/Web/Widget/FilterWidget.php:80
 msgid "Add filter..."
-msgstr "Filter hinzufügen"
+msgstr "Filter hinzufügen..."
 
 #: ../../../../application/forms/Config/UserGroup/AddMemberForm.php:125
 #, php-format
 msgid "Add members for group %s"
-msgstr "Mitglied der Gruppe %s hinzufügen"
+msgstr "Mitglieder der Gruppe %s hinzufügen"
 
 #: ../../../../application/controllers/ConfigController.php:38
 msgid "Adjust the general configuration of Icinga Web 2"
@@ -249,7 +249,7 @@ msgstr "Erlaubt die Einstellung zur Anzeige von Stacktraces"
 
 #: ../../../../application/forms/Security/RoleForm.php:40
 msgid "Allow to share navigation items"
-msgstr "Erlaubt das Teilen von Navigationselemten"
+msgstr "Erlaubt das Teilen von Navigationselementen"
 
 #: ../../../../application/forms/Security/RoleForm.php:45
 msgid "Allow to view the application log"
@@ -261,7 +261,7 @@ msgid ""
 "Leave empty to not to use any additional filter rules."
 msgstr ""
 "Ein zusätzlicher Filter für die Suche nach Gruppen für die angegebene Verbindung. "
-"Leer lassen, um keine Filter zu verwenden."
+"Leer lassen, um keine zusätzlichen Filter zu verwenden."
 
 #: ../../../../application/forms/Config/UserBackend/LdapBackendForm.php:153
 #: ../../../../application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:246
@@ -270,7 +270,7 @@ msgid ""
 "Leave empty to not to use any additional filter rules."
 msgstr ""
 "Ein zusätzlicher Filter für die Suche nach Benutzern für die angegebene Verbindung. "
-"Leer lassen, um keine Filter zu verwenden."
+"Leer lassen, um keine zusätzlichen Filter zu verwenden."
 
 #: ../../../../application/forms/Announcement/AnnouncementForm.php:96
 msgid "Announcement created"
@@ -321,7 +321,7 @@ msgstr "Authentifizierung"
 #: ../../../../library/Icinga/Web/Controller/AuthBackendController.php:69
 #, php-format
 msgid "Authentication backend \"%s\" is not %s"
-msgstr "Authentifizierungsbackend \"%s\" ist  nicht %s"
+msgstr "Authentifizierungsbackend \"%s\" ist nicht %s"
 
 #: ../../../../library/Icinga/Web/Controller/AuthBackendController.php:62
 #, php-format
@@ -404,12 +404,12 @@ msgstr "Kann Rolle '%s' nicht löschen. Die Rolle existiert nicht"
 #: ../../../../application/forms/Security/RoleForm.php:278
 #, php-format
 msgid "Can't update role '%s'. Role does not exist"
-msgstr "Kann Rolle '%s' nicht akualisieren. Die Rolle existiert nicht"
+msgstr "Kann Rolle '%s' nicht aktualisieren. Die Rolle existiert nicht"
 
 #: ../../../../application/views/scripts/user/show.phtml:79
 msgctxt "group.membership"
 msgid "Cancel"
-msgstr "Abbrechen"
+msgstr "Beenden"
 
 #: ../../../../application/controllers/UserController.php:156
 msgid "Cancel this membership"
@@ -427,7 +427,7 @@ msgstr "Einfügen nicht möglich. Die Sektion \"%s\" existiert bereits"
 #: ../../../../library/Icinga/Application/Config.php:328
 #, php-format
 msgid "Cannot read config file \"%s\". Permission denied"
-msgstr "Kann Konfigurationsdatei \"%s\" nicht lesen"
+msgstr "Kann Konfigurationsdatei \"%s\" nicht lesen. Zugriff verweigert"
 
 #: ../../../../library/Icinga/Web/Widget/FilterEditor.php:283
 msgid "Cannot search here"
@@ -448,7 +448,7 @@ msgstr "Aktualisierung nicht möglich. Sektion \"%s\" existiert bereits"
 
 #: ../../../../library/Icinga/Web/Widget/SortBox.php:251
 msgid "Change sort direction"
-msgstr "Sortierreihenfolge"
+msgstr "Sortierreihenfolge ändern"
 
 #: ../../../../application/forms/Config/Resource/DbResourceForm.php:150
 msgid "Character Set"
@@ -461,7 +461,7 @@ msgid ""
 "it will be used nonetheless"
 msgstr ""
 "Checkbox auswählen um Benutzeranpassung zu verbieten. Die Standardtheme wird für "
-"alle Benutzer angezeigt."
+"alle Benutzer angezeigt"
 
 #: ../../../../application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:98
 msgid "Check this box for nested group search in Active Directory based on the user"
@@ -489,7 +489,8 @@ msgstr "Häkchen setzen, um die Änderungen ohne Validierung der Verbindung zu s
 msgid ""
 "Check this box to enforce changes without validating that authentication is possible."
 msgstr ""
-"Häkchen setzen, um die Änderungen ohne Validierung der Authentifizierung zu speichern"
+"Häkchen setzen, um die Änderungen ohne Validierung der Authentifizierung zu "
+"speichern."
 
 #: ../../../../library/Icinga/Web/Widget/FilterWidget.php:68
 msgid "Click to remove this part of your filter"
@@ -516,11 +517,11 @@ msgstr ""
 
 #: ../../../../application/forms/Security/RoleForm.php:131
 msgid "Comma-separated list of groups that are assigned to the role"
-msgstr "Kommaseparierte Liste von Gruppen, die dieser Rolle zugewiesen werden"
+msgstr "Komma separierte Liste von Gruppen, die dieser Rolle zugewiesen werden"
 
 #: ../../../../application/forms/Security/RoleForm.php:123
 msgid "Comma-separated list of users that are assigned to the role"
-msgstr "Kommaseparierte Liste von Nutzern, die dieser Rolle zugewiesen werden"
+msgstr "Komma separierte Liste von Nutzern, die dieser Rolle zugewiesen werden"
 
 #: ../../../../library/Icinga/Application/Web.php:317
 #: ../../../../library/Icinga/Web/Menu.php:269
@@ -565,8 +566,8 @@ msgid ""
 msgstr ""
 "Enthält die Verzeichnisse, die nach verfügbaren Modulen durchsucht werden (getrennt "
 "durch Doppelpunkte). Module, die nicht in diesen Verzeichnissen vorhanden sind, "
-"können trotzdem in den Modulordner gesymlinkt werden. Diese werden allerdings nicht "
-"in der der deaktivierten Module angezeigt."
+"können trotzdem in den Modulordner verlinkt werden. Diese werden allerdings nicht in "
+"der Liste der deaktivierten Module angezeigt."
 
 #: ../../../../library/Icinga/Web/Widget/Tabs.php:332
 msgid "Content"
@@ -636,7 +637,7 @@ msgid ""
 "the end of your authentication order."
 msgstr ""
 "Neues Backend für die Nutzerauthentifizierung anlegen.  Dieses Backend wird an das "
-"Ende Ihrer Authentifizierungsreihenfolge angehängt"
+"Ende Ihrer Authentifizierungsreihenfolge angehängt."
 
 #: ../../../../application/controllers/UsergroupbackendController.php:42
 msgid "Create a new backend to associate users and groups with."
@@ -644,11 +645,11 @@ msgstr "Neues Backend zur Assoziation von Benutzern und Gruppen anlegen."
 
 #: ../../../../application/views/scripts/navigation/index.phtml:19
 msgid "Create a new navigation item"
-msgstr "Ein neues Navigationselement erzeugen"
+msgstr "Neues Navigationselement erstellen"
 
 #: ../../../../application/controllers/NavigationController.php:216
 msgid "Create a new navigation item, such as a menu entry or dashlet."
-msgstr "Ein neues Navigationselement (zum Beispiel Menüeintrag oder Dashlet) erzeugen."
+msgstr "Neues Navigationselement (zum Beispiel Menüeintrag oder Dashlet) erstellen."
 
 #: ../../../../application/views/scripts/config/resource.phtml:13
 msgid "Create a new resource"
@@ -733,7 +734,7 @@ msgstr "Titel des Dashlets"
 
 #: ../../../../application/controllers/DashboardController.php:73
 msgid "Dashlet created"
-msgstr "Dashlet wurde angelegt"
+msgstr "Dashlet erstellt"
 
 #: ../../../../application/controllers/DashboardController.php:183
 msgid "Dashlet has been removed from"
@@ -747,7 +748,7 @@ msgstr "Dashlet aktualisiert"
 #: ../../../../application/forms/Config/UserGroup/UserGroupBackendForm.php:155
 #: ../../../../application/forms/Config/General/ApplicationConfigForm.php:70
 msgid "Database"
-msgstr "SQL Datenbank"
+msgstr "Datenbank"
 
 #: ../../../../application/forms/Config/UserBackend/DbBackendForm.php:64
 #: ../../../../application/forms/Config/UserGroup/DbUserGroupBackendForm.php:47
@@ -790,8 +791,8 @@ msgid ""
 "Details can be found in the application log. (If you don't have access to this log, "
 "call your administrator in this case)"
 msgstr ""
-"Details können im Log der Anwendung gefunden werden. (Wenn kein Zugriff auf das Log "
-"möglich ist, kontaktieren  Sie bitte Ihren Administrator)"
+"Details können im Anwendungs-Log gefunden werden. (Wenn kein Zugriff auf das Log "
+"möglich ist, kontaktieren Sie bitte einen Administrator)"
 
 #: ../../../../application/forms/AutoRefreshForm.php:65
 msgid "Disable auto refresh"
@@ -805,11 +806,11 @@ msgstr "Modul %s deaktivieren"
 #: ../../../../application/forms/Config/UserBackend/LdapBackendForm.php:105
 msgctxt "A button to discover LDAP capabilities"
 msgid "Discover"
-msgstr "Erkennen"
+msgstr "Entdecken"
 
 #: ../../../../application/forms/Config/UserBackend/LdapBackendForm.php:245
 msgid "Discover the domain"
-msgstr "Domain erkennen"
+msgstr "Domain entdecken"
 
 #: ../../../../application/forms/Config/UserBackend/LdapBackendForm.php:223
 #: ../../../../application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:301
@@ -910,11 +911,11 @@ msgstr "Ende"
 
 #: ../../../../application/forms/Dashboard/DashletForm.php:83
 msgid "Enter a title for the dashlet."
-msgstr "Titel für das Dashlet eingeben"
+msgstr "Titel für das Dashlet eingeben."
 
 #: ../../../../application/forms/Dashboard/DashletForm.php:112
 msgid "Enter a title for the new dashboard"
-msgstr "Titel für das Dashboard eingeben"
+msgstr "Titel für das neue Dashboard eingeben"
 
 #: ../../../../application/forms/Dashboard/DashletForm.php:72
 msgid ""
@@ -970,7 +971,7 @@ msgstr "Löschen fehlgeschlagen. Es ist ein Fehler aufgetreten: %s"
 #: ../../../../application/forms/Config/UserBackend/LdapBackendForm.php:275
 #, php-format
 msgid "Failed to discover the chosen LDAP connection: %s"
-msgstr "Die angegeben LDAP-Verbindung konnte nicht gefunden werden: %s"
+msgstr "Über die angegebene LDAP-Verbindung konnte nichts entdeckt werden: %s"
 
 #: ../../../../application/forms/Config/UserGroup/UserGroupForm.php:107
 #, php-format
@@ -1004,7 +1005,7 @@ msgid ""
 "Failed to fully parse navigation configuration. Ensure that all referenced parents "
 "are existing navigation items: %s"
 msgstr ""
-"Die Navigationskonfiguration konnte nicht vollständig geparst werden. Bitte stellen "
+"Die Navigationskonfiguration konnte nicht vollständig gelesen werden. Bitte stellen "
 "Sie sicher, dass alle referenziertem Elternelemente existierende Navigationselemente "
 "sind: %s"
 
@@ -1015,7 +1016,7 @@ msgstr "Einfügen nicht möglich. Ein Fehler ist aufgetreten: %s"
 
 #: ../../../../application/forms/Announcement/AnnouncementForm.php:117
 msgid "Failed to remove announcement"
-msgstr "Bekanntmachung \"%s\" konnte nicht entfernt werden"
+msgstr "Bekanntmachung konnte nicht entfernt werden"
 
 #: ../../../../application/forms/Config/UserGroup/UserGroupForm.php:123
 #, php-format
@@ -1058,7 +1059,7 @@ msgstr "Datei"
 
 #: ../../../../application/forms/Config/General/ApplicationConfigForm.php:69
 msgid "File System (INI Files)"
-msgstr "Dateisystem"
+msgstr "Dateisystem (INI Dateien)"
 
 #: ../../../../application/forms/Config/General/LoggingConfigForm.php:129
 msgid "File path"
@@ -1070,7 +1071,7 @@ msgstr "Dateipfad"
 
 #: ../../../../application/forms/Config/UserBackend/ExternalBackendForm.php:49
 msgid "Filter Pattern"
-msgstr "Muster"
+msgstr "Filter Muster"
 
 #: ../../../../library/Icinga/Repository/Repository.php:1196
 #, php-format
@@ -1104,7 +1105,7 @@ msgid ""
 "For using unix domain sockets, specify the path to the unix domain socket directory"
 msgstr ""
 "Um UNIX Domain Sockets zu verwenden, ist die Angabe des Pfades zum UNIX Domain "
-"Socket Verzeicnis erforderlich"
+"Socket Verzeichnis erforderlich"
 
 #: ../../../../application/forms/Config/ResourceConfigForm.php:247
 msgid "Force Changes"
@@ -1162,7 +1163,7 @@ msgstr "Gruppenmitglieder"
 
 #: ../../../../application/forms/Config/UserGroup/UserGroupForm.php:23
 msgid "Group Name"
-msgstr "Ressourcenname"
+msgstr "Gruppenname"
 
 #: ../../../../application/forms/Config/UserGroup/UserGroupForm.php:89
 msgid "Group added successfully"
@@ -1171,7 +1172,7 @@ msgstr "Gruppe wurde erfolgreich hinzugefügt"
 #: ../../../../application/forms/Config/UserGroup/AddMemberForm.php:175
 #, php-format
 msgid "Group member \"%s\" added successfully"
-msgstr "Gruppenmitlglied \"%s\" wurde erfolgreich hinzugefügt"
+msgstr "Gruppenmitglied \"%s\" wurde erfolgreich hinzugefügt"
 
 #: ../../../../application/forms/Config/UserGroup/AddMemberForm.php:177
 msgid "Group members added successfully"
@@ -1330,15 +1331,15 @@ msgstr "LDAP Filter für Gruppen"
 
 #: ../../../../application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:198
 msgid "LDAP Group Member Attribute"
-msgstr "LDAP-Attribut für die Gruppenmitgliedschaft"
+msgstr "LDAP-Attribut für Gruppenmitgliedschaften"
 
 #: ../../../../application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:184
 msgid "LDAP Group Name Attribute"
-msgstr "LDAP-Attribut für den Gruppennamen"
+msgstr "LDAP-Attribut für Gruppennamen"
 
 #: ../../../../application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:140
 msgid "LDAP Group Object Class"
-msgstr "LDAP Objektklasse für die Gruppe"
+msgstr "LDAP Objektklasse für Gruppen"
 
 #: ../../../../application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:289
 msgid "LDAP User Base DN"
@@ -1346,17 +1347,17 @@ msgstr "LDAP Basis-DN für Benutzer"
 
 #: ../../../../application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:244
 msgid "LDAP User Filter"
-msgstr "LDAP Filter für den Benutzer"
+msgstr "LDAP Filter für Benutzer"
 
 #: ../../../../application/forms/Config/UserBackend/LdapBackendForm.php:189
 #: ../../../../application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:277
 msgid "LDAP User Name Attribute"
-msgstr "LDAP-Attribut für den Benutzernamen"
+msgstr "LDAP-Attribut für Benutzernamen"
 
 #: ../../../../application/forms/Config/UserBackend/LdapBackendForm.php:139
 #: ../../../../application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:233
 msgid "LDAP User Object Class"
-msgstr "LDAP Objektklasse für den Benutzer"
+msgstr "LDAP Objektklasse für Benutzer"
 
 #: ../../../../application/views/scripts/user/show.phtml:40
 #: ../../../../application/views/scripts/group/show.phtml:37
@@ -1391,7 +1392,7 @@ msgstr "Eigene Navigationselemente auflisten und bearbeiten"
 #: ../../../../application/controllers/GroupController.php:386
 #: ../../../../application/controllers/UserController.php:337
 msgid "List groups of user group backends"
-msgstr "Gruppierte Benutzergruppenbackends auflisten"
+msgstr "Gruppen der Benutzergruppenbackends auflisten"
 
 #: ../../../../application/controllers/ConfigController.php:98
 msgid "List intalled modules"
@@ -1401,7 +1402,7 @@ msgstr "Installierte Module auflisten"
 #: ../../../../application/controllers/GroupController.php:378
 #: ../../../../application/controllers/UserController.php:329
 msgid "List users of authentication backends"
-msgstr "Benutzer des Authentifizierungsbackends auflisten"
+msgstr "Benutzer der Authentifizierungsbackends auflisten"
 
 #: ../../../../application/views/scripts/about/index.phtml:104
 msgid "Loaded modules"
@@ -1421,11 +1422,11 @@ msgstr "Logging-Typ"
 
 #: ../../../../application/forms/Authentication/LoginForm.php:31
 msgid "Logging in"
-msgstr "Anmelden"
+msgstr "Anmeldung"
 
 #: ../../../../application/views/scripts/authentication/logout.phtml:12
 msgid "Logging out..."
-msgstr "Abmelden..."
+msgstr "Abmeldung..."
 
 #: ../../../../application/views/scripts/authentication/logout.phtml:22
 #: ../../../../application/forms/Authentication/LoginForm.php:30
@@ -1469,7 +1470,7 @@ msgstr "Nachricht"
 
 #: ../../../../library/Icinga/Web/Controller/ActionController.php:268
 msgid "Method Not Allowed"
-msgstr "Nicht zulässig"
+msgstr "Methode Nicht zulässig"
 
 #: ../../../../application/forms/Navigation/NavigationItemForm.php:72
 msgid "Missing protocol identifier"
@@ -1502,7 +1503,7 @@ msgstr "Modul %s konnte nicht geladen werden"
 #: ../../../../application/views/scripts/config/modules.phtml:19
 #, php-format
 msgid "Module %s is dangling"
-msgstr "Modul %s fehlt"
+msgstr "Modul %s ist ein toter Link"
 
 #: ../../../../application/views/scripts/config/modules.phtml:23
 #, php-format
@@ -1567,7 +1568,7 @@ msgstr "Navigation"
 #: ../../../../application/controllers/NavigationController.php:322
 #, php-format
 msgid "Navigation Item \"%s\" not found. No action required"
-msgstr "Navigationselement \"%s\" nicht gefunden. Kein Eingriff erfoderlich"
+msgstr "Navigationselement \"%s\" nicht gefunden. Kein Eingriff erforderlich"
 
 #: ../../../../application/controllers/NavigationController.php:334
 #, php-format
@@ -1592,7 +1593,7 @@ msgstr "Navigationselement \"%s\" erfolgreich aktualisiert"
 
 #: ../../../../application/controllers/NavigationController.php:236
 msgid "Navigation item successfully created"
-msgstr "Navigationselement \"%s\" erfolgreich angelegt"
+msgstr "Navigationselement erfolgreich angelegt"
 
 #: ../../../../application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:100
 msgid "Nested Group Search"
@@ -1604,7 +1605,7 @@ msgstr "Neue Bekanntmachung"
 
 #: ../../../../application/forms/Navigation/NavigationItemForm.php:42
 msgid "New Column"
-msgstr "Neue Spalte anlegen"
+msgstr "Neue Spalte"
 
 #: ../../../../application/forms/Dashboard/DashletForm.php:111
 msgid "New Dashboard Title"
@@ -1718,7 +1719,7 @@ msgstr ""
 
 #: ../../../../application/views/scripts/role/list.phtml:17
 msgid "No roles found."
-msgstr "Es wurden keine Rollen gefunden"
+msgstr "Es wurden keine Rollen gefunden."
 
 #: ../../../../application/views/scripts/group/list.phtml:44
 msgid "No user groups found matching the filter"
@@ -1742,13 +1743,13 @@ msgstr "Nicht loggen"
 #: ../../../../application/forms/Config/Resource/LdapResourceForm.php:108
 msgctxt "resource.ldap.encryption"
 msgid "None"
-msgstr "Keine Verschlüsselung"
+msgstr "Keine"
 
 #: ../../../../application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:67
 #: ../../../../application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:69
 msgctxt "usergroupbackend.ldap.user_backend"
 msgid "None"
-msgstr "Kein Userbackend"
+msgstr "Keines"
 
 #: ../../../../application/forms/Config/UserGroup/UserGroupForm.php:63
 msgid ""
@@ -1782,7 +1783,7 @@ msgstr "Eigentümer"
 
 #: ../../../../library/Icinga/Web/Widget/SearchDashboard.php:91
 msgid "Page not found"
-msgstr "Seite nicht gefunden."
+msgstr "Seite nicht gefunden"
 
 #: ../../../../application/controllers/ErrorController.php:55
 msgid "Page not found."
@@ -1830,15 +1831,15 @@ msgstr "Tortendiagramm"
 
 #: ../../../../application/views/scripts/dashboard/error.phtml:4
 msgid "Please copy the following dashboard snippet to "
-msgstr "Bitte kopieren Sie den folgenden Ausschnitt aus dem Dashboard nach"
+msgstr "Bitte kopieren Sie den folgenden Ausschnitt aus dem Dashboard nach "
 
 #: ../../../../application/forms/Authentication/LoginForm.php:117
 msgid ""
 "Please note that not all authentication methods were available. Check the system log "
 "or Icinga Web 2 log for more information."
 msgstr ""
-"Bitte beachten Sie, dass nicht alle Authentifizierungsmethoden verfügbar waren. Im "
-"Systemlog oder jenes von Icinga Web 2 für weitere Informationen."
+"Bitte beachten Sie, dass nicht alle Authentifizierungsmethoden verfügbar waren. "
+"Prüfe das Systemlog oder jenes von Icinga Web 2 für weitere Informationen."
 
 #: ../../../../application/forms/Config/UserGroup/AddMemberForm.php:143
 msgid ""
@@ -1890,7 +1891,9 @@ msgstr "Privater Schlüssel"
 
 #: ../../../../application/forms/Config/UserGroup/AddMemberForm.php:120
 msgid "Provide one or more usernames separated by comma to add as group member"
-msgstr "Bitte geben Sie einen oder mehrere Benutzernamen durch Komma getrennt ein, um "
+msgstr ""
+"Bitte geben Sie einen oder mehrere Benutzernamen durch Komma getrennt ein, um diese "
+"als Mitglieder hinzuzufügen"
 
 #: ../../../../library/Icinga/Web/Form/Decorator/Autosubmit.php:125
 msgid ""
@@ -1907,11 +1910,12 @@ msgstr ""
 
 #: ../../../../application/forms/Config/UserBackend/LdapBackendForm.php:247
 msgid "Push to disover and fill in the domain of the LDAP server."
-msgstr "Klicken Sie hier, um die Domäne des LDAP Servers zu füllen."
+msgstr "Klicken Sie hier, um die Domäne des LDAP Servers automatisch zu entdecken."
 
 #: ../../../../application/forms/Config/UserBackend/LdapBackendForm.php:107
 msgid "Push to fill in the chosen connection's default settings."
-msgstr "Klicken Sie hier, um die gewählten Verbindungseinstellungen auszufüllen."
+msgstr ""
+"Klicke hier, um die Standardeinstellungen der gewählten Verbindung einzutragen."
 
 #: ../../../../library/Icinga/Repository/Repository.php:1148
 #, php-format
@@ -1956,7 +1960,7 @@ msgstr "Dashlet aus Dashboard entfernen"
 
 #: ../../../../application/controllers/NavigationController.php:342
 msgid "Remove Navigation Item"
-msgstr "Dieses Navigationselement entfernen"
+msgstr "Navigationselement entfernen"
 
 #: ../../../../application/controllers/ConfigController.php:363
 msgid "Remove Resource"
@@ -1996,7 +2000,7 @@ msgstr "Dashlet %s aus Dashboard %s entfernen"
 #: ../../../../application/forms/Config/UserGroup/UserGroupForm.php:61
 #, php-format
 msgid "Remove group %s?"
-msgstr "Gruppe %s entfernen"
+msgstr "Gruppe %s entfernen?"
 
 #: ../../../../application/views/scripts/navigation/index.phtml:70
 #, php-format
@@ -2047,7 +2051,7 @@ msgstr "Benutzer %s entfernen"
 #: ../../../../application/forms/Config/User/UserForm.php:115
 #, php-format
 msgid "Remove user %s?"
-msgstr "Benutzer %s entfernen"
+msgstr "Benutzer %s entfernen?"
 
 #: ../../../../application/views/scripts/form/reorder-authbackend.phtml:37
 #, php-format
@@ -2128,17 +2132,17 @@ msgstr "Ressourcen dienen als Datenquellen für Icinga Web 2."
 msgid "Restrict which groups this role can share items and information with"
 msgstr ""
 "Beschränken Sie, mit welchen Gruppen diese Rolle Elemente und Informationen teilen "
-"kann."
+"kann"
 
 #: ../../../../application/forms/Security/RoleForm.php:58
 msgid "Restrict which users this role can share items and information with"
 msgstr ""
 "Beschränken Sie, mit welchen Benutzern diese Rolle Elemente und Informationen teilen "
-"kann."
+"kann"
 
 #: ../../../../application/views/scripts/config/module.phtml:78
 msgid "Restrictions"
-msgstr "Beschränkungen"
+msgstr "Einschränkungen"
 
 #: ../../../../application/forms/Security/RoleForm.php:113
 msgid "Role Name"
@@ -2189,7 +2193,7 @@ msgstr "SSL-Zertifikat"
 
 #: ../../../../application/forms/Config/Resource/DbResourceForm.php:215
 msgid "SSL Cipher"
-msgstr "SSL-Verschlüsselung"
+msgstr "SSL-Chiffre"
 
 #: ../../../../application/forms/Config/Resource/DbResourceForm.php:181
 msgid "SSL Key"
@@ -2229,7 +2233,7 @@ msgstr "Suche"
 
 #: ../../../../application/forms/LdapDiscoveryForm.php:27
 msgid "Search Domain"
-msgstr "Domains durchsuchen"
+msgstr "Domain suchen"
 
 #: ../../../../application/forms/LdapDiscoveryForm.php:28
 msgid "Search this domain for records of available servers."
@@ -2316,7 +2320,7 @@ msgstr "Suche anzeigen"
 #: ../../../../application/forms/PreferenceForm.php:238
 #: ../../../../application/forms/Config/General/ApplicationConfigForm.php:38
 msgid "Show Stacktraces"
-msgstr "Stacktrace anzeigen"
+msgstr "Stacktraces anzeigen"
 
 #: ../../../../application/views/scripts/dashboard/settings.phtml:62
 #, php-format
@@ -2349,13 +2353,13 @@ msgstr "Zeige Gruppe %s"
 #: ../../../../application/views/scripts/mixedPagination.phtml:57
 #, php-format
 msgid "Show rows %u to %u of %u"
-msgstr "Zeige die Zeilen %d bis %d von %d"
+msgstr "Zeige die Zeilen %u bis %u von %u"
 
 #: ../../../../application/views/scripts/config/modules.phtml:34
 #: ../../../../application/views/scripts/about/index.phtml:121
 #, php-format
 msgid "Show the overview of the %s module"
-msgstr "Zeige eine Übersicht des Moduls %s"
+msgstr "Zeige die Übersicht des Moduls %s"
 
 #: ../../../../application/controllers/UserController.php:299
 #, php-format
@@ -2364,7 +2368,7 @@ msgstr "Zeige Benutzer %s"
 
 #: ../../../../application/forms/Navigation/NavigationItemForm.php:43
 msgid "Single Column"
-msgstr "Eine Spalte"
+msgstr "Einzelne Spalte"
 
 #: ../../../../application/forms/Config/UserBackendConfigForm.php:374
 msgid "Skip Validation"
@@ -2394,7 +2398,7 @@ msgstr "Status"
 
 #: ../../../../library/Icinga/Web/Widget/FilterEditor.php:423
 msgid "Strip this filter"
-msgstr "Diesen Filter bearbeiten"
+msgstr "Diesen Filter entfernen"
 
 #: ../../../../application/views/scripts/about/index.phtml:80
 msgid "Support"
@@ -2422,11 +2426,11 @@ msgstr "Das Icinga Projekt"
 msgid "The LDAP connection to use for authenticating with this provider."
 msgstr ""
 "Die Datenbankverbindung, welche zur Authentifizierung mit diesem Provider genutzt "
-"werden soll"
+"werden soll."
 
 #: ../../../../application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:54
 msgid "The LDAP connection to use for this backend."
-msgstr "Die Datenbankverbindung, welche mit diesem Backend verwendet werden soll."
+msgstr "Die LDAP-Verbindung, welche mit diesem Backend verwendet werden soll."
 
 #: ../../../../application/forms/Config/General/LoggingConfigForm.php:78
 #: ../../../../application/forms/Config/General/LoggingConfigForm.php:88
@@ -2437,12 +2441,12 @@ msgstr "Das Applikationspräfix darf keine Leerzeichen enthalten."
 msgid "The attribute name used for storing a group's members."
 msgstr ""
 "Der Attributname welcher benutzt wird, um Gruppenmitglieder auf dem LDAP-Server "
-"abzulegen"
+"abzulegen."
 
 #: ../../../../application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:186
 msgid "The attribute name used for storing a group's name on the LDAP server."
 msgstr ""
-"Der Attributname welcher benutzt wird, um Gruppennamen auf dem LDAP-Server abzulegen"
+"Der Attributname welcher benutzt wird, um Gruppennamen auf dem LDAP-Server abzulegen."
 
 #: ../../../../application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:279
 msgid "The attribute name used for storing a user's name on the LDAP server."
@@ -2485,9 +2489,7 @@ msgstr ""
 
 #: ../../../../application/forms/Config/UserGroup/DbUserGroupBackendForm.php:48
 msgid "The database connection to use for this backend"
-msgstr ""
-"Die Datenbankverbindung, welche zur Authentifizierung mit diesem Provider genutzt "
-"werden soll"
+msgstr "Die Datenbankverbindung, die für dieses Backend genutzt werden soll"
 
 #: ../../../../application/forms/Config/General/ThemingConfigForm.php:40
 msgctxt "Form element description"
@@ -2506,7 +2508,11 @@ msgid ""
 msgstr ""
 "Die Domäne, für die der LDAP Server beim Anmelden zuständig ist. Wenn Sie hier eine "
 "Domäne angeben können sich Benutzer nur anmelden, wenn Sie den Benutzernamen mit "
-"Domäne angeben."
+"Domäne angeben. Wenn die Domäne des Benutzers der dieses Backends entspricht wird es "
+"versuchen den Benutzer mittels des Namens (ohne die Domäne) zu authentifizieren. "
+"Falls auf dem LDAP Server Benutzernamen bereits inklusive Domäne angelegt sind oder "
+"keine Notwendigkeit besteht die Authentifizierung auf Basis der Domäne vorzunehmen, "
+"kann dieses Feld leer gelassen werden."
 
 #: ../../../../application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:303
 msgid "The domain the LDAP server is responsible for."
@@ -2515,7 +2521,7 @@ msgstr "Die Domäne, für die der LDAP Server zuständig ist."
 #: ../../../../application/views/scripts/showConfiguration.phtml:5
 #, php-format
 msgid "The file %s couldn't be stored. (Error: \"%s\")"
-msgstr "Die Datei %s konnte nicht gespeichert werden. (Error: \"%s\")"
+msgstr "Die Datei %s konnte nicht gespeichert werden. (Fehler: \"%s\")"
 
 #: ../../../../application/forms/Config/Resource/FileResourceForm.php:42
 msgid "The filename to fetch information from"
@@ -2536,15 +2542,15 @@ msgid ""
 "The filter needs to be expressed as standard LDAP expression, without outer "
 "parentheses. (e.g. &(foo=bar)(bar=foo) or foo=bar)"
 msgstr ""
-"Der Filter muss als standardgemäßer LDAP-Ausdruck angegeben werden, ohne "
-"umschließende Klammern. (z.B. &(foo=bar)(bar=foo) oder foo=bar)"
+"Der Filter muss als gültiger LDAP-Ausdruck angegeben werden, ohne umschließende "
+"Klammern. (z.B. &(foo=bar)(bar=foo) oder foo=bar)"
 
 #: ../../../../application/forms/Config/UserBackend/LdapBackendForm.php:157
 msgid ""
 "The filter needs to be expressed as standard LDAP expression. (e.g. &(foo=bar)"
 "(bar=foo) or foo=bar)"
 msgstr ""
-"Der Filter muss als standardgemäßer LDAP-Ausdruck angegeben werden. (z.B. &(foo=bar)"
+"Der Filter muss als gültiger LDAP-Ausdruck angegeben werden. (z.B. &(foo=bar)"
 "(bar=foo) oder foo=bar)"
 
 #: ../../../../application/forms/Config/UserBackend/ExternalBackendForm.php:54
@@ -2571,7 +2577,7 @@ msgstr "Der angegebene SSH-Schlüssel ist ungültig"
 
 #: ../../../../application/forms/Config/Resource/DbResourceForm.php:102
 msgid "The hostname of the database"
-msgstr "Der Hostname der Datenbank."
+msgstr "Der Hostname der Datenbank"
 
 #: ../../../../application/forms/Config/Resource/LdapResourceForm.php:48
 msgid ""
@@ -2585,11 +2591,11 @@ msgstr ""
 msgid ""
 "The icon of this navigation item. Leave blank if you do not want a icon being "
 "displayed"
-msgstr "Das Icon für dieses Navigationselement. Leer lassen, um kein Icon anzuzeigen."
+msgstr "Das Icon für dieses Navigationselement. Leer lassen, um kein Icon anzuzeigen"
 
 #: ../../../../application/forms/Config/Resource/DbResourceForm.php:216
 msgid "The list of permissible ciphers"
-msgstr "Liste zulässiger Verschlüsselungen"
+msgstr "Liste zulässiger Chiffren"
 
 #: ../../../../application/forms/Config/General/LoggingConfigForm.php:57
 msgid "The maximum logging level to emit."
@@ -2600,13 +2606,12 @@ msgid "The message to display to users"
 msgstr "Die Nachricht, die den Benutzern angezeigt werden soll"
 
 #: ../../../../application/forms/Config/General/LoggingConfigForm.php:76
-#, fuzzy
 msgid "The name of the application by which to prefix log messages."
 msgstr "Der Anwendungsname, welcher Syslog-Nachrichten vorangestellt werden soll."
 
 #: ../../../../application/forms/Navigation/DashletForm.php:19
 msgid "The name of the dashboard pane in which to display this dashlet"
-msgstr "Der Name des Dashboards, in welchem dieses Dashlet angezeigt werden soll."
+msgstr "Der Name des Dashboards, in welchem dieses Dashlet angezeigt werden soll"
 
 #: ../../../../application/forms/Config/Resource/DbResourceForm.php:124
 msgid "The name of the database to use"
@@ -2641,13 +2646,13 @@ msgstr "Der eindeutige Name dieses Benutzergruppenbackends"
 #: ../../../../application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:141
 msgid "The object class used for storing groups on the LDAP server."
 msgstr ""
-"Die Objekt-Klasse welche benutzt wird, um Gruppen auf diesem LDAP-Server abzulegen"
+"Die Objekt-Klasse welche benutzt wird, um Gruppen auf diesem LDAP-Server abzulegen."
 
 #: ../../../../application/forms/Config/UserBackend/LdapBackendForm.php:140
 #: ../../../../application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:234
 msgid "The object class used for storing users on the LDAP server."
 msgstr ""
-"Die Objekt-Klasse welche benutzt wird, um Benutzer auf diesem LDAP-Server abzulegen"
+"Die Objekt-Klasse welche benutzt wird, um Benutzer auf diesem LDAP-Server abzulegen."
 
 #: ../../../../application/forms/Navigation/NavigationConfigForm.php:662
 msgid ""
@@ -2655,7 +2660,7 @@ msgid ""
 "main navigation item"
 msgstr ""
 "Das übergeordnete Element, dem dieses Navigationselement zugewiesen werden soll. "
-"Wählen Sie \"Keines\", um dies zu einem Hauptnavigationselement zu machen."
+"Wählen Sie \"Keines\", um dies zu einem Hauptnavigationselement zu machen"
 
 #: ../../../../application/forms/Navigation/MenuItemForm.php:27
 msgid ""
@@ -2663,7 +2668,7 @@ msgid ""
 "menu entry"
 msgstr ""
 "Der übergeordnete Menü, dem dieses Menü zugewiesen werden soll. Wählen Sie \"Keines"
-"\", um dies zu einem Hauptmenüeintrag zu machen."
+"\", um dies zu einem Hauptmenüeintrag zu machen"
 
 #: ../../../../application/forms/Config/Resource/DbResourceForm.php:142
 msgid "The password to use for authentication"
@@ -2692,19 +2697,19 @@ msgstr ""
 
 #: ../../../../application/forms/Config/Resource/FileResourceForm.php:59
 msgid "The pattern by which to identify columns."
-msgstr "Der reguläre Ausdruck, mit welchem Spalten identifiziert werden können"
+msgstr "Der reguläre Ausdruck, mit welchem Spalten identifiziert werden können."
 
 #: ../../../../application/forms/Security/RoleForm.php:140
 msgid "The permissions to grant. You may select more than one permission"
-msgstr "Die zu vergebenden Berechtigungen. Sie können mehrere gleichzeitig auswählen."
+msgstr "Die zu vergebenden Berechtigungen. Sie können mehrere gleichzeitig auswählen"
 
 #: ../../../../application/forms/Config/Resource/LdapResourceForm.php:92
 msgid "The port of the LDAP server to use for authentication"
-msgstr "Der Port des LDAP-Servers, der zur Authentifizierung genutzt werden soll."
+msgstr "Der Port des LDAP-Servers, der zur Authentifizierung genutzt werden soll"
 
 #: ../../../../application/forms/Config/Resource/DbResourceForm.php:111
 msgid "The port to use"
-msgstr "Der zu benutzende Port."
+msgstr "Der zu benutzende Port"
 
 #: ../../../../application/forms/Config/Resource/SshResourceForm.php:135
 #, php-format
@@ -2713,7 +2718,7 @@ msgstr "Der private Schlüssel des Benutzers \"%s\" ist bereits hinterlegt."
 
 #: ../../../../application/forms/Config/Resource/SshResourceForm.php:71
 msgid "The private key which will be used for the SSH connections"
-msgstr "Der private Schlüssel, der für SSH-Verbindungen verwendet wird."
+msgstr "Der private Schlüssel, der für SSH-Verbindungen verwendet wird"
 
 #: ../../../../application/controllers/ConfigController.php:396
 #, php-format
@@ -2741,7 +2746,7 @@ msgstr "Die zu benutzende Syslog-Facility."
 
 #: ../../../../application/forms/Navigation/NavigationItemForm.php:39
 msgid "The target where to open this navigation item's url"
-msgstr "Das Target der URL dieses Navigationselementes"
+msgstr "Das Ziel der URL dieses Navigationselementes"
 
 #: ../../../../application/forms/Announcement/AnnouncementForm.php:43
 msgid "The time to display the announcement from"
@@ -2749,7 +2754,7 @@ msgstr "Zeitpunkt, ab dem die Bekanntmachung angezeigt werden soll"
 
 #: ../../../../application/forms/Announcement/AnnouncementForm.php:53
 msgid "The time to display the announcement until"
-msgstr "Zeitpunkt, ab dem die Bekanntmachung nicht mehr angezeigt werden soll"
+msgstr "Zeitpunkt, bis zu dem die Bekanntmachung angezeigt werden soll"
 
 #: ../../../../application/forms/Config/Resource/DbResourceForm.php:207
 msgid "The trusted CA certificates in PEM format directory path"
@@ -2757,7 +2762,7 @@ msgstr "Der Pfad zum Verzeichnis mit vertrauenswürdigen CA-Zertifikaten im PEM-
 
 #: ../../../../application/forms/Config/Resource/DbResourceForm.php:92
 msgid "The type of SQL database"
-msgstr "Der Typ der SQL-Datenbank."
+msgstr "Der Typ der SQL-Datenbank"
 
 #: ../../../../application/forms/Config/General/LoggingConfigForm.php:40
 msgid "The type of logging to utilize."
@@ -2769,7 +2774,8 @@ msgstr "Der Typ der Ressource"
 
 #: ../../../../application/forms/Config/UserBackendConfigForm.php:290
 msgid "The type of the resource to use for this authenticaton provider"
-msgstr "Die Resource, die zum Authentifizieren mit diesem Provider genutzt werden soll"
+msgstr ""
+"Die Ressource, die zum Authentifizieren mit diesem Provider genutzt werden soll"
 
 #: ../../../../application/forms/Navigation/NavigationConfigForm.php:640
 msgid "The type of this navigation item"
@@ -2777,7 +2783,7 @@ msgstr "Der Typ dieses Navigationselementes"
 
 #: ../../../../application/forms/Config/UserGroup/UserGroupBackendForm.php:173
 msgid "The type of this user group backend"
-msgstr "Der Typ dieses Authentifizierungsbackends für Benutzergruppen"
+msgstr "Der Typ dieses Benutzergruppenbackends"
 
 #: ../../../../application/forms/Config/Resource/SshResourceForm.php:37
 #: ../../../../application/forms/Config/Resource/FileResourceForm.php:33
@@ -2806,7 +2812,7 @@ msgid ""
 msgstr ""
 "Die URL dieses Navigationselementes. Dies kann leer gelassen werden, wenn nur der "
 "Name angezeigt werden soll. Stelle für URLs mit Benutzername und Passwort sowie alle "
-"externen URLs sicher, dass eine passender Protokollnamen voran gestellt ist (z.B. "
+"externen URLs sicher, dass ein passender Protokollname voran gestellt ist (z.B. "
 "http://example.tld)"
 
 #: ../../../../application/forms/Navigation/DashletForm.php:29
@@ -2814,9 +2820,8 @@ msgid ""
 "The url to load in the dashlet. For external urls, make sure to prepend an "
 "appropriate protocol identifier (e.g. http://example.tld)"
 msgstr ""
-"Die URL, die in dem Dashlet geladen werden soll. Stellen Sie für externe URLs "
-"sicher, dass Sie einen passenden Protokollnamen voran stellen (z.B. http://example."
-"tld)"
+"Die URL, die in dem Dashlet geladen werden soll. Stelle für externe URLs sicher, "
+"dass ein passender Protokollname voran gestellt ist (z.B. http://example.tld)"
 
 #: ../../../../application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:78
 msgid "The user backend to link with this user group backend."
@@ -2829,11 +2834,11 @@ msgid ""
 "attempting an anonymous bind"
 msgstr ""
 "Der Benutzer DN, mit dem der LDAP-Server abgefragt werden soll. Leer lassen, um "
-"einen anonymen Zugriff zu versuchen."
+"einen anonymen Zugriff zu versuchen"
 
 #: ../../../../application/forms/Config/Resource/DbResourceForm.php:133
 msgid "The user name to use for authentication"
-msgstr "Der für die Authentifizierung zu benutzende Benutzername."
+msgstr "Der für die Authentifizierung zu benutzende Benutzername"
 
 #: ../../../../application/forms/PreferenceForm.php:180
 msgctxt "Form element label"
@@ -2842,7 +2847,7 @@ msgstr "Theme"
 
 #: ../../../../application/views/scripts/navigation/shared.phtml:15
 msgid "There are currently no navigation items being shared"
-msgstr "Aktuell werden keinen Navigationselemente geteilt."
+msgstr "Aktuell werden keinen Navigationselemente geteilt"
 
 #: ../../../../application/views/scripts/config/module.phtml:6
 msgid "There is no such module installed."
@@ -2851,7 +2856,8 @@ msgstr "Gegenwärtig ist kein solches Modul installiert."
 #: ../../../../application/views/scripts/showConfiguration.phtml:15
 msgid "There's an application error preventing you from persisting the configuration"
 msgstr ""
-"Ein Fehler in der Anwendung verhindert, dass Sie die Konfiguration speichern können"
+"Ein Fehler in der Anwendung verhindert, dass die Konfiguration gespeichert werden "
+"kann"
 
 #: ../../../../application/views/scripts/showConfiguration.phtml:10
 msgid "This could have one or more of the following reasons:"
@@ -2864,7 +2870,7 @@ msgid ""
 "unsharing %1$s"
 msgstr ""
 "Dies ist ein untergeordnetes Element des Navigationselementes %1$s. Sie können die "
-"Freigabe nur aufheben, wenn Sie dies auch für %1$s tun."
+"Freigabe nur aufheben, wenn Sie dies auch für %1$s tun"
 
 #: ../../../../application/views/scripts/config/module.phtml:60
 msgid "This module has no dependencies"
@@ -2884,22 +2890,24 @@ msgstr ""
 #: ../../../../library/Icinga/Web/Form/Decorator/Autosubmit.php:99
 msgid ""
 "This page will be automatically updated upon change of any of this form's fields"
-msgstr "Die Seite wird sich beim Ändern eines Feldes dieses Formulars aktualisieren"
+msgstr ""
+"Die Seite wird sich beim Ändern eines Feldes dieses Formulars automatisch "
+"aktualisieren"
 
 #: ../../../../library/Icinga/Web/Form.php:938
 #: ../../../../library/Icinga/Web/Form/Decorator/Autosubmit.php:100
 msgid "This page will be automatically updated upon change of the value"
-msgstr "Die Seite wird sich beim Ändern dieses Feldes aktualisieren"
+msgstr "Die Seite wird sich beim Ändern dieses Feldes automatisch aktualisieren"
 
 #: ../../../../application/forms/Navigation/NavigationConfigForm.php:595
 msgid "Tick this box to share this item with others"
-msgstr "Markieren Sie dieses Kästchen, um dieses Element mit Anderen zu teilen."
+msgstr "Markieren Sie dieses Kästchen, um dieses Element mit Anderen zu teilen"
 
 #: ../../../../application/forms/Config/Resource/SshResourceForm.php:90
 msgid "To modify the private key you must recreate this resource."
 msgstr ""
-"Um diesen privaten Schlüssel modifizieren zu können, müssen Sie diese Ressource neu "
-"anlegen."
+"Um diesen privaten Schlüssel modifizieren zu können, muss die Ressource neu angelegt "
+"werden."
 
 #: ../../../../application/views/scripts/navigation/shared.phtml:20
 #: ../../../../application/views/scripts/navigation/index.phtml:30
@@ -2929,7 +2937,7 @@ msgid ""
 msgstr ""
 "Es ist nicht möglich, die Freigabe des Navigationselementes \"%s\" aufzuheben, da es "
 "von dem Element \"%s\" abhängt. Die Freigaben abhängiger Elemente können nur "
-"aufgehoben werden, wenn dies auch für ihre Elternelemente durchgeführt wird."
+"aufgehoben werden, wenn dies auch für ihre Elternelemente durchgeführt wird"
 
 #: ../../../../application/views/scripts/navigation/shared.phtml:42
 #: ../../../../application/views/scripts/navigation/index.phtml:54
@@ -2982,7 +2990,7 @@ msgstr "Benutzer aktualisieren"
 
 #: ../../../../application/controllers/ConfigController.php:272
 msgid "Update User Backend"
-msgstr "Backend für Benutzer aktualisieren"
+msgstr "Benutzerbackend aktualisieren"
 
 #: ../../../../application/controllers/GroupController.php:187
 msgid "Update User Group"
@@ -2990,7 +2998,7 @@ msgstr "Benutzergruppe aktualisieren"
 
 #: ../../../../application/controllers/UsergroupbackendController.php:97
 msgid "Update User Group Backend"
-msgstr "Backend für Benutzergruppe aktualisieren"
+msgstr "Benutzergruppenbackend aktualisieren"
 
 #: ../../../../application/controllers/NavigationController.php:133
 #: ../../../../application/controllers/AccountController.php:27
@@ -3018,7 +3026,7 @@ msgstr "Die folgende Sprache verwenden, um Texte und Nachrichten anzuzeigen"
 
 #: ../../../../application/forms/PreferenceForm.php:225
 msgid "Use the following timezone for dates and times"
-msgstr "Die folgende Zeitzone für Datums- und Zeitangaben verwenden."
+msgstr "Die folgende Zeitzone für Datums- und Zeitangaben verwenden"
 
 #: ../../../../application/forms/Config/Resource/SshResourceForm.php:45
 #: ../../../../application/controllers/UserController.php:300
@@ -3046,7 +3054,7 @@ msgstr "Der Benutzer \"%s\" wurde aus der Gruppe \"%s\" entfernt"
 #: ../../../../application/controllers/UserController.php:231
 #, php-format
 msgid "User \"%s\" not found"
-msgstr "Der Benutzer \"%s\" wurde nicht gefunden."
+msgstr "Der Benutzer \"%s\" wurde nicht gefunden"
 
 #: ../../../../application/forms/Config/User/CreateMembershipForm.php:98
 #, php-format
@@ -3056,11 +3064,11 @@ msgstr "Der Benutzer %s ist bereits Mitglied in allen Gruppen"
 #: ../../../../application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:77
 #: ../../../../application/controllers/UserController.php:50
 msgid "User Backend"
-msgstr "Backend für Benutzer"
+msgstr "Benutzerbackend"
 
 #: ../../../../application/views/scripts/config/userbackend/reorder.phtml:5
 msgid "User Backends"
-msgstr "Backends für Benutzer"
+msgstr "Benutzerbackends"
 
 #: ../../../../application/views/scripts/group/list.phtml:50
 #: ../../../../application/controllers/GroupController.php:73
@@ -3073,11 +3081,11 @@ msgstr "Benutzergruppe"
 
 #: ../../../../application/controllers/GroupController.php:51
 msgid "User Group Backend"
-msgstr "Backend für Benutzergruppen"
+msgstr "Benutzergruppenbackend"
 
 #: ../../../../application/views/scripts/config/userbackend/reorder.phtml:19
 msgid "User Group Backends"
-msgstr "Backend für Benutzergruppen"
+msgstr "Benutzergruppenbackends"
 
 #: ../../../../application/controllers/RoleController.php:173
 #: ../../../../application/controllers/GroupController.php:387
@@ -3116,7 +3124,7 @@ msgstr "Benutzerbackend erfolgreich angelegt"
 #: ../../../../library/Icinga/Web/Controller/AuthBackendController.php:127
 #, php-format
 msgid "User group backend \"%s\" is not %s"
-msgstr "Benutzerbackend \"%s\" ist nicht %s"
+msgstr "Benutzergruppenbackend \"%s\" ist nicht %s"
 
 #: ../../../../application/controllers/UsergroupbackendController.php:94
 #: ../../../../library/Icinga/Web/Controller/AuthBackendController.php:120
@@ -3143,9 +3151,9 @@ msgid ""
 "User to log in as on the remote Icinga instance. Please note that key-based SSH "
 "login must be possible for this user"
 msgstr ""
-"Der Benutzer, mit dem die Anmeldung in die entfernte Icingainstanz erfolgen soll. "
+"Der Benutzer, mit dem die Anmeldung in die entfernte Icinga-Instanz erfolgen soll. "
 "Bitte beachten Sie, dass für diesen Benutzer ein schlüsselbasierter Zugriff möglich "
-"sein muss."
+"sein muss"
 
 #: ../../../../library/Icinga/Web/Menu.php:294
 msgid "Usergroups"
@@ -3181,7 +3189,7 @@ msgstr "Benutzer"
 #: ../../../../application/forms/Config/General/ThemingConfigForm.php:57
 msgctxt "Form element label"
 msgid "Users Can't Change Theme"
-msgstr "Theme Benutzeranpassung verbieten"
+msgstr "Benutzern Theme Anpassung verbieten"
 
 #: ../../../../application/forms/Config/UserBackendConfigForm.php:450
 #: ../../../../application/forms/Config/ResourceConfigForm.php:373
@@ -3234,7 +3242,7 @@ msgid ""
 "communication or none for unencrypted communication"
 msgstr ""
 "Verschlüsselung der Kommunikation. Wählen Sie STARTTLS oder LDAPS für verschlüsselte "
-"Kommunikation oder \"Keine\" für unverschlüsselte Kommunikation."
+"Kommunikation oder \"Keine\" für unverschlüsselte Kommunikation"
 
 #: ../../../../application/forms/Config/Resource/DbResourceForm.php:172
 msgid "Whether to encrypt the connection or to authenticate using certificates"
@@ -3277,7 +3285,7 @@ msgstr "Sie haben noch kein Navigationselement angelegt."
 
 #: ../../../../application/views/scripts/showConfiguration.phtml:13
 msgid "You don't have file-system permissions to write to the file"
-msgstr "Sie haben keine Schreibrechte auf diese Datei."
+msgstr "Sie haben keine Schreibrechte auf diese Datei"
 
 #: ../../../../application/controllers/UserController.php:237
 msgid ""
@@ -3285,7 +3293,7 @@ msgid ""
 "new memberships"
 msgstr ""
 "Sie müssen zuerst mindestens ein Benutzergruppenbackend anlegen, um neue "
-"Mitgliedschaften definieren zu können."
+"Mitgliedschaften definieren zu können"
 
 #: ../../../../application/forms/Authentication/LoginForm.php:143
 msgid ""
