@@ -3868,3 +3868,11 @@ msgstr "umschalten"
 
 #~ msgid "for"
 #~ msgstr "für"
+
+#: ../../../../application/forms/Config/Resource/DbResourceForm.php:176
+msgid "SSL Do Not Verify Server Certificate"
+msgstr "SSL-Serverzertifikat nicht verifizieren"
+
+#: ../../../../application/forms/Config/Resource/DbResourceForm.php:178
+msgid "Whether to disable verification of the server certificate"
+msgstr "Die Verifikation des Serverzertifikats deaktivieren"

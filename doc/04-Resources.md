@@ -23,21 +23,22 @@ ssh                      | Manage [SSH](04-Resources.md#resources-configuration-
 A Database resource defines a connection to a SQL database which
 can contain users and groups to handle authentication and authorization, monitoring data or user preferences.
 
-Option                   | Description
--------------------------|-----------------------------------------------
-type                     | **Required.** Specifies the resource type. Must be set to `db`.
-db                       | **Required.** Database type. In most cases `mysql` or `pgsql`.
-host                     | **Required.** Connect to the database server on the given host. For using unix domain sockets, specify `localhost` for MySQL and the path to the unix domain socket directory for PostgreSQL.
-port                     | **Required.** Port number to use. MySQL defaults to `3306`, PostgreSQL defaults to `5432`. Mandatory for connections to a PostgreSQL database.
-username                 | **Required.** The database username.
-password                 | **Required.** The database password.
-dbname                   | **Required.** The database name.
-charset                  | **Optional.** The character set for the database connection.
-ssl\_cert                | **Optional.** The file path to the SSL certificate. Only available for the `mysql` database.
-ssl\_key                 | **Optional.** The file path to the SSL key. Only available for the `mysql` database.
-ssl\_ca                  | **Optional.** The file path to the SSL certificate authority. Only available for the `mysql` database.
-ssl\_capath              | **Optional.** The file path to the directory that contains the trusted SSL CA certificates, which are stored in PEM format.Only available for the `mysql` database.
-ssl\_cipher              | **Optional.** A list of one or more permissible ciphers to use for SSL encryption, in a format understood by OpenSSL. For example: `DHE-RSA-AES256-SHA:AES128-SHA`. Only available for the `mysql` database.
+Option                              | Description
+------------------------------------|------------
+type                                | **Required.** Specifies the resource type. Must be set to `db`.
+db                                  | **Required.** Database type. In most cases `mysql` or `pgsql`.
+host                                | **Required.** Connect to the database server on the given host. For using unix domain sockets, specify `localhost` for MySQL and the path to the unix domain socket directory for PostgreSQL.
+port                                | **Required.** Port number to use. MySQL defaults to `3306`, PostgreSQL defaults to `5432`. Mandatory for connections to a PostgreSQL database.
+username                            | **Required.** The database username.
+password                            | **Required.** The database password.
+dbname                              | **Required.** The database name.
+charset                             | **Optional.** The character set for the database connection.
+ssl\_do\_not\_verify\_server\_cert  | **Optional.** Disable validation of the server certificate. Only available for the `mysql` database and on PHP versions > 5.6.
+ssl\_cert                           | **Optional.** The file path to the SSL certificate. Only available for the `mysql` database.
+ssl\_key                            | **Optional.** The file path to the SSL key. Only available for the `mysql` database.
+ssl\_ca                             | **Optional.** The file path to the SSL certificate authority. Only available for the `mysql` database.
+ssl\_capath                         | **Optional.** The file path to the directory that contains the trusted SSL CA certificates, which are stored in PEM format.Only available for the `mysql` database.
+ssl\_cipher                         | **Optional.** A list of one or more permissible ciphers to use for SSL encryption, in a format understood by OpenSSL. For example: `DHE-RSA-AES256-SHA:AES128-SHA`. Only available for the `mysql` database.
 
 
 #### Example <a id="resources-configuration-database-example"></a>
