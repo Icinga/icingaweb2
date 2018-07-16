@@ -133,10 +133,16 @@ abstract class Zend_Db_Adapter_Pdo_Abstract extends Zend_Db_Adapter_Abstract
             $this->_connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
         } catch (PDOException $e) {
+            $message = $e->getMessage();
+            if ($e->getPrevious() !== null && preg_match('~^SQLSTATE\[HY000\] \[\d{1,4}\]\s$~', $message)) {
+                // See https://bugs.php.net/bug.php?id=76604
+                $message .= $e->getPrevious()->getMessage();
+            }
+
             /**
              * @see Zend_Db_Adapter_Exception
              */
-            throw new Zend_Db_Adapter_Exception($e->getMessage(), $e->getCode(), $e);
+            throw new Zend_Db_Adapter_Exception($message, $e->getCode(), $e);
         }
 
     }
