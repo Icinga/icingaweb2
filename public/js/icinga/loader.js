@@ -588,7 +588,7 @@
                 oldNotifications.appendTo($('#notifications'));
             }
             if (url.match(/#/)) {
-                this.icinga.ui.focusElement(url.split(/#/)[1], req.$target);
+                setTimeout(this.icinga.ui.focusElement, 0, url.split(/#/)[1], req.$target);
             }
             if (newBody) {
                 this.icinga.ui.fixDebugVisibility().triggerWindowResize();
