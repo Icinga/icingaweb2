@@ -21,7 +21,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.network "forwarded_port", guest: 443, host: 8443,
     auto_correct: true
 
-  config.vm.box = "bento/centos-7.4"
+  config.vm.box = "bento/centos-7"
 
   config.vm.provision :shell, :path => ".puppet/manifests/puppet.sh"
 
