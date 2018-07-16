@@ -309,7 +309,7 @@ class Tab extends AbstractWidget
 
             $tab = sprintf(
                 '<a href="%s"%s>%s</a>',
-                $this->url,
+                $this->view()->escape($this->url->getAbsoluteUrl()),
                 $params,
                 $caption
             );

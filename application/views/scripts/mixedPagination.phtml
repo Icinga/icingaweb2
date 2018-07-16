@@ -10,7 +10,7 @@
             $this->totalItemCount
         ) ?>
         <li class="nav-item">
-            <a  href="<?= $this->url()->overwriteParams(array('page' => $this->previous)) ?>"
+            <a  href="<?= $this->escape($this->url()->overwriteParams(array('page' => $this->previous))->getAbsoluteUrl()) ?>"
                 title="<?= $label ?>"
                 aria-label="<?= $label ?>"
                 class="previous-page">
@@ -44,7 +44,7 @@
             );
             ?>
             <li<?= $page === $this->current ? ' class="active nav-item"' : ' class="nav-item"' ?>>
-                <a  href="<?= $this->url()->overwriteParams(array('page' => $page)) ?>"
+                <a  href="<?= $this->escape($this->url()->overwriteParams(array('page' => $page))->getAbsoluteUrl()) ?>"
                     title="<?= $label ?>"
                     aria-label="<?= $label ?>">
                     <?= $page ?>
@@ -60,7 +60,7 @@
             $this->totalItemCount
         ) ?>
         <li class="nav-item">
-            <a  href="<?= $this->url()->overwriteParams(array('page' => $this->next)) ?>"
+            <a  href="<?= $this->escape($this->url()->overwriteParams(array('page' => $this->next))->getAbsoluteUrl()) ?>"
                 title="<?= $label ?>"
                 aria-label="<?= $label ?>"
                 class="next-page">

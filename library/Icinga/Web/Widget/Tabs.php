@@ -342,7 +342,7 @@ EOT;
                 '{LABEL}'
             ),
             array(
-                $url,
+                $this->view()->escape($url->getAbsoluteUrl()),
                 $title,
                 $label
             ),
