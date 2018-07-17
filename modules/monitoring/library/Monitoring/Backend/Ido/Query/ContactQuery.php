@@ -58,6 +58,14 @@ class ContactQuery extends IdoQuery
 
     public function addFilter(Filter $filter)
     {
+        $strangers = array_diff(
+            $filter->listFilteredColumns(),
+            array_keys($this->columnMap['contacts'])
+        );
+        if (! empty($strangers)) {
+            $this->transformToUnion();
+        }
+
         foreach ($this->subQueries as $sub) {
             $sub->applyFilter(clone $filter);
         }
@@ -67,20 +75,14 @@ class ContactQuery extends IdoQuery
 
     protected function joinBaseTables()
     {
-        $this->contactQuery = $this->db->select();
+        $this->contactQuery = $this->createSubQuery('Hostcontact', array_keys($this->columnMap['contacts']));
+        $this->contactQuery->setIsSubQuery();
+        $this->subQueries[] = $this->contactQuery;
 
-        $this->select->distinct()->from(
+        $this->select->from(
             ['c' => $this->contactQuery],
             []
         );
-
-        $hosts = $this->createSubQuery('hostcontact', array_keys($this->columnMap['contacts']));
-        $this->subQueries[] = $hosts;
-        $this->contactQuery->union([$hosts], Zend_Db_Select::SQL_UNION_ALL);
-
-        $services = $this->createSubQuery('servicecontact', array_keys($this->columnMap['contacts']));
-        $this->subQueries[] = $services;
-        $this->contactQuery->union([$services], Zend_Db_Select::SQL_UNION_ALL);
 
         $this->joinedVirtualTables['contacts'] = true;
     }
@@ -102,5 +104,25 @@ class ContactQuery extends IdoQuery
         }
 
         return $this;
+    }
+
+    public function transformToUnion()
+    {
+        $this->contactQuery = $this->db->select();
+        $this->select->reset();
+        $this->subQueries = [];
+
+        $this->select->distinct()->from(
+            ['c' => $this->contactQuery],
+            []
+        );
+
+        $hosts = $this->createSubQuery('Hostcontact', array_keys($this->columnMap['contacts']));
+        $this->subQueries[] = $hosts;
+        $this->contactQuery->union([$hosts], Zend_Db_Select::SQL_UNION_ALL);
+
+        $services = $this->createSubQuery('Servicecontact', array_keys($this->columnMap['contacts']));
+        $this->subQueries[] = $services;
+        $this->contactQuery->union([$services], Zend_Db_Select::SQL_UNION_ALL);
     }
 }

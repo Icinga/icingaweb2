@@ -85,22 +85,7 @@ class HostcontactQuery extends IdoQuery
             []
         );
 
-        $this->select->joinLeft(
-            ['hc' => $this->prefix . 'host_contacts'],
-            'hc.contact_object_id = c.contact_object_id',
-            []
-        )->joinLeft(
-            ['h' => $this->prefix . 'hosts'],
-            'h.host_id = hc.host_id',
-            []
-        )->joinLeft(
-            ['ho' => $this->prefix . 'objects'],
-            'ho.object_id = h.host_object_id AND ho.is_active = 1',
-            []
-        );
-
-        $this->joinedVirtualTables['contacts'] = true;
-        $this->joinedVirtualTables['hosts'] = true;
+        $this->joinedVirtualTables = array('contacts' => true);
     }
 
     /**
@@ -139,6 +124,26 @@ class HostcontactQuery extends IdoQuery
         )->joinLeft(
             ['hgo' => $this->prefix . 'objects'],
             'hgo.object_id = hg.hostgroup_object_id AND hgo.is_active = 1 AND hgo.objecttype_id = 3',
+            []
+        );
+    }
+
+    /**
+     * Join hosts
+     */
+    protected function joinHosts()
+    {
+        $this->select->joinLeft(
+            ['hc' => $this->prefix . 'host_contacts'],
+            'hc.contact_object_id = c.contact_object_id',
+            []
+        )->joinLeft(
+            ['h' => $this->prefix . 'hosts'],
+            'h.host_id = hc.host_id',
+            []
+        )->joinLeft(
+            ['ho' => $this->prefix . 'objects'],
+            'ho.object_id = h.host_object_id AND ho.is_active = 1',
             []
         );
     }
