@@ -5,6 +5,7 @@ namespace Icinga\Application\Hook;
 
 use Exception;
 use InvalidArgumentException;
+use Icinga\Authentication\Auth;
 use Icinga\Application\Hook;
 use Icinga\Application\Logger;
 
@@ -18,11 +19,21 @@ abstract class AuditHook
      * @param   string  $type       An arbitrary name identifying the type of activity
      * @param   string  $message    A detailed description possibly referencing parameters in $data
      * @param   array   $data       Additional information (How this is stored or used is up to each implementation)
+     * @param   string  $identity   An arbitrary name identifying the responsible subject, defaults to the current user
+     * @param   int     $time       A timestamp defining when the activity occurred, defaults to now
      */
-    public static function logActivity($type, $message, array $data = null)
+    public static function logActivity($type, $message, array $data = null, $identity = null, $time = null)
     {
         if (! Hook::has('audit')) {
             return;
+        }
+
+        if ($identity === null) {
+            $identity = Auth::getInstance()->getUser()->getUsername();
+        }
+
+        if ($time === null) {
+            $time = time();
         }
 
         foreach (Hook::all('audit') as $hook) {
@@ -35,7 +46,7 @@ abstract class AuditHook
                     $formattedMessage = $hook->formatMessage($message, $data);
                 }
 
-                $hook->logMessage($type, $formattedMessage, $data);
+                $hook->logMessage($time, $identity, $type, $formattedMessage, $data);
             } catch (Exception $e) {
                 Logger::error(
                     'Failed to propagate audit message to hook "%s". An error occurred: %s',
@@ -49,11 +60,13 @@ abstract class AuditHook
     /**
      * Log a message to the audit log
      *
+     * @param   int     $time       A timestamp defining when the activity occurred
+     * @param   string  $identity   An arbitrary name identifying the responsible subject
      * @param   string  $type       An arbitrary name identifying the type of activity
      * @param   string  $message    A detailed description of the activity
      * @param   array   $data       Additional activity information
      */
-    abstract public function logMessage($type, $message, array $data = null);
+    abstract public function logMessage($time, $identity, $type, $message, array $data = null);
 
     /**
      * Substitute the given message with its accompanying data
