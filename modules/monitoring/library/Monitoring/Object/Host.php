@@ -100,6 +100,7 @@ class Host extends MonitoredObject
             'host_attempt',
             'host_check_command',
             'host_check_execution_time',
+            'host_check_interval',
             'host_check_latency',
             'host_check_source',
             'host_check_timeperiod',
