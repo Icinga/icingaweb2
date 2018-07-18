@@ -239,7 +239,7 @@ class ServicenotificationQuery extends IdoQuery
         return $group;
     }
 
-    protected function joinSubQuery(IdoQuery $query, $name)
+    protected function joinSubQuery(IdoQuery $query, $name, $filter, $and, $negate, &$additionalFilter)
     {
         if ($name === 'hostgroup') {
             $this->requireVirtualTable('services');
@@ -253,6 +253,6 @@ class ServicenotificationQuery extends IdoQuery
             return ['sgm.service_object_id', 'so.object_id'];
         }
 
-        return parent::joinSubQuery($query, $name);
+        return parent::joinSubQuery($query, $name, $filter, $and, $negate, $additionalFilter);
     }
 }

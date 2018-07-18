@@ -503,14 +503,18 @@ abstract class IdoQuery extends DbQuery
     /**
      * Prepare the given query so that it can be linked to the parent
      *
-     * @param   IdoQuery    $query
-     * @param   string      $name
+     * @param   IdoQuery            $query
+     * @param   string              $name
+     * @param   FilterExpression    $filter             The filter which initiated the sub query
+     * @param   bool                $and                Whether it's an AND filter
+     * @param   bool                $negate             Whether it's an != filter
+     * @param   FilterExpression    $additionalFilter   Filters which should be applied to the "parent" query
      *
-     * @return  array       The first value is their, the second our key column
+     * @return  array   The first value is their, the second our key column
      *
-     * @throws  NotImplementedError     In case the given query is unknown
+     * @throws  NotImplementedError In case the given query is unknown
      */
-    protected function joinSubQuery(IdoQuery $query, $name)
+    protected function joinSubQuery(IdoQuery $query, $name, $filter, $and, $negate, &$additionalFilter)
     {
         throw new NotImplementedError('Query "%s" is unknown', $name);
     }
@@ -521,7 +525,7 @@ abstract class IdoQuery extends DbQuery
      * @param   FilterExpression    $filter
      * @param   string              $queryName
      *
-     * @return  FilterExpression
+     * @return  Filter
      *
      * @throws  QueryException
      */
@@ -530,15 +534,42 @@ abstract class IdoQuery extends DbQuery
         $expr = $filter->getExpression();
         $op = $filter->getSign();
 
-        if ($op !== '=' && ! is_array($expr) && $op === '!=') {
-            // Fallback to standard filter behavior
+        if ($op === '=' && ! is_array($expr) && $op !== '!=') {
+            // We're joining a subquery only if the filter is enclosed in parentheses or if it's a != filter,
+            // e.g. hostgroup_name=(linux...), hostgroup_name!=linux, hostgroup_name!=(linux...)
             throw new NotImplementedError('');
         }
 
         $subQuery = $this->createSubQuery($queryName);
         $subQuery->setIsSubQuery();
 
-        list($theirs, $ours) = $this->joinSubQuery($subQuery, $queryName);
+        $subQueryFilter = clone $filter;
+
+        if ($op === '!=') {
+            $negate = true;
+            if (! is_array($expr)) {
+                // We assume that expression is an array later on but we'll support subquery joins for != filters
+                // which are not enclosed in parentheses
+                $expr = [$expr];
+            }
+        } else {
+            $negate = false;
+        }
+
+        if (count($expr) === 1 && strpos($expr[0], '&') !== false) {
+            // Our current filter implementation does not specify & as a control character so the count of the
+            // expression array is always one in this case
+            $expr = explode('&', $expr[0]);
+            $subQueryFilter->setExpression($expr);
+            $and = true;
+        } else {
+            // Or filters are respected by our filter implementation. No special handling needed here
+            $and = false;
+        }
+
+        $additional = null;
+
+        list($theirs, $ours) = $this->joinSubQuery($subQuery, $queryName, $subQueryFilter, $and, $negate, $additional);
 
         $zendSelect = $subQuery->select();
         $fromPart = $zendSelect->getPart($zendSelect::FROM);
@@ -573,33 +604,8 @@ abstract class IdoQuery extends DbQuery
             }
         }
 
-        $subQueryFilter = clone $filter;
-
-        if ($op === '!=') {
-            $negate = true;
-            if (! is_array($expr)) {
-                $expr = [$expr];
-            }
-            $subQueryFilter = $subQueryFilter->setSign('=');
-        } else {
-            $negate = false;
-        }
-
-        $subQueryFilter->setColumn(preg_replace(
-            '/(?<=^|\s)\w+(?=\.)/',
-            'sub_$0',
-            $subQuery->aliasToColumnName($filter->getColumn())
-        ));
-
-        if (count($expr) === 1 && strpos($expr[0], '&') !== false) {
-            $expr = explode('&', $expr[0]);
-            $subQueryFilter->setExpression($expr);
-            $and = true;
-        } else {
-            $and = false;
-        }
-
         if ($and || $negate && ! $and) {
+            // Having is only required for AND and != filters,
             // e.g. hostgroup_name=(ping&linux), hostgroup_name!=ping, hostgroup_name!=(ping|linux)
             $groups = $subQuery->getGroup();
             $group = $groups[0];
@@ -608,6 +614,17 @@ abstract class IdoQuery extends DbQuery
             $cnt = count($expr);
 
             $subQuery->select()->having("COUNT(DISTINCT $group) >= $cnt");
+        }
+
+        $subQueryFilter->setColumn(preg_replace(
+            '/(?<=^|\s)\w+(?=\.)/',
+            'sub_$0',
+            $subQuery->aliasToColumnName($filter->getColumn())
+        ));
+
+        if ($negate) {
+            // != will be NOT EXISTS later
+            $subQueryFilter = $subQueryFilter->setSign('=');
         }
 
         $subQueryFilter = $subQueryFilter->andFilter(Filter::where(
@@ -624,7 +641,17 @@ abstract class IdoQuery extends DbQuery
 
         // EXISTS is the column name because without any column $this->isCustomVar() fails badly otherwise.
         // Additionally it bypasses the non-required optimizations made by our filter rendering implementation.
-        return new FilterExpression($negate ? 'NOT EXISTS' : 'EXISTS', '', new Zend_Db_Expr($subQuery));
+        $exists = new FilterExpression($negate ? 'NOT EXISTS' : 'EXISTS', '', new Zend_Db_Expr($subQuery));
+
+        if ($additional !== null) {
+            $alias = $additional->getColumn();
+            $this->requireColumn($alias);
+            $additional->setColumn($this->aliasToColumnName($alias));
+
+            return Filter::matchAll($exists, $additional);
+        }
+
+        return $exists;
     }
 
     protected function requireFilterColumns(Filter $filter)

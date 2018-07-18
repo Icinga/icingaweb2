@@ -184,7 +184,7 @@ class ServicedowntimestarthistoryQuery extends IdoQuery
         );
     }
 
-    protected function joinSubQuery(IdoQuery $query, $name)
+    protected function joinSubQuery(IdoQuery $query, $name, $filter, $and, $negate, &$additionalFilter)
     {
         if ($name === 'hostgroup') {
             $query->joinVirtualTable('services');
@@ -196,6 +196,6 @@ class ServicedowntimestarthistoryQuery extends IdoQuery
             return ['sgm.service_object_id', 'so.object_id'];
         }
 
-        return parent::joinSubQuery($query, $name);
+        return parent::joinSubQuery($query, $name, $filter, $and, $negate, $additionalFilter);
     }
 }

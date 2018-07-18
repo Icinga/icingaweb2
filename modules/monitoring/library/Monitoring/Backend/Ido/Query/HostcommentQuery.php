@@ -185,7 +185,7 @@ class HostcommentQuery extends IdoQuery
         );
     }
 
-    protected function joinSubQuery(IdoQuery $query, $name)
+    protected function joinSubQuery(IdoQuery $query, $name, $filter, $and, $negate, &$additionalFilter)
     {
         if ($name === 'hostgroup') {
             $query->joinVirtualTable('members');
@@ -197,6 +197,6 @@ class HostcommentQuery extends IdoQuery
             return ['s.host_object_id', 'ho.object_id'];
         }
 
-        return parent::joinSubQuery($query, $name);
+        return parent::joinSubQuery($query, $name, $filter, $and, $negate, $additionalFilter);
     }
 }

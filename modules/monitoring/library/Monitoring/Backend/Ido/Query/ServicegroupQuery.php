@@ -3,6 +3,8 @@
 
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
+use Icinga\Exception\NotImplementedError;
+
 class ServicegroupQuery extends IdoQuery
 {
     protected $groupBase = array(
@@ -184,7 +186,7 @@ class ServicegroupQuery extends IdoQuery
         );
     }
 
-    protected function joinSubQuery(IdoQuery $query, $name)
+    protected function joinSubQuery(IdoQuery $query, $name, $filter, $and, $negate, &$additionalFilter)
     {
         if ($name === 'hostgroup') {
             $this->requireVirtualTable('members');
@@ -193,11 +195,19 @@ class ServicegroupQuery extends IdoQuery
 
             return ['so.object_id', 'so.object_id'];
         } elseif ($name === 'servicegroup') {
+            if (! $and) {
+                // IN AND NOT IN for OR filters works w/o subquery joins
+                throw new NotImplementedError('');
+            } else {
+                // Propagate that the "parent" query has to be filtered as well
+                $additionalFilter = clone $filter;
+            }
+
             $query->joinVirtualTable('members');
 
             return ['sgm.service_object_id', 'so.object_id'];
         }
 
-        return parent::joinSubQuery($query, $name);
+        return parent::joinSubQuery($query, $name, $filter, $and, $negate, $additionalFilter);
     }
 }

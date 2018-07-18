@@ -3,6 +3,8 @@
 
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
+use Icinga\Exception\NotImplementedError;
+
 /**
  * Query for host groups
  */
@@ -229,9 +231,17 @@ class HostgroupQuery extends IdoQuery
         );
     }
 
-    protected function joinSubQuery(IdoQuery $query, $name)
+    protected function joinSubQuery(IdoQuery $query, $name, $filter, $and, $negate, &$additionalFilter)
     {
         if ($name === 'hostgroup') {
+            if (! $and) {
+                // IN AND NOT IN works for OR filters w/o subquery joins
+                throw new NotImplementedError('');
+            } else {
+                // Propagate that the "parent" query has to be filtered as well
+                $additionalFilter = clone $filter;
+            }
+
             $this->requireVirtualTable('members');
 
             $query->joinVirtualTable('members');
@@ -245,6 +255,6 @@ class HostgroupQuery extends IdoQuery
             return ['s.host_object_id', 'ho.object_id'];
         }
 
-        return parent::joinSubQuery($query, $name);
+        return parent::joinSubQuery($query, $name, $filter, $and, $negate, $additionalFilter);
     }
 }
