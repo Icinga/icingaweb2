@@ -100,7 +100,8 @@ class HostController extends MonitoredObjectController
             'service_active_checks_enabled',
             'service_passive_checks_enabled',
             'current_check_attempt' => 'service_current_check_attempt',
-            'max_check_attempts'    => 'service_max_check_attempts'
+            'max_check_attempts'    => 'service_max_check_attempts',
+            'service_check_command'
         ));
         $this->applyRestriction('monitoring/filter/objects', $query);
         $this->view->services = $query->where('host_name', $this->object->getName());

@@ -86,7 +86,7 @@ if (! $this->compact): ?>
                     <div class="overview-performance-data">
                         <?= $this->perfdata($service->service_perfdata, true, 5) ?>
                     </div>
-                    <p class="overview-plugin-output"><?= $this->pluginOutput($this->ellipsis($service->service_output, 10000), true) ?></p>
+                    <p class="overview-plugin-output"><?= $this->pluginOutput($this->ellipsis($service->service_output, 10000), true, $service->service_check_command) ?></p>
                 </div>
             </td>
         <?php foreach($this->addColumns as $col): ?>

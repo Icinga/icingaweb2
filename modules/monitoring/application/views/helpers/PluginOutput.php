@@ -76,18 +76,30 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
         '<table style="font-size: 0.75em"'
     );
 
+    /** @var \Icinga\Module\Monitoring\Web\Helper\PluginOutputHookRenderer */
+    protected $hookRenderer;
+
+    public function __construct()
+    {
+        $this->hookRenderer = (new \Icinga\Module\Monitoring\Web\Helper\PluginOutputHookRenderer())->registerHooks();
+    }
+
     /**
      * Render plugin output
      *
      * @param   string  $output
      * @param   bool    $raw
+     * @param   string  $command    Check command
      *
      * @return  string
      */
-    public function pluginOutput($output, $raw = false)
+    public function pluginOutput($output, $raw = false, $command = null)
     {
         if (empty($output)) {
             return '';
+        }
+        if ($command !== null) {
+            $output = $this->hookRenderer->render($command, $output, ! $raw);
         }
         $output = preg_replace('~<br[^>]*>~', "\n", $output);
         if (preg_match('~<[^>]*["/\'][^>]*>~', $output)) {
