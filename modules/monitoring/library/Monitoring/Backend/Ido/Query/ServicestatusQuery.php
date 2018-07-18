@@ -138,6 +138,7 @@ class ServicestatusQuery extends IdoQuery
             'object_type'               => '(\'service\')',
             'service'                   => 'so.name2 COLLATE latin1_general_ci',
             'service_action_url'        => 's.action_url',
+            'service_check_interval'    => '(s.check_interval * 60)',
             'service_description'       => 'so.name2',
             'service_display_name'      => 's.display_name COLLATE latin1_general_ci',
             'service_host'              => 'so.name1 COLLATE latin1_general_ci',

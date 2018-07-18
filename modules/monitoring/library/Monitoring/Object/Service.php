@@ -135,6 +135,7 @@ class Service extends MonitoredObject
             'service_attempt',
             'service_check_command',
             'service_check_execution_time',
+            'service_check_interval',
             'service_check_latency',
             'service_check_source',
             'service_check_timeperiod',
