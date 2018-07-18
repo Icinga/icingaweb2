@@ -1,4 +1,6 @@
-<?php if (isset($grapher)) {
-  echo $grapher->getPreviewHtml($object);
+<?php if (isset($graphers)) {
+  foreach ($graphers as $grapher) {
+    echo $grapher->getPreviewHtml($object);
+  }
 } ?>
 
