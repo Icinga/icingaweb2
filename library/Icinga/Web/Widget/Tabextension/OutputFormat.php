@@ -4,6 +4,7 @@
 namespace Icinga\Web\Widget\Tabextension;
 
 use Icinga\Application\Platform;
+use Icinga\Application\Hook;
 use Icinga\Web\Url;
 use Icinga\Web\Widget\Tab;
 use Icinga\Web\Widget\Tabs;
@@ -81,7 +82,13 @@ class OutputFormat implements Tabextension
     {
         $supportedTypes = array();
 
-        if (Platform::extensionLoaded('gd')) {
+        $pdfexport = false;
+
+        if (Hook::has('Pdfexport')) {
+            $pdfexport = Hook::first('Pdfexport')->isSupported();
+        }
+
+        if ($pdfexport || Platform::extensionLoaded('gd')) {
             $supportedTypes[self::TYPE_PDF] = array(
                 'name'      => 'pdf',
                 'label'     => 'PDF',
