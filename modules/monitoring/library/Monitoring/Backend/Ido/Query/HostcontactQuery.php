@@ -17,6 +17,11 @@ class HostcontactQuery extends IdoQuery
 
     protected $groupOrigin = ['contactgroups', 'hosts', 'services'];
 
+    protected $subQueryTargets = [
+        'hostgroups'    => 'hostgroup',
+        'servicegroups' => 'servicegroup'
+    ];
+
     protected $columnMap = [
         'contactgroups' => [
             'contactgroup'       => 'cgo.name1 COLLATE latin1_general_ci',
@@ -189,6 +194,8 @@ class HostcontactQuery extends IdoQuery
      */
     protected function joinServices()
     {
+        $this->joinHosts();
+
         $this->select->joinLeft(
             ['s' => $this->prefix . 'services'],
             's.host_object_id = ho.object_id',
@@ -215,5 +222,24 @@ class HostcontactQuery extends IdoQuery
             'st.timeperiod_object_id = c.service_timeperiod_object_id',
             []
         );
+    }
+
+    protected function joinSubQuery(IdoQuery $query, $name, $filter, $and, $negate, &$additionalFilter)
+    {
+        if ($name === 'hostgroup') {
+            $this->requireVirtualTable('hosts');
+
+            $query->joinVirtualTable('members');
+
+            return ['hgm.host_object_id', 'ho.object_id'];
+        } elseif ($name === 'servicegroup') {
+            $this->requireVirtualTable('services');
+
+            $query->joinVirtualTable('members');
+
+            return ['sgm.service_object_id', 'so.object_id'];
+        }
+
+        return parent::joinSubQuery($query, $name, $filter, $and, $negate, $additionalFilter);
     }
 }
