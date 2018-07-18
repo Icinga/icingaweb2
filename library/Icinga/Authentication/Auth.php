@@ -165,7 +165,7 @@ class Auth
         if ($persist) {
             $this->persistCurrentUser();
         }
-        AuditHook::logActivity('login', 'User {{username}} logged in', ['username' => $user->getUsername()]);
+        AuditHook::logActivity('login', 'User logged in');
     }
 
     /**
@@ -364,7 +364,7 @@ class Auth
      */
     public function removeAuthorization()
     {
-        AuditHook::logActivity('logout', 'User {{username}} logged out', ['username' => $this->user->getUsername()]);
+        AuditHook::logActivity('logout', 'User logged out');
         $this->user = null;
         Session::getSession()->purge();
     }
