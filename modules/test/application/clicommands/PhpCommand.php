@@ -3,8 +3,11 @@
 
 namespace Icinga\Module\Test\Clicommands;
 
+use DOMDocument;
+use DOMXPath;
 use Icinga\Application\Icinga;
 use Icinga\Cli\Command;
+use Icinga\File\Storage\TemporaryLocalFileStorage;
 
 /**
  * PHP unit- & style-tests
@@ -63,10 +66,18 @@ class PhpCommand extends Command
             $options[] = $include;
         }
 
-        chdir(Icinga::app()->getBaseDir());
+        $baseDir = Icinga::app()->getBaseDir();
+        $phpunitXml = new DOMDocument();
+        $temp = new TemporaryLocalFileStorage();
+
+        $phpunitXml->loadXML(file_get_contents("$baseDir/modules/test/phpunit.xml"));
+        $this->adjustPhpunitDom($phpunitXml);
+        $temp->create('phpunit.xml', $phpunitXml->saveXML());
+
+        chdir($baseDir);
         $command = $this->getEnvironmentVariables()
             . $phpUnit
-            . ' -c modules/test/phpunit.xml'
+            . " -c {$temp->resolvePath('phpunit.xml')}"
             . ' ' . join(' ', array_merge($options, $this->params->getAllStandalone()));
         
         if ($this->isVerbose) {
@@ -175,9 +186,15 @@ class PhpCommand extends Command
      */
     protected function getEnvironmentVariables()
     {
+        $modulePaths = [];
+        foreach (Icinga::app()->getModuleManager()->getModuleInfo() as $module) {
+            $modulePaths[] = $module->path;
+        }
+
         $vars = array();
         $vars[] = sprintf('ICINGAWEB_BASEDIR=%s', $this->app->getBaseDir());
         $vars[] = sprintf('ICINGAWEB_ICINGA_LIB=%s', $this->app->getLibraryDir('Icinga'));
+        $vars[] = sprintf('ICINGAWEB_MODULE_DIRS=%s', implode(':', $modulePaths));
 
         // Disabled as the bootstrap.php for PHPUnit and class BaseTestCase can't handle multiple paths yet
         /*$vars[] = sprintf(
@@ -186,5 +203,67 @@ class PhpCommand extends Command
         );*/
 
         return join(' ', $vars) . ' ';
+    }
+
+    /**
+     * Make all relative paths absolute and include all installed modules
+     *
+     * @param   DOMDocument $phpunitXml
+     */
+    protected function adjustPhpunitDom(DOMDocument $phpunitXml)
+    {
+        $app = Icinga::app();
+        $modulesTest = "{$app->getBaseDir()}/modules/test/";
+        $domPath = new DOMXPath($phpunitXml);
+
+        $phpunit = $domPath->query("//phpunit")->item(0);
+        $phpunit->setAttribute('bootstrap', $modulesTest . $phpunit->getAttribute('bootstrap'));
+
+        foreach ([
+            '//phpunit/testsuites/testsuite/directory',
+            '//phpunit/testsuites/testsuite/exclude',
+            '//phpunit/filter/whitelist/directory',
+            '//phpunit/filter/whitelist/exclude/directory',
+            '//phpunit/filter/whitelist/exclude/file'
+        ] as $xPath) {
+            $nodes = $domPath->query($xPath);
+
+            for ($i = 0; $i < $nodes->length; ++$i) {
+                $element = $nodes->item($i);
+                $element->nodeValue = $modulesTest . $element->nodeValue;
+            }
+        }
+
+        $unitModules = $domPath->query("//phpunit/testsuites/testsuite[@name='unit-modules']")->item(0);
+        $regressionModules = $domPath->query("//phpunit/testsuites/testsuite[@name='regression-modules']")->item(0);
+
+        while ($unitModules->hasChildNodes()) {
+            $unitModules->removeChild($unitModules->childNodes->item(0));
+        }
+
+        while ($regressionModules->hasChildNodes()) {
+            $regressionModules->removeChild($regressionModules->childNodes->item(0));
+        }
+
+        foreach ($app->getModuleManager()->getModuleInfo() as $module) {
+            $testPhp = "$module->path/test/php";
+            if (file_exists($testPhp)) {
+                $unitModules->appendChild($phpunitXml->createElement('directory', $testPhp));
+
+                $testPhpRegression = "$testPhp/regression";
+                if (file_exists($testPhpRegression)) {
+                    $regressionModules->appendChild($phpunitXml->createElement('directory', $testPhpRegression));
+                    $unitModules->appendChild($phpunitXml->createElement('exclude', $testPhpRegression));
+                }
+            }
+        }
+
+        if (! $unitModules->hasChildNodes()) {
+            $unitModules->parentNode->removeChild($unitModules);
+        }
+
+        if (! $regressionModules->hasChildNodes()) {
+            $regressionModules->parentNode->removeChild($regressionModules);
+        }
     }
 }

@@ -4,11 +4,13 @@
         <!--
             Unit testing
         -->
-        <testsuite name="unit">
+        <testsuite name="unit-framework">
             <directory>../../test/php/application/</directory>
             <directory>../../test/php/library/</directory>
+        </testsuite>
 
-            <!-- Module tests are independent from core tests -->
+        <!-- Module tests are independent from core tests -->
+        <testsuite name="unit-modules">
             <directory>../*/test/php</directory>
             <exclude>../*/test/php/regression</exclude>
         </testsuite>
@@ -16,8 +18,12 @@
         <!--
             Regression testing
         -->
-        <testsuite name="regression">
+        <testsuite name="regression-framework">
             <directory>../../test/php/regression/</directory>
+        </testsuite>
+
+        <!-- Module tests are independent from core tests -->
+        <testsuite name="regression-modules">
             <directory>../*/test/php/regression</directory>
         </testsuite>
     </testsuites>

@@ -35,25 +35,40 @@ $loader->registerNamespace('Tests', $testLibraryPath);
 $loader->registerNamespace('Icinga', $icingaLibPath);
 $loader->registerNamespace('Icinga\\Forms', $applicationPath . '/forms');
 
-$modules = scandir($modulePath);
-foreach ($modules as $module) {
-    if ($module === '.' || $module === '..') {
-        continue;
+$modulePaths = getenv('ICINGAWEB_MODULE_DIRS');
+
+if ($modulePaths) {
+    $modulePaths = preg_split('/:/', $modulePaths, -1, PREG_SPLIT_NO_EMPTY);
+}
+
+if (! $modulePaths) {
+    $modulePaths = array_flip(scandir($modulePath));
+    unset($modulePaths['.']);
+    unset($modulePaths['..']);
+    $modulePaths = array_keys($modulePaths);
+
+    foreach ($modulePaths as &$path) {
+        $path = "$modulePath/$path";
     }
+    unset($path);
+}
+
+foreach ($modulePaths as $path) {
+    $module = basename($path);
 
     $moduleNamespace = 'Icinga\\Module\\' . ucfirst($module);
-    $moduleLibraryPath = $modulePath . '/' . $module . '/library/' . ucfirst($module);
+    $moduleLibraryPath = "$path/library/" . ucfirst($module);
 
     if (is_dir($moduleLibraryPath)) {
         $loader->registerNamespace($moduleNamespace, $moduleLibraryPath);
     }
 
-    $moduleTestPath = $modulePath . '/' . $module . '/test/php';
+    $moduleTestPath = "$path/test/php";
     if (is_dir($moduleTestPath)) {
         $loader->registerNamespace('Tests\\' . $moduleNamespace, $moduleTestPath);
     }
 
-    $moduleFormPath = $modulePath . '/' . $module . '/application/forms';
+    $moduleFormPath = "$path/application/forms";
     if (is_dir($moduleFormPath)) {
         $loader->registerNamespace($moduleNamespace . '\\Forms', $moduleFormPath);
     }
