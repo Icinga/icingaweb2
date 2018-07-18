@@ -11,7 +11,6 @@ class Contact extends DataView
     public function getColumns()
     {
         return array(
-            'instance_name',
             'contact_object_id',
             'contact_id',
             'contact_name',
@@ -55,7 +54,7 @@ class Contact extends DataView
     public function getStaticFilterColumns()
     {
         return array(
-            'contact',
+            'contact', 'instance_name',
             'contactgroup', 'contactgroup_name', 'contactgroup_alias',
             'host', 'host_name', 'host_display_name', 'host_alias',
             'hostgroup', 'hostgroup_alias', 'hostgroup_name',

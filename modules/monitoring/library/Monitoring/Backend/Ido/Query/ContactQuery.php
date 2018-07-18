@@ -3,233 +3,126 @@
 
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
+use Zend_Db_Select;
+use Icinga\Data\Filter\Filter;
+
 /**
  * Query for contacts
  */
 class ContactQuery extends IdoQuery
 {
-    /**
-     * {@inheritdoc}
-     */
-    protected $allowCustomVars = true;
-
-    /**
-     * {@inheritdoc}
-     */
-    protected $groupBase = array('contacts' => array('co.object_id', 'c.contact_id'));
-
-    /**
-     * {@inheritdoc}
-     */
-    protected $groupOrigin = array('contactgroups', 'hosts', 'services');
-
-    /**
-     * {@inheritdoc}
-     */
-    protected $columnMap = array(
-        'contactgroups' => array(
-            'contactgroup'          => 'cgo.name1 COLLATE latin1_general_ci',
-            'contactgroup_name'     => 'cgo.name1',
-            'contactgroup_alias'    => 'cg.alias COLLATE latin1_general_ci'
-        ),
-        'contacts' => array(
+    protected $columnMap = [
+        'contacts' => [
             'contact_id'                        => 'c.contact_id',
-            'contact'                           => 'co.name1 COLLATE latin1_general_ci',
-            'contact_name'                      => 'co.name1',
-            'contact_alias'                     => 'c.alias COLLATE latin1_general_ci',
-            'contact_email'                     => 'c.email_address COLLATE latin1_general_ci',
-            'contact_pager'                     => 'c.pager_address',
+            'contact'                           => 'c.contact',
+            'contact_name'                      => 'c.contact_name',
+            'contact_alias'                     => 'c.contact_alias',
+            'contact_email'                     => 'c.contact_email',
+            'contact_pager'                     => 'c.contact_pager',
             'contact_object_id'                 => 'c.contact_object_id',
-            'contact_has_host_notfications'     => 'c.host_notifications_enabled',
-            'contact_has_service_notfications'  => 'c.service_notifications_enabled',
-            'contact_can_submit_commands'       => 'c.can_submit_commands',
-            'contact_notify_service_recovery'   => 'c.notify_service_recovery',
-            'contact_notify_service_warning'    => 'c.notify_service_warning',
-            'contact_notify_service_critical'   => 'c.notify_service_critical',
-            'contact_notify_service_unknown'    => 'c.notify_service_unknown',
-            'contact_notify_service_flapping'   => 'c.notify_service_flapping',
-            'contact_notify_service_downtime'   => 'c.notify_service_downtime',
-            'contact_notify_host_recovery'      => 'c.notify_host_recovery',
-            'contact_notify_host_down'          => 'c.notify_host_down',
-            'contact_notify_host_unreachable'   => 'c.notify_host_unreachable',
-            'contact_notify_host_flapping'      => 'c.notify_host_flapping',
-            'contact_notify_host_downtime'      => 'c.notify_host_downtime'
-        ),
-        'hostgroups' => array(
-            'hostgroup'         => 'hgo.name1 COLLATE latin1_general_ci',
-            'hostgroup_alias'   => 'hg.alias COLLATE latin1_general_ci',
-            'hostgroup_name'    => 'hgo.name1'
-        ),
-        'hosts' => array(
-            'host'              => 'ho.name1 COLLATE latin1_general_ci',
-            'host_name'         => 'ho.name1',
-            'host_alias'        => 'h.alias',
-            'host_display_name' => 'h.display_name COLLATE latin1_general_ci'
-        ),
-        'instances' => array(
-            'instance_name' => 'i.instance_name'
-        ),
-        'servicegroups' => array(
-            'servicegroup'          => 'sgo.name1 COLLATE latin1_general_ci',
-            'servicegroup_name'     => 'sgo.name1',
-            'servicegroup_alias'    => 'sg.alias COLLATE latin1_general_ci'
-        ),
-        'services' => array(
-            'service'               => 'so.name2 COLLATE latin1_general_ci',
-            'service_description'   => 'so.name2',
-            'service_display_name'  => 's.display_name COLLATE latin1_general_ci',
-            'service_host_name'     => 'so.name1'
-        ),
-        'timeperiods' => array(
-            'contact_notify_host_timeperiod'    => 'ht.alias COLLATE latin1_general_ci',
-            'contact_notify_service_timeperiod' => 'st.alias COLLATE latin1_general_ci'
-        )
-    );
+            'contact_has_host_notfications'     => 'c.contact_has_host_notfications',
+            'contact_has_service_notfications'  => 'c.contact_has_service_notfications',
+            'contact_can_submit_commands'       => 'c.contact_can_submit_commands',
+            'contact_notify_service_recovery'   => 'c.contact_notify_service_recovery',
+            'contact_notify_service_warning'    => 'c.contact_notify_service_warning',
+            'contact_notify_service_critical'   => 'c.contact_notify_service_critical',
+            'contact_notify_service_unknown'    => 'c.contact_notify_service_unknown',
+            'contact_notify_service_flapping'   => 'c.contact_notify_service_flapping',
+            'contact_notify_service_downtime'   => 'c.contact_notify_service_downtime',
+            'contact_notify_host_recovery'      => 'c.contact_notify_host_recovery',
+            'contact_notify_host_down'          => 'c.contact_notify_host_down',
+            'contact_notify_host_unreachable'   => 'c.contact_notify_host_unreachable',
+            'contact_notify_host_flapping'      => 'c.contact_notify_host_flapping',
+            'contact_notify_host_downtime'      => 'c.contact_notify_host_downtime',
+            'contact_notify_host_timeperiod'    => 'c.contact_notify_host_timeperiod',
+            'contact_notify_service_timeperiod' => 'c.contact_notify_service_timeperiod'
+        ]
+    ];
 
-    /**
-     * {@inheritdoc}
-     */
+    /** @var Zend_Db_Select The union */
+    protected $contactQuery;
+
+    /** @var IdoQuery[] Subqueries used for the contact query */
+    protected $subQueries = [];
+
+    public function allowsCustomVars()
+    {
+        foreach ($this->subQueries as $query) {
+            if (! $query->allowsCustomVars()) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public function addFilter(Filter $filter)
+    {
+        $strangers = array_diff(
+            $filter->listFilteredColumns(),
+            array_keys($this->columnMap['contacts'])
+        );
+        if (! empty($strangers)) {
+            $this->transformToUnion();
+        }
+
+        foreach ($this->subQueries as $sub) {
+            $sub->applyFilter(clone $filter);
+        }
+
+        return $this;
+    }
+
     protected function joinBaseTables()
     {
+        $this->contactQuery = $this->createSubQuery('Hostcontact', array_keys($this->columnMap['contacts']));
+        $this->contactQuery->setIsSubQuery();
+        $this->subQueries[] = $this->contactQuery;
+
         $this->select->from(
-            array('c' => $this->prefix . 'contacts'),
-            array()
-        )->join(
-            array('co' => $this->prefix . 'objects'),
-            'co.object_id = c.contact_object_id AND co.is_active = 1',
-            array()
+            ['c' => $this->contactQuery],
+            []
         );
+
         $this->joinedVirtualTables['contacts'] = true;
     }
 
-    /**
-     * Join contact groups
-     */
-    protected function joinContactgroups()
+    public function order($columnOrAlias, $dir = null)
     {
-        $this->select->joinLeft(
-            array('cgm' => $this->prefix . 'contactgroup_members'),
-            'co.object_id = cgm.contact_object_id',
-            array()
-        )->joinLeft(
-            array('cg' => $this->prefix . 'contactgroups'),
-            'cgm.contactgroup_id = cg.contactgroup_id',
-            array()
-        )->joinLeft(
-            array('cgo' => $this->prefix . 'objects'),
-            'cg.contactgroup_object_id = cgo.object_id AND cgo.is_active = 1 AND cgo.objecttype_id = 11',
-            array()
-        );
+        foreach ($this->subQueries as $sub) {
+            $sub->requireColumn($columnOrAlias);
+        }
+
+        return parent::order($columnOrAlias, $dir);
     }
 
-    /**
-     * Join host groups
-     */
-    protected function joinHostgroups()
+    public function where($condition, $value = null)
     {
-        $this->requireVirtualTable('hosts');
-        $this->select->joinLeft(
-            array('hgm' => $this->prefix . 'hostgroup_members'),
-            'hgm.host_object_id = ho.object_id',
-            array()
-        )->joinLeft(
-            array('hg' => $this->prefix . 'hostgroups'),
-            'hg.hostgroup_id = hgm.hostgroup_id',
-            array()
-        )->joinLeft(
-            array('hgo' => $this->prefix . 'objects'),
-            'hgo.object_id = hg.hostgroup_object_id AND hgo.is_active = 1 AND hgo.objecttype_id = 3',
-            array()
-        );
+        $this->requireColumn($condition);
+        foreach ($this->subQueries as $sub) {
+            $sub->where($condition, $value);
+        }
+
+        return $this;
     }
 
-    /**
-     * Join hosts
-     */
-    protected function joinHosts()
+    public function transformToUnion()
     {
-        $this->select->joinLeft(
-            array('hc' => $this->prefix . 'host_contacts'),
-            'hc.contact_object_id = c.contact_object_id',
-            array()
-        )->joinLeft(
-            array('h' => $this->prefix . 'hosts'),
-            'h.host_id = hc.host_id',
-            array()
-        )->joinLeft(
-            array('ho' => $this->prefix . 'objects'),
-            'ho.object_id = h.host_object_id AND ho.is_active = 1',
-            array()
-        );
-    }
+        $this->contactQuery = $this->db->select();
+        $this->select->reset();
+        $this->subQueries = [];
 
-    /**
-     * Join instances
-     */
-    protected function joinInstances()
-    {
-        $this->select->join(
-            array('i' => $this->prefix . 'instances'),
-            'i.instance_id = c.instance_id',
-            array()
+        $this->select->distinct()->from(
+            ['c' => $this->contactQuery],
+            []
         );
-    }
 
-    /**
-     * Join service groups
-     */
-    protected function joinServicegroups()
-    {
-        $this->requireVirtualTable('services');
-        $this->select->joinLeft(
-            array('sgm' => $this->prefix . 'servicegroup_members'),
-            'sgm.service_object_id = s.service_object_id',
-            array()
-        )->joinLeft(
-            array('sg' => $this->prefix . 'servicegroups'),
-            'sg.servicegroup_id = sgm.servicegroup_id',
-            array()
-        )->joinLeft(
-            array('sgo' => $this->prefix . 'objects'),
-            'sgo.object_id = sg.servicegroup_object_id AND sgo.is_active = 1 AND sgo.objecttype_id = 4',
-            array()
-        );
-    }
+        $hosts = $this->createSubQuery('Hostcontact', array_keys($this->columnMap['contacts']));
+        $this->subQueries[] = $hosts;
+        $this->contactQuery->union([$hosts], Zend_Db_Select::SQL_UNION_ALL);
 
-    /**
-     * Join services
-     */
-    protected function joinServices()
-    {
-        $this->select->joinLeft(
-            array('sc' => $this->prefix . 'service_contacts'),
-            'sc.contact_object_id = c.contact_object_id',
-            array()
-        )->joinLeft(
-            array('s' => $this->prefix . 'services'),
-            's.service_id = sc.service_id',
-            array()
-        )->joinLeft(
-            array('so' => $this->prefix . 'objects'),
-            'so.object_id = s.service_object_id AND so.is_active = 1 AND so.objecttype_id = 2',
-            array()
-        );
-    }
-
-    /**
-     * Join time periods
-     */
-    protected function joinTimeperiods()
-    {
-        $this->select->joinLeft(
-            array('ht' => $this->prefix . 'timeperiods'),
-            'ht.timeperiod_object_id = c.host_timeperiod_object_id',
-            array()
-        );
-        $this->select->joinLeft(
-            array('st' => $this->prefix . 'timeperiods'),
-            'st.timeperiod_object_id = c.service_timeperiod_object_id',
-            array()
-        );
+        $services = $this->createSubQuery('Servicecontact', array_keys($this->columnMap['contacts']));
+        $this->subQueries[] = $services;
+        $this->contactQuery->union([$services], Zend_Db_Select::SQL_UNION_ALL);
     }
 }
