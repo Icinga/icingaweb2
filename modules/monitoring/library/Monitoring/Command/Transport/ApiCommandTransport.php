@@ -3,6 +3,7 @@
 
 namespace Icinga\Module\Monitoring\Command\Transport;
 
+use Icinga\Application\Hook\AuditHook;
 use Icinga\Application\Logger;
 use Icinga\Exception\Json\JsonDecodeException;
 use Icinga\Module\Monitoring\Command\IcingaApiCommand;
@@ -194,6 +195,18 @@ class ApiCommandTransport implements CommandTransportInterface
             $command->getEndpoint(),
             $this->getHost(),
             $this->getPort()
+        );
+
+        $data = $command->getData();
+        $payload = [];
+        foreach ($data as $key => $value) {
+            $payload[] = "$key=$value";
+        }
+        $payload = implode(', ', $payload);
+        AuditHook::logActivity(
+            'monitoring/command',
+            "Issued command {$command->getEndpoint()} with the following payload: $payload",
+            $data
         );
 
         try {
