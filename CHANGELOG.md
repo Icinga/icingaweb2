@@ -4,6 +4,52 @@ Please make sure to always read our [Upgrading](doc/80-Upgrading.md) documentati
 
 ## What's New
 
+### What's New in Version 2.6.0
+
+You can find issues and features related to this release on our [Roadmap](https://github.com/Icinga/icingaweb2/milestone/48?closed=1).
+
+#### Enabling you to do stuff you couldn't before
+
+* Support for PHP 7.2 added
+* Support for SQLite resources added
+* Login and Command (monitoring) auditing added with the help of a dedicated [module](https://github.com/Icinga/icingaweb2-module-audit)
+* Pluginoutput rendering is now hookable by modules which allows to render custom icons, emojis and .. cute kitties :octocat:
+
+#### Avoiding that you miss something
+
+* It's now possible to toggle between list- and grid-mode for the host- and servicegroup overviews
+* The servicegrid now supports to flip its axes which allows it to be put into a [landscape mode](https://github.com/Icinga/icingaweb2/pull/3449#issue-185415579)
+* Contacts only associated with services are visible now when restricted based on host filters
+* Negated and combined membership filters now work as expected ([#2934](https://github.com/Icinga/icingaweb2/issues/2934))
+* A more prominent error message in case the monitoring backend goes down
+* The filter editor doesn't get cleared anymore upon hitting Enter
+
+#### Making your life a bit easier
+
+* The tactical overview is now filterable and can be safely put into [the dashboard](https://github.com/Icinga/icingaweb2/pull/3446#issue-185379142)
+* It is now possible to register new announcements over the [REST Api](https://github.com/Icinga/icingaweb2/issues/2749#issuecomment-279667189)
+* Filtering for custom variables now works in UTF8 environments
+
+#### Ensuring you understand everything
+
+* The monitoring health is now beautiful to look at and properly behaves in [narrow environments](https://github.com/Icinga/icingaweb2/pull/3515#issue-200075373)
+* Updated German localization
+* Updated Italian localization
+
+#### Freeing you from unrealiable things
+
+* Removed support for PHP < 5.6
+* Removed support for persistent database connections
+
+### What's New in Version 2.5.3
+
+You can find issues and features related to this release on our [Roadmap](https://github.com/Icinga/icingaweb2/milestone/50?closed=1).
+
+#### Fixes
+
+A fix for an issue introduced with v2.5.2 that prevented service-only contacts from appearing in the UI resulted in long
+database response times and has been reverted.
+
 ### What's New in Version 2.5.2
 
 You can find issues and features related to this release on our [Roadmap](https://github.com/Icinga/icingaweb2/milestone/49?closed=1).
