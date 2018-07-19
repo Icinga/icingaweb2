@@ -13,6 +13,11 @@ class HostnotificationQuery extends IdoQuery
      */
     protected $allowCustomVars = true;
 
+    protected $subQueryTargets = array(
+        'hostgroups'    => 'hostgroup',
+        'servicegroups' => 'servicegroup'
+    );
+
     /**
      * {@inheritdoc}
      */
@@ -231,5 +236,20 @@ class HostnotificationQuery extends IdoQuery
         }
 
         return $group;
+    }
+
+    protected function joinSubQuery(IdoQuery $query, $name, $filter, $and, $negate, &$additionalFilter)
+    {
+        if ($name === 'hostgroup') {
+            $query->joinVirtualTable('members');
+
+            return ['hgm.host_object_id', 'ho.object_id'];
+        } elseif ($name === 'servicegroup') {
+            $query->joinVirtualTable('services');
+
+            return ['s.host_object_id', 'ho.object_id'];
+        }
+
+        return parent::joinSubQuery($query, $name, $filter, $and, $negate, $additionalFilter);
     }
 }

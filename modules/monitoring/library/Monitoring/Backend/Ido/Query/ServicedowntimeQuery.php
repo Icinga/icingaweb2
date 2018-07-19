@@ -23,6 +23,11 @@ class ServicedowntimeQuery extends IdoQuery
      */
     protected $groupOrigin = array('hostgroups', 'servicegroups');
 
+    protected $subQueryTargets = array(
+        'hostgroups'    => 'hostgroup',
+        'servicegroups' => 'servicegroup'
+    );
+
     /**
      * {@inheritdoc}
      */
@@ -198,5 +203,20 @@ class ServicedowntimeQuery extends IdoQuery
             'ss.service_object_id = so.object_id',
             array()
         );
+    }
+
+    protected function joinSubQuery(IdoQuery $query, $name, $filter, $and, $negate, &$additionalFilter)
+    {
+        if ($name === 'hostgroup') {
+            $query->joinVirtualTable('services');
+
+            return ['so.object_id', 'so.object_id'];
+        } elseif ($name === 'servicegroup') {
+            $query->joinVirtualTable('members');
+
+            return ['sgm.service_object_id', 'so.object_id'];
+        }
+
+        return parent::joinSubQuery($query, $name, $filter, $and, $negate, $additionalFilter);
     }
 }
