@@ -185,10 +185,6 @@ git commit -av -m "Release 2.5.3-1"
 git push
 ```
 
-```
-git commit -av -m "Release 2.5.3-1"
-```
-
 **Note for major releases**: Update release branch to latest.
 `git checkout release && git pull && git merge master && git push`
 
@@ -202,7 +198,7 @@ git commit -av -m "Release 2.5.3-1"
 docker run -v `pwd`:/mnt/packaging -ti ubuntu:xenial bash
 
 apt-get update
-apt-get install git dev-tools vim
+apt-get install git devscripts vim
 cd /mnt/packaging
 
 git config --global user.name "Eric Lippmann"
