@@ -116,6 +116,9 @@ class ExternalBackend implements UserBackendInterface
             }
 
             $user->setUsername($username);
+            if (array_key_exists('entitlement', $_SERVER)) {
+                $user->setGroups(explode(';', $_SERVER['entitlement']));
+            }
             return true;
         }
 
