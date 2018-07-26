@@ -70,7 +70,16 @@ class Hook
     public static function has($name)
     {
         $name = self::normalizeHookName($name);
-        return array_key_exists($name, self::$hooks);
+
+        if (! array_key_exists($name, self::$hooks)) {
+            return false;
+        }
+
+        $hook = self::$hooks[$name];
+        // $hook is in the format key => value
+        $hook = reset($hook);
+
+        return self::hasPermission($hook);
     }
 
     protected static function normalizeHookName($name)
