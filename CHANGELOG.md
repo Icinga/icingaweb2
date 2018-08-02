@@ -4,6 +4,13 @@ Please make sure to always read our [Upgrading](doc/80-Upgrading.md) documentati
 
 ## What's New
 
+### What's New in Version 2.6.1
+
+You can find issues and features related to this release on our [Roadmap](https://github.com/Icinga/icingaweb2/milestone/51?closed=1).
+
+The command audit now logs a command's payload as JSON which fixes a
+[bug](https://github.com/Icinga/icingaweb2/issues/3535) that has been introduced in version 2.6.0.
+
 ### What's New in Version 2.6.0
 
 You can find issues and features related to this release on our [Roadmap](https://github.com/Icinga/icingaweb2/milestone/48?closed=1).
@@ -814,4 +821,3 @@ The location of a user's preferences has been changed from config-dir/preference
 * Bug 9378: Rpm calls usermod w/ invalid option on openSUSE
 * Bug 9384: Timeline+Role problem
 * Bug 9392: Command links seem to be broken
-
