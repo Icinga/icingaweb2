@@ -214,6 +214,16 @@ results of this query instead:
          |
          +--- service_handled = 0
 
+#### Username placeholder <a id="username-placeholder"></a>
+
+The string `$currentUser` is replaced by the local username (without the domain part) of the logged on user while evaluating restrictions.
+This can come in handy if you have some kind of attribute on host or service level defining which user is responsible for a certain host or service.
+
+#### Example <a id="username-placeholder-example"> </a>:
+
+```
+monitoring/filter/objects = (__responsible=$currentUser$|__deputy=$currentUser$)
+```
 
 #### Stacking Filters <a id="stacking-filters"></a>
 
