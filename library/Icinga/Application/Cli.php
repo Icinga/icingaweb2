@@ -146,11 +146,12 @@ class Cli extends ApplicationBootstrap
     {
         $loader = $this->cliLoader();
         $loader->parseParams();
-        $loader->dispatch();
+        $result = $loader->dispatch();
         Benchmark::measure('All done');
         if ($this->showBenchmark) {
             Benchmark::dump();
         }
+        if ($result === FALSE) exit(1);
     }
 
     protected function dispatchEndless()
