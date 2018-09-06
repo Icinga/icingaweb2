@@ -441,7 +441,6 @@ class ListCommand extends Command
             case true:
                 $timezone = date_default_timezone_get();
                 break;
-
         }
 
         return $timezone;

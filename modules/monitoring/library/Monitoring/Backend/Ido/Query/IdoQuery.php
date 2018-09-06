@@ -1518,11 +1518,12 @@ abstract class IdoQuery extends DbQuery
         $timestampColumns = [];
         array_walk_recursive(
             $this->columnMap,
-            function ($val, $key) use (&$timestampColumns){
-            if (is_string($val) && substr($val, 0, 14) == 'UNIX_TIMESTAMP') {
-                $timestampColumns[] = $key;
+            function ($val, $key) use (&$timestampColumns) {
+                if (is_string($val) && substr($val, 0, 14) == 'UNIX_TIMESTAMP') {
+                    $timestampColumns[] = $key;
+                }
             }
-        });
+        );
 
         return $timestampColumns;
     }
