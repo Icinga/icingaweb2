@@ -3,7 +3,7 @@
 
 namespace Icinga\Cli;
 
-use Icinga\Application\ApplicationBootstrap as App;
+use Icinga\Application\Cli;
 use Icinga\Cli\Documentation\CommentParser;
 use ReflectionClass;
 use ReflectionMethod;
@@ -12,7 +12,7 @@ class Documentation
 {
     protected $icinga;
 
-    public function __construct(App $app)
+    public function __construct(Cli $app)
     {
         $this->app = $app;
         $this->loader = $app->cliLoader();

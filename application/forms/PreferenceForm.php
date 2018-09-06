@@ -13,7 +13,6 @@ use Icinga\User\Preferences;
 use Icinga\User\Preferences\PreferencesStore;
 use Icinga\Util\TimezoneDetect;
 use Icinga\Util\Translator;
-use Icinga\Web\Cookie;
 use Icinga\Web\Form;
 use Icinga\Web\Notification;
 use Icinga\Web\Session;
@@ -250,6 +249,25 @@ class PreferenceForm extends Form
             )
         );
 
+
+        $csvExportTimeZones = [
+            'timestamp' => $this->translate('UNIX Timestamp'),
+            'local'     => $this->translate('Local Timezone'),
+            'server'    => $this->translate('Server Timezone')
+        ];
+
+        $this->addElement(
+            'select',
+            'csv_export_time_format',
+            array(
+                'required'      => true,
+                'label'         => $this->translate('CSV Export Time Format'),
+                'description'   => $this->translate('Use the following timezone in CSV exports'),
+                'multiOptions'  => $csvExportTimeZones,
+                'value'         => $csvExportTimeZones
+            )
+        );
+
         if (Auth::getInstance()->hasPermission('application/stacktraces')) {
             $this->addElement(
                 'checkbox',
@@ -372,6 +390,7 @@ class PreferenceForm extends Form
      * Return the default global setting for show_stacktraces
      *
      * @return  bool
+     * @throws  \Icinga\Exception\NotReadableError
      */
     protected function getDefaultShowStacktraces()
     {

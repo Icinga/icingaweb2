@@ -31,4 +31,26 @@ class CsvTest extends BaseTestCase
             'Csv does not render valid/correct csv structured data'
         );
     }
+
+    public function testTimestampToDateString()
+    {
+        $firstOfSeptember2018timestamp = 1535760000;
+
+        $data = new ArrayDatasource([
+            [
+                'firstOfSeptember' => $firstOfSeptember2018timestamp,
+                'notimportant' => 'somestring'
+            ]
+        ]);
+
+        $data->setDataTypeForColumn('firstOfSeptember', 'timestamp');
+
+        $csv = Csv::fromQuery($data->select(), 'Europe/Berlin');
+
+        $this->assertEquals(
+            "firstOfSeptember,notimportant\r\n\"2018-09-01T02:00:00+0200\",\"somestring\"\r\n",
+            (string) $csv,
+            "Csv does not convert timestamps properly to ISO 8601"
+        );
+    }
 }

@@ -679,4 +679,14 @@ class SimpleQuery implements QueryInterface, Queryable, Iterator
     {
         $this->filter = clone $this->filter;
     }
+
+    /**
+     * get all columns defined as timestamps
+     *
+     * @return array
+     */
+    public function getTimestampColumns()
+    {
+        return $this->ds->getColumnsForDataType('timestamp');
+    }
 }

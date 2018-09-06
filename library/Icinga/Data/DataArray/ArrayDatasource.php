@@ -41,6 +41,13 @@ class ArrayDatasource implements Selectable
     protected $keyColumn;
 
     /**
+     * stores data type designation for specific columns
+     *
+     * @var array
+     */
+    protected $columnDataTypes = [];
+
+    /**
      * Create a new data source for the given array
      *
      * @param   array   $data   The array you're going to use as a data source
@@ -181,6 +188,63 @@ class ArrayDatasource implements Selectable
         }
 
         return $this->count;
+    }
+
+    /**
+     * sets the type for a specific column
+     *
+     * @param string $column
+     * @param string $type
+     */
+    public function setDataTypeForColumn($column, $type)
+    {
+        $this->columnDataTypes[$column] = $type;
+    }
+
+    /**
+     * gets the type of a specific column if a type is set
+     *
+     * @param string $column
+     * @return string|null
+     */
+    public function getDataTypeForColumn($column)
+    {
+        $return = null;
+
+        if (isset($this->columnDataTypes[$column])) {
+            $return = $this->columnDataTypes[$column];
+        }
+
+        return $return;
+    }
+
+    /**
+     * get all columns set to the specific data type
+     *
+     * @param string $typeNeedle
+     * @return array
+     */
+    public function getColumnsForDataType($typeNeedle)
+    {
+        $return = [];
+
+        foreach ($this->columnDataTypes as $column => $type) {
+            if ($typeNeedle === $type) {
+                $return[] = $column;
+            }
+        }
+
+        return $return;
+    }
+
+    /**
+     * get all data type definitions
+     *
+     * @return array
+     */
+    public function getColumnDataTypes()
+    {
+        return $this->columnDataTypes;
     }
 
     /**

@@ -3,15 +3,16 @@
 
 namespace Icinga\Cli;
 
-use Icinga\Cli\Screen;
+use Icinga\Application\Cli;
 use Icinga\Util\Translator;
-use Icinga\Cli\Params;
 use Icinga\Application\Config;
-use Icinga\Application\ApplicationBootstrap as App;
 use Icinga\Exception\IcingaException;
 
 abstract class Command
 {
+    /**
+     * @var Cli
+     */
     protected $app;
     protected $docs;
 
@@ -45,7 +46,7 @@ abstract class Command
 
     protected $defaultActionName = 'default';
 
-    public function __construct(App $app, $moduleName, $commandName, $actionName, $initialize = true)
+    public function __construct(Cli $app, $moduleName, $commandName, $actionName, $initialize = true)
     {
         $this->app = $app;
         $this->moduleName  = $moduleName;

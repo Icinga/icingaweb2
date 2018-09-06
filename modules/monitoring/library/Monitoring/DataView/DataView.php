@@ -3,6 +3,8 @@
 
 namespace Icinga\Module\Monitoring\DataView;
 
+use Icinga\Exception\ConfigurationError;
+use Icinga\Module\Monitoring\Hook\DataviewExtensionHook;
 use IteratorAggregate;
 use Icinga\Application\Hook;
 use Icinga\Data\ConnectionInterface;
@@ -116,8 +118,9 @@ abstract class DataView implements QueryInterface, SortRules, FilterColumns, Ite
      *
      * @return  static
      * @deprecated Use $backend->select()->from($viewName) instead
+     * @throws ConfigurationError
      */
-    public static function fromRequest($request, array $columns = null)
+    public static function fromRequest(Request $request, array $columns = null)
     {
         $view = new static(MonitoringBackend::instance($request->getParam('backend')), $columns);
         $view->applyUrlFilter($request);
@@ -125,10 +128,14 @@ abstract class DataView implements QueryInterface, SortRules, FilterColumns, Ite
         return $view;
     }
 
+    /**
+     * @return array
+     */
     protected function getHookedColumns()
     {
         $columns = array();
         foreach (Hook::all('monitoring/dataviewExtension') as $hook) {
+            /** @var DataviewExtensionHook $hook */
             foreach ($hook->getAdditionalQueryColumns($this->getQueryName()) as $col) {
                 $columns[] = $col;
             }
@@ -164,6 +171,7 @@ abstract class DataView implements QueryInterface, SortRules, FilterColumns, Ite
      * @param   array $columns
      *
      * @return  static
+     * @throws  ConfigurationError
      */
     public static function fromParams(array $params, array $columns = null)
     {
@@ -214,6 +222,7 @@ abstract class DataView implements QueryInterface, SortRules, FilterColumns, Ite
      * return the same result.)
      *
      * @return  array
+     * @throws  ConfigurationError
      */
     public function getFilterColumns()
     {
@@ -255,6 +264,7 @@ abstract class DataView implements QueryInterface, SortRules, FilterColumns, Ite
      * Return all dynamic filter columns such as custom variables
      *
      * @return  array
+     * @throws ConfigurationError
      */
     public function getDynamicFilterColumns()
     {
@@ -377,10 +387,11 @@ abstract class DataView implements QueryInterface, SortRules, FilterColumns, Ite
     /**
      * Sort result set either by the given column (and direction) or the sort defaults
      *
-     * @param  string   $column
-     * @param  string   $direction
+     * @param  string $column
+     * @param  string $direction
      *
      * @return $this
+     * @throws QueryException
      */
     public function order($column = null, $direction = null)
     {
@@ -438,6 +449,7 @@ abstract class DataView implements QueryInterface, SortRules, FilterColumns, Ite
      * @param Filter $filter
      *
      * @throws \Icinga\Data\Filter\FilterException
+     * @throws QueryException
      */
     public function validateFilterColumns(Filter $filter)
     {
@@ -522,6 +534,7 @@ abstract class DataView implements QueryInterface, SortRules, FilterColumns, Ite
      * Return whether the query did not yield all available results
      *
      * @return  bool
+     * @throws \Icinga\Exception\ProgrammingError
      */
     public function hasMore()
     {
@@ -642,5 +655,13 @@ abstract class DataView implements QueryInterface, SortRules, FilterColumns, Ite
     public function fetchPairs()
     {
         return $this->getQuery()->fetchPairs();
+    }
+
+    /**
+     * @return array
+     */
+    public function getTimestampColumns()
+    {
+        return $this->query->getTimestampColumns();
     }
 }

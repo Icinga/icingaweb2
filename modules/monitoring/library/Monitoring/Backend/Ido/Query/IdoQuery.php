@@ -522,12 +522,16 @@ abstract class IdoQuery extends DbQuery
     /**
      * Create and return a sub-query filter for the given filter expression
      *
-     * @param   FilterExpression    $filter
-     * @param   string              $queryName
+     * @param   FilterExpression $filter
+     * @param   string $queryName
      *
      * @return  Filter
      *
-     * @throws  QueryException
+     * @throws NotImplementedError
+     * @throws ProgrammingError
+     * @throws QueryException
+     * @throws \Icinga\Data\Filter\FilterException
+     * @throws \Zend_Db_Select_Exception
      */
     protected function createSubQueryFilter(FilterExpression $filter, $queryName)
     {
@@ -654,11 +658,19 @@ abstract class IdoQuery extends DbQuery
         return $exists;
     }
 
+    /**
+     * @param  Filter $filter
+     * @return Filter|null
+     * @throws ProgrammingError
+     * @throws QueryException
+     * @throws \Icinga\Data\Filter\FilterException
+     * @throws \Zend_Db_Select_Exception
+     */
     protected function requireFilterColumns(Filter $filter)
     {
         if ($filter instanceof FilterExpression) {
             if ($filter->getExpression() === '*') {
-                return; // Wildcard only filters are ignored so stop early here to avoid joining a table for nothing
+                return null; // Wildcard only filters are ignored so stop early here to avoid joining a table for nothing
             }
 
             $alias = $filter->getColumn();
@@ -919,6 +931,8 @@ abstract class IdoQuery extends DbQuery
      * @param   array $columns
      *
      * @return  array
+     * @throws  ProgrammingError
+     * @throws  QueryException
      */
     public function resolveColumns($columns)
     {
@@ -965,7 +979,7 @@ abstract class IdoQuery extends DbQuery
      *
      * This calls requireVirtualTable if needed
      *
-     * @param $alias                                The alias of the column to require
+     * @param  string $alias                                The alias of the column to require
      *
      * @return $this                                 Fluent interface
      * @see    IdoQuery::requireVirtualTable        The method initializing required joins
@@ -1001,8 +1015,9 @@ abstract class IdoQuery extends DbQuery
     /**
      * Require a virtual table for the given table name if not already required
      *
-     * @param  String $name         The table name to require
+     * @param  String $name The table name to require
      * @return $this                 Fluent interface
+     * @throws ProgrammingError
      */
     protected function requireVirtualTable($name)
     {
@@ -1239,6 +1254,8 @@ abstract class IdoQuery extends DbQuery
      * @param   array $columns
      *
      * @return  $this
+     * @throws  ProgrammingError
+     * @throws  QueryException
      */
     public function columns(array $columns)
     {
@@ -1489,5 +1506,24 @@ abstract class IdoQuery extends DbQuery
             default:
                 throw new ProgrammingError('Cannot provide a primary key column. Table "%s" is unknown', $table);
         }
+    }
+
+    /**
+     * return all columns containing unix timestamps
+     *
+     * @return array
+     */
+    public function getTimestampColumns()
+    {
+        $timestampColumns = [];
+        array_walk_recursive(
+            $this->columnMap,
+            function ($val, $key) use (&$timestampColumns){
+            if (is_string($val) && substr($val, 0, 14) == 'UNIX_TIMESTAMP') {
+                $timestampColumns[] = $key;
+            }
+        });
+
+        return $timestampColumns;
     }
 }

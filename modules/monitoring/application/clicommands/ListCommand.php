@@ -19,13 +19,23 @@ use Icinga\Util\Json;
  */
 class ListCommand extends Command
 {
+    /**
+     * @var Backend\MonitoringBackend
+     */
     protected $backend;
+
+    /**
+     * @var bool
+     */
     protected $dumpSql;
+
+    /**
+     * @var string
+     */
     protected $defaultActionName = 'status';
 
     public function init()
     {
-        $this->app->setupZendAutoloader();
         $this->backend = Backend::createBackend($this->params->shift('backend'));
         $this->dumpSql = $this->params->shift('showsql');
     }
@@ -34,6 +44,9 @@ class ListCommand extends Command
     {
         $limit = $this->params->shift('limit');
         $format = $this->params->shift('format');
+
+        $timezone = $this->getTimezone();
+
         if ($format !== null) {
             if ($this->params->has('columns')) {
                 $columnParams = preg_split(
@@ -65,13 +78,13 @@ class ListCommand extends Command
         }
 
         if ($format !== null) {
-            $this->showFormatted($query, $format, $columns);
+            $this->showFormatted($query, $format, $columns, $timezone);
         }
 
         return $query;
     }
 
-    protected function showFormatted($query, $format, $columns)
+    protected function showFormatted($query, $format, $columns, $timezone = null)
     {
         $query = $query->getQuery();
         switch ($format) {
@@ -79,7 +92,7 @@ class ListCommand extends Command
                 echo Json::sanitize($query->fetchAll());
                 break;
             case 'csv':
-                Csv::fromQuery($query)->dump();
+                Csv::fromQuery($query, $timezone)->dump();
                 break;
             default:
                 preg_match_all('~\$([a-z0-9_-]+)\$~', $format, $m);
@@ -141,6 +154,11 @@ class ListCommand extends Command
      *     Add a limited set of columns to the output. The following host
      *     attributes can be fetched: state, handled, output, acknowledged, in_downtime, perfdata last_state_change
      *
+     *   --timezone [timezone string]
+     *     (Currently requires --format=csv)
+     *     Outputs fields containing datetimes as ISO8601 formatted string instead of UNIX timestamp.
+     *     If no timezone is supplied the default configured timezone will be used.
+     *
      * EXAMPLES
      *
      *   icingacli monitoring list hosts --problems
@@ -148,6 +166,7 @@ class ListCommand extends Command
      *   icingacli monitoring list hosts --host=local*
      *   icingacli monitoring list hosts --columns 'host,host_output' \
      *     --format='$host$ ($host_output$)'
+     *   icingacli monitoring list hosts --format=csv --timezone "Europe/Berlin"
      */
     public function hostsAction()
     {
@@ -195,6 +214,11 @@ class ListCommand extends Command
      *     Add a limited set of columns to the output. The following service
      *     attributes can be fetched: state, handled, output, acknowledged, in_downtime, perfdata last_state_change
      *
+     *   --timezone [timezone string]
+     *     (Currently requires --format=csv)
+     *     Outputs fields containing datetimes as ISO8601 formatted string instead of UNIX timestamp.
+     *     If no timezone is supplied the default configured timezone will be used.
+     *
      * EXAMPLES
      *
      *   icingacli monitoring list services --problems
@@ -202,6 +226,7 @@ class ListCommand extends Command
      *   icingacli monitoring list services --host=local* --service=*disk*
      *   icingacli monitoring list services --columns 'host,service,service_output' \
      *     --format='$host$: $service$ ($service_output$)'
+     *   icingacli monitoring list services --format=csv --timezone "Europe/Berlin"
      */
     public function servicesAction()
     {
@@ -397,5 +422,28 @@ class ListCommand extends Command
             }
             $last = $circle;
         }
+    }
+
+    /**
+     * @return null|string
+     */
+    protected function getTimezone()
+    {
+        $timezoneValue = $this->params->shift('timezone');
+
+        switch ($timezoneValue) {
+            case null:
+                $timezone = null;
+                break;
+            case is_string($timezoneValue):
+                $timezone = $timezoneValue;
+                break;
+            case true:
+                $timezone = date_default_timezone_get();
+                break;
+
+        }
+
+        return $timezone;
     }
 }
