@@ -48,14 +48,15 @@ abstract class Command
     public function __construct(App $app, $moduleName, $commandName, $actionName, $initialize = true)
     {
         $this->app = $app;
-        $this->moduleName  = $moduleName;
-        $this->commandName = $commandName;
-        $this->actionName  = $actionName;
-        $this->params     = $app->getParams();
-        $this->screen     = Screen::instance($app);
-        $this->trace      = $this->params->shift('trace', false);
-        $this->isVerbose  = $this->params->shift('verbose', false);
-        $this->isDebugging = $this->params->shift('debug', false);
+        $this->moduleName   = $moduleName;
+        $this->commandName  = $commandName;
+        $this->actionName   = $actionName;
+        $this->params       = $app->getParams();
+        $this->screen       = Screen::instance($app);
+        $this->trace        = $this->params->shift('trace', false);
+        $this->isVerbose    = $this->params->shift('verbose', false);
+        $this->isDebugging  = $this->params->shift('debug', false);
+        $this->configs      = [];
         if ($initialize) {
             $this->init();
         }
@@ -94,7 +95,7 @@ abstract class Command
             return $this->config;
         } else {
             if (! array_key_exists($file, $this->configs)) {
-                $this->configs[$file] = Config::module($module, $file);
+                $this->configs[$file] = Config::module($this->moduleName, $file);
             }
             return $this->configs[$file];
         }
