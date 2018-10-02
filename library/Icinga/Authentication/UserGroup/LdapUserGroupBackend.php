@@ -466,15 +466,41 @@ class LdapUserGroupBackend extends LdapRepository implements Inspectable, UserGr
                 );
             }
 
-            $sampleValue = $this->ds
+            $sampleValues = $this->ds
                 ->select()
                 ->from($this->groupClass, array($this->groupMemberAttribute))
                 ->where($this->groupMemberAttribute, '*')
+                ->limit(Logger::getInstance()->getLevel() === Logger::DEBUG ? 3 : 1)
                 ->setUnfoldAttribute($this->groupMemberAttribute)
                 ->setBase($this->groupBaseDn)
-                ->fetchOne();
+                ->fetchAll();
 
-            $this->ambiguousMemberAttribute = ! LdapUtils::isDn($sampleValue);
+            Logger::debug('Ambiguity query returned %d results', count($sampleValues));
+
+            $i = 0;
+            $sampleValue = null;
+            foreach ($sampleValues as $key => $value) {
+                if ($sampleValue === null) {
+                    $sampleValue = $value;
+                }
+
+                Logger::debug('Result %d: %s (%s)', ++$i, $value, $key);
+            }
+
+            if (is_object($sampleValue) && isset($sampleValue->{$this->groupMemberAttribute})) {
+                $this->ambiguousMemberAttribute = ! LdapUtils::isDn($sampleValue->{$this->groupMemberAttribute});
+
+                Logger::debug(
+                    'Ambiguity check came to the conclusion that the member attribute %s ambiguous. Tested sample: %s',
+                    $this->ambiguousMemberAttribute ? 'is' : 'is not',
+                    $sampleValue->{$this->groupMemberAttribute}
+                );
+            } else {
+                Logger::warning(
+                    'Ambiguity query returned zero or invalid results. Sample value is `%s`',
+                    print_r($sampleValue, true)
+                );
+            }
         }
 
         return $this->ambiguousMemberAttribute;
