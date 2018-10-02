@@ -74,6 +74,7 @@ class AuthenticationController extends Controller
         AuthenticationHook::triggerLogout($auth->getUser());
         $auth->removeAuthorization();
         if ($isExternalUser) {
+            $this->view->layout()->setLayout('external-logout');
             $this->getResponse()->setHttpResponseCode(401);
         } else {
             $this->redirectToLogin();

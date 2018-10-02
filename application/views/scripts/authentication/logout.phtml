@@ -8,6 +8,7 @@
     logged-in user this JavaScript provides a workaround to force a new authentication prompt in most browsers.
 -->
 <div class="content">
+    <div id="icinga-logo" aria-hidden="true"></div>
     <div class="alert alert-warning" id="logout-status">
         <b><?= $this->translate('Logging out...'); ?></b>
         <br>
@@ -19,7 +20,7 @@
     </div>
 
     <div class="container">
-        <a href="<?= $this->href('dashboard/index?renderLayout'); ?>"><?= $this->translate('Login'); ?></a>
+        <a href="<?= $this->href('dashboard'); ?>"><?= $this->translate('Login'); ?></a>
     </div>
 </div>
 <script type="text/javascript">
@@ -45,3 +46,34 @@
         msg.className = 'alert alert-success';
     });
 </script>
+<style type="text/css">
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+        background-color: #0095bf;
+        color: white;
+    }
+    .content {
+        text-align: center;
+    }
+
+    #icinga-logo {
+        background-image: url('../img/icinga-logo-big.svg');
+        background-position: center bottom;
+        background-repeat: no-repeat;
+        background-size: contain;
+        height: 177px;
+        margin-top: 10em;
+        width: 100%;
+    }
+
+    #logout-status {
+        margin: 2em 0 1em;
+        font-size: 2em;
+        font-weight: bold;
+    }
+
+    .container a {
+        color: white;
+        font-size: 1.5em;
+    }
+</style>
