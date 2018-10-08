@@ -3,6 +3,8 @@
 
 namespace Icinga\Protocol\Ldap;
 
+use Icinga\Application\Logger;
+
 /**
  * The properties and capabilities of an LDAP server
  *
@@ -347,6 +349,17 @@ class LdapCapabilities
 
         $cap = new LdapCapabilities($connection->cleanupAttributes(ldap_get_attributes($ds, $entry), $fields));
         $cap->discoverAdConfigOptions($connection);
+
+        if (isset($cap->attributes) && Logger::getInstance()->getLevel() === Logger::DEBUG) {
+            Logger::debug('Capability query discovered the following attributes:');
+            foreach ($cap->attributes as $name => $value) {
+                if ($value !== null) {
+                    Logger::debug(' %s = %s', $name, $value);
+                }
+            }
+            Logger::debug('Capability query attribute listing ended.');
+        }
+
         return $cap;
     }
 
