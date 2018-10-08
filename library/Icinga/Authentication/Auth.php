@@ -153,9 +153,20 @@ class Auth
                 continue;
             }
             if (empty($groupsFromBackend)) {
+                Logger::debug(
+                    'No groups found in backend "%s" which the user "%s" is a member of.',
+                    $name,
+                    $user->getUsername()
+                );
                 continue;
             }
             $groupsFromBackend = array_values($groupsFromBackend);
+            Logger::debug(
+                'Groups found in backend "%s" for user "%s": %s',
+                $name,
+                $user->getUsername(),
+                join(', ', $groupsFromBackend)
+            );
             $groups = array_merge($groups, array_combine($groupsFromBackend, $groupsFromBackend));
         }
         $user->setGroups($groups);
