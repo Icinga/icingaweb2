@@ -12,6 +12,7 @@ use Icinga\Application\Modules\Module;
 use Icinga\Data\ResourceFactory;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\NotFoundError;
+use Icinga\Forms\ActionForm;
 use Icinga\Forms\Config\GeneralConfigForm;
 use Icinga\Forms\Config\ResourceConfigForm;
 use Icinga\Forms\Config\UserBackendConfigForm;
@@ -122,7 +123,20 @@ class ConfigController extends Controller
                 $module = new Module($app, $name, $manager->getModuleDir($name));
             }
 
+            $toggleForm = new ActionForm();
+            $toggleForm->setDefaults(['identifier' => $name]);
+            if (! $this->view->moduleData->enabled) {
+                $toggleForm->setAction(Url::fromPath('config/moduleenable'));
+                $toggleForm->setDescription(sprintf($this->translate('Enable the %s module'), $name));
+            } elseif ($this->view->moduleData->loaded) {
+                $toggleForm->setAction(Url::fromPath('config/moduledisable'));
+                $toggleForm->setDescription(sprintf($this->translate('Disable the %s module'), $name));
+            } else {
+                $toggleForm = null;
+            }
+
             $this->view->module = $module;
+            $this->view->toggleForm = $toggleForm;
             $this->view->tabs = $module->getConfigTabs()->activate('info');
             $this->view->moduleGitCommitId = Version::getGitHead($module->getBaseDir());
         } else {
@@ -137,15 +151,20 @@ class ConfigController extends Controller
     public function moduleenableAction()
     {
         $this->assertPermission('config/modules');
-        $module = $this->getParam('name');
-        $manager = Icinga::app()->getModuleManager();
-        try {
-            $manager->enableModule($module);
+
+        $form = new ActionForm();
+        $form->setOnSuccess(function (ActionForm $form) {
+            $module = $form->getValue('identifier');
+            Icinga::app()->getModuleManager()->enableModule($module);
             Notification::success(sprintf($this->translate('Module "%s" enabled'), $module));
             $this->rerenderLayout()->reloadCss()->redirectNow('config/modules');
+        });
+
+        try {
+            $form->handleRequest();
         } catch (Exception $e) {
             $this->view->exceptionMessage = $e->getMessage();
-            $this->view->moduleName = $module;
+            $this->view->moduleName = $form->getValue('name');
             $this->view->action = 'enable';
             $this->render('module-configuration-error');
         }
@@ -157,15 +176,20 @@ class ConfigController extends Controller
     public function moduledisableAction()
     {
         $this->assertPermission('config/modules');
-        $module = $this->getParam('name');
-        $manager = Icinga::app()->getModuleManager();
-        try {
-            $manager->disableModule($module);
+
+        $form = new ActionForm();
+        $form->setOnSuccess(function (ActionForm $form) {
+            $module = $form->getValue('identifier');
+            Icinga::app()->getModuleManager()->disableModule($module);
             Notification::success(sprintf($this->translate('Module "%s" disabled'), $module));
             $this->rerenderLayout()->reloadCss()->redirectNow('config/modules');
+        });
+
+        try {
+            $form->handleRequest();
         } catch (Exception $e) {
             $this->view->exceptionMessage = $e->getMessage();
-            $this->view->moduleName = $module;
+            $this->view->moduleName = $form->getValue('name');
             $this->view->action = 'disable';
             $this->render('module-configuration-error');
         }
