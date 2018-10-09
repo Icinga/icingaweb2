@@ -262,7 +262,7 @@ class IniParser
         }
 
         try {
-            $configArray = parse_ini_string($content, true);
+            $configArray = parse_ini_string($content, true, INI_SCANNER_RAW);
         } catch (ErrorException $e) {
             throw new ConfigurationError('Couldn\'t parse the INI file `%s\'', $path, $e);
         }
