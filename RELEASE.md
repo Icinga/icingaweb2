@@ -231,8 +231,8 @@ Ask @bobapple to update the documentation at docs.icinga.com.
 
 ### Announcement  <a id="announcement"></a>
 
-* Create a new blog post on www.icinga.com/blog
-* Social media: [Twitter](https://twitter.com/icinga), [Facebook](https://www.facebook.com/icinga), [G+](https://plus.google.com/+icinga), [Xing](https://www.xing.com/communities/groups/icinga-da4b-1060043), [LinkedIn](https://www.linkedin.com/groups/Icinga-1921830/about)
+* Create a new blog post on icinga.com/blog
+* Social media: [Twitter](https://twitter.com/icinga), [Facebook](https://www.facebook.com/icinga), [Xing](https://www.xing.com/communities/groups/icinga-da4b-1060043), [LinkedIn](https://www.linkedin.com/groups/Icinga-1921830/about)
 * Update IRC channel topic
 
 ### Project Management  <a id="project-management"></a>
