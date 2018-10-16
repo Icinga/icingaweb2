@@ -144,6 +144,17 @@ class LdapResourceForm extends Form
             )
         );
 
+        $this->addElement(
+            'number',
+            'timeout',
+            array(
+                'preserveDefault'   => true,
+                'label'             => $this->translate('Timeout'),
+                'description'       => $this->translate('Connection timeout for every LDAP connection'),
+                'value'             => 5 // see LdapConnection::__construct()
+            )
+        );
+
         return $this;
     }
 }
