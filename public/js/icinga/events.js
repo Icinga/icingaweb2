@@ -122,9 +122,6 @@
             $( window ).on('unload', { self: this }, this.onUnload);
             $( window ).on('beforeunload', { self: this }, this.onUnload);
 
-            // We catch scroll events in our containers
-            $('.container').on('scroll', { self: this }, this.icinga.events.onContainerScroll);
-
             // Remove notifications on click
             $(document).on('click', '#notifications li', function () { $(this).remove(); });
 
@@ -189,14 +186,6 @@
                 icinga.loader.autorefreshSuspended = true;
                 icinga.logger.debug('Page invisible, disabling auto-refresh');
             }
-        },
-
-        /**
-         * A scroll event happened in one of our containers
-         */
-        onContainerScroll: function (event) {
-            // Ugly. And PLEASE, not so often
-            icinga.ui.fixControls();
         },
 
         autoCheckRadioButton: function (event) {
