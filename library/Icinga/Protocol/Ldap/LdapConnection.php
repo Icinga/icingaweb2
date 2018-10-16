@@ -140,6 +140,13 @@ class LdapConnection implements Selectable, Inspectable
     protected $root;
 
     /**
+     * LDAP_OPT_NETWORK_TIMEOUT for the LDAP connection
+     *
+     * @var int
+     */
+    protected $timeout;
+
+    /**
      * The properties and capabilities of the LDAP server
      *
      * @var LdapCapabilities
@@ -178,7 +185,8 @@ class LdapConnection implements Selectable, Inspectable
         $this->bindDn = $config->bind_dn;
         $this->bindPw = $config->bind_pw;
         $this->rootDn = $config->root_dn;
-        $this->port = $config->get('port', 389);
+        $this->port = (int) $config->get('port', 389);
+        $this->timeout = (int) $config->get('timeout', 5);
 
         $this->encryption = $config->encryption;
         if ($this->encryption !== null) {
@@ -1189,6 +1197,9 @@ class LdapConnection implements Selectable, Inspectable
         }
 
         $ds = ldap_connect($hostname, $this->port);
+
+        // Set a proper timeout for each connection
+        ldap_set_option($ds, LDAP_OPT_NETWORK_TIMEOUT, $this->timeout);
 
         // Usage of ldap_rename, setting LDAP_OPT_REFERRALS to 0 or using STARTTLS requires LDAPv3.
         // If this does not work we're probably not in a PHP 5.3+ environment as it is VERY
