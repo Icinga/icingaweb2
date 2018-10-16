@@ -185,8 +185,8 @@ class LdapConnection implements Selectable, Inspectable
         $this->bindDn = $config->bind_dn;
         $this->bindPw = $config->bind_pw;
         $this->rootDn = $config->root_dn;
-        $this->port = $config->get('port', 389);
-        $this->timeout = $config->get('timeout', 5);
+        $this->port = (int) $config->get('port', 389);
+        $this->timeout = (int) $config->get('timeout', 5);
 
         $this->encryption = $config->encryption;
         if ($this->encryption !== null) {
