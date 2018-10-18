@@ -467,8 +467,8 @@ Finally visit Icinga Web 2 in your browser to login as `icingaadmin` user: `/ici
 Prior to creating your own script, please look into the official resources
 which may help you already:
 
-* [Puppet module](https://www.icinga.com/products/integrations/puppet/)
-* [Chef cookbook](https://www.icinga.com/products/integrations/chef/)
+* [Puppet module](https://icinga.com/products/integrations/puppet/)
+* [Chef cookbook](https://icinga.com/products/integrations/chef/)
 
 If you are automating the installation of Icinga Web 2, you may want to skip the wizard and do things yourself.
 These are the steps you'd need to take assuming you are using MySQL/MariaDB. If you are using PostgreSQL please adapt

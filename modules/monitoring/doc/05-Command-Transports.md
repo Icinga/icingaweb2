@@ -19,7 +19,7 @@ The order in which Icinga Web 2 processes the configured transports is defined b
 
 ## Use the Icinga 2 API <a id="commandtransports-icinga2-api"></a>
 
-If you're running Icinga 2 it's best to use the [Icinga 2 API](https://www.icinga.com/docs/icinga2/latest/doc/12-icinga2-api/)
+If you're running Icinga 2 it's best to use the [Icinga 2 API](https://icinga.com/docs/icinga2/latest/doc/12-icinga2-api/)
 for transmitting external commands.
 
 ### Icinga 2 Preparations <a id="commandtransports-icinga2-api-preparations"></a>
