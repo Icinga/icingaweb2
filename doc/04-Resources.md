@@ -86,6 +86,7 @@ root\_dn                 | **Required.** Root object of the tree, e.g. `ou=peopl
 bind\_dn                 | **Required.** The user to use when connecting to the server.
 bind\_pw                 | **Required.** The password to use when connecting to the server.
 encryption               | **Optional.** Type of encryption to use: `none` (default), `starttls`, `ldaps`.
+timeout                  | **Optional.** Connection timeout for every LDAP connection. Defaults to `5`.
 
 #### Example <a id="resources-configuration-ldap-example"></a>
 
