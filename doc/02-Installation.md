@@ -12,7 +12,7 @@ chapter.
 
 ## Installing Requirements <a id="installing-requirements"></a>
 
-* [Icinga 2](https://www.icinga.com/products/icinga-2/) with the IDO database backend (MySQL or PostgreSQL)
+* [Icinga 2](https://icinga.com/products/icinga-2/) with the IDO database backend (MySQL or PostgreSQL)
 * A web server, e.g. Apache or Nginx
 * PHP version >= 5.6.0
 * The following PHP modules must be installed: cURL, gettext, intl, mbstring, OpenSSL and xml
