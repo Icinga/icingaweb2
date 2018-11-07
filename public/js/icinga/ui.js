@@ -696,17 +696,17 @@
             if (! this.hasWindowId()) {
                 return undefined;
             }
-            return window.name.match(/^Icinga_([a-zA-Z0-9]+)$/)[1];
+            return window.name.match(/^Icinga-([a-zA-Z0-9]+)$/)[1];
         },
 
         hasWindowId: function () {
-            var res = window.name.match(/^Icinga_([a-zA-Z0-9]+)$/);
+            var res = window.name.match(/^Icinga-([a-zA-Z0-9]+)$/);
             return typeof res === 'object' && null !== res;
         },
 
         setWindowId: function (id) {
             this.icinga.logger.debug('Setting new window id', id);
-            window.name = 'Icinga_' + id;
+            window.name = 'Icinga-' + id;
         },
 
         destroy: function () {
