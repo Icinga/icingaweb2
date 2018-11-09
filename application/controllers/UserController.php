@@ -4,6 +4,7 @@
 namespace Icinga\Controllers;
 
 use Exception;
+use Icinga\Application\Config;
 use Icinga\Application\Logger;
 use Icinga\Authentication\User\DomainAwareInterface;
 use Icinga\Data\DataArray\ArrayDatasource;
@@ -124,6 +125,13 @@ class UserController extends AuthBackendController
             $this->view->showCreateMembershipLink = ! empty($extensibleBackends);
         } else {
             $this->view->showCreateMembershipLink = false;
+        }
+
+        if ($this->hasPermission('config/authentication/roles/show')) {
+            $allRoles = Config::app('roles', true);
+            foreach ($allRoles as $name => $role) { /** @var object $role */
+                $user->roles[] = $name;
+            }
         }
 
         $this->view->user = $user;

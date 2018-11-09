@@ -27,6 +27,7 @@ use Icinga\Data\Selectable;
         );
     }
     ?>
+  <div class="content">
     <table class="name-value-table">
         <tr>
             <th><?= $this->translate('State'); ?></th>
@@ -41,17 +42,11 @@ use Icinga\Data\Selectable;
             <td><?= $user->last_modified === null ? '-' : $this->formatDateTime($user->last_modified); ?></td>
         </tr>
     </table>
+</div>
 <?php if (! $this->compact): ?>
     <h2><?= $this->translate('Group Memberships'); ?></h2>
-    <div class="grid">
-        <?= $this->limiter; ?>
-        <?= $this->paginator; ?>
-        <?= $this->sortBox; ?>
-    </div>
     <?= $this->filterEditor; ?>
 <?php endif ?>
-</div>
-<div class="content">
 <?php if ($showCreateMembershipLink): ?>
     <?= $this->qlink(
         $this->translate('Create New Membership'),
@@ -68,10 +63,9 @@ use Icinga\Data\Selectable;
 <?php endif ?>
 
 <?php if (! $memberships->hasResult()): ?>
-    <p><?= $this->translate('No memberships found matching the filter'); ?></p>
-</div>
-<?php return; endif ?>
-
+    <p><?= $this->translate('No group memberships'); ?></p>
+<?php else: ?>
+<div>
     <table data-base-target="_next" class="table-row-selectable common-table">
         <thead>
             <tr>
@@ -108,4 +102,21 @@ use Icinga\Data\Selectable;
         <?php endforeach ?>
         </tbody>
     </table>
+<?php endif; ?>
+
+<?php if(! isset($user->roles)):  ?>
+      <p><?= $this->translate('No role memberships'); ?></p>
+<?php else: ?>
+  <h2><?= $this->translate('Role Memberships'); ?></h2>
+  <table class="table-row-selectable common-table">
+    <tr>
+      <th><?= $this->translate('Name'); ?></th>
+    </tr>
+<?php foreach ($user->roles as $role): ?>
+    <tr>
+      <td><?= $role ?></td>
+    </tr>
+<?php endforeach; ?>
+  </table>
+<?php endif; ?>
 </div>
