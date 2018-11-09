@@ -9,6 +9,8 @@ use Icinga\Data\Selectable;
 <?php if (! $this->compact): ?>
     <?= $tabs; ?>
 <?php endif ?>
+</div>
+<div class="content">
     <h2><?= $this->escape($user->user_name) ?></h2>
     <?php
     if ($this->hasPermission('config/authentication/users/edit') && $backend instanceof Updatable) {
@@ -27,7 +29,6 @@ use Icinga\Data\Selectable;
         );
     }
     ?>
-  <div class="content">
     <table class="name-value-table">
         <tr>
             <th><?= $this->translate('State'); ?></th>
@@ -42,7 +43,6 @@ use Icinga\Data\Selectable;
             <td><?= $user->last_modified === null ? '-' : $this->formatDateTime($user->last_modified); ?></td>
         </tr>
     </table>
-</div>
 <?php if (! $this->compact): ?>
     <h2><?= $this->translate('Group Memberships'); ?></h2>
     <?= $this->filterEditor; ?>
@@ -104,6 +104,10 @@ use Icinga\Data\Selectable;
     </table>
 <?php endif; ?>
 
+    <?php if (! $this->compact): ?>
+      <h2><?= $this->translate('Role Memberships'); ?></h2>
+        <?= $this->filterEditor; ?>
+    <?php endif ?>
 <?php if(! isset($user->roles)):  ?>
       <p><?= $this->translate('No role memberships'); ?></p>
 <?php else: ?>
