@@ -130,6 +130,8 @@ class UserController extends AuthBackendController
         if ($this->hasPermission('config/authentication/roles/show')) {
             $allRoles = Config::app('roles', true);
             foreach ($allRoles as $name => $role) { /** @var object $role */
+
+            if (in_array($userName, explode(',', $role->get('users'))))
                 $user->roles[] = $name;
             }
         }
