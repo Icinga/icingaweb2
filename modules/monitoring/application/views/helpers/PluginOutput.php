@@ -120,8 +120,9 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
             $isHtml = false;
         }
         $output = trim($output);
-        // Add space after comma where missing, to help browsers to break words in plugin output
-        $output = preg_replace('/,(?=[^\s])/', ', ', $output);
+        // Add zero-width space after commas which are not followed by a whitespace character
+        // in oder to help browsers to break words in plugin output
+        $output = preg_replace('/,(?=[^\s])/', ',&#8203;', $output);
         if (! $raw) {
             if ($isHtml) {
                 $output = $this->processHtml($output);
