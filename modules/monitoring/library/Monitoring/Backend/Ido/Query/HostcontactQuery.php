@@ -196,7 +196,7 @@ class HostcontactQuery extends IdoQuery
      */
     protected function joinServices()
     {
-        $this->joinHosts();
+        $this->requireVirtualTable('hosts');
 
         $this->select->joinLeft(
             ['s' => $this->prefix . 'services'],
