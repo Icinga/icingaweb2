@@ -6,6 +6,10 @@ Icinga Web 2 database.
 Specific version upgrades are described below. Please note that version updates are incremental. An upgrade from
 v2.3 to v2.5 requires to follow the instructions for v2.4 too.
 
+## Upgrading to Icinga Web 2 2.6.x <a id="upgrading-to-2.6.x"></a>
+
+* Icinga Web 2 version 2.6.x does not introduce any backward incompatible change.
+
 ## Upgrading to Icinga Web 2 2.5.x <a id="upgrading-to-2.5.x"></a>
 
 > **Attention**
