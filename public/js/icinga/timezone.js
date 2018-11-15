@@ -14,7 +14,7 @@
             return Date.maxTimezoneOffset;
         }
 
-        var year = new Date().getYear();
+        var year = new Date().getFullYear();
         var previousOffset;
 
         for (var i=0; i<12; i++) {
