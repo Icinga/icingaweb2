@@ -75,11 +75,13 @@ class Hook
             return false;
         }
 
-        $hook = self::$hooks[$name];
-        // $hook is in the format key => value
-        $hook = reset($hook);
+        foreach (self::$hooks[$name] as $hook) {
+            if (self::hasPermission($hook)) {
+                return true;
+            }
+        }
 
-        return self::hasPermission($hook);
+        return false;
     }
 
     protected static function normalizeHookName($name)
