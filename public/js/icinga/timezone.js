@@ -23,7 +23,7 @@
      * @returns {boolean}
      */
     Date.prototype.isDst = function() {
-        return (this.getStdTimezoneOffset() === this.getTimezoneOffset()) ? false : true;
+        return this.getStdTimezoneOffset() !== this.getTimezoneOffset();
     };
 
     /**
