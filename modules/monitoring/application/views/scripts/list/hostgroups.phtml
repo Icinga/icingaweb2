@@ -42,7 +42,7 @@ if (! $this->compact): ?>
             <th>
                 <?= $this->qlink(
                     $hostGroup->hostgroup_alias,
-                    'monitoring/list/hosts',
+                    $this->url('monitoring/list/hosts')->addFilter($this->filterEditor->getFilter()),
                     array('hostgroup_name' => $hostGroup->hostgroup_name, 'sort' => 'host_severity'),
                     array('title' => sprintf(
                         $this->translate('List all hosts in the group "%s"'),
@@ -140,7 +140,7 @@ if (! $this->compact): ?>
             <td class="count-col">
                 <?= $this->qlink(
                     $hostGroup->services_total,
-                    'monitoring/list/services',
+                    $this->url('monitoring/list/services')->addFilter($this->filterEditor->getFilter()),
                     array('hostgroup_name' => $hostGroup->hostgroup_name, 'sort' => 'service_severity'),
                     array('title' => sprintf(
                         $this->translate('List all services of all hosts in host group "%s"'),
