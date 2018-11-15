@@ -10,25 +10,11 @@
      * @returns {Number}
      */
     Date.prototype.getStdTimezoneOffset = function() {
-        if (Date.maxTimezoneOffset !== undefined) {
-            return Date.maxTimezoneOffset;
-        }
-
         var year = new Date().getFullYear();
-        var previousOffset;
+        var offsetInJanuary = new Date(year, 0, 2).getTimezoneOffset();
+        var offsetInJune = new Date(year, 5, 2).getTimezoneOffset();
 
-        for (var i=0; i<12; i++) {
-            var d = new Date(year, i, 1);
-            if (previousOffset !== undefined) {
-                previousOffset = Math.max(previousOffset, d.getTimezoneOffset());
-            } else {
-                previousOffset = d.getTimezoneOffset();
-            }
-        }
-
-        Date.maxTimezoneOffset = previousOffset;
-
-        return Date.maxTimezoneOffset;
+        return Math.max(offsetInJanuary, offsetInJune);
     };
 
     /**
