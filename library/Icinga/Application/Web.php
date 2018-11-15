@@ -84,6 +84,7 @@ class Web extends EmbeddedWeb
             ->setupLogging()
             ->setupErrorHandling()
             ->loadConfig()
+            ->setupLogger()
             ->setupRequest()
             ->setupSession()
             ->setupNotifications()
@@ -97,7 +98,6 @@ class Web extends EmbeddedWeb
             ->setupUserBackendFactory()
             ->setupUser()
             ->setupTimezone()
-            ->setupLogger()
             ->setupInternationalization()
             ->setupFatalErrorHandling();
     }
