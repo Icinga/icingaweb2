@@ -55,20 +55,12 @@ class WebCommand extends Command
             $this->forkAndExit();
         }
         echo "Serving Icinga Web 2 from directory $documentRoot and listening on $socket\n";
-        $cmd = sprintf(
-            '%s -S %s -t %s %s',
-            readlink('/proc/self/exe'),
-            $socket,
-            $documentRoot,
-            Icinga::app()->getLibraryDir('/Icinga/Application/webrouter.php')
-        );
 
         // TODO: Store webserver log, switch uid, log index.php includes, pid file
-        if ($fork) {
-            exec($cmd);
-        } else {
-            passthru($cmd);
-        }
+        pcntl_exec(
+            readlink('/proc/self/exe'),
+            ['-S', $socket, '-t', $documentRoot, Icinga::app()->getLibraryDir('/Icinga/Application/webrouter.php')]
+        );
     }
 
     public function stopAction()
