@@ -5,10 +5,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Monitoring Module (2.5.3)\n"
+"Project-Id-Version: Monitoring Module (2.6.1)\n"
 "Report-Msgid-Bugs-To: dev@icinga.com\n"
-"POT-Creation-Date: 2018-07-12 08:32+0000\n"
-"PO-Revision-Date: 2018-07-12 11:03+0200\n"
+"POT-Creation-Date: 2018-11-15 14:27+0000\n"
+"PO-Revision-Date: 2018-11-19 12:25+0100\n"
 "Last-Translator: Markus Frosch <markus.frosch@icinga.com>\n"
 "Language: de_DE\n"
 "MIME-Version: 1.0\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-Basepath: .\n"
 "Language-Team: \n"
-"X-Generator: Poedit 2.0.6\n"
+"X-Generator: Poedit 2.2\n"
 "X-Poedit-SearchPath-0: .\n"
 
 #: ../../../../modules/monitoring/application/controllers/EventController.php:158
@@ -362,16 +362,16 @@ msgstr "API Passwort"
 msgid "API Username"
 msgstr "API Benutzername"
 
-#: ../../../../modules/monitoring/application/views/scripts/show/components/acknowledgement.phtml:77
+#: ../../../../modules/monitoring/application/views/scripts/hosts/show.phtml:30
 #: ../../../../modules/monitoring/application/views/scripts/partials/object/quick-actions.phtml:15
 #: ../../../../modules/monitoring/application/views/scripts/partials/object/quick-actions.phtml:29
-#: ../../../../modules/monitoring/application/views/scripts/hosts/show.phtml:30
 #: ../../../../modules/monitoring/application/views/scripts/services/show.phtml:29
+#: ../../../../modules/monitoring/application/views/scripts/show/components/acknowledgement.phtml:77
 msgid "Acknowledge"
 msgstr "Bestätigen"
 
 # Plural version??
-#: ../../../../modules/monitoring/application/controllers/HostController.php:118
+#: ../../../../modules/monitoring/application/controllers/HostController.php:119
 msgid "Acknowledge Host Problem"
 msgstr "Hostproblem bestätigen"
 
@@ -396,9 +396,9 @@ msgid_plural "Acknowledge problems"
 msgstr[0] "Problem bestätigen"
 msgstr[1] "Probleme bestätigen"
 
-#: ../../../../modules/monitoring/application/views/scripts/show/components/acknowledgement.phtml:85
 #: ../../../../modules/monitoring/application/views/scripts/partials/object/quick-actions.phtml:23
 #: ../../../../modules/monitoring/application/views/scripts/partials/object/quick-actions.phtml:37
+#: ../../../../modules/monitoring/application/views/scripts/show/components/acknowledgement.phtml:85
 msgid ""
 "Acknowledge this problem, suppress all future notifications for it and tag "
 "it as being handled"
@@ -406,14 +406,14 @@ msgstr ""
 "Problem bestätigen, alle zukünftigen Benachrichtigungen unterdrücken und als "
 "\"in Arbeit\" markieren"
 
-#: ../../../../modules/monitoring/application/views/scripts/show/components/acknowledgement.phtml:15
-#: ../../../../modules/monitoring/application/views/helpers/ServiceFlags.php:13
 #: ../../../../modules/monitoring/application/views/helpers/HostFlags.php:13
+#: ../../../../modules/monitoring/application/views/helpers/ServiceFlags.php:13
+#: ../../../../modules/monitoring/application/views/scripts/show/components/acknowledgement.phtml:15
 msgid "Acknowledged"
 msgstr "Bestätigt"
 
-#: ../../../../modules/monitoring/application/views/scripts/partials/event-history.phtml:79
 #: ../../../../modules/monitoring/application/controllers/EventController.php:243
+#: ../../../../modules/monitoring/application/views/scripts/partials/event-history.phtml:79
 msgctxt "tooltip"
 msgid "Acknowledged"
 msgstr "Bestätigt"
@@ -426,8 +426,8 @@ msgstr "Bestätigte Host-Probleme"
 msgid "Acknowledged Problem Services"
 msgstr "Bestätigte Service-Probleme"
 
-#: ../../../../modules/monitoring/application/views/scripts/partials/comment/comment-description.phtml:20
 #: ../../../../modules/monitoring/application/controllers/EventController.php:421
+#: ../../../../modules/monitoring/application/views/scripts/partials/comment/comment-description.phtml:20
 msgid "Acknowledgement"
 msgstr "Bestätigung"
 
@@ -440,8 +440,8 @@ msgstr ""
 "Bestätigung bleibt erhalten, bis der %1$s sich erholt, auch wenn der %1$s "
 "den Zustand wechselt"
 
-#: ../../../../modules/monitoring/application/views/scripts/partials/event-history.phtml:84
 #: ../../../../modules/monitoring/application/controllers/EventController.php:245
+#: ../../../../modules/monitoring/application/views/scripts/partials/event-history.phtml:84
 msgctxt "tooltip"
 msgid "Acknowledgement removed"
 msgstr "Bestätigung entfernt"
@@ -464,8 +464,8 @@ msgstr[1] "Bestätige Probleme.."
 msgid "Actions"
 msgstr "Aktionen"
 
-#: ../../../../modules/monitoring/application/views/helpers/ServiceFlags.php:26
 #: ../../../../modules/monitoring/application/views/helpers/HostFlags.php:26
+#: ../../../../modules/monitoring/application/views/helpers/ServiceFlags.php:26
 msgid "Active And Passive Checks Disabled"
 msgstr "Aktive und passive Checks deaktiviert"
 
@@ -473,8 +473,8 @@ msgstr "Aktive und passive Checks deaktiviert"
 msgid "Active Checks"
 msgstr "Aktive Checks"
 
-#: ../../../../modules/monitoring/application/views/helpers/ServiceFlags.php:28
 #: ../../../../modules/monitoring/application/views/helpers/HostFlags.php:28
+#: ../../../../modules/monitoring/application/views/helpers/ServiceFlags.php:28
 msgid "Active Checks Disabled"
 msgstr "Aktive Checks deaktiviert"
 
@@ -494,18 +494,18 @@ msgstr "Aktive Servicechecks"
 msgid "Active checks"
 msgstr "Aktive Checks"
 
-#: ../../../../modules/monitoring/application/views/scripts/downtime/show.phtml:145
 #: ../../../../modules/monitoring/application/controllers/EventController.php:394
+#: ../../../../modules/monitoring/application/views/scripts/downtime/show.phtml:145
 msgid "Actual end time"
 msgstr "Tatsächliche Endzeit"
 
-#: ../../../../modules/monitoring/application/views/scripts/downtime/show.phtml:140
 #: ../../../../modules/monitoring/application/controllers/EventController.php:388
+#: ../../../../modules/monitoring/application/views/scripts/downtime/show.phtml:140
 msgid "Actual start time"
 msgstr "Tatsächliche Startzeit"
 
 # Plural version??
-#: ../../../../modules/monitoring/application/controllers/HostController.php:130
+#: ../../../../modules/monitoring/application/controllers/HostController.php:131
 msgid "Add Host Comment"
 msgstr "Kommentar zu Host hinzufügen"
 
@@ -524,19 +524,19 @@ msgstr "Kommentar zu Service hinzufügen"
 msgid "Add Service Comments"
 msgstr "Kommentare zu Service hinzufügen"
 
-#: ../../../../modules/monitoring/application/views/scripts/show/components/comments.phtml:14
 #: ../../../../modules/monitoring/application/views/scripts/partials/object/quick-actions.phtml:58
+#: ../../../../modules/monitoring/application/views/scripts/show/components/comments.phtml:14
 msgid "Add a new comment to this host"
 msgstr "Neuen Kommentar für diesen Host hinzufügen"
 
-#: ../../../../modules/monitoring/application/views/scripts/show/components/comments.phtml:26
 #: ../../../../modules/monitoring/application/views/scripts/partials/object/quick-actions.phtml:70
+#: ../../../../modules/monitoring/application/views/scripts/show/components/comments.phtml:26
 msgid "Add a new comment to this service"
 msgstr "Neuen Kommentar für diesen Service hinzufügen"
 
+#: ../../../../modules/monitoring/application/forms/Command/Object/AddCommentCommandForm.php:29
 #: ../../../../modules/monitoring/application/views/scripts/show/components/comments.phtml:7
 #: ../../../../modules/monitoring/application/views/scripts/show/components/comments.phtml:19
-#: ../../../../modules/monitoring/application/forms/Command/Object/AddCommentCommandForm.php:29
 msgid "Add comment"
 msgid_plural "Add comments"
 msgstr[0] "Kommentar hinzufügen"
@@ -554,7 +554,7 @@ msgid_plural "Adding comments.."
 msgstr[0] "Füge Kommentar hinzu.."
 msgstr[1] "Füge Kommentare hinzu.."
 
-#: ../../../../modules/monitoring/application/controllers/ListController.php:88
+#: ../../../../modules/monitoring/application/controllers/ListController.php:89
 msgid "Address"
 msgstr "Adresse"
 
@@ -567,8 +567,8 @@ msgstr "Alarmübersicht"
 msgid "Alert summary"
 msgstr "Alarmübersicht"
 
+#: ../../../../modules/monitoring/application/controllers/ListController.php:326
 #: ../../../../modules/monitoring/application/views/scripts/list/contactgroups.phtml:24
-#: ../../../../modules/monitoring/application/controllers/ListController.php:324
 msgid "Alias"
 msgstr "Alias"
 
@@ -705,11 +705,11 @@ msgstr ""
 msgid "Apply"
 msgstr "Anwenden"
 
-#: ../../../../modules/monitoring/application/views/scripts/comment/show.phtml:42
-#: ../../../../modules/monitoring/application/views/scripts/downtime/show.phtml:39
-#: ../../../../modules/monitoring/application/controllers/ListController.php:247
 #: ../../../../modules/monitoring/application/controllers/EventController.php:399
 #: ../../../../modules/monitoring/application/controllers/EventController.php:442
+#: ../../../../modules/monitoring/application/controllers/ListController.php:249
+#: ../../../../modules/monitoring/application/views/scripts/comment/show.phtml:42
+#: ../../../../modules/monitoring/application/views/scripts/downtime/show.phtml:39
 msgid "Author"
 msgstr "Autor"
 
@@ -726,13 +726,13 @@ msgstr "ø (min)"
 msgid "Backend %s is not running"
 msgstr "Backend %s läuft nicht"
 
-#: ../../../../modules/monitoring/application/forms/Setup/BackendPage.php:28
 #: ../../../../modules/monitoring/application/forms/Config/BackendConfigForm.php:187
+#: ../../../../modules/monitoring/application/forms/Setup/BackendPage.php:28
 msgid "Backend Name"
 msgstr "Backendname"
 
-#: ../../../../modules/monitoring/application/forms/Setup/BackendPage.php:43
 #: ../../../../modules/monitoring/application/forms/Config/BackendConfigForm.php:211
+#: ../../../../modules/monitoring/application/forms/Setup/BackendPage.php:43
 msgid "Backend Type"
 msgstr "Backendtyp"
 
@@ -760,7 +760,7 @@ msgstr "KOMMENTAR"
 msgid "COMMENT DELETED"
 msgstr "KOMMENTAR GELÖSCHT"
 
-#: ../../../../modules/monitoring/library/Monitoring/Object/Service.php:197
+#: ../../../../modules/monitoring/library/Monitoring/Object/Service.php:198
 msgid "CRITICAL"
 msgstr "KRITISCH"
 
@@ -782,6 +782,7 @@ msgstr ""
 "Remote-Benutzer fehlt"
 
 #: ../../../../modules/monitoring/library/Monitoring/Controller.php:125
+#: ../../../../modules/monitoring/library/Monitoring/Monitoring.php:53
 #, php-format
 msgid ""
 "Cannot apply restriction %s using the filter %s. You can only use the "
@@ -898,14 +899,14 @@ msgstr ""
 "Das Vorhandensein dieser angepassten Variablen wird angezeigt, aber ihre "
 "Werte werden maskiert."
 
-#: ../../../../modules/monitoring/application/views/scripts/show/components/command.phtml:12
 #: ../../../../modules/monitoring/application/views/scripts/hosts/show.phtml:163
 #: ../../../../modules/monitoring/application/views/scripts/services/show.phtml:165
+#: ../../../../modules/monitoring/application/views/scripts/show/components/command.phtml:12
 msgid "Command"
 msgstr "Befehl"
 
-#: ../../../../modules/monitoring/application/forms/Config/Transport/RemoteTransportForm.php:177
 #: ../../../../modules/monitoring/application/forms/Config/Transport/LocalTransportForm.php:30
+#: ../../../../modules/monitoring/application/forms/Config/Transport/RemoteTransportForm.php:177
 msgid "Command File"
 msgstr "Befehls-Datei"
 
@@ -963,37 +964,37 @@ msgstr "Reihenfolge der Befehls-Transporte erfolgreich aktualisiert"
 msgid "Command transport successfully created"
 msgstr "Der Befehls-Transport wurde erfolgreich angelegt"
 
-#: ../../../../modules/monitoring/application/views/scripts/show/contact.phtml:51
 #: ../../../../modules/monitoring/application/views/scripts/comment/show.phtml:70
-#: ../../../../modules/monitoring/application/views/scripts/downtime/show.phtml:163
 #: ../../../../modules/monitoring/application/views/scripts/comments/show.phtml:9
+#: ../../../../modules/monitoring/application/views/scripts/downtime/show.phtml:163
 #: ../../../../modules/monitoring/application/views/scripts/downtimes/show.phtml:9
+#: ../../../../modules/monitoring/application/views/scripts/show/contact.phtml:51
 msgid "Commands"
 msgstr "Befehle"
 
-#: ../../../../modules/monitoring/application/views/scripts/partials/object/quick-actions.phtml:51
-#: ../../../../modules/monitoring/application/views/scripts/partials/object/quick-actions.phtml:63
-#: ../../../../modules/monitoring/application/views/scripts/downtime/show.phtml:47
-#: ../../../../modules/monitoring/application/controllers/EventController.php:400
 #: ../../../../modules/monitoring/application/controllers/CommentController.php:56
+#: ../../../../modules/monitoring/application/controllers/EventController.php:400
 #: ../../../../modules/monitoring/application/forms/Command/Object/AcknowledgeProblemCommandForm.php:54
-#: ../../../../modules/monitoring/application/forms/Command/Object/SendCustomNotificationCommandForm.php:46
 #: ../../../../modules/monitoring/application/forms/Command/Object/AddCommentCommandForm.php:43
 #: ../../../../modules/monitoring/application/forms/Command/Object/ScheduleServiceDowntimeCommandForm.php:65
+#: ../../../../modules/monitoring/application/forms/Command/Object/SendCustomNotificationCommandForm.php:46
+#: ../../../../modules/monitoring/application/views/scripts/downtime/show.phtml:47
+#: ../../../../modules/monitoring/application/views/scripts/partials/object/quick-actions.phtml:51
+#: ../../../../modules/monitoring/application/views/scripts/partials/object/quick-actions.phtml:63
 msgid "Comment"
 msgstr "Kommentar"
 
-#: ../../../../modules/monitoring/application/views/scripts/partials/event-history.phtml:69
 #: ../../../../modules/monitoring/application/controllers/EventController.php:239
+#: ../../../../modules/monitoring/application/views/scripts/partials/event-history.phtml:69
 msgctxt "tooltip"
 msgid "Comment"
 msgstr "Kommentar"
 
-#: ../../../../modules/monitoring/application/controllers/ListController.php:438
+#: ../../../../modules/monitoring/application/controllers/ListController.php:440
 msgid "Comment Timestamp"
 msgstr "Kommentarzeitstempel"
 
-#: ../../../../modules/monitoring/application/controllers/ListController.php:441
+#: ../../../../modules/monitoring/application/controllers/ListController.php:443
 msgid "Comment Type"
 msgstr "Kommentartyp"
 
@@ -1005,8 +1006,8 @@ msgstr "Detailinformation zum Kommentar"
 msgid "Comment not found"
 msgstr "Kommentar nicht gefunden"
 
-#: ../../../../modules/monitoring/application/views/scripts/partials/event-history.phtml:74
 #: ../../../../modules/monitoring/application/controllers/EventController.php:241
+#: ../../../../modules/monitoring/application/views/scripts/partials/event-history.phtml:74
 msgctxt "tooltip"
 msgid "Comment removed"
 msgstr "Kommentar gelöscht"
@@ -1028,13 +1029,13 @@ msgid "Comment was created by an user"
 msgstr "Kommentar wurde von einem Benutzer erstellt"
 
 #: ../../../../modules/monitoring/configuration.php:222
-#: ../../../../modules/monitoring/application/views/scripts/show/components/comments.phtml:37
+#: ../../../../modules/monitoring/application/controllers/CommentsController.php:63
+#: ../../../../modules/monitoring/application/controllers/ListController.php:414
+#: ../../../../modules/monitoring/application/controllers/TimelineController.php:62
+#: ../../../../modules/monitoring/application/forms/EventOverviewForm.php:64
 #: ../../../../modules/monitoring/application/views/scripts/hosts/show.phtml:59
 #: ../../../../modules/monitoring/application/views/scripts/services/show.phtml:58
-#: ../../../../modules/monitoring/application/controllers/TimelineController.php:62
-#: ../../../../modules/monitoring/application/controllers/CommentsController.php:63
-#: ../../../../modules/monitoring/application/controllers/ListController.php:412
-#: ../../../../modules/monitoring/application/forms/EventOverviewForm.php:64
+#: ../../../../modules/monitoring/application/views/scripts/show/components/comments.phtml:37
 msgid "Comments"
 msgstr "Kommentare"
 
@@ -1064,10 +1065,10 @@ msgid "Confirm removal of %d downtimes."
 msgstr "Bestätige das Entfernen von %d Downtimes."
 
 #: ../../../../modules/monitoring/application/views/scripts/list/contactgroups.phtml:23
-msgid "Contact Group "
+msgid "Contact Group"
 msgstr "Kontaktgruppe"
 
-#: ../../../../modules/monitoring/application/controllers/ListController.php:383
+#: ../../../../modules/monitoring/application/controllers/ListController.php:385
 msgid "Contact Groups"
 msgstr "Kontaktgruppen"
 
@@ -1075,11 +1076,11 @@ msgstr "Kontaktgruppen"
 msgid "Contact details"
 msgstr "Kontaktdetails"
 
-#: ../../../../modules/monitoring/application/controllers/ListController.php:397
+#: ../../../../modules/monitoring/application/controllers/ListController.php:399
 msgid "Contactgroup Alias"
 msgstr "Kontaktgruppen-Alias"
 
-#: ../../../../modules/monitoring/application/controllers/ListController.php:396
+#: ../../../../modules/monitoring/application/controllers/ListController.php:398
 msgid "Contactgroup Name"
 msgstr "Kontaktgruppen-Name"
 
@@ -1089,8 +1090,8 @@ msgid "Contactgroups"
 msgstr "Kontaktgruppen"
 
 #: ../../../../modules/monitoring/configuration.php:210
+#: ../../../../modules/monitoring/application/controllers/ListController.php:309
 #: ../../../../modules/monitoring/application/views/scripts/show/components/contacts.phtml:17
-#: ../../../../modules/monitoring/application/controllers/ListController.php:307
 msgid "Contacts"
 msgstr "Kontakte"
 
@@ -1138,10 +1139,10 @@ msgstr "Neues Monitoringbackend anlegen"
 msgid "Created"
 msgstr "Angelegt"
 
+#: ../../../../modules/monitoring/application/forms/StatehistoryForm.php:114
+#: ../../../../modules/monitoring/application/views/helpers/Perfdata.php:41
 #: ../../../../modules/monitoring/application/views/scripts/tactical/index.phtml:93
 #: ../../../../modules/monitoring/application/views/scripts/tactical/index.phtml:99
-#: ../../../../modules/monitoring/application/views/helpers/Perfdata.php:41
-#: ../../../../modules/monitoring/application/forms/StatehistoryForm.php:114
 msgid "Critical"
 msgstr "Kritisch"
 
@@ -1149,8 +1150,8 @@ msgstr "Kritisch"
 msgid "Current Downtimes"
 msgstr "Aktuelle Downtimes"
 
+#: ../../../../modules/monitoring/application/controllers/ListController.php:173
 #: ../../../../modules/monitoring/application/views/scripts/event/show.phtml:16
-#: ../../../../modules/monitoring/application/controllers/ListController.php:171
 msgid "Current Host State"
 msgstr "Aktueller Host-Zustand"
 
@@ -1158,12 +1159,12 @@ msgstr "Aktueller Host-Zustand"
 msgid "Current Incidents"
 msgstr "Aktuelle Vorfälle"
 
+#: ../../../../modules/monitoring/application/controllers/ListController.php:168
 #: ../../../../modules/monitoring/application/views/scripts/event/show.phtml:15
-#: ../../../../modules/monitoring/application/controllers/ListController.php:166
 msgid "Current Service State"
 msgstr "Aktueller Service-Zustand"
 
-#: ../../../../modules/monitoring/application/controllers/ListController.php:86
+#: ../../../../modules/monitoring/application/controllers/ListController.php:87
 msgid "Current State"
 msgstr "Aktueller Status"
 
@@ -1175,7 +1176,7 @@ msgstr "Angepasste Variablen"
 msgid "Custom notification"
 msgstr "Benutzerdefinierte Benachrichtigung"
 
-#: ../../../../modules/monitoring/library/Monitoring/Object/Host.php:182
+#: ../../../../modules/monitoring/library/Monitoring/Object/Host.php:183
 msgid "DOWN"
 msgstr "DOWN"
 
@@ -1400,16 +1401,16 @@ msgstr ""
 msgid "Do nothing with child hosts"
 msgstr "Nicht auf untergeordnete Hosts anwenden"
 
+#: ../../../../modules/monitoring/application/forms/StatehistoryForm.php:134
 #: ../../../../modules/monitoring/application/views/scripts/tactical/index.phtml:29
 #: ../../../../modules/monitoring/application/views/scripts/tactical/index.phtml:35
-#: ../../../../modules/monitoring/application/forms/StatehistoryForm.php:134
 msgid "Down"
 msgstr "Down"
 
+#: ../../../../modules/monitoring/application/controllers/DowntimeController.php:66
 #: ../../../../modules/monitoring/application/views/scripts/partials/comment/comment-description.phtml:15
 #: ../../../../modules/monitoring/application/views/scripts/partials/object/quick-actions.phtml:112
 #: ../../../../modules/monitoring/application/views/scripts/partials/object/quick-actions.phtml:126
-#: ../../../../modules/monitoring/application/controllers/DowntimeController.php:66
 msgid "Downtime"
 msgstr "Downtime"
 
@@ -1417,8 +1418,8 @@ msgstr "Downtime"
 msgid "Downtime ended"
 msgstr "Downtime endete"
 
-#: ../../../../modules/monitoring/application/views/scripts/partials/event-history.phtml:132
 #: ../../../../modules/monitoring/application/controllers/EventController.php:261
+#: ../../../../modules/monitoring/application/views/scripts/partials/event-history.phtml:132
 msgctxt "tooltip"
 msgid "Downtime ended"
 msgstr "Downtime endete"
@@ -1427,14 +1428,14 @@ msgstr "Downtime endete"
 msgid "Downtime not found"
 msgstr "Downtime nicht gefunden"
 
-#: ../../../../modules/monitoring/application/views/scripts/partials/event-history.phtml:94
 #: ../../../../modules/monitoring/application/controllers/EventController.php:249
+#: ../../../../modules/monitoring/application/views/scripts/partials/event-history.phtml:94
 msgctxt "tooltip"
 msgid "Downtime removed"
 msgstr "Downtime entfernt"
 
-#: ../../../../modules/monitoring/application/views/scripts/partials/event-history.phtml:89
 #: ../../../../modules/monitoring/application/controllers/EventController.php:247
+#: ../../../../modules/monitoring/application/views/scripts/partials/event-history.phtml:89
 msgctxt "tooltip"
 msgid "Downtime scheduled"
 msgstr "Downtime geplant"
@@ -1443,8 +1444,8 @@ msgstr "Downtime geplant"
 msgid "Downtime started"
 msgstr "Downtime hat begonnen"
 
-#: ../../../../modules/monitoring/application/views/scripts/partials/event-history.phtml:127
 #: ../../../../modules/monitoring/application/controllers/EventController.php:259
+#: ../../../../modules/monitoring/application/views/scripts/partials/event-history.phtml:127
 msgctxt "tooltip"
 msgid "Downtime started"
 msgstr "Downtime hat begonnen"
@@ -1454,12 +1455,12 @@ msgid "Downtime was cancelled"
 msgstr "Downtime wurde abgesagt"
 
 #: ../../../../modules/monitoring/configuration.php:228
-#: ../../../../modules/monitoring/application/views/scripts/show/components/downtime.phtml:41
+#: ../../../../modules/monitoring/application/controllers/DowntimesController.php:70
+#: ../../../../modules/monitoring/application/controllers/ListController.php:213
+#: ../../../../modules/monitoring/application/forms/EventOverviewForm.php:54
 #: ../../../../modules/monitoring/application/views/scripts/hosts/show.phtml:96
 #: ../../../../modules/monitoring/application/views/scripts/services/show.phtml:95
-#: ../../../../modules/monitoring/application/controllers/DowntimesController.php:70
-#: ../../../../modules/monitoring/application/controllers/ListController.php:211
-#: ../../../../modules/monitoring/application/forms/EventOverviewForm.php:54
+#: ../../../../modules/monitoring/application/views/scripts/show/components/downtime.phtml:41
 msgid "Downtimes"
 msgstr "Downtimes"
 
@@ -1467,9 +1468,9 @@ msgstr "Downtimes"
 msgid "Downtimes Active For More Than Three Days"
 msgstr "Downtimes mehr als drei Tage aktiv"
 
+#: ../../../../modules/monitoring/application/controllers/ListController.php:254
 #: ../../../../modules/monitoring/application/views/scripts/downtime/show.phtml:53
 #: ../../../../modules/monitoring/application/views/scripts/downtime/show.phtml:135
-#: ../../../../modules/monitoring/application/controllers/ListController.php:252
 msgid "Duration"
 msgstr "Dauer"
 
@@ -1478,9 +1479,9 @@ msgctxt "Downtime status"
 msgid "ENDS"
 msgstr "ENDET"
 
-#: ../../../../modules/monitoring/library/Monitoring/SecurityStep.php:80
 #: ../../../../modules/monitoring/library/Monitoring/BackendStep.php:178
 #: ../../../../modules/monitoring/library/Monitoring/BackendStep.php:191
+#: ../../../../modules/monitoring/library/Monitoring/SecurityStep.php:80
 #: ../../../../modules/monitoring/library/Monitoring/TransportStep.php:139
 #, php-format
 msgid "ERROR: %s"
@@ -1511,10 +1512,10 @@ msgstr "Bearbeite Befehls-Transport %s"
 msgid "Edit monitoring backend %s"
 msgstr "Bearbeite Monitoring-Backend %s"
 
-#: ../../../../modules/monitoring/application/views/scripts/show/contact.phtml:24
+#: ../../../../modules/monitoring/application/controllers/ListController.php:327
 #: ../../../../modules/monitoring/application/views/scripts/list/contacts.phtml:21
 #: ../../../../modules/monitoring/application/views/scripts/list/contacts.phtml:42
-#: ../../../../modules/monitoring/application/controllers/ListController.php:325
+#: ../../../../modules/monitoring/application/views/scripts/show/contact.phtml:24
 msgid "Email"
 msgstr "E-Mail"
 
@@ -1576,7 +1577,7 @@ msgstr "Aktiviere passive Service-Checks.."
 msgid "Enabling performance data.."
 msgstr "Aktiviere Performancedaten.."
 
-#: ../../../../modules/monitoring/application/controllers/ListController.php:249
+#: ../../../../modules/monitoring/application/controllers/ListController.php:251
 #: ../../../../modules/monitoring/application/forms/Command/Object/ScheduleServiceDowntimeCommandForm.php:89
 msgid "End Time"
 msgstr "Endzeitpunkt"
@@ -1606,8 +1607,8 @@ msgstr ""
 "Tragen Sie hier Ablaufdatum und -Uhrzeit für diese Bestätigung ein. Die "
 "Bestätigung wird nach Ablauf dieser Zeit von Icinga gelöscht."
 
+#: ../../../../modules/monitoring/application/controllers/ListController.php:248
 #: ../../../../modules/monitoring/application/views/scripts/downtime/show.phtml:43
-#: ../../../../modules/monitoring/application/controllers/ListController.php:246
 msgid "Entry Time"
 msgstr "Eingabezeitpunkt"
 
@@ -1628,7 +1629,7 @@ msgid "Event Details"
 msgstr "Ereignis Details"
 
 #: ../../../../modules/monitoring/configuration.php:242
-#: ../../../../modules/monitoring/application/controllers/ListController.php:336
+#: ../../../../modules/monitoring/application/controllers/ListController.php:338
 msgid "Event Grid"
 msgstr "Ereignisraster"
 
@@ -1636,14 +1637,14 @@ msgstr "Ereignisraster"
 msgid "Event Handler"
 msgstr "Eventhandler"
 
+#: ../../../../modules/monitoring/application/forms/Command/Instance/ToggleInstanceFeaturesCommandForm.php:109
 #: ../../../../modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:208
 #: ../../../../modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:210
-#: ../../../../modules/monitoring/application/forms/Command/Instance/ToggleInstanceFeaturesCommandForm.php:109
 msgid "Event Handlers"
 msgstr "Eventhandler"
 
 #: ../../../../modules/monitoring/configuration.php:248
-#: ../../../../modules/monitoring/application/controllers/ListController.php:624
+#: ../../../../modules/monitoring/application/controllers/ListController.php:626
 msgid "Event Overview"
 msgstr "Ereignisüberblick"
 
@@ -1660,7 +1661,7 @@ msgstr "Ereignis-Zeitpunkt"
 msgid "Execution time"
 msgstr "Ausführungsdauer"
 
-#: ../../../../modules/monitoring/application/controllers/ListController.php:442
+#: ../../../../modules/monitoring/application/controllers/ListController.php:444
 msgid "Expiration"
 msgstr "Ablauf"
 
@@ -1673,8 +1674,8 @@ msgstr "Ablaufdatum"
 msgid "Expire Time"
 msgstr "Ablaufzeitpunkt"
 
-#: ../../../../modules/monitoring/application/views/scripts/comment/show.phtml:57
 #: ../../../../modules/monitoring/application/controllers/EventController.php:444
+#: ../../../../modules/monitoring/application/views/scripts/comment/show.phtml:57
 msgid "Expires"
 msgstr "Läuft ab"
 
@@ -1700,16 +1701,16 @@ msgstr ""
 "kein Transport konfiguriert. Bitte kontaktieren Sie Ihren Icinga Web "
 "Administrator."
 
-#: ../../../../modules/monitoring/application/forms/Setup/IdoResourcePage.php:143
 #: ../../../../modules/monitoring/application/forms/Config/TransportConfigForm.php:369
+#: ../../../../modules/monitoring/application/forms/Setup/IdoResourcePage.php:143
 #, php-format
 msgid "Failed to successfully validate the configuration: %s"
 msgstr "Die Validierung der Konfiguration ist fehlgeschlagen: %s"
 
-#: ../../../../modules/monitoring/application/views/scripts/show/components/flags.phtml:2
+#: ../../../../modules/monitoring/application/views/scripts/health/info.phtml:79
 #: ../../../../modules/monitoring/application/views/scripts/hosts/show.phtml:200
 #: ../../../../modules/monitoring/application/views/scripts/services/show.phtml:202
-#: ../../../../modules/monitoring/application/views/scripts/health/info.phtml:79
+#: ../../../../modules/monitoring/application/views/scripts/show/components/flags.phtml:2
 msgid "Feature Commands"
 msgstr "Funktionsbefehle"
 
@@ -1717,13 +1718,13 @@ msgstr "Funktionsbefehle"
 msgid "Filter"
 msgstr "Filter"
 
-#: ../../../../modules/monitoring/application/views/scripts/downtime/show.phtml:60
 #: ../../../../modules/monitoring/application/forms/Command/Object/ScheduleServiceDowntimeCommandForm.php:108
+#: ../../../../modules/monitoring/application/views/scripts/downtime/show.phtml:60
 msgid "Fixed"
 msgstr "Fest"
 
-#: ../../../../modules/monitoring/application/views/scripts/show/components/downtime.phtml:86
 #: ../../../../modules/monitoring/application/views/scripts/partials/downtime/downtime-header.phtml:45
+#: ../../../../modules/monitoring/application/views/scripts/show/components/downtime.phtml:86
 #, php-format
 msgid "Fixed downtime by %s"
 msgstr "Feste Downtime von %s"
@@ -1732,18 +1733,18 @@ msgstr "Feste Downtime von %s"
 msgid "Fixed downtimes have a static start and end time."
 msgstr "Fixe Downtimes haben einen statischen Start- und Endzeitpunkt."
 
-#: ../../../../modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:8
-#: ../../../../modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:10
 #: ../../../../modules/monitoring/application/forms/Command/Instance/ToggleInstanceFeaturesCommandForm.php:118
 #: ../../../../modules/monitoring/application/forms/Command/Object/ToggleObjectFeaturesCommandForm.php:58
+#: ../../../../modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:8
+#: ../../../../modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:10
 msgid "Flap Detection"
 msgstr "Flap-Erkennung"
 
-#: ../../../../modules/monitoring/application/views/scripts/partials/comment/comment-description.phtml:5
-#: ../../../../modules/monitoring/application/views/helpers/ServiceFlags.php:16
-#: ../../../../modules/monitoring/application/views/helpers/HostFlags.php:16
 #: ../../../../modules/monitoring/application/controllers/EventController.php:418
 #: ../../../../modules/monitoring/application/forms/EventOverviewForm.php:84
+#: ../../../../modules/monitoring/application/views/helpers/HostFlags.php:16
+#: ../../../../modules/monitoring/application/views/helpers/ServiceFlags.php:16
+#: ../../../../modules/monitoring/application/views/scripts/partials/comment/comment-description.phtml:5
 msgid "Flapping"
 msgstr "Flapping"
 
@@ -1751,8 +1752,8 @@ msgstr "Flapping"
 msgid "Flapping started"
 msgstr "Flapping begonnen"
 
-#: ../../../../modules/monitoring/application/views/scripts/partials/event-history.phtml:99
 #: ../../../../modules/monitoring/application/controllers/EventController.php:251
+#: ../../../../modules/monitoring/application/views/scripts/partials/event-history.phtml:99
 msgctxt "tooltip"
 msgid "Flapping started"
 msgstr "Flapping begonnen"
@@ -1761,8 +1762,8 @@ msgstr "Flapping begonnen"
 msgid "Flapping stopped"
 msgstr "Flapping beendet"
 
-#: ../../../../modules/monitoring/application/views/scripts/partials/event-history.phtml:105
 #: ../../../../modules/monitoring/application/controllers/EventController.php:253
+#: ../../../../modules/monitoring/application/views/scripts/partials/event-history.phtml:105
 msgctxt "tooltip"
 msgid "Flapping stopped"
 msgstr "Flapping beendet"
@@ -1781,8 +1782,8 @@ msgstr "Flapping wurde deaktiviert"
 msgid "Flapping with a %.2f%% state change rate"
 msgstr "Flapping mit einer Änderungsrate von %.2f%%"
 
-#: ../../../../modules/monitoring/application/views/scripts/downtime/show.phtml:60
 #: ../../../../modules/monitoring/application/forms/Command/Object/ScheduleServiceDowntimeCommandForm.php:109
+#: ../../../../modules/monitoring/application/views/scripts/downtime/show.phtml:60
 msgid "Flexible"
 msgstr "Flexibel"
 
@@ -1790,8 +1791,8 @@ msgstr "Flexibel"
 msgid "Flexible Duration"
 msgstr "Flexible Dauer"
 
-#: ../../../../modules/monitoring/application/views/scripts/show/components/downtime.phtml:85
 #: ../../../../modules/monitoring/application/views/scripts/partials/downtime/downtime-header.phtml:44
+#: ../../../../modules/monitoring/application/views/scripts/show/components/downtime.phtml:85
 #, php-format
 msgid "Flexible downtime by %s"
 msgstr "Flexible Downtime von %s"
@@ -1874,20 +1875,20 @@ msgstr "Hoher Schwellwert"
 msgid "History"
 msgstr "Historie"
 
+#: ../../../../modules/monitoring/application/controllers/ListController.php:246
+#: ../../../../modules/monitoring/application/controllers/ListController.php:441
+#: ../../../../modules/monitoring/application/forms/Config/Transport/ApiTransportForm.php:29
+#: ../../../../modules/monitoring/application/forms/Config/Transport/RemoteTransportForm.php:138
 #: ../../../../modules/monitoring/application/views/scripts/comment/show.phtml:29
 #: ../../../../modules/monitoring/application/views/scripts/comment/show.phtml:31
-#: ../../../../modules/monitoring/application/views/scripts/partials/comment/comment-detail.phtml:20
 #: ../../../../modules/monitoring/application/views/scripts/downtime/show.phtml:15
 #: ../../../../modules/monitoring/application/views/scripts/downtime/show.phtml:30
 #: ../../../../modules/monitoring/application/views/scripts/list/notifications.phtml:53
-#: ../../../../modules/monitoring/application/controllers/ListController.php:244
-#: ../../../../modules/monitoring/application/controllers/ListController.php:439
-#: ../../../../modules/monitoring/application/forms/Config/Transport/RemoteTransportForm.php:138
-#: ../../../../modules/monitoring/application/forms/Config/Transport/ApiTransportForm.php:29
+#: ../../../../modules/monitoring/application/views/scripts/partials/comment/comment-detail.phtml:20
 #: ../../../../modules/monitoring/library/Monitoring/BackendStep.php:97
 #: ../../../../modules/monitoring/library/Monitoring/TransportStep.php:94
-#: ../../../../modules/monitoring/library/Monitoring/Web/Controller/MonitoredObjectController.php:212
 #: ../../../../modules/monitoring/library/Monitoring/DataView/DataView.php:274
+#: ../../../../modules/monitoring/library/Monitoring/Web/Controller/MonitoredObjectController.php:212
 msgid "Host"
 msgstr "Host"
 
@@ -1895,7 +1896,7 @@ msgstr "Host"
 msgid "Host Action"
 msgstr "Hostaktion"
 
-#: ../../../../modules/monitoring/application/controllers/ListController.php:173
+#: ../../../../modules/monitoring/application/controllers/ListController.php:175
 msgid "Host Address"
 msgstr "Host-Adresse"
 
@@ -1909,16 +1910,16 @@ msgstr "Host-Checks"
 msgid "Host Group"
 msgstr "Hostgruppe"
 
-#: ../../../../modules/monitoring/application/controllers/ListController.php:590
+#: ../../../../modules/monitoring/application/controllers/ListController.php:592
 msgid "Host Group Grid"
 msgstr "Hostgruppen-Raster"
 
-#: ../../../../modules/monitoring/application/controllers/ListController.php:572
-#: ../../../../modules/monitoring/application/controllers/ListController.php:612
+#: ../../../../modules/monitoring/application/controllers/ListController.php:574
+#: ../../../../modules/monitoring/application/controllers/ListController.php:614
 msgid "Host Group Name"
 msgstr "Hostgruppenname"
 
-#: ../../../../modules/monitoring/application/controllers/ListController.php:542
+#: ../../../../modules/monitoring/application/controllers/ListController.php:544
 msgid "Host Groups"
 msgstr "Hostgruppen"
 
@@ -1931,7 +1932,7 @@ msgstr "Host-Probleme"
 msgid "Host Problems:"
 msgstr "Host-Probleme:"
 
-#: ../../../../modules/monitoring/application/controllers/ListController.php:170
+#: ../../../../modules/monitoring/application/controllers/ListController.php:172
 msgid "Host Severity"
 msgstr "Schwere (Host)"
 
@@ -1961,24 +1962,24 @@ msgstr "Host nicht gefunden"
 msgid "Hostgroups"
 msgstr "Hostgruppen"
 
-#: ../../../../modules/monitoring/application/controllers/ListController.php:87
-#: ../../../../modules/monitoring/application/controllers/ListController.php:172
-#: ../../../../modules/monitoring/application/controllers/ListController.php:689
+#: ../../../../modules/monitoring/application/controllers/ListController.php:88
+#: ../../../../modules/monitoring/application/controllers/ListController.php:174
+#: ../../../../modules/monitoring/application/controllers/ListController.php:691
 msgid "Hostname"
 msgstr "Hostname"
 
-#: ../../../../modules/monitoring/application/forms/Config/Transport/RemoteTransportForm.php:140
 #: ../../../../modules/monitoring/application/forms/Config/Transport/ApiTransportForm.php:31
+#: ../../../../modules/monitoring/application/forms/Config/Transport/RemoteTransportForm.php:140
 msgid "Hostname or address of the remote Icinga instance"
 msgstr "Hostname oder Adresse der entfernten Icingainstanz"
 
 #: ../../../../modules/monitoring/configuration.php:107
 #: ../../../../modules/monitoring/configuration.php:186
+#: ../../../../modules/monitoring/application/controllers/HostsController.php:59
+#: ../../../../modules/monitoring/application/controllers/ListController.php:48
+#: ../../../../modules/monitoring/application/forms/StatehistoryForm.php:98
 #: ../../../../modules/monitoring/application/views/scripts/show/contact.phtml:39
 #: ../../../../modules/monitoring/application/views/scripts/tactical/components/hostservicechecks.phtml:9
-#: ../../../../modules/monitoring/application/controllers/ListController.php:48
-#: ../../../../modules/monitoring/application/controllers/HostsController.php:59
-#: ../../../../modules/monitoring/application/forms/StatehistoryForm.php:98
 msgid "Hosts"
 msgstr "Hosts"
 
@@ -1994,13 +1995,13 @@ msgstr "Stunde"
 msgid "Hours"
 msgstr "Stunden"
 
-#: ../../../../modules/monitoring/application/views/scripts/partials/object/service-header.phtml:35
 #: ../../../../modules/monitoring/application/views/scripts/partials/object/host-header.phtml:47
+#: ../../../../modules/monitoring/application/views/scripts/partials/object/service-header.phtml:35
 msgid "IPv4 address"
 msgstr "IPv4-Adresse"
 
-#: ../../../../modules/monitoring/application/views/scripts/partials/object/service-header.phtml:32
 #: ../../../../modules/monitoring/application/views/scripts/partials/object/host-header.phtml:44
+#: ../../../../modules/monitoring/application/views/scripts/partials/object/service-header.phtml:32
 msgid "IPv6 address"
 msgstr "IPv6-Adresse"
 
@@ -2136,9 +2137,9 @@ msgstr ""
 "Servicestatus ändern."
 
 #: ../../../../modules/monitoring/application/forms/Command/Object/AcknowledgeProblemCommandForm.php:56
-#: ../../../../modules/monitoring/application/forms/Command/Object/SendCustomNotificationCommandForm.php:48
 #: ../../../../modules/monitoring/application/forms/Command/Object/AddCommentCommandForm.php:45
 #: ../../../../modules/monitoring/application/forms/Command/Object/ScheduleServiceDowntimeCommandForm.php:67
+#: ../../../../modules/monitoring/application/forms/Command/Object/SendCustomNotificationCommandForm.php:48
 msgid ""
 "If you work with other administrators, you may find it useful to share "
 "information about the the host or service that is having problems. Make sure "
@@ -2157,8 +2158,8 @@ msgstr ""
 "Diese Option aktivieren, wenn der Kommentar auch nach dem Löschen der "
 "Bestätigung bestehen bleiben soll."
 
-#: ../../../../modules/monitoring/application/views/helpers/ServiceFlags.php:22
 #: ../../../../modules/monitoring/application/views/helpers/HostFlags.php:22
+#: ../../../../modules/monitoring/application/views/helpers/ServiceFlags.php:22
 msgid "In Downtime"
 msgstr "In einer Downtime"
 
@@ -2197,7 +2198,7 @@ msgstr ""
 "Ungültiger Filter angegeben. Es können nur die folgenden Spalten verwendet "
 "werden: %s"
 
-#: ../../../../modules/monitoring/application/controllers/ListController.php:243
+#: ../../../../modules/monitoring/application/controllers/ListController.php:245
 msgid "Is In Effect"
 msgstr "Ist aktiv"
 
@@ -2231,7 +2232,7 @@ msgstr ""
 msgid "Label"
 msgstr "Label"
 
-#: ../../../../modules/monitoring/application/controllers/ListController.php:89
+#: ../../../../modules/monitoring/application/controllers/ListController.php:90
 msgid "Last Check"
 msgstr "Letzter Check"
 
@@ -2239,7 +2240,7 @@ msgstr "Letzter Check"
 msgid "Last External Command Check"
 msgstr "Letzter Check für externes Kommando"
 
-#: ../../../../modules/monitoring/application/controllers/ListController.php:174
+#: ../../../../modules/monitoring/application/controllers/ListController.php:176
 msgid "Last Host Check"
 msgstr "Letzter Host-Check"
 
@@ -2247,12 +2248,12 @@ msgstr "Letzter Host-Check"
 msgid "Last Log File Rotation"
 msgstr "Letzte Logdateirotation"
 
-#: ../../../../modules/monitoring/application/controllers/ListController.php:168
+#: ../../../../modules/monitoring/application/controllers/ListController.php:170
 msgid "Last Service Check"
 msgstr "Letzter Service-Check"
 
-#: ../../../../modules/monitoring/application/controllers/ListController.php:90
-#: ../../../../modules/monitoring/application/controllers/ListController.php:169
+#: ../../../../modules/monitoring/application/controllers/ListController.php:91
+#: ../../../../modules/monitoring/application/controllers/ListController.php:171
 msgid "Last State Change"
 msgstr "Letzte Statusänderung"
 
@@ -2274,7 +2275,7 @@ msgstr "Letzter State"
 
 #: ../../../../modules/monitoring/application/views/scripts/show/components/checkstatistics.phtml:7
 msgid "Last update"
-msgstr "Letze Aktualisierung"
+msgstr "Letzte Aktualisierung"
 
 #: ../../../../modules/monitoring/configuration.php:326
 msgid "Late Host Check Results"
@@ -2771,9 +2772,9 @@ msgctxt "timeline.link.title"
 msgid "List all event records registered %s"
 msgstr "Alle Ereigniseinträge auflisten, die %s registriert wurden"
 
-#: ../../../../modules/monitoring/application/views/scripts/show/components/hostgroups.phtml:11
 #: ../../../../modules/monitoring/application/views/scripts/list/hostgroup-grid.phtml:165
 #: ../../../../modules/monitoring/application/views/scripts/list/hostgroups.phtml:48
+#: ../../../../modules/monitoring/application/views/scripts/show/components/hostgroups.phtml:11
 #, php-format
 msgid "List all hosts in the group \"%s\""
 msgstr "Liste alle Hosts in der Gruppe \"%s\""
@@ -2790,15 +2791,15 @@ msgstr "Liste alle Hosts, für die Benachrichtigungen aktiv sind"
 msgid "List all hosts, which are processing event handlers entirely"
 msgstr "Liste alle Hosts, die Eventhandler verarbeiten"
 
-#: ../../../../modules/monitoring/application/views/scripts/list/servicegrid.phtml:69
 #: ../../../../modules/monitoring/application/views/scripts/list/servicegrid-flipped.phtml:44
+#: ../../../../modules/monitoring/application/views/scripts/list/servicegrid.phtml:69
 #, php-format
 msgid "List all reported services on host %s"
 msgstr "Liste alle gemeldeten Services auf Host %s"
 
-#: ../../../../modules/monitoring/application/views/scripts/show/components/servicegroups.phtml:11
 #: ../../../../modules/monitoring/application/views/scripts/list/servicegroup-grid.phtml:209
 #: ../../../../modules/monitoring/application/views/scripts/list/servicegroups.phtml:43
+#: ../../../../modules/monitoring/application/views/scripts/show/components/servicegroups.phtml:11
 #, php-format
 msgid "List all services in the group \"%s\""
 msgstr "Liste alle Services in der Gruppe \"%s\""
@@ -2813,8 +2814,8 @@ msgstr "Liste alle Services von allen Hosts in der Hostgruppe \"%s\""
 msgid "List all services on host %s"
 msgstr "Liste alle Services von Host %s"
 
-#: ../../../../modules/monitoring/application/views/scripts/list/servicegrid.phtml:45
 #: ../../../../modules/monitoring/application/views/scripts/list/servicegrid-flipped.phtml:67
+#: ../../../../modules/monitoring/application/views/scripts/list/servicegrid.phtml:45
 #, php-format
 msgid "List all services with the name \"%s\" on all reported hosts"
 msgstr "Liste alle Services mit dem Namen \"%s\" auf allen gemeldeten Hosts"
@@ -2832,16 +2833,16 @@ msgid "List all services, which are processing event handlers entirely"
 msgstr "Services auflisten, welche allesamt Eventhandler verarbeiten"
 
 #: ../../../../modules/monitoring/configuration.php:224
-#: ../../../../modules/monitoring/application/controllers/ListController.php:413
+#: ../../../../modules/monitoring/application/controllers/ListController.php:415
 msgid "List comments"
 msgstr "Liste Kommentare"
 
-#: ../../../../modules/monitoring/application/controllers/ListController.php:384
+#: ../../../../modules/monitoring/application/controllers/ListController.php:386
 msgid "List contact groups"
 msgstr "Liste Kontaktgruppen"
 
 #: ../../../../modules/monitoring/configuration.php:212
-#: ../../../../modules/monitoring/application/controllers/ListController.php:308
+#: ../../../../modules/monitoring/application/controllers/ListController.php:310
 msgid "List contacts"
 msgstr "Liste Kontakte"
 
@@ -2863,16 +2864,16 @@ msgid "List current service problems"
 msgstr "Liste aktuelle Service-Probleme"
 
 #: ../../../../modules/monitoring/configuration.php:230
-#: ../../../../modules/monitoring/application/controllers/ListController.php:212
+#: ../../../../modules/monitoring/application/controllers/ListController.php:214
 msgid "List downtimes"
 msgstr "Liste Downtimes"
 
-#: ../../../../modules/monitoring/application/controllers/ListController.php:625
+#: ../../../../modules/monitoring/application/controllers/ListController.php:627
 msgid "List event records"
 msgstr "Liste Ereigniseinträge"
 
 #: ../../../../modules/monitoring/configuration.php:206
-#: ../../../../modules/monitoring/application/controllers/ListController.php:543
+#: ../../../../modules/monitoring/application/controllers/ListController.php:545
 msgid "List host groups"
 msgstr "Liste Hostgruppen"
 
@@ -2882,17 +2883,17 @@ msgid "List hosts"
 msgstr "Liste Hosts"
 
 #: ../../../../modules/monitoring/configuration.php:256
-#: ../../../../modules/monitoring/application/controllers/ListController.php:273
+#: ../../../../modules/monitoring/application/controllers/ListController.php:275
 msgid "List notifications"
 msgstr "Liste Benachrichtigungen"
 
 #: ../../../../modules/monitoring/configuration.php:200
-#: ../../../../modules/monitoring/application/controllers/ListController.php:465
+#: ../../../../modules/monitoring/application/controllers/ListController.php:467
 msgid "List service groups"
 msgstr "Liste Servicegruppen"
 
 #: ../../../../modules/monitoring/configuration.php:194
-#: ../../../../modules/monitoring/application/controllers/ListController.php:123
+#: ../../../../modules/monitoring/application/controllers/ListController.php:124
 msgid "List services"
 msgstr "Liste Services"
 
@@ -2904,10 +2905,10 @@ msgstr "Liste Benutzer"
 msgid "Load More"
 msgstr "Mehr laden"
 
-#: ../../../../modules/monitoring/application/views/scripts/list/servicegrid.phtml:106
-#: ../../../../modules/monitoring/application/views/scripts/list/servicegrid.phtml:127
 #: ../../../../modules/monitoring/application/views/scripts/list/servicegrid-flipped.phtml:105
 #: ../../../../modules/monitoring/application/views/scripts/list/servicegrid-flipped.phtml:126
+#: ../../../../modules/monitoring/application/views/scripts/list/servicegrid.phtml:106
+#: ../../../../modules/monitoring/application/views/scripts/list/servicegrid.phtml:127
 msgid "Load more"
 msgstr "Mehr laden"
 
@@ -3015,7 +3016,7 @@ msgstr ""
 msgid "Monitoring backend configuration has been successfully written to: %s"
 msgstr ""
 "Die Konfiguration für das Monitoring-Backend wurde erfolgreich nach \"%s\" "
-"geschrieben."
+"geschrieben"
 
 #: ../../../../modules/monitoring/application/controllers/ConfigController.php:119
 msgid "Monitoring backend successfully created"
@@ -3063,11 +3064,6 @@ msgstr "In der Reihenfolge nach oben schieben"
 msgid "Muted"
 msgstr "Stumm"
 
-#: ../../../../modules/monitoring/application/views/scripts/health/info.phtml:21
-#: ../../../../modules/monitoring/application/views/scripts/health/info.phtml:39
-#: ../../../../modules/monitoring/application/views/scripts/health/info.phtml:45
-#: ../../../../modules/monitoring/application/views/scripts/health/info.phtml:51
-#: ../../../../modules/monitoring/application/views/scripts/health/info.phtml:57
 #: ../../../../modules/monitoring/application/controllers/EventController.php:103
 #: ../../../../modules/monitoring/application/controllers/EventController.php:119
 #: ../../../../modules/monitoring/application/controllers/EventController.php:144
@@ -3079,6 +3075,11 @@ msgstr "Stumm"
 #: ../../../../modules/monitoring/application/controllers/EventController.php:435
 #: ../../../../modules/monitoring/application/controllers/EventController.php:459
 #: ../../../../modules/monitoring/application/controllers/EventController.php:499
+#: ../../../../modules/monitoring/application/views/scripts/health/info.phtml:21
+#: ../../../../modules/monitoring/application/views/scripts/health/info.phtml:39
+#: ../../../../modules/monitoring/application/views/scripts/health/info.phtml:45
+#: ../../../../modules/monitoring/application/views/scripts/health/info.phtml:51
+#: ../../../../modules/monitoring/application/views/scripts/health/info.phtml:57
 msgid "N/A"
 msgstr "Nicht verfügbar"
 
@@ -3086,8 +3087,8 @@ msgstr "Nicht verfügbar"
 msgid "NOTIFICATION"
 msgstr "BENACHRICHTIGUNG"
 
+#: ../../../../modules/monitoring/application/controllers/ListController.php:325
 #: ../../../../modules/monitoring/application/views/scripts/list/contacts.phtml:20
-#: ../../../../modules/monitoring/application/controllers/ListController.php:323
 msgid "Name"
 msgstr "Name"
 
@@ -3103,9 +3104,9 @@ msgstr "Nächster Check"
 msgid "Next update"
 msgstr "Nächste Aktualisierung"
 
+#: ../../../../modules/monitoring/application/controllers/EventController.php:106
 #: ../../../../modules/monitoring/application/views/scripts/comment/show.phtml:48
 #: ../../../../modules/monitoring/application/views/scripts/downtime/show.phtml:155
-#: ../../../../modules/monitoring/application/controllers/EventController.php:106
 msgid "No"
 msgstr "Nein"
 
@@ -3181,8 +3182,8 @@ msgstr "Zu diesem Filter wurden keine Servicegruppen gefunden."
 msgid "No services found matching the filter"
 msgstr "Zu diesem Filter wurden keine Services gefunden"
 
-#: ../../../../modules/monitoring/application/views/scripts/list/servicegrid.phtml:17
 #: ../../../../modules/monitoring/application/views/scripts/list/servicegrid-flipped.phtml:17
+#: ../../../../modules/monitoring/application/views/scripts/list/servicegrid.phtml:17
 #: ../../../../modules/monitoring/application/views/scripts/list/services.phtml:18
 msgid "No services found matching the filter."
 msgstr "Zu diesem Filter wurden keine Services gefunden."
@@ -3235,39 +3236,39 @@ msgstr "Bemerkungen"
 msgid "Notification"
 msgstr "Benachrichtigung"
 
-#: ../../../../modules/monitoring/application/views/scripts/partials/event-history.phtml:58
 #: ../../../../modules/monitoring/application/controllers/EventController.php:237
+#: ../../../../modules/monitoring/application/views/scripts/partials/event-history.phtml:58
 msgctxt "tooltip"
 msgid "Notification"
 msgstr "Benachrichtigung"
 
-#: ../../../../modules/monitoring/application/controllers/ListController.php:292
+#: ../../../../modules/monitoring/application/controllers/ListController.php:294
 msgid "Notification Start"
 msgstr "Benachrichtigungs-Zeitpunkt"
 
 #: ../../../../modules/monitoring/configuration.php:254
-#: ../../../../modules/monitoring/application/views/scripts/show/components/notifications.phtml:2
-#: ../../../../modules/monitoring/application/views/scripts/partials/object/detail-content.phtml:25
-#: ../../../../modules/monitoring/application/views/scripts/hosts/show.phtml:137
-#: ../../../../modules/monitoring/application/views/scripts/hosts/show.phtml:141
-#: ../../../../modules/monitoring/application/views/scripts/services/show.phtml:138
-#: ../../../../modules/monitoring/application/views/scripts/services/show.phtml:143
-#: ../../../../modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:129
-#: ../../../../modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:131
-#: ../../../../modules/monitoring/application/controllers/TimelineController.php:52
 #: ../../../../modules/monitoring/application/controllers/AlertsummaryController.php:329
 #: ../../../../modules/monitoring/application/controllers/AlertsummaryController.php:424
 #: ../../../../modules/monitoring/application/controllers/AlertsummaryController.php:467
 #: ../../../../modules/monitoring/application/controllers/AlertsummaryController.php:474
-#: ../../../../modules/monitoring/application/controllers/ListController.php:272
+#: ../../../../modules/monitoring/application/controllers/ListController.php:274
+#: ../../../../modules/monitoring/application/controllers/TimelineController.php:52
 #: ../../../../modules/monitoring/application/forms/EventOverviewForm.php:74
 #: ../../../../modules/monitoring/application/forms/Command/Instance/ToggleInstanceFeaturesCommandForm.php:127
 #: ../../../../modules/monitoring/application/forms/Command/Object/ToggleObjectFeaturesCommandForm.php:50
+#: ../../../../modules/monitoring/application/views/scripts/hosts/show.phtml:137
+#: ../../../../modules/monitoring/application/views/scripts/hosts/show.phtml:141
+#: ../../../../modules/monitoring/application/views/scripts/partials/object/detail-content.phtml:25
+#: ../../../../modules/monitoring/application/views/scripts/services/show.phtml:138
+#: ../../../../modules/monitoring/application/views/scripts/services/show.phtml:143
+#: ../../../../modules/monitoring/application/views/scripts/show/components/notifications.phtml:2
+#: ../../../../modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:129
+#: ../../../../modules/monitoring/application/views/scripts/tactical/components/monitoringfeatures.phtml:131
 msgid "Notifications"
 msgstr "Benachrichtigungen"
 
-#: ../../../../modules/monitoring/application/views/helpers/ServiceFlags.php:19
 #: ../../../../modules/monitoring/application/views/helpers/HostFlags.php:19
+#: ../../../../modules/monitoring/application/views/helpers/ServiceFlags.php:19
 msgid "Notifications Disabled"
 msgstr "Benachrichtigungen inaktiv"
 
@@ -3301,7 +3302,7 @@ msgstr "Benachrichtigungen werden reaktiviert in <strong>%s</strong>"
 msgid "Notifications will be re-enabled in <strong>%s</strong>."
 msgstr "Benachrichtigungen werden reaktiviert in <strong>%s</strong>."
 
-#: ../../../../modules/monitoring/library/Monitoring/Object/Service.php:191
+#: ../../../../modules/monitoring/library/Monitoring/Object/Service.php:192
 msgid "OK"
 msgstr "OK"
 
@@ -3326,32 +3327,32 @@ msgstr "Hosts verfolgen"
 msgid "Obsessing Over Services"
 msgstr "Services verfolgen"
 
-#: ../../../../modules/monitoring/application/controllers/ListController.php:645
+#: ../../../../modules/monitoring/application/controllers/ListController.php:647
 msgid "Occurence"
 msgstr "Vorkommen"
 
-#: ../../../../modules/monitoring/application/views/scripts/tactical/index.phtml:75
 #: ../../../../modules/monitoring/application/forms/StatehistoryForm.php:117
+#: ../../../../modules/monitoring/application/views/scripts/tactical/index.phtml:75
 msgid "Ok"
 msgstr "Ok"
 
-#: ../../../../modules/monitoring/application/controllers/TimelineController.php:105
 #: ../../../../modules/monitoring/application/controllers/AlertsummaryController.php:535
+#: ../../../../modules/monitoring/application/controllers/TimelineController.php:105
 msgid "One day"
 msgstr "Ein Tag"
 
-#: ../../../../modules/monitoring/application/controllers/TimelineController.php:107
 #: ../../../../modules/monitoring/application/controllers/AlertsummaryController.php:537
+#: ../../../../modules/monitoring/application/controllers/TimelineController.php:107
 msgid "One month"
 msgstr "Ein Monat"
 
-#: ../../../../modules/monitoring/application/controllers/TimelineController.php:106
 #: ../../../../modules/monitoring/application/controllers/AlertsummaryController.php:536
+#: ../../../../modules/monitoring/application/controllers/TimelineController.php:106
 msgid "One week"
 msgstr "Eine Woche"
 
-#: ../../../../modules/monitoring/application/controllers/TimelineController.php:108
 #: ../../../../modules/monitoring/application/controllers/AlertsummaryController.php:538
+#: ../../../../modules/monitoring/application/controllers/TimelineController.php:108
 msgid "One year"
 msgstr "Ein Jahr"
 
@@ -3389,22 +3390,22 @@ msgstr "Überfällig"
 msgid "Overview"
 msgstr "Übersicht"
 
-#: ../../../../modules/monitoring/library/Monitoring/Object/Host.php:188
-#: ../../../../modules/monitoring/library/Monitoring/Object/Service.php:203
+#: ../../../../modules/monitoring/library/Monitoring/Object/Host.php:189
+#: ../../../../modules/monitoring/library/Monitoring/Object/Service.php:204
 msgid "PENDING"
 msgstr "AUSSTEHEND"
 
-#: ../../../../modules/monitoring/application/views/scripts/show/contact.phtml:34
 #: ../../../../modules/monitoring/application/views/scripts/list/contacts.phtml:22
+#: ../../../../modules/monitoring/application/views/scripts/show/contact.phtml:34
 msgid "Pager"
 msgstr "Pager"
 
-#: ../../../../modules/monitoring/application/controllers/ListController.php:326
+#: ../../../../modules/monitoring/application/controllers/ListController.php:328
 msgid "Pager Address / Number"
 msgstr "Pageradresse/-nummer"
 
-#: ../../../../modules/monitoring/application/views/scripts/health/stats.phtml:134
 #: ../../../../modules/monitoring/application/forms/Command/Object/ToggleObjectFeaturesCommandForm.php:42
+#: ../../../../modules/monitoring/application/views/scripts/health/stats.phtml:134
 msgid "Passive Checks"
 msgstr "Passive Checks"
 
@@ -3451,8 +3452,8 @@ msgstr "Performancedaten"
 msgid "Performance data"
 msgstr "Performancedaten"
 
-#: ../../../../modules/monitoring/application/views/scripts/comment/show.phtml:47
 #: ../../../../modules/monitoring/application/forms/Command/Object/AddCommentCommandForm.php:57
+#: ../../../../modules/monitoring/application/views/scripts/comment/show.phtml:47
 msgid "Persistent"
 msgstr "Persistent"
 
@@ -3488,8 +3489,8 @@ msgstr ""
 msgid "Plugin Output"
 msgstr "Plugin-Ausgabe"
 
-#: ../../../../modules/monitoring/application/forms/Config/Transport/RemoteTransportForm.php:150
 #: ../../../../modules/monitoring/application/forms/Config/Transport/ApiTransportForm.php:41
+#: ../../../../modules/monitoring/application/forms/Config/Transport/RemoteTransportForm.php:150
 #: ../../../../modules/monitoring/library/Monitoring/BackendStep.php:101
 #: ../../../../modules/monitoring/library/Monitoring/TransportStep.php:98
 msgid "Port"
@@ -3530,10 +3531,10 @@ msgstr "Prozessinformation"
 msgid "Process Information"
 msgstr "Prozessinformation"
 
-#: ../../../../modules/monitoring/application/views/scripts/show/components/command.phtml:21
-#: ../../../../modules/monitoring/application/views/scripts/show/components/command.phtml:33
 #: ../../../../modules/monitoring/application/views/scripts/hosts/show.phtml:166
 #: ../../../../modules/monitoring/application/views/scripts/services/show.phtml:168
+#: ../../../../modules/monitoring/application/views/scripts/show/components/command.phtml:21
+#: ../../../../modules/monitoring/application/views/scripts/show/components/command.phtml:33
 msgid "Process check result"
 msgstr "Check-Ergebnis verarbeiten"
 
@@ -3585,8 +3586,8 @@ msgstr "Entfernter SSH Port"
 msgid "Remote SSH User"
 msgstr "Entfernter SSH Benutzer"
 
-#: ../../../../modules/monitoring/application/forms/Command/Object/DeleteDowntimesCommandForm.php:63
 #: ../../../../modules/monitoring/application/forms/Command/Object/DeleteCommentsCommandForm.php:63
+#: ../../../../modules/monitoring/application/forms/Command/Object/DeleteDowntimesCommandForm.php:63
 msgid "Remove"
 msgid_plural "Remove All"
 msgstr[0] "Entfernen"
@@ -3659,14 +3660,14 @@ msgstr "Berichtintervall"
 msgid "Reporting"
 msgstr "Berichte"
 
-#: ../../../../modules/monitoring/application/views/scripts/show/components/checkstatistics.phtml:34
-#: ../../../../modules/monitoring/application/views/scripts/show/components/checkstatistics.phtml:48
 #: ../../../../modules/monitoring/application/views/scripts/hosts/show.phtml:188
 #: ../../../../modules/monitoring/application/views/scripts/services/show.phtml:190
+#: ../../../../modules/monitoring/application/views/scripts/show/components/checkstatistics.phtml:34
+#: ../../../../modules/monitoring/application/views/scripts/show/components/checkstatistics.phtml:48
 msgid "Reschedule"
 msgstr "Neu planen"
 
-#: ../../../../modules/monitoring/application/controllers/HostController.php:142
+#: ../../../../modules/monitoring/application/controllers/HostController.php:143
 msgid "Reschedule Host Check"
 msgstr "Host-Check neu planen"
 
@@ -3720,8 +3721,8 @@ msgstr "GEPLANTE DOWNTIME"
 msgid "SSH Identity"
 msgstr "SSH-Identität"
 
-#: ../../../../modules/monitoring/application/forms/Config/Transport/RemoteTransportForm.php:151
 #: ../../../../modules/monitoring/application/forms/Config/Transport/ApiTransportForm.php:42
+#: ../../../../modules/monitoring/application/forms/Config/Transport/RemoteTransportForm.php:151
 msgid "SSH port to connect to on the remote Icinga instance"
 msgstr "SSH-Port auf der entfernten Icinga-Instanz"
 
@@ -3738,9 +3739,9 @@ msgctxt "Downtime status"
 msgid "STARTS"
 msgstr "BEGINNT"
 
+#: ../../../../modules/monitoring/application/forms/Config/BackendConfigForm.php:42
 #: ../../../../modules/monitoring/application/forms/Config/SecurityConfigForm.php:20
 #: ../../../../modules/monitoring/application/forms/Config/TransportConfigForm.php:51
-#: ../../../../modules/monitoring/application/forms/Config/BackendConfigForm.php:42
 msgid "Save Changes"
 msgstr "Änderungen speichern"
 
@@ -3749,7 +3750,7 @@ msgstr "Änderungen speichern"
 msgid "Schedule Check"
 msgstr "Check planen"
 
-#: ../../../../modules/monitoring/application/controllers/HostController.php:154
+#: ../../../../modules/monitoring/application/controllers/HostController.php:155
 msgid "Schedule Host Downtime"
 msgstr "Host-Downtime planen"
 
@@ -3765,10 +3766,10 @@ msgstr "Service-Downtime planen"
 msgid "Schedule Service Downtimes"
 msgstr "Service-Downtimes planen"
 
-#: ../../../../modules/monitoring/application/views/scripts/show/components/downtime.phtml:15
-#: ../../../../modules/monitoring/application/views/scripts/show/components/downtime.phtml:29
 #: ../../../../modules/monitoring/application/views/scripts/partials/object/quick-actions.phtml:120
 #: ../../../../modules/monitoring/application/views/scripts/partials/object/quick-actions.phtml:134
+#: ../../../../modules/monitoring/application/views/scripts/show/components/downtime.phtml:15
+#: ../../../../modules/monitoring/application/views/scripts/show/components/downtime.phtml:29
 msgid ""
 "Schedule a downtime to suppress all problem notifications within a specific "
 "period of time"
@@ -3787,9 +3788,9 @@ msgid "Schedule check for all services on the hosts and the hosts themselves."
 msgstr ""
 "Plane einen Check für alle Services auf Hosts und für die Hosts an sich."
 
+#: ../../../../modules/monitoring/application/forms/Command/Object/ScheduleServiceDowntimeCommandForm.php:47
 #: ../../../../modules/monitoring/application/views/scripts/show/components/downtime.phtml:7
 #: ../../../../modules/monitoring/application/views/scripts/show/components/downtime.phtml:21
-#: ../../../../modules/monitoring/application/forms/Command/Object/ScheduleServiceDowntimeCommandForm.php:47
 msgid "Schedule downtime"
 msgid_plural "Schedule downtimes"
 msgstr[0] "Downtime planen"
@@ -3830,11 +3831,11 @@ msgstr "Plane eine Downtime mit Auslöser für alle untergeordneten Hosts"
 msgid "Scheduled"
 msgstr "Geplant"
 
-#: ../../../../modules/monitoring/application/controllers/ListController.php:251
+#: ../../../../modules/monitoring/application/controllers/ListController.php:253
 msgid "Scheduled End"
 msgstr "Geplantes Ende"
 
-#: ../../../../modules/monitoring/application/controllers/ListController.php:250
+#: ../../../../modules/monitoring/application/controllers/ListController.php:252
 msgid "Scheduled Start"
 msgstr "Geplanter Start"
 
@@ -3892,7 +3893,7 @@ msgstr[1] "Plane Service-Downtimes.."
 msgid "Security"
 msgstr "Sicherheit"
 
-#: ../../../../modules/monitoring/application/controllers/HostController.php:178
+#: ../../../../modules/monitoring/application/controllers/HostController.php:179
 #: ../../../../modules/monitoring/application/controllers/HostsController.php:224
 msgid "Send Custom Host Notification"
 msgstr "Benutzerdefinierte Host-Benachrichtigung senden"
@@ -3906,23 +3907,23 @@ msgstr "Benutzerdefinierte Service-Benachrichtigung senden"
 msgid "Send Notification"
 msgstr "Benachrichtigung senden"
 
-#: ../../../../modules/monitoring/application/views/scripts/show/components/notifications.phtml:18
 #: ../../../../modules/monitoring/application/views/scripts/partials/object/quick-actions.phtml:88
+#: ../../../../modules/monitoring/application/views/scripts/show/components/notifications.phtml:18
 msgid "Send a custom notification to contacts responsible for this host"
 msgstr ""
 "Benutzerdefinierte Benachrichtigung an für diesen Host verantwortliche "
 "Kontakte senden"
 
-#: ../../../../modules/monitoring/application/views/scripts/show/components/notifications.phtml:33
 #: ../../../../modules/monitoring/application/views/scripts/partials/object/quick-actions.phtml:102
+#: ../../../../modules/monitoring/application/views/scripts/show/components/notifications.phtml:33
 msgid "Send a custom notification to contacts responsible for this service"
 msgstr ""
 "Benutzerdefinierte Benachrichtigung an für diesen Service verantwortliche "
 "Kontakte senden"
 
-#: ../../../../modules/monitoring/application/views/scripts/show/contact.phtml:26
 #: ../../../../modules/monitoring/application/views/scripts/list/contacts.phtml:44
 #: ../../../../modules/monitoring/application/views/scripts/list/contacts.phtml:45
+#: ../../../../modules/monitoring/application/views/scripts/show/contact.phtml:26
 #, php-format
 msgid "Send a mail to %s"
 msgstr "Sende eine E-Mail an %s"
@@ -3954,18 +3955,18 @@ msgstr[1] "Benutzerdefinierte Benachrichtigungen senden.."
 msgid "Sent to %s"
 msgstr "Gesendet an %s"
 
+#: ../../../../modules/monitoring/application/controllers/ListController.php:247
+#: ../../../../modules/monitoring/application/controllers/ListController.php:442
 #: ../../../../modules/monitoring/application/views/scripts/comment/show.phtml:17
 #: ../../../../modules/monitoring/application/views/scripts/comment/show.phtml:19
-#: ../../../../modules/monitoring/application/views/scripts/partials/comment/comment-detail.phtml:3
-#: ../../../../modules/monitoring/application/views/scripts/partials/downtime/downtime-header.phtml:13
-#: ../../../../modules/monitoring/application/views/scripts/partials/object/service-header.phtml:51
 #: ../../../../modules/monitoring/application/views/scripts/downtime/show.phtml:15
 #: ../../../../modules/monitoring/application/views/scripts/downtime/show.phtml:26
 #: ../../../../modules/monitoring/application/views/scripts/list/notifications.phtml:44
-#: ../../../../modules/monitoring/application/controllers/ListController.php:245
-#: ../../../../modules/monitoring/application/controllers/ListController.php:440
-#: ../../../../modules/monitoring/library/Monitoring/Web/Controller/MonitoredObjectController.php:226
+#: ../../../../modules/monitoring/application/views/scripts/partials/comment/comment-detail.phtml:3
+#: ../../../../modules/monitoring/application/views/scripts/partials/downtime/downtime-header.phtml:13
+#: ../../../../modules/monitoring/application/views/scripts/partials/object/service-header.phtml:51
 #: ../../../../modules/monitoring/library/Monitoring/DataView/DataView.php:277
+#: ../../../../modules/monitoring/library/Monitoring/Web/Controller/MonitoredObjectController.php:226
 msgid "Service"
 msgstr "Service"
 
@@ -3980,7 +3981,7 @@ msgid "Service Checks"
 msgstr "Service-Checks"
 
 #: ../../../../modules/monitoring/configuration.php:160
-#: ../../../../modules/monitoring/application/controllers/ListController.php:653
+#: ../../../../modules/monitoring/application/controllers/ListController.php:655
 msgid "Service Grid"
 msgstr "Serviceraster"
 
@@ -3988,21 +3989,21 @@ msgstr "Serviceraster"
 msgid "Service Group"
 msgstr "Servicegruppe"
 
-#: ../../../../modules/monitoring/application/controllers/ListController.php:504
+#: ../../../../modules/monitoring/application/controllers/ListController.php:506
 msgid "Service Group Grid"
 msgstr "Servicegruppen-Raster"
 
-#: ../../../../modules/monitoring/application/controllers/ListController.php:487
-#: ../../../../modules/monitoring/application/controllers/ListController.php:527
+#: ../../../../modules/monitoring/application/controllers/ListController.php:489
+#: ../../../../modules/monitoring/application/controllers/ListController.php:529
 msgid "Service Group Name"
 msgstr "Servicegruppenname"
 
-#: ../../../../modules/monitoring/application/controllers/ListController.php:464
+#: ../../../../modules/monitoring/application/controllers/ListController.php:466
 msgid "Service Groups"
 msgstr "Servicegruppen"
 
-#: ../../../../modules/monitoring/application/controllers/ListController.php:167
-#: ../../../../modules/monitoring/application/controllers/ListController.php:690
+#: ../../../../modules/monitoring/application/controllers/ListController.php:169
+#: ../../../../modules/monitoring/application/controllers/ListController.php:692
 msgid "Service Name"
 msgstr "Service-Name"
 
@@ -4016,7 +4017,7 @@ msgstr "Serviceprobleme"
 msgid "Service Problems:"
 msgstr "Serviceprobleme:"
 
-#: ../../../../modules/monitoring/application/controllers/ListController.php:165
+#: ../../../../modules/monitoring/application/controllers/ListController.php:167
 msgid "Service Severity"
 msgstr "Service-Schweregrad"
 
@@ -4041,11 +4042,11 @@ msgstr "Servicegruppen"
 
 #: ../../../../modules/monitoring/configuration.php:108
 #: ../../../../modules/monitoring/configuration.php:192
+#: ../../../../modules/monitoring/application/controllers/ListController.php:123
+#: ../../../../modules/monitoring/application/controllers/ServicesController.php:66
+#: ../../../../modules/monitoring/application/forms/StatehistoryForm.php:97
 #: ../../../../modules/monitoring/application/views/scripts/show/contact.phtml:44
 #: ../../../../modules/monitoring/application/views/scripts/tactical/components/hostservicechecks.phtml:10
-#: ../../../../modules/monitoring/application/controllers/ServicesController.php:66
-#: ../../../../modules/monitoring/application/controllers/ListController.php:122
-#: ../../../../modules/monitoring/application/forms/StatehistoryForm.php:97
 #: ../../../../modules/monitoring/library/Monitoring/Web/Controller/MonitoredObjectController.php:239
 msgid "Services"
 msgstr "Services"
@@ -4075,24 +4076,24 @@ msgctxt "setup.summary.btn.finish"
 msgid "Setup the monitoring module for Icinga Web 2"
 msgstr "Das Monitoringmodul für Icinga Web 2 einrichten"
 
-#: ../../../../modules/monitoring/application/controllers/ListController.php:85
-#: ../../../../modules/monitoring/application/controllers/ListController.php:488
-#: ../../../../modules/monitoring/application/controllers/ListController.php:528
-#: ../../../../modules/monitoring/application/controllers/ListController.php:573
-#: ../../../../modules/monitoring/application/controllers/ListController.php:611
+#: ../../../../modules/monitoring/application/controllers/ListController.php:86
+#: ../../../../modules/monitoring/application/controllers/ListController.php:490
+#: ../../../../modules/monitoring/application/controllers/ListController.php:530
+#: ../../../../modules/monitoring/application/controllers/ListController.php:575
+#: ../../../../modules/monitoring/application/controllers/ListController.php:613
 msgid "Severity"
 msgstr "Schweregrad"
 
-#: ../../../../modules/monitoring/application/views/scripts/partials/show-more.phtml:6
-#: ../../../../modules/monitoring/application/views/scripts/partials/event-history.phtml:197
-#: ../../../../modules/monitoring/application/views/scripts/list/downtimes.phtml:48
+#: ../../../../modules/monitoring/application/views/scripts/list/comments.phtml:45
 #: ../../../../modules/monitoring/application/views/scripts/list/contacts.phtml:73
+#: ../../../../modules/monitoring/application/views/scripts/list/downtimes.phtml:48
 #: ../../../../modules/monitoring/application/views/scripts/list/hostgroups.phtml:276
 #: ../../../../modules/monitoring/application/views/scripts/list/hosts.phtml:97
-#: ../../../../modules/monitoring/application/views/scripts/list/servicegroups.phtml:171
 #: ../../../../modules/monitoring/application/views/scripts/list/notifications.phtml:82
-#: ../../../../modules/monitoring/application/views/scripts/list/comments.phtml:45
+#: ../../../../modules/monitoring/application/views/scripts/list/servicegroups.phtml:171
 #: ../../../../modules/monitoring/application/views/scripts/list/services.phtml:102
+#: ../../../../modules/monitoring/application/views/scripts/partials/event-history.phtml:197
+#: ../../../../modules/monitoring/application/views/scripts/partials/show-more.phtml:6
 msgid "Show More"
 msgstr "Mehr zeigen"
 
@@ -4114,28 +4115,28 @@ msgstr ""
 "Zeige eine Übersicht aller Hosts und Services, ihre aktuellen Zustände und "
 "Ausnutzung der Monitoring-Funktionen"
 
-#: ../../../../modules/monitoring/application/views/scripts/show/components/contacts.phtml:11
-#: ../../../../modules/monitoring/application/views/scripts/partials/event-history.phtml:14
-#: ../../../../modules/monitoring/application/views/scripts/list/contacts.phtml:35
 #: ../../../../modules/monitoring/application/views/scripts/list/contactgroups.phtml:39
+#: ../../../../modules/monitoring/application/views/scripts/list/contacts.phtml:35
+#: ../../../../modules/monitoring/application/views/scripts/partials/event-history.phtml:14
+#: ../../../../modules/monitoring/application/views/scripts/show/components/contacts.phtml:11
 #, php-format
 msgid "Show detailed information about %s"
 msgstr "Zeige detaillierte Informationen über %s"
 
-#: ../../../../modules/monitoring/application/views/scripts/partials/event-history.phtml:162
+#: ../../../../modules/monitoring/application/views/helpers/Link.php:37
 #: ../../../../modules/monitoring/application/views/scripts/list/hosts.phtml:50
 #: ../../../../modules/monitoring/application/views/scripts/list/services.phtml:65
-#: ../../../../modules/monitoring/application/views/helpers/Link.php:37
+#: ../../../../modules/monitoring/application/views/scripts/partials/event-history.phtml:162
 #: ../../../../modules/monitoring/library/Monitoring/Web/Controller/MonitoredObjectController.php:209
 #, php-format
 msgid "Show detailed information for host %s"
 msgstr "Zeige detaillierte Informationen über Host %s"
 
-#: ../../../../modules/monitoring/application/views/scripts/partials/event-history.phtml:175
-#: ../../../../modules/monitoring/application/views/scripts/list/servicegrid.phtml:93
-#: ../../../../modules/monitoring/application/views/scripts/list/servicegrid-flipped.phtml:92
-#: ../../../../modules/monitoring/application/views/scripts/list/services.phtml:76
 #: ../../../../modules/monitoring/application/views/helpers/Link.php:63
+#: ../../../../modules/monitoring/application/views/scripts/list/servicegrid-flipped.phtml:92
+#: ../../../../modules/monitoring/application/views/scripts/list/servicegrid.phtml:93
+#: ../../../../modules/monitoring/application/views/scripts/list/services.phtml:76
+#: ../../../../modules/monitoring/application/views/scripts/partials/event-history.phtml:175
 #: ../../../../modules/monitoring/library/Monitoring/Web/Controller/MonitoredObjectController.php:222
 #, php-format
 msgid "Show detailed information for service %s on host %s"
@@ -4204,19 +4205,19 @@ msgstr "Zeige zusammengefasst Informationen für %u Hosts"
 msgid "Show summarized information for %u services"
 msgstr "Zeige zusammengefasst Informationen für %u Services"
 
-#: ../../../../modules/monitoring/application/controllers/ListController.php:336
+#: ../../../../modules/monitoring/application/controllers/ListController.php:338
 msgid "Show the Event Grid"
 msgstr "Zeige das Ereignisraster"
 
-#: ../../../../modules/monitoring/application/controllers/ListController.php:591
+#: ../../../../modules/monitoring/application/controllers/ListController.php:593
 msgid "Show the Host Group Grid"
 msgstr "Zeige das Hostgruppen-Raster"
 
-#: ../../../../modules/monitoring/application/controllers/ListController.php:653
+#: ../../../../modules/monitoring/application/controllers/ListController.php:655
 msgid "Show the Service Grid"
 msgstr "Zeige das Serviceraster"
 
-#: ../../../../modules/monitoring/application/controllers/ListController.php:505
+#: ../../../../modules/monitoring/application/controllers/ListController.php:507
 msgid "Show the Service Group Grid"
 msgstr "Zeige das Servicegruppen-Raster"
 
@@ -4232,16 +4233,16 @@ msgstr ""
 "Zeige die Anzahl der historischen Ereigniseinträge, gruppiert nach Zeit und "
 "Typ"
 
-#: ../../../../modules/monitoring/application/forms/Setup/IdoResourcePage.php:183
 #: ../../../../modules/monitoring/application/forms/Config/BackendConfigForm.php:317
+#: ../../../../modules/monitoring/application/forms/Setup/IdoResourcePage.php:183
 msgid "Skip Validation"
 msgstr "Validierung überspringen"
 
-#: ../../../../modules/monitoring/application/views/scripts/partials/object/service-header.phtml:18
-#: ../../../../modules/monitoring/application/views/scripts/partials/object/service-header.phtml:45
-#: ../../../../modules/monitoring/application/views/scripts/partials/object/host-header.phtml:17
 #: ../../../../modules/monitoring/application/views/scripts/list/hosts.phtml:36
 #: ../../../../modules/monitoring/application/views/scripts/list/services.phtml:49
+#: ../../../../modules/monitoring/application/views/scripts/partials/object/host-header.phtml:17
+#: ../../../../modules/monitoring/application/views/scripts/partials/object/service-header.phtml:18
+#: ../../../../modules/monitoring/application/views/scripts/partials/object/service-header.phtml:45
 msgctxt "Soft state"
 msgid "Soft"
 msgstr "Soft"
@@ -4264,7 +4265,7 @@ msgctxt "setup.welcome.btn.next"
 msgid "Start"
 msgstr "Beginnen"
 
-#: ../../../../modules/monitoring/application/controllers/ListController.php:248
+#: ../../../../modules/monitoring/application/controllers/ListController.php:250
 #: ../../../../modules/monitoring/application/forms/Command/Object/ScheduleServiceDowntimeCommandForm.php:79
 msgid "Start Time"
 msgstr "Anfangszeit"
@@ -4314,7 +4315,7 @@ msgid_plural "Submit Passive Check Results"
 msgstr[0] "Passives Check-Ergebnis übermitteln"
 msgstr[1] "Passive Check-Ergebnisse übermitteln"
 
-#: ../../../../modules/monitoring/application/controllers/HostController.php:166
+#: ../../../../modules/monitoring/application/controllers/HostController.php:167
 msgid "Submit Passive Host Check Result"
 msgstr "Passives Host-Check-Ergebnis übermitteln"
 
@@ -4361,9 +4362,9 @@ msgstr ""
 "Der Zend Datenbank-Adapter für PostgreSQL wird benötigt, um auf PostgreSQL-"
 "Datenbanken zuzugreifen."
 
-#: ../../../../modules/monitoring/application/forms/Setup/TransportPage.php:47
-#: ../../../../modules/monitoring/application/forms/Setup/IdoResourcePage.php:102
 #: ../../../../modules/monitoring/application/forms/Config/TransportConfigForm.php:342
+#: ../../../../modules/monitoring/application/forms/Setup/IdoResourcePage.php:102
+#: ../../../../modules/monitoring/application/forms/Setup/TransportPage.php:47
 msgid "The configuration has been successfully validated."
 msgstr "Die Konfiguration wurde erfolgreich validiert."
 
@@ -4733,15 +4734,15 @@ msgstr "Top 5 der letzten Alarme"
 msgid "Total"
 msgstr "Gesamt"
 
-#: ../../../../modules/monitoring/application/controllers/ListController.php:574
-#: ../../../../modules/monitoring/application/controllers/ListController.php:613
+#: ../../../../modules/monitoring/application/controllers/ListController.php:576
+#: ../../../../modules/monitoring/application/controllers/ListController.php:615
 msgid "Total Hosts"
 msgstr "Alle Hosts"
 
-#: ../../../../modules/monitoring/application/controllers/ListController.php:489
-#: ../../../../modules/monitoring/application/controllers/ListController.php:529
-#: ../../../../modules/monitoring/application/controllers/ListController.php:575
-#: ../../../../modules/monitoring/application/controllers/ListController.php:614
+#: ../../../../modules/monitoring/application/controllers/ListController.php:491
+#: ../../../../modules/monitoring/application/controllers/ListController.php:531
+#: ../../../../modules/monitoring/application/controllers/ListController.php:577
+#: ../../../../modules/monitoring/application/controllers/ListController.php:616
 msgid "Total Services"
 msgstr "Alle Services"
 
@@ -4780,7 +4781,7 @@ msgstr "Typ"
 msgid "Type: %s"
 msgstr "Typ: %s"
 
-#: ../../../../modules/monitoring/library/Monitoring/Object/Service.php:200
+#: ../../../../modules/monitoring/library/Monitoring/Object/Service.php:201
 msgid "UNKNOWN"
 msgstr "UNBEKANNT"
 
@@ -4789,7 +4790,7 @@ msgctxt "icinga.state"
 msgid "UNKNOWN"
 msgstr "UNBEKANNT"
 
-#: ../../../../modules/monitoring/library/Monitoring/Object/Host.php:185
+#: ../../../../modules/monitoring/library/Monitoring/Object/Host.php:186
 msgid "UNREACHABLE"
 msgstr "UNERREICHBAR"
 
@@ -4798,7 +4799,7 @@ msgctxt "icinga.state"
 msgid "UNREACHABLE"
 msgstr "UNERREICHBAR"
 
-#: ../../../../modules/monitoring/library/Monitoring/Object/Host.php:179
+#: ../../../../modules/monitoring/library/Monitoring/Object/Host.php:180
 msgid "UP"
 msgstr "UP"
 
@@ -4807,8 +4808,8 @@ msgctxt "icinga.state"
 msgid "UP"
 msgstr "UP"
 
-#: ../../../../modules/monitoring/application/views/helpers/ServiceFlags.php:10
 #: ../../../../modules/monitoring/application/views/helpers/HostFlags.php:10
+#: ../../../../modules/monitoring/application/views/helpers/ServiceFlags.php:10
 msgid "Unhandled"
 msgstr "Unbehandelt"
 
@@ -4816,20 +4817,20 @@ msgstr "Unbehandelt"
 msgid "Unhandled Problems:"
 msgstr "Unbehandelte Probleme:"
 
+#: ../../../../modules/monitoring/application/forms/StatehistoryForm.php:116
 #: ../../../../modules/monitoring/application/views/scripts/tactical/index.phtml:105
 #: ../../../../modules/monitoring/application/views/scripts/tactical/index.phtml:111
-#: ../../../../modules/monitoring/application/forms/StatehistoryForm.php:116
 msgid "Unknown"
 msgstr "Unbekannt"
 
+#: ../../../../modules/monitoring/application/forms/StatehistoryForm.php:135
 #: ../../../../modules/monitoring/application/views/scripts/tactical/index.phtml:41
 #: ../../../../modules/monitoring/application/views/scripts/tactical/index.phtml:47
-#: ../../../../modules/monitoring/application/forms/StatehistoryForm.php:135
 msgid "Unreachable"
 msgstr "Nicht erreichbar"
 
-#: ../../../../modules/monitoring/application/views/scripts/tactical/index.phtml:23
 #: ../../../../modules/monitoring/application/forms/StatehistoryForm.php:133
+#: ../../../../modules/monitoring/application/views/scripts/tactical/index.phtml:23
 msgid "Up"
 msgstr "Up"
 
@@ -4841,10 +4842,10 @@ msgstr "Verfallszeitpunkt nutzen"
 msgid "Use SSH Identity"
 msgstr "Benutze SSH Identität"
 
-#: ../../../../modules/monitoring/application/views/scripts/comment/show.phtml:43
-#: ../../../../modules/monitoring/application/views/scripts/downtime/show.phtml:40
 #: ../../../../modules/monitoring/application/controllers/EventController.php:432
 #: ../../../../modules/monitoring/application/forms/Config/Transport/RemoteTransportForm.php:163
+#: ../../../../modules/monitoring/application/views/scripts/comment/show.phtml:43
+#: ../../../../modules/monitoring/application/views/scripts/downtime/show.phtml:40
 msgid "User"
 msgstr "Benutzer"
 
@@ -4856,9 +4857,9 @@ msgstr "Benutzerkommentar"
 msgid "User comment"
 msgstr "Benutzerkommentar"
 
-#: ../../../../modules/monitoring/application/forms/Config/Transport/RemoteTransportForm.php:165
 #: ../../../../modules/monitoring/application/forms/Config/Transport/ApiTransportForm.php:53
 #: ../../../../modules/monitoring/application/forms/Config/Transport/ApiTransportForm.php:65
+#: ../../../../modules/monitoring/application/forms/Config/Transport/RemoteTransportForm.php:165
 msgid ""
 "User to log in as on the remote Icinga instance. Please note that key-based "
 "SSH login must be possible for this user"
@@ -4893,7 +4894,7 @@ msgstr "Wert"
 msgid "Value for interval not valid"
 msgstr "Wert des Intervalls ist nicht zulässig"
 
-#: ../../../../modules/monitoring/library/Monitoring/Object/Service.php:194
+#: ../../../../modules/monitoring/library/Monitoring/Object/Service.php:195
 msgid "WARNING"
 msgstr "WARNUNG"
 
@@ -4902,10 +4903,10 @@ msgctxt "icinga.state"
 msgid "WARNING"
 msgstr "WARNUNG"
 
+#: ../../../../modules/monitoring/application/forms/StatehistoryForm.php:115
+#: ../../../../modules/monitoring/application/views/helpers/Perfdata.php:40
 #: ../../../../modules/monitoring/application/views/scripts/tactical/index.phtml:81
 #: ../../../../modules/monitoring/application/views/scripts/tactical/index.phtml:87
-#: ../../../../modules/monitoring/application/views/helpers/Perfdata.php:40
-#: ../../../../modules/monitoring/application/forms/StatehistoryForm.php:115
 msgid "Warning"
 msgstr "Warnung"
 
@@ -4921,9 +4922,9 @@ msgstr "Hat begonnen"
 msgid "Welcome to the configuration of the monitoring module for Icinga Web 2!"
 msgstr "Willkommen bei der Konfiguration des Icinga Web 2 Monitoring Moduls!"
 
+#: ../../../../modules/monitoring/application/controllers/EventController.php:106
 #: ../../../../modules/monitoring/application/views/scripts/comment/show.phtml:48
 #: ../../../../modules/monitoring/application/views/scripts/downtime/show.phtml:155
-#: ../../../../modules/monitoring/application/controllers/EventController.php:106
 msgid "Yes"
 msgstr "Ja"
 
