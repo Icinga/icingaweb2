@@ -121,6 +121,8 @@ class HostcontactQuery extends IdoQuery
      */
     protected function joinHostgroups()
     {
+        $this->requireVirtualTable('hosts');
+
         $this->select->joinLeft(
             ['hgm' => $this->prefix . 'hostgroup_members'],
             'hgm.host_object_id = ho.object_id',
@@ -194,7 +196,7 @@ class HostcontactQuery extends IdoQuery
      */
     protected function joinServices()
     {
-        $this->joinHosts();
+        $this->requireVirtualTable('hosts');
 
         $this->select->joinLeft(
             ['s' => $this->prefix . 'services'],
