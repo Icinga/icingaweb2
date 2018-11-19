@@ -158,19 +158,19 @@ class DocParser
         $tree = new SimpleTree();
         foreach (new RecursiveIteratorIterator($this->docIterator) as $filename) {
             $file = new SplFileObject($filename);
-            $lastLine = null;
+            $file->setFlags(SplFileObject::READ_AHEAD);
             $stack = new SplStack();
-            $cachingIterator = new CachingIterator($file, CachingIterator::TOSTRING_USE_CURRENT);
+            $cachingIterator = new CachingIterator($file);
             $insideFencedCodeBlock = false;
 
-            for ($cachingIterator->rewind(); $line = $cachingIterator->valid(); $cachingIterator->next()) {
-                $fileIterator = $cachingIterator->getInnerIterator();
+            for ($cachingIterator->rewind(); $cachingIterator->valid(); $cachingIterator->next()) {
                 $line = $cachingIterator->current();
                 $header = null;
 
                 if (substr($line, 0, 3) === '```') {
                     $insideFencedCodeBlock = ! $insideFencedCodeBlock;
                 } elseif (! $insideFencedCodeBlock) {
+                    $fileIterator = $cachingIterator->getInnerIterator();
                     $header = $this->extractHeader($line, $fileIterator->valid() ? $fileIterator->current() : null);
                 }
 
