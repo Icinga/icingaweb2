@@ -43,8 +43,8 @@ class ShowController extends Controller
             'contact_notify_host_flapping',
             'contact_notify_host_downtime',
         ));
-        $query->where('contact_name', $contactName);
         $this->applyRestriction('monitoring/filter/objects', $query);
+        $query->where('contact_name', $contactName);
         $contact = $query->getQuery()->fetchRow();
 
         if ($contact) {
