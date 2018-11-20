@@ -233,3 +233,40 @@ a:hover > .icon-cancel {
     width: 100%;
   }
 }
+
+// Collapsible Control
+
+.collapsible-container {
+  position: relative;
+
+  .icon-angle-double-down {
+    display: none;
+  }
+
+  &.collapsed .icon-angle-double-up {
+    display: none;
+  }
+
+  &.collapsed .icon-angle-double-down {
+    display: inline-block;
+  }
+}
+
+#collapsible-control-ghost {
+  display: none;
+}
+
+.collapsible-control {
+  .rounded-corners(50%);
+
+  background: @gray-lighter;
+  color: @gray;
+  width: 2em;
+  height: 2em;
+  position: absolute;
+  border: none;
+  z-index: 1;
+  -webkit-box-shadow: 0 0 1/3em rgba(0,0,0,.3);
+  -moz-box-shadow: 0 0 1/3em rgba(0,0,0,.3);
+  box-shadow: 0 0 1/3em rgba(0,0,0,.3);
+}
