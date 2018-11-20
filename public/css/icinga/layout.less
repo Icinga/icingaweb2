@@ -43,6 +43,7 @@
   width: 16em;
   position: fixed;
   left: 0;
+  margin-top: -3em;
 }
 
 #header-logo {
@@ -176,7 +177,9 @@
 // Display tabs if JS is disabled
 html.no-js .controls > .tabs {
   background-color: @icinga-blue;
-  margin-top: 0;
+  margin-left: -1 * @gutter;
+  margin-right: -1 * @gutter;
+  margin-top: -1 * @gutter;
 }
 
 // Dashboard grid
