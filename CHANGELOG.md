@@ -4,6 +4,22 @@ Please make sure to always read our [Upgrading](doc/80-Upgrading.md) documentati
 
 ## What's New
 
+### What's New in Version 2.6.2
+
+You can find issues and features related to this release on our [Roadmap](https://github.com/Icinga/icingaweb2/milestone/53?closed=1).
+
+This bugfix release addresses the following topics:
+
+* Database connections to MySQL 8 no longer fail
+* LDAP connections now have a timeout configuration which defaults to 5 seconds
+* User groups are now correctly loaded for externally authenticated users
+* Filters are respected for all links in the host and service group overviews
+* Fixed permission problems where host and service actions provided by modules were missing
+* Fixed an SQL error in the contact list view when filtering for host groups
+* Fixed time zone (DST) detection
+* Fixed the contact details view if restrictions are active
+* Doc parser and documentation fixes
+
 ### What's New in Version 2.6.1
 
 You can find issues and features related to this release on our [Roadmap](https://github.com/Icinga/icingaweb2/milestone/51?closed=1).
