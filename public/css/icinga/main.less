@@ -161,13 +161,6 @@ a:hover > .icon-cancel {
     background-color: @tr-hover-color;
     cursor: pointer;
   }
-
-  caption {
-    border-top: 1px solid @gray-light;
-    caption-side: bottom;
-    font-style: italic;
-    text-align: right;
-  }
 }
 
 .name-value-table {
@@ -235,25 +228,66 @@ a:hover > .icon-cancel {
 }
 
 // Collapsible Control
+.collapsible-table-container {
+  &.collapsed.has-collapsible .collapsible {
+    overflow: hidden;
+    max-height: 8em;
+  }
+}
 
-.collapsible-container {
+.collapsible-container,
+.collapsible-table-container {
+  &.collapsed:not(.has-collapsible),
+  &.collapsed.has-collapsible .collapsible {
+    overflow: hidden;
+    max-height: 96px;
+  }
+
+  &.collapsed:not(.has-collapsible) {
+    .collapsible-control {
+      bottom: 4px;
+    }
+  }
+}
+
+.collapsible-container,
+.collapsible-table-container {
   position: relative;
 
-  .icon-angle-double-down {
-    display: none;
+  .table-wrapper {
+    overflow: hidden;
   }
 
-  &.collapsed .icon-angle-double-up {
-    display: none;
+  .collapsed .table-wrapper {
+    overflow: hidden;
+    max-height: 12em;
   }
+}
 
-  &.collapsed .icon-angle-double-down {
-    display: inline-block;
-  }
+.collapsible-control > i:before {
+  margin-right: 0;
 }
 
 #collapsible-control-ghost {
   display: none;
+}
+
+.collapsible-control > .icon-angle-double-down {
+  display: none;
+}
+
+.collapsible-control > .icon-angle-double-up {
+  display: block;
+}
+
+.collapsed {
+  .collapsible-control > .icon-angle-double-up {
+    display: none;
+  }
+
+  .collapsible-control > .icon-angle-double-down {
+    display: block;
+  }
 }
 
 .collapsible-control {
@@ -263,10 +297,12 @@ a:hover > .icon-cancel {
   color: @gray;
   width: 2em;
   height: 2em;
+  z-index: 1;
   position: absolute;
   border: none;
-  z-index: 1;
+  bottom: -1em;
+  right: .25em;
   -webkit-box-shadow: 0 0 1/3em rgba(0,0,0,.3);
-  -moz-box-shadow: 0 0 1/3em rgba(0,0,0,.3);
-  box-shadow: 0 0 1/3em rgba(0,0,0,.3);
+     -moz-box-shadow: 0 0 1/3em rgba(0,0,0,.3);
+          box-shadow: 0 0 1/3em rgba(0,0,0,.3);
 }
