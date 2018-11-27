@@ -2,13 +2,13 @@
 
 set -ex
 
-ICINGAWEB_HOME=${ICINGAWEB_HOME:="$(dirname "$(readlink -f $(dirname "$0"))")"}
-PHPCS_VERSION=${PHPCS_VERSION:=3.0.2}
+ICINGAWEB_HOME=${ICINGAWEB_HOME:="$(dirname "$(readlink -f "$(dirname "$0")")")"}
+PHPCS_VERSION=${PHPCS_VERSION:=3.3.2}
 MOCKERY_VERSION=${MOCKERY_VERSION:=0.9.9}
 HAMCREST_VERSION=${HAMCREST_VERSION:=2.0.0}
 PHPUNIT_VERSION=${PHPUNIT_VERSION:=5.7}
 
-cd ${ICINGAWEB_HOME}
+cd "${ICINGAWEB_HOME}"
 
 test -d vendor || mkdir vendor
 
@@ -42,8 +42,8 @@ fi
 if [ ! -d "${mockery_path}" ]; then
   tar xf "${mockery_path}".tar.gz -C vendor/
 fi
-ln -svf "${mockery_path}"/library/Mockery
-ln -svf "${mockery_path}"/library/Mockery.php
+ln -svf "${mockery_path}"/library/Mockery Mockery
+ln -svf "${mockery_path}"/library/Mockery.php Mockery.php
 
 # hamcrest
 hamcrest_path="vendor/hamcrest-php-${HAMCREST_VERSION}"
@@ -54,5 +54,5 @@ fi
 if [ ! -d "${hamcrest_path}" ]; then
   tar xf "${hamcrest_path}".tar.gz -C vendor/
 fi
-ln -svf "${hamcrest_path}"/hamcrest/Hamcrest
-ln -svf "${hamcrest_path}"/hamcrest/Hamcrest.php
+ln -svf "${hamcrest_path}"/hamcrest/Hamcrest Hamcrest
+ln -svf "${hamcrest_path}"/hamcrest/Hamcrest.php Hamcrest.php
