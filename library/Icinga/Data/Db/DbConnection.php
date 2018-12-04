@@ -215,6 +215,11 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
             case 'oracle':
                 $adapter = 'Pdo_Oci';
                 $defaultPort = 1521;
+
+                // remove host parameter when not configured
+                if (empty($this->config->host)) {
+                    unset($adapterParamaters['host']);
+                }
                 break;
             case 'pgsql':
                 $adapter = 'Pdo_Pgsql';
@@ -555,7 +560,7 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
                 'Connection to %s as %s on %s:%s successful',
                 $config['dbname'],
                 $config['username'],
-                $config['host'],
+                array_key_exists('host', $config) ? $config['host'] : '(none)',
                 $config['port']
             ));
             switch ($this->dbType) {
