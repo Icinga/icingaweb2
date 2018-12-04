@@ -64,7 +64,7 @@ class IniParser
             switch ($state) {
                 case self::LINE_START:
                     if (ctype_space($s)) {
-                        continue;
+                        continue 2;
                     }
                     switch ($s) {
                         case '[':
@@ -130,7 +130,7 @@ class IniParser
 
                 case self::DIRECTIVE_VALUE_START:
                     if (ctype_space($s)) {
-                        continue;
+                        continue 2;
                     } elseif ($s === '"') {
                         $state = self::DIRECTIVE_VALUE_QUOTED;
                     } else {
