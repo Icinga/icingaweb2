@@ -686,7 +686,7 @@ class Module
                         case 'depends':
                             if (strpos($val, ' ') === false) {
                                 $metadata->depends[$val] = true;
-                                continue;
+                                continue 2;
                             }
 
                             $parts = preg_split('/,\s+/', $val);
