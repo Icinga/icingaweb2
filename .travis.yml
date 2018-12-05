@@ -58,6 +58,6 @@ before_script:
 
 script:
   # also see: modules/test/application/clicommands/PhpCommand.php
-  - 'if [ "$CHECK" = phpcs ]; then php phpcs.phar; fi'
-  - 'if [ "$CHECK" = phpunit ]; then php phpunit.phar -c modules/test/phpunit.xml --verbose; fi'
+  - 'if [ "$CHECK" = phpcs ]; then php vendor/phpcs.phar; fi'
+  - 'if [ "$CHECK" = phpunit ]; then php vendor/phpunit.phar -c modules/test/phpunit.xml --verbose; fi'
   - 'if [ "$CHECK" = syntax ]; then php test/check-syntax.php -e "^(\./)?vendor/" -e Icinga/Util/String.php; fi'
