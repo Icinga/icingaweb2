@@ -409,7 +409,7 @@ class GridChart extends Chart
                         );
                         break;
                     default:
-                        continue;
+                        continue 2;
                 }
                 $el = $this->setupGraph($graphObj, $graph);
                 if ($el) {
