@@ -21,6 +21,14 @@ matrix:
       php: '7.0'
     - env: CHECK=phpcs
       php: '5.6'
+    - env: CHECK=syntax
+      php: 'nightly'
+    - env: CHECK=syntax
+      php: '7.3'
+    - env: CHECK=syntax
+      php: '7.0'
+    - env: CHECK=syntax
+      php: '5.6'
   allow_failures:
     - php: nightly
 
@@ -52,3 +60,4 @@ script:
   # also see: modules/test/application/clicommands/PhpCommand.php
   - 'if [ "$CHECK" = phpcs ]; then php phpcs.phar; fi'
   - 'if [ "$CHECK" = phpunit ]; then php phpunit.phar -c modules/test/phpunit.xml --verbose; fi'
+  - 'if [ "$CHECK" = syntax ]; then php test/check-syntax.php -e "^(\./)?vendor/" -e Icinga/Util/String.php; fi'
