@@ -8,6 +8,7 @@
     <file>test/</file>
 
     <exclude-pattern>vendor/*</exclude-pattern>
+    <exclude-pattern>test/*.php</exclude-pattern>
     <exclude-pattern>application/fonts/fontello-ifont/*</exclude-pattern>
 
     <arg value="wps"/>

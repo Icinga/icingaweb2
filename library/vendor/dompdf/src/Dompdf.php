@@ -368,7 +368,7 @@ class Dompdf
 
             $ext = strtolower(pathinfo($realfile, PATHINFO_EXTENSION));
             if (!in_array($ext, $this->allowedLocalFileExtensions)) {
-                throw new Exception("Permission denied on $file.");
+                throw new Exception("Permission denied on $file. This file extension is forbidden");
             }
 
             if (!$realfile) {
@@ -607,7 +607,7 @@ class Dompdf
                             if (!$accept) {
                                 //found at least one mediatype, but none of the accepted ones
                                 //Skip this css file.
-                                continue;
+                                continue 2;
                             }
                         }
 
@@ -628,7 +628,7 @@ class Dompdf
                         ($media = $tag->getAttribute("media")) &&
                         !in_array($media, $acceptedmedia)
                     ) {
-                        continue;
+                        continue 2;
                     }
 
                     $css = "";
@@ -945,7 +945,7 @@ class Dompdf
      *
      * @param array $options options (see above)
      *
-     * @return string
+     * @return string|null
      */
     public function output($options = array())
     {

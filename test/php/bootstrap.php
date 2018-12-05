@@ -18,7 +18,11 @@ if (!defined('ICINGA_LIBDIR')) {
 }
 
 // This is needed to get the Zend Plugin loader working
-set_include_path(implode(PATH_SEPARATOR, array($libraryPath, get_include_path())));
+set_include_path(implode(PATH_SEPARATOR, [
+    $libraryPath,
+    $basePath . DIRECTORY_SEPARATOR . 'vendor',
+    get_include_path()
+]));
 
 require_once 'Mockery/Loader.php';
 $mockeryLoader = new \Mockery\Loader;
