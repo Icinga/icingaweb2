@@ -58,6 +58,12 @@ class DbResourceForm extends Form
             $offerMysql = true;
         }
 
+        if ($dbChoice === 'oracle') {
+            $hostIsRequired = false;
+        } else {
+            $hostIsRequired = true;
+        }
+
         $socketInfo = '';
         if ($offerPostgres) {
             $socketInfo = $this->translate(
@@ -104,7 +110,7 @@ class DbResourceForm extends Form
                 'text',
                 'host',
                 array (
-                    'required'      => true,
+                    'required'      => $hostIsRequired,
                     'label'         => $this->translate('Host'),
                     'description'   => $this->translate('The hostname of the database')
                         . ($socketInfo ? '. ' . $socketInfo : ''),
