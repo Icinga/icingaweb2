@@ -8,6 +8,7 @@ use Dompdf\Dompdf;
 use Dompdf\Options;
 use Icinga\Application\Icinga;
 use Icinga\Exception\ProgrammingError;
+use Icinga\Util\Environment;
 use Icinga\Web\Hook;
 use Icinga\Web\Url;
 
@@ -45,8 +46,10 @@ class Pdf
     public function renderControllerAction($controller)
     {
         $this->assertNoHeadersSent();
-        ini_set('memory_limit', '384M');
-        ini_set('max_execution_time', 300);
+
+        Environment::raiseMemoryLimit('512M');
+        Environment::raiseExecutionTime(300);
+
         $viewRenderer = $controller->getHelper('viewRenderer');
         $controller->render(
             $viewRenderer->getScriptAction(),

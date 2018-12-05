@@ -4,8 +4,6 @@
 namespace Icinga\Util;
 
 use DateTime;
-use Icinga\Date\DateFormatter;
-use Icinga\Exception\ProgrammingError;
 
 class Format
 {
@@ -140,5 +138,38 @@ class Format
         }
 
         return $dt->format('L') == 1;
+    }
+
+    /**
+     * Unpack shorthand bytes PHP directives to bytes
+     *
+     * @param   string  $subject
+     *
+     * @return  int
+     */
+    public static function unpackShorthandBytes($subject)
+    {
+        $base = (int) $subject;
+
+        if ($base <= -1) {
+            return INF;
+        }
+
+        switch (strtoupper($subject[strlen($subject) - 1])) {
+            case 'K':
+                $multiplier = 1024;
+                break;
+            case 'M':
+                $multiplier = 1024 ** 2;
+                break;
+            case 'G':
+                $multiplier = 1024 ** 3;
+                break;
+            default:
+                $multiplier = 1;
+                break;
+        }
+
+        return $base * $multiplier;
     }
 }
