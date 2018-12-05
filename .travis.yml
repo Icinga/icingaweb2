@@ -10,7 +10,17 @@ php:
   - '7.3'
   - nightly
 
+env:
+  - CHECK=phpunit
+
 matrix:
+  include:
+    - env: CHECK=phpcs
+      php: '7.3'
+    - env: CHECK=phpcs
+      php: '7.0'
+    - env: CHECK=phpcs
+      php: '5.6'
   allow_failures:
     - php: nightly
 
@@ -33,12 +43,12 @@ notifications:
 # also see: test/setup_vendor.sh
 before_script:
   - php -m
-  - sh -c '[ -z $LOCALE_GEN ] || sudo locale-gen en_US.UTF-8 de_DE.UTF-8 fr_FR.UTF-8'
-  - sh -c '[ -z $ENABLE_LDAP ] || phpenv config-add test/travis-ldap.ini'
-  - test/travis_database.sh
+  - '[ -z $LOCALE_GEN ] || sudo locale-gen en_US.UTF-8 de_DE.UTF-8 fr_FR.UTF-8'
+  - '[ -z $ENABLE_LDAP ] || phpenv config-add test/travis-ldap.ini'
   - test/setup_vendor.sh
+  - 'if [ "$CHECK" = phpunit ]; then test/travis_database.sh; fi'
 
 script:
   # also see: modules/test/application/clicommands/PhpCommand.php
-  - php phpcs.phar
-  - php phpunit.phar -c modules/test/phpunit.xml --verbose
+  - 'if [ "$CHECK" = phpcs ]; then php phpcs.phar; fi'
+  - 'if [ "$CHECK" = phpunit ]; then php phpunit.phar -c modules/test/phpunit.xml --verbose; fi'
