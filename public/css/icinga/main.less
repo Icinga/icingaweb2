@@ -323,3 +323,12 @@ a:hover > .icon-cancel {
   right: 0;
   z-index: 1;
 }
+
+.collapsible-control:hover:before {
+  content: "";
+  display: block;
+  position: absolute;
+  top: -2px; right: -2px; bottom: -2px; left: -2px;
+  background: fade(@text-color, 10);
+  .rounded-corners(50%);
+}
