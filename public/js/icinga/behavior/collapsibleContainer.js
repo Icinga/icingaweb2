@@ -24,12 +24,14 @@
 
             if ($this.find('.collapsible').length > 0) {
                 $this.addClass('has-collapsible');
-                if ($this.find('.collapsible').innerHeight() > ($this.attr('data-height') || defaultHeight)) {
+                if ($this.find('.collapsible').innerHeight() > ($this.data('height') || defaultHeight)) {
                     $this.append($('#collapsible-control-ghost').clone().removeAttr('id'));
+                    $this.addClass('can-collapse');
                 }
             } else {
-                if ($this.innerHeight() > ($this.attr('data-height') || defaultHeight)) {
+                if ($this.innerHeight() > ($this.data('height') || defaultHeight)) {
                     $this.append($('#collapsible-control-ghost').clone().removeAttr('id'));
+                    $this.addClass('can-collapse');
                 }
             }
             updateCollapsedState($this);
@@ -42,10 +44,12 @@
                 $this.addClass('has-collapsible');
                 if ($this.find('tr').length > ($this.attr('data-numofrows') || defaultNumOfRows)) {
                     $this.append($('#collapsible-control-ghost').clone().removeAttr('id'));
+                    $this.addClass('can-collapse');
                 }
 
                 if ($this.find('li').length > ($this.attr('data-numofrows') || defaultNumOfRows)) {
                     $this.append($('#collapsible-control-ghost').clone().removeAttr('id'));
+                    $this.addClass('can-collapse');
                 }
             }
             updateCollapsedState($this);
@@ -79,12 +83,14 @@
             $container.removeClass('collapsed');
             $collapsible.css({ maxHeight: 'none' });
         } else {
-            $container.addClass('collapsed');
-            if ($container.hasClass('collapsible-container')) {
-                $collapsible.css({ maxHeight: $container.data('height') || defaultHeight });
-            }
-            if ($container.hasClass('collapsible-table-container')) {
-                $collapsible.css({ maxHeight: ($container.data('numofrows') || defaultNumOfRows) * $container.find('tr').height() });
+            if ($container.hasClass('can-collapse')) {
+                $container.addClass('collapsed');
+                if ($container.hasClass('collapsible-container')) {
+                    $collapsible.css({maxHeight: $container.data('height') || defaultHeight});
+                }
+                if ($container.hasClass('collapsible-table-container')) {
+                    $collapsible.css({maxHeight: ($container.data('numofrows') || defaultNumOfRows) * $container.find('tr').height()});
+                }
             }
         }
     }
