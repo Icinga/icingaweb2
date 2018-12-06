@@ -306,3 +306,20 @@ a:hover > .icon-cancel {
      -moz-box-shadow: 0 0 1/3em rgba(0,0,0,.3);
           box-shadow: 0 0 1/3em rgba(0,0,0,.3);
 }
+
+.collapsible {
+  position: relative;
+}
+
+.collapsed .collapsible:before,
+:not(.has-collapsible).collapsed:before {
+  content: "";
+  display: block;
+  height: 2em;
+  background: linear-gradient(rgba(255,255,255,0), white);
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1;
+}
