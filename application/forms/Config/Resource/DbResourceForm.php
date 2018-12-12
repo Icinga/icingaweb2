@@ -114,7 +114,7 @@ class DbResourceForm extends Form
                     'label'         => $this->translate('Host'),
                     'description'   => $this->translate('The hostname of the database')
                         . ($socketInfo ? '. ' . $socketInfo : ''),
-                    'value'         => 'localhost'
+                    'value'         => $hostIsRequired ? 'localhost' : ''
                 )
             );
             $this->addElement(
