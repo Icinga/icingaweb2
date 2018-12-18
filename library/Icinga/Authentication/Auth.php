@@ -139,7 +139,20 @@ class Auth
         $this->getResponse()->setReloadCss(true);
         $user->setPreferences($preferences);
         $groups = $user->getGroups();
+        $userBackendName = $user->getAdditional('backend_name');
         foreach (Config::app('groups') as $name => $config) {
+            $groupsUserBackend = $config->user_backend;
+            if ($groupsUserBackend
+                && $groupsUserBackend !== 'none'
+                && $userBackendName !== null
+                && $groupsUserBackend !== $userBackendName
+            ) {
+                // Do not ask for Group membership if a specific User Backend
+                // has been assigned to that Group Backend, and the user has
+                // been authenticated by another User Backend
+                continue;
+            }
+
             try {
                 $groupBackend = UserGroupBackend::create($name, $config);
                 $groupsFromBackend = $groupBackend->getMemberships($user);
