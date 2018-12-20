@@ -1,0 +1,28 @@
+#modal-overlay {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: none;
+  background: #000;
+  opacity: 0.5;
+  z-index: 1000;
+
+  &.active {
+    display: block;
+  }
+}
+
+#modal-container {
+  position: relative;
+  margin: 0 auto;
+  width: 50%;
+}
+
+.modal-content {
+  position: relative;
+  background-color: #fafafa;
+  border-radius: 0.25em;
+  .box-shadow();
+}

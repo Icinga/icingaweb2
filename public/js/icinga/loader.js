@@ -627,6 +627,10 @@
                 });
             }
 
+            if (!! (req.getResponseHeader('X-Icinga-History') === 'no')) {
+                req.addToHistory = false;
+            }
+
             // Update history when necessary
             if (! req.autorefresh && req.addToHistory) {
                 if (req.$target.hasClass('container')) {

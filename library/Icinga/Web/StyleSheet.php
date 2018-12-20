@@ -40,6 +40,7 @@ class StyleSheet
         'css/icinga/layout.less',
         'css/icinga/layout-structure.less',
         'css/icinga/menu.less',
+        'css/icinga/modal.less',
         'css/icinga/tabs.less',
         'css/icinga/forms.less',
         'css/icinga/setup.less',
