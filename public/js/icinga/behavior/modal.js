@@ -9,7 +9,7 @@
 
         this.$overlay = $('<div id="modal-overlay"><div id="modal-container"></div></div>');
 
-        document.body.insertAdjacentElement('beforeend', this.$overlay[0]);
+        $('#layout').append('beforeend', this.$overlay[0]);
 
         this.on('click', '.modal-toggle', this.onModalToggleClick, this);
     }
@@ -24,8 +24,16 @@
 
     Modal.prototype.onOverlayClick = function(event) {
         var modal = event.data.self;
+        var $target = $(event.target);
+        var $closeButton = $(event.target).closest('button.close');
 
-        modal.hide();
+        console.log($target);
+
+        if ($target.is('#modal-overlay')) {
+            modal.hide();
+        } else if ($closeButton.length) {
+            modal.hide();
+        }
     };
 
     Modal.prototype.onKeydown = function(event) {
@@ -41,7 +49,7 @@
         document.body.style.overflow = 'hidden';
 
         $(document).on('keyup', { self: this }, this.onKeydown);
-//        this.$overlay.on('click', { self: this }, this.onOverlayClick);
+        this.$overlay.on('click', { self: this }, this.onOverlayClick);
 
         this.$overlay.addClass('active');
     };
@@ -50,7 +58,7 @@
         document.body.style.overflow = bodyOverflow;
 
         $('document').off('keydown', this.onKeydown);
-//        this.$overlay.off('click', this.onOverlayClick);
+        this.$overlay.off('click', this.onOverlayClick);
 
         this.$overlay.removeClass('active');
     };
