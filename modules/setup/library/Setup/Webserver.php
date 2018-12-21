@@ -175,6 +175,30 @@ abstract class Webserver
     }
 
     /**
+     * Get whether FPM is enabled
+     *
+     * @return  bool
+     */
+    public function getEnableFpm()
+    {
+        return $this->enableFpm;
+    }
+
+    /**
+     * Set FPM enabled
+     *
+     * @param   bool  $flag
+     *
+     * @return  $this
+     */
+    public function setEnableFpm($flag)
+    {
+        $this->enableFpm = (bool) $flag;
+
+        return $this;
+    }
+
+    /**
      * Get the address or path where to pass requests to FPM
      *
      * @return  string

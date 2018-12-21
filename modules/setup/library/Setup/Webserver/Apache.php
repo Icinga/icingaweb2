@@ -11,9 +11,11 @@ use Icinga\Module\Setup\Webserver;
 class Apache extends Webserver
 {
     protected $fpmUri = 'fcgi://127.0.0.1:9000';
+    protected $enableFpm = false;
 
     protected function getTemplate()
     {
+        if (! $this->enableFpm) {
             return  <<<'EOD'
 Alias {urlPath} "{documentRoot}"
 
@@ -22,7 +24,7 @@ Alias {urlPath} "{documentRoot}"
 #    # Forward PHP requests to FPM
 #    SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1
 #    <LocationMatch "^{urlPath}/(.*\.php)$">
-#        ProxyPassMatch "fcgi://127.0.0.1:9000/{documentRoot}/$1"
+#        ProxyPassMatch "fcgi://{fpmUri}/{documentRoot}/$1"
 #    </LocationMatch>
 #</IfVersion>
 
@@ -76,5 +78,66 @@ Alias {urlPath} "{documentRoot}"
 #    </IfVersion>
 </Directory>
 EOD;
+        } else {
+            return <<<'EOD'
+Alias {urlPath} "{documentRoot}"
+
+<IfVersion < 2.4>
+    # Forward PHP requests to FPM
+    SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1
+    <LocationMatch "^{urlPath}/(.*\.php)$">
+        ProxyPassMatch "fcgi://{fpmUri}/{documentRoot}/$1"
+    </LocationMatch>
+</IfVersion>
+
+<Directory "{documentRoot}">
+    Options SymLinksIfOwnerMatch
+    AllowOverride None
+
+    DirectoryIndex index.php
+
+    <IfModule mod_authz_core.c>
+        # Apache 2.4
+        <RequireAll>
+            Require all granted
+        </RequireAll>
+    </IfModule>
+
+    <IfModule !mod_authz_core.c>
+        # Apache 2.2
+        Order allow,deny
+        Allow from all
+    </IfModule>
+
+    SetEnv ICINGAWEB_CONFIGDIR "{configDir}"
+
+    EnableSendfile Off
+
+    <IfModule mod_rewrite.c>
+        RewriteEngine on
+        RewriteBase {urlPath}/
+        RewriteCond %{REQUEST_FILENAME} -s [OR]
+        RewriteCond %{REQUEST_FILENAME} -l [OR]
+        RewriteCond %{REQUEST_FILENAME} -d
+        RewriteRule ^.*$ - [NC,L]
+        RewriteRule ^.*$ index.php [NC,L]
+    </IfModule>
+
+    <IfModule !mod_rewrite.c>
+        DirectoryIndex error_norewrite.html
+        ErrorDocument 404 {urlPath}/error_norewrite.html
+    </IfModule>
+
+    <IfVersion >= 2.4>
+        # Forward PHP requests to FPM
+        SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1
+        <FilesMatch "\.php$">
+            SetHandler "proxy:{fpmUri}"
+            ErrorDocument 503 {urlPath}/error_unavailable.html
+        </FilesMatch>
+    </IfVersion>
+</Directory>
+EOD;
+        }
     }
 }
