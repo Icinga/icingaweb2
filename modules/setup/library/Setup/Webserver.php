@@ -40,6 +40,13 @@ abstract class Webserver
     protected $fpmUri;
 
     /**
+     * Enable to pass requests to FPM
+     *
+     * @var bool
+     */
+    protected $enableFpm = false;
+
+    /**
      * Create instance by type name
      *
      * @param   string $type

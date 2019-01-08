@@ -10,8 +10,7 @@ use Icinga\Module\Setup\Webserver;
  */
 class Apache extends Webserver
 {
-    protected $fpmUri = 'fcgi://127.0.0.1:9000';
-    protected $enableFpm = false;
+    protected $fpmUri = '127.0.0.1:9000';
 
     protected function getTemplate()
     {
@@ -72,7 +71,7 @@ Alias {urlPath} "{documentRoot}"
 #        # Forward PHP requests to FPM
 #        SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1
 #        <FilesMatch "\.php$">
-#            SetHandler "proxy:{fpmUri}"
+#            SetHandler "proxy:fcgi://{fpmUri}"
 #            ErrorDocument 503 {urlPath}/error_unavailable.html
 #        </FilesMatch>
 #    </IfVersion>
@@ -132,7 +131,7 @@ Alias {urlPath} "{documentRoot}"
         # Forward PHP requests to FPM
         SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1
         <FilesMatch "\.php$">
-            SetHandler "proxy:{fpmUri}"
+            SetHandler "proxy:fcgi://{fpmUri}"
             ErrorDocument 503 {urlPath}/error_unavailable.html
         </FilesMatch>
     </IfVersion>
