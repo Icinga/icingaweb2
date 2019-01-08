@@ -18,14 +18,13 @@
 .modal-header {
   position: relative;
   text-align: center;
-  //border-bottom: 1px solid #e7e7e7;
   padding: .25em 0;
 
   > button.close {
     padding: 0;
     width:  1em;
     height: 1em;
-    background: #666;
+    background: @gray;
     line-height: 1em;
     color: white;
     border: none;
@@ -121,7 +120,7 @@
 }
 
 .modal-search {
-  background-color: #E8E8E8;
+  background-color: darken(@gray-lightest, 5%);
   padding: .5em .5em;
 
   > .search-label {
@@ -137,6 +136,7 @@
 .modal-body {
   flex: 1;
   overflow: auto;
+  background-color: @gray-lightest;
 }
 
 .report-types {
@@ -147,14 +147,59 @@
 .report-type {
   margin: 1em;
   text-align: center;
-  color: #fff;
+  color: @text-color-inverted;
+}
+
+.report-tile {
+  color: @text-color;
+  font-size: 0.85em;
+  border-radius: 5px;
+  height: 210px;
+  width: 160px;
+  display: inline-block;
+  background-color: @text-color-inverted;
+  box-shadow: 0 0 8px 1px rgba(0, 0, 0, 0.1);
+
+  &.active,
+  &.active:hover{
+    background-color: @icinga-blue;
+    color: white;
+    box-shadow: 0 0 11px 1px rgba(0, 0, 0, 0.4);
+
+    > .report-preview {
+      background-color: @text-color-inverted;
+      color: @text-color;
+    }
+  }
+
+  &:hover {
+    transition: background-color 0.2s ease;
+    background-color: lighten(@icinga-blue, 55%);// #b4e4f0; #d9f7ff
+    > .report-preview {
+      background-color: @text-color-inverted;
+    }
+  }
+
+  > p {
+    padding: 0.25em;
+  }
+
+  .report-preview {
+    line-height: 2.5em;
+    font-size: 5em;
+    border-radius: 2px;
+    height: 170px;
+    width: 150px;
+    margin: 5px;
+    background-color: @gray-lightest;
+  }
 }
 
 .modal-footer {
   display: flex;
   justify-content: space-between;
   padding: .5em;
-  background: #E8E8E8;
+  background: darken(@gray-lightest, 5%);
 
   input:not(:last-child),
   button:not(:last-child) {
@@ -167,35 +212,5 @@
 
   .right {
     margin-left: auto;
-  }
-}
-
-.report-tile {
-  color: @text-color;
-  font-size: 0.85em;
-  border-radius: 5px;
-  height: 210px;
-  width: 160px;
-  display: inline-block;
-  background-color: #fafafa;
-
-  &.active {
-    background-color: @icinga-blue;
-    color: white;
-    box-shadow: 0 0 8px 1px rgba(0, 0, 0, 0.4);
-  }
-
-  > p {
-    padding: 0.25em;
-  }
-
-  .report-preview {
-    line-height: 4em;
-    font-size: 3em;
-    border-radius: 4px;
-    height: 170px;
-    width: 150px;
-    margin: 5px;
-    background-color: #f2f2f2;
   }
 }
