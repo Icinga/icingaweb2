@@ -1,34 +1,61 @@
-<div class="modal-content">
+<div class="modal-window">
     <div class="modal-header">
-        <h5 class="modal-title">Modal title</h5>
+        <h5 class="modal-title">Add Report</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <i class="icon-cancel" aria-hidden="true"></i>
         </button>
     </div>
+  <div class="model-area">
+    <div class="modal-sidebar"> <!-- #menu -->
+      <ul> <!-- nav nav-level-1 -->
+        <li class="active">  <!-- nav-item badge-nav-item(?) -->
+          <i class="icon-beaker" aria-hidden="true"></i>
+          <p>Monitoring</p>
+        </li>
+        <li>
+          <i class="icon-barchart" aria-hidden="true"></i>
+          <p>Morenitoring</p>
+        </li>
+      </ul>
+    </div>
+    <div class="modal-content">
     <div class="modal-body">
-        <nav class="primary-nav">
-            <ul class="nav nav-level-1">
-                <li class="nav-item">
-                    <i class="icon-database"></i>
-                    <span class="label">Monitoring</span>
-                </li>
-                <li class="nav-item">
-                    <i class="icon-database"></i>
-                    <span class="label">Monitoring</span>
-                </li>
-            </ul>
-        </nav>
-        <div class="content">
-            <p>Woohoo, you're reading this text in a modal!</p>
+      <div class="modal-search">
+        <label for="srch" class="search-label"><i class="icon-search" aria-hidden="true"></i></label>
+        <input id="srch" type="search" placeholder="Search...">
+      </div>
+      <div class="report-types">
+        <div class="report-type">
+          <!-- todo: flesh out the tile(s) -->
+          <div class="report-tile active">
+            <div class="report-preview" style="box-shadow: none"><i class="icon-angle-double-left" style="color: #535353;" aria-hidden="true"></i></div>
+            <p>SLA</p>
+          </div>
         </div>
+        <div class="report-type">
+          <div class="report-tile">
+            <div class="report-preview"><i class="icon-up-small" aria-hidden="true"></i></div>
+            <p>Availability Diagram</p>
+          </div>
+        </div>
+        <div class="report-type">
+          <div class="report-tile">
+            <div class="report-preview"><i class="icon-th-list" aria-hidden="true"></i></div>
+            <p>Host State Distribution</p>
+          </div>
+        </div>
+        <div class="report-type">
+          <div class="report-tile">
+            <div class="report-preview"><i class="icon-off" aria-hidden="true"></i></div>
+            <p>Top 10 Problem Hosts</p>
+          </div>
+        </div>
+      </div>
     </div>
     <div class="modal-footer">
-        <div class="left">
-            <input type="search">
-        </div>
-        <div class="right">
-            <button type="button" class="btn btn-secondary close" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary">Save changes</button>
-        </div>
+      <div class="right">
+          <button type="button" class="btn btn-primary control-button">Add SLA Report</button>
+      </div>
     </div>
+  </div>
 </div>

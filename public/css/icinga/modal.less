@@ -18,12 +18,13 @@
 .modal-header {
   position: relative;
   text-align: center;
-  border-bottom: 1px solid #e7e7e7;
+  //border-bottom: 1px solid #e7e7e7;
   padding: .25em 0;
 
   > button.close {
-    width:  1.5em;
-    height: 1.5em;
+    padding: 0;
+    width:  1em;
+    height: 1em;
     background: #666;
     line-height: 1em;
     color: white;
@@ -31,15 +32,18 @@
     border-radius: 50%;
     text-align: center;
     position: absolute;
-    top: .25em; left: 0.25em;
+    top: .5em; left: .5em;
     -webkit-appearance: none;
        -moz-appearance: none;
         -ms-appearance: none;
             appearance: none;
   }
 
-  > button.close > i{
-    font-size: .75em;
+  > button.close > i {
+    font-size: .7em;
+    position: absolute;
+    left: 0.25em;
+    top: 0;
   }
 
   > button.close > i:before {
@@ -55,28 +59,95 @@
 #modal-container {
   margin: 0 auto;
   min-width: 50vw;
-  min-height: 75vh;
+  min-height: 60vh;
   max-width: 80%;
   max-height: 95%;
   display: flex;
   flex-direction: column;
 }
 
-.modal-content {
-  border-radius: .75em;
+.modal-window {
+  border-radius: .5em;
   box-shadow: 0 0 2em 0 rgba(0,0,0,.6);
   overflow: hidden;
-  display: flex;
+  display: inline-flex;
   flex-direction: column;
-  justify-content: stretch;
+  align-items: stretch;
   flex: 1;
   background: white;
 }
 
+.model-area {
+  display: flex;
+  flex-grow: 1;
+  flex-direction: row;
+  justify-content: stretch;
+}
+
+.modal-sidebar {
+  box-shadow: inset -7px 0 9px -7px rgba(0,0,0,0.7);
+  display: inline-block;
+  flex: 1;
+  background-color: @menu-bg-color;
+  color: @text-color-inverted;
+  text-align: center;
+
+  i {
+    font-size: 2em;
+  }
+
+  ul {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    > li {
+      padding: 1em 0.5em;
+      &:hover {
+        color: @menu-highlight-color;
+      }
+    }
+  }
+
+  ul .active {
+    background-color: @menu-active-bg-color;
+  }
+}
+
+.modal-content {
+  display: flex;
+  flex: 10;
+  flex-direction: column;
+  justify-content: stretch;
+}
+
+.modal-search {
+  background-color: #E8E8E8;
+  padding: .5em .5em;
+
+  > .search-label {
+    font-size: 1.3em;
+  }
+
+  > input[type="search"] {
+    border-radius: 6px;
+    border: none;
+  }
+}
+
 .modal-body {
-  padding: .5em;
   flex: 1;
   overflow: auto;
+}
+
+.report-types {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.report-type {
+  margin: 1em;
+  text-align: center;
+  color: #fff;
 }
 
 .modal-footer {
@@ -99,3 +170,32 @@
   }
 }
 
+.report-tile {
+  color: @text-color;
+  font-size: 0.85em;
+  border-radius: 5px;
+  height: 210px;
+  width: 160px;
+  display: inline-block;
+  background-color: #fafafa;
+
+  &.active {
+    background-color: @icinga-blue;
+    color: white;
+    box-shadow: 0 0 8px 1px rgba(0, 0, 0, 0.4);
+  }
+
+  > p {
+    padding: 0.25em;
+  }
+
+  .report-preview {
+    line-height: 4em;
+    font-size: 3em;
+    border-radius: 4px;
+    height: 170px;
+    width: 150px;
+    margin: 5px;
+    background-color: #f2f2f2;
+  }
+}
