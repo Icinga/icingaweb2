@@ -19,39 +19,44 @@
       </ul>
     </div>
     <div class="modal-content">
-    <div class="modal-body">
+      <div class="modal-body">
       <div class="modal-search">
         <label for="srch" class="search-label"><i class="icon-search" aria-hidden="true"></i></label>
         <input id="srch" type="search" placeholder="Search...">
       </div>
-      <div class="report-types">
-        <div class="report-type">
-          <!-- todo: flesh out the tile(s) -->
-          <div class="report-tile active">
-            <div class="report-preview"><i class="icon-chart-area" aria-hidden="true"></i></div>
-            <p>SLA</p>
+      <div class="modal-reports">
+        <div class="report-types">
+          <div class="report-type">
+            <!-- todo: flesh out the tile(s) -->
+            <div class="report-tile active">
+              <div class="report-preview"><i class="icon-chart-area" aria-hidden="true"></i></div>
+              <p>SLA</p>
+            </div>
+          </div>
+          <div class="report-type">
+            <div class="report-tile">
+              <div class="report-preview"><i class="icon-chart-bar" aria-hidden="true"></i></div>
+              <p>Availability Diagram</p>
+            </div>
+          </div>
+          <div class="report-type">
+            <div class="report-tile">
+              <div class="report-preview"><i class="icon-chart-line" aria-hidden="true"></i></div>
+              <p>Host State Distribution</p>
+            </div>
+          </div>
+          <div class="report-type">
+            <div class="report-tile">
+              <div class="report-preview"><i class="icon-chart-pie" aria-hidden="true"></i></div>
+              <p>Top 10 Problem Hosts</p>
+            </div>
           </div>
         </div>
-        <div class="report-type">
-          <div class="report-tile">
-            <div class="report-preview"><i class="icon-chart-bar" aria-hidden="true"></i></div>
-            <p>Availability Diagram</p>
-          </div>
-        </div>
-        <div class="report-type">
-          <div class="report-tile">
-            <div class="report-preview"><i class="icon-chart-line" aria-hidden="true"></i></div>
-            <p>Host State Distribution</p>
-          </div>
-        </div>
-        <div class="report-type">
-          <div class="report-tile">
-            <div class="report-preview"><i class="icon-chart-pie" aria-hidden="true"></i></div>
-            <p>Top 10 Problem Hosts</p>
-          </div>
+        <div class="modal-form">
+          < this is where the form content goes >
         </div>
       </div>
-    </div>
+      </div>
     <div class="modal-footer">
       <div class="right">
           <button type="button" class="btn btn-primary control-button">Add SLA Report</button>

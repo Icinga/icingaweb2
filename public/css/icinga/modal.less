@@ -58,7 +58,7 @@
 #modal-container {
   margin: 0 auto;
   min-width: 50vw;
-  min-height: 60vh;
+  //min-height: 60vh;
   max-width: 80%;
   max-height: 95%;
   display: flex;
@@ -139,7 +139,12 @@
   background-color: @gray-lightest;
 }
 
+.modal-reports {
+  display: flex;
+}
+
 .report-types {
+  flex: 1;
   display: flex;
   flex-wrap: wrap;
 }
@@ -193,6 +198,13 @@
     margin: 5px;
     background-color: @gray-lightest;
   }
+}
+
+.modal-form {
+  flex: 1;
+  padding: 2em;
+  border-left: 1px @gray-lighter solid;
+  background-color: @text-color-inverted;
 }
 
 .modal-footer {
