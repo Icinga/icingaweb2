@@ -421,3 +421,33 @@ e.g. a PHP module, please install the package, restart your webserver and reload
 
 If you have SELinux enabled, please ensure to either have the selinux package for Icinga Web 2
 installed, or disable it.
+
+### Additional Module Setup <a id="additional-module-installation-from-git-tar-gz"></a>
+
+In case you want to extend the Web 2 with additional modules found at our github or at any other provider.
+
+There might be the case that there is no installation documentation provided.
+Modules need to be installed in the following folder: `/usr/share/icingaweb2/modules`.
+
+Most of the time you will download the Module in form of a tar.gz or zip file.
+
+As an Example we hypothetical download a module named example.tar.gz from an unknown website.
+
+We move or download it straight to the `/usr/share/icingaweb2/modules/example.tar.gz` then we extract it with
+```
+cd /usr/share/icingaweb2/modules
+# and
+tar xf example.tar.gz
+```
+
+this might extract the archive into something like `example-module-xyz`. Most Modules have a naming convention that needs an exact naming of the folder. As an example from our business-process-module the folder needs to be named `businessprocess`.
+```
+mv example-module-xyz example
+```
+
+Now the only thing that we left out is the ownership of the module files those might also have so different owner ship after extraction.
+Keep in mind that Icinga Web 2 and the apache/nginx/php user/group needs to access those files and might require an adjustment of the ownership.
+
+ 
+ 
+
