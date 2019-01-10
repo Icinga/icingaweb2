@@ -575,6 +575,20 @@
                 rendered = true;
             }
 
+            var referrer = req.referrer;
+            if (typeof referrer === 'undefined') {
+                referrer = req;
+            }
+
+            var autoSubmit = false;
+            if (referrer.method === 'POST') {
+                var newUrl = this.icinga.utils.parseUrl(req.url);
+                var currentUrl = this.icinga.utils.parseUrl(req.$target.data('icingaUrl'));
+                if (newUrl.path === currentUrl.path && this.icinga.utils.objectsEqual(newUrl.params, currentUrl.params)) {
+                    autoSubmit = true;
+                }
+            }
+
             req.$target.data('icingaUrl', req.url);
 
             this.icinga.ui.initializeTriStates($resp);
@@ -588,7 +602,7 @@
             }
 
             // .html() removes outer div we added above
-            this.renderContentToContainer($resp.html(), req.$target, req.action, req.autorefresh, req.forceFocus);
+            this.renderContentToContainer($resp.html(), req.$target, req.action, req.autorefresh, req.forceFocus, autoSubmit);
             if (oldNotifications) {
                 oldNotifications.appendTo($('#notifications'));
             }
@@ -761,7 +775,7 @@
         /**
          * Smoothly render given HTML to given container
          */
-        renderContentToContainer: function (content, $container, action, autorefresh, forceFocus) {
+        renderContentToContainer: function (content, $container, action, autorefresh, forceFocus, autoSubmit) {
             // Container update happens here
             var scrollPos = false;
             var _this = this;
@@ -791,7 +805,7 @@
             }
 
             if (typeof containerId !== 'undefined') {
-                if (autorefresh) {
+                if (autorefresh || autoSubmit) {
                     scrollPos = $container.scrollTop();
                 } else {
                     scrollPos = 0;
