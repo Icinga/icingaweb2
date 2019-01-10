@@ -4,14 +4,18 @@
   right: 0;
   bottom: 0;
   left: 0;
-  display: none;
+  display: flex;
   background: rgba(0,0,0,.6);
   z-index: 1000;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .2s ease-in;
+  justify-content: center;
+  align-items: center;
 
   &.active {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    pointer-events: auto;
+    opacity: 1;
   }
 }
 
@@ -58,7 +62,7 @@
 #modal-container {
   margin: 0 auto;
   min-width: 50vw;
-  //min-height: 60vh;
+  min-height: 40vh;
   max-width: 80%;
   max-height: 95%;
   display: flex;
@@ -84,10 +88,10 @@
 }
 
 .modal-sidebar {
-  box-shadow: inset -7px 0 9px -7px rgba(0,0,0,0.7);
+  background-color: @menu-bg-color;
+  box-shadow: inset -.5em 0 1em -.5em rgba(0, 0, 0, .3);
   display: inline-block;
   flex: 1;
-  background-color: @menu-bg-color;
   color: @text-color-inverted;
   text-align: center;
 
@@ -179,7 +183,7 @@
 
   &:hover {
     transition: background-color 0.2s ease;
-    background-color: lighten(@icinga-blue, 55%);// #b4e4f0; #d9f7ff
+    background-color: lighten(@icinga-blue, 55%);
     > .report-preview {
       background-color: @text-color-inverted;
     }
