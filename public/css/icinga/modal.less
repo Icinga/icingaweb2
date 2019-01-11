@@ -157,6 +157,8 @@
   display: flex;
   flex: 1;
   flex-wrap: wrap;
+  padding-bottom: 3.5em;
+  position: relative;
 }
 
 .report-type {
@@ -216,12 +218,19 @@
   background-color: @text-color-inverted;
   border-left: 1px @gray-lighter solid;
   flex: 1;
-  padding: 2em;
+  padding: 2em 2em 3.5em;
+  position: relative;
 }
 
 .modal-footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+
   background: darken(@gray-lightest, 5%);
   display: flex;
+  height: 3.5em;
   justify-content: space-between;
   padding: .5em;
 
