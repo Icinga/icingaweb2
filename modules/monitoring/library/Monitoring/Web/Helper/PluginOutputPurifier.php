@@ -11,7 +11,7 @@ class PluginOutputPurifier extends HtmlPurifier
     {
         $config->set(
             'HTML.Allowed',
-            'p,br,b,a[href|target],i,ul,ol,li,table,tr,th[colspan],td[colspan],div,*[class]'
+            'p,br,b,a[href|target],i,ul,ol,li,table,tr,th[colspan],td[colspan],div,span,*[class|style]'
         );
     }
 }
