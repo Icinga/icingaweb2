@@ -149,6 +149,66 @@
   overflow: auto;
 }
 
+.modal-form {
+  background-color: @text-color-inverted;
+  border-left: 1px @gray-lighter solid;
+  flex: 1;
+  padding: 2em 2em 3.5em;
+  position: relative;
+}
+
+.modal-footer {
+  background: @gray-lighter;
+  display: flex;
+  flex: 1;
+  height: 3.5em;
+  padding: .5em;
+}
+
+.form-footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: -3.5em;
+
+  height: 3.5em;
+  padding: .5em;
+
+  .btn {
+    margin: 0 .5em;
+    max-width: 12em;
+    min-width: 8em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.btn.btn-warn {
+  .button(@body-bg-color, @btn-waning, @btn-warning-dark);
+}
+
+.btn.btn-act,
+.btn.btn-act.btn-primary {
+  //todo: make saftey lock, in case someone wants to make a primary act button?
+  .button(@body-bg-color, @btn-action);
+  background-color: @body-bg-color;
+  color: @black;
+  &:hover {
+    color: @black;
+  }
+}
+
+
+
+/**********************************************************************************************************************
+                                                    reporting
+***********************************************************************************************************************/
+
 .modal-reports {
   display: flex;
 }
@@ -213,59 +273,5 @@
     line-height: 2.5em;
     margin: 5px;
     width: 150px;
-  }
-}
-
-.modal-form {
-  background-color: @text-color-inverted;
-  border-left: 1px @gray-lighter solid;
-  flex: 1;
-  padding: 2em 2em 3.5em;
-  position: relative;
-}
-
-.modal-footer {
-  background: @gray-lighter;
-  display: flex;
-  flex: 1;
-  height: 3.5em;
-  padding: .5em;
-}
-
-.form-footer {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: -3.5em;
-
-  height: 3.5em;
-  padding: .5em;
-
-  .btn {
-    margin: 0 .5em;
-    max-width: 12em;
-    min-width: 8em;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-}
-
-.btn.btn-warn {
-  .button(@body-bg-color, @btn-waning, @btn-warning-dark);
-}
-
-.btn.btn-act,
-.btn.btn-act.btn-primary {
-  //todo: make saftey lock, in case someone wants to make a primary act button?
-  .button(@body-bg-color, @btn-action);
-  background-color: @body-bg-color;
-  color: @black;
-  &:hover {
-    color: @black;
   }
 }
