@@ -159,6 +159,8 @@
   flex-wrap: wrap;
   padding-bottom: 3.5em;
   position: relative;
+  max-height: 80vh;
+  overflow: scroll;
 }
 
 .report-type {
@@ -223,27 +225,47 @@
 }
 
 .modal-footer {
+  background: @gray-lighter;
+  display: flex;
+  flex: 1;
+  height: 3.5em;
+  padding: .5em;
+}
+
+.form-footer {
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
 
-  background: @gray-lighter;
   display: flex;
-  height: 3.5em;
   justify-content: space-between;
+  margin-bottom: -3.5em;
+
+  height: 3.5em;
   padding: .5em;
 
-  input:not(:last-child),
-  button:not(:last-child) {
+  .btn {
     margin-right: .5em;
+    max-width: 12em;
+    min-width: 8em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
+}
 
-  .left {
-    margin-right: auto;
-  }
+.btn.btn-warn {
+  .button(@body-bg-color, @btn-waning, @btn-warning-dark);
+}
 
-  .right {
-    margin-left: auto;
+.btn.btn-act,
+.btn.btn-act.btn-primary {
+  //todo: make saftey lock, in case someone wants to make a primary act button?
+  .button(@body-bg-color, @btn-action);
+  background-color: @body-bg-color;
+  color: @black;
+  &:hover {
+    color: @black;
   }
 }

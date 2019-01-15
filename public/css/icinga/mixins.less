@@ -6,7 +6,7 @@
           box-shadow: @arguments;
 }
 
-.button(@background-color: @body-bg-color, @color: @icinga-blue) {
+.button(@background-color: @body-bg-color, @color: @icinga-blue, @color-dark: @icinga-blue-dark) {
   .rounded-corners(3px);
 
   background-color: @background-color;
@@ -18,14 +18,22 @@
   padding: @vertical-padding @horizontal-padding;
 
   // Transition mixin does not work w/ comma-separated transitions
-  -webkit-transition: background 0.3s ease, color 0.3s ease;
-     -moz-transition: background 0.3s ease, color 0.3s ease;
-       -o-transition: background 0.3s ease, color 0.3s ease;
-          transition: background 0.3s ease, color 0.3s ease;
+  @duration: 0.2s;
+  -webkit-transition: background @duration, border @duration ease, color @duration ease;
+     -moz-transition: background @duration, border @duration ease, color @duration ease;
+       -o-transition: background @duration, border @duration ease, color @duration ease;
+          transition: background @duration, border @duration ease, color @duration ease;
 
   &:focus,
-  &:hover {
+  &:hover,
+  &.btn-primary {
     background-color: @color;
+    color: @background-color;
+  }
+
+  &.btn-primary:hover {
+    background-color: @color-dark;
+    border-color: @color-dark;
     color: @background-color;
   }
 
