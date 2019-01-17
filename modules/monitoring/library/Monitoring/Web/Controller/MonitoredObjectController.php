@@ -268,6 +268,7 @@ abstract class MonitoredObjectController extends Controller
     protected function setupQuickActionForms()
     {
         $auth = $this->Auth();
+        $object = $this->object;
         if ($auth->hasPermission('monitoring/command/schedule-check')
             || ($auth->hasPermission('monitoring/command/schedule-check/active-only')
                 && $this->object->active_checks_enabled
@@ -275,16 +276,23 @@ abstract class MonitoredObjectController extends Controller
         ) {
             $this->view->checkNowForm = $checkNowForm = new CheckNowCommandForm();
             $checkNowForm
-                ->setObjects($this->object)
+                ->setObjects($object)
                 ->handleRequest();
+            if ($object->getType() === $object::TYPE_HOST) {
+                $this->view->checkServicesNowForm = $checkServicesNowForm = new CheckNowCommandForm();
+                $checkServicesNowForm
+                    ->setObjects($object->services)
+                    ->setSubmitButtonLabel('Check services now')
+                    ->handleRequest();
+            }
         }
-        if (! in_array((int) $this->object->state, array(0, 99))
-            && $this->object->acknowledged
+        if (! in_array((int) $object->state, array(0, 99))
+            && $object->acknowledged
             && $auth->hasPermission('monitoring/command/remove-acknowledgement')
         ) {
             $this->view->removeAckForm = $removeAckForm = new RemoveAcknowledgementCommandForm();
             $removeAckForm
-                ->setObjects($this->object)
+                ->setObjects($object)
                 ->handleRequest();
         }
     }

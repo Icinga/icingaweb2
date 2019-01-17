@@ -22,6 +22,26 @@ class CheckNowCommandForm extends ObjectsCommandForm
     }
 
     /**
+     * SubmitButton Label
+     *
+     * @var SubmitButtonLabel
+     */
+    protected $submitButtonLabel = 'Check now';
+
+    /**
+     * Set the submit button label
+     *
+     * @param   String $submitButtonLabel
+     *
+     * @return  $this
+     */
+    public function setSubmitButtonLabel(String $submitButtonLabel)
+    {
+        $this->submitButtonLabel = $submitButtonLabel;
+        return $this;
+    }
+
+    /**
      * (non-PHPDoc)
      * @see \Icinga\Web\Form::addSubmitButton() For the method documentation.
      */
@@ -39,10 +59,10 @@ class CheckNowCommandForm extends ObjectsCommandForm
                     ),
                     'escape'        => false,
                     'ignore'        => true,
-                    'label'         => $this->getView()->icon('arrows-cw') . $this->translate('Check now'),
+                    'label'         => $this->getView()->icon('arrows-cw') . $this->translate($this->submitButtonLabel),
                     'type'          => 'submit',
                     'title'         => $this->translate('Schedule the next active check to run immediately'),
-                    'value'         => $this->translate('Check now')
+                    'value'         => $this->translate($this->submitButtonLabel)
                 )
             )
         ));

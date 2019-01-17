@@ -138,5 +138,8 @@
         } ?>
         </li>
     <?php endif ?>
+    <?php if (isset($checkServicesNowForm)): // Form is unset if the current user lacks the respective permission ?>
+        <li><?= $checkServicesNowForm ?></li>
+    <?php endif ?>
     </ul>
 </div>
