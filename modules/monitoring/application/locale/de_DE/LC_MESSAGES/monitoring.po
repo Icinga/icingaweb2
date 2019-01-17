@@ -857,6 +857,11 @@ msgstr "Check-Latenz"
 msgid "Check now"
 msgstr "Jetzt prüfen"
 
+#: ../../../../modules/monitoring/application/forms/Command/Object/CheckNowCommandForm.php:62
+#: ../../../../modules/monitoring/application/forms/Command/Object/CheckNowCommandForm.php:65
+msgid "Check services now"
+msgstr "Services jetzt prüfen"
+
 #: ../../../../modules/monitoring/application/views/scripts/show/components/checkstatistics.phtml:12
 msgid "Check result is late"
 msgstr "Check-Ergebnis ist verspätet"
