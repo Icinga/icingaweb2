@@ -285,7 +285,28 @@ class Manager
             return $this;
         }
 
-        if (! @symlink($target, $link)) {
+        $relTarget = explode("/", $target);
+        $relLink = explode("/", $link);
+        while (end($relTarget) === "") {
+            array_pop($relTarget);
+        }
+        while (end($relLink) === "") {
+            array_pop($relLink);
+        }
+        while (reset($relTarget) === reset($relLink)) {
+            array_shift($relTarget);
+            array_shift($relLink);
+        }
+        array_pop($relLink);
+        if (empty($relLink)) {
+            array_unshift($relTarget, ".");
+        } else {
+            while (array_shift($relLink)) {
+                array_unshift($relTarget, "..");
+            }
+        }
+        $relTarget = implode("/", $relTarget);
+        if (! @symlink($relTarget, $link)) {
             $error = error_get_last();
             if (strstr($error["message"], "File exists") === false) {
                 throw new SystemPermissionException(
