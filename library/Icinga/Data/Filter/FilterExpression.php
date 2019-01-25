@@ -163,6 +163,10 @@ class FilterExpression extends Filter
 
     public function matches($row)
     {
+        if (! isset($row->{$this->column})) {
+            return false;
+        }
+
         try {
             $rowValue = $row->{$this->column};
         } catch (Exception $e) {
