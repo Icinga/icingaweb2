@@ -6,26 +6,34 @@
           box-shadow: @arguments;
 }
 
-.button(@background-color: @body-bg-color, @color: @icinga-blue) {
+.button(@background-color: @body-bg-color, @border-font-color: @icinga-blue, @color-dark: darken(@border-font-color, 10%)) {
   .rounded-corners(3px);
 
   background-color: @background-color;
-  border: 2px solid @color;
-  color: @color;
+  border: 2px solid @border-font-color;
+  color: @border-font-color;
   cursor: pointer;
   line-height: normal;
   outline: none;
   padding: @vertical-padding @horizontal-padding;
 
-  // Transition mixin does not work w/ comma-separated transitions
-  -webkit-transition: background 0.3s ease, color 0.3s ease;
-     -moz-transition: background 0.3s ease, color 0.3s ease;
-       -o-transition: background 0.3s ease, color 0.3s ease;
-          transition: background 0.3s ease, color 0.3s ease;
+
+  @duration: 0.2s;
+  //throwaway local variable because transition mixin does not work w/ comma-separated transitions
+  @transition: background @duration, border @duration ease, color @duration ease;
+  .transition(@transition);
 
   &:focus,
-  &:hover {
-    background-color: @color;
+  &:hover,
+  &.btn-primary {
+    background-color: @border-font-color;
+    color: @background-color;
+  }
+
+  &.btn-primary:focus,
+  &.btn-primary:hover {
+    background-color: @color-dark;
+    border-color: @color-dark;
     color: @background-color;
   }
 
@@ -44,6 +52,13 @@
 
 .opacity(@opacity: 0.6) {
   opacity: @opacity;
+}
+
+.appearance(@appearance) {
+  -webkit-appearance: @appearance;
+     -moz-appearance: @appearance;
+      -ms-appearance: @appearance;
+          appearance: @appearance;
 }
 
 .transform(@transform) {

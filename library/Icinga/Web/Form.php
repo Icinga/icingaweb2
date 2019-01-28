@@ -211,9 +211,9 @@ class Form extends Zend_Form
      */
     public static $defaultElementDecorators = array(
         array('Label', array('tag'=>'span', 'separator' => '', 'class' => 'control-label')),
-        array('Help', array('placement' => 'APPEND')),
         array(array('labelWrap' => 'HtmlTag'), array('tag' => 'div', 'class' => 'control-label-group')),
         array('ViewHelper', array('separator' => '')),
+        array('Help', array()),
         array('Errors', array('separator' => '')),
         array('HtmlTag', array('tag' => 'div', 'class' => 'control-group'))
     );
@@ -834,6 +834,7 @@ class Form extends Zend_Form
                 'submit',
                 'btn_submit',
                 array(
+                    'class'                 => 'btn-primary',
                     'ignore'                => true,
                     'label'                 => $submitLabel,
                     'data-progress-label'   => $this->getProgressLabel(),

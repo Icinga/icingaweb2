@@ -1,39 +1,420 @@
-/*! Icinga Web 2 | (c) 2014 Icinga Development Team | GPLv2+ */
+/*! Icinga Web 2 | (c) 2019 Icinga Development Team | GPLv2+ */
 
-input:not([type]),
-input[type=text],
-input[type=date],
-input[type=datetime-local],
-input[type=email],
-input[type=number],
-input[type=password],
-input[type=search],
-input[type=tel],
-input[type=time],
-input[type=url] {
-  .box-shadow(0 1px 0 0 @gray-light);
+/**********************************************************************************************************************
+                                   used colors (todo: move to base.less eventually)
+***********************************************************************************************************************/
+
+@disabled-gray: #9a9a9a;
+@low-sat-blue: #dae3e6;
+@low-sat-blue-dark: #becbcf;
+@icinga-blue-light: #a5c4cd;
+@icinga-blue-dark: #0081a6;
+
+/**********************************************************************************************************************
+                                             general form layout
+***********************************************************************************************************************/
+
+form:not(.inline):not([role="search"]) {
+  max-width: 70em;
+  width: 80%;
+}
+
+.form-element,
+.form-controls {
+  display: flex;
+  margin-left: 16em;
+
+}
+
+.form-control {
+  display: inline-block;
+  float: right;
+
+  &:not(:last-child) {
+    margin-left: .5em;
+  }
+
+  &:last-child {
+    .clearfix();
+  }
+}
+
+.control-group {
+  display: flex;
+  position: relative;
+}
+
+/**********************************************************************************************************************
+                                             minimal form layout
+***********************************************************************************************************************/
+
+#layout.minimal-layout,
+#layout.twocols:not(.wide-layout) {
+  form:not(.inline) {
+    width: 100%;
+
+    .control-label-group {
+      min-width: auto;
+      margin-bottom: 0;
+      padding-left: 0;
+      padding-bottom: 0;
+      text-align: left;
+      width: 100%;
+    }
+
+    .form-controls {
+      margin-left: 0;
+    }
+  }
+
+  .toggle-switch ~ .control-info:before {
+    margin-left: 0;
+  }
+
+  .control-info {
+    position: relative;
+    width: 0;
+    &:before {
+      margin-left: -1.25em;
+    }
+  }
+
+  .errors > li {
+    margin-left: .5em;
+  }
+}
+
+/**********************************************************************************************************************
+                                                 label styles
+***********************************************************************************************************************/
+
+.control-group .control-label-group {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  line-height: 1;
+  margin: .5em 1em 0.5em 0;
+  max-height: 2.5em;
+  text-align: right;
+  width: 15em;
+}
+
+.control-info {
+  position: absolute;
+  right: -.75em;
+  line-height: 3.5em;
+}
+
+.toggle-switch ~ .control-info {
+  position: relative;
+  right: 0;
+  margin-left: .5em;
+}
+
+.spinner {
+  line-height: 3.5em;
+
+  &:before {
+    margin-left: .5em;
+    opacity: 0.4;
+  }
+}
+
+select ~ .spinner:before {
+  margin-left: -4em;
+}
+
+/**********************************************************************************************************************
+                                               general input styles
+***********************************************************************************************************************/
+
+.control-group input[type="text"],
+.control-group input[type="password"],
+.control-group input[type="number"],
+.control-group textarea,
+.control-group select {
+  background: @low-sat-blue;
+  flex: 1;
+}
+
+.control-group .control-label-group,
+.control-group input:not([type="checkbox"]),
+.control-group .toggle-switch,
+.control-group button,
+.control-group select,
+.control-group textarea,
+.form-controls button,
+.form-controls .toggle-switch,
+.form-controls input {
+  border: none;
+  border-radius: .25em;
+  font-size: inherit;
+  margin: .5em 1em 0.5em 0;
+  padding: .5625em;
+  .appearance(none);
+}
+
+.control-group .toggle-switch,
+.form-controls .toggle-switch {
+  margin: 1em 0;
+}
+
+/**********************************************************************************************************************
+                                             specific input styles
+***********************************************************************************************************************/
+
+input.search {
   .transition(border 0.3s ease);
+  .transition(background-image 0.2s ease);
 
+  background: transparent url(../img/icons/search.png) no-repeat scroll 0.1em center;
+  background-size: 1em 1em;
   border: none;
   border-bottom: 1px solid @gray-light;
   outline: none;
   padding: @vertical-padding / 2 @horizontal-padding / 2;
+  padding-left: 1.5em;
+  width: 20em;
 
-  &:focus:not([readonly]) {
-    border-color: @icinga-blue;
+  &:focus {
+    background-color: @body-bg-color;
+    background-image: url(../img/icons/search_icinga_blue.png);
   }
-
-  width: 20em;
+  &:focus:not([readonly]) {
+     border-color: @icinga-blue;
+   }
 }
 
-select, textarea {
-  width: 20em;
+.link-button {
+  .action-link();
+  // Reset defaults
+  background: none;
+  border: none;
+  display: inline-block;
+  padding: 0;
+
+  text-align: left;
 }
 
-.control-button,
-input[type="submit"] {
+/* The default resize handles are still displayed over the image, so I will remove this for now
+.control-group textarea {
+  background-image: url(../img/textarea-corner-2x.png);
+  background-repeat: no-repeat;
+  background-position: bottom right;
+  background-size: 1em 1em;
+} */
+
+.control-group select {
+  padding-right: 1.5625em;
+}
+
+/* Remove native dropdown arrow in IE10+ */
+.control-group select::-ms-expand {
+  display: none;
+  opacity: 0
+}
+
+.form-controls input:not(:last-child),
+.form-controls button:not(:last-child) {
+  margin-right: 1em;
+}
+
+.control-group select:not([multiple]) {
+  background-image: url(../img/select-icon.svg);
+  background-repeat: no-repeat;
+  background-position: right center;
+  background-size: contain;
+}
+
+/**********************************************************************************************************************
+                                               button styles
+***********************************************************************************************************************/
+
+.form-controls input[type="submit"],
+.form-controls input[type="submit"].btn-confirm {
   .button();
 }
+
+.form-controls input[type="submit"].btn-remove {
+  .button(@body-bg-color, @color-critical, darken(@color-critical, 10%));
+}
+
+.form-controls input[type="submit"].btn-cancel {
+  .button(@body-bg-color, @gray, @black);
+}
+
+/**********************************************************************************************************************
+                                               IPL toggle styles
+***********************************************************************************************************************/
+
+/* The switch - the box around the slider */
+.toggle-switch {
+  cursor: pointer;
+  position: relative;
+  display: inline-block;
+  height: 1.5em;
+  width: 2.625em;
+}
+
+/* Hide default HTML checkbox */
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+.toggle-slider {
+  position: absolute;
+  left: 0;
+  top: 0;
+
+  display: inline-block;
+  background:  @low-sat-blue;
+  border: 1px solid @low-sat-blue;
+  box-sizing: content-box;
+  border-radius: 1em;
+  height: 4/3em;
+  width: 8/3em;
+  vertical-align: middle;
+}
+
+.toggle-slider:before {
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  background: @text-color-inverted;
+  border-radius: 1em;
+  border: 1px solid @low-sat-blue;
+  box-sizing: border-box;
+  content: "";
+  display: block;
+  height: 4/3em;
+  margin-left: 0;
+  width: 4/3em;
+
+  @transition: left .2s ease, margin .2s ease;
+  -webkit-transition: @transition;
+  -moz-transition: @transition;
+  -o-transition: @transition;
+  transition: @transition;
+}
+
+input:checked + .toggle-slider {
+  background-color: @icinga-blue;
+  border: 1px solid @icinga-blue;
+}
+
+input:focus + .toggle-slider {
+  box-shadow: 0 0 0 2px @body-bg-color, 0 0 0 4px fade(@icinga-blue, 40);
+}
+
+input:checked + .toggle-slider:before {
+  border: 1px solid @icinga-blue;
+  left: 100%;
+  margin-left: -4/3em;
+}
+
+/**********************************************************************************************************************
+                                                 disabled inputs
+***********************************************************************************************************************/
+
+.toggle-switch.disabled {
+  cursor: default;
+
+  & > .toggle-slider {
+    background-color: @gray-light;
+    border-color: @gray-light;
+
+    &:before {
+      background-color: @gray-lighter;
+      border-color: @gray-light;
+    }
+  }
+}
+
+.control-group.disabled .control-label-group {
+  color: @disabled-gray;
+}
+
+.control-group input[disabled],
+.control-group select[disabled] {
+  background: @gray-lighter;
+  border: none;
+}
+
+/**********************************************************************************************************************
+                                          errors and additional information
+***********************************************************************************************************************/
+
+.form-notifications,
+.form-description {
+  border-radius: .25em;
+  display: flex;
+  list-style: none;
+  margin: 0 0 1em 0;
+  padding: 1em .5em;
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0 .5em;
+  }
+
+  li {
+    list-style: none;
+  }
+
+  & .form-notification-icon,
+  & .form-description-icon {
+    margin-left: 1em;
+  }
+}
+
+.form-notifications {
+  background-color: fade(@color-ok, 20%);
+}
+
+.form-description {
+  background-color: fade(@gray, 20%);
+}
+
+.errors {
+  list-style: none;
+  position: relative;
+  margin: 0;
+  padding: 0;
+  display: block;
+  width: 100%;
+
+  & > li {
+    margin: -0.5em 0 0.5em 16.5em;
+    color: #f56;
+  }
+}
+
+.form-element-error {
+  color: @color-critical;
+  margin: 0 0 0.5em 15em;
+  padding: 0.5625em;
+  width: 100%;
+}
+
+.control-group {
+  flex-wrap: wrap;
+}
+
+.form-info {
+  color: @text-color-light;
+  font-size: @font-size-small;
+  list-style: none;
+  padding-left: 0;
+}
+
+/**********************************************************************************************************************
+                                                placeholder styles
+***********************************************************************************************************************/
 
 input:-moz-placeholder { // FF 18-
   color: @gray-light;
@@ -53,566 +434,23 @@ input::-webkit-input-placeholder {
   color: @gray-light;
 }
 
-input.search {
-  background: transparent url("../img/icons/search.png") no-repeat scroll 0.1em center;
-  background-size: 1em 1em;
-  padding-left: 1.5em;
 
-  &:focus {
-    background-color: @body-bg-color;
-    background-image: url('../img/icons/search_icinga_blue.png');
-  }
+/**********************************************************************************************************************
+                                             specific form styles
+***********************************************************************************************************************/
+
+
+.limiter-control-form > * {
+  display: inline-block;
+  margin-right: 0.25em;
 }
 
-// TODO(el): .form-controls-inline control-group { display: inline-block; }
-form.inline,
-.form-inline {
-  .control-group {
-    padding: 0;
-  }
-  .form-controls {
-    margin: 0;
-  }
+.search.inline {
   display: inline-block;
 }
 
-.form-controls {
-  margin-left: 10em;
-}
 
-.autosubmit-info {
-  margin-left: 0.5em;
-}
-
-button:hover .icon-cancel {
-  color: @color-critical;
-}
-
-.control-info {
-  color: @text-color-light;
-  margin-left: 0.2em;
-
-  &:hover {
-    .opacity(0.6);
-  }
-}
-
-.control-label {
+.sort-control > * {
   display: inline-block;
+  margin: 0.5em 0;
 }
-
-label {
-  color: @text-color-light;
-  font-size: @font-size-small;
-}
-
-.control-label-group {
-  display: inline-block;
-  padding-right: @horizontal-padding;
-  text-align: right;
-  width: 10em;
-}
-
-.control-group {
-  padding: @vertical-padding @horizontal-padding;
-
-  .errors {
-    color: @color-critical;
-  }
-}
-
-.link-button {
-  .action-link();
-  // Reset defaults
-  background: none;
-  border: none;
-  padding: 0;
-
-  text-align: left;
-
-  &:hover {
-    text-decoration: underline;
-  }
-}
-
-// @TODO(el): Fix that
-.form-description, .form-description ul,
-.form-info, .form-info ul,
-.form-notifications, .form-notifications ul,
-.form-errors, .form-errors ul,
-form .errors, form .errors ul {
-  // Reset defaults
-  margin: 5 0;
-  padding: 0;
-  list-style-type: none;
-}
-
-.form-errors {
-  background-color: @color-critical;
-  color: @text-color-inverted;
-}
-
-.form-info {
-  color: @text-color-light;
-  font-size: @font-size-small;
-}
-
-.form-notifications {
-  .notification-error {
-    background-color: @color-critical;
-    color: @text-color-inverted;
-    li {
-      padding: @vertical-padding @horizontal-padding;
-    }
-  }
-  .notification-info {
-    background-color: @color-pending;
-    color: @text-color-inverted;
-    li {
-      padding: @vertical-padding @horizontal-padding;
-    }
-  }
-  .notification-warning {
-    background-color: @color-warning;
-    color: @text-color-inverted;
-    li {
-      padding: @vertical-padding @horizontal-padding;
-    }
-  }
-}
-
-button.animated.active {
-  &.move-up i:before {
-    .animate(move-vertical 500ms infinite linear);
-  }
-
-  &.move-down i:before {
-    .animate(move-vertical 500ms infinite linear reverse);
-  }
-}
-
-textarea {
-  height: 8em;
-}
-
-select.grant-permissions {
-  height: 20em;
-  width: auto;
-}
-
-//div.config-form-buttons {
-//  margin-top: 5px;
-//}
-//
-//table.configTable {
-//  border-spacing: 15px;
-//  border-collapse: separate;
-//}
-//
-//td.configTable {
-//  border: solid;
-//  border-width: thin;
-//  padding: 10px;
-//  min-width: 300px;
-//}
-//
-//.form-element {
-//  margin-bottom: 1em;
-//}
-//
-//label {
-//  display: block;
-//  font-weight: bold;
-//}
-//
-//input, select, textarea {
-//  box-sizing: border-box;
-//  -moz-box-sizing: border-box;
-//  -webkit-box-sizing: border-box;
-//  border: 1px solid #ddd;
-//  font-size: 0.9em;
-//  padding: 0.2em;
-//  background: #fff;
-//  font-family: Calibri, Helvetica, sans-serif;
-//}
-//
-//input[type=checkbox] {
-//  margin-top: 0.3em;
-//  margin-bottom: 0.1em;
-//}
-//
-//input:focus, select:focus {
-//  border-color: #333;
-//}
-//
-//input[type=submit] {
-//  font-weight: bold;
-//  text-align: center;
-//  color: #fff;
-//  border: 1px solid;
-//  border-color: @colorPetrol;
-//  background: @colorPetrol;
-//  outline: 0;
-//
-//  &[disabled] {
-//    background-color: #666;
-//    border-color: black;
-//  }
-//
-//  &:hover[disabled], &:active[disabled], &:focus[disabled] {
-//    background-color: #666;
-//  }
-//}
-//
-//input[type=submit]:hover, a.button:hover, input[type=submit]:focus {
-//  background-color: #333;
-//  border-color: #333;
-//}
-//
-//input[type=submit]:hover, a.button:hover {
-//  cursor: pointer;
-//  color: white;
-//}
-//
-//input:focus, select:focus {
-//  background: white;
-//  outline: 0;
-//}
-//
-//input::-moz-placeholder {
-//  color: #333;
-//}
-//
-//input::-webkit-input-placeholder {
-//  color: #333;
-//}
-//
-//input:-ms-input-placeholder {
-//  color: #333;
-//}
-//
-//input::-moz-focus-inner {
-//  border: 0;
-//  outline: 0;
-//}
-//
-//button::-moz-focus-inner {
-//  border: 0;
-//  outline: 0;
-//}
-//
-//select::-moz-focus-inner {
-//  border: 0;
-//  outline: 0;
-//}
-//
-//form.inline {
-//  margin: 0;
-//  padding: 0;
-//  display: inline;
-//}
-//
-//div.spinner {
-//  display: inline-block;
-//  margin-top: 0.2em;
-//  margin-left: 0.25em;
-//
-//  i {
-//    visibility: hidden;
-//
-//    &.active {
-//      visibility: visible;
-//
-//      &:before {
-//        .animate(spin 2s infinite linear);
-//      }
-//    }
-//
-//    &:before {
-//      margin: 0; // Disables wobbling
-//    }
-//  }
-//}
-//
-//button.animated.active {
-//  &.move-up i:before {
-//    .animate(move-vertical 500ms infinite linear);
-//  }
-//
-//  &.move-down i:before {
-//    .animate(move-vertical 500ms infinite linear reverse);
-//  }
-//}
-//
-//button, .button-like {
-//  font-size: 0.9em;
-//  font-weight: bold;
-//  outline: 0;
-//  color: #fff;
-//  padding: 0.2em;
-//  border: 1px solid;
-//  border-color: @colorPetrol;
-//  background: @colorPetrol;
-//
-//  &[disabled] {
-//    background-color: #666;
-//    border-color: black;
-//  }
-//
-//  &:hover, &:focus, &:active {
-//    background-color: #333;
-//    border-color: #333;
-//    cursor: pointer;
-//
-//    &[disabled] {
-//      background-color: #666;
-//    }
-//  }
-//}
-//
-//.button-like {
-//  display: inline-block;
-//}
-//
-//a.button-like {
-//  cursor: default;
-//  text-decoration: none;
-//}
-//
-//form.link-like input[type="submit"], form.link-like button[type="submit"], input.link-like, button.link-like {
-//  color: @colorLinkDefault;
-//  font-weight: normal;
-//  border: none;
-//  background: none;
-//  padding: 0;
-//  font-size: 1em;
-//  cursor: pointer;
-//
-//  &.icon-only {
-//    color: inherit;
-//    font-size: 1.5em;
-//
-//    &:hover, &:focus, &:active {
-//      color: #666;
-//    }
-//  }
-//}
-//
-//form.link-like input[type="submit"]:hover,
-//form.link-like input[type="submit"]:focus,
-//form.link-like input[type="submit"]:active,
-//form.link-like button[type="submit"]:hover,
-//form.link-like button[type="submit"]:focus,
-//form.link-like button[type="submit"]:active,
-//input.link-like:hover,
-//input.link-like:focus,
-//input.link-like:active,
-//button.link-like:hover,
-//button.link-like:focus,
-//button.link-like:active {
-//  text-decoration: underline;
-//  background: none;
-//  color: @colorLinkDefault;
-//}
-//
-//.non-list-like-list {
-//  list-style-type: none;
-//  margin: 0;
-//  padding: 0.5em 0.5em 0;
-//
-//  li {
-//    padding-bottom: 0.5em;
-//  }
-//}
-//
-//form div.element ul.errors {
-//  .non-list-like-list;
-//  margin: 0.3em 0 0 0.6em;
-//
-//  li {
-//    color: @colorCritical;
-//    font-weight: bold;
-//  }
-//}
-//
-//form ul.form-errors {
-//  .non-list-like-list;
-//  margin-bottom: 1em;
-//  background-color: @colorCritical;
-//
-//  ul.errors {
-//    .non-list-like-list;
-//    padding: 0;
-//
-//    li:last-child {
-//      padding-bottom: 0;
-//    }
-//  }
-//
-//  li {
-//    color: white;
-//    font-weight: bold;
-//  }
-//}
-//
-//form ul.form-notifications {
-//  .non-list-like-list;
-//  margin-bottom: 1em;
-//  padding: 0;
-//
-//  ul {
-//    .non-list-like-list;
-//
-//    &.info {
-//      background-color: @colorFormNotificationInfo;
-//    }
-//
-//    &.warning {
-//      background-color: @colorFormNotificationWarning;
-//    }
-//
-//    &.error {
-//      background-color: @colorFormNotificationError;
-//    }
-//  }
-//
-//  li {
-//    color: white;
-//    font-weight: bold;
-//  }
-//}
-//
-//form div.element {
-//  margin-top: 0.5em;
-//  margin-bottom: 0.5em;
-//}
-//
-//form label {
-//  display: inline-block;
-//  vertical-align: top;
-//  margin-top: 0.25em;
-//  margin-right: 1em;
-//  font-size: 0.9em;
-//  width: 10em;
-//}
-//
-//form div.element i.help:before {
-//  margin-top: 0.25em;
-//}
-//
-//label ~ * {
-//  vertical-align: top;
-//}
-//
-//form dt {
-//  vertical-align: top;
-//}
-//
-//select, input[type=text], textarea {
-//  width: 20em;
-//  display: inline-block;
-//}
-//
-//textarea {
-//  height: 4em;
-//}
-//
-//textarea.resource {
-//  &.ssh-identity {
-//    width: 50%;
-//    height: 25em;
-//  }
-//}
-//
-//form .description {
-//  font-size: 0.8em;
-//  margin: 0.3em 0 0 0.6em;
-//}
-//
-//.description {
-//  display: block;
-//}
-//
-//select.grant-permissions {
-//  height: 20em;
-//  width: auto;
-//}
-//
-//label ~ input, label ~ select, label ~ textarea {
-//  margin-left: 1.3em;
-//}
-//
-//label + i ~ input, label + i ~ select, label + i ~ textarea {
-//  margin-left: 0;
-//}
-//
-//button.noscript-apply {
-//  margin-left: 0.5em;
-//}
-//
-//i.autosubmit-warning {
-//  display: inline-block;
-//  margin-left: 0.2em;
-//  margin-top: 0.25em;
-//
-//  &:before {
-//    margin: 0; // Disables wobbling
-//  }
-//
-//  &.spinning:before {
-//    content: '\e874'; // icon-spin6
-//    .animate(spin 2s infinite linear);
-//  }
-//}
-//
-//input[type=checkbox] + i.autosubmit-warning {
-//  margin-top: 0.15em;
-//}
-//
-//html.no-js i.autosubmit-warning {
-//  .sr-only;
-//}
-//
-//form ul.descriptions {
-//  .info-box;
-//  padding: 0.5em 0.5em 0 1.8em;
-//
-//  li {
-//    padding-bottom: 0.5em;
-//
-//    &:only-child {
-//      margin-left: -1.3em;
-//      list-style-type: none;
-//    }
-//  }
-//}
-//
-//form ul.hints {
-//  .non-list-like-list;
-//  padding: 0.5em 0.5em 0 0.5em;
-//
-//  li {
-//    font-size: 0.8em;
-//    padding-bottom: 0.5em;
-//  }
-//}
-//
-//.control-group {
-//  & > * {
-//    float: left;
-//    margin-right: 0.5em;
-//  }
-//
-//  div.element {
-//    margin-top: 0;
-//    margin-bottom: 0;
-//  }
-//
-//  &:after {
-//    content: ".";
-//    visibility: hidden;
-//    display: block;
-//    height: 0;
-//    clear: both;
-//  }
-//}

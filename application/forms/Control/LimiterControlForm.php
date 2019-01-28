@@ -15,7 +15,7 @@ class LimiterControlForm extends Form
      *
      * @var string
      */
-    const CSS_CLASS_LIMITER = 'limiter-control';
+    const CSS_CLASS_LIMITER = 'limiter-control inline';
 
     /**
      * Default limit
@@ -35,6 +35,15 @@ class LimiterControlForm extends Form
         50  => '50',
         100 => '100',
         500 => '500'
+    );
+
+    public static $defaultElementDecorators = array(
+        array('Label', array('tag'=>'span', 'separator' => '')),
+        array('Help', array('placement' => 'APPEND')),
+        array(array('labelWrap' => 'HtmlTag'), array('tag' => 'div')),
+        array('ViewHelper', array('separator' => '')),
+        array('Errors', array('separator' => '')),
+        array('HtmlTag', array('tag' => 'div', 'class' => 'limiter-control-form'))
     );
 
     /**
