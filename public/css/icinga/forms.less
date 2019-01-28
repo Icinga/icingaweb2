@@ -1,0 +1,188 @@
+.form-element,
+.form-controls {
+  display: flex;
+  margin: .5em 0;
+}
+
+.form-element label {
+  width: 14em;
+  text-align: right;
+  margin-right: 1em;
+}
+
+.form-element input[type="text"],
+.form-element input[type="password"],
+.form-element textarea,
+.form-element select {
+  flex-grow: 1;
+  background: #DAE3E6;
+}
+
+.form-element label,
+.form-element input,
+.form-element button,
+.form-controls button,
+.form-controls input,
+.form-element select,
+.form-element textarea {
+  padding: .5625em;
+  border-radius: .25em;
+  font-size: inherit;
+  border: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  -ms-appearance: none;
+  appearance: none;
+}
+
+.form-element textarea {
+  background-image: url(../img/textarea-corner-2x.png);
+  background-repeat: no-repeat;
+  background-position: bottom right;
+  background-size: 1em 1em;
+}
+
+
+.form-element select {
+  padding-right: 1.5625em;
+}
+
+/* Remove native dropdown arrow in IE10+ */
+.form-element select::-ms-expand {
+  display: none;
+  opacity: 0
+}
+
+.form-controls input:not(:last-child),
+.form-controls button:not(:last-child) {
+  margin-right: 1em;
+}
+
+.form-element select {
+  background-image: url(../img/select-icon-2x.png);
+  background-repeat: no-repeat;
+  background-position: right center;
+  background-size: contain;
+}
+
+/* Primary button styles */
+.form-controls input[type="submit"] {
+  background: #0095BF;
+  color: white;
+}
+
+.form-controls button:hover {
+  background: rgba(0,0,0,.1);
+  cursor: pointer;
+}
+
+input[type="submit"].remove-button {
+  background-color: white;
+  color: @color-critical;
+  border: 1px solid @color-critical;
+
+  &:hover {
+    background-color: @color-critical;
+    color: white;
+  }
+}
+
+.form-controls button:hover {
+  background: rgba(0,0,0,.1);
+  cursor: pointer;
+}
+
+/* Default button styles */
+.form-controls button {
+  color: #0095bf;
+  border: 1px solid #0095bf;
+  background: none;
+}
+
+.form-controls input:hover {
+  cursor: pointer;
+  background: #DAE3E6;
+}
+
+/* IPL toggle styles */
+
+input[type="checkbox"] {
+  display: inline-block;
+  border: 1px solid #DAE3E6;
+  background: #DAE3E6;
+  position: relative;
+  height: 1.5em;
+  width: 3em;
+  margin: .313em 0;
+  vertical-align: middle;
+  border-radius: 1em;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+input[type="checkbox"]:hover {
+  cursor: pointer;
+  background: gray
+}
+
+input[type="checkbox"]:before {
+  border-radius: 1em;
+  content: "";
+  display: block;
+  position: absolute;
+  width: 1.25em;
+  height: 1.25em;
+  top: 0em;
+  left: 0em;
+  background: white;
+  transition: left .2s ease;
+  -webkit-box-shadow: 0 0 4px rgba(0,0,0,.5);
+  -moz-box-shadow: 0 0 4px rgba(0,0,0,.5);
+  box-shadow: 0 0 4px rgba(0,0,0,.5);
+}
+
+input[type="checkbox"]:checked {
+  border-color: #0095bf;
+  background: rgba(0, 149, 191, 0.3)
+}
+
+input[type="checkbox"]:checked:hover {
+  background: maroon;
+}
+
+input[type="checkbox"]:checked:before {
+  left: 1.5em;
+  background: #0095bf;
+}
+
+/* disabled */
+.form-element.disabled label {
+  color: #9a9a9a
+}
+
+.form-element.disabled input {
+  background: #f5f5f5;
+  border: none;
+}
+
+.form-element.disabled input[type="checkbox"] {
+  border: 1px solid #f5f5f5;
+}
+
+.form-element.disabled input[type="checkbox"]:before {
+  -webkit-box-shadow: 0 0 4px rgba(0,0,0,.1);
+  -moz-box-shadow: 0 0 4px rgba(0,0,0,.1);
+  box-shadow: 0 0 4px rgba(0,0,0,.1);
+}
+
+.form-element-error {
+  width: 100%;
+  margin: 0 0 0.5em 15em;
+  padding: 0.5625em;
+  color: @color-critical;
+}
+
+.form-element {
+  flex-wrap: wrap;
+}
