@@ -4,9 +4,23 @@
   margin: .5em 0;
 }
 
+.form-control {
+  display: inline-block;
+  float: right;
+
+  &:not(:last-child) {
+    margin-left: .5em;
+  }
+
+  &:last-child {
+    .clearfix();
+  }
+}
+
 .form-element label {
   width: 14em;
-  text-align: right;
+  //todo(jem): make text-align depend on width of form (when flex switches to one-col the labels don't align
+  //text-align: right;
   margin-right: 1em;
 }
 
@@ -21,27 +35,26 @@
 .form-element label,
 .form-element input,
 .form-element button,
-.form-controls button,
-.form-controls input,
 .form-element select,
-.form-element textarea {
+.form-element textarea,
+.form-controls button,
+.form-controls input {
   padding: .5625em;
   border-radius: .25em;
   font-size: inherit;
   border: none;
   -webkit-appearance: none;
-  -moz-appearance: none;
-  -ms-appearance: none;
-  appearance: none;
+     -moz-appearance: none;
+      -ms-appearance: none;
+          appearance: none;
 }
 
 .form-element textarea {
-  background-image: url(../img/textarea-corner-2x.png);
+  background-image: url(../static/img?file=textarea-corner-2x.png&module_name=reporting);
   background-repeat: no-repeat;
   background-position: bottom right;
   background-size: 1em 1em;
 }
-
 
 .form-element select {
   padding-right: 1.5625em;
@@ -59,7 +72,7 @@
 }
 
 .form-element select {
-  background-image: url(../img/select-icon-2x.png);
+  background-image: url(../static/img?file=select-icon-2x.png&module_name=reporting);
   background-repeat: no-repeat;
   background-position: right center;
   background-size: contain;
@@ -67,7 +80,7 @@
 
 /* Primary button styles */
 .form-controls input[type="submit"] {
-  background: #0095BF;
+  background: @icinga-blue;
   color: white;
 }
 
@@ -94,8 +107,8 @@ input[type="submit"].remove-button {
 
 /* Default button styles */
 .form-controls button {
-  color: #0095bf;
-  border: 1px solid #0095bf;
+  color: @icinga-blue;
+  border: 1px solid @icinga-blue;
   background: none;
 }
 
@@ -143,7 +156,7 @@ input[type="checkbox"]:before {
 }
 
 input[type="checkbox"]:checked {
-  border-color: #0095bf;
+  border-color: @icinga-blue;
   background: rgba(0, 149, 191, 0.3)
 }
 
@@ -153,7 +166,7 @@ input[type="checkbox"]:checked:hover {
 
 input[type="checkbox"]:checked:before {
   left: 1.5em;
-  background: #0095bf;
+  background: @icinga-blue;
 }
 
 /* disabled */

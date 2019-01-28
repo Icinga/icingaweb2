@@ -1,34 +1,6 @@
-<div class="modal-window">
-    <div class="modal-header">
-        <h5 class="modal-title">Add Report</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <i class="icon icon-cancel" aria-hidden="true"></i>
-        </button>
-    </div>
-  <div class="modal-area">
-    <div class="modal-sidebar"> <!-- #menu -->
-      <ul class="sidebar-list"> <!-- nav nav-level-1 -->
-        <li class="active sidebar-listitem">  <!-- nav-item badge-nav-item(?) -->
-          <i class="icon icon-beaker" aria-hidden="true"></i>
-          <p>Monitoring</p>
-        </li>
-        <li class="sidebar-listitem">
-          <i class="icon icon-barchart" aria-hidden="true"></i>
-          <p>Morenitoring</p>
-        </li>
-      </ul>
-    </div>
-    <div class="modal-content">
-      <div class="modal-body">
-        <div class="modal-search">
-          <label for="srch" class="search-label">
-            <i class="icon icon-search" aria-hidden="true"></i>
-          </label>
-          <input id="srch" type="search" placeholder="Search...">
-        </div>
-        <div class="modal-reports">
-          <div class="report-types">
-            <div class="report-type">
+<?php
+$reportTypes = '
+      <div class="report-type">
               <div class="report-tile active">
                 <div class="report-preview"><i class="icon icon-chart-area" aria-hidden="true"></i></div>
                 <p class="tile-subtitle">SLA</p>
@@ -52,18 +24,82 @@
                 <p class="tile-subtitle">Top 10 Problem Hosts</p>
               </div>
             </div>
-          </div>
-          <form class="modal-form">
-            <label>Timeperiod<br><input name="testtext" type="text"></label><br>
-            <label>Severity<br><input name="nulla" type="text"></label><br>
-            <label>Hardmode<input type="checkbox" class="toggle"></label><br>
-            <div class="form-footer right">
-              <button type="button" class="btn btn-warn control-button">Delete SLA</button>
-              <button type="button" class="btn btn-confirm btn-primary control-button">Save</button>
-            </div>
-          </form>
-        </div>
-        <div class="modal-footer"></div>
+      '
+?>
+
+<div class="modal-window">
+    <div class="modal-header">
+        <h5 class="modal-title">Add Report</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <i class="icon icon-cancel" aria-hidden="true"></i>
+        </button>
+    </div>
+  <div class="modal-area">
+    <div class="modal-sidebar"> <!-- #menu -->
+      <ul class="sidebar-list"> <!-- nav nav-level-1 -->
+        <li class="active sidebar-listitem">  <!-- nav-item badge-nav-item(?) -->
+          <i class="icon icon-beaker" aria-hidden="true"></i>
+          <p>Monitoring</p>
+        </li>
+        <li class="sidebar-listitem">
+          <i class="icon icon-barchart" aria-hidden="true"></i>
+          <p>Director</p>
+        </li>
+      </ul>
+    </div>
+    <div class="modal-content">
+      <div class="modal-search">
+        <label for="srch" class="search-label">
+          <i class="icon icon-search" aria-hidden="true"></i>
+        </label>
+        <input id="srch" type="search" placeholder="Search...">
       </div>
+      <div class="modal-reports">
+        <div class="report-types">
+          <!--<?= $reportTypes ?>-->
+          <div class="reports--list">
+            <div class="report--type active">
+              <div class="report--icon">
+                <i class="icon icon-chart-pie" aria-hidden="true"></i>
+              </div>
+              <span class="report--title">SLA open Host reports</span>
+              <i class="report--arrow icon icon-right-dir" aria-hidden="true"></i>
+            </div>
+            <div class="report--type">
+              <div class="report--icon">
+                <i class="icon icon-chart-pie" aria-hidden="true"></i>
+              </div>
+              <span class="report--title">SLA open Host reports</span>
+              <i class="report--arrow icon icon-right-dir" aria-hidden="true"></i>
+            </div>
+            <div class="report--type">
+              <div class="report--icon">
+                <i class="icon icon-chart-pie" aria-hidden="true"></i>
+              </div>
+              <span class="report--title">SLA open Host reports</span>
+              <i class="report--arrow icon icon-right-dir" aria-hidden="true"></i>
+            </div>
+          </div>
+        </div>
+        <form class="modal-form">
+          <div class="form-element">
+            <label for="testtext">Timeperiod</label><input id="testtext" name="testtext" type="text">
+          </div>
+          <div class="form-element">
+            <label for="nulla">Severity</label><input id="nulla" name="nulla" type="text">
+          </div>
+          <div class="form-element">
+            <input id="hard" name="hard" type="checkbox" class="toggle"><label for="hard">Hardmode</label>
+          </div>
+          <div class="form-element">
+            <label for="dd">dddddd</label><select id="dd" name="dd" type="checkbox" class="toggle"><option>1</option></select>
+          </div>
+          <div class="form-footer right">
+            <button type="button" class="btn btn-warn control-button">Delete SLA</button>
+            <button type="button" class="btn btn-confirm btn-primary control-button">Save</button>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer"></div>
   </div>
 </div>
