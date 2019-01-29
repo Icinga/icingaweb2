@@ -228,15 +228,25 @@
 
 .report--type {
   line-height: 2em;
-  margin: .5em 0;
-  padding: .75em 0.5em;
+  padding: 1em 0.5em 1em 1em;
+  background-color: @gray-lighter;
+
+  &:not(:first-child) {
+    margin-top: .5em;
+  }
+
   &.active {
-    background-color: @text-color-inverted;
+    background-color: #DAE3E6;
+  }
+
+  > * {
+    vertical-align: middle;
   }
 }
 
 .report--icon {
   display: inline-block;
+  font-size: 2em;
 }
 
 .report--title {
