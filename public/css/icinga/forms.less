@@ -121,11 +121,11 @@ input[type="submit"].remove-button {
 
 input[type="checkbox"] {
   display: inline-block;
-  border: 1px solid #DAE3E6;
+  border: 2px solid #becbcf;
   background: #DAE3E6;
   position: relative;
-  height: 1.5em;
-  width: 3em;
+  height: 24px;
+  width: 48px;
   margin: .313em 0;
   vertical-align: middle;
   border-radius: 1em;
@@ -136,7 +136,7 @@ input[type="checkbox"] {
 
 input[type="checkbox"]:hover {
   cursor: pointer;
-  background: gray
+  background: #ADC1C7;
 }
 
 input[type="checkbox"]:before {
@@ -144,15 +144,13 @@ input[type="checkbox"]:before {
   content: "";
   display: block;
   position: absolute;
-  width: 1.25em;
-  height: 1.25em;
+  width: 20px;
+  height: 20px;
   top: 0em;
   left: 0em;
-  background: white;
+  background: #dae3e6;
+  border: 2px solid white;
   transition: left .2s ease;
-  -webkit-box-shadow: 0 0 4px rgba(0,0,0,.5);
-  -moz-box-shadow: 0 0 4px rgba(0,0,0,.5);
-  box-shadow: 0 0 4px rgba(0,0,0,.5);
 }
 
 input[type="checkbox"]:checked {
