@@ -216,7 +216,7 @@
 }
 
 /**********************************************************************************************************************
-                                                    reporting
+                                                    list view
 ***********************************************************************************************************************/
 
 .reports--list {
@@ -231,12 +231,18 @@
   background-color: @gray-lighter;
   margin-top: .5em;
 
-  &.active {
-    background-color: #DAE3E6;
+  &.active,
+  &.active:hover{
+    background-color: #A7C4CC;
   }
 
   > * {
     vertical-align: middle;
+  }
+
+  &:hover {
+    transition: background-color 0.2s ease;
+    background-color: #DAE3E6;
   }
 }
 
@@ -245,16 +251,12 @@
   font-size: 2em;
 }
 
-.report--title {
-
-}
-
 .report--arrow {
   float: right;
 }
 
 /**********************************************************************************************************************
-                                                    reporting
+                                                    tiles
 ***********************************************************************************************************************/
 
 .modal-reports {
@@ -274,15 +276,13 @@
 }
 
 .report-type {
-  color: @text-color-inverted;
   margin: 2em 0 0 2em;
   text-align: center;
 }
 
 .report-tile {
-  background-color: @gray-light;
+  background-color: @gray-lighter;
   border-radius: 5px;
-  color: @text-color;
   display: inline-block;
   font-size: 0.85em;
   height: 210px;
@@ -290,13 +290,12 @@
 
   &.active,
   &.active:hover {
-    background-color: @icinga-blue;
-    color: white;
+    background-color: #A7C4CC; //darken(@gray-light, 10%);
   }
 
   &:hover {
-    background-color: #A7C4CC; //darken(@gray-light, 10%);
     transition: background-color 0.2s ease;
+    background-color: #DAE3E6;
     > .report-preview {
       background-color: @text-color-inverted;
     }
@@ -305,7 +304,6 @@
   .report-preview,
   > .preview {
     background-color: #fff;
-    color: @gray;
     border-radius: 2px;
     height: 166px;
     font-size: 5em;
@@ -321,5 +319,20 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+  }
+}
+
+/**********************************************************************************************************************
+                                                    form
+***********************************************************************************************************************/
+.modal-form {
+  .form-element label {
+    text-align: left;
+    width: auto;
+  }
+
+  .form-element input:not([type="checkbox"]),
+  .form-element select {
+    width: 100%;
   }
 }

@@ -1,5 +1,5 @@
 <?php
-$reportTypes = '
+$reportTypesTiles = '
       <div class="report-type">
               <div class="report-tile active">
                 <div class="report-preview"><i class="icon icon-chart-area" aria-hidden="true"></i></div>
@@ -24,7 +24,31 @@ $reportTypes = '
                 <p class="tile-subtitle">Top 10 Problem Hosts</p>
               </div>
             </div>
-      '
+      ';
+$reportTypesList = '<div class="reports--list">
+            <div class="report--type active">
+              <div class="report--icon">
+                <i class="icon icon-chart-pie" aria-hidden="true"></i>
+              </div>
+              <span class="report--title">SLA open Host reports</span>
+              <i class="report--arrow icon icon-right-dir" aria-hidden="true"></i>
+            </div>
+            <div class="report--type">
+              <div class="report--icon">
+                <i class="icon icon-chart-line" aria-hidden="true"></i>
+              </div>
+              <span class="report--title">SLA open Host reports</span>
+              <i class="report--arrow icon icon-right-dir" aria-hidden="true"></i>
+            </div>
+            <div class="report--type">
+              <div class="report--icon">
+                <i class="icon icon-chart-area" aria-hidden="true"></i>
+              </div>
+              <span class="report--title">SLA open Host reports</span>
+              <i class="report--arrow icon icon-right-dir" aria-hidden="true"></i>
+            </div>
+          </div>
+        </div>';
 ?>
 
 <div class="modal-window">
@@ -56,31 +80,8 @@ $reportTypes = '
       </div>
       <div class="modal-reports">
         <div class="report-types">
-          <!--<?= $reportTypes ?>-->
-          <div class="reports--list">
-            <div class="report--type active">
-              <div class="report--icon">
-                <i class="icon icon-chart-pie" aria-hidden="true"></i>
-              </div>
-              <span class="report--title">SLA open Host reports</span>
-              <i class="report--arrow icon icon-right-dir" aria-hidden="true"></i>
-            </div>
-            <div class="report--type">
-              <div class="report--icon">
-                <i class="icon icon-chart-line" aria-hidden="true"></i>
-              </div>
-              <span class="report--title">SLA open Host reports</span>
-              <i class="report--arrow icon icon-right-dir" aria-hidden="true"></i>
-            </div>
-            <div class="report--type">
-              <div class="report--icon">
-                <i class="icon icon-chart-area" aria-hidden="true"></i>
-              </div>
-              <span class="report--title">SLA open Host reports</span>
-              <i class="report--arrow icon icon-right-dir" aria-hidden="true"></i>
-            </div>
-          </div>
-        </div>
+          <?= $reportTypesTiles ?>
+          <?= $reportTypesList ?>
         <form class="modal-form">
           <div class="form-element">
             <label for="testtext">Timeperiod</label><input id="testtext" name="testtext" type="text">
@@ -92,7 +93,7 @@ $reportTypes = '
             <label for="dd">This is a very long label and it's doing weird stuff.</label><select id="dd" name="dd" type="checkbox" class="toggle"><option>1</option></select>
           </div>
           <div class="form-element">
-            <label for="hard">Hardmode</label><input id="hard" name="hard" type="checkbox" class="toggle">
+            <input id="hard" name="hard" type="checkbox" class="toggle"><label for="hard">Hardmode</label>
           </div>
           <div class="form-footer right">
             <button type="button" class="btn btn-warn control-button">Delete SLA</button>
