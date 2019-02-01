@@ -120,7 +120,9 @@ class HostsController extends Controller
         $hostStates = $this->hostList->getStateSummary();
 
         if ($activeChecksEnabled) {
-            $this->view->rescheduleAllLink = Url::fromRequest()->setPath('monitoring/hosts/reschedule-check');
+            $this->view->rescheduleAllLink = Url::fromRequest()
+                ->setPath('monitoring/hosts/reschedule-check')
+                ->addParams(['host_active_checks_enabled' => true]);
         }
 
         $this->view->downtimeAllLink = Url::fromRequest()->setPath('monitoring/hosts/schedule-downtime');
