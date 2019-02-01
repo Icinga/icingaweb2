@@ -125,7 +125,9 @@ class ServicesController extends Controller
         $this->view->toggleFeaturesForm = $toggleFeaturesForm;
 
         if ($activeChecksEnabled) {
-            $this->view->rescheduleAllLink = Url::fromRequest()->setPath('monitoring/services/reschedule-check');
+            $this->view->rescheduleAllLink = Url::fromRequest()
+                ->setPath('monitoring/services/reschedule-check')
+                ->addParams(['service_active_checks_enabled' => true]);
         }
 
         $this->view->downtimeAllLink = Url::fromRequest()->setPath('monitoring/services/schedule-downtime');
