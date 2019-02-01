@@ -46,6 +46,17 @@ class DashletForm extends Form
             $panes = $this->dashboard->getPaneKeyTitleArray();
         }
 
+        $sectionNameValidator = ['Callback', true, [
+            'callback'  => function ($value) {
+                if (strpos($value, '[') === false && strpos($value, ']') === false) {
+                    return true;
+                }
+            },
+            'messages'  => [
+                'callbackValue' => $this->translate('Brackets ([, ]) cannot be used here')
+            ]
+        ]];
+
         $this->addElement(
             'hidden',
             'org_pane',
@@ -80,7 +91,8 @@ class DashletForm extends Form
             array(
                 'required'      => true,
                 'label'         => $this->translate('Dashlet Title'),
-                'description'   => $this->translate('Enter a title for the dashlet.')
+                'description'   => $this->translate('Enter a title for the dashlet.'),
+                'validators'    => [$sectionNameValidator]
             )
         );
         $this->addElement(
@@ -109,7 +121,8 @@ class DashletForm extends Form
                 array(
                     'required'      => true,
                     'label'         => $this->translate('New Dashboard Title'),
-                    'description'   => $this->translate('Enter a title for the new dashboard')
+                    'description'   => $this->translate('Enter a title for the new dashboard'),
+                    'validators'    => [$sectionNameValidator]
                 )
             );
         } else {
