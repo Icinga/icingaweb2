@@ -85,7 +85,12 @@ class HostsController extends Controller
     public function showAction()
     {
         $this->setAutorefreshInterval(15);
-        if ($this->Auth()->hasPermission('monitoring/command/schedule-check')) {
+        $activeChecksEnabled = $this->hostList->getFeatureStatus()['active_checks_enabled'] !== 0;
+        if ($this->Auth()->hasPermission('monitoring/command/schedule-check')
+            || ($this->Auth()->hasPermission('monitoring/command/schedule-check/active-only')
+                && $activeChecksEnabled
+            )
+        ) {
             $checkNowForm = new CheckNowCommandForm();
             $checkNowForm
                 ->setObjects($this->hostList)
@@ -114,8 +119,10 @@ class HostsController extends Controller
 
         $hostStates = $this->hostList->getStateSummary();
 
-        $this->setAutorefreshInterval(15);
-        $this->view->rescheduleAllLink = Url::fromRequest()->setPath('monitoring/hosts/reschedule-check');
+        if ($activeChecksEnabled) {
+            $this->view->rescheduleAllLink = Url::fromRequest()->setPath('monitoring/hosts/reschedule-check');
+        }
+
         $this->view->downtimeAllLink = Url::fromRequest()->setPath('monitoring/hosts/schedule-downtime');
         $this->view->processCheckResultAllLink = Url::fromRequest()->setPath('monitoring/hosts/process-check-result');
         $this->view->addCommentLink = Url::fromRequest()->setPath('monitoring/hosts/add-comment');

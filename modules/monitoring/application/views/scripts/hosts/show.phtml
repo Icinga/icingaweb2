@@ -181,6 +181,7 @@
                 </tr>
             <?php endif ?>
 
+        <?php if (isset($rescheduleAllLink)): ?>
             <tr>
                 <th></th>
                 <td>
@@ -195,6 +196,7 @@
                     ) ?>
                 </td>
             </tr>
+        <?php endif ?>
             </tbody>
         </table>
         <h2><?= $this->translate('Feature Commands') ?></h2>
