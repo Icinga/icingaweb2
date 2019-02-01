@@ -268,7 +268,11 @@ abstract class MonitoredObjectController extends Controller
     protected function setupQuickActionForms()
     {
         $auth = $this->Auth();
-        if ($auth->hasPermission('monitoring/command/schedule-check')) {
+        if ($auth->hasPermission('monitoring/command/schedule-check')
+            || ($auth->hasPermission('monitoring/command/schedule-check/active-only')
+                && $this->object->active_checks_enabled
+            )
+        ) {
             $this->view->checkNowForm = $checkNowForm = new CheckNowCommandForm();
             $checkNowForm
                 ->setObjects($this->object)
