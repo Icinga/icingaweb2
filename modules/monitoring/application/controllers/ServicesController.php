@@ -92,7 +92,12 @@ class ServicesController extends Controller
     public function showAction()
     {
         $this->setAutorefreshInterval(15);
-        if ($this->Auth()->hasPermission('monitoring/command/schedule-check')) {
+        $activeChecksEnabled = $this->serviceList->getFeatureStatus()['active_checks_enabled'] !== 0;
+        if ($this->Auth()->hasPermission('monitoring/command/schedule-check')
+            || ($this->Auth()->hasPermission('monitoring/command/schedule-check/active-only')
+                && $activeChecksEnabled
+            )
+        ) {
             $checkNowForm = new CheckNowCommandForm();
             $checkNowForm
                 ->setObjects($this->serviceList)
@@ -119,8 +124,10 @@ class ServicesController extends Controller
             ->handleRequest();
         $this->view->toggleFeaturesForm = $toggleFeaturesForm;
 
-        $this->setAutorefreshInterval(15);
-        $this->view->rescheduleAllLink = Url::fromRequest()->setPath('monitoring/services/reschedule-check');
+        if ($activeChecksEnabled) {
+            $this->view->rescheduleAllLink = Url::fromRequest()->setPath('monitoring/services/reschedule-check');
+        }
+
         $this->view->downtimeAllLink = Url::fromRequest()->setPath('monitoring/services/schedule-downtime');
         $this->view->processCheckResultAllLink = Url::fromRequest()->setPath(
             'monitoring/services/process-check-result'
