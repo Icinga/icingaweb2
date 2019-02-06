@@ -156,6 +156,7 @@ if (! $hostGroups->hasResult()): ?>
             0
         </div>
     <?php endif ?>
+        <div class="group-grid-cell-title">
         <?= $this->qlink(
             $hostGroup->hostgroup_alias,
             'monitoring/list/hosts',
@@ -167,6 +168,26 @@ if (! $hostGroups->hasResult()): ?>
                 )
             ]
         ) ?>
+        </div>
+
+        <div class="group-grid-serviceinfo">
+        <?= $this->qlink(
+            $this->icon('services'),
+            'monitoring/list/services',
+            ['hostgroup_name' => $hostGroup->hostgroup_name],
+            [
+                'class' => 'action-link',
+                'title' => sprintf(
+                    $this->translate('List all serivces in the group "%s"'),
+                    $hostGroup->hostgroup_alias
+                )
+            ],
+            false
+        ) ?>
+
+        <?php $this->hostGroup = $hostGroup ?>
+        <?= $this->render('list/components/hostgroup-service-statebadges.phtml') ?>
+        </div>
     </div>
 <?php endforeach ?>
 </div>

@@ -64,7 +64,7 @@
 
 .group-grid {
   display: grid;
-  grid-gap: 1em 3em;
+  grid-gap: 1em 2em;
   grid-template-columns: repeat(auto-fit, 14em);
 
   .group-grid-cell > a:last-child {
@@ -83,16 +83,23 @@
     .rounded-corners();
 
     display: inline-block;
-    margin-right: 1em;
-    padding: .5em;
-    height: 2.5em;
-    width: 2.5em;
+    margin-right: .5em;
+    padding: .8em;
+    height: 3em;
+    width: 3em;
+    font-size: 1.2em;
     text-align: center;
     vertical-align: middle;
     color: white;
+
+    float: left;
   }
   .group-grid-cell > div.state-none {
     background-color: @gray-light;
+  }
+  .group-grid-serviceinfo .badge {
+    font-size: 1em;
+
   }
 }
 

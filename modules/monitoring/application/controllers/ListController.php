@@ -604,7 +604,16 @@ class ListController extends Controller
             'hosts_total',
             'hosts_unreachable_handled',
             'hosts_unreachable_unhandled',
-            'hosts_up'
+            'hosts_up',
+            'services_critical_handled',
+            'services_critical_unhandled',
+            'services_ok',
+            'services_pending',
+            'services_total',
+            'services_unknown_handled',
+            'services_unknown_unhandled',
+            'services_warning_handled',
+            'services_warning_unhandled',
         ]);
         $this->applyRestriction('monitoring/filter/objects', $hostGroups);
         $this->filterQuery($hostGroups);
