@@ -3,10 +3,9 @@
 
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
+use Icinga\Data\Filter\Filter;
 use Zend_Db_Expr;
 use Zend_Db_Select;
-
-use Icinga\Data\Filter\Filter;
 
 /**
  * Query for host group summary
@@ -15,8 +14,8 @@ class HostgroupsummaryQuery extends IdoQuery
 {
     protected $allowCustomVars = true;
 
-    protected $columnMap = array(
-        'hostgroupsummary' => array(
+    protected $columnMap = [
+        'hostgroupsummary' => [
             'hostgroup_alias'                               => 'hostgroup_alias',
             'hostgroup_name'                                => 'hostgroup_name',
             'hosts_down'                                    => 'SUM(CASE WHEN host_state = 1 THEN 1 ELSE 0 END)',
@@ -41,8 +40,8 @@ class HostgroupsummaryQuery extends IdoQuery
             'services_warning'                              => 'SUM(CASE WHEN service_state = 1 THEN 1 ELSE 0 END)',
             'services_warning_handled'                      => 'SUM(CASE WHEN service_state = 1 AND service_handled = 1 THEN 1 ELSE 0 END)',
             'services_warning_unhandled'                    => 'SUM(CASE WHEN service_state = 1 AND service_handled = 0 THEN 1 ELSE 0 END)',
-        )
-    );
+        ]
+    ];
 
     /**
      * The union
@@ -56,7 +55,7 @@ class HostgroupsummaryQuery extends IdoQuery
      *
      * @var IdoQuery[]
      */
-    protected $subQueries = array();
+    protected $subQueries = [];
 
     /**
      * Count query
@@ -65,17 +64,74 @@ class HostgroupsummaryQuery extends IdoQuery
      */
     protected $countQuery;
 
+    protected $isFiltered = false;
+
     public function addFilter(Filter $filter)
     {
+        if (! $filter->isEmpty()) {
+            $this->isFiltered = true;
+        }
+
         foreach ($this->subQueries as $sub) {
             $sub->applyFilter(clone $filter);
         }
+
         $this->countQuery->applyFilter(clone $filter);
+
         return $this;
     }
 
     protected function joinBaseTables()
     {
+        if ($this->getMonitoringBackend()->useOptimizedQueries()) {
+            $this->columnMap['hostgroupsummary'] = [
+                'hostgroup_alias' => 'hg.alias',
+                'hostgroup_name'  => 'hgo.name1'
+            ] + $this->columnMap['hostgroupsummary'];
+
+            $hosts = $this->createSubQuery('hoststatus');
+            $hosts->requireVirtualTable('hoststatus');
+            $hosts->columns([
+                new Zend_Db_Expr('hs.host_object_id'),
+                'host_state',
+                'host_handled',
+                'host_severity',
+                'service_handled'   => new Zend_Db_Expr('NULL'),
+                'service_state'     => new Zend_Db_Expr('NULL'),
+            ]);
+
+            $services = $this->createSubQuery('servicestatus');
+            $services->columns([
+                new Zend_Db_Expr('s.host_object_id'),
+                'host_handled'  => new Zend_Db_Expr('NULL'),
+                'host_state'    => new Zend_Db_Expr('NULL'),
+                'host_severity' => new Zend_Db_Expr('NULL'),
+                'service_handled',
+                'service_state'
+            ]);
+
+            $this->subQueries = [$hosts, $services];
+
+            $states = $this->db->select()->union($this->subQueries, \Zend_Db_Select::SQL_UNION_ALL);
+
+            $this
+                ->select
+                ->from(['hg' => 'icinga_hostgroups'], null)
+                ->join(['hgo' => 'icinga_objects'], 'hgo.object_id = hg.hostgroup_object_id AND hgo.objecttype_id = 3 AND hgo.is_active = 1', null)
+                ->joinLeft(['hgm' => 'icinga_hostgroup_members'], 'hgm.hostgroup_id = hg.hostgroup_id', null)
+                ->joinLeft(['ho' => 'icinga_objects'], 'ho.object_id = hgm.host_object_id AND ho.objecttype_id = 1 AND ho.is_active = 1', null)
+                ->joinLeft(['h' => 'icinga_hosts'], 'h.host_object_id = ho.object_id', null)
+                ->joinLeft(['states' => $states], 'states.host_object_id = ho.object_id', null);
+
+            $this->group(['hostgroup_name']);
+
+            $this->joinedVirtualTables['hostgroupsummary'] = true;
+
+            $this->countQuery = $this->createSubQuery('Hostgroup', []);
+
+            return;
+        }
+
         $this->countQuery = $this->createSubQuery(
             'Hostgroup',
             array()
@@ -112,6 +168,17 @@ class HostgroupsummaryQuery extends IdoQuery
         $this->select->from(array('hostgroupsummary' => $this->summaryQuery), array());
         $this->group(array('hostgroup_name', 'hostgroup_alias'));
         $this->joinedVirtualTables['hostgroupsummary'] = true;
+    }
+
+    public function getSelectQuery()
+    {
+        if ($this->getMonitoringBackend()->useOptimizedQueries()) {
+            if ($this->isFiltered) {
+                $this->select->having('hosts_total > 0');
+            }
+        }
+
+        return parent::getSelectQuery();
     }
 
     public function getCountQuery()

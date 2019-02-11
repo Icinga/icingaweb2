@@ -273,7 +273,7 @@ abstract class MonitoredObject implements Filterable
      */
     public function fetch()
     {
-        $properties = $this->getDataView()->applyFilter($this->getFilter())->getQuery()->fetchRow();
+        $properties = $this->getDataView()->applyFilter($this->getFilter())->getQuery()->clearOrder()->fetchRow();
 
         if ($properties === false) {
             return false;
@@ -577,7 +577,6 @@ abstract class MonitoredObject implements Filterable
             'start'             => 'downtime_start'
         ))
             ->where('object_type', $this->type)
-            ->order('downtime_is_in_effect', 'DESC')
             ->order('downtime_scheduled_start', 'ASC');
         if ($this->type === self::TYPE_SERVICE) {
             $downtimes

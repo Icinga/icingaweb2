@@ -80,6 +80,10 @@ class HostnotificationQuery extends IdoQuery
      */
     protected function joinBaseTables()
     {
+        if ($this->getMonitoringBackend()->useOptimizedQueries()) {
+            $this->columnMap['hosts']['host_display_name'] = 'h.display_name';
+            $this->columnMap['services']['service_display_name'] = 's.display_name';
+        }
         switch ($this->ds->getDbType()) {
             case 'mysql':
                 $concattedContacts = "GROUP_CONCAT("

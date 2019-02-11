@@ -38,6 +38,7 @@ class HostStatus extends DataView
             'host_is_flapping',
             'host_is_reachable',
             'host_last_check',
+            'host_last_check_ts',
             'host_last_notification',
             'host_last_state_change',
             'host_last_state_change_ts',
@@ -112,6 +113,13 @@ class HostStatus extends DataView
                 ),
                 'order' => self::SORT_DESC
             ),
+            'host_state' => array(
+                'columns' => array(
+                    'host_state',
+                    'host_last_state_change_ts DESC'
+                ),
+                'order' => self::SORT_ASC
+            ),
             'host_address' => array(
                 'columns' => array(
                     'host_ipv4'
@@ -121,6 +129,12 @@ class HostStatus extends DataView
             'host_last_state_change' => array(
                 'columns' => array(
                     'host_last_state_change_ts'
+                ),
+                'order' => self::SORT_DESC
+            ),
+            'host_last_check' => array(
+                'columns' => array(
+                    'host_last_check_ts'
                 ),
                 'order' => self::SORT_DESC
             )

@@ -72,6 +72,10 @@ class ContactgroupQuery extends IdoQuery
      */
     protected function joinBaseTables()
     {
+        if ($this->getMonitoringBackend()->useOptimizedQueries()) {
+            $this->groupBase['contactgroups'] = ['cgo.object_id'];
+            $this->columnMap['contactgroups']['contactgroup_alias'] = 'cg.alias';
+        }
         $this->select->from(
             array('cg' => $this->prefix . 'contactgroups'),
             array()

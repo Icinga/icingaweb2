@@ -85,6 +85,13 @@ class ServicegroupQuery extends IdoQuery
 
     protected function joinBaseTables()
     {
+        if ($this->getMonitoringBackend()->useOptimizedQueries()) {
+            $this->groupBase['servicegroups'] = ['sgo.object_id'];
+            $this->columnMap['servicegroups']['servicegroup_alias'] = 'sg.alias';
+            $this->columnMap['servicestatus']['service_handled'] = 'ss.is_handled';
+            $this->columnMap['servicestatus']['service_severity'] = 'ss.severity';
+            $this->columnMap['servicestatus']['service_state'] = 'ss.current_state';
+        }
         $this->select->from(
             array('sgo' => $this->prefix . 'objects'),
             array()

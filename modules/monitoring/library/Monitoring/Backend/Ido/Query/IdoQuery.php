@@ -3,6 +3,7 @@
 
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
+use Icinga\Module\Monitoring\Backend\MonitoringBackend;
 use Zend_Db_Expr;
 use Icinga\Application\Icinga;
 use Icinga\Application\Hook;
@@ -424,6 +425,16 @@ abstract class IdoQuery extends DbQuery
      */
     protected $caseInsensitiveColumns;
 
+    /** @var MonitoringBackend */
+    protected $monitoringBackend;
+
+    public function __construct(MonitoringBackend $backend, $columns = null)
+    {
+        $this->monitoringBackend = $backend;
+
+        parent::__construct($backend->getResource(), $columns);
+    }
+
     /**
      * Return true when the column is an aggregate column
      *
@@ -517,6 +528,54 @@ abstract class IdoQuery extends DbQuery
     protected function joinSubQuery(IdoQuery $query, $name, $filter, $and, $negate, &$additionalFilter)
     {
         throw new NotImplementedError('Query "%s" is unknown', $name);
+    }
+
+    protected function createCustomvarSubqueryFilter(FilterExpression $filter)
+    {
+        $customvar = $filter->getColumn();
+
+        list($type, $name) = $this->customvarNameToTypeName($customvar);
+
+        if ($this->hasJoinedVirtualTable('services')) {
+            $objectId = 's.' . $type . '_object_id';
+        } else {
+            switch ($type) {
+                case 'host':
+                    $this->requireVirtualTable('hosts');
+                    $objectId = 'h.host_object_id';
+                    break;
+                case 'service':
+                    $this->requireVirtualTable('services');
+                    $objectId = 's.service_object_id';
+                    break;
+            }
+        }
+
+        $customvarFilter = Filter::matchAll();
+        $customvarFilter->andFilter(
+            new FilterExpression("{$customvar}.object_id", '=', new \Zend_Db_Expr($objectId))
+        );
+        $customvarFilter->andFilter(
+            new FilterExpression("{$customvar}.varname", '=', $name)
+        );
+        $customvarFilter->andFilter(
+            new FilterExpression("{$customvar}.varvalue", '=', $filter->getExpression())
+        );
+
+        $query = $this->createSubQuery('customvar');
+        $query->setIsSubQuery();
+        $query->select()->reset();
+
+        $query->from("icinga_customvariablestatus {$filter->getColumn()}");
+        $query->setFilter($customvarFilter);
+
+        $query->columns([new Zend_Db_Expr('1')]);
+
+        // EXISTS is the column name because without any column $this->isCustomVar() fails badly otherwise.
+        // Additionally it bypasses the non-required optimizations made by our filter rendering implementation.
+        $exists = new FilterExpression($filter->getSign() === '!=' ? 'NOT EXISTS' : 'EXISTS', '', new Zend_Db_Expr($query));
+
+        return $exists;
     }
 
     /**
@@ -664,6 +723,12 @@ abstract class IdoQuery extends DbQuery
             $alias = $filter->getColumn();
 
             $virtualTable = $this->aliasToTableName($alias);
+
+            // WIP: Subquery for custom var filters
+//            if ($this->getMonitoringBackend()->useOptimizedQueries() && $this->isCustomVar($alias)) {
+//                return $this->createCustomvarSubqueryFilter($filter);
+//            }
+
             if (isset($this->subQueryTargets[$virtualTable])) {
                 try {
                     return $this->createSubQueryFilter($filter, $this->subQueryTargets[$virtualTable]);
@@ -1229,7 +1294,7 @@ abstract class IdoQuery extends DbQuery
         $class = '\\'
             . substr(__CLASS__, 0, strrpos(__CLASS__, '\\') + 1)
             . ucfirst($queryName) . 'Query';
-        $query = new $class($this->ds, $columns);
+        $query = new $class($this->monitoringBackend, $columns);
         return $query;
     }
 
@@ -1489,5 +1554,60 @@ abstract class IdoQuery extends DbQuery
             default:
                 throw new ProgrammingError('Cannot provide a primary key column. Table "%s" is unknown', $table);
         }
+    }
+
+    private function removeObjecttypeIdWhereCondition()
+    {
+        // WIP: Remove all objecttype_id WHERE conditions
+//        $zendSelect = $this->select();
+//
+//        $partsProp = (new \ReflectionClass('\Zend_Db_Select'))->getProperty('_parts');
+//        $partsProp->setAccessible(true);
+//
+//        $parts = $partsProp->getValue($zendSelect);
+//
+//        foreach ($parts as $key => &$spec) {
+//            if (! is_array($spec)) {
+//                continue;
+//            }
+//
+//            foreach ($spec as &$part) {
+//                if (isset($part['joinCondition'])) {
+//                    $part['joinCondition'] = preg_replace(
+//                        '/( AND )?[a-z]+.objecttype_id = \d+/',
+//                        '',
+//                        $part['joinCondition']
+//                    );
+//                }
+//            }
+//        }
+//
+//        $partsProp->setValue($zendSelect, $parts);
+    }
+
+    public function getSelectQuery()
+    {
+        if ($this->getMonitoringBackend()->useOptimizedQueries()) {
+            $this->removeObjecttypeIdWhereCondition();
+        }
+
+        return parent::getSelectQuery();
+    }
+
+    public function getCountQuery()
+    {
+        if ($this->getMonitoringBackend()->useOptimizedQueries()) {
+            $this->removeObjecttypeIdWhereCondition();
+        }
+
+        return parent::getCountQuery();
+    }
+
+    /**
+     * @return  MonitoringBackend
+     */
+    public function getMonitoringBackend()
+    {
+        return $this->monitoringBackend;
     }
 }

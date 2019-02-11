@@ -78,10 +78,12 @@ class ServicestatusQuery extends IdoQuery
             'host_is_flapping'                      => 'hs.is_flapping',
             'host_is_reachable'                     => 'hs.is_reachable',
             'host_last_check'                       => 'UNIX_TIMESTAMP(hs.last_check)',
+            'host_last_check_ts'                    => 'hs.last_check',
             'host_last_hard_state'                  => 'hs.last_hard_state',
             'host_last_hard_state_change'           => 'UNIX_TIMESTAMP(hs.last_hard_state_change)',
             'host_last_notification'                => 'UNIX_TIMESTAMP(hs.last_notification)',
             'host_last_state_change'                => 'UNIX_TIMESTAMP(hs.last_state_change)',
+            'host_last_state_change_ts'             => 'hs.last_state_change',
             'host_last_time_down'                   => 'UNIX_TIMESTAMP(hs.last_time_down)',
             'host_last_time_unreachable'            => 'UNIX_TIMESTAMP(hs.last_time_unreachable)',
             'host_last_time_up'                     => 'UNIX_TIMESTAMP(hs.last_time_up)',
@@ -286,6 +288,20 @@ class ServicestatusQuery extends IdoQuery
             $this->columnMap['hoststatus']['host_is_reachable'] = '(NULL)';
             $this->columnMap['servicestatus']['service_is_reachable'] = '(NULL)';
         }
+        if ($this->getMonitoringBackend()->useOptimizedQueries()) {
+            $this->groupBase['services'] = ['so.object_id'];
+            $this->columnMap['hosts']['host_display_name'] = 'h.display_name';
+            $this->columnMap['hoststatus']['host_handled'] = 'hs.is_handled';
+            $this->columnMap['hoststatus']['host_problem'] = 'hs.is_problem';
+            $this->columnMap['hoststatus']['host_severity'] = 'hs.severity';
+            $this->columnMap['hoststatus']['host_state'] = 'hs.current_state';
+            $this->columnMap['services']['service_display_name'] = 's.display_name';
+            $this->columnMap['servicestatus']['service_handled'] = 'ss.is_handled';
+            $this->columnMap['servicestatus']['service_problem'] = 'ss.is_problem';
+            $this->columnMap['servicestatus']['service_severity'] = 'ss.severity';
+            $this->columnMap['servicestatus']['service_state'] = 'ss.current_state';
+            $this->columnMap['servicestatus']['problems'] = 'ss.is_problem';
+        }
 
         $this->select->from(
             array('so' => $this->prefix . 'objects'),
@@ -391,7 +407,9 @@ class ServicestatusQuery extends IdoQuery
      */
     protected function joinServicestatus()
     {
-        $this->requireVirtualTable('hoststatus');
+        if (! $this->getMonitoringBackend()->useOptimizedQueries()) {
+            $this->requireVirtualTable('hoststatus');
+        }
         $this->select->join(
             array('ss' => $this->prefix . 'servicestatus'),
             'ss.service_object_id = so.object_id',

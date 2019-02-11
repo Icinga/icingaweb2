@@ -41,6 +41,7 @@ class HostcommentQuery extends IdoQuery
             'comment_is_persistent' => 'c.is_persistent',
             'comment_name'          => 'c.name',
             'comment_timestamp'     => 'UNIX_TIMESTAMP(c.comment_time)',
+            'comment_time'          => 'c.comment_time',
             'comment_type'          => "CASE c.entry_type WHEN 1 THEN 'comment' WHEN 2 THEN 'downtime' WHEN 3 THEN 'flapping' WHEN 4 THEN 'ack' END",
             'host'                  => 'ho.name1 COLLATE latin1_general_ci',
             'host_name'             => 'ho.name1',
@@ -72,6 +73,37 @@ class HostcommentQuery extends IdoQuery
             'service_display_name'  => 's.display_name COLLATE latin1_general_ci',
         )
     );
+
+    protected $commentTypeMap = [
+        'comment'  => 1,
+        'downtime' => 2,
+        'flapping' => 3,
+        'ack'      => 4
+    ];
+
+    public function whereToSql($col, $sign, $expression)
+    {
+        if ($col === $this->columnMap['comments']['comment_type']) {
+            $expression = (array) $expression;
+            $count = 0;
+
+            foreach ($expression as &$value) {
+                $value = isset($this->commentTypeMap[$value])
+                    ? $this->commentTypeMap[$value]
+                    : $this->escapeForSql($value);
+
+                ++$count;
+            }
+
+            if ($count === 0) {
+                $expression = $expression[0];
+            }
+
+            $col = 'c.entry_type';
+        }
+
+        return parent::whereToSql($col, $sign, $expression);
+    }
 
     /**
      * {@inheritdoc}

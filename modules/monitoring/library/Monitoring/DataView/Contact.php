@@ -42,7 +42,7 @@ class Contact extends DataView
     public function getSortRules()
     {
         return array(
-            'contact_name' => array(
+            'contact_alias' => array(
                 'order' => self::SORT_ASC
             )
         );

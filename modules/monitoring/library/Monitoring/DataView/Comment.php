@@ -37,7 +37,7 @@ class Comment extends DataView
     public function getStaticFilterColumns()
     {
         return array(
-            'comment_author',
+            'comment_author', 'comment_time',
             'host', 'host_alias',
             'hostgroup', 'hostgroup_alias', 'hostgroup_name',
             'instance_name',
@@ -60,7 +60,7 @@ class Comment extends DataView
     public function getSortRules()
     {
         return array(
-            'comment_timestamp' => array(
+            'comment_time' => array(
                 'order' => self::SORT_DESC
             ),
             'host_display_name' => array(

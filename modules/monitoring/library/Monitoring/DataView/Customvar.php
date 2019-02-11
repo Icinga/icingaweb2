@@ -30,8 +30,7 @@ class Customvar extends DataView
         return array(
             'varname' => array(
                 'columns' => array(
-                    'varname',
-                    'varvalue'
+                    'varname'
                 )
             )
         );

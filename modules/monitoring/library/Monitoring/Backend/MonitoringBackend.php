@@ -297,7 +297,7 @@ class MonitoringBackend implements Selectable, Queryable, ConnectionInterface
             );
         }
 
-        return new $class($this->getResource(), $columns);
+        return new $class($this, $columns);
     }
 
     /**
@@ -357,5 +357,13 @@ class MonitoringBackend implements Selectable, Queryable, ConnectionInterface
             '/^[vr]2\.\d+\.\d+.*$/',
             $programVersion
         );
+    }
+
+    /**
+     * @return  bool
+     */
+    public function useOptimizedQueries()
+    {
+        return (bool) $this->config->get('use_optimized_queries', false);
     }
 }

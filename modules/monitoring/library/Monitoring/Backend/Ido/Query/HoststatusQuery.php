@@ -80,6 +80,7 @@ class HoststatusQuery extends IdoQuery
             'host_is_passive_checked'               => 'CASE WHEN hs.active_checks_enabled = 0 AND hs.passive_checks_enabled = 1 THEN 1 ELSE 0 END',
             'host_is_reachable'                     => 'hs.is_reachable',
             'host_last_check'                       => 'UNIX_TIMESTAMP(hs.last_check)',
+            'host_last_check_ts'                    => 'hs.last_check',
             'host_last_hard_state'                  => 'hs.last_hard_state',
             'host_last_hard_state_change'           => 'UNIX_TIMESTAMP(hs.last_hard_state_change)',
             'host_last_notification'                => 'UNIX_TIMESTAMP(hs.last_notification)',
@@ -176,6 +177,15 @@ class HoststatusQuery extends IdoQuery
         }
         if (version_compare($this->getIdoVersion(), '1.13.0', '<')) {
             $this->columnMap['hoststatus']['host_is_reachable'] = '(NULL)';
+        }
+        if ($this->getMonitoringBackend()->useOptimizedQueries()) {
+            $this->groupBase['hosts'] = ['ho.object_id'];
+            $this->columnMap['hosts']['host_display_name'] = 'h.display_name';
+            $this->columnMap['hoststatus']['host_handled'] = 'hs.is_handled';
+            $this->columnMap['hoststatus']['host_problem'] = 'hs.is_problem';
+            $this->columnMap['hoststatus']['host_severity'] = 'hs.severity';
+            $this->columnMap['hoststatus']['host_state'] = 'hs.current_state';
+            $this->columnMap['hoststatus']['problems'] = 'hs.is_problem';
         }
 
         $this->select->from(

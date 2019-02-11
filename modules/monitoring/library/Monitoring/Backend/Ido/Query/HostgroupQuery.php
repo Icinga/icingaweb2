@@ -114,6 +114,16 @@ class HostgroupQuery extends IdoQuery
 
     protected function joinBaseTables()
     {
+        if ($this->getMonitoringBackend()->useOptimizedQueries()) {
+            $this->groupBase['hostgroups'] = ['hgo.object_id'];
+            $this->columnMap['hostgroups']['hostgroup_alias'] = 'hg.alias';
+            $this->columnMap['hoststatus']['host_handled'] = 'hs.is_handled';
+            $this->columnMap['hoststatus']['host_severity'] = 'hs.severity';
+            $this->columnMap['hoststatus']['host_state'] = 'hs.current_state';
+            $this->columnMap['servicestatus']['service_handled'] = 'ss.is_handled';
+            $this->columnMap['servicestatus']['service_severity'] = 'ss.severity';
+            $this->columnMap['servicestatus']['service_state'] = 'ss.current_state';
+        }
         $this->select->from(
             array('hgo' => $this->prefix . 'objects'),
             array()

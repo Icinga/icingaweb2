@@ -35,10 +35,24 @@ class UnhandledserviceproblemsQuery extends IdoQuery
     {
         $this->subSelect = $this->createSubQuery(
             'Servicestatus',
-            array('service_description')
+            [new \Zend_Db_Expr(1)]
         );
         $this->subSelect->where('service_handled', 0);
         $this->subSelect->where('service_state', 2);
+        // WIP: Force index idx_servicestatus_problems
+//        if ($this->getMonitoringBackend()->useOptimizedQueries()) {
+//            $zendSelect = $this->subSelect->select();
+//
+//            $partsProp = (new \ReflectionClass('\Zend_Db_Select'))->getProperty('_parts');
+//            $partsProp->setAccessible(true);
+//
+//            $parts = $partsProp->getValue($zendSelect);
+//
+//            $parts['from']['ss USE INDEX(idx_servicestatus_problems)'] = $parts['from']['ss'];
+//            unset($parts['from']['ss']);
+//
+//            $partsProp->setValue($zendSelect, $parts);
+//        }
         $this->select->from(
             array('problems' => $this->subSelect->setIsSubQuery(true)),
             array()

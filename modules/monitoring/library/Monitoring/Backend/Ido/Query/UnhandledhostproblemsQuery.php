@@ -35,10 +35,24 @@ class UnhandledhostproblemsQuery extends IdoQuery
     {
         $this->subSelect = $this->createSubQuery(
             'Hoststatus',
-            array('host_name')
+            [new \Zend_Db_Expr(1)]
         );
         $this->subSelect->where('host_handled', 0);
         $this->subSelect->where('host_state', 1);
+        // WIP: Force index idx_hoststatus_problems
+//        if ($this->getMonitoringBackend()->useOptimizedQueries()) {
+//            $zendSelect = $this->subSelect->select();
+//
+//            $partsProp = (new \ReflectionClass('\Zend_Db_Select'))->getProperty('_parts');
+//            $partsProp->setAccessible(true);
+//
+//            $parts = $partsProp->getValue($zendSelect);
+//
+//            $parts['from']['hs USE INDEX(idx_hoststatus_problems)'] = $parts['from']['hs'];
+//            unset($parts['from']['hs']);
+//
+//            $partsProp->setValue($zendSelect, $parts);
+//        }
         $this->select->from(
             array('problems' => $this->subSelect->setIsSubQuery(true)),
             array()

@@ -84,6 +84,10 @@ class ServicecontactQuery extends IdoQuery
 
     protected function joinBaseTables()
     {
+        if ($this->getMonitoringBackend()->useOptimizedQueries()) {
+            $this->groupBase['contacts'] = ['co.object_id'];
+            $this->columnMap['contacts']['contact_alias'] = 'c.alias';
+        }
         $this->select->from(
             ['c' => $this->prefix . 'contacts'],
             []

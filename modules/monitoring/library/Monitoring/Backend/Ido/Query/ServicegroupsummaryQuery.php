@@ -73,8 +73,21 @@ class ServicegroupsummaryQuery extends IdoQuery
         $subQuery->setIsSubQuery();
         $this->subQuery = $subQuery;
         $this->select->from(array('servicesgroupsummary' => $this->subQuery), array());
-        $this->group(array('servicegroup_name', 'servicegroup_alias'));
+        if ($this->getMonitoringBackend()->useOptimizedQueries()) {
+            $this->group(['servicegroup_name']);
+        } else {
+            $this->group(array('servicegroup_name', 'servicegroup_alias'));
+        }
         $this->joinedVirtualTables['servicegroupsummary'] = true;
+    }
+
+    public function getSelectQuery()
+    {
+        if ($this->getMonitoringBackend()->useOptimizedQueries()) {
+            $this->subQuery->clearGroupingRules();
+        }
+
+        return parent::getSelectQuery();
     }
 
     public function getCountQuery()

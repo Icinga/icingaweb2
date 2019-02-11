@@ -25,8 +25,8 @@ class CommentQuery extends IdoQuery
             'comment_is_persistent' => 'c.comment_is_persistent',
             'comment_name'          => 'c.comment_name',
             'comment_timestamp'     => 'c.comment_timestamp',
+            'comment_time'          => 'c.comment_time',
             'comment_type'          => 'c.comment_type',
-            'instance_name'         => 'c.instance_name',
             'object_type'           => 'c.object_type'
         ),
         'hosts' => array(

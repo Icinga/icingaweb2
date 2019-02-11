@@ -31,8 +31,7 @@ class DowntimeQuery extends IdoQuery
             'downtime_scheduled_end'    => 'd.downtime_scheduled_end',
             'downtime_scheduled_start'  => 'd.downtime_scheduled_start',
             'downtime_start'            => 'd.downtime_start',
-            'object_type'               => 'd.object_type',
-            'instance_name'             => 'd.instance_name'
+            'object_type'               => 'd.object_type'
         ),
         'hosts' => array(
             'host_display_name'         => 'd.host_display_name',

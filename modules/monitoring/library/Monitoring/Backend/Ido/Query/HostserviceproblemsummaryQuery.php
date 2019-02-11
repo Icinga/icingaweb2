@@ -56,7 +56,6 @@ class HostserviceproblemsummaryQuery extends IdoQuery
     {
         $this->hostStatusQuery = clone $query;
         $this->hostStatusQuery
-            ->clearOrder()
             ->setIsSubQuery()
             ->columns(array('object_id'));
         return $this;
@@ -67,6 +66,10 @@ class HostserviceproblemsummaryQuery extends IdoQuery
      */
     protected function joinBaseTables()
     {
+        if ($this->getMonitoringBackend()->useOptimizedQueries()) {
+            $this->columnMap['problemsummary']['unhandled_service_count'] = 'SUM(1)';
+        }
+
         $this->select->from(
             array('so' => $this->prefix . 'objects'),
             array()
@@ -136,6 +139,23 @@ class HostserviceproblemsummaryQuery extends IdoQuery
      */
     protected function joinProblemsummary()
     {
+        if ($this->getMonitoringBackend()->useOptimizedQueries()) {
+            $this
+                ->select
+                ->join(
+                    ['ss' => $this->prefix . 'servicestatus'],
+                    'ss.service_object_id = so.object_id AND ss.is_problem = 1 AND ss.is_handled = 0',
+                    []
+                )
+                ->join(
+                    ['hoststatus' => $this->hostStatusQuery],
+                    'hoststatus.object_id = s.host_object_id',
+                    []
+                );
+
+            return;
+        }
+
         $this->select->join(
             array('ss' => $this->prefix . 'servicestatus'),
             'ss.service_object_id = so.object_id AND ss.current_state > 0',
