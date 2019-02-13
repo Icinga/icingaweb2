@@ -36,7 +36,7 @@ class icingaweb2_dev (
     'php-phpunit-PHPUnit'
   ]:
     ensure => latest,
-    notify => Service['apache'],
+    notify => Service['php-fpm'],
     require => Class['icinga_packages'],
   }
 
