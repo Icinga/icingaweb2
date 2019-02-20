@@ -453,9 +453,9 @@ class Loader
                 $cmd = strtolower($m[1]);
                 $commands[] = $cmd;
             }
-	}
-	closedir($base);
-	sort($commands);
+        }
+        closedir($base);
+        sort($commands);
         return $commands;
     }
 
