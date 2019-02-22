@@ -163,7 +163,27 @@ class Perfdata
      */
     public function isBytes()
     {
-        return in_array($this->unit, array('b', 'kb', 'mb', 'gb', 'tb'));
+        return $this->isSi() || $this->isIec();
+    }
+
+    /**
+     * Return whether this performance data's value is in a SI unit
+     *
+     * @return  bool    True in case it's in a SI unit, otherwise False
+     */
+    protected function isSi()
+    {
+        return in_array($this->unit, array('kb', 'mb', 'gb', 'tb'));
+    }
+
+    /**
+     * Return whether this performance data's value is in an IEC unit
+     *
+     * @return  bool    True in case it's in an IEC unit, otherwise False
+     */
+    protected function isIec()
+    {
+        return in_array($this->unit, array('b', 'kib', 'mib', 'gib', 'tib'));
     }
 
     /**
@@ -287,7 +307,7 @@ class Perfdata
         $parts = explode(';', $this->perfdataValue);
 
         $matches = array();
-        if (preg_match('@^(-?\d+(\.\d+)?)([a-zA-Z%]{1,2})$@', $parts[0], $matches)) {
+        if (preg_match('@^(-?\d+(\.\d+)?)([a-zA-Z%]{1,3})$@', $parts[0], $matches)) {
             $this->unit = strtolower($matches[3]);
             $this->value = self::convert($matches[1], $this->unit);
         } else {
@@ -359,14 +379,22 @@ class Perfdata
                     return $value / pow(10, 6);
                 case 'ms':
                     return $value / pow(10, 3);
-                case 'tb':
+                case 'tib':
                     return floatval($value) * pow(2, 40);
-                case 'gb':
+                case 'tb':
+                    return floatval($value) * pow(10, 12);
+                case 'gib':
                     return floatval($value) * pow(2, 30);
-                case 'mb':
+                case 'gb':
+                    return floatval($value) * pow(10, 9);
+                case 'mib':
                     return floatval($value) * pow(2, 20);
-                case 'kb':
+                case 'mb':
+                    return floatval($value) * pow(10, 6);
+                case 'kib':
                     return floatval($value) * pow(2, 10);
+                case 'kb':
+                    return floatval($value) * pow(10, 3);
                 default:
                     return (float) $value;
             }
@@ -429,7 +457,11 @@ class Perfdata
             return (string)$value . '%';
         }
         if ($this->isBytes()) {
-            return Format::bytes($value);
+            if ($this->isIec()) {
+                return Format::bytes($value, Format::STANDARD_IEC);
+            }
+
+            return Format::bytes($value, Format::STANDARD_SI);
         }
         if ($this->isSeconds()) {
             return Format::seconds($value);
