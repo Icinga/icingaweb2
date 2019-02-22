@@ -271,6 +271,22 @@ class PerfdataTest extends BaseTestCase
             'Perfdata objects do not identify bytes as bytes'
         );
         $this->assertTrue(
+            Perfdata::fromString('test=6666KiB')->isBytes(),
+            'Perfdata objects do not identify kibibyte as bytes'
+        );
+        $this->assertTrue(
+            Perfdata::fromString('test=666MiB')->isBytes(),
+            'Perfdata objects do not identify mebibyte as bytes'
+        );
+        $this->assertTrue(
+            Perfdata::fromString('test=66GiB')->isBytes(),
+            'Perfdata objects do not identify gibibyte as bytes'
+        );
+        $this->assertTrue(
+            Perfdata::fromString('test=6TiB')->isBytes(),
+            'Perfdata objects do not identify tebibyte as bytes'
+        );
+        $this->assertTrue(
             Perfdata::fromString('test=6666KB')->isBytes(),
             'Perfdata objects do not identify kilobytes as bytes'
         );
@@ -359,12 +375,60 @@ class PerfdataTest extends BaseTestCase
     /**
      * @depends testWhetherValuesAreIdentifiedAsBytes
      */
-    public function testWhetherKiloBytesAreCorrectlyConvertedToBytes()
+    public function testWhetherKibiBytesAreCorrectlyConvertedToBytes()
     {
         $this->assertEquals(
             6666.0 * pow(2, 10),
+            Perfdata::fromString('test=6666KiB')->getValue(),
+            'Perfdata objects do not correctly convert kibibytes to bytes'
+        );
+    }
+
+    /**
+     * @depends testWhetherValuesAreIdentifiedAsBytes
+     */
+    public function testWhetherMebiBytesAreCorrectlyConvertedToBytes()
+    {
+        $this->assertEquals(
+            666.0 * pow(2, 20),
+            Perfdata::fromString('test=666MiB')->getValue(),
+            'Perfdata objects do not correctly convert mebibytes to bytes'
+        );
+    }
+
+    /**
+     * @depends testWhetherValuesAreIdentifiedAsBytes
+     */
+    public function testWhetherGibiBytesAreCorrectlyConvertedToBytes()
+    {
+        $this->assertEquals(
+            66.0 * pow(2, 30),
+            Perfdata::fromString('test=66GiB')->getValue(),
+            'Perfdata objects do not correctly convert gibibytes to bytes'
+        );
+    }
+
+    /**
+     * @depends testWhetherValuesAreIdentifiedAsBytes
+     */
+    public function testWhetherTebiBytesAreCorrectlyConvertedToBytes()
+    {
+        $this->assertEquals(
+            6.0 * pow(2, 40),
+            Perfdata::fromString('test=6TiB')->getValue(),
+            'Perfdata objects do not correctly convert tebibytes to bytes'
+        );
+    }
+
+    /**
+     * @depends testWhetherValuesAreIdentifiedAsBytes
+     */
+    public function testWhetherKiloBytesAreCorrectlyConvertedToBytes()
+    {
+        $this->assertEquals(
+            6666.0 * pow(10, 3),
             Perfdata::fromString('test=6666KB')->getValue(),
-            'Perfdata objects do not corretly convert kilobytes to bytes'
+            'Perfdata objects do not correctly convert kilobytes to bytes'
         );
     }
 
@@ -374,9 +438,9 @@ class PerfdataTest extends BaseTestCase
     public function testWhetherMegaBytesAreCorrectlyConvertedToBytes()
     {
         $this->assertEquals(
-            666.0 * pow(2, 20),
+            666.0 * pow(10, 6),
             Perfdata::fromString('test=666MB')->getValue(),
-            'Perfdata objects do not corretly convert megabytes to bytes'
+            'Perfdata objects do not correctly convert megabytes to bytes'
         );
     }
 
@@ -386,9 +450,9 @@ class PerfdataTest extends BaseTestCase
     public function testWhetherGigaBytesAreCorrectlyConvertedToBytes()
     {
         $this->assertEquals(
-            66.0 * pow(2, 30),
+            66.0 * pow(10, 9),
             Perfdata::fromString('test=66GB')->getValue(),
-            'Perfdata objects do not corretly convert gigabytes to bytes'
+            'Perfdata objects do not correctly convert gigabytes to bytes'
         );
     }
 
@@ -398,9 +462,9 @@ class PerfdataTest extends BaseTestCase
     public function testWhetherTeraBytesAreCorrectlyConvertedToBytes()
     {
         $this->assertEquals(
-            6.0 * pow(2, 40),
+            6.0 * pow(10, 12),
             Perfdata::fromString('test=6TB')->getValue(),
-            'Perfdata objects do not corretly convert terabytes to bytes'
+            'Perfdata objects do not correctly convert terabytes to bytes'
         );
     }
 }
