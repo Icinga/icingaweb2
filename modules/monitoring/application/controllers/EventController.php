@@ -38,13 +38,6 @@ class EventController extends Controller
         'dt_end'                => 'downtimeevent'
     );
 
-    /**
-     * Cache for {@link time()}
-     *
-     * @var DateTimeZone
-     */
-    protected $timeZone;
-
     public function showAction()
     {
         $type = $this->params->shiftRequired('type');
@@ -104,31 +97,6 @@ class EventController extends Controller
         }
 
         return $this->view->escape($condition ? $this->translate('Yes') : $this->translate('No'));
-    }
-
-    /**
-     * Render the given timestamp as human readable HTML in the user agent's timezone or 'N/A' if NULL
-     *
-     * @param   int|null    $stamp
-     *
-     * @return  string
-     */
-    protected function time($stamp)
-    {
-        if ($stamp === null) {
-            return $this->view->escape($this->translate('N/A'));
-        }
-
-        if ($this->timeZone === null) {
-            $timezoneDetect = new TimezoneDetect();
-            $this->timeZone = new DateTimeZone(
-                $timezoneDetect->success() ? $timezoneDetect->getTimezoneName() : date_default_timezone_get()
-            );
-        }
-
-        return $this->view->escape(
-            DateTime::createFromFormat('U', $stamp)->setTimezone($this->timeZone)->format('Y-m-d H:i:s')
-        );
     }
 
     /**
@@ -370,7 +338,7 @@ class EventController extends Controller
             case 'dt_start':
             case 'dt_end':
                 $details = array(array(
-                    array($this->translate('Entry time'), $this->time($event->entry_time)),
+                    array($this->translate('Entry time'), DateFormatter::formatTime($event->entry_time)),
                     array($this->translate('Is fixed'), $this->yesOrNo($event->is_fixed)),
                     array($this->translate('Is in effect'), $this->yesOrNo($event->is_in_effect)),
                     array($this->translate('Was started'), $this->yesOrNo($event->was_started))
@@ -383,16 +351,28 @@ class EventController extends Controller
                 }
 
                 $details[] = array(
-                    array($this->translate('Trigger time'), $this->time($event->trigger_time)),
-                    array($this->translate('Scheduled start time'), $this->time($event->scheduled_start_time)),
-                    array($this->translate('Actual start time'), $this->time($event->actual_start_time)),
-                    array($this->translate('Scheduled end time'), $this->time($event->scheduled_end_time))
+                    array($this->translate('Trigger time'), DateFormatter::formatTime($event->trigger_time)),
+                    array(
+                        $this->translate('Scheduled start time'),
+                        DateFormatter::formatTime($event->scheduled_start_time)
+                    ),
+                    array(
+                        $this->translate('Actual start time'),
+                        DateFormatter::formatTime($event->actual_start_time)
+                    ),
+                    array(
+                        $this->translate('Scheduled end time'),
+                        DateFormatter::formatTime($event->scheduled_end_time)
+                    )
                 );
 
                 if ($type === 'dt_end') {
                     $details[] = array(
-                        array($this->translate('Actual end time'), $this->time($event->actual_end_time)))
-                    ;
+                        array(
+                            $this->translate('Actual end time'),
+                            DateFormatter::formatTime($event->actual_end_time)
+                        )
+                    );
                 }
 
                 $details[] = array(
@@ -436,14 +416,14 @@ class EventController extends Controller
                 }
 
                 return array(
-                    array($this->translate('Time'), $this->time($event->comment_time)),
+                    array($this->translate('Time'), DateFormatter::formatTime($event->comment_time)),
                     array($this->translate('Source'), $this->view->escape($commentSource)),
                     array($this->translate('Entry type'), $this->view->escape($entryType)),
                     array($this->translate('Author'), $this->contact($event->author_name)),
                     array($this->translate('Is persistent'), $this->yesOrNo($event->is_persistent)),
                     array($this->translate('Expires'), $this->yesOrNo($event->expires)),
-                    array($this->translate('Expiration time'), $this->time($event->expiration_time)),
-                    array($this->translate('Deletion time'), $this->time($event->deletion_time)),
+                    array($this->translate('Expiration time'), DateFormatter::formatTime($event->expiration_time)),
+                    array($this->translate('Deletion time'), DateFormatter::formatTime($event->deletion_time)),
                     array($this->translate('Message'), $this->comment($event->comment_data))
                 );
             case 'flapping':
@@ -460,7 +440,7 @@ class EventController extends Controller
                 }
 
                 return array(
-                    array($this->translate('Event time'), $this->time($event->event_time)),
+                    array($this->translate('Event time'), DateFormatter::formatTime($event->event_time)),
                     array($this->translate('Reason'), $this->view->escape($reasonType)),
                     array($this->translate('State change'), $this->percent($event->percent_state_change)),
                     array($this->translate('Low threshold'), $this->percent($event->low_threshold)),
@@ -500,8 +480,8 @@ class EventController extends Controller
                 }
 
                 $details = array(
-                    array($this->translate('Start time'), $this->time($event->start_time)),
-                    array($this->translate('End time'), $this->time($event->end_time)),
+                    array($this->translate('Start time'), DateFormatter::formatTime($event->start_time)),
+                    array($this->translate('End time'), DateFormatter::formatTime($event->end_time)),
                     array($this->translate('Reason'), $this->view->escape($notificationReason)),
                     array(
                         $this->translate('State'),
@@ -521,7 +501,7 @@ class EventController extends Controller
                 $isService = $event->service_description !== null;
 
                 $details = array(
-                    array($this->translate('State time'), $this->time($event->state_time)),
+                    array($this->translate('State time'), DateFormatter::formatTime($event->state_time)),
                     array($this->translate('State'), $this->state($isService, $event->state)),
                     array($this->translate('Check attempt'), $this->view->escape(sprintf(
                         $this->translate('%d of %d'),
