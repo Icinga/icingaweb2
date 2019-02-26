@@ -4,6 +4,7 @@
 namespace Icinga\Forms;
 
 use Exception;
+use Icinga\Exception\ConfigurationError;
 use Zend_Form_Decorator_Abstract;
 use Icinga\Application\Config;
 use Icinga\Web\Form;
@@ -99,6 +100,10 @@ class ConfigForm extends Form
     {
         try {
             $this->writeConfig($this->config);
+        } catch (ConfigurationError $e) {
+            $this->addError($e->getMessage());
+
+            return false;
         } catch (Exception $e) {
             $this->addDecorator('ViewScript', array(
                 'viewModule'    => 'default',

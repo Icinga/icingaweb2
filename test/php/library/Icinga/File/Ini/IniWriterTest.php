@@ -285,9 +285,6 @@ inkey' => 'blarg'
     public function testSectionNameEscaping()
     {
         $config = <<<'EOD'
-[section [brackets\]]
-foo = "bar"
-
 [section \;comment]
 foo = "bar"
 
@@ -304,7 +301,6 @@ EOD;
         $writer = new IniWriter(
             Config::fromArray(
                 array(
-                    'section [brackets]' => array('foo' => 'bar'),
                     'section ;comment' => array('foo' => 'bar'),
                     'section "quotes"' => array('foo' => 'bar'),
                     'section with \\' => array('foo' => 'bar'),
@@ -319,6 +315,15 @@ EOD;
             trim($writer->render()),
             'IniWriter does not handle special chars in section names properly.'
         );
+    }
+
+    /**
+     * @expectedException \Icinga\Exception\ConfigurationError
+     */
+    public function testWhetherBracketsAreIllegalInSectionNames()
+    {
+        $config = Config::fromArray(['section [brackets]' => []]);
+        (new IniWriter($config, $this->tempFile))->write();
     }
 
     public function testDirectiveValueEscaping()

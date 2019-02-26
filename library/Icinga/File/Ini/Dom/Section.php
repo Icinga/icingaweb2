@@ -41,13 +41,18 @@ class Section
     /**
      * @param   string  $name       The immutable name of this section
      *
-     * @throws  ConfigurationError  When the section name is empty
+     * @throws  ConfigurationError  When the section name is empty or contains brackets
      */
     public function __construct($name)
     {
         $this->name = trim($name);
         if (strlen($this->name) < 1) {
-            throw new ConfigurationError(sprintf('Ini file error: empty section identifier'));
+            throw new ConfigurationError('Ini file error: empty section identifier');
+        } elseif (strpos($name, '[') !== false || strpos($name, ']') !== false) {
+            throw new ConfigurationError(
+                'Ini file error: Section name "%s" must not contain any brackets ([, ])',
+                $name
+            );
         }
     }
 
@@ -165,7 +170,6 @@ class Section
         $str = trim($str);
         $str = str_replace('\\', '\\\\', $str);
         $str = str_replace('"', '\\"', $str);
-        $str = str_replace(']', '\\]', $str);
         $str = str_replace(';', '\\;', $str);
         return str_replace(PHP_EOL, ' ', $str);
     }
