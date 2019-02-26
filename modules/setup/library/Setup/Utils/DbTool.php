@@ -280,6 +280,11 @@ class DbTool
                 if ($this->config['ssl_cipher']) {
                     $config['driver_options'][PDO::MYSQL_ATTR_SSL_CIPHER] = $this->config['ssl_cipher'];
                 }
+                if (defined('PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT')
+                    && $this->config['ssl_do_not_verify_server_cert']
+                ) {
+                    $config['driver_options'][PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT] = false;
+                }
             }
             $this->zendConn = new Zend_Db_Adapter_Pdo_Mysql($config);
         } elseif ($this->config['db'] === 'pgsql') {
@@ -329,6 +334,11 @@ class DbTool
             }
             if ($this->config['ssl_cipher']) {
                 $driverOptions[PDO::MYSQL_ATTR_SSL_CIPHER] = $this->config['ssl_cipher'];
+            }
+            if (defined('PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT')
+                && $this->config['ssl_do_not_verify_server_cert']
+            ) {
+                $driverOptions[PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT] = false;
             }
         }
 

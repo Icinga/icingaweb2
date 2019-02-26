@@ -185,6 +185,11 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
                     if ($this->config->ssl_cipher) {
                         $adapterParamaters['driver_options'][PDO::MYSQL_ATTR_SSL_CIPHER] = $this->config->ssl_cipher;
                     }
+                    if (defined('PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT')
+                        && $this->config->ssl_do_not_verify_server_cert
+                    ) {
+                        $adapterParamaters['driver_options'][PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT] = false;
+                    }
                 }
                 /*
                  * Set MySQL server SQL modes to behave as closely as possible to Oracle and PostgreSQL. Note that the
