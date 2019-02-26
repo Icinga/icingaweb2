@@ -3,8 +3,10 @@
 
 namespace Icinga\Module\Monitoring\Controllers;
 
+use Icinga\Application\Hook;
 use Icinga\Module\Monitoring\Backend;
 use Icinga\Module\Monitoring\Controller;
+use Icinga\Module\Monitoring\Hook\ContactActionsHook;
 use Icinga\Web\Url;
 
 /**
@@ -75,5 +77,19 @@ class ShowController extends Controller
 
         $this->view->contact = $contact;
         $this->view->contactName = $contactName;
+        $this->view->contactActions = array();
+
+        foreach (Hook::all('Monitoring\ContactActions') as $hook) {
+            /** @var ContactActionsHook $hook */
+            $beforeHtml = "<span class=\"icinga-module module-{$this->view->escape($hook->getModule()->getName())}\">";
+            $afterHtml = '</span>';
+
+            foreach ($hook->setView($this->view)->getActions($contact) as $action) {
+                $this->view->contactActions[] = array(
+                    $beforeHtml . $action[0] . $afterHtml,
+                    $beforeHtml . $action[1] . $afterHtml
+                );
+            }
+        }
     }
 }
