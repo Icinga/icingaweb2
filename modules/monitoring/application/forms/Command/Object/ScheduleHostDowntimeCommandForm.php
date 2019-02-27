@@ -33,7 +33,7 @@ class ScheduleHostDowntimeCommandForm extends ScheduleServiceDowntimeCommandForm
                     'Schedule downtime for all services on the hosts and the hosts themselves.'
                 ),
                 'label'         => $this->translate('All Services'),
-                'value'         => (bool) $config->get('settings', 'hostdowntime_all_services', false)
+                'value'         => (bool) $config->get('settings', 'hostdowntime_all_services', true)
             )
         );
 
