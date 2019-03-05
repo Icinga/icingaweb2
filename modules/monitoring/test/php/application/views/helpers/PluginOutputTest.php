@@ -65,6 +65,14 @@ class PluginOutputTest extends BaseTestCase
         );
     }
 
+    public function testOutputWithHtmlEntities()
+    {
+        $this->checkOutput(
+            'foo&nbsp;&amp;&nbsp;bar',
+            'foo&nbsp;&amp;&nbsp;bar'
+        );
+    }
+
     public function testSimpleHtmlOutput()
     {
         /** @noinspection HtmlUnknownAttribute */
