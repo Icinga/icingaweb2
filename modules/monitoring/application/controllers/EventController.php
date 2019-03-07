@@ -315,6 +315,7 @@ class EventController extends Controller
                         'last_hard_state'       => 'statechangeevent_last_hard_state',
                         'output'                => 'statechangeevent_output',
                         'long_output'           => 'statechangeevent_long_output',
+                        'check_source'          => 'statechangeevent_check_source',
                         'host_name',
                         'service_description'
                     ))
@@ -510,6 +511,7 @@ class EventController extends Controller
                     ))),
                     array($this->translate('Last state'), $this->state($isService, $event->last_state)),
                     array($this->translate('Last hard state'), $this->state($isService, $event->last_hard_state)),
+                    array($this->translate('Check source'), $event->check_source),
                     array(
                         $this->translate('Output'),
                         $this->pluginOutput($event->output) .  $this->pluginOutput($event->long_output)

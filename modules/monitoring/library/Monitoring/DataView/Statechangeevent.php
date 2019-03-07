@@ -19,6 +19,7 @@ class Statechangeevent extends DataView
             'statechangeevent_last_hard_state',
             'statechangeevent_output',
             'statechangeevent_long_output',
+            'statechangeevent_check_source',
             'host_name',
             'service_description'
         );
