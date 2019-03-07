@@ -104,10 +104,10 @@ $this->provideSetupWizard('Icinga\Module\Monitoring\MonitoringWizard');
 /*
  * Available Search Urls
  */
-$this->provideSearchUrl($this->translate('Hosts'), 'monitoring/list/hosts?sort=host_severity&limit=10', 99);
-$this->provideSearchUrl($this->translate('Services'), 'monitoring/list/services?sort=service_severity&limit=10', 98);
-$this->provideSearchUrl($this->translate('Hostgroups'), 'monitoring/list/hostgroups?limit=10', 97);
-$this->provideSearchUrl($this->translate('Servicegroups'), 'monitoring/list/servicegroups?limit=10', 96);
+$this->provideSearchUrl($this->translate('Hosts'), 'monitoring/list/hosts?sort=host_severity', 99);
+$this->provideSearchUrl($this->translate('Services'), 'monitoring/list/services?sort=service_severity', 98);
+$this->provideSearchUrl($this->translate('Hostgroups'), 'monitoring/list/hostgroups', 97);
+$this->provideSearchUrl($this->translate('Servicegroups'), 'monitoring/list/servicegroups', 96);
 
 /*
  * Available navigation items
@@ -290,11 +290,11 @@ $section->add(N_('Monitoring Health'), array(
 $dashboard = $this->dashboard(N_('Current Incidents'), array('priority' => 50));
 $dashboard->add(
     N_('Service Problems'),
-    'monitoring/list/services?service_problem=1&limit=10&sort=service_severity'
+    'monitoring/list/services?service_problem=1&sort=service_severity'
 );
 $dashboard->add(
     N_('Recently Recovered Services'),
-    'monitoring/list/services?service_state=0&limit=10&sort=service_last_state_change&dir=desc'
+    'monitoring/list/services?service_state=0&sort=service_last_state_change&dir=desc'
 );
 $dashboard->add(
     N_('Host Problems'),
@@ -345,27 +345,27 @@ $dashboard->add(
 $dashboard = $this->dashboard(N_('Muted'), array('priority' => 80));
 $dashboard->add(
     N_('Disabled Service Notifications'),
-    'monitoring/list/services?service_notifications_enabled=0&limit=10'
+    'monitoring/list/services?service_notifications_enabled=0'
 );
 $dashboard->add(
     N_('Disabled Host Notifications'),
-    'monitoring/list/hosts?host_notifications_enabled=0&limit=10'
+    'monitoring/list/hosts?host_notifications_enabled=0'
 );
 $dashboard->add(
     N_('Disabled Service Checks'),
-    'monitoring/list/services?service_active_checks_enabled=0&limit=10'
+    'monitoring/list/services?service_active_checks_enabled=0'
 );
 $dashboard->add(
     N_('Disabled Host Checks'),
-    'monitoring/list/hosts?host_active_checks_enabled=0&limit=10'
+    'monitoring/list/hosts?host_active_checks_enabled=0'
 );
 $dashboard->add(
     N_('Acknowledged Problem Services'),
-    'monitoring/list/services?service_acknowledgement_type=2&service_problem=1&sort=service_state&limit=10'
+    'monitoring/list/services?service_acknowledgement_type=2&service_problem=1&sort=service_state'
 );
 $dashboard->add(
     N_('Acknowledged Problem Hosts'),
-    'monitoring/list/hosts?host_acknowledgement_type=2&host_problem=1&sort=host_severity&limit=10'
+    'monitoring/list/hosts?host_acknowledgement_type=2&host_problem=1&sort=host_severity'
 );
 
 /*
