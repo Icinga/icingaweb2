@@ -1192,7 +1192,7 @@ class LdapConnection implements Selectable, Inspectable
 
                 $hostname = implode(' ', $ldapUrls);
             } else {
-                $hostname = 'ldaps://' . $hostname;
+                $hostname = 'ldaps://' . $hostname . ':' . $this->port;
             }
         }
 
