@@ -178,6 +178,9 @@ class NavigationItemRenderer
             : $item->getLabel();
         if (($icon = $item->getIcon()) !== null) {
             $label = $this->view()->icon($icon) . $label;
+        } else {
+            $firstLetter = $item->getName()[0];
+            $label = $this->view()->icon('letter', null, ['data-letter' => strtolower($firstLetter)]) . $label;
         }
 
         if (($url = $item->getUrl()) !== null) {

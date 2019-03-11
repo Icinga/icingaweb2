@@ -94,6 +94,13 @@
   &:not(.active) > a > i {
     opacity: .8;
   }
+
+  & > a > .icon-letter:before {
+    content: attr(data-letter);
+    font-family: @font-family;
+    font-weight: 800;
+    text-transform: uppercase;
+  }
 }
 
 ul:not(.nav-level-2) > .selected > a {
