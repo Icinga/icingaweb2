@@ -429,7 +429,7 @@ input[type=text].search-input {
   padding: 0;
   color: @gray-light;
   position: absolute;
-  bottom: 0;
+  bottom: 0.2em;
   right: 0;
 
   i {
@@ -456,4 +456,10 @@ input[type=text].search-input {
 
 #open-sidebar {
   display: none;
+}
+
+#open-sidebar:before,
+#close-sidebar:before {
+  width: 1.4em;
+  margin-right: 0;
 }

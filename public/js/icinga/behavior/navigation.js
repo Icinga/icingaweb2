@@ -231,7 +231,7 @@
             return;
         }
 
-        var delay = 600;
+        var delay = 300;
 
         if ($layout.hasClass('menu-hovered')) {
             delay = 0;
