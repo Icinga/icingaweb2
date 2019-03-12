@@ -66,13 +66,8 @@
   color: @menu-color;
 
   &.active {
-    > a {
-      font-weight: @font-weight-bold;
-      letter-spacing: .02em;
-
-      > .badge {
-        display: none;
-      }
+    > a > .badge {
+      display: none;
     }
 
     background-color: @menu-active-bg-color;
