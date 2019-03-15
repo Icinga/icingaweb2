@@ -214,49 +214,6 @@
     color: @black;
   }
 }
-
-/**********************************************************************************************************************
-                                                    list view
-***********************************************************************************************************************/
-
-.reports--list {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-}
-
-.report--type {
-  line-height: 2em;
-  padding: 1em 0.5em 1em 1em;
-  background-color: @gray-lighter;
-  margin-top: .5em;
-  cursor: pointer;
-
-  &.active,
-  &.active:hover{
-    background-color: #A7C4CC;
-    cursor: default;
-  }
-
-  > * {
-    vertical-align: middle;
-  }
-
-  &:hover {
-    transition: background-color 0.2s ease;
-    background-color: #DAE3E6;
-  }
-}
-
-.report--icon {
-  display: inline-block;
-  font-size: 2em;
-}
-
-.report--arrow {
-  float: right;
-}
-
 /**********************************************************************************************************************
                                                     tiles
 ***********************************************************************************************************************/
