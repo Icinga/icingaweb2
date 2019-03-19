@@ -146,12 +146,11 @@ ul:not(.nav-level-2) > .selected > a {
     overflow: hidden;
     position: relative;
 
-    > a {
-      &:focus, &:hover {
-        opacity: .6;
-      }
+    &.active {
+      background-color: @menu-highlight-color;
+      overflow: hidden;
+      position: relative;
     }
-  }
 
   &.active > a:focus {
     background-color: mix(#000, @menu-highlight-color, 20);
@@ -288,7 +287,6 @@ ul:not(.nav-level-2) > .selected > a {
 
         &:focus, &:hover {
           background-color: @menu-highlight-color;
-          opacity: .6;
         }
       }
 
