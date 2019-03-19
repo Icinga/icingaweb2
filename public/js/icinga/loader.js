@@ -604,7 +604,7 @@
                 var url = req.url;
 
                 if (req.$target[0].id === 'col1') {
-                    this.icinga.behaviors.navigation.trySetActiveByUrl(url);
+                    this.icinga.behaviors.navigation.trySetActiveAndSelectedByUrl(url);
                 }
 
                 var $forms = $('[action="' + this.icinga.utils.parseUrl(url).path + '"]');

@@ -322,6 +322,10 @@ class NavigationRenderer implements RecursiveIterator, NavigationRendererInterfa
             $cssClasses[] = static::CSS_CLASS_ACTIVE;
         }
 
+        if ($item->getSelected()) {
+            $cssClasses[] = static::CSS_CLASS_SELECTED;
+        }
+
         if ($cssClass = $item->getCssClass()) {
             $cssClasses[] = $cssClass;
         }
