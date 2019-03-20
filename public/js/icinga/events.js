@@ -457,6 +457,12 @@
                 return true;
             }
 
+            // Check for ctrl or cmd click to open new tab
+            if (event.ctrlKey || event.metaKey) {
+                window.open(href, linkTarget);
+                return false;
+            }
+
             // Special checks for link clicks in action tables
             if (! $a.is('tr[href]') && $a.closest('table.action').length > 0) {
 
