@@ -52,11 +52,11 @@
             var $active = _this.$menu.find('li.active');
             if ($active.length) {
                 $active.each(function() {
-                    _this.setActive($(this));
+                    _this.setActiveAndSelected($(this));
                 });
             } else {
                 // if no item is marked as active, try to select the menu from the current URL
-                _this.setActiveByUrl($('#col1').data('icingaUrl'));
+                _this.setActiveAndSelectedByUrl($('#col1').data('icingaUrl'));
             }
         }
 
@@ -70,7 +70,7 @@
         // restore selection to current active element
         if (this.active) {
             var $el = $(this.icinga.utils.getElementByDomPath(this.active));
-            this.setActive($el);
+            this.setActiveAndSelected($el);
 
             /*
              * Recreate the html content of the menu item to force the browser to update the layout, or else
@@ -98,9 +98,9 @@
         if (href.match(/#/)) {
             // ...it may be a menu section without a dedicated link.
             // Switch the active menu item:
-            _this.setActive($a);
+            _this.setActiveAndSelected($a);
         } else {
-            _this.setActive($(event.target));
+            _this.setActiveAndSelected($(event.target));
         }
         // update target url of the menu container to the clicked link
         var $menu = $('#menu');
@@ -116,7 +116,7 @@
      *
      * @param url   {String}    The url to match
      */
-    Navigation.prototype.setActiveByUrl = function(url) {
+    Navigation.prototype.setActiveAndSelectedByUrl = function(url) {
         var $menu = $('#menu');
 
         if (! $menu.length) {
@@ -124,17 +124,17 @@
         }
 
         // try to active the first item that has an exact URL match
-        this.setActive($menu.find('[href="' + url + '"]'));
+        this.setActiveAndSelected($menu.find('[href="' + url + '"]'));
 
         // the url may point to the search field, which must be activated too
         if (! this.active) {
-            this.setActive($menu.find('form[action="' + this.icinga.utils.parseUrl(url).path + '"]'));
+            this.setActiveAndSelected($menu.find('form[action="' + this.icinga.utils.parseUrl(url).path + '"]'));
         }
 
         // some urls may have custom filters which won't match any menu item, in that case search
         // for a menu item that points to the base action without any filters
         if (! this.active) {
-            this.setActive($menu.find('[href="' + this.icinga.utils.parseUrl(url).path + '"]').first());
+            this.setActiveAndSelected($menu.find('[href="' + this.icinga.utils.parseUrl(url).path + '"]').first());
         }
     };
 
@@ -143,11 +143,12 @@
      *
      * @param url
      */
-    Navigation.prototype.trySetActiveByUrl = function(url) {
+    Navigation.prototype.trySetActiveAndSelectedByUrl = function(url) {
         var active = this.active;
-        this.setActiveByUrl(url);
+        this.setActiveAndSelectedByUrl(url);
+
         if (! this.active && active) {
-            this.setActive($(this.icinga.utils.getElementByDomPath(active)));
+            this.setActiveAndSelected($(this.icinga.utils.getElementByDomPath(active)));
         }
     };
 
@@ -157,6 +158,15 @@
     Navigation.prototype.clear = function() {
         if (this.$menu) {
             this.$menu.find('.active').removeClass('active');
+        }
+    };
+
+    /**
+     * Remove all selected elements
+     */
+    Navigation.prototype.clearSelected = function() {
+        if (this.$menu) {
+            this.$menu.find('.selected').removeClass('selected');
         }
     };
 
@@ -184,6 +194,11 @@
         }
     };
 
+    Navigation.prototype.setActiveAndSelected = function ($el) {
+        this.setActive($el);
+        this.setSelected($el);
+    };
+
     /**
      * Change the active menu element
      *
@@ -202,12 +217,29 @@
         // TODO: push to history
     };
 
+    Navigation.prototype.setSelected = function($el) {
+        this.clearSelected();
+        $el = $el.closest('li');
+
+        if ($el.length) {
+            $el.addClass('selected');
+        }
+    };
+
     /**
      * Reset the active element to nothing
      */
     Navigation.prototype.resetActive = function() {
         this.clear();
         this.active = null;
+    };
+
+    /**
+     * Reset the selected element to nothing
+     */
+    Navigation.prototype.resetSelected = function() {
+        this.clearSelected();
+        this.selected = null;
     };
 
     /**
@@ -231,7 +263,7 @@
             return;
         }
 
-        var delay = 600;
+        var delay = 300;
 
         if ($layout.hasClass('menu-hovered')) {
             delay = 0;
@@ -318,9 +350,10 @@
                 );
                 return;
             }
-            this.setActive($(active));
+            this.setActiveAndSelected($(active))
         } else {
             this.resetActive();
+            this.resetSelected();
         }
     };
 

@@ -322,9 +322,8 @@ class NavigationRenderer implements RecursiveIterator, NavigationRendererInterfa
             $cssClasses[] = static::CSS_CLASS_ACTIVE;
         }
 
-        if ($item->getIcon() === null) {
-            // @TODO(el): Add constant
-            $cssClasses[] = 'no-icon';
+        if ($item->getSelected()) {
+            $cssClasses[] = static::CSS_CLASS_SELECTED;
         }
 
         if ($cssClass = $item->getCssClass()) {
