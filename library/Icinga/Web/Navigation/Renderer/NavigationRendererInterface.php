@@ -23,6 +23,13 @@ interface NavigationRendererInterface
     const CSS_CLASS_ACTIVE = 'active';
 
     /**
+     * CSS class for selected items
+     *
+     * @var string
+     */
+    const CSS_CLASS_SELECTED = 'selected';
+
+    /**
      * CSS class for dropdown items
      *
      * @var string
