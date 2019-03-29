@@ -4,3 +4,4 @@
 /** @var $this \Icinga\Application\Modules\Module */
 
 $this->provideHook('ApplicationState');
+$this->provideHook('X509/Sni');
