@@ -668,10 +668,11 @@
             //this.icinga.logger.debug('Fixing controls for ', $container);
 
             $container.find('.controls').each(function() {
+                var $c = $(this).closest('.container');
                 var $controls = $(this);
                 var $fakeControls = $controls.next('.fake-controls');
                 $controls.css({
-                    top: $container.offsetParent().position().top,
+                    top: $fakeControls.offset().top + $c.scrollTop(),
                     width: $fakeControls.outerWidth()
                 });
                 $fakeControls.height($controls.height());
