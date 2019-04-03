@@ -53,7 +53,7 @@ $innerLayoutScript = $this->layout()->innerLayout . '.phtml';
 </head>
 <body id="body" class="loading">
 <pre id="responsive-debug"></pre>
-<div id="layout" class="default-layout<?php if ($showFullscreen): ?> fullscreen-layout<?php endif ?>">
+<div id="layout" class="default-layout<?php if ($showFullscreen): ?> fullscreen-layout<?php endif ?> vertical-cols">
 <?= $this->render($innerLayoutScript); ?>
 </div>
 <script type="text/javascript">
