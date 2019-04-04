@@ -671,7 +671,6 @@
                 var $controls = $(this);
                 var $fakeControls = $controls.next('.fake-controls');
                 $controls.css({
-                    top: $container.offsetParent().position().top,
                     width: $fakeControls.outerWidth()
                 });
                 $fakeControls.height($controls.height());
