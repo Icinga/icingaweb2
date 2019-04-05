@@ -275,9 +275,14 @@ inkey' => 'blarg'
         );
 
         $rendered = $writer->render();
+        $this->assertRegExp(
+            '~linebreak\\\\nin line~',
+            $rendered,
+            'newlines in values are not escaped'
+        );
         $this->assertEquals(
+            4,
             count(explode("\n", $rendered)),
-            5,
             'generated config should not contain more than three line breaks'
         );
     }
