@@ -284,8 +284,8 @@ class IniParser
      */
     protected static function unescapeSectionName($str)
     {
-        $str = str_replace('\\"', '"', $str);
-        $str = str_replace('\\;', ';', $str);
+        $str = str_replace('\"', '"', $str);
+        $str = str_replace('\;', ';', $str);
 
         return str_replace('\\\\', '\\', $str);
     }
@@ -299,8 +299,11 @@ class IniParser
      */
     protected static function unescapeOptionValue($str)
     {
-        $str = str_replace('\\"', '"', $str);
+        $str = str_replace('\n', "\n", $str);
+        $str = str_replace('\r', "\r", $str);
+        $str = str_replace('\"', '"', $str);
+        $str = str_replace('\\\\', '\\', $str);
 
-        return str_replace('\\\\', '\\', $str);
+        return $str;
     }
 }

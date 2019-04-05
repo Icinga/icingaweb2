@@ -132,7 +132,42 @@ EOD;
         $this->assertEquals(
             2,
             count(explode("\n", $doc->getSection('section')->getDirective('key1')->getValue())),
-            'IniParser does not recognize multi-line values'
+            'IniParser::parseIni does not recognize multi-line values'
+        );
+
+        (new IniWriter(Config::fromArray([
+            'section'   => [
+                'key1'  => "with some\nnewline in the value"
+            ]
+        ]), $this->tempFile))->write();
+
+        $doc = IniParser::parseIniFile($this->tempFile);
+        $this->assertEquals(
+            2,
+            count(explode("\n", $doc->getSection('section')->get('key1'))),
+            'IniParser::parseIniFile does not recognize multi-line values'
+        );
+    }
+
+    public function testEnvironmentVariableResolutionDoesNotWork()
+    {
+        (new IniWriter(Config::fromArray([
+            'section'   => [
+                'key1'  => '${PATH}_${APACHE_RUN_DIR}',
+                'key2'  => '${APACHE_RUN_USER}'
+            ]
+        ]), $this->tempFile))->write();
+
+        $configObject = IniParser::parseIniFile($this->tempFile);
+        $this->assertEquals(
+            '${PATH}_${APACHE_RUN_DIR}',
+            $configObject->getSection('section')->get('key1'),
+            'IniParser::parseIniFile does resolve environment variables'
+        );
+        $this->assertEquals(
+            '${APACHE_RUN_USER}',
+            $configObject->getSection('section')->get('key2'),
+            'IniParser::parseIniFile does resolve environment variables'
         );
     }
 }

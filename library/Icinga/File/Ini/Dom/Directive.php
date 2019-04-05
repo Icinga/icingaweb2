@@ -157,11 +157,10 @@ class Directive
     {
         $str = trim($str);
         $str = str_replace('\\', '\\\\', $str);
-        $str = str_replace('"', '\\"', $str);
+        $str = str_replace('"', '\"', $str);
+        $str = str_replace("\r", '\r', $str);
+        $str = str_replace("\n", '\n', $str);
 
-        // line breaks in the value should always match the current system EOL sequence
-        // to assure editable configuration files
-        $str = preg_replace("/(\r\n)|(\n)/", PHP_EOL, $str);
         return $str;
     }
 }
