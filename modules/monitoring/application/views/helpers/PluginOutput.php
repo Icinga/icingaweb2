@@ -2,6 +2,7 @@
 /* Icinga Web 2 | (c) 2013 Icinga Development Team | GPLv2+ */
 
 use Icinga\Web\Dom\DomNodeIterator;
+use Icinga\Web\View;
 use Icinga\Module\Monitoring\Web\Helper\PluginOutputPurifier;
 
 /**
@@ -115,7 +116,8 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
             $output = preg_replace(
                 self::$txtPatterns,
                 self::$txtReplacements,
-                $this->view->escape($output)
+                // Not using the view here to escape this. The view sets `double_encode` to true
+                htmlspecialchars($output, ENT_COMPAT | ENT_SUBSTITUTE | ENT_HTML5, View::CHARSET, false)
             );
             $isHtml = false;
         }
