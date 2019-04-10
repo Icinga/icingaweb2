@@ -3,6 +3,7 @@
 
 namespace Icinga\Web;
 
+use Icinga\Web\Form\Element\DateTimePicker;
 use Zend_Config;
 use Zend_Form;
 use Zend_Form_Element;
@@ -983,7 +984,9 @@ class Form extends Zend_Form
                     'tag'   => 'input',
                     'type'  => 'hidden',
                     'name'  => $name . static::DEFAULT_SUFFIX,
-                    'value' => $el->getValue()
+                    'value' => $el instanceof DateTimePicker
+                        ? $el->getValue()->format($el->getFormat())
+                        : $el->getValue()
                 )
             );
 
