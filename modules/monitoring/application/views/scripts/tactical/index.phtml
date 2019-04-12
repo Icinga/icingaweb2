@@ -1,21 +1,37 @@
-<?php if (!$this->compact): ?>
+<?php
+/**
+ * Displaying tactical overview with two donuts for hosts and services
+ *
+ * @var $hostStatusSummaryChart    Icinga\Chart\Donut
+ * @var $serviceStatusSummaryChart Icinga\Chart\Donut
+ * @var $statusSummary             \stdClass
+ */
+
+if ($this->compact) {
+    $extraClass = 'compact';
+} else {
+    $extraClass = '';
+?>
 <div class="controls">
     <?= $this->tabs ?>
     <?= $this->filterEditor ?>
 </div>
-<?php endif ?>
+<?php } ?>
 <div class="content tactical grid">
 <?php if (! count(array_filter((array) $statusSummary))): ?>
     <p><?= $this->translate('No results found matching the filter.') ?></p>
-</div>
-<?php return; endif ?>
+<?php else: ?>
     <div class="boxview" data-base-target="_next">
-        <div class="donut-container">
+        <div class="donut-container <?= $extraClass ?>">
+            <?php if (! $this->compact): ?>
             <h2><?= $this->translate('Host Summary') ?></h2>
-            <div class="donut">
+            <?php endif; ?>
+
+            <div class="donut <?= $extraClass ?>">
                 <?= $hostStatusSummaryChart ?>
             </div>
-            <table class="donut-table">
+
+            <table class="donut-table <?= $extraClass ?>">
             <tbody>
                 <?php if ($statusSummary->hosts_up): ?>
                 <tr href="<?= $this->filteredUrl('monitoring/list/hosts', array('host_state' => 0, 'sort' => 'host_last_check', 'dir' => 'asc')) ?>">
@@ -58,16 +74,20 @@
                     <th class="state slice-state-not-checked badge"><?= $statusSummary->hosts_not_checked ?></th>
                     <td><?= $this->translate('Not Checked') ?></td>
                 </tr>
-            <?php endif ?>
+                <?php endif ?>
             </tbody>
             </table>
         </div>
-        <div class="donut-container">
+        <div class="donut-container <?= $extraClass ?>">
+            <?php if (! $this->compact): ?>
             <h2><?= $this->translate('Service Summary') ?></h2>
-            <div class="donut">
+            <?php endif; ?>
+
+            <div class="donut <?= $extraClass ?>">
                 <?= $serviceStatusSummaryChart ?>
             </div>
-            <table class="donut-table">
+
+            <table class="donut-table <?= $extraClass ?>">
             <tbody>
             <?php if ($statusSummary->services_ok):?>
                 <tr href="<?= $this->filteredUrl('monitoring/list/services', array('service_state' => 0, 'sort' => 'service_last_check', 'dir' => 'asc')) ?>">
@@ -127,4 +147,5 @@
             </table>
         </div>
     </div>
+<?php endif; ?>
 </div>
