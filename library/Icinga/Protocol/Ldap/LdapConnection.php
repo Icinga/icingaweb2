@@ -1185,6 +1185,9 @@ class LdapConnection implements Selectable, Inspectable
             $ldapUrls = explode(' ', $hostname);
             if (count($ldapUrls) > 1) {
                 foreach ($ldapUrls as & $uri) {
+                    if (preg_match('/:\d+$/', $uri) === 0) {
+                        $uri = $uri . ':' . $this->port;
+                    }
                     if (strpos($uri, '://') === false) {
                         $uri = 'ldaps://' . $uri;
                     }
