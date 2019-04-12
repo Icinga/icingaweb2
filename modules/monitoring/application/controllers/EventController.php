@@ -504,6 +504,7 @@ class EventController extends Controller
                 $details = array(
                     array($this->translate('State time'), DateFormatter::formatTime($event->state_time)),
                     array($this->translate('State'), $this->state($isService, $event->state)),
+                    array($this->translate('Check source'), $event->check_source),
                     array($this->translate('Check attempt'), $this->view->escape(sprintf(
                         $this->translate('%d of %d'),
                         (int) $event->current_check_attempt,
@@ -511,7 +512,6 @@ class EventController extends Controller
                     ))),
                     array($this->translate('Last state'), $this->state($isService, $event->last_state)),
                     array($this->translate('Last hard state'), $this->state($isService, $event->last_hard_state)),
-                    array($this->translate('Check source'), $event->check_source),
                     array(
                         $this->translate('Output'),
                         $this->pluginOutput($event->output) .  $this->pluginOutput($event->long_output)
