@@ -58,6 +58,12 @@ class CheckNowCommandForm extends ObjectsCommandForm
     {
         foreach ($this->objects as $object) {
             /** @var \Icinga\Module\Monitoring\Object\MonitoredObject $object */
+            if (! $object->active_checks_enabled
+                && ! $this->Auth()->hasPermission('monitoring/command/schedule-check')
+            ) {
+                continue;
+            }
+
             if ($object->getType() === $object::TYPE_HOST) {
                 $check = new ScheduleHostCheckCommand();
             } else {

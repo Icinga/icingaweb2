@@ -45,6 +45,10 @@ class ScheduleHostCheckCommandForm extends ScheduleServiceCheckCommandForm
     {
         foreach ($this->objects as $object) {
             /** @var \Icinga\Module\Monitoring\Object\Host $object */
+            if (! $object->active_checks_enabled) {
+                continue;
+            }
+
             $check = new ScheduleHostCheckCommand();
             $check
                 ->setObject($object)

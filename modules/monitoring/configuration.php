@@ -12,6 +12,10 @@ $this->providePermission(
     $this->translate('Allow scheduling host and service checks')
 );
 $this->providePermission(
+    'monitoring/command/schedule-check/active-only',
+    $this->translate('Allow scheduling host and service checks (Only on objects with active checks enabled)')
+);
+$this->providePermission(
     'monitoring/command/acknowledge-problem',
     $this->translate('Allow acknowledging host and service problems')
 );
