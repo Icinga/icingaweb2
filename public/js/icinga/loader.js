@@ -893,13 +893,14 @@
                 }, 0);
             }
 
-            if (scrollPos !== false) {
-                setTimeout($container.scrollTop.bind($container), 0, scrollPos);
-            }
             var icinga = this.icinga;
             //icinga.events.applyHandlers($container);
             icinga.ui.initializeControls($container);
             icinga.ui.fixControls();
+
+            if (scrollPos !== false) {
+                $container.scrollTop(scrollPos);
+            }
 
             // Re-enable all click events (disabled as of performance reasons)
             // $('*').off('click');
