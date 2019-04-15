@@ -144,6 +144,10 @@
             req.addToHistory = true;
             req.progressTimer = progressTimer;
 
+            if (url.match(/#/)) {
+                req.forceFocus = url.split(/#/)[1];
+            }
+
             if (id) {
                 this.requests[id] = req;
             }
@@ -453,9 +457,8 @@
                 this.failureNotice = null;
             }
 
-            var url = req.url;
             this.icinga.logger.debug(
-                'Got response for ', req.$target, ', URL was ' + url
+                'Got response for ', req.$target, ', URL was ' + req.url
             );
             this.processNotificationHeader(req);
 
@@ -605,9 +608,6 @@
             this.renderContentToContainer($resp.html(), req.$target, req.action, req.autorefresh, req.forceFocus, autoSubmit);
             if (oldNotifications) {
                 oldNotifications.appendTo($('#notifications'));
-            }
-            if (url.match(/#/)) {
-                setTimeout(this.icinga.ui.focusElement, 0, url.split(/#/)[1], req.$target);
             }
             if (newBody) {
                 this.icinga.ui.fixDebugVisibility().triggerWindowResize();
@@ -782,10 +782,15 @@
             var containerId = $container.attr('id');
 
             var activeElementPath = false;
+            var navigationAnchor = false;
             var focusFallback = false;
 
             if (forceFocus && forceFocus.length) {
-                activeElementPath = this.icinga.utils.getCSSPath($(forceFocus));
+                if (typeof forceFocus === 'string') {
+                    navigationAnchor = forceFocus;
+                } else {
+                    activeElementPath = this.icinga.utils.getCSSPath($(forceFocus));
+                }
             } else if (document.activeElement && document.activeElement.id === 'search') {
                 activeElementPath = '#search';
             } else if (document.activeElement
@@ -804,7 +809,7 @@
                 activeElementPath = this.icinga.utils.getCSSPath($activeElement);
             }
 
-            if (typeof containerId !== 'undefined') {
+            if (! forceFocus && typeof containerId !== 'undefined') {
                 if (autorefresh || autoSubmit) {
                     scrollPos = $container.scrollTop();
                 } else {
@@ -863,7 +868,9 @@
             }
             this.icinga.ui.assignUniqueContainerIds();
 
-            if (! activeElementPath) {
+            if (navigationAnchor) {
+                setTimeout(this.icinga.ui.focusElement, 0, navigationAnchor, $container);
+            } else if (! activeElementPath) {
                 // Active element was not in this container
                 if (! autorefresh) {
                     setTimeout(function() {
@@ -881,7 +888,7 @@
                     var $activeElement = $(activeElementPath);
 
                     if ($activeElement.length && $activeElement.is(':visible')) {
-                        $activeElement.focus();
+                        $activeElement[0].focus({preventScroll: autorefresh});
                     } else if (! autorefresh) {
                         if (focusFallback) {
                             $(focusFallback.parent).find(focusFallback.child).focus();
@@ -900,6 +907,13 @@
 
             if (scrollPos !== false) {
                 $container.scrollTop(scrollPos);
+
+                // Fallback for browsers without support for focus({preventScroll: true})
+                setTimeout(function () {
+                    if ($container.scrollTop() !== scrollPos) {
+                        $container.scrollTop(scrollPos);
+                    }
+                }, 0);
             }
 
             // Re-enable all click events (disabled as of performance reasons)
