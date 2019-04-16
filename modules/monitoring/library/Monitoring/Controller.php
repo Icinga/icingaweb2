@@ -97,7 +97,7 @@ class Controller extends IcingaWebController
      *
      * @param   string $name        Name of the restriction
      *
-     * @return  Filter|null         Filter object or null if the authenticated user is not restricted
+     * @return  Filter              Filter object
      * @throws  ConfigurationError  If the restriction contains invalid filter columns
      */
     protected function getRestriction($name)
@@ -115,7 +115,7 @@ class Controller extends IcingaWebController
         ));
         foreach ($this->getRestrictions($name) as $filter) {
             if ($filter === '*') {
-                return Filter::matchAny();
+                return Filter::matchAll();
             }
             try {
                 $restriction->addFilter(Filter::fromQueryString($filter));
@@ -138,6 +138,11 @@ class Controller extends IcingaWebController
                 );
             }
         }
+
+        if ($restriction->isEmpty()) {
+            return Filter::matchAll();
+        }
+
         return $restriction;
     }
 }
