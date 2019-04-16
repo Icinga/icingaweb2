@@ -139,9 +139,14 @@
             req.fail(this.onFailure);
             req.complete(this.onComplete);
             req.autorefresh = autorefresh;
+            req.method = method;
             req.action = action;
             req.addToHistory = true;
             req.progressTimer = progressTimer;
+
+            if (url.match(/#/)) {
+                req.forceFocus = url.split(/#/)[1];
+            }
 
             if (id) {
                 this.requests[id] = req;
@@ -349,10 +354,7 @@
                 return true;
             }
 
-            this.redirectToUrl(
-                redirect, req.$target, req.url, req.getResponseHeader('X-Icinga-Rerender-Layout'), req.forceFocus,
-                req.getResponseHeader('X-Icinga-Refresh')
-            );
+            this.redirectToUrl(redirect, req.$target, req);
             return true;
         },
 
@@ -361,14 +363,20 @@
          *
          * @param {string}  url
          * @param {object}  $target
-         * @param {string}  origin
-         * @param {boolean} rerenderLayout
+         * @param {XMLHttpRequest} referrer
          */
-        redirectToUrl: function (url, $target, origin, rerenderLayout, forceFocus, autoRefreshInterval) {
-            var icinga = this.icinga;
+        redirectToUrl: function (url, $target, referrer) {
+            var icinga = this.icinga,
+                rerenderLayout,
+                autoRefreshInterval,
+                forceFocus,
+                origin;
 
-            if (typeof rerenderLayout === 'undefined') {
-                rerenderLayout = false;
+            if (typeof referrer !== 'undefined') {
+                rerenderLayout = referrer.getResponseHeader('X-Icinga-Rerender-Layout');
+                autoRefreshInterval = referrer.autoRefreshInterval;
+                forceFocus = referrer.forceFocus;
+                origin = referrer.url;
             }
 
             icinga.logger.debug(
@@ -416,6 +424,7 @@
                     var req = this.loadUrl(url, $target);
                     req.forceFocus = url === origin ? forceFocus : null;
                     req.autoRefreshInterval = autoRefreshInterval;
+                    req.referrer = referrer;
                 }
             }
         },
@@ -448,9 +457,8 @@
                 this.failureNotice = null;
             }
 
-            var url = req.url;
             this.icinga.logger.debug(
-                'Got response for ', req.$target, ', URL was ' + url
+                'Got response for ', req.$target, ', URL was ' + req.url
             );
             this.processNotificationHeader(req);
 
@@ -570,6 +578,20 @@
                 rendered = true;
             }
 
+            var referrer = req.referrer;
+            if (typeof referrer === 'undefined') {
+                referrer = req;
+            }
+
+            var autoSubmit = false;
+            if (referrer.method === 'POST') {
+                var newUrl = this.icinga.utils.parseUrl(req.url);
+                var currentUrl = this.icinga.utils.parseUrl(req.$target.data('icingaUrl'));
+                if (newUrl.path === currentUrl.path && this.icinga.utils.objectsEqual(newUrl.params, currentUrl.params)) {
+                    autoSubmit = true;
+                }
+            }
+
             req.$target.data('icingaUrl', req.url);
 
             this.icinga.ui.initializeTriStates($resp);
@@ -583,12 +605,9 @@
             }
 
             // .html() removes outer div we added above
-            this.renderContentToContainer($resp.html(), req.$target, req.action, req.autorefresh, req.forceFocus);
+            this.renderContentToContainer($resp.html(), req.$target, req.action, req.autorefresh, req.forceFocus, autoSubmit);
             if (oldNotifications) {
                 oldNotifications.appendTo($('#notifications'));
-            }
-            if (url.match(/#/)) {
-                setTimeout(this.icinga.ui.focusElement, 0, url.split(/#/)[1], req.$target);
             }
             if (newBody) {
                 this.icinga.ui.fixDebugVisibility().triggerWindowResize();
@@ -756,17 +775,22 @@
         /**
          * Smoothly render given HTML to given container
          */
-        renderContentToContainer: function (content, $container, action, autorefresh, forceFocus) {
+        renderContentToContainer: function (content, $container, action, autorefresh, forceFocus, autoSubmit) {
             // Container update happens here
             var scrollPos = false;
             var _this = this;
             var containerId = $container.attr('id');
 
             var activeElementPath = false;
+            var navigationAnchor = false;
             var focusFallback = false;
 
             if (forceFocus && forceFocus.length) {
-                activeElementPath = this.icinga.utils.getCSSPath($(forceFocus));
+                if (typeof forceFocus === 'string') {
+                    navigationAnchor = forceFocus;
+                } else {
+                    activeElementPath = this.icinga.utils.getCSSPath($(forceFocus));
+                }
             } else if (document.activeElement && document.activeElement.id === 'search') {
                 activeElementPath = '#search';
             } else if (document.activeElement
@@ -785,8 +809,8 @@
                 activeElementPath = this.icinga.utils.getCSSPath($activeElement);
             }
 
-            if (typeof containerId !== 'undefined') {
-                if (autorefresh) {
+            if (! forceFocus && typeof containerId !== 'undefined') {
+                if (autorefresh || autoSubmit) {
                     scrollPos = $container.scrollTop();
                 } else {
                     scrollPos = 0;
@@ -844,7 +868,9 @@
             }
             this.icinga.ui.assignUniqueContainerIds();
 
-            if (! activeElementPath) {
+            if (navigationAnchor) {
+                setTimeout(this.icinga.ui.focusElement, 0, navigationAnchor, $container);
+            } else if (! activeElementPath) {
                 // Active element was not in this container
                 if (! autorefresh) {
                     setTimeout(function() {
@@ -862,7 +888,7 @@
                     var $activeElement = $(activeElementPath);
 
                     if ($activeElement.length && $activeElement.is(':visible')) {
-                        $activeElement.focus();
+                        $activeElement[0].focus({preventScroll: autorefresh});
                     } else if (! autorefresh) {
                         if (focusFallback) {
                             $(focusFallback.parent).find(focusFallback.child).focus();
@@ -874,13 +900,21 @@
                 }, 0);
             }
 
-            if (scrollPos !== false) {
-                setTimeout($container.scrollTop.bind($container), 0, scrollPos);
-            }
             var icinga = this.icinga;
             //icinga.events.applyHandlers($container);
             icinga.ui.initializeControls($container);
             icinga.ui.fixControls();
+
+            if (scrollPos !== false) {
+                $container.scrollTop(scrollPos);
+
+                // Fallback for browsers without support for focus({preventScroll: true})
+                setTimeout(function () {
+                    if ($container.scrollTop() !== scrollPos) {
+                        $container.scrollTop(scrollPos);
+                    }
+                }, 0);
+            }
 
             // Re-enable all click events (disabled as of performance reasons)
             // $('*').off('click');

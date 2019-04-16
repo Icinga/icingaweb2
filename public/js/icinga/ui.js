@@ -567,18 +567,22 @@
 
             $container.find('.controls').each(function() {
                 var $controls = $(this);
-                if (! $controls.next('.fake-controls').length) {
+                if (! $controls.prev('.fake-controls').length) {
                     var $tabs = $controls.find('.tabs', $controls);
                     if ($tabs.length && $controls.children().length > 1 && ! $tabs.next('.tabs-spacer').length) {
                         $tabs.after($('<div class="tabs-spacer"></div>'));
                     }
                     var $fakeControls = $('<div class="fake-controls"></div>');
                     $fakeControls.height($controls.height()).css({
-                        display: 'block'
+                        // That's only temporary. It's reset in fixControls, which is called at the end of this
+                        // function. Its purpose is to prevent the content from jumping up upon auto-refreshes.
+                        // It works by making the fake-controls appear at the same vertical level as the controls
+                        // and the height of the content then doesn't change when taking the controls out of the flow.
+                        float: 'right'
                     });
-                    $controls.css({
+                    $controls.before($fakeControls).css({
                         position: 'fixed'
-                    }).after($fakeControls);
+                    });
                 }
             });
 
@@ -669,12 +673,15 @@
 
             $container.find('.controls').each(function() {
                 var $controls = $(this);
-                var $fakeControls = $controls.next('.fake-controls');
+                var $fakeControls = $controls.prev('.fake-controls');
+                $fakeControls.css({
+                    float: '', // Set by initializeControls
+                    height: $controls.height()
+                });
                 $controls.css({
                     top: $container.offsetParent().position().top,
                     width: $fakeControls.outerWidth()
                 });
-                $fakeControls.height($controls.height());
             });
 
             var $statusBar = $container.children('.monitoring-statusbar');
