@@ -27,10 +27,26 @@ class AnnouncementsController extends Controller
             )
         );
 
-        $repo = new AnnouncementIniRepository();
-        $this->view->announcements = $repo
-            ->select(array('id', 'author', 'message', 'start', 'end'))
-            ->order('start', 'DESC');
+        $announcements = (new AnnouncementIniRepository())
+            ->select([
+                'id',
+                'author',
+                'message',
+                'start',
+                'end'
+            ]);
+
+        $sortAndFilterColumns = [
+            'author'    => $this->translate('Author'),
+            'message'   => $this->translate('Message'),
+            'start'     => $this->translate('Start'),
+            'end'       => $this->translate('End')
+        ];
+
+        $this->setupSortControl($sortAndFilterColumns, $announcements, ['start' => 'desc']);
+        $this->setupFilterControl($announcements, $sortAndFilterColumns, ['message']);
+
+        $this->view->announcements = $announcements->fetchAll();
     }
 
     /**
