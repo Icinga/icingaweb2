@@ -42,6 +42,7 @@ class HostnotificationQuery extends IdoQuery
             'instance_name' => 'i.instance_name'
         ),
         'notifications' => array(
+            'host'                      => 'ho.name1 COLLATE latin1_general_ci',
             'host_name'                 => 'ho.name1',
             'notification_output'       => 'hn.output',
             'notification_reason'       => 'hn.notification_reason',
@@ -53,6 +54,7 @@ class HostnotificationQuery extends IdoQuery
             'servicegroup_name' => 'sgo.name1'
         ),
         'services' => array(
+            'service'               => 'so.name2 COLLATE latin1_general_ci',
             'service_description'   => 'so.name2',
             'service_display_name'  => 's.display_name COLLATE latin1_general_ci',
             'service_host_name'     => 'so.name1'

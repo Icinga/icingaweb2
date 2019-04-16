@@ -42,12 +42,14 @@ class ServicenotificationQuery extends IdoQuery
             'instance_name' => 'i.instance_name'
         ),
         'notifications' => array(
+            'host'                      => 'so.name1 COLLATE latin1_general_ci',
             'host_name'                 => 'so.name1',
             'notification_output'       => 'sn.output',
             'notification_reason'       => 'sn.notification_reason',
             'notification_state'        => 'sn.state',
             'notification_timestamp'    => 'UNIX_TIMESTAMP(sn.start_time)',
             'object_type'               => '(\'service\')',
+            'service'                   => 'so.name2 COLLATE latin1_general_ci',
             'service_description'       => 'so.name2',
             'service_host_name'         => 'so.name1'
         ),
