@@ -3,6 +3,8 @@
 
 namespace Icinga\Data\Db;
 
+use DateTime;
+use DateTimeZone;
 use Exception;
 use Icinga\Data\Inspectable;
 use Icinga\Data\Inspection;
@@ -200,6 +202,7 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
                     $driverOptions[PDO::MYSQL_ATTR_INIT_COMMAND] .= ', NAMES ' . $adapterParamaters['charset'];
                     unset($adapterParamaters['charset']);
                 }
+                $driverOptions[PDO::MYSQL_ATTR_INIT_COMMAND] .= ', time_zone=\'' . $this->getTimezoneOffset() . '\'';
                 $driverOptions[PDO::MYSQL_ATTR_INIT_COMMAND] .=';';
                 $defaultPort = 3306;
                 break;
@@ -275,6 +278,22 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
     {
         $this->tablePrefix = $prefix;
         return $this;
+    }
+
+    /**
+     * Get offset from the current default timezone to GMT
+     *
+     * @return string
+     */
+    public function getTimezoneOffset()
+    {
+        $tz = new DateTimeZone(date_default_timezone_get());
+        $offset = $tz->getOffset(new DateTime());
+        $prefix = $offset >= 0 ? '+' : '-';
+        $offset = abs($offset);
+        $hours = (int) floor($offset / 3600);
+        $minutes = (int) floor(($offset % 3600) / 60);
+        return sprintf('%s%d:%02d', $prefix, $hours, $minutes);
     }
 
     /**
