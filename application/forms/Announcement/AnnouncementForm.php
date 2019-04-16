@@ -13,6 +13,21 @@ use Icinga\Forms\RepositoryForm;
  */
 class AnnouncementForm extends RepositoryForm
 {
+    protected function fetchEntry()
+    {
+        $entry = parent::fetchEntry();
+        if ($entry !== false) {
+            if ($entry->start !== null) {
+                $entry->start = (new DateTime())->setTimestamp($entry->start);
+            }
+            if ($entry->end !== null) {
+                $entry->end = (new DateTime())->setTimestamp($entry->end);
+            }
+        }
+
+        return $entry;
+    }
+
     /**
      * {@inheritDoc}
      */

@@ -40,8 +40,8 @@
     <?php endif ?>
             <td><?= $this->escape($announcement->author) ?></td>
             <td><?= $this->ellipsis($this->escape($announcement->message), 100) ?></td>
-            <td><?= $this->formatDateTime($announcement->start->getTimestamp()) ?></td>
-            <td><?= $this->formatDateTime($announcement->end->getTimestamp()) ?></td>
+            <td><?= $this->formatDateTime($announcement->start) ?></td>
+            <td><?= $this->formatDateTime($announcement->end) ?></td>
         <?php if ($this->hasPermission('admin')): ?>
             <td class="icon-col"><?= $this->qlink(
                 null,
