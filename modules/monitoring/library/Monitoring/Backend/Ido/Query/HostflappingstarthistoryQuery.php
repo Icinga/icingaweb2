@@ -34,6 +34,7 @@ class HostflappingstarthistoryQuery extends IdoQuery
     protected $columnMap = array(
         'flappinghistory' => array(
             'id'            => 'hfh.flappinghistory_id',
+            'host'          => 'ho.name1 COLLATE latin1_general_ci',
             'host_name'     => 'ho.name1',
             'object_id'     => 'hfh.object_id',
             'object_type'   => '(\'host\')',
@@ -58,6 +59,7 @@ class HostflappingstarthistoryQuery extends IdoQuery
             'servicegroup_alias'    => 'sg.alias COLLATE latin1_general_ci'
         ),
         'services' => array(
+            'service'               => 'so.name2 COLLATE latin1_general_ci',
             'service_description'   => 'so.name2',
             'service_display_name'  => 's.display_name COLLATE latin1_general_ci',
             'service_host_name'     => 'so.name1'

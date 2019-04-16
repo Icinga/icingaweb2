@@ -34,10 +34,12 @@ class ServiceflappingstarthistoryQuery extends IdoQuery
     protected $columnMap = array(
         'flappinghistory' => array(
             'id'                    => 'sfh.flappinghistory_id',
+            'host'                  => 'so.name1 COLLATE latin1_general_ci',
             'host_name'             => 'so.name1',
             'object_id'             => 'sfh.object_id',
             'object_type'           => '(\'service\')',
             'output'                => '(sfh.percent_state_change || \'\')',
+            'service'               => 'so.name2 COLLATE latin1_general_ci',
             'service_description'   => 'so.name2',
             'service_host_name'     => 'so.name1',
             'state'                 => '(-1)',
