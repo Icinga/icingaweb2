@@ -3,7 +3,7 @@
     <?= $this->tabs ?>
     <div class="sort-controls-container">
         <?= $this->sortBox ?>
-        <a href="<?= $this->href('monitoring/list/servicegroups') ?>" class="grid-toggle-link"
+        <a href="<?= $this->href('monitoring/list/servicegroups')->addFilter($this->filterEditor->getFilter()) ?>" class="grid-toggle-link"
            title="<?= $this->translate('Toogle grid view mode') ?>">
             <?= $this->icon('th-list', null, ['class' => '-inactive']) ?>
             <?= $this->icon('th-thumb-empty', null, ['class' => '-active']) ?>
@@ -24,7 +24,7 @@ if (! $serviceGroups->hasResult()): ?>
     <?php if ($serviceGroup->services_critical_unhandled > 0): ?>
         <?= $this->qlink(
             $serviceGroup->services_critical_unhandled,
-            'monitoring/list/servicegrid',
+            $this->url('monitoring/list/servicegrid')->addFilter($this->filterEditor->getFilter()),
             [
                 'servicegroup_name' => $serviceGroup->servicegroup_name,
                 'service_handled'   => 0,
@@ -46,7 +46,7 @@ if (! $serviceGroups->hasResult()): ?>
     <?php elseif ($serviceGroup->services_warning_unhandled > 0): ?>
         <?= $this->qlink(
             $serviceGroup->services_warning_unhandled,
-            'monitoring/list/servicegrid',
+            $this->url('monitoring/list/servicegrid')->addFilter($this->filterEditor->getFilter()),
             [
                 'servicegroup_name' => $serviceGroup->servicegroup_name,
                 'service_handled'   => 0,
@@ -68,7 +68,7 @@ if (! $serviceGroups->hasResult()): ?>
     <?php elseif ($serviceGroup->services_unknown_unhandled > 0): ?>
         <?= $this->qlink(
             $serviceGroup->services_unknown_unhandled,
-            'monitoring/list/servicegrid',
+            $this->url('monitoring/list/servicegrid')->addFilter($this->filterEditor->getFilter()),
             [
                 'servicegroup_name' => $serviceGroup->servicegroup_name,
                 'service_handled'   => 0,
@@ -90,7 +90,7 @@ if (! $serviceGroups->hasResult()): ?>
     <?php elseif ($serviceGroup->services_critical_handled > 0): ?>
         <?= $this->qlink(
             $serviceGroup->services_critical_handled,
-            'monitoring/list/servicegrid',
+            $this->url('monitoring/list/servicegrid')->addFilter($this->filterEditor->getFilter()),
             [
                 'servicegroup_name' => $serviceGroup->servicegroup_name,
                 'service_handled'   => 1,
@@ -112,7 +112,7 @@ if (! $serviceGroups->hasResult()): ?>
     <?php elseif ($serviceGroup->services_warning_handled > 0): ?>
         <?= $this->qlink(
             $serviceGroup->services_warning_handled,
-            'monitoring/list/servicegrid',
+            $this->url('monitoring/list/servicegrid')->addFilter($this->filterEditor->getFilter()),
             [
                 'servicegroup_name' => $serviceGroup->servicegroup_name,
                 'service_handled'   => 1,
@@ -134,7 +134,7 @@ if (! $serviceGroups->hasResult()): ?>
     <?php elseif ($serviceGroup->services_unknown_handled > 0): ?>
         <?= $this->qlink(
             $serviceGroup->services_unknown_handled,
-            'monitoring/list/servicegrid',
+            $this->url('monitoring/list/servicegrid')->addFilter($this->filterEditor->getFilter()),
             [
                 'servicegroup_name' => $serviceGroup->servicegroup_name,
                 'service_handled'   => 1,
@@ -156,7 +156,7 @@ if (! $serviceGroups->hasResult()): ?>
     <?php elseif ($serviceGroup->services_pending > 0): ?>
         <?= $this->qlink(
             $serviceGroup->services_pending,
-            'monitoring/list/servicegrid',
+            $this->url('monitoring/list/servicegrid')->addFilter($this->filterEditor->getFilter()),
             [
                 'servicegroup_name' => $serviceGroup->servicegroup_name,
                 'service_state'     => 99
@@ -177,7 +177,7 @@ if (! $serviceGroups->hasResult()): ?>
     <?php elseif ($serviceGroup->services_ok > 0): ?>
         <?= $this->qlink(
             $serviceGroup->services_ok,
-            'monitoring/list/servicegrid',
+            $this->url('monitoring/list/servicegrid')->addFilter($this->filterEditor->getFilter()),
             [
                 'servicegroup_name' => $serviceGroup->servicegroup_name,
                 'service_state'     => 0
@@ -202,7 +202,7 @@ if (! $serviceGroups->hasResult()): ?>
     <?php endif ?>
     <?= $this->qlink(
         $serviceGroup->servicegroup_alias,
-        'monitoring/list/servicegrid',
+        $this->url('monitoring/list/servicegrid')->addFilter($this->filterEditor->getFilter()),
         ['servicegroup_name' => $serviceGroup->servicegroup_name],
         [
             'title' => sprintf(
