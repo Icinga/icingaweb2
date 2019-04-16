@@ -365,7 +365,7 @@ class SimpleQuery implements QueryInterface, Queryable, Iterator
         }
 
         $column = $this->order[$orderIndex][0];
-        if (array_key_exists($column, $this->flippedColumns)) {
+        if (array_key_exists($column, $this->flippedColumns) && is_string($this->flippedColumns[$column])) {
             $column = $this->flippedColumns[$column];
         }
 
