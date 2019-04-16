@@ -30,6 +30,7 @@ class php {
   -> service { 'rh-php71-php-fpm':
     ensure => running,
     enable => true,
+    alias => 'php-fpm',
   }
 
   package { 'php-pecl-xdebug':
