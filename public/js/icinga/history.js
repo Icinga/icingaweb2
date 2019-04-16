@@ -63,10 +63,13 @@
             }
 
             var url = '';
+            var title = '';
 
             // We only store URLs of containers sitting directly under #main:
             $('#main > .container').each(function (idx, container) {
-                var cUrl = $(container).data('icingaUrl');
+                var $container = $(container),
+                    cUrl = $container.data('icingaUrl'),
+                    cTitle = $container.data('icingaTitle');
 
                 // TODO: I'd prefer to have the rightmost URL first
                 if ('undefined' !== typeof cUrl) {
@@ -77,12 +80,19 @@
                         url = url + '#!' + cUrl;
                     }
                 }
+
+                if (typeof cTitle !== 'undefined') {
+                    title = cTitle; // Only uses the rightmost title
+                }
             });
 
             // Did we find any URL? Then push it!
             if (url !== '') {
                 this.icinga.logger.debug('Pushing current state to history');
                 this.push(url);
+            }
+            if (title !== '') {
+                this.icinga.ui.setTitle(title);
             }
         },
 
