@@ -539,7 +539,7 @@
 
             var title = req.getResponseHeader('X-Icinga-Title');
             if (title && ! req.autorefresh && req.$target.closest('.dashboard').length === 0) {
-                this.icinga.ui.setTitle(decodeURIComponent(title));
+                req.$target.data('icingaTitle', decodeURIComponent(title));
             }
 
             // Set a window identifier if the server asks us to do so

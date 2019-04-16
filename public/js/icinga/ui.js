@@ -194,6 +194,7 @@
               'elements': $('#' + $col.attr('id') + ' > *').detach(),
               'data': {
                 'data-icinga-url': $col.data('icingaUrl'),
+                'data-icinga-title': $col.data('icingaTitle'),
                 'data-icinga-refresh': $col.data('icingaRefresh'),
                 'data-last-update': $col.data('lastUpdate'),
                 'data-icinga-module': $col.data('icingaModule')
@@ -202,6 +203,7 @@
             };
             this.icinga.loader.stopPendingRequestsFor($col);
             $col.removeData('icingaUrl');
+            $col.removeData('icingaTitle');
             $col.removeData('icingaRefresh');
             $col.removeData('lastUpdate');
             $col.removeData('icingaModule');
@@ -213,6 +215,7 @@
             backup['elements'].appendTo($col);
             $col.attr('class', backup['class']); // TODO: ie memleak? remove first?
             $col.data('icingaUrl', backup['data']['data-icinga-url']);
+            $col.data('icingaTitle', backup['data']['data-icinga-title']);
             $col.data('icingaRefresh', backup['data']['data-icinga-refresh']);
             $col.data('lastUpdate', backup['data']['data-last-update']);
             $col.data('icingaModule', backup['data']['data-icinga-module']);
@@ -294,6 +297,7 @@
 
         closeContainer: function($c) {
             $c.removeData('icingaUrl');
+            $c.removeData('icingaTitle');
             $c.removeData('icingaRefresh');
             $c.removeData('lastUpdate');
             $c.removeData('icingaModule');
