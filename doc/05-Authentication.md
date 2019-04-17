@@ -171,9 +171,13 @@ Option                   | Description
 -------------------------|-----------------------------------------------
 backend                  | **Required.** Specifies the backend type. Can be set to `ldap`, `msldap`.
 resource                 | **Required.** The name of the LDAP resource defined in [resources.ini](04-Resources.md#resources).
-user\_class              | **Optional.** LDAP user class. Defaults to `user`.
+domain                   | **Optional.** The domain the LDAP server is responsible for. See [Domain-aware Authentication](05-Authentication.md#domain-aware-authentication).
+user\_class              | **Optional.** LDAP user class. Defaults to `inetOrgPerson` with `msldap` and `user` with `ldap`.
 user\_name\_attribute    | **Optional.** LDAP attribute which contains the username. Defaults to `sAMAccountName` with `msldap` and `uid` with `ldap`.
+user\_base\_dn           | **Optional.** The path where users can be found on the LDAP server.
+base_dn                  | **Optional.** LDAP base dn for groups. Leave empty to select all groups available using the specified resource.
 group\_class             | **Optional.** LDAP group class. Defaults to `group`.
+group\_member\_attribute | **Optional.** LDAP attribute where a group's members are stored. Defaults to `member`.
 group\_name\_attribute   | **Optional.** LDAP attribute which contains the groupname. Defaults to `sAMAccountName` with `msldap` and `gid` with `ldap`.
 group\_filter            | **Optional.** LDAP group search filter. Requires `group_class` and `group_name_attribute`.
 nested\_group\_search    | **Optional.** Enable nested group search in Active Directory based on the user. Defaults to `0`. Only available with `backend` type `msldap`.
