@@ -197,7 +197,8 @@
                 'data-icinga-title': $col.data('icingaTitle'),
                 'data-icinga-refresh': $col.data('icingaRefresh'),
                 'data-last-update': $col.data('lastUpdate'),
-                'data-icinga-module': $col.data('icingaModule')
+                'data-icinga-module': $col.data('icingaModule'),
+                'data-icinga-container-id': $col.data('icingaContainerId')
               },
               'class': $col.attr('class')
             };
@@ -207,6 +208,7 @@
             $col.removeData('icingaRefresh');
             $col.removeData('lastUpdate');
             $col.removeData('icingaModule');
+            $col.removeData('icingaContainerId');
             $col.removeAttr('class').attr('class', 'container');
             return props;
         },
@@ -219,6 +221,7 @@
             $col.data('icingaRefresh', backup['data']['data-icinga-refresh']);
             $col.data('lastUpdate', backup['data']['data-last-update']);
             $col.data('icingaModule', backup['data']['data-icinga-module']);
+            $col.data('icingaContainerId', backup['data']['data-icinga-container-id']);
         },
 
         triggerWindowResize: function () {
@@ -703,21 +706,44 @@
             this.fixControls();
         },
 
+        getUniqueContainerId: function ($cont) {
+            if (typeof $cont === 'undefined' || !$cont.length) {
+                return null;
+            }
+
+            var containerId = $cont.data('icingaContainerId');
+            if (typeof containerId === 'undefined') {
+                /**
+                 * Only generate an id if it's not for col1 or the menu (which are using the non-suffixed window id).
+                 * This is based on the assumption that the server only knows about the menu and first column
+                 * and therefore does not need to protect its ids. (As the menu is most likely part of the sidebar)
+                 */
+                if ($cont.attr('id') === 'menu' || $cont.attr('id') === 'col1') {
+                    return null;
+                }
+
+                containerId = this.icinga.utils.generateId(6); // Random because the content may move
+                $cont.data('icingaContainerId', containerId);
+            }
+
+            return containerId;
+        },
+
         getWindowId: function () {
             if (! this.hasWindowId()) {
                 return undefined;
             }
-            return window.name.match(/^Icinga_([a-zA-Z0-9]+)$/)[1];
+            return window.name.match(/^Icinga-([a-zA-Z0-9]+)$/)[1];
         },
 
         hasWindowId: function () {
-            var res = window.name.match(/^Icinga_([a-zA-Z0-9]+)$/);
+            var res = window.name.match(/^Icinga-([a-zA-Z0-9]+)$/);
             return typeof res === 'object' && null !== res;
         },
 
         setWindowId: function (id) {
             this.icinga.logger.debug('Setting new window id', id);
-            window.name = 'Icinga_' + id;
+            window.name = 'Icinga-' + id;
         },
 
         destroy: function () {
