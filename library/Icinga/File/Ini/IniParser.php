@@ -304,6 +304,7 @@ class IniParser
         $str = str_replace('\"', '"', $str);
         $str = str_replace('\\\\', '\\', $str);
 
-        return $str;
+        // This replacement is a work-around for PHP bug #76965. Fixed with versions 7.1.24, 7.2.12 and 7.3.0.
+        return preg_replace('~^([\'"])(.*?)\1\s+$~', '$2', $str);
     }
 }
