@@ -207,7 +207,7 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
                     $driverOptions[PDO::MYSQL_ATTR_INIT_COMMAND] .= ', NAMES ' . $adapterParamaters['charset'];
                     unset($adapterParamaters['charset']);
                 }
-                $driverOptions[PDO::MYSQL_ATTR_INIT_COMMAND] .= ', time_zone=\'' . $this->getTimezoneOffset() . '\'';
+                $driverOptions[PDO::MYSQL_ATTR_INIT_COMMAND] .= ", time_zone='" . $this->defaultTimezoneOffset() . "'";
                 $driverOptions[PDO::MYSQL_ATTR_INIT_COMMAND] .=';';
                 $defaultPort = 3306;
                 break;
@@ -295,7 +295,7 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
      *
      * @return string
      */
-    public function getTimezoneOffset()
+    protected function defaultTimezoneOffset()
     {
         $tz = new DateTimeZone(date_default_timezone_get());
         $offset = $tz->getOffset(new DateTime());
