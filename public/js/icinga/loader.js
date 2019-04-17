@@ -107,7 +107,12 @@
 
             // Ask for a new window id in case we don't already have one
             if (this.icinga.ui.hasWindowId()) {
-                headers['X-Icinga-WindowId'] = this.icinga.ui.getWindowId();
+                var windowId = this.icinga.ui.getWindowId();
+                var containerId = this.icinga.ui.getUniqueContainerId($target);
+                if (containerId) {
+                    windowId = windowId + '_' + containerId;
+                }
+                headers['X-Icinga-WindowId'] = windowId;
             } else {
                 headers['X-Icinga-WindowId'] = 'undefined';
             }

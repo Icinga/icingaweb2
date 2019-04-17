@@ -85,6 +85,7 @@ $innerLayoutScript = $this->layout()->innerLayout . '.phtml';
 <script type="text/javascript" src="<?= $this->href($jsfile) ?>"></script>
 <!--<![endif]-->
 <script type="text/javascript">
+window.name = '<?= $this->protectId('Icinga') ?>';
 var icinga = new Icinga({
   baseUrl: '<?= $this->baseUrl(); ?>'
 });
