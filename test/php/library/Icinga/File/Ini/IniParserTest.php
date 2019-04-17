@@ -170,4 +170,69 @@ EOD;
             'IniParser::parseIniFile does resolve environment variables'
         );
     }
+
+    public function testPhpBug76965()
+    {
+        $config = <<<'EOD'
+[section]
+a = "foobar" 
+b = "foo"bar ""     
+c =   "foobar"  ; comment
+d =' foo ' 
+e =foo
+f = foo
+g = ""foo" "; Edge case, see below for more details
+EOD;
+
+        $parsedConfig = parse_ini_string($config, true, INI_SCANNER_RAW)['section'];
+        if ($parsedConfig['a'] === 'foobar') {
+            $this->markTestSkipped('This version of PHP is not affected by bug #76965');
+        }
+
+        $this->assertEquals('"foobar" ', $parsedConfig['a'], 'PHP version affected but bug #76965 not in effect?');
+        $this->assertEquals('"foo"bar ""     ', $parsedConfig['b'], 'PHP version affected but bug #76965 not in effect?');
+        $this->assertEquals('"foobar"  ', $parsedConfig['c'], 'PHP version affected but bug #76965 not in effect?');
+        $this->assertEquals("' foo ' ", $parsedConfig['d'], 'PHP version affected but bug #76965 not in effect?');
+
+        file_put_contents($this->tempFile, $config);
+        $configObject = IniParser::parseIniFile($this->tempFile);
+
+        $this->assertEquals(
+            'foobar',
+            $configObject->get('section', 'a'),
+            'Workaround for PHP bug #76965 missing'
+        );
+        $this->assertEquals(
+            'foo"bar "',
+            $configObject->get('section', 'b'),
+            'Workaround for PHP bug #76965 missing'
+        );
+        $this->assertEquals(
+            'foobar',
+            $configObject->get('section', 'c'),
+            'Workaround for PHP bug #76965 missing'
+        );
+        $this->assertEquals(
+            ' foo ',
+            $configObject->get('section', 'd'),
+            'Workaround for PHP bug #76965 missing'
+        );
+        $this->assertEquals(
+            'foo',
+            $configObject->get('section', 'e'),
+            'Workaround for PHP bug #76965 missing'
+        );
+        $this->assertEquals(
+            'foo',
+            $configObject->get('section', 'f'),
+            'Workaround for PHP bug #76965 missing'
+        );
+        // This is an edge case which will fail with the current work-around implementation.
+        // Though, it's considered a really rare case and as such deliberately ignored.
+        /*$this->assertEquals(
+            '"foo" ',
+            $configObject->get('section', 'g'),
+            'Workaround for PHP bug #76965 too greedy'
+        );*/
+    }
 }
