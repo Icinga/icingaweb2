@@ -16,7 +16,6 @@ chapter.
 * A web server, e.g. Apache or Nginx
 * PHP version >= 5.6.0
 * The following PHP modules must be installed: cURL, gettext, intl, mbstring, OpenSSL and xml
-* Default time zone configured for PHP in the php.ini file
 * LDAP PHP library when using Active Directory or LDAP for authentication
 * MySQL or PostgreSQL PHP libraries
 
@@ -317,8 +316,6 @@ Check these directories:
 
 * `/etc/php.ini`
 * `/etc/php.d/*.ini`
-
-Most important for icingaweb2 is `date.timezone`.
 
 PHP settings should be stored to:
 

@@ -575,15 +575,6 @@ class WebWizard extends Wizard implements SetupWizard
             )
         )));
 
-        $set->add(new PhpConfigRequirement(array(
-            'condition'     => array('date.timezone', true),
-            'title'         => mt('setup', 'Default Timezone'),
-            'description'   => sprintf(
-                mt('setup', 'It is required that a default timezone has been set using date.timezone in %s.'),
-                php_ini_loaded_file() ?: 'php.ini'
-            ),
-        )));
-
         $set->add(new OSRequirement(array(
             'optional'      => true,
             'condition'     => 'linux',
