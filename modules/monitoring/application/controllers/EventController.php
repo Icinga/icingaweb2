@@ -315,6 +315,7 @@ class EventController extends Controller
                         'last_hard_state'       => 'statechangeevent_last_hard_state',
                         'output'                => 'statechangeevent_output',
                         'long_output'           => 'statechangeevent_long_output',
+                        'check_source'          => 'statechangeevent_check_source',
                         'host_name',
                         'service_description'
                     ))
@@ -503,6 +504,7 @@ class EventController extends Controller
                 $details = array(
                     array($this->translate('State time'), DateFormatter::formatTime($event->state_time)),
                     array($this->translate('State'), $this->state($isService, $event->state)),
+                    array($this->translate('Check source'), $event->check_source),
                     array($this->translate('Check attempt'), $this->view->escape(sprintf(
                         $this->translate('%d of %d'),
                         (int) $event->current_check_attempt,
