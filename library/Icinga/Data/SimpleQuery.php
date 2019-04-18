@@ -365,13 +365,11 @@ class SimpleQuery implements QueryInterface, Queryable, Iterator
         }
 
         $column = $this->order[$orderIndex][0];
-        if (array_key_exists($column, $this->flippedColumns)) {
+        if (array_key_exists($column, $this->flippedColumns) && is_string($this->flippedColumns[$column])) {
             $column = $this->flippedColumns[$column];
         }
 
-        // TODO: throw Exception if column is missing
-        //$res = strnatcmp(strtolower($a->$column), strtolower($b->$column));
-        $result = @strcmp(strtolower($a->$column), strtolower($b->$column));
+        $result = strcmp(strtolower($a->$column), strtolower($b->$column));
         if ($result === 0) {
             return $this->compare($a, $b, ++$orderIndex);
         }
