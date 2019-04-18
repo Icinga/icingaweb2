@@ -477,10 +477,9 @@ and all the other steps described above first.
 
 1. Install PHP dependencies: `php`, `php-intl`, `php-imagick`, `php-gd`, `php-mysql`, `php-curl`, `php-mbstring` used
 by Icinga Web 2.
-2. Set a timezone in `php.ini` configuration file.
-3. Create a database for Icinga Web 2, i.e. `icingaweb2`.
-4. Import the database schema: `mysql -D icingaweb2 < /usr/share/icingaweb2/etc/schema/mysql.schema.sql`.
-5. Insert administrator user in the `icingaweb2` database:
+2. Create a database for Icinga Web 2, i.e. `icingaweb2`.
+3. Import the database schema: `mysql -D icingaweb2 < /usr/share/icingaweb2/etc/schema/mysql.schema.sql`.
+4. Insert administrator user in the `icingaweb2` database:
 `INSERT INTO icingaweb_user (name, active, password_hash) VALUES ('admin', 1, '<hash>')`, where `<hash>` is the output
 of `openssl passwd -1 <password>`.
 5. Make sure the `ido-mysql` and `api` features are enabled in Icinga 2: `icinga2 feature enable ido-mysql` and 
