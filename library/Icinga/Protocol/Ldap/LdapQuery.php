@@ -3,6 +3,7 @@
 
 namespace Icinga\Protocol\Ldap;
 
+use Icinga\Data\Filter\Filter;
 use LogicException;
 use Icinga\Data\SimpleQuery;
 
@@ -181,6 +182,37 @@ class LdapQuery extends SimpleQuery
     {
         $this->where('objectClass', $target);
         return parent::from($target, $fields);
+    }
+
+    public function where($condition, $value = null)
+    {
+        $this->addFilter(Filter::expression($condition, '=', $value));
+        return $this;
+    }
+
+    public function addFilter(Filter $filter)
+    {
+        $this->makeCaseInsensitive($filter);
+        return parent::addFilter($filter);
+    }
+
+    public function setFilter(Filter $filter)
+    {
+        $this->makeCaseInsensitive($filter);
+        return parent::setFilter($filter);
+    }
+
+    protected function makeCaseInsensitive(Filter $filter)
+    {
+        if ($filter->isExpression()) {
+            /** @var \Icinga\Data\Filter\FilterExpression $filter */
+            $filter->setCaseSensitive(false);
+        } else {
+            /** @var \Icinga\Data\Filter\FilterChain $filter */
+            foreach ($filter->filters() as $subFilter) {
+                $this->makeCaseInsensitive($subFilter);
+            }
+        }
     }
 
     /**
