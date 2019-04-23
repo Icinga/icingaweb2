@@ -52,7 +52,11 @@ class StaticController extends Controller
             return;
         }
 
-        $img = file_get_contents('http://www.gravatar.com/avatar/' . $filename . '?s=120&d=mm');
+        $img = @file_get_contents('http://www.gravatar.com/avatar/' . $filename . '?s=120&d=mm');
+        if ($img === false) {
+            $this->httpNotFound('Unable to connect to gravatar.com');
+        }
+
         $cache->store($cacheFile, $img);
         $response->setHeader('ETag', sprintf('"%s"', $cache->etagForCachedFile($cacheFile)));
 
