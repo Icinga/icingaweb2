@@ -1179,25 +1179,7 @@ class LdapConnection implements Selectable, Inspectable
             $info = new Inspection('');
         }
 
-        $hostname = $this->hostname;
-        if ($this->encryption === static::LDAPS) {
-            $info->write('Connect using LDAPS');
-            $ldapUrls = explode(' ', $hostname);
-            if (count($ldapUrls) > 1) {
-                foreach ($ldapUrls as & $uri) {
-                    if (preg_match('/:\d+$/', $uri) === 0) {
-                        $uri = $uri . ':' . $this->port;
-                    }
-                    if (strpos($uri, '://') === false) {
-                        $uri = 'ldaps://' . $uri;
-                    }
-                }
-
-                $hostname = implode(' ', $ldapUrls);
-            } else {
-                $hostname = 'ldaps://' . $hostname . ':' . $this->port;
-            }
-        }
+        $hostname = $this->normalizeHostname($this->hostname);
 
         $ds = ldap_connect($hostname, $this->port);
 
@@ -1212,7 +1194,9 @@ class LdapConnection implements Selectable, Inspectable
         // Not setting this results in "Operations error" on AD when using the whole domain as search base
         ldap_set_option($ds, LDAP_OPT_REFERRALS, 0);
 
-        if ($this->encryption === static::STARTTLS) {
+        if ($this->encryption === static::LDAPS) {
+            $info->write('Connect using LDAPS');
+        } elseif ($this->encryption === static::STARTTLS) {
             $this->encrypted = true;
             $info->write('Connect using STARTTLS');
             if (! ldap_start_tls($ds)) {
@@ -1545,5 +1529,34 @@ class LdapConnection implements Selectable, Inspectable
             $insp->write('Schema discovery not possible: ' . $e->getMessage());
         }
         return $insp;
+    }
+
+    protected function normalizeHostname($hostname)
+    {
+        $scheme = $this->encryption === static::LDAPS ? 'ldaps://' : 'ldap://';
+        $normalizeHostname = function ($hostname) use ($scheme) {
+            if (strpos($hostname, $scheme) === false) {
+                $hostname = $scheme . $hostname;
+            }
+
+            if (! preg_match('/:\d+$/', $hostname)) {
+                $hostname .= ':' . $this->port;
+            }
+
+            return $hostname;
+        };
+
+        $ldapUrls = explode(' ', $hostname);
+        if (count($ldapUrls) > 1) {
+            foreach ($ldapUrls as & $uri) {
+                $uri = $normalizeHostname($uri);
+            }
+
+            $hostname = implode(' ', $ldapUrls);
+        } else {
+            $hostname = $normalizeHostname($hostname);
+        }
+
+        return $hostname;
     }
 }
