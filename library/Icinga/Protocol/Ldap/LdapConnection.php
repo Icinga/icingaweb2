@@ -344,11 +344,10 @@ class LdapConnection implements Selectable, Inspectable
         $success = @ldap_bind($ds, $this->bindDn, $this->bindPw);
         if (! $success) {
             throw new LdapException(
-                'LDAP bind (%s / %s) to %s with default port %s failed: %s',
+                'LDAP bind (%s / %s) to %s failed: %s',
                 $this->bindDn,
                 '***' /* $this->bindPw */,
-                $this->hostname,
-                $this->port,
+                $this->normalizeHostname($this->hostname),
                 ldap_error($ds)
             );
         }
@@ -1240,23 +1239,6 @@ class LdapConnection implements Selectable, Inspectable
             // We're checking the level by ourselves to avoid rendering the ldapsearch commandline for nothing
             $starttlsParam = $this->encryption === static::STARTTLS ? ' -ZZ' : '';
 
-            $ldapUrls = array();
-            $defaultScheme = $this->encryption === static::LDAPS ? 'ldaps://' : 'ldap://';
-            foreach (explode(' ', $this->hostname) as $uri) {
-                $url = Url::fromPath($uri);
-                if (! $url->getScheme()) {
-                    $uri = $defaultScheme . $uri . ($this->port ? ':' . $this->port : '');
-                } else {
-                    if ($url->getPort() === null) {
-                        $url->setPort($this->port);
-                    }
-
-                    $uri = $url->getAbsoluteUrl();
-                }
-
-                $ldapUrls[] = $uri;
-            }
-
             $bindParams = '';
             if ($this->bound) {
                 $bindParams = ' -D "' . $this->bindDn . '"' . ($this->bindPw ? ' -W' : '');
@@ -1275,7 +1257,7 @@ class LdapConnection implements Selectable, Inspectable
             Logger::debug("Issueing LDAP search. Use '%s' to reproduce.", sprintf(
                 'ldapsearch -P 3%s -H "%s"%s -b "%s" -s "%s" -z %u -l %u -a "%s"%s%s%s',
                 $starttlsParam,
-                implode(' ', $ldapUrls),
+                $this->normalizeHostname($this->hostname),
                 $bindParams,
                 $baseDn,
                 $scope,
@@ -1495,11 +1477,10 @@ class LdapConnection implements Selectable, Inspectable
         // Try a bind-command with the given user credentials, this must not fail
         $success = @ldap_bind($ds, $this->bindDn, $this->bindPw);
         $msg = sprintf(
-            'LDAP bind (%s / %s) to %s with default port %s',
+            'LDAP bind (%s / %s) to %s',
             $this->bindDn,
             '***' /* $this->bindPw */,
-            $this->hostname,
-            $this->port
+            $this->normalizeHostname($this->hostname)
         );
         if (! $success) {
             // ldap_error does not return any proper error messages in case of certificate errors. Connecting
