@@ -235,6 +235,10 @@
   border-spacing: 0 1px;
   width: 100%;
 
+  tr[href] {
+    -webkit-transform: translate3d(0,0,0); /* Fixes Safari hover bug in history table rows */
+  }
+
   tr[href].active {
     background-color: @tr-active-color;
   }
