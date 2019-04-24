@@ -39,7 +39,7 @@ $lastDate = null;
 $flappingMsg = $this->translate('Flapping with a %.2f%% state change rate');
 $rowAction = Url::fromPath('monitoring/event/show');
 ?>
-    <table class="table-row-selectable state-table" data-base-target="_next"<?php if (isset($tableCssClass)): ?> class="<?=$tableCssClass ?>"<?php endif ?>>
+    <table class="table-row-selectable state-table" data-base-target="_next">
     <tbody>
     <?php foreach ($history->peekAhead() as $event):
         $icon = '';
