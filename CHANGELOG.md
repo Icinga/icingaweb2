@@ -4,6 +4,68 @@ Please make sure to always read our [Upgrading](doc/80-Upgrading.md) documentati
 
 ## What's New
 
+### What's New in Version 2.6.3
+
+You can find issues related to this release on our [Roadmap](https://github.com/Icinga/icingaweb2/milestone/54?closed=1).
+
+#### PHP 7.3
+
+Now supported. :tada:
+
+#### LDAP - One part of our framework we'd want to NOT touch very often
+
+That's especially the case if it's about establishing a connection. With the help of our users we've finally fixed the
+issue that defining multiple hostnames and enabling STARTTLS has never properly worked. Also, they've identified that
+defining multiple hostnames caused a customized port not being utilized and fixed it themselves.
+
+There has also a rare case been fixed that caused no group members being found in case object classes had a different
+casing than what we expected. (Good news for all the non-OpenLdap and non-MSActiveDirectory users) 
+
+* LDAP connection fails with multiple servers using STARTTLS [#3639](https://github.com/Icinga/icingaweb2/issues/3639)
+* LDAPS authentication ignores custom port setting [#3713](https://github.com/Icinga/icingaweb2/issues/3713)
+* LDAP group members not found [#3650](https://github.com/Icinga/icingaweb2/issues/3650)
+
+#### We take care about your data even better now
+
+With this are newlines and HTML entities (such as `&nbsp;`) in plugin output and custom variables meant.
+Sorry if I've teased some data security folks now. :innocent:
+
+* Newlines in plugin output disappear [#3662](https://github.com/Icinga/icingaweb2/issues/3662)
+* Windows path separators are converted to newlines in custom variables [#3636](https://github.com/Icinga/icingaweb2/issues/3636)
+* HTML entities in plugin output are not resolved if no other HTML is there [#3707](https://github.com/Icinga/icingaweb2/issues/3707)
+
+#### You've wondered how you got into a famous blue police box?
+
+Don't worry, not only you and the european union are sometimes unsure what's the correct time.
+
+* Set client timezone on DB connection [#3525](https://github.com/Icinga/icingaweb2/issues/3525)
+* Ensure a valid default timezone is set in any case [#3747](https://github.com/Icinga/icingaweb2/pull/3747)
+* Fix that the event detail view is not showing times in correct timezone [#3660](https://github.com/Icinga/icingaweb2/pull/3660)
+
+#### UI - The portal to your monitoring environment, improved
+
+The collapsible sidebar introduced with v2.5 has been plagued by some issues since then. They're now fixed. Also,
+the UI should now flicker less and properly preserve the scroll position when interacting with action links. (This
+also allows the business process module to behave more stable when using drag and drop in large configurations.)
+
+* Collapsible Sidebar Issues [#3187](https://github.com/Icinga/icingaweb2/issues/3187)
+* Fix title when closing right column [#3654](https://github.com/Icinga/icingaweb2/issues/3654)
+* Preserve scroll position upon form submits [#3661](https://github.com/Icinga/icingaweb2/pull/3661)
+
+#### Corrected things we've broke recently
+
+That's due to preemptive changes to protect you from bad individuals. Unfortunately this meant that some unforeseen
+side-effects appeared after the release of v2.6.2. These are now fixed.
+
+* Multiline values in ini files broken [#3705](https://github.com/Icinga/icingaweb2/issues/3705)
+* PHP ini parser doesn't strip trailing whitespace [#3733](https://github.com/Icinga/icingaweb2/issues/3733)
+* Escaped characters in INI values are not unescaped [#3648](https://github.com/Icinga/icingaweb2/issues/3648)
+
+Though, if you've faced issue [#3705](https://github.com/Icinga/icingaweb2/issues/3705) you still need to take manual
+action (if not already done) as the provided fix does only prevent further occurrences of the resulting error. The
+required changes involve the transformation of all real newlines in Icinga Web 2's INI files to literal `\n` or `\r\n`
+sequences. (Files likely having such are the `roles.ini` and `announcements.ini`)
+
 ### What's New in Version 2.6.2
 
 You can find issues and features related to this release on our [Roadmap](https://github.com/Icinga/icingaweb2/milestone/53?closed=1).
