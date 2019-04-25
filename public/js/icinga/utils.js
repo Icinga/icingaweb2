@@ -286,7 +286,8 @@
             while (true) {
                 var id = $node.attr('id');
 
-                if (typeof id !== 'undefined') {
+                // Ignore forms and form controls because id generation is unreliable :(
+                if (typeof id !== 'undefined' && ! $node.is(':input') && ! $node.is('form')) {
                     path.push('#' + id);
                     break;
                 }
