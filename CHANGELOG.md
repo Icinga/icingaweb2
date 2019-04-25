@@ -12,11 +12,11 @@ You can find issues related to this release on our [Roadmap](https://github.com/
 
 Now supported. :tada:
 
-#### LDAP - One part of our framework we'd want to NOT touch very often
+#### LDAP - Community contributions, that's the spirit
 
-That's especially the case if it's about establishing a connection. With the help of our users we've finally fixed the
-issue that defining multiple hostnames and enabling STARTTLS has never properly worked. Also, they've identified that
-defining multiple hostnames caused a customized port not being utilized and fixed it themselves.
+With the help of our users we've finally fixed the issue that defining multiple hostnames and enabling STARTTLS has
+never properly worked. Also, they've identified that defining multiple hostnames caused a customized port not being
+utilized and fixed it themselves.
 
 There has also a rare case been fixed that caused no group members being found in case object classes had a different
 casing than what we expected. (Good news for all the non-OpenLdap and non-MSActiveDirectory users) 
