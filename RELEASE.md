@@ -25,7 +25,7 @@
 Specify the release version.
 
 ```
-VERSION=2.6.0
+VERSION=2.6.3
 ```
 
 Add your signing key to your Git configuration file, if not already there.
@@ -136,8 +136,8 @@ sed -i "s/Version: .*/Version: $VERSION/g" icingaweb2.spec
 vim icingaweb2.spec
 
 %changelog
-* Fri Apr 27 2018 Eric.Lippmann <eric.lippmann@icinga.com> 2.5.3-1
-- Update to 2.5.3
+* Wed Apr 24 2019 Johannes Meyer <johannes.meyer@icinga.com> 2.6.3-1
+- Update to 2.6.3
 ```
 
 ```
@@ -174,37 +174,47 @@ git checkout release && git pull
 
 #### Release Commit
 
-Set the `Version`, `Revision` and `changelog` inside the spec file.
+Set the `Version`, `Revision` and `changelog` by using the `dch` helper.
 
 ```
-./dch 2.5.3-1 "Update to 2.5.3"
+VERSION=2.6.3
+
+./dch $VERSION-1 "Update to $VERSION"
 ```
 
 ```
-git commit -av -m "Release 2.5.3-1"
+git commit -av -m "Release $VERSION-1"
 git push
 ```
 
+
 **Note for major releases**: Update release branch to latest.
-`git checkout release && git pull && git merge master && git push`
+
+```
+git checkout release && git pull && git merge master && git push
+```
 
 **Note for minor releases**: Cherry-pick the release commit into master.
-`git checkout master && git pull && git cherry-pick release && git push`
+
+```
+git checkout master && git pull && git cherry-pick release && git push
+```
 
 
 #### DEB with dch on macOS
 
 ```
-docker run -v `pwd`:/mnt/packaging -ti ubuntu:xenial bash
+docker run -v `pwd`:/mnt/packaging -ti ubuntu:bionic bash
 
-apt-get update
-apt-get install git devscripts vim
+apt-get update && apt-get install git ubuntu-dev-tools vim -y
 cd /mnt/packaging
 
 git config --global user.name "Eric Lippmann"
 git config --global user.email "eric.lippmann@icinga.com"
 
-./dch 2.5.3-1 "Update to 2.5.3"
+VERSION=2.6.3
+
+./dch $VERSION-1 "Update to $VERSION"
 ```
 
 ## Build Server <a id="build-server"></a>
@@ -212,24 +222,70 @@ git config --global user.email "eric.lippmann@icinga.com"
 * Verify package build changes for this version.
 * Test the snapshot packages for all distributions beforehand.
 * Build the newly created Git tag for Debian/RHEL/SuSE.
+  * Wait until all jobs have passed and then publish them one by one with `allow_release`
 
 ## Release Tests  <a id="release-tests"></a>
 
 * Provision the vagrant boxes and test the release packages.
+* * Start a new docker container and install/run Icinga Web 2 & icingacli.
+
+### CentOS
+
+```
+docker run -ti centos:latest bash
+
+yum -y install https://packages.icinga.com/epel/icinga-rpm-release-7-latest.noarch.rpm
+yum -y install centos-release-scl
+yum -y install icingaweb2 icingacli
+icingacli
+```
+
+### Debian
+
+```
+docker run -ti debian:stretch bash
+
+apt-get update && apt-get install -y wget curl gnupg apt-transport-https
+
+DIST=$(awk -F"[)(]+" '/VERSION=/ {print $2}' /etc/os-release); \
+ echo "deb https://packages.icinga.com/debian icinga-${DIST} main" > \
+ /etc/apt/sources.list.d/${DIST}-icinga.list
+ echo "deb-src https://packages.icinga.com/debian icinga-${DIST} main" >> \
+ /etc/apt/sources.list.d/${DIST}-icinga.list
+
+curl https://packages.icinga.com/icinga.key | apt-key add -
+apt-get -y install icingaweb2 icingacli
+icingacli
+```
+
 
 ## GitHub Release  <a id="github-release"></a>
 
 Create a new release for the newly created Git tag: https://github.com/Icinga/icingaweb2/releases
 
+> Hint: Choose [tags](https://github.com/Icinga/icingaweb2/tags), pick one to edit and
+> make this a release. You can also create a draft release.
+
+The release body should contain a short changelog, with links
+into the roadmap, changelog and blogpost.
+
 ### Online Documentation  <a id="online-documentation"></a>
 
-Ask @bobapple to update the documentation at docs.icinga.com.
+This is built with a daily cronjob.
+
+#### Manual Updates
+
+SSH into the webserver or ask @bobapple.
+
+```
+cd /usr/local/icinga-docs-tools && ./build-docs.rb -c /var/www/docs/config/icingaweb2-latest.yml
+```
 
 ### Announcement  <a id="announcement"></a>
 
-* Create a new blog post on icinga.com/blog
-* Social media: [Twitter](https://twitter.com/icinga), [Facebook](https://www.facebook.com/icinga), [Xing](https://www.xing.com/communities/groups/icinga-da4b-1060043), [LinkedIn](https://www.linkedin.com/groups/Icinga-1921830/about)
-* Update IRC channel topic
+* Create a new blog post on [icinga.com/blog](https://icinga.com/blog) including a featured image
+* Create a release topic on [community.icinga.com](https://community.icinga.com)
+* Release email to net-tech & team
 
 ### Project Management  <a id="project-management"></a>
 
