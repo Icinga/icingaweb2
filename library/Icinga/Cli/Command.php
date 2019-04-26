@@ -95,7 +95,7 @@ abstract class Command
             return $this->config;
         } else {
             if (! array_key_exists($file, $this->configs)) {
-                $this->configs[$file] = Config::module($this->moduleName, $file);
+                $this->configs[$file] = Config::app($file);
             }
             return $this->configs[$file];
         }
