@@ -17,6 +17,7 @@
     <?php if ($hostCount === 0): ?>
         <?= $this->translate('No hosts found matching the filter'); ?>
     <?php else: ?>
+        <?= $this->render('show/components/extensions.phtml') ?>
         <h2><?= $this->translate('Problem Handling') ?></h2>
         <table class="name-value-table">
             <tbody>

@@ -7,6 +7,7 @@ use Icinga\Application\ClassLoader;
 use Icinga\Application\Icinga;
 use Icinga\Application\Modules\Module;
 use Icinga\Module\Monitoring\Object\MonitoredObject;
+use Icinga\Module\Monitoring\Object\ObjectList;
 use Icinga\Web\View;
 
 /**
@@ -55,6 +56,19 @@ abstract class DetailviewExtensionHook
      * @return  string
      */
     abstract public function getHtmlForObject(MonitoredObject $object);
+
+    /**
+     * Shall return valid HTML to include in the detail view of a multi-select view
+     *
+     * @param ObjectList $objects A list of objects shown in the multi-select view
+     *
+     * @return  string
+     */
+    public function getHtmlForObjects($objects)
+    {
+        // For compatibility empty by default
+        return '';
+    }
 
     /**
      * Get {@link view}
