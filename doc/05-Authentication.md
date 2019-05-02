@@ -171,7 +171,7 @@ Option                   | Description
 -------------------------|-----------------------------------------------
 backend                  | **Required.** Specifies the backend type. Can be set to `ldap`, `msldap`.
 resource                 | **Required.** The name of the LDAP resource defined in [resources.ini](04-Resources.md#resources).
-domain                   | **Optional.** The domain the LDAP server is responsible for. See [Domain-aware Authentication](05-Authentication.md#domain-aware-authentication).
+domain                   | **Optional.** The domain the LDAP server is responsible for. See [Domain-aware Authentication](05-Authentication.md#domain-aware-auth).
 user\_class              | **Optional.** LDAP user class. Defaults to `inetOrgPerson` with `msldap` and `user` with `ldap`.
 user\_name\_attribute    | **Optional.** LDAP attribute which contains the username. Defaults to `sAMAccountName` with `msldap` and `uid` with `ldap`.
 user\_base\_dn           | **Optional.** The path where users can be found on the LDAP server.
