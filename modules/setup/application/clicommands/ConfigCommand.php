@@ -121,7 +121,6 @@ class ConfigCommand extends Command
      *
      *  icingacli setup config webserver nginx \
      *    --root=/usr/share/icingaweb2/public \
-     *    --enable-fpm
      *    --fpm-uri=unix:/var/run/php5-fpm.sock
      */
     public function webserverAction()
