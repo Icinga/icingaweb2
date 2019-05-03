@@ -1254,7 +1254,7 @@ class LdapConnection implements Selectable, Inspectable
                 $derefName = 'find';
             }
 
-            Logger::debug("Issueing LDAP search. Use '%s' to reproduce.", sprintf(
+            Logger::debug("Issuing LDAP search. Use '%s' to reproduce.", sprintf(
                 'ldapsearch -P 3%s -H "%s"%s -b "%s" -s "%s" -z %u -l %u -a "%s"%s%s%s',
                 $starttlsParam,
                 $this->normalizeHostname($this->hostname),
