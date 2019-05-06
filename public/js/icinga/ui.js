@@ -629,8 +629,10 @@
                                 this.toggleMobileMenu
                             )
                             .prepend(
-                                $('<div id="mobile-menu-toggle"><button><i class="icon-menu"></i></button></div>')
+                                $('<div id="mobile-menu-toggle"><button><i class="icon-menu"></i><i class="icon-cancel"></i></button></div>')
                             );
+                            $('#header-logo').clone().attr('id', 'mobile-menu-logo')
+                                .appendTo('#mobile-menu-toggle');
                         $(window).on('keypress', this.closeMobileMenu);
 
                         this.mobileMenu = true;
