@@ -46,7 +46,7 @@ Check issues at https://github.com/Icinga/icingaweb2
 ### Backport Commits <a id="backport-commits"></a>
 
 For minor versions not branched off git master you need
-to manually backports any and all commits from the
+to manually backport any and all commits from the
 master branch which should be part of this release.
 
 ### Authors <a id="authors"></a>
@@ -69,8 +69,8 @@ Commands:
 
 ```
 echo "v$VERSION" > VERSION
-sed -i '' "s/const VERSION = '.*'/const VERSION = '$VERSION'/g" library/Icinga/Application/Version.php
-find . -type f -name '*.info' -exec sed -i '' "s/Version: .*/Version: $VERSION/g" {} \;
+sed -i "s/const VERSION = '.*'/const VERSION = '$VERSION'/g" library/Icinga/Application/Version.php
+find . -type f -name '*.info' -exec sed -i "s/Version: .*/Version: $VERSION/g" {} \;
 ```
 
 ## Changelog <a id="changelog"></a>
@@ -141,7 +141,7 @@ vim icingaweb2.spec
 ```
 
 ```
-git commit -av -m "Release 2.5.3-1"
+git commit -av -m "Release $VERSION-1"
 git push
 ```
 
@@ -275,7 +275,7 @@ This is built with a daily cronjob.
 
 #### Manual Updates
 
-SSH into the webserver or ask @bobapple.
+SSH into the webserver or ask [bobapple](https://github.com/bobapple).
 
 ```
 cd /usr/local/icinga-docs-tools && ./build-docs.rb -c /var/www/docs/config/icingaweb2-latest.yml
