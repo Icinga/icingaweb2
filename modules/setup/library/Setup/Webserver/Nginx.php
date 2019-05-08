@@ -12,6 +12,8 @@ class Nginx extends Webserver
 {
     protected $fpmUri = '127.0.0.1:9000';
 
+    protected $enableFpm = true;
+
     protected function getTemplate()
     {
         return <<<'EOD'
