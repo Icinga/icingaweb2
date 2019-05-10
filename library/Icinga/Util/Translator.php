@@ -187,6 +187,9 @@ class Translator
             $locale = setlocale(LC_ALL, 0);
             putenv('LC_ALL=' . $locale); // Failsafe, Win and Unix
             putenv('LANG=' . $locale); // Windows fix, untested
+
+            // https://www.gnu.org/software/gettext/manual/html_node/The-LANGUAGE-variable.html
+            putenv('LANGUAGE=' . $localeName . ':' . getenv('LANGUAGE'));
         }
     }
 
