@@ -85,6 +85,17 @@ class WebCommand extends Command
             // pcntl_wait($status);
         } else {
              // child
+
+            // Replace console with /dev/null by first freeing the (lowest possible) FDs 0, 1 and 2
+            // and then opening /dev/null once for every one of them (open(2) chooses the lowest free FD).
+
+            fclose(STDIN);
+            fclose(STDOUT);
+            fclose(STDERR);
+
+            fopen('/dev/null', 'rb');
+            fopen('/dev/null', 'wb');
+            fopen('/dev/null', 'wb');
         }
     }
 }
