@@ -35,6 +35,13 @@ namespace Icinga\Test {
     abstract class BaseTestCase extends PHPUnit_Framework_TestCase implements DbTest
     {
         /**
+         * Path to the Icinga Web 2 installation
+         *
+         * @var string
+         */
+        public static $rootDir;
+
+        /**
          * Path to application/
          *
          * @var string
@@ -117,22 +124,22 @@ namespace Icinga\Test {
          */
         public static function setupDirectories()
         {
-            $baseDir = getenv('ICINGAWEB_BASEDIR') ?: realpath(__DIR__ . '/../../../');
-            if ($baseDir === false) {
+            self::$rootDir = getenv('ICINGAWEB_BASEDIR') ?: realpath(__DIR__ . '/../../../');
+            if (self::$rootDir === false) {
                 throw new RuntimeException('Application base dir not found');
             }
 
-            $libDir = getenv('ICINGAWEB_ICINGA_LIB') ?: realpath($baseDir . '/library/Icinga');
+            $libDir = getenv('ICINGAWEB_ICINGA_LIB') ?: realpath(self::$rootDir . '/library/Icinga');
             if ($libDir === false) {
                 throw new RuntimeException('Icinga library dir not found');
             }
 
-            self::$appDir = $baseDir . '/application';
+            self::$appDir = self::$rootDir . '/application';
             self::$libDir = $libDir;
-            self::$etcDir = $baseDir . '/etc';
-            self::$testDir = $baseDir . '/test/php';
-            self::$shareDir = $baseDir . '/share/icinga2-web';
-            self::$moduleDir = getenv('ICINGAWEB_MODULES_DIR') ?: $baseDir . '/modules';
+            self::$etcDir = self::$rootDir . '/etc';
+            self::$testDir = self::$rootDir . '/test/php';
+            self::$shareDir = self::$rootDir . '/share/icinga2-web';
+            self::$moduleDir = getenv('ICINGAWEB_MODULES_DIR') ?: self::$rootDir . '/modules';
         }
 
         /**
@@ -165,6 +172,13 @@ namespace Icinga\Test {
             $bootstrapMock = Mockery::mock('Icinga\Application\ApplicationBootstrap')->shouldDeferMissing();
             $libDir = dirname(self::$libDir);
             $bootstrapMock->shouldReceive('getFrontController')->andReturn($bootstrapMock)
+                ->shouldReceive('getBaseDir')->andReturnUsing(function ($subdir = null) {
+                    $baseDir = self::$rootDir;
+                    if ($subdir !== null) {
+                        $baseDir .= '/' . ltrim($subdir, '/');
+                    }
+                    return $baseDir;
+                })
                 ->shouldReceive('getApplicationDir')->andReturn(self::$appDir)
                 ->shouldReceive('getLibraryDir')->andReturnUsing(function ($subdir = null) use ($libDir) {
                     if ($subdir !== null) {
