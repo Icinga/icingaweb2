@@ -153,4 +153,8 @@ class icingaweb2_dev (
   package { 'php-deepend-Mockery':
     ensure => latest,
   }
+  -> exec { 'move-mockery-to-opt':
+    command => 'cp -R /usr/share/php/Mockery* /opt/rh/rh-php71/root/usr/share/php/',
+    unless  => 'test -d /opt/rh/rh-php71/root/usr/share/php/Mockery'
+  }
 }
