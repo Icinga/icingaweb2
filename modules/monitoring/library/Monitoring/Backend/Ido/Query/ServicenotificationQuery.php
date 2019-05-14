@@ -68,6 +68,8 @@ class ServicenotificationQuery extends IdoQuery
     {
         if ($col === 'UNIX_TIMESTAMP(sn.start_time)') {
             return 'sn.start_time ' . $sign . ' ' . $this->timestampForSql($this->valueToTimestamp($expression));
+        } elseif ($col === $this->columnMap['history']['output']) {
+            return parent::whereToSql('sn.output', $sign, $expression);
         } else {
             return parent::whereToSql($col, $sign, $expression);
         }
