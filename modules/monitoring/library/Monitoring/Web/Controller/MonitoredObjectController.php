@@ -108,7 +108,10 @@ abstract class MonitoredObjectController extends Controller
     public function historyAction()
     {
         $this->getTabs()->activate('history');
-        $this->view->history = $this->object->fetchEventHistory()->eventhistory;
+        $this->view->history = $history = $this->object->fetchEventHistory()->eventhistory;
+
+        $this->handleFormatRequest($history);
+
         $this->applyRestriction('monitoring/filter/objects', $this->view->history);
 
         $this->setupLimitControl(50);
@@ -160,6 +163,8 @@ abstract class MonitoredObjectController extends Controller
                 ->setSuccessData($payload)
                 ->setAutoSanitize()
                 ->sendResponse();
+        } else {
+            parent::handleFormatRequest($query);
         }
     }
 
