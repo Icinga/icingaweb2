@@ -23,6 +23,7 @@ class Tabs extends AbstractWidget implements Countable
     private $baseTpl = <<< 'EOT'
 <ul class="tabs primary-nav nav">
   {TABS}
+  {TABSDROPDOWN}
   {DROPDOWN}
   {REFRESH}
   {CLOSE}
@@ -38,6 +39,22 @@ EOT;
 <li class="dropdown-nav-item">
   <a href="#" class="dropdown-toggle" title="{TITLE}" aria-label="{TITLE}">
     <i aria-hidden="true" class="icon-down-open"></i>
+  </a>
+  <ul class="nav">
+    {TABS}
+  </ul>
+</li>
+EOT;
+
+    /**
+     * Template used for the hidden burger menu dropdown
+     *
+     * @var string
+     */
+    private $tabsDropdownTpl = <<< 'EOT'
+<li class="dropdown-nav-item tabs-dropdown" style="display: none">
+  <a href="#" class="dropdown-toggle" title="{TITLE}" aria-label="{TITLE}">
+    <i aria-hidden="true" class="icon-menu"></i>
   </a>
   <ul class="nav">
     {TABS}
@@ -293,6 +310,26 @@ EOT;
     }
 
     /**
+     * Render the dropdown area with its tabs and return the resulting HTML
+     *
+     * @return  mixed|string
+     */
+    private function renderTabsDropdownTabs()
+    {
+        if (empty($this->tabs)) {
+            return '';
+        }
+        $tabs = '';
+        foreach ($this->tabs as $name => $tab) {
+            if ($tab === null || in_array($name, $this->dropdownTabs)) {
+                continue;
+            }
+            $tabs .= $tab;
+        }
+        return str_replace(array('{TABS}', '{TITLE}'), array($tabs, t('Tabs Dropdown menu')), $this->tabsDropdownTpl);
+    }
+
+    /**
      * Render all tabs, except the ones in dropdown area and return the resulting HTML
      *
      * @return  string
@@ -361,9 +398,11 @@ EOT;
     {
         if (empty($this->tabs) || true === $this->closeButtonOnly) {
             $tabs = '';
+            $tabsdrop = '';
             $drop = '';
         } else {
             $tabs = $this->renderTabs();
+            $tabsdrop = $this->renderTabsDropdownTabs();
             $drop = $this->renderDropdownTabs();
         }
         $close = $this->closeTab ? $this->renderCloseTab() : '';
@@ -372,12 +411,14 @@ EOT;
         return str_replace(
             array(
                 '{TABS}',
+                '{TABSDROPDOWN}',
                 '{DROPDOWN}',
                 '{REFRESH}',
                 '{CLOSE}'
             ),
             array(
                 $tabs,
+                $tabsdrop,
                 $drop,
                 $refresh,
                 $close
