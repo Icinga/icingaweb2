@@ -457,8 +457,8 @@
                 return true;
             }
 
-            // Check for ctrl or cmd click to open new tab
-            if (event.ctrlKey || event.metaKey) {
+            // Check for ctrl or cmd click to open new tab unless clicking on a multiselect row
+            if ((event.ctrlKey || event.metaKey) && ! $a.parent().parent('table.multiselect').length > 0) {
                 window.open(href, linkTarget);
                 return false;
             }
