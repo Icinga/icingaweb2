@@ -197,6 +197,7 @@ abstract class Command
             $this->commandName,
             $action
         );
+        return false;
     }
 
     public function init()

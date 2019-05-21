@@ -151,8 +151,8 @@ class Cli extends ApplicationBootstrap
         if ($this->showBenchmark) {
             Benchmark::dump();
         }
-        if (false === $result) {
-            exit(1);
+        if ($result === false) {
+            exit(3);
         }
     }
 
