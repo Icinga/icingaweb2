@@ -47,14 +47,14 @@ EOT;
 EOT;
 
     /**
-     * Template used for the hidden burger menu dropdown
+     * Template used for the hidden tabs menu dropdown
      *
      * @var string
      */
     private $tabsDropdownTpl = <<< 'EOT'
 <li class="dropdown-nav-item tabs-dropdown" style="display: none">
   <a href="#" class="dropdown-toggle" title="{TITLE}" aria-label="{TITLE}">
-    <i aria-hidden="true" class="icon-menu"></i>
+    <i aria-hidden="true" class="icon-angle-double-right"></i>
   </a>
   <ul class="nav">
     {TABS}
