@@ -118,7 +118,7 @@ systemctl reload httpd
 
 ### Manual User Creation for Database Authentication Backend <a id="advanced-topics-authentication-tips-manual-user-database-auth"></a>
 
-Icinga Web 2 v2.5+ uses the [native password hash algorithm](http://php.net/manual/en/faq.passwords.php)
+Icinga Web 2 v2.5+ uses the [native password hash algorithm](https://php.net/manual/en/faq.passwords.php)
 provided by PHP 5.6+.
 
 In order to generate a password, run the following command with the PHP CLI >= 5.6:

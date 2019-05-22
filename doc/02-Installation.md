@@ -26,15 +26,15 @@ Below is a list of official package repositories for installing Icinga Web 2 for
 
 | Distribution  | Repository |
 | ------------- | ---------- |
-| Debian        | [Icinga Repository](http://packages.icinga.com/debian/) |
-| Ubuntu        | [Icinga Repository](http://packages.icinga.com/ubuntu/) |
-| RHEL/CentOS   | [Icinga Repository](http://packages.icinga.com/epel/) |
-| openSUSE      | [Icinga Repository](http://packages.icinga.com/openSUSE/) |
-| SLES          | [Icinga Repository](http://packages.icinga.com/SUSE/) |
+| Debian        | [Icinga Repository](https://packages.icinga.com/debian/) |
+| Ubuntu        | [Icinga Repository](https://packages.icinga.com/ubuntu/) |
+| RHEL/CentOS   | [Icinga Repository](https://packages.icinga.com/epel/) |
+| openSUSE      | [Icinga Repository](https://packages.icinga.com/openSUSE/) |
+| SLES          | [Icinga Repository](https://packages.icinga.com/SUSE/) |
 | Gentoo        | [Upstream](https://packages.gentoo.org/packages/www-apps/icingaweb2) |
 | FreeBSD       | [Upstream](http://portsmon.freebsd.org/portoverview.py?category=net-mgmt&portname=icingaweb2) |
 | ArchLinux     | [Upstream](https://aur.archlinux.org/packages/icingaweb2) |
-| Alpine Linux  | [Upstream](http://git.alpinelinux.org/cgit/aports/tree/community/icingaweb2/APKBUILD) |
+| Alpine Linux  | [Upstream](https://git.alpinelinux.org/cgit/aports/tree/community/icingaweb2/APKBUILD) |
 
 Packages for distributions other than the ones listed above may also be available.
 Please contact your distribution packagers.

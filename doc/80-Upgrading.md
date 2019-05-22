@@ -78,7 +78,7 @@ Continue here for [MySQL](80-Upgrading.md#upgrading-mysql-db) and [PostgreSQL](8
 ## Upgrading to Icinga Web 2 2.0.0 <a id="upgrading-to-2.0.0"></a>
 
 * Icinga Web 2 installations from package on RHEL/CentOS 7 now depend on `php-ZendFramework` which is available through
-  the [EPEL repository](http://fedoraproject.org/wiki/EPEL). Before, Zend was installed as Icinga Web 2 vendor library
+  the [EPEL repository](https://fedoraproject.org/wiki/EPEL). Before, Zend was installed as Icinga Web 2 vendor library
   through the package `icingaweb2-vendor-zend`. After upgrading, please make sure to remove the package
   `icingaweb2-vendor-zend`.
 
