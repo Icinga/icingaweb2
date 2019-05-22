@@ -361,7 +361,7 @@ class ListController extends Controller
         );
         $orientationBox->applyRequest($this->getRequest());
 */
-        $objectType = $this->getParam('objecttype', 'services');
+        $objectType = $form->getValue('objecttype');
         $from = $form->getValue('from');
         $query = $this->backend->select()->from(
             'eventgrid' . $objectType,
