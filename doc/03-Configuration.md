@@ -65,7 +65,7 @@ file = "/usr/share/icingaweb2/log/icingaweb2.log"
 
 Option                   | Description
 -------------------------|-----------------------------------------------
-default                  | **Optional.** Choose the default theme. Can be set to `Icinga`, `high-contrast`, `Winter` or your own installed theme. Defaults to `Icinga`. Note that this setting is case-sensitive because it refers to the filename of the theme.
+default                  | **Optional.** Choose the default theme. Can be set to `Icinga`, `high-contrast`, `Winter`, 'colorblind' or your own installed theme. Defaults to `Icinga`. Note that this setting is case-sensitive because it refers to the filename of the theme.
 disabled                 | **Optional.** Set this to `1` if users should not be allowed to change their theme. Defaults to `0`.
 
 Example:
