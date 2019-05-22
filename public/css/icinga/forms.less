@@ -286,6 +286,15 @@ form.icinga-form .form-controls {
   input[type="submit"].btn-cancel {
     .button(@body-bg-color, @gray, @black);
   }
+
+  button.noscript-apply {
+    .rounded-corners();
+    .button(@gray-lightest, @gray);
+    border-width: 1px;
+    display: inline-block;
+    padding: .1em .25em;
+    margin: 0 .5em;
+  }
 }
 
 // Toggle styles
