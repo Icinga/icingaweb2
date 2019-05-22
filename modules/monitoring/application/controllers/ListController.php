@@ -362,7 +362,7 @@ class ListController extends Controller
         $orientationBox->applyRequest($this->getRequest());
 */
         $objectType = $this->getParam('objecttype', 'services');
-        $from = date('c', $this->getParam('from', strtotime('midnight 3 months ago')));
+        $from = $form->getValue('from');
         $query = $this->backend->select()->from(
             'eventgrid' . $objectType,
             array('day', $form->getValue('state'))
