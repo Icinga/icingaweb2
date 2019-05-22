@@ -47,7 +47,7 @@ Below is a list with **examples** for various distributions.
 
 **Debian Stretch**:
 ```
-wget -O - http://packages.icinga.com/icinga.key | apt-key add -
+wget -O - https://packages.icinga.com/icinga.key | apt-key add -
 echo 'deb http://packages.icinga.com/debian icinga-stretch main' >/etc/apt/sources.list.d/icinga.list
 apt-get update
 ```
@@ -57,7 +57,7 @@ apt-get update
 
 **Ubuntu Xenial**:
 ```
-wget -O - http://packages.icinga.com/icinga.key | apt-key add -
+wget -O - https://packages.icinga.com/icinga.key | apt-key add -
 add-apt-repository 'deb http://packages.icinga.com/ubuntu icinga-xenial main'
 apt-get update
 ```
