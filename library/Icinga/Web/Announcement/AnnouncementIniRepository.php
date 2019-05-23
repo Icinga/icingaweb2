@@ -110,7 +110,7 @@ class AnnouncementIniRepository extends IniRepository
         $now = new DateTime();
 
         $query = $this
-            ->select(array('hash', 'message'))
+            ->select(array('hash', 'message', 'start'))
             ->setFilter(new FilterAnd(array(
                 Filter::expression('start', '<=', $now),
                 Filter::expression('end', '>=', $now)
