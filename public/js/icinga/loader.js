@@ -670,7 +670,9 @@
             delete this.requests[req.$target.attr('id')];
             this.icinga.ui.fadeNotificationsAway();
 
-            this.processRedirectHeader(req);
+            if (this.processRedirectHeader(req)) {
+                return;
+            }
 
             if (typeof req.loadNext !== 'undefined' && req.loadNext.length) {
                 if ($('#col2').length) {
