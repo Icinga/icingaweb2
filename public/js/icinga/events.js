@@ -458,7 +458,7 @@
             }
 
             // Check for ctrl or cmd click to open new tab unless clicking on a multiselect row
-            if ((event.ctrlKey || event.metaKey) && ! $a.parent().parent('table.multiselect').length > 0) {
+            if ((event.ctrlKey || event.metaKey) && ! $a.parent().parent('table').length > 0 && href !== '#') {
                 window.open(href, linkTarget);
                 return false;
             }
@@ -466,7 +466,7 @@
             // Special checks for link clicks in action tables
             if (! $a.is('tr[href]') && $a.closest('table.action').length > 0) {
 
-                // ignoray clicks to ANY link with special key pressed
+                // ignore clicks to ANY link with special key pressed
                 if ($a.closest('table.multiselect').length > 0 && (event.ctrlKey || event.metaKey || event.shiftKey)) {
                     return true;
                 }
