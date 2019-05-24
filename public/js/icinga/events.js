@@ -458,7 +458,7 @@
             }
 
             // Check for ctrl or cmd click to open new tab unless clicking on a multiselect row
-            if ((event.ctrlKey || event.metaKey) && ! $a.parent().parent('table').length > 0 && href !== '#') {
+            if ((event.ctrlKey || event.metaKey) && href !== '#' && $a.is('a')) {
                 window.open(href, linkTarget);
                 return false;
             }
