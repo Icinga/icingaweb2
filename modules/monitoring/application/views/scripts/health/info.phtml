@@ -57,11 +57,9 @@ if (! $this->compact): ?>
                             : $this->translate('N/A') ?></td>
                 </tr>
                 <tr>
-                    <th><?= $this->translate('Active IcingaWeb Endpoint'); ?></th>
-                    <td><?= gethostname()
-                            ? gethostname()
-                            : $this->translate('N/A') ?></td>
-                    </tr>
+                    <th><?= $this->translate('Active Icinga Web 2 Endpoint'); ?></th>
+                    <td><?= gethostname() ?: $this->translate('N/A') ?></td>
+                </tr>
                 </tbody>
             </table>
             <?php if ((bool) $this->programStatus->is_currently_running === true): ?>
