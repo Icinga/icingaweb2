@@ -95,6 +95,11 @@
         var _this = event.data.self;
         var icinga = _this.icinga;
 
+        // Check for ctrl or cmd click to open new tab and don't unfold other menus
+        if (event.ctrlKey || event.metaKey) {
+            return false;
+        }
+
         if (href.match(/#/)) {
             // ...it may be a menu section without a dedicated link.
             // Switch the active menu item:
