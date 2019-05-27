@@ -47,7 +47,6 @@ class JavaScript
     );
 
     protected static $ie8VendorFiles = array(
-        'js/vendor/jquery-1.11.0',
         'js/vendor/jquery.sparkline',
         'js/vendor/jquery.tipsy'
     );
