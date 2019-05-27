@@ -68,6 +68,8 @@ class HostnotificationQuery extends IdoQuery
     {
         if ($col === 'UNIX_TIMESTAMP(hn.start_time)') {
             return 'hn.start_time ' . $sign . ' ' . $this->timestampForSql($this->valueToTimestamp($expression));
+        } elseif ($col === $this->columnMap['history']['output']) {
+            return parent::whereToSql('hn.output', $sign, $expression);
         } else {
             return parent::whereToSql($col, $sign, $expression);
         }
