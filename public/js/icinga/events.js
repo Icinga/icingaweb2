@@ -249,6 +249,10 @@
                 $form.removeData('submitButton');
             }
 
+            if ($form.closest('[data-no-icinga-ajax]').length > 0) {
+                return true;
+            }
+
             if ($button.length === 0) {
                 var $el;
 
@@ -454,6 +458,10 @@
             var formerUrl;
             if (href.match(/^(?:(?:mailto|javascript|data):|[a-z]+:\/\/)/)) {
                 event.stopPropagation();
+                return true;
+            }
+
+            if ($a.closest('[data-no-icinga-ajax]').length > 0) {
                 return true;
             }
 
