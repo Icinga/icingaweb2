@@ -61,33 +61,56 @@ if (! $this->compact): ?>
 
             <td>
                 <div class="state-header">
-                    <?= $this->iconImage()->service($service) ?>
-                    <?php if ($this->showHost): ?><?= $this->qlink(
-                        $service->host_display_name
-                        . ($service->host_state != 0 ? ' (' . Host::getStateText($service->host_state, true) . ')' : ''),
-                        $hostLink,
-                        null,
-                        array(
-                            'title' => sprintf(
-                                $this->translate('Show detailed information for host %s'),
-                                $service->host_display_name
-                            )
-                        )
-                    ) ?>&#58;
-                    <?php endif ?><?= $this->qlink(
-                        $service->service_display_name,
-                        $serviceLink,
-                        null,
-                        array(
-                            'title' => sprintf(
-                                $this->translate('Show detailed information for service %s on host %s'),
-                                $service->service_display_name,
-                                $service->host_display_name
-                            ),
-                            'class' => 'rowaction'
-                        )
-                    ) ?>
-                    <span class="state-icons"><?= $this->serviceFlags($service) ?></span>
+                  <span class="service-on">
+                  <?= $this->iconImage()->service($service) ?>
+                  <?php
+                  if ($this->showHost) {
+                      echo sprintf(
+                          $this->translate('%s on %s', 'service on host'),
+                          $this->qlink(
+                              $service->service_display_name,
+                              $serviceLink,
+                              null,
+                              array(
+                                  'title' => sprintf(
+                                      $this->translate('Show detailed information for service %s on host %s'),
+                                      $service->service_display_name,
+                                      $service->host_display_name
+                                  ),
+                                  'class' => 'rowaction'
+                              )
+                          ),
+                              $this->qlink(
+                                  $service->host_display_name
+                                  . ($service->host_state != 0 ? ' (' . Host::getStateText($service->host_state, true) . ')' : ''),
+                                  $hostLink,
+                                  null,
+                                  [
+                                      'title' => sprintf(
+                                          $this->translate('Show detailed information for host %s'),
+                                          $service->host_display_name
+                                      )
+                                  ]
+                              )
+                          );
+                  } else {
+                      echo $this->qlink(
+                          $service->service_display_name,
+                          $serviceLink,
+                          null,
+                          array(
+                              'title' => sprintf(
+                                  $this->translate('Show detailed information for service %s on host %s'),
+                                  $service->service_display_name,
+                                  $service->host_display_name
+                              ),
+                              'class' => 'rowaction'
+                          )
+                      );
+                  }
+                  ?>
+                  </span>
+                  <span class="state-icons"><?= $this->serviceFlags($service) ?></span>
                 </div>
                 <div class="overview-plugin-output-container">
                     <div class="overview-performance-data">
