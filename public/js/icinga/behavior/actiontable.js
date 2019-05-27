@@ -378,6 +378,10 @@
         var $tr = $(event.currentTarget);
         var table = new Selection($tr.closest('table.action, table.table-row-selectable')[0], _this.icinga);
 
+        if ($tr.closest('[data-no-icinga-ajax]').length > 0) {
+            return true;
+        }
+
         // some rows may contain form actions that trigger a different action, pass those through
         if (!$target.hasClass('rowaction') && $target.closest('form').length &&
             ($target.closest('a').length ||                                         // allow regular link clinks
