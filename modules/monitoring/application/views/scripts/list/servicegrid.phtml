@@ -10,6 +10,26 @@ if (! $this->compact): ?>
         <?= $this->sortBox ?>
     </div>
     <?= $this->filterEditor ?>
+    <?php
+    $toggleFilter = Url::fromRequest();
+    if ($toggleFilter->getParam('problems')) {
+        $toggleFilter->remove('problems');
+    } else {
+        $toggleFilter->setParam('problems');
+    }
+    ?>
+  <label class="relevance-filter">
+    <input type="checkbox" <?= (bool) $toggleFilter->getParam('problems') ?: "checked" ?>>
+      <?= $this->qlink(
+          $this->translate('relevance filter'),
+          $toggleFilter,
+          null,
+          array(
+              'data-base-target'    => '_self',
+              'title'               => $this->translate('Toggle relevance filter')
+          )
+      ) ?>
+  </label>
 </div>
 <?php endif ?>
 <div class="content" data-base-target="_next">
