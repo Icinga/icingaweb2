@@ -705,29 +705,31 @@
         },
 
         ensureTabVisibility: function ($controls) {
-            var $tabContainer = $controls.find('.tabs', $controls);
+            var $tabContainer = $controls.find('.tabs');
+            if (! $tabContainer) return;
+
             var $tabs = $tabContainer.children('li');
             var $dropdown = $tabContainer.find('.tabs-dropdown');
-            var $visibleCount = $tabs.has(':visible').size();
+            var $visibleCount = $tabs.filter(':visible').size();
 
             if ($tabContainer[0].scrollHeight > $tabContainer[0].clientHeight) {
                 if ($dropdown.is(":visible")) {
-                    $tabs.slice($visibleCount - 5, -4).css('display', 'none');
+                    $tabs.slice($visibleCount - 5, -4).hide();
                 } else {
-                    $tabs.slice($visibleCount - 4, -3).css('display', 'none');
+                    $tabs.slice($visibleCount - 4, -3).hide();
                 }
-                $dropdown.css('display', 'inline-block');
+                $dropdown.show();
             } else if ($tabContainer.find('.tabs-dropdown').is(':visible') && $tabContainer.children().is(':hidden')) {
                 var $visibleWidth = 0;
-                $.each($tabs.has(':visible'), function(){
+                $.each($tabs.filter(':visible'), function(){
                     $visibleWidth += $(this).width();
                 });
                 for (var count = 0; count < $tabs.size() - 4; count++) {
                     if($($tabs[count]).is(":hidden")) {
                         if(($($tabs[count]).width()) < ($tabContainer.width() - $visibleWidth - $visibleCount * 5)) {
-                            $($tabs[count]).css('display', 'inline-block');
+                            $($tabs[count]).show();
                             if ($($tabs[count + 1]).is(":visible")) {
-                                $dropdown.css('display', 'none');
+                                $dropdown.hide();
                             }
                         }
                         break;
@@ -735,10 +737,10 @@
                 }
             }
 
-            var $dropdownList = $dropdown.children('ul').children('li');
-            $visibleCount = $tabs.has(':visible').size();
-            $dropdownList.slice(0, $visibleCount - 4).css('display', 'none');
-            $dropdownList.slice($visibleCount - 4).css('display', 'block');
+            var $dropdownList = $dropdown.find('li');
+            $visibleCount = $tabs.filter(':visible').size();
+            $dropdownList.slice(0, $visibleCount - 4).hide();
+            $dropdownList.slice($visibleCount - 4).show();
         },
 
         toggleFullscreen: function () {
