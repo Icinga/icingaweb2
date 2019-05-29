@@ -109,25 +109,25 @@
 
 // x-column-layout
 #main {
-  .clearfix();
+  display: flex;
 
   & > .container {
-    float: left;
-    // Column width controlled by #layout
-    width: 100%;
-
-    // Container scrolling
     height: 100%;
-    overflow: auto;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+
+    &:empty {
+      display: none;
+    }
 
     & > .content {
+      overflow: auto;
+      flex: 1;
       padding: @gutter;
-      z-index: 2;
     }
 
     & > .controls {
-      z-index: 3;
-
       padding-left: @gutter;
       padding-right: @gutter;
 
