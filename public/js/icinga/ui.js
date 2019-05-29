@@ -596,7 +596,7 @@
             this.fixControls($container);
         },
 
-        fixControls: function($container) {
+        fixControls2: function($container) {
             var $layout = $('#layout');
 
             if ($layout.hasClass('fullscreen-layout')) {
@@ -701,6 +701,11 @@
                 });
                 $statusBar.prev('.monitoring-statusbar-ghost').height($statusBar.outerHeight(true));
             }
+        },
+
+        fixControls: function($container) {
+            console.log('fix controls');
+            return false;
         },
 
         toggleFullscreen: function () {
