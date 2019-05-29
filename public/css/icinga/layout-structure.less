@@ -6,35 +6,28 @@ html {
 
 #layout {
   height: 100%;
-  width: 100%;
-  position: fixed;
-  left: 0;
-  top: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+#content-wrapper {
+  flex: 1;
+  display: flex;
 }
 
 #header {
-  width: 100%;
-  padding-bottom: 3em;
-  position: fixed;
-  left: 0;
-  top: 0;
-
 }
 
 #sidebar {
   width: 12em;
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  top: 4.5em;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 #main {
-  position: fixed;
-  bottom: 0;
-  left: 12em;
-  right: 0;
-  top: 2.25em;
+  flex: 1;
+  overflow: hidden;
 }
 
 .iframe {
