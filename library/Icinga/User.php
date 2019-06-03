@@ -253,7 +253,7 @@ class User
     public function setRestrictions(array $restrictions)
     {
         foreach ($restrictions as $name => $restriction) {
-            $restrictions[$name] = str_replace('$currentUser$', $this->getLocalUsername(), $restriction);
+            $restrictions[$name] = str_replace('$user:local_name$', $this->getLocalUsername(), $restriction);
         }
 
         $this->restrictions = $restrictions;
