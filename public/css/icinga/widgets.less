@@ -1,7 +1,8 @@
 /*! Icinga Web 2 | (c) 2014 Icinga Development Team | GPLv2+ */
 
 #announcements > ul {
-  background-color: @body-bg-color;
+  background-color: @color-notification-success;
+  color: @text-color;
   list-style: none;
   margin: 0;
   padding: 0;
@@ -14,7 +15,6 @@
     position: relative;
 
     &:before {
-      color: @icinga-blue;
       content: "\e811";
       font-family: 'ifont';
 
@@ -33,6 +33,10 @@
     .message {
       display: inline-block;
       vertical-align: middle;
+    }
+
+    .icon-cancel:not(:hover) {
+      color: @text-color;
     }
   }
 }
