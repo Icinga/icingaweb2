@@ -108,7 +108,7 @@ if (empty($object->comments) && ! $addLink) {
                 } ?>
             </dt>
             <dd>
-                <?= $this->nl2br($this->createTicketLinks($this->escapeComment($downtime->comment))) ?>
+                <?= $this->nl2br($this->createTicketLinks($this->markdown($downtime->comment))) ?>
             </dd>
         <?php endforeach ?>
         </dl>
