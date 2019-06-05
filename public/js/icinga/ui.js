@@ -579,6 +579,7 @@
                     if ($tabs.length && $controls.children().length > 1 && ! $tabs.next('.tabs-spacer').length) {
                         $tabs.after($('<div class="tabs-spacer"></div>'));
                     }
+                    /*
                     var $fakeControls = $('<div class="fake-controls"></div>');
                     $fakeControls.height($controls.height()).css({
                         // That's only temporary. It's reset in fixControls, which is called at the end of this
@@ -587,9 +588,13 @@
                         // and the height of the content then doesn't change when taking the controls out of the flow.
                         float: 'right'
                     });
+                    */
+
+                    /*
                     $controls.before($fakeControls).css({
                         position: 'fixed'
                     });
+                    */
                 }
             });
 
