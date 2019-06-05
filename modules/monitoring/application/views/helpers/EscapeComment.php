@@ -33,6 +33,11 @@ class Zend_View_Helper_EscapeComment extends Zend_View_Helper_Abstract
             $config->set('Cache.DefinitionImpl', null);
             self::$purifier = new HTMLPurifier($config);
         }
+
+        $comment = preg_replace_callback('~<(?!/\w+>)(?!\w+\s.+=)[^:@]+@?[^"\'/>]+>~', function ($match) {
+            return htmlspecialchars($match[0], ENT_COMPAT | ENT_SUBSTITUTE | ENT_HTML5);
+        }, $comment);
+
         return self::$purifier->purify($comment);
     }
 }
