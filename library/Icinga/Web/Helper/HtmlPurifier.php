@@ -71,6 +71,12 @@ class HtmlPurifier
      */
     public function purify($html, $config = null)
     {
+        // Escape mail addresses enclosed in < and > first, otherwise HTMLPurifier will throw them away.
+        // $config->set('Core.EscapeInvalidTags', true); fails to preserve the original value unfortunately
+        $html = preg_replace_callback('~<(?!/\w+>)(?!\w+\s.+=)[^:@]+@[^"\'/>]+>~', function ($match) {
+            return htmlspecialchars($match[0], ENT_COMPAT | ENT_SUBSTITUTE | ENT_HTML5);
+        }, $html);
+
         return $this->purifier->purify($html, $config);
     }
 
