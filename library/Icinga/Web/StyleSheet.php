@@ -83,7 +83,7 @@ class StyleSheet
         $app = Icinga::app();
         $this->app = $app;
         $this->lessCompiler = new LessCompiler();
-        $this->pubPath = $app->getBootstrapDirectory();
+        $this->pubPath = $app->getBaseDir('public');
         $this->collect();
     }
 
