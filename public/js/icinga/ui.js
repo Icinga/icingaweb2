@@ -719,6 +719,8 @@
                     $tabs.slice($visibleCount - 4, -3).hide();
                 }
                 $dropdown.show();
+
+                this.ensureTabVisibility($controls);
             } else if ($tabContainer.find('.tabs-dropdown').is(':visible') && $tabContainer.children().is(':hidden')) {
                 var $visibleWidth = 0;
                 $.each($tabs.filter(':visible'), function(){
@@ -731,6 +733,8 @@
                             if ($($tabs[count + 1]).is(":visible")) {
                                 $dropdown.hide();
                             }
+
+                            this.ensureTabVisibility($controls);
                         }
                         break;
                     }
