@@ -5,6 +5,7 @@ namespace Icinga\Protocol\Ldap;
 
 use ArrayIterator;
 use Exception;
+use Icinga\Data\Filter\FilterNot;
 use LogicException;
 use stdClass;
 use Icinga\Application\Config;
@@ -1390,7 +1391,7 @@ class LdapConnection implements Selectable, Inspectable
         }
 
         $format = '%1$s(%2$s)';
-        if (count($parts) === 1) {
+        if (count($parts) === 1 && ! $filter instanceof FilterNot) {
             $format = '%2$s';
         }
         if ($level === 0) {
