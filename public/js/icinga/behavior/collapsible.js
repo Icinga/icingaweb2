@@ -18,7 +18,7 @@
         this.on('click', '.collapsible + .collapsible-control', this.onControlClicked, this);
 
         this.icinga = icinga;
-        this.expandedContainers = {};
+        this.collapsibleStates = {};
         this.defaultNumOfRows = 2;
         this.defaultHeight = 36;
     };
@@ -34,11 +34,22 @@
 
         $('.collapsible', event.currentTarget).each(function() {
             var $collapsible = $(this);
+            var collapsiblePath = _this.icinga.utils.getCSSPath($collapsible);
 
+            // Assumes that any newly rendered elements are expanded
             if (_this.canCollapse($collapsible)) {
                 $collapsible.after($('#collapsible-control-ghost').clone().removeAttr('id'));
                 $collapsible.addClass('can-collapse');
-                _this.updateCollapsedState($collapsible);
+
+                if (typeof _this.collapsibleStates[collapsiblePath] === 'undefined') {
+                    _this.collapsibleStates[collapsiblePath] = true;
+                    _this.collapse($collapsible);
+                } else if (_this.collapsibleStates[collapsiblePath]) {
+                    _this.collapse($collapsible);
+                }
+            } else {
+                // This collapsible is not large enough (anymore)
+                delete _this.collapsibleStates[collapsiblePath];
             }
         });
     };
@@ -56,42 +67,13 @@
         if (! $collapsible.length) {
             _this.icinga.logger.error('[Collapsible] Collapsible control has no associated .collapsible: ', $target);
         } else {
-            _this.updateCollapsedState($collapsible);
-        }
-    };
-
-    /**
-     * Applies the collapse state of the given container. Adds or removes class `collapsed` to containers and sets the
-     * height.
-     *
-     * @param $collapsible  jQuery  The given collapsible container element
-     */
-    Collapsible.prototype.updateCollapsedState = function($collapsible) {
-        var collapsiblePath = this.icinga.utils.getCSSPath($collapsible);
-        if (typeof this.expandedContainers[collapsiblePath] === 'undefined') {
-            this.expandedContainers[collapsiblePath] = $collapsible.is('.collapsed');
-        }
-
-        if (this.expandedContainers[collapsiblePath]) {
-            this.expandedContainers[collapsiblePath] = false;
-            $collapsible.removeClass('collapsed');
-            $collapsible.css({display: '', height: ''});
-        } else {
-            this.expandedContainers[collapsiblePath] = true;
-            $collapsible.addClass('collapsed');
-
-            var rowSelector = this.getRowSelector($collapsible);
-            if (!! rowSelector) {
-                var $rows = $(rowSelector, $collapsible).slice(0, $collapsible.data('numofrows') || this.defaultNumOfRows);
-
-                var totalHeight = $rows.offset().top - $collapsible.offset().top;
-                $rows.outerHeight(function (_, height) {
-                    totalHeight += height;
-                });
-
-                $collapsible.css({display: 'block', height: totalHeight});
+            var collapsiblePath = _this.icinga.utils.getCSSPath($collapsible);
+            if (_this.collapsibleStates[collapsiblePath]) {
+                _this.collapsibleStates[collapsiblePath] = false;
+                _this.expand($collapsible);
             } else {
-                $collapsible.css({display: 'block', height: $collapsible.data('height') || this.defaultHeight});
+                _this.collapsibleStates[collapsiblePath] = true;
+                _this.collapse($collapsible);
             }
         }
     };
@@ -127,6 +109,39 @@
         } else {
             return $collapsible.innerHeight() > ($collapsible.data('height') || this.defaultHeight);
         }
+    };
+
+    /**
+     * Collapse the given collapsible
+     *
+     * @param   $collapsible    jQuery      The given collapsible container element
+     */
+    Collapsible.prototype.collapse = function ($collapsible) {
+        $collapsible.addClass('collapsed');
+
+        var rowSelector = this.getRowSelector($collapsible);
+        if (!! rowSelector) {
+            var $rows = $(rowSelector, $collapsible).slice(0, $collapsible.data('numofrows') || this.defaultNumOfRows);
+
+            var totalHeight = $rows.offset().top - $collapsible.offset().top;
+            $rows.outerHeight(function (_, height) {
+                totalHeight += height;
+            });
+
+            $collapsible.css({display: 'block', height: totalHeight});
+        } else {
+            $collapsible.css({display: 'block', height: $collapsible.data('height') || this.defaultHeight});
+        }
+    };
+
+    /**
+     * Expand the given collapsible
+     *
+     * @param   $collapsible    jQuery      The given collapsible container element
+     */
+    Collapsible.prototype.expand = function ($collapsible) {
+        $collapsible.removeClass('collapsed');
+        $collapsible.css({display: '', height: ''});
     };
 
     Icinga.Behaviors.Collapsible = Collapsible;
