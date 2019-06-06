@@ -11,7 +11,7 @@
      *
      * @param  icinga  Icinga  The current Icinga Object
      */
-    var CollapsibleContainer = function (icinga) {
+    var Collapsible = function (icinga) {
         Icinga.EventListener.call(this, icinga);
 
         this.on('rendered', '#col2', this.onRendered, this);
@@ -22,14 +22,14 @@
         this.defaultNumOfRows = 2;
         this.defaultHeight = 36;
     };
-    CollapsibleContainer.prototype = new Icinga.EventListener();
+    Collapsible.prototype = new Icinga.EventListener();
 
     /**
      * Initializes all collapsibles. Triggered on rendering of a container.
      *
      * @param event  Event  The `onRender` event triggered by the rendered container
      */
-    CollapsibleContainer.prototype.onRendered = function(event) {
+    Collapsible.prototype.onRendered = function(event) {
         var _this = event.data.self;
 
         $('.collapsible', event.currentTarget).each(function() {
@@ -48,7 +48,7 @@
      *
      * @param event  Event  The `onClick` event triggered by the clicked collapsible-control element
      */
-    CollapsibleContainer.prototype.onControlClicked = function(event) {
+    Collapsible.prototype.onControlClicked = function(event) {
         var _this = event.data.self;
         var $target = $(event.currentTarget);
         var $collapsible = $target.prev('.collapsible');
@@ -66,7 +66,7 @@
      *
      * @param $collapsible  jQuery  The given collapsible container element
      */
-    CollapsibleContainer.prototype.updateCollapsedState = function($collapsible) {
+    Collapsible.prototype.updateCollapsedState = function($collapsible) {
         var collapsiblePath = this.icinga.utils.getCSSPath($collapsible);
         if (typeof this.expandedContainers[collapsiblePath] === 'undefined') {
             this.expandedContainers[collapsiblePath] = $collapsible.is('.collapsed');
@@ -103,7 +103,7 @@
      *
      * @returns {string}
      */
-    CollapsibleContainer.prototype.getRowSelector = function ($collapsible) {
+    Collapsible.prototype.getRowSelector = function ($collapsible) {
         if ($collapsible.is('table')) {
             return '> tbody > th, > tbody > tr';
         } else if ($collapsible.is('ul, ol')) {
@@ -120,7 +120,7 @@
      *
      * @returns {boolean}
      */
-    CollapsibleContainer.prototype.canCollapse = function ($collapsible) {
+    Collapsible.prototype.canCollapse = function ($collapsible) {
         var rowSelector = this.getRowSelector($collapsible);
         if (!! rowSelector) {
             return $(rowSelector, $collapsible).length > ($collapsible.data('numofrows') || this.defaultNumOfRows);
@@ -129,6 +129,6 @@
         }
     };
 
-    Icinga.Behaviors.collapsibleContainer = CollapsibleContainer;
+    Icinga.Behaviors.Collapsible = Collapsible;
 
 })(Icinga, jQuery);
