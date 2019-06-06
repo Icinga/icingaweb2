@@ -228,107 +228,78 @@ a:hover > .icon-cancel {
 }
 
 // Collapsible Control
-.collapsible-table-container {
-  &.collapsed.has-collapsible .collapsible {
-    overflow: hidden;
-    max-height: 8em;
-  }
-}
-
-.collapsible-container,
-.collapsible-table-container {
-  &.collapsed:not(.has-collapsible),
-  &.collapsed.has-collapsible .collapsible {
-    overflow: hidden;
-    max-height: 96px;
-  }
-
-  &.collapsed:not(.has-collapsible) {
-    .collapsible-control {
-      bottom: 4px;
-    }
-  }
-}
-
-.collapsible-container,
-.collapsible-table-container {
-  position: relative;
-
-  .table-wrapper {
-    overflow: hidden;
-  }
-
-  .collapsed .table-wrapper {
-    overflow: hidden;
-    max-height: 12em;
-  }
-}
-
-.collapsible-control > i:before {
-  margin-right: 0;
-}
-
 #collapsible-control-ghost {
   display: none;
 }
 
-.collapsible-control > .icon-angle-double-down {
-  display: none;
+.collapsible-control {
+  position: relative;
+
+  button {
+    .rounded-corners(50%);
+
+    background: @gray-lighter;
+    color: @gray;
+    width: 2em;
+    height: 2em;
+    z-index: 1;
+    position: absolute;
+    border: none;
+    bottom: -1em;
+    right: .25em;
+    -webkit-box-shadow: 0 0 1/3em rgba(0,0,0,.3);
+    -moz-box-shadow: 0 0 1/3em rgba(0,0,0,.3);
+    box-shadow: 0 0 1/3em rgba(0,0,0,.3);
+
+    &:hover:before {
+      content: "";
+      display: block;
+      position: absolute;
+      top: -2px;
+      right: -2px;
+      bottom: -2px;
+      left: -2px;
+      background: fade(@text-color, 10);
+      .rounded-corners(50%);
+    }
+  }
 }
 
-.collapsible-control > .icon-angle-double-up {
-  display: block;
-}
-
-.collapsed {
-  .collapsible-control > .icon-angle-double-up {
+.collapsible.can-collapse:not(.collapsed) + .collapsible-control button {
+  > i.expand-icon {
     display: none;
   }
 
-  .collapsible-control > .icon-angle-double-down {
-    display: block;
+  > i.collapse-icon {
+    display: unset;
   }
 }
 
-.collapsible-control {
-  .rounded-corners(50%);
+.collapsible.collapsed + .collapsible-control button {
+  > i.expand-icon {
+    display: unset;
+  }
 
-  background: @gray-lighter;
-  color: @gray;
-  width: 2em;
-  height: 2em;
-  z-index: 1;
-  position: absolute;
-  border: none;
-  bottom: -1em;
-  right: .25em;
-  -webkit-box-shadow: 0 0 1/3em rgba(0,0,0,.3);
-     -moz-box-shadow: 0 0 1/3em rgba(0,0,0,.3);
-          box-shadow: 0 0 1/3em rgba(0,0,0,.3);
+  > i.collapse-icon {
+    display: none;
+  }
 }
 
-.collapsible {
+// Collapsibles
+
+.collapsible.collapsed {
   position: relative;
-}
+  overflow: hidden;
 
-.collapsed .collapsible:before,
-:not(.has-collapsible).collapsed:before {
-  content: "";
-  display: block;
-  height: 2em;
-  background: linear-gradient(rgba(255,255,255,0), white);
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 1;
-}
-
-.collapsible-control:hover:before {
-  content: "";
-  display: block;
-  position: absolute;
-  top: -2px; right: -2px; bottom: -2px; left: -2px;
-  background: fade(@text-color, 10);
-  .rounded-corners(50%);
+  &:before {
+    content: "";
+    display: block;
+    height: 2em;
+    background: linear-gradient(rgba(255,255,255,0), white);
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1;
+  }
 }

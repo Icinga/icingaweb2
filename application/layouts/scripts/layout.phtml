@@ -76,10 +76,12 @@ $innerLayoutScript = $this->layout()->innerLayout . '.phtml';
     }
   }());
 </script>
-<button id="collapsible-control-ghost" title="<?= $this->translate('Collapse') ?>" aria-label="<?= t('Collapse') ?>" class="collapsible-control">
-    <i class="icon-angle-double-down"></i>
-    <i class="icon-angle-double-up"></i>
-</button>
+<div id="collapsible-control-ghost" class="collapsible-control">
+    <button>
+        <?= $this->icon('angle-double-down', $this->translate('Expand'), ['class' => 'expand-icon']) ?>
+        <?= $this->icon('angle-double-up', $this->translate('Collapse'), ['class' => 'collapse-icon']) ?>
+    </button>
+</div>
 <!--[if lt IE 10]>
 <iframe id="fileupload-frame-target" name="fileupload-frame-target"></iframe>
 <![endif]-->
