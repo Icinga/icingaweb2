@@ -130,6 +130,24 @@
       padding-left: @gutter;
       padding-right: @gutter;
       padding-bottom: @horizontal-padding / 2;
+      border-bottom: 1px solid #eee;
+      position: relative;
+
+      &:after {
+        background: -webkit-linear-gradient(top,#fff 0%,rgba(255,255,255,0) 100%);
+        background:    -moz-linear-gradient(top,#fff 0%,rgba(255,255,255,0) 100%);
+        background:     -ms-linear-gradient(top,#fff 0%,rgba(255,255,255,0) 100%);
+        background:      -o-linear-gradient(top,#fff 0%,rgba(255,255,255,0) 100%);
+        background:         linear-gradient(top,#fff 0%,rgba(255,255,255,0) 100%);
+        content: "";
+        display: block;
+        height: 1em;
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: -1.0625em;
+        z-index: 10;
+      }
 
       > .tabs {
         // Remove gutter for tabs
