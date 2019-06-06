@@ -7,8 +7,7 @@
     Icinga.Behaviors = Icinga.Behaviors || {};
 
     /**
-     * Behavior for collapsible containers. Creates collapsible containers from `<div class="collapsible-container">…</div>`
-     * or <div class="collapsible-container"><div class="collapsible">…</div></div>`
+     * Behavior for collapsible containers. Creates collapsibles from `<div class="collapsible">…</div>`
      *
      * @param  icinga  Icinga  The current Icinga Object
      */
@@ -16,7 +15,7 @@
         Icinga.EventListener.call(this, icinga);
 
         this.on('rendered', '#col2', this.onRendered, this);
-        this.on('click', '.collapsible-container .collapsible-control, .collapsible-table-container .collapsible-control', this.onControlClicked, this);
+        this.on('click', '.collapsible + .collapsible-control', this.onControlClicked, this);
 
         this.icinga = icinga;
         this.expandedContainers = {};
@@ -26,109 +25,93 @@
     CollapsibleContainer.prototype = new Icinga.EventListener();
 
     /**
-     * Initializes all collapsible-container elements. Triggered on rendering of a container.
+     * Initializes all collapsibles. Triggered on rendering of a container.
      *
      * @param event  Event  The `onRender` event triggered by the rendered container
      */
     CollapsibleContainer.prototype.onRendered = function(event) {
         var _this = event.data.self;
 
-        $(event.target).find('.collapsible-container').each(function() {
-            var $this = $(this);
+        $('.collapsible', event.currentTarget).each(function() {
+            var $collapsible = $(this);
 
-            if (typeof $this.attr('id') === 'undefined') {
-                _this.icinga.logger.warn('[collapsible] Container has no id: ', this);
-                return;
+            if (_this.canCollapse($collapsible)) {
+                $collapsible.after($('#collapsible-control-ghost').clone().removeAttr('id'));
+                $collapsible.addClass('can-collapse');
+                _this.updateCollapsedState($collapsible);
             }
-
-            if ($this.find('.collapsible').length > 0) {
-                $this.addClass('has-collapsible');
-                if ($this.find('.collapsible').innerHeight() > ($this.data('height') || _this.defaultHeight)) {
-                    $this.append($('#collapsible-control-ghost').clone().removeAttr('id'));
-                    $this.addClass('can-collapse');
-                }
-            } else {
-                if ($this.innerHeight() > ($this.data('height') || _this.defaultHeight)) {
-                    $this.append($('#collapsible-control-ghost').clone().removeAttr('id'));
-                    $this.addClass('can-collapse');
-                }
-            }
-            _this.updateCollapsedState($this);
-        });
-
-        $(event.target).find('.collapsible-table-container').each(function() {
-            var $this = $(this);
-
-            if (typeof $this.attr('id') === 'undefined') {
-                _this.icinga.logger.warn('[collapsible] Container has no id: ', this);
-                return;
-            }
-
-            if ($this.find('.collapsible').length > 0) {
-                $this.addClass('has-collapsible');
-                if ($this.find('tr').length > ($this.attr('data-numofrows') || _this.defaultNumOfRows)) {
-                    $this.append($('#collapsible-control-ghost').clone().removeAttr('id'));
-                    $this.addClass('can-collapse');
-                }
-
-                if ($this.find('li').length > ($this.attr('data-numofrows') || _this.defaultNumOfRows)) {
-                    $this.append($('#collapsible-control-ghost').clone().removeAttr('id'));
-                    $this.addClass('can-collapse');
-                }
-            }
-            _this.updateCollapsedState($this);
         });
     };
 
     /**
-     * Event handler for clocking collapsible control. Toggles the collapsed state of the respective container.
+     * Event handler for toggling collapsibles. Switches the collapsed state of the respective container.
      *
      * @param event  Event  The `onClick` event triggered by the clicked collapsible-control element
      */
     CollapsibleContainer.prototype.onControlClicked = function(event) {
         var _this = event.data.self;
-        var $target = $(event.target);
-        var $c = $target.closest('.collapsible-container, .collapsible-table-container');
+        var $target = $(event.currentTarget);
+        var $collapsible = $target.prev('.collapsible');
 
-        _this.expandedContainers[$c.attr('id')] = $c.is('.collapsed');
-
-        console.log(_this.expandedContainers);
-
-        _this.updateCollapsedState($c);
+        if (! $collapsible.length) {
+            _this.icinga.logger.error('[Collapsible] Collapsible control has no associated .collapsible: ', $target);
+        } else {
+            _this.updateCollapsedState($collapsible);
+        }
     };
 
     /**
      * Renders the collapse state of the given container. Adds or removes class `collapsible` to containers and sets the
      * height.
      *
-     * @param $container  jQuery  The given collapsible container element
+     * @param $collapsible  jQuery  The given collapsible container element
      */
-    CollapsibleContainer.prototype.updateCollapsedState = function($container) {
-        var $collapsible;
-        if ($container.hasClass('has-collapsible')) {
-            $collapsible = $container.find('.collapsible');
-        } else {
-            $collapsible = $container;
+    CollapsibleContainer.prototype.updateCollapsedState = function($collapsible) {
+        var collapsiblePath = this.icinga.utils.getCSSPath($collapsible);
+        if (typeof this.expandedContainers[collapsiblePath] === 'undefined') {
+            this.expandedContainers[collapsiblePath] = $collapsible.is('.collapsed');
         }
 
-        var collapsibleId = $container.attr('id');
-        if (typeof this.expandedContainers[collapsibleId] === 'undefined') {
-            this.expandedContainers[collapsibleId] = false;
-        }
-
-        if (this.expandedContainers[collapsibleId]) {
-            $container.removeClass('collapsed');
+        if (this.expandedContainers[collapsiblePath]) {
+            this.expandedContainers[collapsiblePath] = false;
+            $collapsible.removeClass('collapsed');
             $collapsible.css({ maxHeight: 'none' });
         } else {
-            if ($container.hasClass('can-collapse')) {
-                $container.addClass('collapsed');
-                if ($container.hasClass('collapsible-container')) {
-                    $collapsible.css({maxHeight: $container.data('height') || this.defaultHeight});
-                }
-                if ($container.hasClass('collapsible-table-container')) {
-                    $collapsible.css({maxHeight: ($container.data('numofrows') || this.defaultNumOfRows) * $container.find('tr').height()});
-                }
+            this.expandedContainers[collapsiblePath] = true;
+            $collapsible.addClass('collapsed');
+
+            var rowSelector = this.getRowSelector($collapsible);
+            if (!! rowSelector) {
+                var $rows = $(rowSelector, $collapsible).slice(0, $collapsible.data('numofrows') || this.defaultNumOfRows);
+
+                var totalHeight = 0;
+                $rows.outerHeight(function (_, height) {
+                    totalHeight += height;
+                });
+
+                $collapsible.css({maxHeight: totalHeight});
+            } else {
+                $collapsible.css({maxHeight: $collapsible.data('height') || this.defaultHeight});
             }
+        }
+    };
+
+    CollapsibleContainer.prototype.getRowSelector = function ($collapsible) {
+        if ($collapsible.is('table')) {
+            return '> tbody > th, > tbody > tr';
+        } else if ($collapsible.is('ul, ol')) {
+            return '> li';
+        }
+
+        return '';
+    };
+
+    CollapsibleContainer.prototype.canCollapse = function ($collapsible) {
+        var rowSelector = this.getRowSelector($collapsible);
+        if (!! rowSelector) {
+            return $(rowSelector, $collapsible).length > ($collapsible.data('numofrows') || this.defaultNumOfRows);
+        } else {
+            return $collapsible.innerHeight() > ($collapsible.data('height') || this.defaultHeight);
         }
     };
 
