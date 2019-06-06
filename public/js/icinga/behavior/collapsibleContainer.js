@@ -33,8 +33,13 @@
     CollapsibleContainer.prototype.onRendered = function(event) {
         var _this = event.data.self;
 
-        $(event.target).find('.collapsible-container[data-collapsible-id]').each(function() {
+        $(event.target).find('.collapsible-container').each(function() {
             var $this = $(this);
+
+            if (typeof $this.attr('id') === 'undefined') {
+                _this.icinga.logger.warn('[collapsible] Container has no id: ', this);
+                return;
+            }
 
             if ($this.find('.collapsible').length > 0) {
                 $this.addClass('has-collapsible');
@@ -51,8 +56,13 @@
             _this.updateCollapsedState($this);
         });
 
-        $(event.target).find('.collapsible-table-container[data-collapsible-id]').each(function() {
+        $(event.target).find('.collapsible-table-container').each(function() {
             var $this = $(this);
+
+            if (typeof $this.attr('id') === 'undefined') {
+                _this.icinga.logger.warn('[collapsible] Container has no id: ', this);
+                return;
+            }
 
             if ($this.find('.collapsible').length > 0) {
                 $this.addClass('has-collapsible');
@@ -101,7 +111,7 @@
             $collapsible = $container;
         }
 
-        var collapsibleId = $container.data('collapsibleId');
+        var collapsibleId = $container.attr('id');
         if (typeof this.expandedContainers[collapsibleId] === 'undefined') {
             this.expandedContainers[collapsibleId] = false;
         }
