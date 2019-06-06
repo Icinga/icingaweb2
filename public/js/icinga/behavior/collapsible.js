@@ -14,7 +14,7 @@
     var Collapsible = function (icinga) {
         Icinga.EventListener.call(this, icinga);
 
-        this.on('rendered', '#col2', this.onRendered, this);
+        this.on('rendered', '.container', this.onRendered, this);
         this.on('click', '.collapsible + .collapsible-control', this.onControlClicked, this);
 
         this.icinga = icinga;
