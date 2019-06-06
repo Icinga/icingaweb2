@@ -4,8 +4,7 @@
 
     'use strict';
 
-    var expandedContainers = [];
-    var maxLength = 32;
+    var expandedContainers = {};
     var defaultNumOfRows = 2;
     var defaultHeight = 36;
 
@@ -31,41 +30,37 @@
      * @param event  Event  The `onRender` event triggered by the rendered container
      */
     CollapsibleContainer.prototype.onRendered = function(event) {
-        $(event.target).find('.collapsible-container').each(function() {
+        $(event.target).find('.collapsible-container[data-collapsible-id]').each(function() {
             var $this = $(this);
 
-            if ($this.data('collapsible-id') && $('[data-collapsible-id=' + $this.data('collapsible-id') + ']').length < 2) {
-                if ($this.find('.collapsible').length > 0) {
-                    $this.addClass('has-collapsible');
-                    if ($this.find('.collapsible').innerHeight() > ($this.data('height') || defaultHeight)) {
-                        $this.append($('#collapsible-control-ghost').clone().removeAttr('id'));
-                        $this.addClass('can-collapse');
-                    }
-                } else {
-                    if ($this.innerHeight() > ($this.data('height') || defaultHeight)) {
-                        $this.append($('#collapsible-control-ghost').clone().removeAttr('id'));
-                        $this.addClass('can-collapse');
-                    }
+            if ($this.find('.collapsible').length > 0) {
+                $this.addClass('has-collapsible');
+                if ($this.find('.collapsible').innerHeight() > ($this.data('height') || defaultHeight)) {
+                    $this.append($('#collapsible-control-ghost').clone().removeAttr('id'));
+                    $this.addClass('can-collapse');
+                }
+            } else {
+                if ($this.innerHeight() > ($this.data('height') || defaultHeight)) {
+                    $this.append($('#collapsible-control-ghost').clone().removeAttr('id'));
+                    $this.addClass('can-collapse');
                 }
             }
             updateCollapsedState($this);
         });
 
-        $(event.target).find('.collapsible-table-container').each(function() {
+        $(event.target).find('.collapsible-table-container[data-collapsible-id]').each(function() {
             var $this = $(this);
 
-            if ($this.data('collapsible-id') && $('[data-collapsible-id=' + $this.data('collapsible-id') + ']').length < 2) {
-                if ($this.find('.collapsible').length > 0) {
-                    $this.addClass('has-collapsible');
-                    if ($this.find('tr').length > ($this.attr('data-numofrows') || defaultNumOfRows)) {
-                        $this.append($('#collapsible-control-ghost').clone().removeAttr('id'));
-                        $this.addClass('can-collapse');
-                    }
+            if ($this.find('.collapsible').length > 0) {
+                $this.addClass('has-collapsible');
+                if ($this.find('tr').length > ($this.attr('data-numofrows') || defaultNumOfRows)) {
+                    $this.append($('#collapsible-control-ghost').clone().removeAttr('id'));
+                    $this.addClass('can-collapse');
+                }
 
-                    if ($this.find('li').length > ($this.attr('data-numofrows') || defaultNumOfRows)) {
-                        $this.append($('#collapsible-control-ghost').clone().removeAttr('id'));
-                        $this.addClass('can-collapse');
-                    }
+                if ($this.find('li').length > ($this.attr('data-numofrows') || defaultNumOfRows)) {
+                    $this.append($('#collapsible-control-ghost').clone().removeAttr('id'));
+                    $this.addClass('can-collapse');
                 }
             }
             updateCollapsedState($this);
@@ -81,14 +76,7 @@
         var $target = $(event.target);
         var $c = $target.closest('.collapsible-container, .collapsible-table-container');
 
-        if ($c.hasClass('collapsed')) {
-            if (expandedContainers.length > maxLength - 1) {
-                expandedContainers.shift();
-            }
-            expandedContainers.push($c.data('collapsible-id'));
-        } else {
-            expandedContainers.splice(expandedContainers.indexOf($c.data('collapsible-id')), 1);
-        }
+        expandedContainers[$c.data('collapsibleId')] = $c.is('.collapsed');
 
         console.log(expandedContainers);
 
@@ -108,7 +96,13 @@
         } else {
             $collapsible = $container;
         }
-        if (expandedContainers.indexOf($container.data('collapsible-id')) > -1) {
+
+        var collapsibleId = $container.data('collapsibleId');
+        if (typeof expandedContainers[collapsibleId] === 'undefined') {
+            expandedContainers[collapsibleId] = false;
+        }
+
+        if (expandedContainers[collapsibleId]) {
             $container.removeClass('collapsed');
             $collapsible.css({ maxHeight: 'none' });
         } else {
