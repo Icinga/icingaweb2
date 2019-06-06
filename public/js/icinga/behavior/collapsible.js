@@ -18,9 +18,10 @@
         this.on('click', '.collapsible + .collapsible-control', this.onControlClicked, this);
 
         this.icinga = icinga;
-        this.collapsibleStates = {};
         this.defaultNumOfRows = 2;
         this.defaultHeight = 36;
+
+        this.collapsibleStates = this.getStateFromStorage();
     };
     Collapsible.prototype = new Icinga.EventListener();
 
@@ -142,6 +143,27 @@
     Collapsible.prototype.expand = function ($collapsible) {
         $collapsible.removeClass('collapsed');
         $collapsible.css({display: '', height: ''});
+    };
+
+    /**
+     * Load the collapsible states from storage
+     *
+     * @returns {{}}
+     */
+    Collapsible.prototype.getStateFromStorage = function () {
+        var state = localStorage.getItem('collapsible.state');
+        if (!! state) {
+            return JSON.parse(state);
+        }
+
+        return {};
+    };
+
+    /**
+     * Save the collapsible states to storage
+     */
+    Collapsible.prototype.destroy = function () {
+        localStorage.setItem('collapsible.state', JSON.stringify(this.collapsibleStates));
     };
 
     Icinga.Behaviors.Collapsible = Collapsible;
