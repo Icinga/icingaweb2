@@ -4,9 +4,7 @@
 
     'use strict';
 
-    var expandedContainers = {};
-    var defaultNumOfRows = 2;
-    var defaultHeight = 36;
+    Icinga.Behaviors = Icinga.Behaviors || {};
 
     /**
      * Behavior for collapsible containers. Creates collapsible containers from `<div class="collapsible-container">…</div>`
@@ -14,14 +12,17 @@
      *
      * @param  icinga  Icinga  The current Icinga Object
      */
-
-    function CollapsibleContainer(icinga) {
+    var CollapsibleContainer = function (icinga) {
         Icinga.EventListener.call(this, icinga);
 
         this.on('rendered', '#col2', this.onRendered, this);
         this.on('click', '.collapsible-container .collapsible-control, .collapsible-table-container .collapsible-control', this.onControlClicked, this);
-    }
 
+        this.icinga = icinga;
+        this.expandedContainers = {};
+        this.defaultNumOfRows = 2;
+        this.defaultHeight = 36;
+    };
     CollapsibleContainer.prototype = new Icinga.EventListener();
 
     /**
@@ -30,22 +31,24 @@
      * @param event  Event  The `onRender` event triggered by the rendered container
      */
     CollapsibleContainer.prototype.onRendered = function(event) {
+        var _this = event.data.self;
+
         $(event.target).find('.collapsible-container[data-collapsible-id]').each(function() {
             var $this = $(this);
 
             if ($this.find('.collapsible').length > 0) {
                 $this.addClass('has-collapsible');
-                if ($this.find('.collapsible').innerHeight() > ($this.data('height') || defaultHeight)) {
+                if ($this.find('.collapsible').innerHeight() > ($this.data('height') || _this.defaultHeight)) {
                     $this.append($('#collapsible-control-ghost').clone().removeAttr('id'));
                     $this.addClass('can-collapse');
                 }
             } else {
-                if ($this.innerHeight() > ($this.data('height') || defaultHeight)) {
+                if ($this.innerHeight() > ($this.data('height') || _this.defaultHeight)) {
                     $this.append($('#collapsible-control-ghost').clone().removeAttr('id'));
                     $this.addClass('can-collapse');
                 }
             }
-            updateCollapsedState($this);
+            _this.updateCollapsedState($this);
         });
 
         $(event.target).find('.collapsible-table-container[data-collapsible-id]').each(function() {
@@ -53,17 +56,17 @@
 
             if ($this.find('.collapsible').length > 0) {
                 $this.addClass('has-collapsible');
-                if ($this.find('tr').length > ($this.attr('data-numofrows') || defaultNumOfRows)) {
+                if ($this.find('tr').length > ($this.attr('data-numofrows') || _this.defaultNumOfRows)) {
                     $this.append($('#collapsible-control-ghost').clone().removeAttr('id'));
                     $this.addClass('can-collapse');
                 }
 
-                if ($this.find('li').length > ($this.attr('data-numofrows') || defaultNumOfRows)) {
+                if ($this.find('li').length > ($this.attr('data-numofrows') || _this.defaultNumOfRows)) {
                     $this.append($('#collapsible-control-ghost').clone().removeAttr('id'));
                     $this.addClass('can-collapse');
                 }
             }
-            updateCollapsedState($this);
+            _this.updateCollapsedState($this);
         });
     };
 
@@ -73,14 +76,15 @@
      * @param event  Event  The `onClick` event triggered by the clicked collapsible-control element
      */
     CollapsibleContainer.prototype.onControlClicked = function(event) {
+        var _this = event.data.self;
         var $target = $(event.target);
         var $c = $target.closest('.collapsible-container, .collapsible-table-container');
 
-        expandedContainers[$c.data('collapsibleId')] = $c.is('.collapsed');
+        _this.expandedContainers[$c.attr('id')] = $c.is('.collapsed');
 
-        console.log(expandedContainers);
+        console.log(_this.expandedContainers);
 
-        updateCollapsedState($c);
+        _this.updateCollapsedState($c);
     };
 
     /**
@@ -89,7 +93,7 @@
      *
      * @param $container  jQuery  The given collapsible container element
      */
-    function updateCollapsedState($container) {
+    CollapsibleContainer.prototype.updateCollapsedState = function($container) {
         var $collapsible;
         if ($container.hasClass('has-collapsible')) {
             $collapsible = $container.find('.collapsible');
@@ -98,27 +102,25 @@
         }
 
         var collapsibleId = $container.data('collapsibleId');
-        if (typeof expandedContainers[collapsibleId] === 'undefined') {
-            expandedContainers[collapsibleId] = false;
+        if (typeof this.expandedContainers[collapsibleId] === 'undefined') {
+            this.expandedContainers[collapsibleId] = false;
         }
 
-        if (expandedContainers[collapsibleId]) {
+        if (this.expandedContainers[collapsibleId]) {
             $container.removeClass('collapsed');
             $collapsible.css({ maxHeight: 'none' });
         } else {
             if ($container.hasClass('can-collapse')) {
                 $container.addClass('collapsed');
                 if ($container.hasClass('collapsible-container')) {
-                    $collapsible.css({maxHeight: $container.data('height') || defaultHeight});
+                    $collapsible.css({maxHeight: $container.data('height') || this.defaultHeight});
                 }
                 if ($container.hasClass('collapsible-table-container')) {
-                    $collapsible.css({maxHeight: ($container.data('numofrows') || defaultNumOfRows) * $container.find('tr').height()});
+                    $collapsible.css({maxHeight: ($container.data('numofrows') || this.defaultNumOfRows) * $container.find('tr').height()});
                 }
             }
         }
-    }
-
-    Icinga.Behaviors = Icinga.Behaviors || {};
+    };
 
     Icinga.Behaviors.collapsibleContainer = CollapsibleContainer;
 
