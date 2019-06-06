@@ -710,7 +710,51 @@
 
         fixControls: function($container) {
             console.log('fix controls');
-            return false;
+            var $layout = $('#layout');
+            var $sidebar = $('#sidebar');
+            var $header = $('#header');
+
+            if ($layout.hasClass('minimal-layout')) {
+                if (! this.mobileMenu && $sidebar.length) {
+                    $header.css({
+                        top: $sidebar.outerHeight() + 'px'
+                    });
+                    $sidebar
+                        .on(
+                            'click',
+                            this.toggleMobileMenu
+                        )
+                        .prepend(
+                            $('<div id="mobile-menu-toggle"><button><i class="icon-menu"></i><i class="icon-cancel"></i></button></div>')
+                        );
+                    $('#header-logo').clone().attr('id', 'mobile-menu-logo')
+                        .appendTo('#mobile-menu-toggle');
+                    $(window).on('keypress', this.closeMobileMenu);
+
+                    this.mobileMenu = true;
+                }
+            } else {
+                if (!! $headerLogo.length) {
+                    $sidebar.css({
+                        top: $headerLogo.offset().top + $headerLogo.outerHeight()
+                    });
+                }
+
+                if (this.mobileMenu) {
+                    $header.css({
+                        top: 0
+                    });
+                    $headerLogo.css({
+                        display: 'block'
+                    });
+                    $sidebar.removeClass('expanded').off('click', this.toggleMobileMenu);
+                    $search.off('keypress', this.closeMobileMenu);
+                    $('#mobile-menu-toggle').remove();
+
+                    this.mobileMenu = false;
+                }
+            }
+
         },
 
         toggleFullscreen: function () {
