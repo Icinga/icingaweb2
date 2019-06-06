@@ -75,7 +75,7 @@
         if (this.expandedContainers[collapsiblePath]) {
             this.expandedContainers[collapsiblePath] = false;
             $collapsible.removeClass('collapsed');
-            $collapsible.css({ maxHeight: 'none' });
+            $collapsible.css({display: '', height: ''});
         } else {
             this.expandedContainers[collapsiblePath] = true;
             $collapsible.addClass('collapsed');
@@ -84,14 +84,14 @@
             if (!! rowSelector) {
                 var $rows = $(rowSelector, $collapsible).slice(0, $collapsible.data('numofrows') || this.defaultNumOfRows);
 
-                var totalHeight = 0;
+                var totalHeight = $rows.offset().top - $collapsible.offset().top;
                 $rows.outerHeight(function (_, height) {
                     totalHeight += height;
                 });
 
-                $collapsible.css({maxHeight: totalHeight});
+                $collapsible.css({display: 'block', height: totalHeight});
             } else {
-                $collapsible.css({maxHeight: $collapsible.data('height') || this.defaultHeight});
+                $collapsible.css({display: 'block', height: $collapsible.data('height') || this.defaultHeight});
             }
         }
     };
