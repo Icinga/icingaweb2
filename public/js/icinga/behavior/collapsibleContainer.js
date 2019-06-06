@@ -1,4 +1,4 @@
-/*! Icinga Web 2 | (c) 2018 Icinga Development Team | GPLv2+ */
+/*! Icinga Web 2 | (c) 2019 Icinga GmbH | GPLv2+ */
 
 ;(function(Icinga, $) {
 
@@ -7,7 +7,7 @@
     Icinga.Behaviors = Icinga.Behaviors || {};
 
     /**
-     * Behavior for collapsible containers. Creates collapsibles from `<div class="collapsible">…</div>`
+     * Behavior for collapsible containers.
      *
      * @param  icinga  Icinga  The current Icinga Object
      */
@@ -61,7 +61,7 @@
     };
 
     /**
-     * Renders the collapse state of the given container. Adds or removes class `collapsible` to containers and sets the
+     * Applies the collapse state of the given container. Adds or removes class `collapsed` to containers and sets the
      * height.
      *
      * @param $collapsible  jQuery  The given collapsible container element
@@ -96,6 +96,13 @@
         }
     };
 
+    /**
+     * Return an appropriate row element selector
+     *
+     * @param $collapsible jQuery  The given collapsible container element
+     *
+     * @returns {string}
+     */
     CollapsibleContainer.prototype.getRowSelector = function ($collapsible) {
         if ($collapsible.is('table')) {
             return '> tbody > th, > tbody > tr';
@@ -106,6 +113,13 @@
         return '';
     };
 
+    /**
+     * Check whether the given collapsible needs to collapse
+     *
+     * @param $collapsible jQuery  The given collapsible container element
+     *
+     * @returns {boolean}
+     */
     CollapsibleContainer.prototype.canCollapse = function ($collapsible) {
         var rowSelector = this.getRowSelector($collapsible);
         if (!! rowSelector) {
