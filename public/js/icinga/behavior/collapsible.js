@@ -18,7 +18,7 @@
         this.on('click', '.collapsible + .collapsible-control', this.onControlClicked, this);
 
         this.icinga = icinga;
-        this.defaultNumOfRows = 2;
+        this.defaultVisibleRows = 2;
         this.defaultHeight = 36;
 
         this.collapsibleStates = this.getStateFromStorage();
@@ -106,7 +106,7 @@
     Collapsible.prototype.canCollapse = function ($collapsible) {
         var rowSelector = this.getRowSelector($collapsible);
         if (!! rowSelector) {
-            return $(rowSelector, $collapsible).length > ($collapsible.data('numofrows') || this.defaultNumOfRows);
+            return $(rowSelector, $collapsible).length > ($collapsible.data('visibleRows') || this.defaultVisibleRows);
         } else {
             return $collapsible.innerHeight() > ($collapsible.data('height') || this.defaultHeight);
         }
@@ -122,7 +122,7 @@
 
         var rowSelector = this.getRowSelector($collapsible);
         if (!! rowSelector) {
-            var $rows = $(rowSelector, $collapsible).slice(0, $collapsible.data('numofrows') || this.defaultNumOfRows);
+            var $rows = $(rowSelector, $collapsible).slice(0, $collapsible.data('visibleRows') || this.defaultVisibleRows);
 
             var totalHeight = $rows.offset().top - $collapsible.offset().top;
             $rows.outerHeight(function (_, height) {
