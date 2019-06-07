@@ -88,7 +88,7 @@
      */
     Collapsible.prototype.getRowSelector = function ($collapsible) {
         if ($collapsible.is('table')) {
-            return '> tbody > th, > tbody > tr';
+            return '> tbody > tr';
         } else if ($collapsible.is('ul, ol')) {
             return '> li';
         }
