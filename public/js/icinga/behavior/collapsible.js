@@ -146,7 +146,10 @@
     Collapsible.prototype.loadStorage = function () {
         var expanded = localStorage.getItem('behavior.collapsible.expanded');
         if (!! expanded) {
-            this.expanded = new Set(JSON.parse(expanded));
+            // .forEach() is used because IE11 doesn't support constructor arguments
+            JSON.parse(expanded).forEach(function (value) {
+                this.expanded.add(value);
+            }, this);
         }
     };
 
@@ -155,7 +158,13 @@
      */
     Collapsible.prototype.destroy = function () {
         if (this.expanded.size > 0) {
-            localStorage.setItem('behavior.collapsible.expanded', JSON.stringify(Array.from(this.expanded.values())));
+            var expanded = [];
+            // .forEach() is used because IE11 doesn't support .values()
+            this.expanded.forEach(function(value) {
+                expanded.push(value);
+            });
+
+            localStorage.setItem('behavior.collapsible.expanded', JSON.stringify(expanded));
         } else {
             localStorage.removeItem('behavior.collapsible.expanded');
         }
