@@ -144,7 +144,7 @@
      * Load state from storage
      */
     Collapsible.prototype.loadStorage = function () {
-        var expanded = localStorage.getItem('collapsible.expanded');
+        var expanded = localStorage.getItem('behavior.collapsible.expanded');
         if (!! expanded) {
             this.expanded = new Set(JSON.parse(expanded));
         }
@@ -155,9 +155,9 @@
      */
     Collapsible.prototype.destroy = function () {
         if (this.expanded.size > 0) {
-            localStorage.setItem('collapsible.expanded', JSON.stringify(Array.from(this.expanded.values())));
+            localStorage.setItem('behavior.collapsible.expanded', JSON.stringify(Array.from(this.expanded.values())));
         } else {
-            localStorage.removeItem('collapsible.expanded');
+            localStorage.removeItem('behavior.collapsible.expanded');
         }
     };
 
