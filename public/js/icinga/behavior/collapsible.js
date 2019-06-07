@@ -19,7 +19,7 @@
 
         this.icinga = icinga;
         this.defaultVisibleRows = 2;
-        this.defaultHeight = 36;
+        this.defaultVisibleHeight = 36;
 
         this.collapsibleStates = this.getStateFromStorage();
     };
@@ -108,7 +108,7 @@
         if (!! rowSelector) {
             return $(rowSelector, $collapsible).length > ($collapsible.data('visibleRows') || this.defaultVisibleRows);
         } else {
-            return $collapsible.innerHeight() > ($collapsible.data('height') || this.defaultHeight);
+            return $collapsible.innerHeight() > ($collapsible.data('visibleHeight') || this.defaultVisibleHeight);
         }
     };
 
@@ -131,7 +131,7 @@
 
             $collapsible.css({display: 'block', height: totalHeight});
         } else {
-            $collapsible.css({display: 'block', height: $collapsible.data('height') || this.defaultHeight});
+            $collapsible.css({display: 'block', height: $collapsible.data('visibleHeight') || this.defaultVisibleHeight});
         }
     };
 
