@@ -724,10 +724,12 @@
                 $.each($tabs.filter(':visible'), function(){
                     $visibleWidth += $(this).width();
                 });
-                for (var count = 0; count < $tabs.size() - 4; count++) {
-                    if($($tabs[count]).is(":hidden")) {
-                        if(($($tabs[count]).width()) < ($tabContainer.width() - $visibleWidth - $visibleCount * 5)) {
-                            $($tabs[count]).show();
+
+                for (var count = 0; count < $tabs.size() - $ctrlCount; count++) {
+                    var $tab = $($tabs[count]);
+                    if($tab.is(":hidden")) {
+                        if($tab.width() < ($tabContainer.width() - $visibleWidth - $visibleCount * 5)) {
+                            $tab.show();
                             if ($($tabs[count + 1]).is(":visible")) {
                                 $dropdown.hide();
                             }
