@@ -691,7 +691,7 @@
                     width: $fakeControls.outerWidth()
                 });
 
-                _this.ensureTabVisibility($controls);
+                _this.ensureTabVisibility($controls, 0);
             });
 
             var $statusBar = $container.children('.monitoring-statusbar');
@@ -704,23 +704,21 @@
             }
         },
 
-        ensureTabVisibility: function ($controls) {
+        ensureTabVisibility: function ($controls, repetition) {
             var $tabContainer = $controls.find('.tabs');
             if (! $tabContainer) return;
 
             var $tabs = $tabContainer.children('li');
             var $dropdown = $tabContainer.find('.tabs-dropdown');
             var $visibleCount = $tabs.filter(':visible').size();
+            var $ctrlCount = $tabs.slice($tabContainer.find('.dropdown-nav-item:visible').index()).filter(':visible').size();
 
             if ($tabContainer[0].scrollHeight > $tabContainer[0].clientHeight) {
-                if ($dropdown.is(":visible")) {
-                    $tabs.slice($visibleCount - 5, -4).hide();
-                } else {
-                    $tabs.slice($visibleCount - 4, -3).hide();
-                }
+                $tabs.slice($visibleCount - $ctrlCount - 1, -($ctrlCount) - 1).hide();
                 $dropdown.show();
-
-                this.ensureTabVisibility($controls);
+                if (repetition < $tabs.size()) {
+                    this.ensureTabVisibility($controls, repetition + 1);
+                }
             } else if ($tabContainer.find('.tabs-dropdown').is(':visible') && $tabContainer.children().is(':hidden')) {
                 var $visibleWidth = 0;
                 $.each($tabs.filter(':visible'), function(){
@@ -734,7 +732,9 @@
                                 $dropdown.hide();
                             }
 
-                            this.ensureTabVisibility($controls);
+                            if (repetition < $tabs.size()) {
+                                this.ensureTabVisibility($controls, repetition + 1);
+                            }
                         }
                         break;
                     }
@@ -743,8 +743,8 @@
 
             var $dropdownList = $dropdown.find('li');
             $visibleCount = $tabs.filter(':visible').size();
-            $dropdownList.slice(0, $visibleCount - 4).hide();
-            $dropdownList.slice($visibleCount - 4).show();
+            $dropdownList.slice(0, $visibleCount - $ctrlCount).hide();
+            $dropdownList.slice($visibleCount - $ctrlCount).show();
         },
 
         toggleFullscreen: function () {
