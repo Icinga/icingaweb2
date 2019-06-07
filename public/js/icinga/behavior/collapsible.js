@@ -18,10 +18,11 @@
         this.on('click', '.collapsible + .collapsible-control', this.onControlClicked, this);
 
         this.icinga = icinga;
+        this.expanded = new Set();
         this.defaultVisibleRows = 2;
         this.defaultVisibleHeight = 36;
 
-        this.collapsibleStates = this.getStateFromStorage();
+        this.loadStorage();
     };
     Collapsible.prototype = new Icinga.EventListener();
 
@@ -42,15 +43,9 @@
                 $collapsible.after($('#collapsible-control-ghost').clone().removeAttr('id'));
                 $collapsible.addClass('can-collapse');
 
-                if (typeof _this.collapsibleStates[collapsiblePath] === 'undefined') {
-                    _this.collapsibleStates[collapsiblePath] = true;
-                    _this.collapse($collapsible);
-                } else if (_this.collapsibleStates[collapsiblePath]) {
+                if (! _this.expanded.has(collapsiblePath)) {
                     _this.collapse($collapsible);
                 }
-            } else {
-                // This collapsible is not large enough (anymore)
-                delete _this.collapsibleStates[collapsiblePath];
             }
         });
     };
@@ -69,12 +64,12 @@
             _this.icinga.logger.error('[Collapsible] Collapsible control has no associated .collapsible: ', $target);
         } else {
             var collapsiblePath = _this.icinga.utils.getCSSPath($collapsible);
-            if (_this.collapsibleStates[collapsiblePath]) {
-                _this.collapsibleStates[collapsiblePath] = false;
-                _this.expand($collapsible);
-            } else {
-                _this.collapsibleStates[collapsiblePath] = true;
+            if (_this.expanded.has(collapsiblePath)) {
+                _this.expanded.delete(collapsiblePath);
                 _this.collapse($collapsible);
+            } else {
+                _this.expanded.add(collapsiblePath);
+                _this.expand($collapsible);
             }
         }
     };
@@ -146,24 +141,24 @@
     };
 
     /**
-     * Load the collapsible states from storage
-     *
-     * @returns {{}}
+     * Load state from storage
      */
-    Collapsible.prototype.getStateFromStorage = function () {
-        var state = localStorage.getItem('collapsible.state');
-        if (!! state) {
-            return JSON.parse(state);
+    Collapsible.prototype.loadStorage = function () {
+        var expanded = localStorage.getItem('collapsible.expanded');
+        if (!! expanded) {
+            this.expanded = new Set(JSON.parse(expanded));
         }
-
-        return {};
     };
 
     /**
-     * Save the collapsible states to storage
+     * Save state to storage
      */
     Collapsible.prototype.destroy = function () {
-        localStorage.setItem('collapsible.state', JSON.stringify(this.collapsibleStates));
+        if (this.expanded.size > 0) {
+            localStorage.setItem('collapsible.expanded', JSON.stringify(Array.from(this.expanded.values())));
+        } else {
+            localStorage.removeItem('collapsible.expanded');
+        }
     };
 
     Icinga.Behaviors.Collapsible = Collapsible;
