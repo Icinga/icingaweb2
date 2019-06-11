@@ -579,22 +579,6 @@
                     if ($tabs.length && $controls.children().length > 1 && ! $tabs.next('.tabs-spacer').length) {
                         $tabs.after($('<div class="tabs-spacer"></div>'));
                     }
-                    /*
-                    var $fakeControls = $('<div class="fake-controls"></div>');
-                    $fakeControls.height($controls.height()).css({
-                        // That's only temporary. It's reset in fixControls, which is called at the end of this
-                        // function. Its purpose is to prevent the content from jumping up upon auto-refreshes.
-                        // It works by making the fake-controls appear at the same vertical level as the controls
-                        // and the height of the content then doesn't change when taking the controls out of the flow.
-                        float: 'right'
-                    });
-                    */
-
-                    /*
-                    $controls.before($fakeControls).css({
-                        position: 'fixed'
-                    });
-                    */
                 }
             });
 
@@ -709,16 +693,13 @@
         },
 
         fixControls: function($container) {
-            console.log('fix controls');
             var $layout = $('#layout');
             var $sidebar = $('#sidebar');
-            var $header = $('#header');
+            var $search = $('#search');
 
             if ($layout.hasClass('minimal-layout')) {
+                var self = this;
                 if (! this.mobileMenu && $sidebar.length) {
-                    $header.css({
-                        top: $sidebar.outerHeight() + 'px'
-                    });
                     $sidebar
                         .on(
                             'click',
@@ -729,24 +710,12 @@
                         );
                     $('#header-logo').clone().attr('id', 'mobile-menu-logo')
                         .appendTo('#mobile-menu-toggle');
-                    $(window).on('keypress', this.closeMobileMenu);
+                    $(window).on('keypress', self.closeMobileMenu);
 
                     this.mobileMenu = true;
                 }
             } else {
-                if (!! $headerLogo.length) {
-                    $sidebar.css({
-                        top: $headerLogo.offset().top + $headerLogo.outerHeight()
-                    });
-                }
-
                 if (this.mobileMenu) {
-                    $header.css({
-                        top: 0
-                    });
-                    $headerLogo.css({
-                        display: 'block'
-                    });
                     $sidebar.removeClass('expanded').off('click', this.toggleMobileMenu);
                     $search.off('keypress', this.closeMobileMenu);
                     $('#mobile-menu-toggle').remove();
