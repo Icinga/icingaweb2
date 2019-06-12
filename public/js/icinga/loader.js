@@ -818,7 +818,7 @@
 
             if (! forceFocus && typeof containerId !== 'undefined') {
                 if (autorefresh || autoSubmit) {
-                    scrollPos = $container.scrollTop();
+                    scrollPos = $container.children('.content').scrollTop();
                 } else {
                     scrollPos = 0;
                 }
@@ -913,12 +913,12 @@
             icinga.ui.fixControls();
 
             if (scrollPos !== false) {
-                $container.scrollTop(scrollPos);
+                $container.children('.content').scrollTop(scrollPos);
 
                 // Fallback for browsers without support for focus({preventScroll: true})
                 setTimeout(function () {
                     if ($container.scrollTop() !== scrollPos) {
-                        $container.scrollTop(scrollPos);
+                        $container.children('.content').scrollTop(scrollPos);
                     }
                 }, 0);
             }
