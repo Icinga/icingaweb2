@@ -135,14 +135,15 @@
                 headers: headers,
                 context: _this,
                 contentType: contentType,
-                processData: ! isFormData
+                processData: ! isFormData,
+                complete: this.onComplete
             });
 
             req.$target = $target;
             req.url = url;
             req.done(this.onResponse);
             req.fail(this.onFailure);
-            req.complete(this.onComplete);
+            //req.complete(this.onComplete);
             req.autorefresh = autorefresh;
             req.method = method;
             req.action = action;
