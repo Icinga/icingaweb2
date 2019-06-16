@@ -18,6 +18,7 @@ class ApplicationState extends ApplicationStateHook
                 'programstatus',
                 ['is_currently_running', 'status_update_time']
             )
+            ->order('status_update_time', 'DESC')
             ->fetchRow();
 
         if ($programStatus === false || ! (bool) $programStatus->is_currently_running) {

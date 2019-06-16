@@ -84,6 +84,7 @@ class HealthController extends Controller
                     'process_performance_data'
                 )
             )
+            ->order('status_update_time', 'DESC')
             ->getQuery();
         $this->handleFormatRequest($programStatus);
         $programStatus = $programStatus->fetchRow();

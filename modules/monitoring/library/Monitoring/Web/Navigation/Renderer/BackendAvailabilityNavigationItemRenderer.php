@@ -30,6 +30,7 @@ class BackendAvailabilityNavigationItemRenderer extends BadgeNavigationItemRende
                 'programstatus',
                 array('is_currently_running', 'notifications_enabled')
             )
+            ->order('status_update_time', 'DESC')
             ->fetchRow();
 
         if ($programStatus === false) {
