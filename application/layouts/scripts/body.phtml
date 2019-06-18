@@ -29,20 +29,20 @@ if ($this->layout()->inlineLayout) {
 <?php if (! $this->layout()->isIframe): ?>
 <div id="content-wrapper">
     <div id="sidebar">
-    <div id="header">
-        <div id="header-logo-container">
-            <?= $this->qlink(
-                '',
-                Auth::getInstance()->isAuthenticated() ? 'dashboard' : '',
-                null,
-                array(
-                    'aria-hidden'       => 'true',
-                    'data-base-target'  => '_main',
-                    'id'                => 'header-logo'
-                )
-            ); ?>
+        <div id="header">
+            <div id="header-logo-container">
+                <?= $this->qlink(
+                    '',
+                    Auth::getInstance()->isAuthenticated() ? 'dashboard' : '',
+                    null,
+                    array(
+                        'aria-hidden'       => 'true',
+                        'data-base-target'  => '_main',
+                        'id'                => 'header-logo'
+                    )
+                ); ?>
+            </div>
         </div>
-    </div>
     <?= $this->render('parts/navigation.phtml'); ?>
     </div>
     <?php endif ?>
