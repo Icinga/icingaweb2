@@ -41,7 +41,11 @@ form:not(.inline):not([role="search"]) {
 
 .control-group {
   display: flex;
-  position: relative;
+  margin: 0 -.5em;
+
+  > * {
+    margin: .5em;
+  }
 }
 
 /**********************************************************************************************************************
@@ -54,16 +58,11 @@ form:not(.inline):not([role="search"]) {
     width: 100%;
 
     .control-label-group {
-      min-width: auto;
-      margin-bottom: 0;
-      padding-left: 0;
-      padding-bottom: 0;
       text-align: left;
       width: 100%;
-    }
-
-    .form-controls {
-      margin-left: 0;
+      padding-bottom: 0;
+      padding-left: 0;
+      margin-bottom: 0;
     }
   }
 
@@ -73,10 +72,6 @@ form:not(.inline):not([role="search"]) {
 
   .control-info {
     position: relative;
-    width: 0;
-    &:before {
-      margin-left: -1.25em;
-    }
   }
 
   .errors > li {
@@ -93,26 +88,29 @@ form:not(.inline):not([role="search"]) {
   flex-direction: column;
   justify-content: center;
   line-height: 1;
-  margin: .5em 1em 0.5em 0;
+  padding: .5625em;
   max-height: 2.5em;
   text-align: right;
   width: 15em;
 }
 
 .control-info {
-  position: absolute;
-  right: -.75em;
-  line-height: 3.5em;
+  line-height: 2.5em;
+
+  &:before {
+    margin-left: -.5em;
+    margin-right: .5em;
+  }
 }
 
 .toggle-switch ~ .control-info {
   position: relative;
-  right: 0;
   margin-left: .5em;
 }
 
 .spinner {
-  line-height: 3.5em;
+  line-height: 2.5em;
+  margin: .5em 0;
 
   &:before {
     margin-left: .5em;
@@ -121,7 +119,7 @@ form:not(.inline):not([role="search"]) {
 }
 
 select ~ .spinner:before {
-  margin-left: -4em;
+  margin-left: -3.5em;
 }
 
 /**********************************************************************************************************************
@@ -137,7 +135,6 @@ select ~ .spinner:before {
   flex: 1;
 }
 
-.control-group .control-label-group,
 .control-group input:not([type="checkbox"]),
 .control-group .toggle-switch,
 .control-group button,
@@ -149,14 +146,13 @@ select ~ .spinner:before {
   border: none;
   border-radius: .25em;
   font-size: inherit;
-  margin: .5em 1em 0.5em 0;
   padding: .5625em;
   .appearance(none);
 }
 
 .control-group .toggle-switch,
 .form-controls .toggle-switch {
-  margin: 1em 0;
+  margin: 1em .5em;
 }
 
 /**********************************************************************************************************************
