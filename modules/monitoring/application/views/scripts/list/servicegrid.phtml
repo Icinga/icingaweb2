@@ -12,24 +12,21 @@ if (! $this->compact): ?>
     <?php
     $toggleFilter = Url::fromRequest();
     if ($toggleFilter->getParam('problems')) {
-        $title = 'Show entire environment';
         $toggleFilter->remove('problems');
+
+        echo $this->qlink(
+            $this->translate('Show entire environment'),
+            $toggleFilter
+        );
     } else {
         $toggleFilter->setParam('problems');
-        $title = 'Show problem context';
-    }
-    ?>
-    <?= $this->qlink(
-        $this->translate($title),
-        $toggleFilter,
-        null,
-        array(
-            'data-base-target'    => '_self',
-            'title'               => $this->translate('Toggle relevance filter')
-        )
-    ) ?>
+
+        echo $this->qlink(
+            $this->translate('Show problem context'),
+            $toggleFilter
+        );
+    } ?>
     <?= $this->filterEditor ?>
-  </label>
 </div>
 <?php endif ?>
 <div class="content" data-base-target="_next">
