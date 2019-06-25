@@ -7,6 +7,7 @@ use Icinga\Data\Filter\Filter;
 use Icinga\Web\Navigation\NavigationItem;
 use Icinga\Module\Monitoring\Object\Macro;
 use Icinga\Module\Monitoring\Object\MonitoredObject;
+use Icinga\Web\Url;
 
 /**
  * Action for monitored objects
@@ -33,6 +34,13 @@ class Action extends NavigationItem
      * @var string
      */
     protected $filter;
+
+    /**
+     * This action's raw url attribute
+     *
+     * @var string
+     */
+    protected $rawUrl;
 
     /**
      * Set this action's object
@@ -80,14 +88,22 @@ class Action extends NavigationItem
         return $this->filter;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    public function setUrl($url)
+    {
+        if (is_string($url)) {
+            $this->rawUrl = $url;
+        } else {
+            parent::setUrl($url);
+        }
+
+        return $this;
+    }
+
     public function getUrl()
     {
         $url = parent::getUrl();
-        if (! $this->resolved && $url !== null) {
-            $this->setUrl(Macro::resolveMacros($url->getAbsoluteUrl(), $this->getObject()));
+        if (! $this->resolved && $url === null) {
+            $this->setUrl(Url::fromPath(Macro::resolveMacros($this->rawUrl, $this->getObject())));
             $this->resolved = true;
             return parent::getUrl();
         } else {
@@ -95,9 +111,6 @@ class Action extends NavigationItem
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getRender()
     {
         if ($this->render === null) {
