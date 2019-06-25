@@ -59,7 +59,7 @@ form:not(.inline):not([role="search"]) {
   }
 
   .control-info {
-    position: relative;
+    opacity: .5;
   }
 
   .errors > li {
@@ -84,11 +84,8 @@ form:not(.inline):not([role="search"]) {
 
 .control-info {
   line-height: 2.5em;
-
-  &:before {
-    margin-left: -.5em;
-    margin-right: .5em;
-  }
+  padding-right: .25em;
+  margin-left: 0;
 }
 
 .toggle-switch ~ .control-info {
@@ -369,6 +366,7 @@ input:checked + .toggle-slider:before {
     font-size: 2em;
     margin-left: .25em;
     opacity: .4;
+    align-self: flex-start;
   }
 }
 
@@ -377,7 +375,7 @@ input:checked + .toggle-slider:before {
 }
 
 .form-description {
-  background-color: fade(@gray, 20%);
+  background-color: fade(@gray, 5%);
 }
 
 .errors {
