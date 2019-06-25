@@ -11,7 +11,7 @@
      *
      * @param  icinga  Icinga  The current Icinga Object
      */
-    var Collapsible = function (icinga) {
+    var Collapsible = function(icinga) {
         Icinga.EventListener.call(this, icinga);
 
         this.on('rendered', '.container', this.onRendered, this);
@@ -81,7 +81,7 @@
      *
      * @returns {string}
      */
-    Collapsible.prototype.getRowSelector = function ($collapsible) {
+    Collapsible.prototype.getRowSelector = function($collapsible) {
         if ($collapsible.is('table')) {
             return '> tbody > tr';
         } else if ($collapsible.is('ul, ol')) {
@@ -98,7 +98,7 @@
      *
      * @returns {boolean}
      */
-    Collapsible.prototype.canCollapse = function ($collapsible) {
+    Collapsible.prototype.canCollapse = function($collapsible) {
         var rowSelector = this.getRowSelector($collapsible);
         if (!! rowSelector) {
             return $(rowSelector, $collapsible).length > ($collapsible.data('visibleRows') || this.defaultVisibleRows);
@@ -112,7 +112,7 @@
      *
      * @param   $collapsible    jQuery      The given collapsible container element
      */
-    Collapsible.prototype.collapse = function ($collapsible) {
+    Collapsible.prototype.collapse = function($collapsible) {
         $collapsible.addClass('collapsed');
 
         var rowSelector = this.getRowSelector($collapsible);
@@ -120,7 +120,7 @@
             var $rows = $(rowSelector, $collapsible).slice(0, $collapsible.data('visibleRows') || this.defaultVisibleRows);
 
             var totalHeight = $rows.offset().top - $collapsible.offset().top;
-            $rows.outerHeight(function (_, height) {
+            $rows.outerHeight(function(_, height) {
                 totalHeight += height;
             });
 
@@ -135,7 +135,7 @@
      *
      * @param   $collapsible    jQuery      The given collapsible container element
      */
-    Collapsible.prototype.expand = function ($collapsible) {
+    Collapsible.prototype.expand = function($collapsible) {
         $collapsible.removeClass('collapsed');
         $collapsible.css({display: '', height: ''});
     };
@@ -143,11 +143,11 @@
     /**
      * Load state from storage
      */
-    Collapsible.prototype.loadStorage = function () {
+    Collapsible.prototype.loadStorage = function() {
         var expanded = localStorage.getItem('behavior.collapsible.expanded');
         if (!! expanded) {
             // .forEach() is used because IE11 doesn't support constructor arguments
-            JSON.parse(expanded).forEach(function (value) {
+            JSON.parse(expanded).forEach(function(value) {
                 this.expanded.add(value);
             }, this);
         }
@@ -156,7 +156,7 @@
     /**
      * Save state to storage
      */
-    Collapsible.prototype.destroy = function () {
+    Collapsible.prototype.destroy = function() {
         if (this.expanded.size > 0) {
             var expanded = [];
             // .forEach() is used because IE11 doesn't support .values()
