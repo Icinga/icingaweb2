@@ -84,8 +84,13 @@ form:not(.inline):not([role="search"]) {
 
 .control-info {
   line-height: 2.5em;
-  padding-right: .25em;
+  margin-right: 1em;
+  opacity: .6;
   margin-left: 0;
+
+  &:before {
+    margin-right: 0;
+  }
 }
 
 .toggle-switch ~ .control-info {
@@ -100,6 +105,12 @@ form:not(.inline):not([role="search"]) {
     margin-left: .5em;
     opacity: 0.4;
   }
+}
+
+form.inline .control-group .spinner {
+  line-height: 1.5;
+  margin: 0 auto;
+  padding: 0 .5em;
 }
 
 select ~ .spinner:before {
