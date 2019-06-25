@@ -19,25 +19,13 @@ form:not(.inline):not([role="search"]) {
   width: 80%;
 }
 
-.form-element,
 .form-controls {
   display: flex;
   margin-left: 16em;
-
+  justify-content: flex-end;
 }
 
-.form-control {
-  display: inline-block;
-  float: right;
 
-  &:not(:last-child) {
-    margin-left: .5em;
-  }
-
-  &:last-child {
-    .clearfix();
-  }
-}
 
 .control-group {
   display: flex;
@@ -210,9 +198,14 @@ input.search {
   opacity: 0
 }
 
-.form-controls input:not(:last-child),
-.form-controls button:not(:last-child) {
-  margin-right: 1em;
+.form-controls {
+  .spinner {
+    order: -1;
+  }
+
+  .btn-primary {
+    order: 99;
+  }
 }
 
 .control-group select:not([multiple]) {
