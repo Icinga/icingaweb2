@@ -18,11 +18,9 @@
         this.on('click', '.collapsible + .collapsible-control', this.onControlClicked, this);
 
         this.icinga = icinga;
-        this.expanded = new Set();
+        this.state = new StateStorage();
         this.defaultVisibleRows = 2;
         this.defaultVisibleHeight = 36;
-
-        this.loadStorage();
     };
     Collapsible.prototype = new Icinga.EventListener();
 
@@ -43,7 +41,7 @@
                 $collapsible.after($('#collapsible-control-ghost').clone().removeAttr('id'));
                 $collapsible.addClass('can-collapse');
 
-                if (! _this.expanded.has(collapsiblePath)) {
+                if (! _this.state.isExpanded(collapsiblePath)) {
                     _this.collapse($collapsible);
                 }
             }
@@ -64,11 +62,11 @@
             _this.icinga.logger.error('[Collapsible] Collapsible control has no associated .collapsible: ', $target);
         } else {
             var collapsiblePath = _this.icinga.utils.getCSSPath($collapsible);
-            if (_this.expanded.has(collapsiblePath)) {
-                _this.expanded.delete(collapsiblePath);
+            if (_this.state.isExpanded(collapsiblePath)) {
+                _this.state.collapse(collapsiblePath);
                 _this.collapse($collapsible);
             } else {
-                _this.expanded.add(collapsiblePath);
+                _this.state.expand(collapsiblePath);
                 _this.expand($collapsible);
             }
         }
@@ -140,27 +138,47 @@
         $collapsible.css({display: '', height: ''});
     };
 
-    /**
-     * Load state from storage
-     */
-    Collapsible.prototype.loadStorage = function() {
+    Icinga.Behaviors.Collapsible = Collapsible;
+
+    // State-Storage abstraction, not for use externally until we've had time to think this properly through
+
+    var StateStorage = function() {};
+
+    StateStorage.prototype.isExpanded = function(selector) {
+        return this.load().has(selector);
+    };
+
+    StateStorage.prototype.expand = function(selector) {
+        var set = this.load();
+        set.add(selector);
+        this.save(set);
+    };
+
+    StateStorage.prototype.collapse = function(selector) {
+        var set = this.load();
+        set.delete(selector);
+        this.save(set);
+    };
+
+    StateStorage.prototype.load = function () {
+        var set = new Set();
+
         var expanded = localStorage.getItem('behavior.collapsible.expanded');
         if (!! expanded) {
             // .forEach() is used because IE11 doesn't support constructor arguments
             JSON.parse(expanded).forEach(function(value) {
-                this.expanded.add(value);
+                set.add(value);
             }, this);
         }
+
+        return set;
     };
 
-    /**
-     * Save state to storage
-     */
-    Collapsible.prototype.destroy = function() {
-        if (this.expanded.size > 0) {
+    StateStorage.prototype.save = function(set) {
+        if (set.size > 0) {
             var expanded = [];
             // .forEach() is used because IE11 doesn't support .values()
-            this.expanded.forEach(function(value) {
+            set.forEach(function(value) {
                 expanded.push(value);
             });
 
@@ -169,7 +187,5 @@
             localStorage.removeItem('behavior.collapsible.expanded');
         }
     };
-
-    Icinga.Behaviors.Collapsible = Collapsible;
 
 })(Icinga, jQuery);
