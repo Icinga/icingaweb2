@@ -95,7 +95,6 @@ form:not(.inline):not([role="search"]) {
 
 .spinner {
   line-height: 2.5em;
-  margin: .5em 0;
 
   &:before {
     margin-left: .5em;
@@ -118,6 +117,16 @@ select ~ .spinner:before {
 .control-group select {
   background: @low-sat-blue;
   flex: 1;
+  width: 0;
+}
+
+.control-group select option * {
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  max-width: 100%;
+  -ms-text-overflow: ellipsis;
+  text-overflow: ellipsis;
 }
 
 .control-group input:not([type="checkbox"]),
@@ -201,6 +210,10 @@ input.search {
 .control-group select::-ms-expand {
   display: none;
   opacity: 0
+}
+
+.control-group .spinner {
+  margin: .5em 0;
 }
 
 .form-controls {
