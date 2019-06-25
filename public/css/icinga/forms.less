@@ -76,7 +76,7 @@ form:not(.inline):not([role="search"]) {
   flex-direction: column;
   justify-content: center;
   line-height: 1;
-  padding: .5625em;
+  padding: .5625em .5625em .5625em 0;
   max-height: 2.5em;
   text-align: right;
   width: 15em;
@@ -141,6 +141,14 @@ select ~ .spinner:before {
 .control-group .toggle-switch,
 .form-controls .toggle-switch {
   margin: 1em .5em;
+}
+
+.controls .control-group {
+  input,
+  select {
+    line-height: 0.75;
+    max-width: 16em;
+  }
 }
 
 /**********************************************************************************************************************
@@ -342,8 +350,9 @@ input:checked + .toggle-slider:before {
   border-radius: .25em;
   display: flex;
   list-style: none;
+  align-items: center;
   margin: 0 0 1em 0;
-  padding: 1em .5em;
+  padding: .25em .5em;
 
   ul {
     list-style: none;
@@ -357,7 +366,9 @@ input:checked + .toggle-slider:before {
 
   & .form-notification-icon,
   & .form-description-icon {
-    margin-left: 1em;
+    font-size: 2em;
+    margin-left: .25em;
+    opacity: .4;
   }
 }
 
