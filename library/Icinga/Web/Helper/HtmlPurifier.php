@@ -4,6 +4,7 @@
 namespace Icinga\Web\Helper;
 
 use Closure;
+use Icinga\Web\FileCache;
 use InvalidArgumentException;
 
 class HtmlPurifier
@@ -29,11 +30,16 @@ class HtmlPurifier
         $purifierConfig = \HTMLPurifier_Config::createDefault();
         $purifierConfig->set('Core.EscapeNonASCIICharacters', true);
         $purifierConfig->set('Attr.AllowedFrameTargets', array('_blank'));
+
+        if (($cachePath = FileCache::instance()->directory('htmlpurifier.cache')) !== false) {
+            $purifierConfig->set('Cache.SerializerPath', $cachePath);
+        } else {
+            $purifierConfig->set('Cache.DefinitionImpl', null);
+        }
+
         // This avoids permission problems:
         // $purifierConfig->set('Core.DefinitionCache', null);
-        $purifierConfig->set('Cache.DefinitionImpl', null);
-        // TODO: Use a cache directory:
-        // $purifierConfig->set('Cache.SerializerPath', '/var/spool/whatever');
+
         // $purifierConfig->set('URI.Base', 'http://www.example.com');
         // $purifierConfig->set('URI.MakeAbsolute', true);
 
