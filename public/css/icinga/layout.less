@@ -294,8 +294,21 @@ html.no-js .controls > .tabs {
   }
 
   #menu {
-    .badge {
-      display: none;
+    .nav-level-1 {
+      > .badge-nav-item > a {
+        position: relative;
+
+        > .badge {
+          position: absolute;
+          right: .5em;
+          bottom: .25em;
+          font-size: 75%;
+        }
+      }
+
+      > .nav-item.active > a > .badge {
+        display: unset;
+      }
     }
 
     img.icon {
