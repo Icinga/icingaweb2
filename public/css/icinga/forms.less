@@ -30,6 +30,7 @@ form:not(.inline):not([role="search"]) {
 .control-group {
   display: flex;
   margin: 0 -.5em;
+  align-items: center;
 
   > * {
     margin: .5em;
@@ -121,23 +122,26 @@ select ~ .spinner:before {
                                                general input styles
 ***********************************************************************************************************************/
 
-.control-group input[type="text"],
-.control-group input[type="password"],
-.control-group input[type="number"],
-.control-group textarea,
-.control-group select {
+form input[type="text"],
+form input[type="password"],
+form input[type="number"],
+form textarea,
+form select {
   background: @low-sat-blue;
   flex: 1;
-  width: 0;
 }
 
-.control-group select option * {
-  width: 100%;
-  overflow: hidden;
-  white-space: nowrap;
-  max-width: 100%;
-  -ms-text-overflow: ellipsis;
-  text-overflow: ellipsis;
+form input:not([type="checkbox"]),
+form .toggle-switch,
+form button,
+form select,
+form textarea,
+form button,
+form .toggle-switch,
+form input {
+  border: none;
+  .rounded-corners(.25em);
+  .appearance(none);
 }
 
 .control-group input:not([type="checkbox"]),
@@ -148,11 +152,9 @@ select ~ .spinner:before {
 .form-controls button,
 .form-controls .toggle-switch,
 .form-controls input {
-  border: none;
-  border-radius: .25em;
   font-size: inherit;
-  padding: .5625em;
-  .appearance(none);
+  padding: 0 .5625em;
+  line-height: 2.625em;
 }
 
 .control-group .toggle-switch,
@@ -160,12 +162,44 @@ select ~ .spinner:before {
   margin: 1em .5em;
 }
 
-.controls .control-group {
+.controls form {
+
+  .control-label-group {
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-top: 0.25em;
+    padding-bottom: 0.25em;
+  }
+
   input,
   select {
-    line-height: 0.75;
+    line-height: 1.5em;
+    padding: 0 .5625em;
     max-width: 16em;
   }
+
+  select {
+    padding-right: 1.526em;
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+}
+
+form select {
+  padding-right: 1.5625em;
+}
+
+/* Remove native dropdown arrow in IE10+ */
+form select::-ms-expand {
+  display: none;
+  opacity: 0
+}
+
+form select:not([multiple]) {
+  background-image: url(../img/select-icon.svg);
+  background-repeat: no-repeat;
+  background-position: right center;
+  background-size: contain;
 }
 
 /**********************************************************************************************************************
@@ -205,24 +239,6 @@ input.search {
   text-align: left;
 }
 
-/* The default resize handles are still displayed over the image, so I will remove this for now
-.control-group textarea {
-  background-image: url(../img/textarea-corner-2x.png);
-  background-repeat: no-repeat;
-  background-position: bottom right;
-  background-size: 1em 1em;
-} */
-
-.control-group select {
-  padding-right: 1.5625em;
-}
-
-/* Remove native dropdown arrow in IE10+ */
-.control-group select::-ms-expand {
-  display: none;
-  opacity: 0
-}
-
 .control-group .spinner {
   margin: .5em 0;
 }
@@ -235,13 +251,6 @@ input.search {
   .btn-primary {
     order: 99;
   }
-}
-
-.control-group select:not([multiple]) {
-  background-image: url(../img/select-icon.svg);
-  background-repeat: no-repeat;
-  background-position: right center;
-  background-size: contain;
 }
 
 /**********************************************************************************************************************
@@ -471,8 +480,6 @@ input::-webkit-input-placeholder {
   display: inline-block;
 }
 
-
 .sort-control > * {
   display: inline-block;
-  margin: 0.5em 0;
 }

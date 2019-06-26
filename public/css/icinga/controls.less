@@ -14,6 +14,7 @@
 
   > .control-group {
     padding: 0;
+    line-height: 2em;
 
     > .control-label-group {
       text-align: left;
@@ -33,12 +34,16 @@
 .pagination-control,
 .sort-controls-container {
   // Select controls may not respect font-size thus leading to improperly vertical alignment w/o big enough line-height
-  line-height: 2em;
+  /*line-height: 2em;*/
 }
 
 .filter {
   // Display filter control on a new line
   clear: both;
+
+  > a {
+    color: @icinga-blue;
+  }
 }
 
 .limiter-control > .control-group {
@@ -141,6 +146,7 @@
 .sort-controls-container {
   clear: right;
   float: right;
+  line-height: 1;
 
   > * {
     vertical-align: middle;
@@ -150,6 +156,10 @@
 .sort-direction-control {
   margin-left: 0.25em;
   width: 1em;
+
+  .spinner {
+    line-height: 1;
+  }
 }
 
 html.no-js .sort-control form {
