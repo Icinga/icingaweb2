@@ -161,10 +161,10 @@ class DashletForm extends Form
     public function load(Dashlet $dashlet)
     {
         $this->populate(array(
-            'pane'          => $dashlet->getPane()->getName(),
+            'pane'          => $dashlet->getPane()->getTitle(),
             'org_pane'      => $dashlet->getPane()->getName(),
             'dashlet'       => $dashlet->getTitle(),
-            'org_dashlet'   => $dashlet->getTitle(),
+            'org_dashlet'   => $dashlet->getName(),
             'url'           => $dashlet->getUrl()->getRelativeUrl()
         ));
     }

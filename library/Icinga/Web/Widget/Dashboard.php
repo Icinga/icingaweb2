@@ -103,7 +103,7 @@ class Dashboard extends AbstractWidget
             }
             foreach ($pane->getDashlets() as $dashlet) {
                 if ($dashlet->isUserWidget()) {
-                    $output[$pane->getName() . '.' . $dashlet->getTitle()] = $dashlet->toArray();
+                    $output[$pane->getName() . '.' . $dashlet->getName()] = $dashlet->toArray();
                 }
             }
         }
@@ -175,6 +175,7 @@ class Dashboard extends AbstractWidget
                 $dashletData->url,
                 $pane
             );
+            $dashlet->setName($dashletData->dashlet);
 
             if ((bool) $dashletData->get('disabled', false) === true) {
                 $dashlet->setDisabled(true);
@@ -200,7 +201,7 @@ class Dashboard extends AbstractWidget
     {
         /** @var $pane Pane  */
         foreach ($panes as $pane) {
-            if ($this->hasPane($pane->getTitle()) === true) {
+            if ($this->hasPane($pane->getName()) === true) {
                 /** @var $current Pane */
                 $current = $this->panes[$pane->getName()];
                 $current->addDashlets($pane->getDashlets());
