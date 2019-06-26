@@ -23,18 +23,33 @@
   }
 }
 
+.controls input.search,
+input.search {
+  .transition(border 0.3s ease);
+  .transition(background-image 0.2s ease);
+
+  background-image: url(../img/icons/search.png);
+  background-repeat: no-repeat;
+  background-size: 1em 1em;
+  background-position: .25em center;
+  outline: none;
+  padding-left: 1.5em;
+  width: 20em;
+
+  &:focus {
+    background-image: url(../img/icons/search_icinga_blue.png);
+  }
+
+  &:focus:not([readonly]) {
+    border-color: @icinga-blue;
+  }
+}
+
 .backend-selection,
 .pagination-control,
 .selection-info,
 .sort-controls-container {
   margin-bottom: 0.5em;
-}
-
-.backend-selection,
-.pagination-control,
-.sort-controls-container {
-  // Select controls may not respect font-size thus leading to improperly vertical alignment w/o big enough line-height
-  /*line-height: 2em;*/
 }
 
 .filter {
@@ -146,7 +161,6 @@
 .sort-controls-container {
   clear: right;
   float: right;
-  line-height: 1;
 
   > * {
     vertical-align: middle;

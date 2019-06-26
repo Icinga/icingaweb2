@@ -125,9 +125,10 @@ select ~ .spinner:before {
 form input[type="text"],
 form input[type="password"],
 form input[type="number"],
+form input[type="datetime-local"],
 form textarea,
 form select {
-  background: @low-sat-blue;
+  background-color: @low-sat-blue;
   flex: 1;
 }
 
@@ -173,8 +174,8 @@ form input {
 
   input,
   select {
-    line-height: 1.5em;
-    padding: 0 .5625em;
+    line-height: 1em;
+    padding: .3625em .5625em;
     max-width: 16em;
   }
 
@@ -205,28 +206,6 @@ form select:not([multiple]) {
 /**********************************************************************************************************************
                                              specific input styles
 ***********************************************************************************************************************/
-
-input.search {
-  .transition(border 0.3s ease);
-  .transition(background-image 0.2s ease);
-
-  background: transparent url(../img/icons/search.png) no-repeat scroll 0.1em center;
-  background-size: 1em 1em;
-  border: none;
-  border-bottom: 1px solid @gray-light;
-  outline: none;
-  padding: @vertical-padding / 2 @horizontal-padding / 2;
-  padding-left: 1.5em;
-  width: 20em;
-
-  &:focus {
-    background-color: @body-bg-color;
-    background-image: url(../img/icons/search_icinga_blue.png);
-  }
-  &:focus:not([readonly]) {
-     border-color: @icinga-blue;
-   }
-}
 
 .link-button {
   .action-link();
@@ -448,21 +427,21 @@ input:checked + .toggle-slider:before {
 ***********************************************************************************************************************/
 
 input:-moz-placeholder { // FF 18-
-  color: @gray-light;
+  color: @gray;
   opacity: 1;
 }
 
 input::-moz-placeholder { // FF 19+
-  color: @gray-light;
+  color: @gray;
   opacity: 1;
 }
 
 input:-ms-input-placeholder {
-  color: @gray-light;
+  color: @gray;
 }
 
 input::-webkit-input-placeholder {
-  color: @gray-light;
+  color: @gray;
 }
 
 
