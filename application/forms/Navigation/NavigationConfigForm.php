@@ -666,6 +666,8 @@ class NavigationConfigForm extends ConfigForm
                         + (empty($availableParents) ? [] : array_combine($availableParents, $availableParents))
                 )
             );
+        } else {
+            $this->addElement('hidden', 'parent', ['disabled'  => true]);
         }
 
         $this->addSubForm($itemForm, 'item_form');
