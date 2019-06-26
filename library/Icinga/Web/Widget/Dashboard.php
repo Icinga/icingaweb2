@@ -85,7 +85,7 @@ class Dashboard extends AbstractWidget
         }
 
         $this->mergePanes($panes);
-        $this->loadUserDashboards();
+        $this->loadUserDashboards($navigation);
         return $this;
     }
 
@@ -114,10 +114,10 @@ class Dashboard extends AbstractWidget
     /**
      * Load user dashboards from all config files that match the username
      */
-    protected function loadUserDashboards()
+    protected function loadUserDashboards(Navigation $navigation)
     {
         foreach (DashboardConfig::listConfigFilesForUser($this->user) as $file) {
-            $this->loadUserDashboardsFromFile($file);
+            $this->loadUserDashboardsFromFile($file, $navigation);
         }
     }
 
@@ -128,7 +128,7 @@ class Dashboard extends AbstractWidget
      *
      * @return  bool
      */
-    protected function loadUserDashboardsFromFile($file)
+    protected function loadUserDashboardsFromFile($file, Navigation $dashboardNavigation)
     {
         try {
             $config = Config::fromIni($file);
@@ -143,8 +143,12 @@ class Dashboard extends AbstractWidget
         $dashlets = array();
         foreach ($config as $key => $part) {
             if (strpos($key, '.') === false) {
-                if ($this->hasPane($part->title)) {
-                    $panes[$key] = $this->getPane($part->title);
+                $dashboardPane = $dashboardNavigation->getItem($key);
+                if ($dashboardPane !== null) {
+                    $key = $dashboardPane->getLabel();
+                }
+                if ($this->hasPane($key)) {
+                    $panes[$key] = $this->getPane($key);
                 } else {
                     $panes[$key] = new Pane($key);
                     $panes[$key]->setTitle($part->title);
@@ -155,6 +159,14 @@ class Dashboard extends AbstractWidget
                 }
             } else {
                 list($paneName, $dashletName) = explode('.', $key, 2);
+                $dashboardPane = $dashboardNavigation->getItem($paneName);
+                if ($dashboardPane !== null) {
+                    $paneName = $dashboardPane->getLabel();
+                    $dashletItem = $dashboardPane->getChildren()->getItem($dashletName);
+                    if ($dashletItem !== null) {
+                        $dashletName = $dashletItem->getLabel();
+                    }
+                }
                 $part->pane = $paneName;
                 $part->dashlet = $dashletName;
                 $dashlets[] = $part;
