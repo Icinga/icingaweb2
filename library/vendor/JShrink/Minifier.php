@@ -243,7 +243,7 @@ class Minifier
             // do reg check of doom
             $this->b = $this->getReal();
 
-            if (($this->b == '/' && strpos('(,=:[!&|?', $this->a) !== false)) {
+            if (($this->b == '/' && strpos('(,=:[!&|?*+-%', $this->a) !== false)) {
                 $this->saveRegex();
             }
         }
