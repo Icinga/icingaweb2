@@ -32,7 +32,7 @@
     Collapsible.prototype.onRendered = function(event) {
         var _this = event.data.self;
 
-        $('.collapsible', event.currentTarget).each(function() {
+        $('.collapsible:not(.can-collapse)', event.currentTarget).each(function() {
             var $collapsible = $(this);
             var collapsiblePath = _this.icinga.utils.getCSSPath($collapsible);
 
