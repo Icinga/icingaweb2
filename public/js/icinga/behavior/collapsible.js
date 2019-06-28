@@ -14,6 +14,7 @@
     var Collapsible = function(icinga) {
         Icinga.EventListener.call(this, icinga);
 
+        this.on('layout-change', this.onLayoutChange, this);
         this.on('rendered', '.container', this.onRendered, this);
         this.on('click', '.collapsible + .collapsible-control', this.onControlClicked, this);
 
@@ -34,10 +35,39 @@
 
         $('.collapsible:not(.can-collapse)', event.currentTarget).each(function() {
             var $collapsible = $(this);
-            var collapsiblePath = _this.icinga.utils.getCSSPath($collapsible);
 
             // Assumes that any newly rendered elements are expanded
             if (_this.canCollapse($collapsible)) {
+                $collapsible.after($('#collapsible-control-ghost').clone().removeAttr('id'));
+                $collapsible.addClass('can-collapse');
+
+                if (! _this.state.isExpanded(_this.icinga.utils.getCSSPath($collapsible))) {
+                    _this.collapse($collapsible);
+                }
+            }
+        });
+    };
+
+    /**
+     * Updates all collapsibles.
+     *
+     * @param event  Event  The `layout-change` event triggered by window resizing or column changes
+     */
+    Collapsible.prototype.onLayoutChange = function(event) {
+        var _this = event.data.self;
+
+        $('.collapsible').each(function() {
+            var $collapsible = $(this);
+            var collapsiblePath = _this.icinga.utils.getCSSPath($collapsible);
+
+            if ($collapsible.is('.can-collapse')) {
+                if (! _this.canCollapse($collapsible)) {
+                    $collapsible.next('.collapsible-control').remove();
+                    $collapsible.removeClass('can-collapse');
+                    _this.expand($collapsible);
+                }
+            } else if (_this.canCollapse($collapsible)) {
+                // It's expanded but shouldn't
                 $collapsible.after($('#collapsible-control-ghost').clone().removeAttr('id'));
                 $collapsible.addClass('can-collapse');
 
