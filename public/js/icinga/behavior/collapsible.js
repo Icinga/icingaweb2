@@ -101,7 +101,7 @@
         if (!! rowSelector) {
             return $(rowSelector, $collapsible).length > ($collapsible.data('visibleRows') || this.defaultVisibleRows);
         } else {
-            var actualHeight = $collapsible.innerHeight(),
+            var actualHeight = $collapsible[0].scrollHeight,
                 maxHeight = $collapsible.data('visibleHeight') || this.defaultVisibleHeight;
 
             if (actualHeight <= maxHeight) {
