@@ -245,6 +245,7 @@ a:hover > .icon-cancel {
     z-index: 1;
     position: absolute;
     border: none;
+    padding: 0;
     bottom: -1em;
     right: .25em;
     -webkit-box-shadow: 0 0 1/3em rgba(0,0,0,.3);
@@ -262,6 +263,10 @@ a:hover > .icon-cancel {
       background: fade(@text-color, 10);
       .rounded-corners(50%);
     }
+  }
+
+  button i:before {
+    margin-right: 0;
   }
 }
 
