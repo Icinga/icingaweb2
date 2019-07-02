@@ -19,9 +19,15 @@
         this.on('click', '.collapsible + .collapsible-control', this.onControlClicked, this);
 
         this.icinga = icinga;
-        this.state = new StateStorage();
         this.defaultVisibleRows = 2;
         this.defaultVisibleHeight = 36;
+
+        $(window).on('StorageAwareSetAdd', { self: this }, this.onExternalExpansion);
+        $(window).on('StorageAwareSetDelete', { self: this }, this.onExternalCollapse);
+        this.state = new Icinga.Storage.StorageAwareSet.withStorage(
+            new Icinga.BehaviorStorage('collapsible'),
+            'expanded'
+        );
     };
     Collapsible.prototype = new Icinga.EventListener();
 
@@ -41,7 +47,7 @@
                 $collapsible.after($('#collapsible-control-ghost').clone().removeAttr('id'));
                 $collapsible.addClass('can-collapse');
 
-                if (! _this.state.isExpanded(_this.icinga.utils.getCSSPath($collapsible))) {
+                if (! _this.state.has(_this.icinga.utils.getCSSPath($collapsible))) {
                     _this.collapse($collapsible);
                 }
             }
@@ -71,11 +77,41 @@
                 $collapsible.after($('#collapsible-control-ghost').clone().removeAttr('id'));
                 $collapsible.addClass('can-collapse');
 
-                if (! _this.state.isExpanded(collapsiblePath)) {
+                if (! _this.state.has(collapsiblePath)) {
                     _this.collapse($collapsible);
                 }
             }
         });
+    };
+
+    /**
+     * A collapsible got expanded in another window, try to apply this here as well
+     *
+     * @param   {Event}     event
+     * @param   {string}    collapsiblePath
+     */
+    Collapsible.prototype.onExternalExpansion = function(event, collapsiblePath) {
+        var _this = event.data.self;
+        var $collapsible = $(collapsiblePath);
+
+        if ($collapsible.length) {
+            _this.expand($collapsible);
+        }
+    };
+
+    /**
+     * A collapsible got collapsed in another window, try to apply this here as well
+     *
+     * @param   {Event}     event
+     * @param   {string}    collapsiblePath
+     */
+    Collapsible.prototype.onExternalCollapse = function(event, collapsiblePath) {
+        var _this = event.data.self;
+        var $collapsible = $(collapsiblePath);
+
+        if ($collapsible.length) {
+            _this.collapse($collapsible);
+        }
     };
 
     /**
@@ -92,11 +128,11 @@
             _this.icinga.logger.error('[Collapsible] Collapsible control has no associated .collapsible: ', $target);
         } else {
             var collapsiblePath = _this.icinga.utils.getCSSPath($collapsible);
-            if (_this.state.isExpanded(collapsiblePath)) {
-                _this.state.collapse(collapsiblePath);
+            if (_this.state.has(collapsiblePath)) {
+                _this.state.delete(collapsiblePath);
                 _this.collapse($collapsible);
             } else {
-                _this.state.expand(collapsiblePath);
+                _this.state.add(collapsiblePath);
                 _this.expand($collapsible);
             }
         }
@@ -178,53 +214,5 @@
     };
 
     Icinga.Behaviors.Collapsible = Collapsible;
-
-    // State-Storage abstraction, not for use externally until we've had time to think this properly through
-
-    var StateStorage = function() {};
-
-    StateStorage.prototype.isExpanded = function(selector) {
-        return this.load().has(selector);
-    };
-
-    StateStorage.prototype.expand = function(selector) {
-        var set = this.load();
-        set.add(selector);
-        this.save(set);
-    };
-
-    StateStorage.prototype.collapse = function(selector) {
-        var set = this.load();
-        set.delete(selector);
-        this.save(set);
-    };
-
-    StateStorage.prototype.load = function () {
-        var set = new Set();
-
-        var expanded = localStorage.getItem('behavior.collapsible.expanded');
-        if (!! expanded) {
-            // .forEach() is used because IE11 doesn't support constructor arguments
-            JSON.parse(expanded).forEach(function(value) {
-                set.add(value);
-            }, this);
-        }
-
-        return set;
-    };
-
-    StateStorage.prototype.save = function(set) {
-        if (set.size > 0) {
-            var expanded = [];
-            // .forEach() is used because IE11 doesn't support .values()
-            set.forEach(function(value) {
-                expanded.push(value);
-            });
-
-            localStorage.setItem('behavior.collapsible.expanded', JSON.stringify(expanded));
-        } else {
-            localStorage.removeItem('behavior.collapsible.expanded');
-        }
-    };
 
 })(Icinga, jQuery);
