@@ -136,7 +136,7 @@ class EventController extends Controller
      */
     protected function comment($message)
     {
-        return $this->view->nl2br($this->view->createTicketLinks($this->view->escapeComment($message)));
+        return $this->view->nl2br($this->view->createTicketLinks($this->view->markdown($message)));
     }
 
     /**

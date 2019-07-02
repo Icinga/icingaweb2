@@ -82,6 +82,6 @@
     </span>
   </div>
   <p class="comment-text"<?php if (isset($textId)): ?> id="<?= $textId ?>"<?php endif ?>>
-    <?= $this->nl2br($this->escapeComment($downtime->comment)) ?>
+    <?= $this->nl2br($this->markdown($downtime->comment)) ?>
   </p>
 </td>
