@@ -76,15 +76,15 @@ form:not(.inline):not([role="search"]) {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  line-height: 1;
+  line-height: 1.1em;
   padding: .5625em .5625em .5625em 0;
   max-height: 2.5em;
   text-align: right;
-  width: 15em;
+  width: @name-value-table-name-width;
 }
 
 .control-info {
-  line-height: 2.5em;
+  line-height: 2.25em;
   margin-right: 1em;
   opacity: .6;
   margin-left: 0;
@@ -108,10 +108,14 @@ form:not(.inline):not([role="search"]) {
   }
 }
 
-form.inline .control-group .spinner {
-  line-height: 1.5;
-  margin: 0 auto;
-  padding: 0 .5em;
+form.inline {
+  display: inline-block;
+
+  .control-group .spinner {
+    line-height: 1.5;
+    margin: 0 auto;
+    padding: 0 .5em;
+  }
 }
 
 select ~ .spinner:before {
@@ -159,7 +163,7 @@ form input {
 
 .control-group .toggle-switch,
 .form-controls .toggle-switch {
-  margin: 1em .5em;
+  margin: 0.875em .5em;
 }
 
 form select:not([multiple]) {
@@ -190,7 +194,6 @@ form select {
 form.inline select {
   width: auto
 }
-
 /**********************************************************************************************************************
                                              specific input styles
 ***********************************************************************************************************************/
