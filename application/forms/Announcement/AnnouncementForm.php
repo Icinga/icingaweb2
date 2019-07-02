@@ -37,7 +37,7 @@ class AnnouncementForm extends RepositoryForm
             'text',
             'author',
             array(
-                'disabled'  => true,
+                'disabled'  => ! $this->getRequest()->isApiRequest(),
                 'required'  => true,
                 'value'     => Auth::getInstance()->getUser()->getUsername()
             )
