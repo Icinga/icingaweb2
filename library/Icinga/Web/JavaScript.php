@@ -13,6 +13,7 @@ class JavaScript
         'js/helpers.js',
         'js/icinga.js',
         'js/icinga/logger.js',
+        'js/icinga/storage.js',
         'js/icinga/utils.js',
         'js/icinga/ui.js',
         'js/icinga/timer.js',
