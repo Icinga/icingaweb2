@@ -182,6 +182,15 @@ form select:not([multiple]) {
   background-size: contain;
 }
 
+form select {
+  /* Prevent selects with long option values from exceeding the container */
+  width: 0
+}
+
+form.inline select {
+  width: auto
+}
+
 /**********************************************************************************************************************
                                              specific input styles
 ***********************************************************************************************************************/
