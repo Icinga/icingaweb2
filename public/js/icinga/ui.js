@@ -529,11 +529,11 @@
         initializeControls: function(container) {
             var $container = $(container);
 
-            if ($container.parent('.dashboard').length || $('#layout').hasClass('fullscreen-layout')) {
+/*            if ($container.parent('.dashboard').length || $('#layout').hasClass('fullscreen-layout')) {
                 return;
-            }
+            }*/
 
-            $container.find('.controls').each(function() {
+/*            $container.find('.controls').each(function() {
                 var $controls = $(this);
                 if (! $controls.prev('.fake-controls').length) {
                     var $tabs = $controls.find('.tabs', $controls);
@@ -552,12 +552,12 @@
                         position: 'fixed'
                     });
                 }
-            });
+            });*/
 
             this.fixControls($container);
         },
 
-        fixControls: function($container) {
+        fixControls2: function($container) {
             var $layout = $('#layout');
 
             if ($layout.hasClass('fullscreen-layout')) {
@@ -662,6 +662,11 @@
                 });
                 $statusBar.prev('.monitoring-statusbar-ghost').height($statusBar.outerHeight(true));
             }
+        },
+
+        fixControls: function ($container) {
+            console.log('fixControls');
+            return false;
         },
 
         toggleFullscreen: function () {
