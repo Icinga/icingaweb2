@@ -1,8 +1,6 @@
 /*! Icinga Web 2 | (c) 2019 Icinga Development Team | GPLv2+ */
 
-/**********************************************************************************************************************
-                                   used colors (todo: move to base.less eventually)
-***********************************************************************************************************************/
+// Used colors
 
 @disabled-gray: #9a9a9a;
 @low-sat-blue: #dae3e6;
@@ -10,9 +8,7 @@
 @icinga-blue-light: #a5c4cd;
 @icinga-blue-dark: #0081a6;
 
-/**********************************************************************************************************************
-                                             general form layout
-***********************************************************************************************************************/
+// General form layout
 
 form:not(.inline):not([role="search"]) {
   max-width: 70em;
@@ -37,9 +33,7 @@ form:not(.inline):not([role="search"]) {
   }
 }
 
-/**********************************************************************************************************************
-                                             minimal form layout
-***********************************************************************************************************************/
+// Minimal form layout
 
 #layout.minimal-layout,
 #layout.twocols:not(.wide-layout) {
@@ -68,9 +62,7 @@ form:not(.inline):not([role="search"]) {
   }
 }
 
-/**********************************************************************************************************************
-                                                 label styles
-***********************************************************************************************************************/
+// Label styles
 
 .control-group .control-label-group {
   display: flex;
@@ -122,9 +114,7 @@ select ~ .spinner:before {
   margin-left: -3.5em;
 }
 
-/**********************************************************************************************************************
-                                               general input styles
-***********************************************************************************************************************/
+// General input styles
 
 form input[type="text"],
 form input[type="password"],
@@ -168,15 +158,15 @@ form input {
 
 form select:not([multiple]) {
   padding-right: 1.5625em;
-  /* compensate inconsistent select height calculations */
+  // Compensate inconsistent select height calculations
   line-height: 1em;
   height: 2.25em;
 }
 
-/* Remove native dropdown arrow in IE10+ */
+// Remove native dropdown arrow in IE10+
 form select::-ms-expand {
   display: none;
-  opacity: 0
+  opacity: 0;
 }
 
 form select:not([multiple]) {
@@ -187,16 +177,15 @@ form select:not([multiple]) {
 }
 
 form select {
-  /* Prevent selects with long option values from exceeding the container */
-  width: 0
+  width: 0; // Prevent selects with long option values from exceeding the container
 }
 
 form.inline select {
-  width: auto
+  width: auto;
 }
-/**********************************************************************************************************************
-                                             specific input styles
-***********************************************************************************************************************/
+
+
+// Specific input styles
 
 .link-button {
   .action-link();
@@ -223,9 +212,7 @@ form.inline select {
   }
 }
 
-/**********************************************************************************************************************
-                                               button styles
-***********************************************************************************************************************/
+// Button styles
 
 .form-controls input[type="submit"],
 .form-controls input[type="submit"].btn-confirm {
@@ -240,11 +227,8 @@ form.inline select {
   .button(@body-bg-color, @gray, @black);
 }
 
-/**********************************************************************************************************************
-                                               IPL toggle styles
-***********************************************************************************************************************/
+// Toggle styles
 
-/* The switch - the box around the slider */
 .toggle-switch {
   cursor: pointer;
   position: relative;
@@ -253,14 +237,13 @@ form.inline select {
   width: 2.625em;
 }
 
-/* Hide default HTML checkbox */
+// Hide default checkbox
 .toggle-switch input {
   opacity: 0;
   width: 0;
   height: 0;
 }
 
-/* The slider */
 .toggle-slider {
   position: absolute;
   left: 0;
@@ -313,9 +296,7 @@ input:checked + .toggle-slider:before {
   margin-left: -4/3em;
 }
 
-/**********************************************************************************************************************
-                                                 disabled inputs
-***********************************************************************************************************************/
+// Disabled inputs
 
 .toggle-switch.disabled {
   cursor: default;
@@ -341,9 +322,7 @@ input:checked + .toggle-slider:before {
   border: none;
 }
 
-/**********************************************************************************************************************
-                                          errors and additional information
-***********************************************************************************************************************/
+// Errors and additional information
 
 .form-notifications,
 .form-description {
@@ -413,9 +392,7 @@ input:checked + .toggle-slider:before {
   padding-left: 0;
 }
 
-/**********************************************************************************************************************
-                                                placeholder styles
-***********************************************************************************************************************/
+// Placeholder styles
 
 input:-moz-placeholder { // FF 18-
   color: @gray;
@@ -435,11 +412,7 @@ input::-webkit-input-placeholder {
   color: @gray;
 }
 
-
-/**********************************************************************************************************************
-                                             specific form styles
-***********************************************************************************************************************/
-
+// Specific form styles
 
 .limiter-control-form > * {
   display: inline-block;
