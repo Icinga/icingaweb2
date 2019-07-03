@@ -46,21 +46,13 @@ if ($this->layout()->inlineLayout) {
       <?= $this->render('parts/navigation.phtml'); ?>
     </div>
     <?php endif ?>
-</div>
-<div id="main" role="main">
-  <div id="col1"
-       class="container<?= $moduleClass ?>"
-      <?php if ($moduleName): ?>data-icinga-module="<?= $moduleName ?>"<?php endif ?>
-       data-icinga-title="<?= ! empty($this->title) ? $this->escape($this->title) . ' :: ' : '' ?><?= $this->defaultTitle ?>"
-       data-icinga-url="<?= $this->escape(Url::fromRequest()->without('renderLayout')->getAbsoluteUrl()); ?>"
-      <?= $refresh; ?>
-       style="display: block">
-    <?= $this->render($inlineLayoutScript) ?>
-  </div>
-  <div id="col2" class="container">
-  </div>
-  <div id="col3" class="container">
-  </div>
+    <div id="main" role="main">
+      <div id="col1" class="container<?= $moduleClass ?>"<?php if ($moduleName): ?> data-icinga-module="<?= $moduleName ?>" <?php endif ?> data-icinga-url="<?= $this->escape(Url::fromRequest()->without('renderLayout')->getAbsoluteUrl()); ?>"<?= $refresh; ?> style="display: block">
+        <?= $this->render($inlineLayoutScript) ?>
+      </div>
+      <div id="col2" class="container"></div>
+      <div id="col3" class="container"></div>
+    </div>
 </div>
 <div id="footer">
   <ul role="alert" id="notifications"><?php
