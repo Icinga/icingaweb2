@@ -18,11 +18,9 @@
 #menu {
   background-color: @menu-bg-color;
   box-shadow: inset -.5em 0 1em rgba(0, 0, 0, .3);
-  height: 100%;
   width: 100%;
-  overflow-x: hidden;
-  overflow-y: auto;
-  position: absolute;
+  flex: 1;
+  overflow: scroll;
 }
 
 #layout:not(.minimal-layout) #menu {
