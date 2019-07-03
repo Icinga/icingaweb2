@@ -22,12 +22,12 @@
         this.defaultVisibleRows = 2;
         this.defaultVisibleHeight = 36;
 
-        $(window).on('StorageAwareSetAdd', { self: this }, this.onExternalExpansion);
-        $(window).on('StorageAwareSetDelete', { self: this }, this.onExternalCollapse);
         this.state = new Icinga.Storage.StorageAwareSet.withStorage(
             new Icinga.BehaviorStorage('collapsible'),
             'expanded'
-        );
+        )
+            .on('add', { self: this }, this.onExternalExpansion)
+            .on('delete', { self: this }, this.onExternalCollapse);
     };
     Collapsible.prototype = new Icinga.EventListener();
 

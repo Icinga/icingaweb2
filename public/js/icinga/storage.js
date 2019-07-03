@@ -251,6 +251,27 @@
         },
 
         /**
+         * Register an event handler to handle storage updates
+         *
+         * Available events are: add, delete
+         *
+         * @param   {string}    event
+         * @param   {object}    data
+         * @param   {function}  handler
+         *
+         * @returns {this}
+         */
+        on: function(event, data, handler) {
+            $(window).on(
+                'StorageAwareSet' + event.charAt(0).toUpperCase() + event.slice(1),
+                data,
+                handler
+            );
+
+            return this;
+        },
+
+        /**
          * Return the number of (unique) elements in the set
          *
          * @returns {number}
