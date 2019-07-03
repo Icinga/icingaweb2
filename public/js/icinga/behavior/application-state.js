@@ -34,9 +34,6 @@
 
     ApplicationState.prototype.onSummaryRendered = function(e) {
         var height = $(this).height();
-
-        $('#sidebar').css('bottom', height);
-        $('#main').css('bottom', height);
     };
 
     Icinga.Behaviors.ApplicationState = ApplicationState;
