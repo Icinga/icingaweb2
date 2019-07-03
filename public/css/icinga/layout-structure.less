@@ -1,15 +1,17 @@
 /*! Icinga Web 2 | (c) 2014 Icinga Development Team | GPLv2+ */
 
 html {
+  height: 100%;
   font-family: 'default-layout';
+}
+
+body {
+  min-height: 100%;
+  height: 100%;
 }
 
 #layout {
   height: 100%;
-  width: 100%;
-  position: fixed;
-  left: 0;
-  top: 0;
   // Prevent nav-level-2 flyovers from being covered by #main
   z-index: 0;
 }
@@ -20,7 +22,6 @@ html {
   position: fixed;
   left: 0;
   top: 0;
-
 }
 
 #sidebar {
