@@ -102,23 +102,22 @@
   .clearfix();
 
   & > .container {
+    width: 0;
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
 
     &:empty {
       display: none;
     }
 
-    // Container scrolling
-    height: 100%;
-    overflow: auto;
-
     & > .content {
+      flex: 1 1 auto;
+      overflow: auto;
       padding: @gutter;
-      z-index: 2;
     }
 
     & > .controls {
-      z-index: 3;
-
       padding-left: @gutter;
       padding-right: @gutter;
 
