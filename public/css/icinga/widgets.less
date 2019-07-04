@@ -491,22 +491,28 @@ ul.tree li a.error:hover {
 }
 
 .donut-container {
-  display: inline-block;
   width: 36em;
-  height: 36em;
-  position: relative;
+  float: left;
 }
 
-.donut-table {
-  max-width: 45%;
-  display: inline-block;
-  position: absolute;
-  top: 23em;
-  left: 17.5em;
+.donut-legend {
+  width: 50%;
+  padding: 0;
+  margin: 0 0 0 auto;
+  list-style-type: none;
 
-  & > tbody > tr:hover {
-    text-decoration: underline;
-    cursor: pointer;
+  li {
+    vertical-align: middle;
+
+    &:not(:last-child) {
+      margin-bottom: .5em;
+    }
+
+    .badge {
+      font-weight: bold;
+      margin-right: .5em;
+      vertical-align: initial;
+    }
   }
 }
 
