@@ -666,10 +666,7 @@
 
         fixControls: function ($container) {
             var $layout = $('#layout');
-
-            var $header = $('#header');
             var $headerLogo = $('#header-logo-container');
-            var $main = $('#main');
             var $search = $('#search');
             var $sidebar = $('#sidebar');
 
