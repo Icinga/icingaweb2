@@ -76,10 +76,8 @@ class Zend_View_Helper_FormCheckbox extends Zend_View_Helper_FormElement
 
         // is the element disabled?
         $disabled = '';
-        $classDisabled = '';
         if ($disable) {
             $disabled = ' disabled="disabled"';
-            $classDisabled = ' disabled';
         }
 
         // build the element
@@ -94,17 +92,14 @@ class Zend_View_Helper_FormCheckbox extends Zend_View_Helper_FormElement
             unset($attribs['disableHidden']);
         }
 
-        $xhtml .= '<label class="toggle-switch' . $classDisabled .'">'
-                . '<input type="checkbox"'
+        $xhtml .= '<input type="checkbox"'
                 . ' name="' . $this->view->escape($name) . '"'
                 . ' id="' . $this->view->escape($id) . '"'
                 . ' value="' . $this->view->escape($checkedOptions['checkedValue']) . '"'
                 . $checkedOptions['checkedString']
                 . $disabled
                 . $this->_htmlAttribs($attribs)
-                . $this->getClosingBracket()
-                . '<span class="toggle-slider"></span>'
-                . '</label>';
+                . $this->getClosingBracket();
 
         return $xhtml;
     }
