@@ -675,14 +675,8 @@
 
             if ($layout.hasClass('minimal-layout')) {
                 if (! this.mobileMenu && $sidebar.length) {
-                    $header.css({
-                        top: $sidebar.outerHeight() + 'px'
-                    });
                     $headerLogo.css({
                         display: 'none'
-                    });
-                    $main.css({
-                        top: $header.outerHeight() + $sidebar.outerHeight()
                     });
                     $sidebar
                         .on(
@@ -699,22 +693,7 @@
                     this.mobileMenu = true;
                 }
             } else {
-                $headerLogo.css({
-                    top: $header.css('height')
-                });
-                $main.css({
-                    top: $header.css('height')
-                });
-                if (!! $headerLogo.length) {
-                    $sidebar.css({
-                        top: $headerLogo.offset().top + $headerLogo.outerHeight()
-                    });
-                }
-
                 if (this.mobileMenu) {
-                    $header.css({
-                        top: 0
-                    });
                     $headerLogo.css({
                         display: 'block'
                     });
