@@ -47,7 +47,7 @@ if ($this->layout()->inlineLayout) {
     </div>
     <?php endif ?>
     <div id="main" role="main">
-      <div id="col1" class="container<?= $moduleClass ?>"<?php if ($moduleName): ?> data-icinga-module="<?= $moduleName ?>" <?php endif ?> data-icinga-url="<?= $this->escape(Url::fromRequest()->without('renderLayout')->getAbsoluteUrl()); ?>"<?= $refresh; ?> style="display: block">
+      <div id="col1" class="container<?= $moduleClass ?>"<?php if ($moduleName): ?> data-icinga-module="<?= $moduleName ?>" <?php endif ?> data-icinga-url="<?= $this->escape(Url::fromRequest()->without('renderLayout')->getAbsoluteUrl()); ?>"<?= $refresh; ?>>
         <?= $this->render($inlineLayoutScript) ?>
       </div>
       <div id="col2" class="container"></div>
