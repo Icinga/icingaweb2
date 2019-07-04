@@ -46,20 +46,9 @@ class JavaScript
         'js/vendor/jquery.tipsy'
     );
 
-    protected static $ie8VendorFiles = array(
-        'js/vendor/jquery.sparkline',
-        'js/vendor/jquery.tipsy'
-    );
-
     public static function sendMinified()
     {
         self::send(true);
-    }
-
-    public static function sendForIe8()
-    {
-        self::$vendorFiles = self::$ie8VendorFiles;
-        self::send();
     }
 
     /**

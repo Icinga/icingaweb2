@@ -70,10 +70,6 @@ if (in_array($path, $special)) {
             JavaScript::sendMinified();
             break;
 
-        case 'js/icinga.ie8.js':
-            JavaScript::sendForIe8();
-            break;
-
         default:
             return false;
     }
