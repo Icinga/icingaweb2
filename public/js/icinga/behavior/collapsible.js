@@ -23,7 +23,7 @@
         this.defaultVisibleHeight = 36;
 
         this.state = new Icinga.Storage.StorageAwareSet.withStorage(
-            new Icinga.BehaviorStorage('collapsible'),
+            Icinga.Storage.BehaviorStorage('collapsible'),
             'expanded'
         )
             .on('add', { self: this }, this.onExternalExpansion)

@@ -8,15 +8,17 @@
      * Icinga.Storage
      *
      * localStorage access
+     *
+     * @param   {string}    prefix
      */
-    Icinga.Storage = function() {
+    Icinga.Storage = function(prefix) {
 
         /**
-         * Namespace separator being used
+         * Prefix to use for keys
          *
          * @type {string}
          */
-        this.keySeparator = '.';
+        this.prefix = prefix;
 
         /**
          * Callbacks for storage events on particular keys
@@ -28,17 +30,30 @@
         this.setup();
     };
 
+    /**
+     * Create a new storage with `behavior.<name>` as prefix
+     *
+     * @param   {string}    name
+     *
+     * @returns {Icinga.Storage}
+     */
+    Icinga.Storage.BehaviorStorage = function(name) {
+        return new Icinga.Storage('behavior.' + name);
+    };
+
     Icinga.Storage.prototype = {
 
         /**
          * Prefix the given key
          *
-         * Base implementation, noop.
-         *
          * @param   {string}    key
          * @returns {string}
          */
         prefixKey: function(key) {
+            if (typeof this.prefix !== 'undefined') {
+                return this.prefix + '.' + key;
+            }
+
             return key;
         },
 
@@ -116,36 +131,6 @@
         destroy: function() {
             window.removeEventListener('storage', this.onStorage.bind(this));
         }
-    };
-
-    /**
-     * Icinga.BehaviorStorage
-     *
-     * @param   {string} behaviorName
-     * @constructor
-     */
-    Icinga.BehaviorStorage = function(behaviorName) {
-
-        /**
-         * The behavior's name
-         *
-         * @type {string}
-         */
-        this.behaviorName = behaviorName;
-
-        Icinga.Storage.call(this);
-    };
-    Icinga.BehaviorStorage.prototype = Object.create(Icinga.Storage.prototype);
-
-    /**
-     * Prefix the given key with `behavior.<name>.`
-     *
-     * @param   {string}    key
-     *
-     * @returns {string}
-     */
-    Icinga.BehaviorStorage.prototype.prefixKey = function(key) {
-        return 'behavior' + this.keySeparator + this.behaviorName + this.keySeparator + key;
     };
 
     /**
