@@ -143,7 +143,6 @@
             req.url = url;
             req.done(this.onResponse);
             req.fail(this.onFailure);
-            //req.complete(this.onComplete);
             req.autorefresh = autorefresh;
             req.method = method;
             req.action = action;
