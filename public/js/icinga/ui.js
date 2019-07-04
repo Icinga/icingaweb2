@@ -665,8 +665,66 @@
         },
 
         fixControls: function ($container) {
-            console.log('fixControls');
-            return false;
+            var $layout = $('#layout');
+
+            var $header = $('#header');
+            var $headerLogo = $('#header-logo-container');
+            var $main = $('#main');
+            var $search = $('#search');
+            var $sidebar = $('#sidebar');
+
+            if ($layout.hasClass('minimal-layout')) {
+                if (! this.mobileMenu && $sidebar.length) {
+                    $header.css({
+                        top: $sidebar.outerHeight() + 'px'
+                    });
+                    $headerLogo.css({
+                        display: 'none'
+                    });
+                    $main.css({
+                        top: $header.outerHeight() + $sidebar.outerHeight()
+                    });
+                    $sidebar
+                        .on(
+                            'click',
+                            this.toggleMobileMenu
+                        )
+                        .prepend(
+                            $('<div id="mobile-menu-toggle"><button><i class="icon-menu"></i><i class="icon-cancel"></i></button></div>')
+                        );
+                    $('#header-logo').clone().attr('id', 'mobile-menu-logo')
+                        .appendTo('#mobile-menu-toggle');
+                    $(window).on('keypress', this.closeMobileMenu);
+
+                    this.mobileMenu = true;
+                }
+            } else {
+                $headerLogo.css({
+                    top: $header.css('height')
+                });
+                $main.css({
+                    top: $header.css('height')
+                });
+                if (!! $headerLogo.length) {
+                    $sidebar.css({
+                        top: $headerLogo.offset().top + $headerLogo.outerHeight()
+                    });
+                }
+
+                if (this.mobileMenu) {
+                    $header.css({
+                        top: 0
+                    });
+                    $headerLogo.css({
+                        display: 'block'
+                    });
+                    $sidebar.removeClass('expanded').off('click', this.toggleMobileMenu);
+                    $search.off('keypress', this.closeMobileMenu);
+                    $('#mobile-menu-toggle').remove();
+
+                    this.mobileMenu = false;
+                }
+            }
         },
 
         toggleFullscreen: function () {
