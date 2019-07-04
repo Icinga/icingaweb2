@@ -20,7 +20,7 @@
   box-shadow: inset -.5em 0 1em rgba(0, 0, 0, .3);
   width: 100%;
   flex: 1;
-  overflow: scroll;
+  overflow: auto;
 }
 
 #layout:not(.minimal-layout) #menu {
@@ -36,6 +36,8 @@
   vertical-align: middle;
 
   > a {
+    position: relative;
+
     &:focus {
       outline: none;
     }
@@ -254,6 +256,7 @@ ul:not(.nav-level-2) > .selected > a {
     padding: @vertical-padding 0;
     width: 14em;
     position: fixed;
+    z-index: 1;
 
     &:after {
       .transform(rotate(45deg));
