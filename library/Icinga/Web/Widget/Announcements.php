@@ -40,7 +40,7 @@ class Announcements extends AbstractWidget
             foreach ($announcements as $announcement) {
                 $ackForm = new AcknowledgeAnnouncementForm();
                 $ackForm->populate(array('hash' => $announcement->hash));
-                $html .= '<li><div>'
+                $html .= '<li><div class="message">'
                     . Markdown::text($announcement->message)
                     . '</div>'
                     . $ackForm
