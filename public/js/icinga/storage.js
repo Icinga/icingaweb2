@@ -96,11 +96,12 @@
          *
          * @param   {string}    key
          * @param   {function}  callback
+         * @param   {object}    context
          *
          * @returns {void}
          */
-        subscribe: function(key, callback) {
-            this.subscribers[this.prefixKey(key)] = callback;
+        subscribe: function(key, callback, context) {
+            this.subscribers[this.prefixKey(key)] = [callback, context];
         },
 
         /**
@@ -110,7 +111,8 @@
          */
         onStorage: function(event) {
             if (typeof this.subscribers[event.key] !== 'undefined') {
-                this.subscribers[event.key](JSON.parse(event.oldValue), JSON.parse(event.newValue));
+                var subscriber = this.subscribers[event.key];
+                subscriber[0].call(subscriber[1], JSON.parse(event.newValue), JSON.parse(event.oldValue), event);
             }
         },
 
@@ -198,7 +200,7 @@
             this.storage = storage;
             this.key = key;
 
-            storage.subscribe(key, this.onChange.bind(this));
+            storage.subscribe(key, this.onChange, this);
             return this;
         },
 
@@ -214,10 +216,9 @@
         /**
          * Update the set
          *
-         * @param   {Array} oldValue
          * @param   {Array} newValue
          */
-        onChange: function(oldValue, newValue) {
+        onChange: function(newValue) {
             // Check for deletions first
             this.values().forEach(function (value) {
                 if (newValue.indexOf(value) < 0) {
