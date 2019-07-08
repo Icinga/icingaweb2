@@ -66,7 +66,7 @@
          * @returns {void}
          */
         set: function(key, value) {
-            localStorage.setItem(this.prefixKey(key), JSON.stringify(value));
+            window.localStorage.setItem(this.prefixKey(key), JSON.stringify(value));
         },
 
         /**
@@ -77,7 +77,7 @@
          * @returns {*}
          */
         get: function(key) {
-            return JSON.parse(localStorage.getItem(this.prefixKey(key)));
+            return JSON.parse(window.localStorage.getItem(this.prefixKey(key)));
         },
 
         /**
@@ -88,7 +88,7 @@
          * @returns {void}
          */
         remove: function(key) {
-            localStorage.removeItem(this.prefixKey(key));
+            window.localStorage.removeItem(this.prefixKey(key));
         },
 
         /**
