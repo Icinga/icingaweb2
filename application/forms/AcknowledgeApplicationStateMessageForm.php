@@ -13,7 +13,7 @@ class AcknowledgeApplicationStateMessageForm extends Form
     public function init()
     {
         $this->setAction(Url::fromPath('application-state/acknowledge-message'));
-        $this->setAttrib('class', 'form-inline application-state-acknowledge-message-control');
+        $this->setAttrib('class', 'inline application-state-acknowledge-message-control');
         $this->setRedirectUrl('application-state/summary');
     }
 
