@@ -38,8 +38,14 @@ class ServicestatusQuery extends IdoQuery
         'contacts' => [
             'service_contact' => 'sco.name1'
         ],
+        'contactgroups' => [
+            'service_contactgroup' => 'scgo.name1'
+        ],
         'hostcontacts' => [
             'host_contact' => 'hco.name1'
+        ],
+        'hostcontactgroups' => [
+            'host_contactgroup' => 'hcgo.name1'
         ],
         'hostgroups' => array(
             'hostgroup'         => 'hgo.name1 COLLATE latin1_general_ci',
@@ -333,6 +339,22 @@ class ServicestatusQuery extends IdoQuery
     }
 
     /**
+     * Join contact groups
+     */
+    protected function joinContactgroups()
+    {
+        $this->select->joinLeft(
+            ['scg' => 'icinga_service_contactgroups'],
+            'scg.service_id = s.service_id',
+            []
+        )->joinLeft(
+            ['scgo' => 'icinga_objects'],
+            'scgo.object_id = scg.contactgroup_object_id AND scgo.is_active = 1 AND scgo.objecttype_id = 10',
+            []
+        );
+    }
+
+    /**
      * Join host contacts
      */
     protected function joinHostcontacts()
@@ -346,6 +368,24 @@ class ServicestatusQuery extends IdoQuery
         )->joinLeft(
             ['hco' => 'icinga_objects'],
             'hco.object_id = hc.contact_object_id AND hco.is_active = 1 AND hco.objecttype_id = 10',
+            []
+        );
+    }
+
+    /**
+     * Join host contact groups
+     */
+    protected function joinHostcontactgroups()
+    {
+        $this->requireVirtualTable('hosts');
+
+        $this->select->joinLeft(
+            ['hcg' => 'icinga_host_contactgroups'],
+            'hcg.host_id = h.host_id',
+            []
+        )->joinLeft(
+            ['hcgo' => 'icinga_objects'],
+            'hcgo.object_id = hcg.contactgroup_object_id AND hcgo.is_active = 1 AND hcgo.objecttype_id = 11',
             []
         );
     }

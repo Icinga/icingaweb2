@@ -29,6 +29,9 @@ class HostgroupQuery extends IdoQuery
         'contacts' => [
             'host_contact' => 'hco.name1'
         ],
+        'contactgroups' => [
+            'host_contactgroup' => 'hcgo.name1'
+        ],
         'hostgroups' => array(
             'hostgroup'         => 'hgo.name1 COLLATE latin1_general_ci',
             'hostgroup_alias'   => 'hg.alias COLLATE latin1_general_ci',
@@ -142,6 +145,24 @@ class HostgroupQuery extends IdoQuery
         )->joinLeft(
             ['hco' => 'icinga_objects'],
             'hco.object_id = hc.contact_object_id AND hco.is_active = 1 AND hco.objecttype_id = 10',
+            []
+        );
+    }
+
+    /**
+     * Join contact groups
+     */
+    protected function joinContactgroups()
+    {
+        $this->requireVirtualTable('hosts');
+
+        $this->select->joinLeft(
+            ['hcg' => 'icinga_host_contactgroups'],
+            'hcg.host_id = h.host_id',
+            []
+        )->joinLeft(
+            ['hcgo' => 'icinga_objects'],
+            'hcgo.object_id = hcg.contactgroup_object_id AND hcgo.is_active = 1 AND hcgo.objecttype_id = 11',
             []
         );
     }
