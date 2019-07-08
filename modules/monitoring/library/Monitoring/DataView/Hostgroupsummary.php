@@ -58,7 +58,7 @@ class Hostgroupsummary extends DataView
     {
         return array(
             'instance_name',
-            'host', 'host_alias', 'host_display_name', 'host_name',
+            'host', 'host_alias', 'host_contact', 'host_display_name', 'host_name',
             'hostgroup',
             'service', 'service_description', 'service_display_name',
             'servicegroup', 'servicegroup_alias', 'servicegroup_name'

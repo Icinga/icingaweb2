@@ -22,6 +22,12 @@ class ServicegroupQuery extends IdoQuery
     );
 
     protected $columnMap = array(
+        'contacts' => [
+            'service_contact' => 'sco.name1'
+        ],
+        'hostcontacts' => [
+            'host_contact' => 'hco.name1'
+        ],
         'hostgroups' => array(
             'hostgroup_name' => 'hgo.name1'
         ),
@@ -97,6 +103,46 @@ class ServicegroupQuery extends IdoQuery
     }
 
     /**
+     * Join contacts
+     */
+    protected function joinContacts()
+    {
+        $this->requireVirtualTable('services');
+
+        $this->select->joinLeft(
+            ['sc' => 'icinga_service_contacts'],
+            'sc.service_id = s.service_id',
+            []
+        )->joinLeft(
+            ['sco' => 'icinga_objects'],
+            'sco.object_id = sc.contact_object_id AND sco.is_active = 1 AND sco.objecttype_id = 10',
+            []
+        );
+    }
+
+    /**
+     * Join host contacts
+     */
+    protected function joinHostcontacts()
+    {
+        $this->requireVirtualTable('services');
+
+        $this->select->joinLeft(
+            ['h' => 'icinga_hosts'],
+            'h.host_object_id = s.host_object_id',
+            []
+        )->joinLeft(
+            ['hc' => 'icinga_host_contacts'],
+            'hc.host_id = h.host_id',
+            []
+        )->joinLeft(
+            ['hco' => 'icinga_objects'],
+            'hco.object_id = hc.contact_object_id AND hco.is_active = 1 AND hco.objecttype_id = 10',
+            []
+        );
+    }
+
+    /**
      * Join host groups
      */
     protected function joinHostgroups()
@@ -125,6 +171,9 @@ class ServicegroupQuery extends IdoQuery
     protected function joinHosts()
     {
         $this->requireVirtualTable('services');
+
+        // Host custom var filters work w/o any host related table. If a host table join is necessary here some day,
+        // please adjust `joinHostcontacts()` where we explicitly do this already
     }
 
     /**

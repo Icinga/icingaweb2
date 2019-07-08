@@ -35,6 +35,12 @@ class ServicestatusQuery extends IdoQuery
         'checktimeperiods' => array(
             'service_check_timeperiod' => 'ctp.alias COLLATE latin1_general_ci'
         ),
+        'contacts' => [
+            'service_contact' => 'sco.name1'
+        ],
+        'hostcontacts' => [
+            'host_contact' => 'hco.name1'
+        ],
         'hostgroups' => array(
             'hostgroup'         => 'hgo.name1 COLLATE latin1_general_ci',
             'hostgroup_alias'   => 'hg.alias COLLATE latin1_general_ci',
@@ -307,6 +313,40 @@ class ServicestatusQuery extends IdoQuery
             array('ctp' => $this->prefix . 'timeperiods'),
             'ctp.timeperiod_object_id = s.check_timeperiod_object_id',
             array()
+        );
+    }
+
+    /**
+     * Join contacts
+     */
+    protected function joinContacts()
+    {
+        $this->select->joinLeft(
+            ['sc' => 'icinga_service_contacts'],
+            'sc.service_id = s.service_id',
+            []
+        )->joinLeft(
+            ['sco' => 'icinga_objects'],
+            'sco.object_id = sc.contact_object_id AND sco.is_active = 1 AND sco.objecttype_id = 10',
+            []
+        );
+    }
+
+    /**
+     * Join host contacts
+     */
+    protected function joinHostcontacts()
+    {
+        $this->requireVirtualTable('hosts');
+
+        $this->select->joinLeft(
+            ['hc' => 'icinga_host_contacts'],
+            'hc.host_id = h.host_id',
+            []
+        )->joinLeft(
+            ['hco' => 'icinga_objects'],
+            'hco.object_id = hc.contact_object_id AND hco.is_active = 1 AND hco.objecttype_id = 10',
+            []
         );
     }
 
