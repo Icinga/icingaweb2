@@ -4,6 +4,8 @@
 
     'use strict';
 
+    const KEY_TTL = 7776000000; // 90 days (90×24×60×60×1000)
+
     /**
      * Icinga.Storage
      *
@@ -184,7 +186,21 @@
      * @returns {Icinga.Storage.StorageAwareMap}
      */
     Icinga.Storage.StorageAwareMap.withStorage = function(storage, key) {
-        return (new Icinga.Storage.StorageAwareMap(storage.get(key)).setStorage(storage, key));
+        var items = storage.get(key);
+        if (typeof items !== 'undefined' && !! items) {
+            Object.keys(items).forEach(function(key) {
+                var value = items[key];
+
+                if (typeof value !== 'object' || typeof value['lastAccess'] === 'undefined') {
+                    items[key] = {'value': value, 'lastAccess': Date.now()};
+                } else if (Date.now() - value['lastAccess'] > KEY_TTL) {
+                    delete items[key];
+                }
+            }, this);
+        }
+
+        storage.set(key, items);
+        return (new Icinga.Storage.StorageAwareMap(items).setStorage(storage, key));
     };
 
     Icinga.Storage.StorageAwareMap.prototype = {
@@ -215,12 +231,30 @@
         },
 
         /**
+         * Update the storage
+         *
+         * @returns {void}
+         */
+        updateStorage: function() {
+            if (! this.hasStorage()) {
+                return;
+            }
+
+            if (this.size > 0) {
+                this.storage.set(this.key, this.toObject());
+            } else {
+                this.storage.remove(this.key);
+            }
+        },
+
+        /**
          * Update the map
          *
-         * @param   {object} newValue
+         * @param   {object}    newValue
+         * @param   {object}    oldValue
          */
-        onChange: function(newValue) {
-            // Check for deletions first
+        onChange: function(newValue, oldValue) {
+            // Check for deletions first. Uses keys() to iterate over a copy
             this.keys().forEach(function (key) {
                 if (typeof newValue[key] === 'undefined') {
                     this.data.delete(key);
@@ -230,8 +264,11 @@
 
             // Now check for new entries
             Object.keys(newValue).forEach(function(key) {
-                if (! this.data.has(key)) {
-                    this.data.set(key, newValue[key]);
+                var known = this.data.has(key);
+                // Always override any known value as we want to keep track of all `lastAccess` changes
+                this.data.set(key, newValue[key]);
+
+                if (! known) {
                     $(window).trigger('StorageAwareMapAdd', key);
                 }
             }, this);
@@ -276,12 +313,9 @@
          * @returns {this}
          */
         set: function(key, value) {
-            this.data.set(key, value);
+            this.data.set(key, {'value': value, 'lastAccess': Date.now()});
 
-            if (this.hasStorage()) {
-                this.storage.set(this.key, this.toObject());
-            }
-
+            this.updateStorage();
             return this;
         },
 
@@ -291,11 +325,8 @@
          * @returns {void}
          */
         clear: function() {
-            if (this.hasStorage()) {
-                this.storage.remove(this.key);
-            }
-
-            return this.data.clear();
+            this.data.clear();
+            this.updateStorage();
         },
 
         /**
@@ -308,10 +339,7 @@
         delete: function(key) {
             var retVal = this.data.delete(key);
 
-            if (this.hasStorage()) {
-                this.storage.set(this.key, this.toObject());
-            }
-
+            this.updateStorage();
             return retVal;
         },
 
@@ -324,8 +352,8 @@
             var list = [];
 
             if (this.size > 0) {
-                this.forEach(function (value, key) {
-                    list.push([key, value]);
+                this.data.forEach(function (value, key) {
+                    list.push([key, value['value']]);
                 });
             }
 
@@ -336,11 +364,18 @@
          * Execute a provided function once for each item in the map, in insertion order
          *
          * @param   {function}  callback
+         * @param   {object}    thisArg
          *
          * @returns {void}
          */
-        forEach: function(callback) {
-            return this.data.forEach(callback);
+        forEach: function(callback, thisArg) {
+            if (typeof thisArg === 'undefined') {
+                thisArg = this;
+            }
+
+            return this.data.forEach(function(value, key) {
+                callback.call(thisArg, value['value'], key);
+            });
         },
 
         /**
@@ -351,7 +386,10 @@
          * @returns {*}
          */
         get: function(key) {
-            return this.data.get(key);
+            var value = this.data.get(key)['value'];
+            this.set(key, value); // Update `lastAccess`
+
+            return value;
         },
 
         /**
@@ -375,7 +413,7 @@
 
             if (this.size > 0) {
                 // .forEach() is used because IE11 doesn't support .keys()
-                this.forEach(function(_, key) {
+                this.data.forEach(function(_, key) {
                     list.push(key);
                 });
             }
@@ -393,8 +431,8 @@
 
             if (this.size > 0) {
                 // .forEach() is used because IE11 doesn't support .values()
-                this.forEach(function(value) {
-                    list.push(value);
+                this.data.forEach(function(value) {
+                    list.push(value['value']);
                 });
             }
 
@@ -410,7 +448,7 @@
             var obj = {};
 
             if (this.size > 0) {
-                this.forEach(function (value, key) {
+                this.data.forEach(function (value, key) {
                     obj[key] = value;
                 });
             }
