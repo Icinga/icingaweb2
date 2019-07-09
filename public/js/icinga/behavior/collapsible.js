@@ -22,7 +22,7 @@
         this.defaultVisibleRows = 2;
         this.defaultVisibleHeight = 36;
 
-        this.state = new Icinga.Storage.StorageAwareSet.withStorage(
+        this.state = new Icinga.Storage.StorageAwareMap.withStorage(
             Icinga.Storage.BehaviorStorage('collapsible'),
             'expanded'
         )
@@ -132,7 +132,7 @@
                 _this.state.delete(collapsiblePath);
                 _this.collapse($collapsible);
             } else {
-                _this.state.add(collapsiblePath);
+                _this.state.set(collapsiblePath, 1);
                 _this.expand($collapsible);
             }
         }

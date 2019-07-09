@@ -47,6 +47,7 @@
          * Prefix the given key
          *
          * @param   {string}    key
+         *
          * @returns {string}
          */
         prefixKey: function(key) {
@@ -136,14 +137,14 @@
     };
 
     /**
-     * Icinga.Storage.StorageAwareSet
+     * Icinga.Storage.StorageAwareMap
      *
-     * Emits events `StorageAwareSetDelete` and `StorageAwareSetAdd` in case an update occurs in the storage.
+     * Emits events `StorageAwareMapDelete` and `StorageAwareMapAdd` in case an update occurs in the storage.
      *
-     * @param   {Array} values
+     * @param   {object} items
      * @constructor
      */
-    Icinga.Storage.StorageAwareSet = function(values) {
+    Icinga.Storage.StorageAwareMap = function(items) {
 
         /**
          * Storage object
@@ -160,36 +161,36 @@
         this.key = undefined;
 
         /**
-         * The internal (real) set
+         * The internal (real) map
          *
-         * @type {Set<*>}
+         * @type {Map<*>}
          */
-        this.data = new Set();
+        this.data = new Map();
 
         // items is not passed directly because IE11 doesn't support constructor arguments
-        if (typeof values !== 'undefined' && !! values && values.length) {
-            values.forEach(function(value) {
-                this.data.add(value);
+        if (typeof items !== 'undefined' && !! items) {
+            Object.keys(items).forEach(function(key) {
+                this.data.set(key, items[key]);
             }, this);
         }
     };
 
     /**
-     * Create a new StorageAwareSet for the given storage and key
+     * Create a new StorageAwareMap for the given storage and key
      *
      * @param   {Icinga.Storage}    storage
      * @param   {string}            key
      *
-     * @returns {Icinga.Storage.StorageAwareSet}
+     * @returns {Icinga.Storage.StorageAwareMap}
      */
-    Icinga.Storage.StorageAwareSet.withStorage = function(storage, key) {
-        return (new Icinga.Storage.StorageAwareSet(storage.get(key)).setStorage(storage, key));
+    Icinga.Storage.StorageAwareMap.withStorage = function(storage, key) {
+        return (new Icinga.Storage.StorageAwareMap(storage.get(key)).setStorage(storage, key));
     };
 
-    Icinga.Storage.StorageAwareSet.prototype = {
+    Icinga.Storage.StorageAwareMap.prototype = {
 
         /**
-         * Bind this set to the given storage and key
+         * Bind this map to the given storage and key
          *
          * @param   {Icinga.Storage}    storage
          * @param   {string}            key
@@ -205,7 +206,7 @@
         },
 
         /**
-         * Return a boolean indicating this set got a storage
+         * Return a boolean indicating this map got a storage
          *
          * @returns {boolean}
          */
@@ -214,24 +215,24 @@
         },
 
         /**
-         * Update the set
+         * Update the map
          *
-         * @param   {Array} newValue
+         * @param   {object} newValue
          */
         onChange: function(newValue) {
             // Check for deletions first
-            this.values().forEach(function (value) {
-                if (newValue.indexOf(value) < 0) {
-                    this.data.delete(value);
-                    $(window).trigger('StorageAwareSetDelete', value);
+            this.keys().forEach(function (key) {
+                if (typeof newValue[key] === 'undefined') {
+                    this.data.delete(key);
+                    $(window).trigger('StorageAwareMapDelete', key);
                 }
             }, this);
 
             // Now check for new entries
-            newValue.forEach(function(value) {
-                if (! this.data.has(value)) {
-                    this.data.add(value);
-                    $(window).trigger('StorageAwareSetAdd', value);
+            Object.keys(newValue).forEach(function(key) {
+                if (! this.data.has(key)) {
+                    this.data.set(key, newValue[key]);
+                    $(window).trigger('StorageAwareMapAdd', key);
                 }
             }, this);
         },
@@ -249,7 +250,7 @@
          */
         on: function(event, data, handler) {
             $(window).on(
-                'StorageAwareSet' + event.charAt(0).toUpperCase() + event.slice(1),
+                'StorageAwareMap' + event.charAt(0).toUpperCase() + event.slice(1),
                 data,
                 handler
             );
@@ -258,7 +259,7 @@
         },
 
         /**
-         * Return the number of (unique) elements in the set
+         * Return the number of key/value pairs in the map
          *
          * @returns {number}
          */
@@ -267,24 +268,25 @@
         },
 
         /**
-         * Append the given value to the end of the set
+         * Set the value for the key in the map
          *
-         * @param value
+         * @param   {string}    key
+         * @param   {*}         value
          *
          * @returns {this}
          */
-        add: function(value) {
-            this.data.add(value);
+        set: function(key, value) {
+            this.data.set(key, value);
 
             if (this.hasStorage()) {
-                this.storage.set(this.key, this.values());
+                this.storage.set(this.key, this.toObject());
             }
 
             return this;
         },
 
         /**
-         * Remove all elements from the set
+         * Remove all key/value pairs from the map
          *
          * @returns {void}
          */
@@ -297,35 +299,43 @@
         },
 
         /**
-         * Remove the given value from the set
+         * Remove the given key from the map
          *
-         * @param value
+         * @param   {string}    key
          *
          * @returns {boolean}
          */
-        delete: function(value) {
-            var retVal = this.data.delete(value);
+        delete: function(key) {
+            var retVal = this.data.delete(key);
 
             if (this.hasStorage()) {
-                this.storage.set(this.key, this.values());
+                this.storage.set(this.key, this.toObject());
             }
 
             return retVal;
         },
 
         /**
-         * Returns an iterable of [v,v] pairs for every value v in the set.
+         * Return a list of [key, value] pairs for every item in the map
          *
-         * @returns {IterableIterator<[*, *]>}
+         * @returns {Array}
          */
         entries: function() {
-            return this.data.entries();
+            var list = [];
+
+            if (this.size > 0) {
+                this.forEach(function (value, key) {
+                    list.push([key, value]);
+                });
+            }
+
+            return list;
         },
 
         /**
-         * Execute a provided function once for each value in the Set object, in insertion order.
+         * Execute a provided function once for each item in the map, in insertion order
          *
-         * @param callback
+         * @param   {function}  callback
          *
          * @returns {void}
          */
@@ -334,18 +344,47 @@
         },
 
         /**
-         * Return a boolean indicating whether an element with the specified value exists in a Set object or not.
+         * Return the value associated to the key, or undefined if there is none
          *
-         * @param value
+         * @param   {string}    key
          *
-         * @returns {boolean}
+         * @returns {*}
          */
-        has: function(value) {
-            return this.data.has(value);
+        get: function(key) {
+            return this.data.get(key);
         },
 
         /**
-         * Returns an array of values in the set.
+         * Return a boolean asserting whether a value has been associated to the key in the map
+         *
+         * @param   {string}    key
+         *
+         * @returns {boolean}
+         */
+        has: function(key) {
+            return this.data.has(key);
+        },
+
+        /**
+         * Return an array of keys in the map
+         *
+         * @returns {Array}
+         */
+        keys: function() {
+            var list = [];
+
+            if (this.size > 0) {
+                // .forEach() is used because IE11 doesn't support .keys()
+                this.forEach(function(_, key) {
+                    list.push(key);
+                });
+            }
+
+            return list;
+        },
+
+        /**
+         * Return an array of values in the map
          *
          * @returns {Array}
          */
@@ -360,6 +399,23 @@
             }
 
             return list;
+        },
+
+        /**
+         * Return this map as simple object
+         *
+         * @returns {object}
+         */
+        toObject: function() {
+            var obj = {};
+
+            if (this.size > 0) {
+                this.forEach(function (value, key) {
+                    obj[key] = value;
+                });
+            }
+
+            return obj;
         }
     };
 
