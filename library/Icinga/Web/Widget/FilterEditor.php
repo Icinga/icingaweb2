@@ -783,8 +783,8 @@ class FilterEditor extends AbstractWidget
             . $this->renderFilter($this->filter)
             . '</li></ul>'
             . '<div class="buttons">'
-            . '<input type="submit" name="submit" value="Apply" />'
-            . '<input type="submit" name="cancel" value="Cancel" />'
+            . '<input type="submit" name="cancel" value="Cancel" class="button btn-cancel" />'
+            . '<input type="submit" name="submit" value="Apply" class="button btn-primary"/>'
             . '</div>'
             . '<input type="hidden" name="formUID" value="FilterEditor">'
             . '</form>'

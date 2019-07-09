@@ -188,6 +188,8 @@ table.multiselect tr[href] td {
 
 #main div.filter {
   form.editor {
+    max-width: 37em;
+
     input[type=text], select {
       width: 12em;
     }
@@ -196,13 +198,22 @@ table.multiselect tr[href] td {
       background-color: #eee;
     }
 
-    div.buttons {
-      float: right;
-    }
-
     button {
       border: none;
       background: none;
+    }
+
+    .buttons {
+      padding: .25em 0;
+      text-align: right;
+    }
+
+    .buttons input {
+      .button();
+    }
+
+    .buttons input:not(:last-child) {
+      margin-right:.5em;
     }
   }
 }
@@ -279,7 +290,7 @@ ul.tree li::after {
 
 /* Stop left vertical line at "mid-height" after last nodes (at each level) */
 ul.tree li:last-child::before {
-  height: 1em;
+  height: 1.5em;
 }
 
 /* No border for the root element - there must be only ONE root */
@@ -294,8 +305,8 @@ ul.tree > ul > li::before, ul.tree > ul > li::after {
 
 ul.tree li a {
   display: inline-block;
-  padding-left: 1em;
   line-height: 2em;
+  padding: 0 .5em;
   text-decoration: none;
   color: @gray;
   background-repeat: no-repeat;
