@@ -44,8 +44,9 @@
         }
 
         if (typeof Icinga.Storage.subscribers[event.key] !== 'undefined') {
-            var subscriber = Icinga.Storage.subscribers[event.key];
-            subscriber[0].call(subscriber[1], JSON.parse(event.newValue), JSON.parse(event.oldValue), event);
+            Icinga.Storage.subscribers[event.key].forEach(function (subscriber) {
+                subscriber[0].call(subscriber[1], JSON.parse(event.newValue), JSON.parse(event.oldValue), event);
+            });
         }
     });
 
@@ -122,7 +123,13 @@
          * @returns {void}
          */
         onChange: function(key, callback, context) {
-            Icinga.Storage.subscribers[this.prefixKey(key)] = [callback, context];
+            var prefixedKey = this.prefixKey(key);
+
+            if (typeof Icinga.Storage.subscribers[prefixedKey] === 'undefined') {
+                Icinga.Storage.subscribers[prefixedKey] = [];
+            }
+
+            Icinga.Storage.subscribers[prefixedKey].push([callback, context]);
         }
     };
 
