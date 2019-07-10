@@ -94,7 +94,7 @@
         var _this = event.data.self;
         var $collapsible = $(collapsiblePath);
 
-        if ($collapsible.length) {
+        if ($collapsible.length && $collapsible.is('.can-collapse')) {
             _this.expand($collapsible);
         }
     };
@@ -109,7 +109,7 @@
         var _this = event.data.self;
         var $collapsible = $(collapsiblePath);
 
-        if ($collapsible.length) {
+        if ($collapsible.length && _this.canCollapse($collapsible)) {
             _this.collapse($collapsible);
         }
     };
