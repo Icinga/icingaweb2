@@ -103,7 +103,7 @@
          *
          * @returns {void}
          */
-        subscribe: function(key, callback, context) {
+        onChange: function(key, callback, context) {
             this.subscribers[this.prefixKey(key)] = [callback, context];
         },
 
@@ -217,7 +217,7 @@
             this.storage = storage;
             this.key = key;
 
-            storage.subscribe(key, this.onChange, this);
+            storage.onChange(key, this.onChange, this);
             return this;
         },
 
