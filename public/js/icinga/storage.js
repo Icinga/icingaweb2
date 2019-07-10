@@ -1,6 +1,6 @@
 /*! Icinga Web 2 | (c) 2019 Icinga GmbH | GPLv2+ */
 
-(function (Icinga, $) {
+;(function (Icinga) {
 
     'use strict';
 
@@ -129,8 +129,6 @@
     /**
      * Icinga.Storage.StorageAwareMap
      *
-     * Emits events `StorageAwareMapDelete` and `StorageAwareMapAdd` in case an update occurs in the storage.
-     *
      * @param   {object} items
      * @constructor
      */
@@ -149,6 +147,16 @@
          * @type {string}
          */
         this.key = undefined;
+
+        /**
+         * Event listeners for our internal events
+         *
+         * @type {{}}
+         */
+        this.eventListeners = {
+            'add': [],
+            'delete': []
+        };
 
         /**
          * The internal (real) map
@@ -244,8 +252,9 @@
             // Check for deletions first. Uses keys() to iterate over a copy
             this.keys().forEach(function (key) {
                 if (newValue === null || typeof newValue[key] === 'undefined') {
-                    $(window).trigger('StorageAwareMapDelete', [key, this.data.get(key)['value']]);
+                    var value = this.data.get(key)['value'];
                     this.data.delete(key);
+                    this.trigger('delete', key, value);
                 }
             }, this);
 
@@ -260,7 +269,7 @@
                 this.data.set(key, newValue[key]);
 
                 if (! known) {
-                    $(window).trigger('StorageAwareMapAdd', [key, newValue[key]['value']]);
+                    this.trigger('add', key, newValue[key]['value']);
                 }
             }, this);
         },
@@ -268,23 +277,40 @@
         /**
          * Register an event handler to handle storage updates
          *
-         * Available events are: add, delete. The handler receives the
-         * key and its value as second and third argument, respectively.
+         * Available events are: add, delete. The callback receives the
+         * key and its value as first and second argument, respectively.
          *
          * @param   {string}    event
-         * @param   {object}    data
-         * @param   {function}  handler
+         * @param   {function}  callback
+         * @param   {object}    thisArg
          *
          * @returns {this}
          */
-        on: function(event, data, handler) {
-            $(window).on(
-                'StorageAwareMap' + event.charAt(0).toUpperCase() + event.slice(1),
-                data,
-                handler
-            );
+        on: function(event, callback, thisArg) {
+            if (typeof this.eventListeners[event] === 'undefined') {
+                throw new Error('Invalid event "' + event + '"');
+            }
 
+            this.eventListeners[event].push([callback, thisArg]);
             return this;
+        },
+
+        /**
+         * Trigger all event handlers for the given event
+         *
+         * @param   {string}    event
+         * @param   {string}    key
+         * @param   {*}         value
+         */
+        trigger: function(event, key, value) {
+            this.eventListeners[event].forEach(function (handler) {
+                var thisArg = handler[1];
+                if (typeof thisArg === 'undefined') {
+                    thisArg = this;
+                }
+
+                handler[0].call(thisArg, key, value);
+            });
         },
 
         /**
@@ -453,4 +479,4 @@
         }
     };
 
-}(Icinga, jQuery));
+}(Icinga));

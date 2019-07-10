@@ -26,8 +26,8 @@
             Icinga.Storage.BehaviorStorage('collapsible'),
             'expanded'
         )
-            .on('add', { self: this }, this.onExternalExpansion)
-            .on('delete', { self: this }, this.onExternalCollapse);
+            .on('add', this.onExternalExpansion, this)
+            .on('delete', this.onExternalCollapse, this);
     };
     Collapsible.prototype = new Icinga.EventListener();
 
@@ -90,12 +90,11 @@
      * @param   {Event}     event
      * @param   {string}    collapsiblePath
      */
-    Collapsible.prototype.onExternalExpansion = function(event, collapsiblePath) {
-        var _this = event.data.self;
+    Collapsible.prototype.onExternalExpansion = function(collapsiblePath) {
         var $collapsible = $(collapsiblePath);
 
         if ($collapsible.length && $collapsible.is('.can-collapse')) {
-            _this.expand($collapsible);
+            this.expand($collapsible);
         }
     };
 
@@ -105,12 +104,11 @@
      * @param   {Event}     event
      * @param   {string}    collapsiblePath
      */
-    Collapsible.prototype.onExternalCollapse = function(event, collapsiblePath) {
-        var _this = event.data.self;
+    Collapsible.prototype.onExternalCollapse = function(collapsiblePath) {
         var $collapsible = $(collapsiblePath);
 
-        if ($collapsible.length && _this.canCollapse($collapsible)) {
-            _this.collapse($collapsible);
+        if ($collapsible.length && this.canCollapse($collapsible)) {
+            this.collapse($collapsible);
         }
     };
 
