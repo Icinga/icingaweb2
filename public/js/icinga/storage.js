@@ -256,8 +256,8 @@
             // Check for deletions first. Uses keys() to iterate over a copy
             this.keys().forEach(function (key) {
                 if (newValue === null || typeof newValue[key] === 'undefined') {
+                    $(window).trigger('StorageAwareMapDelete', [key, this.data.get(key)['value']]);
                     this.data.delete(key);
-                    $(window).trigger('StorageAwareMapDelete', key);
                 }
             }, this);
 
@@ -272,7 +272,7 @@
                 this.data.set(key, newValue[key]);
 
                 if (! known) {
-                    $(window).trigger('StorageAwareMapAdd', key);
+                    $(window).trigger('StorageAwareMapAdd', [key, newValue[key]['value']]);
                 }
             }, this);
         },
@@ -280,7 +280,8 @@
         /**
          * Register an event handler to handle storage updates
          *
-         * Available events are: add, delete
+         * Available events are: add, delete. The handler receives the
+         * key and its value as second and third argument, respectively.
          *
          * @param   {string}    event
          * @param   {object}    data
