@@ -132,7 +132,7 @@
                 _this.state.delete(collapsiblePath);
                 _this.collapse($collapsible);
             } else {
-                _this.state.set(collapsiblePath, 1);
+                _this.state.set(collapsiblePath);
                 _this.expand($collapsible);
             }
         }

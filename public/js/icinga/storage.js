@@ -312,11 +312,15 @@
          * Set the value for the key in the map
          *
          * @param   {string}    key
-         * @param   {*}         value
+         * @param   {*}         value   Default null
          *
          * @returns {this}
          */
         set: function(key, value) {
+            if (typeof value === 'undefined') {
+                value = null;
+            }
+
             this.data.set(key, {'value': value, 'lastAccess': Date.now()});
 
             this.updateStorage();
