@@ -251,16 +251,19 @@
          * Update the map
          *
          * @param   {object}    newValue
-         * @param   {object}    oldValue
          */
-        onChange: function(newValue, oldValue) {
+        onChange: function(newValue) {
             // Check for deletions first. Uses keys() to iterate over a copy
             this.keys().forEach(function (key) {
-                if (typeof newValue[key] === 'undefined') {
+                if (newValue === null || typeof newValue[key] === 'undefined') {
                     this.data.delete(key);
                     $(window).trigger('StorageAwareMapDelete', key);
                 }
             }, this);
+
+            if (newValue === null) {
+                return;
+            }
 
             // Now check for new entries
             Object.keys(newValue).forEach(function(key) {
