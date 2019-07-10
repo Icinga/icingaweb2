@@ -21,16 +21,33 @@
          * @type {string}
          */
         this.prefix = prefix;
-
-        /**
-         * Callbacks for storage events on particular keys
-         *
-         * @type {{function}}
-         */
-        this.subscribers = {};
-
-        this.setup();
     };
+
+    /**
+     * Callbacks for storage events on particular keys
+     *
+     * @type {{function}}
+     */
+    Icinga.Storage.subscribers = {};
+
+    /**
+     * Pass storage events to subscribers
+     *
+     * @param   {StorageEvent}  event
+     */
+    window.addEventListener('storage', function(event) {
+        var url = icinga.utils.parseUrl(event.url);
+        if (! url.path.startsWith(icinga.config.baseUrl)) {
+            // A localStorage is shared between all paths on the same origin.
+            // So we need to make sure it's us who made a change.
+            return;
+        }
+
+        if (typeof Icinga.Storage.subscribers[event.key] !== 'undefined') {
+            var subscriber = Icinga.Storage.subscribers[event.key];
+            subscriber[0].call(subscriber[1], JSON.parse(event.newValue), JSON.parse(event.oldValue), event);
+        }
+    });
 
     /**
      * Create a new storage with `behavior.<name>` as prefix
@@ -105,44 +122,7 @@
          * @returns {void}
          */
         onChange: function(key, callback, context) {
-            this.subscribers[this.prefixKey(key)] = [callback, context];
-        },
-
-        /**
-         * Pass storage events to subscribers
-         *
-         * @param   {StorageEvent}  event
-         */
-        onStorage: function(event) {
-            var url = icinga.utils.parseUrl(event.url);
-            if (! url.path.startsWith(icinga.config.baseUrl)) {
-                // A localStorage is shared between all paths on the same origin.
-                // So we need to make sure it's us who made a change.
-                return;
-            }
-
-            if (typeof this.subscribers[event.key] !== 'undefined') {
-                var subscriber = this.subscribers[event.key];
-                subscriber[0].call(subscriber[1], JSON.parse(event.newValue), JSON.parse(event.oldValue), event);
-            }
-        },
-
-        /**
-         * Add the event listener
-         *
-         * @returns {void}
-         */
-        setup: function() {
-            window.addEventListener('storage', this.onStorage.bind(this));
-        },
-
-        /**
-         * Remove the event listener
-         *
-         * @returns {void}
-         */
-        destroy: function() {
-            window.removeEventListener('storage', this.onStorage.bind(this));
+            Icinga.Storage.subscribers[this.prefixKey(key)] = [callback, context];
         }
     };
 
