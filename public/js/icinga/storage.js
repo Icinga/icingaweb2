@@ -53,11 +53,12 @@
          * @returns {string}
          */
         prefixKey: function(key) {
+            var prefix = 'icinga.';
             if (typeof this.prefix !== 'undefined') {
-                return this.prefix + '.' + key;
+                prefix = prefix + this.prefix + '.';
             }
 
-            return key;
+            return prefix + key;
         },
 
         /**
@@ -113,6 +114,13 @@
          * @param   {StorageEvent}  event
          */
         onStorage: function(event) {
+            var url = icinga.utils.parseUrl(event.url);
+            if (! url.path.startsWith(icinga.config.baseUrl)) {
+                // A localStorage is shared between all paths on the same origin.
+                // So we need to make sure it's us who made a change.
+                return;
+            }
+
             if (typeof this.subscribers[event.key] !== 'undefined') {
                 var subscriber = this.subscribers[event.key];
                 subscriber[0].call(subscriber[1], JSON.parse(event.newValue), JSON.parse(event.oldValue), event);
