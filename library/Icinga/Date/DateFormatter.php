@@ -149,12 +149,13 @@ class DateFormatter
      *
      * @param   int|float   $time
      * @param   bool        $timeOnly
+     * @param   bool        $requireTime
      *
      * @return  string
      */
-    public static function timeAgo($time, $timeOnly = false)
+    public static function timeAgo($time, $timeOnly = false, $requireTime = false)
     {
-        list($type, $ago, $invert) = static::diff($time);
+        list($type, $ago, $invert) = static::diff($time, $requireTime);
         if ($timeOnly) {
             return $ago;
         }
@@ -185,12 +186,13 @@ class DateFormatter
      *
      * @param   int|float   $time
      * @param   bool        $timeOnly
+     * @param   bool        $requireTime
      *
      * @return  string
      */
-    public static function timeSince($time, $timeOnly = false)
+    public static function timeSince($time, $timeOnly = false, $requireTime = false)
     {
-        list($type, $since, $invert) = static::diff($time);
+        list($type, $since, $invert) = static::diff($time, $requireTime);
         if ($timeOnly) {
             return $since;
         }
