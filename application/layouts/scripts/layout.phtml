@@ -17,8 +17,7 @@ $iframeClass = $isIframe ? ' iframe' : '';
 $innerLayoutScript = $this->layout()->innerLayout . '.phtml';
 
 ?><!DOCTYPE html>
-<!--[if gt IE 8]><!-->
-<html class="no-js<?= $iframeClass ?>" lang="<?= $lang ?>"> <!--<![endif]-->
+<html class="no-js<?= $iframeClass ?>" lang="<?= $lang ?>">
 <head>
   <meta charset="utf-8">
   <meta name="google" value="notranslate">
@@ -42,7 +41,6 @@ $innerLayoutScript = $this->layout()->innerLayout . '.phtml';
   </script>
 <?php endif ?>
   <link rel="stylesheet" href="<?= $this->href($cssfile) ?>" media="all" type="text/css" />
-  <!-- Respond.js IE8 support of media queries -->
   <link type="image/png" rel="shortcut icon" href="<?= $this->baseUrl('img/favicon.png') ?>" />
   <link rel="apple-touch-icon" href="<?= $this->baseUrl('img/touch-icon.png') ?>">
 </head>
@@ -76,12 +74,7 @@ $innerLayoutScript = $this->layout()->innerLayout . '.phtml';
         <?= $this->icon('angle-double-up', $this->translate('Collapse'), ['class' => 'collapse-icon']) ?>
     </button>
 </div>
-<!--[if lt IE 10]>
-<iframe id="fileupload-frame-target" name="fileupload-frame-target"></iframe>
-<![endif]-->
-<!--[if gt IE 8]><!-->
 <script type="text/javascript" src="<?= $this->href($jsfile) ?>"></script>
-<!--<![endif]-->
 <script type="text/javascript">
 window.name = '<?= $this->protectId('Icinga') ?>';
 var icinga = new Icinga({
