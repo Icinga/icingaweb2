@@ -47,7 +47,7 @@
         )) ?>
     </span>
   <?php if (! $downtime->is_in_effect && $downtime->start >= time()): ?>
-    <span><?= sprintf($this->translate('expires %s'), $this->timeUntil($downtime->end, false, true)) ?></span>
+    <span><?= sprintf($this->translate('expires %s'), $this->timeUntil($downtime->is_flexible ? $downtime->scheduled_end : $downtime->end, false, true)) ?></span>
   <?php endif ?>
     <span class="comment-icons">
       <?php if ($downtime->is_flexible): ?>

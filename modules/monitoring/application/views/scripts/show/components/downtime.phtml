@@ -74,7 +74,7 @@ if (empty($object->comments) && ! $addLink) {
                     }
                     $state .= ' ' . sprintf(
                         $this->translate('expires %s', 'Last format parameter represents the downtime expire time'),
-                        $this->timeUntil($downtime->end, false, true)
+                        $this->timeUntil($downtime->is_flexible ? $downtime->scheduled_end : $downtime->end, false, true)
                     );
                 }
             }
