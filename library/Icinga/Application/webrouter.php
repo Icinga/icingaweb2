@@ -46,7 +46,6 @@ $special = array(
     'css/icinga.css',
     'css/icinga.min.css',
     'js/icinga.dev.js',
-    'js/icinga.ie8.js',
     'js/icinga.min.js'
 );
 
