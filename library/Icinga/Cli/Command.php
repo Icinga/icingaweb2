@@ -3,14 +3,12 @@
 
 namespace Icinga\Cli;
 
+use Icinga\Application\ApplicationBootstrap as App;
+use Icinga\Application\Config;
 use Icinga\Application\Logger;
-use Icinga\Cli\Screen;
+use Icinga\Exception\IcingaException;
 use Icinga\Exception\NotReadableError;
 use Icinga\Util\Translator;
-use Icinga\Cli\Params;
-use Icinga\Application\Config;
-use Icinga\Application\ApplicationBootstrap as App;
-use Icinga\Exception\IcingaException;
 
 abstract class Command
 {
