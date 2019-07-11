@@ -21,6 +21,22 @@ abstract class FilterChain extends Filter
 
     protected $allowedColumns;
 
+    /**
+     * Set the filters
+     *
+     * @param   array   $filters
+     *
+     * @return  $this
+     */
+    public function setFilters(array $filters)
+    {
+        $this->filters = $filters;
+
+        $this->refreshChildIds();
+
+        return $this;
+    }
+
     public function hasId($id)
     {
         foreach ($this->filters() as $filter) {
