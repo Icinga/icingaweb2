@@ -1,10 +1,10 @@
 <td class="state-col state-<?= $stateName; ?><?= $downtime->is_in_effect ? ' handled' : ''; ?>">
   <?php if ($downtime->start <= time() && ! $downtime->is_in_effect): ?>
       <div class="state-label"><?= $this->translate('ENDS', 'Downtime status'); ?></div>
-      <div class="state-meta"><?= $this->timeUntil($downtime->is_flexible ? $downtime->scheduled_end : $downtime->end, $this->compact) ?></div>
+      <div class="state-meta"><?= $this->timeUntil($downtime->is_flexible ? $downtime->scheduled_end : $downtime->end, $this->compact, true) ?></div>
   <?php else: ?>
       <div class="state-label"><?= $downtime->is_in_effect ? $this->translate('EXPIRES', 'Downtime status') : $this->translate('STARTS', 'Downtime status'); ?></div>
-      <div class="state-meta"><?= $this->timeUntil($downtime->is_in_effect ? $downtime->end : $downtime->start, $this->compact) ?></div>
+      <div class="state-meta"><?= $this->timeUntil($downtime->is_in_effect ? $downtime->end : $downtime->start, $this->compact, true) ?></div>
   <?php endif; ?>
 </td>
 <td>
@@ -47,7 +47,7 @@
         )) ?>
     </span>
   <?php if (! $downtime->is_in_effect && $downtime->start >= time()): ?>
-    <span><?= sprintf($this->translate('expires %s'), $this->timeUntil($downtime->end)) ?></span>
+    <span><?= sprintf($this->translate('expires %s'), $this->timeUntil($downtime->end, false, true)) ?></span>
   <?php endif ?>
     <span class="comment-icons">
       <?php if ($downtime->is_flexible): ?>

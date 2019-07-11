@@ -64,17 +64,17 @@ if (empty($object->comments) && ! $addLink) {
                     if ((bool) $downtime->is_fixed) {
                         $state = sprintf(
                             $this->translate('scheduled %s', 'Last format parameter represents the time scheduled'),
-                            $this->timeUntil($downtime->start)
+                            $this->timeUntil($downtime->start, false, true)
                         );
                     } else {
                         $state = sprintf(
                             $this->translate('scheduled flexible %s', 'Last format parameter represents the time scheduled'),
-                            $this->timeUntil($downtime->start)
+                            $this->timeUntil($downtime->start, false, true)
                         );
                     }
                     $state .= ' ' . sprintf(
                         $this->translate('expires %s', 'Last format parameter represents the downtime expire time'),
-                        $this->timeUntil($downtime->end)
+                        $this->timeUntil($downtime->end, false, true)
                     );
                 }
             }
