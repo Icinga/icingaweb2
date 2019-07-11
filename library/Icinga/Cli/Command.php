@@ -3,7 +3,9 @@
 
 namespace Icinga\Cli;
 
+use Icinga\Application\Logger;
 use Icinga\Cli\Screen;
+use Icinga\Exception\NotReadableError;
 use Icinga\Util\Translator;
 use Icinga\Cli\Params;
 use Icinga\Application\Config;
@@ -45,6 +47,9 @@ abstract class Command
 
     protected $defaultActionName = 'default';
 
+    /** @var bool Whether to automatically load enabled modules */
+    protected $loadEnabledModules = true;
+
     public function __construct(App $app, $moduleName, $commandName, $actionName, $initialize = true)
     {
         $this->app = $app;
@@ -57,6 +62,15 @@ abstract class Command
         $this->isVerbose    = $this->params->shift('verbose', false);
         $this->isDebugging  = $this->params->shift('debug', false);
         $this->configs      = [];
+
+        if ($this->loadEnabledModules) {
+            try {
+                $app->getModuleManager()->loadEnabledModules();
+            } catch (NotReadableError $e) {
+                Logger::error(new IcingaException('Cannot load enabled modules. An exception was thrown:', $e));
+            }
+        }
+
         if ($initialize) {
             $this->init();
         }
