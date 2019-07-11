@@ -87,10 +87,10 @@ if (empty($object->comments) && ! $addLink) {
                     $downtime->author_name
                 )) ?>
                 <span class="comment-time">
+                    <?= $state ?>
+                    <span aria-hidden="true">&#448;</span>
                     <?= $this->translate('created') ?>
                     <?= $this->timeAgo($downtime->entry_time) ?>
-                    <span aria-hidden="true">&#448;</span>
-                    <?= $state ?>
                 </span>
                 <?php if (isset($delDowntimeForm)) {
                     // Form is unset if the current user lacks the respective permission
