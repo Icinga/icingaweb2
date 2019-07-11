@@ -60,13 +60,13 @@ $this->addHelperFunction('timeSince', function ($time, $timeOnly = false) {
     );
 });
 
-$this->addHelperFunction('timeUntil', function ($time, $timeOnly = false) {
+$this->addHelperFunction('timeUntil', function ($time, $timeOnly = false, $requireTime = false) {
     if (! $time) {
         return '';
     }
     return sprintf(
         '<span class="relative-time time-until" title="%s">%s</span>',
         DateFormatter::formatDateTime($time),
-        DateFormatter::timeUntil($time, $timeOnly)
+        DateFormatter::timeUntil($time, $timeOnly, $requireTime)
     );
 });
