@@ -3,6 +3,7 @@
 
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
+use Icinga\Data\Filter\FilterNot;
 use Zend_Db_Expr;
 use Icinga\Application\Icinga;
 use Icinga\Application\Hook;
@@ -691,6 +692,47 @@ abstract class IdoQuery extends DbQuery
 
             $filter->setColumn($column);
         } else {
+            if (! $filter instanceof FilterNot) {
+                // Allow subquery filters in a filter chain
+                $columns = $filter->listFilteredColumns();
+                if (count($columns) === 1) {
+                    $column = $columns[0];
+                    $virtualTable = $this->aliasToTableName($column);
+                    if (isset($this->subQueryTargets[$virtualTable])) {
+                        $lastSign = null;
+                        $filters = [];
+                        $expressions = [];
+                        foreach ($filter->filters() as $child) {
+                            if ($lastSign === null) {
+                                $lastSign = $child->getSign();
+                            } else {
+                                $sign = $child->getSign();
+                                if ($sign !== $lastSign) {
+                                    $filters[] = new FilterExpression(
+                                        $column,
+                                        $lastSign,
+                                        $filter->getOperatorSymbol() === '&'
+                                            ? [implode('&', $expressions)]
+                                            : $expressions
+                                    );
+                                    $expressions = [];
+                                    $lastSign = $sign;
+                                }
+                            }
+                            $expressions[] = $child->getExpression();
+                        }
+                        $filters[] = new FilterExpression(
+                            $column,
+                            $lastSign,
+                            $filter->getOperatorSymbol() === '&'
+                                ? [implode('&', $expressions)]
+                                : $expressions
+                        );
+                        $filter->setFilters($filters);
+                    }
+                }
+            }
+
             foreach ($filter->filters() as $child) {
                 $replacement = $this->requireFilterColumns($child);
                 if ($replacement !== null) {
