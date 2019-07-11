@@ -46,7 +46,7 @@ module_path = "/usr/share/icingaweb2/modules"
 
 Option                   | Description
 -------------------------|-----------------------------------------------
-log                      | **Optional.** Specifies the logging type. Can be set to `syslog`, `file` or `none`.
+log                      | **Optional.** Specifies the logging type. Can be set to `syslog`, `file`, `php` (web server's error log) or `none`.
 level                    | **Optional.** Specifies the logging level. Can be set to `ERROR`, `WARNING`, `INFORMATION` or `DEBUG`.
 file                     | **Optional.** Specifies the log file path if `log` is set to `file`.
 application              | **Optional.** Specifies the application name if `log` is set to `syslog`.
