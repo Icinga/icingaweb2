@@ -1,4 +1,5 @@
 <?php
+use Icinga\Date\DateFormatter;
 use Icinga\Module\Monitoring\Object\Host;
 use Icinga\Module\Monitoring\Object\Service;
 
@@ -38,10 +39,16 @@ if (! $this->compact): ?>
                 'host' => $service->host_name,
             )
         );
-        $serviceStateName = Service::getStateText($service->service_state); ?>
-        <tr>
+        $serviceStateName = Service::getStateText($service->service_state);
+        $serviceCheckOverdue = $service->service_next_update < time(); ?>
+        <tr<?= $serviceCheckOverdue ? ' class="state-outdated"' : '' ?>>
             <td class="state-col state-<?= $serviceStateName ?><?= $service->service_handled ? ' handled' : '' ?>">
-                <div class="state-label"><?= Service::getStateText($service->service_state, true) ?></div>
+                <div class="state-label">
+                <?php if ($serviceCheckOverdue): ?>
+                    <?= $this->icon('clock', sprintf($this->translate('Overdue %s'), DateFormatter::timeSince($service->service_next_update))) ?>
+                <?php endif ?>
+                    <?= Service::getStateText($service->service_state, true) ?>
+                </div>
             <?php if ((int) $service->service_state !== 99): ?>
                 <div class="state-meta">
                     <?= $this->timeSince($service->service_last_state_change, $this->compact) ?>

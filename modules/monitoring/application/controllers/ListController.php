@@ -159,7 +159,8 @@ class ListController extends Controller
             'service_notifications_enabled',
             'service_active_checks_enabled',
             'service_passive_checks_enabled',
-            'service_check_command'
+            'service_check_command',
+            'service_next_update'
         ), $this->addColumns()));
         $this->applyRestriction('monitoring/filter/objects', $services);
 
