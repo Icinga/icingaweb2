@@ -4,10 +4,10 @@
 namespace Icinga\Forms;
 
 use Exception;
-use Icinga\Application\Hook\ConfigFormEventsHook;
-use Icinga\Exception\ConfigurationError;
 use Zend_Form_Decorator_Abstract;
 use Icinga\Application\Config;
+use Icinga\Application\Hook\ConfigFormEventsHook;
+use Icinga\Exception\ConfigurationError;
 use Icinga\Web\Form;
 use Icinga\Web\Notification;
 
