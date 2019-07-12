@@ -1,5 +1,5 @@
 # Icinga Web 2 - Head for multiple monitoring backends.
-# Copyright (C) 2018 Icinga Development Team
+# Copyright (C) 2019 Icinga Development Team
 # This file is distributed under the same license as Icinga Web 2.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Icinga Web 2 (None)\n"
 "Report-Msgid-Bugs-To: dev@icinga.com\n"
-"POT-Creation-Date: 2018-07-11 14:17+0000\n"
-"PO-Revision-Date: 2018-07-11 16:30+0200\n"
+"POT-Creation-Date: 2019-07-12 12:08-0700\n"
+"PO-Revision-Date: 2019-07-12 14:10+0200\n"
 "Last-Translator: Markus Frosch <markus.frosch@icinga.com>\n"
 "Language: de_DE\n"
 "MIME-Version: 1.0\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-Basepath: .\n"
 "Language-Team: \n"
-"X-Generator: Poedit 2.0.6\n"
+"X-Generator: Poedit 2.2.3\n"
 "X-Poedit-SearchPath-0: .\n"
 
 #: ../../../../library/Icinga/Web/Form/Validator/InArray.php:16
@@ -533,6 +533,14 @@ msgstr "Komma separierte Liste von Nutzern, die dieser Rolle zugewiesen werden"
 #: ../../../../library/Icinga/Web/Menu.php:61
 msgid "Configuration"
 msgstr "Konfiguration"
+
+#: ../../../../application/forms/ConfigForm.php:89
+msgid ""
+"Configuration successfully stored. Though, one or more module hooks failed "
+"to run. See logs for details"
+msgstr ""
+"Konfiguration erfolgreich gespeichert. Es sind jedoch einer oder mehrere "
+"Modul-Hooks fehlgeschlagen. Bitte die Logs prüfen"
 
 #: ../../../../application/controllers/RoleController.php:155
 #: ../../../../application/controllers/UserController.php:320
