@@ -1278,11 +1278,11 @@ class Module
      * @param   string  $implementation Fully qualified name of the class providing the hook implementation.
      *                                  Defaults to the module's ProvidedHook namespace plus the hook's name for the
      *                                  class name
-     * @param   string  $deprecated     DEPRECATED - No-op arg for compatibility reasons
+     * @param   bool    $alwaysRun      To run the hook always (e.g. without permission check)
      *
      * @return  $this
      */
-    protected function provideHook($name, $implementation = null, $deprecated = null)
+    protected function provideHook($name, $implementation = null, $alwaysRun = false)
     {
         if ($implementation === null) {
             $implementation = $name;
@@ -1296,7 +1296,7 @@ class Module
             $class = $implementation;
         }
 
-        Hook::register($name, $class, $class);
+        Hook::register($name, $class, $class, $alwaysRun);
         return $this;
     }
 
