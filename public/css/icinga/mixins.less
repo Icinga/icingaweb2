@@ -17,11 +17,9 @@
   outline: none;
   padding: @vertical-padding @horizontal-padding;
 
-
   @duration: 0.2s;
-  // Throwaway local variable because transition mixin does not work w/ comma-separated transitions
-  @transition: background @duration, border @duration ease, color @duration ease;
-  .transition(@transition);
+  // The trailing semicolon is needed to be able to pass this as a css list
+  .transition(background @duration, border @duration ease, color @duration ease;);
 
   &:focus,
   &:hover,
