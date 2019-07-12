@@ -63,6 +63,7 @@ class DowntimesController extends Controller
 
         $this->downtimes = $query;
 
+        $this->view->title = $this->translate('Downtimes');
         $this->getTabs()->add(
             'downtimes',
             array(

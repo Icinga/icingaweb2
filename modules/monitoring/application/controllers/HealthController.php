@@ -113,6 +113,7 @@ class HealthController extends Controller
      */
     public function statsAction()
     {
+        $this->view->title = $this->translate('Stats');
         $this->getTabs()->activate('stats');
 
         $servicestats = $this->backend->select()->from('servicestatussummary', array(

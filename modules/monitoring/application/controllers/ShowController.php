@@ -19,6 +19,13 @@ class ShowController extends Controller
      */
     protected $backend;
 
+    public function init()
+    {
+        $this->view->defaultTitle = $this->translate('Contacts') . ' :: ' . $this->view->defaultTitle;
+
+        parent::init();
+    }
+
     public function contactAction()
     {
         $contactName = $this->params->getRequired('contact_name');
@@ -71,6 +78,7 @@ class ShowController extends Controller
             $this->view->notifications = $notifications;
             $this->setupLimitControl();
             $this->setupPaginationControl($this->view->notifications);
+            $this->view->title = $contact->contact_name;
         }
 
         $this->view->contact = $contact;

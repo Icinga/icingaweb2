@@ -56,6 +56,7 @@ class CommentsController extends Controller
 
         $this->comments = $query;
 
+        $this->view->title = $this->translate('Comments');
         $this->getTabs()->add(
             'comments',
             array(

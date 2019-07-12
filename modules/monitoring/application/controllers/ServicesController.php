@@ -74,6 +74,7 @@ class ServicesController extends Controller
                 'url'   => Url::fromRequest()
             )
         )->extend(new DashboardAction())->extend(new MenuAction())->activate('show');
+        $this->view->title = $this->translate('Services');
     }
 
     protected function handleCommandForm(ObjectsCommandForm $form)

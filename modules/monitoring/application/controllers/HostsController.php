@@ -68,6 +68,7 @@ class HostsController extends Controller
             )
         )->extend(new DashboardAction())->extend(new MenuAction())->activate('show');
         $this->view->listAllLink = Url::fromRequest()->setPath('monitoring/list/hosts');
+        $this->view->title = $this->translate('Hosts');
     }
 
     protected function handleCommandForm(ObjectsCommandForm $form)
