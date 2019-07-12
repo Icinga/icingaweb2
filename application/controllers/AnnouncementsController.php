@@ -12,6 +12,13 @@ use Icinga\Web\Url;
 
 class AnnouncementsController extends Controller
 {
+    public function init()
+    {
+        $this->view->title = $this->translate('Announcements');
+
+        parent::init();
+    }
+
     /**
      * List all announcements
      */
