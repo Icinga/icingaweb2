@@ -77,7 +77,8 @@ class ListController extends Controller
             'host_notifications_enabled',
             'host_active_checks_enabled',
             'host_passive_checks_enabled',
-            'host_check_command'
+            'host_check_command',
+            'host_next_update'
         ), $this->addColumns()));
         $this->applyRestriction('monitoring/filter/objects', $hosts);
 
