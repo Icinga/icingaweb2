@@ -4,6 +4,7 @@
 namespace Icinga\Forms;
 
 use Exception;
+use Icinga\Application\Hook\ConfigFormEventsHook;
 use Icinga\Exception\ConfigurationError;
 use Zend_Form_Decorator_Abstract;
 use Icinga\Application\Config;
@@ -52,6 +53,19 @@ class ConfigForm extends Form
         return $this;
     }
 
+    public function isValid($formData)
+    {
+        $valid = parent::isValid($formData);
+
+        if ($valid && ConfigFormEventsHook::runIsValid($this) === false) {
+            $this->addErrors(ConfigFormEventsHook::getLastErrors());
+
+            $valid = false;
+        }
+
+        return $valid;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -71,6 +85,12 @@ class ConfigForm extends Form
             Notification::success($this->translate('New configuration has successfully been stored'));
         } else {
             return false;
+        }
+
+        if (ConfigFormEventsHook::runOnSuccess($this) === false) {
+            Notification::error($this->translate(
+                'Configuration successfully stored despite erroneous module hook(s). See logs for details'
+            ));
         }
     }
 
