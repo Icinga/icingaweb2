@@ -66,9 +66,6 @@ class ConfigForm extends Form
         return $valid;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function onSuccess()
     {
         $sections = array();
@@ -94,9 +91,6 @@ class ConfigForm extends Form
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function onRequest()
     {
         $values = array();
