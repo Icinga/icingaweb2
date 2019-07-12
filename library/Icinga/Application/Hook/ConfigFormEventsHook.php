@@ -17,6 +17,18 @@ abstract class ConfigFormEventsHook
     private static $lastErrors = [];
 
     /**
+     * Get whether the hook applies to the given config form
+     *
+     * @param \Icinga\Forms\ConfigForm $form
+     *
+     * @return bool
+     */
+    public function appliesTo(ConfigForm $form)
+    {
+        return false;
+    }
+
+    /**
      * isValid event hook
      *
      * Implement this method in order to run code after the form has been validated successfully.
@@ -73,6 +85,10 @@ abstract class ConfigFormEventsHook
 
         foreach (Hook::all('ConfigFormEvents') as $hook) {
             /** @var self $hook */
+            if (! $hook->runAppliesTo($form)) {
+                continue;
+            }
+
             try {
                 $hook->isValid($form);
             } catch (\Exception $e) {
@@ -106,6 +122,10 @@ abstract class ConfigFormEventsHook
 
         foreach (Hook::all('ConfigFormEvents') as $hook) {
             /** @var self $hook */
+            if (! $hook->runAppliesTo($form)) {
+                continue;
+            }
+
             try {
                 $hook->onSuccess($form);
             } catch (\Exception $e) {
@@ -118,5 +138,20 @@ abstract class ConfigFormEventsHook
         }
 
         return $success;
+    }
+
+    private function runAppliesTo(ConfigForm $form)
+    {
+        try {
+            $appliesTo = $this->appliesTo($form);
+        } catch (\Exception $e) {
+            // Don't save exception to last errors because we do not want to disturb the user for messed up
+            // appliesTo checks
+            Logger::error("%s\n%s", $e, IcingaException::getConfidentialTraceAsString($e));
+
+            $appliesTo = false;
+        }
+
+        return $appliesTo === true;
     }
 }
