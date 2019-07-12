@@ -178,7 +178,7 @@ class NavigationItemRenderer
             : $item->getLabel();
         if (($icon = $item->getIcon()) !== null) {
             $label = $this->view()->icon($icon) . $label;
-        } else {
+        } elseif ($item->getName()) {
             $firstLetter = $item->getName()[0];
             $label = $this->view()->icon('letter', null, ['data-letter' => strtolower($firstLetter)]) . $label;
         }
