@@ -570,7 +570,7 @@
             var $search = $('#search');
             if (e.which === 13 && $search.is(':focus')) {
                 $('#sidebar').removeClass('expanded');
-                $search.blur();
+                $search[0].blur();
             }
         },
 
