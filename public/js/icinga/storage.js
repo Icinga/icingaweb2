@@ -44,8 +44,17 @@
         }
 
         if (typeof Icinga.Storage.subscribers[event.key] !== 'undefined') {
+            var newValue = null,
+                oldValue = null;
+            if (event.newValue.length) {
+                newValue = JSON.parse(event.newValue);
+            }
+            if (event.oldValue.length) {
+                oldValue = JSON.parse(event.oldValue);
+            }
+
             Icinga.Storage.subscribers[event.key].forEach(function (subscriber) {
-                subscriber[0].call(subscriber[1], JSON.parse(event.newValue), JSON.parse(event.oldValue), event);
+                subscriber[0].call(subscriber[1], newValue, oldValue, event);
             });
         }
     });
