@@ -68,6 +68,7 @@ class AccountController extends Controller
         $form->handleRequest();
 
         $this->view->form = $form;
+        $this->view->title = $this->translate('My Account');
         $this->getTabs()->activate('account');
     }
 }

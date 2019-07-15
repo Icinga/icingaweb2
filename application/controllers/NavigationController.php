@@ -127,6 +127,7 @@ class NavigationController extends Controller
         $this->view->types = $this->listItemTypes();
         $this->view->items = $query;
 
+        $this->view->title = $this->translate('Navigation');
         $this->getTabs()
         ->add(
             'account',
@@ -187,6 +188,7 @@ class NavigationController extends Controller
         $this->view->types = $this->listItemTypes();
         $this->view->items = $query;
 
+        $this->view->title = $this->translate('Shared Navigation');
         $this->getTabs()->add(
             'navigation/shared',
             array(
@@ -242,6 +244,7 @@ class NavigationController extends Controller
         });
         $form->handleRequest();
 
+        $this->view->title = $this->translate('Navigation');
         $this->renderForm($form, $this->translate('New Navigation Item'));
     }
 
@@ -297,6 +300,7 @@ class NavigationController extends Controller
             $this->httpNotFound(sprintf($this->translate('Navigation item "%s" not found'), $itemName));
         }
 
+        $this->view->title = $this->translate('Navigation');
         $this->renderForm($form, $this->translate('Update Navigation Item'));
     }
 
@@ -340,6 +344,7 @@ class NavigationController extends Controller
         });
         $form->handleRequest();
 
+        $this->view->title = $this->translate('Navigation');
         $this->renderForm($form, $this->translate('Remove Navigation Item'));
     }
 
@@ -428,5 +433,6 @@ class NavigationController extends Controller
         }
 
         $this->view->navigation = $navigation;
+        $this->view->title = $navigation->getLabel();
     }
 }

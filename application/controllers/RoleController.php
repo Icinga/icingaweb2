@@ -18,6 +18,13 @@ use Icinga\Web\Notification;
  */
 class RoleController extends AuthBackendController
 {
+    public function init()
+    {
+        $this->view->title = $this->translate('Roles');
+
+        parent::init();
+    }
+
     /**
      * List roles
      *

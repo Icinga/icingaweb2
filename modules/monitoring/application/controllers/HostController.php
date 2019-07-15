@@ -35,6 +35,8 @@ class HostController extends MonitoredObjectController
         $this->object = $host;
         $this->createTabs();
         $this->getTabs()->activate('host');
+        $this->view->title = $host->host_display_name;
+        $this->view->defaultTitle = $this->translate('Hosts') . ' :: ' . $this->view->defaultTitle;
     }
 
     /**

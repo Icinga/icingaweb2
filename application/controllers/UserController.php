@@ -20,6 +20,13 @@ use Icinga\Web\Widget;
 
 class UserController extends AuthBackendController
 {
+    public function init()
+    {
+        $this->view->title = $this->translate('Users');
+
+        parent::init();
+    }
+
     /**
      * List all users of a single backend
      */

@@ -15,6 +15,7 @@ class TacticalController extends Controller
     {
         $this->setAutorefreshInterval(15);
 
+        $this->view->title = $this->translate('Tactical Overview');
         $this->getTabs()->add(
             'tactical_overview',
             array(

@@ -21,6 +21,13 @@ use Icinga\Web\Widget;
 
 class GroupController extends AuthBackendController
 {
+    public function init()
+    {
+        $this->view->title = $this->translate('User Groups');
+
+        parent::init();
+    }
+
     /**
      * List all user groups of a single backend
      */

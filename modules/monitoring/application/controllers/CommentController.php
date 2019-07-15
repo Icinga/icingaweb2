@@ -66,6 +66,7 @@ class CommentController extends Controller
     public function showAction()
     {
         $this->view->comment = $this->comment;
+        $this->view->title = $this->translate('Comments');
 
         if ($this->hasPermission('monitoring/command/comment/delete')) {
             $listUrl = Url::fromPath('monitoring/list/comments')

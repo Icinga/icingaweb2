@@ -54,5 +54,6 @@ class ListController extends Controller
 
         $this->setupLimitControl();
         $this->setupPaginationControl($this->view->logData);
+        $this->view->title = $this->translate('Application Log');
     }
 }

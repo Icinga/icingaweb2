@@ -511,11 +511,11 @@ class ActionController extends Zend_Controller_Action
             }
             $resp->setHeader(
                 'X-Icinga-Title',
-                rawurlencode($this->view->title . ' :: ' . static::DEFAULT_TITLE),
+                rawurlencode($this->view->title . ' :: ' . $this->view->defaultTitle),
                 true
             );
         } else {
-            $resp->setHeader('X-Icinga-Title', rawurlencode(static::DEFAULT_TITLE), true);
+            $resp->setHeader('X-Icinga-Title', rawurlencode($this->view->defaultTitle), true);
         }
 
         $layout = $this->_helper->layout();

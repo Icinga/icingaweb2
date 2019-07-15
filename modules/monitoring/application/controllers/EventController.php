@@ -70,6 +70,7 @@ class EventController extends Controller
             $this->getDetails($type, $event)
         );
 
+        $this->view->title = $this->translate('Event Overview');
         $this->getTabs()
             ->add('event', array(
                 'title'     => $label,

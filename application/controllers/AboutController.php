@@ -13,6 +13,7 @@ class AboutController extends Controller
     {
         $this->view->version = Version::get();
         $this->view->modules = Icinga::app()->getModuleManager()->getLoadedModules();
+        $this->view->title = $this->translate('About');
         $this->view->tabs = $this->getTabs()->add(
             'about',
             array(

@@ -58,6 +58,7 @@ class UsergroupbackendController extends Controller
         });
         $form->handleRequest();
 
+        $this->view->title = $this->translate('Authentication');
         $this->renderForm($form, $this->translate('New User Group Backend'));
     }
 
@@ -94,6 +95,7 @@ class UsergroupbackendController extends Controller
             $this->httpNotFound(sprintf($this->translate('User group backend "%s" not found'), $backendName));
         }
 
+        $this->view->title = $this->translate('Authentication');
         $this->renderForm($form, $this->translate('Update User Group Backend'));
     }
 
@@ -125,6 +127,7 @@ class UsergroupbackendController extends Controller
         });
         $form->handleRequest();
 
+        $this->view->title = $this->translate('Authentication');
         $this->renderForm($form, $this->translate('Remove User Group Backend'));
     }
 }
