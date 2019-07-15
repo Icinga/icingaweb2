@@ -59,12 +59,12 @@ class EventhistoryQuery extends IdoQuery
             'service_display_name'
         );
         $this->subQueries = array(
+            $this->createSubQuery('Notificationhistory', $columns),
             $this->createSubQuery('Statehistory', $columns),
             $this->createSubQuery('Downtimestarthistory', $columns),
             $this->createSubQuery('Downtimeendhistory', $columns),
             $this->createSubQuery('Commenthistory', $columns),
             $this->createSubQuery('Commentdeletionhistory', $columns),
-            $this->createSubQuery('Notificationhistory', $columns),
             $this->createSubQuery('Flappingstarthistory', $columns),
             $this->createSubQuery('Flappingendhistory', $columns)
         );
