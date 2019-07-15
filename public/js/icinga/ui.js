@@ -497,7 +497,7 @@
                 $target.contents().filter(function() { return this.nodeType === 3; }).remove();
 
                 // has three states?
-                var triState = $target.find('input[value="unchanged"]').size() > 0 ? 1 : 0;
+                var triState = $target.find('input[value="unchanged"]').length > 0 ? 1 : 0;
 
                 // fetch current value from radiobuttons
                 var value  = $target.find('input:checked').first().val();
