@@ -38,7 +38,17 @@ class HostnotificationQuery extends IdoQuery
             'output'    => null,
             'state'     => 'hn.state',
             'timestamp' => 'UNIX_TIMESTAMP(hn.start_time)',
-            'type'      => '(\'notify\')'
+            'type'      => '
+                CASE hn.notification_reason
+                    WHEN 1 THEN \'notification_ack\'
+                    WHEN 2 THEN \'notification_flapping\'
+                    WHEN 3 THEN \'notification_flapping_end\'
+                    WHEN 5 THEN \'notification_dt_start\'
+                    WHEN 6 THEN \'notification_dt_end\'
+                    WHEN 7 THEN \'notification_dt_end\'
+                    WHEN 8 THEN \'notification_custom\'
+                    ELSE \'notification_state\'
+                END',
         ),
         'instances' => array(
             'instance_name' => 'i.instance_name'
