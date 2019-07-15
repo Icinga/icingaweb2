@@ -135,14 +135,14 @@
                 headers: headers,
                 context: _this,
                 contentType: contentType,
-                processData: ! isFormData,
-                complete: this.onComplete
+                processData: ! isFormData
             });
 
             req.$target = $target;
             req.url = url;
             req.done(this.onResponse);
             req.fail(this.onFailure);
+            req.always(this.onComplete);
             req.autorefresh = autorefresh;
             req.method = method;
             req.action = action;
@@ -590,7 +590,15 @@
         /**
          * Regardless of whether a request succeeded of failed, clean up
          */
-        onComplete: function (req, textStatus) {
+        onComplete: function (dataOrReq, textStatus, reqOrError) {
+            var req;
+
+            if (typeof dataOrReq === 'object') {
+                req = dataOrReq;
+            } else {
+                req = reqOrError;
+            }
+
             // Remove 'impact' class if there was such
             if (req.$target.hasClass('impact')) {
                 req.$target.removeClass('impact');
