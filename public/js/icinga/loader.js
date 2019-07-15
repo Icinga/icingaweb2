@@ -819,14 +819,6 @@
             // TODO: We do not want to wrap this twice...
             var $content = $('<div>' + content + '</div>');
 
-            // Disable all click events while rendering
-            // (Disabling disabled, was ways too slow)
-            // $('*').click(function (event) {
-            //     event.stopImmediatePropagation();
-            //     event.stopPropagation();
-            //     event.preventDefault();
-            // });
-
             $('.container', $container).each(function() {
                 _this.stopPendingRequestsFor($(this));
             });
@@ -861,7 +853,7 @@
                         }
                         // Do not touch focus in case a module or component already placed it
                         if ($(document.activeElement).closest('.container').attr('id') !== containerId) {
-                            $container.focus();
+                            _this.icinga.ui.focusElement($container);
                         }
                     }, 0);
                 }
@@ -873,11 +865,11 @@
                         $activeElement[0].focus({preventScroll: autorefresh});
                     } else if (! autorefresh) {
                         if (focusFallback) {
-                            $(focusFallback.parent).find(focusFallback.child).focus();
+                            _this.icinga.ui.focusElement($(focusFallback.parent).find(focusFallback.child));
                         } else if (typeof $container.attr('tabindex') === 'undefined') {
                             $container.attr('tabindex', -1);
                         }
-                        $container.focus();
+                        _this.icinga.ui.focusElement($container);
                     }
                 }, 0);
             }
