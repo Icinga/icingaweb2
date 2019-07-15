@@ -179,38 +179,47 @@ $rowAction = Url::fromPath('monitoring/event/show');
                 <div class="state-meta"><?= $this->formatTime($event->timestamp) ?></div>
             </td>
             <td>
-                <?php if ($this->isOverview): ?>
-                    <?= $this->qlink(
-                        $event->host_display_name,
-                        'monitoring/host/show',
-                        array(
-                            'host' => $event->host_name,
-                        ),
-                        array('title' => sprintf(
-                            $this->translate('Show detailed information for host %s'),
-                            $event->host_display_name
-                        ))
-                    ) ?><?php if ($isService): ?>&#58;
+                <div class="history-message-container">
+                <?php if ($icon): ?>
+                    <div class="history-message-icon">
+                        <?= $this->icon($icon, $iconTitle) ?>
+                    </div>
+                <?php endif ?>
+                    <div class="history-message-output">
+                    <?php if ($this->isOverview): ?>
                         <?= $this->qlink(
-                            $event->service_display_name,
-                            'monitoring/service/show',
-                            array(
-                                'host'      => $event->host_name,
-                                'service'   => $event->service_description
-                            ),
-                            array(
+                            $event->host_display_name,
+                            'monitoring/host/show',
+                            [
+                                'host' => $event->host_name,
+                            ],
+                            [
                                 'title' => sprintf(
-                                    $this->translate('Show detailed information for service %s on host %s'),
-                                    $event->service_display_name,
+                                    $this->translate('Show detailed information for host %s'),
                                     $event->host_display_name
                                 )
-                            )
-                        ) ?>
+                            ]
+                        ) ?><?php if ($isService): ?>&#58;
+                            <?= $this->qlink(
+                                $event->service_display_name,
+                                'monitoring/service/show',
+                                [
+                                    'host'    => $event->host_name,
+                                    'service' => $event->service_description
+                                ],
+                                [
+                                    'title' => sprintf(
+                                        $this->translate('Show detailed information for service %s on host %s'),
+                                        $event->service_display_name,
+                                        $event->host_display_name
+                                    )
+                                ]
+                            ) ?>
+                        <?php endif ?>
                     <?php endif ?>
-                <?php endif ?>
-                <?php if ($icon) {
-                    echo $this->icon($icon, $iconTitle);
-                } ?><?= $this->nl2br($this->createTicketLinks($this->markdown($msg, ['class' => 'overview-plugin-output']))) ?>
+                        <?= $this->nl2br($this->createTicketLinks($this->markdown($msg, ['class' => 'overview-plugin-output']))) ?>
+                    </div>
+                </div>
             </td>
         </tr>
         <?php endforeach ?>
