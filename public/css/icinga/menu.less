@@ -20,9 +20,11 @@
   box-shadow: inset -.5em 0 1em rgba(0, 0, 0, .3);
   height: 100%;
   width: 100%;
-  overflow-x: hidden;
   overflow-y: auto;
   position: absolute;
+  // Remove scrollbar
+  box-sizing: content-box; // Set width to 100% + padding (17px)
+  padding-right: 17px; // 17px is the general width of modern browsers' scrollbars
 }
 
 #layout:not(.minimal-layout) #menu {
