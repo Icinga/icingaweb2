@@ -54,7 +54,7 @@ class AuthenticationController extends Controller
             $form->handleRequest();
         }
         $this->view->form = $form;
-        $this->view->title = $this->translate('Icinga Web 2 Login');
+        $this->view->defaultTitle = $this->translate('Icinga Web 2 Login');
         $this->view->requiresSetup = $requiresSetup;
     }
 
