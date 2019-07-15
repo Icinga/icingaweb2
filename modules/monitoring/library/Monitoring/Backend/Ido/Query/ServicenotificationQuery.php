@@ -30,7 +30,17 @@ class ServicenotificationQuery extends IdoQuery
             'output'    => null,
             'state'     => 'sn.state',
             'timestamp' => 'UNIX_TIMESTAMP(sn.start_time)',
-            'type'      => '(\'notify\')'
+            'type'      => '
+                CASE sn.notification_reason
+                    WHEN 1 THEN \'notification_ack\'
+                    WHEN 2 THEN \'notification_flapping\'
+                    WHEN 3 THEN \'notification_flapping_end\'
+                    WHEN 5 THEN \'notification_dt_start\'
+                    WHEN 6 THEN \'notification_dt_end\'
+                    WHEN 7 THEN \'notification_dt_end\'
+                    WHEN 8 THEN \'notification_custom\'
+                    ELSE \'notification_state\'
+                END',
         ),
         'hostgroups' => array(
             'hostgroup_name' => 'hgo.name1'
