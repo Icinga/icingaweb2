@@ -27,7 +27,6 @@ class JavaScript
         'js/icinga/behavior/autofocus.js',
         'js/icinga/behavior/collapsible.js',
         'js/icinga/behavior/detach.js',
-        'js/icinga/behavior/tooltip.js',
         'js/icinga/behavior/sparkline.js',
         'js/icinga/behavior/tristate.js',
         'js/icinga/behavior/dropdown.js',
@@ -43,8 +42,7 @@ class JavaScript
     protected static $vendorFiles = array(
         'js/vendor/jquery-3.4.1',
         'js/vendor/jquery-migrate-3.1.0',
-        'js/vendor/jquery.sparkline',
-        'js/vendor/jquery.tipsy'
+        'js/vendor/jquery.sparkline'
     );
 
     public static function sendMinified()

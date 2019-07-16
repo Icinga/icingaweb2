@@ -129,7 +129,6 @@ class HistoryColorGrid extends AbstractWidget
                 'aria-label="' . $entry['caption'] . '" ' .
                 'title="' . $entry['caption'] . '" ' .
                 'href="'  . $entry['url'] . '" ' .
-                'data-tooltip-delay="0"' .
             '></a>';
         } else {
             return '<span ' .
