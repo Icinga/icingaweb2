@@ -33,6 +33,11 @@ class Form extends Zend_Form
     const DEFAULT_SUFFIX = '_default';
 
     /**
+     * A form's default CSS classes
+     */
+    const DEFAULT_CLASSES = 'icinga-forms icinga-controls';
+
+    /**
      * Identifier for notifications of type error
      */
     const NOTIFICATION_ERROR = 0;
@@ -238,6 +243,10 @@ class Form extends Zend_Form
                 'type'      => static::DECORATOR
             )
         ));
+
+        if (! isset($options['attribs']['class'])) {
+            $options['attribs']['class'] = static::DEFAULT_CLASSES;
+        }
 
         parent::__construct($options);
     }
