@@ -703,6 +703,17 @@ abstract class IdoQuery extends DbQuery
                         $filters = [];
                         $expressions = [];
                         foreach ($filter->filters() as $child) {
+                            switch (true) {
+                                case $child instanceof FilterExpression:
+                                    $expression = $child->getExpression();
+                                    if (! is_array($expression)) {
+                                        break;
+                                    }
+                                    // Move to default
+                                default:
+                                    $filters[] = $child;
+                                    continue 2;
+                            }
                             if ($lastSign === null) {
                                 $lastSign = $child->getSign();
                             } else {
@@ -719,15 +730,17 @@ abstract class IdoQuery extends DbQuery
                                     $lastSign = $sign;
                                 }
                             }
-                            $expressions[] = $child->getExpression();
+                            $expressions[] = $expression;
                         }
-                        $filters[] = new FilterExpression(
-                            $column,
-                            $lastSign,
-                            $filter->getOperatorSymbol() === '&'
-                                ? [implode('&', $expressions)]
-                                : $expressions
-                        );
+                        if (! empty($expressions)) {
+                            $filters[] = new FilterExpression(
+                                $column,
+                                $lastSign,
+                                $filter->getOperatorSymbol() === '&'
+                                    ? [implode('&', $expressions)]
+                                    : $expressions
+                            );
+                        }
                         $filter->setFilters($filters);
                     }
                 }
