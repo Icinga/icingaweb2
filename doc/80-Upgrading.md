@@ -10,8 +10,10 @@ v2.3 to v2.5 requires to follow the instructions for v2.4 too.
 
 **Breaking changes**
 
-* We've upgraded jQuery to version 3.4.1. If you're a module developer, check what's been deprecated since
-  v2.1 or earlier and has now been removed. (https://api.jquery.com/category/deprecated/)
+* We've upgraded jQuery to version 3.4.1. If you're a module developer, please add `?_dev` to your address bar to check
+  for log messages emitted by jquery-migrate. (https://github.com/jquery/jquery-migrate) Your javascript code will still
+  work, though jquery-migrate will notify you if you're utilizing deprecated/removed functions. jquery-migrate will be
+  removed with Icinga Web v2.8 and code not adjusted accordingly will stop working.
 
 ## Upgrading to Icinga Web 2 2.6.x <a id="upgrading-to-2.6.x"></a>
 
