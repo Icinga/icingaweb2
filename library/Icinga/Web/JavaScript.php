@@ -42,6 +42,7 @@ class JavaScript
 
     protected static $vendorFiles = array(
         'js/vendor/jquery-3.4.1',
+        'js/vendor/jquery-migrate-3.1.0',
         'js/vendor/jquery.sparkline',
         'js/vendor/jquery.tipsy'
     );
