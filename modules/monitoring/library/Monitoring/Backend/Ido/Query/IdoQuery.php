@@ -560,7 +560,7 @@ abstract class IdoQuery extends DbQuery
         if (count($expr) === 1 && strpos($expr[0], '&') !== false) {
             // Our current filter implementation does not specify & as a control character so the count of the
             // expression array is always one in this case
-            $expr = explode('&', $expr[0]);
+            $expr = array_unique(explode('&', $expr[0]));
             $subQueryFilter->setExpression($expr);
             $and = true;
         } else {
