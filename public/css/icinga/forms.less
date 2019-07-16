@@ -1,5 +1,14 @@
 /*! Icinga Web 2 | (c) 2019 Icinga Development Team | GPLv2+ */
 
+/**
+ Rules found in here are structured with two layers:
+
+  1) form.icinga-forms, that's what defines the general structure of our single/individual forms. It's not
+     supposed to be used for any other forms that are not the only content on the page (e.g. inline-forms)
+  2) .icinga-controls, this defines the design of our controls. Any input that's part of a container with
+     this class gets our design applied
+ */
+
 // Used colors
 
 @disabled-gray: #9a9a9a;
@@ -10,26 +19,25 @@
 
 // General form layout
 
-form:not(.inline):not([role="search"]) {
+form.icinga-forms {
   max-width: 70em;
   width: 80%;
-}
 
-.form-controls {
-  display: flex;
-  margin-left: 16em;
-  justify-content: flex-end;
-}
+  .control-group {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 -.5em;
+    align-items: flex-start;
 
+    > * {
+      margin: .5em;
+    }
+  }
 
-
-.control-group {
-  display: flex;
-  margin: 0 -.5em;
-  align-items: flex-start;
-
-  > * {
-    margin: .5em;
+  .form-controls {
+    display: flex;
+    margin-left: 16em;
+    justify-content: flex-end;
   }
 }
 
@@ -37,7 +45,7 @@ form:not(.inline):not([role="search"]) {
 
 #layout.minimal-layout,
 #layout.twocols:not(.wide-layout) {
-  form:not(.inline) {
+  form.icinga-forms {
     width: 100%;
 
     .control-label-group {
@@ -47,24 +55,24 @@ form:not(.inline):not([role="search"]) {
       padding-left: 0;
       margin-bottom: 0;
     }
-  }
 
-  .toggle-switch ~ .control-info:before {
-    margin-left: 0;
-  }
+    .toggle-switch ~ .control-info:before {
+      margin-left: 0;
+    }
 
-  .control-info {
-    opacity: .5;
-  }
+    .control-info {
+      opacity: .5;
+    }
 
-  .errors > li {
-    margin-left: .5em;
+    .errors > li {
+      margin-left: .5em;
+    }
   }
 }
 
 // Label styles
 
-.control-group .control-label-group {
+form.icinga-forms .control-group .control-label-group {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -75,7 +83,7 @@ form:not(.inline):not([role="search"]) {
   width: @name-value-table-name-width;
 }
 
-.control-info {
+form.icinga-forms .control-group .control-info {
   line-height: 2.25em;
   margin-right: 1em;
   opacity: .6;
@@ -86,18 +94,9 @@ form:not(.inline):not([role="search"]) {
   }
 }
 
-.toggle-switch ~ .control-info {
+form.icinga-forms .control-group .toggle-switch ~ .control-info {
   position: relative;
   margin-left: .5em;
-}
-
-.spinner {
-  line-height: 2.5em;
-
-  &:before {
-    margin-left: .5em;
-    opacity: 0.4;
-  }
 }
 
 form.inline {
@@ -110,76 +109,96 @@ form.inline {
   }
 }
 
-select ~ .spinner:before {
+.icinga-controls select ~ .spinner:before {
   margin-left: -3.5em;
 }
 
 // General input styles
 
-form input[type="text"],
-form input[type="password"],
-form input[type="number"],
-form input[type="datetime-local"],
-form input[type="date"],
-form input[type="time"],
-form textarea,
-form select {
-  background-color: @low-sat-blue;
-  flex: 1;
-  width: 0;
+.icinga-controls {
+  input[type="text"],
+  input[type="password"],
+  input[type="number"],
+  input[type="datetime-local"],
+  input[type="date"],
+  input[type="time"],
+  textarea,
+  select {
+    background-color: @low-sat-blue;
+  }
 }
 
-form input:not([type="checkbox"]),
-form .toggle-switch,
-form button,
-form select,
-form textarea,
-form button,
-form .toggle-switch,
-form input {
-  border: none;
-  .rounded-corners(.25em);
-  .appearance(none);
+form.icinga-forms {
+  input[type="text"],
+  input[type="password"],
+  input[type="number"],
+  input[type="datetime-local"],
+  input[type="date"],
+  input[type="time"],
+  textarea,
+  select {
+    flex: 1;
+    width: 0;
+  }
 }
 
-.control-group input:not([type="checkbox"]),
-.control-group .toggle-switch,
-.control-group button,
-.control-group select,
-.control-group textarea,
-.form-controls button,
-.form-controls .toggle-switch,
-.form-controls input {
-  font-size: inherit;
-  padding: @vertical-padding;
+.icinga-controls {
+  input:not([type="checkbox"]),
+  .toggle-switch,
+  button,
+  select,
+  textarea,
+  button,
+  .toggle-switch,
+  input {
+    border: none;
+    .rounded-corners(.25em);
+    .appearance(none);
+  }
 }
 
-.control-group .toggle-switch,
-.form-controls .toggle-switch {
-  margin: 0.875em .5em;
+.icinga-controls {
+  .control-group input:not([type="checkbox"]),
+  .control-group .toggle-switch,
+  .control-group button,
+  .control-group select,
+  .control-group textarea,
+  .form-controls button,
+  .form-controls .toggle-switch,
+  .form-controls input {
+    font-size: inherit;
+    padding: @vertical-padding;
+  }
 }
 
-form select:not([multiple]) {
-  padding-right: 1.5625em;
+form.icinga-forms {
+  .control-group .toggle-switch,
+  .form-controls .toggle-switch {
+    margin: 0.875em .5em;
+  }
+}
+
+form.icinga-forms select:not([multiple]) {
   // Compensate inconsistent select height calculations
   line-height: 1em;
   height: 2.25em;
 }
 
 // Remove native dropdown arrow in IE10+
-form select::-ms-expand {
+.icinga-controls select::-ms-expand {
   display: none;
   opacity: 0;
 }
 
-form select:not([multiple]) {
+.icinga-controls select:not([multiple]) {
+  padding-right: 1.5625em;
   background-image: url(../img/select-icon.svg);
   background-repeat: no-repeat;
   background-position: right center;
   background-size: contain;
 }
 
-form select {
+form.icinga-forms select {
   width: 0; // Prevent selects with long option values from exceeding the container
 }
 
@@ -201,11 +220,17 @@ form.inline select {
   text-align: left;
 }
 
-.control-group .spinner {
+.icinga-controls .spinner {
   margin: .5em 0;
+  line-height: 2.5em;
+
+  &:before {
+    margin-left: .5em;
+    opacity: 0.4;
+  }
 }
 
-.form-controls {
+form.icinga-forms .form-controls {
   .spinner {
     order: -1;
   }
@@ -217,22 +242,24 @@ form.inline select {
 
 // Button styles
 
-.form-controls input[type="submit"],
-.form-controls input[type="submit"].btn-confirm {
-  .button();
-}
+.icinga-controls {
+  .form-controls input[type="submit"],
+  .form-controls input[type="submit"].btn-confirm {
+    .button();
+  }
 
-.form-controls input[type="submit"].btn-remove {
-  .button(@body-bg-color, @color-critical, darken(@color-critical, 10%));
-}
+  .form-controls input[type="submit"].btn-remove {
+    .button(@body-bg-color, @color-critical, darken(@color-critical, 10%));
+  }
 
-.form-controls input[type="submit"].btn-cancel {
-  .button(@body-bg-color, @gray, @black);
+  .form-controls input[type="submit"].btn-cancel {
+    .button(@body-bg-color, @gray, @black);
+  }
 }
 
 // Toggle styles
 
-.toggle-switch {
+.icinga-controls .toggle-switch {
   cursor: pointer;
   position: relative;
   display: inline-block;
@@ -241,13 +268,13 @@ form.inline select {
 }
 
 // Hide default checkbox
-.toggle-switch input {
+.icinga-controls .toggle-switch input {
   opacity: 0;
   width: 0;
   height: 0;
 }
 
-.toggle-slider {
+.icinga-controls .toggle-switch .toggle-slider {
   position: absolute;
   left: 0;
   top: 0;
@@ -262,7 +289,7 @@ form.inline select {
   vertical-align: middle;
 }
 
-.toggle-slider:before {
+.icinga-controls .toggle-switch .toggle-slider:before {
   position: absolute;
   top: 0;
   left: 0;
@@ -284,16 +311,16 @@ form.inline select {
   transition: @transition;
 }
 
-input:checked + .toggle-slider {
+.icinga-controls .toggle-switch input:checked + .toggle-slider {
   background-color: @icinga-blue;
   border: 1px solid @icinga-blue;
 }
 
-input:focus + .toggle-slider {
+.icinga-controls .toggle-switch input:focus + .toggle-slider {
   box-shadow: 0 0 0 2px @body-bg-color, 0 0 0 4px fade(@icinga-blue, 40);
 }
 
-input:checked + .toggle-slider:before {
+.icinga-controls .toggle-switch input:checked + .toggle-slider:before {
   border: 1px solid @icinga-blue;
   left: 100%;
   margin-left: -4/3em;
@@ -301,7 +328,7 @@ input:checked + .toggle-slider:before {
 
 // Disabled inputs
 
-.toggle-switch.disabled {
+.icinga-controls .toggle-switch.disabled {
   cursor: default;
 
   & > .toggle-slider {
@@ -315,80 +342,73 @@ input:checked + .toggle-slider:before {
   }
 }
 
-.control-group.disabled .control-label-group {
+.icinga-controls .control-group.disabled .control-label-group {
   color: @disabled-gray;
 }
 
-.control-group input[disabled],
-.control-group select[disabled] {
-  background: @gray-lighter;
-  border-color: transparent;
+.icinga-controls {
+  .control-group input[disabled],
+  .control-group select[disabled] {
+    background: @gray-lighter;
+    border-color: transparent;
+  }
 }
 
 // Errors and additional information
 
-.form-notifications,
-.form-description {
-  border-radius: .25em;
-  display: flex;
-  list-style: none;
-  align-items: center;
-  margin: 0 0 1em 0;
-  padding: .25em .5em;
-
-  ul {
+form.icinga-forms {
+  .form-notifications,
+  .form-description {
+    border-radius: .25em;
+    display: flex;
     list-style: none;
+    align-items: center;
+    margin: 0 0 1em 0;
+    padding: .25em .5em;
+
+    ul {
+      list-style: none;
+      margin: 0;
+      padding: 0 .5em;
+    }
+
+    li {
+      list-style: none;
+    }
+
+    & .form-notification-icon,
+    & .form-description-icon {
+      font-size: 2em;
+      margin-left: .25em;
+      opacity: .4;
+      align-self: flex-start;
+    }
+  }
+
+  .form-notifications {
+    background-color: fade(@color-ok, 20%);
+  }
+
+  .form-description {
+    background-color: fade(@gray, 5%);
+  }
+
+  .errors {
+    list-style: none;
+    position: relative;
     margin: 0;
-    padding: 0 .5em;
-  }
+    padding: 0;
+    display: block;
+    width: 100%;
 
-  li {
-    list-style: none;
-  }
-
-  & .form-notification-icon,
-  & .form-description-icon {
-    font-size: 2em;
-    margin-left: .25em;
-    opacity: .4;
-    align-self: flex-start;
+    & > li {
+      margin: -0.5em 0 0.5em 16.5em;
+      color: #f56;
+    }
   }
 }
 
-.form-notifications {
-  background-color: fade(@color-ok, 20%);
-}
-
-.form-description {
-  background-color: fade(@gray, 5%);
-}
-
-.errors {
-  list-style: none;
-  position: relative;
-  margin: 0;
-  padding: 0;
-  display: block;
-  width: 100%;
-
-  & > li {
-    margin: -0.5em 0 0.5em 16.5em;
-    color: #f56;
-  }
-}
-
-.form-element-error {
-  color: @color-critical;
-  margin: 0 0 0.5em 15em;
-  padding: 0.5625em;
-  width: 100%;
-}
-
-.control-group {
-  flex-wrap: wrap;
-}
-
-.form-info {
+form.icinga-forms .form-info {
   color: @text-color-light;
   font-size: @font-size-small;
   list-style: none;
@@ -397,22 +417,24 @@ input:checked + .toggle-slider:before {
 
 // Placeholder styles
 
-input:-moz-placeholder { // FF 18-
-  color: @gray;
-  opacity: 1;
-}
+.icinga-controls {
+  input:-moz-placeholder { // FF 18-
+    color: @gray;
+    opacity: 1;
+  }
 
-input::-moz-placeholder { // FF 19+
-  color: @gray;
-  opacity: 1;
-}
+  input::-moz-placeholder { // FF 19+
+    color: @gray;
+    opacity: 1;
+  }
 
-input:-ms-input-placeholder {
-  color: @gray;
-}
+  input:-ms-input-placeholder {
+    color: @gray;
+  }
 
-input::-webkit-input-placeholder {
-  color: @gray;
+  input::-webkit-input-placeholder {
+    color: @gray;
+  }
 }
 
 // Specific form styles
