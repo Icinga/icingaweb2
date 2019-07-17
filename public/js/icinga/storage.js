@@ -46,11 +46,24 @@
         if (typeof Icinga.Storage.subscribers[event.key] !== 'undefined') {
             var newValue = null,
                 oldValue = null;
-            if (event.newValue.length) {
-                newValue = JSON.parse(event.newValue);
+            if (!! event.newValue) {
+                try {
+                    newValue = JSON.parse(event.newValue);
+                } catch(error) {
+                    icinga.logger.error('[Storage] Failed to parse new value (\`' + event.newValue
+                        + '\`) for key "' + event.key + '". Error was: ' + error);
+                    event.storageArea.removeItem(event.key);
+                    return;
+                }
             }
-            if (event.oldValue.length) {
-                oldValue = JSON.parse(event.oldValue);
+            if (!! event.oldValue) {
+                try {
+                    oldValue = JSON.parse(event.oldValue);
+                } catch(error) {
+                    icinga.logger.warn('[Storage] Failed to parse old value (\`' + event.oldValue
+                        + '\`) of key "' + event.key + '". Error was: ' + error);
+                    oldValue = null;
+                }
             }
 
             Icinga.Storage.subscribers[event.key].forEach(function (subscriber) {
@@ -108,7 +121,17 @@
          * @returns {*}
          */
         get: function(key) {
-            return JSON.parse(window.localStorage.getItem(this.prefixKey(key)));
+            key = this.prefixKey(key);
+            var value = window.localStorage.getItem(key);
+
+            try {
+                return JSON.parse(value);
+            } catch(error) {
+                icinga.logger.error('[Storage] Failed to parse value (\`' + value
+                    + '\`) of key "' + key + '". Error was: ' + error);
+                window.localStorage.removeItem(key);
+                return null;
+            }
         },
 
         /**
