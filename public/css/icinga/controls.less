@@ -2,9 +2,9 @@
 
 // TODO(el): Rename .filter to .filter-control
 
-// Hide auto sumbit info in controls but keep information for screen readers
+// Hide auto sumbit info in controls
 .controls .autosubmit-info {
-  .sr-only();
+  display: none;
 }
 
 
@@ -12,14 +12,12 @@
 .backend-selection {
   float: left;
 
-  > .control-group {
-    padding: 0;
-    line-height: 2em;
+  .control-label-group, select {
+    display: inline-block;
+  }
 
-    > .control-label-group {
-      text-align: left;
-      width: auto;
-    }
+  select {
+    margin-left: .5em;
   }
 }
 
