@@ -386,7 +386,17 @@ form.icinga-forms {
   }
 
   .form-notifications {
-    background-color: fade(@color-ok, 20%);
+    &.info {
+      background-color: fade(@color-ok, 20%);
+    }
+
+    &.error {
+      background-color: fade(@color-critical, 30%);
+    }
+
+    &.warning {
+      background-color: fade(@color-warning, 40%);
+    }
   }
 
   .form-description {

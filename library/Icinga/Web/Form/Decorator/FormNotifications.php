@@ -37,10 +37,7 @@ class FormNotifications extends Zend_Form_Decorator_Abstract
             return $content;
         }
 
-        $html = '<div class="form-notifications">'
-            . Icinga::app()->getViewRenderer()->view->icon('ok', '', ['class' => 'form-notification-icon'])
-            . '<ul class="form-notification-list">';
-
+        $html = '<ul class="form-notification-list">';
         foreach (array(Form::NOTIFICATION_ERROR, Form::NOTIFICATION_WARNING, Form::NOTIFICATION_INFO) as $type) {
             if (isset($notifications[$type])) {
                 $html .= '<li><ul class="notification-' . $this->getNotificationTypeName($type) . '">';
@@ -58,6 +55,21 @@ class FormNotifications extends Zend_Form_Decorator_Abstract
                 $html .= '</ul></li>';
             }
         }
+
+        if (isset($notifications[Form::NOTIFICATION_ERROR])) {
+            $icon = 'cancel';
+            $class = 'error';
+        } elseif (isset($notifications[Form::NOTIFICATION_WARNING])) {
+            $icon = 'warning-empty';
+            $class = 'warning';
+        } else {
+            $icon = 'info';
+            $class = 'info';
+        }
+
+        $html = "<div class=\"form-notifications $class\">"
+        . Icinga::app()->getViewRenderer()->view->icon($icon, '', ['class' => 'form-notification-icon'])
+        . $html;
 
         switch ($this->getPlacement()) {
             case self::APPEND:
