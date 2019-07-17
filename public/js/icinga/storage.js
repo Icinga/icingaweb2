@@ -1,6 +1,6 @@
 /*! Icinga Web 2 | (c) 2019 Icinga GmbH | GPLv2+ */
 
-;(function (Icinga) {
+;(function(Icinga) {
 
     'use strict';
 
@@ -434,7 +434,7 @@
                 thisArg = this;
             }
 
-            return this.data.forEach(function(value, key) {
+            this.data.forEach(function(value, key) {
                 callback.call(thisArg, value['value'], key);
             });
         },
