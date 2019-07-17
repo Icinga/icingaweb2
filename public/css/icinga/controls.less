@@ -79,29 +79,8 @@ input.search {
   }
 }
 
-.limiter-control > .control-group {
-  padding: 0;
-  // Note that the sort-control form does not have padding as it's utilizing different decorators
-
-  > .control-label-group {
-    text-align: left;
-    padding: 0;
-    width: 1em;
-  }
-
-  > select {
-    width: 4.5em;
-  }
-
-  > i {
-    .sr-only();
-  }
-}
-
-.limiter-control,
-.sort-control {
-  // Display limiter and sort control both on the same line; floating could be used here too to achieve the same
-  display: inline-block;
+.limiter-control > select {
+  margin-left: .5em;
 }
 
 .pagination-control {
@@ -164,8 +143,6 @@ input.search {
 }
 
 .sort-control {
-  margin-left: 0.25em;
-
   label {
     width: auto;
     margin-right: 0.5em;
@@ -185,9 +162,10 @@ input.search {
 .sort-controls-container {
   clear: right;
   float: right;
+  display: flex;
 
-  > * {
-    vertical-align: middle;
+  > *:not(:last-child) {
+    margin-right: .5em;
   }
 }
 
