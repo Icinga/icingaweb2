@@ -768,12 +768,12 @@ class FilterEditor extends AbstractWidget
             return '';
         }
         if (! $this->preservedUrl()->getParam('modifyFilter')) {
-            return '<div class="filter">'
+            return '<div class="filter icinga-controls">'
                 . $this->renderSearch()
                 . $this->view()->escape($this->shorten($this->filter, 50))
                 . '</div>';
         }
-        return  '<div class="filter">'
+        return  '<div class="filter icinga-controls">'
             . $this->renderSearch()
             . '<form action="'
             . Url::fromRequest()
