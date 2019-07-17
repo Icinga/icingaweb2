@@ -17,7 +17,7 @@ class AcknowledgeAnnouncementForm extends Form
     public function init()
     {
         $this->setAction(Url::fromPath('announcements/acknowledge'));
-        $this->setAttrib('class', 'inline acknowledge-announcement-control');
+        $this->setAttrib('class', 'acknowledge-announcement-control');
         $this->setRedirectUrl('layout/announcements');
     }
 
