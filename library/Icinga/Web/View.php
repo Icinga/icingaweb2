@@ -4,6 +4,7 @@
 namespace Icinga\Web;
 
 use Closure;
+use Icinga\Application\Icinga;
 use Zend_View_Abstract;
 use Icinga\Authentication\Auth;
 use Icinga\Exception\ProgrammingError;
@@ -91,6 +92,8 @@ class View extends Zend_View_Abstract
                 stream_wrapper_register('zend.view', '\Icinga\Web\ViewStream');
             }
         }
+
+        $config['helperPath']['Icinga\\Web\\View\\Helper\\'] = Icinga::app()->getLibraryDir('Icinga/Web/View/Helper');
 
         parent::__construct($config);
     }
