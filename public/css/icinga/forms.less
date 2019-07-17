@@ -26,11 +26,11 @@ form.icinga-forms {
   .control-group {
     display: flex;
     flex-wrap: wrap;
-    margin: 0 -.5em;
+    margin: 1em -.5em;
     align-items: flex-start;
 
     > * {
-      margin: .5em;
+      margin-right: 1em;
     }
   }
 
@@ -83,20 +83,20 @@ form.icinga-forms .control-group .control-label-group {
   width: @name-value-table-name-width;
 }
 
-form.icinga-forms .control-group .control-info {
+.icinga-controls .control-info {
   line-height: 2.25em;
-  margin-right: 1em;
   opacity: .6;
-  margin-left: 0;
 
   &:before {
     margin-right: 0;
   }
 }
 
+form.icinga-forms .control-group .control-info {
+  margin-left: -.5em;
+}
 form.icinga-forms .control-group .toggle-switch ~ .control-info {
-  position: relative;
-  margin-left: .5em;
+  margin-left: 0;
 }
 
 form.inline {
@@ -107,10 +107,6 @@ form.inline {
     margin: 0 auto;
     padding: 0 .5em;
   }
-}
-
-.icinga-controls select ~ .spinner:before {
-  margin-left: -3.5em;
 }
 
 // General input styles
@@ -147,10 +143,7 @@ form.icinga-forms {
   .toggle-switch,
   button,
   select,
-  textarea,
-  button,
-  .toggle-switch,
-  input {
+  textarea {
     border: none;
     .rounded-corners(.25em);
     .appearance(none);
@@ -174,7 +167,8 @@ form.icinga-forms {
 form.icinga-forms {
   .control-group .toggle-switch,
   .form-controls .toggle-switch {
-    margin: 0.875em .5em;
+    margin-top: 0.5em*0.666666667;
+    margin-bottom: 0.5em*0.666666667;
   }
 }
 
@@ -220,12 +214,26 @@ form.inline select {
   text-align: left;
 }
 
-.icinga-controls .spinner {
-  margin: .5em 0;
-  line-height: 2.5em;
+.icinga-controls {
+  input ~ .spinner,
+  button ~ .spinner,
+  textarea ~ .spinner {
+    margin-top: 0.5em*0.666666667;
+    margin-bottom: 0.5em*0.666666667;
+
+    &:before {
+      margin-left: .5em;
+      opacity: 0.4;
+    }
+  }
+}
+
+/* selects get their spinner specifically placed */
+.icinga-controls select + .spinner {
+  margin: 0.5em*0.666666667 0;
 
   &:before {
-    margin-left: .5em;
+    margin-left: -3.75em;
     opacity: 0.4;
   }
 }
@@ -268,10 +276,12 @@ form.icinga-forms .form-controls {
 }
 
 // Hide default checkbox
-.icinga-controls .toggle-switch input {
+.icinga-controls input[type="checkbox"] {
   opacity: 0;
   width: 0;
   height: 0;
+  margin: 0;
+  padding: 0;
 }
 
 .icinga-controls .toggle-switch .toggle-slider {
@@ -311,16 +321,16 @@ form.icinga-forms .form-controls {
   transition: @transition;
 }
 
-.icinga-controls .toggle-switch input:checked + .toggle-slider {
+.icinga-controls input[type="checkbox"]:checked + .toggle-switch .toggle-slider {
   background-color: @icinga-blue;
   border: 1px solid @icinga-blue;
 }
 
-.icinga-controls .toggle-switch input:focus + .toggle-slider {
+.icinga-controls input[type="checkbox"]:focus + .toggle-switch .toggle-slider {
   box-shadow: 0 0 0 2px @body-bg-color, 0 0 0 4px fade(@icinga-blue, 40);
 }
 
-.icinga-controls .toggle-switch input:checked + .toggle-slider:before {
+.icinga-controls input[type="checkbox"]:checked + .toggle-switch .toggle-slider:before {
   border: 1px solid @icinga-blue;
   left: 100%;
   margin-left: -4/3em;
