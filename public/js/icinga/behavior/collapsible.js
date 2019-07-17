@@ -26,9 +26,10 @@
             Icinga.Storage.BehaviorStorage('collapsible'),
             'expanded'
         )
-            .on('add', this.onExternalExpansion, this)
-            .on('delete', this.onExternalCollapse, this);
+            .on('add', this.onExpand, this)
+            .on('delete', this.onCollapse, this);
     };
+
     Collapsible.prototype = new Icinga.EventListener();
 
     /**
@@ -87,10 +88,9 @@
     /**
      * A collapsible got expanded in another window, try to apply this here as well
      *
-     * @param   {Event}     event
      * @param   {string}    collapsiblePath
      */
-    Collapsible.prototype.onExternalExpansion = function(collapsiblePath) {
+    Collapsible.prototype.onExpand = function(collapsiblePath) {
         var $collapsible = $(collapsiblePath);
 
         if ($collapsible.length && $collapsible.is('.can-collapse')) {
@@ -101,10 +101,9 @@
     /**
      * A collapsible got collapsed in another window, try to apply this here as well
      *
-     * @param   {Event}     event
      * @param   {string}    collapsiblePath
      */
-    Collapsible.prototype.onExternalCollapse = function(collapsiblePath) {
+    Collapsible.prototype.onCollapse = function(collapsiblePath) {
         var $collapsible = $(collapsiblePath);
 
         if ($collapsible.length && this.canCollapse($collapsible)) {
@@ -165,8 +164,8 @@
         if (!! rowSelector) {
             return $(rowSelector, $collapsible).length > ($collapsible.data('visibleRows') || this.defaultVisibleRows);
         } else {
-            var actualHeight = $collapsible[0].scrollHeight,
-                maxHeight = $collapsible.data('visibleHeight') || this.defaultVisibleHeight;
+            var actualHeight = $collapsible[0].scrollHeight;
+            var maxHeight = $collapsible.data('visibleHeight') || this.defaultVisibleHeight;
 
             if (actualHeight <= maxHeight) {
                 return false;
