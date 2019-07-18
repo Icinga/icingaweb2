@@ -314,9 +314,12 @@ class Module
         $navigation = new Navigation();
         foreach ($panes as $pane) {
             /** @var DashboardContainer $pane */
-            $dashlets = array();
+            $dashlets = [];
             foreach ($pane->getDashlets() as $dashletName => $dashletUrl) {
-                $dashlets[$this->translate($dashletName)] = $dashletUrl;
+                $dashlets[$dashletName] = [
+                    'label' => $this->translate($dashletName),
+                    'url'   => $dashletUrl
+                ];
             }
 
             $navigation->addItem(
@@ -326,7 +329,7 @@ class Module
                     array(
                         'label'     => $this->translate($pane->getName()),
                         'type'      => 'dashboard-pane',
-                        'dashlets'  => $dashlets
+                        'children'  => $dashlets
                     )
                 )
             );

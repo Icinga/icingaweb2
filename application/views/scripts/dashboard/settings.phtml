@@ -59,7 +59,7 @@
                                 <?= $this->qlink(
                                     $dashlet->getTitle(),
                                     'dashboard/update-dashlet',
-                                    array('pane' => $pane->getName(), 'dashlet' => $dashlet->getTitle()),
+                                    array('pane' => $pane->getName(), 'dashlet' => $dashlet->getName()),
                                     array('title' => sprintf($this->translate('Edit dashlet %s'), $dashlet->getTitle()))
                                 ); ?>
                             </td>
@@ -75,10 +75,10 @@
                                 <?= $this->qlink(
                                     '',
                                     'dashboard/remove-dashlet',
-                                    array('pane' => $pane->getName(), 'dashlet' => $dashlet->getTitle()),
+                                    array('pane' => $pane->getName(), 'dashlet' => $dashlet->getName()),
                                     array(
                                         'icon'  => 'trash',
-                                        'title' => sprintf($this->translate('Remove dashlet %s from pane %s'), $dashlet->getTitle(), $pane->getName())
+                                        'title' => sprintf($this->translate('Remove dashlet %s from pane %s'), $dashlet->getTitle(), $pane->getTitle())
                                     )
                                 ); ?>
                             </td>
