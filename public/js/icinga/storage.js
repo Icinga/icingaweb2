@@ -234,7 +234,12 @@
             }, this);
         }
 
-        storage.set(key, items);
+        if (!! items && items.length) {
+            storage.set(key, items);
+        } else if(items !== null) {
+            storage.remove(key);
+        }
+
         return (new Icinga.Storage.StorageAwareMap(items).setStorage(storage, key));
     };
 
