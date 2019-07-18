@@ -32,7 +32,6 @@ class Zend_View_Helper_IconImage extends Zend_View_Helper_Abstract
                 null,
                 array(
                     'alt'                   => $object->host_icon_image_alt,
-                    'data-tooltip-delay'    => 0,
                     'class'                 => 'host-icon-image',
                     'title'                 => $object->host_icon_image_alt
                 )
@@ -56,7 +55,6 @@ class Zend_View_Helper_IconImage extends Zend_View_Helper_Abstract
                 array(
                     'alt'                   => $object->service_icon_image_alt,
                     'class'                 => 'service-icon-image',
-                    'data-tooltip-delay'    => 0,
                     'title'                 => $object->service_icon_image_alt
                 )
             );

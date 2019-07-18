@@ -154,16 +154,20 @@
          * @param   {object}    [$container]    The container containing the element
          */
         focusElement: function(element, $container) {
-            var $element = $('#' + element);
+            var $element = element;
 
-            if (! $element.length) {
-                // The name attribute is actually deprecated, on anchor tags,
-                // but we'll possibly handle links from another source
-                // (module etc) so that's used as a fallback
-                if ($container && $container.length) {
-                    $element = $container.find('[name="' + element.replace(/'/, '\\\'') + '"]');
-                } else {
-                    $element = $('[name="' + element.replace(/'/, '\\\'') + '"]');
+            if (typeof element === 'string') {
+                $element = $('#' + element);
+
+                if (! $element.length) {
+                    // The name attribute is actually deprecated, on anchor tags,
+                    // but we'll possibly handle links from another source
+                    // (module etc) so that's used as a fallback
+                    if ($container && $container.length) {
+                        $element = $container.find('[name="' + element.replace(/'/, '\\\'') + '"]');
+                    } else {
+                        $element = $('[name="' + element.replace(/'/, '\\\'') + '"]');
+                    }
                 }
             }
 
@@ -172,7 +176,7 @@
                     $element.attr('tabindex', -1);
                 }
 
-                $element.focus();
+                $element[0].focus();
 
                 if ($container && $container.length) {
                     $container.scrollTop(0);
@@ -497,7 +501,7 @@
                 $target.contents().filter(function() { return this.nodeType === 3; }).remove();
 
                 // has three states?
-                var triState = $target.find('input[value="unchanged"]').size() > 0 ? 1 : 0;
+                var triState = $target.find('input[value="unchanged"]').length > 0 ? 1 : 0;
 
                 // fetch current value from radiobuttons
                 var value  = $target.find('input:checked').first().val();
@@ -566,7 +570,7 @@
             var $search = $('#search');
             if (e.which === 13 && $search.is(':focus')) {
                 $('#sidebar').removeClass('expanded');
-                $search.blur();
+                $search[0].blur();
             }
         },
 

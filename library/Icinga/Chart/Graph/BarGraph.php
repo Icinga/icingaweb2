@@ -142,7 +142,6 @@ class BarGraph extends Styleable implements Drawable
 
             // draw actual bar
             $bar = $this->drawSingleBar($point, $this->fill, $this->strokeWidth)->toSvg($ctx);
-            $bar->setAttribute('class', 'chart-data');
             if (isset($this->tooltips[$x])) {
                 $data = array(
                     'label' => isset($this->graphs[$this->order]['label']) ?
@@ -152,14 +151,9 @@ class BarGraph extends Styleable implements Drawable
                 );
                 $format = isset($this->graphs[$this->order]['tooltip'])
                     ? $this->graphs[$this->order]['tooltip'] : null;
-                $bar->setAttribute(
-                    'title',
-                    $this->tooltips[$x]->renderNoHtml($this->order, $data, $format)
-                );
-                $bar->setAttribute(
-                    'data-title-rich',
-                    $this->tooltips[$x]->render($this->order, $data, $format)
-                );
+                $title = $ctx->getDocument()->createElement('title');
+                $title->textContent = $this->tooltips[$x]->renderNoHtml($this->order, $data, $format);
+                $bar->appendChild($title);
             }
             $group->appendChild($bar);
         }

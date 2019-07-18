@@ -142,7 +142,7 @@
             req.url = url;
             req.done(this.onResponse);
             req.fail(this.onFailure);
-            req.complete(this.onComplete);
+            req.always(this.onComplete);
             req.autorefresh = autorefresh;
             req.method = method;
             req.action = action;
@@ -161,41 +161,6 @@
             }
             this.icinga.ui.refreshDebug();
             return req;
-        },
-
-        /**
-         * Mimic XHR form submission by using an iframe
-         *
-         * @param {object} $form    The form being submitted
-         * @param {string} action   The form's action URL
-         * @param {object} $target  The target container
-         */
-        submitFormToIframe: function ($form, action, $target) {
-            var _this = this;
-
-            $form.prop('action', _this.icinga.utils.addUrlParams(action, {
-                '_frameUpload': true
-            }));
-            $form.prop('target', 'fileupload-frame-target');
-            $('#fileupload-frame-target').on('load', function (event) {
-                var $frame = $(event.target);
-                var $contents = $frame.contents();
-
-                var $redirectMeta = $contents.find('meta[name="redirectUrl"]');
-                if ($redirectMeta.length) {
-                    _this.redirectToUrl($redirectMeta.attr('content'), $target);
-                } else {
-                    // Fetch the frame's new content and paste it into the target
-                    _this.renderContentToContainer(
-                        $contents.find('body').html(),
-                        $target,
-                        'replace'
-                    );
-                }
-
-                $frame.prop('src', 'about:blank'); // Clear the frame's dom
-                $frame.off('load'); // Unbind the event as it's set on demand
-            });
         },
 
         /**
@@ -625,7 +590,15 @@
         /**
          * Regardless of whether a request succeeded of failed, clean up
          */
-        onComplete: function (req, textStatus) {
+        onComplete: function (dataOrReq, textStatus, reqOrError) {
+            var req;
+
+            if (typeof dataOrReq === 'object') {
+                req = dataOrReq;
+            } else {
+                req = reqOrError;
+            }
+
             // Remove 'impact' class if there was such
             if (req.$target.hasClass('impact')) {
                 req.$target.removeClass('impact');
@@ -846,14 +819,6 @@
             // TODO: We do not want to wrap this twice...
             var $content = $('<div>' + content + '</div>');
 
-            // Disable all click events while rendering
-            // (Disabling disabled, was ways too slow)
-            // $('*').click(function (event) {
-            //     event.stopImmediatePropagation();
-            //     event.stopPropagation();
-            //     event.preventDefault();
-            // });
-
             $('.container', $container).each(function() {
                 _this.stopPendingRequestsFor($(this));
             });
@@ -888,7 +853,7 @@
                         }
                         // Do not touch focus in case a module or component already placed it
                         if ($(document.activeElement).closest('.container').attr('id') !== containerId) {
-                            $container.focus();
+                            _this.icinga.ui.focusElement($container);
                         }
                     }, 0);
                 }
@@ -900,11 +865,11 @@
                         $activeElement[0].focus({preventScroll: autorefresh});
                     } else if (! autorefresh) {
                         if (focusFallback) {
-                            $(focusFallback.parent).find(focusFallback.child).focus();
+                            _this.icinga.ui.focusElement($(focusFallback.parent).find(focusFallback.child));
                         } else if (typeof $container.attr('tabindex') === 'undefined') {
                             $container.attr('tabindex', -1);
                         }
-                        $container.focus();
+                        _this.icinga.ui.focusElement($container);
                     }
                 }, 0);
             }

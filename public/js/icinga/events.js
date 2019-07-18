@@ -322,33 +322,6 @@
                 url = icinga.utils.addUrlParams(url, dataObj);
             } else {
                 if (encoding === 'multipart/form-data') {
-                    if (typeof window.FormData === 'undefined') {
-                        icinga.loader.submitFormToIframe($form, url, $target);
-
-                        // Disable all form controls to prevent resubmission as early as possible.
-                        // (This relies on native form submission, so using setTimeout is the only possible solution)
-                        setTimeout(function () {
-                            if ($target.attr('id') == $form.closest('.container').attr('id')) {
-                                $form.find(':input:not(:disabled)').prop('disabled', true);
-                            }
-                        }, 0);
-
-                        if (autosubmit) {
-                            if ($button.length) {
-                                // We're autosubmitting the form so the button has not been clicked, however,
-                                // to be really safe, we're disabling the button explicitly, just in case..
-                                $button.prop('disabled', true);
-                            }
-
-                            $form[0].submit(); // This should actually not trigger the onSubmit event, let's hope that this is true for all browsers..
-                            event.stopPropagation();
-                            event.preventDefault();
-                            return false;
-                        } else {
-                            return true;
-                        }
-                    }
-
                     data = new window.FormData($form[0]);
                 } else {
                     data = $form.serializeArray();
@@ -370,7 +343,7 @@
 
             // Disable all form controls to prevent resubmission except for our search input
             // Note that disabled form inputs will not be enabled via JavaScript again
-            if ($target.attr('id') == $form.closest('.container').attr('id')) {
+            if ($target.attr('id') === $form.closest('.container').attr('id')) {
                 $form.find(':input:not(#search):not(:disabled)').prop('disabled', true);
             }
 

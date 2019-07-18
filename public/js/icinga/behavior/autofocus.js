@@ -18,7 +18,7 @@
             if (document.activeElement === e.target
                 || document.activeElement === document.body
             ) {
-                $(e.target).find('.autofocus').focus();
+                e.data.self.icinga.ui.focusElement($(e.target).find('.autofocus'));
             }
         }, 0);
     };
