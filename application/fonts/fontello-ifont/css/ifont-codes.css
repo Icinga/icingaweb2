@@ -135,5 +135,7 @@
 .icon-th-list:before { content: '\f009'; } /* '' */
 .icon-th-thumb-empty:before { content: '\f00b'; } /* '' */
 .icon-github-circled:before { content: '\f09b'; } /* '' */
+.icon-angle-double-up:before { content: '\f102'; } /* '' */
+.icon-angle-double-down:before { content: '\f103'; } /* '' */
 .icon-history:before { content: '\f1da'; } /* '' */
 .icon-binoculars:before { content: '\f1e5'; } /* '' */
