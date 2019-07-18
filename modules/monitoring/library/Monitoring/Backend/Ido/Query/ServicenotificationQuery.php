@@ -33,7 +33,9 @@ class ServicenotificationQuery extends IdoQuery
             'type'      => '(\'notify\')'
         ),
         'hostgroups' => array(
-            'hostgroup_name' => 'hgo.name1'
+            'hostgroup_name'    => 'hgo.name1',
+            'hostgroup'         => 'hgo.name1 COLLATE latin1_general_ci',
+            'hostgroup_alias'   => 'hg.alias COLLATE latin1_general_ci',
         ),
         'hosts' => array(
             'host_display_name' => 'h.display_name COLLATE latin1_general_ci'
@@ -54,7 +56,9 @@ class ServicenotificationQuery extends IdoQuery
             'service_host_name'         => 'so.name1'
         ),
         'servicegroups' => array(
-            'servicegroup_name' => 'sgo.name1'
+            'servicegroup_name'     => 'sgo.name1',
+            'servicegroup'          => 'sgo.name1 COLLATE latin1_general_ci',
+            'servicegroup_alias'    => 'sg.alias COLLATE latin1_general_ci'
         ),
         'services' => array(
             'service_display_name'  => 's.display_name COLLATE latin1_general_ci'

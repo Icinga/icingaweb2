@@ -44,6 +44,7 @@ class HostflappingstarthistoryQuery extends IdoQuery
             'type'          => '(\'flapping\')'
         ),
         'hostgroups' => array(
+            'hostgroup'         => 'hgo.name1 COLLATE latin1_general_ci',
             'hostgroup_alias'   => 'hg.alias COLLATE latin1_general_ci',
             'hostgroup_name'    => 'hgo.name1'
         ),
@@ -56,6 +57,7 @@ class HostflappingstarthistoryQuery extends IdoQuery
         ),
         'servicegroups' => array(
             'servicegroup_name'     => 'sgo.name1',
+            'servicegroup'          => 'sgo.name1 COLLATE latin1_general_ci',
             'servicegroup_alias'    => 'sg.alias COLLATE latin1_general_ci'
         ),
         'services' => array(
