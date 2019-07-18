@@ -30,6 +30,30 @@
          * @type {jQuery}
          */
         this.$menu = null;
+
+        /**
+         * Local storage
+         *
+         * @type {Icinga.Storage}
+         */
+        this.storage = Icinga.Storage.BehaviorStorage('navigation');
+
+        // Restore collapsed sidebar if necessary
+        if (this.storage.get('sidebar-collapsed')) {
+            $('#layout').addClass('sidebar-collapsed');
+        }
+
+        // Ensure we'll get notified if the sidebar is toggled in another window
+        this.storage.onChange('sidebar-collapsed', function (collapsed) {
+            // Not using toggleClass here to avoid inconsistencies
+            if (collapsed) {
+                $('#layout').addClass('sidebar-collapsed');
+            } else {
+                $('#layout').removeClass('sidebar-collapsed');
+            }
+
+            $(window).trigger('resize');
+        }, this);
     };
 
     Navigation.prototype = new Icinga.EventListener();
@@ -333,7 +357,10 @@
      * @param {Object} e Event
      */
     Navigation.prototype.toggleSidebar = function(e) {
-        $('#layout').toggleClass('sidebar-collapsed');
+        var _this = e.data.self;
+        var $layout = $('#layout');
+        $layout.toggleClass('sidebar-collapsed');
+        _this.storage.set('sidebar-collapsed', $layout.is('.sidebar-collapsed'));
         $(window).trigger('resize');
     };
 
