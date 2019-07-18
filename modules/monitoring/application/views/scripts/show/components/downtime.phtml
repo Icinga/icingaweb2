@@ -52,29 +52,21 @@ if (empty($object->comments) && ! $addLink) {
             if ((bool) $downtime->is_in_effect) {
                 $state = sprintf(
                     $this->translate('expires %s', 'Last format parameter represents the downtime expire time'),
-                    $this->timeUntil($downtime->end)
+                    $this->timeUntil($downtime->end, false, true)
                 );
             } else {
                 if ($downtime->start <= time()) {
                     $state = sprintf(
                         $this->translate('ends %s', 'Last format parameter represents the end time'),
-                        $this->timeUntil($downtime->is_flexible ? $downtime->scheduled_end : $downtime->end)
+                        $this->timeUntil($downtime->is_flexible ? $downtime->scheduled_end : $downtime->end, false, true)
                     );
                 } else {
-                    if ((bool) $downtime->is_fixed) {
-                        $state = sprintf(
-                            $this->translate('scheduled %s', 'Last format parameter represents the time scheduled'),
-                            $this->timeUntil($downtime->start, false, true)
-                        );
-                    } else {
-                        $state = sprintf(
-                            $this->translate('scheduled flexible %s', 'Last format parameter represents the time scheduled'),
-                            $this->timeUntil($downtime->start, false, true)
-                        );
-                    }
-                    $state .= ' ' . sprintf(
+                    $state = sprintf(
+                        $this->translate('scheduled %s', 'Last format parameter represents the time scheduled'),
+                        $this->timeUntil($downtime->start, false, true)
+                    ) . ' ' . sprintf(
                         $this->translate('expires %s', 'Last format parameter represents the downtime expire time'),
-                        $this->timeUntil($downtime->end, false, true)
+                        $this->timeUntil($downtime->is_flexible ? $downtime->scheduled_end : $downtime->end, false, true)
                     );
                 }
             }
