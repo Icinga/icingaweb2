@@ -26,8 +26,11 @@ form.icinga-forms {
   .control-group {
     display: flex;
     flex-wrap: wrap;
-    margin: 1em 0;
     align-items: flex-start;
+
+    // Negative margin-right because every child gets 1em right but we can't exclude
+    // the last element as it's impossible to identify the last *visible* element
+    margin: 1em -1em 1em 0;
 
     > * {
       margin-right: 1em;
@@ -36,7 +39,6 @@ form.icinga-forms {
 
   .form-controls {
     display: flex;
-    margin-left: 16em;
     justify-content: flex-end;
   }
 }
