@@ -46,7 +46,7 @@ class GroupController extends AuthBackendController
         }
 
         $this->view->backendSelection = new Form();
-        $this->view->backendSelection->setAttrib('class', 'backend-selection');
+        $this->view->backendSelection->setAttrib('class', 'backend-selection icinga-controls');
         $this->view->backendSelection->setUidDisabled();
         $this->view->backendSelection->setMethod('GET');
         $this->view->backendSelection->setTokenDisabled();
