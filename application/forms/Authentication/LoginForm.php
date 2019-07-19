@@ -16,6 +16,8 @@ use Icinga\Web\Url;
  */
 class LoginForm extends Form
 {
+    const DEFAULT_CLASSES = 'icinga-controls';
+
     /**
      * Redirect URL
      */
