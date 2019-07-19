@@ -219,11 +219,13 @@ form.inline select {
 .icinga-controls {
   input ~ .spinner,
   button ~ .spinner,
+  select ~ .spinner,
   textarea ~ .spinner {
-    margin-top: 0.5em*0.666666667;
-    margin-bottom: 0.5em*0.666666667;
+    line-height: normal;
+    padding: .5em 0;
 
     &:before {
+      vertical-align: middle;
       margin-left: .5em;
       opacity: 0.4;
     }
@@ -231,12 +233,12 @@ form.inline select {
 }
 
 /* selects get their spinner specifically placed */
-.icinga-controls select + .spinner {
-  margin: 0.5em*0.666666667 0;
+.icinga-controls select:not([multiple]) + .spinner {
+  height: 2.25em;
+  margin: 0;
 
   &:before {
     margin-left: -3.75em;
-    opacity: 0.4;
   }
 }
 
