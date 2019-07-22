@@ -172,7 +172,7 @@
             }
 
             if ($element.length) {
-                if (typeof $element.attr('tabindex') === 'undefined') {
+                if (! this.isFocusable($element)) {
                     $element.attr('tabindex', -1);
                 }
 
@@ -183,6 +183,12 @@
                     $container.scrollTop($element.first().position().top);
                 }
             }
+        },
+
+        isFocusable: function ($element) {
+            return $element.is('*[tabindex], a[href], input:not([disabled]), button:not([disabled])' +
+                ', select:not([disabled]), textarea:not([disabled]), iframe, area[href], object' +
+                ', embed, *[contenteditable]');
         },
 
         moveToLeft: function () {
