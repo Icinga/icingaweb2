@@ -74,7 +74,7 @@ form.icinga-form {
 
 // Label styles
 
-form.icinga-form .control-group .control-label-group {
+form.icinga-form .control-label-group {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -157,14 +157,12 @@ form.icinga-form {
 }
 
 .icinga-controls {
-  .control-group input:not([type="checkbox"]),
-  .control-group .toggle-switch,
-  .control-group button,
-  .control-group select,
-  .control-group textarea,
-  .form-controls button,
-  .form-controls .toggle-switch,
-  .form-controls input {
+  input:not([type="checkbox"]),
+  .toggle-switch,
+  select,
+  textarea,
+  button,
+  .toggle-switch {
     font-size: inherit;
     padding: @vertical-padding;
   }
@@ -259,16 +257,16 @@ form.icinga-form .form-controls {
 // Button styles
 
 .icinga-controls {
-  .form-controls input[type="submit"],
-  .form-controls input[type="submit"].btn-confirm {
+  input[type="submit"],
+  input[type="submit"].btn-confirm {
     .button();
   }
 
-  .form-controls input[type="submit"].btn-remove {
+  input[type="submit"].btn-remove {
     .button(@body-bg-color, @color-critical, darken(@color-critical, 10%));
   }
 
-  .form-controls input[type="submit"].btn-cancel {
+  input[type="submit"].btn-cancel {
     .button(@body-bg-color, @gray, @black);
   }
 }
@@ -360,13 +358,13 @@ form.icinga-form .form-controls {
   }
 }
 
-.icinga-controls .control-group.disabled .control-label-group {
+form.icinga-form .control-group.disabled .control-label-group {
   color: @disabled-gray;
 }
 
 .icinga-controls {
-  .control-group input[disabled],
-  .control-group select[disabled] {
+  input[disabled],
+  select[disabled] {
     background: @gray-lighter;
     border-color: transparent;
   }
