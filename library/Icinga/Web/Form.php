@@ -35,7 +35,7 @@ class Form extends Zend_Form
     /**
      * A form's default CSS classes
      */
-    const DEFAULT_CLASSES = 'icinga-forms icinga-controls';
+    const DEFAULT_CLASSES = 'icinga-form icinga-controls';
 
     /**
      * Identifier for notifications of type error

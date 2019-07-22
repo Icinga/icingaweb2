@@ -3,7 +3,7 @@
 /**
  Rules found in here are structured with two layers:
 
-  1) form.icinga-forms, that's what defines the general structure of our single/individual forms. It's not
+  1) form.icinga-form, that's what defines the general structure of our single/individual forms. It's not
      supposed to be used for any other forms that are not the only content on the page (e.g. inline-forms)
   2) .icinga-controls, this defines the design of our controls. Any input that's part of a container with
      this class gets our design applied
@@ -19,7 +19,7 @@
 
 // General form layout
 
-form.icinga-forms {
+form.icinga-form {
   max-width: 70em;
   width: 80%;
 
@@ -47,7 +47,7 @@ form.icinga-forms {
 
 #layout.minimal-layout,
 #layout.twocols:not(.wide-layout) {
-  form.icinga-forms {
+  form.icinga-form {
     width: 100%;
 
     .control-label-group {
@@ -74,7 +74,7 @@ form.icinga-forms {
 
 // Label styles
 
-form.icinga-forms .control-group .control-label-group {
+form.icinga-form .control-group .control-label-group {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -94,10 +94,10 @@ form.icinga-forms .control-group .control-label-group {
   }
 }
 
-form.icinga-forms .control-group .control-info {
+form.icinga-form .control-group .control-info {
   margin-left: -.5em;
 }
-form.icinga-forms .control-group .toggle-switch ~ .control-info {
+form.icinga-form .control-group .toggle-switch ~ .control-info {
   margin-left: 0;
 }
 
@@ -126,7 +126,7 @@ form.inline {
   }
 }
 
-form.icinga-forms {
+form.icinga-form {
   input[type="text"],
   input[type="password"],
   input[type="number"],
@@ -166,7 +166,7 @@ form.icinga-forms {
   }
 }
 
-form.icinga-forms {
+form.icinga-form {
   .control-group .toggle-switch,
   .form-controls .toggle-switch {
     margin-top: 0.5em*0.666666667;
@@ -174,7 +174,7 @@ form.icinga-forms {
   }
 }
 
-form.icinga-forms select:not([multiple]) {
+form.icinga-form select:not([multiple]) {
   // Compensate inconsistent select height calculations
   line-height: 1em;
   height: 2.25em;
@@ -194,7 +194,7 @@ form.icinga-forms select:not([multiple]) {
   background-size: contain;
 }
 
-form.icinga-forms select {
+form.icinga-form select {
   width: 0; // Prevent selects with long option values from exceeding the container
 }
 
@@ -242,7 +242,7 @@ form.inline select {
   }
 }
 
-form.icinga-forms .form-controls {
+form.icinga-form .form-controls {
   .spinner {
     order: -1;
   }
@@ -370,7 +370,7 @@ form.icinga-forms .form-controls {
 
 // Errors and additional information
 
-form.icinga-forms {
+form.icinga-form {
   .form-notifications,
   .form-description {
     border-radius: .25em;
@@ -432,7 +432,7 @@ form.icinga-forms {
   }
 }
 
-form.icinga-forms .form-info {
+form.icinga-form .form-info {
   color: @text-color-light;
   font-size: @font-size-small;
   list-style: none;
