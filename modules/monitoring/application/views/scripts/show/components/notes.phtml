@@ -38,7 +38,7 @@ if (($navigation->isEmpty() || ! $navigation->hasRenderableItems()) && $notes ==
     <td>
         <?= $navigation->getRenderer() ?>
     <?php if ($notes !== ''): ?>
-        <section class="notes"><?= $this->markdown($notes) ?></section>
+        <?= $this->markdown($notes) ?>
     <?php endif ?>
     </td>
 </tr>

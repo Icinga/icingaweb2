@@ -65,6 +65,4 @@
     } ?>
     </span>
 </div>
-<p class="comment-text"<?php if (isset($textId)): ?> id="<?= $textId ?>"<?php endif ?>>
-    <?= $this->nl2br($this->markdown($comment->comment)) ?>
-</p>
+<?= $this->nl2br($this->markdown($comment->comment, isset($textId) ? ['id' => $textId] : null)) ?>
