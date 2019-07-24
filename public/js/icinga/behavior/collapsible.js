@@ -16,7 +16,8 @@
 
         this.on('layout-change', this.onLayoutChange, this);
         this.on('rendered', '#layout', this.onRendered, this);
-        this.on('click', '.collapsible + .collapsible-control', this.onControlClicked, this);
+        this.on('click', '.collapsible + .collapsible-control, .collapsible > .collapsible-control',
+            this.onControlClicked, this);
 
         this.icinga = icinga;
         this.defaultVisibleRows = 2;
@@ -45,7 +46,19 @@
 
             // Assumes that any newly rendered elements are expanded
             if (_this.canCollapse($collapsible)) {
-                $collapsible.after($('#collapsible-control-ghost').clone().removeAttr('id'));
+                var toggleElement = $collapsible.data('toggleElement');
+                if (!! toggleElement) {
+                    var $toggle = $collapsible.children(toggleElement).first();
+                    if (! $toggle.length) {
+                        _this.icinga.logger.error(
+                            '[Collapsible] Control `' + toggleElement + '` not found in .collapsible', $collapsible);
+                    } else if (! $toggle.is('.collapsible-control')) {
+                        $toggle.addClass('collapsible-control');
+                    }
+                } else {
+                    $collapsible.after($('#collapsible-control-ghost').clone().removeAttr('id'));
+                }
+
                 $collapsible.addClass('can-collapse');
 
                 if (! _this.state.has(_this.icinga.utils.getCSSPath($collapsible))) {
@@ -119,7 +132,11 @@
     Collapsible.prototype.onControlClicked = function(event) {
         var _this = event.data.self;
         var $target = $(event.currentTarget);
+
         var $collapsible = $target.prev('.collapsible');
+        if (! $collapsible.length) {
+            $collapsible = $target.parent('.collapsible');
+        }
 
         if (! $collapsible.length) {
             _this.icinga.logger.error('[Collapsible] Collapsible control has no associated .collapsible: ', $target);
