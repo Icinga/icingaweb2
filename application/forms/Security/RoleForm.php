@@ -41,35 +41,43 @@ class RoleForm extends RepositoryForm
 
         $this->providedPermissions['application'] = [
             $helper->filterName('application/share/navigation') => [
-                'label' => $this->translate('Allow to share navigation items'),
-                'name'  => 'application/share/navigation'
+                'name'          => 'application/share/navigation',
+                'description'   => $this->translate('Allow to share navigation items')
             ],
-            $helper->filterName('application/stacktraces')      => [
-                'label' => $this->translate('Allow to adjust in the preferences whether to show stacktraces'),
-                'name'  => 'application/stacktraces'
+            $helper->filterName('application/stacktraces') => [
+                'name'          => 'application/stacktraces',
+                'description'   => $this->translate(
+                    'Allow to adjust in the preferences whether to show stacktraces'
+                )
             ],
-            $helper->filterName('application/log')              => [
-                'label' => $this->translate('Allow to view the application log'),
-                'name'  => 'application/log'
+            $helper->filterName('application/log') => [
+                'name'          => 'application/log',
+                'description'   => $this->translate('Allow to view the application log')
             ],
-            $helper->filterName('admin')                        => [
-                'label' => $this->translate('Grant admin permissions, e.g. manage announcements'),
-                'name'  => 'admin'
+            $helper->filterName('admin') => [
+                'name'          => 'admin',
+                'description'   => $this->translate(
+                    'Grant admin permissions, e.g. manage announcements'
+                )
             ],
-            $helper->filterName('config/*')                     => [
-                'label' => $this->translate('Allow config access'),
-                'name'  => 'config/*'
+            $helper->filterName('config/*') => [
+                'name'          => 'config/*',
+                'description'   => $this->translate('Allow config access')
             ]
         ];
 
         $this->providedRestrictions['application'] = [
             $helper->filterName('application/share/users') => [
-                'label' => $this->translate('Restrict which users this role can share items and information with'),
-                'name'  => 'application/share/users'
+                'name'          => 'application/share/users',
+                'description'   => $this->translate(
+                    'Restrict which users this role can share items and information with'
+                )
             ],
             $helper->filterName('application/share/groups') => [
-                'label' => $this->translate('Restrict which groups this role can share items and information with'),
-                'name'  => 'application/share/groups'
+                'name'          => 'application/share/groups',
+                'description'   => $this->translate(
+                    'Restrict which groups this role can share items and information with'
+                )
             ]
         ];
 
@@ -77,34 +85,33 @@ class RoleForm extends RepositoryForm
         foreach ($mm->listInstalledModules() as $moduleName) {
             $modulePermission = Manager::MODULE_PERMISSION_NS . $moduleName;
             $this->providedPermissions[$moduleName][$helper->filterName($modulePermission)] = [
-                'label'         => sprintf($this->translate('Allow access to module %s'), $moduleName),
+                'isUsagePerm'   => true,
                 'name'          => $modulePermission,
-                'isUsagePerm'   => true
+                'label'         => $this->translate('General Module Access'),
+                'description'   => sprintf($this->translate('Allow access to module %s'), $moduleName)
             ];
 
             $module = $mm->getModule($moduleName, false);
             $permissions = $module->getProvidedPermissions();
 
-            if (count($permissions) > 1) {
-                $this->providedPermissions[$moduleName][$helper->filterName($moduleName . '/*')] = [
-                    'label'         => $this->translate('Full Access'),
-                    'name'          => $moduleName . '/*',
-                    'isFullPerm'    => true
-                ];
-            }
+            $this->providedPermissions[$moduleName][$helper->filterName($moduleName . '/*')] = [
+                'isFullPerm'    => true,
+                'name'          => $moduleName . '/*',
+                'label'         => $this->translate('Full Module Access')
+            ];
 
             foreach ($permissions as $permission) {
                 /** @var object $permission */
                 $this->providedPermissions[$moduleName][$helper->filterName($permission->name)] = [
-                    'label' => $permission->description,
-                    'name'  => $permission->name
+                    'name'          => $permission->name,
+                    'description'   => $permission->description
                 ];
             }
 
             foreach ($module->getProvidedRestrictions() as $restriction) {
                 $this->providedRestrictions[$moduleName][$helper->filterName($restriction->name)] = [
-                    'label' => $restriction->description,
-                    'name'  => $restriction->name
+                    'name'          => $restriction->name,
+                    'description'   => $restriction->description
                 ];
             }
         }
@@ -168,8 +175,8 @@ class RoleForm extends RepositoryForm
                             'autosubmit'    => isset($spec['isFullPerm']),
                             'disabled'      => $hasFullPerm ?: null,
                             'value'         => $hasFullPerm,
-                            'label'         => $spec['name'],
-                            'description'   => $spec['label']
+                            'label'         => isset($spec['label']) ? $spec['label'] : $spec['name'],
+                            'description'   => isset($spec['description']) ? $spec['description'] : $spec['name']
                         ]
                     );
                     if (isset($spec['isFullPerm'])) {
@@ -185,7 +192,7 @@ class RoleForm extends RepositoryForm
                             $name,
                             [
                                 'label'         => $spec['name'],
-                                'description'   => $spec['label']
+                                'description'   => $spec['description']
                             ]
                         );
                     }
