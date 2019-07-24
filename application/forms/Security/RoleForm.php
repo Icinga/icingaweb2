@@ -181,7 +181,7 @@ class RoleForm extends RepositoryForm
                     [
                         'decorators'    => ['ViewHelper'],
                         'value'         => '<h3>' . ($moduleName !== 'application'
-                            ? sprintf($this->translate('Module: %s'), $moduleName)
+                            ? sprintf('%s <em>%s</em>', $moduleName, $this->translate('Module'))
                             :  'Icinga Web 2') . '</h3>'
                     ]
                 );
@@ -242,7 +242,7 @@ class RoleForm extends RepositoryForm
                         ['Fieldset', [
                             'class'                 => 'collapsible',
                             'data-toggle-element'   => 'h3',
-                            'data-visible-height'   => 64
+                            'data-visible-height'   => 32
                         ]]
                     ]
                 ]);

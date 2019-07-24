@@ -23,6 +23,53 @@ form.icinga-form {
   max-width: 70em;
   width: 80%;
 
+  > fieldset {
+    border: none;
+    padding: 0;
+    margin: 0;
+
+    h3 em {
+      font-size: .857em;
+      font-weight: normal;
+      color: @text-color-light;
+    }
+
+    h4 {
+      margin-top: 1.5em;
+    }
+
+    &.collapsible:before {
+      display: none;
+    }
+
+    &:not(:last-of-type) .collapsible-control {
+      border-bottom: 1px solid @gray-light
+    }
+
+    .collapsed .collapsible-control {
+      border-bottom: none;
+    }
+
+    .collapsible-control:before {
+      content: "\f103";
+      display: inline-block;
+      font-family: 'ifont';
+      font-weight: normal;
+      padding: 0 .25em;
+      margin-right: .25em;
+      width: 1em;
+      opacity: .6;
+    }
+
+    &.collapsed .collapsible-control:before {
+      content: "\e87b";
+    }
+
+    .permission-heading {
+      display: none;
+    }
+  }
+
   .control-group {
     display: flex;
     flex-wrap: wrap;
