@@ -174,7 +174,11 @@ class RoleForm extends RepositoryForm
             foreach ($this->providedPermissions as $moduleName => $permissionList) {
                 $this->sortPermissions($permissionList);
 
-                $elements = [];
+                $elements = ['permission_header'];
+                $this->addElement('note', 'permission_header', [
+                    'value' => '<h3>' . $this->translate('Permissions') . '</h3>'
+                ]);
+
                 $hasFullPerm = false;
                 foreach ($permissionList as $name => $spec) {
                     $elements[] = $name;
@@ -199,6 +203,11 @@ class RoleForm extends RepositoryForm
                 }
 
                 if (isset($this->providedRestrictions[$moduleName])) {
+                    $elements[] = 'restriction_header';
+                    $this->addElement('note', 'restriction_header', [
+                        'value' => '<h3>' . $this->translate('Restrictions') . '</h3>'
+                    ]);
+
                     foreach ($this->providedRestrictions[$moduleName] as $name => $spec) {
                         $elements[] = $name;
                         $this->addElement(
