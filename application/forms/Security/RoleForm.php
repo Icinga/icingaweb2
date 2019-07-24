@@ -230,7 +230,7 @@ class RoleForm extends RepositoryForm
                         :  'Icinga Web 2',
                     'decorators'    => [
                         'FormElements',
-                        ['Fieldset', ['class' => 'collapsible']]
+                        ['Fieldset', ['class' => 'collapsible', 'data-toggle-element' => 'legend']]
                     ]
                 ]);
             }
