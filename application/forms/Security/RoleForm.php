@@ -174,9 +174,21 @@ class RoleForm extends RepositoryForm
             foreach ($this->providedPermissions as $moduleName => $permissionList) {
                 $this->sortPermissions($permissionList);
 
-                $elements = ['permission_header'];
+                $elements = [$moduleName . '_header'];
+                $this->addElement(
+                    'note',
+                    $moduleName . '_header',
+                    [
+                        'decorators'    => ['ViewHelper'],
+                        'value'         => '<h3>' . ($moduleName !== 'application'
+                            ? sprintf($this->translate('Module: %s'), $moduleName)
+                            :  'Icinga Web 2') . '</h3>'
+                    ]
+                );
+
+                $elements[] = 'permission_header';
                 $this->addElement('note', 'permission_header', [
-                    'value' => '<h3>' . $this->translate('Permissions') . '</h3>'
+                    'value' => '<h4>' . $this->translate('Permissions') . '</h4>'
                 ]);
 
                 $hasFullPerm = false;
@@ -205,7 +217,7 @@ class RoleForm extends RepositoryForm
                 if (isset($this->providedRestrictions[$moduleName])) {
                     $elements[] = 'restriction_header';
                     $this->addElement('note', 'restriction_header', [
-                        'value' => '<h3>' . $this->translate('Restrictions') . '</h3>'
+                        'value' => '<h4>' . $this->translate('Restrictions') . '</h4>'
                     ]);
 
                     foreach ($this->providedRestrictions[$moduleName] as $name => $spec) {
@@ -225,12 +237,13 @@ class RoleForm extends RepositoryForm
                 }
 
                 $this->addDisplayGroup($elements, $moduleName . '_elements', [
-                    'legend'        => $moduleName !== 'application'
-                        ? sprintf($this->translate('Module: %s'), $moduleName)
-                        :  'Icinga Web 2',
                     'decorators'    => [
                         'FormElements',
-                        ['Fieldset', ['class' => 'collapsible', 'data-toggle-element' => 'legend']]
+                        ['Fieldset', [
+                            'class'                 => 'collapsible',
+                            'data-toggle-element'   => 'h3',
+                            'data-visible-height'   => 64
+                        ]]
                     ]
                 ]);
             }
