@@ -38,6 +38,7 @@ class RoleForm extends RepositoryForm
     public function init()
     {
         $helper = new Zend_Form_Element('bogus');
+        $view = $this->getView();
 
         $this->providedPermissions['application'] = [
             $helper->filterName('application/share/navigation') => [
@@ -87,7 +88,7 @@ class RoleForm extends RepositoryForm
             $this->providedPermissions[$moduleName][$helper->filterName($modulePermission)] = [
                 'isUsagePerm'   => true,
                 'name'          => $modulePermission,
-                'label'         => $this->translate('General Module Access'),
+                'label'         => $view->escape($this->translate('General Module Access')),
                 'description'   => sprintf($this->translate('Allow access to module %s'), $moduleName)
             ];
 
@@ -97,13 +98,18 @@ class RoleForm extends RepositoryForm
             $this->providedPermissions[$moduleName][$helper->filterName($moduleName . '/*')] = [
                 'isFullPerm'    => true,
                 'name'          => $moduleName . '/*',
-                'label'         => $this->translate('Full Module Access')
+                'label'         => $view->escape($this->translate('Full Module Access'))
             ];
 
             foreach ($permissions as $permission) {
                 /** @var object $permission */
                 $this->providedPermissions[$moduleName][$helper->filterName($permission->name)] = [
                     'name'          => $permission->name,
+                    'label'         => preg_replace(
+                        '~^(\w+)(\/.*)~',
+                        '<em>$1</em>$2',
+                        $view->escape($permission->name)
+                    ),
                     'description'   => $permission->description
                 ];
             }
@@ -111,6 +117,11 @@ class RoleForm extends RepositoryForm
             foreach ($module->getProvidedRestrictions() as $restriction) {
                 $this->providedRestrictions[$moduleName][$helper->filterName($restriction->name)] = [
                     'name'          => $restriction->name,
+                    'label'         => preg_replace(
+                        '~^(\w+)(\/.*)~',
+                        '<em>$1</em>$2',
+                        $view->escape($restriction->name)
+                    ),
                     'description'   => $restriction->description
                 ];
             }
@@ -178,7 +189,10 @@ class RoleForm extends RepositoryForm
                             'label'         => isset($spec['label']) ? $spec['label'] : $spec['name'],
                             'description'   => isset($spec['description']) ? $spec['description'] : $spec['name']
                         ]
-                    );
+                    )
+                        ->getElement($name)
+                        ->getDecorator('Label')
+                        ->setOption('escape', false);
                     if (isset($spec['isFullPerm'])) {
                         $hasFullPerm = isset($formData[$name]) && $formData[$name];
                     }
@@ -191,10 +205,13 @@ class RoleForm extends RepositoryForm
                             'text',
                             $name,
                             [
-                                'label'         => $spec['name'],
+                                'label'         => isset($spec['label']) ? $spec['label'] : $spec['name'],
                                 'description'   => $spec['description']
                             ]
-                        );
+                        )
+                            ->getElement($name)
+                            ->getDecorator('Label')
+                            ->setOption('escape', false);
                     }
                 }
 
