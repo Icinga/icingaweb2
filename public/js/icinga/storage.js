@@ -234,9 +234,9 @@
             }, this);
         }
 
-        if (!! items && items.length) {
+        if (!! items && Object.keys(items).length) {
             storage.set(key, items);
-        } else if(items !== null) {
+        } else if (items !== null) {
             storage.remove(key);
         }
 
