@@ -143,6 +143,10 @@
      * @returns {string}
      */
     Collapsible.prototype.getRowSelector = function($collapsible) {
+        if (!! $collapsible.data('visibleHeight')) {
+            return '';
+        }
+
         if ($collapsible.is('table')) {
             return '> tbody > tr';
         } else if ($collapsible.is('ul, ol')) {
