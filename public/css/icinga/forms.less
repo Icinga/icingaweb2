@@ -50,7 +50,7 @@ form.icinga-form {
       border-bottom: none;
     }
 
-    .collapsible-control:before {
+    .collapsible-control:after {
       content: "\f103";
       display: inline-block;
       font-family: 'ifont';
@@ -59,10 +59,12 @@ form.icinga-form {
       margin-right: .25em;
       width: 1em;
       opacity: .6;
+      float: right;
     }
 
-    &.collapsed .collapsible-control:before {
-      content: "\e87b";
+    &.collapsed .collapsible-control:after {
+      /*content: "\e87b";*/
+      content: "\e87a";
     }
 
     .permission-heading {

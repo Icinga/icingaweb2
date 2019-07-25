@@ -37,6 +37,8 @@ class RoleForm extends RepositoryForm
 
     public function init()
     {
+        $this->setAttrib('class', self::DEFAULT_CLASSES . ' role-form');
+
         $helper = new Zend_Form_Element('bogus');
         $view = $this->getView();
 
