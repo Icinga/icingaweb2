@@ -20,7 +20,6 @@
                     'host' => $downtime->host_name,
                     'service' => $downtime->service_description
                 ],
-                null,
                 [
                     'title' => sprintf(
                         $this->translate('Show detailed information for service %s on host %s'),
@@ -32,11 +31,8 @@
             ),
             $this->qlink(
                 $downtime->host_display_name,
-                $this->href(
-                    'monitoring/host/show',
-                    ['host' => $downtime->host_name]
-                ),
-                null,
+                'monitoring/host/show',
+                ['host' => $downtime->host_name],
                 [
                     'title' => sprintf(
                         $this->translate('Show detailed information for host %s'),
