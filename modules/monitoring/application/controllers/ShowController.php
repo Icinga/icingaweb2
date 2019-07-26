@@ -63,6 +63,7 @@ class ShowController extends Controller
             $this->view->commands = $commands;
 
             $notifications = $this->backend->select()->from('notification', array(
+                'id',
                 'host_name',
                 'service_description',
                 'notification_output',
