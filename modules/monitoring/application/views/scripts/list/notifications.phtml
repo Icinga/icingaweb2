@@ -40,17 +40,51 @@ if (! $this->compact): ?>
             </td>
             <td>
                 <div class="state-header">
-                <?php if ($isService): ?>
-                    <?= $this->link()->service(
-                        $notification->service_description,
-                        $notification->service_display_name,
-                        $notification->host_name,
+                <?php if ($isService) {
+                    echo '<span class="service-on">';
+                    echo sprintf(
+                        $this->translate('%s on %s', 'service on host'),
+                        $this->qlink(
+                            $notification->service_display_name,
+                            'monitoring/service/show',
+                            [
+                                'host' => $notification->host_name,
+                                'service' => $notification->service_description
+                            ],
+                            [
+                                'title' => sprintf(
+                                    $this->translate('Show detailed information for service %s on host %s'),
+                                    $notification->service_display_name,
+                                    $notification->host_display_name
+                                )
+                            ]
+                        ),
+                        $this->qlink(
+                            $notification->host_display_name,
+                            'monitoring/host/show',
+                            ['host' => $notification->host_name],
+                            [
+                                'title' => sprintf(
+                                    $this->translate('Show detailed information for host %s'),
+                                    $notification->host_display_name
+                                )
+                            ]
+                        )
+                    );
+                    echo '</span>';
+                } else {
+                    echo $this->qlink(
                         $notification->host_display_name,
-                        'rowaction'
-                    ) ?>
-                <?php else: ?>
-                    <?= $this->link()->host($notification->host_name, $notification->host_display_name) ?>
-                <?php endif ?>
+                        'monitoring/host/show',
+                        ['host' => $notification->host_name],
+                        [
+                            'title' => sprintf(
+                                $this->translate('Show detailed information for host %s'),
+                                $notification->host_display_name
+                            )
+                        ]
+                    );
+                } ?>
                 <?php if (! $this->contact): ?>
                     <div class="notification-recipient">
                     <?php if ($notification->notification_contact_name): ?>
