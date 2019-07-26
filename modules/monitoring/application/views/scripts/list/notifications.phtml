@@ -31,7 +31,7 @@ if (! $this->compact): ?>
             $stateName = Host::getStateText($notification->notification_state);
         }
     ?>
-        <tr>
+        <tr href="<?= $this->href('monitoring/event/show', ['id' => $notification->id, 'type' => 'notify']) ?>">
             <td class="state-col state-<?= $stateName ?>">
                 <div class="state-label"><?= $stateLabel ?></div>
                 <div class="state-meta">

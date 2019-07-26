@@ -280,6 +280,7 @@ class ListController extends Controller
         $this->setAutorefreshInterval(15);
 
         $notifications = $this->backend->select()->from('notification', array(
+            'id',
             'host_display_name',
             'host_name',
             'notification_contact_name',
