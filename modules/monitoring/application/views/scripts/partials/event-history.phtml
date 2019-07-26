@@ -54,6 +54,7 @@ $rowAction = Url::fromPath('monitoring/event/show');
         ));
         switch ($event->type) {
             case substr($event->type, 0, 13) === 'notification_':
+                $rowAction->setParam('type', 'notify');
                 $icon = 'bell';
                 switch (substr($event->type, 13)) {
                     case 'state':
