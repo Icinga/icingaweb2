@@ -61,7 +61,11 @@ class ApplicationStateMessages extends AbstractWidget
         $ackForm = new AcknowledgeApplicationStateMessageForm();
         $ackForm->populate(['id' => $id]);
 
-        $html .= Markdown::text($message) . $ackForm;
+        $html .= '<section class="markdown">';
+        $html .= Markdown::text($message);
+        $html .= '</section>';
+
+        $html .= $ackForm;
 
         $html .= '</div>';
 
