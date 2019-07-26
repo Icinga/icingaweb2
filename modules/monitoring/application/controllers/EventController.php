@@ -75,7 +75,6 @@ class EventController extends Controller
             ->add('event', array(
                 'title'     => $label,
                 'label'     => $label,
-                'icon'      => $icon,
                 'url'       => Url::fromRequest(),
                 'active'    => true
             ))
