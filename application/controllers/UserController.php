@@ -141,6 +141,7 @@ class UserController extends AuthBackendController
         if ($this->hasPermission('config/authentication/groups/edit')) {
             $removeForm = new Form();
             $removeForm->setUidDisabled();
+            $removeForm->setAttrib('class', 'inline');
             $removeForm->addElement('hidden', 'user_name', array(
                 'isArray'       => true,
                 'value'         => $userName,

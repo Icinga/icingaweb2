@@ -167,6 +167,7 @@ class NavigationController extends Controller
 
         $removeForm = new Form();
         $removeForm->setUidDisabled();
+        $removeForm->setAttrib('class', 'inline');
         $removeForm->addElement('hidden', 'name', array(
             'decorators'    => array('ViewHelper')
         ));

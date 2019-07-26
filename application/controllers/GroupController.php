@@ -128,6 +128,7 @@ class GroupController extends AuthBackendController
         if ($this->hasPermission('config/authentication/groups/edit') && $backend instanceof Reducible) {
             $removeForm = new Form();
             $removeForm->setUidDisabled();
+            $removeForm->setAttrib('class', 'inline');
             $removeForm->setAction(
                 Url::fromPath('group/removemember', array('backend' => $backend->getName(), 'group' => $groupName))
             );
