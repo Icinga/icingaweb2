@@ -41,7 +41,6 @@ if (! $this->compact): ?>
             <td>
                 <div class="state-header">
                 <?php if ($isService): ?>
-                    <?= $this->icon('service', $this->translate('Service')); ?>
                     <?= $this->link()->service(
                         $notification->service_description,
                         $notification->service_display_name,
@@ -50,7 +49,6 @@ if (! $this->compact): ?>
                         'rowaction'
                     ) ?>
                 <?php else: ?>
-                    <?= $this->icon('host', $this->translate('Host')); ?>
                     <?= $this->link()->host($notification->host_name, $notification->host_display_name) ?>
                 <?php endif ?>
                 <?php if (! $this->contact): ?>
