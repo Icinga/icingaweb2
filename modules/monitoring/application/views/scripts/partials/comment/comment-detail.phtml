@@ -10,7 +10,6 @@
                 'host' => $comment->host_name,
                 'service' => $comment->service_description
             ],
-            null,
             [
                 'title' => sprintf(
                     $this->translate('Show detailed information for service %s on host %s'),
@@ -22,11 +21,8 @@
         ),
         $this->qlink(
             $comment->host_display_name,
-            $this->href(
-                'monitoring/host/show',
-                ['host' => $comment->host_name]
-            ),
-            null,
+            'monitoring/host/show',
+            ['host' => $comment->host_name],
             [
                 'title' => sprintf(
                     $this->translate('Show detailed information for host %s'),
