@@ -15,7 +15,7 @@
         Icinga.EventListener.call(this, icinga);
 
         this.on('layout-change', this.onLayoutChange, this);
-        this.on('rendered', '.container', this.onRendered, this);
+        this.on('rendered', '#layout', this.onRendered, this);
         this.on('click', '.collapsible + .collapsible-control', this.onControlClicked, this);
 
         this.icinga = icinga;
@@ -40,7 +40,7 @@
     Collapsible.prototype.onRendered = function(event) {
         var _this = event.data.self;
 
-        $('.collapsible:not(.can-collapse)', event.currentTarget).each(function() {
+        $('.collapsible:not(.can-collapse)', event.target).each(function() {
             var $collapsible = $(this);
 
             // Assumes that any newly rendered elements are expanded
