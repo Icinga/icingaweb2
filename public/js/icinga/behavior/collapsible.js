@@ -166,18 +166,14 @@
     Collapsible.prototype.canCollapse = function($collapsible) {
         var rowSelector = this.getRowSelector($collapsible);
         if (!! rowSelector) {
-            return $(rowSelector, $collapsible).length > ($collapsible.data('visibleRows') || this.defaultVisibleRows);
+            var visibleRows = $collapsible.data('visibleRows') || this.defaultVisibleRows;
+
+            return $(rowSelector, $collapsible).length > visibleRows * 2;
         } else {
             var actualHeight = $collapsible[0].scrollHeight;
             var maxHeight = $collapsible.data('visibleHeight') || this.defaultVisibleHeight;
 
-            if (actualHeight <= maxHeight) {
-                return false;
-            }
-
-            // Although the height seems larger than what it should be, make sure it's not just a small fraction
-            // i.e. more than 12 pixel and at least 10% difference
-            return actualHeight - maxHeight > 12 && actualHeight / maxHeight >= 1.1;
+            return actualHeight >= maxHeight * 2;
         }
     };
 
