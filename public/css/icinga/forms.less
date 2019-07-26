@@ -23,62 +23,6 @@ form.icinga-form {
   max-width: 70em;
   width: 80%;
 
-  > fieldset {
-    border: none;
-    padding: 0;
-    margin: 0;
-
-    h3 em {
-      font-size: .857em;
-      font-weight: normal;
-      color: @text-color-light;
-    }
-
-    h4 {
-      margin-top: 1.5em;
-    }
-
-    &.collapsible:before {
-      display: none;
-    }
-
-    &:not(:last-of-type) .collapsible-control {
-      border-bottom: 1px solid @gray-light;
-      cursor: default;
-      -webkit-touch-callout: none;
-      -webkit-user-select: none;
-      -khtml-user-select: none;
-      -moz-user-select: none;
-      -ms-user-select: none;
-      user-select: none;
-    }
-
-    .collapsed .collapsible-control {
-      border-bottom: none;
-    }
-
-    .collapsible-control:after {
-      content: "\f103";
-      display: inline-block;
-      font-family: 'ifont';
-      font-weight: normal;
-      padding: 0 .25em;
-      margin-right: .25em;
-      width: 1em;
-      opacity: .6;
-      float: right;
-    }
-
-    &.collapsed .collapsible-control:after {
-      content: "\e87b";
-      /*content: "\e87a";*/
-    }
-
-    .permission-heading {
-      display: none;
-    }
-  }
-
   .control-group {
     display: flex;
     flex-wrap: wrap;

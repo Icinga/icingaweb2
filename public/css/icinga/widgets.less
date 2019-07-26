@@ -227,6 +227,53 @@ form.role-form {
     color: @text-color-light;
     font-style: normal;
   }
+
+  fieldset.collapsible {
+    border: none;
+    padding: 0;
+    margin: 0;
+
+    &:before {
+      display: none;
+    }
+
+    h3 em {
+      font-size: .857em;
+      font-weight: normal;
+      color: @text-color-light;
+    }
+
+    h4 {
+      margin-top: 1.5em;
+    }
+
+    .collapsible-control {
+      border-bottom: 1px solid @gray-light;
+      cursor: pointer;
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      -khtml-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+
+    .collapsible-control:after {
+      content: "\f103";
+      display: inline-block;
+      font-family: 'ifont';
+      font-weight: normal;
+      padding: 0 .25em;
+      margin-right: .25em;
+      width: 1em;
+      opacity: .6;
+      float: right;
+    }
+
+    &.collapsed .collapsible-control:after {
+      content: "\e87a";
+    }
+  }
 }
 
 ul.tree select:first-of-type { /* ?? */
