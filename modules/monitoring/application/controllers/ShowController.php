@@ -30,6 +30,13 @@ class ShowController extends Controller
     {
         $contactName = $this->params->getRequired('contact_name');
 
+        $this->getTabs()->add('contact-detail', [
+            'title'  => $this->translate('Contact details'),
+            'label'  => $this->translate('Contact'),
+            'url'    => Url::fromRequest(),
+            'active' => true
+        ]);
+
         $query = $this->backend->select()->from('contact', array(
             'contact_name',
             'contact_id',
