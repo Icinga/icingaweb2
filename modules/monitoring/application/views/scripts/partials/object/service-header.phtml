@@ -22,7 +22,7 @@ $linkServiceName = ! ($url->getPath() === 'monitoring/service/show' && $url->get
         <td>
             <?= $this->iconImage()->host($object) ?>
             <a href="<?= Url::fromPath('monitoring/host/show', array('host' => $object->host_name)) ?>">
-                <span class="selectable"><?= $this->escape($object->host_display_name) ?></span>
+                <span class="selectable"><strong><?= $this->escape($object->host_display_name) ?></strong></span>
             <?php if ($object->host_display_name !== $object->host_name): ?>
                 <span class="selectable host-meta">&#40;<?= $this->escape($object->host_name) ?>&#41;</span>
             <?php endif ?>
@@ -57,7 +57,7 @@ $linkServiceName = ! ($url->getPath() === 'monitoring/service/show' && $url->get
                 )) . '">';
             }
             ?>
-                <span class="selectable"><?= $this->escape($object->service_display_name) ?></span>
+                <span class="selectable"><strong><?= $this->escape($object->service_display_name) ?></strong></span>
                 <?php if ($object->service_display_name !== $object->service_description): ?>
                     <span class="selectable service-meta">&#40;<?= $this->escape($object->service_description) ?>&#41;</span>
                 <?php endif ?>
