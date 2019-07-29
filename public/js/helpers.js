@@ -5,6 +5,16 @@
 
     'use strict';
 
+    /* Get data value or default */
+    $.fn.getData = function (name, fallback) {
+        var value = this.data(name);
+        if (typeof value !== 'undefined') {
+            return value;
+        }
+
+        return fallback;
+    };
+
     /* Whether a HTML tag has a specific attribute */
     $.fn.hasAttr = function(name) {
         // We have inconsistent behaviour across browsers (false VS undef)
