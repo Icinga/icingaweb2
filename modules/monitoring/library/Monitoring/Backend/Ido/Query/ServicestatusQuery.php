@@ -204,14 +204,14 @@ class ServicestatusQuery extends IdoQuery
                 NULL
             ELSE
                 UNIX_TIMESTAMP(ss.last_check)
-                + CASE WHEN
+                + (CASE WHEN
                     COALESCE(ss.current_state, 0) > 0 AND ss.state_type = 0
                 THEN
                     ss.retry_check_interval
                 ELSE
                     ss.normal_check_interval
-                END * 60 * 2
-                + CEIL(ss.execution_time)
+                END * 60
+                + CEIL(ss.execution_time) + CEIL(ss.latency)) * 2
             END',
             'service_no_more_notifications'             => 'ss.no_more_notifications',
             'service_normal_check_interval'             => 'ss.normal_check_interval',

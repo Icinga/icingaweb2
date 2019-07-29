@@ -240,6 +240,10 @@
     background-color: @tr-hover-color;
     cursor: pointer;
   }
+
+  tr[href].state-outdated:not(:hover):not(.active) td:not(.state-col) {
+    opacity: 0.7;
+  }
 }
 
 // Event history

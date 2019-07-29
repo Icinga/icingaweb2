@@ -1,4 +1,5 @@
 <?php
+use Icinga\Date\DateFormatter;
 use Icinga\Module\Monitoring\Object\Host;
 
 if (! $this->compact): ?>
@@ -25,10 +26,16 @@ if (! $this->compact): ?>
     <tbody>
     <?php foreach($hosts->peekAhead($this->compact) as $host):
         $hostStateName = Host::getStateText($host->host_state);
-        $hostLink = $this->href('monitoring/host/show', array('host' => $host->host_name)); ?>
-        <tr>
+        $hostLink = $this->href('monitoring/host/show', array('host' => $host->host_name));
+        $hostCheckOverdue = $host->host_next_update < time();?>
+        <tr<?= $hostCheckOverdue ? ' class="state-outdated"' : '' ?>>
             <td class="state-col state-<?= $hostStateName ?><?= $host->host_handled ? ' handled' : '' ?>">
-                <div class="state-label"><?= Host::getStateText($host->host_state, true) ?></div>
+                <div class="state-label">
+                <?php if ($hostCheckOverdue): ?>
+                    <?= $this->icon('clock', sprintf($this->translate('Overdue %s'), DateFormatter::timeSince($host->host_next_update))) ?>
+                <?php endif ?>
+                    <?= Host::getStateText($host->host_state, true) ?>
+                </div>
                 <?php if ((int) $host->host_state !== 99): ?>
                     <div class="state-meta">
                         <?= $this->timeSince($host->host_last_state_change, $this->compact) ?>

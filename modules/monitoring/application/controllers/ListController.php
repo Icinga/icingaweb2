@@ -77,7 +77,8 @@ class ListController extends Controller
             'host_notifications_enabled',
             'host_active_checks_enabled',
             'host_passive_checks_enabled',
-            'host_check_command'
+            'host_check_command',
+            'host_next_update'
         ), $this->addColumns()));
         $this->applyRestriction('monitoring/filter/objects', $hosts);
 
@@ -158,7 +159,8 @@ class ListController extends Controller
             'service_notifications_enabled',
             'service_active_checks_enabled',
             'service_passive_checks_enabled',
-            'service_check_command'
+            'service_check_command',
+            'service_next_update'
         ), $this->addColumns()));
         $this->applyRestriction('monitoring/filter/objects', $services);
 
