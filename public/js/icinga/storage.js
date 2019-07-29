@@ -21,6 +21,13 @@
          * @type {string}
          */
         this.prefix = prefix;
+
+        /**
+         * Storage backend
+         *
+         * @type {Storage}
+         */
+        this.backend = window.localStorage;
     };
 
     /**
@@ -86,6 +93,15 @@
     Icinga.Storage.prototype = {
 
         /**
+         * Set the storage backend
+         *
+         * @param {Storage} backend
+         */
+        setBackend: function(backend) {
+            this.backend = backend;
+        },
+
+        /**
          * Prefix the given key
          *
          * @param   {string}    key
@@ -110,7 +126,7 @@
          * @returns {void}
          */
         set: function(key, value) {
-            window.localStorage.setItem(this.prefixKey(key), JSON.stringify(value));
+            this.backend.setItem(this.prefixKey(key), JSON.stringify(value));
         },
 
         /**
@@ -122,14 +138,14 @@
          */
         get: function(key) {
             key = this.prefixKey(key);
-            var value = window.localStorage.getItem(key);
+            var value = this.backend.getItem(key);
 
             try {
                 return JSON.parse(value);
             } catch(error) {
                 icinga.logger.error('[Storage] Failed to parse value (\`' + value
                     + '\`) of key "' + key + '". Error was: ' + error);
-                window.localStorage.removeItem(key);
+                this.backend.removeItem(key);
                 return null;
             }
         },
@@ -142,7 +158,7 @@
          * @returns {void}
          */
         remove: function(key) {
-            window.localStorage.removeItem(this.prefixKey(key));
+            this.backend.removeItem(this.prefixKey(key));
         },
 
         /**
