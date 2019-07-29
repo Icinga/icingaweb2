@@ -167,7 +167,7 @@
         if ($collapsible.is('table')) {
             return '> tbody > tr';
         } else if ($collapsible.is('ul, ol')) {
-            return '> li';
+            return '> li:not(.collapsible-control)';
         }
 
         return '';
@@ -183,12 +183,12 @@
     Collapsible.prototype.canCollapse = function($collapsible) {
         var rowSelector = this.getRowSelector($collapsible);
         if (!! rowSelector) {
-            var visibleRows = $collapsible.data('visibleRows') || this.defaultVisibleRows;
+            var visibleRows = $collapsible.getData('visibleRows', this.defaultVisibleRows);
 
             return $(rowSelector, $collapsible).length > visibleRows * 2;
         } else {
-            var actualHeight = $collapsible[0].scrollHeight;
-            var maxHeight = $collapsible.data('visibleHeight') || this.defaultVisibleHeight;
+            var actualHeight = $collapsible[0].scrollHeight - parseFloat($collapsible.css('padding-top'));
+            var maxHeight = $collapsible.getData('visibleHeight', this.defaultVisibleHeight);
 
             return actualHeight >= maxHeight * 2;
         }
@@ -200,21 +200,40 @@
      * @param   $collapsible    jQuery      The given collapsible container element
      */
     Collapsible.prototype.collapse = function($collapsible) {
-        $collapsible.addClass('collapsed');
+        var height;
 
         var rowSelector = this.getRowSelector($collapsible);
         if (!! rowSelector) {
-            var $rows = $(rowSelector, $collapsible).slice(0, $collapsible.data('visibleRows') || this.defaultVisibleRows);
+            height = $collapsible[0].scrollHeight;
+            height -= parseFloat($collapsible.css('padding-bottom'));
 
-            var totalHeight = $rows.offset().top - $collapsible.offset().top;
-            $rows.outerHeight(function(_, height) {
-                totalHeight += height;
+            var $rows = $(rowSelector, $collapsible).slice(
+                $collapsible.getData('visibleRows', this.defaultVisibleRows)
+            );
+            $rows.outerHeight(function (i, contentHeight) {
+                var $el = $(this);
+                var $prev = $el.prev();
+
+                if (i === 0 && ! $prev.length) { // very first element
+                    height -= parseFloat($el.css('margin-top')) + contentHeight;
+                } else if (i < $rows.length - 1) { // every element but the last one
+                    var prevBottomOffset = $prev.offset().top + $prev.outerHeight();
+                    height -= ($el.offset().top - prevBottomOffset) + contentHeight;
+                } else { // the last element
+                    height -= $el.outerHeight(true);
+                }
             });
-
-            $collapsible.css({display: 'block', height: totalHeight});
         } else {
-            $collapsible.css({display: 'block', height: $collapsible.data('visibleHeight') || this.defaultVisibleHeight});
+            height = $collapsible.getData('visibleHeight', this.defaultVisibleHeight);
+            height += parseFloat($collapsible.css('padding-top'));
+
+            if (!! $collapsible.data('toggleElement')) {
+                height += $collapsible.children($collapsible.data('toggleElement')).first().outerHeight(true);
+            }
         }
+
+        $collapsible.css({display: 'block', height: height, paddingBottom: 0});
+        $collapsible.addClass('collapsed');
     };
 
     /**
@@ -224,7 +243,7 @@
      */
     Collapsible.prototype.expand = function($collapsible) {
         $collapsible.removeClass('collapsed');
-        $collapsible.css({display: '', height: ''});
+        $collapsible.css({display: '', height: '', paddingBottom: ''});
     };
 
     Icinga.Behaviors.Collapsible = Collapsible;
