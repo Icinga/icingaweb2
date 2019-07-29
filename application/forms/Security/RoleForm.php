@@ -246,7 +246,7 @@ class RoleForm extends RepositoryForm
                         ['Fieldset', [
                             'class'                 => 'collapsible',
                             'data-toggle-element'   => 'h3',
-                            'data-visible-height'   => 32
+                            'data-visible-height'   => 0
                         ]]
                     ]
                 ]);
