@@ -307,7 +307,7 @@ a:hover > .icon-cancel {
   position: relative;
   overflow: hidden;
 
-  &:before {
+  &:before, &:after {
     content: "";
     display: block;
     height: 2em;
@@ -317,5 +317,23 @@ a:hover > .icon-cancel {
     left: 0;
     right: 0;
     z-index: 1;
+
+    opacity: 1;
+    transition: opacity 2s 1s linear;
+  }
+
+  &:after {
+    opacity: 0;
+    background: linear-gradient(rgba(238,238,238,0), #eee);
+  }
+}
+
+.impact .collapsible.collapsed {
+  &:before {
+    opacity: 0;
+  }
+
+  &:after {
+    opacity: 1;
   }
 }

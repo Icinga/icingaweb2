@@ -34,9 +34,11 @@ class Zend_View_Helper_Customvar extends Zend_View_Helper_Abstract
             return '[]';
         }
         $out = "<ul>\n";
+
         foreach ($array as $val) {
             $out .= '<li>' . $this->customvar($val) . "</li>\n";
         }
+
         return $out . "</ul>\n";
     }
 
@@ -46,6 +48,7 @@ class Zend_View_Helper_Customvar extends Zend_View_Helper_Abstract
             return '{}';
         }
         $out = "{<ul>\n";
+
         foreach ($object as $key => $val) {
             $out .= '<li>'
                   . $this->view->escape($key)
@@ -53,6 +56,7 @@ class Zend_View_Helper_Customvar extends Zend_View_Helper_Abstract
                   . $this->customvar($val)
                   . "</li>\n";
         }
+
         return $out . "</ul>}";
     }
 }
