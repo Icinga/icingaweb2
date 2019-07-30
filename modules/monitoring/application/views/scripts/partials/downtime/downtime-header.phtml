@@ -9,24 +9,41 @@
 </td>
 <td>
   <div class="comment-author">
-    <?php if ($isService): ?>
-        <?= $this->icon('service', $this->translate('Service')); ?> <?= $this->qlink(
-            $downtime->host_display_name . ': ' . $downtime->service_display_name,
-            'monitoring/service/show',
-            array(
-                'host'    => $downtime->host_name,
-                'service' => $downtime->service_description
+    <?php if ($isService) {
+        echo '<span class="service-on">';
+        echo sprintf(
+            $this->translate('%s on %s', 'service on host'),
+            $this->qlink(
+                $downtime->service_display_name,
+                'monitoring/service/show',
+                [
+                    'host' => $downtime->host_name,
+                    'service' => $downtime->service_description
+                ],
+                [
+                    'title' => sprintf(
+                        $this->translate('Show detailed information for service %s on host %s'),
+                        $downtime->service_display_name,
+                        $downtime->host_display_name
+                    ),
+                    'class' => 'rowaction'
+                ]
             ),
-            array(
-                'title' => sprintf(
-                    $this->translate('Show detailed information for this downtime scheduled for service %s on host %s'),
-                    $downtime->service_display_name,
-                    $downtime->host_display_name
-                )
+            $this->qlink(
+                $downtime->host_display_name,
+                'monitoring/host/show',
+                ['host' => $downtime->host_name],
+                [
+                    'title' => sprintf(
+                        $this->translate('Show detailed information for host %s'),
+                        $downtime->host_display_name
+                    )
+                ]
             )
-        ); ?>
-    <?php else: ?>
-        <?= $this->icon('host', $this->translate('host')); ?> <?= $this->qlink(
+        );
+        echo '</span>';
+    } else {
+        echo $this->qlink(
             $downtime->host_display_name,
             'monitoring/host/show',
             array('host' => $downtime->host_name, 'downtime_id' => $downtime->id),
@@ -36,8 +53,8 @@
                     $downtime->host_display_name
                 )
             )
-        ); ?>
-    <?php endif ?>
+        );
+    } ?>
     <span class="comment-time">
         <?= $this->escape(sprintf(
             $downtime->is_flexible

@@ -34,7 +34,6 @@ class HostnotificationQuery extends IdoQuery
             'host_display_name' => 'h.display_name COLLATE latin1_general_ci'
         ),
         'history' => array(
-            'id'        => 'hn.notification_id',
             'output'    => null,
             'state'     => 'hn.state',
             'timestamp' => 'UNIX_TIMESTAMP(hn.start_time)',
@@ -54,6 +53,7 @@ class HostnotificationQuery extends IdoQuery
             'instance_name' => 'i.instance_name'
         ),
         'notifications' => array(
+            'id'                        => 'hn.notification_id',
             'host'                      => 'ho.name1 COLLATE latin1_general_ci',
             'host_name'                 => 'ho.name1',
             'notification_output'       => 'hn.output',

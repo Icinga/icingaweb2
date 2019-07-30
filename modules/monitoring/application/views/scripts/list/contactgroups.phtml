@@ -30,7 +30,7 @@ if (! $this->compact): ?>
                 <td class="count-col">
                     <span class="badge"><?= $contactGroup->contact_count ?></span>
                 </td>
-                <td>
+                <th>
                     <?= $this->qlink(
                         $contactGroup->contactgroup_name,
                         'monitoring/list/contacts',
@@ -40,7 +40,7 @@ if (! $this->compact): ?>
                             $contactGroup->contactgroup_name
                         ))
                     ) ?>
-                </td>
+                </th>
             <td>
             <?php if ($contactGroup->contactgroup_name !== $contactGroup->contactgroup_alias): ?>
                 <?= $contactGroup->contactgroup_alias ?>

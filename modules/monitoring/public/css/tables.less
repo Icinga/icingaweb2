@@ -17,6 +17,10 @@
 // Object link and comment author in the comment overview
 .comment-author {
   margin-bottom: 0.25em;
+
+  > a {
+    font-weight: bold;
+  }
 }
 
 // Comment icons, e.g. persistent in the comment overview
@@ -205,6 +209,10 @@
 // Wraps links, icons and meta in overviews
 .state-header {
   .clearfix();
+
+  > a {
+    font-weight: bold;
+  }
 }
 
 // State icons, e.g. acknowledged in overviews
@@ -259,5 +267,9 @@
 
   > .history-message-output {
     flex: 1;
+
+    > a {
+      font-weight: bold;
+    }
   }
 }

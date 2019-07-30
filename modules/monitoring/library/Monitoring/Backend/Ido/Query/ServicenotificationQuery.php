@@ -26,7 +26,6 @@ class ServicenotificationQuery extends IdoQuery
             'notification_contact_name' => 'co.name1'
         ),
         'history' => array(
-            'id'        => 'sn.notification_id',
             'output'    => null,
             'state'     => 'sn.state',
             'timestamp' => 'UNIX_TIMESTAMP(sn.start_time)',
@@ -54,6 +53,7 @@ class ServicenotificationQuery extends IdoQuery
             'instance_name' => 'i.instance_name'
         ),
         'notifications' => array(
+            'id'                        => 'sn.notification_id',
             'host'                      => 'so.name1 COLLATE latin1_general_ci',
             'host_name'                 => 'so.name1',
             'notification_output'       => 'sn.output',
