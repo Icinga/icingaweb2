@@ -33,6 +33,8 @@
     .message {
       display: inline-block;
       vertical-align: middle;
+      padding-right: 1.5em;
+      font-size: 7/6em;
     }
   }
 }
@@ -45,7 +47,7 @@
   margin-top: -0.75em;
 
   position: absolute;
-  right: 1em;
+  right: .75em;
   top: 50%;
 }
 
@@ -186,41 +188,105 @@ table.multiselect tr[href] td {
 
 #main div.filter {
   form.editor {
+    max-width: 37em;
+
     input[type=text], select {
       width: 12em;
+      height: 2em;
+      line-height: 1;
     }
 
     ul.tree li.active {
-      background-color: #eee;
-    }
-
-    div.buttons {
-      float: right;
+      background-color: @gray-lightest;
     }
 
     button {
       border: none;
       background: none;
     }
+
+    .buttons {
+      padding: .25em 0;
+      text-align: right;
+    }
+
+    .buttons input {
+      .button();
+    }
+
+    .buttons input:not(:last-child) {
+      margin-right:.5em;
+    }
   }
 }
 
-ul.tree select { /* ?? */
+form.role-form {
+  &.icinga-form .control-label-group {
+    width: 20em;
+  }
+
+  .control-label-group em {
+    color: @text-color-light;
+    font-style: normal;
+  }
+
+  fieldset.collapsible {
+    border: none;
+    padding: 0;
+    margin: 0;
+
+    h3 em {
+      font-size: .857em;
+      font-weight: normal;
+      color: @text-color-light;
+    }
+
+    h4 {
+      margin-top: 1.5em;
+    }
+
+    .collapsible-control {
+      border-bottom: 1px solid @gray-light;
+      cursor: pointer;
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      -khtml-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+
+    .collapsible-control:after {
+      content: "\f103";
+      display: inline-block;
+      font-family: 'ifont';
+      font-weight: normal;
+      padding: 0 .25em;
+      margin-right: .25em;
+      width: 1em;
+      opacity: .6;
+      float: right;
+    }
+
+    &.collapsed .collapsible-control:after {
+      content: "\e87a";
+    }
+  }
+}
+
+ul.tree select:first-of-type { /* ?? */
   margin-bottom: 0.3em;
-  margin-left: 1em;
+  margin-left: 2em;
 }
 
 ul.tree {
   padding: 0;
   margin: 0;
-}
-
-ul.tree, ul.tree ul {
-  padding-left: 1.5em;
+  padding-top: .5em;
 }
 
 ul.tree ul {
-  padding-left: 1.5em;
+  padding-left: 1em;
 }
 
 ul.tree li {
@@ -235,10 +301,10 @@ ul.tree li .handle {
   background-repeat: no-repeat;
   display: inline-block;
   position: absolute;
-  width: 1em;
+  width: 1.5em;
   height: 2em;
-  left: -0.6em;
-  background-position: -3px 3px;
+  left: 0em;
+  background-position: center center;
   z-index: 1;
   cursor: pointer;
 }
@@ -264,9 +330,9 @@ ul.tree li::before, ul.tree li::after {
 /* This is the left vertical line */
 ul.tree li::before {
   border-left-width: 1px;
-  top: 0;
+  top: -.5em;
   width: 1em;
-  height: 100%;
+  height: 2.5em;
   bottom: 1em;
 }
 
@@ -274,13 +340,13 @@ ul.tree li::before {
 ul.tree li::after {
   border-top-width: 1px;
   top: 1em;
-  width: 1em;
+  width: 2em;
   height: 1em;
 }
 
 /* Stop left vertical line at "mid-height" after last nodes (at each level) */
 ul.tree li:last-child::before {
-  height: 1em;
+  height: 1.5em;
 }
 
 /* No border for the root element - there must be only ONE root */
@@ -295,8 +361,8 @@ ul.tree > ul > li::before, ul.tree > ul > li::after {
 
 ul.tree li a {
   display: inline-block;
-  padding-left: 1em;
   line-height: 2em;
+  padding: 0 .5em;
   text-decoration: none;
   color: @gray;
   background-repeat: no-repeat;
@@ -356,6 +422,8 @@ ul.tree li a.error:hover {
     border: 1px solid @gray-lighter;
     box-shadow: 0 0 .5em 0 rgba(0, 0, 0, 0.2);
     position: absolute;
+    padding: @vertical-padding @horizontal-padding;
+    .rounded-corners();
   }
 
   &.flyover-arrow-top .flyover-content:before {

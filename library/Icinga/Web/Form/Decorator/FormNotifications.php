@@ -3,9 +3,10 @@
 
 namespace Icinga\Web\Form\Decorator;
 
-use Zend_Form_Decorator_Abstract;
+use Icinga\Application\Icinga;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Web\Form;
+use Zend_Form_Decorator_Abstract;
 
 /**
  * Decorator to add a list of notifications at the top or bottom of a form
@@ -36,7 +37,7 @@ class FormNotifications extends Zend_Form_Decorator_Abstract
             return $content;
         }
 
-        $html = '<ul class="form-notifications">';
+        $html = '<ul class="form-notification-list">';
         foreach (array(Form::NOTIFICATION_ERROR, Form::NOTIFICATION_WARNING, Form::NOTIFICATION_INFO) as $type) {
             if (isset($notifications[$type])) {
                 $html .= '<li><ul class="notification-' . $this->getNotificationTypeName($type) . '">';
@@ -55,11 +56,26 @@ class FormNotifications extends Zend_Form_Decorator_Abstract
             }
         }
 
+        if (isset($notifications[Form::NOTIFICATION_ERROR])) {
+            $icon = 'cancel';
+            $class = 'error';
+        } elseif (isset($notifications[Form::NOTIFICATION_WARNING])) {
+            $icon = 'warning-empty';
+            $class = 'warning';
+        } else {
+            $icon = 'info';
+            $class = 'info';
+        }
+
+        $html = "<div class=\"form-notifications $class\">"
+        . Icinga::app()->getViewRenderer()->view->icon($icon, '', ['class' => 'form-notification-icon'])
+        . $html;
+
         switch ($this->getPlacement()) {
             case self::APPEND:
-                return $content . $html . '</ul>';
+                return $content . $html . '</ul></div>';
             case self::PREPEND:
-                return $html . '</ul>' . $content;
+                return $html . '</ul></div>' . $content;
         }
     }
 

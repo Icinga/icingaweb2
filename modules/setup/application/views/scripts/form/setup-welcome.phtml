@@ -63,7 +63,7 @@ if (! (false === ($distro = Platform::getLinuxDistro(1)) || $distro === 'linux')
     . ' finished you are able to log in and to explore all the new and stunning features!'
   ); ?></p>
  <?php endif ?>
-  <form id="<?= $form->getName(); ?>" name="<?= $form->getName(); ?>" enctype="<?= $form->getEncType(); ?>" method="<?= $form->getMethod(); ?>" action="<?= $form->getAction(); ?>">
+  <form id="<?= $form->getName(); ?>" name="<?= $form->getName(); ?>" enctype="<?= $form->getEncType(); ?>" method="<?= $form->getMethod(); ?>" action="<?= $form->getAction(); ?>" class="icinga-controls">
     <?= $form->getElement('token'); ?>
     <?= $form->getElement($form->getTokenElementName()); ?>
     <?= $form->getElement($form->getUidElementName()); ?>

@@ -590,8 +590,7 @@ form.instance-features span.description, form.object-features span.description {
 .object-features {
   .control-label-group {
     text-align: left;
-    padding: @table-column-padding;
-    padding-left: 0;
+    margin-right: 0;
     width: @name-value-table-name-width;
 
     label {
@@ -599,9 +598,8 @@ form.instance-features span.description, form.object-features span.description {
     }
   }
 
-  input[type="checkbox"],
-  input[type="radio"] {
-    margin: @table-column-padding;
+  .toggle-switch {
+    margin-left: @table-column-padding;
   }
 }
 

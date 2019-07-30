@@ -33,6 +33,11 @@ class Form extends Zend_Form
     const DEFAULT_SUFFIX = '_default';
 
     /**
+     * A form's default CSS classes
+     */
+    const DEFAULT_CLASSES = 'icinga-form icinga-controls';
+
+    /**
      * Identifier for notifications of type error
      */
     const NOTIFICATION_ERROR = 0;
@@ -211,9 +216,9 @@ class Form extends Zend_Form
      */
     public static $defaultElementDecorators = array(
         array('Label', array('tag'=>'span', 'separator' => '', 'class' => 'control-label')),
-        array('Help', array('placement' => 'APPEND')),
         array(array('labelWrap' => 'HtmlTag'), array('tag' => 'div', 'class' => 'control-label-group')),
         array('ViewHelper', array('separator' => '')),
+        array('Help', array()),
         array('Errors', array('separator' => '')),
         array('HtmlTag', array('tag' => 'div', 'class' => 'control-group'))
     );
@@ -238,6 +243,10 @@ class Form extends Zend_Form
                 'type'      => static::DECORATOR
             )
         ));
+
+        if (! isset($options['attribs']['class'])) {
+            $options['attribs']['class'] = static::DEFAULT_CLASSES;
+        }
 
         parent::__construct($options);
     }
@@ -834,6 +843,7 @@ class Form extends Zend_Form
                 'submit',
                 'btn_submit',
                 array(
+                    'class'                 => 'btn-primary',
                     'ignore'                => true,
                     'label'                 => $submitLabel,
                     'data-progress-label'   => $this->getProgressLabel(),

@@ -216,8 +216,6 @@ class BackendConfigForm extends ConfigForm
             )
         );
 
-        $decorators = static::$defaultElementDecorators;
-        array_pop($decorators); // Removes the HtmlTag decorator
         $this->addElement(
             'select',
             'resource',
@@ -227,7 +225,6 @@ class BackendConfigForm extends ConfigForm
                 'description'   => $this->translate('The resource to use'),
                 'multiOptions'  => $this->resources[$resourceType],
                 'value'         => current($this->resources[$resourceType]),
-                'decorators'    => $decorators,
                 'autosubmit'    => true
             )
         );
@@ -237,22 +234,11 @@ class BackendConfigForm extends ConfigForm
             'resource_note',
             array(
                 'escape'        => false,
-                'decorators'    => $decorators,
                 'value'         => sprintf(
                     '<a href="%1$s" data-base-target="_next" title="%2$s" aria-label="%2$s">%3$s</a>',
                     $this->getView()->url('config/editresource', array('resource' => $resourceName)),
                     sprintf($this->translate('Show the configuration of the %s resource'), $resourceName),
                     $this->translate('Show resource configuration')
-                )
-            )
-        );
-        $this->addDisplayGroup(
-            array('resource', 'resource_note'),
-            'resource-group',
-            array(
-                'decorators'    => array(
-                    'FormElements',
-                    array('HtmlTag', array('tag' => 'div', 'class' => 'control-group'))
                 )
             )
         );

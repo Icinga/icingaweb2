@@ -40,7 +40,7 @@ if ($this->hasPermission('config/authentication/groups/edit') && $backend instan
     </table>
 <?php if (! $this->compact): ?>
     <h2><?= $this->translate('Members'); ?></h2>
-    <div class="grid">
+    <div class="sort-controls-container">
         <?= $this->limiter; ?>
         <?= $this->paginator; ?>
         <?= $this->sortBox; ?>

@@ -768,12 +768,12 @@ class FilterEditor extends AbstractWidget
             return '';
         }
         if (! $this->preservedUrl()->getParam('modifyFilter')) {
-            return '<div class="filter">'
+            return '<div class="filter icinga-controls">'
                 . $this->renderSearch()
                 . $this->view()->escape($this->shorten($this->filter, 50))
                 . '</div>';
         }
-        return  '<div class="filter">'
+        return  '<div class="filter icinga-controls">'
             . $this->renderSearch()
             . '<form action="'
             . Url::fromRequest()
@@ -783,8 +783,8 @@ class FilterEditor extends AbstractWidget
             . $this->renderFilter($this->filter)
             . '</li></ul>'
             . '<div class="buttons">'
-            . '<input type="submit" name="submit" value="Apply" />'
-            . '<input type="submit" name="cancel" value="Cancel" />'
+            . '<input type="submit" name="cancel" value="Cancel" class="button btn-cancel" />'
+            . '<input type="submit" name="submit" value="Apply" class="button btn-primary"/>'
             . '</div>'
             . '<input type="hidden" name="formUID" value="FilterEditor">'
             . '</form>'

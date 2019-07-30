@@ -36,11 +36,11 @@ class Announcements extends AbstractWidget
         $announcements = $repo->findActive();
         $announcements->applyFilter($acked);
         if ($announcements->hasResult()) {
-            $html = '<ul role="alert" id="announcements">';
+            $html = '<ul role="alert">';
             foreach ($announcements as $announcement) {
                 $ackForm = new AcknowledgeAnnouncementForm();
                 $ackForm->populate(array('hash' => $announcement->hash));
-                $html .= '<li><div>'
+                $html .= '<li><div class="message">'
                     . Markdown::text($announcement->message)
                     . '</div>'
                     . $ackForm

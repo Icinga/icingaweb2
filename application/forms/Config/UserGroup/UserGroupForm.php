@@ -64,6 +64,7 @@ class UserGroupForm extends RepositoryForm
             . ' have their membership cleared automatically.'
         ));
         $this->setSubmitLabel($this->translate('Yes'));
+        $this->setAttrib('class', 'icinga-form icinga-controls');
     }
 
     /**

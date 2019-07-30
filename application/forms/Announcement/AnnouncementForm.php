@@ -92,6 +92,7 @@ class AnnouncementForm extends RepositoryForm
     {
         $this->setTitle(sprintf($this->translate('Remove announcement %s?'), $this->getIdentifier()));
         $this->setSubmitLabel($this->translate('Yes'));
+        $this->setAttrib('class', 'icinga-controls');
     }
 
     /**

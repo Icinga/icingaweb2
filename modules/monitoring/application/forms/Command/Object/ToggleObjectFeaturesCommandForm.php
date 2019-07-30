@@ -32,7 +32,7 @@ class ToggleObjectFeaturesCommandForm extends ObjectsCommandForm
     public function init()
     {
         $this->setUseFormAutosubmit();
-        $this->setAttrib('class', 'inline object-features');
+        $this->setAttrib('class', self::DEFAULT_CLASSES . ' object-features');
         $features = array(
             ToggleObjectFeatureCommand::FEATURE_ACTIVE_CHECKS => array(
                 'label'         => $this->translate('Active Checks'),

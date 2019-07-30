@@ -304,8 +304,11 @@ a:hover > .icon-cancel {
 // Collapsibles
 
 .collapsible.collapsed {
-  position: relative;
   overflow: hidden;
+}
+
+.collapsible.collapsed:not([data-toggle-element]) {
+  position: relative;
 
   &:before, &:after {
     content: "";
@@ -328,7 +331,7 @@ a:hover > .icon-cancel {
   }
 }
 
-.impact .collapsible.collapsed {
+.impact .collapsible.collapsed:not([data-toggle-element]) {
   &:before {
     opacity: 0;
   }

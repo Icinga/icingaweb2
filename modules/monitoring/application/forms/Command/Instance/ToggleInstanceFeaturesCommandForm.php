@@ -26,7 +26,7 @@ class ToggleInstanceFeaturesCommandForm extends CommandForm
     public function init()
     {
         $this->setUseFormAutosubmit();
-        $this->setAttrib('class', 'inline instance-features');
+        $this->setAttrib('class', self::DEFAULT_CLASSES . ' instance-features');
     }
 
     /**

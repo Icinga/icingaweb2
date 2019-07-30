@@ -45,7 +45,7 @@ class UserController extends AuthBackendController
         }
 
         $this->view->backendSelection = new Form();
-        $this->view->backendSelection->setAttrib('class', 'backend-selection');
+        $this->view->backendSelection->setAttrib('class', 'backend-selection icinga-controls');
         $this->view->backendSelection->setUidDisabled();
         $this->view->backendSelection->setMethod('GET');
         $this->view->backendSelection->setTokenDisabled();
@@ -141,6 +141,7 @@ class UserController extends AuthBackendController
         if ($this->hasPermission('config/authentication/groups/edit')) {
             $removeForm = new Form();
             $removeForm->setUidDisabled();
+            $removeForm->setAttrib('class', 'inline');
             $removeForm->addElement('hidden', 'user_name', array(
                 'isArray'       => true,
                 'value'         => $userName,

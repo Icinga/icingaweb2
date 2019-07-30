@@ -1,618 +1,494 @@
-/*! Icinga Web 2 | (c) 2014 Icinga Development Team | GPLv2+ */
+/*! Icinga Web 2 | (c) 2019 Icinga Development Team | GPLv2+ */
 
-input:not([type]),
-input[type=text],
-input[type=date],
-input[type=datetime-local],
-input[type=email],
-input[type=number],
-input[type=password],
-input[type=search],
-input[type=tel],
-input[type=time],
-input[type=url] {
-  .box-shadow(0 1px 0 0 @gray-light);
-  .transition(border 0.3s ease);
+/**
+ Rules found in here are structured with two layers:
 
-  border: none;
-  border-bottom: 1px solid @gray-light;
-  outline: none;
-  padding: @vertical-padding / 2 @horizontal-padding / 2;
+  1) form.icinga-form, that's what defines the general structure of our single/individual forms. It's not
+     supposed to be used for any other forms that are not the only content on the page (e.g. inline-forms)
+  2) .icinga-controls, this defines the design of our controls. Any input that's part of a container with
+     this class gets our design applied
+ */
 
-  &:focus:not([readonly]) {
-    border-color: @icinga-blue;
-  }
+// Used colors
 
-  width: 20em;
-}
+@disabled-gray: #9a9a9a;
+@low-sat-blue: #dae3e6;
+@low-sat-blue-dark: #becbcf;
+@icinga-blue-light: #a5c4cd;
+@icinga-blue-dark: #0081a6;
 
-select, textarea {
-  width: 20em;
-}
+// General form layout
 
-.control-button,
-input[type="submit"] {
-  .button();
-}
+form.icinga-form {
+  max-width: 70em;
+  width: 80%;
 
-input:-moz-placeholder { // FF 18-
-  color: @gray-light;
-  opacity: 1;
-}
-
-input::-moz-placeholder { // FF 19+
-  color: @gray-light;
-  opacity: 1;
-}
-
-input:-ms-input-placeholder {
-  color: @gray-light;
-}
-
-input::-webkit-input-placeholder {
-  color: @gray-light;
-}
-
-input.search {
-  background: transparent url("../img/icons/search.png") no-repeat scroll 0.1em center;
-  background-size: 1em 1em;
-  padding-left: 1.5em;
-
-  &:focus {
-    background-color: @body-bg-color;
-    background-image: url('../img/icons/search_icinga_blue.png');
-  }
-}
-
-// TODO(el): .form-controls-inline control-group { display: inline-block; }
-form.inline,
-.form-inline {
   .control-group {
-    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+
+    // Negative margin-right because every child gets 1em right but we can't exclude
+    // the last element as it's impossible to identify the last *visible* element
+    margin: 1em -1em 1em 0;
+
+    > * {
+      margin-right: 1em;
+    }
   }
+
   .form-controls {
-    margin: 0;
-  }
-  display: inline-block;
-}
-
-.form-controls {
-  margin-left: 10em;
-}
-
-.autosubmit-info {
-  margin-left: 0.5em;
-}
-
-button:hover .icon-cancel {
-  color: @color-critical;
-}
-
-.control-info {
-  color: @text-color-light;
-  margin-left: 0.2em;
-
-  &:hover {
-    .opacity(0.6);
+    display: flex;
+    justify-content: flex-end;
   }
 }
 
-.control-label {
-  display: inline-block;
+// Minimal form layout
+
+#layout.minimal-layout,
+#layout.twocols:not(.wide-layout) {
+  form.icinga-form {
+    width: 100%;
+
+    .control-label-group {
+      text-align: left;
+      padding-bottom: 0;
+      padding-left: 0;
+      margin-bottom: 0;
+    }
+
+    .toggle-switch ~ .control-info:before {
+      margin-left: 0;
+    }
+
+    .control-info {
+      opacity: .5;
+    }
+
+    .errors > li {
+      margin-left: .5em;
+    }
+  }
 }
 
-label {
-  color: @text-color-light;
-  font-size: @font-size-small;
-}
+// Label styles
 
-.control-label-group {
-  display: inline-block;
-  padding-right: @horizontal-padding;
+form.icinga-form .control-label-group {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  line-height: 1.1em;
+  padding: .5625em .5625em .5625em 0;
+  max-height: 2.5em;
   text-align: right;
-  width: 10em;
+  width: 14em;
 }
 
-.control-group {
-  padding: @vertical-padding @horizontal-padding;
+.icinga-controls fieldset {
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-top: 1px solid @gray-light;
 
-  .errors {
-    color: @color-critical;
+  legend, .description {
+    margin-left: .7em;
   }
 }
+
+.icinga-controls .control-info {
+  line-height: 2.25em;
+  opacity: .6;
+
+  &:before {
+    margin-right: 0;
+  }
+
+  &:hover:before {
+    color: black;
+  }
+}
+
+form.icinga-form .control-group .control-info {
+  margin-left: -.5em;
+}
+form.icinga-form .control-group .toggle-switch ~ .control-info {
+  margin-left: 0;
+}
+
+form.inline {
+  display: inline-block;
+
+  .control-group .spinner {
+    line-height: 1.5;
+    margin: 0 auto;
+    padding: 0 .5em;
+  }
+}
+
+// General input styles
+
+.icinga-controls {
+  input[type="text"],
+  input[type="password"],
+  input[type="number"],
+  input[type="datetime-local"],
+  input[type="date"],
+  input[type="time"],
+  textarea,
+  select {
+    background-color: @low-sat-blue;
+  }
+}
+
+form.icinga-form {
+  input[type="text"],
+  input[type="password"],
+  input[type="number"],
+  input[type="datetime-local"],
+  input[type="date"],
+  input[type="time"],
+  textarea,
+  select {
+    flex: 1;
+    width: 0;
+  }
+}
+
+.icinga-controls {
+  input:not([type="checkbox"]),
+  .toggle-switch,
+  button,
+  select,
+  textarea {
+    border: none;
+    .rounded-corners(.25em);
+    .appearance(none);
+  }
+}
+
+.icinga-controls {
+  input:not([type="checkbox"]),
+  .toggle-switch,
+  select,
+  textarea,
+  button,
+  .toggle-switch {
+    font-size: inherit;
+    padding: @vertical-padding;
+  }
+}
+
+form.icinga-form {
+  .control-group .toggle-switch,
+  .form-controls .toggle-switch {
+    margin-top: 0.5em*0.666666667;
+    margin-bottom: 0.5em*0.666666667;
+  }
+}
+
+form.icinga-form select:not([multiple]) {
+  // Compensate inconsistent select height calculations
+  line-height: 1em;
+  height: 2.25em;
+}
+
+// Remove native dropdown arrow in IE10+
+.icinga-controls select::-ms-expand {
+  display: none;
+  opacity: 0;
+}
+
+.icinga-controls select:not([multiple]) {
+  padding-right: 1.5625em;
+  background-image: url(../img/select-icon.svg);
+  background-repeat: no-repeat;
+  background-position: right center;
+  background-size: contain;
+}
+
+form.icinga-form select {
+  width: 0; // Prevent selects with long option values from exceeding the container
+}
+
+form.inline select {
+  width: auto;
+}
+
+
+// Specific input styles
 
 .link-button {
   .action-link();
   // Reset defaults
   background: none;
   border: none;
+  display: inline-block;
   padding: 0;
 
   text-align: left;
+}
 
-  &:hover {
-    text-decoration: underline;
+.icinga-controls {
+  input ~ .spinner,
+  button ~ .spinner,
+  select ~ .spinner,
+  textarea ~ .spinner {
+    line-height: normal;
+    padding: .5em 0;
+
+    &:before {
+      vertical-align: middle;
+      margin-left: .5em;
+      opacity: 0.4;
+    }
   }
 }
 
-// @TODO(el): Fix that
-.form-description, .form-description ul,
-.form-info, .form-info ul,
-.form-notifications, .form-notifications ul,
-.form-errors, .form-errors ul,
-form .errors, form .errors ul {
-  // Reset defaults
-  margin: 5 0;
+/* selects get their spinner specifically placed */
+.icinga-controls select:not([multiple]) + .spinner {
+  height: 2.25em;
+  margin: 0;
+
+  &:before {
+    margin-left: -3.75em;
+  }
+}
+
+form.icinga-form .form-controls {
+  .spinner {
+    order: -1;
+  }
+
+  .btn-primary {
+    order: 99;
+  }
+}
+
+// Button styles
+
+.icinga-controls {
+  input[type="submit"],
+  input[type="submit"].btn-confirm {
+    .button();
+  }
+
+  input[type="submit"].btn-remove {
+    .button(@body-bg-color, @color-critical, darken(@color-critical, 10%));
+  }
+
+  input[type="submit"].btn-cancel {
+    .button(@body-bg-color, @gray, @black);
+  }
+}
+
+// Toggle styles
+
+.icinga-controls .toggle-switch {
+  cursor: pointer;
+  position: relative;
+  display: inline-block;
+  height: 1.5em;
+  width: 2.625em;
+}
+
+// Hide default checkbox
+.icinga-controls input[type="checkbox"] {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  margin: 0;
   padding: 0;
-  list-style-type: none;
 }
 
-.form-errors {
-  background-color: @color-critical;
-  color: @text-color-inverted;
+.icinga-controls .toggle-switch .toggle-slider {
+  position: absolute;
+  left: 0;
+  top: 0;
+
+  display: inline-block;
+  background:  @low-sat-blue;
+  border: 1px solid @low-sat-blue;
+  box-sizing: content-box;
+  border-radius: 1em;
+  height: 4/3em;
+  width: 8/3em;
+  vertical-align: middle;
 }
 
-.form-info {
+.icinga-controls .toggle-switch .toggle-slider:before {
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  background: @text-color-inverted;
+  border-radius: 1em;
+  border: 1px solid @low-sat-blue;
+  box-sizing: border-box;
+  content: "";
+  display: block;
+  height: 4/3em;
+  margin-left: 0;
+  width: 4/3em;
+
+  @transition: left .2s ease, margin .2s ease;
+  -webkit-transition: @transition;
+  -moz-transition: @transition;
+  -o-transition: @transition;
+  transition: @transition;
+}
+
+.icinga-controls input[type="checkbox"]:checked + .toggle-switch .toggle-slider {
+  background-color: @icinga-blue;
+  border: 1px solid @icinga-blue;
+}
+
+.icinga-controls input[type="checkbox"]:focus + .toggle-switch .toggle-slider {
+  box-shadow: 0 0 0 2px @body-bg-color, 0 0 0 4px fade(@icinga-blue, 40);
+}
+
+.icinga-controls input[type="checkbox"]:checked + .toggle-switch .toggle-slider:before {
+  border: 1px solid @icinga-blue;
+  left: 100%;
+  margin-left: -4/3em;
+}
+
+// Disabled inputs
+
+.icinga-controls .toggle-switch.disabled {
+  cursor: default;
+
+  & > .toggle-slider {
+    background-color: @gray-light;
+    border-color: @gray-light;
+
+    &:before {
+      background-color: @gray-lighter;
+      border-color: @gray-light;
+    }
+  }
+}
+
+form.icinga-form .control-group.disabled .control-label-group {
+  color: @disabled-gray;
+}
+
+.icinga-controls {
+  input[disabled],
+  select[disabled] {
+    background: @gray-lighter;
+    border-color: transparent;
+  }
+}
+
+// Errors and additional information
+
+form.icinga-form {
+  .form-notifications,
+  .form-description {
+    border-radius: .25em;
+    display: flex;
+    list-style: none;
+    align-items: center;
+    margin: 0 0 1em 0;
+    padding: .25em .5em;
+
+    ul {
+      list-style: none;
+      margin: 0;
+      padding: 0 .5em;
+    }
+
+    li {
+      list-style: none;
+    }
+
+    & .form-notification-icon,
+    & .form-description-icon {
+      font-size: 2em;
+      margin-left: .25em;
+      opacity: .4;
+      align-self: flex-start;
+    }
+  }
+
+  .form-notifications {
+    &.info {
+      background-color: fade(@color-ok, 20%);
+    }
+
+    &.error {
+      background-color: fade(@color-critical, 30%);
+    }
+
+    &.warning {
+      background-color: fade(@color-warning, 40%);
+    }
+  }
+
+  .form-description {
+    background-color: fade(@gray, 5%);
+  }
+
+  .errors {
+    list-style: none;
+    position: relative;
+    margin: 0;
+    padding: 0;
+    display: block;
+    width: 100%;
+
+    & > li {
+      margin: -0.5em 0 0.5em 16.5em;
+      color: #f56;
+    }
+  }
+}
+
+form.icinga-form .form-info {
   color: @text-color-light;
   font-size: @font-size-small;
+  list-style: none;
+  padding-left: 0;
 }
 
-.form-notifications {
-  .notification-error {
-    background-color: @color-critical;
-    color: @text-color-inverted;
-    li {
-      padding: @vertical-padding @horizontal-padding;
-    }
-  }
-  .notification-info {
-    background-color: @color-pending;
-    color: @text-color-inverted;
-    li {
-      padding: @vertical-padding @horizontal-padding;
-    }
-  }
-  .notification-warning {
-    background-color: @color-warning;
-    color: @text-color-inverted;
-    li {
-      padding: @vertical-padding @horizontal-padding;
-    }
-  }
-}
+// Placeholder styles
 
-button.animated.active {
-  &.move-up i:before {
-    .animate(move-vertical 500ms infinite linear);
+.icinga-controls {
+  input:-moz-placeholder { // FF 18-
+    color: @gray;
+    opacity: 1;
   }
 
-  &.move-down i:before {
-    .animate(move-vertical 500ms infinite linear reverse);
+  input::-moz-placeholder { // FF 19+
+    color: @gray;
+    opacity: 1;
+  }
+
+  input:-ms-input-placeholder {
+    color: @gray;
+  }
+
+  input::-webkit-input-placeholder {
+    color: @gray;
   }
 }
 
-textarea {
-  height: 8em;
+// Specific form styles
+
+.search.inline {
+  display: inline-block;
 }
 
-select.grant-permissions {
-  height: 20em;
+.sort-control > * {
+  display: inline-block;
+}
+
+/* Flyover form styles */
+
+.flyover-content form:not(.inline):not([role="search"]) {
   width: auto;
 }
 
-//div.config-form-buttons {
-//  margin-top: 5px;
-//}
-//
-//table.configTable {
-//  border-spacing: 15px;
-//  border-collapse: separate;
-//}
-//
-//td.configTable {
-//  border: solid;
-//  border-width: thin;
-//  padding: 10px;
-//  min-width: 300px;
-//}
-//
-//.form-element {
-//  margin-bottom: 1em;
-//}
-//
-//label {
-//  display: block;
-//  font-weight: bold;
-//}
-//
-//input, select, textarea {
-//  box-sizing: border-box;
-//  -moz-box-sizing: border-box;
-//  -webkit-box-sizing: border-box;
-//  border: 1px solid #ddd;
-//  font-size: 0.9em;
-//  padding: 0.2em;
-//  background: #fff;
-//  font-family: Calibri, Helvetica, sans-serif;
-//}
-//
-//input[type=checkbox] {
-//  margin-top: 0.3em;
-//  margin-bottom: 0.1em;
-//}
-//
-//input:focus, select:focus {
-//  border-color: #333;
-//}
-//
-//input[type=submit] {
-//  font-weight: bold;
-//  text-align: center;
-//  color: #fff;
-//  border: 1px solid;
-//  border-color: @colorPetrol;
-//  background: @colorPetrol;
-//  outline: 0;
-//
-//  &[disabled] {
-//    background-color: #666;
-//    border-color: black;
-//  }
-//
-//  &:hover[disabled], &:active[disabled], &:focus[disabled] {
-//    background-color: #666;
-//  }
-//}
-//
-//input[type=submit]:hover, a.button:hover, input[type=submit]:focus {
-//  background-color: #333;
-//  border-color: #333;
-//}
-//
-//input[type=submit]:hover, a.button:hover {
-//  cursor: pointer;
-//  color: white;
-//}
-//
-//input:focus, select:focus {
-//  background: white;
-//  outline: 0;
-//}
-//
-//input::-moz-placeholder {
-//  color: #333;
-//}
-//
-//input::-webkit-input-placeholder {
-//  color: #333;
-//}
-//
-//input:-ms-input-placeholder {
-//  color: #333;
-//}
-//
-//input::-moz-focus-inner {
-//  border: 0;
-//  outline: 0;
-//}
-//
-//button::-moz-focus-inner {
-//  border: 0;
-//  outline: 0;
-//}
-//
-//select::-moz-focus-inner {
-//  border: 0;
-//  outline: 0;
-//}
-//
-//form.inline {
-//  margin: 0;
-//  padding: 0;
-//  display: inline;
-//}
-//
-//div.spinner {
-//  display: inline-block;
-//  margin-top: 0.2em;
-//  margin-left: 0.25em;
-//
-//  i {
-//    visibility: hidden;
-//
-//    &.active {
-//      visibility: visible;
-//
-//      &:before {
-//        .animate(spin 2s infinite linear);
-//      }
-//    }
-//
-//    &:before {
-//      margin: 0; // Disables wobbling
-//    }
-//  }
-//}
-//
-//button.animated.active {
-//  &.move-up i:before {
-//    .animate(move-vertical 500ms infinite linear);
-//  }
-//
-//  &.move-down i:before {
-//    .animate(move-vertical 500ms infinite linear reverse);
-//  }
-//}
-//
-//button, .button-like {
-//  font-size: 0.9em;
-//  font-weight: bold;
-//  outline: 0;
-//  color: #fff;
-//  padding: 0.2em;
-//  border: 1px solid;
-//  border-color: @colorPetrol;
-//  background: @colorPetrol;
-//
-//  &[disabled] {
-//    background-color: #666;
-//    border-color: black;
-//  }
-//
-//  &:hover, &:focus, &:active {
-//    background-color: #333;
-//    border-color: #333;
-//    cursor: pointer;
-//
-//    &[disabled] {
-//      background-color: #666;
-//    }
-//  }
-//}
-//
-//.button-like {
-//  display: inline-block;
-//}
-//
-//a.button-like {
-//  cursor: default;
-//  text-decoration: none;
-//}
-//
-//form.link-like input[type="submit"], form.link-like button[type="submit"], input.link-like, button.link-like {
-//  color: @colorLinkDefault;
-//  font-weight: normal;
-//  border: none;
-//  background: none;
-//  padding: 0;
-//  font-size: 1em;
-//  cursor: pointer;
-//
-//  &.icon-only {
-//    color: inherit;
-//    font-size: 1.5em;
-//
-//    &:hover, &:focus, &:active {
-//      color: #666;
-//    }
-//  }
-//}
-//
-//form.link-like input[type="submit"]:hover,
-//form.link-like input[type="submit"]:focus,
-//form.link-like input[type="submit"]:active,
-//form.link-like button[type="submit"]:hover,
-//form.link-like button[type="submit"]:focus,
-//form.link-like button[type="submit"]:active,
-//input.link-like:hover,
-//input.link-like:focus,
-//input.link-like:active,
-//button.link-like:hover,
-//button.link-like:focus,
-//button.link-like:active {
-//  text-decoration: underline;
-//  background: none;
-//  color: @colorLinkDefault;
-//}
-//
-//.non-list-like-list {
-//  list-style-type: none;
-//  margin: 0;
-//  padding: 0.5em 0.5em 0;
-//
-//  li {
-//    padding-bottom: 0.5em;
-//  }
-//}
-//
-//form div.element ul.errors {
-//  .non-list-like-list;
-//  margin: 0.3em 0 0 0.6em;
-//
-//  li {
-//    color: @colorCritical;
-//    font-weight: bold;
-//  }
-//}
-//
-//form ul.form-errors {
-//  .non-list-like-list;
-//  margin-bottom: 1em;
-//  background-color: @colorCritical;
-//
-//  ul.errors {
-//    .non-list-like-list;
-//    padding: 0;
-//
-//    li:last-child {
-//      padding-bottom: 0;
-//    }
-//  }
-//
-//  li {
-//    color: white;
-//    font-weight: bold;
-//  }
-//}
-//
-//form ul.form-notifications {
-//  .non-list-like-list;
-//  margin-bottom: 1em;
-//  padding: 0;
-//
-//  ul {
-//    .non-list-like-list;
-//
-//    &.info {
-//      background-color: @colorFormNotificationInfo;
-//    }
-//
-//    &.warning {
-//      background-color: @colorFormNotificationWarning;
-//    }
-//
-//    &.error {
-//      background-color: @colorFormNotificationError;
-//    }
-//  }
-//
-//  li {
-//    color: white;
-//    font-weight: bold;
-//  }
-//}
-//
-//form div.element {
-//  margin-top: 0.5em;
-//  margin-bottom: 0.5em;
-//}
-//
-//form label {
-//  display: inline-block;
-//  vertical-align: top;
-//  margin-top: 0.25em;
-//  margin-right: 1em;
-//  font-size: 0.9em;
-//  width: 10em;
-//}
-//
-//form div.element i.help:before {
-//  margin-top: 0.25em;
-//}
-//
-//label ~ * {
-//  vertical-align: top;
-//}
-//
-//form dt {
-//  vertical-align: top;
-//}
-//
-//select, input[type=text], textarea {
-//  width: 20em;
-//  display: inline-block;
-//}
-//
-//textarea {
-//  height: 4em;
-//}
-//
-//textarea.resource {
-//  &.ssh-identity {
-//    width: 50%;
-//    height: 25em;
-//  }
-//}
-//
-//form .description {
-//  font-size: 0.8em;
-//  margin: 0.3em 0 0 0.6em;
-//}
-//
-//.description {
-//  display: block;
-//}
-//
-//select.grant-permissions {
-//  height: 20em;
-//  width: auto;
-//}
-//
-//label ~ input, label ~ select, label ~ textarea {
-//  margin-left: 1.3em;
-//}
-//
-//label + i ~ input, label + i ~ select, label + i ~ textarea {
-//  margin-left: 0;
-//}
-//
-//button.noscript-apply {
-//  margin-left: 0.5em;
-//}
-//
-//i.autosubmit-warning {
-//  display: inline-block;
-//  margin-left: 0.2em;
-//  margin-top: 0.25em;
-//
-//  &:before {
-//    margin: 0; // Disables wobbling
-//  }
-//
-//  &.spinning:before {
-//    content: '\e874'; // icon-spin6
-//    .animate(spin 2s infinite linear);
-//  }
-//}
-//
-//input[type=checkbox] + i.autosubmit-warning {
-//  margin-top: 0.15em;
-//}
-//
-//html.no-js i.autosubmit-warning {
-//  .sr-only;
-//}
-//
-//form ul.descriptions {
-//  .info-box;
-//  padding: 0.5em 0.5em 0 1.8em;
-//
-//  li {
-//    padding-bottom: 0.5em;
-//
-//    &:only-child {
-//      margin-left: -1.3em;
-//      list-style-type: none;
-//    }
-//  }
-//}
-//
-//form ul.hints {
-//  .non-list-like-list;
-//  padding: 0.5em 0.5em 0 0.5em;
-//
-//  li {
-//    font-size: 0.8em;
-//    padding-bottom: 0.5em;
-//  }
-//}
-//
-//.control-group {
-//  & > * {
-//    float: left;
-//    margin-right: 0.5em;
-//  }
-//
-//  div.element {
-//    margin-top: 0;
-//    margin-bottom: 0;
-//  }
-//
-//  &:after {
-//    content: ".";
-//    visibility: hidden;
-//    display: block;
-//    height: 0;
-//    clear: both;
-//  }
-//}
+.flyover-content .control-label-group {
+  text-align: left;
+}
