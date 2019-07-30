@@ -155,10 +155,14 @@ class ServiceStatus extends DataView
     {
         return array(
             'host',
+            'host_contact',
+            'host_contactgroup',
             'hostgroup',
             'hostgroup_alias',
             'hostgroup_name',
             'service',
+            'service_contact',
+            'service_contactgroup',
             'service_host',
             'servicegroup',
             'servicegroup_alias',

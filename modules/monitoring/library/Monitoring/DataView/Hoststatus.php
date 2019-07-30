@@ -71,7 +71,7 @@ class HostStatus extends DataView
     public function getStaticFilterColumns()
     {
         return array(
-            'host',
+            'host', 'host_contact', 'host_contactgroup',
             'hostgroup', 'hostgroup_alias', 'hostgroup_name',
             'service', 'service_description', 'service_display_name',
             'servicegroup', 'servicegroup_alias', 'servicegroup_name'
