@@ -171,6 +171,10 @@
          * @returns {void}
          */
         onChange: function(key, callback, context) {
+            if (this.backend !== window.localStorage) {
+                throw new Error('[Storage] Only the localStorage emits events');
+            }
+
             var prefixedKey = this.prefixKey(key);
 
             if (typeof Icinga.Storage.subscribers[prefixedKey] === 'undefined') {
@@ -273,7 +277,10 @@
             this.storage = storage;
             this.key = key;
 
-            storage.onChange(key, this.onChange, this);
+            if (storage.backend === window.localStorage) {
+                storage.onChange(key, this.onChange, this);
+            }
+
             return this;
         },
 
