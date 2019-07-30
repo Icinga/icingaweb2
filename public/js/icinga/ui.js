@@ -728,6 +728,8 @@
                 return null;
             }
 
+            $cont = $cont.closest('.container');
+
             var containerId = $cont.data('icingaContainerId');
             if (typeof containerId === 'undefined') {
                 /**
