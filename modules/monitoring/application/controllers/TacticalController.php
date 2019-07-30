@@ -55,11 +55,8 @@ class TacticalController extends Controller
         $this->setupFilterControl($stats, null, ['host', 'service'], ['format']);
         $this->view->setHelperFunction('filteredUrl', function ($path, array $params) {
             $filter = clone $this->view->filterEditor->getFilter();
-            foreach ($params as $column => $value) {
-                $filter = $filter->andFilter($filter->where($column, $value));
-            }
 
-            return $this->view->url($path)->setQueryString($filter->toQueryString());
+            return $this->view->url($path)->setParams($params)->addFilter($filter);
         });
 
         $this->handleFormatRequest($stats);

@@ -1,4 +1,5 @@
 <?php
+
 use Icinga\Module\Monitoring\Web\Widget\StateBadges;
 
 if (! $this->compact): ?>
@@ -42,12 +43,15 @@ if (! $this->compact): ?>
             <th>
                 <?= $this->qlink(
                     $hostGroup->hostgroup_alias,
-                    $this->url('monitoring/list/hosts')->addFilter($this->filterEditor->getFilter()),
-                    array('hostgroup_name' => $hostGroup->hostgroup_name, 'sort' => 'host_severity'),
-                    array('title' => sprintf(
+                    $this
+                        ->url('monitoring/list/hosts')
+                        ->setParams(['hostgroup_name' => $hostGroup->hostgroup_name])
+                        ->addFilter($this->filterEditor->getFilter()),
+                    ['sort' => 'host_severity'],
+                    ['title' => sprintf(
                         $this->translate('List all hosts in the group "%s"'),
                         $hostGroup->hostgroup_alias
-                    ))
+                    )]
                 ) ?>
             </th>
             <td>
@@ -140,12 +144,18 @@ if (! $this->compact): ?>
             <td class="count-col">
                 <?= $this->qlink(
                     $hostGroup->services_total,
-                    $this->url('monitoring/list/services')->addFilter($this->filterEditor->getFilter()),
-                    array('hostgroup_name' => $hostGroup->hostgroup_name, 'sort' => 'service_severity'),
-                    array('title' => sprintf(
-                        $this->translate('List all services of all hosts in host group "%s"'),
-                        $hostGroup->hostgroup_alias
-                    ), 'class' => 'badge')
+                    $this
+                        ->url('monitoring/list/services')
+                        ->setParams(['hostgroup_name' => $hostGroup->hostgroup_name])
+                        ->addFilter($this->filterEditor->getFilter()),
+                    ['sort' => 'service_severity'],
+                    [
+                        'title' => sprintf(
+                            $this->translate('List all services of all hosts in host group "%s"'),
+                            $hostGroup->hostgroup_alias
+                        ),
+                        'class' => 'badge'
+                    ]
                 ) ?>
             </td>
             <td>

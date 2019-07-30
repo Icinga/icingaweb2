@@ -298,6 +298,8 @@ class ServicegroupQuery extends IdoQuery
                 $additionalFilter = clone $filter;
             }
 
+            $this->requireVirtualTable('members');
+
             $query->joinVirtualTable('members');
 
             return ['sgm.service_object_id', 'so.object_id'];
