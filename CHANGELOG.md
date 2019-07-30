@@ -4,6 +4,84 @@ Please make sure to always read our [Upgrading](doc/80-Upgrading.md) documentati
 
 ## What's New
 
+### What's New in Version 2.7.0
+
+You can find issues related to this release on our [Roadmap](https://github.com/Icinga/icingaweb2/milestone/52?closed=1).
+
+#### Icinga's Amazingness Spreads Further
+
+All the Japanese and Ukrainian monitoring enthusiasts can now appreciate our web-frontend in their native tongue. Being
+so late to the party is also of their advantage, though. Because they can adjust their dashboard without worrying it gets
+broke with the next update. (All other admins with non-english users, please have a look at our
+[upgrading documentation](doc/80-Upgrading.md#upgrading-to-icinga-web-2-27x-))
+
+* Add Japanese language support [#3776](https://github.com/Icinga/icingaweb2/pull/3776)
+* Add Ukrainian language support [#3828](https://github.com/Icinga/icingaweb2/pull/3828)
+* Don't translate pane and dashlet names in configs [#3837](https://github.com/Icinga/icingaweb2/pull/3837)
+
+#### Modules - Bonus Functionality Unleashed
+
+With this release module developers got additional ways to customize Icinga Web 2. Whether you ever wanted to hook into
+a configuration form's handling, to perform your very own Ajax requests or enhance our multi-select views with fancy
+graphs. All is possible now.
+
+* Allow to hook into a configuration form's handling [#3862](https://github.com/Icinga/icingaweb2/pull/3862)
+* Allow to fully customize click and submit handling [#3794](https://github.com/Icinga/icingaweb2/issues/3767)
+* Integrate DetailviewExtension into multi-select views [#3304](https://github.com/Icinga/icingaweb2/pull/3304)
+
+#### UI - Your Daily Routine and Incident Management, Enhanced
+
+Users with color deficiencies now have a built-in theme to ease navigating within Icinga Web 2. Also, our forms got
+a long overdue re-design and now look less boring. Though, the best of all features is that clicking while holding
+the Ctrl-key now actually opens a new browser tab! Lost comments? No more. Defining an expiry date again? No more!
+
+* Add colorblind theme [#3743](https://github.com/Icinga/icingaweb2/pull/3743)
+* Improve the look of forms [#3416](https://github.com/Icinga/icingaweb2/issues/3416)
+* Make ctrl-click open new tab [#3723](https://github.com/Icinga/icingaweb2/pull/3723)
+
+#### Stay Focused - More Room for More Important Stuff
+
+Some of you know that some checks tend to produce walls of text or measure (too) many interfaces. Now, plugin output
+and performance data will collapse if they exceed a certain height. If necessary they can of course be expanded and
+keep that way across browser restarts. The same is also true for the sidebar. (Though, this one stays *collapsed*)
+
+* Persistent Collapsible Containers [#3638](https://github.com/Icinga/icingaweb2/pull/3638)
+* Collapsible plugin output [#3870](https://github.com/Icinga/icingaweb2/pull/3870)
+* Collapsed sidebar should stay collapsed [#3682](https://github.com/Icinga/icingaweb2/issues/3628)
+
+#### Markdown - Tables, Lists and Emphasized Text The Easy Way
+
+Since we now have the possibility to collapse large content dynamically, we allow you to add entire wiki pages to hosts
+and services. Though, if you prefer to use a real wiki to maintain those (what we'd strongly suggest) it's now easier
+than ever before to link to it. Copy url, paste url, submit comment, Done.
+
+* Make notes, comments and announcements markdown aware [#3814](https://github.com/Icinga/icingaweb2/pull/3814)
+* Transform any URL in a Comment to a clickable Link [#3441](https://github.com/Icinga/icingaweb2/issues/3441)
+* Support relative links in plugin output [#2916](https://github.com/Icinga/icingaweb2/issues/2916)
+
+#### Things You Have Missed Previously
+
+The tactical overview, our fancy pie charts, is now the very first result when you search something in the sidebar.
+If you'll see two entirely green circles there, relax. Also overdue or unreachable checks are now appropriately marked
+in list views and the service grid now allows you to switch between everything or problems only.
+
+* Add tactical overview to global search [#3845](https://github.com/Icinga/icingaweb2/pull/3845)
+* Servicegrid: Add toggle to show problems only [#3871](https://github.com/Icinga/icingaweb2/pull/3871)
+* Make overdue/unreachable checks better visible [#3860](https://github.com/Icinga/icingaweb2/pull/3860)
+
+#### Authorization - Knowing and Controlling What's Going On
+
+Roles can now be even more tailored to users since the introduction of a new placeholder. This placeholder allows to
+use a user's name in restrictions. Things like `_service_responsible_person=$user:local_name$` are now possible. The
+audit log now receives failed login-attempts, that's been made possible since hooks can now run for anonymous users.
+
+* Allow roles to filter for the currently logged in user [#3493](https://github.com/Icinga/icingaweb2/issues/3493)
+* Add possibility to disable permission checks for hooks [#3849](https://github.com/Icinga/icingaweb2/pull/3849)
+* Send failed login-attempts to the audit log [#3856](https://github.com/Icinga/icingaweb2/pull/3856)
+
+See also the [audit module](https://github.com/Icinga/icingaweb2-module-audit/releases) which got an update and is
+required for [#3856](https://github.com/Icinga/icingaweb2/pull/3856) to work.
+
 ### What's New in Version 2.6.3
 
 You can find issues related to this release on our [Roadmap](https://github.com/Icinga/icingaweb2/milestone/54?closed=1).
