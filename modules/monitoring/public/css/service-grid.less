@@ -60,3 +60,16 @@
   vertical-align: middle;
   width: 1.5em;
 }
+
+form.filter-toggle {
+  label:not(.toggle-switch) {
+    display: inline-block;
+    vertical-align: top;
+    margin-left: .5em;
+    color: @gray-light;
+  }
+
+  input[type="checkbox"]:checked ~ label {
+    color: inherit;
+  }
+}

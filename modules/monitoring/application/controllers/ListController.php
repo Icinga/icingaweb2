@@ -3,6 +3,7 @@
 
 namespace Icinga\Module\Monitoring\Controllers;
 
+use Icinga\Web\Form;
 use Zend_Form;
 use Icinga\Data\Filter\Filter;
 use Icinga\Module\Monitoring\Backend;
@@ -671,6 +672,19 @@ class ListController extends Controller
         $this->applyRestriction('monitoring/filter/objects', $query);
         $this->filterQuery($query);
         $filter = (bool) $this->params->shift('problems', false) ? Filter::where('service_problem', 1) : null;
+
+        $this->view->problemToggle = $problemToggle = new Form(['method' => 'GET']);
+        $problemToggle->setUidDisabled();
+        $problemToggle->setTokenDisabled();
+        $problemToggle->setAttrib('class', 'filter-toggle inline icinga-controls');
+        $problemToggle->addElement('checkbox', 'problems', [
+            'disableHidden' => true,
+            'autosubmit'    => true,
+            'value'         => $filter !== null,
+            'label'         => $this->translate('Problems Only'),
+            'decorators'    => ['ViewHelper', ['Label', ['placement' => 'APPEND']]]
+        ]);
+
         if ($this->params->get('flipped', false)) {
             $pivot = $query
                 ->pivot(
