@@ -706,7 +706,7 @@ abstract class IdoQuery extends DbQuery
                             switch (true) {
                                 case $child instanceof FilterExpression:
                                     $expression = $child->getExpression();
-                                    if (! is_array($expression)) {
+                                    if (! is_array($expression) && strpos($child->getExpression(), '*') === false) {
                                         break;
                                     }
                                     // Move to default
