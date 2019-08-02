@@ -2,6 +2,7 @@
 
 /* solarized colors: http://simianuprising.com/wp-content/uploads/2012/08/solarized-reference-horizontal.png */
 
+// Solarized base colors
 @base01: #586e75;
 @base00: #657b83;
 @base02: #073645;
@@ -9,10 +10,15 @@
 @base0: #839496;
 @base1: #93a1a1;
 @base2: #eee8d5;
-@button-primary-color: #237c98;
 
+// Gray colors
+@gray: @base1;
+@gray-light: @base01;
+@gray-lighter: #00222b;
+@gray-lightest: @base02;
+
+// Icinga colors
 @icinga-blue: @base1;
-@body-bg-color: @base03;
 
 @color-ok: #859900;
 @color-critical: #dc322f;
@@ -24,21 +30,31 @@
 @color-unreachable: #2aa198;
 @color-unreachable-handled: #1d736c;
 @color-pending: #268bd2;
+// Notification colors
 
+// Background color for <body>
+@body-bg-color: @base03;
+
+// Text colors
 @text-color: @base2;
 @text-color-light: @base1;
 @text-color-on-icinga-blue: @base2;
 @text-color-inverted: @base02;
 
+// Text color on <a>
 @link-color: @base0;
-
-@gray: @base1;
-@gray-light: @base01;
-@gray-lighter: #00222b;
-@gray-lightest: @base02;
-
 @tr-active-color: @base01;
 @tr-hover-color: @base02;
+
+// Menu colors
+@menu-bg-color: @base02;
+@menu-active-bg-color: @base03;
+@menu-highlight-color: @icinga-blue;
+@menu-2ndlvl-color: #c4c4c4;
+@menu-flyout-color: @text-color;
+
+// Form colors
+@button-primary-color: lighten(@base02, 20);
 
 #header {
   background-color: @base02;
@@ -130,6 +146,10 @@ textarea {
       color: @text-color;
       background-color: @base00;
     }
+
+    &.active:not(.selected) {
+      background-color: @base03;
+    }
   }
 
   .nav-level-2 > .nav-item {
@@ -141,6 +161,25 @@ textarea {
         color: @text-color;
       }
       background-color: @base00;
+    }
+
+    &.active.selected {
+      background-color: darken(@base03, 3);
+    }
+
+    &:not(.selected):not(.active) > a:hover,
+    &:not(.selected):not(.active) > a:focus {
+      color: @text-color;
+    }
+  }
+
+  ul:not(.nav-level-2) > .selected > a {
+    background-color: darken(@base03, 3);
+    color: @text-color;
+
+    &:after {
+      background-color: @body-bg-color;
+      box-shadow: 0 0 1em 0 rgba(0,0,0,0.6);
     }
   }
 
