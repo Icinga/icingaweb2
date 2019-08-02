@@ -9,6 +9,7 @@
 @base0: #839496;
 @base1: #93a1a1;
 @base2: #eee8d5;
+@button-primary-color: #237c98;
 
 @icinga-blue: @base1;
 @body-bg-color: @base03;
@@ -266,6 +267,10 @@ textarea {
   }
 }
 
+/* Form styles */
+
+@input-background: lighten(@base02, 5);
+
 form .control-group {
   input[type="text"],
   input[type="password"],
@@ -275,6 +280,50 @@ form .control-group {
   input[type="time"],
   textarea,
   select {
-    background-color: @base02;
+    background-color: @input-background;
+  }
+}
+
+.icinga-controls .toggle-switch .toggle-slider {
+  background:  @input-background;
+  border: 2px solid @input-background;
+}
+
+.icinga-controls .toggle-switch .toggle-slider:before {
+  background: @body-bg-color;
+  border: 1px solid @body-bg-color;
+}
+
+.icinga-controls input[type="checkbox"]:checked + .toggle-switch .toggle-slider {
+  background-color: @button-primary-color;
+  border: 1px solid @button-primary-color;
+}
+
+.icinga-controls input[type="checkbox"]:focus + .toggle-switch .toggle-slider {
+  box-shadow: 0 0 0 2px @body-bg-color, 0 0 0 4px fade(@button-primary-color, 40);
+}
+
+.icinga-controls input[type="checkbox"]:checked + .toggle-switch .toggle-slider:before {
+  border: 1px solid @button-primary-color;
+}
+
+.button {
+  background-color: @input-background;
+  border: 2px solid @input-background;
+  color: @text-color;
+
+  &:focus,
+  &:hover,
+  &.btn-primary {
+    background-color: lighten(@base02, 15);
+    border-color: lighten(@base02, 15);
+    color: @text-color;
+  }
+
+  &.btn-primary:focus,
+  &.btn-primary:hover {
+    background-color: @button-primary-color;
+    border-color: @button-primary-color;
+    color: @text-color;
   }
 }
