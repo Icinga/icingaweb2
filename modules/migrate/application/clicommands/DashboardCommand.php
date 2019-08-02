@@ -9,6 +9,7 @@ use Icinga\Application\Icinga;
 use Icinga\Application\Modules\DashboardContainer;
 use Icinga\Cli\Command;
 use Icinga\Application\Logger;
+use Icinga\Exception\IcingaException;
 use Icinga\Util\Translator;
 use ReflectionClass;
 
@@ -58,7 +59,12 @@ class DashboardCommand extends Command
                         continue;
                     }
 
-                    Translator::setupLocale($locale);
+                    try {
+                        Translator::setupLocale($locale);
+                    } catch (IcingaException $e) {
+                        Logger::debug('Ignoring locale "%s". Reason: %s', $locale, $e->getMessage());
+                        continue;
+                    }
 
                     foreach ($paneItemsProperty->getValue($module) as $paneName => $container) {
                         /** @var DashboardContainer $container */
