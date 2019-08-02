@@ -508,7 +508,7 @@
             }
 
             var title = req.getResponseHeader('X-Icinga-Title');
-            if (title && target === 'layout') {
+            if (title && (target === 'layout' || req.$target.is('#layout'))) {
                 this.icinga.ui.setTitle(decodeURIComponent(title));
             } else if (title && ! req.autorefresh && req.$target.closest('.dashboard').length === 0) {
                 req.$target.data('icingaTitle', decodeURIComponent(title));
