@@ -76,10 +76,7 @@ class DashboardCommand extends Command
                                 $dashletTitle = null;
                             }
 
-                            if (isset($options['disabled']) && mt($module->getName(), $paneName) !== $paneTitle) {
-                                // `disabled` is checked because if it's a module's pane that's the only reason
-                                // why it's in there. If a user utilized the same label though for a custom pane,
-                                // it remains as is.
+                            if (mt($module->getName(), $paneName) !== $paneTitle) {
                                 continue;
                             }
 
@@ -90,6 +87,10 @@ class DashboardCommand extends Command
                                         $dashletName = $name;
                                         break;
                                     }
+                                }
+
+                                if ($dashletName === null) {
+                                    $dashletName = $dashletTitle;
                                 }
                             }
 
