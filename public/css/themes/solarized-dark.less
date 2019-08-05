@@ -322,7 +322,8 @@ textarea {
 
 @input-background: lighten(@base02, 5);
 
-form .control-group {
+.icinga-form,
+.controls {
   input[type="text"],
   input[type="password"],
   input[type="number"],
@@ -333,29 +334,29 @@ form .control-group {
   select {
     background-color: @input-background;
   }
-}
 
-.icinga-controls .toggle-switch .toggle-slider {
-  background:  @input-background;
-  border: 2px solid @input-background;
-}
+  & .toggle-switch .toggle-slider {
+    background: @input-background;
+    border: 2px solid @input-background;
+  }
 
-.icinga-controls .toggle-switch .toggle-slider:before {
-  background: @body-bg-color;
-  border: 1px solid @body-bg-color;
-}
+  & .toggle-switch .toggle-slider:before {
+    background: @body-bg-color;
+    border: 1px solid @body-bg-color;
+  }
 
-.icinga-controls input[type="checkbox"]:checked + .toggle-switch .toggle-slider {
-  background-color: @button-primary-color;
-  border: 1px solid @button-primary-color;
-}
+  & input[type="checkbox"]:checked + .toggle-switch .toggle-slider {
+    background-color: @button-primary-color;
+    border: 1px solid @button-primary-color;
+  }
 
-.icinga-controls input[type="checkbox"]:focus + .toggle-switch .toggle-slider {
-  box-shadow: 0 0 0 2px @body-bg-color, 0 0 0 4px fade(@button-primary-color, 40);
-}
+  & input[type="checkbox"]:focus + .toggle-switch .toggle-slider {
+    box-shadow: 0 0 0 2px @body-bg-color, 0 0 0 4px fade(@button-primary-color, 40);
+  }
 
-.icinga-controls input[type="checkbox"]:checked + .toggle-switch .toggle-slider:before {
-  border: 1px solid @button-primary-color;
+  & input[type="checkbox"]:checked + .toggle-switch .toggle-slider:before {
+    border: 1px solid @button-primary-color;
+  }
 }
 
 .button {
