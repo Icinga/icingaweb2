@@ -144,17 +144,22 @@ textarea {
 
     &.active, &:hover {
       color: @text-color;
-      background-color: @base00;
+      background-color: darken(@base03, 5);
     }
 
     &.active:not(.selected) {
-      background-color: @base03;
+      background-color: darken(@base03, 3);
+
+      & > a:focus,
+      & > a:hover {
+        background-color: darken(@base03, 5);
+      }
     }
   }
 
   .nav-level-2 > .nav-item {
     color: @text-color;
-    background-color: @base03;
+    background-color: darken(@base03, 3);
 
     &.active, &:hover {
       a {
@@ -164,7 +169,7 @@ textarea {
     }
 
     &.active.selected {
-      background-color: darken(@base03, 3);
+      background-color: @button-primary-color;
     }
 
     &:not(.selected):not(.active) > a:hover,
@@ -178,8 +183,15 @@ textarea {
     color: @text-color;
 
     &:after {
-      background-color: @body-bg-color;
+      background-color: darken(@base03, 3);
       box-shadow: 0 0 1em 0 rgba(0,0,0,0.6);
+    }
+  }
+
+  .nav-level-2 > .nav-item:not(.selected):not(.active) {
+    & > a:hover,
+    & > a:focus {
+      background-color: darken(@base03, 5);
     }
   }
 
