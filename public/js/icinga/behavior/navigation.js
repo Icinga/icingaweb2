@@ -12,7 +12,7 @@
         this.on('click', '#menu tr[href]', this.linkClicked, this);
         this.on('rendered', '#menu', this.onRendered, this);
         this.on('mouseenter', '#menu .nav-level-1 > .nav-item', this.showFlyoutMenu, this);
-        this.on('mouseleave', '#menu-container', this.hideFlyoutMenu, this);
+        this.on('mouseleave', '#menu', this.hideFlyoutMenu, this);
         this.on('click', '#toggle-sidebar', this.toggleSidebar, this);
 
         /**
