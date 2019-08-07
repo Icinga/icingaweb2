@@ -277,16 +277,11 @@
         var $flyout = $target.find('.nav-level-2');
 
         if (! $flyout.length) {
-            $layout.removeClass('menu-hovered');
             $target.siblings().not($target).removeClass('hover');
             return;
         }
 
         var delay = 300;
-
-        if ($layout.hasClass('menu-hovered')) {
-            delay = 0;
-        }
 
         setTimeout(function() {
             try {
@@ -295,7 +290,6 @@
                 }
             } catch(e) { /* Bypass because if IE8 */ }
 
-            $layout.addClass('menu-hovered');
             $target.siblings().not($target).removeClass('hover');
             $target.addClass('hover');
 
@@ -325,8 +319,6 @@
         var $hovered = $('#menu').find('.nav-level-1 > .nav-item.hover');
 
         if (! $hovered.length) {
-            $layout.removeClass('menu-hovered');
-
             return;
         }
 
@@ -337,7 +329,6 @@
                 }
             } catch(e) { /* Bypass because if IE8 */ };
             $hovered.removeClass('hover');
-            $layout.removeClass('menu-hovered');
         }, 600);
     };
 
