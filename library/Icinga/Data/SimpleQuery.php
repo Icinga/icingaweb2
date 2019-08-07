@@ -450,17 +450,7 @@ class SimpleQuery implements QueryInterface, Queryable, Iterator
      */
     public function hasResult()
     {
-        if ($this->iteratorPosition !== null) {
-            return true;
-        }
-
-        $hasResult = false;
-        foreach ($this as $row) {
-            $hasResult = true;
-            break;
-        }
-
-        return $hasResult;
+        return $this->iteratorPosition !== null || $this->fetchRow() !== false;
     }
 
     /**
