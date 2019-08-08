@@ -49,6 +49,10 @@
                 var toggleElement = $collapsible.data('toggleElement');
                 if (!! toggleElement) {
                     var $toggle = $collapsible.children(toggleElement).first();
+
+                    if (!! $toggle) {
+                        $toggle = $collapsible.siblings(toggleElement).first();
+                    }
                     if (! $toggle.length) {
                         _this.icinga.logger.error(
                             '[Collapsible] Control `' + toggleElement + '` not found in .collapsible', $collapsible);
