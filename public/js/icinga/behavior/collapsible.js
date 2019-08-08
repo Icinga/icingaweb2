@@ -238,6 +238,8 @@
 
         $collapsible.css({display: 'block', height: height, paddingBottom: 0});
         $collapsible.addClass('collapsed');
+
+        this.icinga.ui.fixControls($collapsible.closest('.container'));
     };
 
     /**
@@ -248,6 +250,8 @@
     Collapsible.prototype.expand = function($collapsible) {
         $collapsible.removeClass('collapsed');
         $collapsible.css({display: '', height: '', paddingBottom: ''});
+
+        this.icinga.ui.fixControls($collapsible.closest('.container'));
     };
 
     Icinga.Behaviors.Collapsible = Collapsible;
