@@ -3,14 +3,20 @@ use Icinga\Date\DateFormatter;
 use Icinga\Module\Monitoring\Object\Host;
 
 if (! $this->compact): ?>
-<div class="controls">
+<div class="controls separated">
     <?= $this->tabs ?>
-    <?= $this->paginator ?>
-    <div class="sort-controls-container">
-        <?= $this->limiter ?>
-        <?= $this->sortBox ?>
+    <div class="collapsible" data-toggle-element=".controls-toggle" data-visible-height="0">
+        <?= $this->paginator ?>
+        <div class="sort-controls-container">
+            <?= $this->limiter ?>
+            <?= $this->sortBox ?>
+        </div>
+        <?= $this->filterEditor ?>
     </div>
-    <?= $this->filterEditor ?>
+    <button class="controls-toggle">
+        <span class="controls-collapsed"><i class="icon-sliders"></i> Show controls</span>
+        <span class="controls-expanded"><i class="icon-cancel"></i> Hide controls</span>
+    </button>
 </div>
 <?php endif ?>
 <div class="content">
