@@ -185,6 +185,11 @@ html.no-js .sort-control form {
 }
 
 .controls {
+
+  .collapsible.collapsed {
+    height: 0;
+  }
+
   .control-label-group {
     margin-top: 0;
     margin-bottom: 0;
@@ -206,5 +211,39 @@ html.no-js .sort-control form {
     /* compensate inconsistent select height calculations */
     line-height: 1;
     max-height: 2em;
+  }
+}
+
+.controls-toggle {
+  position: absolute;
+  color: @icinga-blue;
+  bottom: -2em;
+  z-index: 3;
+  right: @gutter;
+  border-bottom-right-radius: .4em;
+  border-bottom-left-radius:  .4em;
+  border: 1px solid @gray-lighter;
+  background: @body-bg-color;
+  border-top: none;
+
+  .appearance(none);
+
+  .controls-collapsed {
+    display: none;
+  }
+
+  .controls-expanded {
+    display: block;
+  }
+}
+
+.collapsed + .controls-toggle {
+
+  .controls-collapsed {
+    display: block;
+  }
+
+  .controls-expanded {
+    display: none;
   }
 }
