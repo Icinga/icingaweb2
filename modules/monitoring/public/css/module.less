@@ -15,6 +15,7 @@
   line-height: 1;
 
   &:before {
+    content: "";
     background: -webkit-linear-gradient(bottom, @body-bg-color 0%, rgba(255,255,255,0) 100%);
     background:    -moz-linear-gradient(bottom, @body-bg-color 0%, rgba(255,255,255,0) 100%);
     background:     -ms-linear-gradient(bottom, @body-bg-color 0%, rgba(255,255,255,0) 100%);
@@ -22,11 +23,11 @@
     background:         linear-gradient(bottom, @body-bg-color 0%, rgba(255,255,255,0) 100%);
     content: "";
     display: block;
-    height: 6px;
+    height: 1em;
     position: absolute;
     left: 0;
     right: 0;
-    top: -7px;
+    top: -13/12em;
   }
 
   .services-summary,

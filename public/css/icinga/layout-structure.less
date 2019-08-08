@@ -116,9 +116,23 @@ html {
 
 .controls-separated,
 .container .controls.separated {
-    box-shadow: 0 3px 4px -4px rgba(0, 0, 0, 0.2);
-//  border-bottom: 1px solid @gray-lightest;
-    padding-bottom: @horizontal-padding / 2
+    border-bottom: 1px solid @gray-lighter;
+    padding-bottom: @horizontal-padding / 2;
+
+    &:after {
+      content: "";
+      background: -webkit-linear-gradient(top, @body-bg-color 0%, rgba(255,255,255,0) 100%);
+      background:    -moz-linear-gradient(top, @body-bg-color 0%, rgba(255,255,255,0) 100%);
+      background:     -ms-linear-gradient(top, @body-bg-color 0%, rgba(255,255,255,0) 100%);
+      background:      -o-linear-gradient(top, @body-bg-color 0%, rgba(255,255,255,0) 100%);
+      background:         linear-gradient(top, @body-bg-color 0%, rgba(255,255,255,0) 100%);
+      display: block;
+      height: 1em;
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -13/12em;
+    }
 }
 
 .hbox {
