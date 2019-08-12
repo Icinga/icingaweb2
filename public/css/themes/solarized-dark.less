@@ -2,6 +2,7 @@
 
 /* solarized colors: http://simianuprising.com/wp-content/uploads/2012/08/solarized-reference-horizontal.png */
 
+// Solarized base colors
 @base01: #586e75;
 @base00: #657b83;
 @base02: #073645;
@@ -10,8 +11,14 @@
 @base1: #93a1a1;
 @base2: #eee8d5;
 
+// Gray colors
+@gray: @base1;
+@gray-light: @base01;
+@gray-lighter: #00222b;
+@gray-lightest: @base02;
+
+// Icinga colors
 @icinga-blue: @base1;
-@body-bg-color: @base03;
 
 @color-ok: #859900;
 @color-critical: #dc322f;
@@ -23,21 +30,31 @@
 @color-unreachable: #2aa198;
 @color-unreachable-handled: #1d736c;
 @color-pending: #268bd2;
+// Notification colors
 
+// Background color for <body>
+@body-bg-color: @base03;
+
+// Text colors
 @text-color: @base2;
 @text-color-light: @base1;
 @text-color-on-icinga-blue: @base2;
 @text-color-inverted: @base02;
 
+// Text color on <a>
 @link-color: @base0;
-
-@gray: @base1;
-@gray-light: @base01;
-@gray-lighter: #00222b;
-@gray-lightest: @base02;
-
 @tr-active-color: @base01;
 @tr-hover-color: @base02;
+
+// Menu colors
+@menu-bg-color: @base02;
+@menu-active-bg-color: @base03;
+@menu-highlight-color: @icinga-blue;
+@menu-2ndlvl-color: #c4c4c4;
+@menu-flyout-color: @text-color;
+
+// Form colors
+@button-primary-color: lighten(@base02, 20);
 
 #header {
   background-color: @base02;
@@ -127,13 +144,22 @@ textarea {
 
     &.active, &:hover {
       color: @text-color;
-      background-color: @base00;
+      background-color: darken(@base03, 5);
+    }
+
+    &.active:not(.selected) {
+      background-color: darken(@base03, 3);
+
+      & > a:focus,
+      & > a:hover {
+        background-color: darken(@base03, 5);
+      }
     }
   }
 
   .nav-level-2 > .nav-item {
     color: @text-color;
-    background-color: @base03;
+    background-color: darken(@base03, 3);
 
     &.active, &:hover {
       a {
@@ -141,8 +167,33 @@ textarea {
       }
       background-color: @base00;
     }
+
+    &.active.selected {
+      background-color: @button-primary-color;
+    }
+
+    &:not(.selected):not(.active) > a:hover,
+    &:not(.selected):not(.active) > a:focus {
+      color: @text-color;
+    }
   }
 
+  ul:not(.nav-level-2) > .selected > a {
+    background-color: darken(@base03, 3);
+    color: @text-color;
+
+    &:after {
+      background-color: darken(@base03, 3);
+      box-shadow: 0 0 1em 0 rgba(0,0,0,0.6);
+    }
+  }
+
+  .nav-level-2 > .nav-item:not(.selected):not(.active) {
+    & > a:hover,
+    & > a:focus {
+      background-color: darken(@base03, 5);
+    }
+  }
 
   .nav-itemxx{
     &:hover,
@@ -158,6 +209,10 @@ textarea {
 .boxview a:focus {
   color: @text-color;
   text-decoration: underline;
+}
+
+table.avp tbody th {
+  background-color: transparent;
 }
 
 .icinga-module.module-monitoring {
@@ -264,5 +319,66 @@ textarea {
 
   ul.main-actions li a {
     color: @icinga-blue;
+  }
+}
+
+/* Form styles */
+
+@input-background: lighten(@base02, 5);
+
+.icinga-controls {
+  input[type="text"],
+  input[type="password"],
+  input[type="number"],
+  input[type="datetime-local"],
+  input[type="date"],
+  input[type="time"],
+  textarea,
+  select {
+    background-color: @input-background;
+  }
+
+  & .toggle-switch .toggle-slider {
+    background: @input-background;
+    border: 2px solid @input-background;
+  }
+
+  & .toggle-switch .toggle-slider:before {
+    background: @body-bg-color;
+    border: 1px solid @body-bg-color;
+  }
+
+  & input[type="checkbox"]:checked + .toggle-switch .toggle-slider {
+    background-color: @button-primary-color;
+    border: 1px solid @button-primary-color;
+  }
+
+  & input[type="checkbox"]:focus + .toggle-switch .toggle-slider {
+    box-shadow: 0 0 0 2px @body-bg-color, 0 0 0 4px fade(@button-primary-color, 40);
+  }
+
+  & input[type="checkbox"]:checked + .toggle-switch .toggle-slider:before {
+    border: 1px solid @button-primary-color;
+  }
+}
+
+.button {
+  background-color: @input-background;
+  border: 2px solid @input-background;
+  color: @text-color;
+
+  &:focus,
+  &:hover,
+  &.btn-primary {
+    background-color: lighten(@base02, 15);
+    border-color: lighten(@base02, 15);
+    color: @text-color;
+  }
+
+  &.btn-primary:focus,
+  &.btn-primary:hover {
+    background-color: @button-primary-color;
+    border-color: @button-primary-color;
+    color: @text-color;
   }
 }
