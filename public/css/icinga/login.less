@@ -55,20 +55,24 @@
     line-height: @line-height;
   }
 
-  .control-group .errors {
-    background-color: @color-critical;
-    font-size: @font-size-small;
-    margin: 2em 0 0 0;
-    padding: 0;
-
-    > li {
-      padding: 1em;
-      color: @body-bg-color;
-    }
+  .errors,
+  .form-errors {
+    list-style-type: none;
+    padding: 0.5em;
   }
 
-  .control-group {
-    margin: 0 auto; // Center horizontally
+  .errors {
+    background-color: @color-critical;
+    color: white;
+  }
+
+  .form-errors {
+    margin-top: 0;
+    padding: 0;
+  }
+
+  .control-group,
+  .form-errors {
     width: 24em;
   }
 
