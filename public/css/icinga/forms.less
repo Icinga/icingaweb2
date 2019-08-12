@@ -453,22 +453,16 @@ form.icinga-form .form-info {
 // Placeholder styles
 
 .icinga-controls {
-  input:-moz-placeholder { // FF 18-
-    color: @gray;
-    opacity: 1;
-  }
-
-  input::-moz-placeholder { // FF 19+
-    color: @gray;
+  input::placeholder {
+    color: @disabled-gray;
+    font-style: italic;
     opacity: 1;
   }
 
   input:-ms-input-placeholder {
-    color: @gray;
-  }
-
-  input::-webkit-input-placeholder {
-    color: @gray;
+    color: @disabled-gray;
+    font-style: italic;
+    opacity: 1;
   }
 }
 
