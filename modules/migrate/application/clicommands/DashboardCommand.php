@@ -9,6 +9,7 @@ use Icinga\Application\Icinga;
 use Icinga\Application\Modules\DashboardContainer;
 use Icinga\Cli\Command;
 use Icinga\Application\Logger;
+use Icinga\Exception\IcingaException;
 use Icinga\Util\Translator;
 use ReflectionClass;
 
@@ -58,7 +59,12 @@ class DashboardCommand extends Command
                         continue;
                     }
 
-                    Translator::setupLocale($locale);
+                    try {
+                        Translator::setupLocale($locale);
+                    } catch (IcingaException $e) {
+                        Logger::debug('Ignoring locale "%s". Reason: %s', $locale, $e->getMessage());
+                        continue;
+                    }
 
                     foreach ($paneItemsProperty->getValue($module) as $paneName => $container) {
                         /** @var DashboardContainer $container */
@@ -70,10 +76,7 @@ class DashboardCommand extends Command
                                 $dashletTitle = null;
                             }
 
-                            if (isset($options['disabled']) && mt($module->getName(), $paneName) !== $paneTitle) {
-                                // `disabled` is checked because if it's a module's pane that's the only reason
-                                // why it's in there. If a user utilized the same label though for a custom pane,
-                                // it remains as is.
+                            if (mt($module->getName(), $paneName) !== $paneTitle) {
                                 continue;
                             }
 
@@ -84,6 +87,10 @@ class DashboardCommand extends Command
                                         $dashletName = $name;
                                         break;
                                     }
+                                }
+
+                                if ($dashletName === null) {
+                                    $dashletName = $dashletTitle;
                                 }
                             }
 
