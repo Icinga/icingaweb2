@@ -4,6 +4,32 @@ Please make sure to always read our [Upgrading](doc/80-Upgrading.md) documentati
 
 ## What's New
 
+### What's New in Version 2.7.1
+
+You can find all issues related to this release on our [Roadmap](https://github.com/Icinga/icingaweb2/milestone/56?closed=1).
+
+#### Sneaky Solution for Sneaky Links
+
+Usually we try to include only bugs in minor-releases. Sorry, bug-fixes, of course. But thanks to
+[@winem_](https://twitter.com/winem_/status/1156531270521896960) we have also a little enhancement this time:
+Links in comments, notes, etc. are now [highlighted](https://github.com/Icinga/icingaweb2/pull/3893) as such.
+
+* Highlight links in the notes of an object [#3888](https://github.com/Icinga/icingaweb2/issues/3888)
+
+#### Nobody's Perfect, Not Even Developers
+
+We knew it. We saw it coming. And forgot about it. Some views, especially histories, showed an anarchic behavior
+since v2.7.0. The change responsible for this has been undone and history's order is reestablished now.
+
+* Default sort rules no longer work in 2.7.0 [#3891](https://github.com/Icinga/icingaweb2/issues/3891)
+
+#### Restrictions Gone ~~Wild~~ Cagey
+
+A [fix](https://github.com/Icinga/icingaweb2/pull/3868) unfortunately caused restrictions using wildcards to show no
+results anymore. This is now solved and such restrictions are as permissive as ever.
+
+* Wildcard filters in chains broken [#3886](https://github.com/Icinga/icingaweb2/issues/3886)
+
 ### What's New in Version 2.7.0
 
 You can find issues related to this release on our [Roadmap](https://github.com/Icinga/icingaweb2/milestone/52?closed=1).
