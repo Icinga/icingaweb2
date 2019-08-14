@@ -312,17 +312,19 @@ class DbQuery extends SimpleQuery
                 if (! empty($comp)) {
                     $sql[] = $col . ' IN (' . $this->escapeForSql($comp) . ')';
                 }
+                $operator = 'OR';
             } elseif ($sign === '!=') {
                 if (! empty($comp)) {
                     $sql[] = sprintf('(%1$s NOT IN (%2$s) OR %1$s IS NULL)', $col, $this->escapeForSql($comp));
                 }
+                $operator = 'AND';
             } else {
                 throw new QueryException(
                     'Unable to render array expressions with operators other than equal or not equal'
                 );
             }
 
-            return '(' . implode(' OR ', $sql) . ')';
+            return '(' . implode(" $operator ", $sql) . ')';
         } elseif ($sign === '=' && strpos($expression, '*') !== false) {
             if ($expression === '*') {
                 return new Zend_Db_Expr('TRUE');
