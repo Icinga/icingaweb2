@@ -633,6 +633,12 @@ abstract class IdoQuery extends DbQuery
             new Zend_Db_Expr($ours)
         ));
 
+        if (! $negate) {
+            $subQueryFilter = $subQueryFilter->orFilter(
+                new FilterExpression($ours, '', new Zend_Db_Expr('IS NULL'))
+            );
+        }
+
         $subQuery
             ->setFilter($subQueryFilter)
             ->clearGroupingRules()
