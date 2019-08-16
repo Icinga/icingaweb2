@@ -11,7 +11,7 @@
 <?php return; endif ?>
     <div class="boxview" data-base-target="_next">
         <div class="donut-container">
-            <h2><?= $this->translate('Host Summary') ?></h2>
+            <h2 aria-label="<?= $this->translate('Host Summary') ?>"><?= $this->translate('Host Summary') ?></h2>
             <div class="donut">
                 <?= $hostStatusSummaryChart ?>
             </div>
@@ -68,7 +68,7 @@
             </ul>
         </div>
         <div class="donut-container">
-            <h2><?= $this->translate('Service Summary') ?></h2>
+            <h2 aria-label="<?= $this->translate('Service Summary') ?>"><?= $this->translate('Service Summary') ?></h2>
             <div class="donut">
                 <?= $serviceStatusSummaryChart ?>
             </div>
