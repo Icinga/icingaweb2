@@ -268,6 +268,7 @@ class Donut
         $svg['content'][] = array(
             'tag'        => 'circle',
             'attributes' => array(
+                'aria-hidden' => true,
                 'cx'           => 20,
                 'cy'           => 20,
                 'r'            => sprintf('%F', $this->radius),
@@ -329,6 +330,7 @@ class Donut
                     array(
                         'tag' => 'a',
                         'attributes' => array(
+                            'aria-label' => $labelBig . ' ' . $labelSmall,
                             'href' => $this->getLabelBigUrl() ? $this->getLabelBigUrl()->getAbsoluteUrl() : null,
                             'class' => $this->labelBigEyeCatching
                                 ? 'donut-label-big donut-label-big-eye-catching'
