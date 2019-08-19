@@ -28,6 +28,7 @@ class JavaScript
         'js/icinga/behavior/collapsible.js',
         'js/icinga/behavior/detach.js',
         'js/icinga/behavior/sparkline.js',
+        'js/icinga/behavior/subcontainer.js',
         'js/icinga/behavior/tristate.js',
         'js/icinga/behavior/dropdown.js',
         'js/icinga/behavior/navigation.js',
