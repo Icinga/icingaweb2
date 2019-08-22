@@ -48,7 +48,9 @@ form.icinga-form {
 #layout.minimal-layout,
 #layout.twocols:not(.wide-layout) {
   form.icinga-form {
-    width: 100%;
+    &:not(.inline) {
+      width: 100%;
+    }
 
     .control-label-group {
       text-align: left;
