@@ -193,17 +193,25 @@
 
 // Quick actions
 .quick-actions {
+  margin: 0 -.5em;
+
+  &:last-child {
+    margin-bottom: -.25em;
+  }
+
   li {
     color: @icinga-blue;
-    padding: 0 0.6em;
   }
 
-  li:first-child {
-    padding-left: 0;
-  }
+  a,
+  button {
+    .rounded-corners();
+    padding: .25em .5em;
 
-  li:last-child {
-    padding-right: 0;
+    &:hover {
+      background-color: @gray-lighter;
+      text-decoration: none;
+    }
   }
 }
 
