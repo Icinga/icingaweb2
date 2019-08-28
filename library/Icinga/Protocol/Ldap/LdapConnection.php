@@ -1523,6 +1523,15 @@ class LdapConnection implements Selectable, Inspectable
 
     protected function normalizeHostname($hostname)
     {
+        if (strpos($hostname, '://') !== false) {
+            Logger::error(
+                'LDAP hostname: Please avoid using scheme ldap:// or ldaps://. We\'ll remove it for you without'
+                . ' consider encryption setting based on scheme'
+            );
+
+            $hostname = preg_replace('/^ldaps?:\/\//', '', $hostname, 2);
+        }
+
         $scheme = $this->encryption === static::LDAPS ? 'ldaps://' : 'ldap://';
         $normalizeHostname = function ($hostname) use ($scheme) {
             if (strpos($hostname, $scheme) === false) {
