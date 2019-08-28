@@ -1181,7 +1181,15 @@ class LdapConnection implements Selectable, Inspectable
 
         $hostname = $this->normalizeHostname($this->hostname);
 
-        $ds = ldap_connect($hostname, $this->port);
+        try {
+            $ds = ldap_connect($hostname, $this->port);
+        } catch (\ErrorException $e) {
+            throw new LdapException(
+                'LDAP connection to %s failed (%s)',
+                $hostname,
+                $e->getMessage()
+            );
+        }
 
         // Set a proper timeout for each connection
         ldap_set_option($ds, LDAP_OPT_NETWORK_TIMEOUT, $this->timeout);
