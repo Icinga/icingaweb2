@@ -652,6 +652,22 @@ form.instance-features span.description, form.object-features span.description {
     color: @body-bg-color;
     padding: 0.2em;
   }
+
+  &.empty {
+    opacity: .6;
+    border-left-color: @gray-lighter;
+    background: @gray-lighter;
+    .rounded-corners()
+  }
+}
+
+.plugin-output,
+.overview-plugin-output {
+  &.empty {
+    font-style: italic;
+    opacity: .6;
+    font-family: @font-family;
+  }
 }
 
 .go-ahead,
