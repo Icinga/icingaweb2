@@ -1,5 +1,9 @@
 <h2><?= $this->translate('Plugin Output') ?></h2>
 <div id="check-output-<?= $this->escape(str_replace(' ', '-', $object->check_command)) ?>" class="collapsible" data-visible-height="100">
+    <?php if (strlen($object->output) == 0 && strlen($object->long_output) == 0) {?>
+        <div class="plugin-output empty"><?= $this->translate('This check has not returned any output') ?></div>
+    <?php } else { ?>
     <?= $this->pluginOutput($object->output, false, $object->check_command) ?>
     <?= $this->pluginOutput($object->long_output, false, $object->check_command) ?>
+    <?php } ?>
 </div>
