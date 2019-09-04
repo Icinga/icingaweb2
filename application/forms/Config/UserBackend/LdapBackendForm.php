@@ -121,11 +121,13 @@ class LdapBackendForm extends Form
             $userClass = 'user';
             $filter = '!(objectClass=computer)';
             $userNameAttribute = 'sAMAccountName';
+            $userNameLookup = 'userPrincipalName';
         } else {
             // OpenLDAP defaults
             $userClass = 'inetOrgPerson';
             $filter = null;
             $userNameAttribute = 'uid';
+            $userNameLookup = '';
         }
 
         $this->addElement(
@@ -191,6 +193,23 @@ class LdapBackendForm extends Form
                     'The attribute name used for storing the user name on the LDAP server.'
                 ),
                 'value'             => $this->getSuggestion('user_name_attribute', $userNameAttribute)
+            )
+        );
+
+        $this->addElement(
+            'text',
+            'user_name_lookup',
+            array(
+                'preserveDefault'   => true,
+                'label'             => $this->translate('LDAP User Name Lookup'),
+                'description'       => $this->translate(
+                    'Alternative attributes to check for the username.'
+                    . ' This will search for users where this field is the entered username oder user@domain.'
+                    . ' Can be used for matching with a Kerberos principal or email addresses.'
+                    . ' The authenticated username will be taken from the User Name Attribute.'
+                    . ' (Can be a list of comma separated attributes)'
+                ),
+                'value'             => $this->getSuggestion('user_name_lookup', $userNameLookup)
             )
         );
         $this->addElement(

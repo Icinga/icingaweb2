@@ -4,14 +4,17 @@
 namespace Icinga\Authentication\User;
 
 use DateTime;
+use Icinga\Data\Filter\Filter;
 use Icinga\Data\Inspectable;
 use Icinga\Data\Inspection;
 use Icinga\Exception\AuthenticationException;
 use Icinga\Exception\ProgrammingError;
+use Icinga\Protocol\Ldap\LdapQuery;
 use Icinga\Repository\LdapRepository;
 use Icinga\Repository\RepositoryQuery;
 use Icinga\Protocol\Ldap\LdapException;
 use Icinga\User;
+use Icinga\Util\StringHelper;
 
 class LdapUserBackend extends LdapRepository implements
     UserBackendInterface,
@@ -41,6 +44,13 @@ class LdapUserBackend extends LdapRepository implements
      * @var string
      */
     protected $userNameAttribute;
+
+    /**
+     * Additional attributes to lookup for matching a user's name
+     *
+     * @var array
+     */
+    protected $userNameLookup;
 
     /**
      * The custom LDAP filter to apply on search queries
@@ -154,6 +164,36 @@ class LdapUserBackend extends LdapRepository implements
     public function getUserNameAttribute()
     {
         return $this->userNameAttribute;
+    }
+
+    /**
+     * Set additional attributes to match a user's name
+     *
+     * @param array|string $attributes
+     *
+     * @return $this
+     */
+    public function setUserNameLookup($attributes)
+    {
+        $attrs = [];
+        if (! is_array($attributes)) {
+            $attributes = StringHelper::trimSplit($attributes);
+        }
+        foreach ($attributes as $attr) {
+            $attrs[] = $this->getNormedAttribute($attr);
+        }
+        $this->userNameLookup = $attrs;
+        return $this;
+    }
+
+    /**
+     * Return the additional attributes to match for user names
+     *
+     * @return  array
+     */
+    public function getUserNameLookup()
+    {
+        return $this->userNameLookup;
     }
 
     /**
@@ -398,26 +438,56 @@ class LdapUserBackend extends LdapRepository implements
             }
         }
 
+        $fullUsername = null;
         if ($this->domain !== null) {
             if (! $user->hasDomain() || strtolower($user->getDomain()) !== strtolower($this->domain)) {
                 return false;
             }
 
             $username = $user->getLocalUsername();
+            $fullUsername = $user->getUsername();
         } else {
             $username = $user->getUsername();
         }
 
         try {
-            $userDn = $this
-                ->select()
-                ->where('user_name', str_replace('*', '', $username))
-                ->getQuery()
-                ->setUsePagedResults(false)
-                ->fetchDn();
-            if ($userDn === null) {
-                return false;
+            $safeUsername = str_replace('*', '', $username);
+
+            /** @var LdapQuery $query */
+            $query = $this->select()->getQuery();
+            $filter = Filter::where($this->userNameAttribute, $safeUsername);
+
+            $lookup = $this->getUserNameLookup();
+            if (! empty($lookup)) {
+                // Enhance filter with additional attribute searches
+                $filter = Filter::matchAny($filter);
+
+                foreach ($lookup as $attr) {
+                    $filter->orFilter(Filter::where($attr, $safeUsername));
+                    if ($fullUsername) {
+                        $filter->orFilter(Filter::where($attr, str_replace('*', '', $fullUsername)));
+                    }
+                }
             }
+
+            $query->setFilter($filter);
+            $query->setUsePagedResults(false);
+
+            $entries = $query->fetchAll();
+            $count = count($entries);
+            if ($count === 0) {
+                return false;
+            } elseif ($count > 1) {
+                throw new AuthenticationException('Found %d entries in LDAP for username "%s', $count, $username);
+            } else {
+                $userDn = key($entries);
+                $userEntry = current($entries);
+                $foundUserName = $userEntry->user_name;
+            }
+
+            // update user information with matched user entry and the domain of this backend
+            $user->setUsername($foundUserName);
+            $user->setDomain($this->getDomain());
 
             if (! empty($user->getExternalUserInformation())) {
                 $user->setAdditional('ldap_dn', $userDn);
