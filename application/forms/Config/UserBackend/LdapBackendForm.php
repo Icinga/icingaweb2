@@ -262,6 +262,7 @@ class LdapBackendForm extends Form
                     . ' authenticating the user based on the username without the domain part.'
                     . ' If your LDAP backend holds usernames with a domain part or if it is not necessary in your setup'
                     . ' to authenticate users based on their domains, leave this field empty.'
+                    . ' (Can be a comma separated list)'
                 ),
                 'preserveDefault' => true,
                 'value'         => $this->getSuggestion('domain')
@@ -378,14 +379,16 @@ class LdapBackendForm extends Form
     {
         $cap = $this->getLdapCapabilities($formData);
 
+        $domain = $this->defaultNamingContextToFQDN($cap);
+
         if ($cap->isActiveDirectory()) {
             $netBiosName = $cap->getNetBiosName();
             if ($netBiosName !== null) {
-                return $netBiosName;
+                $domain .= ',' . $netBiosName;
             }
         }
 
-        return $this->defaultNamingContextToFQDN($cap);
+        return $domain;
     }
 
     /**

@@ -60,11 +60,11 @@ class LdapUserBackend extends LdapRepository implements
     protected $filter;
 
     /**
-     * The domain the backend is responsible for
+     * The domains the backend is responsible for
      *
-     * @var string
+     * @var array
      */
-    protected $domain;
+    protected $domains;
 
     /**
      * The columns which are not permitted to be queried
@@ -226,24 +226,43 @@ class LdapUserBackend extends LdapRepository implements
         return $this->filter;
     }
 
+    /**
+     * Return the primary domain for this backend, which is the first or only set
+     *
+     * @return string|null
+     */
     public function getDomain()
     {
-        return $this->domain;
+        if (empty($this->domains)) {
+            return null;
+        }
+        $domains = $this->domains;
+        return current($domains);
     }
 
     /**
-     * Set the domain the backend is responsible for
+     * Return all domains set for this backend
      *
-     * @param   string  $domain
+     * @return array|null
+     */
+    public function getDomains()
+    {
+        return $this->domains;
+    }
+
+    /**
+     * Set the domains the backend is responsible for
+     *
+     * @param   string|array  $domains
      *
      * @return  $this
      */
-    public function setDomain($domain)
+    public function setDomain($domains)
     {
-        $domain = trim($domain);
-
-        if (strlen($domain)) {
-            $this->domain = $domain;
+        if ($domains === null || is_array($domains)) {
+            $this->domains = $domains;
+        } else {
+            $this->domains = StringHelper::trimSplit($domains);
         }
 
         return $this;
@@ -439,8 +458,9 @@ class LdapUserBackend extends LdapRepository implements
         }
 
         $fullUsername = null;
-        if ($this->domain !== null) {
-            if (! $user->hasDomain() || strtolower($user->getDomain()) !== strtolower($this->domain)) {
+        if (! empty($this->domains)) {
+            $domains = array_map('strtolower', $this->domains);
+            if (! $user->hasDomain() || ! in_array(strtolower($user->getDomain()), $domains)) {
                 return false;
             }
 
