@@ -4,7 +4,6 @@
 namespace Icinga\Authentication\User;
 
 use DateTime;
-use Icinga\Data\ConfigObject;
 use Icinga\Data\Inspectable;
 use Icinga\Data\Inspection;
 use Icinga\Exception\AuthenticationException;
@@ -14,8 +13,14 @@ use Icinga\Repository\RepositoryQuery;
 use Icinga\Protocol\Ldap\LdapException;
 use Icinga\User;
 
-class LdapUserBackend extends LdapRepository implements UserBackendInterface, DomainAwareInterface, Inspectable
+class LdapUserBackend extends LdapRepository implements
+    UserBackendInterface,
+    ExternalAuthInterface,
+    DomainAwareInterface,
+    Inspectable
 {
+    use ExternalAuthTrait;
+
     /**
      * The base DN to use for a query
      *
@@ -384,8 +389,15 @@ class LdapUserBackend extends LdapRepository implements UserBackendInterface, Do
      *
      * @throws  AuthenticationException     In case authentication is not possible due to an error
      */
-    public function authenticate(User $user, $password)
+    public function authenticate(User $user, $password = null)
     {
+        if (empty($password) && $this->hasExternalAuth()) {
+            $external = $this->authenticateExternal($user);
+            if (! $external) {
+                return false;
+            }
+        }
+
         if ($this->domain !== null) {
             if (! $user->hasDomain() || strtolower($user->getDomain()) !== strtolower($this->domain)) {
                 return false;
@@ -407,12 +419,21 @@ class LdapUserBackend extends LdapRepository implements UserBackendInterface, Do
                 return false;
             }
 
-            $validCredentials = $this->ds->testCredentials($userDn, $password);
-            if ($validCredentials) {
+            if (! empty($user->getExternalUserInformation())) {
                 $user->setAdditional('ldap_dn', $userDn);
-            }
+                return true;
+            } else {
+                if (empty($password)) {
+                    // Just to be sure block any empty password here
+                    return false;
+                }
+                $validCredentials = $this->ds->testCredentials($userDn, $password);
+                if ($validCredentials) {
+                    $user->setAdditional('ldap_dn', $userDn);
+                }
 
-            return $validCredentials;
+                return $validCredentials;
+            }
         } catch (LdapException $e) {
             throw new AuthenticationException(
                 'Failed to authenticate user "%s" against backend "%s". An exception was thrown:',

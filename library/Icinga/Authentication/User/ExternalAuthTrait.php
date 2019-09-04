@@ -3,6 +3,7 @@
 
 namespace Icinga\Authentication\User;
 
+use Icinga\Application\Config;
 use Icinga\User;
 
 /**
@@ -16,6 +17,8 @@ trait ExternalAuthTrait
      * @var string[]
      */
     public static $remoteUserEnvvars = array('REMOTE_USER', 'REDIRECT_REMOTE_USER');
+
+    protected $externalAuth = false;
 
     /**
      * Get the remote user from environment or $_SERVER, if any
@@ -58,7 +61,8 @@ trait ExternalAuthTrait
     /**
      * Try external authentication and set username
      *
-     * Should be called from authenticate() to implement the support for external auth
+     * The authenticate() function should check hasExternalAuth() and then
+     * call this function to implement the support for external auth
      *
      * @param User $user
      * @param bool $updateUser
@@ -71,12 +75,39 @@ trait ExternalAuthTrait
         if ($username !== null) {
             if ($updateUser) {
                 $user->setExternalUserInformation($username, $field);
+
                 $user->setUsername($username);
+                if (! $user->hasDomain()) {
+                    $user->setDomain(Config::app()->get('authentication', 'default_domain'));
+                }
             }
 
-            return [$username, $field];
+            return [$username, $field, $user->getUsername()];
         }
 
         return false;
+    }
+
+    /**
+     * Enable external auth for the backend
+     *
+     * @param bool $externalAuth
+     *
+     * @return $this
+     */
+    public function setExternalAuth($externalAuth = true)
+    {
+        $this->externalAuth = (bool) $externalAuth;
+        return $this;
+    }
+
+    /**
+     * Checks if external auth is enabled
+     *
+     * @return bool
+     */
+    public function hasExternalAuth()
+    {
+        return $this->externalAuth;
     }
 }

@@ -217,6 +217,20 @@ class LdapBackendForm extends Form
         );
 
         $this->addElement(
+            'checkbox',
+            'external_auth',
+            array(
+                'label'           => $this->translate('External Auth'),
+                'description'     => $this->translate(
+                    'Handle external authentication via the REMOTE_USER variable.'
+                    . ' This will only accept users found in the backend to be authenticated via external auth.'
+                ),
+                'preserveDefault' => true,
+                'value'           => $this->getSuggestion('external_auth')
+            )
+        );
+
+        $this->addElement(
             'text',
             'domain',
             array(

@@ -217,6 +217,7 @@ class UserBackend implements ConfigAwareFactory
                 $backend->setBaseDn($backendConfig->base_dn);
                 $backend->setUserClass($backendConfig->get('user_class', 'user'));
                 $backend->setUserNameAttribute($backendConfig->get('user_name_attribute', 'sAMAccountName'));
+                $backend->setExternalAuth($backendConfig->get('external_auth', false));
                 $backend->setFilter($backendConfig->filter);
                 $backend->setDomain($backendConfig->domain);
                 break;
@@ -225,6 +226,7 @@ class UserBackend implements ConfigAwareFactory
                 $backend->setBaseDn($backendConfig->base_dn);
                 $backend->setUserClass($backendConfig->get('user_class', 'inetOrgPerson'));
                 $backend->setUserNameAttribute($backendConfig->get('user_name_attribute', 'uid'));
+                $backend->setExternalAuth($backendConfig->get('external_auth', false));
                 $backend->setFilter($backendConfig->filter);
                 $backend->setDomain($backendConfig->domain);
                 break;
