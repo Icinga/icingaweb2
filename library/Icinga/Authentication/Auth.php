@@ -8,6 +8,7 @@ use Icinga\Application\Config;
 use Icinga\Application\Hook\AuditHook;
 use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
+use Icinga\Authentication\User\ExternalAuthInterface;
 use Icinga\Authentication\User\ExternalBackend;
 use Icinga\Authentication\UserGroup\UserGroupBackend;
 use Icinga\Data\ConfigObject;
@@ -283,7 +284,7 @@ class Auth
     {
         $user = new User('');
         foreach ($this->getAuthChain() as $userBackend) {
-            if ($userBackend instanceof ExternalBackend) {
+            if ($userBackend instanceof ExternalAuthInterface) {
                 if ($userBackend->authenticate($user)) {
                     if (! $user->hasDomain()) {
                         $user->setDomain(Config::app()->get('authentication', 'default_domain'));

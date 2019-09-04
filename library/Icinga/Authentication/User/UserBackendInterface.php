@@ -4,7 +4,6 @@
 namespace Icinga\Authentication\User;
 
 use Icinga\Authentication\Authenticatable;
-use Icinga\User;
 
 /**
  * Interface for user backends
