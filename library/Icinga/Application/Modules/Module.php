@@ -315,10 +315,11 @@ class Module
         foreach ($panes as $pane) {
             /** @var DashboardContainer $pane */
             $dashlets = [];
-            foreach ($pane->getDashlets() as $dashletName => $dashletUrl) {
+            foreach ($pane->getDashlets() as $dashletName => $dashletConfig) {
                 $dashlets[$dashletName] = [
-                    'label' => $this->translate($dashletName),
-                    'url'   => $dashletUrl
+                    'label'     => $this->translate($dashletName),
+                    'url'       => $dashletConfig['url'],
+                    'priority'  => $dashletConfig['priority']
                 ];
             }
 
