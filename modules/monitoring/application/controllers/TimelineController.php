@@ -46,10 +46,47 @@ class TimelineController extends Controller
                 )
             ),
             array(
-                'notify'        => array(
-                    'class'     => 'timeline-notification',
-                    'detailUrl' => $detailUrl,
-                    'label'     => mt('monitoring', 'Notifications')
+                'notification_ack'  => array(
+                    'class'         => 'timeline-notification',
+                    'detailUrl'     => $detailUrl,
+                    'label'         => mt('monitoring', 'Notifications'),
+                    'groupBy'       => 'notification_*'
+                ),
+                'notification_flapping'  => array(
+                    'class'         => 'timeline-notification',
+                    'detailUrl'     => $detailUrl,
+                    'label'         => mt('monitoring', 'Notifications'),
+                    'groupBy'       => 'notification_*'
+                ),
+                'notification_flapping_end'  => array(
+                    'class'         => 'timeline-notification',
+                    'detailUrl'     => $detailUrl,
+                    'label'         => mt('monitoring', 'Notifications'),
+                    'groupBy'       => 'notification_*'
+                ),
+                'notification_dt_start'  => array(
+                    'class'         => 'timeline-notification',
+                    'detailUrl'     => $detailUrl,
+                    'label'         => mt('monitoring', 'Notifications'),
+                    'groupBy'       => 'notification_*'
+                ),
+                'notification_dt_end'  => array(
+                    'class'         => 'timeline-notification',
+                    'detailUrl'     => $detailUrl,
+                    'label'         => mt('monitoring', 'Notifications'),
+                    'groupBy'       => 'notification_*'
+                ),
+                'notification_custom'  => array(
+                    'class'         => 'timeline-notification',
+                    'detailUrl'     => $detailUrl,
+                    'label'         => mt('monitoring', 'Notifications'),
+                    'groupBy'       => 'notification_*'
+                ),
+                'notification_state'  => array(
+                    'class'         => 'timeline-notification',
+                    'detailUrl'     => $detailUrl,
+                    'label'         => mt('monitoring', 'Notifications'),
+                    'groupBy'       => 'notification_*'
                 ),
                 'hard_state'    => array(
                     'class'     => 'timeline-hard-state',

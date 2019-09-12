@@ -503,21 +503,38 @@ div.timeline {
     }
 
     div.circle-box {
+      // width: inline-style;
       height: 100%;
       margin-right: 0.5em;
       position: relative;
       float: left;
 
       div.outer-circle {
+        // width: inline-style;
+        // height: inline-style;
         position: absolute;
         top: 50%;
+        // margin-top: inline-style;
+
+        &.extrapolated {
+          border-width: 2px;
+          border-style: dotted;
+          //border-color: inline-style;
+          border-radius: 100%;
+          // background-color: inline-style;
+        }
 
         a.inner-circle {
+          // width: inline-style;
+          // height: inline-style;
           display: block;
           position: absolute;
           top: 50%;
           left: 50%;
+          // margin-top: inline-style;
+          // margin-left: inline-style;
           border-radius: 100%;
+          // background-color: inline-style;
         }
       }
     }
