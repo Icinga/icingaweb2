@@ -36,6 +36,8 @@ class LessCompiler
      */
     protected $moduleLessFiles = array();
 
+    protected $moduleRequires = [];
+
     /**
      * LESS source
      *
@@ -91,6 +93,12 @@ class LessCompiler
         return $this;
     }
 
+    public function addModuleRequire($moduleName, $lessFile)
+    {
+        $this->moduleRequires[$lessFile][] = $moduleName;
+        return $this;
+    }
+
     /**
      * Get the list of LESS files added to the compiler
      *
@@ -103,6 +111,8 @@ class LessCompiler
         foreach ($this->moduleLessFiles as $moduleLessFiles) {
             $lessFiles = array_merge($lessFiles, $moduleLessFiles);
         }
+
+        $lessFiles = array_merge($lessFiles, array_keys($this->moduleRequires));
 
         if ($this->theme !== null) {
             $lessFiles[] = $this->theme;
@@ -159,6 +169,16 @@ class LessCompiler
         }
 
         $this->source .= $moduleCss;
+
+        $requireCss = '';
+        foreach ($this->moduleRequires as $requiredFile => $modules) {
+            $containers = array_map(function ($name) {
+                return '.icinga-module.module-' . $name;
+            }, $modules);
+            $requireCss .= join(',', $containers) . ' {' . file_get_contents($requiredFile) . '}';
+        }
+
+        $this->source .= $requireCss;
 
         if ($this->theme !== null) {
             $this->source .= file_get_contents($this->theme);

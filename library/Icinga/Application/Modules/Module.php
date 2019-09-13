@@ -4,24 +4,23 @@
 namespace Icinga\Application\Modules;
 
 use Exception;
-use Zend_Controller_Router_Route;
-use Zend_Controller_Router_Route_Abstract;
-use Zend_Controller_Router_Route_Regex;
 use Icinga\Application\ApplicationBootstrap;
 use Icinga\Application\Config;
+use Icinga\Application\Hook;
 use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
-use Icinga\Application\Modules\DashboardContainer;
-use Icinga\Application\Modules\MenuItemContainer;
 use Icinga\Exception\IcingaException;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Module\Setup\SetupWizard;
 use Icinga\Util\File;
 use Icinga\Util\Translator;
-use Icinga\Web\Controller\Dispatcher;
-use Icinga\Application\Hook;
 use Icinga\Web\Navigation\Navigation;
 use Icinga\Web\Widget;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+use Zend_Controller_Router_Route;
+use Zend_Controller_Router_Route_Abstract;
+use Zend_Controller_Router_Route_Regex;
 
 /**
  * Module handling
@@ -43,6 +42,13 @@ class Module
      * @var string
      */
     private $basedir;
+
+    /**
+     * Directory for assets
+     *
+     * @var string
+     */
+    private $assetDir;
 
     /**
      * Directory for styles
@@ -185,6 +191,34 @@ class Module
     protected $jsFiles = array();
 
     /**
+     * Globally provided CSS assets
+     *
+     * @var array
+     */
+    protected $cssAssets = [];
+
+    /**
+     * Globally provided JS assets
+     *
+     * @var array
+     */
+    protected $jsAssets = [];
+
+    /**
+     * Required CSS assets
+     *
+     * @var array
+     */
+    protected $cssRequires = [];
+
+    /**
+     * Required JS assets
+     *
+     * @var array
+     */
+    protected $jsRequires = [];
+
+    /**
      * Routes to add to the route chain
      *
      * @var array Array of name-route pairs
@@ -247,6 +281,7 @@ class Module
         $this->app            = $app;
         $this->name           = $name;
         $this->basedir        = $basedir;
+        $this->assetDir       = $basedir . '/asset';
         $this->cssdir         = $basedir . '/public/css';
         $this->jsdir          = $basedir . '/public/js';
         $this->libdir         = $basedir . '/library';
@@ -435,6 +470,7 @@ class Module
             return false;
         }
         $this->registerWebIntegration();
+        $this->registerAssets();
         $this->registered = true;
 
         return true;
@@ -468,7 +504,7 @@ class Module
      * @param string $name
      * @param bool   $autoload
      *
-     * @return mixed
+     * @return  self
      *
      * @throws ProgrammingError When the module is not yet loaded
      */
@@ -482,6 +518,150 @@ class Module
         }
         // Throws ProgrammingError when the module is not yet loaded
         return $manager->getModule($name);
+    }
+
+    /**
+     * Provide a static CSS asset which can be required by other modules
+     *
+     * @param   string  $path   The path, relative to the module's base
+     *
+     * @return  $this
+     */
+    protected function provideCssAsset($path)
+    {
+        $fullPath = join(DIRECTORY_SEPARATOR, [$this->basedir, $path]);
+        $this->cssAssets[] = $fullPath;
+        $this->cssRequires[] = $fullPath; // A module should not have to require its own assets
+
+        return $this;
+    }
+
+    /**
+     * Get the CSS assets provided by this module
+     *
+     * @return array
+     */
+    public function getCssAssets()
+    {
+        return $this->cssAssets;
+    }
+
+    /**
+     * Require CSS from a different module
+     *
+     * @param   string  $name   The file's name
+     * @param   string  $from   The module's name
+     *
+     * @return  bool
+     */
+    protected function requireCssFile($name, $from)
+    {
+        $module = self::get($from, true); // TODO: Cross deps?
+        foreach ($module->getCssAssets() as $filePath) {
+            if (basename($filePath) === $name) {
+                if (is_readable($filePath) && is_file($filePath)) {
+                    $this->cssRequires[] = $filePath;
+                    return true;
+                }
+            }
+        }
+
+        // TODO: Error logging? New way of "there's something wrong"?
+        trigger_error(sprintf('CSS file "%s" by module "%s" not found', $name, $from), E_USER_ERROR);
+    }
+
+    /**
+     * Check whether this module requires CSS from a different module
+     *
+     * @return bool
+     */
+    public function requiresCss()
+    {
+        $this->launchConfigScript();
+        return ! empty($this->cssRequires);
+    }
+
+    /**
+     * List the CSS assets required by this module
+     *
+     * @return array
+     */
+    public function getCssRequires()
+    {
+        $this->launchConfigScript();
+        return $this->cssRequires;
+    }
+
+    /**
+     * Provide a static Javascript asset which can be required by other modules
+     *
+     * @param   string  $path   The path, relative to the module's base
+     *
+     * @return  $this
+     */
+    protected function provideJsAsset($path)
+    {
+        $fullPath = join(DIRECTORY_SEPARATOR, [$this->basedir, $path]);
+        $this->jsAssets[] = $fullPath;
+        $this->jsRequires[] = $fullPath; // A module should not have to require its own assets
+
+        return $this;
+    }
+
+    /**
+     * Get the Javascript assets provided by this module
+     *
+     * @return array
+     */
+    public function getJsAssets()
+    {
+        return $this->jsAssets;
+    }
+
+    /**
+     * Require Javascript from a different module
+     *
+     * @param   string  $name   The file's name
+     * @param   string  $from   The module's name
+     *
+     * @return  bool
+     */
+    protected function requireJsFile($name, $from)
+    {
+        $module = self::get($from, true); // TODO: Cross deps?
+        foreach ($module->getJsAssets() as $filePath) {
+            if (basename($filePath) === $name) {
+                if (is_readable($filePath) && is_file($filePath)) {
+                    $this->jsRequires[] = $filePath;
+                    return true;
+                }
+            }
+        }
+
+        // TODO: Error logging? New way of "there's something wrong"?
+        trigger_error(sprintf('JS file "%s" by module "%s" not found', $name, $from), E_USER_ERROR);
+    }
+
+    /**
+     * Check whether this module requires Javascript from a different module
+     *
+     * @return bool
+     */
+    public function requiresJs()
+    {
+        $this->launchConfigScript();
+        return ! empty($this->jsRequires);
+    }
+
+    /**
+     * List the Javascript assets required by this module
+     *
+     * @return array
+     */
+    public function getJsRequires()
+    {
+        $this->launchConfigScript();
+        return $this->jsRequires;
     }
 
     /**
@@ -1091,6 +1271,40 @@ class Module
         );
 
         $this->registeredAutoloader = true;
+
+        return $this;
+    }
+
+    /**
+     * Register this module's assets
+     *
+     * @return $this
+     */
+    protected function registerAssets()
+    {
+        if (! is_dir($this->assetDir)) {
+            return $this;
+        }
+
+        $listAssets = function ($type) {
+            $dir = join(DIRECTORY_SEPARATOR, [$this->assetDir, $type]);
+            if (! is_dir($dir)) {
+                return [];
+            }
+
+            return new RecursiveIteratorIterator(new RecursiveDirectoryIterator(
+                $dir,
+                RecursiveDirectoryIterator::CURRENT_AS_PATHNAME | RecursiveDirectoryIterator::SKIP_DOTS
+            ));
+        };
+
+        foreach ($listAssets('css') as $assetPath) {
+            $this->provideCssAsset(ltrim(substr($assetPath, strlen($this->basedir)), '/\\'));
+        }
+
+        foreach ($listAssets('js') as $assetPath) {
+            $this->provideJsAsset(ltrim(substr($assetPath, strlen($this->basedir)), '/\\'));
+        }
 
         return $this;
     }
