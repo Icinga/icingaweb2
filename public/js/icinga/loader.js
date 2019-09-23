@@ -399,22 +399,6 @@
             }
         },
 
-        cacheLoadedIcons: function($container) {
-            // TODO: this is just a prototype, disabled for now
-            return;
-
-            var _this = this;
-            $('img.icon', $container).each(function(idx, img) {
-                var src = $(img).attr('src');
-                if (typeof _this.iconCache[src] !== 'undefined') {
-                    return;
-                }
-                var cache = new Image();
-                cache.src = src
-                _this.iconCache[src] = cache;
-            });
-        },
-
         /**
          * Handle successful XHR response
          */
@@ -578,7 +562,6 @@
             if (newBody) {
                 this.icinga.ui.fixDebugVisibility().triggerWindowResize();
             }
-            _this.cacheLoadedIcons(req.$target);
         },
 
         /**
