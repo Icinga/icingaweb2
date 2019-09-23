@@ -639,6 +639,26 @@
             delete this.requests[req.$target.attr('id')];
             this.icinga.ui.fadeNotificationsAway();
 
+            var extraUpdates = req.getResponseHeader('X-Icinga-Extra-Updates');
+            if (!! extraUpdates && req.getResponseHeader('X-Icinga-Redirect-Http') !== 'yes') {
+                var _this = this;
+                $.each(extraUpdates.split(','), function (idx, el) {
+                    var parts = el.trim().split(';');
+                    if (parts.length !== 2) {
+                        _this.icinga.logger.error('Invalid extra update', el);
+                        return;
+                    }
+
+                    var $target = $('#' + parts[0]);
+                    if (! $target.length) {
+                        _this.icinga.logger.warn('Invalid target ID. Cannot load extra URL', el);
+                        return;
+                    }
+
+                    _this.loadUrl(parts[1], $target).addToHistory = false;
+                });
+            }
+
             if (this.processRedirectHeader(req)) {
                 return;
             }
