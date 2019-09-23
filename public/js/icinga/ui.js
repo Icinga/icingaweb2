@@ -681,7 +681,7 @@
                  * This is based on the assumption that the server only knows about the menu and first column
                  * and therefore does not need to protect its ids. (As the menu is most likely part of the sidebar)
                  */
-                if ($cont.attr('id') === 'menu' || $cont.attr('id') === 'col1') {
+                if ($cont.attr('id') === 'menu' || $cont.attr('id') === 'col1' || $cont.closest('#col1').length) {
                     return null;
                 }
 
