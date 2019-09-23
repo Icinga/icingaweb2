@@ -47,7 +47,6 @@
                 <!-- application/views -->
                 <file>../../application/views/helpers/FormNumber.php</file>
                 <file>../../application/views/helpers/FormDateTime.php</file>
-                <file>../../application/views/helpers/FormTriStateCheckbox.php</file>
                 <!-- library/Icinga/Logger -->
                 <file>../../library/Icinga/Logger/Writer/SyslogWriter.php</file>
                 <!-- library/Icinga/User -->

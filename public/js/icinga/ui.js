@@ -496,60 +496,6 @@
         },
 
         /**
-         * Initialize all TriStateCheckboxes in the given html
-         */
-        initializeTriStates: function ($html) {
-            $('div.tristate', $html).each(function(index, item) {
-                var $target  = $(item);
-
-                // hide input boxess and remove text nodes
-                $target.find("input").hide();
-                $target.contents().filter(function() { return this.nodeType === 3; }).remove();
-
-                // has three states?
-                var triState = $target.find('input[value="unchanged"]').length > 0 ? 1 : 0;
-
-                // fetch current value from radiobuttons
-                var value  = $target.find('input:checked').first().val();
-
-                $target.append(
-                  '<input class="tristate-dummy" ' +
-                        ' data-icinga-old="' + value + '" data-icinga-tristate="' + triState + '" type="checkbox" ' +
-                        (value === '1' ? 'checked ' : ( value === 'unchanged' ? 'indeterminate="true" ' : ' ' )) +
-                  '/> <b style="visibility: hidden;" class="tristate-changed"> (changed) </b>'
-                );
-                if (triState) {
-                  // TODO: find a better way to activate indeterminate checkboxes after load.
-                  $target.append(
-                    '<script type="text/javascript"> ' +
-                      ' $(\'input.tristate-dummy[indeterminate="true"]\').each(function(i, el){ el.indeterminate = true; }); ' +
-                    '</script>'
-                  );
-                }
-            });
-        },
-
-        /**
-         * Set the value of the given TriStateCheckbox
-         *
-         * @param value     {String}  The value to set, can be '1', '0' and 'unchanged'
-         * @param $checkbox {jQuery}  The checkbox
-         */
-        setTriState: function(value, $checkbox) {
-            switch (value) {
-                case ('1'):
-                    $checkbox.prop('checked', true).prop('indeterminate', false);
-                    break;
-                case ('0'):
-                    $checkbox.prop('checked', false).prop('indeterminate', false);
-                    break;
-                case ('unchanged'):
-                    $checkbox.prop('checked', false).prop('indeterminate', true);
-                    break;
-            }
-        },
-
-        /**
          * Toggle mobile menu
          *
          * @param {object} e Event
