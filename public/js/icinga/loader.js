@@ -566,8 +566,6 @@
 
             req.$target.data('icingaUrl', req.url);
 
-            this.icinga.ui.initializeTriStates($resp);
-
             if (rendered) {
                 return;
             }
