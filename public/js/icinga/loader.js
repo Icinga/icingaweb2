@@ -445,8 +445,6 @@
                 _this.loadUrl(_this.url('/layout/announcements'), $('#announcements'));
             }
 
-            // div helps getting an XML tree
-            var $resp = $('<div>' + req.responseText + '</div>');
             var active = false;
             var rendered = false;
             var classes;
@@ -521,33 +519,32 @@
             }
 
             // Handle search requests, still hardcoded.
-            if (req.url.match(/^\/search/) &&
-                req.$target.data('icingaUrl').match(/^\/search/) &&
-                $('.dashboard', $resp).length > 0 &&
-                $('.dashboard .container', req.$target).length > 0)
-            {
-                // TODO: We need dashboard pane and container identifiers (not ids)
-                var targets = [];
-                $('.dashboard .container', req.$target).each(function (idx, el) {
-                    targets.push($(el));
-                });
+            if (req.url.match(/^\/search/) && req.$target.data('icingaUrl').match(/^\/search/)) {
+                var $resp = $('<div>' + req.responseText + '</div>'); // div helps getting an XML tree
+                if ($('.dashboard', $resp).length > 0 && $('.dashboard .container', req.$target).length > 0) {
+                    // TODO: We need dashboard pane and container identifiers (not ids)
+                    var targets = [];
+                    $('.dashboard .container', req.$target).each(function (idx, el) {
+                        targets.push($(el));
+                    });
 
-                var i = 0;
-                // Searching for '.dashboard .container' in $resp doesn't dork?!
-                $('.dashboard .container', $resp).each(function (idx, el) {
-                    var $el = $(el);
-                    if ($el.hasClass('dashboard')) {
-                        return;
-                    }
-                    var url = $el.data('icingaUrl');
-                    targets[i].data('icingaUrl', url);
-                    var title = $('h1', $el).first();
-                    $('h1', targets[i]).first().replaceWith(title);
+                    var i = 0;
+                    // Searching for '.dashboard .container' in $resp doesn't dork?!
+                    $('.dashboard .container', $resp).each(function (idx, el) {
+                        var $el = $(el);
+                        if ($el.hasClass('dashboard')) {
+                            return;
+                        }
+                        var url = $el.data('icingaUrl');
+                        targets[i].data('icingaUrl', url);
+                        var title = $('h1', $el).first();
+                        $('h1', targets[i]).first().replaceWith(title);
 
-                    _this.loadUrl(url, targets[i]);
-                    i++;
-                });
-                rendered = true;
+                        _this.loadUrl(url, targets[i]);
+                        i++;
+                    });
+                    rendered = true;
+                }
             }
 
             var referrer = req.referrer;
@@ -574,8 +571,7 @@
                 this.icinga.timer.unregister(req.progressTimer);
             }
 
-            // .html() removes outer div we added above
-            this.renderContentToContainer($resp.html(), req.$target, req.action, req.autorefresh, req.forceFocus, autoSubmit);
+            this.renderContentToContainer(req.responseText, req.$target, req.action, req.autorefresh, req.forceFocus, autoSubmit);
             if (oldNotifications) {
                 oldNotifications.appendTo($('#notifications'));
             }
