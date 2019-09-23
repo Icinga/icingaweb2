@@ -555,7 +555,28 @@
                 this.icinga.timer.unregister(req.progressTimer);
             }
 
-            this.renderContentToContainer(req.responseText, req.$target, req.action, req.autorefresh, req.forceFocus, autoSubmit);
+            var contentSeparator = req.getResponseHeader('X-Icinga-Multipart-Content');
+            if (!! contentSeparator) {
+                $.each(req.responseText.split(contentSeparator), function (idx, el) {
+                    var match = el.match(/for=(?<id>\S+)\s+(?<html>.*)/m);
+                    if (!! match) {
+                        var $target = $('#' + match.groups.id);
+                        if ($target.length) {
+                            _this.renderContentToContainer(
+                                match.groups.html, $target, 'replace', req.autorefresh, req.forceFocus, autoSubmit);
+                        } else {
+                            _this.icinga.logger.warn(
+                                'Invalid target ID. Cannot render multipart to #' + match.groups.id);
+                        }
+                    } else {
+                        _this.icinga.logger.error('Ill-formed multipart', el);
+                    }
+                })
+            } else {
+                this.renderContentToContainer(
+                    req.responseText, req.$target, req.action, req.autorefresh, req.forceFocus, autoSubmit);
+            }
+
             if (oldNotifications) {
                 oldNotifications.appendTo($('#notifications'));
             }
