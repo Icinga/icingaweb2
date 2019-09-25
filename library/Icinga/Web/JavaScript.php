@@ -76,6 +76,7 @@ class JavaScript
             $jsFiles[] = $basedir . '/' . $file;
         }
 
+        $sharedFiles = [];
         foreach (Icinga::app()->getModuleManager()->getLoadedModules() as $name => $module) {
             if ($module->hasJs()) {
                 foreach ($module->getJsFiles() as $path) {
@@ -84,8 +85,16 @@ class JavaScript
                     }
                 }
             }
+
+            if ($module->requiresJs()) {
+                foreach ($module->getJsRequires() as $path) {
+                    $sharedFiles[] = $path;
+                }
+            }
         }
-        $files = array_merge($vendorFiles, $jsFiles);
+
+        $sharedFiles = array_unique($sharedFiles);
+        $files = array_merge($vendorFiles, $jsFiles, $sharedFiles);
 
         $request = Icinga::app()->getRequest();
         $noCache = $request->getHeader('Cache-Control') === 'no-cache' || $request->getHeader('Pragma') === 'no-cache';
@@ -114,6 +123,14 @@ class JavaScript
 
         foreach ($jsFiles as $file) {
             $js .= file_get_contents($file) . "\n\n\n";
+        }
+
+        foreach ($sharedFiles as $file) {
+            if (substr($file, -7, 7) === '.min.js') {
+                $out .= ';' . ltrim(trim(file_get_contents($file)), ';') . "\n";
+            } else {
+                $js .= file_get_contents($file) . "\n\n\n";
+            }
         }
 
         if ($minified) {
