@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Icinga Web 2 (None)\n"
 "Report-Msgid-Bugs-To: dev@icinga.com\n"
-"POT-Creation-Date: 2020-01-14 06:55+0000\n"
-"PO-Revision-Date: 2020-01-14 07:55+0100\n"
+"POT-Creation-Date: 2020-04-09 09:47+0200\n"
+"PO-Revision-Date: 2020-04-09 09:48+0200\n"
 "Last-Translator: Johannes Meyer <johannes.meyer@icinga.com>\n"
 "Language: de_DE\n"
 "MIME-Version: 1.0\n"
@@ -152,7 +152,7 @@ msgid "Acknowledge this announcement"
 msgstr "Diese Bekanntmachung bestätigen"
 
 #: ../../../../application/forms/Config/User/UserForm.php:24
-#: ../../../../application/controllers/UserController.php:80
+#: ../../../../application/controllers/UserController.php:81
 #: ../../../../application/views/scripts/user/show.phtml:33
 #: ../../../../library/Icinga/Authentication/User/LdapUserBackend.php:270
 #: ../../../../library/Icinga/Authentication/User/DbUserBackend.php:105
@@ -399,7 +399,7 @@ msgctxt "group.membership"
 msgid "Cancel"
 msgstr "Beenden"
 
-#: ../../../../application/controllers/UserController.php:164
+#: ../../../../application/controllers/UserController.php:165
 msgid "Cancel this membership"
 msgstr "Diese Mitgliedschaft beenden"
 
@@ -533,7 +533,7 @@ msgstr ""
 "Modul-Hooks fehlgeschlagen. Bitte die Logs prüfen"
 
 #: ../../../../application/controllers/GroupController.php:377
-#: ../../../../application/controllers/UserController.php:328
+#: ../../../../application/controllers/UserController.php:334
 #: ../../../../application/controllers/RoleController.php:116
 msgid ""
 "Configure roles to permit or restrict users and groups accessing Icinga Web 2"
@@ -606,7 +606,7 @@ msgstr "Konnte Dashboard nicht speichern"
 msgid "Create"
 msgstr "Erstellen"
 
-#: ../../../../application/views/scripts/user/show.phtml:57
+#: ../../../../application/views/scripts/user/show.phtml:83
 msgid "Create New Membership"
 msgstr "Neue Gruppenmitgliedschaft"
 
@@ -693,7 +693,7 @@ msgstr "Erstellt am"
 
 #: ../../../../application/controllers/GroupController.php:81
 #: ../../../../application/controllers/GroupController.php:117
-#: ../../../../application/controllers/UserController.php:81
+#: ../../../../application/controllers/UserController.php:82
 #: ../../../../application/views/scripts/group/show.phtml:33
 #: ../../../../application/views/scripts/user/show.phtml:36
 #: ../../../../library/Icinga/Authentication/User/DbUserBackend.php:106
@@ -888,6 +888,7 @@ msgid "Edit resource %s"
 msgstr "Ressource %s bearbeiten"
 
 #: ../../../../application/views/scripts/role/list.phtml:36
+#: ../../../../application/views/scripts/user/show.phtml:56
 #, php-format
 msgid "Edit role %s"
 msgstr "Rolle %s bearbeiten"
@@ -1033,7 +1034,7 @@ msgid "Failed to fetch any users from backend %s. Please check your log"
 msgstr ""
 "Es konnten keine Benutzer vom Backend %s geholt werden. Bitte Log überprüfen"
 
-#: ../../../../application/controllers/UserController.php:286
+#: ../../../../application/controllers/UserController.php:292
 #, php-format
 msgid "Failed to fetch memberships from backend %s. Please check your log"
 msgstr ""
@@ -1192,8 +1193,8 @@ msgid "Grid Chart"
 msgstr "Netzansicht"
 
 #: ../../../../application/controllers/GroupController.php:357
-#: ../../../../application/controllers/UserController.php:124
-#: ../../../../application/views/scripts/user/show.phtml:78
+#: ../../../../application/controllers/UserController.php:125
+#: ../../../../application/views/scripts/user/show.phtml:104
 msgid "Group"
 msgstr "Benutzergruppe"
 
@@ -1216,7 +1217,7 @@ msgstr "Benutzergruppe \"%s\" wurde entfernt"
 msgid "Group \"%s\" not found"
 msgstr "Benutzergruppe \"%s\" wurde nicht gefunden"
 
-#: ../../../../application/views/scripts/user/show.phtml:45
+#: ../../../../application/views/scripts/user/show.phtml:71
 msgid "Group Memberships"
 msgstr "Gruppenmitglieder"
 
@@ -1425,7 +1426,7 @@ msgstr "LDAP Objektklasse für Benutzer"
 
 #: ../../../../application/controllers/GroupController.php:82
 #: ../../../../application/controllers/GroupController.php:118
-#: ../../../../application/controllers/UserController.php:82
+#: ../../../../application/controllers/UserController.php:83
 #: ../../../../application/views/scripts/group/show.phtml:37
 #: ../../../../application/views/scripts/user/show.phtml:40
 #: ../../../../library/Icinga/Authentication/UserGroup/LdapUserGroupBackend.php:575
@@ -1457,7 +1458,7 @@ msgid "List announcements"
 msgstr "Bekanntmachungen auflisten"
 
 #: ../../../../application/controllers/GroupController.php:394
-#: ../../../../application/controllers/UserController.php:345
+#: ../../../../application/controllers/UserController.php:351
 #: ../../../../application/controllers/RoleController.php:133
 msgid "List groups of user group backends"
 msgstr "Gruppen der Benutzergruppenbackends auflisten"
@@ -1467,7 +1468,7 @@ msgid "List intalled modules"
 msgstr "Installierte Module auflisten"
 
 #: ../../../../application/controllers/GroupController.php:386
-#: ../../../../application/controllers/UserController.php:337
+#: ../../../../application/controllers/UserController.php:343
 #: ../../../../application/controllers/RoleController.php:125
 msgid "List users of authentication backends"
 msgstr "Benutzer der Authentifizierungsbackends auflisten"
@@ -1715,7 +1716,7 @@ msgstr "Neue Ressource erstellen"
 msgid "New Role"
 msgstr "Neue Rolle anlegen"
 
-#: ../../../../application/controllers/UserController.php:182
+#: ../../../../application/controllers/UserController.php:188
 msgid "New User"
 msgstr "Neuen Benutzer anlegen"
 
@@ -1798,7 +1799,11 @@ msgid "No group member found matching the filter"
 msgstr ""
 "Es wurde kein Gruppenmitglied gefunden, das den Filterkriterien entspricht"
 
-#: ../../../../application/views/scripts/user/show.phtml:71
+#: ../../../../application/views/scripts/user/show.phtml:65
+msgid "No memberships found"
+msgstr "Es wurden keine Mitgliedschaften gefunden"
+
+#: ../../../../application/views/scripts/user/show.phtml:97
 msgid "No memberships found matching the filter"
 msgstr ""
 "Es wurde keine Mitgliedschaften gefunden, welche den Filterkriterien "
@@ -2099,7 +2104,7 @@ msgstr "Ressource entfernen"
 msgid "Remove Role"
 msgstr "Rolle entfernen"
 
-#: ../../../../application/controllers/UserController.php:226
+#: ../../../../application/controllers/UserController.php:232
 msgid "Remove User"
 msgstr "Benutzer entfernen"
 
@@ -2277,6 +2282,10 @@ msgstr ""
 msgid "Restrictions"
 msgstr "Einschränkungen"
 
+#: ../../../../application/views/scripts/user/show.phtml:44
+msgid "Role Memberships"
+msgstr "Rollenmitgliedschaften"
+
 #: ../../../../application/forms/Security/RoleForm.php:151
 msgid "Role Name"
 msgstr "Rollenname"
@@ -2311,7 +2320,7 @@ msgid "Role updated"
 msgstr "Rolle aktualisiert"
 
 #: ../../../../application/controllers/GroupController.php:375
-#: ../../../../application/controllers/UserController.php:326
+#: ../../../../application/controllers/UserController.php:332
 #: ../../../../application/controllers/RoleController.php:21
 #: ../../../../application/controllers/RoleController.php:114
 msgid "Roles"
@@ -2507,7 +2516,7 @@ msgstr "Dashlet %s anzeigen"
 msgid "Show detailed information about %s"
 msgstr "Zeige detaillierte Informationen über %s"
 
-#: ../../../../application/views/scripts/user/show.phtml:91
+#: ../../../../application/views/scripts/user/show.phtml:117
 #, php-format
 msgid "Show detailed information for group %s"
 msgstr "Zeige detaillierte Informationen über die Gruppe %s"
@@ -2535,7 +2544,7 @@ msgstr "Zeige die Zeilen %u bis %u von %u"
 msgid "Show the overview of the %s module"
 msgstr "Zeige die Übersicht des Moduls %s"
 
-#: ../../../../application/controllers/UserController.php:307
+#: ../../../../application/controllers/UserController.php:313
 #, php-format
 msgid "Show user %s"
 msgstr "Zeige Benutzer %s"
@@ -3210,7 +3219,7 @@ msgstr "Ressource aktualisieren"
 msgid "Update Role"
 msgstr "Rolle aktualisieren"
 
-#: ../../../../application/controllers/UserController.php:204
+#: ../../../../application/controllers/UserController.php:210
 msgid "Update User"
 msgstr "Benutzer aktualisieren"
 
@@ -3255,7 +3264,7 @@ msgid "Use the following timezone for dates and times"
 msgstr "Die folgende Zeitzone für Datums- und Zeitangaben verwenden"
 
 #: ../../../../application/forms/Config/Resource/SshResourceForm.php:45
-#: ../../../../application/controllers/UserController.php:308
+#: ../../../../application/controllers/UserController.php:314
 msgid "User"
 msgstr "Benutzer"
 
@@ -3274,10 +3283,10 @@ msgstr "Der Benutzer \"%s\" wurde entfernt"
 msgid "User \"%s\" has been removed from group \"%s\""
 msgstr "Der Benutzer \"%s\" wurde aus der Gruppe \"%s\" entfernt"
 
-#: ../../../../application/controllers/UserController.php:104
-#: ../../../../application/controllers/UserController.php:201
-#: ../../../../application/controllers/UserController.php:223
-#: ../../../../application/controllers/UserController.php:239
+#: ../../../../application/controllers/UserController.php:105
+#: ../../../../application/controllers/UserController.php:207
+#: ../../../../application/controllers/UserController.php:229
+#: ../../../../application/controllers/UserController.php:245
 #, php-format
 msgid "User \"%s\" not found"
 msgstr "Der Benutzer \"%s\" wurde nicht gefunden"
@@ -3288,7 +3297,7 @@ msgid "User %s is already a member of all groups"
 msgstr "Der Benutzer %s ist bereits Mitglied in allen Gruppen"
 
 #: ../../../../application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:77
-#: ../../../../application/controllers/UserController.php:57
+#: ../../../../application/controllers/UserController.php:58
 msgid "User Backend"
 msgstr "Benutzerbackend"
 
@@ -3297,7 +3306,7 @@ msgid "User Backends"
 msgstr "Benutzerbackends"
 
 #: ../../../../application/controllers/GroupController.php:80
-#: ../../../../application/controllers/UserController.php:116
+#: ../../../../application/controllers/UserController.php:117
 #: ../../../../application/views/scripts/group/list.phtml:50
 #: ../../../../library/Icinga/Authentication/UserGroup/LdapUserGroupBackend.php:573
 #: ../../../../library/Icinga/Authentication/UserGroup/DbUserGroupBackend.php:118
@@ -3315,7 +3324,7 @@ msgstr "Benutzergruppenbackends"
 
 #: ../../../../application/controllers/GroupController.php:26
 #: ../../../../application/controllers/GroupController.php:395
-#: ../../../../application/controllers/UserController.php:346
+#: ../../../../application/controllers/UserController.php:352
 #: ../../../../application/controllers/RoleController.php:134
 msgid "User Groups"
 msgstr "Benutzergruppen"
@@ -3386,7 +3395,7 @@ msgstr ""
 #: ../../../../application/forms/Config/User/UserForm.php:33
 #: ../../../../application/forms/Authentication/LoginForm.php:48
 #: ../../../../application/controllers/GroupController.php:116
-#: ../../../../application/controllers/UserController.php:79
+#: ../../../../application/controllers/UserController.php:80
 #: ../../../../application/views/scripts/group/show.phtml:75
 #: ../../../../application/views/scripts/user/list.phtml:51
 #: ../../../../library/Icinga/Authentication/UserGroup/LdapUserGroupBackend.php:572
@@ -3402,8 +3411,8 @@ msgstr "Benutzername"
 #: ../../../../application/forms/Config/UserGroup/AddMemberForm.php:118
 #: ../../../../application/forms/Navigation/NavigationConfigForm.php:605
 #: ../../../../application/controllers/GroupController.php:387
-#: ../../../../application/controllers/UserController.php:25
-#: ../../../../application/controllers/UserController.php:338
+#: ../../../../application/controllers/UserController.php:26
+#: ../../../../application/controllers/UserController.php:344
 #: ../../../../application/controllers/RoleController.php:126
 #: ../../../../application/views/scripts/role/list.phtml:23
 msgid "Users"
@@ -3529,7 +3538,7 @@ msgstr "Sie haben noch kein Navigationselement angelegt."
 msgid "You don't have file-system permissions to write to the file"
 msgstr "Sie haben keine Schreibrechte auf diese Datei"
 
-#: ../../../../application/controllers/UserController.php:245
+#: ../../../../application/controllers/UserController.php:251
 msgid ""
 "You'll need to configure at least one user group backend first that allows "
 "to create new memberships"
