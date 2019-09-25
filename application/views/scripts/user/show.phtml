@@ -43,22 +43,27 @@ use Icinga\Data\Selectable;
         <tr>
             <th><?= $this->translate('Role Memberships'); ?></th>
             <td>
-                <?php $roleObj =  $userObj->getRoles(); ?>
-                <?php if (! empty($roleObj)): ?>
-                    <ul class="role-memberships">
-                        <?php foreach($roleObj as $role): ?>
-                            <li><?= $this->qlink(
-                                    $role->getName(),
-                                    'role/edit',
-                                    ['role' => $role->getName()],
-                                    ['title' => sprintf($this->translate('Edit role %s'), $role->getName())]
-                                ) ?>
-                            </li>
-                        <?php endforeach ?>
-                    </ul>
-                <?php else: ?>
-                    <p><?= $this->translate('No memberships found'); ?></p>
-                <?php endif ?>
+            <?php $roleObj =  $userObj->getRoles(); ?>
+            <?php if (! empty($roleObj)): ?>
+                <ul class="role-memberships">
+                <?php foreach($roleObj as $role): ?>
+                    <li>
+                    <?php if ($this->allowedToEditRoles): ?>
+                        <?= $this->qlink(
+                            $role->getName(),
+                            'role/edit',
+                            ['role' => $role->getName()],
+                            ['title' => sprintf($this->translate('Edit role %s'), $role->getName())]
+                        ) ?>
+                    <?php else: ?>
+                        <?= $role->getName() ?>
+                    <?php endif ?>
+                    </li>
+                <?php endforeach ?>
+                </ul>
+            <?php else: ?>
+                <p><?= $this->translate('No memberships found'); ?></p>
+            <?php endif ?>
             </td>
         </tr>
     </table>

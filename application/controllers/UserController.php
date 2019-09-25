@@ -170,6 +170,7 @@ class UserController extends AuthBackendController
         $admissionLoader = new AdmissionLoader();
         $admissionLoader->applyRoles($userObj);
         $this->view->userObj = $userObj;
+        $this->view->allowedToEditRoles = $this->hasPermission('config/authentication/roles/edit');
     }
 
     /**
