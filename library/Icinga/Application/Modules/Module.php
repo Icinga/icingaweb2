@@ -1282,7 +1282,7 @@ class Module
      */
     protected function registerAssets()
     {
-        if (! is_dir($this->assetDir)) {
+        if ($this->app->isCli() || ! is_dir($this->assetDir)) {
             return $this;
         }
 
