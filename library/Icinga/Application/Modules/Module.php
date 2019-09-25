@@ -556,8 +556,7 @@ class Module
      */
     protected function requireCssFile($name, $from)
     {
-        $module = self::get($from, true); // TODO: Cross deps?
-        foreach ($module->getCssAssets() as $filePath) {
+        foreach (self::get($from)->getCssAssets() as $filePath) {
             if (basename($filePath) === $name) {
                 if (is_readable($filePath) && is_file($filePath)) {
                     $this->cssRequires[] = $filePath;
@@ -628,8 +627,7 @@ class Module
      */
     protected function requireJsFile($name, $from)
     {
-        $module = self::get($from, true); // TODO: Cross deps?
-        foreach ($module->getJsAssets() as $filePath) {
+        foreach (self::get($from)->getJsAssets() as $filePath) {
             if (basename($filePath) === $name) {
                 if (is_readable($filePath) && is_file($filePath)) {
                     $this->jsRequires[] = $filePath;
