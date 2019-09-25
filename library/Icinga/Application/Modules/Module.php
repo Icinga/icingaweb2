@@ -567,7 +567,9 @@ class Module
 
             if ($path === $relativePath) {
                 $this->cssRequires[] = $assetPath;
-                break;
+                break; // Exact match, won't match again..
+            } elseif (fnmatch($path, $relativePath)) {
+                $this->cssRequires[] = $assetPath;
             }
         }
 
@@ -643,7 +645,9 @@ class Module
 
             if ($path === $relativePath) {
                 $this->jsRequires[] = $assetPath;
-                break;
+                break; // Exact match, won't match again..
+            } elseif (fnmatch($path, $relativePath)) {
+                $this->jsRequires[] = $assetPath;
             }
         }
 
