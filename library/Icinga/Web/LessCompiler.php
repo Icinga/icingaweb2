@@ -36,6 +36,11 @@ class LessCompiler
      */
     protected $moduleLessFiles = array();
 
+    /**
+     * Array of module names indexed by LESS asset paths
+     *
+     * @var array
+     */
     protected $moduleRequires = [];
 
     /**
@@ -93,6 +98,14 @@ class LessCompiler
         return $this;
     }
 
+    /**
+     * Add a LESS asset requirement
+     *
+     * @param   string  $moduleName
+     * @param   string  $lessFile
+     *
+     * @return  $this
+     */
     public function addModuleRequire($moduleName, $lessFile)
     {
         $this->moduleRequires[$lessFile][] = $moduleName;
@@ -159,6 +172,16 @@ class LessCompiler
             $this->source .= file_get_contents($lessFile);
         }
 
+        $requireCss = '';
+        foreach ($this->moduleRequires as $requiredFile => $modules) {
+            $containers = array_map(function ($name) {
+                return '.icinga-module.module-' . $name;
+            }, $modules);
+            $requireCss .= join(',', $containers) . ' {' . file_get_contents($requiredFile) . '}';
+        }
+
+        $this->source .= $requireCss;
+
         $moduleCss = '';
         foreach ($this->moduleLessFiles as $moduleName => $moduleLessFiles) {
             $moduleCss .= '.icinga-module.module-' . $moduleName . ' {';
@@ -169,16 +192,6 @@ class LessCompiler
         }
 
         $this->source .= $moduleCss;
-
-        $requireCss = '';
-        foreach ($this->moduleRequires as $requiredFile => $modules) {
-            $containers = array_map(function ($name) {
-                return '.icinga-module.module-' . $name;
-            }, $modules);
-            $requireCss .= join(',', $containers) . ' {' . file_get_contents($requiredFile) . '}';
-        }
-
-        $this->source .= $requireCss;
 
         if ($this->theme !== null) {
             $this->source .= file_get_contents($this->theme);
