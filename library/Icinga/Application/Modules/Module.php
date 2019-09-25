@@ -549,24 +549,29 @@ class Module
     /**
      * Require CSS from a different module
      *
-     * @param   string  $name   The file's name
+     * @param   string  $path   The file's path, relative to the module's asset or base directory
      * @param   string  $from   The module's name
      *
-     * @return  bool
+     * @return  $this
      */
-    protected function requireCssFile($name, $from)
+    protected function requireCssFile($path, $from)
     {
-        foreach (self::get($from)->getCssAssets() as $filePath) {
-            if (basename($filePath) === $name) {
-                if (is_readable($filePath) && is_file($filePath)) {
-                    $this->cssRequires[] = $filePath;
-                    return true;
-                }
+        $module = self::get($from);
+        $cssAssetDir = join(DIRECTORY_SEPARATOR, [$module->assetDir, 'css']);
+        foreach ($module->getCssAssets() as $assetPath) {
+            if (substr($assetPath, 0, strlen($cssAssetDir)) === $cssAssetDir) {
+                $relativePath = ltrim(substr($assetPath, strlen($cssAssetDir)), '/\\');
+            } else {
+                $relativePath = ltrim(substr($assetPath, strlen($module->basedir)), '/\\');
+            }
+
+            if ($path === $relativePath) {
+                $this->cssRequires[] = $assetPath;
+                break;
             }
         }
 
-        // TODO: Error logging? New way of "there's something wrong"?
-        trigger_error(sprintf('CSS file "%s" by module "%s" not found', $name, $from), E_USER_ERROR);
+        return $this;
     }
 
     /**
@@ -620,24 +625,29 @@ class Module
     /**
      * Require Javascript from a different module
      *
-     * @param   string  $name   The file's name
+     * @param   string  $path   The file's path, relative to the module's asset or base directory
      * @param   string  $from   The module's name
      *
-     * @return  bool
+     * @return  $this
      */
-    protected function requireJsFile($name, $from)
+    protected function requireJsFile($path, $from)
     {
-        foreach (self::get($from)->getJsAssets() as $filePath) {
-            if (basename($filePath) === $name) {
-                if (is_readable($filePath) && is_file($filePath)) {
-                    $this->jsRequires[] = $filePath;
-                    return true;
-                }
+        $module = self::get($from);
+        $jsAssetDir = join(DIRECTORY_SEPARATOR, [$module->assetDir, 'js']);
+        foreach ($module->getJsAssets() as $assetPath) {
+            if (substr($assetPath, 0, strlen($jsAssetDir)) === $jsAssetDir) {
+                $relativePath = ltrim(substr($assetPath, strlen($jsAssetDir)), '/\\');
+            } else {
+                $relativePath = ltrim(substr($assetPath, strlen($module->basedir)), '/\\');
+            }
+
+            if ($path === $relativePath) {
+                $this->jsRequires[] = $assetPath;
+                break;
             }
         }
 
-        // TODO: Error logging? New way of "there's something wrong"?
-        trigger_error(sprintf('JS file "%s" by module "%s" not found', $name, $from), E_USER_ERROR);
+        return $this;
     }
 
     /**
