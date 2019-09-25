@@ -399,22 +399,6 @@
             }
         },
 
-        cacheLoadedIcons: function($container) {
-            // TODO: this is just a prototype, disabled for now
-            return;
-
-            var _this = this;
-            $('img.icon', $container).each(function(idx, img) {
-                var src = $(img).attr('src');
-                if (typeof _this.iconCache[src] !== 'undefined') {
-                    return;
-                }
-                var cache = new Image();
-                cache.src = src
-                _this.iconCache[src] = cache;
-            });
-        },
-
         /**
          * Handle successful XHR response
          */
@@ -445,8 +429,6 @@
                 _this.loadUrl(_this.url('/layout/announcements'), $('#announcements'));
             }
 
-            // div helps getting an XML tree
-            var $resp = $('<div>' + req.responseText + '</div>');
             var active = false;
             var rendered = false;
             var classes;
@@ -521,33 +503,32 @@
             }
 
             // Handle search requests, still hardcoded.
-            if (req.url.match(/^\/search/) &&
-                req.$target.data('icingaUrl').match(/^\/search/) &&
-                $('.dashboard', $resp).length > 0 &&
-                $('.dashboard .container', req.$target).length > 0)
-            {
-                // TODO: We need dashboard pane and container identifiers (not ids)
-                var targets = [];
-                $('.dashboard .container', req.$target).each(function (idx, el) {
-                    targets.push($(el));
-                });
+            if (req.url.match(/^\/search/) && req.$target.data('icingaUrl').match(/^\/search/)) {
+                var $resp = $('<div>' + req.responseText + '</div>'); // div helps getting an XML tree
+                if ($('.dashboard', $resp).length > 0 && $('.dashboard .container', req.$target).length > 0) {
+                    // TODO: We need dashboard pane and container identifiers (not ids)
+                    var targets = [];
+                    $('.dashboard .container', req.$target).each(function (idx, el) {
+                        targets.push($(el));
+                    });
 
-                var i = 0;
-                // Searching for '.dashboard .container' in $resp doesn't dork?!
-                $('.dashboard .container', $resp).each(function (idx, el) {
-                    var $el = $(el);
-                    if ($el.hasClass('dashboard')) {
-                        return;
-                    }
-                    var url = $el.data('icingaUrl');
-                    targets[i].data('icingaUrl', url);
-                    var title = $('h1', $el).first();
-                    $('h1', targets[i]).first().replaceWith(title);
+                    var i = 0;
+                    // Searching for '.dashboard .container' in $resp doesn't dork?!
+                    $('.dashboard .container', $resp).each(function (idx, el) {
+                        var $el = $(el);
+                        if ($el.hasClass('dashboard')) {
+                            return;
+                        }
+                        var url = $el.data('icingaUrl');
+                        targets[i].data('icingaUrl', url);
+                        var title = $('h1', $el).first();
+                        $('h1', targets[i]).first().replaceWith(title);
 
-                    _this.loadUrl(url, targets[i]);
-                    i++;
-                });
-                rendered = true;
+                        _this.loadUrl(url, targets[i]);
+                        i++;
+                    });
+                    rendered = true;
+                }
             }
 
             var referrer = req.referrer;
@@ -574,15 +555,34 @@
                 this.icinga.timer.unregister(req.progressTimer);
             }
 
-            // .html() removes outer div we added above
-            this.renderContentToContainer($resp.html(), req.$target, req.action, req.autorefresh, req.forceFocus, autoSubmit);
+            var contentSeparator = req.getResponseHeader('X-Icinga-Multipart-Content');
+            if (!! contentSeparator) {
+                $.each(req.responseText.split(contentSeparator), function (idx, el) {
+                    var match = el.match(/for=(?<id>\S+)\s+(?<html>.*)/m);
+                    if (!! match) {
+                        var $target = $('#' + match.groups.id);
+                        if ($target.length) {
+                            _this.renderContentToContainer(
+                                match.groups.html, $target, 'replace', req.autorefresh, req.forceFocus, autoSubmit);
+                        } else {
+                            _this.icinga.logger.warn(
+                                'Invalid target ID. Cannot render multipart to #' + match.groups.id);
+                        }
+                    } else {
+                        _this.icinga.logger.error('Ill-formed multipart', el);
+                    }
+                })
+            } else {
+                this.renderContentToContainer(
+                    req.responseText, req.$target, req.action, req.autorefresh, req.forceFocus, autoSubmit);
+            }
+
             if (oldNotifications) {
                 oldNotifications.appendTo($('#notifications'));
             }
             if (newBody) {
                 this.icinga.ui.fixDebugVisibility().triggerWindowResize();
             }
-            _this.cacheLoadedIcons(req.$target);
         },
 
         /**
@@ -642,6 +642,26 @@
             req.$target.data('lastUpdate', (new Date()).getTime());
             delete this.requests[req.$target.attr('id')];
             this.icinga.ui.fadeNotificationsAway();
+
+            var extraUpdates = req.getResponseHeader('X-Icinga-Extra-Updates');
+            if (!! extraUpdates && req.getResponseHeader('X-Icinga-Redirect-Http') !== 'yes') {
+                var _this = this;
+                $.each(extraUpdates.split(','), function (idx, el) {
+                    var parts = el.trim().split(';');
+                    if (parts.length !== 2) {
+                        _this.icinga.logger.error('Invalid extra update', el);
+                        return;
+                    }
+
+                    var $target = $('#' + parts[0]);
+                    if (! $target.length) {
+                        _this.icinga.logger.warn('Invalid target ID. Cannot load extra URL', el);
+                        return;
+                    }
+
+                    _this.loadUrl(parts[1], $target).addToHistory = false;
+                });
+            }
 
             if (this.processRedirectHeader(req)) {
                 return;
