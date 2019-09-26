@@ -43,12 +43,16 @@ class DashboardContainer extends NavigationItemContainer
      *
      * @param   string  $name
      * @param   string  $url
+     * @param   int     $priority
      *
      * @return  $this
      */
-    public function add($name, $url)
+    public function add($name, $url, $priority = null)
     {
-        $this->dashlets[$name] = $url;
+        $this->dashlets[$name] = [
+            'url'       => $url,
+            'priority'  => $priority
+        ];
         return $this;
     }
 }

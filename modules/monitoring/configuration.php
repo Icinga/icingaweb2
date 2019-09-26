@@ -295,15 +295,18 @@ $section->add(N_('Monitoring Health'), array(
 $dashboard = $this->dashboard(N_('Current Incidents'), array('priority' => 50));
 $dashboard->add(
     N_('Service Problems'),
-    'monitoring/list/services?service_problem=1&limit=10&sort=service_severity'
+    'monitoring/list/services?service_problem=1&limit=10&sort=service_severity',
+    100
 );
 $dashboard->add(
     N_('Recently Recovered Services'),
-    'monitoring/list/services?service_state=0&limit=10&sort=service_last_state_change&dir=desc'
+    'monitoring/list/services?service_state=0&limit=10&sort=service_last_state_change&dir=desc',
+    110
 );
 $dashboard->add(
     N_('Host Problems'),
-    'monitoring/list/hosts?host_problem=1&sort=host_severity'
+    'monitoring/list/hosts?host_problem=1&sort=host_severity',
+    120
 );
 
 /*
@@ -329,19 +332,23 @@ $dashboard->add(
 $dashboard = $this->dashboard(N_('Overdue'), array('priority' => 70));
 $dashboard->add(
     N_('Late Host Check Results'),
-    'monitoring/list/hosts?host_next_update<now'
+    'monitoring/list/hosts?host_next_update<now',
+    100
 );
 $dashboard->add(
     N_('Late Service Check Results'),
-    'monitoring/list/services?service_next_update<now'
+    'monitoring/list/services?service_next_update<now',
+    110
 );
 $dashboard->add(
     N_('Acknowledgements Active For At Least Three Days'),
-    'monitoring/list/comments?comment_type=Ack&comment_timestamp<-3 days&sort=comment_timestamp&dir=asc'
+    'monitoring/list/comments?comment_type=Ack&comment_timestamp<-3 days&sort=comment_timestamp&dir=asc',
+    120
 );
 $dashboard->add(
     N_('Downtimes Active For More Than Three Days'),
-    'monitoring/list/downtimes?downtime_is_in_effect=1&downtime_scheduled_start<-3%20days&sort=downtime_start&dir=asc'
+    'monitoring/list/downtimes?downtime_is_in_effect=1&downtime_scheduled_start<-3%20days&sort=downtime_start&dir=asc',
+    130
 );
 
 /*
@@ -350,27 +357,33 @@ $dashboard->add(
 $dashboard = $this->dashboard(N_('Muted'), array('priority' => 80));
 $dashboard->add(
     N_('Disabled Service Notifications'),
-    'monitoring/list/services?service_notifications_enabled=0&limit=10'
+    'monitoring/list/services?service_notifications_enabled=0&limit=10',
+    100
 );
 $dashboard->add(
     N_('Disabled Host Notifications'),
-    'monitoring/list/hosts?host_notifications_enabled=0&limit=10'
+    'monitoring/list/hosts?host_notifications_enabled=0&limit=10',
+    110
 );
 $dashboard->add(
     N_('Disabled Service Checks'),
-    'monitoring/list/services?service_active_checks_enabled=0&limit=10'
+    'monitoring/list/services?service_active_checks_enabled=0&limit=10',
+    120
 );
 $dashboard->add(
     N_('Disabled Host Checks'),
-    'monitoring/list/hosts?host_active_checks_enabled=0&limit=10'
+    'monitoring/list/hosts?host_active_checks_enabled=0&limit=10',
+    130
 );
 $dashboard->add(
     N_('Acknowledged Problem Services'),
-    'monitoring/list/services?service_acknowledgement_type=2&service_problem=1&sort=service_state&limit=10'
+    'monitoring/list/services?service_acknowledgement_type=2&service_problem=1&sort=service_state&limit=10',
+    140
 );
 $dashboard->add(
     N_('Acknowledged Problem Hosts'),
-    'monitoring/list/hosts?host_acknowledgement_type=2&host_problem=1&sort=host_severity&limit=10'
+    'monitoring/list/hosts?host_acknowledgement_type=2&host_problem=1&sort=host_severity&limit=10',
+    150
 );
 
 /*
