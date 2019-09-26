@@ -3,20 +3,13 @@
 
 use Icinga\Web\Dom\DomNodeIterator;
 use Icinga\Web\View;
-use Icinga\Module\Monitoring\Web\Helper\PluginOutputPurifier;
+use Icinga\Web\Helper\HtmlPurifier;
 
 /**
  * Plugin output renderer
  */
 class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
 {
-    /**
-     * The return value of getPurifier()
-     *
-     * @var HTMLPurifier
-     */
-    protected static $purifier;
-
     /**
      * Patterns to be replaced in plain text plugin output
      *
@@ -107,7 +100,7 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
             $output = preg_replace(
                 self::$htmlPatterns,
                 self::$htmlReplacements,
-                PluginOutputPurifier::process($output)
+                HtmlPurifier::process($output)
             );
             $isHtml = true;
         } else {
