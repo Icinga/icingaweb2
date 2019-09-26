@@ -101,17 +101,17 @@ class HoststatusQuery extends IdoQuery
             'host_next_notification'                => 'UNIX_TIMESTAMP(hs.next_notification)',
             'host_next_update'                      => 'CASE WHEN hs.has_been_checked = 0 OR hs.has_been_checked IS NULL
             THEN
-                NULL
+                CASE hs.should_be_scheduled WHEN 1 THEN UNIX_TIMESTAMP(hs.next_check) + (hs.normal_check_interval * 60) ELSE NULL END
             ELSE
-                UNIX_TIMESTAMP(hs.last_check)
+                UNIX_TIMESTAMP(hs.next_check)
                 + (CASE WHEN
                     COALESCE(hs.current_state, 0) > 0 AND hs.state_type = 0
                 THEN
                     hs.retry_check_interval
                 ELSE
                     hs.normal_check_interval
-                END * 60
-                + CEIL(hs.execution_time) + CEIL(hs.latency)) * 2
+                END * 60)
+                + (CEIL(hs.execution_time + hs.latency) * 2)
             END',
             'host_no_more_notifications'            => 'hs.no_more_notifications',
             'host_normal_check_interval'            => 'hs.normal_check_interval',
