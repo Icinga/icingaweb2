@@ -157,7 +157,7 @@ form.icinga-form {
 }
 
 .icinga-controls {
-  input:not([type="checkbox"]),
+  input:not([type="checkbox"]):not([type="radio"]),
   .toggle-switch,
   button,
   select,
@@ -165,6 +165,10 @@ form.icinga-form {
     border: none;
     .rounded-corners(.25em);
     .appearance(none);
+  }
+
+  input[type="radio"] {
+    margin-right: .25em;
   }
 }
 
