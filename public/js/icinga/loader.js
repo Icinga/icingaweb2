@@ -647,19 +647,23 @@
             if (!! extraUpdates && req.getResponseHeader('X-Icinga-Redirect-Http') !== 'yes') {
                 var _this = this;
                 $.each(extraUpdates.split(','), function (idx, el) {
-                    var parts = el.trim().split(';');
-                    if (parts.length !== 2) {
+                    var parts = el.trim().split(';'), $target, url;
+                    if (parts.length === 2) {
+                        $target = $('#' + parts[0]);
+                        if (! $target.length) {
+                            _this.icinga.logger.warn('Invalid target ID. Cannot load extra URL', el);
+                            return;
+                        }
+                        url = parts[1];
+                    } else if (parts.length === 1) {
+                        $target = $(parts[0]).closest(".container").not(req.$target);
+                        url = $target.data('icingaUrl');
+                    } else {
                         _this.icinga.logger.error('Invalid extra update', el);
                         return;
                     }
 
-                    var $target = $('#' + parts[0]);
-                    if (! $target.length) {
-                        _this.icinga.logger.warn('Invalid target ID. Cannot load extra URL', el);
-                        return;
-                    }
-
-                    _this.loadUrl(parts[1], $target).addToHistory = false;
+                    _this.loadUrl(url, $target).addToHistory = false;
                 });
             }
 
