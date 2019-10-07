@@ -558,15 +558,15 @@
             var contentSeparator = req.getResponseHeader('X-Icinga-Multipart-Content');
             if (!! contentSeparator) {
                 $.each(req.responseText.split(contentSeparator), function (idx, el) {
-                    var match = el.match(/for=(?<id>\S+)\s+(?<html>.*)/m);
+                    var match = el.match(/for=(\S+)\s+(.*)/m);
                     if (!! match) {
-                        var $target = $('#' + match.groups.id);
+                        var $target = $('#' + match[1]);
                         if ($target.length) {
                             _this.renderContentToContainer(
-                                match.groups.html, $target, 'replace', req.autorefresh, req.forceFocus, autoSubmit);
+                                match[2], $target, 'replace', req.autorefresh, req.forceFocus, autoSubmit);
                         } else {
                             _this.icinga.logger.warn(
-                                'Invalid target ID. Cannot render multipart to #' + match.groups.id);
+                                'Invalid target ID. Cannot render multipart to #' + match[1]);
                         }
                     } else {
                         _this.icinga.logger.error('Ill-formed multipart', el);
