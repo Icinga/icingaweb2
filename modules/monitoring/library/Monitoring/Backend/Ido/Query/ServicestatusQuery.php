@@ -213,17 +213,17 @@ class ServicestatusQuery extends IdoQuery
             'service_next_notification'                 => 'UNIX_TIMESTAMP(ss.next_notification)',
             'service_next_update'                       => 'CASE WHEN ss.has_been_checked = 0 OR ss.has_been_checked IS NULL
             THEN
-                NULL
+                CASE ss.should_be_scheduled WHEN 1 THEN UNIX_TIMESTAMP(ss.next_check) + (ss.normal_check_interval * 60) ELSE NULL END
             ELSE
-                UNIX_TIMESTAMP(ss.last_check)
+                UNIX_TIMESTAMP(ss.next_check)
                 + (CASE WHEN
                     COALESCE(ss.current_state, 0) > 0 AND ss.state_type = 0
                 THEN
                     ss.retry_check_interval
                 ELSE
                     ss.normal_check_interval
-                END * 60
-                + CEIL(ss.execution_time) + CEIL(ss.latency)) * 2
+                END * 60)
+                + (CEIL(ss.execution_time + ss.latency) * 2)
             END',
             'service_no_more_notifications'             => 'ss.no_more_notifications',
             'service_normal_check_interval'             => 'ss.normal_check_interval',
