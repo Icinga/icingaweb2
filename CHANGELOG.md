@@ -4,6 +4,34 @@ Please make sure to always read our [Upgrading](doc/80-Upgrading.md) documentati
 
 ## What's New
 
+### What's New in Version 2.7.2
+
+You can find all issues related to this release on our [Roadmap](https://github.com/Icinga/icingaweb2/milestone/57?closed=1).
+
+#### Less Smoky Database Servers
+
+The release of v2.7.1 introduced a change which revealed an inefficient part of our database queries. We made some
+general optimizations on our queries and changed the way we utilize them in some views. The result are faster
+response times by less work for the database server.
+
+* Consuming more CPU resources since upgraded to 2.7.1 [#3928](https://github.com/Icinga/icingaweb2/issues/3928)
+
+#### Anarchism Infested Dashboards
+
+Recent history already showed signs of anarchism. (Pun intended) A similar mindset now infested default dashboards
+which appeared in a different way than before v2.7.0. We taught their dashlets a lesson and order has been reestablished
+as previously.
+
+* Recently Recovered Services in dashboard "Current Incidents" seems out of order [#3931](https://github.com/Icinga/icingaweb2/issues/3931)
+
+#### Solitary Downtimes
+
+We improved the host and service distinction with v2.7.0. The downtimes list however got confused by this and didn't
+knew anymore how to combine multiple downtimes. If you now instruct the list to select multiple downtimes this works
+again as we removed the confusing parts.
+
+* Selection of multiple downtimes fails [#3920](https://github.com/Icinga/icingaweb2/issues/3920)
+
 ### What's New in Version 2.7.1
 
 You can find all issues related to this release on our [Roadmap](https://github.com/Icinga/icingaweb2/milestone/56?closed=1).
