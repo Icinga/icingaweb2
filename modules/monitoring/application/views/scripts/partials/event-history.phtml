@@ -29,19 +29,17 @@ if (! $url->hasParam('page') || ($page = (int) $url->getParam('page')) < 1) {
 $history->limit($limit * $page);
 ?>
 <div class="content">
-<?php if (! $history->hasResult()): ?>
-    <p><?= $this->translate('No historical events found matching the filter.') ?></p>
-</div>
-<?php return; endif ?>
 <?php
 $dateFormat = $this->translate('%A, %B %e, %Y', 'date.verbose');
 $lastDate = null;
 $flappingMsg = $this->translate('Flapping with a %.2f%% state change rate');
 $rowAction = Url::fromPath('monitoring/event/show');
 ?>
+    <?php foreach ($history->peekAhead() as $event): ?>
+<?php if ($lastDate === null): ?>
     <table class="table-row-selectable state-table" data-base-target="_next">
-    <tbody>
-    <?php foreach ($history->peekAhead() as $event):
+        <tbody>
+<?php endif;
         $icon = '';
         $iconTitle = null;
         $isService = isset($event->service_description);
@@ -240,8 +238,10 @@ $rowAction = Url::fromPath('monitoring/event/show');
             </td>
         </tr>
         <?php endforeach ?>
+<?php if ($lastDate !== null): ?>
         </tbody>
     </table>
+<?php endif ?>
 <?php if ($history->hasMore()): ?>
     <div class="action-links">
     <?php if ($this->compact) {

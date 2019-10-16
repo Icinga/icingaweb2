@@ -108,7 +108,24 @@ class HostgroupsummaryQuery extends IdoQuery
             )
         );
         $this->subQueries[] = $services;
-        $this->summaryQuery = $this->db->select()->union(array($hosts, $services), Zend_Db_Select::SQL_UNION_ALL);
+        $emptyGroups = $this->createSubQuery(
+            'Emptyhostgroup',
+            [
+                'hostgroup_alias',
+                'hostgroup_name',
+                'host_handled'      => new Zend_Db_Expr('NULL'),
+                'host_severity'     => new Zend_Db_Expr('0'),
+                'host_state'        => new Zend_Db_Expr('NULL'),
+                'service_handled'   => new Zend_Db_Expr('NULL'),
+                'service_severity'  => new Zend_Db_Expr('0'),
+                'service_state'     => new Zend_Db_Expr('NULL'),
+            ]
+        );
+        $this->subQueries[] = $emptyGroups;
+        $this->summaryQuery = $this->db->select()->union(
+            [$hosts, $services, $emptyGroups],
+            Zend_Db_Select::SQL_UNION_ALL
+        );
         $this->select->from(array('hostgroupsummary' => $this->summaryQuery), array());
         $this->group(array('hostgroup_name', 'hostgroup_alias'));
         $this->joinedVirtualTables['hostgroupsummary'] = true;

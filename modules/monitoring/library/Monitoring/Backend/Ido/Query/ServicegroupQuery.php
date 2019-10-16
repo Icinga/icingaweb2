@@ -89,7 +89,7 @@ class ServicegroupQuery extends IdoQuery
                              END
                          END
                 END',
-            'service_state'     => 'CASE WHEN ss.has_been_checked = 0 OR (ss.has_been_checked IS NULL AND ss.servicestatus_id IS NOT NULL) THEN 99 ELSE ss.current_state END'
+            'service_state'     => 'CASE WHEN ss.has_been_checked = 0 OR ss.has_been_checked IS NULL THEN 99 ELSE ss.current_state END'
         )
     );
 
@@ -192,15 +192,15 @@ class ServicegroupQuery extends IdoQuery
     protected function joinHostgroups()
     {
         $this->requireVirtualTable('services');
-        $this->select->joinLeft(
+        $this->select->join(
             array('hgm' => $this->prefix . 'hostgroup_members'),
             'hgm.host_object_id = s.host_object_id',
             array()
-        )->joinLeft(
+        )->join(
             array('hg' => $this->prefix . 'hostgroups'),
             'hg.hostgroup_id = hgm.hostgroup_id',
             array()
-        )->joinLeft(
+        )->join(
             array('hgo' => $this->prefix . 'objects'),
             'hgo.object_id = hg.hostgroup_object_id AND hgo.objecttype_id = 3 AND hgo.is_active = 1',
             array()
@@ -225,7 +225,7 @@ class ServicegroupQuery extends IdoQuery
      */
     protected function joinInstances()
     {
-        $this->select->joinLeft(
+        $this->select->join(
             array('i' => $this->prefix . 'instances'),
             'i.instance_id = sg.instance_id',
             array()
@@ -237,11 +237,11 @@ class ServicegroupQuery extends IdoQuery
      */
     protected function joinMembers()
     {
-        $this->select->joinLeft(
+        $this->select->join(
             array('sgm' => $this->prefix . 'servicegroup_members'),
             'sgm.servicegroup_id = sg.servicegroup_id',
             array()
-        )->joinLeft(
+        )->join(
             array('so' => $this->prefix . 'objects'),
             'so.object_id = sgm.service_object_id AND so.objecttype_id = 2 AND so.is_active = 1',
             array()
@@ -254,7 +254,7 @@ class ServicegroupQuery extends IdoQuery
     protected function joinServices()
     {
         $this->requireVirtualTable('members');
-        $this->select->joinLeft(
+        $this->select->join(
             array('s' => $this->prefix . 'services'),
             's.service_object_id = so.object_id',
             array()
@@ -267,12 +267,12 @@ class ServicegroupQuery extends IdoQuery
     protected function joinServicestatus()
     {
         $this->requireVirtualTable('services');
-        $this->select->joinLeft(
+        $this->select->join(
             array('hs' => $this->prefix . 'hoststatus'),
             'hs.host_object_id = s.host_object_id',
             array()
         );
-        $this->select->joinLeft(
+        $this->select->join(
             array('ss' => $this->prefix . 'servicestatus'),
             'ss.service_object_id = so.object_id',
             array()
