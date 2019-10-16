@@ -37,6 +37,13 @@ class SimpleQuery implements QueryInterface, Queryable, Iterator
     protected $iteratorPosition;
 
     /**
+     * The amount of rows previously calculated
+     *
+     * @var int
+     */
+    protected $cachedCount;
+
+    /**
      * The target you are going to query
      *
      * @var mixed
@@ -450,7 +457,7 @@ class SimpleQuery implements QueryInterface, Queryable, Iterator
      */
     public function hasResult()
     {
-        return $this->iteratorPosition !== null || $this->fetchRow() !== false;
+        return $this->cachedCount > 0 || $this->iteratorPosition !== null || $this->fetchRow() !== false;
     }
 
     /**
@@ -647,6 +654,7 @@ class SimpleQuery implements QueryInterface, Queryable, Iterator
         $query->limit(0, 0);
         Benchmark::measure('Counting all results started');
         $count = $this->ds->count($query);
+        $this->cachedCount = $count;
         Benchmark::measure('Counting all results finished');
         return $count;
     }

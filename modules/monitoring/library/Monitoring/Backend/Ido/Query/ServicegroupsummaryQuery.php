@@ -4,6 +4,8 @@
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
 use Icinga\Data\Filter\Filter;
+use Zend_Db_Expr;
+use Zend_Db_Select;
 
 /**
  * Query for service group summary
@@ -23,7 +25,7 @@ class ServicegroupsummaryQuery extends IdoQuery
             'services_ok'                                   => 'SUM(CASE WHEN service_state = 0 THEN 1 ELSE 0 END)',
             'services_pending'                              => 'SUM(CASE WHEN service_state = 99 THEN 1 ELSE 0 END)',
             'services_severity'                             => 'MAX(service_severity)',
-            'services_total'                                => 'SUM(CASE WHEN service_state IS NOT NULL THEN 1 ELSE 0 END)',
+            'services_total'                                => 'SUM(1)',
             'services_unknown'                              => 'SUM(CASE WHEN service_state = 3 THEN 1 ELSE 0 END)',
             'services_unknown_handled'                      => 'SUM(CASE WHEN service_state = 3 AND service_handled = 1 THEN 1 ELSE 0 END)',
             'services_unknown_unhandled'                    => 'SUM(CASE WHEN service_state = 3 AND service_handled = 0 THEN 1 ELSE 0 END)',
@@ -34,11 +36,18 @@ class ServicegroupsummaryQuery extends IdoQuery
     );
 
     /**
-     * Subquery used for the summary query
+     * The union
      *
-     * @var IdoQuery
+     * @var Zend_Db_Select
      */
-    protected $subQuery;
+    protected $summaryQuery;
+
+    /**
+     * Subqueries used for the summary query
+     *
+     * @var IdoQuery[]
+     */
+    protected $subQueries = [];
 
     /**
      * Count query
@@ -49,7 +58,9 @@ class ServicegroupsummaryQuery extends IdoQuery
 
     public function addFilter(Filter $filter)
     {
-        $this->subQuery->applyFilter(clone $filter);
+        foreach ($this->subQueries as $sub) {
+            $sub->applyFilter(clone $filter);
+        }
         $this->countQuery->applyFilter(clone $filter);
         return $this;
     }
@@ -70,10 +81,24 @@ class ServicegroupsummaryQuery extends IdoQuery
                 'service_state'
             )
         );
-        $subQuery->setIsSubQuery();
-        $this->subQuery = $subQuery;
-        $this->select->from(array('servicesgroupsummary' => $this->subQuery), array());
-        $this->group(array('servicegroup_name', 'servicegroup_alias'));
+        $this->subQueries[] = $subQuery;
+        $emptyGroups = $this->createSubQuery(
+            'Emptyservicegroup',
+            [
+                'servicegroup_alias',
+                'servicegroup_name',
+                'service_handled'   => new Zend_Db_Expr('NULL'),
+                'service_severity'  => new Zend_Db_Expr('0'),
+                'service_state'     => new Zend_Db_Expr('NULL'),
+            ]
+        );
+        $this->subQueries[] = $emptyGroups;
+        $this->summaryQuery = $this->db->select()->union(
+            [$subQuery, $emptyGroups],
+            Zend_Db_Select::SQL_UNION_ALL
+        );
+        $this->select->from(['servicesgroupsummary' => $this->summaryQuery], []);
+        $this->group(['servicegroup_name', 'servicegroup_alias']);
         $this->joinedVirtualTables['servicegroupsummary'] = true;
     }
 
