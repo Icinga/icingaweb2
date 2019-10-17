@@ -33,4 +33,15 @@ class EmptyservicegroupQuery extends ServicegroupQuery
         $this->select->group(['sgo.object_id', 'sg.servicegroup_id']);
         $this->select->having('COUNT(esgm.servicegroup_member_id) = ?', 0);
     }
+
+    protected function joinHosts()
+    {
+        parent::joinHosts();
+
+        $this->select->joinLeft(
+            ['h' => 'icinga_hosts'],
+            'h.host_object_id = s.host_object_id',
+            []
+        );
+    }
 }
