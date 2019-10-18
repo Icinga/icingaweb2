@@ -14,7 +14,11 @@ class EmptyservicegroupQuery extends ServicegroupQuery
             'servicegroup_name'     => 'sgo.name1',
             'host_name'             => '(NULL)',
             'hostgroup_name'        => '(NULL)',
-            'service_description'   => '(NULL)'
+            'service_description'   => '(NULL)',
+            'host_contact'          => '(NULL)',
+            'host_contactgroup'     => '(NULL)',
+            'service_contact'       => '(NULL)',
+            'service_contactgroup'  => '(NULL)'
         ],
         'instances' => [
             'instance_name'         => 'i.instance_name'

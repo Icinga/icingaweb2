@@ -14,7 +14,9 @@ class EmptyhostgroupQuery extends HostgroupQuery
             'hostgroup_name'        => 'hgo.name1',
             'host_name'             => '(NULL)',
             'service_description'   => '(NULL)',
-            'servicegroup_name'     => '(NULL)'
+            'servicegroup_name'     => '(NULL)',
+            'host_contact'          => '(NULL)',
+            'host_contactgroup'     => '(NULL)'
         ],
         'instances' => [
             'instance_name'         => 'i.instance_name'
