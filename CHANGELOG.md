@@ -4,6 +4,12 @@ Please make sure to always read our [Upgrading](doc/80-Upgrading.md) documentati
 
 ## What's New
 
+### What's New in Version 2.7.3
+
+This is a hotfix release and fixes the following issue:
+
+* Servicegroups for roles with filtered objects not available [#3983](https://github.com/Icinga/icingaweb2/issues/3983)
+
 ### What's New in Version 2.7.2
 
 You can find all issues related to this release on our [Roadmap](https://github.com/Icinga/icingaweb2/milestone/57?closed=1).
