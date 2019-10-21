@@ -531,8 +531,25 @@
                 $target = _this.getLinkTargetFor($a);
             }
 
+            var additionalHeader;
+
+            if ($a.data('icinga-modal') === true) {
+                additionalHeader = {
+                    'X-Icinga-Modal': true
+                };
+            }
+
             // Load link URL
-            icinga.loader.loadUrl(href, $target);
+            icinga.loader.loadUrl(
+                href,
+                $target,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                additionalHeader
+            );
 
             if ($a.closest('#menu').length > 0) {
                 // Menu links should remove all but the first layout column

@@ -50,15 +50,16 @@
         /**
          * Load the given URL to the given target
          *
-         * @param {string}  url             URL to be loaded
-         * @param {object}  target          Target jQuery element
-         * @param {object}  data            Optional parameters, usually for POST requests
-         * @param {string}  method          HTTP method, default is 'GET'
-         * @param {string}  action          How to handle the response ('replace' or 'append'), default is 'replace'
-         * @param {boolean} autorefresh     Whether the cause is a autorefresh or not
-         * @param {object}  progressTimer   A timer to be stopped when the request is done
+         * @param {string}  url              URL to be loaded
+         * @param {object}  target           Target jQuery element
+         * @param {object}  data             Optional parameters, usually for POST requests
+         * @param {string}  method           HTTP method, default is 'GET'
+         * @param {string}  action           How to handle the response ('replace' or 'append'), default is 'replace'
+         * @param {boolean} autorefresh      Whether the cause is a autorefresh or not
+         * @param {object}  progressTimer    A timer to be stopped when the request is done
+         * @param {object}  additionalHeader Custom request headers
          */
-        loadUrl: function (url, $target, data, method, action, autorefresh, progressTimer) {
+        loadUrl: function (url, $target, data, method, action, autorefresh, progressTimer, additionalHeader) {
             var id = null;
 
             // Default method is GET
@@ -105,6 +106,10 @@
             // Not sure whether we need this Accept-header
             var headers = { 'X-Icinga-Accept': 'text/html' };
 
+            if (typeof additionalHeader === 'object') {
+                headers = $.extend(headers, additionalHeader);
+            }
+
             // Ask for a new window id in case we don't already have one
             if (this.icinga.ui.hasWindowId()) {
                 var windowId = this.icinga.ui.getWindowId();
@@ -146,7 +151,7 @@
             req.autorefresh = autorefresh;
             req.method = method;
             req.action = action;
-            req.addToHistory = true;
+            req.addToHistory = headers['X-Icinga-Modal'] !== true && true;
             req.progressTimer = progressTimer;
 
             if (url.match(/#/)) {
