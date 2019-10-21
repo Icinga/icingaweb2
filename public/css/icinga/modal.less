@@ -1,0 +1,294 @@
+#modal-overlay {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+
+  align-items: center;
+  display: flex;
+  background: rgba(0, 0, 0, .6);
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .2s ease-in;
+  z-index: 1000;
+
+  &.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
+.modal-header {
+  padding: .25em 0;
+  position: relative;
+  text-align: center;
+
+  > .close {
+    position: absolute;
+    top: .5em;
+    left: .5em;
+
+    background: @gray;
+    border: none;
+    border-radius: 50%;
+    color: white;
+    height: 1em;
+    line-height: 1em;
+    padding: 0;
+    text-align: center;
+    width: 1em;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    -ms-appearance: none;
+    appearance: none;
+  }
+
+  > .close > i {
+    position: absolute;
+    left: 0.25em;
+    top: 0;
+
+    font-size: .7em;
+  }
+
+  > .close > .icon:before {
+    margin: 0;
+  }
+}
+
+.modal-title {
+  padding: .25em;
+  margin: 0;
+}
+
+#modal-container {
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto;
+  min-width: 50vw;
+  min-height: 40vh;
+  max-width: 80%;
+  max-height: 95%;
+}
+
+.modal-window {
+  align-items: stretch;
+  background: white;
+  border-radius: .5em;
+  box-shadow: 0 0 2em 0 rgba(0, 0, 0, .6);
+  display: inline-flex;
+  flex: 1;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.modal-area {
+  display: flex;
+  flex-grow: 1;
+  flex-direction: row;
+  justify-content: stretch;
+}
+
+.modal-sidebar {
+  background-color: @menu-bg-color;
+  box-shadow: inset -.5em 0 1em -.5em rgba(0, 0, 0, .3);
+  color: @text-color-inverted;
+  display: inline-block;
+  flex: 1;
+  min-width: 5em;
+  text-align: center;
+
+  .icon {
+    font-size: 2em;
+  }
+
+  .sidebar-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    > .sidebar-listitem {
+      padding: 1em 0.5em;
+      &:hover {
+        color: @menu-highlight-color;
+      }
+      > i::before {
+        margin: 0;
+      }
+
+      > p {
+        font-size: 0.75em;
+      }
+    }
+  }
+
+  .sidebar-listitem.active {
+    background-color: @menu-active-bg-color;
+  }
+}
+
+.modal-content {
+  display: flex;
+  flex: 10;
+  flex-direction: column;
+  justify-content: stretch;
+}
+
+.modal-search {
+  background-color: @gray-lighter;
+  min-width: 24em;
+  padding: .5em .5em;
+
+  > .search-label {
+    font-size: 1.3em;
+  }
+
+  > input[type="search"] {
+    border-radius: 6px;
+    border: none;
+    padding: 0.25em 0.5em;
+    min-width: 20em;
+  }
+}
+
+.modal-body {
+  background-color: @gray-lightest;
+  flex: 1;
+  overflow: auto;
+}
+
+.modal-form {
+  background-color: @text-color-inverted;
+  border-left: 1px @gray-lighter solid;
+  flex: 1;
+  padding: 1em 1em;
+  position: relative;
+}
+
+.modal-footer {
+  background: @gray-lighter;
+  display: flex;
+  height: 3.5em;
+  padding: .5em;
+}
+
+.form-footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: -3.5em;
+
+  height: 3.5em;
+  padding: .5em;
+
+  .btn {
+    margin: 0 .5em;
+    max-width: 12em;
+    min-width: 8em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+//.btn.btn-warn {
+//  .button(@body-bg-color, @btn-waning, @btn-warning-dark);
+//}
+//
+//.btn.btn-confirm {
+//  .button();
+//}
+//
+//.btn.btn-act,
+//.btn.btn-act.btn-primary {
+//  //todo: make safety lock, in case someone wants to make a primary act button?
+//  .button(@body-bg-color, @btn-action);
+//  background-color: @body-bg-color;
+//  color: @black;
+//  &:hover {
+//    color: @black;
+//  }
+//}
+
+.modal-reports {
+  display: flex;
+  flex: 1;
+}
+
+.report-types {
+  background-color: @gray-lightest;
+  display: flex;
+  flex: 1;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  padding-bottom: 3.5em;
+  position: relative;
+  max-height: 80vh;
+  overflow: scroll;
+}
+
+.report-type {
+  margin: 0.5em;
+  text-align: center;
+}
+
+.report-tile {
+  background-color: @gray-lighter;
+  border-radius: 5px;
+  cursor: pointer;
+  display: inline-block;
+  font-size: 0.85em;
+  height: 210px;
+  width: 160px;
+
+  &.active,
+  &.active:hover {
+    background-color: #A7C4CC; //darken(@gray-light, 10%);
+    cursor: default;
+  }
+
+  &:hover {
+    transition: background-color 0.2s ease;
+    background-color: #DAE3E6;
+    > .report-preview {
+      background-color: @text-color-inverted;
+    }
+  }
+
+  .report-preview,
+  > .preview {
+    background-color: #fff;
+    border-radius: 2px;
+    height: 166px;
+    font-size: 5em;
+    line-height: 2.5em;
+    margin: 7px;
+    width: 146px;
+  }
+  > .tile-subtitle {
+    padding: 0.25em;
+    font-size: 1.1em;
+    font-weight: 500;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.modal-form {
+  .form-element label {
+    text-align: left;
+    width: auto;
+  }
+
+  .form-element input:not([type="checkbox"]),
+  .form-element select {
+    width: 100%;
+  }
+}
