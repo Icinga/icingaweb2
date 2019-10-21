@@ -15,7 +15,7 @@
 
         $overlay.appendTo($('#layout'));
 
-        this.on('click', '.modal-toggle', this.onModalToggleClick, this);
+        this.on('click', '[data-icinga-modal=true]', this.onModalToggleClick, this);
     }
 
     Modal.prototype = new Icinga.EventListener();
