@@ -132,6 +132,13 @@
                 contentType = false;
             }
 
+            var isModal = headers['X-Icinga-Modal'] === true && true;
+
+            if (! isModal && $target.closest('#modal-overlay')) {
+                isModal = true;
+                headers['X-Icinga-Modal'] = true;
+            }
+
             var _this = this;
             var req = $.ajax({
                 type   : method,
@@ -151,8 +158,9 @@
             req.autorefresh = autorefresh;
             req.method = method;
             req.action = action;
-            req.addToHistory = headers['X-Icinga-Modal'] !== true && true;
+            req.addToHistory = isModal !== true && true;
             req.progressTimer = progressTimer;
+            req.modal = isModal;
 
             if (url.match(/#/)) {
                 req.forceFocus = url.split(/#/)[1];
@@ -669,6 +677,10 @@
             }
 
             if (this.processRedirectHeader(req)) {
+                if (req.modal) {
+                    icinga.behaviors.modal.hide();
+                }
+
                 return;
             }
 
