@@ -53,8 +53,6 @@
         var $target = $(event.target);
         var $closeButton = $(event.target).closest('button.close');
 
-        console.log($target);
-
         if ($target.is('#modal-overlay')) {
             modal.hide();
         } else if ($closeButton.length) {
@@ -74,6 +72,8 @@
         $body.css('overflow', '');
 
         $overlay.removeClass('active');
+
+        $overlay.find('#modal-container').empty();
     };
 
     Icinga.Behaviors = Icinga.Behaviors || {};
