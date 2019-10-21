@@ -1,0 +1,110 @@
+#layout > #modal {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  top: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background-color: rgba(0, 0, 0, .6);
+  opacity: 0;
+  font-size: @font-size;
+  line-height: @line-height;
+  pointer-events: none;
+  transition: opacity .2s ease-in; // This is coupled with a `setTimout` in modal.js
+  z-index: 1000;
+
+  &.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
+#modal-content {
+  display: flex;
+  flex: 10;
+  flex-direction: column;
+  justify-content: stretch;
+
+  > .content {
+    padding: 1em;
+
+    > * {
+      width: 100%;
+    }
+  }
+}
+
+#modal-ghost {
+  display: none;
+}
+
+.modal-area {
+  display: flex;
+  flex-direction: row;
+  flex-grow: 1;
+  justify-content: stretch;
+}
+
+.modal-header {
+  padding: .25em 0;
+  position: relative;
+  text-align: center;
+
+  > button {
+    position: absolute;
+    top: 1em;
+    left: .5em;
+
+    background-color: @gray;
+    border: none;
+    border-radius: 50%;
+    color: white;
+    height: 1em;
+    line-height: 1em;
+    padding: 0;
+    text-align: center;
+    width: 1em;
+
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    -ms-appearance: none;
+    appearance: none;
+  }
+
+  > button > i {
+    position: absolute;
+    left: 0.25em;
+    top: 0;
+
+    font-size: .7em;
+  }
+
+  > button > .icon:before {
+    margin: 0;
+  }
+}
+
+.modal-header h1 {
+  padding: .25em;
+  margin: 0;
+}
+
+.modal-window {
+  display: flex;
+  align-items: stretch;
+  flex-direction: column;
+
+  background-color: white;
+  border-radius: .5em;
+  box-shadow: 0 0 2em 0 rgba(0, 0, 0, .6);
+  flex: 1;
+  margin: 0 auto;
+  max-height: 80%;
+  min-height: 40vh;
+  overflow: hidden;
+  width: 60em;
+}
