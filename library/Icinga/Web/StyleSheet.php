@@ -51,7 +51,8 @@ class StyleSheet
         'css/icinga/spinner.less',
         'css/icinga/compat.less',
         'css/icinga/print.less',
-        'css/icinga/responsive.less'
+        'css/icinga/responsive.less',
+        'css/icinga/modal.less'
     );
 
     /**
