@@ -1,4 +1,8 @@
-#modal-overlay {
+#modal-ghost {
+  display: none;
+}
+
+#layout > #modal {
   position: fixed;
   top: 0;
   right: 0;
@@ -11,7 +15,7 @@
   justify-content: center;
   opacity: 0;
   pointer-events: none;
-  transition: opacity .2s ease-in;
+  transition: opacity .2s ease-in; // This is coupled with a `setTimout` in modal.js
   z-index: 1000;
 
   &.active {
@@ -25,7 +29,7 @@
   position: relative;
   text-align: center;
 
-  > .close {
+  > button {
     position: absolute;
     top: .5em;
     left: .5em;
@@ -45,7 +49,7 @@
     appearance: none;
   }
 
-  > .close > i {
+  > button > i {
     position: absolute;
     left: 0.25em;
     top: 0;
@@ -53,17 +57,17 @@
     font-size: .7em;
   }
 
-  > .close > .icon:before {
+  > button > .icon:before {
     margin: 0;
   }
 }
 
-.modal-title {
+.modal-header h1 {
   padding: .25em;
   margin: 0;
 }
 
-#modal-container {
+.modal-window {
   display: flex;
   flex-direction: column;
   margin: 0 auto;
@@ -71,16 +75,11 @@
   min-height: 40vh;
   max-width: 80%;
   max-height: 95%;
-}
-
-.modal-window {
   align-items: stretch;
   background: white;
   border-radius: .5em;
   box-shadow: 0 0 2em 0 rgba(0, 0, 0, .6);
-  display: inline-flex;
   flex: 1;
-  flex-direction: column;
   overflow: hidden;
 }
 
@@ -128,11 +127,15 @@
   }
 }
 
-.modal-content {
+#modal-content {
   display: flex;
   flex: 10;
   flex-direction: column;
   justify-content: stretch;
+
+  > .content {
+    padding: 1em;
+  }
 }
 
 .modal-search {
