@@ -298,9 +298,9 @@
                     $button.addClass('active');
                 }
 
-                $target = _this.getLinkTargetFor($button);
+                $target = icinga.loader.getLinkTargetFor($button);
             } else {
-                $target = _this.getLinkTargetFor($form);
+                $target = icinga.loader.getLinkTargetFor($form);
             }
 
             if (! url) {
@@ -516,7 +516,7 @@
                     }
                     return false;
                 }
-                $target = _this.getLinkTargetFor($a);
+                $target = icinga.loader.getLinkTargetFor($a);
 
                 formerUrl = $target.data('icingaUrl');
                 if (typeof formerUrl !== 'undefined' && formerUrl.split(/#/)[0] === href.split(/#/)[0]) {
@@ -528,7 +528,7 @@
                     return false;
                 }
             } else {
-                $target = _this.getLinkTargetFor($a);
+                $target = icinga.loader.getLinkTargetFor($a);
             }
 
             // Load link URL
@@ -540,63 +540,6 @@
             }
 
             return false;
-        },
-
-        /**
-         * Detect the link/form target for a given element (link, form, whatever)
-         */
-        getLinkTargetFor: function($el)
-        {
-            var targetId;
-
-            // If everything else fails, our target is the first column...
-            var $target = $('#col1');
-
-            // ...but usually we will use our own container...
-            var $container = $el.closest('.container');
-            if ($container.length) {
-                $target = $container;
-            }
-
-            // You can of course override the default behaviour:
-            if ($el.closest('[data-base-target]').length) {
-                targetId = $el.closest('[data-base-target]').data('baseTarget');
-
-                // Simulate _next to prepare migration to dynamic column layout
-                // YES, there are duplicate lines right now.
-                if (targetId === '_next') {
-                    if (this.icinga.ui.hasOnlyOneColumn()) {
-                        targetId = 'col1';
-                        $target = $('#' + targetId);
-                    } else {
-                        if ($el.closest('#col2').length) {
-                            this.icinga.ui.moveToLeft();
-                        }
-                        targetId = 'col2';
-                        $target = $('#' + targetId);
-                    }
-                } else if (targetId === '_self') {
-                    $target = $el.closest('.container');
-                    targetId = $target.attr('id');
-                } else if (targetId === '_main') {
-                    targetId = 'col1';
-                    $target = $('#' + targetId);
-                    this.icinga.ui.layout1col();
-                } else {
-                    $target = $('#' + targetId);
-                    if (! $target.length) {
-                        this.icinga.logger.warn('Link target "#' + targetId + '" does not exist in DOM.');
-                    }
-                }
-
-            }
-
-            // Hardcoded layout switch unless columns are dynamic
-            if ($target.attr('id') === 'col2') {
-                this.icinga.ui.layout2col();
-            }
-
-            return $target;
         },
 
         clearSearch: function (event) {
