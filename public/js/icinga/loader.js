@@ -47,6 +47,146 @@
             this.icinga.timer.register(this.autorefresh, this, 500);
         },
 
+        submitForm: function ($form, $autoSubmittedBy, $button) {
+            var icinga = this.icinga;
+            var url = $form.attr('action');
+            var method = $form.attr('method');
+            var encoding = $form.attr('enctype');
+            var progressTimer;
+            var $target;
+            var data;
+
+            if (typeof method === 'undefined') {
+                method = 'POST';
+            } else {
+                method = method.toUpperCase();
+            }
+
+            if (typeof encoding === 'undefined') {
+                encoding = 'application/x-www-form-urlencoded';
+            }
+
+            if (typeof $autoSubmittedBy === 'undefined') {
+                $autoSubmittedBy = false;
+            }
+
+            if (typeof $button === 'undefined') {
+                $button = $('input[type=submit]:focus', $form).add('button[type=submit]:focus', $form);
+            }
+
+            if ($button.length === 0) {
+                $button = $('input[type=submit]', $form).add('button[type=submit]', $form).first();
+            }
+
+            if ($button.length) {
+                // Activate spinner
+                if ($button.hasClass('spinner')) {
+                    $button.addClass('active');
+                }
+
+                $target = this.getLinkTargetFor($button);
+            } else {
+                $target = this.getLinkTargetFor($form);
+            }
+
+            if (! url) {
+                // Use the URL of the target container if the form's action is not set
+                url = $target.closest('.container').data('icinga-url');
+            }
+
+            icinga.logger.debug('Submitting form: ' + method + ' ' + url, method);
+
+            if (method === 'GET') {
+                var dataObj = $form.serializeObject();
+
+                if (! $autoSubmittedBy) {
+                    if ($button.length && $button.attr('name') !== 'undefined') {
+                        dataObj[$button.attr('name')] = $button.attr('value');
+                    }
+                }
+
+                url = icinga.utils.addUrlParams(url, dataObj);
+            } else {
+                if (encoding === 'multipart/form-data') {
+                    data = new window.FormData($form[0]);
+                } else {
+                    data = $form.serializeArray();
+                }
+
+                if (! $autoSubmittedBy) {
+                    if ($button.length && $button.attr('name') !== 'undefined') {
+                        if (encoding === 'multipart/form-data') {
+                            data.append($button.attr('name'), $button.attr('value'));
+                        } else {
+                            data.push({
+                                name: $button.attr('name'),
+                                value: $button.attr('value')
+                            });
+                        }
+                    }
+                }
+            }
+
+            // Disable all form controls to prevent resubmission except for our search input
+            // Note that disabled form inputs will not be enabled via JavaScript again
+            if ($target.attr('id') === $form.closest('.container').attr('id')) {
+                $form.find(':input:not(#search):not(:disabled)').prop('disabled', true);
+            }
+
+            // Show a spinner depending on how the form is being submitted
+            if ($autoSubmittedBy && $autoSubmittedBy.siblings('.spinner').length) {
+                $autoSubmittedBy.siblings('.spinner').first().addClass('active');
+            } else if ($button.length && $button.is('button') && $button.hasClass('animated')) {
+                $button.addClass('active');
+            } else if ($button.length && $button.attr('data-progress-label')) {
+                var isInput = $button.is('input');
+                if (isInput) {
+                    $button.prop('value', $button.attr('data-progress-label') + '...');
+                } else {
+                    $button.html($button.attr('data-progress-label') + '...');
+                }
+
+                // Use a fixed width to prevent the button from wobbling
+                $button.css('width', $button.css('width'));
+
+                progressTimer = icinga.timer.register(function () {
+                    var label = isInput ? $button.prop('value') : $button.html();
+                    var dots = label.substr(-3);
+
+                    // Using empty spaces here to prevent centered labels from wobbling
+                    if (dots === '...') {
+                        label = label.slice(0, -2) + '  ';
+                    } else if (dots === '.. ') {
+                        label = label.slice(0, -1) + '.';
+                    } else if (dots === '.  ') {
+                        label = label.slice(0, -2) + '. ';
+                    }
+
+                    if (isInput) {
+                        $button.prop('value', label);
+                    } else {
+                        $button.html(label);
+                    }
+                }, null, 100);
+            } else if ($button.length && $button.next().hasClass('spinner')) {
+                $('i', $button.next()).addClass('active');
+            } else if ($form.attr('data-progress-element')) {
+                var $progressElement = $('#' + $form.attr('data-progress-element'));
+                if ($progressElement.length) {
+                    if ($progressElement.hasClass('spinner')) {
+                        $('i', $progressElement).addClass('active');
+                    } else {
+                        $('i.spinner', $progressElement).addClass('active');
+                    }
+                }
+            }
+
+            var req = this.loadUrl(url, $target, data, method);
+            req.forceFocus = $autoSubmittedBy ? $autoSubmittedBy : $button.length ? $button : null;
+            req.progressTimer = progressTimer;
+            return req;
+        },
+
         /**
          * Load the given URL to the given target
          *
