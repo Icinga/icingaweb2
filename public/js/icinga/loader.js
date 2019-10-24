@@ -279,6 +279,7 @@
             });
 
             req.$target = $target;
+            req.$redirectTarget = $target;
             req.url = url;
             req.done(this.onResponse);
             req.fail(this.onFailure);
@@ -464,7 +465,7 @@
                 return true;
             }
 
-            this.redirectToUrl(redirect, req.$target, req);
+            this.redirectToUrl(redirect, req.$redirectTarget, req);
             return true;
         },
 
