@@ -773,6 +773,58 @@
         },
 
         /**
+         * Detect the link/form target for a given element (link, form, whatever)
+         */
+        getLinkTargetFor: function($el)
+        {
+            // If everything else fails, our target is the first column...
+            var $col1 = $('#col1');
+            var $target = $col1;
+
+            // ...but usually we will use our own container...
+            var $container = $el.closest('.container');
+            if ($container.length) {
+                $target = $container;
+            }
+
+            // You can of course override the default behaviour:
+            if ($el.closest('[data-base-target]').length) {
+                var targetId = $el.closest('[data-base-target]').data('baseTarget');
+
+                // Simulate _next to prepare migration to dynamic column layout
+                // YES, there are duplicate lines right now.
+                if (targetId === '_next') {
+                    if (this.icinga.ui.hasOnlyOneColumn()) {
+                        $target = $col1;
+                    } else {
+                        if ($el.closest('#col2').length) {
+                            this.icinga.ui.moveToLeft();
+                        }
+
+                        $target = $('#col2');
+                    }
+                } else if (targetId === '_self') {
+                    $target = $el.closest('.container');
+                } else if (targetId === '_main') {
+                    $target = $col1;
+                    this.icinga.ui.layout1col();
+                } else {
+                    $target = $('#' + targetId);
+                    if (! $target.length) {
+                        this.icinga.logger.warn('Link target "#' + targetId + '" does not exist in DOM.');
+                    }
+                }
+            }
+
+            // Hardcoded layout switch unless columns are dynamic
+            if ($target.attr('id') === 'col2') {
+                this.icinga.ui.layout2col();
+            }
+
+            return $target;
+        },
+
+        /**
          * Smoothly render given HTML to given container
          */
         renderContentToContainer: function (content, $container, action, autorefresh, forceFocus, autoSubmit) {
