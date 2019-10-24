@@ -74,6 +74,19 @@ $innerLayoutScript = $this->layout()->innerLayout . '.phtml';
         <?= $this->icon('angle-double-up', $this->translate('Collapse'), ['class' => 'collapse-icon']) ?>
     </button>
 </div>
+<div id="modal-ghost">
+    <div>
+        <section class="modal-window">
+            <div class="modal-header">
+                <h1></h1>
+                <button type="button"><?= $this->icon('cancel') ?></button>
+            </div>
+            <div class="modal-area">
+                <div id="modal-content" data-base-target="modal-content" tabindex data-no-icinga-ajax></div>
+            </div>
+        </section>
+    </div>
+</div>
 <script type="text/javascript" src="<?= $this->href($jsfile) ?>"></script>
 <script type="text/javascript">
 window.name = '<?= $this->protectId('Icinga') ?>';
