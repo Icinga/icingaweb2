@@ -31,10 +31,10 @@ form.icinga-form {
     // Negative margin-right because every child gets 1em right but we can't exclude
     // the last element as it's impossible to identify the last *visible* element
     margin: 1em -1em 1em 0;
+  }
 
-    > * {
-      margin-right: 1em;
-    }
+  &:not(.inline) .control-group > * {
+    margin-right: 1em;
   }
 
   .form-controls {
@@ -119,6 +119,16 @@ form.icinga-form .control-group .toggle-switch ~ .control-info {
 
 form.inline {
   display: inline-block;
+  width: auto;
+
+  .control-group {
+    margin: 0;
+  }
+
+  .control-label-group {
+    width: auto;
+    line-height: 0.857em;
+  }
 
   .control-group .spinner {
     line-height: 1.5;
