@@ -7,6 +7,13 @@ use Parsedown;
 
 class Markdown
 {
+    public static function line($content)
+    {
+        require_once 'Parsedown/Parsedown.php';
+
+        return HtmlPurifier::process(Parsedown::instance()->line($content));
+    }
+
     public static function text($content)
     {
         require_once 'Parsedown/Parsedown.php';
