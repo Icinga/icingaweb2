@@ -222,25 +222,19 @@
         },
 
         autoSubmitForm: function (event) {
-            return event.data.self.submitForm(event, true);
+            return event.data.self.submitForm(event, $(event.currentTarget));
         },
 
         /**
          *
          */
-        submitForm: function (event, autosubmit) {
+        submitForm: function (event, $autoSubmittedBy) {
             var _this   = event.data.self;
-            var icinga = _this.icinga;
+
             // .closest is not required unless subelements to trigger this
             var $form = $(event.currentTarget).closest('form');
-            var url = $form.attr('action');
-            var method = $form.attr('method');
-            var encoding = $form.attr('enctype');
-            var $button = $('input[type=submit]:focus', $form).add('button[type=submit]:focus', $form);
-            var progressTimer;
-            var $target;
-            var data;
 
+            var $button;
             var $rememberedSubmittButton = $form.data('submitButton');
             if (typeof $rememberedSubmittButton != 'undefined') {
                 if ($form.has($rememberedSubmittButton)) {
@@ -253,151 +247,28 @@
                 return true;
             }
 
-            if ($button.length === 0) {
+            if (typeof $button === 'undefined') {
                 var $el;
 
                 if (typeof event.originalEvent !== 'undefined'
                     && typeof event.originalEvent.explicitOriginalTarget === 'object') { // Firefox
                     $el = $(event.originalEvent.explicitOriginalTarget);
-                    icinga.logger.debug('events/submitForm: Button is event.originalEvent.explicitOriginalTarget');
+                    _this.icinga.logger.debug('events/submitForm: Button is event.originalEvent.explicitOriginalTarget');
                 } else {
                     $el = $(event.currentTarget);
-                    icinga.logger.debug('events/submitForm: Button is event.currentTarget');
+                    _this.icinga.logger.debug('events/submitForm: Button is event.currentTarget');
                 }
 
                 if ($el && ($el.is('input[type=submit]') || $el.is('button[type=submit]'))) {
                     $button = $el;
                 } else {
-                    icinga.logger.debug(
+                    _this.icinga.logger.debug(
                         'events/submitForm: Can not determine submit button, using the first one in form'
                     );
                 }
             }
 
-            if (typeof method === 'undefined') {
-                method = 'POST';
-            } else {
-                method = method.toUpperCase();
-            }
-
-            if (typeof encoding === 'undefined') {
-                encoding = 'application/x-www-form-urlencoded';
-            }
-
-            if (typeof autosubmit === 'undefined') {
-                autosubmit = false;
-            }
-
-            if ($button.length === 0) {
-                $button = $('input[type=submit]', $form).add('button[type=submit]', $form).first();
-            }
-
-            if ($button.length) {
-                // Activate spinner
-                if ($button.hasClass('spinner')) {
-                    $button.addClass('active');
-                }
-
-                $target = _this.getLinkTargetFor($button);
-            } else {
-                $target = _this.getLinkTargetFor($form);
-            }
-
-            if (! url) {
-                // Use the URL of the target container if the form's action is not set
-                url = $target.closest('.container').data('icinga-url');
-            }
-
-            icinga.logger.debug('Submitting form: ' + method + ' ' + url, method);
-
-            if (method === 'GET') {
-                var dataObj = $form.serializeObject();
-
-                if (! autosubmit) {
-                    if ($button.length && $button.attr('name') !== 'undefined') {
-                        dataObj[$button.attr('name')] = $button.attr('value');
-                    }
-                }
-
-                url = icinga.utils.addUrlParams(url, dataObj);
-            } else {
-                if (encoding === 'multipart/form-data') {
-                    data = new window.FormData($form[0]);
-                } else {
-                    data = $form.serializeArray();
-                }
-
-                if (! autosubmit) {
-                    if ($button.length && $button.attr('name') !== 'undefined') {
-                        if (encoding === 'multipart/form-data') {
-                            data.append($button.attr('name'), $button.attr('value'));
-                        } else {
-                            data.push({
-                                name: $button.attr('name'),
-                                value: $button.attr('value')
-                            });
-                        }
-                    }
-                }
-            }
-
-            // Disable all form controls to prevent resubmission except for our search input
-            // Note that disabled form inputs will not be enabled via JavaScript again
-            if ($target.attr('id') === $form.closest('.container').attr('id')) {
-                $form.find(':input:not(#search):not(:disabled)').prop('disabled', true);
-            }
-
-            // Show a spinner depending on how the form is being submitted
-            if (autosubmit && typeof $el !== 'undefined' && $el.siblings('.spinner').length) {
-                $el.siblings('.spinner').first().addClass('active');
-            } else if ($button.length && $button.is('button') && $button.hasClass('animated')) {
-                $button.addClass('active');
-            } else if ($button.length && $button.attr('data-progress-label')) {
-                var isInput = $button.is('input');
-                if (isInput) {
-                    $button.prop('value', $button.attr('data-progress-label') + '...');
-                } else {
-                    $button.html($button.attr('data-progress-label') + '...');
-                }
-
-                // Use a fixed width to prevent the button from wobbling
-                $button.css('width', $button.css('width'));
-
-                progressTimer = icinga.timer.register(function () {
-                    var label = isInput ? $button.prop('value') : $button.html();
-                    var dots = label.substr(-3);
-
-                    // Using empty spaces here to prevent centered labels from wobbling
-                    if (dots === '...') {
-                        label = label.slice(0, -2) + '  ';
-                    } else if (dots === '.. ') {
-                        label = label.slice(0, -1) + '.';
-                    } else if (dots === '.  ') {
-                        label = label.slice(0, -2) + '. ';
-                    }
-
-                    if (isInput) {
-                        $button.prop('value', label);
-                    } else {
-                        $button.html(label);
-                    }
-                }, null, 100);
-            } else if ($button.length && $button.next().hasClass('spinner')) {
-                $('i', $button.next()).addClass('active');
-            } else if ($form.attr('data-progress-element')) {
-                var $progressElement = $('#' + $form.attr('data-progress-element'));
-                if ($progressElement.length) {
-                    if ($progressElement.hasClass('spinner')) {
-                        $('i', $progressElement).addClass('active');
-                    } else {
-                        $('i.spinner', $progressElement).addClass('active');
-                    }
-                }
-            }
-
-            var req = icinga.loader.loadUrl(url, $target, data, method);
-            req.forceFocus = autosubmit ? $(event.currentTarget) : $button.length ? $button : null;
-            req.progressTimer = progressTimer;
+            _this.icinga.loader.submitForm($form, $autoSubmittedBy, $button);
 
             event.stopPropagation();
             event.preventDefault();
@@ -516,7 +387,7 @@
                     }
                     return false;
                 }
-                $target = _this.getLinkTargetFor($a);
+                $target = icinga.loader.getLinkTargetFor($a);
 
                 formerUrl = $target.data('icingaUrl');
                 if (typeof formerUrl !== 'undefined' && formerUrl.split(/#/)[0] === href.split(/#/)[0]) {
@@ -528,7 +399,7 @@
                     return false;
                 }
             } else {
-                $target = _this.getLinkTargetFor($a);
+                $target = icinga.loader.getLinkTargetFor($a);
             }
 
             // Load link URL
@@ -540,63 +411,6 @@
             }
 
             return false;
-        },
-
-        /**
-         * Detect the link/form target for a given element (link, form, whatever)
-         */
-        getLinkTargetFor: function($el)
-        {
-            var targetId;
-
-            // If everything else fails, our target is the first column...
-            var $target = $('#col1');
-
-            // ...but usually we will use our own container...
-            var $container = $el.closest('.container');
-            if ($container.length) {
-                $target = $container;
-            }
-
-            // You can of course override the default behaviour:
-            if ($el.closest('[data-base-target]').length) {
-                targetId = $el.closest('[data-base-target]').data('baseTarget');
-
-                // Simulate _next to prepare migration to dynamic column layout
-                // YES, there are duplicate lines right now.
-                if (targetId === '_next') {
-                    if (this.icinga.ui.hasOnlyOneColumn()) {
-                        targetId = 'col1';
-                        $target = $('#' + targetId);
-                    } else {
-                        if ($el.closest('#col2').length) {
-                            this.icinga.ui.moveToLeft();
-                        }
-                        targetId = 'col2';
-                        $target = $('#' + targetId);
-                    }
-                } else if (targetId === '_self') {
-                    $target = $el.closest('.container');
-                    targetId = $target.attr('id');
-                } else if (targetId === '_main') {
-                    targetId = 'col1';
-                    $target = $('#' + targetId);
-                    this.icinga.ui.layout1col();
-                } else {
-                    $target = $('#' + targetId);
-                    if (! $target.length) {
-                        this.icinga.logger.warn('Link target "#' + targetId + '" does not exist in DOM.');
-                    }
-                }
-
-            }
-
-            // Hardcoded layout switch unless columns are dynamic
-            if ($target.attr('id') === 'col2') {
-                this.icinga.ui.layout2col();
-            }
-
-            return $target;
         },
 
         clearSearch: function (event) {

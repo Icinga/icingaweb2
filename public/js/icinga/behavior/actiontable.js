@@ -414,9 +414,9 @@
         var count = table.selections().length;
         if (count > 0) {
             var query = table.toQuery();
-            _this.icinga.loader.loadUrl(query, _this.icinga.events.getLinkTargetFor($tr));
+            _this.icinga.loader.loadUrl(query, _this.icinga.loader.getLinkTargetFor($tr));
         } else {
-            if (_this.icinga.events.getLinkTargetFor($tr).attr('id') === 'col2') {
+            if (_this.icinga.loader.getLinkTargetFor($tr).attr('id') === 'col2') {
                 _this.icinga.ui.layout1col();
             }
         }
