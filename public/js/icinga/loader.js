@@ -458,8 +458,26 @@
                     redirect = redirect.replace(/__SELF__/, req.url);
                 }
             } else if (redirect.match(/__BACK__/)) {
+                // We may just close the right column, refresh the left one in this case
+                $(window).on('popstate.__back__', { self: this }, function (event) {
+                    var _this = event.data.self;
+
+                    if (icinga.ui.isOneColLayout()) {
+                        var $col1 = $('#col1');
+                        _this.loadUrl($col1.data('icingaUrl'), $col1).autorefresh = true;
+
+                        // TODO: Find a better solution than a hardcoded one
+                        setTimeout(function () {
+                            _this.loadUrl($col1.data('icingaUrl'), $col1).autorefresh = true;
+                        }, 1000);
+                    }
+
+                    $(window).off('popstate.__back__');
+                });
+
                 // Navigate back, no redirect desired
                 window.history.back();
+
                 return true;
             }
 
