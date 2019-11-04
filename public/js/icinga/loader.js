@@ -457,6 +457,10 @@
                     // redirect to the link's URL instead of the current window's URL (see above)
                     redirect = redirect.replace(/__SELF__/, req.url);
                 }
+            } else if (redirect.match(/__BACK__/)) {
+                // Navigate back, no redirect desired
+                window.history.back();
+                return true;
             }
 
             var useHttp = req.getResponseHeader('X-Icinga-Redirect-Http');
