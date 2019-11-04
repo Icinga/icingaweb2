@@ -215,6 +215,16 @@ class Perfdata
     }
 
     /**
+     * Return the unit as a string
+     *
+     * @return string
+     */
+    public function getUnit()
+    {
+        return $this->unit;
+    }
+
+    /**
      * Return the value as percentage (0-100)
      *
      * @return  null|float
