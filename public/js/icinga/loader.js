@@ -458,19 +458,43 @@
                     redirect = redirect.replace(/__SELF__/, req.url);
                 }
             } else if (redirect.match(/__BACK__/)) {
+                if (req.$redirectTarget.is('#col1')) {
+                    icinga.logger.warn('Cannot navigate back. Redirect target is #col1');
+                    return false;
+                }
+
+                var originUrl = req.$target.data('icingaUrl');
+
                 // We may just close the right column, refresh the left one in this case
                 $(window).on('popstate.__back__', { self: this }, function (event) {
                     var _this = event.data.self;
+                    var $refreshTarget = $('#col2');
+                    var refreshUrl;
 
-                    if (icinga.ui.isOneColLayout()) {
-                        var $col1 = $('#col1');
-                        _this.loadUrl($col1.data('icingaUrl'), $col1).autorefresh = true;
+                    var hash = icinga.history.getCol2State();
+                    if (hash && hash.match(/^#!/)) {
+                        // TODO: These three lines are copied from history.js, I don't like this
+                        var parts = hash.split(/#!/);
 
-                        // TODO: Find a better solution than a hardcoded one
-                        setTimeout(function () {
-                            _this.loadUrl($col1.data('icingaUrl'), $col1).autorefresh = true;
-                        }, 1000);
+                        if (parts[1] === originUrl) {
+                            // After a page load a call to back() seems not to have an effect
+                            icinga.ui.layout1col();
+                        } else {
+                            refreshUrl = parts[1];
+                        }
                     }
+
+                    if (typeof refreshUrl === 'undefined' && icinga.ui.isOneColLayout()) {
+                        refreshUrl = icinga.history.getCol1State();
+                        $refreshTarget = $('#col1');
+                    }
+
+                    _this.loadUrl(refreshUrl, $refreshTarget).autorefresh = true;
+
+                    setTimeout(function () {
+                        // TODO: Find a better solution than a hardcoded one
+                        _this.loadUrl(refreshUrl, $refreshTarget).autorefresh = true;
+                    }, 1000);
 
                     $(window).off('popstate.__back__');
                 });
