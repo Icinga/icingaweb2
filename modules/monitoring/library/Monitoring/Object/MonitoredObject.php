@@ -463,7 +463,7 @@ abstract class MonitoredObject implements Filterable
         if ($hiddenPattern) {
             $this->customvars = array_filter($this->customvars, function ($elem) use ($hiddenPattern) {
                 return  !($hiddenPattern && preg_match($hiddenPattern, $elem));
-            },ARRAY_FILTER_USE_KEY);
+            }, ARRAY_FILTER_USE_KEY);
         }
 
         return $this;
