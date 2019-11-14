@@ -7,6 +7,7 @@ This chapter provides details for advanced Icinga Web 2 topics.
 * [Advanced Authentication Tips](20-Advanced-Topics.md#advanced-topics-authentication-tips)
 * [Source installation](20-Advanced-Topics.md#installing-from-source)
 * [Automated setup](20-Advanced-Topics.md#web-setup-automation)
+* [Kiosk Mode Configuration](20-Advanced-Topics.md#kiosk-mode)
 
 ## Global URL Parameters <a id="global-url-parameters"></a>
 
@@ -513,3 +514,35 @@ The structure of the configurations looks like the following:
 
 Have a look [here](20-Advanced-Topics.md#web-setup-manual-from-source-config) for the contents of the files.
 
+## Kiosk Mode Configuration <a id="kiosk-mode"></a>
+
+Be aware that when you create a kiosk user every person who has access to the kiosk is able to perform tasks on it.
+For a kiosk mode you have to enable/create a dedicated user for it in the GUI. First add a new user named `kiosk`
+in `System/Configuration/Authentication/Users` to keep it simple use `kiosk` as a password.
+We would also need a usergroup `System/Configuration/Authentication/UserGroups` create here a usergroup `kiosk` and
+assign the user `kiosk` to it.
+Next step would be to assign the proper permission set which should be `Allow Access to Module Monitoring` after
+this we need to create an authentication at `System/Configuration/Application/Authentication`. There create a new
+user called `autologin` with `backend` type external.
+
+Check if the `kiosk` user has the access to view whatever you want him to access.
+Now set in the `/etc/apache2/conf-available/icingaweb2.conf` on non debian based systems you find the file at the
+following place `/etc/httpd/conf.d/icingaweb2.conf`. Add the following line `SetEnv REMOTE_USER kiosk` right below
+the other `SetEnv` line. This just enables the `kiosk` user to access the Web 2 from this webserver.
+
+You might also need to create a htpasswd file at the `usr/share/icingaweb2/public/` location for the `kiosk` user
+the command for that is `htpasswd -c kiosk kiosk`. Don't forget to restart the Apache2 Process afterwards.
+
+Alternatively you can add also the following part into the `icingaweb2.conf`.
+
+```
+<ifmodule mod_authz_core.c>
+    # Apache 2.4
+    SetEnvIf Remote_Addr "X.X.X.X" REMOTE_USER=kiosk
+    <requireall>
+        Require all granted
+    </requireall>
+</ifmodule>
+```
+
+Replace Remote_Addr with the IP where the kiosk user is accessing the Web to restrict further usage from other IPs.
