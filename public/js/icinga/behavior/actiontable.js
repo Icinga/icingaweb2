@@ -189,17 +189,7 @@
             this.rowActions()
                 .filter(
                     function (i, el) {
-                        var params = _this.getRowData($(el));
-                        if (_this.icinga.utils.objectKeys(params).length !== _this.icinga.utils.objectKeys(filter).length) {
-                            return false;
-                        }
-                        var equal = true;
-                        $.each(params, function(key, value) {
-                            if (filter[key] !== value) {
-                                equal = false;
-                            }
-                        });
-                        return equal;
+                        return _this.icinga.utils.objectsEqual(_this.getRowData($(el)), filter);
                     }
                 )
                 .closest('tr')

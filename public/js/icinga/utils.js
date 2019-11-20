@@ -365,8 +365,13 @@
         },
 
         objectsEqual: function equals(obj1, obj2) {
-            return Object.keys(obj1)
-                .concat(Object.keys(obj2))
+            var obj1Keys = Object.keys(obj1);
+            var obj2Keys = Object.keys(obj2);
+            if (obj1Keys.length !== obj2Keys.length) {
+                return false;
+            }
+
+            return obj1Keys.concat(obj2Keys)
                 .every(function (key) {
                     return obj1[key] === obj2[key];
                 });
