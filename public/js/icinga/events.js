@@ -14,7 +14,6 @@
 
         this.searchValue = '';
         this.searchTimer = null;
-        this.initializeModules = true;
     };
 
     Icinga.Events.prototype = {
@@ -24,87 +23,16 @@
          */
         initialize: function () {
             this.applyGlobalDefaults();
-            $('#layout').trigger('rendered');
-            //$('.container').trigger('rendered');
             $('.container').each(function(idx, el) {
                 icinga.ui.initializeControls($(el));
             });
-        },
-
-        // TODO: What's this?
-        applyHandlers: function (event) {
-            var $target = $(event.target);
-            var _this = event.data.self;
-            var icinga = _this.icinga;
-
-            if (! icinga) {
-                // Attempt to catch a rare error, race condition, whatever
-                console.log('Got no icinga in applyHandlers');
-                return;
-            }
-
-            if (_this.initializeModules) {
-                var loaded = false;
-                var moduleName = $target.data('icingaModule');
-                if (moduleName) {
-                    if (icinga.hasModule(moduleName) && !icinga.isLoadedModule(moduleName)) {
-                        loaded |= icinga.loadModule(moduleName);
-                    }
-                }
-
-                $('.icinga-module', $target).each(function(idx, mod) {
-                    moduleName = $(mod).data('icingaModule');
-                    if (icinga.hasModule(moduleName) && !icinga.isLoadedModule(moduleName)) {
-                        loaded |= icinga.loadModule(moduleName);
-                    }
-                });
-
-                if (loaded) {
-                    // Modules may register their own handler for the 'renderend' event
-                    // so we need to ensure that it is called the first time they are
-                    // initialized
-                    event.stopImmediatePropagation();
-                    _this.initializeModules = false;
-
-                    var $container = $target.closest('.container');
-                    if (! $container.length) {
-                        // The page obviously got loaded for the first time,
-                        // so we'll trigger the event for all containers
-                        $container = $('.container');
-                    }
-
-                    $container.trigger('rendered');
-
-                    // But since we're listening on this event by ourself, we'll have
-                    // to abort our own processing as we'll process it twice otherwise
-                    return false;
-                }
-            } else {
-                _this.initializeModules = true;
-            }
-
-            $('.dashboard > div', $target).each(function(idx, el) {
-                var $element = $(el);
-                var $url = $element.data('icingaUrl');
-                if (typeof $url !== 'undefined') {
-                    icinga.loader.loadUrl($url, $element).autorefresh = true;
-                }
-            });
-
-            var $searchField = $('#menu input.search', $target);
-            // Remember initial search field value if any
-            if ($searchField.length && $searchField.val().length) {
-                _this.searchValue = $searchField.val();
-            }
         },
 
         /**
          * Global default event handlers
          */
         applyGlobalDefaults: function () {
-            // Apply element-specific behavior whenever the layout is rendered
-            // Note: It is important that this is the first handler for this event!
-            $(document).on('rendered', { self: this }, this.applyHandlers);
+            $(document).on('beforerender', { self: this }, this.initializeModules);
 
             $(document).on('visibilitychange', { self: this }, this.onVisibilityChange);
 
@@ -141,16 +69,50 @@
             $(document).on('focus', 'form select[data-related-radiobtn]', { self: this }, this.autoCheckRadioButton);
             $(document).on('focus', 'form input[data-related-radiobtn]', { self: this }, this.autoCheckRadioButton);
 
-            $(document).on('keyup', '#menu input.search', {self: this}, this.autoSubmitSearch);
+            $(document).on('rendered', '#menu', { self: this }, this.onRenderedMenu);
+            $(document).on('keyup', '#search', { self: this }, this.autoSubmitSearch);
 
             $(document).on('click', '.tree .handle', { self: this }, this.treeNodeToggle);
 
             $(document).on('click', '#search + .search-reset', this.clearSearch);
 
+            $(document).on('rendered', '.container', { self: this }, this.loadDashlets);
+
             // TBD: a global autocompletion handler
             // $(document).on('keyup', 'form.auto input', this.formChangeDelayed);
             // $(document).on('change', 'form.auto input', this.formChanged);
             // $(document).on('change', 'form.auto select', this.submitForm);
+        },
+
+        /**
+         * Lazy load module javascript (Applies only to module.js code)
+         *
+         * @param {Event} event
+         */
+        initializeModules: function (event) {
+            var _this, $target;
+
+            if (typeof event === 'undefined') {
+                _this = this;
+                $target = $('#col1');
+            } else {
+                _this = event.data.self;
+                $target = $(event.target);
+            }
+
+            var moduleName = $target.data('icingaModule');
+            if (moduleName) {
+                if (_this.icinga.hasModule(moduleName) && ! _this.icinga.isLoadedModule(moduleName)) {
+                    _this.icinga.loadModule(moduleName);
+                }
+            }
+
+            $target.find('.icinga-module').each(function () {
+                moduleName = $(this).data('icingaModule');
+                if (_this.icinga.hasModule(moduleName) && !_this.icinga.isLoadedModule(moduleName)) {
+                    _this.icinga.loadModule(moduleName);
+                }
+            });
         },
 
         treeNodeToggle: function () {
@@ -167,7 +129,16 @@
 
         onLoad: function (event) {
             $('body').removeClass('loading');
-            //$('.container').trigger('rendered');
+
+            // First initialize already included modules
+            event.data.self.initializeModules();
+
+            // Then trigger the initial `rendered` events
+            $('.container').trigger('rendered');
+
+            // Additionally trigger a `rendered` event on the layout, some behaviors may
+            // want to differentiate whether a container or the entire layout is rendered
+            $('#layout').trigger('rendered');
         },
 
         onUnload: function (event) {
@@ -197,12 +168,25 @@
             return true;
         },
 
+        onRenderedMenu: function(event) {
+            var _this = event.data.self;
+            var $target = $(event.target);
+
+            var $searchField = $target.find('input.search');
+            // Remember initial search field value if any
+            if ($searchField.length && $searchField.val().length) {
+                _this.searchValue = $searchField.val();
+            }
+        },
+
         autoSubmitSearch: function(event) {
             var _this = event.data.self;
-            if ($('#menu input.search').val() === _this.searchValue) {
+            var $searchField = $(event.target);
+
+            if ($searchField.val() === _this.searchValue) {
                 return;
             }
-            _this.searchValue = $('#menu input.search').val();
+            _this.searchValue = $searchField.val();
 
             if (_this.searchTimer !== null) {
                 clearTimeout(_this.searchTimer);
@@ -210,9 +194,24 @@
             }
             var _event = $.extend({}, event);  // event seems gc'd once the timeout is over
             _this.searchTimer = setTimeout(function () {
-                _this.submitForm(_event, true);
+                _this.submitForm(_event, $searchField);
                 _this.searchTimer = null;
             }, 500);
+        },
+
+        loadDashlets: function(event) {
+            var _this = event.data.self;
+            var $target = $(event.target);
+
+            if ($target.children('.dashboard').length) {
+                $target.find('.dashboard > .container').each(function () {
+                    var $dashlet = $(this);
+                    var url = $dashlet.data('icingaUrl');
+                    if (typeof url !== 'undefined') {
+                        _this.icinga.loader.loadUrl(url, $dashlet).autorefresh = true;
+                    }
+                });
+            }
         },
 
         rememberSubmitButton: function(e) {
