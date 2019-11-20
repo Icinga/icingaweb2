@@ -22,7 +22,7 @@ chapter.
 
 ## Installing Icinga Web 2 from Package <a id="installing-from-package"></a>
 
-Below is a list of official package repositories for installing Icinga Web 2 for various operating systems.
+Official repositories ([support matrix](https://icinga.com/subscription/support-details/)):
 
 | Distribution  | Repository |
 | ------------- | ---------- |
@@ -31,6 +31,12 @@ Below is a list of official package repositories for installing Icinga Web 2 for
 | RHEL/CentOS   | [Icinga Repository](https://packages.icinga.com/epel/) |
 | openSUSE      | [Icinga Repository](https://packages.icinga.com/openSUSE/) |
 | SLES          | [Icinga Repository](https://packages.icinga.com/SUSE/) |
+
+
+Community repositories:
+
+| Distribution  | Repository |
+| ------------- | ---------- |
 | Gentoo        | [Upstream](https://packages.gentoo.org/packages/www-apps/icingaweb2) |
 | FreeBSD       | [Upstream](http://portsmon.freebsd.org/portoverview.py?category=net-mgmt&portname=icingaweb2) |
 | ArchLinux     | [Upstream](https://aur.archlinux.org/packages/icingaweb2) |
@@ -43,39 +49,57 @@ Please contact your distribution packagers.
 
 You need to add the Icinga repository to your package management configuration for installing Icinga Web 2.
 If you've already configured your OS to use the Icinga repository for installing Icinga 2, you may skip this step.
-Below is a list with **examples** for various distributions.
 
-**Debian Stretch**:
+**Debian**:
+
 ```
+apt-get update
+apt-get -y install apt-transport-https wget gnupg
+
 wget -O - https://packages.icinga.com/icinga.key | apt-key add -
-echo 'deb http://packages.icinga.com/debian icinga-stretch main' >/etc/apt/sources.list.d/icinga.list
+
+DIST=$(awk -F"[)(]+" '/VERSION=/ {print $2}' /etc/os-release); \
+ echo "deb https://packages.icinga.com/debian icinga-${DIST} main" > \
+ /etc/apt/sources.list.d/${DIST}-icinga.list
+ echo "deb-src https://packages.icinga.com/debian icinga-${DIST} main" >> \
+ /etc/apt/sources.list.d/${DIST}-icinga.list
+
 apt-get update
 ```
-> INFO
->
-> For other Debian versions just replace `stretch` with your distribution's code name.
 
-**Ubuntu Xenial**:
+**Ubuntu**:
+
 ```
+apt-get update
+apt-get -y install apt-transport-https wget gnupg
+
 wget -O - https://packages.icinga.com/icinga.key | apt-key add -
-add-apt-repository 'deb http://packages.icinga.com/ubuntu icinga-xenial main'
+
+. /etc/os-release; if [ ! -z ${UBUNTU_CODENAME+x} ]; then DIST="${UBUNTU_CODENAME}"; else DIST="$(lsb_release -c| awk '{print $2}')"; fi; \
+ echo "deb https://packages.icinga.com/ubuntu icinga-${DIST} main" > \
+ /etc/apt/sources.list.d/${DIST}-icinga.list
+ echo "deb-src https://packages.icinga.com/ubuntu icinga-${DIST} main" >> \
+ /etc/apt/sources.list.d/${DIST}-icinga.list
+
 apt-get update
 ```
-> INFO
->
-> For other Ubuntu versions just replace xenial with your distribution's code name.
+
+**RHEL and CentOS 8**:
+```
+dnf install https://packages.icinga.com/epel/icinga-rpm-release-8-latest.noarch.rpm
+```
 
 **RHEL and CentOS 7**:
 ```
 yum install https://packages.icinga.com/epel/icinga-rpm-release-7-latest.noarch.rpm
 ```
 
-**Fedora 26**:
+**Fedora 31**:
 ```
-dnf install https://packages.icinga.com/fedora/icinga-rpm-release-26-latest.noarch.rpm
+dnf install https://packages.icinga.com/fedora/icinga-rpm-release-31-latest.noarch.rpm
 ```
 
-**SLES 12**:
+**SLES 15/12**:
 ```
 zypper ar http://packages.icinga.com/SUSE/ICINGA-release.repo
 zypper ref
@@ -98,28 +122,46 @@ apk update
 
 #### RHEL/CentOS Notes <a id="package-repositories-rhel-notes"></a>
 
-Our packages are build on and with packages from the **[EPEL repository](https://fedoraproject.org/wiki/EPEL)**.
-Please enable it prior installing the Icinga packages.
+The packages for RHEL/CentOS depend on other packages which are distributed
+as part of the [EPEL repository](https://fedoraproject.org/wiki/EPEL).
 
-CentOS 7/6:
+CentOS 8 additionally needs the PowerTools repository for EPEL:
+
+```
+dnf install 'dnf-command(config-manager)'
+dnf config-manager --set-enabled PowerTools
+
+dnf install epel-release
+```
+
+CentOS 7:
+
 ```
 yum install epel-release
 ```
 
-RedHat 7:
+If you are using RHEL you need to additionally enable the `optional` and `codeready-builder`
+repository before installing the [EPEL rpm package](https://fedoraproject.org/wiki/EPEL#How_can_I_use_these_extra_packages.3F).
+
+RHEL 8:
+
 ```
+ARCH=$( /bin/arch )
+
+subscription-manager repos --enable rhel-8-server-optional-rpms
+subscription-manager repos --enable "codeready-builder-for-rhel-8-${ARCH}-rpms"
+
+dnf install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
+```
+
+RHEL 7:
+
+```
+subscription-manager repos --enable rhel-7-server-optional-rpms
 yum install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
 ```
 
-If you are using RHEL you need enable the **optional repository** in order to use some
-contents of EPEL.
-
-RedHat:
-```
-subscription-manager repos --enable rhel-7-server-optional-rpms
-# or
-subscription-manager repos --enable rhel-6-server-optional-rpms
-```
+##### RHEL/CentOS 7 PHP SCL
 
 Since version 2.5.0 we also require a **newer PHP version** than what is available
 in RedHat itself. You need to enable the SCL repository, so that the dependencies
@@ -133,8 +175,6 @@ yum install centos-release-scl
 RedHat:
 ```
 subscription-manager repos --enable rhel-server-rhscl-7-rpms
-# or
-subscription-manager repos --enable rhel-server-rhscl-6-rpms
 ```
 
 Make sure to also read the chapter on [Setting up FPM](02-Installation.md#setting-up-fpm).
@@ -164,7 +204,12 @@ apt-get install icingaweb2 icingacli
 apt-get install icingaweb2 libapache2-mod-php icingacli
 ```
 
-**RHEL, CentOS and Fedora**:
+**RHEL/CentOS 8 and Fedora**:
+```
+dnf install icingaweb2 icingacli
+```
+
+**RHEL/CentOS 7**
 ```
 yum install icingaweb2 icingacli
 ```
@@ -186,7 +231,7 @@ For Alpine Linux please read the [package repositories notes](02-Installation.md
 ## Installing the web server <a id="installing-the-web-server"></a>
 
 Depending on your OS you might have to install, and or configure the web server.
-We usually only require PHP as hard dependency. 
+We usually only require PHP as hard dependency.
 
 We usually build on Apache httpd as the default web server, but you also can use nginx.
 
@@ -200,17 +245,7 @@ systemctl start httpd.service
 systemctl enable httpd.service
 ```
 
-Note for **EPEL 6 and 7**: See "Setting up FPM" below!
-
-Note for **Fedora >= 27**:
- 
-You need to choose which httpd PHP mode you want to use!
-
-1. Enable mod_php: \
-   Edit `/etc/httpd/conf.modules.d/00-mpm.conf` and enable `prefork` instead of `event`
-2. or start php-fpm: \
-`systemctl start php-fpm.service` \
-`systemctl enable`
+Note for **EPEL 7 and 8**: Check the [Setting up FPM](02-Installation.md#setting-up-fpm) chapter.
 
 **SUSE SLE / openSUSE**
 
@@ -224,20 +259,20 @@ a2enmod php7
 systemctl start apache2.service
 systemctl enable apache2.service
 ```
-    
+
 **Debian / Ubuntu**
 
 Your web server should be up and running after the installation of Icinga Web 2.
 
 ### Setting up FPM <a id="setting-up-fpm"></a>
 
-If you are on CentOS / RedHat 6 or 7, or just want to run Icinga Web 2 with PHP-FPM instead
+If you are on CentOS / RedHat, or just want to run Icinga Web 2 with PHP-FPM instead
 of the Apache module.
 
 | Operating System    | FPM configuration path            |
 |---------------------|-----------------------------------|
+| RedHat 8            | `/etc/php-frpm.d/`                |
 | RedHat 7 (with SCL) | `/etc/opt/rh/rh-php71/php-fpm.d/` |
-| RedHat 6 (with SCL) | `/etc/opt/rh/rh-php70/php-fpm.d/` |
 | Fedora              | `/etc/php-fpm.d/`                 |
 | Debian/Ubuntu       | `/etc/php*/*/fpm/pool.d/`         |
 
@@ -245,22 +280,17 @@ The default pool `www` should be sufficient for Icinga Web 2.
 
 On RedHat you need to start and enable the FPM service.
 
+RedHat / CentOS 8 and Fedora:
+
+```
+systemctl start php-fpm.service
+systemctl enable php-fpm.service
+```
+
 RedHat / CentOS 7 (SCL package):
 ```
 systemctl start rh-php71-php-fpm.service
 systemctl enable rh-php71-php-fpm.service
-```
-
-RedHat / CentOS 6 (SCL package):
-```
-service rh-php70-php-fpm start
-chkconfig rh-php70-php-fpm on
-```
-
-Fedora:
-```
-systemctl start php-fpm.service
-systemctl enable php-fpm.service
 ```
 
 All module packages for PHP have this SCL prefix, so you can install a
@@ -269,16 +299,6 @@ database module like this:
 yum install rh-php71-php-mysqlnd
 # or
 yum install rh-php71-php-pgsql
-
-# on el6
-yum install rh-php70-php-mysqlnd
-# or
-yum install rh-php70-php-pgsql
-```
-
-On RedHat / CentOS 6 you also need to install `mod_proxy_fcgi` for httpd:
-```
-yum install mod_proxy_fcgi
 ```
 
 Depending on your web server installation, we might have installed or
@@ -293,85 +313,6 @@ Make sure that the `FilesMatch` part is included for Apache >= 2.4. For Apache <
 Also see the example from icingacli:
 ```
 icingacli setup config webserver apache
-```
-
-### Upgrading to FPM <a id="upgrading-to-fpm"></a>
-
-Valid for:
-
-* RedHat / CentOS 6
-* RedHat / CentOS 7
-
-Other distributions are also possible if preferred, but not included here.
-
-Some upgrading work needs to be done manually, while we install PHP FPM
-as dependency, you need to start the service, and configure some things.
-
-Please read [Setting up FPM](02-Installation.md#setting-up-fpm) first.
-
-**php.ini settings** you have tuned in the past needs to be migrated to a SCL installation
-of PHP.
-
-Check these directories:
-
-* `/etc/php.ini`
-* `/etc/php.d/*.ini`
-
-PHP settings should be stored to:
-
-* RedHat / CentOS 7: `/etc/opt/rh/rh-php71/php.d/`
-* RedHat / CentOS 6: `/etc/opt/rh/rh-php70/php.d/`
-
-Make sure to **install the required database modules**
-
-RedHat / CentOS 7:
-```
-yum install rh-php71-php-mysqlnd
-# or
-yum install rh-php71-php-pgsql
-```
-
-RedHat / CentOS 6:
-```
-yum install rh-php70-php-mysqlnd
-# or
-yum install rh-php70-php-pgsql
-```
-
-After any PHP related change you now need to **restart FPM**:
-
-RedHat / CentOS 7:
-```
-systemctl restart rh-php71-php-fpm.service
-```
-
-RedHat / CentOS 6:
-```
-service rh-php70-php-fpm restart
-```
-
-If you don't need mod_php for other apps on the server, you should disable it in Apache.
-
-Disable PHP in Apache httpd:
-```
-cd /etc/httpd
-cp conf.d/php.conf{,.bak}
-: >conf.d/php.conf
-
-# ONLY on el7!
-cp conf.modules.d/10-php.conf{,.bak}
-: >conf.modules.d/10-php.conf
-
-systemctl restart httpd.service
-# or on el6
-service httpd restart
-```
-
-You can also uninstall the mod_php package, or all non-SCL PHP related packages.
-```
-yum remove php
-# or
-yum remove php-common
 ```
 
 ### Preparing Web Setup <a id="preparing-web-setup-from-package"></a>
@@ -418,3 +359,68 @@ e.g. a PHP module, please install the package, restart your webserver and reload
 
 If you have SELinux enabled, please ensure to either have the selinux package for Icinga Web 2
 installed, or disable it.
+
+
+### Upgrading to FPM <a id="upgrading-to-fpm"></a>
+
+Valid for:
+
+* RedHat / CentOS 7
+
+Other distributions are also possible if preferred, but not included here.
+
+Some upgrading work needs to be done manually, while we install PHP FPM
+as dependency, you need to start the service, and configure some things.
+
+Please read [Setting up FPM](02-Installation.md#setting-up-fpm) first.
+
+**php.ini settings** you have tuned in the past needs to be migrated to a SCL installation
+of PHP.
+
+Check these directories:
+
+* `/etc/php.ini`
+* `/etc/php.d/*.ini`
+
+PHP settings should be stored to:
+
+* RedHat / CentOS 7: `/etc/opt/rh/rh-php71/php.d/`
+
+Make sure to **install the required database modules**
+
+RedHat / CentOS 7:
+```
+yum install rh-php71-php-mysqlnd
+# or
+yum install rh-php71-php-pgsql
+```
+
+After any PHP related change you now need to **restart FPM**:
+
+RedHat / CentOS 7:
+```
+systemctl restart rh-php71-php-fpm.service
+```
+
+If you don't need mod_php for other apps on the server, you should disable it in Apache.
+
+Disable PHP in Apache httpd:
+```
+cd /etc/httpd
+cp conf.d/php.conf{,.bak}
+: >conf.d/php.conf
+
+# ONLY on el7!
+cp conf.modules.d/10-php.conf{,.bak}
+: >conf.modules.d/10-php.conf
+
+systemctl restart httpd.service
+```
+
+You can also uninstall the mod_php package, or all non-SCL PHP related packages.
+```
+yum remove php
+# or
+yum remove php-common
+```
+
