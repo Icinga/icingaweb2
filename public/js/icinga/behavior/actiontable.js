@@ -161,7 +161,7 @@
             var keys = this.getMultiselectionKeys();
             for (var i = 0; i < keys.length; i++) {
                 var key = keys[i];
-                if (params[key]) {
+                if (params[key] || params[key] === null) {
                     tuple[key] = params[key];
                 }
             }
@@ -305,7 +305,12 @@
                 selections.each(function (i, el) {
                     var parts = [];
                     $.each(_this.getRowData($(el)), function(key, value) {
-                        parts.push(utils.fixedEncodeURIComponent(key) + '=' + utils.fixedEncodeURIComponent(value));
+                        var condition = utils.fixedEncodeURIComponent(key);
+                        if (value !== null) {
+                            condition += '=' + utils.fixedEncodeURIComponent(value);
+                        }
+
+                        parts.push(condition);
                     });
                     queries.push('(' + parts.join('&') + ')');
                 });

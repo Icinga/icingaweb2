@@ -136,19 +136,25 @@
               newparams[key] = value;
             });
 
-            if (Object.keys(newparams).length > 0) {
-              var queryString = '?';
-              $.each(newparams, function (key, value) {
+            if (Object.keys(newparams).length) {
+                var queryString = '?';
+                $.each(newparams, function (key, value) {
                   if (queryString !== '?') {
                       queryString += '&';
                   }
-                  queryString += encodeURIComponent(key) + '=' + encodeURIComponent(value);
-              });
-              result += queryString;
+
+                  queryString += encodeURIComponent(key);
+                  if (value !== null) {
+                      queryString += '=' + encodeURIComponent(value);
+                  }
+                });
+                result += queryString;
             }
-            if (parts.hash.length > 0) {
+
+            if (parts.hash.length) {
                 result += '#' + parts.hash;
             }
+
             return result;
         },
 
@@ -162,19 +168,25 @@
                 delete newparams[key];
             });
 
-            if (Object.keys(newparams).length > 0) {
-              var queryString = '?';
-              $.each(newparams, function (key, value) {
+            if (Object.keys(newparams).length) {
+                var queryString = '?';
+                $.each(newparams, function (key, value) {
                   if (queryString !== '?') {
                       queryString += '&';
                   }
-                  queryString += encodeURIComponent(key) + '=' + encodeURIComponent(value);
-              });
-              result += queryString;
+
+                  queryString += encodeURIComponent(key);
+                  if (value !== null) {
+                      queryString += '=' + encodeURIComponent(value);
+                  }
+                });
+                result += queryString;
             }
-            if (parts.hash.length > 0) {
+
+            if (parts.hash.length) {
                 result += '#' + parts.hash;
             }
+
             return result;
         },
 
@@ -193,7 +205,7 @@
                     continue;
                 }
                 s = segment[i].split('=');
-                params[s[0]] = decodeURIComponent(s[1]);
+                params[decodeURIComponent(s[0])] = typeof s[1] !== 'undefined' ? decodeURIComponent(s[1]) : null;
             }
             return params;
         },
