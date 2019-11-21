@@ -274,7 +274,7 @@ class FilterEditor extends AbstractWidget
                         $filter = Filter::matchAll();
                     }
                     $filters = array();
-                    $search = ltrim($search);
+                    $search = trim($search);
                     foreach ($this->searchColumns as $searchColumn) {
                         $filters[] = Filter::expression($searchColumn, '=', "*$search*");
                     }
