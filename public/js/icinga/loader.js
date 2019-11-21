@@ -654,6 +654,11 @@
                     return true;
                 });
                 if (moduleName) {
+                    // Lazy load module javascript (Applies only to module.js code)
+                    if (_this.icinga.hasModule(moduleName) && ! _this.icinga.isLoadedModule(moduleName)) {
+                        _this.icinga.loadModule(moduleName);
+                    }
+
                     req.$target.data('icingaModule', moduleName);
                     classes.push('icinga-module');
                     classes.push('module-' + moduleName);
@@ -776,6 +781,7 @@
          * Regardless of whether a request succeeded of failed, clean up
          */
         onComplete: function (dataOrReq, textStatus, reqOrError) {
+            var _this = this;
             var req;
 
             if (typeof dataOrReq === 'object') {
@@ -832,7 +838,6 @@
 
             var extraUpdates = req.getResponseHeader('X-Icinga-Extra-Updates');
             if (!! extraUpdates && req.getResponseHeader('X-Icinga-Redirect-Http') !== 'yes') {
-                var _this = this;
                 $.each(extraUpdates.split(','), function (idx, el) {
                     var parts = el.trim().split(';');
                     if (parts.length !== 2) {
@@ -864,6 +869,15 @@
                 }
             }
 
+            req.$target.find('.container').each(function () {
+                // Lazy load module javascript (Applies only to module.js code)
+                var moduleName = $(this).data('icingaModule');
+                if (_this.icinga.hasModule(moduleName) && ! _this.icinga.isLoadedModule(moduleName)) {
+                    _this.icinga.loadModule(moduleName);
+                }
+
+                $(this).trigger('rendered');
+            });
             req.$target.trigger('rendered');
 
             this.icinga.ui.refreshDebug();

@@ -32,8 +32,6 @@
          * Global default event handlers
          */
         applyGlobalDefaults: function () {
-            $(document).on('beforerender', { self: this }, this.initializeModules);
-
             $(document).on('visibilitychange', { self: this }, this.onVisibilityChange);
 
             $.each(this.icinga.behaviors, function (name, behavior) {
@@ -85,32 +83,16 @@
         },
 
         /**
-         * Lazy load module javascript (Applies only to module.js code)
-         *
-         * @param {Event} event
+         * Initialize module javascript (Applies only to module.js code)
          */
-        initializeModules: function (event) {
-            var _this, $target;
-
-            if (typeof event === 'undefined') {
-                _this = this;
-                $target = $('#col1');
-            } else {
-                _this = event.data.self;
-                $target = $(event.target);
-            }
-
-            var moduleName = $target.data('icingaModule');
-            if (moduleName) {
-                if (_this.icinga.hasModule(moduleName) && ! _this.icinga.isLoadedModule(moduleName)) {
-                    _this.icinga.loadModule(moduleName);
-                }
-            }
-
-            $target.find('.icinga-module').each(function () {
-                moduleName = $(this).data('icingaModule');
-                if (_this.icinga.hasModule(moduleName) && !_this.icinga.isLoadedModule(moduleName)) {
-                    _this.icinga.loadModule(moduleName);
+        initializeModules: function () {
+            var _this = this;
+            $('.container').each(function () {
+                var moduleName = $(this).data('icingaModule');
+                if (moduleName) {
+                    if (_this.icinga.hasModule(moduleName) && ! _this.icinga.isLoadedModule(moduleName)) {
+                        _this.icinga.loadModule(moduleName);
+                    }
                 }
             });
         },
