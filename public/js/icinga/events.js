@@ -38,11 +38,22 @@
                 behavior.bind($(document));
             });
 
+            var _this = this;
+            $('.container').each(function () {
+                // Initialize module javascript (Applies only to module.js code)
+                var moduleName = $(this).data('icingaModule');
+                if (moduleName) {
+                    if (_this.icinga.hasModule(moduleName) && ! _this.icinga.isLoadedModule(moduleName)) {
+                        _this.icinga.loadModule(moduleName);
+                    }
+                }
+            });
+
             // We catch resize events
             $(window).on('resize', { self: this.icinga.ui }, this.icinga.ui.onWindowResize);
 
             // Trigger 'rendered' event also on page loads
-            $(window).on('load', { self: this }, this.onLoad);
+            $(document).on('icinga-init', { self: this }, this.onInit);
 
             // Destroy Icinga, clean up and interrupt pending requests on unload
             $( window ).on('unload', { self: this }, this.onUnload);
@@ -82,21 +93,6 @@
             // $(document).on('change', 'form.auto select', this.submitForm);
         },
 
-        /**
-         * Initialize module javascript (Applies only to module.js code)
-         */
-        initializeModules: function () {
-            var _this = this;
-            $('.container').each(function () {
-                var moduleName = $(this).data('icingaModule');
-                if (moduleName) {
-                    if (_this.icinga.hasModule(moduleName) && ! _this.icinga.isLoadedModule(moduleName)) {
-                        _this.icinga.loadModule(moduleName);
-                    }
-                }
-            });
-        },
-
         treeNodeToggle: function () {
             var $parent = $(this).closest('li');
             if ($parent.hasClass('collapsed')) {
@@ -109,13 +105,10 @@
             icinga.ui.fixControls($parent.closest('.container'));
         },
 
-        onLoad: function (event) {
+        onInit: function (event) {
             $('body').removeClass('loading');
 
-            // First initialize already included modules
-            event.data.self.initializeModules();
-
-            // Then trigger the initial `rendered` events
+            // Trigger the initial `rendered` events
             $('.container').trigger('rendered');
 
             // Additionally trigger a `rendered` event on the layout, some behaviors may
