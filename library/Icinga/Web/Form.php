@@ -1015,7 +1015,7 @@ class Form extends Zend_Form
      */
     public function ensureElementAccessibility(Zend_Form_Element $element)
     {
-        if ($element->isRequired() && strpos(strtolower($element->getType()), 'checkbox') === false) {
+        if ($element->isRequired()) {
             $element->setAttrib('aria-required', 'true'); // ARIA
             $element->setAttrib('required', ''); // HTML5
             if (($cue = $this->getRequiredCue()) !== null && ($label = $element->getDecorator('label')) !== false) {
