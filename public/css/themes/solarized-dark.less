@@ -13,13 +13,12 @@
 
 // Gray colors
 @gray: @base1;
+@gray-semilight: mix(@gray, @gray-light);
 @gray-light: @base01;
 @gray-lighter: #00222b;
 @gray-lightest: @base02;
 
-// Icinga colors
-@icinga-blue: @base1;
-
+// State colors
 @color-ok: #859900;
 @color-critical: #dc322f;
 @color-critical-handled: #a82523;
@@ -30,6 +29,10 @@
 @color-unreachable: #2aa198;
 @color-unreachable-handled: #1d736c;
 @color-pending: #268bd2;
+
+// Icinga colors
+@icinga-blue: @base1;
+
 // Notification colors
 
 // Background color for <body>
@@ -380,5 +383,21 @@ table.avp tbody th {
     background-color: @button-primary-color;
     border-color: @button-primary-color;
     color: @text-color;
+  }
+}
+
+.icinga-module.module-icingadb .view-mode-switcher {
+  li {
+    color: @icinga-blue !important;
+    background: #08475c !important;
+
+    &.active {
+      background-color: @gray-lighter !important;
+      color: @base2 !important;
+    }
+
+    &:not(:last-child) {
+      border-color: @body-bg-color !important;
+    }
   }
 }
