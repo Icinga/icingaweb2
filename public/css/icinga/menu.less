@@ -92,7 +92,7 @@
 
   &.active:not(.selected) > a:focus,
   &.active:not(.selected) > a:hover {
-    background-color: mix(#000, @menu-active-bg-color, 20);
+    background-color: darken(@menu-active-bg-color, 20);
   }
 
   &:not(.selected) > a:hover,
@@ -151,7 +151,7 @@ ul:not(.nav-level-2) > .selected > a {
 
   &:not(.selected):not(.active) > a:not(.badge):hover,
   &:not(.selected):not(.active) > a:not(.badge):focus {
-    background-color: mix(#000, @menu-active-bg-color, 20);
+    background-color: darken(@menu-active-bg-color, 20);
     color: @menu-2ndlvl-highlight-color;
   }
 
@@ -232,7 +232,7 @@ ul:not(.nav-level-2) > .selected > a {
 
   &:hover,
   &:focus {
-    background-color: mix(#000, @menu-bg-color, 20);
+    background-color: darken(@menu-bg-color, 20);
   }
 }
 
@@ -375,7 +375,7 @@ ul:not(.nav-level-2) > .selected > a {
 }
 
 .search-input:focus ~ .search-reset:hover {
-  background-color: mix(#000, @menu-active-bg-color, 20);
+  background-color: darken(@menu-active-bg-color, 20);
 }
 
 .search-reset {
@@ -393,7 +393,7 @@ ul:not(.nav-level-2) > .selected > a {
 
   &:focus,
   &:hover {
-    background-color: mix(#000, @menu-bg-color, 20);
+    background-color: darken(@menu-bg-color, 20);
     outline: none;
   }
 }
