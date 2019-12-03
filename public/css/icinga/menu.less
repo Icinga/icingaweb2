@@ -91,7 +91,7 @@
 
   &.active:not(.selected) > a:focus,
   &.active:not(.selected) > a:hover {
-    background-color: mix(#000, @menu-active-bg-color, 20);
+    background-color: darken(@menu-active-bg-color, 20);
   }
 
   &:not(.selected) > a:hover,
@@ -150,7 +150,7 @@ ul:not(.nav-level-2) > .selected > a {
 
   &:not(.selected):not(.active) > a:not(.badge):hover,
   &:not(.selected):not(.active) > a:not(.badge):focus {
-    background-color: mix(#000, @menu-active-bg-color, 20);
+    background-color: darken(@menu-active-bg-color, 20);
     color: @menu-2ndlvl-highlight-color;
   }
 
@@ -231,7 +231,7 @@ ul:not(.nav-level-2) > .selected > a {
 
   &:hover,
   &:focus {
-    background-color: mix(#000, @menu-bg-color, 20);
+    background-color: darken(@menu-bg-color, 20);
   }
 }
 
@@ -373,7 +373,7 @@ ul:not(.nav-level-2) > .selected > a {
 }
 
 .search-input:focus ~ .search-reset:hover {
-  background-color: mix(#000, @menu-active-bg-color, 20);
+  background-color: darken(@menu-active-bg-color, 20);
 }
 
 .search-reset {
@@ -391,7 +391,7 @@ ul:not(.nav-level-2) > .selected > a {
 
   &:focus,
   &:hover {
-    background-color: mix(#000, @menu-bg-color, 20);
+    background-color: darken(@menu-bg-color, 20);
     outline: none;
   }
 }
@@ -506,7 +506,7 @@ input[type=text].search-input {
 #layout:not(.sidebar-collapsed) #menu .nav-level-1 > .nav-item.active .nav-level-2 > li {
   &.badge-nav-item:not(.selected) {
     &:hover {
-      background: #292929;
+      background: darken(@menu-bg-color, 20);
 
       a {
         color: white;
@@ -518,7 +518,7 @@ input[type=text].search-input {
 #layout:not(.sidebar-collapsed) #menu .nav-level-1 > .nav-item:not(.active).hover .nav-level-2 > li {
   &.badge-nav-item {
     &:hover {
-      background: #e5f9ff;
+      background: lighten(@icinga-blue, 80);
     }
   }
 }
