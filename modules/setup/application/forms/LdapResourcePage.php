@@ -97,7 +97,7 @@ class LdapResourcePage extends Form
         if (isset($formData['backend_validation']) && parent::isValid($formData)) {
             $inspection = ResourceConfigForm::inspectResource($this);
             if ($inspection !== null) {
-                $join = function ($e) use (& $join) {
+                $join = function ($e) use (&$join) {
                     return is_string($e) ? $e : join("\n", array_map($join, $e));
                 };
                 $this->addElement(

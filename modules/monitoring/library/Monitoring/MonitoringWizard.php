@@ -140,7 +140,10 @@ class MonitoringWizard extends Wizard implements SetupWizard
         $setup->addStep(
             new BackendStep(array(
                 'backendConfig'     => $pageData['setup_monitoring_backend'],
-                'resourceConfig'    => array_diff_key($pageData['setup_monitoring_ido'], array('skip_validation' => null)) //TODO: Prefer a new backend once implemented.
+                'resourceConfig'    => array_diff_key(
+                    $pageData['setup_monitoring_ido'], //TODO: Prefer a new backend once implemented.
+                    array('skip_validation' => null)
+                )
             ))
         );
 

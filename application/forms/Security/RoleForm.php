@@ -350,7 +350,7 @@ class RoleForm extends RepositoryForm
         return $success ? $this->translate('Role removed') : $this->translate('Role removal failed');
     }
 
-    protected function sortPermissions(& $permissions)
+    protected function sortPermissions(&$permissions)
     {
         return uasort($permissions, function ($a, $b) {
             if (isset($a['isUsagePerm'])) {
