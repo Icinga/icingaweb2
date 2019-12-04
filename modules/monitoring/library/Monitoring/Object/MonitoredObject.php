@@ -419,7 +419,9 @@ abstract class MonitoredObject implements Filterable
     public function fetchCustomvars()
     {
         $blacklist = array();
+        $hidden = array();
         $blacklistPattern = '';
+        $hiddenPattern = '';
 
         if (($blacklistConfig = Config::module('monitoring')->get('security', 'protected_customvars', '')) !== '') {
             foreach (explode(',', $blacklistConfig) as $customvar) {
@@ -430,6 +432,17 @@ abstract class MonitoredObject implements Filterable
                 $blacklist[] = implode('.*', $nonWildcards);
             }
             $blacklistPattern = '/^(' . implode('|', $blacklist) . ')$/i';
+        }
+
+        if (($hiddenConfig = Config::module('monitoring')->get('security', 'hidden_customvars', '')) !== '') {
+            foreach (explode(',', $hiddenConfig) as $customvar) {
+                $nonWildcards = array();
+                foreach (explode('*', $customvar) as $nonWildcard) {
+                    $nonWildcards[] = preg_quote($nonWildcard, '/');
+                }
+                $hidden[] = implode('.*', $nonWildcards);
+            }
+            $hiddenPattern = '/^(' . implode('|', $hidden) . ')$/i';
         }
 
         if ($this->type === self::TYPE_SERVICE) {
@@ -445,6 +458,12 @@ abstract class MonitoredObject implements Filterable
 
         if ($blacklistPattern) {
             $this->customvars = $this->obfuscateCustomVars($this->customvars, $blacklistPattern);
+        }
+
+        if ($hiddenPattern) {
+            $this->customvars = array_filter($this->customvars, function ($elem) use ($hiddenPattern) {
+                return  !($hiddenPattern && preg_match($hiddenPattern, $elem));
+            }, ARRAY_FILTER_USE_KEY);
         }
 
         return $this;
