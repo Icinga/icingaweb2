@@ -94,7 +94,7 @@ class CliUtils
         );
     }
 
-    public function objectStateFlags($type, & $row)
+    public function objectStateFlags($type, &$row)
     {
         $extra = array();
         if ($row->{$type . '_in_downtime'}) {

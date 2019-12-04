@@ -188,7 +188,7 @@ class AuthBackendPage extends Form
 
             $inspection = UserBackendConfigForm::inspectUserBackend($self);
             if ($inspection !== null) {
-                $join = function ($e) use (& $join) {
+                $join = function ($e) use (&$join) {
                     return is_string($e) ? $e : join("\n", array_map($join, $e));
                 };
                 $this->addElement(

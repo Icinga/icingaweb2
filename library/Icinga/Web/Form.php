@@ -1120,7 +1120,7 @@ class Form extends Zend_Form
      * @param   Zend_Form   $form
      * @param   array       $defaults
      */
-    protected function preserveDefaults(Zend_Form $form, array & $defaults)
+    protected function preserveDefaults(Zend_Form $form, array &$defaults)
     {
         foreach ($form->getElements() as $name => $element) {
             if ((array_key_exists($name, $defaults)

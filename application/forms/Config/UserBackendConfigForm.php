@@ -69,7 +69,7 @@ class UserBackendConfigForm extends ConfigForm
             $externalBackends = $this->config->toArray();
             array_walk(
                 $externalBackends,
-                function (& $authBackendCfg) {
+                function (&$authBackendCfg) {
                     if (! isset($authBackendCfg['backend']) || $authBackendCfg['backend'] !== 'external') {
                         $authBackendCfg = null;
                     }
@@ -397,7 +397,7 @@ class UserBackendConfigForm extends ConfigForm
         if ($this->getElement('backend_validation')->isChecked() && parent::isValid($formData)) {
             $inspection = static::inspectUserBackend($this);
             if ($inspection !== null) {
-                $join = function ($e) use (& $join) {
+                $join = function ($e) use (&$join) {
                     return is_string($e) ? $e : join("\n", array_map($join, $e));
                 };
                 $this->addElement(

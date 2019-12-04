@@ -68,7 +68,7 @@ class Format
         return sprintf('%0.2f d', $value / 86400);
     }
 
-    protected static function formatForUnits($value, & $units, $base)
+    protected static function formatForUnits($value, &$units, $base)
     {
         $sign = '';
         if ($value < 0) {

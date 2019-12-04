@@ -127,8 +127,7 @@ class ArrayToTextTableHelper
         $this->printHeading();
 
         $rc = count($this->rows);
-        for ($i = 0; $i < $rc;
-             $i++) {
+        for ($i = 0; $i < $rc; $i++) {
             $this->printRow($i);
         }
 
