@@ -4,7 +4,6 @@ sudo: false
 
 php:
   - '5.6'
-  - '7.0'
   - '7.1'
   - '7.2'
   - '7.3'
@@ -21,7 +20,9 @@ matrix:
     - env: CHECK=phpcs
       php: '7.3'
     - env: CHECK=phpcs
-      php: '7.0'
+      php: '7.2'
+    - env: CHECK=phpcs
+      php: '7.1'
     - env: CHECK=phpcs
       php: '5.6'
     - env: CHECK=syntax
@@ -31,7 +32,9 @@ matrix:
     - env: CHECK=syntax
       php: '7.3'
     - env: CHECK=syntax
-      php: '7.0'
+      php: '7.2'
+    - env: CHECK=syntax
+      php: '7.1'
     - env: CHECK=syntax
       php: '5.6'
   allow_failures:
