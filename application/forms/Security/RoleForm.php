@@ -43,6 +43,10 @@ class RoleForm extends RepositoryForm
         $view = $this->getView();
 
         $this->providedPermissions['application'] = [
+            $helper->filterName('no-user/password-change') => [
+                'name'          => 'no-user/password-change',
+                'description'   => $this->translate('Prohibit password changes in the account preferences')
+            ],
             $helper->filterName('application/share/navigation') => [
                 'name'          => 'application/share/navigation',
                 'description'   => $this->translate('Allow to share navigation items')
