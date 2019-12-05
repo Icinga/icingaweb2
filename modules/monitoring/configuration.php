@@ -1,6 +1,8 @@
 <?php
 /* Icinga Web 2 | (c) 2014 Icinga Development Team | GPLv2+ */
 
+use Icinga\Authentication\Auth;
+
 /** @var $this \Icinga\Application\Modules\Module */
 
 $this->providePermission(
@@ -216,18 +218,24 @@ $section->add(N_('Hostgroups'), array(
     'url'         => 'monitoring/list/hostgroups',
     'priority'    => 60
 ));
-$section->add(N_('Contacts'), array(
-    'icon'        => 'user',
-    'description' => $this->translate('List contacts'),
-    'url'         => 'monitoring/list/contacts',
-    'priority'    => 70
-));
-$section->add(N_('Contactgroups'), array(
-    'icon'        => 'users',
-    'description' => $this->translate('List users'),
-    'url'         => 'monitoring/list/contactgroups',
-    'priority'    => 70
-));
+
+// Checking the permission here since navigation items don't support negating permissions
+$auth = Auth::getInstance();
+if ($auth->hasPermission('*') || ! $auth->hasPermission('no-monitoring/contacts')) {
+    $section->add(N_('Contacts'), array(
+        'icon'        => 'user',
+        'description' => $this->translate('List contacts'),
+        'url'         => 'monitoring/list/contacts',
+        'priority'    => 70
+    ));
+    $section->add(N_('Contactgroups'), array(
+        'icon'        => 'users',
+        'description' => $this->translate('List users'),
+        'url'         => 'monitoring/list/contactgroups',
+        'priority'    => 70
+    ));
+}
+
 $section->add(N_('Comments'), array(
     'icon'        => 'chat-empty',
     'description' => $this->translate('List comments'),

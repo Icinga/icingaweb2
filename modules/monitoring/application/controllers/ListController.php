@@ -3,6 +3,7 @@
 
 namespace Icinga\Module\Monitoring\Controllers;
 
+use Icinga\Security\SecurityException;
 use Icinga\Web\Form;
 use Zend_Form;
 use Icinga\Data\Filter\Filter;
@@ -308,6 +309,10 @@ class ListController extends Controller
      */
     public function contactsAction()
     {
+        if (! $this->hasPermission('*') && $this->hasPermission('no-monitoring/contacts')) {
+            throw new SecurityException('No permission for %s', 'monitoring/contacts');
+        }
+
         $this->addTitleTab(
             'contacts',
             $this->translate('Contacts'),
@@ -387,6 +392,10 @@ class ListController extends Controller
      */
     public function contactgroupsAction()
     {
+        if (! $this->hasPermission('*') && $this->hasPermission('no-monitoring/contacts')) {
+            throw new SecurityException('No permission for %s', 'monitoring/contacts');
+        }
+
         $this->addTitleTab(
             'contactgroups',
             $this->translate('Contact Groups'),

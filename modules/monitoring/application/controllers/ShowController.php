@@ -5,6 +5,7 @@ namespace Icinga\Module\Monitoring\Controllers;
 
 use Icinga\Module\Monitoring\Backend;
 use Icinga\Module\Monitoring\Controller;
+use Icinga\Security\SecurityException;
 use Icinga\Web\Url;
 
 /**
@@ -28,6 +29,10 @@ class ShowController extends Controller
 
     public function contactAction()
     {
+        if (! $this->hasPermission('*') && $this->hasPermission('no-monitoring/contacts')) {
+            throw new SecurityException('No permission for %s', 'monitoring/contacts');
+        }
+
         $contactName = $this->params->getRequired('contact_name');
 
         $this->getTabs()->add('contact-detail', [

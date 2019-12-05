@@ -149,11 +149,16 @@ abstract class MonitoredObjectController extends Controller
             || $this->getRequest()->getHeader('Accept') === 'application/json'
         ) {
             $payload = (array) $this->object->properties;
-            $payload += array(
-                'contacts'          => $this->object->contacts->fetchPairs(),
-                'contact_groups'    => $this->object->contactgroups->fetchPairs(),
-                'vars'              => $this->object->customvars
-            );
+            $payload['vars'] = $this->object->customvars;
+
+            if ($this->hasPermission('*') || ! $this->hasPermission('no-monitoring/contacts')) {
+                $payload['contacts'] = $this->object->contacts->fetchPairs();
+                $payload['contact_groups'] = $this->object->contactgroups->fetchPairs();
+            } else {
+                $payload['contacts'] = [];
+                $payload['contact_groups'] = [];
+            }
+
             $groupName = $this->object->getType() . 'groups';
             $payload[$groupName] = $this->object->$groupName;
             $this->getResponse()->json()
