@@ -579,7 +579,7 @@ class User
                 $wildcard = strpos($grantedPermission, '*');
             }
 
-            if ($wildcard !== false) {
+            if ($wildcard !== false && $wildcard > 0) {
                 if (substr($requiredPermission, 0, $wildcard) === substr($grantedPermission, 0, $wildcard)) {
                     return true;
                 }
