@@ -641,6 +641,7 @@
             // Enable this only in case you want to track down UI problems
             //this.icinga.logger.debug('Fixing controls for ', $container);
 
+            var _this = this;
             $container.find('.controls').each(function() {
                 var $controls = $(this);
                 var $fakeControls = $controls.prev('.fake-controls');
@@ -652,6 +653,8 @@
                     top: $container.offsetParent().position().top,
                     width: $fakeControls.outerWidth()
                 });
+
+                _this.ensureTabVisibility($controls, 0);
             });
 
             var $statusBar = $container.children('.monitoring-statusbar');
@@ -662,6 +665,51 @@
                 });
                 $statusBar.prev('.monitoring-statusbar-ghost').height($statusBar.outerHeight(true));
             }
+        },
+
+        ensureTabVisibility: function ($controls, repetition) {
+            var $tabContainer = $controls.find('.tabs');
+            if (! $tabContainer) return;
+
+            var $tabs = $tabContainer.children('li');
+            var $dropdown = $tabContainer.find('.tabs-dropdown');
+            var $visibleCount = $tabs.filter(':visible').size();
+            var $ctrlCount = $tabs.slice($tabContainer.find('.dropdown-nav-item:visible').index()).filter(':visible').size();
+
+            if ($tabContainer[0].scrollHeight > $tabContainer[0].clientHeight) {
+                $tabs.slice($visibleCount - $ctrlCount - 1, -($ctrlCount) - 1).hide();
+                $dropdown.show();
+                if (repetition < $tabs.size()) {
+                    this.ensureTabVisibility($controls, repetition + 1);
+                }
+            } else if ($tabContainer.find('.tabs-dropdown').is(':visible') && $tabContainer.children().is(':hidden')) {
+                var $visibleWidth = 0;
+                $.each($tabs.filter(':visible'), function(){
+                    $visibleWidth += $(this).width();
+                });
+
+                for (var count = 0; count < $tabs.size() - $ctrlCount; count++) {
+                    var $tab = $($tabs[count]);
+                    if($tab.is(":hidden")) {
+                        if($tab.width() < ($tabContainer.width() - $visibleWidth - $visibleCount * 5)) {
+                            $tab.show();
+                            if ($($tabs[count + 1]).is(":visible")) {
+                                $dropdown.hide();
+                            }
+
+                            if (repetition < $tabs.size()) {
+                                this.ensureTabVisibility($controls, repetition + 1);
+                            }
+                        }
+                        break;
+                    }
+                }
+            }
+
+            var $dropdownList = $dropdown.find('li');
+            $visibleCount = $tabs.filter(':visible').size();
+            $dropdownList.slice(0, $visibleCount - $ctrlCount).hide();
+            $dropdownList.slice($visibleCount - $ctrlCount).show();
         },
 
         toggleFullscreen: function () {
