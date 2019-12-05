@@ -83,6 +83,10 @@ $this->providePermission(
     'monitoring/command/send-custom-notification',
     $this->translate('Allow sending custom notifications for hosts and services')
 );
+$this->providePermission(
+    'no-monitoring/contacts',
+    $this->translate('Prohibit access to contacts and contactgroups')
+);
 
 $this->provideRestriction(
     'monitoring/filter/objects',
