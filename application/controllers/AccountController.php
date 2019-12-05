@@ -43,17 +43,19 @@ class AccountController extends Controller
         $config = Config::app()->getSection('global');
         $user = $this->Auth()->getUser();
         if ($user->getAdditional('backend_type') === 'db') {
-            try {
-                $userBackend = UserBackend::create($user->getAdditional('backend_name'));
-            } catch (ConfigurationError $e) {
-                $userBackend = null;
-            }
-            if ($userBackend !== null) {
-                $changePasswordForm = new ChangePasswordForm();
-                $changePasswordForm
-                    ->setBackend($userBackend)
-                    ->handleRequest();
-                $this->view->changePasswordForm = $changePasswordForm;
+            if ($user->can('*') || ! $user->can('no-user/password-change')) {
+                try {
+                    $userBackend = UserBackend::create($user->getAdditional('backend_name'));
+                } catch (ConfigurationError $e) {
+                    $userBackend = null;
+                }
+                if ($userBackend !== null) {
+                    $changePasswordForm = new ChangePasswordForm();
+                    $changePasswordForm
+                        ->setBackend($userBackend)
+                        ->handleRequest();
+                    $this->view->changePasswordForm = $changePasswordForm;
+                }
             }
         }
 
