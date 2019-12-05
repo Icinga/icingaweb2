@@ -70,11 +70,11 @@ class ExternalBackend implements UserBackendInterface
     public static function getRemoteUser($variable = 'REMOTE_USER')
     {
         $username = getenv($variable);
-        if ($username !== false) {
+        if (! empty($username)) {
             return $username;
         }
 
-        if (array_key_exists($variable, $_SERVER)) {
+        if (array_key_exists($variable, $_SERVER) && ! empty($_SERVER[$variable])) {
             return $_SERVER[$variable];
         }
     }
