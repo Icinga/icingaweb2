@@ -82,7 +82,9 @@ class ServicesController extends Controller
         $form
             ->setBackend($this->backend)
             ->setObjects($this->serviceList)
-            ->setRedirectUrl(Url::fromPath('monitoring/services/show')->setParams($this->params))
+            ->setRedirectUrl(Url::fromPath('monitoring/services/show')->setParams(
+                $this->params->without('service_active_checks_enabled')
+            ))
             ->handleRequest();
 
         $this->view->form = $form;
