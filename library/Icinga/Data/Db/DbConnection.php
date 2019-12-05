@@ -205,8 +205,15 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
                     . 'ANSI_QUOTES,PIPES_AS_CONCAT,NO_ENGINE_SUBSTITUTION\'';
                 if (isset($adapterParamaters['charset'])) {
                     $driverOptions[PDO::MYSQL_ATTR_INIT_COMMAND] .= ', NAMES ' . $adapterParamaters['charset'];
+                    if (trim($adapterParamaters['charset']) === 'latin1') {
+                        // Required for MySQL 8+ because we need PIPES_AS_CONCAT and
+                        // have several columns with explicit COLLATE instructions
+                        $driverOptions[PDO::MYSQL_ATTR_INIT_COMMAND] .= ' COLLATE latin1_general_ci';
+                    }
+
                     unset($adapterParamaters['charset']);
                 }
+
                 $driverOptions[PDO::MYSQL_ATTR_INIT_COMMAND] .= ", time_zone='" . $this->defaultTimezoneOffset() . "'";
                 $driverOptions[PDO::MYSQL_ATTR_INIT_COMMAND] .=';';
                 $defaultPort = 3306;
