@@ -76,7 +76,9 @@ class HostsController extends Controller
         $form
             ->setBackend($this->backend)
             ->setObjects($this->hostList)
-            ->setRedirectUrl(Url::fromPath('monitoring/hosts/show')->setParams($this->params))
+            ->setRedirectUrl(Url::fromPath('monitoring/hosts/show')->setParams(
+                $this->params->without('host_active_checks_enabled')
+            ))
             ->handleRequest();
 
         $this->view->form = $form;
