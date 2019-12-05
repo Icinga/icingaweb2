@@ -3,7 +3,7 @@
 </div>
 <div class="content">
     <?php foreach ($navigation as $item): /** @var \Icinga\Web\Navigation\NavigationItem $item */?>
-    <a class="dashboard-link" href="<?= $this->url($item->getUrl(), $item->getUrlParameters()) ?>">
+    <a class="dashboard-link" href="<?= $this->url($item->getUrl(), $item->getUrlParameters()) ?>"<?= $this->propertiesToString($item->getAttributes()) ?>>
         <div class="link-icon">
             <?= $this->icon($item->getIcon() ?: 'forward', null, array('aria-hidden' => true)) ?>
         </div>
