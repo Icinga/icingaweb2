@@ -1,17 +1,10 @@
 /*! Icinga Web 2 | (c) 2014 Icinga Development Team | GPLv2+ */
 
-// Styles for the bottom status bar in the host and service list views
-.monitoring-statusbar-ghost {
-  display: block;
-  visibility: hidden;
-}
-
 .monitoring-statusbar {
+  position: relative;
   background-color: @body-bg-color;
   border-top: 1px solid @gray-lighter;
-  bottom: 0;
   padding: .25em @gutter;
-  position: fixed;
   line-height: 1;
 
   &:before {
@@ -200,17 +193,25 @@
 
 // Quick actions
 .quick-actions {
+  margin: 0 -.5em;
+
+  &:last-child {
+    margin-bottom: -.25em;
+  }
+
   li {
     color: @icinga-blue;
-    padding: 0 0.6em;
   }
 
-  li:first-child {
-    padding-left: 0;
-  }
+  a,
+  button {
+    .rounded-corners();
+    padding: .25em .5em;
 
-  li:last-child {
-    padding-right: 0;
+    &:hover {
+      background-color: @gray-lighter;
+      text-decoration: none;
+    }
   }
 }
 

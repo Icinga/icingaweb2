@@ -1,52 +1,44 @@
 /*! Icinga Web 2 | (c) 2014 Icinga Development Team | GPLv2+ */
 
 html {
+  height: 100%;
   font-family: 'default-layout';
+}
+
+body {
+  height: 100%;
 }
 
 #layout {
   height: 100%;
-  width: 100%;
-  position: fixed;
-  left: 0;
-  top: 0;
+  display: flex;
+  flex-direction: column;
   // Prevent nav-level-2 flyovers from being covered by #main
   z-index: 0;
 }
 
-#header {
-  width: 100%;
-  padding-bottom: 3em;
-  position: fixed;
-  left: 0;
-  top: 0;
+#content-wrapper {
+  flex: 1 1 auto;
+  display: flex;
+  height: 0;
 
 }
 
 #sidebar {
-  width: 12em;
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  top: 4.5em;
+  width: 16em;
+  display: flex;
+  flex-direction: column;
+  position: relative;
 }
 
 #main {
-  position: fixed;
-  bottom: 0;
-  left: 12em;
-  right: 0;
-  top: 2.25em;
+  flex: 1;
+  display: flex;
 }
 
 .iframe {
   #header, #sidebar {
     display: none;
-  }
-
-  #main {
-    left: 0;
-    top: 0;
   }
 }
 
@@ -103,16 +95,10 @@ html {
     height: 1.5em;
     font-size: 0.75em;
     padding: 0.2em 0 0;
-    background-color: @icinga-blue;
   }
 
   .controls > ul.tabs > li > a {
     line-height: 1.5em;
-  }
-
-  #main {
-    left: 0;
-    top: 0 !important;
   }
 }
 

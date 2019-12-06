@@ -938,8 +938,6 @@
                             + '.',
                             true
                         );
-
-                        this.icinga.ui.fixControls();
                     }
 
                     this.icinga.logger.error(
@@ -963,8 +961,6 @@
             var $notice = $(
                 '<li class="' + c + '">' + this.icinga.utils.escape(message) + '</li>'
             ).appendTo($('#notifications'));
-
-            this.icinga.ui.fixControls();
 
             if (!persist) {
                 this.icinga.ui.fadeNotificationsAway();
@@ -1144,11 +1140,6 @@
                     }
                 }, 0);
             }
-
-            var icinga = this.icinga;
-            //icinga.events.applyHandlers($container);
-            icinga.ui.initializeControls($container);
-            icinga.ui.fixControls();
 
             if (scrollPos !== false) {
                 $container.scrollTop(scrollPos);

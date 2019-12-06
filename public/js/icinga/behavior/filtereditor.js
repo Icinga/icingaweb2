@@ -56,8 +56,6 @@
                         $li.toggleClass('collapsed');
                     }
                 });
-
-                icinga.ui.fixControls($container);
             }
         }
     };

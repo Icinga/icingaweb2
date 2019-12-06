@@ -26,24 +26,16 @@
 
 #header,
 #login,
-#main > .container,
-#menu {
+#content-wrapper {
   font-size: @font-size;
   line-height: @line-height;
 }
 
-#header {
-  background-color: @icinga-blue;
-}
-
 #header-logo-container {
-  background: inherit;
+  background: @icinga-blue;
   height: 6em;
   padding: 1.25em;
   width: 16em;
-  position: fixed;
-  left: 0;
-  margin-top: -3em;
 }
 
 #header-logo,
@@ -105,22 +97,23 @@
   .clearfix();
 
   & > .container {
-    float: left;
-    // Column width controlled by #layout
-    width: 100%;
-
-    // Container scrolling
-    height: 100%;
+    width: 0;
     overflow: auto;
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+
+    &:empty {
+      display: none;
+    }
 
     & > .content {
+      flex: 1 1 auto;
+      overflow: auto;
       padding: @gutter;
-      z-index: 2;
     }
 
     & > .controls {
-      z-index: 3;
-
       padding-left: @gutter;
       padding-right: @gutter;
 
@@ -128,6 +121,11 @@
         // Remove gutter for tabs
         margin-left: -1 * @gutter;
         margin-right: -1 * @gutter;
+        height: 2.5em;
+      }
+
+      .tabs:first-child:not(:last-child) {
+        margin-bottom: .5em;
       }
     }
   }
@@ -162,18 +160,8 @@
 }
 
 .controls {
-  // Override default transparent background because scrolled content is positioned beneath controls and could be seen
-  // through otherwise
-  background-color: @body-bg-color;
-
   > .tabs {
-    height: 2.6em;
-    margin-top: -2.6em;
     overflow: hidden;
-  }
-
-  > .tabs-spacer {
-    margin-bottom: 1em;
   }
 }
 
@@ -245,15 +233,6 @@ html.no-js .controls > .tabs {
   }
 }
 
-// Z-Index correction
-#main {
-  z-index: 1;
-}
-
-#sidebar {
-  z-index: 2;
-}
-
 // Collapsed sidebar
 #layout:not(.minimal-layout).sidebar-collapsed {
   #header-logo-container {
@@ -266,13 +245,8 @@ html.no-js .controls > .tabs {
     background-image: url('../img/icinga-logo-compact.svg');
   }
 
-  #main {
-    left: 3em;
-  }
-
   #sidebar {
-    top: 2.25em;
-    width: 3em;
+    width: 4em;
   }
 
   #open-sidebar {

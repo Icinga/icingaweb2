@@ -9,20 +9,13 @@
 
 @icon-width: 1.7em; // 1.5em width + 0.2em right margin
 
-#menu-container {
-  height: 100%;
-  overflow: hidden;
-  position: relative;
-}
-
 #menu {
   background-color: @menu-bg-color;
   box-shadow: inset -.5em 0 1em rgba(0, 0, 0, .3);
-  height: 100%;
   width: 100%;
+  flex: 1;
+  overflow: auto;
   overflow-x: hidden;
-  overflow-y: auto;
-  position: absolute;
 }
 
 #layout:not(.minimal-layout) #menu {
@@ -38,6 +31,8 @@
   vertical-align: middle;
 
   > a {
+    position: relative;
+
     &:focus {
       outline: none;
     }
@@ -91,7 +86,7 @@
 
   &.active:not(.selected) > a:focus,
   &.active:not(.selected) > a:hover {
-    background-color: mix(#000, @menu-active-bg-color, 20);
+    background-color: darken(@menu-active-bg-color, 20);
   }
 
   &:not(.selected) > a:hover,
@@ -148,9 +143,9 @@ ul:not(.nav-level-2) > .selected > a {
     padding: 0.364em 0.545em 0.364em (@icon-width + .75em)/@font-size-small;
   }
 
-  &:not(.selected):not(.active) > a:hover,
-  &:not(.selected):not(.active) > a:focus {
-    background-color: mix(#000, @menu-active-bg-color, 20);
+  &:not(.selected):not(.active) > a:not(.badge):hover,
+  &:not(.selected):not(.active) > a:not(.badge):focus {
+    background-color: darken(@menu-active-bg-color, 20);
     color: @menu-2ndlvl-highlight-color;
   }
 
@@ -231,7 +226,7 @@ ul:not(.nav-level-2) > .selected > a {
 
   &:hover,
   &:focus {
-    background-color: mix(#000, @menu-bg-color, 20);
+    background-color: darken(@menu-bg-color, 20);
   }
 }
 
@@ -256,6 +251,7 @@ ul:not(.nav-level-2) > .selected > a {
     padding: @vertical-padding 0;
     width: 14em;
     position: fixed;
+    z-index: 1;
 
     &:after {
       .transform(rotate(45deg));
@@ -329,6 +325,8 @@ ul:not(.nav-level-2) > .selected > a {
 // Accessibility skip links
 .skip-links {
   position: relative;
+  font-size: 1/.75em;
+
   ul {
     list-style-type: none;
     margin: 0;
@@ -356,9 +354,6 @@ ul:not(.nav-level-2) > .selected > a {
 }
 
 #sidebar.expanded {
-  bottom: 0 !important;
-  height: auto !important;
-
   #mobile-menu-toggle .icon-menu {
     display: none;
   }
@@ -373,7 +368,7 @@ ul:not(.nav-level-2) > .selected > a {
 }
 
 .search-input:focus ~ .search-reset:hover {
-  background-color: mix(#000, @menu-active-bg-color, 20);
+  background-color: darken(@menu-active-bg-color, 20);
 }
 
 .search-reset {
@@ -391,7 +386,7 @@ ul:not(.nav-level-2) > .selected > a {
 
   &:focus,
   &:hover {
-    background-color: mix(#000, @menu-bg-color, 20);
+    background-color: darken(@menu-bg-color, 20);
     outline: none;
   }
 }
@@ -437,6 +432,8 @@ input[type=text].search-input {
 
 // Toggle sidebar button
 #toggle-sidebar {
+  font-size: 1/.75em;
+
   // Reset button styles
   background: none;
   border: none;
@@ -476,4 +473,49 @@ input[type=text].search-input {
 #close-sidebar:before {
   width: 1.4em;
   margin-right: 0;
+}
+
+#layout:not(.sidebar-collapsed) #menu .nav-level-1 > .nav-item.active .nav-level-2 > li,
+#layout:not(.sidebar-collapsed) #menu .nav-level-1 > .nav-item:not(.active).hover .nav-level-2 > li {
+  &.badge-nav-item {
+    display: flex;
+    align-items: center;
+  }
+
+  &.badge-nav-item a:not(.badge) {
+    flex: 1 1 auto;
+    width: 0;
+  }
+
+  &.badge-nav-item a.badge {
+    color: white;
+    flex: 0 1 auto;
+    margin-right: 1em;
+    padding: .25em;
+    width: auto;
+
+    &:hover {
+      opacity: .6;
+    }
+  }
+}
+
+#layout:not(.sidebar-collapsed) #menu .nav-level-1 > .nav-item.active .nav-level-2 > li {
+  &.badge-nav-item:not(.selected) {
+    &:hover {
+      background-color: darken(@menu-bg-color, 20);
+
+      a {
+        color: white;
+      }
+    }
+  }
+}
+
+#layout:not(.sidebar-collapsed) #menu .nav-level-1 > .nav-item:not(.active).hover .nav-level-2 > li {
+  &.badge-nav-item {
+    &:hover {
+      background-color: lighten(@icinga-blue, 80);
+    }
+  }
 }
