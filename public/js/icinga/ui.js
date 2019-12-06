@@ -44,6 +44,11 @@
             this.enableTimeCounters();
             this.triggerWindowResize();
             this.fadeNotificationsAway();
+
+            $(document).on('click', '#mobile-menu-toggle', this.toggleMobileMenu);
+            $(document).on('keypress', '#search',{ self: this, type: 'key' }, this.closeMobileMenu);
+            $(document).on('mouseleave', '#sidebar', { self: this, type: 'leave' }, this.closeMobileMenu);
+            $(document).on('click', '#sidebar a', { self: this, type: 'navigate' }, this.closeMobileMenu);
         },
 
         fadeNotificationsAway: function() {
@@ -489,28 +494,26 @@
          * @param {object} e Event
          */
         toggleMobileMenu: function(e) {
-            var $sidebar = $('#sidebar');
-            var $target = $(e.target);
-            var href = $target.attr('href');
-            if (href) {
-                if (href !== '#') {
-                    $sidebar.removeClass('expanded');
-                }
-            } else if (! $target.is('input')) {
-                $sidebar.toggleClass('expanded');
-            }
+            $('#sidebar').toggleClass('expanded');
         },
 
         /**
-         * Close mobile menu when the enter key was pressed
+         * Close mobile menu when the enter key is pressed during search or the user leaves the sidebar
          *
          * @param {object} e Event
          */
         closeMobileMenu: function(e) {
-            var $search = $('#search');
-            if (e.which === 13 && $search.is(':focus')) {
+            if (e.data.self.currentLayout !== 'minimal') {
+                return;
+            }
+
+            if (e.data.type === 'key') {
+                if (e.which === 13) {
+                    $('#sidebar').removeClass('expanded');
+                    $(e.target)[0].blur();
+                }
+            } else {
                 $('#sidebar').removeClass('expanded');
-                $search[0].blur();
             }
         },
 

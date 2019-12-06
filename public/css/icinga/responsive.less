@@ -61,17 +61,37 @@
   }
 }
 
+#layout:not(.minimal-layout) {
+  #mobile-menu-toggle {
+    display: none;
+  }
+}
+
 #layout.minimal-layout {
-  #main {
-    left: 0;
+  #sidebar {
+    width: 100%;
   }
 
-  #sidebar {
-    top: 0 !important;
-    height: 32px;
-    padding-bottom: 2.5em;
-    width: 100%;
-    z-index: 3;
+  #header-logo-container {
+    width: auto;
+    height: 2.5em;
+    padding: 0;
+    background: inherit;
+  }
+
+  #header-logo {
+    float: left;
+    width: 6em;
+    height: 2em;
+    margin: .25em;
+  }
+
+  #mobile-menu-toggle {
+    float: right;
+  }
+
+  #sidebar:not(.expanded) #menu {
+    display: none;
   }
 
   #menu {

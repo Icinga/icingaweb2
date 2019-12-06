@@ -42,8 +42,11 @@ if ($this->layout()->inlineLayout) {
                     'id'                => 'header-logo'
                 )
             ); ?>
+            <div id="mobile-menu-toggle">
+                <button type="button"><?= $this->icon('menu') ?><?= $this->icon('cancel') ?></button>
+            </div>
         </div>
-      <?= $this->render('parts/navigation.phtml'); ?>
+        <?= $this->render('parts/navigation.phtml'); ?>
     </div>
     <?php endif ?>
     <div id="main" role="main">
