@@ -29,7 +29,7 @@ if ($this->layout()->inlineLayout) {
     </div>
 </div>
 <div id="content-wrapper">
-    <?php if (! $this->layout()->isIframe): ?>
+<?php if (! $this->layout()->isIframe): ?>
     <div id="sidebar">
         <div id="header-logo-container">
             <?= $this->qlink(
@@ -48,10 +48,17 @@ if ($this->layout()->inlineLayout) {
         </div>
         <?= $this->render('parts/navigation.phtml'); ?>
     </div>
-    <?php endif ?>
+<?php endif ?>
     <div id="main" role="main">
-      <div id="col1" class="container<?= $moduleClass ?>"<?php if ($moduleName): ?> data-icinga-module="<?= $moduleName ?>" <?php endif ?> data-icinga-url="<?= $this->escape(Url::fromRequest()->without('renderLayout')->getAbsoluteUrl()); ?>"<?= $refresh; ?>>
-        <?= $this->render($inlineLayoutScript) ?>
+        <div id="col1"
+            class="container<?= $moduleClass ?>"
+        <?php if ($moduleName): ?>
+            data-icinga-module="<?= $moduleName ?>"
+        <?php endif ?>
+            data-icinga-url="<?= $this->escape(Url::fromRequest()->without('renderLayout')->getAbsoluteUrl()); ?>"
+            <?= $refresh; ?>
+        >
+            <?= $this->render($inlineLayoutScript) ?>
       </div>
       <div id="col2" class="container"></div>
       <div id="col3" class="container"></div>
