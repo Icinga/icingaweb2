@@ -21,13 +21,6 @@
 
         this.timeCounterTimer = null;
 
-        /**
-         * Whether the mobile menu is shown
-         *
-         * @type {bool}
-         */
-        this.mobileMenu = false;
-
         // detect currentLayout
         var classList = $('#layout').attr('class').split(/\s+/);
         var _this = this;
@@ -62,10 +55,8 @@
                 .delay(7000)
                 .fadeOut('slow',
             function() {
-                icinga.ui.fixControls();
                 $(this).remove();
             });
-
         },
 
         toggleDebug: function() {
@@ -124,9 +115,9 @@
                         'href',
                         base + '/' + url.replace(/^\//, '')
                     ).on('load', function() {
-                        icinga.ui.fixControls();
                         $oldLink.remove();
                     });
+
                     $newLink.appendTo($('head'));
                 }
             });
@@ -195,7 +186,6 @@
             var col2 = this.cutContainer($('#col2'));
             var kill = this.cutContainer($('#col1'));
             this.pasteContainer($('#col1'), col2);
-            this.fixControls();
             this.icinga.behaviors.navigation.trySetActiveAndSelectedByUrl($('#col1').data('icingaUrl'));
         },
 
@@ -250,7 +240,7 @@
                     _this.currentLayout
                 );
             }
-            _this.fixControls();
+
             _this.refreshDebug();
         },
 
@@ -321,14 +311,12 @@
             this.icinga.loader.stopPendingRequestsFor($c);
             $c.trigger('close-column');
             $c.html('');
-            this.fixControls();
         },
 
         layout2col: function () {
             if (! this.isOneColLayout()) { return; }
             this.icinga.logger.debug('Switching to double col');
             $('#layout').addClass('twocols');
-            this.fixControls();
             $('#layout').trigger('layout-change');
         },
 
@@ -526,186 +514,8 @@
             }
         },
 
-        initializeControls: function(container) {
-            var $container = $(container);
-
-/*            if ($container.parent('.dashboard').length || $('#layout').hasClass('fullscreen-layout')) {
-                return;
-            }*/
-
-/*            $container.find('.controls').each(function() {
-                var $controls = $(this);
-                if (! $controls.prev('.fake-controls').length) {
-                    var $tabs = $controls.find('.tabs', $controls);
-                    if ($tabs.length && $controls.children().length > 1 && ! $tabs.next('.tabs-spacer').length) {
-                        $tabs.after($('<div class="tabs-spacer"></div>'));
-                    }
-                    var $fakeControls = $('<div class="fake-controls"></div>');
-                    $fakeControls.height($controls.height()).css({
-                        // That's only temporary. It's reset in fixControls, which is called at the end of this
-                        // function. Its purpose is to prevent the content from jumping up upon auto-refreshes.
-                        // It works by making the fake-controls appear at the same vertical level as the controls
-                        // and the height of the content then doesn't change when taking the controls out of the flow.
-                        float: 'right'
-                    });
-                    $controls.before($fakeControls).css({
-                        position: 'fixed'
-                    });
-                }
-            });*/
-
-            this.fixControls($container);
-        },
-
-        fixControls2: function($container) {
-            var $layout = $('#layout');
-
-            if ($layout.hasClass('fullscreen-layout')) {
-                return;
-            }
-
-            if (typeof $container === 'undefined') {
-                var $header = $('#header');
-                var $headerLogo = $('#header-logo-container');
-                var $main = $('#main');
-                var $search = $('#search');
-                var $sidebar = $('#sidebar');
-
-                $header.css({ height: 'auto'});
-
-                if ($layout.hasClass('minimal-layout')) {
-                    if (! this.mobileMenu && $sidebar.length) {
-                        $header.css({
-                            top: $sidebar.outerHeight() + 'px'
-                        });
-                        $headerLogo.css({
-                            display: 'none'
-                        });
-                        $main.css({
-                            top: $header.outerHeight() + $sidebar.outerHeight()
-                        });
-                        $sidebar
-                            .on(
-                                'click',
-                                this.toggleMobileMenu
-                            )
-                            .prepend(
-                                $('<div id="mobile-menu-toggle"><button><i class="icon-menu"></i><i class="icon-cancel"></i></button></div>')
-                            );
-                            $('#header-logo').clone().attr('id', 'mobile-menu-logo')
-                                .appendTo('#mobile-menu-toggle');
-                        $(window).on('keypress', this.closeMobileMenu);
-
-                        this.mobileMenu = true;
-                    }
-                } else {
-                    $headerLogo.css({
-                        top: $header.css('height')
-                    });
-                    $main.css({
-                        top: $header.css('height')
-                    });
-                    if (!! $headerLogo.length) {
-                        $sidebar.css({
-                            top: $headerLogo.offset().top + $headerLogo.outerHeight()
-                        });
-                    }
-
-                    if (this.mobileMenu) {
-                        $header.css({
-                            top: 0
-                        });
-                        $headerLogo.css({
-                            display: 'block'
-                        });
-                        $sidebar.removeClass('expanded').off('click', this.toggleMobileMenu);
-                        $search.off('keypress', this.closeMobileMenu);
-                        $('#mobile-menu-toggle').remove();
-
-                        this.mobileMenu = false;
-                    }
-                }
-
-                var _this = this;
-                $('.container').each(function () {
-                    _this.fixControls($(this));
-                });
-
-                return;
-            }
-
-            if ($container.parent('.dashboard').length) {
-                return;
-            }
-
-            // Enable this only in case you want to track down UI problems
-            //this.icinga.logger.debug('Fixing controls for ', $container);
-
-            $container.find('.controls').each(function() {
-                var $controls = $(this);
-                var $fakeControls = $controls.prev('.fake-controls');
-                $fakeControls.css({
-                    float: '', // Set by initializeControls
-                    height: $controls.height()
-                });
-                $controls.css({
-                    top: $container.offsetParent().position().top,
-                    width: $fakeControls.outerWidth()
-                });
-            });
-
-            var $statusBar = $container.children('.monitoring-statusbar');
-            if ($statusBar.length) {
-                $statusBar.css({
-                    left: $container.offset().left,
-                    width: $container.width()
-                });
-                $statusBar.prev('.monitoring-statusbar-ghost').height($statusBar.outerHeight(true));
-            }
-        },
-
-        fixControls: function ($container) {
-            var $layout = $('#layout');
-            var $headerLogo = $('#header-logo-container');
-            var $search = $('#search');
-            var $sidebar = $('#sidebar');
-
-            if ($layout.hasClass('minimal-layout')) {
-                if (! this.mobileMenu && $sidebar.length) {
-                    $headerLogo.css({
-                        display: 'none'
-                    });
-                    $sidebar
-                        .on(
-                            'click',
-                            this.toggleMobileMenu
-                        )
-                        .prepend(
-                            $('<div id="mobile-menu-toggle"><button><i class="icon-menu"></i><i class="icon-cancel"></i></button></div>')
-                        );
-                    $('#header-logo').clone().attr('id', 'mobile-menu-logo')
-                        .appendTo('#mobile-menu-toggle');
-                    $(window).on('keypress', this.closeMobileMenu);
-
-                    this.mobileMenu = true;
-                }
-            } else {
-                if (this.mobileMenu) {
-                    $headerLogo.css({
-                        display: 'block'
-                    });
-                    $sidebar.removeClass('expanded').off('click', this.toggleMobileMenu);
-                    $search.off('keypress', this.closeMobileMenu);
-                    $('#mobile-menu-toggle').remove();
-
-                    this.mobileMenu = false;
-                }
-            }
-        },
-
         toggleFullscreen: function () {
             $('#layout').toggleClass('fullscreen-layout');
-            this.fixControls();
         },
 
         getUniqueContainerId: function ($cont) {

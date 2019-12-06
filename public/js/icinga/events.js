@@ -23,9 +23,6 @@
          */
         initialize: function () {
             this.applyGlobalDefaults();
-            $('.container').each(function(idx, el) {
-                icinga.ui.initializeControls($(el));
-            });
         },
 
         /**
@@ -101,8 +98,6 @@
             } else {
                 $parent.addClass('collapsed');
             }
-
-            icinga.ui.fixControls($parent.closest('.container'));
         },
 
         onInit: function (event) {
