@@ -46,6 +46,10 @@
 }
 
 #menu ul.nav-level-1 > .nav-item {
+  &.selected > a {
+    background-color: transparent;
+  }
+
   &:focus, &:hover {
     background-image: url('../img/winter/snow1.png'), url('../img/winter/snow2.png'), url('../img/winter/snow3.png');
     -webkit-animation: snow 10s linear infinite;
