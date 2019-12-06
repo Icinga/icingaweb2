@@ -23,25 +23,25 @@ if ($this->layout()->inlineLayout) {
 }
 
 ?>
-<div id="announcements" class="container">
-    <?= $this->widget('announcements') ?>
+<div id="header">
+    <div id="announcements" class="container">
+        <?= $this->widget('announcements') ?>
+    </div>
 </div>
 <div id="content-wrapper">
     <?php if (! $this->layout()->isIframe): ?>
     <div id="sidebar">
-        <div id="header">
-            <div id="header-logo-container">
-                <?= $this->qlink(
-                    '',
-                    Auth::getInstance()->isAuthenticated() ? 'dashboard' : '',
-                    null,
-                    array(
-                        'aria-hidden'       => 'true',
-                        'data-base-target'  => '_main',
-                        'id'                => 'header-logo'
-                    )
-                ); ?>
-            </div>
+        <div id="header-logo-container">
+            <?= $this->qlink(
+                '',
+                Auth::getInstance()->isAuthenticated() ? 'dashboard' : '',
+                null,
+                array(
+                    'aria-hidden'       => 'true',
+                    'data-base-target'  => '_main',
+                    'id'                => 'header-logo'
+                )
+            ); ?>
         </div>
       <?= $this->render('parts/navigation.phtml'); ?>
     </div>
@@ -66,4 +66,3 @@ if ($this->layout()->inlineLayout) {
   ?></ul>
   <div id="application-state-summary" class="container" data-icinga-url="<?= $this->url('application-state/summary') ?>" data-last-update="-1" data-icinga-refresh="60"></div>
 </div>
-
