@@ -10,7 +10,6 @@
     var ApplicationState = function (icinga) {
         Icinga.EventListener.call(this, icinga);
         this.on('rendered', this.onRendered, this);
-        this.on('rendered', '#application-state-summary', this.onSummaryRendered, this);
         this.icinga = icinga;
     };
 
@@ -30,10 +29,6 @@
                 + '/application-state" data-icinga-refresh="60"></div>'
             );
         }
-    };
-
-    ApplicationState.prototype.onSummaryRendered = function(e) {
-        var height = $(this).height();
     };
 
     Icinga.Behaviors.ApplicationState = ApplicationState;
