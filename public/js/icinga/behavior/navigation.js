@@ -324,7 +324,7 @@
 
         setTimeout(function() {
             try {
-                if ($hovered.is(':hover') || $('#menu-container').is(':hover')) {
+                if ($hovered.is(':hover') || $('#menu').is(':hover')) {
                     return;
                 }
             } catch(e) { /* Bypass because if IE8 */ };
