@@ -209,7 +209,12 @@ class RoleForm extends RepositoryForm
                             'autosubmit'    => isset($spec['isFullPerm']),
                             'disabled'      => $hasFullPerm ?: null,
                             'value'         => $hasFullPerm,
-                            'label'         => isset($spec['label']) ? $spec['label'] : $spec['name'],
+                            'label'         => preg_replace(
+                                // Adds a zero-width char after each slash to help browsers break onto newlines
+                                '~(?<!<)/~',
+                                '/&#8203;',
+                                isset($spec['label']) ? $spec['label'] : $spec['name']
+                            ),
                             'description'   => isset($spec['description']) ? $spec['description'] : $spec['name']
                         ]
                     )
@@ -234,7 +239,12 @@ class RoleForm extends RepositoryForm
                             'text',
                             $name,
                             [
-                                'label'         => isset($spec['label']) ? $spec['label'] : $spec['name'],
+                                'label'         => preg_replace(
+                                    // Adds a zero-width char after each slash to help browsers break onto newlines
+                                    '~(?<!<)/~',
+                                    '/&#8203;',
+                                    isset($spec['label']) ? $spec['label'] : $spec['name']
+                                ),
                                 'description'   => $spec['description']
                             ]
                         )
