@@ -389,12 +389,12 @@ $dashboard->add(
 );
 $dashboard->add(
     N_('Acknowledged Problem Services'),
-    'monitoring/list/services?service_acknowledgement_type=2&service_problem=1&sort=service_state&limit=10',
+    'monitoring/list/services?service_acknowledgement_type!=0&service_problem=1&sort=service_state&limit=10',
     140
 );
 $dashboard->add(
     N_('Acknowledged Problem Hosts'),
-    'monitoring/list/hosts?host_acknowledgement_type=2&host_problem=1&sort=host_severity&limit=10',
+    'monitoring/list/hosts?host_acknowledgement_type!=0&host_problem=1&sort=host_severity&limit=10',
     150
 );
 
