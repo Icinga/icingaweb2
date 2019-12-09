@@ -3,12 +3,14 @@
 
 namespace Icinga\Forms\Security;
 
+use Icinga\Application\Hook\ConfigFormEventsHook;
 use Icinga\Application\Icinga;
 use Icinga\Application\Modules\Manager;
 use Icinga\Data\Filter\Filter;
 use Icinga\Forms\ConfigForm;
 use Icinga\Forms\RepositoryForm;
 use Icinga\Util\StringHelper;
+use Icinga\Web\Notification;
 use Zend_Form_Element;
 
 /**
@@ -383,5 +385,34 @@ class RoleForm extends RepositoryForm
 
             return strnatcmp($a, $b);
         });
+    }
+
+    public function isValid($formData)
+    {
+        $valid = parent::isValid($formData);
+
+        if ($valid && ConfigFormEventsHook::runIsValid($this) === false) {
+            foreach (ConfigFormEventsHook::getLastErrors() as $msg) {
+                $this->error($msg);
+            }
+
+            $valid = false;
+        }
+
+        return $valid;
+    }
+
+    public function onSuccess()
+    {
+        if (parent::onSuccess() === false) {
+            return false;
+        }
+
+        if (ConfigFormEventsHook::runOnSuccess($this) === false) {
+            Notification::error($this->translate(
+                'Configuration successfully stored. Though, one or more module hooks failed to run.'
+                . ' See logs for details'
+            ));
+        }
     }
 }

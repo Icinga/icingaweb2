@@ -6,7 +6,7 @@ namespace Icinga\Application\Hook;
 use Icinga\Application\Hook;
 use Icinga\Application\Logger;
 use Icinga\Exception\IcingaException;
-use Icinga\Forms\ConfigForm;
+use Icinga\Web\Form;
 
 /**
  * Base class for config form event hooks
@@ -19,11 +19,11 @@ abstract class ConfigFormEventsHook
     /**
      * Get whether the hook applies to the given config form
      *
-     * @param ConfigForm $form
+     * @param Form $form
      *
      * @return bool
      */
-    public function appliesTo(ConfigForm $form)
+    public function appliesTo(Form $form)
     {
         return false;
     }
@@ -36,11 +36,11 @@ abstract class ConfigFormEventsHook
      * The exception's message will be automatically added as form error message so that it will be
      * displayed in the frontend.
      *
-     * @param ConfigForm $form
+     * @param Form $form
      *
      * @throws \Exception If either the form is not valid or to interrupt the form handling
      */
-    public function isValid(ConfigForm $form)
+    public function isValid(Form $form)
     {
     }
 
@@ -50,9 +50,9 @@ abstract class ConfigFormEventsHook
      * Implement this method in order to run code after the configuration form has been stored successfully.
      * You can't interrupt the form handling here. Any exception will be caught, logged and notified.
      *
-     * @param ConfigForm $form
+     * @param Form $form
      */
-    public function onSuccess(ConfigForm $form)
+    public function onSuccess(Form $form)
     {
     }
 
@@ -69,11 +69,11 @@ abstract class ConfigFormEventsHook
     /**
      * Run all isValid hooks
      *
-     * @param ConfigForm $form
+     * @param Form $form
      *
      * @return bool Returns false if any hook threw an exception
      */
-    final public static function runIsValid(ConfigForm $form)
+    final public static function runIsValid(Form $form)
     {
         return self::runEventMethod('isValid', $form);
     }
@@ -81,16 +81,16 @@ abstract class ConfigFormEventsHook
     /**
      * Run all onSuccess hooks
      *
-     * @param ConfigForm $form
+     * @param Form $form
      *
      * @return bool Returns false if any hook threw an exception
      */
-    final public static function runOnSuccess(ConfigForm $form)
+    final public static function runOnSuccess(Form $form)
     {
         return self::runEventMethod('onSuccess', $form);
     }
 
-    private static function runEventMethod($eventMethod, ConfigForm $form)
+    private static function runEventMethod($eventMethod, Form $form)
     {
         static::$lastErrors = [];
 
@@ -120,7 +120,7 @@ abstract class ConfigFormEventsHook
         return $success;
     }
 
-    private function runAppliesTo(ConfigForm $form)
+    private function runAppliesTo(Form $form)
     {
         try {
             $appliesTo = $this->appliesTo($form);
