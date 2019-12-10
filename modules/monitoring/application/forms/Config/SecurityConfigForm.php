@@ -61,21 +61,6 @@ class SecurityConfigForm extends ConfigForm
                 )
             )
         );
-
-        $this->addElement(
-            'text',
-            'hidden_customvars',
-            array(
-                'allowEmpty'    => true,
-                'attribs'       => array('placeholder' => $this->getDefaultProtectedCustomvars()),
-                'label'         => $this->translate('Hidden Custom Variables'),
-                'description'   => $this->translate(
-                    'Comma separated case insensitive list of hidden custom variables.'
-                    . ' Use * as a placeholder for zero or more wildcard characters.'
-                    . ' Existence of those custom variables will not be shown, but remain usable for modules.'
-                )
-            )
-        );
     }
 
     /**
