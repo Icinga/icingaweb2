@@ -1058,9 +1058,16 @@
                 activeElementPath = this.icinga.utils.getCSSPath($activeElement);
             }
 
+            var scrollTarget = $container;
             if (! forceFocus && typeof containerId !== 'undefined') {
                 if (autorefresh || autoSubmit) {
-                    scrollPos = $container.scrollTop();
+                    if ($container.css('display') === 'flex') {
+                        var $scrollableContent = $container.children('.content');
+                        scrollPos = $scrollableContent.scrollTop();
+                        scrollTarget = _this.icinga.utils.getCSSPath($scrollableContent);
+                    } else {
+                        scrollPos = $container.scrollTop();
+                    }
                 } else {
                     scrollPos = 0;
                 }
@@ -1142,12 +1149,13 @@
             }
 
             if (scrollPos !== false) {
-                $container.scrollTop(scrollPos);
+                var $scrollTarget = $(scrollTarget);
+                $scrollTarget.scrollTop(scrollPos);
 
                 // Fallback for browsers without support for focus({preventScroll: true})
                 setTimeout(function () {
-                    if ($container.scrollTop() !== scrollPos) {
-                        $container.scrollTop(scrollPos);
+                    if ($scrollTarget.scrollTop() !== scrollPos) {
+                        $scrollTarget.scrollTop(scrollPos);
                     }
                 }, 0);
             }
