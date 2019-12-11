@@ -110,13 +110,9 @@
     & > .content {
       flex: 1 1 auto;
       overflow: auto;
-      padding: @gutter;
     }
 
     & > .controls {
-      padding-left: @gutter;
-      padding-right: @gutter;
-
       > .tabs {
         // Remove gutter for tabs
         margin-left: -1 * @gutter;
@@ -128,6 +124,18 @@
         margin-bottom: .5em;
       }
     }
+  }
+}
+
+// Not part of the above to relax specificity and to allow modules adjust this
+:not(.dashboard) > .container {
+  & > .controls {
+    padding-left: @gutter;
+    padding-right: @gutter;
+  }
+
+  & > .content {
+    padding: @gutter;
   }
 }
 
