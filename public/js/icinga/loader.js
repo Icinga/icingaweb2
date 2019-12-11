@@ -1110,7 +1110,7 @@
             this.icinga.ui.assignUniqueContainerIds();
 
             if (navigationAnchor) {
-                setTimeout(this.icinga.ui.focusElement, 0, navigationAnchor, $container);
+                setTimeout(this.icinga.ui.focusElement.bind(this.icinga.ui), 0, navigationAnchor, $container);
             } else if (! activeElementPath) {
                 // Active element was not in this container
                 if (! autorefresh) {
