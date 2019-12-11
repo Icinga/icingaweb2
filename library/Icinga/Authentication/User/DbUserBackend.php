@@ -186,8 +186,9 @@ class DbUserBackend extends DbRepository implements UserBackendInterface, Inspec
 
         $query = $this->ds->select()
             ->from($this->prependTablePrefix('user'), $columns)
-            ->where('name', $username)
+            ->where(($this->ds->getDbType() === 'mysql' ? 'BINARY ' : '') . 'name', $username)
             ->where('active', true);
+
         $statement = $this->ds->getDbAdapter()->prepare($query->getSelectQuery());
         $statement->execute();
         $statement->bindColumn(1, $lob, PDO::PARAM_LOB);
