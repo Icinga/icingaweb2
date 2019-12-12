@@ -2,7 +2,7 @@
 # Copyright (C) 2019 Icinga Development Team
 # This file is distributed under the same license as Monitoring Module.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# 
+#
 #, fuzzy
 msgid ""
 msgstr ""
@@ -1601,7 +1601,7 @@ msgstr "有効期限"
 #: ../../../../modules/monitoring/application/controllers/EventController.php:444
 #: ../../../../modules/monitoring/application/views/scripts/comment/show.phtml:57
 msgid "Expires"
-msgstr "有効期限"
+msgstr "期限切れ"
 
 #: ../../../../modules/monitoring/application/views/scripts/show/components/acknowledgement.phtml:27
 #, php-format
@@ -1763,15 +1763,15 @@ msgstr "処理済み"
 #: ../../../../modules/monitoring/application/views/scripts/partials/event-history.phtml:115
 msgctxt "tooltip"
 msgid "Hard state"
-msgstr "異常の状態"
+msgstr "ハードステート"
 
 #: ../../../../modules/monitoring/application/controllers/EventController.php:255
 msgid "Hard state change"
-msgstr "状態の変化"
+msgstr "ハードステートに変更"
 
 #: ../../../../modules/monitoring/application/controllers/TimelineController.php:57
 msgid "Hard state changes"
-msgstr "状態の変化"
+msgstr "ハードステートに変更"
 
 #: ../../../../modules/monitoring/application/controllers/AlertsummaryController.php:325
 msgid "Healing Chart"
@@ -2134,7 +2134,7 @@ msgstr "最終監視"
 
 #: ../../../../modules/monitoring/application/controllers/EventController.php:532
 msgid "Last hard state"
-msgstr "最終ハードウェア状態"
+msgstr "最終ハードステート"
 
 #: ../../../../modules/monitoring/application/controllers/EventController.php:531
 msgid "Last state"
@@ -3489,8 +3489,8 @@ msgstr "Monitoring バックエンド %s の削除"
 #: ../../../../modules/monitoring/application/forms/Command/Object/RemoveAcknowledgementCommandForm.php:92
 msgid "Remove acknowledgement"
 msgid_plural "Remove acknowledgements"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "承認の削除"
+msgstr[1] "承認の削除"
 
 #: ../../../../modules/monitoring/application/views/scripts/downtimes/show.phtml:11
 #, php-format
@@ -4095,16 +4095,16 @@ msgstr "検証をスキップ"
 #: ../../../../modules/monitoring/application/views/scripts/partials/object/service-header.phtml:45
 msgctxt "Soft state"
 msgid "Soft"
-msgstr "ソフトウェア"
+msgstr "ソフトステート"
 
 #: ../../../../modules/monitoring/application/views/scripts/partials/event-history.phtml:121
 msgctxt "tooltip"
 msgid "Soft state"
-msgstr "ソフトウェアの状態"
+msgstr "軽微な異常"
 
 #: ../../../../modules/monitoring/application/controllers/EventController.php:257
 msgid "Soft state change"
-msgstr "ソフトウェアの状態変更"
+msgstr "ソフトステートに変更"
 
 #: ../../../../modules/monitoring/application/controllers/EventController.php:440
 msgid "Source"
@@ -4784,7 +4784,7 @@ msgstr ""
 
 #: ../../../../modules/monitoring/application/views/scripts/show/components/checkstatistics.phtml:69
 msgid "hard state"
-msgstr "ハードウェアの状態"
+msgstr "ハードステート"
 
 #: ../../../../modules/monitoring/application/views/scripts/downtime/show.phtml:138
 msgid "he date/time the scheduled downtime was actually started"
@@ -4849,7 +4849,7 @@ msgstr "サービス"
 
 #: ../../../../modules/monitoring/application/views/scripts/show/components/checkstatistics.phtml:69
 msgid "soft state"
-msgstr "ソフトウェアの状態"
+msgstr "ソフトステート"
 
 #: ../../../../modules/monitoring/library/Monitoring/MonitoringWizard.php:51
 msgctxt "setup.summary.subject"
