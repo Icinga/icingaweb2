@@ -12,6 +12,7 @@ use Icinga\Module\Monitoring\Forms\Command\Object\ObjectsCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\RemoveAcknowledgementCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\ToggleObjectFeaturesCommandForm;
 use Icinga\Module\Monitoring\Hook\DetailviewExtensionHook;
+use Icinga\Module\Monitoring\Hook\ObjectDetailsTabHook;
 use Icinga\Web\Hook;
 use Icinga\Web\Url;
 use Icinga\Web\Widget\Tabextension\DashboardAction;
@@ -35,6 +36,13 @@ abstract class MonitoredObjectController extends Controller
      * @var string
      */
     protected $commandRedirectUrl;
+
+    /**
+     * List of visible hooked tabs
+     *
+     * @var ObjectDetailsTabHook[]
+     */
+    protected $tabHooks = [];
 
     /**
      * (non-PHPDoc)
@@ -115,6 +123,22 @@ abstract class MonitoredObjectController extends Controller
         $this->setupPaginationControl($this->view->history, 50);
         $this->view->object = $this->object;
         $this->render('object/detail-history', null, true);
+    }
+
+    /**
+     * Show the content of a custom tab
+     */
+    public function tabhookAction()
+    {
+        $hookName = $this->params->get('hook');
+        $this->getTabs()->activate($hookName);
+
+        $hook = $this->tabHooks[$hookName];
+
+        $this->view->header = $hook->getHeader($this->object, $this->getRequest());
+        $this->view->content = $hook->getContent($this->object, $this->getRequest());
+        $this->view->object = $this->object;
+        $this->render('object/detail-tabhook', null, true);
     }
 
     /**
@@ -267,6 +291,20 @@ abstract class MonitoredObjectController extends Controller
                 )
             );
         }
+
+        /** @var ObjectDetailsTabHook $hook */
+        foreach (Hook::all('Monitoring\\ObjectDetailsTab') as $hook) {
+            $hookName = $hook->getName();
+            if ($hook->shouldBeShown($object, $this->Auth())) {
+                $this->tabHooks[$hookName] = $hook;
+                $tabs->add($hookName, [
+                    'label' => $hook->getLabel(),
+                    'url'       => $isService ? 'monitoring/service/tabhook' : 'monitoring/host/tabhook',
+                    'urlParams' => $params + [ 'hook' => $hookName ]
+                ]);
+            }
+        }
+
         $tabs->extend(new DashboardAction())->extend(new MenuAction());
     }
 
