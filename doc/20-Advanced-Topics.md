@@ -7,6 +7,7 @@ This chapter provides details for advanced Icinga Web 2 topics.
 * [Advanced Authentication Tips](20-Advanced-Topics.md#advanced-topics-authentication-tips)
 * [Source installation](20-Advanced-Topics.md#installing-from-source)
 * [Automated setup](20-Advanced-Topics.md#web-setup-automation)
+* [Kiosk Mode Configuration](20-Advanced-Topics.md#kiosk-mode)
 
 ## Global URL Parameters <a id="global-url-parameters"></a>
 
@@ -513,3 +514,28 @@ The structure of the configurations looks like the following:
 
 Have a look [here](20-Advanced-Topics.md#web-setup-manual-from-source-config) for the contents of the files.
 
+## Kiosk Mode Configuration <a id="kiosk-mode"></a>
+
+Be aware that when you create a kiosk user every person who has access to the kiosk is able to perform tasks on it.
+Therefore you would need to create a user in the `roles.ini` in `/etc/icingaweb2/roles.ini`.
+
+   [kioskusers]
+   users = "kiosk"
+
+If you need special permissions you should add those permissions to the user via the admin account in icingaweb2 to the role of the kiosk user.
+
+For the Dashboard system where you want to display the kiosk you can add also the following part into the `icingaweb2.conf`.
+So it starts directly into the kiosk mode.
+If you want to show a specific Dashboard you can enforce this onto the kiosk user via the [enforceddashboard](https://github.com/Thomas-Gelf/icingaweb2-module-enforceddashboard) module.
+
+```
+<ifmodule mod_authz_core.c>
+    # Apache 2.4
+    SetEnvIf Remote_Addr "X.X.X.X" REMOTE_USER=kiosk
+    <requireall>
+        Require all granted
+    </requireall>
+</ifmodule>
+```
+
+Replace Remote_Addr with the IP where the kiosk user is accessing the Web to restrict further usage from other IPs.
