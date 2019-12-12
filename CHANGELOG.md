@@ -4,6 +4,52 @@ Please make sure to always read our [Upgrading](doc/80-Upgrading.md) documentati
 
 ## What's New
 
+### What's New in Version 2.8.0-rc1
+
+You can find all issues related to this release on our [Roadmap](https://github.com/Icinga/icingaweb2/milestone/55?closed=1).
+
+#### Icinga DB
+
+It's happening. Yes. Our latest hot shit is now available for those who are willing to participate in this enormous
+endeavour. Icinga Web 2 is also a crucial part of it and accompanies the 1.0-rc1 release of Icinga DB. If you like
+to participate, don't forget to update Icinga Web 2 as well.
+
+#### Support For Even More Hot Shit
+
+We also made sure that you won't be disappointed by Icinga Web 2 if you're running PHP 7.4 or trying to access a MySQL
+database with version 8+. These should pose no issues anymore now. But if you still somehow managed to get issues
+please let us now and we'll fix it asap.
+
+* Exceptions with MySQL 8 [#3740](https://github.com/Icinga/icingaweb2/issues/3740)
+* Support for PHP 7.4 [#4009](https://github.com/Icinga/icingaweb2/issues/4009)
+
+#### Find What You Search For
+
+It's been previously not possible to properly filter for range values. This was especially true for custom variables
+where, if you searched for e.g. `_host_interfaces>=20`, you wouldn't find the correct results. If you often copy some
+values in our search fields you may also been a victim of extraneous spaces which are now automatically trimmed.
+
+* Filter: more/less than doesn't seem to working [#3974](https://github.com/Icinga/icingaweb2/issues/3974)
+* Search object followed by a space finds no results [#4002](https://github.com/Icinga/icingaweb2/issues/4002)
+
+#### Don't Leave Your Little Sheep Unattended
+
+It's time again to further restrict your users. It's now possible to completely block any access to contacts and
+contactgroups for specific roles. These won't ever see again who's notified and who's not. Also, if you are using
+single accounts for a group of people you can now disable password changes for those.
+
+* Prohibit access to contacts and contactgroups [#3973](https://github.com/Icinga/icingaweb2/issues/3973)
+* Allow to forbid password changes on specific user accounts [#3286](https://github.com/Icinga/icingaweb2/issues/3286)
+
+#### In and Out, Access Control Done Right
+
+While we have no burgers (but cookies!) you are nevertheless welcome to visit Icinga Web 2. And now you can also
+successfully leave while being externally authenticated and unsuccessfully enter while being unable to not add
+extraneous spaces to your username.
+
+* External logout not working from the navigation dashboard [#3995](https://github.com/Icinga/icingaweb2/issues/3995)
+* Username with extraneous spaces are not invalid [#4030](https://github.com/Icinga/icingaweb2/pull/4030)
+
 ### What's New in Version 2.7.3
 
 This is a hotfix release and fixes the following issue:
