@@ -521,8 +521,8 @@ Therefore you would need to create a user in the `roles.ini` in `/etc/icingaweb2
 
    [kioskusers]
    users = "kiosk"
-   groups = "kiosk"
-   permissions = "*"
+
+If you need special permissions you should add those permissions to the user via the admin account in icingaweb2 to the role of the kiosk user.
 
 For the Dashboard system where you want to display the kiosk you can add also the following part into the `icingaweb2.conf`.
 So it starts directly into the kiosk mode.
