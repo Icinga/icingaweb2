@@ -67,4 +67,25 @@
         return o;
     };
 
+    $.fn.offsetTopRelativeTo = function($ancestor) {
+        if (typeof $ancestor === 'undefined') {
+            return false;
+        }
+
+        var el = this[0];
+        var offset = el.offsetTop;
+        var $parent = $(el.offsetParent);
+
+        if ($parent.is('body') || $parent.is($ancestor)) {
+            return offset;
+        }
+
+        if (el.tagName === 'TR') {
+            // TODO: Didn't found a better way, this will probably break sooner or later
+            return $parent.offsetTopRelativeTo($ancestor);
+        }
+
+        return offset + $parent.offsetTopRelativeTo($ancestor);
+    };
+
 })(jQuery);
