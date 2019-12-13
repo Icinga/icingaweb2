@@ -3,6 +3,7 @@
 
 namespace Icinga\Forms;
 
+use Icinga\Application\Hook\ConfigFormEventsHook;
 use Icinga\Web\Form;
 
 class ActionForm extends Form
@@ -57,5 +58,21 @@ class ActionForm extends Form
                 'title'         => $this->getDescription()
             ]
         );
+    }
+
+    public function isValid($formData)
+    {
+        $valid = parent::isValid($formData);
+
+        if ($valid) {
+            $valid = ConfigFormEventsHook::runIsValid($this);
+        }
+
+        return $valid;
+    }
+
+    public function onSuccess()
+    {
+        ConfigFormEventsHook::runOnSuccess($this);
     }
 }
