@@ -175,8 +175,19 @@
                 $element[0].focus();
 
                 if ($container && $container.length) {
-                    $container.scrollTop(0);
-                    $container.scrollTop($element.first().position().top);
+                    if (! $container.is('.container')) {
+                        $container = $container.closest('.container');
+                    }
+
+                    if ($container.css('display') === 'flex' && $container.is('.container')) {
+                        var $controls = $container.find('.controls');
+                        var $content = $container.find('.content');
+                        $content.scrollTop($element.offsetTopRelativeTo($content) - $controls.outerHeight() - (
+                            $element.outerHeight(true) - $element.innerHeight()
+                        ));
+                    } else {
+                        $container.scrollTop($element.first().position().top);
+                    }
                 }
             }
         },
