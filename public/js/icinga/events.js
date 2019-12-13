@@ -269,6 +269,11 @@
             var linkTarget = $a.attr('target');
             var $target;
             var formerUrl;
+
+            if (! href) {
+                return;
+            }
+
             if (href.match(/^(?:(?:mailto|javascript|data):|[a-z]+:\/\/)/)) {
                 event.stopPropagation();
                 return true;
