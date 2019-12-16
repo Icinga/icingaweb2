@@ -247,7 +247,8 @@ class UserController extends AuthBackendController
         }
 
         $form = new CreateMembershipForm();
-        $form->setBackends($backends)
+        $form->setUserBackend($backend)
+            ->setBackends($backends)
             ->setUsername($userName)
             ->setRedirectUrl(Url::fromPath('user/show', array('backend' => $backend->getName(), 'user' => $userName)))
             ->handleRequest();
