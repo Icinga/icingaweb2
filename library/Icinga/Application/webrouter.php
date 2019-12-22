@@ -15,7 +15,7 @@ if (isset($_SERVER['REQUEST_URI'])) {
     return false;
 }
 
-// Workaround, PHPs internal Webserver seems to mess up SCRIPT_FILENAME
+// Workaround, PHPs built-in web server seems to mess up SCRIPT_FILENAME
 // as it prefixes it's absolute path with DOCUMENT_ROOT
 if (preg_match('/^PHP .* Development Server/', $_SERVER['SERVER_SOFTWARE'])) {
     $script = basename($_SERVER['SCRIPT_FILENAME']);
