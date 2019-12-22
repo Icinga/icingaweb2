@@ -30,6 +30,12 @@ $baseDir = dirname($_SERVER['SCRIPT_FILENAME']);
 // Fix aliases
 $remove = str_replace('\\', '/', dirname($_SERVER['PHP_SELF']));
 if (strpos($ruri, $remove) !== 0) {
+    $error_msg = sprintf(
+        'The first path segment was expected to start with "%s", but "%s" was found instead. ' .
+        'To fix this, check your web server configuration, not the Icinga Web 2 configuration.',
+        $remove,
+        $ruri);
+    trigger_error($error_msg, E_USER_NOTICE);
     return false;
 }
 $ruri = ltrim(substr($ruri, strlen($remove)), '/');
