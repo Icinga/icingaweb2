@@ -25,21 +25,19 @@ if (preg_match('/^PHP .* Development Server/', $_SERVER['SERVER_SOFTWARE'])) {
       . $script;
 }
 
-$baseDir = $_SERVER['DOCUMENT_ROOT'];
 $baseDir = dirname($_SERVER['SCRIPT_FILENAME']);
 
 // Fix aliases
 $remove = str_replace('\\', '/', dirname($_SERVER['PHP_SELF']));
-if (substr($ruri, 0, strlen($remove)) !== $remove) {
+if (strpos($ruri, $remove) !== 0) {
     return false;
 }
 $ruri = ltrim(substr($ruri, strlen($remove)), '/');
 
 if (strpos($ruri, '?') === false) {
-    $params = '';
     $path = $ruri;
 } else {
-    list($path, $params) = preg_split('/\?/', $ruri, 2);
+    list($path) = explode("?", $ruri, 2);
 }
 
 $special = array(
