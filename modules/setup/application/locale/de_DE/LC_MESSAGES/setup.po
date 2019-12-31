@@ -1113,7 +1113,7 @@ msgstr ""
 
 #: ../../../../library/Setup/Steps/DatabaseStep.php:252
 msgid "The database has been fully set up!"
-msgstr "Die Datenbank \"%s\" wurde vollständig eingerichtet!"
+msgstr "Die Datenbank wurde vollständig eingerichtet!"
 
 #: ../../../../library/Setup/Steps/DatabaseStep.php:216
 #, php-format
