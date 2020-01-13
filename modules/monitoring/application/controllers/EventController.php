@@ -5,6 +5,8 @@ namespace Icinga\Module\Monitoring\Controllers;
 
 use DateTime;
 use DateTimeZone;
+use Icinga\Module\Monitoring\Hook\EventDetailsExtensionHook;
+use Icinga\Application\Hook;
 use InvalidArgumentException;
 use Icinga\Data\Queryable;
 use Icinga\Date\DateFormatter;
@@ -69,6 +71,24 @@ class EventController extends Controller
             array(array($this->view->escape($this->translate('Type')), $label)),
             $this->getDetails($type, $event)
         );
+
+        $this->view->extensionsHtml = array();
+        /** @var EventDetailsExtensionHook $hook */
+        foreach (Hook::all('Monitoring\\EventDetailsExtension') as $hook) {
+            try {
+                $html = $hook->getHtmlForEvent($object);
+            } catch (\Exception $e) {
+                $html = $this->view->escape($e->getMessage());
+            }
+
+            if ($html) {
+                $module = $this->view->escape($hook->getModule()->getName());
+                $this->view->extensionsHtml[] =
+                    '<div class="icinga-module module-' . $module . '" data-icinga-module="' . $module . '">'
+                    . $html
+                    . '</div>';
+            }
+        }
 
         $this->view->title = $this->translate('Event Overview');
         $this->getTabs()
