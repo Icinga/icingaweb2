@@ -1294,7 +1294,6 @@ class LdapConnection implements Selectable, Inspectable
                 throw new LogicException('LDAP scope %s not supported by ldapSearch', $scope);
         }
 
-        $serverctrls = [];
         if ($pageSize !== null) {
             $serverctrls[] = [
                 'oid' => LDAP_CONTROL_PAGEDRESULTS,
@@ -1306,19 +1305,30 @@ class LdapConnection implements Selectable, Inspectable
                     'cookie' => ''
                 ]
             ];
-        }
 
-        return @$function(
-            $this->getConnection(),
-            $baseDn,
-            $queryString,
-            $attributes,
-            $attrsonly,
-            $sizelimit,
-            $timelimit,
-            $deref,
-            $serverctrls
-        );
+            return @$function(
+                $this->getConnection(),
+                $baseDn,
+                $queryString,
+                $attributes,
+                $attrsonly,
+                $sizelimit,
+                $timelimit,
+                $deref,
+                $serverctrls
+            );
+        } else {
+            return @$function(
+                $this->getConnection(),
+                $baseDn,
+                $queryString,
+                $attributes,
+                $attrsonly,
+                $sizelimit,
+                $timelimit,
+                $deref
+            );
+        }
     }
 
     /**
