@@ -1533,7 +1533,10 @@ class LdapConnection implements Selectable, Inspectable
         try {
             $cap = LdapCapabilities::discoverCapabilities($this);
             $discovery = new Inspection('Discovery Results');
-            $discovery->write($cap->getVendor());
+            $vendor = $cap->getVendor();
+            if (isset($vendor)) {
+                $discovery->write($vendor);
+            }
             $version = $cap->getVersion();
             if (isset($version)) {
                 $discovery->write($version);
