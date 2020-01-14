@@ -42,8 +42,8 @@
         var $modal = _this.$ghost.clone();
         var $urlTarget = _this.icinga.loader.getLinkTargetFor($a);
 
-        // Add view=compact, we don't want controls in a modal
-        url = _this.icinga.utils.addUrlParams(url, { 'view': 'compact' });
+        // Add showCompact, we don't want controls in a modal
+        url = _this.icinga.utils.addUrlFlag(url, 'showCompact');
 
         // Set the toggle's base target on the modal to use it as redirect target
         $modal.data('redirectTarget', $urlTarget);
