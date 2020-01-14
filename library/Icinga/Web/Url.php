@@ -100,7 +100,7 @@ class Url
      * @param   UrlParams|array $params     Parameters that should additionally be considered for the url
      * @param   Zend_Request    $request    A request to use instead of the default one
      *
-     * @return  Url
+     * @return  static
      */
     public static function fromRequest($params = array(), $request = null)
     {
@@ -156,7 +156,7 @@ class Url
      * @param   array           $params     An array of parameters that should additionally be considered for the url
      * @param   Zend_Request    $request    A request to use instead of the default one
      *
-     * @return  Url
+     * @return  static
      */
     public static function fromPath($url, array $params = array(), $request = null)
     {
@@ -245,7 +245,7 @@ class Url
      * @param Filter    $filter     The base filter
      * @param Filter    $optional   The optional filter
      *
-     * @return Url                  The altered URL containing the new filter
+     * @return static               The altered URL containing the new filter
      * @throws ProgrammingError
      */
     public static function urlAddFilterOptional($url, $filter, $optional)
@@ -796,7 +796,7 @@ class Url
      *
      * @param   string|array    $keyOrArrayOfKeys   A single string or an array containing parameter names
      *
-     * @return  Url
+     * @return  static
      */
     public function getUrlWithout($keyOrArrayOfKeys)
     {
@@ -819,7 +819,7 @@ class Url
      * @param string|array $param  A single string or an array containing parameter names
      * @param array        $values an optional values array
      *
-     * @return Url
+     * @return static
      */
     public function with($param, $values = null)
     {
