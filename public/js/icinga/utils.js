@@ -211,6 +211,30 @@
         },
 
         /**
+         * Add the specified flag to the given URL
+         *
+         * @param {string} url
+         * @param {string} flag
+         *
+         * @returns {string}
+         */
+        addUrlFlag: function (url, flag) {
+            var pos = url.lastIndexOf('#');
+
+            if (url.indexOf('?') !== -1) {
+                flag = '&' + flag;
+            } else {
+                flag = '?' + flag;
+            }
+
+            if (pos === -1) {
+                return url + flag;
+            }
+
+            return url.slice(0, pos) + flag + url.slice(pos);
+        },
+
+        /**
          * Check whether two HTMLElements overlap
          *
          * @param a {HTMLElement}
