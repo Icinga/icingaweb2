@@ -1,5 +1,5 @@
 # Icinga Web 2 - Head for multiple monitoring backends.
-# Copyright (C) 2018 Icinga Development Team
+# Copyright (C) 2020 Icinga Development Team
 # This file is distributed under the same license as Icinga Web 2.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 # 
@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Icinga Web 2 (None)\n"
 "Report-Msgid-Bugs-To: dev@icinga.com\n"
-"POT-Creation-Date: 2018-07-18 11:57+0000\n"
+"POT-Creation-Date: 2020-01-14 07:01+0000\n"
 "PO-Revision-Date: 2018-02-02 14:02+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: it_IT\n"
@@ -32,8 +32,8 @@ msgid ""
 "following?: %s"
 msgstr "\"%s\" non è tra i valori ammessi. Intendevi uno dei seguenti?: %s"
 
-#: ../../../../application/forms/Config/Resource/FileResourceForm.php:50
 #: ../../../../application/forms/Config/UserBackend/ExternalBackendForm.php:42
+#: ../../../../application/forms/Config/Resource/FileResourceForm.php:50
 msgid "\"%value%\" is not a valid regular expression."
 msgstr "\"%value%\" non è un'espressione regolare valida."
 
@@ -52,7 +52,7 @@ msgstr "%s (%%value%%), tipo MIME non trovato"
 msgid "%s Required field"
 msgstr "%s Required field"
 
-#: ../../../../library/Icinga/Date/DateFormatter.php:171
+#: ../../../../library/Icinga/Date/DateFormatter.php:173
 #, php-format
 msgctxt "An event that happened the given time interval ago"
 msgid "%s ago"
@@ -102,9 +102,9 @@ msgstr "%s: Mostra %s %u a %u di %u"
 msgid "'%s' is not a valid number"
 msgstr "'%s' non è un numero valido"
 
-#: ../../../../library/Icinga/Authentication/User/DbUserBackend.php:101
 #: ../../../../library/Icinga/Authentication/UserGroup/DbUserGroupBackend.php:117
 #: ../../../../library/Icinga/Authentication/UserGroup/DbUserGroupBackend.php:118
+#: ../../../../library/Icinga/Authentication/User/DbUserBackend.php:101
 msgid "(Case insensitive)"
 msgstr "(Case insensitive)"
 
@@ -114,26 +114,18 @@ msgstr "(Case insensitive)"
 msgid "A navigation item with the name \"%s\" does already exist"
 msgstr "Un oggetto di navigazione con il nome \"%s\" è già presente"
 
-#: ../../../../application/forms/Config/Resource/LdapResourceForm.php:76
-msgid ""
-"A protocol scheme such as ldap:// or ldaps:// is mandatory for URIs with a "
-"given port and for all other URIs as well once a scheme is given for a "
-"single one."
-msgstr ""
-"Un protocollo come ldap:// o ldaps:// e' obbligatorio per URI con una data "
-"porta e per tutte le altre URI."
-
 #: ../../../../application/forms/Config/UserBackendConfigForm.php:165
 #, php-format
 msgid "A user backend with the name \"%s\" does already exist"
 msgstr "Un Backend Utenti con il nome \"%s\" è già presente"
 
-#: ../../../../application/controllers/AboutController.php:19
+#: ../../../../application/controllers/AboutController.php:16
+#: ../../../../application/controllers/AboutController.php:20
 #: ../../../../library/Icinga/Web/Menu.php:47
 msgid "About"
 msgstr "Info"
 
-#: ../../../../application/controllers/AboutController.php:20
+#: ../../../../application/controllers/AboutController.php:21
 msgid "About Icinga Web 2"
 msgstr "Info Icinga Web 2"
 
@@ -158,17 +150,17 @@ msgstr "Accetta questo annuncio"
 msgid "Acknowledge this announcement"
 msgstr "Accetta questo annuncio"
 
-#: ../../../../application/controllers/UserController.php:73
 #: ../../../../application/forms/Config/User/UserForm.php:24
+#: ../../../../application/controllers/UserController.php:80
 #: ../../../../application/views/scripts/user/show.phtml:33
-#: ../../../../library/Icinga/Authentication/User/DbUserBackend.php:105
 #: ../../../../library/Icinga/Authentication/User/LdapUserBackend.php:270
+#: ../../../../library/Icinga/Authentication/User/DbUserBackend.php:105
 msgid "Active"
 msgstr "Attivo"
 
-#: ../../../../application/forms/Config/User/UserForm.php:46
 #: ../../../../application/forms/Config/UserGroup/AddMemberForm.php:126
 #: ../../../../application/forms/Config/UserGroup/UserGroupForm.php:29
+#: ../../../../application/forms/Config/User/UserForm.php:46
 msgid "Add"
 msgstr "Aggiungi"
 
@@ -185,7 +177,6 @@ msgid "Add New Member"
 msgstr "Aggiungi Nuovo Membro"
 
 #: ../../../../application/forms/Dashboard/DashletForm.php:30
-#: ../../../../application/forms/Dashboard/NewDashboardForm.php:32
 #: ../../../../library/Icinga/Web/Widget/Tabextension/DashboardAction.php:27
 msgid "Add To Dashboard"
 msgstr "Aggiungi alla Dashboard"
@@ -223,11 +214,15 @@ msgstr "Aggiungi filtro..."
 msgid "Add members for group %s"
 msgstr "Aggiungi membri al gruppo %s"
 
-#: ../../../../application/controllers/ConfigController.php:38
+#: ../../../../application/controllers/ConfigController.php:39
 msgid "Adjust the general configuration of Icinga Web 2"
 msgstr "Cambia la configurazione generale di Icinga Web 2"
 
-#: ../../../../application/forms/Authentication/LoginForm.php:113
+#: ../../../../application/forms/Security/RoleForm.php:176
+msgid "Administrative Access"
+msgstr ""
+
+#: ../../../../application/forms/Authentication/LoginForm.php:115
 msgid ""
 "All configured authentication methods failed. Please check the system log or "
 "Icinga Web 2 log for more information."
@@ -235,28 +230,24 @@ msgstr ""
 "Tutti i metodi di autenticazione configurati hanno fallito. Controllare i "
 "log di sistema o di Icinga Web 2 per maggiori informazioni."
 
-#: ../../../../application/forms/Security/RoleForm.php:73
+#: ../../../../application/forms/Security/RoleForm.php:100
 #, php-format
 msgid "Allow access to module %s"
 msgstr "Permetti accesso al modulo %s"
 
-#: ../../../../application/forms/Security/RoleForm.php:50
+#: ../../../../application/forms/Security/RoleForm.php:74
 msgid "Allow config access"
 msgstr "Permetti accesso alla configurazione"
 
-#: ../../../../application/forms/Security/RoleForm.php:39
-msgid "Allow everything"
-msgstr "Permetti tutto"
-
-#: ../../../../application/forms/Security/RoleForm.php:43
+#: ../../../../application/forms/Security/RoleForm.php:59
 msgid "Allow to adjust in the preferences whether to show stacktraces"
 msgstr "Permetti di modificare le preferenze per visualizzare lo stacktrace"
 
-#: ../../../../application/forms/Security/RoleForm.php:40
+#: ../../../../application/forms/Security/RoleForm.php:54
 msgid "Allow to share navigation items"
 msgstr "Permetti di condividere oggetti di navigazione"
 
-#: ../../../../application/forms/Security/RoleForm.php:45
+#: ../../../../application/forms/Security/RoleForm.php:64
 msgid "Allow to view the application log"
 msgstr "Permetti di vedere l'application log"
 
@@ -279,24 +270,25 @@ msgstr ""
 "connessione specificata. Lasciare vuota se non si vuole utilizzare filtri "
 "aggiuntivi."
 
-#: ../../../../application/forms/Announcement/AnnouncementForm.php:96
+#: ../../../../application/forms/Announcement/AnnouncementForm.php:112
 msgid "Announcement created"
 msgstr "Annuncio creato"
 
-#: ../../../../application/controllers/AnnouncementsController.php:59
-#: ../../../../application/controllers/AnnouncementsController.php:75
+#: ../../../../application/controllers/AnnouncementsController.php:82
+#: ../../../../application/controllers/AnnouncementsController.php:98
 msgid "Announcement not found"
 msgstr "Annuncio non trovato"
 
-#: ../../../../application/forms/Announcement/AnnouncementForm.php:116
+#: ../../../../application/forms/Announcement/AnnouncementForm.php:132
 msgid "Announcement removed"
 msgstr "Annuncio rimosso"
 
-#: ../../../../application/forms/Announcement/AnnouncementForm.php:106
+#: ../../../../application/forms/Announcement/AnnouncementForm.php:122
 msgid "Announcement updated"
 msgstr "Annuncio aggiornato"
 
-#: ../../../../application/controllers/AnnouncementsController.php:24
+#: ../../../../application/controllers/AnnouncementsController.php:17
+#: ../../../../application/controllers/AnnouncementsController.php:31
 #: ../../../../library/Icinga/Web/Menu.php:54
 msgid "Announcements"
 msgstr "Annunci"
@@ -305,6 +297,7 @@ msgstr "Annunci"
 msgid "Application"
 msgstr "Applicazione"
 
+#: ../../../../application/controllers/ListController.php:57
 #: ../../../../library/Icinga/Web/Menu.php:128
 msgid "Application Log"
 msgstr "Log Applicazione"
@@ -317,7 +310,14 @@ msgstr "Prefisso dell'applicazione"
 msgid "Apply"
 msgstr "Applica"
 
-#: ../../../../application/controllers/ConfigController.php:51
+#: ../../../../application/controllers/UsergroupbackendController.php:61
+#: ../../../../application/controllers/UsergroupbackendController.php:98
+#: ../../../../application/controllers/UsergroupbackendController.php:130
+#: ../../../../application/controllers/ConfigController.php:52
+#: ../../../../application/controllers/ConfigController.php:217
+#: ../../../../application/controllers/ConfigController.php:264
+#: ../../../../application/controllers/ConfigController.php:303
+#: ../../../../application/controllers/ConfigController.php:336
 #: ../../../../library/Icinga/Web/Menu.php:77
 msgid "Authentication"
 msgstr "Autenticazione"
@@ -336,7 +336,8 @@ msgstr "Backend di Autenticazione \"%s\" non trovato"
 msgid "Authentication order updated"
 msgstr "Ordine di autenticazione aggiornato"
 
-#: ../../../../application/views/scripts/announcements/index.phtml:27
+#: ../../../../application/controllers/AnnouncementsController.php:47
+#: ../../../../application/views/scripts/announcements/index.phtml:33
 msgid "Author"
 msgstr "Autore"
 
@@ -348,26 +349,21 @@ msgstr "Aggiornamento automatico disabilitato correttamente"
 msgid "Auto refresh successfully enabled"
 msgstr "Aggiornamento automatico abilitato correttamente"
 
-#: ../../../../application/controllers/DashboardsController.php:37
-#, fuzzy
-msgid "Available Dashlets"
-msgstr "Rimouovi Vista"
-
 #: ../../../../library/Icinga/Web/Wizard.php:623
 #: ../../../../library/Icinga/Web/Wizard.php:647
 msgid "Back"
 msgstr "Indietro"
 
-#: ../../../../application/views/scripts/config/userbackend/reorder.phtml:35
 #: ../../../../application/views/scripts/form/reorder-authbackend.phtml:4
+#: ../../../../application/views/scripts/config/userbackend/reorder.phtml:35
 msgid "Backend"
 msgstr "Backend"
 
-#: ../../../../application/forms/Config/UserBackend/DbBackendForm.php:53
 #: ../../../../application/forms/Config/UserBackend/ExternalBackendForm.php:32
+#: ../../../../application/forms/Config/UserBackend/DbBackendForm.php:53
 #: ../../../../application/forms/Config/UserBackend/LdapBackendForm.php:74
-#: ../../../../application/forms/Config/UserGroup/DbUserGroupBackendForm.php:34
 #: ../../../../application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:39
+#: ../../../../application/forms/Config/UserGroup/DbUserGroupBackendForm.php:34
 msgid "Backend Name"
 msgstr "Nome Backend"
 
@@ -380,13 +376,17 @@ msgstr "Tipo Backend"
 msgid "Backend Users"
 msgstr "Utenti Backend"
 
-#: ../../../../application/forms/Config/Resource/LdapResourceForm.php:130
+#: ../../../../application/forms/Config/Resource/LdapResourceForm.php:99
 msgid "Bind DN"
 msgstr "Bind DN"
 
-#: ../../../../application/forms/Config/Resource/LdapResourceForm.php:142
+#: ../../../../application/forms/Config/Resource/LdapResourceForm.php:111
 msgid "Bind Password"
 msgstr "Bind Password"
+
+#: ../../../../application/forms/Dashboard/DashletForm.php:56
+msgid "Brackets ([, ]) cannot be used here"
+msgstr ""
 
 #: ../../../../application/forms/PreferenceForm.php:196
 #: ../../../../application/forms/PreferenceForm.php:205
@@ -395,32 +395,12 @@ msgctxt "preferences.form"
 msgid "Browser (%s)"
 msgstr "Browser (%s)"
 
-#: ../../../../application/forms/Security/RoleForm.php:219
-#, php-format
-msgid "Can't add role '%s'. Role already exists"
-msgstr "Impossibile aggiungere il ruolo '%s'. Ruolo già esistente"
-
-#: ../../../../application/forms/Security/RoleForm.php:178
-#, php-format
-msgid "Can't load role '%s'. Role does not exist"
-msgstr "Impossibile caricare il ruolo '%s'. Ruolo inesistente"
-
-#: ../../../../application/forms/Security/RoleForm.php:245
-#, php-format
-msgid "Can't remove role '%s'. Role does not exist"
-msgstr "Impossibile rimuovere il ruolo '%s'. Ruolo inesistente"
-
-#: ../../../../application/forms/Security/RoleForm.php:278
-#, php-format
-msgid "Can't update role '%s'. Role does not exist"
-msgstr "Impossibile aggiornare il ruolo '%s'. Ruolo inesistente"
-
 #: ../../../../application/views/scripts/user/show.phtml:79
 msgctxt "group.membership"
 msgid "Cancel"
 msgstr "Annulla"
 
-#: ../../../../application/controllers/UserController.php:156
+#: ../../../../application/controllers/UserController.php:164
 msgid "Cancel this membership"
 msgstr "Cancella questa associazione"
 
@@ -428,7 +408,7 @@ msgstr "Cancella questa associazione"
 msgid "Cancel this operation"
 msgstr "Annulla operazione"
 
-#: ../../../../library/Icinga/Web/Widget/Dashboard/Dashlet.php:229
+#: ../../../../library/Icinga/Web/Widget/Dashboard/Dashlet.php:243
 #, php-format
 msgid "Cannot create dashboard dashlet \"%s\" without valid URL"
 msgstr ""
@@ -465,7 +445,7 @@ msgstr "Un Backend Utenti con il nome \"%s\" è già presente"
 msgid "Change sort direction"
 msgstr "Cambia direzione di ordinamento"
 
-#: ../../../../application/forms/Config/Resource/DbResourceForm.php:158
+#: ../../../../application/forms/Config/Resource/DbResourceForm.php:164
 msgid "Character Set"
 msgstr "Set Caratteri"
 
@@ -485,9 +465,7 @@ msgstr ""
 "Seleziona questo box per ricerche ricorsive di gruppo in Active Directory "
 "basate sull'utente"
 
-#: ../../../../application/forms/Dashboard/DashletForm.php:102
-#: ../../../../application/forms/Dashboard/NewDashboardForm.php:74
-#: ../../../../application/forms/Dashboard/TakeShareForm.php:88
+#: ../../../../application/forms/Dashboard/DashletForm.php:114
 msgid "Check this box if you want to add the dashlet to a new dashboard"
 msgstr ""
 "Selezionare questa opzione se si  vuole aggiungere questa vista a una nuova "
@@ -515,6 +493,10 @@ msgstr "Cliccare per rimuovere questa parte del filtro"
 msgid "Close container"
 msgstr "Chudi contenitore"
 
+#: ../../../../application/layouts/scripts/layout.phtml:74
+msgid "Collapse"
+msgstr ""
+
 #: ../../../../library/Icinga/Repository/Repository.php:1146
 #, php-format
 msgid "Column \"%s\" cannot be queried"
@@ -531,11 +513,11 @@ msgid "Comma separated list of usernames to share this item with"
 msgstr ""
 "Lista di utenti, separati da virgola, con cui condividere questo oggetto"
 
-#: ../../../../application/forms/Security/RoleForm.php:131
+#: ../../../../application/forms/Security/RoleForm.php:168
 msgid "Comma-separated list of groups that are assigned to the role"
 msgstr "Lista dei gruppi assegnati al ruolo separati da virgole"
 
-#: ../../../../application/forms/Security/RoleForm.php:123
+#: ../../../../application/forms/Security/RoleForm.php:160
 msgid "Comma-separated list of users that are assigned to the role"
 msgstr "Lista degli utenti assegnati al ruolo separati da virgole"
 
@@ -543,20 +525,27 @@ msgstr "Lista degli utenti assegnati al ruolo separati da virgole"
 msgid "Configuration"
 msgstr "Configurazione"
 
-#: ../../../../application/controllers/GroupController.php:369
-#: ../../../../application/controllers/RoleController.php:155
-#: ../../../../application/controllers/UserController.php:320
+#: ../../../../application/forms/ConfigForm.php:91
+#: ../../../../application/forms/Security/RoleForm.php:413
+msgid ""
+"Configuration successfully stored. Though, one or more module hooks failed "
+"to run. See logs for details"
+msgstr ""
+
+#: ../../../../application/controllers/GroupController.php:377
+#: ../../../../application/controllers/UserController.php:328
+#: ../../../../application/controllers/RoleController.php:116
 msgid ""
 "Configure roles to permit or restrict users and groups accessing Icinga Web 2"
 msgstr ""
 "Configura i ruoli per permettere o restringere i permessi di utenti e gruppi "
 "di Icinga Web 2"
 
-#: ../../../../application/controllers/ConfigController.php:50
+#: ../../../../application/controllers/ConfigController.php:51
 msgid "Configure the user and group backends"
 msgstr "Configura i backend utente e gruppo"
 
-#: ../../../../application/controllers/ConfigController.php:44
+#: ../../../../application/controllers/ConfigController.php:45
 msgid "Configure which resources are being utilized by Icinga Web 2"
 msgstr "Configura quali risorse saranno utilizzate da Icinga Web 2"
 
@@ -564,9 +553,13 @@ msgstr "Configura quali risorse saranno utilizzate da Icinga Web 2"
 msgid "Confirm New Password"
 msgstr "Conferma nuova Password"
 
-#: ../../../../application/forms/ConfirmRemovalForm.php:19
+#: ../../../../application/forms/ConfirmRemovalForm.php:21
 msgid "Confirm Removal"
 msgstr "Conferma Rimozione"
+
+#: ../../../../application/forms/Config/Resource/LdapResourceForm.php:122
+msgid "Connection timeout for every LDAP connection"
+msgstr ""
 
 #: ../../../../library/Icinga/Chart/GridChart.php:90
 msgid "Contains data in a bar or line chart."
@@ -592,7 +585,7 @@ msgstr ""
 msgid "Content"
 msgstr "Contenuto"
 
-#: ../../../../application/views/scripts/about/index.phtml:19
+#: ../../../../application/views/scripts/about/index.phtml:21
 msgid "Copyright"
 msgstr "Copyright"
 
@@ -608,7 +601,7 @@ msgstr ""
 msgid "Could not save dashboard"
 msgstr "Dashboard non persistente"
 
-#: ../../../../application/forms/Announcement/AnnouncementForm.php:61
+#: ../../../../application/forms/Announcement/AnnouncementForm.php:76
 #: ../../../../application/forms/Config/User/CreateMembershipForm.php:89
 msgid "Create"
 msgstr "Crea"
@@ -617,11 +610,11 @@ msgstr "Crea"
 msgid "Create New Membership"
 msgstr "Crea Nuova Associazione"
 
-#: ../../../../application/controllers/RoleController.php:59
+#: ../../../../application/controllers/RoleController.php:50
 msgid "Create Role"
 msgstr "Crea Ruolo"
 
-#: ../../../../application/views/scripts/announcements/index.phtml:9
+#: ../../../../application/views/scripts/announcements/index.phtml:15
 msgid "Create a New Announcement"
 msgstr "Crea Un Nuovo Annuncio"
 
@@ -645,12 +638,12 @@ msgstr "Crea Nuovo Backend Utenti"
 msgid "Create a New User Group Backend"
 msgstr "Crea Nuovo Backend Gruppi Utenti"
 
-#: ../../../../application/forms/Announcement/AnnouncementForm.php:60
-#: ../../../../application/views/scripts/announcements/index.phtml:16
+#: ../../../../application/forms/Announcement/AnnouncementForm.php:75
+#: ../../../../application/views/scripts/announcements/index.phtml:22
 msgid "Create a new announcement"
 msgstr "Crea un nuovo annuncio"
 
-#: ../../../../application/controllers/ConfigController.php:201
+#: ../../../../application/controllers/ConfigController.php:231
 msgid ""
 "Create a new backend for authenticating your users. This backend will be "
 "added at the end of your authentication order."
@@ -666,7 +659,7 @@ msgstr "Crea un nuovo backend per identificare gruppi gli utenti."
 msgid "Create a new navigation item"
 msgstr "Crea un nuovo oggetto di navigazione"
 
-#: ../../../../application/controllers/NavigationController.php:217
+#: ../../../../application/controllers/NavigationController.php:220
 msgid "Create a new navigation item, such as a menu entry or dashlet."
 msgstr ""
 "Crea un nuovo oggetto di navigazione, come una voce di menu o una vista."
@@ -692,15 +685,15 @@ msgstr "Crea un nuovo backend gruppo utenti"
 msgid "Create memberships for %s"
 msgstr "Crea associazione per %s"
 
-#: ../../../../library/Icinga/Authentication/User/LdapUserBackend.php:271
+#: ../../../../library/Icinga/Authentication/UserGroup/LdapUserGroupBackend.php:574
 #: ../../../../library/Icinga/Authentication/UserGroup/DbUserGroupBackend.php:125
-#: ../../../../library/Icinga/Authentication/UserGroup/LdapUserGroupBackend.php:548
+#: ../../../../library/Icinga/Authentication/User/LdapUserBackend.php:271
 msgid "Created At"
 msgstr "Creato il"
 
-#: ../../../../application/controllers/GroupController.php:74
-#: ../../../../application/controllers/GroupController.php:110
-#: ../../../../application/controllers/UserController.php:74
+#: ../../../../application/controllers/GroupController.php:81
+#: ../../../../application/controllers/GroupController.php:117
+#: ../../../../application/controllers/UserController.php:81
 #: ../../../../application/views/scripts/group/show.phtml:33
 #: ../../../../application/views/scripts/user/show.phtml:36
 #: ../../../../library/Icinga/Authentication/User/DbUserBackend.php:106
@@ -725,32 +718,21 @@ msgstr ""
 "Nessuna vista disponibile. E' possibile abilitarne una da quelle disponibili "
 "%s."
 
-#: ../../../../application/controllers/DashboardController.php:314
-#: ../../../../application/forms/Dashboard/DashletForm.php:121
+#: ../../../../application/forms/Dashboard/DashletForm.php:134
+#: ../../../../application/controllers/DashboardController.php:307
 #: ../../../../library/Icinga/Web/Menu.php:30
 msgid "Dashboard"
-msgstr "Dashboard"
-
-#: ../../../../application/forms/Dashboard/NewDashboardForm.php:83
-#: ../../../../application/forms/Dashboard/TakeShareForm.php:97
-#, fuzzy
-msgid "Dashboard Home"
-msgstr "Dashboard"
-
-#: ../../../../application/forms/Dashboard/NewDashboardForm.php:98
-#, fuzzy
-msgid "Dashboard Name"
 msgstr "Dashboard"
 
 #: ../../../../application/views/scripts/dashboard/settings.phtml:5
 msgid "Dashboard Settings"
 msgstr "Impostazioni Dashboard"
 
-#: ../../../../application/controllers/DashboardController.php:276
+#: ../../../../application/controllers/DashboardController.php:269
 msgid "Dashboard has been removed"
 msgstr "Dashboard Rimossa"
 
-#: ../../../../library/Icinga/Web/Widget/Dashboard/Dashlet.php:257
+#: ../../../../library/Icinga/Web/Widget/Dashboard/Dashlet.php:271
 msgid "Dashlet"
 msgstr "Vista"
 
@@ -758,7 +740,7 @@ msgstr "Vista"
 msgid "Dashlet Name"
 msgstr "Nome Vista"
 
-#: ../../../../application/forms/Dashboard/DashletForm.php:82
+#: ../../../../application/forms/Dashboard/DashletForm.php:93
 msgid "Dashlet Title"
 msgstr "Titolo Vista"
 
@@ -766,11 +748,11 @@ msgstr "Titolo Vista"
 msgid "Dashlet created"
 msgstr "Vista Creata"
 
-#: ../../../../application/controllers/DashboardController.php:184
+#: ../../../../application/controllers/DashboardController.php:177
 msgid "Dashlet has been removed from"
 msgstr "Vista rimossa da"
 
-#: ../../../../application/controllers/DashboardController.php:141
+#: ../../../../application/controllers/DashboardController.php:134
 msgid "Dashlet updated"
 msgstr "Vista Aggiornata"
 
@@ -780,18 +762,18 @@ msgstr "Vista Aggiornata"
 msgid "Database"
 msgstr "Database"
 
-#: ../../../../application/forms/Config/General/ApplicationConfigForm.php:104
 #: ../../../../application/forms/Config/UserBackend/DbBackendForm.php:64
+#: ../../../../application/forms/Config/General/ApplicationConfigForm.php:104
 #: ../../../../application/forms/Config/UserGroup/DbUserGroupBackendForm.php:47
 msgid "Database Connection"
 msgstr "Connessione Database"
 
-#: ../../../../application/forms/Config/Resource/DbResourceForm.php:98
-#: ../../../../application/forms/Config/Resource/DbResourceForm.php:130
+#: ../../../../application/forms/Config/Resource/DbResourceForm.php:104
+#: ../../../../application/forms/Config/Resource/DbResourceForm.php:136
 msgid "Database Name"
 msgstr "Nome Database"
 
-#: ../../../../application/forms/Config/Resource/DbResourceForm.php:87
+#: ../../../../application/forms/Config/Resource/DbResourceForm.php:93
 msgid "Database Type"
 msgstr "Tipo Database"
 
@@ -818,11 +800,11 @@ msgstr ""
 msgid "Default page size"
 msgstr "Tema di default"
 
-#: ../../../../application/views/scripts/config/module.phtml:56
+#: ../../../../application/views/scripts/config/module.phtml:45
 msgid "Dependencies"
 msgstr "Dipendenze"
 
-#: ../../../../application/views/scripts/config/module.phtml:49
+#: ../../../../application/views/scripts/config/module.phtml:38
 msgid "Description"
 msgstr "Descrizione"
 
@@ -838,7 +820,7 @@ msgstr ""
 msgid "Disable auto refresh"
 msgstr "Disabilitare aggiornamento automatico"
 
-#: ../../../../application/views/scripts/config/module.phtml:26
+#: ../../../../application/controllers/ConfigController.php:135
 #, php-format
 msgid "Disable the %s module"
 msgstr "Disabilita il modulo %s"
@@ -866,7 +848,7 @@ msgstr "Non salvare le Preferenze"
 msgid "Dropdown menu"
 msgstr "Menu a tendina"
 
-#: ../../../../application/controllers/DashboardController.php:144
+#: ../../../../application/controllers/DashboardController.php:137
 msgid "Edit Dashlet"
 msgstr "Modifica Vista"
 
@@ -874,7 +856,7 @@ msgstr "Modifica Vista"
 msgid "Edit User"
 msgstr "Modifica utente"
 
-#: ../../../../application/forms/Announcement/AnnouncementForm.php:69
+#: ../../../../application/forms/Announcement/AnnouncementForm.php:84
 #, php-format
 msgid "Edit announcement %s"
 msgstr "Modifica annuncio %s"
@@ -931,12 +913,12 @@ msgstr "Modifica backend utenti %s"
 msgid "Edit user group backend %s"
 msgstr "Modifica backend gruppo utenti %s"
 
-#: ../../../../application/forms/AutoRefreshForm.php:63
 #: ../../../../application/forms/PreferenceForm.php:280
+#: ../../../../application/forms/AutoRefreshForm.php:63
 msgid "Enable auto refresh"
 msgstr "Abilitare aggiornamento automatico"
 
-#: ../../../../application/views/scripts/config/module.phtml:34
+#: ../../../../application/controllers/ConfigController.php:132
 #, php-format
 msgid "Enable the %s module"
 msgstr "Abilita il modulo %s"
@@ -946,25 +928,25 @@ msgstr "Abilita il modulo %s"
 msgid "Enabling the \"%s\" module might help!"
 msgstr "Abilitare il modulo \"%s\" potrebbe essere utile!"
 
-#: ../../../../application/forms/Config/Resource/LdapResourceForm.php:102
+#: ../../../../application/forms/Config/Resource/LdapResourceForm.php:71
 msgid "Encryption"
 msgstr "Crittografia"
 
-#: ../../../../application/forms/Announcement/AnnouncementForm.php:54
-#: ../../../../application/views/scripts/announcements/index.phtml:30
+#: ../../../../application/forms/Announcement/AnnouncementForm.php:69
+#: ../../../../application/controllers/AnnouncementsController.php:50
+#: ../../../../application/views/scripts/announcements/index.phtml:36
 msgid "End"
 msgstr "Fine"
 
-#: ../../../../application/forms/Dashboard/DashletForm.php:83
-#: ../../../../application/forms/Dashboard/NewDashboardForm.php:99
+#: ../../../../application/forms/Dashboard/DashletForm.php:94
 msgid "Enter a title for the dashlet."
 msgstr "Inserisci un titolo per la vista."
 
-#: ../../../../application/forms/Dashboard/DashletForm.php:112
+#: ../../../../application/forms/Dashboard/DashletForm.php:124
 msgid "Enter a title for the new dashboard"
 msgstr "Inserici un titolo per la nuova dashboard"
 
-#: ../../../../application/forms/Dashboard/DashletForm.php:72
+#: ../../../../application/forms/Dashboard/DashletForm.php:83
 msgid ""
 "Enter url to be loaded in the dashlet. You can paste the full URL, including "
 "filters."
@@ -984,6 +966,14 @@ msgstr "Error"
 msgid "Error details"
 msgstr "Dettagli dell'Errore"
 
+#: ../../../../application/forms/Security/RoleForm.php:177
+msgid "Everything is allowed"
+msgstr ""
+
+#: ../../../../application/layouts/scripts/layout.phtml:73
+msgid "Expand"
+msgstr ""
+
 #: ../../../../application/forms/Config/UserBackendConfigForm.php:274
 msgid "External"
 msgstr "Esterno"
@@ -992,21 +982,21 @@ msgstr "Esterno"
 msgid "Facility"
 msgstr "Facility log"
 
-#: ../../../../application/forms/Config/User/CreateMembershipForm.php:128
 #: ../../../../application/forms/Config/UserGroup/AddMemberForm.php:163
+#: ../../../../application/forms/Config/User/CreateMembershipForm.php:128
 #, php-format
 msgid "Failed to add \"%s\" as group member for \"%s\""
 msgstr "Impossibile aggiungere \"%s\" come membro del gruppo \"%s\""
 
-#: ../../../../application/forms/Config/UserGroup/UserGroupForm.php:91
+#: ../../../../application/forms/Config/UserGroup/UserGroupForm.php:92
 msgid "Failed to add group"
 msgstr "Impossibile aggiungere il gruppo"
 
-#: ../../../../application/forms/Config/User/UserForm.php:141
+#: ../../../../application/forms/Config/User/UserForm.php:142
 msgid "Failed to add user"
 msgstr "Impossibile aggiungere utente"
 
-#: ../../../../application/forms/Announcement/AnnouncementForm.php:97
+#: ../../../../application/forms/Announcement/AnnouncementForm.php:113
 msgid "Failed to create announcement"
 msgstr "Errore durante la creazione dell'annuncio"
 
@@ -1020,12 +1010,12 @@ msgstr "Impossibile cancellare. Dettagli errore: %s"
 msgid "Failed to discover the chosen LDAP connection: %s"
 msgstr "Impossibile stabilire la connessione LDAP selezionata: %s"
 
-#: ../../../../application/forms/Config/UserGroup/UserGroupForm.php:107
+#: ../../../../application/forms/Config/UserGroup/UserGroupForm.php:108
 #, php-format
 msgid "Failed to edit group \"%s\""
 msgstr "Impossibile modificare il gruppo \"%s\""
 
-#: ../../../../application/forms/Config/User/UserForm.php:157
+#: ../../../../application/forms/Config/User/UserForm.php:158
 #, php-format
 msgid "Failed to edit user \"%s\""
 msgstr "Impossibile modificare l'utente \"%s\""
@@ -1037,14 +1027,14 @@ msgstr ""
 "Impossibile recuperare gruppi dal backend %s. Controllare i  log per "
 "maggiori dettagli"
 
-#: ../../../../application/controllers/GroupController.php:327
+#: ../../../../application/controllers/GroupController.php:335
 #, php-format
 msgid "Failed to fetch any users from backend %s. Please check your log"
 msgstr ""
 "Impossibile recuperare gli utenti dal backend %s. Controllare i log per "
 "maggiori informazioni"
 
-#: ../../../../application/controllers/UserController.php:278
+#: ../../../../application/controllers/UserController.php:286
 #, php-format
 msgid "Failed to fetch memberships from backend %s. Please check your log"
 msgstr ""
@@ -1065,34 +1055,34 @@ msgstr ""
 msgid "Failed to insert. An error occurred: %s"
 msgstr "Impossibile aggiungere. Dettagli errore: %s"
 
-#: ../../../../application/forms/Announcement/AnnouncementForm.php:117
+#: ../../../../application/forms/Announcement/AnnouncementForm.php:133
 msgid "Failed to remove announcement"
 msgstr "Impossibile rimuovere l'annuncio"
 
-#: ../../../../application/forms/Config/UserGroup/UserGroupForm.php:123
+#: ../../../../application/forms/Config/UserGroup/UserGroupForm.php:124
 #, php-format
 msgid "Failed to remove group \"%s\""
 msgstr "Impossibile rimuovere il gruppo \"%s\""
 
-#: ../../../../application/forms/Config/User/UserForm.php:173
+#: ../../../../application/forms/Config/User/UserForm.php:174
 #, php-format
 msgid "Failed to remove user \"%s\""
 msgstr "Impossibile rimuovere l'utente \"%s\""
 
-#: ../../../../application/forms/Config/ResourceConfigForm.php:342
 #: ../../../../application/forms/Config/UserBackendConfigForm.php:419
+#: ../../../../application/forms/Config/ResourceConfigForm.php:342
 #: ../../../../application/forms/Config/UserGroup/UserGroupBackendForm.php:251
 #, php-format
 msgid "Failed to successfully validate the configuration: %s"
 msgstr "Impossibile convalidare la configurazione: %s"
 
-#: ../../../../application/controllers/NavigationController.php:382
+#: ../../../../application/controllers/NavigationController.php:388
 #, php-format
 msgid "Failed to unshare navigation item \"%s\""
 msgstr ""
 "Impossibile annullare la condivisione dell'oggetto di navigazione \"%s\""
 
-#: ../../../../application/forms/Announcement/AnnouncementForm.php:107
+#: ../../../../application/forms/Announcement/AnnouncementForm.php:123
 msgid "Failed to update announcement"
 msgstr "Impossibile aggiornare l'annuncio"
 
@@ -1136,8 +1126,8 @@ msgstr "Filtro colonna \"%s\" non trovato"
 msgid "Filter column \"%s\" not found in table \"%s\""
 msgstr "Filtro colonna \"%s\" non trovato nella tabella \"%s\""
 
-#: ../../../../library/Icinga/Web/Widget/FilterEditor.php:745
 #: ../../../../library/Icinga/Web/Widget/FilterWidget.php:89
+#: ../../../../library/Icinga/Web/Widget/FilterEditor.php:745
 msgid "Filter this list"
 msgstr "Filtra questa lista"
 
@@ -1153,11 +1143,11 @@ msgstr "Fine"
 msgid "Flip grid axes"
 msgstr ""
 
-#: ../../../../application/forms/Config/Resource/DbResourceForm.php:68
+#: ../../../../application/forms/Config/Resource/DbResourceForm.php:74
 msgid "For using unix domain sockets, specify localhost"
 msgstr "Per utilizzare i socket unix, specificare localhost"
 
-#: ../../../../application/forms/Config/Resource/DbResourceForm.php:64
+#: ../../../../application/forms/Config/Resource/DbResourceForm.php:70
 msgid ""
 "For using unix domain sockets, specify the path to the unix domain socket "
 "directory"
@@ -1169,20 +1159,29 @@ msgstr ""
 msgid "Force Changes"
 msgstr "Forzare Modifiche"
 
-#: ../../../../application/controllers/ConfigController.php:39
+#: ../../../../application/forms/Security/RoleForm.php:109
+msgid "Full Module Access"
+msgstr ""
+
+#: ../../../../application/controllers/ConfigController.php:40
+#: ../../../../application/controllers/ConfigController.php:85
 msgid "General"
 msgstr "Generale"
 
+#: ../../../../application/forms/Security/RoleForm.php:99
+msgid "General Module Access"
+msgstr ""
+
 #: ../../../../application/views/scripts/about/index.phtml:12
-#: ../../../../application/views/scripts/config/module.phtml:44
+#: ../../../../application/views/scripts/config/module.phtml:33
 msgid "Git commit"
 msgstr "Commit Git"
 
-#: ../../../../application/views/scripts/about/index.phtml:16
+#: ../../../../application/views/scripts/about/index.phtml:18
 msgid "Git commit date"
 msgstr "Data commit Gid"
 
-#: ../../../../application/forms/Security/RoleForm.php:48
+#: ../../../../application/forms/Security/RoleForm.php:69
 msgid "Grant admin permissions, e.g. manage announcements"
 msgstr "Concedi permessi di amministratore, ad esempio gestire gli annunci"
 
@@ -1190,27 +1189,27 @@ msgstr "Concedi permessi di amministratore, ad esempio gestire gli annunci"
 msgid "Grid Chart"
 msgstr "Grafico a Griglia"
 
-#: ../../../../application/controllers/GroupController.php:349
-#: ../../../../application/controllers/UserController.php:117
+#: ../../../../application/controllers/GroupController.php:357
+#: ../../../../application/controllers/UserController.php:124
 #: ../../../../application/views/scripts/user/show.phtml:78
 msgid "Group"
 msgstr "Gruppo"
 
-#: ../../../../application/forms/Config/UserGroup/UserGroupForm.php:105
+#: ../../../../application/forms/Config/UserGroup/UserGroupForm.php:106
 #, php-format
 msgid "Group \"%s\" has been edited"
 msgstr "Gruppo \"%s\" modificato"
 
-#: ../../../../application/forms/Config/UserGroup/UserGroupForm.php:121
+#: ../../../../application/forms/Config/UserGroup/UserGroupForm.php:122
 #, php-format
 msgid "Group \"%s\" has been removed"
 msgstr "Gruppo \"%s\" rimosso"
 
-#: ../../../../application/controllers/GroupController.php:96
-#: ../../../../application/controllers/GroupController.php:184
-#: ../../../../application/controllers/GroupController.php:206
-#: ../../../../application/controllers/GroupController.php:233
-#: ../../../../application/controllers/GroupController.php:288
+#: ../../../../application/controllers/GroupController.php:103
+#: ../../../../application/controllers/GroupController.php:192
+#: ../../../../application/controllers/GroupController.php:214
+#: ../../../../application/controllers/GroupController.php:241
+#: ../../../../application/controllers/GroupController.php:296
 #, php-format
 msgid "Group \"%s\" not found"
 msgstr "Gruppo \"%s\" non trovato"
@@ -1223,7 +1222,7 @@ msgstr "Associazione Gruppi"
 msgid "Group Name"
 msgstr "Nome Gruppo"
 
-#: ../../../../application/forms/Config/UserGroup/UserGroupForm.php:89
+#: ../../../../application/forms/Config/UserGroup/UserGroupForm.php:90
 msgid "Group added successfully"
 msgstr "Gruppo aggiunto correttamente"
 
@@ -1236,9 +1235,9 @@ msgstr "Membro \"%s\" aggiunto correttamente"
 msgid "Group members added successfully"
 msgstr "Membri aggiunti correttamente"
 
+#: ../../../../application/forms/Security/RoleForm.php:167
 #: ../../../../application/forms/Config/User/CreateMembershipForm.php:79
 #: ../../../../application/forms/Navigation/NavigationConfigForm.php:615
-#: ../../../../application/forms/Security/RoleForm.php:130
 #: ../../../../application/views/scripts/role/list.phtml:24
 msgid "Groups"
 msgstr "Gruppi"
@@ -1247,7 +1246,7 @@ msgstr "Gruppi"
 msgid "Hint"
 msgstr "Suggerimento"
 
-#: ../../../../application/forms/Config/Resource/DbResourceForm.php:108
+#: ../../../../application/forms/Config/Resource/DbResourceForm.php:114
 #: ../../../../application/forms/Config/Resource/LdapResourceForm.php:46
 msgid "Host"
 msgstr "Host"
@@ -1260,11 +1259,11 @@ msgstr "Host"
 msgid "I'm ready to search, waiting for your input"
 msgstr "Pronto per la ricerca, in attesa di un input"
 
-#: ../../../../application/views/scripts/about/index.phtml:90
+#: ../../../../application/views/scripts/about/index.phtml:83
 msgid "Icinga Community"
 msgstr "Icinga Community"
 
-#: ../../../../application/views/scripts/about/index.phtml:100
+#: ../../../../application/views/scripts/about/index.phtml:93
 msgid "Icinga Documentation"
 msgstr "Documentazione Icinga"
 
@@ -1285,7 +1284,7 @@ msgstr "Installazione Guidata Icinga Web 2"
 msgid "Icinga Web 2 Version"
 msgstr "Icinga Web 2 Login"
 
-#: ../../../../application/views/scripts/about/index.phtml:49
+#: ../../../../application/views/scripts/about/index.phtml:51
 #: ../../../../application/views/scripts/authentication/login.phtml:53
 msgid "Icinga on Facebook"
 msgstr "Icinga su Facebook"
@@ -1295,11 +1294,7 @@ msgstr "Icinga su Facebook"
 msgid "Icinga on GitHub"
 msgstr "Icinga su Twitter"
 
-#: ../../../../application/views/scripts/about/index.phtml:58
-msgid "Icinga on Google+"
-msgstr "Icinga su Google+"
-
-#: ../../../../application/views/scripts/about/index.phtml:40
+#: ../../../../application/views/scripts/about/index.phtml:42
 #: ../../../../application/views/scripts/authentication/login.phtml:41
 msgid "Icinga on Twitter"
 msgstr "Icinga su Twitter"
@@ -1317,7 +1312,7 @@ msgid ""
 "usernames with the domain part, users will not be able to login."
 msgstr ""
 
-#: ../../../../application/views/scripts/authentication/logout.phtml:15
+#: ../../../../application/views/scripts/authentication/logout.phtml:16
 msgid ""
 "If this message does not disappear, it might be necessary to quit the "
 "current session manually by clearing the cache, or by closing the current "
@@ -1339,7 +1334,7 @@ msgstr ""
 msgid "Inactive"
 msgstr "Disattivato"
 
-#: ../../../../application/forms/Authentication/LoginForm.php:125
+#: ../../../../application/forms/Authentication/LoginForm.php:127
 msgid "Incorrect username or password"
 msgstr "Utente o password errati"
 
@@ -1423,15 +1418,15 @@ msgstr "Attributo per Nome Utente LDAP"
 msgid "LDAP User Object Class"
 msgstr "Object Class Utente LDAP"
 
-#: ../../../../application/controllers/GroupController.php:75
-#: ../../../../application/controllers/GroupController.php:111
-#: ../../../../application/controllers/UserController.php:75
+#: ../../../../application/controllers/GroupController.php:82
+#: ../../../../application/controllers/GroupController.php:118
+#: ../../../../application/controllers/UserController.php:82
 #: ../../../../application/views/scripts/group/show.phtml:37
 #: ../../../../application/views/scripts/user/show.phtml:40
-#: ../../../../library/Icinga/Authentication/User/DbUserBackend.php:107
-#: ../../../../library/Icinga/Authentication/User/LdapUserBackend.php:272
+#: ../../../../library/Icinga/Authentication/UserGroup/LdapUserGroupBackend.php:575
 #: ../../../../library/Icinga/Authentication/UserGroup/DbUserGroupBackend.php:126
-#: ../../../../library/Icinga/Authentication/UserGroup/LdapUserGroupBackend.php:549
+#: ../../../../library/Icinga/Authentication/User/LdapUserBackend.php:272
+#: ../../../../library/Icinga/Authentication/User/DbUserBackend.php:107
 msgid "Last modified"
 msgstr "Ultima Modifica"
 
@@ -1439,16 +1434,16 @@ msgstr "Ultima Modifica"
 msgid "Leave empty for not updating the user's password"
 msgstr "Lasciare vuoto per non aggiornare la password dell'utente"
 
-#: ../../../../application/controllers/AnnouncementsController.php:25
+#: ../../../../application/controllers/AnnouncementsController.php:32
 msgid "List All Announcements"
 msgstr "Elenca tutti gli annunci"
 
-#: ../../../../application/controllers/NavigationController.php:193
+#: ../../../../application/controllers/NavigationController.php:196
 msgid "List and configure shared navigation items"
 msgstr "Mostra e configura gli oggetti di navigazione condivisi"
 
+#: ../../../../application/controllers/NavigationController.php:144
 #: ../../../../application/controllers/AccountController.php:32
-#: ../../../../application/controllers/NavigationController.php:143
 msgid "List and configure your own navigation items"
 msgstr "Mostra e configura i tuoi oggetti di navigazione"
 
@@ -1457,27 +1452,27 @@ msgstr "Mostra e configura i tuoi oggetti di navigazione"
 msgid "List announcements"
 msgstr "Elenca tutti gli annunci"
 
-#: ../../../../application/controllers/GroupController.php:386
-#: ../../../../application/controllers/RoleController.php:172
-#: ../../../../application/controllers/UserController.php:337
+#: ../../../../application/controllers/GroupController.php:394
+#: ../../../../application/controllers/UserController.php:345
+#: ../../../../application/controllers/RoleController.php:133
 msgid "List groups of user group backends"
 msgstr "Mostra gruppi dei backend gruppo utenti"
 
-#: ../../../../application/controllers/ConfigController.php:98
+#: ../../../../application/controllers/ConfigController.php:100
 msgid "List intalled modules"
 msgstr "Mostra moduli installati"
 
-#: ../../../../application/controllers/GroupController.php:378
-#: ../../../../application/controllers/RoleController.php:164
-#: ../../../../application/controllers/UserController.php:329
+#: ../../../../application/controllers/GroupController.php:386
+#: ../../../../application/controllers/UserController.php:337
+#: ../../../../application/controllers/RoleController.php:125
 msgid "List users of authentication backends"
 msgstr "Mostra utenti dei backend di autenticazione"
 
-#: ../../../../application/views/scripts/about/index.phtml:104
+#: ../../../../application/views/scripts/about/index.phtml:97
 msgid "Loaded modules"
 msgstr "Moduli caricati"
 
-#: ../../../../library/Icinga/Web/Widget/Dashboard/Dashlet.php:184
+#: ../../../../library/Icinga/Web/Widget/Dashboard/Dashlet.php:198
 msgid "Loading"
 msgstr "Caricamento"
 
@@ -1493,16 +1488,16 @@ msgstr "Livello dei Log"
 msgid "Logging Type"
 msgstr "Tipo di Log"
 
-#: ../../../../application/forms/Authentication/LoginForm.php:32
+#: ../../../../application/forms/Authentication/LoginForm.php:34
 msgid "Logging in"
 msgstr "Accesso in corso"
 
-#: ../../../../application/views/scripts/authentication/logout.phtml:12
+#: ../../../../application/views/scripts/authentication/logout.phtml:13
 msgid "Logging out..."
 msgstr "Uscita in corso..."
 
-#: ../../../../application/forms/Authentication/LoginForm.php:31
-#: ../../../../application/views/scripts/authentication/logout.phtml:22
+#: ../../../../application/forms/Authentication/LoginForm.php:33
+#: ../../../../application/views/scripts/authentication/logout.phtml:23
 msgid "Login"
 msgstr "Accedi"
 
@@ -1510,7 +1505,7 @@ msgstr "Accedi"
 msgid "Logout"
 msgstr "Esci"
 
-#: ../../../../application/views/scripts/authentication/logout.phtml:44
+#: ../../../../application/views/scripts/authentication/logout.phtml:45
 msgid "Logout successful!"
 msgstr "Uscito correttamente!"
 
@@ -1536,8 +1531,9 @@ msgstr "Associazione creata correttamente"
 msgid "Menu Entry"
 msgstr "Voce Menu"
 
-#: ../../../../application/forms/Announcement/AnnouncementForm.php:35
-#: ../../../../application/views/scripts/announcements/index.phtml:28
+#: ../../../../application/forms/Announcement/AnnouncementForm.php:50
+#: ../../../../application/controllers/AnnouncementsController.php:48
+#: ../../../../application/views/scripts/announcements/index.phtml:34
 msgid "Message"
 msgstr "Messaggio"
 
@@ -1549,21 +1545,22 @@ msgstr "Metodo non consentito"
 msgid "Missing protocol identifier"
 msgstr "Identificatore di protocollo mancante"
 
-#: ../../../../library/Icinga/Web/Widget/FilterEditor.php:747
 #: ../../../../library/Icinga/Web/Widget/FilterWidget.php:94
+#: ../../../../library/Icinga/Web/Widget/FilterEditor.php:747
 msgid "Modify this filter"
 msgstr "Modifica filtro"
 
+#: ../../../../application/forms/Security/RoleForm.php:192
 #: ../../../../application/views/scripts/config/modules.phtml:11
 msgid "Module"
 msgstr "Modulo"
 
-#: ../../../../application/controllers/ConfigController.php:164
+#: ../../../../application/controllers/ConfigController.php:188
 #, php-format
 msgid "Module \"%s\" disabled"
 msgstr "Modulo \"%s\" disabilitato"
 
-#: ../../../../application/controllers/ConfigController.php:144
+#: ../../../../application/controllers/ConfigController.php:162
 #, php-format
 msgid "Module \"%s\" enabled"
 msgstr "Modulo \"%s\" abilitato"
@@ -1592,7 +1589,8 @@ msgstr "Modulo %s abilitato"
 msgid "Module Path"
 msgstr "Percorso Modulo"
 
-#: ../../../../application/controllers/ConfigController.php:97
+#: ../../../../application/controllers/ConfigController.php:99
+#: ../../../../application/controllers/ConfigController.php:111
 #: ../../../../library/Icinga/Web/Menu.php:93
 msgid "Modules"
 msgstr "Moduli"
@@ -1615,60 +1613,65 @@ msgstr "Sposta Backend Utenti %s giù"
 msgid "Move user backend %s upwards"
 msgstr "Sposta Backend Utenti %s su"
 
+#: ../../../../application/controllers/NavigationController.php:136
 #: ../../../../application/controllers/AccountController.php:28
-#: ../../../../application/controllers/NavigationController.php:135
+#: ../../../../application/controllers/AccountController.php:73
 #: ../../../../library/Icinga/Web/Menu.php:109
 msgid "My Account"
 msgstr "Il mio account"
 
-#: ../../../../application/controllers/DashboardController.php:216
 #: ../../../../application/forms/Navigation/NavigationConfigForm.php:575
-#: ../../../../application/views/scripts/about/index.phtml:108
-#: ../../../../application/views/scripts/config/module.phtml:16
+#: ../../../../application/controllers/DashboardController.php:209
 #: ../../../../application/views/scripts/role/list.phtml:22
+#: ../../../../application/views/scripts/about/index.phtml:101
+#: ../../../../application/views/scripts/config/module.phtml:16
 msgid "Name"
 msgstr "Nome"
 
+#: ../../../../application/controllers/NavigationController.php:130
+#: ../../../../application/controllers/NavigationController.php:145
+#: ../../../../application/controllers/NavigationController.php:153
+#: ../../../../application/controllers/NavigationController.php:248
+#: ../../../../application/controllers/NavigationController.php:304
+#: ../../../../application/controllers/NavigationController.php:348
 #: ../../../../application/controllers/AccountController.php:33
-#: ../../../../application/controllers/NavigationController.php:144
-#: ../../../../application/controllers/NavigationController.php:152
 #: ../../../../application/views/scripts/pivottablePagination.phtml:16
 #: ../../../../application/views/scripts/layout/menu.phtml:16
 #: ../../../../application/views/scripts/navigation/index.phtml:29
 msgid "Navigation"
 msgstr "Navigazione"
 
-#: ../../../../application/controllers/NavigationController.php:323
+#: ../../../../application/controllers/NavigationController.php:328
 #, php-format
 msgid "Navigation Item \"%s\" not found. No action required"
 msgstr "Oggetto di Navigazione \"%s\" non trovato. Nessuna azione richiesta"
 
-#: ../../../../application/controllers/NavigationController.php:335
+#: ../../../../application/controllers/NavigationController.php:340
 #, php-format
 msgid "Navigation Item \"%s\" successfully removed"
 msgstr "Oggetto di Navigazione \"%s\" rimosso correttamente"
 
-#: ../../../../application/controllers/NavigationController.php:375
+#: ../../../../application/controllers/NavigationController.php:381
 #, php-format
 msgid "Navigation item \"%s\" has been unshared"
 msgstr "Oggetto di Navigazione \"%s\" rimosso dalla condivisione correttamente"
 
-#: ../../../../application/controllers/NavigationController.php:297
-#: ../../../../application/controllers/NavigationController.php:408
+#: ../../../../application/controllers/NavigationController.php:301
+#: ../../../../application/controllers/NavigationController.php:414
 #, php-format
 msgid "Navigation item \"%s\" not found"
 msgstr "Oggetto di Navigazione \"%s\" non trovato"
 
-#: ../../../../application/controllers/NavigationController.php:286
+#: ../../../../application/controllers/NavigationController.php:290
 #, php-format
 msgid "Navigation item \"%s\" successfully updated"
 msgstr "Oggetto di Navigazione \"%s\" aggiornato correttamente"
 
-#: ../../../../application/controllers/NavigationController.php:237
+#: ../../../../application/controllers/NavigationController.php:240
 msgid "Navigation item successfully created"
 msgstr "Oggetto di Navigazione creato correttamente"
 
-#: ../../../../application/controllers/NavigationController.php:427
+#: ../../../../application/controllers/NavigationController.php:433
 #, fuzzy
 msgid "Navigation not found"
 msgstr "Oggetto di Navigazione \"%s\" non trovato"
@@ -1677,7 +1680,7 @@ msgstr "Oggetto di Navigazione \"%s\" non trovato"
 msgid "Nested Group Search"
 msgstr "Ricerca di Gruppo Ricorsiva"
 
-#: ../../../../application/controllers/AnnouncementsController.php:45
+#: ../../../../application/controllers/AnnouncementsController.php:68
 msgid "New Announcement"
 msgstr "Nuovo Annuncio"
 
@@ -1685,13 +1688,7 @@ msgstr "Nuovo Annuncio"
 msgid "New Column"
 msgstr "Nuova Colonna"
 
-#: ../../../../application/forms/Dashboard/NewDashboardForm.php:73
-#: ../../../../application/forms/Dashboard/TakeShareForm.php:87
-#, fuzzy
-msgid "New Dashboard Home"
-msgstr "Titolo nuova Dashboard"
-
-#: ../../../../application/forms/Dashboard/DashletForm.php:111
+#: ../../../../application/forms/Dashboard/DashletForm.php:123
 msgid "New Dashboard Title"
 msgstr "Titolo nuova Dashboard"
 
@@ -1699,7 +1696,7 @@ msgstr "Titolo nuova Dashboard"
 msgid "New Dashlet"
 msgstr "Nuova Vista"
 
-#: ../../../../application/controllers/NavigationController.php:245
+#: ../../../../application/controllers/NavigationController.php:249
 msgid "New Navigation Item"
 msgstr "Nuovo Oggetto di Navigazione"
 
@@ -1707,31 +1704,31 @@ msgstr "Nuovo Oggetto di Navigazione"
 msgid "New Password"
 msgstr "Nuova Password"
 
-#: ../../../../application/controllers/ConfigController.php:327
+#: ../../../../application/controllers/ConfigController.php:361
 msgid "New Resource"
 msgstr "Nuova Risorsa"
 
-#: ../../../../application/controllers/RoleController.php:63
+#: ../../../../application/controllers/RoleController.php:53
 msgid "New Role"
 msgstr "Nuovo Ruolo"
 
-#: ../../../../application/controllers/UserController.php:174
+#: ../../../../application/controllers/UserController.php:182
 msgid "New User"
 msgstr "Nuovo Utente"
 
-#: ../../../../application/controllers/ConfigController.php:234
+#: ../../../../application/controllers/ConfigController.php:265
 msgid "New User Backend"
 msgstr "Nuovo Backend Utenti"
 
-#: ../../../../application/controllers/GroupController.php:163
+#: ../../../../application/controllers/GroupController.php:171
 msgid "New User Group"
 msgstr "Nuovo Gruppo Utenti"
 
-#: ../../../../application/controllers/UsergroupbackendController.php:61
+#: ../../../../application/controllers/UsergroupbackendController.php:62
 msgid "New User Group Backend"
 msgstr "Nuovo Backend Gruppi Utenti"
 
-#: ../../../../application/controllers/GroupController.php:236
+#: ../../../../application/controllers/GroupController.php:244
 msgid "New User Group Member"
 msgstr "Nuovo Membro"
 
@@ -1739,11 +1736,11 @@ msgstr "Nuovo Membro"
 msgid "New Window"
 msgstr "Nuova Finestra"
 
-#: ../../../../application/forms/ConfigForm.php:70
+#: ../../../../application/forms/ConfigForm.php:84
 msgid "New configuration has successfully been stored"
 msgstr "Nuova configurazione salvata correttamente"
 
-#: ../../../../application/forms/Dashboard/DashletForm.php:101
+#: ../../../../application/forms/Dashboard/DashletForm.php:113
 msgid "New dashboard"
 msgstr "Nuova Dashboard"
 
@@ -1769,11 +1766,11 @@ msgstr "No"
 msgid "No LDAP resources available. Please configure an LDAP resource first."
 msgstr "Nessuna risorsa LDAP disponibile. Configurare prima una risorsa LDAP."
 
-#: ../../../../application/views/scripts/announcements/index.phtml:21
+#: ../../../../application/views/scripts/announcements/index.phtml:27
 msgid "No announcements found."
 msgstr "Nessun annuncio trovato."
 
-#: ../../../../application/forms/Authentication/LoginForm.php:107
+#: ../../../../application/forms/Authentication/LoginForm.php:109
 msgid ""
 "No authentication methods available. Did you create authentication.ini when "
 "setting up Icinga Web 2?"
@@ -1813,7 +1810,7 @@ msgstr "Nessun gruppo di utenti soddisfa i criteri di ricerca"
 msgid "No users found matching the filter"
 msgstr "Nessun utente soddisfa i criteri di ricerca"
 
-#: ../../../../application/forms/Navigation/NavigationConfigForm.php:666
+#: ../../../../application/forms/Navigation/NavigationConfigForm.php:665
 msgctxt "No parent for a navigation item"
 msgid "None"
 msgstr "Nessuno"
@@ -1823,7 +1820,7 @@ msgctxt "app.config.logging.type"
 msgid "None"
 msgstr "Nessuno"
 
-#: ../../../../application/forms/Config/Resource/LdapResourceForm.php:108
+#: ../../../../application/forms/Config/Resource/LdapResourceForm.php:77
 msgctxt "resource.ldap.encryption"
 msgid "None"
 msgstr "Nessuno"
@@ -1854,7 +1851,7 @@ msgstr "La vecchia password non e' valida"
 msgid "Old resource name missing"
 msgstr "Nome della vecchia risorsa non presente"
 
-#: ../../../../application/forms/Config/Resource/LdapResourceForm.php:122
+#: ../../../../application/forms/Config/Resource/LdapResourceForm.php:91
 msgid "Only the root and its child nodes will be accessible on this resource."
 msgstr ""
 "Solo gli oggetti che appartengono a questa risorsa radice saranno "
@@ -1894,10 +1891,15 @@ msgstr "Configurazione Autenticazione"
 msgid "Open your account preferences"
 msgstr "Aggiorna il tuo account"
 
-#: ../../../../application/controllers/NavigationController.php:201
+#: ../../../../application/controllers/NavigationController.php:204
 #: ../../../../application/views/scripts/navigation/shared.phtml:21
 msgid "Owner"
 msgstr "Proprietario"
+
+#: ../../../../application/views/scripts/about/index.phtml:15
+#, fuzzy
+msgid "PHP Version"
+msgstr "Versione"
 
 #: ../../../../library/Icinga/Web/Widget/SearchDashboard.php:91
 msgid "Page not found"
@@ -1915,7 +1917,7 @@ msgstr "Impaginazione"
 msgid "Pane"
 msgstr "Pannello"
 
-#: ../../../../application/controllers/DashboardController.php:241
+#: ../../../../application/controllers/DashboardController.php:234
 #, fuzzy, php-format
 msgid "Pane \"%s\" successfully renamed to \"%s\""
 msgstr "Backend Utenti \"%s\" rimosso correttamente"
@@ -1925,10 +1927,10 @@ msgstr "Backend Utenti \"%s\" rimosso correttamente"
 msgid "Parent"
 msgstr "Padre"
 
-#: ../../../../application/forms/Authentication/LoginForm.php:55
-#: ../../../../application/forms/Config/Resource/DbResourceForm.php:149
+#: ../../../../application/forms/Config/Resource/DbResourceForm.php:155
 #: ../../../../application/forms/Config/User/UserForm.php:41
 #: ../../../../application/forms/Config/User/UserForm.php:63
+#: ../../../../application/forms/Authentication/LoginForm.php:57
 msgid "Password"
 msgstr "Password"
 
@@ -1936,12 +1938,9 @@ msgstr "Password"
 msgid "Pattern"
 msgstr "Pattern"
 
-#: ../../../../application/views/scripts/config/module.phtml:68
+#: ../../../../application/forms/Security/RoleForm.php:199
+#: ../../../../application/views/scripts/config/module.phtml:57
 msgid "Permissions"
-msgstr "Permessi"
-
-#: ../../../../application/forms/Security/RoleForm.php:138
-msgid "Permissions Set"
 msgstr "Permessi"
 
 #: ../../../../library/Icinga/Chart/PieChart.php:55
@@ -1952,7 +1951,7 @@ msgstr "Grafico a Torta"
 msgid "Please copy the following dashboard snippet to "
 msgstr "Copiare la seguente porzione di dashboard in "
 
-#: ../../../../application/forms/Authentication/LoginForm.php:120
+#: ../../../../application/forms/Authentication/LoginForm.php:122
 msgid ""
 "Please note that not all authentication methods were available. Check the "
 "system log or Icinga Web 2 log for more information."
@@ -1977,8 +1976,8 @@ msgstr ""
 "ricerche. Per comodità verrà automaticamente aggiunto dopo l'ultimo "
 "carattere digitato."
 
-#: ../../../../application/forms/Config/Resource/DbResourceForm.php:119
-#: ../../../../application/forms/Config/Resource/LdapResourceForm.php:91
+#: ../../../../application/forms/Config/Resource/DbResourceForm.php:125
+#: ../../../../application/forms/Config/Resource/LdapResourceForm.php:60
 msgid "Port"
 msgstr "Porta"
 
@@ -2006,6 +2005,10 @@ msgstr "Pagina precedente"
 #: ../../../../application/forms/Config/Resource/SshResourceForm.php:83
 msgid "Private Key"
 msgstr "Chiave Privata"
+
+#: ../../../../application/forms/Security/RoleForm.php:50
+msgid "Prohibit password changes in the account preferences"
+msgstr ""
 
 #: ../../../../application/forms/Config/UserGroup/AddMemberForm.php:120
 msgid "Provide one or more usernames separated by comma to add as group member"
@@ -2058,58 +2061,58 @@ msgstr "Pronto per la ricerca"
 msgid "Refresh the %s"
 msgstr ""
 
-#: ../../../../application/views/scripts/group/list.phtml:52
 #: ../../../../application/views/scripts/group/show.phtml:77
+#: ../../../../application/views/scripts/group/list.phtml:52
 #: ../../../../application/views/scripts/user/list.phtml:53
 msgid "Remove"
 msgstr "Rimuovi"
 
-#: ../../../../application/controllers/AnnouncementsController.php:77
+#: ../../../../application/controllers/AnnouncementsController.php:100
 msgid "Remove Announcement"
 msgstr "Rimuovi Annuncio"
 
-#: ../../../../application/controllers/DashboardController.php:285
+#: ../../../../application/controllers/DashboardController.php:278
 msgid "Remove Dashboard"
 msgstr "Rimouovi Dashboard"
 
-#: ../../../../application/controllers/DashboardController.php:159
+#: ../../../../application/controllers/DashboardController.php:152
 msgid "Remove Dashlet"
 msgstr "Rimouovi Vista"
 
-#: ../../../../application/controllers/DashboardController.php:193
+#: ../../../../application/controllers/DashboardController.php:186
 msgid "Remove Dashlet From Dashboard"
 msgstr "Rimuovi Vista dalla Dashboard"
 
-#: ../../../../application/controllers/NavigationController.php:343
+#: ../../../../application/controllers/NavigationController.php:349
 msgid "Remove Navigation Item"
 msgstr "Rimuovi Oggetto di Navigazione"
 
-#: ../../../../application/controllers/ConfigController.php:366
+#: ../../../../application/controllers/ConfigController.php:402
 msgid "Remove Resource"
 msgstr "Rimuovi Risorsa"
 
-#: ../../../../application/controllers/RoleController.php:137
-#: ../../../../application/controllers/RoleController.php:140
+#: ../../../../application/controllers/RoleController.php:92
+#: ../../../../application/controllers/RoleController.php:101
 msgid "Remove Role"
 msgstr "Rimuovi ruolo"
 
-#: ../../../../application/controllers/UserController.php:218
+#: ../../../../application/controllers/UserController.php:226
 msgid "Remove User"
 msgstr "Rimuovi Utente"
 
-#: ../../../../application/controllers/ConfigController.php:304
+#: ../../../../application/controllers/ConfigController.php:337
 msgid "Remove User Backend"
 msgstr "Rimuovi Backend Utenti"
 
-#: ../../../../application/controllers/GroupController.php:209
+#: ../../../../application/controllers/GroupController.php:217
 msgid "Remove User Group"
 msgstr "Rimuovi Gruppo Utenti"
 
-#: ../../../../application/controllers/UsergroupbackendController.php:128
+#: ../../../../application/controllers/UsergroupbackendController.php:131
 msgid "Remove User Group Backend"
 msgstr "Rimuovi Backend Gruppi Utenti"
 
-#: ../../../../application/forms/Announcement/AnnouncementForm.php:78
+#: ../../../../application/forms/Announcement/AnnouncementForm.php:93
 #, php-format
 msgid "Remove announcement %s?"
 msgstr "Rimuovi annuncio %s?"
@@ -2149,7 +2152,7 @@ msgstr "Rimuovi Ruolo %s"
 msgid "Remove the %s resource"
 msgstr "Rimuovi la risorsa %s"
 
-#: ../../../../application/views/scripts/announcements/index.phtml:53
+#: ../../../../application/views/scripts/announcements/index.phtml:59
 msgid "Remove this announcement"
 msgstr "Rimuovi questo annuncio"
 
@@ -2157,7 +2160,7 @@ msgstr "Rimuovi questo annuncio"
 msgid "Remove this filter"
 msgstr "Rimuovi filtro"
 
-#: ../../../../application/controllers/GroupController.php:145
+#: ../../../../application/controllers/GroupController.php:153
 msgid "Remove this member"
 msgstr "Rimuovi questo membro"
 
@@ -2190,7 +2193,7 @@ msgstr "Rimuovi gruppo utenti %s"
 msgid "Remove user group backend %s"
 msgstr "Rimuovi backend gruppo utenti %s"
 
-#: ../../../../application/views/scripts/about/index.phtml:70
+#: ../../../../application/views/scripts/about/index.phtml:63
 msgid "Report a bug"
 msgstr "Segnala un bug"
 
@@ -2216,15 +2219,15 @@ msgstr "Risorsa \"%s\" aggiornata correttamente"
 msgid "Resource \"%s\" has been successfully created"
 msgstr "Risorsa \"%s\" creata correttamente"
 
-#: ../../../../application/controllers/ConfigController.php:383
+#: ../../../../application/controllers/ConfigController.php:419
 #, php-format
 msgid "Resource \"%s\" has been successfully removed"
 msgstr "Risorsa \"%s\" rimossa correttamente"
 
-#: ../../../../application/forms/Config/Resource/DbResourceForm.php:77
-#: ../../../../application/forms/Config/Resource/FileResourceForm.php:32
-#: ../../../../application/forms/Config/Resource/LdapResourceForm.php:37
 #: ../../../../application/forms/Config/Resource/SshResourceForm.php:36
+#: ../../../../application/forms/Config/Resource/DbResourceForm.php:83
+#: ../../../../application/forms/Config/Resource/LdapResourceForm.php:37
+#: ../../../../application/forms/Config/Resource/FileResourceForm.php:32
 msgid "Resource Name"
 msgstr "Nome Risorsa"
 
@@ -2242,51 +2245,78 @@ msgstr "Risorsa già presente"
 msgid "Resource name missing"
 msgstr "Nome Risorsa mancante"
 
-#: ../../../../application/controllers/ConfigController.php:45
+#: ../../../../application/controllers/ConfigController.php:46
+#: ../../../../application/controllers/ConfigController.php:350
+#: ../../../../application/controllers/ConfigController.php:371
+#: ../../../../application/controllers/ConfigController.php:391
+#: ../../../../application/controllers/ConfigController.php:456
 msgid "Resources"
 msgstr "Risorse"
 
-#: ../../../../application/controllers/ConfigController.php:331
+#: ../../../../application/controllers/ConfigController.php:365
 msgid "Resources are entities that provide data to Icinga Web 2."
 msgstr "Le Risorse sono le entità da cui Icinga Web 2 recupera i dati."
 
-#: ../../../../application/forms/Security/RoleForm.php:64
+#: ../../../../application/forms/Security/RoleForm.php:88
 msgid "Restrict which groups this role can share items and information with"
 msgstr ""
 "Limita i gruppi di questo ruolo con cui condividere oggetti e informazioni"
 
-#: ../../../../application/forms/Security/RoleForm.php:58
+#: ../../../../application/forms/Security/RoleForm.php:82
 msgid "Restrict which users this role can share items and information with"
 msgstr ""
 "Limita gli utenti di questo ruolo con cui condividere oggetti e informazioni"
 
-#: ../../../../application/views/scripts/config/module.phtml:78
+#: ../../../../application/forms/Security/RoleForm.php:234
+#: ../../../../application/views/scripts/config/module.phtml:67
 msgid "Restrictions"
 msgstr "Restrizioni"
 
-#: ../../../../application/forms/Security/RoleForm.php:113
+#: ../../../../application/forms/Security/RoleForm.php:151
 msgid "Role Name"
 msgstr "Nome Ruolo"
 
-#: ../../../../application/controllers/RoleController.php:52
+#: ../../../../application/forms/Security/RoleForm.php:356
 msgid "Role created"
 msgstr "Ruolo creato"
 
-#: ../../../../application/controllers/RoleController.php:130
+#: ../../../../application/forms/Security/RoleForm.php:356
+#, fuzzy
+msgid "Role creation failed"
+msgstr "Ruolo creato"
+
+#: ../../../../application/controllers/RoleController.php:75
+#: ../../../../application/controllers/RoleController.php:98
+#, fuzzy
+msgid "Role not found"
+msgstr "Pagina non trovata"
+
+#: ../../../../application/forms/Security/RoleForm.php:366
+#, fuzzy
+msgid "Role removal failed"
+msgstr "Ruolo rimosso"
+
+#: ../../../../application/forms/Security/RoleForm.php:366
 msgid "Role removed"
 msgstr "Ruolo rimosso"
 
-#: ../../../../application/controllers/RoleController.php:96
+#: ../../../../application/forms/Security/RoleForm.php:361
+#, fuzzy
+msgid "Role update failed"
+msgstr "Ruolo aggiornato"
+
+#: ../../../../application/forms/Security/RoleForm.php:361
 msgid "Role updated"
 msgstr "Ruolo aggiornato"
 
-#: ../../../../application/controllers/GroupController.php:367
-#: ../../../../application/controllers/RoleController.php:153
-#: ../../../../application/controllers/UserController.php:318
+#: ../../../../application/controllers/GroupController.php:375
+#: ../../../../application/controllers/UserController.php:326
+#: ../../../../application/controllers/RoleController.php:21
+#: ../../../../application/controllers/RoleController.php:114
 msgid "Roles"
 msgstr "Ruoli"
 
-#: ../../../../application/forms/Config/Resource/LdapResourceForm.php:120
+#: ../../../../application/forms/Config/Resource/LdapResourceForm.php:89
 msgid "Root DN"
 msgstr "Root DN"
 
@@ -2298,41 +2328,45 @@ msgstr "SQL Database"
 msgid "SSH Identity"
 msgstr "Identità SSH"
 
-#: ../../../../application/forms/Config/Resource/DbResourceForm.php:193
+#: ../../../../application/forms/Config/Resource/DbResourceForm.php:211
 msgid "SSL CA"
 msgstr "SSL CA"
 
-#: ../../../../application/forms/Config/Resource/DbResourceForm.php:201
+#: ../../../../application/forms/Config/Resource/DbResourceForm.php:219
 msgid "SSL CA Path"
 msgstr "SSL CA Path"
 
-#: ../../../../application/forms/Config/Resource/DbResourceForm.php:185
+#: ../../../../application/forms/Config/Resource/DbResourceForm.php:203
 msgid "SSL Certificate"
 msgstr "Certificato SSL"
 
-#: ../../../../application/forms/Config/Resource/DbResourceForm.php:211
+#: ../../../../application/forms/Config/Resource/DbResourceForm.php:229
 msgid "SSL Cipher"
 msgstr "SSL Cipher"
 
-#: ../../../../application/forms/Config/Resource/DbResourceForm.php:177
+#: ../../../../application/forms/Config/Resource/DbResourceForm.php:184
+msgid "SSL Do Not Verify Server Certificate"
+msgstr ""
+
+#: ../../../../application/forms/Config/Resource/DbResourceForm.php:195
 msgid "SSL Key"
 msgstr "SSL Key"
 
-#: ../../../../application/forms/Announcement/AnnouncementForm.php:70
-#: ../../../../application/forms/Config/User/UserForm.php:68
+#: ../../../../application/forms/Announcement/AnnouncementForm.php:85
 #: ../../../../application/forms/Config/UserGroup/UserGroupForm.php:32
+#: ../../../../application/forms/Config/User/UserForm.php:68
 msgid "Save"
 msgstr "Salva"
 
 #: ../../../../application/forms/Config/GeneralConfigForm.php:23
-#: ../../../../application/forms/Config/ResourceConfigForm.php:44
 #: ../../../../application/forms/Config/UserBackendConfigForm.php:46
+#: ../../../../application/forms/Config/ResourceConfigForm.php:44
 #: ../../../../application/forms/Config/UserGroup/UserGroupBackendForm.php:53
 #: ../../../../application/forms/Navigation/NavigationConfigForm.php:85
 msgid "Save Changes"
 msgstr "Salva Modifiche"
 
-#: ../../../../application/forms/PreferenceForm.php:315
+#: ../../../../application/forms/PreferenceForm.php:316
 msgid "Save for the current Session"
 msgstr "Salva per la sessione corrente"
 
@@ -2366,12 +2400,7 @@ msgstr "Cerca..."
 msgid "Searching"
 msgstr "Ricerca in corso"
 
-#: ../../../../application/forms/Dashboard/DashletForm.php:123
-#: ../../../../application/forms/Dashboard/NewDashboardForm.php:89
-#: ../../../../application/forms/Dashboard/NewDashboardForm.php:112
-#: ../../../../application/forms/Dashboard/NewDashboardForm.php:124
-#: ../../../../application/forms/Dashboard/TakeShareForm.php:77
-#: ../../../../application/forms/Dashboard/TakeShareForm.php:103
+#: ../../../../application/forms/Dashboard/DashletForm.php:136
 msgid "Select a dashboard you want to add the dashlet to"
 msgstr "Seleziona a quale dashboard vuoi aggiungere questa vista"
 
@@ -2419,37 +2448,28 @@ msgstr ""
 msgid "Settings"
 msgstr "Impostazioni"
 
-#: ../../../../application/controllers/NavigationController.php:151
 #: ../../../../application/forms/Navigation/NavigationConfigForm.php:594
+#: ../../../../application/controllers/NavigationController.php:152
 #: ../../../../application/views/scripts/navigation/index.phtml:31
 msgid "Shared"
 msgstr "Condiviso"
 
-#: ../../../../application/controllers/DashboardsController.php:22
-#, fuzzy
-msgid "Shared Dashboards"
-msgstr "Dashboard"
-
-#: ../../../../application/controllers/NavigationController.php:194
-#: ../../../../application/controllers/NavigationController.php:202
+#: ../../../../application/controllers/NavigationController.php:192
+#: ../../../../application/controllers/NavigationController.php:197
+#: ../../../../application/controllers/NavigationController.php:205
 #: ../../../../application/views/scripts/navigation/shared.phtml:19
 #: ../../../../library/Icinga/Web/Menu.php:85
 msgid "Shared Navigation"
 msgstr "Navigazione Condivisa"
 
-#: ../../../../application/forms/Dashboard/NewDashboardForm.php:110
-#, fuzzy
-msgid "Shared With"
-msgstr "Condiviso"
-
-#: ../../../../library/Icinga/Web/Widget/Dashboard/Dashlet.php:226
-#: ../../../../library/Icinga/Web/Widget/Dashboard/Dashlet.php:255
+#: ../../../../library/Icinga/Web/Widget/Dashboard/Dashlet.php:240
+#: ../../../../library/Icinga/Web/Widget/Dashboard/Dashlet.php:269
 #, php-format
 msgctxt "dashboard.dashlet.tooltip"
 msgid "Show %s"
 msgstr "Mostra %s"
 
-#: ../../../../library/Icinga/Web/Widget/Dashboard.php:234
+#: ../../../../library/Icinga/Web/Widget/Dashboard.php:247
 #, php-format
 msgctxt "dashboard.pane.tooltip"
 msgid "Show %s"
@@ -2494,7 +2514,7 @@ msgstr "Mostra dettagli del gruppo %s"
 msgid "Show detailed information for user group %s"
 msgstr "Mostra informazioni dettagliate per il gruppo di utenti %s"
 
-#: ../../../../application/controllers/GroupController.php:348
+#: ../../../../application/controllers/GroupController.php:356
 #, php-format
 msgid "Show group %s"
 msgstr "Mostra gruppo %s"
@@ -2506,13 +2526,13 @@ msgstr "Mostra gruppo %s"
 msgid "Show rows %u to %u of %u"
 msgstr "Mostra dalla riga %u alla %u di %u"
 
-#: ../../../../application/views/scripts/about/index.phtml:121
+#: ../../../../application/views/scripts/about/index.phtml:114
 #: ../../../../application/views/scripts/config/modules.phtml:34
 #, php-format
 msgid "Show the overview of the %s module"
 msgstr "Mostra i dettagli del modulo %s"
 
-#: ../../../../application/controllers/UserController.php:299
+#: ../../../../application/controllers/UserController.php:307
 #, php-format
 msgid "Show user %s"
 msgstr "Mostra utente %s"
@@ -2537,13 +2557,14 @@ msgstr "Qualcosa è andato storto durante la scrittura del file"
 msgid "Sort by"
 msgstr "Ordina per"
 
-#: ../../../../application/forms/Announcement/AnnouncementForm.php:44
-#: ../../../../application/views/scripts/announcements/index.phtml:29
+#: ../../../../application/forms/Announcement/AnnouncementForm.php:59
+#: ../../../../application/controllers/AnnouncementsController.php:49
+#: ../../../../application/views/scripts/announcements/index.phtml:35
 msgid "Start"
 msgstr "Inizio"
 
-#: ../../../../application/views/scripts/config/module.phtml:20
 #: ../../../../application/views/scripts/user/show.phtml:32
+#: ../../../../application/views/scripts/config/module.phtml:20
 msgid "State"
 msgstr "Stato"
 
@@ -2551,7 +2572,7 @@ msgstr "Stato"
 msgid "Strip this filter"
 msgstr "Modifica filtro"
 
-#: ../../../../application/views/scripts/about/index.phtml:80
+#: ../../../../application/views/scripts/about/index.phtml:73
 msgid "Support"
 msgstr "Supporto"
 
@@ -2569,24 +2590,15 @@ msgstr "Sistema"
 msgid "System (Yes)"
 msgstr "Sistema"
 
-#: ../../../../application/forms/Dashboard/TakeShareForm.php:32
-#, fuzzy
-msgid "Take Share"
-msgstr "Condiviso"
-
 #: ../../../../application/forms/Navigation/NavigationItemForm.php:38
 msgid "Target"
 msgstr "Destinazione"
 
-#: ../../../../application/forms/Dashboard/TakeShareForm.php:72
-msgid "Target Location"
-msgstr ""
-
-#: ../../../../application/forms/Config/Resource/DbResourceForm.php:194
+#: ../../../../application/forms/Config/Resource/DbResourceForm.php:212
 msgid "The CA certificate file path"
 msgstr "Percorso del file del certificato CA"
 
-#: ../../../../application/views/scripts/about/index.phtml:23
+#: ../../../../application/views/scripts/about/index.phtml:25
 msgid "The Icinga Project"
 msgstr "Il Progetto Icinga"
 
@@ -2620,15 +2632,15 @@ msgid "The attribute name used for storing the user name on the LDAP server."
 msgstr ""
 "Il nome dell'attributo usato per memorizzare il nome utente sul server LDAP."
 
-#: ../../../../application/forms/Config/Resource/DbResourceForm.php:186
+#: ../../../../application/forms/Config/Resource/DbResourceForm.php:204
 msgid "The certificate file path"
 msgstr "Percorso del file del certificato"
 
-#: ../../../../application/forms/Config/Resource/DbResourceForm.php:157
+#: ../../../../application/forms/Config/Resource/DbResourceForm.php:163
 msgid "The character set for the database"
 msgstr "Il set di caratteri per il database"
 
-#: ../../../../application/forms/Config/Resource/DbResourceForm.php:178
+#: ../../../../application/forms/Config/Resource/DbResourceForm.php:196
 msgid "The client key file path"
 msgstr "Percorso del file della chiave del client"
 
@@ -2638,8 +2650,8 @@ msgstr ""
 "Il filtro che identifica le colonne deve essere un'espressione regolare "
 "valida."
 
-#: ../../../../application/forms/Config/ResourceConfigForm.php:349
 #: ../../../../application/forms/Config/UserBackendConfigForm.php:426
+#: ../../../../application/forms/Config/ResourceConfigForm.php:349
 #: ../../../../application/forms/Config/UserGroup/UserGroupBackendForm.php:258
 msgid "The configuration has been successfully validated."
 msgstr "La configurazione è stata convalidata."
@@ -2727,7 +2739,7 @@ msgstr "Percorso completo del file di  log dove scrivere i messaggi."
 msgid "The given SSH key is invalid"
 msgstr "La chiave SSH fornita non è valida"
 
-#: ../../../../application/forms/Config/Resource/DbResourceForm.php:109
+#: ../../../../application/forms/Config/Resource/DbResourceForm.php:115
 msgid "The hostname of the database"
 msgstr "Hostname del database"
 
@@ -2747,7 +2759,7 @@ msgstr ""
 "Icona dell'oggetto di navigazione. Lasciare vuoto se non si vuole mostrare "
 "nessuna icona"
 
-#: ../../../../application/forms/Config/Resource/DbResourceForm.php:212
+#: ../../../../application/forms/Config/Resource/DbResourceForm.php:230
 msgid "The list of permissible ciphers"
 msgstr "Lista dei chipers permessi"
 
@@ -2755,7 +2767,7 @@ msgstr "Lista dei chipers permessi"
 msgid "The maximum logging level to emit."
 msgstr "Livello massimo da scrivere nei log."
 
-#: ../../../../application/forms/Announcement/AnnouncementForm.php:34
+#: ../../../../application/forms/Announcement/AnnouncementForm.php:49
 msgid "The message to display to users"
 msgstr "Messaggio da mostrare agli utenti"
 
@@ -2768,17 +2780,17 @@ msgstr "Nome dell'applicazione da usare come prefisso dei messaggi di syslog."
 msgid "The name of the dashboard pane in which to display this dashlet"
 msgstr "Il nome della dashboard nella quale si vuole mostrare questa vista"
 
-#: ../../../../application/forms/Config/Resource/DbResourceForm.php:99
-#: ../../../../application/forms/Config/Resource/DbResourceForm.php:131
+#: ../../../../application/forms/Config/Resource/DbResourceForm.php:105
+#: ../../../../application/forms/Config/Resource/DbResourceForm.php:137
 msgid "The name of the database to use"
 msgstr "Nome del database da usare"
 
-#: ../../../../application/forms/Security/RoleForm.php:114
+#: ../../../../application/forms/Security/RoleForm.php:152
 msgid "The name of the role"
 msgstr "Il nome del ruolo"
 
-#: ../../../../application/forms/Config/UserBackend/DbBackendForm.php:55
 #: ../../../../application/forms/Config/UserBackend/ExternalBackendForm.php:34
+#: ../../../../application/forms/Config/UserBackend/DbBackendForm.php:55
 msgid ""
 "The name of this authentication provider that is used to differentiate it "
 "from others"
@@ -2799,8 +2811,8 @@ msgid ""
 msgstr ""
 "Il nome dell'oggetto di navigazione usato per differenziarlo dagli altri"
 
-#: ../../../../application/forms/Config/UserGroup/DbUserGroupBackendForm.php:36
 #: ../../../../application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:41
+#: ../../../../application/forms/Config/UserGroup/DbUserGroupBackendForm.php:36
 msgid ""
 "The name of this user group backend that is used to differentiate it from "
 "others"
@@ -2831,11 +2843,11 @@ msgstr ""
 "La voce di menu a cui assegnare questa nuova voce. Selezionare \"Nessuno\" "
 "per creare una nuova voce di menu"
 
-#: ../../../../application/forms/Config/Resource/DbResourceForm.php:150
+#: ../../../../application/forms/Config/Resource/DbResourceForm.php:156
 msgid "The password to use for authentication"
 msgstr "Password da usare per l'autenticazione"
 
-#: ../../../../application/forms/Config/Resource/LdapResourceForm.php:143
+#: ../../../../application/forms/Config/Resource/LdapResourceForm.php:112
 msgid "The password to use for querying the ldap server"
 msgstr "Password da usare per interrogare il server ldap"
 
@@ -2861,15 +2873,11 @@ msgstr ""
 msgid "The pattern by which to identify columns."
 msgstr "L'espressione regolare che consente di identificare le colonne."
 
-#: ../../../../application/forms/Security/RoleForm.php:140
-msgid "The permissions to grant. You may select more than one permission"
-msgstr "Permessi da assegnare. E' possibile selezionare più di un permesso"
-
-#: ../../../../application/forms/Config/Resource/LdapResourceForm.php:92
+#: ../../../../application/forms/Config/Resource/LdapResourceForm.php:61
 msgid "The port of the LDAP server to use for authentication"
 msgstr "La porta del server LDAP da usare per l'autenticazione"
 
-#: ../../../../application/forms/Config/Resource/DbResourceForm.php:118
+#: ../../../../application/forms/Config/Resource/DbResourceForm.php:124
 msgid "The port to use"
 msgstr "La porta da usare"
 
@@ -2882,7 +2890,7 @@ msgstr "La chiave privata per l'utente \"%s\" esiste già."
 msgid "The private key which will be used for the SSH connections"
 msgstr "La chiave privata che verrà utilizzata per le connessioni SSH"
 
-#: ../../../../application/controllers/ConfigController.php:399
+#: ../../../../application/controllers/ConfigController.php:435
 #, php-format
 msgid ""
 "The resource \"%s\" is currently utilized for authentication by user backend "
@@ -2893,7 +2901,7 @@ msgstr ""
 "utenti \"%s\". Rimuovendo la risorsa nessuno sarà più in grado di effettuare "
 "l'accesso."
 
-#: ../../../../application/controllers/ConfigController.php:412
+#: ../../../../application/controllers/ConfigController.php:448
 #, php-format
 msgid ""
 "The resource \"%s\" is currently utilized to store user preferences. "
@@ -2912,19 +2920,19 @@ msgstr "Tipo di log da utilizzare."
 msgid "The target where to open this navigation item's url"
 msgstr "La destinazione in cui aprire l'url di questo oggetto di navigazione"
 
-#: ../../../../application/forms/Announcement/AnnouncementForm.php:43
+#: ../../../../application/forms/Announcement/AnnouncementForm.php:58
 msgid "The time to display the announcement from"
 msgstr "L'ora a partire da cui mostrare l'annuncio"
 
-#: ../../../../application/forms/Announcement/AnnouncementForm.php:53
+#: ../../../../application/forms/Announcement/AnnouncementForm.php:68
 msgid "The time to display the announcement until"
 msgstr "L'ora fino a cui mostrare l'annuncio"
 
-#: ../../../../application/forms/Config/Resource/DbResourceForm.php:203
+#: ../../../../application/forms/Config/Resource/DbResourceForm.php:221
 msgid "The trusted CA certificates in PEM format directory path"
 msgstr "Directory in cui si trovano i certificati trusted CA nel formato PEM"
 
-#: ../../../../application/forms/Config/Resource/DbResourceForm.php:88
+#: ../../../../application/forms/Config/Resource/DbResourceForm.php:94
 msgid "The type of SQL database"
 msgstr "Tipo di database SQL"
 
@@ -2948,10 +2956,10 @@ msgstr "Il tipo dell'oggetto di navigazione"
 msgid "The type of this user group backend"
 msgstr "Tipo del backend gruppo utenti"
 
-#: ../../../../application/forms/Config/Resource/DbResourceForm.php:78
-#: ../../../../application/forms/Config/Resource/FileResourceForm.php:33
-#: ../../../../application/forms/Config/Resource/LdapResourceForm.php:38
 #: ../../../../application/forms/Config/Resource/SshResourceForm.php:37
+#: ../../../../application/forms/Config/Resource/DbResourceForm.php:84
+#: ../../../../application/forms/Config/Resource/LdapResourceForm.php:38
+#: ../../../../application/forms/Config/Resource/FileResourceForm.php:33
 msgid "The unique name of this resource"
 msgstr "Nome univoco per questa risorsa"
 
@@ -2989,7 +2997,7 @@ msgstr ""
 msgid "The user backend to link with this user group backend."
 msgstr "Backend Utenti da collegare a questo backend gruppi utenti."
 
-#: ../../../../application/forms/Config/Resource/LdapResourceForm.php:132
+#: ../../../../application/forms/Config/Resource/LdapResourceForm.php:101
 msgid ""
 "The user dn to use for querying the ldap server. Leave the dn and password "
 "empty for attempting an anonymous bind"
@@ -2997,7 +3005,7 @@ msgstr ""
 "L'utente dn da utilizzare per interrogare il server ldap. Lasciare dn e "
 "password vuoti per tentare una connessione anonima"
 
-#: ../../../../application/forms/Config/Resource/DbResourceForm.php:140
+#: ../../../../application/forms/Config/Resource/DbResourceForm.php:146
 msgid "The user name to use for authentication"
 msgstr "Nome utente da usare per l'autenticazione"
 
@@ -3033,11 +3041,11 @@ msgstr ""
 "Questo è un figlio dell'oggetto di navigazione %1$s. Devi annullare la "
 "condivisione per poter annullare quella di %1$s"
 
-#: ../../../../application/views/scripts/config/module.phtml:60
+#: ../../../../application/views/scripts/config/module.phtml:49
 msgid "This module has no dependencies"
 msgstr "Questo modulo non ha dipendenze"
 
-#: ../../../../library/Icinga/Application/Modules/Module.php:725
+#: ../../../../library/Icinga/Application/Modules/Module.php:921
 msgid "This module has no description"
 msgstr "Questo modulo non ha descrizione"
 
@@ -3055,7 +3063,7 @@ msgid ""
 "fields"
 msgstr ""
 
-#: ../../../../library/Icinga/Web/Form.php:938
+#: ../../../../library/Icinga/Web/Form.php:949
 #: ../../../../library/Icinga/Web/Form/Decorator/Autosubmit.php:100
 msgid "This page will be automatically updated upon change of the value"
 msgstr ""
@@ -3064,7 +3072,11 @@ msgstr ""
 msgid "Tick this box to share this item with others"
 msgstr "Spunta questa casella per condividere questo oggetto con gli altri"
 
-#: ../../../../application/controllers/DashboardController.php:224
+#: ../../../../application/forms/Config/Resource/LdapResourceForm.php:121
+msgid "Timeout"
+msgstr ""
+
+#: ../../../../application/controllers/DashboardController.php:217
 msgid "Title"
 msgstr ""
 
@@ -3072,16 +3084,16 @@ msgstr ""
 msgid "To modify the private key you must recreate this resource."
 msgstr "Per modificare la chiave privata è necessario ricreare questa risorsa."
 
-#: ../../../../application/layouts/scripts/parts/navigation.phtml:34
+#: ../../../../application/layouts/scripts/parts/navigation.phtml:32
 #, fuzzy
 msgid "Toggle Menu"
 msgstr "Aggiungi al Menu"
 
-#: ../../../../application/controllers/NavigationController.php:150
-#: ../../../../application/controllers/NavigationController.php:200
 #: ../../../../application/forms/Navigation/NavigationConfigForm.php:639
-#: ../../../../application/views/scripts/navigation/index.phtml:30
+#: ../../../../application/controllers/NavigationController.php:151
+#: ../../../../application/controllers/NavigationController.php:203
 #: ../../../../application/views/scripts/navigation/shared.phtml:20
+#: ../../../../application/views/scripts/navigation/index.phtml:30
 msgid "Type"
 msgstr "Tipo"
 
@@ -3108,8 +3120,8 @@ msgstr ""
 "Questo dipende dall'oggetto \"%s\". Gli oggetti dipendenti possono essere "
 "rimossi dalla condivisione rimuovendo anche i genitori"
 
-#: ../../../../application/views/scripts/navigation/index.phtml:54
 #: ../../../../application/views/scripts/navigation/shared.phtml:42
+#: ../../../../application/views/scripts/navigation/index.phtml:54
 msgid "Unknown"
 msgstr "Unknown"
 
@@ -3123,7 +3135,7 @@ msgstr "Risorsa sconosciuta"
 msgid "Unshare"
 msgstr "Annulla condivisione"
 
-#: ../../../../application/controllers/NavigationController.php:183
+#: ../../../../application/controllers/NavigationController.php:185
 msgid "Unshare this navigation item"
 msgstr "Annulla condivisione per questo oggetto di navigazione"
 
@@ -3131,7 +3143,7 @@ msgstr "Annulla condivisione per questo oggetto di navigazione"
 msgid "Update Account"
 msgstr "Aggiorna Account"
 
-#: ../../../../application/controllers/AnnouncementsController.php:61
+#: ../../../../application/controllers/AnnouncementsController.php:84
 msgid "Update Announcement"
 msgstr "Aggiorna Annuncio"
 
@@ -3140,54 +3152,54 @@ msgstr "Aggiorna Annuncio"
 msgid "Update Dashlet"
 msgstr "Aggiorna Vista"
 
-#: ../../../../application/controllers/NavigationController.php:300
+#: ../../../../application/controllers/NavigationController.php:305
 msgid "Update Navigation Item"
 msgstr "Aggiorna Oggetto di Navigazione"
 
-#: ../../../../application/controllers/DashboardController.php:210
-#: ../../../../application/controllers/DashboardController.php:251
+#: ../../../../application/controllers/DashboardController.php:203
+#: ../../../../application/controllers/DashboardController.php:244
 #, fuzzy
 msgid "Update Pane"
 msgstr "Aggiorna Ruolo"
 
-#: ../../../../application/controllers/ConfigController.php:347
+#: ../../../../application/controllers/ConfigController.php:382
 msgid "Update Resource"
 msgstr "Aggiorna Risorsa"
 
-#: ../../../../application/controllers/RoleController.php:76
-#: ../../../../application/controllers/RoleController.php:103
+#: ../../../../application/controllers/RoleController.php:69
+#: ../../../../application/controllers/RoleController.php:78
 msgid "Update Role"
 msgstr "Aggiorna Ruolo"
 
-#: ../../../../application/controllers/UserController.php:196
+#: ../../../../application/controllers/UserController.php:204
 msgid "Update User"
 msgstr "Aggiorna Utente"
 
-#: ../../../../application/controllers/ConfigController.php:272
+#: ../../../../application/controllers/ConfigController.php:304
 msgid "Update User Backend"
 msgstr "Aggiorna Backend Utenti"
 
-#: ../../../../application/controllers/GroupController.php:187
+#: ../../../../application/controllers/GroupController.php:195
 msgid "Update User Group"
 msgstr "Aggiorna Gruppo Utenti"
 
-#: ../../../../application/controllers/UsergroupbackendController.php:97
+#: ../../../../application/controllers/UsergroupbackendController.php:99
 msgid "Update User Group Backend"
 msgstr "Aggiorna Backend Gruppi Utenti"
 
+#: ../../../../application/controllers/NavigationController.php:135
 #: ../../../../application/controllers/AccountController.php:27
-#: ../../../../application/controllers/NavigationController.php:134
 msgid "Update your account"
 msgstr "Aggiorna il tuo account"
 
-#: ../../../../application/forms/Dashboard/DashletForm.php:70
+#: ../../../../application/forms/Dashboard/DashletForm.php:81
 #: ../../../../application/forms/Navigation/DashletForm.php:27
 #: ../../../../application/forms/Navigation/NavigationItemForm.php:54
 #: ../../../../application/views/scripts/dashboard/settings.phtml:14
 msgid "Url"
 msgstr "Url"
 
-#: ../../../../application/forms/Config/Resource/DbResourceForm.php:166
+#: ../../../../application/forms/Config/Resource/DbResourceForm.php:172
 msgid "Use SSL"
 msgstr "Usa SSL"
 
@@ -3203,30 +3215,30 @@ msgstr "Usa la lingua seguente per visualizzare testi e messaggi"
 msgid "Use the following timezone for dates and times"
 msgstr "Usa il seguente fuso orario per data e ora"
 
-#: ../../../../application/controllers/UserController.php:300
 #: ../../../../application/forms/Config/Resource/SshResourceForm.php:45
+#: ../../../../application/controllers/UserController.php:308
 msgid "User"
 msgstr "Utente"
 
-#: ../../../../application/forms/Config/User/UserForm.php:155
+#: ../../../../application/forms/Config/User/UserForm.php:156
 #, php-format
 msgid "User \"%s\" has been edited"
 msgstr "Utente \"%s\" è stato modificato"
 
-#: ../../../../application/forms/Config/User/UserForm.php:171
+#: ../../../../application/forms/Config/User/UserForm.php:172
 #, php-format
 msgid "User \"%s\" has been removed"
 msgstr "Utente \"%s\" è stato rimosso"
 
-#: ../../../../application/controllers/GroupController.php:261
+#: ../../../../application/controllers/GroupController.php:269
 #, php-format
 msgid "User \"%s\" has been removed from group \"%s\""
 msgstr "Utente \"%s\" è stato rimosso dal gruppo \"%s\""
 
-#: ../../../../application/controllers/UserController.php:97
-#: ../../../../application/controllers/UserController.php:193
-#: ../../../../application/controllers/UserController.php:215
-#: ../../../../application/controllers/UserController.php:231
+#: ../../../../application/controllers/UserController.php:104
+#: ../../../../application/controllers/UserController.php:201
+#: ../../../../application/controllers/UserController.php:223
+#: ../../../../application/controllers/UserController.php:239
 #, php-format
 msgid "User \"%s\" not found"
 msgstr "Utente \"%s\" non trovato"
@@ -3236,8 +3248,8 @@ msgstr "Utente \"%s\" non trovato"
 msgid "User %s is already a member of all groups"
 msgstr "Utente %s è già un membro di tutti i gruppi"
 
-#: ../../../../application/controllers/UserController.php:50
 #: ../../../../application/forms/Config/UserGroup/LdapUserGroupBackendForm.php:77
+#: ../../../../application/controllers/UserController.php:57
 msgid "User Backend"
 msgstr "Backend Utenti"
 
@@ -3245,16 +3257,16 @@ msgstr "Backend Utenti"
 msgid "User Backends"
 msgstr "Utente Backend"
 
-#: ../../../../application/controllers/GroupController.php:73
-#: ../../../../application/controllers/UserController.php:109
+#: ../../../../application/controllers/GroupController.php:80
+#: ../../../../application/controllers/UserController.php:116
 #: ../../../../application/views/scripts/group/list.phtml:50
+#: ../../../../library/Icinga/Authentication/UserGroup/LdapUserGroupBackend.php:573
 #: ../../../../library/Icinga/Authentication/UserGroup/DbUserGroupBackend.php:118
 #: ../../../../library/Icinga/Authentication/UserGroup/DbUserGroupBackend.php:123
-#: ../../../../library/Icinga/Authentication/UserGroup/LdapUserGroupBackend.php:547
 msgid "User Group"
 msgstr "Gruppi Utenti"
 
-#: ../../../../application/controllers/GroupController.php:51
+#: ../../../../application/controllers/GroupController.php:58
 msgid "User Group Backend"
 msgstr "Backend Gruppi Utenti"
 
@@ -3262,9 +3274,10 @@ msgstr "Backend Gruppi Utenti"
 msgid "User Group Backends"
 msgstr "Backend Gruppo Utenti"
 
-#: ../../../../application/controllers/GroupController.php:387
-#: ../../../../application/controllers/RoleController.php:173
-#: ../../../../application/controllers/UserController.php:338
+#: ../../../../application/controllers/GroupController.php:26
+#: ../../../../application/controllers/GroupController.php:395
+#: ../../../../application/controllers/UserController.php:346
+#: ../../../../application/controllers/RoleController.php:134
 msgid "User Groups"
 msgstr "Gruppi Utenti"
 
@@ -3272,27 +3285,27 @@ msgstr "Gruppi Utenti"
 msgid "User Preference Storage Type"
 msgstr "Metodo di salvataggio delle preferenze degli utenti"
 
-#: ../../../../application/forms/Config/User/UserForm.php:139
+#: ../../../../application/forms/Config/User/UserForm.php:140
 msgid "User added successfully"
 msgstr "Utente aggiunto correttamente"
 
-#: ../../../../application/controllers/ConfigController.php:269
 #: ../../../../application/forms/Config/UserBackendReorderForm.php:70
+#: ../../../../application/controllers/ConfigController.php:300
 #, php-format
 msgid "User backend \"%s\" not found"
 msgstr "Backend Utenti \"%s\" non trovato"
 
-#: ../../../../application/controllers/ConfigController.php:296
+#: ../../../../application/controllers/ConfigController.php:328
 #, php-format
 msgid "User backend \"%s\" successfully removed"
 msgstr "Backend Utenti \"%s\" rimosso correttamente"
 
-#: ../../../../application/controllers/ConfigController.php:257
+#: ../../../../application/controllers/ConfigController.php:288
 #, php-format
 msgid "User backend \"%s\" successfully updated"
 msgstr "Backend  Utenti \"%s\" aggiornato correttamente"
 
-#: ../../../../application/controllers/ConfigController.php:226
+#: ../../../../application/controllers/ConfigController.php:256
 msgid "User backend successfully created"
 msgstr "Backend Utenti aggiunto correttamente"
 
@@ -3301,18 +3314,18 @@ msgstr "Backend Utenti aggiunto correttamente"
 msgid "User group backend \"%s\" is not %s"
 msgstr "Backend gruppi utenti \"%s\" non è %s"
 
-#: ../../../../application/controllers/UsergroupbackendController.php:94
+#: ../../../../application/controllers/UsergroupbackendController.php:95
 #: ../../../../library/Icinga/Web/Controller/AuthBackendController.php:120
 #, php-format
 msgid "User group backend \"%s\" not found"
 msgstr "Backend gruppo utenti \"%s\" non trovato"
 
-#: ../../../../application/controllers/UsergroupbackendController.php:120
+#: ../../../../application/controllers/UsergroupbackendController.php:122
 #, php-format
 msgid "User group backend \"%s\" successfully removed"
 msgstr "Backend gruppi utenti \"%s\" rimosso correttamente"
 
-#: ../../../../application/controllers/UsergroupbackendController.php:83
+#: ../../../../application/controllers/UsergroupbackendController.php:84
 #, php-format
 msgid "User group backend \"%s\" successfully updated"
 msgstr "Backend gruppi utenti \"%s\" aggiornato correttamente"
@@ -3329,28 +3342,29 @@ msgstr ""
 "Utente da usare per la connessione all'istanza remota di Icinga. L'utente "
 "deve avere i permessi per poter effettuare login con chiave SSH"
 
-#: ../../../../application/controllers/GroupController.php:109
-#: ../../../../application/controllers/UserController.php:72
-#: ../../../../application/forms/Authentication/LoginForm.php:46
-#: ../../../../application/forms/Config/Resource/DbResourceForm.php:139
+#: ../../../../application/forms/Config/Resource/DbResourceForm.php:145
 #: ../../../../application/forms/Config/User/UserForm.php:33
+#: ../../../../application/forms/Authentication/LoginForm.php:48
+#: ../../../../application/controllers/GroupController.php:116
+#: ../../../../application/controllers/UserController.php:79
 #: ../../../../application/views/scripts/group/show.phtml:75
 #: ../../../../application/views/scripts/user/list.phtml:51
-#: ../../../../library/Icinga/Authentication/User/DbUserBackend.php:101
-#: ../../../../library/Icinga/Authentication/User/DbUserBackend.php:104
-#: ../../../../library/Icinga/Authentication/User/LdapUserBackend.php:269
+#: ../../../../library/Icinga/Authentication/UserGroup/LdapUserGroupBackend.php:572
 #: ../../../../library/Icinga/Authentication/UserGroup/DbUserGroupBackend.php:117
 #: ../../../../library/Icinga/Authentication/UserGroup/DbUserGroupBackend.php:121
-#: ../../../../library/Icinga/Authentication/UserGroup/LdapUserGroupBackend.php:546
+#: ../../../../library/Icinga/Authentication/User/LdapUserBackend.php:269
+#: ../../../../library/Icinga/Authentication/User/DbUserBackend.php:101
+#: ../../../../library/Icinga/Authentication/User/DbUserBackend.php:104
 msgid "Username"
 msgstr "Nome Utente"
 
-#: ../../../../application/controllers/GroupController.php:379
-#: ../../../../application/controllers/RoleController.php:165
-#: ../../../../application/controllers/UserController.php:330
+#: ../../../../application/forms/Security/RoleForm.php:159
 #: ../../../../application/forms/Config/UserGroup/AddMemberForm.php:118
 #: ../../../../application/forms/Navigation/NavigationConfigForm.php:605
-#: ../../../../application/forms/Security/RoleForm.php:122
+#: ../../../../application/controllers/GroupController.php:387
+#: ../../../../application/controllers/UserController.php:25
+#: ../../../../application/controllers/UserController.php:338
+#: ../../../../application/controllers/RoleController.php:126
 #: ../../../../application/views/scripts/role/list.phtml:23
 msgid "Users"
 msgstr "Utenti"
@@ -3360,26 +3374,26 @@ msgctxt "Form element label"
 msgid "Users Can't Change Theme"
 msgstr "Gli utenti non possono cambiare tema"
 
-#: ../../../../application/forms/Config/ResourceConfigForm.php:373
 #: ../../../../application/forms/Config/UserBackendConfigForm.php:450
+#: ../../../../application/forms/Config/ResourceConfigForm.php:373
 #: ../../../../application/forms/Config/UserGroup/UserGroupBackendForm.php:282
 msgid "Validate Configuration"
 msgstr "Convalida Configurazione"
 
-#: ../../../../application/forms/Config/ResourceConfigForm.php:374
 #: ../../../../application/forms/Config/UserBackendConfigForm.php:451
+#: ../../../../application/forms/Config/ResourceConfigForm.php:374
 #: ../../../../application/forms/Config/UserGroup/UserGroupBackendForm.php:283
 msgid "Validation In Progress"
 msgstr "Convalida In Corso"
 
-#: ../../../../application/forms/Config/ResourceConfigForm.php:331
 #: ../../../../application/forms/Config/UserBackendConfigForm.php:408
+#: ../../../../application/forms/Config/ResourceConfigForm.php:331
 #: ../../../../application/forms/Config/UserGroup/UserGroupBackendForm.php:240
 msgid "Validation Log"
 msgstr "Log di Convalida"
 
-#: ../../../../application/views/scripts/about/index.phtml:109
-#: ../../../../application/views/scripts/config/module.phtml:39
+#: ../../../../application/views/scripts/about/index.phtml:102
+#: ../../../../application/views/scripts/config/module.phtml:28
 msgid "Version"
 msgstr "Versione"
 
@@ -3407,7 +3421,12 @@ msgstr ""
 msgid "Welcome to Icinga Web!"
 msgstr "Benvenuto in Icinga Web!"
 
-#: ../../../../application/forms/Config/Resource/LdapResourceForm.php:104
+#: ../../../../application/forms/Config/Resource/DbResourceForm.php:186
+#, fuzzy
+msgid "Whether to disable verification of the server certificate"
+msgstr "Criptare la connessione o autenticare usando certificati"
+
+#: ../../../../application/forms/Config/Resource/LdapResourceForm.php:73
 msgid ""
 "Whether to encrypt communication. Choose STARTTLS or LDAPS for encrypted "
 "communication or none for unencrypted communication"
@@ -3415,7 +3434,7 @@ msgstr ""
 "Scegliere STARTTLS o LDAPS per una crittografare la comunicazione o None per "
 "la comunicazione in chiaro"
 
-#: ../../../../application/forms/Config/Resource/DbResourceForm.php:168
+#: ../../../../application/forms/Config/Resource/DbResourceForm.php:174
 msgid "Whether to encrypt the connection or to authenticate using certificates"
 msgstr "Criptare la connessione o autenticare usando certificati"
 
@@ -3423,11 +3442,6 @@ msgstr "Criptare la connessione o autenticare usando certificati"
 #, fuzzy
 msgid "Whether to show application state messages."
 msgstr "Selezionare se si vuole visualizzare le eccezioni dello stacktrace."
-
-#: ../../../../application/forms/Dashboard/NewDashboardForm.php:122
-#, fuzzy
-msgid "Write Permissions"
-msgstr "Permessi"
 
 #: ../../../../application/views/scripts/joystickPagination.phtml:79
 #: ../../../../application/views/scripts/joystickPagination.phtml:118
@@ -3442,9 +3456,9 @@ msgid "Y-Axis"
 msgstr "Asse Y"
 
 #: ../../../../application/forms/PreferenceForm.php:247
-#: ../../../../application/forms/Announcement/AnnouncementForm.php:79
-#: ../../../../application/forms/Config/User/UserForm.php:116
+#: ../../../../application/forms/Announcement/AnnouncementForm.php:94
 #: ../../../../application/forms/Config/UserGroup/UserGroupForm.php:66
+#: ../../../../application/forms/Config/User/UserForm.php:116
 #: ../../../../application/views/scripts/navigation/index.phtml:57
 msgid "Yes"
 msgstr "Si"
@@ -3471,7 +3485,7 @@ msgstr "Non è ancora stato creato nessun oggetto di navigazione."
 msgid "You don't have file-system permissions to write to the file"
 msgstr "Nessun permesso per scrivere nel file"
 
-#: ../../../../application/controllers/UserController.php:237
+#: ../../../../application/controllers/UserController.php:245
 msgid ""
 "You'll need to configure at least one user group backend first that allows "
 "to create new memberships"
@@ -3479,7 +3493,7 @@ msgstr ""
 "E' necessario configurare almeno un backend gruppi utenti per poter creare "
 "una nuova associazione"
 
-#: ../../../../application/forms/Authentication/LoginForm.php:146
+#: ../../../../application/forms/Authentication/LoginForm.php:148
 msgid ""
 "You're currently not authenticated using any of the web server's "
 "authentication mechanisms. Make sure you'll configure such, otherwise you'll "
@@ -3506,13 +3520,13 @@ msgstr ""
 "manca il corrispondente locale. Assicurati di installare il pacchetto di "
 "lingua corretto e riavviare in seguito il web server."
 
-#: ../../../../library/Icinga/Date/DateFormatter.php:176
+#: ../../../../library/Icinga/Date/DateFormatter.php:178
 #, php-format
 msgctxt "An event happened at the given time"
 msgid "at %s"
 msgstr "alle %s"
 
-#: ../../../../library/Icinga/Date/DateFormatter.php:250
+#: ../../../../library/Icinga/Date/DateFormatter.php:254
 #, php-format
 msgctxt "An event will happen at the given time"
 msgid "at %s"
@@ -3523,15 +3537,7 @@ msgstr "alle %s"
 msgid "default"
 msgstr "default"
 
-#: ../../../../application/views/scripts/config/module.phtml:23
-msgid "disable"
-msgstr "disabilita"
-
-#: ../../../../application/views/scripts/config/module.phtml:31
-msgid "enable"
-msgstr "abilita"
-
-#: ../../../../library/Icinga/Date/DateFormatter.php:199
+#: ../../../../library/Icinga/Date/DateFormatter.php:202
 #, php-format
 msgctxt "A status is lasting for the given time interval"
 msgid "for %s"
@@ -3547,7 +3553,7 @@ msgstr "host"
 msgid "icinga.com"
 msgstr ""
 
-#: ../../../../library/Icinga/Date/DateFormatter.php:245
+#: ../../../../library/Icinga/Date/DateFormatter.php:249
 #, php-format
 msgctxt "An event will happen after the given time interval has elapsed"
 msgid "in %s"
@@ -3557,13 +3563,13 @@ msgstr "in %s"
 msgid "modules"
 msgstr "moduli"
 
-#: ../../../../library/Icinga/Date/DateFormatter.php:165
+#: ../../../../library/Icinga/Date/DateFormatter.php:167
 #, php-format
 msgctxt "An event happened on the given date or date and time"
 msgid "on %s"
 msgstr "il %s"
 
-#: ../../../../library/Icinga/Date/DateFormatter.php:239
+#: ../../../../library/Icinga/Date/DateFormatter.php:243
 #, php-format
 msgctxt "An event will happen on the given date or date and time"
 msgid "on %s"
@@ -3575,7 +3581,7 @@ msgctxt "pagination.joystick"
 msgid "services"
 msgstr "servizi"
 
-#: ../../../../library/Icinga/Date/DateFormatter.php:209
+#: ../../../../library/Icinga/Date/DateFormatter.php:212
 #, php-format
 msgctxt "A status is lasting since the given time, date or date and time"
 msgid "since %s"
@@ -3584,6 +3590,76 @@ msgstr "dal %s"
 #: ../../../../application/views/scripts/config/devtools.phtml:5
 msgid "toggle"
 msgstr "seleziona"
+
+#~ msgid ""
+#~ "A protocol scheme such as ldap:// or ldaps:// is mandatory for URIs with "
+#~ "a given port and for all other URIs as well once a scheme is given for a "
+#~ "single one."
+#~ msgstr ""
+#~ "Un protocollo come ldap:// o ldaps:// e' obbligatorio per URI con una "
+#~ "data porta e per tutte le altre URI."
+
+#~ msgid "Allow everything"
+#~ msgstr "Permetti tutto"
+
+#, fuzzy
+#~ msgid "Available Dashlets"
+#~ msgstr "Rimouovi Vista"
+
+#~ msgid "Can't add role '%s'. Role already exists"
+#~ msgstr "Impossibile aggiungere il ruolo '%s'. Ruolo già esistente"
+
+#~ msgid "Can't load role '%s'. Role does not exist"
+#~ msgstr "Impossibile caricare il ruolo '%s'. Ruolo inesistente"
+
+#~ msgid "Can't remove role '%s'. Role does not exist"
+#~ msgstr "Impossibile rimuovere il ruolo '%s'. Ruolo inesistente"
+
+#~ msgid "Can't update role '%s'. Role does not exist"
+#~ msgstr "Impossibile aggiornare il ruolo '%s'. Ruolo inesistente"
+
+#, fuzzy
+#~ msgid "Dashboard Home"
+#~ msgstr "Dashboard"
+
+#, fuzzy
+#~ msgid "Dashboard Name"
+#~ msgstr "Dashboard"
+
+#~ msgid "Icinga on Google+"
+#~ msgstr "Icinga su Google+"
+
+#, fuzzy
+#~ msgid "New Dashboard Home"
+#~ msgstr "Titolo nuova Dashboard"
+
+#~ msgid "Permissions Set"
+#~ msgstr "Permessi"
+
+#, fuzzy
+#~ msgid "Shared Dashboards"
+#~ msgstr "Dashboard"
+
+#, fuzzy
+#~ msgid "Shared With"
+#~ msgstr "Condiviso"
+
+#, fuzzy
+#~ msgid "Take Share"
+#~ msgstr "Condiviso"
+
+#~ msgid "The permissions to grant. You may select more than one permission"
+#~ msgstr "Permessi da assegnare. E' possibile selezionare più di un permesso"
+
+#, fuzzy
+#~ msgid "Write Permissions"
+#~ msgstr "Permessi"
+
+#~ msgid "disable"
+#~ msgstr "disabilita"
+
+#~ msgid "enable"
+#~ msgstr "abilita"
 
 #~ msgid ""
 #~ "Check this box for persistent database connections. Persistent "
