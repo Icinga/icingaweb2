@@ -30,11 +30,11 @@ class DeleteDowntimesCommandForm extends CommandForm
     /**
      * Set the downtimes to delete
      *
-     * @param   array $downtimes
+     * @param   iterable $downtimes
      *
      * @return  $this
      */
-    public function setDowntimes(array $downtimes)
+    public function setDowntimes($downtimes)
     {
         $this->downtimes = $downtimes;
         return $this;
