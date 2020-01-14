@@ -415,13 +415,19 @@
             return true;
         },
 
+        /**
+         * Add the specified flag to the given URL
+         *
+         * @param {string} url
+         * @param {string} flag
+         *
+         * @returns {string}
+         *
+         * @deprecated since version 2.8.0. Use {@link Icinga.Utils.addUrlFlag()} instead
+         */
         addUrlFlag: function(url, flag)
         {
-            if (url.match(/\?/)) {
-                return url + '&' + flag;
-            } else {
-                return url + '?' + flag;
-            }
+            return this.icinga.utils.addUrlFlag(url, flag);
         },
 
         /**
