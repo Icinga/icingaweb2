@@ -30,11 +30,11 @@ class DeleteCommentsCommandForm extends CommandForm
     /**
      * Set the comments to delete
      *
-     * @param   array $comments
+     * @param   iterable $comments
      *
      * @return  $this
      */
-    public function setComments(array $comments)
+    public function setComments($comments)
     {
         $this->comments = $comments;
         return $this;
