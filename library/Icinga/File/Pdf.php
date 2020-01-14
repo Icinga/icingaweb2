@@ -70,17 +70,14 @@ class Pdf
 
         if (Hook::has('Pdfexport')) {
             $pdfexport = Hook::first('Pdfexport');
+            $pdfexport->streamPdfFromHtml($html, sprintf(
+                '%s-%s-%d',
+                $request->getControllerName(),
+                $request->getActionName(),
+                time()
+            ));
 
-            if ($pdfexport->isSupported()) {
-                $pdfexport->streamPdfFromHtml($html, sprintf(
-                    '%s-%s-%d',
-                    $request->getControllerName(),
-                    $request->getActionName(),
-                    time()
-                ));
-
-                return;
-            }
+            return;
         }
 
         $options = new Options();
