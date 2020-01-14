@@ -122,7 +122,6 @@ class ActionController extends Zend_Controller_Action
             ->_setInvokeArgs($invokeArgs);
         $this->_helper = new Zend_Controller_Action_HelperBroker($this);
 
-        $this->handlerBrowserWindows();
         $moduleName = $this->getModuleName();
         $this->view->defaultTitle = static::DEFAULT_TITLE;
         $this->view->translationDomain = $moduleName !== 'default' ? $moduleName : 'icinga';
@@ -233,18 +232,6 @@ class ActionController extends Zend_Controller_Action
         }
 
         return $this->window;
-    }
-
-    protected function handlerBrowserWindows()
-    {
-        if ($this->isXhr()) {
-            $id = $this->_request->getHeader('X-Icinga-WindowId', null);
-
-            if ($id === Window::UNDEFINED) {
-                $this->window = new Window($id);
-                $this->_response->setHeader('X-Icinga-WindowId', Window::generateId());
-            }
-        }
     }
 
     protected function reloadCss()
