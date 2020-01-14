@@ -321,7 +321,7 @@ class ResourceConfigForm extends ConfigForm
             $inspection = static::inspectResource($this);
             if ($inspection !== null) {
                 $join = function ($e) use (&$join) {
-                    return is_string($e) ? $e : join("\n", array_map($join, $e));
+                    return is_array($e) ? join("\n", array_map($join, $e)) : $e;
                 };
                 $this->addElement(
                     'note',
