@@ -113,8 +113,8 @@ class Window
         if (! isset(static::$window)) {
             $id = Icinga::app()->getRequest()->getHeader('X-Icinga-WindowId');
             if (empty($id) || $id === static::UNDEFINED) {
+                Icinga::app()->getResponse()->setOverrideWindowId();
                 $id = static::generateId();
-                Icinga::app()->getResponse()->setHeader('X-Icinga-WindowId', $id);
             }
 
             static::$window = new Window($id);

@@ -229,10 +229,9 @@ class ActionController extends Zend_Controller_Action
     public function Window()
     {
         if ($this->window === null) {
-            $this->window = new Window(
-                $this->_request->getHeader('X-Icinga-WindowId', Window::UNDEFINED)
-            );
+            $this->window = Window::getInstance();
         }
+
         return $this->window;
     }
 
