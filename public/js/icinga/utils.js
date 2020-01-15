@@ -133,7 +133,7 @@
 
             $.each(params, function (key, value) {
               // We overwrite existing params
-              newparams[key] = value;
+              newparams[encodeURIComponent(key)] = encodeURIComponent(value);
             });
 
             if (Object.keys(newparams).length) {
@@ -143,9 +143,9 @@
                       queryString += '&';
                   }
 
-                  queryString += encodeURIComponent(key);
+                  queryString += key;
                   if (value !== null) {
-                      queryString += '=' + encodeURIComponent(value);
+                      queryString += '=' + value;
                   }
                 });
                 result += queryString;
