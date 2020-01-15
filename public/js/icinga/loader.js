@@ -549,7 +549,7 @@
             if (rerenderLayout) {
                 var parts = url.split(/#!/);
                 url = parts.shift();
-                var redirectionUrl = this.addUrlFlag(url, 'renderLayout');
+                var redirectionUrl = icinga.utils.addUrlFlag(url, 'renderLayout');
                 var r = this.loadUrl(redirectionUrl, $('#layout'));
                 r.historyUrl = url;
                 if (parts.length) {
