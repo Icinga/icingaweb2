@@ -219,7 +219,7 @@
          * @returns {string}
          */
         addUrlFlag: function (url, flag) {
-            var pos = url.lastIndexOf('#');
+            var pos = url.search(/#(?!!)/);
 
             if (url.indexOf('?') !== -1) {
                 flag = '&' + flag;
