@@ -92,6 +92,7 @@
         var $modal = $form.closest('#modal');
 
         var req = _this.icinga.loader.submitForm($form, $autoSubmittedBy);
+        req.addToHistory = false;
         req.$redirectTarget = $modal.data('redirectTarget');
         req.done(function (data, textStatus, req) {
             if (req.getResponseHeader('X-Icinga-Redirect')) {
