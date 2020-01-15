@@ -115,6 +115,26 @@
         },
 
         /**
+         * Replace the current history entry with the current state
+         */
+        replaceCurrentState: function () {
+            if (! this.enabled) {
+                return;
+            }
+
+            var state = this.getCurrentState();
+
+            if (state.url) {
+                this.icinga.logger.debug('Replacing current history state');
+                window.history.replaceState(
+                    this.getBehaviorState(),
+                    null,
+                    state.url
+                );
+            }
+        },
+
+        /**
          * Push the given url as the new history state, unless the history is disabled
          *
          * @param   {string}    url     The full url path, including anchor
