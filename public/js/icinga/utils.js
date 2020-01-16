@@ -132,21 +132,23 @@
                 newparams = parts.params;
 
             $.each(params, function (key, value) {
-              // We overwrite existing params
-              newparams[encodeURIComponent(key)] = encodeURIComponent(value);
+                // We overwrite existing params
+                newparams[encodeURIComponent(key)] = typeof value === 'string'
+                    ? encodeURIComponent(value)
+                    : null;
             });
 
             if (Object.keys(newparams).length) {
                 var queryString = '?';
                 $.each(newparams, function (key, value) {
-                  if (queryString !== '?') {
-                      queryString += '&';
-                  }
+                    if (queryString !== '?') {
+                        queryString += '&';
+                    }
 
-                  queryString += key;
-                  if (value !== null) {
-                      queryString += '=' + value;
-                  }
+                    queryString += key;
+                    if (value !== null) {
+                        queryString += '=' + value;
+                    }
                 });
                 result += queryString;
             }
@@ -165,7 +167,7 @@
                 newparams = parts.params;
 
             $.each(params, function (idx, key) {
-                delete newparams[key];
+                delete newparams[encodeURIComponent(key)];
             });
 
             if (Object.keys(newparams).length) {
@@ -175,9 +177,9 @@
                       queryString += '&';
                   }
 
-                  queryString += encodeURIComponent(key);
+                  queryString += key;
                   if (value !== null) {
-                      queryString += '=' + encodeURIComponent(value);
+                      queryString += '=' + value;
                   }
                 });
                 result += queryString;
