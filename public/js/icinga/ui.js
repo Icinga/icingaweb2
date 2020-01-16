@@ -153,7 +153,11 @@
             var $element = element;
 
             if (typeof element === 'string') {
-                $element = $('#' + element);
+                if ($container && $container.length) {
+                    $element = $container.find('#' + element);
+                } else {
+                    $element = $('#' + element);
+                }
 
                 if (! $element.length) {
                     // The name attribute is actually deprecated, on anchor tags,
