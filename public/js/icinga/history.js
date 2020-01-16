@@ -52,18 +52,17 @@
         },
 
         /**
-         * Detect active URLs and push combined URL to history
+         * Get the current state (url and title) as object
          *
-         * TODO: How should we handle POST requests? e.g. search VS login
+         * @returns {object}
          */
-        pushCurrentState: function () {
-            // No history API, no action
+        getCurrentState: function () {
             if (! this.enabled) {
-                return;
+                return null;
             }
 
-            var url = '';
-            var title = '';
+            var title = null;
+            var url = null;
 
             // We only store URLs of containers sitting directly under #main:
             $('#main > .container').each(function (idx, container) {
@@ -74,7 +73,7 @@
                 // TODO: I'd prefer to have the rightmost URL first
                 if ('undefined' !== typeof cUrl) {
                     // TODO: solve this on server side cUrl = icinga.utils.removeUrlParams(cUrl, blacklist);
-                    if (url === '') {
+                    if (! url) {
                         url = cUrl;
                     } else {
                         url = url + '#!' + cUrl;
@@ -86,13 +85,52 @@
                 }
             });
 
-            // Did we find any URL? Then push it!
-            if (url !== '') {
-                this.icinga.logger.debug('Pushing current state to history');
-                this.push(url);
+            return {
+                title: title,
+                url: url,
+            };
+        },
+
+        /**
+         * Detect active URLs and push combined URL to history
+         *
+         * TODO: How should we handle POST requests? e.g. search VS login
+         */
+        pushCurrentState: function () {
+            // No history API, no action
+            if (! this.enabled) {
+                return;
             }
-            if (title !== '') {
-                this.icinga.ui.setTitle(title);
+
+            var state = this.getCurrentState();
+
+            // Did we find any URL? Then push it!
+            if (state.url) {
+                this.icinga.logger.debug('Pushing current state to history');
+                this.push(state.url);
+            }
+            if (state.title) {
+                this.icinga.ui.setTitle(state.title);
+            }
+        },
+
+        /**
+         * Replace the current history entry with the current state
+         */
+        replaceCurrentState: function () {
+            if (! this.enabled) {
+                return;
+            }
+
+            var state = this.getCurrentState();
+
+            if (state.url) {
+                this.icinga.logger.debug('Replacing current history state');
+                window.history.replaceState(
+                    this.getBehaviorState(),
+                    null,
+                    state.url
+                );
             }
         },
 
