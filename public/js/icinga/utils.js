@@ -133,7 +133,7 @@
 
             $.each(params, function (key, value) {
               // We overwrite existing params
-              newparams[key] = value;
+              newparams[encodeURIComponent(key)] = encodeURIComponent(value);
             });
 
             if (Object.keys(newparams).length) {
@@ -143,9 +143,9 @@
                       queryString += '&';
                   }
 
-                  queryString += encodeURIComponent(key);
+                  queryString += key;
                   if (value !== null) {
-                      queryString += '=' + encodeURIComponent(value);
+                      queryString += '=' + value;
                   }
                 });
                 result += queryString;
@@ -198,15 +198,28 @@
                 segment = a.search.replace(/^\?/,'').split('&'),
                 len = segment.length,
                 i = 0,
-                s;
+                s,
+                key,
+                value,
+                equalPos;
 
             for (; i < len; i++) {
-                if (!segment[i]) {
+                if (! segment[i]) {
                     continue;
                 }
-                s = segment[i].split('=');
-                params[decodeURIComponent(s[0])] = typeof s[1] !== 'undefined' ? decodeURIComponent(s[1]) : null;
+
+                equalPos = segment[i].indexOf('=');
+                if (equalPos !== -1) {
+                    key = segment[i].slice(0, equalPos);
+                    value = segment[i].slice(equalPos + 1);
+                } else {
+                    key = segment[i];
+                    value = null;
+                }
+
+                params[key] = value;
             }
+
             return params;
         },
 
