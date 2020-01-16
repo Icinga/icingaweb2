@@ -238,7 +238,8 @@
   width: 100%;
 
   tr[href] {
-    -webkit-transform: translate3d(0,0,0); /* Fixes Safari hover bug in history table rows */
+    -webkit-transform: translate3d(0,0,0); /* Without this, hovering in Safari is broken in history table rows */
+    -moz-transform: none; /* Firefox collapses border spacing due to the above */
   }
 
   tr[href].active {
