@@ -1077,7 +1077,7 @@
             }
 
             var scrollTarget = $container;
-            if (! forceFocus && typeof containerId !== 'undefined') {
+            if (typeof containerId !== 'undefined') {
                 if (autorefresh || autoSubmit) {
                     if ($container.css('display') === 'flex') {
                         var $scrollableContent = $container.children('.content');
