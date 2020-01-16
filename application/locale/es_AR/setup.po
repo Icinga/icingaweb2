@@ -1,0 +1,1422 @@
+# Icinga Web 2 - Head for multiple monitoring backends.
+# Copyright (C) 2019 Icinga Development Team
+# This file is distributed under the same license as Setup Module.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Setup Module (2.6.1)\n"
+"Report-Msgid-Bugs-To: dev@icinga.com\n"
+"POT-Creation-Date: 2019-01-18 11:20-0200\n"
+"PO-Revision-Date: 2019-03-29 12:30-0300\n"
+"Language: es_AR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-Basepath: .\n"
+"Last-Translator: Juan Cruz Fernandez <juancruz.f87@gmail.com>\n"
+"Language-Team: \n"
+"X-Generator: Poedit 1.8.7.1\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: ../../../../modules/setup/library/Setup/Requirement/OSRequirement.php:15
+#, php-format
+msgid "%s Platform"
+msgstr "%s Platforma"
+
+#: ../../../../modules/setup/application/views/scripts/form/setup-welcome.phtml:104
+msgid "<your-webserver-user>"
+msgstr "<your-webserver-user>"
+
+#: ../../../../modules/setup/application/views/scripts/form/setup-welcome.phtml:84
+msgid "A system group called \"icingaweb2\" exists"
+msgstr "Existe un grupo de sistema llamado \ "icingaweb2 \""
+
+#: ../../../../modules/setup/application/forms/DatabaseCreationPage.php:102
+msgid ""
+"A user which is able to create databases and/or touch the database schema"
+msgstr "Un usuario que puede crear bases de datos y / o tocar el esquema de la base de datos."
+
+#: ../../../../modules/setup/library/Setup/Steps/UserGroupStep.php:198
+#, php-format
+msgid ""
+"Account \"%s\" has been successfully added as member to user group \"%s\"."
+msgstr "La cuenta \"%s\" se ha agregado correctamente como miembro al grupo de usuarios \ "%s\"."
+
+#: ../../../../modules/setup/library/Setup/Steps/AuthenticationStep.php:203
+#, php-format
+msgid "Account \"%s\" has been successfully created."
+msgstr "La cuenta\"%s\" fue creada exitosamente."
+
+#: ../../../../modules/setup/library/Setup/Steps/AuthenticationStep.php:216
+#, php-format
+msgid "Account \"%s\" has been successfully defined as initial administrator."
+msgstr "La cuenta \"%s\" se ha definido correctamente como administrador inicial."
+
+#: ../../../../modules/setup/application/forms/AdminAccountPage.php:52
+#: ../../../../modules/setup/library/Setup/Steps/AuthenticationStep.php:122
+msgctxt "setup.page.title"
+msgid "Administration"
+msgstr "Administración"
+
+#: ../../../../modules/setup/library/Setup/Steps/AuthenticationStep.php:167
+#, php-format
+msgid ""
+"Administrative rights will initially be granted to a new account called \"%s"
+"\"."
+msgstr "Los derechos administrativos se otorgarán inicialmente a una nueva cuenta llamada \ "%s\"."
+
+#: ../../../../modules/setup/library/Setup/Steps/AuthenticationStep.php:170
+#, php-format
+msgid ""
+"Administrative rights will initially be granted to an existing account "
+"called \"%s\"."
+msgstr "Los derechos administrativos se otorgarán inicialmente a una cuenta existente llamada \ "%s\"."
+
+#: ../../../../modules/setup/library/Setup/Steps/AuthenticationStep.php:175
+#, php-format
+msgid ""
+"Administrative rights will initially be granted to members of the user group "
+"\"%s\"."
+msgstr "Los derechos administrativos se otorgarán inicialmente a los miembros del grupo de usuarios \ "%s\"."
+
+#: ../../../../modules/setup/library/Setup/Steps/UserGroupStep.php:83
+#: ../../../../modules/setup/library/Setup/Steps/UserGroupStep.php:105
+#: ../../../../modules/setup/library/Setup/Steps/UserGroupStep.php:186
+#: ../../../../modules/setup/library/Setup/Steps/UserGroupStep.php:191
+#: ../../../../modules/setup/library/Setup/Steps/UserGroupStep.php:200
+#: ../../../../modules/setup/library/Setup/Steps/UserGroupStep.php:206
+#: ../../../../modules/setup/library/Setup/Steps/AuthenticationStep.php:73
+#: ../../../../modules/setup/library/Setup/Steps/AuthenticationStep.php:83
+msgctxt "setup.role.name"
+msgid "Administrators"
+msgstr "Administradores"
+
+#: ../../../../modules/setup/library/Setup/Steps/GeneralConfigStep.php:58
+msgid "An exception's stacktrace is hidden from every user by default."
+msgstr "El seguimiento de pila de una excepción está oculto para todos los usuarios de forma predeterminada."
+
+#: ../../../../modules/setup/library/Setup/Steps/GeneralConfigStep.php:57
+msgid "An exception's stacktrace is shown to every user by default."
+msgstr "El seguimiento de la pila de una excepción se muestra a cada usuario de forma predeterminada."
+
+#: ../../../../modules/setup/application/forms/GeneralConfigPage.php:21
+#: ../../../../modules/setup/library/Setup/Steps/GeneralConfigStep.php:50
+msgctxt "setup.page.title"
+msgid "Application Configuration"
+msgstr "Configuración de la aplicación"
+
+#: ../../../../modules/setup/library/Setup/Steps/GeneralConfigStep.php:82
+msgid "Application Prefix"
+msgstr "Prefijo de la aplicación"
+
+#: ../../../../modules/setup/application/clicommands/ConfigCommand.php:127
+msgid "Argument type is mandatory."
+msgstr "El tipo de argumento es obligatorio."
+
+#: ../../../../modules/setup/application/forms/AuthBackendPage.php:77
+msgid ""
+"As you've chosen to use a database for authentication all you need to do now "
+"is defining a name for your first authentication backend."
+msgstr "Como ha elegido utilizar una base de datos para la autenticación, todo lo que necesita hacer ahora es definir un nombre para su primer backend de autenticación."
+
+#: ../../../../modules/setup/application/forms/AuthenticationPage.php:22
+#: ../../../../modules/setup/library/Setup/Steps/AuthenticationStep.php:120
+msgctxt "setup.page.title"
+msgid "Authentication"
+msgstr "Autenticación"
+
+#: ../../../../modules/setup/application/forms/AuthBackendPage.php:39
+#: ../../../../modules/setup/library/Setup/Steps/AuthenticationStep.php:121
+msgctxt "setup.page.title"
+msgid "Authentication Backend"
+msgstr "Backend de autenticación"
+
+#: ../../../../modules/setup/application/forms/AuthenticationPage.php:63
+msgid "Authentication Type"
+msgstr "Tipo de autenticación"
+
+#: ../../../../modules/setup/library/Setup/Steps/AuthenticationStep.php:195
+#, php-format
+msgid ""
+"Authentication configuration could not be written to: %s. An error occured:"
+msgstr "La configuración de autenticación no se pudo escribir en: %s . Ocurrió un error:"
+
+#: ../../../../modules/setup/library/Setup/Steps/AuthenticationStep.php:190
+#, php-format
+msgid "Authentication configuration has been successfully written to: %s"
+msgstr "La configuración de autenticación se ha escrito correctamente en: %s"
+
+#: ../../../../modules/setup/application/views/scripts/index/parts/finish.phtml:20
+msgid "Back"
+msgstr "Atrás"
+
+#: ../../../../modules/setup/library/Setup/Steps/UserGroupStep.php:141
+#: ../../../../modules/setup/library/Setup/Steps/AuthenticationStep.php:138
+msgid "Backend Name"
+msgstr "Nombre del backend"
+
+#: ../../../../modules/setup/application/forms/AuthBackendPage.php:106
+msgid "Backend Type"
+msgstr "Tipo de backend"
+
+#: ../../../../modules/setup/application/forms/AuthBackendPage.php:96
+msgid ""
+"Before you are able to authenticate using the LDAP connection defined "
+"earlier you need to provide some more information so that Icinga Web 2 is "
+"able to locate account details."
+msgstr "Antes de que pueda autenticarse utilizando la conexión LDAP definida anteriormente, debe proporcionar más información para que Icinga Web 2 pueda localizar los detalles de la cuenta."
+
+#: ../../../../modules/setup/library/Setup/Steps/ResourceStep.php:157
+msgid "Bind DN"
+msgstr "Atar DN"
+
+#: ../../../../modules/setup/library/Setup/Steps/ResourceStep.php:161
+msgid "Bind Password"
+msgstr "Atar Password"
+
+#: ../../../../modules/setup/application/forms/AdminAccountPage.php:104
+msgctxt "setup.admin"
+msgid "By Name"
+msgstr "Por nombre"
+
+#: ../../../../modules/setup/library/Setup/Steps/ResourceStep.php:111
+msgid "CA"
+msgstr "CA"
+
+#: ../../../../modules/setup/library/Setup/Steps/ResourceStep.php:118
+msgid "CA Path"
+msgstr "Ruta al CA"
+
+#: ../../../../modules/setup/application/clicommands/ConfigCommand.php:78
+#, php-format
+msgid "Can't change the group of %s to %s: %s"
+msgstr "No se puede cambiar el grupo de %s a %s: %s"
+
+#: ../../../../modules/setup/application/clicommands/ConfigCommand.php:69
+#, php-format
+msgid "Can't change the mode of the configuration directory to %s: %s"
+msgstr "No se puede cambiar el modo del directorio de configuración a %s: %s"
+
+#: ../../../../modules/setup/application/clicommands/ConfigCommand.php:60
+#, php-format
+msgid "Can't create configuration directory %s: %s"
+msgstr "No se puede crear el directorio de configuración %s: %s"
+
+#: ../../../../modules/setup/application/clicommands/TokenCommand.php:84
+#, php-format
+msgid "Cannot change access mode of \"%s\" to %o."
+msgstr "No se puede cambiar el modo de accesode \ "%s\" a %o."
+
+#: ../../../../modules/setup/library/Setup/Web/Form/Validator/TokenValidator.php:37
+#, php-format
+msgid "Cannot validate token, file \"%s\" is empty. Please define a token."
+msgstr "No se puede validar el token, el archivo \"%s\" está vacío. Por favor, defina un token."
+
+#: ../../../../modules/setup/library/Setup/Web/Form/Validator/TokenValidator.php:32
+#, php-format
+msgid "Cannot validate token: %s (%s)"
+msgstr "No se puede validar el token: %s (%s)"
+
+#: ../../../../modules/setup/application/clicommands/TokenCommand.php:80
+#, php-format
+msgid "Cannot write setup token \"%s\" to disk."
+msgstr "No se puede escribir el token de configuración\ "%s\" en el disco."
+
+#: ../../../../modules/setup/application/forms/AuthBackendPage.php:241
+msgid "Check this to not to validate authentication using this backend"
+msgstr "Marque esto para no validar la autenticación usando este backend"
+
+#: ../../../../modules/setup/application/forms/LdapResourcePage.php:147
+msgid ""
+"Check this to not to validate connectivity with the given directory service"
+msgstr "Marque esto para no validar la conectividad con el servicio de directorio dado"
+
+#: ../../../../modules/setup/application/forms/DatabaseCreationPage.php:203
+msgid ""
+"Check this to not to validate the ability to login and required privileges"
+msgstr "Marque esto para no validar la capacidad de inicio de sesión y los privilegios requeridos"
+
+#: ../../../../modules/setup/application/forms/DbResourcePage.php:179
+msgid "Check this to not to validate the configuration"
+msgstr "Marcar esto para no validar la configuración"
+
+#: ../../../../modules/setup/application/forms/AdminAccountPage.php:173
+msgctxt "setup.admin"
+msgid ""
+"Choose a user group reported by the LDAP backend to permit its members "
+"administrative access."
+msgstr "Elija un grupo de usuarios informado por el backend LDAP para permitir el acceso administrativo de sus miembros."
+
+#: ../../../../modules/setup/application/forms/AdminAccountPage.php:191
+#, php-format
+msgctxt "setup.admin"
+msgid ""
+"Choose a user reported by the %s backend as the initial administrative "
+"account."
+msgstr "Elija un usuario reportado por el  %s backend como la cuenta administrativa inicial."
+
+#: ../../../../modules/setup/application/forms/AdminAccountPage.php:133
+msgid "Choose how to define the desired account."
+msgstr "Elija cómo definir la cuenta deseada."
+
+#: ../../../../modules/setup/library/Setup/Steps/ResourceStep.php:125
+msgid "Cipher"
+msgstr "Cifrado"
+
+#: ../../../../modules/setup/application/views/scripts/index/index.phtml:76
+msgctxt "setup.progress"
+msgid "Configuration"
+msgstr "Configuración"
+
+#: ../../../../modules/setup/application/views/scripts/index/parts/finish.phtml:3
+msgid "Congratulations! Icinga Web 2 has been successfully set up."
+msgstr "¡Felicidades! Icinga Web 2 se ha configurado con éxito."
+
+#: ../../../../modules/setup/application/forms/LdapDiscoveryPage.php:82
+#, php-format
+msgid ""
+"Could not find any LDAP servers on the domain \"%s\". An error occurred: %s"
+msgstr "No se pudo encontrar ningún servidor LDAP en el dominio \ "%s\". Ocurrió un error: %s"
+
+#: ../../../../modules/setup/application/clicommands/ConfigCommand.php:171
+msgid "Could not write to file"
+msgstr "'No se ha podido escribir en el archivo'"
+
+#: ../../../../modules/setup/library/Setup/Steps/DatabaseStep.php:72
+#: ../../../../modules/setup/library/Setup/Steps/DatabaseStep.php:123
+msgid "Creating database schema..."
+msgstr "Creando el esquema de la base de datos..."
+
+#: ../../../../modules/setup/library/Setup/Steps/DatabaseStep.php:79
+#: ../../../../modules/setup/library/Setup/Steps/DatabaseStep.php:130
+#, php-format
+msgid "Creating login \"%s\"..."
+msgstr "Creando detalles de acceso \"%s\"..."
+
+#: ../../../../modules/setup/library/Setup/Steps/DatabaseStep.php:64
+#: ../../../../modules/setup/library/Setup/Steps/DatabaseStep.php:112
+#, php-format
+msgid "Creating new database \"%s\"..."
+msgstr "Creando nueva base de datos \"%s\" ..."
+
+#: ../../../../modules/setup/library/Setup/Steps/UserGroupStep.php:149
+#: ../../../../modules/setup/library/Setup/Steps/AuthenticationStep.php:147
+msgid "Custom Filter"
+msgstr "Filtro personalizado"
+
+#: ../../../../modules/setup/application/forms/AuthenticationPage.php:50
+msgid "Database"
+msgstr "Base de datos"
+
+#: ../../../../modules/setup/library/Setup/Steps/ResourceStep.php:61
+msgctxt "setup.page.title"
+msgid "Database"
+msgstr "Base de datos"
+
+#: ../../../../modules/setup/library/Setup/Steps/ResourceStep.php:82
+msgid "Database Name"
+msgstr "Nombre de base de datos"
+
+#: ../../../../modules/setup/application/forms/DbResourcePage.php:21
+msgctxt "setup.page.title"
+msgid "Database Resource"
+msgstr "Recurso de base de datos"
+
+#: ../../../../modules/setup/application/forms/DatabaseCreationPage.php:41
+#: ../../../../modules/setup/library/Setup/Steps/DatabaseStep.php:245
+msgctxt "setup.page.title"
+msgid "Database Setup"
+msgstr "Configuración de base de datos"
+
+#: ../../../../modules/setup/library/Setup/Steps/ResourceStep.php:70
+msgid "Database Type"
+msgstr "Tipo de base de datos"
+
+#: ../../../../modules/setup/library/Setup/Steps/DatabaseStep.php:70
+#: ../../../../modules/setup/library/Setup/Steps/DatabaseStep.php:121
+msgid "Database schema already exists..."
+msgstr "El esquema de base de datos ya existe..."
+
+#: ../../../../modules/setup/library/Setup/Steps/GeneralConfigStep.php:105
+msgctxt "app.config.logging.level"
+msgid "Debug"
+msgstr "Depurar"
+
+#: ../../../../modules/setup/library/Setup/WebWizard.php:580
+msgid "Default Timezone"
+msgstr "Zona horaria por defecto"
+
+#: ../../../../modules/setup/application/forms/AdminAccountPage.php:158
+msgid ""
+"Define the initial administrative account by providing a username that "
+"reflects a user created later or one that is authenticated using external "
+"mechanisms."
+msgstr "Defina la cuenta administrativa inicial proporcionando un nombre de usuario que refleje un usuario creado más tarde o uno que se autentique mediante mecanismos externos."
+
+#: ../../../../modules/setup/application/forms/LdapDiscoveryPage.php:51
+msgid "Do not discover LDAP servers and enter all settings manually."
+msgstr "No descubra los servidores LDAP e ingrese todos los ajustes manualmente."
+
+#: ../../../../modules/setup/library/Setup/Steps/DatabaseStep.php:257
+#: ../../../../modules/setup/library/Setup/Steps/UserGroupStep.php:180
+#: ../../../../modules/setup/library/Setup/Steps/UserGroupStep.php:193
+#: ../../../../modules/setup/library/Setup/Steps/UserGroupStep.php:208
+#: ../../../../modules/setup/library/Setup/Steps/ResourceStep.php:185
+#: ../../../../modules/setup/library/Setup/Steps/AuthenticationStep.php:198
+#: ../../../../modules/setup/library/Setup/Steps/AuthenticationStep.php:211
+#: ../../../../modules/setup/library/Setup/Steps/AuthenticationStep.php:233
+#: ../../../../modules/setup/library/Setup/Steps/GeneralConfigStep.php:134
+#: ../../../../modules/setup/library/Setup/Utils/EnableModuleStep.php:61
+#, php-format
+msgid "ERROR: %s"
+msgstr "ERROR: %s"
+
+#: ../../../../modules/setup/application/forms/AdminAccountPage.php:223
+msgid "Enter the password to assign to the newly created account."
+msgstr "Ingrese la contraseña para asignar a la cuenta recién creada."
+
+#: ../../../../modules/setup/application/forms/AdminAccountPage.php:211
+msgid ""
+"Enter the username to be used when creating an initial administrative "
+"account."
+msgstr "Ingrese el nombre de usuario que se usará al crear una cuenta administrativa inicial."
+
+#: ../../../../modules/setup/library/Setup/Steps/GeneralConfigStep.php:102
+msgctxt "app.config.logging.level"
+msgid "Error"
+msgstr "Error"
+
+#: ../../../../modules/setup/application/forms/AdminAccountPage.php:121
+msgctxt "setup.admin"
+msgid "Existing User"
+msgstr "Usuario existente"
+
+#: ../../../../modules/setup/application/forms/AuthenticationPage.php:55
+msgid "External"
+msgstr "Externo"
+
+#: ../../../../modules/setup/library/Setup/Steps/DatabaseStep.php:256
+msgid "Failed to fully setup the database. An error occured:"
+msgstr "Error al configurar completamente la base de datos. Ocurrió un error:"
+
+#: ../../../../modules/setup/application/forms/AuthBackendPage.php:210
+#: ../../../../modules/setup/application/forms/DbResourcePage.php:117
+#: ../../../../modules/setup/application/forms/LdapResourcePage.php:119
+#, php-format
+msgid "Failed to successfully validate the configuration: %s"
+msgstr "Falló al validar de manera exitosa la configuración: %s"
+
+#: ../../../../modules/setup/library/Setup/Steps/GeneralConfigStep.php:87
+msgctxt "app.config.logging.type"
+msgid "File"
+msgstr "Archivo"
+
+#: ../../../../modules/setup/application/clicommands/ConfigCommand.php:166
+#, php-format
+msgid "File %s already exists. Please delete it first."
+msgstr "El archivo  %s ya existe. Por favor elimínelo primero."
+
+#: ../../../../modules/setup/library/Setup/Steps/GeneralConfigStep.php:88
+msgid "Filepath"
+msgstr "Ruta del archivo"
+
+#: ../../../../modules/setup/library/Setup/Steps/AuthenticationStep.php:158
+msgid "Filter Pattern"
+msgstr "Patron de filtrado"
+
+#: ../../../../modules/setup/application/views/scripts/index/index.phtml:136
+msgctxt "setup.progress"
+msgid "Finish"
+msgstr "Terminado"
+
+#: ../../../../modules/setup/application/forms/WelcomePage.php:38
+msgid ""
+"For security reasons we need to ensure that you are permitted to run this "
+"wizard. Please provide a token by following the instructions below."
+msgstr "Por razones de seguridad, debemos asegurarnos de que tiene permiso para ejecutar este asistente. Por favor, proporcione un token siguiendo las instrucciones a continuación."
+
+#: ../../../../modules/setup/library/Setup/Steps/GeneralConfigStep.php:51
+msgctxt "app.config"
+msgid "General"
+msgstr "General"
+
+#: ../../../../modules/setup/library/Setup/Steps/GeneralConfigStep.php:131
+#, php-format
+msgid "General configuration could not be written to: %s. An error occured:"
+msgstr "La configuración de autenticación no se pudo escribir en:  %s. Ocurrió un error:"
+
+#: ../../../../modules/setup/library/Setup/Steps/GeneralConfigStep.php:125
+#, php-format
+msgid "General configuration has been successfully written to: %s"
+msgstr "La configuración general se ha escrito correctamente en: %s"
+
+#: ../../../../modules/setup/application/views/scripts/form/setup-welcome.phtml:75
+msgid "Generating a New Setup Token"
+msgstr "Generando un nuevo token de configuración"
+
+#: ../../../../modules/setup/library/Setup/Steps/DatabaseStep.php:91
+#: ../../../../modules/setup/library/Setup/Steps/DatabaseStep.php:142
+#, php-format
+msgid "Granting required privileges to login \"%s\"..."
+msgstr "Otorgando privilegios requeridos para iniciar sesión \ "%s\" ..."
+
+#: ../../../../modules/setup/library/Setup/Steps/UserGroupStep.php:157
+msgid "Group Member Attribute"
+msgstr "Atributo de miembros de grupos"
+
+#: ../../../../modules/setup/application/forms/AdminAccountPage.php:171
+msgid "Group Name"
+msgstr "Nombre de grupo"
+
+#: ../../../../modules/setup/library/Setup/Steps/UserGroupStep.php:153
+msgid "Group Name Attribute"
+msgstr "Atributo de nombre de grupos"
+
+#: ../../../../modules/setup/library/Setup/Steps/UserGroupStep.php:145
+msgid "Group Object Class"
+msgstr "Grupo de clase de objetos"
+
+#: ../../../../modules/setup/library/Setup/Steps/ResourceStep.php:74
+#: ../../../../modules/setup/library/Setup/Steps/ResourceStep.php:145
+msgid "Host"
+msgstr "Huésped"
+
+#: ../../../../modules/setup/application/views/scripts/form/setup-welcome.phtml:108
+msgid "Icinga Web 2 documentation"
+msgstr "Documentación Icinga web 2"
+
+#: ../../../../modules/setup/library/Setup/WebWizard.php:592
+msgid ""
+"Icinga Web 2 is developed for and tested on Linux. While we cannot guarantee "
+"they will, other platforms may also perform as well."
+msgstr "Icinga Web 2 está desarrollado y probado en Linux. Si bien no podemos garantizar que lo hagan, otras plataformas también pueden funcionar."
+
+#: ../../../../modules/setup/library/Setup/WebWizard.php:628
+msgid ""
+"If you want your users to benefit from language, timezone and date/time "
+"format negotiation, the INTL module for PHP is required."
+msgstr "Si desea que sus usuarios se beneficien de la negociación de idioma, zona horaria y formato de fecha / hora, se requiere el módulo INTL para PHP."
+
+#: ../../../../modules/setup/library/Setup/WebWizard.php:619
+msgid ""
+"If you'd like to authenticate users using LDAP the corresponding PHP module "
+"is required."
+msgstr "Si desea autenticar a los usuarios utilizando LDAP, se requiere el módulo PHP correspondiente."
+
+#: ../../../../modules/setup/application/views/scripts/form/setup-welcome.phtml:97
+msgid "If you've got the IcingaCLI installed you can do the following:"
+msgstr "Si tiene instalado el IcingaCLI, puede hacer lo siguiente:"
+
+#: ../../../../modules/setup/application/views/scripts/form/setup-welcome.phtml:82
+msgid ""
+"In any case, make sure that all of the following applies to your environment:"
+msgstr "En cualquier caso, asegúrese de que todo lo siguiente se aplica a su entorno:"
+
+#: ../../../../modules/setup/application/views/scripts/form/setup-welcome.phtml:102
+msgid "In case the IcingaCLI is missing you can create the token manually:"
+msgstr "En caso de que falte el IcingaCLI, puede crear el token manualmente:"
+
+#: ../../../../modules/setup/library/Setup/WebWizard.php:657
+msgid ""
+"In case you want graphs being exported to PDF as well, you'll need the "
+"ImageMagick extension for PHP."
+msgstr "En caso de que también desee que los gráficos se exporten a PDF, necesitará la extensión ImageMagick para PHP."
+
+#: ../../../../modules/setup/library/Setup/WebWizard.php:648
+msgid ""
+"In case you want views being exported to PDF, you'll need the GD extension "
+"for PHP."
+msgstr "En caso de que desee exportar vistas a PDF, necesitará la extensión GD para PHP."
+
+#: ../../../../modules/setup/library/Setup/Steps/GeneralConfigStep.php:104
+msgctxt "app.config.logging.level"
+msgid "Information"
+msgstr "Información"
+
+#: ../../../../modules/setup/library/Setup/Web/Form/Validator/TokenValidator.php:40
+msgid "Invalid token supplied."
+msgstr "El token provisto no es válido"
+
+#: ../../../../modules/setup/library/Setup/WebWizard.php:582
+#, php-format
+msgid ""
+"It is required that a default timezone has been set using date.timezone in "
+"%s."
+msgstr "Se requiere que se haya establecido una zona horaria predeterminada usando date.timezone en %s."
+
+#: ../../../../modules/setup/application/forms/DatabaseCreationPage.php:43
+msgid ""
+"It seems that either the database you defined earlier does not yet exist and "
+"cannot be created using the provided access credentials, the database does "
+"not have the required schema to be operated by Icinga Web 2 or the provided "
+"access credentials do not have the sufficient permissions to access the "
+"database. Please provide appropriate access credentials to solve this."
+msgstr "Parece que la base de datos que definió anteriormente todavía no existe y no se puede crear con las credenciales de acceso proporcionadas, la base de datos no tiene el esquema requerido para ser operado por Icinga Web 2 o las credenciales de acceso proporcionadas no tienen los permisos suficientes para acceder a la base de datos. Por favor, proporcione las credenciales de acceso adecuadas para resolver esto."
+
+#: ../../../../modules/setup/application/forms/LdapDiscoveryPage.php:31
+msgctxt "setup.page.title"
+msgid "LDAP Discovery"
+msgstr "Descubrimiento LDAP"
+
+#: ../../../../modules/setup/application/forms/LdapDiscoveryConfirmPage.php:40
+msgctxt "setup.page.title"
+msgid "LDAP Discovery Results"
+msgstr "Resultados del descurbimiento LDAP"
+
+#: ../../../../modules/setup/application/forms/LdapResourcePage.php:21
+msgctxt "setup.page.title"
+msgid "LDAP Resource"
+msgstr "Recurso LDAP"
+
+#: ../../../../modules/setup/library/Setup/Steps/GeneralConfigStep.php:101
+msgctxt "app.config.logging"
+msgid "Level"
+msgstr "Nivel"
+
+#: ../../../../modules/setup/library/Setup/Steps/GeneralConfigStep.php:52
+msgctxt "app.config"
+msgid "Logging"
+msgstr "Logueando"
+
+#: ../../../../modules/setup/library/Setup/Steps/GeneralConfigStep.php:70
+msgid "Logging will be disabled."
+msgstr "El logueo va a estar deshabilitado"
+
+#: ../../../../modules/setup/library/Setup/Steps/DatabaseStep.php:77
+#: ../../../../modules/setup/library/Setup/Steps/DatabaseStep.php:128
+#, php-format
+msgid "Login \"%s\" already exists..."
+msgstr "Login \"%s\"  ya existe"
+
+#: ../../../../modules/setup/application/views/scripts/index/parts/finish.phtml:10
+msgid "Login to Icinga Web 2"
+msgstr "Logueo a Icinga web 2"
+
+#: ../../../../modules/setup/application/views/scripts/form/setup-requirements.phtml:13
+msgid "Module"
+msgstr "Módulo"
+
+#: ../../../../modules/setup/library/Setup/Utils/EnableModuleStep.php:55
+#, php-format
+msgid "Module \"%s\" could not be enabled. An error occured:"
+msgstr "El módulo \"%s\" no pudo ser habilitado. Ocurrió un error:"
+
+#: ../../../../modules/setup/library/Setup/Utils/EnableModuleStep.php:54
+#, php-format
+msgid "Module \"%s\" has been successfully enabled."
+msgstr "El módulo \"%s\" fue habilitado exitosamente"
+
+#: ../../../../modules/setup/application/views/scripts/form/setup-modules.phtml:14
+msgctxt "setup.page.title"
+msgid "Modules"
+msgstr "Módulos"
+
+#: ../../../../modules/setup/application/views/scripts/index/index.phtml:44
+msgctxt "setup.progress"
+msgid "Modules"
+msgstr "Módulos"
+
+#: ../../../../modules/setup/application/forms/AdminAccountPage.php:114
+msgctxt "setup.admin"
+msgid "New User"
+msgstr "Nuevo usuario"
+
+#: ../../../../modules/setup/library/Setup/Steps/DatabaseStep.php:239
+msgid ""
+"No connection to database host possible. You'll need to setup the database "
+"with the schema required by Icinga Web 2 manually."
+msgstr "No es posible la conexión con el host de la base de datos. Deberá configurar la base de datos con el esquema requerido por Icinga Web 2 manualmente."
+
+#: ../../../../modules/setup/library/Setup/Steps/UserGroupStep.php:150
+#: ../../../../modules/setup/library/Setup/Steps/AuthenticationStep.php:148
+msgctxt "auth.ldap.filter"
+msgid "None"
+msgstr "Ningún"
+
+#: ../../../../modules/setup/library/Setup/WebWizard.php:240
+msgid ""
+"Note that choosing \"Database\" as preference storage causes Icinga Web 2 to "
+"use the same database as for authentication."
+msgstr "Tenga en cuenta que elegir \ "Base de datos \" como almacenamiento de preferencias hace que Icinga Web 2 use la misma base de datos que para la autenticación."
+
+#: ../../../../modules/setup/library/Setup/WebWizard.php:174
+#: ../../../../modules/setup/library/Setup/WebWizard.php:207
+msgid ""
+"Note that the database itself does not need to exist at this time as it is "
+"going to be created once the wizard is about to be finished."
+msgstr "Tenga en cuenta que la base de datos en sí no necesita existir en este momento, ya que se creará una vez que el asistente esté a punto de finalizar."
+
+#: ../../../../modules/setup/application/clicommands/TokenCommand.php:42
+msgid ""
+"Nothing to show. Please create a new setup token using the generateToken "
+"action."
+msgstr "Nada que mostrar. Por favor, cree un nuevo token de configuración utilizando la acción generateToken."
+
+#: ../../../../modules/setup/application/forms/AdminAccountPage.php:54
+msgid ""
+"Now it's time to configure your first administrative account or group for "
+"Icinga Web 2."
+msgstr "Ahora es el momento de configurar su primera cuenta o grupo administrativo para Icinga Web 2."
+
+#: ../../../../modules/setup/application/forms/GeneralConfigPage.php:23
+msgid ""
+"Now please adjust all application and logging related configuration options "
+"to fit your needs."
+msgstr "Ahora, ajuste todas las opciones de configuración relacionadas con la aplicación y el registro para que se ajusten a sus necesidades."
+
+#: ../../../../modules/setup/library/Setup/WebWizard.php:203
+msgid ""
+"Now please configure the database resource where to store user preferences."
+msgstr "Ahora, configure el recurso de la base de datos donde almacenar las preferencias del usuario."
+
+#: ../../../../modules/setup/library/Setup/WebWizard.php:170
+msgid ""
+"Now please configure the database resource where to store users and user "
+"groups."
+msgstr "Ahora, configure el recurso de base de datos donde almacenar usuarios y grupos de usuarios."
+
+#: ../../../../modules/setup/application/forms/LdapResourcePage.php:23
+msgid ""
+"Now please configure your AD/LDAP resource. This will later be used to "
+"authenticate users logging in to Icinga Web 2."
+msgstr "Ahora, por favor, configure su recurso AD / LDAP. Esto se usará más adelante para autenticar a los usuarios que inician sesión en Icinga Web 2."
+
+#: ../../../../modules/setup/library/Setup/Requirement/PhpModuleRequirement.php:19
+#, php-format
+msgid "PHP Module: %s"
+msgstr "Módulo PHP: %s"
+
+#: ../../../../modules/setup/library/Setup/Requirement/PhpVersionRequirement.php:15
+msgid "PHP Version"
+msgstr "Versión de PHP"
+
+#: ../../../../modules/setup/application/forms/DatabaseCreationPage.php:111
+#: ../../../../modules/setup/application/forms/AdminAccountPage.php:221
+#: ../../../../modules/setup/library/Setup/Steps/ResourceStep.php:90
+msgid "Password"
+msgstr "Contraseña"
+
+#: ../../../../modules/setup/application/forms/AuthenticationPage.php:24
+msgid ""
+"Please choose how you want to authenticate when accessing Icinga Web 2. "
+"Configuring backend specific details follows in a later step."
+msgstr "Elija cómo desea autenticarse al acceder a la Web de Icinga 2. La configuración de los detalles específicos del backend sigue en un paso posterior."
+
+#: ../../../../modules/setup/application/forms/AdminAccountPage.php:235
+msgid "Please repeat the password given above to avoid typing errors."
+msgstr "Repita la contraseña dada anteriormente para evitar errores de escritura."
+
+#: ../../../../modules/setup/application/views/scripts/form/setup-welcome.phtml:107
+#, php-format
+msgid ""
+"Please see the %s for an extensive description on how to access and use this "
+"wizard."
+msgstr "Consulte la  %s para obtener una descripción detallada sobre cómo acceder y utilizar este asistente."
+
+#: ../../../../modules/setup/library/Setup/Steps/ResourceStep.php:78
+#: ../../../../modules/setup/library/Setup/Steps/ResourceStep.php:149
+msgid "Port"
+msgstr "Puerto"
+
+#: ../../../../modules/setup/library/Setup/Steps/GeneralConfigStep.php:62
+#, php-format
+msgid "Preferences will be stored per user account in INI files at: %s"
+msgstr "Las preferencias se almacenarán por cuenta de usuario en archivos INI en: %s"
+
+#: ../../../../modules/setup/library/Setup/Steps/GeneralConfigStep.php:64
+msgid "Preferences will be stored using a database."
+msgstr "Las preferencias se almacenarán utilizando una base de datos."
+
+#: ../../../../modules/setup/library/Setup/Requirement/ConfigDirectoryRequirement.php:14
+msgid "Read- and writable configuration directory"
+msgstr "Directorio de configuración de lectura y escritura"
+
+#: ../../../../modules/setup/application/views/scripts/form/setup-requirements.phtml:37
+msgid "Refresh"
+msgstr "Refrescar"
+
+#: ../../../../modules/setup/application/views/scripts/form/setup-requirements.phtml:43
+#, php-format
+msgid "Refresh the page; %s"
+msgstr "Refrescar la página; %s"
+
+#: ../../../../modules/setup/application/forms/AdminAccountPage.php:233
+msgid "Repeat password"
+msgstr "Repetir la contraseña"
+
+#: ../../../../modules/setup/library/Setup/Steps/DatabaseStep.php:86
+#: ../../../../modules/setup/library/Setup/Steps/DatabaseStep.php:137
+#, php-format
+msgid "Required privileges were already granted to login \"%s\"."
+msgstr "Los privilegios requeridos ya fueron otorgados para iniciar sesión \ "%s\"."
+
+#: ../../../../modules/setup/application/views/scripts/index/index.phtml:60
+msgctxt "setup.progress"
+msgid "Requirements"
+msgstr "Requisitos"
+
+#: ../../../../modules/setup/library/Setup/Steps/ResourceStep.php:57
+msgctxt "setup.page.title"
+msgid "Resource"
+msgstr "Recurso"
+
+#: ../../../../modules/setup/library/Setup/Steps/ResourceStep.php:66
+#: ../../../../modules/setup/library/Setup/Steps/ResourceStep.php:141
+msgid "Resource Name"
+msgstr "Nombre del recurso"
+
+#: ../../../../modules/setup/library/Setup/Steps/ResourceStep.php:182
+#, php-format
+msgid "Resource configuration could not be written to: %s. An error occured:"
+msgstr "La configuración de autenticación no se pudo escribir en:  %s. Ocurrió un error:"
+
+#: ../../../../modules/setup/library/Setup/Steps/ResourceStep.php:176
+#, php-format
+msgid "Resource configuration has been successfully written to: %s"
+msgstr "La configuración del recurso ha sido escrita exitosamente a: %s"
+
+#: ../../../../modules/setup/library/Setup/Steps/ResourceStep.php:55
+msgctxt "setup.page.title"
+msgid "Resources"
+msgstr "Recursos"
+
+#: ../../../../modules/setup/application/controllers/IndexController.php:61
+msgid "Restart the setup"
+msgstr "Reinicie la configuración"
+
+#: ../../../../modules/setup/library/Setup/Steps/ResourceStep.php:153
+msgid "Root DN"
+msgstr "DN root"
+
+#: ../../../../modules/setup/library/Setup/WebWizard.php:574
+msgid "Running Icinga Web 2 requires PHP version 5.6."
+msgstr "La ejecución de Icinga Web 2 requiere la versión 5.6 de PHP."
+
+#: ../../../../modules/setup/library/Setup/Steps/ResourceStep.php:104
+msgid "SSL Cert"
+msgstr "Certificado SSL"
+
+#: ../../../../modules/setup/library/Setup/Steps/ResourceStep.php:97
+msgid "SSL Key"
+msgstr "Llave SSL"
+
+#: ../../../../modules/setup/library/Setup/WebWizard.php:359
+msgctxt "setup.summary.btn.finish"
+msgid "Setup Icinga Web 2"
+msgstr "Configuración de Icinga web 2"
+
+#: ../../../../modules/setup/application/forms/WelcomePage.php:36
+msgid "Setup Token"
+msgstr "Token de configuración"
+
+#: ../../../../modules/setup/application/views/scripts/index/parts/finish.phtml:25
+msgid "Show previous wizard-page"
+msgstr "Mostrar página anterior del asistente"
+
+#: ../../../../modules/setup/application/views/scripts/index/parts/finish.phtml:15
+#, -ERR:PROP-NOT-FOUND-
+msgid "Show the login page of Icinga Web 2"
+msgstr "Muestre la página de logueo a Icinga web 2"
+
+#: ../../../../modules/setup/application/forms/LdapDiscoveryPage.php:50
+#, -ERR:PROP-NOT-FOUND-
+msgid "Skip"
+msgstr "Omitir"
+
+#: ../../../../modules/setup/application/forms/AuthBackendPage.php:240
+#: ../../../../modules/setup/application/forms/DbResourcePage.php:178
+#: ../../../../modules/setup/application/forms/LdapResourcePage.php:145
+#: ../../../../modules/setup/application/forms/DatabaseCreationPage.php:201
+msgid "Skip Validation"
+msgstr "Saltar la validación"
+
+#: ../../../../modules/setup/application/views/scripts/index/parts/finish.phtml:5
+msgid "Sorry! Failed to set up Icinga Web 2 successfully."
+msgstr "¡Lo siento! Error al configurar Icinga Web 2 con éxito."
+
+#: ../../../../modules/setup/library/Setup/WebWizard.php:355
+msgctxt "setup.welcome.btn.next"
+msgid "Start"
+msgstr "Iniciar"
+
+#: ../../../../modules/setup/library/Setup/Steps/DatabaseStep.php:59
+#: ../../../../modules/setup/library/Setup/Steps/DatabaseStep.php:107
+#, php-format
+msgid "Successfully connected to existing database \"%s\"..."
+msgstr "Conectado exitosamente a la base de datos existente \"%s\" ..."
+
+#: ../../../../modules/setup/application/clicommands/ConfigCommand.php:85
+#, -ERR:PROP-NOT-FOUND-, php-format
+msgid "Successfully created configuration directory %s"
+msgstr "Falló al validar la configuración de manera exitosa: %s"
+
+#: ../../../../modules/setup/application/clicommands/ConfigCommand.php:173
+#, php-format
+msgid "Successfully written %d bytes to file"
+msgstr "Escrito con éxito %d bytes  al archivo"
+
+#: ../../../../modules/setup/library/Setup/Requirement/ClassRequirement.php:27
+#, -ERR:PROP-NOT-FOUND-, php-format
+msgctxt "setup.requirement.class"
+msgid "The %s class is available."
+msgstr "La clase de objetos  %s esta disponible"
+
+#: ../../../../modules/setup/library/Setup/Requirement/ClassRequirement.php:37
+#, -ERR:PROP-NOT-FOUND-, php-format
+msgctxt "setup.requirement.class"
+msgid "The %s class is missing."
+msgstr "Falta el parámetro requerido '%s'"
+
+#: ../../../../modules/setup/library/Setup/Requirement/ClassRequirement.php:31
+#, -ERR:PROP-NOT-FOUND-, php-format
+msgctxt "setup.requirement.class"
+msgid "The %s is available."
+msgstr "La vista %s esta  disponible"
+
+#: ../../../../modules/setup/library/Setup/Requirement/ClassRequirement.php:41
+#, -ERR:PROP-NOT-FOUND-, php-format
+msgctxt "setup.requirement.class"
+msgid "The %s is missing."
+msgstr "La '%s' esta faltando"
+
+#: ../../../../modules/setup/library/Setup/WebWizard.php:727
+msgid ""
+"The Icinga Web 2 configuration directory defaults to \"/etc/icingaweb2\", if "
+"not explicitly set in the environment variable \"ICINGAWEB_CONFIGDIR\"."
+msgstr "El directorio de configuración de Icinga Web 2 se establece de forma predeterminada en \ "/ etc / icingaweb2 \", si no se establece explícitamente en la variable de entorno \ "ICINGAWEB_CONFIGDIR \"."
+
+#: ../../../../modules/setup/library/Setup/WebWizard.php:610
+msgid ""
+"The JSON module for PHP is required for various export functionalities as "
+"well as APIs."
+msgstr "El módulo JSON para PHP es necesario para varias funcionalidades de exportación, así como para las API."
+
+#: ../../../../modules/setup/library/Setup/Requirement/PhpConfigRequirement.php:18
+#, php-format
+msgid "The PHP config `%s' is not defined."
+msgstr "La configuración de PHP `%s'no está definida."
+
+#: ../../../../modules/setup/library/Setup/Requirement/PhpConfigRequirement.php:17
+#, -ERR:PROP-NOT-FOUND-, php-format
+msgid "The PHP config `%s' is set to \"%s\"."
+msgstr "La configuración PHP `%s' esta configurada para "%s""
+
+#: ../../../../modules/setup/library/Setup/Requirement/PhpModuleRequirement.php:30
+#, -ERR:PROP-NOT-FOUND-, php-format
+msgid "The PHP module %s is available."
+msgstr "El módulo PHP %s esta disponible"
+
+#: ../../../../modules/setup/library/Setup/Requirement/PhpModuleRequirement.php:36
+#, -ERR:PROP-NOT-FOUND-, php-format
+msgid "The PHP module %s is missing."
+msgstr "Falta el módulo PHP '%s'."
+
+#: ../../../../modules/setup/library/Setup/WebWizard.php:601
+msgid ""
+"The PHP module for OpenSSL is required to generate cryptographically safe "
+"password salts."
+msgstr "El módulo PHP para OpenSSL es necesario para generar sales de contraseña criptográficamente seguras."
+
+#: ../../../../modules/setup/library/Setup/WebWizard.php:681
+msgctxt "setup.requirement.class"
+msgid "The Zend database adapter for MySQL is available."
+msgstr "El adaptador de base de datos Zend para MySQL está disponible."
+
+#: ../../../../modules/setup/library/Setup/WebWizard.php:686
+msgctxt "setup.requirement.class"
+msgid "The Zend database adapter for MySQL is missing."
+msgstr "Falta el adaptador de base de datos Zend para MySQL."
+
+#: ../../../../modules/setup/library/Setup/WebWizard.php:677
+msgid ""
+"The Zend database adapter for MySQL is required to access a MySQL database."
+msgstr "Se requiere el adaptador de base de datos Zend para MySQL para acceder a una base de datos MySQL."
+
+#: ../../../../modules/setup/library/Setup/WebWizard.php:712
+msgctxt "setup.requirement.class"
+msgid "The Zend database adapter for PostgreSQL is available."
+msgstr "El adaptador de base de datos Zend para PostgreSQL está disponible."
+
+#: ../../../../modules/setup/library/Setup/WebWizard.php:717
+msgctxt "setup.requirement.class"
+msgid "The Zend database adapter for PostgreSQL is missing."
+msgstr "Falta el adaptador de base de datos Zend para PostgreSQL."
+
+#: ../../../../modules/setup/library/Setup/WebWizard.php:708
+msgid ""
+"The Zend database adapter for PostgreSQL is required to access a PostgreSQL "
+"database."
+msgstr "El adaptador de base de datos Zend para PostgreSQL es necesario para acceder a una base de datos PostgreSQL."
+
+#: ../../../../modules/setup/application/clicommands/ConfigCommand.php:39
+#: ../../../../modules/setup/application/clicommands/ConfigCommand.php:149
+#: ../../../../modules/setup/application/clicommands/TokenCommand.php:35
+#: ../../../../modules/setup/application/clicommands/TokenCommand.php:67
+msgid ""
+"The argument --config expects a path to Icinga Web 2's configuration files"
+msgstr "El argumento --config espera una ruta a los archivos de configuración de Icinga Web 2"
+
+#: ../../../../modules/setup/application/clicommands/ConfigCommand.php:155
+msgid ""
+"The argument --fpm-uri expects an address or path where to pass requests to "
+"FPM"
+msgstr "El argumento --fpm-uri espera una dirección o ruta donde pasar las solicitudes a FPM"
+
+#: ../../../../modules/setup/application/clicommands/ConfigCommand.php:46
+msgid ""
+"The argument --group expects a owner group for the configuration directory"
+msgstr "El argumento --grupo espera un grupo de propietarios para el directorio de configuración"
+
+#: ../../../../modules/setup/application/clicommands/ConfigCommand.php:53
+msgid ""
+"The argument --mode expects an access mode for the configuration directory"
+msgstr "El argumento --mode espera un modo de acceso para el directorio de configuración"
+
+#: ../../../../modules/setup/application/clicommands/ConfigCommand.php:136
+msgid "The argument --path expects a URL path"
+msgstr "El argumento --path espera una ruta URL"
+
+#: ../../../../modules/setup/application/clicommands/ConfigCommand.php:143
+msgid ""
+"The argument --root/--document-root expects a directory from which the "
+"webserver will serve files"
+msgstr "El argumento --root / - document-root espera un directorio desde el cual el servidor web servirá los archivos"
+
+#: ../../../../modules/setup/application/forms/AuthBackendPage.php:217
+#: ../../../../modules/setup/application/forms/DbResourcePage.php:96
+#: ../../../../modules/setup/application/forms/LdapResourcePage.php:126
+msgid "The configuration has been successfully validated."
+msgstr "La configuración fue validada de manera exitosa."
+
+#: ../../../../modules/setup/application/clicommands/TokenCommand.php:46
+#, php-format
+msgid "The current setup token is: %s\n"
+msgstr "El token de configuración actual es: %s\n"
+
+#: ../../../../modules/setup/library/Setup/Steps/DatabaseStep.php:192
+#, php-format
+msgid ""
+"The database \"%s\" already seems to be fully set up. No action required."
+msgstr "La base de datos\ "%s\" ya parece estar completamente configurada. No se requiere accion."
+
+#: ../../../../modules/setup/library/Setup/Steps/DatabaseStep.php:252
+msgid "The database has been fully set up!"
+msgstr "La base de datos ha sido completamente configurada!"
+
+#: ../../../../modules/setup/library/Setup/Steps/DatabaseStep.php:216
+#, php-format
+msgid ""
+"The database user \"%s\" will be used to create the missing database \"%s\" "
+"with the schema required by Icinga Web 2 and to grant access to it to a new "
+"login called \"%s\"."
+msgstr "El usuario de la basede datos \ "%s\" se usará para crear la base de datos faltante\ "%s\" con el esquema requerido por Icinga Web 2 y otorgarle acceso a un nuevo inicio de sesión llamado \ "%s\"."
+
+#: ../../../../modules/setup/library/Setup/Steps/DatabaseStep.php:204
+#, php-format
+msgid ""
+"The database user \"%s\" will be used to create the missing database \"%s\" "
+"with the schema required by Icinga Web 2 and to grant access to it to an "
+"existing login called \"%s\"."
+msgstr "El usuario de la basede datos \ "%s\" se usará para crear la base de datos faltante\ "%s\" con el esquema requerido por Icinga Web 2 y para otorgarle acceso a un inicio de sesión existente llamado \ "%s\"."
+
+#: ../../../../modules/setup/library/Setup/Steps/DatabaseStep.php:229
+#, php-format
+msgid ""
+"The database user \"%s\" will be used to create the missing database \"%s\" "
+"with the schema required by Icinga Web 2."
+msgstr "El usuario de la basede datos \ "%s\" se usará para crear la base de datos faltante\ "%s\" con el esquema requerido por Icinga Web 2."
+
+#: ../../../../modules/setup/library/Setup/Steps/DatabaseStep.php:172
+#, php-format
+msgid ""
+"The database user \"%s\" will be used to setup the missing schema required "
+"by Icinga Web 2 in database \"%s\" and to grant access to it to a new login "
+"called \"%s\"."
+msgstr "El usuario de la basede datos \"%s\" se usará para crear la base de datos faltante \"%s\" con el esquema requerido por Icinga Web 2 y otorgarle acceso a un nuevo inicio de sesión llamado \"%s\"."
+
+#: ../../../../modules/setup/library/Setup/Steps/DatabaseStep.php:183
+#, php-format
+msgid ""
+"The database user \"%s\" will be used to setup the missing schema required "
+"by Icinga Web 2 in database \"%s\"."
+msgstr "El usuario de la basede datos \ "%s\" se utilizará para configurar el esquema faltante requerido por Icinga Web 2 en la base de datos \"%s\"."
+
+#: ../../../../modules/setup/application/forms/DbResourcePage.php:134
+msgid ""
+"The database you've configured to use for Icinga Web 2 seems to be the one "
+"of Icinga. Please be aware that this database configuration is supposed to "
+"be used for Icinga Web 2's configuration and that it is highly recommended "
+"to not mix different schemas in the same database. If this is intentional, "
+"you can skip the validation and ignore this warning. If not, please provide "
+"a different database."
+msgstr "La base de datos que ha configurado para usar para Icinga Web 2 parece ser la de Icinga. Tenga en cuenta que esta configuración de la base de datos se debe utilizar para la configuración de Icinga Web 2 y que se recomienda encarecidamente no mezclar diferentes esquemas en la misma base de datos. Si esto es intencional, puede omitir la validación e ignorar esta advertencia. Si no es así, por favor proporcione una base de datos diferente."
+
+#: ../../../../modules/setup/library/Setup/Requirement/ConfigDirectoryRequirement.php:38
+#, -ERR:PROP-NOT-FOUND-, php-format
+msgid "The directory %s does not exist."
+msgstr "El directorio %s no existe"
+
+#: ../../../../modules/setup/library/Setup/Requirement/ConfigDirectoryRequirement.php:32
+#, -ERR:PROP-NOT-FOUND-, php-format
+msgid "The directory %s is not readable."
+msgstr "El directorio %s no se puede leer"
+
+#: ../../../../modules/setup/library/Setup/Requirement/ConfigDirectoryRequirement.php:31
+#, -ERR:PROP-NOT-FOUND-, php-format
+msgid "The directory %s is not writable."
+msgstr "El directorio %s no se puede escribir"
+
+#: ../../../../modules/setup/library/Setup/Requirement/ConfigDirectoryRequirement.php:26
+#, -ERR:PROP-NOT-FOUND-, php-format
+msgid "The directory %s is read- and writable."
+msgstr "El directorio %s se puede leer y escribir"
+
+#: ../../../../modules/setup/application/forms/LdapDiscoveryConfirmPage.php:82
+#, php-format
+msgid "The following directory service has been found on domain \"%s\"."
+msgstr "El siguiente servicio de directorio se ha encontrado en el dominio \"%s\"."
+
+#: ../../../../modules/setup/application/views/scripts/form/setup-modules.phtml:15
+msgid ""
+"The following modules were found in your Icinga Web 2 installation. To "
+"enable and configure a module, just tick it and click \"Next\"."
+msgstr "Los siguientes módulos se encontraron en su instalación de Icinga Web 2. Para habilitar y configurar un módulo, simplemente márquelo y haga clic en "Siguiente"."
+
+#: ../../../../modules/setup/library/Setup/WebWizard.php:214
+msgid ""
+"The given resource name must be unique and is already in use by the LDAP "
+"resource"
+msgstr "El nombre del recurso dado debe ser único y ya está en uso por el recurso LDAP"
+
+#: ../../../../modules/setup/library/Setup/Steps/AuthenticationStep.php:219
+#, php-format
+msgid ""
+"The members of the user group \"%s\" were successfully defined as initial "
+"administrators."
+msgstr "Los miembros del grupo de usuarios \ "%s\" se definieron correctamente como administradores iniciales."
+
+#: ../../../../modules/setup/application/clicommands/TokenCommand.php:87
+#, php-format
+msgid "The newly generated setup token is: %s\n"
+msgstr "El token de configuración recién generado es: %s\n"
+
+#: ../../../../modules/setup/application/forms/DatabaseCreationPage.php:112
+msgid "The password for the database user defined above"
+msgstr "La contraseña para el usuario de la base de datos definida anteriormente."
+
+#: ../../../../modules/setup/application/forms/DatabaseCreationPage.php:169
+msgid ""
+"The provided credentials cannot be used to create the database and/or the "
+"user."
+msgstr "Las credenciales proporcionadas no se pueden utilizar para crear la base de datos y / o el usuario."
+
+#: ../../../../modules/setup/application/forms/DatabaseCreationPage.php:179
+#, php-format
+msgid ""
+"The provided credentials cannot be used to grant all required privileges to "
+"the login \"%s\"."
+msgstr "Las credenciales proporcionadas no se pueden usar para otorgar todos los privilegios necesarios para el inicio de sesión \"%s\"."
+
+#: ../../../../modules/setup/application/forms/DbResourcePage.php:156
+#, php-format
+msgid "The server's version %s is too old. The minimum required version is %s."
+msgstr "La versión del servidor %s es demasiado antigua. La versión mínima requerida es %s."
+
+#: ../../../../modules/setup/application/forms/AuthenticationPage.php:64
+msgid "The type of authentication to use when accessing Icinga Web 2"
+msgstr "El tipo de autenticación que se debe utilizar al acceder a Icinga Web 2"
+
+#: ../../../../modules/setup/application/forms/AuthBackendPage.php:108
+#, -ERR:PROP-NOT-FOUND-
+msgid "The type of the resource being used for this authenticaton provider"
+msgstr "El tipo de recurso a usar para este proveedor de autenticación"
+
+#: ../../../../modules/setup/application/views/scripts/form/setup-welcome.phtml:86
+#, php-format
+msgid "The user \"%s\" is a member of the system group \"icingaweb2\""
+msgstr "El usuario \ "%s\" es un miembro del grupo del sistema \ "icingaweb2 \""
+
+#: ../../../../modules/setup/application/views/scripts/form/setup-welcome.phtml:62
+msgid ""
+"This wizard will guide you through the configuration of Icinga Web 2. Once "
+"completed and successfully finished you are able to log in and to explore "
+"all the new and stunning features!"
+msgstr "Este asistente lo guiará a través de la configuración de Icinga Web 2. Una vez completado y completado con éxito, podrá iniciar sesión y explorar todas las nuevas e impresionantes funciones."
+
+#: ../../../../modules/setup/application/forms/UserGroupBackendPage.php:39
+msgid ""
+"To allow Icinga Web 2 to associate users and groups, you'll need to provide "
+"some further information about the LDAP Connection that is already going to "
+"be used to locate account details."
+msgstr "Para permitir que Icinga Web 2 asocie usuarios y grupos, deberá proporcionar más información sobre la conexión LDAP que ya se usará para localizar los detalles de la cuenta."
+
+#: ../../../../modules/setup/library/Setup/WebWizard.php:639
+msgid ""
+"To be able to export views and reports to PDF, the DOM module for PHP is "
+"required."
+msgstr "Para poder exportar vistas e informes a PDF, se requiere el módulo DOM para PHP."
+
+#: ../../../../modules/setup/application/views/scripts/form/setup-welcome.phtml:79
+msgid ""
+"To run this wizard a user needs to authenticate using a token which is "
+"usually provided to him by an administrator who'd followed the instructions "
+"below."
+msgstr "Para ejecutar este asistente, un usuario debe autenticarse con un token que normalmente le proporciona un administrador que ha seguido las instrucciones a continuación."
+
+#: ../../../../modules/setup/library/Setup/WebWizard.php:668
+msgid ""
+"To store users or preferences in a MySQL database the PDO-MySQL module for "
+"PHP is required."
+msgstr "Para almacenar usuarios o preferencias en una base de datos MySQL, se requiere el módulo PDO-MySQL para PHP."
+
+#: ../../../../modules/setup/library/Setup/WebWizard.php:699
+msgid ""
+"To store users or preferences in a PostgreSQL database the PDO-PostgreSQL "
+"module for PHP is required."
+msgstr "Para almacenar usuarios o preferencias en una base de datos PostgreSQL, se requiere el módulo PDO-PostgreSQL para PHP."
+
+#: ../../../../modules/setup/library/Setup/Steps/GeneralConfigStep.php:97
+msgctxt "app.config.logging"
+msgid "Type"
+msgstr "Tipo"
+
+#: ../../../../modules/setup/application/forms/AdminAccountPage.php:132
+#, -ERR:PROP-NOT-FOUND-
+msgid "Type Of Definition"
+msgstr "Tipo de definición"
+
+#: ../../../../modules/setup/library/Setup/Steps/UserGroupStep.php:204
+#, php-format
+msgid ""
+"Unable to add account \"%s\" as member to user group \"%s\". An error "
+"occured:"
+msgstr "No se puede agregar la cuenta \"%s\" como miembro al grupo de usuarios \"%s\". Ocurrió un error:"
+
+#: ../../../../modules/setup/application/forms/DbResourcePage.php:145
+#, php-format
+msgid ""
+"Unable to check the server's version. This is usually not a critical error "
+"as there is probably only access to the database permitted which does not "
+"exist yet. If you are absolutely sure you are running PostgreSQL in a "
+"version equal to or newer than 9.1, you can skip the validation and safely "
+"proceed to the next step. The error was: %s"
+msgstr "No se puede verificar la versión del servidor. Por lo general, esto no es un error crítico, ya que probablemente solo se permita el acceso a la base de datos que aún no existe. Si está absolutamente seguro de que está ejecutando PostgreSQL en una versión igual o superior a 9.1, puede omitir la validación y continuar de forma segura al siguiente paso. El error fue: %s"
+
+#: ../../../../modules/setup/library/Setup/Steps/AuthenticationStep.php:208
+#, php-format
+msgid "Unable to create account \"%s\". An error occured:"
+msgstr "No se puede crear la cuenta \"%s\". Ocurrió un error:"
+
+#: ../../../../modules/setup/library/Setup/Steps/UserGroupStep.php:190
+#, php-format
+msgid "Unable to create user group \"%s\". An error occured:"
+msgstr "No se puede crear el grupo de usuarios\ "%s\". Ocurrió un error:"
+
+#: ../../../../modules/setup/library/Setup/Steps/AuthenticationStep.php:224
+#, php-format
+msgid ""
+"Unable to define account \"%s\" as initial administrator. An error occured:"
+msgstr "No se puede definir la cuenta \"%s\" como administrador inicial. Ocurrió un error:"
+
+#: ../../../../modules/setup/library/Setup/Steps/AuthenticationStep.php:229
+#, php-format
+msgid ""
+"Unable to define the members of the user group \"%s\" as initial "
+"administrators. An error occured:"
+msgstr "No se pueden definir los miembros del grupo de usuarios \ "%s\" como administradores iniciales. Ocurrió un error:"
+
+#: ../../../../modules/setup/application/clicommands/ConfigCommand.php:132
+#, -ERR:PROP-NOT-FOUND-
+msgid "Unknown type"
+msgstr "Tipo desconocido"
+
+#: ../../../../modules/setup/application/forms/LdapDiscoveryConfirmPage.php:105
+#, -ERR:PROP-NOT-FOUND-
+msgid "Use this configuration?"
+msgstr "¿Usar esta configuración?"
+
+#: ../../../../modules/setup/application/forms/AdminAccountPage.php:110
+msgctxt "setup.admin"
+msgid "User Group"
+msgstr "Grupo de usuarios"
+
+#: ../../../../modules/setup/library/Setup/Steps/UserGroupStep.php:185
+#, -ERR:PROP-NOT-FOUND-, php-format
+msgid "User Group \"%s\" has been successfully created."
+msgstr "Recurso \"%s\" fue creado exitosamente"
+
+#: ../../../../modules/setup/application/forms/UserGroupBackendPage.php:37
+#: ../../../../modules/setup/library/Setup/Steps/UserGroupStep.php:135
+msgctxt "setup.page.title"
+msgid "User Group Backend"
+msgstr "Backend de grupo de usuarios"
+
+#: ../../../../modules/setup/library/Setup/Steps/UserGroupStep.php:177
+#, php-format
+msgid ""
+"User Group Backend configuration could not be written to: %s. An error "
+"occured:"
+msgstr "La configuración de Backend del grupo de usuarios no se pudo escribir en: %s. Ocurrió un error:"
+
+#: ../../../../modules/setup/library/Setup/Steps/UserGroupStep.php:172
+#, php-format
+msgid "User Group Backend configuration has been successfully written to: %s"
+msgstr "La configuración de Backend del grupo de usuarios se ha escrito correctamente en: %s"
+
+#: ../../../../modules/setup/library/Setup/Steps/UserGroupStep.php:134
+msgctxt "setup.page.title"
+msgid "User Groups"
+msgstr "Grupo de usuarios"
+
+#: ../../../../modules/setup/library/Setup/Steps/AuthenticationStep.php:151
+#, -ERR:PROP-NOT-FOUND-
+msgid "User Name Attribute"
+msgstr "Atributo nombre de usuario"
+
+#: ../../../../modules/setup/library/Setup/Steps/AuthenticationStep.php:143
+#, -ERR:PROP-NOT-FOUND-
+msgid "User Object Class"
+msgstr "Clase de objeto usuario"
+
+#: ../../../../modules/setup/application/forms/DatabaseCreationPage.php:100
+#: ../../../../modules/setup/application/forms/AdminAccountPage.php:156
+#: ../../../../modules/setup/application/forms/AdminAccountPage.php:188
+#: ../../../../modules/setup/application/forms/AdminAccountPage.php:209
+#: ../../../../modules/setup/library/Setup/Steps/ResourceStep.php:86
+msgid "Username"
+msgstr "Nombre de usuario"
+
+#: ../../../../modules/setup/application/forms/AdminAccountPage.php:259
+#, -ERR:PROP-NOT-FOUND-
+msgid "Username already exists."
+msgstr "Ya existe el nombre de usuario"
+
+#: ../../../../modules/setup/library/Setup/Steps/AuthenticationStep.php:126
+#, -ERR:PROP-NOT-FOUND-, php-format
+msgctxt "setup.summary.auth"
+msgid "Users will authenticate using %s."
+msgstr "El usuario se va a autenticar usando %s."
+
+#: ../../../../modules/setup/library/Setup/WebWizard.php:377
+#: ../../../../modules/setup/library/Setup/WebWizard.php:393
+msgid "Validate Configuration"
+msgstr "Validar configuración"
+
+#: ../../../../modules/setup/library/Setup/WebWizard.php:378
+#: ../../../../modules/setup/library/Setup/WebWizard.php:394
+msgid "Validation In Progress"
+msgstr "Validación en progreso"
+
+#: ../../../../modules/setup/application/forms/AuthBackendPage.php:199
+#: ../../../../modules/setup/application/forms/LdapResourcePage.php:108
+msgid "Validation Log"
+msgstr "Log de validación"
+
+#: ../../../../modules/setup/library/Setup/Steps/GeneralConfigStep.php:103
+msgctxt "app.config.logging.level"
+msgid "Warning"
+msgstr "Advertencia"
+
+#: ../../../../modules/setup/library/Setup/Steps/GeneralConfigStep.php:76
+msgctxt "app.config.logging.type"
+msgid "Webserver Log"
+msgstr "Log de servidor web"
+
+#: ../../../../modules/setup/application/views/scripts/index/index.phtml:33
+#, -ERR:PROP-NOT-FOUND-
+msgctxt "setup.progress"
+msgid "Welcome"
+msgstr "Bienvenido"
+
+#: ../../../../modules/setup/application/views/scripts/form/setup-welcome.phtml:54
+#, -ERR:PROP-NOT-FOUND-
+msgid "Welcome to the configuration of Icinga Web 2!"
+msgstr "Bienvenido a la configuración de Icinga web 2!"
+
+#: ../../../../modules/setup/application/clicommands/ConfigCommand.php:168
+#, -ERR:PROP-NOT-FOUND-, php-format
+msgid "Write %s configuration to file: %s"
+msgstr "Escribir %s al archivo de configuración: %s"
+
+#: ../../../../modules/setup/library/Setup/Requirement/OSRequirement.php:24
+#, php-format
+msgid "You are running PHP on a %s system."
+msgstr "Está ejecutando PHP en un  %s sistema."
+
+#: ../../../../modules/setup/library/Setup/Requirement/PhpVersionRequirement.php:24
+#, php-format
+msgid "You are running PHP version %s."
+msgstr "Usted está ejecutando la versión de PHP %s."
+
+#: ../../../../modules/setup/application/forms/LdapDiscoveryPage.php:33
+msgid ""
+"You can use this page to discover LDAP or ActiveDirectory servers  for "
+"authentication. If you don't want to execute a discovery, just skip this "
+"step."
+msgstr "Puede usar esta página para descubrir servidores LDAP o ActiveDirectory para la autenticación. Si no desea ejecutar un descubrimiento, simplemente omita este paso."
+
+#: ../../../../modules/setup/application/views/scripts/form/setup-requirements.phtml:35
+msgid ""
+"You may also need to restart the web-server for the changes to take effect!"
+msgstr "¡Es posible que también deba reiniciar el servidor web para que los cambios surtan efecto!"
+
+#: ../../../../modules/setup/application/forms/AuthenticationPage.php:39
+msgid ""
+"You're currently not authenticated using any of the web server's "
+"authentication mechanisms. Make sure you'll configure such, otherwise you'll "
+"not be able to log into Icinga Web 2."
+msgstr "Actualmente no está autenticado con ninguno de los mecanismos de autenticación del servidor web. Asegúrese de que lo configure, de lo contrario no podrá iniciar sesión en Icinga Web 2."
+
+#: ../../../../modules/setup/application/views/scripts/form/setup-welcome.phtml:57
+msgid ""
+"You've already completed the configuration of Icinga Web 2. Note that most "
+"of your configuration files will be overwritten in case you'll re-configure "
+"Icinga Web 2 using this wizard!"
+msgstr "¡Ya ha completado la configuración de Icinga Web 2. Tenga en cuenta que la mayoría de sus archivos de configuración se sobrescribirán en caso de que vuelva a configurar Icinga Web 2 con este asistente!"
+
+#: ../../../../modules/setup/application/forms/AuthBackendPage.php:121
+msgid ""
+"You've chosen to authenticate using a web server's mechanism so it may be "
+"necessary to adjust usernames before any permissions, restrictions, etc. are "
+"being applied."
+msgstr "Ha elegido autenticarse utilizando el mecanismo de un servidor web, por lo que puede ser necesario ajustar los nombres de usuario antes de que se apliquen los permisos, restricciones, etc."
+
+#: ../../../../modules/setup/application/views/scripts/form/setup-summary.phtml:13
+#, php-format
+msgid ""
+"You've configured %1$s successfully. You can review the changes supposed to "
+"be made before setting it up. Make sure that everything is correct (Feel "
+"free to navigate back to make any corrections!) so that you can start using "
+"%1$s right after it has successfully been set up."
+msgstr "Has configurado  %1$s correctamente. Puede revisar los cambios que deben hacerse antes de aplicarlo. Asegúrese de que todo sea correcto (¡Siéntase libre de navegar hacia atrás para hacer cualquier corrección!) Para que pueda comenzar a usarlo  %1$s justo después de que se haya configurado correctamente."
+
+#: ../../../../modules/setup/application/views/scripts/form/setup-welcome.phtml:88
+msgid "Your webserver's user is a member of the system group \"icingaweb2\""
+msgstr "El usuario de su servidor web es miembro del grupo de sistemas \ "icingaweb2 \""
+
+#: ../../../../modules/setup/library/Setup/WebWizard.php:674
+msgid "Zend database adapter for MySQL"
+msgstr "Adaptador de base de datos Zend para MySQL"
+
+#: ../../../../modules/setup/library/Setup/WebWizard.php:705
+msgid "Zend database adapter for PostgreSQL"
+msgstr "Adaptador de base de datos Zend para PostgreSQL"
+
+#: ../../../../modules/setup/library/Setup/Steps/AuthenticationStep.php:127
+#, -ERR:PROP-NOT-FOUND-
+msgctxt "setup.summary.auth.type"
+msgid "a database"
+msgstr "una base de datos"
+
+#: ../../../../modules/setup/application/forms/AdminAccountPage.php:195
+#, -ERR:PROP-NOT-FOUND-
+msgctxt "setup.admin.authbackend"
+msgid "database"
+msgstr "base de datos"
+
+#: ../../../../modules/setup/library/Setup/Steps/AuthenticationStep.php:129
+msgctxt "setup.summary.auth.type"
+msgid "webserver authentication"
+msgstr "servidor web de autenticación"
