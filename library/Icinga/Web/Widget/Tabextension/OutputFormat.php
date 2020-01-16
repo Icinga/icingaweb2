@@ -82,11 +82,7 @@ class OutputFormat implements Tabextension
     {
         $supportedTypes = array();
 
-        $pdfexport = false;
-
-        if (Hook::has('Pdfexport')) {
-            $pdfexport = Hook::first('Pdfexport')->isSupported();
-        }
+        $pdfexport = Hook::has('Pdfexport');
 
         if ($pdfexport || Platform::extensionLoaded('gd')) {
             $supportedTypes[self::TYPE_PDF] = array(
