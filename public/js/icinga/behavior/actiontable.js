@@ -161,8 +161,11 @@
             var keys = this.getMultiselectionKeys();
             for (var i = 0; i < keys.length; i++) {
                 var key = keys[i];
-                if (params[key] || params[key] === null) {
-                    tuple[key] = params[key];
+                for (var j = 0; j < params.length; j++) {
+                    if (params[j].key === key && (params[j].value || params[j].value === null)) {
+                        tuple[key] = params[j].value;
+                        break;
+                    }
                 }
             }
             return tuple;

@@ -131,26 +131,27 @@
                 result = parts.path,
                 newparams = parts.params;
 
+            // We overwrite existing params
             $.each(params, function (key, value) {
-                // We overwrite existing params
-                newparams[encodeURIComponent(key)] = typeof value === 'string'
-                    ? encodeURIComponent(value)
-                    : null;
+                key = encodeURIComponent(key);
+                value = typeof value !== 'string' || !! value ? encodeURIComponent(value) : null;
+
+                var found = false;
+                for (var i = 0; i < newparams.length; i++) {
+                    if (newparams[i].key === key) {
+                        newparams[i].value = value;
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (! found) {
+                    newparams.push({ key: key, value: value });
+                }
             });
 
-            if (Object.keys(newparams).length) {
-                var queryString = '?';
-                $.each(newparams, function (key, value) {
-                    if (queryString !== '?') {
-                        queryString += '&';
-                    }
-
-                    queryString += key;
-                    if (value !== null) {
-                        queryString += '=' + value;
-                    }
-                });
-                result += queryString;
+            if (newparams.length) {
+                result += '?' + this.buildQuery(newparams);
             }
 
             if (parts.hash.length) {
@@ -166,23 +167,19 @@
                 result = parts.path,
                 newparams = parts.params;
 
-            $.each(params, function (idx, key) {
-                delete newparams[encodeURIComponent(key)];
+            $.each(params, function (_, key) {
+                key = encodeURIComponent(key);
+
+                for (var i = 0; i < newparams.length; i++) {
+                    if (typeof newparams[i].key === key) {
+                        delete newparams[i];
+                        return;
+                    }
+                }
             });
 
-            if (Object.keys(newparams).length) {
-                var queryString = '?';
-                $.each(newparams, function (key, value) {
-                  if (queryString !== '?') {
-                      queryString += '&';
-                  }
-
-                  queryString += key;
-                  if (value !== null) {
-                      queryString += '=' + value;
-                  }
-                });
-                result += queryString;
+            if (newparams.length) {
+                result += '?' + this.buildQuery(newparams);
             }
 
             if (parts.hash.length) {
@@ -193,14 +190,36 @@
         },
 
         /**
+         * Return a query string for the given params
+         *
+         * @param {Array} params
+         * @return {string}
+         */
+        buildQuery: function (params) {
+            var query = '';
+
+            for (var i = 0; i < params.length; i++) {
+                if (!! query) {
+                    query += '&';
+                }
+
+                query += params[i].key;
+                if (params[i].value !== null) {
+                    query += '=' + params[i].value;
+                }
+            }
+
+            return query;
+        },
+
+        /**
          * Parse url params
          */
         parseParams: function (a) {
-            var params = {},
+            var params = [],
                 segment = a.search.replace(/^\?/,'').split('&'),
                 len = segment.length,
                 i = 0,
-                s,
                 key,
                 value,
                 equalPos;
@@ -219,7 +238,7 @@
                     value = null;
                 }
 
-                params[key] = value;
+                params.push({ key: key, value: value });
             }
 
             return params;
@@ -414,6 +433,28 @@
                 .every(function (key) {
                     return obj1[key] === obj2[key];
                 });
+        },
+
+        arraysEqual: function (array1, array2) {
+            if (array1.length !== array2.length) {
+                return false;
+            }
+
+            var value1, value2;
+            for (var i = 0; i < array1.length; i++) {
+                value1 = array1[i];
+                value2 = array2[i];
+
+                if (typeof value1 === 'object') {
+                    if (typeof value2 !== 'object' || ! this.objectsEqual(value1, value2)) {
+                        return false;
+                    }
+                } else if (value1 !== value2) {
+                    return false;
+                }
+            }
+
+            return true;
         },
 
         /**

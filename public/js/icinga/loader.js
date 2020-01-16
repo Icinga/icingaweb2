@@ -738,7 +738,7 @@
             if (referrer.method === 'POST') {
                 var newUrl = this.icinga.utils.parseUrl(req.url);
                 var currentUrl = this.icinga.utils.parseUrl(req.$target.data('icingaUrl'));
-                if (newUrl.path === currentUrl.path && this.icinga.utils.objectsEqual(newUrl.params, currentUrl.params)) {
+                if (newUrl.path === currentUrl.path && this.icinga.utils.arraysEqual(newUrl.params, currentUrl.params)) {
                     autoSubmit = true;
                 }
             }
