@@ -415,13 +415,19 @@
             return true;
         },
 
+        /**
+         * Add the specified flag to the given URL
+         *
+         * @param {string} url
+         * @param {string} flag
+         *
+         * @returns {string}
+         *
+         * @deprecated since version 2.8.0. Use {@link Icinga.Utils.addUrlFlag()} instead
+         */
         addUrlFlag: function(url, flag)
         {
-            if (url.match(/\?/)) {
-                return url + '&' + flag;
-            } else {
-                return url + '?' + flag;
-            }
+            return this.icinga.utils.addUrlFlag(url, flag);
         },
 
         /**
@@ -543,7 +549,7 @@
             if (rerenderLayout) {
                 var parts = url.split(/#!/);
                 url = parts.shift();
-                var redirectionUrl = this.addUrlFlag(url, 'renderLayout');
+                var redirectionUrl = icinga.utils.addUrlFlag(url, 'renderLayout');
                 var r = this.loadUrl(redirectionUrl, $('#layout'));
                 r.historyUrl = url;
                 if (parts.length) {
