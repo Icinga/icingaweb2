@@ -1,0 +1,113 @@
+name: PHP Tests
+
+on:
+  push:
+    branches:
+      - master
+      - release/*
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  lint:
+    name: Static analysis for php ${{ matrix.php }} on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['5.6', '7.0', '7.1', '7.2', '7.3', '7.4']
+        os: ['ubuntu-latest']
+        include:
+          - php: '5.6'
+            allow_failure: true
+          - php: '7.0'
+            allow_failure: true
+
+    steps:
+      - name: Checkout code base
+        uses: actions/checkout@v2
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v1
+        with:
+          php-version: ${{ matrix.php }}
+          tools: phpcs
+
+      - name: Setup dependencies
+        run: composer require -n --no-progress overtrue/phplint
+
+      - name: PHP Lint
+        if: success() || matrix.allow_failure
+        run: ./vendor/bin/phplint -n --exclude={^vendor/.*} --exclude=library/Icinga/Util/String.php -- .
+
+      - name: PHP CodeSniffer
+        if: success() || matrix.allow_failure
+        run: phpcs
+
+  test:
+    name: Unit tests with php ${{ matrix.php }} on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+
+    env:
+      phpunit-version: 5.7.27
+      mockery-version: 0.9.9 # *Any* other version is not compatible with PHP 5.6 and anything above phpunit 6
+
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['5.6', '7.0', '7.1', '7.2', '7.3', '7.4']
+        os: ['ubuntu-latest']
+
+    services:
+      mysql:
+        image: mariadb
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: icinga_unittest
+          MYSQL_USER: icinga_unittest
+          MYSQL_PASSWORD: icinga_unittest
+        options: >-
+          --health-cmd "mysql -s -uroot -proot -e'SHOW DATABASES;' 2> /dev/null | grep icinga_unittest > test"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 3306/tcp
+
+      pgsql:
+        image: postgres
+        env:
+          POSTGRES_USER: icinga_unittest
+          POSTGRES_PASSWORD: icinga_unittest
+          POSTGRES_DB: icinga_unittest
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432/tcp
+
+    steps:
+      - name: Checkout code base
+        uses: actions/checkout@v2
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v1
+        with:
+          php-version: ${{ matrix.php }}
+          tools: phpunit:${{ env.phpunit-version }}
+          extensions: mysql, pgsql, ldap
+
+      - name: Setup dependencies
+        run: |
+          sudo locale-gen en_US.UTF-8 de_DE.UTF-8 fr_FR.UTF-8
+          composer require -n --no-progress mockery/mockery:${{ env.mockery-version }}
+
+      - name: PHPUnit
+        env:
+          ICINGAWEB_TEST_MYSQL_PORT: ${{ job.services.mysql.ports['3306'] }}
+          ICINGAWEB_TEST_PGSQL_PORT: ${{ job.services.pgsql.ports['5432'] }}
+        run: phpunit -c modules/test/phpunit.xml --verbose
