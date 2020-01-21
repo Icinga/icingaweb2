@@ -6,6 +6,8 @@ namespace Icinga\Forms;
 use Exception;
 use Zend_Form_Decorator_Abstract;
 use Icinga\Application\Config;
+use Icinga\Application\Hook\ConfigFormEventsHook;
+use Icinga\Exception\ConfigurationError;
 use Icinga\Web\Form;
 use Icinga\Web\Notification;
 
@@ -51,9 +53,21 @@ class ConfigForm extends Form
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    public function isValid($formData)
+    {
+        $valid = parent::isValid($formData);
+
+        if ($valid && ConfigFormEventsHook::runIsValid($this) === false) {
+            foreach (ConfigFormEventsHook::getLastErrors() as $msg) {
+                $this->error($msg);
+            }
+
+            $valid = false;
+        }
+
+        return $valid;
+    }
+
     public function onSuccess()
     {
         $sections = array();
@@ -71,11 +85,15 @@ class ConfigForm extends Form
         } else {
             return false;
         }
+
+        if (ConfigFormEventsHook::runOnSuccess($this) === false) {
+            Notification::error($this->translate(
+                'Configuration successfully stored. Though, one or more module hooks failed to run.'
+                . ' See logs for details'
+            ));
+        }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function onRequest()
     {
         $values = array();
@@ -99,6 +117,10 @@ class ConfigForm extends Form
     {
         try {
             $this->writeConfig($this->config);
+        } catch (ConfigurationError $e) {
+            $this->addError($e->getMessage());
+
+            return false;
         } catch (Exception $e) {
             $this->addDecorator('ViewScript', array(
                 'viewModule'    => 'default',

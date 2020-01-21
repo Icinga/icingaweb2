@@ -3,6 +3,7 @@
 
 namespace Icinga\Module\Monitoring\Controllers;
 
+use Exception;
 use Icinga\Data\Filter\Filter;
 use Icinga\Data\Filter\FilterEqual;
 use Icinga\Module\Monitoring\Controller;
@@ -16,7 +17,9 @@ use Icinga\Module\Monitoring\Forms\Command\Object\ScheduleHostCheckCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\ScheduleHostDowntimeCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\SendCustomNotificationCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\ToggleObjectFeaturesCommandForm;
+use Icinga\Module\Monitoring\Hook\DetailviewExtensionHook;
 use Icinga\Module\Monitoring\Object\HostList;
+use Icinga\Web\Hook;
 use Icinga\Web\Url;
 use Icinga\Web\Widget\Tabextension\DashboardAction;
 use Icinga\Web\Widget\Tabextension\MenuAction;
@@ -65,6 +68,7 @@ class HostsController extends Controller
             )
         )->extend(new DashboardAction())->extend(new MenuAction())->activate('show');
         $this->view->listAllLink = Url::fromRequest()->setPath('monitoring/list/hosts');
+        $this->view->title = $this->translate('Hosts');
     }
 
     protected function handleCommandForm(ObjectsCommandForm $form)
@@ -72,7 +76,9 @@ class HostsController extends Controller
         $form
             ->setBackend($this->backend)
             ->setObjects($this->hostList)
-            ->setRedirectUrl(Url::fromPath('monitoring/hosts/show')->setParams($this->params))
+            ->setRedirectUrl(Url::fromPath('monitoring/hosts/show')->setParams(
+                $this->params->without('host_active_checks_enabled')
+            ))
             ->handleRequest();
 
         $this->view->form = $form;
@@ -85,7 +91,12 @@ class HostsController extends Controller
     public function showAction()
     {
         $this->setAutorefreshInterval(15);
-        if ($this->Auth()->hasPermission('monitoring/command/schedule-check')) {
+        $activeChecksEnabled = $this->hostList->getFeatureStatus()['active_checks_enabled'] !== 0;
+        if ($this->Auth()->hasPermission('monitoring/command/schedule-check')
+            || ($this->Auth()->hasPermission('monitoring/command/schedule-check/active-only')
+                && $activeChecksEnabled
+            )
+        ) {
             $checkNowForm = new CheckNowCommandForm();
             $checkNowForm
                 ->setObjects($this->hostList)
@@ -114,8 +125,12 @@ class HostsController extends Controller
 
         $hostStates = $this->hostList->getStateSummary();
 
-        $this->setAutorefreshInterval(15);
-        $this->view->rescheduleAllLink = Url::fromRequest()->setPath('monitoring/hosts/reschedule-check');
+        if ($activeChecksEnabled) {
+            $this->view->rescheduleAllLink = Url::fromRequest()
+                ->setPath('monitoring/hosts/reschedule-check')
+                ->addParams(['host_active_checks_enabled' => true]);
+        }
+
         $this->view->downtimeAllLink = Url::fromRequest()->setPath('monitoring/hosts/schedule-downtime');
         $this->view->processCheckResultAllLink = Url::fromRequest()->setPath('monitoring/hosts/process-check-result');
         $this->view->addCommentLink = Url::fromRequest()->setPath('monitoring/hosts/add-comment');
@@ -151,6 +166,24 @@ class HostsController extends Controller
         $this->view->commentsLink = Url::fromRequest()->setPath('monitoring/list/comments');
         $this->view->sendCustomNotificationLink = Url::fromRequest()
             ->setPath('monitoring/hosts/send-custom-notification');
+
+        $this->view->extensionsHtml = array();
+        foreach (Hook::all('Monitoring\DetailviewExtension') as $hook) {
+            /** @var DetailviewExtensionHook $hook */
+            try {
+                $html = $hook->setView($this->view)->getHtmlForObjects($this->hostList);
+            } catch (Exception $e) {
+                $html = $this->view->escape($e->getMessage());
+            }
+
+            if ($html) {
+                $module = $this->view->escape($hook->getModule()->getName());
+                $this->view->extensionsHtml[] =
+                    '<div class="icinga-module module-' . $module . '" data-icinga-module="' . $module . '">'
+                    . $html
+                    . '</div>';
+            }
+        }
     }
 
     /**

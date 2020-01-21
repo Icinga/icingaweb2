@@ -5,13 +5,14 @@
 
 // Gray colors
 @gray: #7F7F7F;
+@gray-semilight: #A9A9A9;
 @gray-light: #C9C9C9;
 @gray-lighter: #EEEEEE;
 @gray-lightest: #F7F7F7;
+@disabled-gray: #9a9a9a;
 
-// Icinga colors
-@icinga-blue: #0095BF;
-@icinga-secondary: #EF4F98;
+
+// State colors
 @color-ok: #44bb77;
 @color-up: @color-ok;
 @color-warning: #ffaa44;
@@ -25,6 +26,14 @@
 @color-unreachable: @color-unknown;
 @color-unreachable-handled: @color-unknown-handled;
 @color-pending: #77aaff;
+
+// Icinga colors
+@icinga-blue: #0095BF;
+@icinga-secondary: #EF4F98;
+@low-sat-blue: #dae3e6;
+@low-sat-blue-dark: #becbcf;
+@icinga-blue-light: #a5c4cd;
+@icinga-blue-dark: #0081a6;
 
 // Notification colors
 @color-notification-error: @color-critical;
@@ -65,7 +74,7 @@
 
 // Font sizes
 @font-size: 0.750em; // 12px
-@font-size-small: 0.917em; // 11px
+@font-size-small: 11/12em; // 11px
 @font-size-dashboard: 3.5em; // 56px
 @font-size-dashboard-small: 1.1em; // 17px
 @font-weight-bold: 600;

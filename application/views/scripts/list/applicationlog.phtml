@@ -1,9 +1,9 @@
 <?php if (! $this->compact): ?>
 <div class="controls separated">
     <?= $this->tabs ?>
-    <div class="grid">
+    <?= $this->paginator ?>
+    <div class="sort-controls-container">
         <?= $this->limiter ?>
-        <?= $this->paginator ?>
     </div>
 </div>
 <?php endif ?>

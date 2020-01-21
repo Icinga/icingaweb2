@@ -99,6 +99,8 @@ class ConfigCommand extends Command
      *  --root|--document-root=<directory>  The directory from which the webserver will serve files
      *                                      [/path/to/icingaweb2/public]
      *
+     *  --enable-fpm                        Enable FPM handler for Apache (Nginx is always enabled)
+     *
      *  --fpm-uri=<uri>                     Address or path where to pass requests to FPM [127.0.0.1:9000]
      *
      *  --config=<directory>                Path to Icinga Web 2's configuration files [/etc/icingaweb2]
@@ -149,6 +151,9 @@ class ConfigCommand extends Command
                 'The argument --config expects a path to Icinga Web 2\'s configuration files'
             ));
         }
+
+        $enableFpm = $this->params->shift('enable-fpm', $webserver->getEnableFpm());
+
         $fpmUri = trim($this->params->get('fpm-uri', $webserver->getFpmUri()));
         if (empty($fpmUri)) {
             $this->fail($this->translate(
@@ -159,6 +164,7 @@ class ConfigCommand extends Command
             ->setDocumentRoot($documentRoot)
             ->setConfigDir($configDir)
             ->setUrlPath($urlPath)
+            ->setEnableFpm($enableFpm)
             ->setFpmUri($fpmUri);
         $config = $webserver->generate() . "\n";
         if (($file = $this->params->get('file')) !== null) {

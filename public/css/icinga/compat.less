@@ -30,5 +30,15 @@ table.action {
 }
 
 table.avp {
-  .name-value-table()
+  .name-value-table();
+
+  tbody th {
+    background-color: #f1f1f1;
+  }
+}
+
+.code() {
+  // Some 3rd party modules (e.g. vsphere) use this mixin (though we never had it)
+  // With lessphp version 0.5.0 using undefined mixins now throws exceptions
+  // Since we can't rely that users upgrade those modules first, we provide the mixin for compatibility here
 }

@@ -7,6 +7,7 @@ This chapter provides details for advanced Icinga Web 2 topics.
 * [Advanced Authentication Tips](20-Advanced-Topics.md#advanced-topics-authentication-tips)
 * [Source installation](20-Advanced-Topics.md#installing-from-source)
 * [Automated setup](20-Advanced-Topics.md#web-setup-automation)
+* [Kiosk Mode Configuration](20-Advanced-Topics.md#kiosk-mode)
 
 ## Global URL Parameters <a id="global-url-parameters"></a>
 
@@ -118,7 +119,7 @@ systemctl reload httpd
 
 ### Manual User Creation for Database Authentication Backend <a id="advanced-topics-authentication-tips-manual-user-database-auth"></a>
 
-Icinga Web 2 v2.5+ uses the [native password hash algorithm](http://php.net/manual/en/faq.passwords.php)
+Icinga Web 2 v2.5+ uses the [native password hash algorithm](https://php.net/manual/en/faq.passwords.php)
 provided by PHP 5.6+.
 
 In order to generate a password, run the following command with the PHP CLI >= 5.6:
@@ -477,10 +478,9 @@ and all the other steps described above first.
 
 1. Install PHP dependencies: `php`, `php-intl`, `php-imagick`, `php-gd`, `php-mysql`, `php-curl`, `php-mbstring` used
 by Icinga Web 2.
-2. Set a timezone in `php.ini` configuration file.
-3. Create a database for Icinga Web 2, i.e. `icingaweb2`.
-4. Import the database schema: `mysql -D icingaweb2 < /usr/share/icingaweb2/etc/schema/mysql.schema.sql`.
-5. Insert administrator user in the `icingaweb2` database:
+2. Create a database for Icinga Web 2, i.e. `icingaweb2`.
+3. Import the database schema: `mysql -D icingaweb2 < /usr/share/icingaweb2/etc/schema/mysql.schema.sql`.
+4. Insert administrator user in the `icingaweb2` database:
 `INSERT INTO icingaweb_user (name, active, password_hash) VALUES ('admin', 1, '<hash>')`, where `<hash>` is the output
 of `openssl passwd -1 <password>`.
 5. Make sure the `ido-mysql` and `api` features are enabled in Icinga 2: `icinga2 feature enable ido-mysql` and 
@@ -514,3 +514,28 @@ The structure of the configurations looks like the following:
 
 Have a look [here](20-Advanced-Topics.md#web-setup-manual-from-source-config) for the contents of the files.
 
+## Kiosk Mode Configuration <a id="kiosk-mode"></a>
+
+Be aware that when you create a kiosk user every person who has access to the kiosk is able to perform tasks on it.
+Therefore you would need to create a user in the `roles.ini` in `/etc/icingaweb2/roles.ini`.
+
+   [kioskusers]
+   users = "kiosk"
+
+If you need special permissions you should add those permissions to the user via the admin account in icingaweb2 to the role of the kiosk user.
+
+For the Dashboard system where you want to display the kiosk you can add also the following part into the `icingaweb2.conf`.
+So it starts directly into the kiosk mode.
+If you want to show a specific Dashboard you can enforce this onto the kiosk user via the [enforceddashboard](https://github.com/Thomas-Gelf/icingaweb2-module-enforceddashboard) module.
+
+```
+<ifmodule mod_authz_core.c>
+    # Apache 2.4
+    SetEnvIf Remote_Addr "X.X.X.X" REMOTE_USER=kiosk
+    <requireall>
+        Require all granted
+    </requireall>
+</ifmodule>
+```
+
+Replace Remote_Addr with the IP where the kiosk user is accessing the Web to restrict further usage from other IPs.

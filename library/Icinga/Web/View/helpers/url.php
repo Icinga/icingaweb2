@@ -77,7 +77,7 @@ $this->addHelperFunction('img', function ($url, $params = null, array $propertie
 
     return sprintf(
         '<img src="%s"%s />',
-        $view->escape($view->url($url, $params)),
+        $view->escape($view->url($url, $params)->getAbsoluteUrl()),
         $view->propertiesToString($properties)
     );
 });

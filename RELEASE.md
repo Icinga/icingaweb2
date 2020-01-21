@@ -1,31 +1,11 @@
-# Release Workflow <a id="release-workflow"></a>
+# Release Workflow
 
-#### Table of Content
-
-- [1. Preparations](#preparations)
-  - [1.1. Issues](#issues)
-  - [1.2. Backport Commits](#backport-commits)
-  - [1.3. Authors](#authors)
-- [2. Version](#version)
-- [3. Changelog](#changelog)
-- [4. Git Tag](#git-tag)
-- [5. Package Builds](#package-builds)
-  - [5.1. RPM Packages](#rpm-packages)
-  - [5.2. DEB Packages](#deb-packages)
-- [6. Build Server](#build-server)
-- [7. Release Tests](#release-tests)
-- [8. GitHub Release](#github-release)
-- [9. Post Release](#post-release)
-  - [9.1. Online Documentation](#online-documentation)
-  - [9.2. Announcement](#announcement)
-  - [9.3. Project Management](#project-management)
-
-## Preparations <a id="preparations"></a>
+## Preparations
 
 Specify the release version.
 
 ```
-VERSION=2.6.0
+VERSION=2.7.0
 ```
 
 Add your signing key to your Git configuration file, if not already there.
@@ -39,17 +19,17 @@ vim $HOME/.gitconfig
         signingkey = D14A1F16
 ```
 
-### Issues <a id="issues"></a>
+### Issues
 
 Check issues at https://github.com/Icinga/icingaweb2
 
-### Backport Commits <a id="backport-commits"></a>
+### Backport Commits
 
 For minor versions not branched off git master you need
-to manually backports any and all commits from the
+to manually backport any and all commits from the
 master branch which should be part of this release.
 
-### Authors <a id="authors"></a>
+### Authors
 
 Update the [.mailmap](.mailmap) and [AUTHORS](AUTHORS) files:
 
@@ -57,7 +37,7 @@ Update the [.mailmap](.mailmap) and [AUTHORS](AUTHORS) files:
 git log --use-mailmap | grep '^Author:' | cut -f2- -d' ' | sort | uniq > AUTHORS
 ```
 
-## Version <a id="version"></a>
+## Version
 
 Update the version in the following files:
 
@@ -69,15 +49,16 @@ Commands:
 
 ```
 echo "v$VERSION" > VERSION
-sed -i '' "s/const VERSION = '.*'/const VERSION = '$VERSION'/g" library/Icinga/Application/Version.php
-find . -type f -name '*.info' -exec sed -i '' "s/Version: .*/Version: $VERSION/g" {} \;
+sed -i "s/const VERSION = '.*'/const VERSION = '$VERSION'/g" library/Icinga/Application/Version.php
+find . -type f -name '*.info' -exec sed -i "s/Version: .*/Version: $VERSION/g" {} \;
 ```
 
-## Changelog <a id="changelog"></a>
+## Changelog
 
-Link to the milestone and closed=1 as filter.
+Choose the most important issues and summarize them in multiple groups/paragraphs. Provide links to the mentioned
+issues/PRs. At the start include a link to the milestone's closed issues.
 
-## Git Tag  <a id="git-tag"></a>
+## Git Tag
 
 ```
 git commit -v -a -m "Release version $VERSION"
@@ -93,145 +74,186 @@ git tag -s -m "Version $VERSION" v$VERSION
 Push the tag:
 
 ```
-git push --tags
+git push v$VERSION
 ```
 
 **For major releases:** Create a new `support` branch:
 
 ```
 git checkout master
-git checkout -b support/2.6
-git push -u origin support/2.6
+git checkout -b support/2.7
+git push -u origin support/2.7
 ```
 
-## Package Builds  <a id="package-builds"></a>
+## Package Builds
 
-### RPM Packages  <a id="rpm-packages"></a>
-
-```
-git clone git@github.com:icinga/rpm-icingaweb2.git && cd rpm-icingaweb2
-```
-
-#### Branch Workflow
-
-**Major releases** are branched off `master`.
+### RPM Packages
 
 ```
-git checkout master && git pull
+git clone git@git.icinga.com:packaging/rpm-icingaweb2.git && cd rpm-icingaweb2
 ```
 
-**Bugfix releases** are created in the `release` branch and later merged to master.
+### DEB Packages
 
 ```
-git checkout release && git pull
+git clone git@git.icinga.com:packaging/deb-icingaweb2.git && cd deb-icingaweb2
 ```
 
-#### Release Commit
+### Branch Workflow
 
-Set the `Version`, `Revision` and `changelog` inside the spec file.
+Checkout `master` and create a new branch.
+
+* For releases use x.x[.x] as branch name (e.g. 2.7 or 2.7.1)
+* For releases with revision use x.x.x-n (e.g. 2.7.0-2)
+
+### Switch Build Type (For RPM and DEB)
+
+Edit file `.gitlab-ci.yml` and comment variable `ICINGA_BUILD_TYPE` out.
+
+```yaml
+variables:
+  ...
+  #ICINGA_BUILD_TYPE: snapshot
+  ...
+```
+
+Commit the change.
 
 ```
-sed -i "s/Version: .*/Version: $VERSION/g" icingaweb2.spec
+git commit -av -m "Switch build type for $VERSION-1"
+```
+
+#### RPM Release Preparations
+
+Set the `Version`, `revision` and `%changelog` inside the spec file:
+
+```
+sed -i "s/Version:.*/Version:        $VERSION/g" icingaweb2.spec
 
 vim icingaweb2.spec
 
 %changelog
-* Fri Apr 27 2018 Eric.Lippmann <eric.lippmann@icinga.com> 2.5.3-1
-- Update to 2.5.3
+* Tue Jul 30 2019 Johannes Meyer <johannes.meyer@icinga.com> 2.7.0-1
+- Update to 2.7.0
 ```
 
-```
-git commit -av -m "Release 2.5.3-1"
-git push
-```
+#### DEB Release Preparations
 
-**Note for major releases**: Update release branch to latest.
-`git checkout release && git pull && git merge master && git push`
-
-**Note for minor releases**: Cherry-pick the release commit into master.
-`git checkout master && git pull && git cherry-pick release && git push`
-
-
-### DEB Packages  <a id="deb-packages"></a>
+Update file `debian/changelog` and add at the beginning:
 
 ```
-git clone git@github.com:icinga/deb-icingaweb2.git && cd deb-icingaweb2
-```
+icingaweb2 (2.7.0-1) icinga; urgency=medium
 
-#### Branch Workflow
+  * Release 2.7.0-1
 
-**Major releases** are branched off `master`.
-
-```
-git checkout master && git pull
-```
-
-**Bugfix releases** are created in the `release` branch and later merged to master.
+ -- Eric Lippmann <eric.lippmann@icinga.com>  Tue, 30 Jul 2019 09:28:52 +0000
 
 ```
-git checkout release && git pull
-```
 
-#### Release Commit
+### Release Commit (For RPM and DEB)
 
-Set the `Version`, `Revision` and `changelog` inside the spec file.
+Commit the changes and push the branch.
 
 ```
-./dch 2.5.3-1 "Update to 2.5.3"
+git commit -av -m "Release $VERSION-1"
+git push origin 2.7
 ```
 
+Gitlab will now build snapshot packages based on the tag `v2.7.0` of Icinga Web 2.
+
+### Package Tests
+
+In order to test the created packages you can download a job's artifacts:
+
+Visit [git.icinga.com](https://git.icinga.com/packaging/rpm-icingaweb2)
+and navigate to the respective pipeline under `CI / CD -> Pipelines`.
+
+There click on the job you want to download packages from:
+
+![Pipeline Jobs](doc/res/gitlab-rpm-package-pipeline-jobs.png "Pipeline Jobs")
+
+The job's output appears. On the right-hand sidebar you can browse its artifacts:
+
+![Job Artifacts](doc/res/gitlab-job-artifacts.png "Job Artifacts")
+
+Once there, navigate to `build/RPMS/noarch` where you'll find the packages.
+
+### Release Packages
+
+To build release packages and upload them to [packages.icinga.com](https://packages.icinga.com)
+tag the release commit and push it.
+
 ```
-git commit -av -m "Release 2.5.3-1"
-git push
+git tag -s 2.7.0-1
+git push origin 2.7.0-1
 ```
 
-**Note for major releases**: Update release branch to latest.
-`git checkout release && git pull && git merge master && git push`
+Now cherry pick the release commit to `master` so that the changes are transferred back to it.
 
-**Note for minor releases**: Cherry-pick the release commit into master.
-`git checkout master && git pull && git cherry-pick release && git push`
+**Attention**: Only the release commit. *NOT* the one switching the build type!
 
-
-#### DEB with dch on macOS
-
-```
-docker run -v `pwd`:/mnt/packaging -ti ubuntu:xenial bash
-
-apt-get update
-apt-get install git devscripts vim
-cd /mnt/packaging
-
-git config --global user.name "Eric Lippmann"
-git config --global user.email "eric.lippmann@icinga.com"
-
-./dch 2.5.3-1 "Update to 2.5.3"
-```
-
-## Build Server <a id="build-server"></a>
-
-* Verify package build changes for this version.
-* Test the snapshot packages for all distributions beforehand.
-* Build the newly created Git tag for Debian/RHEL/SuSE.
-
-## Release Tests  <a id="release-tests"></a>
+## Release Tests
 
 * Provision the vagrant boxes and test the release packages.
+* * Start a new docker container and install/run Icinga Web 2 & icingacli.
 
-## GitHub Release  <a id="github-release"></a>
+### CentOS
+
+```
+docker run -ti centos:latest bash
+
+yum -y install https://packages.icinga.com/epel/icinga-rpm-release-7-latest.noarch.rpm
+yum -y install centos-release-scl
+yum -y install icingaweb2 icingacli
+icingacli
+```
+
+### Debian
+
+```
+docker run -ti debian:stretch bash
+
+apt-get update && apt-get install -y wget curl gnupg apt-transport-https
+
+DIST=$(awk -F"[)(]+" '/VERSION=/ {print $2}' /etc/os-release); \
+ echo "deb https://packages.icinga.com/debian icinga-${DIST} main" > \
+ /etc/apt/sources.list.d/${DIST}-icinga.list
+ echo "deb-src https://packages.icinga.com/debian icinga-${DIST} main" >> \
+ /etc/apt/sources.list.d/${DIST}-icinga.list
+
+curl https://packages.icinga.com/icinga.key | apt-key add -
+apt-get -y install icingaweb2 icingacli
+icingacli
+```
+
+## GitHub Release
 
 Create a new release for the newly created Git tag: https://github.com/Icinga/icingaweb2/releases
 
-### Online Documentation  <a id="online-documentation"></a>
+> Hint: Choose [tags](https://github.com/Icinga/icingaweb2/tags), pick one to edit and
+> make this a release. You can also create a draft release.
 
-Ask @bobapple to update the documentation at docs.icinga.com.
+Use the changelog for the release body.
 
-### Announcement  <a id="announcement"></a>
+## Online Documentation
 
-* Create a new blog post on icinga.com/blog
-* Social media: [Twitter](https://twitter.com/icinga), [Facebook](https://www.facebook.com/icinga), [Xing](https://www.xing.com/communities/groups/icinga-da4b-1060043), [LinkedIn](https://www.linkedin.com/groups/Icinga-1921830/about)
-* Update IRC channel topic
+This is built with a daily cronjob.
 
-### Project Management  <a id="project-management"></a>
+### Manual Updates
+
+SSH into the webserver or ask [bobapple](https://github.com/bobapple).
+
+```
+cd /usr/local/icinga-docs-tools && ./build-docs.rb -c /var/www/docs/config/icingaweb2-latest.yml
+```
+
+## Announcement
+
+* Create a new blog post on [icinga.com/blog](https://icinga.com/blog) including a featured image
+* Create a release topic on [community.icinga.com](https://community.icinga.com)
+* Release email to net-tech & team
+
+## Project Management
 
 * Add new minor version on [GitHub](https://github.com/Icinga/icingaweb2/milestones).
 * Close the released version on [GitHub](https://github.com/Icinga/icingaweb2/milestones).

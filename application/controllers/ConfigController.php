@@ -82,6 +82,7 @@ class ConfigController extends Controller
         $form->handleRequest();
 
         $this->view->form = $form;
+        $this->view->title = $this->translate('General');
         $this->createApplicationTabs()->activate('general');
     }
 
@@ -107,6 +108,7 @@ class ConfigController extends Controller
             ->order('name');
         $this->setupLimitControl();
         $this->setupPaginationControl($this->view->modules);
+        $this->view->title = $this->translate('Modules');
     }
 
     public function moduleAction()
@@ -137,6 +139,7 @@ class ConfigController extends Controller
 
             $this->view->module = $module;
             $this->view->toggleForm = $toggleForm;
+            $this->view->title = $module->getName();
             $this->view->tabs = $module->getConfigTabs()->activate('info');
             $this->view->moduleGitCommitId = Version::getGitHead($module->getBaseDir());
         } else {
@@ -157,6 +160,7 @@ class ConfigController extends Controller
             $module = $form->getValue('identifier');
             Icinga::app()->getModuleManager()->enableModule($module);
             Notification::success(sprintf($this->translate('Module "%s" enabled'), $module));
+            $form->onSuccess();
             $this->rerenderLayout()->reloadCss()->redirectNow('config/modules');
         });
 
@@ -182,6 +186,7 @@ class ConfigController extends Controller
             $module = $form->getValue('identifier');
             Icinga::app()->getModuleManager()->disableModule($module);
             Notification::success(sprintf($this->translate('Module "%s" disabled'), $module));
+            $form->onSuccess();
             $this->rerenderLayout()->reloadCss()->redirectNow('config/modules');
         });
 
@@ -209,6 +214,7 @@ class ConfigController extends Controller
         $this->view->form = $form;
         $this->view->backendNames = Config::app('groups');
         $this->createApplicationTabs()->activate('authentication');
+        $this->view->title = $this->translate('Authentication');
         $this->render('userbackend/reorder');
     }
 
@@ -255,6 +261,7 @@ class ConfigController extends Controller
         });
         $form->handleRequest();
 
+        $this->view->title = $this->translate('Authentication');
         $this->renderForm($form, $this->translate('New User Backend'));
     }
 
@@ -293,6 +300,7 @@ class ConfigController extends Controller
             $this->httpNotFound(sprintf($this->translate('User backend "%s" not found'), $backendName));
         }
 
+        $this->view->title = $this->translate('Authentication');
         $this->renderForm($form, $this->translate('Update User Backend'));
     }
 
@@ -325,6 +333,7 @@ class ConfigController extends Controller
         });
         $form->handleRequest();
 
+        $this->view->title = $this->translate('Authentication');
         $this->renderForm($form, $this->translate('Remove User Backend'));
     }
 
@@ -338,6 +347,7 @@ class ConfigController extends Controller
             ->setKeyColumn('name')
             ->select()
             ->order('name');
+        $this->view->title = $this->translate('Resources');
         $this->createApplicationTabs()->activate('resource');
     }
 
@@ -358,6 +368,7 @@ class ConfigController extends Controller
         $form->handleRequest();
 
         $this->view->form = $form;
+        $this->view->title = $this->translate('Resources');
         $this->render('resource/create');
     }
 
@@ -377,6 +388,7 @@ class ConfigController extends Controller
         $form->handleRequest();
 
         $this->view->form = $form;
+        $this->view->title = $this->translate('Resources');
         $this->render('resource/modify');
     }
 
@@ -441,6 +453,7 @@ class ConfigController extends Controller
         }
 
         $this->view->form = $form;
+        $this->view->title = $this->translate('Resources');
         $this->render('resource/remove');
     }
 }

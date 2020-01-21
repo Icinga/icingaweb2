@@ -354,7 +354,7 @@ class MonitoringBackend implements Selectable, Queryable, ConnectionInterface
             $programVersion = $this->select()->from('programstatus', array('program_version'))->fetchOne();
         }
         return (bool) preg_match(
-            '/^[vr]2\.\d+\.\d+.*$/',
+            '/^[vr]?2\.\d+\.\d+.*$/',
             $programVersion
         );
     }

@@ -51,14 +51,19 @@ class Pdf
         Environment::raiseExecutionTime(300);
 
         $viewRenderer = $controller->getHelper('viewRenderer');
-        $controller->render(
-            $viewRenderer->getScriptAction(),
-            $viewRenderer->getResponseSegment(),
-            $viewRenderer->getNoController()
-        );
-        $layout = $controller->getHelper('layout')->setLayout('pdf');
+        $viewRenderer->postDispatch();
+
+        $layoutHelper = $controller->getHelper('layout');
+        $oldLayout = $layoutHelper->getLayout();
+        $layout = $layoutHelper->setLayout('pdf');
+
         $layout->content = $controller->getResponse();
         $html = $layout->render();
+
+        // Restore previous layout and reset content, to properly show errors
+        $controller->getResponse()->clearBody($viewRenderer->getResponseSegment());
+        $layoutHelper->setLayout($oldLayout);
+
         $imgDir = Url::fromPath('img');
         $html = preg_replace(
             '~src="' . $imgDir . '/~',
@@ -70,17 +75,14 @@ class Pdf
 
         if (Hook::has('Pdfexport')) {
             $pdfexport = Hook::first('Pdfexport');
+            $pdfexport->streamPdfFromHtml($html, sprintf(
+                '%s-%s-%d',
+                $request->getControllerName(),
+                $request->getActionName(),
+                time()
+            ));
 
-            if ($pdfexport->isSupported()) {
-                $pdfexport->streamPdfFromHtml($html, sprintf(
-                    '%s-%s-%d',
-                    $request->getControllerName(),
-                    $request->getActionName(),
-                    time()
-                ));
-
-                return;
-            }
+            return;
         }
 
         $options = new Options();

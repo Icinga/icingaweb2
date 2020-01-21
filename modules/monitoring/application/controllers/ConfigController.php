@@ -27,6 +27,8 @@ class ConfigController extends Controller
     public function init()
     {
         $this->assertPermission('config/modules');
+        $this->view->title = $this->translate('Backends');
+        $this->view->defaultTitle = 'monitoring :: ' . $this->view->defaultTitle;
         parent::init();
     }
 
@@ -290,6 +292,7 @@ class ConfigController extends Controller
         $form->handleRequest();
 
         $this->view->form = $form;
+        $this->view->title = $this->translate('Security');
         $this->view->tabs = $this->Module()->getConfigTabs()->activate('security');
     }
 }

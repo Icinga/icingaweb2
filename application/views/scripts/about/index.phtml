@@ -12,6 +12,8 @@
         <dt><?= $this->translate('Git commit') ?></dt>
         <dd><?= $this->escape($version['gitCommitID']) ?></dd>
     <?php endif ?>
+        <dt><?= $this->translate('PHP Version') ?></dt>
+        <dd><?= $this->escape(PHP_VERSION) ?></dd>
     <?php if (isset($version['gitCommitDate'])): ?>
         <dt><?= $this->translate('Git commit date') ?></dt>
         <dd><?= $this->escape($version['gitCommitDate']) ?></dd>
@@ -47,15 +49,6 @@
                 'target'    => '_blank',
                 'icon'      => 'facebook-squared',
                 'title'     => $this->translate('Icinga on Facebook')
-            )
-        ) ?> <?= $this->qlink(
-            null,
-            'https://plus.google.com/+icinga',
-            null,
-            array(
-                'target'    => '_blank',
-                'icon'      => 'gplus-squared',
-                'title'     => $this->translate('Icinga on Google+')
             )
         ) ?>
     </div>

@@ -131,24 +131,33 @@
                 result = parts.path,
                 newparams = parts.params;
 
+            // We overwrite existing params
             $.each(params, function (key, value) {
-              // We overwrite existing params
-              newparams[key] = value;
+                key = encodeURIComponent(key);
+                value = typeof value !== 'string' || !! value ? encodeURIComponent(value) : null;
+
+                var found = false;
+                for (var i = 0; i < newparams.length; i++) {
+                    if (newparams[i].key === key) {
+                        newparams[i].value = value;
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (! found) {
+                    newparams.push({ key: key, value: value });
+                }
             });
 
-            if (Object.keys(newparams).length > 0) {
-              var queryString = '?';
-              $.each(newparams, function (key, value) {
-                  if (queryString !== '?') {
-                      queryString += '&';
-                  }
-                  queryString += encodeURIComponent(key) + '=' + encodeURIComponent(value);
-              });
-              result += queryString;
+            if (newparams.length) {
+                result += '?' + this.buildQuery(newparams);
             }
-            if (parts.hash.length > 0) {
+
+            if (parts.hash.length) {
                 result += '#' + parts.hash;
             }
+
             return result;
         },
 
@@ -158,44 +167,105 @@
                 result = parts.path,
                 newparams = parts.params;
 
-            $.each(params, function (idx, key) {
-                delete newparams[key];
+            $.each(params, function (_, key) {
+                key = encodeURIComponent(key);
+
+                for (var i = 0; i < newparams.length; i++) {
+                    if (typeof newparams[i].key === key) {
+                        delete newparams[i];
+                        return;
+                    }
+                }
             });
 
-            if (Object.keys(newparams).length > 0) {
-              var queryString = '?';
-              $.each(newparams, function (key, value) {
-                  if (queryString !== '?') {
-                      queryString += '&';
-                  }
-                  queryString += encodeURIComponent(key) + '=' + encodeURIComponent(value);
-              });
-              result += queryString;
+            if (newparams.length) {
+                result += '?' + this.buildQuery(newparams);
             }
-            if (parts.hash.length > 0) {
+
+            if (parts.hash.length) {
                 result += '#' + parts.hash;
             }
+
             return result;
+        },
+
+        /**
+         * Return a query string for the given params
+         *
+         * @param {Array} params
+         * @return {string}
+         */
+        buildQuery: function (params) {
+            var query = '';
+
+            for (var i = 0; i < params.length; i++) {
+                if (!! query) {
+                    query += '&';
+                }
+
+                query += params[i].key;
+                if (params[i].value !== null) {
+                    query += '=' + params[i].value;
+                }
+            }
+
+            return query;
         },
 
         /**
          * Parse url params
          */
         parseParams: function (a) {
-            var params = {},
+            var params = [],
                 segment = a.search.replace(/^\?/,'').split('&'),
                 len = segment.length,
                 i = 0,
-                s;
+                key,
+                value,
+                equalPos;
 
             for (; i < len; i++) {
-                if (!segment[i]) {
+                if (! segment[i]) {
                     continue;
                 }
-                s = segment[i].split('=');
-                params[s[0]] = decodeURIComponent(s[1]);
+
+                equalPos = segment[i].indexOf('=');
+                if (equalPos !== -1) {
+                    key = segment[i].slice(0, equalPos);
+                    value = segment[i].slice(equalPos + 1);
+                } else {
+                    key = segment[i];
+                    value = null;
+                }
+
+                params.push({ key: key, value: value });
             }
+
             return params;
+        },
+
+        /**
+         * Add the specified flag to the given URL
+         *
+         * @param {string} url
+         * @param {string} flag
+         *
+         * @returns {string}
+         */
+        addUrlFlag: function (url, flag) {
+            var pos = url.search(/#(?!!)/);
+
+            if (url.indexOf('?') !== -1) {
+                flag = '&' + flag;
+            } else {
+                flag = '?' + flag;
+            }
+
+            if (pos === -1) {
+                return url + flag;
+            }
+
+            return url.slice(0, pos) + flag + url.slice(pos);
         },
 
         /**
@@ -352,6 +422,41 @@
             return keys;
         },
 
+        objectsEqual: function equals(obj1, obj2) {
+            var obj1Keys = Object.keys(obj1);
+            var obj2Keys = Object.keys(obj2);
+            if (obj1Keys.length !== obj2Keys.length) {
+                return false;
+            }
+
+            return obj1Keys.concat(obj2Keys)
+                .every(function (key) {
+                    return obj1[key] === obj2[key];
+                });
+        },
+
+        arraysEqual: function (array1, array2) {
+            if (array1.length !== array2.length) {
+                return false;
+            }
+
+            var value1, value2;
+            for (var i = 0; i < array1.length; i++) {
+                value1 = array1[i];
+                value2 = array2[i];
+
+                if (typeof value1 === 'object') {
+                    if (typeof value2 !== 'object' || ! this.objectsEqual(value1, value2)) {
+                        return false;
+                    }
+                } else if (value1 !== value2) {
+                    return false;
+                }
+            }
+
+            return true;
+        },
+
         /**
          * Cleanup
          */
@@ -404,6 +509,37 @@
                 str = padding + str;
             }
             return str;
+        },
+
+        /**
+         * Shuffle a string
+         *
+         * @param   {String}    str     The string to shuffle
+         *
+         * @returns {String}    The shuffled string
+         */
+        shuffleString: function(str) {
+            var a = str.split(""),
+                n = a.length;
+
+            for(var i = n - 1; i > 0; i--) {
+                var j = Math.floor(Math.random() * (i + 1));
+                var tmp = a[i];
+                a[i] = a[j];
+                a[j] = tmp;
+            }
+            return a.join("");
+        },
+
+        /**
+         * Generate an id
+         *
+         * @param   {Number}    len     The desired length of the id
+         *
+         * @returns {String}    The id
+         */
+        generateId: function(len) {
+            return this.shuffleString('abcefghijklmnopqrstuvwxyz').substr(0, len);
         }
     };
 

@@ -114,6 +114,7 @@ class UserForm extends RepositoryForm
     {
         $this->setTitle(sprintf($this->translate('Remove user %s?'), $this->getIdentifier()));
         $this->setSubmitLabel($this->translate('Yes'));
+        $this->setAttrib('class', 'icinga-controls');
     }
 
     /**

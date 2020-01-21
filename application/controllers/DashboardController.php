@@ -106,29 +106,22 @@ class DashboardController extends ActionController
         $action = $this;
         $form->setOnSuccess(function (Form $form) use ($dashboard, $action) {
             try {
-                $pane = $dashboard->getPane($form->getValue('pane'));
+                $pane = $dashboard->getPane($form->getValue('org_pane'));
+                $pane->setTitle($form->getValue('pane'));
             } catch (ProgrammingError $e) {
                 $pane = new Dashboard\Pane($form->getValue('pane'));
                 $pane->setUserWidget();
                 $dashboard->addPane($pane);
             }
             try {
-                $dashlet = $pane->getDashlet($form->getValue('dashlet'));
+                $dashlet = $pane->getDashlet($form->getValue('org_dashlet'));
+                $dashlet->setTitle($form->getValue('dashlet'));
                 $dashlet->setUrl($form->getValue('url'));
             } catch (ProgrammingError $e) {
                 $dashlet = new Dashboard\Dashlet($form->getValue('dashlet'), $form->getValue('url'), $pane);
                 $pane->addDashlet($dashlet);
             }
             $dashlet->setUserWidget();
-            // Rename dashlet
-            if ($form->getValue('org_dashlet') && $form->getValue('org_dashlet') !== $dashlet->getTitle()) {
-                $pane->removeDashlet($form->getValue('org_dashlet'));
-            }
-            // Move
-            if ($form->getValue('org_pane') && $form->getValue('org_pane') !== $pane->getTitle()) {
-                $oldPane = $dashboard->getPane($form->getValue('org_pane'));
-                $oldPane->removeDashlet($dashlet->getTitle());
-            }
             $dashboardConfig = $dashboard->getConfig();
             try {
                 $dashboardConfig->saveIni();
@@ -269,7 +262,7 @@ class DashboardController extends ActionController
         $action = $this;
         $form->setOnSuccess(function (Form $form) use ($dashboard, $pane, $action) {
             $pane = $dashboard->getPane($pane);
-            $dashboard->removePane($pane->getTitle());
+            $dashboard->removePane($pane->getName());
             $dashboardConfig = $dashboard->getConfig();
             try {
                 $dashboardConfig->saveIni();

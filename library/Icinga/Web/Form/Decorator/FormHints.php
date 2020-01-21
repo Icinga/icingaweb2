@@ -95,7 +95,7 @@ class FormHints extends Zend_Form_Decorator_Abstract
      *
      * @return  array
      */
-    protected function recurseForm(Form $form, & $entirelyRequired = null, $elementsPassed = false)
+    protected function recurseForm(Form $form, &$entirelyRequired = null, $elementsPassed = false)
     {
         $requiredLabels = array();
         if ($form->getRequiredCue() !== null) {

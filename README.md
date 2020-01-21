@@ -50,3 +50,7 @@ testing, reporting bugs, or reviewing and updating the documentation. Every
 contribution is appreciated!
 
 Please continue reading in the [contributing chapter](CONTRIBUTING.md).
+
+### Security Issues
+
+For reporting security issues please visit [this page](https://icinga.com/contact/security/).

@@ -21,13 +21,6 @@
 
         this.timeCounterTimer = null;
 
-        /**
-         * Whether the mobile menu is shown
-         *
-         * @type {bool}
-         */
-        this.mobileMenu = false;
-
         // detect currentLayout
         var classList = $('#layout').attr('class').split(/\s+/);
         var _this = this;
@@ -51,6 +44,11 @@
             this.enableTimeCounters();
             this.triggerWindowResize();
             this.fadeNotificationsAway();
+
+            $(document).on('click', '#mobile-menu-toggle', this.toggleMobileMenu);
+            $(document).on('keypress', '#search',{ self: this, type: 'key' }, this.closeMobileMenu);
+            $(document).on('mouseleave', '#sidebar', { self: this, type: 'leave' }, this.closeMobileMenu);
+            $(document).on('click', '#sidebar a', { self: this, type: 'navigate' }, this.closeMobileMenu);
         },
 
         fadeNotificationsAway: function() {
@@ -62,10 +60,8 @@
                 .delay(7000)
                 .fadeOut('slow',
             function() {
-                icinga.ui.fixControls();
                 $(this).remove();
             });
-
         },
 
         toggleDebug: function() {
@@ -124,9 +120,9 @@
                         'href',
                         base + '/' + url.replace(/^\//, '')
                     ).on('load', function() {
-                        icinga.ui.fixControls();
                         $oldLink.remove();
                     });
+
                     $newLink.appendTo($('head'));
                 }
             });
@@ -154,39 +150,63 @@
          * @param   {object}    [$container]    The container containing the element
          */
         focusElement: function(element, $container) {
-            var $element = $('#' + element);
+            var $element = element;
 
-            if (! $element.length) {
-                // The name attribute is actually deprecated, on anchor tags,
-                // but we'll possibly handle links from another source
-                // (module etc) so that's used as a fallback
+            if (typeof element === 'string') {
                 if ($container && $container.length) {
-                    $element = $container.find('[name="' + element.replace(/'/, '\\\'') + '"]');
+                    $element = $container.find('#' + element);
                 } else {
-                    $element = $('[name="' + element.replace(/'/, '\\\'') + '"]');
+                    $element = $('#' + element);
+                }
+
+                if (! $element.length) {
+                    // The name attribute is actually deprecated, on anchor tags,
+                    // but we'll possibly handle links from another source
+                    // (module etc) so that's used as a fallback
+                    if ($container && $container.length) {
+                        $element = $container.find('[name="' + element.replace(/'/, '\\\'') + '"]');
+                    } else {
+                        $element = $('[name="' + element.replace(/'/, '\\\'') + '"]');
+                    }
                 }
             }
 
             if ($element.length) {
-                if (typeof $element.attr('tabindex') === 'undefined') {
+                if (! this.isFocusable($element)) {
                     $element.attr('tabindex', -1);
                 }
 
-                $element.focus();
+                $element[0].focus();
 
                 if ($container && $container.length) {
-                    $container.scrollTop(0);
-                    $container.scrollTop($element.first().position().top);
+                    if (! $container.is('.container')) {
+                        $container = $container.closest('.container');
+                    }
+
+                    if ($container.css('display') === 'flex' && $container.is('.container')) {
+                        var $controls = $container.find('.controls');
+                        var $content = $container.find('.content');
+                        $content.scrollTop($element.offsetTopRelativeTo($content) - $controls.outerHeight() - (
+                            $element.outerHeight(true) - $element.innerHeight()
+                        ));
+                    } else {
+                        $container.scrollTop($element.first().position().top);
+                    }
                 }
             }
+        },
+
+        isFocusable: function ($element) {
+            return $element.is('*[tabindex], a[href], input:not([disabled]), button:not([disabled])' +
+                ', select:not([disabled]), textarea:not([disabled]), iframe, area[href], object' +
+                ', embed, *[contenteditable]');
         },
 
         moveToLeft: function () {
             var col2 = this.cutContainer($('#col2'));
             var kill = this.cutContainer($('#col1'));
             this.pasteContainer($('#col1'), col2);
-            this.fixControls();
-            this.icinga.behaviors.navigation.trySetActiveByUrl($('#col1').data('icingaUrl'));
+            this.icinga.behaviors.navigation.trySetActiveAndSelectedByUrl($('#col1').data('icingaUrl'));
         },
 
         cutContainer: function ($col) {
@@ -194,17 +214,21 @@
               'elements': $('#' + $col.attr('id') + ' > *').detach(),
               'data': {
                 'data-icinga-url': $col.data('icingaUrl'),
+                'data-icinga-title': $col.data('icingaTitle'),
                 'data-icinga-refresh': $col.data('icingaRefresh'),
                 'data-last-update': $col.data('lastUpdate'),
-                'data-icinga-module': $col.data('icingaModule')
+                'data-icinga-module': $col.data('icingaModule'),
+                'data-icinga-container-id': $col.data('icingaContainerId')
               },
               'class': $col.attr('class')
             };
             this.icinga.loader.stopPendingRequestsFor($col);
             $col.removeData('icingaUrl');
+            $col.removeData('icingaTitle');
             $col.removeData('icingaRefresh');
             $col.removeData('lastUpdate');
             $col.removeData('icingaModule');
+            $col.removeData('icingaContainerId');
             $col.removeAttr('class').attr('class', 'container');
             return props;
         },
@@ -213,9 +237,11 @@
             backup['elements'].appendTo($col);
             $col.attr('class', backup['class']); // TODO: ie memleak? remove first?
             $col.data('icingaUrl', backup['data']['data-icinga-url']);
+            $col.data('icingaTitle', backup['data']['data-icinga-title']);
             $col.data('icingaRefresh', backup['data']['data-icinga-refresh']);
             $col.data('lastUpdate', backup['data']['data-last-update']);
             $col.data('icingaModule', backup['data']['data-icinga-module']);
+            $col.data('icingaContainerId', backup['data']['data-icinga-container-id']);
         },
 
         triggerWindowResize: function () {
@@ -234,7 +260,7 @@
                     _this.currentLayout
                 );
             }
-            _this.fixControls();
+
             _this.refreshDebug();
         },
 
@@ -262,6 +288,9 @@
                     this.currentLayout = matched[1];
                     if (this.currentLayout === 'poor' || this.currentLayout === 'minimal') {
                         this.layout1col();
+                    } else {
+                        // layout1col() also triggers this, that's why an else is required
+                        $('#layout').trigger('layout-change');
                     }
                     return true;
                 }
@@ -287,6 +316,7 @@
             this.icinga.logger.debug('Switching to single col');
             $('#layout').removeClass('twocols');
             this.closeContainer($('#col2'));
+            $('#layout').trigger('layout-change');
             // one-column layouts never have any selection active
             $('#col1').removeData('icinga-actiontable-former-href');
             this.icinga.behaviors.actiontable.clearAll();
@@ -294,20 +324,20 @@
 
         closeContainer: function($c) {
             $c.removeData('icingaUrl');
+            $c.removeData('icingaTitle');
             $c.removeData('icingaRefresh');
             $c.removeData('lastUpdate');
             $c.removeData('icingaModule');
             this.icinga.loader.stopPendingRequestsFor($c);
             $c.trigger('close-column');
             $c.html('');
-            this.fixControls();
         },
 
         layout2col: function () {
             if (! this.isOneColLayout()) { return; }
             this.icinga.logger.debug('Switching to double col');
             $('#layout').addClass('twocols');
-            this.fixControls();
+            $('#layout').trigger('layout-change');
         },
 
         getAvailableColumnSpace: function () {
@@ -474,239 +504,76 @@
         },
 
         /**
-         * Initialize all TriStateCheckboxes in the given html
-         */
-        initializeTriStates: function ($html) {
-            $('div.tristate', $html).each(function(index, item) {
-                var $target  = $(item);
-
-                // hide input boxess and remove text nodes
-                $target.find("input").hide();
-                $target.contents().filter(function() { return this.nodeType === 3; }).remove();
-
-                // has three states?
-                var triState = $target.find('input[value="unchanged"]').size() > 0 ? 1 : 0;
-
-                // fetch current value from radiobuttons
-                var value  = $target.find('input:checked').first().val();
-
-                $target.append(
-                  '<input class="tristate-dummy" ' +
-                        ' data-icinga-old="' + value + '" data-icinga-tristate="' + triState + '" type="checkbox" ' +
-                        (value === '1' ? 'checked ' : ( value === 'unchanged' ? 'indeterminate="true" ' : ' ' )) +
-                  '/> <b style="visibility: hidden;" class="tristate-changed"> (changed) </b>'
-                );
-                if (triState) {
-                  // TODO: find a better way to activate indeterminate checkboxes after load.
-                  $target.append(
-                    '<script type="text/javascript"> ' +
-                      ' $(\'input.tristate-dummy[indeterminate="true"]\').each(function(i, el){ el.indeterminate = true; }); ' +
-                    '</script>'
-                  );
-                }
-            });
-        },
-
-        /**
-         * Set the value of the given TriStateCheckbox
-         *
-         * @param value     {String}  The value to set, can be '1', '0' and 'unchanged'
-         * @param $checkbox {jQuery}  The checkbox
-         */
-        setTriState: function(value, $checkbox) {
-            switch (value) {
-                case ('1'):
-                    $checkbox.prop('checked', true).prop('indeterminate', false);
-                    break;
-                case ('0'):
-                    $checkbox.prop('checked', false).prop('indeterminate', false);
-                    break;
-                case ('unchanged'):
-                    $checkbox.prop('checked', false).prop('indeterminate', true);
-                    break;
-            }
-        },
-
-        /**
          * Toggle mobile menu
          *
          * @param {object} e Event
          */
         toggleMobileMenu: function(e) {
-            var $sidebar = $('#sidebar');
-            var $target = $(e.target);
-            var href = $target.attr('href');
-            if (href) {
-                if (href !== '#') {
-                    $sidebar.removeClass('expanded');
-                }
-            } else if (! $target.is('input')) {
-                $sidebar.toggleClass('expanded');
-            }
+            $('#sidebar').toggleClass('expanded');
         },
 
         /**
-         * Close mobile menu when the enter key was pressed
+         * Close mobile menu when the enter key is pressed during search or the user leaves the sidebar
          *
          * @param {object} e Event
          */
         closeMobileMenu: function(e) {
-            var $search = $('#search');
-            if (e.which === 13 && $search.is(':focus')) {
+            if (e.data.self.currentLayout !== 'minimal') {
+                return;
+            }
+
+            if (e.data.type === 'key') {
+                if (e.which === 13) {
+                    $('#sidebar').removeClass('expanded');
+                    $(e.target)[0].blur();
+                }
+            } else {
                 $('#sidebar').removeClass('expanded');
-                $search.blur();
-            }
-        },
-
-        initializeControls: function(container) {
-            var $container = $(container);
-
-            if ($container.parent('.dashboard').length || $('#layout').hasClass('fullscreen-layout')) {
-                return;
-            }
-
-            $container.find('.controls').each(function() {
-                var $controls = $(this);
-                if (! $controls.next('.fake-controls').length) {
-                    var $tabs = $controls.find('.tabs', $controls);
-                    if ($tabs.length && $controls.children().length > 1 && ! $tabs.next('.tabs-spacer').length) {
-                        $tabs.after($('<div class="tabs-spacer"></div>'));
-                    }
-                    var $fakeControls = $('<div class="fake-controls"></div>');
-                    $fakeControls.height($controls.height()).css({
-                        display: 'block'
-                    });
-                    $controls.css({
-                        position: 'fixed'
-                    }).after($fakeControls);
-                }
-            });
-
-            this.fixControls($container);
-        },
-
-        fixControls: function($container) {
-            var $layout = $('#layout');
-
-            if ($layout.hasClass('fullscreen-layout')) {
-                return;
-            }
-
-            if (typeof $container === 'undefined') {
-                var $header = $('#header');
-                var $headerLogo = $('#header-logo-container');
-                var $main = $('#main');
-                var $search = $('#search');
-                var $sidebar = $('#sidebar');
-
-                $header.css({ height: 'auto'});
-
-                if ($layout.hasClass('minimal-layout')) {
-                    if (! this.mobileMenu && $sidebar.length) {
-                        $header.css({
-                            top: $sidebar.outerHeight() + 'px'
-                        });
-                        $headerLogo.css({
-                            display: 'none'
-                        });
-                        $main.css({
-                            top: $header.outerHeight() + $sidebar.outerHeight()
-                        });
-                        $sidebar
-                            .on(
-                                'click',
-                                this.toggleMobileMenu
-                            )
-                            .prepend(
-                                $('<div id="mobile-menu-toggle"><button><i class="icon-menu"></i></button></div>')
-                            );
-                        $(window).on('keypress', this.closeMobileMenu);
-
-                        this.mobileMenu = true;
-                    }
-                } else {
-                    $headerLogo.css({
-                        top: $header.css('height')
-                    });
-                    $main.css({
-                        top: $header.css('height')
-                    });
-                    if (!! $headerLogo.length) {
-                        $sidebar.css({
-                            top: $headerLogo.offset().top + $headerLogo.outerHeight()
-                        });
-                    }
-
-                    if (this.mobileMenu) {
-                        $header.css({
-                            top: 0
-                        });
-                        $headerLogo.css({
-                            display: 'block'
-                        });
-                        $sidebar.removeClass('expanded').off('click', this.toggleMobileMenu);
-                        $search.off('keypress', this.closeMobileMenu);
-                        $('#mobile-menu-toggle').remove();
-
-                        this.mobileMenu = false;
-                    }
-                }
-
-                var _this = this;
-                $('.container').each(function () {
-                    _this.fixControls($(this));
-                });
-
-                return;
-            }
-
-            if ($container.parent('.dashboard').length) {
-                return;
-            }
-
-            // Enable this only in case you want to track down UI problems
-            //this.icinga.logger.debug('Fixing controls for ', $container);
-
-            $container.find('.controls').each(function() {
-                var $controls = $(this);
-                var $fakeControls = $controls.next('.fake-controls');
-                $controls.css({
-                    top: $container.offsetParent().position().top,
-                    width: $fakeControls.outerWidth()
-                });
-                $fakeControls.height($controls.height());
-            });
-
-            var $statusBar = $container.children('.monitoring-statusbar');
-            if ($statusBar.length) {
-                $statusBar.css({
-                    left: $container.offset().left,
-                    width: $container.width()
-                });
-                $statusBar.prev('.monitoring-statusbar-ghost').height($statusBar.outerHeight(true));
             }
         },
 
         toggleFullscreen: function () {
             $('#layout').toggleClass('fullscreen-layout');
-            this.fixControls();
+        },
+
+        getUniqueContainerId: function ($cont) {
+            if (typeof $cont === 'undefined' || !$cont.length) {
+                return null;
+            }
+
+            var containerId = $cont.data('icingaContainerId');
+            if (typeof containerId === 'undefined') {
+                /**
+                 * Only generate an id if it's not for col1 or the menu (which are using the non-suffixed window id).
+                 * This is based on the assumption that the server only knows about the menu and first column
+                 * and therefore does not need to protect its ids. (As the menu is most likely part of the sidebar)
+                 */
+                if ($cont.attr('id') === 'menu' || $cont.attr('id') === 'col1' || $cont.closest('#col1').length) {
+                    return null;
+                }
+
+                containerId = this.icinga.utils.generateId(6); // Random because the content may move
+                $cont.data('icingaContainerId', containerId);
+            }
+
+            return containerId;
         },
 
         getWindowId: function () {
             if (! this.hasWindowId()) {
                 return undefined;
             }
-            return window.name.match(/^Icinga_([a-zA-Z0-9]+)$/)[1];
+            return window.name.match(/^Icinga-([a-zA-Z0-9]+)$/)[1];
         },
 
         hasWindowId: function () {
-            var res = window.name.match(/^Icinga_([a-zA-Z0-9]+)$/);
+            var res = window.name.match(/^Icinga-([a-zA-Z0-9]+)$/);
             return typeof res === 'object' && null !== res;
         },
 
         setWindowId: function (id) {
             this.icinga.logger.debug('Setting new window id', id);
-            window.name = 'Icinga_' + id;
+            window.name = 'Icinga-' + id;
         },
 
         destroy: function () {

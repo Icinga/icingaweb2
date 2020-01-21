@@ -38,6 +38,13 @@ class NavigationItem implements IteratorAggregate
     protected $active;
 
     /**
+     * Whether this item is selected
+     *
+     * @var bool
+     */
+    protected $selected;
+
+    /**
      * The CSS class used for the outer li element
      *
      * @var string
@@ -209,6 +216,39 @@ class NavigationItem implements IteratorAggregate
         if ($this->active && $this->getParent() !== null) {
             $this->getParent()->setActive();
         }
+
+        return $this;
+    }
+
+    /**
+     * Return whether this item is selected
+     *
+     * @return  bool
+     */
+    public function getSelected()
+    {
+        if ($this->selected === null) {
+            $this->active = false;
+            if ($this->getUrl() !== null && Icinga::app()->getRequest()->getUrl()->matches($this->getUrl())) {
+                $this->setSelected();
+            }
+        }
+
+        return $this->selected;
+    }
+
+    /**
+     * Set whether this item is active
+     *
+     * If it's active and has a parent, the parent gets activated as well.
+     *
+     * @param   bool    $selected
+     *
+     * @return  $this
+     */
+    public function setSelected($selected = true)
+    {
+        $this->selected = (bool) $selected;
 
         return $this;
     }

@@ -3,6 +3,8 @@
 
 namespace Icinga\Data\Db;
 
+use DateTime;
+use DateTimeZone;
 use Exception;
 use Icinga\Data\Inspectable;
 use Icinga\Data\Inspection;
@@ -185,6 +187,11 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
                     if ($this->config->ssl_cipher) {
                         $adapterParamaters['driver_options'][PDO::MYSQL_ATTR_SSL_CIPHER] = $this->config->ssl_cipher;
                     }
+                    if (defined('PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT')
+                        && $this->config->ssl_do_not_verify_server_cert
+                    ) {
+                        $adapterParamaters['driver_options'][PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT] = false;
+                    }
                 }
                 /*
                  * Set MySQL server SQL modes to behave as closely as possible to Oracle and PostgreSQL. Note that the
@@ -198,8 +205,16 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
                     . 'ANSI_QUOTES,PIPES_AS_CONCAT,NO_ENGINE_SUBSTITUTION\'';
                 if (isset($adapterParamaters['charset'])) {
                     $driverOptions[PDO::MYSQL_ATTR_INIT_COMMAND] .= ', NAMES ' . $adapterParamaters['charset'];
+                    if (trim($adapterParamaters['charset']) === 'latin1') {
+                        // Required for MySQL 8+ because we need PIPES_AS_CONCAT and
+                        // have several columns with explicit COLLATE instructions
+                        $driverOptions[PDO::MYSQL_ATTR_INIT_COMMAND] .= ' COLLATE latin1_general_ci';
+                    }
+
                     unset($adapterParamaters['charset']);
                 }
+
+                $driverOptions[PDO::MYSQL_ATTR_INIT_COMMAND] .= ", time_zone='" . $this->defaultTimezoneOffset() . "'";
                 $driverOptions[PDO::MYSQL_ATTR_INIT_COMMAND] .=';';
                 $defaultPort = 3306;
                 break;
@@ -280,6 +295,22 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
     {
         $this->tablePrefix = $prefix;
         return $this;
+    }
+
+    /**
+     * Get offset from the current default timezone to GMT
+     *
+     * @return string
+     */
+    protected function defaultTimezoneOffset()
+    {
+        $tz = new DateTimeZone(date_default_timezone_get());
+        $offset = $tz->getOffset(new DateTime());
+        $prefix = $offset >= 0 ? '+' : '-';
+        $offset = abs($offset);
+        $hours = (int) floor($offset / 3600);
+        $minutes = (int) floor(($offset % 3600) / 60);
+        return sprintf('%s%d:%02d', $prefix, $hours, $minutes);
     }
 
     /**

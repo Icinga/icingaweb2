@@ -67,6 +67,7 @@ class IndexController extends Controller
         }
 
         $this->view->wizard = $wizard;
+        $this->view->title = $this->translate('Setup') . ' :: ' . $this->view->defaultTitle;
     }
 
     /**

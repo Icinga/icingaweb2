@@ -108,7 +108,7 @@ class Zend_View_Helper_Perfdata extends Zend_View_Helper_Abstract
                 return '';
             }
             return sprintf(
-                '<table class="performance-data-table">%s</table>',
+                '<table class="performance-data-table collapsible" data-visible-rows="6">%s</table>',
                 implode("\n", $table)
             );
         }

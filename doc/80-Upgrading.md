@@ -6,6 +6,18 @@ Icinga Web 2 database.
 Specific version upgrades are described below. Please note that version updates are incremental. An upgrade from
 v2.3 to v2.5 requires to follow the instructions for v2.4 too.
 
+## Upgrading to Icinga Web 2 2.7.x <a id="upgrading-to-2.7.x"></a>
+
+**Breaking changes**
+
+* We've upgraded jQuery to version 3.4.1. If you're a module developer, please add `?_dev` to your address bar to check
+  for log messages emitted by jquery-migrate. (https://github.com/jquery/jquery-migrate) Your javascript code will still
+  work, though jquery-migrate will notify you if you're utilizing deprecated/removed functions. jquery-migrate will be
+  removed with Icinga Web v2.8 and code not adjusted accordingly will stop working.
+* If you're using a language other than english and you've adjusted or disabled module dashboards, you'll need to
+  update all of your `dashboard.ini` files. A CLI command exists to assist you with this task. Enable the `migrate`
+  module and run the following on the host where these files exist: `icingacli migrate dashboard sections --verbose`
+
 ## Upgrading to Icinga Web 2 2.6.x <a id="upgrading-to-2.6.x"></a>
 
 * Icinga Web 2 version 2.6.x does not introduce any backward incompatible change.
@@ -78,7 +90,7 @@ Continue here for [MySQL](80-Upgrading.md#upgrading-mysql-db) and [PostgreSQL](8
 ## Upgrading to Icinga Web 2 2.0.0 <a id="upgrading-to-2.0.0"></a>
 
 * Icinga Web 2 installations from package on RHEL/CentOS 7 now depend on `php-ZendFramework` which is available through
-  the [EPEL repository](http://fedoraproject.org/wiki/EPEL). Before, Zend was installed as Icinga Web 2 vendor library
+  the [EPEL repository](https://fedoraproject.org/wiki/EPEL). Before, Zend was installed as Icinga Web 2 vendor library
   through the package `icingaweb2-vendor-zend`. After upgrading, please make sure to remove the package
   `icingaweb2-vendor-zend`.
 

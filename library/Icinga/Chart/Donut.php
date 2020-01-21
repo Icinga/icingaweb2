@@ -297,7 +297,9 @@ class Donut
                     'r'                 => sprintf('%F', $this->radius),
                     'fill'              => 'transparent',
                     'stroke-width'      => $this->getThickness(),
-                    'stroke-dasharray'  => sprintf('%F', $slice[0]) . ' ' . sprintf('%F', (99.9 - $slice[0])), // 99.9 prevents gaps (slight overlap)
+                    'stroke-dasharray'  => sprintf('%F', $slice[0])
+                        . ' '
+                        . sprintf('%F', (99.9 - $slice[0])), // 99.9 prevents gaps (slight overlap)
                     'stroke-dashoffset' => sprintf('%F', $offset)
                 )
             );
@@ -366,7 +368,7 @@ class Donut
     protected function shortenLabel($label)
     {
         if (is_numeric($label) && strlen($label) > 3) {
-            return '~' . substr(round($label, -3), 0, 1) . 'k';
+            return round($label, -3)/1000 . 'k';
         }
 
         return $label;

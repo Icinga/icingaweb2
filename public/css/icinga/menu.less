@@ -9,25 +9,13 @@
 
 @icon-width: 1.7em; // 1.5em width + 0.2em right margin
 
-#menu-container {
-  height: 100%;
-  overflow: hidden;
-  position: relative;
-}
-
 #menu {
   background-color: @menu-bg-color;
   box-shadow: inset -.5em 0 1em rgba(0, 0, 0, .3);
-  height: 100%;
   width: 100%;
+  flex: 1;
+  overflow: auto;
   overflow-x: hidden;
-  overflow-y: auto;
-  position: absolute;
-}
-
-#layout:not(.minimal-layout).sidebar-collapsed #menu {
-  min-width: 6em;
-  width: auto;
 }
 
 #layout:not(.minimal-layout) #menu {
@@ -43,6 +31,8 @@
   vertical-align: middle;
 
   > a {
+    position: relative;
+
     &:focus {
       outline: none;
     }
@@ -51,6 +41,10 @@
       text-decoration: none;
     }
   }
+
+  .nav-level-2 {
+    z-index: 1;
+  }
 }
 
 #layout:not(.sidebar-collapsed) #menu .nav-item > a {
@@ -58,6 +52,10 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+#layout:not(.minimal-layout).sidebar-collapsed #menu .nav-level-1 > .nav-item {
+  overflow: hidden;
 }
 
 #layout:not(.minimal-layout).sidebar-collapsed #menu .nav-level-1 > .nav-item > a {
@@ -71,13 +69,8 @@
   color: @menu-color;
 
   &.active {
-    > a {
-      font-weight: @font-weight-bold;
-      letter-spacing: .02em;
-
-      > .badge {
-        display: none;
-      }
+    > a > .badge {
+      display: none;
     }
 
     background-color: @menu-active-bg-color;
@@ -89,15 +82,53 @@
 
   > a {
     padding: 0.5em 0.5em 0.5em .75em;
+  }
 
-    &:focus, &:hover {
-      color: @menu-highlight-color;
-    }
+  &.active:not(.selected) > a:focus,
+  &.active:not(.selected) > a:hover {
+    background-color: darken(@menu-active-bg-color, 20);
+  }
+
+  &:not(.selected) > a:hover,
+  &:not(.selected) > a:focus {
+    background-color: mix(#000, @menu-bg-color, 20);
   }
 
   // Balance icon weight for non active menu items
   &:not(.active) > a > i {
     opacity: .8;
+  }
+
+  & > a > .icon-letter:before {
+    content: attr(data-letter);
+    font-family: @font-family;
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+}
+
+ul:not(.nav-level-2) > .selected > a {
+  background-color: @menu-highlight-color;
+  color: @text-color-inverted;
+
+
+  &:hover {
+    color: @text-color-inverted;
+  }
+
+  &:after {
+    .transform(rotate(45deg));
+
+    position: absolute;
+    right: -.75em;
+
+    background-color: #fff;
+    box-shadow: 0 0 1em 0 rgba(0,0,0,0.6);
+    content: "";
+    display: block;
+    height: 1.25em;
+    margin-top: -1.75em;
+    width: 1.25em;
   }
 }
 
@@ -105,42 +136,35 @@
   // Collapse menu by default
   display: none;
   line-height: 1.833em; // 22px
-  padding-left: @icon-width;
 
   > a {
     color: @menu-2ndlvl-color;
     font-size: @font-size-small;
-    padding: 0.364em 0.545em 0.364em .8em;
+    padding: 0.364em 0.545em 0.364em (@icon-width + .75em)/@font-size-small;
+  }
 
-    &:hover, &:focus {
-      color: @menu-2ndlvl-highlight-color;
-    }
+  &:not(.selected):not(.active) > a:not(.badge):hover,
+  &:not(.selected):not(.active) > a:not(.badge):focus {
+    background-color: darken(@menu-active-bg-color, 20);
+    color: @menu-2ndlvl-highlight-color;
   }
 
   &.active {
     background-color: @menu-highlight-color;
     overflow: hidden;
     position: relative;
-
-    > a {
-      &:focus, &:hover {
-        opacity: .6;
-      }
-    }
   }
 
   // Little caret on active level-2 item
   &.active:after {
+    .transform(rotate(45deg));
+
     background-color: @body-bg-color;
     box-shadow: 0 0 1em 0 rgba(0,0,0,.6);
     content: "";
     display: block;
     height: 1.25em;
     width: 1.25em;
-    -webkit-transform: rotate(45deg);
-       -moz-transform: rotate(45deg);
-        -ms-transform: rotate(45deg);
-            transform: rotate(45deg);
     position: absolute;
     top: .5em;
     right: -.75em;
@@ -187,17 +211,22 @@
 }
 
 #menu input.search {
-  background: transparent url('../img/icons/search_white.png') no-repeat 0.7em center;
+  background: transparent url('../img/icons/search_white.png') no-repeat 1em center;
   background-size: 1em auto;
   border: none;
-  border-left: 5px solid transparent;
   color: @menu-color;
   line-height: 2.167em;
-  padding-left: @icon-width + 0.5em;
+  padding: .25em;
+  padding-left: @icon-width + .75em;
   width: 100%;
 
   &.active {
     background-color: @menu-active-bg-color;
+  }
+
+  &:hover,
+  &:focus {
+    background-color: darken(@menu-bg-color, 20);
   }
 }
 
@@ -222,7 +251,23 @@
     padding: @vertical-padding 0;
     width: 14em;
     position: fixed;
+    z-index: 1;
 
+    &:after {
+      .transform(rotate(45deg));
+
+      background-color: @body-bg-color;
+      border-bottom: 1px solid @gray-light;
+      border-left: 1px solid @gray-light;
+      content: "";
+      display: block;
+      height: 1.1em;
+      width: 1.1em;
+      position: absolute;
+      top: 1em;
+      left: -.6em;
+      z-index: -1;
+    }
     > .nav-item {
       display: block;
       padding-left: 0;
@@ -242,7 +287,6 @@
 
         &:focus, &:hover {
           background-color: @menu-highlight-color;
-          opacity: .6;
         }
       }
 
@@ -281,6 +325,8 @@
 // Accessibility skip links
 .skip-links {
   position: relative;
+  font-size: 1/.75em;
+
   ul {
     list-style-type: none;
     margin: 0;
@@ -308,12 +354,21 @@
 }
 
 #sidebar.expanded {
-  bottom: 0 !important;
-  height: auto !important;
+  #mobile-menu-toggle .icon-menu {
+    display: none;
+  }
+
+  #mobile-menu-toggle .icon-cancel {
+    display: inline-block;
+  }
 }
 
 .search-control {
   position: relative;
+}
+
+.search-input:focus ~ .search-reset:hover {
+  background-color: darken(@menu-active-bg-color, 20);
 }
 
 .search-reset {
@@ -329,8 +384,9 @@
   right: 0;
   top: 0;
 
-  &:focus, &:hover {
-    color: @menu-highlight-color;
+  &:focus,
+  &:hover {
+    background-color: darken(@menu-bg-color, 20);
     outline: none;
   }
 }
@@ -358,10 +414,13 @@ input[type=text].search-input {
   color: @gray-light;
 }
 
+.search-input ~ .search-reset {
+  opacity: 0;
+}
+
 .search-input:valid ~ .search-reset {
-  animation-duration: .4s;
-  animation-name: search-reset-in;
   display: block;
+  opacity: 1;
 }
 
 .search-input:invalid,
@@ -371,26 +430,17 @@ input[type=text].search-input {
   box-shadow: none;
 }
 
-@keyframes search-reset-in {
-  0% {
-    opacity: 0;
-    transform: translate3d(-20%, 0, 0);
-  }
-  100% {
-    opacity: 1;
-    transform: none;
-  }
-}
-
 // Toggle sidebar button
 #toggle-sidebar {
+  font-size: 1/.75em;
+
   // Reset button styles
   background: none;
   border: none;
   padding: 0;
   color: @gray-light;
   position: absolute;
-  bottom: 0;
+  bottom: 0.2em;
   right: 0;
 
   i {
@@ -417,4 +467,55 @@ input[type=text].search-input {
 
 #open-sidebar {
   display: none;
+}
+
+#open-sidebar:before,
+#close-sidebar:before {
+  width: 1.4em;
+  margin-right: 0;
+}
+
+#layout:not(.sidebar-collapsed) #menu .nav-level-1 > .nav-item.active .nav-level-2 > li,
+#layout:not(.sidebar-collapsed) #menu .nav-level-1 > .nav-item:not(.active).hover .nav-level-2 > li {
+  &.badge-nav-item {
+    display: flex;
+    align-items: center;
+  }
+
+  &.badge-nav-item a:not(.badge) {
+    flex: 1 1 auto;
+    width: 0;
+  }
+
+  &.badge-nav-item a.badge {
+    color: white;
+    flex: 0 1 auto;
+    margin-right: 1em;
+    padding: .25em;
+    width: auto;
+
+    &:hover {
+      opacity: .6;
+    }
+  }
+}
+
+#layout:not(.sidebar-collapsed) #menu .nav-level-1 > .nav-item.active .nav-level-2 > li {
+  &.badge-nav-item:not(.selected) {
+    &:hover {
+      background-color: darken(@menu-bg-color, 20);
+
+      a {
+        color: white;
+      }
+    }
+  }
+}
+
+#layout:not(.sidebar-collapsed) #menu .nav-level-1 > .nav-item:not(.active).hover .nav-level-2 > li {
+  &.badge-nav-item {
+    &:hover {
+      background-color: lighten(@icinga-blue, 80);
+    }
+  }
 }

@@ -147,6 +147,16 @@ class Perfdata
     }
 
     /**
+     * Return whether this performance data's value is a temperature
+     *
+     * @return  bool    True in case it's temperature, otherwise False
+     */
+    public function isTemperature()
+    {
+        return in_array($this->unit, array('°c', '°f'));
+    }
+
+    /**
      * Return whether this performance data's value is in percentage
      *
      * @return  bool    True in case it's in percentage, otherwise False
@@ -202,6 +212,16 @@ class Perfdata
     public function getValue()
     {
         return $this->value;
+    }
+
+    /**
+     * Return the unit as a string
+     *
+     * @return string
+     */
+    public function getUnit()
+    {
+        return $this->unit;
     }
 
     /**
@@ -287,7 +307,7 @@ class Perfdata
         $parts = explode(';', $this->perfdataValue);
 
         $matches = array();
-        if (preg_match('@^(-?\d+(\.\d+)?)([a-zA-Z%]{1,2})$@', $parts[0], $matches)) {
+        if (preg_match('@^(-?\d+(\.\d+)?)([a-zA-Z%°]{1,2})$@u', $parts[0], $matches)) {
             $this->unit = strtolower($matches[3]);
             $this->value = self::convert($matches[1], $this->unit);
         } else {
@@ -433,6 +453,9 @@ class Perfdata
         }
         if ($this->isSeconds()) {
             return Format::seconds($value);
+        }
+        if ($this->isTemperature()) {
+            return (string)$value . strtoupper($this->unit);
         }
         return number_format($value, 2);
     }

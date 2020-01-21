@@ -51,7 +51,8 @@ class StyleSheet
         'css/icinga/spinner.less',
         'css/icinga/compat.less',
         'css/icinga/print.less',
-        'css/icinga/responsive.less'
+        'css/icinga/responsive.less',
+        'css/icinga/modal.less'
     );
 
     /**
@@ -83,7 +84,7 @@ class StyleSheet
         $app = Icinga::app();
         $this->app = $app;
         $this->lessCompiler = new LessCompiler();
-        $this->pubPath = $app->getBootstrapDirectory();
+        $this->pubPath = $app->getBaseDir('public');
         $this->collect();
     }
 
@@ -102,6 +103,12 @@ class StyleSheet
             if ($module->hasCss()) {
                 foreach ($module->getCssFiles() as $lessFilePath) {
                     $this->lessCompiler->addModuleLessFile($moduleName, $lessFilePath);
+                }
+            }
+
+            if ($module->requiresCss()) {
+                foreach ($module->getCssRequires() as $lessFilePath) {
+                    $this->lessCompiler->addModuleRequire($moduleName, $lessFilePath);
                 }
             }
         }

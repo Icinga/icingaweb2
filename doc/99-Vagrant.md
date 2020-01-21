@@ -13,7 +13,7 @@ instead.
 * VirtualBox or Parallels Desktop
 
 Parallels requires the additional provider plugin
-[vagrant-paralells](http://parallels.github.io/vagrant-parallels/docs/) to be installed:
+[vagrant-paralells](https://parallels.github.io/vagrant-parallels/docs/) to be installed:
 
 ```
 $ vagrant plugin install vagrant-parallels

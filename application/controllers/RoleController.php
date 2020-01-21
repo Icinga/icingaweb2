@@ -4,12 +4,10 @@
 namespace Icinga\Controllers;
 
 use Icinga\Application\Config;
-use Icinga\Exception\AlreadyExistsException;
+use Icinga\Authentication\RolesConfig;
 use Icinga\Exception\NotFoundError;
-use Icinga\Forms\ConfirmRemovalForm;
 use Icinga\Forms\Security\RoleForm;
 use Icinga\Web\Controller\AuthBackendController;
-use Icinga\Web\Notification;
 
 /**
  * Manage user permissions and restrictions based on roles
@@ -18,6 +16,13 @@ use Icinga\Web\Notification;
  */
 class RoleController extends AuthBackendController
 {
+    public function init()
+    {
+        $this->view->title = $this->translate('Roles');
+
+        parent::init();
+    }
+
     /**
      * List roles
      *
@@ -38,28 +43,13 @@ class RoleController extends AuthBackendController
     public function addAction()
     {
         $this->assertPermission('config/authentication/roles/add');
-        $role = new RoleForm(array(
-            'onSuccess' => function (RoleForm $role) {
-                $name = $role->getElement('name')->getValue();
-                $values = $role->getValues();
-                try {
-                    $role->add($name, $values);
-                } catch (AlreadyExistsException $e) {
-                    $role->addError($e->getMessage());
-                    return false;
-                }
-                if ($role->save()) {
-                    Notification::success(t('Role created'));
-                    return true;
-                }
-                return false;
-            }
-        ));
-        $role
-            ->setSubmitLabel($this->translate('Create Role'))
-            ->setIniConfig(Config::app('roles', true))
-            ->setRedirectUrl('role/list')
-            ->handleRequest();
+
+        $role = new RoleForm();
+        $role->setRedirectUrl('role/list');
+        $role->setRepository(new RolesConfig());
+        $role->setSubmitLabel($this->translate('Create Role'));
+        $role->add()->handleRequest();
+
         $this->renderForm($role, $this->translate('New Role'));
     }
 
@@ -71,35 +61,20 @@ class RoleController extends AuthBackendController
     public function editAction()
     {
         $this->assertPermission('config/authentication/roles/edit');
+
         $name = $this->params->getRequired('role');
         $role = new RoleForm();
+        $role->setRedirectUrl('role/list');
+        $role->setRepository(new RolesConfig());
         $role->setSubmitLabel($this->translate('Update Role'));
+        $role->edit($name);
+
         try {
-            $role
-                ->setIniConfig(Config::app('roles', true))
-                ->load($name);
+            $role->handleRequest();
         } catch (NotFoundError $e) {
-            $this->httpNotFound($e->getMessage());
+            $this->httpNotFound($this->translate('Role not found'));
         }
-        $role
-            ->setOnSuccess(function (RoleForm $role) use ($name) {
-                $oldName = $name;
-                $name = $role->getElement('name')->getValue();
-                $values = $role->getValues();
-                try {
-                    $role->update($name, $values, $oldName);
-                } catch (NotFoundError $e) {
-                    $role->addError($e->getMessage());
-                    return false;
-                }
-                if ($role->save()) {
-                    Notification::success(t('Role updated'));
-                    return true;
-                }
-                return false;
-            })
-            ->setRedirectUrl('role/list')
-            ->handleRequest();
+
         $this->renderForm($role, $this->translate('Update Role'));
     }
 
@@ -109,35 +84,21 @@ class RoleController extends AuthBackendController
     public function removeAction()
     {
         $this->assertPermission('config/authentication/roles/remove');
+
         $name = $this->params->getRequired('role');
         $role = new RoleForm();
+        $role->setRedirectUrl('role/list');
+        $role->setRepository(new RolesConfig());
+        $role->setSubmitLabel($this->translate('Remove Role'));
+        $role->remove($name);
+
         try {
-            $role
-                ->setIniConfig(Config::app('roles', true))
-                ->load($name);
+            $role->handleRequest();
         } catch (NotFoundError $e) {
-            $this->httpNotFound($e->getMessage());
+            $this->httpNotFound($this->translate('Role not found'));
         }
-        $confirmation = new ConfirmRemovalForm(array(
-            'onSuccess' => function (ConfirmRemovalForm $confirmation) use ($name, $role) {
-                try {
-                    $role->remove($name);
-                } catch (NotFoundError $e) {
-                    Notification::error($e->getMessage());
-                    return false;
-                }
-                if ($role->save()) {
-                    Notification::success(t('Role removed'));
-                    return true;
-                }
-                return false;
-            }
-        ));
-        $confirmation
-            ->setSubmitLabel($this->translate('Remove Role'))
-            ->setRedirectUrl('role/list')
-            ->handleRequest();
-        $this->renderForm($confirmation, $this->translate('Remove Role'));
+
+        $this->renderForm($role, $this->translate('Remove Role'));
     }
 
     /**

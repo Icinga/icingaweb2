@@ -74,3 +74,10 @@ Currently provided languages:
 * Portuguese
 
 More details about this module can be found in [this chapter](../modules/translation/doc/01-About.md#translation-module-about).
+
+
+## Accessibility <a id="about-accessibility"></a>
+
+In the Icinga Web 2 interface even the blind can see - 
+easy navigation with a screen reader and specific themes for different kinds of vision deficiencies
+make it possible for everyone to monitor their systems without impairments.

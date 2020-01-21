@@ -8,7 +8,7 @@ use Icinga\Application\Hook\ApplicationStateHook;
 use Icinga\Authentication\Auth;
 use Icinga\Forms\AcknowledgeApplicationStateMessageForm;
 use Icinga\Web\ApplicationStateCookie;
-use Icinga\Web\Helper\HtmlPurifier;
+use Icinga\Web\Helper\Markdown;
 
 /**
  * Render application state messages
@@ -25,12 +25,6 @@ class ApplicationStateMessages extends AbstractWidget
         $active = array_diff_key($messages, $acked);
 
         return $active;
-    }
-
-
-    protected function getPurifier()
-    {
-        return new HtmlPurifier(['HTML.Allowed' => 'b,a[href|target],i,*[class]']);
     }
 
     public function render()
@@ -55,8 +49,6 @@ class ApplicationStateMessages extends AbstractWidget
             return '<div style="display: none;"></div>';
         }
 
-        $purifier = $this->getPurifier();
-
         $html = '<div>';
 
         reset($active);
@@ -69,7 +61,11 @@ class ApplicationStateMessages extends AbstractWidget
         $ackForm = new AcknowledgeApplicationStateMessageForm();
         $ackForm->populate(['id' => $id]);
 
-        $html .= $purifier->purify($message) . $ackForm;
+        $html .= '<section class="markdown">';
+        $html .= Markdown::text($message);
+        $html .= '</section>';
+
+        $html .= $ackForm;
 
         $html .= '</div>';
 

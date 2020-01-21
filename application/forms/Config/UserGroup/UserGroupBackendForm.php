@@ -229,8 +229,8 @@ class UserGroupBackendForm extends ConfigForm
         if (isset($formData['backend_validation']) && parent::isValid($formData)) {
             $inspection = static::inspectUserBackend($this);
             if ($inspection !== null) {
-                $join = function ($e) use (& $join) {
-                    return is_string($e) ? $e : join("\n", array_map($join, $e));
+                $join = function ($e) use (&$join) {
+                    return is_array($e) ? join("\n", array_map($join, $e)) : $e;
                 };
                 $this->addElement(
                     'note',

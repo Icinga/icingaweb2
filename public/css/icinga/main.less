@@ -1,7 +1,7 @@
 /*! Icinga Web 2 | (c) 2014 Icinga Development Team | GPLv2+ */
 
 // Width for the name column--th--of name-value-table
-@name-value-table-name-width: 14em;
+@name-value-table-name-width: 38/3em;
 
 .action-link {
   color: @icinga-blue;
@@ -28,6 +28,17 @@
 .preformatted {
   font-family: @font-family-fixed;
   white-space: pre-wrap;
+}
+
+.markdown {
+  > * {
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  > *:last-child {
+    margin-bottom: 0;
+  }
 }
 
 .pull-right {
@@ -67,12 +78,12 @@ a:hover > .icon-cancel {
   .action-link();
   .rounded-corners(3px);
 
-  background: @gray-lighter;
+  background: @low-sat-blue;
   display: inline-block;
   padding: 0.25em 0.5em;
 
   &:hover {
-    background: @gray-lightest;
+    background: @low-sat-blue-dark;
     text-decoration: none;
   }
 }
@@ -161,13 +172,6 @@ a:hover > .icon-cancel {
     background-color: @tr-hover-color;
     cursor: pointer;
   }
-
-  caption {
-    border-top: 1px solid @gray-light;
-    caption-side: bottom;
-    font-style: italic;
-    text-align: right;
-  }
 }
 
 .name-value-table {
@@ -231,5 +235,108 @@ a:hover > .icon-cancel {
     top: 0;
     height: 100%;
     width: 100%;
+  }
+}
+
+// Collapsible Control
+#collapsible-control-ghost {
+  display: none;
+}
+
+.collapsible-control {
+  position: relative;
+
+  button {
+    .rounded-corners(50%);
+
+    background: @gray-lighter;
+    color: @gray;
+    width: 2em;
+    height: 2em;
+    z-index: 1;
+    position: absolute;
+    border: none;
+    padding: 0;
+    bottom: -1em;
+    right: .25em;
+    -webkit-box-shadow: 0 0 1/3em rgba(0,0,0,.3);
+    -moz-box-shadow: 0 0 1/3em rgba(0,0,0,.3);
+    box-shadow: 0 0 1/3em rgba(0,0,0,.3);
+
+    &:hover:before {
+      content: "";
+      display: block;
+      position: absolute;
+      top: -1/6em;
+      right: -1/6em;
+      bottom: -1/6em;
+      left: -1/6em;
+      background: fade(@text-color, 10);
+      .rounded-corners(50%);
+    }
+  }
+
+  button i:before {
+    margin-right: 0;
+  }
+}
+
+.collapsible.can-collapse:not(.collapsed) + .collapsible-control button {
+  > i.expand-icon {
+    display: none;
+  }
+
+  > i.collapse-icon {
+    display: inline;
+  }
+}
+
+.collapsible.collapsed + .collapsible-control button {
+  > i.expand-icon {
+    display: inline;
+  }
+
+  > i.collapse-icon {
+    display: none;
+  }
+}
+
+// Collapsibles
+
+.collapsible.collapsed {
+  overflow: hidden;
+}
+
+.collapsible.collapsed:not([data-toggle-element]) {
+  position: relative;
+
+  &:before, &:after {
+    content: "";
+    display: block;
+    height: 2em;
+    background: linear-gradient(rgba(255,255,255,0), white);
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1;
+
+    opacity: 1;
+    transition: opacity 2s 1s linear;
+  }
+
+  &:after {
+    opacity: 0;
+    background: linear-gradient(rgba(238,238,238,0), #eee);
+  }
+}
+
+.impact .collapsible.collapsed:not([data-toggle-element]) {
+  &:before {
+    opacity: 0;
+  }
+
+  &:after {
+    opacity: 1;
   }
 }

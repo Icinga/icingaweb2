@@ -40,6 +40,12 @@ class ServiceController extends MonitoredObjectController
         $this->object = $service;
         $this->createTabs();
         $this->getTabs()->activate('service');
+        $this->view->title = $service->service_display_name;
+        $this->view->defaultTitle = join(' :: ', [
+            $service->host_display_name,
+            $this->translate('Services'),
+            $this->view->defaultTitle
+        ]);
     }
 
     /**

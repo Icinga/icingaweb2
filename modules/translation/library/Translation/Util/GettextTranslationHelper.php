@@ -418,7 +418,7 @@ class GettextTranslationHelper
     {
         shell_exec(sprintf(
             "sed -i 's;%s;../../../..;g' %s",
-            dirname($this->appDir),
+            $this->moduleDir ?: dirname($this->appDir),
             $path
         ));
     }

@@ -37,6 +37,13 @@ class SimpleQuery implements QueryInterface, Queryable, Iterator
     protected $iteratorPosition;
 
     /**
+     * The amount of rows previously calculated
+     *
+     * @var int
+     */
+    protected $cachedCount;
+
+    /**
      * The target you are going to query
      *
      * @var mixed
@@ -365,13 +372,11 @@ class SimpleQuery implements QueryInterface, Queryable, Iterator
         }
 
         $column = $this->order[$orderIndex][0];
-        if (array_key_exists($column, $this->flippedColumns)) {
+        if (array_key_exists($column, $this->flippedColumns) && is_string($this->flippedColumns[$column])) {
             $column = $this->flippedColumns[$column];
         }
 
-        // TODO: throw Exception if column is missing
-        //$res = strnatcmp(strtolower($a->$column), strtolower($b->$column));
-        $result = @strcmp(strtolower($a->$column), strtolower($b->$column));
+        $result = strcmp(strtolower($a->$column), strtolower($b->$column));
         if ($result === 0) {
             return $this->compare($a, $b, ++$orderIndex);
         }
@@ -452,7 +457,7 @@ class SimpleQuery implements QueryInterface, Queryable, Iterator
      */
     public function hasResult()
     {
-        return $this->iteratorPosition !== null || $this->fetchRow() !== false;
+        return $this->cachedCount > 0 || $this->iteratorPosition !== null || $this->fetchRow() !== false;
     }
 
     /**
@@ -649,6 +654,7 @@ class SimpleQuery implements QueryInterface, Queryable, Iterator
         $query->limit(0, 0);
         Benchmark::measure('Counting all results started');
         $count = $this->ds->count($query);
+        $this->cachedCount = $count;
         Benchmark::measure('Counting all results finished');
         return $count;
     }

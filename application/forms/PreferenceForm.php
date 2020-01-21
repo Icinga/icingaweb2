@@ -302,7 +302,8 @@ class PreferenceForm extends Form
                 array(
                     'ignore'        => true,
                     'label'         => $this->translate('Save to the Preferences'),
-                    'decorators'    => array('ViewHelper')
+                    'decorators'    => array('ViewHelper'),
+                    'class'         => 'btn-primary'
                 )
             );
         }
@@ -335,7 +336,7 @@ class PreferenceForm extends Form
             array(
                 'decorators' => array(
                     'FormElements',
-                    array('HtmlTag', array('tag' => 'div', 'class' => 'control-group'))
+                    array('HtmlTag', array('tag' => 'div', 'class' => 'control-group form-controls'))
                 )
             )
         );

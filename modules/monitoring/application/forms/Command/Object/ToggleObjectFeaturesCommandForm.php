@@ -32,7 +32,7 @@ class ToggleObjectFeaturesCommandForm extends ObjectsCommandForm
     public function init()
     {
         $this->setUseFormAutosubmit();
-        $this->setAttrib('class', 'inline object-features');
+        $this->setAttrib('class', self::DEFAULT_CLASSES . ' object-features');
         $features = array(
             ToggleObjectFeatureCommand::FEATURE_ACTIVE_CHECKS => array(
                 'label'         => $this->translate('Active Checks'),
@@ -80,17 +80,25 @@ class ToggleObjectFeaturesCommandForm extends ObjectsCommandForm
                 $options['description'] = $this->translate('changed');
             }
             if ($formData[$feature] === 2) {
-                $options['multiOptions'] = array(
-                    $this->translate('disable'),
-                    $this->translate('enable'),
-                );
-                $options['separator'] = '';
-                $elementType = 'radio';
+                $this->addElement('select', $feature, $options + [
+                    'description'   => $this->translate('Multiple Values'),
+                    'filters'       => [['Null', ['type' => \Zend_Filter_Null::STRING]]],
+                    'multiOptions'  => [
+                        '' => $this->translate('Leave Unchanged'),
+                        $this->translate('Disable All'),
+                        $this->translate('Enable All')
+                    ],
+                    'decorators'    => array_merge(
+                        array_slice(static::$defaultElementDecorators, 0, 3),
+                        [['Description', ['tag' => 'span']]],
+                        array_slice(static::$defaultElementDecorators, 4, 1),
+                        [['HtmlTag', ['tag' => 'div', 'class' => 'control-group indeterminate']]]
+                    )
+                ]);
             } else {
-                $elementType = 'checkbox';
                 $options['value'] = $formData[$feature];
+                $this->addElement('checkbox', $feature, $options);
             }
-            $this->addElement($elementType, $feature, $options);
         }
     }
 

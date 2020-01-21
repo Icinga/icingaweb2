@@ -86,6 +86,7 @@ class DowntimeController extends Controller
         $this->view->stateName = $isService ? Service::getStateText($this->downtime->service_state)
             : Host::getStateText($this->downtime->host_state);
 
+        $this->view->title = $this->translate('Downtimes');
         if ($this->hasPermission('monitoring/command/downtime/delete')) {
             $form = new DeleteDowntimeCommandForm();
             $form

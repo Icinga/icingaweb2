@@ -7,7 +7,7 @@ if (! $this->compact): ?>
     <div class="sort-controls-container">
         <?= $this->limiter ?>
         <?= $this->sortBox ?>
-        <a href="<?= $this->href('monitoring/list/servicegroup-grid') ?>" class="grid-toggle-link"
+        <a href="<?= $this->href('monitoring/list/servicegroup-grid')->addFilter(clone $this->filterEditor->getFilter()) ?>" class="grid-toggle-link"
            title="<?= $this->translate('Toogle grid view mode') ?>">
             <?= $this->icon('th-list', null, ['class' => '-active']) ?>
             <?= $this->icon('th-thumb-empty', null, ['class' => '-inactive']) ?>
@@ -38,9 +38,12 @@ if (! $this->compact): ?>
             <th>
                 <?= $this->qlink(
                     $serviceGroup->servicegroup_alias,
-                    $this->url('monitoring/list/services')->addFilter($this->filterEditor->getFilter()),
-                    array('servicegroup_name' =>  $serviceGroup->servicegroup_name, 'sort' => 'service_severity'),
-                    array('title' => sprintf($this->translate('List all services in the group "%s"'),  $serviceGroup->servicegroup_alias))
+                    $this
+                        ->url('monitoring/list/services')
+                        ->setParams(['servicegroup_name' => $serviceGroup->servicegroup_name])
+                        ->addFilter($this->filterEditor->getFilter()),
+                    ['sort' => 'service_severity'],
+                    ['title' => sprintf($this->translate('List all services in the group "%s"'),  $serviceGroup->servicegroup_alias)]
                 ) ?>
             </th>
             <td>

@@ -63,19 +63,6 @@ class DashboardPane extends NavigationItem
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function merge(NavigationItem $item)
-    {
-        parent::merge($item);
-
-        $this->setDashlets(array_merge(
-            $this->getDashlets(false),
-            $item->getDashlets(false)
-        ));
-    }
-
-    /**
      * Set disabled state for pane
      *
      * @param bool $disabled

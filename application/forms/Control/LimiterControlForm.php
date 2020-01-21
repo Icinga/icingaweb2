@@ -15,7 +15,7 @@ class LimiterControlForm extends Form
      *
      * @var string
      */
-    const CSS_CLASS_LIMITER = 'limiter-control';
+    const CSS_CLASS_LIMITER = 'limiter-control icinga-controls';
 
     /**
      * Default limit
@@ -36,6 +36,11 @@ class LimiterControlForm extends Form
         100 => '100',
         500 => '500'
     );
+
+    public static $defaultElementDecorators = [
+        ['Label', ['tag' => 'span', 'separator' => '']],
+        ['ViewHelper', ['separator' => '']],
+    ];
 
     /**
      * Default limit for this instance

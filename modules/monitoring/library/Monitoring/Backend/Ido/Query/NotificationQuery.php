@@ -22,6 +22,7 @@ class NotificationQuery extends IdoQuery
      */
     protected $columnMap = array(
         'notifications' => array(
+            'id'                            => 'n.id',
             'instance_name'                 => 'n.instance_name',
             'notification_contact_name'     => 'n.notification_contact_name',
             'notification_output'           => 'n.notification_output',

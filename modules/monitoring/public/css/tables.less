@@ -17,17 +17,15 @@
 // Object link and comment author in the comment overview
 .comment-author {
   margin-bottom: 0.25em;
+
+  > a {
+    font-weight: bold;
+  }
 }
 
 // Comment icons, e.g. persistent in the comment overview
 .comment-icons {
   float: right;
-}
-
-// Comment text in the comment overview
-.comment-text {
-  // Reset margin
-  margin: 0;
 }
 
 // Type information for backends in the monitoring config
@@ -80,7 +78,7 @@
 
 // Plugin output in detail views
 .plugin-output,
-// Plugin output in overvies
+// Plugin output in overviews
 .overview-plugin-output {
   -webkit-hyphens: auto;
      -moz-hyphens: auto;
@@ -91,7 +89,7 @@
   word-wrap: break-word;
 }
 
-// Plugin output in overvies
+// Plugin output in overviews
 .overview-plugin-output {
   color: @text-color-light;
   font-family: @font-family-fixed;
@@ -211,6 +209,10 @@
 // Wraps links, icons and meta in overviews
 .state-header {
   .clearfix();
+
+  > a {
+    font-weight: bold;
+  }
 }
 
 // State icons, e.g. acknowledged in overviews
@@ -235,6 +237,11 @@
   border-spacing: 0 1px;
   width: 100%;
 
+  tr[href] {
+    -webkit-transform: translate3d(0,0,0); /* Without this, hovering in Safari is broken in history table rows */
+    -moz-transform: none; /* Firefox collapses border spacing due to the above */
+  }
+
   tr[href].active {
     background-color: @tr-active-color;
   }
@@ -242,5 +249,28 @@
   tr[href]:hover {
     background-color: @tr-hover-color;
     cursor: pointer;
+  }
+
+  tr[href].state-outdated:not(:hover):not(.active) td:not(.state-col) {
+    opacity: 0.7;
+  }
+}
+
+// Event history
+.history-message-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  > .history-message-icon {
+    padding: 0.25em;
+  }
+
+  > .history-message-output {
+    flex: 1;
+
+    > a {
+      font-weight: bold;
+    }
   }
 }

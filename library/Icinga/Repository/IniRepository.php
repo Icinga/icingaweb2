@@ -32,7 +32,7 @@ abstract class IniRepository extends Repository implements Extensible, Updatable
      * <code>
      * array(
      *   'table_name' => array(
-     *     'config'    => 'name_of_the_ini_file_without_extension',
+     *     'name'      => 'name_of_the_ini_file_without_extension',
      *     'keyColumn' => 'the_name_of_the_column_to_use_as_key_column',
      *    ['module'    => 'the_name_of_the_module_if_any']
      *   )
@@ -405,7 +405,7 @@ abstract class IniRepository extends Repository implements Extensible, Updatable
      *
      * @throws  ProgrammingError    In case no valid section name is available
      */
-    protected function extractSectionName(& $config, $keyColumn)
+    protected function extractSectionName(&$config, $keyColumn)
     {
         if (! is_array($config) && !$config instanceof ConfigObject) {
             throw new ProgrammingError('$config is neither an array nor a ConfigObject');

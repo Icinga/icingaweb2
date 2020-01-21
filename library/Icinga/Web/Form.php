@@ -3,6 +3,7 @@
 
 namespace Icinga\Web;
 
+use Icinga\Web\Form\Element\DateTimePicker;
 use Zend_Config;
 use Zend_Form;
 use Zend_Form_Element;
@@ -30,6 +31,11 @@ class Form extends Zend_Form
      * The suffix to append to a field's hidden default field name
      */
     const DEFAULT_SUFFIX = '_default';
+
+    /**
+     * A form's default CSS classes
+     */
+    const DEFAULT_CLASSES = 'icinga-form icinga-controls';
 
     /**
      * Identifier for notifications of type error
@@ -210,9 +216,9 @@ class Form extends Zend_Form
      */
     public static $defaultElementDecorators = array(
         array('Label', array('tag'=>'span', 'separator' => '', 'class' => 'control-label')),
-        array('Help', array('placement' => 'APPEND')),
         array(array('labelWrap' => 'HtmlTag'), array('tag' => 'div', 'class' => 'control-label-group')),
         array('ViewHelper', array('separator' => '')),
+        array('Help', array()),
         array('Errors', array('separator' => '')),
         array('HtmlTag', array('tag' => 'div', 'class' => 'control-group'))
     );
@@ -237,6 +243,10 @@ class Form extends Zend_Form
                 'type'      => static::DECORATOR
             )
         ));
+
+        if (! isset($options['attribs']['class'])) {
+            $options['attribs']['class'] = static::DEFAULT_CLASSES;
+        }
 
         parent::__construct($options);
     }
@@ -833,6 +843,7 @@ class Form extends Zend_Form
                 'submit',
                 'btn_submit',
                 array(
+                    'class'                 => 'btn-primary',
                     'ignore'                => true,
                     'label'                 => $submitLabel,
                     'data-progress-label'   => $this->getProgressLabel(),
@@ -983,7 +994,9 @@ class Form extends Zend_Form
                     'tag'   => 'input',
                     'type'  => 'hidden',
                     'name'  => $name . static::DEFAULT_SUFFIX,
-                    'value' => $el->getValue()
+                    'value' => $el instanceof DateTimePicker
+                        ? $el->getValue()->format($el->getFormat())
+                        : $el->getValue()
                 )
             );
 
@@ -1107,7 +1120,7 @@ class Form extends Zend_Form
      * @param   Zend_Form   $form
      * @param   array       $defaults
      */
-    protected function preserveDefaults(Zend_Form $form, array & $defaults)
+    protected function preserveDefaults(Zend_Form $form, array &$defaults)
     {
         foreach ($form->getElements() as $name => $element) {
             if ((array_key_exists($name, $defaults)

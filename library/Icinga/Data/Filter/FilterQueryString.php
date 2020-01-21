@@ -77,6 +77,11 @@ class FilterQueryString
                 }
                 $var = substr($key, $pos + 1);
                 $key = substr($key, 0, $pos);
+
+                if (ctype_digit($var)) {
+                    $var = (float) $var;
+                }
+
                 return Filter::expression($key, $sign, $var);
             }
         }
@@ -89,20 +94,26 @@ class FilterQueryString
             return Filter::expression($key, '=', true);
         }
 
+        $toFloat = false;
         if ($sign === '=') {
             $last = substr($key, -1);
             if ($last === '>' || $last === '<') {
                 $sign = $last . $sign;
                 $key = substr($key, 0, -1);
+                $toFloat = true;
             }
         // TODO: Same as above for unescaped <> - do we really need this?
         } elseif ($sign === '>' || $sign === '<' || $sign === '!') {
+            $toFloat = $sign === '>' || $sign === '<';
             if ($this->nextChar() === '=') {
                 $sign .= $this->readChar();
             }
         }
 
         $var = $this->readNextValue();
+        if ($toFloat && ctype_digit($var)) {
+            $var = (float) $var;
+        }
 
         return Filter::expression($key, $sign, $var);
     }

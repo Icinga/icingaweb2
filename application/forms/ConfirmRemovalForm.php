@@ -10,6 +10,8 @@ use Icinga\Web\Form;
  */
 class ConfirmRemovalForm extends Form
 {
+    const DEFAULT_CLASSES = 'icinga-controls';
+
     /**
      * {@inheritdoc}
      */

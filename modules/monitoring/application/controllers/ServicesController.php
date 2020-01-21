@@ -3,6 +3,7 @@
 
 namespace Icinga\Module\Monitoring\Controllers;
 
+use Exception;
 use Icinga\Data\Filter\Filter;
 use Icinga\Module\Monitoring\Controller;
 use Icinga\Module\Monitoring\Forms\Command\Object\AcknowledgeProblemCommandForm;
@@ -15,7 +16,9 @@ use Icinga\Module\Monitoring\Forms\Command\Object\ScheduleServiceCheckCommandFor
 use Icinga\Module\Monitoring\Forms\Command\Object\ScheduleServiceDowntimeCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\SendCustomNotificationCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\ToggleObjectFeaturesCommandForm;
+use Icinga\Module\Monitoring\Hook\DetailviewExtensionHook;
 use Icinga\Module\Monitoring\Object\ServiceList;
+use Icinga\Web\Hook;
 use Icinga\Web\Url;
 use Icinga\Web\Widget\Tabextension\DashboardAction;
 use Icinga\Web\Widget\Tabextension\MenuAction;
@@ -71,6 +74,7 @@ class ServicesController extends Controller
                 'url'   => Url::fromRequest()
             )
         )->extend(new DashboardAction())->extend(new MenuAction())->activate('show');
+        $this->view->title = $this->translate('Services');
     }
 
     protected function handleCommandForm(ObjectsCommandForm $form)
@@ -78,7 +82,9 @@ class ServicesController extends Controller
         $form
             ->setBackend($this->backend)
             ->setObjects($this->serviceList)
-            ->setRedirectUrl(Url::fromPath('monitoring/services/show')->setParams($this->params))
+            ->setRedirectUrl(Url::fromPath('monitoring/services/show')->setParams(
+                $this->params->without('service_active_checks_enabled')
+            ))
             ->handleRequest();
 
         $this->view->form = $form;
@@ -92,7 +98,12 @@ class ServicesController extends Controller
     public function showAction()
     {
         $this->setAutorefreshInterval(15);
-        if ($this->Auth()->hasPermission('monitoring/command/schedule-check')) {
+        $activeChecksEnabled = $this->serviceList->getFeatureStatus()['active_checks_enabled'] !== 0;
+        if ($this->Auth()->hasPermission('monitoring/command/schedule-check')
+            || ($this->Auth()->hasPermission('monitoring/command/schedule-check/active-only')
+                && $activeChecksEnabled
+            )
+        ) {
             $checkNowForm = new CheckNowCommandForm();
             $checkNowForm
                 ->setObjects($this->serviceList)
@@ -119,8 +130,12 @@ class ServicesController extends Controller
             ->handleRequest();
         $this->view->toggleFeaturesForm = $toggleFeaturesForm;
 
-        $this->setAutorefreshInterval(15);
-        $this->view->rescheduleAllLink = Url::fromRequest()->setPath('monitoring/services/reschedule-check');
+        if ($activeChecksEnabled) {
+            $this->view->rescheduleAllLink = Url::fromRequest()
+                ->setPath('monitoring/services/reschedule-check')
+                ->addParams(['service_active_checks_enabled' => true]);
+        }
+
         $this->view->downtimeAllLink = Url::fromRequest()->setPath('monitoring/services/schedule-downtime');
         $this->view->processCheckResultAllLink = Url::fromRequest()->setPath(
             'monitoring/services/process-check-result'
@@ -153,6 +168,24 @@ class ServicesController extends Controller
         $this->view->sendCustomNotificationLink = Url::fromRequest()->setPath(
             'monitoring/services/send-custom-notification'
         );
+
+        $this->view->extensionsHtml = array();
+        foreach (Hook::all('Monitoring\DetailviewExtension') as $hook) {
+            /** @var DetailviewExtensionHook $hook */
+            try {
+                $html = $hook->setView($this->view)->getHtmlForObjects($this->serviceList);
+            } catch (Exception $e) {
+                $html = $this->view->escape($e->getMessage());
+            }
+
+            if ($html) {
+                $module = $this->view->escape($hook->getModule()->getName());
+                $this->view->extensionsHtml[] =
+                    '<div class="icinga-module module-' . $module . '" data-icinga-module="' . $module . '">'
+                    . $html
+                    . '</div>';
+            }
+        }
     }
 
     /**

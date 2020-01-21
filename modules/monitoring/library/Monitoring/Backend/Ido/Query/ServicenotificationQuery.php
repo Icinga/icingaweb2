@@ -26,14 +26,25 @@ class ServicenotificationQuery extends IdoQuery
             'notification_contact_name' => 'co.name1'
         ),
         'history' => array(
-            'id'        => 'sn.notification_id',
             'output'    => null,
             'state'     => 'sn.state',
             'timestamp' => 'UNIX_TIMESTAMP(sn.start_time)',
-            'type'      => '(\'notify\')'
+            'type'      => '
+                CASE sn.notification_reason
+                    WHEN 1 THEN \'notification_ack\'
+                    WHEN 2 THEN \'notification_flapping\'
+                    WHEN 3 THEN \'notification_flapping_end\'
+                    WHEN 5 THEN \'notification_dt_start\'
+                    WHEN 6 THEN \'notification_dt_end\'
+                    WHEN 7 THEN \'notification_dt_end\'
+                    WHEN 8 THEN \'notification_custom\'
+                    ELSE \'notification_state\'
+                END',
         ),
         'hostgroups' => array(
-            'hostgroup_name' => 'hgo.name1'
+            'hostgroup_name'    => 'hgo.name1',
+            'hostgroup'         => 'hgo.name1 COLLATE latin1_general_ci',
+            'hostgroup_alias'   => 'hg.alias COLLATE latin1_general_ci',
         ),
         'hosts' => array(
             'host_display_name' => 'h.display_name COLLATE latin1_general_ci'
@@ -42,17 +53,22 @@ class ServicenotificationQuery extends IdoQuery
             'instance_name' => 'i.instance_name'
         ),
         'notifications' => array(
+            'id'                        => 'sn.notification_id',
+            'host'                      => 'so.name1 COLLATE latin1_general_ci',
             'host_name'                 => 'so.name1',
             'notification_output'       => 'sn.output',
             'notification_reason'       => 'sn.notification_reason',
             'notification_state'        => 'sn.state',
             'notification_timestamp'    => 'UNIX_TIMESTAMP(sn.start_time)',
             'object_type'               => '(\'service\')',
+            'service'                   => 'so.name2 COLLATE latin1_general_ci',
             'service_description'       => 'so.name2',
             'service_host_name'         => 'so.name1'
         ),
         'servicegroups' => array(
-            'servicegroup_name' => 'sgo.name1'
+            'servicegroup_name'     => 'sgo.name1',
+            'servicegroup'          => 'sgo.name1 COLLATE latin1_general_ci',
+            'servicegroup_alias'    => 'sg.alias COLLATE latin1_general_ci'
         ),
         'services' => array(
             'service_display_name'  => 's.display_name COLLATE latin1_general_ci'
@@ -66,6 +82,8 @@ class ServicenotificationQuery extends IdoQuery
     {
         if ($col === 'UNIX_TIMESTAMP(sn.start_time)') {
             return 'sn.start_time ' . $sign . ' ' . $this->timestampForSql($this->valueToTimestamp($expression));
+        } elseif ($col === $this->columnMap['history']['output']) {
+            return parent::whereToSql('sn.output', $sign, $expression);
         } else {
             return parent::whereToSql($col, $sign, $expression);
         }

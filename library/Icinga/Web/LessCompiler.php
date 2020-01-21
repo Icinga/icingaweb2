@@ -37,6 +37,13 @@ class LessCompiler
     protected $moduleLessFiles = array();
 
     /**
+     * Array of module names indexed by LESS asset paths
+     *
+     * @var array
+     */
+    protected $moduleRequires = [];
+
+    /**
      * LESS source
      *
      * @var string
@@ -92,6 +99,20 @@ class LessCompiler
     }
 
     /**
+     * Add a LESS asset requirement
+     *
+     * @param   string  $moduleName
+     * @param   string  $lessFile
+     *
+     * @return  $this
+     */
+    public function addModuleRequire($moduleName, $lessFile)
+    {
+        $this->moduleRequires[$lessFile][] = $moduleName;
+        return $this;
+    }
+
+    /**
      * Get the list of LESS files added to the compiler
      *
      * @return string[]
@@ -103,6 +124,8 @@ class LessCompiler
         foreach ($this->moduleLessFiles as $moduleLessFiles) {
             $lessFiles = array_merge($lessFiles, $moduleLessFiles);
         }
+
+        $lessFiles = array_merge($lessFiles, array_keys($this->moduleRequires));
 
         if ($this->theme !== null) {
             $lessFiles[] = $this->theme;
@@ -152,6 +175,14 @@ class LessCompiler
         $moduleCss = '';
         foreach ($this->moduleLessFiles as $moduleName => $moduleLessFiles) {
             $moduleCss .= '.icinga-module.module-' . $moduleName . ' {';
+
+            // TODO: Import these. (https://github.com/leafo/lessphp/issues/515)
+            foreach ($this->moduleRequires as $requiredFile => $modules) {
+                if (in_array($moduleName, $modules, true)) {
+                    $moduleCss .= file_get_contents($requiredFile);
+                }
+            }
+
             foreach ($moduleLessFiles as $moduleLessFile) {
                 $moduleCss .= file_get_contents($moduleLessFile);
             }

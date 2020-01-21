@@ -188,7 +188,9 @@ class PhpCommand extends Command
     {
         $modulePaths = [];
         foreach (Icinga::app()->getModuleManager()->getModuleInfo() as $module) {
-            $modulePaths[] = $module->path;
+            if (! file_exists($module->path . '/phpunit.xml')) {
+                $modulePaths[] = $module->path;
+            }
         }
 
         $vars = array();
@@ -247,7 +249,7 @@ class PhpCommand extends Command
 
         foreach ($app->getModuleManager()->getModuleInfo() as $module) {
             $testPhp = "$module->path/test/php";
-            if (file_exists($testPhp)) {
+            if (file_exists($testPhp) && ! file_exists($module->path . '/phpunit.xml')) {
                 $unitModules->appendChild($phpunitXml->createElement('directory', $testPhp));
 
                 $testPhpRegression = "$testPhp/regression";

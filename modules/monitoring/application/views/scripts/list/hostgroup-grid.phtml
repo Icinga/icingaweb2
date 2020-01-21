@@ -3,7 +3,7 @@
     <?= $this->tabs ?>
     <div class="sort-controls-container">
         <?= $this->sortBox ?>
-        <a href="<?= $this->href('monitoring/list/hostgroups') ?>" class="grid-toggle-link"
+        <a href="<?= $this->href('monitoring/list/hostgroups')->addFilter($this->filterEditor->getFilter()) ?>" class="grid-toggle-link"
            title="<?= $this->translate('Toogle grid view mode') ?>">
             <?= $this->icon('th-list', null, ['class' => '-inactive']) ?>
             <?= $this->icon('th-thumb-empty', null, ['class' => '-active']) ?>
@@ -24,7 +24,7 @@ if (! $hostGroups->hasResult()): ?>
     <?php if ($hostGroup->hosts_down_unhandled > 0): ?>
         <?= $this->qlink(
             $hostGroup->hosts_down_unhandled,
-            'monitoring/list/hosts',
+            $this->url('monitoring/list/hosts')->addFilter($this->filterEditor->getFilter()),
             [
                 'hostgroup_name'    => $hostGroup->hostgroup_name,
                 'host_handled'      => 0,
@@ -46,7 +46,7 @@ if (! $hostGroups->hasResult()): ?>
     <?php elseif ($hostGroup->hosts_unreachable_unhandled > 0): ?>
         <?= $this->qlink(
             $hostGroup->hosts_unreachable_unhandled,
-            'monitoring/list/hosts',
+            $this->url('monitoring/list/hosts')->addFilter($this->filterEditor->getFilter()),
             [
                 'hostgroup_name'    => $hostGroup->hostgroup_name,
                 'host_handled'      => 0,
@@ -68,7 +68,7 @@ if (! $hostGroups->hasResult()): ?>
     <?php elseif ($hostGroup->hosts_down_handled > 0): ?>
         <?= $this->qlink(
             $hostGroup->hosts_down_handled,
-            'monitoring/list/hosts',
+            $this->url('monitoring/list/hosts')->addFilter($this->filterEditor->getFilter()),
             [
                 'hostgroup_name'    => $hostGroup->hostgroup_name,
                 'host_handled'      => 1,
@@ -90,7 +90,7 @@ if (! $hostGroups->hasResult()): ?>
     <?php elseif ($hostGroup->hosts_unreachable_handled > 0): ?>
         <?= $this->qlink(
             $hostGroup->hosts_unreachable_handled,
-            'monitoring/list/hosts',
+            $this->url('monitoring/list/hosts')->addFilter($this->filterEditor->getFilter()),
             [
                 'hostgroup_name'    => $hostGroup->hostgroup_name,
                 'host_handled'      => 0,
@@ -112,7 +112,7 @@ if (! $hostGroups->hasResult()): ?>
     <?php elseif ($hostGroup->hosts_pending > 0): ?>
         <?= $this->qlink(
             $hostGroup->hosts_pending,
-            'monitoring/list/hosts',
+            $this->url('monitoring/list/hosts')->addFilter($this->filterEditor->getFilter()),
             [
                 'hostgroup_name'    => $hostGroup->hostgroup_name,
                 'host_state'        => 99
@@ -133,7 +133,7 @@ if (! $hostGroups->hasResult()): ?>
     <?php elseif ($hostGroup->hosts_up > 0): ?>
         <?= $this->qlink(
             $hostGroup->hosts_up,
-            'monitoring/list/hosts',
+            $this->url('monitoring/list/hosts')->addFilter($this->filterEditor->getFilter()),
             [
                 'hostgroup_name'    => $hostGroup->hostgroup_name,
                 'host_state'        => 0
@@ -158,7 +158,7 @@ if (! $hostGroups->hasResult()): ?>
     <?php endif ?>
         <?= $this->qlink(
             $hostGroup->hostgroup_alias,
-            'monitoring/list/hosts',
+            $this->url('monitoring/list/hosts')->addFilter($this->filterEditor->getFilter()),
             ['hostgroup_name' => $hostGroup->hostgroup_name],
             [
                 'title' => sprintf(

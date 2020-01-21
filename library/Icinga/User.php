@@ -252,6 +252,10 @@ class User
      */
     public function setRestrictions(array $restrictions)
     {
+        foreach ($restrictions as $name => $restriction) {
+            $restrictions[$name] = str_replace('$user:local_name$', $this->getLocalUsername(), $restriction);
+        }
+
         $this->restrictions = $restrictions;
         return $this;
     }
@@ -575,7 +579,7 @@ class User
                 $wildcard = strpos($grantedPermission, '*');
             }
 
-            if ($wildcard !== false) {
+            if ($wildcard !== false && $wildcard > 0) {
                 if (substr($requiredPermission, 0, $wildcard) === substr($grantedPermission, 0, $wildcard)) {
                     return true;
                 }

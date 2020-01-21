@@ -6,6 +6,7 @@ use Icinga\Web\Url;
 if (! $this->compact): ?>
 <div class="controls">
     <?= $this->tabs ?>
+    <?= $this->problemToggle ?>
     <div class="sort-controls-container">
         <?= $this->sortBox ?>
     </div>
@@ -114,7 +115,7 @@ foreach ($pivotData as $serviceDescription => $_) {
                         'data-base-target'  => '_self'
                     )
                 ) ?>
-                <?= ++$i === (int) (count($pivotHeader['rows']) / 2) ? $expandLink : '' ?>
+                <?= ++$i === (int) ceil(count($pivotHeader['rows']) / 2) ? $expandLink : '' ?>
             </td>
         <?php endif ?>
         </tr>

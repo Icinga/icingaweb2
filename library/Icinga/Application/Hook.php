@@ -76,7 +76,8 @@ class Hook
         }
 
         foreach (self::$hooks[$name] as $hook) {
-            if (self::hasPermission($hook)) {
+            list($class, $alwaysRun) = $hook;
+            if ($alwaysRun || self::hasPermission($class)) {
                 return true;
             }
         }
@@ -120,7 +121,7 @@ class Hook
             return self::$instances[$name][$key];
         }
 
-        $class = self::$hooks[$name][$key];
+        $class = self::$hooks[$name][$key][0];
 
         if (! class_exists($class)) {
             throw new ProgrammingError(
@@ -273,7 +274,8 @@ class Hook
         }
 
         foreach (self::$hooks[$name] as $key => $hook) {
-            if (self::hasPermission($hook)) {
+            list($class, $alwaysRun) = $hook;
+            if ($alwaysRun || self::hasPermission($class)) {
                 if (self::createInstance($name, $key) === null) {
                     return array();
                 }
@@ -296,7 +298,8 @@ class Hook
 
         if (self::has($name)) {
             foreach (self::$hooks[$name] as $key => $hook) {
-                if (self::hasPermission($hook)) {
+                list($class, $alwaysRun) = $hook;
+                if ($alwaysRun || self::hasPermission($class)) {
                     return self::createInstance($name, $key);
                 }
             }
@@ -306,12 +309,13 @@ class Hook
     /**
      * Register a class
      *
-     * @param   string      $name   One of the predefined hook names
-     * @param   string      $key    The identifier of a specific subtype
-     * @param   string      $class  Your class name, must inherit one of the
-     *                              classes in the Icinga/Application/Hook folder
+     * @param   string      $name           One of the predefined hook names
+     * @param   string      $key            The identifier of a specific subtype
+     * @param   string      $class          Your class name, must inherit one of the
+     *                                      classes in the Icinga/Application/Hook folder
+     * @param   bool        $alwaysRun      To run the hook always (e.g. without permission check)
      */
-    public static function register($name, $key, $class)
+    public static function register($name, $key, $class, $alwaysRun = false)
     {
         $name = self::normalizeHookName($name);
 
@@ -321,6 +325,6 @@ class Hook
 
         $class = ltrim($class, ClassLoader::NAMESPACE_SEPARATOR);
 
-        self::$hooks[$name][$key] = $class;
+        self::$hooks[$name][$key] = [$class, $alwaysRun];
     }
 }

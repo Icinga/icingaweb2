@@ -3,8 +3,9 @@
 
 namespace Icinga\Web\Form\Decorator;
 
-use Zend_Form_Decorator_Abstract;
+use Icinga\Application\Icinga;
 use Icinga\Web\Form;
+use Zend_Form_Decorator_Abstract;
 
 /**
  * Decorator to add a list of descriptions at the top or bottom of a form
@@ -35,7 +36,10 @@ class FormDescriptions extends Zend_Form_Decorator_Abstract
             return $content;
         }
 
-        $html = '<ul class="form-description">';
+        $html = '<div class="form-description">'
+            . Icinga::app()->getViewRenderer()->view->icon('info-circled', '', ['class' => 'form-description-icon'])
+            . '<ul class="form-description-list">';
+
         foreach ($descriptions as $description) {
             if (is_array($description)) {
                 list($description, $properties) = $description;
@@ -47,9 +51,9 @@ class FormDescriptions extends Zend_Form_Decorator_Abstract
 
         switch ($this->getPlacement()) {
             case self::APPEND:
-                return $content . $html . '</ul>';
+                return $content . $html . '</ul></div>';
             case self::PREPEND:
-                return $html . '</ul>' . $content;
+                return $html . '</ul></div>' . $content;
         }
     }
 

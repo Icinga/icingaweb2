@@ -320,8 +320,8 @@ class ResourceConfigForm extends ConfigForm
         if ($this->getElement('resource_validation')->isChecked() && parent::isValid($formData)) {
             $inspection = static::inspectResource($this);
             if ($inspection !== null) {
-                $join = function ($e) use (& $join) {
-                    return is_string($e) ? $e : join("\n", array_map($join, $e));
+                $join = function ($e) use (&$join) {
+                    return is_array($e) ? join("\n", array_map($join, $e)) : $e;
                 };
                 $this->addElement(
                     'note',

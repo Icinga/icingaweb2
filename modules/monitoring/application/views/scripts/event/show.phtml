@@ -17,6 +17,12 @@ echo $object instanceof Service
 ?>
 </div>
 <div class="content">
+    <?php
+    foreach ($extensionsHtml as $extensionHtml) {
+        echo $extensionHtml;
+    }
+    ?>
+
     <h2><?= $this->escape($this->translate('Event Details')) ?></h2>
     <table class="event-details name-value-table" data-base-target="_next">
     <?php

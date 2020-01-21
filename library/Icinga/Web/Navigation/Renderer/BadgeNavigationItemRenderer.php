@@ -100,15 +100,8 @@ abstract class BadgeNavigationItemRenderer extends NavigationItemRenderer
         $item->setCssClass('badge-nav-item');
         $this->setEscapeLabel(false);
         $label = $this->view()->escape($item->getLabel());
-        if (($icon = $item->getIcon()) !== null) {
-            $label = $this->view()->icon($icon) . $label;
-            $item->setIcon(null);
-        }
         $item->setLabel($this->renderBadge() . $label);
         $html = parent::render($item);
-        if ($icon) {
-            $item->setIcon(true);
-        }
         return $html;
     }
 
@@ -120,6 +113,12 @@ abstract class BadgeNavigationItemRenderer extends NavigationItemRenderer
     protected function renderBadge()
     {
         if ($count = $this->getCount()) {
+            if ($count > 1000000) {
+                $count = round($count, -6) / 1000000 . 'M';
+            } elseif ($count > 1000) {
+                $count = round($count, -3) / 1000 . 'k';
+            }
+
             $view = $this->view();
             return sprintf(
                 '<span title="%s" class="badge state-%s">%s</span>',

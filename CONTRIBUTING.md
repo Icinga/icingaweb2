@@ -278,7 +278,7 @@ Navigate to `Configuration - Modules` and enable the `doc` module. Open
 This is only important for developers who will review pull requests. If you want to join
 the development team, kindly contact us.
 
-- Ensure that the style guide applies.
+- Ensure that the [style guide](https://www.php-fig.org/psr/psr-12/) applies.
 - Verify that the patch fixes a problem or linked issue, if any.
 - Discuss new features with team members.
 - Test the patch in your local dev environment.

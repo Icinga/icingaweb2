@@ -26,22 +26,35 @@ class HostnotificationQuery extends IdoQuery
             'notification_contact_name' => 'co.name1'
         ),
         'hostgroups' => array(
-            'hostgroup_name' => 'hgo.name1'
+            'hostgroup'         => 'hgo.name1 COLLATE latin1_general_ci',
+            'hostgroup_alias'   => 'hg.alias COLLATE latin1_general_ci',
+            'hostgroup_name'    => 'hgo.name1'
         ),
         'hosts' => array(
             'host_display_name' => 'h.display_name COLLATE latin1_general_ci'
         ),
         'history' => array(
-            'id'        => 'hn.notification_id',
             'output'    => null,
             'state'     => 'hn.state',
             'timestamp' => 'UNIX_TIMESTAMP(hn.start_time)',
-            'type'      => '(\'notify\')'
+            'type'      => '
+                CASE hn.notification_reason
+                    WHEN 1 THEN \'notification_ack\'
+                    WHEN 2 THEN \'notification_flapping\'
+                    WHEN 3 THEN \'notification_flapping_end\'
+                    WHEN 5 THEN \'notification_dt_start\'
+                    WHEN 6 THEN \'notification_dt_end\'
+                    WHEN 7 THEN \'notification_dt_end\'
+                    WHEN 8 THEN \'notification_custom\'
+                    ELSE \'notification_state\'
+                END',
         ),
         'instances' => array(
             'instance_name' => 'i.instance_name'
         ),
         'notifications' => array(
+            'id'                        => 'hn.notification_id',
+            'host'                      => 'ho.name1 COLLATE latin1_general_ci',
             'host_name'                 => 'ho.name1',
             'notification_output'       => 'hn.output',
             'notification_reason'       => 'hn.notification_reason',
@@ -50,9 +63,12 @@ class HostnotificationQuery extends IdoQuery
             'object_type'               => '(\'host\')'
         ),
         'servicegroups' => array(
-            'servicegroup_name' => 'sgo.name1'
+            'servicegroup_name'     => 'sgo.name1',
+            'servicegroup'          => 'sgo.name1 COLLATE latin1_general_ci',
+            'servicegroup_alias'    => 'sg.alias COLLATE latin1_general_ci'
         ),
         'services' => array(
+            'service'               => 'so.name2 COLLATE latin1_general_ci',
             'service_description'   => 'so.name2',
             'service_display_name'  => 's.display_name COLLATE latin1_general_ci',
             'service_host_name'     => 'so.name1'
@@ -66,6 +82,8 @@ class HostnotificationQuery extends IdoQuery
     {
         if ($col === 'UNIX_TIMESTAMP(hn.start_time)') {
             return 'hn.start_time ' . $sign . ' ' . $this->timestampForSql($this->valueToTimestamp($expression));
+        } elseif ($col === $this->columnMap['history']['output']) {
+            return parent::whereToSql('hn.output', $sign, $expression);
         } else {
             return parent::whereToSql($col, $sign, $expression);
         }

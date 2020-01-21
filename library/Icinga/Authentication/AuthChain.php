@@ -3,6 +3,7 @@
 
 namespace Icinga\Authentication;
 
+use Icinga\Application\Hook\AuditHook;
 use Iterator;
 use Icinga\Application\Config;
 use Icinga\Application\Logger;
@@ -123,13 +124,17 @@ class AuthChain implements Authenticatable, Iterator
                 return true;
             }
         }
+
         if ($backendsTried === 0) {
             $this->error = static::EEMPTY;
         } elseif ($backendsTried === $backendsWithError) {
             $this->error = static::EFAIL;
         } elseif ($backendsWithError) {
             $this->error = static::ENOTALL;
+        } else {
+            AuditHook::logActivity('login-failed', 'User failed to authenticate', null, $user->getUsername());
         }
+
         return false;
     }
 

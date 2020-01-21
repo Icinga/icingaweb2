@@ -68,7 +68,14 @@ class AuthBackendPage extends Form
             $this->addSkipValidationCheckbox();
         }
 
-        if ($this->config['type'] === 'db') {
+        if (! isset($this->config) || $this->config['type'] === 'external') {
+            $backendForm = new ExternalBackendForm();
+            $backendForm->create($formData);
+            $this->addDescription($this->translate(
+                'You\'ve chosen to authenticate using a web server\'s mechanism so it may be necessary'
+                . ' to adjust usernames before any permissions, restrictions, etc. are being applied.'
+            ));
+        } elseif ($this->config['type'] === 'db') {
             $this->setRequiredCue(null);
             $backendForm = new DbBackendForm();
             $backendForm->setRequiredCue(null);
@@ -114,13 +121,6 @@ class AuthBackendPage extends Form
                     'value'             => $type
                 )
             );
-        } else { // $this->config['type'] === 'external'
-            $backendForm = new ExternalBackendForm();
-            $backendForm->create($formData);
-            $this->addDescription($this->translate(
-                'You\'ve chosen to authenticate using a web server\'s mechanism so it may be necessary'
-                . ' to adjust usernames before any permissions, restrictions, etc. are being applied.'
-            ));
         }
 
         $backendForm->getElement('name')->setValue('icingaweb2');
@@ -155,14 +155,18 @@ class AuthBackendPage extends Form
             return false;
         }
 
-        if ($this->config['type'] === 'ldap' && (! isset($data['skip_validation']) || $data['skip_validation'] == 0)) {
-            $self = clone $this;
-            $self->getSubForm('backend_form')->getElement('resource')->setIgnore(false);
-            $inspection = UserBackendConfigForm::inspectUserBackend($self);
-            if ($inspection && $inspection->hasError()) {
-                $this->error($inspection->getError());
-                $this->addSkipValidationCheckbox();
-                return false;
+        if (isset($this->config)) {
+            if ($this->config['type'] === 'ldap' && (
+                ! isset($data['skip_validation']) || $data['skip_validation'] == 0)
+            ) {
+                $self = clone $this;
+                $self->getSubForm('backend_form')->getElement('resource')->setIgnore(false);
+                $inspection = UserBackendConfigForm::inspectUserBackend($self);
+                if ($inspection && $inspection->hasError()) {
+                    $this->error($inspection->getError());
+                    $this->addSkipValidationCheckbox();
+                    return false;
+                }
             }
         }
 
@@ -188,7 +192,7 @@ class AuthBackendPage extends Form
 
             $inspection = UserBackendConfigForm::inspectUserBackend($self);
             if ($inspection !== null) {
-                $join = function ($e) use (& $join) {
+                $join = function ($e) use (&$join) {
                     return is_string($e) ? $e : join("\n", array_map($join, $e));
                 };
                 $this->addElement(

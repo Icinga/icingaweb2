@@ -454,6 +454,7 @@ class Loader
                 $commands[] = $cmd;
             }
         }
+        closedir($base);
         sort($commands);
         return $commands;
     }

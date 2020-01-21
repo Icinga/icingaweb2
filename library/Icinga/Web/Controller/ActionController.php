@@ -122,7 +122,6 @@ class ActionController extends Zend_Controller_Action
             ->_setInvokeArgs($invokeArgs);
         $this->_helper = new Zend_Controller_Action_HelperBroker($this);
 
-        $this->handlerBrowserWindows();
         $moduleName = $this->getModuleName();
         $this->view->defaultTitle = static::DEFAULT_TITLE;
         $this->view->translationDomain = $moduleName !== 'default' ? $moduleName : 'icinga';
@@ -229,23 +228,10 @@ class ActionController extends Zend_Controller_Action
     public function Window()
     {
         if ($this->window === null) {
-            $this->window = new Window(
-                $this->_request->getHeader('X-Icinga-WindowId', Window::UNDEFINED)
-            );
+            $this->window = Window::getInstance();
         }
+
         return $this->window;
-    }
-
-    protected function handlerBrowserWindows()
-    {
-        if ($this->isXhr()) {
-            $id = $this->_request->getHeader('X-Icinga-WindowId', null);
-
-            if ($id === Window::UNDEFINED) {
-                $this->window = new Window($id);
-                $this->_response->setHeader('X-Icinga-WindowId', Window::generateId());
-            }
-        }
     }
 
     protected function reloadCss()
@@ -483,9 +469,9 @@ class ActionController extends Zend_Controller_Action
             }
         }
 
-        if ($req->getParam('format') === 'pdf') {
-            $this->shutdownSession();
+        if ($req->getParam('error_handler') === null && $req->getParam('format') === 'pdf') {
             $this->sendAsPdf();
+            $this->shutdownSession();
             exit;
         }
 
@@ -511,11 +497,11 @@ class ActionController extends Zend_Controller_Action
             }
             $resp->setHeader(
                 'X-Icinga-Title',
-                rawurlencode($this->view->title . ' :: ' . static::DEFAULT_TITLE),
+                rawurlencode($this->view->title . ' :: ' . $this->view->defaultTitle),
                 true
             );
         } else {
-            $resp->setHeader('X-Icinga-Title', rawurlencode(static::DEFAULT_TITLE), true);
+            $resp->setHeader('X-Icinga-Title', rawurlencode($this->view->defaultTitle), true);
         }
 
         $layout = $this->_helper->layout();

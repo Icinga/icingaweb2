@@ -13,6 +13,21 @@ use Icinga\Forms\RepositoryForm;
  */
 class AnnouncementForm extends RepositoryForm
 {
+    protected function fetchEntry()
+    {
+        $entry = parent::fetchEntry();
+        if ($entry !== false) {
+            if ($entry->start !== null) {
+                $entry->start = (new DateTime())->setTimestamp($entry->start);
+            }
+            if ($entry->end !== null) {
+                $entry->end = (new DateTime())->setTimestamp($entry->end);
+            }
+        }
+
+        return $entry;
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -22,7 +37,7 @@ class AnnouncementForm extends RepositoryForm
             'text',
             'author',
             array(
-                'disabled'  => true,
+                'disabled'  => ! $this->getRequest()->isApiRequest(),
                 'required'  => true,
                 'value'     => Auth::getInstance()->getUser()->getUsername()
             )
@@ -77,6 +92,7 @@ class AnnouncementForm extends RepositoryForm
     {
         $this->setTitle(sprintf($this->translate('Remove announcement %s?'), $this->getIdentifier()));
         $this->setSubmitLabel($this->translate('Yes'));
+        $this->setAttrib('class', 'icinga-controls');
     }
 
     /**

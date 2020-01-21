@@ -92,6 +92,10 @@ class ScheduleServiceCheckCommandForm extends ObjectsCommandForm
     {
         foreach ($this->objects as $object) {
             /** @var \Icinga\Module\Monitoring\Object\Service $object */
+            if (! $object->active_checks_enabled) {
+                continue;
+            }
+
             $check = new ScheduleServiceCheckCommand();
             $check->setObject($object);
             $this->scheduleCheck($check, $this->request);

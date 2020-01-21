@@ -120,7 +120,7 @@ class IdoResourcePage extends Form
         $inspection = ResourceConfigForm::inspectResource($this);
         if ($inspection !== null) {
             if ($showLog) {
-                $join = function ($e) use (& $join) {
+                $join = function ($e) use (&$join) {
                     return is_string($e) ? $e : join("\n", array_map($join, $e));
                 };
                 $this->addElement(

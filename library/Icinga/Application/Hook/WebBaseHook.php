@@ -24,10 +24,14 @@ class WebBaseHook
      * Set the view instance
      *
      * @param Zend_View $view
+     *
+     * @return $this
      */
     public function setView(Zend_View $view)
     {
         $this->view = $view;
+
+        return $this;
     }
 
     /**

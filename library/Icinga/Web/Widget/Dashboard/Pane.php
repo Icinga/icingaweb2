@@ -22,7 +22,6 @@ class Pane extends UserWidget
 
     /**
      * The title of this pane, as displayed in the dashboard tabs
-     * @TODO: Currently the same as $name, evaluate if distinguishing is needed
      *
      * @var string
      */
@@ -229,7 +228,7 @@ class Pane extends UserWidget
     public function addDashlet($dashlet, $url = null)
     {
         if ($dashlet instanceof Dashlet) {
-            $this->dashlets[$dashlet->getTitle()] = $dashlet;
+            $this->dashlets[$dashlet->getName()] = $dashlet;
         } elseif (is_string($dashlet) && $url !== null) {
              $this->createDashlet($dashlet, $url);
         } else {
@@ -248,15 +247,15 @@ class Pane extends UserWidget
     {
         /* @var $dashlet Dashlet */
         foreach ($dashlets as $dashlet) {
-            if (array_key_exists($dashlet->getTitle(), $this->dashlets)) {
-                if (preg_match('/_(\d+)$/', $dashlet->getTitle(), $m)) {
-                    $name = preg_replace('/_\d+$/', $m[1]++, $dashlet->getTitle());
+            if (array_key_exists($dashlet->getName(), $this->dashlets)) {
+                if (preg_match('/_(\d+)$/', $dashlet->getName(), $m)) {
+                    $name = preg_replace('/_\d+$/', $m[1]++, $dashlet->getName());
                 } else {
-                    $name = $dashlet->getTitle() . '_2';
+                    $name = $dashlet->getName() . '_2';
                 }
                 $this->dashlets[$name] = $dashlet;
             } else {
-                $this->dashlets[$dashlet->getTitle()] = $dashlet;
+                $this->dashlets[$dashlet->getName()] = $dashlet;
             }
         }
 

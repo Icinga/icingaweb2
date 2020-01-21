@@ -269,9 +269,42 @@ class IniParser
 
         $unescaped = array();
         foreach ($configArray as $section => $options) {
-            $unescaped[preg_replace('/\\\\(.)/', '\1', $section)] = $options;
+            $unescaped[self::unescapeSectionName($section)] = array_map([__CLASS__, 'unescapeOptionValue'], $options);
         }
 
         return Config::fromArray($unescaped)->setConfigFile($file);
+    }
+
+    /**
+     * Unescape significant characters in the given section name
+     *
+     * @param   string  $str
+     *
+     * @return  string
+     */
+    protected static function unescapeSectionName($str)
+    {
+        $str = str_replace('\"', '"', $str);
+        $str = str_replace('\;', ';', $str);
+
+        return str_replace('\\\\', '\\', $str);
+    }
+
+    /**
+     * Unescape significant characters in the given option value
+     *
+     * @param   string  $str
+     *
+     * @return  string
+     */
+    protected static function unescapeOptionValue($str)
+    {
+        $str = str_replace('\n', "\n", $str);
+        $str = str_replace('\r', "\r", $str);
+        $str = str_replace('\"', '"', $str);
+        $str = str_replace('\\\\', '\\', $str);
+
+        // This replacement is a work-around for PHP bug #76965. Fixed with versions 7.1.24, 7.2.12 and 7.3.0.
+        return preg_replace('~^([\'"])(.*?)\1\s+$~', '$2', $str);
     }
 }

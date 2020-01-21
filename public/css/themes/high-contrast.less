@@ -40,6 +40,10 @@
   }
 }
 
+#menu ul:not(.nav-level-2) > .selected > a {
+  color: @text-color;
+}
+
 #menu .active > a {
   text-decoration: underline;
 }
@@ -140,5 +144,28 @@
     &.extrapolated {
       background-color: lighten(@timeline-downtime-end-color, 20%);
     }
+  }
+}
+
+.icinga-controls {
+  input[type="text"],
+  input[type="password"],
+  input[type="number"],
+  input[type="datetime-local"],
+  input[type="date"],
+  input[type="time"],
+  textarea,
+  select,
+  input[type="checkbox"]:checked + .toggle-switch .toggle-slider:before,
+  input[type="checkbox"]:checked + .toggle-switch > .toggle-slider,
+  .toggle-switch .toggle-slider:before,
+  .toggle-switch > .toggle-slider {
+    border: 1px solid @icinga-blue;
+  }
+
+  input[type="checkbox"]:not(:checked) + .toggle-switch .toggle-slider:before {
+    height: 1.166666667em;
+    width: 1.166666667em;
+    margin: 1px;
   }
 }

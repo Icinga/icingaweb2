@@ -54,11 +54,13 @@ class Format
 
     public static function seconds($value)
     {
-        if ($value < 60) {
+        $absValue = abs($value);
+
+        if ($absValue < 60) {
             return self::formatForUnits($value, self::$secondPrefix, self::$secondBase);
-        } elseif ($value < 3600) {
+        } elseif ($absValue < 3600) {
             return sprintf('%0.2f m', $value / 60);
-        } elseif ($value < 86400) {
+        } elseif ($absValue < 86400) {
             return sprintf('%0.2f h', $value / 3600);
         }
 
@@ -66,7 +68,7 @@ class Format
         return sprintf('%0.2f d', $value / 86400);
     }
 
-    protected static function formatForUnits($value, & $units, $base)
+    protected static function formatForUnits($value, &$units, $base)
     {
         $sign = '';
         if ($value < 0) {

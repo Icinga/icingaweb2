@@ -21,6 +21,13 @@ use Icinga\Web\Widget;
 
 class GroupController extends AuthBackendController
 {
+    public function init()
+    {
+        $this->view->title = $this->translate('User Groups');
+
+        parent::init();
+    }
+
     /**
      * List all user groups of a single backend
      */
@@ -39,7 +46,7 @@ class GroupController extends AuthBackendController
         }
 
         $this->view->backendSelection = new Form();
-        $this->view->backendSelection->setAttrib('class', 'backend-selection');
+        $this->view->backendSelection->setAttrib('class', 'backend-selection icinga-controls');
         $this->view->backendSelection->setUidDisabled();
         $this->view->backendSelection->setMethod('GET');
         $this->view->backendSelection->setTokenDisabled();
@@ -121,6 +128,7 @@ class GroupController extends AuthBackendController
         if ($this->hasPermission('config/authentication/groups/edit') && $backend instanceof Reducible) {
             $removeForm = new Form();
             $removeForm->setUidDisabled();
+            $removeForm->setAttrib('class', 'inline');
             $removeForm->setAction(
                 Url::fromPath('group/removemember', array('backend' => $backend->getName(), 'group' => $groupName))
             );

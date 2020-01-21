@@ -5,6 +5,9 @@ namespace Icinga\Legacy;
 
 use Icinga\Application\Config;
 use Icinga\User;
+use Icinga\Web\Navigation\DashboardPane;
+use Icinga\Web\Navigation\Navigation;
+use Icinga\Web\Navigation\NavigationItem;
 
 /**
  * Legacy dashboard config class for case insensitive interpretation of dashboard config files
@@ -76,6 +79,51 @@ class DashboardConfig extends Config
      */
     public function saveIni($filePath = null, $fileMode = 0660)
     {
+        // Preprocessing start, ensures that the non-translated names are used to save module dashboard changes
+        // TODO: This MUST NOT survive the new dashboard implementation (yes, it's still a thing..)
+        $dashboardNavigation = new Navigation();
+        $dashboardNavigation->load('dashboard-pane');
+        $getDashboardPane = function ($label) use ($dashboardNavigation) {
+            foreach ($dashboardNavigation as $dashboardPane) {
+                /** @var DashboardPane $dashboardPane */
+                if ($dashboardPane->getLabel() === $label) {
+                    return $dashboardPane;
+                }
+
+                foreach ($dashboardPane->getChildren() as $dashlet) {
+                    /** @var NavigationItem $dashlet */
+                    if ($dashlet->getLabel() === $label) {
+                        return $dashlet;
+                    }
+                }
+            }
+        };
+
+        foreach (clone $this->config as $name => $options) {
+            if (strpos($name, '.') !== false) {
+                list($dashboardLabel, $dashletLabel) = explode('.', $name, 2);
+            } else {
+                $dashboardLabel = $name;
+                $dashletLabel = null;
+            }
+
+            $dashboardPane = $getDashboardPane($dashboardLabel);
+            if ($dashboardPane !== null) {
+                $dashboardLabel = $dashboardPane->getName();
+            }
+
+            if ($dashletLabel !== null) {
+                $dashletItem = $getDashboardPane($dashletLabel);
+                if ($dashletItem !== null) {
+                    $dashletLabel = $dashletItem->getName();
+                }
+            }
+
+            unset($this->config[$name]);
+            $this->config[$dashboardLabel . ($dashletLabel ? '.' . $dashletLabel : '')] = $options;
+        }
+        // Preprocessing end
+
         parent::saveIni($filePath, $fileMode);
         if ($filePath === null) {
             $filePath = $this->configFile;

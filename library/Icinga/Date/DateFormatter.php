@@ -40,10 +40,11 @@ class DateFormatter
      * Get the diff between the given time and the current time
      *
      * @param   int|float $time
+     * @param   bool      $requireTime
      *
      * @return  array
      */
-    protected static function diff($time)
+    protected static function diff($time, $requireTime = false)
     {
         $invert = false;
         $now = time();
@@ -56,9 +57,9 @@ class DateFormatter
         if ($diff > 3600 * 24 * 3) {
             $type = static::DATE;
             if (date('Y') === date('Y', $time)) {
-                $formatted = date('M j', $time);
+                $formatted = date($requireTime ? 'M j H:i' : 'M j', $time);
             } else {
-                $formatted = date('Y-m', $time);
+                $formatted = date($requireTime ? 'Y-m-d H:i' : 'Y-m', $time);
             }
         } else {
             $minutes = floor($diff / 60);
@@ -148,12 +149,13 @@ class DateFormatter
      *
      * @param   int|float   $time
      * @param   bool        $timeOnly
+     * @param   bool        $requireTime
      *
      * @return  string
      */
-    public static function timeAgo($time, $timeOnly = false)
+    public static function timeAgo($time, $timeOnly = false, $requireTime = false)
     {
-        list($type, $ago, $invert) = static::diff($time);
+        list($type, $ago, $invert) = static::diff($time, $requireTime);
         if ($timeOnly) {
             return $ago;
         }
@@ -184,12 +186,13 @@ class DateFormatter
      *
      * @param   int|float   $time
      * @param   bool        $timeOnly
+     * @param   bool        $requireTime
      *
      * @return  string
      */
-    public static function timeSince($time, $timeOnly = false)
+    public static function timeSince($time, $timeOnly = false, $requireTime = false)
     {
-        list($type, $since, $invert) = static::diff($time);
+        list($type, $since, $invert) = static::diff($time, $requireTime);
         if ($timeOnly) {
             return $since;
         }
@@ -219,12 +222,13 @@ class DateFormatter
      *
      * @param   int|float   $time
      * @param   bool        $timeOnly
+     * @param   bool        $requireTime
      *
      * @return  string
      */
-    public static function timeUntil($time, $timeOnly = false)
+    public static function timeUntil($time, $timeOnly = false, $requireTime = false)
     {
-        list($type, $until, $invert) = static::diff($time);
+        list($type, $until, $invert) = static::diff($time, $requireTime);
         if ($invert && $type === static::RELATIVE) {
             $until = '-' . $until;
         }

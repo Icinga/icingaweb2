@@ -52,10 +52,24 @@ class Servicegroupsummary extends DataView
         return array(
             'instance_name',
             'services_severity',
-            'host', 'host_alias', 'host_display_name', 'host_name',
-            'hostgroup', 'hostgroup_alias', 'hostgroup_name',
-            'service', 'service_description', 'service_display_name',
+            'host_contact', 'host_contactgroup', 'host_name',
+            'hostgroup_name',
+            'service_contact', 'service_contactgroup', 'service_description',
             'servicegroup'
         );
+    }
+
+    public function getFilterColumns()
+    {
+        if ($this->filterColumns === null) {
+            $filterColumns = parent::getFilterColumns();
+            $diff = array_diff($filterColumns, $this->getColumns());
+            $this->filterColumns = array_merge($diff, [
+                'Servicegroup Name'    => 'servicegroup_name',
+                'Servicegroup Alias'   => 'servicegroup_alias'
+            ]);
+        }
+
+        return $this->filterColumns;
     }
 }

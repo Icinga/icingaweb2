@@ -213,7 +213,7 @@ class NavigationConfigForm extends ConfigForm
 
         $names = array();
         foreach ($this->getShareConfig($type) as $sectionName => $sectionConfig) {
-            if ($sectionName !== $this->itemToLoad
+            if ((string) $sectionName !== $this->itemToLoad
                 && $sectionConfig->owner === ($owner ?: $this->getUser()->getUsername())
                 && ! in_array($sectionName, $children, true)
             ) {
@@ -222,7 +222,7 @@ class NavigationConfigForm extends ConfigForm
         }
 
         foreach ($this->getUserConfig($type) as $sectionName => $sectionConfig) {
-            if ($sectionName !== $this->itemToLoad
+            if ((string) $sectionName !== $this->itemToLoad
                 && ! in_array($sectionName, $children, true)
             ) {
                 $names[] = $sectionName;
@@ -662,12 +662,12 @@ class NavigationConfigForm extends ConfigForm
                         'The parent item to assign this navigation item to. '
                         . 'Select "None" to make this a main navigation item'
                     ),
-                    'multiOptions'  => array_merge(
-                        array('' => $this->translate('None', 'No parent for a navigation item')),
-                        empty($availableParents) ? array() : array_combine($availableParents, $availableParents)
-                    )
+                    'multiOptions'  => ['' => $this->translate('None', 'No parent for a navigation item')]
+                        + (empty($availableParents) ? [] : array_combine($availableParents, $availableParents))
                 )
             );
+        } else {
+            $this->addElement('hidden', 'parent', ['disabled'  => true]);
         }
 
         $this->addSubForm($itemForm, 'item_form');

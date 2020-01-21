@@ -2,15 +2,13 @@
 set -eux
 #GLOBIGNORE=$0; rm -rf *
 
-#DOMPDF_VERSION=0.8.2
-DOMPDF_VERSION=6a77a427984f97743018ace3e095fbf0edaaee29 # https://github.com/dompdf/dompdf/pull/1854
-
+DOMPDF_VERSION=0.8.3
 PHP_FONTLIB_VERSION=0.5.1
 PHP_SVGLIB_VERSION=0.3.2
 
 rm -rf lib/ src/
 
-curl -LsS https://github.com/dompdf/dompdf/archive/"$DOMPDF_VERSION".tar.gz -o /tmp/dompdf.tar.gz
+curl -LsS https://github.com/dompdf/dompdf/archive/v"$DOMPDF_VERSION".tar.gz -o /tmp/dompdf.tar.gz
 tar xf /tmp/dompdf.tar.gz --strip-components 1 dompdf-"$DOMPDF_VERSION"/{lib,src,LICENSE.LGPL}
 rm /tmp/dompdf.tar.gz
 mv LICENSE.LGPL LICENSE

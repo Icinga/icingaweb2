@@ -176,6 +176,18 @@ class DbResourceForm extends Form
                 )
             );
             if (isset($formData['use_ssl']) && $formData['use_ssl']) {
+                if (defined('\PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT')) {
+                    $this->addElement(
+                        'checkbox',
+                        'ssl_do_not_verify_server_cert',
+                        array(
+                            'label'             => $this->translate('SSL Do Not Verify Server Certificate'),
+                            'description'       => $this->translate(
+                                'Whether to disable verification of the server certificate'
+                            )
+                        )
+                    );
+                }
                 $this->addElement(
                     'text',
                     'ssl_key',

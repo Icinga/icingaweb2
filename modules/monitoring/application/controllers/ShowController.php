@@ -5,6 +5,7 @@ namespace Icinga\Module\Monitoring\Controllers;
 
 use Icinga\Module\Monitoring\Backend;
 use Icinga\Module\Monitoring\Controller;
+use Icinga\Security\SecurityException;
 use Icinga\Web\Url;
 
 /**
@@ -19,9 +20,27 @@ class ShowController extends Controller
      */
     protected $backend;
 
+    public function init()
+    {
+        $this->view->defaultTitle = $this->translate('Contacts') . ' :: ' . $this->view->defaultTitle;
+
+        parent::init();
+    }
+
     public function contactAction()
     {
+        if (! $this->hasPermission('*') && $this->hasPermission('no-monitoring/contacts')) {
+            throw new SecurityException('No permission for %s', 'monitoring/contacts');
+        }
+
         $contactName = $this->params->getRequired('contact_name');
+
+        $this->getTabs()->add('contact-detail', [
+            'title'  => $this->translate('Contact details'),
+            'label'  => $this->translate('Contact'),
+            'url'    => Url::fromRequest(),
+            'active' => true
+        ]);
 
         $query = $this->backend->select()->from('contact', array(
             'contact_name',
@@ -56,6 +75,7 @@ class ShowController extends Controller
             $this->view->commands = $commands;
 
             $notifications = $this->backend->select()->from('notification', array(
+                'id',
                 'host_name',
                 'service_description',
                 'notification_output',
@@ -71,6 +91,7 @@ class ShowController extends Controller
             $this->view->notifications = $notifications;
             $this->setupLimitControl();
             $this->setupPaginationControl($this->view->notifications);
+            $this->view->title = $contact->contact_name;
         }
 
         $this->view->contact = $contact;

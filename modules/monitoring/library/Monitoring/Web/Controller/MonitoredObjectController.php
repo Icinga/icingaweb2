@@ -12,6 +12,7 @@ use Icinga\Module\Monitoring\Forms\Command\Object\ObjectsCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\RemoveAcknowledgementCommandForm;
 use Icinga\Module\Monitoring\Forms\Command\Object\ToggleObjectFeaturesCommandForm;
 use Icinga\Module\Monitoring\Hook\DetailviewExtensionHook;
+use Icinga\Module\Monitoring\Hook\ObjectDetailsTabHook;
 use Icinga\Web\Hook;
 use Icinga\Web\Url;
 use Icinga\Web\Widget\Tabextension\DashboardAction;
@@ -35,6 +36,13 @@ abstract class MonitoredObjectController extends Controller
      * @var string
      */
     protected $commandRedirectUrl;
+
+    /**
+     * List of visible hooked tabs
+     *
+     * @var ObjectDetailsTabHook[]
+     */
+    protected $tabHooks = [];
 
     /**
      * (non-PHPDoc)
@@ -92,10 +100,13 @@ abstract class MonitoredObjectController extends Controller
                 $html = $this->view->escape($e->getMessage());
             }
 
-            $this->view->extensionsHtml[] =
-                '<div class="icinga-module module-' . $this->view->escape($hook->getModule()->getName()) . '">'
-                . $html
-                . '</div>';
+            if ($html) {
+                $module = $this->view->escape($hook->getModule()->getName());
+                $this->view->extensionsHtml[] =
+                    '<div class="icinga-module module-' . $module . '" data-icinga-module="' . $module . '">'
+                    . $html
+                    . '</div>';
+            }
         }
     }
 
@@ -112,6 +123,22 @@ abstract class MonitoredObjectController extends Controller
         $this->setupPaginationControl($this->view->history, 50);
         $this->view->object = $this->object;
         $this->render('object/detail-history', null, true);
+    }
+
+    /**
+     * Show the content of a custom tab
+     */
+    public function tabhookAction()
+    {
+        $hookName = $this->params->get('hook');
+        $this->getTabs()->activate($hookName);
+
+        $hook = $this->tabHooks[$hookName];
+
+        $this->view->header = $hook->getHeader($this->object, $this->getRequest());
+        $this->view->content = $hook->getContent($this->object, $this->getRequest());
+        $this->view->object = $this->object;
+        $this->render('object/detail-tabhook', null, true);
     }
 
     /**
@@ -146,11 +173,16 @@ abstract class MonitoredObjectController extends Controller
             || $this->getRequest()->getHeader('Accept') === 'application/json'
         ) {
             $payload = (array) $this->object->properties;
-            $payload += array(
-                'contacts'          => $this->object->contacts->fetchPairs(),
-                'contact_groups'    => $this->object->contactgroups->fetchPairs(),
-                'vars'              => $this->object->customvars
-            );
+            $payload['vars'] = $this->object->customvars;
+
+            if ($this->hasPermission('*') || ! $this->hasPermission('no-monitoring/contacts')) {
+                $payload['contacts'] = $this->object->contacts->fetchPairs();
+                $payload['contact_groups'] = $this->object->contactgroups->fetchPairs();
+            } else {
+                $payload['contacts'] = [];
+                $payload['contact_groups'] = [];
+            }
+
             $groupName = $this->object->getType() . 'groups';
             $payload[$groupName] = $this->object->$groupName;
             $this->getResponse()->json()
@@ -259,6 +291,20 @@ abstract class MonitoredObjectController extends Controller
                 )
             );
         }
+
+        /** @var ObjectDetailsTabHook $hook */
+        foreach (Hook::all('Monitoring\\ObjectDetailsTab') as $hook) {
+            $hookName = $hook->getName();
+            if ($hook->shouldBeShown($object, $this->Auth())) {
+                $this->tabHooks[$hookName] = $hook;
+                $tabs->add($hookName, [
+                    'label' => $hook->getLabel(),
+                    'url'       => $isService ? 'monitoring/service/tabhook' : 'monitoring/host/tabhook',
+                    'urlParams' => $params + [ 'hook' => $hookName ]
+                ]);
+            }
+        }
+
         $tabs->extend(new DashboardAction())->extend(new MenuAction());
     }
 
@@ -268,7 +314,11 @@ abstract class MonitoredObjectController extends Controller
     protected function setupQuickActionForms()
     {
         $auth = $this->Auth();
-        if ($auth->hasPermission('monitoring/command/schedule-check')) {
+        if ($auth->hasPermission('monitoring/command/schedule-check')
+            || ($auth->hasPermission('monitoring/command/schedule-check/active-only')
+                && $this->object->active_checks_enabled
+            )
+        ) {
             $this->view->checkNowForm = $checkNowForm = new CheckNowCommandForm();
             $checkNowForm
                 ->setObjects($this->object)

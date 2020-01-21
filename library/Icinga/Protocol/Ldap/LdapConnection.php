@@ -5,6 +5,7 @@ namespace Icinga\Protocol\Ldap;
 
 use ArrayIterator;
 use Exception;
+use Icinga\Data\Filter\FilterNot;
 use LogicException;
 use stdClass;
 use Icinga\Application\Config;
@@ -344,11 +345,10 @@ class LdapConnection implements Selectable, Inspectable
         $success = @ldap_bind($ds, $this->bindDn, $this->bindPw);
         if (! $success) {
             throw new LdapException(
-                'LDAP bind (%s / %s) to %s with default port %s failed: %s',
+                'LDAP bind (%s / %s) to %s failed: %s',
                 $this->bindDn,
                 '***' /* $this->bindPw */,
-                $this->hostname,
-                $this->port,
+                $this->normalizeHostname($this->hostname),
                 ldap_error($ds)
             );
         }
@@ -889,13 +889,17 @@ class LdapConnection implements Selectable, Inspectable
             }
         }
 
+        $legacyControlHandling = version_compare(PHP_VERSION, '7.3.0') < 0;
+
         $count = 0;
         $cookie = '';
         $entries = array();
         do {
-            // Do not request the pagination control as a critical extension, as we want the
-            // server to return results even if the paged search request cannot be satisfied
-            ldap_control_paged_result($ds, $pageSize, false, $cookie);
+            if ($legacyControlHandling) {
+                // Do not request the pagination control as a critical extension, as we want the
+                // server to return results even if the paged search request cannot be satisfied
+                ldap_control_paged_result($ds, $pageSize, false, $cookie);
+            }
 
             if ($serverSorting && $query->hasOrder()) {
                 ldap_set_option($ds, LDAP_OPT_SERVER_CONTROLS, array(
@@ -910,7 +914,10 @@ class LdapConnection implements Selectable, Inspectable
                 $query,
                 array_values($fields),
                 0,
-                ($serverSorting || ! $query->hasOrder()) && $limit ? $offset + $limit : 0
+                ($serverSorting || ! $query->hasOrder()) && $limit ? $offset + $limit : 0,
+                0,
+                LDAP_DEREF_NEVER,
+                $legacyControlHandling ? null : $pageSize
             );
             if ($results === false) {
                 if (ldap_errno($ds) === self::LDAP_NO_SUCH_OBJECT) {
@@ -976,7 +983,7 @@ class LdapConnection implements Selectable, Inspectable
                 && ($entry = ldap_next_entry($ds, $entry))
             );
 
-            if (false === @ldap_control_paged_result_response($ds, $results, $cookie)) {
+            if ($legacyControlHandling && false === @ldap_control_paged_result_response($ds, $results, $cookie)) {
                 // If the page size is greater than or equal to the sizeLimit value, the server should ignore the
                 // control as the request can be satisfied in a single page: https://www.ietf.org/rfc/rfc2696.txt
                 // This applies no matter whether paged search requests are permitted or not. You're done once you
@@ -993,7 +1000,7 @@ class LdapConnection implements Selectable, Inspectable
             ldap_free_result($results);
         } while ($cookie && (! $serverSorting || $limit === 0 || count($entries) < $limit));
 
-        if ($cookie) {
+        if ($legacyControlHandling && $cookie) {
             // A sequence of paged search requests is abandoned by the client sending a search request containing a
             // pagedResultsControl with the size set to zero (0) and the cookie set to the last cookie returned by
             // the server: https://www.ietf.org/rfc/rfc2696.txt
@@ -1179,22 +1186,7 @@ class LdapConnection implements Selectable, Inspectable
             $info = new Inspection('');
         }
 
-        $hostname = $this->hostname;
-        if ($this->encryption === static::LDAPS) {
-            $info->write('Connect using LDAPS');
-            $ldapUrls = explode(' ', $hostname);
-            if (count($ldapUrls) > 1) {
-                foreach ($ldapUrls as & $uri) {
-                    if (strpos($uri, '://') === false) {
-                        $uri = 'ldaps://' . $uri;
-                    }
-                }
-
-                $hostname = implode(' ', $ldapUrls);
-            } else {
-                $hostname = 'ldaps://' . $hostname;
-            }
-        }
+        $hostname = $this->normalizeHostname($this->hostname);
 
         $ds = ldap_connect($hostname, $this->port);
 
@@ -1209,7 +1201,9 @@ class LdapConnection implements Selectable, Inspectable
         // Not setting this results in "Operations error" on AD when using the whole domain as search base
         ldap_set_option($ds, LDAP_OPT_REFERRALS, 0);
 
-        if ($this->encryption === static::STARTTLS) {
+        if ($this->encryption === static::LDAPS) {
+            $info->write('Connect using LDAPS');
+        } elseif ($this->encryption === static::STARTTLS) {
             $this->encrypted = true;
             $info->write('Connect using STARTTLS');
             if (! ldap_start_tls($ds)) {
@@ -1232,6 +1226,7 @@ class LdapConnection implements Selectable, Inspectable
      * @param   int         $sizelimit      Enables you to limit the count of entries fetched
      * @param   int         $timelimit      Sets the number of seconds how long is spend on the search
      * @param   int         $deref
+     * @param   int         $pageSize       The page size to request (Only supported with PHP v7.3+)
      *
      * @return  resource|bool               A search result identifier or false on error
      *
@@ -1243,7 +1238,8 @@ class LdapConnection implements Selectable, Inspectable
         $attrsonly = 0,
         $sizelimit = 0,
         $timelimit = 0,
-        $deref = LDAP_DEREF_NEVER
+        $deref = LDAP_DEREF_NEVER,
+        $pageSize = null
     ) {
         $queryString = (string) $query;
         $baseDn = $query->getBase() ?: $this->getDn();
@@ -1252,23 +1248,6 @@ class LdapConnection implements Selectable, Inspectable
         if (Logger::getInstance()->getLevel() === Logger::DEBUG) {
             // We're checking the level by ourselves to avoid rendering the ldapsearch commandline for nothing
             $starttlsParam = $this->encryption === static::STARTTLS ? ' -ZZ' : '';
-
-            $ldapUrls = array();
-            $defaultScheme = $this->encryption === static::LDAPS ? 'ldaps://' : 'ldap://';
-            foreach (explode(' ', $this->hostname) as $uri) {
-                $url = Url::fromPath($uri);
-                if (! $url->getScheme()) {
-                    $uri = $defaultScheme . $uri . ($this->port ? ':' . $this->port : '');
-                } else {
-                    if ($url->getPort() === null) {
-                        $url->setPort($this->port);
-                    }
-
-                    $uri = $url->getAbsoluteUrl();
-                }
-
-                $ldapUrls[] = $uri;
-            }
 
             $bindParams = '';
             if ($this->bound) {
@@ -1285,10 +1264,10 @@ class LdapConnection implements Selectable, Inspectable
                 $derefName = 'find';
             }
 
-            Logger::debug("Issueing LDAP search. Use '%s' to reproduce.", sprintf(
+            Logger::debug("Issuing LDAP search. Use '%s' to reproduce.", sprintf(
                 'ldapsearch -P 3%s -H "%s"%s -b "%s" -s "%s" -z %u -l %u -a "%s"%s%s%s',
                 $starttlsParam,
-                implode(' ', $ldapUrls),
+                $this->normalizeHostname($this->hostname),
                 $bindParams,
                 $baseDn,
                 $scope,
@@ -1315,16 +1294,41 @@ class LdapConnection implements Selectable, Inspectable
                 throw new LogicException('LDAP scope %s not supported by ldapSearch', $scope);
         }
 
-        return @$function(
-            $this->getConnection(),
-            $baseDn,
-            $queryString,
-            $attributes,
-            $attrsonly,
-            $sizelimit,
-            $timelimit,
-            $deref
-        );
+        if ($pageSize !== null) {
+            $serverctrls[] = [
+                'oid' => LDAP_CONTROL_PAGEDRESULTS,
+                // Do not request the pagination control as a critical extension, as we want the
+                // server to return results even if the paged search request cannot be satisfied
+                'iscritical' => false,
+                'value' => [
+                    'size' => $pageSize,
+                    'cookie' => ''
+                ]
+            ];
+
+            return @$function(
+                $this->getConnection(),
+                $baseDn,
+                $queryString,
+                $attributes,
+                $attrsonly,
+                $sizelimit,
+                $timelimit,
+                $deref,
+                $serverctrls
+            );
+        } else {
+            return @$function(
+                $this->getConnection(),
+                $baseDn,
+                $queryString,
+                $attributes,
+                $attrsonly,
+                $sizelimit,
+                $timelimit,
+                $deref
+            );
+        }
     }
 
     /**
@@ -1421,7 +1425,7 @@ class LdapConnection implements Selectable, Inspectable
         }
 
         $format = '%1$s(%2$s)';
-        if (count($parts) === 1) {
+        if (count($parts) === 1 && ! $filter instanceof FilterNot) {
             $format = '%2$s';
         }
         if ($level === 0) {
@@ -1508,11 +1512,10 @@ class LdapConnection implements Selectable, Inspectable
         // Try a bind-command with the given user credentials, this must not fail
         $success = @ldap_bind($ds, $this->bindDn, $this->bindPw);
         $msg = sprintf(
-            'LDAP bind (%s / %s) to %s with default port %s',
+            'LDAP bind (%s / %s) to %s',
             $this->bindDn,
             '***' /* $this->bindPw */,
-            $this->hostname,
-            $this->port
+            $this->normalizeHostname($this->hostname)
         );
         if (! $success) {
             // ldap_error does not return any proper error messages in case of certificate errors. Connecting
@@ -1530,7 +1533,10 @@ class LdapConnection implements Selectable, Inspectable
         try {
             $cap = LdapCapabilities::discoverCapabilities($this);
             $discovery = new Inspection('Discovery Results');
-            $discovery->write($cap->getVendor());
+            $vendor = $cap->getVendor();
+            if (isset($vendor)) {
+                $discovery->write($vendor);
+            }
             $version = $cap->getVersion();
             if (isset($version)) {
                 $discovery->write($version);
@@ -1542,5 +1548,34 @@ class LdapConnection implements Selectable, Inspectable
             $insp->write('Schema discovery not possible: ' . $e->getMessage());
         }
         return $insp;
+    }
+
+    protected function normalizeHostname($hostname)
+    {
+        $scheme = $this->encryption === static::LDAPS ? 'ldaps://' : 'ldap://';
+        $normalizeHostname = function ($hostname) use ($scheme) {
+            if (strpos($hostname, $scheme) === false) {
+                $hostname = $scheme . $hostname;
+            }
+
+            if (! preg_match('/:\d+$/', $hostname)) {
+                $hostname .= ':' . $this->port;
+            }
+
+            return $hostname;
+        };
+
+        $ldapUrls = explode(' ', $hostname);
+        if (count($ldapUrls) > 1) {
+            foreach ($ldapUrls as & $uri) {
+                $uri = $normalizeHostname($uri);
+            }
+
+            $hostname = implode(' ', $ldapUrls);
+        } else {
+            $hostname = $normalizeHostname($hostname);
+        }
+
+        return $hostname;
     }
 }

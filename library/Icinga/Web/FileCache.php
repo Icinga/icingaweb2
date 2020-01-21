@@ -155,6 +155,27 @@ class FileCache
     }
 
     /**
+     * Prepare a sub directory with the given name and return its path
+     *
+     * @param   string  $name
+     *
+     * @return  string|false    Returns FALSE in case the cache is not enabled or an error occurred
+     */
+    public function directory($name)
+    {
+        if (! $this->enabled) {
+            return false;
+        }
+
+        $path = $this->filename($name);
+        if (! is_dir($path) && ! @mkdir($path, octdec('1750'), true)) {
+            return false;
+        }
+
+        return $path;
+    }
+
+    /**
      * Whether the given ETag matches a cached file
      *
      * If no ETag is given we'll try to fetch the one from the current

@@ -298,13 +298,33 @@ class DbQuery extends SimpleQuery
         }
 
         if (is_array($expression)) {
+            $comp = [];
+            $pattern = [];
+            foreach ($expression as $value) {
+                if (strpos($value, '*') === false) {
+                    $comp[] = $value;
+                } else {
+                    $pattern[] = $this->whereToSql($col, $sign, $value);
+                }
+            }
+            $sql = $pattern;
             if ($sign === '=') {
-                return $col . ' IN (' . $this->escapeForSql($expression) . ')';
+                if (! empty($comp)) {
+                    $sql[] = $col . ' IN (' . $this->escapeForSql($comp) . ')';
+                }
+                $operator = 'OR';
             } elseif ($sign === '!=') {
-                return sprintf('(%1$s NOT IN (%2$s) OR %1$s IS NULL)', $col, $this->escapeForSql($expression));
+                if (! empty($comp)) {
+                    $sql[] = sprintf('(%1$s NOT IN (%2$s) OR %1$s IS NULL)', $col, $this->escapeForSql($comp));
+                }
+                $operator = 'AND';
+            } else {
+                throw new QueryException(
+                    'Unable to render array expressions with operators other than equal or not equal'
+                );
             }
 
-            throw new QueryException('Unable to render array expressions with operators other than equal or not equal');
+            return '(' . implode(" $operator ", $sql) . ')';
         } elseif ($sign === '=' && strpos($expression, '*') !== false) {
             if ($expression === '*') {
                 return new Zend_Db_Expr('TRUE');

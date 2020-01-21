@@ -1,18 +1,11 @@
 /*! Icinga Web 2 | (c) 2014 Icinga Development Team | GPLv2+ */
 
-// Styles for the bottom status bar in the host and service list views
-.monitoring-statusbar-ghost {
-  display: block;
-  visibility: hidden;
-}
-
 .monitoring-statusbar {
+  position: relative;
   background-color: @body-bg-color;
   border-top: 1px solid @gray-lighter;
-  bottom: 0;
   padding: .25em @gutter;
-  position: fixed;
-  line-height: 1;
+  line-height: 1.3;
 
   &:before {
     background: -webkit-linear-gradient(bottom, @body-bg-color 0%, rgba(255,255,255,0) 100%);
@@ -175,6 +168,16 @@
   }
 }
 
+.service-on {
+  color: @text-color-light;
+
+  > a {
+    color: @text-color;
+    letter-spacing: normal;
+    font-weight: bold;
+  }
+}
+
 // State table in the host and service multi-selection and detail views
 .host-detail-state,
 .service-detail-state {
@@ -190,17 +193,25 @@
 
 // Quick actions
 .quick-actions {
+  margin: 0 -.5em;
+
+  &:last-child {
+    margin-bottom: -.25em;
+  }
+
   li {
     color: @icinga-blue;
-    padding: 0 0.6em;
   }
 
-  li:first-child {
-    padding-left: 0;
-  }
+  a,
+  button {
+    .rounded-corners();
+    padding: .25em .5em;
 
-  li:last-child {
-    padding-right: 0;
+    &:hover {
+      background-color: @gray-lighter;
+      text-decoration: none;
+    }
   }
 }
 
@@ -493,21 +504,38 @@ div.timeline {
     }
 
     div.circle-box {
+      // width: inline-style;
       height: 100%;
       margin-right: 0.5em;
       position: relative;
       float: left;
 
       div.outer-circle {
+        // width: inline-style;
+        // height: inline-style;
         position: absolute;
         top: 50%;
+        // margin-top: inline-style;
+
+        &.extrapolated {
+          border-width: 2px;
+          border-style: dotted;
+          //border-color: inline-style;
+          border-radius: 100%;
+          // background-color: inline-style;
+        }
 
         a.inner-circle {
+          // width: inline-style;
+          // height: inline-style;
           display: block;
           position: absolute;
           top: 50%;
           left: 50%;
+          // margin-top: inline-style;
+          // margin-left: inline-style;
           border-radius: 100%;
+          // background-color: inline-style;
         }
       }
     }
@@ -590,18 +618,50 @@ form.instance-features span.description, form.object-features span.description {
 .object-features {
   .control-label-group {
     text-align: left;
-    padding: @table-column-padding;
-    padding-left: 0;
+    margin-right: 0;
     width: @name-value-table-name-width;
+    color: @gray;
 
     label {
       font-size: inherit;
     }
   }
 
-  input[type="checkbox"],
-  input[type="radio"] {
-    margin: @table-column-padding;
+  .control-group {
+    margin-top: 0;
+    margin-bottom: 0;
+
+    &.indeterminate {
+      justify-content: flex-start;
+
+      .control-label-group {
+        flex: 0 1 auto;
+      }
+
+      select {
+        width: auto;
+        flex: 0 1 auto;
+
+        & + span.hint {
+          flex: 0 1 auto;
+        }
+      }
+    }
+  }
+
+  .toggle-switch {
+    margin-left: @table-column-padding;
+  }
+
+  select {
+    margin-right: .5em;
+    margin-left: @table-column-padding;
+
+    & + span.hint {
+      margin: .35em;
+      color: @gray-light;
+      font-style: italic;
+    }
   }
 }
 
@@ -646,12 +706,16 @@ form.instance-features span.description, form.object-features span.description {
   }
 }
 
-.go-ahead a {
-   border-bottom: 1px @gray-light dotted;
+.go-ahead,
+.markdown,
+.plugin-output {
+  a {
+     border-bottom: 1px @gray-light dotted;
 
-  &:hover {
-    border-bottom: 1px @text-color solid;
-    text-decoration: none;
+    &:hover {
+      border-bottom: 1px @text-color solid;
+      text-decoration: none;
+    }
   }
 }
 

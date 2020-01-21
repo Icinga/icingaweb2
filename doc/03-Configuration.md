@@ -46,7 +46,7 @@ module_path = "/usr/share/icingaweb2/modules"
 
 Option                   | Description
 -------------------------|-----------------------------------------------
-log                      | **Optional.** Specifies the logging type. Can be set to `syslog`, `file` or `none`.
+log                      | **Optional.** Specifies the logging type. Can be set to `syslog`, `file`, `php` (web server's error log) or `none`.
 level                    | **Optional.** Specifies the logging level. Can be set to `ERROR`, `WARNING`, `INFORMATION` or `DEBUG`.
 file                     | **Optional.** Specifies the log file path if `log` is set to `file`.
 application              | **Optional.** Specifies the application name if `log` is set to `syslog`.
@@ -65,7 +65,7 @@ file = "/usr/share/icingaweb2/log/icingaweb2.log"
 
 Option                   | Description
 -------------------------|-----------------------------------------------
-default                  | **Optional.** Choose the default theme. Can be set to `Icinga`, `high-contrast`, `Winter` or your own installed theme. Defaults to `Icinga`. Note that this setting is case-sensitive because it refers to the filename of the theme.
+default                  | **Optional.** Choose the default theme. Can be set to `Icinga`, `high-contrast`, `Winter`, 'colorblind' or your own installed theme. Defaults to `Icinga`. Note that this setting is case-sensitive because it refers to the filename of the theme.
 disabled                 | **Optional.** Set this to `1` if users should not be allowed to change their theme. Defaults to `0`.
 
 Example:

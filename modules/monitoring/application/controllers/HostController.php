@@ -35,6 +35,8 @@ class HostController extends MonitoredObjectController
         $this->object = $host;
         $this->createTabs();
         $this->getTabs()->activate('host');
+        $this->view->title = $host->host_display_name;
+        $this->view->defaultTitle = $this->translate('Hosts') . ' :: ' . $this->view->defaultTitle;
     }
 
     /**
@@ -101,7 +103,8 @@ class HostController extends MonitoredObjectController
             'service_passive_checks_enabled',
             'current_check_attempt' => 'service_current_check_attempt',
             'max_check_attempts'    => 'service_max_check_attempts',
-            'service_check_command'
+            'service_check_command',
+            'service_next_update'
         ));
         $this->applyRestriction('monitoring/filter/objects', $query);
         $this->view->services = $query->where('host_name', $this->object->getName());

@@ -1,23 +1,37 @@
 <div class="comment-author">
 <?php if ($comment->objecttype === 'service') {
-    echo $this->icon('service', $this->translate('Service'));
-    echo $this->qlink(
-        $comment->host_display_name . ': ' . $comment->service_display_name,
-        'monitoring/service/show',
-        array(
-            'host' => $comment->host_name,
-            'service' => $comment->service_description
+    echo '<span class="service-on">';
+    echo sprintf(
+        $this->translate('%s on %s', 'service on host'),
+        $this->qlink(
+            $comment->service_display_name,
+            'monitoring/service/show',
+            [
+                'host' => $comment->host_name,
+                'service' => $comment->service_description
+            ],
+            [
+                'title' => sprintf(
+                    $this->translate('Show detailed information for service %s on host %s'),
+                    $comment->service_display_name,
+                    $comment->host_display_name
+                )
+            ]
         ),
-        array(
-            'title' => sprintf(
-                $this->translate('Show detailed information for this comment about service %s on host %s'),
-                $comment->service_display_name,
-                $comment->host_display_name
-            )
+        $this->qlink(
+            $comment->host_display_name,
+            'monitoring/host/show',
+            ['host' => $comment->host_name],
+            [
+                'title' => sprintf(
+                    $this->translate('Show detailed information for host %s'),
+                    $comment->host_display_name
+                )
+            ]
         )
     );
+    echo '</span>';
 } else {
-    echo $this->icon('host', $this->translate('Host'));
     echo $this->qlink(
         $comment->host_display_name,
         'monitoring/host/show',
@@ -65,6 +79,4 @@
     } ?>
     </span>
 </div>
-<p class="comment-text"<?php if (isset($textId)): ?> id="<?= $textId ?>"<?php endif ?>>
-    <?= $this->nl2br($this->escapeComment($comment->comment)) ?>
-</p>
+<?= $this->nl2br($this->markdown($comment->comment, isset($textId) ? ['id' => $textId] : null)) ?>

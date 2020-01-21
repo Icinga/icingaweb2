@@ -201,7 +201,7 @@ class ArrayDatasource implements Selectable
         $result = array();
         $skipped = 0;
         foreach ($this->data as $key => $row) {
-            if (is_string($key) && $this->keyColumn !== null && !isset($row->{$this->keyColumn})) {
+            if ($this->keyColumn !== null && !isset($row->{$this->keyColumn})) {
                 $row = clone $row; // Make sure that this won't affect the actual data
                 $row->{$this->keyColumn} = $key;
             }

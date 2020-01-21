@@ -58,10 +58,24 @@ class Hostgroupsummary extends DataView
     {
         return array(
             'instance_name',
-            'host', 'host_alias', 'host_display_name', 'host_name',
+            'host_contact', 'host_contactgroup', 'host_name',
             'hostgroup',
-            'service', 'service_description', 'service_display_name',
-            'servicegroup', 'servicegroup_alias', 'servicegroup_name'
+            'service_description',
+            'servicegroup_name'
         );
+    }
+
+    public function getFilterColumns()
+    {
+        if ($this->filterColumns === null) {
+            $filterColumns = parent::getFilterColumns();
+            $diff = array_diff($filterColumns, $this->getColumns());
+            $this->filterColumns = array_merge($diff, [
+                'Hostgroup Name'    => 'hostgroup_name',
+                'Hostgroup Alias'   => 'hostgroup_alias'
+            ]);
+        }
+
+        return $this->filterColumns;
     }
 }

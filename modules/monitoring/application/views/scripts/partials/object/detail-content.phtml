@@ -26,7 +26,9 @@
     <table class="name-value-table">
     <tbody>
         <?= $this->render('show/components/notifications.phtml') ?>
+    <?php if ($this->hasPermission('*') || ! $this->hasPermission('no-monitoring/contacts')): ?>
         <?= $this->render('show/components/contacts.phtml') ?>
+    <?php endif ?>
     </tbody>
     </table>
 
@@ -43,7 +45,7 @@
 
     <?php if (! empty($object->customvars)): ?>
     <h2><?= $this->translate('Custom Variables') ?></h2>
-    <table class="name-value-table">
+    <table id="<?= $object->type ?>-customvars" class="name-value-table collapsible" data-visible-height="200">
     <tbody>
         <?= $this->render('show/components/customvars.phtml') ?>
     </tbody>

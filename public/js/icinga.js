@@ -108,6 +108,9 @@
 
             this.logger.info('Icinga is ready, running on jQuery ', $().jquery);
             this.initialized = true;
+
+            // Trigger our own post-init event, `onLoad` is not reliable enough
+            $(document).trigger('icinga-init');
         },
 
         /**

@@ -20,7 +20,8 @@ class StatechangeeventQuery extends IdoQuery
             'statechangeevent_last_state'               => 'sh.last_state',
             'statechangeevent_last_hard_state'          => 'sh.last_hard_state',
             'statechangeevent_output'                   => 'sh.output',
-            'statechangeevent_long_output'              => 'sh.long_output'
+            'statechangeevent_long_output'              => 'sh.long_output',
+            'statechangeevent_check_source'             => 'sh.check_source'
         ),
         'object' => array(
             'host_name'             => 'o.name1',

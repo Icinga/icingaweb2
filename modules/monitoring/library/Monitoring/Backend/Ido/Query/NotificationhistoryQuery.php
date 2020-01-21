@@ -27,7 +27,7 @@ class NotificationhistoryQuery extends IdoQuery
             'output'        => 'n.output',
             'state'         => 'n.state',
             'timestamp'     => 'n.timestamp',
-            'type'          => "('notify')"
+            'type'          => 'n.type'
         ),
         'hosts' => array(
             'host_display_name' => 'n.host_display_name',
@@ -79,9 +79,6 @@ class NotificationhistoryQuery extends IdoQuery
                 $columns[$column] = new Zend_Db_Expr('NULL');
             }
         }
-        if (isset($columns['type'])) {
-            unset($columns['type']);
-        }
         $hosts = $this->createSubQuery('hostnotification', $columns);
         $this->subQueries[] = $hosts;
         $this->notificationQuery->union(array($hosts), Zend_Db_Select::SQL_UNION_ALL);
@@ -93,9 +90,6 @@ class NotificationhistoryQuery extends IdoQuery
     protected function joinServices()
     {
         $columns = array_flip($this->desiredColumns);
-        if (isset($columns['type'])) {
-            unset($columns['type']);
-        }
         $services = $this->createSubQuery('servicenotification', array_flip($columns));
         $this->subQueries[] = $services;
         $this->notificationQuery->union(array($services), Zend_Db_Select::SQL_UNION_ALL);

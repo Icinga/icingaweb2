@@ -10,7 +10,7 @@
 @tr-hover-color: #c6cfe4;
 
 /* Snow, from http://codepen.io/NickyCDK/pen/AIonk */
-#header, #login {
+#login, #header-logo-container, #main > .container > .controls > .tabs {
     background-image: url('../img/winter/snow1.png'), url('../img/winter/snow2.png'), url('../img/winter/snow3.png');
     -webkit-animation: snow 10s linear infinite;
     -moz-animation: snow 10s linear infinite;
@@ -46,6 +46,10 @@
 }
 
 #menu ul.nav-level-1 > .nav-item {
+  &.selected > a {
+    background-color: transparent;
+  }
+
   &:focus, &:hover {
     background-image: url('../img/winter/snow1.png'), url('../img/winter/snow2.png'), url('../img/winter/snow3.png');
     -webkit-animation: snow 10s linear infinite;

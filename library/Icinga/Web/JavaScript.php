@@ -13,6 +13,7 @@ class JavaScript
         'js/helpers.js',
         'js/icinga.js',
         'js/icinga/logger.js',
+        'js/icinga/storage.js',
         'js/icinga/utils.js',
         'js/icinga/ui.js',
         'js/icinga/timer.js',
@@ -24,10 +25,9 @@ class JavaScript
         'js/icinga/timezone.js',
         'js/icinga/behavior/application-state.js',
         'js/icinga/behavior/autofocus.js',
+        'js/icinga/behavior/collapsible.js',
         'js/icinga/behavior/detach.js',
-        'js/icinga/behavior/tooltip.js',
         'js/icinga/behavior/sparkline.js',
-        'js/icinga/behavior/tristate.js',
         'js/icinga/behavior/dropdown.js',
         'js/icinga/behavior/navigation.js',
         'js/icinga/behavior/form.js',
@@ -35,30 +35,19 @@ class JavaScript
         'js/icinga/behavior/flyover.js',
         'js/icinga/behavior/expandable.js',
         'js/icinga/behavior/filtereditor.js',
-        'js/icinga/behavior/selectable.js'
+        'js/icinga/behavior/selectable.js',
+        'js/icinga/behavior/modal.js'
     );
 
     protected static $vendorFiles = array(
-        'js/vendor/jquery-2.1.0',
-        'js/vendor/jquery.sparkline',
-        'js/vendor/jquery.tipsy'
-    );
-
-    protected static $ie8VendorFiles = array(
-        'js/vendor/jquery-1.11.0',
-        'js/vendor/jquery.sparkline',
-        'js/vendor/jquery.tipsy'
+        'js/vendor/jquery-3.4.1',
+        'js/vendor/jquery-migrate-3.1.0',
+        'js/vendor/jquery.sparkline'
     );
 
     public static function sendMinified()
     {
         self::send(true);
-    }
-
-    public static function sendForIe8()
-    {
-        self::$vendorFiles = self::$ie8VendorFiles;
-        self::send();
     }
 
     /**
@@ -88,6 +77,7 @@ class JavaScript
             $jsFiles[] = $basedir . '/' . $file;
         }
 
+        $sharedFiles = [];
         foreach (Icinga::app()->getModuleManager()->getLoadedModules() as $name => $module) {
             if ($module->hasJs()) {
                 foreach ($module->getJsFiles() as $path) {
@@ -96,8 +86,16 @@ class JavaScript
                     }
                 }
             }
+
+            if ($module->requiresJs()) {
+                foreach ($module->getJsRequires() as $path) {
+                    $sharedFiles[] = $path;
+                }
+            }
         }
-        $files = array_merge($vendorFiles, $jsFiles);
+
+        $sharedFiles = array_unique($sharedFiles);
+        $files = array_merge($vendorFiles, $jsFiles, $sharedFiles);
 
         $request = Icinga::app()->getRequest();
         $noCache = $request->getHeader('Cache-Control') === 'no-cache' || $request->getHeader('Pragma') === 'no-cache';
@@ -126,6 +124,14 @@ class JavaScript
 
         foreach ($jsFiles as $file) {
             $js .= file_get_contents($file) . "\n\n\n";
+        }
+
+        foreach ($sharedFiles as $file) {
+            if (substr($file, -7, 7) === '.min.js') {
+                $out .= ';' . ltrim(trim(file_get_contents($file)), ';') . "\n";
+            } else {
+                $js .= file_get_contents($file) . "\n\n\n";
+            }
         }
 
         if ($minified) {

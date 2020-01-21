@@ -3,6 +3,7 @@
 
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
+use Icinga\Data\Filter\FilterNot;
 use Zend_Db_Expr;
 use Icinga\Application\Icinga;
 use Icinga\Application\Hook;
@@ -559,7 +560,7 @@ abstract class IdoQuery extends DbQuery
         if (count($expr) === 1 && strpos($expr[0], '&') !== false) {
             // Our current filter implementation does not specify & as a control character so the count of the
             // expression array is always one in this case
-            $expr = explode('&', $expr[0]);
+            $expr = array_unique(explode('&', $expr[0]));
             $subQueryFilter->setExpression($expr);
             $and = true;
         } else {
@@ -691,6 +692,60 @@ abstract class IdoQuery extends DbQuery
 
             $filter->setColumn($column);
         } else {
+            if (! $filter instanceof FilterNot) {
+                // Allow subquery filters in a filter chain
+                $columns = $filter->listFilteredColumns();
+                if (count($columns) === 1) {
+                    $column = $columns[0];
+                    $virtualTable = $this->aliasToTableName($column);
+                    if (isset($this->subQueryTargets[$virtualTable])) {
+                        $lastSign = null;
+                        $filters = [];
+                        $expressions = [];
+                        foreach ($filter->filters() as $child) {
+                            switch (true) {
+                                case $child instanceof FilterExpression:
+                                    $expression = $child->getExpression();
+                                    if (! is_array($expression)) {
+                                        break;
+                                    }
+                                    // Move to default
+                                default:
+                                    $filters[] = $child;
+                                    continue 2;
+                            }
+                            if ($lastSign === null) {
+                                $lastSign = $child->getSign();
+                            } else {
+                                $sign = $child->getSign();
+                                if ($sign !== $lastSign) {
+                                    $filters[] = new FilterExpression(
+                                        $column,
+                                        $lastSign,
+                                        $filter->getOperatorSymbol() === '&'
+                                            ? [implode('&', $expressions)]
+                                            : $expressions
+                                    );
+                                    $expressions = [];
+                                    $lastSign = $sign;
+                                }
+                            }
+                            $expressions[] = $expression;
+                        }
+                        if (! empty($expressions)) {
+                            $filters[] = new FilterExpression(
+                                $column,
+                                $lastSign,
+                                $filter->getOperatorSymbol() === '&'
+                                    ? [implode('&', $expressions)]
+                                    : $expressions
+                            );
+                        }
+                        $filter->setFilters($filters);
+                    }
+                }
+            }
+
             foreach ($filter->filters() as $child) {
                 $replacement = $this->requireFilterColumns($child);
                 if ($replacement !== null) {

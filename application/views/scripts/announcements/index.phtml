@@ -1,6 +1,12 @@
-<?php if (! $compact): ?>
+<?php if (! $this->compact): ?>
 <div class="controls">
-    <?= $tabs ?>
+    <?= $this->tabs ?>
+    <?= $this->paginator ?>
+    <div class="sort-controls-container">
+        <?= $this->limiter ?>
+        <?= $this->sortBox ?>
+    </div>
+    <?= $this->filterEditor ?>
 </div>
 <?php endif ?>
 <div class="content">
@@ -17,7 +23,7 @@
         )
     );
 } ?>
-<?php if (! $announcements->hasResult()): ?>
+<?php if (empty($this->announcements)): ?>
     <p><?= $this->translate('No announcements found.') ?></p>
 </div>
 <?php return; endif ?>
@@ -32,7 +38,7 @@
         </tr>
     </thead>
     <tbody>
-    <?php foreach ($announcements as $announcement): /** @var object $announcement */ ?>
+    <?php foreach ($this->announcements as $announcement): /** @var object $announcement */ ?>
     <?php if ($this->hasPermission('admin')): ?>
         <tr href="<?= $this->href('announcements/update', array('id' => $announcement->id)) ?>">
     <?php else: ?>
@@ -40,8 +46,8 @@
     <?php endif ?>
             <td><?= $this->escape($announcement->author) ?></td>
             <td><?= $this->ellipsis($this->escape($announcement->message), 100) ?></td>
-            <td><?= $this->formatDateTime($announcement->start->getTimestamp()) ?></td>
-            <td><?= $this->formatDateTime($announcement->end->getTimestamp()) ?></td>
+            <td><?= $this->formatDateTime($announcement->start) ?></td>
+            <td><?= $this->formatDateTime($announcement->end) ?></td>
         <?php if ($this->hasPermission('admin')): ?>
             <td class="icon-col"><?= $this->qlink(
                 null,

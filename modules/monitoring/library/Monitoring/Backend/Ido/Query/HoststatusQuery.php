@@ -32,6 +32,12 @@ class HoststatusQuery extends IdoQuery
         'checktimeperiods' => array(
             'host_check_timeperiod' => 'ctp.alias COLLATE latin1_general_ci'
         ),
+        'contacts' => [
+            'host_contact' => 'hco.name1'
+        ],
+        'contactgroups' => [
+            'host_contactgroup' => 'hcgo.name1'
+        ],
         'hostgroups' => array(
             'hostgroup'         => 'hgo.name1 COLLATE latin1_general_ci',
             'hostgroup_alias'   => 'hg.alias COLLATE latin1_general_ci',
@@ -95,17 +101,17 @@ class HoststatusQuery extends IdoQuery
             'host_next_notification'                => 'UNIX_TIMESTAMP(hs.next_notification)',
             'host_next_update'                      => 'CASE WHEN hs.has_been_checked = 0 OR hs.has_been_checked IS NULL
             THEN
-                NULL
+                CASE hs.should_be_scheduled WHEN 1 THEN UNIX_TIMESTAMP(hs.next_check) + (hs.normal_check_interval * 60) ELSE NULL END
             ELSE
-                UNIX_TIMESTAMP(hs.last_check)
-                + CASE WHEN
+                UNIX_TIMESTAMP(hs.next_check)
+                + (CASE WHEN
                     COALESCE(hs.current_state, 0) > 0 AND hs.state_type = 0
                 THEN
                     hs.retry_check_interval
                 ELSE
                     hs.normal_check_interval
-                END * 60 * 2
-                + CEIL(hs.execution_time)
+                END * 60)
+                + (CEIL(hs.execution_time + hs.latency) * 2)
             END',
             'host_no_more_notifications'            => 'hs.no_more_notifications',
             'host_normal_check_interval'            => 'hs.normal_check_interval',
@@ -198,6 +204,38 @@ class HoststatusQuery extends IdoQuery
             array('ctp' => $this->prefix . 'timeperiods'),
             'ctp.timeperiod_object_id = h.check_timeperiod_object_id',
             array()
+        );
+    }
+
+    /**
+     * Join contacts
+     */
+    protected function joinContacts()
+    {
+        $this->select->joinLeft(
+            ['hc' => 'icinga_host_contacts'],
+            'hc.host_id = h.host_id',
+            []
+        )->joinLeft(
+            ['hco' => 'icinga_objects'],
+            'hco.object_id = hc.contact_object_id AND hco.is_active = 1 AND hco.objecttype_id = 10',
+            []
+        );
+    }
+
+    /**
+     * Join contact groups
+     */
+    protected function joinContactgroups()
+    {
+        $this->select->joinLeft(
+            ['hcg' => 'icinga_host_contactgroups'],
+            'hcg.host_id = h.host_id',
+            []
+        )->joinLeft(
+            ['hcgo' => 'icinga_objects'],
+            'hcgo.object_id = hcg.contactgroup_object_id AND hcgo.is_active = 1 AND hcgo.objecttype_id = 11',
+            []
         );
     }
 

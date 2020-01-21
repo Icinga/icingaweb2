@@ -3,8 +3,6 @@
 
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
-use Icinga\Exception\NotImplementedError;
-
 /**
  * Query for host groups
  */
@@ -26,6 +24,12 @@ class HostgroupQuery extends IdoQuery
     );
 
     protected $columnMap = array(
+        'contacts' => [
+            'host_contact' => 'hco.name1'
+        ],
+        'contactgroups' => [
+            'host_contactgroup' => 'hcgo.name1'
+        ],
         'hostgroups' => array(
             'hostgroup'         => 'hgo.name1 COLLATE latin1_general_ci',
             'hostgroup_alias'   => 'hg.alias COLLATE latin1_general_ci',
@@ -55,7 +59,7 @@ class HostgroupQuery extends IdoQuery
                         END
                     END
                 END',
-            'host_state'    => 'CASE WHEN hs.has_been_checked = 0 OR (hs.has_been_checked IS NULL AND hs.hoststatus_id IS NOT NULL) THEN 99 ELSE hs.current_state END'
+            'host_state'    => 'CASE WHEN hs.has_been_checked = 0 OR hs.has_been_checked IS NULL THEN 99 ELSE hs.current_state END'
         ),
         'instances' => array(
             'instance_name' => 'i.instance_name'
@@ -108,7 +112,7 @@ class HostgroupQuery extends IdoQuery
                              END
                          END
                 END',
-            'service_state'     => 'CASE WHEN ss.has_been_checked = 0 OR (ss.has_been_checked IS NULL AND ss.servicestatus_id IS NOT NULL) THEN 99 ELSE ss.current_state END'
+            'service_state'     => 'CASE WHEN ss.has_been_checked = 0 OR ss.has_been_checked IS NULL THEN 99 ELSE ss.current_state END'
         )
     );
 
@@ -126,12 +130,48 @@ class HostgroupQuery extends IdoQuery
     }
 
     /**
+     * Join contacts
+     */
+    protected function joinContacts()
+    {
+        $this->requireVirtualTable('hosts');
+
+        $this->select->joinLeft(
+            ['hc' => 'icinga_host_contacts'],
+            'hc.host_id = h.host_id',
+            []
+        )->joinLeft(
+            ['hco' => 'icinga_objects'],
+            'hco.object_id = hc.contact_object_id AND hco.is_active = 1 AND hco.objecttype_id = 10',
+            []
+        );
+    }
+
+    /**
+     * Join contact groups
+     */
+    protected function joinContactgroups()
+    {
+        $this->requireVirtualTable('hosts');
+
+        $this->select->joinLeft(
+            ['hcg' => 'icinga_host_contactgroups'],
+            'hcg.host_id = h.host_id',
+            []
+        )->joinLeft(
+            ['hcgo' => 'icinga_objects'],
+            'hcgo.object_id = hcg.contactgroup_object_id AND hcgo.is_active = 1 AND hcgo.objecttype_id = 11',
+            []
+        );
+    }
+
+    /**
      * Join hosts
      */
     protected function joinHosts()
     {
         $this->requireVirtualTable('members');
-        $this->select->joinLeft(
+        $this->select->join(
             array('h' => $this->prefix . 'hosts'),
             'h.host_object_id = ho.object_id',
             array()
@@ -144,7 +184,7 @@ class HostgroupQuery extends IdoQuery
     protected function joinHoststatus()
     {
         $this->requireVirtualTable('members');
-        $this->select->joinLeft(
+        $this->select->join(
             array('hs' => $this->prefix . 'hoststatus'),
             'hs.host_object_id = ho.object_id',
             array()
@@ -156,7 +196,7 @@ class HostgroupQuery extends IdoQuery
      */
     protected function joinInstances()
     {
-        $this->select->joinLeft(
+        $this->select->join(
             array('i' => $this->prefix . 'instances'),
             'i.instance_id = hg.instance_id',
             array()
@@ -168,11 +208,11 @@ class HostgroupQuery extends IdoQuery
      */
     protected function joinMembers()
     {
-        $this->select->joinLeft(
+        $this->select->join(
             array('hgm' => $this->prefix . 'hostgroup_members'),
             'hgm.hostgroup_id = hg.hostgroup_id',
             array()
-        )->joinLeft(
+        )->join(
             array('ho' => $this->prefix . 'objects'),
             'hgm.host_object_id = ho.object_id AND ho.is_active = 1 AND ho.objecttype_id = 1',
             array()
@@ -185,15 +225,15 @@ class HostgroupQuery extends IdoQuery
     protected function joinServicegroups()
     {
         $this->requireVirtualTable('services');
-        $this->select->joinLeft(
+        $this->select->join(
             array('sgm' => $this->prefix . 'servicegroup_members'),
             'sgm.service_object_id = s.service_object_id',
             array()
-        )->joinLeft(
+        )->join(
             array('sg' => $this->prefix . 'servicegroups'),
             'sgm.servicegroup_id = sg.servicegroup_id',
             array()
-        )->joinLeft(
+        )->join(
             array('sgo' => $this->prefix . 'objects'),
             'sgo.object_id = sg.servicegroup_object_id AND sgo.is_active = 1 AND sgo.objecttype_id = 4',
             array()
@@ -206,11 +246,11 @@ class HostgroupQuery extends IdoQuery
     protected function joinServices()
     {
         $this->requireVirtualTable('hosts');
-        $this->select->joinLeft(
+        $this->select->join(
             array('s' => $this->prefix . 'services'),
             's.host_object_id = h.host_object_id',
             array()
-        )->joinLeft(
+        )->join(
             array('so' => $this->prefix . 'objects'),
             'so.object_id = s.service_object_id AND so.is_active = 1 AND so.objecttype_id = 2',
             array()
@@ -224,7 +264,7 @@ class HostgroupQuery extends IdoQuery
     {
         $this->requireVirtualTable('services');
         $this->requireVirtualTable('hoststatus');
-        $this->select->joinLeft(
+        $this->select->join(
             array('ss' => $this->prefix . 'servicestatus'),
             'ss.service_object_id = so.object_id',
             array()
@@ -234,13 +274,8 @@ class HostgroupQuery extends IdoQuery
     protected function joinSubQuery(IdoQuery $query, $name, $filter, $and, $negate, &$additionalFilter)
     {
         if ($name === 'hostgroup') {
-            if (! $and) {
-                // IN AND NOT IN works for OR filters w/o subquery joins
-                throw new NotImplementedError('');
-            } else {
-                // Propagate that the "parent" query has to be filtered as well
-                $additionalFilter = clone $filter;
-            }
+            // Propagate that the "parent" query has to be filtered as well
+            $additionalFilter = clone $filter;
 
             $this->requireVirtualTable('members');
 

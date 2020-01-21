@@ -96,7 +96,7 @@ class SelectBox extends AbstractWidget
     public function render()
     {
         $form = new Form();
-        $form->setAttrib('class', 'inline');
+        $form->setAttrib('class', Form::DEFAULT_CLASSES . ' inline');
         $form->setMethod('GET');
         $form->setUidDisabled();
         $form->setTokenDisabled();

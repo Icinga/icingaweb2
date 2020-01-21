@@ -52,6 +52,46 @@
         },
 
         /**
+         * Get the current state (url and title) as object
+         *
+         * @returns {object}
+         */
+        getCurrentState: function () {
+            if (! this.enabled) {
+                return null;
+            }
+
+            var title = null;
+            var url = null;
+
+            // We only store URLs of containers sitting directly under #main:
+            $('#main > .container').each(function (idx, container) {
+                var $container = $(container),
+                    cUrl = $container.data('icingaUrl'),
+                    cTitle = $container.data('icingaTitle');
+
+                // TODO: I'd prefer to have the rightmost URL first
+                if ('undefined' !== typeof cUrl) {
+                    // TODO: solve this on server side cUrl = icinga.utils.removeUrlParams(cUrl, blacklist);
+                    if (! url) {
+                        url = cUrl;
+                    } else {
+                        url = url + '#!' + cUrl;
+                    }
+                }
+
+                if (typeof cTitle !== 'undefined') {
+                    title = cTitle; // Only uses the rightmost title
+                }
+            });
+
+            return {
+                title: title,
+                url: url,
+            };
+        },
+
+        /**
          * Detect active URLs and push combined URL to history
          *
          * TODO: How should we handle POST requests? e.g. search VS login
@@ -62,27 +102,35 @@
                 return;
             }
 
-            var url = '';
-
-            // We only store URLs of containers sitting directly under #main:
-            $('#main > .container').each(function (idx, container) {
-                var cUrl = $(container).data('icingaUrl');
-
-                // TODO: I'd prefer to have the rightmost URL first
-                if ('undefined' !== typeof cUrl) {
-                    // TODO: solve this on server side cUrl = icinga.utils.removeUrlParams(cUrl, blacklist);
-                    if (url === '') {
-                        url = cUrl;
-                    } else {
-                        url = url + '#!' + cUrl;
-                    }
-                }
-            });
+            var state = this.getCurrentState();
 
             // Did we find any URL? Then push it!
-            if (url !== '') {
+            if (state.url) {
                 this.icinga.logger.debug('Pushing current state to history');
-                this.push(url);
+                this.push(state.url);
+            }
+            if (state.title) {
+                this.icinga.ui.setTitle(state.title);
+            }
+        },
+
+        /**
+         * Replace the current history entry with the current state
+         */
+        replaceCurrentState: function () {
+            if (! this.enabled) {
+                return;
+            }
+
+            var state = this.getCurrentState();
+
+            if (state.url) {
+                this.icinga.logger.debug('Replacing current history state');
+                window.history.replaceState(
+                    this.getBehaviorState(),
+                    null,
+                    state.url
+                );
             }
         },
 

@@ -40,6 +40,13 @@ abstract class Webserver
     protected $fpmUri;
 
     /**
+     * Enable to pass requests to FPM
+     *
+     * @var bool
+     */
+    protected $enableFpm = false;
+
+    /**
      * Create instance by type name
      *
      * @param   string $type
@@ -172,6 +179,30 @@ abstract class Webserver
             return Icinga::app()->getConfigDir();
         }
         return $this->configDir;
+    }
+
+    /**
+     * Get whether FPM is enabled
+     *
+     * @return  bool
+     */
+    public function getEnableFpm()
+    {
+        return $this->enableFpm;
+    }
+
+    /**
+     * Set FPM enabled
+     *
+     * @param   bool  $flag
+     *
+     * @return  $this
+     */
+    public function setEnableFpm($flag)
+    {
+        $this->enableFpm = (bool) $flag;
+
+        return $this;
     }
 
     /**

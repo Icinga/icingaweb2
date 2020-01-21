@@ -618,11 +618,7 @@ abstract class ApplicationBootstrap
     {
         $timezone = $this->detectTimeZone();
         if ($timezone === null || @date_default_timezone_set($timezone) === false) {
-            $timezone = @date_default_timezone_get();
-            if ($timezone === false) {
-                $timezone = 'UTC';
-                date_default_timezone_set($timezone);
-            }
+            date_default_timezone_set(@date_default_timezone_get());
         }
         return $this;
     }

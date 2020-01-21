@@ -36,7 +36,7 @@ class icingaweb2_dev (
     'php-phpunit-PHPUnit'
   ]:
     ensure => latest,
-    notify => Service['apache'],
+    notify => Service['php-fpm'],
     require => Class['icinga_packages'],
   }
 
@@ -152,5 +152,9 @@ class icingaweb2_dev (
   # TODO(el): Should be a module
   package { 'php-deepend-Mockery':
     ensure => latest,
+  }
+  -> exec { 'move-mockery-to-opt':
+    command => 'cp -R /usr/share/php/Mockery* /opt/rh/rh-php71/root/usr/share/php/',
+    unless  => 'test -d /opt/rh/rh-php71/root/usr/share/php/Mockery'
   }
 }

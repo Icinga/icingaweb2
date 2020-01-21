@@ -1,2 +1,7 @@
-http://leafo.net/lessphp/src/lessphp-0.4.0.tar.gz
-tar xfz lessphp-0.4.0.tar.gz lessphp/lessc.inc.php lessphp/LICENSE
+#!/bin/bash
+set -eux
+VERSION=0.5.0
+
+curl -LsS https://github.com/leafo/lessphp/archive/v"$VERSION".tar.gz -o /tmp/lessphp.tar.gz
+tar xfz /tmp/lessphp.tar.gz --strip-components 1 lessphp-$VERSION/lessc.inc.php lessphp-$VERSION/LICENSE
+rm /tmp/lessphp.tar.gz

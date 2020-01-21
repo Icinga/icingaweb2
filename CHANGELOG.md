@@ -4,6 +4,206 @@ Please make sure to always read our [Upgrading](doc/80-Upgrading.md) documentati
 
 ## What's New
 
+### What's New in Version 2.7.3
+
+This is a hotfix release and fixes the following issue:
+
+* Servicegroups for roles with filtered objects not available [#3983](https://github.com/Icinga/icingaweb2/issues/3983)
+
+### What's New in Version 2.7.2
+
+You can find all issues related to this release on our [Roadmap](https://github.com/Icinga/icingaweb2/milestone/57?closed=1).
+
+#### Less Smoky Database Servers
+
+The release of v2.7.1 introduced a change which revealed an inefficient part of our database queries. We made some
+general optimizations on our queries and changed the way we utilize them in some views. The result are faster
+response times by less work for the database server.
+
+* Consuming more CPU resources since upgraded to 2.7.1 [#3928](https://github.com/Icinga/icingaweb2/issues/3928)
+
+#### Anarchism Infested Dashboards
+
+Recent history already showed signs of anarchism. (Pun intended) A similar mindset now infested default dashboards
+which appeared in a different way than before v2.7.0. We taught their dashlets a lesson and order has been reestablished
+as previously.
+
+* Recently Recovered Services in dashboard "Current Incidents" seems out of order [#3931](https://github.com/Icinga/icingaweb2/issues/3931)
+
+#### Solitary Downtimes
+
+We improved the host and service distinction with v2.7.0. The downtimes list however got confused by this and didn't
+knew anymore how to combine multiple downtimes. If you now instruct the list to select multiple downtimes this works
+again as we removed the confusing parts.
+
+* Selection of multiple downtimes fails [#3920](https://github.com/Icinga/icingaweb2/issues/3920)
+
+### What's New in Version 2.7.1
+
+You can find all issues related to this release on our [Roadmap](https://github.com/Icinga/icingaweb2/milestone/56?closed=1).
+
+#### Sneaky Solution for Sneaky Links
+
+Usually we try to include only bugs in minor-releases. Sorry, bug-fixes, of course. But thanks to
+[@winem_](https://twitter.com/winem_/status/1156531270521896960) we have also a little enhancement this time:
+Links in comments, notes, etc. are now [highlighted](https://github.com/Icinga/icingaweb2/pull/3893) as such.
+
+* Highlight links in the notes of an object [#3888](https://github.com/Icinga/icingaweb2/issues/3888)
+
+#### Nobody's Perfect, Not Even Developers
+
+We knew it. We saw it coming. And forgot about it. Some views, especially histories, showed an anarchic behavior
+since v2.7.0. The change responsible for this has been undone and history's order is reestablished now.
+
+* Default sort rules no longer work in 2.7.0 [#3891](https://github.com/Icinga/icingaweb2/issues/3891)
+
+#### Restrictions Gone ~~Wild~~ Cagey
+
+A [fix](https://github.com/Icinga/icingaweb2/pull/3868) unfortunately caused restrictions using wildcards to show no
+results anymore. This is now solved and such restrictions are as permissive as ever.
+
+* Wildcard filters in chains broken [#3886](https://github.com/Icinga/icingaweb2/issues/3886)
+
+### What's New in Version 2.7.0
+
+You can find issues related to this release on our [Roadmap](https://github.com/Icinga/icingaweb2/milestone/52?closed=1).
+
+#### Icinga's Amazingness Spreads Further
+
+All the Japanese and Ukrainian monitoring enthusiasts can now appreciate our web-frontend in their native tongue. Being
+so late to the party is also of their advantage, though. Because they can adjust their dashboard without worrying it gets
+broke with the next update. (All other admins with non-english users, please have a look at our
+[upgrading documentation](doc/80-Upgrading.md#upgrading-to-icinga-web-2-27x-))
+
+* Add Japanese language support [#3776](https://github.com/Icinga/icingaweb2/pull/3776)
+* Add Ukrainian language support [#3828](https://github.com/Icinga/icingaweb2/pull/3828)
+* Don't translate pane and dashlet names in configs [#3837](https://github.com/Icinga/icingaweb2/pull/3837)
+
+#### Modules - Bonus Functionality Unleashed
+
+With this release module developers got additional ways to customize Icinga Web 2. Whether you ever wanted to hook into
+a configuration form's handling, to perform your very own Ajax requests or enhance our multi-select views with fancy
+graphs. All is possible now.
+
+* Allow to hook into a configuration form's handling [#3862](https://github.com/Icinga/icingaweb2/pull/3862)
+* Allow to fully customize click and submit handling [#3794](https://github.com/Icinga/icingaweb2/issues/3767)
+* Integrate DetailviewExtension into multi-select views [#3304](https://github.com/Icinga/icingaweb2/pull/3304)
+
+#### UI - Your Daily Routine and Incident Management, Enhanced
+
+Users with color deficiencies now have a built-in theme to ease navigating within Icinga Web 2. Also, our forms got
+a long overdue re-design and now look less boring. Though, the best of all features is that clicking while holding
+the Ctrl-key now actually opens a new browser tab! Lost comments? No more. Defining an expiry date again? No more!
+
+* Add colorblind theme [#3743](https://github.com/Icinga/icingaweb2/pull/3743)
+* Improve the look of forms [#3416](https://github.com/Icinga/icingaweb2/issues/3416)
+* Make ctrl-click open new tab [#3723](https://github.com/Icinga/icingaweb2/pull/3723)
+
+#### Stay Focused - More Room for More Important Stuff
+
+Some of you know that some checks tend to produce walls of text or measure (too) many interfaces. Now, plugin output
+and performance data will collapse if they exceed a certain height. If necessary they can of course be expanded and
+keep that way across browser restarts. The same is also true for the sidebar. (Though, this one stays *collapsed*)
+
+* Persistent Collapsible Containers [#3638](https://github.com/Icinga/icingaweb2/pull/3638)
+* Collapsible plugin output [#3870](https://github.com/Icinga/icingaweb2/pull/3870)
+* Collapsed sidebar should stay collapsed [#3682](https://github.com/Icinga/icingaweb2/issues/3628)
+
+#### Markdown - Tables, Lists and Emphasized Text The Easy Way
+
+Since we now have the possibility to collapse large content dynamically, we allow you to add entire wiki pages to hosts
+and services. Though, if you prefer to use a real wiki to maintain those (what we'd strongly suggest) it's now easier
+than ever before to link to it. Copy url, paste url, submit comment, Done.
+
+* Make notes, comments and announcements markdown aware [#3814](https://github.com/Icinga/icingaweb2/pull/3814)
+* Transform any URL in a Comment to a clickable Link [#3441](https://github.com/Icinga/icingaweb2/issues/3441)
+* Support relative links in plugin output [#2916](https://github.com/Icinga/icingaweb2/issues/2916)
+
+#### Things You Have Missed Previously
+
+The tactical overview, our fancy pie charts, is now the very first result when you search something in the sidebar.
+If you'll see two entirely green circles there, relax. Also overdue or unreachable checks are now appropriately marked
+in list views and the service grid now allows you to switch between everything or problems only.
+
+* Add tactical overview to global search [#3845](https://github.com/Icinga/icingaweb2/pull/3845)
+* Servicegrid: Add toggle to show problems only [#3871](https://github.com/Icinga/icingaweb2/pull/3871)
+* Make overdue/unreachable checks better visible [#3860](https://github.com/Icinga/icingaweb2/pull/3860)
+
+#### Authorization - Knowing and Controlling What's Going On
+
+Roles can now be even more tailored to users since the introduction of a new placeholder. This placeholder allows to
+use a user's name in restrictions. Things like `_service_responsible_person=$user:local_name$` are now possible. The
+audit log now receives failed login-attempts, that's been made possible since hooks can now run for anonymous users.
+
+* Allow roles to filter for the currently logged in user [#3493](https://github.com/Icinga/icingaweb2/issues/3493)
+* Add possibility to disable permission checks for hooks [#3849](https://github.com/Icinga/icingaweb2/pull/3849)
+* Send failed login-attempts to the audit log [#3856](https://github.com/Icinga/icingaweb2/pull/3856)
+
+See also the [audit module](https://github.com/Icinga/icingaweb2-module-audit/releases) which got an update and is
+required for [#3856](https://github.com/Icinga/icingaweb2/pull/3856) to work.
+
+### What's New in Version 2.6.3
+
+You can find issues related to this release on our [Roadmap](https://github.com/Icinga/icingaweb2/milestone/54?closed=1).
+
+#### PHP 7.3
+
+Now supported. :tada:
+
+#### LDAP - Community contributions, that's the spirit
+
+With the help of our users we've finally fixed the issue that defining multiple hostnames and enabling STARTTLS has
+never properly worked. Also, they've identified that defining multiple hostnames caused a customized port not being
+utilized and fixed it themselves.
+
+There has also a rare case been fixed that caused no group members being found in case object classes had a different
+casing than what we expected. (Good news for all the non-OpenLdap and non-MSActiveDirectory users) 
+
+* LDAP connection fails with multiple servers using STARTTLS [#3639](https://github.com/Icinga/icingaweb2/issues/3639)
+* LDAPS authentication ignores custom port setting [#3713](https://github.com/Icinga/icingaweb2/issues/3713)
+* LDAP group members not found [#3650](https://github.com/Icinga/icingaweb2/issues/3650)
+
+#### We take care about your data even better now
+
+With this are newlines and HTML entities (such as `&nbsp;`) in plugin output and custom variables meant.
+Sorry if I've teased some data security folks now. :innocent:
+
+* Newlines in plugin output disappear [#3662](https://github.com/Icinga/icingaweb2/issues/3662)
+* Windows path separators are converted to newlines in custom variables [#3636](https://github.com/Icinga/icingaweb2/issues/3636)
+* HTML entities in plugin output are not resolved if no other HTML is there [#3707](https://github.com/Icinga/icingaweb2/issues/3707)
+
+#### You've wondered how you got into a famous blue police box?
+
+Don't worry, not only you and the european union are sometimes unsure what's the correct time.
+
+* Set client timezone on DB connection [#3525](https://github.com/Icinga/icingaweb2/issues/3525)
+* Ensure a valid default timezone is set in any case [#3747](https://github.com/Icinga/icingaweb2/pull/3747)
+* Fix that the event detail view is not showing times in correct timezone [#3660](https://github.com/Icinga/icingaweb2/pull/3660)
+
+#### UI - The portal to your monitoring environment, improved
+
+The collapsible sidebar introduced with v2.5 has been plagued by some issues since then. They're now fixed. Also,
+the UI should now flicker less and properly preserve the scroll position when interacting with action links. (This
+also allows the business process module to behave more stable when using drag and drop in large configurations.)
+
+* Collapsible Sidebar Issues [#3187](https://github.com/Icinga/icingaweb2/issues/3187)
+* Fix title when closing right column [#3654](https://github.com/Icinga/icingaweb2/issues/3654)
+* Preserve scroll position upon form submits [#3661](https://github.com/Icinga/icingaweb2/pull/3661)
+
+#### Corrected things we've broke recently
+
+That's due to preemptive changes to protect you from bad individuals. Unfortunately this meant that some unforeseen
+side-effects appeared after the release of v2.6.2. These are now fixed.
+
+* Multiline values in ini files broken [#3705](https://github.com/Icinga/icingaweb2/issues/3705)
+* PHP ini parser doesn't strip trailing whitespace [#3733](https://github.com/Icinga/icingaweb2/issues/3733)
+* Escaped characters in INI values are not unescaped [#3648](https://github.com/Icinga/icingaweb2/issues/3648)
+
+Though, if you've faced issue [#3705](https://github.com/Icinga/icingaweb2/issues/3705) you still need to take manual
+action (if not already done) as the provided fix does only prevent further occurrences of the resulting error. The
+required changes involve the transformation of all real newlines in Icinga Web 2's INI files to literal `\n` or `\r\n`
+sequences. (Files likely having such are the `roles.ini` and `announcements.ini`)
+
 ### What's New in Version 2.6.2
 
 You can find issues and features related to this release on our [Roadmap](https://github.com/Icinga/icingaweb2/milestone/53?closed=1).

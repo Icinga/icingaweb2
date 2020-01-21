@@ -1,16 +1,10 @@
 /*! Icinga Web 2 | (c) 2014 Icinga Development Team | GPLv2+ */
-
-#layout {
-  overflow: auto; // TODO: Shouldn't be necessary, here, IMHO
-}
-
-
 #setup {
-  .header {
+  > .header {
     width: 100%;
     height: 5.5em;
     background-color: @icinga-blue;
-    border-bottom: 1px solid #d9d9d9d;
+    border-bottom: 1px solid #d9d9d9;
     text-align: center;
 
 
@@ -124,6 +118,11 @@
   }
 }
 
+.setup-content .control-group > * {
+  display: inline-block;
+  margin-right: 1em;
+}
+
 #setup div.buttons {
   margin-top: 1.5em; // Yes, -top and -bottom, keep it like that...
   margin-bottom: 1.5em;
@@ -133,8 +132,17 @@
     left: -1337px;
   }
 
+  .control-button,
+  input[type="submit"] {
+    .button();
+  }
+
   button.finish, a.button-like.login {
     min-width: 25em;
+  }
+
+  .spinner {
+    margin-left: 1em;
   }
 }
 
@@ -391,30 +399,35 @@ form#setup_requirements {
 #setup_modules {
   div.module {
     float: left;
-    //width: 15em;
+    width: 15em;
     height: 15em;
     margin: 1em;
     padding: 0.3em;
     border: 1px solid #ccc;
     background-color: snow;
 
+    .header {
+      height: 2.5em;
+      display: flex;
+      justify-content: space-between;
+    }
+
     h3 {
+      margin: 0;
       border: none;
-      margin: 0.5em 0;
-      text-align: center;
+      overflow: hidden;
+      text-overflow: ellipsis;
 
       label {
-        margin: 0;
-        width: 15em;
         cursor: pointer;
       }
     }
 
-    h3 + label {
+    label.description {
       display: inline-block;
-      width: 13.5em;
-      height: 13.9em;
-      overflow: visible;
+      width: 14.4em;
+      height: 12em;
+      overflow: auto;
       cursor: pointer;
       font-weight: normal;
     }

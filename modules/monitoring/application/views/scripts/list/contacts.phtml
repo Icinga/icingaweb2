@@ -25,7 +25,7 @@
     <tbody>
     <?php foreach ($contacts->peekAhead($this->compact) as $contact): ?>
         <tr>
-        <td>
+        <th>
             <?= $this->qlink(
                 $contact->contact_name,
                 'monitoring/show/contact',
@@ -37,7 +37,7 @@
                     )
                 )
             ) ?>
-        </td>
+        </th>
         <td>
             <?= $this->translate('Email') ?>:
             <a href="mailto:<?= $contact->contact_email ?>"

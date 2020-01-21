@@ -114,12 +114,7 @@ class Request extends Zend_Controller_Request_Http
      */
     public function protectId($id)
     {
-        if (! isset($this->uniqueId)) {
-            $windowId = $this->getHeader('X-Icinga-WindowId');
-            $this->uniqueId = empty($windowId) ? Window::generateId() : $windowId;
-        }
-
-        return $id . '-' . $this->uniqueId;
+        return $id . '-' . Window::getInstance()->getContainerId();
     }
 
     public function getPost($key = null, $default = null)

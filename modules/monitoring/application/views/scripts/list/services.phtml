@@ -1,4 +1,5 @@
 <?php
+use Icinga\Date\DateFormatter;
 use Icinga\Module\Monitoring\Object\Host;
 use Icinga\Module\Monitoring\Object\Service;
 
@@ -38,10 +39,16 @@ if (! $this->compact): ?>
                 'host' => $service->host_name,
             )
         );
-        $serviceStateName = Service::getStateText($service->service_state); ?>
-        <tr>
+        $serviceStateName = Service::getStateText($service->service_state);
+        $serviceCheckOverdue = $service->service_next_update < time(); ?>
+        <tr<?= $serviceCheckOverdue ? ' class="state-outdated"' : '' ?>>
             <td class="state-col state-<?= $serviceStateName ?><?= $service->service_handled ? ' handled' : '' ?>">
-                <div class="state-label"><?= Service::getStateText($service->service_state, true) ?></div>
+                <div class="state-label">
+                <?php if ($serviceCheckOverdue): ?>
+                    <?= $this->icon('clock', sprintf($this->translate('Overdue %s'), DateFormatter::timeSince($service->service_next_update))) ?>
+                <?php endif ?>
+                    <?= Service::getStateText($service->service_state, true) ?>
+                </div>
             <?php if ((int) $service->service_state !== 99): ?>
                 <div class="state-meta">
                     <?= $this->timeSince($service->service_last_state_change, $this->compact) ?>
@@ -54,33 +61,56 @@ if (! $this->compact): ?>
 
             <td>
                 <div class="state-header">
-                    <?= $this->iconImage()->service($service) ?>
-                    <?php if ($this->showHost): ?><?= $this->qlink(
-                        $service->host_display_name
-                        . ($service->host_state != 0 ? ' (' . Host::getStateText($service->host_state, true) . ')' : ''),
-                        $hostLink,
-                        null,
-                        array(
-                            'title' => sprintf(
-                                $this->translate('Show detailed information for host %s'),
-                                $service->host_display_name
-                            )
-                        )
-                    ) ?>&#58;
-                    <?php endif ?><?= $this->qlink(
-                        $service->service_display_name,
-                        $serviceLink,
-                        null,
-                        array(
-                            'title' => sprintf(
-                                $this->translate('Show detailed information for service %s on host %s'),
-                                $service->service_display_name,
-                                $service->host_display_name
-                            ),
-                            'class' => 'rowaction'
-                        )
-                    ) ?>
-                    <span class="state-icons"><?= $this->serviceFlags($service) ?></span>
+                  <span class="service-on">
+                  <?= $this->iconImage()->service($service) ?>
+                  <?php
+                  if ($this->showHost) {
+                      echo sprintf(
+                          $this->translate('%s on %s', 'service on host'),
+                          $this->qlink(
+                              $service->service_display_name,
+                              $serviceLink,
+                              null,
+                              array(
+                                  'title' => sprintf(
+                                      $this->translate('Show detailed information for service %s on host %s'),
+                                      $service->service_display_name,
+                                      $service->host_display_name
+                                  ),
+                                  'class' => 'rowaction'
+                              )
+                          ),
+                              $this->qlink(
+                                  $service->host_display_name
+                                  . ($service->host_state != 0 ? ' (' . Host::getStateText($service->host_state, true) . ')' : ''),
+                                  $hostLink,
+                                  null,
+                                  [
+                                      'title' => sprintf(
+                                          $this->translate('Show detailed information for host %s'),
+                                          $service->host_display_name
+                                      )
+                                  ]
+                              )
+                          );
+                  } else {
+                      echo $this->qlink(
+                          $service->service_display_name,
+                          $serviceLink,
+                          null,
+                          array(
+                              'title' => sprintf(
+                                  $this->translate('Show detailed information for service %s on host %s'),
+                                  $service->service_display_name,
+                                  $service->host_display_name
+                              ),
+                              'class' => 'rowaction'
+                          )
+                      );
+                  }
+                  ?>
+                  </span>
+                  <span class="state-icons"><?= $this->serviceFlags($service) ?></span>
                 </div>
                 <div class="overview-plugin-output-container">
                     <div class="overview-performance-data">
@@ -111,7 +141,6 @@ if (! $this->compact): ?>
 <?php endif ?>
 </div>
 <?php if (! $this->compact): ?>
-<div class="monitoring-statusbar-ghost dont-print"></div>
 <div class="monitoring-statusbar dont-print">
     <?= $this->render('list/components/servicesummary.phtml') ?>
     <?= $this->render('list/components/selectioninfo.phtml') ?>

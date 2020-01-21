@@ -22,6 +22,8 @@ class Dashlet extends UserWidget
      */
     private $url;
 
+    private $name;
+
     /**
      * The title being displayed on top of the dashlet
      * @var
@@ -91,9 +93,21 @@ EOD;
      */
     public function __construct($title, $url, Pane $pane)
     {
+        $this->name = $title;
         $this->title = $title;
         $this->pane = $pane;
         $this->url = $url;
+    }
+
+    public function setName($name)
+    {
+        $this->name = $name;
+        return $this;
+    }
+
+    public function getName()
+    {
+        return $this->name;
     }
 
     /**

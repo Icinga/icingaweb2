@@ -29,19 +29,17 @@ if (! $url->hasParam('page') || ($page = (int) $url->getParam('page')) < 1) {
 $history->limit($limit * $page);
 ?>
 <div class="content">
-<?php if (! $history->hasResult()): ?>
-    <p><?= $this->translate('No historical events found matching the filter.') ?></p>
-</div>
-<?php return; endif ?>
 <?php
 $dateFormat = $this->translate('%A, %B %e, %Y', 'date.verbose');
 $lastDate = null;
 $flappingMsg = $this->translate('Flapping with a %.2f%% state change rate');
 $rowAction = Url::fromPath('monitoring/event/show');
 ?>
-    <table class="table-row-selectable state-table" data-base-target="_next"<?php if (isset($tableCssClass)): ?> class="<?=$tableCssClass ?>"<?php endif ?>>
-    <tbody>
-    <?php foreach ($history->peekAhead() as $event):
+    <?php foreach ($history->peekAhead() as $event): ?>
+<?php if ($lastDate === null): ?>
+    <table class="table-row-selectable state-table" data-base-target="_next">
+        <tbody>
+<?php endif;
         $icon = '';
         $iconTitle = null;
         $isService = isset($event->service_description);
@@ -53,16 +51,45 @@ $rowAction = Url::fromPath('monitoring/event/show');
             'id' => $event->id
         ));
         switch ($event->type) {
-            case 'notify':
+            case substr($event->type, 0, 13) === 'notification_':
+                $rowAction->setParam('type', 'notify');
                 $icon = 'bell';
-                $iconTitle = $this->translate('Notification', 'tooltip');
-                $label = $this->translate('NOTIFICATION');
+                switch (substr($event->type, 13)) {
+                    case 'state':
+                        $iconTitle = $this->translate('State notification', 'tooltip');
+                        $label = $this->translate('NOTIFICATION');
+                        $stateName = $isService ? Service::getStateText($event->state) : Host::getStateText($event->state);
+                        break;
+                    case 'ack':
+                        $iconTitle = $this->translate('Ack Notification', 'tooltip');
+                        $label = $this->translate('ACK NOTIFICATION');
+                        break;
+                    case 'dt_start':
+                        $iconTitle = $this->translate('Downtime start notification', 'tooltip');
+                        $label = $this->translate('DOWNTIME START NOTIFICATION');
+                        break;
+                    case 'dt_end':
+                        $iconTitle = $this->translate('Downtime end notification', 'tooltip');
+                        $label = $this->translate('DOWNTIME END NOTIFICATION');
+                        break;
+                    case 'flapping':
+                        $iconTitle = $this->translate('Flapping notification', 'tooltip');
+                        $label = $this->translate('FLAPPING NOTIFICATION');
+                        break;
+                    case 'flapping_end':
+                        $iconTitle = $this->translate('Flapping end notification', 'tooltip');
+                        $label = $this->translate('FLAPPING END NOTIFICATION');
+                        break;
+                    case 'custom':
+                        $iconTitle = $this->translate('Custom notification', 'tooltip');
+                        $label = $this->translate('CUSTOM NOTIFICATION');
+                        break;
+                }
                 $msg = $msg ? preg_replace_callback(
                     '/^\[([^\]]+)\]/',
                     function($match) use ($self) { return contactsLink($match, $self); },
                     $msg
                 ) : $this->translate('This notification was not sent out to any contact.');
-                $stateName = $isService ? Service::getStateText($event->state) : Host::getStateText($event->state);
                 break;
             case 'comment':
                 $icon = 'comment-empty';
@@ -151,45 +178,70 @@ $rowAction = Url::fromPath('monitoring/event/show');
                 <div class="state-meta"><?= $this->formatTime($event->timestamp) ?></div>
             </td>
             <td>
-                <?php if ($this->isOverview): ?>
-                    <?= $this->qlink(
-                        $event->host_display_name,
-                        'monitoring/host/show',
-                        array(
-                            'host' => $event->host_name,
-                        ),
-                        array('title' => sprintf(
-                            $this->translate('Show detailed information for host %s'),
-                            $event->host_display_name
-                        ))
-                    ) ?><?php if ($isService): ?>&#58;
-                        <?= $this->qlink(
-                            $event->service_display_name,
-                            'monitoring/service/show',
-                            array(
-                                'host'      => $event->host_name,
-                                'service'   => $event->service_description
-                            ),
-                            array(
-                                'title' => sprintf(
-                                    $this->translate('Show detailed information for service %s on host %s'),
-                                    $event->service_display_name,
-                                    $event->host_display_name
-                                )
-                            )
-                        ) ?>
-                    <?php endif ?>
+                <div class="history-message-container">
+                <?php if ($icon): ?>
+                    <div class="history-message-icon">
+                        <?= $this->icon($icon, $iconTitle) ?>
+                    </div>
                 <?php endif ?>
-                <p class="overview-plugin-output"><?php if ($icon) {
-                    echo $this->icon($icon, $iconTitle);
-                } ?><?= $this->nl2br($this->createTicketLinks($this->escapeComment($msg)))
-                // TODO(ak): this allows only a[href] in messages, but plugin output allows more
-                ?></p>
+                    <div class="history-message-output">
+                    <?php if ($this->isOverview): ?>
+                        <?php if ($isService) {
+                            echo '<span class="service-on">';
+                            echo sprintf(
+                                $this->translate('%s on %s', 'service on host'),
+                                $this->qlink(
+                                    $event->service_display_name,
+                                    'monitoring/service/show',
+                                    [
+                                        'host' => $event->host_name,
+                                        'service' => $event->service_description
+                                    ],
+                                    [
+                                        'title' => sprintf(
+                                            $this->translate('Show detailed information for service %s on host %s'),
+                                            $event->service_display_name,
+                                            $event->host_display_name
+                                        )
+                                    ]
+                                ),
+                                $this->qlink(
+                                    $event->host_display_name,
+                                    'monitoring/host/show',
+                                    ['host' => $event->host_name],
+                                    [
+                                        'title' => sprintf(
+                                            $this->translate('Show detailed information for host %s'),
+                                            $event->host_display_name
+                                        )
+                                    ]
+                                )
+                            );
+                            echo '</span>';
+                        } else {
+                            echo $this->qlink(
+                                $event->host_display_name,
+                                'monitoring/host/show',
+                                ['host' => $event->host_name],
+                                [
+                                    'title' => sprintf(
+                                        $this->translate('Show detailed information for host %s'),
+                                        $event->host_display_name
+                                    )
+                                ]
+                            );
+                        } ?>
+                    <?php endif ?>
+                        <?= $this->nl2br($this->createTicketLinks($this->markdown($msg, ['class' => 'overview-plugin-output']))) ?>
+                    </div>
+                </div>
             </td>
         </tr>
         <?php endforeach ?>
+<?php if ($lastDate !== null): ?>
         </tbody>
     </table>
+<?php endif ?>
 <?php if ($history->hasMore()): ?>
     <div class="action-links">
     <?php if ($this->compact) {

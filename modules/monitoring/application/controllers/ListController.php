@@ -3,6 +3,8 @@
 
 namespace Icinga\Module\Monitoring\Controllers;
 
+use Icinga\Security\SecurityException;
+use Icinga\Web\Form;
 use Zend_Form;
 use Icinga\Data\Filter\Filter;
 use Icinga\Module\Monitoring\Backend;
@@ -77,7 +79,8 @@ class ListController extends Controller
             'host_notifications_enabled',
             'host_active_checks_enabled',
             'host_passive_checks_enabled',
-            'host_check_command'
+            'host_check_command',
+            'host_next_update'
         ), $this->addColumns()));
         $this->applyRestriction('monitoring/filter/objects', $hosts);
 
@@ -158,7 +161,8 @@ class ListController extends Controller
             'service_notifications_enabled',
             'service_active_checks_enabled',
             'service_passive_checks_enabled',
-            'service_check_command'
+            'service_check_command',
+            'service_next_update'
         ), $this->addColumns()));
         $this->applyRestriction('monitoring/filter/objects', $services);
 
@@ -278,6 +282,7 @@ class ListController extends Controller
         $this->setAutorefreshInterval(15);
 
         $notifications = $this->backend->select()->from('notification', array(
+            'id',
             'host_display_name',
             'host_name',
             'notification_contact_name',
@@ -304,6 +309,10 @@ class ListController extends Controller
      */
     public function contactsAction()
     {
+        if (! $this->hasPermission('*') && $this->hasPermission('no-monitoring/contacts')) {
+            throw new SecurityException('No permission for %s', 'monitoring/contacts');
+        }
+
         $this->addTitleTab(
             'contacts',
             $this->translate('Contacts'),
@@ -361,13 +370,16 @@ class ListController extends Controller
         );
         $orientationBox->applyRequest($this->getRequest());
 */
+        $objectType = $form->getValue('objecttype');
+        $from = $form->getValue('from');
         $query = $this->backend->select()->from(
-            'eventgrid',
+            'eventgrid' . $objectType,
             array('day', $form->getValue('state'))
         );
         $this->params->remove(array('objecttype', 'from', 'to', 'state', 'btn_submit'));
         $this->view->filter = Filter::fromQuerystring((string) $this->params);
         $query->applyFilter($this->view->filter);
+        $query->applyFilter(Filter::fromQuerystring('timestamp>=' . $from));
         $this->applyRestriction('monitoring/filter/objects', $query);
         $this->view->summary = $query;
         $this->view->column = $form->getValue('state');
@@ -380,6 +392,10 @@ class ListController extends Controller
      */
     public function contactgroupsAction()
     {
+        if (! $this->hasPermission('*') && $this->hasPermission('no-monitoring/contacts')) {
+            throw new SecurityException('No permission for %s', 'monitoring/contacts');
+        }
+
         $this->addTitleTab(
             'contactgroups',
             $this->translate('Contact Groups'),
@@ -666,6 +682,19 @@ class ListController extends Controller
         $this->applyRestriction('monitoring/filter/objects', $query);
         $this->filterQuery($query);
         $filter = (bool) $this->params->shift('problems', false) ? Filter::where('service_problem', 1) : null;
+
+        $this->view->problemToggle = $problemToggle = new Form(['method' => 'GET']);
+        $problemToggle->setUidDisabled();
+        $problemToggle->setTokenDisabled();
+        $problemToggle->setAttrib('class', 'filter-toggle inline icinga-controls');
+        $problemToggle->addElement('checkbox', 'problems', [
+            'disableHidden' => true,
+            'autosubmit'    => true,
+            'value'         => $filter !== null,
+            'label'         => $this->translate('Problems Only'),
+            'decorators'    => ['ViewHelper', ['Label', ['placement' => 'APPEND']]]
+        ]);
+
         if ($this->params->get('flipped', false)) {
             $pivot = $query
                 ->pivot(

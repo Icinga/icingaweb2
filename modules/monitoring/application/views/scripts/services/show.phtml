@@ -19,6 +19,7 @@
     <?php if ($serviceCount === 0): ?>
         <?= $this->translate('No services found matching the filter') ?>
     <?php else: ?>
+        <?= $this->render('show/components/extensions.phtml') ?>
         <h2> <?= $this->translate('Problem handling') ?> </h2>
         <table class="name-value-table">
             <tbody>
@@ -183,6 +184,7 @@
                 </tr>
             <?php endif ?>
 
+        <?php if (isset($rescheduleAllLink)): ?>
             <tr>
                 <th></th>
                 <td>
@@ -197,6 +199,7 @@
                     ) ?>
                 </td>
             </tr>
+        <?php endif ?>
             </tbody>
         </table>
         <h2><?= $this->translate('Feature Commands') ?></h2>

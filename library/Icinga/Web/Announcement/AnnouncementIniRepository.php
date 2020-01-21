@@ -31,25 +31,6 @@ class AnnouncementIniRepository extends IniRepository
     ));
 
     /**
-     * Create a DateTime from a timestamp
-     *
-     * @param   string  $timestamp
-     *
-     * @return  DateTime|null
-     */
-    protected function retrieveTimestamp($timestamp)
-    {
-        if ($timestamp !== null) {
-            $dateTime = new DateTime();
-            $dateTime->setTimestamp($timestamp);
-
-            return $dateTime;
-        }
-
-        return null;
-    }
-
-    /**
      * Get a DateTime's timestamp
      *
      * @param   DateTime    $datetime
@@ -129,7 +110,7 @@ class AnnouncementIniRepository extends IniRepository
         $now = new DateTime();
 
         $query = $this
-            ->select(array('hash', 'message'))
+            ->select(array('hash', 'message', 'start'))
             ->setFilter(new FilterAnd(array(
                 Filter::expression('start', '<=', $now),
                 Filter::expression('end', '>=', $now)
@@ -157,7 +138,7 @@ class AnnouncementIniRepository extends IniRepository
         $refresh = null;
 
         foreach ($query as $row) {
-            $min = min($row->start->getTimestamp(), $row->end->getTimestamp());
+            $min = min($row->start, $row->end);
 
             if ($refresh === null) {
                 $refresh = $min;

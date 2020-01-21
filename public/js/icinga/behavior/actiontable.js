@@ -161,8 +161,11 @@
             var keys = this.getMultiselectionKeys();
             for (var i = 0; i < keys.length; i++) {
                 var key = keys[i];
-                if (params[key]) {
-                    tuple[key] = params[key];
+                for (var j = 0; j < params.length; j++) {
+                    if (params[j].key === key && (params[j].value || params[j].value === null)) {
+                        tuple[key] = params[j].value;
+                        break;
+                    }
                 }
             }
             return tuple;
@@ -189,17 +192,7 @@
             this.rowActions()
                 .filter(
                     function (i, el) {
-                        var params = _this.getRowData($(el));
-                        if (_this.icinga.utils.objectKeys(params).length !== _this.icinga.utils.objectKeys(filter).length) {
-                            return false;
-                        }
-                        var equal = true;
-                        $.each(params, function(key, value) {
-                            if (filter[key] !== value) {
-                                equal = false;
-                            }
-                        });
-                        return equal;
+                        return _this.icinga.utils.objectsEqual(_this.getRowData($(el)), filter);
                     }
                 )
                 .closest('tr')
@@ -305,7 +298,12 @@
                 selections.each(function (i, el) {
                     var parts = [];
                     $.each(_this.getRowData($(el)), function(key, value) {
-                        parts.push(utils.fixedEncodeURIComponent(key) + '=' + utils.fixedEncodeURIComponent(value));
+                        var condition = utils.fixedEncodeURIComponent(key);
+                        if (value !== null) {
+                            condition += '=' + utils.fixedEncodeURIComponent(value);
+                        }
+
+                        parts.push(condition);
                     });
                     queries.push('(' + parts.join('&') + ')');
                 });
@@ -378,6 +376,10 @@
         var $tr = $(event.currentTarget);
         var table = new Selection($tr.closest('table.action, table.table-row-selectable')[0], _this.icinga);
 
+        if ($tr.closest('[data-no-icinga-ajax]').length > 0) {
+            return true;
+        }
+
         // some rows may contain form actions that trigger a different action, pass those through
         if (!$target.hasClass('rowaction') && $target.closest('form').length &&
             ($target.closest('a').length ||                                         // allow regular link clinks
@@ -410,9 +412,9 @@
         var count = table.selections().length;
         if (count > 0) {
             var query = table.toQuery();
-            _this.icinga.loader.loadUrl(query, _this.icinga.events.getLinkTargetFor($tr));
+            _this.icinga.loader.loadUrl(query, _this.icinga.loader.getLinkTargetFor($tr));
         } else {
-            if (_this.icinga.events.getLinkTargetFor($tr).attr('id') === 'col2') {
+            if (_this.icinga.loader.getLinkTargetFor($tr).attr('id') === 'col2') {
                 _this.icinga.ui.layout1col();
             }
         }
@@ -423,7 +425,7 @@
         });
 
         // update selection info
-        $('.selection-info-count').text(table.selections().size());
+        $('.selection-info-count').text(table.selections().length);
         return false;
     };
 
@@ -466,7 +468,7 @@
 
         // update displayed selection counter
         var table = new Selection(_this.tables(container).first());
-        $(container).find('.selection-info-count').text(table.selections().size());
+        $(container).find('.selection-info-count').text(table.selections().length);
     };
 
     ActionTable.prototype.beforeRender = function(evt) {

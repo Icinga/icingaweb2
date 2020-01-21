@@ -57,6 +57,7 @@ class Documentation
             . "  --help          Show help\n"
             . "  --benchmark     Show benchmark summary\n"
             . "  --watch [s]     Refresh output every <s> seconds (default: 5)\n"
+            . "  --version       Shows version of Icinga Web 2, loaded modules and PHP\n"
             ;
         $d .= "\nShow help on a specific command : icingacli help <command>"
             . "\nShow help on a specific module  : icingacli help <module>"

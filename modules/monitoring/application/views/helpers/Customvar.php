@@ -16,11 +16,11 @@ class Zend_View_Helper_Customvar extends Zend_View_Helper_Abstract
     public function customvar($struct)
     {
         if (is_scalar($struct)) {
-            return $this->view->nl2br($this->view->escape(
+            return nl2br($this->view->escape(
                 is_string($struct)
                     ? $struct
                     : var_export($struct, true)
-            ));
+            ), false);
         } elseif (is_array($struct)) {
             return $this->renderArray($struct);
         } elseif (is_object($struct)) {
@@ -34,9 +34,11 @@ class Zend_View_Helper_Customvar extends Zend_View_Helper_Abstract
             return '[]';
         }
         $out = "<ul>\n";
+
         foreach ($array as $val) {
             $out .= '<li>' . $this->customvar($val) . "</li>\n";
         }
+
         return $out . "</ul>\n";
     }
 
@@ -46,6 +48,7 @@ class Zend_View_Helper_Customvar extends Zend_View_Helper_Abstract
             return '{}';
         }
         $out = "{<ul>\n";
+
         foreach ($object as $key => $val) {
             $out .= '<li>'
                   . $this->view->escape($key)
@@ -53,6 +56,7 @@ class Zend_View_Helper_Customvar extends Zend_View_Helper_Abstract
                   . $this->customvar($val)
                   . "</li>\n";
         }
+
         return $out . "</ul>}";
     }
 }

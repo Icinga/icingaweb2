@@ -208,6 +208,10 @@ class TimeLine implements IteratorAggregate
     {
         $groupInfo = array();
         foreach ($this->identifiers as $name => $attributes) {
+            if (isset($attributes['groupBy'])) {
+                $name = $attributes['groupBy'];
+            }
+
             $groupInfo[$name]['class'] = $attributes['class'];
             $groupInfo[$name]['label'] = $attributes['label'];
         }
@@ -436,16 +440,28 @@ class TimeLine implements IteratorAggregate
             foreach ($data as $timestamp => $count) {
                 $dateTime = new DateTime();
                 $dateTime->setTimestamp($timestamp);
-                $groups[$timestamp][$name] = TimeEntry::fromArray(
-                    array_merge(
-                        $this->identifiers[$name],
+
+                $groupName = $name;
+                if (isset($this->identifiers[$name]['groupBy'])) {
+                    $groupName = $this->identifiers[$name]['groupBy'];
+                }
+
+                if (isset($groups[$timestamp][$groupName])) {
+                    $groups[$timestamp][$groupName]->setValue(
+                        $groups[$timestamp][$groupName]->getValue() + $count
+                    );
+                } else {
+                    $groups[$timestamp][$groupName] = TimeEntry::fromArray(
                         array(
-                            'name'      => $name,
+                            'name'      => $groupName,
                             'value'     => $count,
-                            'dateTime'  => $dateTime
+                            'dateTime'  => $dateTime,
+                            'class'     => $this->identifiers[$name]['class'],
+                            'detailUrl' => $this->identifiers[$name]['detailUrl'],
+                            'label'     => $this->identifiers[$name]['label']
                         )
-                    )
-                );
+                    );
+                }
             }
         }
 

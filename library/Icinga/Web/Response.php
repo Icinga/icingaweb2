@@ -62,6 +62,13 @@ class Response extends Zend_Controller_Response_Http
     protected $rerenderLayout = false;
 
     /**
+     * Whether to send the current window ID to the client
+     *
+     * @var bool
+     */
+    protected $overrideWindowId = false;
+
+    /**
      * Get the auto-refresh interval
      *
      * @return int
@@ -238,6 +245,29 @@ class Response extends Zend_Controller_Response_Http
     }
 
     /**
+     * Get whether to send the current window ID to the client
+     *
+     * @return bool
+     */
+    public function getOverrideWindowId()
+    {
+        return $this->overrideWindowId;
+    }
+
+    /**
+     * Set whether to send the current window ID to the client
+     *
+     * @param bool $overrideWindowId
+     *
+     * @return $this
+     */
+    public function setOverrideWindowId($overrideWindowId = true)
+    {
+        $this->overrideWindowId = $overrideWindowId;
+        return $this;
+    }
+
+    /**
      * Entry point for HTTP responses in JSON format
      *
      * @return JsonResponse
@@ -261,6 +291,9 @@ class Response extends Zend_Controller_Response_Http
                 if ($this->getRerenderLayout()) {
                     $this->setHeader('X-Icinga-Rerender-Layout', 'yes', true);
                 }
+            }
+            if ($this->getOverrideWindowId()) {
+                $this->setHeader('X-Icinga-WindowId', Window::getInstance()->getId(), true);
             }
             if ($this->getRerenderLayout()) {
                 $this->setHeader('X-Icinga-Container', 'layout', true);

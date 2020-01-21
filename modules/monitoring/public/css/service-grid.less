@@ -34,6 +34,14 @@
 
   a {
     color: @text-color;
+    outline: none;
+
+    &:hover {
+      color: @text-color-light;
+    }
+    &:focus, &:active {
+      color: @icinga-blue;
+    }
   }
 
   i {
@@ -51,4 +59,17 @@
   height: 1.5em;
   vertical-align: middle;
   width: 1.5em;
+}
+
+form.filter-toggle {
+  label:not(.toggle-switch) {
+    display: inline-block;
+    vertical-align: top;
+    margin-left: .5em;
+    color: @gray-light;
+  }
+
+  input[type="checkbox"]:checked ~ label {
+    color: inherit;
+  }
 }
