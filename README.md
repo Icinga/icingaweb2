@@ -1,6 +1,6 @@
 # Icinga Web 2
 
-[![Build Status](https://travis-ci.org/Icinga/icingaweb2.png?branch=master)](https://travis-ci.org/Icinga/icingaweb2)
+![Build Status](https://github.com/icinga/icingaweb2/workflows/PHP%20Tests/badge.svg?branch=master)
 [![Github Tag](https://img.shields.io/github/tag/Icinga/icingaweb2.svg)](https://github.com/Icinga/icingaweb2)
 
 ![Icinga Logo](https://icinga.com/wp-content/uploads/2014/06/icinga_logo.png)
