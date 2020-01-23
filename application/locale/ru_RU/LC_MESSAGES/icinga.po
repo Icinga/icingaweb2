@@ -56,7 +56,7 @@ msgstr "%s недоступен для записи"
 
 #, php-format
 msgid "%s is required and must not be empty"
-msgstr ""
+msgstr "%s требуется и не должно быть пустым"
 
 #, php-format
 msgid "%s not in the expected format: %%value%%"
@@ -114,22 +114,22 @@ msgid "Add To Menu"
 msgstr "Добавить в меню"
 
 msgid "Add User to Group"
-msgstr ""
+msgstr "Добавить пользователя в группу"
 
 msgid "Add a New User"
-msgstr ""
+msgstr "Добавить нового пользователя"
 
 msgid "Add a New User Group"
-msgstr ""
+msgstr "Добавить новую группу пользователя"
 
 msgid "Add a new group"
-msgstr ""
+msgstr "Добавить новую группу"
 
 msgid "Add a new user"
-msgstr ""
+msgstr "Добавить нового пользователя"
 
 msgid "Add another filter"
-msgstr ""
+msgstr "Добавить ещё один фильтр"
 
 msgid "Add filter..."
 msgstr "Добавить фильтр..."
@@ -182,7 +182,7 @@ msgid ""
 msgstr ""
 
 msgid "Application"
-msgstr ""
+msgstr "Приложение"
 
 #, fuzzy
 msgid "Application Log"
@@ -192,14 +192,14 @@ msgid "Application Prefix"
 msgstr "Префикс приложения"
 
 msgid "Apply"
-msgstr ""
+msgstr "Применить"
 
 msgctxt "sort direction"
 msgid "Ascending"
 msgstr "По возрастанию"
 
 msgid "Authentication"
-msgstr ""
+msgstr "Аутентификация"
 
 msgid "Authentication Backend"
 msgstr ""
@@ -216,7 +216,7 @@ msgid "Authentication order updated"
 msgstr ""
 
 msgid "Authorization"
-msgstr ""
+msgstr "Авторизация"
 
 msgid "Auto refresh successfully disabled"
 msgstr ""
@@ -248,7 +248,7 @@ msgstr ""
 #, php-format
 msgctxt "preferences.form"
 msgid "Browser (%s)"
-msgstr ""
+msgstr "Браузер (%s)"
 
 #, php-format
 msgid "Can't add role '%s'. Role already exists"
@@ -268,13 +268,13 @@ msgstr ""
 
 msgctxt "group.membership"
 msgid "Cancel"
-msgstr ""
+msgstr "Отмена"
 
 msgid "Cancel this membership"
 msgstr ""
 
 msgid "Cancel this operation"
-msgstr ""
+msgstr "Отменить эту операцию"
 
 #, php-format
 msgid "Cannot insert. Section \"%s\" does already exist"
@@ -296,7 +296,7 @@ msgid "Cannot update. Section \"%s\" does already exist"
 msgstr ""
 
 msgid "Character Set"
-msgstr ""
+msgstr "Набор символов"
 
 msgid ""
 "Check this box for persistent database connections. Persistent connections "
@@ -385,16 +385,16 @@ msgid "Could not save dashboard"
 msgstr ""
 
 msgid "Create"
-msgstr ""
+msgstr "Создание"
 
-msgid "Create Role"
-msgstr ""
+msgid "Role"
+msgstr "Роль"
 
 msgid "Create a New Navigation Item"
 msgstr ""
 
 msgid "Create a New Resource"
-msgstr ""
+msgstr "Создание нового ресурса"
 
 msgid "Create a New Role"
 msgstr ""
@@ -420,26 +420,26 @@ msgid "Create a new navigation item, such as a menu entry or dashlet."
 msgstr "Создать новый элемент навигации - элемент меню или компонент сводки."
 
 msgid "Create a new resource"
-msgstr ""
+msgstr "Создать новый ресурс"
 
 msgid "Create a new role"
-msgstr ""
+msgstr "Создать новую роль"
 
 msgid "Create a new user"
-msgstr ""
+msgstr "Создать нового пользователя"
 
 msgid "Create a new user backend"
 msgstr ""
 
 msgid "Create a new user group"
-msgstr ""
+msgstr "Создать новую группу пользователей"
 
 msgid "Create a new user group backend"
 msgstr ""
 
 #, php-format
 msgid "Create memberships for %s"
-msgstr ""
+msgstr "Создать участников для %s"
 
 msgid "Created At"
 msgstr ""
@@ -448,11 +448,12 @@ msgid "Created at"
 msgstr ""
 
 msgid "Current Column"
-msgstr ""
+msgstr "Текущий столбец"
 
 msgid ""
 "Currently there is no dashlet available. Please contact the administrator."
 msgstr ""
+"В настоящее время страниа информации недоступна. Пожалуйста, свяжитесь с администратором."
 
 #, php-format
 msgid ""
@@ -461,37 +462,37 @@ msgid ""
 msgstr ""
 
 msgid "Dashboard"
-msgstr "Сводка"
+msgstr "Панель информации"
 
 msgid "Dashboard Settings"
-msgstr "Параметры сводки"
+msgstr "Параметры панели информации"
 
 msgid "Dashboard has been removed"
-msgstr ""
+msgstr "Панель информации была удалена"
 
 msgid "Dashlet Name"
-msgstr "Название компонента"
+msgstr "Название страницы информации"
 
 msgid "Dashlet Title"
-msgstr "Заголовок компонента"
+msgstr "Заголовок страницы информации"
 
 msgid "Dashlet created"
-msgstr ""
+msgstr "Создание страницы информации"
 
 msgid "Dashlet has been removed from"
-msgstr ""
+msgstr "Страница информации была удалена из"
 
 msgid "Dashlet updated"
-msgstr ""
+msgstr "Страница информации обновлена"
 
 msgid "Database"
-msgstr ""
+msgstr "База данных"
 
 msgid "Database Connection"
 msgstr ""
 
 msgid "Database Name"
-msgstr ""
+msgstr "Название базы данных"
 
 msgid "Database Type"
 msgstr "Тип базы данных"
@@ -501,14 +502,14 @@ msgid "Debug"
 msgstr "Отладка"
 
 msgid "Dependencies"
-msgstr ""
+msgstr "Зависимости"
 
 msgctxt "sort direction"
 msgid "Descending"
 msgstr "По убыванию"
 
 msgid "Description"
-msgstr ""
+msgstr "Описание"
 
 msgid ""
 "Details can be found in the application log. (If you don't have access to "
@@ -542,7 +543,7 @@ msgstr ""
 
 #, php-format
 msgid "Edit group %s"
-msgstr ""
+msgstr "Редактировать группу %s"
 
 #, php-format
 msgid "Edit navigation item %s"
@@ -554,7 +555,7 @@ msgstr ""
 
 #, php-format
 msgid "Edit role %s"
-msgstr ""
+msgstr "Редактировать роль %s"
 
 #, php-format
 msgid "Edit shared navigation item %s"
@@ -562,7 +563,7 @@ msgstr ""
 
 #, php-format
 msgid "Edit user %s"
-msgstr ""
+msgstr "Редактировать пользователя %s"
 
 #, php-format
 msgid "Edit user backend %s"
@@ -584,7 +585,7 @@ msgid "Enabling the \"%s\" module might help!"
 msgstr ""
 
 msgid "Encryption"
-msgstr ""
+msgstr "Шифрование"
 
 msgid "Enter a title for the dashlet."
 msgstr "Введите название для компонента."
@@ -609,10 +610,10 @@ msgid "Error"
 msgstr "Ошибка"
 
 msgid "Error details"
-msgstr ""
+msgstr "Детали ошибки"
 
 msgid "External"
-msgstr ""
+msgstr "Внешний"
 
 #, php-format
 msgid "Failed to add \"%s\" as group member for \"%s\""
@@ -690,16 +691,16 @@ msgid "File"
 msgstr "Файл"
 
 msgid "File System (INI Files)"
-msgstr ""
+msgstr "Файловая система (файлы INI)"
 
 msgid "File path"
-msgstr ""
+msgstr "Путь к файлу"
 
 msgid "Filepath"
 msgstr "Путь к файлу"
 
 msgid "Filter Pattern"
-msgstr ""
+msgstr "Шаблон фильтра"
 
 #, php-format
 msgid "Filter column \"%s\" not found"
@@ -716,7 +717,7 @@ msgid "Filtered"
 msgstr ""
 
 msgid "Finish"
-msgstr ""
+msgstr "Завершено"
 
 msgid "For using unix domain sockets, specify localhost"
 msgstr ""
@@ -742,7 +743,7 @@ msgid "Grid Chart"
 msgstr ""
 
 msgid "Group"
-msgstr ""
+msgstr "Группа"
 
 #, php-format
 msgid "Group \"%s\" has been edited"
@@ -773,10 +774,10 @@ msgid "Group members added successfully"
 msgstr ""
 
 msgid "Groups"
-msgstr ""
+msgstr "Группы"
 
 msgid "Hint"
-msgstr ""
+msgstr "Подсказка"
 
 msgid "Host"
 msgstr "Узел"
@@ -788,10 +789,10 @@ msgid "I'm ready to search, waiting for your input"
 msgstr ""
 
 msgid "Icinga Documentation"
-msgstr ""
+msgstr "Документация Icinga"
 
 msgid "Icinga Web 2 Documentation"
-msgstr ""
+msgstr "Документация Icinga Web 2"
 
 msgid "Icinga Web 2 Login"
 msgstr "Вход в Icinga Web 2"
@@ -800,13 +801,13 @@ msgid "Icinga Web 2 Setup-Wizard"
 msgstr ""
 
 msgid "Icinga Wiki"
-msgstr ""
+msgstr "Wiki Icinga"
 
 msgid "Icinga on Facebook"
-msgstr ""
+msgstr "Icinga в Facebook"
 
 msgid "Icinga on Twitter"
-msgstr ""
+msgstr "Icinga в Twitter"
 
 msgid "Icon"
 msgstr "Значок"
@@ -912,10 +913,10 @@ msgid "List users of authentication backends"
 msgstr ""
 
 msgid "Loaded modules"
-msgstr ""
+msgstr "Загруженные модули"
 
 msgid "Logging Level"
-msgstr "Уровень журналирования"
+msgstr "Уровень логирования"
 
 msgid "Logging Type"
 msgstr "Тип журнала"
@@ -939,14 +940,14 @@ msgid "Make sure that the webserver can write to this file."
 msgstr ""
 
 msgid "Members"
-msgstr ""
+msgstr "Участники"
 
 #, php-format
 msgid "Membership for group %s created successfully"
 msgstr ""
 
 msgid "Memberships created successfully"
-msgstr ""
+msgstr "Участники успешно созданы"
 
 msgid "Menu Entry"
 msgstr "Элемент меню"
@@ -958,15 +959,15 @@ msgid "Modify this filter"
 msgstr "Изменить этот фильтр"
 
 msgid "Module"
-msgstr ""
+msgstr "Модуль"
 
 #, php-format
 msgid "Module \"%s\" disabled"
-msgstr ""
+msgstr "Модуль \"%s\" отключен"
 
 #, php-format
 msgid "Module \"%s\" enabled"
-msgstr ""
+msgstr "Модуль \"%s\" включен"
 
 #, php-format
 msgid "Module %s has failed to load"
@@ -974,7 +975,7 @@ msgstr ""
 
 #, php-format
 msgid "Module %s is disabled"
-msgstr ""
+msgstr "Модуль %s отключен"
 
 #, php-format
 msgid "Module %s is enabled"
@@ -984,7 +985,7 @@ msgid "Module Path"
 msgstr ""
 
 msgid "Modules"
-msgstr "Расширения"
+msgstr "Модули"
 
 msgid "Move down in authentication order"
 msgstr ""
@@ -1004,7 +1005,7 @@ msgid "Name"
 msgstr "Название"
 
 msgid "Navigation"
-msgstr ""
+msgstr "Навигация"
 
 #, php-format
 msgid "Navigation Item \"%s\" not found. No action required"
@@ -1027,46 +1028,46 @@ msgid "Navigation item \"%s\" successfully updated"
 msgstr ""
 
 msgid "Navigation item successfully created"
-msgstr ""
+msgstr "Элемент навигации успешно создан"
 
 msgid "New Column"
-msgstr ""
+msgstr "Новый столбец"
 
 msgid "New Dashboard Title"
-msgstr ""
+msgstr "Название новой панели информации"
 
 msgid "New Navigation Item"
-msgstr ""
+msgstr "Новый элемент панели информации"
 
 msgid "New Resource"
-msgstr ""
+msgstr "Новый ресурс"
 
 msgid "New Role"
-msgstr ""
+msgstr "Новая роль"
 
 msgid "New User"
-msgstr ""
+msgstr "Новый пользователь"
 
 msgid "New User Backend"
 msgstr ""
 
 msgid "New User Group"
-msgstr ""
+msgstr "Новая пользовательская группа"
 
 msgid "New User Group Backend"
 msgstr ""
 
 msgid "New User Group Member"
-msgstr ""
+msgstr "Новый участник пользовательской группы"
 
 msgid "New Window"
-msgstr "В новом окне"
+msgstr "Новое окно"
 
 msgid "New configuration has successfully been stored"
 msgstr ""
 
 msgid "New dashboard"
-msgstr "Создать новый экран сводки"
+msgstr "Новая панель информации"
 
 msgid "New resource name missing"
 msgstr ""
@@ -1075,10 +1076,10 @@ msgid "Next"
 msgstr "Далее"
 
 msgid "Next page"
-msgstr ""
+msgstr "Следующая страница"
 
 msgid "No"
-msgstr ""
+msgstr "Нет"
 
 msgid "No LDAP resources available. Please configure an LDAP resource first."
 msgstr ""
@@ -1107,7 +1108,7 @@ msgid "No memberships found matching the filter"
 msgstr ""
 
 msgid "No roles found."
-msgstr ""
+msgstr "Ролей не найдено"
 
 msgid "No users found matching the filter."
 msgstr ""
@@ -1118,15 +1119,15 @@ msgstr "Отсутствует"
 
 msgctxt "app.config.logging.type"
 msgid "None"
-msgstr ""
+msgstr "Отсутствует"
 
 msgctxt "resource.ldap.encryption"
 msgid "None"
-msgstr ""
+msgstr "Отсутствует"
 
 msgctxt "usergroupbackend.ldap.user_backend"
 msgid "None"
-msgstr ""
+msgstr "Отсутствует"
 
 msgid ""
 "Note that all users that are currently a member of this group will have their "
@@ -1140,7 +1141,7 @@ msgid "Only the root and its child nodes will be accessible on this resource."
 msgstr ""
 
 msgid "Owner"
-msgstr ""
+msgstr "Владелец"
 
 #, fuzzy
 msgid "Page not found"
@@ -1165,10 +1166,10 @@ msgid "Pattern"
 msgstr "Шаблон"
 
 msgid "Permissions"
-msgstr ""
+msgstr "Разрешения"
 
 msgid "Permissions Set"
-msgstr ""
+msgstr "Набор разрешений"
 
 msgid "Persistent"
 msgstr ""
@@ -1210,10 +1211,10 @@ msgid "Prevents the user from logging in if unchecked"
 msgstr ""
 
 msgid "Previous page"
-msgstr ""
+msgstr "Предыдущая страница"
 
 msgid "Private Key"
-msgstr ""
+msgstr "Приватный ключ"
 
 msgid "Provide one or more usernames separated by comma to add as group member"
 msgstr ""
@@ -1243,31 +1244,31 @@ msgid "Ready to search"
 msgstr ""
 
 msgid "Remove"
-msgstr ""
+msgstr "Удалить"
 
 msgid "Remove Dashboard"
-msgstr ""
+msgstr "Удалить панель информации"
 
 msgid "Remove Dashlet From Dashboard"
 msgstr ""
 
 msgid "Remove Navigation Item"
-msgstr ""
+msgstr "Удалить элемент навигации"
 
 msgid "Remove Resource"
-msgstr ""
+msgstr "Удалить ресурс"
 
 msgid "Remove Role"
-msgstr ""
+msgstr "Удалить роль"
 
 msgid "Remove User"
-msgstr ""
+msgstr "Удалить пользователя"
 
 msgid "Remove User Backend"
 msgstr ""
 
 msgid "Remove User Group"
-msgstr ""
+msgstr "Удалить пользовательскую группу"
 
 msgid "Remove User Group Backend"
 msgstr ""
@@ -1278,15 +1279,15 @@ msgstr ""
 
 #, php-format
 msgid "Remove group %s"
-msgstr ""
+msgstr "Удаление группы %s"
 
 #, php-format
 msgid "Remove group %s?"
-msgstr ""
+msgstr "Удалить группу %s?"
 
 #, php-format
 msgid "Remove navigation item %s"
-msgstr ""
+msgstr "Удаление элемента навигации %S"
 
 #, php-format
 msgid "Remove pane %s"
@@ -1294,7 +1295,7 @@ msgstr ""
 
 #, php-format
 msgid "Remove resource %s"
-msgstr ""
+msgstr "Удаление ресурса %s"
 
 #, php-format
 msgid "Remove role %s"
@@ -1305,21 +1306,21 @@ msgid "Remove the %s resource"
 msgstr ""
 
 msgid "Remove this filter"
-msgstr ""
+msgstr "Удалить этот фильтр"
 
 msgid "Remove this member"
-msgstr ""
+msgstr "Удалить этого участника"
 
 msgid "Remove this part of your filter"
 msgstr ""
 
 #, php-format
 msgid "Remove user %s"
-msgstr ""
+msgstr "Удаление пользователя %s"
 
 #, php-format
 msgid "Remove user %s?"
-msgstr ""
+msgstr "Удалить пользователя %s?"
 
 #, php-format
 msgid "Remove user backend %s"
@@ -1337,7 +1338,7 @@ msgid "Required parameter '%s' missing"
 msgstr ""
 
 msgid "Resource"
-msgstr ""
+msgstr "Ресурс"
 
 #, php-format
 msgid "Resource \"%s\" has been successfully changed"
@@ -1379,31 +1380,31 @@ msgid "Restrictions"
 msgstr ""
 
 msgid "Role Name"
-msgstr ""
+msgstr "Название роли"
 
 msgid "Role created"
-msgstr ""
+msgstr "Роль создана"
 
 msgid "Role removed"
-msgstr ""
+msgstr "Роль удалена"
 
 msgid "Role updated"
-msgstr ""
+msgstr "Роль обновлена"
 
 msgid "Roles"
-msgstr ""
+msgstr "Роли"
 
 msgid "Root DN"
 msgstr ""
 
 msgid "SQL Database"
-msgstr ""
+msgstr "База данных SQL"
 
 msgid "SSH Identity"
-msgstr ""
+msgstr "Идентификация SSH"
 
 msgid "Save"
-msgstr ""
+msgstr "Сохранение"
 
 msgid "Save Changes"
 msgstr "Сохранить изменения"
@@ -1421,16 +1422,16 @@ msgid "Search"
 msgstr "Поиск"
 
 msgid "Search Domain"
-msgstr ""
+msgstr "Поиск домена"
 
 msgid "Search this domain for records of available servers."
 msgstr ""
 
 msgid "Search..."
-msgstr ""
+msgstr "Поиск..."
 
 msgid "Searching"
-msgstr ""
+msgstr "Поисковый"
 
 msgid "Select a pane you want to add the dashlet."
 msgstr "Выберите панель, на которую следует добавить компонент."
@@ -1462,12 +1463,12 @@ msgid "Shared"
 msgstr "Общий"
 
 msgid "Shared Navigation"
-msgstr ""
+msgstr "Общая навигация"
 
 #, php-format
 msgctxt "dashboard.pane.tooltip"
 msgid "Show %s"
-msgstr ""
+msgstr "Показать %s"
 
 #, php-format
 msgid "Show %u rows on this page"
@@ -1475,7 +1476,7 @@ msgstr ""
 
 msgctxt "dashboard.pane.tooltip"
 msgid "Show Search"
-msgstr ""
+msgstr "Показать поиск"
 
 msgid "Show Stacktraces"
 msgstr ""
@@ -1485,7 +1486,7 @@ msgstr ""
 
 #, php-format
 msgid "Show dashlet %s"
-msgstr ""
+msgstr "Показать компонент %s"
 
 #, php-format
 msgid "Show detailed information about %s"
@@ -1497,7 +1498,7 @@ msgstr ""
 
 #, php-format
 msgid "Show group %s"
-msgstr ""
+msgstr "Показать группу %s"
 
 #, php-format
 msgid "Show rows %u to %u of %u"
@@ -1509,7 +1510,7 @@ msgstr ""
 
 #, php-format
 msgid "Show user %s"
-msgstr ""
+msgstr "Показать пользователя %s"
 
 msgid "Single Column"
 msgstr "Один столбец"
@@ -1645,10 +1646,10 @@ msgid "The name of the dashboard pane in which to display this dashlet"
 msgstr ""
 
 msgid "The name of the database to use"
-msgstr "Имя базы данных"
+msgstr "Название базы данных для использования"
 
 msgid "The name of the role"
-msgstr ""
+msgstr "Имя для роли"
 
 msgid ""
 "The name of this authentication provider that is used to differentiate it "
@@ -1735,7 +1736,7 @@ msgid "The target where to open this navigation item's url"
 msgstr "Укажите как будет открыта ссылка данного элемента навигации"
 
 msgid "The type of SQL database"
-msgstr "Тип СУБД"
+msgstr "Тип БД SQL"
 
 msgid "The type of logging to utilize."
 msgstr ""
@@ -1747,13 +1748,13 @@ msgid "The type of the resource to use for this authenticaton provider"
 msgstr ""
 
 msgid "The type of this navigation item"
-msgstr "Тип элемента навигации"
+msgstr "Тип этого элемента навигации"
 
 msgid "The type of this user group backend"
 msgstr ""
 
 msgid "The unique name of this resource"
-msgstr "Уникальное название ресурса"
+msgstr "Уникальное название этого ресурса"
 
 msgid ""
 "The url of this navigation item. Leave blank if you only want the name being "
@@ -1801,10 +1802,10 @@ msgid ""
 msgstr ""
 
 msgid "This module has no dependencies"
-msgstr ""
+msgstr "Этот модуль не имеет зависимостей"
 
 msgid "This module has no description"
-msgstr ""
+msgstr "Этот модуль не имеет описания"
 
 msgid ""
 "This option allows you to enable or to disable the global page content auto "
@@ -1821,7 +1822,7 @@ msgid "Type"
 msgstr "Тип"
 
 msgid "UI Debug"
-msgstr ""
+msgstr "Отладка UI"
 
 #, php-format
 msgid ""
@@ -1836,7 +1837,7 @@ msgid ""
 msgstr ""
 
 msgid "Unknown"
-msgstr ""
+msgstr "Неизвестный"
 
 msgid "Unknown resource provided"
 msgstr ""
@@ -1848,25 +1849,25 @@ msgid "Unshare this navigation item"
 msgstr ""
 
 msgid "Update Dashlet"
-msgstr ""
+msgstr "Обновить компонент"
 
 msgid "Update Navigation Item"
 msgstr ""
 
 msgid "Update Resource"
-msgstr ""
+msgstr "Обервить ресурс"
 
 msgid "Update Role"
-msgstr ""
+msgstr "Обновить роль"
 
 msgid "Update User"
-msgstr ""
+msgstr "Обновить пользователя"
 
 msgid "Update User Backend"
 msgstr ""
 
 msgid "Update User Group"
-msgstr ""
+msgstr "Обновить пользовательскую группу"
 
 msgid "Update User Group Backend"
 msgstr ""
@@ -1924,10 +1925,10 @@ msgid "User Backend"
 msgstr ""
 
 msgid "User Group"
-msgstr ""
+msgstr "Пользовательская группа"
 
 msgid "User Groups"
-msgstr ""
+msgstr "Пользовательская группа"
 
 msgid "User Preference Storage Type"
 msgstr ""
@@ -1978,7 +1979,7 @@ msgid "Usergroup Backend"
 msgstr ""
 
 msgid "Usergroups"
-msgstr ""
+msgstr "Группы пользователей"
 
 msgid "Username"
 msgstr "Имя пользователя"
@@ -1996,7 +1997,7 @@ msgid "Validation Log"
 msgstr "Журнал проверок"
 
 msgid "Version"
-msgstr ""
+msgstr "Версия"
 
 #, fuzzy
 msgctxt "app.config.logging.level"
@@ -2004,7 +2005,7 @@ msgid "Warning"
 msgstr "Предупреждение"
 
 msgid "Welcome to Icinga Web!"
-msgstr ""
+msgstr "Добро пожаловать в Icinga Web!"
 
 msgid ""
 "Whether to encrypt communication. Choose STARTTLS or LDAPS for encrypted "
@@ -2020,7 +2021,7 @@ msgid "Y-Axis"
 msgstr ""
 
 msgid "Yes"
-msgstr ""
+msgstr "Да"
 
 msgid "You did not create any navigation item yet."
 msgstr ""
@@ -2046,7 +2047,7 @@ msgid "Your Current Timezone"
 msgstr "Ваша временная зона"
 
 msgid "all"
-msgstr ""
+msgstr "все"
 
 #, php-format
 msgctxt "An event happened at the given time"
@@ -2059,10 +2060,10 @@ msgid "at %s"
 msgstr ""
 
 msgid "disable"
-msgstr ""
+msgstr "отключен"
 
 msgid "enable"
-msgstr ""
+msgstr "включен"
 
 #, php-format
 msgctxt "A status is lasting for the given time interval"
@@ -2072,7 +2073,7 @@ msgstr ""
 #, fuzzy
 msgctxt "pagination.joystick"
 msgid "hosts"
-msgstr "Узлы"
+msgstr "узлы"
 
 #, php-format
 msgctxt "An event will happen after the given time interval has elapsed"
@@ -2096,7 +2097,7 @@ msgstr ""
 #, fuzzy
 msgctxt "pagination.joystick"
 msgid "services"
-msgstr "Службы"
+msgstr "службы"
 
 #, php-format
 msgctxt "A status is lasting since the given time, date or date and time"
@@ -2104,7 +2105,7 @@ msgid "since %s"
 msgstr "с %s"
 
 msgid "toggle"
-msgstr ""
+msgstr "переключатель"
 
 #~ msgid "...and your password"
 #~ msgstr "...и ваш пароль"
