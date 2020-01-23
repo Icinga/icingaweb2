@@ -6,31 +6,33 @@ msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: \n"
-"Last-Translator: Michael Friedrich <michael.friedrich@icinga.com>\n"
+"Last-Translator: Dmitriy Kuznetsov <krotesk@mail.ru>\n"
 "Language-Team: \n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.0.3\n"
 
 #, php-format
 msgid "\"%s\" is not in the list of allowed values."
-msgstr ""
+msgstr "\"%s\" отсутствует в списке допустимых значений."
 
 #, php-format
 msgid ""
 "\"%s\" is not in the list of allowed values. Did you mean one of the "
 "following?: %s"
 msgstr ""
+"\"%s\" не входит в список допустимых значений. Вы имели в виду одно из "
+"следующих?: %s"
 
 msgid "\"%value%\" is not a valid regular expression."
-msgstr ""
+msgstr "\"%value%\" не является допустимым регулярным выражением."
 
 #, php-format
 msgid "%s (%%value%%) has a false MIME type of \"%%type%%\""
-msgstr ""
+msgstr "%s (%%value%%) имеет неверный тим MIME - \"%%type%%\""
 
 #, php-format
 msgid "%s (%%value%%) has no MIME type"
-msgstr ""
+msgstr "%s (%%value%%) не имеет тип MIME"
 
 #, php-format
 msgctxt "An event that happened the given time interval ago"
@@ -40,17 +42,17 @@ msgstr "%s назад"
 #, php-format
 msgctxt "config.path"
 msgid "%s does not exist"
-msgstr ""
+msgstr "%s не существует"
 
 #, php-format
 msgctxt "config.path"
 msgid "%s is not readable"
-msgstr ""
+msgstr "%s не читается"
 
 #, php-format
 msgctxt "config.path"
 msgid "%s is not writable"
-msgstr ""
+msgstr "%s недоступен для записи"
 
 #, php-format
 msgid "%s is required and must not be empty"
@@ -2079,7 +2081,7 @@ msgstr ""
 
 #, fuzzy
 msgid "modules"
-msgstr "Расширения"
+msgstr "модули"
 
 #, php-format
 msgctxt "An event happened on the given date or date and time"
