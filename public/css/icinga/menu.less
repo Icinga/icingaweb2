@@ -143,12 +143,6 @@ ul:not(.nav-level-2) > .selected > a {
     padding: 0.364em 0.545em 0.364em (@icon-width + .75em)/@font-size-small;
   }
 
-  &:not(.selected):not(.active) > a:not(.badge):hover,
-  &:not(.selected):not(.active) > a:not(.badge):focus {
-    background-color: darken(@menu-active-bg-color, 20);
-    color: @menu-2ndlvl-highlight-color;
-  }
-
   &.active {
     background-color: @menu-highlight-color;
     overflow: hidden;
@@ -276,7 +270,9 @@ ul:not(.nav-level-2) > .selected > a {
       > a {
         color: @menu-flyout-color;
         padding-left: 1.5em;
+      }
 
+      &:not(.active) {
         &:hover, &:focus {
           background-color: @tr-active-color;
         }
@@ -284,10 +280,6 @@ ul:not(.nav-level-2) > .selected > a {
 
       &.active > a {
         color: @menu-color;
-
-        &:focus, &:hover {
-          background-color: @menu-highlight-color;
-        }
       }
 
       // Hide activity caret when displayed as flyout
@@ -319,6 +311,28 @@ ul:not(.nav-level-2) > .selected > a {
     // Position relative to parent
     margin-left: 4em;
     margin-top: -3.333em;
+
+    > .badge-nav-item {
+      display: flex;
+      align-items: center;
+
+      a:not(.badge) {
+        flex: 1 1 auto;
+        width: 0;
+      }
+
+      a.badge {
+         color: white;
+         flex: 0 1 auto;
+         margin-right: 1em;
+         padding: .25em;
+         width: auto;
+
+         &:hover {
+           opacity: .6;
+         }
+       }
+    }
   }
 }
 
@@ -475,6 +489,19 @@ input[type=text].search-input {
   margin-right: 0;
 }
 
+#layout:not(.sidebar-collapsed) #menu .nav-level-1 > .nav-item.active .nav-level-2 > li {
+  &.nav-item:not(.badge-nav-item) {
+    &:not(.selected):not(.active):hover,
+    &:not(.selected):not(.active):focus {
+      background-color: darken(@menu-bg-color, 20);
+
+      > a {
+        color: @menu-2ndlvl-highlight-color;
+      }
+    }
+  }
+}
+
 #layout:not(.sidebar-collapsed) #menu .nav-level-1 > .nav-item.active .nav-level-2 > li,
 #layout:not(.sidebar-collapsed) #menu .nav-level-1 > .nav-item:not(.active).hover .nav-level-2 > li {
   &.badge-nav-item {
@@ -508,14 +535,6 @@ input[type=text].search-input {
       a {
         color: white;
       }
-    }
-  }
-}
-
-#layout:not(.sidebar-collapsed) #menu .nav-level-1 > .nav-item:not(.active).hover .nav-level-2 > li {
-  &.badge-nav-item {
-    &:hover {
-      background-color: lighten(@icinga-blue, 80);
     }
   }
 }
