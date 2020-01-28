@@ -171,8 +171,8 @@
                 key = encodeURIComponent(key);
 
                 for (var i = 0; i < newparams.length; i++) {
-                    if (typeof newparams[i].key === key) {
-                        delete newparams[i];
+                    if (newparams[i].key === key) {
+                        newparams.splice(i, 1);
                         return;
                     }
                 }
