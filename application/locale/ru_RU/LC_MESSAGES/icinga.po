@@ -60,43 +60,43 @@ msgstr "%s требуется и не должно быть пустым"
 
 #, php-format
 msgid "%s not in the expected format: %%value%%"
-msgstr ""
+msgstr "%s не в ожидаемом формате: %%value%%"
 
 #, php-format
 msgid "%s: %d to %d of %d (on the %s-axis)"
-msgstr ""
+msgstr "%s: %d to %d of %d (on the %s-axis)"
 
 #, php-format
 msgctxt "pagination.joystick"
 msgid "%s: Show %s %u to %u out of %u"
-msgstr ""
+msgstr "%s: Show %s %u to %u out of %u"
 
 #, php-format
 msgid "'%s' is not a valid number"
-msgstr ""
+msgstr "'%s' не является допустимым числом"
 
 msgid "(Case insensitive)"
-msgstr ""
+msgstr "(Без учета регистра)"
 
 #, php-format
 msgid "A navigation item with the name \"%s\" does already exist"
-msgstr ""
+msgstr "Элемент навигации с именем \"%s\" уже существует"
 
 #, php-format
 msgid "A user backend with the name \"%s\" does already exist"
-msgstr ""
+msgstr "Пользователь бэкэнда с именем \"%s\" уже существует"
 
 msgid "About"
-msgstr ""
+msgstr "О программе"
 
 msgid "About Icinga Web 2"
-msgstr ""
+msgstr "Об Icinga Web 2"
 
 msgid "Accessibility Skip Links"
-msgstr ""
+msgstr "Пропустить доступные ссылки"
 
 msgid "Active"
-msgstr ""
+msgstr "Активный"
 
 msgid "Add"
 msgstr "Добавить"
@@ -136,50 +136,56 @@ msgstr "Добавить фильтр..."
 
 #, php-format
 msgid "Add members for group %s"
-msgstr ""
+msgstr "Добавить участников в группу %s"
 
 msgid "Add user to group"
-msgstr ""
+msgstr "Добавить пользователя в группу"
 
 msgid "Add user to user group"
-msgstr ""
+msgstr "Добавить пользователя в группу пользователей"
 
 msgid "Adjust the general configuration of Icinga Web 2"
-msgstr ""
+msgstr "Настройте общую конфигурацию Icinga Web 2"
 
 msgid "Adjust the preferences of Icinga Web 2 according to your needs"
-msgstr ""
+msgstr "Настройте предпочтения Icinga Web 2 в соответствии с вашими потребностями"
 
 msgid ""
 "All configured authentication methods failed. Please check the system log or "
 "Icinga Web 2 log for more information."
 msgstr ""
+"Все настроенные способы аутентификации не выполнены. Пожалуйста, проверьте системный журнал"
+"или журнал Icinga Web 2 для получения дополнительной информаци".
 
 #, php-format
 msgid "Allow access to module %s"
-msgstr ""
+msgstr "Разрешить доступ к модулю %s"
 
 msgid "Allow config access"
-msgstr ""
+msgstr "Разрешить доступ к конфигурации"
 
 msgid "Allow everything"
-msgstr ""
+msgstr "Разрешить всё"
 
 msgid "Allow to adjust in the preferences whether to show stacktraces"
-msgstr ""
+msgstr "Позволить отображать в настройках трассировки стека"
 
 msgid "Allow to share navigation items"
-msgstr ""
+msgstr "Разрешить общий доступ к элементам навигации"
 
 msgid ""
 "An additional filter to use when looking up groups using the specified "
 "connection. Leave empty to not to use any additional filter rules."
 msgstr ""
+"Дополнительный фильтр, используемый при поиске групп, использующих указанное соединение."
+"Оставьте пустой, чтобы не использовать никаких дополнительных правил фильтрации."
 
 msgid ""
 "An additional filter to use when looking up users using the specified "
 "connection. Leave empty to not to use any additional filter rules."
 msgstr ""
+"Дополнительный фильтр, используемый при поиске пользователей, использующих указанное соединение."
+"Оставьте пустой, чтобы не использовать никаких дополнительных правил фильтрации."
 
 msgid "Application"
 msgstr "Приложение"
@@ -202,48 +208,48 @@ msgid "Authentication"
 msgstr "Аутентификация"
 
 msgid "Authentication Backend"
-msgstr ""
+msgstr "Бэкенд аутентификации"
 
 #, php-format
 msgid "Authentication backend \"%s\" is not %s"
-msgstr ""
+msgstr "Бэкенд аутентификации \"%s\" не является %s"
 
 #, php-format
 msgid "Authentication backend \"%s\" not found"
-msgstr ""
+msgstr "Бэкенд аутентификации \"%s\" не найден"
 
 msgid "Authentication order updated"
-msgstr ""
+msgstr "Порядок аутентификации обновлен"
 
 msgid "Authorization"
 msgstr "Авторизация"
 
 msgid "Auto refresh successfully disabled"
-msgstr ""
+msgstr "Автообновление успешно отключено"
 
 msgid "Auto refresh successfully enabled"
-msgstr ""
+msgstr "Автообновление успешно включено"
 
 msgid "Back"
 msgstr "Назад"
 
 msgid "Backend"
-msgstr ""
+msgstr "Бэкэнд"
 
 msgid "Backend Name"
-msgstr ""
+msgstr "Название бэкэнда"
 
 msgid "Backend Type"
-msgstr ""
+msgstr "Тип бэкэнда"
 
 msgid "Backend Users"
-msgstr ""
+msgstr "Пользователи бэкэнда"
 
 msgid "Bind DN"
-msgstr ""
+msgstr "Привязать DN"
 
 msgid "Bind Password"
-msgstr ""
+msgstr "Привязать пароль"
 
 #, php-format
 msgctxt "preferences.form"
@@ -252,19 +258,19 @@ msgstr "Браузер (%s)"
 
 #, php-format
 msgid "Can't add role '%s'. Role already exists"
-msgstr ""
+msgstr "Невозможно добавить роль '%s'. Роль уже существует"
 
 #, php-format
 msgid "Can't load role '%s'. Role does not exist"
-msgstr ""
+msgstr "Не удается загрузить роль '%s'. Роль не существует"
 
 #, php-format
 msgid "Can't remove role '%s'. Role does not exist"
-msgstr ""
+msgstr "Невозможно удалить роль '%s'. Роль не существует"
 
 #, php-format
 msgid "Can't update role '%s'. Role does not exist"
-msgstr ""
+msgstr "Невозможно обновить роль '%s'. Роль не существует"
 
 msgctxt "group.membership"
 msgid "Cancel"
