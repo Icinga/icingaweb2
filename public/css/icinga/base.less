@@ -188,13 +188,34 @@ td, th {
           transition: none !important;
 }
 
-// Styles for when containers are loading. JS will remove this once the containers are ready
-.impact {
-    .transition(background-color 2s 1s linear !important);
-    background-color: @gray-lighter !important;
-}
+.container {
+  &:before {
+    content: "";
+    display: block;
+    opacity: 0;
+    pointer-events: none;
+    z-index: -10;
+  }
 
-.impact > .controls, .impact li.active a {
-    .transition(background-color 2s 1s linear !important);
-    background-color: @gray-lighter !important;
+  &.impact {
+    overflow: hidden;
+    position: relative;
+  }
+
+  &.impact:before {
+    content: "";
+    display: block;
+    background: @body-bg-color url(/img/icinga-loader.gif) no-repeat center center;
+    background-size: 4em 4em;
+    opacity: .7;
+    pointer-events: all;
+    position: absolute;
+    top: 2.5em;
+    right: 0;
+    bottom: 0;
+    left: 0;
+
+    z-index: 10;
+    .transition(opacity 1s 2s linear !important);
+  }
 }
