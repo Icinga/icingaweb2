@@ -1079,7 +1079,7 @@
             var scrollTarget = $container;
             if (typeof containerId !== 'undefined') {
                 if (autorefresh || autoSubmit) {
-                    if ($container.css('display') === 'flex') {
+                    if ($container.css('display') === 'flex' && $container.is('.container')) {
                         var $scrollableContent = $container.children('.content');
                         scrollPos = $scrollableContent.scrollTop();
                         scrollTarget = _this.icinga.utils.getCSSPath($scrollableContent);
