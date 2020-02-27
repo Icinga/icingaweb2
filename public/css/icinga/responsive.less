@@ -220,3 +220,11 @@
 #main, #footer {
   padding-right: constant(safe-area-inset-right);
 }
+
+#layout.twocols #col2 {
+  border-left: 1px solid @gray-lighter;
+
+  &:empty {
+    display: flex;
+  }
+}
