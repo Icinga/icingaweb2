@@ -285,6 +285,7 @@
             req.fail(this.onFailure);
             req.always(this.onComplete);
             req.autorefresh = autorefresh;
+            req.scripted = false;
             req.method = method;
             req.action = action;
             req.addToHistory = true;
@@ -761,7 +762,14 @@
                         var $target = $('#' + match[1]);
                         if ($target.length) {
                             _this.renderContentToContainer(
-                                match[2], $target, 'replace', req.autorefresh, req.forceFocus, autoSubmit);
+                                match[2],
+                                $target,
+                                'replace',
+                                req.autorefresh,
+                                req.forceFocus,
+                                autoSubmit,
+                                req.scripted
+                            );
                         } else {
                             _this.icinga.logger.warn(
                                 'Invalid target ID. Cannot render multipart to #' + match[1]);
@@ -772,7 +780,14 @@
                 })
             } else {
                 this.renderContentToContainer(
-                    req.responseText, req.$target, req.action, req.autorefresh, req.forceFocus, autoSubmit);
+                    req.responseText,
+                    req.$target,
+                    req.action,
+                    req.autorefresh,
+                    req.forceFocus,
+                    autoSubmit,
+                    req.scripted
+                );
             }
 
             if (oldNotifications) {
@@ -930,7 +945,8 @@
                     req.responseText,
                     req.$target,
                     req.action,
-                    req.autorefresh
+                    req.autorefresh,
+                    req.scripted
                 );
             } else {
                 if (errorThrown === 'abort') {
@@ -1042,7 +1058,7 @@
         /**
          * Smoothly render given HTML to given container
          */
-        renderContentToContainer: function (content, $container, action, autorefresh, forceFocus, autoSubmit) {
+        renderContentToContainer: function (content, $container, action, autorefresh, forceFocus, autoSubmit, scripted) {
             // Container update happens here
             var scrollPos = false;
             var _this = this;
@@ -1138,7 +1154,7 @@
                 setTimeout(this.icinga.ui.focusElement.bind(this.icinga.ui), 0, navigationAnchor, $container);
             } else if (! activeElementPath) {
                 // Active element was not in this container
-                if (! autorefresh) {
+                if (! autorefresh && ! scripted) {
                     setTimeout(function() {
                         if (typeof $container.attr('tabindex') === 'undefined') {
                             $container.attr('tabindex', -1);
@@ -1155,7 +1171,7 @@
 
                     if ($activeElement.length && $activeElement.is(':visible')) {
                         $activeElement[0].focus({preventScroll: autorefresh});
-                    } else if (! autorefresh) {
+                    } else if (! autorefresh && ! scripted) {
                         if (focusFallback) {
                             _this.icinga.ui.focusElement($(focusFallback.parent).find(focusFallback.child));
                         } else if (typeof $container.attr('tabindex') === 'undefined') {

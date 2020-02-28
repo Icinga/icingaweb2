@@ -264,7 +264,7 @@
                             $('#col2')
                         );
                         req.addToHistory = false;
-                        req.autorefresh = onload;
+                        req.scripted = onload;
                     }
                 }
 
