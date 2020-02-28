@@ -53,7 +53,7 @@
                         <div class="box entry"><?= $this->qlink(
                             sprintf(
                                 $this->translatePlural('%d Disabled', '%d Disabled', $this->statusSummary->hosts_not_checked),
-                                $this->statusSummary->hosts_not_checked
+                                $this->statusSummary->hosts_pending - $this->statusSummary->hosts_not_checked
                             ),
                             'monitoring/list/hosts',
                             array('host_active_checks_enabled' => 0, 'host_passive_checks_enabled' => 0),
@@ -61,9 +61,9 @@
                                 $this->translatePlural(
                                     'List %u host that is not being checked at all',
                                     'List %u hosts which are not being checked at all',
-                                    $this->statusSummary->hosts_not_checked
+                                    $this->statusSummary->hosts_pending - $this->statusSummary->hosts_not_checked
                                 ),
-                                $this->statusSummary->hosts_not_checked
+                                $this->statusSummary->hosts_pending - $this->statusSummary->hosts_not_checked
                             ))
                         ); ?></div>
 <?php endif ?>
@@ -109,7 +109,7 @@
                         <div class="box entry"><?= $this->qlink(
                             sprintf(
                                 $this->translatePlural('%d Disabled', '%d Disabled', $this->statusSummary->services_not_checked),
-                                $this->statusSummary->services_not_checked
+                                $this->statusSummary->services_pending - $this->statusSummary->services_not_checked
                             ),
                             'monitoring/list/services',
                             array('service_active_checks_enabled' => 0, 'service_passive_checks_enabled' => 0),
@@ -117,9 +117,9 @@
                                 $this->translatePlural(
                                     'List %u service that is not being checked at all',
                                     'List %u services which are not being checked at all',
-                                    $this->statusSummary->services_not_checked
+                                    $this->statusSummary->services_pending - $this->statusSummary->services_not_checked
                                 ),
-                                $this->statusSummary->services_not_checked
+                                $this->statusSummary->services_pending - $this->statusSummary->services_not_checked
                             ))
                         ); ?></div>
 <?php endif ?>
