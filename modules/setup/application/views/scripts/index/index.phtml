@@ -15,18 +15,8 @@ $maxProgress = @max(array_keys(array_filter(
 )));
 
 ?>
-<ul id="notifications"><?php
-
-$notifications = Notification::getInstance();
-if ($notifications->hasMessages()) {
-    foreach ($notifications->popMessages() as $m) {
-        echo '<li class="' . $m->type . '">' . $this->escape($m->message) . '</li>';
-    }
-}
-
-?></ul>
-<div id="setup" data-base-target="layout">
-  <div class="header">
+<div id="setup-content-wrapper" data-base-target="layout">
+  <div class="setup-header">
     <?= $this->img('img/icinga-logo-big.png'); ?>
     <div class="progress-bar">
       <div class="step" style="width: 10%;">
@@ -150,4 +140,14 @@ if ($notifications->hasMessages()) {
     <?= $this->render('index/parts/wizard.phtml'); ?>
 <?php endif ?>
   </div>
+</div>
+<div id="footer">
+    <ul role="alert" id="notifications"><?php
+        $notifications = Notification::getInstance();
+        if ($notifications->hasMessages()) {
+            foreach ($notifications->popMessages() as $m) {
+                echo '<li class="' . $m->type . '">' . $this->escape($m->message) . '</li>';
+            }
+        }
+    ?></ul>
 </div>
