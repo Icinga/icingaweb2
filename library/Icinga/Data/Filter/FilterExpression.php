@@ -192,7 +192,7 @@ class FilterExpression extends Filter
 
         $parts = array();
         foreach (preg_split('~\*~', $expression) as $part) {
-            $parts[] = preg_quote($part);
+            $parts[] = preg_quote($part, '/');
         }
         $pattern = '/^' . implode('.*', $parts) . '$/';
 
