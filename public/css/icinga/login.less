@@ -3,7 +3,6 @@
 // Login page styles
 
 #login {
-
   height: 100%;
   background-color: @icinga-blue;
   background-repeat:  no-repeat;
@@ -12,6 +11,8 @@
   // fallback ie 9
   background-size: 100% 100%;
   background-size: cover;
+
+  background: #0D1260 linear-gradient(180deg, #040B2F 0%, #080D59 100%);
 
   .login-wrapper {
     height: 100%;
@@ -139,6 +140,92 @@
       font-weight: bold;
     }
   }
+}
+
+#orb {
+  position: absolute;
+  width:  1000px;
+  height: 1000px;
+  margin-left: -500px;
+  margin-top:  -500px;
+  top: 50%;
+  left: 50%;
+}
+
+.layer {
+  position: absolute;
+  transition: all ease-in-out 1s;
+  background-size: contain;
+  background-repeat: no-repeat;
+
+  animation: pulse 5s infinite ease-in-out;
+  animation-fill: both;
+  animation-play-state: running;
+  animation-direction: alternate;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale3d(.95, .95, 1);
+  }
+
+  100% {
+    transform: scale3d(1.05, 1.05, 1);
+  }
+}
+
+#orb-1 {
+  background-image: url(../img/orb-1.png);
+  width: 60%;
+  height: 60%;
+  left: 20%;
+  top: 20%;
+  animation-delay: -1s;
+}
+
+#orb-2 {
+  background-image: url(../img/orb-2.png);
+  width: 70%;
+  height: 70%;
+  left: 15%;
+  top: 15%;
+  animation-delay: -2s;
+}
+
+#orb-3 {
+  background-image: url(../img/orb-3.png);
+  width: 80%;
+  height: 80%;
+  left: 10%;
+  top: 10%;
+  animation-delay: -1.5s;
+}
+
+#orb-4 {
+  background-image: url(../img/orb-4.png);
+  width: 90%;
+  height: 90%;
+  left: 5%;
+  top: 5%;
+  animation-delay: -2.5s;
+}
+
+#glow {
+  background-image: url(../img/glow.png);
+  width: 120%;
+  height: 120%;
+  animation-delay: -3s;
+}
+
+#login:after {
+  content: "";
+  display: block;
+  position: absolute;
+  top: 0; right: 0; bottom: 0; left: 0;
+  background: url(../img/orb-fg.png) no-repeat center center;
+  background-size: cover;
+  opacity: .4;
+  mix-blend-mode: exclusion;
 }
 
 #social {
