@@ -160,7 +160,6 @@
 
   animation: pulse 5s infinite ease-in-out;
   animation-fill: both;
-  animation-play-state: running;
   animation-direction: alternate;
 }
 
@@ -171,6 +170,16 @@
 
   100% {
     transform: scale3d(1.05, 1.05, 1);
+  }
+}
+
+@keyframes fade {
+  0% {
+    filter: blur(10px);
+  }
+
+  100% {
+    filter: blur(0);
   }
 }
 
@@ -226,6 +235,10 @@
   background-size: cover;
   opacity: .4;
   mix-blend-mode: exclusion;
+
+  animation: fade 20s infinite;
+  animation-fill: both;
+  animation-direction: alternate;
 }
 
 #social {
