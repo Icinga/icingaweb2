@@ -3,7 +3,6 @@
 
 namespace Icinga\Controllers;
 
-use Icinga\Application\Config;
 use Icinga\Authentication\RolesConfig;
 use Icinga\Exception\NotFoundError;
 use Icinga\Forms\Security\RoleForm;
@@ -32,7 +31,20 @@ class RoleController extends AuthBackendController
     {
         $this->assertPermission('config/authentication/roles/show');
         $this->createListTabs()->activate('role/list');
-        $this->view->roles = Config::app('roles', true);
+        $this->view->roles = (new RolesConfig())
+            ->select();
+
+        $sortAndFilterColumns = [
+            'name'        => $this->translate('Name'),
+            'users'       => $this->translate('Users'),
+            'groups'      => $this->translate('Groups'),
+            'permissions' => $this->translate('Permissions')
+        ];
+
+        $this->setupFilterControl($this->view->roles, $sortAndFilterColumns, ['name']);
+        $this->setupLimitControl();
+        $this->setupPaginationControl($this->view->roles);
+        $this->setupSortControl($sortAndFilterColumns, $this->view->roles, ['name']);
     }
 
     /**
