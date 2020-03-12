@@ -860,7 +860,7 @@ class Module
             if (file_exists($this->metadataFile)) {
                 $key = null;
                 $file = new File($this->metadataFile, 'r');
-                foreach ($file as $line) {
+                foreach ($file as $lineno => $line) {
                     $line = rtrim($line);
 
                     if ($key === 'description') {
@@ -873,6 +873,19 @@ class Module
                         }
                     } elseif (empty($line)) {
                         continue;
+                    }
+
+                    if (strpos($line, ':') === false) {
+                        Logger::debug(
+                            $this->translate(
+                                "Can't process line %d in %s: Line does not specify a key:value pair"
+                                . " nor is it part of the description (indented with a single space)"
+                            ),
+                            $lineno,
+                            $this->metadataFile
+                        );
+
+                        break;
                     }
 
                     list($key, $val) = preg_split('/:\s+/', $line, 2);
