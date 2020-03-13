@@ -1,14 +1,14 @@
 # Icinga Web 2 - Head for multiple monitoring backends.
-# Copyright (C) 2019 Icinga Development Team
+# Copyright (C) 2020 Icinga Development Team
 # This file is distributed under the same license as Setup Module.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Setup Module (2.7.0)\n"
+"Project-Id-Version: Setup Module (2.8.0-rc1)\n"
 "Report-Msgid-Bugs-To: dev@icinga.com\n"
-"POT-Creation-Date: 2019-07-30 07:43+0000\n"
-"PO-Revision-Date: 2019-07-30 10:23+0200\n"
+"POT-Creation-Date: 2020-01-14 06:53+0000\n"
+"PO-Revision-Date: 2020-01-14 07:56+0100\n"
 "Last-Translator: Johannes Meyer <johannes.meyer@icinga.com>\n"
 "Language: de_DE\n"
 "MIME-Version: 1.0\n"
@@ -122,7 +122,7 @@ msgstr "Anwendungspräfix"
 msgid "Argument type is mandatory."
 msgstr "Typ-Argument ist erforderlich."
 
-#: ../../../../application/forms/AuthBackendPage.php:77
+#: ../../../../application/forms/AuthBackendPage.php:84
 msgid ""
 "As you've chosen to use a database for authentication all you need to do now "
 "is defining a name for your first authentication backend."
@@ -170,11 +170,11 @@ msgstr "Zurück"
 msgid "Backend Name"
 msgstr "Backend-Name"
 
-#: ../../../../application/forms/AuthBackendPage.php:106
+#: ../../../../application/forms/AuthBackendPage.php:113
 msgid "Backend Type"
 msgstr "Backend-Typ"
 
-#: ../../../../application/forms/AuthBackendPage.php:96
+#: ../../../../application/forms/AuthBackendPage.php:103
 msgid ""
 "Before you are able to authenticate using the LDAP connection defined "
 "earlier you need to provide some more information so that Icinga Web 2 is "
@@ -244,7 +244,7 @@ msgstr "Konnte Token nicht validieren: %s (%s)"
 msgid "Cannot write setup token \"%s\" to disk."
 msgstr "Konnte Einrichtungstoken \"%s\" nicht auf die Festplatte schreiben."
 
-#: ../../../../application/forms/AuthBackendPage.php:241
+#: ../../../../application/forms/AuthBackendPage.php:245
 msgid "Check this to not to validate authentication using this backend"
 msgstr ""
 "Häkchen setzen, um die Authentifizierung dieses Backends nicht zu prüfen"
@@ -434,7 +434,7 @@ msgstr ""
 "aufgetreten:"
 
 #: ../../../../application/forms/DbResourcePage.php:117
-#: ../../../../application/forms/AuthBackendPage.php:210
+#: ../../../../application/forms/AuthBackendPage.php:214
 #: ../../../../application/forms/LdapResourcePage.php:119
 #, php-format
 msgid "Failed to successfully validate the configuration: %s"
@@ -661,7 +661,7 @@ msgstr ""
 msgid "Module \"%s\" has been successfully enabled."
 msgstr "Modul \"%s\" wurde erfolgreich aktiviert."
 
-#: ../../../../application/views/scripts/form/setup-modules.phtml:14
+#: ../../../../application/views/scripts/form/setup-modules.phtml:15
 msgctxt "setup.page.title"
 msgid "Modules"
 msgstr "Module"
@@ -913,7 +913,7 @@ msgid "Skip"
 msgstr "Überspringen"
 
 #: ../../../../application/forms/DbResourcePage.php:178
-#: ../../../../application/forms/AuthBackendPage.php:240
+#: ../../../../application/forms/AuthBackendPage.php:244
 #: ../../../../application/forms/LdapResourcePage.php:145
 #: ../../../../application/forms/DatabaseCreationPage.php:201
 msgid "Skip Validation"
@@ -1093,7 +1093,7 @@ msgstr ""
 "Webserver Dateien ausliefern wird"
 
 #: ../../../../application/forms/DbResourcePage.php:96
-#: ../../../../application/forms/AuthBackendPage.php:217
+#: ../../../../application/forms/AuthBackendPage.php:221
 #: ../../../../application/forms/LdapResourcePage.php:126
 msgid "The configuration has been successfully validated."
 msgstr "Die Einstellungen wurden erfolgreich überprüft."
@@ -1207,7 +1207,7 @@ msgstr "Das Verzeichnis %s ist lesbar und beschreibbar."
 msgid "The following directory service has been found on domain \"%s\"."
 msgstr "Der folgende Verzeichnis Dienst wurde auf der Domain '%s' gefunden."
 
-#: ../../../../application/views/scripts/form/setup-modules.phtml:15
+#: ../../../../application/views/scripts/form/setup-modules.phtml:16
 msgid ""
 "The following modules were found in your Icinga Web 2 installation. To "
 "enable and configure a module, just tick it and click \"Next\"."
@@ -1269,7 +1269,7 @@ msgstr ""
 msgid "The type of authentication to use when accessing Icinga Web 2"
 msgstr "Die Art der Authentifizierung der Zugriffe auf Icinga Web 2"
 
-#: ../../../../application/forms/AuthBackendPage.php:108
+#: ../../../../application/forms/AuthBackendPage.php:115
 msgid "The type of the resource being used for this authenticaton provider"
 msgstr ""
 "Der Typ der Ressource, die für diesen Authentifizierungs-Provider benutzt "
@@ -1475,7 +1475,7 @@ msgstr "Einstellungen prüfen"
 msgid "Validation In Progress"
 msgstr "Überprüfung läuft"
 
-#: ../../../../application/forms/AuthBackendPage.php:199
+#: ../../../../application/forms/AuthBackendPage.php:203
 #: ../../../../application/forms/LdapResourcePage.php:108
 msgid "Validation Log"
 msgstr "Überprüfungsprotokoll"
@@ -1552,7 +1552,7 @@ msgstr ""
 "Einstellungs-Dateien überschrieben werden, wenn Icinga Web 2 mittels dieses "
 "Assistenten neu konfiguriert wird."
 
-#: ../../../../application/forms/AuthBackendPage.php:121
+#: ../../../../application/forms/AuthBackendPage.php:75
 msgid ""
 "You've chosen to authenticate using a web server's mechanism so it may be "
 "necessary to adjust usernames before any permissions, restrictions, etc. are "
