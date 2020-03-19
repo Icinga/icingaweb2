@@ -61,6 +61,15 @@ class LoginForm extends Form
             )
         );
         $this->addElement(
+            'checkbox',
+            'rememberme',
+            array(
+                'required'      => false,
+                'label'         => $this->translate('Remember me'),
+                //'class'         => isset($formData['username']) ? 'autofocus' : ''
+            )
+        );
+        $this->addElement(
             'hidden',
             'redirect',
             array(
@@ -97,9 +106,42 @@ class LoginForm extends Form
             $user->setDomain(Config::app()->get('authentication', 'default_domain'));
         }
         $password = $this->getElement('password')->getValue();
+        $rememberMeIsChecked = (isset($_POST['rememberme']) && $_POST['rememberme'] == '1') ? true : false;
+
+
         $authenticated = $authChain->authenticate($user, $password);
         if ($authenticated) {
             $auth->setAuthenticated($user);
+            if($rememberMeIsChecked) {
+                var_dump("set cookies for this user");
+                $config = [
+                    'digest_alg' => 'sha512',
+                    'private_key_bits' => 2048,
+                    'private_key_type' => OPENSSL_KEYTYPE_RSA,
+                ];
+
+                // Create the keypair
+                $res = openssl_pkey_new($config);
+
+                // Extract the private key from $res to $privKey
+                openssl_pkey_export($res, $privKey);
+
+                // Extract the public key from $res to $pubKey
+                $pubKey = openssl_pkey_get_details($res);
+                $pubKey = $pubKey["key"];
+
+                $data = $user->getUsername();
+
+                // Encrypt the data to $encrypted using the public key
+                openssl_public_encrypt($data, $encrypted, $pubKey);
+
+                // Decrypt the data using the private key and store the results in $decrypted
+                openssl_private_decrypt($encrypted, $decrypted, $privKey);
+
+                var_dump($encrypted);
+                var_dump($decrypted);
+                die;
+            }
             // Call provided AuthenticationHook(s) after successful login
             AuthenticationHook::triggerLogin($user);
             $this->getResponse()->setRerenderLayout(true);
