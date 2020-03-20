@@ -1,4 +1,3 @@
-DROP TABLE rememberme;
 CREATE TABLE rememberme (
     id int(10) unsigned NOT NULL AUTO_INCREMENT,
     username varchar(30) NOT NULL,
