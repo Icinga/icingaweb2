@@ -66,7 +66,6 @@ class LoginForm extends Form
             array(
                 'required'      => false,
                 'label'         => $this->translate('Remember me'),
-                //'class'         => isset($formData['username']) ? 'autofocus' : ''
             )
         );
         $this->addElement(
@@ -108,7 +107,6 @@ class LoginForm extends Form
         $password = $this->getElement('password')->getValue();
         $rememberMeIsChecked = (isset($_POST['rememberme']) && $_POST['rememberme'] == '1') ? true : false;
 
-
         $authenticated = $authChain->authenticate($user, $password);
         if ($authenticated) {
             $auth->setAuthenticated($user);
@@ -138,9 +136,6 @@ class LoginForm extends Form
                 // Decrypt the data using the private key and store the results in $decrypted
                 openssl_private_decrypt($encrypted, $decrypted, $privKey);
 
-                var_dump($encrypted);
-                var_dump($decrypted);
-                die;
             }
             // Call provided AuthenticationHook(s) after successful login
             AuthenticationHook::triggerLogin($user);
