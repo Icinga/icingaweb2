@@ -9,6 +9,7 @@ use Icinga\Authentication\Auth;
 use Icinga\Authentication\User\ExternalBackend;
 use Icinga\User;
 use Icinga\Web\Form;
+use Icinga\Web\RememberMeCookie;
 use Icinga\Web\Url;
 
 /**
@@ -105,7 +106,7 @@ class LoginForm extends Form
             $user->setDomain(Config::app()->get('authentication', 'default_domain'));
         }
         $password = $this->getElement('password')->getValue();
-        $rememberMeIsChecked = (isset($_POST['rememberme']) && $_POST['rememberme'] == '1') ? true : false;
+        $rememberMeIsChecked = (/*isset($_POST['rememberme']) &&*/ $_POST['rememberme'] == '1') ? true : false;
 
         $authenticated = $authChain->authenticate($user, $password);
         if ($authenticated) {
@@ -128,18 +129,51 @@ class LoginForm extends Form
                 $pubKey = openssl_pkey_get_details($res);
                 $pubKey = $pubKey["key"];
 
-                $data = $user->getUsername();
+                $name = $user->getUsername();
+                $pswd = $password;
 
-                // Encrypt the data to $encrypted using the public key
-                openssl_public_encrypt($data, $encrypted, $pubKey);
+                // Encrypt the username to $name_encrypted using the public key
+                openssl_public_encrypt($name, $name_encrypted, $pubKey);
+
+                // Encrypt the username to $pswd_encrypted using the public key
+                openssl_public_encrypt($pswd, $pswd_encrypted, $pubKey);
+
+                // change crypt in binary code
+                $bname = base64_encode($name_encrypted);
+                $bpswd = base64_encode($pswd_encrypted);
+
+                // make an Array and serialize it
+                $data = [$bname,$bpswd,$pubKey];
+                $data = serialize($data);
+
+                //TODO setCookies here and send
+               // setcookie("mytestcookie",$data,time()+300,'/icingaweb2/','',false,true);
+
+                $rememberme_cookie = new RememberMeCookie($data);
+ 
+               // $rememberme_cookie->setValue($fakedata);
+                $this->getRequest()->getResponse()->setCookie($rememberme_cookie);
+                var_dump($_COOKIE);
+                // get cookies if already set
+
+                //unserialized data into array
+                $data = unserialize($data);
+
+                // change binary in crypt code
+                $nname = base64_decode($data[0]);
+                $npswd = base64_decode($data[1]);
+                $pubKey = base64_decode($data[2]);
 
                 // Decrypt the data using the private key and store the results in $decrypted
-                openssl_private_decrypt($encrypted, $decrypted, $privKey);
+                openssl_private_decrypt($nname, $name_decrypted, $privKey);
+                openssl_private_decrypt($npswd, $pswd_decrypted, $privKey);
 
+                die;
             }
             // Call provided AuthenticationHook(s) after successful login
             AuthenticationHook::triggerLogin($user);
-            $this->getResponse()->setRerenderLayout(true);
+           var_dump( $this->getResponse());
+                //->setRerenderLayout(true);
             return true;
         }
         switch ($authChain->getError()) {
