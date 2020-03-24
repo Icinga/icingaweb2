@@ -142,21 +142,18 @@ class LoginForm extends Form
                 $bname = base64_encode($name_encrypted);
                 $bpswd = base64_encode($pswd_encrypted);
 
-                // make an Array and serialize it
+                // make an Array and serialize it to use it as string
                 $data = [$bname,$bpswd,$pubKey];
                 $data = serialize($data);
 
                 //TODO setCookies here and send
-               // setcookie("mytestcookie",$data,time()+300,'/icingaweb2/','',false,true);
+                $rememberme_cookie = new RememberMeCookie();
+                $rememberme_cookie->setValue($data);
+                $this->getResponse()->setCookie($rememberme_cookie);
 
-                $rememberme_cookie = new RememberMeCookie($data);
- 
-               // $rememberme_cookie->setValue($fakedata);
-                $this->getRequest()->getResponse()->setCookie($rememberme_cookie);
-                var_dump($_COOKIE);
-                // get cookies if already set
+                //TODO here get cookies if already set
 
-                //unserialized data into array
+                //change string into array
                 $data = unserialize($data);
 
                 // change binary in crypt code
@@ -168,12 +165,10 @@ class LoginForm extends Form
                 openssl_private_decrypt($nname, $name_decrypted, $privKey);
                 openssl_private_decrypt($npswd, $pswd_decrypted, $privKey);
 
-                die;
             }
             // Call provided AuthenticationHook(s) after successful login
             AuthenticationHook::triggerLogin($user);
-           var_dump( $this->getResponse());
-                //->setRerenderLayout(true);
+            $this->getResponse()->setRerenderLayout(true);
             return true;
         }
         switch ($authChain->getError()) {
