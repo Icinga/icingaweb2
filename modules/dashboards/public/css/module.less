@@ -1,0 +1,49 @@
+.drag-over {
+  background: dodgerblue;
+  border: 5px red dashed;
+  box-shadow: 4px 4px 4px 4px black, 4px 4px 4px 4px black, 4px 4px 4px 4px black, 4px 4px 4px 4px black;
+}
+
+.dashlet-sortable.drag-active * {
+  pointer-events: none;
+}
+
+.draggable-element{
+  opacity: .4;
+}
+
+.dashlet-sortable{
+  overflow: auto;
+  display: inline-block;
+  position: relative;
+  height: 670px;
+}
+
+div.dashlet-sortable:after{
+  content: '';
+  position: absolute;
+  padding: 0 10px;
+}
+
+.dashlet-sortable:hover{
+  border:1px solid orange;
+}
+
+#Click-me {
+  background-color: green;
+  font-size: 25px;
+  color: white;
+  margin-top: 100px;
+  margin-right: 20px;
+  float: right;
+  border-radius: 7px;
+  outline: none;
+}
+
+#Click-me:hover {
+  background-color: lawngreen;
+  color: black;
+  box-shadow: black 3px 3px 3px;
+  font-size: x-large;
+  border-radius: 7px;
+}
