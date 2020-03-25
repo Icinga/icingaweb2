@@ -8,5 +8,4 @@ CREATE TABLE rememberme (
     mtime timestamp NULL DEFAULT NULL,
     PRIMARY KEY (id),
     CONSTRAINT idx_rememberme_username UNIQUE KEY (username)
-)
-ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
