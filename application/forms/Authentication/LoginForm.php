@@ -106,14 +106,12 @@ class LoginForm extends Form
             $user->setDomain(Config::app()->get('authentication', 'default_domain'));
         }
         $password = $this->getElement('password')->getValue();
-        $rememberMeIsChecked = $this->getElement('rememberme')->isChecked();
-
         $authenticated = $authChain->authenticate($user, $password);
         if ($authenticated) {
             $auth->setAuthenticated($user);
-            if ($rememberMeIsChecked) {
+            if ($this->getElement('rememberme')->isChecked()) {
                 $data = $this->encryptRememberMeData($user->getUsername(), $password);
-                $data = implode("|", $data);
+                $data = implode('|', $data);
 
                 $this->getResponse()->setCookie(
                     (new RememberMeCookie())->setValue($data)
@@ -143,7 +141,7 @@ class LoginForm extends Form
                     'Please note that not all authentication methods were available.'
                     . ' Check the system log or Icinga Web 2 log for more information.'
                 ));
-            // Move to default
+                // Move to default
             default:
                 $this->getElement('password')->addError($this->translate('Incorrect username or password'));
                 break;
