@@ -8,12 +8,12 @@ namespace Icinga\Web;
  */
 class RememberMeCookie extends Cookie
 {
-
     public function __construct()
     {
         parent::__construct('remember-me');
 
-        $this->setExpire(time()+60*60*24*30);
+        $this->setExpire(time() + 60 * 60 * 24 * 30);
         $this->setHttpOnly(true);
     }
 }
+
