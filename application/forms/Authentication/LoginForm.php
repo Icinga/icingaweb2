@@ -43,23 +43,23 @@ class LoginForm extends Form
         $this->addElement(
             'text',
             'username',
-            [
+            array(
                 'autocapitalize'    => 'off',
                 'autocomplete'      => 'username',
                 'class'             => false === isset($formData['username']) ? 'autofocus' : '',
                 'label'             => $this->translate('Username'),
                 'required'          => true
-            ]
+            )
         );
         $this->addElement(
             'password',
             'password',
-            [
+            array(
                 'required'      => true,
                 'autocomplete'  => 'current-password',
                 'label'         => $this->translate('Password'),
                 'class'         => isset($formData['username']) ? 'autofocus' : ''
-            ]
+            )
         );
         $this->addElement(
             'checkbox',
@@ -72,9 +72,9 @@ class LoginForm extends Form
         $this->addElement(
             'hidden',
             'redirect',
-            [
+            array(
                 'value' => Url::fromRequest()->getParam('redirect')
-            ]
+            )
         );
     }
 
