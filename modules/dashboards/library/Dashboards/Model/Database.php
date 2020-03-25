@@ -6,16 +6,14 @@ use ipl\Sql\Connection;
 
 trait Database
 {
-    protected function getDb()
-    {
+    protected function getDb(){
         return new Connection([
-            'db'       => 'mysql',
-            'host'     => 'mysql',
-            'dbname'   => 'dashboard',
+            'db' => 'mysql',
+            'host' => 'mysql',
+            'dbname' => 'dashboard',
             'username' => 'dashboard',
             'password' => 'dashboard',
-            'charset'  => 'utf8mb4'
+            'charset' => 'utf8mb4'
         ]);
     }
-
 }

@@ -22,7 +22,7 @@ class DashboardsWidget extends BaseHtmlElement
 
     protected function assemble()
     {
-        foreach ($this->dashlets AS $dashlet) {
+        foreach ($this->dashlets as $dashlet) {
             try {
                 $this->add(Html::tag('div', [
                     'class' => 'container dashlet-sortable icinga-module module-monitoring',
@@ -34,7 +34,7 @@ class DashboardsWidget extends BaseHtmlElement
                 ])->prepend($this->title($dashlet->title))
                 );
             } catch (Exception $e) {
-                echo 'Deshlets url could not be found'.$e->getMessage();
+                echo 'Deshlets url could not be found' . $e->getMessage();
             }
         }
 

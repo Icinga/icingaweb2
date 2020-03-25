@@ -39,7 +39,7 @@ class DashboardsController extends Controller
         $ids = explode(',', $postId);
         $priority = count($ids);
         if ($priority > 0) {
-            foreach ($ids AS $id) {
+            foreach ($ids as $id) {
                 $this->getDb()->update(
                     'dashlet',
                     ['priority' => $priority--],
@@ -58,13 +58,13 @@ class DashboardsController extends Controller
             $this->getDb()->update(
                 'dashlet',
                 ['style_width' => 99.9],
-                ['id = ?'      => $id]
+                ['id = ?' => $id]
             );
         } elseif ($savedWidth > 33.3 && $savedWidth < 66.6) {
             $this->getDb()->update(
                 'dashlet',
                 ['style_width' => 66.6],
-                ['id = ?'      => $id]
+                ['id = ?' => $id]
             );
         } elseif ($savedWidth <= 33.3) {
             $this->getDb()->update(

@@ -19,12 +19,12 @@ class DashboardsModel extends Model
 
     public function getColumns()
     {
-       return [
-        'title',
-        'url',
-        'priority',
-        'style_width',
-        'dashboard_id'
+        return [
+            'title',
+            'url',
+            'priority',
+            'style_width',
+            'dashboard_id'
         ];
     }
 
