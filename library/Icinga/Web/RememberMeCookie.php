@@ -1,15 +1,10 @@
 <?php
-/* Icinga Web 2 | (c) 2018 Icinga Development Team | GPLv2+ */
+/* Icinga Web 2 | (c) 2020 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Web;
 
-use Icinga\Application\Logger;
-use Icinga\Authentication\Auth;
-use Icinga\Exception\Json\JsonDecodeException;
-use Icinga\Util\Json;
-
 /**
- * Handle acknowledged application state messages via cookie
+ * Set cookie for RememberMe button
  */
 class RememberMeCookie extends Cookie
 {
@@ -18,10 +13,7 @@ class RememberMeCookie extends Cookie
     {
         parent::__construct('remember-me');
 
-        $this->setExpire(60);
-        $this->setPath('/');
-        $this->setDomain("");
-
+        $this->setExpire(time()+60*60*24*30);
+        $this->setHttpOnly(true);
     }
-
 }
