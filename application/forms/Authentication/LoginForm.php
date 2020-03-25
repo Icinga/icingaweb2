@@ -43,38 +43,38 @@ class LoginForm extends Form
         $this->addElement(
             'text',
             'username',
-            array(
+            [
                 'autocapitalize'    => 'off',
                 'autocomplete'      => 'username',
                 'class'             => false === isset($formData['username']) ? 'autofocus' : '',
                 'label'             => $this->translate('Username'),
                 'required'          => true
-            )
+            ]
         );
         $this->addElement(
             'password',
             'password',
-            array(
+            [
                 'required'      => true,
                 'autocomplete'  => 'current-password',
                 'label'         => $this->translate('Password'),
                 'class'         => isset($formData['username']) ? 'autofocus' : ''
-            )
+            ]
         );
         $this->addElement(
             'checkbox',
             'rememberme',
-            array(
+            [
                 'required'      => false,
                 'label'         => $this->translate('Remember me'),
-            )
+            ]
         );
         $this->addElement(
             'hidden',
             'redirect',
-            array(
+            [
                 'value' => Url::fromRequest()->getParam('redirect')
-            )
+            ]
         );
     }
 
@@ -106,65 +106,18 @@ class LoginForm extends Form
             $user->setDomain(Config::app()->get('authentication', 'default_domain'));
         }
         $password = $this->getElement('password')->getValue();
-        $rememberMeIsChecked = (/*isset($_POST['rememberme']) &&*/ $_POST['rememberme'] == '1') ? true : false;
+        $rememberMeIsChecked = $this->getElement('rememberme')->isChecked();
 
         $authenticated = $authChain->authenticate($user, $password);
         if ($authenticated) {
             $auth->setAuthenticated($user);
             if($rememberMeIsChecked) {
-                var_dump("set cookies for this user");
-                $config = [
-                    'digest_alg' => 'sha512',
-                    'private_key_bits' => 2048,
-                    'private_key_type' => OPENSSL_KEYTYPE_RSA,
-                ];
+                $data = $this->encryptRememberMeData($user->getUsername(), $password);
+                $data = implode("|", $data);
 
-                // Create the keypair
-                $res = openssl_pkey_new($config);
-
-                // Extract the private key from $res to $privKey
-                openssl_pkey_export($res, $privKey);
-
-                // Extract the public key from $res to $pubKey
-                $pubKey = openssl_pkey_get_details($res);
-                $pubKey = $pubKey["key"];
-
-                $name = $user->getUsername();
-                $pswd = $password;
-
-                // Encrypt the username to $name_encrypted using the public key
-                openssl_public_encrypt($name, $name_encrypted, $pubKey);
-
-                // Encrypt the username to $pswd_encrypted using the public key
-                openssl_public_encrypt($pswd, $pswd_encrypted, $pubKey);
-
-                // change crypt in binary code
-                $bname = base64_encode($name_encrypted);
-                $bpswd = base64_encode($pswd_encrypted);
-
-                // make an Array and serialize it to use it as string
-                $data = [$bname,$bpswd,$pubKey];
-                $data = serialize($data);
-
-                //TODO setCookies here and send
-                $rememberme_cookie = new RememberMeCookie();
-                $rememberme_cookie->setValue($data);
-                $this->getResponse()->setCookie($rememberme_cookie);
-
-                //TODO here get cookies if already set
-
-                //change string into array
-                $data = unserialize($data);
-
-                // change binary in crypt code
-                $nname = base64_decode($data[0]);
-                $npswd = base64_decode($data[1]);
-                $pubKey = base64_decode($data[2]);
-
-                // Decrypt the data using the private key and store the results in $decrypted
-                openssl_private_decrypt($nname, $name_decrypted, $privKey);
-                openssl_private_decrypt($npswd, $pswd_decrypted, $privKey);
-
+                $this->getResponse()->setCookie(
+                    (new RememberMeCookie())->setValue($data)
+                );
             }
             // Call provided AuthenticationHook(s) after successful login
             AuthenticationHook::triggerLogin($user);
@@ -190,7 +143,7 @@ class LoginForm extends Form
                     'Please note that not all authentication methods were available.'
                     . ' Check the system log or Icinga Web 2 log for more information.'
                 ));
-                // Move to default
+            // Move to default
             default:
                 $this->getElement('password')->addError($this->translate('Incorrect username or password'));
                 break;
@@ -217,5 +170,42 @@ class LoginForm extends Form
                 . ' Make sure you\'ll configure such, otherwise you\'ll not be able to login.'
             ));
         }
+    }
+
+    /**
+     * This function encrypt username and password,
+     * change these into binary code
+     * @param $username
+     * @param $password
+     * @return array
+     */
+    public function encryptRememberMeData($username,$password) {
+
+        $res = openssl_pkey_new(
+            [
+                'digest_alg' => 'sha512',
+                'private_key_bits' => 2048,
+                'private_key_type' => OPENSSL_KEYTYPE_RSA,
+            ]
+        );
+
+        // Extract the private key from $res to $privKey
+        openssl_pkey_export($res, $privKey);
+
+        // Extract the public key from $res to $pubKey
+        $pubKey = openssl_pkey_get_details($res);
+        $pubKey = $pubKey["key"];
+
+        //$username = $user->getUsername();
+
+        // Encrypt username and password with public key
+        openssl_public_encrypt($username, $encryptedUsername, $pubKey);
+        openssl_public_encrypt($password, $encryptedPassword, $pubKey);
+
+        // change crypt in binary code
+        $encryptedUsername = base64_encode($encryptedUsername);
+        $encryptedPassword = base64_encode($encryptedPassword);
+
+        return [$encryptedUsername, $encryptedPassword, $pubKey];
     }
 }
