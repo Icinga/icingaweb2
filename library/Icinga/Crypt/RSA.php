@@ -2,6 +2,7 @@
 /* Icinga Web 2 | (c) 2020 Icinga Development Team | GPLv2+ */
 
 namespace Icinga\Crypt;
+
 /**
  * Class RSA
  *
@@ -61,7 +62,7 @@ class RSA
         $pubKey = openssl_pkey_get_details($res);
         $pubKey = $pubKey["key"];
 
-        return [$privKey,$pubKey];
+        return [$privKey, $pubKey];
     }
 
     /**
