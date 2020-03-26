@@ -4,7 +4,12 @@
 namespace Icinga\Web;
 
 /**
- * Set cookie for RememberMe button
+ * Class RememberMeCookie
+ *
+ * This class sets the given value of the cookie for 30 days,
+ * when the user "checks" the "remember me" button while logging in.
+ *
+ * @package Icinga\Web
  */
 class RememberMeCookie extends Cookie
 {
@@ -16,4 +21,3 @@ class RememberMeCookie extends Cookie
         $this->setHttpOnly(true);
     }
 }
-
