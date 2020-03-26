@@ -52,7 +52,7 @@ class RSA
         $res = openssl_pkey_new(
             [
                 'digest_alg' => 'sha512',
-                'private_key_bits' => 2048,
+                'private_key_bits' => 4096,
                 'private_key_type' => OPENSSL_KEYTYPE_RSA,
             ]
         );
@@ -163,8 +163,14 @@ class RSA
      */
     public function loadKey(...$key)
     {
-        $this->privKey = $key[0];
-        $this->pubKey = $key[1];
+        foreach ($key as $keys) {
+            if (strpos($keys, "PRIVATE")) {
+                $this->privKey = $keys;
+            }
+            if (strpos($keys, "PUBLIC")) {
+                $this->pubKey = $keys;
+            }
+        }
 
         return  $this;
     }
