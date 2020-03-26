@@ -169,42 +169,4 @@ class LoginForm extends Form
             ));
         }
     }
-
-    /**
-     * This function encrypt username and password,
-     * change these into binary code
-     * @param $username
-     * @param $password
-     * @return array
-     */
-    public function encryptRememberMeData($username, $password)
-    {
-
-        $res = openssl_pkey_new(
-            [
-                'digest_alg' => 'sha512',
-                'private_key_bits' => 2048,
-                'private_key_type' => OPENSSL_KEYTYPE_RSA,
-            ]
-        );
-
-        // Extract the private key from $res to $privKey
-        openssl_pkey_export($res, $privKey);
-
-        // Extract the public key from $res to $pubKey
-        $pubKey = openssl_pkey_get_details($res);
-        $pubKey = $pubKey["key"];
-
-        //$username = $user->getUsername();
-
-        // Encrypt username and password with public key
-        openssl_public_encrypt($username, $encryptedUsername, $pubKey);
-        openssl_public_encrypt($password, $encryptedPassword, $pubKey);
-
-        // change crypt in binary code
-        $encryptedUsername = base64_encode($encryptedUsername);
-        $encryptedPassword = base64_encode($encryptedPassword);
-
-        return [$encryptedUsername, $encryptedPassword, $pubKey];
-    }
 }
