@@ -4,7 +4,6 @@
 namespace Tests\Icinga\Crypt;
 
 use Icinga\Crypt\RSA;
-
 use Icinga\Test\BaseTestCase;
 use InvalidArgumentException;
 use UnexpectedValueException;
@@ -16,7 +15,7 @@ class RSATest extends BaseTestCase
      */
     function testLoadKeyThrowsExceptionIfMoreThanTwoKeysGiven()
     {
-        (new RSA())->loadKey('one','two','three');
+        (new RSA())->loadKey('one', 'two', 'three');
     }
 
     /**
@@ -38,7 +37,6 @@ class RSATest extends BaseTestCase
     /**
      * @expectedException UnexpectedValueException
      */
-
     function testLoadKeyAutomaticallyDetectsThePublicAndPrivateKey()
     {
         list($privateKey, $publicKey) = RSA::keygen();
@@ -50,41 +48,5 @@ class RSATest extends BaseTestCase
         $rsa = (new RSA())->loadKey($privateKey, $publicKey);
         $this->assertSame($privateKey, $rsa->getPrivateKey());
         $this->assertSame($publicKey, $rsa->getPublicKey());
-    }
-
-    /**
-     * @expectedException UnexpectedValueException
-     */
-    function testEncryptThrowsExceptionIfNoParameterOrEmptyValueGiven()
-    {
-        $rsa = (new RSA())->loadKey(...RSA::keygen());
-        $rsa->encrypt();
-    }
-
-    /**
-     * @expectedException UnexpectedValueException
-     */
-    function testEncryptToBase64ThrowsExceptionIfNoParameterOrEmptyValueGiven()
-    {
-        $rsa = (new RSA())->loadKey(...RSA::keygen());
-        $rsa->encryptToBase64();
-    }
-
-    /**
-     * @expectedException UnexpectedValueException
-     */
-    function testDecryptThrowsExceptionIfNoParameterOrEmptyValueGiven()
-    {
-        $rsa = (new RSA())->loadKey(...RSA::keygen());
-        $rsa->decrypt();
-    }
-
-    /**
-     * @expectedException UnexpectedValueException
-     */
-    function testDecryptFromBase64ThrowsExceptionIfNoParameterOrEmptyValueGiven()
-    {
-        $rsa = (new RSA())->loadKey(...RSA::keygen());
-        $rsa->decryptFromBase64();
     }
 }
