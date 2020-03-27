@@ -155,7 +155,7 @@ class RSA
     }
 
     /**
-     * Save the given values in the Variables( private and public key)
+     * Save the given values in the Variables (private and public key)
      *
      * @param mixed ...$key
      *
@@ -163,12 +163,11 @@ class RSA
      */
     public function loadKey(...$key)
     {
-        foreach ($key as $keys) {
-            if (strpos($keys, "PRIVATE")) {
-                $this->privKey = $keys;
-            }
-            if (strpos($keys, "PUBLIC")) {
-                $this->pubKey = $keys;
+        foreach ($key as $k) {
+            if (strpos($k, "PUBLIC")) {
+                $this->pubKey = $k;
+            } else {
+                $this->privKey = $k;
             }
         }
 
