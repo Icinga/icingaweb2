@@ -4,6 +4,7 @@
 namespace Tests\Icinga\Crypt;
 
 use Icinga\Crypt\RSA;
+
 use Icinga\Test\BaseTestCase;
 use InvalidArgumentException;
 use UnexpectedValueException;
@@ -33,6 +34,10 @@ class RSATest extends BaseTestCase
     {
         (new RSA())->getPrivateKey();
     }
+
+    /**
+     * @expectedException UnexpectedValueException
+     */
 
     function testLoadKeyAutomaticallyDetectsThePublicAndPrivateKey()
     {
