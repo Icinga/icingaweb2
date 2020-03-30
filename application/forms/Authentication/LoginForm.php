@@ -7,6 +7,8 @@ use Icinga\Application\Config;
 use Icinga\Application\Hook\AuthenticationHook;
 use Icinga\Authentication\Auth;
 use Icinga\Authentication\User\ExternalBackend;
+use Icinga\Crypt\RSA;
+use Icinga\Rememberme\Common\Database;
 use Icinga\User;
 use Icinga\Web\Form;
 use Icinga\Web\RememberMeCookie;
@@ -17,6 +19,8 @@ use Icinga\Web\Url;
  */
 class LoginForm extends Form
 {
+    use Database;
+
     const DEFAULT_CLASSES = 'icinga-controls';
 
     /**
@@ -110,8 +114,18 @@ class LoginForm extends Form
         if ($authenticated) {
             $auth->setAuthenticated($user);
             if ($this->getElement('rememberme')->isChecked()) {
-                $data = "";
 
+                $rsa = new RSA();
+                $rsa->loadKey(...RSA::keygen());
+                $data = $rsa->encryptToBase64($user->getUsername(), $password);
+                $data[] = base64_encode($rsa->getPublicKey());
+
+                $values['username']     = $user->getUsername();
+                $values['private_key']  = base64_encode($rsa->getPrivateKey());
+                $values['public_key']   = base64_encode($rsa->getPublicKey());
+                $this->getDb()->insert('rememberme', $values);
+
+                $data = implode('|', $data);
                 $this->getResponse()->setCookie(
                     (new RememberMeCookie())->setValue($data)
                 );
