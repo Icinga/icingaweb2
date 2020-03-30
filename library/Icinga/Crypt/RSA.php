@@ -185,8 +185,10 @@ class RSA
      */
     public function loadKey(...$key)
     {
-        if (count($key) > 2 ) {
-            throw new InvalidArgumentException('loadKey() do not expects more then 2 parameters, '.count($key).' given');
+        if (count($key) > 2) {
+            throw new InvalidArgumentException(
+                'loadKey() do not expects more then 2 parameters, '.count($key).' given'
+            );
         }
         foreach ($key as $k) {
             if (strpos($k, "PUBLIC")) {
