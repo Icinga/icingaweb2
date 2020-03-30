@@ -34,9 +34,6 @@ class RSATest extends BaseTestCase
         (new RSA())->getPrivateKey();
     }
 
-    /**
-     * @expectedException UnexpectedValueException
-     */
     function testLoadKeyAutomaticallyDetectsThePublicAndPrivateKey()
     {
         list($privateKey, $publicKey) = RSA::keygen();
