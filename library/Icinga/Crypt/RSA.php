@@ -49,7 +49,18 @@ class RSA
     /**
      * Generate a new private and public key pair
      *
-     * @return array
+     * Use this method to generate a new RSA key pair and grab the keys from it or populate an RSA instance:
+     *
+     * ```php
+     * // Grab keys
+     * list($privateKey, $publicKey) = RSA::keygen();
+     *
+     * // Populate new instance
+     * $rsa (new RSA())
+     *     ->loadKeys(...RSA::keygen());
+     * ``
+     *
+     * @return array Private key as first element of the array and the public key as the second
      */
     public static function keygen()
     {
@@ -100,9 +111,11 @@ class RSA
     }
 
     /**
-     * Decrypt the given data
+     * Decrypt the given data using the set private key
      *
-     * @param mixed ...$data
+     * See {@link loadKey()} for providing the private key.
+     *
+     * @param string ...$data
      *
      * @return array
      *
@@ -119,9 +132,11 @@ class RSA
     }
 
     /**
-     * Decrypt and decodes the given data which is encoded in MIME base64
+     * Decode from Base64 and decrypt the given data using the set private key
      *
-     * @param mixed ...$data
+     * See {@link loadKey()} for providing the private key.
+     *
+     * @param string ...$data
      *
      * @return array
      *
@@ -139,9 +154,11 @@ class RSA
     }
 
     /**
-     * Encrypt the given data
+     * Encrypt the given data using the set public key
      *
-     * @param mixed ...$data
+     * See {@link loadKey()} for providing the public key.
+     *
+     * @param string ...$data
      *
      * @return array
      *
@@ -158,9 +175,11 @@ class RSA
     }
 
     /**
-     * Encrypt and encodes the given data with MIME base64
+     * Encrypt the given data using the set public key and encode to Base64
      *
-     * @param mixed ...$data
+     * See {@link loadKey()} for providing the public key.
+     *
+     * @param string ...$data
      *
      * @return array
      *
@@ -178,7 +197,29 @@ class RSA
     }
 
     /**
-     * Save the given values in the Variables (private and public key)
+     * Load the given private/public key
+     *
+     * This method auto-detects the key as public if it contains the string `PUBLIC`.
+     * Otherwise the key is considered private. You may call `loadKey()` with the keys one-by-one
+     * or pass both keys directly as arguments to the function, e.g.
+     *
+     * ```php
+     * // Populate with new keys
+     * $rsa = (new RSA())
+     *     ->loadKey(RSA::keygen());
+     *
+     * // Load keys one-by-one (order of keys does not matter)
+     * $rsa = (new RSA())
+     *     ->loadKey($publicKey)
+     *     ->loadKey($privateKey)
+     *
+     * // Fetch keys as array from somewhere else and load it (again, order does not matter)
+     * $rsa = (new RSA())
+     *     ->loadKeys(...$keys);
+     * ```
+     *
+     * Please note that you may not necessarily have to always populate both keys since the public key is used for
+     * encryption and the private key for decryption.
      *
      * @param string ...$key
      *
