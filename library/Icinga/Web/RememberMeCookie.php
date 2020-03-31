@@ -13,7 +13,7 @@ namespace Icinga\Web;
  */
 class RememberMeCookie extends Cookie
 {
-    public function __construct($expire = NULL)
+    public function __construct($expire = null)
     {
         if (! $expire) {
             $expire = time() + 60 * 60 * 24 * 30;
