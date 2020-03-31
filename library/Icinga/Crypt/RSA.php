@@ -237,7 +237,7 @@ class RSA
             ));
         }
         foreach ($key as $k) {
-            if (strpos($k, 'PUBLIC')) {
+            if (strpos($k, 'PUBLIC') !== false) {
                 $this->pubKey = $k;
             } else {
                 $this->privKey = $k;
