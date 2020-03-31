@@ -49,16 +49,14 @@ class RSA
      */
     public static function keygen()
     {
-        $res = openssl_pkey_new(
-            [
+        $res = openssl_pkey_new([
                 'digest_alg' => 'sha512',
                 'private_key_bits' => 4096,
                 'private_key_type' => OPENSSL_KEYTYPE_RSA,
-            ]
-        );
+            ]);
         openssl_pkey_export($res, $privKey);
         $pubKey = openssl_pkey_get_details($res);
-        $pubKey = $pubKey["key"];
+        $pubKey = $pubKey['key'];
 
         return [$privKey, $pubKey];
     }
@@ -73,6 +71,7 @@ class RSA
         if (empty($this->pubKey)) {
             throw new UnexpectedValueException('No public key set');
         }
+
         return $this->pubKey;
     }
 
@@ -86,6 +85,7 @@ class RSA
         if (empty($this->privKey)) {
             throw new UnexpectedValueException('No private key set');
         }
+
         return $this->privKey;
     }
 
@@ -98,9 +98,6 @@ class RSA
      */
     public function decrypt(...$data)
     {
-        if (empty(array_filter($data))) {
-            throw new UnexpectedValueException('decrypt() do not expects empty value');
-        }
         $decryptedValues = array();
         foreach ($data as $valueToDecrypt) {
             openssl_private_decrypt($valueToDecrypt, $decryptedValues[], $this->getPrivateKey());
@@ -118,9 +115,6 @@ class RSA
      */
     public function decryptFromBase64(...$data)
     {
-        if (empty(array_filter($data))) {
-            throw new UnexpectedValueException('decryptFromBase64() do not expects empty value');
-        }
         $decodedValues = array();
         foreach ($data as $decodeValue) {
             $decodedValues[] = base64_decode($decodeValue);
@@ -139,9 +133,6 @@ class RSA
      */
     public function encrypt(...$data)
     {
-        if (empty(array_filter($data))) {
-            throw new UnexpectedValueException('encrypt() do not expects empty value');
-        }
         $encryptedValues = array();
         foreach ($data as $valueTOEncrypt) {
             openssl_public_encrypt($valueTOEncrypt, $encryptedValues[], $this->getPublicKey());
@@ -159,9 +150,6 @@ class RSA
      */
     public function encryptToBase64(...$data)
     {
-        if (empty(array_filter($data))) {
-            throw new UnexpectedValueException('encryptToBase64() do not expects empty value');
-        }
         $data = $this->encrypt(...$data);
         $encodedValues = array();
         foreach ($data as $valueToEncode) {
@@ -186,7 +174,7 @@ class RSA
             );
         }
         foreach ($key as $k) {
-            if (strpos($k, "PUBLIC")) {
+            if (strpos($k, 'PUBLIC')) {
                 $this->pubKey = $k;
             } else {
                 $this->privKey = $k;
