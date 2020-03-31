@@ -44,22 +44,21 @@ class AuthenticationController extends Controller
         $form = new LoginForm();
         if (isset($_COOKIE['remember-me'])) {
             $data = explode('|', $_COOKIE['remember-me']);
-            $publicKeyEncoded = array_pop($data);
+            $publicKey = base64_decode(array_pop($data));
 
             $select = (new Select())
                 ->from('rememberme')
                 ->columns('*')
-                ->where(['public_key = ?' => $publicKeyEncoded]);
+                ->where(['public_key = ?' => $publicKey]);
 
             $DBData = $this->getDb()->select($select)->fetch();
-
             $newData = array();
             foreach ($DBData as $key => $value) {
                 $newData[$key] = $value;
             }
 
             $rsa = new RSA();
-            $rsa->loadKey(base64_decode($newData['private_key']), base64_decode($publicKeyEncoded));
+            $rsa->loadKey($newData['private_key'], $publicKey);
             list($username, $passwordFromCookie) = $rsa->decryptFromBase64(...$data);
 
             $authChain = $this->Auth()->getAuthChain();
