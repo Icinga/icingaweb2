@@ -123,12 +123,14 @@ class RSA
      */
     public function decrypt(...$data)
     {
-        $decryptedValues = array();
-        foreach ($data as $valueToDecrypt) {
-            openssl_private_decrypt($valueToDecrypt, $decryptedValues[], $this->getPrivateKey());
+        $decrypted = [];
+        $privateKey = $this->getPrivateKey();
+
+        foreach ($data as $value) {
+            openssl_private_decrypt($value, $decrypted[], $privateKey);
         }
 
-        return $decryptedValues;
+        return $decrypted;
     }
 
     /**
@@ -144,13 +146,13 @@ class RSA
      */
     public function decryptFromBase64(...$data)
     {
-        $decodedValues = array();
-        foreach ($data as $decodeValue) {
-            $decodedValues[] = base64_decode($decodeValue);
-        }
-        $decryptedData = $this->decrypt(...$decodedValues);
+        $decoded = [];
 
-        return $decryptedData;
+        foreach ($data as $value) {
+            $decoded[] = base64_decode($value);
+        }
+
+        return $this->decrypt(...$decoded);
     }
 
     /**
@@ -166,12 +168,13 @@ class RSA
      */
     public function encrypt(...$data)
     {
-        $encryptedValues = array();
-        foreach ($data as $valueTOEncrypt) {
-            openssl_public_encrypt($valueTOEncrypt, $encryptedValues[], $this->getPublicKey());
+        $encrypted = [];
+
+        foreach ($data as $value) {
+            openssl_public_encrypt($value, $encrypted[], $this->getPublicKey());
         }
 
-        return $encryptedValues;
+        return $encrypted;
     }
 
     /**
@@ -187,13 +190,13 @@ class RSA
      */
     public function encryptToBase64(...$data)
     {
-        $data = $this->encrypt(...$data);
-        $encodedValues = array();
-        foreach ($data as $valueToEncode) {
-            $encodedValues[] = base64_encode($valueToEncode);
+        $encoded = [];
+
+        foreach ($this->encrypt(...$data) as $value) {
+            $encoded[] = base64_encode($value);
         }
 
-        return $encodedValues;
+        return $encoded;
     }
 
     /**
