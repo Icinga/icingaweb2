@@ -7,14 +7,12 @@ use InvalidArgumentException;
 use UnexpectedValueException;
 
 /**
- * Class RSA
+ * Data encryption and decryption using RSA keys also supporting key generation
  *
- * This class allows to encrypt and decrypt data.
+ * # Example Usage
  *
- * Usage
- * -----
- * <code>
- * ** Encryption **
+ * ```php
+ *  //Encryption
  *
  * $rsa = new RSA();
  * $rsa->loadKey(...RSA::keygen());
@@ -26,16 +24,15 @@ use UnexpectedValueException;
  * $data = $rsa->encryptToBase64($myVar1, myVar2); // multiple parameters allowed
  *
  *
- * ** Decryption **
+ * //Decryption
  *
  * $rsa = new RSA();
  * $rsa->loadKey($publicKey, load_private_key_from_database($publicKey));
  *
  * Decrypt and decodes the given data which is encoded in MIME base64
  * list($myVar1, $myVar2) = $rsa->decryptFromBase64(...$data);
- * </code>
+ * ```
  *
- * @package Icinga\Crypt
  */
 class RSA
 {
@@ -46,7 +43,7 @@ class RSA
     private $privKey;
 
     /**
-     * Generates a new private and public key pair
+     * Generate a new private and public key pair
      *
      * @return array
      */
@@ -59,9 +56,7 @@ class RSA
                 'private_key_type' => OPENSSL_KEYTYPE_RSA,
             ]
         );
-        // Extract the private key from $res to $privKey
         openssl_pkey_export($res, $privKey);
-        // Extract the public key from $res to $pubKey
         $pubKey = openssl_pkey_get_details($res);
         $pubKey = $pubKey["key"];
 
@@ -179,7 +174,7 @@ class RSA
     /**
      * Save the given values in the Variables (private and public key)
      *
-     * @param mixed ...$key
+     * @param string ...$key
      *
      * @return $this
      */
