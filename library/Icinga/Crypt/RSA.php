@@ -54,11 +54,13 @@ class RSA
     public static function keygen()
     {
         $res = openssl_pkey_new([
-                'digest_alg' => 'sha512',
-                'private_key_bits' => 4096,
-                'private_key_type' => OPENSSL_KEYTYPE_RSA,
-            ]);
+            'digest_alg'       => 'sha512',
+            'private_key_bits' => 4096,
+            'private_key_type' => OPENSSL_KEYTYPE_RSA,
+        ]);
+
         openssl_pkey_export($res, $privKey);
+
         $pubKey = openssl_pkey_get_details($res);
         $pubKey = $pubKey['key'];
 
