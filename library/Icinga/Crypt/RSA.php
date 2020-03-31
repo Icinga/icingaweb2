@@ -236,6 +236,7 @@ class RSA
                 count($key)
             ));
         }
+
         foreach ($key as $k) {
             if (strpos($k, 'PUBLIC') !== false) {
                 $this->pubKey = $k;
