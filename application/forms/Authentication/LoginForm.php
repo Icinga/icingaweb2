@@ -76,9 +76,9 @@ class LoginForm extends Form
         $this->addElement(
             'hidden',
             'redirect',
-            array(
+            [
                 'value' => Url::fromRequest()->getParam('redirect')
-            )
+            ]
         );
     }
 
