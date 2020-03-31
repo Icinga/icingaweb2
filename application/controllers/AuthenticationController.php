@@ -3,18 +3,25 @@
 
 namespace Icinga\Controllers;
 
+use Icinga\Application\Config;
 use Icinga\Application\Hook\AuthenticationHook;
 use Icinga\Application\Icinga;
+use Icinga\Crypt\RSA;
 use Icinga\Forms\Authentication\LoginForm;
+use Icinga\Rememberme\Common\Database;
+use Icinga\User;
 use Icinga\Web\Controller;
 use Icinga\Web\Helper\CookieHelper;
+use Icinga\Web\RememberMeCookie;
 use Icinga\Web\Url;
+use ipl\Sql\Select;
 
 /**
  * Application wide controller for authentication
  */
 class AuthenticationController extends Controller
 {
+    use database;
     /**
      * {@inheritdoc}
      */
@@ -35,6 +42,37 @@ class AuthenticationController extends Controller
             $this->redirectNow(Url::fromPath('setup'));
         }
         $form = new LoginForm();
+        if (isset($_COOKIE['remember-me'])) {
+            $data = explode('|', $_COOKIE['remember-me']);
+            $publicKeyEncoded = array_pop($data);
+
+            $select = (new Select())
+                ->from('rememberme')
+                ->columns('*')
+                ->where(['public_key = ?' => $publicKeyEncoded]);
+
+            $DBData = $this->getDb()->select($select)->fetch();
+
+            $newData = array();
+            foreach ($DBData as $key => $value) {
+                $newData[$key] = $value;
+            }
+
+            $rsa = new RSA();
+            $rsa->loadKey(base64_decode($newData['private_key']), base64_decode($publicKeyEncoded));
+            list($username, $passwordFromCookie) = $rsa->decryptFromBase64(...$data);
+
+            $authChain = $this->Auth()->getAuthChain();
+            $authChain->setSkipExternalBackends(true);
+            $user = new User($username);
+            if (! $user->hasDomain()) {
+                $user->setDomain(Config::app()->get('authentication', 'default_domain'));
+            }
+            $authenticated = $authChain->authenticate($user, $passwordFromCookie);
+            if ($authenticated) {
+                $this->Auth()->setAuthenticated($user);
+            }
+        }
         if ($this->Auth()->isAuthenticated()) {
             // Call provided AuthenticationHook(s) when login action is called
             // but icinga web user is already authenticated
@@ -53,6 +91,7 @@ class AuthenticationController extends Controller
             }
             $form->handleRequest();
         }
+
         $this->view->form = $form;
         $this->view->defaultTitle = $this->translate('Icinga Web 2 Login');
         $this->view->requiresSetup = $requiresSetup;
@@ -64,6 +103,14 @@ class AuthenticationController extends Controller
     public function logoutAction()
     {
         $auth = $this->Auth();
+        if (isset($_COOKIE['remember-me'])) {
+            unset($_COOKIE['remember-me']);
+            $this->getResponse()->setCookie(
+                (new RememberMeCookie(time() - 3600))->setValue('')
+            );
+        }
+        $this->getDb()->delete('rememberme', ['username = ?' => $auth->getUser()->getUsername()]);
+
         if (! $auth->isAuthenticated()) {
             $this->redirectToLogin();
         }
