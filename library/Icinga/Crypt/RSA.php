@@ -12,25 +12,29 @@ use UnexpectedValueException;
  * # Example Usage
  *
  * ```php
- *  //Encryption
+ * // Key generation
+ * list($privateKey, $publicKey) = RSA::keygen();
  *
- * $rsa = new RSA();
- * $rsa->loadKey(...RSA::keygen());
+ * // Encryption
+ * $data = (new RSA())
+ *     ->loadKey($publicKey)
+ *     ->encrypt($a, $b, $c); // Accepts a variable number of arguments
  *
- * just Encrypt data
- * $data = $rsa->encrypt($myVar1, myVar2); // multiple parameters allowed
+ * // Encrypt and encode to Base64
+ * $data = (new RSA())
+ *     ->loadKey($publicKey)
+ *     ->encryptToBase64($a, $b, $c); // Accepts a variable number of arguments
  *
- * Encrypt and encodes the given data with MIME base64
- * $data = $rsa->encryptToBase64($myVar1, myVar2); // multiple parameters allowed
  *
+ * // Decryption
+ * list($a, $b, $c) = (new RSA())
+ *     ->loadKey($privateKey)
+ *     ->decrypt(...$data);
  *
- * //Decryption
- *
- * $rsa = new RSA();
- * $rsa->loadKey($publicKey, load_private_key_from_database($publicKey));
- *
- * Decrypt and decodes the given data which is encoded in MIME base64
- * list($myVar1, $myVar2) = $rsa->decryptFromBase64(...$data);
+ * // Decode from Base64 and decrypt
+ * list($a, $b, $c) = (new RSA())
+ *     ->loadKey($privateKey)
+ *     ->decryptFromBase64(...$data);
  * ```
  *
  */
