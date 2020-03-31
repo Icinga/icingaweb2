@@ -12,9 +12,7 @@ trait Database
 {
     protected function getDb()
     {
-        $config = new SqlConfig(ResourceFactory::getResourceConfig(
-            IcingaConfig::module('customer')->get('backend', 'resource')
-        ));
+        $config = new SqlConfig(ResourceFactory::getResourceConfig('remember-me'));
 
         $config->options = [
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ,
