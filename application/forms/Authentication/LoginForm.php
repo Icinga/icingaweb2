@@ -69,8 +69,8 @@ class LoginForm extends Form
             'checkbox',
             'rememberme',
             [
-                'required'      => false,
-                'label'         => $this->translate('Remember me'),
+                'required'  => false,
+                'label'     => $this->translate('Remember me'),
             ]
         );
         $this->addElement(
@@ -119,14 +119,13 @@ class LoginForm extends Form
                 $data = $rsa->encryptToBase64($user->getUsername(), $password);
                 $data[] = base64_encode($rsa->getPublicKey());
 
-                $values['username']     = $user->getUsername();
-                $values['private_key']  = base64_encode($rsa->getPrivateKey());
-                $values['public_key']   = base64_encode($rsa->getPublicKey());
+                $values['username'] = $user->getUsername();
+                $values['private_key'] = $rsa->getPrivateKey();
+                $values['public_key'] = $rsa->getPublicKey();
                 $this->getDb()->insert('rememberme', $values);
 
-                $data = implode('|', $data);
                 $this->getResponse()->setCookie(
-                    (new RememberMeCookie())->setValue($data)
+                    (new RememberMeCookie())->setValue(implode('|', $data))
                 );
             }
             // Call provided AuthenticationHook(s) after successful login
