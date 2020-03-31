@@ -114,7 +114,6 @@ class LoginForm extends Form
         if ($authenticated) {
             $auth->setAuthenticated($user);
             if ($this->getElement('rememberme')->isChecked()) {
-
                 $rsa = new RSA();
                 $rsa->loadKey(...RSA::keygen());
                 $data = $rsa->encryptToBase64($user->getUsername(), $password);
