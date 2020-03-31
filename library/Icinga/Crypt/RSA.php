@@ -71,6 +71,8 @@ class RSA
      * Get the public key
      *
      * @return string
+     *
+     * @throws UnexpectedValueException If the public key is not set
      */
     public function getPublicKey()
     {
@@ -85,6 +87,8 @@ class RSA
      * Get the private key
      *
      * @return string
+     *
+     * @throws UnexpectedValueException If the private key is not set
      */
     public function getPrivateKey()
     {
@@ -101,6 +105,8 @@ class RSA
      * @param mixed ...$data
      *
      * @return array
+     *
+     * @throws UnexpectedValueException If the private key is not set
      */
     public function decrypt(...$data)
     {
@@ -118,6 +124,8 @@ class RSA
      * @param mixed ...$data
      *
      * @return array
+     *
+     * @throws UnexpectedValueException If the private key is not set
      */
     public function decryptFromBase64(...$data)
     {
@@ -136,6 +144,8 @@ class RSA
      * @param mixed ...$data
      *
      * @return array
+     *
+     * @throws UnexpectedValueException If the public key is not set
      */
     public function encrypt(...$data)
     {
@@ -153,6 +163,8 @@ class RSA
      * @param mixed ...$data
      *
      * @return array
+     *
+     * @throws UnexpectedValueException If the public key is not set
      */
     public function encryptToBase64(...$data)
     {
@@ -171,6 +183,8 @@ class RSA
      * @param string ...$key
      *
      * @return $this
+     *
+     * @throws InvalidArgumentException If more than two keys are passed to the function
      */
     public function loadKey(...$key)
     {
