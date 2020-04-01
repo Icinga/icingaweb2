@@ -119,10 +119,13 @@ class LoginForm extends Form
                 $data = $rsa->encryptToBase64($user->getUsername(), $password);
                 $data[] = base64_encode($rsa->getPublicKey());
 
-                $values['username'] = $user->getUsername();
-                $values['private_key'] = $rsa->getPrivateKey();
-                $values['public_key'] = $rsa->getPublicKey();
-                $this->getDb()->insert('rememberme', $values);
+                $this->getDb()->insert('rememberme', [
+                    'username' => $user->getUsername(),
+                    'private_key' => $rsa->getPrivateKey(),
+                    'public_key' => $rsa->getPublicKey(),
+                    'ctime' => date("Y-m-d H:i:s"),
+                    'mtime' => date("Y-m-d H:i:s")
+                ]);
 
                 $this->getResponse()->setCookie(
                     (new RememberMeCookie())->setValue(implode('|', $data))
