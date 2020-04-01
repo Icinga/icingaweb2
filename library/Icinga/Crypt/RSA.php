@@ -160,6 +160,10 @@ class RSA
      *
      * See {@link loadKey()} for providing the public key.
      *
+     * Please note that this method expects string type arguments. Thus, all arguments are
+     * stringified upon encryption which may lead to unexpected results when decrypting.
+     * Use {@link json_encode()} if you have to encrypt other scalar types than string.
+     *
      * @param string ...$data
      *
      * @return array
