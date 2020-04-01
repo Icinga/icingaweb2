@@ -69,8 +69,8 @@ class LoginForm extends Form
             'checkbox',
             'rememberme',
             [
-                'required'  => false,
-                'label'     => $this->translate('Remember me'),
+                'required' => false,
+                'label' => $this->translate('Remember me'),
             ]
         );
         $this->addElement(
