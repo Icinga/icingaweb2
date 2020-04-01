@@ -102,6 +102,7 @@ class AuthenticationController extends Controller
     public function logoutAction()
     {
         $auth = $this->Auth();
+        $username = $auth->getUser()->getUsername();
         if (! $auth->isAuthenticated()) {
             $this->redirectToLogin();
         }
@@ -118,10 +119,10 @@ class AuthenticationController extends Controller
             if (isset($_COOKIE['remember-me'])) {
                 unset($_COOKIE['remember-me']);
                 $this->getResponse()->setCookie(
-                    (new RememberMeCookie(time() - 3600))->setValue('')
+                    (new RememberMeCookie())->forgetMe()
                 );
             }
-            $this->getDb()->delete('rememberme', ['username = ?' => $auth->getUser()->getUsername()]);
+            $this->getDb()->delete('rememberme', ['username = ?' => $username]);
             $this->redirectToLogin();
         }
     }
