@@ -21,7 +21,7 @@ use ipl\Sql\Select;
  */
 class AuthenticationController extends Controller
 {
-    use database;
+    use Database;
     /**
      * {@inheritdoc}
      */
@@ -51,9 +51,9 @@ class AuthenticationController extends Controller
                 ->columns('*')
                 ->where(['public_key = ?' => $publicKey]);
 
-            $DBData = $this->getDb()->select($select)->fetch();
+            $dbData = $this->getDb()->select($select)->fetch();
             $newData = array();
-            foreach ($DBData as $key => $value) {
+            foreach ($dbData as $key => $value) {
                 $newData[$key] = $value;
             }
 
