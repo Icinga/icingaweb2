@@ -52,7 +52,7 @@ class AuthenticationController extends Controller
                 ->where(['public_key = ?' => $publicKey]);
 
             $dbData = $this->getDb()->select($select)->fetch();
-            $newData = array();
+            $newData = [];
             foreach ($dbData as $key => $value) {
                 $newData[$key] = $value;
             }
