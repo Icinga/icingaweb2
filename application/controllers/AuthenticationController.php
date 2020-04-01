@@ -102,14 +102,6 @@ class AuthenticationController extends Controller
     public function logoutAction()
     {
         $auth = $this->Auth();
-        if (isset($_COOKIE['remember-me'])) {
-            unset($_COOKIE['remember-me']);
-            $this->getResponse()->setCookie(
-                (new RememberMeCookie(time() - 3600))->setValue('')
-            );
-        }
-        $this->getDb()->delete('rememberme', ['username = ?' => $auth->getUser()->getUsername()]);
-
         if (! $auth->isAuthenticated()) {
             $this->redirectToLogin();
         }
@@ -123,6 +115,13 @@ class AuthenticationController extends Controller
             $this->view->layout()->setLayout('external-logout');
             $this->getResponse()->setHttpResponseCode(401);
         } else {
+            if (isset($_COOKIE['remember-me'])) {
+                unset($_COOKIE['remember-me']);
+                $this->getResponse()->setCookie(
+                    (new RememberMeCookie(time() - 3600))->setValue('')
+                );
+            }
+            $this->getDb()->delete('rememberme', ['username = ?' => $auth->getUser()->getUsername()]);
             $this->redirectToLogin();
         }
     }
