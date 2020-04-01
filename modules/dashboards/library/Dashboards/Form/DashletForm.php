@@ -2,28 +2,28 @@
 
 namespace Icinga\Module\Dashboards\Form;
 
+use Exception;
+use Icinga\Module\Dashboards\Model\Database;
 use ipl\Html\Html;
 use ipl\Web\Compat\CompatForm;
 
-class NewDashletsForm extends CompatForm
+class DashletForm extends CompatForm
 {
+    use Database;
+    private $data;
+
     public function newAction()
     {
-        $this->add(Html::tag('h1', ['class' => 'hint'], 'Add Dashlet To Dashboard'));
         $this->setAction('dashboards/dashlets/new');
 
-        $this->add(Html::tag('br'));
-
-        $this->addElement('textarea', 'dashlet_url', [
+        $this->addElement('textarea', 'url', [
             'label' => 'Url',
             'placeholder' => 'Enter Dashlet Url',
             'required' => true,
             'rows' => '3'
         ]);
 
-        $this->add(Html::tag('br'));
-
-        $this->addElement('text', 'dashlet_name', [
+        $this->addElement('text', 'name', [
             'label' => 'Dashlet Name',
             'placeholder' => 'Enter Dashlet Name',
             'required' => true
@@ -31,15 +31,13 @@ class NewDashletsForm extends CompatForm
 
         $this->add(Html::tag('hr'));
 
-        $this->addElement('select', 'select_dashboard', [
+        $this->addElement('select', 'dashboard', [
             'label' => 'Dashboard',
             'options' => [
                 '1' => 'Current Incidents',
                 '2' => 'Muted'
             ]
         ]);
-
-        $this->add(Html::tag('br'));
 
         $this->addElement('submit', 'submit', [
             'label' => 'Add To Dashboard'
@@ -49,5 +47,20 @@ class NewDashletsForm extends CompatForm
     protected function assemble()
     {
         $this->add($this->newAction());
+    }
+
+    public function onSuccess()
+    {
+        try {
+            $this->data = [
+                'dashboard_id' => $this->getValue('dashboard'),
+                'name'  => $this->getValue('name'),
+                'url'   => $this->getValue('url'),
+            ];
+
+            $this->getDb()->insert('dashlet', $this->data);
+        } catch (Exception $error) {
+            throw $error;
+        }
     }
 }
