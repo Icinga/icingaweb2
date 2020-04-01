@@ -69,6 +69,13 @@ class Cookie
     protected $value;
 
     /**
+     * Object of the given class
+     *
+     * @var object
+     */
+    protected $object;
+
+    /**
      * Create a new cookie
      *
      * @param   string  $name
@@ -261,5 +268,14 @@ class Cookie
     {
         $this->value = $value;
         return $this;
+    }
+
+    public function forgetMe()
+    {
+        $this->object = $this;
+        $this->object->setValue(null);
+        $this->object->setExpire(0);
+
+        return $this->object;
     }
 }
