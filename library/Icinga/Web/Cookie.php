@@ -69,13 +69,6 @@ class Cookie
     protected $value;
 
     /**
-     * Object of the given class
-     *
-     * @var object
-     */
-    protected $object;
-
-    /**
      * Create a new cookie
      *
      * @param   string  $name
@@ -270,12 +263,24 @@ class Cookie
         return $this;
     }
 
+    /**
+     * Remove the given cookie
+     *
+     * This method set the value of the given cookie to null and
+     * expire time to 0, so that Cookie removes itself immediately
+     *
+     * # Example Usage
+     *
+     * ```php
+     * (new Cookie(cookieName))->forgetMe();
+     * ```
+     *
+     * @return static
+     */
     public function forgetMe()
     {
-        $this->object = $this;
-        $this->object->setValue(null);
-        $this->object->setExpire(0);
-
-        return $this->object;
+        return (clone $this)
+            ->setValue(null)
+            ->setExpire(1);
     }
 }
