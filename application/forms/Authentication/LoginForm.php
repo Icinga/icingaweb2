@@ -123,8 +123,8 @@ class LoginForm extends Form
                     'username' => $user->getUsername(),
                     'private_key' => $rsa->getPrivateKey(),
                     'public_key' => $rsa->getPublicKey(),
-                    'ctime' => date("Y-m-d H:i:s"),
-                    'mtime' => date("Y-m-d H:i:s")
+                    'ctime' => date('Y-m-d H:i:s'),
+                    'mtime' => date('Y-m-d H:i:s')
                 ]);
 
                 $this->getResponse()->setCookie(
