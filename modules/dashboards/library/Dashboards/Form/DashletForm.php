@@ -2,15 +2,31 @@
 
 namespace Icinga\Module\Dashboards\Form;
 
-use Exception;
 use Icinga\Module\Dashboards\Model\Database;
 use ipl\Html\Html;
+use ipl\Sql\Select;
 use ipl\Web\Compat\CompatForm;
 
 class DashletForm extends CompatForm
 {
     use Database;
     private $data;
+
+    public function fetchDashboards()
+    {
+        $dashboard = [];
+
+        $this->data = (new Select())
+            ->columns('*')
+            ->from('dashboard');
+
+        $dashboards = $this->getDb()->select($this->data);
+        foreach ($dashboards as $name) {
+            $dashboard[] = [$name['id'] => $name['name']];
+        }
+
+        return $dashboard;
+    }
 
     public function newAction()
     {
@@ -33,10 +49,8 @@ class DashletForm extends CompatForm
 
         $this->addElement('select', 'dashboard', [
             'label' => 'Dashboard',
-            'options' => [
-                '1' => 'Current Incidents',
-                '2' => 'Muted'
-            ]
+            'required'  => true,
+            'options' => $this->fetchDashboards()
         ]);
 
         $this->addElement('submit', 'submit', [
@@ -51,16 +65,12 @@ class DashletForm extends CompatForm
 
     public function onSuccess()
     {
-        try {
-            $this->data = [
-                'dashboard_id' => $this->getValue('dashboard'),
-                'name'  => $this->getValue('name'),
-                'url'   => $this->getValue('url'),
-            ];
+        $this->data = [
+            'dashboard_id' => $this->getValue('dashboard'),
+            'name'  => $this->getValue('name'),
+            'url'   => $this->getValue('url'),
+        ];
 
-            $this->getDb()->insert('dashlet', $this->data);
-        } catch (Exception $error) {
-            throw $error;
-        }
+        $this->getDb()->insert('dashlet', $this->data);
     }
 }
