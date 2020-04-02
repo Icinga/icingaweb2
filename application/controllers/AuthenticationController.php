@@ -6,6 +6,7 @@ namespace Icinga\Controllers;
 use Icinga\Application\Config;
 use Icinga\Application\Hook\AuthenticationHook;
 use Icinga\Application\Icinga;
+use Icinga\Authentication\Auth;
 use Icinga\Crypt\RSA;
 use Icinga\Forms\Authentication\LoginForm;
 use Icinga\Rememberme\Common\Database;
@@ -101,16 +102,16 @@ class AuthenticationController extends Controller
      */
     public function logoutAction()
     {
-        $auth = $this->Auth();
-        $username = $auth->getUser()->getUsername();
+        $auth = Auth::getInstance();
+        $user = $auth->getUser();
         if (! $auth->isAuthenticated()) {
             $this->redirectToLogin();
         }
         // Get info whether the user is externally authenticated before removing authorization which destroys the
         // session and the user object
-        $isExternalUser = $auth->getUser()->isExternalUser();
+        $isExternalUser = $user->isExternalUser();
         // Call provided AuthenticationHook(s) when logout action is called
-        AuthenticationHook::triggerLogout($auth->getUser());
+        AuthenticationHook::triggerLogout($user);
         $auth->removeAuthorization();
         if ($isExternalUser) {
             $this->view->layout()->setLayout('external-logout');
@@ -122,7 +123,7 @@ class AuthenticationController extends Controller
                     (new RememberMeCookie())->forgetMe()
                 );
             }
-            $this->getDb()->delete('rememberme', ['username = ?' => $username]);
+            $this->getDb()->delete('rememberme', ['username = ?' => $user->getUsername()]);
             $this->redirectToLogin();
         }
     }
