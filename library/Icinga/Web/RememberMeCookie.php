@@ -4,7 +4,7 @@
 namespace Icinga\Web;
 
 /**
- * This class sets the given value of the cookie for 30 days
+ * Cookie for the "remember me" feature upon login with a default expiration time of 30 days
  *
  */
 class RememberMeCookie extends Cookie
