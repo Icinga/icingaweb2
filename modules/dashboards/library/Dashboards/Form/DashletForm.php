@@ -2,7 +2,7 @@
 
 namespace Icinga\Module\Dashboards\Form;
 
-use Icinga\Module\Dashboards\Model\Database;
+use Icinga\Module\Dashboards\Common\Database;
 use ipl\Sql\Select;
 use ipl\Web\Compat\CompatForm;
 
@@ -27,26 +27,18 @@ class DashletForm extends CompatForm
         return $dashboards;
     }
 
-    public function fetchNewDashboardId()
+    public function createDashboard(string $name) : int
     {
-        $dashboardIds = [];
+        $data = [
+            'name'  => $name
+        ];
 
-        $data = ['name' => $this->getValue('new_dashboard')];
+        $newDashboard = $this->getDb();
+        $newDashboard->insert('dashboard', $data);
 
-        $this->getDb()->insert('dashboard', $data);
+        $id = $newDashboard->lastInsertId();
 
-        $newDashboard = (new Select())
-            ->columns('id')
-            ->from('dashboard')
-            ->orderBy('id DESC')
-            ->limit('1');
-
-        $selectID = $this->getDb()->select($newDashboard);
-        foreach ($selectID as $id) {
-            $dashboardIds[$id->id] = $id->id;
-        }
-
-        return $dashboardIds;
+        return $id;
     }
 
 
@@ -90,9 +82,9 @@ class DashletForm extends CompatForm
 
     public function onSuccess()
     {
-        if ($this->getValue('new_dashboard') != null) {
+        if ($this->getValue('new_dashboard') !== null) {
             $values = [
-                'dashboard_id'  => implode($this->fetchNewDashboardId()),
+                'dashboard_id'  => $this->createDashboard($this->getValue('new_dashboard')),
                 'name'          => $this->getValue('name'),
                 'url'           => $this->getValue('url')
             ];
