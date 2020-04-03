@@ -26,8 +26,8 @@ class DashletWidget extends BaseHtmlElement
             try {
                 $this->add(Html::tag('div', [
                     'class' => 'container dashlet-sortable icinga-module module-monitoring',
-                    'data-icinga-url' => Url::fromPath($dashlet['url'])->addParams(['view' => 'compact'])
-                    ])->prepend($this->title($dashlet['name']))
+                    'data-icinga-url' => Url::fromPath($dashlet->url)->addParams(['view' => 'compact'])
+                    ])->prepend($this->title($dashlet->name))
                 );
             } catch (Exception $e) {
                 throw new Exception("Can't access to dashlet table" . $e->getMessage());
