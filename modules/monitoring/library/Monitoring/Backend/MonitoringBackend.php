@@ -222,7 +222,11 @@ class MonitoringBackend implements Selectable, Queryable, ConnectionInterface
     public function getResource()
     {
         if ($this->resource === null) {
-            $this->resource = ResourceFactory::create($this->config->get('resource'));
+            $config = ResourceFactory::getResourceConfig($this->config->get('resource'));
+            if ($this->is('ido') && $config->type === 'db' && $config->db === 'mysql' && $config->charset === null) {
+                $config->charset = 'latin1';
+            }
+            $this->resource = ResourceFactory::createResource($config);
             if ($this->is('ido') && $this->resource->getDbType() !== 'oracle') {
                 // TODO(el): The resource should set the table prefix
                 $this->resource->setTablePrefix('icinga_');
