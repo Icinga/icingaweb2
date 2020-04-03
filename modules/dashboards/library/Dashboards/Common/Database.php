@@ -1,6 +1,6 @@
 <?php
 
-namespace Icinga\Module\Dashboards\Model;
+namespace Icinga\Module\Dashboards\Common;
 
 use ipl\Sql\Config;
 use ipl\Sql\Connection;
