@@ -6,6 +6,7 @@ namespace Icinga\Controllers;
 use Icinga\Application\Hook\AuthenticationHook;
 use Icinga\Application\Icinga;
 use Icinga\Authentication\Auth;
+use Icinga\Crypt\RSA;
 use Icinga\Forms\Authentication\LoginForm;
 use Icinga\Rememberme\Common\Database;
 use Icinga\Web\Controller;
@@ -85,11 +86,11 @@ class AuthenticationController extends Controller
      */
     public function logoutAction()
     {
-        $auth = Auth::getInstance();
-        $user = $auth->getUser();
+        $auth = $this->Auth();
         if (! $auth->isAuthenticated()) {
             $this->redirectToLogin();
         }
+        $user = $auth->getUser();
         // Get info whether the user is externally authenticated before removing authorization which destroys the
         // session and the user object
         $isExternalUser = $user->isExternalUser();
