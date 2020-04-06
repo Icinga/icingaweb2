@@ -10,7 +10,6 @@ use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
 use Icinga\Authentication\User\ExternalBackend;
 use Icinga\Authentication\UserGroup\UserGroupBackend;
-use Icinga\Crypt\RSA;
 use Icinga\Data\ConfigObject;
 use Icinga\Exception\IcingaException;
 use Icinga\Exception\NotReadableError;
@@ -18,6 +17,7 @@ use Icinga\Rememberme\Common\Database;
 use Icinga\User;
 use Icinga\User\Preferences;
 use Icinga\User\Preferences\PreferencesStore;
+use Icinga\Web\RememberMe;
 use Icinga\Web\Session;
 use Icinga\Web\StyleSheet;
 use ipl\Sql\Select;
@@ -458,42 +458,14 @@ class Auth
     /**
      * Read the 'remember-me' cookie and authenticate
      *
-     * This function read the database entry from rememberme table for the given user,
-     * get the private key to decrypt the remember-me cookie and authenticate
-     *
      * @return bool     True if user authentication is succeed, false if not
      */
     public function authenticateFromRememberMeCookie()
     {
-        $data = explode('|', $_COOKIE['remember-me']);
-        $publicKey = base64_decode(array_pop($data));
-
-        $select = (new Select())
-            ->from('rememberme')
-            ->columns('*')
-            ->where(['public_key = ?' => $publicKey]);
-
-        $dbData = $this->getDb()->select($select)->fetch();
-        $newData = [];
-        foreach ($dbData as $key => $value) {
-            $newData[$key] = $value;
+        $rememberMe = RememberMe::fromCookie();
+        if ($rememberMe->authenticate()) {
+            //TODO renew cookie
         }
-
-        $rsa = new RSA();
-        $rsa->loadKey($newData['private_key'], $publicKey);
-        list($username, $password) = $rsa->decryptFromBase64(...$data);
-
-        $authChain = $this->getAuthChain();
-        $authChain->setSkipExternalBackends(true);
-        $user = new User($username);
-        if (! $user->hasDomain()) {
-            $user->setDomain(Config::app()->get('authentication', 'default_domain'));
-        }
-        $authenticated = $authChain->authenticate($user, $password);
-        if ($authenticated) {
-            $this->setAuthenticated($user);
-        }
-
-        return $authenticated;
+        return $rememberMe->authenticate();
     }
 }
