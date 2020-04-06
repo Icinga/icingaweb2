@@ -27,16 +27,16 @@ class DashletForm extends CompatForm
         return $dashboards;
     }
 
-    public function createDashboard(string $name) : int
+    public function createDashboard(string $name)
     {
         $data = [
             'name'  => $name
         ];
 
-        $newDashboard = $this->getDb();
-        $newDashboard->insert('dashboard', $data);
+        $db = $this->getDb();
+        $db->insert('dashboard', $data);
 
-        $id = $newDashboard->lastInsertId();
+        $id = $db->lastInsertId();
 
         return $id;
     }
@@ -64,6 +64,12 @@ class DashletForm extends CompatForm
             'placeholder'   => 'New Dashboard Name '
         ]);
 
+        $this->addElement('checkbox', 'new-dashboard', [
+            'label'     => 'Dashboard',
+            'autosubmit'    => true,
+            'value'     => 'new-dashboard'
+        ]);
+
         $this->addElement('select', 'dashboard', [
             'label' => 'Dashboard',
             'required'  => true,
@@ -82,7 +88,8 @@ class DashletForm extends CompatForm
 
     public function onSuccess()
     {
-        if ($this->getValue('new_dashboard') !== null) {
+        if ($this->getElement('new-dashboard')->getValue() === 'new-dashboard' &&
+            $this->getValue('new_dashboard') !== null) {
             $values = [
                 'dashboard_id'  => $this->createDashboard($this->getValue('new_dashboard')),
                 'name'          => $this->getValue('name'),
