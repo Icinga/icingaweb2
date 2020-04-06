@@ -59,22 +59,24 @@ class DashletForm extends CompatForm
             'required' => true
         ]);
 
-        $this->addElement('text', 'new_dashboard', [
-            'label'     => 'New Dashboard',
-            'placeholder'   => 'New Dashboard Name '
-        ]);
-
         $this->addElement('checkbox', 'new-dashboard', [
             'label'     => 'Dashboard',
             'autosubmit'    => true,
             'value'     => 'new-dashboard'
         ]);
 
-        $this->addElement('select', 'dashboard', [
-            'label' => 'Dashboard',
-            'required'  => true,
-            'options' => $this->fetchDashboards()
-        ]);
+        if ($this->getElement('new-dashboard') === 'new-dashboard') {
+            $this->addElement('text', 'new_dashboard', [
+                'label'     => 'New Dashboard',
+                'placeholder'   => 'New Dashboard Name '
+            ]);
+        } else {
+            $this->addElement('select', 'dashboard', [
+                'label' => 'Dashboard',
+                'required'  => true,
+                'options' => $this->fetchDashboards()
+            ]);
+        }
 
         $this->addElement('submit', 'submit', [
             'label' => 'Add To Dashboard'
@@ -88,8 +90,7 @@ class DashletForm extends CompatForm
 
     public function onSuccess()
     {
-        if ($this->getElement('new-dashboard')->getValue() === 'new-dashboard' &&
-            $this->getValue('new_dashboard') !== null) {
+        if (! empty($_POST['new-dashboard']) && $this->getValue('new_dashboard') !== null) {
             $values = [
                 'dashboard_id'  => $this->createDashboard($this->getValue('new_dashboard')),
                 'name'          => $this->getValue('name'),
