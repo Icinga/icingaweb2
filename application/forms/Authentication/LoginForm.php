@@ -7,11 +7,10 @@ use Icinga\Application\Config;
 use Icinga\Application\Hook\AuthenticationHook;
 use Icinga\Authentication\Auth;
 use Icinga\Authentication\User\ExternalBackend;
-use Icinga\Crypt\RSA;
 use Icinga\Rememberme\Common\Database;
 use Icinga\User;
 use Icinga\Web\Form;
-use Icinga\Web\RememberMeCookie;
+use Icinga\Web\RememberMe;
 use Icinga\Web\Url;
 
 /**
@@ -114,22 +113,12 @@ class LoginForm extends Form
         if ($authenticated) {
             $auth->setAuthenticated($user);
             if ($this->getElement('rememberme')->isChecked()) {
-                $rsa = new RSA();
-                $rsa->loadKey(...RSA::keygen());
-                $data = $rsa->encryptToBase64($user->getUsername(), $password);
-                $data[] = base64_encode($rsa->getPublicKey());
+                    $rememberMe = RememberMe::fromCredentials($user->getUsername(), $password);
 
-                $this->getDb()->insert('rememberme', [
-                    'username' => $user->getUsername(),
-                    'private_key' => $rsa->getPrivateKey(),
-                    'public_key' => $rsa->getPublicKey(),
-                    'ctime' => date('Y-m-d H:i:s'),
-                    'mtime' => date('Y-m-d H:i:s')
-                ]);
-
-                $this->getResponse()->setCookie(
-                    (new RememberMeCookie())->setValue(implode('|', $data))
-                );
+                    $this->getResponse()->setCookie(
+                        ($rememberMe->getCookie())
+                    );
+                    $rememberMe->persist();
             }
             // Call provided AuthenticationHook(s) after successful login
             AuthenticationHook::triggerLogin($user);
