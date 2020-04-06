@@ -3,6 +3,7 @@
 namespace Icinga\Module\Dashboards\Form;
 
 use Icinga\Module\Dashboards\Common\Database;
+use Icinga\Web\Notification;
 use ipl\Sql\Select;
 use ipl\Web\Compat\CompatForm;
 
@@ -27,10 +28,10 @@ class DashletForm extends CompatForm
         return $dashboards;
     }
 
-    public function createDashboard(string $name)
+    public function createDashboard($name)
     {
         $data = [
-            'name'  => $name
+            'name' => $name
         ];
 
         $db = $this->getDb();
@@ -60,20 +61,20 @@ class DashletForm extends CompatForm
         ]);
 
         $this->addElement('checkbox', 'new-dashboard', [
-            'label'     => 'Dashboard',
-            'autosubmit'    => true,
-            'value'     => 'new-dashboard'
+            'label' => 'Dashboard',
+            'class' => 'autosubmit',
+            'value' => 'new-dashboard'
         ]);
 
-        if ($this->getElement('new-dashboard') === 'new-dashboard') {
+        if ($this->getElement('new-dashboard')->getValue() === 'new-dashboard') {
             $this->addElement('text', 'new_dashboard', [
-                'label'     => 'New Dashboard',
-                'placeholder'   => 'New Dashboard Name '
+                'label' => 'New Dashboard',
+                'placeholder' => 'New Dashboard Name '
             ]);
         } else {
             $this->addElement('select', 'dashboard', [
                 'label' => 'Dashboard',
-                'required'  => true,
+                'required' => true,
                 'options' => $this->fetchDashboards()
             ]);
         }
@@ -90,22 +91,29 @@ class DashletForm extends CompatForm
 
     public function onSuccess()
     {
-        if (! empty($_POST['new-dashboard']) && $this->getValue('new_dashboard') !== null) {
-            $values = [
-                'dashboard_id'  => $this->createDashboard($this->getValue('new_dashboard')),
-                'name'          => $this->getValue('name'),
-                'url'           => $this->getValue('url')
-            ];
+        if ($this->getValue('new-dashboard') !== null) {
+            if ($this->getValue('new_dashboard') !== null) {
+                $values = [
+                    'dashboard_id' => $this->createDashboard($this->getValue('new_dashboard')),
+                    'name' => $this->getValue('name'),
+                    'url' => $this->getValue('url')
+                ];
 
-            $this->getDb()->insert('dashlet', $values);
+                $this->getDb()->insert('dashlet', $values);
+                Notification::success('Dashlet created');
+            } else {
+                Notification::error('Dashboard Name failed!');
+            }
+
         } else {
             $data = [
                 'dashboard_id' => $this->getValue('dashboard'),
-                'name'  => $this->getValue('name'),
-                'url'   => $this->getValue('url'),
+                'name' => $this->getValue('name'),
+                'url' => $this->getValue('url'),
             ];
 
             $this->getDb()->insert('dashlet', $data);
+            Notification::success('Dashlet created');
         }
     }
 }
