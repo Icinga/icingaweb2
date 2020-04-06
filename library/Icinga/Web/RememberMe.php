@@ -96,7 +96,11 @@ use Database;
         $rememberMe->encryptedUsername =  $rsa->encryptToBase64($username);
         $rememberMe->username = $username;
         $rememberMe->rsa = $rsa;
-        $rememberMe->value = [$rememberMe->encryptedUsername[0], $rememberMe->encryptedPassword[0], base64_encode($rsa->getPublicKey())];
+        $rememberMe->value = [
+                $rememberMe->encryptedUsername[0],
+                $rememberMe->encryptedPassword[0],
+                base64_encode($rsa->getPublicKey())
+            ];
 
         return $rememberMe;
     }
@@ -122,7 +126,10 @@ use Database;
      */
     public function authenticate()
     {
-        list($username, $password) = $this->rsa->decryptFromBase64($this->encryptedUsername, $this->encryptedPassword);
+        list($username, $password) = $this->rsa->decryptFromBase64(
+            $this->encryptedUsername,
+            $this->encryptedPassword
+        );
 
         $auth = Auth::getInstance();
         $authChain = $auth->getAuthChain();
