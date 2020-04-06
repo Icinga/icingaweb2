@@ -114,10 +114,10 @@ class LoginForm extends Form
             $auth->setAuthenticated($user);
             if ($this->getElement('rememberme')->isChecked()) {
                     $rememberMe = RememberMe::fromCredentials($user->getUsername(), $password);
-
                     $this->getResponse()->setCookie(
                         ($rememberMe->getCookie())
                     );
+
                     $rememberMe->persist();
             }
             // Call provided AuthenticationHook(s) after successful login
