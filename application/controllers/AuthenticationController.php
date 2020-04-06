@@ -41,7 +41,7 @@ class AuthenticationController extends Controller
         }
         $form = new LoginForm();
         if (isset($_COOKIE['remember-me'])) {
-            if ($this->Auth()->authenticateFromRememberMeCookie()) {
+            if (RememberMe::fromCookie()->authenticate()) {
                 // Call provided AuthenticationHook(s) when login action is called
                 // but icinga web user is already authenticated
                 AuthenticationHook::triggerLogin($this->Auth()->getUser());
