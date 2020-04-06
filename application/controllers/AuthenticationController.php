@@ -5,13 +5,11 @@ namespace Icinga\Controllers;
 
 use Icinga\Application\Hook\AuthenticationHook;
 use Icinga\Application\Icinga;
-use Icinga\Authentication\Auth;
-use Icinga\Crypt\RSA;
 use Icinga\Forms\Authentication\LoginForm;
 use Icinga\Rememberme\Common\Database;
 use Icinga\Web\Controller;
 use Icinga\Web\Helper\CookieHelper;
-use Icinga\Web\RememberMeCookie;
+use Icinga\Web\RememberMe;
 use Icinga\Web\Url;
 
 /**
@@ -50,12 +48,11 @@ class AuthenticationController extends Controller
                 $this->redirectNow($this->params->get('redirect'));
             } else {
                 unset($_COOKIE['remember-me']);
+                $rememberMe = new RememberMe();
                 $this->getResponse()->setCookie(
-                    (new RememberMeCookie())->forgetMe()
+                    $rememberMe->getCookie()->forgetMe()
                 );
-                $this->getDb()->delete('rememberme', [
-                    'username = ?' => $this->Auth()->getUser()->getUsername()
-                ]);
+                $rememberMe->remove($this->Auth()->getUser()->getUsername());
             }
         } else {
             if ($this->Auth()->isAuthenticated()) {
@@ -101,13 +98,15 @@ class AuthenticationController extends Controller
             $this->view->layout()->setLayout('external-logout');
             $this->getResponse()->setHttpResponseCode(401);
         } else {
+            $rememberMe = new RememberMe();
             if (isset($_COOKIE['remember-me'])) {
                 unset($_COOKIE['remember-me']);
+
                 $this->getResponse()->setCookie(
-                    (new RememberMeCookie())->forgetMe()
+                    $rememberMe->getCookie()->forgetMe()
                 );
             }
-            $this->getDb()->delete('rememberme', ['username = ?' => $user->getUsername()]);
+            $rememberMe->remove($user->getUsername());
             $this->redirectToLogin();
         }
     }
