@@ -8,6 +8,7 @@ use Icinga\Authentication\Auth;
 use Icinga\Crypt\RSA;
 use Icinga\Rememberme\Common\Database;
 use Icinga\User;
+use ipl\Sql\Expression;
 use ipl\Sql\Select;
 use UnexpectedValueException;
 
@@ -163,8 +164,8 @@ class RememberMe
             'username' => $this->username,
             'private_key' => $this->rsa->getPrivateKey(),
             'public_key' => $this->rsa->getPublicKey(),
-            'ctime' => date('Y-m-d H:i:s'),
-            'mtime' => date('Y-m-d H:i:s')
+            'ctime' => new Expression('NOW()'),
+            'mtime' => new Expression('NOW()')
         ]);
     }
 
