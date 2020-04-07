@@ -69,7 +69,7 @@ class RememberMe
         }
 
         $rememberMe->rsa = (new RSA())->loadKey($newData['private_key'], $publicKey);
-        $rememberMe->username = $rememberMe->rsa->decryptFromBase64($data[0]);
+        $rememberMe->username = $rememberMe->rsa->decryptFromBase64($data[0])[0];
         $rememberMe->encryptedPassword = $data[1];
 
         return $rememberMe;
@@ -90,7 +90,7 @@ class RememberMe
 
         $rsa = (new RSA())->loadKey(...RSA::keygen());
 
-        $rememberMe->encryptedPassword = $rsa->encryptToBase64($password);
+        $rememberMe->encryptedPassword = $rsa->encryptToBase64($password)[0];
         $rememberMe->username = $username;
         $rememberMe->rsa = $rsa;
 
@@ -105,7 +105,7 @@ class RememberMe
     public function getCookie()
     {
         $value = $this->rsa->encryptToBase64($this->username);
-        $value[] = $this->encryptedPassword[0];
+        $value[] = $this->encryptedPassword;
         $value[] = base64_encode($this->rsa->getPublicKey());
 
         return (new Cookie(static::COOKIE))
@@ -143,7 +143,7 @@ class RememberMe
         $auth = Auth::getInstance();
         $authChain = $auth->getAuthChain();
         $authChain->setSkipExternalBackends(true);
-        $user = new User($this->username[0]);
+        $user = new User($this->username);
         if (! $user->hasDomain()) {
             $user->setDomain(Config::app()->get('authentication', 'default_domain'));
         }
