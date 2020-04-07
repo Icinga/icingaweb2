@@ -40,19 +40,17 @@ class AuthenticationController extends Controller
             $this->redirectNow(Url::fromPath('setup'));
         }
         $form = new LoginForm();
-        if (isset($_COOKIE['remember-me'])) {
+        if (RememberMe::hasCookie()) {
             if (RememberMe::fromCookie()->authenticate()) {
                 // Call provided AuthenticationHook(s) when login action is called
                 // but icinga web user is already authenticated
                 AuthenticationHook::triggerLogin($this->Auth()->getUser());
                 $this->redirectNow($this->params->get('redirect'));
             } else {
-                unset($_COOKIE['remember-me']);
-                $rememberMe = new RememberMe();
                 $this->getResponse()->setCookie(
-                    $rememberMe->getCookie()->forgetMe()
+                    RememberMe::unsetCookie()
                 );
-                $rememberMe->remove($this->Auth()->getUser()->getUsername());
+                (new RememberMe())->remove($this->Auth()->getUser()->getUsername());
             }
         } else {
             if ($this->Auth()->isAuthenticated()) {
@@ -98,15 +96,12 @@ class AuthenticationController extends Controller
             $this->view->layout()->setLayout('external-logout');
             $this->getResponse()->setHttpResponseCode(401);
         } else {
-            $rememberMe = new RememberMe();
-            if (isset($_COOKIE['remember-me'])) {
-                unset($_COOKIE['remember-me']);
-
+            if (RememberMe::hasCookie()) {
                 $this->getResponse()->setCookie(
-                    $rememberMe->getCookie()->forgetMe()
+                    RememberMe::unsetCookie()
                 );
             }
-            $rememberMe->remove($user->getUsername());
+            (new RememberMe())->remove($user->getUsername());
             $this->redirectToLogin();
         }
     }
