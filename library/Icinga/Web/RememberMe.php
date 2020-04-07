@@ -53,9 +53,6 @@ class RememberMe
      */
     public static function fromCookie()
     {
-        if (! static::hasCookie()) {
-            throw new UnexpectedValueException('remember-me cookie ist not set');
-        }
         $data = explode('|', $_COOKIE[static::COOKIE]);
         $publicKey = base64_decode(array_pop($data));
 
@@ -74,7 +71,7 @@ class RememberMe
         $rememberMe->rsa = (new RSA())->loadKey($newData['private_key'], $publicKey);
         $rememberMe->username = $rememberMe->rsa->decryptFromBase64($data[0]);
         $rememberMe->encryptedPassword = $data[1];
-        
+
         return $rememberMe;
     }
 
