@@ -267,7 +267,7 @@ class Cookie
      * Remove the given cookie
      *
      * This method set the value of the given cookie to null and
-     * expire time to 0, so that Cookie removes itself immediately
+     * expire time to 1, so that Cookie removes itself immediately
      *
      * # Example Usage
      *
