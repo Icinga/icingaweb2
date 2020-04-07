@@ -34,7 +34,7 @@ class RememberMe
      * @var object
      */
     protected $rsa;
-    
+
     /**
      * Check if cookie is set
      *
@@ -53,16 +53,16 @@ class RememberMe
      */
     public static function fromCookie()
     {
-        if (!isset($_COOKIE[static::COOKIE])) {
+        if (! static::hasCookie()) {
             throw new UnexpectedValueException('remember-me cookie ist not set');
         }
         $data = explode('|', $_COOKIE[static::COOKIE]);
         $publicKey = base64_decode(array_pop($data));
 
         $select = (new Select())
-        ->from('rememberme')
-        ->columns('*')
-        ->where(['public_key = ?' => $publicKey]);
+            ->from('rememberme')
+            ->columns('*')
+            ->where(['public_key = ?' => $publicKey]);
 
         $rememberMe = new static();
         $dbData = $rememberMe->getDb()->select($select)->fetch();
@@ -71,10 +71,10 @@ class RememberMe
             $newData[$key] = $value;
         }
 
-        $rememberMe->encryptedUsername = $data[0];
-        $rememberMe->encryptedPassword = $data[1];
         $rememberMe->rsa = (new RSA())->loadKey($newData['private_key'], $publicKey);
-
+        $rememberMe->username = $rememberMe->rsa->decryptFromBase64($data[0]);
+        $rememberMe->encryptedPassword = $data[1];
+        
         return $rememberMe;
     }
 
@@ -137,18 +137,16 @@ class RememberMe
      *
      * @return bool     True if authentication succeed, false if not
      *
+     * @throws \Icinga\Exception\AuthenticationException
      */
+
     public function authenticate()
     {
-        list($username, $password) = $this->rsa->decryptFromBase64(
-            $this->encryptedUsername,
-            $this->encryptedPassword
-        );
-        $this->password = $password;
+        list($password) = $this->rsa->decryptFromBase64($this->encryptedPassword);
         $auth = Auth::getInstance();
         $authChain = $auth->getAuthChain();
         $authChain->setSkipExternalBackends(true);
-        $user = new User($username);
+        $user = new User($this->username[0]);
         if (! $user->hasDomain()) {
             $user->setDomain(Config::app()->get('authentication', 'default_domain'));
         }
