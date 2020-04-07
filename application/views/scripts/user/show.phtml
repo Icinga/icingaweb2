@@ -25,6 +25,20 @@ use Icinga\Data\Selectable;
                 'title' => sprintf($this->translate('Edit user %s'), $user->user_name)
             )
         );
+        echo ' ';
+        // TODO: Needs to be refactored for a newer Dashboard implementation (#3809)
+        echo $this->qlink(
+            $this->translate('Reset dashboards'),
+            'user/resetdashboards',
+            array(
+                'backend'   => $backend->getName(),
+                'user'      => $user->user_name
+            ),
+            array(
+                'class' => 'button-link',
+                'icon'  => 'rewind',
+            )
+        );
     }
     ?>
     <table class="name-value-table">
