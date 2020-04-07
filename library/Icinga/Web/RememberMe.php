@@ -9,10 +9,11 @@ use Icinga\Crypt\RSA;
 use Icinga\Rememberme\Common\Database;
 use Icinga\User;
 use ipl\Sql\Select;
+use UnexpectedValueException;
 
 class RememberMe
 {
-use Database;
+    use Database;
 
     /**
      * Constant cookie
@@ -27,22 +28,23 @@ use Database;
     /**
      * @var string
      */
-    protected $encryptedUsername;
-
-    /**
-     * @var string
-     */
     protected $username;
 
     /**
      * @var object
      */
     protected $rsa;
-
+    
     /**
-     * @var array
+     * Check if cookie is set
+     *
+     * @return bool
+     *
      */
-    protected $value = [];
+    public static function hasCookie()
+    {
+        return isset($_COOKIE[static::COOKIE]);
+    }
 
     /**
      * Get cookie values
@@ -51,11 +53,8 @@ use Database;
      */
     public static function fromCookie()
     {
-        if (! isset($_COOKIE[static::COOKIE])) {
-
-            // Do we need throw ?
-            //throw new UnexpectedValueException('');
-            return;
+        if (!isset($_COOKIE[static::COOKIE])) {
+            throw new UnexpectedValueException('remember-me cookie ist not set');
         }
         $data = explode('|', $_COOKIE[static::COOKIE]);
         $publicKey = base64_decode(array_pop($data));
@@ -84,23 +83,19 @@ use Database;
      *
      * @param $username
      * @param $password
+     *
      * @return static
      */
     public static function fromCredentials($username, $password)
     {
+
         $rememberMe = new static();
 
         $rsa = (new RSA())->loadKey(...RSA::keygen());
 
         $rememberMe->encryptedPassword = $rsa->encryptToBase64($password);
-        $rememberMe->encryptedUsername =  $rsa->encryptToBase64($username);
         $rememberMe->username = $username;
         $rememberMe->rsa = $rsa;
-        $rememberMe->value = [
-                $rememberMe->encryptedUsername[0],
-                $rememberMe->encryptedPassword[0],
-                base64_encode($rsa->getPublicKey())
-            ];
 
         return $rememberMe;
     }
@@ -112,10 +107,29 @@ use Database;
      */
     public function getCookie()
     {
+        $value = $this->rsa->encryptToBase64($this->username);
+        $value[] = $this->encryptedPassword[0];
+        $value[] = base64_encode($this->rsa->getPublicKey());
+
         return (new Cookie(static::COOKIE))
             ->setExpire(time() + 60 * 60 * 24 * 30)
             ->setHttpOnly(true)
-            ->setValue(implode('|',$this->value));
+            ->setValue(implode('|', $value));
+    }
+
+    /**
+     * Unset the values for 'remember-me' cookie
+     *
+     * @return Cookie
+     */
+    public static function unsetCookie()
+    {
+        unset($_COOKIE[static::COOKIE]);
+
+        return (new Cookie(static::COOKIE))
+            ->setExpire(1)
+            ->setHttpOnly(true)
+            ->setValue(null);
     }
 
     /**
@@ -130,7 +144,7 @@ use Database;
             $this->encryptedUsername,
             $this->encryptedPassword
         );
-
+        $this->password = $password;
         $auth = Auth::getInstance();
         $authChain = $auth->getAuthChain();
         $authChain->setSkipExternalBackends(true);
