@@ -123,9 +123,7 @@ class RememberMe
         unset($_COOKIE[static::COOKIE]);
 
         return (new Cookie(static::COOKIE))
-            ->setExpire(1)
-            ->setHttpOnly(true)
-            ->setValue(null);
+            ->forgetMe();
     }
 
     /**
