@@ -9,6 +9,7 @@ use Icinga\Exception\NotReadableError;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Legacy\DashboardConfig;
 use Icinga\User;
+use Icinga\Util\File;
 use Icinga\Web\Navigation\DashboardPane;
 use Icinga\Web\Navigation\Navigation;
 use Icinga\Web\Url;
@@ -200,6 +201,27 @@ class Dashboard extends AbstractWidget
         $this->mergePanes($panes);
 
         return true;
+    }
+
+    /**
+     * Clears and resets any custom configuration for the set user
+     *
+     * @throws ProgrammingError
+     * @throws \Icinga\Exception\NotWritableError
+     */
+    public function resetUserDashboards()
+    {
+        if ($this->user === null) {
+            throw new ProgrammingError('Can\'t reset dashboards. User is not set');
+        }
+
+        $file = $this->getConfigFile();
+
+        if (file_exists($file)) {
+            unlink($file);
+            // recreate the file to it is visibly empty
+            File::create($file, 0660);
+        }
     }
 
     /**
