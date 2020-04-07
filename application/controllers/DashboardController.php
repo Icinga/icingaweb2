@@ -336,6 +336,38 @@ class DashboardController extends ActionController
         $this->view->dashboard = $this->dashboard;
     }
 
+    public function resetAction()
+    {
+        $this->createTabs();
+
+        $this->getTabs()->add('reset', array(
+            'active'    => true,
+            'label'     => $this->translate('Reset Dashboards'),
+            'url'       => Url::fromRequest()
+        ));
+
+        $dashboard = $this->dashboard;
+
+        $this->view->title = t('Reset all dashboards settings');
+        $this->view->description = t('Do you want to remove all custom dashboard configuration?');
+
+        $this->view->form = $form = new ConfirmRemovalForm();
+        $form->setSubmitLabel(t('Reset dashboards'));
+        $form->setRedirectUrl('dashboard/settings');
+        $form->setOnSuccess(function (ConfirmRemovalForm $form) use ($dashboard) {
+            try {
+                $dashboard->resetUserDashboards();
+            } catch (Exception $e) {
+                $form->error($e->getMessage());
+                return false;
+            }
+
+            Notification::success(t('User dashboard config has been reset!'));
+            return true;
+        });
+        $form->handleRequest();
+    }
+
     /**
      * Create tab aggregation
      */

@@ -4,6 +4,28 @@
 <div class="content">
     <h1><?= t('Dashboard Settings'); ?></h1>
 
+    <p>
+        <?= $this->qlink(
+            t('Add Dashlet'),
+            'dashboard/new-dashlet',
+            [],
+            array(
+                'class' => 'button-link',
+                'icon'  => 'plus',
+            )
+        ); ?>
+        <?= $this->qlink(
+            t('Reset dashboards'),
+            'dashboard/reset',
+            [],
+            array(
+                'class' => 'button-link',
+                'icon'  => 'rewind',
+                'title' => t('Reset all dashboards settings'),
+            )
+        ); ?>
+    </p>
+
     <table class="avp action" data-base-target="_next">
         <thead>
             <tr>
