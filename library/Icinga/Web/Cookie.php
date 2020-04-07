@@ -279,7 +279,8 @@ class Cookie
      */
     public function forgetMe()
     {
-        return (clone $this)
+        $forgetMe = clone $this;
+        return $forgetMe
             ->setValue(null)
             ->setExpire(1);
     }
