@@ -26,6 +26,12 @@
         ); ?>
     </p>
 
+    <?php if ($this->errors !== null): ?>
+    <p class="error-message"><?= t('There was an error while parsing the dashboard config') ?></p>
+    <hr>
+    <pre><?= join('<br/>', array_map($this->escape, $this->errors)) ?></pre>
+    <?php else: ?>
+
     <table class="avp action" data-base-target="_next">
         <thead>
             <tr>
@@ -110,4 +116,7 @@
             <?php endforeach; ?>
         </tbody>
     </table>
+
+    <?php endif; ?>
+
 </div>

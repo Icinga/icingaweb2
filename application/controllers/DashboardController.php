@@ -32,7 +32,6 @@ class DashboardController extends ActionController
     {
         $this->dashboard = new Dashboard();
         $this->dashboard->setUser($this->Auth()->getUser());
-        $this->dashboard->load();
     }
 
     public function newDashletAction()
@@ -43,7 +42,7 @@ class DashboardController extends ActionController
             'label'     => $this->translate('New Dashlet'),
             'url'       => Url::fromRequest()
         ));
-        $dashboard = $this->dashboard;
+        $dashboard = $this->dashboard->load();
         $form->setDashboard($dashboard);
         if ($this->_request->getParam('url')) {
             $params = $this->_request->getParams();
@@ -87,7 +86,7 @@ class DashboardController extends ActionController
             'label'     => $this->translate('Update Dashlet'),
             'url'       => Url::fromRequest()
         ));
-        $dashboard = $this->dashboard;
+        $dashboard = $this->dashboard->load();
         $form = new DashletForm();
         $form->setDashboard($dashboard);
         $form->setSubmitLabel($this->translate('Update Dashlet'));
@@ -152,7 +151,7 @@ class DashboardController extends ActionController
             'label'     => $this->translate('Remove Dashlet'),
             'url'       => Url::fromRequest()
         ));
-        $dashboard = $this->dashboard;
+        $dashboard = $this->dashboard->load();
         if (! $this->_request->getParam('pane')) {
             throw new Zend_Controller_Action_Exception(
                 'Missing parameter "pane"',
@@ -251,7 +250,7 @@ class DashboardController extends ActionController
     {
         $form = new ConfirmRemovalForm();
         $this->createTabs();
-        $dashboard = $this->dashboard;
+        $dashboard = $this->dashboard->load();
         if (! $this->_request->getParam('pane')) {
             throw new Zend_Controller_Action_Exception(
                 'Missing parameter "pane"',
@@ -290,7 +289,21 @@ class DashboardController extends ActionController
      */
     public function indexAction()
     {
+        try {
+            $this->dashboard->load();
+        } catch (Exception $e) {
+            $this->getTabs()->add('dashboard', array(
+                'active'    => true,
+                'title'     => $this->translate('Dashboard'),
+                'url'       => Url::fromRequest()
+            ))->extend(new DashboardSettings());
+
+            $this->view->errors = $this->getErrors($e);
+            return;
+        }
+
         $this->createTabs();
+
         if (! $this->dashboard->hasPanes()) {
             $this->view->title = 'Dashboard';
         } else {
@@ -333,7 +346,19 @@ class DashboardController extends ActionController
     public function settingsAction()
     {
         $this->createTabs();
-        $this->view->dashboard = $this->dashboard;
+
+        $this->getTabs()->add('settings', array(
+            'active'    => true,
+            'label'     => $this->translate('Dashboard Settings'),
+            'url'       => Url::fromRequest()
+        ));
+
+        try {
+            $this->dashboard->load();
+            $this->view->dashboard = $this->dashboard;
+        } catch (Exception $e) {
+            $this->view->errors = $this->getErrors($e);
+        }
     }
 
     public function resetAction()
@@ -374,5 +399,17 @@ class DashboardController extends ActionController
     private function createTabs()
     {
         $this->view->tabs = $this->dashboard->getTabs()->extend(new DashboardSettings());
+    }
+
+    protected function getErrors(Exception $exception)
+    {
+        $messages = [];
+
+        while ($exception !== null) {
+            $messages[] = $exception->getMessage();
+            $exception = $exception->getPrevious();
+        }
+
+        return $messages;
     }
 }
