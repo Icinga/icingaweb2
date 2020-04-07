@@ -16,7 +16,6 @@ class DashletsController extends Controller
         $dashletForm = new DashletForm();
 
         $dashletForm->on($dashletForm::ON_SUCCESS, function () {
-            Notification::success('Dashlet created');
             $this->redirectNow('dashboards/dashboards');
         });
 

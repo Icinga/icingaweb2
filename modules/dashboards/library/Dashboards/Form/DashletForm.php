@@ -66,10 +66,13 @@ class DashletForm extends CompatForm
             'value' => 'new-dashboard'
         ]);
 
-        if ($this->getElement('new-dashboard')->getValue() === 'new-dashboard') {
+        if (isset($_REQUEST['new-dashboard'])) {
+            $this->getElement('new-dashboard')->addAttributes(['checked' => true]);
+
             $this->addElement('text', 'new_dashboard', [
                 'label' => 'New Dashboard',
-                'placeholder' => 'New Dashboard Name '
+                'placeholder' => 'New Dashboard Name',
+                'required'  => true,
             ]);
         } else {
             $this->addElement('select', 'dashboard', [
