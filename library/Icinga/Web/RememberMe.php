@@ -63,12 +63,8 @@ class RememberMe
 
         $rememberMe = new static();
         $dbData = $rememberMe->getDb()->select($select)->fetch();
-        $newData = [];
-        foreach ($dbData as $key => $value) {
-            $newData[$key] = $value;
-        }
 
-        $rememberMe->rsa = (new RSA())->loadKey($newData['private_key'], $publicKey);
+        $rememberMe->rsa = (new RSA())->loadKey($dbData->private_key, $publicKey);
         $rememberMe->username = $rememberMe->rsa->decryptFromBase64($data[0])[0];
         $rememberMe->encryptedPassword = $data[1];
 
