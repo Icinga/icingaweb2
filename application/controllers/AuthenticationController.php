@@ -33,8 +33,6 @@ class AuthenticationController extends Controller
      */
     public function loginAction()
     {
-        //TODO var_dump(substr($_SERVER["REQUEST_URI"],12));die;
-        $authenticatedByCookie = false;
         $icinga = Icinga::app();
         if (($requiresSetup = $icinga->requiresSetup()) && $icinga->setupTokenExists()) {
             $this->redirectNow(Url::fromPath('setup'));
