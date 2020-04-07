@@ -47,6 +47,8 @@ class AuthenticationController extends Controller
             }
         }
         if ($this->Auth()->isAuthenticated()) {
+            // Call provided AuthenticationHook(s) when login action is called
+            // but icinga web user is already authenticated
             AuthenticationHook::triggerLogin($this->Auth()->getUser());
             $this->redirectNow($this->params->get('redirect'));
         }
