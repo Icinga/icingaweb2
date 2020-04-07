@@ -39,7 +39,6 @@ class RememberMe
      * Check if cookie is set
      *
      * @return bool
-     *
      */
     public static function hasCookie()
     {
@@ -49,7 +48,7 @@ class RememberMe
     /**
      * Get cookie values
      *
-     * @return void|static
+     * @return static
      */
     public static function fromCookie()
     {
