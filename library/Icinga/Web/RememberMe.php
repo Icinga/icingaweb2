@@ -67,14 +67,14 @@ class RememberMe
             throw new RuntimeException('No database entry found for the given key');
         }
         $rememberMe->rsa = (new RSA())->loadKey($rs->private_key, $publicKey);
-        $rememberMe->username = $rememberMe->rsa->decryptFromBase64($data[0])[0];
+        $rememberMe->username = $rememberMe->rsa->decryptFromBase64($data[0]);
         $rememberMe->encryptedPassword = $data[1];
 
         return $rememberMe;
     }
 
     /**
-     * Encrypt the given username, password and assign the variables
+     * Encrypt the given password and assign the variables
      *
      * @param $username
      * @param $password
@@ -83,15 +83,13 @@ class RememberMe
      */
     public static function fromCredentials($username, $password)
     {
-
         $rememberMe = new static();
 
         $rsa = (new RSA())->loadKey(...RSA::keygen());
 
-        $rememberMe->encryptedPassword = $rsa->encryptToBase64($password)[0];
+        $rememberMe->encryptedPassword = $rsa->encryptToBase64($password);
         $rememberMe->username = $username;
         $rememberMe->rsa = $rsa;
-
 
         return $rememberMe;
     }
@@ -103,7 +101,7 @@ class RememberMe
      */
     public function getCookie()
     {
-        $value = $this->rsa->encryptToBase64($this->username);
+        $value[] = $this->rsa->encryptToBase64($this->username);
         $value[] = $this->encryptedPassword;
         $value[] = base64_encode($this->rsa->getPublicKey());
 
@@ -137,7 +135,7 @@ class RememberMe
 
     public function authenticate()
     {
-        list($password) = $this->rsa->decryptFromBase64($this->encryptedPassword);
+        $password = $this->rsa->decryptFromBase64($this->encryptedPassword);
         $auth = Auth::getInstance();
         $authChain = $auth->getAuthChain();
         $authChain->setSkipExternalBackends(true);
@@ -197,8 +195,9 @@ class RememberMe
     {
         $newCookie = static::fromCredentials(
             $this->username,
-            $this->rsa->decryptFromBase64($this->encryptedPassword)[0]
+            $this->rsa->decryptFromBase64($this->encryptedPassword)
         );
+
         $newCookie->remove();
         $newCookie->persist();
 
