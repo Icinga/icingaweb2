@@ -62,8 +62,8 @@ class RememberMe
             ->where(['public_key = ?' => $publicKey]);
 
         $rememberMe = new static();
-        $dbData = $rememberMe->getDb()->select($select)->fetch();
-        if (!$dbData) {
+        $rs = $rememberMe->getDb()->select($select)->fetch();
+        if (! $rs) {
             throw new RuntimeException('No database entry found for the given key');
         }
         $rememberMe->rsa = (new RSA())->loadKey($dbData->private_key, $publicKey);
