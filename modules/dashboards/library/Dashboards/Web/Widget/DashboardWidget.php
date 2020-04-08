@@ -16,6 +16,19 @@ class DashboardWidget extends BaseHtmlElement
         $this->dashlets = $dashlets;
     }
 
+    /**
+     * @inheritDoc
+     *
+     * ipl/Html lacks a call to {@link BaseHtmlElement::ensureAssembled()} here. This override is subject to remove once
+     * ipl/Html incorporates this fix.
+     */
+    public function isEmpty()
+    {
+        $this->ensureAssembled();
+
+        return parent::isEmpty();
+    }
+
     public function assemble()
     {
         foreach ($this->dashlets as $dashlet) {

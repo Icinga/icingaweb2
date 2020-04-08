@@ -16,9 +16,6 @@ class DashboardsController extends Controller
     {
         $this->createTabs();
 
-        $setAttribute = $this->content;
-        $setAttribute->setAttributes(['class' => 'dashboard content']);
-
         $stmt = (new Select())
             ->columns('dashlet.name, dashlet.dashboard_id, dashlet.url')
             ->from('dashlet')
@@ -26,9 +23,8 @@ class DashboardsController extends Controller
             ->where(['d.name = ?' => $this->getTabs()->getActiveName()]);
 
         $db = $this->getDb()->select($stmt);
-        $dashboard = new DashboardWidget($db);
 
-        $this->addContent($dashboard);
+        $this->content = new DashboardWidget($db);
     }
 
     protected function createTabs()
