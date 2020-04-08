@@ -44,8 +44,14 @@ class AuthenticationController extends Controller
         if (RememberMe::hasCookie()) {
             $authenticated = false;
             try {
-                $authenticated = RememberMe::fromCookie()->authenticate();
-                //TODO renew cookie
+                $rememberMe = RememberMe::fromCookie();
+                $authenticated = $rememberMe->authenticate();
+                if ($authenticated) {
+                    $this->getResponse()->setCookie(
+                        $rememberMe->renewCookie()
+                    );
+                }
+
             } catch (RuntimeException $e) {
                 Logger::error("Can't authenticate user via remember me cookie: %s", $e->getMessage());
             } catch (AuthenticationException $e) {
