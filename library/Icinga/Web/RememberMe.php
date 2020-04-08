@@ -193,7 +193,8 @@ class RememberMe
      *
      * @return Cookie
      */
-    public function renewCookie() {
+    public function renewCookie()
+    {
         $newCookie = static::fromCredentials(
             $this->username,
             $this->rsa->decryptFromBase64($this->encryptedPassword)[0]
