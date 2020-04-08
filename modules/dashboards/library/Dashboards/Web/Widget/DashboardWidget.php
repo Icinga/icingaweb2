@@ -49,7 +49,7 @@ class DashboardWidget extends BaseHtmlElement
         return parent::isEmpty();
     }
 
-    public function assemble()
+    protected function assemble()
     {
         foreach ($this->dashlets as $dashlet) {
             $this->add(new DashletWidget($dashlet));
