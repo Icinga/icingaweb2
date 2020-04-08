@@ -67,7 +67,7 @@ class RememberMe
             throw new RuntimeException('No database entry found for the given key');
         }
         $rememberMe->rsa = (new RSA())->loadKey($rs->private_key, $publicKey);
-        $rememberMe->username = ($rememberMe->rsa->decryptFromBase64($data[0]))[0];
+        $rememberMe->username = $rememberMe->rsa->decryptFromBase64($data[0])[0];
         $rememberMe->encryptedPassword = $data[1];
 
         return $rememberMe;
@@ -88,7 +88,7 @@ class RememberMe
 
         $rsa = (new RSA())->loadKey(...RSA::keygen());
 
-        $rememberMe->encryptedPassword = ($rsa->encryptToBase64($password))[0];
+        $rememberMe->encryptedPassword = $rsa->encryptToBase64($password)[0];
         $rememberMe->username = $username;
         $rememberMe->rsa = $rsa;
 
