@@ -64,7 +64,7 @@ class RememberMe
         $rememberMe = new static();
         $dbData = $rememberMe->getDb()->select($select)->fetch();
         if (!$dbData) {
-           throw new RuntimeException('No database entry found for the given key');
+            throw new RuntimeException('No database entry found for the given key');
         }
         $rememberMe->rsa = (new RSA())->loadKey($dbData->private_key, $publicKey);
         $rememberMe->username = $rememberMe->rsa->decryptFromBase64($data[0])[0];
