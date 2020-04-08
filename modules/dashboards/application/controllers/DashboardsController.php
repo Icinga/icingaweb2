@@ -26,13 +26,15 @@ class DashboardsController extends Controller
             ->where(['d.name = ?' => $this->getTabs()->getActiveName()]);
 
         $db = $this->getDb()->select($stmt);
-        $dashlet = new DashboardWidget($db);
+        $dashboard = new DashboardWidget($db);
 
-        $this->addContent($dashlet);
+        $this->addContent($dashboard);
     }
 
     protected function createTabs()
     {
+        $activateDashboard = [];
+
         $tabs = $this->getTabs();
         $data = (new Select())
             ->columns('*')
@@ -44,12 +46,22 @@ class DashboardsController extends Controller
             $tabs->add($dashboard->name, [
                 'label' => $dashboard->name,
                 'url' => Url::fromPath('dashboards/dashboards', [
-                    'dashboard' => $dashboard->name
+                    'dashboard' => $dashboard->id
                 ])
             ]);
+
+            $activateDashboard[$dashboard->id] = $dashboard->name;
         }
 
-        $tabs->activate($this->getParam('dashboard'));
+        if (empty($this->getParam('dashboard'))) {
+            foreach ($activateDashboard as $firstDashboard) {
+                $tabs->activate($firstDashboard);
+
+                break;
+            }
+        } else {
+            $tabs->activate($activateDashboard[$this->getParam('dashboard')]);
+        }
 
         return $tabs;
     }
