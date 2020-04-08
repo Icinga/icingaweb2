@@ -174,7 +174,7 @@ class RememberMe
      * by logout, this class do not have the login data for user, so username must
      * be given as parameter to delete the user information from database.
      *
-     * @param null $username
+     * @param null|$username
      */
     public function remove($username = null)
     {
