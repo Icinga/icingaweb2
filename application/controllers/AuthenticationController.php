@@ -5,12 +5,15 @@ namespace Icinga\Controllers;
 
 use Icinga\Application\Hook\AuthenticationHook;
 use Icinga\Application\Icinga;
+use Icinga\Application\Logger;
+use Icinga\Exception\AuthenticationException;
 use Icinga\Forms\Authentication\LoginForm;
 use Icinga\Rememberme\Common\Database;
 use Icinga\Web\Controller;
 use Icinga\Web\Helper\CookieHelper;
 use Icinga\Web\RememberMe;
 use Icinga\Web\Url;
+use RuntimeException;
 
 /**
  * Application wide controller for authentication
@@ -39,11 +42,19 @@ class AuthenticationController extends Controller
         }
         $form = new LoginForm();
         if (RememberMe::hasCookie()) {
-            if (! RememberMe::fromCookie()->authenticate()) {
+            $authenticated = false;
+            try {
+                $authenticated = RememberMe::fromCookie()->authenticate();
+                //TODO renew cookie
+            } catch (RuntimeException $e) {
+                Logger::error("Can't authenticate user via remember me cookie: %s", $e->getMessage());
+            } catch (AuthenticationException $e) {
+                Logger::error($e);
+            }
+            if (! $authenticated) {
                 $this->getResponse()->setCookie(
                     RememberMe::unsetCookie()
                 );
-                (new RememberMe())->remove($this->Auth()->getUser()->getUsername());
             }
         }
         if ($this->Auth()->isAuthenticated()) {
