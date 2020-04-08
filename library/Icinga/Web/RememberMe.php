@@ -10,7 +10,7 @@ use Icinga\Rememberme\Common\Database;
 use Icinga\User;
 use ipl\Sql\Expression;
 use ipl\Sql\Select;
-use UnexpectedValueException;
+use RuntimeException;
 
 class RememberMe
 {
@@ -63,7 +63,9 @@ class RememberMe
 
         $rememberMe = new static();
         $dbData = $rememberMe->getDb()->select($select)->fetch();
-
+        if (!$dbData) {
+           throw new RuntimeException('No database entry found for the given key');
+        }
         $rememberMe->rsa = (new RSA())->loadKey($dbData->private_key, $publicKey);
         $rememberMe->username = $rememberMe->rsa->decryptFromBase64($data[0])[0];
         $rememberMe->encryptedPassword = $data[1];
@@ -156,6 +158,7 @@ class RememberMe
      */
     public function persist()
     {
+        $this->remove();
         $this->getDb()->insert('rememberme', [
             'username' => $this->username,
             'private_key' => $this->rsa->getPrivateKey(),
