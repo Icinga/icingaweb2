@@ -554,17 +554,15 @@ ul.tree li a.error:hover {
 }
 
 .donut-container {
-  width: 36em;
   float: left;
+
+  &:not(:last-of-type) {
+    margin-right: 10em;
+  }
 }
 
-.dashboard .donut-container {
-  width: 50%;
-  font-size: 80%;
-
-  .donut-legend {
-    margin-left: auto;
-  }
+.dashboard .donut-container .donut-legend {
+  margin-left: auto;
 }
 
 .donut-legend {

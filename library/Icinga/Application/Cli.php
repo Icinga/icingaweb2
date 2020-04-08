@@ -5,6 +5,7 @@ namespace Icinga\Application;
 
 use Icinga\Application\Platform;
 use Icinga\Application\ApplicationBootstrap;
+use Icinga\Authentication\Auth;
 use Icinga\Cli\Params;
 use Icinga\Cli\Loader;
 use Icinga\Cli\Screen;
@@ -12,6 +13,7 @@ use Icinga\Application\Logger;
 use Icinga\Application\Benchmark;
 use Icinga\Data\ConfigObject;
 use Icinga\Exception\ProgrammingError;
+use Icinga\User;
 
 require_once __DIR__ . '/ApplicationBootstrap.php';
 
@@ -43,7 +45,8 @@ class Cli extends ApplicationBootstrap
             ->setupLogger()
             ->setupModuleManager()
             ->setupUserBackendFactory()
-            ->loadSetupModuleIfNecessary();
+            ->loadSetupModuleIfNecessary()
+            ->setupFakeAuthentication();
     }
 
     /**
@@ -84,6 +87,13 @@ class Cli extends ApplicationBootstrap
         }
 
         Logger::create($config);
+        return $this;
+    }
+
+    protected function setupFakeAuthentication()
+    {
+        Auth::getInstance()->setUser(new User('cli'));
+
         return $this;
     }
 

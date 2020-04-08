@@ -163,7 +163,7 @@
                 var key = keys[i];
                 for (var j = 0; j < params.length; j++) {
                     if (params[j].key === key && (params[j].value || params[j].value === null)) {
-                        tuple[key] = params[j].value;
+                        tuple[key] = params[j].value ? decodeURIComponent(params[j].value): params[j].value;
                         break;
                     }
                 }

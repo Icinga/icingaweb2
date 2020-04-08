@@ -24,9 +24,15 @@ set_include_path(implode(PATH_SEPARATOR, [
     get_include_path()
 ]));
 
-require_once 'Mockery/Loader.php';
-$mockeryLoader = new \Mockery\Loader;
-$mockeryLoader->register();
+$vendorAutoload = $basePath . '/vendor/autoload.php';
+if (file_exists($vendorAutoload)) {
+    require_once $vendorAutoload;
+} else {
+    require_once 'Mockery/Loader.php';
+
+    $mockeryLoader = new \Mockery\Loader;
+    $mockeryLoader->register();
+}
 
 require_once($icingaLibPath . '/Test/ClassLoader.php');
 

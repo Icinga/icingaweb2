@@ -45,7 +45,9 @@ class ScheduleHostCheckCommandForm extends ScheduleServiceCheckCommandForm
     {
         foreach ($this->objects as $object) {
             /** @var \Icinga\Module\Monitoring\Object\Host $object */
-            if (! $object->active_checks_enabled) {
+            if (! $object->active_checks_enabled
+                && ! $this->Auth()->hasPermission('monitoring/command/schedule-check')
+            ) {
                 continue;
             }
 

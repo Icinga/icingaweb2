@@ -1,6 +1,7 @@
 # Icinga Web 2
 
-[![Build Status](https://travis-ci.org/Icinga/icingaweb2.png?branch=master)](https://travis-ci.org/Icinga/icingaweb2)
+[![PHP Support](https://img.shields.io/badge/php-%3E%3D%205.6-777BB4?logo=PHP)](https://php.net/)
+![Build Status](https://github.com/icinga/icingaweb2/workflows/PHP%20Tests/badge.svg?branch=master)
 [![Github Tag](https://img.shields.io/github/tag/Icinga/icingaweb2.svg)](https://github.com/Icinga/icingaweb2)
 
 ![Icinga Logo](https://icinga.com/wp-content/uploads/2014/06/icinga_logo.png)

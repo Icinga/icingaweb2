@@ -210,7 +210,19 @@ namespace Icinga\Test {
         protected function createDbConfigFor($name)
         {
             if (array_key_exists($name, self::$dbConfiguration)) {
-                return new ConfigObject(self::$dbConfiguration[$name]);
+                $config = new ConfigObject(self::$dbConfiguration[$name]);
+
+                $host = getenv(sprintf('ICINGAWEB_TEST_%s_HOST', strtoupper($name)));
+                if ($host) {
+                    $config['host'] = $host;
+                }
+
+                $port = getenv(sprintf('ICINGAWEB_TEST_%s_PORT', strtoupper($name)));
+                if ($port) {
+                    $config['port'] = $port;
+                }
+
+                return $config;
             }
 
             throw new RuntimeException('Configuration for database type not available: ' . $name);

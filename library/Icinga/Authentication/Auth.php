@@ -257,6 +257,23 @@ class Auth
     }
 
     /**
+     * Set the authenticated user
+     *
+     * Note that this method just sets the authenticated user and thus bypasses our default authentication process in
+     * {@link setAuthenticated()}.
+     *
+     * @param User $user
+     *
+     * @return $this
+     */
+    public function setUser(User $user)
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    /**
      * Try to authenticate the user with the current session
      *
      * Authentication for externally-authenticated users will be revoked if the username changed or external
