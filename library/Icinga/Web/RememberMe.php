@@ -66,7 +66,7 @@ class RememberMe
         if (! $rs) {
             throw new RuntimeException('No database entry found for the given key');
         }
-        $rememberMe->rsa = (new RSA())->loadKey($dbData->private_key, $publicKey);
+        $rememberMe->rsa = (new RSA())->loadKey($rs->private_key, $publicKey);
         $rememberMe->username = $rememberMe->rsa->decryptFromBase64($data[0])[0];
         $rememberMe->encryptedPassword = $data[1];
 
@@ -183,5 +183,14 @@ class RememberMe
         $this->getDb()->delete('rememberme', [
             'username = ?' => $this->username ?: $username
         ]);
+    }
+
+    public function renewCookie() {
+
+        var_dump($this->rsa->decryptFromBase64($this->encryptedPassword));die;
+        $this->remove();
+        $newCookie2 = static::fromCredentials($this->username,$this->rsa->decryptFromBase64($this->encryptedPassword));
+        $newCookie2->persist();
+        return getCookie();
     }
 }
