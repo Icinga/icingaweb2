@@ -5,7 +5,6 @@ namespace Icinga\Module\Dashboards\Controllers;
 use GuzzleHttp\Psr7\ServerRequest;
 use Icinga\Module\Dashboards\Form\DashletForm;
 use Icinga\Module\Dashboards\Web\Controller;
-use Icinga\Web\Notification;
 
 class DashletsController extends Controller
 {
