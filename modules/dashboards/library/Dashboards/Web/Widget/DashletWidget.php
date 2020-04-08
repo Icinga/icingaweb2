@@ -2,7 +2,6 @@
 
 namespace Icinga\Module\Dashboards\Web\Widget;
 
-use Exception;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
 use ipl\Web\Url;
@@ -13,7 +12,7 @@ class DashletWidget extends BaseHtmlElement
 
     protected $tag = 'div';
 
-    protected $defaultAttributes = ['class' => 'dashboard content'];
+    protected $defaultAttributes;
 
     public function __construct($dashlets)
     {
@@ -22,17 +21,11 @@ class DashletWidget extends BaseHtmlElement
 
     protected function assemble()
     {
-        foreach ($this->dashlets as $dashlet) {
-            try {
-                $this->add(Html::tag('div', [
-                    'class' => 'container dashlet-sortable icinga-module module-monitoring',
-                    'data-icinga-url' => Url::fromPath($dashlet->url)->addParams(['view' => 'compact'])
-                    ])->prepend($this->title($dashlet->name))
-                );
-            } catch (Exception $e) {
-                throw new Exception("Can't access to dashlet table" . $e->getMessage());
-            }
-        }
+        $this->defaultAttributes = [
+            'class' => 'container dashlet-sortable icinga-module module-monitoring',
+            'data-icinga-url' => Url::fromPath($this->dashlets->url)->addParams(['view' => 'compact'])
+            ];
+        $this->add($this->title($this->dashlets->name));
     }
 
     protected function title($title)
