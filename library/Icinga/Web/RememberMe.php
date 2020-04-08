@@ -154,6 +154,7 @@ class RememberMe
     /**
      * Database insert for the given private and public key
      *
+     * Remove old entry for given user if exists
      * Save new keys in database
      */
     public function persist()
