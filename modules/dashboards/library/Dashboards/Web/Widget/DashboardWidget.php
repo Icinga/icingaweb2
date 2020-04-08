@@ -8,8 +8,9 @@ class DashboardWidget extends BaseHtmlElement
 {
     protected $dashlets;
 
-    protected $tag = 'div';
     protected $defaultAttributes = ['class' => 'dashboard content'];
+
+    protected $tag = 'div';
 
     public function __construct($dashlets)
     {
