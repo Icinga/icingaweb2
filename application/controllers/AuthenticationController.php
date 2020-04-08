@@ -51,7 +51,6 @@ class AuthenticationController extends Controller
                         $rememberMe->renewCookie()
                     );
                 }
-
             } catch (RuntimeException $e) {
                 Logger::error("Can't authenticate user via remember me cookie: %s", $e->getMessage());
             } catch (AuthenticationException $e) {
