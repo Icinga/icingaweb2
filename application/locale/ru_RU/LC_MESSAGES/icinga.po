@@ -277,29 +277,29 @@ msgid "Cancel"
 msgstr "Отмена"
 
 msgid "Cancel this membership"
-msgstr ""
+msgstr "Отменить это членство"
 
 msgid "Cancel this operation"
 msgstr "Отменить эту операцию"
 
 #, php-format
 msgid "Cannot insert. Section \"%s\" does already exist"
-msgstr ""
+msgstr "Не удается вставить. Раздел \"%s\" уже существует"
 
 #, php-format
 msgid "Cannot read config file \"%s\". Permission denied"
-msgstr ""
+msgstr "Не удается прочитать файл конфига \"%s\". Доступ запрещен"
 
 msgid "Cannot search here"
-msgstr ""
+msgstr "Невозможно найти здесь"
 
 #, php-format
 msgid "Cannot update. Column \"%s\" holds a section's name which must be unique"
-msgstr ""
+msgstr "Невозможно обновить. Столбец \"%s\" содержит имя раздела, которое должно быть уникальным"
 
 #, php-format
 msgid "Cannot update. Section \"%s\" does already exist"
-msgstr ""
+msgstr "Невозможно обновить. Раздел \"%s\" уже существует"
 
 msgid "Character Set"
 msgstr "Набор символов"
@@ -309,65 +309,72 @@ msgid ""
 "are not closed at the end of a request, but are cached and re-used. This is "
 "experimental"
 msgstr ""
+"Установите этот флажок для постоянного соединения к базе данных. "
+"Постоянное соединение не закрывается в конце запроса, а кэшируются "
+"и повторно используются. Это экспериментально"
 
 msgid "Check this box if you want to add the dashlet to a new dashboard"
-msgstr ""
+msgstr "Установите этот флажок если хотите добавить дашлет в новую панель мониторинга"
 
 msgid "Check this box to enforce changes without connectivity validation"
-msgstr ""
+msgstr "Установите этот флажок для применения изменений без проверки подключения"
 
 msgid ""
 "Check this box to enforce changes without validating that authentication is "
 "possible."
 msgstr ""
+"Установите этот флажок чтобы применить изменения без проверки возможности "
+"аутентификации."
 
 msgid "Click to remove this part of your filter"
-msgstr ""
+msgstr "Нажмите для удаления этой части Вашего фильтра"
 
 #, php-format
 msgid "Column \"%s\" cannot be queried"
-msgstr ""
+msgstr "Столбец \"%s\" не может быть запрошен"
 
 msgid "Comma separated list of group names to share this item with"
-msgstr ""
+msgstr "Разделенный запятыми список имен групп для совместного использования этого элемента"
 
 msgid "Comma separated list of usernames to share this item with"
-msgstr ""
+msgstr "Разделенный запятыми список имен пользователей для совместного использования этого элемента"
 
 msgid "Comma-separated list of groups that are assigned to the role"
-msgstr ""
+msgstr "Разделенный запятыми список имен групп для совместного использования этой роли"
 
 msgid "Comma-separated list of users that are assigned to the role"
-msgstr ""
+msgstr "Разделенный запятыми список пользователей для совместного использования этой роли"
 
 msgid "Configuration"
 msgstr "Настройки"
 
 msgid "Configure how users are associated with groups by Icinga Web 2"
-msgstr ""
+msgstr "Настройка связи пользователей с группами с помощью Icinga Web 2"
 
 msgid "Configure how users authenticate with and log into Icinga Web 2"
-msgstr ""
+msgstr "Настройка способа аутентификации пользователей и входа в Icinga Web 2"
 
 msgid ""
 "Configure roles to permit or restrict users and groups accessing Icinga Web 2"
 msgstr ""
+"Настройка ролей для разрешения или ограничения доступа пользователей и групп к Icinga Web 2"
 
 msgid "Configure which resources are being utilized by Icinga Web 2"
-msgstr ""
+msgstr "Настройка ресурсов, используемых Icinga Web 2"
 
 msgid "Confirm Removal"
-msgstr ""
+msgstr "Подтвердите удаление"
 
 msgid ""
 "Connectivity validation failed, connection to the given resource not possible."
 msgstr ""
+"Проверка подключения не удалась, подключение к данному ресурсу невозможно."
 
 msgid "Contains data in a bar or line chart."
-msgstr ""
+msgstr "Содержит данных в виде столбчатой или линейной диаграммы."
 
 msgid "Contains data in a pie chart."
-msgstr ""
+msgstr "Содержит данные в виде круговой диаграммы."
 
 msgid ""
 "Contains the directories that will be searched for available modules, "
@@ -375,20 +382,26 @@ msgid ""
 "be symlinked in the module folder, but won't show up in the list of disabled "
 "modules."
 msgstr ""
+"Содержит каталоги, разделенные двоеточиями, в которых будет осуществляться "
+"поиск доступных модулей. Модули, которые не существуют в этих каталогах, "
+"все еще могут быть символически связаны с каталогом модуля, но не будут "
+"отображаться в списке отключенных модулей.
 
 msgid "Copyright"
-msgstr ""
+msgstr "Авторские права"
 
 msgid ""
 "Could not find any valid user backend resources. Please configure a resource "
 "for authentication first."
 msgstr ""
+"Не удалось найти никаких допустимых внутренних ресурсов пользователя. "
+"Пожалуйста, сначала настройте ресурс для проверки подлинности."
 
 msgid "Could not persist dashboard"
-msgstr ""
+msgstr "Не удалось оставить приборную панель"
 
 msgid "Could not save dashboard"
-msgstr ""
+msgstr "Не удалось сохранить приборную панель"
 
 msgid "Create"
 msgstr "Создание"
@@ -397,61 +410,63 @@ msgid "Role"
 msgstr "Роль"
 
 msgid "Create a New Navigation Item"
-msgstr ""
+msgstr "Создание нового элемента навигации"
 
 msgid "Create a New Resource"
 msgstr "Создание нового ресурса"
 
 msgid "Create a New Role"
-msgstr ""
+msgstr "Создание новой роли"
 
 msgid "Create a New User Backend"
-msgstr ""
+msgstr "Создание нового пользователя бэкенда"
 
 msgid "Create a New User Group Backend"
-msgstr ""
+msgstr "Создание новой группы бэкенда"
 
 msgid ""
 "Create a new backend for authenticating your users. This backend will be "
 "added at the end of your authentication order."
 msgstr ""
+"Создайте новый сервер для аутентификации ваших пользователей. "
+"Этот бэкэнд будет добавлен в конце вашего порядка аутентификации."
 
 msgid "Create a new backend to associate users and groups with."
-msgstr ""
+msgstr "Создание нового бэкэнда для связи с пользователями и группами."
 
 msgid "Create a new navigation item"
-msgstr ""
+msgstr "Создание нового элемента навигации"
 
 msgid "Create a new navigation item, such as a menu entry or dashlet."
-msgstr "Создать новый элемент навигации - элемент меню или компонент сводки."
+msgstr "Создание нового элемента навигации - элемент меню или компонент сводки."
 
 msgid "Create a new resource"
-msgstr "Создать новый ресурс"
+msgstr "Создание нового ресурса"
 
 msgid "Create a new role"
-msgstr "Создать новую роль"
+msgstr "Создание новой роли"
 
 msgid "Create a new user"
-msgstr "Создать нового пользователя"
+msgstr "Создание нового пользователя"
 
 msgid "Create a new user backend"
-msgstr ""
+msgstr "Создание нового пользователя бэкэнда"
 
 msgid "Create a new user group"
-msgstr "Создать новую группу пользователей"
+msgstr "Создание новой группы пользователей"
 
 msgid "Create a new user group backend"
-msgstr ""
+msgstr "Создание новой группы пользователей бэкэнда"
 
 #, php-format
 msgid "Create memberships for %s"
 msgstr "Создать участников для %s"
 
 msgid "Created At"
-msgstr ""
+msgstr "Создано в"
 
 msgid "Created at"
-msgstr ""
+msgstr "Создано в"
 
 msgid "Current Column"
 msgstr "Текущий столбец"
@@ -459,13 +474,15 @@ msgstr "Текущий столбец"
 msgid ""
 "Currently there is no dashlet available. Please contact the administrator."
 msgstr ""
-"В настоящее время страниа информации недоступна. Пожалуйста, свяжитесь с администратором."
+"В настоящее время страница информации недоступна. Пожалуйста, свяжитесь с администратором."
 
 #, php-format
 msgid ""
 "Currently there is no dashlet available. This might change once you enabled "
 "some of the available %s."
 msgstr ""
+"В настоящее время дашлет не доступен. Это может измениться, как только "
+"вы включите некоторые из доступных %s."
 
 msgid "Dashboard"
 msgstr "Панель информации"
@@ -495,7 +512,7 @@ msgid "Database"
 msgstr "База данных"
 
 msgid "Database Connection"
-msgstr ""
+msgstr "Подключение к базе данных"
 
 msgid "Database Name"
 msgstr "Название базы данных"
@@ -521,31 +538,33 @@ msgid ""
 "Details can be found in the application log. (If you don't have access to "
 "this log, call your administrator in this case)"
 msgstr ""
+"Подробные сведения можно найти в журнале приложений. (Если у вас нет доступа "
+"к этому журналу, то обратитесь к своему администратору)"
 
 msgctxt "sort direction"
 msgid "Direction"
-msgstr ""
+msgstr "Направление"
 
 msgid "Disable auto refresh"
-msgstr ""
+msgstr "Отключить автообновление"
 
 #, php-format
 msgid "Disable the %s module"
-msgstr ""
+msgstr "Отключите модуль %s"
 
 msgctxt "A button to discover LDAP capabilities"
 msgid "Discover"
-msgstr ""
+msgstr "Обнаружение"
 
 msgid "Don't Store Preferences"
-msgstr ""
+msgstr "Не хранить предпочтения"
 
 msgid "Edit Dashlet"
-msgstr ""
+msgstr "Редактировать дашлет"
 
 #, php-format
 msgid "Edit dashlet %s"
-msgstr ""
+msgstr "Редактировать дашлет %s"
 
 #, php-format
 msgid "Edit group %s"
@@ -553,11 +572,11 @@ msgstr "Редактировать группу %s"
 
 #, php-format
 msgid "Edit navigation item %s"
-msgstr ""
+msgstr "Изменить элемент навигации %s"
 
 #, php-format
 msgid "Edit resource %s"
-msgstr ""
+msgstr "Редактировать ресурс %S"
 
 #, php-format
 msgid "Edit role %s"
@@ -565,7 +584,7 @@ msgstr "Редактировать роль %s"
 
 #, php-format
 msgid "Edit shared navigation item %s"
-msgstr ""
+msgstr "Изменить общий элемент навигации %s"
 
 #, php-format
 msgid "Edit user %s"
@@ -573,18 +592,18 @@ msgstr "Редактировать пользователя %s"
 
 #, php-format
 msgid "Edit user backend %s"
-msgstr ""
+msgstr "Редактировать пользователя бэкэнда %s"
 
 #, php-format
 msgid "Edit user group backend %s"
-msgstr ""
+msgstr "Редактировать группу пользователей бэкэнда %s"
 
 msgid "Enable auto refresh"
-msgstr ""
+msgstr "Включить автообновление"
 
 #, php-format
 msgid "Enable the %s module"
-msgstr ""
+msgstr "Включить модуль %s"
 
 #, php-format
 msgid "Enabling the \"%s\" module might help!"
