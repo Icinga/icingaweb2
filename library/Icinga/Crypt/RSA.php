@@ -115,20 +115,25 @@ class RSA
      *
      * See {@link loadKey()} for providing the private key.
      *
-     * @param string ...$data
+     * @param string|array $data
      *
-     * @return array
+     * @return string|array
      *
      * @throws UnexpectedValueException If the private key is not set
      */
-    public function decrypt(...$data)
+    public function decrypt($data)
     {
-        $decrypted = [];
         $privateKey = $this->getPrivateKey();
+        if (is_array($data)) {
+            $decrypted = [];
 
-        foreach ($data as $value) {
-            openssl_private_decrypt($value, $decrypted[], $privateKey);
+            foreach ($data as $value) {
+                openssl_private_decrypt($value, $decrypted[], $privateKey);
+            }
+
+            return $decrypted;
         }
+        openssl_private_decrypt($data, $decrypted, $privateKey);
 
         return $decrypted;
     }
@@ -138,21 +143,25 @@ class RSA
      *
      * See {@link loadKey()} for providing the private key.
      *
-     * @param string ...$data
+     * @param string|array $data
      *
-     * @return array
+     * @return string|array
      *
      * @throws UnexpectedValueException If the private key is not set
      */
-    public function decryptFromBase64(...$data)
+    public function decryptFromBase64($data)
     {
-        $decoded = [];
+        if (is_array($data)) {
+            $decoded = [];
 
-        foreach ($data as $value) {
-            $decoded[] = base64_decode($value);
+            foreach ($data as $value) {
+                $decoded[] = base64_decode($value);
+            }
+
+            return $this->decrypt($decoded);
         }
 
-        return $this->decrypt(...$decoded);
+        return $this->decrypt(base64_decode($data));
     }
 
     /**
@@ -164,19 +173,23 @@ class RSA
      * stringified upon encryption which may lead to unexpected results when decrypting.
      * Use {@link json_encode()} if you have to encrypt other scalar types than string.
      *
-     * @param string ...$data
+     * @param string|array $data
      *
-     * @return array
+     * @return string|array
      *
      * @throws UnexpectedValueException If the public key is not set
      */
-    public function encrypt(...$data)
+    public function encrypt($data)
     {
-        $encrypted = [];
+        if (is_array($data)) {
+            $encrypted = [];
 
-        foreach ($data as $value) {
-            openssl_public_encrypt($value, $encrypted[], $this->getPublicKey());
+            foreach ($data as $value) {
+                openssl_public_encrypt($value, $encrypted[], $this->getPublicKey());
+            }
+            return $encrypted;
         }
+        openssl_public_encrypt($data, $encrypted, $this->getPublicKey());
 
         return $encrypted;
     }
@@ -186,21 +199,25 @@ class RSA
      *
      * See {@link loadKey()} for providing the public key.
      *
-     * @param string ...$data
+     * @param string|array $data
      *
-     * @return array
+     * @return string|array
      *
      * @throws UnexpectedValueException If the public key is not set
      */
-    public function encryptToBase64(...$data)
+    public function encryptToBase64($data)
     {
-        $encoded = [];
+        if (is_array($data)) {
+            $encoded = [];
 
-        foreach ($this->encrypt(...$data) as $value) {
-            $encoded[] = base64_encode($value);
+            foreach ($this->encrypt($data) as $value) {
+                $encoded[] = base64_encode($value);
+            }
+
+            return $encoded;
         }
 
-        return $encoded;
+        return base64_encode($this->encrypt($data));
     }
 
     /**
