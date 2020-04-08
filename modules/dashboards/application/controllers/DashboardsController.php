@@ -16,15 +16,15 @@ class DashboardsController extends Controller
     {
         $this->createTabs();
 
-        $stmt = (new Select())
+        $select = (new Select())
             ->columns('dashlet.name, dashlet.dashboard_id, dashlet.url')
             ->from('dashlet')
             ->join('dashboard d', 'dashlet.dashboard_id = d.id')
             ->where(['d.name = ?' => $this->getTabs()->getActiveName()]);
 
-        $db = $this->getDb()->select($stmt);
+        $dashlets = $this->getDb()->select($select);
 
-        $this->content = new DashboardWidget($db);
+        $this->content = new DashboardWidget($dashlets);
     }
 
     protected function createTabs()
