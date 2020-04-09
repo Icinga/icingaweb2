@@ -8,7 +8,7 @@ use Icinga\Module\Dashboards\Web\Widget\DashboardWidget;
 use Icinga\Web\Url;
 use ipl\Sql\Select;
 
-class DashboardsController extends Controller
+class IndexController extends Controller
 {
     use Database;
 
@@ -20,7 +20,7 @@ class DashboardsController extends Controller
             ->columns('dashlet.name, dashlet.dashboard_id, dashlet.url')
             ->from('dashlet')
             ->join('dashboard d', 'dashlet.dashboard_id = d.id')
-            ->where(['d.name = ?' => $this->getTabs()->getActiveName()]);
+            ->where(['d.id = ?' => $this->params->get('dashboard')]);
 
         $dashlets = $this->getDb()->select($select);
 
@@ -29,8 +29,6 @@ class DashboardsController extends Controller
 
     protected function createTabs()
     {
-        $activateDashboard = [];
-
         $tabs = $this->getTabs();
         $data = (new Select())
             ->columns('*')
@@ -41,7 +39,7 @@ class DashboardsController extends Controller
         foreach ($dashboards as $dashboard) {
             $tabs->add($dashboard->id, [
                 'label' => $dashboard->name,
-                'url' => Url::fromPath('dashboards/dashboards', [
+                'url' => Url::fromPath('dashboards', [
                     'dashboard' => $dashboard->id
                 ])
             ]);
