@@ -33,7 +33,6 @@ class ApplicationConfigForm extends Form
             'checkbox',
             'global_show_stacktraces',
             array(
-                'required'      => true,
                 'value'         => true,
                 'label'         => $this->translate('Show Stacktraces'),
                 'description'   => $this->translate(
@@ -47,7 +46,6 @@ class ApplicationConfigForm extends Form
             'checkbox',
             'global_show_application_state_messages',
             array(
-                'required'      => true,
                 'value'         => true,
                 'label'         => $this->translate('Show Application State Messages'),
                 'description'   => $this->translate(

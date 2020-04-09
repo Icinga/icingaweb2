@@ -19,7 +19,6 @@ class UserForm extends RepositoryForm
             'checkbox',
             'is_active',
             array(
-                'required'      => true,
                 'value'         => true,
                 'label'         => $this->translate('Active'),
                 'description'   => $this->translate('Prevents the user from logging in if unchecked')
