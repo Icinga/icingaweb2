@@ -1176,12 +1176,14 @@ msgid ""
 "Note that all users that are currently a member of this group will have their "
 "membership cleared automatically."
 msgstr ""
+"Обратите внимание, что все пользователи, являющиеся в настоящее время участниками "
+"этой группы, будут автоматически освобождены от участия."
 
 msgid "Old resource name missing"
-msgstr ""
+msgstr "Старое имя ресурса отсутствует"
 
 msgid "Only the root and its child nodes will be accessible on this resource."
-msgstr ""
+msgstr "На этом ресурсе будут доступны только корневые и дочерние узлы."
 
 msgid "Owner"
 msgstr "Владелец"
@@ -1194,10 +1196,10 @@ msgid "Page not found."
 msgstr "Страница не найдена."
 
 msgid "Pagination"
-msgstr ""
+msgstr "Разбивка"
 
 msgid "Pane"
-msgstr ""
+msgstr "Панель"
 
 msgid "Parent"
 msgstr "Родительский элемент"
@@ -1215,28 +1217,34 @@ msgid "Permissions Set"
 msgstr "Набор разрешений"
 
 msgid "Persistent"
-msgstr ""
+msgstr "Устойчивый"
 
 msgid "Pie Chart"
-msgstr ""
+msgstr "Круговая диаграмма"
 
 msgid "Please copy the following dashboard snippet to "
-msgstr ""
+msgstr "Пожалуйста, скопируйте следующий фрагмент панели мониторинга в "
 
 msgid ""
 "Please note that not all authentication methods were available. Check the "
 "system log or Icinga Web 2 log for more information."
 msgstr ""
+"Обратите внимание - не все методы аутентификации были доступны. Дополнительную "
+"информацию можно найти в системном журнале или журнале Icinga Web 2."
 
 msgid ""
 "Please provide at least one username, either by choosing one in the list or "
 "by manually typing one in the text box below"
 msgstr ""
+"Пожалуйста, укажите хотя бы одно имя пользователя, выбрав его в списке или "
+"вручную введя в текстовое поле ниже"
 
 msgid ""
 "Please use the asterisk (*) as a placeholder for wildcard searches. For "
 "convenience I'll always add a wildcard in front and after your search string."
 msgstr ""
+"Пожалуйста, используйте звездочку (*) в качестве заполнителя для подстановки "
+"символов. Для удобства я всегда добавляю её перед поисковой строкой и после нее.
 
 msgid "Port"
 msgstr "Порт"
@@ -1248,10 +1256,10 @@ msgid "Preferences successfully saved"
 msgstr "Предпочтения успешно сохранены"
 
 msgid "Preferences successfully saved for the current session"
-msgstr ""
+msgstr "Настройки успешно сохранены для текущего сеанса"
 
 msgid "Prevents the user from logging in if unchecked"
-msgstr ""
+msgstr "Запрещает пользователю входить в систему, если он не проверен"
 
 msgid "Previous page"
 msgstr "Предыдущая страница"
@@ -1260,31 +1268,35 @@ msgid "Private Key"
 msgstr "Приватный ключ"
 
 msgid "Provide one or more usernames separated by comma to add as group member"
-msgstr ""
+msgstr "Укажите одно или несколько имен пользователей, разделенных запятой, для добавления в качестве участника группы"
 
 msgid ""
 "Push this button to update the form to reflect the change that was made in "
 "the field on the left"
 msgstr ""
+"Нажмите эту кнопку, чтобы обновить форму и отразить изменения, внесенные "
+"в поле слева"
 
 msgid ""
 "Push this button to update the form to reflect the changes that were made "
 "below"
 msgstr ""
+"Нажмите эту кнопку, чтобы обновить форму и отразить изменения, внесенные "
+"ниже"
 
 msgid "Push to fill in the chosen connection's default settings."
-msgstr ""
+msgstr "Нажмите, чтобы заполнить настройки выбранного соединения по умолчанию."
 
 #, php-format
 msgid "Query column \"%s\" not found"
-msgstr ""
+msgstr "Столбец запроса \"%s\" не найден"
 
 #, php-format
 msgid "Query column \"%s\" not found in table \"%s\""
-msgstr ""
+msgstr "Столбец запроса \"%s\" не найден в таблице \"%s\""
 
 msgid "Ready to search"
-msgstr ""
+msgstr "Готов к поиску"
 
 msgid "Remove"
 msgstr "Удалить"
@@ -1293,7 +1305,7 @@ msgid "Remove Dashboard"
 msgstr "Удалить панель информации"
 
 msgid "Remove Dashlet From Dashboard"
-msgstr ""
+msgstr "Удалить дашлет с приборной панели"
 
 msgid "Remove Navigation Item"
 msgstr "Удалить элемент навигации"
@@ -1308,17 +1320,17 @@ msgid "Remove User"
 msgstr "Удалить пользователя"
 
 msgid "Remove User Backend"
-msgstr ""
+msgstr "Удалить пользователя бэкэнда"
 
 msgid "Remove User Group"
 msgstr "Удалить пользовательскую группу"
 
 msgid "Remove User Group Backend"
-msgstr ""
+msgstr "Удалить пользовательскую группу бэкэнда"
 
 #, php-format
 msgid "Remove dashlet %s from pane %s"
-msgstr ""
+msgstr "Удалить дашлет %s с панели %s"
 
 #, php-format
 msgid "Remove group %s"
@@ -1334,7 +1346,7 @@ msgstr "Удаление элемента навигации %S"
 
 #, php-format
 msgid "Remove pane %s"
-msgstr ""
+msgstr "Удаление панели &s"
 
 #, php-format
 msgid "Remove resource %s"
@@ -1342,11 +1354,11 @@ msgstr "Удаление ресурса %s"
 
 #, php-format
 msgid "Remove role %s"
-msgstr ""
+msgstr "Удаление роли &s"
 
 #, php-format
 msgid "Remove the %s resource"
-msgstr ""
+msgstr "Удаление ресурса &s"
 
 msgid "Remove this filter"
 msgstr "Удалить этот фильтр"
@@ -1355,7 +1367,7 @@ msgid "Remove this member"
 msgstr "Удалить этого участника"
 
 msgid "Remove this part of your filter"
-msgstr ""
+msgstr "Удалите эту часть вашего фильтра"
 
 #, php-format
 msgid "Remove user %s"
@@ -1367,33 +1379,33 @@ msgstr "Удалить пользователя %s?"
 
 #, php-format
 msgid "Remove user backend %s"
-msgstr ""
+msgstr "Удаление пользователя бэкэнда %s"
 
 #, php-format
 msgid "Remove user group backend %s"
-msgstr ""
+msgstr "Удалить пользовательской группы бэкэнда %s"
 
 msgid "Report a bug"
-msgstr ""
+msgstr "Сообщить об ошибке"
 
 #, php-format
 msgid "Required parameter '%s' missing"
-msgstr ""
+msgstr "Обязательный параметр '%s' отсутствует"
 
 msgid "Resource"
 msgstr "Ресурс"
 
 #, php-format
 msgid "Resource \"%s\" has been successfully changed"
-msgstr ""
+msgstr "Ресурс \"%s\" был успешно изменен"
 
 #, php-format
 msgid "Resource \"%s\" has been successfully created"
-msgstr ""
+msgstr "Ресурс \"%s\" был успешно создан"
 
 #, php-format
 msgid "Resource \"%s\" has been successfully removed"
-msgstr ""
+msgstr "Ресурс \"%s\" был успешно удален"
 
 msgid "Resource Name"
 msgstr "Название ресурса"
@@ -1402,25 +1414,25 @@ msgid "Resource Type"
 msgstr "Тип ресурса"
 
 msgid "Resource already exists"
-msgstr ""
+msgstr "Ресурс уже существует"
 
 msgid "Resource name missing"
-msgstr ""
+msgstr "Название ресурса отсутствует"
 
 msgid "Resources"
-msgstr ""
+msgstr "Ресурсы"
 
 msgid "Resources are entities that provide data to Icinga Web 2."
-msgstr ""
+msgstr "Ресурсы - это объекты, которые предоставляют данные в Icinga Web 2."
 
 msgid "Restrict which groups this role can share items and information with"
-msgstr ""
+msgstr "Ограничьте, с какими группами эта роль может совместно использовать элементы и информацию"
 
 msgid "Restrict which users this role can share items and information with"
-msgstr ""
+msgstr "Ограничьте пользователей, с которыми эта роль может обмениваться элементами и информацией"
 
 msgid "Restrictions"
-msgstr ""
+msgstr "Ограничения"
 
 msgid "Role Name"
 msgstr "Название роли"
@@ -1438,7 +1450,7 @@ msgid "Roles"
 msgstr "Роли"
 
 msgid "Root DN"
-msgstr ""
+msgstr "Корневое DN"
 
 msgid "SQL Database"
 msgstr "База данных SQL"
@@ -1453,13 +1465,13 @@ msgid "Save Changes"
 msgstr "Сохранить изменения"
 
 msgid "Save for the current Session"
-msgstr ""
+msgstr "Сохранить для текущего сеанса"
 
 msgid "Save to the Preferences"
-msgstr ""
+msgstr "Сохранить в предпочтениях"
 
 msgid "Saving Configuration Failed"
-msgstr ""
+msgstr "Не удалось сохранить конфигурацию"
 
 msgid "Search"
 msgstr "Поиск"
@@ -1468,7 +1480,7 @@ msgid "Search Domain"
 msgstr "Поиск домена"
 
 msgid "Search this domain for records of available servers."
-msgstr ""
+msgstr "Найдите в этом домене записи о доступных серверах."
 
 msgid "Search..."
 msgstr "Поиск..."
@@ -1481,12 +1493,14 @@ msgstr "Выберите панель, на которую следует доб
 
 #, php-format
 msgid "Select one or more groups where to add %s as member"
-msgstr ""
+msgstr "Выберите одну или несколько групп, в которые нужно добавить %s в качестве участника"
 
 msgid ""
 "Select one or more users (fetched from your user backends) to add as group "
 "member"
 msgstr ""
+"Выберите одного или нескольких пользователей (извлеченных из ваших "
+"пользователей бэкендов) для добавления в качестве участника группы"
 
 msgid "Services"
 msgstr "Службы"
@@ -1495,9 +1509,11 @@ msgid ""
 "Set whether to show an exception's stacktrace by default. This can also be "
 "set in a user's preferences with the appropriate permission."
 msgstr ""
+"Установите - показывать ли трассировку стека исключений по умолчанию. Это также может "
+"быть установлено в настройках пользователя с соответствующим разрешением."
 
-msgid "Set whether to show an exception's stacktrace."
-msgstr ""
+msgid "Set whether to show a exception's stacktrace."
+msgstr "Установите, следует ли показывать трассировку стека исключений."
 
 msgid "Settings"
 msgstr "Параметры"
@@ -1515,17 +1531,17 @@ msgstr "Показать %s"
 
 #, php-format
 msgid "Show %u rows on this page"
-msgstr ""
+msgstr "Показать %u строк на этой странице"
 
 msgctxt "dashboard.pane.tooltip"
 msgid "Show Search"
 msgstr "Показать поиск"
 
 msgid "Show Stacktraces"
-msgstr ""
+msgstr "Показать стеки"
 
 msgid "Show all items on this page"
-msgstr ""
+msgstr "Показать все элементы на этой странице"
 
 #, php-format
 msgid "Show dashlet %s"
@@ -1533,11 +1549,11 @@ msgstr "Показать компонент %s"
 
 #, php-format
 msgid "Show detailed information about %s"
-msgstr ""
+msgstr "Показать подробную информацию о %s"
 
 #, php-format
 msgid "Show detailed information for group %s"
-msgstr ""
+msgstr "Показать подробную информацию для группы %s"
 
 #, php-format
 msgid "Show group %s"
@@ -1545,11 +1561,11 @@ msgstr "Показать группу %s"
 
 #, php-format
 msgid "Show rows %u to %u of %u"
-msgstr ""
+msgstr "Показать строки %u для %u из %u"
 
 #, php-format
 msgid "Show the overview of the %s module"
-msgstr ""
+msgstr "Показать обзор модуля %s"
 
 #, php-format
 msgid "Show user %s"
