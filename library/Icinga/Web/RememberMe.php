@@ -101,9 +101,11 @@ class RememberMe
      */
     public function getCookie()
     {
-        $value[] = $this->rsa->encryptToBase64($this->username);
-        $value[] = $this->encryptedPassword;
-        $value[] = base64_encode($this->rsa->getPublicKey());
+        $value = [
+            $this->rsa->encryptToBase64($this->username),
+            $this->encryptedPassword,
+            base64_encode($this->rsa->getPublicKey())
+        ];
 
         return (new Cookie(static::COOKIE))
             ->setExpire(time() + 60 * 60 * 24 * 30)
@@ -160,6 +162,7 @@ class RememberMe
     public function persist()
     {
         $this->remove();
+
         $this->getDb()->insert('rememberme', [
             'username' => $this->username,
             'private_key' => $this->rsa->getPrivateKey(),
