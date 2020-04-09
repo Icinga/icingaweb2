@@ -33,9 +33,9 @@ class DashletForm extends CompatForm
     }
 
     /**
-     * Create a new Dashboard
-     * @param $name
-     * @return  $id last inserted Id
+     * Create a new Dashboard and return the last insert Id
+     * @param string $name
+     * @return int $id
      */
     public function createDashboard($name)
     {
@@ -52,7 +52,7 @@ class DashletForm extends CompatForm
     }
 
     /**
-     * Display the Form to create new Dashboards and Dashlets
+     * Display the FormElement for creating new Dashboards and Dashlets
      */
     public function newAction()
     {
@@ -80,7 +80,7 @@ class DashletForm extends CompatForm
             $this->addElement('text', 'new_dashboard', [
                 'label' => 'New Dashboard',
                 'placeholder' => 'New Dashboard Name',
-                'required'  => true,
+                'required' => true,
             ]);
         } else {
             $this->addElement('select', 'dashboard', [
