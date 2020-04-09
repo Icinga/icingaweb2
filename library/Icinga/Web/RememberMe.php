@@ -212,7 +212,7 @@ class RememberMe
      */
     public function getExpiresIn()
     {
-        if($this->expiresIn === null) {
+        if ($this->expiresIn === null) {
             $this->expiresIn = time() + 60 * 60 * 24 * 30;
         }
 
