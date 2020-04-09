@@ -11,6 +11,10 @@ class DashletForm extends CompatForm
 {
     use Database;
 
+    /**
+     * Fetch all Dashboards from the database
+     * @return array $dashboards
+     */
     public function fetchDashboards()
     {
         $dashboards = [];
@@ -19,15 +23,20 @@ class DashletForm extends CompatForm
             ->columns('*')
             ->from('dashboard');
 
-        $data = $this->getDb()->select($select);
+        $result = $this->getDb()->select($select);
 
-        foreach ($data as $dashboard) {
+        foreach ($result as $dashboard) {
             $dashboards[$dashboard->id] = $dashboard->name;
         }
 
         return $dashboards;
     }
 
+    /**
+     * Create a new Dashboard
+     * @param $name
+     * @return  $id last inserted Id
+     */
     public function createDashboard($name)
     {
         $data = [
@@ -42,7 +51,9 @@ class DashletForm extends CompatForm
         return $id;
     }
 
-
+    /**
+     * Display the Form to create new Dashboards and Dashlets
+     */
     public function newAction()
     {
         $this->setAction('dashboards/dashlets/new');
@@ -63,12 +74,9 @@ class DashletForm extends CompatForm
         $this->addElement('checkbox', 'new-dashboard', [
             'label' => 'Dashboard',
             'class' => 'autosubmit',
-            'value' => 'new-dashboard'
         ]);
 
-        if (isset($_REQUEST['new-dashboard'])) {
-            $this->getElement('new-dashboard')->addAttributes(['checked' => true]);
-
+        if ($this->getElement('new-dashboard')->getValue() === 'y') {
             $this->addElement('text', 'new_dashboard', [
                 'label' => 'New Dashboard',
                 'placeholder' => 'New Dashboard Name',
@@ -92,9 +100,9 @@ class DashletForm extends CompatForm
         $this->add($this->newAction());
     }
 
-    public function onSuccess()
+    protected function onSuccess()
     {
-        if ($this->getValue('new-dashboard') !== null) {
+        if ($this->getValue('new-dashboard')) {
             if ($this->getValue('new_dashboard') !== null) {
                 $values = [
                     'dashboard_id' => $this->createDashboard($this->getValue('new_dashboard')),
@@ -103,7 +111,7 @@ class DashletForm extends CompatForm
                 ];
 
                 $this->getDb()->insert('dashlet', $values);
-                Notification::success('Dashlet created');
+                Notification::success('Dashlet in new Dashboard created');
             } else {
                 Notification::error('Dashboard Name failed!');
             }
