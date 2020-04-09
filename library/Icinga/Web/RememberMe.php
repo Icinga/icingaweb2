@@ -224,8 +224,8 @@ class RememberMe
      */
     public static function removeExpired()
     {
-         (new static())->getDb()->delete('rememberme',[
+         (new static())->getDb()->delete('rememberme', [
             'expires_in < ?' => new Expression('NOW()')
-        ]);
+         ]);
     }
 }
