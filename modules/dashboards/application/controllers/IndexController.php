@@ -39,24 +39,21 @@ class DashboardsController extends Controller
         $dashboards = $this->getDb()->select($data);
 
         foreach ($dashboards as $dashboard) {
-            $tabs->add($dashboard->name, [
+            $tabs->add($dashboard->id, [
                 'label' => $dashboard->name,
                 'url' => Url::fromPath('dashboards/dashboards', [
                     'dashboard' => $dashboard->id
                 ])
             ]);
 
-            $activateDashboard[$dashboard->id] = $dashboard->name;
+            $ids[] = $dashboard->id;
         }
 
-        if (empty($this->getParam('dashboard'))) {
-            foreach ($activateDashboard as $firstDashboard) {
-                $tabs->activate($firstDashboard);
+        foreach ($ids as $id) {
+            $id = $this->params->get('dashboard') ? : array_shift($ids);
+            $tabs->activate($id);
 
-                break;
-            }
-        } else {
-            $tabs->activate($activateDashboard[$this->getParam('dashboard')]);
+            return $id;
         }
 
         return $tabs;
