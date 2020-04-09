@@ -7,6 +7,7 @@ use Icinga\Forms\AcknowledgeApplicationStateMessageForm;
 use Icinga\Web\Announcement\AnnouncementCookie;
 use Icinga\Web\Announcement\AnnouncementIniRepository;
 use Icinga\Web\Controller;
+use Icinga\Web\RememberMe;
 use Icinga\Web\Session;
 use Icinga\Web\Widget;
 
@@ -65,6 +66,8 @@ class ApplicationStateController extends Controller
                 }
             }
         }
+        RememberMe::removeExpired();
+        $this->setAutorefreshInterval(60);
     }
 
     public function summaryAction()
