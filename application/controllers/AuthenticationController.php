@@ -113,7 +113,7 @@ class AuthenticationController extends Controller
         } else {
             if (RememberMe::hasCookie()) {
                 $this->getResponse()->setCookie(
-                    RememberMe::unsetCookie()
+                    RememberMe::forget()
                 );
             }
             (new RememberMe())->remove($user->getUsername());
