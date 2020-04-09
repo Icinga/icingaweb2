@@ -190,20 +190,13 @@ class RememberMe
     /**
      * Renew the cookie
      *
-     * Delete old database entry and insert new data for the given user
-     *
-     * @return Cookie
+     * @return $this
      */
-    public function renewCookie()
+    public function renew()
     {
-        $newCookie = static::fromCredentials(
+        return static::fromCredentials(
             $this->username,
             $this->rsa->decryptFromBase64($this->encryptedPassword)
         );
-
-        $newCookie->remove();
-        $newCookie->persist();
-
-        return $newCookie->getCookie();
     }
 }
