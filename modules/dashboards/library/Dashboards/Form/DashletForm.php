@@ -115,7 +115,7 @@ class DashletForm extends CompatForm
             } else {
                 Notification::error('Dashboard Name failed!');
             }
-        } else {
+        }else {
             $data = [
                 'dashboard_id' => $this->getValue('dashboard'),
                 'name' => $this->getValue('name'),
