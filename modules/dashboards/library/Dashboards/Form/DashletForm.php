@@ -12,7 +12,7 @@ class DashletForm extends CompatForm
     use Database;
 
     /**
-     * Fetch all Dashboards from the database and return them as array
+     * Fetch all dashboards from the database and return them as array
      * @return array $dashboards
      */
     public function fetchDashboards()
@@ -33,7 +33,7 @@ class DashletForm extends CompatForm
     }
 
     /**
-     * Create a new Dashboard and return the last insert Id
+     * Create a new dashboard and return the last insert Id
      * @param string $name
      * @return int $id
      */
@@ -52,7 +52,7 @@ class DashletForm extends CompatForm
     }
 
     /**
-     * Display the FormElement for creating new Dashboards and Dashlets
+     * Display the FormElement for creating a new dashboards and dashlets
      */
     public function newAction()
     {
@@ -115,7 +115,6 @@ class DashletForm extends CompatForm
             } else {
                 Notification::error('Dashboard Name failed!');
             }
-
         } else {
             $data = [
                 'dashboard_id' => $this->getValue('dashboard'),
