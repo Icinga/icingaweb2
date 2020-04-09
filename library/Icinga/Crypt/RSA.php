@@ -18,23 +18,23 @@ use UnexpectedValueException;
  * // Encryption
  * $data = (new RSA())
  *     ->loadKey($publicKey)
- *     ->encrypt($a, $b, $c); // Accepts a variable number of arguments
+ *     ->encrypt([$a, $b, $c]); // Accepts a string or an array as argument
  *
  * // Encrypt and encode to Base64
  * $data = (new RSA())
  *     ->loadKey($publicKey)
- *     ->encryptToBase64($a, $b, $c); // Accepts a variable number of arguments
+ *     ->encryptToBase64([$a, $b, $c]); // Accepts a string or an array as argument
  *
  *
  * // Decryption
  * list($a, $b, $c) = (new RSA())
  *     ->loadKey($privateKey)
- *     ->decrypt(...$data);
+ *     ->decrypt($data);
  *
  * // Decode from Base64 and decrypt
  * list($a, $b, $c) = (new RSA())
  *     ->loadKey($privateKey)
- *     ->decryptFromBase64(...$data);
+ *     ->decryptFromBase64($data);
  * ```
  *
  */
@@ -115,9 +115,9 @@ class RSA
      *
      * See {@link loadKey()} for providing the private key.
      *
-     * @param string|array $data
+     * @param string|string[] $data
      *
-     * @return string|array
+     * @return string|string[]
      *
      * @throws UnexpectedValueException If the private key is not set
      */
@@ -143,9 +143,9 @@ class RSA
      *
      * See {@link loadKey()} for providing the private key.
      *
-     * @param string|array $data
+     * @param string|string[] $data
      *
-     * @return string|array
+     * @return string|string[]
      *
      * @throws UnexpectedValueException If the private key is not set
      */
@@ -173,9 +173,9 @@ class RSA
      * stringified upon encryption which may lead to unexpected results when decrypting.
      * Use {@link json_encode()} if you have to encrypt other scalar types than string.
      *
-     * @param string|array $data
+     * @param string|string[] $data
      *
-     * @return string|array
+     * @return string|string[]
      *
      * @throws UnexpectedValueException If the public key is not set
      */
@@ -199,9 +199,9 @@ class RSA
      *
      * See {@link loadKey()} for providing the public key.
      *
-     * @param string|array $data
+     * @param string|string[] $data
      *
-     * @return string|array
+     * @return string|string[]
      *
      * @throws UnexpectedValueException If the public key is not set
      */
