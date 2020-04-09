@@ -9,8 +9,7 @@ use ipl\Web\Url;
 class DashletWidget extends BaseHtmlElement
 {
     /**
-     * Dashlet of the dashboard
-     * @var $dashlet
+     * @var object Dashlet of the dashboard
      */
     protected $dashlet;
 
@@ -31,7 +30,7 @@ class DashletWidget extends BaseHtmlElement
     {
         $this->getAttributes()->add([
             'data-icinga-url' => Url::fromPath($this->dashlet->url)->addParams(['view' => 'compact'])
-            ]);
+        ]);
         $this->add($this->title($this->dashlet->name));
     }
 
