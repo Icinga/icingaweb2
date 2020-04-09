@@ -9,4 +9,3 @@ CREATE TABLE rememberme (
     PRIMARY KEY (id),
     CONSTRAINT idx_rememberme_username UNIQUE KEY (username)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
-
