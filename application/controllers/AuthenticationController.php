@@ -41,8 +41,10 @@ class AuthenticationController extends Controller
             $this->redirectNow(Url::fromPath('setup'));
         }
         $form = new LoginForm();
+
         if (RememberMe::hasCookie()) {
             $authenticated = false;
+
             try {
                 $rememberMe = RememberMe::fromCookie();
                 $authenticated = $rememberMe->authenticate();
@@ -56,12 +58,14 @@ class AuthenticationController extends Controller
             } catch (AuthenticationException $e) {
                 Logger::error($e);
             }
+
             if (! $authenticated) {
                 $this->getResponse()->setCookie(
                     RememberMe::unsetCookie()
                 );
             }
         }
+        
         if ($this->Auth()->isAuthenticated()) {
             // Call provided AuthenticationHook(s) when login action is called
             // but icinga web user is already authenticated
