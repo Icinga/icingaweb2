@@ -255,7 +255,6 @@ class PreferenceForm extends Form
                 'checkbox',
                 'show_stacktraces',
                 array(
-                    'required'      => true,
                     'value'         => $this->getDefaultShowStacktraces(),
                     'label'         => $this->translate('Show Stacktraces'),
                     'description'   => $this->translate('Set whether to show an exception\'s stacktrace.')
@@ -267,7 +266,6 @@ class PreferenceForm extends Form
             'checkbox',
             'show_benchmark',
             array(
-                'required'  => true,
                 'label'     => $this->translate('Use benchmark')
             )
         );

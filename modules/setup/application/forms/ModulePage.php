@@ -33,7 +33,6 @@ class ModulePage extends Form
                 'checkbox',
                 $module->getName(),
                 array(
-                    'required'      => true,
                     'description'   => $module->getDescription(),
                     'label'         => ucfirst($module->getName()),
                     'value'         => $module->getName() === 'monitoring' ? 1 : 0,

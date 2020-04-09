@@ -175,7 +175,6 @@ class BackendConfigForm extends ConfigForm
             'checkbox',
             'disabled',
             array(
-                'required'  => true,
                 'label'     => $this->translate('Disable This Backend')
             )
         );
