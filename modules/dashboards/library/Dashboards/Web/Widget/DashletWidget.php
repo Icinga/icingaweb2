@@ -8,24 +8,31 @@ use ipl\Web\Url;
 
 class DashletWidget extends BaseHtmlElement
 {
-    protected $dashlets;
+    /**
+     * Dashlet of the dashboard
+     * @var $dashlet
+     */
+    protected $dashlet;
+
+    protected $defaultAttributes = ['class' => 'container'];
 
     protected $tag = 'div';
 
-    protected $defaultAttributes;
-
-    public function __construct($dashlets)
+    /**
+     * Create a new Dashlet
+     * @param $dashlet
+     */
+    public function __construct($dashlet)
     {
-        $this->dashlets = $dashlets;
+        $this->dashlet = $dashlet;
     }
 
     protected function assemble()
     {
-        $this->defaultAttributes = [
-            'class' => 'container dashlet-sortable icinga-module module-monitoring',
-            'data-icinga-url' => Url::fromPath($this->dashlets->url)->addParams(['view' => 'compact'])
-            ];
-        $this->add($this->title($this->dashlets->name));
+        $this->getAttributes()->add([
+            'data-icinga-url' => Url::fromPath($this->dashlet->url)->addParams(['view' => 'compact'])
+            ]);
+        $this->add($this->title($this->dashlet->name));
     }
 
     protected function title($title)
