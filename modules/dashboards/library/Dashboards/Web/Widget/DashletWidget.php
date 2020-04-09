@@ -8,9 +8,7 @@ use ipl\Web\Url;
 
 class DashletWidget extends BaseHtmlElement
 {
-    /**
-     * @var object Dashlet of the dashboard
-     */
+    /** @var object Dashlet of the dashboard */
     protected $dashlet;
 
     protected $defaultAttributes = ['class' => 'container'];
