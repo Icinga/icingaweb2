@@ -6,7 +6,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: \n"
-"Last-Translator: Dmitriy Kuznetsov <krotesk@mail.ru>\n"
+"Last-Translator: Dmitriy Kuznetsov <dmitry@atsip.ru>\n"
 "Language-Team: \n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 2.0.3\n"
@@ -607,7 +607,7 @@ msgstr "Включить модуль %s"
 
 #, php-format
 msgid "Enabling the \"%s\" module might help!"
-msgstr ""
+msgstr "Включение модуля \"%s\" может помочь!"
 
 msgid "Encryption"
 msgstr "Шифрование"
@@ -616,19 +616,21 @@ msgid "Enter a title for the dashlet."
 msgstr "Введите название для компонента."
 
 msgid "Enter a title for the new pane."
-msgstr ""
+msgstr "Введите название для новой панели."
 
 msgid ""
 "Enter url being loaded in the dashlet. You can paste the full URL, including "
 "filters."
 msgstr ""
-"Введите URL компонента. Вы можете скопировать полный URL, включая фильтры."
+"Введите URL, загружаемый в компонент. Вы можете скопировать полный URL, "
+"включая фильтры."
 
 msgid ""
 "Enter url to be loaded in the dashlet. You can paste the full URL, including "
 "filters."
 msgstr ""
-"Введите URL компонента. Вы можете скопировать полный URL, включая фильтры."
+"Введите URL для загрузки в компонент. Вы можете скопировать полный URL, "
+"включая фильтры."
 
 msgctxt "app.config.logging.level"
 msgid "Error"
@@ -642,71 +644,73 @@ msgstr "Внешний"
 
 #, php-format
 msgid "Failed to add \"%s\" as group member for \"%s\""
-msgstr ""
+msgstr "Не удалось добавить \"%s\" в качестве участника группы для \"%s\""
 
 msgid "Failed to add group"
-msgstr ""
+msgstr "Не удалось добавить группу"
 
 msgid "Failed to add user"
-msgstr ""
+msgstr "Не удалось добавить пользователя"
 
 #, php-format
 msgid "Failed to delete. An error occurred: %s"
-msgstr ""
+msgstr "Не удалось удалить. Произошла ошибка: %s"
 
 #, php-format
 msgid "Failed to discover the chosen LDAP connection: %s"
-msgstr ""
+msgstr "Не удалось обнаружить выбранное соединение LDAP: %s"
 
 #, php-format
 msgid "Failed to edit group \"%s\""
-msgstr ""
+msgstr "Не удалось изменить группу \"%s\""
 
 #, php-format
 msgid "Failed to edit user \"%s\""
-msgstr ""
+msgstr "Не удалось изменить пользователя \"%s\""
 
 #, php-format
 msgid "Failed to fetch any groups from backend %s. Please check your log"
-msgstr ""
+msgstr "Не удалось получить какие-либо группы из бэкенда %s. Пожалуйста, проверьте свой журнал"
 
 #, php-format
 msgid "Failed to fetch any users from backend %s. Please check your log"
-msgstr ""
+msgstr "Не удалось получить каких-либо пользователей из бэкенда %s. Пожалуйста, проверьте свой журнал"
 
 #, php-format
 msgid "Failed to fetch memberships from backend %s. Please check your log"
-msgstr ""
+msgstr "Не удалось получить членство из бэкенда %s. Пожалуйста, проверьте свой журнал"
 
 #, php-format
 msgid ""
 "Failed to fully parse navigation configuration. Ensure that all referenced "
 "parents are existing navigation items: %s"
 msgstr ""
+"Не удалось полностью проанализировать конфигурацию навигации. Убедитесь, "
+"что все указанные родители являются существующими элементами навигации: %s"
 
 #, php-format
 msgid "Failed to insert. An error occurred: %s"
-msgstr ""
+msgstr "Не удалось вставить. Произошла ошибка: %s"
 
 #, php-format
 msgid "Failed to remove group \"%s\""
-msgstr ""
+msgstr "Не удалось удалить группу \"%s\""
 
 #, php-format
 msgid "Failed to remove user \"%s\""
-msgstr ""
+msgstr "Не удалось удалить пользователя \"%s\""
 
 #, php-format
 msgid "Failed to successfully validate the configuration: %s"
-msgstr ""
+msgstr "Не удалось успешно проверить конфигурацию: %s"
 
 #, php-format
 msgid "Failed to unshare navigation item \"%s\""
-msgstr ""
+msgstr "Не удалось разделить элемент навигации \"%s\""
 
 #, php-format
 msgid "Failed to update. An error occurred: %s"
-msgstr ""
+msgstr "Не удалось обновить. Произошла ошибка: %s
 
 msgid "File"
 msgstr "Файл"
@@ -729,74 +733,76 @@ msgstr "Шаблон фильтра"
 
 #, php-format
 msgid "Filter column \"%s\" not found"
-msgstr ""
+msgstr "Столбец фильтра \"%s\" не найден"
 
 #, php-format
 msgid "Filter column \"%s\" not found in table \"%s\""
-msgstr ""
+msgstr "Столбец фильтра \"%s\" не найден в таблице \"%s\""
 
 msgid "Filter this list"
-msgstr ""
+msgstr "Отфильтровать этот список"
 
 msgid "Filtered"
-msgstr ""
+msgstr "Отфильтровано"
 
 msgid "Finish"
 msgstr "Завершено"
 
 msgid "For using unix domain sockets, specify localhost"
-msgstr ""
+msgstr "Для использования доменных сокетов unix укажите localhost"
 
 msgid ""
 "For using unix domain sockets, specify the path to the unix domain socket "
 "directory"
 msgstr ""
+"Для использования доменных сокетов unix укажите путь к каталогу "
+"доменных сокетов unix"
 
 msgid "Force Changes"
-msgstr ""
+msgstr "Форсировать изменения"
 
 msgid "General"
-msgstr ""
+msgstr "Общее"
 
 msgid "Git commit"
-msgstr ""
+msgstr "Git commit"
 
 msgid "Git commit date"
-msgstr ""
+msgstr "Git commit date"
 
 msgid "Grid Chart"
-msgstr ""
+msgstr "Сеточная диаграмма"
 
 msgid "Group"
 msgstr "Группа"
 
 #, php-format
 msgid "Group \"%s\" has been edited"
-msgstr ""
+msgstr "Группа \"%s\" была отредактирована"
 
 #, php-format
 msgid "Group \"%s\" has been removed"
-msgstr ""
+msgstr "Группа \"%s\" была удалена"
 
 #, php-format
 msgid "Group \"%s\" not found"
-msgstr ""
+msgstr "Группа \"%s\" не найдена"
 
 msgid "Group Memberships"
-msgstr ""
+msgstr "Участники группы"
 
 msgid "Group Name"
 msgstr "Название группы"
 
 msgid "Group added successfully"
-msgstr ""
+msgstr "Группа успешно добавлена"
 
 #, php-format
 msgid "Group member \"%s\" added successfully"
-msgstr ""
+msgstr "Участник группы \"%s\" успешно добавлен"
 
 msgid "Group members added successfully"
-msgstr ""
+msgstr "Участник группы успешно добавлен"
 
 msgid "Groups"
 msgstr "Группы"
@@ -811,7 +817,7 @@ msgid "Hosts"
 msgstr "Узлы"
 
 msgid "I'm ready to search, waiting for your input"
-msgstr ""
+msgstr "Я готов к поиску, жду вашего ответа"
 
 msgid "Icinga Documentation"
 msgstr "Документация Icinga"
@@ -823,7 +829,7 @@ msgid "Icinga Web 2 Login"
 msgstr "Вход в Icinga Web 2"
 
 msgid "Icinga Web 2 Setup-Wizard"
-msgstr ""
+msgstr "Мастер установки Icinga Web 2"
 
 msgid "Icinga Wiki"
 msgstr "Wiki Icinga"
@@ -842,14 +848,18 @@ msgid ""
 "session manually by clearing the cache, or by closing the current browser "
 "session."
 msgstr ""
+"Если это сообщение не исчезает - возможно потребуется выйти из текущего сеанса "
+"вручную, очистив кэш или закрыв текущий сеанс браузера."
 
 msgid ""
 "In case you can access the file by yourself, you can open it and insert the "
 "config manually:"
 msgstr ""
+"В случае, если вы можете получить доступ к файлу самостоятельно, то можете "
+"открыть его и вставить конфигурацию вручную:"
 
 msgid "Inactive"
-msgstr ""
+msgstr "Неактивно"
 
 msgid "Incorrect username or password"
 msgstr "Неверные имя пользователя или пароль"
@@ -860,11 +870,11 @@ msgstr "Информация"
 
 #, php-format
 msgid "Invalid backend type \"%s\" provided"
-msgstr ""
+msgstr "Указан неверный тип бэкэнда \"%s\""
 
 #, php-format
 msgid "Invalid resource type \"%s\" provided"
-msgstr ""
+msgstr "Указан неверный тип ресурса \"%s\""
 
 #, php-format
 msgid ""
@@ -873,15 +883,21 @@ msgid ""
 "authentication method by following the instructions in the %1$sdocumentation"
 "%3$s or by using our %2$sweb-based setup-wizard%3$s."
 msgstr ""
+"Похоже, что вы еще не настроили Icinga Web 2 - поэтому войти в систему "
+"без какого-либо определенного метода аутентификации невозможно. Пожалуйста, "
+"определите метод аутентификации, следуя инструкциям в %1$документации %3$s "
+или используя наш веб-мастер установки.
+"укажите метод аутентификации, следуя инструкциям в %1$sdocumentation"
+"%3$s или при помощи %2$sweb-мастера настройки%3$s.
 
 msgid "LDAP Base DN"
-msgstr ""
+msgstr "Базовое DN LDAP"
 
 msgid "LDAP Connection"
-msgstr ""
+msgstr "Подключение LDAP"
 
 msgid "LDAP Filter"
-msgstr ""
+msgstr "Фильтр LDAP"
 
 msgid "LDAP Group Base DN"
 msgstr ""
