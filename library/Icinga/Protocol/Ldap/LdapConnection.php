@@ -77,6 +77,9 @@ class LdapConnection implements Selectable, Inspectable
      */
     const LDAPS = 'ldaps';
 
+    /** @var ConfigObject Connection configuration */
+    protected $config;
+
     /**
      * Encryption for the connection if any
      *
@@ -182,6 +185,7 @@ class LdapConnection implements Selectable, Inspectable
      */
     public function __construct(ConfigObject $config)
     {
+        $this->config = $config;
         $this->hostname = $config->hostname;
         $this->bindDn = $config->bind_dn;
         $this->bindPw = $config->bind_pw;
@@ -739,7 +743,8 @@ class LdapConnection implements Selectable, Inspectable
 
         $ds = $this->getConnection();
 
-        $serverSorting = $this->getCapabilities()->hasOid(LdapCapabilities::LDAP_SERVER_SORT_OID);
+        $serverSorting = ! $this->config->disable_server_side_sort
+            && $this->getCapabilities()->hasOid(LdapCapabilities::LDAP_SERVER_SORT_OID);
 
         if ($query->hasOrder()) {
             if ($serverSorting) {
