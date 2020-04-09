@@ -62,6 +62,10 @@ class TacticalController extends Controller
         $this->handleFormatRequest($stats);
         $summary = $stats->fetchRow();
 
+        // Correct pending counts. Done here instead of in the query for compatibility reasons.
+        $summary->hosts_pending -= $summary->hosts_not_checked;
+        $summary->services_pending -= $summary->services_not_checked;
+
         $hostSummaryChart = new Donut();
         $hostSummaryChart
             ->addSlice($summary->hosts_up, array('class' => 'slice-state-ok'))
