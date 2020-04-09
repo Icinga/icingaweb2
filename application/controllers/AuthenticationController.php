@@ -61,11 +61,11 @@ class AuthenticationController extends Controller
 
             if (! $authenticated) {
                 $this->getResponse()->setCookie(
-                    RememberMe::unsetCookie()
+                    RememberMe::forget()
                 );
             }
         }
-        
+
         if ($this->Auth()->isAuthenticated()) {
             // Call provided AuthenticationHook(s) when login action is called
             // but icinga web user is already authenticated
