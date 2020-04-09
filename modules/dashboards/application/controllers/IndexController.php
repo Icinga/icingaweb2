@@ -20,7 +20,7 @@ class IndexController extends Controller
             ->columns('dashlet.name, dashlet.dashboard_id, dashlet.url')
             ->from('dashlet')
             ->join('dashboard d', 'dashlet.dashboard_id = d.id')
-            ->where(['d.id = ?' => $this->params->get('dashboard')]);
+            ->where(['d.id = ?' => $this->getTabs()->getActiveName()]);
 
         $dashlets = $this->getDb()->select($select);
 
@@ -48,10 +48,12 @@ class IndexController extends Controller
         }
 
         if (empty($this->params->get('dashboard'))) {
-            $id = $this->params->get('dashboard') ? : array_shift($ids);
+            $id = $this->params->get('dashboard') ?: array_shift($ids);
             $tabs->activate($id);
 
             return $id;
+        } else {
+            $tabs->activate($this->params->get('dashboard'));
         }
 
         return $tabs;
