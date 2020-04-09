@@ -900,58 +900,58 @@ msgid "LDAP Filter"
 msgstr "Фильтр LDAP"
 
 msgid "LDAP Group Base DN"
-msgstr ""
+msgstr "Базовое DN группы LDAP"
 
 msgid "LDAP Group Filter"
-msgstr ""
+msgstr "Групповой фильтр LDAP"
 
 msgid "LDAP Group Member Attribute"
-msgstr ""
+msgstr "Атрибут участника группы LDAP"
 
 msgid "LDAP Group Name Attribute"
-msgstr ""
+msgstr "Атрибут имени группы LDAP"
 
 msgid "LDAP Group Object Class"
-msgstr ""
+msgstr "Класс объектов группы LDAP"
 
 msgid "LDAP User Base DN"
-msgstr ""
+msgstr "База пользователей DN LDAP"
 
 msgid "LDAP User Filter"
-msgstr ""
+msgstr "Пользовательский фильтр LDAP"
 
 msgid "LDAP User Name Attribute"
-msgstr ""
+msgstr "Атрибут имени пользователя LDAP"
 
 msgid "LDAP User Object Class"
-msgstr ""
+msgstr "Класс объектов пользователя LDAP"
 
 msgid "Last Modified"
-msgstr ""
+msgstr "Последнее изменение"
 
 msgid "Last modified"
-msgstr ""
+msgstr "Последнее изменение"
 
 msgid "Leave empty for not updating the user's password"
-msgstr ""
+msgstr "Оставьте пустым чтобы не обновлять пароль пользователя"
 
 msgid "Limiter"
-msgstr ""
+msgstr "Ограничитель"
 
 msgid "List and configure shared navigation items"
-msgstr ""
+msgstr "Список и настройка общих элементов навигации"
 
 msgid "List and configure your own navigation items"
-msgstr ""
+msgstr "Список и настройка собственных элементов навигации"
 
 msgid "List groups of user group backends"
-msgstr ""
+msgstr "Список групп бэкендов групп пользователей"
 
 msgid "List intalled modules"
-msgstr ""
+msgstr "Список установленных модулей"
 
 msgid "List users of authentication backends"
-msgstr ""
+msgstr "Список пользователей бэкэндов аутентификации"
 
 msgid "Loaded modules"
 msgstr "Загруженные модули"
@@ -963,10 +963,10 @@ msgid "Logging Type"
 msgstr "Тип журнала"
 
 msgid "Logging in"
-msgstr ""
+msgstr "Вход в систему"
 
 msgid "Logging out..."
-msgstr ""
+msgstr "Выход из системы..."
 
 msgid "Login"
 msgstr "Вход"
@@ -978,14 +978,14 @@ msgid "Logout successful!"
 msgstr "Успешный выход!"
 
 msgid "Make sure that the webserver can write to this file."
-msgstr ""
+msgstr "Убедитесь, что веб-сервер может записывать данные в этот файл."
 
 msgid "Members"
 msgstr "Участники"
 
 #, php-format
 msgid "Membership for group %s created successfully"
-msgstr ""
+msgstr "Членство в группе %s успешно создано"
 
 msgid "Memberships created successfully"
 msgstr "Участники успешно созданы"
@@ -994,7 +994,7 @@ msgid "Menu Entry"
 msgstr "Элемент меню"
 
 msgid "Method Not Allowed"
-msgstr ""
+msgstr "Метод не разрешен"
 
 msgid "Modify this filter"
 msgstr "Изменить этот фильтр"
@@ -1012,7 +1012,7 @@ msgstr "Модуль \"%s\" включен"
 
 #, php-format
 msgid "Module %s has failed to load"
-msgstr ""
+msgstr "Не удалось загрузить модуль %s"
 
 #, php-format
 msgid "Module %s is disabled"
@@ -1020,27 +1020,27 @@ msgstr "Модуль %s отключен"
 
 #, php-format
 msgid "Module %s is enabled"
-msgstr ""
+msgstr "Модуль %s включен"
 
 msgid "Module Path"
-msgstr ""
+msgstr "Путь к модулю"
 
 msgid "Modules"
 msgstr "Модули"
 
 msgid "Move down in authentication order"
-msgstr ""
+msgstr "Переместить вниз в порядке аутентификации"
 
 msgid "Move up in authentication order"
-msgstr ""
+msgstr "Переместить вверх в порядке аутентификации"
 
 #, php-format
 msgid "Move user backend %s downwards"
-msgstr ""
+msgstr "Переместить бэкэнд пользователя %s вниз"
 
 #, php-format
 msgid "Move user backend %s upwards"
-msgstr ""
+msgstr "Переместить бэкэнд пользователя %s вверх"
 
 msgid "Name"
 msgstr "Название"
@@ -1050,23 +1050,23 @@ msgstr "Навигация"
 
 #, php-format
 msgid "Navigation Item \"%s\" not found. No action required"
-msgstr ""
+msgstr "Элемент навигации \"%s\" не найден. Никаких действий не требуется"
 
 #, php-format
 msgid "Navigation Item \"%s\" successfully removed"
-msgstr ""
+msgstr "Элемент навигации \"%s\" успешно удалён"
 
 #, php-format
 msgid "Navigation item \"%s\" has been unshared"
-msgstr ""
+msgstr "Элемент навигации \"%s\" не был разделен"
 
 #, php-format
 msgid "Navigation item \"%s\" not found"
-msgstr ""
+msgstr "Элемент навигации \"%s\" не найден"
 
 #, php-format
 msgid "Navigation item \"%s\" successfully updated"
-msgstr ""
+msgstr "Элемент навигации \"%s\" успешно обновлён"
 
 msgid "Navigation item successfully created"
 msgstr "Элемент навигации успешно создан"
@@ -1078,7 +1078,7 @@ msgid "New Dashboard Title"
 msgstr "Название новой панели информации"
 
 msgid "New Navigation Item"
-msgstr "Новый элемент панели информации"
+msgstr "Новый элемент навигации"
 
 msgid "New Resource"
 msgstr "Новый ресурс"
@@ -1090,13 +1090,13 @@ msgid "New User"
 msgstr "Новый пользователь"
 
 msgid "New User Backend"
-msgstr ""
+msgstr "Новый пользователь бэкэнда"
 
 msgid "New User Group"
 msgstr "Новая пользовательская группа"
 
 msgid "New User Group Backend"
-msgstr ""
+msgstr "Новая пользовательская группа бэкэнда"
 
 msgid "New User Group Member"
 msgstr "Новый участник пользовательской группы"
@@ -1105,13 +1105,13 @@ msgid "New Window"
 msgstr "Новое окно"
 
 msgid "New configuration has successfully been stored"
-msgstr ""
+msgstr "Новая конфигурация успешно сохранена"
 
 msgid "New dashboard"
 msgstr "Новая панель информации"
 
 msgid "New resource name missing"
-msgstr ""
+msgstr "Отсутствует новое имя ресурса"
 
 msgid "Next"
 msgstr "Далее"
@@ -1123,36 +1123,38 @@ msgid "No"
 msgstr "Нет"
 
 msgid "No LDAP resources available. Please configure an LDAP resource first."
-msgstr ""
+msgstr "Нет доступных ресурсов LDAP. Пожалуйста, сначала настройте ресурс LDAP."
 
 msgid ""
 "No authentication methods available. Did you create authentication.ini when "
 "setting up Icinga Web 2?"
 msgstr ""
+"Нет доступных методов аутентификации. Вы создали authentication.ini "
+"при настройке Icinga Web 2?"
 
 msgid "No backend found which is able to list groups"
-msgstr ""
+msgstr "Не найден бэкэнд, который может перечислять группы"
 
 msgid "No backend found which is able to list users."
-msgstr ""
+msgstr "Не найден бэкэнд, который может перечислять пользователей."
 
 msgid "No dashlets added to dashboard"
-msgstr ""
+msgstr "Нет дашлетов, добавленных в панель мониторинга"
 
 msgid "No group member found matching the filter"
-msgstr ""
+msgstr "Не найден ни один член группы, соответствующий фильтру"
 
 msgid "No groups found matching the filter"
-msgstr ""
+msgstr "Не найдено групп, соответствующих фильтру"
 
 msgid "No memberships found matching the filter"
-msgstr ""
+msgstr "Не найдено участников, соответствующих фильтру"
 
 msgid "No roles found."
 msgstr "Ролей не найдено"
 
 msgid "No users found matching the filter."
-msgstr ""
+msgstr "Ни один пользователь не соответствует фильтру."
 
 msgctxt "No parent for a navigation item"
 msgid "None"
