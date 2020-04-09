@@ -1575,16 +1575,16 @@ msgid "Single Column"
 msgstr "Один столбец"
 
 msgid "Skip Validation"
-msgstr ""
+msgstr "Пропустить проверку"
 
 msgid "Skip to Content"
-msgstr ""
+msgstr "Перейти к содержимому"
 
 msgid "Socket"
-msgstr ""
+msgstr "Сокет"
 
 msgid "Something went wrong while writing the file"
-msgstr ""
+msgstr "Что-то пошло не так во время записи файла"
 
 msgid "Sort by"
 msgstr "Сортировать по"
@@ -1593,10 +1593,10 @@ msgid "State"
 msgstr "Состояние"
 
 msgid "Strip this filter"
-msgstr ""
+msgstr "Снять этот фильтр"
 
 msgid "Support / Mailinglists"
-msgstr ""
+msgstr "Поддержка / Списки рассылки"
 
 msgid "System"
 msgstr "Система"
@@ -1605,104 +1605,110 @@ msgid "Target"
 msgstr "Цель"
 
 msgid "The Icinga Project"
-msgstr ""
+msgstr "Проект Icinga"
 
 msgid "The Icinga logo"
-msgstr ""
+msgstr "Логотип Icinga"
 
 msgid "The LDAP connection to use for authenticating with this provider."
-msgstr ""
+msgstr "Соединение LDAP, которое будет использоваться для аутентификации с этим поставщиком."
 
 msgid "The LDAP connection to use for this backend."
-msgstr ""
+msgstr "Соединение LDAP для использования этого бэкенда."
 
 msgid "The application prefix must not contain whitespace."
-msgstr ""
+msgstr "Префикс приложения не должен содержать пробелов."
 
 msgid "The attribute name used for storing a group's members."
-msgstr ""
+msgstr "Имя атрибута, используемое для хранения участников групп."
 
 msgid "The attribute name used for storing a group's name on the LDAP server."
-msgstr ""
+msgstr "Имя атрибута, используемое для хранения имен групп на сервере LDAP."
 
 msgid "The attribute name used for storing a user's name on the LDAP server."
-msgstr ""
+msgstr "Имя атрибута, используемое для хранения имен пользователей на сервере LDAP."
 
 msgid "The attribute name used for storing the user name on the LDAP server."
-msgstr ""
+msgstr "Имя атрибута, используемое для хранения имени пользователя на сервере LDAP."
 
 msgid "The character set for the database"
 msgstr "Кодировка сервера СУБД"
 
 msgid "The column pattern must be a valid regular expression."
-msgstr ""
+msgstr "Шаблон столбца должен быть допустимым регулярным выражением."
 
 msgid "The configuration has been successfully validated."
-msgstr ""
+msgstr "Конфигурация была успешно проверена."
 
 msgid "The database connection to use for authenticating with this provider"
-msgstr ""
+msgstr "Подключение к базе данных, используемое для аутентификации с этим поставщиком"
 
 msgid "The database connection to use for this backend"
-msgstr ""
+msgstr "Подключение к базе данных для использования в этом бэкэнде"
 
 #, php-format
 msgid "The file %s couldn't be stored. (Error: \"%s\")"
-msgstr ""
+msgstr "Файл %s не может быть сохранен. (Ошибка: \"%s\")"
 
 msgid "The filename to fetch information from"
-msgstr ""
+msgstr "Имя файла для извлечения информации из него"
 
 msgid "The filter is invalid. Please check your syntax."
-msgstr ""
+msgstr "Фильтр является недопустимым. Пожалуйста, проверьте синтаксис."
 
 msgid "The filter must not be wrapped in parantheses."
-msgstr ""
+msgstr "Фильтр не должен быть заключен в скобки."
 
 msgid ""
 "The filter needs to be expressed as standard LDAP expression, without outer "
 "parentheses. (e.g. &(foo=bar)(bar=foo) or foo=bar)"
 msgstr ""
+"Фильтр должен выглядеть как стандартное выражение LDAP, без внешних скобок. "
+"(например, &(foo=bar)(bar=foo) или foo=bar)"
 
 msgid ""
 "The filter needs to be expressed as standard LDAP expression. (e.g. &(foo=bar)"
 "(bar=foo) or foo=bar)"
 msgstr ""
+"Фильтр должен выглядеть как стандартное выражение LDAP. (например, "
+"&(foo=bar)(bar=foo) или foo=bar)"
 
 msgid "The filter pattern must be a valid regular expression."
-msgstr ""
+msgstr "Шаблон фильтра должен быть допустимым регулярным выражением."
 
 msgid ""
 "The filter to use to strip specific parts off from usernames. Leave empty if "
 "you do not want to strip off anything."
 msgstr ""
+"Фильтр, используемый для удаления определенных частей из имен пользователей. "
+"Оставьте пустым, если вы не хотите ничего удалять."
 
 msgid "The full path to the log file to write messages to."
-msgstr ""
+msgstr "Полный путь к файлу журнала для записи сообщений."
 
 msgid "The given SSH key is invalid"
-msgstr ""
+msgstr "Данный ключ SSH недействителен"
 
 #, fuzzy
 msgid "The hostname of the database"
-msgstr "Сетевое имя сервера СУБД"
+msgstr "Имя хоста сервера СУБД"
 
 msgid "The hostname or address of the LDAP server to use for authentication"
-msgstr ""
+msgstr "Имя хоста или адрес сервера LDAP, используемого для аутентификации"
 
 msgid ""
 "The icon of this navigation item. Leave blank if you do not want a icon being "
 "displayed"
-msgstr "Значок элемента навигации. Оставьте пустым для скрытия значка"
+msgstr "Значок этого элемента навигации. Оставьте пустым для скрытия значка"
 
 msgid "The maximum logging level to emit."
-msgstr ""
+msgstr "Максимальный уровень протоколирования."
 
 msgid "The name of the application by which to prefix syslog messages."
-msgstr ""
+msgstr "Имя приложения, с помощью которого можно добавлять префикс сообщениям системного журнала."
 
 msgid "The name of the dashboard pane in which to display this dashlet"
-msgstr ""
+msgstr "Имя панели мониторинга, в которой будет отображаться этот дашлет"
 
 msgid "The name of the database to use"
 msgstr "Название базы данных для использования"
@@ -1714,11 +1720,13 @@ msgid ""
 "The name of this authentication provider that is used to differentiate it "
 "from others"
 msgstr ""
+"Имя этого поставщика аутентификации, которое используется для отличия его "
+"от других поставщиков"
 
 msgid ""
 "The name of this authentication provider that is used to differentiate it "
 "from others."
-msgstr ""
+msgstr "Имя этого поставщика аутентификации, используемое для отличия его от других."
 
 msgid ""
 "The name of this navigation item that is used to differentiate it from others"
@@ -1729,17 +1737,20 @@ msgid ""
 "The name of this user group backend that is used to differentiate it from "
 "others"
 msgstr ""
+"Имя бэкенда этой группы пользователей, позволяющее отличить его от других"
 
 msgid "The object class used for storing groups on the LDAP server."
-msgstr ""
+msgstr "Класс объектов, используемый для хранения групп на сервере LDAP."
 
 msgid "The object class used for storing users on the LDAP server."
-msgstr ""
+msgstr "Класс объектов, используемый для хранения пользователей на сервере LDAP."
 
 msgid ""
 "The parent item to assign this navigation item to. Select \"None\" to make "
 "this a main navigation item"
 msgstr ""
+"Родительский элемент для назначения этого элемента навигации. Выберите "
+"\"Нет\", чтобы сделать его основным элементом навигации"
 
 msgid ""
 "The parent menu to assign this menu entry to. Select \"None\" to make this a "
