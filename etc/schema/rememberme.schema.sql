@@ -3,9 +3,10 @@ CREATE TABLE rememberme (
     username varchar(254) COLLATE utf8mb4_unicode_ci NOT NULL,
     public_key text NOT NULL,
     private_key text NOT NULL,
-    last_seen timestamp NULL DEFAULT NULL,
+    expires_in timestamp NULL DEFAULT NULL,
     ctime timestamp NULL DEFAULT NULL,
     mtime timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (id),
     CONSTRAINT idx_rememberme_username UNIQUE KEY (username)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+
