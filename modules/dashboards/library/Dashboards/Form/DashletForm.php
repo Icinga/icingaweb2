@@ -12,7 +12,7 @@ class DashletForm extends CompatForm
     use Database;
 
     /**
-     * Fetch all Dashboards from the database
+     * Fetch all Dashboards from the database and return them as array
      * @return array $dashboards
      */
     public function fetchDashboards()
@@ -72,13 +72,13 @@ class DashletForm extends CompatForm
         ]);
 
         $this->addElement('checkbox', 'new-dashboard', [
-            'label' => 'Dashboard',
+            'label' => 'New Dashboard',
             'class' => 'autosubmit',
         ]);
 
         if ($this->getElement('new-dashboard')->getValue() === 'y') {
-            $this->addElement('text', 'new_dashboard', [
-                'label' => 'New Dashboard',
+            $this->addElement('text', 'new-dashboard-name', [
+                'label' => 'Dashboard Name',
                 'placeholder' => 'New Dashboard Name',
                 'required' => true,
             ]);
@@ -103,9 +103,9 @@ class DashletForm extends CompatForm
     protected function onSuccess()
     {
         if ($this->getValue('new-dashboard')) {
-            if ($this->getValue('new_dashboard') !== null) {
+            if ($this->getValue('new-dashboard-name') !== null) {
                 $values = [
-                    'dashboard_id' => $this->createDashboard($this->getValue('new_dashboard')),
+                    'dashboard_id' => $this->createDashboard($this->getValue('new-dashboard-name')),
                     'name' => $this->getValue('name'),
                     'url' => $this->getValue('url')
                 ];
