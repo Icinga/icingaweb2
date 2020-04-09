@@ -9,7 +9,7 @@ use function ipl\Stdlib\get_php_type;
 
 class DashboardWidget extends BaseHtmlElement
 {
-    /** @var iterable Dashlets of the dashboard */
+    /** @var iterable $dashlets of the dashboard */
     protected $dashlets;
 
     protected $defaultAttributes = ['class' => 'dashboard content'];
@@ -25,7 +25,7 @@ class DashboardWidget extends BaseHtmlElement
      */
     public function __construct($dashlets)
     {
-        if (! is_iterable($dashlets)) {
+        if (!is_iterable($dashlets)) {
             throw new InvalidArgumentException(sprintf(
                 '%s expects parameter 1 to be iterable, got %s instead',
                 __METHOD__,
