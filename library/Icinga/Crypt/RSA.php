@@ -124,6 +124,7 @@ class RSA
     public function decrypt($data)
     {
         $privateKey = $this->getPrivateKey();
+
         if (is_array($data)) {
             $decrypted = [];
 
@@ -133,6 +134,7 @@ class RSA
 
             return $decrypted;
         }
+
         openssl_private_decrypt($data, $decrypted, $privateKey);
 
         return $decrypted;
@@ -187,8 +189,10 @@ class RSA
             foreach ($data as $value) {
                 openssl_public_encrypt($value, $encrypted[], $this->getPublicKey());
             }
+
             return $encrypted;
         }
+        
         openssl_public_encrypt($data, $encrypted, $this->getPublicKey());
 
         return $encrypted;
