@@ -218,4 +218,14 @@ class RememberMe
 
         return $this->expiresIn;
     }
+
+    /**
+     *  Remove expired database entry
+     */
+    public static function removeExpired()
+    {
+         (new static())->getDb()->delete('rememberme',[
+            'expires_in < ?' => new Expression('NOW()')
+        ]);
+    }
 }
