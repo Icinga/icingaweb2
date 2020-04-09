@@ -47,7 +47,7 @@ class IndexController extends Controller
             $ids[] = $dashboard->id;
         }
 
-        foreach ($ids as $id) {
+        if (empty($this->params->get('dashboard'))) {
             $id = $this->params->get('dashboard') ? : array_shift($ids);
             $tabs->activate($id);
 
