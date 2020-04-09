@@ -118,7 +118,7 @@ class RememberMe
      *
      * @return Cookie
      */
-    public static function unsetCookie()
+    public static function forget()
     {
         unset($_COOKIE[static::COOKIE]);
 
