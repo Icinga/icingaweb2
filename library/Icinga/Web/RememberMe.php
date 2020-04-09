@@ -36,6 +36,8 @@ class RememberMe
      */
     protected $rsa;
 
+    protected $expiresIn;
+
     /**
      * Check if cookie is set
      *
@@ -167,6 +169,7 @@ class RememberMe
             'username' => $this->username,
             'private_key' => $this->rsa->getPrivateKey(),
             'public_key' => $this->rsa->getPublicKey(),
+            'expires_in' => new Expression('FROM_UNIXTIME(?)', $this->getExpiresIn()),
             'ctime' => new Expression('NOW()'),
             'mtime' => new Expression('NOW()')
         ]);
@@ -198,5 +201,21 @@ class RememberMe
             $this->username,
             $this->rsa->decryptFromBase64($this->encryptedPassword)
         );
+    }
+
+    /**
+     * Get expiry date
+     *
+     * set if not already set
+     *
+     * @return int
+     */
+    public function getExpiresIn()
+    {
+        if($this->expiresIn === null) {
+            $this->expiresIn = time() + 60 * 60 * 24 * 30;
+        }
+
+        return $this->expiresIn;
     }
 }
