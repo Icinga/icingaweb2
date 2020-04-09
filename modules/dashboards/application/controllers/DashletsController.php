@@ -15,7 +15,7 @@ class DashletsController extends Controller
         $dashletForm = new DashletForm();
 
         $dashletForm->on($dashletForm::ON_SUCCESS, function () {
-            $this->redirectNow('dashboards/dashboards');
+            $this->redirectNow('dashboards');
         });
 
         $dashletForm->handleRequest(ServerRequest::fromGlobals());
