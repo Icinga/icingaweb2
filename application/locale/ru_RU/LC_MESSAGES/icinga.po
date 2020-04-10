@@ -1749,7 +1749,7 @@ msgid ""
 "The parent item to assign this navigation item to. Select \"None\" to make "
 "this a main navigation item"
 msgstr ""
-"Родительский элемент для назначения этого элемента навигации. Выберите "
+"Родительский элемент для добавления этого элемента навигации. Выберите "
 "\"Нет\", чтобы сделать его основным элементом навигации"
 
 msgid ""
@@ -1763,26 +1763,30 @@ msgid "The password to use for authentication"
 msgstr "Пароль для аутентификации"
 
 msgid "The password to use for querying the ldap server"
-msgstr ""
+msgstr "Пароль, используемый для запроса на сервер ldap"
 
 msgid ""
 "The path where groups can be found on the LDAP server. Leave empty to select "
 "all users available using the specified connection."
 msgstr ""
+"Путь, по которому можно найти группы на сервере LDAP. Оставьте пустым, чтобы "
+"выбрать всех пользователей, доступных с помощью указанного соединения."
 
 msgid ""
 "The path where users can be found on the LDAP server. Leave empty to select "
 "all users available using the specified connection."
 msgstr ""
+"Путь для нахождения пользователей на сервере LDAP. Оставьте пустым для "
+"выбора всех пользователей, доступных с помощью указанного соединения."
 
 msgid "The pattern by which to identify columns."
-msgstr ""
+msgstr "Шаблон идентификации столбцов."
 
 msgid "The permissions to grant. You may select more than one permission"
-msgstr ""
+msgstr "Предоставляемые разрешения. Вы можете выбрать несколько разрешений"
 
 msgid "The port of the LDAP server to use for authentication"
-msgstr ""
+msgstr "Порт сервера LDAP, используемый для аутентификации"
 
 #, fuzzy
 msgid "The port to use"
@@ -1790,10 +1794,10 @@ msgstr "Используемый сетевой порт"
 
 #, php-format
 msgid "The private key for the user \"%s\" is already exists."
-msgstr ""
+msgstr "Приватный ключ для пользователя \"%s\" уже существует."
 
 msgid "The private key which will be used for the SSH connections"
-msgstr ""
+msgstr "Приватный ключ, используемый для SSH-соединений"
 
 #, php-format
 msgid ""
@@ -1801,6 +1805,8 @@ msgid ""
 "\"%s\". Removing the resource can result in noone being able to log in any "
 "longer."
 msgstr ""
+"Ресурс \"%s\" в настоящее время используется для аутентификации бэкэнда пользователя "
+""\%s\". Удаление ресурса может привести к невозможности входа в систему никому."
 
 msgid "The target where to open this navigation item's url"
 msgstr "Укажите как будет открыта ссылка данного элемента навигации"
@@ -1809,19 +1815,19 @@ msgid "The type of SQL database"
 msgstr "Тип БД SQL"
 
 msgid "The type of logging to utilize."
-msgstr ""
+msgstr "Тип ведения журнала для использования."
 
 msgid "The type of resource"
 msgstr "Тип ресурса"
 
 msgid "The type of the resource to use for this authenticaton provider"
-msgstr ""
+msgstr "Тип ресурса, используемый для данного поставщика аутентификации"
 
 msgid "The type of this navigation item"
 msgstr "Тип этого элемента навигации"
 
 msgid "The type of this user group backend"
-msgstr ""
+msgstr "Тип бэкенда этой группы пользователей"
 
 msgid "The unique name of this resource"
 msgstr "Уникальное название этого ресурса"
@@ -1832,44 +1838,51 @@ msgid ""
 "identifier (e.g. http://example.tld)"
 msgstr ""
 "URL адрес элемента навигации. Оставьте пустым, если необходимо только "
-"отображение имени. Для внешних адресов убедитесь, что в начале ссылке указан "
+"отображение имени. Для внешних адресов убедитесь, что в начале ссылки указан "
 "корректный протокол (например, http://example.tld)"
 
 msgid ""
 "The url to load in the dashlet. For external urls, make sure to prepend an "
 "appropriate protocol identifier (e.g. http://example.tld)"
 msgstr ""
+"URL-адрес для загрузки в дашлете. Для внешних URL-адресов обязательно добавьте "
+"соответствующий идентификатор протокола (например, http://example.ru)"
 
 msgid "The user backend to link with this user group backend."
-msgstr ""
+msgstr "Бэкэнд пользователя для связи с этим бэкэндом группы пользователей."
 
 msgid ""
 "The user dn to use for querying the ldap server. Leave the dn and password "
 "empty for attempting an anonymous bind"
 msgstr ""
+"Имя пользователя, которое будет использоваться для запроса на сервер ldap. "
+"Оставьте dn и пароль пустыми для попытки анонимной привязки"
 
 #, fuzzy
 msgid "The user name to use for authentication"
 msgstr "Имя пользователя для аутентификации"
 
 msgid "There are currently no navigation items being shared"
-msgstr ""
+msgstr "В настоящее время общие элементы навигации отсутствуют"
 
 msgid "There is no such module installed."
-msgstr ""
+msgstr "Такого модуля не установлено."
 
 msgid ""
 "There's an application error preventing you from persisting the configuration"
 msgstr ""
+"Имеется ошибка приложения, которая не позволяет вам сохранить конфигурацию"
 
 msgid "This could have one or more of the following reasons:"
-msgstr ""
+msgstr "Это может иметь одну или несколько из следующих причин:"
 
 #, php-format
 msgid ""
 "This is a child of the navigation item %1$s. You can only unshare this item "
 "by unsharing %1$s"
 msgstr ""
+"Это дочерний элемент навигационного элемента %1$s. Вы можете разделить этот "
+"элемент только путем разделения %1$s"
 
 msgid "This module has no dependencies"
 msgstr "Этот модуль не имеет зависимостей"
@@ -1881,12 +1894,14 @@ msgid ""
 "This option allows you to enable or to disable the global page content auto "
 "refresh"
 msgstr ""
+"Этот параметр позволяет включать или отключать автоматическое обновление "
+"содержимого общей страницы"
 
 msgid "Tick this box to share this item with others"
 msgstr "Сделать элемент доступным другим пользователям"
 
 msgid "To modify the private key you must recreate this resource."
-msgstr ""
+msgstr "Для изменения приватного ключа необходимо заново создать этот ресурс."
 
 msgid "Type"
 msgstr "Тип"
@@ -1899,30 +1914,34 @@ msgid ""
 "Unable to delete navigation item \"%s\". There are other items dependent from "
 "it: %s"
 msgstr ""
+"Невозможно удалить элемент навигации \"%s\". Есть и другие элементы, зависящие "
+"от него: %s"
 
 #, php-format
 msgid ""
 "Unable to unshare navigation item \"%s\". It is dependent from item \"%s\". "
 "Dependent items can only be unshared by unsharing their parent"
 msgstr ""
+"Невозможно разделить элемент навигации \"%s\". Он зависит от элемента \"%s\". "
+"Зависимые элементы могут быть разделены только путем разделения их родительских элементов"
 
 msgid "Unknown"
 msgstr "Неизвестный"
 
 msgid "Unknown resource provided"
-msgstr ""
+msgstr "Предоставлен неизвестный ресурс"
 
 msgid "Unshare"
-msgstr ""
+msgstr "Скрытый"
 
 msgid "Unshare this navigation item"
-msgstr ""
+msgstr "Скрыть этот элемент навигации"
 
 msgid "Update Dashlet"
 msgstr "Обновить компонент"
 
 msgid "Update Navigation Item"
-msgstr ""
+msgstr "Обновить элемент навигации"
 
 msgid "Update Resource"
 msgstr "Обервить ресурс"
@@ -1934,18 +1953,20 @@ msgid "Update User"
 msgstr "Обновить пользователя"
 
 msgid "Update User Backend"
-msgstr ""
+msgstr "Обновить бэкэнд пользователя"
 
 msgid "Update User Group"
 msgstr "Обновить пользовательскую группу"
 
 msgid "Update User Group Backend"
-msgstr ""
+msgstr "Обновить бэкэнд группы пользователей"
 
 msgid ""
 "Upon any of this form's fields were changed, this page is being updated "
 "automatically."
 msgstr ""
+"После изменения любого из полей этой формы эта страница обновляется "
+"автоматически."
 
 msgid ""
 "Upon its value changing, this field issues an automatic update of this page."
@@ -1960,28 +1981,28 @@ msgid "Url"
 msgstr "URL"
 
 msgid "Use benchmark"
-msgstr ""
+msgstr "Использовать исходный элемент"
 
 msgid "Use the following language to display texts and messages"
-msgstr ""
+msgstr "Использовать следующий язык для отображения текстов и сообщений"
 
 msgid "Use the following timezone for dates and times"
-msgstr ""
+msgstr "Использовать следующий часовой пояс для дат и времени"
 
 msgid "User"
 msgstr "Пользователь"
 
 #, php-format
 msgid "User \"%s\" has been edited"
-msgstr ""
+msgstr "Пользователь \"%s\" был отредактирован"
 
 #, php-format
 msgid "User \"%s\" has been removed"
-msgstr ""
+msgstr "Пользователь \"%s\" был удален"
 
 #, php-format
 msgid "User \"%s\" has been removed from group \"%s\""
-msgstr ""
+msgstr "Пользователь \"%s\" был удален из группы \"%s\""
 
 #, php-format
 msgid "User \"%s\" not found"
@@ -1989,64 +2010,67 @@ msgstr "Пользователь \"%s\" не найден"
 
 #, php-format
 msgid "User %s is already a member of all groups"
-msgstr ""
+msgstr "Пользователь %s уже является участником всех групп"
 
 msgid "User Backend"
-msgstr ""
+msgstr "Бэкэнд пользователя"
 
 msgid "User Group"
 msgstr "Пользовательская группа"
 
 msgid "User Groups"
-msgstr "Пользовательская группа"
+msgstr "Пользовательские группы"
 
 msgid "User Preference Storage Type"
-msgstr ""
+msgstr "Тип хранения предпочтений пользователя"
 
 msgid "User added successfully"
 msgstr "Пользователь успешно добавлен"
 
 #, php-format
 msgid "User backend \"%s\" not found"
-msgstr ""
+msgstr "Бэкэнд пользователя \"%s\" не найден"
 
 #, php-format
 msgid "User backend \"%s\" successfully removed"
-msgstr ""
+msgstr "Бэкэнд пользователя \"%s\" успешно удален"
 
 #, php-format
 msgid "User backend \"%s\" successfully updated"
-msgstr ""
+msgstr "Бэкэнд пользователя \"%s\" успешно обновлен"
 
 msgid "User backend successfully created"
-msgstr ""
+msgstr "Бэкэнд пользователя успешно создан"
 
 #, php-format
 msgid "User group backend \"%s\" is not %s"
-msgstr ""
+msgstr "Бэкэнд группы пользователя \"%s\" не %s"
 
 #, php-format
 msgid "User group backend \"%s\" not found"
-msgstr ""
+msgstr "Бэкэнд группы пользователя \"%s\" не найден"
 
 #, php-format
 msgid "User group backend \"%s\" successfully removed"
-msgstr ""
+msgstr "Бэкэнд группы пользователя \"%s\" успешно удалён"
 
 #, php-format
 msgid "User group backend \"%s\" successfully updated"
-msgstr ""
+msgstr "Бэкэнд группы пользователя \"%s\" успешно обновлен"
 
 msgid "User group backend successfully created"
-msgstr ""
+msgstr "Бэкэнд группы пользователя успешно создан"
 
 msgid ""
 "User to log in as on the remote Icinga instance. Please note that key-based "
 "SSH login must be possible for this user"
 msgstr ""
+"Пользователь должен войти как на удаленном экземпляре Icinga. Пожалуйста, "
+"обратите внимание, что для этого пользователя должен быть возможен SSH-вход "
+"по ключу"
 
 msgid "Usergroup Backend"
-msgstr ""
+msgstr "Бэкэнд группы пользователя"
 
 msgid "Usergroups"
 msgstr "Группы пользователей"
@@ -2061,7 +2085,7 @@ msgid "Validate Configuration"
 msgstr "Проверить конфигурацию"
 
 msgid "Validation In Progress"
-msgstr ""
+msgstr "Проверка в процессе"
 
 msgid "Validation Log"
 msgstr "Журнал проверок"
@@ -2081,34 +2105,41 @@ msgid ""
 "Whether to encrypt communication. Choose STARTTLS or LDAPS for encrypted "
 "communication or none for unencrypted communication"
 msgstr ""
+"Нужно ли шифровать соединение. Выбрать STARTTLS или LDAPS для шифрования "
+"соединения или ничего для незашифрованной связи"
 
 msgctxt "pagination.joystick"
 msgid "X-Axis"
-msgstr ""
+msgstr "Ось X"
 
 msgctxt "pagination.joystick"
 msgid "Y-Axis"
-msgstr ""
+msgstr "Ось Y"
 
 msgid "Yes"
 msgstr "Да"
 
 msgid "You did not create any navigation item yet."
-msgstr ""
+msgstr "Вы еще не создали ни одного элемента навигации."
 
 msgid "You don't have file-system permissions to write to the file"
-msgstr ""
+msgstr "У вас нет разрешений файловой системы для записи в файл"
 
 msgid ""
 "You'll need to configure at least one user group backend first that allows to "
 "create new memberships"
 msgstr ""
+"Сначала вам необходимо настроить хотя бы одну группу пользователей бэкэнда, "
+"которая позволит создавать новые членства"
 
 msgid ""
 "You're currently not authenticated using any of the web server's "
 "authentication mechanisms. Make sure you'll configure such, otherwise you'll "
 "not be able to login."
 msgstr ""
+"В настоящее время вы не прошли аутентификацию с помощью любого из механизмов "
+"проверки подлинности веб-сервера. Убедитесь, что вы настроите его, "
+"иначе вы не сможете войти в систему."
 
 msgid "Your Current Language"
 msgstr "Используемый вами язык"
@@ -2127,7 +2158,7 @@ msgstr ""
 #, php-format
 msgctxt "An event will happen at the given time"
 msgid "at %s"
-msgstr ""
+msgstr "в %s"
 
 msgid "disable"
 msgstr "отключен"
@@ -2138,7 +2169,7 @@ msgstr "включен"
 #, php-format
 msgctxt "A status is lasting for the given time interval"
 msgid "for %s"
-msgstr ""
+msgstr "для %s"
 
 #, fuzzy
 msgctxt "pagination.joystick"
@@ -2148,7 +2179,7 @@ msgstr "узлы"
 #, php-format
 msgctxt "An event will happen after the given time interval has elapsed"
 msgid "in %s"
-msgstr ""
+msgstr "в %s"
 
 #, fuzzy
 msgid "modules"
@@ -2157,12 +2188,12 @@ msgstr "модули"
 #, php-format
 msgctxt "An event happened on the given date or date and time"
 msgid "on %s"
-msgstr ""
+msgstr "на %s"
 
 #, php-format
 msgctxt "An event will happen on the given date or date and time"
 msgid "on %s"
-msgstr ""
+msgstr "на %s"
 
 #, fuzzy
 msgctxt "pagination.joystick"
