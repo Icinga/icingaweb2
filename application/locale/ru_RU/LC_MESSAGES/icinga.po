@@ -64,12 +64,12 @@ msgstr "%s не в ожидаемом формате: %%value%%"
 
 #, php-format
 msgid "%s: %d to %d of %d (on the %s-axis)"
-msgstr "%s: %d to %d of %d (on the %s-axis)"
+msgstr "%s: %d до %d от %d (на оси %s)"
 
 #, php-format
 msgctxt "pagination.joystick"
 msgid "%s: Show %s %u to %u out of %u"
-msgstr "%s: Show %s %u to %u out of %u"
+msgstr "%s: Показать %s %u to %u out of %u"
 
 #, php-format
 msgid "'%s' is not a valid number"
@@ -108,7 +108,7 @@ msgid "Add New Pane Or Dashlet"
 msgstr "Добавить новую панель или страницу сводки"
 
 msgid "Add To Dashboard"
-msgstr "Сводка"
+msgstr "Добавить на панель мониторинга"
 
 msgid "Add To Menu"
 msgstr "Добавить в меню"
@@ -154,8 +154,9 @@ msgid ""
 "All configured authentication methods failed. Please check the system log or "
 "Icinga Web 2 log for more information."
 msgstr ""
-"Все настроенные способы аутентификации не выполнены. Пожалуйста, проверьте системный журнал"
-"или журнал Icinga Web 2 для получения дополнительной информаци".
+"Не удалось выполнить все настроенные методы аутентификации. Пожалуйста, "
+"проверьте системный журнал или журнал Icinga Web 2 для получения "
+"дополнительной информации."
 
 #, php-format
 msgid "Allow access to module %s"
@@ -184,8 +185,9 @@ msgid ""
 "An additional filter to use when looking up users using the specified "
 "connection. Leave empty to not to use any additional filter rules."
 msgstr ""
-"Дополнительный фильтр, используемый при поиске пользователей, использующих указанное соединение."
-"Оставьте пустой, чтобы не использовать никаких дополнительных правил фильтрации."
+"Дополнительный фильтр, используемый при поиске пользователей, использующих "
+"указанное соединение. Оставьте пустым, чтобы не использовать никаких "
+"дополнительных правил фильтрации."
 
 msgid "Application"
 msgstr "Приложение"
@@ -1881,8 +1883,8 @@ msgid ""
 "This is a child of the navigation item %1$s. You can only unshare this item "
 "by unsharing %1$s"
 msgstr ""
-"Это дочерний элемент навигационного элемента %1$s. Вы можете разделить этот "
-"элемент только путем разделения %1$s"
+"Это дочерний элемент навигационного элемента %1$s. Вы можете скрыть этот "
+"элемент только путем скрытия %1$s"
 
 msgid "This module has no dependencies"
 msgstr "Этот модуль не имеет зависимостей"
@@ -1922,8 +1924,8 @@ msgid ""
 "Unable to unshare navigation item \"%s\". It is dependent from item \"%s\". "
 "Dependent items can only be unshared by unsharing their parent"
 msgstr ""
-"Невозможно разделить элемент навигации \"%s\". Он зависит от элемента \"%s\". "
-"Зависимые элементы могут быть разделены только путем разделения их родительских элементов"
+"Невозможно скрыть элемент навигации \"%s\". Он зависит от элемента \"%s\". "
+"Зависимые элементы могут быть скрыты только путем скрытия их родительских элементов"
 
 msgid "Unknown"
 msgstr "Неизвестный"
