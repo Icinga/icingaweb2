@@ -918,6 +918,10 @@
             req.$target.trigger('rendered');
 
             this.icinga.ui.refreshDebug();
+
+            if (req.getResponseHeader('X-Icinga-Reload-Js')) {
+                this.icinga.ui.reloadJs();
+            }
         },
 
         /**
