@@ -13,7 +13,8 @@ class DashletForm extends CompatForm
 
     /**
      * Fetch all dashboards from the database and return them as array
-     * @return array $dashboards
+     *
+     * @return array
      */
     public function fetchDashboards()
     {
@@ -33,9 +34,10 @@ class DashletForm extends CompatForm
     }
 
     /**
-     * Create a new dashboard and return the last insert Id
+     * Create a new dashboard and return its id
+     *
      * @param string $name
-     * @return int $id
+     * @return int
      */
     public function createDashboard($name)
     {
@@ -102,27 +104,21 @@ class DashletForm extends CompatForm
 
     protected function onSuccess()
     {
-        if ($this->getValue('new-dashboard')) {
-            if ($this->getValue('new-dashboard-name') !== null) {
-                $values = [
-                    'dashboard_id' => $this->createDashboard($this->getValue('new-dashboard-name')),
-                    'name' => $this->getValue('name'),
-                    'url' => $this->getValue('url')
-                ];
+        if ($this->getValue('new-dashboard-name') !== null) {
+            $this->getDb()->insert('dashlet', [
+                'dashboard_id' => $this->createDashboard($this->getValue('new-dashboard-name')),
+                'name' => $this->getValue('name'),
+                'url' => $this->getValue('url')
+            ]);
 
-                $this->getDb()->insert('dashlet', $values);
-                Notification::success('Dashlet in new Dashboard created');
-            } else {
-                Notification::error('Dashboard Name failed!');
-            }
+            Notification::success('Dashboard and dashlet created');
         } else {
-            $data = [
+            $this->getDb()->insert('dashlet', [
                 'dashboard_id' => $this->getValue('dashboard'),
                 'name' => $this->getValue('name'),
                 'url' => $this->getValue('url'),
-            ];
+            ]);
 
-            $this->getDb()->insert('dashlet', $data);
             Notification::success('Dashlet created');
         }
     }
