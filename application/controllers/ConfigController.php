@@ -161,7 +161,7 @@ class ConfigController extends Controller
             Icinga::app()->getModuleManager()->enableModule($module);
             Notification::success(sprintf($this->translate('Module "%s" enabled'), $module));
             $form->onSuccess();
-            $this->rerenderLayout()->reloadCss()->redirectNow('config/modules');
+            $this->rerenderLayout()->reloadCss()->reloadJs()->redirectNow('config/modules');
         });
 
         try {
@@ -187,7 +187,7 @@ class ConfigController extends Controller
             Icinga::app()->getModuleManager()->disableModule($module);
             Notification::success(sprintf($this->translate('Module "%s" disabled'), $module));
             $form->onSuccess();
-            $this->rerenderLayout()->reloadCss()->redirectNow('config/modules');
+            $this->rerenderLayout()->reloadCss()->reloadJs()->redirectNow('config/modules');
         });
 
         try {
