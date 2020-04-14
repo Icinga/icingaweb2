@@ -274,6 +274,8 @@ form.icinga-form .form-controls {
 // Button styles
 
 .icinga-controls {
+  button:not([type]),
+  button[type="submit"],
   input[type="submit"],
   input[type="submit"].btn-confirm {
     .button();
@@ -288,12 +290,17 @@ form.icinga-form .form-controls {
   }
 
   button.noscript-apply {
-    .rounded-corners();
-    .button(@gray-lightest, @gray);
+    color: @gray;
+    background-color: @gray-lightest;
+    border-color: @gray;
     border-width: 1px;
-    display: inline-block;
-    padding: .1em .25em;
-    margin: 0 .5em;
+  }
+}
+
+form.inline {
+  button.noscript-apply {
+    margin-left: .5em;
+    padding: .1em;
   }
 }
 
@@ -476,10 +483,6 @@ form.icinga-form .form-info {
 // Specific form styles
 
 .search.inline {
-  display: inline-block;
-}
-
-.sort-control > * {
   display: inline-block;
 }
 

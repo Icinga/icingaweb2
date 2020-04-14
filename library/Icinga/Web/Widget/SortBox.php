@@ -187,7 +187,7 @@ class SortBox extends AbstractWidget
         $columnForm = new Form();
         $columnForm->setTokenDisabled();
         $columnForm->setName($this->name . '-column');
-        $columnForm->setAttrib('class', 'icinga-controls');
+        $columnForm->setAttrib('class', 'icinga-controls inline');
         $columnForm->addElement(
             'select',
             'sort',
