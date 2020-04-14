@@ -17,6 +17,7 @@ class DashletWidget extends BaseHtmlElement
 
     /**
      * Create a new dashlet widget
+     *
      * @param $dashlet
      */
     public function __construct($dashlet)
