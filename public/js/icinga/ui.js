@@ -128,6 +128,11 @@
             });
         },
 
+        reloadJs: function () {
+            icinga.logger.info('Reloading JS');
+            location.reload(true);
+        },
+
         enableTimeCounters: function () {
             this.timeCounterTimer = this.icinga.timer.register(
                 this.refreshTimeSince,
