@@ -48,9 +48,7 @@ class Response extends Zend_Controller_Response_Http
     protected $request;
 
     /**
-     * Whether to instruct client side script code to reload CSS
-     *
-     * @var bool
+     * @var bool Whether to instruct client side script code to reload CSS
      */
     protected $reloadCss;
 
@@ -225,11 +223,21 @@ class Response extends Zend_Controller_Response_Http
         return $this;
     }
 
+    /**
+     * @return bool Get whether to instruct client side script code to reload CSS
+     */
     public function isReloadCss()
     {
         return $this->reloadCss;
     }
 
+    /**
+     * Set whether to instruct client side script code to reload CSS
+     *
+     * @param bool $reloadCss
+     *
+     * @return $this
+     */
     public function setReloadCss($reloadCss)
     {
         $this->reloadCss = $reloadCss;
