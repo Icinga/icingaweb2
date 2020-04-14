@@ -192,7 +192,7 @@ class RSA
 
             return $encrypted;
         }
-        
+
         openssl_public_encrypt($data, $encrypted, $this->getPublicKey());
 
         return $encrypted;
