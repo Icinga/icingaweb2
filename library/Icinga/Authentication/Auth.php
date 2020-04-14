@@ -13,7 +13,7 @@ use Icinga\Authentication\UserGroup\UserGroupBackend;
 use Icinga\Data\ConfigObject;
 use Icinga\Exception\IcingaException;
 use Icinga\Exception\NotReadableError;
-use Icinga\Rememberme\Common\Database;
+use Icinga\Common\Database;
 use Icinga\User;
 use Icinga\User\Preferences;
 use Icinga\User\Preferences\PreferencesStore;
