@@ -7,7 +7,7 @@ use Icinga\Application\Config;
 use Icinga\Application\Hook\AuthenticationHook;
 use Icinga\Authentication\Auth;
 use Icinga\Authentication\User\ExternalBackend;
-use Icinga\Rememberme\Common\Database;
+use Icinga\Common\Database;
 use Icinga\User;
 use Icinga\Web\Form;
 use Icinga\Web\RememberMe;
