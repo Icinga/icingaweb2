@@ -11,14 +11,14 @@ class DashletsController extends Controller
     public function newAction()
     {
         $this->setTitle('New Dashlet');
+        $this->tabs->disableLegacyExtensions();
 
-        $dashletForm = new DashletForm();
+        $dashletForm = (new DashletForm())
+            ->on(DashletForm::ON_SUCCESS, function () {
+                $this->redirectNow('dashboards');
+            })
+            ->handleRequest(ServerRequest::fromGlobals());
 
-        $dashletForm->on($dashletForm::ON_SUCCESS, function () {
-            $this->redirectNow('dashboards');
-        });
-
-        $dashletForm->handleRequest(ServerRequest::fromGlobals());
         $this->addContent($dashletForm);
     }
 }
