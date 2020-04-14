@@ -29,7 +29,8 @@ class IndexController extends Controller
     /**
      * create Tabs and
      * activate the first dashboard from the database when the url doesn't have a parameter
-     * @return int $id
+     *
+     * @return int
      */
     protected function createTabsAndAutoActivateDashboard()
     {
