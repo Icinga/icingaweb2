@@ -37,6 +37,7 @@ class DashletForm extends CompatForm
      * Create a new dashboard and return its id
      *
      * @param string $name
+     *
      * @return int
      */
     public function createDashboard($name)

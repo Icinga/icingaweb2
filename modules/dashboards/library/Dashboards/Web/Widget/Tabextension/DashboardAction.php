@@ -17,6 +17,7 @@ class DashboardAction implements Tabextension
      * Applies the dashboard extension to the provided tabset
      *
      * @param Tabs $tabs The tabs object to extend with
+     *
      * @throws \Icinga\Exception\ProgrammingError
      */
     public function apply(Tabs $tabs)
