@@ -115,6 +115,7 @@ class PreferenceForm extends Form
             && ($theme = $theme->getValue()) !== $oldTheme
         ) {
             $this->getResponse()->setReloadCss(true);
+            $this->getResponse()->setReloadJs(true);
         }
 
         try {
