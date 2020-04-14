@@ -49,8 +49,9 @@ class AuthenticationController extends Controller
                 $rememberMe = RememberMe::fromCookie();
                 $authenticated = $rememberMe->authenticate();
                 if ($authenticated) {
+                    $rememberMe = $rememberMe->renew();
                     $this->getResponse()->setCookie(
-                        $rememberMe->renew()->getCookie()
+                        $rememberMe->getCookie()
                     );
                     $rememberMe->persist();
                 }
