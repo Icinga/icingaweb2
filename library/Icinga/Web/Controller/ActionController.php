@@ -68,6 +68,11 @@ class ActionController extends Zend_Controller_Action
 
     protected $reloadCss = false;
 
+    /**
+     * @var bool Set whether to instruct client side script code to reload JS
+     */
+    protected $reloadJs = false;
+
     protected $window;
 
     protected $rerenderLayout = false;
@@ -237,6 +242,19 @@ class ActionController extends Zend_Controller_Action
     protected function reloadCss()
     {
         $this->reloadCss = true;
+
+        return $this;
+    }
+
+    /**
+     * Set whether to instruct client side script code to reload JS
+     *
+     * @return $this
+     */
+    protected function reloadJs()
+    {
+        $this->reloadJs = true;
+
         return $this;
     }
 
@@ -404,6 +422,7 @@ class ActionController extends Zend_Controller_Action
     {
         $this->getResponse()
             ->setReloadCss($this->reloadCss)
+            ->setReloadJs($this->reloadJs)
             ->setRerenderLayout($this->rerenderLayout)
             ->redirectAndExit($url);
     }
@@ -488,6 +507,10 @@ class ActionController extends Zend_Controller_Action
 
         if ($this->reloadCss) {
             $resp->setReloadCss(true);
+        }
+
+        if ($this->reloadJs) {
+            $resp->setReloadJs(true);
         }
 
         if ($this->view->title) {
