@@ -8,7 +8,7 @@ use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
 use Icinga\Exception\AuthenticationException;
 use Icinga\Forms\Authentication\LoginForm;
-use Icinga\Rememberme\Common\Database;
+use Icinga\Common\Database;
 use Icinga\Web\Controller;
 use Icinga\Web\Helper\CookieHelper;
 use Icinga\Web\RememberMe;
