@@ -61,12 +61,13 @@ class Dashlet extends UserWidget
         <h1><a href="{FULL_URL}" aria-label="{TOOLTIP}" title="{TOOLTIP}" data-base-target="col1">{TITLE}</a></h1>
         <p class="progress-label">{PROGRESS_LABEL}<span>.</span><span>.</span><span>.</span></p>
         <noscript>
-            <iframe
-                src="{IFRAME_URL}"
-                style="height:100%; width:99%"
-                frameborder="no"
-                title="{TITLE_PREFIX}{TITLE}">
-            </iframe>
+            <div class="iframe-container">
+                <iframe
+                    src="{IFRAME_URL}"
+                    frameborder="no"
+                    title="{TITLE_PREFIX}{TITLE}">
+                </iframe>
+            </div>
         </noscript>
     </div>
 EOD;
