@@ -6,7 +6,7 @@ namespace Icinga\Web;
 use Icinga\Application\Config;
 use Icinga\Authentication\Auth;
 use Icinga\Crypt\RSA;
-use Icinga\Rememberme\Common\Database;
+use Icinga\Common\Database;
 use Icinga\User;
 use ipl\Sql\Expression;
 use ipl\Sql\Select;
