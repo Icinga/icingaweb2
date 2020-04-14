@@ -40,6 +40,33 @@ use Icinga\Data\Selectable;
             <th><?= $this->translate('Last modified'); ?></th>
             <td><?= $user->last_modified === null ? '-' : $this->formatDateTime($user->last_modified); ?></td>
         </tr>
+        <tr>
+            <th><?= $this->translate('Role Memberships'); ?></th>
+            <td>
+            <?php $roles = $userObj->getRoles(); ?>
+            <?php if (! empty($roles)): ?>
+                <ul class="role-memberships">
+                <?php foreach($roles as $role): ?>
+                    <li>
+                    <?php if ($this->allowedToEditRoles): ?>
+                        <?= $this->qlink(
+                            $role->getName(),
+                            'role/edit',
+                            ['role' => $role->getName()],
+                            ['title' => sprintf($this->translate('Edit role %s'), $role->getName())]
+                        );
+                        $role === end($roles) ? print '' : print ', '; ?>
+                    <?php else: ?>
+                        <?= $role->getName() ?>
+                    <?php endif ?>
+                    </li>
+                <?php endforeach ?>
+                </ul>
+            <?php else: ?>
+                <p><?= $this->translate('No memberships found'); ?></p>
+            <?php endif ?>
+            </td>
+        </tr>
     </table>
 <?php if (! $this->compact): ?>
     <h2><?= $this->translate('Group Memberships'); ?></h2>

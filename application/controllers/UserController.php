@@ -5,6 +5,7 @@ namespace Icinga\Controllers;
 
 use Exception;
 use Icinga\Application\Logger;
+use Icinga\Authentication\AdmissionLoader;
 use Icinga\Authentication\User\DomainAwareInterface;
 use Icinga\Data\DataArray\ArrayDatasource;
 use Icinga\Exception\ConfigurationError;
@@ -165,6 +166,11 @@ class UserController extends AuthBackendController
             ));
             $this->view->removeForm = $removeForm;
         }
+
+        $admissionLoader = new AdmissionLoader();
+        $admissionLoader->applyRoles($userObj);
+        $this->view->userObj = $userObj;
+        $this->view->allowedToEditRoles = $this->hasPermission('config/authentication/roles/edit');
     }
 
     /**
