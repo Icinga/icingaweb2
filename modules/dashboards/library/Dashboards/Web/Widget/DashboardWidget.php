@@ -25,7 +25,7 @@ class DashboardWidget extends BaseHtmlElement
      */
     public function __construct($dashlets)
     {
-        if (!is_iterable($dashlets)) {
+        if (! is_iterable($dashlets)) {
             throw new InvalidArgumentException(sprintf(
                 '%s expects parameter 1 to be iterable, got %s instead',
                 __METHOD__,
