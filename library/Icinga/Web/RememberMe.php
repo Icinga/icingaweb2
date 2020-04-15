@@ -224,9 +224,9 @@ class RememberMe
      *  Remove expired database entry
      */
     public static function removeExpired()
-    {//TODO this function is not working corectly, db entry deletes after 60 secounds
+    {
          (new static())->getDb()->delete('rememberme', [
-            'expires_in < ?' => new Expression('NOW()')
+            'expires_in < ?' => date('Y-m-d H:i:s',time())
          ]);
     }
 }
