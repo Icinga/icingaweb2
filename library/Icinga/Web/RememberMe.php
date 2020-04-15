@@ -170,7 +170,7 @@ class RememberMe
             'username' => $this->username,
             'private_key' => $this->rsa->getPrivateKey(),
             'public_key' => $this->rsa->getPublicKey(),
-            'expires_in' => date('Y-m-d H:i:s',$this->getExpiresIn()),
+            'expires_in' => date('Y-m-d H:i:s', $this->getExpiresIn()),
             'ctime' => new Expression('NOW()'),
             'mtime' => new Expression('NOW()')
         ]);
