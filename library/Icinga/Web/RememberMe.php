@@ -226,7 +226,7 @@ class RememberMe
     public static function removeExpired()
     {
          (new static())->getDb()->delete('rememberme', [
-            'expires_in < ?' => date('Y-m-d H:i:s',time())
+            'expires_in < ?' => date('Y-m-d H:i:s', time())
          ]);
     }
 }
