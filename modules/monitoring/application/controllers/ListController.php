@@ -668,6 +668,10 @@ class ListController extends Controller
 
     public function servicegridAction()
     {
+        if ($this->params->has('noscript_apply')) {
+            $this->redirectNow($this->getRequest()->getUrl()->without('noscript_apply'));
+        }
+
         $this->addTitleTab('servicegrid', $this->translate('Service Grid'), $this->translate('Show the Service Grid'));
         $this->setAutorefreshInterval(15);
         $query = $this->backend->select()->from('servicestatus', array(
