@@ -65,6 +65,7 @@ class RememberMe
 
         $rememberMe = new static();
         $rs = $rememberMe->getDb()->select($select)->fetch();
+
         if (! $rs) {
             throw new RuntimeException('No database entry found for the given key');
         }
@@ -169,7 +170,7 @@ class RememberMe
             'username' => $this->username,
             'private_key' => $this->rsa->getPrivateKey(),
             'public_key' => $this->rsa->getPublicKey(),
-            'expires_in' => new Expression('FROM_UNIXTIME(?)', $this->getExpiresIn()),
+            'expires_in' => date('Y-m-d H:i:s',$this->getExpiresIn()),
             'ctime' => new Expression('NOW()'),
             'mtime' => new Expression('NOW()')
         ]);
@@ -223,7 +224,7 @@ class RememberMe
      *  Remove expired database entry
      */
     public static function removeExpired()
-    {
+    {//TODO this function is not working corectly, db entry deletes after 60 secounds
          (new static())->getDb()->delete('rememberme', [
             'expires_in < ?' => new Expression('NOW()')
          ]);
