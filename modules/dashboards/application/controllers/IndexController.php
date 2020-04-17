@@ -2,7 +2,6 @@
 
 namespace Icinga\Module\Dashboards\Controllers;
 
-use Icinga\Exception\NotFoundError;
 use Icinga\Module\Dashboards\Common\Database;
 use Icinga\Module\Dashboards\Web\Controller;
 use Icinga\Module\Dashboards\Web\Widget\Tabextension\DashboardAction;
@@ -22,7 +21,7 @@ class IndexController extends Controller
         } catch (\Exception $e) {
             $this->tabs->extend(new DashboardAction())->disableLegacyExtensions();
 
-            Notification::error('No dashboard found to create a Tab');
+            Notification::error('No dashboard and dashlet found');
         }
 
         $select = (new Select())
