@@ -19,7 +19,7 @@ class RememberMe
     /**
      * Constant cookie
      */
-    const COOKIE = 'remember-me';
+    const COOKIE = 'icingaweb-remember-me';
 
     /**
      * @var string
@@ -69,6 +69,7 @@ class RememberMe
         if (! $rs) {
             throw new RuntimeException('No database entry found for the given key');
         }
+        
         $rememberMe->rsa = (new RSA())->loadKey($rs->private_key, $publicKey);
         $rememberMe->username = $rememberMe->rsa->decryptFromBase64($data[0]);
         $rememberMe->encryptedPassword = $data[1];
