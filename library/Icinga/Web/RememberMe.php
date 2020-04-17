@@ -22,6 +22,11 @@ class RememberMe
     const COOKIE = 'icingaweb-remember-me';
 
     /**
+     * Constant table for database
+     */
+    const TABLE = 'icingaweb_rememberme';
+
+    /**
      * @var string
      */
     protected $encryptedPassword;
@@ -59,7 +64,7 @@ class RememberMe
         $publicKey = base64_decode(array_pop($data));
 
         $select = (new Select())
-            ->from('rememberme')
+            ->from(static::TABLE)
             ->columns('*')
             ->where(['public_key = ?' => $publicKey]);
 
@@ -69,7 +74,7 @@ class RememberMe
         if (! $rs) {
             throw new RuntimeException('No database entry found for the given key');
         }
-        
+
         $rememberMe->rsa = (new RSA())->loadKey($rs->private_key, $publicKey);
         $rememberMe->username = $rememberMe->rsa->decryptFromBase64($data[0]);
         $rememberMe->encryptedPassword = $data[1];
@@ -167,7 +172,7 @@ class RememberMe
     {
         $this->remove();
 
-        $this->getDb()->insert('rememberme', [
+        $this->getDb()->insert(static::TABLE, [
             'username' => $this->username,
             'private_key' => $this->rsa->getPrivateKey(),
             'public_key' => $this->rsa->getPublicKey(),
@@ -187,7 +192,7 @@ class RememberMe
      */
     public function remove($username = null)
     {
-        $this->getDb()->delete('rememberme', [
+        $this->getDb()->delete(static::TABLE, [
             'username = ?' => $this->username ?: $username
         ]);
     }
@@ -226,7 +231,7 @@ class RememberMe
      */
     public static function removeExpired()
     {
-         (new static())->getDb()->delete('rememberme', [
+         (new static())->getDb()->delete(static::TABLE, [
             'expires_in < ?' => date('Y-m-d H:i:s', time())
          ]);
     }
