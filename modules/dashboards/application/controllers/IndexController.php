@@ -53,6 +53,7 @@ class IndexController extends Controller
         }
 
         $id = $this->params->get('dashboard') ?: array_shift($ids);
+
         $tabs->activate($id);
 
         return $id;
