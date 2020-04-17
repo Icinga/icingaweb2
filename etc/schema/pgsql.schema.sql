@@ -101,7 +101,7 @@ CREATE UNIQUE INDEX idx_icingaweb_user_preference
     lower((name)::text)
 );
 
-CREATE TABLE "rememberme" (
+CREATE TABLE "icingaweb_rememberme" (
     "id" serial,
     "username" character varying(254) NOT NULL,
     "public_key" text NOT NULL,
@@ -111,14 +111,14 @@ CREATE TABLE "rememberme" (
     "mtime" timestamp NULL DEFAULT NULL
 );
 
-ALTER TABLE ONLY "rememberme"
-  ADD CONSTRAINT pk_rememberme
+ALTER TABLE ONLY "icingaweb_rememberme"
+  ADD CONSTRAINT pk_icingaweb_rememberme
   PRIMARY KEY (
     "id"
 );
 
-CREATE UNIQUE INDEX idx_rememberme
-  ON "rememberme"
+CREATE UNIQUE INDEX idx_icingaweb_rememberme
+  ON "icingaweb_rememberme"
   USING btree (
     lower((username)::text)
 );
