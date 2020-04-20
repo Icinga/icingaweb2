@@ -367,7 +367,10 @@ class WebWizard extends Wizard implements SetupWizard
             'setup_auth_db_resource',
             'setup_config_db_resource',
             'setup_ldap_resource',
-            'setup_monitoring_ido', // TODO(mf): This should be handled by MonitoringWizard
+            'setup_monitoring_ido',
+            'setup_icingadb_resource',
+            'setup_icingadb_redis',
+            'setup_icingadb_api_transport'
         ))) {
             $page->addElement(
                 'submit',
@@ -382,7 +385,6 @@ class WebWizard extends Wizard implements SetupWizard
             $page->getDisplayGroup('buttons')->addElement($page->getElement('backend_validation'));
         }
 
-        // TODO(mf): This should be handled by MonitoringWizard
         if ($page->getName() === 'setup_command_transport') {
             if ($page->getSubForm('transport_form')->getSubForm('transport_form') instanceof ApiTransportForm) {
                 $page->addElement(
