@@ -4,6 +4,7 @@
 namespace Icinga\Module\Setup\Forms;
 
 use Icinga\Application\Icinga;
+use Icinga\Application\Modules\Module;
 use Icinga\Web\Form;
 
 class ModulePage extends Form
@@ -11,6 +12,8 @@ class ModulePage extends Form
     protected $modules;
 
     protected $modulePaths;
+
+    protected $foundIcingaDB = false;
 
     /**
      * Initialize this page
@@ -29,19 +32,29 @@ class ModulePage extends Form
     public function createElements(array $formData)
     {
         foreach ($this->getModules() as $module) {
+            $checked = false;
+            if ($module->getName() === 'monitoring') {
+                $checked = ! $this->foundIcingaDB;
+            } elseif ($this->foundIcingaDB && $module->getName() === 'icingadb') {
+                $checked = true;
+            }
+
             $this->addElement(
                 'checkbox',
                 $module->getName(),
                 array(
                     'description'   => $module->getDescription(),
                     'label'         => ucfirst($module->getName()),
-                    'value'         => $module->getName() === 'monitoring' ? 1 : 0,
+                    'value'         => (int) $checked,
                     'decorators'    => array('ViewHelper')
                 )
             );
         }
     }
 
+    /**
+     * @return Module[]
+     */
     protected function getModules()
     {
         if ($this->modules !== null) {
@@ -55,6 +68,10 @@ class ModulePage extends Form
         foreach ($moduleManager->listInstalledModules() as $moduleName) {
             if ($moduleName !== 'setup') {
                 $this->modules[$moduleName] = $moduleManager->loadModule($moduleName)->getModule($moduleName);
+            }
+
+            if ($moduleName === 'icingadb') {
+                $this->foundIcingaDB = true;
             }
         }
 
