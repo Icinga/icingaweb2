@@ -103,6 +103,18 @@
     }
   }
 
+  span[id^="form_login_rememberme"] {
+    display: block;
+    padding-top: 1em;
+    padding-bottom: 0.3em;
+    text-align: center;
+  }
+
+  input:focus,
+  input[type="submit"]:focus {
+    outline: 3px solid fade(@icinga-blue, 50%);
+  }
+
   .form-controls {
     margin-bottom: 2em;
     margin-top: 2em;
