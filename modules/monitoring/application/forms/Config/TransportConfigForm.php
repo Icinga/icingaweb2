@@ -375,7 +375,6 @@ class TransportConfigForm extends ConfigForm
                     'force_creation',
                     array(
                         'order'         => 0,
-                        'required'      => true,
                         'ignore'        => true,
                         'label'         => $this->translate('Force Changes'),
                         'description'   => $this->translate(
