@@ -19,7 +19,7 @@ class RememberMe
     /**
      * Constant cookie
      */
-    const COOKIE = 'icingaweb-remember-me';
+    const COOKIE = 'icingaweb2-remember-me';
 
     /**
      * Constant table for database
