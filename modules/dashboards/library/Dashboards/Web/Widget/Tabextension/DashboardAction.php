@@ -33,5 +33,17 @@ class DashboardAction implements Tabextension
                 )
             )
         );
+
+        $tabs->addAsDropdown(
+            'dashboard_edit',
+            array(
+                'icon' => 'edit',
+                'label' => t('Edit Dashlet'),
+                'url' => Url::fromPath('dashboards/dashlets/edit'),
+                'urlParams' => array(
+                    'url' => rawurlencode(Url::fromRequest()->getRelativeUrl())
+                )
+            )
+        );
     }
 }
