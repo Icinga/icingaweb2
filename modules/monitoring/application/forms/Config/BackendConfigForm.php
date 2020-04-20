@@ -298,7 +298,6 @@ class BackendConfigForm extends ConfigForm
             array(
                 'order'         => 0,
                 'ignore'        => true,
-                'required'      => true,
                 'label'         => $this->translate('Skip Validation'),
                 'description'   => $this->translate(
                     'Check this to not to validate the IDO schema of the chosen resource.'

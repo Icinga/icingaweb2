@@ -370,7 +370,6 @@ class UserBackendConfigForm extends ConfigForm
             array(
                 'order'         => 0,
                 'ignore'        => true,
-                'required'      => true,
                 'label'         => $this->translate('Skip Validation'),
                 'description'   => $this->translate(
                     'Check this box to enforce changes without validating that authentication is possible.'
