@@ -23,7 +23,6 @@ class EditDashletForm extends DashletForm
     {
         $this->dashlet = $dashlet;
 
-
         $this->populate($dashlet);
     }
 
