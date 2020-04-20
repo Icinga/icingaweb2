@@ -71,16 +71,8 @@ class ApplicationConfigForm extends Form
         );
 
         $this->addElement(
-            'select',
-            'global_config_backend',
-            array(
-                'required'      => true,
-                'autosubmit'    => true,
-                'label'         => $this->translate('User Preference Storage Type'),
-                'multiOptions'  => array(
-                    'db'    => $this->translate('Database')
-                )
-            )
+            'hidden',
+            'global_config_backend'
         );
 
         if (isset($formData['global_config_backend']) && $formData['global_config_backend'] === 'db') {
