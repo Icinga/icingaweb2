@@ -271,7 +271,7 @@ of the Apache module.
 
 | Operating System    | FPM configuration path            |
 |---------------------|-----------------------------------|
-| RedHat 8            | `/etc/php-frpm.d/`                |
+| RedHat 8            | `/etc/php-fpm.d/`                |
 | RedHat 7 (with SCL) | `/etc/opt/rh/rh-php71/php-fpm.d/` |
 | Fedora              | `/etc/php-fpm.d/`                 |
 | Debian/Ubuntu       | `/etc/php*/*/fpm/pool.d/`         |
