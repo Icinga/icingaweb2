@@ -3,6 +3,7 @@
 
 namespace Icinga\Module\Setup;
 
+use Icinga\Application\Platform;
 use PDOException;
 use Icinga\Web\Form;
 use Icinga\Web\Wizard;
@@ -234,14 +235,6 @@ class WebWizard extends Wizard implements SetupWizard
                     ->create($this->getRequestData($page, $request))
                     ->getElement('global_config_backend')
                     ->setValue('db');
-                $page->info(
-                    mt(
-                        'setup',
-                        'Note that choosing "Database" as preference storage causes'
-                        . ' Icinga Web 2 to use the same database as for authentication.'
-                    ),
-                    false
-                );
             }
         } elseif ($page->getName() === 'setup_authentication_type' && $this->getDirection() === static::FORWARD) {
             $authData = $this->getPageData($page->getName());
@@ -649,9 +642,10 @@ class WebWizard extends Wizard implements SetupWizard
             )
         )));
 
-        $mysqlSet = new RequirementSet(true);
+        $isOptional = Platform::extensionLoaded('pdo_pgsql');
+        $mysqlSet = new RequirementSet($isOptional);
         $mysqlSet->add(new PhpModuleRequirement(array(
-            'optional'      => true,
+            'optional'      => $isOptional,
             'condition'     => 'pdo_mysql',
             'alias'         => 'PDO-MySQL',
             'description'   => mt(
@@ -660,7 +654,7 @@ class WebWizard extends Wizard implements SetupWizard
             )
         )));
         $mysqlSet->add(new ClassRequirement(array(
-            'optional'      => true,
+            'optional'      => $isOptional,
             'condition'     => 'Zend_Db_Adapter_Pdo_Mysql',
             'alias'         => mt('setup', 'Zend database adapter for MySQL'),
             'description'   => mt(
@@ -680,9 +674,10 @@ class WebWizard extends Wizard implements SetupWizard
         )));
         $set->merge($mysqlSet);
 
-        $pgsqlSet = new RequirementSet(true);
+        $isOptional = Platform::extensionLoaded('pdo_mysql');
+        $pgsqlSet = new RequirementSet(false);
         $pgsqlSet->add(new PhpModuleRequirement(array(
-            'optional'      => true,
+            'optional'      => $isOptional,
             'condition'     => 'pdo_pgsql',
             'alias'         => 'PDO-PostgreSQL',
             'description'   => mt(
@@ -691,7 +686,7 @@ class WebWizard extends Wizard implements SetupWizard
             )
         )));
         $pgsqlSet->add(new ClassRequirement(array(
-            'optional'      => true,
+            'optional'      => $isOptional,
             'condition'     => 'Zend_Db_Adapter_Pdo_Pgsql',
             'alias'         => mt('setup', 'Zend database adapter for PostgreSQL'),
             'description'   => mt(
