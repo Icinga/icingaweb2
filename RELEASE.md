@@ -58,6 +58,9 @@ find . -type f -name '*.info' -exec sed -i "s/Version: .*/Version: $VERSION/g" {
 Choose the most important issues and summarize them in multiple groups/paragraphs. Provide links to the mentioned
 issues/PRs. At the start include a link to the milestone's closed issues.
 
+Make sure to check for issues/PRs with the label `affects-upgrades` and include them in
+the [upgrading documentation](doc/80-Upgrading.md).
+
 ## Git Tag
 
 ```
