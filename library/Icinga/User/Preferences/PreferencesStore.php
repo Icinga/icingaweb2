@@ -4,6 +4,7 @@
 namespace Icinga\User\Preferences;
 
 use Icinga\Application\Config;
+use Icinga\Application\Logger;
 use Icinga\User;
 use Icinga\User\Preferences;
 use Icinga\Data\ConfigObject;
@@ -126,6 +127,7 @@ abstract class PreferencesStore
         }
 
         if ($type === 'Ini') {
+            Logger::warning('Ini backend type is deprecated and will be removed with version 2.10');
             $config->location = Config::resolvePath('preferences');
         } elseif ($type === 'Db') {
             $config->connection = new DbConnection(ResourceFactory::getResourceConfig($config->resource));
