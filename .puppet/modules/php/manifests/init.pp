@@ -22,12 +22,12 @@ class php {
   include epel
   include scl
 
-  package { 'rh-php71-php-fpm':
+  package { 'rh-php73-php-fpm':
     ensure  => latest,
     notify  => Service['apache'],
     require => [ Class['scl'], Package['apache'] ],
   }
-  -> service { 'rh-php71-php-fpm':
+  -> service { 'rh-php73-php-fpm':
     ensure => running,
     enable => true,
     alias => 'php-fpm',

@@ -14,9 +14,9 @@ define php::phpd {
 
   include php
 
-  file { "/etc/opt/rh/rh-php71/php.d/$name.ini":
+  file { "/etc/opt/rh/rh-php73/php.d/$name.ini":
     content => template("php/$name.ini.erb"),
     notify  => Service['apache'],
-    require => Package['rh-php71-php-fpm'],
+    require => Package['rh-php73-php-fpm'],
   }
 }
