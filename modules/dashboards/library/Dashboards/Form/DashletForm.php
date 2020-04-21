@@ -59,8 +59,6 @@ class DashletForm extends CompatForm
      */
     public function newAction()
     {
-        $this->setAction('dashboards/dashlets/new');
-
         $this->addElement('textarea', 'url', [
             'label' => 'Url',
             'placeholder' => 'Enter Dashlet Url',
