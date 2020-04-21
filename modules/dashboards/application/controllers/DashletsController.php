@@ -31,16 +31,23 @@ class DashletsController extends Controller
     {
         $this->tabs->disableLegacyExtensions();
 
-        $dashletId = $this->params->get('dashletId');
+        $dashboardId = $this->params->get('dashboardId');
+
+        $db = (new Select())
+            ->from('dashboard')
+            ->columns(['id', 'name'])
+            ->where(['id = ?' => $dashboardId]);
+
+        $dashboard = $this->getDb()->fetchRow($db);
+
+        $this->setTitle($this->translate('Edit Dashboard: %s'), $dashboard->name);
 
         $select = (new Select())
             ->from('dashlet')
             ->columns('*')
-            ->where(['dashboard_id = ?' => $dashletId]);
+            ->where(['dashboard_id = ?' => $dashboard->id]);
 
         $dashlet = $this->getDb()->fetchRow($select);
-
-        $this->setTitle($this->translate('Edit Dashlet: %s'), $dashlet->name);
 
         $form = (new EditDashletForm($dashlet))
             ->on(EditDashletForm::ON_SUCCESS, function () {
