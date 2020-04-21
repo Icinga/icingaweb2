@@ -677,7 +677,7 @@ class WebWizard extends Wizard implements SetupWizard
         $set->merge($mysqlSet);
 
         $isOptional = Platform::extensionLoaded('pdo_mysql');
-        $pgsqlSet = new RequirementSet(false);
+        $pgsqlSet = new RequirementSet($isOptional);
         $pgsqlSet->add(new PhpModuleRequirement(array(
             'optional'      => $isOptional,
             'condition'     => 'pdo_pgsql',
