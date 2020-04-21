@@ -16,6 +16,7 @@ class SettingsController extends Controller
     public function indexAction()
     {
         $this->createTabs();
+
         $select = (new Select())
             ->from('dashboard')
             ->columns('*');
