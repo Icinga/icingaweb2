@@ -117,7 +117,7 @@ abstract class PreferencesStore
      */
     public static function create(ConfigObject $config, User $user)
     {
-        $type = ucfirst(strtolower($config->get('store', 'ini')));
+        $type = ucfirst(strtolower($config->get('store', 'db')));
         $storeClass = 'Icinga\\User\\Preferences\\Store\\' . $type . 'Store';
         if (!class_exists($storeClass)) {
             throw new ConfigurationError(
@@ -130,7 +130,9 @@ abstract class PreferencesStore
             Logger::warning('Ini backend type is deprecated and will be removed with version 2.10');
             $config->location = Config::resolvePath('preferences');
         } elseif ($type === 'Db') {
-            $config->connection = new DbConnection(ResourceFactory::getResourceConfig($config->resource));
+            $config->connection = new DbConnection(
+                  ResourceFactory::getResourceConfig(Config::app()->get('global', 'config_resource'))
+                );
         }
 
         return new $storeClass($config, $user);
