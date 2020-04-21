@@ -24,7 +24,7 @@ class IndexController extends Controller
                     'icon' => 'edit',
                     'label' => t('Edit Dashlet'),
                     'url' => Url::fromPath('dashboards/dashlets/edit', [
-                        'dashletId' => $this->tabs->getActiveName()
+                        'dashboardId' => $this->tabs->getActiveName()
                     ]),
                     'urlParams' => array(
                         'url' => rawurlencode(Url::fromRequest()->getRelativeUrl())
