@@ -31,7 +31,7 @@ class icingaweb2_dev (
     'rh-php73-php-ldap',
     'rh-php73-php-xml',
     'rh-php73-php-mbstring',
-    'sclo-php73-php-pecl-xdebug',
+    'rh-php73-php-pecl-xdebug',
     'sclo-php73-php-pecl-imagick',
     'php-phpunit-PHPUnit'
   ]:
