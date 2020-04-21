@@ -49,14 +49,16 @@ class DashboardSetting extends BaseHtmlElement
             'data-base-target' => '_next'
         ]);
 
-        $table->add(Html::tag('thead', null, Html::tag('tr', null,
-            [Html::tag('th', [
-                'style' => 'width: 18em;'
-            ], Html::tag('strong', null, t('Dashlet Name'))),
+        $table->add(Html::tag('thead', null,
+            Html::tag('tr', null, [
+                Html::tag('th', [
+                    'style' => 'width: 18em;'
+                ], Html::tag('strong', null, t('Dashlet Name'))),
                 Html::tag('th', null, Html::tag('strong', null, 'Url')),
                 Html::tag('th', [
                     'style' => 'width: 1.48em;'
-                ])])
+                ])
+            ])
         ));
 
         $tbody = Html::tag('tbody');
@@ -77,7 +79,8 @@ class DashboardSetting extends BaseHtmlElement
                         'class' => 'icon-edit',
                         'aria-hidden' => true
                     ]))
-                ])]);
+                ])
+            ]);
 
             $tbody->add($tableRow1);
 
@@ -111,7 +114,8 @@ class DashboardSetting extends BaseHtmlElement
                             'class' => 'icon-edit',
                             'aria-hidden' => true
                         ]))
-                    ])]);
+                    ])
+                ]);
 
                 $tbody->add($tableRow2);
             }
