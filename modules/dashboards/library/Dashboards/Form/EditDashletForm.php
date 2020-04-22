@@ -46,7 +46,7 @@ class EditDashletForm extends DashletForm
                 'dashboard_id' => $this->createDashboard($this->getValue('new-dashboard-name')),
                 'name' => $this->getValue('name'),
                 'url' => $this->getValue('url')
-            ]);
+            ], ['id = ?' => $this->dashlet->id]);
 
             Notification::success('Dashboard created & dashlet updated');
         } else {
@@ -54,7 +54,7 @@ class EditDashletForm extends DashletForm
                 'dashboard_id' => $this->getValue('dashboard'),
                 'name' => $this->getValue('name'),
                 'url' => $this->getValue('url'),
-            ]);
+            ], ['id = ?' => $this->dashlet->id]);
 
             Notification::success('Dashlet updated');
         }
