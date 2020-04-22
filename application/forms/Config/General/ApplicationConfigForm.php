@@ -69,8 +69,11 @@ class ApplicationConfigForm extends Form
                 )
             )
         );
-        
-        if ($this->getRequest()->getModuleName() != 'setup') {
+
+        if (
+            $this->getRequest()->getModuleName() != 'setup'
+            && $formData['global_config_backend'] === 'ini'
+        ) {
             $this->addElement(
                 'select',
                 'global_config_backend',
@@ -91,7 +94,6 @@ class ApplicationConfigForm extends Form
                 'global_config_backend'
             );
         }
-
         if (isset($formData['global_config_backend']) && $formData['global_config_backend'] === 'db') {
             $backends = array();
             foreach (ResourceFactory::getResourceConfigs()->toArray() as $name => $resource) {
@@ -105,7 +107,12 @@ class ApplicationConfigForm extends Form
                 'global_config_resource',
                 array(
                     'required'      => true,
-                    'multiOptions'  => $backends,
+                    'multiOptions'  => array_merge(
+                                            ['' => sprintf(' - %s - ', $this->translate('Please choose'))],
+                                            array_combine($backends, $backends)
+                     ),
+                    'disable'       => [''],
+                     'value'         => '',
                     'label'         => $this->translate('Database Connection')
                 )
             );
