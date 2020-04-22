@@ -3,8 +3,10 @@
 
 namespace Icinga\Forms\Config\UserGroup;
 
+use Icinga\Application\Hook\ConfigFormEventsHook;
 use Icinga\Data\Filter\Filter;
 use Icinga\Forms\RepositoryForm;
+use Icinga\Web\Notification;
 
 class UserGroupForm extends RepositoryForm
 {
@@ -122,6 +124,35 @@ class UserGroupForm extends RepositoryForm
             return sprintf($this->translate('Group "%s" has been removed'), $this->getIdentifier());
         } else {
             return sprintf($this->translate('Failed to remove group "%s"'), $this->getIdentifier());
+        }
+    }
+
+    public function isValid($formData)
+    {
+        $valid = parent::isValid($formData);
+
+        if ($valid && ConfigFormEventsHook::runIsValid($this) === false) {
+            foreach (ConfigFormEventsHook::getLastErrors() as $msg) {
+                $this->error($msg);
+            }
+
+            $valid = false;
+        }
+
+        return $valid;
+    }
+
+    public function onSuccess()
+    {
+        if (parent::onSuccess() === false) {
+            return false;
+        }
+
+        if (ConfigFormEventsHook::runOnSuccess($this) === false) {
+            Notification::error($this->translate(
+                'Configuration successfully stored. Though, one or more module hooks failed to run.'
+                . ' See logs for details'
+            ));
         }
     }
 }
