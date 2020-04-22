@@ -57,8 +57,7 @@ class DashboardSetting extends BaseHtmlElement
             Html::tag('th', null, Html::tag('strong', null, 'Url')),
             Html::tag('th', [
                 'style' => 'width: 1.48em;'
-            ])])
-        ));
+            ])])));
 
         $tbody = Html::tag('tbody');
 
