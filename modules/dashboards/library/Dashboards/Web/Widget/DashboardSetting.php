@@ -97,23 +97,27 @@ class DashboardSetting extends BaseHtmlElement
                 $tableRow2->add([Html::tag('td', $dashlet->name, [
                     Html::tag('a', [
                         'href' => Url::fromPath('dashboards'),
-                        'title' => 'Edit dashlet ' . $dashlet->name,
-                        'aria-label' => 'Edit dashlet ' . $dashlet->name
                     ], $dashlet->name)
                 ]), Html::tag('td', [
                     'style' => 'table-layout: fixed; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;'
                 ], Html::tag('a', [
                     'href' => $dashlet->url,
-                    'title' => 'Show dashlet ' . $dashlet->name
                 ], $dashlet->url)),
                     Html::tag('td', [
                         Html::tag('a', [
                             'href' => Url::fromPath('dashboards/dashlets/edit', [
                                 'dashletId' => $dashlet->id
-                            ]),
-                            'title' => 'Remove dashlet ' . $dashlet->name . ' from Dashboard ' . $dashboard->name
+                            ])
                         ], Html::tag('i', [
                             'class' => 'icon-edit',
+                            'aria-hidden' => true
+                        ])),
+                        Html::tag('a', [
+                            'href' => Url::fromPath('dashboards/dashlets/remove', [
+                                'dashletId' => $dashlet->id
+                            ])
+                        ], Html::tag('i', [
+                            'class' => 'icon-trash',
                             'aria-hidden' => true
                         ]))
                     ])
