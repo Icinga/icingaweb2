@@ -6,6 +6,7 @@ use GuzzleHttp\Psr7\ServerRequest;
 use Icinga\Module\Dashboards\Common\Database;
 use Icinga\Module\Dashboards\Form\DashletForm;
 use Icinga\Module\Dashboards\Form\DeleteDashboardForm;
+use Icinga\Module\Dashboards\Form\DeleteDashletForm;
 use Icinga\Module\Dashboards\Form\EditDashletForm;
 use Icinga\Module\Dashboards\Web\Controller;
 use ipl\Sql\Select;
@@ -66,6 +67,29 @@ class DashletsController extends Controller
 
         $form = (new DeleteDashboardForm($dashboard))
             ->on(DeleteDashboardForm::ON_SUCCESS, function () {
+                $this->redirectNow('dashboards/settings');
+            })
+            ->handleRequest(ServerRequest::fromGlobals());
+
+        $this->addContent($form);
+    }
+
+    public function removeAction()
+    {
+        $dashletId = $this->params->getRequired('dashletId');
+        $this->tabs->disableLegacyExtensions();
+
+        $select = (new Select())
+            ->from('dashlet')
+            ->columns('*')
+            ->where(['id = ?' => $dashletId]);
+
+        $dashlet = $this->getDb()->select($select)->fetch();
+
+        $this->setTitle($this->translate('Delete Dashlet: %s'), $dashlet->name);
+
+        $form = (new DeleteDashletForm($dashlet))
+            ->on(DeleteDashletForm::ON_SUCCESS, function () {
                 $this->redirectNow('dashboards/settings');
             })
             ->handleRequest(ServerRequest::fromGlobals());
