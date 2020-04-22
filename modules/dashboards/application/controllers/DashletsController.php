@@ -5,6 +5,7 @@ namespace Icinga\Module\Dashboards\Controllers;
 use GuzzleHttp\Psr7\ServerRequest;
 use Icinga\Module\Dashboards\Common\Database;
 use Icinga\Module\Dashboards\Form\DashletForm;
+use Icinga\Module\Dashboards\Form\DeleteDashboardForm;
 use Icinga\Module\Dashboards\Form\EditDashletForm;
 use Icinga\Module\Dashboards\Web\Controller;
 use ipl\Sql\Select;
@@ -29,29 +30,43 @@ class DashletsController extends Controller
 
     public function editAction()
     {
+        $dashletId = $this->params->getRequired('dashletId');
         $this->tabs->disableLegacyExtensions();
-
-        $dashboardId = $this->params->get('dashboardId');
-
-        $db = (new Select())
-            ->from('dashboard')
-            ->columns(['id', 'name'])
-            ->where(['id = ?' => $dashboardId]);
-
-        $dashboard = $this->getDb()->fetchRow($db);
-
-        $this->setTitle($this->translate('Edit Dashboard: %s'), $dashboard->name);
 
         $select = (new Select())
             ->from('dashlet')
             ->columns('*')
-            ->where(['dashboard_id = ?' => $dashboard->id]);
+            ->where(['id = ?' => $dashletId]);
 
-        $dashlet = $this->getDb()->fetchRow($select);
+        $dashlet = $this->getDb()->select($select)->fetch();
+
+        $this->setTitle($this->translate('Edit Dashlet: %s'), $dashlet->name);
 
         $form = (new EditDashletForm($dashlet))
             ->on(EditDashletForm::ON_SUCCESS, function () {
-                $this->redirectNow('dashboards');
+                $this->redirectNow('dashboards/settings');
+            })
+            ->handleRequest(ServerRequest::fromGlobals());
+
+        $this->addContent($form);
+    }
+
+    public function deleteAction()
+    {
+        $this->tabs->disableLegacyExtensions();
+
+        $select = (new Select())
+            ->from('dashboard')
+            ->columns('*')
+            ->where(['id = ?' => $this->params->getRequired('dashboardId')]);
+
+        $dashboard = $this->getDb()->select($select)->fetch();
+
+        $this->setTitle($this->translate('Delete Dashboard: %s'), $dashboard->name);
+
+        $form = (new DeleteDashboardForm($dashboard))
+            ->on(DeleteDashboardForm::ON_SUCCESS, function () {
+                $this->redirectNow('dashboards/settings');
             })
             ->handleRequest(ServerRequest::fromGlobals());
 
