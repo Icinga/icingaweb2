@@ -18,23 +18,10 @@ class IndexController extends Controller
     {
         try {
             $this->createTabsAndAutoActivateDashboard();
-            $this->tabs->addAsDropdown(
-                'dashboard_edit',
-                array(
-                    'icon' => 'edit',
-                    'label' => t('Edit Dashlet'),
-                    'url' => Url::fromPath('dashboards/dashlets/edit', [
-                        'dashboardId' => $this->tabs->getActiveName()
-                    ]),
-                    'urlParams' => array(
-                        'url' => rawurlencode(Url::fromRequest()->getRelativeUrl())
-                    )
-                )
-            );
         } catch (\Exception $e) {
             $this->tabs->extend(new DashboardAction())->disableLegacyExtensions();
 
-            Notification::error('No dashboard and dashlet found');
+            Notification::error('No dashboard or dashlet found');
         }
 
         $select = (new Select())
