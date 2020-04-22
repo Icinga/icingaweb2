@@ -31,7 +31,8 @@ class HostnotificationQuery extends IdoQuery
             'hostgroup_name'    => 'hgo.name1'
         ),
         'hosts' => array(
-            'host_display_name' => 'h.display_name COLLATE latin1_general_ci'
+            'host_display_name' => 'h.display_name COLLATE latin1_general_ci',
+            'host_alias'        => 'h.alias COLLATE latin1_general_ci',
         ),
         'history' => array(
             'output'    => null,
