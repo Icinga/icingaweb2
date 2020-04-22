@@ -47,7 +47,8 @@ class ServicenotificationQuery extends IdoQuery
             'hostgroup_alias'   => 'hg.alias COLLATE latin1_general_ci',
         ),
         'hosts' => array(
-            'host_display_name' => 'h.display_name COLLATE latin1_general_ci'
+            'host_display_name' => 'h.display_name COLLATE latin1_general_ci',
+            'host_alias'        => 'h.alias COLLATE latin1_general_ci',
         ),
         'instances' => array(
             'instance_name' => 'i.instance_name'
