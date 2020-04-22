@@ -939,7 +939,7 @@
                 this.icinga.timer.unregister(req.progressTimer);
             }
 
-            if (req.status > 0) {
+            if (req.status > 0 && req.status < 501) {
                 this.icinga.logger.error(
                     req.status,
                     errorThrown + ':',
