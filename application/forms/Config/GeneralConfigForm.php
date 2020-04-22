@@ -15,6 +15,12 @@ use Icinga\Forms\ConfigForm;
 class GeneralConfigForm extends ConfigForm
 {
     /**
+     * Form data
+     *
+     * @var array
+     */
+    protected $formData;
+    /**
      * {@inheritdoc}
      */
     public function init()
@@ -28,6 +34,7 @@ class GeneralConfigForm extends ConfigForm
      */
     public function createElements(array $formData)
     {
+        $this->formData = $formData;
         $appConfigForm = new ApplicationConfigForm();
         $loggingConfigForm = new LoggingConfigForm();
         $themingConfigForm = new ThemingConfigForm();
@@ -40,7 +47,8 @@ class GeneralConfigForm extends ConfigForm
 
     public function onRequest()
     {
-        if ($this->config->getConfigObject()->current()->__get('config_backend') === 'ini') {
+        parent::onRequest();
+        if ($this->formData['global_config_backend'] === 'ini') {
             $this->warning('The preferences backend of type INI is deprecated and will be removed with version 2.10');
         }
     }
