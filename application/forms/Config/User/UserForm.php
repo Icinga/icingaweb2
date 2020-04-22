@@ -3,8 +3,10 @@
 
 namespace Icinga\Forms\Config\User;
 
+use Icinga\Application\Hook\ConfigFormEventsHook;
 use Icinga\Data\Filter\Filter;
 use Icinga\Forms\RepositoryForm;
+use Icinga\Web\Notification;
 
 class UserForm extends RepositoryForm
 {
@@ -97,7 +99,10 @@ class UserForm extends RepositoryForm
     public function getValues($suppressArrayNotation = false)
     {
         $values = parent::getValues($suppressArrayNotation);
-        if (! $values['password']) {
+        // before checking if password values is empty
+        // we have to check that the password field is set
+        // otherwise an error is thrown
+        if (isset($values['password']) && ! $values['password']) {
             unset($values['password']);
         }
 
@@ -171,6 +176,35 @@ class UserForm extends RepositoryForm
             return sprintf($this->translate('User "%s" has been removed'), $this->getIdentifier());
         } else {
             return sprintf($this->translate('Failed to remove user "%s"'), $this->getIdentifier());
+        }
+    }
+
+    public function isValid($formData)
+    {
+        $valid = parent::isValid($formData);
+
+        if ($valid && ConfigFormEventsHook::runIsValid($this) === false) {
+            foreach (ConfigFormEventsHook::getLastErrors() as $msg) {
+                $this->error($msg);
+            }
+
+            $valid = false;
+        }
+
+        return $valid;
+    }
+
+    public function onSuccess()
+    {
+        if (parent::onSuccess() === false) {
+            return false;
+        }
+
+        if (ConfigFormEventsHook::runOnSuccess($this) === false) {
+            Notification::error($this->translate(
+                'Configuration successfully stored. Though, one or more module hooks failed to run.'
+                . ' See logs for details'
+            ));
         }
     }
 }
