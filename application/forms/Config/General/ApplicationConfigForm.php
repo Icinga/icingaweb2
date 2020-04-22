@@ -69,11 +69,28 @@ class ApplicationConfigForm extends Form
                 )
             )
         );
-
-        $this->addElement(
-            'hidden',
-            'global_config_backend'
-        );
+        
+        if ($this->getRequest()->getModuleName() != 'setup') {
+            $this->addElement(
+                'select',
+                'global_config_backend',
+                array(
+                    'required'      => true,
+                    'autosubmit'    => true,
+                    'label'         => $this->translate('User Preference Storage Type'),
+                    'multiOptions'  => array(
+                        'ini'   => $this->translate('File System (INI Files)'),
+                        'db'    => $this->translate('Database'),
+                        'none'  => $this->translate('Don\'t Store Preferences')
+                    )
+                )
+            );
+        } else {
+            $this->addElement(
+                'hidden',
+                'global_config_backend'
+            );
+        }
 
         if (isset($formData['global_config_backend']) && $formData['global_config_backend'] === 'db') {
             $backends = array();
