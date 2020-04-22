@@ -50,15 +50,14 @@ class DashboardSetting extends BaseHtmlElement
             'data-base-target' => '_next'
         ]);
 
-        $table->add(Html::tag('thead', null,
-            Html::tag('tr', null, [
-                Html::tag('th', [
-                    'style' => 'width: 18em;'
-                    ], Html::tag('strong', null, t('Dashlet Name'))),
-                Html::tag('th', null, Html::tag('strong', null, 'Url')),
-                Html::tag('th', [
-                    'style' => 'width: 1.48em;'
-                ])])
+        $table->add(Html::tag('thead', null, Html::tag('tr', null, [
+            Html::tag('th', [
+                'style' => 'width: 18em;'
+            ], Html::tag('strong', null, t('Dashlet Name'))),
+            Html::tag('th', null, Html::tag('strong', null, 'Url')),
+            Html::tag('th', [
+                'style' => 'width: 1.48em;'
+            ])])
         ));
 
         $tbody = Html::tag('tbody');
@@ -74,7 +73,7 @@ class DashboardSetting extends BaseHtmlElement
                 Html::tag('th', null, [
                     Html::tag('a', [
                         'href' => Url::fromPath('dashboards/dashlets/delete', [
-                            'dashboardId'   => $dashboard->id
+                            'dashboardId' => $dashboard->id
                         ]),
                         'title' => 'Edit Dashboard ' . $dashboard->name
                     ], Html::tag('i', [
