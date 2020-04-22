@@ -37,6 +37,7 @@ class DashboardSetting extends BaseHtmlElement
                 get_php_type($dashboards)
             ));
         }
+
         $this->dashboards = $dashboards;
     }
 
@@ -53,12 +54,12 @@ class DashboardSetting extends BaseHtmlElement
             Html::tag('tr', null, [
                 Html::tag('th', [
                     'style' => 'width: 18em;'
-                ], Html::tag('strong', null, t('Dashlet Name'))),
+                    ], Html::tag('strong', null, t('Dashlet Name'))
+                ),
                 Html::tag('th', null, Html::tag('strong', null, 'Url')),
                 Html::tag('th', [
                     'style' => 'width: 1.48em;'
-                    ]
-                )
+                ])
             ])
         ));
 
@@ -74,10 +75,12 @@ class DashboardSetting extends BaseHtmlElement
                 ], $dashboard->name),
                 Html::tag('th', null, [
                     Html::tag('a', [
-                        'href' => Url::fromPath('dashboards/dashlets/edit'),
+                        'href' => Url::fromPath('dashboards/dashlets/delete', [
+                            'dashboardId'   => $dashboard->id
+                        ]),
                         'title' => 'Edit Dashboard ' . $dashboard->name
                     ], Html::tag('i', [
-                        'class' => 'icon-edit',
+                        'class' => 'icon-trash',
                         'aria-hidden' => true
                     ]))
                 ])
@@ -87,7 +90,7 @@ class DashboardSetting extends BaseHtmlElement
 
             $select = (new Select())
                 ->from('dashlet')
-                ->columns(['name', 'url'])
+                ->columns(['*'])
                 ->where(['dashboard_id = ?' => $dashboard->id]);
 
             $dashlets = $this->getDb()->select($select);
@@ -109,7 +112,9 @@ class DashboardSetting extends BaseHtmlElement
                 ], $dashlet->url)),
                     Html::tag('td', [
                         Html::tag('a', [
-                            'href' => Url::fromPath('dashboards/dashlets/remove'),
+                            'href' => Url::fromPath('dashboards/dashlets/edit', [
+                                'dashletId' => $dashlet->id
+                            ]),
                             'title' => 'Remove dashlet ' . $dashlet->name . ' from Dashboard ' . $dashboard->name
                         ], Html::tag('i', [
                             'class' => 'icon-edit',
