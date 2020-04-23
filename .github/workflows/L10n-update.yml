@@ -1,0 +1,19 @@
+name: L10n Update
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  trigger-update:
+    name: L10n Update Trigger
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Repository dispatch
+        uses: peter-evans/repository-dispatch@v1
+        with:
+          token: ${{ secrets.L10N_ACCESS_TOKEN }}
+          repository: Icinga/ipl-L10n
+          event-type: update
