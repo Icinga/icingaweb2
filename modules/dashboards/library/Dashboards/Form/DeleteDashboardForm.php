@@ -20,10 +20,15 @@ class DeleteDashboardForm extends CompatForm
     protected function assemble()
     {
         $this->add(
-            Html::tag('h1',
+            Html::tag(
+                'h1',
                 null,
-                Html::sprintf('Please confirm deletion of dashboard %s',
-                    $this->dashboard->name)));
+                Html::sprintf(
+                    'Please confirm deletion of dashboard %s',
+                    $this->dashboard->name
+                )
+            )
+        );
 
         $this->addElement('input', 'btn_submit', [
             'type' => 'submit',
