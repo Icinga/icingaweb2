@@ -28,6 +28,11 @@ class SettingsController extends Controller
         $this->addContent($dashboardSetting);
     }
 
+    /**
+     * Create a tab for each dashboard from the database
+     *
+     * @return \ipl\Web\Widget\Tabs
+     */
     protected function createTabs()
     {
         $tabs = $this->getTabs();
