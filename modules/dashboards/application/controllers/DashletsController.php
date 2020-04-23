@@ -29,6 +29,11 @@ class DashletsController extends Controller
         $this->addContent($dashletForm);
     }
 
+    /**
+     * Edit dashboard with the selected dashlet
+     *
+     * @throws \Icinga\Exception\MissingParameterException  If the param $dashletId doesn't exist
+     */
     public function editAction()
     {
         $dashletId = $this->params->getRequired('dashletId');
@@ -52,6 +57,11 @@ class DashletsController extends Controller
         $this->addContent($form);
     }
 
+    /**
+     * Delete single dashboard with all its dashlets
+     *
+     * @throws \Icinga\Exception\MissingParameterException  If the parameter $dashboardId doesn't exist
+     */
     public function deleteAction()
     {
         $this->tabs->disableLegacyExtensions();
@@ -74,6 +84,11 @@ class DashletsController extends Controller
         $this->addContent($form);
     }
 
+    /**
+     * Remove individual dashlets from the given dashboard
+     *
+     * @throws \Icinga\Exception\MissingParameterException  If the parameter $dashletId doesn't exist
+     */
     public function removeAction()
     {
         $dashletId = $this->params->getRequired('dashletId');
