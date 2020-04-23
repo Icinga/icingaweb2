@@ -70,8 +70,7 @@ class ApplicationConfigForm extends Form
             )
         );
 
-        if (
-            $this->getRequest()->getModuleName() != 'setup'
+        if ($this->getRequest()->getModuleName() != 'setup'
             && $formData['global_config_backend'] === 'ini'
         ) {
             $this->addElement(
@@ -107,9 +106,9 @@ class ApplicationConfigForm extends Form
                 array(
                     'required'      => true,
                     'multiOptions'  => array_merge(
-                                            ['' => sprintf(' - %s - ', $this->translate('Please choose'))],
-                                            array_combine($backends, $backends)
-                     ),
+                        ['' => sprintf(' - %s - ', $this->translate('Please choose'))],
+                        array_combine($backends, $backends)
+                    ),
                     'disable'       => [''],
                      'value'         => '',
                     'label'         => $this->translate('Configuration Database')
