@@ -74,7 +74,6 @@ class DashboardSetting extends BaseHtmlElement
                         'href' => Url::fromPath('dashboards/dashlets/delete', [
                             'dashboardId' => $dashboard->id
                         ]),
-                        'title' => 'Edit Dashboard ' . $dashboard->name
                     ], Html::tag('i', [
                         'class' => 'icon-trash',
                         'aria-hidden' => true
