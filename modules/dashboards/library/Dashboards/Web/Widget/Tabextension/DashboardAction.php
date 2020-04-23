@@ -37,7 +37,7 @@ class DashboardAction implements Tabextension
         $tabs->addAsDropdown(
             'dashboard_settings',
             array(
-                'icon' => 'dashboard',
+                'icon' => 'wrench',
                 'label' => t('Settings'),
                 'url' => Url::fromPath('dashboards/settings')
             )
