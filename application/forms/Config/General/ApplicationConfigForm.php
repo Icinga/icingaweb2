@@ -83,8 +83,7 @@ class ApplicationConfigForm extends Form
                     'label'         => $this->translate('User Preference Storage Type'),
                     'multiOptions'  => array(
                         'ini'   => $this->translate('File System (INI Files)'),
-                        'db'    => $this->translate('Database'),
-                        'none'  => $this->translate('Don\'t Store Preferences')
+                        'db'    => $this->translate('Database')
                     )
                 )
             );
