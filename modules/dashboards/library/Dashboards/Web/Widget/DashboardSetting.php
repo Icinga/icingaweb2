@@ -17,7 +17,7 @@ class DashboardSetting extends BaseHtmlElement
     /** @var iterable $dashboards from the database */
     protected $dashboards;
 
-    protected $defaultAttributes = ['class' => 'content'];
+    protected $defaultAttributes = ['class' => 'content setting'];
 
     protected $tag = 'div';
 
@@ -41,6 +41,26 @@ class DashboardSetting extends BaseHtmlElement
         $this->dashboards = $dashboards;
     }
 
+    /**
+     * @inheritDoc
+     *
+     * ipl/Html lacks a call to {@link BaseHtmlElement::ensureAssembled()} here. This override is subject to remove once
+     * ipl/Html incorporates this fix.
+     */
+    public function isEmpty()
+    {
+        $this->ensureAssembled();
+
+        return parent::isEmpty();
+    }
+
+    /**
+     * Display the dashboards and dashlets setting
+     *
+     * @return \ipl\Html\HtmlElement
+     *
+     * @throws \Icinga\Exception\ProgrammingError   If the given fromPath Url doesn't exist
+     */
     public function settingsAction()
     {
         $this->add(Html::tag('h1', null, t('Dashboard Settings')));
