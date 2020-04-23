@@ -58,8 +58,6 @@ class DashboardSetting extends BaseHtmlElement
      * Display the dashboards and dashlets setting
      *
      * @return \ipl\Html\HtmlElement
-     *
-     * @throws \Icinga\Exception\ProgrammingError   If the given fromPath Url doesn't exist
      */
     public function settingsAction()
     {
