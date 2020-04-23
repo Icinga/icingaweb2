@@ -10,8 +10,14 @@ class DeleteDashletForm extends CompatForm
 {
     use Database;
 
+    /** @var object $dashlet single dashlet from the given dashboard */
     protected $dashlet;
 
+    /**
+     * Create a dashlet remove Form
+     *
+     * @param object $dashlet The dashlet that is deleted from the given dashboard
+     */
     public function __construct($dashlet)
     {
         $this->dashlet = $dashlet;

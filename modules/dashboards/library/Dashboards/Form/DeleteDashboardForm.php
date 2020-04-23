@@ -10,8 +10,14 @@ class DeleteDashboardForm extends CompatForm
 {
     use Database;
 
+    /** @var object $dashboard single dashboard from the database */
     protected $dashboard;
 
+    /**
+     * Create a dashboard delete Form
+     *
+     * @param object $dashboard  The dashboard that is deleted
+     */
     public function __construct($dashboard)
     {
         $this->dashboard = $dashboard;
