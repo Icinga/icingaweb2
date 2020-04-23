@@ -112,7 +112,7 @@ class ApplicationConfigForm extends Form
                      ),
                     'disable'       => [''],
                      'value'         => '',
-                    'label'         => $this->translate('Database Connection')
+                    'label'         => $this->translate('Configuration Database')
                 )
             );
         }
