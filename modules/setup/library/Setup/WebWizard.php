@@ -244,8 +244,7 @@ class WebWizard extends Wizard implements SetupWizard
                     unset($pageData['setup_config_db_resource']);
                     unset($pageData['setup_config_db_creation']);
                 }
-            }
-            elseif ($authData == null || $authData['type'] == 'external') {
+            } elseif ($authData == null || $authData['type'] == 'external') {
                 unset($pageData['setup_config_db_resource']);
             }
         }
