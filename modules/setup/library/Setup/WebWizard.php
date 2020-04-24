@@ -230,8 +230,7 @@ class WebWizard extends Wizard implements SetupWizard
             }
         } elseif ($page->getName() === 'setup_authentication_type' && $this->getDirection() === static::FORWARD) {
             $authData = $this->getPageData($page->getName());
-            if (
-                $authData !== null
+            if ($authData !== null
                 && $request->getPost('type') !== $authData['type']
                 || $authData['type'] == 'external'
             ) {
