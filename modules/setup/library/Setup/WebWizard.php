@@ -230,7 +230,11 @@ class WebWizard extends Wizard implements SetupWizard
             }
         } elseif ($page->getName() === 'setup_authentication_type' && $this->getDirection() === static::FORWARD) {
             $authData = $this->getPageData($page->getName());
-            if ($authData !== null && $request->getPost('type') !== $authData['type']) {
+            if (
+                $authData !== null
+                && $request->getPost('type') !== $authData['type']
+                || $authData['type'] == 'external'
+            ) {
                 // Drop any existing page data in case the authentication type has changed,
                 // otherwise it will conflict with other forms that depend on this one
                 $pageData = & $this->getPageData();
@@ -240,6 +244,8 @@ class WebWizard extends Wizard implements SetupWizard
                 if ($authData['type'] === 'db') {
                     unset($pageData['setup_auth_db_resource']);
                     unset($pageData['setup_auth_db_creation']);
+                } elseif ($authData['type'] === 'external') {
+                    unset($pageData['setup_config_db_resource']);
                 } elseif ($request->getPost('type') === 'db') {
                     unset($pageData['setup_config_db_resource']);
                     unset($pageData['setup_config_db_creation']);
@@ -285,12 +291,13 @@ class WebWizard extends Wizard implements SetupWizard
             if (($newPage->getName() === 'setup_auth_db_creation' || $this->hasPageData('setup_config_db_resource'))
                 && (($config = $this->getPageData('setup_auth_db_resource')) !== null
                     || ($config = $this->getPageData('setup_config_db_resource')) !== null)
-                    && !$config['skip_validation']
+                    && !$config['skip_validation'] &&  $this->getDirection() == static::FORWARD
             ) {
                 $db = new DbTool($config);
 
                 try {
                     $db->connectToDb(); // Are we able to login on the database?
+
                     if (array_search(reset($this->databaseTables), $db->listTables(), true) === false) {
                         // In case the database schema does not yet exist the
                         // user needs the privileges to setup the database
