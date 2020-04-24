@@ -228,27 +228,25 @@ class WebWizard extends Wizard implements SetupWizard
                     unset($pageData['setup_usergroup_backend']);
                 }
             }
-        } elseif ($page->getName() === 'setup_authentication_type' && $this->getDirection() === static::FORWARD) {
+        } elseif ($page->getName() === 'setup_authentication_type') {
             $authData = $this->getPageData($page->getName());
-            if ($authData !== null
-                && $request->getPost('type') !== $authData['type']
-                || $authData['type'] == 'external'
-            ) {
+            $pageData = & $this->getPageData();
+            if ($authData !== null && $request->getPost('type') !== $authData['type']) {
                 // Drop any existing page data in case the authentication type has changed,
                 // otherwise it will conflict with other forms that depend on this one
-                $pageData = & $this->getPageData();
                 unset($pageData['setup_admin_account']);
                 unset($pageData['setup_authentication_backend']);
 
                 if ($authData['type'] === 'db') {
                     unset($pageData['setup_auth_db_resource']);
                     unset($pageData['setup_auth_db_creation']);
-                } elseif ($authData['type'] === 'external') {
-                    unset($pageData['setup_config_db_resource']);
                 } elseif ($request->getPost('type') === 'db') {
                     unset($pageData['setup_config_db_resource']);
                     unset($pageData['setup_config_db_creation']);
                 }
+            }
+            elseif ($authData == null || $authData['type'] == 'external') {
+                unset($pageData['setup_config_db_resource']);
             }
         }
     }
