@@ -130,9 +130,7 @@ abstract class PreferencesStore
             Logger::warning('The preferences backend of type INI is deprecated and will be removed with version 2.10');
             $config->location = Config::resolvePath('preferences');
         } elseif ($type === 'Db') {
-            $config->connection = new DbConnection(
-                ResourceFactory::getResourceConfig(Config::app()->get('global', 'config_resource'))
-            );
+            $config->connection = new DbConnection(ResourceFactory::getResourceConfig($config->resource));
         }
 
         return new $storeClass($config, $user);
