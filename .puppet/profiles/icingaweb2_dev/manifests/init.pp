@@ -22,17 +22,17 @@ class icingaweb2_dev (
 
   # TODO(el): icinga-gui is not a icingaweb2_dev package
   package { [
-    'rh-php71-php-cli',
-    'rh-php71-php-gd',
-    'rh-php71-php-intl',
-    'rh-php71-php-pdo',
-    'rh-php71-php-mysqlnd',
-    'rh-php71-php-pgsql',
-    'rh-php71-php-ldap',
-    'rh-php71-php-xml',
-    'rh-php71-php-mbstring',
-    'sclo-php71-php-pecl-xdebug',
-    'sclo-php71-php-pecl-imagick',
+    'rh-php73-php-cli',
+    'rh-php73-php-gd',
+    'rh-php73-php-intl',
+    'rh-php73-php-pdo',
+    'rh-php73-php-mysqlnd',
+    'rh-php73-php-pgsql',
+    'rh-php73-php-ldap',
+    'rh-php73-php-xml',
+    'rh-php73-php-mbstring',
+    'rh-php73-php-pecl-xdebug',
+    'sclo-php73-php-pecl-imagick',
     'php-phpunit-PHPUnit'
   ]:
     ensure => latest,
@@ -154,7 +154,7 @@ class icingaweb2_dev (
     ensure => latest,
   }
   -> exec { 'move-mockery-to-opt':
-    command => 'cp -R /usr/share/php/Mockery* /opt/rh/rh-php71/root/usr/share/php/',
-    unless  => 'test -d /opt/rh/rh-php71/root/usr/share/php/Mockery'
+    command => 'cp -R /usr/share/php/Mockery* /opt/rh/rh-php73/root/usr/share/php/',
+    unless  => 'test -d /opt/rh/rh-php73/root/usr/share/php/Mockery'
   }
 }
