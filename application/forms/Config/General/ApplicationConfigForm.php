@@ -89,7 +89,11 @@ class ApplicationConfigForm extends Form
         } else {
             $this->addElement(
                 'hidden',
-                'global_config_backend'
+                'global_config_backend',
+                array(
+                    'required'  => true,
+                    'value'     => 'db'
+                )
             );
         }
         if (isset($formData['global_config_backend']) && $formData['global_config_backend'] === 'db') {
