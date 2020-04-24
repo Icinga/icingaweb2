@@ -230,12 +230,10 @@ class WebWizard extends Wizard implements SetupWizard
             }
         } elseif ($page->getName() === 'setup_general_config') {
             $authData = $this->getPageData('setup_authentication_type');
-            if ($authData['type'] === 'db') {
-                $page
-                    ->create($this->getRequestData($page, $request))
-                    ->getElement('global_config_backend')
-                    ->setValue('db');
-            }
+            $page
+                ->create($this->getRequestData($page, $request))
+                ->getElement('global_config_backend')
+                ->setValue('db');
         } elseif ($page->getName() === 'setup_authentication_type' && $this->getDirection() === static::FORWARD) {
             $authData = $this->getPageData($page->getName());
             if ($authData !== null && $request->getPost('type') !== $authData['type']) {
