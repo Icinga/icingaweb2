@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Dashboards\Controllers;
 
+use Icinga\Authentication\Auth;
 use Icinga\Module\Dashboards\Common\Database;
 use Icinga\Module\Dashboards\Web\Controller;
 use Icinga\Module\Dashboards\Web\Widget\Tabextension\DashboardAction;
@@ -24,15 +25,37 @@ class IndexController extends Controller
             Notification::error('No dashboard or dashlet found');
         }
 
+        $selectUserDashlet = (new Select())
+            ->columns([
+                'user_dashlet.id',
+                'user_dashlet.user_dashboard_id',
+                'user_dashlet.name',
+                'user_dashlet.url',
+            ])
+            ->from('user_dashlet')
+            ->join('user_dashboard d', 'user_dashlet.user_dashboard_id = d.dashboard_id')
+            ->join('dashboard', 'd.dashboard_id = dashboard.id')
+            ->join('users u', 'd.user_name = u.name')
+            ->where([
+                'dashboard.type = ?' => 'private',
+                'dashboard_id = ?' => $this->tabs->getActiveName(),
+                'u.name = ?' => Auth::getInstance()->getUser()->getUsername()
+            ]);
+
         $select = (new Select())
             ->columns('dashlet.name, dashlet.dashboard_id, dashlet.url')
             ->from('dashlet')
             ->join('dashboard d', 'dashlet.dashboard_id = d.id')
-            ->where(['d.id = ?' => $this->tabs->getActiveName()]);
+            ->where([
+                'd.id = ?' => $this->tabs->getActiveName(),
+                'd.type = ?' => 'public'
+            ]);
 
         $dashlets = $this->getDb()->select($select);
 
-        $this->content = new DashboardWidget($dashlets);
+        $userDashlets = $this->getDb()->select($selectUserDashlet);
+
+        $this->content = (new DashboardWidget($dashlets, $userDashlets));
     }
 
     /**
@@ -45,12 +68,31 @@ class IndexController extends Controller
      */
     protected function createTabsAndAutoActivateDashboard()
     {
-        $ids = [];
         $tabs = $this->getTabs();
 
         $select = (new Select())
             ->columns('*')
-            ->from('dashboard');
+            ->from('dashboard')
+            ->join('user_dashboard d', 'd.dashboard_id = dashboard.id')
+            ->where(['type = ?' => 'private', 'd.user_name = ?' => Auth::getInstance()->getUser()->getUsername()]);
+
+        $dashboards = $this->getDb()->select($select);
+
+        foreach ($dashboards as $dashboard) {
+            $tabs->add($dashboard->id, [
+                'label' => $dashboard->name,
+                'url' => Url::fromPath('dashboards', [
+                    'dashboard' => $dashboard->id
+                ])
+            ])->extend(new DashboardAction())->disableLegacyExtensions();
+
+            $ids[] = $dashboard->id;
+        }
+
+        $select = (new Select())
+            ->columns('*')
+            ->from('dashboard')
+            ->where(['type = ?' => 'public']);
 
         $dashboards = $this->getDb()->select($select);
 
