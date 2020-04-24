@@ -73,8 +73,7 @@ class IndexController extends Controller
         $select = (new Select())
             ->columns('*')
             ->from('dashboard')
-            ->join('user_dashboard d', 'd.dashboard_id = dashboard.id')
-            ->where(['type = ?' => 'private', 'd.user_name = ?' => Auth::getInstance()->getUser()->getUsername()]);
+            ->where(['type = ?' => 'private']);
 
         $dashboards = $this->getDb()->select($select);
 
