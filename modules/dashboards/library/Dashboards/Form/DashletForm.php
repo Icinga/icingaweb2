@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Dashboards\Form;
 
+use Icinga\Authentication\Auth;
 use Icinga\Module\Dashboards\Common\Database;
 use Icinga\Web\Notification;
 use ipl\Sql\Select;
@@ -22,12 +23,28 @@ class DashletForm extends CompatForm
 
         $select = (new Select())
             ->columns('*')
-            ->from('dashboard');
+            ->from('dashboard')
+            ->where(['type = ?' => 'public']);
 
         $result = $this->getDb()->select($select);
 
         foreach ($result as $dashboard) {
             $dashboards[$dashboard->id] = $dashboard->name;
+        }
+
+        $db = (new Select())
+            ->from('dashboard')
+            ->columns('*')
+            ->join('user_dashboard', 'user_dashboard.dashboard_id = dashboard.id')
+            ->where([
+                'type = ?' => 'private',
+                'user_dashboard.user_name = ?' => Auth::getInstance()->getUser()->getUsername(),
+            ]);
+
+        $stmt = $this->getDb()->select($db);
+
+        foreach ($stmt as $userDashboard) {
+            $dashboards[$userDashboard->id] = $userDashboard->name;
         }
 
         return $dashboards;
@@ -42,16 +59,80 @@ class DashletForm extends CompatForm
      */
     public function createDashboard($name)
     {
-        $data = [
-            'name' => $name
-        ];
+        if ($this->getValue('user-dashboard') !== null) {
+            $data = [
+                'name' => $name,
+                'type' => 'private'
+            ];
 
-        $db = $this->getDb();
-        $db->insert('dashboard', $data);
+            $db = $this->getDb();
+            $db->insert('dashboard', $data);
 
-        $id = $db->lastInsertId();
+            return $db->lastInsertId();
+        } else {
+            $data = [
+                'name' => $name,
+                'type' => 'public'
+            ];
 
-        return $id;
+            $db = $this->getDb();
+            $db->insert('dashboard', $data);
+
+            return $db->lastInsertId();
+        }
+    }
+
+    public function createUserDashboard($name)
+    {
+        $ids = [];
+
+        if ($this->getValue('new-dashboard-name') !== null) {
+            $data = [
+                'dashboard_id' => $this->createDashboard($name),
+                'user_name' => Auth::getInstance()->getUser()->getUsername()
+            ];
+
+            $this->getDb()->insert('user_dashboard', $data);
+
+            $select = (new Select())
+                ->from('user_dashboard')
+                ->columns('*');
+
+            $dashboards = $this->getDb()->select($select);
+
+            foreach ($dashboards as $dashboard) {
+                $ids[] = $dashboard->dashboard_id;
+            }
+
+            foreach ($ids as $id) {
+
+            }
+
+            return $id;
+        } else {
+            $data = [
+                'dashboard_id' => $name,
+                'user_name' => Auth::getInstance()->getUser()->getUsername()
+            ];
+
+            $this->getDb()->insert('user_dashboard', $data);
+
+            $select = (new Select())
+                ->from('user_dashboard')
+                ->columns('*');
+
+            $dashboards = $this->getDb()->select($select);
+
+            foreach ($dashboards as $dashboard) {
+                $ids[] = $dashboard->dashboard_id;
+            }
+
+            foreach ($ids as $id) {
+
+            }
+
+            return $id;
+        }
     }
 
     /**
@@ -74,6 +155,11 @@ class DashletForm extends CompatForm
 
         $this->addElement('checkbox', 'new-dashboard', [
             'label' => 'New Dashboard',
+            'class' => 'autosubmit',
+        ]);
+
+        $this->addElement('checkbox', 'user-dashboard', [
+            'label' => 'Private Dashboard',
             'class' => 'autosubmit',
         ]);
 
@@ -103,22 +189,51 @@ class DashletForm extends CompatForm
 
     protected function onSuccess()
     {
-        if ($this->getValue('new-dashboard-name') !== null) {
-            $this->getDb()->insert('dashlet', [
-                'dashboard_id' => $this->createDashboard($this->getValue('new-dashboard-name')),
-                'name' => $this->getValue('name'),
-                'url' => $this->getValue('url')
-            ]);
+        if ($this->getValue('user-dashboard') !== null) {
+            $select = (new Select())
+                ->from('users')
+                ->columns('name')
+                ->where(['name = ?' => Auth::getInstance()->getUser()->getUsername()]);
 
-            Notification::success('Dashboard and dashlet created');
+            $user = $this->getDb()->select($select)->fetch();
+
+            if ($this->getValue('new-dashboard-name') !== null) {
+                if ($user === false)
+                    $this->getDb()->insert('users', ['name' => Auth::getInstance()->getUser()->getUsername()]);
+
+                $this->getDb()->insert('user_dashlet', [
+                    'user_dashboard_id' => $this->createUserDashboard($this->getValue('new-dashboard-name')),
+                    'name' => $this->getValue('name'),
+                    'url' => $this->getValue('url')
+                ]);
+            } else {
+                if ($user === false)
+                    $this->getDb()->insert('users', ['name' => Auth::getInstance()->getUser()->getUsername()]);
+
+                $this->getDb()->insert('user_dashlet', [
+                    'user_dashboard_id' => $this->createUserDashboard($this->getValue('dashboard')),
+                    'name' => $this->getValue('name'),
+                    'url' => $this->getValue('url')
+                ]);
+            }
         } else {
-            $this->getDb()->insert('dashlet', [
-                'dashboard_id' => $this->getValue('dashboard'),
-                'name' => $this->getValue('name'),
-                'url' => $this->getValue('url'),
-            ]);
+            if ($this->getValue('new-dashboard-name') !== null) {
+                $this->getDb()->insert('dashlet', [
+                    'dashboard_id' => $this->createDashboard($this->getValue('new-dashboard-name')),
+                    'name' => $this->getValue('name'),
+                    'url' => $this->getValue('url')
+                ]);
 
-            Notification::success('Dashlet created');
+                Notification::success('Dashboard and dashlet created');
+            } else {
+                $this->getDb()->insert('dashlet', [
+                    'dashboard_id' => $this->getValue('dashboard'),
+                    'name' => $this->getValue('name'),
+                    'url' => $this->getValue('url'),
+                ]);
+
+                Notification::success('Dashlet created');
+            }
         }
     }
 }
