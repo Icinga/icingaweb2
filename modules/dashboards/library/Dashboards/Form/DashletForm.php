@@ -105,7 +105,7 @@ class DashletForm extends CompatForm
             }
 
             foreach ($ids as $id) {
-
+                continue;
             }
 
             return $id;
@@ -128,7 +128,7 @@ class DashletForm extends CompatForm
             }
 
             foreach ($ids as $id) {
-
+                continue;
             }
 
             return $id;
@@ -198,8 +198,9 @@ class DashletForm extends CompatForm
             $user = $this->getDb()->select($select)->fetch();
 
             if ($this->getValue('new-dashboard-name') !== null) {
-                if ($user === false)
+                if ($user === false) {
                     $this->getDb()->insert('users', ['name' => Auth::getInstance()->getUser()->getUsername()]);
+                }
 
                 $this->getDb()->insert('user_dashlet', [
                     'user_dashboard_id' => $this->createUserDashboard($this->getValue('new-dashboard-name')),
@@ -207,8 +208,9 @@ class DashletForm extends CompatForm
                     'url' => $this->getValue('url')
                 ]);
             } else {
-                if ($user === false)
+                if ($user === false) {
                     $this->getDb()->insert('users', ['name' => Auth::getInstance()->getUser()->getUsername()]);
+                }
 
                 $this->getDb()->insert('user_dashlet', [
                     'user_dashboard_id' => $this->createUserDashboard($this->getValue('dashboard')),
