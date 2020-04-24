@@ -228,12 +228,6 @@ class WebWizard extends Wizard implements SetupWizard
                     unset($pageData['setup_usergroup_backend']);
                 }
             }
-        } elseif ($page->getName() === 'setup_general_config') {
-            $authData = $this->getPageData('setup_authentication_type');
-            $page
-                ->create($this->getRequestData($page, $request))
-                ->getElement('global_config_backend')
-                ->setValue('db');
         } elseif ($page->getName() === 'setup_authentication_type' && $this->getDirection() === static::FORWARD) {
             $authData = $this->getPageData($page->getName());
             if ($authData !== null && $request->getPost('type') !== $authData['type']) {
@@ -286,8 +280,7 @@ class WebWizard extends Wizard implements SetupWizard
             $skip = $backendConfig['backend'] !== 'ldap';
         } elseif ($newPage->getName() === 'setup_config_db_resource') {
             $authData = $this->getPageData('setup_authentication_type');
-            $configData = $this->getPageData('setup_general_config');
-            $skip = $authData['type'] === 'db' || $configData['global_config_backend'] !== 'db';
+            $skip = $authData['type'] === 'db';
         } elseif (in_array($newPage->getName(), array('setup_auth_db_creation', 'setup_config_db_creation'))) {
             if (($newPage->getName() === 'setup_auth_db_creation' || $this->hasPageData('setup_config_db_resource'))
                 && (($config = $this->getPageData('setup_auth_db_resource')) !== null
