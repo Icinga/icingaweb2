@@ -84,54 +84,34 @@ class DashletForm extends CompatForm
 
     public function createUserDashboard($name)
     {
-        $ids = [];
-
         if ($this->getValue('new-dashboard-name') !== null) {
-            $data = [
-                'dashboard_id' => $this->createDashboard($name),
-                'user_name' => Auth::getInstance()->getUser()->getUsername()
-            ];
-
-            $this->getDb()->insert('user_dashboard', $data);
-
             $select = (new Select())
                 ->from('user_dashboard')
-                ->columns('*');
+                ->columns('dashboard_id')
+                ->orderBy('dashboard_id DESC')
+                ->limit(1);
 
-            $dashboards = $this->getDb()->select($select);
+            $dashboard = $this->getDb()->fetchCol($select);
 
-            foreach ($dashboards as $dashboard) {
-                $ids[] = $dashboard->dashboard_id;
-            }
-
-            foreach ($ids as $id) {
-                continue;
-            }
-
-            return $id;
+            return implode($dashboard);
         } else {
-            $data = [
-                'dashboard_id' => $name,
-                'user_name' => Auth::getInstance()->getUser()->getUsername()
-            ];
+            return $name;
+        }
+    }
 
-            $this->getDb()->insert('user_dashboard', $data);
+    public function checkForPrivateDashboard($id)
+    {
+        $select = (new Select())
+            ->from('user_dashboard')
+            ->columns('*')
+            ->where(['dashboard_id = ?' => $id]);
 
-            $select = (new Select())
-                ->from('user_dashboard')
-                ->columns('*');
+        $dashboard = $this->getDb()->select($select)->fetch();
 
-            $dashboards = $this->getDb()->select($select);
-
-            foreach ($dashboards as $dashboard) {
-                $ids[] = $dashboard->dashboard_id;
-            }
-
-            foreach ($ids as $id) {
-                continue;
-            }
-
-            return $id;
+        if ($dashboard) {
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -201,6 +181,12 @@ class DashletForm extends CompatForm
                 if ($user === false) {
                     $this->getDb()->insert('users', ['name' => Auth::getInstance()->getUser()->getUsername()]);
                 }
+                $data = [
+                    'dashboard_id' => $this->createDashboard($this->getValue('new-dashboard-name')),
+                    'user_name' => Auth::getInstance()->getUser()->getUsername()
+                ];
+
+                $this->getDb()->insert('user_dashboard', $data);
 
                 $this->getDb()->insert('user_dashlet', [
                     'user_dashboard_id' => $this->createUserDashboard($this->getValue('new-dashboard-name')),
@@ -218,6 +204,12 @@ class DashletForm extends CompatForm
                     'url' => $this->getValue('url')
                 ]);
             }
+        } else if ($this->checkForPrivateDashboard($this->getValue('dashboard'))) {
+            $this->getDb()->insert('user_dashlet', [
+                'user_dashboard_id' => $this->createUserDashboard($this->getValue('dashboard')),
+                'name' => $this->getValue('name'),
+                'url' => $this->getValue('url')
+            ]);
         } else {
             if ($this->getValue('new-dashboard-name') !== null) {
                 $this->getDb()->insert('dashlet', [
@@ -237,5 +229,6 @@ class DashletForm extends CompatForm
                 Notification::success('Dashlet created');
             }
         }
+        var_dump($this->checkForPrivateDashboard($this->getValue('dashboard')));
     }
 }
