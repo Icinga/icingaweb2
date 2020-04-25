@@ -204,7 +204,7 @@ class DashletForm extends CompatForm
                     'url' => $this->getValue('url')
                 ]);
             }
-        } else if ($this->checkForPrivateDashboard($this->getValue('dashboard'))) {
+        } elseif ($this->checkForPrivateDashboard($this->getValue('dashboard'))) {
             $this->getDb()->insert('user_dashlet', [
                 'user_dashboard_id' => $this->createUserDashboard($this->getValue('dashboard')),
                 'name' => $this->getValue('name'),
