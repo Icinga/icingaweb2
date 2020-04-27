@@ -64,7 +64,7 @@ class DeleteDashboardForm extends CompatForm
             $this->getDb()->delete('user_dashlet', ['user_dashboard_id = ?' => $this->dashboard->id]);
             $this->getDb()->delete('user_dashboard', ['dashboard_id = ?' => $this->dashboard->id]);
             $this->getDb()->delete('dashboard', ['id = ?' => $this->dashboard->id]);
-        } else if ($this->dashboard->type === 'public') {
+        } elseif ($this->dashboard->type === 'public') {
             $this->getDb()->delete('dashlet', ['dashboard_id = ?' => $this->dashboard->id]);
             $this->getDb()->delete('dashboard', ['id = ?' => $this->dashboard->id]);
         } else {
