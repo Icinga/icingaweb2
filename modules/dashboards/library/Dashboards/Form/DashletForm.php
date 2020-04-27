@@ -32,7 +32,7 @@ class DashletForm extends CompatForm
             $dashboards[$dashboard->id] = $dashboard->name;
         }
 
-        $db = (new Select())
+        $query = (new Select())
             ->from('dashboard')
             ->columns('*')
             ->join('user_dashboard', 'user_dashboard.dashboard_id = dashboard.id')
@@ -41,9 +41,9 @@ class DashletForm extends CompatForm
                 'user_dashboard.user_name = ?' => Auth::getInstance()->getUser()->getUsername(),
             ]);
 
-        $stmt = $this->getDb()->select($db);
+        $result = $this->getDb()->select($query);
 
-        foreach ($stmt as $userDashboard) {
+        foreach ($result as $userDashboard) {
             $dashboards[$userDashboard->id] = $userDashboard->name;
         }
 
@@ -178,9 +178,10 @@ class DashletForm extends CompatForm
             $user = $this->getDb()->select($select)->fetch();
 
             if ($this->getValue('new-dashboard-name') !== null) {
-                if ($user === false) {
+                if (! $user) {
                     $this->getDb()->insert('users', ['name' => Auth::getInstance()->getUser()->getUsername()]);
                 }
+
                 $data = [
                     'dashboard_id' => $this->createDashboard($this->getValue('new-dashboard-name')),
                     'user_name' => Auth::getInstance()->getUser()->getUsername()
@@ -193,16 +194,20 @@ class DashletForm extends CompatForm
                     'name' => $this->getValue('name'),
                     'url' => $this->getValue('url')
                 ]);
-            } else {
-                if ($user === false) {
-                    $this->getDb()->insert('users', ['name' => Auth::getInstance()->getUser()->getUsername()]);
-                }
 
-                $this->getDb()->insert('user_dashlet', [
-                    'user_dashboard_id' => $this->createUserDashboard($this->getValue('dashboard')),
-                    'name' => $this->getValue('name'),
-                    'url' => $this->getValue('url')
-                ]);
+                Notification::success("Private dashboard and dashlet created");
+            } else {
+                if (! $this->checkForPrivateDashboard($this->getValue('dashboard'))) {
+                    Notification::error("You can't have private dashlet in a public dashboard!");
+                } else {
+                    $this->getDb()->insert('user_dashlet', [
+                        'user_dashboard_id' => $this->createUserDashboard($this->getValue('dashboard')),
+                        'name' => $this->getValue('name'),
+                        'url' => $this->getValue('url')
+                    ]);
+
+                    Notification::success("Private dashlet created");
+                }
             }
         } elseif ($this->checkForPrivateDashboard($this->getValue('dashboard'))) {
             $this->getDb()->insert('user_dashlet', [
@@ -210,6 +215,8 @@ class DashletForm extends CompatForm
                 'name' => $this->getValue('name'),
                 'url' => $this->getValue('url')
             ]);
+
+            Notification::success("Private dashlet created");
         } else {
             if ($this->getValue('new-dashboard-name') !== null) {
                 $this->getDb()->insert('dashlet', [
@@ -229,6 +236,5 @@ class DashletForm extends CompatForm
                 Notification::success('Dashlet created');
             }
         }
-        var_dump($this->checkForPrivateDashboard($this->getValue('dashboard')));
     }
 }
