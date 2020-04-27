@@ -48,8 +48,8 @@ class GeneralConfigForm extends ConfigForm
     public function onRequest()
     {
         parent::onRequest();
-        
-        if ($this->formData['global_config_backend'] === 'ini') {
+
+        if ($this->config->getConfigObject()->__get('global')->__get('config_backend') === 'ini') {
             $this->warning('The preferences backend of type INI is deprecated and will be removed with version 2.10');
         }
     }
