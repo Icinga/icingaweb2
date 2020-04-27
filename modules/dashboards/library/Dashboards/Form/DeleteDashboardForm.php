@@ -2,8 +2,11 @@
 
 namespace Icinga\Module\Dashboards\Form;
 
+use Icinga\Authentication\Auth;
 use Icinga\Module\Dashboards\Common\Database;
+use Icinga\Web\Notification;
 use ipl\Html\Html;
+use ipl\Sql\Select;
 use ipl\Web\Compat\CompatForm;
 
 class DeleteDashboardForm extends CompatForm
@@ -45,9 +48,27 @@ class DeleteDashboardForm extends CompatForm
 
     protected function onSuccess()
     {
-        $this->getDb()->delete('dashlet', ['dashboard_id = ?' => $this->dashboard->id]);
-        $this->getDb()->delete('user_dashlet', ['user_dashboard_id = ?' => $this->dashboard->id]);
-        $this->getDb()->delete('user_dashboard', ['dashboard_id = ?' => $this->dashboard->id]);
-        $this->getDb()->delete('dashboard', ['id = ?' => $this->dashboard->id]);
+        $select = (new Select())
+            ->from('users')
+            ->join('user_dashboard d', 'd.user_name = users.name')
+            ->columns('name')
+            ->where([
+                'd.dashboard_id = ?' => $this->dashboard->id,
+                'users.name = ?' => Auth::getInstance()->getUser()->getUsername()
+                ]);
+
+        $user = $this->getDb()->select($select)->fetch();
+
+        if ($user) {
+            $this->getDb()->delete('dashlet', ['dashboard_id = ?' => $this->dashboard->id]);
+            $this->getDb()->delete('user_dashlet', ['user_dashboard_id = ?' => $this->dashboard->id]);
+            $this->getDb()->delete('user_dashboard', ['dashboard_id = ?' => $this->dashboard->id]);
+            $this->getDb()->delete('dashboard', ['id = ?' => $this->dashboard->id]);
+        } else if ($this->dashboard->type === 'public') {
+            $this->getDb()->delete('dashlet', ['dashboard_id = ?' => $this->dashboard->id]);
+            $this->getDb()->delete('dashboard', ['id = ?' => $this->dashboard->id]);
+        } else {
+            Notification::error("You don't have a permission to delete this dashboard!");
+        }
     }
 }
