@@ -46,6 +46,8 @@ class DeleteDashboardForm extends CompatForm
     protected function onSuccess()
     {
         $this->getDb()->delete('dashlet', ['dashboard_id = ?' => $this->dashboard->id]);
+        $this->getDb()->delete('user_dashlet', ['user_dashboard_id = ?' => $this->dashboard->id]);
+        $this->getDb()->delete('user_dashboard', ['dashboard_id = ?' => $this->dashboard->id]);
         $this->getDb()->delete('dashboard', ['id = ?' => $this->dashboard->id]);
     }
 }
