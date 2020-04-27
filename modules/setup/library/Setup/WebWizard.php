@@ -294,6 +294,8 @@ class WebWizard extends Wizard implements SetupWizard
                     || ($config = $this->getPageData('setup_config_db_resource')) !== null)
                     && !$config['skip_validation'] &&  $this->getDirection() == static::FORWARD
             ) {
+                // Execute this code only if the direction is forward.
+                // Otherwise, an error will be output when you go back. 
                 $db = new DbTool($config);
 
                 try {
