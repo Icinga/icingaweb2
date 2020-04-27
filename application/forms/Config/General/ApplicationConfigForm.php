@@ -78,25 +78,25 @@ class ApplicationConfigForm extends Form
             $this->addElement(
                 'select',
                 'global_config_backend',
-                array(
+                [
                     'required'      => true,
                     'autosubmit'    => true,
                     'label'         => $this->translate('User Preference Storage Type'),
-                    'multiOptions'  => array(
+                    'multiOptions'  => [
                         'ini'   => $this->translate('File System (INI Files)'),
                         'db'    => $this->translate('Database')
-                    )
-                )
+                    ]
+                ]
             );
         } else {
             $this->addElement(
                 'hidden',
                 'global_config_backend',
-                array(
+                [
                     'required'  => true,
                     'value'     => 'db',
-                    'disabled' => true
-                )
+                    'disabled'  => true
+                ]
             );
         }
         if (isset($formData['global_config_backend']) && $formData['global_config_backend'] === 'db') {
@@ -117,7 +117,7 @@ class ApplicationConfigForm extends Form
                         $backends
                     ),
                     'disable'       => [''],
-                     'value'         => '',
+                     'value'        => '',
                     'label'         => $this->translate('Configuration Database')
                 )
             );
