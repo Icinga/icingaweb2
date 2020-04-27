@@ -40,15 +40,26 @@ class DashletsController extends Controller
         $this->tabs->disableLegacyExtensions();
 
         $select = (new Select())
+            ->from('user_dashlet')
+            ->columns('*')
+            ->where(['id = ?' => $dashletId]);
+
+        $userDashlet = $this->getDb()->select($select)->fetch();
+
+        $query = (new Select())
             ->from('dashlet')
             ->columns('*')
             ->where(['id = ?' => $dashletId]);
 
-        $dashlet = $this->getDb()->select($select)->fetch();
+        $dashlet = $this->getDb()->select($query)->fetch();
 
-        $this->setTitle($this->translate('Edit Dashlet: %s'), $dashlet->name);
+        try {
+            $this->setTitle($this->translate('Edit Dashlet: %s'), $dashlet->name);
+        } catch (\Exception $err) {
+            $this->setTitle($this->translate('Edit Dashlet: %s'), $userDashlet->name);
+        }
 
-        $form = (new EditDashletForm($dashlet))
+        $form = (new EditDashletForm($dashlet, $userDashlet))
             ->on(EditDashletForm::ON_SUCCESS, function () {
                 $this->redirectNow('dashboards/settings');
             })
