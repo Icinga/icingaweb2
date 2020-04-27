@@ -295,7 +295,7 @@ class WebWizard extends Wizard implements SetupWizard
                     && !$config['skip_validation'] &&  $this->getDirection() == static::FORWARD
             ) {
                 // Execute this code only if the direction is forward.
-                // Otherwise, an error will be output when you go back. 
+                // Otherwise, an error will be output when you go back.
                 $db = new DbTool($config);
 
                 try {
@@ -645,10 +645,12 @@ class WebWizard extends Wizard implements SetupWizard
             )
         )));
 
-        $isOptional = Platform::extensionLoaded('pdo_pgsql');
-        $mysqlSet = new RequirementSet($isOptional);
+
+        $dbSet = new RequirementSet(false, RequirementSet::MODE_OR);
+
+        $mysqlSet = new RequirementSet(true);
         $mysqlSet->add(new PhpModuleRequirement(array(
-            'optional'      => $isOptional,
+            'optional'      => true,
             'condition'     => 'pdo_mysql',
             'alias'         => 'PDO-MySQL',
             'description'   => mt(
@@ -657,7 +659,7 @@ class WebWizard extends Wizard implements SetupWizard
             )
         )));
         $mysqlSet->add(new ClassRequirement(array(
-            'optional'      => $isOptional,
+            'optional'      => true,
             'condition'     => 'Zend_Db_Adapter_Pdo_Mysql',
             'alias'         => mt('setup', 'Zend database adapter for MySQL'),
             'description'   => mt(
@@ -675,12 +677,12 @@ class WebWizard extends Wizard implements SetupWizard
                 'setup.requirement.class'
             )
         )));
-        $set->merge($mysqlSet);
 
-        $isOptional = Platform::extensionLoaded('pdo_mysql');
-        $pgsqlSet = new RequirementSet($isOptional);
+        $dbSet->merge($mysqlSet);
+
+        $pgsqlSet = new RequirementSet(true);
         $pgsqlSet->add(new PhpModuleRequirement(array(
-            'optional'      => $isOptional,
+            'optional'      => true,
             'condition'     => 'pdo_pgsql',
             'alias'         => 'PDO-PostgreSQL',
             'description'   => mt(
@@ -689,7 +691,7 @@ class WebWizard extends Wizard implements SetupWizard
             )
         )));
         $pgsqlSet->add(new ClassRequirement(array(
-            'optional'      => $isOptional,
+            'optional'      => true,
             'condition'     => 'Zend_Db_Adapter_Pdo_Pgsql',
             'alias'         => mt('setup', 'Zend database adapter for PostgreSQL'),
             'description'   => mt(
@@ -707,7 +709,8 @@ class WebWizard extends Wizard implements SetupWizard
                 'setup.requirement.class'
             )
         )));
-        $set->merge($pgsqlSet);
+        $dbSet->merge($pgsqlSet);
+        $set->merge($dbSet);
 
         $set->add(new ConfigDirectoryRequirement(array(
             'condition'     => Icinga::app()->getConfigDir(),
