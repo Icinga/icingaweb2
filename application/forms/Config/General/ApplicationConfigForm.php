@@ -114,7 +114,7 @@ class ApplicationConfigForm extends Form
                     'required'      => true,
                     'multiOptions'  => array_merge(
                         ['' => sprintf(' - %s - ', $this->translate('Please choose'))],
-                        array_combine($backends, $backends)
+                        $backends
                     ),
                     'disable'       => [''],
                      'value'         => '',
