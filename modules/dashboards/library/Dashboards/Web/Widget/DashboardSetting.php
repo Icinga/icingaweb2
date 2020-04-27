@@ -3,7 +3,6 @@
 namespace Icinga\Module\Dashboards\Web\Widget;
 
 use Icinga\Module\Dashboards\Common\Database;
-use Icinga\Web\Url;
 use InvalidArgumentException;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
@@ -14,8 +13,11 @@ class DashboardSetting extends BaseHtmlElement
 {
     use Database;
 
-    /** @var iterable $dashboards from the database */
+    /** @var iterable|null $dashboards public dashboards the database */
     protected $dashboards;
+
+    /** @var iterable|null $userDashboards private dashboards */
+    protected $userDashboards;
 
     protected $defaultAttributes = ['class' => 'content setting'];
 
@@ -24,11 +26,13 @@ class DashboardSetting extends BaseHtmlElement
     /**
      * Create a new dashboards and dashlets setting
      *
-     * @param iterable $dashboards The dashboards from a database
+     * @param iterable|null $dashboards All public dashboards from the database
      *
-     * @throws InvalidArgumentException If $dashboards is not iterable
+     * @param iterable|null $userDashboards Private dashboards
+     *
+     * @throws InvalidArgumentException If $dashboards|$userDashboards are not iterable
      */
-    public function __construct($dashboards)
+    public function __construct($dashboards = null, $userDashboards = null)
     {
         if (!is_iterable($dashboards)) {
             throw new InvalidArgumentException(sprintf(
@@ -38,7 +42,16 @@ class DashboardSetting extends BaseHtmlElement
             ));
         }
 
+        if (!is_iterable($userDashboards)) {
+            throw new InvalidArgumentException(sprintf(
+                '%s expects parameter 1 to be iterable, got %s instead',
+                __METHOD__,
+                get_php_type($userDashboards)
+            ));
+        }
+
         $this->dashboards = $dashboards;
+        $this->userDashboards = $userDashboards;
     }
 
     /**
@@ -79,68 +92,37 @@ class DashboardSetting extends BaseHtmlElement
 
         $tbody = Html::tag('tbody');
 
-        foreach ($this->dashboards as $dashboard) {
-            $tableRow1 = Html::tag('tr');
+        if (!empty($this->dashboards)) {
+            foreach ($this->dashboards as $dashboard) {
+                $tbody->add(new DashboardDetails($dashboard));
 
-            $tableRow1->add([
-                Html::tag('th', [
-                    'colspan' => '2',
-                    'style' => 'text-align: left; padding: 0.5em;'
-                ], $dashboard->name),
-                Html::tag('th', null, [
-                    Html::tag('a', [
-                        'href' => Url::fromPath('dashboards/dashlets/delete', [
-                            'dashboardId' => $dashboard->id
-                        ]),
-                    ], Html::tag('i', [
-                        'class' => 'icon-trash',
-                        'aria-hidden' => true
-                    ]))
-                ])
-            ]);
+                $select = (new Select())
+                    ->from('dashlet')
+                    ->columns(['*'])
+                    ->where(['dashboard_id = ?' => $dashboard->id]);
 
-            $tbody->add($tableRow1);
+                $dashlets = $this->getDb()->select($select);
 
-            $select = (new Select())
-                ->from('dashlet')
-                ->columns(['*'])
-                ->where(['dashboard_id = ?' => $dashboard->id]);
+                foreach ($dashlets as $dashlet) {
+                    $tbody->add(new DashletDetails($dashlet));
+                }
+            }
+        }
 
-            $dashlets = $this->getDb()->select($select);
+        if (!empty($this->userDashboards)) {
+            foreach ($this->userDashboards as $userDashboard) {
+                $tbody->add(new DashboardDetails($userDashboard));
 
-            foreach ($dashlets as $dashlet) {
-                $tableRow2 = Html::tag('tr');
+                $select = (new Select())
+                    ->from('user_dashlet')
+                    ->columns(['*'])
+                    ->where(['user_dashboard_id = ?' => $userDashboard->id]);
 
-                $tableRow2->add([Html::tag('td', $dashlet->name, [
-                    Html::tag('a', [
-                        'href' => Url::fromPath('dashboards'),
-                    ], $dashlet->name)
-                ]), Html::tag('td', [
-                    'style' => 'table-layout: fixed; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;'
-                ], Html::tag('a', [
-                    'href' => $dashlet->url,
-                ], $dashlet->url)),
-                    Html::tag('td', [
-                        Html::tag('a', [
-                            'href' => Url::fromPath('dashboards/dashlets/edit', [
-                                'dashletId' => $dashlet->id
-                            ])
-                        ], Html::tag('i', [
-                            'class' => 'icon-edit',
-                            'aria-hidden' => true
-                        ])),
-                        Html::tag('a', [
-                            'href' => Url::fromPath('dashboards/dashlets/remove', [
-                                'dashletId' => $dashlet->id
-                            ])
-                        ], Html::tag('i', [
-                            'class' => 'icon-trash',
-                            'aria-hidden' => true
-                        ]))
-                    ])
-                ]);
+                $userDashlets = $this->getDb()->select($select);
 
-                $tbody->add($tableRow2);
+                foreach ($userDashlets as $userDashlet) {
+                    $tbody->add(new DashletDetails($userDashlet));
+                }
             }
         }
 
