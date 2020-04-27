@@ -38,8 +38,7 @@ class IndexController extends Controller
             ->join('users u', 'd.user_name = u.name')
             ->where([
                 'dashboard.type = ?' => 'private',
-                'dashboard_id = ?' => $this->tabs->getActiveName(),
-                'u.name = ?' => Auth::getInstance()->getUser()->getUsername()
+                'dashboard_id = ?' => $this->tabs->getActiveName()
             ]);
 
         $select = (new Select())
@@ -73,7 +72,11 @@ class IndexController extends Controller
         $select = (new Select())
             ->columns('*')
             ->from('dashboard')
-            ->where(['type = ?' => 'private']);
+            ->join('user_dashboard', 'user_dashboard.dashboard_id = dashboard.id')
+            ->where([
+                'type = ?' => 'private',
+                'user_dashboard.user_name = ?' => Auth::getInstance()->getUser()->getUsername()
+            ]);
 
         $dashboards = $this->getDb()->select($select);
 
