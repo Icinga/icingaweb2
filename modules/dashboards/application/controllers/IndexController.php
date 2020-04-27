@@ -54,7 +54,7 @@ class IndexController extends Controller
 
         $userDashlets = $this->getDb()->select($selectUserDashlet);
 
-        $this->content = (new DashboardWidget($dashlets, $userDashlets));
+        $this->content = new DashboardWidget($dashlets, $userDashlets);
     }
 
     /**
