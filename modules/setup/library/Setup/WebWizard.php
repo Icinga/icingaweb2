@@ -231,6 +231,7 @@ class WebWizard extends Wizard implements SetupWizard
         } elseif ($page->getName() === 'setup_authentication_type') {
             $authData = $this->getPageData($page->getName());
             $pageData = & $this->getPageData();
+            
             if ($authData !== null && $request->getPost('type') !== $authData['type']) {
                 // Drop any existing page data in case the authentication type has changed,
                 // otherwise it will conflict with other forms that depend on this one
@@ -244,7 +245,7 @@ class WebWizard extends Wizard implements SetupWizard
                     unset($pageData['setup_config_db_resource']);
                     unset($pageData['setup_config_db_creation']);
                 }
-            } elseif ($authData == null || $authData['type'] == 'external') {
+            } elseif ($authData != null && $authData['type'] == 'external') {
                 unset($pageData['setup_config_db_resource']);
             }
         }
