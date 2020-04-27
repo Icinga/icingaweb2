@@ -2,10 +2,12 @@
 
 namespace Icinga\Module\Dashboards\Controllers;
 
+use Icinga\Authentication\Auth;
 use Icinga\Module\Dashboards\Common\Database;
 use Icinga\Module\Dashboards\Web\Widget\DashboardSetting;
 use Icinga\Module\Dashboards\Web\Controller;
 use Icinga\Module\Dashboards\Web\Widget\Tabextension\DashboardAction;
+use Icinga\Web\Notification;
 use Icinga\Web\Url;
 use ipl\Sql\Select;
 
@@ -15,23 +17,41 @@ class SettingsController extends Controller
 
     public function indexAction()
     {
-        $this->createTabs();
+        try {
+            $this->createTabs();
+        } catch (\Exception $err) {
+            $this->tabs->extend(new DashboardAction())->disableLegacyExtensions();
+
+            Notification::error("No dashboard found! Please create firstly a dashboard.");
+        }
 
         $select = (new Select())
             ->from('dashboard')
-            ->columns('*');
+            ->columns('*')
+            ->where(['type = ?' => 'public']);
 
         $dashboard = $this->getDb()->select($select);
 
-        $dashboardSetting = new DashboardSetting($dashboard);
+        $query = (new Select())
+            ->from('dashboard')
+            ->columns('*')
+            ->join('user_dashboard d', 'd.dashboard_id = dashboard.id')
+            ->where([
+                'type = ?' => 'private',
+                'd.user_name = ?'   => Auth::getInstance()->getUser()->getUsername()
+            ]);
 
-        $this->addContent($dashboardSetting);
+        $userDashboard = $this->getDb()->select($query);
+
+        $this->content = new DashboardSetting($dashboard, $userDashboard);
     }
 
     /**
      * Create a tab for each dashboard from the database
      *
      * @return \ipl\Web\Widget\Tabs
+     *
+     * @throws \Icinga\Exception\NotFoundError  If no dashboard is found to create a Tab
      */
     protected function createTabs()
     {
