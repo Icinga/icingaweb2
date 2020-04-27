@@ -12,39 +12,35 @@ use ipl\Sql\Expression;
 use ipl\Sql\Select;
 use RuntimeException;
 
+/**
+ * Remember me component
+ *
+ * Retains credentials for 30 days by default in order to stay signed in even after the session is closed.
+ */
 class RememberMe
 {
     use Database;
 
-    /**
-     * Constant cookie
-     */
+    /** @var string Cookie name */
     const COOKIE = 'icingaweb2-remember-me';
 
-    /**
-     * Constant table for database
-     */
+    /** @var string Database table name */
     const TABLE = 'icingaweb_rememberme';
 
-    /**
-     * @var string
-     */
+    /** @var string Encrypted password of the user */
     protected $encryptedPassword;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $username;
 
-    /**
-     * @var object
-     */
+    /** @var RSA RSA keys for encrypting/decrypting the credentials */
     protected $rsa;
 
+    /** @var int Timestamp when the remember me cookie expires */
     protected $expiresIn;
 
     /**
-     * Check if cookie is set
+     * Get whether the remember cookie is set
      *
      * @return bool
      */
@@ -54,7 +50,21 @@ class RememberMe
     }
 
     /**
-     * Get cookie values
+     * Unset the remember me cookie from PHP's `$_COOKIE` superglobal and return the invalidation cookie
+     *
+     * @return Cookie Cookie which has to be sent to client in oder to remove the remember me cookie
+     */
+    public static function forget()
+    {
+        unset($_COOKIE[static::COOKIE]);
+
+        return (new Cookie(static::COOKIE))
+            ->setHttpOnly(true)
+            ->forgetMe();
+    }
+
+    /**
+     * Create the remember me component from the remember me cookie
      *
      * @return static
      */
@@ -72,7 +82,10 @@ class RememberMe
         $rs = $rememberMe->getDb()->select($select)->fetch();
 
         if (! $rs) {
-            throw new RuntimeException('No database entry found for the given key');
+            throw new RuntimeException(sprintf(
+                "No database entry found for public key '%s'",
+                $publicKey
+            ));
         }
 
         $rememberMe->rsa = (new RSA())->loadKey($rs->private_key, $publicKey);
@@ -83,10 +96,10 @@ class RememberMe
     }
 
     /**
-     * Encrypt the given password and assign the variables
+     * Create the remember me component from the given username and password
      *
-     * @param $username
-     * @param $password
+     * @param string $username
+     * @param string $password
      *
      * @return static
      */
@@ -104,42 +117,66 @@ class RememberMe
     }
 
     /**
-     * Set the values for 'remember-me' cookie
+     * Remove expired remember me information from the database
+     */
+    public static function removeExpired()
+    {
+        (new static())->getDb()->delete(static::TABLE, [
+            'expires_in < ?' => new Expression('NOW()')
+        ]);
+    }
+
+    /**
+     * Get the remember me cookie
      *
      * @return Cookie
      */
     public function getCookie()
     {
-        $value = [
-            $this->rsa->encryptToBase64($this->username),
-            $this->encryptedPassword,
-            base64_encode($this->rsa->getPublicKey())
-        ];
-
         return (new Cookie(static::COOKIE))
-            ->setExpire(time() + 60 * 60 * 24 * 30)
+            ->setExpire($this->getExpiresIn())
             ->setHttpOnly(true)
-            ->setValue(implode('|', $value));
+            ->setValue(implode('|', [
+                $this->rsa->encryptToBase64($this->username),
+                $this->encryptedPassword,
+                base64_encode($this->rsa->getPublicKey())
+            ]));
     }
 
     /**
-     * Unset the values for 'remember-me' cookie
+     * Get the timestamp when the cookie expires
      *
-     * @return Cookie
+     * Defaults to now plus 30 days, if not set via {@link setExpiresIn()}.
+     *
+     * @return int
      */
-    public static function forget()
+    public function getExpiresIn()
     {
-        unset($_COOKIE[static::COOKIE]);
+        if ($this->expiresIn === null) {
+            $this->expiresIn = time() + 60 * 60 * 24 * 30;
+        }
 
-        return (new Cookie(static::COOKIE))
-            ->setHttpOnly(true)
-            ->forgetMe();
+        return $this->expiresIn;
     }
 
     /**
-     * Authenticate the given username and password
+     * Set the timestamp when the cookie expires
      *
-     * @return bool     True if authentication succeed, false if not
+     * @param int $expiresIn
+     *
+     * @return $this
+     */
+    public function setExpiresIn($expiresIn)
+    {
+        $this->expiresIn = $expiresIn;
+
+        return $this;
+    }
+
+    /**
+     * Authenticate via the remember me cookie
+     *
+     * @return bool
      *
      * @throws \Icinga\Exception\AuthenticationException
      */
@@ -163,44 +200,48 @@ class RememberMe
     }
 
     /**
-     * Database insert for the given private and public key
+     * Persist the remember me information into the database
      *
-     * Remove old entry for given user if exists
-     * Save new keys in database
+     * Any previous stored information is automatically removed.
+     *
+     * @return $this
      */
     public function persist()
     {
         $this->remove();
 
         $this->getDb()->insert(static::TABLE, [
-            'username' => $this->username,
+            'username'    => $this->username,
             'private_key' => $this->rsa->getPrivateKey(),
-            'public_key' => $this->rsa->getPublicKey(),
-            'expires_in' => date('Y-m-d H:i:s', $this->getExpiresIn()),
-            'ctime' => new Expression('NOW()'),
-            'mtime' => new Expression('NOW()')
+            'public_key'  => $this->rsa->getPublicKey(),
+            'expires_in'  => date('Y-m-d H:i:s', $this->getExpiresIn()),
+            'ctime'       => new Expression('NOW()'),
+            'mtime'       => new Expression('NOW()')
         ]);
+
+        return $this;
     }
 
     /**
-     * Delete database entry if user logout or new keys are created for the same user
+     * Remove remember me information from the database
      *
-     * by logout, this class do not have the login data for user, so username must
-     * be given as parameter to delete the user information from database.
+     * @param string $username
      *
-     * @param null|$username
+     * @return $this
      */
     public function remove($username = null)
     {
         $this->getDb()->delete(static::TABLE, [
-            'username = ?' => $this->username ?: $username
+            'username = ?' => $username ?: $this->username
         ]);
+
+        return $this;
     }
 
     /**
-     * Renew the cookie
+     * Create renewed remember me cookie
      *
-     * @return $this
+     * @return static New remember me cookie which has to be sent to the client
      */
     public function renew()
     {
@@ -208,31 +249,5 @@ class RememberMe
             $this->username,
             $this->rsa->decryptFromBase64($this->encryptedPassword)
         );
-    }
-
-    /**
-     * Get expiry date
-     *
-     * set if not already set
-     *
-     * @return int
-     */
-    public function getExpiresIn()
-    {
-        if ($this->expiresIn === null) {
-            $this->expiresIn = time() + 60 * 60 * 24 * 30;
-        }
-
-        return $this->expiresIn;
-    }
-
-    /**
-     *  Remove expired database entry
-     */
-    public static function removeExpired()
-    {
-         (new static())->getDb()->delete(static::TABLE, [
-            'expires_in < ?' => date('Y-m-d H:i:s', time())
-         ]);
     }
 }

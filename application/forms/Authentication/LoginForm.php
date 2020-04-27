@@ -68,7 +68,6 @@ class LoginForm extends Form
             'checkbox',
             'rememberme',
             [
-                'required' => false,
                 'label' => $this->translate('Remember me'),
             ]
         );
@@ -117,7 +116,6 @@ class LoginForm extends Form
                     $this->getResponse()->setCookie(
                         $rememberMe->getCookie()
                     );
-
                     $rememberMe->persist();
             }
             // Call provided AuthenticationHook(s) after successful login

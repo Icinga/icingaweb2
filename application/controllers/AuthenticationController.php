@@ -21,6 +21,7 @@ use RuntimeException;
 class AuthenticationController extends Controller
 {
     use Database;
+
     /**
      * {@inheritdoc}
      */
@@ -86,7 +87,6 @@ class AuthenticationController extends Controller
             }
             $form->handleRequest();
         }
-
         $this->view->form = $form;
         $this->view->defaultTitle = $this->translate('Icinga Web 2 Login');
         $this->view->requiresSetup = $requiresSetup;

@@ -264,15 +264,26 @@ class Cookie
     }
 
     /**
-     * Remove the given cookie
+     * Create invalidation cookie
      *
-     * This method set the value of the given cookie to null and
-     * expire time to 1, so that Cookie removes itself immediately
+     * This method clones the current cookie and sets its value to null and expire time to 1.
+     * That way, the cookie removes itself when it has been sent to and processed by the client.
+     *
+     * We're cloning the current cookie in order to meet the [RFC6265 spec](https://tools.ietf.org/search/rfc6265)
+     * regarding the `Path` and `Domain` attribute:
+     *
+     * > Finally, to remove a cookie, the server returns a Set-Cookie header with an expiration date in the past.
+     * > The server will be successful in removing the cookie only if the Path and the Domain attribute in the
+     * > Set-Cookie header match the values used when the cookie was created.
+     *
+     * Note that the cookie has be sent to the client.
      *
      * # Example Usage
      *
      * ```php
-     * (new Cookie(cookieName))->forgetMe();
+     * $response->setCookie(
+     *     $cookie->forgetMe()
+     * );
      * ```
      *
      * @return static
@@ -280,6 +291,7 @@ class Cookie
     public function forgetMe()
     {
         $forgetMe = clone $this;
+
         return $forgetMe
             ->setValue(null)
             ->setExpire(1);
