@@ -13,7 +13,7 @@ class DashboardSetting extends BaseHtmlElement
 {
     use Database;
 
-    /** @var iterable|null $dashboards public dashboards the database */
+    /** @var iterable|null $dashboards public dashboards */
     protected $dashboards;
 
     /** @var iterable|null $userDashboards private dashboards */
