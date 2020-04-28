@@ -15,12 +15,6 @@ use Icinga\Forms\ConfigForm;
 class GeneralConfigForm extends ConfigForm
 {
     /**
-     * Form data
-     *
-     * @var array
-     */
-    protected $formData;
-    /**
      * {@inheritdoc}
      */
     public function init()
