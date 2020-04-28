@@ -38,7 +38,7 @@ class SettingsController extends Controller
             ->join('user_dashboard d', 'd.dashboard_id = dashboard.id')
             ->where([
                 'type = ?' => 'private',
-                'd.user_name = ?'   => Auth::getInstance()->getUser()->getUsername()
+                'd.user_name = ?' => Auth::getInstance()->getUser()->getUsername()
             ]);
 
         $userDashboard = $this->getDb()->select($query);
@@ -59,7 +59,28 @@ class SettingsController extends Controller
 
         $select = (new Select())
             ->columns('*')
-            ->from('dashboard');
+            ->from('dashboard')
+            ->join('user_dashboard d', 'd.dashboard_id = dashboard.id')
+            ->where([
+                'dashboard.type = ?' => 'private',
+                'd.user_name = ?' => Auth::getInstance()->getUser()->getUsername()
+            ]);
+
+        $userDashboards = $this->getDb()->select($select);
+
+        foreach ($userDashboards as $userDashboard) {
+            $tabs->add($userDashboard->name, [
+                'label' => $userDashboard->name,
+                'url' => Url::fromPath('dashboards', [
+                    'dashboard' => $userDashboard->id
+                ])
+            ])->extend(new DashboardAction())->disableLegacyExtensions();
+        }
+
+        $select = (new Select())
+            ->columns('*')
+            ->from('dashboard')
+            ->where(['type = ?' => 'public']);
 
         $dashboards = $this->getDb()->select($select);
 
