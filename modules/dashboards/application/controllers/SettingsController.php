@@ -7,7 +7,6 @@ use Icinga\Module\Dashboards\Common\Database;
 use Icinga\Module\Dashboards\Web\Widget\DashboardSetting;
 use Icinga\Module\Dashboards\Web\Controller;
 use Icinga\Module\Dashboards\Web\Widget\Tabextension\DashboardAction;
-use Icinga\Web\Notification;
 use Icinga\Web\Url;
 use ipl\Sql\Select;
 
@@ -17,11 +16,7 @@ class SettingsController extends Controller
 
     public function indexAction()
     {
-        if ($this->createTabs() === null) {
-            $this->tabs->extend(new DashboardAction())->disableLegacyExtensions();
-
-            Notification::error("No dashboard found! Please create firstly a dashboard.");
-        }
+        $this->createTabs();
 
         $select = (new Select())
             ->from('dashboard')
