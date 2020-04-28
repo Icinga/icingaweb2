@@ -98,23 +98,42 @@ class DashletsController extends Controller
     /**
      * Remove individual dashlets from the given dashboard
      *
-     * @throws \Icinga\Exception\MissingParameterException  If the parameter $dashletId doesn't exist
+     * @throws \Icinga\Exception\MissingParameterException  If the parameter $dashletId|$dashboardId doesn't exist
      */
     public function removeAction()
     {
         $dashletId = $this->params->getRequired('dashletId');
+        $dashboardId = $this->params->getRequired('dashboardId');
+
         $this->tabs->disableLegacyExtensions();
+
+        $query = (new Select())
+            ->from('user_dashlet')
+            ->columns('*')
+            ->where([
+                'id = ?' => $dashletId,
+                'user_dashboard_id = ?' => $dashboardId
+            ]);
+
+        $userDashlet = $this->getDb()->select($query)->fetch();
 
         $select = (new Select())
             ->from('dashlet')
             ->columns('*')
-            ->where(['id = ?' => $dashletId]);
+            ->where([
+                'id = ?' => $dashletId,
+                'dashboard_id = ?' => $dashboardId
+            ]);
 
         $dashlet = $this->getDb()->select($select)->fetch();
 
-        $this->setTitle($this->translate('Delete Dashlet: %s'), $dashlet->name);
+        try {
+            $this->setTitle($this->translate('Delete Dashlet: %s'), $dashlet->name);
+        } catch (\Exception $err) {
+            $this->setTitle($this->translate('Delete Dashlet: %s'), $userDashlet->name);
+        }
 
-        $form = (new DeleteDashletForm($dashlet))
+        $form = (new DeleteDashletForm($dashlet, $userDashlet))
             ->on(DeleteDashletForm::ON_SUCCESS, function () {
                 $this->redirectNow('dashboards/settings');
             })
