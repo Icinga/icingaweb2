@@ -104,7 +104,7 @@ class DashboardSetting extends BaseHtmlElement
                 $dashlets = $this->getDb()->select($select);
 
                 foreach ($dashlets as $dashlet) {
-                    $tbody->add(new DashletDetails($dashlet));
+                    $tbody->add(new DashletDetails($dashlet, $dashboard));
                 }
             }
         }
@@ -121,7 +121,7 @@ class DashboardSetting extends BaseHtmlElement
                 $userDashlets = $this->getDb()->select($select);
 
                 foreach ($userDashlets as $userDashlet) {
-                    $tbody->add(new DashletDetails($userDashlet));
+                    $tbody->add(new DashletDetails($userDashlet, $userDashboard));
                 }
             }
         }
