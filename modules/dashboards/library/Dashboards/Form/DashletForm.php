@@ -91,9 +91,9 @@ class DashletForm extends CompatForm
                 ->orderBy('dashboard_id DESC')
                 ->limit(1);
 
-            $dashboard = $this->getDb()->fetchCol($select);
+            $dashboard = $this->getDb()->select($select)->fetch();
 
-            return implode($dashboard);
+            return $dashboard->dashboard_id;
         } else {
             return $name;
         }
