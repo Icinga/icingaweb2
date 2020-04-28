@@ -17,9 +17,7 @@ class SettingsController extends Controller
 
     public function indexAction()
     {
-        try {
-            $this->createTabs();
-        } catch (\Exception $err) {
+        if ($this->createTabs() === null) {
             $this->tabs->extend(new DashboardAction())->disableLegacyExtensions();
 
             Notification::error("No dashboard found! Please create firstly a dashboard.");
@@ -50,8 +48,6 @@ class SettingsController extends Controller
      * Create a tab for each dashboard from the database
      *
      * @return \ipl\Web\Widget\Tabs
-     *
-     * @throws \Icinga\Exception\NotFoundError  If no dashboard is found to create a Tab
      */
     protected function createTabs()
     {
