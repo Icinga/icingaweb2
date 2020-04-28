@@ -42,12 +42,6 @@ class DeleteDashletForm extends CompatForm
                     )
                 )
             );
-
-            $this->addElement('input', 'btn_submit', [
-                'type' => 'submit',
-                'value' => 'Confirm Removal',
-                'class' => 'btn-primary autofocus'
-            ]);
         }
 
         if (! empty($this->userDashlet)) {
@@ -61,13 +55,13 @@ class DeleteDashletForm extends CompatForm
                     )
                 )
             );
-
-            $this->addElement('input', 'btn_submit', [
-                'type' => 'submit',
-                'value' => 'Confirm Removal',
-                'class' => 'btn-primary autofocus'
-            ]);
         }
+
+        $this->addElement('input', 'btn_submit', [
+            'type' => 'submit',
+            'value' => 'Confirm Removal',
+            'class' => 'btn-primary autofocus'
+        ]);
     }
 
     protected function onSuccess()
