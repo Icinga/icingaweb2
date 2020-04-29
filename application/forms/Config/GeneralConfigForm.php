@@ -28,7 +28,6 @@ class GeneralConfigForm extends ConfigForm
      */
     public function createElements(array $formData)
     {
-        $this->formData = $formData;
         $appConfigForm = new ApplicationConfigForm();
         $loggingConfigForm = new LoggingConfigForm();
         $themingConfigForm = new ThemingConfigForm();
