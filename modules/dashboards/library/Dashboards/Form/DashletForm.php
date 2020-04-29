@@ -224,10 +224,9 @@ class DashletForm extends CompatForm
                     Notification::success("Private dashlet created");
                 }
             }
-        } elseif($this->checkForPrivateDashboard($this->getValue('dashboard'))) {
+        } elseif ($this->checkForPrivateDashboard($this->getValue('dashboard'))) {
             Notification::error("You can't create public dashlet in a private dashboard!");
-        } else {
-
+        } elseif (Auth::getInstance()->getUser()->isMemberOf('admin')) {
             if ($this->getValue('new-dashboard-name') !== null) {
                 $this->getDb()->insert('dashlet', [
                     'dashboard_id' => $this->createDashboard($this->getValue('new-dashboard-name')),
