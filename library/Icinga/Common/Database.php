@@ -1,5 +1,5 @@
 <?php
-/* Icinga Web 2 | (c) 2020 Icinga Development Team | GPLv2+ */
+/* Icinga Web 2 | (c) 2020 Icinga GmbH | GPLv2+ */
 
 namespace Icinga\Common;
 
