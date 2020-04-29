@@ -643,8 +643,7 @@ class WebWizard extends Wizard implements SetupWizard
                 'In case you want graphs being exported to PDF as well, you\'ll need the ImageMagick extension for PHP.'
             )
         )));
-
-
+        
         $dbSet = new RequirementSet(false, RequirementSet::MODE_OR);
 
         $mysqlSet = new RequirementSet(true);
