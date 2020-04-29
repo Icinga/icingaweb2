@@ -244,10 +244,11 @@ class WebWizard extends Wizard implements SetupWizard
                     unset($pageData['setup_config_db_resource']);
                     unset($pageData['setup_config_db_creation']);
                 }
-            } elseif ($authData != null) {
-                // If you validate the database and then come back to change the authentication type
-                // but do not change it, you will get an database configuration related error message on the next page.
-                // To avoid this error, the 'setup_config_db_resource' page must be unset.
+            } elseif ($authData['type'] == 'external') {
+                // If you choose the authentication type external and validate the database and then come
+                // back to change the authentication type but do not change it, you will get an database configuration
+                // related error message on the next page. To avoid this error, the 'setup_config_db_resource'
+                // page must be unset.
 
                 unset($pageData['setup_config_db_resource']);
             }
@@ -643,7 +644,7 @@ class WebWizard extends Wizard implements SetupWizard
                 'In case you want graphs being exported to PDF as well, you\'ll need the ImageMagick extension for PHP.'
             )
         )));
-        
+
         $dbSet = new RequirementSet(false, RequirementSet::MODE_OR);
 
         $mysqlSet = new RequirementSet(true);
