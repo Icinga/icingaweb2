@@ -3,7 +3,6 @@
 
 namespace Icinga\Module\Setup;
 
-use Icinga\Application\Platform;
 use PDOException;
 use Icinga\Web\Form;
 use Icinga\Web\Wizard;
