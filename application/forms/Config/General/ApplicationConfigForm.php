@@ -72,8 +72,8 @@ class ApplicationConfigForm extends Form
 
         // we do not need this form for setup because we set the database there as default.
         // this form is only displayed in configuration -> application if preferences backend type of ini is recognized
-        if ($this->getRequest()->getModuleName() != 'setup'
-            && $formData['global_config_backend'] === 'ini'
+        if (isset($formData['global_config_backend'])
+            && $formData['global_config_backend'] === 'db'
         ) {
             $this->addElement(
                 'select',
@@ -95,7 +95,6 @@ class ApplicationConfigForm extends Form
                 [
                     'required'  => true,
                     'value'     => 'db',
-                    'disabled'  => true
                 ]
             );
         }
