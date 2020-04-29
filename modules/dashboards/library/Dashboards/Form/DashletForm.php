@@ -244,6 +244,8 @@ class DashletForm extends CompatForm
 
                 Notification::success('Dashlet created');
             }
+        } else {
+            Notification::error("You don't have a permission!");
         }
     }
 }
