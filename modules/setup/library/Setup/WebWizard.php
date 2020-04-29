@@ -244,7 +244,7 @@ class WebWizard extends Wizard implements SetupWizard
                     unset($pageData['setup_config_db_resource']);
                     unset($pageData['setup_config_db_creation']);
                 }
-            } elseif ($authData['type'] == 'external') {
+            } elseif (isset($authData['type']) && $authData['type'] == 'external') {
                 // If you choose the authentication type external and validate the database and then come
                 // back to change the authentication type but do not change it, you will get an database configuration
                 // related error message on the next page. To avoid this error, the 'setup_config_db_resource'
