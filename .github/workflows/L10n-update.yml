@@ -15,5 +15,6 @@ jobs:
         uses: peter-evans/repository-dispatch@v1
         with:
           token: ${{ secrets.L10N_ACCESS_TOKEN }}
-          repository: Icinga/ipl-L10n
+          repository: Icinga/L10n
           event-type: update
+          client-payload: '{"origin": "${{ github.repository }}", "commit": "${{ github.sha }}"}'
