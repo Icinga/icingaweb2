@@ -18,14 +18,9 @@ CREATE TABLE dashlet (
     CONSTRAINT fk_dashlet_dashboard FOREIGN KEY (dashboard_id) REFERENCES dashboard (id) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
-CREATE TABLE users (
-   name varchar(64) NOT NULL UNIQUE COLLATE utf8mb4_unicode_ci
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
-
 Create TABLE user_dashboard (
    dashboard_id int(10) unsigned NOT NULL,
    user_name varchar(64) NOT NULL COLLATE utf8mb4_unicode_ci,
-   CONSTRAINT fk_user_dashboard_users FOREIGN KEY (user_name) REFERENCES users (name) ON DELETE CASCADE ON UPDATE CASCADE,
    CONSTRAINT fk_user_dashboard_dashboard FOREIGN KEY (dashboard_id) REFERENCES dashboard (id) ON DELETE CASCADE ON UPDATE CASCADE
 ) Engine=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
