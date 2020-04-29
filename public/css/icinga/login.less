@@ -103,11 +103,31 @@
     }
   }
 
-  span[id^="form_login_rememberme"] {
-    display: block;
-    padding-top: 1em;
-    padding-bottom: 0.3em;
-    text-align: center;
+  form[id^='form_login-']  > div:nth-child(3) {
+    padding-top: 10px;
+  }
+
+  form[id^='form_login-'] > div:nth-child(3) > div{
+    display: inline-block;
+    width: auto;
+    left: -44px;
+    position: relative;
+  }
+
+  form[id^='form_login-'] > div:nth-child(3) > label{
+    left: -169px;
+    top: 5px;
+  }
+
+  @media only screen and (max-width: 1180px) {
+    form[id^='form_login-'] > div:nth-child(3) > label{
+      left: -150px;
+      top: 4px;
+    }
+
+    form[id^='form_login-'] > div:nth-child(3) > div{
+      left: -40px;
+    }
   }
 
   input:focus,
