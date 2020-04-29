@@ -35,9 +35,7 @@ class IndexController extends Controller
             ->from('user_dashlet')
             ->join('user_dashboard d', 'user_dashlet.user_dashboard_id = d.dashboard_id')
             ->join('dashboard', 'd.dashboard_id = dashboard.id')
-            ->join('users u', 'd.user_name = u.name')
             ->where([
-                'dashboard.type = ?' => 'private',
                 'dashboard_id = ?' => $this->tabs->getActiveName()
             ]);
 
@@ -46,8 +44,7 @@ class IndexController extends Controller
             ->from('dashlet')
             ->join('dashboard d', 'dashlet.dashboard_id = d.id')
             ->where([
-                'd.id = ?' => $this->tabs->getActiveName(),
-                'd.type = ?' => 'public'
+                'd.id = ?' => $this->tabs->getActiveName()
             ]);
 
         $dashlets = $this->getDb()->select($select);

@@ -38,7 +38,7 @@ class DashletForm extends CompatForm
             ->join('user_dashboard', 'user_dashboard.dashboard_id = dashboard.id')
             ->where([
                 'type = ?' => 'private',
-                'user_dashboard.user_name = ?' => Auth::getInstance()->getUser()->getUsername(),
+                'user_dashboard.user_name = ?' => Auth::getInstance()->getUser()->getUsername()
             ]);
 
         $result = $this->getDb()->select($query);
@@ -99,6 +99,13 @@ class DashletForm extends CompatForm
         }
     }
 
+    /**
+     * Check if the selected dashboard is private or not
+     *
+     * @param int $id   The id of the selected dashboard
+     *
+     * @return bool
+     */
     public function checkForPrivateDashboard($id)
     {
         $select = (new Select())
@@ -170,18 +177,7 @@ class DashletForm extends CompatForm
     protected function onSuccess()
     {
         if ($this->getValue('user-dashboard') !== null) {
-            $select = (new Select())
-                ->from('users')
-                ->columns('name')
-                ->where(['name = ?' => Auth::getInstance()->getUser()->getUsername()]);
-
-            $user = $this->getDb()->select($select)->fetch();
-
             if ($this->getValue('new-dashboard-name') !== null) {
-                if (! $user) {
-                    $this->getDb()->insert('users', ['name' => Auth::getInstance()->getUser()->getUsername()]);
-                }
-
                 $data = [
                     'dashboard_id' => $this->createDashboard($this->getValue('new-dashboard-name')),
                     'user_name' => Auth::getInstance()->getUser()->getUsername()
@@ -198,7 +194,26 @@ class DashletForm extends CompatForm
                 Notification::success("Private dashboard and dashlet created");
             } else {
                 if (! $this->checkForPrivateDashboard($this->getValue('dashboard'))) {
-                    Notification::error("You can't have private dashlet in a public dashboard!");
+                    $this->getDb()->insert('user_dashboard', [
+                        'dashboard_id' => $this->getValue('dashboard'),
+                        'user_name' => Auth::getInstance()->getUser()->getUsername()
+                    ]);
+
+                    $select = (new Select())
+                        ->from('user_dashboard')
+                        ->columns('dashboard_id')
+                        ->orderBy('dashboard_id DESC')
+                        ->limit(1);
+
+                    $dashboard = $this->getDb()->select($select)->fetch();
+
+                    $this->getDb()->insert('user_dashlet', [
+                        'user_dashboard_id' => $dashboard->dashboard_id,
+                        'name' => $this->getValue('name'),
+                        'url' => $this->getValue('url')
+                    ]);
+
+                    Notification::success("Private dashlet in a public dashboard created!");
                 } else {
                     $this->getDb()->insert('user_dashlet', [
                         'user_dashboard_id' => $this->createUserDashboard($this->getValue('dashboard')),
@@ -209,15 +224,10 @@ class DashletForm extends CompatForm
                     Notification::success("Private dashlet created");
                 }
             }
-        } elseif ($this->checkForPrivateDashboard($this->getValue('dashboard'))) {
-            $this->getDb()->insert('user_dashlet', [
-                'user_dashboard_id' => $this->createUserDashboard($this->getValue('dashboard')),
-                'name' => $this->getValue('name'),
-                'url' => $this->getValue('url')
-            ]);
-
-            Notification::success("Private dashlet created");
+        } elseif($this->checkForPrivateDashboard($this->getValue('dashboard'))) {
+            Notification::error("You can't create public dashlet in a private dashboard!");
         } else {
+
             if ($this->getValue('new-dashboard-name') !== null) {
                 $this->getDb()->insert('dashlet', [
                     'dashboard_id' => $this->createDashboard($this->getValue('new-dashboard-name')),
