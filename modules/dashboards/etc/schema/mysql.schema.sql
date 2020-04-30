@@ -1,8 +1,7 @@
-DROP TABLE IF EXISTS  dashlet;
 DROP TABLE IF EXISTS user_dashlet;
+DROP TABLE IF EXISTS  dashlet;
 DROP TABLE IF EXISTS user_dashboard;
 DROP TABLE IF EXISTS dashboard;
-DROP TABLE IF EXISTS users;
 
 CREATE TABLE dashboard (
     id int(10) unsigned NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -25,9 +24,8 @@ Create TABLE user_dashboard (
 ) Engine=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 CREATE TABLE user_dashlet (
-    id int(10) unsigned NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    user_dashboard_id int(10) unsigned NOT NULL,
-    name varchar(64) NOT NULL COLLATE utf8mb4_unicode_ci,
-    url varchar(2048) NOT NULL,
-    CONSTRAINT fk_user_dashlet_user_dashboard FOREIGN KEY (user_dashboard_id) REFERENCES user_dashboard (dashboard_id) ON DELETE CASCADE ON UPDATE CASCADE
+    dashlet_id int(10) unsigned NOT NULL,
+    user_dashboard_id int(10) UNSIGNED NOT NULL,
+    CONSTRAINT fk_user_dashlet_user_dashboard FOREIGN KEY (user_dashboard_id) REFERENCES user_dashboard (dashboard_id) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT fk_user_dashlet_dashlet FOREIGN KEY (dashlet_id) REFERENCES dashlet (id) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
