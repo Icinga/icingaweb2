@@ -232,7 +232,7 @@ class DashletForm extends CompatForm
 
                 $this->getDb()->insert('user_dashboard', $data);
 
-                $this->getDb()->insert('user_dashlet' , [
+                $this->getDb()->insert('user_dashlet', [
                     'dashlet_id' => $this->createUserDashlet($this->getValue('new-dashboard-name')),
                     'user_dashboard_id' => $this->fetchUserDashboardId($this->getValue('new-dashboard-name'))
                 ]);

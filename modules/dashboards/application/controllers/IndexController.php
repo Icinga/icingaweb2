@@ -25,22 +25,8 @@ class IndexController extends Controller
             Notification::error('No dashboard or dashlet found');
         }
 
-        $selectUserDashlet = (new Select())
-            ->columns([
-                'user_dashlet.id',
-                'user_dashlet.user_dashboard_id',
-                'user_dashlet.name',
-                'user_dashlet.url',
-            ])
-            ->from('user_dashlet')
-            ->join('user_dashboard d', 'user_dashlet.user_dashboard_id = d.dashboard_id')
-            ->join('dashboard', 'd.dashboard_id = dashboard.id')
-            ->where([
-                'dashboard_id = ?' => $this->tabs->getActiveName()
-            ]);
-
         $select = (new Select())
-            ->columns('dashlet.name, dashlet.dashboard_id, dashlet.url')
+            ->columns('dashlet.id ,dashlet.name, dashlet.dashboard_id, dashlet.url')
             ->from('dashlet')
             ->join('dashboard d', 'dashlet.dashboard_id = d.id')
             ->where([
@@ -49,9 +35,7 @@ class IndexController extends Controller
 
         $dashlets = $this->getDb()->select($select);
 
-        $userDashlets = $this->getDb()->select($selectUserDashlet);
-
-        $this->content = new DashboardWidget($dashlets, $userDashlets);
+        $this->content = new DashboardWidget($dashlets);
     }
 
     /**
