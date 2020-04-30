@@ -122,7 +122,7 @@ class RememberMe
     public static function removeExpired()
     {
         (new static())->getDb()->delete(static::TABLE, [
-            'expires_in < ?' => new Expression('NOW()')
+            'expires_in < NOW()'
         ]);
     }
 
