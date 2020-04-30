@@ -104,30 +104,21 @@
   }
 
   form[id^='form_login-']  > div:nth-child(3) {
-    padding-top: 10px;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-areas:
+      "button label"
+    ;
+    margin-top: 10px;
   }
 
   form[id^='form_login-'] > div:nth-child(3) > div{
-    display: inline-block;
-    width: auto;
-    left: -44px;
-    position: relative;
+    grid-area: label;
+    padding-left: 12px;
   }
 
   form[id^='form_login-'] > div:nth-child(3) > label{
-    left: -169px;
-    top: 5px;
-  }
-
-  @media only screen and (max-width: 1180px) {
-    form[id^='form_login-'] > div:nth-child(3) > label{
-      left: -150px;
-      top: 4px;
-    }
-
-    form[id^='form_login-'] > div:nth-child(3) > div{
-      left: -40px;
-    }
+      grid-area: button;
   }
 
   input:focus,
