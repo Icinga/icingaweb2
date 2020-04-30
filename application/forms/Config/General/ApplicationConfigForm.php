@@ -72,9 +72,7 @@ class ApplicationConfigForm extends Form
 
         // we do not need this form for setup because we set the database there as default.
         // this form is only displayed in configuration -> application if preferences backend type of ini is recognized
-        if (isset($formData['global_config_backend'])
-            && $formData['global_config_backend'] === 'ini'
-        ) {
+        if (isset($formData['global_config_backend']) && $formData['global_config_backend'] === 'ini') {
             $this->addElement(
                 'select',
                 'global_config_backend',
@@ -99,6 +97,7 @@ class ApplicationConfigForm extends Form
                 ]
             );
         }
+
         if (! isset($formData['global_config_backend']) || $formData['global_config_backend'] === 'db') {
             $backends = array();
             foreach (ResourceFactory::getResourceConfigs()->toArray() as $name => $resource) {
@@ -117,7 +116,7 @@ class ApplicationConfigForm extends Form
                         $backends
                     ),
                     'disable'       => [''],
-                     'value'        => '',
+                    'value'         => '',
                     'label'         => $this->translate('Configuration Database')
                 )
             );
