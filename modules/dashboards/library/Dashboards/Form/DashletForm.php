@@ -51,7 +51,7 @@ class DashletForm extends CompatForm
     }
 
     /**
-     * Create a new dashboard and return its id
+     * Create a new public dashboard and return its id
      *
      * @param string $name
      *
@@ -82,7 +82,54 @@ class DashletForm extends CompatForm
         }
     }
 
-    public function createUserDashboard($name)
+    /**
+     * Create a user specific dashlets and return its id
+     *
+     * @param int $id     The id of the selected dashboard
+     *
+     * @return integer
+     */
+    public function createUserDashlet($id)
+    {
+        if ($this->getValue('new-dashboard-name') !== null ||
+            $this->checkForPrivateDashboard($id)) {
+            $data = [
+                'dashboard_id' => $this->fetchUserDashboardId($id),
+                'name' => $this->getValue('name'),
+                'url' => $this->getValue('url')
+            ];
+            $db = $this->getDb();
+            $db->insert('dashlet', $data);
+
+            return $db->lastInsertId();
+        } else {
+            $select = (new Select())
+                ->from('user_dashboard')
+                ->columns('dashboard_id')
+                ->orderBy('dashboard_id DESC')
+                ->limit(1);
+
+            $dashboard = $this->getDb()->select($select)->fetch();
+
+            $db = $this->getDb();
+            $db->insert('dashlet', [
+                'dashboard_id' => $dashboard->dashboard_id,
+                'name' => $this->getValue('name'),
+                'url' => $this->getValue('url')
+            ]);
+
+            return $db->lastInsertId();
+        }
+    }
+
+    /**
+     * If the dashboard is new created then fetch its id or the dashboard is already created and return just the param
+     *
+     * @param int $id       The id of new created or old dashboard
+     *
+     * @return int
+     */
+    public function fetchUserDashboardId($id)
     {
         if ($this->getValue('new-dashboard-name') !== null) {
             $select = (new Select())
@@ -95,7 +142,7 @@ class DashletForm extends CompatForm
 
             return $dashboard->dashboard_id;
         } else {
-            return $name;
+            return $id;
         }
     }
 
@@ -185,10 +232,9 @@ class DashletForm extends CompatForm
 
                 $this->getDb()->insert('user_dashboard', $data);
 
-                $this->getDb()->insert('user_dashlet', [
-                    'user_dashboard_id' => $this->createUserDashboard($this->getValue('new-dashboard-name')),
-                    'name' => $this->getValue('name'),
-                    'url' => $this->getValue('url')
+                $this->getDb()->insert('user_dashlet' , [
+                    'dashlet_id' => $this->createUserDashlet($this->getValue('new-dashboard-name')),
+                    'user_dashboard_id' => $this->fetchUserDashboardId($this->getValue('new-dashboard-name'))
                 ]);
 
                 Notification::success("Private dashboard and dashlet created");
@@ -199,26 +245,16 @@ class DashletForm extends CompatForm
                         'user_name' => Auth::getInstance()->getUser()->getUsername()
                     ]);
 
-                    $select = (new Select())
-                        ->from('user_dashboard')
-                        ->columns('dashboard_id')
-                        ->orderBy('dashboard_id DESC')
-                        ->limit(1);
-
-                    $dashboard = $this->getDb()->select($select)->fetch();
-
                     $this->getDb()->insert('user_dashlet', [
-                        'user_dashboard_id' => $dashboard->dashboard_id,
-                        'name' => $this->getValue('name'),
-                        'url' => $this->getValue('url')
+                        'dashlet_id' => $this->createUserDashlet($this->getValue('dashboard')),
+                        'user_dashboard_id' => $this->fetchUserDashboardId($this->getValue('dashboard'))
                     ]);
 
                     Notification::success("Private dashlet in a public dashboard created!");
                 } else {
                     $this->getDb()->insert('user_dashlet', [
-                        'user_dashboard_id' => $this->createUserDashboard($this->getValue('dashboard')),
-                        'name' => $this->getValue('name'),
-                        'url' => $this->getValue('url')
+                        'dashlet_id' => $this->createUserDashlet($this->getValue('dashboard')),
+                        'user_dashboard_id' => $this->fetchUserDashboardId($this->getValue('dashboard'))
                     ]);
 
                     Notification::success("Private dashlet created");
