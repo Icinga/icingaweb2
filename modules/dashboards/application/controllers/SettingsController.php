@@ -18,25 +18,15 @@ class SettingsController extends Controller
     {
         $this->createTabs();
 
-        $select = (new Select())
-            ->from('dashboard')
-            ->columns('*')
-            ->where(['type = ?' => 'public']);
-
-        $dashboard = $this->getDb()->select($select);
-
         $query = (new Select())
             ->from('dashboard')
             ->columns('*')
             ->join('user_dashboard d', 'd.dashboard_id = dashboard.id')
-            ->where([
-                'type = ?' => 'private',
-                'd.user_name = ?' => Auth::getInstance()->getUser()->getUsername()
-            ]);
+            ->where(['d.user_name = ?' => Auth::getInstance()->getUser()->getUsername()]);
 
-        $userDashboard = $this->getDb()->select($query);
+        $dashboard = $this->getDb()->select($query);
 
-        $this->content = new DashboardSetting($dashboard, $userDashboard);
+        $this->content = new DashboardSetting($dashboard);
     }
 
     /**

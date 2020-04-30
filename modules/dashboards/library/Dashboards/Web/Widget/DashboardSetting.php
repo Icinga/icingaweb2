@@ -2,6 +2,7 @@
 
 namespace Icinga\Module\Dashboards\Web\Widget;
 
+use Icinga\Authentication\Auth;
 use Icinga\Module\Dashboards\Common\Database;
 use InvalidArgumentException;
 use ipl\Html\BaseHtmlElement;
@@ -13,11 +14,8 @@ class DashboardSetting extends BaseHtmlElement
 {
     use Database;
 
-    /** @var iterable|null $dashboards public dashboards */
+    /** @var iterable $dashboards public dashboards */
     protected $dashboards;
-
-    /** @var iterable|null $userDashboards private dashboards */
-    protected $userDashboards;
 
     protected $defaultAttributes = ['class' => 'content setting'];
 
@@ -26,13 +24,11 @@ class DashboardSetting extends BaseHtmlElement
     /**
      * Create a new dashboards and dashlets setting
      *
-     * @param iterable|null $dashboards All public dashboards from the database
-     *
-     * @param iterable|null $userDashboards Private dashboards
+     * @param iterable $dashboards All public dashboards from the database
      *
      * @throws InvalidArgumentException If $dashboards|$userDashboards are not iterable
      */
-    public function __construct($dashboards = null, $userDashboards = null)
+    public function __construct($dashboards)
     {
         if (!is_iterable($dashboards)) {
             throw new InvalidArgumentException(sprintf(
@@ -42,16 +38,7 @@ class DashboardSetting extends BaseHtmlElement
             ));
         }
 
-        if (!is_iterable($userDashboards)) {
-            throw new InvalidArgumentException(sprintf(
-                '%s expects parameter 1 to be iterable, got %s instead',
-                __METHOD__,
-                get_php_type($userDashboards)
-            ));
-        }
-
         $this->dashboards = $dashboards;
-        $this->userDashboards = $userDashboards;
     }
 
     /**
@@ -92,37 +79,42 @@ class DashboardSetting extends BaseHtmlElement
 
         $tbody = Html::tag('tbody');
 
-        if (!empty($this->dashboards)) {
-            foreach ($this->dashboards as $dashboard) {
-                $tbody->add(new DashboardDetails($dashboard));
+        foreach ($this->dashboards as $dashboard) {
+            $tbody->add(new DashboardDetails($dashboard));
 
-                $select = (new Select())
-                    ->from('dashlet')
-                    ->columns(['*'])
-                    ->where(['dashboard_id = ?' => $dashboard->id]);
+            // Selects all private dashlets with the given user
+            $select = (new Select())
+                ->from('dashlet')
+                ->columns('dashlet.id, dashlet.name, dashlet.dashboard_id, dashlet.url')
+                ->join('user_dashlet ud', 'dashlet.id = ud.dashlet_id')
+                ->join('dashboard d', 'dashlet.dashboard_id = d.id')
+                ->join('user_dashboard', 'user_dashboard.dashboard_id = d.id')
+                ->where([
+                    'd.type = ?' => 'private',
+                    'ud.user_dashboard_id = ?' => $dashboard->id,
+                    'user_dashboard.user_name = ?' => Auth::getInstance()->getUser()->getUsername()
+                ]);
 
-                $dashlets = $this->getDb()->select($select);
+            $dashlets = $this->getDb()->select($select);
 
-                foreach ($dashlets as $dashlet) {
-                    $tbody->add(new DashletDetails($dashlet, $dashboard));
-                }
+            foreach ($dashlets as $dashlet) {
+                $tbody->add(new DashletDetails($dashlet, $dashboard));
             }
-        }
 
-        if (!empty($this->userDashboards)) {
-            foreach ($this->userDashboards as $userDashboard) {
-                $tbody->add(new DashboardDetails($userDashboard));
+            // Fetch just the public dashlets
+            $query = (new Select())
+                ->from('dashlet')
+                ->columns('dashlet.name, dashlet.url, dashlet.id')
+                ->join('dashboard d', 'dashlet.dashboard_id = d.id')
+                ->where([
+                    'd.type = ?' => 'public',
+                    'd.id = ?' => $dashboard->id
+                ]);
 
-                $select = (new Select())
-                    ->from('user_dashlet')
-                    ->columns(['*'])
-                    ->where(['user_dashboard_id = ?' => $userDashboard->id]);
+            $dashlets = $this->getDb()->select($query);
 
-                $userDashlets = $this->getDb()->select($select);
-
-                foreach ($userDashlets as $userDashlet) {
-                    $tbody->add(new DashletDetails($userDashlet, $userDashboard));
-                }
+            foreach ($dashlets as $dashlet) {
+                $tbody->add(new DashletDetails($dashlet, $dashboard));
             }
         }
 
