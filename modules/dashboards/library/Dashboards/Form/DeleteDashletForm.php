@@ -13,20 +13,14 @@ class DeleteDashletForm extends CompatForm
     /** @var object|null $dashlet Public dashlet from the given dashboard */
     protected $dashlet;
 
-    /** @var object|null Private dashlet from the selected dashboard */
-    protected $userDashlet;
-
     /**
      * Create a dashlet remove Form
      *
      * @param object|null $dashlet The dashlet that can be deleted by any user
-     *
-     * @param object|null $userDashlet The dashlet, which is only deleted if the user owns it
      */
-    public function __construct($dashlet = null, $userDashlet = null)
+    public function __construct($dashlet)
     {
         $this->dashlet = $dashlet;
-        $this->userDashlet = $userDashlet;
     }
 
     protected function assemble()
@@ -44,19 +38,6 @@ class DeleteDashletForm extends CompatForm
             );
         }
 
-        if (! empty($this->userDashlet)) {
-            $this->add(
-                Html::tag(
-                    'h1',
-                    null,
-                    Html::sprintf(
-                        'Please confirm deletion of dashlet %s',
-                        $this->userDashlet->name
-                    )
-                )
-            );
-        }
-
         $this->addElement('input', 'btn_submit', [
             'type' => 'submit',
             'value' => 'Confirm Removal',
@@ -67,11 +48,8 @@ class DeleteDashletForm extends CompatForm
     protected function onSuccess()
     {
         if (! empty($this->dashlet)) {
+            $this->getDb()->delete('user_dashlet', ['dashlet_id = ?' => $this->dashlet->id]);
             $this->getDb()->delete('dashlet', ['id = ?' => $this->dashlet->id]);
-        }
-
-        if (! empty($this->userDashlet)) {
-            $this->getDb()->delete('user_dashlet', ['id = ?' => $this->userDashlet->id]);
         }
     }
 }
