@@ -158,11 +158,7 @@ class DashletForm extends CompatForm
         $select = (new Select())
             ->from('user_dashboard')
             ->columns('*')
-            ->join('dashboard d', 'dashboard_id = d.id')
-            ->where([
-                'dashboard_id = ?' => $id,
-                'd.type = ?'  => 'private'
-            ]);
+            ->where(['dashboard_id = ?' => $id]);
 
         $dashboard = $this->getDb()->select($select)->fetch();
 
