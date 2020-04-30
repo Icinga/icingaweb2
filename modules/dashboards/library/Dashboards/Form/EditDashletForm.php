@@ -60,16 +60,21 @@ class EditDashletForm extends DashletForm
     {
         if (! empty($this->userDashlet) && $this->checkForPrivateDashboard($this->getValue('dashboard'))) {
             if (! empty($this->getValue('new-dashboard-name'))) {
-                $this->getDb()->update('user_dashlet', [
-                    'user_dashboard_id' => $this->createUserDashboard($this->getValue('new-dashboard-name')),
+                $this->getDb()->update('dashlet', [
+                    'dashboard_id' => $this->fetchUserDashboardId($this->getValue('new-dashboard-name')),
                     'name' => $this->getValue('name'),
                     'url' => $this->getValue('url')
                 ], ['id = ?' => $this->userDashlet->id]);
 
+                $this->getDb()->update('user_dashlet', [
+                    'dashlet_id' => $this->userDashlet->id,
+                    'user_dashboard_id' => $this->fetchUserDashboardId($this->getValue('new-dashboard-name'))
+                ]);
+
                 Notification::success('Private Dashboard created & dashlet updated');
             } else {
-                $this->getDb()->update('user_dashlet', [
-                    'user_dashboard_id' => $this->createUserDashboard($this->getValue('dashboard')),
+                $this->getDb()->update('dashlet', [
+                    'dashboard_id' => $this->fetchUserDashboardId($this->getValue('dashboard')),
                     'name' => $this->getValue('name'),
                     'url' => $this->getValue('url'),
                 ], ['id = ?' => $this->userDashlet->id]);
@@ -78,7 +83,7 @@ class EditDashletForm extends DashletForm
             }
         }
 
-        if (! empty($this->dashlet) && ! $this->checkForPrivateDashboard($this->getValue('dashboard'))) {
+        if (! empty($this->dashlet)) {
             if (! empty($this->getValue('new-dashboard-name'))) {
                 $this->getDb()->update('dashlet', [
                     'dashboard_id' => $this->createDashboard($this->getValue('new-dashboard-name')),
