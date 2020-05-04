@@ -11,7 +11,7 @@ class DashletWidget extends BaseHtmlElement
     /** @var object $dashlet of the dashboard */
     protected $dashlet;
 
-    protected $defaultAttributes = ['class' => 'container'];
+    protected $defaultAttributes = ['class' => 'container dashlet-sortable'];
 
     protected $tag = 'div';
 
@@ -28,8 +28,13 @@ class DashletWidget extends BaseHtmlElement
     protected function assemble()
     {
         $this->getAttributes()->add([
-            'data-icinga-url' => Url::fromPath($this->dashlet->url)->addParams(['view' => 'compact'])
+            'draggable' => 'true',
+            'data-icinga-url' => Url::fromPath($this->dashlet->url)->addParams(['view' => 'compact']),
+            'style' => 'width: ' . $this->dashlet->style_width . '%',
+            'data-icinga-dashlet-id' => $this->dashlet->id,
+            'data-icinga-dashlet-col' => $this->dashlet->style_width
         ]);
+
         $this->add($this->title($this->dashlet->name));
     }
 
