@@ -3,9 +3,10 @@
 namespace Icinga\Module\Dashboards\Form;
 
 use Icinga\Module\Dashboards\Common\Database;
+use Icinga\Module\Dashboards\Forms\DashboardsForm;
 use Icinga\Web\Notification;
 
-class EditDashletForm extends DashletForm
+class EditDashletForm extends DashboardsForm
 {
     use Database;
 
@@ -48,7 +49,11 @@ class EditDashletForm extends DashletForm
      */
     public function editAction()
     {
-        $this->newAction();
+        $this->displayForm();
+
+        $this->addElement('submit', 'submit', [
+            'label' => 'Update Dashboard'
+        ]);
     }
 
     protected function assemble()
