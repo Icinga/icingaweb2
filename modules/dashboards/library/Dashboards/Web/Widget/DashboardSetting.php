@@ -80,12 +80,26 @@ class DashboardSetting extends BaseHtmlElement
         $tbody = Html::tag('tbody');
 
         foreach ($this->dashboards as $dashboard) {
+            $selectUserDashboard = (new Select())
+                ->from('user_dashboard')
+                ->columns('*')
+                ->where([
+                    'dashboard_id = ?' => $dashboard->id,
+                    'user_name = ?' => Auth::getInstance()->getUser()->getUsername()
+                ]);
+
+            $userDashboard = $this->getDb()->select($selectUserDashboard)->fetch();
+
+            if ($dashboard->type === 'private' && ! $userDashboard) {
+                continue;
+            }
+
             $tbody->add(new DashboardDetails($dashboard));
 
             // Selects all private dashlets with the given user
             $select = (new Select())
                 ->from('dashlet')
-                ->columns('dashlet.id, dashlet.name, dashlet.dashboard_id, dashlet.url')
+                ->columns('dashlet.id, dashlet.name, dashlet.dashboard_id, dashlet.url, dashlet.priority')
                 ->join('user_dashlet ud', 'dashlet.id = ud.dashlet_id')
                 ->join('dashboard d', 'dashlet.dashboard_id = d.id')
                 ->join('user_dashboard', 'user_dashboard.dashboard_id = d.id')
@@ -93,7 +107,8 @@ class DashboardSetting extends BaseHtmlElement
                     'd.type = ?' => 'private',
                     'ud.user_dashboard_id = ?' => $dashboard->id,
                     'user_dashboard.user_name = ?' => Auth::getInstance()->getUser()->getUsername()
-                ]);
+                ])
+                ->orderBy('priority DESC');
 
             $dashlets = $this->getDb()->select($select);
 
@@ -104,12 +119,13 @@ class DashboardSetting extends BaseHtmlElement
             // Fetch just the public dashlets
             $query = (new Select())
                 ->from('dashlet')
-                ->columns('dashlet.name, dashlet.url, dashlet.id')
+                ->columns('dashlet.name, dashlet.url, dashlet.id, dashlet.priority')
                 ->join('dashboard d', 'dashlet.dashboard_id = d.id')
                 ->where([
                     'd.type = ?' => 'public',
                     'd.id = ?' => $dashboard->id
-                ]);
+                ])
+                ->orderBy('priority DESC');
 
             $dashlets = $this->getDb()->select($query);
 
