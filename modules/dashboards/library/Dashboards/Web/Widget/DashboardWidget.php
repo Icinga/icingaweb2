@@ -4,6 +4,7 @@ namespace Icinga\Module\Dashboards\Web\Widget;
 
 use InvalidArgumentException;
 use ipl\Html\BaseHtmlElement;
+use ipl\Html\Html;
 use function ipl\Stdlib\get_php_type;
 
 class DashboardWidget extends BaseHtmlElement
@@ -59,5 +60,7 @@ class DashboardWidget extends BaseHtmlElement
                 $dashlets[] = $dashlet->name;
             }
         }
+
+        $this->add(Html::tag('button', ['id' => 'TryIt_button'], 'Try it'));
     }
 }
