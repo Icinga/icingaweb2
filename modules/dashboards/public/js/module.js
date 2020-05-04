@@ -163,19 +163,19 @@
                         console.log('It is not allowed to resize a div above 99.9%!');
                     }
 
-                    let DB_width = '';
+                    let widthAfterResize = '';
 
                     $dashlet.each(function () {
 
-                        let widthAfterResize = $(this).width() / $(this).parent().width() * 100;
+                        let currentWidth = $(this).width() / $(this).parent().width() * 100;
 
-                        let currentWidth = $(this).attr('data-icinga-dashlet-col');
+                        let defaultWidth = $(this).attr('data-icinga-dashlet-col');
                         dataIcingaId = $(this).attr('data-icinga-dashlet-id');
 
-                        if (widthAfterResize !== currentWidth) {
-                            DB_width = widthAfterResize;
+                        if (currentWidth !== defaultWidth) {
+                            widthAfterResize = currentWidth;
                         } else {
-                            DB_width = DB_width + ',' + widthAfterResize;
+                            widthAfterResize = widthAfterResize + ',' + currentWidth;
                         }
                     });
 
@@ -184,7 +184,7 @@
                     $.ajax({
                         url: 'http://localhost/icingaweb2/dashboards/dashlets/resize',
                         method: 'POST',
-                        data: {'defaultWidth': DB_width, 'dashletIds': dataIcingaId},
+                        data: {'defaultWidth': widthAfterResize, 'dashletIds': dataIcingaId},
                         dataType: 'text',
                         success: function () {
                             console.log('Dashlets width updated successfully');
