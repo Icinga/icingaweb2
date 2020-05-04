@@ -140,4 +140,58 @@ class DashletsController extends Controller
 
         $this->addContent($form);
     }
+
+    /**
+     * Get the request param $dashletIds and update the dashlet priority
+     */
+    public function dropAction()
+    {
+        if ($this->getRequest()->getMethod() === 'POST') {
+            $requestIds = $this->getRequest()->getParam('dashletIds');
+
+            $dashletIds = explode(',', $requestIds);
+            $dashletPriority = count($dashletIds);
+
+            if ($dashletPriority > 0) {
+                foreach ($dashletIds as $dashletId) {
+                    $this->getDb()->update(
+                        'dashlet',
+                        ['priority' => $dashletPriority--],
+                        ['id = ?' => $dashletId]
+                    );
+                }
+            }
+        }
+    }
+
+    /**
+     * Get the request params $dashletIds & $defaultWidth and update dashlet width with the given id
+     */
+    public function resizeAction()
+    {
+        if ($this->getRequest()->getMethod() === 'POST') {
+            $dashletIds = $this->getRequest()->getParam('dashletIds');
+            $dashletWidth = $this->getRequest()->getParam('defaultWidth');
+
+            if ($dashletWidth > 66.6) {
+                $this->getDb()->update(
+                    'dashlet',
+                    ['style_width' => 99.9],
+                    ['id = ?' => $dashletIds]
+                );
+            } elseif ($dashletWidth > 33.3 && $dashletWidth < 66.6) {
+                $this->getDb()->update(
+                    'dashlet',
+                    ['style_width' => 66.6],
+                    ['id = ?' => $dashletIds]
+                );
+            } elseif ($dashletWidth <= 33.3) {
+                $this->getDb()->update(
+                    'dashlet',
+                    ['style_width' => 33.3],
+                    ['id = ?' => $dashletIds]
+                );
+            }
+        }
+    }
 }
