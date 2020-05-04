@@ -122,6 +122,8 @@
                 }
             });
 
+            //TODO: If your Icinga Web 2 is hosted from somewhere else,
+            // you have to replace localhost with the url that Icinga Web 2 is hosted from
             $.ajax({
                 url: 'http://localhost/icingaweb2/dashboards/dashlets/drop',
                 method: 'POST',
@@ -177,6 +179,8 @@
                         }
                     });
 
+                    //TODO: If your Icinga Web 2 is hosted from somewhere else,
+                    // you have to replace localhost with the url that Icinga Web 2 is hosted from
                     $.ajax({
                         url: 'http://localhost/icingaweb2/dashboards/dashlets/resize',
                         method: 'POST',
