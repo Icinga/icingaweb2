@@ -20,9 +20,7 @@ class SettingsController extends Controller
 
         $query = (new Select())
             ->from('dashboard')
-            ->columns('*')
-            ->join('user_dashboard d', 'd.dashboard_id = dashboard.id')
-            ->where(['d.user_name = ?' => Auth::getInstance()->getUser()->getUsername()]);
+            ->columns('*');
 
         $dashboard = $this->getDb()->select($query);
 
