@@ -26,12 +26,20 @@ class IndexController extends Controller
         }
 
         $select = (new Select())
-            ->columns('dashlet.id ,dashlet.name, dashlet.dashboard_id, dashlet.url')
+            ->columns([
+                'dashlet.id',
+                'dashlet.name',
+                'dashlet.dashboard_id',
+                'dashlet.url',
+                'dashlet.style_width',
+                'dashlet.priority'
+            ])
             ->from('dashlet')
             ->join('dashboard d', 'dashlet.dashboard_id = d.id')
             ->where([
                 'd.id = ?' => $this->tabs->getActiveName()
-            ]);
+            ])
+            ->orderBy('priority DESC');
 
         $dashlets = $this->getDb()->select($select);
 
