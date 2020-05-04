@@ -14,6 +14,8 @@ CREATE TABLE dashlet (
     dashboard_id int(10) unsigned NOT NULL,
     name varchar(64) NOT NULL COLLATE utf8mb4_unicode_ci,
     url varchar(2048) NOT NULL,
+    priority int(10) unsigned DEFAULT 1,
+    style_width float(10) DEFAULT 33.3,
     CONSTRAINT fk_dashlet_dashboard FOREIGN KEY (dashboard_id) REFERENCES dashboard (id) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
