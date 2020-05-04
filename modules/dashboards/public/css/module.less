@@ -1,0 +1,52 @@
+.drag-over {
+  background-color: #0095bf;
+  border: 5px white dashed;
+  box-shadow: 2px 2px 2px 2px black,
+              2px 2px 2px 2px black,
+              2px 2px 2px 2px black,
+              2px 2px 2px 2px black;
+}
+
+.dashlet-sortable.drag-active * {
+  pointer-events: none;
+}
+
+.draggable-element{
+  opacity: .4;
+}
+
+.dashlet-sortable{
+  overflow: auto;
+  display: inline-block;
+  position: relative;
+  height: 670px;
+  margin-right: .5px;
+}
+
+div.dashlet-sortable:after{
+  content: '';
+  position: absolute;
+  padding: 0 10px;
+}
+
+.dashlet-sortable:hover{
+  border:1px solid #0095bf;
+}
+
+#TryIt_button {
+  background-color: #0095bf;
+  font-size: 20px;
+  color: white;
+  margin-top: 90px;
+  float: right;
+  border-radius: 7px;
+  outline: none;
+}
+
+#TryIt_button:hover {
+  background-color: #0095bf;
+  box-shadow: black 3px 3px 3px;
+  font-size: x-large;
+  line-height: normal;
+  border-radius: 7px;
+}
