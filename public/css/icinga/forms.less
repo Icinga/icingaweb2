@@ -25,7 +25,7 @@ form.icinga-form {
     margin: 1em -1em 1em 0;
   }
 
-  &:not(.inline) .control-group > * {
+  .control-group > :not(.control-label-group) {
     margin-right: 1em;
   }
 
@@ -115,16 +115,15 @@ form.inline {
 
   .control-group {
     margin: 0;
+
+    &:last-child {
+      margin-right: -1em;
+    }
   }
 
   .control-label-group {
     width: auto;
     line-height: 0.857em;
-  }
-
-  .control-group .spinner {
-    line-height: 1.5;
-    margin: 0 auto;
   }
 }
 
