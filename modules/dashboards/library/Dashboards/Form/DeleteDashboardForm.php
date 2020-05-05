@@ -56,6 +56,7 @@ class DeleteDashboardForm extends CompatForm
 
         $select = (new Select())
             ->from('user_dashboard')
+            ->columns('*')
             ->where([
                 'dashboard_id = ?' => $this->dashboard->id,
                 'user_name = ?' => Auth::getInstance()->getUser()->getUsername()
@@ -64,8 +65,8 @@ class DeleteDashboardForm extends CompatForm
         $user = $this->getDb()->select($select)->fetch();
 
         if (Auth::getInstance()->getUser()->isMemberOf('admin')) {
-            $this->getDb()->delete('dashlet', ['dashboard_id = ?' => $this->dashboard->id]);
             $this->getDb()->delete('user_dashlet', ['user_dashboard_id = ?' => $this->dashboard->id]);
+            $this->getDb()->delete('dashlet', ['dashboard_id = ?' => $this->dashboard->id]);
             $this->getDb()->delete('user_dashboard', ['dashboard_id = ?' => $this->dashboard->id]);
             $this->getDb()->delete('dashboard', ['id = ?' => $this->dashboard->id]);
         } elseif ($this->dashboard->type === 'private' && $user) {
