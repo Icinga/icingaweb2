@@ -19,7 +19,13 @@ class WebModuleRequirement extends Requirement
         }
 
         $module = $mm->getModule($name, false);
-        $this->setStateText(sprintf(mt('setup', '%s version: %s'), $this->getAlias(), $module->getVersion()));
-        return version_compare($module->getVersion(), $version, $op);
+
+        $moduleVersion = $module->getVersion();
+        if ($moduleVersion[0] === 'v') {
+            $moduleVersion = substr($moduleVersion, 1);
+        }
+
+        $this->setStateText(sprintf(mt('setup', '%s version: %s'), $this->getAlias(), $moduleVersion));
+        return version_compare($moduleVersion, $version, $op);
     }
 }
