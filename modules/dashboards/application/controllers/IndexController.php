@@ -56,6 +56,9 @@ class IndexController extends Controller
      */
     protected function createTabsAndAutoActivateDashboard()
     {
+        $privateIds = [];
+        $publicIds = [];
+
         $tabs = $this->getTabs();
 
         $select = (new Select())
@@ -77,7 +80,7 @@ class IndexController extends Controller
                 ])
             ])->extend(new DashboardAction())->disableLegacyExtensions();
 
-            $ids[] = $dashboard->id;
+            $privateIds[] = $dashboard->id;
         }
 
         $select = (new Select())
@@ -95,8 +98,10 @@ class IndexController extends Controller
                 ])
             ])->extend(new DashboardAction())->disableLegacyExtensions();
 
-            $ids[] = $dashboard->id;
+            $publicIds[] = $dashboard->id;
         }
+
+        $ids = array_merge($privateIds, $publicIds);
 
         $id = $this->params->get('dashboard') ?: array_shift($ids);
 
