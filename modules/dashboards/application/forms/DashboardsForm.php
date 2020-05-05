@@ -21,7 +21,8 @@ abstract class DashboardsForm extends CompatForm
      */
     public function fetchDashboards()
     {
-        $dashboards = [];
+        $publicDashboard = [];
+        $privateDashboard = [];
 
         $select = (new Select())
             ->columns('*')
@@ -31,7 +32,7 @@ abstract class DashboardsForm extends CompatForm
         $result = $this->getDb()->select($select);
 
         foreach ($result as $dashboard) {
-            $dashboards[$dashboard->id] = $dashboard->name;
+            $publicDashboard[$dashboard->id] = $dashboard->name;
         }
 
         $query = (new Select())
@@ -46,10 +47,10 @@ abstract class DashboardsForm extends CompatForm
         $result = $this->getDb()->select($query);
 
         foreach ($result as $userDashboard) {
-            $dashboards[$userDashboard->id] = $userDashboard->name;
+            $privateDashboard[$userDashboard->id] = $userDashboard->name;
         }
 
-        return $dashboards;
+        return array_merge($publicDashboard, $privateDashboard);
     }
 
     /**
