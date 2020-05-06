@@ -249,9 +249,9 @@ class RoleForm extends RepositoryForm
                             'description'   => $spec['description']
                         ]
                     )
-                        ->getElement($name)
-                        ->getDecorator('Label')
-                        ->setOption('escape', false);
+                    ->getElement($name)
+                    ->getDecorator('Label')
+                    ->setOption('escape', false);
                 }
             }
 
