@@ -108,7 +108,7 @@ class DashboardSetting extends BaseHtmlElement
                     'ud.user_dashboard_id = ?' => $dashboard->id,
                     'user_dashboard.user_name = ?' => Auth::getInstance()->getUser()->getUsername()
                 ])
-                ->orderBy('priority DESC');
+                ->orderBy('priority', 'DESC');
 
             $dashlets = $this->getDb()->select($select);
 
@@ -125,7 +125,7 @@ class DashboardSetting extends BaseHtmlElement
                     'd.type = ?' => 'public',
                     'd.id = ?' => $dashboard->id
                 ])
-                ->orderBy('priority DESC');
+                ->orderBy('priority', 'DESC');
 
             $dashlets = $this->getDb()->select($query);
 

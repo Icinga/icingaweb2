@@ -39,7 +39,7 @@ class IndexController extends Controller
             ->where([
                 'd.id = ?' => $this->tabs->getActiveName()
             ])
-            ->orderBy('priority DESC');
+            ->orderBy('priority', 'DESC');
 
         $dashlets = $this->getDb()->select($select);
 
