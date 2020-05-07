@@ -312,14 +312,6 @@ class RoleForm extends RepositoryForm
     {
         $values = parent::getValues($suppressArrayNotation);
 
-        if (isset($values[self::WILDCARD_NAME])) {
-            foreach ($values as $key => $value) {
-                if ($value === '0') {
-                    unset($values[$key]);
-                }
-            }
-        }
-
         foreach ($this->providedRestrictions as $moduleName => $restrictionList) {
             foreach ($restrictionList as $name => $spec) {
                 if (isset($values[$name])) {
@@ -332,6 +324,22 @@ class RoleForm extends RepositoryForm
         $permissions = [];
         if (isset($values[self::WILDCARD_NAME]) && $values[self::WILDCARD_NAME]) {
             $permissions[] = '*';
+
+            foreach ($this->providedPermissions as $moduleName => $permissionList) {
+                foreach ($permissionList as $name => $spec) {
+                    if (isset($values[$name]) && $values[$name]) {
+                        $permissions[] = $spec['name'];
+                    }
+
+                    unset($values[$name]);
+                }
+            }
+
+            foreach ($values as $key => $value) {
+                if ($value === '0') {
+                    unset($values[$key]);
+                }
+            }
         } else {
             foreach ($this->providedPermissions as $moduleName => $permissionList) {
                 foreach ($permissionList as $name => $spec) {
