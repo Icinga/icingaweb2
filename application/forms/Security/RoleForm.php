@@ -207,7 +207,9 @@ class RoleForm extends RepositoryForm
                         'checkbox',
                         $name,
                         [
-                            'disabled'      => false,
+                            'onclick'       => 'return false;',
+                            'onkeydown'     => 'return false;',
+                            'value'         => $hasFullPerm,
                             'label'         => preg_replace(
                             // Adds a zero-width char after each slash to help browsers break onto newlines
                                 '~(?<!<)/~',
@@ -220,16 +222,19 @@ class RoleForm extends RepositoryForm
                         ->getElement($name)
                         ->getDecorator('Label')
                         ->setOption('escape', false);
+                    if (isset($spec['isFullPerm'])) {
+                        $hasFullPerm = isset($formData[$name]) && $formData[$name];
+                    }
                 } else {
                     $this->addElement(
                         'checkbox',
                         $name,
                         [
-                            'ignore' => isset($spec['isUsagePerm']) ? false : $hasFullPerm,
-                            'autosubmit' => isset($spec['isFullPerm']),
-                            'disabled' => $hasFullPerm ?: null,
-                            'value' => $hasFullPerm,
-                            'label' => preg_replace(
+                            'ignore'        => isset($spec['isUsagePerm']) ? false : $hasFullPerm,
+                            'autosubmit'    => isset($spec['isFullPerm']),
+                            'disabled'      => $hasFullPerm ?: null,
+                            'value'         => $hasFullPerm,
+                            'label'         => preg_replace(
                             // Adds a zero-width char after each slash to help browsers break onto newlines
                                 '~(?<!<)/~',
                                 '/&#8203;',
