@@ -207,9 +207,10 @@ class RoleForm extends RepositoryForm
                         'checkbox',
                         $name,
                         [
-                            'onclick'       => 'return false;',
-                            'onkeydown'     => 'return false;',
-                            'value'         => $hasFullPerm,
+                            'autosubmit'    => isset($spec['isFullPerm']),
+                            'disabled'      => isset($formData[self::WILDCARD_NAME]) &&
+                                                $formData[self::WILDCARD_NAME]?: null,
+                            'value'         => $formData[self::WILDCARD_NAME],
                             'label'         => preg_replace(
                             // Adds a zero-width char after each slash to help browsers break onto newlines
                                 '~(?<!<)/~',
@@ -222,9 +223,6 @@ class RoleForm extends RepositoryForm
                         ->getElement($name)
                         ->getDecorator('Label')
                         ->setOption('escape', false);
-                    if (isset($spec['isFullPerm'])) {
-                        $hasFullPerm = isset($formData[$name]) && $formData[$name];
-                    }
                 } else {
                     $this->addElement(
                         'checkbox',
