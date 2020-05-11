@@ -178,53 +178,58 @@ class RoleForm extends RepositoryForm
             ]
         );
 
-        if (isset($formData[self::WILDCARD_NAME]) && $formData[self::WILDCARD_NAME]) {
+        foreach ($this->providedPermissions as $moduleName => $permissionList) {
+            $this->sortPermissions($permissionList);
+
+            $elements = [$moduleName . '_header'];
             $this->addElement(
-                'checkbox',
-                'restricts',
+                'note',
+                $moduleName . '_header',
                 [
-                    'autosubmit'    => true,
-                    'label'         => $this->translate('Add Restrictions'),
-                    'description'   => $this->translate('Add additional restricts for a super user')
+                    'decorators'    => ['ViewHelper'],
+                    'value'         => '<h3>' . ($moduleName !== 'application'
+                            ? sprintf('%s <em>%s</em>', $moduleName, $this->translate('Module'))
+                            :  'Icinga Web 2') . '</h3>'
                 ]
             );
-        }
 
-        if (! isset($formData[self::WILDCARD_NAME]) || ! $formData[self::WILDCARD_NAME] ||
-            (isset($formData[self::WILDCARD_NAME]) && isset($formData['restricts']) && $formData['restricts'])) {
-            foreach ($this->providedPermissions as $moduleName => $permissionList) {
-                $this->sortPermissions($permissionList);
+            $elements[] = 'permission_header';
+            $this->addElement('note', 'permission_header', [
+                'value'         => '<h4>' . $this->translate('Permissions') . '</h4>',
+                'decorators'    => ['ViewHelper']
+            ]);
 
-                $elements = [$moduleName . '_header'];
-                $this->addElement(
-                    'note',
-                    $moduleName . '_header',
-                    [
-                        'decorators'    => ['ViewHelper'],
-                        'value'         => '<h3>' . ($moduleName !== 'application'
-                                ? sprintf('%s <em>%s</em>', $moduleName, $this->translate('Module'))
-                                :  'Icinga Web 2') . '</h3>'
-                    ]
-                );
-
-                $elements[] = 'permission_header';
-                $this->addElement('note', 'permission_header', [
-                    'value'         => '<h4>' . $this->translate('Permissions') . '</h4>',
-                    'decorators'    => ['ViewHelper']
-                ]);
-
-                $hasFullPerm = false;
-                foreach ($permissionList as $name => $spec) {
-                    $elements[] = $name;
+            $hasFullPerm = false;
+            foreach ($permissionList as $name => $spec) {
+                $elements[] = $name;
+                if (isset($formData[self::WILDCARD_NAME]) && $formData[self::WILDCARD_NAME]) {
                     $this->addElement(
                         'checkbox',
                         $name,
                         [
-                            'ignore'        => isset($spec['isUsagePerm']) ? false : $hasFullPerm,
-                            'autosubmit'    => isset($spec['isFullPerm']),
-                            'disabled'      => $hasFullPerm ?: null,
-                            'value'         => $hasFullPerm,
+                            'disabled'      => false,
                             'label'         => preg_replace(
+                            // Adds a zero-width char after each slash to help browsers break onto newlines
+                                '~(?<!<)/~',
+                                '/&#8203;',
+                                isset($spec['label']) ? $spec['label'] : $spec['name']
+                            ),
+                            'description'   => isset($spec['description']) ? $spec['description'] : $spec['name']
+                        ]
+                    )
+                        ->getElement($name)
+                        ->getDecorator('Label')
+                        ->setOption('escape', false);
+                } else {
+                    $this->addElement(
+                        'checkbox',
+                        $name,
+                        [
+                            'ignore' => isset($spec['isUsagePerm']) ? false : $hasFullPerm,
+                            'autosubmit' => isset($spec['isFullPerm']),
+                            'disabled' => $hasFullPerm ?: null,
+                            'value' => $hasFullPerm,
+                            'label' => preg_replace(
                             // Adds a zero-width char after each slash to help browsers break onto newlines
                                 '~(?<!<)/~',
                                 '/&#8203;',
@@ -240,54 +245,46 @@ class RoleForm extends RepositoryForm
                         $hasFullPerm = isset($formData[$name]) && $formData[$name];
                     }
                 }
+            }
 
-                if (isset($this->providedRestrictions[$moduleName])) {
-                    $elements[] = 'restriction_header';
-                    $this->addElement('note', 'restriction_header', [
-                        'value'         => '<h4>' . $this->translate('Restrictions') . '</h4>',
-                        'decorators'    => ['ViewHelper']
-                    ]);
-
-                    foreach ($this->providedRestrictions[$moduleName] as $name => $spec) {
-                        $elements[] = $name;
-                        $this->addElement(
-                            'text',
-                            $name,
-                            [
-                                'label'         => preg_replace(
-                                // Adds a zero-width char after each slash to help browsers break onto newlines
-                                    '~(?<!<)/~',
-                                    '/&#8203;',
-                                    isset($spec['label']) ? $spec['label'] : $spec['name']
-                                ),
-                                'description'   => $spec['description']
-                            ]
-                        )
-                            ->getElement($name)
-                            ->getDecorator('Label')
-                            ->setOption('escape', false);
-                    }
-                }
-
-                $this->addDisplayGroup($elements, $moduleName . '_elements', [
-                    'decorators'    => [
-                        'FormElements',
-                        ['Fieldset', [
-                            'class'                 => 'collapsible',
-                            'data-toggle-element'   => 'h3',
-                            'data-visible-height'   => 0
-                        ]]
-                    ]
+            if (isset($this->providedRestrictions[$moduleName])) {
+                $elements[] = 'restriction_header';
+                $this->addElement('note', 'restriction_header', [
+                    'value'         => '<h4>' . $this->translate('Restrictions') . '</h4>',
+                    'decorators'    => ['ViewHelper']
                 ]);
-            }
-        } else {
-            // Previously it was possible to define restrictions for super users, so make sure
-            // to not remove any restrictions which were set before the enforced separation
-            foreach ($this->providedRestrictions as $restrictionList) {
-                foreach ($restrictionList as $name => $_) {
-                    $this->addElement('hidden', $name);
+
+                foreach ($this->providedRestrictions[$moduleName] as $name => $spec) {
+                    $elements[] = $name;
+                    $this->addElement(
+                        'text',
+                        $name,
+                        [
+                            'label'         => preg_replace(
+                            // Adds a zero-width char after each slash to help browsers break onto newlines
+                                '~(?<!<)/~',
+                                '/&#8203;',
+                                isset($spec['label']) ? $spec['label'] : $spec['name']
+                            ),
+                            'description'   => $spec['description']
+                        ]
+                    )
+                        ->getElement($name)
+                        ->getDecorator('Label')
+                        ->setOption('escape', false);
                 }
             }
+
+            $this->addDisplayGroup($elements, $moduleName . '_elements', [
+                'decorators'    => [
+                    'FormElements',
+                    ['Fieldset', [
+                        'class'                 => 'collapsible',
+                        'data-toggle-element'   => 'h3',
+                        'data-visible-height'   => 0
+                    ]]
+                ]
+            ]);
         }
     }
 
@@ -345,40 +342,17 @@ class RoleForm extends RepositoryForm
         }
 
         $permissions = [];
-        if (isset($values[self::WILDCARD_NAME]) && $values[self::WILDCARD_NAME] &&
-            isset($values['restricts']) && $values['restricts']) {
+        if (isset($values[self::WILDCARD_NAME]) && $values[self::WILDCARD_NAME]) {
             $permissions[] = '*';
+        }
 
-            if (array_key_exists('restricts', $values)) {
-                unset($values['restricts']);
-            }
-
-            foreach ($this->providedPermissions as $moduleName => $permissionList) {
-                foreach ($permissionList as $name => $spec) {
-                    unset($values[$name]);
+        foreach ($this->providedPermissions as $moduleName => $permissionList) {
+            foreach ($permissionList as $name => $spec) {
+                if (isset($values[$name]) && $values[$name]) {
+                    $permissions[] = $spec['name'];
                 }
-            }
 
-            foreach ($values as $key => $value) {
-                if ($value === '0') {
-                    unset($values[$key]);
-                }
-            }
-        } elseif (isset($values[self::WILDCARD_NAME]) && $values[self::WILDCARD_NAME] && ! $values['restricts']) {
-            $permissions[] = '*';
-
-            if (array_key_exists('restricts', $values)) {
-                unset($values['restricts']);
-            }
-        } else {
-            foreach ($this->providedPermissions as $moduleName => $permissionList) {
-                foreach ($permissionList as $name => $spec) {
-                    if (isset($values[$name]) && $values[$name]) {
-                        $permissions[] = $spec['name'];
-                    }
-
-                    unset($values[$name]);
-                }
+                unset($values[$name]);
             }
         }
 
