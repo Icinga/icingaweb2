@@ -103,22 +103,19 @@
     }
   }
 
-  form[id^='form_login-']  > div:nth-child(3) {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    grid-template-areas:
-      "button label"
-    ;
-    margin-top: 10px;
+  .control-group:nth-child(3) {
+    text-align: left;
+    margin-top: 20px;
   }
 
-  form[id^='form_login-'] > div:nth-child(3) > div{
-    grid-area: label;
-    padding-left: 12px;
+  .control-group:nth-child(3) > div{
+    display: inline-block;
+    width: auto;
   }
 
-  form[id^='form_login-'] > div:nth-child(3) > label{
-      grid-area: button;
+  .control-group:nth-child(3) > label {
+    float: left;
+    margin-right: 15px;
   }
 
   input:focus,
