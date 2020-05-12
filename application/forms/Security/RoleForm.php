@@ -37,6 +37,8 @@ class RoleForm extends RepositoryForm
      */
     protected $providedRestrictions;
 
+    protected array $values = [];
+
     public function init()
     {
         $this->setAttrib('class', self::DEFAULT_CLASSES . ' role-form');
@@ -202,14 +204,19 @@ class RoleForm extends RepositoryForm
             $hasFullPerm = false;
             foreach ($permissionList as $name => $spec) {
                 $elements[] = $name;
+                if (! empty(parent::fetchEntry()->permissions) &&
+                    in_array($spec['name'], explode(",",parent::fetchEntry()->permissions))) {
+                    $this->values[$name] = '1';
+                }
+
                 if (isset($formData[self::WILDCARD_NAME]) && $formData[self::WILDCARD_NAME]) {
                     $this->addElement(
                         'checkbox',
                         $name,
                         [
+                            'ignore'        => key_exists($name, $formData[$name])? false: true,
                             'autosubmit'    => isset($spec['isFullPerm']),
-                            'disabled'      => isset($formData[self::WILDCARD_NAME]) &&
-                                                $formData[self::WILDCARD_NAME]?: null,
+                            'disabled'      => isset($formData[self::WILDCARD_NAME]) && $formData[self::WILDCARD_NAME]?: true,
                             'value'         => $formData[self::WILDCARD_NAME],
                             'label'         => preg_replace(
                             // Adds a zero-width char after each slash to help browsers break onto newlines
@@ -230,8 +237,8 @@ class RoleForm extends RepositoryForm
                         [
                             'ignore'        => isset($spec['isUsagePerm']) ? false : $hasFullPerm,
                             'autosubmit'    => isset($spec['isFullPerm']),
-                            'disabled'      => $hasFullPerm ?: null,
-                            'value'         => $hasFullPerm,
+                            'disabled'      => key_exists($name, $this->values)?: null,
+                            'value'         => key_exists($name, $this->values) ? $this->values[$name] : $hasFullPerm,
                             'label'         => preg_replace(
                             // Adds a zero-width char after each slash to help browsers break onto newlines
                                 '~(?<!<)/~',
