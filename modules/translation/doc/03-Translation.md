@@ -11,7 +11,7 @@ part on localizing Icinga Web 2 for different languages and how to use the
 
 ## Translation for Developers <a id="module-translation-developers"></a>
 
-To make use of the built-in translations in your applications code or views, you should use the method
+To make use of the built-in translations in your module's code or views, you should use the method
 `$this->translate('String to be translated')`, let's have a look at an example:
 
 ```php
@@ -71,13 +71,19 @@ class ExampleController extends Controller
 {
     public function indexAction()
     {
-        $this->view->title = $this->translate('My Titile', 'mycontext');
+        $this->view->title = $this->translate('My Title', 'mycontext');
         $this->view->message = $this->translatePlural('Service', 'Services', 3, 'mycontext');
     }
 }
 ```
 
 ## Translation for Translators <a id="module-translation-translators"></a>
+
+> **Note**:
+>
+> If you want to translate Icinga Web 2 or any module made by Icinga, please head over to
+> [Icinga/L10n](https://github.com/Icinga/L10n) instead. We won't accept any contributions
+> in this regard other than those made there.
 
 Icinga Web 2 internally uses the UNIX standard gettext tool to perform internationalization, this means translation
 files in the .po file format are supplied for text strings used in the code.
@@ -108,11 +114,14 @@ When you are done, just save your new settings.
 
 #### Editing .po files <a id="module-translation-translators-poedit-edit-po-files"></a>
 
-To work with Icinga Web 2 .po files, you can open for e.g. the German icinga.po file which is located under
-`application/locale/de_DE/LC_MESSAGES/icinga.po`, as shown below, you will get then a full list of all available
-translation strings for the core application. Each module names its translation files `%module_name%.po`. For a
-module called `yourmodule` the .po translation file will be named `yourmodule.po`.
+> **Note**
+>
+> ll_CC stands for ll=language and CC=country code for e.g `de_DE`, `fr_FR`, `ru_RU`, `it_IT` etc.
 
+To work with .po files, open or create the one for your language located under
+`application/locale/ll_CC/LC_MESSAGES/yourmodule.po`. As shown below, you will
+get then a full list of all available translation strings for the module. Each
+module names its translation files `%module_name%.po`.
 
 ![Full list of strings](img/poedit_004.png)
 
@@ -135,45 +144,20 @@ If you want to try out your translation changes in Icinga Web 2, you can make us
 To get an easier development with translations, you can activate the `translation module` which provides CLI commands,
 after that you would be able to refresh and compile your .po files.
 
-
-> **Note**
->
-> The ll_CC stands for ll=language and CC=country code for e.g `de_DE`, `fr_FR`, `ru_RU`, `it_IT` etc.
-
-### Application <a id="module-translation-tests-application"></a>
-
-To refresh the `icinga.po` file:
-
-```
-icingacli translation refresh icinga ll_CC
-```
-
-And to compile it:
-
-```
-icingacli translation compile icinga ll_CC
-```
-
-> **Note**
->
-> After a compile you need to restart the web server to get new translations available in your application.
-
-### Modules <a id="module-translation-tests-modules"></a>
-
 Let's assume, we want to provide German translations for our just new created module `yourmodule`.
 
 If we haven't yet any translations strings in our .po file or even the .po file, we can use the CLI command, to do the
 job for us:
 
 ```
-icingacli translation refresh module yourmodule ll_CC
+icingacli translation refresh module yourmodule de_DE
 ```
 
 This will go through all .php and .phtml files inside the module and a look after `$this->translate()` if there is
 something to translate - if there is something and is not available in the `yourmodule.po` it will update this file
 for us with new strings.
 
-Now you can open the `yourmodule.po` and you will see something similar:
+Now you can open the `application/locale/de_DE/LC_MESSAGES/yourmodule.po` and you will see something similar:
 
 ```
 # Icinga Web 2 - Head for multiple monitoring backends.
@@ -210,8 +194,12 @@ msgstr "Attrappe"
 The last step is to compile the `yourmodule.po` to the `yourmodule.mo`:
 
 ```
-icingacli translation compile module yourmodule ll_CC
+icingacli translation compile module yourmodule de_DE
 ```
 
-At this moment, everywhere in the module where the `Dummy` should be translated, it would returns the translated
+> **Note**
+>
+> After compiling it you need to restart the web server to get new translations available in your module.
+
+At this moment, everywhere in the module where the `Dummy` should be translated, it would return the translated
 string `Attrappe`.
