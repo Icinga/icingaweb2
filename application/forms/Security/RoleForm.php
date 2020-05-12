@@ -37,7 +37,7 @@ class RoleForm extends RepositoryForm
      */
     protected $providedRestrictions;
 
-    protected array $values = [];
+    protected $values = [];
 
     public function init()
     {
@@ -205,7 +205,7 @@ class RoleForm extends RepositoryForm
             foreach ($permissionList as $name => $spec) {
                 $elements[] = $name;
                 if (! empty(parent::fetchEntry()->permissions) &&
-                    in_array($spec['name'], explode(",",parent::fetchEntry()->permissions))) {
+                    in_array($spec['name'], explode(",", parent::fetchEntry()->permissions))) {
                     $this->values[$name] = '1';
                 }
 
