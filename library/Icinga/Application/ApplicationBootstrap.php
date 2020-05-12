@@ -76,6 +76,13 @@ abstract class ApplicationBootstrap
     protected $configDir;
 
     /**
+     * Locale directory
+     *
+     * @var string
+     */
+    protected $localeDir;
+
+    /**
      * Common storage directory
      *
      * @var string
@@ -663,7 +670,16 @@ abstract class ApplicationBootstrap
      */
     public function getLocaleDir()
     {
-        return $this->getApplicationDir('locale');
+        if ($this->localeDir === null) {
+            $L10nLocales = getenv('ICINGAWEB_LOCALEDIR') ?: '/usr/share/icinga-L10n/locale';
+            if (file_exists($L10nLocales) && is_dir($L10nLocales)) {
+                $this->localeDir = $L10nLocales;
+            } else {
+                $this->localeDir = $this->getApplicationDir('locale');
+            }
+        }
+
+        return $this->localeDir;
     }
 
     /**

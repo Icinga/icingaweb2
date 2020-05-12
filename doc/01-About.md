@@ -65,16 +65,13 @@ More details about this module can be found in [this chapter](../modules/doc/doc
 
 ## Translation <a id="about-translation"></a>
 
-With the translation module every piece of text in the user interface (of the framework itself and any module) can be translated to a language of your choice.
+Icinga Web 2 and all modules by Icinga utilize gettext to provide translations into other languages from the default
+English (en_US). However, the actual language specific files (locales) are not separately included in every project.
 
-Currently provided languages:
+Icinga uses a central repository to manage locales: https://github.com/Icinga/L10n
 
-* German
-* Italian
-* Portuguese
-
-More details about this module can be found in [this chapter](../modules/translation/doc/01-About.md#translation-module-about).
-
+If you want to provide or update a translation for your own language, please head over there where you will find
+[instructions](https://github.com/Icinga/L10n/blob/master/CONTRIBUTING.md) on how to contribute.
 
 ## Accessibility <a id="about-accessibility"></a>
 
