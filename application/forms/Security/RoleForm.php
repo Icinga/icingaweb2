@@ -216,7 +216,8 @@ class RoleForm extends RepositoryForm
                         [
                             'ignore'        => key_exists($name, $formData[$name])? false: true,
                             'autosubmit'    => isset($spec['isFullPerm']),
-                            'disabled'      => isset($formData[self::WILDCARD_NAME]) && $formData[self::WILDCARD_NAME]?: true,
+                            'disabled'      => isset($formData[self::WILDCARD_NAME]) &&
+                            $formData[self::WILDCARD_NAME]?: true,
                             'value'         => $formData[self::WILDCARD_NAME],
                             'label'         => preg_replace(
                             // Adds a zero-width char after each slash to help browsers break onto newlines
