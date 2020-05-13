@@ -39,13 +39,17 @@
     </thead>
     <tbody>
     <?php foreach ($this->announcements as $announcement): /** @var object $announcement */ ?>
-    <?php if ($this->hasPermission('admin')): ?>
-        <tr href="<?= $this->href('announcements/update', array('id' => $announcement->id)) ?>">
-    <?php else: ?>
         <tr>
-    <?php endif ?>
             <td><?= $this->escape($announcement->author) ?></td>
+        <?php if ($this->hasPermission('admin')): ?>
+            <td>
+                <a href="<?= $this->href('announcements/update', array('id' => $announcement->id)) ?>">
+                    <?= $this->ellipsis($this->escape($announcement->message), 100) ?>
+                </a>
+            </td>
+        <?php else: ?>
             <td><?= $this->ellipsis($this->escape($announcement->message), 100) ?></td>
+        <?php endif ?>
             <td><?= $this->formatDateTime($announcement->start) ?></td>
             <td><?= $this->formatDateTime($announcement->end) ?></td>
         <?php if ($this->hasPermission('admin')): ?>
