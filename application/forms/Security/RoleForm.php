@@ -214,7 +214,7 @@ class RoleForm extends RepositoryForm
                         'checkbox',
                         $name,
                         [
-                            'ignore'        => key_exists($name, $this->values)? false: true,
+                            'ignore'        => true,
                             'autosubmit'    => isset($spec['isFullPerm']),
                             'disabled'      => isset($formData[self::WILDCARD_NAME]) &&
                             $formData[self::WILDCARD_NAME]?: null,
