@@ -95,7 +95,7 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
         if ($command !== null) {
             $output = $this->hookRenderer->render($command, $output, ! $raw);
         }
-        if (preg_match('~<[^>]*["/\'][^>]*>~', $output)) {
+        if (preg_match('~<\w+(?>\s\w+=[^>]*)?>~', $output)) {
             // HTML
             $output = preg_replace(
                 self::$htmlPatterns,
