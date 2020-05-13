@@ -24,7 +24,8 @@ class Macro
         'host.name'     => 'host_name',
         'host.address'  => 'host_address',
         'host.address6' => 'host_address6',
-        'service.description' => 'service_description'
+        'service.description' => 'service_description',
+        'service.name'  => 'service_description'
     );
 
     /**
