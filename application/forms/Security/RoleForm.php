@@ -214,10 +214,10 @@ class RoleForm extends RepositoryForm
                         'checkbox',
                         $name,
                         [
-                            'ignore'        => true,
+                            'ignore'        => key_exists($name, $this->values)? false: true,
                             'autosubmit'    => isset($spec['isFullPerm']),
                             'disabled'      => isset($formData[self::WILDCARD_NAME]) &&
-                            $formData[self::WILDCARD_NAME]?: null,
+                                                $formData[self::WILDCARD_NAME]?: null,
                             'value'         => $formData[self::WILDCARD_NAME],
                             'label'         => preg_replace(
                             // Adds a zero-width char after each slash to help browsers break onto newlines
@@ -238,8 +238,8 @@ class RoleForm extends RepositoryForm
                         [
                             'ignore'        => isset($spec['isUsagePerm']) ? false : $hasFullPerm,
                             'autosubmit'    => isset($spec['isFullPerm']),
-                            'disabled'      => key_exists($name, $this->values)?: null,
-                            'value'         => key_exists($name, $this->values) ? $this->values[$name] : $hasFullPerm,
+                            'disabled'      => $hasFullPerm ?: null,
+                            'value'         => key_exists($name, $this->values)? $this->values[$name] : $hasFullPerm,
                             'label'         => preg_replace(
                             // Adds a zero-width char after each slash to help browsers break onto newlines
                                 '~(?<!<)/~',
@@ -316,6 +316,13 @@ class RoleForm extends RepositoryForm
             'groups'            => $role->groups,
             self::WILDCARD_NAME => $role->permissions === '*'
         ];
+
+        if ($values[self::WILDCARD_NAME] !== '*') {
+            $arrPermissions = explode(",", $role->permissions);
+            if ($arrPermissions[0] === '*') {
+                $values[self::WILDCARD_NAME] = 1;
+            }
+        }
 
         if (! empty($role->permissions) && $role->permissions !== '*') {
             $permissions = StringHelper::trimSplit($role->permissions);
