@@ -8,12 +8,7 @@ namespace Icinga\Module\Monitoring\Command\Object;
  */
 abstract class WithCommentCommand extends ObjectCommand
 {
-    /**
-     * Author of the comment
-     *
-     * @var string
-     */
-    protected $author;
+    use CommandAuthor;
 
     /**
      * Comment
@@ -21,29 +16,6 @@ abstract class WithCommentCommand extends ObjectCommand
      * @var string
      */
     protected $comment;
-
-    /**
-     * Set the author
-     *
-     * @param   string $author
-     *
-     * @return  $this
-     */
-    public function setAuthor($author)
-    {
-        $this->author = (string) $author;
-        return $this;
-    }
-
-    /**
-     * Get the author
-     *
-     * @return string
-     */
-    public function getAuthor()
-    {
-        return $this->author;
-    }
 
     /**
      * Set the comment
