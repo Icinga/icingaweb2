@@ -94,6 +94,7 @@ class DeleteCommentCommandForm extends CommandForm
     {
         $cmd = new DeleteCommentCommand();
         $cmd
+            ->setAuthor($this->Auth()->getUser()->getUsername())
             ->setCommentId($this->getElement('comment_id')->getValue())
             ->setCommentName($this->getElement('comment_name')->getValue())
             ->setIsService($this->getElement('comment_is_service')->getValue());
