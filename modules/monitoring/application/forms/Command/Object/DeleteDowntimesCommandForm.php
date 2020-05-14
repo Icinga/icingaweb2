@@ -73,6 +73,7 @@ class DeleteDowntimesCommandForm extends CommandForm
             $delDowntime
                 ->setDowntimeId($downtime->id)
                 ->setDowntimeName($downtime->name)
+                ->setAuthor($this->Auth()->getUser()->getUsername())
                 ->setIsService(isset($downtime->service_description));
             $this->getTransport($this->request)->send($delDowntime);
         }

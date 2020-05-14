@@ -237,25 +237,27 @@ class IcingaApiCommandRenderer implements IcingaCommandRendererInterface
     public function renderDeleteComment(DeleteCommentCommand $command)
     {
         $endpoint = 'actions/remove-comment';
-        $data = array(
-            'comment' => $command->getCommentName()
-        );
+        $data = [
+            'author'    => $command->getAuthor(),
+            'comment'   => $command->getCommentName()
+        ];
         return IcingaApiCommand::create($endpoint, $data);
     }
 
     public function renderDeleteDowntime(DeleteDowntimeCommand $command)
     {
         $endpoint = 'actions/remove-downtime';
-        $data = array(
-            'downtime' => $command->getDowntimeName()
-        );
+        $data = [
+            'author'    => $command->getAuthor(),
+            'downtime'  => $command->getDowntimeName()
+        ];
         return IcingaApiCommand::create($endpoint, $data);
     }
 
     public function renderRemoveAcknowledgement(RemoveAcknowledgementCommand $command)
     {
         $endpoint = 'actions/remove-acknowledgement';
-        $data = array();
+        $data = ['author' => $command->getAuthor()];
         $this->applyFilter($data, $command->getObject());
         return IcingaApiCommand::create($endpoint, $data);
     }

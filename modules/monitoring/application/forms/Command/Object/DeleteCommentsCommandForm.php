@@ -73,6 +73,7 @@ class DeleteCommentsCommandForm extends CommandForm
             $cmd
                 ->setCommentId($comment->id)
                 ->setCommentName($comment->name)
+                ->setAuthor($this->Auth()->getUser()->getUsername())
                 ->setIsService(isset($comment->service_description));
             $this->getTransport($this->request)->send($cmd);
         }

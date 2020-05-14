@@ -10,6 +10,8 @@ use Icinga\Module\Monitoring\Command\IcingaCommand;
  */
 class DeleteCommentCommand extends IcingaCommand
 {
+    use CommandAuthor;
+
     /**
      * ID of the comment that is to be deleted
      *
