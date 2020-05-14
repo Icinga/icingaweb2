@@ -5,10 +5,6 @@
   right: 0;
   top: 0;
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
   background-color: rgba(0, 0, 0, .6);
   opacity: 0;
   font-size: @font-size;
@@ -20,6 +16,15 @@
   &.active {
     opacity: 1;
     pointer-events: auto;
+  }
+
+  > div {
+    height: 100%;
+    pointer-events: none;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 }
 
@@ -94,6 +99,9 @@
 }
 
 .modal-window {
+  overflow: auto;
+  pointer-events: auto;
+
   display: flex;
   align-items: stretch;
   flex-direction: column;
@@ -105,6 +113,5 @@
   margin: 0 auto;
   max-height: 80%;
   min-height: 40vh;
-  overflow: hidden;
-  width: 60em;
+  max-width: 60em;
 }
