@@ -10,6 +10,8 @@ use Icinga\Module\Monitoring\Command\IcingaCommand;
  */
 class DeleteDowntimeCommand extends IcingaCommand
 {
+    use CommandAuthor;
+
     /**
      * ID of the downtime that is to be deleted
      *
