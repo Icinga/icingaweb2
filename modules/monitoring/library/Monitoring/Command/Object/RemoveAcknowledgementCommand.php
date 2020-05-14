@@ -8,6 +8,8 @@ namespace Icinga\Module\Monitoring\Command\Object;
  */
 class RemoveAcknowledgementCommand extends ObjectCommand
 {
+    use CommandAuthor;
+
     /**
      * (non-PHPDoc)
      * @see \Icinga\Module\Monitoring\Command\Object\ObjectCommand::$allowedObjects For the property documentation.

@@ -257,7 +257,7 @@ class IcingaApiCommandRenderer implements IcingaCommandRendererInterface
     public function renderRemoveAcknowledgement(RemoveAcknowledgementCommand $command)
     {
         $endpoint = 'actions/remove-acknowledgement';
-        $data = array();
+        $data = ['author' => $command->getAuthor()];
         $this->applyFilter($data, $command->getObject());
         return IcingaApiCommand::create($endpoint, $data);
     }

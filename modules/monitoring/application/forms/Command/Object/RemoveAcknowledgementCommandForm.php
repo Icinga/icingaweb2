@@ -107,6 +107,7 @@ class RemoveAcknowledgementCommandForm extends ObjectsCommandForm
             /** @var \Icinga\Module\Monitoring\Object\MonitoredObject $object */
             $removeAck = new RemoveAcknowledgementCommand();
             $removeAck->setObject($object);
+            $removeAck->setAuthor($this->Auth()->getUser()->getUsername());
             $this->getTransport($this->request)->send($removeAck);
         }
         Notification::success(mtp(
