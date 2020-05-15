@@ -148,18 +148,11 @@
 }
 
 .icinga-controls {
-  input[type="text"],
-  input[type="password"],
-  input[type="number"],
-  input[type="datetime-local"],
-  input[type="date"],
-  input[type="time"],
-  textarea,
-  select,
-  input[type="checkbox"]:checked + .toggle-switch .toggle-slider:before,
-  input[type="checkbox"]:checked + .toggle-switch > .toggle-slider,
+  input:not([type="checkbox"]):not([type="radio"]),
   .toggle-switch .toggle-slider:before,
-  .toggle-switch > .toggle-slider {
+  .toggle-switch > .toggle-slider,
+  select,
+  textarea {
     border: 1px solid @icinga-blue;
   }
 
