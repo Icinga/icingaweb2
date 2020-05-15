@@ -19,6 +19,7 @@
 
 // Icinga colors
 @icinga-blue: @base1;
+@low-sat-blue: @base00;
 
 @color-ok: #859900;
 @color-critical: #dc322f;
@@ -56,16 +57,35 @@
 // Form colors
 @button-primary-color: lighten(@base02, 20);
 
-#header-logo-container {
+#sidebar {
   background-color: @base02;
+  box-shadow: inset -0.5em 0 1em rgba(0,0,0,0.3);
+}
+#header-logo-container {
+  background-color: transparent;
+}
+#menu {
+  background-color: transparent;
+  box-shadow: none;
 }
 
-.tabs > li > a {
-  color: @base00;
+.tabs {
+  background-color: @base02;
+
+  > li > a {
+    color: @base00;
+  }
 }
 
 .action-link {
   color: @link-color;
+}
+.button-link {
+  background-color: @base02;
+
+  &:hover {
+    background-color: darken(@base03, 5);
+  }
 }
 
 input, select {
@@ -87,6 +107,15 @@ input, select {
 
 #login-footer {
   color: @base01;
+}
+
+#about > img {
+  width: 0;
+  height: 0;
+  padding: 55.5px 160px;
+
+  background: url(../img/icinga-logo-big.png);
+  background-size: contain;
 }
 
 textarea {
@@ -128,8 +157,6 @@ textarea {
 }
 
 #menu {
-  background-color: @base02;
-
   input.search {
     color: @text-color;
     background-image: url(../img/icons/search_white.png);
@@ -157,19 +184,22 @@ textarea {
     }
   }
 
+  .nav-level-2, .nav-level-2:after {
+    background-color: darken(@base03, 3) !important;
+  }
+
   .nav-level-2 > .nav-item {
     color: @text-color;
-    background-color: darken(@base03, 3);
 
     &.active, &:hover {
       a {
-        color: @text-color;
+        color: @text-color !important;
       }
       background-color: @base00;
     }
 
     &.active.selected {
-      background-color: @button-primary-color;
+      background-color: @base02;
     }
 
     &:not(.selected):not(.active) > a:hover,
