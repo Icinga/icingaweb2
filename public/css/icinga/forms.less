@@ -33,6 +33,19 @@ form.icinga-form {
     display: flex;
     justify-content: flex-end;
   }
+
+  &.inline {
+    display: inline-block;
+    width: auto;
+
+    .control-group {
+      margin: 0;
+
+      &:last-child {
+        margin-right: -1em;
+      }
+    }
+  }
 }
 
 // Minimal form layout
@@ -78,6 +91,11 @@ form.icinga-form .control-label-group {
   width: 14em;
 }
 
+form.icinga-form.inline .control-label-group {
+  width: auto;
+  line-height: 0.857em;
+}
+
 .icinga-controls fieldset {
   margin: 0;
   padding: 0;
@@ -107,24 +125,6 @@ form.icinga-form .control-group .control-info {
 }
 form.icinga-form .control-group .toggle-switch ~ .control-info {
   margin-left: 0;
-}
-
-form.inline {
-  display: inline-block;
-  width: auto;
-
-  .control-group {
-    margin: 0;
-
-    &:last-child {
-      margin-right: -1em;
-    }
-  }
-
-  .control-label-group {
-    width: auto;
-    line-height: 0.857em;
-  }
 }
 
 // General input styles
