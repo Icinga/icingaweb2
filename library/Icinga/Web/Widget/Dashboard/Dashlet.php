@@ -249,7 +249,7 @@ EOD;
         }
 
         $url = $this->getUrl();
-        $url->setParam('view', 'compact');
+        $url->setParam('showCompact', true);
         $iframeUrl = clone $url;
         $iframeUrl->setParam('isIframe');
 
@@ -266,7 +266,7 @@ EOD;
         $replaceTokens = array(
             $url,
             $iframeUrl,
-            $url->getUrlWithout(array('view', 'limit')),
+            $url->getUrlWithout(array('showCompact', 'limit')),
             sprintf($view->translate('Show %s', 'dashboard.dashlet.tooltip'), $view->escape($this->getTitle())),
             $view->escape($this->getTitle()),
             $view->translate('Dashlet') . ': ',
