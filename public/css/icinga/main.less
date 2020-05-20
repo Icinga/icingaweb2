@@ -245,34 +245,27 @@ a:hover > .icon-cancel {
 
 .collapsible-control {
   position: relative;
+  z-index: 1;
 
   button {
     .rounded-corners(50%);
 
-    background: @gray-lighter;
-    color: @gray;
+    float: right;
     width: 2em;
     height: 2em;
-    z-index: 1;
-    position: absolute;
-    border: none;
     padding: 0;
-    bottom: -1em;
-    right: .25em;
+    margin-top: -1em;
+    margin-right: .25em;
+
+    background: @gray-lighter;
+    color: @gray;
+    border: none;
     -webkit-box-shadow: 0 0 1/3em rgba(0,0,0,.3);
     -moz-box-shadow: 0 0 1/3em rgba(0,0,0,.3);
     box-shadow: 0 0 1/3em rgba(0,0,0,.3);
 
-    &:hover:before {
-      content: "";
-      display: block;
-      position: absolute;
-      top: -1/6em;
-      right: -1/6em;
-      bottom: -1/6em;
-      left: -1/6em;
-      background: fade(@text-color, 10);
-      .rounded-corners(50%);
+    &:hover {
+      background: @gray-light;
     }
   }
 
