@@ -37,7 +37,7 @@ $linkServiceName = ! ($url->getPath() === 'monitoring/service/show' && $url->get
         </td>
     </tr>
     <tr>
-        <td class="state-col state-<?= Service::getStateText($object->service_state) ?><?= $object->service_handled ? ' handled' : '' ?>">
+        <td class="state-col state-<?= Service::getStateText($object->service_state) ?><?= (int) $object->service_state_type === 0 ? ' soft' : '' ?><?= $object->service_handled ? ' handled' : '' ?>">
             <div class="state-label"><?= Service::getStateText($object->service_state, true) ?></div>
             <div class="state-meta">
                 <?= $this->timeSince($object->service_last_state_change) ?>
