@@ -88,6 +88,15 @@ bind\_dn                 | **Required.** The user to use when connecting to the 
 bind\_pw                 | **Required.** The password to use when connecting to the server.
 encryption               | **Optional.** Type of encryption to use: `none` (default), `starttls`, `ldaps`.
 timeout                  | **Optional.** Connection timeout for every LDAP connection. Defaults to `5`.
+disable_server_side_sort | **Optional.** Disable server side sorting. Defaults to automatic detection whether the server supports this.
+
+#### Server Side Sorting <a id="ldap-server-side-sort"></a>
+
+Icinga Web automatically detects whether the LDAP server supports server side sorting.
+If that is not the case, results get sorted on the client side.
+There are LDAP servers though which report that they support this feature in general but have it disabled for certain
+fields. This may lead to failures. With `disable_server_side_sort` it is possible to disable server side sorting and it
+has precedence over the automatic detection.
 
 #### Example <a id="resources-configuration-ldap-example"></a>
 
