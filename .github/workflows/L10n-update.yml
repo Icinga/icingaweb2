@@ -14,7 +14,7 @@ jobs:
       - name: Repository dispatch
         uses: peter-evans/repository-dispatch@v1
         with:
-          token: ${{ secrets.L10N_ACCESS_TOKEN }}
+          token: ${{ secrets.ICINGABOT_TOKEN }}
           repository: Icinga/L10n
           event-type: update
           client-payload: '{"origin": "${{ github.repository }}", "commit": "${{ github.sha }}"}'
