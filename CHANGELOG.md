@@ -4,7 +4,7 @@ Please make sure to always read our [Upgrading](doc/80-Upgrading.md) documentati
 
 ## What's New
 
-### What's New in Version 2.8.0-rc1
+### What's New in Version 2.8.0
 
 You can find all issues related to this release on our [Roadmap](https://github.com/Icinga/icingaweb2/milestone/55?closed=1).
 
@@ -49,6 +49,28 @@ extraneous spaces to your username.
 
 * External logout not working from the navigation dashboard [#3995](https://github.com/Icinga/icingaweb2/issues/3995)
 * Username with extraneous spaces are not invalid [#4030](https://github.com/Icinga/icingaweb2/pull/4030)
+
+### Changes in Packaging and Dependencies
+
+Valid for distributions:
+
+* RHEL / CentOS 7
+  * Upgrade to PHP 7.3 via RedHat SCL
+  * See [Upgrading to Icinga Web 2 2.8.x](doc/80-Upgrading.md#upgrading-to-icinga-web-2-28x)
+    for manual steps that are required
+
+#### Discontinued Package Updates
+
+Icinga Web 2 v2.8+ is not supported on these platforms:
+
+* RHEL / CentOS 6
+* Debian 8 Jessie
+* Ubuntu 16.04 LTS (Xenial Xerus)
+
+Please consider an upgrade of your central Icinga system to a newer distribution release.
+
+[icinga.com](https://icinga.com/subscription/support-details/) provides an overview about
+currently supported distributions.
 
 ### What's New in Version 2.7.3
 
