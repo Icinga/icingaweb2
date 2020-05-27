@@ -1,5 +1,11 @@
-<div class="controls">
+<div class="controls separated">
     <?= $tabs ?>
+    <?= $this->paginator ?>
+    <div class="sort-controls-container">
+        <?= $this->limiter ?>
+        <?= $this->sortBox ?>
+    </div>
+    <?= $this->filterEditor ?>
 </div>
 <div class="content">
     <?= $this->qlink(
@@ -13,7 +19,7 @@
             'title'             => $this->translate('Create a new role')
         )
     ) ?>
-<?php /** @var \Icinga\Application\Config $roles */ if ($roles->isEmpty()): ?>
+<?php /** @var \Icinga\Application\Config $roles */ if (! $roles->hasResult()): ?>
     <p><?= $this->translate('No roles found.') ?></p>
 <?php return; endif ?>
     <table class="table-row-selectable common-table" data-base-target="_next">
