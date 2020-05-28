@@ -6,12 +6,12 @@ Please make sure to always read our [Upgrading](doc/80-Upgrading.md) documentati
 
 ### What's New in Version 2.8.0
 
-You can find all issues related to this release on our [Roadmap](https://github.com/Icinga/icingaweb2/milestone/55?closed=1).
+You can find all issues related to this release on our [Roadmap](https://github.com/Icinga/icingaweb2/milestone/60?closed=1).
 
 #### Icinga DB
 
 It's happening. Yes. Our latest hot shit is now available for those who are willing to participate in this enormous
-endeavour. Icinga Web 2 is also a crucial part of it and accompanies the 1.0-rc1 release of Icinga DB. If you like
+endeavour. Icinga Web 2 is also a crucial part of it and accompanies the first release of Icinga DB. If you like
 to participate, don't forget to update Icinga Web 2 as well.
 
 #### Support For Even More Hot Shit
