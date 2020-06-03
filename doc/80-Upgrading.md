@@ -45,6 +45,11 @@ Please consider an upgrade of your central Icinga system to a newer distribution
 [icinga.com](https://icinga.com/subscription/support-details/) provides an overview about
 currently supported distributions.
 
+**Framework changes affecting third-party code**
+
+* Url parameter `view=compact` is now deprecated. `showCompact` should be used instead.
+  Details are in pull request [#4164](https://github.com/Icinga/icingaweb2/pull/4164).
+
 ## Upgrading to Icinga Web 2 2.7.x <a id="upgrading-to-2.7.x"></a>
 
 **Breaking changes**
