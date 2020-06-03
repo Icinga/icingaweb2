@@ -130,7 +130,7 @@ if (! $this->compact): ?>
 <div class="action-links">
     <?= $this->qlink(
         $this->translate('Show More'),
-        $this->url()->without(array('view', 'limit')),
+        $this->url()->without(array('showCompact', 'limit')),
         null,
         array(
             'class'             => 'action-link',
