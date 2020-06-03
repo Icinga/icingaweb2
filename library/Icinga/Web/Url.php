@@ -828,6 +828,32 @@ class Url
         return $url;
     }
 
+    /**
+     * Return a copy of this url with only the given parameter(s)
+     *
+     * The argument can be either a single query parameter name or
+     * an array of parameter names to keep on on the query
+     *
+     * @param string|array $keyOrArrayOfKeys
+     *
+     * @return static
+     */
+    public function onlyWith($keyOrArrayOfKeys)
+    {
+        if (! is_array($keyOrArrayOfKeys)) {
+            $keyOrArrayOfKeys = [$keyOrArrayOfKeys];
+        }
+
+        $url = clone $this;
+        foreach ($url->getParams()->toArray(false) as $key => $_) {
+            if (! in_array($key, $keyOrArrayOfKeys, true)) {
+                $url->remove($key);
+            }
+        }
+
+        return $url;
+    }
+
     public function __clone()
     {
         $this->params = clone $this->params;
