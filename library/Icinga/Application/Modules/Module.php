@@ -1308,7 +1308,7 @@ class Module
      */
     protected function registerAssets()
     {
-        if ($this->app->isCli() || ! is_dir($this->assetDir)) {
+        if (! is_dir($this->assetDir)) {
             return $this;
         }
 
