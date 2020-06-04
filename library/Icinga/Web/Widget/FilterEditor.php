@@ -285,12 +285,10 @@ class FilterEditor extends AbstractWidget
                 }
             }
 
-            $url = $this->url()->setQueryString(
-                $filter->toQueryString()
-            )->addParams($preserve);
-            if ($modify) {
-                $url->getParams()->add('modifyFilter');
-            }
+            $url = Url::fromRequest()->onlyWith($this->preserveParams);
+            $urlParams = $url->getParams();
+            $url->setQueryString($filter->toQueryString());
+            $url->getParams()->mergeValues($urlParams->toArray(false));
             $this->redirectNow($url);
         }
 

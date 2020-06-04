@@ -235,7 +235,7 @@ class Controller extends ModuleActionController
             'sort', // setupSortControl()
             'dir', // setupSortControl()
             'backend', // Framework
-            'view', // Framework
+            'showCompact', // Framework
             '_dev' // Framework
         );
 

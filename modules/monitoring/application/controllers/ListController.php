@@ -355,7 +355,7 @@ class ListController extends Controller
         $this->view->form = $form;
 
         $this->params
-            ->remove('view')
+            ->remove('showCompact')
             ->remove('format');
         $orientation = $this->params->shift('vertical', 0) ? 'vertical' : 'horizontal';
 /*

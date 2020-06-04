@@ -147,7 +147,7 @@ abstract class DataView implements QueryInterface, SortRules, FilterColumns, Ite
         $dir = $url->shift('dir');
         $page = $url->shift('page');
         $format = $url->shift('format');
-        $view = $url->shift('view');
+        $view = $url->shift('showCompact');
         $view = $url->shift('backend');
         foreach ($url->getParams() as $k => $v) {
             $this->where($k, $v);

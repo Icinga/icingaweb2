@@ -129,7 +129,10 @@ class ActionController extends Zend_Controller_Action
         $this->_helper->layout()->showFullscreen = $request->getUrl()->shift('showFullscreen');
         $this->_helper->layout()->moduleName = $moduleName;
 
-        $this->view->compact = $request->getParam('view') === 'compact';
+        if ($request->getUrl()->getParam('view') === 'compact') {
+            $request->getUrl()->remove('view');
+            $this->view->compact = true;
+        }
         if ($request->getUrl()->shift('showCompact')) {
             $this->view->compact = true;
         }

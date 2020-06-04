@@ -35,7 +35,7 @@ class ServicesController extends Controller
         $serviceList = new ServiceList($this->backend);
         $this->applyRestriction('monitoring/filter/objects', $serviceList);
         $serviceList->addFilter(Filter::fromQueryString(
-            (string) $this->params->without(array('service_problem', 'service_handled', 'view'))
+            (string) $this->params->without(array('service_problem', 'service_handled', 'showCompact'))
         ));
         $this->serviceList = $serviceList;
         $this->serviceList->setColumns(array(
