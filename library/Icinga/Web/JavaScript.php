@@ -36,13 +36,15 @@ class JavaScript
         'js/icinga/behavior/expandable.js',
         'js/icinga/behavior/filtereditor.js',
         'js/icinga/behavior/selectable.js',
-        'js/icinga/behavior/modal.js'
+        'js/icinga/behavior/modal.js',
+        'js/icinga/behavior/test-flatpickr.js'
     );
 
     protected static $vendorFiles = array(
         'js/vendor/jquery-3.4.1',
         'js/vendor/jquery-migrate-3.1.0',
-        'js/vendor/jquery.sparkline'
+        'js/vendor/jquery.sparkline',
+        'js/vendor/flatpickr'
     );
 
     public static function sendMinified()
