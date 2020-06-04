@@ -188,8 +188,6 @@ table.multiselect tr[href] td {
 
 #main div.filter {
   form.editor {
-    max-width: 37em;
-
     input[type=text], select {
       width: 12em;
       height: 2em;
@@ -201,17 +199,19 @@ table.multiselect tr[href] td {
     }
 
     button {
+      padding: .5em;
       border: none;
       background: none;
+      color: @text-color;
+
+      &:hover, &:focus {
+        color: @icinga-blue;
+      }
     }
 
     .buttons {
+      margin-left: 25em;
       padding: .25em 0;
-      text-align: right;
-    }
-
-    .buttons input {
-      .button();
     }
 
     .buttons input:not(:last-child) {
