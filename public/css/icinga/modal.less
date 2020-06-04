@@ -61,18 +61,18 @@
 
   > button {
     position: absolute;
-    top: 1em;
+    top: .75em;
     left: .5em;
 
     background-color: @gray;
     border: none;
     border-radius: 50%;
     color: @text-color-inverted;
-    height: 1em;
+    height: 1.5em;
     line-height: 1em;
     padding: 0;
     text-align: center;
-    width: 1em;
+    width: 1.5em;
 
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -80,16 +80,12 @@
     appearance: none;
   }
 
-  > button > i {
-    position: absolute;
-    left: 0.25em;
-    top: 0;
-
-    font-size: .7em;
+  > button:hover {
+    opacity: .8;
   }
 
-  > button > .icon:before {
-    margin: 0;
+  > button > .icon-cancel:before {
+    margin-right: 0;
   }
 }
 
