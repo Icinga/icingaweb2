@@ -217,7 +217,31 @@ class RoleForm extends RepositoryForm
                             'ignore'        => key_exists($name, $this->values)? false: true,
                             'autosubmit'    => isset($spec['isFullPerm']),
                             'disabled'      => !key_exists($name, $this->values)?$formData[self::WILDCARD_NAME]:null,
+                            'onclick'       => key_exists($name, $this->values)? 'return false' : 'return true',
                             'value'         => $formData[self::WILDCARD_NAME],
+                            'label'         => preg_replace(
+                            // Adds a zero-width char after each slash to help browsers break onto newlines
+                                '~(?<!<)/~',
+                                '/&#8203;',
+                                isset($spec['label']) ? $spec['label'] : $spec['name']
+                            ),
+                            'description'   => isset($spec['description']) ? $spec['description'] : $spec['name']
+                        ]
+                    )
+                        ->getElement($name)
+                        ->getDecorator('Label')
+                        ->setOption('escape', false);
+                } else {
+                    $this->addElement(
+                        'checkbox',
+                        $name,
+                        [
+                            'ignore'        => isset($spec['isUsagePerm']) ? false : $hasFullPerm,
+                            'autosubmit'    => isset($spec['isFullPerm']),
+                            'disabled'      => !key_exists($name, $this->values) && $hasFullPerm ?: null,
+                            'onclick'       => key_exists($name, $this->values) && $hasFullPerm?
+                                                'return false' : 'return true',
+                            'value'         => $hasFullPerm,
                             'label'         => preg_replace(
                             // Adds a zero-width char after each slash to help browsers break onto newlines
                                 '~(?<!<)/~',
@@ -232,30 +256,6 @@ class RoleForm extends RepositoryForm
                         ->setOption('escape', false);
                     if (isset($spec['isFullPerm'])) {
                         $hasFullPerm = isset($formData[$name]) && $formData[$name];
-                    }
-                } else {
-                    $this->addElement(
-                        'checkbox',
-                        $name,
-                        [
-                            'ignore'        => isset($spec['isUsagePerm']) ? false : $hasFullPerm,
-                            'autosubmit'    => isset($spec['isFullPerm']),
-                            'disabled'      => !key_exists($name, $this->values) && $hasFullPerm ?: null,
-                            'value'         => key_exists($name, $this->values)? $this->values[$name] : $hasFullPerm,
-                            'label'         => preg_replace(
-                            // Adds a zero-width char after each slash to help browsers break onto newlines
-                                '~(?<!<)/~',
-                                '/&#8203;',
-                                isset($spec['label']) ? $spec['label'] : $spec['name']
-                            ),
-                            'description'   => isset($spec['description']) ? $spec['description'] : $spec['name']
-                        ]
-                    )
-                        ->getElement($name)
-                        ->getDecorator('Label')
-                        ->setOption('escape', false);
-                    if (isset($spec['isFullPerm'])) {
-                        $hasFullPerm = !key_exists($name, $this->values) && isset($formData[$name]) && $formData[$name];
                     }
                 }
             }
