@@ -204,8 +204,17 @@
                 }
 
                 query += params[i].key;
-                if (params[i].value !== null) {
-                    query += '=' + params[i].value;
+                switch (params[i].value) {
+                    case true:
+                        break;
+                    case false:
+                        query += '=0';
+                        break;
+                    case null:
+                        query += '=';
+                        break;
+                    default:
+                        query += '=' + params[i].value;
                 }
             }
 
@@ -235,7 +244,7 @@
                     value = segment[i].slice(equalPos + 1);
                 } else {
                     key = segment[i];
-                    value = null;
+                    value = true;
                 }
 
                 params.push({ key: key, value: value });
