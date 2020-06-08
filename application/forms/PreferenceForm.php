@@ -90,6 +90,12 @@ class PreferenceForm extends Form
      */
     public function onSuccess()
     {
+        if (!($this->getElement('btn_submit_preferences')->isChecked()
+            || $this->getElement('btn_submit_session')->isChecked()
+        )) {
+            return false;
+        }
+
         $this->preferences = new Preferences($this->store ? $this->store->load() : array());
 
         $oldTheme = $this->preferences->getValue('icingaweb', 'theme');
@@ -146,6 +152,10 @@ class PreferenceForm extends Form
 
         if (! isset($values['timezone'])) {
             $values['timezone'] = 'autodetect';
+        }
+
+        if (! isset($values['auto_refresh'])) {
+            $values['auto_refresh'] = '1';
         }
 
         $this->populate($values);
@@ -275,6 +285,7 @@ class PreferenceForm extends Form
             'auto_refresh',
             array(
                 'required'      => false,
+                'autosubmit'    => true,
                 'label'         => $this->translate('Enable auto refresh'),
                 'description'   => $this->translate(
                     'This option allows you to enable or to disable the global page content auto refresh'
@@ -282,6 +293,36 @@ class PreferenceForm extends Form
                 'value'         => 1
             )
         );
+
+        if (isset($formData['auto_refresh']) && $formData['auto_refresh']) {
+            $speeds = [1 => $this->translate('Default')];
+
+            foreach ([2, 4, 8] as $speed) {
+                // Using Form#translatePlural() not for $speed==1 and $speed!=1,
+                // but for different $speed-dependent plural forms, e.g. in Russian
+                $speeds[$speed] = sprintf($this->translatePlural('%dx slower', '%dx slower', $speed), $speed);
+                $speeds[rtrim(sprintf('%F', 1.0 / $speed), '0')] = sprintf(
+                    $this->translatePlural('%dx faster', '%dx faster', $speed),
+                    $speed
+                );
+            }
+
+            krsort($speeds);
+
+            $this->addElement(
+                'select',
+                'auto_refresh_speed',
+                [
+                    'required'      => false,
+                    'label'         => $this->translate('Auto refresh speed'),
+                    'description'   => $this->translate(
+                        'This option allows you to speed up or to slow down the global page content auto refresh'
+                    ),
+                    'multiOptions'  => $speeds,
+                    'value'         => ''
+                ]
+            );
+        }
 
         $this->addElement(
             'number',
