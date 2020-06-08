@@ -302,7 +302,9 @@
                 setTimeout(function () {
                     // The column may have not been shown before. To make the transition
                     // delay working we have to wait for the column getting rendered
-                    req.$target.addClass('impact');
+                    if (req.state() === 'pending') {
+                        req.$target.addClass('impact');
+                    }
                 }, 0);
             }
             this.icinga.ui.refreshDebug();
