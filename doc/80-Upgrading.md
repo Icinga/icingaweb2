@@ -49,6 +49,12 @@ currently supported distributions.
 
 * Url parameter `view=compact` is now deprecated. `showCompact` should be used instead.
   Details are in pull request [#4164](https://github.com/Icinga/icingaweb2/pull/4164).
+* Form elements of type checkbox now need to be checked prior submission if they're
+  required. Previously setting `required => true` didn't cause the browser to complain
+  if such a checkbox wasn't checked. Browsers now do complain if so.
+* The general layout now uses flexbox instead of fixed positioning. This applies to the
+  `#header`, `#sidebar`, `#main`, `#footer`, `#col1`, `#col2` and a column's controls.
+  `#sidebar` and `#main` are now additionally wrapped in a new container `#content-wrapper`.
 
 ## Upgrading to Icinga Web 2 2.7.x <a id="upgrading-to-2.7.x"></a>
 
