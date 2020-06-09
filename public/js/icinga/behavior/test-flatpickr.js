@@ -13,16 +13,48 @@
 
     Flatpickr.prototype = new Icinga.EventListener();
 
-    Flatpickr.prototype.onRendered = function (e) {
-        var input = document.querySelectorAll("input[type=datetime-local]");
+    Flatpickr.prototype.onRendered = function (event) {
+        var $el = $(this);
+        var selector = document.querySelectorAll("input[type=datetime-local]");
+        var $container = $('<flatpickr>');
+        var data = $el.find(selector);
+        var options = {
+            appendTo: $container[0],
+            dateFormat: 'Y-m-d\TH:i:s',
+            wrap: true,
+        };
+
+        // flatpickr(selector, options);
 
         if (typeof $().flatpickr === 'function') {
-            $(e.target).find('.flatpickr').each(function () {
+            event.target.insertAdjacentElement('beforeend', $container[0]);
+            $(data).each(function () {
+                if (data.hasOwnProperty('enableTime')) {
+                    options.enableTime = true;
+                    options.dateFormat += ' H:i';
+                    options.defaultHour = data.defaultHour || 12;
+                    options.defaultMinute = data.defaultMinute || 0;
+                }
 
-                $(this).flatpickr(input, {
-                    dateFormat: "Y-m-d\TH:i:s",
-                    enableTime: true
-                });
+                if (data.hasOwnProperty('enableSeconds')) {
+                    options.enableSeconds = true;
+                    options.dateFormat += ':S';
+                    options.defaultSeconds = data.defaultSeconds || 0;
+                }
+
+                if (data.hasOwnProperty('allowInput')) {
+                    options.allowInput = true;
+                    options.clickOpens = false;
+                    options.parseDate = function() {
+                        // Accept any date string but don't update the value of the input
+                        // If the dev console is open this will issue a warning.
+                        return true;
+                    };
+                }
+
+                console.log(options);
+
+                $el.flatpickr(options);
             });
         }
     };
