@@ -37,6 +37,7 @@ class TacticalController extends Controller
                 'hosts_unreachable_handled',
                 'hosts_unreachable_unhandled',
                 'hosts_pending',
+                'hosts_pending_not_checked',
                 'hosts_not_checked',
 
                 'services_ok',
@@ -47,6 +48,7 @@ class TacticalController extends Controller
                 'services_unknown_handled',
                 'services_unknown_unhandled',
                 'services_pending',
+                'services_pending_not_checked',
                 'services_not_checked',
             )
         );
@@ -63,8 +65,8 @@ class TacticalController extends Controller
         $summary = $stats->fetchRow();
 
         // Correct pending counts. Done here instead of in the query for compatibility reasons.
-        $summary->hosts_pending -= $summary->hosts_not_checked;
-        $summary->services_pending -= $summary->services_not_checked;
+        $summary->hosts_pending -= $summary->hosts_pending_not_checked;
+        $summary->services_pending -= $summary->services_pending_not_checked;
 
         $hostSummaryChart = new Donut();
         $hostSummaryChart
@@ -74,7 +76,7 @@ class TacticalController extends Controller
             ->addSlice($summary->hosts_unreachable_handled, array('class' => 'slice-state-unreachable-handled'))
             ->addSlice($summary->hosts_unreachable_unhandled, array('class' => 'slice-state-unreachable'))
             ->addSlice($summary->hosts_pending, array('class' => 'slice-state-pending'))
-            ->addSlice($summary->hosts_not_checked, array('class' => 'slice-state-not-checked'))
+            ->addSlice($summary->hosts_pending_not_checked, array('class' => 'slice-state-not-checked'))
             ->setLabelBig($summary->hosts_down_unhandled)
             ->setLabelBigEyeCatching($summary->hosts_down_unhandled > 0)
             ->setLabelSmall($this->translate('Hosts Down'));
@@ -89,7 +91,7 @@ class TacticalController extends Controller
             ->addSlice($summary->services_unknown_handled, array('class' => 'slice-state-unknown-handled'))
             ->addSlice($summary->services_unknown_unhandled, array('class' => 'slice-state-unknown'))
             ->addSlice($summary->services_pending, array('class' => 'slice-state-pending'))
-            ->addSlice($summary->services_not_checked, array('class' => 'slice-state-not-checked'))
+            ->addSlice($summary->services_pending_not_checked, array('class' => 'slice-state-not-checked'))
             ->setLabelBig($summary->services_critical_unhandled)
             ->setLabelBigEyeCatching($summary->services_critical_unhandled > 0)
             ->setLabelSmall($this->translate('Services Critical'));
