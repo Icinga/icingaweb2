@@ -1,3 +1,6 @@
+<?php
+use Icinga\Data\Filter\Filter;
+?>
 <?php if (! $this->compact): ?>
 <div class="controls">
     <?= $this->tabs ?>
@@ -53,15 +56,15 @@
             <?php endif ?>
             <?php if ($statusSummary->hosts_pending): ?>
                 <li>
-                    <a href="<?= $this->filteredUrl('monitoring/list/hosts', array('host_state' => 99, 'sort' => 'host_last_check', 'dir' => 'asc')) ?>">
+                    <a href="<?= $this->filteredUrl('monitoring/list/hosts', array('host_state' => 99, 'sort' => 'host_last_check', 'dir' => 'asc'))->addFilter(Filter::not(Filter::where('host_active_checks_enabled', 0), Filter::where('host_passive_checks_enabled', 0))) ?>">
                         <span class="state state-pending badge"><?= $statusSummary->hosts_pending ?></span><?= $this->translate('Pending') ?>
                     </a>
                 </li>
             <?php endif ?>
-            <?php if ($statusSummary->hosts_not_checked): ?>
+            <?php if ($statusSummary->hosts_pending_not_checked): ?>
                 <li>
-                    <a href="<?= $this->filteredUrl('monitoring/list/hosts', array('host_active_checks_enabled' => 0, 'host_passive_checks_enabled' => 0, 'sort' => 'host_last_check', 'dir' => 'asc')) ?>">
-                        <span class="state slice-state-not-checked badge"><?= $statusSummary->hosts_not_checked ?></span><?= $this->translate('Not Checked') ?>
+                    <a href="<?= $this->filteredUrl('monitoring/list/hosts', array('host_state' => 99, 'host_active_checks_enabled' => 0, 'host_passive_checks_enabled' => 0, 'sort' => 'host_last_check', 'dir' => 'asc')) ?>">
+                        <span class="state slice-state-not-checked badge"><?= $statusSummary->hosts_pending_not_checked ?></span><?= $this->translate('Not Checked') ?>
                     </a>
                 </li>
             <?php endif ?>
@@ -124,15 +127,15 @@
             <?php endif;
             if ($statusSummary->services_pending):?>
                 <li>
-                    <a href="<?= $this->filteredUrl('monitoring/list/services', array('service_state' => 99, 'sort' => 'service_last_check', 'dir' => 'asc')) ?>">
+                    <a href="<?= $this->filteredUrl('monitoring/list/services', array('service_state' => 99, 'sort' => 'service_last_check', 'dir' => 'asc'))->addFilter(Filter::not(Filter::where('service_active_checks_enabled', 0), Filter::where('service_passive_checks_enabled', 0))) ?>">
                         <span class="state state-pending badge"><?= $statusSummary->services_pending ?></span><?= $this->translate('Pending') ?>
                     </a>
                 </li>
             <?php endif;
-            if ($statusSummary->services_not_checked):?>
+            if ($statusSummary->services_pending_not_checked):?>
                 <li>
-                    <a href="<?= $this->filteredUrl('monitoring/list/services', array('service_active_checks_enabled' => 0, 'service_passive_checks_enabled' => 0, 'sort' => 'service_last_check', 'dir' => 'asc')) ?>">
-                        <span class="state slice-state-not-checked badge"><?= $statusSummary->services_not_checked ?></span><?= $this->translate('Not Checked') ?>
+                    <a href="<?= $this->filteredUrl('monitoring/list/services', array('service_state' => 99, 'service_active_checks_enabled' => 0, 'service_passive_checks_enabled' => 0, 'sort' => 'service_last_check', 'dir' => 'asc')) ?>">
+                        <span class="state slice-state-not-checked badge"><?= $statusSummary->services_pending_not_checked ?></span><?= $this->translate('Not Checked') ?>
                     </a>
                 </li>
             <?php endif?>
