@@ -37,7 +37,7 @@ class RememberMe
     protected $rsa;
 
     /** @var int Timestamp when the remember me cookie expires */
-    protected $expiresIn;
+    protected $expiresAt;
 
     /**
      * Get whether the remember cookie is set
@@ -122,7 +122,7 @@ class RememberMe
     public static function removeExpired()
     {
         (new static())->getDb()->delete(static::TABLE, [
-            'expires_in < NOW()'
+            'expires_at < NOW()'
         ]);
     }
 
@@ -134,7 +134,7 @@ class RememberMe
     public function getCookie()
     {
         return (new Cookie(static::COOKIE))
-            ->setExpire($this->getExpiresIn())
+            ->setExpire($this->getExpiresAt())
             ->setHttpOnly(true)
             ->setValue(implode('|', [
                 $this->rsa->encryptToBase64($this->username),
@@ -146,29 +146,29 @@ class RememberMe
     /**
      * Get the timestamp when the cookie expires
      *
-     * Defaults to now plus 30 days, if not set via {@link setExpiresIn()}.
+     * Defaults to now plus 30 days, if not set via {@link setExpiresAt()}.
      *
      * @return int
      */
-    public function getExpiresIn()
+    public function getExpiresAt()
     {
-        if ($this->expiresIn === null) {
-            $this->expiresIn = time() + 60 * 60 * 24 * 30;
+        if ($this->expiresAt === null) {
+            $this->expiresAt = time() + 60 * 60 * 24 * 30;
         }
 
-        return $this->expiresIn;
+        return $this->expiresAt;
     }
 
     /**
      * Set the timestamp when the cookie expires
      *
-     * @param int $expiresIn
+     * @param int $expiresAt
      *
      * @return $this
      */
-    public function setExpiresIn($expiresIn)
+    public function setExpiresAt($expiresAt)
     {
-        $this->expiresIn = $expiresIn;
+        $this->expiresAt = $expiresAt;
 
         return $this;
     }
@@ -214,7 +214,7 @@ class RememberMe
             'username'    => $this->username,
             'private_key' => $this->rsa->getPrivateKey(),
             'public_key'  => $this->rsa->getPublicKey(),
-            'expires_in'  => date('Y-m-d H:i:s', $this->getExpiresIn()),
+            'expires_at'  => date('Y-m-d H:i:s', $this->getExpiresAt()),
             'ctime'       => new Expression('NOW()'),
             'mtime'       => new Expression('NOW()')
         ]);
