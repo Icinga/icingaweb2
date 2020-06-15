@@ -351,6 +351,9 @@ form.icinga-form .form-controls {
 }
 
 // Disabled inputs
+.control-group > input[type="checkbox"][readonly="readonly"] + label {
+  pointer-events: none;
+}
 
 .icinga-controls .toggle-switch.disabled {
   cursor: default;
