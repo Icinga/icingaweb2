@@ -216,8 +216,8 @@ class RoleForm extends RepositoryForm
                         [
                             'ignore'        => key_exists($name, $this->values)? false: true,
                             'autosubmit'    => isset($spec['isFullPerm']),
-                            'disabled'      => !key_exists($name, $this->values)?$formData[self::WILDCARD_NAME]:null,
-                            'onclick'       => key_exists($name, $this->values)? 'return false' : 'return true',
+                            'disabled'      => !key_exists($name, $this->values)?:null,
+                            'readonly'      => key_exists($name, $this->values) ? true : null,
                             'value'         => $formData[self::WILDCARD_NAME],
                             'label'         => preg_replace(
                             // Adds a zero-width char after each slash to help browsers break onto newlines
@@ -239,8 +239,7 @@ class RoleForm extends RepositoryForm
                             'ignore'        => isset($spec['isUsagePerm']) ? false : $hasFullPerm,
                             'autosubmit'    => isset($spec['isFullPerm']),
                             'disabled'      => !key_exists($name, $this->values) && $hasFullPerm ?: null,
-                            'onclick'       => key_exists($name, $this->values) && $hasFullPerm?
-                                                'return false' : 'return true',
+                            'readonly'      => key_exists($name, $this->values) && $hasFullPerm ? true : null,
                             'value'         => $hasFullPerm,
                             'label'         => preg_replace(
                             // Adds a zero-width char after each slash to help browsers break onto newlines
