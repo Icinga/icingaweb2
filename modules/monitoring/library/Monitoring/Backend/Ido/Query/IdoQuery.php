@@ -568,6 +568,13 @@ abstract class IdoQuery extends DbQuery
             $and = false;
         }
 
+        $alias = $filter->getColumn();
+        $column = $subQuery->aliasToColumnName($alias);
+        if (isset($this->caseInsensitiveColumns[$subQuery->aliasToTableName($alias)][$alias])) {
+            $column = 'LOWER( ' . $column . ' )';
+            $subQueryFilter->setExpression(array_map('strtolower', $subQueryFilter->getExpression()));
+        }
+
         $additional = null;
 
         list($theirs, $ours) = $this->joinSubQuery($subQuery, $queryName, $subQueryFilter, $and, $negate, $additional);
@@ -620,7 +627,7 @@ abstract class IdoQuery extends DbQuery
         $subQueryFilter->setColumn(preg_replace(
             '/(?<=^|\s)\w+(?=\.)/',
             'sub_$0',
-            $subQuery->aliasToColumnName($filter->getColumn())
+            $column
         ));
 
         if ($negate) {
