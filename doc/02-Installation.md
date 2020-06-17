@@ -17,7 +17,7 @@ chapter.
 * PHP version >= 5.6.0
 * The following PHP modules must be installed: cURL, gettext, intl, mbstring, OpenSSL and xml
 * LDAP PHP library when using Active Directory or LDAP for authentication
-* MySQL or PostgreSQL PHP libraries
+* [Icinga PHP Library (ipl)](https://github.com/Icinga/icingaweb2-module-ipl) (>= 0.5) (Icinga Web 2 module)
 
 
 ## Installing Icinga Web 2 from Package <a id="installing-from-package"></a>
