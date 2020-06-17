@@ -191,6 +191,11 @@ class Manager
                 $this->loadModule($name);
             }
 
+            if ($this->hasInstalled('ipl')) {
+                // Load module ipl in any case
+                $this->loadModule('ipl');
+            }
+
             $this->loadedAllEnabledModules = true;
         }
 
