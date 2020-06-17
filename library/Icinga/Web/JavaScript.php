@@ -40,7 +40,8 @@ class JavaScript
         'js/icinga/behavior/expandable.js',
         'js/icinga/behavior/filtereditor.js',
         'js/icinga/behavior/selectable.js',
-        'js/icinga/behavior/modal.js'
+        'js/icinga/behavior/modal.js',
+        'js/icinga/behavior/complete.js'
     ];
 
     protected static $vendorFiles = [
