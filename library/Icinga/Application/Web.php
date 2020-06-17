@@ -117,7 +117,7 @@ class Web extends EmbeddedWeb
             }
         }
         $mm = $this->getModuleManager();
-        foreach ($mm->listEnabledModules() as $moduleName) {
+        foreach ($mm->listLoadedModules() as $moduleName) {
             $moduleThemePath = $mm->getModule($moduleName)->getCssDir() . '/themes';
             if (! DirectoryIterator::isReadable($moduleThemePath)) {
                 continue;
