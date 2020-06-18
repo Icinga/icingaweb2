@@ -4,12 +4,7 @@
 
 .tabs {
   background-color: @icinga-blue;
-  letter-spacing: -0.417em;
-}
-
-.tabs > li {
-  display: inline-block;
-  letter-spacing: normal;
+  display: flex;
 }
 
 .tabs a {
@@ -22,12 +17,19 @@
 }
 
 .tabs > li {
+  flex: 0 1 auto;
+  overflow: hidden;
+  min-width: 2em;
+
   &:not(:last-child) {
     margin-right: 0.5em;
   }
 
   > a {
     color: @body-bg-color;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 
     &:hover {
       text-decoration: none;
@@ -39,6 +41,10 @@
   > a:focus {
     background-color: @body-bg-color;
     color: @text-color;
+  }
+
+  &.close-button {
+    margin-left: auto;
   }
 }
 
