@@ -69,6 +69,8 @@
   color: @menu-color;
 
   &.active {
+    color: @white;
+
     > a > .badge {
       display: none;
     }
@@ -165,7 +167,7 @@
   }
 
   &.active > a {
-    color: @menu-color;
+    color: @body-bg-color;
   }
 }
 
@@ -498,10 +500,6 @@ html.no-js  #toggle-sidebar {
     &:not(.selected):not(.active):hover,
     &:not(.selected):not(.active):focus {
       background-color: darken(@menu-bg-color, 20);
-
-      > a {
-        color: @menu-2ndlvl-highlight-color;
-      }
     }
   }
 }
@@ -519,7 +517,7 @@ html.no-js  #toggle-sidebar {
   }
 
   &.badge-nav-item a.badge {
-    color: white;
+    color: @body-bg-color;
     flex: 0 1 auto;
     margin-right: 1em;
     padding: .25em;
@@ -535,10 +533,6 @@ html.no-js  #toggle-sidebar {
   &.badge-nav-item:not(.selected) {
     &:hover {
       background-color: darken(@menu-bg-color, 20);
-
-      a {
-        color: white;
-      }
     }
   }
 }
