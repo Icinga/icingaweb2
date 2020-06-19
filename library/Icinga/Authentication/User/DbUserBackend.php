@@ -184,9 +184,15 @@ class DbUserBackend extends DbRepository implements UserBackendInterface, Inspec
             $columns = array('password_hash');
         }
 
+        $nameColumn = 'name';
+        if ($this->ds->getDbType() === 'mysql') {
+            $username = strtolower($username);
+            $nameColumn = 'BINARY LOWER(name)';
+        }
+
         $query = $this->ds->select()
             ->from($this->prependTablePrefix('user'), $columns)
-            ->where(($this->ds->getDbType() === 'mysql' ? 'BINARY ' : '') . 'name', $username)
+            ->where($nameColumn, $username)
             ->where('active', true);
 
         $statement = $this->ds->getDbAdapter()->prepare($query->getSelectQuery());
