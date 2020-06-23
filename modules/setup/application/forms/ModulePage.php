@@ -35,8 +35,12 @@ class ModulePage extends Form
             $checked = false;
             if ($module->getName() === 'monitoring') {
                 $checked = ! $this->foundIcingaDB;
-            } elseif ($this->foundIcingaDB && $module->getName() === 'icingadb') {
-                $checked = true;
+            } elseif ($this->foundIcingaDB) {
+                switch ($module->getName()) {
+                    case 'icingadb':
+                    case 'ipl':
+                        $checked = true;
+                }
             }
 
             $this->addElement(
