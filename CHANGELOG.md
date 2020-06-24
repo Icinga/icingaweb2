@@ -4,17 +4,38 @@ Please make sure to always read our [Upgrading](doc/80-Upgrading.md) documentati
 
 ## What's New
 
+### What's New in Version 2.8.1
+
+You can find all issues related to this release on the respective [milestone](https://github.com/Icinga/icingaweb2/milestone/61?closed=1).
+
+#### Case Sensitivity Problems
+
+A fix in v2.8.0 led to users being not able to login if they got their username's case wrong. A hostgroup name's case
+has also been incorrectly taken into account despite using a `CI` labelled column in the servicegrid and other lists.
+
+* Login usernames now case sensitive in 2.8 [#4184](https://github.com/Icinga/icingaweb2/issues/4184)
+* Case insensitive hostgroup filter in service grid not working [#4178](https://github.com/Icinga/icingaweb2/issues/4178)
+
+#### Issues With Numbers
+
+An attempt to avoid misrepresenting environments in the tactical overview had an opposite effect by showing negative
+numbers. Filtering for timestamps in the event history also showed no results because our filters couldn't cope with
+plain numbers anymore.
+
+* Tactical overview showing "-1 pending" hosts [#4174](https://github.com/Icinga/icingaweb2/issues/4174)
+* Timestamp filters not working correctly in history views [#4182](https://github.com/Icinga/icingaweb2/issues/4182)
+
 ### What's New in Version 2.8.0
 
 You can find all issues related to this release on our [Roadmap](https://github.com/Icinga/icingaweb2/milestone/60?closed=1).
 
 #### Icinga DB
 
-It's happening. Yes. Our latest hot shit is now available for those who are willing to participate in this enormous
+It's happening. Yes. Our latest achievement is now available for those who are willing to participate in this enormous
 endeavour. Icinga Web 2 is also a crucial part of it and accompanies the first release of Icinga DB. If you like
 to participate, don't forget to update Icinga Web 2 as well.
 
-#### Support For Even More Hot Shit
+#### Support for PHP 7.4 and MySQL 8
 
 We also made sure that you won't be disappointed by Icinga Web 2 if you're running PHP 7.4 or trying to access a MySQL
 database with version 8+. These should pose no issues anymore now. But if you still somehow managed to get issues
