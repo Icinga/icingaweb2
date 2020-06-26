@@ -15,14 +15,21 @@
     Flatpickr.prototype = new Icinga.EventListener();
 
     Flatpickr.prototype.onRendered = function (event) {
+        if (! $('#flatpickr-container').length
+            && ! $('#login').length
+            && ! $('#guest-error').length
+            && ! $('#setup').length
+        ) {
+            $('#layout').append(
+                '<div id="flatpickr-container"></div>'
+            );
+        }
         if (typeof $().flatpickr === 'function') {
-            var input = document.querySelector("input[class=flatpickr-input]");
             $('.icinga-flatpickr').each(function () {
                 var $el = $(this);
-                var data = $el.find(input);
+                var data = $el.find('input').data();
                 var options = {
-                    minDate: "today",
-                    appendTo: input,
+                    appendTo: $('#flatpickr-container')[0],
                     dateFormat: "Y-m-d",
                     wrap: true
                 };
@@ -51,8 +58,8 @@
                 }
 
                 //console.log(options);
-                var selector = document.querySelector("button[class=icon-calendar]");
-                $el.flatpickr(selector, options);
+
+                $el.flatpickr(options);
             });
         }
     };
