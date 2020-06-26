@@ -75,20 +75,28 @@ class ScheduleServiceDowntimeCommandForm extends ObjectsCommandForm
                 'dateTimePicker',
                 'start',
                 array(
-                    'required'      => true,
-                    'label'         => $this->translate('Start Time'),
-                    'description'   => $this->translate('Set the start date and time for the downtime.'),
-                    'value'         => $start
+                    'required'            => true,
+                    'label'               => $this->translate('Start Time'),
+                    'placeholder'         => $this->translate('Select a start date or provide a textual datetime description'),
+                    'data-allow-input'    => true,
+                    'data-enable-time'    => true,
+                    'data-enable-seconds' => true,
+                    'data-default-hour'   => '00'
                 )
             ),
             array(
                 'dateTimePicker',
                 'end',
                 array(
-                    'required'      => true,
-                    'label'         => $this->translate('End Time'),
-                    'description'   => $this->translate('Set the end date and time for the downtime.'),
-                    'value'         => $end
+                    'required'             => true,
+                    'label'                => $this->translate('End Time'),
+                    'placeholder'          => $this->translate('Select a end date or provide a textual datetime description'),
+                    'data-allow-input'     => true,
+                    'data-enable-time'     => true,
+                    'data-enable-seconds'  => true,
+                    'data-default-hour'    => '23',
+                    'data-default-minute'  => '59',
+                    'data-default-seconds' => '59'
                 )
             ),
             array(
