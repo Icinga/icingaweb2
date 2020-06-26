@@ -19,10 +19,9 @@
             var input = document.querySelector("input[class=flatpickr-input]");
             $('.icinga-flatpickr').each(function () {
                 var $el = $(this);
-                var date = new Date();
                 var data = $el.find(input);
                 var options = {
-                    enable: [{from: date, to: 2100-12-31}],
+                    minDate: "today",
                     appendTo: input,
                     dateFormat: "Y-m-d",
                     wrap: true
