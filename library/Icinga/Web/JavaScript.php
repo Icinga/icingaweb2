@@ -37,7 +37,7 @@ class JavaScript
         'js/icinga/behavior/filtereditor.js',
         'js/icinga/behavior/selectable.js',
         'js/icinga/behavior/modal.js',
-        'js/icinga/behavior/test-flatpickr.js'
+        'js/icinga/behavior/icinga-flatpickr.js'
     );
 
     protected static $vendorFiles = array(
