@@ -9,26 +9,25 @@
     var Flatpickr = function (icinga) {
         Icinga.EventListener.call(this, icinga);
         this.on('rendered', this.onRendered);
+        this.icinga = icinga;
     };
 
     Flatpickr.prototype = new Icinga.EventListener();
 
     Flatpickr.prototype.onRendered = function (event) {
-        var $el = $(this);
-        var selector = document.querySelectorAll("input[type=datetime-local]");
-        var $container = $('<flatpickr>');
-        var data = $el.find(selector);
-        var options = {
-            appendTo: $container[0],
-            dateFormat: 'Y-m-d\TH:i:s',
-            wrap: true,
-        };
-
-        // flatpickr(selector, options);
-
         if (typeof $().flatpickr === 'function') {
-            event.target.insertAdjacentElement('beforeend', $container[0]);
-            $(data).each(function () {
+            var input = document.querySelector("input[class=flatpickr-input]");
+            $('.icinga-flatpickr').each(function () {
+                var $el = $(this);
+                var date = new Date();
+                var data = $el.find(input);
+                var options = {
+                    enable: [{from: date, to: 2100-12-31}],
+                    appendTo: input,
+                    dateFormat: "Y-m-d",
+                    wrap: true
+                };
+
                 if (data.hasOwnProperty('enableTime')) {
                     options.enableTime = true;
                     options.dateFormat += ' H:i';
@@ -52,9 +51,9 @@
                     };
                 }
 
-                console.log(options);
-
-                $el.flatpickr(options);
+                //console.log(options);
+                var selector = document.querySelector("button[class=icon-calendar]");
+                $el.flatpickr(selector, options);
             });
         }
     };
