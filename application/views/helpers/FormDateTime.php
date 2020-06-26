@@ -50,7 +50,7 @@ class Zend_View_Helper_FormDateTime extends Zend_View_Helper_FormElement
         unset($attribs['local']);  // Unset local to not render it again in $this->_htmlAttribs($attribs)
         // id="%s"
         $html5 =  sprintf(
-            '<input type="text" class="flatpickr-input" name="%s" %s%s%s',
+            '<input type="text" class="flatpickr-input" data-input=true name="%s" %s%s%s',
             //$type,
             $this->view->escape($name),
             //$this->view->escape($id),
@@ -59,8 +59,8 @@ class Zend_View_Helper_FormDateTime extends Zend_View_Helper_FormElement
             $this->_htmlAttribs($attribs),
             $this->getClosingBracket()
         );
-        $html5 .= sprintf('<button id="flatpickr-cal" type="button" class="icon-calendar" data-toggle=true>');
-        $html5 .= sprintf('<button id="flatpickr-can" type="button" class="icon-cancel" data-clear=true>');
+        $html5 .= sprintf('<button type="button" class="icon-calendar" data-toggle=true>');
+        $html5 .= sprintf('<button type="button" class="icon-cancel" data-clear=true>');
         return "<div class='icinga-flatpickr'>" . $html5 . "</div>";
     }
 }
