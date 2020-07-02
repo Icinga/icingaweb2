@@ -136,7 +136,7 @@ class FilterExpression extends Filter
         return $this->column . $this->sign . $expression;
     }
 
-    protected function isBooleanTrue()
+    public function isBooleanTrue()
     {
         return $this->sign === '=' && $this->expression === true;
     }
