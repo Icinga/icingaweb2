@@ -141,9 +141,9 @@ class FilterQueryString
         );
     }
 
-    protected function readFilters($nestingLevel = 0, $op = null)
+    protected function readFilters($nestingLevel = 0, $op = null, $filters = null)
     {
-        $filters = array();
+        $filters = empty($filters) ? [] : $filters;
         while ($this->pos < $this->length) {
             if ($op === '!' && count($filters) === 1) {
                 break;
@@ -190,6 +190,17 @@ class FilterQueryString
                 if ($next === $op) {
                     continue;
                 }
+                if (in_array($next, ['&', '|'])) {
+                    if ($op === '&') {
+                        $this->debug('Setting op to ' . $next, $nestingLevel, $op);
+                        $filters = [Filter::matchAll($filters)];
+                        $op = $next;
+                    } else if ($op === '|') {
+                        $filters[] = $this->readFilters($nestingLevel + 1, $next, [array_pop($filters)]);
+                    }
+
+                    continue;
+                }
                 $this->parseError($next, "$op level $nestingLevel");
             } else {
                 $this->debug('Got new expression: ' . $filter, $nestingLevel, $op);
@@ -218,9 +229,18 @@ class FilterQueryString
                     }
                     $this->parseError($next);
                 }
-                if ($op === null && in_array($next, array('&', '|'))) {
-                    $this->debug('Setting op to ' . $next, $nestingLevel, $op);
-                    $op = $next;
+                if (in_array($next, ['&', '|'])) {
+                    if ($op === null || $op === '&') {
+                        if ($op === '&') {
+                            $filters = [Filter::matchAll($filters)];
+                        }
+
+                        $this->debug('Setting op to ' . $next, $nestingLevel, $op);
+                        $op = $next;
+                    } else if ($op === '|') {
+                        $filters[] = $this->readFilters($nestingLevel + 1, $next, [array_pop($filters)]);
+                    }
+
                     continue;
                 }
                 $this->parseError($next);
