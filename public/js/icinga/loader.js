@@ -245,6 +245,10 @@
             // Not sure whether we need this Accept-header
             var headers = { 'X-Icinga-Accept': 'text/html' };
 
+            if (autorefresh) {
+                headers['X-Icinga-Autorefresh'] = '1';
+            }
+
             // Ask for a new window id in case we don't already have one
             if (this.icinga.ui.hasWindowId()) {
                 var windowId = this.icinga.ui.getWindowId();
