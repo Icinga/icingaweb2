@@ -960,9 +960,9 @@
                     _this.icinga.loadModule(moduleName);
                 }
 
-                $(this).trigger('rendered');
+                $(this).trigger('rendered', [req.autorefresh, req.scripted]);
             });
-            req.$target.trigger('rendered');
+            req.$target.trigger('rendered', [req.autorefresh, req.scripted]);
 
             this.icinga.ui.refreshDebug();
         },
@@ -1158,7 +1158,7 @@
                 }
             }
 
-            $container.trigger('beforerender');
+            $container.trigger('beforerender', [content, action, autorefresh, scripted]);
 
             var discard = false;
             $.each(_this.icinga.behaviors, function(name, behavior) {
