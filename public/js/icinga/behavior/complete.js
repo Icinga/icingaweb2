@@ -32,8 +32,12 @@
 
     /**
      * @param event
+     * @param content
+     * @param action
+     * @param autorefresh
+     * @param scripted
      */
-    Complete.prototype.onBeforeRender = function (event) {
+    Complete.prototype.onBeforeRender = function (event, content, action, autorefresh, scripted) {
         var _this = event.data.self;
 
         var $elements = $('input[data-term-completion]', event.currentTarget);
@@ -43,6 +47,10 @@
             var $input = $(this),
                 completion = $input.data('completion');
             if (completion) {
+                if (! completion.keepUsedTerms) {
+                    completion.keepUsedTerms = autorefresh;
+                }
+
                 _this.cachedCompletions[_this.icinga.utils.getDomPath($input[0]).join(' ')] = completion;
             }
         });
@@ -50,8 +58,10 @@
 
     /**
      * @param event
+     * @param autorefresh
+     * @param scripted
      */
-    Complete.prototype.onRendered = function (event) {
+    Complete.prototype.onRendered = function (event, autorefresh, scripted) {
         var _this = event.data.self;
 
         // Apply remembered instances
