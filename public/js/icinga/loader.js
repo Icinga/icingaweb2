@@ -861,6 +861,10 @@
             delete this.requests[req.$target.attr('id')];
             this.icinga.ui.fadeNotificationsAway();
 
+            if (req.getResponseHeader('X-Icinga-Reload-Js')) {
+                this.icinga.ui.reloadJs();
+            }
+
             var extraUpdates = req.getResponseHeader('X-Icinga-Extra-Updates');
             if (!! extraUpdates && req.getResponseHeader('X-Icinga-Redirect-Http') !== 'yes') {
                 $.each(extraUpdates.split(','), function (idx, el) {

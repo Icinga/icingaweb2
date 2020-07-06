@@ -55,6 +55,13 @@ class Response extends Zend_Controller_Response_Http
     protected $reloadCss;
 
     /**
+     * Whether to instruct client side script code to reload JS
+     *
+     * @var bool
+     */
+    protected $reloadJs;
+
+    /**
      * Whether to send the rerender layout header on XHR
      *
      * @var bool
@@ -222,6 +229,30 @@ class Response extends Zend_Controller_Response_Http
     }
 
     /**
+     * Get whether to instruct client side script code to reload JS
+     *
+     * @return bool
+     */
+    public function isReloadJs()
+    {
+        return $this->reloadJs;
+    }
+
+    /**
+     * Set whether to instruct client side script code to reload JS
+     *
+     * @param bool $reloadJs
+     *
+     * @return $this
+     */
+    public function setReloadJs($reloadJs)
+    {
+        $this->reloadJs = $reloadJs;
+
+        return $this;
+    }
+
+    /**
      * Get whether to send the rerender layout header on XHR
      *
      * @return bool
@@ -300,6 +331,9 @@ class Response extends Zend_Controller_Response_Http
             }
             if ($this->isReloadCss()) {
                 $this->setHeader('X-Icinga-Reload-Css', 'now', true);
+            }
+            if ($this->isReloadJs()) {
+                $this->setHeader('X-Icinga-Reload-Js', 'now', true);
             }
             if (($autoRefreshInterval = $this->getAutoRefreshInterval()) !== null) {
                 $this->setHeader('X-Icinga-Refresh', $autoRefreshInterval, true);

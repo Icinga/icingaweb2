@@ -68,6 +68,8 @@ class ActionController extends Zend_Controller_Action
 
     protected $reloadCss = false;
 
+    protected $reloadJs = false;
+
     protected $window;
 
     protected $rerenderLayout = false;
@@ -240,6 +242,12 @@ class ActionController extends Zend_Controller_Action
         return $this;
     }
 
+    protected function reloadJs()
+    {
+        $this->reloadJs = true;
+        return $this;
+    }
+
     /**
      * Respond with HTTP 405 if the current request's method is not one of the given methods
      *
@@ -404,6 +412,7 @@ class ActionController extends Zend_Controller_Action
     {
         $this->getResponse()
             ->setReloadCss($this->reloadCss)
+            ->setReloadJs($this->reloadJs)
             ->setRerenderLayout($this->rerenderLayout)
             ->redirectAndExit($url);
     }
@@ -488,6 +497,10 @@ class ActionController extends Zend_Controller_Action
 
         if ($this->reloadCss) {
             $resp->setReloadCss(true);
+        }
+
+        if ($this->reloadJs) {
+            $resp->setReloadJs(true);
         }
 
         if ($this->view->title) {
