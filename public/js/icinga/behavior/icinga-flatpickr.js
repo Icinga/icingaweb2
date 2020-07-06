@@ -1,6 +1,6 @@
 /*! Icinga Web 2 | (c) 2020 Icinga Development Team | GPLv2+ */
 
-(function(Icinga, $) {
+(function (Icinga, $) {
 
     'use strict';
 
@@ -14,7 +14,7 @@
 
     Flatpickr.prototype = new Icinga.EventListener();
 
-    Flatpickr.prototype.onRendered = function (event) {
+    Flatpickr.prototype.onRendered = function () {
         if (! $('#flatpickr-container').length
             && ! $('#login').length
             && ! $('#guest-error').length
@@ -24,11 +24,14 @@
                 '<div id="flatpickr-container"></div>'
             );
         }
+
         if (typeof $().flatpickr === 'function') {
             $('.icinga-flatpickr').each(function () {
                 var $el = $(this);
                 var data = $el.find('input').data();
+                //var lang = document.querySelector('html').getAttribute('lang');
                 var options = {
+                    locale: de,
                     appendTo: $('#flatpickr-container')[0],
                     dateFormat: "Y-m-d",
                     wrap: true
@@ -50,14 +53,14 @@
                 if (data.hasOwnProperty('allowInput')) {
                     options.allowInput = true;
                     options.clickOpens = false;
-                    options.parseDate = function() {
+                    options.parseDate = function () {
                         // Accept any date string but don't update the value of the input
                         // If the dev console is open this will issue a warning.
                         return true;
                     };
                 }
 
-                //console.log(options);
+                console.log(options);
 
                 $el.flatpickr(options);
             });
