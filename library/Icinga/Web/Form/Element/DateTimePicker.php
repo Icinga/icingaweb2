@@ -43,7 +43,7 @@ class DateTimePicker extends FormElement
      */
     public function getFormat()
     {
-        return $this->local ? 'Y-m-d\TH:i:s' : DateTime::RFC3339;
+        return $this->local ? 'Y-m-d H:i:s' : DateTime::RFC3339;
     }
 
     /**

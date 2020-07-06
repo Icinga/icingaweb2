@@ -58,7 +58,7 @@ class DateTimeValidator extends Zend_Validate_Abstract
         }
 
         if (! $value instanceof DateTime) {
-            $format = $baseFormat = $this->local === true ? 'Y-m-d\TH:i:s' : DateTime::RFC3339;
+            $format = $baseFormat = $this->local === true ? 'Y-m-d H:i:s' : DateTime::RFC3339;
             $dateTime = DateTime::createFromFormat($format, $value);
 
             if ($dateTime === false) {
