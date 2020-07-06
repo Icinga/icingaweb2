@@ -572,7 +572,7 @@ abstract class IdoQuery extends DbQuery
         $column = $subQuery->aliasToColumnName($alias);
         if (isset($this->caseInsensitiveColumns[$subQuery->aliasToTableName($alias)][$alias])) {
             $column = 'LOWER( ' . $column . ' )';
-            $subQueryFilter->setExpression(array_map('strtolower', $subQueryFilter->getExpression()));
+            $subQueryFilter->setExpression(array_map('strtolower', (array) $subQueryFilter->getExpression()));
         }
 
         $additional = null;
