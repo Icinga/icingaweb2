@@ -133,7 +133,7 @@ class FilterExpression extends Filter
              '(' . implode('|', array_map('rawurlencode', $this->expression)) . ')' :
              rawurlencode($this->expression);
 
-        return $this->column . $this->sign . $expression;
+        return rawurlencode($this->column) . $this->sign . $expression;
     }
 
     public function isBooleanTrue()
