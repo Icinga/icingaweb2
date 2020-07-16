@@ -45,7 +45,7 @@ class JavaScript
         'js/vendor/jquery-migrate-3.1.0',
         'js/vendor/jquery.sparkline',
         'js/vendor/flatpickr',
-        'js/vendor/flatpickr/dist/l10n/de'
+        'js/vendor/flatpickr/dist/l10n/de.js'
     );
 
     public static function sendMinified()
@@ -66,12 +66,17 @@ class JavaScript
         $basedir = Icinga::app()->getBootstrapDirectory();
 
         $js = $out = '';
-        $min = $minified === '.js' ? '.min' : '';
+        $min = $minified ? '.min' : '';
 
         // Prepare vendor file list
         $vendorFiles = array();
         foreach (self::$vendorFiles as $file) {
-            $vendorFiles[] = $basedir . '/' . $file . $min . '.js';
+            $check = substr($file, -3);
+            if ($check === '.js') {
+                $vendorFiles[] = $basedir . '/' . $file;
+            } else {
+                $vendorFiles[] = $basedir . '/' . $file . $min . '.js';
+            }
         }
 
         // Prepare Icinga JS file list
