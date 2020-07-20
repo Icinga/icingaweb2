@@ -5,10 +5,10 @@
 #login {
 
   height: 100%;
-  background-color: @icinga-blue;
+  background-color: @icinga-secondary;
   background-repeat:  no-repeat;
   background-position: center center;
-  background-image: url(../img/icingaweb2-background.jpg);
+  //background-image: url(../img/icingaweb2-background.jpg);
   // fallback ie 9
   background-size: 100% 100%;
   background-size: cover;
@@ -24,7 +24,7 @@
 
   .login-form {
     position: relative;
-    background: white;
+    background: @menu-bg-color;
     min-width: 288px;
     height: 100%;
     width: 33%;
@@ -114,7 +114,7 @@
 
   input[type=submit] {
     border-radius: .25em;
-    background: @icinga-secondary;
+    background: @icinga-blue;
     color: white;
     border: none;
     height: 2.5em;
@@ -122,7 +122,7 @@
     width: 100%;
 
     &:hover {
-      background-color: darken(@icinga-secondary, 10)
+      background-color: darken(@icinga-blue, 10)
     }
   }
 
@@ -200,7 +200,7 @@
   position: absolute;
   right: 2em; bottom: .25em; left: 2em;
   border-top: 1px solid @gray-light;
-  padding: .5em;
+  padding: .5em 0;
   font-size: @font-size-small;
 
   &:after {
