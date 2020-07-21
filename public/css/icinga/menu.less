@@ -93,7 +93,7 @@
 
   &:not(.selected) > a:hover,
   &:not(.selected) > a:focus {
-    background-color: mix(#000, @menu-bg-color, 20);
+    background-color: fade(@text-color-inverted, 50%)
   }
 
   // Balance icon weight for non active menu items
@@ -124,7 +124,7 @@
     position: absolute;
     right: -.75em;
 
-    background-color: #fff;
+    background-color: @body-bg-color;
     box-shadow: 0 0 1em 0 rgba(0,0,0,0.6);
     content: "";
     display: block;
@@ -499,7 +499,7 @@ html.no-js  #toggle-sidebar {
   &.nav-item:not(.badge-nav-item) {
     &:not(.selected):not(.active):hover,
     &:not(.selected):not(.active):focus {
-      background-color: darken(@menu-bg-color, 20);
+      background-color: fade(@text-color-inverted, 50%)
     }
   }
 }
@@ -532,7 +532,7 @@ html.no-js  #toggle-sidebar {
 #layout:not(.sidebar-collapsed) #menu .nav-level-1 > .nav-item.active .nav-level-2 > li {
   &.badge-nav-item:not(.selected) {
     &:hover {
-      background-color: darken(@menu-bg-color, 20);
+      background-color: fade(@text-color-inverted, 50%)
     }
   }
 }
