@@ -3,7 +3,7 @@
 /**
  * Complete - Behavior for forms with auto-completion of terms
  */
-(function(Icinga, $) {
+(function(Icinga) {
 
     "use strict";
 
@@ -13,20 +13,29 @@
      * @param icinga
      * @constructor
      */
-    var Complete = function (icinga) {
+    let Complete = function (icinga) {
         Icinga.EventListener.call(this, icinga);
 
         this.on('beforerender', '.container', this.onBeforeRender, this);
         this.on('rendered', '.container', this.onRendered, this);
 
         /**
-         * Cached completions
+         * Enriched inputs
+         *
+         * @type {WeakMap<object, FilterInput>}
+         * @private
+         */
+        this._enrichments = new WeakMap();
+
+        /**
+         * Cached enrichments
          *
          * Holds values only during the time between `beforerender` and `rendered`
          *
          * @type {{}}
+         * @private
          */
-        this.cachedCompletions = {};
+        this._cachedEnrichments = {};
     };
     Complete.prototype = new Icinga.EventListener();
 
@@ -38,20 +47,18 @@
      * @param scripted
      */
     Complete.prototype.onBeforeRender = function (event, content, action, autorefresh, scripted) {
-        var _this = event.data.self;
+        if (! autorefresh) {
+            return;
+        }
 
-        var $elements = $('input[data-term-completion]', event.currentTarget);
+        let _this = event.data.self;
+        let inputs = event.currentTarget.querySelectorAll('input[data-term-completion]');
 
         // Remember current instances
-        $elements.each(function () {
-            var $input = $(this),
-                completion = $input.data('completion');
-            if (completion) {
-                if (! completion.keepUsedTerms) {
-                    completion.keepUsedTerms = autorefresh;
-                }
-
-                _this.cachedCompletions[_this.icinga.utils.getDomPath($input[0]).join(' ')] = completion;
+        inputs.forEach((input) => {
+            let enrichment = _this._enrichments.get(input);
+            if (enrichment) {
+                _this._cachedEnrichments[_this.icinga.utils.getDomPath(input).join(' ')] = enrichment;
             }
         });
     };
@@ -62,31 +69,38 @@
      * @param scripted
      */
     Complete.prototype.onRendered = function (event, autorefresh, scripted) {
-        var _this = event.data.self;
+        let _this = event.data.self;
+        let container = event.currentTarget;
 
-        // Apply remembered instances
-        $.each(_this.cachedCompletions, function (inputPath) {
-            var $input = $(inputPath);
-            if ($input.length) {
-                this.refresh($input[0]);
-            } else {
-                this.destroy();
+        if (autorefresh) {
+            // Apply remembered instances
+            for (let inputPath in _this._cachedEnrichments) {
+                let enrichment = _this._cachedEnrichments[inputPath];
+                let input = container.querySelector(inputPath);
+                if (input !== null) {
+                    enrichment.refresh(input);
+                    _this._enrichments.set(input, enrichment);
+                } else {
+                    enrichment.destroy();
+                }
+
+                delete _this._cachedEnrichments[inputPath];
             }
-
-            delete _this.cachedCompletions[inputPath];
-        });
-
-        var $elements = $('input[data-term-completion]', event.currentTarget);
+        }
 
         // Create new instances
-        $elements.each(function() {
-            var $input = $(this);
-            if (! $input.data('completion')) {
-                (new Completion(_this.icinga, this)).bind().restoreTerms();
+        let inputs = container.querySelectorAll('input[data-term-completion]');
+        inputs.forEach((input) => {
+            let enrichment = _this._enrichments.get(input);
+            if (! enrichment) {
+                enrichment = (new FilterInput(input)).bind();
+                enrichment.restoreTerms();
+
+                _this._enrichments.set(input, enrichment);
             }
         });
     };
 
     Icinga.Behaviors.Complete = Complete;
 
-})(Icinga, jQuery);
+})(Icinga);
