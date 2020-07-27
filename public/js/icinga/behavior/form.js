@@ -11,37 +11,26 @@
 
     var Form = function (icinga) {
         Icinga.EventListener.call(this, icinga);
-        this.on('keyup change', 'form input', this.onChange, this);
+        this.on('rendered', '.container', this.onRendered, this);
 
         // store the modification state of all input fields
-        this.inputs = {};
+        this.inputs = new WeakMap();
     };
     Form.prototype = new Icinga.EventListener();
 
     /**
-     * @param evt
+     * @param event
      */
-    Form.prototype.onChange = function (evt) {
-        var el = evt.target;
-        var form = evt.data.self.uniqueFormName($(el).closest('form')[0] || {});
-        evt.data.self.inputs[form] = evt.data.self.inputs[form] || {};
-        if (el.value !== '') {
-            evt.data.self.inputs[form][el.name] = true;
-        } else {
-            evt.data.self.inputs[form][el.name] = false;
-        }
-    };
+    Form.prototype.onRendered = function (event) {
+        var _this = event.data.self;
+        var container = event.target;
 
-    /**
-     * Try to generate an unique form name using the action
-     * and the name of the given form element
-     *
-     * @param   form    {HTMLFormElement}   The
-     * @returns         {String}            The unique name
-     */
-    Form.prototype.uniqueFormName = function(form)
-    {
-        return (form.name || 'undefined') + '.' + (form.action || 'undefined');
+        container.querySelectorAll('form input').forEach(function (input) {
+            if (! _this.inputs.has(input) && input.type !== 'hidden') {
+                _this.inputs.set(input, input.value);
+                _this.icinga.logger.debug('registering "' + input.value + '" as original input value');
+            }
+        });
     };
 
     /**
@@ -68,43 +57,37 @@
             return content;
         }
 
-        var origFocus = document.activeElement;
-        var containerId = $container.attr('id');
-        var icinga = this.icinga;
-        var _this = this.icinga.behaviors.form;
+        if (! autorefresh) {
+            return content;
+        }
+
+        var _this = this;
         var changed = false;
-        $container.find('form').each(function () {
-            var form = _this.uniqueFormName(this);
-            if (autorefresh) {
-                // check if an element in this container was changed
-                $(this).find('input').each(function () {
-                    var name = this.name;
-                    if (_this.inputs[form] && _this.inputs[form][name]) {
-                        icinga.logger.debug(
-                            'form input: ' + form + '.' + name + ' was changed and aborts reload...'
-                        );
-                        changed = true;
-                    }
-                });
-            } else {
-                // user-triggered reload, forget all changes to forms in this container
-                _this.inputs[form] = null;
+        $container[0].querySelectorAll('form input').forEach(function (input) {
+            if (_this.inputs.has(input) && _this.inputs.get(input) !== input.value) {
+                changed = true;
+                _this.icinga.logger.debug(
+                    '"' + _this.inputs.get(input) + '" was changed ("' + input.value + '") and aborts reload...'
+                );
             }
         });
         if (changed) {
             return null;
         }
+
+        var origFocus = document.activeElement;
+        var containerId = $container.attr('id');
         if ($container.has(origFocus).length
-            && autorefresh
             && $(origFocus).length
             && ! $(origFocus).hasClass('autofocus')
             && ! $(origFocus).hasClass('autosubmit')
             && $(origFocus).closest('form').length
             && $(origFocus).not(':input[type=button], :input[type=submit], :input[type=reset]').length
         ) {
-            icinga.logger.debug('Not changing content for ' + containerId + ' form has focus');
+            this.icinga.logger.debug('Not changing content for ' + containerId + ' form has focus');
             return null;
         }
+
         return content;
     };
 
