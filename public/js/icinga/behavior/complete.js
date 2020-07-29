@@ -13,7 +13,7 @@
      * @param icinga
      * @constructor
      */
-    let Complete = function (icinga) {
+    var Complete = function (icinga) {
         Icinga.EventListener.call(this, icinga);
 
         this.on('beforerender', '.container', this.onBeforeRender, this);
@@ -55,8 +55,8 @@
         let inputs = event.currentTarget.querySelectorAll('input[data-term-completion]');
 
         // Remember current instances
-        inputs.forEach((input) => {
-            let enrichment = _this._enrichments.get(input);
+        inputs.forEach(function (input) {
+            var enrichment = _this._enrichments.get(input);
             if (enrichment) {
                 _this._cachedEnrichments[_this.icinga.utils.getDomPath(input).join(' ')] = enrichment;
             }
@@ -74,9 +74,9 @@
 
         if (autorefresh) {
             // Apply remembered instances
-            for (let inputPath in _this._cachedEnrichments) {
-                let enrichment = _this._cachedEnrichments[inputPath];
-                let input = container.querySelector(inputPath);
+            for (var inputPath in _this._cachedEnrichments) {
+                var enrichment = _this._cachedEnrichments[inputPath];
+                var input = container.querySelector(inputPath);
                 if (input !== null) {
                     enrichment.refresh(input);
                     _this._enrichments.set(input, enrichment);
@@ -89,9 +89,9 @@
         }
 
         // Create new instances
-        let inputs = container.querySelectorAll('input[data-term-completion]');
-        inputs.forEach((input) => {
-            let enrichment = _this._enrichments.get(input);
+        var inputs = container.querySelectorAll('input[data-term-completion]');
+        inputs.forEach(function (input) {
+            var enrichment = _this._enrichments.get(input);
             if (! enrichment) {
                 enrichment = (new FilterInput(input)).bind();
                 enrichment.restoreTerms();
