@@ -536,24 +536,29 @@
             $('#layout').toggleClass('fullscreen-layout');
         },
 
-        getUniqueContainerId: function ($cont) {
-            if (typeof $cont === 'undefined' || !$cont.length) {
+        getUniqueContainerId: function (container) {
+            if (typeof container.jquery !== 'undefined') {
+                if (! container.length) {
+                    return null;
+                }
+
+                container = container[0];
+            } else if (typeof container === 'undefined') {
                 return null;
             }
 
-            var containerId = $cont.data('icingaContainerId');
-            if (typeof containerId === 'undefined') {
+            var containerId = container.dataset.icingaContainerId || null;
+            if (containerId === null) {
                 /**
                  * Only generate an id if it's not for col1 or the menu (which are using the non-suffixed window id).
                  * This is based on the assumption that the server only knows about the menu and first column
                  * and therefore does not need to protect its ids. (As the menu is most likely part of the sidebar)
                  */
-                if ($cont.attr('id') === 'menu' || $cont.attr('id') === 'col1' || $cont.closest('#col1').length) {
-                    return null;
+                var col1 = document.getElementById('col1');
+                if (container.id !== 'menu' && col1 !== null && ! col1.contains(container)) {
+                    containerId = this.icinga.utils.generateId(6); // Random because the content may move
+                    container.dataset.icingaContainerId = containerId;
                 }
-
-                containerId = this.icinga.utils.generateId(6); // Random because the content may move
-                $cont.data('icingaContainerId', containerId);
             }
 
             return containerId;
