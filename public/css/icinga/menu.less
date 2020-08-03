@@ -500,7 +500,7 @@ html.no-js  #toggle-sidebar {
   &.nav-item:not(.badge-nav-item) {
     &:not(.selected):not(.active):hover,
     &:not(.selected):not(.active):focus {
-      background-color: fade(@text-color-inverted, 50%)
+      background-color: @tr-hover-color;
     }
   }
 }
@@ -533,7 +533,7 @@ html.no-js  #toggle-sidebar {
 #layout:not(.sidebar-collapsed) #menu .nav-level-1 > .nav-item.active .nav-level-2 > li {
   &.badge-nav-item:not(.selected) {
     &:hover {
-      background-color: fade(@text-color-inverted, 50%)
+      background-color: @tr-hover-color;
     }
   }
 }
