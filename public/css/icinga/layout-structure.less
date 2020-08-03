@@ -31,6 +31,18 @@ body {
   flex-direction: column;
   position: relative;
   z-index: 2;
+
+  &:after {
+    content: "";
+    display: block;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 1em;
+    background: linear-gradient(to left, rgba(0,0,0,.1), rgba(0,0,0,0));
+    z-index: 0;
+  }
 }
 
 #main {
