@@ -166,8 +166,8 @@ class Url
 
         if (! is_string($url)) {
             throw new ProgrammingError(
-                'url "%s" is not a string',
-                $url
+                'url %s is not a string',
+                var_export($url, true)
             );
         }
 
