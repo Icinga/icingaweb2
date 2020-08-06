@@ -4,6 +4,7 @@
 namespace Icinga\Web\Navigation\Renderer;
 
 use Exception;
+use Icinga\Application\Config;
 use RecursiveIteratorIterator;
 use Icinga\Exception\IcingaException;
 use Icinga\Web\Navigation\Navigation;
@@ -192,7 +193,13 @@ class RecursiveNavigationRenderer extends RecursiveIteratorIterator implements N
         try {
             return $this->render();
         } catch (Exception $e) {
-            return IcingaException::describe($e);
+            return htmlspecialchars(
+                Config::app()->get('global', 'show_stacktraces', true)
+                    ? IcingaException::getConfidentialTraceAsString($e)
+                    : IcingaException::describe($e),
+                ENT_COMPAT | ENT_SUBSTITUTE | ENT_HTML5,
+                'UTF-8'
+            );
         }
     }
 }
