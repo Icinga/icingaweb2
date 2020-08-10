@@ -119,6 +119,25 @@ foreach ($pivotData as $hostName => $_) {
                 <?= ++$i === (int) (count($pivotHeader['rows']) / 2) ? $expandLink : '' ?>
             </td>
         <?php endif ?>
+        <?php if ($this->compact): ?>
+            <td>
+                <?php $expandLink = $this->qlink(
+                    $this->translate('Show More'),
+                    Url::fromRequest(),
+                    array(
+                        'limit'         => (
+                                $this->horizontalPaginator->getItemCountPerPage() + 20) . ','
+                             .  $this->verticalPaginator->getItemCountPerPage(),
+                        'showCompact'   => '0'
+                    ),
+                    array(
+                        'class'             => 'action-link',
+                        'data-base-target'  => '_next'
+                    )
+                ) ?>
+                <?= ++$i === (int) (count($pivotHeader['rows']) / 2) ? $expandLink : '' ?>
+            </td>
+        <?php endif ?>
         </tr>
     <?php endforeach ?>
     <?php if (! $this->compact && $this->verticalPaginator->getPages()->pageCount > 1): ?>
@@ -134,6 +153,25 @@ foreach ($pivotData as $hostName => $_) {
                     array(
                         'class'             => 'action-link',
                         'data-base-target'  => '_self'
+                    )
+                ) ?>
+            </td>
+        </tr>
+    <?php endif ?>
+    <?php if ($this->compact): ?>
+        <tr>
+            <td colspan="<?= count($pivotHeader['cols']) + 1?>" class="service-grid-table-more">
+                <?php echo $this->qlink(
+                    $this->translate('Show More'),
+                    Url::fromRequest(),
+                    array(
+                        'limit'         => $this->horizontalPaginator->getItemCountPerPage() . ',' .
+                            ($this->verticalPaginator->getItemCountPerPage() + 20),
+                        'showCompact'   => '0'
+                    ),
+                    array(
+                        'class'             => 'action-link',
+                        'data-base-target'  => '_next'
                     )
                 ) ?>
             </td>
