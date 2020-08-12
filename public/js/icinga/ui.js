@@ -17,6 +17,8 @@
 
         this.debug = false;
 
+        this.locale = null;
+
         this.debugTimer = null;
 
         this.timeCounterTimer = null;
@@ -42,6 +44,7 @@
         initialize: function () {
             $('html').removeClass('no-js').addClass('js');
             this.enableTimeCounters();
+            this.setLocale(this.icinga.config.locale);
             this.triggerWindowResize();
             this.fadeNotificationsAway();
 
@@ -131,6 +134,14 @@
         reloadJs: function () {
             icinga.logger.info('Reloading JS');
             location.reload(true);
+        },
+
+        getLocale: function () {
+            return this.locale;
+        },
+
+        setLocale: function (locale) {
+            this.locale = locale;
         },
 
         enableTimeCounters: function () {
