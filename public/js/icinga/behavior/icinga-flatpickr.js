@@ -8,13 +8,13 @@
 
     var Flatpickr = function (icinga) {
         Icinga.EventListener.call(this, icinga);
-        this.on('rendered', this.onRendered);
+        this.on('rendered', this.onRendered, this);
         this.icinga = icinga;
     };
 
     Flatpickr.prototype = new Icinga.EventListener();
 
-    Flatpickr.prototype.onRendered = function () {
+    Flatpickr.prototype.onRendered = function (event) {
         if (! $('#flatpickr-container').length
             && ! $('#login').length
             && ! $('#guest-error').length
@@ -29,9 +29,10 @@
             $('.icinga-flatpickr').each(function () {
                 var $el = $(this);
                 var data = $el.find('input').data();
-                //var lang = document.querySelector('html').getAttribute('lang');
+                var _this = event.data.self;
+                var lang = _this.icinga.ui.getLocale();
                 var options = {
-                    locale: de,
+                    locale: lang.slice(0, 2),
                     appendTo: $('#flatpickr-container')[0],
                     dateFormat: "Y-m-d",
                     wrap: true
