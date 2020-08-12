@@ -45,7 +45,14 @@ class JavaScript
         'js/vendor/jquery-migrate-3.1.0',
         'js/vendor/jquery.sparkline',
         'js/vendor/flatpickr',
-        'js/vendor/flatpickr/dist/l10n/de.js'
+        'js/vendor/flatpickr/dist/l10n/ar.js',
+        'js/vendor/flatpickr/dist/l10n/de.js',
+        'js/vendor/flatpickr/dist/l10n/fi.js',
+        'js/vendor/flatpickr/dist/l10n/it.js',
+        'js/vendor/flatpickr/dist/l10n/ja.js',
+        'js/vendor/flatpickr/dist/l10n/pt.js',
+        'js/vendor/flatpickr/dist/l10n/ru.js',
+        'js/vendor/flatpickr/dist/l10n/uk.js'
     );
 
     public static function sendMinified()
@@ -71,8 +78,7 @@ class JavaScript
         // Prepare vendor file list
         $vendorFiles = array();
         foreach (self::$vendorFiles as $file) {
-            $check = substr($file, -3);
-            if ($check === '.js') {
+            if (substr($file, -3) === '.js') {
                 $vendorFiles[] = $basedir . '/' . $file;
             } else {
                 $vendorFiles[] = $basedir . '/' . $file . $min . '.js';
