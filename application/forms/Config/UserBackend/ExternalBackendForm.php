@@ -3,6 +3,7 @@
 
 namespace Icinga\Forms\Config\UserBackend;
 
+use Icinga\Authentication\User\ExternalBackend;
 use Zend_Validate_Callback;
 use Icinga\Web\Form;
 
@@ -32,6 +33,19 @@ class ExternalBackendForm extends Form
                 'label'         => $this->translate('Backend Name'),
                 'description'   => $this->translate(
                     'The name of this authentication provider that is used to differentiate it from others'
+                )
+            )
+        );
+        $this->addElement(
+            'text',
+            'env_var',
+            array(
+                'label'         => $this->translate('Environment Variable'),
+                'description'   => sprintf(
+                    $this->translate(
+                        'The environment variable to try to get the user name from before falling back to %s.'
+                    ),
+                    ExternalBackend::$remoteUserEnvvars[0]
                 )
             )
         );

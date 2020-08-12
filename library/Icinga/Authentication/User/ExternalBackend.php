@@ -27,6 +27,13 @@ class ExternalBackend implements UserBackendInterface
     protected $name;
 
     /**
+     * The environment variable to try to get the user name from before falling back to $remoteUserEnvvars
+     *
+     * @var string|null
+     */
+    protected $envVar;
+
+    /**
      * Regexp expression to strip values from a username
      *
      * @var string
@@ -40,6 +47,7 @@ class ExternalBackend implements UserBackendInterface
      */
     public function __construct(ConfigObject $config)
     {
+        $this->envVar = $config->get('env_var');
         $this->stripUsernameRegexp = $config->get('strip_username_regexp');
     }
 
@@ -86,7 +94,13 @@ class ExternalBackend implements UserBackendInterface
      */
     public function getRemoteUserInformation()
     {
-        foreach (static::$remoteUserEnvvars as $envVar) {
+        $envVars = static::$remoteUserEnvvars;
+
+        if (trim($this->envVar) !== '') {
+            $envVars = array_merge([$this->envVar], $envVars);
+        }
+
+        foreach ($envVars as $envVar) {
             $username = static::getRemoteUser($envVar);
             if ($username !== null) {
                 return array($username, $envVar);
