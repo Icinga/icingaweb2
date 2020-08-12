@@ -4,6 +4,7 @@
 namespace Icinga\Module\Setup\Forms;
 
 use Icinga\Authentication\User\ExternalBackend;
+use Icinga\Data\ConfigObject;
 use Icinga\Web\Form;
 use Icinga\Application\Platform;
 
@@ -32,7 +33,7 @@ class AuthenticationPage extends Form
     public function createElements(array $formData)
     {
         if (isset($formData['type']) && $formData['type'] === 'external') {
-            list($username, $_) = ExternalBackend::getRemoteUserInformation();
+            list($username, $_) = (new ExternalBackend(new ConfigObject()))->getRemoteUserInformation();
             if ($username === null) {
                 $this->info(
                     $this->translate(

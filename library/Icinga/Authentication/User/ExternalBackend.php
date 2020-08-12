@@ -84,7 +84,7 @@ class ExternalBackend implements UserBackendInterface
      *
      * @return  array   Contains always two entries, the username and origin which may both set to null.
      */
-    public static function getRemoteUserInformation()
+    public function getRemoteUserInformation()
     {
         foreach (static::$remoteUserEnvvars as $envVar) {
             $username = static::getRemoteUser($envVar);
@@ -101,7 +101,7 @@ class ExternalBackend implements UserBackendInterface
      */
     public function authenticate(User $user, $password = null)
     {
-        list($username, $field) = static::getRemoteUserInformation();
+        list($username, $field) = $this->getRemoteUserInformation();
         if ($username !== null) {
             $user->setExternalUserInformation($username, $field);
 
