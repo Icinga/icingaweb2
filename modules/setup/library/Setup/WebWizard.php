@@ -3,6 +3,7 @@
 
 namespace Icinga\Module\Setup;
 
+use Icinga\Module\Setup\Requirement\SetRequirement;
 use PDOException;
 use Icinga\Web\Form;
 use Icinga\Web\Wizard;
@@ -710,6 +711,21 @@ class WebWizard extends Wizard implements SetupWizard
         )));
         $dbSet->merge($pgsqlSet);
         $set->merge($dbSet);
+
+        $dbRequire = new RequirementSet(true);
+        $dbRequire->add(new SetRequirement(array(
+            'optional'      => $dbSet->getState(),
+            'condition'     => $dbSet->getState(),
+            'title'         =>'Database',
+            'alias'         => 'PDO-MySQL OR PDO-PostgreSQL',
+            'description'   => mt(
+                'setup',
+                'To store users or preferences in a database at least one module PDO-MySQL OR PDO-PostgreSQL for PHP 
+        is required.'
+            )
+        )));
+        $set->merge($dbRequire);
+
 
         $set->add(new ConfigDirectoryRequirement(array(
             'condition'     => Icinga::app()->getConfigDir(),
