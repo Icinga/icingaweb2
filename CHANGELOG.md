@@ -4,6 +4,27 @@ Please make sure to always read our [Upgrading](doc/80-Upgrading.md) documentati
 
 ## What's New
 
+### What's New in Version 2.8.2
+
+**Notice**: This is a security release. It is recommended to immediately upgrade to this release.
+
+You can find all issues related to this release on the respective [milestone](https://github.com/Icinga/icingaweb2/milestone/62?closed=1).
+
+#### Path Traversal Vulnerability
+
+The vulnerability in question allows an attacker to access arbitrary files which are readable by the process running
+Icinga Web 2. Technical details can be found at the corresponding [CVE-2020-24368](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2020-24368)
+and in the issue below.
+
+* Possible path traversal when serving static image files [#4226](https://github.com/Icinga/icingaweb2/issues/4226)
+
+#### Broken Negated Filters with PostgreSQL
+
+We've also included a small non-security related fix. Searching for e.g. `servicegroup!=support` leads to an error
+instead of the desired result when using a PostgreSQL database.
+
+* Single negated membership filter fails with PostgreSQL [#4196](https://github.com/Icinga/icingaweb2/issues/4196)
+
 ### What's New in Version 2.8.1
 
 You can find all issues related to this release on the respective [milestone](https://github.com/Icinga/icingaweb2/milestone/61?closed=1).
