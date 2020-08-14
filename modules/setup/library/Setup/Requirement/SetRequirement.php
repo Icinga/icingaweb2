@@ -14,9 +14,9 @@ class SetRequirement extends Requirement
 {
     protected function evaluate()
     {
-        $isAvailable = $this->getCondition();
+        $condition = $this->getCondition();
 
-        if ($isAvailable) {
+        if ($condition->getState()) {
             $this->setStateText(sprintf(
                 mt('setup', '%s is available.'),
                 $this->getAlias() ?: $this->getTitle()
