@@ -714,8 +714,8 @@ class WebWizard extends Wizard implements SetupWizard
 
         $dbRequire = new RequirementSet(true);
         $dbRequire->add(new SetRequirement(array(
-            'optional'      => $dbSet->getState(),
-            'condition'     => $dbSet->getState(),
+            'optional'      => false,
+            'condition'     => $dbSet,
             'title'         =>'Database',
             'alias'         => 'PDO-MySQL OR PDO-PostgreSQL',
             'description'   => mt(
