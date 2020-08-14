@@ -4,6 +4,18 @@ Please make sure to always read our [Upgrading](doc/80-Upgrading.md) documentati
 
 ## What's New
 
+### What's New in Version 2.7.4
+
+**Notice**: This is a security release. It is recommended to immediately upgrade to this release.
+
+#### Path Traversal Vulnerability
+
+The vulnerability in question allows an attacker to access arbitrary files which are readable by the process running
+Icinga Web 2. Technical details can be found at the corresponding [CVE-2020-24368](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2020-24368)
+and in the issue below.
+
+* Possible path traversal when serving static image files [#4226](https://github.com/Icinga/icingaweb2/issues/4226)
+
 ### What's New in Version 2.7.3
 
 This is a hotfix release and fixes the following issue:
