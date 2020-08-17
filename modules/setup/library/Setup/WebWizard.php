@@ -712,8 +712,7 @@ class WebWizard extends Wizard implements SetupWizard
         $dbSet->merge($pgsqlSet);
         $set->merge($dbSet);
 
-        $dbRequire = new RequirementSet(true);
-        $dbRequire->add(new SetRequirement(array(
+        $dbRequire = (new SetRequirement(array(
             'optional'      => false,
             'condition'     => $dbSet,
             'title'         =>'Database',
@@ -724,7 +723,8 @@ class WebWizard extends Wizard implements SetupWizard
         is required.'
             )
         )));
-        $set->merge($dbRequire);
+
+        $set->add($dbRequire);
 
 
         $set->add(new ConfigDirectoryRequirement(array(
