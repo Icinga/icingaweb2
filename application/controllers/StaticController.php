@@ -68,16 +68,16 @@ class StaticController extends Controller
      */
     public function imgAction()
     {
-        $moduleRoot = Icinga::app()
+        $imgRoot = Icinga::app()
             ->getModuleManager()
             ->getModule($this->getParam('module_name'))
-            ->getBaseDir();
+            ->getBaseDir() . '/public/img/';
 
         $file = $this->getParam('file');
-        $filePath = realpath($moduleRoot . '/public/img/' . $file);
+        $filePath = realpath($imgRoot . $file);
 
-        if ($filePath === false) {
-            $this->httpNotFound('%s does not exist', $filePath);
+        if ($filePath === false || substr($filePath, 0, strlen($imgRoot)) !== $imgRoot) {
+            $this->httpNotFound('%s does not exist', $file);
         }
 
         if (preg_match('/\.([a-z]+)$/i', $file, $m)) {
