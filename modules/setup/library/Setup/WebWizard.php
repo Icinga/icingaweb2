@@ -719,7 +719,7 @@ class WebWizard extends Wizard implements SetupWizard
             'alias'         => 'PDO-MySQL OR PDO-PostgreSQL',
             'description'   => mt(
                 'setup',
-                'To store users or preferences in a database at least one module PDO-MySQL OR PDO-PostgreSQL for PHP 
+                'A database is mandatory, therefore at least one module PDO-MySQL OR PDO-PostgreSQL for PHP 
         is required.'
             )
         )));
