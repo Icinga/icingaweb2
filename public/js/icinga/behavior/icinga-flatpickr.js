@@ -31,10 +31,13 @@
                 var data = $el.find('input').data();
                 var _this = event.data.self;
                 var lang = _this.icinga.ui.getLocale();
+                var fmt = _this.icinga.ui.getDateFormat();
+                var map = { dd : "d", MM : "m", y : "Y", GGGGG : "" };
+                fmt = fmt.replace(/dd|MM|y|yy|GGGGG/g, function(matched){ return map[matched]; });
                 var options = {
                     locale: lang.slice(0, 2),
                     appendTo: $('#flatpickr-container')[0],
-                    dateFormat: "Y-m-d",
+                    dateFormat: fmt,
                     wrap: true
                 };
 
