@@ -10,6 +10,9 @@ if (array_key_exists('_dev', $_GET)) {
   $cssfile = 'css/icinga.min.css';
 }
 
+$locale = substr(setlocale(LC_ALL, 0), 0, 5);
+$fmt = new IntlDateFormatter($locale, 3, -1);
+$dateFormat = $fmt->getPattern();
 $lang = Translator::splitLocaleCode()->language;
 $isIframe = $this->layout()->isIframe;
 $showFullscreen = $this->layout()->showFullscreen;
@@ -92,7 +95,8 @@ $innerLayoutScript = $this->layout()->innerLayout . '.phtml';
 window.name = '<?= $this->protectId('Icinga') ?>';
 var icinga = new Icinga({
   baseUrl: '<?= $this->baseUrl(); ?>',
-  locale: '<?= setlocale(LC_ALL, 0); ?>'
+  locale: '<?= $locale; ?>',
+  dateFormat: '<?= $dateFormat; ?>'
 });
 </script>
 </body>
