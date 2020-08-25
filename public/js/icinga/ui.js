@@ -19,6 +19,8 @@
 
         this.locale = null;
 
+        this.dateFormat = null;
+
         this.debugTimer = null;
 
         this.timeCounterTimer = null;
@@ -45,6 +47,7 @@
             $('html').removeClass('no-js').addClass('js');
             this.enableTimeCounters();
             this.setLocale(this.icinga.config.locale);
+            this.setDateFormat(this.icinga.config.dateFormat);
             this.triggerWindowResize();
             this.fadeNotificationsAway();
 
@@ -142,6 +145,14 @@
 
         setLocale: function (locale) {
             this.locale = locale;
+        },
+
+        getDateFormat: function () {
+            return this.dateFormat;
+        },
+
+        setDateFormat: function (dateFormat) {
+            this.dateFormat = dateFormat;
         },
 
         enableTimeCounters: function () {
