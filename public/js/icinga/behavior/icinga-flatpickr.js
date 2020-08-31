@@ -32,12 +32,12 @@
                 var _this = event.data.self;
                 var lang = _this.icinga.ui.getLocale();
                 var fmt = _this.icinga.ui.getDateFormat();
-                var map = { dd : "d", MM : "m", y : "Y", GGGGG : "" };
-                fmt = fmt.replace(/dd|MM|y|yy|GGGGG/g, function(matched){ return map[matched]; });
+                var map = { G : "", a : "" };
+                fmt = fmt.replace(/G|a|(.)\1+/g, '$1', function (matched) { return map[matched] } );
                 var options = {
                     locale: lang.slice(0, 2),
                     appendTo: $('#flatpickr-container')[0],
-                    dateFormat: fmt,
+                    dateFormat: fmt.trim(),
                     wrap: true
                 };
 
