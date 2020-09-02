@@ -48,6 +48,105 @@ class RoleForm extends RepositoryForm
         $this->setAttrib('class', self::DEFAULT_CLASSES . ' role-form');
 
         list($this->providedPermissions, $this->providedRestrictions) = static::collectProvidedPrivileges();
+
+        $helper = new Zend_Form_Element('bogus');
+        $view = $this->getView();
+
+        $this->providedPermissions['application'] = [
+            $helper->filterName('no-user/password-change') => [
+                'name'          => 'no-user/password-change',
+                'description'   => $this->translate('Prohibit password changes in the account preferences')
+            ],
+            $helper->filterName('application/share/navigation') => [
+                'name'          => 'application/share/navigation',
+                'description'   => $this->translate('Allow to share navigation items')
+            ],
+            $helper->filterName('application/stacktraces') => [
+                'name'          => 'application/stacktraces',
+                'description'   => $this->translate(
+                    'Allow to adjust in the preferences whether to show stacktraces'
+                )
+            ],
+            $helper->filterName('application/log') => [
+                'name'          => 'application/log',
+                'description'   => $this->translate('Allow to view the application log')
+            ],
+            $helper->filterName('admin') => [
+                'name'          => 'admin',
+                'description'   => $this->translate(
+                    'Grant admin permissions, e.g. manage announcements'
+                )
+            ],
+            $helper->filterName('config/*') => [
+                'name'          => 'config/*',
+                'description'   => $this->translate('Allow config access')
+            ],
+            $helper->filterName('manage/rememberme') => [
+                'name'          => 'manage/rememberme',
+                'description'   => $this->translate('Allow this user to view and delete other users 
+                rememberme cookies')
+            ]
+        ];
+
+        $this->providedRestrictions['application'] = [
+            $helper->filterName('application/share/users') => [
+                'name'          => 'application/share/users',
+                'description'   => $this->translate(
+                    'Restrict which users this role can share items and information with'
+                )
+            ],
+            $helper->filterName('application/share/groups') => [
+                'name'          => 'application/share/groups',
+                'description'   => $this->translate(
+                    'Restrict which groups this role can share items and information with'
+                )
+            ]
+        ];
+
+        $mm = Icinga::app()->getModuleManager();
+        foreach ($mm->listInstalledModules() as $moduleName) {
+            $modulePermission = Manager::MODULE_PERMISSION_NS . $moduleName;
+            $this->providedPermissions[$moduleName][$helper->filterName($modulePermission)] = [
+                'isUsagePerm'   => true,
+                'name'          => $modulePermission,
+                'label'         => $view->escape($this->translate('General Module Access')),
+                'description'   => sprintf($this->translate('Allow access to module %s'), $moduleName)
+            ];
+
+            $module = $mm->getModule($moduleName, false);
+            $permissions = $module->getProvidedPermissions();
+
+            $this->providedPermissions[$moduleName][$helper->filterName($moduleName . '/*')] = [
+                'isFullPerm'    => true,
+                'name'          => $moduleName . '/*',
+                'label'         => $view->escape($this->translate('Full Module Access'))
+            ];
+
+            foreach ($permissions as $permission) {
+                /** @var object $permission */
+                $this->providedPermissions[$moduleName][$helper->filterName($permission->name)] = [
+                    'name'          => $permission->name,
+                    'label'         => preg_replace(
+                        '~^(\w+)(\/.*)~',
+                        '<em>$1</em>$2',
+                        $view->escape($permission->name)
+                    ),
+                    'description'   => $permission->description
+                ];
+            }
+
+            foreach ($module->getProvidedRestrictions() as $restriction) {
+                $this->providedRestrictions[$moduleName][$helper->filterName($restriction->name)] = [
+                    'name'          => $restriction->name,
+                    'label'         => preg_replace(
+                        '~^(\w+)(\/.*)~',
+                        '<em>$1</em>$2',
+                        $view->escape($restriction->name)
+                    ),
+                    'description'   => $restriction->description
+                ];
+            }
+        }
     }
 
     protected function createFilter()
