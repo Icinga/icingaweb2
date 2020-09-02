@@ -74,7 +74,8 @@ class RememberMeUserList extends BaseHtmlElement
     {
         $thead = Html::tag('thead');
         $theadRow = Html::tag('tr');
-        $theadRow->add(Html::tag('th',
+        $theadRow->add(Html::tag(
+            'th',
             ucfirst('List of users who stay logged in')
         ));
 
@@ -82,7 +83,7 @@ class RememberMeUserList extends BaseHtmlElement
 
         $tbody = Html::tag('tbody');
 
-        if(empty($this->getUsers())) {
+        if (empty($this->getUsers())) {
             $tbody->add(Html::tag('td', 'No user found'));
         } else {
             foreach ($this->getUsers() as $user) {

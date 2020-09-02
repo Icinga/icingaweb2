@@ -19,15 +19,11 @@ class ManageUserDevicesController extends CompatController
 {
     use Database;
 
-    public function init()
-    {
-
-    }
-
     public function indexAction()
     {
         $this->getTabs()
-            ->add('manageuserdevices',
+            ->add(
+                'manageuserdevices',
                 array(
                     'title' => $this->translate('List of users who stay logged in'),
                     'label' => $this->translate('Users'),
@@ -49,7 +45,8 @@ class ManageUserDevicesController extends CompatController
     public function devicesAction()
     {
         $this->getTabs()
-            ->add('managedevices',
+            ->add(
+                'managedevices',
                 array(
                     'title' => $this->translate('List of devices'),
                     'label' => $this->translate('Devices'),

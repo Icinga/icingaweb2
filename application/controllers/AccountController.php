@@ -33,7 +33,8 @@ class AccountController extends Controller
                 'label' => $this->translate('Navigation'),
                 'url'   => 'navigation'
             ))
-            ->add('devices',
+            ->add(
+                'devices',
                 array(
                     'title' => $this->translate('List of devices you are logged in'),
                     'label' => $this->translate('My Devices'),

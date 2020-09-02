@@ -9,8 +9,8 @@ namespace Icinga\Web;
  *
  * @package Icinga\Web
  */
-class UserAgent {
-
+class UserAgent
+{
     /**
      * $_SERVER['HTTP_USER_AGENT'] output string
      *
@@ -20,7 +20,7 @@ class UserAgent {
 
     public function __construct($agent = null)
     {
-        $this->agent = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : NULL;
+        $this->agent = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : null;
 
         if ($agent) {
             $this->agent = $agent->http_user_agent;
@@ -56,9 +56,9 @@ class UserAgent {
             "Google Chrome"        => "/Chrome(.*)/i",
             "Safari"               => "/Safari(.*)/i"
         ];
-
-        foreach($browsers as $browser => $regex){//TODO find a way to return the version of the browser
-          if (preg_match($regex, $this->agent)) {
+        //TODO find a way to return also the version of the browser
+        foreach ($browsers as $browser => $regex) {
+            if (preg_match($regex, $this->agent)) {
                 return $browser;
             }
         }
