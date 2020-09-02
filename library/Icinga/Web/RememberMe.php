@@ -1,5 +1,5 @@
 <?php
-/* Icinga Web 2 | (c) 2020 Icinga Development Team | GPLv2+ */
+/* Icinga Web 2 | (c) 2020 Icinga GmbH | GPLv2+ */
 
 namespace Icinga\Web;
 
@@ -214,6 +214,7 @@ class RememberMe
             'username'    => $this->username,
             'private_key' => $this->rsa->getPrivateKey(),
             'public_key'  => $this->rsa->getPublicKey(),
+            'http_user_agent' => (new UserAgent)->getAgent(),
             'expires_at'  => date('Y-m-d H:i:s', $this->getExpiresAt()),
             'ctime'       => new Expression('NOW()'),
             'mtime'       => new Expression('NOW()')
@@ -232,7 +233,8 @@ class RememberMe
     public function remove($username = null)
     {
         $this->getDb()->delete(static::TABLE, [
-            'username = ?' => $username ?: $this->username
+            'username = ?' => $username ?: $this->username,
+            'http_user_agent = ?' =>  (new UserAgent)->getAgent()
         ]);
 
         return $this;
@@ -249,5 +251,56 @@ class RememberMe
             $this->username,
             $this->rsa->decryptFromBase64($this->encryptedPassword)
         );
+    }
+
+    /**
+     * Remove specific remember me information from the database
+     *
+     * @param string $username
+     *
+     * @param $userAgent
+     *
+     * @return $this
+     */
+    public function removeSpecific($username, $userAgent)
+    {
+        $this->getDb()->delete(static::TABLE, [
+            'username = ?' => $username ?: $this->username,
+            'http_user_agent = ?' => $userAgent
+        ], 'AND');
+
+        return $this;
+    }
+
+    /**
+     * Get all users using rememberme cookie
+     *
+     * @return array
+     */
+    public static function getAllUser()
+    {
+        $select = (new Select())
+            ->from(static::TABLE)
+            ->columns('username')
+            ->groupBy('username');
+
+        return (new static())->getDb()->select($select)->fetchAll();
+    }
+
+    /**
+     * Get all rememberme cookies of the given user
+     *
+     * @param $username
+     *
+     * @return array
+     */
+    public static function getAllByUsername($username)
+    {
+        $select = (new Select())
+            ->from(static::TABLE)
+           ->columns(['http_user_agent'])
+            ->where(['username = ?' => $username]);
+
+        return (new static())->getDb()->select($select)->fetchAll();
     }
 }
