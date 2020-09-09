@@ -32,7 +32,7 @@ class HostgroupQuery extends IdoQuery
         ],
         'hostgroups' => array(
             'hostgroup'         => 'hgo.name1 COLLATE latin1_general_ci',
-            'hostgroup_alias'   => 'hg.alias COLLATE latin1_general_ci',
+            'hostgroup_alias'   => 'hg.alias',
             'hostgroup_name'    => 'hgo.name1'
         ),
         'hoststatus' => array(
