@@ -16,7 +16,7 @@ class ServicestatusQuery extends IdoQuery
     /**
      * {@inheritdoc}
      */
-    protected $groupBase = array('services' => array('so.object_id', 's.service_id'));
+    protected $groupBase = array('services' => array('so.object_id'));
 
     /**
      * {@inheritdoc}
