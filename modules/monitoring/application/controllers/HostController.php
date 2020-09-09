@@ -71,8 +71,8 @@ class HostController extends MonitoredObjectController
         $this->setAutorefreshInterval(10);
         $this->getTabs()->activate('services');
         $query = $this->backend->select()->from('servicestatus', array(
-            'host_name',
             'host_display_name',
+            'service_host_name',
             'service_description',
             'service_display_name',
             'service_state',
