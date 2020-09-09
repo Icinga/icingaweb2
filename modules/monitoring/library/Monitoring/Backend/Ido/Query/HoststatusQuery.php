@@ -86,6 +86,7 @@ class HoststatusQuery extends IdoQuery
             'host_is_passive_checked'               => 'CASE WHEN hs.active_checks_enabled = 0 AND hs.passive_checks_enabled = 1 THEN 1 ELSE 0 END',
             'host_is_reachable'                     => 'hs.is_reachable',
             'host_last_check'                       => 'UNIX_TIMESTAMP(hs.last_check)',
+            'host_last_check_ts'                    => 'hs.last_check',
             'host_last_hard_state'                  => 'hs.last_hard_state',
             'host_last_hard_state_change'           => 'UNIX_TIMESTAMP(hs.last_hard_state_change)',
             'host_last_notification'                => 'UNIX_TIMESTAMP(hs.last_notification)',
