@@ -73,12 +73,6 @@ class HostController extends MonitoredObjectController
         $query = $this->backend->select()->from('servicestatus', array(
             'host_name',
             'host_display_name',
-            'host_state',
-            'host_state_type',
-            'host_last_state_change',
-            'host_address',
-            'host_address6',
-            'host_handled',
             'service_description',
             'service_display_name',
             'service_state',
