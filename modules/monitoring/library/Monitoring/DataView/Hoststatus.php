@@ -38,6 +38,7 @@ class HostStatus extends DataView
             'host_is_flapping',
             'host_is_reachable',
             'host_last_check',
+            'host_last_check_ts',
             'host_last_notification',
             'host_last_state_change',
             'host_last_state_change_ts',
