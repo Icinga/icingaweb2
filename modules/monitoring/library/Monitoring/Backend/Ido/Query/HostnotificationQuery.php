@@ -27,12 +27,12 @@ class HostnotificationQuery extends IdoQuery
         ),
         'hostgroups' => array(
             'hostgroup'         => 'hgo.name1 COLLATE latin1_general_ci',
-            'hostgroup_alias'   => 'hg.alias COLLATE latin1_general_ci',
+            'hostgroup_alias'   => 'hg.alias',
             'hostgroup_name'    => 'hgo.name1'
         ),
         'hosts' => array(
-            'host_display_name' => 'h.display_name COLLATE latin1_general_ci',
-            'host_alias'        => 'h.alias COLLATE latin1_general_ci',
+            'host_display_name' => 'h.display_name',
+            'host_alias'        => 'h.alias',
         ),
         'history' => array(
             'output'    => null,
@@ -66,12 +66,12 @@ class HostnotificationQuery extends IdoQuery
         'servicegroups' => array(
             'servicegroup_name'     => 'sgo.name1',
             'servicegroup'          => 'sgo.name1 COLLATE latin1_general_ci',
-            'servicegroup_alias'    => 'sg.alias COLLATE latin1_general_ci'
+            'servicegroup_alias'    => 'sg.alias'
         ),
         'services' => array(
             'service'               => 'so.name2 COLLATE latin1_general_ci',
             'service_description'   => 'so.name2',
-            'service_display_name'  => 's.display_name COLLATE latin1_general_ci',
+            'service_display_name'  => 's.display_name',
             'service_host_name'     => 'so.name1'
         )
     );
