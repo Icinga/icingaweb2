@@ -11,7 +11,7 @@ class ServicecontactQuery extends IdoQuery
     protected $allowCustomVars = true;
 
     protected $groupBase = [
-        'contacts' => ['co.object_id', 'c.contact_id'],
+        'contacts' => ['co.object_id'],
         'timeperiods' => ['ht.timeperiod_id', 'st.timeperiod_id']
     ];
 
