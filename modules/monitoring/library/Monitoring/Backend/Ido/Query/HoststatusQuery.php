@@ -50,7 +50,7 @@ class HoststatusQuery extends IdoQuery
             'host_address6'         => 'h.address6',
             'host_alias'            => 'h.alias',
             'host_check_interval'   => '(h.check_interval * 60)',
-            'host_display_name'     => 'h.display_name COLLATE latin1_general_ci',
+            'host_display_name'     => 'h.display_name',
             'host_icon_image'       => 'h.icon_image',
             'host_icon_image_alt'   => 'h.icon_image_alt',
             'host_ipv4'             => 'INET_ATON(h.address)',
