@@ -26,13 +26,13 @@ class ServicecontactQuery extends IdoQuery
         'contactgroups' => [
             'contactgroup'       => 'cgo.name1 COLLATE latin1_general_ci',
             'contactgroup_name'  => 'cgo.name1',
-            'contactgroup_alias' => 'cg.alias COLLATE latin1_general_ci'
+            'contactgroup_alias' => 'cg.alias'
         ],
         'contacts' => [
             'contact_id'                       => 'c.contact_id',
             'contact'                          => 'co.name1 COLLATE latin1_general_ci',
             'contact_name'                     => 'co.name1',
-            'contact_alias'                    => 'c.alias COLLATE latin1_general_ci',
+            'contact_alias'                    => 'c.alias',
             'contact_email'                    => 'c.email_address COLLATE latin1_general_ci',
             'contact_pager'                    => 'c.pager_address',
             'contact_object_id'                => 'c.contact_object_id',
@@ -53,14 +53,14 @@ class ServicecontactQuery extends IdoQuery
         ],
         'hostgroups' => [
             'hostgroup'       => 'hgo.name1 COLLATE latin1_general_ci',
-            'hostgroup_alias' => 'hg.alias COLLATE latin1_general_ci',
+            'hostgroup_alias' => 'hg.alias',
             'hostgroup_name'  => 'hgo.name1'
         ],
         'hosts' => [
             'host'              => 'ho.name1 COLLATE latin1_general_ci',
             'host_name'         => 'ho.name1',
             'host_alias'        => 'h.alias',
-            'host_display_name' => 'h.display_name COLLATE latin1_general_ci'
+            'host_display_name' => 'h.display_name'
         ],
         'instances' => [
             'instance_name' => 'i.instance_name'
@@ -68,12 +68,12 @@ class ServicecontactQuery extends IdoQuery
         'servicegroups' => [
             'servicegroup'       => 'sgo.name1 COLLATE latin1_general_ci',
             'servicegroup_name'  => 'sgo.name1',
-            'servicegroup_alias' => 'sg.alias COLLATE latin1_general_ci'
+            'servicegroup_alias' => 'sg.alias'
         ],
         'services' => [
             'service'              => 'so.name2 COLLATE latin1_general_ci',
             'service_description'  => 'so.name2',
-            'service_display_name' => 's.display_name COLLATE latin1_general_ci',
+            'service_display_name' => 's.display_name',
             'service_host_name'    => 'so.name1'
         ],
         'timeperiods' => [
