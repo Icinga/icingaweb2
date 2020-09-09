@@ -273,7 +273,7 @@ abstract class MonitoredObject implements Filterable
      */
     public function fetch()
     {
-        $properties = $this->getDataView()->applyFilter($this->getFilter())->getQuery()->fetchRow();
+        $properties = $this->getDataView()->applyFilter($this->getFilter())->getQuery()->clearOrder()->fetchRow();
 
         if ($properties === false) {
             return false;
