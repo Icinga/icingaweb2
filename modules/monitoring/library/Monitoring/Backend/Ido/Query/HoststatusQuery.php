@@ -13,7 +13,7 @@ class HoststatusQuery extends IdoQuery
     /**
      * {@inheritdoc}
      */
-    protected $groupBase = array('hosts' => array('ho.object_id', 'h.host_id'));
+    protected $groupBase = array('hosts' => array('ho.object_id'));
 
     /**
      * {@inheritdoc}
