@@ -11,7 +11,7 @@ class HostgroupQuery extends IdoQuery
     protected $allowCustomVars = true;
 
     protected $groupBase = array(
-        'hostgroups'         => array('hgo.object_id', 'hg.hostgroup_id'),
+        'hostgroups'         => array('hgo.object_id'),
         'hoststatus'         => array('hs.hoststatus_id'),
         'servicestatus'      => array('ss.servicestatus_id')
     );
