@@ -3,6 +3,8 @@
 
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
+use Icinga\Data\Filter\Filter;
+
 /**
  * Query for service status
  */
@@ -287,6 +289,17 @@ class ServicestatusQuery extends IdoQuery
         )
     );
 
+    protected $isFiltered = false;
+
+    public function addFilter(Filter $filter)
+    {
+        if (! $filter->isEmpty()) {
+            $this->isFiltered = true;
+        }
+
+        return parent::addFilter($filter);
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -514,5 +527,30 @@ class ServicestatusQuery extends IdoQuery
         }
 
         return parent::joinSubQuery($query, $name, $filter, $and, $negate, $additionalFilter);
+    }
+
+    public function getSelectQuery()
+    {
+        if ($this->getDatasource()->getDbType() === 'mysql' && ! $this->isFiltered) {
+            $order = $this->getOrder();
+            if ($order === [['s.display_name', 'ASC']] || $order === [['s.display_name', 'DESC']]) {
+                // Force idx_services_display_name index usage
+                $zendSelect = $this->select;
+
+                $partsProp = (new \ReflectionClass('\Zend_Db_Select'))->getProperty('_parts');
+                $partsProp->setAccessible(true);
+
+                $parts = $partsProp->getValue($zendSelect);
+
+                $parts['from'] = json_decode(
+                    str_replace('"s":', '"s USE INDEX(idx_services_display_name)":', json_encode($parts['from'])),
+                    true
+                );
+
+                $partsProp->setValue($zendSelect, $parts);
+            }
+        }
+
+        return parent::getSelectQuery();
     }
 }
