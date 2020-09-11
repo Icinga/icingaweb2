@@ -1576,4 +1576,47 @@ abstract class IdoQuery extends DbQuery
                 throw new ProgrammingError('Cannot provide a primary key column. Table "%s" is unknown', $table);
         }
     }
+//
+//    private function removeObjecttypeIdWhereCondition()
+//    {
+//        // Remove all objecttype_id WHERE conditions
+//        $zendSelect = $this->select();
+//
+//        $partsProp = (new \ReflectionClass('\Zend_Db_Select'))->getProperty('_parts');
+//        $partsProp->setAccessible(true);
+//
+//        $parts = $partsProp->getValue($zendSelect);
+//
+//        foreach ($parts as $key => &$spec) {
+//            if (! is_array($spec)) {
+//                continue;
+//            }
+//
+//            foreach ($spec as &$part) {
+//                if (isset($part['joinCondition'])) {
+//                    $part['joinCondition'] = preg_replace(
+//                        '/( AND )?[a-z]+.objecttype_id = \d+/',
+//                        '',
+//                        $part['joinCondition']
+//                    );
+//                }
+//            }
+//        }
+//
+//        $partsProp->setValue($zendSelect, $parts);
+//    }
+//
+//    public function getSelectQuery()
+//    {
+//        $this->removeObjecttypeIdWhereCondition();
+//
+//        return parent::getSelectQuery();
+//    }
+//
+//    public function getCountQuery()
+//    {
+//        $this->removeObjecttypeIdWhereCondition();
+//
+//        return parent::getCountQuery();
+//    }
 }
