@@ -17,8 +17,8 @@ class ServicegroupsummaryQuery extends IdoQuery
 
     protected $columnMap = array(
         'servicegroupsummary' => array(
-            'servicegroup_alias'                            => 'servicegroup_alias',
-            'servicegroup_name'                             => 'servicegroup_name',
+            'servicegroup_alias'                            => 'sg.alias',
+            'servicegroup_name'                             => 'sgo.name1',
             'services_critical'                             => 'SUM(CASE WHEN service_state = 2 THEN 1 ELSE 0 END)',
             'services_critical_handled'                     => 'SUM(CASE WHEN service_state = 2 AND service_handled = 1 THEN 1 ELSE 0 END)',
             'services_critical_unhandled'                   => 'SUM(CASE WHEN service_state = 2 AND service_handled = 0 THEN 1 ELSE 0 END)',
@@ -56,8 +56,14 @@ class ServicegroupsummaryQuery extends IdoQuery
      */
     protected $countQuery;
 
+    protected $isFiltered = false;
+
     public function addFilter(Filter $filter)
     {
+        if (! $filter->isEmpty()) {
+            $this->isFiltered = true;
+        }
+
         foreach ($this->subQueries as $sub) {
             $sub->applyFilter(clone $filter);
         }
@@ -67,39 +73,41 @@ class ServicegroupsummaryQuery extends IdoQuery
 
     protected function joinBaseTables()
     {
-        $this->countQuery = $this->createSubQuery(
-            'Servicegroup',
-            array()
-        );
-        $subQuery = $this->createSubQuery(
-            'Servicegroup',
-            array(
-                'servicegroup_alias',
-                'servicegroup_name',
-                'service_handled',
-                'service_severity',
-                'service_state'
-            )
-        );
-        $this->subQueries[] = $subQuery;
-        $emptyGroups = $this->createSubQuery(
-            'Emptyservicegroup',
-            [
-                'servicegroup_alias',
-                'servicegroup_name',
-                'service_handled'   => new Zend_Db_Expr('NULL'),
-                'service_severity'  => new Zend_Db_Expr('0'),
-                'service_state'     => new Zend_Db_Expr('NULL'),
-            ]
-        );
-        $this->subQueries[] = $emptyGroups;
-        $this->summaryQuery = $this->db->select()->union(
-            [$subQuery, $emptyGroups],
-            Zend_Db_Select::SQL_UNION_ALL
-        );
-        $this->select->from(['servicesgroupsummary' => $this->summaryQuery], []);
+        $services = $this->createSubQuery('servicestatus');
+        $services->columns([
+            new Zend_Db_Expr('s.service_object_id'),
+            'service_handled',
+            'service_severity',
+            'service_state'
+        ]);
+
+        $this->subQueries = [$services];
+
+        $states = $this->db->select()->union($this->subQueries, \Zend_Db_Select::SQL_UNION_ALL);
+
+        $this
+            ->select
+            ->from(['sg' => 'icinga_servicegroups'], null)
+            ->join(['sgo' => 'icinga_objects'], 'sgo.object_id = sg.servicegroup_object_id AND sgo.objecttype_id = 4 AND sgo.is_active = 1', null)
+            ->joinLeft(['sgm' => 'icinga_servicegroup_members'], 'sgm.servicegroup_id = sg.servicegroup_id', null)
+            ->joinLeft(['so' => 'icinga_objects'], 'so.object_id = sgm.service_object_id AND so.objecttype_id = 2 AND so.is_active = 1', null)
+            ->joinLeft(['s' => 'icinga_services'], 's.service_object_id = so.object_id', null)
+            ->joinLeft(['states' => $states], 'states.service_object_id = so.object_id', null);
+
         $this->group(['servicegroup_name']);
+
         $this->joinedVirtualTables['servicegroupsummary'] = true;
+
+        $this->countQuery = $this->createSubQuery('Servicegroup', []);
+    }
+
+    public function getSelectQuery()
+    {
+        if ($this->isFiltered) {
+            $this->select->having('services_total > 0');
+        }
+
+        return parent::getSelectQuery();
     }
 
     public function getCountQuery()
@@ -107,7 +115,9 @@ class ServicegroupsummaryQuery extends IdoQuery
         $count = $this->countQuery->select();
         $this->countQuery->applyFilterSql($count);
         $count->columns(array('sgo.object_id'));
-        $count->group(array('sgo.object_id'));
+        if ($this->isFiltered) {
+            $count->group(array('sgo.object_id'));
+        }
         return $this->db->select()->from($count, array('cnt' => 'COUNT(*)'));
     }
 }
