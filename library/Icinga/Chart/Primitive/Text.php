@@ -113,7 +113,7 @@ class Text extends Styleable implements Drawable
     }
 
     /**
-     * Set the the text alignment with one of the ALIGN_* constants
+     * Set the text alignment with one of the ALIGN_* constants
      *
      * @param   String $align   Value how to align
      *
