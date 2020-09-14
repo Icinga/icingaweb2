@@ -494,7 +494,7 @@ class Web extends EmbeddedWeb
      *
      * @return  string                      Detected locale code
      *
-     * @see     Translator::DEFAULT_LOCALE  For the the default locale code.
+     * @see     Translator::DEFAULT_LOCALE  For the default locale code.
      */
     protected function detectLocale()
     {
