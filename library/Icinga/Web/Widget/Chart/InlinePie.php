@@ -73,23 +73,7 @@ class InlinePie extends AbstractWidget
      *
      * @var string
      */
-    private $template =<<<'EOD'
-<span sparkType="pie" class="sparkline {class}" title="{title}" role="img" aria-label="{title}"
-      sparkSliceColors="[{colors}]" values="{data}"></span>
-{noscript}
-EOD;
-
-    private $noscript =<<<'EOD'
-<noscript>
-  <img width={size} height={size} class="inlinepie {class}" title="{title}" role="img" aria-label="{title}"
-       src="{url}" data-icinga-colors="{colors}" data-icinga-values="{data}"/>
-</noscript>
-EOD;
-
-    /**
-     * @var Url
-     */
-    private $url;
+    private $template = '<div class="inline-pie {class}">{svg}</div>';
 
     /**
      * The colors used to display the slices of this pie-chart.
@@ -106,9 +90,9 @@ EOD;
     private $title;
 
     /**
-     * @var
+     * @var int
      */
-    private $size;
+    private $size = 16;
 
     /**
      * The data displayed by the pie-chart
@@ -132,7 +116,7 @@ EOD;
     public function setData(array $data)
     {
         $this->data = $data;
-        $this->url->setParam('data', implode(',', $data));
+
         return $this;
     }
 
@@ -146,15 +130,17 @@ EOD;
     public function setSize($size = null)
     {
         $this->size = $size;
+
         return $this;
     }
 
     /**
      * Do not display the NoScript fallback html
+     *
+     * @deprecated noop
      */
     public function disableNoScript()
     {
-        $this->noscript = '';
     }
 
     /**
@@ -167,6 +153,7 @@ EOD;
     public function setSparklineClass($class)
     {
         $this->class = $class;
+
         return $this;
     }
 
@@ -180,11 +167,7 @@ EOD;
     public function setColors(array $colors = null)
     {
         $this->colors = $colors;
-        if (isset($colors)) {
-            $this->url->setParam('colors', implode(',', $colors));
-        } else {
-            $this->url->setParam('colors', null);
-        }
+
         return $this;
     }
 
@@ -198,6 +181,7 @@ EOD;
     public function setTitle($title)
     {
         $this->title = $this->view()->escape($title);
+
         return $this;
     }
 
@@ -211,7 +195,7 @@ EOD;
     public function __construct(array $data, $title, $colors = null)
     {
         $this->setTitle($title);
-        $this->url = Url::fromPath('svg/chart.php');
+
         if (array_key_exists('data', $data)) {
             $this->data = $data['data'];
             if (array_key_exists('colors', $data)) {
@@ -220,12 +204,14 @@ EOD;
         } else {
             $this->setData($data);
         }
+
         if (isset($colors)) {
             $this->setColors($colors);
         } else {
             $this->setColors($this->colors);
         }
     }
+
     /**
      * Renders this widget via the given view and returns the
      * HTML as a string
@@ -234,14 +220,15 @@ EOD;
      */
     public function render()
     {
-        if ($this->view()->layout()->getLayout() === 'pdf') {
-            $pie = new PieChart();
-            $pie->alignTopLeft();
-            $pie->disableLegend();
-            $pie->drawPie(array(
-                'data' => $this->data, 'colors' => $this->colors
-            ));
+        $pie = new PieChart();
+        $pie->alignTopLeft();
+        $pie->disableLegend();
+        $pie->drawPie([
+            'data'      => $this->data,
+            'colors'    => $this->colors
+        ]);
 
+        if ($this->view()->layout()->getLayout() === 'pdf') {
             try {
                 $png = $pie->toPng($this->size, $this->size);
                 return '<img class="inlinepie" src="data:image/png;base64,' . base64_encode($png) . '" />';
@@ -250,39 +237,27 @@ EOD;
             }
         }
 
+        $pie->title = $this->title;
+        $pie->description = $this->title;
+
         $template = $this->template;
-        // TODO: Check whether we are XHR and don't send
-        $template = str_replace('{noscript}', $this->noscript, $template);
-        $template = str_replace('{url}', $this->url, $template);
         $template = str_replace('{class}', $this->class, $template);
+        $template = str_replace('{svg}', $pie->render(), $template);
 
-        // style
-        $template = str_replace('{size}', isset($this->size) ? $this->size : 16, $template);
-        $template = str_replace('{title}', $this->title, $template);
-
-        $template = str_replace('{colors}', implode(',', $this->colors), $template);
-
-        // Locale-ignorant string cast. Please. Do. NOT. Remove. This. Again.
-        // Problem is that implode respects locales when casting floats. This means
-        // that implode(',', array(1.1, 1.2)) would read '1,1,1,2'.
-        $data = array();
-        foreach ($this->data as $dat) {
-            $data[] = sprintf('%F', $dat);
-        }
-
-        $template = str_replace('{data}', htmlspecialchars(implode(',', $data)), $template);
         return $template;
     }
 
     public static function createFromStateSummary(stdClass $states, $title, array $colors)
     {
-        $handledUnhandledStates = array();
+        $handledUnhandledStates = [];
         foreach ($states as $key => $value) {
             if (StringHelper::endsWith($key, '_handled') || StringHelper::endsWith($key, '_unhandled')) {
                 $handledUnhandledStates[$key] = $value;
             }
         }
+
         $chart = new self(array_values($handledUnhandledStates), $title, $colors);
+
         return $chart
             ->setSize(50)
             ->setTitle('')
