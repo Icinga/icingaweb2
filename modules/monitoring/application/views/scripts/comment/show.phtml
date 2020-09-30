@@ -65,6 +65,11 @@
       </td>
     </tr>
 
+    <tr>
+      <th><?= $this->translate('Comment') ?></th>
+      <td><?= $this->nl2br($this->createTicketLinks($this->markdown($comment->comment))) ?></td>
+    </tr>
+
     <?php if (isset($delCommentForm)): // Form is unset if the current user lacks the respective permission ?>
     <tr class="newsection">
       <th><?= $this->translate('Commands') ?></th>
