@@ -3,6 +3,7 @@
 
 namespace Icinga\Module\Monitoring\Controllers;
 
+use Icinga\Application\Hook;
 use Icinga\Module\Monitoring\Controller;
 use Icinga\Module\Monitoring\Forms\Command\Object\DeleteCommentCommandForm;
 use Icinga\Web\Url;
@@ -58,6 +59,10 @@ class CommentController extends Controller
                 'url'   =>'monitoring/comments/show'
             )
         )->activate('comment')->extend(new DashboardAction())->extend(new MenuAction());
+
+        if (Hook::has('ticket')) {
+            $this->view->tickets = Hook::first('ticket');
+        }
     }
 
     /**

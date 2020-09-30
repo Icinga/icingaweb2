@@ -40,6 +40,13 @@ class EventController extends Controller
         'dt_end'                => 'downtimeevent'
     );
 
+    public function init()
+    {
+        if (Hook::has('ticket')) {
+            $this->view->tickets = Hook::first('ticket');
+        }
+    }
+
     public function showAction()
     {
         $type = $this->params->shiftRequired('type');
