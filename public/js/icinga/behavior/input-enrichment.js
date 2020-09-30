@@ -1,7 +1,7 @@
 /* Icinga Web 2 | (c) 2020 Icinga GmbH | GPLv2+ */
 
 /**
- * Complete - Behavior for forms with auto-completion of terms
+ * InputEnrichment - Behavior for forms with enriched inputs
  */
 (function(Icinga) {
 
@@ -13,7 +13,7 @@
      * @param icinga
      * @constructor
      */
-    var Complete = function (icinga) {
+    var InputEnrichment = function (icinga) {
         Icinga.EventListener.call(this, icinga);
 
         this.on('beforerender', '.container', this.onBeforeRender, this);
@@ -22,7 +22,7 @@
         /**
          * Enriched inputs
          *
-         * @type {WeakMap<object, FilterInput>}
+         * @type {WeakMap<object, FilterInput|TermInput|Completer>}
          * @private
          */
         this._enrichments = new WeakMap();
@@ -37,7 +37,7 @@
          */
         this._cachedEnrichments = {};
     };
-    Complete.prototype = new Icinga.EventListener();
+    InputEnrichment.prototype = new Icinga.EventListener();
 
     /**
      * @param event
@@ -46,13 +46,13 @@
      * @param autorefresh
      * @param scripted
      */
-    Complete.prototype.onBeforeRender = function (event, content, action, autorefresh, scripted) {
+    InputEnrichment.prototype.onBeforeRender = function (event, content, action, autorefresh, scripted) {
         if (! autorefresh) {
             return;
         }
 
         let _this = event.data.self;
-        let inputs = event.currentTarget.querySelectorAll('input[data-term-completion]');
+        let inputs = event.currentTarget.querySelectorAll('input[data-enrichment-type]');
 
         // Remember current instances
         inputs.forEach(function (input) {
@@ -68,7 +68,7 @@
      * @param autorefresh
      * @param scripted
      */
-    Complete.prototype.onRendered = function (event, autorefresh, scripted) {
+    InputEnrichment.prototype.onRendered = function (event, autorefresh, scripted) {
         let _this = event.data.self;
         let container = event.currentTarget;
 
@@ -89,18 +89,28 @@
         }
 
         // Create new instances
-        var inputs = container.querySelectorAll('input[data-term-completion]');
+        var inputs = container.querySelectorAll('input[data-enrichment-type]');
         inputs.forEach(function (input) {
             var enrichment = _this._enrichments.get(input);
             if (! enrichment) {
-                enrichment = (new FilterInput(input)).bind();
-                enrichment.restoreTerms();
+                switch (input.dataset.enrichmentType) {
+                    case 'filter':
+                        enrichment = (new FilterInput(input)).bind();
+                        enrichment.restoreTerms();
+                        break;
+                    case 'terms':
+                        enrichment = (new TermInput(input)).bind();
+                        enrichment.restoreTerms();
+                        break;
+                    case 'completion':
+                        enrichment = (new Completer(input)).bind();
+                }
 
                 _this._enrichments.set(input, enrichment);
             }
         });
     };
 
-    Icinga.Behaviors.Complete = Complete;
+    Icinga.Behaviors.InputEnrichment = InputEnrichment;
 
 })(Icinga);
