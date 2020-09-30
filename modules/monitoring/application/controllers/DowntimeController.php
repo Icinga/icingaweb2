@@ -3,6 +3,7 @@
 
 namespace Icinga\Module\Monitoring\Controllers;
 
+use Icinga\Application\Hook;
 use Icinga\Module\Monitoring\Controller;
 use Icinga\Module\Monitoring\Forms\Command\Object\DeleteDowntimeCommandForm;
 use Icinga\Module\Monitoring\Object\Host;
@@ -68,6 +69,10 @@ class DowntimeController extends Controller
                 'url'   =>'monitoring/downtimes/show'
             )
         )->activate('downtime')->extend(new DashboardAction())->extend(new MenuAction());
+
+        if (Hook::has('ticket')) {
+            $this->view->tickets = Hook::first('ticket');
+        }
     }
 
     /**
