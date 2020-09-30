@@ -41,7 +41,7 @@ class JavaScript
         'js/icinga/behavior/filtereditor.js',
         'js/icinga/behavior/selectable.js',
         'js/icinga/behavior/modal.js',
-        'js/icinga/behavior/complete.js'
+        'js/icinga/behavior/input-enrichment.js'
     ];
 
     protected static $vendorFiles = [
