@@ -237,6 +237,10 @@
                 }
             }
 
+            if (! $autoSubmittedBy && event.detail && event.detail.submittedBy) {
+                $autoSubmittedBy = $(event.detail.submittedBy);
+            }
+
             _this.icinga.loader.submitForm($form, $autoSubmittedBy, $button);
 
             event.stopPropagation();
