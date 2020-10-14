@@ -763,7 +763,7 @@
             var contentSeparator = req.getResponseHeader('X-Icinga-Multipart-Content');
             if (!! contentSeparator) {
                 $.each(req.responseText.split(contentSeparator), function (idx, el) {
-                    var match = el.match(/for=(\S+)\s+(.*)/m);
+                    var match = el.match(/for=(\S+)\s+(.*)/ms);
                     if (!! match) {
                         var $target = $('#' + match[1]);
                         if ($target.length) {
