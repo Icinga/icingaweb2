@@ -1119,7 +1119,7 @@
             $.each(_this.icinga.behaviors, function(name, behavior) {
                 if (behavior.renderHook) {
                     var changed = behavior.renderHook(content, $container, action, autorefresh);
-                    if (!changed) {
+                    if (changed === null) {
                         discard = true;
                     } else {
                         content = changed;
