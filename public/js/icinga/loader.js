@@ -762,6 +762,14 @@
 
             var contentSeparator = req.getResponseHeader('X-Icinga-Multipart-Content');
             if (!! contentSeparator) {
+                var locationQuery = req.getResponseHeader('X-Icinga-Location-Query');
+                if (locationQuery !== null) {
+                    var a = this.icinga.utils.getUrlHelper();
+                    a.search = locationQuery ? '?' + locationQuery : '';
+                    req.$target.data('icingaUrl', a.href);
+                    this.icinga.history.replaceCurrentState();
+                }
+
                 $.each(req.responseText.split(contentSeparator), function (idx, el) {
                     var match = el.match(/for=(\S+)\s+(.*)/m);
                     if (!! match) {
