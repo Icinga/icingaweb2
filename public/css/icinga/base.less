@@ -187,7 +187,8 @@ td, th {
 }
 
 .container {
-  &:before {
+  &:before,
+  > .content:before {
     content: "";
     display: block;
 
@@ -195,26 +196,31 @@ td, th {
     background-size: 4em 4em;
 
     opacity: 0;
-    z-index: -10;
+    z-index: -1;
     pointer-events: none;
     .transition(none);
   }
 
-  &.impact {
+  &.impact,
+  > .content.impact {
     overflow: hidden;
     position: relative;
+
+    &:before {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+
+      opacity: .7;
+      z-index: 1;
+      pointer-events: all;
+      .transition(opacity 1s 2s linear);
+    }
   }
 
   &.impact:before {
-    position: absolute;
     top: 2.5em;
-    right: 0;
-    bottom: 0;
-    left: 0;
-
-    opacity: .7;
-    z-index: 10;
-    pointer-events: all;
-    .transition(opacity 1s 2s linear);
   }
 }
