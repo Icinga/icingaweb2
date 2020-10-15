@@ -181,10 +181,19 @@
                 }
             }
 
-            var req = this.loadUrl(url, $target, data, method);
+            var req = this.loadUrl(url, $target, data, method, undefined, !! $autoSubmittedBy);
             req.forceFocus = $autoSubmittedBy ? $autoSubmittedBy : $button.length ? $button : null;
             req.addToHistory = method === 'GET';
             req.progressTimer = progressTimer;
+
+            if ($autoSubmittedBy) {
+                if ($autoSubmittedBy.closest('.controls').length) {
+                    $('.content', req.$target).addClass('impact');
+                } else {
+                    req.$target.addClass('impact');
+                }
+            }
+
             return req;
         },
 
@@ -851,6 +860,11 @@
             // Remove 'impact' class if there was such
             if (req.$target.hasClass('impact')) {
                 req.$target.removeClass('impact');
+            } else {
+                var $impact = req.$target.find('.impact').first();
+                if ($impact.length) {
+                    $impact.removeClass('impact');
+                }
             }
 
             if (! req.autorefresh) {
