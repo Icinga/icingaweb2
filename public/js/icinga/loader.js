@@ -767,12 +767,20 @@
                     if (!! match) {
                         var $target = $('#' + match[1]);
                         if ($target.length) {
+                            var forceFocus;
+                            if (req.forceFocus
+                                && typeof req.forceFocus.jquery !== 'undefined'
+                                && $.contains($target[0], req.forceFocus[0])
+                            ) {
+                                forceFocus = req.forceFocus;
+                            }
+
                             _this.renderContentToContainer(
                                 match[2],
                                 $target,
                                 'replace',
                                 req.autorefresh,
-                                req.forceFocus,
+                                forceFocus,
                                 autoSubmit,
                                 req.scripted
                             );
