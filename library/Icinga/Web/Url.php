@@ -845,9 +845,13 @@ class Url
         }
 
         $url = clone $this;
-        foreach ($url->getParams()->toArray(false) as $key => $_) {
-            if (! in_array($key, $keyOrArrayOfKeys, true)) {
-                $url->remove($key);
+        foreach ($url->getParams()->toArray(false) as $param => $value) {
+            if (is_int($param)) {
+                $param = $value;
+            }
+
+            if (! in_array($param, $keyOrArrayOfKeys, true)) {
+                $url->remove($param);
             }
         }
 
