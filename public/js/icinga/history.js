@@ -126,6 +126,7 @@
 
             if (state.url) {
                 this.icinga.logger.debug('Replacing current history state');
+                this.lastPushUrl = state.url;
                 window.history.replaceState(
                     this.getBehaviorState(),
                     null,
