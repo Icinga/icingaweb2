@@ -40,6 +40,16 @@
     InputEnrichment.prototype = new Icinga.EventListener();
 
     /**
+     * @param data
+     */
+    InputEnrichment.prototype.update = function (data) {
+        var input = document.querySelector(data[0]);
+        if (input !== null && this._enrichments.has(input)) {
+            this._enrichments.get(input).updateTerms(data[1]);
+        }
+    };
+
+    /**
      * @param event
      * @param content
      * @param action
