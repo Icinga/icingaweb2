@@ -771,30 +771,40 @@
                 }
 
                 $.each(req.responseText.split(contentSeparator), function (idx, el) {
-                    var match = el.match(/for=(\S+)\s+(.*)/ms);
+                    var match = el.match(/for=(Behavior:)?(\S+)\s+(.*)/ms);
                     if (!! match) {
-                        var $target = $('#' + match[1]);
-                        if ($target.length) {
-                            var forceFocus;
-                            if (req.forceFocus
-                                && typeof req.forceFocus.jquery !== 'undefined'
-                                && $.contains($target[0], req.forceFocus[0])
-                            ) {
-                                forceFocus = req.forceFocus;
+                        if (match[1]) {
+                            var behavior = _this.icinga.behaviors[match[2].toLowerCase()];
+                            if (typeof behavior !== 'undefined' && typeof behavior.update === 'function') {
+                                behavior.update(JSON.parse(match[3]));
+                            } else {
+                                _this.icinga.logger.warn(
+                                    'Invalid behavior. Cannot update behavior "' + match[2] + '"');
                             }
-
-                            _this.renderContentToContainer(
-                                match[2],
-                                $target,
-                                'replace',
-                                req.autorefresh,
-                                forceFocus,
-                                autoSubmit,
-                                req.scripted
-                            );
                         } else {
-                            _this.icinga.logger.warn(
-                                'Invalid target ID. Cannot render multipart to #' + match[1]);
+                            var $target = $('#' + match[2]);
+                            if ($target.length) {
+                                var forceFocus;
+                                if (req.forceFocus
+                                    && typeof req.forceFocus.jquery !== 'undefined'
+                                    && $.contains($target[0], req.forceFocus[0])
+                                ) {
+                                    forceFocus = req.forceFocus;
+                                }
+
+                                _this.renderContentToContainer(
+                                    match[3],
+                                    $target,
+                                    'replace',
+                                    req.autorefresh,
+                                    forceFocus,
+                                    autoSubmit,
+                                    req.scripted
+                                );
+                            } else {
+                                _this.icinga.logger.warn(
+                                    'Invalid target ID. Cannot render multipart to #' + match[2]);
+                            }
                         }
                     } else {
                         _this.icinga.logger.error('Ill-formed multipart', el);
