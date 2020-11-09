@@ -139,7 +139,7 @@ class ModuleController extends DocController
         $image = $this->params->getRequired('image');
         $docPath = $this->getPath($module, Icinga::app()->getModuleManager()->getModuleDir($module, '/doc'));
         $imagePath = realpath($docPath . '/' . $image);
-        if ($imagePath === false) {
+        if ($imagePath === false || substr($imagePath, 0, strlen($docPath)) !== $docPath) {
             $this->httpNotFound('%s does not exist', $image);
         }
 
