@@ -83,6 +83,7 @@ class Web extends EmbeddedWeb
             ->setupZendAutoloader()
             ->setupLogging()
             ->setupErrorHandling()
+            ->loadLibraries()
             ->loadConfig()
             ->setupLogger()
             ->setupRequest()
