@@ -6,9 +6,12 @@ namespace Icinga\Application\Libraries;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\Json\JsonDecodeException;
 use Icinga\Util\Json;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
 
 class Library
 {
+    /** @var string */
     protected $path;
 
     /** @var string */
@@ -16,6 +19,9 @@ class Library
 
     /** @var array */
     protected $metaData;
+
+    /** @var array */
+    protected $assets;
 
     /**
      * Create a new Library
@@ -25,6 +31,16 @@ class Library
     public function __construct($path)
     {
         $this->path = $path;
+    }
+
+    /**
+     * Get this library's path
+     *
+     * @return string
+     */
+    public function getPath()
+    {
+        return $this->path;
     }
 
     /**
@@ -61,6 +77,36 @@ class Library
     }
 
     /**
+     * Get this library's JS assets
+     *
+     * @return string[] Asset paths
+     */
+    public function getJsAssets()
+    {
+        return $this->assets()['js'];
+    }
+
+    /**
+     * Get this library's CSS assets
+     *
+     * @return string[] Asset paths
+     */
+    public function getCssAssets()
+    {
+        return $this->assets()['css'];
+    }
+
+    /**
+     * Get this library's static assets
+     *
+     * @return string[] Asset paths
+     */
+    public function getStaticAssets()
+    {
+        return $this->assets()['static'];
+    }
+
+    /**
      * Register this library's autoloader
      *
      * @return void
@@ -93,5 +139,42 @@ class Library
         }
 
         return $this->metaData;
+    }
+
+    /**
+     * Register and return this library's assets
+     *
+     * @return array
+     */
+    protected function assets()
+    {
+        if ($this->assets !== null) {
+            return $this->assets;
+        }
+
+        $listAssets = function ($type) {
+            $dir = join(DIRECTORY_SEPARATOR, [$this->path, 'asset', $type]);
+            if (! is_dir($dir)) {
+                return [];
+            }
+
+            return new RecursiveIteratorIterator(new RecursiveDirectoryIterator(
+                $dir,
+                RecursiveDirectoryIterator::CURRENT_AS_PATHNAME | RecursiveDirectoryIterator::SKIP_DOTS
+            ));
+        };
+
+        $this->assets = [];
+
+        $jsAssets = $listAssets('js');
+        $this->assets['js'] = is_array($jsAssets) ? $jsAssets : iterator_to_array($jsAssets);
+
+        $cssAssets = $listAssets('css');
+        $this->assets['css'] = is_array($cssAssets) ? $cssAssets : iterator_to_array($cssAssets);
+
+        $staticAssets = $listAssets('static');
+        $this->assets['static'] = is_array($staticAssets) ? $staticAssets : iterator_to_array($staticAssets);
+
+        return $this->assets;
     }
 }
