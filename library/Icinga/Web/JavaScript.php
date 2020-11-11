@@ -4,11 +4,16 @@
 namespace Icinga\Web;
 
 use Icinga\Application\Icinga;
-use Icinga\Web\FileCache;
+use Icinga\Application\Logger;
+use Icinga\Exception\Json\JsonDecodeException;
+use Icinga\Util\Json;
 use JShrink\Minifier;
 
 class JavaScript
 {
+    /** @var string */
+    const DEFINE_RE = '/(?<!\.)define\(\s*([\'"][^\'"]*[\'"])?[,\s]*(\[[^]]*\])?[,\s]*(function\s*\([^)]*\)|[^=]*=>)/';
+
     protected static $jsFiles = array(
         'js/helpers.js',
         'js/icinga.js',
@@ -64,13 +69,22 @@ class JavaScript
         $min = $minified ? '.min' : '';
 
         // Prepare vendor file list
-        $vendorFiles = array();
+        $vendorFiles = [];
         foreach (self::$vendorFiles as $file) {
             $vendorFiles[] = $basedir . '/' . $file . $min . '.js';
         }
 
+        // Prepare library file list
+        $libraryFiles = [];
+        foreach (Icinga::app()->getLibraries() as $library) {
+            $libraryFiles = array_merge(
+                $libraryFiles,
+                $library->getJsAssets()
+            );
+        }
+
         // Prepare Icinga JS file list
-        $jsFiles = array();
+        $jsFiles = [];
         foreach (self::$jsFiles as $file) {
             $jsFiles[] = $basedir . '/' . $file;
         }
@@ -93,7 +107,7 @@ class JavaScript
         }
 
         $sharedFiles = array_unique($sharedFiles);
-        $files = array_merge($vendorFiles, $jsFiles, $sharedFiles);
+        $files = array_merge($vendorFiles, $libraryFiles, $jsFiles, $sharedFiles);
 
         $request = Icinga::app()->getRequest();
         $noCache = $request->getHeader('Cache-Control') === 'no-cache' || $request->getHeader('Pragma') === 'no-cache';
@@ -118,6 +132,67 @@ class JavaScript
         // We do not minify vendor files
         foreach ($vendorFiles as $file) {
             $out .= ';' . ltrim(trim(file_get_contents($file)), ';') . "\n";
+        }
+
+        // Library files need to be namespaced first before they can be included
+        foreach (Icinga::app()->getLibraries() as $library) {
+            foreach ($library->getJsAssets() as $file) {
+                $content = file_get_contents($file) . "\n\n\n";
+                if (preg_match(self::DEFINE_RE, $content, $match)) {
+                    try {
+                        $assetName = $match[1] ? Json::decode($match[1]) : '';
+                        if (! $assetName) {
+                            $assetName = explode('.', basename($file))[0];
+                        }
+
+                        $assetName = join(DIRECTORY_SEPARATOR, array_filter([
+                            $library->getName(),
+                            ltrim(substr(dirname($file), strlen($library->getJsAssetPath())), DIRECTORY_SEPARATOR),
+                            $assetName
+                        ]));
+
+                        $assetName = Json::encode($assetName, JSON_UNESCAPED_SLASHES);
+                    } catch (JsonDecodeException $_) {
+                        $assetName = $match[1];
+                        Logger::error(
+                            'Can\'t optimize name of "%s". Are single quotes used instead of double quotes?',
+                            $file
+                        );
+                    }
+
+                    try {
+                        $dependencies = $match[2] ? Json::decode($match[2]) : [];
+                        foreach ($dependencies as &$dependencyName) {
+                            if (preg_match('~^((?:\.\.?/)+)*(.*)~', $dependencyName, $natch)) {
+                                $dependencyName = join(DIRECTORY_SEPARATOR, array_filter([
+                                    $library->getName(),
+                                    ltrim(substr(
+                                        realpath(join(DIRECTORY_SEPARATOR, [dirname($file), $natch[1]])),
+                                        strlen(realpath($library->getJsAssetPath()))
+                                    ), DIRECTORY_SEPARATOR),
+                                    $natch[2]
+                                ]));
+                            }
+                        }
+
+                        $dependencies = Json::encode($dependencies, JSON_UNESCAPED_SLASHES);
+                    } catch (JsonDecodeException $_) {
+                        $dependencies = $match[2];
+                        Logger::error(
+                            'Can\'t optimize dependencies of "%s". Are single quotes used instead of double quotes?',
+                            $file
+                        );
+                    }
+
+                    $content = str_replace(
+                        $match[0],
+                        sprintf("define(%s, %s, %s", $assetName, $dependencies, $match[3]),
+                        $content
+                    );
+                }
+
+                $js .= $content;
+            }
         }
 
         foreach ($jsFiles as $file) {
