@@ -15,6 +15,15 @@ class Library
     protected $path;
 
     /** @var string */
+    protected $jsAssetPath;
+
+    /** @var string */
+    protected $cssAssetPath;
+
+    /** @var string */
+    protected $staticAssetPath;
+
+    /** @var string */
     protected $version;
 
     /** @var array */
@@ -41,6 +50,39 @@ class Library
     public function getPath()
     {
         return $this->path;
+    }
+
+    /**
+     * Get path of this library's JS assets
+     *
+     * @return string
+     */
+    public function getJsAssetPath()
+    {
+        $this->assets();
+        return $this->jsAssetPath;
+    }
+
+    /**
+     * Get path of this library's CSS assets
+     *
+     * @return string
+     */
+    public function getCssAssetPath()
+    {
+        $this->assets();
+        return $this->cssAssetPath;
+    }
+
+    /**
+     * Get path of this library's static assets
+     *
+     * @return string
+     */
+    public function getStaticAssetPath()
+    {
+        $this->assets();
+        return $this->staticAssetPath;
     }
 
     /**
@@ -157,6 +199,8 @@ class Library
             if (! is_dir($dir)) {
                 return [];
             }
+
+            $this->{$type . 'AssetPath'} = $dir;
 
             return new RecursiveIteratorIterator(new RecursiveDirectoryIterator(
                 $dir,
