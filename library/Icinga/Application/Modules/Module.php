@@ -58,6 +58,13 @@ class Module
     private $cssdir;
 
     /**
+     * Directory for Javascript
+     *
+     * @var string
+     */
+    private $jsdir;
+
+    /**
      * Base application directory
      *
      * @var string
@@ -948,6 +955,26 @@ class Module
     public function getCssDir()
     {
         return $this->cssdir;
+    }
+
+    /**
+     * Get the module's JS directory
+     *
+     * @return string
+     */
+    public function getJsDir()
+    {
+        return $this->jsdir;
+    }
+
+    /**
+     * Get the module's JS asset directory
+     *
+     * @return string
+     */
+    public function getJsAssetDir()
+    {
+        return join(DIRECTORY_SEPARATOR, [$this->assetDir, 'js']);
     }
 
     /**
