@@ -7,6 +7,10 @@
 
     "use strict";
 
+    var FilterInput = require('icinga/ipl/widget/FilterInput');
+    var TermInput = require('icinga/ipl/widget/TermInput');
+    var Completer = require('icinga/ipl/widget/Completer');
+
     Icinga.Behaviors = Icinga.Behaviors || {};
 
     /**
