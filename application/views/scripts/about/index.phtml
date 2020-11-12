@@ -94,7 +94,27 @@
             )
         ) ?>
     </div>
-    <h2><?= $this->translate('Loaded modules') ?></h2>
+    <h2><?= $this->translate('Loaded Libraries') ?></h2>
+    <table class="table-row-selectable common-table" data-base-target="_next">
+        <thead>
+            <tr>
+                <th><?= $this->translate('Name') ?></th>
+                <th><?= $this->translate('Version') ?></th>
+            </tr>
+        </thead>
+        <tbody>
+        <?php foreach ($libraries as $library): ?>
+            <tr>
+                <td>
+                    <?= $this->escape($library->getName()) ?>
+                <td>
+                    <?= $this->escape($library->getVersion()) ?: '-' ?>
+                </td>
+            </tr>
+        <?php endforeach ?>
+        </tbody>
+    </table>
+    <h2><?= $this->translate('Loaded Modules') ?></h2>
     <table class="table-row-selectable common-table" data-base-target="_next">
     <thead>
         <tr>
