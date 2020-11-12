@@ -14,7 +14,7 @@ class JavaScript
     /** @var string */
     const DEFINE_RE = '/(?<!\.)define\(\s*([\'"][^\'"]*[\'"])?[,\s]*(\[[^]]*\])?[,\s]*(function\s*\([^)]*\)|[^=]*=>)/';
 
-    protected static $jsFiles = array(
+    protected static $jsFiles = [
         'js/helpers.js',
         'js/icinga.js',
         'js/icinga/logger.js',
@@ -41,12 +41,16 @@ class JavaScript
         'js/icinga/behavior/filtereditor.js',
         'js/icinga/behavior/selectable.js',
         'js/icinga/behavior/modal.js'
-    );
+    ];
 
-    protected static $vendorFiles = array(
+    protected static $vendorFiles = [
         'js/vendor/jquery-3.4.1',
         'js/vendor/jquery-migrate-3.1.0'
-    );
+    ];
+
+    protected static $baseFiles = [
+        'js/define.js'
+    ];
 
     public static function sendMinified()
     {
@@ -72,6 +76,12 @@ class JavaScript
         $vendorFiles = [];
         foreach (self::$vendorFiles as $file) {
             $vendorFiles[] = $basedir . '/' . $file . $min . '.js';
+        }
+
+        // Prepare base file list
+        $baseFiles = [];
+        foreach (self::$baseFiles as $file) {
+            $baseFiles[] = $basedir . '/' . $file;
         }
 
         // Prepare library file list
@@ -107,7 +117,7 @@ class JavaScript
         }
 
         $sharedFiles = array_unique($sharedFiles);
-        $files = array_merge($vendorFiles, $libraryFiles, $jsFiles, $sharedFiles);
+        $files = array_merge($vendorFiles, $baseFiles, $libraryFiles, $jsFiles, $sharedFiles);
 
         $request = Icinga::app()->getRequest();
         $noCache = $request->getHeader('Cache-Control') === 'no-cache' || $request->getHeader('Pragma') === 'no-cache';
@@ -132,6 +142,10 @@ class JavaScript
         // We do not minify vendor files
         foreach ($vendorFiles as $file) {
             $out .= ';' . ltrim(trim(file_get_contents($file)), ';') . "\n";
+        }
+
+        foreach ($baseFiles as $file) {
+            $js .= file_get_contents($file) . "\n\n\n";
         }
 
         // Library files need to be namespaced first before they can be included
