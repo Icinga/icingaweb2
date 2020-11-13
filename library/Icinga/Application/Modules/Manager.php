@@ -532,6 +532,36 @@ class Manager
     }
 
     /**
+     * Check if the given module has unmet dependencies
+     *
+     * @param string $name
+     *
+     * @return bool
+     */
+    public function hasUnmetDependencies($name)
+    {
+        $module = $this->getModule($name, false);
+
+        $requiredMods = $module->getRequiredModules();
+        foreach ($requiredMods as $moduleName => $moduleVersion) {
+            if (! $this->has($moduleName, $moduleVersion)) {
+                return true;
+            }
+        }
+
+        $libraries = Icinga::app()->getLibraries();
+
+        $requiredLibs = $module->getRequiredLibraries();
+        foreach ($requiredLibs as $libraryName => $libraryVersion) {
+            if (! $libraries->has($libraryName, $libraryVersion)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Return an array containing all enabled module names as strings
      *
      * @return array
