@@ -17,4 +17,41 @@ if (isset($stackTraces)) {
     }
 }
 ?>
+<?php if (isset($module)): ?>
+  <?php $manager = \Icinga\Application\Icinga::app()->getModuleManager(); ?>
+  <?php if ($manager->hasUnmetDependencies($module->getName())): ?>
+    <div class="error-reason">
+        <p><?= sprintf($this->translate(
+            'This error might have occurred because module "%s" has unmet dependencies.'
+            . ' Please check it\'s installation instructions and install missing dependencies.'
+        ), $module->getName()) ?></p>
+    <?php if (isset($requiredModule) && $requiredModule && isset($module->getRequiredModules()[$requiredModule])): ?>
+      <?php if (! $manager->hasInstalled($requiredModule)): ?>
+        <p><?= sprintf($this->translate(
+            'Module "%s" is required and missing. Please install a version of it matching the required one: %s'
+        ), $requiredModule, $module->getRequiredModules()[$requiredModule]) ?></p>
+      <?php elseif (! $manager->hasEnabled($requiredModule)): ?>
+        <p><?= sprintf($this->translate(
+            'Module "%s" is required and installed, but not enabled. Please enable module "%1$s".'
+        ), $requiredModule) ?></p>
+      <?php elseif (! $manager->has($requiredModule, $module->getRequiredModules()[$requiredModule])): ?>
+        <p><?= sprintf($this->translate(
+            'Module "%s" is required and installed, but its version (%s) does not satisfy the required one: %s'
+        ), $requiredModule, $manager->getModule($requiredModule, false)->getVersion(), $module->getRequiredModules()[$requiredModule]) ?></p>
+      <?php endif ?>
+    <?php elseif (isset($requiredLibrary) && $requiredLibrary && isset($module->getRequiredLibraries()[$requiredLibrary])): ?>
+      <?php $libraries = \Icinga\Application\Icinga::app()->getLibraries(); ?>
+      <?php if (! $libraries->has($requiredLibrary)): ?>
+        <p><?= sprintf($this->translate(
+            'Library "%s" is required and missing. Please install a version of it matching the required one: %s'
+        ), $requiredLibrary, $module->getRequiredLibraries()[$requiredLibrary]) ?></p>
+      <?php elseif (! $libraries->has($requiredLibrary, $module->getRequiredLibraries()[$requiredLibrary])): ?>
+        <p><?= sprintf($this->translate(
+            'Library "%s" is required and installed, but its version (%s) does not satisfy the required one: %s'
+        ), $requiredLibrary, $libraries->get($requiredLibrary)->getVersion(), $module->getRequiredLibraries()[$requiredLibrary]) ?></p>
+      <?php endif ?>
+    <?php endif ?>
+    </div>
+  <?php endif ?>
+<?php endif ?>
 </div>
