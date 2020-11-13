@@ -168,7 +168,7 @@ class ConfigController extends Controller
             $form->handleRequest();
         } catch (Exception $e) {
             $this->view->exceptionMessage = $e->getMessage();
-            $this->view->moduleName = $form->getValue('name');
+            $this->view->moduleName = $form->getValue('identifier');
             $this->view->action = 'enable';
             $this->render('module-configuration-error');
         }
@@ -194,7 +194,7 @@ class ConfigController extends Controller
             $form->handleRequest();
         } catch (Exception $e) {
             $this->view->exceptionMessage = $e->getMessage();
-            $this->view->moduleName = $form->getValue('name');
+            $this->view->moduleName = $form->getValue('identifier');
             $this->view->action = 'disable';
             $this->render('module-configuration-error');
         }
