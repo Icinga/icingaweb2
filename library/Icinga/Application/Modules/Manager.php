@@ -431,6 +431,34 @@ class Manager
     }
 
     /**
+     * Check if a module with the given name is enabled
+     *
+     * Passing a version constraint also verifies that the module's version matches.
+     *
+     * @param string $name
+     * @param string $version
+     *
+     * @return bool
+     */
+    public function has($name, $version = null)
+    {
+        if (! $this->hasEnabled($name)) {
+            return false;
+        } elseif ($version === null) {
+            return true;
+        }
+
+        $operator = '=';
+        if (preg_match('/^([<>=]{1,2})\s*v?((?:[\d.]+)(?:\D+)?)$/', $version, $match)) {
+            $operator = $match[1];
+            $version = $match[2];
+        }
+
+        $modVersion = ltrim($this->getModule($name)->getVersion(), 'v');
+        return version_compare($modVersion, $version, $operator);
+    }
+
+    /**
      * Get the currently loaded modules
      *
      * @return  Module[]
