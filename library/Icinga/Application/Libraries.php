@@ -49,15 +49,8 @@ class Libraries implements IteratorAggregate
      */
     public function has($name, $version = null)
     {
-        $libVersion = null;
-        foreach ($this->libraries as $library) {
-            if ($library->getName() === $name) {
-                $libVersion = $library->getVersion();
-                break;
-            }
-        }
-
-        if ($libVersion === null) {
+        $library = $this->get($name);
+        if ($library === null) {
             return false;
         } elseif ($version === null) {
             return true;
@@ -69,6 +62,22 @@ class Libraries implements IteratorAggregate
             $version = $match[2];
         }
 
-        return version_compare($libVersion, $version, $operator);
+        return version_compare($library->getVersion(), $version, $operator);
+    }
+
+    /**
+     * Get a library by name
+     *
+     * @param string $name
+     *
+     * @return Library|null
+     */
+    public function get($name)
+    {
+        foreach ($this->libraries as $library) {
+            if ($library->getName() === $name) {
+                return $library;
+            }
+        }
     }
 }
