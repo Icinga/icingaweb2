@@ -138,6 +138,8 @@ class ConfigController extends Controller
             }
 
             $this->view->module = $module;
+            $this->view->libraries = $app->getLibraries();
+            $this->view->moduleManager = $manager;
             $this->view->toggleForm = $toggleForm;
             $this->view->title = $module->getName();
             $this->view->tabs = $module->getConfigTabs()->activate('info');

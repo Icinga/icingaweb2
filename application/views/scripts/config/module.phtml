@@ -6,9 +6,11 @@
     <?= $this->translate('There is no such module installed.') ?>
   <?php return; endif ?>
   <?php
-    $dependencies = $module->getDependencies();
+    $requiredMods = $module->getRequiredModules();
+    $requiredLibs = $module->getRequiredLibraries();
     $restrictions = $module->getProvidedRestrictions();
     $permissions = $module->getProvidedPermissions();
+    $unmetDependencies = $moduleManager->hasUnmetDependencies($module->getName());
     $state = $moduleData->enabled ? ($moduleData->loaded ? 'enabled' : 'failed') : 'disabled'
   ?>
   <table class="name-value-table">
@@ -20,9 +22,13 @@
       <th><?= $this->translate('State') ?></th>
       <td>
         <?= $state ?>
-        <?php if (isset($this->toggleForm)): ?>
+      <?php if (isset($this->toggleForm)): ?>
+        <?php if ($moduleData->enabled || ! $unmetDependencies): ?>
           <?= $this->toggleForm ?>
+        <?php else: ?>
+          <?= $this->icon('attention-alt', $this->translate('Module can\'t be enabled due to unmet dependencies')) ?>
         <?php endif ?>
+      <?php endif ?>
       </td>
     <tr>
       <th><?= $this->escape($this->translate('Version')) ?></th>
@@ -43,13 +49,58 @@
     </tr>
     <tr>
       <th><?= $this->escape($this->translate('Dependencies')) ?></th>
-      <td>
-        <?php
-          if (empty($dependencies)):
-            echo $this->translate('This module has no dependencies');
-          else: foreach ($dependencies as $name => $versionString): ?>
-            <strong><?= $this->escape($name) ?></strong><?php if ($versionString !== true): ?>: <?= $this->escape($versionString) ?><?php endif ?><br />
-        <?php endforeach; endif ?>
+      <td class="module-dependencies">
+      <?php if (empty($requiredLibs) && empty($requiredMods)): ?>
+          <?= $this->translate('This module has no dependencies') ?>
+      <?php else: ?>
+        <?php if ($unmetDependencies): ?>
+          <strong class="unmet-dependencies">
+            <?= $this->translate('Unmet dependencies found! Module can\'t be enabled unless all dependencies are met.') ?>
+          </strong>
+        <?php endif ?>
+        <?php if (! empty($requiredLibs)): ?>
+          <table class="name-value-table">
+              <caption><?= $this->translate('Libraries') ?></caption>
+          <?php foreach ($requiredLibs as $libraryName => $versionString): ?>
+              <tr>
+                  <th><?= $this->escape($libraryName) ?></th>
+                  <td>
+                  <?php if ($libraries->has($libraryName, $versionString === true ? null : $versionString)): ?>
+                      <?= $versionString === true ? '*' : $this->escape($versionString) ?>
+                  <?php else: ?>
+                      <span class="missing"><?= $versionString === true ? '*' : $this->escape($versionString) ?></span>
+                    <?php if (($library = $libraries->get($libraryName)) !== null): ?>
+                      (<?= $library->getVersion() ?>)
+                    <?php endif ?>
+                  <?php endif ?>
+                  </td>
+              </tr>
+          <?php endforeach ?>
+          </table>
+        <?php endif ?>
+        <?php if (! empty($requiredMods)): ?>
+          <table class="name-value-table">
+              <caption><?= $this->translate('Modules') ?></caption>
+          <?php foreach ($requiredMods as $moduleName => $versionString): ?>
+              <tr>
+                  <th><?= $this->escape($moduleName) ?></th>
+                  <td>
+                  <?php if ($moduleManager->has($moduleName, $versionString === true ? null : $versionString)): ?>
+                      <?= $versionString === true ? '*' : $this->escape($versionString) ?>
+                  <?php else: ?>
+                      <span class="missing"><?= $versionString === true ? '*' : $this->escape($versionString) ?></span>
+                    <?php if (! $moduleManager->hasInstalled($moduleName)): ?>
+                      (<?= $this->translate('not installed') ?>)
+                    <?php else: ?>
+                      (<?= $moduleManager->getModule($moduleName, false)->getVersion() ?><?= $moduleManager->hasEnabled($moduleName) ? '' : ', ' . $this->translate('disabled') ?>)
+                    <?php endif ?>
+                  <?php endif ?>
+                  </td>
+              </tr>
+          <?php endforeach ?>
+          </table>
+        <?php endif ?>
+      <?php endif ?>
       </td>
     </tr>
     <?php if (! empty($permissions)): ?>

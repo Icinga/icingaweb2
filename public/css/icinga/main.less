@@ -178,6 +178,12 @@ a:hover > .icon-cancel {
   width: 100%;
 }
 
+.name-value-table > caption {
+  margin-top: .5em;
+  text-align: left;
+  font-weight: bold;
+}
+
 .name-value-table > tbody > tr > th {
   color: @text-color-light;
   // Reset default font-weight
@@ -348,6 +354,32 @@ a:hover > .icon-cancel {
 
     &:last-child {
       padding-right: 0;
+    }
+  }
+}
+
+.module-dependencies {
+  .unmet-dependencies {
+    background-color: @color-warning;
+    color: @text-color-on-icinga-blue;
+    padding: .25em .5em;
+    margin-left: -.5em;
+  }
+
+  .name-value-table {
+    > caption {
+      font-weight: normal;
+      color: @text-color-light;
+    }
+
+    > tbody > tr > th {
+      font-weight: bold;
+      color: @text-color;
+    }
+
+    .missing {
+      color: @color-critical;
+      font-weight: bold;
     }
   }
 }
