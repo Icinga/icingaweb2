@@ -36,4 +36,39 @@ class Libraries implements IteratorAggregate
 
         return $library;
     }
+
+    /**
+     * Check if a library with the given name has been registered
+     *
+     * Passing a version constraint also verifies that the library's version matches.
+     *
+     * @param string $name
+     * @param string $version
+     *
+     * @return bool
+     */
+    public function has($name, $version = null)
+    {
+        $libVersion = null;
+        foreach ($this->libraries as $library) {
+            if ($library->getName() === $name) {
+                $libVersion = $library->getVersion();
+                break;
+            }
+        }
+
+        if ($libVersion === null) {
+            return false;
+        } elseif ($version === null) {
+            return true;
+        }
+
+        $operator = '=';
+        if (preg_match('/^([<>=]{1,2})\s*v?((?:[\d.]+)(?:\D+)?)$/', $version, $match)) {
+            $operator = $match[1];
+            $version = $match[2];
+        }
+
+        return version_compare($libVersion, $version, $operator);
+    }
 }
