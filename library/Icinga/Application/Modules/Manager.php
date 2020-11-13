@@ -260,6 +260,13 @@ class Manager
             );
         }
 
+        if ($this->hasUnmetDependencies($name)) {
+            throw new ConfigurationError(
+                t('Module "%s" can\'t be enabled. Module has unmet dependencies'),
+                $name
+            );
+        }
+
         clearstatcache(true);
         $target = $this->installedBaseDirs[$name];
         $link = $this->enableDir . DIRECTORY_SEPARATOR . $name;
