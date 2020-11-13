@@ -842,10 +842,31 @@ class Module
      * Get the module dependencies
      *
      * @return array
+     * @deprecated Use method getRequiredModules() instead
      */
     public function getDependencies()
     {
         return $this->metadata()->depends;
+    }
+
+    /**
+     * Get required libraries
+     *
+     * @return array
+     */
+    public function getRequiredLibraries()
+    {
+        return $this->metadata()->libraries;
+    }
+
+    /**
+     * Get required modules
+     *
+     * @return array
+     */
+    public function getRequiredModules()
+    {
+        return $this->metadata()->modules ?: $this->metadata()->depends;
     }
 
     /**
@@ -856,16 +877,19 @@ class Module
     protected function metadata()
     {
         if ($this->metadata === null) {
-            $metadata = (object) array(
-                'name'        => $this->getName(),
-                'version'     => '0.0.0',
-                'title'       => null,
-                'description' => '',
-                'depends'     => array(),
-            );
+            $metadata = (object) [
+                'name'          => $this->getName(),
+                'version'       => '0.0.0',
+                'title'         => null,
+                'description'   => '',
+                'depends'       => [],
+                'libraries'     => [],
+                'modules'       => []
+            ];
 
             if (file_exists($this->metadataFile)) {
                 $key = null;
+                $simpleRequires = false;
                 $file = new File($this->metadataFile, 'r');
                 foreach ($file as $lineno => $line) {
                     $line = rtrim($line);
@@ -884,10 +908,8 @@ class Module
 
                     if (strpos($line, ':') === false) {
                         Logger::debug(
-                            $this->translate(
-                                "Can't process line %d in %s: Line does not specify a key:value pair"
-                                . " nor is it part of the description (indented with a single space)"
-                            ),
+                            "Can't process line %d in %s: Line does not specify a key:value pair"
+                            . " nor is it part of the description (indented with a single space)",
                             $lineno,
                             $this->metadataFile
                         );
@@ -895,27 +917,54 @@ class Module
                         break;
                     }
 
-                    list($key, $val) = preg_split('/:\s+/', $line, 2);
-                    $key = lcfirst($key);
+                    $parts = preg_split('/:\s+/', $line, 2);
+                    if (count($parts) === 1) {
+                        $parts[] = '';
+                    }
 
+                    list($key, $val) = $parts;
+
+                    $key = strtolower($key);
                     switch ($key) {
+                        case 'requires':
+                            if ($val) {
+                                $simpleRequires = true;
+                                $key = 'libraries';
+                            } else {
+                                break;
+                            }
+
+                            // Shares the syntax with `Depends`
+                        case '  libraries':
+                        case '  modules':
+                            if ($simpleRequires && $key[0] === ' ') {
+                                Logger::debug(
+                                    'Can\'t process line %d in %s: Requirements already registered by a previous line',
+                                    $lineno,
+                                    $this->metadataFile
+                                );
+                                break;
+                            }
+
+                            $key = ltrim($key);
+                            // Shares the syntax with `Depends`
                         case 'depends':
                             if (strpos($val, ' ') === false) {
-                                $metadata->depends[$val] = true;
+                                $metadata->{$key}[$val] = true;
                                 continue 2;
                             }
 
                             $parts = preg_split('/,\s+/', $val);
                             foreach ($parts as $part) {
                                 if (preg_match('/^(\w+)\s+\((.+)\)$/', $part, $m)) {
-                                    $metadata->depends[$m[1]] = $m[2];
+                                    $metadata->{$key}[$m[1]] = $m[2];
                                 } else {
                                     // TODO: FAIL?
                                     continue;
                                 }
                             }
-                            break;
 
+                            break;
                         case 'description':
                             if ($metadata->title === null) {
                                 $metadata->title = $val;
@@ -935,8 +984,6 @@ class Module
             }
 
             if ($metadata->description === '') {
-                // TODO: Check whether the translation module is able to
-                //       extract this
                 $metadata->description = t(
                     'This module has no description'
                 );
