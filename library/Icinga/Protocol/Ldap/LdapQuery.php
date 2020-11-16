@@ -215,6 +215,41 @@ class LdapQuery extends SimpleQuery
         }
     }
 
+    public function compare($a, $b, $orderIndex = 0)
+    {
+        if (array_key_exists($orderIndex, $this->order)) {
+            $column = $this->order[$orderIndex][0];
+            $direction = $this->order[$orderIndex][1];
+
+            $flippedColumns = $this->flippedColumns ?: array_flip($this->columns);
+            if (array_key_exists($column, $flippedColumns) && is_string($flippedColumns[$column])) {
+                $column = $flippedColumns[$column];
+            }
+
+            if (is_array($a->$column)) {
+                // rfc2891 states: If a sort key is a multi-valued attribute, and an entry happens to
+                //   have multiple values for that attribute and no other controls are
+                //   present that affect the sorting order, then the server SHOULD use the
+                //   least value (according to the ORDERING rule for that attribute).
+                $a = clone $a;
+                $a->$column = array_reduce($a->$column, function ($carry, $item) use ($direction) {
+                    $result = $carry === null ? 0 : strcmp($item, $carry);
+                    return ($direction === self::SORT_ASC ? $result : $result * -1) < 1 ? $item : $carry;
+                });
+            }
+
+            if (is_array($b->$column)) {
+                $b = clone $b;
+                $b->$column = array_reduce($b->$column, function ($carry, $item) use ($direction) {
+                    $result = $carry === null ? 0 : strcmp($item, $carry);
+                    return ($direction === self::SORT_ASC ? $result : $result * -1) < 1 ? $item : $carry;
+                });
+            }
+        }
+
+        return parent::compare($a, $b, $orderIndex);
+    }
+
     /**
      * Fetch result as tree
      *
