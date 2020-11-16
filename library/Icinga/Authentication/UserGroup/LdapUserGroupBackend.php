@@ -654,6 +654,7 @@ class LdapUserGroupBackend extends LdapRepository implements Inspectable, UserGr
         return $this->ds
             ->select()
             ->from('*', array($this->userNameAttribute))
+            ->setUnfoldAttribute($this->userNameAttribute)
             ->setBase($dn)
             ->fetchOne();
     }
@@ -694,8 +695,8 @@ class LdapUserGroupBackend extends LdapRepository implements Inspectable, UserGr
     public function requireQueryColumn($table, $name, RepositoryQuery $query = null)
     {
         $column = parent::requireQueryColumn($table, $name, $query);
-        if ($name === 'user_name' && $query !== null) {
-            $query->getQuery()->setUnfoldAttribute('user_name');
+        if (($name === 'user_name' || $name === 'group_name') && $query !== null) {
+            $query->getQuery()->setUnfoldAttribute($name);
         }
 
         return $column;
@@ -749,6 +750,7 @@ class LdapUserGroupBackend extends LdapRepository implements Inspectable, UserGr
         $groupQuery = $this->ds
             ->select()
             ->from($this->groupClass, array($this->groupNameAttribute))
+            ->setUnfoldAttribute($this->groupNameAttribute)
             ->where($groupMemberAttribute, $queryValue)
             ->setBase($this->groupBaseDn);
         if ($this->groupFilter) {
