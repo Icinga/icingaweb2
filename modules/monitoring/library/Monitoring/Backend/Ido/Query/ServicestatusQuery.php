@@ -21,7 +21,7 @@ class ServicestatusQuery extends IdoQuery
     /**
      * {@inheritdoc}
      */
-    protected $groupOrigin = array('hostgroups', 'servicegroups');
+    protected $groupOrigin = array('hostgroups', 'servicegroups', 'contacts', 'contactgroups');
 
     protected $subQueryTargets = array(
         'hostgroups'    => 'hostgroup',
