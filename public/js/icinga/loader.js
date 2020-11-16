@@ -302,7 +302,7 @@
             req.scripted = false;
             req.method = method;
             req.action = action;
-            req.addToHistory = $target.parent().is('#main');
+            req.addToHistory = true;
             req.progressTimer = progressTimer;
 
             if (url.match(/#/)) {
