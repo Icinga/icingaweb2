@@ -165,8 +165,8 @@ class Controller extends ModuleActionController
         if ($this->userPageSize === null) {
             $user = $this->Auth()->getUser();
             if ($user !== null) {
-                $pageSize = $user->getPreferences()->getValue('icingaweb', 'default_page_size', false);
-                $this->userPageSize = $pageSize !== false ? (int) $pageSize : false;
+                $pageSize = $user->getPreferences()->getValue('icingaweb', 'default_page_size');
+                $this->userPageSize = $pageSize ? (int) $pageSize : false;
             } else {
                 $this->userPageSize = false;
             }
