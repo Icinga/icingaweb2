@@ -289,6 +289,8 @@ class PreferenceForm extends Form
             array(
                 'label'         => $this->translate('Default page size'),
                 'description'   => $this->translate('Default number of items per page for list views'),
+                'placeholder'   => 25,
+                'min'           => 25,
                 'step'          => 1
             )
         );
