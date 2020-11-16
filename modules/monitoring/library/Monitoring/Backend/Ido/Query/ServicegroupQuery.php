@@ -137,7 +137,7 @@ class ServicegroupQuery extends IdoQuery
             []
         )->joinLeft(
             ['scgo' => 'icinga_objects'],
-            'scgo.object_id = scg.contactgroup_object_id AND scgo.is_active = 1 AND scgo.objecttype_id = 10',
+            'scgo.object_id = scg.contactgroup_object_id AND scgo.is_active = 1 AND scgo.objecttype_id = 11',
             []
         );
     }
