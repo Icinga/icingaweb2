@@ -237,12 +237,13 @@ class Manager
      * Set the given module to the enabled state
      *
      * @param   string $name                The module to enable
+     * @param   bool   $force               Whether to ignore unmet dependencies
      *
      * @return  $this
      * @throws  ConfigurationError          When trying to enable a module that is not installed
      * @throws  SystemPermissionException   When insufficient permissions for the application exist
      */
-    public function enableModule($name)
+    public function enableModule($name, $force = false)
     {
         if (! $this->hasInstalled($name)) {
             throw new ConfigurationError(
@@ -261,10 +262,14 @@ class Manager
         }
 
         if ($this->hasUnmetDependencies($name)) {
-            throw new ConfigurationError(
-                t('Module "%s" can\'t be enabled. Module has unmet dependencies'),
-                $name
-            );
+            if ($force) {
+                Logger::warning(t('Enabling module "%s" although it has unmet dependencies'), $name);
+            } else {
+                throw new ConfigurationError(
+                    t('Module "%s" can\'t be enabled. Module has unmet dependencies'),
+                    $name
+                );
+            }
         }
 
         clearstatcache(true);
