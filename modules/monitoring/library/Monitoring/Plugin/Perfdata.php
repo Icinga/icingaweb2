@@ -425,9 +425,6 @@ class Perfdata
         $pieChart = new InlinePie($data, $this);
         $pieChart->setColors(array('#44bb77', '#ffaa44', '#ff5566', '#ddccdd'));
 
-        if (Zend_Controller_Front::getInstance()->getRequest()->isXmlHttpRequest()) {
-            $pieChart->disableNoScript();
-        }
         return $pieChart;
     }
 
