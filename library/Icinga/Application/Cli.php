@@ -38,6 +38,7 @@ class Cli extends ApplicationBootstrap
         $this->assertRunningOnCli();
         $this->setupLogging()
             ->setupErrorHandling()
+            ->loadLibraries()
             ->loadConfig()
             ->setupTimezone()
             ->setupInternationalization()

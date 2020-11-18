@@ -237,12 +237,13 @@ class Manager
      * Set the given module to the enabled state
      *
      * @param   string $name                The module to enable
+     * @param   bool   $force               Whether to ignore unmet dependencies
      *
      * @return  $this
      * @throws  ConfigurationError          When trying to enable a module that is not installed
      * @throws  SystemPermissionException   When insufficient permissions for the application exist
      */
-    public function enableModule($name)
+    public function enableModule($name, $force = false)
     {
         if (! $this->hasInstalled($name)) {
             throw new ConfigurationError(
@@ -258,6 +259,17 @@ class Manager
                 $name,
                 substr($name, 18)
             );
+        }
+
+        if ($this->hasUnmetDependencies($name)) {
+            if ($force) {
+                Logger::warning(t('Enabling module "%s" although it has unmet dependencies'), $name);
+            } else {
+                throw new ConfigurationError(
+                    t('Module "%s" can\'t be enabled. Module has unmet dependencies'),
+                    $name
+                );
+            }
         }
 
         clearstatcache(true);
@@ -431,6 +443,34 @@ class Manager
     }
 
     /**
+     * Check if a module with the given name is enabled
+     *
+     * Passing a version constraint also verifies that the module's version matches.
+     *
+     * @param string $name
+     * @param string $version
+     *
+     * @return bool
+     */
+    public function has($name, $version = null)
+    {
+        if (! $this->hasEnabled($name)) {
+            return false;
+        } elseif ($version === null) {
+            return true;
+        }
+
+        $operator = '=';
+        if (preg_match('/^([<>=]{1,2})\s*v?((?:[\d.]+)(?:\D+)?)$/', $version, $match)) {
+            $operator = $match[1];
+            $version = $match[2];
+        }
+
+        $modVersion = ltrim($this->getModule($name)->getVersion(), 'v');
+        return version_compare($modVersion, $version, $operator);
+    }
+
+    /**
      * Get the currently loaded modules
      *
      * @return  Module[]
@@ -501,6 +541,36 @@ class Manager
         }
 
         return $info;
+    }
+
+    /**
+     * Check if the given module has unmet dependencies
+     *
+     * @param string $name
+     *
+     * @return bool
+     */
+    public function hasUnmetDependencies($name)
+    {
+        $module = $this->getModule($name, false);
+
+        $requiredMods = $module->getRequiredModules();
+        foreach ($requiredMods as $moduleName => $moduleVersion) {
+            if (! $this->has($moduleName, $moduleVersion)) {
+                return true;
+            }
+        }
+
+        $libraries = Icinga::app()->getLibraries();
+
+        $requiredLibs = $module->getRequiredLibraries();
+        foreach ($requiredLibs as $libraryName => $libraryVersion) {
+            if (! $libraries->has($libraryName, $libraryVersion)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

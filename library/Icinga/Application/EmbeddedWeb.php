@@ -65,6 +65,7 @@ class EmbeddedWeb extends ApplicationBootstrap
         return $this
             ->setupZendAutoloader()
             ->setupErrorHandling()
+            ->loadLibraries()
             ->loadConfig()
             ->setupLogging()
             ->setupLogger()

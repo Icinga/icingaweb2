@@ -138,6 +138,8 @@ class ConfigController extends Controller
             }
 
             $this->view->module = $module;
+            $this->view->libraries = $app->getLibraries();
+            $this->view->moduleManager = $manager;
             $this->view->toggleForm = $toggleForm;
             $this->view->title = $module->getName();
             $this->view->tabs = $module->getConfigTabs()->activate('info');
@@ -168,7 +170,7 @@ class ConfigController extends Controller
             $form->handleRequest();
         } catch (Exception $e) {
             $this->view->exceptionMessage = $e->getMessage();
-            $this->view->moduleName = $form->getValue('name');
+            $this->view->moduleName = $form->getValue('identifier');
             $this->view->action = 'enable';
             $this->render('module-configuration-error');
         }
@@ -194,7 +196,7 @@ class ConfigController extends Controller
             $form->handleRequest();
         } catch (Exception $e) {
             $this->view->exceptionMessage = $e->getMessage();
-            $this->view->moduleName = $form->getValue('name');
+            $this->view->moduleName = $form->getValue('identifier');
             $this->view->action = 'disable';
             $this->render('module-configuration-error');
         }

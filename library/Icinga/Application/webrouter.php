@@ -4,6 +4,7 @@
 namespace Icinga\Application;
 
 use Icinga\Chart\Inline\PieChart;
+use Icinga\Web\Controller\StaticController;
 use Icinga\Web\JavaScript;
 use Icinga\Web\StyleSheet;
 
@@ -92,6 +93,11 @@ if (in_array($path, $special)) {
     $pie = new PieChart();
     $pie->initFromRequest();
     $pie->toPng();
+} elseif (substr($path, 0, 4) === 'lib/') {
+    include_once __DIR__ . '/StaticWeb.php';
+    $app = StaticWeb::start();
+    (new StaticController())->handle($app->getRequest());
+    $app->getResponse()->sendResponse();
 } elseif (file_exists($baseDir . '/' . $path) && is_file($baseDir . '/' . $path)) {
     return false;
 } else {
