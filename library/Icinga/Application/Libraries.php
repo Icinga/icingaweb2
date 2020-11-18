@@ -74,10 +74,17 @@ class Libraries implements IteratorAggregate
      */
     public function get($name)
     {
+        $candidate = null;
         foreach ($this->libraries as $library) {
-            if ($library->getName() === $name) {
+            $libraryName = $library->getName();
+            if ($libraryName === $name) {
                 return $library;
+            } elseif (explode('/', $libraryName)[1] === $name) {
+                // Also return libs which only partially match
+                $candidate = $library;
             }
         }
+
+        return $candidate;
     }
 }
