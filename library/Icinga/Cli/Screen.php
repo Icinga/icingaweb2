@@ -7,7 +7,7 @@ use Icinga\Cli\AnsiScreen;
 
 class Screen
 {
-    protected static $instance;
+    protected static $instances = [];
 
     protected $isUtf8;
 
@@ -91,15 +91,16 @@ class Screen
         return $text;
     }
 
-    public static function instance()
+    public static function instance($output = STDOUT)
     {
-        if (self::$instance === null) {
-            if (function_exists('posix_isatty') && posix_isatty(STDOUT)) {
-                self::$instance = new AnsiScreen();
+        if (! isset(self::$instances[(int) $output])) {
+            if (function_exists('posix_isatty') && posix_isatty($output)) {
+                self::$instances[(int) $output] = new AnsiScreen();
             } else {
-                self::$instance = new Screen();
+                self::$instances[(int) $output] = new Screen();
             }
         }
-        return self::$instance;
+
+        return self::$instances[(int) $output];
     }
 }

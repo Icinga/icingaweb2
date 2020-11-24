@@ -103,7 +103,7 @@ class Loader
      */
     public function fail($msg)
     {
-        printf("%s: %s\n", $this->screen()->colorize('ERROR', 'red'), $msg);
+        fprintf(STDERR, "%s: %s\n", $this->screen()->colorize('ERROR', 'red'), $msg);
         exit(1);
     }
 
@@ -173,7 +173,8 @@ class Loader
             foreach ($this->lastSuggestions as & $s) {
                 $s = $this->screen()->colorize($s, 'lightblue');
             }
-            printf(
+            fprintf(
+                STDERR,
                 "Did you mean %s?\n",
                 implode(" or ", $this->lastSuggestions)
             );
@@ -197,9 +198,9 @@ class Loader
         }
         if (! $found) {
             $msg = "There is no such module or command: '$first'";
-            printf("%s: %s\n", $this->screen()->colorize('ERROR', 'red'), $msg);
+            fprintf(STDERR, "%s: %s\n", $this->screen()->colorize('ERROR', 'red'), $msg);
             $this->showLastSuggestions();
-            echo "\n";
+            fwrite(STDERR, "\n");
         }
 
         $obj = null;
@@ -241,10 +242,10 @@ class Loader
     public function dispatch(Params $overrideParams = null)
     {
         if ($this->commandName === null) {
-            echo $this->docs()->usage($this->moduleName);
+            fwrite(STDERR, $this->docs()->usage($this->moduleName));
             return false;
         } elseif ($this->actionName === null) {
-            echo $this->docs()->usage($this->moduleName, $this->commandName);
+            fwrite(STDERR, $this->docs()->usage($this->moduleName, $this->commandName));
             return false;
         }
 
@@ -265,7 +266,7 @@ class Loader
             return $obj->{$this->actionName . 'Action'}();
         } catch (Exception $e) {
             if ($obj && $obj instanceof Command && $obj->showTrace()) {
-                echo $this->formatTrace($e->getTrace());
+                fwrite(STDERR, $this->formatTrace($e->getTrace()));
             }
 
             $this->fail(IcingaException::describe($e));
