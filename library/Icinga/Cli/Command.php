@@ -55,7 +55,7 @@ abstract class Command
         $this->commandName  = $commandName;
         $this->actionName   = $actionName;
         $this->params       = $app->getParams();
-        $this->screen       = Screen::instance($app);
+        $this->screen       = Screen::instance();
         $this->trace        = $this->params->shift('trace', false);
         $this->isVerbose    = $this->params->shift('verbose', false);
         $this->isDebugging  = $this->params->shift('debug', false);
