@@ -456,7 +456,7 @@ class Manager
     {
         if (! $this->hasEnabled($name)) {
             return false;
-        } elseif ($version === null) {
+        } elseif ($version === null || $version === true) {
             return true;
         }
 

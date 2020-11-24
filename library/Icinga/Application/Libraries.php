@@ -52,7 +52,7 @@ class Libraries implements IteratorAggregate
         $library = $this->get($name);
         if ($library === null) {
             return false;
-        } elseif ($version === null) {
+        } elseif ($version === null || $version === true) {
             return true;
         }
 
