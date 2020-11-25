@@ -295,20 +295,6 @@ class PreferenceForm extends Form
         );
 
         if (isset($formData['auto_refresh']) && $formData['auto_refresh']) {
-            $speeds = [1 => $this->translate('Default')];
-
-            foreach ([2, 4, 8] as $speed) {
-                // Using Form#translatePlural() not for $speed==1 and $speed!=1,
-                // but for different $speed-dependent plural forms, e.g. in Russian
-                $speeds[$speed] = sprintf($this->translatePlural('%dx slower', '%dx slower', $speed), $speed);
-                $speeds[rtrim(sprintf('%F', 1.0 / $speed), '0')] = sprintf(
-                    $this->translatePlural('%dx faster', '%dx faster', $speed),
-                    $speed
-                );
-            }
-
-            krsort($speeds);
-
             $this->addElement(
                 'select',
                 'auto_refresh_speed',
@@ -318,7 +304,12 @@ class PreferenceForm extends Form
                     'description'   => $this->translate(
                         'This option allows you to speed up or to slow down the global page content auto refresh'
                     ),
-                    'multiOptions'  => $speeds,
+                    'multiOptions'  => [
+                        '0.5'   => $this->translate('Fast', 'refresh_speed'),
+                        ''      => $this->translate('Default', 'refresh_speed'),
+                        '2'     => $this->translate('Moderate', 'refresh_speed'),
+                        '4'     => $this->translate('Slow', 'refresh_speed')
+                    ],
                     'value'         => ''
                 ]
             );
