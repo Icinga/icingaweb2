@@ -19,6 +19,7 @@ class CheckNowCommandForm extends ObjectsCommandForm
     public function init()
     {
         $this->setAttrib('class', 'inline');
+        $this->setSubmitLabel($this->translate('Check now'));
     }
 
     /**
