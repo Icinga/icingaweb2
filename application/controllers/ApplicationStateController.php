@@ -64,7 +64,7 @@ class ApplicationStateController extends Controller
             }
         }
 
-        $this->setAutorefreshInterval(60);
+        $this->setAutorefreshInterval(60, true);
     }
 
     public function summaryAction()
@@ -73,7 +73,7 @@ class ApplicationStateController extends Controller
             $this->getResponse()->setBody((string) Widget::create('ApplicationStateMessages'));
         }
 
-        $this->setAutorefreshInterval(60);
+        $this->setAutorefreshInterval(60, true);
     }
 
     public function acknowledgeMessageAction()

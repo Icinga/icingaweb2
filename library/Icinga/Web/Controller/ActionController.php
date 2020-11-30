@@ -341,13 +341,23 @@ class ActionController extends Zend_Controller_Action
         }
     }
 
-    public function setAutorefreshInterval($interval)
+    public function setAutorefreshInterval($interval, $bypassUserPreferences = false)
     {
         if (! is_int($interval) || $interval < 1) {
             throw new ProgrammingError(
                 'Setting autorefresh interval smaller than 1 second is not allowed'
             );
         }
+
+        if (! $bypassUserPreferences) {
+            $user = $this->getRequest()->getUser();
+
+            if ($user !== null) {
+                $speed = (float) $user->getPreferences()->getValue('icingaweb', 'auto_refresh_speed', 1.0);
+                $interval = max(round($interval * $speed), min($interval, 5));
+            }
+        }
+
         $this->autorefreshInterval = $interval;
         $this->_helper->layout()->autorefreshInterval = $interval;
         return $this;
