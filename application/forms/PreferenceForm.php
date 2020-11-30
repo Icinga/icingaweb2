@@ -44,6 +44,7 @@ class PreferenceForm extends Form
     public function init()
     {
         $this->setName('form_config_preferences');
+        $this->setSubmitLabel($this->translate('Save to the Preferences'));
     }
 
     /**
@@ -90,12 +91,6 @@ class PreferenceForm extends Form
      */
     public function onSuccess()
     {
-        if (!($this->getElement('btn_submit_preferences')->isChecked()
-            || $this->getElement('btn_submit_session')->isChecked()
-        )) {
-            return false;
-        }
-
         $this->preferences = new Preferences($this->store ? $this->store->load() : array());
 
         $oldTheme = $this->preferences->getValue('icingaweb', 'theme');
@@ -124,7 +119,7 @@ class PreferenceForm extends Form
         }
 
         try {
-            if ($this->store && $this->getElement('btn_submit_preferences')->isChecked()) {
+            if ($this->store && $this->getElement('btn_submit')->isChecked()) {
                 $this->save();
                 Notification::success($this->translate('Preferences successfully saved'));
             } else {
@@ -330,7 +325,7 @@ class PreferenceForm extends Form
         if ($this->store) {
             $this->addElement(
                 'submit',
-                'btn_submit_preferences',
+                'btn_submit',
                 array(
                     'ignore'        => true,
                     'label'         => $this->translate('Save to the Preferences'),
@@ -363,7 +358,7 @@ class PreferenceForm extends Form
         );
 
         $this->addDisplayGroup(
-            array('btn_submit_preferences', 'btn_submit_session', 'preferences-progress'),
+            array('btn_submit', 'btn_submit_session', 'preferences-progress'),
             'submit_buttons',
             array(
                 'decorators' => array(
@@ -372,6 +367,20 @@ class PreferenceForm extends Form
                 )
             )
         );
+    }
+
+    public function addSubmitButton()
+    {
+        return $this;
+    }
+
+    public function isSubmitted()
+    {
+        if (parent::isSubmitted()) {
+            return true;
+        }
+
+        return $this->getElement('btn_submit_session')->isChecked();
     }
 
     /**
