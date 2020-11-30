@@ -26,6 +26,8 @@ acknowledge_expire_time       | **Optional.** Set default value for "Expire Time
 acknowledge_notify            | **Optional.** Check "Send Notification" in Acknowledgement dialog by default. Defaults to **1 (true)**.
 acknowledge_persistent        | **Optional.** Check "Persistent Comment" in Acknowledgement dialog by default. Defaults to **0 (false)**.
 acknowledge_sticky            | **Optional.** Check "Sticky Acknowledgement" in Acknowledgement dialog by default. Defaults to **0 (false)**.
+comment_expire                | **Optional.** Check "Use Expire Time" in Comment dialog by default. Defaults to **0 (false)**.
+comment_expire_time           | **Optional.** Set default value for "Expire Time" in Comment dialog, its calculated as now + this setting. Format is a [PHP Dateinterval](http://www.php.net/manual/en/dateinterval.construct.php). Defaults to **1 hour (PT1H)**.
 custom_notification_forced    | **Optional.** Check "Forced" in Custom Notification dialog by default. Defaults to **0 (false)**.
 hostcheck_all_services        | **Optional.** Check "All Services" in Schedule Host Check dialog by default. Defaults to **0 (false)**.
 hostdowntime_all_services     | **Optional.** Check "All Services" in Schedule Host Downtime dialog by default. Defaults to **0 (false)**.

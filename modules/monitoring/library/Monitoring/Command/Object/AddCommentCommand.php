@@ -25,6 +25,13 @@ class AddCommentCommand extends WithCommentCommand
     protected $persistent;
 
     /**
+     * Optional time when the acknowledgement should expire
+     *
+     * @var int|null
+     */
+    protected $expireTime;
+
+    /**
      * Set whether the comment is persistent
      *
      * @param   bool $persistent
@@ -45,5 +52,29 @@ class AddCommentCommand extends WithCommentCommand
     public function getPersistent()
     {
         return $this->persistent;
+    }
+
+    /**
+     * Set the time when the acknowledgement should expire
+     *
+     * @param   int $expireTime
+     *
+     * @return  $this
+     */
+    public function setExpireTime($expireTime)
+    {
+        $this->expireTime = (int) $expireTime;
+
+        return $this;
+    }
+
+    /**
+     * Get the time when the acknowledgement should expire
+     *
+     * @return int|null
+     */
+    public function getExpireTime()
+    {
+        return $this->expireTime;
     }
 }
