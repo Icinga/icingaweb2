@@ -78,8 +78,9 @@ class Loader
     protected function screen()
     {
         if ($this->screen === null) {
-            $this->screen = Screen::instance();
+            $this->screen = Screen::instance(STDERR);
         }
+
         return $this->screen;
     }
 
