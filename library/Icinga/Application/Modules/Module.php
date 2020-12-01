@@ -565,11 +565,6 @@ class Module
      */
     protected function requireCssFile($path, $from)
     {
-        Logger::warning(
-            'Module assets are deprecated since v2.9. Please check if the module "%s" provides a library instead.',
-            $from
-        );
-
         $module = self::get($from);
         $cssAssetDir = join(DIRECTORY_SEPARATOR, [$module->assetDir, 'css']);
         foreach ($module->getCssAssets() as $assetPath) {
@@ -649,11 +644,6 @@ class Module
      */
     protected function requireJsFile($path, $from)
     {
-        Logger::warning(
-            'Module assets are deprecated since v2.9. Please check if the module "%s" provides a library instead.',
-            $from
-        );
-
         $module = self::get($from);
         $jsAssetDir = join(DIRECTORY_SEPARATOR, [$module->assetDir, 'js']);
         foreach ($module->getJsAssets() as $assetPath) {
@@ -1397,11 +1387,6 @@ class Module
         if (! is_dir($this->assetDir)) {
             return $this;
         }
-
-        Logger::warning(
-            'Module assets are deprecated since v2.9. Please provide a library'
-            . ' for the parts you want to make available to other modules.'
-        );
 
         $listAssets = function ($type) {
             $dir = join(DIRECTORY_SEPARATOR, [$this->assetDir, $type]);
