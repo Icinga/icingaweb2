@@ -50,6 +50,13 @@ if (empty($object->comments) && ! $addLink) {
                 <span class="comment-time">
                     <?= $this->translate('commented') ?>
                     <?= $this->timeAgo($comment->timestamp) ?>
+                <?php if ($comment->expiration): ?>
+                    <span aria-hidden="true">ǀ</span>
+                    <?= sprintf(
+                        $this->translate('Expires %s'),
+                        $this->timeUntil($comment->expiration)
+                    ) ?>
+                <?php endif ?>
                 </span>
                 <?= $comment->persistent ? $this->icon('attach', 'This comment is persistent.') : '' ?>
                 <?php if (isset($delCommentForm)) {
