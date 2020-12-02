@@ -9,10 +9,10 @@ $currentPos = array_search($wizard->getCurrentPage(), $pages, true);
 list($configPagesLeft, $configPagesRight) = array_chunk($configPages, count($configPages) / 2, true);
 
 $visitedPages = array_keys($wizard->getPageData());
-$maxProgress = @max(array_keys(array_filter(
+$maxProgress = @max(array_merge([0], array_keys(array_filter(
     $pages,
     function ($page) use ($visitedPages) { return in_array($page->getName(), $visitedPages); }
-)));
+))));
 
 ?>
 <div id="setup-content-wrapper" data-base-target="layout">
