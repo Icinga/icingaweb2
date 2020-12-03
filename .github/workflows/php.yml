@@ -48,8 +48,8 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     env:
-      phpunit-version: 5.7.27
-      mockery-version: 0.9.9 # *Any* other version is not compatible with PHP 5.6 and anything above phpunit 6
+      phpunit-version: '9.4'
+      mockery-version: 1.3.3
 
     strategy:
       fail-fast: false
