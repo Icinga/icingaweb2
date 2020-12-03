@@ -138,7 +138,7 @@ namespace Icinga\Test {
         /**
          * Setup MVC bootstrapping and ensure that the Icinga-Mock gets reinitialized
          */
-        public function setUp()
+        protected function setUp(): void
         {
             parent::setUp();
             $this->setupIcingaMock();
