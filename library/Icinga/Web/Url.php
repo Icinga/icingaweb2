@@ -866,6 +866,6 @@ class Url
      */
     public function __toString()
     {
-        return $this->getAbsoluteUrl('&amp;');
+        return htmlspecialchars($this->getAbsoluteUrl(), ENT_COMPAT | ENT_SUBSTITUTE | ENT_HTML5, 'UTF-8', true);
     }
 }
