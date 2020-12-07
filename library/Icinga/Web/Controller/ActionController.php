@@ -64,6 +64,13 @@ class ActionController extends Zend_Controller_Action
      */
     protected $moduleName;
 
+    /**
+     * A page's automatic refresh interval
+     *
+     * The initial value will not be subject to a user's preferences.
+     *
+     * @var int
+     */
     protected $autorefreshInterval;
 
     protected $reloadCss = false;
@@ -341,6 +348,18 @@ class ActionController extends Zend_Controller_Action
         }
     }
 
+    /**
+     * Set the interval (in seconds) at which the page should automatically refresh
+     *
+     * This may be adjusted based on the user's preferences. The result could be a
+     * lower or higher rate of the page's automatic refresh. If this is not desired,
+     * the only way to bypass this is to initialize the {@see ActionController::$autorefreshInterval}
+     * property or to set the `autorefreshInterval` property of the layout directly.
+     *
+     * @param int $interval
+     *
+     * @return $this
+     */
     public function setAutorefreshInterval($interval)
     {
         if (! is_int($interval) || $interval < 1) {
