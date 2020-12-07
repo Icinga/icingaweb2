@@ -356,14 +356,14 @@ class ActionController extends Zend_Controller_Action
         }
 
         $this->autorefreshInterval = $interval;
-        $this->_helper->layout()->autorefreshInterval = $interval;
+
         return $this;
     }
 
     public function disableAutoRefresh()
     {
         $this->autorefreshInterval = null;
-        $this->_helper->layout()->autorefreshInterval = null;
+
         return $this;
     }
 
@@ -478,6 +478,10 @@ class ActionController extends Zend_Controller_Action
             if (! (bool) $user->getPreferences()->getValue('icingaweb', 'auto_refresh', true)) {
                 $this->disableAutoRefresh();
             }
+        }
+
+        if ($this->autorefreshInterval !== null) {
+            $layout->autorefreshInterval = $this->autorefreshInterval;
         }
 
         if ($req->getParam('error_handler') === null && $req->getParam('format') === 'pdf') {
