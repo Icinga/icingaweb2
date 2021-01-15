@@ -17,6 +17,8 @@ class ApplicationStateController extends Controller
 {
     protected $requiresAuthentication = false;
 
+    protected $autorefreshInterval = 60;
+
     public function init()
     {
         $this->_helper->layout->disableLayout();
@@ -63,8 +65,6 @@ class ApplicationStateController extends Controller
                 }
             }
         }
-
-        $this->setAutorefreshInterval(60, true);
     }
 
     public function summaryAction()
@@ -72,8 +72,6 @@ class ApplicationStateController extends Controller
         if ($this->Auth()->isAuthenticated()) {
             $this->getResponse()->setBody((string) Widget::create('ApplicationStateMessages'));
         }
-
-        $this->setAutorefreshInterval(60, true);
     }
 
     public function acknowledgeMessageAction()

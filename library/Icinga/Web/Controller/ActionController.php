@@ -64,6 +64,13 @@ class ActionController extends Zend_Controller_Action
      */
     protected $moduleName;
 
+    /**
+     * A page's automatic refresh interval
+     *
+     * The initial value will not be subject to a user's preferences.
+     *
+     * @var int
+     */
     protected $autorefreshInterval;
 
     protected $reloadCss = false;
@@ -341,7 +348,19 @@ class ActionController extends Zend_Controller_Action
         }
     }
 
-    public function setAutorefreshInterval($interval, $bypassUserPreferences = false)
+    /**
+     * Set the interval (in seconds) at which the page should automatically refresh
+     *
+     * This may be adjusted based on the user's preferences. The result could be a
+     * lower or higher rate of the page's automatic refresh. If this is not desired,
+     * the only way to bypass this is to initialize the {@see ActionController::$autorefreshInterval}
+     * property or to set the `autorefreshInterval` property of the layout directly.
+     *
+     * @param int $interval
+     *
+     * @return $this
+     */
+    public function setAutorefreshInterval($interval)
     {
         if (! is_int($interval) || $interval < 1) {
             throw new ProgrammingError(
@@ -349,24 +368,21 @@ class ActionController extends Zend_Controller_Action
             );
         }
 
-        if (! $bypassUserPreferences) {
-            $user = $this->getRequest()->getUser();
-
-            if ($user !== null) {
-                $speed = (float) $user->getPreferences()->getValue('icingaweb', 'auto_refresh_speed', 1.0);
-                $interval = max(round($interval * $speed), min($interval, 5));
-            }
+        $user = $this->getRequest()->getUser();
+        if ($user !== null) {
+            $speed = (float) $user->getPreferences()->getValue('icingaweb', 'auto_refresh_speed', 1.0);
+            $interval = max(round($interval * $speed), min($interval, 5));
         }
 
         $this->autorefreshInterval = $interval;
-        $this->_helper->layout()->autorefreshInterval = $interval;
+
         return $this;
     }
 
     public function disableAutoRefresh()
     {
         $this->autorefreshInterval = null;
-        $this->_helper->layout()->autorefreshInterval = null;
+
         return $this;
     }
 
@@ -481,6 +497,10 @@ class ActionController extends Zend_Controller_Action
             if (! (bool) $user->getPreferences()->getValue('icingaweb', 'auto_refresh', true)) {
                 $this->disableAutoRefresh();
             }
+        }
+
+        if ($this->autorefreshInterval !== null) {
+            $layout->autorefreshInterval = $this->autorefreshInterval;
         }
 
         if ($req->getParam('error_handler') === null && $req->getParam('format') === 'pdf') {
