@@ -563,27 +563,8 @@ class User
      */
     public function can($requiredPermission)
     {
-        if (isset($this->permissions['*']) || isset($this->permissions[$requiredPermission])) {
-            return true;
-        }
-
-        $requiredWildcard = strpos($requiredPermission, '*');
-        foreach ($this->permissions as $grantedPermission) {
-            if ($requiredWildcard !== false) {
-                if (($grantedWildcard = strpos($grantedPermission, '*')) !== false) {
-                    $wildcard = min($requiredWildcard, $grantedWildcard);
-                } else {
-                    $wildcard = $requiredWildcard;
-                }
-            } else {
-                $wildcard = strpos($grantedPermission, '*');
-            }
-
-            if ($wildcard !== false && $wildcard > 0) {
-                if (substr($requiredPermission, 0, $wildcard) === substr($grantedPermission, 0, $wildcard)) {
-                    return true;
-                }
-            } elseif ($requiredPermission === $grantedPermission) {
+        foreach ($this->getRoles() as $role) {
+            if ($role->grants($requiredPermission)) {
                 return true;
             }
         }

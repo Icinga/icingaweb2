@@ -106,4 +106,41 @@ class Role
         $this->restrictions = $restrictions;
         return $this;
     }
+
+    /**
+     * Whether this role grants the given permission
+     *
+     * @param string $permission
+     *
+     * @return bool
+     */
+    public function grants($permission)
+    {
+        $requiredWildcard = strpos($permission, '*');
+        foreach ($this->permissions as $grantedPermission) {
+            if ($grantedPermission === '*' || $grantedPermission === $permission) {
+                return true;
+            }
+
+            if ($requiredWildcard !== false) {
+                if (($grantedWildcard = strpos($grantedPermission, '*')) !== false) {
+                    $wildcard = min($requiredWildcard, $grantedWildcard);
+                } else {
+                    $wildcard = $requiredWildcard;
+                }
+            } else {
+                $wildcard = strpos($grantedPermission, '*');
+            }
+
+            if ($wildcard !== false && $wildcard > 0) {
+                if (substr($permission, 0, $wildcard) === substr($grantedPermission, 0, $wildcard)) {
+                    return true;
+                }
+            } elseif ($permission === $grantedPermission) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }
