@@ -3,6 +3,7 @@
 
 namespace Tests\Icinga\Web;
 
+use Icinga\Authentication\Role;
 use Mockery;
 use Icinga\Test\BaseTestCase;
 use Icinga\User;
@@ -47,8 +48,12 @@ class SearchDashboardTest extends BaseTestCase
 
     public function testWhetherSearchLoadsSearchDashletsFromModules()
     {
+        $role = new Role();
+        $role->setPermissions(['*']);
+
         $user = new User('test');
-        $user->setPermissions(array('*' => '*'));
+        $user->setRoles([$role]);
+
         $dashboard = new SearchDashboard();
         $dashboard->setUser($user);
         $dashboard = $dashboard->search('pending');
@@ -60,8 +65,12 @@ class SearchDashboardTest extends BaseTestCase
 
     public function testWhetherSearchProvidesHintWhenSearchStringIsEmpty()
     {
+        $role = new Role();
+        $role->setPermissions(['*']);
+
         $user = new User('test');
-        $user->setPermissions(array('*' => '*'));
+        $user->setRoles([$role]);
+
         $dashboard = new SearchDashboard();
         $dashboard->setUser($user);
         $dashboard = $dashboard->search();

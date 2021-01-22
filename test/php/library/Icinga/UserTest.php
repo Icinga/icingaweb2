@@ -3,6 +3,7 @@
 
 namespace Tests\Icinga;
 
+use Icinga\Authentication\Role;
 use Mockery;
 use DateTimeZone;
 use Icinga\User;
@@ -62,14 +63,18 @@ class UserTest extends BaseTestCase
 
     public function testPermissions()
     {
-        $user = new User('test');
-        $user->setPermissions(array(
+        $role = new Role();
+        $role->setPermissions([
             'test',
             'test/some/specific',
             'test/more/*',
             'test/wildcard-with-wildcard/*',
             'test/even-more/specific-with-wildcard/*'
-        ));
+        ]);
+
+        $user = new User('test');
+        $user->setRoles([$role]);
+
         $this->assertTrue($user->can('test'));
         $this->assertTrue($user->can('test/some/specific'));
         $this->assertTrue($user->can('test/more/everything'));
