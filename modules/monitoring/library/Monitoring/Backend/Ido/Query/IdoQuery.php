@@ -8,6 +8,7 @@ use Zend_Db_Expr;
 use Icinga\Application\Icinga;
 use Icinga\Application\Hook;
 use Icinga\Application\Logger;
+use Icinga\Application\Config;
 use Icinga\Data\Db\DbQuery;
 use Icinga\Data\Filter\Filter;
 use Icinga\Data\Filter\FilterExpression;
@@ -1216,8 +1217,14 @@ abstract class IdoQuery extends DbQuery
             $this->db->quote($name)
         );
 
+        if (! (bool) Config::module('monitoring')->get('ido', 'use_customvar_status_table', true)) {
+            $table = 'customvariables';
+        } else {
+            $table = 'customvariablestatus';
+        }
+        
         $this->select->joinLeft(
-            array($alias => $this->prefix . 'customvariablestatus'),
+            array($alias => $this->prefix . $table),
             $joinOn,
             array()
         );
