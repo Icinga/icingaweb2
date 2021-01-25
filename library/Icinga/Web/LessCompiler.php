@@ -4,7 +4,7 @@
 namespace Icinga\Web;
 
 use Icinga\Application\Logger;
-use lessc;
+use Icinga\Util\LessParser;
 
 /**
  * Compile LESS into CSS
@@ -16,7 +16,7 @@ class LessCompiler
     /**
      * lessphp compiler
      *
-     * @var lessc
+     * @var LessParser
      */
     protected $lessc;
 
@@ -60,8 +60,7 @@ class LessCompiler
      */
     public function __construct()
     {
-        require_once 'lessphp/lessc.inc.php';
-        $this->lessc = new lessc();
+        $this->lessc = new LessParser();
         // Discourage usage of import because we're caching based on an explicit list of LESS files to compile
         $this->lessc->importDisabled = true;
     }

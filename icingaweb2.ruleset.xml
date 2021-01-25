@@ -22,6 +22,7 @@
         <exclude-pattern>library/Icinga/Application/LegacyWeb.php</exclude-pattern>
         <exclude-pattern>library/Icinga/Application/Web.php</exclude-pattern>
         <exclude-pattern>library/Icinga/File/Pdf.php</exclude-pattern>
+        <exclude-pattern>library/Icinga/Util/LessParser.php</exclude-pattern>
         <exclude-pattern>modules/doc/library/Doc/Renderer/DocSectionRenderer.php</exclude-pattern>
         <exclude-pattern>modules/monitoring/library/Monitoring/Plugin.php</exclude-pattern>
     </rule>
