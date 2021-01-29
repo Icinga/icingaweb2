@@ -563,13 +563,18 @@ class User
      */
     public function can($requiredPermission)
     {
+        $granted = false;
         foreach ($this->getRoles() as $role) {
-            if ($role->grants($requiredPermission)) {
-                return true;
+            if ($role->denies($requiredPermission)) {
+                return false;
+            }
+
+            if (! $granted && $role->grants($requiredPermission)) {
+                $granted = true;
             }
         }
 
-        return false;
+        return $granted;
     }
 
     /**

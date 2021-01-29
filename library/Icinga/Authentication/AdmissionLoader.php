@@ -71,6 +71,7 @@ class AdmissionLoader
         foreach ($roles as $roleName => $role) {
             if ($this->match($username, $userGroups, $role)) {
                 $permissionsFromRole = StringHelper::trimSplit($role->permissions);
+                $refusals = StringHelper::trimSplit($role->refusals);
                 $permissions = array_merge(
                     $permissions,
                     array_diff($permissionsFromRole, $permissions)
@@ -78,6 +79,7 @@ class AdmissionLoader
                 $restrictionsFromRole = $role->toArray();
                 unset($restrictionsFromRole['users']);
                 unset($restrictionsFromRole['groups']);
+                unset($restrictionsFromRole['refusals']);
                 unset($restrictionsFromRole['permissions']);
                 foreach ($restrictionsFromRole as $name => $restriction) {
                     if (! isset($restrictions[$name])) {
@@ -89,6 +91,7 @@ class AdmissionLoader
                 $roleObj = new Role();
                 $roleObjs[] = $roleObj
                     ->setName($roleName)
+                    ->setRefusals($refusals)
                     ->setPermissions($permissionsFromRole)
                     ->setRestrictions($restrictionsFromRole);
             }

@@ -17,14 +17,21 @@ class Role
      *
      * @var string[]
      */
-    protected $permissions = array();
+    protected $permissions = [];
+
+    /**
+     * Refusals of the role
+     *
+     * @var string[]
+     */
+    protected $refusals = [];
 
     /**
      * Restrictions of the role
      *
      * @var string[]
      */
-    protected $restrictions = array();
+    protected $restrictions = [];
 
     /**
      * Get the name of the role
@@ -46,6 +53,7 @@ class Role
     public function setName($name)
     {
         $this->name = $name;
+
         return $this;
     }
 
@@ -69,6 +77,31 @@ class Role
     public function setPermissions(array $permissions)
     {
         $this->permissions = $permissions;
+
+        return $this;
+    }
+
+    /**
+     * Get the refusals of the role
+     *
+     * @return string[]
+     */
+    public function getRefusals()
+    {
+        return $this->refusals;
+    }
+
+    /**
+     * Set the refusals of the role
+     *
+     * @param array $refusals
+     *
+     * @return $this
+     */
+    public function setRefusals(array $refusals)
+    {
+        $this->refusals = $refusals;
+
         return $this;
     }
 
@@ -104,6 +137,7 @@ class Role
     public function setRestrictions(array $restrictions)
     {
         $this->restrictions = $restrictions;
+
         return $this;
     }
 
@@ -116,29 +150,65 @@ class Role
      */
     public function grants($permission)
     {
-        $requiredWildcard = strpos($permission, '*');
         foreach ($this->permissions as $grantedPermission) {
-            if ($grantedPermission === '*' || $grantedPermission === $permission) {
+            if ($this->match($grantedPermission, $permission)) {
                 return true;
             }
+        }
 
-            if ($requiredWildcard !== false) {
-                if (($grantedWildcard = strpos($grantedPermission, '*')) !== false) {
-                    $wildcard = min($requiredWildcard, $grantedWildcard);
-                } else {
-                    $wildcard = $requiredWildcard;
-                }
+        return false;
+    }
+
+    /**
+     * Whether this role denies the given permission
+     *
+     * @param string $permission
+     *
+     * @return bool
+     */
+    public function denies($permission)
+    {
+        foreach ($this->refusals as $refusedPermission) {
+            if ($this->match($refusedPermission, $permission, false)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Get whether the role expression matches the required permission
+     *
+     * @param string $roleExpression
+     * @param string $requiredPermission
+     * @param bool $cascadeUpwards `false` if `foo/bar/*` and `foo/bar/raboof` should not match `foo/*`
+     *
+     * @return bool
+     */
+    protected function match($roleExpression, $requiredPermission, $cascadeUpwards = true)
+    {
+        if ($roleExpression === '*' || $roleExpression === $requiredPermission) {
+            return true;
+        }
+
+        $requiredWildcard = strpos($requiredPermission, '*');
+        if ($requiredWildcard !== false) {
+            if (($grantedWildcard = strpos($roleExpression, '*')) !== false) {
+                $wildcard = $cascadeUpwards ? min($requiredWildcard, $grantedWildcard) : $grantedWildcard;
             } else {
-                $wildcard = strpos($grantedPermission, '*');
+                $wildcard = $cascadeUpwards ? $requiredWildcard : false;
             }
+        } else {
+            $wildcard = strpos($roleExpression, '*');
+        }
 
-            if ($wildcard !== false && $wildcard > 0) {
-                if (substr($permission, 0, $wildcard) === substr($grantedPermission, 0, $wildcard)) {
-                    return true;
-                }
-            } elseif ($permission === $grantedPermission) {
+        if ($wildcard !== false && $wildcard > 0) {
+            if (substr($requiredPermission, 0, $wildcard) === substr($roleExpression, 0, $wildcard)) {
                 return true;
             }
+        } elseif ($requiredPermission === $roleExpression) {
+            return true;
         }
 
         return false;

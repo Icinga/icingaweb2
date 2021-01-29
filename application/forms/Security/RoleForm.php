@@ -24,6 +24,11 @@ class RoleForm extends RepositoryForm
     const WILDCARD_NAME = 'allAndEverything';
 
     /**
+     * The prefix used to deny a permission
+     */
+    const DENY_PREFIX = 'no-';
+
+    /**
      * Provided permissions by currently installed modules
      *
      * @var array
@@ -196,8 +201,15 @@ class RoleForm extends RepositoryForm
 
             $elements[] = 'permission_header';
             $this->addElement('note', 'permission_header', [
-                'value'         => '<h4>' . $this->translate('Permissions') . '</h4>',
-                'decorators'    => ['ViewHelper']
+                'decorators'    => [['Callback', ['callback' => function () {
+                    return '<h4>' . $this->translate('Permissions') . '</h4>'
+                        . $this->getView()->icon('ok', $this->translate(
+                            'Grant access by toggling a switch below'
+                        ))
+                        . $this->getView()->icon('cancel', $this->translate(
+                            'Deny access by toggling a switch below'
+                        ));
+                }]], ['HtmlTag', ['tag' => 'div']]]
             ]);
 
             $hasFullPerm = false;
@@ -205,6 +217,17 @@ class RoleForm extends RepositoryForm
                 $elementName = $name;
                 if ($hasFullPerm || $hasAdminPerm) {
                     $elementName .= '_fake';
+                }
+
+                $denyCheckbox = null;
+                if (! isset($spec['isFullPerm'])
+                    && substr($spec['name'], 0, strlen(self::DENY_PREFIX)) !== self::DENY_PREFIX
+                ) {
+                    $denyCheckbox = $this->createElement('checkbox', self::DENY_PREFIX . $name, [
+                        'decorators'    => ['ViewHelper']
+                    ]);
+                    $this->addElement($denyCheckbox);
+                    $this->removeFromIteration($denyCheckbox->getName());
                 }
 
                 $elements[] = $elementName;
@@ -222,7 +245,14 @@ class RoleForm extends RepositoryForm
                             '/&#8203;',
                             isset($spec['label']) ? $spec['label'] : $spec['name']
                         ),
-                        'description'   => isset($spec['description']) ? $spec['description'] : $spec['name']
+                        'description'   => isset($spec['description']) ? $spec['description'] : $spec['name'],
+                        'decorators'    => array_merge(
+                            array_slice(self::$defaultElementDecorators, 0, 3),
+                            [['Callback', ['callback' => function () use ($denyCheckbox) {
+                                return $denyCheckbox ? $denyCheckbox->render() : '';
+                            }]]],
+                            array_slice(self::$defaultElementDecorators, 3)
+                        )
                     ]
                 )
                     ->getElement($elementName)
@@ -298,12 +328,17 @@ class RoleForm extends RepositoryForm
             self::WILDCARD_NAME => (bool) preg_match('~(?<!/)\*~', $role->permissions)
         ];
 
-        if (! empty($role->permissions) && $role->permissions !== '*') {
+        if (! empty($role->permissions) || ! empty($role->refusals)) {
             $permissions = StringHelper::trimSplit($role->permissions);
+            $refusals = StringHelper::trimSplit($role->refusals);
             foreach ($this->providedPermissions as $moduleName => $permissionList) {
                 foreach ($permissionList as $name => $spec) {
                     if (in_array($spec['name'], $permissions, true)) {
                         $values[$name] = 1;
+                    }
+
+                    if (in_array($spec['name'], $refusals, true)) {
+                        $values[$this->filterName(self::DENY_PREFIX . $name)] = 1;
                     }
                 }
             }
@@ -338,17 +373,24 @@ class RoleForm extends RepositoryForm
             $permissions[] = '*';
         }
 
+        $refusals = [];
         foreach ($this->providedPermissions as $moduleName => $permissionList) {
             foreach ($permissionList as $name => $spec) {
                 if (isset($values[$name]) && $values[$name]) {
                     $permissions[] = $spec['name'];
                 }
 
-                unset($values[$name]);
+                $denyName = $this->filterName(self::DENY_PREFIX . $name);
+                if (isset($values[$denyName]) && $values[$denyName]) {
+                    $refusals[] = $spec['name'];
+                }
+
+                unset($values[$name], $values[$denyName]);
             }
         }
 
         unset($values[self::WILDCARD_NAME]);
+        $values['refusals'] = join(',', $refusals);
         $values['permissions'] = join(',', $permissions);
         return ConfigForm::transformEmptyValuesToNull($values);
     }
