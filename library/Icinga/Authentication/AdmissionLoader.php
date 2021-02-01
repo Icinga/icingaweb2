@@ -155,9 +155,13 @@ class AdmissionLoader
                         array_diff($role->getPermissions(), $permissions)
                     );
 
-                    foreach ($role->getRestrictions() as $name => $restriction) {
+                    $roleRestrictions = $role->getRestrictions();
+                    foreach ($roleRestrictions as $name => & $restriction) {
+                        $restriction = str_replace('$user:local_name$', $user->getLocalUsername(), $restriction);
                         $restrictions[$name][] = $restriction;
                     }
+
+                    $role->setRestrictions($roleRestrictions);
                 }
             }
         }
