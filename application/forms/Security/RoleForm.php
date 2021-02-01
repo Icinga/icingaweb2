@@ -158,6 +158,19 @@ class RoleForm extends RepositoryForm
             ]
         );
         $this->addElement(
+            'select',
+            'parent',
+            [
+                'label'         => $this->translate('Inherit From'),
+                'description'   => $this->translate('Choose a role from which to inherit privileges'),
+                'value'         => '',
+                'multiOptions'  => array_merge(
+                    ['' => $this->translate('None', 'parent role')],
+                    $this->collectRoles()
+                )
+            ]
+        );
+        $this->addElement(
             'textarea',
             'users',
             [
@@ -322,6 +335,7 @@ class RoleForm extends RepositoryForm
         }
 
         $values = [
+            'parent'            => $role->parent,
             'name'              => $role->name,
             'users'             => $role->users,
             'groups'            => $role->groups,
@@ -431,6 +445,36 @@ class RoleForm extends RepositoryForm
         });
     }
 
+    protected function collectRoles()
+    {
+        // Function to get all connected children. Used to avoid reference loops
+        $getChildren = function ($name, $children = []) use (&$getChildren) {
+            foreach ($this->repository->select()->where('parent', $name) as $child) {
+                if (isset($children[$child->name])) {
+                    // Don't follow already established loops here,
+                    // the user should be able to solve such in the UI
+                    continue;
+                }
+
+                $children[$child->name] = true;
+                $children = $getChildren($child->name, $children);
+            }
+
+            return $children;
+        };
+
+        $children = $this->getIdentifier() !== null ? $getChildren($this->getIdentifier()) : [];
+
+        $names = [];
+        foreach ($this->repository->select() as $role) {
+            if ($role->name !== $this->getIdentifier() && ! isset($children[$role->name])) {
+                $names[] = $role->name;
+            }
+        }
+
+        return array_combine($names, $names);
+    }
+
     public function isValid($formData)
     {
         $valid = parent::isValid($formData);
@@ -450,6 +494,14 @@ class RoleForm extends RepositoryForm
     {
         if (parent::onSuccess() === false) {
             return false;
+        }
+
+        if (($newName = $this->getValue('name')) !== $this->getIdentifier()) {
+            $this->repository->update(
+                $this->getBaseTable(),
+                ['parent' => $newName],
+                Filter::where('parent', $this->getIdentifier())
+            );
         }
 
         if (ConfigFormEventsHook::runOnSuccess($this) === false) {

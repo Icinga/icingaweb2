@@ -13,6 +13,20 @@ class Role
     protected $name;
 
     /**
+     * The role from which to inherit privileges
+     *
+     * @var Role
+     */
+    protected $parent;
+
+    /**
+     * The roles to which privileges are inherited
+     *
+     * @var Role[]
+     */
+    protected $children;
+
+    /**
      * Permissions of the role
      *
      * @var string[]
@@ -53,6 +67,68 @@ class Role
     public function setName($name)
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * Get the role from which privileges are inherited
+     *
+     * @return Role
+     */
+    public function getParent()
+    {
+        return $this->parent;
+    }
+
+    /**
+     * Set the role from which to inherit privileges
+     *
+     * @param Role $parent
+     *
+     * @return $this
+     */
+    public function setParent(Role $parent)
+    {
+        $this->parent = $parent;
+
+        return $this;
+    }
+
+    /**
+     * Get the roles to which privileges are inherited
+     *
+     * @return Role[]
+     */
+    public function getChildren()
+    {
+        return $this->children;
+    }
+
+    /**
+     * Set the roles to which inherit privileges
+     *
+     * @param Role[] $children
+     *
+     * @return $this
+     */
+    public function setChildren(array $children)
+    {
+        $this->children = $children;
+
+        return $this;
+    }
+
+    /**
+     * Add a role to which inherit privileges
+     *
+     * @param Role $role
+     *
+     * @return $this
+     */
+    public function addChild(Role $role)
+    {
+        $this->children[] = $role;
 
         return $this;
     }
@@ -145,15 +221,20 @@ class Role
      * Whether this role grants the given permission
      *
      * @param string $permission
+     * @param bool $ignoreParent    Only evaluate the role's own permissions
      *
      * @return bool
      */
-    public function grants($permission)
+    public function grants($permission, $ignoreParent = false)
     {
         foreach ($this->permissions as $grantedPermission) {
             if ($this->match($grantedPermission, $permission)) {
                 return true;
             }
+        }
+
+        if (! $ignoreParent && $this->getParent() !== null) {
+            return $this->getParent()->grants($permission);
         }
 
         return false;
@@ -163,15 +244,20 @@ class Role
      * Whether this role denies the given permission
      *
      * @param string $permission
+     * @param bool $ignoreParent    Only evaluate the role's own refusals
      *
      * @return bool
      */
-    public function denies($permission)
+    public function denies($permission, $ignoreParent = false)
     {
         foreach ($this->refusals as $refusedPermission) {
             if ($this->match($refusedPermission, $permission, false)) {
                 return true;
             }
+        }
+
+        if (! $ignoreParent && $this->getParent() !== null) {
+            return $this->getParent()->denies($permission);
         }
 
         return false;

@@ -3,9 +3,10 @@
 
 namespace Icinga\Authentication;
 
+use Generator;
 use Icinga\Application\Config;
 use Icinga\Application\Logger;
-use Icinga\Authentication\Role;
+use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\NotReadableError;
 use Icinga\Data\ConfigObject;
 use Icinga\User;
@@ -16,7 +17,24 @@ use Icinga\Util\StringHelper;
  */
 class AdmissionLoader
 {
+    /** @var Role[] */
+    protected $roles;
+
+    /** @var ConfigObject */
+    protected $roleConfig;
+
+    public function __construct()
+    {
+        try {
+            $this->roleConfig = Config::app('roles');
+        } catch (NotReadableError $e) {
+            Logger::error('Can\'t access roles configuration. An exception was thrown:', $e);
+        }
+    }
+
     /**
+     * Whether the user or groups are a member of the role
+     *
      * @param   string          $username
      * @param   array           $userGroups
      * @param   ConfigObject    $section
@@ -31,10 +49,12 @@ class AdmissionLoader
             if (in_array('*', $users)) {
                 return true;
             }
+
             if (in_array($username, $users)) {
                 return true;
             }
         }
+
         if (! empty($section->groups)) {
             $groups = array_map('strtolower', StringHelper::trimSplit($section->groups));
             foreach ($userGroups as $userGroup) {
@@ -43,7 +63,68 @@ class AdmissionLoader
                 }
             }
         }
+
         return false;
+    }
+
+    /**
+     * Process role configuration and yield resulting roles
+     *
+     * This will also resolve any parent-child relationships.
+     *
+     * @param string $name
+     * @param ConfigObject $section
+     *
+     * @return Generator
+     * @throws ConfigurationError
+     */
+    protected function loadRole($name, ConfigObject $section)
+    {
+        if (! isset($this->roles[$name])) {
+            $permissions = StringHelper::trimSplit($section->permissions);
+            $refusals = StringHelper::trimSplit($section->refusals);
+
+            $restrictions = $section->toArray();
+            unset($restrictions['users'], $restrictions['groups']);
+            unset($restrictions['refusals'], $restrictions['permissions']);
+
+            $role = new Role();
+            $this->roles[$name] = $role
+                ->setName($name)
+                ->setRefusals($refusals)
+                ->setPermissions($permissions)
+                ->setRestrictions($restrictions);
+
+            if (isset($section->parent)) {
+                $parentName = $section->parent;
+                if (! $this->roleConfig->hasSection($parentName)) {
+                    Logger::error(
+                        'Failed to parse authentication configuration: Missing parent role "%s" (required by "%s")',
+                        $parentName,
+                        $name
+                    );
+                    throw new ConfigurationError(
+                        t('Unable to parse authentication configuration. Check the log for more details.')
+                    );
+                }
+
+                foreach ($this->loadRole($parentName, $this->roleConfig->getSection($parentName)) as $parent) {
+                    if ($parent->getName() === $parentName) {
+                        $role->setParent($parent);
+                        $parent->addChild($role);
+
+                        // Only yield main role once fully assembled
+                        yield $role;
+                    }
+
+                    yield $parent;
+                }
+            } else {
+                yield $role;
+            }
+        } else {
+            yield $this->roles[$name];
+        }
     }
 
     /**
@@ -53,51 +134,36 @@ class AdmissionLoader
      */
     public function applyRoles(User $user)
     {
-        $username = $user->getUsername();
-        try {
-            $roles = Config::app('roles');
-        } catch (NotReadableError $e) {
-            Logger::error(
-                'Can\'t get permissions and restrictions for user \'%s\'. An exception was thrown:',
-                $username,
-                $e
-            );
+        if ($this->roleConfig === null) {
             return;
         }
-        $userGroups = $user->getGroups();
-        $permissions = array();
-        $restrictions = array();
-        $roleObjs = array();
-        foreach ($roles as $roleName => $role) {
-            if ($this->match($username, $userGroups, $role)) {
-                $permissionsFromRole = StringHelper::trimSplit($role->permissions);
-                $refusals = StringHelper::trimSplit($role->refusals);
-                $permissions = array_merge(
-                    $permissions,
-                    array_diff($permissionsFromRole, $permissions)
-                );
-                $restrictionsFromRole = $role->toArray();
-                unset($restrictionsFromRole['users']);
-                unset($restrictionsFromRole['groups']);
-                unset($restrictionsFromRole['refusals']);
-                unset($restrictionsFromRole['permissions']);
-                foreach ($restrictionsFromRole as $name => $restriction) {
-                    if (! isset($restrictions[$name])) {
-                        $restrictions[$name] = array();
-                    }
-                    $restrictions[$name][] = $restriction;
-                }
 
-                $roleObj = new Role();
-                $roleObjs[] = $roleObj
-                    ->setName($roleName)
-                    ->setRefusals($refusals)
-                    ->setPermissions($permissionsFromRole)
-                    ->setRestrictions($restrictionsFromRole);
+        $username = $user->getUsername();
+        $userGroups = $user->getGroups();
+
+        $roles = [];
+        $permissions = [];
+        $restrictions = [];
+        foreach ($this->roleConfig as $roleName => $roleConfig) {
+            if (! isset($roles[$roleName]) && $this->match($username, $userGroups, $roleConfig)) {
+                foreach ($this->loadRole($roleName, $roleConfig) as $role) {
+                    /** @var Role $role */
+                    $roles[$role->getName()] = $role;
+
+                    $permissions = array_merge(
+                        $permissions,
+                        array_diff($role->getPermissions(), $permissions)
+                    );
+
+                    foreach ($role->getRestrictions() as $name => $restriction) {
+                        $restrictions[$name][] = $restriction;
+                    }
+                }
             }
         }
-        $user->setPermissions($permissions);
+
         $user->setRestrictions($restrictions);
-        $user->setRoles($roleObjs);
+        $user->setPermissions($permissions);
+        $user->setRoles(array_values($roles));
     }
 }
