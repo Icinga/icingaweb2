@@ -1,190 +1,143 @@
-# Security <a id="security"></a>
+# Security
 
-Access control is a vital part of configuring Icinga Web 2 in a secure way.
-It is important that not every user that has access to Icinga Web 2 is able
-to do any action or to see any host and service. For example, it is useful to allow
-only a small group of administrators to change the Icinga Web 2 configuration,
-to prevent misconfiguration or security breaches. Another important use case is
-creating groups of users which can only see the fraction of the monitoring
-environment they are in charge of.
+Access control is a vital part of configuring Icinga Web 2 securely. It is important that not every user that has
+access to Icinga Web 2 can perform any action or see any host and service. Allow only a small group of administrators
+to change the Icinga Web 2 configuration to prevent mis-configuration and security breaches. Define different rules
+to users and groups of users which should only see a part of the monitoring environment they're in charge of.
 
-This chapter will describe how to do the security configuration of Icinga Web 2
-and how to apply permissions and restrictions to users or groups of users.
+This chapter will describe how to configure such rules in Icinga Web 2 and how permissions, refusals, restrictions
+and role inheritance work.
 
-## Basics <a id="security-basics"></a>
+## Basics
 
-Icinga Web 2 access control is done by defining **roles** that associate permissions
-and restrictions with **users** and **groups**. There are two general kinds of
-things to which access can be managed: actions and objects.
+Icinga Web 2 access control is done by defining **roles** that associate privileges with **users** and **groups**.
+Privileges of a role consist of **permissions**, **refusals** and **restrictions**. A role can **inherit** privileges
+from another role.
 
+### Role Memberships
 
-### <a id="security-basics-actions"></a>Actions
-
-Actions are all the things an Icinga Web 2 user can do, like changing a certain configuration,
-changing permissions or sending a command to an Icinga 2 instance.
-All actions must be be **allowed explicitly** using permissions.
-
-A permission is a simple list of identifiers of actions a user is
-allowed to do. Permissions are described in greater detail in the
-section [Permissions](06-Security.md#permissions).
-
-### Objects <a id="security-basics-objects"></a>
-
-There are all kinds of different objects in Icinga Web 2: Hosts, Services, Notifications, Downtimes and Events.
-
-By default, a user can **see everything**, but it is possible to **explicitly restrict** what each user can see using restrictions.
-
-Restrictions are complex filter queries that describe what objects should be displayed to a user. Restrictions are described
-in greater detail in the section [Restrictions](06-Security.md#restrictions).
-
-### <a id="security-basics-users"></a>Users
-
-Anyone who can **login** to Icinga Web 2 is considered a user and can be referenced to by the
-**user name** used during login.
-For example, there might be user called **jdoe** authenticated
-using Active Directory, and a user **icingaadmin** that is authenticated using a MySQL-Database as backend.
-In the configuration, both can be referenced to by using their user names **icingaadmin** or **jdoe**.
-
-Icinga Web 2 users and groups are not configured by a configuration file, but provided by
-an **authentication backend**. For extended information on setting up authentication backends and managing users, please read the chapter [Authentication](05-Authentication.md#authentication).
-
+A role is tied to users or groups of users. Upon login, a user's roles are identified by the username or names of
+groups the user is a member of.
 
 > **Note**
 >
-> Since Icinga Web 2, users in the Icinga configuration and the web authentication are separated, to allow
-> use of external authentication providers. This means that users and groups defined in the Icinga configuration are not available to Icinga Web 2. Instead it uses its own authentication
-> backend to fetch users and groups from, which must be configured separately.
+> Since Icinga Web 2, users in the Icinga configuration and the web authentication are separated, to allow use of
+> external authentication providers. This means that users and groups defined in the Icinga configuration are not
+> available to Icinga Web 2. It uses its own authentication backend to fetch users and groups from,
+> [which must be configured separately](05-Authentication.md#authentication).
 
-#### <a id="security-basics-users-managing"></a>Managing Users
+### Privileges
 
-When using a [Database
-as authentication backend](05-Authentication.md#authentication-configuration-db-authentication), it is possible to create, add and delete users directly in the frontend. This configuration
-can be found at **Configuration > Authentication > Users **.
+Permissions are used to grant access. Whether this means that a user can see a certain area or perform a distinct
+action is fully up to the permission in question. Without granting a permission, the user will lack access and won't
+see the area or perform the action.
 
-### <a id="security-basics-groups"></a>Groups
+Refusals are used to deny access. So they're the exact opposite of permissions. Most permissions can be refused.
+Refusing a permission will block the user's access no matter if another role grants the permission. Refusals
+override permissions.
 
-If there is a big amount of users to manage, it would be tedious to specify each user
-separately when regularly referring to the same group of users. Because of that, it is possible to group users.
-A user can be member of multiple groups and will inherit all permissions and restrictions.
+Restrictions are expressions that limit access. What this exactly means is up to how the restriction is being utilized.
+Without any restriction, a user is supposed to see *everything*. A user that occupies multiple roles, which all define
+a restriction of the same type, will see *more*.
 
-Like users, groups are identified solely by their **name** that is provided by
- a **group backend**. For extended information on setting up group backends,
- please read the chapter [Authentication](05-Authentication.md#authentication).
+## Roles
 
+A user can occupy multiple roles. Permissions and restrictions stack up in this case, thus will grant *more* access.
+Refusals still override permissions however. A refusal of one role negates the granted permission of any other role.
 
-#### <a id="security-basics-groups-managing"></a>Managing Groups
+### Configuration
 
-When using a [Database as an authentication backend](05-Authentication.md#authentication-configuration-db-authentication),
-it is possible to manage groups and group memberships directly in the frontend. This configuration
-can be found at **Configuration > Authentication > User Groups **.
+Roles can be changed either through the UI, by navigating to the page **Configuration > Authentication > Roles**,
+or by editing the configuration file `/etc/icingaweb2/roles.ini`.
 
-## <a id="security-roles"></a>Roles
+#### Example
 
-A role defines a set of **permissions** and **restrictions** and assigns
-those to **users** and **groups**. For example, a role **admins** could define that certain
-users have access to all configuration options, or another role **support**
-could define that a list of users or groups is restricted to see only hosts and services
-that match a specific query.
-
-The actual permission of a certain user will be determined by merging the permissions
-and restrictions of the user itself and all the groups the user is member of. Permissions can
-be simply added up, while restrictions follow a slighty more complex pattern, that is described
-in the section [Stacking Filters](06-Security.md#stacking-filters).
-
-### <a id="security-roles-configuration"></a>Configuration
-
-Roles can be changed either through the icingaweb2 interface, by navigation
-to the page **Configuration > Authentication > Roles**, or through editing the
-configuration file:
-
-```
-vim /etc/icingaweb2/roles.ini
-```
-
-#### <a id="security-roles-configuration-example"></a>Introducing Example
-
-To get you a quick start, here is an example of what a role definition could look like:
+The following shows a role definition from the configuration file mentioned above:
 
 ```
 [winadmin]
 users = "jdoe, janedoe"
 groups = "admin"
-permissions = "config/*, monitoring/commands/schedule-check"
+permissions = "config/*, module/monitoring, monitoring/commands/schedule-check"
+refusals = "config/authentication"
 monitoring/filter/objects = "host_name=*win*"
 ```
 
+This describes a role with the name `winadmin`. The users `jdoe` and `janedoe` are members of it. Just like the
+members of group `admin` are. Full configuration access is granted, except of the authentication configuration,
+which is forbidden. It also grants access to the *monitoring* module which includes the ability to re-schedule
+checks, but only on objects related to hosts whose name contain `win`.
 
-This example creates a role called **winadmin**, that grants all permissions in `config/*` and `monitoring/commands/schedule-check` and additionally only
-allows the hosts and services that match the filter `host_name=*win*` to be displayed. The users
-**jdoe** and **janedoe** and all members of the group **admin** will be affected
-by this role.
-
-
-#### Syntax <a id="syntax"></a>
+#### Syntax
 
 Each role is defined as a section, with the name of the role as section name. The following
-attributes can be defined for each role in a default Icinga Web 2 installation:
-
+options can be defined for each role in a default Icinga Web 2 installation:
 
 Name                      | Description
 --------------------------|-----------------------------------------------
-users                     | Comma-separated list of user **user names** that are affected by this role.
-groups                    | Comma-separated list of **group names** that are affected by this role.
+parent                    | The name of the role from which to inherit privileges.
+users                     | Comma-separated list of **usernames** that should occupy this role.
+groups                    | Comma-separated list of **group names** whose users should occupy this role.
 permissions               | Comma-separated list of **permissions** granted by this role.
-monitoring/filter/objects | **Filter expression** that restricts the access to services and hosts.
+refusals                  | Comma-separated list of **permissions** refused by this role.
+monitoring/filter/objects | **Filter expression** that restricts the access to monitoring objects.
 
+### Inheritance
 
+A role can inherit privileges from another role. Privileges are then combined the same way as if a user occupies
+all roles in the inheritance path. Or to rephrase that, each role shares its members with all of its parents.
 
-## Permissions <a id="permissions"></a>
+## Permissions
 
-Permissions can be used to allow users or groups certain **actions**. By default,
-all actions are **prohibited** and must be allowed explicitly by a role for any user.
+Each permission in Icinga Web 2 is denoted by a **namespaced key**, which is used to group permissions. All permissions
+that affect the configuration of Icinga Web 2, are in a namespace called **config**, while all configuration options
+that affect modules are covered by the permission `config/modules`.
 
-Each action in Icinga Web 2 is denoted by a **namespaced key**, which is used to order and
-group those actions. All actions that affect the configuration of Icinga Web 2, are in a
-namespace called **config**, while all configurations that affect modules
-are in the namespace `config/modules`
-
-**Wildcards** can be used to grant permission for all actions in a certain namespace.
-The permission `config/*` would grant permission to all configuration actions,
-while just specifying a wildcard `*` would give permission for all actions.
+**Wildcards** can be used to grant all permissions in a certain namespace. The permission `config/*` grants access to
+all configuration options. Just specifying a wildcard `*` will grant all permissions.
 
 Access to modules is restricted to users who have the related module permission granted. Icinga Web 2 provides
 a module permission in the format `module/<moduleName>` for each installed module.
 
-When multiple roles assign permissions to the same user (either directly or indirectly
-through a group) all permissions are added together to get the users actual permission set.
-
-### Global Permissions <a id="permissions-global"></a>
+### General Permissions
 
 Name                      | Permits
 --------------------------|-----------------------------------------------
 \*                        | allow everything, including module-specific permissions
 config/\*                 | allow all configuration actions
 config/modules            | allow enabling or disabling modules
-module/&lt;moduleName&gt; | allow access to module &lt;moduleName&gt;
+module/`<moduleName>`     | allow access to module `<moduleName>` (e.g. `module/monitoring`)
 
-
-### Monitoring Module Permissions <a id="permissions-module"></a>
+### Monitoring Module Permissions
 
 The built-in monitoring module defines an additional set of permissions, that
 is described in detail in the monitoring module documentation.
 
+## Restrictions
 
-## Restrictions <a id="restrictions"></a>
+Restrictions can be used to define what a user can see by specifying an expression that applies to a defined set of
+data. By default, when no restrictions are defined, a user will be able to see the entire data that is available.
 
-Restrictions can be used to define what a user or group can see by specifying
-a filter expression that applies to a defined set of data. By default, when no
-restrictions are defined, a user will be able to see every information that is available.
+The syntax of the expression used to define a particular restriction varies. This can be a comma-separated list of
+terms, or [a full-blown filter](06-Security.md#filter-expressions). For more details on particular restrictions,
+check the table below or the module's documentation providing the restriction.
 
-A restrictions is always specified for a certain **filter directive**, that defines what
-data the filter is applied to. The **filter directive** is a simple identifier, that was
-defined in an Icinga Web 2 module. The only filter directive that is available
-in a default installation, is the `monitoring/filter/objects` directive, defined by the monitoring module,
-that can be used to apply filter to hosts and services. This directive was previously
-mentioned in the section [Syntax](06-Security.md#syntax).
+### General Restrictions
 
-### <a id="restrictions-filter"></a>Filter Expressions
+Name                      | Applies to
+--------------------------|------------------------------------------------------------------------------------------
+application/share/users   | which users a user can share navigation items with (comma-separated list of usernames)
+application/share/groups  | which groups a user can share navigation items with (comma-separated list of group names)
+
+### Username placeholder
+
+It is possible to reference the local username (without the domain part) of the user in restrictions. To accomplish
+this, put the macro `$user:local_name$` in the restriction where you want it to appear.
+
+This can come in handy if you have e.g. an attribute on hosts or services defining which user is responsible for it:
+`_host_deputy=$user:local_name$|_service_deputy=$user:local_name$`
+
+### Filter Expressions
 
 Filters operate on columns. A complete list of all available filter columns on hosts and services can be found in
 the monitoring module documentation.
@@ -214,18 +167,7 @@ results of this query instead:
          |
          +--- service_handled = 0
 
-#### Username placeholder <a id="username-placeholder"></a>
-
-The string `$user:local_name$` is replaced by the local username (without the domain part) of the logged on user while evaluating restrictions.
-This can come in handy if you have some kind of attribute on host or service level defining which user is responsible for a certain host or service.
-
-**Example**
-
-```
-monitoring/filter/objects = (_responsible=$user:local_name$|_deputy=$user:local_name$)
-```
-
-#### Stacking Filters <a id="stacking-filters"></a>
+#### Stacking Filters
 
 When multiple roles assign restrictions to the same user, either directly or indirectly
 through a group, all filters will be combined using an **OR-Clause**, resulting in the final
@@ -246,7 +188,7 @@ expression:
 As a result, a user is be able to see hosts that are matched by **ANY** of
 the filter expressions. The following examples will show the usefulness of this behavior:
 
-#### <a id="restrictions-filter-example1"></a>Example 1: Negation
+#### Example 1: Negation
 
 ```
 [winadmin]
@@ -266,7 +208,7 @@ Will only match hosts and services whose host name does **not** contain **win**
 
 Notice that because of the behavior of two stacking filters, a user that is member of **windows-admins** and **web-admins**, will now be able to see both, Windows and non-Windows hosts and services.
 
-#### <a id="restrictions-filter-example2"></a>Example 2: Hostgroups
+#### Example 2: Hostgroups
 
 ```
 [unix-server]
