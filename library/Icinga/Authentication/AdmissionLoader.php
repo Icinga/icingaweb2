@@ -93,7 +93,8 @@ class AdmissionLoader
                 ->setName($name)
                 ->setRefusals($refusals)
                 ->setPermissions($permissions)
-                ->setRestrictions($restrictions);
+                ->setRestrictions($restrictions)
+                ->setIsUnrestricted($section->get('unrestricted', false));
 
             if (isset($section->parent)) {
                 $parentName = $section->parent;
@@ -144,6 +145,7 @@ class AdmissionLoader
         $roles = [];
         $permissions = [];
         $restrictions = [];
+        $isUnrestricted = false;
         foreach ($this->roleConfig as $roleName => $roleConfig) {
             if (! isset($roles[$roleName]) && $this->match($username, $userGroups, $roleConfig)) {
                 foreach ($this->loadRole($roleName, $roleConfig) as $role) {
@@ -162,11 +164,15 @@ class AdmissionLoader
                     }
 
                     $role->setRestrictions($roleRestrictions);
+
+                    if (! $isUnrestricted) {
+                        $isUnrestricted = $role->isUnrestricted();
+                    }
                 }
             }
         }
 
-        $user->setRestrictions($restrictions);
+        $user->setRestrictions($isUnrestricted ? [] : $restrictions);
         $user->setPermissions($permissions);
         $user->setRoles(array_values($roles));
     }

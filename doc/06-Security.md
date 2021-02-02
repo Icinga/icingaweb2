@@ -80,7 +80,16 @@ users                     | Comma-separated list of **usernames** that should oc
 groups                    | Comma-separated list of **group names** whose users should occupy this role.
 permissions               | Comma-separated list of **permissions** granted by this role.
 refusals                  | Comma-separated list of **permissions** refused by this role.
+unrestricted              | If set to `1`, owners of this role are not restricted in any way (Default: `0`)
 monitoring/filter/objects | **Filter expression** that restricts the access to monitoring objects.
+
+### Administrative Roles
+
+Roles that have the wildcard `*` as permission, have full access and don't need any further permissions. However,
+they are still affected by refusals.
+
+Unrestricted roles are supposed to allow users to access data without being limited to a subset of it. Once a user
+occupies an unrestricted role, restrictions of the same and any other role are ignored.
 
 ### Inheritance
 

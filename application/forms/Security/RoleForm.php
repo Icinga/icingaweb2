@@ -195,8 +195,19 @@ class RoleForm extends RepositoryForm
                 'description'   => $this->translate('Everything is allowed')
             ]
         );
+        $this->addElement(
+            'checkbox',
+            'unrestricted',
+            [
+                'autosubmit'        => true,
+                'uncheckedValue'    => null,
+                'label'             => $this->translate('Unrestricted Access'),
+                'description'       => $this->translate('Access to any data is completely unrestricted')
+            ]
+        );
 
         $hasAdminPerm = isset($formData[self::WILDCARD_NAME]) && $formData[self::WILDCARD_NAME];
+        $isUnrestricted = isset($formData['unrestricted']) && $formData['unrestricted'];
         foreach ($this->providedPermissions as $moduleName => $permissionList) {
             $this->sortPermissions($permissionList);
 
@@ -301,7 +312,9 @@ class RoleForm extends RepositoryForm
                                 '/&#8203;',
                                 isset($spec['label']) ? $spec['label'] : $spec['name']
                             ),
-                            'description'   => $spec['description']
+                            'description'   => $spec['description'],
+                            'style'         => $isUnrestricted ? 'text-decoration:line-through;' : '',
+                            'readonly'      => $isUnrestricted ?: null
                         ]
                     )
                         ->getElement($name)
@@ -339,6 +352,7 @@ class RoleForm extends RepositoryForm
             'name'              => $role->name,
             'users'             => $role->users,
             'groups'            => $role->groups,
+            'unrestricted'      => $role->unrestricted,
             self::WILDCARD_NAME => (bool) preg_match('~(?<!/)\*~', $role->permissions)
         ];
 

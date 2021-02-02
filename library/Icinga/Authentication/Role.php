@@ -27,6 +27,13 @@ class Role
     protected $children;
 
     /**
+     * Whether restrictions should not apply to owners of the role
+     *
+     * @var bool
+     */
+    protected $unrestricted = false;
+
+    /**
      * Permissions of the role
      *
      * @var string[]
@@ -129,6 +136,30 @@ class Role
     public function addChild(Role $role)
     {
         $this->children[] = $role;
+
+        return $this;
+    }
+
+    /**
+     * Get whether restrictions should not apply to owners of the role
+     *
+     * @return bool
+     */
+    public function isUnrestricted()
+    {
+        return $this->unrestricted;
+    }
+
+    /**
+     * Set whether restrictions should not apply to owners of the role
+     *
+     * @param bool $state
+     *
+     * @return $this
+     */
+    public function setIsUnrestricted($state)
+    {
+        $this->unrestricted = (bool) $state;
 
         return $this;
     }

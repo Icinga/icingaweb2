@@ -25,6 +25,7 @@ class RolesConfig extends IniRepository
                 'groups',
                 'refusals',
                 'permissions',
+                'unrestricted',
                 'application/share/users',
                 'application/share/groups'
             ]
