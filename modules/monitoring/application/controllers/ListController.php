@@ -4,6 +4,7 @@
 namespace Icinga\Module\Monitoring\Controllers;
 
 use Icinga\Security\SecurityException;
+use Icinga\Util\GlobFilter;
 use Icinga\Web\Form;
 use Zend_Form;
 use Icinga\Data\Filter\Filter;
@@ -761,8 +762,31 @@ class ListController extends Controller
             -1,
             PREG_SPLIT_NO_EMPTY
         );
-        $this->view->addColumns = $columns;
-        return $columns;
+
+        $customVars = [];
+        $additionalCols = [];
+        foreach ($columns as $column) {
+            if (preg_match('~^_(host|service)_([a-zA-Z0-9_]+)$~', $column, $m)) {
+                $customVars[$m[1]]['vars'][$m[2]] = null;
+            } else {
+                $additionalCols[] = $column;
+            }
+        }
+
+        if (! empty($customVars)) {
+            $blacklistedProperties = new GlobFilter(
+                $this->getRestrictions('monitoring/blacklist/properties')
+            );
+            $customVars = $blacklistedProperties->removeMatching($customVars);
+            foreach ($customVars as $type => $vars) {
+                foreach ($vars['vars'] as $var => $_) {
+                    $additionalCols[] = '_' . $type . '_' . $var;
+                }
+            }
+        }
+
+        $this->view->addColumns = $additionalCols;
+        return $additionalCols;
     }
 
     protected function addTitleTab($action, $title, $tip)
