@@ -92,7 +92,11 @@ if (! $this->compact): ?>
                 <p class="overview-plugin-output"><?= $this->pluginOutput($this->ellipsis($host->host_output, 10000), true, $host->host_check_command) ?></p>
             </td>
         <?php foreach($this->addColumns as $col): ?>
+          <?php if ($host->$col && preg_match('~^_(host|service)_([a-zA-Z0-9_]+)$~', $col, $m)): ?>
+            <td><?= $this->escape(\Icinga\Module\Monitoring\Object\MonitoredObject::protectCustomVars([$m[2] => $host->$col])[$m[2]]) ?></td>
+          <?php else: ?>
             <td><?= $this->escape($host->$col) ?></td>
+          <?php endif ?>
         <?php endforeach ?>
         </tr>
     <?php endforeach ?>
