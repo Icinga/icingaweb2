@@ -516,11 +516,15 @@
                         $refreshTarget = $('#col1');
                     }
 
-                    _this.loadUrl(refreshUrl, $refreshTarget).autorefresh = true;
+                    var req = _this.loadUrl(refreshUrl, $refreshTarget);
+                    req.addToHistory = false;
+                    req.scripted = true;
 
                     setTimeout(function () {
                         // TODO: Find a better solution than a hardcoded one
-                        _this.loadUrl(refreshUrl, $refreshTarget).autorefresh = true;
+                        var req = _this.loadUrl(refreshUrl, $refreshTarget);
+                        req.addToHistory = false;
+                        req.scripted = true;
                     }, 1000);
 
                     $(window).off('popstate.__back__');
