@@ -40,10 +40,11 @@
      * @param $container    {jQuery}    The target container where the html will be rendered in
      * @param action        {String}    The action-url that caused the reload
      * @param autorefresh   {Boolean}   Whether the rendering is due to an autoRefresh
+     * @param autoSubmit    {Boolean}   Whether the rendering is due to an autoSubmit
      *
      * @returns {string|NULL}           The content to be rendered, or NULL, when nothing should be changed
      */
-    Form.prototype.renderHook = function(content, $container, action, autorefresh) {
+    Form.prototype.renderHook = function(content, $container, action, autorefresh, autoSubmit) {
         if ($container.attr('id') === 'menu') {
             var $search = $container.find('#search');
             if ($search[0] === document.activeElement) {
@@ -57,7 +58,7 @@
             return content;
         }
 
-        if (! autorefresh) {
+        if (! autorefresh || autoSubmit) {
             return content;
         }
 
