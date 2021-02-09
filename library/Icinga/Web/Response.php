@@ -287,7 +287,7 @@ class Response extends Zend_Controller_Response_Http
         $redirectUrl = $this->getRedirectUrl();
         if ($this->getRequest()->isXmlHttpRequest()) {
             if ($redirectUrl !== null) {
-                if (Icinga::app()->getViewRenderer()->view->compact) {
+                if ($this->getRequest()->isGet() && Icinga::app()->getViewRenderer()->view->compact) {
                     $redirectUrl->getParams()->set('showCompact', true);
                 }
 
