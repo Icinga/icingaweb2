@@ -90,7 +90,7 @@ class ModuleCommand extends Command
     /**
      * Enable a given module
      *
-     * Usage: icingacli module enable <module-name> [--force]
+     * Usage: icingacli module enable <module-name>
      */
     public function enableAction()
     {
@@ -98,13 +98,11 @@ class ModuleCommand extends Command
             $module = $this->params->shift('module');
         }
 
-        $force = $this->params->shift('force', false);
-
         if (! $module || $this->hasRemainingParams()) {
             return $this->showUsage();
         }
 
-        $this->modules->enableModule($module, $force);
+        $this->modules->enableModule($module, true);
     }
 
     /**
