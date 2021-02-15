@@ -65,6 +65,14 @@ class PluginOutputTest extends BaseTestCase
         );
     }
 
+    public function testOutputWithNewlines()
+    {
+        $this->checkOutput(
+            'foo\nbar\n\nraboof',
+            "foo\nbar\nraboof"
+        );
+    }
+
     public function testOutputWithHtmlEntities()
     {
         $this->checkOutput(
