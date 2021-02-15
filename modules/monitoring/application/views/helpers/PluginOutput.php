@@ -16,9 +16,9 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
      * @var array
      */
     protected static $txtPatterns = array(
-        '~\\\n~',
+        '~\\\n\\\n~',
         '~\\\t~',
-         '~\\\n\\\n~',
+        '~\\\n~',
         '~(\[|\()OK(\]|\))~',
         '~(\[|\()WARNING(\]|\))~',
         '~(\[|\()CRITICAL(\]|\))~',
@@ -52,9 +52,9 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
      * @var array
      */
     protected static $htmlPatterns = array(
-        '~\\\n~',
-        '~\\\t~',
         '~\\\n\\\n~',
+        '~\\\t~',
+        '~\\\n~',
         '~<table~'
     );
 
