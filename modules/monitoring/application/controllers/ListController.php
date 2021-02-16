@@ -82,7 +82,6 @@ class ListController extends Controller
             'host_check_command',
             'host_next_update'
         ), $this->addColumns()));
-        $this->applyRestriction('monitoring/filter/objects', $hosts);
 
         $this->setupPaginationControl($hosts);
         $this->setupSortControl(array(
@@ -164,7 +163,6 @@ class ListController extends Controller
             'service_check_command',
             'service_next_update'
         ), $this->addColumns()));
-        $this->applyRestriction('monitoring/filter/objects', $services);
 
         $this->setupPaginationControl($services);
         $this->setupSortControl(array(
@@ -242,7 +240,6 @@ class ListController extends Controller
             'host_display_name',
             'service_display_name'
         ));
-        $this->applyRestriction('monitoring/filter/objects', $downtimes);
 
         $this->setupPaginationControl($downtimes);
         $this->setupSortControl(array(
@@ -292,7 +289,6 @@ class ListController extends Controller
             'service_description',
             'service_display_name'
         ));
-        $this->applyRestriction('monitoring/filter/objects', $notifications);
 
         $this->setupPaginationControl($notifications);
         $this->setupSortControl(array(
@@ -327,7 +323,6 @@ class ListController extends Controller
             'contact_notify_service_timeperiod',
             'contact_notify_host_timeperiod'
         ));
-        $this->applyRestriction('monitoring/filter/objects', $contacts);
 
         $this->setupPaginationControl($contacts);
         $this->setupSortControl(array(
@@ -407,7 +402,6 @@ class ListController extends Controller
             'contactgroup_alias',
             'contact_count'
         ));
-        $this->applyRestriction('monitoring/filter/objects', $contactGroups);
 
         $this->setupPaginationControl($contactGroups);
         $this->setupSortControl(array(
@@ -448,7 +442,6 @@ class ListController extends Controller
             'host_display_name',
             'service_display_name'
         ));
-        $this->applyRestriction('monitoring/filter/objects', $comments);
 
         $this->setupPaginationControl($comments);
         $this->setupSortControl(
@@ -498,7 +491,6 @@ class ListController extends Controller
             'services_warning_handled',
             'services_warning_unhandled'
         ));
-        $this->applyRestriction('monitoring/filter/objects', $serviceGroups);
 
         $this->setupPaginationControl($serviceGroups);
         $this->setupSortControl(array(
@@ -538,7 +530,6 @@ class ListController extends Controller
             'services_warning_handled',
             'services_warning_unhandled'
         ));
-        $this->applyRestriction('monitoring/filter/objects', $serviceGroups);
         $this->filterQuery($serviceGroups);
 
         $this->setupSortControl(array(
@@ -583,7 +574,6 @@ class ListController extends Controller
             'services_warning_handled',
             'services_warning_unhandled'
         ));
-        $this->applyRestriction('monitoring/filter/objects', $hostGroups);
 
         $this->setupPaginationControl($hostGroups);
         $this->setupSortControl(array(
@@ -622,7 +612,6 @@ class ListController extends Controller
             'hosts_unreachable_unhandled',
             'hosts_up'
         ]);
-        $this->applyRestriction('monitoring/filter/objects', $hostGroups);
         $this->filterQuery($hostGroups);
 
         $this->setupSortControl([
@@ -656,7 +645,6 @@ class ListController extends Controller
             'type'
         ));
 
-        $this->applyRestriction('monitoring/filter/objects', $query);
         $this->view->history = $query;
 
         $this->setupSortControl(array(
@@ -683,7 +671,6 @@ class ListController extends Controller
             'service_output',
             'service_state'
         ));
-        $this->applyRestriction('monitoring/filter/objects', $query);
         $this->filterQuery($query);
         $filter = (bool) $this->params->shift('problems', false) ? Filter::where('service_problem', 1) : null;
 
@@ -750,7 +737,13 @@ class ListController extends Controller
             'problems', // servicegridAction()
             'flipped' // servicegridAction()
         ));
+
+        if ($this->params->get('format') !== 'sql' || $this->hasPermission('config/authentication/roles/show')) {
+            $this->applyRestriction('monitoring/filter/objects', $dataView);
+        }
+
         $this->handleFormatRequest($dataView);
+
         return $dataView;
     }
 
