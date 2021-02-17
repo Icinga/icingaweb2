@@ -4,6 +4,7 @@
 namespace Icinga\Web\Widget;
 
 use Icinga\Application\Config;
+use Icinga\Common\Database;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\NotReadableError;
 use Icinga\Exception\ProgrammingError;
@@ -14,6 +15,7 @@ use Icinga\Web\Navigation\Navigation;
 use Icinga\Web\Url;
 use Icinga\Web\Widget\Dashboard\Dashlet as DashboardDashlet;
 use Icinga\Web\Widget\Dashboard\Pane;
+use ipl\Sql\Select;
 
 /**
  * Dashboards display multiple views on a single page
@@ -26,6 +28,8 @@ use Icinga\Web\Widget\Dashboard\Pane;
  */
 class Dashboard extends AbstractWidget
 {
+    use Database;
+
     /**
      * An array containing all panes of this dashboard
      *
@@ -119,6 +123,52 @@ class Dashboard extends AbstractWidget
         foreach (DashboardConfig::listConfigFilesForUser($this->user) as $file) {
             $this->loadUserDashboardsFromFile($file, $navigation);
         }
+
+        $this->loadUserDashboardsFromDatabase($this->user);
+    }
+
+    /**
+     * Loads user specific dashboards and dashlets from the database
+     * and merges them to the dashboards loaded from an ini file
+     *
+     * @param User $user
+     *
+     * @return bool
+     */
+    protected function loadUserDashboardsFromDatabase(User $user)
+    {
+        $dashboards = array();
+
+        $results = $this->getDb()->select((new Select())
+            ->columns('*')
+            ->from('dashboard'));
+
+        foreach ($results as $dashboard) {
+            $dashboards[$dashboard->name] = new Pane($dashboard->name);
+            $dashboards[$dashboard->name]->setTitle($dashboard->name);
+            $dashboards[$dashboard->name]->setUserWidget();
+
+            $newResults = $this->getDb()->select((new Select())
+                ->columns('*')
+                ->from('dashlet')
+                ->where(['dashboard_id = ?' => $dashboard->id, 'dashlet.owner = ?' => $user->getUsername()]));
+
+            foreach ($newResults as $dashletData) {
+                $dashlet = new DashboardDashlet(
+                    $dashletData->name,
+                    $dashletData->url,
+                    $dashboards[$dashboard->name]
+                );
+
+                $dashlet->setName($dashletData->name);
+                $dashlet->setUserWidget();
+                $dashboards[$dashboard->name]->addDashlet($dashlet);
+            }
+        }
+
+        $this->mergePanes($dashboards);
+
+        return true;
     }
 
     /**
@@ -216,6 +266,17 @@ class Dashboard extends AbstractWidget
             if ($this->hasPane($pane->getName()) === true) {
                 /** @var $current Pane */
                 $current = $this->panes[$pane->getName()];
+
+                /** @var $dashlet DashboardDashlet */
+                foreach ($pane->getDashlets() as $dashlet) {
+                    if ($current->hasDashlet($dashlet->getName()) === true) {
+                        $currentUrl = $current->getDashlet($dashlet->getName())->getUrl();
+                        if ($currentUrl->getAbsoluteUrl() === $dashlet->getUrl()->getAbsoluteUrl()) {
+                            $current->removeDashlet($dashlet->getName());
+                        }
+                    }
+                }
+
                 $current->addDashlets($pane->getDashlets());
             } else {
                 $this->panes[$pane->getName()] = $pane;
