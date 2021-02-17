@@ -340,6 +340,26 @@
             $('#layout').trigger('layout-change');
         },
 
+        prepareColumnFor: function ($el, $target) {
+            var explicitTarget;
+
+            if ($target.attr('id') === 'col2') {
+                if ($el.closest('#col2').length) {
+                    explicitTarget = $el.closest('[data-base-target]').data('baseTarget');
+                    if (typeof explicitTarget !== 'undefined' && explicitTarget === '_next') {
+                        this.moveToLeft();
+                    }
+                } else {
+                    this.layout2col();
+                }
+            } else { // if ($target.attr('id') === 'col1')
+                explicitTarget = $el.closest('[data-base-target]').data('baseTarget');
+                if (typeof explicitTarget !== 'undefined' && explicitTarget === '_main') {
+                    this.layout1col();
+                }
+            }
+        },
+
         getAvailableColumnSpace: function () {
             return $('#main').width() / this.getDefaultFontSize();
         },

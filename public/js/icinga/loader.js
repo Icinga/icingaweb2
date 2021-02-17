@@ -1060,9 +1060,16 @@
 
         /**
          * Detect the link/form target for a given element (link, form, whatever)
+         *
+         * @param {object} $el jQuery set with the element
+         * @param {boolean} prepare Pass `false` to disable column preparation
          */
-        getLinkTargetFor: function($el)
+        getLinkTargetFor: function($el, prepare)
         {
+            if (typeof prepare === 'undefined') {
+                prepare = true;
+            }
+
             // If everything else fails, our target is the first column...
             var $col1 = $('#col1');
             var $target = $col1;
@@ -1083,17 +1090,12 @@
                     if (this.icinga.ui.hasOnlyOneColumn()) {
                         $target = $col1;
                     } else {
-                        if ($el.closest('#col2').length) {
-                            this.icinga.ui.moveToLeft();
-                        }
-
                         $target = $('#col2');
                     }
                 } else if (targetId === '_self') {
                     $target = $el.closest('.container');
                 } else if (targetId === '_main') {
                     $target = $col1;
-                    this.icinga.ui.layout1col();
                 } else {
                     $target = $('#' + targetId);
                     if (! $target.length) {
@@ -1102,9 +1104,8 @@
                 }
             }
 
-            // Hardcoded layout switch unless columns are dynamic
-            if ($target.attr('id') === 'col2') {
-                this.icinga.ui.layout2col();
+            if (prepare) {
+                this.icinga.ui.prepareColumnFor($el, $target);
             }
 
             return $target;

@@ -40,7 +40,7 @@
         var $a = $(event.currentTarget);
         var url = $a.attr('href');
         var $modal = _this.$ghost.clone();
-        var $urlTarget = _this.icinga.loader.getLinkTargetFor($a);
+        var $urlTarget = _this.icinga.loader.getLinkTargetFor($a, false);
 
         // Add showCompact, we don't want controls in a modal
         url = _this.icinga.utils.addUrlFlag(url, 'showCompact');
