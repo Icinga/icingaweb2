@@ -111,9 +111,9 @@ class Auth
             );
             $config = new Config();
         }
-        if ($config->get('global', 'config_backend', 'ini') !== 'none') {
+        if ($config->get('global', 'config_backend', 'db') !== 'none') {
             $preferencesConfig = new ConfigObject(array(
-                'store'     => $config->get('global', 'config_backend', 'ini'),
+                'store'     => $config->get('global', 'config_backend', 'db'),
                 'resource'  => $config->get('global', 'config_resource')
             ));
             try {
