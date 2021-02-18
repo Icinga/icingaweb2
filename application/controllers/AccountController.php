@@ -43,7 +43,7 @@ class AccountController extends Controller
         $config = Config::app()->getSection('global');
         $user = $this->Auth()->getUser();
         if ($user->getAdditional('backend_type') === 'db') {
-            if ($user->can('*') || ! $user->can('no-user/password-change')) {
+            if ($user->can('user/password-change')) {
                 try {
                     $userBackend = UserBackend::create($user->getAdditional('backend_name'));
                 } catch (ConfigurationError $e) {

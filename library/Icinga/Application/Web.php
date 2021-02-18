@@ -336,7 +336,7 @@ class Web extends EmbeddedWeb
             $this->getRequest()->setUser($user);
             $this->user = $user;
 
-            if ($user->can('application/stacktraces')) {
+            if ($user->can('user/application/stacktraces')) {
                 $displayExceptions = $this->user->getPreferences()->getValue(
                     'icingaweb',
                     'show_stacktraces'

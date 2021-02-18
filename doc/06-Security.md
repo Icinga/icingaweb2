@@ -110,12 +110,25 @@ a module permission in the format `module/<moduleName>` for each installed modul
 
 ### General Permissions
 
-Name                      | Permits
---------------------------|-----------------------------------------------
-\*                        | allow everything, including module-specific permissions
-config/\*                 | allow all configuration actions
-config/modules            | allow enabling or disabling modules
-module/`<moduleName>`     | allow access to module `<moduleName>` (e.g. `module/monitoring`)
+Name                         | Permits
+-----------------------------|-----------------------------------------------
+\*                           | allow everything, including module-specific permissions
+application/announcements    | allow to manage announcements
+application/log              | allow to view the application log
+config/\*                    | allow full config access
+config/access-control/\*     | allow to fully manage access control
+config/access-control/groups | allow to manage groups
+config/access-control/roles  | allow to manage roles
+config/access-control/users  | allow to manage user accounts
+config/general               | allow to adjust the general configuration
+config/modules               | allow to enable/disable and configure modules
+config/navigation            | allow to view and adjust shared navigation items
+config/resources             | allow to manage resources
+user/\*                      | allow all account related functionalities
+user/application/stacktraces | allow to adjust in the preferences whether to show stacktraces
+user/password-change         | allow password changes in the account preferences
+user/share/navigation        | allow to share navigation items
+module/`<moduleName>`        | allow access to module `<moduleName>` (e.g. `module/monitoring`)
 
 ### Monitoring Module Permissions
 

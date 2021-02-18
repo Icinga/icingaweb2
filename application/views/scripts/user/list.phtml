@@ -22,8 +22,8 @@ if (! isset($backend)) {
     echo $this->translate('No backend found which is able to list users') . '</div>';
     return;
 } else {
-    $extensible = $this->hasPermission('config/authentication/users/add') && $backend instanceof Extensible;
-    $reducible = $this->hasPermission('config/authentication/users/remove') && $backend instanceof Reducible;
+    $extensible = $this->hasPermission('config/access-control/users') && $backend instanceof Extensible;
+    $reducible = $this->hasPermission('config/access-control/users') && $backend instanceof Reducible;
 }
 ?>
 

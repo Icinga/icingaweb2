@@ -61,7 +61,7 @@ class AnnouncementsController extends Controller
      */
     public function newAction()
     {
-        $this->assertPermission('admin');
+        $this->assertPermission('application/announcements');
 
         $form = $this->prepareForm()->add();
         $form->handleRequest();
@@ -73,7 +73,7 @@ class AnnouncementsController extends Controller
      */
     public function updateAction()
     {
-        $this->assertPermission('admin');
+        $this->assertPermission('application/announcements');
 
         $form = $this->prepareForm()->edit($this->params->getRequired('id'));
         try {
@@ -89,7 +89,7 @@ class AnnouncementsController extends Controller
      */
     public function removeAction()
     {
-        $this->assertPermission('admin');
+        $this->assertPermission('application/announcements');
 
         $form = $this->prepareForm()->remove($this->params->getRequired('id'));
         try {

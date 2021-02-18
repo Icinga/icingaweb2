@@ -67,24 +67,23 @@ class Menu extends Navigation
                     'icon'        => 'wrench',
                     'description' => t('Open application configuration'),
                     'label'       => t('Application'),
-                    'url'         => 'config/general',
-                    'permission'  => 'config/application/*',
+                    'url'         => 'config',
                     'priority'    => 810
                 ],
                 'authentication' => [
                     'icon'        => 'users',
-                    'description' => t('Open authentication configuration'),
-                    'label'       => t('Authentication'),
-                    'permission'  => 'config/authentication/*',
+                    'description' => t('Open access control configuration'),
+                    'label'       => t('Access Control'),
+                    'permission'  => 'config/access-control/*',
                     'priority'    => 830,
-                    'url'         => 'role/list'
+                    'url'         => 'role'
                 ],
                 'navigation' => [
                     'icon'        => 'sitemap',
                     'description' => t('Open shared navigation configuration'),
                     'label'       => t('Shared Navigation'),
                     'url'         => 'navigation/shared',
-                    'permission'  => 'config/application/navigation',
+                    'permission'  => 'config/navigation',
                     'priority'    => 840,
                 ],
                 'modules' => [

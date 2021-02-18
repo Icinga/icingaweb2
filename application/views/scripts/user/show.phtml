@@ -11,7 +11,7 @@ use Icinga\Data\Selectable;
 <?php endif ?>
     <h2><?= $this->escape($user->user_name) ?></h2>
     <?php
-    if ($this->hasPermission('config/authentication/users/edit') && $backend instanceof Updatable) {
+    if ($this->hasPermission('config/access-control/users') && $backend instanceof Updatable) {
         echo $this->qlink(
             $this->translate('Edit User'),
             'user/edit',
@@ -110,7 +110,7 @@ use Icinga\Data\Selectable;
         <?php foreach ($memberships as $membership): ?>
             <tr>
                 <td>
-                <?php if ($this->hasPermission('config/authentication/groups/show') && $membership->backend instanceof Selectable): ?>
+                <?php if ($this->hasPermission('config/access-control/groups') && $membership->backend instanceof Selectable): ?>
                     <?= $this->qlink($membership->group_name, 'group/show', array(
                         'backend' => $membership->backend->getName(),
                         'group'   => $membership->group_name

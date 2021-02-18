@@ -6,6 +6,7 @@ namespace Icinga\Forms\Security;
 use Icinga\Application\Hook\ConfigFormEventsHook;
 use Icinga\Application\Icinga;
 use Icinga\Application\Modules\Manager;
+use Icinga\Authentication\AdmissionLoader;
 use Icinga\Data\Filter\Filter;
 use Icinga\Forms\ConfigForm;
 use Icinga\Forms\RepositoryForm;
@@ -50,33 +51,67 @@ class RoleForm extends RepositoryForm
         $view = $this->getView();
 
         $this->providedPermissions['application'] = [
-            $helper->filterName('no-user/password-change') => [
-                'name'          => 'no-user/password-change',
-                'description'   => $this->translate('Prohibit password changes in the account preferences')
-            ],
-            $helper->filterName('application/share/navigation') => [
-                'name'          => 'application/share/navigation',
-                'description'   => $this->translate('Allow to share navigation items')
-            ],
-            $helper->filterName('application/stacktraces') => [
-                'name'          => 'application/stacktraces',
-                'description'   => $this->translate(
-                    'Allow to adjust in the preferences whether to show stacktraces'
-                )
+            $helper->filterName('application/announcements') => [
+                'name'          => 'application/announcements',
+                'description'   => $this->translate('Allow to manage announcements')
             ],
             $helper->filterName('application/log') => [
                 'name'          => 'application/log',
                 'description'   => $this->translate('Allow to view the application log')
             ],
-            $helper->filterName('admin') => [
-                'name'          => 'admin',
-                'description'   => $this->translate(
-                    'Grant admin permissions, e.g. manage announcements'
-                )
-            ],
             $helper->filterName('config/*') => [
                 'name'          => 'config/*',
-                'description'   => $this->translate('Allow config access')
+                'description'   => $this->translate('Allow full config access')
+            ],
+            $helper->filterName('config/general') => [
+                'name'          => 'config/general',
+                'description'   => $this->translate('Allow to adjust the general configuration')
+            ],
+            $helper->filterName('config/modules') => [
+                'name'          => 'config/modules',
+                'description'   => $this->translate('Allow to enable/disable and configure modules')
+            ],
+            $helper->filterName('config/resources') => [
+                'name'          => 'config/resources',
+                'description'   => $this->translate('Allow to manage resources')
+            ],
+            $helper->filterName('config/navigation') => [
+                'name'          => 'config/navigation',
+                'description'   => $this->translate('Allow to view and adjust shared navigation items')
+            ],
+            $helper->filterName('config/access-control/*') => [
+                'name'          => 'config/access-control/*',
+                'description'   => $this->translate('Allow to fully manage access-control')
+            ],
+            $helper->filterName('config/access-control/users') => [
+                'name'          => 'config/access-control/users',
+                'description'   => $this->translate('Allow to manage user accounts')
+            ],
+            $helper->filterName('config/access-control/groups') => [
+                'name'          => 'config/access-control/groups',
+                'description'   => $this->translate('Allow to manage user groups')
+            ],
+            $helper->filterName('config/access-control/roles') => [
+                'name'          => 'config/access-control/roles',
+                'description'   => $this->translate('Allow to manage roles')
+            ],
+            $helper->filterName('user/*') => [
+                'name'          => 'user/*',
+                'description'   => $this->translate('Allow all account related functionalities')
+            ],
+            $helper->filterName('user/password-change') => [
+                'name'          => 'user/password-change',
+                'description'   => $this->translate('Allow password changes in the account preferences')
+            ],
+            $helper->filterName('user/application/stacktraces') => [
+                'name'          => 'user/application/stacktraces',
+                'description'   => $this->translate(
+                    'Allow to adjust in the preferences whether to show stacktraces'
+                )
+            ],
+            $helper->filterName('user/share/navigation') => [
+                'name'          => 'user/share/navigation',
+                'description'   => $this->translate('Allow to share navigation items')
             ]
         ];
 
@@ -359,6 +394,12 @@ class RoleForm extends RepositoryForm
         if (! empty($role->permissions) || ! empty($role->refusals)) {
             $permissions = StringHelper::trimSplit($role->permissions);
             $refusals = StringHelper::trimSplit($role->refusals);
+
+            list($permissions, $newRefusals) = AdmissionLoader::migrateLegacyPermissions($permissions);
+            if (! empty($newRefusals)) {
+                array_push($refusals, ...$newRefusals);
+            }
+
             foreach ($this->providedPermissions as $moduleName => $permissionList) {
                 foreach ($permissionList as $name => $spec) {
                     if (in_array($spec['name'], $permissions, true)) {

@@ -4,6 +4,7 @@
 namespace Icinga;
 
 use DateTimeZone;
+use Icinga\Authentication\AdmissionLoader;
 use InvalidArgumentException;
 use Icinga\Application\Config;
 use Icinga\Authentication\Role;
@@ -559,6 +560,15 @@ class User
      */
     public function can($requiredPermission)
     {
+        list($permissions, $refusals) = AdmissionLoader::migrateLegacyPermissions([$requiredPermission]);
+        if (! empty($permissions)) {
+            $requiredPermission = array_pop($permissions);
+        } elseif (! empty($refusals)) {
+            throw new InvalidArgumentException(
+                'Refusals are not supported anymore. Check for a grant instead!'
+            );
+        }
+
         $granted = false;
         foreach ($this->getRoles() as $role) {
             if ($role->denies($requiredPermission)) {

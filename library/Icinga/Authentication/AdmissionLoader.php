@@ -17,6 +17,35 @@ use Icinga\Util\StringHelper;
  */
 class AdmissionLoader
 {
+    const LEGACY_PERMISSIONS = [
+        'admin'                                 => 'application/announcements',
+        'application/stacktraces'               => 'user/application/stacktraces',
+        'application/share/navigation'          => 'user/share/navigation',
+        // Migrating config/application/* would include config/modules, so that's skipped
+        //'config/application/*'                  => 'config/*',
+        'config/application/general'            => 'config/general',
+        'config/application/resources'          => 'config/resources',
+        'config/application/navigation'         => 'config/navigation',
+        'config/application/userbackend'        => 'config/access-control/users',
+        'config/application/usergroupbackend'   => 'config/access-control/groups',
+        'config/authentication/*'               => 'config/access-control/*',
+        'config/authentication/users/*'         => 'config/access-control/users',
+        'config/authentication/users/show'      => 'config/access-control/users',
+        'config/authentication/users/add'       => 'config/access-control/users',
+        'config/authentication/users/edit'      => 'config/access-control/users',
+        'config/authentication/users/remove'    => 'config/access-control/users',
+        'config/authentication/groups/*'        => 'config/access-control/groups',
+        'config/authentication/groups/show'     => 'config/access-control/groups',
+        'config/authentication/groups/edit'     => 'config/access-control/groups',
+        'config/authentication/groups/add'      => 'config/access-control/groups',
+        'config/authentication/groups/remove'   => 'config/access-control/groups',
+        'config/authentication/roles/*'         => 'config/access-control/roles',
+        'config/authentication/roles/show'      => 'config/access-control/roles',
+        'config/authentication/roles/add'       => 'config/access-control/roles',
+        'config/authentication/roles/edit'      => 'config/access-control/roles',
+        'config/authentication/roles/remove'    => 'config/access-control/roles'
+    ];
+
     /** @var Role[] */
     protected $roles;
 
@@ -83,6 +112,11 @@ class AdmissionLoader
         if (! isset($this->roles[$name])) {
             $permissions = StringHelper::trimSplit($section->permissions);
             $refusals = StringHelper::trimSplit($section->refusals);
+
+            list($permissions, $newRefusals) = self::migrateLegacyPermissions($permissions);
+            if (! empty($newRefusals)) {
+                array_push($refusals, ...$newRefusals);
+            }
 
             $restrictions = $section->toArray();
             unset($restrictions['users'], $restrictions['groups']);
@@ -175,5 +209,23 @@ class AdmissionLoader
         $user->setRestrictions($isUnrestricted ? [] : $restrictions);
         $user->setPermissions($permissions);
         $user->setRoles(array_values($roles));
+    }
+
+    public static function migrateLegacyPermissions(array $permissions)
+    {
+        $migratedGrants = [];
+        $refusals = [];
+
+        foreach ($permissions as $permission) {
+            if (array_key_exists($permission, self::LEGACY_PERMISSIONS)) {
+                $migratedGrants[] = self::LEGACY_PERMISSIONS[$permission];
+            } elseif ($permission === 'no-user/password-change') {
+                $refusals[] = 'user/password-change';
+            } else {
+                $migratedGrants[] = $permission;
+            }
+        }
+
+        return [$migratedGrants, $refusals];
     }
 }
