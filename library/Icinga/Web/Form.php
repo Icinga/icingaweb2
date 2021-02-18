@@ -737,6 +737,7 @@ class Form extends Zend_Form
     /**
      * Get whether the form is an API target
      *
+     * @todo This should probably only return true if the request is also an api request
      * @return bool
      */
     public function getIsApiTarget()
@@ -1157,6 +1158,7 @@ class Form extends Zend_Form
 
         $formData = $this->getRequestData();
         if ($this->getIsApiTarget()
+            // TODO: Very very bad, wasSent() must not be bypassed if it's only an api request but not an qpi target
             || $this->getRequest()->isApiRequest()
             || $this->getUidDisabled()
             || $this->wasSent($formData)
@@ -1170,6 +1172,7 @@ class Form extends Zend_Form
                     && (($this->onSuccess !== null && false !== call_user_func($this->onSuccess, $this))
                         || ($this->onSuccess === null && false !== $this->onSuccess()))
                 ) {
+                    // TODO: Still bad. An api target must not behave as one if it's not an api request
                     if ($this->getIsApiTarget() || $this->getRequest()->isApiRequest()) {
                         // API targets and API requests will never redirect but immediately respond w/ JSON-encoded
                         // notifications
@@ -1189,6 +1192,7 @@ class Form extends Zend_Form
                     } else {
                         $this->getView()->layout()->redirectUrl = $this->getRedirectUrl()->getAbsoluteUrl();
                     }
+                // TODO: Still bad. An api target must not behave as one if it's not an api request
                 } elseif ($this->getIsApiTarget() || $this->getRequest()->isApiRequest()) {
                     $this->getResponse()->json()->setFailData($this->getMessages())->sendResponse();
                 }
