@@ -33,7 +33,7 @@ class UserController extends AuthBackendController
      */
     public function listAction()
     {
-        $this->assertPermission('config/authentication/users/show');
+        $this->assertPermission('config/access-control/users');
         $this->createListTabs()->activate('user/list');
         $backendNames = array_map(
             function ($b) {
@@ -91,7 +91,7 @@ class UserController extends AuthBackendController
      */
     public function showAction()
     {
-        $this->assertPermission('config/authentication/users/show');
+        $this->assertPermission('config/access-control/users');
         $userName = $this->params->getRequired('user');
         $backend = $this->getUserBackend($this->params->getRequired('backend'));
 
@@ -127,7 +127,7 @@ class UserController extends AuthBackendController
             $memberships
         );
 
-        if ($this->hasPermission('config/authentication/groups/edit')) {
+        if ($this->hasPermission('config/access-control/groups')) {
             $extensibleBackends = $this->loadUserGroupBackends('Icinga\Data\Extensible');
             $this->view->showCreateMembershipLink = ! empty($extensibleBackends);
         } else {
@@ -139,7 +139,7 @@ class UserController extends AuthBackendController
         $this->view->memberships = $memberships;
         $this->createShowTabs($backend->getName(), $userName)->activate('user/show');
 
-        if ($this->hasPermission('config/authentication/groups/edit')) {
+        if ($this->hasPermission('config/access-control/groups')) {
             $removeForm = new Form();
             $removeForm->setUidDisabled();
             $removeForm->setAttrib('class', 'inline');
@@ -170,7 +170,7 @@ class UserController extends AuthBackendController
         $admissionLoader = new AdmissionLoader();
         $admissionLoader->applyRoles($userObj);
         $this->view->userObj = $userObj;
-        $this->view->allowedToEditRoles = $this->hasPermission('config/authentication/roles/edit');
+        $this->view->allowedToEditRoles = $this->hasPermission('config/access-control/groups');
     }
 
     /**
@@ -178,7 +178,7 @@ class UserController extends AuthBackendController
      */
     public function addAction()
     {
-        $this->assertPermission('config/authentication/users/add');
+        $this->assertPermission('config/access-control/users');
         $backend = $this->getUserBackend($this->params->getRequired('backend'), 'Icinga\Data\Extensible');
         $form = new UserForm();
         $form->setRedirectUrl(Url::fromPath('user/list', array('backend' => $backend->getName())));
@@ -193,7 +193,7 @@ class UserController extends AuthBackendController
      */
     public function editAction()
     {
-        $this->assertPermission('config/authentication/users/edit');
+        $this->assertPermission('config/access-control/users');
         $userName = $this->params->getRequired('user');
         $backend = $this->getUserBackend($this->params->getRequired('backend'), 'Icinga\Data\Updatable');
 
@@ -215,7 +215,7 @@ class UserController extends AuthBackendController
      */
     public function removeAction()
     {
-        $this->assertPermission('config/authentication/users/remove');
+        $this->assertPermission('config/access-control/users');
         $userName = $this->params->getRequired('user');
         $backend = $this->getUserBackend($this->params->getRequired('backend'), 'Icinga\Data\Reducible');
 
@@ -237,7 +237,7 @@ class UserController extends AuthBackendController
      */
     public function createmembershipAction()
     {
-        $this->assertPermission('config/authentication/groups/edit');
+        $this->assertPermission('config/access-control/groups');
         $userName = $this->params->getRequired('user');
         $backend = $this->getUserBackend($this->params->getRequired('backend'));
 
@@ -325,18 +325,21 @@ class UserController extends AuthBackendController
     protected function createListTabs()
     {
         $tabs = $this->getTabs();
-        $tabs->add(
-            'role/list',
-            array(
-                'baseTarget'    => '_main',
-                'label'         => $this->translate('Roles'),
-                'title'         => $this->translate(
-                    'Configure roles to permit or restrict users and groups accessing Icinga Web 2'
-                ),
-                'url'           => 'role/list'
 
-            )
-        );
+        if ($this->hasPermission('config/access-control/roles')) {
+            $tabs->add(
+                'role/list',
+                array(
+                    'baseTarget'    => '_main',
+                    'label'         => $this->translate('Roles'),
+                    'title'         => $this->translate(
+                        'Configure roles to permit or restrict users and groups accessing Icinga Web 2'
+                    ),
+                    'url'           => 'role/list'
+                )
+            );
+        }
+
         $tabs->add(
             'user/list',
             array(
@@ -345,14 +348,18 @@ class UserController extends AuthBackendController
                 'url'       => 'user/list'
             )
         );
-        $tabs->add(
-            'group/list',
-            array(
-                'title'     => $this->translate('List groups of user group backends'),
-                'label'     => $this->translate('User Groups'),
-                'url'       => 'group/list'
-            )
-        );
+
+        if ($this->hasPermission('config/access-control/groups')) {
+            $tabs->add(
+                'group/list',
+                array(
+                    'title'     => $this->translate('List groups of user group backends'),
+                    'label'     => $this->translate('User Groups'),
+                    'url'       => 'group/list'
+                )
+            );
+        }
+
         return $tabs;
     }
 }

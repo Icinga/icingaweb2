@@ -299,7 +299,7 @@ class NavigationConfigForm extends ConfigForm
         $shared = false;
         $config = $this->getUserConfig($data['type']);
         if ((isset($data['users']) && $data['users']) || (isset($data['groups']) && $data['groups'])) {
-            if ($this->getUser()->can('application/share/navigation')) {
+            if ($this->getUser()->can('user/share/navigation')) {
                 $data['owner'] = $this->getUser()->getUsername();
                 $config = $this->getShareConfig($data['type']);
                 $shared = true;
@@ -370,7 +370,7 @@ class NavigationConfigForm extends ConfigForm
                 $config = $this->unshare($name, isset($data['parent']) ? $data['parent'] : null);
             }
         } elseif ((isset($data['users']) && $data['users']) || (isset($data['groups']) && $data['groups'])) {
-            if ($this->getUser()->can('application/share/navigation')) {
+            if ($this->getUser()->can('user/share/navigation')) {
                 // It is not shared yet but should be
                 $this->secondaryConfig = $config;
                 $config = $this->getShareConfig();
@@ -580,7 +580,7 @@ class NavigationConfigForm extends ConfigForm
         );
 
         if ((! $itemForm->requiresParentSelection() || ! isset($formData['parent']) || ! $formData['parent'])
-            && $this->getUser()->can('application/share/navigation')
+            && $this->getUser()->can('user/share/navigation')
         ) {
             $checked = isset($formData['shared']) ? null : (isset($formData['users']) || isset($formData['groups']));
 
@@ -783,7 +783,7 @@ class NavigationConfigForm extends ConfigForm
             return $this->getUserConfig();
         } elseif ($this->getShareConfig()->hasSection($name)) {
             if ($this->getShareConfig()->get($name, 'owner') === $this->getUser()->getUsername()
-                || $this->getUser()->can('config/application/navigation')
+                || $this->getUser()->can('user/share/navigation')
             ) {
                 return $this->getShareConfig();
             }

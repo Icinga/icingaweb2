@@ -6,6 +6,7 @@ namespace Icinga\Forms\Security;
 use Icinga\Application\Hook\ConfigFormEventsHook;
 use Icinga\Application\Icinga;
 use Icinga\Application\Modules\Manager;
+use Icinga\Authentication\AdmissionLoader;
 use Icinga\Data\Filter\Filter;
 use Icinga\Forms\ConfigForm;
 use Icinga\Forms\RepositoryForm;
@@ -22,6 +23,11 @@ class RoleForm extends RepositoryForm
      * The name to use instead of `*`
      */
     const WILDCARD_NAME = 'allAndEverything';
+
+    /**
+     * The prefix used to deny a permission
+     */
+    const DENY_PREFIX = 'no-';
 
     /**
      * Provided permissions by currently installed modules
@@ -45,33 +51,67 @@ class RoleForm extends RepositoryForm
         $view = $this->getView();
 
         $this->providedPermissions['application'] = [
-            $helper->filterName('no-user/password-change') => [
-                'name'          => 'no-user/password-change',
-                'description'   => $this->translate('Prohibit password changes in the account preferences')
-            ],
-            $helper->filterName('application/share/navigation') => [
-                'name'          => 'application/share/navigation',
-                'description'   => $this->translate('Allow to share navigation items')
-            ],
-            $helper->filterName('application/stacktraces') => [
-                'name'          => 'application/stacktraces',
-                'description'   => $this->translate(
-                    'Allow to adjust in the preferences whether to show stacktraces'
-                )
+            $helper->filterName('application/announcements') => [
+                'name'          => 'application/announcements',
+                'description'   => $this->translate('Allow to manage announcements')
             ],
             $helper->filterName('application/log') => [
                 'name'          => 'application/log',
                 'description'   => $this->translate('Allow to view the application log')
             ],
-            $helper->filterName('admin') => [
-                'name'          => 'admin',
-                'description'   => $this->translate(
-                    'Grant admin permissions, e.g. manage announcements'
-                )
-            ],
             $helper->filterName('config/*') => [
                 'name'          => 'config/*',
-                'description'   => $this->translate('Allow config access')
+                'description'   => $this->translate('Allow full config access')
+            ],
+            $helper->filterName('config/general') => [
+                'name'          => 'config/general',
+                'description'   => $this->translate('Allow to adjust the general configuration')
+            ],
+            $helper->filterName('config/modules') => [
+                'name'          => 'config/modules',
+                'description'   => $this->translate('Allow to enable/disable and configure modules')
+            ],
+            $helper->filterName('config/resources') => [
+                'name'          => 'config/resources',
+                'description'   => $this->translate('Allow to manage resources')
+            ],
+            $helper->filterName('config/navigation') => [
+                'name'          => 'config/navigation',
+                'description'   => $this->translate('Allow to view and adjust shared navigation items')
+            ],
+            $helper->filterName('config/access-control/*') => [
+                'name'          => 'config/access-control/*',
+                'description'   => $this->translate('Allow to fully manage access-control')
+            ],
+            $helper->filterName('config/access-control/users') => [
+                'name'          => 'config/access-control/users',
+                'description'   => $this->translate('Allow to manage user accounts')
+            ],
+            $helper->filterName('config/access-control/groups') => [
+                'name'          => 'config/access-control/groups',
+                'description'   => $this->translate('Allow to manage user groups')
+            ],
+            $helper->filterName('config/access-control/roles') => [
+                'name'          => 'config/access-control/roles',
+                'description'   => $this->translate('Allow to manage roles')
+            ],
+            $helper->filterName('user/*') => [
+                'name'          => 'user/*',
+                'description'   => $this->translate('Allow all account related functionalities')
+            ],
+            $helper->filterName('user/password-change') => [
+                'name'          => 'user/password-change',
+                'description'   => $this->translate('Allow password changes in the account preferences')
+            ],
+            $helper->filterName('user/application/stacktraces') => [
+                'name'          => 'user/application/stacktraces',
+                'description'   => $this->translate(
+                    'Allow to adjust in the preferences whether to show stacktraces'
+                )
+            ],
+            $helper->filterName('user/share/navigation') => [
+                'name'          => 'user/share/navigation',
+                'description'   => $this->translate('Allow to share navigation items')
             ]
         ];
 
@@ -153,6 +193,19 @@ class RoleForm extends RepositoryForm
             ]
         );
         $this->addElement(
+            'select',
+            'parent',
+            [
+                'label'         => $this->translate('Inherit From'),
+                'description'   => $this->translate('Choose a role from which to inherit privileges'),
+                'value'         => '',
+                'multiOptions'  => array_merge(
+                    ['' => $this->translate('None', 'parent role')],
+                    $this->collectRoles()
+                )
+            ]
+        );
+        $this->addElement(
             'textarea',
             'users',
             [
@@ -177,8 +230,19 @@ class RoleForm extends RepositoryForm
                 'description'   => $this->translate('Everything is allowed')
             ]
         );
+        $this->addElement(
+            'checkbox',
+            'unrestricted',
+            [
+                'autosubmit'        => true,
+                'uncheckedValue'    => null,
+                'label'             => $this->translate('Unrestricted Access'),
+                'description'       => $this->translate('Access to any data is completely unrestricted')
+            ]
+        );
 
         $hasAdminPerm = isset($formData[self::WILDCARD_NAME]) && $formData[self::WILDCARD_NAME];
+        $isUnrestricted = isset($formData['unrestricted']) && $formData['unrestricted'];
         foreach ($this->providedPermissions as $moduleName => $permissionList) {
             $this->sortPermissions($permissionList);
 
@@ -196,8 +260,15 @@ class RoleForm extends RepositoryForm
 
             $elements[] = 'permission_header';
             $this->addElement('note', 'permission_header', [
-                'value'         => '<h4>' . $this->translate('Permissions') . '</h4>',
-                'decorators'    => ['ViewHelper']
+                'decorators'    => [['Callback', ['callback' => function () {
+                    return '<h4>' . $this->translate('Permissions') . '</h4>'
+                        . $this->getView()->icon('ok', $this->translate(
+                            'Grant access by toggling a switch below'
+                        ))
+                        . $this->getView()->icon('cancel', $this->translate(
+                            'Deny access by toggling a switch below'
+                        ));
+                }]], ['HtmlTag', ['tag' => 'div']]]
             ]);
 
             $hasFullPerm = false;
@@ -205,6 +276,17 @@ class RoleForm extends RepositoryForm
                 $elementName = $name;
                 if ($hasFullPerm || $hasAdminPerm) {
                     $elementName .= '_fake';
+                }
+
+                $denyCheckbox = null;
+                if (! isset($spec['isFullPerm'])
+                    && substr($spec['name'], 0, strlen(self::DENY_PREFIX)) !== self::DENY_PREFIX
+                ) {
+                    $denyCheckbox = $this->createElement('checkbox', self::DENY_PREFIX . $name, [
+                        'decorators'    => ['ViewHelper']
+                    ]);
+                    $this->addElement($denyCheckbox);
+                    $this->removeFromIteration($denyCheckbox->getName());
                 }
 
                 $elements[] = $elementName;
@@ -222,7 +304,14 @@ class RoleForm extends RepositoryForm
                             '/&#8203;',
                             isset($spec['label']) ? $spec['label'] : $spec['name']
                         ),
-                        'description'   => isset($spec['description']) ? $spec['description'] : $spec['name']
+                        'description'   => isset($spec['description']) ? $spec['description'] : $spec['name'],
+                        'decorators'    => array_merge(
+                            array_slice(self::$defaultElementDecorators, 0, 3),
+                            [['Callback', ['callback' => function () use ($denyCheckbox) {
+                                return $denyCheckbox ? $denyCheckbox->render() : '';
+                            }]]],
+                            array_slice(self::$defaultElementDecorators, 3)
+                        )
                     ]
                 )
                     ->getElement($elementName)
@@ -258,7 +347,9 @@ class RoleForm extends RepositoryForm
                                 '/&#8203;',
                                 isset($spec['label']) ? $spec['label'] : $spec['name']
                             ),
-                            'description'   => $spec['description']
+                            'description'   => $spec['description'],
+                            'style'         => $isUnrestricted ? 'text-decoration:line-through;' : '',
+                            'readonly'      => $isUnrestricted ?: null
                         ]
                     )
                         ->getElement($name)
@@ -292,18 +383,31 @@ class RoleForm extends RepositoryForm
         }
 
         $values = [
+            'parent'            => $role->parent,
             'name'              => $role->name,
             'users'             => $role->users,
             'groups'            => $role->groups,
+            'unrestricted'      => $role->unrestricted,
             self::WILDCARD_NAME => (bool) preg_match('~(?<!/)\*~', $role->permissions)
         ];
 
-        if (! empty($role->permissions) && $role->permissions !== '*') {
+        if (! empty($role->permissions) || ! empty($role->refusals)) {
             $permissions = StringHelper::trimSplit($role->permissions);
+            $refusals = StringHelper::trimSplit($role->refusals);
+
+            list($permissions, $newRefusals) = AdmissionLoader::migrateLegacyPermissions($permissions);
+            if (! empty($newRefusals)) {
+                array_push($refusals, ...$newRefusals);
+            }
+
             foreach ($this->providedPermissions as $moduleName => $permissionList) {
                 foreach ($permissionList as $name => $spec) {
                     if (in_array($spec['name'], $permissions, true)) {
                         $values[$name] = 1;
+                    }
+
+                    if (in_array($spec['name'], $refusals, true)) {
+                        $values[$this->filterName(self::DENY_PREFIX . $name)] = 1;
                     }
                 }
             }
@@ -338,17 +442,24 @@ class RoleForm extends RepositoryForm
             $permissions[] = '*';
         }
 
+        $refusals = [];
         foreach ($this->providedPermissions as $moduleName => $permissionList) {
             foreach ($permissionList as $name => $spec) {
                 if (isset($values[$name]) && $values[$name]) {
                     $permissions[] = $spec['name'];
                 }
 
-                unset($values[$name]);
+                $denyName = $this->filterName(self::DENY_PREFIX . $name);
+                if (isset($values[$denyName]) && $values[$denyName]) {
+                    $refusals[] = $spec['name'];
+                }
+
+                unset($values[$name], $values[$denyName]);
             }
         }
 
         unset($values[self::WILDCARD_NAME]);
+        $values['refusals'] = join(',', $refusals);
         $values['permissions'] = join(',', $permissions);
         return ConfigForm::transformEmptyValuesToNull($values);
     }
@@ -389,6 +500,36 @@ class RoleForm extends RepositoryForm
         });
     }
 
+    protected function collectRoles()
+    {
+        // Function to get all connected children. Used to avoid reference loops
+        $getChildren = function ($name, $children = []) use (&$getChildren) {
+            foreach ($this->repository->select()->where('parent', $name) as $child) {
+                if (isset($children[$child->name])) {
+                    // Don't follow already established loops here,
+                    // the user should be able to solve such in the UI
+                    continue;
+                }
+
+                $children[$child->name] = true;
+                $children = $getChildren($child->name, $children);
+            }
+
+            return $children;
+        };
+
+        $children = $this->getIdentifier() !== null ? $getChildren($this->getIdentifier()) : [];
+
+        $names = [];
+        foreach ($this->repository->select() as $role) {
+            if ($role->name !== $this->getIdentifier() && ! isset($children[$role->name])) {
+                $names[] = $role->name;
+            }
+        }
+
+        return array_combine($names, $names);
+    }
+
     public function isValid($formData)
     {
         $valid = parent::isValid($formData);
@@ -408,6 +549,14 @@ class RoleForm extends RepositoryForm
     {
         if (parent::onSuccess() === false) {
             return false;
+        }
+
+        if (($newName = $this->getValue('name')) !== $this->getIdentifier()) {
+            $this->repository->update(
+                $this->getBaseTable(),
+                ['parent' => $newName],
+                Filter::where('parent', $this->getIdentifier())
+            );
         }
 
         if (ConfigFormEventsHook::runOnSuccess($this) === false) {

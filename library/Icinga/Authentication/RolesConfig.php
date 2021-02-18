@@ -19,10 +19,13 @@ class RolesConfig extends IniRepository
     {
         $columns = [
             'roles' => [
+                'parent',
                 'name',
                 'users',
                 'groups',
+                'refusals',
                 'permissions',
+                'unrestricted',
                 'application/share/users',
                 'application/share/groups'
             ]

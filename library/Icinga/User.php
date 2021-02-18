@@ -4,6 +4,7 @@
 namespace Icinga;
 
 use DateTimeZone;
+use Icinga\Authentication\AdmissionLoader;
 use InvalidArgumentException;
 use Icinga\Application\Config;
 use Icinga\Authentication\Role;
@@ -252,10 +253,6 @@ class User
      */
     public function setRestrictions(array $restrictions)
     {
-        foreach ($restrictions as $name => $restriction) {
-            $restrictions[$name] = str_replace('$user:local_name$', $this->getLocalUsername(), $restriction);
-        }
-
         $this->restrictions = $restrictions;
         return $this;
     }
@@ -563,32 +560,27 @@ class User
      */
     public function can($requiredPermission)
     {
-        if (isset($this->permissions['*']) || isset($this->permissions[$requiredPermission])) {
-            return true;
+        list($permissions, $refusals) = AdmissionLoader::migrateLegacyPermissions([$requiredPermission]);
+        if (! empty($permissions)) {
+            $requiredPermission = array_pop($permissions);
+        } elseif (! empty($refusals)) {
+            throw new InvalidArgumentException(
+                'Refusals are not supported anymore. Check for a grant instead!'
+            );
         }
 
-        $requiredWildcard = strpos($requiredPermission, '*');
-        foreach ($this->permissions as $grantedPermission) {
-            if ($requiredWildcard !== false) {
-                if (($grantedWildcard = strpos($grantedPermission, '*')) !== false) {
-                    $wildcard = min($requiredWildcard, $grantedWildcard);
-                } else {
-                    $wildcard = $requiredWildcard;
-                }
-            } else {
-                $wildcard = strpos($grantedPermission, '*');
+        $granted = false;
+        foreach ($this->getRoles() as $role) {
+            if ($role->denies($requiredPermission)) {
+                return false;
             }
 
-            if ($wildcard !== false && $wildcard > 0) {
-                if (substr($requiredPermission, 0, $wildcard) === substr($grantedPermission, 0, $wildcard)) {
-                    return true;
-                }
-            } elseif ($requiredPermission === $grantedPermission) {
-                return true;
+            if (! $granted && $role->grants($requiredPermission)) {
+                $granted = true;
             }
         }
 
-        return false;
+        return $granted;
     }
 
     /**

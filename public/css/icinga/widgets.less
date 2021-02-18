@@ -242,7 +242,26 @@ form.role-form {
     }
 
     h4 {
+      display: inline-block;
+      width: 20em;
       margin-top: 1.5em;
+      padding-right: .5625em;
+      text-align: right;
+
+      & ~ i {
+        display: inline-block;
+        width: 2.625em;
+        margin-right: 1em;
+        text-align: center;
+
+        &.icon-ok {
+          color: @color-ok;
+        }
+
+        &.icon-cancel {
+          color: @color-critical;
+        }
+      }
     }
 
     .collapsible-control {

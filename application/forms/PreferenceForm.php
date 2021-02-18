@@ -255,7 +255,7 @@ class PreferenceForm extends Form
             )
         );
 
-        if (Auth::getInstance()->hasPermission('application/stacktraces')) {
+        if (Auth::getInstance()->hasPermission('user/application/stacktraces')) {
             $this->addElement(
                 'checkbox',
                 'show_stacktraces',

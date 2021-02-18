@@ -21,7 +21,7 @@ class UsergroupbackendController extends Controller
      */
     public function init()
     {
-        $this->assertPermission('config/application/usergroupbackend');
+        $this->assertPermission('config/access-control/users');
     }
 
     /**

@@ -101,7 +101,7 @@ class ConfigController extends Controller
         try {
             $form->setResourceConfig(ResourceFactory::getResourceConfigs());
         } catch (ConfigurationError $e) {
-            if ($this->hasPermission('config/application/resources')) {
+            if ($this->hasPermission('config/resources')) {
                 Notification::error($e->getMessage());
                 $this->redirectNow('config/createresource');
             }

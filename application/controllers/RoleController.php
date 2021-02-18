@@ -6,6 +6,7 @@ namespace Icinga\Controllers;
 use Icinga\Authentication\RolesConfig;
 use Icinga\Exception\NotFoundError;
 use Icinga\Forms\Security\RoleForm;
+use Icinga\Security\SecurityException;
 use Icinga\Web\Controller\AuthBackendController;
 
 /**
@@ -22,6 +23,19 @@ class RoleController extends AuthBackendController
         parent::init();
     }
 
+    public function indexAction()
+    {
+        if ($this->hasPermission('config/access-control/roles')) {
+            $this->redirectNow('role/list');
+        } elseif ($this->hasPermission('config/access-control/users')) {
+            $this->redirectNow('user/list');
+        } elseif ($this->hasPermission('config/access-control/groups')) {
+            $this->redirectNow('group/list');
+        } else {
+            throw new SecurityException('No permission to configure Icinga Web 2');
+        }
+    }
+
     /**
      * List roles
      *
@@ -29,7 +43,7 @@ class RoleController extends AuthBackendController
      */
     public function listAction()
     {
-        $this->assertPermission('config/authentication/roles/show');
+        $this->assertPermission('config/access-control/roles');
         $this->createListTabs()->activate('role/list');
         $this->view->roles = (new RolesConfig())
             ->select();
@@ -54,7 +68,7 @@ class RoleController extends AuthBackendController
      */
     public function addAction()
     {
-        $this->assertPermission('config/authentication/roles/add');
+        $this->assertPermission('config/access-control/roles');
 
         $role = new RoleForm();
         $role->setRedirectUrl('role/list');
@@ -72,7 +86,7 @@ class RoleController extends AuthBackendController
      */
     public function editAction()
     {
-        $this->assertPermission('config/authentication/roles/edit');
+        $this->assertPermission('config/access-control/roles');
 
         $name = $this->params->getRequired('role');
         $role = new RoleForm();
@@ -95,7 +109,7 @@ class RoleController extends AuthBackendController
      */
     public function removeAction()
     {
-        $this->assertPermission('config/authentication/roles/remove');
+        $this->assertPermission('config/access-control/roles');
 
         $name = $this->params->getRequired('role');
         $role = new RoleForm();
@@ -128,25 +142,31 @@ class RoleController extends AuthBackendController
                     'Configure roles to permit or restrict users and groups accessing Icinga Web 2'
                 ),
                 'url'           => 'role/list'
+            )
+        );
 
-            )
-        );
-        $tabs->add(
-            'user/list',
-            array(
-                'title'     => $this->translate('List users of authentication backends'),
-                'label'     => $this->translate('Users'),
-                'url'       => 'user/list'
-            )
-        );
-        $tabs->add(
-            'group/list',
-            array(
-                'title'     => $this->translate('List groups of user group backends'),
-                'label'     => $this->translate('User Groups'),
-                'url'       => 'group/list'
-            )
-        );
+        if ($this->hasPermission('config/access-control/users')) {
+            $tabs->add(
+                'user/list',
+                array(
+                    'title'     => $this->translate('List users of authentication backends'),
+                    'label'     => $this->translate('Users'),
+                    'url'       => 'user/list'
+                )
+            );
+        }
+
+        if ($this->hasPermission('config/access-control/groups')) {
+            $tabs->add(
+                'group/list',
+                array(
+                    'title'     => $this->translate('List groups of user group backends'),
+                    'label'     => $this->translate('User Groups'),
+                    'url'       => 'group/list'
+                )
+            );
+        }
+
         return $tabs;
     }
 }

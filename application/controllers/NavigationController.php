@@ -161,7 +161,7 @@ class NavigationController extends Controller
      */
     public function sharedAction()
     {
-        $this->assertPermission('config/application/navigation');
+        $this->assertPermission('config/navigation');
         $ds = new ArrayDatasource($this->fetchSharedNavigationItemConfigs());
         $query = $ds->select();
 
@@ -259,7 +259,7 @@ class NavigationController extends Controller
         $referrer = $this->params->get('referrer', 'index');
 
         $user = $this->Auth()->getUser();
-        if ($user->can('config/application/navigation')) {
+        if ($user->can('config/navigation')) {
             $itemOwner = $this->params->get('owner', $user->getUsername());
         } else {
             $itemOwner = $user->getUsername();
@@ -354,7 +354,7 @@ class NavigationController extends Controller
      */
     public function unshareAction()
     {
-        $this->assertPermission('config/application/navigation');
+        $this->assertPermission('config/navigation');
         $this->assertHttpMethod('POST');
 
         // TODO: I'd like these being form fields
