@@ -231,12 +231,13 @@
 
             // If we have a pending request for the same target...
             if (typeof this.requests[id] !== 'undefined') {
-                if (autorefresh) {
-                    return false;
-                }
                 // ... ignore the new request if it is already pending with the same URL. Only abort GETs, as those
                 // are the only methods that are guaranteed to return the same value
                 if (this.requests[id].url === url && method === 'GET') {
+                    if (autorefresh) {
+                        return false;
+                    }
+
                     this.icinga.logger.debug('Request to ', url, ' is already running for ', $target);
                     return this.requests[id];
                 }
