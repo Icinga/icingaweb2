@@ -790,7 +790,7 @@
                 }
 
                 $.each(req.responseText.split(contentSeparator), function (idx, el) {
-                    var match = el.match(/for=(Behavior:)?(\S+)\s+(.*)/ms);
+                    var match = el.match(/for=(Behavior:)?(\S+)\s+([^]*)/m);
                     if (!! match) {
                         if (match[1]) {
                             var behavior = _this.icinga.behaviors[match[2].toLowerCase()];
