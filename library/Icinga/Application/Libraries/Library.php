@@ -3,6 +3,7 @@
 
 namespace Icinga\Application\Libraries;
 
+use CallbackFilterIterator;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\Json\JsonDecodeException;
 use Icinga\Util\Json;
@@ -202,10 +203,20 @@ class Library
 
             $this->{$type . 'AssetPath'} = $dir;
 
-            return new RecursiveIteratorIterator(new RecursiveDirectoryIterator(
+            $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator(
                 $dir,
                 RecursiveDirectoryIterator::CURRENT_AS_PATHNAME | RecursiveDirectoryIterator::SKIP_DOTS
             ));
+            if ($type === 'static') {
+                return $iterator;
+            }
+
+            return new CallbackFilterIterator(
+                $iterator,
+                function ($path) use ($type) {
+                    return substr($path, -5 - strlen($type)) !== ".min.$type";
+                }
+            );
         };
 
         $this->assets = [];

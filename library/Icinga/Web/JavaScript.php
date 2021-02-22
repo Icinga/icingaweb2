@@ -157,12 +157,24 @@ class JavaScript
         // Library files need to be namespaced first before they can be included
         foreach (Icinga::app()->getLibraries() as $library) {
             foreach ($library->getJsAssets() as $file) {
-                $js .= self::optimizeDefine(
+                $alreadyMinified = false;
+                if ($minified && file_exists(($minFile = substr($file, 0, -3) . '.min.js'))) {
+                    $alreadyMinified = true;
+                    $file = $minFile;
+                }
+
+                $content = self::optimizeDefine(
                     file_get_contents($file),
                     $file,
                     $library->getJsAssetPath(),
                     $library->getName()
-                ) . "\n\n\n";
+                );
+
+                if ($alreadyMinified) {
+                    $out .= ';' . ltrim(trim($content), ';') . "\n";
+                } else {
+                    $js .= $content . "\n\n\n";
+                }
             }
         }
 
