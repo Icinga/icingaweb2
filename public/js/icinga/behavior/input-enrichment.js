@@ -7,9 +7,14 @@
 
     "use strict";
 
-    var FilterInput = require('icinga/ipl/widget/FilterInput');
-    var TermInput = require('icinga/ipl/widget/TermInput');
-    var Completer = require('icinga/ipl/widget/Completer');
+    try {
+        var FilterInput = require('icinga/ipl/widget/FilterInput');
+        var TermInput = require('icinga/ipl/widget/TermInput');
+        var Completer = require('icinga/ipl/widget/Completer');
+    } catch (e) {
+        console.warn('Unable to provide input enrichments. Libraries not available:', e);
+        return;
+    }
 
     Icinga.Behaviors = Icinga.Behaviors || {};
 
