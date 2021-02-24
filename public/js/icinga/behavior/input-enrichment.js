@@ -8,6 +8,7 @@
     "use strict";
 
     try {
+        var SearchBar = require('icinga/ipl/widget/SearchBar');
         var FilterInput = require('icinga/ipl/widget/FilterInput');
         var TermInput = require('icinga/ipl/widget/TermInput');
         var Completer = require('icinga/ipl/widget/Completer');
@@ -31,7 +32,7 @@
         /**
          * Enriched inputs
          *
-         * @type {WeakMap<object, FilterInput|TermInput|Completer>}
+         * @type {WeakMap<object, SearchBar|FilterInput|TermInput|Completer>}
          * @private
          */
         this._enrichments = new WeakMap();
@@ -71,7 +72,7 @@
         }
 
         let _this = event.data.self;
-        let inputs = event.currentTarget.querySelectorAll('input[data-enrichment-type]');
+        let inputs = event.currentTarget.querySelectorAll('[data-enrichment-type]');
 
         // Remember current instances
         inputs.forEach(function (input) {
@@ -108,14 +109,22 @@
         }
 
         // Create new instances
-        var inputs = container.querySelectorAll('input[data-enrichment-type]');
+        var inputs = container.querySelectorAll('[data-enrichment-type]');
         inputs.forEach(function (input) {
             var enrichment = _this._enrichments.get(input);
             if (! enrichment) {
                 switch (input.dataset.enrichmentType) {
+                    case 'search-bar':
+                        enrichment = (new SearchBar(input)).bind();
+                        break;
                     case 'filter':
                         enrichment = (new FilterInput(input)).bind();
                         enrichment.restoreTerms();
+
+                        if (_this._enrichments.has(input.form)) {
+                            _this._enrichments.get(input.form).setFilterInput(enrichment);
+                        }
+
                         break;
                     case 'terms':
                         enrichment = (new TermInput(input)).bind();
