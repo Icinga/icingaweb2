@@ -634,6 +634,31 @@
                 this.failureNotice = null;
             }
 
+            var target = req.getResponseHeader('X-Icinga-Container');
+            var newBody = false;
+            var oldNotifications = false;
+            if (target) {
+                if (target === 'ignore') {
+                    return;
+                }
+
+                var $newTarget = this.identifyLinkTarget(target, req.$target);
+                if ($newTarget.length) {
+                    // If we change the target, oncomplete will fail to clean up
+                    // This fixes the problem, not using req.$target would be better
+                    delete this.requests[req.$target.attr('id')];
+
+                    req.$target = $newTarget;
+                    req.$redirectTarget = $newTarget;
+
+                    if (target === 'layout') {
+                        oldNotifications = $('#notifications li').detach();
+                        this.icinga.ui.layout1col();
+                        newBody = true;
+                    }
+                }
+            }
+
             this.icinga.logger.debug(
                 'Got response for ', req.$target, ', URL was ' + req.url
             );
@@ -652,34 +677,8 @@
                 _this.loadUrl(_this.url('/layout/announcements'), $('#announcements'));
             }
 
-            var active = false;
             var rendered = false;
             var classes;
-
-            if (req.autorefresh) {
-                // TODO: next container url
-                active = $('[href].active', req.$target).attr('href');
-            }
-
-            var target = req.getResponseHeader('X-Icinga-Container');
-            var newBody = false;
-            var oldNotifications = false;
-            if (target) {
-                if (target === 'ignore') {
-                    return;
-                }
-                // If we change the target, oncomplete will fail to clean up
-                // This fixes the problem, not using req.$target would be better
-                delete this.requests[req.$target.attr('id')];
-
-                req.$target = $('#' + target);
-                if (target === 'layout') {
-                    oldNotifications = $('#notifications li').detach();
-                }
-                // We assume target === 'layout' right now. This might not be correct
-                this.icinga.ui.layout1col();
-                newBody = true;
-            }
 
             if (target !== 'layout') {
                 var moduleName = req.getResponseHeader('X-Icinga-Module');
