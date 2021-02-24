@@ -256,6 +256,10 @@
             // Not sure whether we need this Accept-header
             var headers = { 'X-Icinga-Accept': 'text/html' };
 
+            if (!! id) {
+                headers['X-Icinga-Container'] = id;
+            }
+
             if (autorefresh) {
                 headers['X-Icinga-Autorefresh'] = '1';
             }
