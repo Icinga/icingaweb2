@@ -38,7 +38,7 @@ class ContactgroupQuery extends IdoQuery
             'contactgroup_alias'    => 'cg.alias COLLATE latin1_general_ci'
         ),
         'members' => array(
-            'contact_count' => 'SUM(CASE WHEN cgmo.object_id IS NOT NULL THEN 1 ELSE 0 END)'
+            'contact_count' => 'SUM(cgmo.object_id IS NOT NULL)'
         ),
         'hostgroups' => array(
             'hostgroup'         => 'hgo.name1 COLLATE latin1_general_ci',
