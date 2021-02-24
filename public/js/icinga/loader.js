@@ -1076,8 +1076,7 @@
             }
 
             // If everything else fails, our target is the first column...
-            var $col1 = $('#col1');
-            var $target = $col1;
+            var $target = $('#col1');
 
             // ...but usually we will use our own container...
             var $container = $el.closest('.container');
@@ -1089,28 +1088,43 @@
             if ($el.closest('[data-base-target]').length) {
                 var targetId = $el.closest('[data-base-target]').data('baseTarget');
 
-                // Simulate _next to prepare migration to dynamic column layout
-                // YES, there are duplicate lines right now.
-                if (targetId === '_next') {
-                    if (this.icinga.ui.hasOnlyOneColumn()) {
-                        $target = $col1;
-                    } else {
-                        $target = $('#col2');
-                    }
-                } else if (targetId === '_self') {
-                    $target = $el.closest('.container');
-                } else if (targetId === '_main') {
-                    $target = $col1;
-                } else {
-                    $target = $('#' + targetId);
-                    if (! $target.length) {
-                        this.icinga.logger.warn('Link target "#' + targetId + '" does not exist in DOM.');
-                    }
+                $target = this.identifyLinkTarget(targetId, $el);
+                if (! $target.length) {
+                    this.icinga.logger.warn('Link target "#' + targetId + '" does not exist in DOM.');
                 }
             }
 
             if (prepare) {
                 this.icinga.ui.prepareColumnFor($el, $target);
+            }
+
+            return $target;
+        },
+
+        /**
+         * Identify link target by the given id
+         *
+         * The id may also be one of the column aliases: `_next`, `_self` and `_main`
+         *
+         * @param {string} id
+         * @param {object} $of
+         * @return {object}
+         */
+        identifyLinkTarget: function (id, $of) {
+            var $target;
+
+            if (id === '_next') {
+                if (this.icinga.ui.hasOnlyOneColumn()) {
+                    $target = $('#col1');
+                } else {
+                    $target = $('#col2');
+                }
+            } else if (id === '_self') {
+                $target = $of.closest('.container');
+            } else if (id === '_main') {
+                $target = $('#col1');
+            } else {
+                $target = $('#' + id);
             }
 
             return $target;
