@@ -354,7 +354,7 @@
         },
 
         filterAutorefreshingContainers: function () {
-            return $(this).data('icingaRefresh') > 0;
+            return $(this).data('icingaRefresh') > 0 && ! $(this).is('[data-suspend-autorefresh]');
         },
 
         autorefresh: function () {
@@ -657,6 +657,10 @@
                         newBody = true;
                     }
                 }
+            }
+
+            if (req.autorefresh && req.$target.is('[data-suspend-autorefresh]')) {
+                return;
             }
 
             this.icinga.logger.debug(
