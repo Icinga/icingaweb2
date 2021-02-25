@@ -30,6 +30,16 @@
         this.on('rendered', '.container', this.onRendered, this);
 
         /**
+         * Listen for events emitted by the SearchBar widget
+         */
+        this.on('editor-open', '.container', function () {
+            this.dataset.suspendAutorefresh = '';
+        });
+        this.on('editor-close', '.container', function () {
+            delete this.dataset.suspendAutorefresh;
+        });
+
+        /**
          * Enriched inputs
          *
          * @type {WeakMap<object, SearchBar|FilterInput|TermInput|Completer>}
