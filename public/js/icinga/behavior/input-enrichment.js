@@ -3,7 +3,7 @@
 /**
  * InputEnrichment - Behavior for forms with enriched inputs
  */
-(function(Icinga) {
+(function(Icinga, $) {
 
     "use strict";
 
@@ -32,8 +32,9 @@
         /**
          * Listen for events emitted by the SearchBar widget
          */
-        this.on('editor-open', '.container', function () {
+        this.on('editor-open', '.container', function (event) {
             this.dataset.suspendAutorefresh = '';
+            $(event.target.dataset.searchEditor).trigger('rendered', [false, true]);
         });
         this.on('editor-close', '.container', function () {
             delete this.dataset.suspendAutorefresh;
@@ -151,4 +152,4 @@
 
     Icinga.Behaviors.InputEnrichment = InputEnrichment;
 
-})(Icinga);
+})(Icinga, jQuery);
