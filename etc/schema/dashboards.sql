@@ -4,8 +4,15 @@ DROP USER IF EXISTS dashboard;
 CREATE DATABASE dashboard;
 USE dashboard;
 
+CREATE TABLE dashboard_home (
+    id int(10) unsigned NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    name varchar(64) NOT NULL COLLATE utf8mb4_unicode_ci,
+    owner varchar(254) DEFAULT NULL COLLATE utf8mb4_unicode_ci
+) Engine=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+
 CREATE TABLE dashboard (
     id int(10) unsigned NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    home_id int(10) unsigned NOT NULL,
     name varchar(64) NOT NULL COLLATE utf8mb4_unicode_ci
 ) Engine=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
@@ -18,10 +25,16 @@ CREATE TABLE dashlet (
     CONSTRAINT fk_dashlet_dashboard FOREIGN KEY (dashboard_id) REFERENCES dashboard (id) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
-INSERT INTO dashboard (id, name) VALUES
-(1, 'Current Incidents'),
-(2, 'Overdue'),
-(3, 'Icinga');
+INSERT INTO dashboard_home (id, name, owner) VALUES
+(1, 'Banking', 'jdoe'),
+(2, 'Fraud Detection', 'icingaadmin'),
+(3, 'Shared Dashboards', 'rroe'),
+(4, 'Available Dashlets', 'icingaadmin');
+
+INSERT INTO dashboard (id, home_id, name) VALUES
+(1, 2, 'Current Incidents'),
+(2, 1, 'Overdue'),
+(3, 4, 'Icinga');
 
 INSERT INTO dashlet (id, dashboard_id, owner, name, url) VALUES
 (1, 1, 'icingaadmin', 'Service Problems', '/icingaweb2/monitoring/list/services?service_problem=1&sort=service_severity'),

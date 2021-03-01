@@ -5,19 +5,24 @@ namespace Icinga\Web;
 
 use Icinga\Application\Logger;
 use Icinga\Authentication\Auth;
+use Icinga\Common\Database;
 use Icinga\Web\Navigation\Navigation;
+use ipl\Sql\Select;
 
 /**
  * Main menu for Icinga Web 2
  */
 class Menu extends Navigation
 {
+    use Database;
+
     /**
      * Create the main menu
      */
     public function __construct()
     {
         $this->init();
+        $this->loadDashboardHomeFromDatabase();
         $this->load('menu-item');
     }
 
@@ -145,6 +150,29 @@ class Menu extends Navigation
                 'permission'  => 'application/log',
                 'priority'    => 900
             ]));
+        }
+    }
+
+    protected function loadDashboardHomeFromDatabase()
+    {
+        $dashboardHomes = $this->getDb()->select((new Select())
+            ->columns('*')
+            ->from('dashboard_home as dh')
+            ->where([
+                'dh.owner = ?' => Auth::getInstance()->getUser()->getUsername(),
+                'dh.owner IS NULL'
+            ], 'OR'));
+
+        $priority = 10;
+        foreach ($dashboardHomes as $dashboardHome) {
+            $this->getItem('dashboard')->addChild($this->createItem($dashboardHome->name, [
+                'label'       => t($dashboardHome->name),
+                'description' => $dashboardHome->name,
+                'url'         => 'home?name=' . $dashboardHome->name . '&id=' . $dashboardHome->id,
+                'priority'    => $priority
+            ]));
+
+            $priority += 10;
         }
     }
 }
