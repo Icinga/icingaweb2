@@ -12,7 +12,8 @@ use JShrink\Minifier;
 class JavaScript
 {
     /** @var string */
-    const DEFINE_RE = '/(?<!\.)define\(\s*([\'"][^\'"]*[\'"])?[,\s]*(\[[^]]*\])?[,\s]*(function\s*\([^)]*\)|[^=]*=>)/';
+    const DEFINE_RE =
+        '/(?<!\.)define\(\s*([\'"][^\'"]*[\'"])?[,\s]*(\[[^]]*\])?[,\s]*((?>function\s*\([^)]*\)|[^=]*=>|\w+).*)/';
 
     protected static $jsFiles = [
         'js/helpers.js',
