@@ -3,12 +3,13 @@
 /**
  * InputEnrichment - Behavior for forms with enriched inputs
  */
-(function(Icinga, $) {
+(function(Icinga) {
 
     "use strict";
 
     try {
         var SearchBar = require('icinga/ipl/widget/SearchBar');
+        var SearchEditor = require('icinga/ipl/widget/SearchEditor');
         var FilterInput = require('icinga/ipl/widget/FilterInput');
         var TermInput = require('icinga/ipl/widget/TermInput');
         var Completer = require('icinga/ipl/widget/Completer');
@@ -26,24 +27,13 @@
     var InputEnrichment = function (icinga) {
         Icinga.EventListener.call(this, icinga);
 
-        this.on('beforerender', '.container', this.onBeforeRender, this);
-        this.on('rendered', '.container', this.onRendered, this);
-
-        /**
-         * Listen for events emitted by the SearchBar widget
-         */
-        this.on('editor-open', '.container', function (event) {
-            this.dataset.suspendAutorefresh = '';
-            $(event.target.dataset.searchEditor).trigger('rendered', [false, true]);
-        });
-        this.on('editor-close', '.container', function () {
-            delete this.dataset.suspendAutorefresh;
-        });
+        this.on('beforerender', this.onBeforeRender, this);
+        this.on('rendered', this.onRendered, this);
 
         /**
          * Enriched inputs
          *
-         * @type {WeakMap<object, SearchBar|FilterInput|TermInput|Completer>}
+         * @type {WeakMap<object, SearchEditor|SearchBar|FilterInput|TermInput|Completer>}
          * @private
          */
         this._enrichments = new WeakMap();
@@ -83,7 +73,7 @@
         }
 
         let _this = event.data.self;
-        let inputs = event.currentTarget.querySelectorAll('[data-enrichment-type]');
+        let inputs = event.target.querySelectorAll('[data-enrichment-type]');
 
         // Remember current instances
         inputs.forEach(function (input) {
@@ -101,7 +91,7 @@
      */
     InputEnrichment.prototype.onRendered = function (event, autorefresh, scripted) {
         let _this = event.data.self;
-        let container = event.currentTarget;
+        let container = event.target;
 
         if (autorefresh) {
             // Apply remembered instances
@@ -128,6 +118,9 @@
                     case 'search-bar':
                         enrichment = (new SearchBar(input)).bind();
                         break;
+                    case 'search-editor':
+                        enrichment = (new SearchEditor(input)).bind();
+                        break;
                     case 'filter':
                         enrichment = (new FilterInput(input)).bind();
                         enrichment.restoreTerms();
@@ -152,4 +145,4 @@
 
     Icinga.Behaviors.InputEnrichment = InputEnrichment;
 
-})(Icinga, jQuery);
+})(Icinga);
