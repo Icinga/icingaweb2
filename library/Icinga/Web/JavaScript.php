@@ -153,8 +153,9 @@ class JavaScript
             $out .= ';' . ltrim(trim(file_get_contents($file)), ';') . "\n";
         }
 
+        $baseJs = '';
         foreach ($baseFiles as $file) {
-            $js .= file_get_contents($file) . "\n\n\n";
+            $baseJs .= file_get_contents($file) . "\n\n\n";
         }
 
         if (! $forIe11) {
@@ -202,9 +203,11 @@ class JavaScript
 
         if ($minified) {
             require_once 'JShrink/Minifier.php';
-            $out .= Minifier::minify($js, array('flaggedComments' => false));
+            $out .= Minifier::minify($js, ['flaggedComments' => false]);
+            $baseOut = Minifier::minify($baseJs, ['flaggedComments' => false]);
+            $out = ';' . ltrim($baseOut, ';') . "\n" . $out;
         } else {
-            $out .= $js;
+            $out = $baseJs . $out . $js;
         }
 
         $cache->store($cacheFile, $out);
