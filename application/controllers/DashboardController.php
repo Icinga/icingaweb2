@@ -6,7 +6,7 @@ namespace Icinga\Controllers;
 use Exception;
 use Icinga\Application\Icinga;
 use Icinga\Common\Database;
-use Icinga\Forms\Dashboard\DashletList;
+use Icinga\Forms\Dashboard\AvailableDashlets;
 use Zend_Controller_Action_Exception;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Exception\Http\HttpNotFoundException;
@@ -311,7 +311,7 @@ class DashboardController extends ActionController
                     $dashlets[$module->getName()] = $module->getDashletHomes();
                 }
 
-                $this->dashlets = new DashletList($dashlets);
+                $this->dashlets = new AvailableDashlets($dashlets);
                 $this->view->dashlets = $this->dashlets;
             } else {
                 // Table view and dashboard/dashlets view have different div contents
