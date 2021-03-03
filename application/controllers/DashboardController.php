@@ -4,6 +4,9 @@
 namespace Icinga\Controllers;
 
 use Exception;
+use Icinga\Application\Icinga;
+use Icinga\Common\Database;
+use Icinga\Forms\Dashboard\DashletList;
 use Zend_Controller_Action_Exception;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Exception\Http\HttpNotFoundException;
@@ -23,6 +26,8 @@ use Icinga\Web\Widget\Tabextension\DashboardSettings;
  */
 class DashboardController extends ActionController
 {
+    use Database;
+
     /**
      * @var Dashboard;
      */
@@ -280,6 +285,52 @@ class DashboardController extends ActionController
         $form->handleRequest();
         $this->view->pane = $pane;
         $this->view->form = $form;
+    }
+
+    public function homeAction()
+    {
+        if ($this->params->get('dashlet') === null) {
+            $dashboardHome = $this->translate($this->params->getRequired('home'));
+
+            if ($dashboardHome === 'Available Dashlets') {
+                $this->view->tabeleView = true;
+
+                $this->getTabs()->add($dashboardHome, [
+                    'label' => $dashboardHome,
+                    'url' => Url::fromRequest()
+                ])->activate($dashboardHome);
+
+                $modules = Icinga::app()->getModuleManager()->getLoadedModules();
+                $dashlets = [];
+
+                foreach ($modules as $module) {
+                    if (empty($module->getDashletHomes())) {
+                        continue;
+                    }
+
+                    $dashlets[$module->getName()] = $module->getDashletHomes();
+                }
+
+                $this->dashlets = new DashletList($dashlets);
+                $this->view->dashlets = $this->dashlets;
+            } else {
+                // Table view and dashboard/dashlets view have different div contents
+                // so we need to set tableView to false
+                $this->view->tabeleView = false;
+
+                $dashboards = new Dashboard();
+                $dashboards->setUser($this->Auth()->getUser());
+                $dashboards->loadUserDashboardsFromDatabase($dashboards->getUser());
+                $this->view->tabs = $dashboards->getTabs(true);
+
+                if ($this->params->get('name')) {
+                    $pane = $this->params->get('name');
+                    $dashboards->activate($pane);
+                }
+
+                $this->view->dashboards = $dashboards;
+            }
+        }
     }
 
     /**

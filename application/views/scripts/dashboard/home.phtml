@@ -1,0 +1,16 @@
+<div class="controls">
+    <?php if (! $this->compact): ?>
+        <?= $this->tabs ?>
+    <?php endif ?>
+</div>
+
+<?php if ($this->tabeleView): ?>
+<div class="content">
+    <?= $this->dashlets ?>
+</div>
+<?php else: ?>
+<div class="dashboard content">
+    <?= $this->dashboards ?>
+</div>
+
+<?php endif; ?>

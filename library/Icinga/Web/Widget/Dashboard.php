@@ -123,25 +123,28 @@ class Dashboard extends AbstractWidget
         foreach (DashboardConfig::listConfigFilesForUser($this->user) as $file) {
             $this->loadUserDashboardsFromFile($file, $navigation);
         }
-
-        $this->loadUserDashboardsFromDatabase($this->user);
     }
 
     /**
-     * Loads user specific dashboards and dashlets from the database
+     * Load user specific dashboards and dashlets from the database
      * and merges them to the dashboards loaded from an ini file
      *
      * @param User $user
      *
      * @return bool
      */
-    protected function loadUserDashboardsFromDatabase(User $user)
+    public function loadUserDashboardsFromDatabase(User $user)
     {
         $dashboards = array();
 
+        $id = 0;
+        if (Url::fromRequest()->hasParam('home')) {
+            $id = Url::fromRequest()->getParam('id');
+        }
         $results = $this->getDb()->select((new Select())
             ->columns('*')
-            ->from('dashboard'));
+            ->from('dashboard')
+            ->where(['home_id = ?' => $id]));
 
         foreach ($results as $dashboard) {
             $dashboards[$dashboard->name] = new Pane($dashboard->name);
@@ -289,11 +292,19 @@ class Dashboard extends AbstractWidget
     /**
      * Return the tab object used to navigate through this dashboard
      *
+     * @param bool $dashboardHomes
+     *
      * @return Tabs
      */
-    public function getTabs()
+    public function getTabs($dashboardHomes = false)
     {
         $url = Url::fromPath('dashboard')->getUrlWithout($this->tabParam);
+
+        if ($dashboardHomes) {
+            // We don't want to discard the existing url params at dashboard homes
+            $url = Url::fromRequest();
+        }
+
         if ($this->tabs === null) {
             $this->tabs = new Tabs();
 
@@ -310,11 +321,17 @@ class Dashboard extends AbstractWidget
                         ),
                         'label'     => $pane->getTitle(),
                         'url'       => clone($url),
-                        'urlParams' => array($this->tabParam => $key)
+                        'urlParams' => $dashboardHomes ? ['name' => $key] : [ $this->tabParam => $key ]
                     )
                 );
             }
         }
+
+        // This is only required for dashboard homes
+        if ($dashboardHomes) {
+            $this->setDefaultPane();
+        }
+
         return $this->tabs;
     }
 
