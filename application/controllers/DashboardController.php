@@ -289,17 +289,17 @@ class DashboardController extends ActionController
 
     public function homeAction()
     {
-        if ($this->params->get('dashlet') === null) {
-            $dashboardHome = $this->translate($this->params->getRequired('home'));
+        $dashboardHome = $this->translate($this->params->getRequired('home'));
+
+        if ($dashboardHome === 'Available Dashlets' || $dashboardHome === 'Shared Dashboards') {
+            $this->view->tabeleView = true;
+
+            $this->getTabs()->add($dashboardHome, [
+                'label' => $dashboardHome,
+                'url' => Url::fromRequest()
+            ])->activate($dashboardHome);
 
             if ($dashboardHome === 'Available Dashlets') {
-                $this->view->tabeleView = true;
-
-                $this->getTabs()->add($dashboardHome, [
-                    'label' => $dashboardHome,
-                    'url' => Url::fromRequest()
-                ])->activate($dashboardHome);
-
                 $modules = Icinga::app()->getModuleManager()->getLoadedModules();
                 $dashlets = [];
 
@@ -311,26 +311,35 @@ class DashboardController extends ActionController
                     $dashlets[$module->getName()] = $module->getDashletHomes();
                 }
 
-                $this->dashlets = new AvailableDashlets($dashlets);
-                $this->view->dashlets = $this->dashlets;
-            } else {
-                // Table view and dashboard/dashlets view have different div contents
-                // so we need to set tableView to false
-                $this->view->tabeleView = false;
-
-                $dashboards = new Dashboard();
-                $dashboards->setUser($this->Auth()->getUser());
-                $dashboards->loadUserDashboardsFromDatabase($dashboards->getUser());
-                $this->view->tabs = $dashboards->getTabs(true);
-
-                if ($this->params->get('name')) {
-                    $pane = $this->params->get('name');
-                    $dashboards->activate($pane);
-                }
-
-                $this->view->dashboards = $dashboards;
+                $dashlet = new AvailableDashlets($dashlets);
+                $this->view->dashlets = $dashlet;
             }
+        } else {
+            // Table view and dashboard/dashlets view have different div contents
+            // so we need to set tableView to false
+            $this->view->tabeleView = false;
+
+            $dashboards = new Dashboard();
+            $dashboards->setUser($this->Auth()->getUser());
+            $dashboards->loadUserDashboardsFromDatabase($dashboards->getUser());
+            $this->view->tabs = $dashboards->getTabs(true);
+
+            if ($this->params->get('name')) {
+                $pane = $this->params->get('name');
+                $dashboards->activate($pane);
+            }
+
+            $this->view->dashboard = $dashboards;
         }
+    }
+
+    public function homeDetailAction()
+    {
+        $dashlet = $this->params->get('dashlet');
+        $this->getTabs()->add($dashlet, [
+            'label' => $this->params->get('module') . ' Dashboard',
+            'url' => Url::fromRequest()
+        ])->activate($dashlet);
     }
 
     /**

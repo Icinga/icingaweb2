@@ -284,6 +284,13 @@ class Module
     protected $navigationItems = array();
 
     /**
+     * This module's dashlet home items
+     *
+     * @var array
+     */
+    protected $dashletItems = array();
+
+    /**
      * Create a new module object
      *
      * @param ApplicationBootstrap  $app
@@ -1296,6 +1303,17 @@ class Module
     }
 
     /**
+     * Return this module's dashlet items provided by the provideDashlet() method
+     *
+     * @return array
+     */
+    public function getDashletHomes()
+    {
+        $this->launchConfigScript();
+        return $this->dashletItems;
+    }
+
+    /**
      * Provide a named permission
      *
      * @param   string $name        Unique permission name
@@ -1416,6 +1434,24 @@ class Module
         );
 
         return $this;
+    }
+
+    /**
+     * Provide dashlets that will be listed in dashboard homes as "Available Dashlets"
+     *
+     * with the associated module names.
+     *
+     * @param string $name
+     *
+     * @param array $properties
+     *
+     * @return array|mixed
+     */
+    protected function provideDashlet($name, $properties = array())
+    {
+        $this->dashletItems[$name] = $properties;
+
+        return $this->dashletItems[$name];
     }
 
     /**

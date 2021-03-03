@@ -11,6 +11,8 @@ class AvailableDashlets extends BaseHtmlElement
 {
     protected $modules;
 
+    protected $properties = [];
+
     protected $tag = 'table';
 
     protected $defaultAttributes = [
@@ -45,10 +47,14 @@ class AvailableDashlets extends BaseHtmlElement
             foreach ($dashlets as $key => $dashlet) {
                 $row = Html::tag('tr');
 
-                $dashletLink = new Link($module, Url::fromPath('dashboard/home')->addParams(['dashlet' => $key]));
+                $dashletLink = new Link($module, Url::fromPath('dashboard/home-detail')->addParams([
+                    'module' => $module,
+                    'dashlet' => $key
+                ]));
 
                 $row->add(Html::tag('td', $dashletLink));
                 $row->add(Html::tag('td', $key));
+                $row->add(Html::tag('td', ['style' => 'display:none;'], $dashlet['url']));
 
                 $tbody->add($row);
             }
@@ -62,5 +68,4 @@ class AvailableDashlets extends BaseHtmlElement
         $this->add($this->tableHeader());
         $this->add($this->tableBody());
     }
-
 }

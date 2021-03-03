@@ -28,7 +28,7 @@ CREATE TABLE dashlet (
 INSERT INTO dashboard_home (id, name, owner) VALUES
 (1, 'Banking', 'jdoe'),
 (2, 'Fraud Detection', 'icingaadmin'),
-(3, 'Shared Dashboards', 'rroe'),
+(3, 'Shared Dashboards', default),
 (4, 'Available Dashlets', 'icingaadmin');
 
 INSERT INTO dashboard (id, home_id, name) VALUES

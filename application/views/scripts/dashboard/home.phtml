@@ -5,12 +5,33 @@
 </div>
 
 <?php if ($this->tabeleView): ?>
-<div class="content">
-    <?= $this->dashlets ?>
+    <?php if ($this->dashlets !== null): ?>
+        <div class="content">
+            <?= $this->dashlets ?>
+        </div>
+    <?php else: ?>
+        <div class="content">
+            <h1><?= $this->escape($this->translate('Welcome to Icinga Web!')) ?></h1>
+            <p>
+                <?php printf($this->escape($this->translate('Currently there is no %s.')), $this->tabs->getActiveName()); ?>
+            </p>
+        </div>
+    <?php endif; ?>
+<?php elseif ($this->dashboard): ?>
+<div class="dashboard content">
+    <?= $this->dashboard ?>
 </div>
 <?php else: ?>
-<div class="dashboard content">
-    <?= $this->dashboards ?>
-</div>
-
+    <div class="content">
+        <h1><?= $this->escape($this->translate('Welcome to Icinga Web!')) ?></h1>
+        <p>
+            <?php if (! $this->hasPermission('config/modules')) {
+                echo $this->escape($this->translate(
+                    'Currently there is no dashlet available. Please contact the administrator.'
+                ));
+            } else {
+                printf($this->escape($this->translate('Currently there is no dashlet available.')));
+            } ?>
+        </p>
+    </div>
 <?php endif; ?>
