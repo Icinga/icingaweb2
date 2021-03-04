@@ -148,7 +148,7 @@
     Modal.prototype.onKeyDown = function(event) {
         var _this = event.data.self;
 
-        if (event.which === 27) {
+        if (! event.isDefaultPrevented() && event.key === 'Escape') {
             _this.hide(_this.$layout.children('#modal'));
         }
     };
