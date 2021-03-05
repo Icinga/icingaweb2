@@ -22,7 +22,7 @@
         this.on('change', '#modal form select.autosubmit', this.onFormAutoSubmit, this);
         this.on('change', '#modal form input.autosubmit', this.onFormAutoSubmit, this);
         this.on('click', '[data-icinga-modal]', this.onModalToggleClick, this);
-        this.on('click', '#layout > #modal', this.onModalLeave, this);
+        this.on('mousedown', '#layout > #modal', this.onModalLeave, this);
         this.on('click', '.modal-header > button', this.onModalClose, this);
         this.on('keydown', this.onKeyDown, this);
     };
