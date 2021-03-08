@@ -11,6 +11,14 @@ use Icinga\Web\Widget\Tabs;
  */
 class DashboardSettings implements Tabextension
 {
+    /** @var array|null url params to be attached to the dropdown menus. */
+    private $urlParam;
+
+    public function __construct($urlParam = null)
+    {
+        $this->urlParam = $urlParam;
+    }
+
     /**
      * Apply this tabextension to the provided tabs
      *
@@ -18,21 +26,23 @@ class DashboardSettings implements Tabextension
      */
     public function apply(Tabs $tabs)
     {
+        $url = Url::fromPath('dashboard/new-dashlet');
         $tabs->addAsDropdown(
             'dashboard_add',
             array(
                 'icon'      => 'dashboard',
                 'label'     => t('Add Dashlet'),
-                'url'       => Url::fromPath('dashboard/new-dashlet')
+                'url'       => empty($this->urlParam) ? $url : $url->addParams($this->urlParam)
             )
         );
 
+        $url = Url::fromPath('dashboard/settings');
         $tabs->addAsDropdown(
             'dashboard_settings',
             array(
                 'icon'      => 'dashboard',
                 'label'     => t('Settings'),
-                'url'       => Url::fromPath('dashboard/settings')
+                'url'       => empty($this->urlParam) ? $url : $url->addParams($this->urlParam)
             )
         );
     }

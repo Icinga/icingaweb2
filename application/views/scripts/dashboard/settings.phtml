@@ -1,91 +1,10 @@
 <div class="controls">
     <?= $this->tabs ?>
+
+    <div class="sort-controls-container">
+        <?= $this->control ?>
+    </div>
 </div>
 <div class="content">
-    <h1><?= t('Dashboard Settings'); ?></h1>
-
-    <table class="avp action" data-base-target="_next">
-        <thead>
-            <tr>
-                <th style="width: 18em;">
-                    <strong><?= t('Dashlet Name') ?></strong>
-                </th>
-                <th>
-                    <strong><?= t('Url') ?></strong>
-                </th>
-                <th style="width: 1.4em;">&nbsp;</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach ($this->dashboard->getPanes() as $pane): ?>
-                <?php if ($pane->getDisabled()) continue; ?>
-                <tr>
-                    <th colspan="2" style="text-align: left; padding: 0.5em;">
-                    <?php if ($pane->isUserWidget()): ?>
-                        <?= $this->qlink(
-                            $pane->getName(),
-                            'dashboard/rename-pane',
-                            array('pane' => $pane->getName()),
-                            array('title' => sprintf($this->translate('Edit pane %s'), $pane->getName()))
-                        ) ?>
-                    <?php else: ?>
-                        <?= $this->escape($pane->getName()) ?>
-                    <?php endif ?>
-                    </th>
-                    <th>
-                        <?= $this->qlink(
-                            '',
-                            'dashboard/remove-pane',
-                            array('pane' => $pane->getName()),
-                            array(
-                                'icon'  => 'trash',
-                                'title' => sprintf($this->translate('Remove pane %s'), $pane->getName())
-                            )
-                        ); ?>
-                    </th>
-                </tr>
-                <?php $dashlets = $pane->getDashlets(); ?>
-                <?php if(empty($dashlets)): ?>
-                    <tr>
-                        <td colspan="3">
-                            <?= $this->translate('No dashlets added to dashboard') ?>.
-                        </td>
-                    </tr>
-                <?php else: ?>
-                    <?php foreach ($dashlets as $dashlet): ?>
-                    <?php if ($dashlet->getDisabled()) continue; ?>
-                        <tr>
-                            <td>
-                                <?= $this->qlink(
-                                    $dashlet->getTitle(),
-                                    'dashboard/update-dashlet',
-                                    array('pane' => $pane->getName(), 'dashlet' => $dashlet->getName()),
-                                    array('title' => sprintf($this->translate('Edit dashlet %s'), $dashlet->getTitle()))
-                                ); ?>
-                            </td>
-                            <td style="table-layout: fixed; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-                                <?= $this->qlink(
-                                    $dashlet->getUrl()->getRelativeUrl(),
-                                    $dashlet->getUrl()->getRelativeUrl(),
-                                    null,
-                                    array('title' => sprintf($this->translate('Show dashlet %s'), $dashlet->getTitle()))
-                                ); ?>
-                            </td>
-                            <td>
-                                <?= $this->qlink(
-                                    '',
-                                    'dashboard/remove-dashlet',
-                                    array('pane' => $pane->getName(), 'dashlet' => $dashlet->getName()),
-                                    array(
-                                        'icon'  => 'trash',
-                                        'title' => sprintf($this->translate('Remove dashlet %s from pane %s'), $dashlet->getTitle(), $pane->getTitle())
-                                    )
-                                ); ?>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                <?php endif; ?>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
+    <?= $this->settings; ?>
 </div>

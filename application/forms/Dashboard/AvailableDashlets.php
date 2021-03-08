@@ -47,14 +47,9 @@ class AvailableDashlets extends BaseHtmlElement
             foreach ($dashlets as $key => $dashlet) {
                 $row = Html::tag('tr');
 
-                $dashletLink = new Link($module, Url::fromPath('dashboard/home-detail')->addParams([
-                    'module' => $module,
-                    'dashlet' => $key
-                ]));
-
+                $dashletLink = new Link($module, $dashlet['url']);
                 $row->add(Html::tag('td', $dashletLink));
                 $row->add(Html::tag('td', $key));
-                $row->add(Html::tag('td', ['style' => 'display:none;'], $dashlet['url']));
 
                 $tbody->add($row);
             }

@@ -11,27 +11,22 @@
         </div>
     <?php else: ?>
         <div class="content">
-            <h1><?= $this->escape($this->translate('Welcome to Icinga Web!')) ?></h1>
-            <p>
-                <?php printf($this->escape($this->translate('Currently there is no %s.')), $this->tabs->getActiveName()); ?>
-            </p>
+            <h1><?= $this->translate('Thank you for using Icinga Web 2!'); ?></h1>
+            <p><?= $this->escape($this->translate(sprintf('Currently there is no %s on your Icinga infrastructure.', $this->tabs->getActiveName()))); ?></p>
         </div>
     <?php endif; ?>
 <?php elseif ($this->dashboard): ?>
-<div class="dashboard content">
-    <?= $this->dashboard ?>
-</div>
-<?php else: ?>
-    <div class="content">
-        <h1><?= $this->escape($this->translate('Welcome to Icinga Web!')) ?></h1>
-        <p>
-            <?php if (! $this->hasPermission('config/modules')) {
-                echo $this->escape($this->translate(
-                    'Currently there is no dashlet available. Please contact the administrator.'
-                ));
-            } else {
-                printf($this->escape($this->translate('Currently there is no dashlet available.')));
-            } ?>
-        </p>
-    </div>
+    <?php if ($this->dashboard->hasPanes()): ?>
+        <?php if ($this->dashboard->getPane($this->tabs->getActiveName())->hasDashlets()): ?>
+            <div class="dashboard content">
+            <?= $this->dashboard ?>
+            </div>
+        <?php else: ?>
+            <h1><?= $this->translate('Thank you for using Icinga Web 2!') ?></h1>
+            <?= $this->translate('No dashlets added to dashboard.'); ?>
+        <?php endif; ?>
+    <?php else: ?>
+        <h1><?= $this->translate('Thank you for using Icinga Web 2!'); ?></h1>
+        <p><?= $this->translate('Currently there is no available dashboards in this home.'); ?><p>
+    <?php endif; ?>
 <?php endif; ?>

@@ -22,7 +22,7 @@ class SearchDashboard extends Dashboard
     /**
      * {@inheritdoc}
      */
-    public function getTabs($dashboardHomes = false)
+    public function getTabs($defaultPane = false)
     {
         if ($this->tabs === null) {
             $this->tabs = new Tabs();

@@ -164,17 +164,19 @@ class Menu extends Navigation
             ->columns('*')
             ->from('dashboard_home as dh')
             ->where([
-                'dh.owner = ?' => Auth::getInstance()->getUser()->getUsername(),
+                'dh.owner = ?'  => Auth::getInstance()->getUser()->getUsername(),
                 'dh.owner IS NULL'
             ], 'OR'));
 
         $priority = 10;
         foreach ($dashboardHomes as $dashboardHome) {
             $this->getItem('dashboard')->addChild($this->createItem($dashboardHome->name, [
-                'label'       => t($dashboardHome->name),
-                'description' => $dashboardHome->name,
-                'url'         => 'dashboard/home?home=' . $dashboardHome->name . '&id=' . $dashboardHome->id,
-                'priority'    => $priority
+                'label'         => t($dashboardHome->name),
+                'description'   => $dashboardHome->name,
+                'url'           => 'dashboard/home?home=' . $dashboardHome->name,
+                'priority'      => $priority,
+                'owner'         => $dashboardHome->owner,
+                'homeId'        => $dashboardHome->id
             ]));
 
             $priority += 10;

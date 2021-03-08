@@ -4,7 +4,6 @@
 namespace Icinga\Web\Widget\Dashboard;
 
 use Icinga\Data\ConfigObject;
-use Icinga\Web\Widget\AbstractWidget;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Exception\ConfigurationError;
 
@@ -42,6 +41,20 @@ class Pane extends UserWidget
     private $disabled = false;
 
     /**
+     * Dashboard home id if the current pane is loaded from DB
+     *
+     * @var integer
+     */
+    private $parentId;
+
+    /**
+     * Unique identifier of the this pane
+     *
+     * @var integer
+     */
+    private $paneId;
+
+    /**
      * Create a new pane
      *
      * @param string $name         The pane to create
@@ -50,6 +63,46 @@ class Pane extends UserWidget
     {
         $this->name  = $name;
         $this->title = $name;
+    }
+
+    /**
+     * Set the dashboard home id for this pane
+     *
+     * @param  integer  $homeId
+     */
+    public function setParentId($homeId)
+    {
+        $this->parentId = $homeId;
+    }
+
+    /**
+     * Returns the dashboard home id of this pane
+     *
+     * @return integer
+     */
+    public function getParentId()
+    {
+        return $this->parentId;
+    }
+
+    /**
+     * Set unique identifier of this pane
+     *
+     * @param  integer  $id
+     */
+    public function setPaneId($id)
+    {
+        $this->paneId = $id;
+    }
+
+    /**
+     * Get the unique identifier of this pane
+     *
+     * @return integer
+     */
+    public function getPaneId()
+    {
+        return $this->paneId;
     }
 
     /**

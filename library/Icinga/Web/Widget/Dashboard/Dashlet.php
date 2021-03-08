@@ -5,7 +5,6 @@ namespace Icinga\Web\Widget\Dashboard;
 
 use Icinga\Web\Url;
 use Icinga\Data\ConfigObject;
-use Icinga\Exception\IcingaException;
 
 /**
  * A dashboard pane dashlet
@@ -50,6 +49,9 @@ class Dashlet extends UserWidget
      */
     private $progressLabel;
 
+    /** @var integer Unique identifier of this dashlet */
+    private $dashletId;
+
     /**
      * The template string used for rendering this widget
      *
@@ -90,14 +92,34 @@ EOD;
      *
      * @param string $title     The title to use for this dashlet
      * @param Url|string $url   The url this dashlet uses for displaying information
-     * @param Pane $pane        The pane this Dashlet will be added to
+     * @param Pane|null $pane   The pane this Dashlet will be added to
      */
-    public function __construct($title, $url, Pane $pane)
+    public function __construct($title, $url, Pane $pane = null)
     {
         $this->name = $title;
         $this->title = $title;
         $this->pane = $pane;
         $this->url = $url;
+    }
+
+    /**
+     * Set the identifier of this dashlet
+     *
+     * @param  integer  $id
+     */
+    public function setDashletId($id)
+    {
+        $this->dashletId = $id;
+    }
+
+    /**
+     * Get the unique identifier of this dashlet
+     *
+     * @return int
+     */
+    public function getDashletId()
+    {
+        return $this->dashletId;
     }
 
     public function setName($name)
