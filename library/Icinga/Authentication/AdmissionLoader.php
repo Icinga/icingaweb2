@@ -206,6 +206,7 @@ class AdmissionLoader
             }
         }
 
+        $user->setIsUnrestricted($isUnrestricted);
         $user->setRestrictions($isUnrestricted ? [] : $restrictions);
         $user->setPermissions($permissions);
         $user->setRoles(array_values($roles));
