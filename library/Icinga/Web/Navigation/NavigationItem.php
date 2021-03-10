@@ -118,6 +118,13 @@ class NavigationItem implements IteratorAggregate
     protected $url;
 
     /**
+     * A flag whether this item should haven a url
+     *
+     * @var bool
+     */
+    protected $defaultUrl = true;
+
+    /**
      * This item's url target
      *
      * @var string
@@ -583,7 +590,7 @@ class NavigationItem implements IteratorAggregate
      */
     public function getUrl()
     {
-        if ($this->url === null && $this->hasChildren()) {
+        if ($this->url === null && $this->hasChildren() && $this->defaultUrl) {
             $this->setUrl(Url::fromPath('navigation/dashboard', array('name' => strtolower($this->getName()))));
         }
 
@@ -610,6 +617,30 @@ class NavigationItem implements IteratorAggregate
         }
 
         $this->url = $url;
+
+        return $this;
+    }
+
+    /**
+     * Get whether this item's url is set
+     *
+     * @return bool
+     */
+    public function hasUrl()
+    {
+        return (bool) $this->url;
+    }
+
+    /**
+     * Set a flag whether this item should have a url even if having children
+     *
+     * @param $value
+     *
+     * @return $this
+     */
+    public function setDefaultUrl($value)
+    {
+        $this->defaultUrl = $value;
 
         return $this;
     }

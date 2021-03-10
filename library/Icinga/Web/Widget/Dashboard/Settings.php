@@ -5,6 +5,8 @@ namespace Icinga\Web\Widget\Dashboard;
 use Icinga\Web\Widget\Dashboard;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\HtmlElement;
+use ipl\Web\Url;
+use ipl\Web\Widget\Icon;
 use ipl\Web\Widget\Link;
 
 class Settings extends BaseHtmlElement
@@ -48,10 +50,55 @@ class Settings extends BaseHtmlElement
 
     public function tableBody()
     {
+        if (Url::fromRequest()->hasParam('home')) {
+            $home = $this->dashboard->getHome(Url::fromRequest()->getParam('home'));
+        } else {
+            $home = $this->dashboard->rewindHomes();
+
+            if (! empty($home)) {
+                $this->dashboard->loadUserDashboards($home->getAttribute('homeId'));
+            }
+        }
+
         $tbody = new HtmlElement('tbody', null);
-        foreach ($this->dashboard->getDashboardHomeItems() as $item) {
+
+        if (! empty($home)) {
+            $tableRow = new HtmlElement(
+                'tr',
+                null,
+                new HtmlElement('th', [
+                    'colspan'   => '2',
+                    'style'     => 'text-align: left; padding: 0.5em; background-color: #0095bf;'
+                ], new Link(
+                    $home->getName(),
+                    sprintf('dashboard/rename-home?home=%s', $home->getName()),
+                    [
+                        'title' => sprintf(t('Edit home %s'), $home->getName())
+                    ]
+                ))
+            );
+
+            if ($home->getAttribute('disabled')) {
+                $tableRow->add(new HtmlElement('td', [
+                    'style' => 'text-align: center; width: 15px;'
+                ], new Icon('ban', ['style' => 'color: red; font-size: 1.5em;'])));
+
+                return $tbody->add($tableRow);
+            }
+
+            $tbody->add($tableRow);
+        }
+
+        if (empty($this->dashboard->getPanes())) {
+            $tbody->add(new HtmlElement(
+                'tr',
+                null,
+                new HtmlElement('td', ['colspan' => '3'], t('Currently there is no dashboard available.'))
+            ));
+        } else {
+            /** @var Pane $pane */
             foreach ($this->dashboard->getPanes() as $pane) {
-                if ($pane->getDisabled() || $pane->getParentId() !== $item->getAttribute('homeId')) {
+                if ($pane->getParentId() !== $home->getAttribute('homeId')) {
                     continue;
                 }
 
@@ -60,41 +107,28 @@ class Settings extends BaseHtmlElement
                     'colspan'   => '2',
                     'style'     => 'text-align: left; padding: 0.5em;'
                 ]);
-                if ($pane->isUserWidget()) {
-                    $th->add(new Link(
-                        $pane->getName(),
-                        sprintf(
-                            'dashboard/rename-pane?home=%s&pane=%s',
-                            $this->dashboard->getHomeByName($pane->getParentId()),
-                            $pane->getName()
-                        ),
-                        [
-                            'title' => sprintf(t('Edit pane %s'), $pane->getName())
-                        ]
-                    ));
-                } else {
-                    $th->add($pane->getName());
-                }
-
-                $tableRow->add($th);
-                $th = new HtmlElement('th', null);
                 $th->add(new Link(
-                    new HtmlElement('i', [
-                        'aria-hidden'   => 'true',
-                        'class'         => 'icon-trash',
-                        'style'         => 'float: right'
-                    ]),
+                    $pane->getTitle(),
                     sprintf(
-                        'dashboard/remove-pane?home=%s&pane=%s',
-                        $this->dashboard->getHomeByName($pane->getParentId()),
+                        'dashboard/rename-pane?home=%s&pane=%s',
+                        $home->getName(),
                         $pane->getName()
                     ),
                     [
-                        'title' => sprintf(t('Remove pane %s'), $pane->getName()),
+                        'title' => sprintf(t('Edit pane %s'), $pane->getName())
                     ]
                 ));
 
                 $tableRow->add($th);
+                if ($pane->getDisabled()) {
+                    $tableRow->add(new HtmlElement('td', ['style' => 'text-align: right; width: 1%;'], new Icon(
+                        'ban',
+                        ['style' => 'font-size: 1.5em; color: red; position: relative;']
+                    )));
+
+                    $tbody->add($tableRow);
+                    continue;
+                }
 
                 if (empty($pane->getDashlets())) {
                     $tableRow->add(new HtmlElement(
@@ -103,10 +137,8 @@ class Settings extends BaseHtmlElement
                         new HtmlElement('td', ['colspan' => '3'], t('No dashlets added to dashboard'))
                     ));
                 } else {
+                    /** @var \Icinga\Web\Dashboard\Dashlet $dashlet */
                     foreach ($pane->getDashlets() as $dashlet) {
-                        if ($dashlet->getDisabled()) {
-                            continue;
-                        }
                         $tr = new HtmlElement('tr', null, new HtmlElement(
                             'td',
                             null,
@@ -114,7 +146,7 @@ class Settings extends BaseHtmlElement
                                 $dashlet->getTitle(),
                                 sprintf(
                                     'dashboard/update-dashlet?home=%s&pane=%s&dashlet=%s',
-                                    $this->dashboard->getHomeByName($pane->getParentId()),
+                                    $home->getName(),
                                     $pane->getName(),
                                     $dashlet->getName()
                                 ),
@@ -132,24 +164,12 @@ class Settings extends BaseHtmlElement
                             $dashlet->getUrl()->getRelativeUrl(),
                             ['title' => sprintf(t('Show dashlet %s'), $dashlet->getTitle())]
                         )));
-                        $tr->add(new HtmlElement('td', null, new Link(
-                            new HtmlElement('i', [
-                                'aria-hidden'   => 'true',
-                                'class'         => 'icon-trash',
-                                'style'         => 'float: right',
-                                'title'         => sprintf(
-                                    t('Remove dashlet %s from pane %s'),
-                                    $dashlet->getTitle(),
-                                    $pane->getTitle()
-                                )
-                            ]),
-                            sprintf(
-                                'dashboard/remove-dashlet?home=%s&pane=%s&dashlet=%s',
-                                $this->dashboard->getHomeByName($pane->getParentId()),
-                                $pane->getName(),
-                                $dashlet->getName()
-                            )
-                        )));
+
+                        if ($dashlet->getDisabled()) {
+                            $tr->add(new HtmlElement('td', [
+                                'style' => 'text-align: right;'
+                            ], new Icon('ban', ['style' => 'font-size: 1.5em; color: red; position: relative;'])));
+                        }
 
                         $tableRow->add($tr);
                     }

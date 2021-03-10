@@ -5,10 +5,8 @@ namespace Icinga\Controllers;
 
 use GuzzleHttp\Psr7\ServerRequest;
 use Icinga\Application\Icinga;
-use Icinga\Common\Database;
 use Icinga\Forms\Dashboard\AvailableDashlets;
-use Icinga\Forms\Dashboard\RemovalForm;
-use Icinga\Forms\Dashboard\RenamePaneForm;
+use Icinga\Forms\Dashboard\HomeAndPaneForm;
 use Icinga\Web\Controller\ActionController;
 use Icinga\Exception\Http\HttpNotFoundException;
 use Icinga\Forms\Dashboard\DashletForm;
@@ -24,8 +22,6 @@ use ipl\Web\Url;
  */
 class DashboardController extends ActionController
 {
-    use Database;
-
     /**
      * @var Dashboard;
      */
@@ -43,7 +39,7 @@ class DashboardController extends ActionController
         $this->getTabs()->add('new-dashlet', array(
             'active'    => true,
             'label'     => $this->translate('New Dashlet'),
-            'url'       => $this->getRequest()->getUrl()
+            'url'       => Url::fromRequest()
         ));
 
         $dashletForm = new DashletForm($this->dashboard);
@@ -54,9 +50,9 @@ class DashboardController extends ActionController
             ]));
         })->handleRequest(ServerRequest::fromGlobals());
 
-        if ($this->_request->getParam('url')) {
-            $params = $this->_request->getParams();
-            $params['url'] = rawurldecode($this->_request->getParam('url'));
+        if ($this->getParam('url')) {
+            $params = $this->getAllParams();
+            $params['url'] = rawurldecode($this->getParam('url'));
             $dashletForm->populate($params);
         }
 
@@ -68,16 +64,22 @@ class DashboardController extends ActionController
         $this->getTabs()->add('update-dashlet', array(
             'active'    => true,
             'label'     => $this->translate('Update Dashlet'),
-            'url'       => $this->getRequest()->getUrl()
+            'url'       => Url::fromRequest()
         ));
 
-        if (! $this->_request->getParam('pane')) {
+        if (! $this->getParam('home')) {
+            throw new Zend_Controller_Action_Exception(
+                'Missing parameter "home"',
+                400
+            );
+        }
+        if (! $this->getParam('pane')) {
             throw new Zend_Controller_Action_Exception(
                 'Missing parameter "pane"',
                 400
             );
         }
-        if (! $this->_request->getParam('dashlet')) {
+        if (! $this->getParam('dashlet')) {
             throw new Zend_Controller_Action_Exception(
                 'Missing parameter "dashlet"',
                 400
@@ -90,7 +92,7 @@ class DashboardController extends ActionController
         $dashletForm = new DashletForm($this->dashboard);
         $dashletForm->on(DashletForm::ON_SUCCESS, function () use ($dashletForm) {
             $this->redirectNow(Url::fromPath('dashboard/settings')->addParams([
-                'home'  => $dashletForm->getValue('home')
+                'home' => $dashletForm->getValue('home')
             ]));
         })->handleRequest(ServerRequest::fromGlobals());
 
@@ -100,103 +102,150 @@ class DashboardController extends ActionController
 
     public function removeDashletAction()
     {
-        $this->getTabs()->add('remove-dashlet', array(
-            'active'    => true,
-            'label'     => $this->translate('Remove Dashlet'),
-            'url'       => $this->getRequest()->getUrl()
-        ));
-
-        if (! $this->_request->getParam('pane')) {
+        if (! $this->getParam('home')) {
+            throw new Zend_Controller_Action_Exception(
+                'Missing parameter "home"',
+                400
+            );
+        }
+        if (! $this->getParam('pane')) {
             throw new Zend_Controller_Action_Exception(
                 'Missing parameter "pane"',
                 400
             );
         }
-        if (! $this->_request->getParam('dashlet')) {
+        if (! $this->getParam('dashlet')) {
             throw new Zend_Controller_Action_Exception(
                 'Missing parameter "dashlet"',
                 400
             );
         }
 
-        $pane = $this->_request->getParam('pane');
-        $paneForm = (new RemovalForm($this->dashboard, $pane))
-            ->on(RemovalForm::ON_SUCCESS, function () {
-                $this->redirectNow(Url::fromPath('dashboard/settings')->addParams([
-                    'home'  => $this->getRequest()->getParam('home')
+        // No need to pass the form to the view renderer
+        (new DashletForm($this->dashboard))
+            ->on(DashletForm::ON_SUCCESS, function () {
+                $this->redirectNow(Url::fromPath('dashboard/settings')->setParams([
+                    'home' => $this->getParam('home')
                 ]));
-            })
-            ->handleRequest(ServerRequest::fromGlobals());
-
-        $this->view->pane = $pane;
-        $this->view->dashlet = $this->dashboard->getPane($pane)->getDashlet($this->getRequest()->getParam('dashlet'));
-        $this->view->form = $paneForm;
+            })->handleRequest(ServerRequest::fromGlobals());
     }
 
     public function renamePaneAction()
     {
         $this->getTabs()->add('update-pane', [
             'title' => $this->translate('Update Pane'),
-            'url'   => $this->getRequest()->getUrl()
+            'url'   => Url::fromRequest()
         ])->activate('update-pane');
 
-        $paneName = $this->params->getRequired('pane');
+        $home = $this->getParam('home');
+        if (! array_key_exists($home, $this->dashboard->getHomes())) {
+            throw new HttpNotFoundException('Home not found');
+        }
+
+        $paneName = $this->getParam('pane');
         if (! $this->dashboard->hasPane($paneName)) {
             throw new HttpNotFoundException('Pane not found');
         }
 
-        $paneForm = (new RenamePaneForm($this->dashboard))
-            ->on(RenamePaneForm::ON_SUCCESS, function () {
-                $this->redirectNow(Url::fromPath('dashboard/settings')->addParams([
-                    'home'  => $this->getRequest()->getParam('home')
-                ]));
+        $paneForm = (new HomeAndPaneForm($this->dashboard))
+            ->on(HomeAndPaneForm::ON_SUCCESS, function () {
+                $this->redirectNow('__back__');
             })
             ->handleRequest(ServerRequest::fromGlobals());
 
+        $paneForm->load($this->dashboard->getPane($paneName));
         $this->view->form = $paneForm;
     }
 
     public function removePaneAction()
     {
-        if (! $this->_request->getParam('pane')) {
+        $home = $this->getParam('home');
+        if (! array_key_exists($home, $this->dashboard->getHomes())) {
+            throw new HttpNotFoundException('Home not found');
+        }
+
+        $paneName = $this->getParam('pane');
+        if (! $this->dashboard->hasPane($paneName)) {
+            throw new HttpNotFoundException('Pane not found');
+        }
+
+        (new HomeAndPaneForm($this->dashboard))
+            ->on(HomeAndPaneForm::ON_SUCCESS, function () {
+                $this->redirectNow(Url::fromPath('dashboard/settings')->addParams([
+                    'home' => $this->getParam('home')
+                ]));
+            })
+            ->handleRequest(ServerRequest::fromGlobals())
+            ->load($this->dashboard->getPane($paneName));
+    }
+
+    public function renameHomeAction()
+    {
+        $this->getTabs()->add('rename-home', [
+            'title' => $this->translate('Update Home'),
+            'url'   => Url::fromRequest()
+        ])->activate('rename-home');
+
+        if (! $this->getParam('home')) {
             throw new Zend_Controller_Action_Exception(
-                'Missing parameter "pane"',
+                'Missing parameter "home"',
                 400
             );
         }
-        $pane = $this->_request->getParam('pane');
-        $this->getTabs()->add('remove-pane', [
-            'active'    => true,
-            'title'     => sprintf($this->translate('Remove Dashboard: %s'), $pane),
-            'url'       => $this->getRequest()->getUrl()
-        ]);
 
-        $paneForm = (new RemovalForm($this->dashboard, $pane))
-            ->on(RemovalForm::ON_SUCCESS, function () {
-                $this->redirectNow(Url::fromPath('dashboard/settings')->addParams([
-                    'home'  => $this->getRequest()->getParam('home')
-                ]));
-            })
-            ->handleRequest(ServerRequest::fromGlobals());
+        $homeForm = new HomeAndPaneForm($this->dashboard);
+        $homeForm->on(HomeAndPaneForm::ON_SUCCESS, function () use ($homeForm) {
+            $this->redirectNow(Url::fromPath('dashboard/settings')->addParams([
+                'home'  => $homeForm->getValue('name')
+            ]));
+        })->handleRequest(ServerRequest::fromGlobals());
 
-        $this->view->form = $paneForm;
+        $homeForm->load($this->dashboard->getHomes()[$this->getParam('home')]);
+        $this->view->form = $homeForm;
+    }
+
+    public function removeHomeAction()
+    {
+        if (! $this->hasParam('home')) {
+            throw new Zend_Controller_Action_Exception(
+                'Missing parameter "home"',
+                400
+            );
+        }
+
+        (new HomeAndPaneForm($this->dashboard))
+            ->setAction((string)Url::fromRequest())
+            ->on(HomeAndPaneForm::ON_SUCCESS, function () {
+                $homes = $this->dashboard->getHomes();
+                // Since the navigation menu is not loaded that fast, we need to unset
+                // the just deleted home from this array as well.
+                unset($homes[$this->getParam('home')]);
+
+                $firstHome = reset($homes);
+                if (empty($firstHome)) {
+                    $this->redirectNow('dashboard');
+                } else {
+                    $this->redirectNow(Url::fromPath('dashboard/settings')->addParams([
+                        'home'  => $firstHome->getName()
+                    ]));
+                }
+            })->handleRequest(ServerRequest::fromGlobals())
+            ->load($this->dashboard->getHomes()[$this->getParam('home')]);
     }
 
     public function homeAction()
     {
-        $dashboardHome = $this->params->getRequired('home');
-        $homeOwner = $this->dashboard->getDashboardHomeItems()[$dashboardHome]->getAttribute('owner');
-        $this->urlParam = ['home' => $dashboardHome];
+        $dashboardHome = $this->getParam('home');
 
-        if ($dashboardHome === 'Available Dashlets' || $homeOwner === null) {
+        if ($dashboardHome === Dashboard::AVAILABLE_DASHLETS || $dashboardHome === Dashboard::SHARED_DASHBOARDS) {
             $this->view->tabeleView = true;
 
             $this->getTabs()->add($dashboardHome, [
                 'label' => $dashboardHome,
-                'url'   => $this->getRequest()->getUrl()
+                'url'   => Url::fromRequest()
             ])->activate($dashboardHome);
 
-            if ($dashboardHome === 'Available Dashlets') {
+            if ($dashboardHome === Dashboard::AVAILABLE_DASHLETS) {
                 $moduleManager = Icinga::app()->getModuleManager();
                 $dashlets = [];
 
@@ -219,8 +268,8 @@ class DashboardController extends ActionController
             // so we need to set tableView to false
             $this->view->tabeleView = false;
 
-            if ($this->params->get('pane')) {
-                $pane = $this->params->get('pane');
+            if ($this->getParam('pane')) {
+                $pane = $this->getParam('pane');
                 $this->dashboard->activate($pane);
             }
 
@@ -230,13 +279,13 @@ class DashboardController extends ActionController
 
     public function homeDetailAction()
     {
-        $dashlet = $this->params->get('dashlet');
+        $dashlet = $this->getParam('dashlet');
         $this->getTabs()->add($dashlet, [
-            'label' => $this->params->get('module') . ' Dashboard',
-            'url'   => $this->getRequest()->getUrl()
+            'label' => $this->getParam('module') . ' Dashboard',
+            'url'   => Url::fromRequest()
         ])->activate($dashlet);
 
-        $dashletWidget = new Dashboard\Dashlet($dashlet, $this->getRequest()->getUrl());
+        $dashletWidget = new Dashboard\Dashlet($dashlet, Url::fromRequest());
         $this->view->dashlets = $dashletWidget;
     }
 
@@ -248,22 +297,22 @@ class DashboardController extends ActionController
      */
     public function indexAction()
     {
+        $homes = $this->dashboard->getHomes();
+        if (array_key_exists(Dashboard::DEFAULT_HOME, $homes)) {
+            $defaultHome = $homes[Dashboard::DEFAULT_HOME];
+            $this->dashboard->loadUserDashboardsFromDatabase($defaultHome->getAttribute('homeId'));
+        }
+
         $this->createTabs();
         if (! $this->dashboard->hasPanes()) {
             $this->view->title = 'Dashboard';
         } else {
-            $panes = array_filter(
-                $this->dashboard->getPanes(),
-                function ($pane) {
-                    return ! $pane->getDisabled();
-                }
-            );
-            if (empty($panes)) {
+            if (empty($this->dashboard->getPanes())) {
                 $this->view->title = 'Dashboard';
                 $this->getTabs()->add('dashboard', array(
                     'active'    => true,
                     'title'     => $this->translate('Dashboard'),
-                    'url'       => $this->getRequest()->getUrl()
+                    'url'       => Url::fromRequest()
                 ));
             } else {
                 if ($this->_getParam('pane')) {
@@ -274,11 +323,6 @@ class DashboardController extends ActionController
                     $this->view->title = 'Dashboard';
                 } else {
                     $this->view->title = $this->dashboard->getActivePane()->getTitle() . ' :: Dashboard';
-                    if ($this->hasParam('remove')) {
-                        $this->dashboard->getActivePane()->removeDashlet($this->getParam('remove'));
-                        $this->dashboard->getConfig()->saveIni();
-                        $this->redirectNow($this->getRequest()->getUrl()->remove('remove'));
-                    }
                     $this->view->dashboard = $this->dashboard;
                 }
             }
@@ -310,7 +354,10 @@ class DashboardController extends ActionController
      */
     private function createTabs($defaultPanes = false)
     {
-        $urlParam = ['home' => $this->params->get('home')];
+        $urlParam = [];
+        if ($this->hasParam('home')) {
+            $urlParam = ['home' => $this->getParam('home')];
+        }
         $this->view->tabs = $this->dashboard->getTabs($defaultPanes)->extend(new DashboardSettings($urlParam));
     }
 }

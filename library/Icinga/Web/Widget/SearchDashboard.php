@@ -25,7 +25,8 @@ class SearchDashboard extends Dashboard
     public function getTabs($defaultPane = false)
     {
         if ($this->tabs === null) {
-            $this->tabs = new Tabs();
+            $this->tabs = new \ipl\Web\Widget\Tabs();
+
             $this->tabs->add(
                 'search',
                 array(

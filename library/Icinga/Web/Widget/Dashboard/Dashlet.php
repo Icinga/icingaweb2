@@ -110,6 +110,7 @@ EOD;
     public function setDashletId($id)
     {
         $this->dashletId = $id;
+        return $this;
     }
 
     /**

@@ -256,6 +256,13 @@ class Module
     protected $paneItems = array();
 
     /**
+     * A set of DashboardHome elements
+     *
+     * @var array
+     */
+    protected $homeItems = [];
+
+    /**
      * A set of objects representing a searchUrl configuration
      *
      * @var array
@@ -371,7 +378,11 @@ class Module
     {
         $navigation = new Navigation();
         foreach ($panes as $pane) {
-            /** @var DashboardContainer $pane */
+            if (array_key_exists('home', $pane->getProperties())) {
+                // $pane belongs to a Dashboard Home and hence can't be loaded standalone.
+                continue;
+            }
+
             $dashlets = [];
             foreach ($pane->getDashlets() as $dashletName => $dashletConfig) {
                 $dashlets[$dashletName] = [
@@ -398,6 +409,45 @@ class Module
     }
 
     /**
+     * Get this module's dashboard homes
+     *
+     * @return Navigation
+     */
+    public function getHomes()
+    {
+        $this->launchConfigScript();
+        return $this->createHomes($this->homeItems);
+    }
+
+    /**
+     * Create and return a new navigation for the given dashboard homes
+     *
+     * @param DashboardHomeContainer[] $homes
+     *
+     * @return Navigation
+     */
+    public function createHomes(array $homes)
+    {
+        $navigation = new Navigation();
+
+        foreach ($homes as $home) {
+            $navigation->addItem(
+                $home->getName(),
+                array_merge(
+                    $home->getProperties(),
+                    array(
+                        'label'     => $this->translate($home->getName()),
+                        'type'      => 'dashboard-home',
+                        'children'  => $home->getDashboards()
+                    )
+                )
+            );
+        }
+
+        return $navigation;
+    }
+
+    /**
      * Add or get a dashboard pane
      *
      * @param   string  $name
@@ -414,6 +464,29 @@ class Module
         }
 
         return $this->paneItems[$name];
+    }
+
+    /**
+     * Add and get a dashboard home
+     *
+     * @param   string $name
+     * @param   array   $properties
+     *
+     * @return  DashboardHomeContainer
+     */
+    protected function provideHome($name, array $properties = [])
+    {
+        if ($name === Widget\Dashboard::DEFAULT_HOME) {
+            throw new ProgrammingError('Specified dashboard home "%s" is reserved for internal use', $name);
+        }
+
+        if (array_key_exists($name, $this->homeItems)) {
+            $this->homeItems[$name]->setProperties($properties);
+        } else {
+            $this->homeItems[$name] = new DashboardHomeContainer($name, $properties);
+        }
+
+        return $this->homeItems[$name];
     }
 
     /**

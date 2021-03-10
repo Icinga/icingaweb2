@@ -3,20 +3,20 @@
 
 namespace Icinga\Web\Widget;
 
-use Icinga\Application\Config;
 use Icinga\Common\Database;
 use Icinga\Exception\ConfigurationError;
-use Icinga\Exception\NotReadableError;
 use Icinga\Exception\ProgrammingError;
-use Icinga\Legacy\DashboardConfig;
 use Icinga\User;
 use Icinga\Web\Menu;
-use Icinga\Web\Navigation\DashboardPane;
 use Icinga\Web\Navigation\Navigation;
 use Icinga\Web\Navigation\NavigationItem;
 use Icinga\Web\Url;
-use Icinga\Web\Widget\Dashboard\Dashlet as DashboardDashlet;
+use Icinga\Web\Dashboard\Dashlet;
 use Icinga\Web\Widget\Dashboard\Pane;
+use ipl\Html\BaseHtmlElement;
+use ipl\Html\HtmlElement;
+use ipl\Web\Widget\Link;
+use ipl\Web\Widget\Tabs;
 use ipl\Sql\Select;
 
 /**
@@ -28,9 +28,41 @@ use ipl\Sql\Select;
  * - Dashboard:     Shows all panes
  *
  */
-class Dashboard extends AbstractWidget
+class Dashboard extends BaseHtmlElement
 {
     use Database;
+
+    protected $tag = 'div';
+
+    protected $defaultAttributes = ['class' => 'dashboard content'];
+
+    /**
+     * Name of the default home
+     *
+     * @var string
+     */
+    const DEFAULT_HOME = 'Default Home';
+
+    /**
+     * Default user of the "Default Home"
+     *
+     * @var string
+     */
+    const DEFAULT_IW2_USER = 'icingaweb2';
+
+    /**
+     * Preserve key name for coming features
+     *
+     * @var string
+     */
+    const AVAILABLE_DASHLETS = 'Available Dashlets';
+
+    /**
+     * Preserve key name for coming features
+     *
+     * @var string
+     */
+    const SHARED_DASHBOARDS = 'Shared Dashboards';
 
     /**
      * An array containing all panes of this dashboard
@@ -40,7 +72,7 @@ class Dashboard extends AbstractWidget
     private $panes = array();
 
     /**
-     * The @see Icinga\Web\Widget\Tabs object for displaying displayable panes
+     * The @see \ipl\Web\Widget\Tabs object for displaying displayable panes
      *
      * @var Tabs
      */
@@ -49,21 +81,28 @@ class Dashboard extends AbstractWidget
     /**
      * The parameter that will be added to identify panes
      *
-     * @var string
+     * @var array
      */
     private $tabParam = 'pane';
 
     /**
-     * Dashboard home NavigationItems of the main menu item „dashboard“
+     * Home items loaded from the „dashboard“ menu item
      *
      * @var array
      */
-    private $dashboardHomeItems = [];
+    private $homes = [];
 
     /**
      * @var User
      */
     private $user;
+
+    /**
+     * Unique home identifier that is being loaded
+     *
+     * @var integer
+     */
+    private $activeHomeId;
 
     /**
      * Set the given tab name as active.
@@ -93,88 +132,12 @@ class Dashboard extends AbstractWidget
      */
     public function load()
     {
-        $navigation = new Navigation();
-        //$navigation->load('dashboard-pane');
+        $this->loadHomeItems();
+        $this->loadSystemDashboards();
+        $this->loadSystemPanesOfTheGivenHome();
+        $this->loadUserDashboards();
 
-        $panes = array();
-        foreach ($navigation as $dashboardPane) {
-            /** @var DashboardPane $dashboardPane */
-            $pane = new Pane($dashboardPane->getLabel());
-            foreach ($dashboardPane->getChildren() as $dashlet) {
-                $pane->addDashlet($dashlet->getLabel(), $dashlet->getUrl());
-            }
-
-            $panes[] = $pane;
-        }
-
-        $this->mergePanes($panes);
-        $this->loadUserDashboards($navigation);
         return $this;
-    }
-
-    /**
-     * Return dashboard home Navigation items
-     *
-     * @return array
-     */
-    public function getDashboardHomeItems()
-    {
-        return $this->dashboardHomeItems;
-    }
-
-    /**
-     * Get the name of the dashboard home from the Navigation
-     *
-     * if its identifier matches the given $id
-     *
-     * @param integer $id
-     *
-     * @return string|null
-     */
-    public function getHomeByName($id)
-    {
-        foreach ($this->dashboardHomeItems as $homeItem) {
-            if ((int)$homeItem->getAttribute('homeId') === $id) {
-                return $homeItem->getUrl()->getParam('home');
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Create and return a Config object for this dashboard
-     *
-     * @return  Config
-     */
-    public function getConfig()
-    {
-        $output = array();
-        foreach ($this->panes as $pane) {
-            if ($pane->isUserWidget()) {
-                $output[$pane->getName()] = $pane->toArray();
-            }
-            foreach ($pane->getDashlets() as $dashlet) {
-                if ($dashlet->isUserWidget()) {
-                    $output[$pane->getName() . '.' . $dashlet->getName()] = $dashlet->toArray();
-                }
-            }
-        }
-
-        return DashboardConfig::fromArray($output)->setConfigFile($this->getConfigFile())->setUser($this->user);
-    }
-
-    /**
-     * Load user dashboards from all config files that match the username
-     */
-    protected function loadUserDashboards(Navigation $navigation)
-    {
-        foreach (DashboardConfig::listConfigFilesForUser($this->user) as $file) {
-            $this->loadUserDashboardsFromFile($file, $navigation);
-        }
-
-        $this->loadDashboardHomeItems();
-        $this->loadUserDashboardsFromDatabase();
     }
 
     /**
@@ -182,180 +145,368 @@ class Dashboard extends AbstractWidget
      *
      * always be loaded when the $this->load() method is called
      */
-    public function loadDashboardHomeItems()
+    public function loadHomeItems()
     {
         $menu = new Menu();
-        /** @var NavigationItem|mixed $child */
-        foreach ($menu->getItem('dashboard')->getChildren() as $child) {
-            $this->dashboardHomeItems[$child->getName()] = $child;
+        /** @var NavigationItem|mixed $home */
+        foreach ($menu->getItem('dashboard')->getChildren() as $home) {
+            if ($home->hasChildren()) {
+                /** @var NavigationItem $dashboard */
+                foreach ($home->getChildren() as $dashboard) {
+                    $dashboard->setChildren($dashboard->getAttribute('dashlets'));
+                    $dashboard->setAttribute('dashlets', '');
+                }
+            }
+
+            $this->homes[$home->getName()] = $home;
         }
+    }
+
+    /**
+     * Loads system dashboards provided by all enabled modules that don't have a dashboard home
+     */
+    public function loadSystemDashboards($home = '')
+    {
+        $homeParam = Url::fromRequest()->getParam('home');
+
+        if (! empty($homeParam) && $homeParam !== self::DEFAULT_HOME && empty($home)) {
+            return;
+        } elseif (! empty($home) && $home !== self::DEFAULT_HOME) {
+            return;
+        }
+
+        $db = $this->getConn();
+        if (! $this->hasHome(self::DEFAULT_HOME)) {
+            $db->insert('dashboard_home', [
+                'name'  => self::DEFAULT_HOME,
+                'owner' => self::DEFAULT_IW2_USER
+            ]);
+
+            $parent = $db->lastInsertId();
+        } else {
+            $defaultHome = $this->getHome(self::DEFAULT_HOME);
+            if ($defaultHome->getAttribute('disabled')) {
+                return;
+            }
+
+            $parent = $defaultHome->getAttribute('homeId');
+        }
+
+        $navigation = new Navigation();
+        $navigation->load('dashboard-pane');
+        $this->setActiveHomeId($parent);
+
+        $panes = [];
+        /** @var NavigationItem $dashboardPane */
+        foreach ($navigation as $dashboardPane) {
+            $paneId = $this->getSHA1(self::DEFAULT_IW2_USER . self::DEFAULT_HOME . $dashboardPane->getName());
+            $pane = (new Pane($dashboardPane->getName()))
+                ->setPaneId($paneId)
+                ->setParentId($parent)
+                ->setType(Pane::PUBLIC)
+                ->setTitle($dashboardPane->getLabel());
+
+            $dashlets = [];
+            /** @var NavigationItem $dashlet */
+            foreach ($dashboardPane->getChildren() as $dashlet) {
+                $dashletId = $this->getSHA1(
+                    self::DEFAULT_IW2_USER . self::DEFAULT_HOME . $pane->getName() . $dashlet->getName()
+                );
+
+                $newDashlet = (new Dashlet($dashlet->getLabel(), $dashlet->getUrl()->getRelativeUrl(), $pane))
+                    ->setName($dashlet->getName())
+                    ->setDashletId($dashletId);
+
+                $dashlets[$newDashlet->getName()] = $newDashlet;
+            }
+
+            $pane->addDashlets($dashlets);
+            $panes[$dashboardPane->getName()] = $pane;
+        }
+
+        $this->mergePanes($panes);
+    }
+
+    /**
+     * Loads system dashboard homes provided by all enabled modules
+     */
+    public function loadSystemPanesOfTheGivenHome($home = null)
+    {
+        $homeParam = Url::fromRequest()->getParam('home');
+
+        if (empty($home) && ! $homeParam) {
+            return;
+        } elseif (! empty($home)) {
+            $homeParam = $home;
+        }
+
+        $dashboardHome = $this->getHome($homeParam);
+
+        if ($dashboardHome->getName() === self::DEFAULT_HOME) {
+            return;
+        }
+
+        $this->setActiveHomeId($dashboardHome->getAttribute('homeId'));
+
+        $panes = [];
+        /** @var NavigationItem $dashboard */
+        foreach ($dashboardHome->getChildren() as $dashboard) {
+            $paneId = $this->getSHA1(self::DEFAULT_IW2_USER . $home . $dashboard->getName());
+            $pane = (new Pane($dashboard->getName()))
+                ->setPaneId($paneId)
+                ->setType(Pane::PUBLIC)
+                ->setTitle($dashboard->getLabel())
+                ->setParentId($dashboardHome->getAttribute('homeId'));
+
+            $dashlets = [];
+            /** @var NavigationItem $dashlet */
+            foreach ($dashboard->getChildren() as $dashlet) {
+                $dashletId = $this->getSHA1(
+                    self::DEFAULT_IW2_USER . $home . $dashboard->getName() . $dashlet->getName()
+                );
+
+                $newDashlet = (new Dashlet($dashlet->getLabel(), $dashlet->getUrl()->getRelativeUrl(), $pane))
+                    ->setName($dashlet->getName())
+                    ->setDashletId($dashletId);
+
+                $dashlets[$dashlet->getName()] = $newDashlet;
+            }
+
+            $pane->addDashlets($dashlets);
+            $panes[$dashboard->getName()] = $pane;
+        }
+
+        $this->mergePanes($panes);
     }
 
     /**
      * Load user specific dashboards and dashlets from the database
-     * and merges them to the dashboards loaded from an ini file
+     * and merges them to the system dashboards
      *
      * @param   integer  $parentId
-     *
-     * @return  bool
      */
-    public function loadUserDashboardsFromDatabase($parentId = 0)
+    public function loadUserDashboards($parentId = 0)
     {
-        $dashboards = array();
-        if (Url::fromRequest()->hasParam('home') && $parentId === 0) {
-            $home = Url::fromRequest()->getParam('home');
-            $parentId = $this->dashboardHomeItems[$home]->getAttribute('homeId');
+        if (! Url::fromRequest()->hasParam('home')) {
+            if ($this->hasHome(self::DEFAULT_HOME)) {
+                $home = $this->getHome(self::DEFAULT_HOME);
+                // We only load default homes within the dashboard/ path
+                if ($home->getAttribute('disabled')) {
+                    return;
+                }
+            }
         }
 
-        $select = $this->getDb()->select((new Select())
+        if (Url::fromRequest()->getParam('home') && $parentId === 0) {
+            $home = Url::fromRequest()->getParam('home');
+            $parentId = $this->homes[$home]->getAttribute('homeId');
+        } elseif ($parentId === 0) {
+            $home = $this->rewindHomes();
+            $parentId = $home ? $home->getAttribute('homeId') : $parentId;
+        }
+
+        $select = $this->getConn()->select((new Select())
             ->columns('*')
             ->from('dashboard')
-            ->where(['home_id = ?' => $parentId]));
+            ->where([
+                'home_id = ?'   => $parentId,
+                'owner = ?'     => $this->user->getUsername()
+            ]));
 
+        $this->setActiveHomeId($parentId);
+
+        $dashboards = [];
         foreach ($select as $dashboard) {
-            $dashboards[$dashboard->name] = new Pane($dashboard->name);
-            $dashboards[$dashboard->name]->setUserWidget();
-            $dashboards[$dashboard->name]->setPaneId($dashboard->id);
-            $dashboards[$dashboard->name]->setParentId($dashboard->home_id);
+            $dashboards[$dashboard->name] = (new Pane($dashboard->name))
+                ->setUserWidget()
+                ->setPaneId($dashboard->id)
+                ->setTitle($dashboard->label)
+                ->setOwner($dashboard->owner)
+                ->setType($dashboard->source)
+                ->setParentId($dashboard->home_id);
 
             $newResults = $this->getDb()->select((new Select())
                 ->columns('*')
                 ->from('dashlet')
-                ->where(['dashboard_id = ?' => $dashboard->id, 'dashlet.owner = ?' => $this->user->getUsername()]));
+                ->where([
+                    'dashboard_id = ?'  => $dashboard->id,
+                    'dashlet.owner = ?' => $this->user->getUsername()
+                ]));
 
+            $dashlets = [];
             foreach ($newResults as $dashletData) {
-                $dashlet = new DashboardDashlet(
-                    $dashletData->name,
+                $dashlet = (new Dashlet(
+                    $dashletData->label,
                     $dashletData->url,
                     $dashboards[$dashboard->name]
-                );
+                ))
+                    ->setName($dashletData->name)
+                    ->setDashletId($dashletData->id)
+                    ->setUserWidget();
 
-                $dashlet->setName($dashletData->name);
-                $dashlet->setUserWidget();
-                $dashlet->setDashletId($dashletData->id);
-                $dashboards[$dashboard->name]->addDashlet($dashlet);
+                $dashlets[$dashlet->getName()] = $dashlet;
             }
+
+            $dashboards[$dashboard->name]->addDashlets($dashlets);
         }
 
         $this->mergePanes($dashboards);
-
-        return true;
-    }
-
-    /**
-     * Load user dashboards from the given config file
-     *
-     * @param   string  $file
-     *
-     * @return  bool
-     */
-    protected function loadUserDashboardsFromFile($file, Navigation $dashboardNavigation)
-    {
-        try {
-            $config = Config::fromIni($file);
-        } catch (NotReadableError $e) {
-            return false;
-        }
-
-        if (! count($config)) {
-            return false;
-        }
-        $panes = array();
-        $dashlets = array();
-        foreach ($config as $key => $part) {
-            if (strpos($key, '.') === false) {
-                $dashboardPane = $dashboardNavigation->getItem($key);
-                if ($dashboardPane !== null) {
-                    $key = $dashboardPane->getLabel();
-                }
-                if ($this->hasPane($key)) {
-                    $panes[$key] = $this->getPane($key);
-                } else {
-                    $panes[$key] = new Pane($key);
-                    $panes[$key]->setTitle($part->title);
-                }
-                $panes[$key]->setUserWidget();
-                if ((bool) $part->get('disabled', false) === true) {
-                    $panes[$key]->setDisabled();
-                }
-            } else {
-                list($paneName, $dashletName) = explode('.', $key, 2);
-                $dashboardPane = $dashboardNavigation->getItem($paneName);
-                if ($dashboardPane !== null) {
-                    $paneName = $dashboardPane->getLabel();
-                    $dashletItem = $dashboardPane->getChildren()->getItem($dashletName);
-                    if ($dashletItem !== null) {
-                        $dashletName = $dashletItem->getLabel();
-                    }
-                }
-                $part->pane = $paneName;
-                $part->dashlet = $dashletName;
-                $dashlets[] = $part;
-            }
-        }
-        foreach ($dashlets as $dashletData) {
-            $pane = null;
-
-            if (array_key_exists($dashletData->pane, $panes) === true) {
-                $pane = $panes[$dashletData->pane];
-            } elseif (array_key_exists($dashletData->pane, $this->panes) === true) {
-                $pane = $this->panes[$dashletData->pane];
-            } else {
-                continue;
-            }
-            $dashlet = new DashboardDashlet(
-                $dashletData->title,
-                $dashletData->url,
-                $pane
-            );
-            $dashlet->setName($dashletData->dashlet);
-
-            if ((bool) $dashletData->get('disabled', false) === true) {
-                $dashlet->setDisabled(true);
-            }
-
-            $dashlet->setUserWidget();
-            $pane->addDashlet($dashlet);
-        }
-
-        $this->mergePanes($panes);
-
-        return true;
     }
 
     /**
      * Merge panes with existing panes
      *
-     * @param   array $panes
+     * @param  array $panes
      *
-     * @return  $this
+     * @return $this
+     *
+     * @throws ProgrammingError|ConfigurationError
      */
     public function mergePanes(array $panes)
     {
+        // Get the id of the dashboard home which is currently loaded
+        $activeHome = $this->getActiveHomeId();
+
         /** @var $pane Pane  */
         foreach ($panes as $pane) {
-            if ($this->hasPane($pane->getName()) === true) {
-                /** @var $current Pane */
-                $current = $this->panes[$pane->getName()];
+            if (empty($pane->getParentId()) || empty($pane->getPaneId())) {
+                throw new ProgrammingError(
+                    'Pane "%s" doesn\'t contain an \'%s\'.',
+                    $pane->getName(),
+                    $pane->getPaneId() ? 'home id' : 'identifier'
+                );
+            }
 
-                if ($current->getParentId() === $pane->getParentId()) {
-                    /** @var $dashlet DashboardDashlet */
-                    foreach ($pane->getDashlets() as $dashlet) {
-                        if ($current->hasDashlet($dashlet->getName()) === true) {
-                            $currentUrl = $current->getDashlet($dashlet->getName())->getUrl();
-                            if ($currentUrl->getAbsoluteUrl() === $dashlet->getUrl()->getAbsoluteUrl()) {
-                                $current->removeDashlet($dashlet->getName());
+            // Skip when the parent id does not match the activeHome's id
+            if ($activeHome && $activeHome !== $pane->getParentId()) {
+                continue;
+            }
+
+            $currentPane = null;
+            if ($this->hasPane($pane->getName())) {
+                $currentPane = $this->getPane($pane->getName());
+
+                // Check if the user has cloned system pane without modifying it
+                if ($pane->getOwner() && $pane->getType() === Pane::PUBLIC && ! $currentPane->getOwner()) {
+                    // Cleaning up cloned system panes from the DB
+                    if (! $pane->hasDashlets()) {
+                        $this->getConn()->delete('dashboard', [
+                            'id = ?'    => $pane->getPaneId(),
+                            'owner = ?' => $pane->getOwner()
+                        ]);
+
+                        continue;
+                    }
+
+                    $currentPane->setPaneId($pane->getPaneId());
+                }
+            }
+
+            // Check if the pane does have an owner, if not it's a system pane
+            if (! $pane->getOwner() || $pane->getType() === Pane::PUBLIC) {
+                $customPane = $this->getConn()->select((new Select())
+                    ->columns('*')
+                    ->from('dashboard_override')
+                    ->where([
+                        'owner = ?'         => $this->user->getUsername(),
+                        'home_id = ?'       => $pane->getParentId(),
+                        'dashboard_id = ?'  => $pane->getPaneId()
+                    ]))->fetch();
+
+                if ($customPane) {
+                    // Remove the custom pane if label is null|rolled back to it's original value and is not disabled
+                    if ((! $customPane->label || $customPane->label == $pane->getTitle()) &&
+                        ! (bool)$customPane->disabled) {
+                        $this->getConn()->delete('dashboard_override', [
+                            'dashboard_id = ?'  => $pane->getPaneId(),
+                            'owner = ?'         => $this->user->getUsername()
+                        ]);
+                    } else {
+                        $pane
+                            ->setUserWidget()
+                            ->setOverride(true)
+                            ->setOwner($customPane->owner)
+                            ->setDisabled($customPane->disabled);
+
+                        if ($customPane->label) {
+                            $pane->setTitle($customPane->label);
+                        }
+                    }
+                }
+            }
+
+            /** @var Dashlet $dashlet */
+            foreach ($pane->getDashlets() as $dashlet) {
+                if (! $dashlet->isUserWidget()) {
+                    // Since the system dashlet ids are being modified when writing them into
+                    // the DB, we have to regenerate the ids here as well.
+                    $dashletId = $this->getSHA1(
+                        $this->user->getUsername() . self::DEFAULT_HOME . $pane->getName() . $dashlet->getName()
+                    );
+                    $customDashlet = $this->getConn()->select((new Select())
+                        ->columns('*')
+                        ->from('dashlet_override')
+                        ->where([
+                            'owner = ?'         => $this->user->getUsername(),
+                            'dashlet_id = ?'    => $dashletId,
+                        ]))->fetch();
+
+                    if ($customDashlet) {
+                        // Remove the custom dashlet if label & url are null|rolled back to their original
+                        // value and is not disabled
+                        if ((! $customDashlet->label || $customDashlet->label === $dashlet->getTitle()) &&
+                            (! $customDashlet->url || $dashlet->getUrl()->matches($customDashlet->url)) &&
+                            ! (bool)$customDashlet->disabled) {
+                            $this->getConn()->delete('dashlet_override', [
+                                'dashlet_id = ?'    => $dashletId,
+                                'owner = ?'         => $this->user->getUsername()
+                            ]);
+                        } else {
+                            $dashlet
+                                ->setUserWidget()
+                                ->setOverride()
+                                ->setDashletId($dashletId)
+                                ->setDisabled($customDashlet->disabled);
+
+                            if ($customDashlet->url) {
+                                $dashlet->setUrl($customDashlet->url);
+                            }
+
+                            if ($customDashlet->label) {
+                                $dashlet->setTitle($customDashlet->label);
                             }
                         }
                     }
-
-                    $current->addDashlets($pane->getDashlets());
-                } else {
-                    $this->panes[$pane->getName()] = $pane;
                 }
-            } else {
-                $this->panes[$pane->getName()] = $pane;
+
+                if ($currentPane) {
+                    if (! $currentPane->hasDashlet($dashlet->getTitle())) {
+                        $currentPane->addDashlet($dashlet);
+                    } else {
+                        $currentPane->getDashlet($dashlet->getTitle())
+                            ->setUrl($dashlet->getUrl())
+                            ->setName($dashlet->getName())
+                            ->setDisabled($dashlet->getDisabled())
+                            ->setDashletId($dashlet->getDashletId())
+                            ->setUserWidget($dashlet->isUserWidget())
+                            ->setOverride($dashlet->isOverridesSystem());
+                    }
+                }
             }
+
+            if ($currentPane) {
+                // We need to set these attributes here again because they might have changed above
+                $currentPane
+                    ->setTitle($pane->getTitle())
+                    ->setOwner($pane->getOwner())
+                    ->setDisabled($pane->getDisabled())
+                    ->setUserWidget($pane->isUserWidget())
+                    ->setOverride($pane->isOverridesSystem());
+
+                continue;
+            }
+
+            $this->panes[$pane->getName()] = $pane;
         }
 
         return $this;
@@ -370,23 +521,23 @@ class Dashboard extends AbstractWidget
      */
     public function getTabs($defaultPane = false)
     {
-        $url = Url::fromPath('dashboard')->getUrlWithout($this->tabParam);
+        if (Url::fromRequest()->hasParam('home')) {
+            $home = Url::fromRequest()->getParam('home');
+            $url = Url::fromPath('dashboard/home')->getUrlWithout(['home', $this->tabParam]);
+            $url->addParams(['home'  => $home]);
+        } else {
+            $url = Url::fromPath('dashboard')->getUrlWithout($this->tabParam);
+        }
+
         if ($this->tabs === null) {
             $this->tabs = new Tabs();
+            $this->tabs->disableLegacyExtensions();
 
             foreach ($this->panes as $key => $pane) {
                 if ($pane->getDisabled()) {
                     continue;
                 }
-                if (Url::fromRequest()->hasParam('home')) {
-                    if ($this->getHomeByName($pane->getParentId()) !== null) {
-                        $url = Url::fromPath('dashboard/home')->addParams([
-                            'home'   => $this->getHomeByName($pane->getParentId()),
-                        ]);
-                    } else {
-                        $url = Url::fromPath('dashboard/home');
-                    }
-                }
+
                 $this->tabs->add(
                     $key,
                     [
@@ -402,12 +553,158 @@ class Dashboard extends AbstractWidget
             }
         }
 
-        // This is only required for dashboard homes to activate a default pane
+        // This is only required in DashboardController::homeAction()
         if ($defaultPane) {
             $this->setDefaultPane();
         }
 
         return $this->tabs;
+    }
+
+    /**
+     * Set the home id that is being loaded
+     *
+     * @param $home
+     *
+     * @return $this
+     */
+    public function setActiveHomeId($home)
+    {
+        $this->activeHomeId = $home;
+
+        return $this;
+    }
+
+    /**
+     * Get the active home identifier
+     *
+     * @return integer
+     */
+    public function getActiveHomeId()
+    {
+        return $this->activeHomeId;
+    }
+
+    /**
+     * Return dashboard home Navigation items
+     *
+     * @return array
+     */
+    public function getHomes()
+    {
+        return $this->homes;
+    }
+
+    /**
+     * Get home from the Navigation by the given name
+     *
+     * @param  string $name
+     *
+     * @return NavigationItem
+     *
+     * @throws ProgrammingError
+     */
+    public function getHome($name)
+    {
+        if ($this->hasHome($name)) {
+            return $this->homes[$name];
+        }
+
+        throw new ProgrammingError('Trying to retrieve invalid dashboard home "%s"', $name);
+    }
+
+    /**
+     * Remove a specific home from this dashboard
+     *
+     * @param string $home
+     *
+     * @return $this
+     *
+     * @throws ProgrammingError
+     */
+    public function removeHome($home)
+    {
+        if ($this->hasHome($home)) {
+            $parent = $this->getHome($home);
+
+            if (! $parent->getAttribute('owner')) {
+                $this->getConn()->insert('dashboard_home', [
+                    'name'      => $parent->getName(),
+                    'owner'     => $this->user->getUsername(),
+                    'disabled'  => (int)true
+                ]);
+            } elseif (! $parent->getAttribute('disabled')) {
+                if ($parent->getName() === self::DEFAULT_HOME) {
+                    $this->getConn()->update('dashboard_home', ['disabled' => (int)true], [
+                        'id = ?'    => $parent->getAttribute('homeId')
+                    ]);
+                } else {
+                    /** @var Pane $pane */
+                    foreach ($this->panes as $pane) {
+                        $pane->removeDashlets();
+                    }
+
+                    $this->removePanes();
+
+                    $this->getConn()->delete('dashboard_home', ['id = ?' => $parent->getAttribute('homeId')]);
+                }
+            }
+        } else {
+            throw new ProgrammingError('Dashboard home not found: ' . $home);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Return an array with home name=>name format used for comboboxes
+     *
+     * @return array
+     */
+    public function getHomeKeyNameArray()
+    {
+        $list = [];
+        foreach ($this->homes as $name => $home) {
+            $list[$name] = $home->getLabel();
+        }
+
+        return $list;
+    }
+
+    /**
+     * Reset the current position of the internal home object
+     *
+     * @return null|NavigationItem
+     */
+    public function rewindHomes()
+    {
+        return reset($this->homes);
+    }
+
+    /**
+     * Unset the provided home if exists from the list
+     *
+     * @param $home
+     *
+     * @return $this
+     */
+    public function unsetHome($home)
+    {
+        if ($this->hasHome($home)) {
+            unset($this->homes[$home]);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Checks whether the given home exists
+     *
+     * @return bool
+     */
+    public function hasHome($home)
+    {
+        return $home && array_key_exists($home, $this->homes);
     }
 
     /**
@@ -419,7 +716,6 @@ class Dashboard extends AbstractWidget
     {
         return $this->panes;
     }
-
 
     /**
      * Creates a new empty pane with the given title
@@ -468,22 +764,69 @@ class Dashboard extends AbstractWidget
     public function addPane(Pane $pane)
     {
         $this->panes[$pane->getName()] = $pane;
+
         return $this;
     }
 
-    public function removePane($title)
+    /**
+     * Remove a specific pane from this dashboard
+     *
+     * @param  $pane
+     *
+     * @return $this
+     *
+     * @throws ProgrammingError
+     */
+    public function removePane($pane)
     {
-        if ($this->hasPane($title) === true) {
-            $pane = $this->getPane($title);
-            if ($pane->isUserWidget() === true) {
-                unset($this->panes[$pane->getName()]);
-            } else {
-                $pane->setDisabled();
-                $pane->setUserWidget();
+        if (! $pane instanceof Pane) {
+            if (! $this->hasPane($pane)) {
+                throw new ProgrammingError('Pane not found: ' . $pane);
             }
-        } else {
-            throw new ProgrammingError('Pane not found: ' . $title);
+
+            $pane = $this->getPane($pane);
         }
+
+        if ($pane->getOwner() && ! $pane->getDisabled()) {
+            $tableName = 'dashboard';
+            $rowName = 'id = ?';
+
+            if ($pane->isOverridesSystem()) {
+                $tableName = 'dashboard_override';
+                $rowName = 'dashboard_id = ?';
+            }
+
+            $this->getConn()->delete($tableName, [
+                $rowName    => $pane->getPaneId(),
+                'owner = ?' => $pane->getOwner()
+            ]);
+        } elseif (! $pane->getDisabled()) {
+            // User is going to disable this system pane
+            $this->getConn()->insert('dashboard_override', [
+                'dashboard_id'  => $pane->getPaneId(),
+                'home_id'       => $pane->getParentId(),
+                'owner'         => $this->user->getUsername(),
+                'disabled'      => true
+            ]);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @throws ProgrammingError
+     */
+    public function removePanes($panes = [])
+    {
+        if (empty($panes)) {
+            $panes = $this->getPanes();
+        }
+
+        foreach ($panes as $pane) {
+            $this->removePane($pane);
+        }
+
+        return $this;
     }
 
     /**
@@ -496,12 +839,13 @@ class Dashboard extends AbstractWidget
      */
     public function getPane($name)
     {
-        if (! array_key_exists($name, $this->panes)) {
+        if (! $this->hasPane($name)) {
             throw new ProgrammingError(
                 'Trying to retrieve invalid dashboard pane "%s"',
                 $name
             );
         }
+
         return $this->panes[$name];
     }
 
@@ -510,49 +854,23 @@ class Dashboard extends AbstractWidget
      *
      * @return array
      */
-    public function getPaneKeyTitleArray()
+    public function getPaneKeyTitleArray($parent = 0)
     {
-        //TODO: Shall we replace this method with the one implemented below?
-        $list = array();
+        $list = [];
         foreach ($this->panes as $name => $pane) {
-            $list[$name] = $pane->getTitle();
-        }
-        return $list;
-    }
-
-    /**
-     * Return an array with pane name=>title format used for comboboxes
-     *
-     * @param Dashboard $dashboard
-     *
-     * @param $homeId
-     *
-     * @return array
-     */
-    public function getPaneKeyNameArray($homeId)
-    {
-        $lists = [];
-        foreach ($this->getPanes() as $name => $pane) {
-            if ($pane->getParentId() !== (int)$homeId) {
+            if ($pane->getDisabled()) {
                 continue;
             }
 
-            $lists[$name] = $pane->getTitle();
+            // We don't allow any system panes to be listed at other homes as well
+            if (! empty($parent) && $parent !== $pane->getParentId()) {
+                continue;
+            }
+
+            $list[$name] = $pane->getTitle();
         }
 
-        return $lists;
-    }
-
-    /**
-     * @see Icinga\Web\Widget::render
-     */
-    public function render()
-    {
-        if (empty($this->panes)) {
-            return '';
-        }
-
-        return $this->determineActivePane()->render();
+        return $list;
     }
 
     /**
@@ -574,6 +892,7 @@ class Dashboard extends AbstractWidget
         if ($active !== null) {
             $this->activate($active);
         }
+
         return $active;
     }
 
@@ -595,7 +914,7 @@ class Dashboard extends AbstractWidget
      */
     public function determineActivePane()
     {
-        $active = $this->getTabs()->getActiveName();
+        $active = $this->getTabs()->getActiveTab();
         if (! $active) {
             if ($active = Url::fromRequest()->getParam($this->tabParam)) {
                 if ($this->hasPane($active)) {
@@ -608,6 +927,8 @@ class Dashboard extends AbstractWidget
             } else {
                 $active = $this->setDefaultPane();
             }
+        } else {
+            $active = $active->getName();
         }
 
         if (isset($this->panes[$active])) {
@@ -638,15 +959,71 @@ class Dashboard extends AbstractWidget
     }
 
     /**
-     * Get config file
+     * @inheritDoc
+     */
+    public function assemble()
+    {
+        $panes = array_filter($this->panes, function ($pane) {
+            return ! $pane->getDisabled();
+        });
+
+        if (! empty($panes)) {
+            $dashlets = array_filter($this->determineActivePane()->getDashlets(), function ($dashlet) {
+                return ! $dashlet->getDisabled();
+            });
+
+            if (empty($dashlets)) {
+                $this->setAttribute('class', 'content');
+                $dashlets = new HtmlElement('h1', null, t('No dashlet added to this pane.'));
+            }
+        } else {
+            $this->setAttribute('class', 'content');
+            $format = t(
+                'Currently there is no pane available. This might change once you enabled some of the available %s.'
+            );
+
+            $dashlets = [
+                new HtmlElement('h1', null, t('Welcome to Icinga Web!')),
+                sprintf($format, new Link('modules', 'config/modules'))
+            ];
+        }
+
+        $this->add($dashlets);
+    }
+
+    /**
+     * Generate the sha1 hash of the provided string
+     *
+     * @param string $name
      *
      * @return string
      */
-    public function getConfigFile()
+    public function getSHA1($name)
     {
-        if ($this->user === null) {
-            throw new ProgrammingError('Can\'t load dashboards. User is not set');
-        }
-        return Config::resolvePath('dashboards/' . strtolower($this->user->getUsername()) . '/dashboard.ini');
+        return sha1($name, true);
+    }
+
+    /**
+     * Sets the position of the specified key of array element as the first
+     *
+     * element of the list e.g $arr ['two' => 2, 'one' => 1]
+     *
+     * is going to be $arr ['one' => 1, 'two' => 2]
+     *
+     * @param  array $list
+     *
+     * @param  $key
+     *
+     * @return array
+     */
+    public function switchElementPos(array $list, $key)
+    {
+        array_unshift($list, $key);
+        $list = array_unique($list);
+
+        $keys = array_keys($list);
+        $keys[array_search(0, $keys, true)] = $key;
+
+        return array_combine($keys, $list);
     }
 }

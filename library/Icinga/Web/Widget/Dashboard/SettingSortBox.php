@@ -18,9 +18,15 @@ class SettingSortBox extends CompatForm
 
     public function assemble()
     {
-        $active = Url::fromRequest()->getParam('home');
-        $sortControls[$active] = $active;
-        foreach ($this->dashboard->getDashboardHomeItems() as $item) {
+        $homes = $this->dashboard->getHomes();
+        $sortControls = [];
+        $active = null;
+        if (Url::fromRequest()->hasParam('home')) {
+            $active = Url::fromRequest()->getParam('home');
+            $sortControls[$active] = $active;
+        }
+
+        foreach ($homes as $item) {
             if ($active === $item->getName()) {
                 continue;
             }
@@ -34,7 +40,7 @@ class SettingSortBox extends CompatForm
                 'class'          => 'autosubmit',
                 'required'       => true,
                 'label'          => t('Dashboard Home'),
-                'multiOptions'   => $sortControls,
+                'multiOptions'   => $sortControls ?: ['no' => 'No home available'],
                 'description'    => t('Select a dashboard home you want to see the dashboards from.')
             ]
         );

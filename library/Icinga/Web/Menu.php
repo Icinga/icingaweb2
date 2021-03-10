@@ -7,6 +7,8 @@ use Icinga\Application\Logger;
 use Icinga\Authentication\Auth;
 use Icinga\Common\Database;
 use Icinga\Web\Navigation\Navigation;
+use Icinga\Web\Navigation\NavigationItem;
+use Icinga\Web\Widget\Dashboard;
 use ipl\Sql\Select;
 
 /**
@@ -22,7 +24,6 @@ class Menu extends Navigation
     public function __construct()
     {
         $this->init();
-        $this->loadDashboardHomeFromDatabase();
         $this->load('menu-item');
     }
 
@@ -151,21 +152,26 @@ class Menu extends Navigation
                 'priority'    => 900
             ]));
         }
+
+        $this->loadDashboardHomes();
     }
 
     /**
-     * Load user specific and shared dashboard homes from the db
+     * Load user specific and shared dashboard homes from the db and system
      *
-     * and append them as child items to the dashboard menu
+     * homes from the navigation and append them as child items to the dashboard menu
      */
-    protected function loadDashboardHomeFromDatabase()
+    protected function loadDashboardHomes()
     {
+        $user = Auth::getInstance()->getUser();
+        $homesFromDb = [];
+
         $dashboardHomes = $this->getDb()->select((new Select())
             ->columns('*')
             ->from('dashboard_home as dh')
             ->where([
-                'dh.owner = ?'  => Auth::getInstance()->getUser()->getUsername(),
-                'dh.owner IS NULL'
+                'dh.owner = ?'  => $user->getUsername(),
+                'dh.owner = \'icingaweb2\''
             ], 'OR'));
 
         $priority = 10;
@@ -173,13 +179,68 @@ class Menu extends Navigation
             $this->getItem('dashboard')->addChild($this->createItem($dashboardHome->name, [
                 'label'         => t($dashboardHome->name),
                 'description'   => $dashboardHome->name,
-                'url'           => 'dashboard/home?home=' . $dashboardHome->name,
                 'priority'      => $priority,
                 'owner'         => $dashboardHome->owner,
-                'homeId'        => $dashboardHome->id
+                'homeId'        => $dashboardHome->id,
+                'disabled'      => (bool) $dashboardHome->disabled
             ]));
 
+            if ($dashboardHome->name !== Dashboard::DEFAULT_HOME && ! $dashboardHome->disabled) {
+                $this->getItem('dashboard')->getChildren()->getItem($dashboardHome->name)->setUrl(
+                    \ipl\Web\Url::fromPath('dashboard/home', ['home' => $dashboardHome->name])
+                );
+            }
+
             $priority += 10;
+            $homesFromDb[$dashboardHome->id] = $dashboardHome->name;
+        }
+
+        $navigation = new Navigation();
+        $homes = $navigation->load('dashboard-home');
+        $largestId = $this->getDb()->select((new Select())
+            ->columns('MAX(id) AS largestId')
+            ->from('dashboard_home'))->fetch();
+
+        /** @var NavigationItem $home */
+        foreach ($homes as $home) {
+            if (in_array($home->getName(), $homesFromDb, true)) {
+                $item = $this->getItem('dashboard')->getChildren()->findItem($home->getName());
+
+                $dashboard = $this->getDb()->select((new Select())
+                    ->columns('id')
+                    ->from('dashboard')
+                    ->where(['home_id = ?' => $item->getAttribute('homeId')])
+                    ->limit(1))->fetch();
+
+                if ($dashboard || $item->getAttribute('disabled')) {
+                    $item->setChildren($home->getChildren());
+
+                    if ($item->getAttribute('disabled')) {
+                        $item->setDefaultUrl(false);
+                    }
+
+                    continue;
+                } else {
+                    // This home has been edited by the user, e.g by deactivating the entire
+                    // home, but now it has been reactivated and can be removed from the DB
+                    $this->getDb()->delete('dashboard_home', [
+                        'id = ?'    => $item->getAttribute('homeId'),
+                        'owner = ?' => $user->getUsername()
+                    ]);
+                }
+            }
+
+            // When the item type doesn't match dashboard-home, we do nothing
+            if ($home->getAttribute('type') !== 'dashboard-home') {
+                continue;
+            }
+
+            if (! $home->hasUrl()) {
+                $home->setUrl(\ipl\Web\Url::fromPath('dashboard/home', ['home' => $home->getName()]));
+            }
+
+            $home->setAttribute('homeId', ++$largestId->largestId);
+            $this->getItem('dashboard')->addChild($home);
         }
     }
 }
