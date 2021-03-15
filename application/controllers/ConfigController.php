@@ -5,6 +5,7 @@ namespace Icinga\Controllers;
 
 use Exception;
 use Icinga\Application\Version;
+use Icinga\Data\DataArray\ArrayDatasource;
 use InvalidArgumentException;
 use Icinga\Application\Config;
 use Icinga\Application\Icinga;
@@ -118,11 +119,16 @@ class ConfigController extends Controller
                 'url'   => 'config/modules'
             ))
             ->activate('modules');
-        $this->view->modules = Icinga::app()->getModuleManager()->select()
+        $queryArray = Icinga::app()->getModuleManager()->select()
             ->from('modules')
             ->order('enabled', 'desc')
             ->order('installed', 'asc')
-            ->order('name');
+            ->order('name')
+            ->fetchAll();
+
+        $query = new ArrayDatasource($queryArray);
+
+        $this->view->modules = $query->select();
         $this->setupLimitControl();
         $this->setupPaginationControl($this->view->modules);
         $this->view->title = $this->translate('Modules');
