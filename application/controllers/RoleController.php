@@ -3,11 +3,17 @@
 
 namespace Icinga\Controllers;
 
+use Exception;
+use GuzzleHttp\Psr7\ServerRequest;
 use Icinga\Authentication\RolesConfig;
+use Icinga\Data\Selectable;
 use Icinga\Exception\NotFoundError;
 use Icinga\Forms\Security\RoleForm;
+use Icinga\Repository\Repository;
 use Icinga\Security\SecurityException;
 use Icinga\Web\Controller\AuthBackendController;
+use Icinga\Web\Widget\SingleValueSearchControl;
+use ipl\Web\Url;
 
 /**
  * Manage user permissions and restrictions based on roles
@@ -125,6 +131,59 @@ class RoleController extends AuthBackendController
         }
 
         $this->renderForm($role, $this->translate('Remove Role'));
+    }
+
+    public function auditAction()
+    {
+        $this->assertPermission('config/access-control/roles');
+        $this->createListTabs()->activate('role/audit');
+        $username = $this->params->get('user');
+
+        $form = new SingleValueSearchControl();
+        $form->populate(['q' => $username]);
+        $form->setInputLabel(t('Enter username'));
+        $form->setSubmitLabel(t('Inspect'));
+        $form->setSuggestionUrl(Url::fromPath(
+            'role/suggest-role-member',
+            ['_disableLayout' => true, 'showCompact' => true]
+        ));
+
+        $form->on(SingleValueSearchControl::ON_SUCCESS, function ($form) {
+            $this->redirectNow(Url::fromPath('role/audit', ['user' => $form->getValue('q')]));
+        })->handleRequest(ServerRequest::fromGlobals());
+
+        $this->content->add($form);
+    }
+
+    public function suggestRoleMemberAction()
+    {
+        $this->assertHttpMethod('POST');
+        $requestData = $this->getRequest()->getPost();
+        $limit = $this->params->get('limit', 50);
+
+        $searchTerm = $requestData['term']['label'];
+        $backends = $this->loadUserBackends(Selectable::class);
+
+        $users = [];
+        while ($limit > 0 && ! empty($backends)) {
+            /** @var Repository $backend */
+            $backend = array_shift($backends);
+            $query = $backend->select()
+                ->from('user', ['user_name'])
+                ->where('user_name', $searchTerm)
+                ->limit($limit);
+
+            try {
+                $names = $query->fetchColumn();
+            } catch (Exception $e) {
+                continue;
+            }
+
+            array_push($users, ...$names);
+            $limit -= count($names);
+        }
+
+        $this->document->add(SingleValueSearchControl::createSuggestions($users));
     }
 
     /**
