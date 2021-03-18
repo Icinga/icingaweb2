@@ -3,19 +3,26 @@
 
 namespace Icinga\Web\Controller;
 
+use ipl\Web\Compat\CompatController;
 use Zend_Controller_Action_Exception;
 use Icinga\Application\Config;
 use Icinga\Authentication\User\UserBackend;
 use Icinga\Authentication\User\UserBackendInterface;
 use Icinga\Authentication\UserGroup\UserGroupBackend;
 use Icinga\Authentication\UserGroup\UserGroupBackendInterface;
-use Icinga\Web\Controller;
 
 /**
  * Base class for authentication backend controllers
  */
-class AuthBackendController extends Controller
+class AuthBackendController extends CompatController
 {
+    public function init()
+    {
+        parent::init();
+
+        $this->tabs->disableLegacyExtensions();
+    }
+
     /**
      * Redirect to this controller's list action
      */
