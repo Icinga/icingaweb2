@@ -145,6 +145,15 @@ class RoleController extends AuthBackendController
             )
         );
 
+        $tabs->add(
+            'role/audit',
+            [
+                'title'     => $this->translate('Audit a user\'s privileges'),
+                'label'     => $this->translate('Audit'),
+                'url'       => 'role/audit'
+            ]
+        );
+
         if ($this->hasPermission('config/access-control/users')) {
             $tabs->add(
                 'user/list',

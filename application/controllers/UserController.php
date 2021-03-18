@@ -338,6 +338,15 @@ class UserController extends AuthBackendController
                     'url'           => 'role/list'
                 )
             );
+
+            $tabs->add(
+                'role/audit',
+                [
+                    'title'     => $this->translate('Audit a user\'s privileges'),
+                    'label'     => $this->translate('Audit'),
+                    'url'       => 'role/audit'
+                ]
+            );
         }
 
         $tabs->add(
