@@ -137,11 +137,14 @@ class RoleController extends AuthBackendController
     {
         $this->assertPermission('config/access-control/roles');
         $this->createListTabs()->activate('role/audit');
-        $username = $this->params->get('user');
+
+        $type = $this->params->has('group') ? 'group' : 'user';
+        $name = $this->params->get($type);
 
         $form = new SingleValueSearchControl();
-        $form->populate(['q' => $username]);
-        $form->setInputLabel(t('Enter username'));
+        $form->setMetaDataNames('type');
+        $form->populate(['q' => $name, 'q-type' => $type]);
+        $form->setInputLabel(t('Enter user or group name'));
         $form->setSubmitLabel(t('Inspect'));
         $form->setSuggestionUrl(Url::fromPath(
             'role/suggest-role-member',
@@ -149,7 +152,9 @@ class RoleController extends AuthBackendController
         ));
 
         $form->on(SingleValueSearchControl::ON_SUCCESS, function ($form) {
-            $this->redirectNow(Url::fromPath('role/audit', ['user' => $form->getValue('q')]));
+            $this->redirectNow(Url::fromPath('role/audit', [
+                $form->getValue('q-type') ?: 'user' => $form->getValue('q')
+            ]));
         })->handleRequest(ServerRequest::fromGlobals());
 
         $this->content->add($form);
@@ -162,12 +167,12 @@ class RoleController extends AuthBackendController
         $limit = $this->params->get('limit', 50);
 
         $searchTerm = $requestData['term']['label'];
-        $backends = $this->loadUserBackends(Selectable::class);
+        $userBackends = $this->loadUserBackends(Selectable::class);
 
         $users = [];
-        while ($limit > 0 && ! empty($backends)) {
+        while ($limit > 0 && ! empty($userBackends)) {
             /** @var Repository $backend */
-            $backend = array_shift($backends);
+            $backend = array_shift($userBackends);
             $query = $backend->select()
                 ->from('user', ['user_name'])
                 ->where('user_name', $searchTerm)
@@ -179,11 +184,47 @@ class RoleController extends AuthBackendController
                 continue;
             }
 
-            array_push($users, ...$names);
+            foreach ($names as $name) {
+                $users[$name] = ['type' => 'user'];
+            }
+
             $limit -= count($names);
         }
 
-        $this->document->add(SingleValueSearchControl::createSuggestions($users));
+        $groupBackends = $this->loadUserGroupBackends(Selectable::class);
+
+        $groups = [];
+        while ($limit > 0 && ! empty($groupBackends)) {
+            /** @var Repository $backend */
+            $backend = array_shift($groupBackends);
+            $query = $backend->select()
+                ->from('group', ['group_name'])
+                ->where('group_name', $searchTerm)
+                ->limit($limit);
+
+            try {
+                $names = $query->fetchColumn();
+            } catch (Exception $e) {
+                continue;
+            }
+
+            foreach ($names as $name) {
+                $groups[$name] = ['type' => 'group'];
+            }
+
+            $limit -= count($names);
+        }
+
+        $suggestions = [];
+        if (! empty($users)) {
+            $suggestions[t('Users')] = $users;
+        }
+
+        if (! empty($groups)) {
+            $suggestions[t('Groups')] = $groups;
+        }
+
+        $this->document->add(SingleValueSearchControl::createSuggestions($suggestions));
     }
 
     /**
@@ -207,7 +248,7 @@ class RoleController extends AuthBackendController
         $tabs->add(
             'role/audit',
             [
-                'title'     => $this->translate('Audit a user\'s privileges'),
+                'title'     => $this->translate('Audit a user\'s or group\'s privileges'),
                 'label'     => $this->translate('Audit'),
                 'url'       => 'role/audit'
             ]
