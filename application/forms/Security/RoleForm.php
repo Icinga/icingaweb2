@@ -551,7 +551,7 @@ class RoleForm extends RepositoryForm
             return false;
         }
 
-        if (($newName = $this->getValue('name')) !== $this->getIdentifier()) {
+        if ($this->getIdentifier() && ($newName = $this->getValue('name')) !== $this->getIdentifier()) {
             $this->repository->update(
                 $this->getBaseTable(),
                 ['parent' => $newName],
