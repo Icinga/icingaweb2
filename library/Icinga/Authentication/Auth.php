@@ -17,6 +17,7 @@ use Icinga\User;
 use Icinga\User\Preferences;
 use Icinga\User\Preferences\PreferencesStore;
 use Icinga\Web\Session;
+use Icinga\Web\StyleSheet;
 
 class Auth
 {
@@ -100,8 +101,15 @@ class Auth
     {
         $this->setupUser($user);
 
-        // TODO(el): Quick-fix for #10957. Only reload CSS if the theme changed.
-        $this->getResponse()->setReloadCss(true);
+        // Reload CSS if the theme changed
+        $themingConfig = Icinga::app()->getConfig()->getSection('themes');
+        $userTheme = $user->getPreferences()->getValue('icingaweb', 'theme');
+        if (! (bool) $themingConfig->get('disabled', false) && $userTheme !== null) {
+            $defaultTheme = $themingConfig->get('default', StyleSheet::DEFAULT_THEME);
+            if ($userTheme !== $defaultTheme) {
+                $this->getResponse()->setReloadCss(true);
+            }
+        }
 
         $this->user = $user;
         if ($persist) {
