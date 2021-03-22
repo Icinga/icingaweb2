@@ -141,9 +141,14 @@ class RoleController extends AuthBackendController
         $type = $this->params->has('group') ? 'group' : 'user';
         $name = $this->params->get($type);
 
+        $backend = null;
+        if ($name && $type === 'user') {
+            $backend = $this->params->getRequired('backend');
+        }
+
         $form = new SingleValueSearchControl();
-        $form->setMetaDataNames('type');
-        $form->populate(['q' => $name, 'q-type' => $type]);
+        $form->setMetaDataNames('type', 'backend');
+        $form->populate(['q' => $name, 'q-type' => $type, 'q-backend' => $backend]);
         $form->setInputLabel(t('Enter user or group name'));
         $form->setSubmitLabel(t('Inspect'));
         $form->setSuggestionUrl(Url::fromPath(
@@ -152,9 +157,14 @@ class RoleController extends AuthBackendController
         ));
 
         $form->on(SingleValueSearchControl::ON_SUCCESS, function ($form) {
-            $this->redirectNow(Url::fromPath('role/audit', [
-                $form->getValue('q-type') ?: 'user' => $form->getValue('q')
-            ]));
+            $type = $form->getValue('q-type') ?: 'user';
+            $params = [$type => $form->getValue('q')];
+
+            if ($type === 'user') {
+                $params['backend'] = $form->getValue('q-backend');
+            }
+
+            $this->redirectNow(Url::fromPath('role/audit', $params));
         })->handleRequest(ServerRequest::fromGlobals());
 
         $this->content->add($form);
@@ -185,7 +195,10 @@ class RoleController extends AuthBackendController
             }
 
             foreach ($names as $name) {
-                $users[$name] = ['type' => 'user'];
+                $users[$name] = [
+                    'type'      => 'user',
+                    'backend'   => $backend->getName()
+                ];
             }
 
             $limit -= count($names);
