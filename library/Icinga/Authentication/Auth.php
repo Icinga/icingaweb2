@@ -98,97 +98,16 @@ class Auth
 
     public function setAuthenticated(User $user, $persist = true)
     {
-        $username = $user->getUsername();
-        try {
-            $config = Config::app();
-        } catch (NotReadableError $e) {
-            Logger::error(
-                new IcingaException(
-                    'Cannot load preferences for user "%s". An exception was thrown: %s',
-                    $username,
-                    $e
-                )
-            );
-            $config = new Config();
-        }
-        if ($config->get('global', 'config_backend', 'db') !== 'none') {
-            $preferencesConfig = new ConfigObject(array(
-                'store'     => $config->get('global', 'config_backend', 'db'),
-                'resource'  => $config->get('global', 'config_resource')
-            ));
-            try {
-                $preferencesStore = PreferencesStore::create(
-                    $preferencesConfig,
-                    $user
-                );
-                $preferences = new Preferences($preferencesStore->load());
-            } catch (Exception $e) {
-                Logger::error(
-                    new IcingaException(
-                        'Cannot load preferences for user "%s". An exception was thrown: %s',
-                        $username,
-                        $e
-                    )
-                );
-                $preferences = new Preferences();
-            }
-        } else {
-            $preferences = new Preferences();
-        }
+        $this->setupUser($user);
+
         // TODO(el): Quick-fix for #10957. Only reload CSS if the theme changed.
         $this->getResponse()->setReloadCss(true);
-        $user->setPreferences($preferences);
-        $groups = $user->getGroups();
-        $userBackendName = $user->getAdditional('backend_name');
-        foreach (Config::app('groups') as $name => $config) {
-            $groupsUserBackend = $config->user_backend;
-            if ($groupsUserBackend
-                && $groupsUserBackend !== 'none'
-                && $userBackendName !== null
-                && $groupsUserBackend !== $userBackendName
-            ) {
-                // Do not ask for Group membership if a specific User Backend
-                // has been assigned to that Group Backend, and the user has
-                // been authenticated by another User Backend
-                continue;
-            }
 
-            try {
-                $groupBackend = UserGroupBackend::create($name, $config);
-                $groupsFromBackend = $groupBackend->getMemberships($user);
-            } catch (Exception $e) {
-                Logger::error(
-                    'Can\'t get group memberships for user \'%s\' from backend \'%s\'. An exception was thrown: %s',
-                    $username,
-                    $name,
-                    $e
-                );
-                continue;
-            }
-            if (empty($groupsFromBackend)) {
-                Logger::debug(
-                    'No groups found in backend "%s" which the user "%s" is a member of.',
-                    $name,
-                    $user->getUsername()
-                );
-                continue;
-            }
-            $groupsFromBackend = array_values($groupsFromBackend);
-            Logger::debug(
-                'Groups found in backend "%s" for user "%s": %s',
-                $name,
-                $user->getUsername(),
-                join(', ', $groupsFromBackend)
-            );
-            $groups = array_merge($groups, array_combine($groupsFromBackend, $groupsFromBackend));
-        }
-        $user->setGroups($groups);
-        $admissionLoader = new AdmissionLoader();
-        $admissionLoader->applyRoles($user);
         $this->user = $user;
         if ($persist) {
             $this->persistCurrentUser();
         }
+
         AuditHook::logActivity('login', 'User logged in');
     }
 
@@ -408,5 +327,111 @@ class Auth
         AuditHook::logActivity('logout', 'User logged out');
         $this->user = null;
         Session::getSession()->purge();
+    }
+
+    /**
+     * Setup the given user
+     *
+     * This loads preferences, groups and roles.
+     *
+     * @param User $user
+     *
+     * @return void
+     */
+    public function setupUser(User $user)
+    {
+        // Load the user's preferences
+
+        try {
+            $config = Config::app();
+        } catch (NotReadableError $e) {
+            Logger::error(
+                new IcingaException(
+                    'Cannot load preferences for user "%s". An exception was thrown: %s',
+                    $user->getUsername(),
+                    $e
+                )
+            );
+            $config = new Config();
+        }
+
+        if ($config->get('global', 'config_backend', 'db') !== 'none') {
+            $preferencesConfig = new ConfigObject([
+                'store'     => $config->get('global', 'config_backend', 'db'),
+                'resource'  => $config->get('global', 'config_resource')
+            ]);
+
+            try {
+                $preferencesStore = PreferencesStore::create($preferencesConfig, $user);
+                $preferences = new Preferences($preferencesStore->load());
+            } catch (Exception $e) {
+                Logger::error(
+                    new IcingaException(
+                        'Cannot load preferences for user "%s". An exception was thrown: %s',
+                        $user->getUsername(),
+                        $e
+                    )
+                );
+                $preferences = new Preferences();
+            }
+        } else {
+            $preferences = new Preferences();
+        }
+
+        $user->setPreferences($preferences);
+
+        // Load the user's groups
+        $groups = $user->getGroups();
+        $userBackendName = $user->getAdditional('backend_name');
+        foreach (Config::app('groups') as $name => $config) {
+            $groupsUserBackend = $config->user_backend;
+            if ($groupsUserBackend
+                && $groupsUserBackend !== 'none'
+                && $userBackendName !== null
+                && $groupsUserBackend !== $userBackendName
+            ) {
+                // Do not ask for Group membership if a specific User Backend
+                // has been assigned to that Group Backend, and the user has
+                // been authenticated by another User Backend
+                continue;
+            }
+
+            try {
+                $groupBackend = UserGroupBackend::create($name, $config);
+                $groupsFromBackend = $groupBackend->getMemberships($user);
+            } catch (Exception $e) {
+                Logger::error(
+                    'Can\'t get group memberships for user \'%s\' from backend \'%s\'. An exception was thrown: %s',
+                    $user->getUsername(),
+                    $name,
+                    $e
+                );
+                continue;
+            }
+
+            if (empty($groupsFromBackend)) {
+                Logger::debug(
+                    'No groups found in backend "%s" which the user "%s" is a member of.',
+                    $name,
+                    $user->getUsername()
+                );
+                continue;
+            }
+
+            $groupsFromBackend = array_values($groupsFromBackend);
+            Logger::debug(
+                'Groups found in backend "%s" for user "%s": %s',
+                $name,
+                $user->getUsername(),
+                join(', ', $groupsFromBackend)
+            );
+            $groups = array_merge($groups, array_combine($groupsFromBackend, $groupsFromBackend));
+        }
+
+        $user->setGroups($groups);
+
+        // Load the user's roles
+        $admissionLoader = new AdmissionLoader();
+        $admissionLoader->applyRoles($user);
     }
 }
