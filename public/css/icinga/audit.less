@@ -1,0 +1,318 @@
+// Style
+
+.privilege-audit {
+  &, ul, ol {
+    list-style-type: none;
+  }
+
+  h3 {
+    border-bottom: 1px solid @gray-light;
+  }
+
+  h3 em,
+  .previews em,
+  .privilege-label em {
+    color: @text-color-light;
+  }
+  h3 em {
+    font-weight: normal;
+  }
+  .privilege-label em {
+    font-style: normal;
+  }
+
+  .icon {
+    color: @gray-light;
+
+    &.granted {
+      color: @color-granted;
+    }
+
+    &.refused {
+      color: @color-refused;
+    }
+
+    &.restricted {
+      color: @color-restricted;
+    }
+  }
+
+  .privilege-list > li {
+    .spacer {
+      opacity: 0;
+      .transition(opacity .5s ease-out);
+    }
+
+    &:hover .spacer {
+      .transition(opacity .25s .25s ease-in);
+      border: 0 dashed @gray-light;
+      border-top-width: .2em;
+      opacity: 1;
+    }
+  }
+
+  .vertical-line {
+    border: 0 solid;
+    border-left-width: 2px;
+
+    &.granted {
+      border-color: @color-granted;
+    }
+
+    &.refused {
+      border-color: @color-refused;
+    }
+  }
+
+  .connector {
+    border: 0 solid @gray-lighter;
+    border-bottom-width: 2px;
+
+    &.granted {
+      border-color: @color-granted;
+    }
+
+    &.refused {
+      border-color: @color-refused;
+    }
+
+    &:first-child {
+      border-width: 0 0 2px 2px;
+      border-bottom-left-radius: .5em;
+    }
+  }
+
+  .role {
+    .rounded-corners(1em);
+    border: 2px solid @gray-lighter;
+
+    &.granted {
+      border: 2px solid @color-granted;
+    }
+
+    &.refused {
+      border: 2px solid @color-refused;
+    }
+  }
+
+  .restriction {
+    font-family: @font-family-fixed;
+    background-color: @gray-lighter;
+  }
+}
+
+// Layout
+
+.privilege-audit {
+  &, ul, ol {
+    margin: 0;
+    padding: 0;
+  }
+
+  > li:not(.collapsed) {
+    margin-bottom: 2em;
+  }
+
+  .flex-overflow,
+  .privilege-list > li,
+  .inheritance-paths > ol {
+    display: flex;
+  }
+
+  .privilege-list > li {
+    margin-top: 1em;
+
+    > :last-child {
+      // This aids the usage of text-overflow:ellipsis in any of the children.
+      // It seems that to get this working while none of the children has a
+      // defined width, any flex item on the way up to the clipped container
+      // also must have a overflow value of "hidden".
+      // https://codepen.io/unthinkingly/pen/XMwJLG
+      overflow: hidden;
+    }
+  }
+
+  h3 {
+    display: flex;
+
+    > :first-child {
+      flex: 3 1 auto;
+      min-width: 20em;
+      max-width: 40em / 1.167em; // privilege label width + spacer width / h3 font-size
+    }
+
+    .audit-preview {
+      flex: 1 1 auto;
+
+      .icon:before {
+        width: 1.25em;
+        font-size: 1.25em / 1.167em; // privilege state icon font-size / h3 font-size
+      }
+    }
+
+    em {
+      font-size: .857em;
+    }
+  }
+
+  h4,
+  .privilege-label {
+    flex-shrink: 0;
+    width: 20em;
+    margin: 0;
+    text-align: right;
+  }
+
+  ol + h4 {
+    margin-top: 1em;
+  }
+
+  .spacer {
+    flex: 20 1 auto;
+    min-width: 10em; // TODO: Mobile?
+    max-width: 18.8em; // 20em - (margin-left + margin-right)
+    margin: .6em;
+  }
+
+  .inheritance-paths,
+  .restrictions {
+    flex: 1 1 auto;
+
+    > div {
+      line-height: 1;
+
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+
+      > .icon:before {
+        width: 1.25em;
+        font-size: 1.25em;
+      }
+    }
+  }
+
+  .vertical-line {
+    margin-left: ~"calc(.75em - 1px)";
+  }
+
+  .connector {
+    flex: 1 1 auto;
+    width: 2em;
+    max-width: 2em;
+    min-width: 1em;
+    margin-bottom: ~"calc(1em - 1px)";
+
+    &:first-child {
+      margin-left: ~"calc(.75em - 1px)";
+    }
+
+    &.initiator {
+      z-index: 1;
+      margin-right: ~"calc(-.25em - 2px)";
+    }
+  }
+
+  .vertical-line + .connector {
+    min-width: ~"calc(.75em - 2px)";
+    width: ~"calc(.75em - 2px)";
+    flex-grow: 0;
+
+    &.initiator {
+      width: ~"calc(1em - 1px)";
+    }
+  }
+  .connector:first-child {
+    min-width: .75em;
+    width: .75em;
+    flex-grow: 0;
+
+    &.initiator {
+      width: 1em;
+    }
+  }
+
+  .role {
+    padding: .25em .5em .25em .5em;
+    line-height: 1;
+
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+
+    .icon:before {
+      font-size: 1.25em;
+    }
+  }
+  .inheritance-paths .role {
+    min-width: 4em;
+    margin-top: .5em;
+    padding-left: .25em;
+  }
+  .restrictions .role {
+    display: inline-block;
+  }
+
+  .previews {
+    display: flex;
+    margin-top: .25em;
+
+    em {
+      // explicit margin + ((header icon width + its margin right) * 125% font-size)
+      margin: 0 1em 0 1em + ((1.25em + .2em) * 1.25em);
+    }
+  }
+
+  .links li:not(:last-child):after {
+    content: ",";
+  }
+
+  .restrictions > ul > li {
+    margin-top: .5em;
+
+    .role {
+      margin-left: 1.25em + .2em * 1.25em; // (header icon width + its margin right) * 125% font-size
+      margin-right: 1em;
+    }
+  }
+
+  .restriction {
+    font-size: .8em;
+    padding: .335em / .8em;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+
+    .user-select(all);
+  }
+}
+
+// Integrations
+
+.privilege-audit .collapsible {
+  .collapsible-control {
+    cursor: pointer;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+
+  .collapsible-control:after {
+    content: "\f103";
+    display: inline-block;
+    font-family: 'ifont';
+    font-weight: normal;
+    padding: 0 .25em;
+    margin-right: .25em;
+    width: 1em;
+    opacity: .6;
+    float: right;
+  }
+
+  &.collapsed .collapsible-control:after {
+    content: "\e87a";
+  }
+}
