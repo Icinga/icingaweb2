@@ -5,15 +5,22 @@ namespace Icinga\Controllers;
 
 use Exception;
 use GuzzleHttp\Psr7\ServerRequest;
+use Icinga\Authentication\AdmissionLoader;
+use Icinga\Authentication\Auth;
 use Icinga\Authentication\RolesConfig;
 use Icinga\Data\Selectable;
 use Icinga\Exception\NotFoundError;
 use Icinga\Forms\Security\RoleForm;
+use Icinga\Module\Icingadb\Widget\EmptyState;
 use Icinga\Repository\Repository;
 use Icinga\Security\SecurityException;
+use Icinga\User;
 use Icinga\Web\Controller\AuthBackendController;
+use Icinga\Web\View\PrivilegeAudit;
 use Icinga\Web\Widget\SingleValueSearchControl;
+use ipl\Html\Html;
 use ipl\Web\Url;
+use ipl\Web\Widget\Link;
 
 /**
  * Manage user permissions and restrictions based on roles
@@ -137,7 +144,9 @@ class RoleController extends AuthBackendController
     {
         $this->assertPermission('config/access-control/roles');
         $this->createListTabs()->activate('role/audit');
+        $this->view->title = t('Audit');
 
+        $roleName = $this->params->get('role');
         $type = $this->params->has('group') ? 'group' : 'user';
         $name = $this->params->get($type);
 
@@ -167,7 +176,68 @@ class RoleController extends AuthBackendController
             $this->redirectNow(Url::fromPath('role/audit', $params));
         })->handleRequest(ServerRequest::fromGlobals());
 
-        $this->content->add($form);
+        $this->addControl($form);
+
+        if (! $name) {
+            $this->addContent(new EmptyState(t('No user or group selected.')));
+            return;
+        }
+
+        if ($type === 'user') {
+            $header = Html::tag('h2', sprintf(t('Privilege Audit for User "%s"'), $name));
+
+            $user = new User($name);
+            $user->setAdditional('backend_name', $backend);
+            Auth::getInstance()->setupUser($user);
+        } else {
+            $header = Html::tag('h2', sprintf(t('Privilege Audit for Group "%s"'), $name));
+
+            $user = new User((string) time());
+            $user->setGroups([$name]);
+            (new AdmissionLoader())->applyRoles($user);
+        }
+
+        $chosenRole = null;
+        $assignedRoles = array_filter($user->getRoles(), function ($role) use ($user, &$chosenRole, $roleName) {
+            if (! in_array($role->getName(), $user->getAdditional('assigned_roles'), true)) {
+                return false;
+            }
+
+            if ($role->getName() === $roleName) {
+                $chosenRole = $role;
+            }
+
+            return true;
+        });
+
+        $this->addControl(Html::tag(
+            'ul',
+            ['class' => 'privilege-audit-role-control'],
+            [
+                Html::tag('li', $roleName ? null : ['class' => 'active'], new Link(
+                    t('All roles'),
+                    Url::fromRequest()->without('role'),
+                    ['class' => 'button-link', 'title' => t('Show privileges of all roles')]
+                )),
+                array_map(function ($role) use ($roleName) {
+                    return Html::tag(
+                        'li',
+                        $role->getName() === $roleName ? ['class' => 'active'] : null,
+                        new Link(
+                            $role->getName(),
+                            Url::fromRequest()->setParam('role', $role->getName()),
+                            [
+                                'class' => 'button-link',
+                                'title' => sprintf(t('Only show privileges of role %s'), $role->getName())
+                            ]
+                        )
+                    );
+                }, $assignedRoles)
+            ]
+        ));
+
+        $this->addControl($header);
+        $this->addContent(new PrivilegeAudit($chosenRole !== null ? [$chosenRole] : $assignedRoles));
     }
 
     public function suggestRoleMemberAction()

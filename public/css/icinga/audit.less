@@ -1,5 +1,18 @@
 // Style
 
+.privilege-audit-role-control {
+  list-style-type: none;
+
+  li {
+    .rounded-corners(3px);
+    border: 1px solid @low-sat-blue;
+
+    &.active {
+      border-color: @icinga-blue;
+    }
+  }
+}
+
 .privilege-audit {
   &, ul, ol {
     list-style-type: none;
@@ -102,6 +115,22 @@
 }
 
 // Layout
+
+.privilege-audit-role-control {
+  display: inline-flex;
+  flex-wrap: wrap;
+
+  margin: 0 0 0 1em;
+  padding: 0;
+
+  li {
+    margin-top: @vertical-padding;
+
+    &:not(:first-child) {
+      margin-left: .5em;
+    }
+  }
+}
 
 .privilege-audit {
   &, ul, ol {
