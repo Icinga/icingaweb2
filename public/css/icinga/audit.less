@@ -316,6 +316,25 @@
   }
 }
 
+#layout.minimal-layout,
+#layout.poor-layout {
+  .privilege-audit {
+    h3 > :first-child {
+      flex-grow: 99;
+    }
+
+    h4,
+    .privilege-label {
+      width: 12em;
+    }
+
+    .spacer {
+      flex: 0;
+      min-width: 0;
+    }
+  }
+}
+
 // Integrations
 
 .privilege-audit .collapsible {
