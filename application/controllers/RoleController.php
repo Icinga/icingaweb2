@@ -237,7 +237,10 @@ class RoleController extends AuthBackendController
         ));
 
         $this->addControl($header);
-        $this->addContent(new PrivilegeAudit($chosenRole !== null ? [$chosenRole] : $assignedRoles));
+        $this->addContent(
+            (new PrivilegeAudit($chosenRole !== null ? [$chosenRole] : $assignedRoles))
+                ->addAttributes(['id' => 'role/audit'])
+        );
     }
 
     public function suggestRoleMemberAction()
