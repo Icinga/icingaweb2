@@ -15,7 +15,7 @@
   cursor: pointer;
   line-height: normal;
   outline: none;
-  padding: @vertical-padding @horizontal-padding;
+  padding: ~"calc(@{vertical-padding} - 2px)" @horizontal-padding;
 
   @duration: 0.2s;
   // The trailing semicolon is needed to be able to pass this as a css list
