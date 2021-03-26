@@ -112,6 +112,7 @@ class SingleValueSearchControl extends Form
                 'required'              => true,
                 'minlength'             => 1,
                 'autocomplete'          => 'off',
+                'class'                 => 'search',
                 'data-enrichment-type'  => 'completion',
                 'data-term-suggestions' => '#' . $suggestionsId,
                 'data-suggest-url'      => $this->suggestionUrl,
