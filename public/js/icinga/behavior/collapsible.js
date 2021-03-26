@@ -61,7 +61,10 @@
 
                 $collapsible.addClass('can-collapse');
 
-                if (! _this.state.has(_this.icinga.utils.getCSSPath($collapsible))) {
+                if (
+                    $collapsible.is('[data-no-persistence]')
+                    || ! _this.state.has(_this.icinga.utils.getCSSPath($collapsible))
+                ) {
                     _this.collapse($collapsible);
                 }
             }
@@ -91,7 +94,7 @@
                 $collapsible.after($('#collapsible-control-ghost').clone().removeAttr('id'));
                 $collapsible.addClass('can-collapse');
 
-                if (! _this.state.has(collapsiblePath)) {
+                if ($collapsible.is('[data-no-persistence]') || ! _this.state.has(collapsiblePath)) {
                     _this.collapse($collapsible);
                 }
             }
@@ -140,6 +143,12 @@
 
         if (! $collapsible.length) {
             _this.icinga.logger.error('[Collapsible] Collapsible control has no associated .collapsible: ', $target);
+        } else if ($collapsible.is('[data-no-persistence]')) {
+            if ($collapsible.is('.collapsed')) {
+                _this.expand($collapsible);
+            } else {
+                _this.collapse($collapsible);
+            }
         } else {
             var collapsiblePath = _this.icinga.utils.getCSSPath($collapsible);
             if (_this.state.has(collapsiblePath)) {
