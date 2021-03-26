@@ -171,16 +171,24 @@ class RoleForm extends RepositoryForm
                         'autosubmit'    => isset($spec['isFullPerm']),
                         'disabled'      => $hasFullPerm || $hasAdminPerm ?: null,
                         'value'         => $hasFullPerm || $hasAdminPerm,
-                        'label'         => preg_replace(
-                            // Adds a zero-width char after each slash to help browsers break onto newlines
-                            '~(?<!<)/~',
-                            '/&#8203;',
-                            isset($spec['label']) ? $spec['label'] : preg_replace(
-                                '~^(\w+)(/.*)~',
-                                '<em>$1</em>$2',
-                                $name
-                            )
-                        ),
+                        'label'         => isset($spec['label'])
+                            ? $spec['label']
+                            : join('', iterator_to_array(call_user_func(function ($segments) {
+                                foreach ($segments as $segment) {
+                                    if ($segment[0] === '/') {
+                                        // Adds a zero-width char after each slash to help browsers break onto newlines
+                                        yield '/&#8203;';
+                                        yield '<span class="no-wrap">' . substr($segment, 1) . '</span>';
+                                    } else {
+                                        yield '<em>' . $segment . '</em>';
+                                    }
+                                }
+                            }, preg_split(
+                                '~(/[^/]+)~',
+                                $name,
+                                -1,
+                                PREG_SPLIT_DELIM_CAPTURE|PREG_SPLIT_NO_EMPTY
+                            )))),
                         'description'   => isset($spec['description']) ? $spec['description'] : $name,
                         'decorators'    => array_merge(
                             array_slice(self::$defaultElementDecorators, 0, 3),
@@ -220,16 +228,24 @@ class RoleForm extends RepositoryForm
                         'text',
                         $elementName,
                         [
-                            'label'         => preg_replace(
-                                // Adds a zero-width char after each slash to help browsers break onto newlines
-                                '~(?<!<)/~',
-                                '/&#8203;',
-                                isset($spec['label']) ? $spec['label'] : preg_replace(
-                                    '~^(\w+)(/.*)~',
-                                    '<em>$1</em>$2',
-                                    $name
-                                )
-                            ),
+                            'label'         => isset($spec['label'])
+                                ? $spec['label']
+                                : join('', iterator_to_array(call_user_func(function ($segments) {
+                                    foreach ($segments as $segment) {
+                                        if ($segment[0] === '/') {
+                                            // Add zero-width char after each slash to help browsers break onto newlines
+                                            yield '/&#8203;';
+                                            yield '<span class="no-wrap">' . substr($segment, 1) . '</span>';
+                                        } else {
+                                            yield '<em>' . $segment . '</em>';
+                                        }
+                                    }
+                                }, preg_split(
+                                    '~(/[^/]+)~',
+                                    $name,
+                                    -1,
+                                    PREG_SPLIT_DELIM_CAPTURE|PREG_SPLIT_NO_EMPTY
+                                )))),
                             'description'   => $spec['description'],
                             'style'         => $isUnrestricted ? 'text-decoration:line-through;' : '',
                             'readonly'      => $isUnrestricted ?: null
