@@ -288,7 +288,10 @@ class FilterEditor extends AbstractWidget
             $url = Url::fromRequest()->onlyWith($this->preserveParams);
             $urlParams = $url->getParams();
             $url->setQueryString($filter->toQueryString());
-            $url->getParams()->mergeValues($urlParams->toArray(false));
+            foreach ($urlParams->toArray(false) as $key => $value) {
+                $url->getParams()->addEncoded($key, $value);
+            }
+
             $this->redirectNow($url);
         }
 
