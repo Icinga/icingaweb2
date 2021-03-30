@@ -497,7 +497,6 @@
 
                 var originUrl = req.$target.data('icingaUrl');
 
-                // We may just close the right column, refresh the left one in this case
                 $(window).on('popstate.__back__', { self: this }, function (event) {
                     var _this = event.data.self;
                     var $refreshTarget = $('#col2');
@@ -521,12 +520,18 @@
                         $refreshTarget = $('#col1');
                     }
 
+                    // loadUrl won't run this request, as due to the history handling it's already running.
+                    // The important bit though is that it returns this (already running) request. This way
+                    // it's possible to set `scripted = true` on the request. (`addToHistory = true` should
+                    // already be the case, though it's added again just in case it's not already `true`..)
                     var req = _this.loadUrl(refreshUrl, $refreshTarget);
                     req.addToHistory = false;
                     req.scripted = true;
 
                     setTimeout(function () {
                         // TODO: Find a better solution than a hardcoded one
+                        // This is still the *cheat* to get live results
+                        // (in case there's a delay and a change is not instantly effective)
                         var req = _this.loadUrl(refreshUrl, $refreshTarget);
                         req.addToHistory = false;
                         req.scripted = true;
@@ -537,6 +542,35 @@
 
                 // Navigate back, no redirect desired
                 window.history.back();
+
+                return true;
+            } else if (redirect.match(/__CLOSE__/)) {
+                if (req.$redirectTarget.is('#col1')) {
+                    icinga.logger.warn('Cannot close #col1');
+                    return false;
+                }
+
+                // Close right column as requested
+                icinga.ui.layout1col();
+
+                // Refresh left column and produce a new history state for it
+                var $col1 = $('#col1');
+                var col1Url = icinga.history.getCol1State();
+                var refresh = this.loadUrl(col1Url, $col1);
+                refresh.scripted = true;
+
+                var _this = this;
+                setTimeout(function () {
+                    // TODO: Find a better solution than a hardcoded one
+                    // This is still the *cheat* to get live results
+                    // (in case there's a delay and a change is not instantly effective)
+                    var secondRefresh = _this.loadUrl(col1Url, $col1);
+                    if (secondRefresh !== refresh) {
+                        // Only change these properties if it's not still the first refresh
+                        secondRefresh.addToHistory = false;
+                        secondRefresh.scripted = true;
+                    }
+                }, 1000);
 
                 return true;
             }
