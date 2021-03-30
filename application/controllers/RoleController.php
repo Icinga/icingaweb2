@@ -84,7 +84,7 @@ class RoleController extends AuthBackendController
         $this->assertPermission('config/access-control/roles');
 
         $role = new RoleForm();
-        $role->setRedirectUrl('role/list');
+        $role->setRedirectUrl('__CLOSE__');
         $role->setRepository(new RolesConfig());
         $role->setSubmitLabel($this->translate('Create Role'));
         $role->add()->handleRequest();
@@ -103,7 +103,7 @@ class RoleController extends AuthBackendController
 
         $name = $this->params->getRequired('role');
         $role = new RoleForm();
-        $role->setRedirectUrl('role/list');
+        $role->setRedirectUrl('__CLOSE__');
         $role->setRepository(new RolesConfig());
         $role->setSubmitLabel($this->translate('Update Role'));
         $role->edit($name);
@@ -126,7 +126,7 @@ class RoleController extends AuthBackendController
 
         $name = $this->params->getRequired('role');
         $role = new RoleForm();
-        $role->setRedirectUrl('role/list');
+        $role->setRedirectUrl('__CLOSE__');
         $role->setRepository(new RolesConfig());
         $role->setSubmitLabel($this->translate('Remove Role'));
         $role->remove($name);
