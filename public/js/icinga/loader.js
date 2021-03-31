@@ -1247,25 +1247,12 @@
                     }
                 }
             });
-            if (discard) {
-                return;
-            }
-
-            // TODO: We do not want to wrap this twice...
-            var $content = $('<div>' + content + '</div>');
 
             $('.container', $container).each(function() {
                 _this.stopPendingRequestsFor($(this));
             });
 
-            if (false &&
-                $('.dashboard', $content).length > 0 &&
-                $('.dashboard', $container).length === 0
-            ) {
-                // $('.dashboard', $content)
-                // $container.html(content);
-
-            } else {
+            if (! discard) {
                 if ($container.closest('.dashboard').length) {
                     var title = $('h1', $container).first().detach();
                     $container.html(title).append(content);
@@ -1275,9 +1262,10 @@
                     $container.append(content);
                 }
             }
+
             this.icinga.ui.assignUniqueContainerIds();
 
-            if (navigationAnchor) {
+            if (! discard && navigationAnchor) {
                 setTimeout(this.icinga.ui.focusElement.bind(this.icinga.ui), 0, navigationAnchor, $container);
             } else if (! activeElementPath) {
                 // Active element was not in this container
