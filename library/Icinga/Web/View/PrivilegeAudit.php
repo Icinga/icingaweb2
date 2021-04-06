@@ -112,7 +112,6 @@ class PrivilegeAudit extends BaseHtmlElement
             $path = new HtmlElement('ol');
 
             $class = null;
-            $initiator = null;
             $setInitiator = false;
             foreach ($rolesReversed as $role) {
                 $granted = false;
@@ -136,7 +135,7 @@ class PrivilegeAudit extends BaseHtmlElement
                     $connector = new HtmlElement('li', ['class' => ['connector', $class]]);
                     if ($setInitiator) {
                         $setInitiator = false;
-                        $initiator = $connector;
+                        $connector->getAttributes()->add('class', 'initiator');
                     }
 
                     $path->prepend($connector);
@@ -156,10 +155,6 @@ class PrivilegeAudit extends BaseHtmlElement
                 }
             }
 
-            if ($initiator !== null) {
-                $initiator->getAttributes()->add('class', 'initiator');
-            }
-
             if ($vClass === null || $vClass === 'granted') {
                 $vClass = $class;
             }
@@ -169,7 +164,7 @@ class PrivilegeAudit extends BaseHtmlElement
                 new HtmlElement('li', ['class' => [
                     'connector',
                     $class,
-                    $initiator === null ? 'initiator' : null
+                    $setInitiator ? 'initiator' : null
                 ]])
             ]));
         }
