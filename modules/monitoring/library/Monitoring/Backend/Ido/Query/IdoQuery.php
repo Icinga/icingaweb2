@@ -17,6 +17,7 @@ use Icinga\Exception\ProgrammingError;
 use Icinga\Exception\QueryException;
 use Icinga\Web\Session;
 use Icinga\Module\Monitoring\Data\ColumnFilterIterator;
+use Zend_Db_Select;
 
 /**
  * Base class for Ido Queries
@@ -1182,7 +1183,13 @@ abstract class IdoQuery extends DbQuery
     {
         // TODO: This is not generic enough yet
         list($type, $name) = $this->customvarNameToTypeName($customvar);
-        $alias = ($type === 'host' ? 'hcv_' : 'scv_') . $name;
+        $alias = ($type === 'host' ? 'hcv_' : 'scv_') . preg_replace('~[^a-zA-Z0-9_]~', '_', $name);
+
+        // We're replacing any problematic char with an underscore, which will lead to duplicates, this avoids them
+        $from = $this->select->getPart(Zend_Db_Select::FROM);
+        for ($i = 2; array_key_exists($alias, $from); $i++) {
+            $alias = $alias . '_' . $i;
+        }
 
         $this->customVars[strtolower($customvar)] = $alias;
 
@@ -1221,7 +1228,7 @@ abstract class IdoQuery extends DbQuery
     protected function customvarNameToTypeName($customvar)
     {
         $customvar = strtolower($customvar);
-        if (! preg_match('~^_(host|service)_([a-zA-Z0-9_]+)$~', $customvar, $m)) {
+        if (! preg_match('~^_(host|service)_(.+)$~', $customvar, $m)) {
             throw new ProgrammingError(
                 'Got invalid custom var: "%s"',
                 $customvar
