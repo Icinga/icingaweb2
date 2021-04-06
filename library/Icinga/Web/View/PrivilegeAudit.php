@@ -199,8 +199,8 @@ class PrivilegeAudit extends BaseHtmlElement
                 break;
             }
 
-            if (($roleRestriction = $role->getRestrictions($restriction)) !== null) {
-                $restrictedBy[] = $role->getName();
+            foreach ($this->collectRestrictions($role, $restriction) as $role => $roleRestriction) {
+                $restrictedBy[] = $role;
                 $restrictions[] = $roleRestriction;
             }
         }
@@ -216,13 +216,15 @@ class PrivilegeAudit extends BaseHtmlElement
                             'Restricted by %s and %s as well as %d others',
                             count($restrictedBy) - 2
                         ),
-                        $restrictedBy[0],
-                        $restrictedBy[1],
+                        $restrictedBy[0]->getName(),
+                        $restrictedBy[1]->getName(),
                         count($restrictedBy) - 2
                     )
                     : sprintf(
                         tp('Restricted by %s', 'Restricted by %s and %s', count($restrictedBy)),
-                        ...$restrictedBy
+                        ...array_map(function ($role) {
+                            return $role->getName();
+                        }, $restrictedBy)
                     )
             ]);
         } else {
@@ -237,7 +239,9 @@ class PrivilegeAudit extends BaseHtmlElement
                     new HtmlElement('span', [
                         'class' => 'role',
                         'title' => t('All roles combined')
-                    ], join(' | ', $restrictedBy)),
+                    ], join(' | ', array_map(function ($role) {
+                        return $role->getName();
+                    }, $restrictedBy))),
                     new HtmlElement('code', ['class' => 'restriction'], $combinedRestrictions)
                 ]),
                 $combinedLinks ? new HtmlElement('div', ['class' => 'previews'], [
@@ -247,11 +251,7 @@ class PrivilegeAudit extends BaseHtmlElement
             ]);
         }
 
-        foreach ($this->roles as $role) {
-            if (! in_array($role->getName(), $restrictedBy, true)) {
-                continue;
-            }
-
+        foreach ($restrictedBy as $role) {
             list($roleRestriction, $restrictionLinks) = $this->createRestrictionLinks(
                 $restriction,
                 [$role->getRestrictions($restriction)]
@@ -420,6 +420,16 @@ class PrivilegeAudit extends BaseHtmlElement
                 ]
             ]));
         }
+    }
+
+    private function collectRestrictions(Role $role, $restrictionName)
+    {
+        do {
+            $restriction = $role->getRestrictions($restrictionName);
+            if ($restriction) {
+                yield $role => $restriction;
+            }
+        } while (($role = $role->getParent()) !== null);
     }
 
     private function createRestrictionLinks($restrictionName, array $restrictions)
