@@ -482,7 +482,7 @@ by Icinga Web 2.
 3. Import the database schema: `mysql -D icingaweb2 < /usr/share/icingaweb2/etc/schema/mysql.schema.sql`.
 4. Insert administrator user in the `icingaweb2` database:
 `INSERT INTO icingaweb_user (name, active, password_hash) VALUES ('admin', 1, '<hash>')`, where `<hash>` is the output
-of `openssl passwd -1 <password>`.
+of `php -r 'echo password_hash("yourtopsecretpassword", PASSWORD_DEFAULT);'`.
 5. Make sure the `ido-mysql` and `api` features are enabled in Icinga 2: `icinga2 feature enable ido-mysql` and 
 `icinga2 feature enable api`.
 6. Generate Apache/nginx config. This command will print an apache config for you on stdout:
