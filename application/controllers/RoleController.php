@@ -11,7 +11,6 @@ use Icinga\Authentication\RolesConfig;
 use Icinga\Data\Selectable;
 use Icinga\Exception\NotFoundError;
 use Icinga\Forms\Security\RoleForm;
-use Icinga\Module\Icingadb\Widget\EmptyState;
 use Icinga\Repository\Repository;
 use Icinga\Security\SecurityException;
 use Icinga\User;
@@ -186,7 +185,7 @@ class RoleController extends AuthBackendController
         $this->addControl($form);
 
         if (! $name) {
-            $this->addContent(new EmptyState(t('No user or group selected.')));
+            $this->addContent(Html::wantHtml(t('No user or group selected.')));
             return;
         }
 
