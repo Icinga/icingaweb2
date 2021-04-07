@@ -156,8 +156,8 @@ class SingleValueSearchControl extends Form
     public static function createSuggestions(array $groups)
     {
         $ul = new HtmlElement('ul');
-        foreach ($groups as $name => $entries) {
-            if (is_string($name)) {
+        foreach ($groups as list($name, $entries)) {
+            if ($name) {
                 if ($entries === false) {
                     $ul->add(new HtmlElement('li', ['class' => 'failure-message'], [
                         new HtmlElement('em', null, t('Can\'t search:')),
@@ -169,7 +169,7 @@ class SingleValueSearchControl extends Form
                 }
             }
 
-            foreach ($entries as $label => $metaData) {
+            foreach ($entries as list($label, $metaData)) {
                 $attributes = [
                     'value'     => $label,
                     'type'      => 'button',
