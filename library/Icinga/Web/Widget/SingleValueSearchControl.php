@@ -164,6 +164,12 @@ class SingleValueSearchControl extends Form
                         $name
                     ]));
                     continue;
+                } elseif (empty($entries)) {
+                    $ul->add(new HtmlElement('li', ['class' => 'failure-message'], [
+                        new HtmlElement('em', null, t('No results:')),
+                        $name
+                    ]));
+                    continue;
                 } else {
                     $ul->add(new HtmlElement('li', ['class' => Suggestions::SUGGESTION_TITLE_CLASS], $name));
                 }
