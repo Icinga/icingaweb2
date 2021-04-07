@@ -151,8 +151,15 @@ class RoleController extends AuthBackendController
         $name = $this->params->get($type);
 
         $backend = null;
-        if ($name && $type === 'user') {
-            $backend = $this->params->getRequired('backend');
+        if ($type === 'user') {
+            if ($name) {
+                $backend = $this->params->getRequired('backend');
+            } else {
+                $backends = $this->loadUserBackends();
+                if (! empty($backends)) {
+                    $backend = array_shift($backends)->getName();
+                }
+            }
         }
 
         $form = new SingleValueSearchControl();
