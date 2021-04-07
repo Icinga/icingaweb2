@@ -18,6 +18,7 @@ use Icinga\Web\Controller\AuthBackendController;
 use Icinga\Web\View\PrivilegeAudit;
 use Icinga\Web\Widget\SingleValueSearchControl;
 use ipl\Html\Html;
+use ipl\Html\HtmlString;
 use ipl\Web\Url;
 use ipl\Web\Widget\Link;
 
@@ -258,7 +259,7 @@ class RoleController extends AuthBackendController
         $searchTerm = $requestData['term']['label'];
         $userBackends = $this->loadUserBackends(Selectable::class);
 
-        $users = [];
+        $suggestions = [];
         while ($limit > 0 && ! empty($userBackends)) {
             /** @var Repository $backend */
             $backend = array_shift($userBackends);
@@ -273,10 +274,22 @@ class RoleController extends AuthBackendController
                 continue;
             }
 
+            $users = [];
             foreach ($names as $name) {
-                $users[$name] = [
+                $users[] = [$name, [
                     'type'      => 'user',
                     'backend'   => $backend->getName()
+                ]];
+            }
+
+            if (! empty($users)) {
+                $suggestions[] = [
+                    [
+                        t('Users'),
+                        HtmlString::create('&nbsp;'),
+                        Html::tag('span', ['class' => 'badge'], $backend->getName())
+                    ],
+                    $users
                 ];
             }
 
@@ -285,7 +298,6 @@ class RoleController extends AuthBackendController
 
         $groupBackends = $this->loadUserGroupBackends(Selectable::class);
 
-        $groups = [];
         while ($limit > 0 && ! empty($groupBackends)) {
             /** @var Repository $backend */
             $backend = array_shift($groupBackends);
@@ -300,20 +312,23 @@ class RoleController extends AuthBackendController
                 continue;
             }
 
+            $groups = [];
             foreach ($names as $name) {
-                $groups[$name] = ['type' => 'group'];
+                $groups[] = [$name, ['type' => 'group']];
+            }
+
+            if (! empty($groups)) {
+                $suggestions[] = [
+                    [
+                        t('Groups'),
+                        HtmlString::create('&nbsp;'),
+                        Html::tag('span', ['class' => 'badge'], $backend->getName())
+                    ],
+                    $groups
+                ];
             }
 
             $limit -= count($names);
-        }
-
-        $suggestions = [];
-        if (! empty($users)) {
-            $suggestions[t('Users')] = $users;
-        }
-
-        if (! empty($groups)) {
-            $suggestions[t('Groups')] = $groups;
         }
 
         $this->document->add(SingleValueSearchControl::createSuggestions($suggestions));
