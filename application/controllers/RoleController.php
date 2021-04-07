@@ -331,6 +331,10 @@ class RoleController extends AuthBackendController
             $limit -= count($names);
         }
 
+        if (empty($suggestions)) {
+            $suggestions[] = [t('Your search does not match any user or group'), []];
+        }
+
         $this->document->add(SingleValueSearchControl::createSuggestions($suggestions));
     }
 
