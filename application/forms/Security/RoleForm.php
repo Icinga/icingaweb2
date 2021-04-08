@@ -12,6 +12,7 @@ use Icinga\Forms\ConfigForm;
 use Icinga\Forms\RepositoryForm;
 use Icinga\Util\StringHelper;
 use Icinga\Web\Notification;
+use ipl\Web\Widget\Icon;
 
 /**
  * Form for managing roles
@@ -119,17 +120,12 @@ class RoleForm extends RepositoryForm
         foreach ($this->providedPermissions as $moduleName => $permissionList) {
             $this->sortPermissions($permissionList);
 
+            $anythingGranted = false;
+            $anythingRefused = false;
+            $anythingRestricted = false;
+
             $elements = [$moduleName . '_header'];
-            $this->addElement(
-                'note',
-                $moduleName . '_header',
-                [
-                    'decorators'    => ['ViewHelper'],
-                    'value'         => '<h3>' . ($moduleName !== 'application'
-                        ? sprintf('%s <em>%s</em>', $moduleName, $this->translate('Module'))
-                        :  'Icinga Web 2') . '</h3>'
-                ]
-            );
+            // The actual element is added last
 
             $elements[] = 'permission_header';
             $this->addElement('note', 'permission_header', [
@@ -147,6 +143,11 @@ class RoleForm extends RepositoryForm
             $hasFullPerm = false;
             foreach ($permissionList as $name => $spec) {
                 $elementName = $this->filterName($name);
+
+                if (isset($formData[$elementName]) && $formData[$elementName]) {
+                    $anythingGranted = true;
+                }
+
                 if ($hasFullPerm || $hasAdminPerm) {
                     $elementName .= '_fake';
                 }
@@ -160,6 +161,10 @@ class RoleForm extends RepositoryForm
                     ]);
                     $this->addElement($denyCheckbox);
                     $this->removeFromIteration($denyCheckbox->getName());
+
+                    if (isset($formData[$denyCheckbox->getName()]) && $formData[$denyCheckbox->getName()]) {
+                        $anythingRefused = true;
+                    }
                 }
 
                 $elements[] = $elementName;
@@ -223,6 +228,11 @@ class RoleForm extends RepositoryForm
 
                 foreach ($this->providedRestrictions[$moduleName] as $name => $spec) {
                     $elementName = $this->filterName($name);
+
+                    if (isset($formData[$elementName]) && $formData[$elementName]) {
+                        $anythingRestricted = true;
+                    }
+
                     $elements[] = $elementName;
                     $this->addElement(
                         'text',
@@ -256,6 +266,28 @@ class RoleForm extends RepositoryForm
                         ->setOption('escape', false);
                 }
             }
+
+            $this->addElement(
+                'note',
+                $moduleName . '_header',
+                [
+                    'decorators'    => ['ViewHelper'],
+                    'value'         => '<h3>'
+                        . '<span>' . ($moduleName !== 'application'
+                            ? sprintf('%s <em>%s</em>', $moduleName, $this->translate('Module'))
+                            :  'Icinga Web 2'
+                        ) . '</span>'
+                        . '<span class="privilege-preview">'
+                        . ($hasAdminPerm || $anythingGranted ? new Icon('check-circle', ['class' => 'granted']) : '')
+                        . ($anythingRefused ? new Icon('times-circle', ['class' => 'refused']) : '')
+                        . (! $isUnrestricted && $anythingRestricted
+                            ? new Icon('filter', ['class' => 'restricted'])
+                            : ''
+                        )
+                        . '</span>'
+                        . '</h3>'
+                ]
+            );
 
             $this->addDisplayGroup($elements, $moduleName . '_elements', [
                 'decorators'    => [
