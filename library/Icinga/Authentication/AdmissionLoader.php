@@ -179,9 +179,15 @@ class AdmissionLoader
         $roles = [];
         $permissions = [];
         $restrictions = [];
+        $assignedRoles = [];
         $isUnrestricted = false;
         foreach ($this->roleConfig as $roleName => $roleConfig) {
-            if (! isset($roles[$roleName]) && $this->match($username, $userGroups, $roleConfig)) {
+            $assigned = $this->match($username, $userGroups, $roleConfig);
+            if ($assigned) {
+                $assignedRoles[] = $roleName;
+            }
+
+            if (! isset($roles[$roleName]) && $assigned) {
                 foreach ($this->loadRole($roleName, $roleConfig) as $role) {
                     /** @var Role $role */
                     $roles[$role->getName()] = $role;
@@ -205,6 +211,8 @@ class AdmissionLoader
                 }
             }
         }
+
+        $user->setAdditional('assigned_roles', $assignedRoles);
 
         $user->setIsUnrestricted($isUnrestricted);
         $user->setRestrictions($isUnrestricted ? [] : $restrictions);
