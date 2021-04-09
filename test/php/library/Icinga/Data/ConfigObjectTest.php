@@ -115,11 +115,10 @@ class ConfigObjectTest extends BaseTestCase
         );
     }
 
-    /**
-     * @expectedException \Icinga\Exception\ProgrammingError
-     */
     public function testWhetherItIsNotPossibleToAppendProperties()
     {
+        $this->expectException(\Icinga\Exception\ProgrammingError::class);
+
         $config = new ConfigObject();
         $config[] = 'test';
     }

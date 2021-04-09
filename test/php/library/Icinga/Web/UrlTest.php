@@ -130,11 +130,10 @@ class UrlTest extends BaseTestCase
         );
     }
 
-    /**
-     * @expectedException Icinga\Exception\ProgrammingError
-     */
     public function testWhetherFromPathProperlyHandlesInvalidUrls()
     {
+        $this->expectException(\Icinga\Exception\ProgrammingError::class);
+
         Url::fromPath(null);
     }
 

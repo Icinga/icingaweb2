@@ -8,20 +8,18 @@ use Icinga\Test\BaseTestCase;
 
 class FileTest extends BaseTestCase
 {
-    /**
-     * @expectedException \Icinga\Exception\NotWritableError
-     */
     public function testWhetherWritingToNonWritableFilesThrowsAnException()
     {
+        $this->expectException(\Icinga\Exception\NotWritableError::class);
+
         $file = new File('/dev/null');
         $file->fwrite('test');
     }
 
-    /**
-     * @expectedException \Icinga\Exception\NotWritableError
-     */
     public function testWhetherTruncatingNonWritableFilesThrowsAnException()
     {
+        $this->expectException(\Icinga\Exception\NotWritableError::class);
+
         $file = new File('/dev/null');
         $file->ftruncate(0);
     }

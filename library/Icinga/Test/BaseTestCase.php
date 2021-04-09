@@ -23,7 +23,6 @@ namespace Icinga\Test {
     use Exception;
     use RuntimeException;
     use Mockery;
-    use PHPUnit_Framework_TestCase;
     use Icinga\Application\Icinga;
     use Icinga\Data\ConfigObject;
     use Icinga\Data\ResourceFactory;
@@ -32,7 +31,7 @@ namespace Icinga\Test {
     /**
      * Class BaseTestCase
      */
-    abstract class BaseTestCase extends PHPUnit_Framework_TestCase implements DbTest
+    abstract class BaseTestCase extends Mockery\Adapter\Phpunit\MockeryTestCase implements DbTest
     {
         /**
          * Path to application/
@@ -138,7 +137,7 @@ namespace Icinga\Test {
         /**
          * Setup MVC bootstrapping and ensure that the Icinga-Mock gets reinitialized
          */
-        public function setUp()
+        public function setUp(): void
         {
             parent::setUp();
             $this->setupIcingaMock();
@@ -332,6 +331,23 @@ namespace Icinga\Test {
             $tables = $adapter->listTables();
             foreach ($tables as $table) {
                 $adapter->exec('DROP TABLE ' . $table . ';');
+            }
+        }
+
+        /**
+         * Add assertMatchesRegularExpression() method for phpunit >= 8.0 < 9.0 for compatibility with PHP 7.2.
+         *
+         * @TODO Remove once PHP 7.2 support is not needed for testing anymore.
+         */
+        public static function assertMatchesRegularExpression(
+            string $pattern,
+            string $string,
+            string $message = ''
+        ): void {
+            if (method_exists(parent::class, 'assertMatchesRegularExpression')) {
+                parent::assertMatchesRegularExpression($pattern, $string, $message);
+            } else {
+                static::assertRegExp($pattern, $string, $message);
             }
         }
     }

@@ -605,7 +605,7 @@ abstract class ApplicationBootstrap
         ini_set('display_startup_errors', 1);
         ini_set('display_errors', 1);
         set_error_handler(function ($errno, $errstr, $errfile, $errline) {
-            if (error_reporting() === 0) {
+            if (! (error_reporting() & $errno)) {
                 // Error was suppressed with the @-operator
                 return false; // Continue with the normal error handler
             }
