@@ -26,7 +26,7 @@ class SuccessfulForm extends Form
 
 class FormTest extends BaseTestCase
 {
-    public function tearDown()
+    public function tearDown(): void
     {
         Mockery::close(); // Necessary as some tests are running isolated
     }

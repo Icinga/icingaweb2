@@ -11,7 +11,7 @@ use Icinga\Web\Widget\SearchDashboard;
 
 class SearchDashboardTest extends BaseTestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         $moduleMock = Mockery::mock('Icinga\Application\Modules\Module');
         $searchUrl = (object) array(

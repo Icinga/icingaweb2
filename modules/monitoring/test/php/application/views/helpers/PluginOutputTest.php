@@ -20,7 +20,7 @@ class PluginOutputTest extends BaseTestCase
 
     protected static $statusTags = array('OK', 'WARNING', 'CRITICAL', 'UNKNOWN', 'UP', 'DOWN');
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 

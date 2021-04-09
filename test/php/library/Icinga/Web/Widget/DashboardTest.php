@@ -39,7 +39,7 @@ class DashboardWithPredefinableActiveName extends Dashboard
 
 class DashboardTest extends BaseTestCase
 {
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         Mockery::close(); // Necessary because some tests run in a separate process

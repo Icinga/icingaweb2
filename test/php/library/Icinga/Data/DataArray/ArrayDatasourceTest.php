@@ -10,7 +10,7 @@ class ArrayDatasourceTest extends BaseTestCase
 {
     private $sampleData;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->sampleData = array(

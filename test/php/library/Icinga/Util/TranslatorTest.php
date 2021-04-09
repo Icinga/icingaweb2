@@ -17,7 +17,7 @@ class TranslatorWithHardcodedLocaleCodes extends Translator
 
 class TranslatorTest extends BaseTestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         Translator::registerDomain('icingatest', BaseTestCase::$testDir . '/res/locale');

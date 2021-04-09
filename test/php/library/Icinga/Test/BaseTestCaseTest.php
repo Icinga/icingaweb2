@@ -10,7 +10,7 @@ class BaseTestCaseTest extends BaseTestCase
 {
     protected $emptySqlDumpFile;
 
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
 

@@ -10,14 +10,14 @@ use Icinga\Test\BaseTestCase;
 
 class StreamWriterTest extends BaseTestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
         $this->target = tempnam(sys_get_temp_dir(), 'log');
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
 

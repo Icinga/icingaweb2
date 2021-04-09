@@ -41,14 +41,14 @@ class HookTest extends BaseTestCase
     protected $failingHook   = '\\Tests\\Icinga\\Web\\FailingHook';
     protected $testBaseClass = '\\Icinga\\Web\\Hook\\TestHook';
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->markTestSkipped();
         parent::setUp();
         Hook::clean();
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         Hook::clean();

@@ -11,7 +11,7 @@ class ConfigTest extends BaseTestCase
     /**
      * Set up config dir
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->oldConfigDir = Config::$configDir;
@@ -21,7 +21,7 @@ class ConfigTest extends BaseTestCase
     /**
      * Reset config dir
      */
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         Config::$configDir = $this->oldConfigDir;

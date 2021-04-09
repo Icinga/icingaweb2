@@ -12,13 +12,13 @@ class IniParserTest extends BaseTestCase
 {
     protected $tempFile;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $this->tempFile = tempnam(sys_get_temp_dir(), 'icinga-ini-parser-test');
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         unlink($this->tempFile);

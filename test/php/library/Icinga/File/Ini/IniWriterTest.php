@@ -12,7 +12,7 @@ class IniWriterTest extends BaseTestCase
     protected $tempFile;
     protected $tempFile2;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -20,7 +20,7 @@ class IniWriterTest extends BaseTestCase
         $this->tempFile2 = tempnam(sys_get_temp_dir(), 'icinga-ini-writer-test-2');
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
 
