@@ -45,7 +45,7 @@ class PluginOutputTest extends BaseTestCase
                 $html,
                 preg_quote(self::SUFFIX, '~')
             );
-            $this->assertRegExp($expect, $actual, 'Output must match example regexp');
+            $this->assertMatchesRegularExpression($expect, $actual, 'Output must match example regexp');
         } else {
             $expect = $prefix . $html . self::SUFFIX;
             $this->assertEquals($expect, $actual, 'Output must match example');

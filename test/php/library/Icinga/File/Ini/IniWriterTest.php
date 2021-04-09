@@ -275,7 +275,7 @@ inkey' => 'blarg'
         );
 
         $rendered = $writer->render();
-        $this->assertRegExp(
+        $this->assertMatchesRegularExpression(
             '~linebreak\\\\nin line~',
             $rendered,
             'newlines in values are not escaped'
