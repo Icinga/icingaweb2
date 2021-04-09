@@ -185,11 +185,10 @@ class ConfigTest extends BaseTestCase
         );
     }
 
-    /**
-     * @expectedException UnexpectedValueException
-     */
     public function testWhetherAnExceptionIsThrownWhenTryingToAccessASectionPropertyOnANonSection()
     {
+        $this->expectException(\UnexpectedValueException::class);
+
         $config = Config::fromArray(array('a' => 'b'));
         $config->get('a', 'b');
     }
@@ -234,11 +233,10 @@ class ConfigTest extends BaseTestCase
         );
     }
 
-    /**
-     * @expectedException Icinga\Exception\NotReadableError
-     */
     public function testWhetherFromIniThrowsAnExceptionOnInsufficientPermission()
     {
+        $this->expectException(\Icinga\Exception\NotReadableError::class);
+
         Config::fromIni('/etc/shadow');
     }
 

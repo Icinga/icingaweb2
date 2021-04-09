@@ -38,6 +38,6 @@ class StreamWriterTest extends BaseTestCase
         $writer = new FileWriter(new ConfigObject(array('file' => $this->target)));
         $writer->log(Logger::ERROR, 'This is a test error');
         $log = file_get_contents($this->target);
-        $this->assertContains('This is a test error', $log, 'StreamWriter does not write log messages');
+        $this->assertStringContainsString('This is a test error', $log, 'StreamWriter does not write log messages');
     }
 }

@@ -322,11 +322,10 @@ EOD;
         );
     }
 
-    /**
-     * @expectedException \Icinga\Exception\ConfigurationError
-     */
     public function testWhetherBracketsAreIllegalInSectionNames()
     {
+        $this->expectException(\Icinga\Exception\ConfigurationError::class);
+
         $config = Config::fromArray(['section [brackets]' => []]);
         (new IniWriter($config, $this->tempFile))->write();
     }
@@ -419,7 +418,7 @@ EOD;
         $config->setSection('garbage', $section);
 
         $iniWriter = new IniWriter($config, '/dev/null');
-        $this->assertNotContains(
+        $this->assertStringNotContainsString(
             'foobar',
             $iniWriter->render(),
             'IniWriter persists section keys with null values'
@@ -434,7 +433,7 @@ EOD;
         $config->setSection('garbage', $section);
 
         $iniWriter = new IniWriter($config, '/dev/null');
-        $this->assertContains(
+        $this->assertStringContainsString(
             'foobar',
             $iniWriter->render(),
             'IniWriter doesn\'t persist section keys with empty values'
@@ -451,7 +450,7 @@ EOD;
         $section = $config->getSection('garbage');
         $section->foobar = null;
         $iniWriter = new IniWriter($config, $filename);
-        $this->assertNotContains(
+        $this->assertStringNotContainsString(
             'foobar',
             $iniWriter->render(),
             'IniWriter doesn\'t remove section keys with null values'

@@ -83,11 +83,10 @@ class DbStoreTest extends BaseTestCase
         $this->assertEmpty($dbMock->deletions, 'DbStore::save deletes *new* preferences');
     }
 
-    /**
-     * @expectedException   \Icinga\Exception\NotWritableError
-     */
     public function testWhetherPreferenceInsertionThrowsNotWritableError()
     {
+        $this->expectException(\Icinga\Exception\NotWritableError::class);
+
         $store = $this->getStore(new FaultyDatabaseMock());
         $store->save(
             Mockery::mock(
@@ -114,11 +113,10 @@ class DbStoreTest extends BaseTestCase
         $this->assertEmpty($dbMock->deletions, 'DbStore::save inserts *existing* preferneces');
     }
 
-    /**
-     * @expectedException   \Icinga\Exception\NotWritableError
-     */
     public function testWhetherPreferenceUpdatesThrowNotWritableError()
     {
+        $this->expectException(\Icinga\Exception\NotWritableError::class);
+
         $store = $this->getStore(new FaultyDatabaseMock());
         $store->setPreferences(array('testsection' => array('key' => 'value')));
         $store->save(
@@ -146,11 +144,10 @@ class DbStoreTest extends BaseTestCase
         $this->assertEmpty($dbMock->updates, 'DbStore::save updates *removed* preferences');
     }
 
-    /**
-     * @expectedException   \Icinga\Exception\NotWritableError
-     */
     public function testWhetherPreferenceDeletionThrowsNotWritableError()
     {
+        $this->expectException(\Icinga\Exception\NotWritableError::class);
+
         $store = $this->getStore(new FaultyDatabaseMock());
         $store->setPreferences(array('testsection' => array('key' => 'value')));
         $store->save(

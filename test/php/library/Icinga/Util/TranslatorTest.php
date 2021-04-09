@@ -48,11 +48,10 @@ class TranslatorTest extends BaseTestCase
         );
     }
 
-    /**
-     * @expectedException Icinga\Exception\IcingaException
-     */
     public function testWhetherSetupLocaleThrowsAnExceptionWhenGivenAnInvalidLocale()
     {
+        $this->expectException(\Icinga\Exception\IcingaException::class);
+
         Translator::setupLocale('foobar');
     }
 

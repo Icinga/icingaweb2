@@ -251,11 +251,10 @@ class FormTest extends BaseTestCase
         );
     }
 
-    /**
-     * @expectedException \Icinga\Exception\ProgrammingError
-     */
     public function testWhetherTheOnSuccessOptionMustBeCallable()
     {
+        $this->expectException(\Icinga\Exception\ProgrammingError::class);
+
         new Form(array('onSuccess' => '_invalid_'));
     }
 

@@ -8,19 +8,17 @@ use Icinga\Module\Monitoring\Plugin\Perfdata;
 
 class PerfdataTest extends BaseTestCase
 {
-    /**
-     * @expectedException   \InvalidArgumentException
-     */
     public function testWhetherFromStringThrowsExceptionWhenGivenAnEmptyString()
     {
+        $this->expectException(\InvalidArgumentException::class);
+
         Perfdata::fromString('');
     }
 
-    /**
-     * @expectedException   \InvalidArgumentException
-     */
     public function testWhetherFromStringThrowsExceptionWhenGivenAnInvalidString()
     {
+        $this->expectException(\InvalidArgumentException::class);
+
         Perfdata::fromString('test');
     }
 

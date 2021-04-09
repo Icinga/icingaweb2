@@ -32,27 +32,24 @@ class AuditHookTest extends BaseTestCase
         $this->assertEquals('foo', (new TestAuditHook())->formatMessage('{{te{.}st}}', ['te{' => ['}st' => 'foo']]));
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testFormatMessageComplainsAboutUnresolvedParameters()
     {
+        $this->expectException(\InvalidArgumentException::class);
+
         (new TestAuditHook())->formatMessage('{{missing}}', []);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testFormatMessageComplainsAboutNonScalarParameters()
     {
+        $this->expectException(\InvalidArgumentException::class);
+
         (new TestAuditHook())->formatMessage('{{test}}', ['test' => ['foo' => 'bar']]);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testFormatMessageComplainsAboutNonArrayParameters()
     {
+        $this->expectException(\InvalidArgumentException::class);
+
         (new TestAuditHook())->formatMessage('{{test.foo}}', ['test' => 'foo']);
     }
 }

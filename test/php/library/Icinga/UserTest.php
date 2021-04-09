@@ -52,11 +52,10 @@ class UserTest extends BaseTestCase
         );
     }
 
-    /**
-     * @expectedException   \InvalidArgumentException
-     */
     public function testWhetherInvalidEmailsCannotBeSet()
     {
+        $this->expectException(\InvalidArgumentException::class);
+
         $user = new User('unittest');
         $user->setEmail('mySampleEmail at someDomain dot org');
     }

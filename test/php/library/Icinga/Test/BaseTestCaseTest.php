@@ -148,19 +148,17 @@ class BaseTestCaseTest extends BaseTestCase
         $this->assertCount(0, $tables);
     }
 
-    /**
-     * @expectedException   RuntimeException
-     */
     public function testWhetherLoadSqlThrowsErrorWhenFileMissing()
     {
+        $this->expectException(\RuntimeException::class);
+
         $this->loadSql(Mockery::mock('Icinga\Data\Db\DbConnection'), 'not_existing');
     }
 
-    /**
-     * @expectedException   RuntimeException
-     */
     public function testWhetherLoadSqlThrowsErrorWhenFileEmpty()
     {
+        $this->expectException(\RuntimeException::class);
+
         $this->emptySqlDumpFile = tempnam(sys_get_temp_dir(), 'icinga2-web-db-test-empty');
         $this->loadSql(Mockery::mock('Icinga\Data\Db\DbConnection'), $this->emptySqlDumpFile);
     }
