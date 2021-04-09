@@ -181,8 +181,9 @@
                 }
             }
 
-            var req = this.loadUrl(url, $target, data, method, undefined, !! $autoSubmittedBy);
+            var req = this.loadUrl(url, $target, data, method);
             req.forceFocus = $autoSubmittedBy ? $autoSubmittedBy : $button.length ? $button : null;
+            req.autosubmit = !! $autoSubmittedBy;
             req.addToHistory = method === 'GET';
             req.progressTimer = progressTimer;
 
