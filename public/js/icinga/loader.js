@@ -304,6 +304,7 @@
             req.fail(this.onFailure);
             req.always(this.onComplete);
             req.autorefresh = autorefresh;
+            req.autosubmit = false;
             req.scripted = false;
             req.method = method;
             req.action = action;
@@ -321,7 +322,7 @@
                 setTimeout(function () {
                     // The column may have not been shown before. To make the transition
                     // delay working we have to wait for the column getting rendered
-                    if (req.state() === 'pending') {
+                    if (! req.autosubmit && req.state() === 'pending') {
                         req.$target.addClass('impact');
                     }
                 }, 0);
@@ -827,7 +828,7 @@
                     var a = this.icinga.utils.getUrlHelper().cloneNode(true);
                     a.search = locationQuery ? '?' + locationQuery : '';
 
-                    if (autoSubmit) {
+                    if (req.autosubmit || autoSubmit) {
                         // Also update a form's action if it doesn't differ from the container's url
                         var $form = $(referrer.forceFocus).closest('form');
                         var formAction = $form.attr('action');
@@ -873,7 +874,7 @@
                                     'replace',
                                     req.autorefresh,
                                     forceFocus,
-                                    autoSubmit,
+                                    req.autosubmit || autoSubmit,
                                     req.scripted
                                 );
                             } else {
@@ -892,7 +893,7 @@
                     req.action,
                     req.autorefresh,
                     req.forceFocus,
-                    autoSubmit,
+                    req.autosubmit || autoSubmit,
                     req.scripted
                 );
             }
@@ -928,7 +929,7 @@
                 }
             }
 
-            if (! req.autorefresh) {
+            if (! req.autorefresh && ! req.autosubmit) {
                 // TODO: Hook for response/url?
                 var url = req.url;
 
@@ -1021,9 +1022,9 @@
                     _this.icinga.loadModule(moduleName);
                 }
 
-                $(this).trigger('rendered', [req.autorefresh, req.scripted]);
+                $(this).trigger('rendered', [req.autorefresh, req.scripted, req.autosubmit]);
             });
-            req.$target.trigger('rendered', [req.autorefresh, req.scripted]);
+            req.$target.trigger('rendered', [req.autorefresh, req.scripted, req.autosubmit]);
 
             this.icinga.ui.refreshDebug();
         },
@@ -1058,6 +1059,8 @@
                     req.$target,
                     req.action,
                     req.autorefresh,
+                    undefined,
+                    req.autosubmit,
                     req.scripted
                 );
             } else {
@@ -1234,7 +1237,7 @@
                 }
             }
 
-            $container.trigger('beforerender', [content, action, autorefresh, scripted]);
+            $container.trigger('beforerender', [content, action, autorefresh, scripted, autoSubmit]);
 
             var discard = false;
             $.each(_this.icinga.behaviors, function(name, behavior) {
@@ -1269,7 +1272,7 @@
                 setTimeout(this.icinga.ui.focusElement.bind(this.icinga.ui), 0, navigationAnchor, $container);
             } else if (! activeElementPath) {
                 // Active element was not in this container
-                if (! autorefresh && ! scripted) {
+                if (! autorefresh && ! autoSubmit && ! scripted) {
                     setTimeout(function() {
                         if (typeof $container.attr('tabindex') === 'undefined') {
                             $container.attr('tabindex', -1);
@@ -1285,8 +1288,8 @@
                     var $activeElement = $(activeElementPath);
 
                     if ($activeElement.length && $activeElement.is(':visible')) {
-                        $activeElement[0].focus({preventScroll: autorefresh});
-                    } else if (! autorefresh && ! scripted) {
+                        $activeElement[0].focus({preventScroll: autorefresh || autoSubmit});
+                    } else if (! autorefresh && ! autoSubmit && ! scripted) {
                         if (focusFallback) {
                             _this.icinga.ui.focusElement($(focusFallback.parent).find(focusFallback.child));
                         } else if (typeof $container.attr('tabindex') === 'undefined') {
