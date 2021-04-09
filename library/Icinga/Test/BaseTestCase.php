@@ -23,7 +23,6 @@ namespace Icinga\Test {
     use Exception;
     use RuntimeException;
     use Mockery;
-    use PHPUnit_Framework_TestCase;
     use Icinga\Application\Icinga;
     use Icinga\Data\ConfigObject;
     use Icinga\Data\ResourceFactory;
@@ -32,7 +31,7 @@ namespace Icinga\Test {
     /**
      * Class BaseTestCase
      */
-    abstract class BaseTestCase extends PHPUnit_Framework_TestCase implements DbTest
+    abstract class BaseTestCase extends Mockery\Adapter\Phpunit\MockeryTestCase implements DbTest
     {
         /**
          * Path to application/
