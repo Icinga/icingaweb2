@@ -22,6 +22,7 @@ jobs:
         include:
           - php: '5.6'
             allow_failure: true
+            phplint_options: "--exclude='{(?>.*/)?test/php/.*}' --exclude=library/Icinga/Test/BaseTestCase.php"
           - php: '7.0'
             allow_failure: true
 
@@ -40,7 +41,7 @@ jobs:
 
       - name: PHP Lint
         if: success() || matrix.allow_failure
-        run: ./vendor/bin/phplint -n --exclude={^vendor/.*} --exclude=library/Icinga/Util/String.php -- .
+        run: ./vendor/bin/phplint -n --exclude={^vendor/.*} --exclude=library/Icinga/Util/String.php ${{ matrix.phplint_options }}  -- .
 
       - name: PHP CodeSniffer
         if: success() || matrix.allow_failure
