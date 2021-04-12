@@ -196,11 +196,16 @@ class ArrayDatasource implements Selectable
         $filter = $query->getFilter();
         $offset = $query->hasOffset() ? $query->getOffset() : 0;
         $limit = $query->hasLimit() ? $query->getLimit() : 0;
+        $data = $this->data;
+
+        if ($query->hasOrder()) {
+            uasort($data, [$query, 'compare']);
+        }
 
         $foundStringKey = false;
-        $result = array();
+        $result = [];
         $skipped = 0;
-        foreach ($this->data as $key => $row) {
+        foreach ($data as $key => $row) {
             if ($this->keyColumn !== null && !isset($row->{$this->keyColumn})) {
                 $row = clone $row; // Make sure that this won't affect the actual data
                 $row->{$this->keyColumn} = $key;
@@ -239,14 +244,7 @@ class ArrayDatasource implements Selectable
             }
         }
 
-        // Sort the result
-        if ($query->hasOrder()) {
-            if ($foundStringKey) {
-                uasort($result, array($query, 'compare'));
-            } else {
-                usort($result, array($query, 'compare'));
-            }
-        } elseif (! $foundStringKey) {
+        if (! $foundStringKey) {
             $result = array_values($result);
         }
 
