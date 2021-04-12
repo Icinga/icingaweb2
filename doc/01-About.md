@@ -3,19 +3,6 @@
 Icinga Web 2 is a powerful PHP framework for web applications that comes in a clean and reduced design.
 It's fast, responsive, accessible and easily extensible with modules.
 
-## The monitoring module <a id="about-monitoring"></a>
-
-This is the core module for most Icinga Web 2 users.
-
-It provides an intuitive user interface for monitoring with Icinga 2.
-Especially there are lots of list and detail views (e.g. for hosts and services)
-you can sort and filter depending on what you want to see.
-
-You can also control the monitoring process itself by sending external commands to Icinga.
-Most such actions (like rescheduling a check) can be done with just a single click.
-
-More details about this module can be found in [this chapter](../modules/monitoring/doc/01-About.md#monitoring-module-about).
-
 ## Installation <a id="about-installation"></a>
 
 Icinga Web 2 can be installed easily from packages from the official package repositories.
@@ -55,7 +42,24 @@ They can be stored either in a database or in .ini files.
 See [here](07-Preferences.md#preferences) for more information about a user's preferences
 and how to configure their storage type.
 
-## Documentation <a id="about-documentation"></a>
+### The monitoring module <a id="about-monitoring"></a>
+
+> **Note for Icinga DB Users**
+>
+> This module is only for the IDO backend. Use [Icinga DB Web](https://github.com/Icinga/icingadb-web) instead.
+
+This is the core module for most Icinga Web 2 users.
+
+It provides an intuitive user interface for monitoring with Icinga 2.
+There are lots of list and detail views (e.g. for hosts and services)
+you can sort and filter depending on what you want to see.
+
+You can also control the monitoring process itself by sending external commands to Icinga.
+Most such actions (like rescheduling a check) can be done with just a single click in the UI.
+
+More details about this module can be found in [this chapter](../modules/monitoring/doc/01-About.md#monitoring-module-about).
+
+### Documentation <a id="about-documentation"></a>
 
 With the documentation module you can read the documentation of the framework (and any module) directly in the user interface.
 
