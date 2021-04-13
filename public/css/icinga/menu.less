@@ -68,7 +68,7 @@
   color: @menu-color;
 
   &.active {
-    color: @text-color;
+    color: @menu-active-color;
 
     > a > .badge {
       display: none;
@@ -92,7 +92,7 @@
 
   &:not(.selected) > a:hover,
   &:not(.selected) > a:focus {
-    background-color: fade(@text-color-inverted, 50%)
+    background-color: fade(@menu-bg-color, 50%)
   }
 
   // Balance icon weight for non active menu items
@@ -123,7 +123,7 @@
     position: absolute;
     right: -.75em;
 
-    background-color: @body-bg-color;
+    background-color: @menu-bg-color;
     box-shadow: 0 0 1em 0 rgba(0,0,0,0.6);
     content: "";
     display: block;
@@ -167,7 +167,7 @@
   }
 
   &.active > a {
-    color: @body-bg-color;
+    color: @menu-2ndlvl-highlight-color;
   }
 }
 
@@ -324,7 +324,7 @@
       }
 
       a.badge {
-         color: white;
+         color: @text-color-inverted;
          flex: 0 1 auto;
          margin-right: 1em;
          padding: .25em;
@@ -500,7 +500,7 @@ html.no-js  #toggle-sidebar {
   &.nav-item:not(.badge-nav-item) {
     &:not(.selected):not(.active):hover,
     &:not(.selected):not(.active):focus {
-      background-color: @tr-hover-color;
+      background-color: @menu-2ndlvl-highlight-bg-color;
     }
   }
 }
@@ -518,7 +518,7 @@ html.no-js  #toggle-sidebar {
   }
 
   &.badge-nav-item a.badge {
-    color: @body-bg-color;
+    color: @text-color-inverted;
     flex: 0 1 auto;
     margin-right: 1em;
     padding: .25em;
@@ -533,7 +533,7 @@ html.no-js  #toggle-sidebar {
 #layout:not(.sidebar-collapsed) #menu .nav-level-1 > .nav-item.active .nav-level-2 > li {
   &.badge-nav-item:not(.selected) {
     &:hover {
-      background-color: @tr-hover-color;
+      background-color: @menu-2ndlvl-highlight-bg-color;
     }
   }
 }
