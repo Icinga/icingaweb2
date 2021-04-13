@@ -320,7 +320,7 @@ a:hover > .icon-cancel {
 .collapsible.collapsed:not([data-toggle-element]) {
   position: relative;
 
-  &:before {
+  &:before, &:after {
     content: "";
     display: block;
     height: 2em;
@@ -337,7 +337,7 @@ a:hover > .icon-cancel {
 
   &:after {
     opacity: 0;
-    background: linear-gradient(rgba(238,238,238,0), #eee);
+    background: linear-gradient(fade(@body-bg-color, 0), @body-bg-color);
   }
 }
 
