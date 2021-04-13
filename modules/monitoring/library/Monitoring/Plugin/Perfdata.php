@@ -433,6 +433,10 @@ class Perfdata
      */
     protected function format($value)
     {
+        if ($value === null) {
+            return null;
+        }
+
         if ($value instanceof ThresholdRange) {
             if ($value->getMin()) {
                 return (string) $value;
