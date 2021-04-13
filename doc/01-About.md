@@ -42,6 +42,15 @@ They can be stored either in a database or in .ini files.
 See [here](07-Preferences.md#preferences) for more information about a user's preferences
 and how to configure their storage type.
 
+## Modules
+
+Modules extend Icinga Web 2 with additional functionality. They allow the integration of
+capabilities into existing views and even other modules. Be it a graph provider such as
+[Graphite](https://github.com/Icinga/icingaweb2-module-graphite) or a UI for the Icinga 2
+configuration like the [Director](https://github.com/Icinga/icingaweb2-module-director).
+
+See [here](08-Modules.md#modules) for information on how to install and configure modules.
+
 ### The monitoring module <a id="about-monitoring"></a>
 
 > **Note for Icinga DB Users**
@@ -67,7 +76,7 @@ The module can also export the documentation to PDF.
 
 More details about this module can be found in [this chapter](../modules/doc/doc/01-About.md#doc-module-about).
 
-## Translation <a id="about-translation"></a>
+### Translation <a id="about-translation"></a>
 
 Icinga Web 2 and all modules by Icinga utilize gettext to provide translations into other languages from the default
 English (en_US). However, the actual language specific files (locales) are not separately included in every project.
