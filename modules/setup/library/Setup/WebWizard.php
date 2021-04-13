@@ -374,7 +374,8 @@ class WebWizard extends Wizard implements SetupWizard
                     'ignore'                => true,
                     'label'                 => t('Validate Configuration'),
                     'data-progress-label'   => t('Validation In Progress'),
-                    'decorators'            => array('ViewHelper')
+                    'decorators'            => array('ViewHelper'),
+                    'formnovalidate'        => 'formnovalidate'
                 )
             );
             $page->getDisplayGroup('buttons')->addElement($page->getElement('backend_validation'));
@@ -389,7 +390,8 @@ class WebWizard extends Wizard implements SetupWizard
                         'ignore'                => true,
                         'label'                 => t('Validate Configuration'),
                         'data-progress-label'   => t('Validation In Progress'),
-                        'decorators'            => array('ViewHelper')
+                        'decorators'            => array('ViewHelper'),
+                        'formnovalidate'        => 'formnovalidate'
                     )
                 );
                 $page->getDisplayGroup('buttons')->addElement($page->getElement('transport_validation'));
