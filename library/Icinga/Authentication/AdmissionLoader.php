@@ -110,8 +110,8 @@ class AdmissionLoader
     protected function loadRole($name, ConfigObject $section)
     {
         if (! isset($this->roles[$name])) {
-            $permissions = StringHelper::trimSplit($section->permissions);
-            $refusals = StringHelper::trimSplit($section->refusals);
+            $permissions = $section->permissions ? StringHelper::trimSplit($section->permissions) : [];
+            $refusals = $section->refusals ? StringHelper::trimSplit($section->refusals) : [];
 
             list($permissions, $newRefusals) = self::migrateLegacyPermissions($permissions);
             if (! empty($newRefusals)) {
@@ -120,6 +120,7 @@ class AdmissionLoader
 
             $restrictions = $section->toArray();
             unset($restrictions['users'], $restrictions['groups']);
+            unset($restrictions['parent'], $restrictions['unrestricted']);
             unset($restrictions['refusals'], $restrictions['permissions']);
 
             $role = new Role();
@@ -190,6 +191,10 @@ class AdmissionLoader
             if (! isset($roles[$roleName]) && $assigned) {
                 foreach ($this->loadRole($roleName, $roleConfig) as $role) {
                     /** @var Role $role */
+                    if (isset($roles[$role->getName()])) {
+                        continue;
+                    }
+
                     $roles[$role->getName()] = $role;
 
                     $permissions = array_merge(
