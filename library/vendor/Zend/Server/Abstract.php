@@ -217,7 +217,7 @@ abstract class Zend_Server_Abstract implements Zend_Server_Interface
             $invokeArgs = $invocable->getInvokeArguments();
             if (!empty($invokeArgs)) {
                 $reflection = new ReflectionClass($class);
-                $object     = $reflection->newInstanceArgs($invokeArgs);
+                $object     = $reflection->newInstanceArgs(array_values($invokeArgs));
             } else {
                 $object = new $class;
             }
