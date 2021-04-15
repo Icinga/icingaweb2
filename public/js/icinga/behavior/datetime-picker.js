@@ -64,6 +64,7 @@
             var dateTimeFormatter = _this.createFormatter(! disableDate, enableTime);
             var options = {
                 locale: _this.loadFlatpickrLocale(),
+                appendTo: this.form.parentNode,
                 altInput: true,
                 enableTime: enableTime,
                 noCalendar: disableDate,
