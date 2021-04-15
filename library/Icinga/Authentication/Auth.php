@@ -111,6 +111,13 @@ class Auth
             }
         }
 
+        // Reload entire layout if the locale changed
+        if (($locale = $user->getPreferences()->getValue('icingaweb', 'language')) !== null) {
+            if (setlocale(LC_ALL, 0) !== $locale && $this->getRequest()->isXmlHttpRequest()) {
+                $this->getResponse()->setHeader('X-Icinga-Redirect-Http', 'yes');
+            }
+        }
+
         $this->user = $user;
         if ($persist) {
             $this->persistCurrentUser();
