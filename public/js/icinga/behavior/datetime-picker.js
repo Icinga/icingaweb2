@@ -9,6 +9,7 @@
 
     try {
         var Flatpickr = require('icinga/ipl/vendor/flatpickr');
+        var notjQuery = require('icinga/ipl/notjQuery');
     } catch (e) {
         console.warn('Unable to provide datetime picker. Libraries not available:', e);
         return;
@@ -102,6 +103,8 @@
 
             var fp = Flatpickr(this, options);
             fp.calendarContainer.classList.add('icinga-datetime-picker');
+            this.parentNode.insertBefore(_this.renderIcon(), fp.altInput.nextSibling);
+
             _this._pickers.set(fp, containerId);
         });
     };
@@ -172,6 +175,10 @@
             default:
                 return 'default';
         }
+    };
+
+    DatetimePicker.prototype.renderIcon = function () {
+        return notjQuery.render('<i class="icon fa fa-calendar" role="image"></i>');
     };
 
     Icinga.Behaviors.DatetimePicker = DatetimePicker;
