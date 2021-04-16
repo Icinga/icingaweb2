@@ -23,6 +23,7 @@
      */
     var DatetimePicker = function(icinga) {
         Icinga.EventListener.call(this, icinga);
+        this.icinga = icinga;
 
         /**
          * The formats the server expects
@@ -35,9 +36,17 @@
         this.server_date_format = 'Y-m-d';
         this.server_time_format = 'H:i:S';
 
-        this.icinga = icinga;
+        /**
+         * The flatpickr instances created
+         *
+         * @type {Map<Flatpickr, string>}
+         * @private
+         */
+        this._pickers = new Map();
 
         this.on('rendered', this.onRendered, this);
+        this.on('close-column', this.onCloseContainer, this);
+        this.on('close-modal', this.onCloseContainer, this);
     };
 
     DatetimePicker.prototype = new Icinga.EventListener();
@@ -49,7 +58,11 @@
      */
     DatetimePicker.prototype.onRendered = function(event) {
         var _this = event.data.self;
+        var containerId = event.target.dataset.icingaContainerId;
         var inputs = event.target.querySelectorAll('input[data-use-datetime-picker]');
+
+        // Cleanup left-over pickers from the previous content
+        _this.cleanupPickers(containerId);
 
         $.each(inputs, function () {
             var server_format = _this.server_full_format;
@@ -89,7 +102,34 @@
 
             var fp = Flatpickr(this, options);
             fp.calendarContainer.classList.add('icinga-datetime-picker');
+            _this._pickers.set(fp, containerId);
         });
+    };
+
+    /**
+     * Cleanup all flatpickr instances in the closed container
+     *
+     * @param event {Event}
+     */
+    DatetimePicker.prototype.onCloseContainer = function (event) {
+        var _this = event.data.self;
+        var containerId = event.target.dataset.icingaContainerId;
+
+        _this.cleanupPickers(containerId);
+    };
+
+    /**
+     * Destroy all flatpickr instances in the container with the given id
+     *
+     * @param containerId {String}
+     */
+    DatetimePicker.prototype.cleanupPickers = function (containerId) {
+        this._pickers.forEach(function (cId, fp) {
+            if (cId === containerId) {
+                this._pickers.delete(fp);
+                fp.destroy();
+            }
+        }, this);
     };
 
     DatetimePicker.prototype.createFormatter = function (withDate, withTime) {
