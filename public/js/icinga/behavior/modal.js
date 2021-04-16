@@ -190,6 +190,7 @@
         $modal.removeClass('active');
         // Using `setTimeout` here to let the transition finish
         setTimeout(function () {
+            $modal.find('#modal-content').trigger('close-modal');
             $modal.remove();
         }, 200);
     };
