@@ -4,4 +4,5 @@
 /** @var $this \Icinga\Application\Modules\Module */
 
 $this->provideHook('ApplicationState');
+$this->provideHook('Health');
 $this->provideHook('X509/Sni');
