@@ -114,6 +114,14 @@ class UserBackendConfigForm extends ConfigForm
                 $form = new ExternalBackendForm();
                 break;
             default:
+                foreach (UserBackend::getCustomUserBackendsClasses() as $backendType => $className) {
+                    if ($backendType === $type) {
+                        $backend = new $className($this->config->getSection($this->backendToLoad));
+                        if (method_exists($backend, 'getConfigurationFormClass') && $class = $backend->getConfigurationFormClass()) {
+                            return new $class();
+                        }
+                    }
+                }
                 throw new InvalidArgumentException(
                     sprintf($this->translate('Invalid backend type "%s" provided'), $type)
                 );
@@ -272,6 +280,19 @@ class UserBackendConfigForm extends ConfigForm
         );
         if ($backendType === 'external' || empty($externalBackends)) {
             $backendTypes['external'] = $this->translate('External');
+        }
+
+        foreach (UserBackend::getCustomUserBackendsClasses() as $customBackendType => $backendClass) {
+            $name = $customBackendType;
+            try {
+                $backend = new $backendClass(new ConfigObject());
+                if (method_exists($backend, 'getName')) {
+                    $name = $backend->getName();
+                }
+            } catch (\Exception $e) {
+                // nothing to do
+            }
+            $backendTypes[$customBackendType] = $name;
         }
 
         if ($backendType === null) {

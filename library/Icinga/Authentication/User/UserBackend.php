@@ -113,6 +113,12 @@ class UserBackend implements ConfigAwareFactory
         }
     }
 
+    public static function getCustomUserBackendsClasses()
+    {
+        static::registerCustomUserBackends();
+        return self::$customBackends;
+    }
+
     /**
      * Return the class for the given custom user backend
      *
