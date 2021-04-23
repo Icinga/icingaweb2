@@ -110,8 +110,8 @@ class AdmissionLoader
     protected function loadRole($name, ConfigObject $section)
     {
         if (! isset($this->roles[$name])) {
-            $permissions = StringHelper::trimSplit($section->permissions);
-            $refusals = StringHelper::trimSplit($section->refusals);
+            $permissions = $section->permissions ? StringHelper::trimSplit($section->permissions) : [];
+            $refusals = $section->refusals ? StringHelper::trimSplit($section->refusals) : [];
 
             list($permissions, $newRefusals) = self::migrateLegacyPermissions($permissions);
             if (! empty($newRefusals)) {
@@ -120,6 +120,7 @@ class AdmissionLoader
 
             $restrictions = $section->toArray();
             unset($restrictions['users'], $restrictions['groups']);
+            unset($restrictions['parent'], $restrictions['unrestricted']);
             unset($restrictions['refusals'], $restrictions['permissions']);
 
             $role = new Role();
@@ -179,11 +180,21 @@ class AdmissionLoader
         $roles = [];
         $permissions = [];
         $restrictions = [];
+        $assignedRoles = [];
         $isUnrestricted = false;
         foreach ($this->roleConfig as $roleName => $roleConfig) {
-            if (! isset($roles[$roleName]) && $this->match($username, $userGroups, $roleConfig)) {
+            $assigned = $this->match($username, $userGroups, $roleConfig);
+            if ($assigned) {
+                $assignedRoles[] = $roleName;
+            }
+
+            if (! isset($roles[$roleName]) && $assigned) {
                 foreach ($this->loadRole($roleName, $roleConfig) as $role) {
                     /** @var Role $role */
+                    if (isset($roles[$role->getName()])) {
+                        continue;
+                    }
+
                     $roles[$role->getName()] = $role;
 
                     $permissions = array_merge(
@@ -206,6 +217,9 @@ class AdmissionLoader
             }
         }
 
+        $user->setAdditional('assigned_roles', $assignedRoles);
+
+        $user->setIsUnrestricted($isUnrestricted);
         $user->setRestrictions($isUnrestricted ? [] : $restrictions);
         $user->setPermissions($permissions);
         $user->setRoles(array_values($roles));

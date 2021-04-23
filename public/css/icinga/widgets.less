@@ -230,6 +230,27 @@ form.role-form {
     font-style: normal;
   }
 
+  h3 {
+    > :first-child {
+      display: inline-block;
+      width: 20em / 1.167em; // element label width / h3 font-size
+    }
+
+    .privilege-preview .icon {
+      &.granted {
+        color: @color-granted;
+      }
+
+      &.refused {
+        color: @color-refused;
+      }
+
+      &.restricted {
+        color: @color-restricted;
+      }
+    }
+  }
+
   fieldset.collapsible {
     border: none;
     padding: 0;
@@ -255,11 +276,11 @@ form.role-form {
         text-align: center;
 
         &.icon-ok {
-          color: @color-ok;
+          color: @color-granted;
         }
 
         &.icon-cancel {
-          color: @color-critical;
+          color: @color-refused;
         }
       }
     }

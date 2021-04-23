@@ -74,6 +74,13 @@ class User
     protected $externalUserInformation = array();
 
     /**
+     * Whether restrictions should not apply to this user
+     *
+     * @var bool
+     */
+    protected $unrestricted = false;
+
+    /**
      * Set of permissions
      *
      * @var array
@@ -200,6 +207,30 @@ class User
     public function isMemberOf($group)
     {
         return in_array($group, $this->groups);
+    }
+
+    /**
+     * Get whether restrictions should not apply to this user
+     *
+     * @return bool
+     */
+    public function isUnrestricted()
+    {
+        return $this->unrestricted;
+    }
+
+    /**
+     * Set whether restrictions should not apply to this user
+     *
+     * @param bool $state
+     *
+     * @return $this
+     */
+    public function setIsUnrestricted($state)
+    {
+        $this->unrestricted = (bool) $state;
+
+        return $this;
     }
 
     /**

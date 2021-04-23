@@ -554,19 +554,13 @@ class DbConnection implements Selectable, Extensible, Updatable, Reducible, Insp
             );
         } elseif ($sign === '=' && strpos($value, '*') !== false) {
             if ($value === '*') {
-                // We'll ignore such filters as it prevents index usage and because "*" means anything, so whether we're
-                // using a real column with a valid comparison here or just an expression which can only be evaluated to
-                // true makes no difference, except for performance reasons...
-                return new Zend_Db_Expr('TRUE');
+                return $column . ' IS NOT NULL';
             }
 
             return $column . ' LIKE ' . $this->dbAdapter->quote(preg_replace('~\*~', '%', $value));
         } elseif ($sign === '!=' && strpos($value, '*') !== false) {
             if ($value === '*') {
-                // We'll ignore such filters as it prevents index usage and because "*" means nothing, so whether we're
-                // using a real column with a valid comparison here or just an expression which cannot be evaluated to
-                // true makes no difference, except for performance reasons...
-                return new Zend_Db_Expr('FALSE');
+                return $column . ' IS NULL';
             }
 
             return sprintf(

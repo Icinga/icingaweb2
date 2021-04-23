@@ -126,10 +126,11 @@ The packages for RHEL/CentOS depend on other packages which are distributed
 as part of the [EPEL repository](https://fedoraproject.org/wiki/EPEL).
 
 CentOS 8 additionally needs the PowerTools repository for EPEL:
-
+*Be aware that the name of the `powertools` repo [changed to lowercase](https://wiki.centos.org/Manuals/ReleaseNotes/CentOS8.2011#Yum_repo_file_and_repoid_changes) with CentOS 8.3.2011 and newer.*
+*If you are using CentOS 8.2.2044 or earlier please change the name to `PowerTools` in the following command.*
 ```
 dnf install 'dnf-command(config-manager)'
-dnf config-manager --set-enabled PowerTools
+dnf config-manager --set-enabled powertools
 
 dnf install epel-release
 ```

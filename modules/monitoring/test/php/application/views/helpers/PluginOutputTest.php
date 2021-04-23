@@ -20,7 +20,7 @@ class PluginOutputTest extends BaseTestCase
 
     protected static $statusTags = array('OK', 'WARNING', 'CRITICAL', 'UNKNOWN', 'UP', 'DOWN');
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -45,7 +45,7 @@ class PluginOutputTest extends BaseTestCase
                 $html,
                 preg_quote(self::SUFFIX, '~')
             );
-            $this->assertRegExp($expect, $actual, 'Output must match example regexp');
+            $this->assertMatchesRegularExpression($expect, $actual, 'Output must match example regexp');
         } else {
             $expect = $prefix . $html . self::SUFFIX;
             $this->assertEquals($expect, $actual, 'Output must match example');

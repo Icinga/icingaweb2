@@ -3,19 +3,6 @@
 Icinga Web 2 is a powerful PHP framework for web applications that comes in a clean and reduced design.
 It's fast, responsive, accessible and easily extensible with modules.
 
-## The monitoring module <a id="about-monitoring"></a>
-
-This is the core module for most Icinga Web 2 users.
-
-It provides an intuitive user interface for monitoring with Icinga 2.
-Especially there are lots of list and detail views (e.g. for hosts and services)
-you can sort and filter depending on what you want to see.
-
-You can also control the monitoring process itself by sending external commands to Icinga.
-Most such actions (like rescheduling a check) can be done with just a single click.
-
-More details about this module can be found in [this chapter](../modules/monitoring/doc/01-About.md#monitoring-module-about).
-
 ## Installation <a id="about-installation"></a>
 
 Icinga Web 2 can be installed easily from packages from the official package repositories.
@@ -55,7 +42,33 @@ They can be stored either in a database or in .ini files.
 See [here](07-Preferences.md#preferences) for more information about a user's preferences
 and how to configure their storage type.
 
-## Documentation <a id="about-documentation"></a>
+## Modules
+
+Modules extend Icinga Web 2 with additional functionality. They allow the integration of
+capabilities into existing views and even other modules. Be it a graph provider such as
+[Graphite](https://github.com/Icinga/icingaweb2-module-graphite) or a UI for the Icinga 2
+configuration like the [Director](https://github.com/Icinga/icingaweb2-module-director).
+
+See [here](08-Modules.md#modules) for information on how to install and configure modules.
+
+### The monitoring module <a id="about-monitoring"></a>
+
+> **Note for Icinga DB Users**
+>
+> This module is only for the IDO backend. Use [Icinga DB Web](https://github.com/Icinga/icingadb-web) instead.
+
+This is the core module for most Icinga Web 2 users.
+
+It provides an intuitive user interface for monitoring with Icinga 2.
+There are lots of list and detail views (e.g. for hosts and services)
+you can sort and filter depending on what you want to see.
+
+You can also control the monitoring process itself by sending external commands to Icinga.
+Most such actions (like rescheduling a check) can be done with just a single click in the UI.
+
+More details about this module can be found in [this chapter](../modules/monitoring/doc/01-About.md#monitoring-module-about).
+
+### Documentation <a id="about-documentation"></a>
 
 With the documentation module you can read the documentation of the framework (and any module) directly in the user interface.
 
@@ -63,7 +76,7 @@ The module can also export the documentation to PDF.
 
 More details about this module can be found in [this chapter](../modules/doc/doc/01-About.md#doc-module-about).
 
-## Translation <a id="about-translation"></a>
+### Translation <a id="about-translation"></a>
 
 Icinga Web 2 and all modules by Icinga utilize gettext to provide translations into other languages from the default
 English (en_US). However, the actual language specific files (locales) are not separately included in every project.

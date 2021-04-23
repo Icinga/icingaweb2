@@ -253,19 +253,20 @@ class Role
      *
      * @param string $permission
      * @param bool $ignoreParent    Only evaluate the role's own permissions
+     * @param bool $cascadeUpwards  `false` if `foo/bar/*` and `foo/bar/raboof` should not match `foo/*`
      *
      * @return bool
      */
-    public function grants($permission, $ignoreParent = false)
+    public function grants($permission, $ignoreParent = false, $cascadeUpwards = true)
     {
         foreach ($this->permissions as $grantedPermission) {
-            if ($this->match($grantedPermission, $permission)) {
+            if ($this->match($grantedPermission, $permission, $cascadeUpwards)) {
                 return true;
             }
         }
 
         if (! $ignoreParent && $this->getParent() !== null) {
-            return $this->getParent()->grants($permission);
+            return $this->getParent()->grants($permission, false, $cascadeUpwards);
         }
 
         return false;

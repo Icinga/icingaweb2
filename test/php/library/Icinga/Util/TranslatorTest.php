@@ -17,7 +17,7 @@ class TranslatorWithHardcodedLocaleCodes extends Translator
 
 class TranslatorTest extends BaseTestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         Translator::registerDomain('icingatest', BaseTestCase::$testDir . '/res/locale');
@@ -48,11 +48,10 @@ class TranslatorTest extends BaseTestCase
         );
     }
 
-    /**
-     * @expectedException Icinga\Exception\IcingaException
-     */
     public function testWhetherSetupLocaleThrowsAnExceptionWhenGivenAnInvalidLocale()
     {
+        $this->expectException(\Icinga\Exception\IcingaException::class);
+
         Translator::setupLocale('foobar');
     }
 

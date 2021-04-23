@@ -42,6 +42,11 @@
      */
     EventListener.prototype.bind = function (emitter) {
         var _this = this;
+
+        if (typeof emitter.jquery === 'undefined') {
+            emitter = $(emitter);
+        }
+
         $.each(this.handlers, function(i, handler) {
             _this.icinga.logger.debug('bind: ' + handler.evt + '(' + handler.cond + ')');
             emitter.on(

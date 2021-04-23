@@ -15,7 +15,7 @@
   cursor: pointer;
   line-height: normal;
   outline: none;
-  padding: @vertical-padding @horizontal-padding;
+  padding: ~"calc(@{vertical-padding} - 2px)" @horizontal-padding;
 
   @duration: 0.2s;
   // The trailing semicolon is needed to be able to pass this as a css list
@@ -65,6 +65,13 @@
       -ms-transform: @transform;
        -o-transform: @transform;
           transform: @transform;
+}
+
+.user-select(@user-select) {
+  -webkit-user-select: @user-select;
+  -moz-user-select: @user-select;
+  -ms-user-select: @user-select;
+  user-select: @user-select;
 }
 
 .rounded-corners(@border-radius: 0.4em) {

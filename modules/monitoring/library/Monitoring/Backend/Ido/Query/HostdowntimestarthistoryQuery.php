@@ -96,7 +96,7 @@ class HostdowntimestarthistoryQuery extends IdoQuery
             array()
         );
 
-        if (@func_get_arg(0) === false) {
+        if (func_num_args() === 0 || func_get_arg(0) === false) {
             $this->select->where(
                 "hdh.actual_start_time > '1970-01-02 00:00:00'"
             );

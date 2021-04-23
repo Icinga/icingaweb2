@@ -29,7 +29,6 @@ class StyleSheet
     protected static $lessFiles = [
         '../application/fonts/fontello-ifont/css/ifont-embedded.css',
         'css/vendor/normalize.css',
-        'css/vendor/tipsy.css',
         'css/icinga/base.less',
         'css/icinga/badges.less',
         'css/icinga/mixins.less',
@@ -52,7 +51,8 @@ class StyleSheet
         'css/icinga/compat.less',
         'css/icinga/print.less',
         'css/icinga/responsive.less',
-        'css/icinga/modal.less'
+        'css/icinga/modal.less',
+        'css/icinga/audit.less'
     ];
 
     /**

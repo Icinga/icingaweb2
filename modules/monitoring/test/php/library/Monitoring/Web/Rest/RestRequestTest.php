@@ -16,11 +16,10 @@ class MockedRestRequest extends RestRequest
 
 class RestRequestTest extends BaseTestCase
 {
-    /**
-     * @expectedException \Icinga\Exception\Json\JsonDecodeException
-     */
     public function testInvalidServerResponseHandling()
     {
+        $this->expectException(\Icinga\Exception\Json\JsonDecodeException::class);
+
         MockedRestRequest::get('http://localhost')->send();
     }
 }

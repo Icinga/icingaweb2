@@ -26,7 +26,7 @@ class SuccessfulForm extends Form
 
 class FormTest extends BaseTestCase
 {
-    public function tearDown()
+    public function tearDown(): void
     {
         Mockery::close(); // Necessary as some tests are running isolated
     }
@@ -251,11 +251,10 @@ class FormTest extends BaseTestCase
         );
     }
 
-    /**
-     * @expectedException \Icinga\Exception\ProgrammingError
-     */
     public function testWhetherTheOnSuccessOptionMustBeCallable()
     {
+        $this->expectException(\Icinga\Exception\ProgrammingError::class);
+
         new Form(array('onSuccess' => '_invalid_'));
     }
 

@@ -36,10 +36,6 @@ if (file_exists($vendorAutoload)) {
 
 require_once($icingaLibPath . '/Test/ClassLoader.php');
 
-if (! class_exists('PHPUnit_Framework_TestCase')) {
-    require_once __DIR__ . '/phpunit-compat.php';
-}
-
 $loader = new Icinga\Test\ClassLoader();
 $loader->registerNamespace('Tests', $testLibraryPath);
 $loader->registerNamespace('Icinga', $icingaLibPath);

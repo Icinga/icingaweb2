@@ -351,50 +351,56 @@
         /**
          * Get the CSS selector to the given node
          *
-         * @param   {jQuery}    $node
+         * @param {HTMLElement} element
          *
          * @returns {string}
          */
-        getCSSPath: function($node) {
-            if (! $node.length) {
-                throw 'Requires a node';
+        getCSSPath: function(element) {
+            if (typeof element === 'undefined') {
+                throw 'Requires a element';
+            }
+
+            if (typeof element.jquery !== 'undefined') {
+                if (! element.length) {
+                    throw 'Requires a element';
+                }
+
+                element = element[0];
             }
 
             var path = [];
 
             while (true) {
-                var id = $node.attr('id');
+                var id = element.id;
 
                 // Ignore forms and form controls because id generation is unreliable :(
-                if (typeof id !== 'undefined' && ! $node.is(':input') && ! $node.is('form')) {
+                if (id && ! element.form && ! (element instanceof HTMLFormElement)) {
                     path.push('#' + id);
                     break;
                 }
 
-                var tagName = $node.prop('tagName').toLowerCase();
-                //var classes = $node.attr('class');
-                //
-                //if (classes) {
-                //    classes = classes.split(' ').join('.');
-                //}
+                var tagName = element.tagName;
+                var parent = element.parentElement;
 
-                var $parent = $node.parent();
-
-                if (! $parent.length) {
-                    path.push(tagName);
+                if (! parent) {
+                    path.push(tagName.toLowerCase());
                     break;
                 }
 
-                var $siblings = $parent.children(tagName);
+                if (parent.children.length) {
+                    var index = 0;
+                    do {
+                        if (element.tagName === tagName) {
+                            index++;
+                        }
+                    } while ((element = element.previousElementSibling));
 
-                if ($siblings.length > 1) {
-                    var index = $siblings.index($node) + 1;
-                    path.push(tagName + ':nth-of-type(' + index.toString() + ')');
+                    path.push(tagName.toLowerCase() + ':nth-of-type(' + index + ')');
                 } else {
-                    path.push(tagName);
+                    path.push(tagName.toLowerCase());
                 }
 
-                $node = $parent;
+                element = parent;
             }
 
             return path.reverse().join(' > ');

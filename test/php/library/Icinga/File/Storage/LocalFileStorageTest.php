@@ -54,11 +54,10 @@ class LocalFileStorageTest extends BaseTestCase
         static::assertSame(array('foobar'), array_values(iterator_to_array($lfs->getIterator())));
     }
 
-    /**
-     * @expectedException \Icinga\Exception\NotReadableError
-     */
     public function testGetIteratorThrowsNotReadableError()
     {
+        $this->expectException(\Icinga\Exception\NotReadableError::class);
+
         $lfs = new LocalFileStorage('/notreadabledirectory');
         $lfs->getIterator();
     }
@@ -79,21 +78,19 @@ class LocalFileStorageTest extends BaseTestCase
         static::assertSame('Hello world!', $lfs->read('foo/bar'));
     }
 
-    /**
-     * @expectedException \Icinga\Exception\AlreadyExistsException
-     */
     public function testCreateThrowsAlreadyExistsException()
     {
+        $this->expectException(\Icinga\Exception\AlreadyExistsException::class);
+
         $lfs = new TemporaryLocalFileStorage();
         $lfs->create('foobar', 'Hello world!');
         $lfs->create('foobar', 'Hello world!');
     }
 
-    /**
-     * @expectedException \Icinga\Exception\NotWritableError
-     */
     public function testCreateThrowsNotWritableError()
     {
+        $this->expectException(\Icinga\Exception\NotWritableError::class);
+
         $lfs = new LocalFileStorage('/notwritabledirectory');
         $lfs->create('foobar', 'Hello world!');
     }
@@ -105,20 +102,18 @@ class LocalFileStorageTest extends BaseTestCase
         static::assertSame('Hello world!', $lfs->read('foobar'));
     }
 
-    /**
-     * @expectedException \Icinga\Exception\NotFoundError
-     */
     public function testReadThrowsNotFoundError()
     {
+        $this->expectException(\Icinga\Exception\NotFoundError::class);
+
         $lfs = new TemporaryLocalFileStorage();
         $lfs->read('foobar');
     }
 
-    /**
-     * @expectedException \Icinga\Exception\NotReadableError
-     */
     public function testReadThrowsNotReadableError()
     {
+        $this->expectException(\Icinga\Exception\NotReadableError::class);
+
         $lfs = new TemporaryLocalFileStorage();
         $lfs->create('foobar', 'Hello world!');
         chmod($lfs->resolvePath('foobar'), 0);
@@ -133,20 +128,18 @@ class LocalFileStorageTest extends BaseTestCase
         static::assertSame('Hello universe!', $lfs->read('foobar'));
     }
 
-    /**
-     * @expectedException \Icinga\Exception\NotFoundError
-     */
     public function testUpdateThrowsNotFoundError()
     {
+        $this->expectException(\Icinga\Exception\NotFoundError::class);
+
         $lfs = new TemporaryLocalFileStorage();
         $lfs->update('foobar', 'Hello universe!');
     }
 
-    /**
-     * @expectedException \Icinga\Exception\NotWritableError
-     */
     public function testUpdateThrowsNotWritableError()
     {
+        $this->expectException(\Icinga\Exception\NotWritableError::class);
+
         $lfs = new TemporaryLocalFileStorage();
         $lfs->create('foobar', 'Hello world!');
         chmod($lfs->resolvePath('foobar'), 0);
@@ -161,20 +154,18 @@ class LocalFileStorageTest extends BaseTestCase
         static::assertFalse($lfs->has('foobar'));
     }
 
-    /**
-     * @expectedException \Icinga\Exception\NotFoundError
-     */
     public function testDeleteThrowsNotFoundError()
     {
+        $this->expectException(\Icinga\Exception\NotFoundError::class);
+
         $lfs = new TemporaryLocalFileStorage();
         $lfs->delete('foobar');
     }
 
-    /**
-     * @expectedException \Icinga\Exception\NotWritableError
-     */
     public function testDeleteThrowsNotWritableError()
     {
+        $this->expectException(\Icinga\Exception\NotWritableError::class);
+
         $lfs = new TemporaryLocalFileStorage();
         $lfs->create('foobar', 'Hello world!');
 
@@ -204,20 +195,18 @@ class LocalFileStorageTest extends BaseTestCase
         $lfs->resolvePath('./notRelevant/../foobar', true);
     }
 
-    /**
-     * @expectedException \Icinga\Exception\NotFoundError
-     */
     public function testResolvePathThrowsNotFoundError()
     {
+        $this->expectException(\Icinga\Exception\NotFoundError::class);
+
         $lfs = new TemporaryLocalFileStorage();
         $lfs->resolvePath('foobar', true);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testResolvePathThrowsInvalidArgumentException()
     {
+        $this->expectException(\InvalidArgumentException::class);
+
         $lfs = new LocalFileStorage('/notreadabledirectory');
         $lfs->resolvePath('../foobar');
     }
