@@ -3,6 +3,7 @@
 
 namespace Icinga\Module\Setup;
 
+use Icinga\Module\Setup\Requirement\SetRequirement;
 use PDOException;
 use Icinga\Web\Form;
 use Icinga\Web\Wizard;
@@ -227,28 +228,13 @@ class WebWizard extends Wizard implements SetupWizard
                     unset($pageData['setup_usergroup_backend']);
                 }
             }
-        } elseif ($page->getName() === 'setup_general_config') {
-            $authData = $this->getPageData('setup_authentication_type');
-            if ($authData['type'] === 'db') {
-                $page
-                    ->create($this->getRequestData($page, $request))
-                    ->getElement('global_config_backend')
-                    ->setValue('db');
-                $page->info(
-                    mt(
-                        'setup',
-                        'Note that choosing "Database" as preference storage causes'
-                        . ' Icinga Web 2 to use the same database as for authentication.'
-                    ),
-                    false
-                );
-            }
-        } elseif ($page->getName() === 'setup_authentication_type' && $this->getDirection() === static::FORWARD) {
+        } elseif ($page->getName() === 'setup_authentication_type') {
             $authData = $this->getPageData($page->getName());
+            $pageData = & $this->getPageData();
+
             if ($authData !== null && $request->getPost('type') !== $authData['type']) {
                 // Drop any existing page data in case the authentication type has changed,
                 // otherwise it will conflict with other forms that depend on this one
-                $pageData = & $this->getPageData();
                 unset($pageData['setup_admin_account']);
                 unset($pageData['setup_authentication_backend']);
 
@@ -259,6 +245,13 @@ class WebWizard extends Wizard implements SetupWizard
                     unset($pageData['setup_config_db_resource']);
                     unset($pageData['setup_config_db_creation']);
                 }
+            } elseif (isset($authData['type']) && $authData['type'] == 'external') {
+                // If you choose the authentication type external and validate the database and then come
+                // back to change the authentication type but do not change it, you will get an database configuration
+                // related error message on the next page. To avoid this error, the 'setup_config_db_resource'
+                // page must be unset.
+
+                unset($pageData['setup_config_db_resource']);
             }
         }
     }
@@ -295,18 +288,20 @@ class WebWizard extends Wizard implements SetupWizard
             $skip = $backendConfig['backend'] !== 'ldap';
         } elseif ($newPage->getName() === 'setup_config_db_resource') {
             $authData = $this->getPageData('setup_authentication_type');
-            $configData = $this->getPageData('setup_general_config');
-            $skip = $authData['type'] === 'db' || $configData['global_config_backend'] !== 'db';
+            $skip = $authData['type'] === 'db';
         } elseif (in_array($newPage->getName(), array('setup_auth_db_creation', 'setup_config_db_creation'))) {
             if (($newPage->getName() === 'setup_auth_db_creation' || $this->hasPageData('setup_config_db_resource'))
                 && (($config = $this->getPageData('setup_auth_db_resource')) !== null
                     || ($config = $this->getPageData('setup_config_db_resource')) !== null)
-                    && !$config['skip_validation']
+                    && !$config['skip_validation'] &&  $this->getDirection() == static::FORWARD
             ) {
+                // Execute this code only if the direction is forward.
+                // Otherwise, an error will be output when you go back.
                 $db = new DbTool($config);
 
                 try {
                     $db->connectToDb(); // Are we able to login on the database?
+
                     if (array_search(reset($this->databaseTables), $db->listTables(), true) === false) {
                         // In case the database schema does not yet exist the
                         // user needs the privileges to setup the database
@@ -379,7 +374,8 @@ class WebWizard extends Wizard implements SetupWizard
                     'ignore'                => true,
                     'label'                 => t('Validate Configuration'),
                     'data-progress-label'   => t('Validation In Progress'),
-                    'decorators'            => array('ViewHelper')
+                    'decorators'            => array('ViewHelper'),
+                    'formnovalidate'        => 'formnovalidate'
                 )
             );
             $page->getDisplayGroup('buttons')->addElement($page->getElement('backend_validation'));
@@ -394,7 +390,8 @@ class WebWizard extends Wizard implements SetupWizard
                         'ignore'                => true,
                         'label'                 => t('Validate Configuration'),
                         'data-progress-label'   => t('Validation In Progress'),
-                        'decorators'            => array('ViewHelper')
+                        'decorators'            => array('ViewHelper'),
+                        'formnovalidate'        => 'formnovalidate'
                     )
                 );
                 $page->getDisplayGroup('buttons')->addElement($page->getElement('transport_validation'));
@@ -651,6 +648,8 @@ class WebWizard extends Wizard implements SetupWizard
             )
         )));
 
+        $dbSet = new RequirementSet(false, RequirementSet::MODE_OR);
+
         $mysqlSet = new RequirementSet(true);
         $mysqlSet->add(new PhpModuleRequirement(array(
             'optional'      => true,
@@ -680,7 +679,8 @@ class WebWizard extends Wizard implements SetupWizard
                 'setup.requirement.class'
             )
         )));
-        $set->merge($mysqlSet);
+
+        $dbSet->merge($mysqlSet);
 
         $pgsqlSet = new RequirementSet(true);
         $pgsqlSet->add(new PhpModuleRequirement(array(
@@ -711,7 +711,23 @@ class WebWizard extends Wizard implements SetupWizard
                 'setup.requirement.class'
             )
         )));
-        $set->merge($pgsqlSet);
+        $dbSet->merge($pgsqlSet);
+        $set->merge($dbSet);
+
+        $dbRequire = (new SetRequirement(array(
+            'optional'      => false,
+            'condition'     => $dbSet,
+            'title'         =>'Database',
+            'alias'         => 'PDO-MySQL OR PDO-PostgreSQL',
+            'description'   => mt(
+                'setup',
+                'A database is mandatory, therefore at least one module PDO-MySQL OR PDO-PostgreSQL for PHP 
+        is required.'
+            )
+        )));
+
+        $set->add($dbRequire);
+
 
         $set->add(new ConfigDirectoryRequirement(array(
             'condition'     => Icinga::app()->getConfigDir(),

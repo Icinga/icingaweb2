@@ -12,7 +12,7 @@ require_once BaseTestCase::$appDir . '/views/helpers/DateFormat.php';
 
 class DateFormatTest extends BaseTestCase
 {
-    public function tearDown()
+    public function tearDown(): void
     {
         DateTimeFactory::setConfig(array('timezone' => date_default_timezone_get()));
     }

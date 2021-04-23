@@ -135,7 +135,7 @@ And when you want to test your changes, please read more about under the chapter
 
 ## Testing Translations <a id="module-translation-tests"></a>
 
-If you want to try out your translation changes in Icinga Web 2, you can make use of the the CLI translations commands.
+If you want to try out your translation changes in Icinga Web 2, you can make use of the CLI translations commands.
 
 > **Note**:
 >

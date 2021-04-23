@@ -129,8 +129,8 @@
 
             // Disable all form controls to prevent resubmission except for our search input
             // Note that disabled form inputs will not be enabled via JavaScript again
-            if ($target.attr('id') === $form.closest('.container').attr('id')) {
-                $form.find(':input:not(#search):not(:disabled)').prop('disabled', true);
+            if (! $form.is('[role="search"]') && $target.attr('id') === $form.closest('.container').attr('id')) {
+                $form.find('input:not(:disabled)').prop('disabled', true);
             }
 
             // Show a spinner depending on how the form is being submitted
@@ -183,7 +183,18 @@
 
             var req = this.loadUrl(url, $target, data, method);
             req.forceFocus = $autoSubmittedBy ? $autoSubmittedBy : $button.length ? $button : null;
+            req.autosubmit = !! $autoSubmittedBy;
+            req.addToHistory = method === 'GET';
             req.progressTimer = progressTimer;
+
+            if ($autoSubmittedBy) {
+                if ($autoSubmittedBy.closest('.controls').length) {
+                    $('.content', req.$target).addClass('impact');
+                } else {
+                    req.$target.addClass('impact');
+                }
+            }
+
             return req;
         },
 
@@ -221,12 +232,13 @@
 
             // If we have a pending request for the same target...
             if (typeof this.requests[id] !== 'undefined') {
-                if (autorefresh) {
-                    return false;
-                }
                 // ... ignore the new request if it is already pending with the same URL. Only abort GETs, as those
                 // are the only methods that are guaranteed to return the same value
                 if (this.requests[id].url === url && method === 'GET') {
+                    if (autorefresh) {
+                        return false;
+                    }
+
                     this.icinga.logger.debug('Request to ', url, ' is already running for ', $target);
                     return this.requests[id];
                 }
@@ -244,6 +256,14 @@
 
             // Not sure whether we need this Accept-header
             var headers = { 'X-Icinga-Accept': 'text/html' };
+
+            if (!! id) {
+                headers['X-Icinga-Container'] = id;
+            }
+
+            if (autorefresh) {
+                headers['X-Icinga-Autorefresh'] = '1';
+            }
 
             // Ask for a new window id in case we don't already have one
             if (this.icinga.ui.hasWindowId()) {
@@ -285,6 +305,7 @@
             req.fail(this.onFailure);
             req.always(this.onComplete);
             req.autorefresh = autorefresh;
+            req.autosubmit = false;
             req.scripted = false;
             req.method = method;
             req.action = action;
@@ -302,7 +323,7 @@
                 setTimeout(function () {
                     // The column may have not been shown before. To make the transition
                     // delay working we have to wait for the column getting rendered
-                    if (req.state() === 'pending') {
+                    if (! req.autosubmit && req.state() === 'pending') {
                         req.$target.addClass('impact');
                     }
                 }, 0);
@@ -335,7 +356,7 @@
         },
 
         filterAutorefreshingContainers: function () {
-            return $(this).data('icingaRefresh') > 0;
+            return $(this).data('icingaRefresh') > 0 && ! $(this).is('[data-suspend-autorefresh]');
         },
 
         autorefresh: function () {
@@ -478,7 +499,6 @@
 
                 var originUrl = req.$target.data('icingaUrl');
 
-                // We may just close the right column, refresh the left one in this case
                 $(window).on('popstate.__back__', { self: this }, function (event) {
                     var _this = event.data.self;
                     var $refreshTarget = $('#col2');
@@ -502,11 +522,21 @@
                         $refreshTarget = $('#col1');
                     }
 
-                    _this.loadUrl(refreshUrl, $refreshTarget).autorefresh = true;
+                    // loadUrl won't run this request, as due to the history handling it's already running.
+                    // The important bit though is that it returns this (already running) request. This way
+                    // it's possible to set `scripted = true` on the request. (`addToHistory = true` should
+                    // already be the case, though it's added again just in case it's not already `true`..)
+                    var req = _this.loadUrl(refreshUrl, $refreshTarget);
+                    req.addToHistory = false;
+                    req.scripted = true;
 
                     setTimeout(function () {
                         // TODO: Find a better solution than a hardcoded one
-                        _this.loadUrl(refreshUrl, $refreshTarget).autorefresh = true;
+                        // This is still the *cheat* to get live results
+                        // (in case there's a delay and a change is not instantly effective)
+                        var req = _this.loadUrl(refreshUrl, $refreshTarget);
+                        req.addToHistory = false;
+                        req.scripted = true;
                     }, 1000);
 
                     $(window).off('popstate.__back__');
@@ -514,6 +544,35 @@
 
                 // Navigate back, no redirect desired
                 window.history.back();
+
+                return true;
+            } else if (redirect.match(/__CLOSE__/)) {
+                if (req.$redirectTarget.is('#col1')) {
+                    icinga.logger.warn('Cannot close #col1');
+                    return false;
+                }
+
+                // Close right column as requested
+                icinga.ui.layout1col();
+
+                // Refresh left column and produce a new history state for it
+                var $col1 = $('#col1');
+                var col1Url = icinga.history.getCol1State();
+                var refresh = this.loadUrl(col1Url, $col1);
+                refresh.scripted = true;
+
+                var _this = this;
+                setTimeout(function () {
+                    // TODO: Find a better solution than a hardcoded one
+                    // This is still the *cheat* to get live results
+                    // (in case there's a delay and a change is not instantly effective)
+                    var secondRefresh = _this.loadUrl(col1Url, $col1);
+                    if (secondRefresh !== refresh) {
+                        // Only change these properties if it's not still the first refresh
+                        secondRefresh.addToHistory = false;
+                        secondRefresh.scripted = true;
+                    }
+                }, 1000);
 
                 return true;
             }
@@ -611,6 +670,35 @@
                 this.failureNotice = null;
             }
 
+            var target = req.getResponseHeader('X-Icinga-Container');
+            var newBody = false;
+            var oldNotifications = false;
+            if (target) {
+                if (target === 'ignore') {
+                    return;
+                }
+
+                var $newTarget = this.identifyLinkTarget(target, req.$target);
+                if ($newTarget.length) {
+                    // If we change the target, oncomplete will fail to clean up
+                    // This fixes the problem, not using req.$target would be better
+                    delete this.requests[req.$target.attr('id')];
+
+                    req.$target = $newTarget;
+                    req.$redirectTarget = $newTarget;
+
+                    if (target === 'layout') {
+                        oldNotifications = $('#notifications li').detach();
+                        this.icinga.ui.layout1col();
+                        newBody = true;
+                    }
+                }
+            }
+
+            if (req.autorefresh && req.$target.is('[data-suspend-autorefresh]')) {
+                return;
+            }
+
             this.icinga.logger.debug(
                 'Got response for ', req.$target, ', URL was ' + req.url
             );
@@ -629,34 +717,8 @@
                 _this.loadUrl(_this.url('/layout/announcements'), $('#announcements'));
             }
 
-            var active = false;
             var rendered = false;
             var classes;
-
-            if (req.autorefresh) {
-                // TODO: next container url
-                active = $('[href].active', req.$target).attr('href');
-            }
-
-            var target = req.getResponseHeader('X-Icinga-Container');
-            var newBody = false;
-            var oldNotifications = false;
-            if (target) {
-                if (target === 'ignore') {
-                    return;
-                }
-                // If we change the target, oncomplete will fail to clean up
-                // This fixes the problem, not using req.$target would be better
-                delete this.requests[req.$target.attr('id')];
-
-                req.$target = $('#' + target);
-                if (target === 'layout') {
-                    oldNotifications = $('#notifications li').detach();
-                }
-                // We assume target === 'layout' right now. This might not be correct
-                this.icinga.ui.layout1col();
-                newBody = true;
-            }
 
             if (target !== 'layout') {
                 var moduleName = req.getResponseHeader('X-Icinga-Module');
@@ -762,23 +824,64 @@
 
             var contentSeparator = req.getResponseHeader('X-Icinga-Multipart-Content');
             if (!! contentSeparator) {
+                var locationQuery = req.getResponseHeader('X-Icinga-Location-Query');
+                if (locationQuery !== null) {
+                    var a = this.icinga.utils.getUrlHelper().cloneNode(true);
+                    a.search = locationQuery ? '?' + locationQuery : '';
+
+                    if (req.autosubmit || autoSubmit) {
+                        // Also update a form's action if it doesn't differ from the container's url
+                        var $form = $(referrer.forceFocus).closest('form');
+                        var formAction = $form.attr('action');
+                        if (!! formAction) {
+                            formAction = this.icinga.utils.parseUrl(formAction);
+                            if (formAction.path === currentUrl.path
+                                && this.icinga.utils.arraysEqual(formAction.params, currentUrl.params)
+                            ) {
+                                $form.attr('action', a.href);
+                            }
+                        }
+                    }
+
+                    req.$target.data('icingaUrl', a.href);
+                    this.icinga.history.replaceCurrentState();
+                }
+
                 $.each(req.responseText.split(contentSeparator), function (idx, el) {
-                    var match = el.match(/for=(\S+)\s+(.*)/m);
+                    var match = el.match(/for=(Behavior:)?(\S+)\s+([^]*)/m);
                     if (!! match) {
-                        var $target = $('#' + match[1]);
-                        if ($target.length) {
-                            _this.renderContentToContainer(
-                                match[2],
-                                $target,
-                                'replace',
-                                req.autorefresh,
-                                req.forceFocus,
-                                autoSubmit,
-                                req.scripted
-                            );
+                        if (match[1]) {
+                            var behavior = _this.icinga.behaviors[match[2].toLowerCase()];
+                            if (typeof behavior !== 'undefined' && typeof behavior.update === 'function') {
+                                behavior.update(JSON.parse(match[3]));
+                            } else {
+                                _this.icinga.logger.warn(
+                                    'Invalid behavior. Cannot update behavior "' + match[2] + '"');
+                            }
                         } else {
-                            _this.icinga.logger.warn(
-                                'Invalid target ID. Cannot render multipart to #' + match[1]);
+                            var $target = $('#' + match[2]);
+                            if ($target.length) {
+                                var forceFocus;
+                                if (req.forceFocus
+                                    && typeof req.forceFocus.jquery !== 'undefined'
+                                    && $.contains($target[0], req.forceFocus[0])
+                                ) {
+                                    forceFocus = req.forceFocus;
+                                }
+
+                                _this.renderContentToContainer(
+                                    match[3],
+                                    $target,
+                                    'replace',
+                                    req.autorefresh,
+                                    forceFocus,
+                                    req.autosubmit || autoSubmit,
+                                    req.scripted
+                                );
+                            } else {
+                                _this.icinga.logger.warn(
+                                    'Invalid target ID. Cannot render multipart to #' + match[2]);
+                            }
                         }
                     } else {
                         _this.icinga.logger.error('Ill-formed multipart', el);
@@ -791,7 +894,7 @@
                     req.action,
                     req.autorefresh,
                     req.forceFocus,
-                    autoSubmit,
+                    req.autosubmit || autoSubmit,
                     req.scripted
                 );
             }
@@ -820,9 +923,14 @@
             // Remove 'impact' class if there was such
             if (req.$target.hasClass('impact')) {
                 req.$target.removeClass('impact');
+            } else {
+                var $impact = req.$target.find('.impact').first();
+                if ($impact.length) {
+                    $impact.removeClass('impact');
+                }
             }
 
-            if (! req.autorefresh) {
+            if (! req.autorefresh && ! req.autosubmit) {
                 // TODO: Hook for response/url?
                 var url = req.url;
 
@@ -915,9 +1023,9 @@
                     _this.icinga.loadModule(moduleName);
                 }
 
-                $(this).trigger('rendered');
+                $(this).trigger('rendered', [req.autorefresh, req.scripted, req.autosubmit]);
             });
-            req.$target.trigger('rendered');
+            req.$target.trigger('rendered', [req.autorefresh, req.scripted, req.autosubmit]);
 
             this.icinga.ui.refreshDebug();
         },
@@ -952,6 +1060,8 @@
                     req.$target,
                     req.action,
                     req.autorefresh,
+                    undefined,
+                    req.autosubmit,
                     req.scripted
                 );
             } else {
@@ -1011,12 +1121,18 @@
 
         /**
          * Detect the link/form target for a given element (link, form, whatever)
+         *
+         * @param {object} $el jQuery set with the element
+         * @param {boolean} prepare Pass `false` to disable column preparation
          */
-        getLinkTargetFor: function($el)
+        getLinkTargetFor: function($el, prepare)
         {
+            if (typeof prepare === 'undefined') {
+                prepare = true;
+            }
+
             // If everything else fails, our target is the first column...
-            var $col1 = $('#col1');
-            var $target = $col1;
+            var $target = $('#col1');
 
             // ...but usually we will use our own container...
             var $container = $el.closest('.container');
@@ -1028,34 +1144,43 @@
             if ($el.closest('[data-base-target]').length) {
                 var targetId = $el.closest('[data-base-target]').data('baseTarget');
 
-                // Simulate _next to prepare migration to dynamic column layout
-                // YES, there are duplicate lines right now.
-                if (targetId === '_next') {
-                    if (this.icinga.ui.hasOnlyOneColumn()) {
-                        $target = $col1;
-                    } else {
-                        if ($el.closest('#col2').length) {
-                            this.icinga.ui.moveToLeft();
-                        }
-
-                        $target = $('#col2');
-                    }
-                } else if (targetId === '_self') {
-                    $target = $el.closest('.container');
-                } else if (targetId === '_main') {
-                    $target = $col1;
-                    this.icinga.ui.layout1col();
-                } else {
-                    $target = $('#' + targetId);
-                    if (! $target.length) {
-                        this.icinga.logger.warn('Link target "#' + targetId + '" does not exist in DOM.');
-                    }
+                $target = this.identifyLinkTarget(targetId, $el);
+                if (! $target.length) {
+                    this.icinga.logger.warn('Link target "#' + targetId + '" does not exist in DOM.');
                 }
             }
 
-            // Hardcoded layout switch unless columns are dynamic
-            if ($target.attr('id') === 'col2') {
-                this.icinga.ui.layout2col();
+            if (prepare) {
+                this.icinga.ui.prepareColumnFor($el, $target);
+            }
+
+            return $target;
+        },
+
+        /**
+         * Identify link target by the given id
+         *
+         * The id may also be one of the column aliases: `_next`, `_self` and `_main`
+         *
+         * @param {string} id
+         * @param {object} $of
+         * @return {object}
+         */
+        identifyLinkTarget: function (id, $of) {
+            var $target;
+
+            if (id === '_next') {
+                if (this.icinga.ui.hasOnlyOneColumn()) {
+                    $target = $('#col1');
+                } else {
+                    $target = $('#col2');
+                }
+            } else if (id === '_self') {
+                $target = $of.closest('.container');
+            } else if (id === '_main') {
+                $target = $('#col1');
+            } else {
+                $target = $('#' + id);
             }
 
             return $target;
@@ -1113,38 +1238,25 @@
                 }
             }
 
-            $container.trigger('beforerender');
+            $container.trigger('beforerender', [content, action, autorefresh, scripted, autoSubmit]);
 
             var discard = false;
             $.each(_this.icinga.behaviors, function(name, behavior) {
                 if (behavior.renderHook) {
-                    var changed = behavior.renderHook(content, $container, action, autorefresh);
-                    if (!changed) {
+                    var changed = behavior.renderHook(content, $container, action, autorefresh, autoSubmit);
+                    if (changed === null) {
                         discard = true;
                     } else {
                         content = changed;
                     }
                 }
             });
-            if (discard) {
-                return;
-            }
-
-            // TODO: We do not want to wrap this twice...
-            var $content = $('<div>' + content + '</div>');
 
             $('.container', $container).each(function() {
                 _this.stopPendingRequestsFor($(this));
             });
 
-            if (false &&
-                $('.dashboard', $content).length > 0 &&
-                $('.dashboard', $container).length === 0
-            ) {
-                // $('.dashboard', $content)
-                // $container.html(content);
-
-            } else {
+            if (! discard) {
                 if ($container.closest('.dashboard').length) {
                     var title = $('h1', $container).first().detach();
                     $container.html(title).append(content);
@@ -1154,13 +1266,14 @@
                     $container.append(content);
                 }
             }
+
             this.icinga.ui.assignUniqueContainerIds();
 
-            if (navigationAnchor) {
+            if (! discard && navigationAnchor) {
                 setTimeout(this.icinga.ui.focusElement.bind(this.icinga.ui), 0, navigationAnchor, $container);
             } else if (! activeElementPath) {
                 // Active element was not in this container
-                if (! autorefresh && ! scripted) {
+                if (! autorefresh && ! autoSubmit && ! scripted) {
                     setTimeout(function() {
                         if (typeof $container.attr('tabindex') === 'undefined') {
                             $container.attr('tabindex', -1);
@@ -1176,8 +1289,8 @@
                     var $activeElement = $(activeElementPath);
 
                     if ($activeElement.length && $activeElement.is(':visible')) {
-                        $activeElement[0].focus({preventScroll: autorefresh});
-                    } else if (! autorefresh && ! scripted) {
+                        $activeElement[0].focus({preventScroll: autorefresh || autoSubmit});
+                    } else if (! autorefresh && ! autoSubmit && ! scripted) {
                         if (focusFallback) {
                             _this.icinga.ui.focusElement($(focusFallback.parent).find(focusFallback.child));
                         } else if (typeof $container.attr('tabindex') === 'undefined') {

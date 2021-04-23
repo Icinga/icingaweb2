@@ -28,6 +28,7 @@
         <th><?= $this->translate('Name') ?></th>
         <th><?= $this->translate('Users') ?></th>
         <th><?= $this->translate('Groups') ?></th>
+        <th><?= $this->translate('Inherits From') ?></th>
         <th></th>
     </tr>
     </thead>
@@ -44,6 +45,7 @@
         </td>
         <td><?= $this->escape($role->users) ?></td>
         <td><?= $this->escape($role->groups) ?></td>
+        <td><?= $this->escape($role->parent) ?></td>
         <td class="icon-col text-right">
             <?= $this->qlink(
                 '',

@@ -35,24 +35,33 @@ class ConfigController extends Controller
     public function createApplicationTabs()
     {
         $tabs = $this->getTabs();
-        $tabs->add('general', array(
-            'title' => $this->translate('Adjust the general configuration of Icinga Web 2'),
-            'label' => $this->translate('General'),
-            'url'   => 'config/general',
-            'baseTarget' => '_main'
-        ));
-        $tabs->add('resource', array(
-            'title' => $this->translate('Configure which resources are being utilized by Icinga Web 2'),
-            'label' => $this->translate('Resources'),
-            'url'   => 'config/resource',
-            'baseTarget' => '_main'
-        ));
-        $tabs->add('authentication', array(
-            'title' => $this->translate('Configure the user and group backends'),
-            'label' => $this->translate('Authentication'),
-            'url'   => 'config/userbackend',
-            'baseTarget' => '_main'
-        ));
+        if ($this->hasPermission('config/general')) {
+            $tabs->add('general', array(
+                'title' => $this->translate('Adjust the general configuration of Icinga Web 2'),
+                'label' => $this->translate('General'),
+                'url'   => 'config/general',
+                'baseTarget' => '_main'
+            ));
+        }
+        if ($this->hasPermission('config/resources')) {
+            $tabs->add('resource', array(
+                'title' => $this->translate('Configure which resources are being utilized by Icinga Web 2'),
+                'label' => $this->translate('Resources'),
+                'url'   => 'config/resource',
+                'baseTarget' => '_main'
+            ));
+        }
+        if ($this->hasPermission('config/access-control/users')
+            || $this->hasPermission('config/access-control/groups')
+        ) {
+            $tabs->add('authentication', array(
+                'title' => $this->translate('Configure the user and group backends'),
+                'label' => $this->translate('Access Control Backends'),
+                'url'   => 'config/userbackend',
+                'baseTarget' => '_main'
+            ));
+        }
+
         return $tabs;
     }
 
@@ -66,7 +75,15 @@ class ConfigController extends Controller
      */
     public function indexAction()
     {
-        $this->redirectNow('config/general');
+        if ($this->hasPermission('config/general')) {
+            $this->redirectNow('config/general');
+        } elseif ($this->hasPermission('config/resources')) {
+            $this->redirectNow('config/resource');
+        } elseif ($this->hasPermission('config/access-control/*')) {
+            $this->redirectNow('config/userbackend');
+        } else {
+            throw new SecurityException('No permission to configure Icinga Web 2');
+        }
     }
 
     /**
@@ -76,7 +93,7 @@ class ConfigController extends Controller
      */
     public function generalAction()
     {
-        $this->assertPermission('config/application/general');
+        $this->assertPermission('config/general');
         $form = new GeneralConfigForm();
         $form->setIniConfig(Config::app());
         $form->handleRequest();
@@ -138,6 +155,8 @@ class ConfigController extends Controller
             }
 
             $this->view->module = $module;
+            $this->view->libraries = $app->getLibraries();
+            $this->view->moduleManager = $manager;
             $this->view->toggleForm = $toggleForm;
             $this->view->title = $module->getName();
             $this->view->tabs = $module->getConfigTabs()->activate('info');
@@ -161,14 +180,14 @@ class ConfigController extends Controller
             Icinga::app()->getModuleManager()->enableModule($module);
             Notification::success(sprintf($this->translate('Module "%s" enabled'), $module));
             $form->onSuccess();
-            $this->rerenderLayout()->reloadCss()->redirectNow('config/modules');
+            $this->redirectHttp('config/modules');
         });
 
         try {
             $form->handleRequest();
         } catch (Exception $e) {
             $this->view->exceptionMessage = $e->getMessage();
-            $this->view->moduleName = $form->getValue('name');
+            $this->view->moduleName = $form->getValue('identifier');
             $this->view->action = 'enable';
             $this->render('module-configuration-error');
         }
@@ -187,14 +206,14 @@ class ConfigController extends Controller
             Icinga::app()->getModuleManager()->disableModule($module);
             Notification::success(sprintf($this->translate('Module "%s" disabled'), $module));
             $form->onSuccess();
-            $this->rerenderLayout()->reloadCss()->redirectNow('config/modules');
+            $this->redirectHttp('config/modules');
         });
 
         try {
             $form->handleRequest();
         } catch (Exception $e) {
             $this->view->exceptionMessage = $e->getMessage();
-            $this->view->moduleName = $form->getValue('name');
+            $this->view->moduleName = $form->getValue('identifier');
             $this->view->action = 'disable';
             $this->render('module-configuration-error');
         }
@@ -205,14 +224,17 @@ class ConfigController extends Controller
      */
     public function userbackendAction()
     {
-        $this->assertPermission('config/application/userbackend');
-        $this->assertPermission('config/application/usergroupbackend');
-        $form = new UserBackendReorderForm();
-        $form->setIniConfig(Config::app('authentication'));
-        $form->handleRequest();
+        if ($this->hasPermission('config/access-control/users')) {
+            $form = new UserBackendReorderForm();
+            $form->setIniConfig(Config::app('authentication'));
+            $form->handleRequest();
+            $this->view->form = $form;
+        }
 
-        $this->view->form = $form;
-        $this->view->backendNames = Config::app('groups');
+        if ($this->hasPermission('config/access-control/groups')) {
+            $this->view->backendNames = Config::app('groups');
+        }
+
         $this->createApplicationTabs()->activate('authentication');
         $this->view->title = $this->translate('Authentication');
         $this->render('userbackend/reorder');
@@ -223,7 +245,7 @@ class ConfigController extends Controller
      */
     public function createuserbackendAction()
     {
-        $this->assertPermission('config/application/userbackend');
+        $this->assertPermission('config/access-control/users');
         $form = new UserBackendConfigForm();
         $form
             ->setRedirectUrl('config/userbackend')
@@ -236,7 +258,7 @@ class ConfigController extends Controller
         try {
             $form->setResourceConfig(ResourceFactory::getResourceConfigs());
         } catch (ConfigurationError $e) {
-            if ($this->hasPermission('config/application/resources')) {
+            if ($this->hasPermission('config/resources')) {
                 Notification::error($e->getMessage());
                 $this->redirectNow('config/createresource');
             }
@@ -270,7 +292,7 @@ class ConfigController extends Controller
      */
     public function edituserbackendAction()
     {
-        $this->assertPermission('config/application/userbackend');
+        $this->assertPermission('config/access-control/users');
         $backendName = $this->params->getRequired('backend');
 
         $form = new UserBackendConfigForm();
@@ -309,7 +331,7 @@ class ConfigController extends Controller
      */
     public function removeuserbackendAction()
     {
-        $this->assertPermission('config/application/userbackend');
+        $this->assertPermission('config/access-control/users');
         $backendName = $this->params->getRequired('backend');
 
         $backendForm = new UserBackendConfigForm();
@@ -342,7 +364,7 @@ class ConfigController extends Controller
      */
     public function resourceAction()
     {
-        $this->assertPermission('config/application/resources');
+        $this->assertPermission('config/resources');
         $this->view->resources = Config::app('resources', true)->getConfigObject()
             ->setKeyColumn('name')
             ->select()
@@ -356,7 +378,7 @@ class ConfigController extends Controller
      */
     public function createresourceAction()
     {
-        $this->assertPermission('config/application/resources');
+        $this->assertPermission('config/resources');
         $this->getTabs()->add('resources/new', array(
             'label' => $this->translate('New Resource'),
             'url'   => Url::fromRequest()
@@ -377,7 +399,7 @@ class ConfigController extends Controller
      */
     public function editresourceAction()
     {
-        $this->assertPermission('config/application/resources');
+        $this->assertPermission('config/resources');
         $this->getTabs()->add('resources/update', array(
             'label' => $this->translate('Update Resource'),
             'url'   => Url::fromRequest()
@@ -397,7 +419,7 @@ class ConfigController extends Controller
      */
     public function removeresourceAction()
     {
-        $this->assertPermission('config/application/resources');
+        $this->assertPermission('config/resources');
         $this->getTabs()->add('resources/remove', array(
             'label' => $this->translate('Remove Resource'),
             'url'   => Url::fromRequest()

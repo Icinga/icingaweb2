@@ -425,9 +425,6 @@ class Perfdata
         $pieChart = new InlinePie($data, $this);
         $pieChart->setColors(array('#44bb77', '#ffaa44', '#ff5566', '#ddccdd'));
 
-        if (Zend_Controller_Front::getInstance()->getRequest()->isXmlHttpRequest()) {
-            $pieChart->disableNoScript();
-        }
         return $pieChart;
     }
 
@@ -436,6 +433,10 @@ class Perfdata
      */
     protected function format($value)
     {
+        if ($value === null) {
+            return null;
+        }
+
         if ($value instanceof ThresholdRange) {
             if ($value->getMin()) {
                 return (string) $value;

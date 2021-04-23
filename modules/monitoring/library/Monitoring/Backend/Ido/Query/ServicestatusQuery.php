@@ -21,7 +21,7 @@ class ServicestatusQuery extends IdoQuery
     /**
      * {@inheritdoc}
      */
-    protected $groupOrigin = array('hostgroups', 'servicegroups');
+    protected $groupOrigin = array('hostgroups', 'servicegroups', 'contacts', 'contactgroups');
 
     protected $subQueryTargets = array(
         'hostgroups'    => 'hostgroup',
@@ -349,7 +349,7 @@ class ServicestatusQuery extends IdoQuery
             []
         )->joinLeft(
             ['scgo' => 'icinga_objects'],
-            'scgo.object_id = scg.contactgroup_object_id AND scgo.is_active = 1 AND scgo.objecttype_id = 10',
+            'scgo.object_id = scg.contactgroup_object_id AND scgo.is_active = 1 AND scgo.objecttype_id = 11',
             []
         );
     }

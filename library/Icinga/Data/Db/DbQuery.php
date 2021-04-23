@@ -327,13 +327,13 @@ class DbQuery extends SimpleQuery
             return '(' . implode(" $operator ", $sql) . ')';
         } elseif ($sign === '=' && strpos($expression, '*') !== false) {
             if ($expression === '*') {
-                return new Zend_Db_Expr('TRUE');
+                return $col . ' IS NOT NULL';
             }
 
             return $col . ' LIKE ' . $this->escapeForSql($this->escapeWildcards($expression));
         } elseif ($sign === '!=' && strpos($expression, '*') !== false) {
             if ($expression === '*') {
-                return new Zend_Db_Expr('FALSE');
+                return $col . ' IS NULL';
             }
 
             return sprintf(

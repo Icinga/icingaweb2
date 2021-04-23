@@ -4,12 +4,18 @@
 namespace Icinga\Web;
 
 use Icinga\Application\Icinga;
-use Icinga\Web\FileCache;
+use Icinga\Application\Logger;
+use Icinga\Exception\Json\JsonDecodeException;
+use Icinga\Util\Json;
 use JShrink\Minifier;
 
 class JavaScript
 {
-    protected static $jsFiles = array(
+    /** @var string */
+    const DEFINE_RE =
+        '/(?<!\.)define\(\s*([\'"][^\'"]*[\'"])?[,\s]*(\[[^]]*\])?[,\s]*((?>function\s*\([^)]*\)|[^=]*=>|\w+).*)/';
+
+    protected static $jsFiles = [
         'js/helpers.js',
         'js/icinga.js',
         'js/icinga/logger.js',
@@ -27,7 +33,6 @@ class JavaScript
         'js/icinga/behavior/autofocus.js',
         'js/icinga/behavior/collapsible.js',
         'js/icinga/behavior/detach.js',
-        'js/icinga/behavior/sparkline.js',
         'js/icinga/behavior/dropdown.js',
         'js/icinga/behavior/navigation.js',
         'js/icinga/behavior/form.js',
@@ -36,18 +41,22 @@ class JavaScript
         'js/icinga/behavior/expandable.js',
         'js/icinga/behavior/filtereditor.js',
         'js/icinga/behavior/selectable.js',
-        'js/icinga/behavior/modal.js'
-    );
+        'js/icinga/behavior/modal.js',
+        'js/icinga/behavior/input-enrichment.js'
+    ];
 
-    protected static $vendorFiles = array(
+    protected static $vendorFiles = [
         'js/vendor/jquery-3.4.1',
-        'js/vendor/jquery-migrate-3.1.0',
-        'js/vendor/jquery.sparkline'
-    );
+        'js/vendor/jquery-migrate-3.1.0'
+    ];
 
-    public static function sendMinified()
+    protected static $baseFiles = [
+        'js/define.js'
+    ];
+
+    public static function sendMinified($forIe11 = false)
     {
-        self::send(true);
+        self::send(true, $forIe11);
     }
 
     /**
@@ -57,56 +66,78 @@ class JavaScript
      *
      * @param   bool    $minified   Whether to compress the client side script code
      */
-    public static function send($minified = false)
+    public static function send($minified = false, $forIe11 = false)
     {
         header('Content-Type: application/javascript');
         $basedir = Icinga::app()->getBootstrapDirectory();
+        $moduleManager = Icinga::app()->getModuleManager();
 
+        $files = [];
         $js = $out = '';
         $min = $minified ? '.min' : '';
 
         // Prepare vendor file list
-        $vendorFiles = array();
+        $vendorFiles = [];
         foreach (self::$vendorFiles as $file) {
-            $vendorFiles[] = $basedir . '/' . $file . $min . '.js';
+            $filePath = $basedir . '/' . $file . $min . '.js';
+            $vendorFiles[] = $filePath;
+            $files[] = $filePath;
         }
 
-        // Prepare Icinga JS file list
-        $jsFiles = array();
+        // Prepare base file list
+        $baseFiles = [];
+        foreach (self::$baseFiles as $file) {
+            $filePath = $basedir . '/' . $file;
+            $baseFiles[] = $filePath;
+            $files[] = $filePath;
+        }
+
+        if (! $forIe11) {
+            // Prepare library file list
+            foreach (Icinga::app()->getLibraries() as $library) {
+                $files = array_merge($files, $library->getJsAssets());
+            }
+        }
+
+        // Prepare core file list
+        $coreFiles = [];
         foreach (self::$jsFiles as $file) {
-            $jsFiles[] = $basedir . '/' . $file;
+            $filePath = $basedir . '/' . $file;
+            $coreFiles[] = $filePath;
+            $files[] = $filePath;
         }
 
-        $sharedFiles = [];
-        foreach (Icinga::app()->getModuleManager()->getLoadedModules() as $name => $module) {
+        $moduleFiles = [];
+        foreach ($moduleManager->getLoadedModules() as $name => $module) {
             if ($module->hasJs()) {
+                $jsDir = $module->getJsDir();
                 foreach ($module->getJsFiles() as $path) {
                     if (file_exists($path)) {
-                        $jsFiles[] = $path;
+                        $moduleFiles[$name][$jsDir][] = $path;
+                        $files[] = $path;
                     }
                 }
             }
 
-            if ($module->requiresJs()) {
-                foreach ($module->getJsRequires() as $path) {
-                    $sharedFiles[] = $path;
-                }
+            $assetDir = $module->getJsAssetDir();
+            foreach ($module->getJsAssets() as $path) {
+                $moduleFiles[$name][$assetDir][] = $path;
+                $files[] = $path;
             }
         }
-
-        $sharedFiles = array_unique($sharedFiles);
-        $files = array_merge($vendorFiles, $jsFiles, $sharedFiles);
 
         $request = Icinga::app()->getRequest();
         $noCache = $request->getHeader('Cache-Control') === 'no-cache' || $request->getHeader('Pragma') === 'no-cache';
 
         header('Cache-Control: public');
+
         if (! $noCache && FileCache::etagMatchesFiles($files)) {
             header("HTTP/1.1 304 Not Modified");
             return;
         } else {
             $etag = FileCache::etagForFiles($files);
         }
+
         header('ETag: "' . $etag . '"');
         header('Content-Type: application/javascript');
 
@@ -122,25 +153,125 @@ class JavaScript
             $out .= ';' . ltrim(trim(file_get_contents($file)), ';') . "\n";
         }
 
-        foreach ($jsFiles as $file) {
+        $baseJs = '';
+        foreach ($baseFiles as $file) {
+            $baseJs .= file_get_contents($file) . "\n\n\n";
+        }
+
+        if (! $forIe11) {
+            // Library files need to be namespaced first before they can be included
+            foreach (Icinga::app()->getLibraries() as $library) {
+                foreach ($library->getJsAssets() as $file) {
+                    $alreadyMinified = false;
+                    if ($minified && file_exists(($minFile = substr($file, 0, -3) . '.min.js'))) {
+                        $alreadyMinified = true;
+                        $file = $minFile;
+                    }
+
+                    $content = self::optimizeDefine(
+                        file_get_contents($file),
+                        $file,
+                        $library->getJsAssetPath(),
+                        $library->getName()
+                    );
+
+                    if ($alreadyMinified) {
+                        $out .= ';' . ltrim(trim($content), ';') . "\n";
+                    } else {
+                        $js .= $content . "\n\n\n";
+                    }
+                }
+            }
+        }
+
+        foreach ($coreFiles as $file) {
             $js .= file_get_contents($file) . "\n\n\n";
         }
 
-        foreach ($sharedFiles as $file) {
-            if (substr($file, -7, 7) === '.min.js') {
-                $out .= ';' . ltrim(trim(file_get_contents($file)), ';') . "\n";
-            } else {
-                $js .= file_get_contents($file) . "\n\n\n";
+        foreach ($moduleFiles as $name => $paths) {
+            foreach ($paths as $basePath => $filePaths) {
+                foreach ($filePaths as $file) {
+                    $content = self::optimizeDefine(file_get_contents($file), $file, $basePath, $name);
+                    if (substr($file, -7, 7) === '.min.js') {
+                        $out .= ';' . ltrim(trim($content), ';') . "\n";
+                    } else {
+                        $js .= $content . "\n\n\n";
+                    }
+                }
             }
         }
 
         if ($minified) {
             require_once 'JShrink/Minifier.php';
-            $out .= Minifier::minify($js, array('flaggedComments' => false));
+            $out .= Minifier::minify($js, ['flaggedComments' => false]);
+            $baseOut = Minifier::minify($baseJs, ['flaggedComments' => false]);
+            $out = ';' . ltrim($baseOut, ';') . "\n" . $out;
         } else {
-            $out .= $js;
+            $out = $baseJs . $out . $js;
         }
+
         $cache->store($cacheFile, $out);
         echo $out;
+    }
+
+    /**
+     * Optimize define() calls in the given JS
+     *
+     * @param string $js
+     * @param string $filePath
+     * @param string $basePath
+     * @param string $packageName
+     *
+     * @return string
+     */
+    public static function optimizeDefine($js, $filePath, $basePath, $packageName)
+    {
+        if (! preg_match(self::DEFINE_RE, $js, $match)) {
+            return $js;
+        }
+
+        try {
+            $assetName = $match[1] ? Json::decode($match[1]) : '';
+            if (! $assetName) {
+                $assetName = explode('.', basename($filePath))[0];
+            }
+
+            $assetName = join(DIRECTORY_SEPARATOR, array_filter([
+                $packageName,
+                ltrim(substr(dirname($filePath), strlen($basePath)), DIRECTORY_SEPARATOR),
+                $assetName
+            ]));
+
+            $assetName = Json::encode($assetName, JSON_UNESCAPED_SLASHES);
+        } catch (JsonDecodeException $_) {
+            $assetName = $match[1];
+            Logger::error('Can\'t optimize name of "%s". Are single quotes used instead of double quotes?', $filePath);
+        }
+
+        try {
+            $dependencies = $match[2] ? Json::decode($match[2]) : [];
+            foreach ($dependencies as &$dependencyName) {
+                if (preg_match('~^((?:\.\.?/)+)*(.*)~', $dependencyName, $natch)) {
+                    $dependencyName = join(DIRECTORY_SEPARATOR, array_filter([
+                        $packageName,
+                        ltrim(substr(
+                            realpath(join(DIRECTORY_SEPARATOR, [dirname($filePath), $natch[1]])),
+                            strlen(realpath($basePath))
+                        ), DIRECTORY_SEPARATOR),
+                        $natch[2]
+                    ]));
+                }
+            }
+
+            $dependencies = Json::encode($dependencies, JSON_UNESCAPED_SLASHES);
+        } catch (JsonDecodeException $_) {
+            $dependencies = $match[2];
+            Logger::error(
+                'Can\'t optimize dependencies of "%s". Are single quotes used instead of double quotes?',
+                $filePath
+            );
+        }
+
+        return str_replace($match[0], sprintf("define(%s, %s, %s", $assetName, $dependencies, $match[3]), $js);
     }
 }

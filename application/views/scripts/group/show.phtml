@@ -3,10 +3,10 @@
 use Icinga\Data\Extensible;
 use Icinga\Data\Updatable;
 
-$extensible = $this->hasPermission('config/authentication/groups/add') && $backend instanceof Extensible;
+$extensible = $this->hasPermission('config/access-control/groups') && $backend instanceof Extensible;
 
 $editLink = null;
-if ($this->hasPermission('config/authentication/groups/edit') && $backend instanceof Updatable) {
+if ($this->hasPermission('config/access-control/groups') && $backend instanceof Updatable) {
     $editLink = $this->qlink(
         null,
         'group/edit',
@@ -83,7 +83,7 @@ if ($this->hasPermission('config/authentication/groups/edit') && $backend instan
             <tr>
                 <td>
                 <?php if (
-                    $this->hasPermission('config/authentication/users/show')
+                    $this->hasPermission('config/access-control/users')
                     && ($userBackend = $backend->getUserBackendName($member->user_name)) !== null
                 ): ?>
                     <?= $this->qlink($member->user_name, 'user/show', array(

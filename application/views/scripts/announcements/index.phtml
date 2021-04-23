@@ -10,7 +10,7 @@
 </div>
 <?php endif ?>
 <div class="content">
-<?php if ($this->hasPermission('admin')) {
+<?php if ($this->hasPermission('application/announcements')) {
     echo $this->qlink(
         $this->translate('Create a New Announcement') ,
         'announcements/new',
@@ -41,7 +41,7 @@
     <?php foreach ($this->announcements as $announcement): /** @var object $announcement */ ?>
         <tr>
             <td><?= $this->escape($announcement->author) ?></td>
-        <?php if ($this->hasPermission('admin')): ?>
+        <?php if ($this->hasPermission('application/announcements')): ?>
             <td>
                 <a href="<?= $this->href('announcements/update', array('id' => $announcement->id)) ?>">
                     <?= $this->ellipsis($this->escape($announcement->message), 100) ?>
@@ -52,7 +52,7 @@
         <?php endif ?>
             <td><?= $this->formatDateTime($announcement->start) ?></td>
             <td><?= $this->formatDateTime($announcement->end) ?></td>
-        <?php if ($this->hasPermission('admin')): ?>
+        <?php if ($this->hasPermission('application/announcements')): ?>
             <td class="icon-col"><?= $this->qlink(
                 null,
                 'announcements/remove',

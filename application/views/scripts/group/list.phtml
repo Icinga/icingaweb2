@@ -22,8 +22,8 @@ if (! isset($backend)) {
     echo $this->translate('No backend found which is able to list user groups') . '</div>';
     return;
 } else {
-    $extensible = $this->hasPermission('config/authentication/groups/add') && $backend instanceof Extensible;
-    $reducible = $this->hasPermission('config/authentication/groups/remove') && $backend instanceof Reducible;
+    $extensible = $this->hasPermission('config/access-control/groups') && $backend instanceof Extensible;
+    $reducible = $this->hasPermission('config/access-control/groups') && $backend instanceof Reducible;
 }
 ?>
 

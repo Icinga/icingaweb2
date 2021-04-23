@@ -93,6 +93,10 @@ class ProcessCheckResultCommandForm extends ObjectsCommandForm
     {
         foreach ($this->objects as $object) {
             /** @var \Icinga\Module\Monitoring\Object\MonitoredObject $object */
+            if (! $object->passive_checks_enabled) {
+                continue;
+            }
+
             $command = new ProcessCheckResultCommand();
             $command->setObject($object);
             $command->setStatus($this->getValue('status'));

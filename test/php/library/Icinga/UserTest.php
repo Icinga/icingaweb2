@@ -3,6 +3,7 @@
 
 namespace Tests\Icinga;
 
+use Icinga\Authentication\Role;
 use Mockery;
 use DateTimeZone;
 use Icinga\User;
@@ -51,26 +52,30 @@ class UserTest extends BaseTestCase
         );
     }
 
-    /**
-     * @expectedException   \InvalidArgumentException
-     */
     public function testWhetherInvalidEmailsCannotBeSet()
     {
+        $this->expectException(\InvalidArgumentException::class);
+
         $user = new User('unittest');
         $user->setEmail('mySampleEmail at someDomain dot org');
     }
 
     public function testPermissions()
     {
-        $user = new User('test');
-        $user->setPermissions(array(
+        $role = new Role();
+        $role->setPermissions([
             'test',
             'test/some/specific',
             'test/more/*',
             'test/wildcard-with-wildcard/*',
             'test/even-more/specific-with-wildcard/*'
-        ));
+        ]);
+
+        $user = new User('test');
+        $user->setRoles([$role]);
+
         $this->assertTrue($user->can('test'));
+        $this->assertTrue($user->can('test/some/*'));
         $this->assertTrue($user->can('test/some/specific'));
         $this->assertTrue($user->can('test/more/everything'));
         $this->assertTrue($user->can('test/wildcard-with-wildcard/*'));
@@ -79,5 +84,49 @@ class UserTest extends BaseTestCase
         $this->assertFalse($user->can('not/test'));
         $this->assertFalse($user->can('test/some/not/so/specific'));
         $this->assertFalse($user->can('test/wildcard2/*'));
+    }
+
+    public function testRefusals()
+    {
+        $role = new Role();
+        $role->setPermissions([
+            'a',
+            'a/b/*',
+            'a/b/c/d',
+            'c/*',
+            'd/*'
+        ]);
+        $role->setRefusals([
+            'a/b/c',
+            'a/b/e',
+            'c/b/a',
+            'c/d/*',
+            'd/f',
+            'e/g'
+        ]);
+
+        $user = new User('test');
+        $user->setRoles([$role]);
+
+        $this->assertFalse($user->can('a/b/c'));
+        $this->assertFalse($user->can('a/b/e'));
+        $this->assertTrue($user->can('a/b/d'));
+        $this->assertTrue($user->can('a/b/c/d'));
+        $this->assertFalse($user->can('c/b/a'));
+        $this->assertTrue($user->can('c/b/d'));
+        $this->assertFalse($user->can('c/d/u'));
+        $this->assertFalse($user->can('c/d/*'));
+        $this->assertTrue($user->can('c/*'));
+        $this->assertTrue($user->can('d/*'));
+        $this->assertFalse($user->can('e/*'));
+
+        $secondRole = new Role();
+        $role->setRefusals(['a/b/*']);
+
+        $user->setRoles([$role, $secondRole]);
+
+        $this->assertFalse($user->can('a/b/d'));
+        $this->assertFalse($user->can('a/b/c/d'));
+        $this->assertTrue($user->can('c/b/d'));
     }
 }

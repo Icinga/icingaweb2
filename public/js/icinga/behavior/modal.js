@@ -22,7 +22,7 @@
         this.on('change', '#modal form select.autosubmit', this.onFormAutoSubmit, this);
         this.on('change', '#modal form input.autosubmit', this.onFormAutoSubmit, this);
         this.on('click', '[data-icinga-modal]', this.onModalToggleClick, this);
-        this.on('click', '#layout > #modal', this.onModalLeave, this);
+        this.on('mousedown', '#layout > #modal', this.onModalLeave, this);
         this.on('click', '.modal-header > button', this.onModalClose, this);
         this.on('keydown', this.onKeyDown, this);
     };
@@ -40,7 +40,7 @@
         var $a = $(event.currentTarget);
         var url = $a.attr('href');
         var $modal = _this.$ghost.clone();
-        var $urlTarget = _this.icinga.loader.getLinkTargetFor($a);
+        var $urlTarget = _this.icinga.loader.getLinkTargetFor($a, false);
 
         // Add showCompact, we don't want controls in a modal
         url = _this.icinga.utils.addUrlFlag(url, 'showCompact');
@@ -148,7 +148,7 @@
     Modal.prototype.onKeyDown = function(event) {
         var _this = event.data.self;
 
-        if (event.which === 27) {
+        if (! event.isDefaultPrevented() && event.key === 'Escape') {
             _this.hide(_this.$layout.children('#modal'));
         }
     };

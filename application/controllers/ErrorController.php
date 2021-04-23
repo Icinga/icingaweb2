@@ -19,6 +19,11 @@ use Icinga\Web\Url;
 class ErrorController extends ActionController
 {
     /**
+     * Regular expression to match exceptions resulting from missing functions/classes
+     */
+    const MISSING_DEP_ERROR = "/Uncaught Error:.*(?:undefined function (\S+)|Class '([^']+)' not found).* in ([^:]+)/";
+
+    /**
      * {@inheritdoc}
      */
     protected $requiresAuthentication = false;
@@ -44,21 +49,23 @@ class ErrorController extends ActionController
             $this->innerLayout = 'guest-error';
         }
 
+        $modules = Icinga::app()->getModuleManager();
+        $sourcePath = ltrim($this->_request->get('PATH_INFO'), '/');
+        $pathParts = preg_split('~/~', $sourcePath);
+        $moduleName = array_shift($pathParts);
+
+        $module = null;
         switch ($error->type) {
             case Zend_Controller_Plugin_ErrorHandler::EXCEPTION_NO_ROUTE:
             case Zend_Controller_Plugin_ErrorHandler::EXCEPTION_NO_CONTROLLER:
             case Zend_Controller_Plugin_ErrorHandler::EXCEPTION_NO_ACTION:
-                $modules = Icinga::app()->getModuleManager();
-                $path = ltrim($this->_request->get('PATH_INFO'), '/');
-                $path = preg_split('~/~', $path);
-                $path = array_shift($path);
                 $this->getResponse()->setHttpResponseCode(404);
                 $this->view->messages = array($this->translate('Page not found.'));
                 if ($isAuthenticated) {
-                    if ($modules->hasInstalled($path) && ! $modules->hasEnabled($path)) {
+                    if ($modules->hasInstalled($moduleName) && ! $modules->hasEnabled($moduleName)) {
                         $this->view->messages[0] .= ' ' . sprintf(
                             $this->translate('Enabling the "%s" module might help!'),
-                            $path
+                            $moduleName
                         );
                     }
                 }
@@ -84,8 +91,27 @@ class ErrorController extends ActionController
                         break;
                     default:
                         $this->getResponse()->setHttpResponseCode(500);
+                        $module = $modules->hasLoaded($moduleName) ? $modules->getModule($moduleName) : null;
                         Logger::error("%s\n%s", $exception, IcingaException::getConfidentialTraceAsString($exception));
                         break;
+                }
+
+                // Try to narrow down why the request has failed
+                if (preg_match(self::MISSING_DEP_ERROR, $exception->getMessage(), $match)) {
+                    $sourcePath = $match[3];
+                    foreach ($modules->listLoadedModules() as $name) {
+                        $candidate = $modules->getModule($name);
+                        $modulePath = $candidate->getBaseDir();
+                        if (substr($sourcePath, 0, strlen($modulePath)) === $modulePath) {
+                            $module = $candidate;
+                            break;
+                        }
+                    }
+
+                    if (preg_match('/^(?:Icinga\\\Module\\\(\w+)|(\w+)\\\)/', $match[1] ?: $match[2], $natch)) {
+                        $this->view->requiredModule = isset($natch[1]) ? strtolower($natch[1]) : null;
+                        $this->view->requiredLibrary = isset($natch[2]) ? $natch[2] : null;
+                    }
                 }
 
                 $this->view->messages = array();
@@ -114,6 +140,7 @@ class ErrorController extends ActionController
                 ->sendResponse();
         }
 
+        $this->view->module = $module;
         $this->view->request = $error->request;
         if (! $isAuthenticated) {
             $this->view->hideControls = true;

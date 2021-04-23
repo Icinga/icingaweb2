@@ -102,7 +102,7 @@ class Action extends NavigationItem
     public function getUrl()
     {
         $url = parent::getUrl();
-        if (! $this->resolved && $url === null) {
+        if (! $this->resolved && $url === null && $this->rawUrl !== null) {
             $this->setUrl(Url::fromPath(Macro::resolveMacros($this->rawUrl, $this->getObject())));
             $this->resolved = true;
             return parent::getUrl();

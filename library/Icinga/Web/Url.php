@@ -166,8 +166,8 @@ class Url
 
         if (! is_string($url)) {
             throw new ProgrammingError(
-                'url "%s" is not a string',
-                $url
+                'url %s is not a string',
+                var_export($url, true)
             );
         }
 
@@ -845,9 +845,13 @@ class Url
         }
 
         $url = clone $this;
-        foreach ($url->getParams()->toArray(false) as $key => $_) {
-            if (! in_array($key, $keyOrArrayOfKeys, true)) {
-                $url->remove($key);
+        foreach ($url->getParams()->toArray(false) as $param => $value) {
+            if (is_int($param)) {
+                $param = $value;
+            }
+
+            if (! in_array($param, $keyOrArrayOfKeys, true)) {
+                $url->remove($param);
             }
         }
 
@@ -866,6 +870,6 @@ class Url
      */
     public function __toString()
     {
-        return $this->getAbsoluteUrl('&amp;');
+        return htmlspecialchars($this->getAbsoluteUrl(), ENT_COMPAT | ENT_SUBSTITUTE | ENT_HTML5, 'UTF-8', true);
     }
 }

@@ -26,10 +26,9 @@ class StyleSheet
      *
      * @var string[]
      */
-    protected static $lessFiles = array(
+    protected static $lessFiles = [
         '../application/fonts/fontello-ifont/css/ifont-embedded.css',
         'css/vendor/normalize.css',
-        'css/vendor/tipsy.css',
         'css/icinga/base.less',
         'css/icinga/badges.less',
         'css/icinga/mixins.less',
@@ -52,8 +51,9 @@ class StyleSheet
         'css/icinga/compat.less',
         'css/icinga/print.less',
         'css/icinga/responsive.less',
-        'css/icinga/modal.less'
-    );
+        'css/icinga/modal.less',
+        'css/icinga/audit.less'
+    ];
 
     /**
      * Application instance
@@ -93,6 +93,12 @@ class StyleSheet
      */
     protected function collect()
     {
+        foreach ($this->app->getLibraries() as $library) {
+            foreach ($library->getCssAssets() as $lessFile) {
+                $this->lessCompiler->addLessFile($lessFile);
+            }
+        }
+
         foreach (self::$lessFiles as $lessFile) {
             $this->lessCompiler->addLessFile($this->pubPath . '/' . $lessFile);
         }

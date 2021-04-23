@@ -224,7 +224,7 @@ class Zend_Filter implements Zend_Filter_Interface
             $class = new ReflectionClass($className);
             if ($class->implementsInterface('Zend_Filter_Interface')) {
                 if ($class->hasMethod('__construct')) {
-                    $object = $class->newInstanceArgs($args);
+                    $object = $class->newInstanceArgs(array_values($args));
                 } else {
                     $object = $class->newInstance();
                 }

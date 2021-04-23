@@ -39,7 +39,7 @@ class DashboardWithPredefinableActiveName extends Dashboard
 
 class DashboardTest extends BaseTestCase
 {
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         Mockery::close(); // Necessary because some tests run in a separate process
@@ -109,11 +109,12 @@ class DashboardTest extends BaseTestCase
     }
 
     /**
-     * @expectedException \Icinga\Exception\ProgrammingError
      * @depends testWhetherCreatePaneCreatesAPane
      */
     public function testWhetherGetPaneThrowsAnExceptionOnNotExistentPaneName()
     {
+        $this->expectException(\Icinga\Exception\ProgrammingError::class);
+
         $dashboard = new Dashboard();
         $dashboard->createPane('test1');
 
@@ -267,11 +268,10 @@ class DashboardTest extends BaseTestCase
         );
     }
 
-    /**
-     * @expectedException \Icinga\Exception\ConfigurationError
-     */
     public function testWhetherDetermineActivePaneThrowsAnExceptionIfCouldNotDetermine()
     {
+        $this->expectException(\Icinga\Exception\ConfigurationError::class);
+
         $dashboard = new Dashboard();
         $dashboard->determineActivePane();
     }
@@ -279,11 +279,12 @@ class DashboardTest extends BaseTestCase
     /**
      * @runInSeparateProcess
      * @preserveGlobalState disabled
-     * @expectedException \Icinga\Exception\ProgrammingError
      * @depends testWhetherCreatePaneCreatesAPane
      */
     public function testWhetherDetermineActivePaneThrowsAnExceptionIfCouldNotDetermineInvalidPane()
     {
+        $this->expectException(\Icinga\Exception\ProgrammingError::class);
+
         $dashboard = new DashboardWithPredefinableActiveName();
         $dashboard->createPane('test1');
 

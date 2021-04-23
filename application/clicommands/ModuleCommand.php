@@ -97,10 +97,12 @@ class ModuleCommand extends Command
         if (! $module = $this->params->shift()) {
             $module = $this->params->shift('module');
         }
+
         if (! $module || $this->hasRemainingParams()) {
             return $this->showUsage();
         }
-        $this->modules->enableModule($module);
+
+        $this->modules->enableModule($module, true);
     }
 
     /**

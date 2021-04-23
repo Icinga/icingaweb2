@@ -42,7 +42,7 @@ class Zend_Soap_Server_Proxy
 	if ($constructor === null) {
             $this->_classInstance = $class->newInstance();
 	} else {
-            $this->_classInstance = $class->newInstanceArgs($classArgs);
+            $this->_classInstance = $class->newInstanceArgs(array_values($classArgs));
 	}
 	$this->_className = $className;
     }

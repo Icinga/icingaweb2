@@ -37,4 +37,13 @@ class GeneralConfigForm extends ConfigForm
         $this->addSubForm($themingConfigForm->create($formData));
         $this->addSubForm($domainConfigForm->create($formData));
     }
+
+    public function onRequest()
+    {
+        parent::onRequest();
+
+        if ($this->config->getConfigObject()->global->config_backend === 'ini') {
+            $this->warning('The preferences backend of type INI is deprecated and will be removed with version 2.10');
+        }
+    }
 }

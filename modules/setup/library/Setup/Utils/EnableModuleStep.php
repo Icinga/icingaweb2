@@ -5,6 +5,7 @@ namespace Icinga\Module\Setup\Utils;
 
 use Exception;
 use Icinga\Application\Icinga;
+use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\IcingaException;
 use Icinga\Module\Setup\Step;
 
@@ -15,6 +16,8 @@ class EnableModuleStep extends Step
     protected $moduleNames;
 
     protected $errors;
+
+    protected $warnings;
 
     public function __construct(array $moduleNames)
     {
@@ -35,6 +38,8 @@ class EnableModuleStep extends Step
         foreach ($this->moduleNames as $moduleName) {
             try {
                 $moduleManager->enableModule($moduleName);
+            } catch (ConfigurationError $e) {
+                $this->warnings[$moduleName] = $e;
             } catch (Exception $e) {
                 $this->errors[$moduleName] = $e;
                 $success = false;
@@ -59,6 +64,9 @@ class EnableModuleStep extends Step
             if (isset($this->errors[$moduleName])) {
                 $report[] = sprintf($failMessage, $moduleName);
                 $report[] = sprintf(mt('setup', 'ERROR: %s'), IcingaException::describe($this->errors[$moduleName]));
+            } elseif (isset($this->warnings[$moduleName])) {
+                $report[] = sprintf($failMessage, $moduleName);
+                $report[] = sprintf(mt('setup', 'WARNING: %s'), $this->warnings[$moduleName]->getMessage());
             } else {
                 $report[] = sprintf($okMessage, $moduleName);
             }

@@ -83,6 +83,7 @@ class Web extends EmbeddedWeb
             ->setupZendAutoloader()
             ->setupLogging()
             ->setupErrorHandling()
+            ->loadLibraries()
             ->loadConfig()
             ->setupLogger()
             ->setupRequest()
@@ -335,7 +336,7 @@ class Web extends EmbeddedWeb
             $this->getRequest()->setUser($user);
             $this->user = $user;
 
-            if ($user->can('application/stacktraces')) {
+            if ($user->can('user/application/stacktraces')) {
                 $displayExceptions = $this->user->getPreferences()->getValue(
                     'icingaweb',
                     'show_stacktraces'
@@ -494,7 +495,7 @@ class Web extends EmbeddedWeb
      *
      * @return  string                      Detected locale code
      *
-     * @see     Translator::DEFAULT_LOCALE  For the the default locale code.
+     * @see     Translator::DEFAULT_LOCALE  For the default locale code.
      */
     protected function detectLocale()
     {

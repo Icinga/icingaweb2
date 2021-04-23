@@ -4,9 +4,7 @@
 namespace Icinga\Web;
 
 use Icinga\Application\Logger;
-use RecursiveArrayIterator;
-use RecursiveIteratorIterator;
-use lessc;
+use Icinga\Util\LessParser;
 
 /**
  * Compile LESS into CSS
@@ -18,7 +16,7 @@ class LessCompiler
     /**
      * lessphp compiler
      *
-     * @var lessc
+     * @var LessParser
      */
     protected $lessc;
 
@@ -62,8 +60,7 @@ class LessCompiler
      */
     public function __construct()
     {
-        require_once 'lessphp/lessc.inc.php';
-        $this->lessc = new lessc();
+        $this->lessc = new LessParser();
         // Discourage usage of import because we're caching based on an explicit list of LESS files to compile
         $this->lessc->importDisabled = true;
     }
@@ -173,6 +170,7 @@ class LessCompiler
         }
 
         $moduleCss = '';
+        $exportedVars = [];
         foreach ($this->moduleLessFiles as $moduleName => $moduleLessFiles) {
             $moduleCss .= '.icinga-module.module-' . $moduleName . ' {';
 
@@ -184,12 +182,35 @@ class LessCompiler
             }
 
             foreach ($moduleLessFiles as $moduleLessFile) {
-                $moduleCss .= file_get_contents($moduleLessFile);
+                $content = file_get_contents($moduleLessFile);
+
+                $pattern = '/^@exports:\s*{((?:\s*@[^:}]+:[^;]*;\s+)+)};$/m';
+                if (preg_match_all($pattern, $content, $matches, PREG_SET_ORDER)) {
+                    foreach ($matches as $match) {
+                        $content = str_replace($match[0], '', $content);
+                        foreach (explode("\n", trim($match[1])) as $line) {
+                            list($name, $value) = explode(':', $line, 2);
+                            $exportedVars[trim($name)] = trim($value, ' ;');
+                        }
+                    }
+                }
+
+                $moduleCss .= $content;
             }
+
             $moduleCss .= '}';
         }
 
         $this->source .= $moduleCss;
+
+        $varExports = '';
+        foreach ($exportedVars as $name => $value) {
+            $varExports .= sprintf("%s: %s;\n", $name, $value);
+        }
+
+        // exported vars are injected at the beginning to avoid that they are
+        // able to override other variables, that's what themes are for
+        $this->source = $varExports . "\n\n" . $this->source;
 
         if ($this->theme !== null) {
             $this->source .= file_get_contents($this->theme);

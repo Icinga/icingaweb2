@@ -39,6 +39,7 @@ form.icinga-form {
 
     .control-group {
       margin: 0;
+      align-items: center;
 
       &:last-child {
         margin-right: -1em;
@@ -49,6 +50,12 @@ form.icinga-form {
 
 form.inline {
   display: inline-block;
+
+  fieldset {
+    display: inline-block;
+    vertical-align: top;
+    border: none;
+  }
 }
 
 // Minimal form layout
@@ -300,6 +307,15 @@ form.icinga-form .form-controls {
 }
 
 form.inline {
+  :not([type="hidden"]) {
+    & ~ button:not([type]),
+    & ~ button[type="submit"],
+    & ~ input[type="submit"],
+    & ~ input[type="submit"].btn-confirm {
+      margin-left: @horizontal-padding;
+    }
+  }
+
   button.noscript-apply {
     margin-left: .5em;
     padding: .1em;

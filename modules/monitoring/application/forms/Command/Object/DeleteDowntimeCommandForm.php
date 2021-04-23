@@ -4,6 +4,7 @@
 namespace Icinga\Module\Monitoring\Forms\Command\Object;
 
 use Icinga\Module\Monitoring\Command\Object\DeleteDowntimeCommand;
+use Icinga\Module\Monitoring\Exception\CommandTransportException;
 use Icinga\Module\Monitoring\Forms\Command\CommandForm;
 use Icinga\Web\Notification;
 
@@ -98,13 +99,31 @@ class DeleteDowntimeCommandForm extends CommandForm
             ->setDowntimeId($this->getElement('downtime_id')->getValue())
             ->setDowntimeName($this->getElement('downtime_name')->getValue())
             ->setIsService($this->getElement('downtime_is_service')->getValue());
-        $this->getTransport($this->request)->send($cmd);
 
-        $redirect = $this->getElement('redirect')->getValue();
+        $errorMsg = null;
+
+        try {
+            $this->getTransport($this->request)->send($cmd);
+        } catch (CommandTransportException $e) {
+            $errorMsg = $e->getMessage();
+        }
+
+        if (! $errorMsg) {
+            $redirect = $this->getElement('redirect')->getValue();
+            Notification::success($this->translate('Deleting downtime.'));
+        } else {
+            if (! $this->getIsApiTarget()) {
+                $redirect = $this->getRequest()->getUrl();
+            }
+
+            Notification::error($errorMsg);
+        }
+
         if (! empty($redirect)) {
             $this->setRedirectUrl($redirect);
+            return true;
         }
-        Notification::success($this->translate('Deleting downtime.'));
-        return true;
+
+        return false;
     }
 }

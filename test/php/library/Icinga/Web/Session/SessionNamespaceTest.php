@@ -62,11 +62,10 @@ class SessionNamespaceTest extends BaseTestCase
         $this->assertNull($ns->get('key2'));
     }
 
-    /**
-     * @expectedException Icinga\Exception\IcingaException
-     */
     public function testFailingPropertyAccess()
     {
+        $this->expectException(\Icinga\Exception\IcingaException::class);
+
         $ns = new SessionNamespace();
         $ns->missing;
     }

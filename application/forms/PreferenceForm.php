@@ -44,6 +44,7 @@ class PreferenceForm extends Form
     public function init()
     {
         $this->setName('form_config_preferences');
+        $this->setSubmitLabel($this->translate('Save to the Preferences'));
     }
 
     /**
@@ -118,7 +119,7 @@ class PreferenceForm extends Form
         }
 
         try {
-            if ($this->store && $this->getElement('btn_submit_preferences')->isChecked()) {
+            if ($this->store && $this->getElement('btn_submit')->isChecked()) {
                 $this->save();
                 Notification::success($this->translate('Preferences successfully saved'));
             } else {
@@ -146,6 +147,10 @@ class PreferenceForm extends Form
 
         if (! isset($values['timezone'])) {
             $values['timezone'] = 'autodetect';
+        }
+
+        if (! isset($values['auto_refresh'])) {
+            $values['auto_refresh'] = '1';
         }
 
         $this->populate($values);
@@ -250,7 +255,7 @@ class PreferenceForm extends Form
             )
         );
 
-        if (Auth::getInstance()->hasPermission('application/stacktraces')) {
+        if (Auth::getInstance()->hasPermission('user/application/stacktraces')) {
             $this->addElement(
                 'checkbox',
                 'show_stacktraces',
@@ -275,6 +280,7 @@ class PreferenceForm extends Form
             'auto_refresh',
             array(
                 'required'      => false,
+                'autosubmit'    => true,
                 'label'         => $this->translate('Enable auto refresh'),
                 'description'   => $this->translate(
                     'This option allows you to enable or to disable the global page content auto refresh'
@@ -283,12 +289,35 @@ class PreferenceForm extends Form
             )
         );
 
+        if (isset($formData['auto_refresh']) && $formData['auto_refresh']) {
+            $this->addElement(
+                'select',
+                'auto_refresh_speed',
+                [
+                    'required'      => false,
+                    'label'         => $this->translate('Auto refresh speed'),
+                    'description'   => $this->translate(
+                        'This option allows you to speed up or to slow down the global page content auto refresh'
+                    ),
+                    'multiOptions'  => [
+                        '0.5'   => $this->translate('Fast', 'refresh_speed'),
+                        ''      => $this->translate('Default', 'refresh_speed'),
+                        '2'     => $this->translate('Moderate', 'refresh_speed'),
+                        '4'     => $this->translate('Slow', 'refresh_speed')
+                    ],
+                    'value'         => ''
+                ]
+            );
+        }
+
         $this->addElement(
             'number',
             'default_page_size',
             array(
                 'label'         => $this->translate('Default page size'),
                 'description'   => $this->translate('Default number of items per page for list views'),
+                'placeholder'   => 25,
+                'min'           => 25,
                 'step'          => 1
             )
         );
@@ -296,7 +325,7 @@ class PreferenceForm extends Form
         if ($this->store) {
             $this->addElement(
                 'submit',
-                'btn_submit_preferences',
+                'btn_submit',
                 array(
                     'ignore'        => true,
                     'label'         => $this->translate('Save to the Preferences'),
@@ -329,7 +358,7 @@ class PreferenceForm extends Form
         );
 
         $this->addDisplayGroup(
-            array('btn_submit_preferences', 'btn_submit_session', 'preferences-progress'),
+            array('btn_submit', 'btn_submit_session', 'preferences-progress'),
             'submit_buttons',
             array(
                 'decorators' => array(
@@ -338,6 +367,20 @@ class PreferenceForm extends Form
                 )
             )
         );
+    }
+
+    public function addSubmitButton()
+    {
+        return $this;
+    }
+
+    public function isSubmitted()
+    {
+        if (parent::isSubmitted()) {
+            return true;
+        }
+
+        return $this->getElement('btn_submit_session')->isChecked();
     }
 
     /**

@@ -17,7 +17,7 @@ class SlidingwithborderTest extends BaseTestCase
         $paginator = new Zend_Paginator($this->getPaginatorAdapter());
 
         $pages = $scrollingStyle->getPages($paginator);
-        $this->assertInternalType('array', $pages);
+        $this->assertIsArray($pages);
         $this->assertCount(10, $pages);
         $this->assertEquals('...', $pages[8]);
     }
@@ -29,7 +29,7 @@ class SlidingwithborderTest extends BaseTestCase
         $paginator->setCurrentPageNumber(9);
 
         $pages = $scrollingStyle->getPages($paginator);
-        $this->assertInternalType('array', $pages);
+        $this->assertIsArray($pages);
         $this->assertCount(10, $pages);
         $this->assertEquals('...', $pages[3]);
         $this->assertEquals('...', $pages[12]);

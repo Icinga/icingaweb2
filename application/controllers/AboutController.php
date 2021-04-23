@@ -12,6 +12,7 @@ class AboutController extends Controller
     public function indexAction()
     {
         $this->view->version = Version::get();
+        $this->view->libraries = Icinga::app()->getLibraries();
         $this->view->modules = Icinga::app()->getModuleManager()->getLoadedModules();
         $this->view->title = $this->translate('About');
         $this->view->tabs = $this->getTabs()->add(

@@ -3,6 +3,8 @@
 
 namespace Icinga\Module\Monitoring\Forms\Command\Object;
 
+use DateInterval;
+use DateTime;
 use Icinga\Application\Config;
 use Icinga\Module\Monitoring\Command\Object\AddCommentCommand;
 use Icinga\Web\Notification;
@@ -42,7 +44,7 @@ class AddCommentCommandForm extends ObjectsCommandForm
                 'required'      => true,
                 'label'         => $this->translate('Comment'),
                 'description'   => $this->translate(
-                    'If you work with other administrators, you may find it useful to share information about the'
+                    'If you work with other administrators, you may find it useful to share information about'
                     . ' the host or service that is having problems. Make sure you enter a brief description of'
                     . ' what you are doing.'
                 ),
@@ -63,6 +65,52 @@ class AddCommentCommandForm extends ObjectsCommandForm
                 )
             );
         }
+
+        if (version_compare($this->getBackend()->getProgramVersion(), '2.13.0', '>=')) {
+            $config = Config::module('monitoring');
+            $commentExpire = (bool) $config->get('settings', 'comment_expire', false);
+
+            $this->addElement(
+                'checkbox',
+                'expire',
+                [
+                    'label'         => $this->translate('Use Expire Time'),
+                    'value'         => $commentExpire,
+                    'description'   => $this->translate('If the comment should expire, check this option.'),
+                    'autosubmit'    => true
+                ]
+            );
+
+            if (isset($formData['expire']) ? $formData['expire'] : $commentExpire) {
+                $expireTime = new DateTime();
+                $expireTime->add(new DateInterval($config->get('settings', 'comment_expire_time', 'PT1H')));
+
+                $this->addElement(
+                    'dateTimePicker',
+                    'expire_time',
+                    [
+                        'label'         => $this->translate('Expire Time'),
+                        'value'         => $expireTime,
+                        'description'   => $this->translate(
+                            'Enter the expire date and time for this comment here. Icinga will delete the'
+                            . ' comment after this time expired.'
+                        )
+                    ]
+                );
+
+                $this->addDisplayGroup(
+                    ['expire', 'expire_time'],
+                    'expire-expire_time',
+                    [
+                        'decorators' => [
+                            'FormElements',
+                            ['HtmlTag', ['tag' => 'div']]
+                        ]
+                    ]
+                );
+            }
+        }
+
         return $this;
     }
 
@@ -81,6 +129,13 @@ class AddCommentCommandForm extends ObjectsCommandForm
             if (($persistent = $this->getElement('persistent')) !== null) {
                 $comment->setPersistent($persistent->isChecked());
             }
+
+            $expire = $this->getElement('expire');
+
+            if ($expire !== null && $expire->isChecked()) {
+                $comment->setExpireTime($this->getElement('expire_time')->getValue()->getTimestamp());
+            }
+
             $this->getTransport($this->request)->send($comment);
         }
         Notification::success($this->translatePlural(

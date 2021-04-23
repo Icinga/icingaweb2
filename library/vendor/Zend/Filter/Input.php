@@ -1185,7 +1185,7 @@ class Zend_Filter_Input
         }
 
         if ($class->hasMethod('__construct')) {
-            $object = $class->newInstanceArgs($args);
+            $object = $class->newInstanceArgs(array_values($args));
         } else {
             $object = $class->newInstance();
         }

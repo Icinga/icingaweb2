@@ -3,6 +3,7 @@
 
 namespace Tests\Icinga\Web;
 
+use Icinga\Authentication\Role;
 use Mockery;
 use Icinga\Test\BaseTestCase;
 use Icinga\User;
@@ -10,7 +11,7 @@ use Icinga\Web\Widget\SearchDashboard;
 
 class SearchDashboardTest extends BaseTestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         $moduleMock = Mockery::mock('Icinga\Application\Modules\Module');
         $searchUrl = (object) array(
@@ -31,11 +32,10 @@ class SearchDashboardTest extends BaseTestCase
         $bootstrapMock->shouldReceive('getModuleManager')->andReturn($moduleManagerMock);
     }
 
-    /**
-     * @expectedException Zend_Controller_Action_Exception
-     */
     public function testWhetherRenderThrowsAnExceptionWhenHasNoDashlets()
     {
+        $this->expectException(\Zend_Controller_Action_Exception::class);
+
         $user = new User('test');
         $user->setPermissions(array('*' => '*'));
         $dashboard = new SearchDashboard();
@@ -47,8 +47,12 @@ class SearchDashboardTest extends BaseTestCase
 
     public function testWhetherSearchLoadsSearchDashletsFromModules()
     {
+        $role = new Role();
+        $role->setPermissions(['*']);
+
         $user = new User('test');
-        $user->setPermissions(array('*' => '*'));
+        $user->setRoles([$role]);
+
         $dashboard = new SearchDashboard();
         $dashboard->setUser($user);
         $dashboard = $dashboard->search('pending');
@@ -60,8 +64,12 @@ class SearchDashboardTest extends BaseTestCase
 
     public function testWhetherSearchProvidesHintWhenSearchStringIsEmpty()
     {
+        $role = new Role();
+        $role->setPermissions(['*']);
+
         $user = new User('test');
-        $user->setPermissions(array('*' => '*'));
+        $user->setRoles([$role]);
+
         $dashboard = new SearchDashboard();
         $dashboard->setUser($user);
         $dashboard = $dashboard->search();

@@ -2,6 +2,7 @@
     <?= $tabs ?>
 </div>
 <div class="content">
+  <?php if ($this->auth()->hasPermission('config/access-control/users')): ?>
     <h1><?= $this->translate('User Backends') ?></h1>
     <?= $this->qlink(
         $this->translate('Create a New User Backend') ,
@@ -15,7 +16,9 @@
         )
     ) ?>
     <?= $form ?>
+  <?php endif ?>
 
+  <?php if ($this->auth()->hasPermission('config/access-control/groups')): ?>
     <h1><?= $this->translate('User Group Backends') ?></h1>
     <?= $this->qlink(
         $this->translate('Create a New User Group Backend') ,
@@ -68,4 +71,5 @@
     <?php endforeach ?>
     </tbody>
     </table>
+  <?php endif ?>
 </div>

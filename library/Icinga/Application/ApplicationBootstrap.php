@@ -3,6 +3,7 @@
 
 namespace Icinga\Application;
 
+use DirectoryIterator;
 use ErrorException;
 use Exception;
 use LogicException;
@@ -62,7 +63,7 @@ abstract class ApplicationBootstrap
     protected $vendorDir;
 
     /**
-     * Library directory
+     * Icinga library directory
      *
      * @var string
      */
@@ -88,6 +89,20 @@ abstract class ApplicationBootstrap
      * @var string
      */
     protected $storageDir;
+
+    /**
+     * External library paths
+     *
+     * @var string[]
+     */
+    protected $libraryPaths;
+
+    /**
+     * Loaded external libraries
+     *
+     * @var Libraries
+     */
+    protected $libraries;
 
     /**
      * Icinga class loader
@@ -176,6 +191,20 @@ abstract class ApplicationBootstrap
         $canonical = realpath($storageDir);
         $this->storageDir = $canonical ? $canonical : $storageDir;
 
+        if ($this->libraryPaths === null) {
+            $libraryPaths = getenv('ICINGAWEB_LIBDIR');
+            if ($libraryPaths !== false) {
+                $this->libraryPaths = array_filter(array_map(
+                    'realpath',
+                    explode(':', $libraryPaths)
+                ), 'is_dir');
+            } else {
+                $this->libraryPaths = is_dir('/usr/share/php-icinga')
+                    ? ['/usr/share/php-icinga']
+                    : [];
+            }
+        }
+
         set_include_path(
             implode(
                 PATH_SEPARATOR,
@@ -196,6 +225,16 @@ abstract class ApplicationBootstrap
      * @return mixed
      */
     abstract protected function bootstrap();
+
+    /**
+     * Get loaded external libraries
+     *
+     * @return Libraries
+     */
+    public function getLibraries()
+    {
+        return $this->libraries;
+    }
 
     /**
      * Getter for module manager
@@ -500,6 +539,26 @@ abstract class ApplicationBootstrap
     }
 
     /**
+     * Load external libraries
+     *
+     * @return $this
+     */
+    protected function loadLibraries()
+    {
+        $this->libraries = new Libraries();
+        foreach ($this->libraryPaths as $libraryPath) {
+            foreach (new DirectoryIterator($libraryPath) as $path) {
+                if (! $path->isDot() && is_dir($path->getRealPath())) {
+                    $this->libraries->registerPath($path->getPathname())
+                        ->registerAutoloader();
+                }
+            }
+        }
+
+        return $this;
+    }
+
+    /**
      * Setup default logging
      *
      * @return $this
@@ -546,7 +605,7 @@ abstract class ApplicationBootstrap
         ini_set('display_startup_errors', 1);
         ini_set('display_errors', 1);
         set_error_handler(function ($errno, $errstr, $errfile, $errline) {
-            if (error_reporting() === 0) {
+            if (! (error_reporting() & $errno)) {
                 // Error was suppressed with the @-operator
                 return false; // Continue with the normal error handler
             }

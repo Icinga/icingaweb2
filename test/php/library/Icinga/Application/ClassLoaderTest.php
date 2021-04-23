@@ -26,7 +26,7 @@ class TestStruct
 
 EOD;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         $tempDir = sys_get_temp_dir();
@@ -35,7 +35,7 @@ EOD;
         file_put_contents($this->baseDir. self::$classFile, self::$classContent);
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         system('rm -rf '. $this->baseDir);

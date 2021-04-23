@@ -6,12 +6,13 @@ namespace Icinga\Forms\Security;
 use Icinga\Application\Hook\ConfigFormEventsHook;
 use Icinga\Application\Icinga;
 use Icinga\Application\Modules\Manager;
+use Icinga\Authentication\AdmissionLoader;
 use Icinga\Data\Filter\Filter;
 use Icinga\Forms\ConfigForm;
 use Icinga\Forms\RepositoryForm;
 use Icinga\Util\StringHelper;
 use Icinga\Web\Notification;
-use Zend_Form_Element;
+use ipl\Web\Widget\Icon;
 
 /**
  * Form for managing roles
@@ -22,6 +23,11 @@ class RoleForm extends RepositoryForm
      * The name to use instead of `*`
      */
     const WILDCARD_NAME = 'allAndEverything';
+
+    /**
+     * The prefix used to deny a permission
+     */
+    const DENY_PREFIX = 'no-';
 
     /**
      * Provided permissions by currently installed modules
@@ -41,99 +47,7 @@ class RoleForm extends RepositoryForm
     {
         $this->setAttrib('class', self::DEFAULT_CLASSES . ' role-form');
 
-        $helper = new Zend_Form_Element('bogus');
-        $view = $this->getView();
-
-        $this->providedPermissions['application'] = [
-            $helper->filterName('no-user/password-change') => [
-                'name'          => 'no-user/password-change',
-                'description'   => $this->translate('Prohibit password changes in the account preferences')
-            ],
-            $helper->filterName('application/share/navigation') => [
-                'name'          => 'application/share/navigation',
-                'description'   => $this->translate('Allow to share navigation items')
-            ],
-            $helper->filterName('application/stacktraces') => [
-                'name'          => 'application/stacktraces',
-                'description'   => $this->translate(
-                    'Allow to adjust in the preferences whether to show stacktraces'
-                )
-            ],
-            $helper->filterName('application/log') => [
-                'name'          => 'application/log',
-                'description'   => $this->translate('Allow to view the application log')
-            ],
-            $helper->filterName('admin') => [
-                'name'          => 'admin',
-                'description'   => $this->translate(
-                    'Grant admin permissions, e.g. manage announcements'
-                )
-            ],
-            $helper->filterName('config/*') => [
-                'name'          => 'config/*',
-                'description'   => $this->translate('Allow config access')
-            ]
-        ];
-
-        $this->providedRestrictions['application'] = [
-            $helper->filterName('application/share/users') => [
-                'name'          => 'application/share/users',
-                'description'   => $this->translate(
-                    'Restrict which users this role can share items and information with'
-                )
-            ],
-            $helper->filterName('application/share/groups') => [
-                'name'          => 'application/share/groups',
-                'description'   => $this->translate(
-                    'Restrict which groups this role can share items and information with'
-                )
-            ]
-        ];
-
-        $mm = Icinga::app()->getModuleManager();
-        foreach ($mm->listInstalledModules() as $moduleName) {
-            $modulePermission = Manager::MODULE_PERMISSION_NS . $moduleName;
-            $this->providedPermissions[$moduleName][$helper->filterName($modulePermission)] = [
-                'isUsagePerm'   => true,
-                'name'          => $modulePermission,
-                'label'         => $view->escape($this->translate('General Module Access')),
-                'description'   => sprintf($this->translate('Allow access to module %s'), $moduleName)
-            ];
-
-            $module = $mm->getModule($moduleName, false);
-            $permissions = $module->getProvidedPermissions();
-
-            $this->providedPermissions[$moduleName][$helper->filterName($moduleName . '/*')] = [
-                'isFullPerm'    => true,
-                'name'          => $moduleName . '/*',
-                'label'         => $view->escape($this->translate('Full Module Access'))
-            ];
-
-            foreach ($permissions as $permission) {
-                /** @var object $permission */
-                $this->providedPermissions[$moduleName][$helper->filterName($permission->name)] = [
-                    'name'          => $permission->name,
-                    'label'         => preg_replace(
-                        '~^(\w+)(\/.*)~',
-                        '<em>$1</em>$2',
-                        $view->escape($permission->name)
-                    ),
-                    'description'   => $permission->description
-                ];
-            }
-
-            foreach ($module->getProvidedRestrictions() as $restriction) {
-                $this->providedRestrictions[$moduleName][$helper->filterName($restriction->name)] = [
-                    'name'          => $restriction->name,
-                    'label'         => preg_replace(
-                        '~^(\w+)(\/.*)~',
-                        '<em>$1</em>$2',
-                        $view->escape($restriction->name)
-                    ),
-                    'description'   => $restriction->description
-                ];
-            }
-        }
+        list($this->providedPermissions, $this->providedRestrictions) = static::collectProvidedPrivileges();
     }
 
     protected function createFilter()
@@ -150,6 +64,19 @@ class RoleForm extends RepositoryForm
                 'required'      => true,
                 'label'         => $this->translate('Role Name'),
                 'description'   => $this->translate('The name of the role')
+            ]
+        );
+        $this->addElement(
+            'select',
+            'parent',
+            [
+                'label'         => $this->translate('Inherit From'),
+                'description'   => $this->translate('Choose a role from which to inherit privileges'),
+                'value'         => '',
+                'multiOptions'  => array_merge(
+                    ['' => $this->translate('None', 'parent role')],
+                    $this->collectRoles()
+                )
             ]
         );
         $this->addElement(
@@ -177,104 +104,201 @@ class RoleForm extends RepositoryForm
                 'description'   => $this->translate('Everything is allowed')
             ]
         );
+        $this->addElement(
+            'checkbox',
+            'unrestricted',
+            [
+                'autosubmit'        => true,
+                'uncheckedValue'    => null,
+                'label'             => $this->translate('Unrestricted Access'),
+                'description'       => $this->translate('Access to any data is completely unrestricted')
+            ]
+        );
 
-        if (! isset($formData[self::WILDCARD_NAME]) || ! $formData[self::WILDCARD_NAME]) {
-            foreach ($this->providedPermissions as $moduleName => $permissionList) {
-                $this->sortPermissions($permissionList);
+        $hasAdminPerm = isset($formData[self::WILDCARD_NAME]) && $formData[self::WILDCARD_NAME];
+        $isUnrestricted = isset($formData['unrestricted']) && $formData['unrestricted'];
+        foreach ($this->providedPermissions as $moduleName => $permissionList) {
+            $this->sortPermissions($permissionList);
 
-                $elements = [$moduleName . '_header'];
+            $anythingGranted = false;
+            $anythingRefused = false;
+            $anythingRestricted = false;
+
+            $elements = [$moduleName . '_header'];
+            // The actual element is added last
+
+            $elements[] = 'permission_header';
+            $this->addElement('note', 'permission_header', [
+                'decorators'    => [['Callback', ['callback' => function () {
+                    return '<h4>' . $this->translate('Permissions') . '</h4>'
+                        . $this->getView()->icon('ok', $this->translate(
+                            'Grant access by toggling a switch below'
+                        ))
+                        . $this->getView()->icon('cancel', $this->translate(
+                            'Deny access by toggling a switch below'
+                        ));
+                }]], ['HtmlTag', ['tag' => 'div']]]
+            ]);
+
+            $hasFullPerm = false;
+            foreach ($permissionList as $name => $spec) {
+                $elementName = $this->filterName($name);
+
+                if (isset($formData[$elementName]) && $formData[$elementName]) {
+                    $anythingGranted = true;
+                }
+
+                if ($hasFullPerm || $hasAdminPerm) {
+                    $elementName .= '_fake';
+                }
+
+                $denyCheckbox = null;
+                if (! isset($spec['isFullPerm'])
+                    && substr($name, 0, strlen(self::DENY_PREFIX)) !== self::DENY_PREFIX
+                ) {
+                    $denyCheckbox = $this->createElement('checkbox', self::DENY_PREFIX . $name, [
+                        'decorators'    => ['ViewHelper']
+                    ]);
+                    $this->addElement($denyCheckbox);
+                    $this->removeFromIteration($denyCheckbox->getName());
+
+                    if (isset($formData[$denyCheckbox->getName()]) && $formData[$denyCheckbox->getName()]) {
+                        $anythingRefused = true;
+                    }
+                }
+
+                $elements[] = $elementName;
                 $this->addElement(
-                    'note',
-                    $moduleName . '_header',
+                    'checkbox',
+                    $elementName,
                     [
-                        'decorators'    => ['ViewHelper'],
-                        'value'         => '<h3>' . ($moduleName !== 'application'
-                            ? sprintf('%s <em>%s</em>', $moduleName, $this->translate('Module'))
-                            :  'Icinga Web 2') . '</h3>'
+                        'ignore'        => $hasFullPerm || $hasAdminPerm,
+                        'autosubmit'    => isset($spec['isFullPerm']),
+                        'disabled'      => $hasFullPerm || $hasAdminPerm ?: null,
+                        'value'         => $hasFullPerm || $hasAdminPerm,
+                        'label'         => isset($spec['label'])
+                            ? $spec['label']
+                            : join('', iterator_to_array(call_user_func(function ($segments) {
+                                foreach ($segments as $segment) {
+                                    if ($segment[0] === '/') {
+                                        // Adds a zero-width char after each slash to help browsers break onto newlines
+                                        yield '/&#8203;';
+                                        yield '<span class="no-wrap">' . substr($segment, 1) . '</span>';
+                                    } else {
+                                        yield '<em>' . $segment . '</em>';
+                                    }
+                                }
+                            }, preg_split(
+                                '~(/[^/]+)~',
+                                $name,
+                                -1,
+                                PREG_SPLIT_DELIM_CAPTURE|PREG_SPLIT_NO_EMPTY
+                            )))),
+                        'description'   => isset($spec['description']) ? $spec['description'] : $name,
+                        'decorators'    => array_merge(
+                            array_slice(self::$defaultElementDecorators, 0, 3),
+                            [['Callback', ['callback' => function () use ($denyCheckbox) {
+                                return $denyCheckbox ? $denyCheckbox->render() : '';
+                            }]]],
+                            array_slice(self::$defaultElementDecorators, 3)
+                        )
                     ]
-                );
+                )
+                    ->getElement($elementName)
+                    ->getDecorator('Label')
+                    ->setOption('escape', false);
 
-                $elements[] = 'permission_header';
-                $this->addElement('note', 'permission_header', [
-                    'value'         => '<h4>' . $this->translate('Permissions') . '</h4>',
+                if ($hasFullPerm || $hasAdminPerm) {
+                    // Add a hidden element to preserve the configured permission value
+                    $this->addElement('hidden', $this->filterName($name));
+                }
+
+                if (isset($spec['isFullPerm'])) {
+                    $filteredName = $this->filterName($name);
+                    $hasFullPerm = isset($formData[$filteredName]) && $formData[$filteredName];
+                }
+            }
+
+            if (isset($this->providedRestrictions[$moduleName])) {
+                $elements[] = 'restriction_header';
+                $this->addElement('note', 'restriction_header', [
+                    'value'         => '<h4>' . $this->translate('Restrictions') . '</h4>',
                     'decorators'    => ['ViewHelper']
                 ]);
 
-                $hasFullPerm = false;
-                foreach ($permissionList as $name => $spec) {
-                    $elements[] = $name;
+                foreach ($this->providedRestrictions[$moduleName] as $name => $spec) {
+                    $elementName = $this->filterName($name);
+
+                    if (isset($formData[$elementName]) && $formData[$elementName]) {
+                        $anythingRestricted = true;
+                    }
+
+                    $elements[] = $elementName;
                     $this->addElement(
-                        'checkbox',
-                        $name,
+                        'text',
+                        $elementName,
                         [
-                            'ignore'        => isset($spec['isUsagePerm']) ? false : $hasFullPerm,
-                            'autosubmit'    => isset($spec['isFullPerm']),
-                            'disabled'      => $hasFullPerm ?: null,
-                            'value'         => $hasFullPerm,
-                            'label'         => preg_replace(
-                                // Adds a zero-width char after each slash to help browsers break onto newlines
-                                '~(?<!<)/~',
-                                '/&#8203;',
-                                isset($spec['label']) ? $spec['label'] : $spec['name']
-                            ),
-                            'description'   => isset($spec['description']) ? $spec['description'] : $spec['name']
+                            'label'         => isset($spec['label'])
+                                ? $spec['label']
+                                : join('', iterator_to_array(call_user_func(function ($segments) {
+                                    foreach ($segments as $segment) {
+                                        if ($segment[0] === '/') {
+                                            // Add zero-width char after each slash to help browsers break onto newlines
+                                            yield '/&#8203;';
+                                            yield '<span class="no-wrap">' . substr($segment, 1) . '</span>';
+                                        } else {
+                                            yield '<em>' . $segment . '</em>';
+                                        }
+                                    }
+                                }, preg_split(
+                                    '~(/[^/]+)~',
+                                    $name,
+                                    -1,
+                                    PREG_SPLIT_DELIM_CAPTURE|PREG_SPLIT_NO_EMPTY
+                                )))),
+                            'description'   => $spec['description'],
+                            'style'         => $isUnrestricted ? 'text-decoration:line-through;' : '',
+                            'readonly'      => $isUnrestricted ?: null
                         ]
                     )
-                        ->getElement($name)
+                        ->getElement($elementName)
                         ->getDecorator('Label')
                         ->setOption('escape', false);
-                    if (isset($spec['isFullPerm'])) {
-                        $hasFullPerm = isset($formData[$name]) && $formData[$name];
-                    }
                 }
+            }
 
-                if (isset($this->providedRestrictions[$moduleName])) {
-                    $elements[] = 'restriction_header';
-                    $this->addElement('note', 'restriction_header', [
-                        'value'         => '<h4>' . $this->translate('Restrictions') . '</h4>',
-                        'decorators'    => ['ViewHelper']
-                    ]);
-
-                    foreach ($this->providedRestrictions[$moduleName] as $name => $spec) {
-                        $elements[] = $name;
-                        $this->addElement(
-                            'text',
-                            $name,
-                            [
-                                'label'         => preg_replace(
-                                    // Adds a zero-width char after each slash to help browsers break onto newlines
-                                    '~(?<!<)/~',
-                                    '/&#8203;',
-                                    isset($spec['label']) ? $spec['label'] : $spec['name']
-                                ),
-                                'description'   => $spec['description']
-                            ]
+            $this->addElement(
+                'note',
+                $moduleName . '_header',
+                [
+                    'decorators'    => ['ViewHelper'],
+                    'value'         => '<h3>'
+                        . '<span>' . ($moduleName !== 'application'
+                            ? sprintf('%s <em>%s</em>', $moduleName, $this->translate('Module'))
+                            :  'Icinga Web 2'
+                        ) . '</span>'
+                        . '<span class="privilege-preview">'
+                        . ($hasAdminPerm || $anythingGranted ? new Icon('check-circle', ['class' => 'granted']) : '')
+                        . ($anythingRefused ? new Icon('times-circle', ['class' => 'refused']) : '')
+                        . (! $isUnrestricted && $anythingRestricted
+                            ? new Icon('filter', ['class' => 'restricted'])
+                            : ''
                         )
-                            ->getElement($name)
-                            ->getDecorator('Label')
-                            ->setOption('escape', false);
-                    }
-                }
+                        . '</span>'
+                        . '</h3>'
+                ]
+            );
 
-                $this->addDisplayGroup($elements, $moduleName . '_elements', [
-                    'decorators'    => [
-                        'FormElements',
-                        ['Fieldset', [
-                            'class'                 => 'collapsible',
-                            'data-toggle-element'   => 'h3',
-                            'data-visible-height'   => 0
-                        ]]
-                    ]
-                ]);
-            }
-        } else {
-            // Previously it was possible to define restrictions for super users, so make sure
-            // to not remove any restrictions which were set before the enforced separation
-            foreach ($this->providedRestrictions as $restrictionList) {
-                foreach ($restrictionList as $name => $_) {
-                    $this->addElement('hidden', $name);
-                }
-            }
+            $this->addDisplayGroup($elements, $moduleName . '_elements', [
+                'decorators'    => [
+                    'FormElements',
+                    ['Fieldset', [
+                        'class'                 => 'collapsible',
+                        'data-toggle-element'   => 'h3',
+                        'data-visible-height'   => 0
+                    ]]
+                ]
+            ]);
         }
     }
 
@@ -290,18 +314,31 @@ class RoleForm extends RepositoryForm
         }
 
         $values = [
+            'parent'            => $role->parent,
             'name'              => $role->name,
             'users'             => $role->users,
             'groups'            => $role->groups,
-            self::WILDCARD_NAME => $role->permissions === '*'
+            'unrestricted'      => $role->unrestricted,
+            self::WILDCARD_NAME => (bool) preg_match('~(?<!/)\*~', $role->permissions)
         ];
 
-        if (! empty($role->permissions) && $role->permissions !== '*') {
+        if (! empty($role->permissions) || ! empty($role->refusals)) {
             $permissions = StringHelper::trimSplit($role->permissions);
+            $refusals = StringHelper::trimSplit($role->refusals);
+
+            list($permissions, $newRefusals) = AdmissionLoader::migrateLegacyPermissions($permissions);
+            if (! empty($newRefusals)) {
+                array_push($refusals, ...$newRefusals);
+            }
+
             foreach ($this->providedPermissions as $moduleName => $permissionList) {
                 foreach ($permissionList as $name => $spec) {
-                    if (in_array($spec['name'], $permissions, true)) {
-                        $values[$name] = 1;
+                    if (in_array($name, $permissions, true)) {
+                        $values[$this->filterName($name)] = 1;
+                    }
+
+                    if (in_array($name, $refusals, true)) {
+                        $values[$this->filterName(self::DENY_PREFIX . $name)] = 1;
                     }
                 }
             }
@@ -309,8 +346,8 @@ class RoleForm extends RepositoryForm
 
         foreach ($this->providedRestrictions as $moduleName => $restrictionList) {
             foreach ($restrictionList as $name => $spec) {
-                if (isset($role->{$spec['name']})) {
-                    $values[$name] = $role->{$spec['name']};
+                if (isset($role->$name)) {
+                    $values[$this->filterName($name)] = $role->$name;
                 }
             }
         }
@@ -324,9 +361,10 @@ class RoleForm extends RepositoryForm
 
         foreach ($this->providedRestrictions as $moduleName => $restrictionList) {
             foreach ($restrictionList as $name => $spec) {
-                if (isset($values[$name])) {
-                    $values[$spec['name']] = $values[$name];
-                    unset($values[$name]);
+                $elementName = $this->filterName($name);
+                if (isset($values[$elementName])) {
+                    $values[$name] = $values[$elementName];
+                    unset($values[$elementName]);
                 }
             }
         }
@@ -334,19 +372,27 @@ class RoleForm extends RepositoryForm
         $permissions = [];
         if (isset($values[self::WILDCARD_NAME]) && $values[self::WILDCARD_NAME]) {
             $permissions[] = '*';
-        } else {
-            foreach ($this->providedPermissions as $moduleName => $permissionList) {
-                foreach ($permissionList as $name => $spec) {
-                    if (isset($values[$name]) && $values[$name]) {
-                        $permissions[] = $spec['name'];
-                    }
+        }
 
-                    unset($values[$name]);
+        $refusals = [];
+        foreach ($this->providedPermissions as $moduleName => $permissionList) {
+            foreach ($permissionList as $name => $spec) {
+                $elementName = $this->filterName($name);
+                if (isset($values[$elementName]) && $values[$elementName]) {
+                    $permissions[] = $name;
                 }
+
+                $denyName = $this->filterName(self::DENY_PREFIX . $name);
+                if (isset($values[$denyName]) && $values[$denyName]) {
+                    $refusals[] = $name;
+                }
+
+                unset($values[$elementName], $values[$denyName]);
             }
         }
 
         unset($values[self::WILDCARD_NAME]);
+        $values['refusals'] = join(',', $refusals);
         $values['permissions'] = join(',', $permissions);
         return ConfigForm::transformEmptyValuesToNull($values);
     }
@@ -368,15 +414,15 @@ class RoleForm extends RepositoryForm
 
     protected function sortPermissions(&$permissions)
     {
-        return uasort($permissions, function ($a, $b) {
-            if (isset($a['isUsagePerm'])) {
-                return isset($b['isFullPerm']) ? 1 : -1;
-            } elseif (isset($b['isUsagePerm'])) {
-                return isset($a['isFullPerm']) ? -1 : 1;
+        return uksort($permissions, function ($a, $b) use ($permissions) {
+            if (isset($permissions[$a]['isUsagePerm'])) {
+                return isset($permissions[$b]['isFullPerm']) ? 1 : -1;
+            } elseif (isset($permissions[$b]['isUsagePerm'])) {
+                return isset($permissions[$a]['isFullPerm']) ? -1 : 1;
             }
 
-            $aParts = explode('/', $a['name']);
-            $bParts = explode('/', $b['name']);
+            $aParts = explode('/', $a);
+            $bParts = explode('/', $b);
 
             do {
                 $a = array_shift($aParts);
@@ -385,6 +431,36 @@ class RoleForm extends RepositoryForm
 
             return strnatcmp($a, $b);
         });
+    }
+
+    protected function collectRoles()
+    {
+        // Function to get all connected children. Used to avoid reference loops
+        $getChildren = function ($name, $children = []) use (&$getChildren) {
+            foreach ($this->repository->select()->where('parent', $name) as $child) {
+                if (isset($children[$child->name])) {
+                    // Don't follow already established loops here,
+                    // the user should be able to solve such in the UI
+                    continue;
+                }
+
+                $children[$child->name] = true;
+                $children = $getChildren($child->name, $children);
+            }
+
+            return $children;
+        };
+
+        $children = $this->getIdentifier() !== null ? $getChildren($this->getIdentifier()) : [];
+
+        $names = [];
+        foreach ($this->repository->select() as $role) {
+            if ($role->name !== $this->getIdentifier() && ! isset($children[$role->name])) {
+                $names[] = $role->name;
+            }
+        }
+
+        return array_combine($names, $names);
     }
 
     public function isValid($formData)
@@ -408,11 +484,117 @@ class RoleForm extends RepositoryForm
             return false;
         }
 
+        if ($this->getIdentifier() && ($newName = $this->getValue('name')) !== $this->getIdentifier()) {
+            $this->repository->update(
+                $this->getBaseTable(),
+                ['parent' => $newName],
+                Filter::where('parent', $this->getIdentifier())
+            );
+        }
+
         if (ConfigFormEventsHook::runOnSuccess($this) === false) {
             Notification::error($this->translate(
                 'Configuration successfully stored. Though, one or more module hooks failed to run.'
                 . ' See logs for details'
             ));
         }
+    }
+
+    /**
+     * Collect permissions and restrictions provided by Icinga Web 2 and modules
+     *
+     * @return array[$permissions, $restrictions]
+     */
+    public static function collectProvidedPrivileges()
+    {
+        $providedPermissions['application'] = [
+            'application/announcements' => [
+                'description' => t('Allow to manage announcements')
+            ],
+            'application/log' => [
+                'description' => t('Allow to view the application log')
+            ],
+            'config/*' => [
+                'description' => t('Allow full config access')
+            ],
+            'config/general' => [
+                'description' => t('Allow to adjust the general configuration')
+            ],
+            'config/modules' => [
+                'description' => t('Allow to enable/disable and configure modules')
+            ],
+            'config/resources' => [
+                'description' => t('Allow to manage resources')
+            ],
+            'config/navigation' => [
+                'description' => t('Allow to view and adjust shared navigation items')
+            ],
+            'config/access-control/*' => [
+                'description' => t('Allow to fully manage access-control')
+            ],
+            'config/access-control/users' => [
+                'description' => t('Allow to manage user accounts')
+            ],
+            'config/access-control/groups' => [
+                'description' => t('Allow to manage user groups')
+            ],
+            'config/access-control/roles' => [
+                'description' => t('Allow to manage roles')
+            ],
+            'user/*' => [
+                'description' => t('Allow all account related functionalities')
+            ],
+            'user/password-change' => [
+                'description' => t('Allow password changes in the account preferences')
+            ],
+            'user/application/stacktraces' => [
+                'description' => t('Allow to adjust in the preferences whether to show stacktraces')
+            ],
+            'user/share/navigation' => [
+                'description' => t('Allow to share navigation items')
+            ]
+        ];
+
+        $providedRestrictions['application'] = [
+            'application/share/users' => [
+                'description'   => t('Restrict which users this role can share items and information with')
+            ],
+            'application/share/groups' => [
+                'description'   => t('Restrict which groups this role can share items and information with')
+            ]
+        ];
+
+        $mm = Icinga::app()->getModuleManager();
+        foreach ($mm->listInstalledModules() as $moduleName) {
+            $modulePermission = Manager::MODULE_PERMISSION_NS . $moduleName;
+            $providedPermissions[$moduleName][$modulePermission] = [
+                'isUsagePerm'   => true,
+                'label'         => t('General Module Access'),
+                'description'   => sprintf(t('Allow access to module %s'), $moduleName)
+            ];
+
+            $module = $mm->getModule($moduleName, false);
+            $permissions = $module->getProvidedPermissions();
+
+            $providedPermissions[$moduleName][$moduleName . '/*'] = [
+                'isFullPerm'    => true,
+                'label'         => t('Full Module Access')
+            ];
+
+            foreach ($permissions as $permission) {
+                /** @var object $permission */
+                $providedPermissions[$moduleName][$permission->name] = [
+                    'description'   => $permission->description
+                ];
+            }
+
+            foreach ($module->getProvidedRestrictions() as $restriction) {
+                $providedRestrictions[$moduleName][$restriction->name] = [
+                    'description'   => $restriction->description
+                ];
+            }
+        }
+
+        return [$providedPermissions, $providedRestrictions];
     }
 }
