@@ -117,7 +117,8 @@ class UserBackendConfigForm extends ConfigForm
                 foreach (UserBackend::getCustomUserBackendsClasses() as $backendType => $className) {
                     if ($backendType === $type) {
                         $backend = new $className($this->config->getSection($this->backendToLoad));
-                        if (method_exists($backend, 'getConfigurationFormClass') && $class = $backend->getConfigurationFormClass()) {
+                        if (method_exists($backend, 'getConfigurationFormClass')
+                        && $class = $backend->getConfigurationFormClass()) {
                             return new $class();
                         }
                     }
