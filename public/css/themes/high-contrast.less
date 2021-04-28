@@ -35,8 +35,18 @@
   }
 }
 
+#menu ul.nav-level-1 > .nav-item.active > a,
+#menu .nav-level-1 > .nav-item.active:not(.selected) > a:hover {
+  color: @text-color;
+  background-color: @white;
+}
+
 #menu .nav-level-2 > .nav-item.active {
-  background-color: black;
+  background-color: @white;
+
+  a {
+    color: @text-color;
+  }
 
   > a:focus, > a:hover {
     opacity: 1;
