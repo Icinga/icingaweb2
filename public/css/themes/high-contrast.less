@@ -57,37 +57,53 @@
   text-decoration: underline;
 }
 
-.badge {
-  background-color: @text-color-light;
+.badge:not(.handled),
+.state-badge:not(.handled) {
+  &.state-warning {
+    border: 1px solid @color-warning;
+  }
+
+  &.state-critical,
+  &.state-down {
+    border: 1px solid @color-critical;
+  }
+
+  &.state-unreachable {
+    border: 1px solid @color-unreachable;
+  }
+
+  &.state-unknown {
+    border: 1px solid @color-unknown;
+  }
+
+  &.state-ok,
+  &.state-up {
+    border: 1px solid @color-ok;
+  }
 }
 
-.badge.handled {
+.badge.handled,
+.badge.state-ok,
+.state-badge.handled,
+.state-badge.state-ok {
   background-color: @body-bg-color !important;
-  color: @text-color;
+  color: @text-color !important;
 
   &.state-warning {
     border: 1px solid @color-warning-handled;
-    margin-top: -1px;
   }
 
-  &.state-critical {
-    border: 1px solid @color-critical-handled;
-    margin-top: -1px;
-  }
-
+  &.state-critical,
   &.state-down {
     border: 1px solid @color-critical-handled;
-    margin-top: -1px;
   }
 
   &.state-unreachable {
     border: 1px solid @color-unreachable-handled;
-    margin-top: -1px;
   }
 
   &.state-unknown {
     border: 1px solid @color-unknown-handled;
-    margin-top: -1px;
   }
 }
 
