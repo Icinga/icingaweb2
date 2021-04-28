@@ -188,7 +188,8 @@
   }
 }
 
-.icinga-controls {
+.icinga-controls,
+.search-editor {
   input:not([type="checkbox"]):not([type="radio"]),
   .toggle-switch .toggle-slider:before,
   .toggle-switch > .toggle-slider,
@@ -209,8 +210,15 @@ input.search {
   background-image: url(../img/icons/search.png);
 }
 
-
-.search-bar {
-  border: 1px solid #006d8c;
+.search-bar,
+.button-link {
+  border: 1px solid @icinga-blue;
 }
 
+.view-mode-switcher > label {
+  border: 1px solid @icinga-blue;
+
+  &:not(:first-of-type) {
+    border-left: none;
+  }
+}
