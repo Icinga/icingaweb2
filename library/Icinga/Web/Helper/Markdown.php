@@ -3,20 +3,36 @@
 
 namespace Icinga\Web\Helper;
 
+use Icinga\Web\Helper\Markdown\LinkTransformer;
 use Parsedown;
 
 class Markdown
 {
-    public static function line($content)
+    public static function line($content, $config = null)
     {
         require_once 'Parsedown/Parsedown.php';
 
-        return HtmlPurifier::process(Parsedown::instance()->line($content));
+        if ($config === null) {
+            $config = function (\HTMLPurifier_Config $config) {
+                $config->set('HTML.Parent', 'span'); // Only allow inline elements
+
+                LinkTransformer::attachTo($config);
+            };
+        }
+
+        return HtmlPurifier::process(Parsedown::instance()->line($content), $config);
     }
 
-    public static function text($content)
+    public static function text($content, $config = null)
     {
         require_once 'Parsedown/Parsedown.php';
-        return HtmlPurifier::process(Parsedown::instance()->text($content));
+
+        if ($config === null) {
+            $config = function (\HTMLPurifier_Config $config) {
+                LinkTransformer::attachTo($config);
+            };
+        }
+
+        return HtmlPurifier::process(Parsedown::instance()->text($content), $config);
     }
 }
