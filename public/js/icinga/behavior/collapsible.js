@@ -48,6 +48,10 @@
                 var toggleSelector = collapsible.dataset.toggleElement;
                 if (!! toggleSelector) {
                     var toggle = $(collapsible).children(toggleSelector)[0];
+                    if (! toggle && $(collapsible.nextSibling).is(toggleSelector)) {
+                        toggle = collapsible.nextSibling;
+                    }
+
                     if (! toggle) {
                         _this.icinga.logger.error(
                             '[Collapsible] Control `' + toggleSelector + '` not found in .collapsible', collapsible);
@@ -281,7 +285,10 @@
 
             height += parseFloat(window.getComputedStyle(collapsible).getPropertyValue('padding-top'));
 
-            if (!! collapsible.dataset.toggleElement) {
+            if (
+                !! collapsible.dataset.toggleElement
+                && ! $(collapsible.nextSibling).is(collapsible.dataset.toggleElement)
+            ) {
                 var toggle = $(collapsible).children(collapsible.dataset.toggleElement)[0];
                 height += toggle.offsetHeight; // TODO: Very expensive at times. (50ms+) Check why!
                 height += parseFloat(window.getComputedStyle(toggle).getPropertyValue('margin-top'));
