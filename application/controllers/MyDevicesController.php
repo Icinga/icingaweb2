@@ -66,7 +66,7 @@ class MyDevicesController extends CompatController
     {
         (new RememberMe())->removeSpecific(
             $this->auth->getUser()->getUsername(),
-            (new UserAgent())->getAgent()
+            $this->params->get('agent')
         );
 
         $this->redirectNow(
