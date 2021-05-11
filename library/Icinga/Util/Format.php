@@ -9,6 +9,8 @@ class Format
 {
     protected static $instance;
 
+    protected static $generalBase = 1000;
+
     protected static $bitPrefix = ['b', 'kb', 'mb', 'gb', 'tb', 'pb', 'eb', 'zb', 'yb'];
 
     protected static $bytePrefix = ['B', 'kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
@@ -38,8 +40,7 @@ class Format
     protected static $literPrefix = ['l', 'hl'];
     protected static $literBase = 100;
 
-    protected static $secondPrefix = array('s');
-    protected static $baseFactor = 1000;
+    protected static $secondPrefix = ['s'];
 
     public static function getInstance()
     {
@@ -51,47 +52,47 @@ class Format
 
     public static function bits($value)
     {
-        return self::formatForUnits($value, self::$bitPrefix, self::$baseFactor);
+        return self::formatForUnits($value, self::$bitPrefix, self::$generalBase);
     }
 
     public static function bytes($value)
     {
-        return self::formatForUnits($value, self::$bytePrefix, self::$baseFactor);
+        return self::formatForUnits($value, self::$bytePrefix, self::$generalBase);
     }
 
     public static function timeWatts($value, $wattType)
     {
-        return self::formatForUnits($value, self::$timeWattPrefix[$wattType], self::$baseFactor);
+        return self::formatForUnits($value, self::$timeWattPrefix[$wattType], self::$generalBase);
     }
 
     public static function watts($value)
     {
-        return self::formatForUnits($value, self::$wattPrefix, self::$baseFactor);
+        return self::formatForUnits($value, self::$wattPrefix, self::$generalBase);
     }
 
     public static function amperes($value)
     {
-        return self::formatForUnits($value, self::$amperePrefix, self::$baseFactor);
+        return self::formatForUnits($value, self::$amperePrefix, self::$generalBase);
     }
 
     public static function timeAmperes($value, $ampereType)
     {
-        return self::formatForUnits($value, self::$timeAmperePrefix[$ampereType], self::$baseFactor);
+        return self::formatForUnits($value, self::$timeAmperePrefix[$ampereType], self::$generalBase);
     }
 
     public static function volts($value)
     {
-        return self::formatForUnits($value, self::$voltPrefix, self::$baseFactor);
+        return self::formatForUnits($value, self::$voltPrefix, self::$generalBase);
     }
 
     public static function ohms($value)
     {
-        return self::formatForUnits($value, self::$ohmPrefix, self::$baseFactor);
+        return self::formatForUnits($value, self::$ohmPrefix, self::$generalBase);
     }
 
     public static function grams($value)
     {
-        return self::formatForUnits($value, self::$gramPrefix, self::$baseFactor);
+        return self::formatForUnits($value, self::$gramPrefix, self::$generalBase);
     }
 
     public static function liters($value)
@@ -104,7 +105,7 @@ class Format
         $absValue = abs($value);
 
         if ($absValue < 60) {
-            return self::formatForUnits($value, self::$secondPrefix, self::$baseFactor);
+            return self::formatForUnits($value, self::$secondPrefix, self::$generalBase);
         } elseif ($absValue < 3600) {
             return sprintf('%0.2f m', $value / 60);
         } elseif ($absValue < 86400) {
