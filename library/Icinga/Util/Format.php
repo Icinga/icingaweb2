@@ -7,48 +7,38 @@ use DateTime;
 
 class Format
 {
-    const STANDARD_IEC = 0;
-    const STANDARD_SI = 1;
     protected static $instance;
 
-    protected static $bitPrefix = array(
-        array('b', 'kib', 'mib', 'gib', 'tib', 'pib', 'eib', 'zib', 'yib'),
-        array('b', 'kb', 'mb', 'gb', 'tb', 'pb', 'eb', 'zb', 'yb'),
-    );
-    protected static $bitBase = array(1024, 1000);
+    protected static $bitPrefix = ['b', 'kb', 'mb', 'gb', 'tb', 'pb', 'eb', 'zb', 'yb'];
 
-    protected static $bytePrefix = array(
-        array('B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'),
-        array('B', 'kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'),
-    );
-    protected static $byteBase = array(1024, 1000);
+    protected static $bytePrefix = ['B', 'kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
 
     protected static $timeWattPrefix = [
-        'WattHours'   => ['mWh', 'µWh', 'nWh', 'Wh', 'kWh', 'MWh', 'GWh', 'TWh', 'PWh', 'EWh', 'ZWh', 'YWh'],
-        'WattMinutes' => ['mWm', 'µWm', 'nWm', 'Wm', 'kWm', 'MWm', 'GWm', 'TWm', 'PWm', 'EWm', 'ZWm', 'YWm'],
-        'WattSeconds' => ['mWs', 'µWs', 'nWs', 'Ws', 'kWs', 'MWs', 'GWs', 'TWs', 'PWs', 'EWs', 'ZWs', 'YWs'],
+        'WattHours'   => ['Wh', 'kWh', 'MWh', 'GWh', 'TWh', 'PWh', 'EWh', 'ZWh', 'YWh'],
+        'WattMinutes' => ['Wm', 'kWm', 'MWm', 'GWm', 'TWm', 'PWm', 'EWm', 'ZWm', 'YWm'],
+        'WattSeconds' => ['Ws', 'kWs', 'MWs', 'GWs', 'TWs', 'PWs', 'EWs', 'ZWs', 'YWs'],
     ];
 
-    protected static $wattPrefix = ['mW', 'µW', 'nW', 'W', 'kW', 'MW', 'GW', 'TW', 'PW', 'EW', 'ZW', 'YW'];
+    protected static $wattPrefix = ['W', 'kW', 'MW', 'GW', 'TW', 'PW', 'EW', 'ZW', 'YW'];
 
-    protected static $amperePrefix = ['nA', 'µA', 'mA', 'A', 'kA', 'MA', 'GA', 'TA', 'PA', 'EA', 'ZA', 'YA'];
+    protected static $amperePrefix = ['A', 'kA', 'MA', 'GA', 'TA', 'PA', 'EA', 'ZA', 'YA'];
 
     protected static $timeAmperePrefix = [
-        'AmpHours'   => ['nAh', 'uAh', 'mAh', 'Ah', 'kAh', 'MAh', 'GAh', 'TAh', 'PAh', 'EAh', 'ZAh', 'YAh'],
-        'AmpMinutes' => ['nAm', 'uAm', 'mAm', 'Am', 'kAm', 'MAm', 'GAm', 'TAm', 'PAm', 'EAm', 'ZAm', 'YAm'],
-        'AmpSeconds' => ['nAs', 'uAs', 'mAs', 'As', 'kAs', 'MAs', 'GAs', 'TAs', 'PAs', 'EAs', 'ZAs', 'YAs'],
+        'AmpHours'   => ['Ah', 'kAh', 'MAh', 'GAh', 'TAh', 'PAh', 'EAh', 'ZAh', 'YAh'],
+        'AmpMinutes' => ['Am', 'kAm', 'MAm', 'GAm', 'TAm', 'PAm', 'EAm', 'ZAm', 'YAm'],
+        'AmpSeconds' => ['As', 'kAs', 'MAs', 'GAs', 'TAs', 'PAs', 'EAs', 'ZAs', 'YAs'],
     ];
 
-    protected static $voltPrefix = ['nV', 'µV', 'mV', 'V', 'kV', 'MV', 'GV', 'TV', 'PV', 'EV', 'ZV', 'YV'];
+    protected static $voltPrefix = ['V', 'kV', 'MV', 'GV', 'TV', 'PV', 'EV', 'ZV', 'YV'];
 
-    protected static $ohmPrefix = ['nO', 'µO', 'mO', 'O', 'kO', 'MO', 'GO', 'TO', 'PO', 'EO', 'ZO', 'YO'];
+    protected static $ohmPrefix = ['O', 'kO', 'MO', 'GO', 'TO', 'PO', 'EO', 'ZO', 'YO'];
 
-    protected static $gramPrefix = ['ng', 'µg', 'mg', 'g', 'kg', 't'];
+    protected static $gramPrefix = ['g', 'kg', 't'];
 
-    protected static $literPrefix = ['ml', 'l', 'hl'];
+    protected static $literPrefix = ['l', 'hl'];
     protected static $literBase = 100;
 
-    protected static $secondPrefix = array('as', 'fs', 'ps', 'ns', 'µs', 'ms', 's');
+    protected static $secondPrefix = array('s');
     protected static $baseFactor = 1000;
 
     public static function getInstance()
@@ -59,22 +49,14 @@ class Format
         return self::$instance;
     }
 
-    public static function bits($value, $standard = self::STANDARD_SI)
+    public static function bits($value)
     {
-        return self::formatForUnits(
-            $value,
-            self::$bitPrefix[$standard],
-            self::$bitBase[$standard]
-        );
+        return self::formatForUnits($value, self::$bitPrefix, self::$baseFactor);
     }
 
-    public static function bytes($value, $standard = self::STANDARD_IEC)
+    public static function bytes($value)
     {
-        return self::formatForUnits(
-            $value,
-            self::$bytePrefix[$standard],
-            self::$byteBase[$standard]
-        );
+        return self::formatForUnits($value, self::$bytePrefix, self::$baseFactor);
     }
 
     public static function timeWatts($value, $wattType)
