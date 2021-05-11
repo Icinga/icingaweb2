@@ -19,6 +19,20 @@ chapter.
 * LDAP PHP library when using Active Directory or LDAP for authentication
 * MySQL or PostgreSQL PHP libraries
 
+### Browser Support
+
+Icinga Web 2 and modules made by Icinga don't require a particular browser or set of browsers. The
+vendor of the browser in question doesn't matter much. However, the features a browser supports do.
+
+This generally applies to CSS and Javascript features. Since there a plethora of features in each
+category which Icinga Web 2 and modules may require, we will only mention the most prominent feature
+or sub-category here:
+
+* For CSS this is [the flexible box layout module](https://caniuse.com/flexbox)
+* For Javascript it is [the ECMAScript 2015 specification](https://caniuse.com/es6)
+
+If your desired browser and its version is showing up in green when visiting the respective link,
+it's probably okay to use it for Icinga Web 2.
 
 ## Installing Icinga Web 2 from Package <a id="installing-from-package"></a>
 
