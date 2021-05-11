@@ -41,7 +41,7 @@ abstract class EventDetailsExtensionHook
     /**
      * Shall return valid HTML to include in the detail view
      *
-     * @param   object $object     The object to generate HTML for
+     * @param   object $event     The object to generate HTML for
      *
      * @return  string
      */
