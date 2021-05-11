@@ -83,7 +83,7 @@ class EventController extends Controller
         /** @var EventDetailsExtensionHook $hook */
         foreach (Hook::all('Monitoring\\EventDetailsExtension') as $hook) {
             try {
-                $html = $hook->getHtmlForEvent($object);
+                $html = $hook->getHtmlForEvent($event);
             } catch (\Exception $e) {
                 $html = $this->view->escape($e->getMessage());
             }
