@@ -5,7 +5,7 @@ namespace Icinga\Web;
 
 use Icinga\Application\Config;
 use Icinga\Authentication\Auth;
-use Icinga\Crypt\RSA;
+use Icinga\Crypt\AesCrypt;
 use Icinga\Common\Database;
 use Icinga\User;
 use ipl\Sql\Expression;
@@ -33,8 +33,8 @@ class RememberMe
     /** @var string */
     protected $username;
 
-    /** @var RSA RSA keys for encrypting/decrypting the credentials */
-    protected $rsa;
+    /** @var AesCrypt Instance for encrypting/decrypting the credentials */
+    protected $aesCrypt;
 
     /** @var int Timestamp when the remember me cookie expires */
     protected $expiresAt;
@@ -71,26 +71,30 @@ class RememberMe
     public static function fromCookie()
     {
         $data = explode('|', $_COOKIE[static::COOKIE]);
-        $publicKey = base64_decode(array_pop($data));
+        $iv = base64_decode(array_pop($data));
+        $tag = base64_decode(array_pop($data));
 
         $select = (new Select())
             ->from(static::TABLE)
             ->columns('*')
-            ->where(['public_key = ?' => $publicKey]);
+            ->where(['random_iv = ?' => bin2hex($iv)]);
 
         $rememberMe = new static();
         $rs = $rememberMe->getDb()->select($select)->fetch();
 
         if (! $rs) {
             throw new RuntimeException(sprintf(
-                "No database entry found for public key '%s'",
-                $publicKey
+                "No database entry found for IV '%s'",
+                bin2hex($iv)
             ));
         }
 
-        $rememberMe->rsa = (new RSA())->loadKey($rs->private_key, $publicKey);
-        $rememberMe->username = $rememberMe->rsa->decryptFromBase64($data[0]);
-        $rememberMe->encryptedPassword = $data[1];
+        $rememberMe->aesCrypt = (new AesCrypt())
+            ->setKey(hex2bin($rs->passphrase))
+            ->setTag($tag)
+            ->setIV($iv);
+        $rememberMe->username = $rs->username;
+        $rememberMe->encryptedPassword = $data[0];
 
         return $rememberMe;
     }
@@ -105,13 +109,11 @@ class RememberMe
      */
     public static function fromCredentials($username, $password)
     {
+        $aesCrypt = new AesCrypt();
         $rememberMe = new static();
-
-        $rsa = (new RSA())->loadKey(...RSA::keygen());
-
-        $rememberMe->encryptedPassword = $rsa->encryptToBase64($password);
+        $rememberMe->encryptedPassword = $aesCrypt->encryptToBase64($password);
         $rememberMe->username = $username;
-        $rememberMe->rsa = $rsa;
+        $rememberMe->aesCrypt = $aesCrypt;
 
         return $rememberMe;
     }
@@ -137,9 +139,9 @@ class RememberMe
             ->setExpire($this->getExpiresAt())
             ->setHttpOnly(true)
             ->setValue(implode('|', [
-                $this->rsa->encryptToBase64($this->username),
                 $this->encryptedPassword,
-                base64_encode($this->rsa->getPublicKey())
+                base64_encode($this->aesCrypt->getTag()),
+                base64_encode($this->aesCrypt->getIV()),
             ]));
     }
 
@@ -183,7 +185,7 @@ class RememberMe
 
     public function authenticate()
     {
-        $password = $this->rsa->decryptFromBase64($this->encryptedPassword);
+        $password = $this->aesCrypt->decryptFromBase64($this->encryptedPassword);
         $auth = Auth::getInstance();
         $authChain = $auth->getAuthChain();
         $authChain->setSkipExternalBackends(true);
@@ -211,13 +213,13 @@ class RememberMe
         $this->remove();
 
         $this->getDb()->insert(static::TABLE, [
-            'username'    => $this->username,
-            'private_key' => $this->rsa->getPrivateKey(),
-            'public_key'  => $this->rsa->getPublicKey(),
-            'http_user_agent' => (new UserAgent)->getAgent(),
-            'expires_at'  => date('Y-m-d H:i:s', $this->getExpiresAt()),
-            'ctime'       => new Expression('NOW()'),
-            'mtime'       => new Expression('NOW()')
+            'username'          => $this->username,
+            'passphrase'        => bin2hex($this->aesCrypt->getKey()),
+            'random_iv'         => bin2hex($this->aesCrypt->getIV()),
+            'http_user_agent'   => (new UserAgent)->getAgent(),
+            'expires_at'        => date('Y-m-d H:i:s', $this->getExpiresAt()),
+            'ctime'             => new Expression('NOW()'),
+            'mtime'             => new Expression('NOW()')
         ]);
 
         return $this;
@@ -233,8 +235,8 @@ class RememberMe
     public function remove($username = null)
     {
         $this->getDb()->delete(static::TABLE, [
-            'username = ?' => $username ?: $this->username,
-            'http_user_agent = ?' =>  (new UserAgent)->getAgent()
+            'username = ?'          => $username ?: $this->username,
+            'http_user_agent = ?'   =>  (new UserAgent)->getAgent()
         ]);
 
         return $this;
@@ -249,7 +251,7 @@ class RememberMe
     {
         return static::fromCredentials(
             $this->username,
-            $this->rsa->decryptFromBase64($this->encryptedPassword)
+            $this->aesCrypt->decryptFromBase64($this->encryptedPassword)
         );
     }
 
@@ -298,7 +300,7 @@ class RememberMe
     {
         $select = (new Select())
             ->from(static::TABLE)
-           ->columns(['http_user_agent'])
+            ->columns(['http_user_agent'])
             ->where(['username = ?' => $username]);
 
         return (new static())->getDb()->select($select)->fetchAll();
