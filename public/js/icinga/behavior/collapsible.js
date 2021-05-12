@@ -79,11 +79,12 @@
             }
         });
 
-        setTimeout(function () {
-            for (var i = 0; i < toCollapse.length; i++) {
-                _this.collapse(toCollapse[i][0], toCollapse[i][1]);
-            }
-        }, 0);
+        // Elements are all collapsed in a row now, after height calculations are done.
+        // This avoids reflows since instantly collapsing an element will cause one if
+        // the height of the next element is being calculated.
+        for (var i = 0; i < toCollapse.length; i++) {
+            _this.collapse(toCollapse[i][0], toCollapse[i][1]);
+        }
     };
 
     /**
