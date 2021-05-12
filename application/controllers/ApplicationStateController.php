@@ -66,9 +66,8 @@ class ApplicationStateController extends Controller
                 }
             }
         }
-        RememberMe::removeExpired();
 
-        $this->setAutorefreshInterval(60);
+        RememberMe::removeExpired();
     }
 
     public function summaryAction()

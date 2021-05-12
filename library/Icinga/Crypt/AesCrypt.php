@@ -143,6 +143,7 @@ class AesCrypt
         if (empty($this->tag) || strlen($this->tag) !== 16) {
             throw new UnexpectedValueException('No tag set');
         }
+
         if (strlen($this->tag) !== 16) {
             throw new InvalidArgumentException('Invalid tag value');
         }
@@ -201,6 +202,7 @@ class AesCrypt
         if(is_bool($encrypt) && $encrypt === false) {
             throw new UnexpectedValueException('Encryption failed');
         }
+
         return $encrypt;
     }
 

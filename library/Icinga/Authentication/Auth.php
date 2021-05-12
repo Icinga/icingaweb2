@@ -13,18 +13,15 @@ use Icinga\Authentication\UserGroup\UserGroupBackend;
 use Icinga\Data\ConfigObject;
 use Icinga\Exception\IcingaException;
 use Icinga\Exception\NotReadableError;
-use Icinga\Common\Database;
 use Icinga\User;
 use Icinga\User\Preferences;
 use Icinga\User\Preferences\PreferencesStore;
-use Icinga\Web\RememberMe;
 use Icinga\Web\Session;
 use Icinga\Web\StyleSheet;
 use ipl\Sql\Select;
 
 class Auth
 {
-    use Database;
 
     /**
      * Singleton instance
@@ -453,20 +450,5 @@ class Auth
         // Load the user's roles
         $admissionLoader = new AdmissionLoader();
         $admissionLoader->applyRoles($user);
-    }
-
-    /**
-     * Read the 'remember-me' cookie and authenticate
-     *
-     * @return bool     True if user authentication is succeed, false if not
-     */
-    public function authenticateFromRememberMeCookie()
-    {
-        $rememberMe = RememberMe::fromCookie();
-        if ($rememberMe->authenticate()) {
-            //TODO renew cookie
-        }
-
-        return $rememberMe->authenticate();
     }
 }

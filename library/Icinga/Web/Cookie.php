@@ -276,7 +276,7 @@ class Cookie
      * > The server will be successful in removing the cookie only if the Path and the Domain attribute in the
      * > Set-Cookie header match the values used when the cookie was created.
      *
-     * Note that the cookie has be sent to the client.
+     * Note that the cookie has to be sent to the client.
      *
      * # Example Usage
      *
