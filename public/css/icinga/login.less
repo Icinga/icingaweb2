@@ -103,7 +103,6 @@
     }
   }
 
-  input:focus,
   input[type="submit"]:focus {
     outline: 3px solid fade(@icinga-blue, 50%);
   }
@@ -143,16 +142,16 @@
   .control-group:nth-child(3) {
     text-align: left;
     margin-top: 1.25em;
-  }
 
-  .control-group:nth-child(3) > div{
-    display: inline-block;
-    width: auto;
-  }
+    > .control-label-group {
+      display: inline-block;
+      width: auto;
+    }
 
-  .control-group:nth-child(3) > label {
-    float: left;
-    margin-right: 1em;
+    > .toggle-switch {
+      float: left;
+      margin-right: 1em;
+    }
   }
 }
 
