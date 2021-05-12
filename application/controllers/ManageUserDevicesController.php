@@ -11,13 +11,12 @@ use ipl\Web\Compat\CompatController;
 use ipl\Web\Url;
 
 /**
- * RememberMeManageController
+ * ManageUserDevicesController
  *
- * you need 'manage/rememberme' permission to use this controller
+ * you need 'application/sessions' permission to use this controller
  */
 class ManageUserDevicesController extends CompatController
 {
-    use Database;
 
     public function indexAction()
     {
@@ -33,7 +32,7 @@ class ManageUserDevicesController extends CompatController
             );
         $this->getTabs()->activate('manageuserdevices');
 
-        $this->assertPermission('manage/rememberme');
+        $this->assertPermission('application/sessions');
 
         $usersList = (new RememberMeUserList())
             ->setUsers(RememberMe::getAllUser())

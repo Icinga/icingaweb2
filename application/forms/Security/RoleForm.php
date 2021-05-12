@@ -81,11 +81,11 @@ class RoleForm extends RepositoryForm
                 'name'          => 'config/*',
                 'description'   => $this->translate('Allow config access')
             ],
-            $helper->filterName('manage/rememberme') => [
+            /*$helper->filterName('manage/rememberme') => [
                 'name'          => 'manage/rememberme',
                 'description'   => $this->translate('Allow this user to view and delete other users 
                 rememberme cookies')
-            ]
+            ]*/
         ];
 
         $this->providedRestrictions['application'] = [
@@ -651,6 +651,9 @@ class RoleForm extends RepositoryForm
             ],
             'user/share/navigation' => [
                 'description' => t('Allow to share navigation items')
+            ],
+            'application/sessions' => [
+                'description' => t('Allow to manage user sessions')
             ]
         ];
 

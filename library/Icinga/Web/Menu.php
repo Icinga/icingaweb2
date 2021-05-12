@@ -139,13 +139,13 @@ class Menu extends Navigation
             ]));
         }
 
-        if (Auth::getInstance()->hasPermission('manage/rememberme')) {
+        if (Auth::getInstance()->hasPermission('application/sessions')) {
             $this->getItem('system')->addChild($this->createItem('Logged_in_users', [
                 'icon'        => 'host',
                 'description' => t('List of users who stay logged in'),
                 'label'       => t('Logged in users'),
                 'url'         => 'manageuserdevices',
-                'permission'  => 'manage/rememberme',
+                'permission'  => 'application/sessions',
                 'priority'    => 890
             ]));
         }
