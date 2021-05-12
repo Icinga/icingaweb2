@@ -62,6 +62,14 @@ class Menu extends Navigation
                     'label'       => t('Announcements'),
                     'url'         => 'announcements',
                     'priority'    => 720
+                ],
+                'sessions' => [
+                    'icon'        => 'host',
+                    'description' => t('List of users who stay logged in'),
+                    'label'       => t('User Sessions'),
+                    'permission'  => 'application/sessions',
+                    'url'         => 'manage-user-devices',
+                    'priority'    => 730
                 ]
             ]
         ]);
@@ -136,17 +144,6 @@ class Menu extends Navigation
                 'url'         => 'list/applicationlog',
                 'permission'  => 'application/log',
                 'priority'    => 900
-            ]));
-        }
-
-        if (Auth::getInstance()->hasPermission('application/sessions')) {
-            $this->getItem('system')->addChild($this->createItem('Logged_in_users', [
-                'icon'        => 'host',
-                'description' => t('List of users who stay logged in'),
-                'label'       => t('Logged in users'),
-                'url'         => 'manageuserdevices',
-                'permission'  => 'application/sessions',
-                'priority'    => 890
             ]));
         }
     }
