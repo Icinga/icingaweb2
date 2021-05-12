@@ -1,6 +1,7 @@
 <?php
 
 use Icinga\Util\Translator;
+use ipl\Web\Widget\Icon;
 
 if (array_key_exists('_dev', $_GET)) {
   $jsfile  = 'js/icinga.dev.js';
@@ -70,8 +71,9 @@ $innerLayoutScript = $this->layout()->innerLayout . '.phtml';
 </script>
 <div id="collapsible-control-ghost" class="collapsible-control">
     <button type="button">
-        <?= $this->icon('angle-double-down', $this->translate('Expand'), ['class' => 'expand-icon']) ?>
-        <?= $this->icon('angle-double-up', $this->translate('Collapse'), ['class' => 'collapse-icon']) ?>
+        <!-- TODO: Accessibility attributes are missing since usage of the Icon class -->
+        <?= new Icon('angle-double-down', ['class' => 'expand-icon', 'title' => $this->translate('Expand')]) ?>
+        <?= new Icon('angle-double-up', ['class' => 'collapse-icon', 'title' => $this->translate('Collapse')]) ?>
     </button>
 </div>
 <div id="modal-ghost">
