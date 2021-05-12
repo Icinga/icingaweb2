@@ -18,7 +18,7 @@ use UnexpectedValueException;
  *
  *
  * // Encrypt and encode to Base64
- * $encryptedData = (new RSA())->encryptToBase64($data); // Accepts a string
+ * $encryptedData = (new AesCrypt())->encryptToBase64($data); // Accepts a string
  *
  *
  * // Decryption
