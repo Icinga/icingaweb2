@@ -94,6 +94,7 @@ class PreferenceForm extends Form
         $this->preferences = new Preferences($this->store ? $this->store->load() : array());
 
         $oldTheme = $this->preferences->getValue('icingaweb', 'theme');
+        $oldLocale = $this->preferences->getValue('icingaweb', 'language');
 
         $webPreferences = $this->preferences->get('icingaweb', array());
         foreach ($this->getValues() as $key => $value) {
@@ -116,6 +117,12 @@ class PreferenceForm extends Form
             && ($theme = $theme->getValue()) !== $oldTheme
         ) {
             $this->getResponse()->setReloadCss(true);
+        }
+
+        if (($locale = $this->getElement('language')) !== null
+            && $locale->getValue() !== $oldLocale
+        ) {
+            $this->getResponse()->setHeader('X-Icinga-Redirect-Http', 'yes');
         }
 
         try {

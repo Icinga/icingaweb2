@@ -11,6 +11,7 @@ if (array_key_exists('_dev', $_GET)) {
   $cssfile = 'css/icinga.min.css';
 }
 
+$timezone = date_default_timezone_get();
 $lang = Translator::splitLocaleCode()->language;
 $isIframe = $this->layout()->isIframe;
 $showFullscreen = $this->layout()->showFullscreen;
@@ -93,7 +94,9 @@ $innerLayoutScript = $this->layout()->innerLayout . '.phtml';
 <script type="text/javascript">
 window.name = '<?= $this->protectId('Icinga') ?>';
 var icinga = new Icinga({
-  baseUrl: '<?= $this->baseUrl(); ?>'
+  baseUrl: '<?= $this->baseUrl(); ?>',
+  locale: '<?= $lang; ?>',
+  timezone: '<?= $timezone ?>'
 });
 </script>
 </body>

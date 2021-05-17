@@ -49,7 +49,7 @@ class Zend_View_Helper_FormDateTime extends Zend_View_Helper_FormElement
         $type = $attribs['local'] === true ? 'datetime-local' : 'datetime';
         unset($attribs['local']);  // Unset local to not render it again in $this->_htmlAttribs($attribs)
         $html5 =  sprintf(
-            '<input type="%s" name="%s" id="%s" step="1" value="%s"%s%s%s',
+            '<input type="%s" data-use-datetime-picker name="%s" id="%s" step="1" value="%s"%s%s%s',
             $type,
             $this->view->escape($name),
             $this->view->escape($id),

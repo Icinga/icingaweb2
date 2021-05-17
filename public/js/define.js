@@ -60,17 +60,33 @@
      */
     define.resolve = function (name) {
         var requirements = define.defines[name]['requirements'];
-        if (requirements.filter(define.has).length < requirements.length) {
-            return false;
-        }
 
+        var exports, ref;
         var requiredRefs = [];
         for (var i = 0; i < requirements.length; i++) {
-            requiredRefs.push(define.get(requirements[i]));
+            if (define.has(requirements[i])) {
+                ref = define.get(requirements[i]);
+            } else if (requirements[i] === 'exports') {
+                exports = ref = {};
+            } else {
+                return false;
+            }
+
+            requiredRefs.push(ref);
         }
 
         var factory = define.defines[name]['factory'];
-        define.set(name, factory.apply(null, requiredRefs));
+        var resolved = factory.apply(null, requiredRefs);
+
+        if (typeof exports === 'object') {
+            if (typeof resolved !== 'undefined') {
+                throw new Error('Factory for ' + name + ' returned, although exports were populated');
+            }
+
+            resolved = exports;
+        }
+
+        define.set(name, resolved);
 
         for (var definedName in define.defines) {
             if (define.defines[definedName]['requirements'].indexOf(name) >= 0) {
