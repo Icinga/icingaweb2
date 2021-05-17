@@ -7,7 +7,6 @@ use ipl\Html\Html;
 use ipl\Web\Url;
 use ipl\Web\Widget\Icon;
 use ipl\Web\Widget\Link;
-use phpDocumentor\Reflection\Types\This;
 
 class RememberMeUserDevicesList extends BaseHtmlElement
 {
@@ -105,28 +104,30 @@ class RememberMeUserDevicesList extends BaseHtmlElement
         $tbody = Html::tag('tbody');
 
         $head = Html::tag('tr');
-        $head->add(Html::tag('th', 'os'));
-        $head->add(Html::tag('th', 'browser'));
+        $head->add(Html::tag('th', 'OS'));
+        $head->add(Html::tag('th', 'Browser'));
+        $head->add(Html::tag('th', 'Fingerprint'));
         $thead->add($head);
 
         if (empty($this->getDevicesList())) {
             $tbody->add(Html::tag('td', 'No device found'));
         } else {
-            foreach ($this->getDevicesList() as $userAgent) {
-                $agent = new UserAgent($userAgent);
+            foreach ($this->getDevicesList() as $device) {
+                $agent = new UserAgent($device);
 
                 $element = Html::tag('tr');
 
                 $element->add(Html::tag('td', $agent->getOs()));
                 $element->add(Html::tag('td', $agent->getBrowser()));
+                $element->add(Html::tag('td', $device->random_iv));
 
                 $link =(new Link(
                     new Icon('trash'),
                     Url::fromPath($this->getUrl())
                         ->addParams(
                             [
-                                'name' => $this->getUsername(),
-                                'agent' =>  $userAgent->http_user_agent,
+                                'name'          => $this->getUsername(),
+                                'fingerprint'   =>  $device->random_iv,
                             ]
                         )
                 ));

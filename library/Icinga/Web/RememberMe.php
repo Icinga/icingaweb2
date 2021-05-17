@@ -216,7 +216,7 @@ class RememberMe
             'username'          => $this->username,
             'passphrase'        => bin2hex($this->aesCrypt->getKey()),
             'random_iv'         => bin2hex($this->aesCrypt->getIV()),
-            'http_user_agent'   => (new UserAgent)->getAgent() . uniqid('id'),
+            'http_user_agent'   => (new UserAgent)->getAgent(),
             'expires_at'        => date('Y-m-d H:i:s', $this->getExpiresAt()),
             'ctime'             => new Expression('NOW()'),
             'mtime'             => new Expression('NOW()')
@@ -260,15 +260,15 @@ class RememberMe
      *
      * @param string $username
      *
-     * @param $userAgent
+     * @param $iv
      *
      * @return $this
      */
-    public function removeSpecific($username, $userAgent)
+    public function removeSpecific($username, $iv)
     {
         $this->getDb()->delete(static::TABLE, [
             'username = ?' => $username ?: $this->username,
-            'http_user_agent = ?' => $userAgent
+            'random_iv = ?' => $iv
         ], 'AND');
 
         return $this;
@@ -300,7 +300,7 @@ class RememberMe
     {
         $select = (new Select())
             ->from(static::TABLE)
-            ->columns(['http_user_agent'])
+            ->columns(['http_user_agent', 'random_iv'])
             ->where(['username = ?' => $username]);
 
         return (new static())->getDb()->select($select)->fetchAll();

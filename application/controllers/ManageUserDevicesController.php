@@ -67,7 +67,7 @@ class ManageUserDevicesController extends CompatController
     {
         (new RememberMe())->removeSpecific(
             $this->params->get('name'),
-            $this->params->get('agent')
+            $this->params->get('fingerprint')
         );
 
         $this->redirectNow(
