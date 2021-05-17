@@ -1,9 +1,9 @@
 CREATE TABLE "icingaweb_rememberme" (
   "id"                  serial,
   "username"            character varying(254) NOT NULL,
-  "passphrase"          text NOT NULL,
-  "random_iv"           text NOT NULL,
-  "http_user_agent"     text NOT NULL,
+  "passphrase"          character varying(254) NOT NULL,
+  "random_iv"           character varying(24) NOT NULL,
+  "http_user_agent"     character varying(254) NOT NULL,
   "expires_at"          timestamp NULL DEFAULT NULL,
   "ctime"               timestamp NULL DEFAULT NULL,
   "mtime"               timestamp NULL DEFAULT NULL
