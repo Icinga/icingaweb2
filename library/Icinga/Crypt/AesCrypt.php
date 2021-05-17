@@ -53,7 +53,7 @@ class AesCrypt
     /** @var string The cipher method */
     private $method = 'aes-128-gcm';
 
-    public function __construct($random_bytes_len = 256)
+    public function __construct($random_bytes_len = 128)
     {
         $len = openssl_cipher_iv_length($this->method);
         $this->iv = openssl_random_pseudo_bytes($len);
