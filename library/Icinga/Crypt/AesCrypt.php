@@ -199,7 +199,7 @@ class AesCrypt
     {
         $encrypt = openssl_encrypt($data, $this->method, $this->getkey(), 0, $this->getIV(), $this->tag);
 
-        if(is_bool($encrypt) && $encrypt === false) {
+        if (is_bool($encrypt) && $encrypt === false) {
             throw new UnexpectedValueException('Encryption failed');
         }
 

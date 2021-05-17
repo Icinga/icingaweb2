@@ -18,11 +18,9 @@ use Icinga\User\Preferences;
 use Icinga\User\Preferences\PreferencesStore;
 use Icinga\Web\Session;
 use Icinga\Web\StyleSheet;
-use ipl\Sql\Select;
 
 class Auth
 {
-
     /**
      * Singleton instance
      *
@@ -374,8 +372,8 @@ class Auth
 
         if ($config->get('global', 'config_backend', 'db') !== 'none') {
             $preferencesConfig = new ConfigObject([
-                'store' => $config->get('global', 'config_backend', 'db'),
-                'resource' => $config->get('global', 'config_resource')
+                'store'     => $config->get('global', 'config_backend', 'db'),
+                'resource'  => $config->get('global', 'config_resource')
             ]);
 
             try {

@@ -7,7 +7,6 @@ use Icinga\Application\Config;
 use Icinga\Application\Hook\AuthenticationHook;
 use Icinga\Authentication\Auth;
 use Icinga\Authentication\User\ExternalBackend;
-use Icinga\Common\Database;
 use Icinga\User;
 use Icinga\Web\Form;
 use Icinga\Web\RememberMe;
@@ -18,8 +17,6 @@ use Icinga\Web\Url;
  */
 class LoginForm extends Form
 {
-    use Database;
-
     const DEFAULT_CLASSES = 'icinga-controls';
 
     /**

@@ -7,5 +7,5 @@ CREATE TABLE `icingaweb_rememberme`(
   expires_at        timestamp NULL DEFAULT NULL,
   ctime             timestamp NULL DEFAULT NULL,
   mtime             timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (id),
+  PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;

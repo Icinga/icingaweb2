@@ -3,21 +3,18 @@
 
 namespace Icinga\Controllers;
 
-use Icinga\Common\Database;
-use Icinga\Web\UserAgent;
 use Icinga\Web\RememberMe;
 use Icinga\Web\RememberMeUserDevicesList;
 use ipl\Web\Compat\CompatController;
 use ipl\Web\Url;
 
 /**
- * RememberMeUserDevicesController
+ * MyDevicesController
  *
  * this controller shows you all the devices you are logged in
  */
 class MyDevicesController extends CompatController
 {
-    use Database;
 
     public function init()
     {
@@ -43,7 +40,7 @@ class MyDevicesController extends CompatController
                 array(
                     'title' => $this->translate('List of devices you are logged in'),
                     'label' => $this->translate('My Devices'),
-                    'url'   => 'mydevices'
+                    'url'   => 'my-devices'
                 )
             );
 
@@ -57,7 +54,7 @@ class MyDevicesController extends CompatController
         $data = (new RememberMeUserDevicesList())
         ->setDevicesList(RememberMe::getAllByUsername($name))
         ->setUsername($name)
-        ->setUrl('mydevices/delete');
+        ->setUrl('my-devices/delete');
 
         $this->addContent($data);
     }
@@ -70,7 +67,7 @@ class MyDevicesController extends CompatController
         );
 
         $this->redirectNow(
-            Url::fromPath('mydevices/')
+            Url::fromPath('my-devices/')
                 ->addParams(['name' => $this->auth->getUser()->getUsername()])
         );
     }

@@ -3,7 +3,6 @@
 
 namespace Icinga\Controllers;
 
-use Icinga\Common\Database;
 use Icinga\Web\RememberMe;
 use Icinga\Web\RememberMeUserList;
 use Icinga\Web\RememberMeUserDevicesList;
@@ -22,21 +21,21 @@ class ManageUserDevicesController extends CompatController
     {
         $this->getTabs()
             ->add(
-                'manageuserdevices',
+                'manage-user-devices',
                 array(
                     'title' => $this->translate('List of users who stay logged in'),
                     'label' => $this->translate('Users'),
-                    'url'   => 'manageuserdevices',
+                    'url'   => 'manage-user-devices',
                     'data-base-target' => '_self'
                 )
             );
-        $this->getTabs()->activate('manageuserdevices');
+        $this->getTabs()->activate('manage-user-devices');
 
         $this->assertPermission('application/sessions');
 
         $usersList = (new RememberMeUserList())
             ->setUsers(RememberMe::getAllUser())
-            ->setUrl('manageuserdevices/devices');
+            ->setUrl('manage-user-devices/devices');
 
         $this->addContent($usersList);
     }
@@ -45,21 +44,21 @@ class ManageUserDevicesController extends CompatController
     {
         $this->getTabs()
             ->add(
-                'managedevices',
+                'manage-devices',
                 array(
                     'title' => $this->translate('List of devices'),
                     'label' => $this->translate('Devices'),
-                    'url'   => 'manageuserdevices/devices'
+                    'url'   => 'manage-user-devices/devices'
                 )
             );
-        $this->getTabs()->activate('managedevices');
+        $this->getTabs()->activate('manage-devices');
 
         $name = $this->params->get('name');
 
         $data = (new RememberMeUserDevicesList())
             ->setDevicesList(RememberMe::getAllByUsername($name))
             ->setUsername($name)
-            ->setUrl('manageuserdevices/delete');
+            ->setUrl('manage-user-devices/delete');
 
         $this->addContent($data);
     }
@@ -72,7 +71,7 @@ class ManageUserDevicesController extends CompatController
         );
 
         $this->redirectNow(
-            Url::fromPath('manageuserdevices/devices')
+            Url::fromPath('manage-user-devices/devices')
                 ->addParams(['name' => $this->params->get('name')])
         );
     }

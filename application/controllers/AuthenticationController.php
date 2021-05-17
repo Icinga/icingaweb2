@@ -8,7 +8,6 @@ use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
 use Icinga\Exception\AuthenticationException;
 use Icinga\Forms\Authentication\LoginForm;
-use Icinga\Common\Database;
 use Icinga\Web\Controller;
 use Icinga\Web\Helper\CookieHelper;
 use Icinga\Web\RememberMe;
@@ -20,8 +19,6 @@ use RuntimeException;
  */
 class AuthenticationController extends Controller
 {
-    use Database;
-
     /**
      * {@inheritdoc}
      */
@@ -51,9 +48,7 @@ class AuthenticationController extends Controller
                 $authenticated = $rememberMe->authenticate();
                 if ($authenticated) {
                     $rememberMe = $rememberMe->renew();
-                    $this->getResponse()->setCookie(
-                        $rememberMe->getCookie()
-                    );
+                    $this->getResponse()->setCookie($rememberMe->getCookie());
                     $rememberMe->persist();
                 }
             } catch (RuntimeException $e) {
@@ -63,9 +58,7 @@ class AuthenticationController extends Controller
             }
 
             if (! $authenticated) {
-                $this->getResponse()->setCookie(
-                    RememberMe::forget()
-                );
+                $this->getResponse()->setCookie(RememberMe::forget());
             }
         }
 
@@ -113,9 +106,7 @@ class AuthenticationController extends Controller
             $this->getResponse()->setHttpResponseCode(401);
         } else {
             if (RememberMe::hasCookie()) {
-                $this->getResponse()->setCookie(
-                    RememberMe::forget()
-                );
+                $this->getResponse()->setCookie(RememberMe::forget());
             }
             (new RememberMe())->remove($user->getUsername());
             $this->redirectToLogin();

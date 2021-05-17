@@ -38,7 +38,7 @@ class AccountController extends Controller
                 array(
                     'title' => $this->translate('List of devices you are logged in'),
                     'label' => $this->translate('My Devices'),
-                    'url'   => 'mydevices'
+                    'url'   => 'my-devices'
                 )
             );
     }
