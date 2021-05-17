@@ -208,15 +208,15 @@ class RememberMe
      *
      * @return $this
      */
-    public function persist()
+    public function persist($iv = null)
     {
-        $this->remove();
+        $this->remove($this->username, $iv);
 
         $this->getDb()->insert(static::TABLE, [
             'username'          => $this->username,
             'passphrase'        => bin2hex($this->aesCrypt->getKey()),
             'random_iv'         => bin2hex($this->aesCrypt->getIV()),
-            'http_user_agent'   => (new UserAgent)->getAgent(),
+            'http_user_agent'   => (new UserAgent)->getAgent() . uniqid('id'),
             'expires_at'        => date('Y-m-d H:i:s', $this->getExpiresAt()),
             'ctime'             => new Expression('NOW()'),
             'mtime'             => new Expression('NOW()')
@@ -232,11 +232,11 @@ class RememberMe
      *
      * @return $this
      */
-    public function remove($username = null)
+    public function remove($username, $iv)
     {
         $this->getDb()->delete(static::TABLE, [
-            'username = ?'          => $username ?: $this->username,
-            'http_user_agent = ?'   =>  (new UserAgent)->getAgent()
+            'username = ?'          => $username,
+            'random_iv = ?'         => bin2hex($iv)
         ]);
 
         return $this;
@@ -304,5 +304,15 @@ class RememberMe
             ->where(['username = ?' => $username]);
 
         return (new static())->getDb()->select($select)->fetchAll();
+    }
+
+    /**
+     * Get the encrypton/decryption instance
+     *
+     * @return AesCrypt
+     */
+    public function getAesCrypt()
+    {
+        return $this->aesCrypt;
     }
 }

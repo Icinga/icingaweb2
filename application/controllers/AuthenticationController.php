@@ -44,12 +44,12 @@ class AuthenticationController extends Controller
             $authenticated = false;
 
             try {
-                $rememberMe = RememberMe::fromCookie();
-                $authenticated = $rememberMe->authenticate();
+                $rememberMeOld = RememberMe::fromCookie();
+                $authenticated = $rememberMeOld->authenticate();
                 if ($authenticated) {
-                    $rememberMe = $rememberMe->renew();
+                    $rememberMe = $rememberMeOld->renew();
                     $this->getResponse()->setCookie($rememberMe->getCookie());
-                    $rememberMe->persist();
+                    $rememberMe->persist($rememberMeOld->getAesCrypt()->getIv());
                 }
             } catch (RuntimeException $e) {
                 Logger::error("Can't authenticate user via remember me cookie: %s", $e->getMessage());
@@ -106,9 +106,10 @@ class AuthenticationController extends Controller
             $this->getResponse()->setHttpResponseCode(401);
         } else {
             if (RememberMe::hasCookie()) {
+                (new RememberMe())->remove($user->getUsername(), (RememberMe::fromCookie())->getAesCrypt()->getIV());
                 $this->getResponse()->setCookie(RememberMe::forget());
             }
-            (new RememberMe())->remove($user->getUsername());
+
             $this->redirectToLogin();
         }
     }
