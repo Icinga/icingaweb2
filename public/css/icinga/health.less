@@ -1,0 +1,68 @@
+// Style
+
+.app-health {
+  header {
+    color: @text-color-light;
+
+    span {
+      color: @text-color;
+    }
+  }
+
+  span {
+    &.state-ok {
+      background-color: @color-ok;
+    }
+
+    &.state-warning {
+      background-color: @color-warning;
+    }
+
+    &.state-critical {
+      background-color: @color-critical;
+    }
+
+    &.state-unknown {
+      background-color: @color-unknown;
+    }
+  }
+
+  a {
+    font-weight: bold;
+  }
+
+  tbody tr, tr.active {
+    border: none;
+  }
+
+  tr:not(:last-child) td {
+    border: 0 solid @gray-light;
+    border-bottom-width: 1px;
+  }
+
+  section {
+    color: @text-color-light;
+    font-family: @font-family-fixed;
+  }
+}
+
+// Layout
+
+.app-health {
+  th {
+    width: 2.5em;
+    padding: .5em 1em 0 .5em;
+    vertical-align: top;
+  }
+
+  td {
+    padding: .5em 0;
+  }
+
+  section {
+    margin-top: .25em;
+    height: 3em;
+    overflow: hidden;
+    word-break: break-word;
+  }
+}

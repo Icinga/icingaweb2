@@ -48,12 +48,20 @@ class Menu extends Navigation
                     'url'         => 'about',
                     'priority'    => 700
                 ],
+                'health' => [
+                    'icon'        => 'eye',
+                    'description' => t('Open health overview'),
+                    'label'       => t('Health'),
+                    'url'         => 'health',
+                    'priority'    => 710,
+                    'renderer'    => 'HealthNavigationRenderer'
+                ],
                 'announcements' => [
                     'icon'        => 'megaphone',
                     'description' => t('List announcements'),
                     'label'       => t('Announcements'),
                     'url'         => 'announcements',
-                    'priority'    => 710
+                    'priority'    => 720
                 ]
             ]
         ]);
