@@ -206,11 +206,13 @@ class RememberMe
      *
      * Any previous stored information is automatically removed.
      *
+     * @param null $iv
+     *
      * @return $this
      */
     public function persist($iv = null)
     {
-        $this->remove($this->username, $iv);
+        $this->remove($iv);
 
         $this->getDb()->insert(static::TABLE, [
             'username'          => $this->username,
@@ -228,14 +230,13 @@ class RememberMe
     /**
      * Remove remember me information from the database
      *
-     * @param string $username
+     * @param string $iv
      *
      * @return $this
      */
-    public function remove($username, $iv)
+    public function remove($iv)
     {
         $this->getDb()->delete(static::TABLE, [
-            'username = ?'          => $username,
             'random_iv = ?'         => bin2hex($iv)
         ]);
 
@@ -264,12 +265,11 @@ class RememberMe
      *
      * @return $this
      */
-    public function removeSpecific($username, $iv)
+    public function removeSpecific($iv)
     {
         $this->getDb()->delete(static::TABLE, [
-            'username = ?' => $username ?: $this->username,
             'random_iv = ?' => $iv
-        ], 'AND');
+        ]);
 
         return $this;
     }

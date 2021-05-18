@@ -65,10 +65,7 @@ class ManageUserDevicesController extends CompatController
 
     public function deleteAction()
     {
-        (new RememberMe())->removeSpecific(
-            $this->params->get('name'),
-            $this->params->get('fingerprint')
-        );
+        (new RememberMe())->removeSpecific($this->params->get('fingerprint'));
 
         $this->redirectNow(
             Url::fromPath('manage-user-devices/devices')
