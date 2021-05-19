@@ -15,7 +15,6 @@ use ipl\Web\Url;
  */
 class MyDevicesController extends CompatController
 {
-
     public function init()
     {
         $this->getTabs()
@@ -42,9 +41,7 @@ class MyDevicesController extends CompatController
                     'label' => $this->translate('My Devices'),
                     'url'   => 'my-devices'
                 )
-            );
-
-        $this->getTabs()->activate('devices');
+            )->activate('devices');
     }
 
     public function indexAction()
@@ -52,9 +49,9 @@ class MyDevicesController extends CompatController
         $name = $this->auth->getUser()->getUsername();
 
         $data = (new RememberMeUserDevicesList())
-        ->setDevicesList(RememberMe::getAllByUsername($name))
-        ->setUsername($name)
-        ->setUrl('my-devices/delete');
+            ->setDevicesList(RememberMe::getAllByUsername($name))
+            ->setUsername($name)
+            ->setUrl('my-devices/delete');
 
         $this->addContent($data);
     }
@@ -64,8 +61,7 @@ class MyDevicesController extends CompatController
         (new RememberMe())->removeSpecific($this->params->get('fingerprint'));
 
         $this->redirectNow(
-            Url::fromPath('my-devices/')
-                ->addParams(['name' => $this->auth->getUser()->getUsername()])
+            Url::fromPath('my-devices/')->addParams(['name' => $this->auth->getUser()->getUsername()])
         );
     }
 }

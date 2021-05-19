@@ -16,7 +16,6 @@ use ipl\Web\Url;
  */
 class ManageUserDevicesController extends CompatController
 {
-
     public function indexAction()
     {
         $this->getTabs()
@@ -28,11 +27,9 @@ class ManageUserDevicesController extends CompatController
                     'url'   => 'manage-user-devices',
                     'data-base-target' => '_self'
                 )
-            );
-        $this->getTabs()->activate('manage-user-devices');
+            )->activate('manage-user-devices');
 
         $this->assertPermission('application/sessions');
-
         $usersList = (new RememberMeUserList())
             ->setUsers(RememberMe::getAllUser())
             ->setUrl('manage-user-devices/devices');
@@ -50,11 +47,9 @@ class ManageUserDevicesController extends CompatController
                     'label' => $this->translate('Devices'),
                     'url'   => 'manage-user-devices/devices'
                 )
-            );
-        $this->getTabs()->activate('manage-devices');
+            )->activate('manage-devices');
 
         $name = $this->params->get('name');
-
         $data = (new RememberMeUserDevicesList())
             ->setDevicesList(RememberMe::getAllByUsername($name))
             ->setUsername($name)
@@ -68,8 +63,7 @@ class ManageUserDevicesController extends CompatController
         (new RememberMe())->removeSpecific($this->params->get('fingerprint'));
 
         $this->redirectNow(
-            Url::fromPath('manage-user-devices/devices')
-                ->addParams(['name' => $this->params->get('name')])
+            Url::fromPath('manage-user-devices/devices')->addParams(['name' => $this->params->get('name')])
         );
     }
 }

@@ -13,15 +13,15 @@ class RememberMeUserDevicesList extends BaseHtmlElement
     protected $tag = 'table';
 
     protected $defaultAttributes = [
-        'class' => 'common-table',
-        'data-base-target' => '_self',
-        'title' => 'click to remove this cookie from the database'
+        'class'             => 'common-table',
+        'data-base-target'  => '_self',
+        'title'             => 'click to remove this cookie from the database'
     ];
 
     /**
      * @var array
      */
-    protected $userList;
+    protected $devicesList;
 
     /**
      * @var string
@@ -69,57 +69,58 @@ class RememberMeUserDevicesList extends BaseHtmlElement
     public function setUsername($username)
     {
         $this->username = $username;
+
         return $this;
     }
 
     /**
-     * @return array $_SERVER['HTTP_USER_AGENT'] output string for all devices as associative array
+     * @return array List of devices. Each device contains user agent and fingerprint string
      */
     public function getDevicesList()
     {
-        return $this->userList;
+        return $this->devicesList;
     }
 
     /**
-     * @param $userList
+     * @param $devicesList
+     *
      * @return $this
      */
-    public function setDevicesList($userList)
+    public function setDevicesList($devicesList)
     {
-        $this->userList = $userList;
+        $this->devicesList = $devicesList;
+
         return $this;
     }
 
     protected function assemble()
     {
         $thead = Html::tag('thead');
-        $theadRow = Html::tag('tr');
-        $theadRow->add(Html::tag(
-            'th',
-            ucfirst("List of devices and browsers {$this->getUsername()} is currently logged in:")
-        ));
+        $theadRow = Html::tag('tr')
+            ->add(Html::tag(
+                'th',
+                ucfirst("List of devices and browsers {$this->getUsername()} is currently logged in:")
+            ));
 
         $thead->add($theadRow);
 
-        $tbody = Html::tag('tbody');
+        $head = Html::tag('tr')
+            ->add(Html::tag('th', 'OS'))
+            ->add(Html::tag('th', 'Browser'))
+            ->add(Html::tag('th', 'Fingerprint'));
 
-        $head = Html::tag('tr');
-        $head->add(Html::tag('th', 'OS'));
-        $head->add(Html::tag('th', 'Browser'));
-        $head->add(Html::tag('th', 'Fingerprint'));
         $thead->add($head);
+        $tbody = Html::tag('tbody');
 
         if (empty($this->getDevicesList())) {
             $tbody->add(Html::tag('td', 'No device found'));
         } else {
             foreach ($this->getDevicesList() as $device) {
                 $agent = new UserAgent($device);
-
-                $element = Html::tag('tr');
-
-                $element->add(Html::tag('td', $agent->getOs()));
-                $element->add(Html::tag('td', $agent->getBrowser()));
-                $element->add(Html::tag('td', $device->random_iv));
+                $element = Html::tag('tr')
+                    ->add(Html::tag('td', $agent->getOs()))
+                    ->add(Html::tag('td', $agent->getBrowser()))
+                    ->add(Html::tag('td', $device->random_iv));
 
                 $link =(new Link(
                     new Icon('trash'),
@@ -133,7 +134,6 @@ class RememberMeUserDevicesList extends BaseHtmlElement
                 ));
 
                 $element->add(Html::tag('td', $link));
-
                 $tbody->add($element);
             }
         }

@@ -17,8 +17,8 @@ class RememberMeUserList extends BaseHtmlElement
     protected $tag = 'table';
 
     protected $defaultAttributes = [
-        'class' => 'common-table table-row-selectable',
-        'data-base-target' => '_next',
+        'class'             => 'common-table table-row-selectable',
+        'data-base-target'  => '_next',
     ];
     /**
      * @var array
@@ -73,14 +73,13 @@ class RememberMeUserList extends BaseHtmlElement
     protected function assemble()
     {
         $thead = Html::tag('thead');
-        $theadRow = Html::tag('tr');
-        $theadRow->add(Html::tag(
-            'th',
-            ucfirst('List of users who stay logged in')
-        ));
+        $theadRow = Html::tag('tr')
+            ->add(Html::tag(
+                'th',
+                ucfirst('List of users who stay logged in')
+            ));
 
         $thead->add($theadRow);
-
         $tbody = Html::tag('tbody');
 
         if (empty($this->getUsers())) {
@@ -88,15 +87,13 @@ class RememberMeUserList extends BaseHtmlElement
         } else {
             foreach ($this->getUsers() as $user) {
                 $element = Html::tag('tr');
-
-                $link =(new Link(
+                $link = new Link(
                     $user->username,
                     Url::fromPath($this->getUrl())->addParams(['name' => $user->username]),
                     ['title' => "Remove stay logged in for {$user->username}"]
-                ));
+                );
 
                 $element->add(Html::tag('td', $link));
-
                 $tbody->add($element);
             }
         }
