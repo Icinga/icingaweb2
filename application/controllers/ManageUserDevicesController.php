@@ -22,10 +22,10 @@ class ManageUserDevicesController extends CompatController
             ->add(
                 'manage-user-devices',
                 array(
-                    'title' => $this->translate('List of users who stay logged in'),
-                    'label' => $this->translate('Users'),
-                    'url'   => 'manage-user-devices',
-                    'data-base-target' => '_self'
+                    'title'             => $this->translate('List of users who stay logged in'),
+                    'label'             => $this->translate('Users'),
+                    'url'               => 'manage-user-devices',
+                    'data-base-target'  => '_self'
                 )
             )->activate('manage-user-devices');
 

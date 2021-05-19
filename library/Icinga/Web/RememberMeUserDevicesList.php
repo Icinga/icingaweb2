@@ -99,21 +99,21 @@ class RememberMeUserDevicesList extends BaseHtmlElement
         $theadRow = Html::tag('tr')
             ->add(Html::tag(
                 'th',
-                ucfirst("List of devices and browsers {$this->getUsername()} is currently logged in:")
+                t("List of devices and browsers {$this->getUsername()} is currently logged in:")
             ));
 
         $thead->add($theadRow);
 
         $head = Html::tag('tr')
-            ->add(Html::tag('th', 'OS'))
-            ->add(Html::tag('th', 'Browser'))
-            ->add(Html::tag('th', 'Fingerprint'));
+            ->add(Html::tag('th', t('OS')))
+            ->add(Html::tag('th', t('Browser')))
+            ->add(Html::tag('th', t('Fingerprint')));
 
         $thead->add($head);
         $tbody = Html::tag('tbody');
 
         if (empty($this->getDevicesList())) {
-            $tbody->add(Html::tag('td', 'No device found'));
+            $tbody->add(Html::tag('td', t('No device found')));
         } else {
             foreach ($this->getDevicesList() as $device) {
                 $agent = new UserAgent($device);
@@ -128,7 +128,7 @@ class RememberMeUserDevicesList extends BaseHtmlElement
                         ->addParams(
                             [
                                 'name'          => $this->getUsername(),
-                                'fingerprint'   =>  $device->random_iv,
+                                'fingerprint'   => $device->random_iv,
                             ]
                         )
                 ));
