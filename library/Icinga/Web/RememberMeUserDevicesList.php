@@ -1,5 +1,6 @@
 <?php
 /* Icinga Web 2 | (c) 2021 Icinga GmbH | GPLv2+ */
+
 namespace Icinga\Web;
 
 use ipl\Html\BaseHtmlElement;
@@ -14,8 +15,7 @@ class RememberMeUserDevicesList extends BaseHtmlElement
 
     protected $defaultAttributes = [
         'class'             => 'common-table',
-        'data-base-target'  => '_self',
-        'title'             => 'click to remove this cookie from the database'
+        'data-base-target'  => '_self'
     ];
 
     /**
@@ -122,7 +122,7 @@ class RememberMeUserDevicesList extends BaseHtmlElement
                     ->add(Html::tag('td', $agent->getBrowser()))
                     ->add(Html::tag('td', $device->random_iv));
 
-                $link =(new Link(
+                $link = (new Link(
                     new Icon('trash'),
                     Url::fromPath($this->getUrl())
                         ->addParams(

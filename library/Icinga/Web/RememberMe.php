@@ -182,7 +182,6 @@ class RememberMe
      *
      * @throws \Icinga\Exception\AuthenticationException
      */
-
     public function authenticate()
     {
         $password = $this->aesCrypt->decryptFromBase64($this->encryptedPassword);
@@ -193,6 +192,7 @@ class RememberMe
         if (! $user->hasDomain()) {
             $user->setDomain(Config::app()->get('authentication', 'default_domain'));
         }
+
         $authenticated = $authChain->authenticate($user, $password);
         if ($authenticated) {
             $auth->setAuthenticated($user);
@@ -206,7 +206,7 @@ class RememberMe
      *
      * Any previous stored information is automatically removed.
      *
-     * @param null $iv
+     * @param string|null $iv
      *
      * @return $this
      */
@@ -237,7 +237,7 @@ class RememberMe
     public function remove($iv)
     {
         $this->getDb()->delete(static::TABLE, [
-            'random_iv = ?'         => bin2hex($iv)
+            'random_iv = ?' => bin2hex($iv)
         ]);
 
         return $this;

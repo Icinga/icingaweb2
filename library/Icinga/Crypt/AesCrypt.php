@@ -64,7 +64,6 @@ class AesCrypt
      * Set the key
      *
      * @return $this
-     *
      */
     public function setKey($key)
     {
@@ -159,7 +158,6 @@ class AesCrypt
      * @return string
      *
      * @throws UnexpectedValueException If decryption fails
-     *
      */
     public function decrypt($data)
     {
@@ -193,7 +191,6 @@ class AesCrypt
      * @return string encrypted data
      *
      * @throws UnexpectedValueException If decryption fails
-     *
      */
     public function encrypt($data)
     {

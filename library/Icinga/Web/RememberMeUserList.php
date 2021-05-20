@@ -1,5 +1,6 @@
 <?php
 /* Icinga Web 2 | (c) 2021 Icinga GmbH | GPLv2+ */
+
 namespace Icinga\Web;
 
 use ipl\Html\BaseHtmlElement;
@@ -20,6 +21,7 @@ class RememberMeUserList extends BaseHtmlElement
         'class'             => 'common-table table-row-selectable',
         'data-base-target'  => '_next',
     ];
+
     /**
      * @var array
      */
