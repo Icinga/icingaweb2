@@ -1,2 +1,0 @@
-msgid "Lorem ipsum dolor sit amet"
-msgstr "Lorem ipsum dolor sit amet?"
