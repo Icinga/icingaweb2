@@ -107,7 +107,7 @@ jobs:
       - name: Setup dependencies
         run: |
           sudo locale-gen en_US.UTF-8 de_DE.UTF-8 fr_FR.UTF-8
-          composer require -n --no-progress mockery/mockery
+          composer require -n --no-progress mockery/mockery ipl/i18n:@dev
 
       - name: PHPUnit
         env:
