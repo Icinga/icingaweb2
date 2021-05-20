@@ -6,13 +6,14 @@ namespace Icinga\Application;
 use DirectoryIterator;
 use ErrorException;
 use Exception;
+use ipl\I18n\GettextTranslator;
+use ipl\I18n\StaticTranslator;
 use LogicException;
 use Icinga\Application\Modules\Manager as ModuleManager;
 use Icinga\Authentication\User\UserBackend;
 use Icinga\Data\ConfigObject;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\NotReadableError;
-use Icinga\Util\Translator;
 use Icinga\Exception\IcingaException;
 
 /**
@@ -700,23 +701,39 @@ abstract class ApplicationBootstrap
     }
 
     /**
+     * Prepare internationalization using gettext
+     *
+     * @return $this
+     */
+    protected function prepareInternationalization()
+    {
+        StaticTranslator::$instance = (new GettextTranslator())
+            ->setDefaultDomain('icinga');
+
+        return $this;
+    }
+
+    /**
      * Set up internationalization using gettext
      *
      * @return $this
      */
     final protected function setupInternationalization()
     {
+        /** @var GettextTranslator $translator */
+        $translator = StaticTranslator::$instance;
+
         if ($this->hasLocales()) {
-            Translator::registerDomain(Translator::DEFAULT_DOMAIN, $this->getLocaleDir());
+            $translator->addTranslationDirectory($this->getLocaleDir(), 'icinga');
         }
 
         $locale = $this->detectLocale();
         if ($locale === null) {
-            $locale = Translator::DEFAULT_LOCALE;
+            $locale = $translator->getDefaultLocale();
         }
 
         try {
-            Translator::setupLocale($locale);
+            $translator->setLocale($locale);
         } catch (Exception $error) {
             Logger::error($error);
         }

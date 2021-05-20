@@ -6,6 +6,9 @@ namespace Icinga\Application;
 require_once __DIR__ . '/EmbeddedWeb.php';
 
 use ErrorException;
+use ipl\I18n\GettextTranslator;
+use ipl\I18n\Locale;
+use ipl\I18n\StaticTranslator;
 use Zend_Controller_Action_HelperBroker;
 use Zend_Controller_Front;
 use Zend_Controller_Router_Route;
@@ -16,7 +19,6 @@ use Icinga\Authentication\Auth;
 use Icinga\User;
 use Icinga\Util\DirectoryIterator;
 use Icinga\Util\TimezoneDetect;
-use Icinga\Util\Translator;
 use Icinga\Web\Controller\Dispatcher;
 use Icinga\Web\Menu;
 use Icinga\Web\Navigation\Navigation;
@@ -91,6 +93,7 @@ class Web extends EmbeddedWeb
             ->setupNotifications()
             ->setupResponse()
             ->setupZendMvc()
+            ->prepareInternationalization()
             ->setupModuleManager()
             ->loadSetupModuleIfNecessary()
             ->loadEnabledModules()
