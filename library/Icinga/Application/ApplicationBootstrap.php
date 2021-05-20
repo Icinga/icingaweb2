@@ -770,27 +770,15 @@ abstract class ApplicationBootstrap
     /**
      * List all available locales
      *
-     * NOTE: Might be a candidate for a static function in Translator
+     * @return array Locale list
      *
-     * return array Locale list
+     * @deprecated Use {@see \ipl\I18n\GettextTranslator::listLocales()} instead
      */
     public function listLocales()
     {
-        $locales = array();
-        if (! $this->hasLocales()) {
-            return $locales;
-        }
-        $localedir = $this->getLocaleDir();
+        /** @var GettextTranslator $translator */
+        $translator = StaticTranslator::$instance;
 
-        $dh = opendir($localedir);
-        while (false !== ($file = readdir($dh))) {
-            $filename = $localedir . DIRECTORY_SEPARATOR . $file;
-            if (preg_match('/^[a-z]{2}_[A-Z]{2}$/', $file) && is_dir($filename)) {
-                $locales[] = $file;
-            }
-        }
-        closedir($dh);
-        sort($locales);
-        return $locales;
+        return $translator->listLocales();
     }
 }
