@@ -496,9 +496,7 @@ class Web extends EmbeddedWeb
      *
      * Uses the preferred user language or the browser suggested language or our default.
      *
-     * @return  string                      Detected locale code
-     *
-     * @see     Translator::DEFAULT_LOCALE  For the default locale code.
+     * @return string Detected locale code
      */
     protected function detectLocale()
     {
@@ -508,9 +506,14 @@ class Web extends EmbeddedWeb
         ) {
             return $locale;
         }
+
+        /** @var GettextTranslator $translator */
+        $translator = StaticTranslator::$instance;
+
         if (isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
-            return Translator::getPreferredLocaleCode($_SERVER['HTTP_ACCEPT_LANGUAGE']);
+            return (new Locale())->getPreferred($_SERVER['HTTP_ACCEPT_LANGUAGE'], $translator->listLocales());
         }
-        return Translator::DEFAULT_LOCALE;
+
+        return $translator->getDefaultLocale();
     }
 }
