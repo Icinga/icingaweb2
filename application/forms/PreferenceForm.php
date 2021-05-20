@@ -12,12 +12,13 @@ use Icinga\Authentication\Auth;
 use Icinga\User\Preferences;
 use Icinga\User\Preferences\PreferencesStore;
 use Icinga\Util\TimezoneDetect;
-use Icinga\Util\Translator;
-use Icinga\Web\Cookie;
 use Icinga\Web\Form;
 use Icinga\Web\Notification;
 use Icinga\Web\Session;
 use Icinga\Web\StyleSheet;
+use ipl\I18n\GettextTranslator;
+use ipl\I18n\Locale;
+use ipl\I18n\StaticTranslator;
 
 /**
  * Form class to adjust user preferences
@@ -201,14 +202,18 @@ class PreferenceForm extends Form
             }
         }
 
-        $languages = array();
+        /** @var GettextTranslator $translator */
+        $translator = StaticTranslator::$instance;
 
-        $locale = $this->getLocale();
+        $languages = array();
+        $availableLocales = $translator->listLocales();
+
+        $locale = $this->getLocale($availableLocales);
         if ($locale !== null) {
             $languages['autodetect'] = sprintf($this->translate('Browser (%s)', 'preferences.form'), $locale);
         }
 
-        foreach (Translator::getAvailableLocaleCodes() as $language) {
+        foreach ($availableLocales as $language) {
             $languages[$language] = $language;
         }
 
@@ -410,10 +415,10 @@ class PreferenceForm extends Form
      *
      * @return string|null
      */
-    protected function getLocale()
+    protected function getLocale($availableLocales)
     {
         return isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])
-            ? Translator::getPreferredLocaleCode($_SERVER['HTTP_ACCEPT_LANGUAGE'])
+            ? (new Locale())->getPreferred($_SERVER['HTTP_ACCEPT_LANGUAGE'], $availableLocales)
             : null;
     }
 
