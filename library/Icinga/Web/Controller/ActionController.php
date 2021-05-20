@@ -3,6 +3,7 @@
 
 namespace Icinga\Web\Controller;
 
+use ipl\I18n\Translation;
 use Zend_Controller_Action;
 use Zend_Controller_Action_HelperBroker;
 use Zend_Controller_Request_Abstract;
@@ -16,7 +17,6 @@ use Icinga\Exception\ProgrammingError;
 use Icinga\File\Pdf;
 use Icinga\Forms\AutoRefreshForm;
 use Icinga\Security\SecurityException;
-use Icinga\Util\Translator;
 use Icinga\Web\Session;
 use Icinga\Web\Url;
 use Icinga\Web\UrlParams;
@@ -40,6 +40,8 @@ use Icinga\Web\Window;
  */
 class ActionController extends Zend_Controller_Action
 {
+    use Translation;
+
     /**
      * The login route to use when requiring authentication
      */
@@ -131,7 +133,8 @@ class ActionController extends Zend_Controller_Action
 
         $moduleName = $this->getModuleName();
         $this->view->defaultTitle = static::DEFAULT_TITLE;
-        $this->view->translationDomain = $moduleName !== 'default' ? $moduleName : 'icinga';
+        $this->translationDomain = $moduleName !== 'default' ? $moduleName : 'icinga';
+        $this->view->translationDomain = $this->translationDomain;
         $this->_helper->layout()->isIframe = $request->getUrl()->shift('isIframe');
         $this->_helper->layout()->showFullscreen = $request->getUrl()->shift('showFullscreen');
         $this->_helper->layout()->moduleName = $moduleName;
@@ -303,42 +306,6 @@ class ActionController extends Zend_Controller_Action
     public function getTabs()
     {
         return $this->view->tabs;
-    }
-
-    /**
-     * Translate a string
-     *
-     * Autoselects the module domain, if any, and falls back to the global one if no translation could be found.
-     *
-     * @param   string      $text       The string to translate
-     * @param   string|null $context    Optional parameter for context based translation
-     *
-     * @return  string                  The translated string
-     */
-    public function translate($text, $context = null)
-    {
-        return Translator::translate($text, $this->view->translationDomain, $context);
-    }
-
-    /**
-     * Translate a plural string
-     *
-     * @param string        $textSingular   The string in singular form to translate
-     * @param string        $textPlural     The string in plural form to translate
-     * @param string        $number         The number to get the plural or singular string
-     * @param string|null   $context        Optional parameter for context based translation
-     *
-     * @return string                       The translated string
-     */
-    public function translatePlural($textSingular, $textPlural, $number, $context = null)
-    {
-        return Translator::translatePlural(
-            $textSingular,
-            $textPlural,
-            $number,
-            $this->view->translationDomain,
-            $context
-        );
     }
 
     protected function ignoreXhrBody()

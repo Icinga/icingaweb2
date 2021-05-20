@@ -4,6 +4,7 @@
 namespace Icinga\Web;
 
 use Icinga\Web\Form\Element\DateTimePicker;
+use ipl\I18n\Translation;
 use Zend_Config;
 use Zend_Form;
 use Zend_Form_Element;
@@ -12,7 +13,6 @@ use Icinga\Application\Icinga;
 use Icinga\Authentication\Auth;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Security\SecurityException;
-use Icinga\Util\Translator;
 use Icinga\Web\Form\ErrorLabeller;
 use Icinga\Web\Form\Decorator\Autosubmit;
 use Icinga\Web\Form\Element\CsrfCounterMeasure;
@@ -27,6 +27,11 @@ use Icinga\Web\Form\Element\CsrfCounterMeasure;
  */
 class Form extends Zend_Form
 {
+    use Translation {
+        translate as i18nTranslate;
+        translatePlural as i18nTranslatePlural;
+    }
+
     /**
      * The suffix to append to a field's hidden default field name
      */
@@ -1519,7 +1524,9 @@ class Form extends Zend_Form
      */
     protected function translate($text, $context = null)
     {
-        return Translator::translate($text, $this->getTranslationDomain(), $context);
+        $this->translationDomain = $this->getTranslationDomain();
+
+        return $this->i18nTranslate($text, $context);
     }
 
     /**
@@ -1534,13 +1541,9 @@ class Form extends Zend_Form
      */
     protected function translatePlural($textSingular, $textPlural, $number, $context = null)
     {
-        return Translator::translatePlural(
-            $textSingular,
-            $textPlural,
-            $number,
-            $this->getTranslationDomain(),
-            $context
-        );
+        $this->translationDomain = $this->getTranslationDomain();
+
+        return $this->i18nTranslatePlural($textSingular, $textPlural, $number, $context);
     }
 
     /**
