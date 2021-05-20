@@ -94,12 +94,11 @@ class AuthenticationController extends Controller
         if (! $auth->isAuthenticated()) {
             $this->redirectToLogin();
         }
-        $user = $auth->getUser();
         // Get info whether the user is externally authenticated before removing authorization which destroys the
         // session and the user object
-        $isExternalUser = $user->isExternalUser();
+        $isExternalUser = $auth->getUser()->isExternalUser();
         // Call provided AuthenticationHook(s) when logout action is called
-        AuthenticationHook::triggerLogout($user);
+        AuthenticationHook::triggerLogout($auth->getUser());
         $auth->removeAuthorization();
         if ($isExternalUser) {
             $this->view->layout()->setLayout('external-logout');
