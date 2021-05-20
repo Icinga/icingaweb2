@@ -3,10 +3,14 @@
 
 namespace Icinga\Util;
 
-use Icinga\Exception\IcingaException;
+use ipl\I18n\GettextTranslator;
+use ipl\I18n\Locale;
+use ipl\I18n\StaticTranslator;
 
 /**
  * Helper class to ease internationalization when using gettext
+ *
+ * @deprecated Use {@see \ipl\I18n\StaticTranslator::$instance} or {@see \ipl\I18n\Translation} instead
  */
 class Translator
 {
@@ -21,13 +25,6 @@ class Translator
     const DEFAULT_LOCALE = 'en_US';
 
     /**
-     * Known gettext domains and directories
-     *
-     * @var array
-     */
-    private static $knownDomains = array();
-
-    /**
      * Translate a string
      *
      * Falls back to the default domain in case the string cannot be translated using the given domain
@@ -40,19 +37,7 @@ class Translator
      */
     public static function translate($text, $domain, $context = null)
     {
-        if ($context !== null) {
-            $res = self::pgettext($text, $domain, $context);
-            if ($res === $text && $domain !== self::DEFAULT_DOMAIN) {
-                $res = self::pgettext($text, self::DEFAULT_DOMAIN, $context);
-            }
-            return $res;
-        }
-
-        $res = dgettext($domain, $text);
-        if ($res === $text && $domain !== self::DEFAULT_DOMAIN) {
-            return dgettext(self::DEFAULT_DOMAIN, $text);
-        }
-        return $res;
+        return StaticTranslator::$instance->translateInDomain($domain, $text, $context);
     }
 
     /**
@@ -70,19 +55,13 @@ class Translator
      */
     public static function translatePlural($textSingular, $textPlural, $number, $domain, $context = null)
     {
-        if ($context !== null) {
-            $res = self::pngettext($textSingular, $textPlural, $number, $domain, $context);
-            if (($res === $textSingular || $res === $textPlural) && $domain !== self::DEFAULT_DOMAIN) {
-                $res = self::pngettext($textSingular, $textPlural, $number, self::DEFAULT_DOMAIN, $context);
-            }
-            return $res;
-        }
-
-        $res = dngettext($domain, $textSingular, $textPlural, $number);
-        if (($res === $textSingular || $res === $textPlural) && $domain !== self::DEFAULT_DOMAIN) {
-            $res = dngettext(self::DEFAULT_DOMAIN, $textSingular, $textPlural, $number);
-        }
-        return $res;
+        return StaticTranslator::$instance->translatePluralInDomain(
+            $domain,
+            $textSingular,
+            $textPlural,
+            $number,
+            $context
+        );
     }
 
     /**
@@ -98,19 +77,7 @@ class Translator
      */
     public static function pgettext($text, $domain, $context)
     {
-        $contextString = "{$context}\004{$text}";
-
-        $translation = dcgettext(
-            $domain,
-            $contextString,
-            defined('LC_MESSAGES') ? LC_MESSAGES : LC_ALL
-        );
-
-        if ($translation == $contextString) {
-            return $text;
-        } else {
-            return $translation;
-        }
+        return StaticTranslator::$instance->translateInDomain($domain, $text, $context);
     }
 
     /**
@@ -128,21 +95,13 @@ class Translator
      */
     public static function pngettext($textSingular, $textPlural, $number, $domain, $context)
     {
-        $contextString = "{$context}\004{$textSingular}";
-
-        $translation = dcngettext(
+        return StaticTranslator::$instance->translatePluralInDomain(
             $domain,
-            $contextString,
+            $textSingular,
             $textPlural,
             $number,
-            defined('LC_MESSAGES') ? LC_MESSAGES : LC_ALL
+            $context
         );
-
-        if ($translation == $contextString || $translation == $textPlural) {
-            return ($number == 1 ? $textSingular : $textPlural);
-        } else {
-            return $translation;
-        }
     }
 
     /**
@@ -151,19 +110,14 @@ class Translator
      * @param   string  $name       The name of the domain to register
      * @param   string  $directory  The directory where message catalogs can be found
      *
-     * @throws  IcingaException     In case the domain was not successfully registered
+     * @return  void
      */
     public static function registerDomain($name, $directory)
     {
-        if (bindtextdomain($name, $directory) === false) {
-            throw new IcingaException(
-                'Cannot register domain \'%s\' with path \'%s\'',
-                $name,
-                $directory
-            );
-        }
-        bind_textdomain_codeset($name, 'UTF-8');
-        self::$knownDomains[$name] = $directory;
+        /** @var GettextTranslator $translator */
+        $translator = StaticTranslator::$instance;
+
+        $translator->addTranslationDirectory($directory, $name);
     }
 
     /**
@@ -171,26 +125,14 @@ class Translator
      *
      * @param   string  $localeName     The name of the locale to use
      *
-     * @throws  IcingaException         In case the locale's name is invalid
+     * @return  void
      */
     public static function setupLocale($localeName)
     {
-        if (setlocale(LC_ALL, $localeName . '.UTF-8') === false && setlocale(LC_ALL, $localeName) === false) {
-            setlocale(LC_ALL, 'C'); // C == "use whatever is hardcoded"
-            if ($localeName !== self::DEFAULT_LOCALE) {
-                throw new IcingaException(
-                    'Cannot set locale \'%s\' for category \'LC_ALL\'',
-                    $localeName
-                );
-            }
-        } else {
-            $locale = setlocale(LC_ALL, 0);
-            putenv('LC_ALL=' . $locale); // Failsafe, Win and Unix
-            putenv('LANG=' . $locale); // Windows fix, untested
+        /** @var GettextTranslator $translator */
+        $translator = StaticTranslator::$instance;
 
-            // https://www.gnu.org/software/gettext/manual/html_node/The-LANGUAGE-variable.html
-            putenv('LANGUAGE=' . $localeName . ':' . getenv('LANGUAGE'));
-        }
+        $translator->setLocale($localeName);
     }
 
     /**
@@ -202,18 +144,14 @@ class Translator
      */
     public static function splitLocaleCode($locale = null)
     {
-        $matches = array();
-        $locale = $locale !== null ? $locale : setlocale(LC_ALL, 0);
-        if (preg_match('@([a-z]{2})[_-]([a-z]{2})@i', $locale, $matches)) {
-            list($languageCode, $countryCode) = array_slice($matches, 1);
-        } elseif ($locale === 'C') {
-            list($languageCode, $countryCode) = preg_split('@[_-]@', static::DEFAULT_LOCALE, 2);
-        } else {
-            $languageCode = $locale;
-            $countryCode = null;
+        /** @var GettextTranslator $translator */
+        $translator = StaticTranslator::$instance;
+
+        if ($locale === null) {
+            $locale = $translator->getLocale();
         }
 
-        return (object) array('language' => $languageCode, 'country' => $countryCode);
+        return (new Locale())->parseLocale($locale);
     }
 
     /**
@@ -223,21 +161,10 @@ class Translator
      */
     public static function getAvailableLocaleCodes()
     {
-        $codes = array(static::DEFAULT_LOCALE);
-        foreach (array_values(self::$knownDomains) as $directory) {
-            $dh = opendir($directory);
-            while (false !== ($name = readdir($dh))) {
-                if (substr($name, 0, 1) !== '.'
-                    && false === in_array($name, $codes)
-                    && is_dir($directory . DIRECTORY_SEPARATOR . $name)
-                ) {
-                    $codes[] = $name;
-                }
-            }
-        }
-        sort($codes);
+        /** @var GettextTranslator $translator */
+        $translator = StaticTranslator::$instance;
 
-        return $codes;
+        return $translator->listLocales();
     }
 
     /**
@@ -249,68 +176,9 @@ class Translator
      */
     public static function getPreferredLocaleCode($header)
     {
-        $headerValues = explode(',', $header);
-        for ($i = 0; $i < count($headerValues); $i++) {
-            // In order to accomplish a stable sort we need to take the original
-            // index into account as well during element comparison
-            $headerValues[$i] = array($headerValues[$i], $i);
-        }
-        usort( // Sort DESC but keep equal elements ASC
-            $headerValues,
-            function ($a, $b) {
-                $tagA = explode(';', $a[0], 2);
-                $tagB = explode(';', $b[0], 2);
-                $qValA = (float) (strpos($a[0], ';') > 0 ? substr(array_pop($tagA), 2) : 1);
-                $qValB = (float) (strpos($b[0], ';') > 0 ? substr(array_pop($tagB), 2) : 1);
-                return $qValA < $qValB ? 1 : ($qValA > $qValB ? -1 : ($a[1] > $b[1] ? 1 : ($a[1] < $b[1] ? -1 : 0)));
-            }
-        );
-        for ($i = 0; $i < count($headerValues); $i++) {
-            // We need to reset the array to its original structure once it's sorted
-            $headerValues[$i] = $headerValues[$i][0];
-        }
-        $requestedLocales = array();
-        foreach ($headerValues as $headerValue) {
-            if (strpos($headerValue, ';') > 0) {
-                $parts = explode(';', $headerValue, 2);
-                $headerValue = $parts[0];
-            }
-            $requestedLocales[] = str_replace('-', '_', $headerValue);
-        }
-        $requestedLocales = array_combine(
-            array_map('strtolower', array_values($requestedLocales)),
-            array_values($requestedLocales)
-        );
+        /** @var GettextTranslator $translator */
+        $translator = StaticTranslator::$instance;
 
-        $availableLocales = static::getAvailableLocaleCodes();
-        $availableLocales = array_combine(
-            array_map('strtolower', array_values($availableLocales)),
-            array_values($availableLocales)
-        );
-
-        $similarMatch = null;
-
-        foreach ($requestedLocales as $requestedLocaleLowered => $requestedLocale) {
-            $localeObj = static::splitLocaleCode($requestedLocaleLowered);
-
-            if (isset($availableLocales[$requestedLocaleLowered])
-                && (! $similarMatch || static::splitLocaleCode($similarMatch)->language === $localeObj->language)
-            ) {
-                // Prefer perfect match only if no similar match has been found yet or the perfect match is more precise
-                // than the similar match
-                return $availableLocales[$requestedLocaleLowered];
-            }
-
-            if (! $similarMatch) {
-                foreach ($availableLocales as $availableLocaleLowered => $availableLocale) {
-                    if (static::splitLocaleCode($availableLocaleLowered)->language === $localeObj->language) {
-                        $similarMatch = $availableLocaleLowered;
-                        break;
-                    }
-                }
-            }
-        }
-
-        return $similarMatch ? $availableLocales[$similarMatch] : static::DEFAULT_LOCALE;
+        return (new Locale())->getPreferred($header, $translator->listLocales());
     }
 }
