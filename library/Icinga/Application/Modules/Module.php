@@ -13,9 +13,10 @@ use Icinga\Exception\IcingaException;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Module\Setup\SetupWizard;
 use Icinga\Util\File;
-use Icinga\Util\Translator;
 use Icinga\Web\Navigation\Navigation;
 use Icinga\Web\Widget;
+use ipl\I18n\GettextTranslator;
+use ipl\I18n\StaticTranslator;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use Zend_Controller_Router_Route;
@@ -1418,9 +1419,10 @@ class Module
      */
     protected function registerLocales()
     {
-        if ($this->hasLocales()) {
-            Translator::registerDomain($this->name, $this->localedir);
+        if ($this->hasLocales() && StaticTranslator::$instance instanceof GettextTranslator) {
+            StaticTranslator::$instance->addTranslationDirectory($this->localedir, $this->name);
         }
+
         return $this;
     }
 
