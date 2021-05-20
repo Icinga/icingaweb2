@@ -49,7 +49,7 @@ class ManageUserDevicesController extends CompatController
                 )
             )->activate('manage-devices');
 
-        $name = $this->params->get('name');
+        $name = $this->params->getRequired('name');
         $data = (new RememberMeUserDevicesList())
             ->setDevicesList(RememberMe::getAllByUsername($name))
             ->setUsername($name)
@@ -60,10 +60,11 @@ class ManageUserDevicesController extends CompatController
 
     public function deleteAction()
     {
-        (new RememberMe())->removeSpecific($this->params->get('fingerprint'));
+        (new RememberMe())->removeSpecific($this->params->getRequired('fingerprint'));
 
         $this->redirectNow(
-            Url::fromPath('manage-user-devices/devices')->addParams(['name' => $this->params->get('name')])
+            Url::fromPath('manage-user-devices/devices')
+                ->addParams(['name' => $this->params->getRequired('name')])
         );
     }
 }
