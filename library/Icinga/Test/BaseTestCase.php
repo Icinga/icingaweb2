@@ -21,6 +21,8 @@ namespace {
 namespace Icinga\Test {
 
     use Exception;
+    use ipl\I18n\NoopTranslator;
+    use ipl\I18n\StaticTranslator;
     use RuntimeException;
     use Mockery;
     use Icinga\Application\Icinga;
@@ -140,6 +142,8 @@ namespace Icinga\Test {
         public function setUp(): void
         {
             parent::setUp();
+
+            StaticTranslator::$instance = new NoopTranslator();
             $this->setupIcingaMock();
         }
 
