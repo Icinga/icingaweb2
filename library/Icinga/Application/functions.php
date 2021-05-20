@@ -1,7 +1,8 @@
 <?php
 /* Icinga Web 2 | (c) 2013 Icinga Development Team | GPLv2+ */
 
-use Icinga\Util\Translator;
+use ipl\Stdlib\Contract\Translator;
+use ipl\I18n\StaticTranslator;
 
 /**
  * No-op translate
@@ -27,45 +28,46 @@ if (function_exists('t')) {
 if (extension_loaded('gettext')) {
 
     /**
-     * (non-PHPDoc)
      * @see Translator::translate() For the function documentation.
      */
     function t($messageId, $context = null)
     {
-        return Translator::translate($messageId, Translator::DEFAULT_DOMAIN, $context);
+        return StaticTranslator::$instance->translate($messageId, $context);
     }
 
     /**
-     * (non-PHPDoc)
-     * @see Translator::translate() For the function documentation.
+     * @see Translator::translateInDomain() For the function documentation.
      */
     function mt($domain, $messageId, $context = null)
     {
-        return Translator::translate($messageId, $domain, $context);
+        return StaticTranslator::$instance->translateInDomain($domain, $messageId, $context);
     }
 
     /**
-     * (non-PHPDoc)
      * @see Translator::translatePlural() For the function documentation.
      */
     function tp($messageId, $messageId2, $number, $context = null)
     {
-        return Translator::translatePlural($messageId, $messageId2, $number, Translator::DEFAULT_DOMAIN, $context);
+        return StaticTranslator::$instance->translatePlural($messageId, $messageId2, $number, $context);
     }
 
     /**
-     * (non-PHPDoc)
-     * @see Translator::translatePlural() For the function documentation.
+     * @see Translator::translatePluralInDomain() For the function documentation.
      */
     function mtp($domain, $messageId, $messageId2, $number, $context = null)
     {
-        return Translator::translatePlural($messageId, $messageId2, $number, $domain, $context);
+        return StaticTranslator::$instance->translatePluralInDomain(
+            $domain,
+            $messageId,
+            $messageId2,
+            $number,
+            $context
+        );
     }
 
 } else {
 
     /**
-     * (non-PHPDoc)
      * @see Translator::translate() For the function documentation.
      */
     function t($messageId, $context = null)
@@ -74,7 +76,6 @@ if (extension_loaded('gettext')) {
     }
 
     /**
-     * (non-PHPDoc)
      * @see Translator::translate() For the function documentation.
      */
     function mt($domain, $messageId, $context = null)
@@ -83,7 +84,6 @@ if (extension_loaded('gettext')) {
     }
 
     /**
-     * (non-PHPDoc)
      * @see Translator::translatePlural() For the function documentation.
      */
     function tp($messageId, $messageId2, $number, $context = null)
@@ -91,11 +91,11 @@ if (extension_loaded('gettext')) {
         if ((int) $number !== 1) {
             return $messageId2;
         }
+
         return $messageId;
     }
 
     /**
-     * (non-PHPDoc)
      * @see Translator::translatePlural() For the function documentation.
      */
     function mtp($domain, $messageId, $messageId2, $number, $context = null)
@@ -103,6 +103,7 @@ if (extension_loaded('gettext')) {
         if ((int) $number !== 1) {
             return $messageId2;
         }
+
         return $messageId;
     }
 
