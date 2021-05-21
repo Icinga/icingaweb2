@@ -7,6 +7,7 @@ use Icinga\Application\Config as IcingaConfig;
 use Icinga\Data\ResourceFactory;
 use ipl\Sql\Config as SqlConfig;
 use ipl\Sql\Connection;
+use LogicException;
 use PDO;
 
 /**
@@ -23,6 +24,10 @@ trait Database
      */
     protected function getDb()
     {
+        if (! $this->hasDb()) {
+            throw new LogicException('Please check if a db instance exists at all');
+        }
+
         $config = new SqlConfig(ResourceFactory::getResourceConfig(
             IcingaConfig::app()->get('global', 'config_resource')
         ));
@@ -34,5 +39,17 @@ trait Database
         ];
 
         return new Connection($config);
+    }
+
+    /** Check if db exists
+     *
+     * @return bool true if a database was found otherwise false
+     */
+    protected function hasDb() {
+        if (IcingaConfig::app()->get('global', 'config_resource')) {
+            return true;
+        }
+
+        return false;
     }
 }
