@@ -123,11 +123,12 @@ class RememberMe
      */
     public static function removeExpired()
     {
-        if (! (new static())->hasDb()) {
+        $rememberMe = new static();
+        if (! $rememberMe->hasDb()) {
             return;
         }
 
-        (new static())->getDb()->delete(static::TABLE, [
+        $rememberMe->getDb()->delete(static::TABLE, [
             'expires_at < NOW()'
         ]);
     }
@@ -287,7 +288,8 @@ class RememberMe
      */
     public static function getAllUser()
     {
-        if (! (new static())->hasDb()) {
+        $rememberMe = new static();
+        if (! $rememberMe->hasDb()) {
             return [];
         }
 
@@ -296,7 +298,7 @@ class RememberMe
             ->columns('username')
             ->groupBy('username');
 
-        return (new static())->getDb()->select($select)->fetchAll();
+        return $rememberMe->getDb()->select($select)->fetchAll();
     }
 
     /**
@@ -308,7 +310,8 @@ class RememberMe
      */
     public static function getAllByUsername($username)
     {
-        if (! (new static())->hasDb()) {
+        $rememberMe = new static();
+        if (! $rememberMe->hasDb()) {
             return [];
         }
 
@@ -317,7 +320,7 @@ class RememberMe
             ->columns(['http_user_agent', 'random_iv'])
             ->where(['username = ?' => $username]);
 
-        return (new static())->getDb()->select($select)->fetchAll();
+        return $rememberMe->getDb()->select($select)->fetchAll();
     }
 
     /**
