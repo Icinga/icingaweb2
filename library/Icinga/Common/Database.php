@@ -41,15 +41,13 @@ trait Database
         return new Connection($config);
     }
 
-    /** Check if db exists
+    /**
+     * Check if db exists
      *
      * @return bool true if a database was found otherwise false
      */
-    protected function hasDb() {
-        if (IcingaConfig::app()->get('global', 'config_resource')) {
-            return true;
-        }
-
-        return false;
+    protected function hasDb()
+    {
+        return (bool) IcingaConfig::app()->get('global', 'config_resource');
     }
 }
