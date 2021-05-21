@@ -43,25 +43,23 @@ class AuthenticationController extends Controller
         }
         $form = new LoginForm();
 
-        if (RememberMe::hasCookie()) {
+        if (RememberMe::hasCookie() && $this->hasDb()) {
             $authenticated = false;
-            if ($this->hasDb()) {
-                try {
-                    $rememberMeOld = RememberMe::fromCookie();
-                    $authenticated = $rememberMeOld->authenticate();
-                    if ($authenticated) {
-                        $rememberMe = $rememberMeOld->renew();
-                        $this->getResponse()->setCookie($rememberMe->getCookie());
-                        $rememberMe->persist($rememberMeOld->getAesCrypt()->getIv());
-                    }
-                } catch (RuntimeException $e) {
-                    Logger::error("Can't authenticate user via remember me cookie: %s", $e->getMessage());
-                } catch (AuthenticationException $e) {
-                    Logger::error($e);
+            try {
+                $rememberMeOld = RememberMe::fromCookie();
+                $authenticated = $rememberMeOld->authenticate();
+                if ($authenticated) {
+                    $rememberMe = $rememberMeOld->renew();
+                    $this->getResponse()->setCookie($rememberMe->getCookie());
+                    $rememberMe->persist($rememberMeOld->getAesCrypt()->getIv());
                 }
+            } catch (RuntimeException $e) {
+                Logger::error("Can't authenticate user via remember me cookie: %s", $e->getMessage());
+            } catch (AuthenticationException $e) {
+                Logger::error($e);
             }
 
-            if (! $authenticated || ! $this->hasDb()) {
+            if (! $authenticated) {
                 $this->getResponse()->setCookie(RememberMe::forget());
             }
         }
@@ -108,11 +106,8 @@ class AuthenticationController extends Controller
             $this->view->layout()->setLayout('external-logout');
             $this->getResponse()->setHttpResponseCode(401);
         } else {
-            if (RememberMe::hasCookie()) {
-                if ($this->hasDb()) {
-                    (new RememberMe())->remove((RememberMe::fromCookie())->getAesCrypt()->getIV());
-                }
-
+            if (RememberMe::hasCookie() && $this->hasDb()) {
+                (new RememberMe())->remove((RememberMe::fromCookie())->getAesCrypt()->getIV());
                 $this->getResponse()->setCookie(RememberMe::forget());
             }
 
