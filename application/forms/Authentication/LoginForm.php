@@ -7,6 +7,7 @@ use Icinga\Application\Config;
 use Icinga\Application\Hook\AuthenticationHook;
 use Icinga\Authentication\Auth;
 use Icinga\Authentication\User\ExternalBackend;
+use Icinga\Common\Database;
 use Icinga\User;
 use Icinga\Web\Form;
 use Icinga\Web\RememberMe;
@@ -17,6 +18,8 @@ use Icinga\Web\Url;
  */
 class LoginForm extends Form
 {
+    use Database;
+
     const DEFAULT_CLASSES = 'icinga-controls';
 
     /**
@@ -68,6 +71,10 @@ class LoginForm extends Form
                 'label' => $this->translate('Stay logged in'),
             ]
         );
+        if (! $this->hasDb()) {
+            $this->getElement('rememberme')->setAttrib('disabled', true);
+        }
+
         $this->addElement(
             'hidden',
             'redirect',
