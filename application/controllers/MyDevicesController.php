@@ -4,10 +4,10 @@
 namespace Icinga\Controllers;
 
 use Icinga\Common\Database;
+use Icinga\Web\Notification;
 use Icinga\Web\RememberMe;
 use Icinga\Web\RememberMeUserDevicesList;
 use ipl\Web\Compat\CompatController;
-use ipl\Web\Url;
 
 /**
  * MyDevicesController
@@ -17,6 +17,7 @@ use ipl\Web\Url;
 class MyDevicesController extends CompatController
 {
     use Database;
+
     public function init()
     {
         $this->getTabs()
@@ -48,7 +49,6 @@ class MyDevicesController extends CompatController
 
     public function indexAction()
     {
-        //var_dump($this->hasDb());die;
         $name = $this->auth->getUser()->getUsername();
 
         $data = (new RememberMeUserDevicesList())
@@ -57,6 +57,12 @@ class MyDevicesController extends CompatController
             ->setUrl('my-devices/delete');
 
         $this->addContent($data);
+
+        if (! $this->hasDb()) {
+            Notification::warning(
+                sprintf($this->translate('No db instance found for devices'))
+            );
+        }
     }
 
     public function deleteAction()

@@ -3,6 +3,8 @@
 
 namespace Icinga\Controllers;
 
+use Icinga\Common\Database;
+use Icinga\Web\Notification;
 use Icinga\Web\RememberMe;
 use Icinga\Web\RememberMeUserList;
 use Icinga\Web\RememberMeUserDevicesList;
@@ -16,6 +18,8 @@ use ipl\Web\Url;
  */
 class ManageUserDevicesController extends CompatController
 {
+    use Database;
+
     public function init()
     {
         $this->assertPermission('application/sessions');
@@ -39,6 +43,12 @@ class ManageUserDevicesController extends CompatController
             ->setUrl('manage-user-devices/devices');
 
         $this->addContent($usersList);
+
+        if (! $this->hasDb()) {
+            Notification::warning(
+                sprintf($this->translate('No db instance found for users'))
+            );
+        }
     }
 
     public function devicesAction()
