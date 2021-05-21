@@ -4,7 +4,7 @@
 namespace Icinga\Crypt;
 
 use InvalidArgumentException;
-use UnexpectedValueException;
+use RuntimeException;
 
 /**
  * Data encryption and decryption using symmetric algorithm
@@ -77,12 +77,12 @@ class AesCrypt
      *
      * @return string
      *
-     * @throws UnexpectedValueException If the key is not set
+     * @throws RuntimeException If the key is not set
      */
     public function getKey()
     {
         if (empty($this->key)) {
-            throw new UnexpectedValueException('No key set');
+            throw new RuntimeException('No key set');
         }
 
         return $this->key;
@@ -105,12 +105,12 @@ class AesCrypt
      *
      * @return string
      *
-     * @throws UnexpectedValueException If the IV is not set
+     * @throws RuntimeException If the IV is not set
      */
     public function getIV()
     {
         if (empty($this->iv)) {
-            throw new UnexpectedValueException('No iv set');
+            throw new RuntimeException('No iv set');
         }
 
         return $this->iv;
@@ -133,18 +133,12 @@ class AesCrypt
      *
      * @return string
      *
-     * @throws UnexpectedValueException If the Tag is not set
-     *
-     * @throws InvalidArgumentException If the Tag is length is not 16
+     * @throws RuntimeException If the Tag is not set
      */
     public function getTag()
     {
         if (empty($this->tag) || strlen($this->tag) !== 16) {
-            throw new UnexpectedValueException('No tag set');
-        }
-
-        if (strlen($this->tag) !== 16) {
-            throw new InvalidArgumentException('Invalid tag value');
+            throw new RuntimeException('No tag set');
         }
 
         return $this->tag;
@@ -157,13 +151,13 @@ class AesCrypt
      *
      * @return string
      *
-     * @throws UnexpectedValueException If decryption fails
+     * @throws RuntimeException If decryption fails
      */
     public function decrypt($data)
     {
         $decrypt = openssl_decrypt($data, $this->method, $this->getKey(), 0, $this->getIV(), $this->getTag());
         if (is_bool($decrypt) && $decrypt === false) {
-            throw new UnexpectedValueException('Decryption failed');
+            throw new RuntimeException('Decryption failed');
         }
 
         return $decrypt;
@@ -176,7 +170,7 @@ class AesCrypt
      *
      * @return string decrypted data
      *
-     * @throws UnexpectedValueException If decryption fails
+     * @throws RuntimeException If decryption fails
      */
     public function decryptFromBase64($data)
     {
@@ -190,14 +184,14 @@ class AesCrypt
      *
      * @return string encrypted data
      *
-     * @throws UnexpectedValueException If decryption fails
+     * @throws RuntimeException If decryption fails
      */
     public function encrypt($data)
     {
         $encrypt = openssl_encrypt($data, $this->method, $this->getkey(), 0, $this->getIV(), $this->tag);
 
         if (is_bool($encrypt) && $encrypt === false) {
-            throw new UnexpectedValueException('Encryption failed');
+            throw new RuntimeException('Encryption failed');
         }
 
         return $encrypt;
@@ -210,7 +204,7 @@ class AesCrypt
      *
      * @return string encrypted and encoded to Base64 data
      *
-     * @throws UnexpectedValueException If encryption fails
+     * @throws RuntimeException If encryption fails
      */
     public function encryptToBase64($data)
     {
