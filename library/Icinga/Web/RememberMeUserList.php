@@ -92,7 +92,7 @@ class RememberMeUserList extends BaseHtmlElement
                 $link = new Link(
                     $user->username,
                     Url::fromPath($this->getUrl())->addParams(['name' => $user->username]),
-                    ['title' => "Remove stay logged in for {$user->username}"]
+                    ['title' => sprintf(t('Device list of %s'), $user->username)]
                 );
 
                 $element->add(Html::tag('td', $link));

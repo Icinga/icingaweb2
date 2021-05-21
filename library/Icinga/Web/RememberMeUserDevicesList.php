@@ -99,7 +99,7 @@ class RememberMeUserDevicesList extends BaseHtmlElement
         $theadRow = Html::tag('tr')
             ->add(Html::tag(
                 'th',
-                t("List of devices and browsers {$this->getUsername()} is currently logged in:")
+                sprintf(t('List of devices and browsers %s is currently logged in:'), $this->getUsername())
             ));
 
         $thead->add($theadRow);
