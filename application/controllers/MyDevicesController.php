@@ -69,6 +69,6 @@ class MyDevicesController extends CompatController
     {
         (new RememberMe())->removeSpecific($this->params->getRequired('fingerprint'));
 
-        $this->redirectNow('my-devices/');
+        $this->redirectNow('my-devices');
     }
 }
