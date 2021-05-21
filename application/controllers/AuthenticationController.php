@@ -6,6 +6,7 @@ namespace Icinga\Controllers;
 use Icinga\Application\Hook\AuthenticationHook;
 use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
+use Icinga\Common\Database;
 use Icinga\Exception\AuthenticationException;
 use Icinga\Forms\Authentication\LoginForm;
 use Icinga\Web\Controller;
@@ -19,6 +20,8 @@ use RuntimeException;
  */
 class AuthenticationController extends Controller
 {
+    use Database;
+
     /**
      * {@inheritdoc}
      */
@@ -42,22 +45,23 @@ class AuthenticationController extends Controller
 
         if (RememberMe::hasCookie()) {
             $authenticated = false;
-
-            try {
-                $rememberMeOld = RememberMe::fromCookie();
-                $authenticated = $rememberMeOld->authenticate();
-                if ($authenticated) {
-                    $rememberMe = $rememberMeOld->renew();
-                    $this->getResponse()->setCookie($rememberMe->getCookie());
-                    $rememberMe->persist($rememberMeOld->getAesCrypt()->getIv());
+            if ($this->hasDb()) {
+                try {
+                    $rememberMeOld = RememberMe::fromCookie();
+                    $authenticated = $rememberMeOld->authenticate();
+                    if ($authenticated) {
+                        $rememberMe = $rememberMeOld->renew();
+                        $this->getResponse()->setCookie($rememberMe->getCookie());
+                        $rememberMe->persist($rememberMeOld->getAesCrypt()->getIv());
+                    }
+                } catch (RuntimeException $e) {
+                    Logger::error("Can't authenticate user via remember me cookie: %s", $e->getMessage());
+                } catch (AuthenticationException $e) {
+                    Logger::error($e);
                 }
-            } catch (RuntimeException $e) {
-                Logger::error("Can't authenticate user via remember me cookie: %s", $e->getMessage());
-            } catch (AuthenticationException $e) {
-                Logger::error($e);
             }
 
-            if (! $authenticated) {
+            if (! $authenticated || ! $this->hasDb()) {
                 $this->getResponse()->setCookie(RememberMe::forget());
             }
         }
@@ -105,7 +109,10 @@ class AuthenticationController extends Controller
             $this->getResponse()->setHttpResponseCode(401);
         } else {
             if (RememberMe::hasCookie()) {
-                (new RememberMe())->remove((RememberMe::fromCookie())->getAesCrypt()->getIV());
+                if ($this->hasDb()) {
+                    (new RememberMe())->remove((RememberMe::fromCookie())->getAesCrypt()->getIV());
+                }
+
                 $this->getResponse()->setCookie(RememberMe::forget());
             }
 

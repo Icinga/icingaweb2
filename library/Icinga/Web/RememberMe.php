@@ -123,6 +123,10 @@ class RememberMe
      */
     public static function removeExpired()
     {
+        if (! (new static())->hasDb()) {
+            return;
+        }
+
         (new static())->getDb()->delete(static::TABLE, [
             'expires_at < NOW()'
         ]);
@@ -283,6 +287,10 @@ class RememberMe
      */
     public static function getAllUser()
     {
+        if (! (new static())->hasDb()) {
+            return [];
+        }
+
         $select = (new Select())
             ->from(static::TABLE)
             ->columns('username')
@@ -300,6 +308,10 @@ class RememberMe
      */
     public static function getAllByUsername($username)
     {
+        if (! (new static())->hasDb()) {
+            return [];
+        }
+
         $select = (new Select())
             ->from(static::TABLE)
             ->columns(['http_user_agent', 'random_iv'])

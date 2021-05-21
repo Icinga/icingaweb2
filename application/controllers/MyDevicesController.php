@@ -3,6 +3,7 @@
 
 namespace Icinga\Controllers;
 
+use Icinga\Common\Database;
 use Icinga\Web\RememberMe;
 use Icinga\Web\RememberMeUserDevicesList;
 use ipl\Web\Compat\CompatController;
@@ -15,6 +16,7 @@ use ipl\Web\Url;
  */
 class MyDevicesController extends CompatController
 {
+    use Database;
     public function init()
     {
         $this->getTabs()
@@ -46,6 +48,7 @@ class MyDevicesController extends CompatController
 
     public function indexAction()
     {
+        //var_dump($this->hasDb());die;
         $name = $this->auth->getUser()->getUsername();
 
         $data = (new RememberMeUserDevicesList())
