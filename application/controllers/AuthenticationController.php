@@ -5,16 +5,23 @@ namespace Icinga\Controllers;
 
 use Icinga\Application\Hook\AuthenticationHook;
 use Icinga\Application\Icinga;
+use Icinga\Application\Logger;
+use Icinga\Common\Database;
+use Icinga\Exception\AuthenticationException;
 use Icinga\Forms\Authentication\LoginForm;
 use Icinga\Web\Controller;
 use Icinga\Web\Helper\CookieHelper;
+use Icinga\Web\RememberMe;
 use Icinga\Web\Url;
+use RuntimeException;
 
 /**
  * Application wide controller for authentication
  */
 class AuthenticationController extends Controller
 {
+    use Database;
+
     /**
      * {@inheritdoc}
      */
@@ -35,11 +42,33 @@ class AuthenticationController extends Controller
             $this->redirectNow(Url::fromPath('setup'));
         }
         $form = new LoginForm();
+
+        if (RememberMe::hasCookie() && $this->hasDb()) {
+            $authenticated = false;
+            try {
+                $rememberMeOld = RememberMe::fromCookie();
+                $authenticated = $rememberMeOld->authenticate();
+                if ($authenticated) {
+                    $rememberMe = $rememberMeOld->renew();
+                    $this->getResponse()->setCookie($rememberMe->getCookie());
+                    $rememberMe->persist($rememberMeOld->getAesCrypt()->getIv());
+                }
+            } catch (RuntimeException $e) {
+                Logger::error("Can't authenticate user via remember me cookie: %s", $e->getMessage());
+            } catch (AuthenticationException $e) {
+                Logger::error($e);
+            }
+
+            if (! $authenticated) {
+                $this->getResponse()->setCookie(RememberMe::forget());
+            }
+        }
+
         if ($this->Auth()->isAuthenticated()) {
             // Call provided AuthenticationHook(s) when login action is called
             // but icinga web user is already authenticated
             AuthenticationHook::triggerLogin($this->Auth()->getUser());
-            $this->redirectNow($form->getRedirectUrl());
+            $this->redirectNow($this->params->get('redirect', $form->getRedirectUrl()));
         }
         if (! $requiresSetup) {
             $cookies = new CookieHelper($this->getRequest());
@@ -77,6 +106,16 @@ class AuthenticationController extends Controller
             $this->view->layout()->setLayout('external-logout');
             $this->getResponse()->setHttpResponseCode(401);
         } else {
+            if (RememberMe::hasCookie() && $this->hasDb()) {
+                try {
+                    (new RememberMe())->remove(RememberMe::fromCookie()->getAesCrypt()->getIV());
+                } catch (RuntimeException $e) {
+                    // pass
+                }
+
+                $this->getResponse()->setCookie(RememberMe::forget());
+            }
+
             $this->redirectToLogin();
         }
     }

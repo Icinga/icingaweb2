@@ -62,6 +62,14 @@ class Menu extends Navigation
                     'label'       => t('Announcements'),
                     'url'         => 'announcements',
                     'priority'    => 720
+                ],
+                'sessions' => [
+                    'icon'        => 'host',
+                    'description' => t('List of users who stay logged in'),
+                    'label'       => t('User Sessions'),
+                    'permission'  => 'application/sessions',
+                    'url'         => 'manage-user-devices',
+                    'priority'    => 730
                 ]
             ]
         ]);

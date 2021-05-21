@@ -103,6 +103,10 @@
     }
   }
 
+  input[type="submit"]:focus {
+    outline: 3px solid fade(@icinga-blue, 50%);
+  }
+
   .form-controls {
     margin-bottom: 2em;
     margin-top: 2em;
@@ -132,6 +136,21 @@
     a {
       color: @text-color-inverted;
       font-weight: bold;
+    }
+  }
+
+  .control-group:nth-child(3) {
+    text-align: left;
+    margin-top: 1.25em;
+
+    > .control-label-group {
+      display: inline-block;
+      width: auto;
+    }
+
+    > .toggle-switch {
+      float: left;
+      margin-right: 1em;
     }
   }
 }

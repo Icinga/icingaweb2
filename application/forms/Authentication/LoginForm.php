@@ -7,8 +7,10 @@ use Icinga\Application\Config;
 use Icinga\Application\Hook\AuthenticationHook;
 use Icinga\Authentication\Auth;
 use Icinga\Authentication\User\ExternalBackend;
+use Icinga\Common\Database;
 use Icinga\User;
 use Icinga\Web\Form;
+use Icinga\Web\RememberMe;
 use Icinga\Web\Url;
 
 /**
@@ -16,6 +18,8 @@ use Icinga\Web\Url;
  */
 class LoginForm extends Form
 {
+    use Database;
+
     const DEFAULT_CLASSES = 'icinga-controls';
 
     /**
@@ -61,6 +65,19 @@ class LoginForm extends Form
             )
         );
         $this->addElement(
+            'checkbox',
+            'rememberme',
+            [
+                'label' => $this->translate('Stay logged in'),
+            ]
+        );
+        if (! $this->hasDb()) {
+            $this->getElement('rememberme')
+                ->setAttrib('disabled', true)
+                ->setAttrib('title', "You can't stay logged in without a database configuration backend");
+        }
+
+        $this->addElement(
             'hidden',
             'redirect',
             array(
@@ -100,6 +117,12 @@ class LoginForm extends Form
         $authenticated = $authChain->authenticate($user, $password);
         if ($authenticated) {
             $auth->setAuthenticated($user);
+            if ($this->getElement('rememberme')->isChecked()) {
+                $rememberMe = RememberMe::fromCredentials($user->getUsername(), $password);
+                $this->getResponse()->setCookie($rememberMe->getCookie());
+                $rememberMe->persist();
+            }
+
             // Call provided AuthenticationHook(s) after successful login
             AuthenticationHook::triggerLogin($user);
             $this->getResponse()->setRerenderLayout(true);

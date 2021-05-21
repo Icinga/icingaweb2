@@ -552,6 +552,9 @@ class RoleForm extends RepositoryForm
             ],
             'user/share/navigation' => [
                 'description' => t('Allow to share navigation items')
+            ],
+            'application/sessions' => [
+                'description' => t('Allow to manage user sessions')
             ]
         ];
 
