@@ -56,7 +56,7 @@ class AesCrypt
     public function __construct($random_bytes_len = 128)
     {
         $len = openssl_cipher_iv_length($this->method);
-        $this->iv = openssl_random_pseudo_bytes($len);
+        $this->iv = random_bytes($len);
         $this->key = random_bytes($random_bytes_len);
     }
 
