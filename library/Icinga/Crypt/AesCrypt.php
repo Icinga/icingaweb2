@@ -3,7 +3,7 @@
 
 namespace Icinga\Crypt;
 
-use InvalidArgumentException;
+use UnexpectedValueException;
 use RuntimeException;
 
 /**
@@ -123,6 +123,13 @@ class AesCrypt
      */
     public function setTag($tag)
     {
+        if (strlen($tag) !== 16) {
+            throw new UnexpectedValueException(sprintf(
+                'expects tag length to be 16, got instead %s',
+                strlen($tag)
+            ));
+        }
+
         $this->tag = $tag;
 
         return $this;
@@ -137,7 +144,7 @@ class AesCrypt
      */
     public function getTag()
     {
-        if (empty($this->tag) || strlen($this->tag) !== 16) {
+        if (empty($this->tag)) {
             throw new RuntimeException('No tag set');
         }
 
