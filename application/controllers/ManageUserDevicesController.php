@@ -16,6 +16,11 @@ use ipl\Web\Url;
  */
 class ManageUserDevicesController extends CompatController
 {
+    public function init()
+    {
+        $this->assertPermission('application/sessions');
+    }
+
     public function indexAction()
     {
         $this->getTabs()
@@ -29,7 +34,6 @@ class ManageUserDevicesController extends CompatController
                 )
             )->activate('manage-user-devices');
 
-        $this->assertPermission('application/sessions');
         $usersList = (new RememberMeUserList())
             ->setUsers(RememberMe::getAllUser())
             ->setUrl('manage-user-devices/devices');
