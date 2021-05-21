@@ -60,7 +60,7 @@ class MyDevicesController extends CompatController
 
         if (! $this->hasDb()) {
             Notification::warning(
-                sprintf($this->translate('No db instance found for devices'))
+                $this->translate("Users can't stay logged in without a database configuration backend")
             );
         }
     }

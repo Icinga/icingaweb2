@@ -46,7 +46,7 @@ class ManageUserDevicesController extends CompatController
 
         if (! $this->hasDb()) {
             Notification::warning(
-                sprintf($this->translate('No db instance found for users'))
+                $this->translate("Users can't stay logged in without a database configuration backend")
             );
         }
     }
