@@ -72,7 +72,9 @@ class LoginForm extends Form
             ]
         );
         if (! $this->hasDb()) {
-            $this->getElement('rememberme')->setAttrib('disabled', true);
+            $this->getElement('rememberme')
+                ->setAttrib('disabled', true)
+                ->setAttrib('title', "You can't stay logged in without a database configuration backend");
         }
 
         $this->addElement(
