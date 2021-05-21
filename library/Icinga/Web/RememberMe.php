@@ -212,7 +212,9 @@ class RememberMe
      */
     public function persist($iv = null)
     {
-        $this->remove($iv);
+        if ($iv) {
+            $this->remove($iv);
+        }
 
         $this->getDb()->insert(static::TABLE, [
             'username'          => $this->username,
