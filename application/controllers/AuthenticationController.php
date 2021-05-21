@@ -107,7 +107,12 @@ class AuthenticationController extends Controller
             $this->getResponse()->setHttpResponseCode(401);
         } else {
             if (RememberMe::hasCookie() && $this->hasDb()) {
-                (new RememberMe())->remove(RememberMe::fromCookie()->getAesCrypt()->getIV());
+                try {
+                    (new RememberMe())->remove(RememberMe::fromCookie()->getAesCrypt()->getIV());
+                } catch (RuntimeException $e) {
+                    // pass
+                }
+
                 $this->getResponse()->setCookie(RememberMe::forget());
             }
 
