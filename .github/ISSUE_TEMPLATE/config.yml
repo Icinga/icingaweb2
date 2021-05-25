@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Ask a question
+    url: https://community.icinga.com/c/icinga-web-2/7
+    about: Ask a question in our community foum
