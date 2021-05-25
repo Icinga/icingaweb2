@@ -97,7 +97,7 @@
         var toCollapse = [];
 
         $.each(document.querySelectorAll('.collapsible'), function (_, collapsible) {
-            if (collapsible.matches('.can-collapse')) {
+            if ($(collapsible).is('.can-collapse')) {
                 if (! _this.canCollapse(collapsible)) {
                     $(collapsible).next('.collapsible-control').remove();
                     collapsible.classList.remove('can-collapse');
@@ -139,7 +139,7 @@
     Collapsible.prototype.onExpand = function(collapsiblePath) {
         var collapsible = $(collapsiblePath)[0];
 
-        if (collapsible && collapsible.matches('.can-collapse')) {
+        if (collapsible && $(collapsible).is('.can-collapse')) {
             this.expand(collapsible);
         }
     };
@@ -175,7 +175,7 @@
             _this.icinga.logger.error(
                 '[Collapsible] Collapsible control has no associated .collapsible: ', $target[0]);
         } else if (typeof collapsible.dataset.noPersistence !== 'undefined') {
-            if (collapsible.matches('.collapsed')) {
+            if ($(collapsible).is('.collapsed')) {
                 _this.expand(collapsible);
             } else {
                 _this.collapse(collapsible, _this.calculateCollapsedHeight(collapsible));
@@ -204,9 +204,9 @@
             return '';
         }
 
-        if (collapsible.matches('table')) {
+        if (collapsible.tagName === 'TABLE') {
             return '> tbody > tr';
-        } else if (collapsible.matches('ul, ol')) {
+        } else if (collapsible.tagName === 'UL' || collapsible.tagName === 'OL') {
             return '> li:not(.collapsible-control)';
         }
 
