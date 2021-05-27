@@ -26,4 +26,14 @@ interface UserBackendInterface extends Authenticatable
      * @return  string
      */
     public function getName();
+
+    /**
+     * Return this backend's configuration form class path
+     *
+     * This is not part of the interface to not break existing implementations.
+     * If you need a custom backend form, implement this method.
+     *
+     * @return  string
+     */
+    //public static function getConfigurationFormClass();
 }
