@@ -113,6 +113,25 @@ class UserBackend implements ConfigAwareFactory
         }
     }
 
+    public static function getCustomBackendConfigForms()
+    {
+        $customBackendConfigForms = [];
+        static::registerCustomUserBackends();
+        foreach (self::$customBackends as $customBackendType => $customBackendClass) {
+            if (method_exists($customBackendClass, 'getConfigurationFormClass')) {
+                $customBackend = new $customBackendClass(new ConfigObject());
+                $name = method_exists($customBackend, 'getName') ? $customBackend->getName() : $customBackendType;
+                if ($class = $customBackend->getConfigurationFormClass()) {
+                    $customBackendConfigForms[$customBackendType] = [
+                        'formClassPath' => $class,
+                        'name' => $name
+                    ];
+                }
+            }
+        }
+        return $customBackendConfigForms;
+    }
+
     /**
      * Return the class for the given custom user backend
      *

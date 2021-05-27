@@ -38,6 +38,13 @@ class UserBackendConfigForm extends ConfigForm
     protected $backendToLoad;
 
     /**
+     * The loaded custom backends list
+     *
+     * @var array
+     */
+    protected $customBackends;
+
+    /**
      * Initialize this form
      */
     public function init()
@@ -45,6 +52,7 @@ class UserBackendConfigForm extends ConfigForm
         $this->setName('form_config_authbackend');
         $this->setSubmitLabel($this->translate('Save Changes'));
         $this->setValidatePartial(true);
+        $this->customBackends = UserBackend::getCustomBackendConfigForms();
     }
 
     /**
@@ -114,6 +122,11 @@ class UserBackendConfigForm extends ConfigForm
                 $form = new ExternalBackendForm();
                 break;
             default:
+                foreach ($this->customBackends as $backendType => $backendData) {
+                    if ($backendType === $type) {
+                        return new $backendData['formClassPath']();
+                    }
+                }
                 throw new InvalidArgumentException(
                     sprintf($this->translate('Invalid backend type "%s" provided'), $type)
                 );
@@ -272,6 +285,10 @@ class UserBackendConfigForm extends ConfigForm
         );
         if ($backendType === 'external' || empty($externalBackends)) {
             $backendTypes['external'] = $this->translate('External');
+        }
+
+        foreach ($this->customBackends as $customBackendType => $backendData) {
+            $backendTypes[$customBackendType] = $backendData['name'];
         }
 
         if ($backendType === null) {
