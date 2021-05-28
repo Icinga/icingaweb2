@@ -4,48 +4,21 @@
 namespace Icinga\Module\Translation\Clicommands;
 
 use Icinga\Module\Translation\Cli\TranslationCommand;
-use Icinga\Module\Translation\Util\GettextTranslationHelper;
 
 /**
  * Translation compiler
  *
- * This command will compile the PO-file of a domain. The actions below allow
- * you to select a particular domain for which the PO-file should be compiled.
+ * This command will compile gettext catalogs of modules.
  *
- * Domains are the global one 'icinga' and all available and enabled modules
- * identified by their name.
- *
- * Once a PO-file is compiled its content is used by Icinga Web 2 to display
+ * Once a catalog is compiled its content is used by Icinga Web 2 to display
  * messages in the configured language.
  */
 class CompileCommand extends TranslationCommand
 {
     /**
-     * Compile the global domain
+     * Compile a module gettext catalog
      *
-     * This will compile the PO-file of the global 'icinga' domain.
-     *
-     * USAGE:
-     *
-     *   icingacli translation compile icinga <locale>
-     *
-     * EXAMPLES:
-     *
-     *   icingacli translation compile icinga de_DE
-     *   icingacli translation compile icinga fr_FR
-     */
-    public function icingaAction()
-    {
-        $locale = $this->validateLocaleCode($this->params->shift());
-
-        $helper = $this->getTranslationHelper($locale);
-        $helper->compileIcingaTranslation();
-    }
-
-    /**
-     * Compile a module domain
-     *
-     * This will compile the PO-file of the given module domain.
+     * This will compile the catalog of the given module and locale.
      *
      * USAGE:
      *
@@ -53,8 +26,8 @@ class CompileCommand extends TranslationCommand
      *
      * EXAMPLES:
      *
-     *   icingacli translation compile monitoring de_DE
-     *   icingacli trnslations compile monitoring de_DE
+     *   icingacli translation compile demo de_DE
+     *   icingacli translation compile demo fr_FR
      */
     public function moduleAction()
     {

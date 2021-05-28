@@ -1,13 +1,12 @@
 # Introduction <a id="module-translation-introduction"></a>
 
-Icinga Web 2 provides localization out of the box - for the core application and the modules, that means
-that you can with a lightness use existent localizations, update or even create you own localizations.
+Icinga Web 2 provides localization out of the box - for itself and the core modules.
+This module is for third party module developers to aid them to localize their work.
 
 The chapters [Translation for Developers](03-Translation.md#module-translation-developers),
 [Translation for Translators](03-Translation.md#module-translation-translators) and
-[Testing Translations](03-Translation.md#module-translation-tests) will introduce and explain you, how to take
-part on localizing Icinga Web 2 for different languages and how to use the
-`translation module` to make your life much easier.
+[Testing Translations](03-Translation.md#module-translation-tests) will introduce and
+explain you, how to take part on localizing modules to different languages.
 
 ## Translation for Developers <a id="module-translation-developers"></a>
 
