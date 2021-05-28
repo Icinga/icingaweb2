@@ -199,8 +199,8 @@ abstract class ApplicationBootstrap
                     explode(':', $libraryPaths)
                 ), 'is_dir');
             } else {
-                $this->libraryPaths = is_dir('/usr/share/php-icinga')
-                    ? ['/usr/share/php-icinga']
+                $this->libraryPaths = is_dir('/usr/share/icinga-php')
+                    ? ['/usr/share/icinga-php']
                     : [];
             }
         }
