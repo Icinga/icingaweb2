@@ -967,7 +967,7 @@ class Module
 
                             $parts = preg_split('/,\s+/', $val);
                             foreach ($parts as $part) {
-                                if (preg_match('/^(\w+)\s+\((.+)\)$/', $part, $m)) {
+                                if (preg_match('/^([\w\-\/]+)\s+\((.+)\)$/', $part, $m)) {
                                     $metadata->{$key}[$m[1]] = $m[2];
                                 } else {
                                     // TODO: FAIL?
