@@ -352,7 +352,7 @@ class Dashlet extends BaseHtmlElement implements UserWidget
      *
      * @return bool
      */
-    public function isOverridesSystem()
+    public function isOverriding()
     {
         return $this->override;
     }

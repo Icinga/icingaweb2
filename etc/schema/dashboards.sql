@@ -8,13 +8,13 @@ CREATE TABLE `dashboard_home` (
     `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
     `name` varchar(64) NOT NULL COLLATE utf8mb4_unicode_ci,
     `owner` varchar(254) NOT NULL COLLATE utf8mb4_unicode_ci,
+    `label` varchar(64) NOT NULL COLLATE utf8mb4_unicode_ci,
     `disabled` tinyint(1) DEFAULT 0,
-    PRIMARY KEY (`id`),
-    UNIQUE KEY(`name`)
+    PRIMARY KEY (`id`)
 ) Engine=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 CREATE TABLE `dashboard` (
-    `id` binary(20) NOT NULL COMMENT 'sha1(module.name|home.name + name)',
+    `id` binary(20) NOT NULL COMMENT 'sha1(username + home.name + name)',
     `home_id` int(10) UNSIGNED NOT NULL,
     `owner` varchar(254) NOT NULL COLLATE utf8mb4_unicode_ci,
     `name` varchar(64) NOT NULL COLLATE utf8mb4_unicode_ci,
@@ -35,8 +35,8 @@ CREATE TABLE `dashboard_override` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 CREATE TABLE `dashlet` (
-    `id` binary(20) NOT NULL COMMENT 'sha1(module.name|home.name + dashboard.name + name)',
-    `dashboard_id` binary(20) NOT NULL COMMENT 'sha1(module.name|home.name + name)',
+    `id` binary(20) NOT NULL COMMENT 'sha1(username + home.name + dashboard.name + name)',
+    `dashboard_id` binary(20) NOT NULL COMMENT 'sha1(username + home.name + name)',
     `owner` varchar(254) NOT NULL COLLATE utf8mb4_unicode_ci,
     `name` varchar(64) NOT NULL COLLATE utf8mb4_unicode_ci,
     `label` varchar(64) NOT NULL COLLATE utf8mb4_unicode_ci,

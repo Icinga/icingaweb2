@@ -14,7 +14,12 @@ class DashboardSettings implements Tabextension
     /** @var array|null url params to be attached to the dropdown menus. */
     private $urlParam;
 
-    public function __construct($urlParam = null)
+    /**
+     * DashboardSettings constructor.
+     *
+     * @param array $urlParam
+     */
+    public function __construct(array $urlParam = [])
     {
         $this->urlParam = $urlParam;
     }

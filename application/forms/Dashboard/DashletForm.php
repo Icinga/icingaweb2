@@ -3,7 +3,9 @@
 
 namespace Icinga\Forms\Dashboard;
 
+use Icinga\Exception\InvalidPropertyException;
 use Icinga\Exception\ProgrammingError;
+use Icinga\Web\Navigation\DashboardHome;
 use Icinga\Web\Notification;
 use Icinga\Web\Widget\Dashboard;
 use Icinga\Web\Dashboard\Dashlet;
@@ -22,7 +24,10 @@ class DashletForm extends CompatForm
     private $dashboard;
 
     /** @var string Name of the pane to be edited */
-    public $paneName;
+    private $paneName;
+
+    /** @var bool A flag whether a new home has been created */
+    private $homeCreated = true;
 
     /**
      * DashletForm constructor.
@@ -31,7 +36,26 @@ class DashletForm extends CompatForm
      */
     public function __construct(Dashboard $dashboard)
     {
-        $this->setDashboard($dashboard);
+        $this->dashboard = $dashboard;
+    }
+
+    /**
+     * Allow to access private properties
+     *
+     * @param $name
+     *
+     * @return mixed
+     */
+    public function __get($name)
+    {
+        if (! property_exists($this, $name)) {
+            $class = get_class($this);
+            $message = "Call to undefined property $class::$name";
+
+            throw new InvalidPropertyException($message);
+        }
+
+        return $this->$name;
     }
 
     /**
@@ -49,51 +73,44 @@ class DashletForm extends CompatForm
     protected function assemble()
     {
         $home = Url::fromRequest()->getParam('home');
-        $populated = $this->getPopulatedValue('home');
+        $populatedHome = $this->getPopulatedValue('home', $home);
 
-        $dashboardHomes = [];
         $panes = [];
+        $dashboardHomes = [];
+        $requestPath = Url::fromRequest()->getPath();
+        $removeDashlet = 'dashboard/remove-dashlet';
+        $updateDashlet = 'dashboard/update-dashlet';
+
         if ($this->dashboard) {
             $dashboardHomes = $this->dashboard->getHomeKeyNameArray();
-            if (empty($populated) && ! empty($home)) {
-                $dashboardHomes = $this->dashboard->switchElementPos($dashboardHomes, $home);
+
+            if (empty($home)) {
+                $home = current($dashboardHomes);
+                $populatedHome = $this->getPopulatedValue('home', $home);
             }
 
-            if (empty($populated) && $this->getPopulatedValue('create_new_home') !== 'y') {
+            if ($home === $populatedHome && $this->getPopulatedValue('create_new_home') !== 'y') {
                 if (! empty($home)) {
-                    $panes = $this->dashboard->getPaneKeyTitleArray();
+                    $panes = $this->dashboard->getActiveHome()->getPaneKeyTitleArray();
                 } else {
                     // This tab was opened from where the home parameter is not present
                     $firstHome = $this->dashboard->rewindHomes();
+
                     if (! empty($firstHome)) {
-                        $firstHomeId = $firstHome->getAttribute('homeId');
-
-                        $this->dashboard->loadSystemPanesOfTheGivenHome($firstHome->getName());
-
-                        if ($firstHome->getAttribute('owner')) {
-                            $this->dashboard->loadUserDashboards($firstHomeId);
-                        }
-
-                        $panes = $this->dashboard->getPaneKeyTitleArray($firstHomeId);
+                        $this->dashboard->loadDashboards($firstHome->getName());
+                        $panes = $firstHome->getPaneKeyTitleArray();
                     }
                 }
             } else {
-                if ($this->dashboard->hasHome($populated)) {
-                    $dashboardHome = $this->dashboard->getHome($populated);
+                if ($this->dashboard->hasHome($populatedHome)) {
+                    $this->dashboard->loadDashboards($populatedHome);
 
-                    $this->dashboard->loadSystemPanesOfTheGivenHome($dashboardHome->getName());
-                    $this->dashboard->loadSystemDashboards($dashboardHome->getName());
-
-                    if ($dashboardHome->getAttribute('owner')) {
-                        $this->dashboard->loadUserDashboards($dashboardHome->getAttribute('homeId'));
-                    }
-
-                    $panes = $this->dashboard->getPaneKeyTitleArray($dashboardHome->getAttribute('homeId'));
+                    $panes = $this->dashboard->getActiveHome()->getPaneKeyTitleArray();
                 }
             }
         }
 
-        if (Url::fromRequest()->getPath() === 'dashboard/remove-dashlet') {
+        if ($requestPath === $removeDashlet) {
             $this->add(new HtmlElement('h1', null, sprintf(
                 t('Please confirm removal of dashlet "%s"'),
                 Url::fromRequest()->getParam('dashlet')
@@ -105,14 +122,14 @@ class DashletForm extends CompatForm
             $submitLabel = t('Add To Dashboard');
             $formTitle = t('Add Dashlet To Dashboard');
 
-            if (Url::fromRequest()->getPath() === 'dashboard/update-dashlet') {
+            if ($requestPath === $updateDashlet) {
                 $submitLabel = t('Update Dashlet');
                 $formTitle = t('Edit Dashlet');
             }
 
             $this->add(Html::tag('h1', $formTitle));
             $this->addElement('hidden', 'org_pane', ['required'     => false]);
-            $this->addElement('hidden', 'org_parentId', ['required' => false]);
+            $this->addElement('hidden', 'org_home', ['required'     => false]);
             $this->addElement('hidden', 'org_dashlet', ['required'  => false]);
             $this->addElement(
                 'checkbox',
@@ -127,6 +144,7 @@ class DashletForm extends CompatForm
             );
 
             $shouldDisable = empty($panes) || $this->getPopulatedValue('create_new_home') === 'y';
+
             if (empty($dashboardHomes) || $this->getPopulatedValue('create_new_home') === 'y') {
                 if (empty($dashboardHomes)) {
                     $this->getElement('create_new_home')->addAttributes(['checked' => 'checked']);
@@ -154,6 +172,7 @@ class DashletForm extends CompatForm
                         'required'      => true,
                         'label'         => t('Dashboard Home'),
                         'multiOptions'  => $dashboardHomes,
+                        'value'         => $home,
                         'description'   => t('Select a home you want to add the pane to'),
                     ]
                 );
@@ -200,9 +219,10 @@ class DashletForm extends CompatForm
 
             $this->add(new HtmlElement('hr'));
 
-            if (Url::fromRequest()->getPath() === 'dashboard/update-dashlet') {
-                if ($home === $this->getPopulatedValue('home', reset($dashboardHomes))) {
-                    $pane = $this->dashboard->getPane(Url::fromRequest()->getParam('pane'));
+            if ($requestPath === $updateDashlet) {
+                if ($home === $populatedHome) {
+                    $pane = Url::fromRequest()->getParam('pane');
+                    $pane = $this->dashboard->getActiveHome()->getPane($pane);
                     $dashlet = $pane->getDashlet(Url::fromRequest()->getParam('dashlet'));
 
                     if ($dashlet->getDisabled()) {
@@ -239,6 +259,7 @@ class DashletForm extends CompatForm
                     'description'   => t('Enter a title for the dashlet.'),
                 ]
             );
+
             $this->add(
                 new HtmlElement(
                     'div',
@@ -247,7 +268,7 @@ class DashletForm extends CompatForm
                         'style' => 'position: relative;  margin-top: 2em;'
                     ],
                     [
-                        Url::fromRequest()->getPath() !== 'dashboard/update-dashlet' ? '' :
+                        $requestPath !== $updateDashlet ? '' :
                             new HtmlElement(
                                 'input',
                                 [
@@ -255,7 +276,7 @@ class DashletForm extends CompatForm
                                     'type'          => 'submit',
                                     'name'          => 'remove_dashlet',
                                     'value'         => t('Remove Dashlet'),
-                                    'formaction'    => (string)Url::fromRequest()->setPath('dashboard/remove-dashlet')
+                                    'formaction'    => (string) Url::fromRequest()->setPath('dashboard/remove-dashlet')
                                 ]
                             ),
                         new HtmlElement(
@@ -264,7 +285,7 @@ class DashletForm extends CompatForm
                                 'class' => 'btn-primary',
                                 'type'  => 'submit',
                                 'name'  => 'submit',
-                                'value' => $submitLabel
+                                'value' => $submitLabel,
                             ]
                         ),
                     ]
@@ -275,35 +296,33 @@ class DashletForm extends CompatForm
 
     public function createDashlet()
     {
-        $db = $this->dashboard->getConn();
+        $db = DashboardHome::getConn();
         $username = $this->dashboard->getUser()->getUsername();
         $home = $this->getValue('home');
 
         // Begin DB transaction
         $db->beginTransaction();
 
-        if (! $this->dashboard->hasHome($home) ||
-            ! $this->dashboard->getHome($home)->getAttribute('owner')) {
-            $db->insert('dashboard_home', [
-                'name'  => $home,
-                'owner' => $username
-            ]);
+        if (! $this->dashboard->hasHome($home) || /** prevents from failing foreign key constraint */
+            ($this->dashboard->getHome($home)->getOwner() === DashboardHome::DEFAULT_IW2_USER &&
+            $this->dashboard->getHome($home)->getName() !== DashboardHome::DEFAULT_HOME)) {
+            $db->insert('dashboard_home', ['name' => $home, 'label' => $home, 'owner' => $username]);
 
             $homeId = $db->lastInsertId();
         } else {
-            $homeId = $this->dashboard->getHome($home)->getAttribute('homeId');
+            $homeId = $this->dashboard->getHome($home)->getIdentifier();
+        }
+
+        if ($this->dashboard->hasHome($home)) {
+            $this->dashboard->loadDashboards($home);
         }
 
         try {
             $this->paneName = $this->getValue('pane');
-            $pane = $this->dashboard->getPane($this->paneName);
+            $pane = $this->dashboard->getActiveHome()->getPane($this->paneName);
             $paneId = $pane->getPaneId();
 
-            if ($homeId !== $pane->getParentId()) {
-                throw new ProgrammingError('Pane already exist in another home.');
-            }
-
-            if (! $pane->getOwner()) {
+            if ($pane->getOwner() === DashboardHome::DEFAULT_IW2_USER) {
                 throw new ProgrammingError('User is going to create a dashlet in a system pane.');
             }
         } catch (ProgrammingError $e) {
@@ -312,15 +331,13 @@ class DashletForm extends CompatForm
 
             $paneName = $this->getValue('pane');
             $paneLabel = $paneName;
-            $paneId = $this->dashboard->getSHA1($username . $home . $paneName);
+            $paneId = DashboardHome::getSHA1($username . $home . $paneName);
 
-            if ($this->dashboard->hasPane($paneName)) {
-                $tmpPane = $this->dashboard->getPane($paneName);
-                if ($tmpPane->getParentId() === $homeId) {
-                    $paneLabel = $tmpPane->getTitle();
-                }
+            if ($this->dashboard->getActiveHome()->hasPane($paneName)) {
+                $tmpPane = $this->dashboard->getActiveHome()->getPane($paneName);
+                $paneLabel = $tmpPane->getTitle();
 
-                if (! $tmpPane->getOwner()) {
+                if ($tmpPane->getOwner() === DashboardHome::DEFAULT_IW2_USER) {
                     $type = Pane::PUBLIC;
                 }
             }
@@ -336,23 +353,20 @@ class DashletForm extends CompatForm
         }
 
         try {
+            $dashletFound = false;
             if (! empty($pane)) {
-                $dashlet = array_filter($pane->getDashlets(), function ($dashlet) {
-                    if ($dashlet->getName() === $this->getValue('dashlet')) {
-                        return $dashlet;
-                    }
-                });
-            } else {
-                $dashlet = null;
+                if ($pane->hasDashlet($this->getValue('dashlet'))) {
+                    $dashletFound = true;
+                }
             }
 
-            if (empty($dashlet)) {
-                throw new ProgrammingError('Dashlet does not exist.');
+            if (! $dashletFound) {
+                throw new ProgrammingError('Dashlet does not exist');
             }
 
-            Notification::warning(t('There already exists a Dashlet with the same name.'));
+            Notification::error(t('There already exists a Dashlet with the same name'));
         } catch (ProgrammingError $err) {
-            $dashletId = $this->dashboard->getSHA1(
+            $dashletId = DashboardHome::getSHA1(
                 $username . $home . $this->paneName . $this->getValue('dashlet')
             );
             $db->insert('dashlet', [
@@ -373,85 +387,56 @@ class DashletForm extends CompatForm
 
     public function updateDashlet()
     {
-        $db = $this->dashboard->getConn();
+        $db = DashboardHome::getConn();
         $username = $this->dashboard->getUser()->getUsername();
+        $orgHome = $this->dashboard->getHome($this->getValue('org_home'));
 
         // Original pane and dashlet
-        $orgPane = $this->dashboard->getPane($this->getValue('org_pane'));
+        $orgPane = $orgHome->getPane($this->getValue('org_pane'));
         $orgDashlet = $orgPane->getDashlet($this->getValue('org_dashlet'));
 
-        if (! $orgDashlet->isUserWidget() && $orgPane->getName() !== $this->getValue('pane')) {
-            Notification::warning(sprintf(
+        $homeName = $this->getValue('home');
+
+        if (! $orgDashlet->isUserWidget() &&
+            ($orgPane->getName() !== $this->getValue('pane') || $orgHome->getName() !== $homeName)) {
+            Notification::error(sprintf(
                 t('It is not allowed to move system dashlet: "%s"'),
                 $this->getValue('org_dashlet')
             ));
 
+            $this->homeCreated = false;
+
             return;
-        }
-
-        $homeName = $this->getValue('home');
-        $insertHomeIntoDB = false;
-
-        if ($this->dashboard->hasHome($homeName)) {
-            $home = $this->dashboard->getHome($homeName);
-            $homeId = $home->getAttribute('homeId');
-
-            // Home already exists but it doesn't have an owner
-            if (! $home->getAttribute('owner')) {
-                $insertHomeIntoDB = true;
-            }
-        } else {
-            $insertHomeIntoDB = true;
         }
 
         // Begin DB transaction
         $db->beginTransaction();
 
-        if ($insertHomeIntoDB) {
-            $db->insert('dashboard_home', [
-                'name'  => $this->getValue('home'),
-                'owner' => $username
-            ]);
+        $createNewHome = true;
+        if ($this->dashboard->hasHome($homeName)) {
+            $home = $this->dashboard->getHome($homeName);
+            $homeId = $home->getIdentifier();
 
-            $homeId = $db->lastInsertId();
+            $createNewHome = false;
+
+            if ($orgHome->getName() !== $home->getName()) {
+                $this->dashboard->loadDashboards($homeName);
+                $homeId = $this->dashboard->getActiveHome()->getIdentifier();
+            }
         }
 
-        $this->dashboard->loadUserDashboards($homeId);
-        $insertPaneIntoDB = false;
-        $isClonedPane = false;
+        $activeHome = $this->dashboard->getActiveHome();
+        $paneName = $this->getValue('pane');
+        $createNewPane = true;
 
-        if ($this->dashboard->hasPane($this->getValue('pane'))) {
-            $newPane = $this->dashboard->getPane($this->getValue('pane'));
+        if ($activeHome && $activeHome->hasPane($paneName)) {
+            $newPane = $activeHome->getPane($paneName);
             $paneId = $newPane->getPaneId();
 
-            // User is going to clone a system pane
-            if (! $newPane->getOwner()) {
-                $insertPaneIntoDB = true;
-                $isClonedPane = true;
-            }
-        } else {
-            $insertPaneIntoDB = true;
+            $createNewPane = false;
         }
 
-        if ($insertPaneIntoDB) {
-            $paneId = $this->dashboard->getSHA1($username . $homeName . $this->getValue('pane'));
-
-            $type = Pane::PRIVATE;
-            if ($isClonedPane) {
-                $type = Pane::PUBLIC;
-            }
-
-            $db->insert('dashboard', [
-                'id'        => $paneId,
-                'home_id'   => $homeId,
-                'name'      => $this->getValue('pane'),
-                'owner'     => $username,
-                'label'     => $this->getValue('pane'),
-                'source'    => $type
-            ]);
-        }
-
-        $dashletUrl = $orgDashlet->getUrl()->getRelativeUrl();
+        $dashletUrl = null;
         $dashletLabel = $this->getValue('dashlet');
         $dashletDisabled = $orgDashlet->getDisabled();
 
@@ -463,11 +448,11 @@ class DashletForm extends CompatForm
             $dashletDisabled = false;
         }
 
-        if (! $orgDashlet->isUserWidget()) {
+        if (! $orgDashlet->isUserWidget()) { // System dashlets
             // Since system dashlets can be edited by multiple users, we need to change
             // the original id here so we don't encounter a duplicate key error
-            $dashletId = $this->dashboard->getSHA1(
-                $username . Dashboard::DEFAULT_HOME . $orgDashlet->getPane()->getName() . $orgDashlet->getName()
+            $dashletId = DashboardHome::getSHA1(
+                $username . $homeName . $orgDashlet->getPane()->getName() . $orgDashlet->getName()
             );
 
             $db->insert('dashlet_override', [
@@ -476,18 +461,45 @@ class DashletForm extends CompatForm
                 'owner'         => $username,
                 'label'         => $dashletLabel,
                 'url'           => $dashletUrl,
-                'disabled'      => (int)$dashletDisabled
+                'disabled'      => (int) $dashletDisabled
             ]);
-        } elseif ($orgDashlet->isOverridesSystem()) {
+        } elseif ($orgDashlet->isOverriding()) { // Custom dashelts that overwrites system dashlets
             $db->update('dashlet_override', [
                 'label'     => $dashletLabel,
                 'url'       => $dashletUrl,
                 'disabled'  => (int)$dashletDisabled
             ], [
                 'dashlet_id = ?'    => $orgDashlet->getDashletId(),
-                'owner = ?'         => $username
+                'dashboard_id = ?'  => $paneId
             ]);
-        } else {
+        } else { // Custom
+            if ($createNewHome || ($homeName !== DashboardHome::DEFAULT_HOME &&
+                    $activeHome->getOwner() === DashboardHome::DEFAULT_IW2_USER)) {
+                $db->insert('dashboard_home', ['name' => $homeName, 'label' => $homeName, 'owner' => $username]);
+
+                $homeId = $db->lastInsertId();
+            }
+
+            if ($createNewPane || $activeHome->getPane($paneName)->getOwner() === DashboardHome::DEFAULT_IW2_USER) {
+                $paneLabel = $paneName;
+                $source = Pane::PRIVATE;
+                $paneId = DashboardHome::getSHA1($username . $homeName . $paneName);
+
+                if (! $createNewPane) {
+                    $paneLabel = $activeHome->getPane($paneName)->getTitle();
+                    $source = Pane::PUBLIC;
+                }
+
+                $db->insert('dashboard', [
+                    'id'        => $paneId,
+                    'home_id'   => $homeId,
+                    'name'      => $paneName,
+                    'owner'     => $username,
+                    'label'     => $paneLabel,
+                    'source'    => $source,
+                ]);
+            }
+
             $db->update('dashlet', [
                 'dashboard_id'  => $paneId,
                 'owner'         => $username,
@@ -509,8 +521,15 @@ class DashletForm extends CompatForm
             $this->createDashlet();
         } else {
             if ($this->getPopulatedValue('remove_dashlet')) {
+                $activeHome = $this->dashboard->getActiveHome();
                 $dashlet = Url::fromRequest()->getParam('dashlet');
-                $pane = $this->dashboard->getPane(Url::fromRequest()->getParam('pane'));
+                $pane = $activeHome->getPane(Url::fromRequest()->getParam('pane'));
+
+                $dashletId = DashboardHome::getSHA1(
+                    $activeHome->getUser()->getUsername() . $activeHome->getName() . $pane->getName() . $dashlet
+                );
+
+                $pane->getDashlet($dashlet)->setDashletId($dashletId);
                 $pane->removeDashlet($dashlet);
 
                 Notification::success(t('Dashlet has been removed from') . ' ' . $pane->getTitle());
@@ -521,22 +540,15 @@ class DashletForm extends CompatForm
     }
 
     /**
-     * @param \Icinga\Web\Widget\Dashboard $dashboard
-     */
-    public function setDashboard(Dashboard $dashboard)
-    {
-        $this->dashboard = $dashboard;
-    }
-
-    /**
      * @param Dashlet $dashlet
+     * @param string  $home
      */
-    public function load(Dashlet $dashlet)
+    public function load(Dashlet $dashlet, $home)
     {
         $this->populate(array(
             'pane'          => $dashlet->getPane()->getName(),
             'org_pane'      => $dashlet->getPane()->getName(),
-            'org_parentId'  => $dashlet->getPane()->getParentId(),
+            'org_home'      => $home,
             'dashlet'       => $dashlet->getTitle(),
             'org_dashlet'   => $dashlet->getName(),
             'url'           => $dashlet->getUrl()->getRelativeUrl()

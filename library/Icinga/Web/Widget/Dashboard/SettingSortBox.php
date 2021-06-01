@@ -11,6 +11,8 @@ class SettingSortBox extends CompatForm
     /** @var Dashboard */
     private $dashboard;
 
+    private $activeHome;
+
     public function __construct($dashboard)
     {
         $this->dashboard = $dashboard;
@@ -18,19 +20,10 @@ class SettingSortBox extends CompatForm
 
     public function assemble()
     {
-        $homes = $this->dashboard->getHomes();
-        $sortControls = [];
-        $active = null;
-        if (Url::fromRequest()->hasParam('home')) {
-            $active = Url::fromRequest()->getParam('home');
-            $sortControls[$active] = $active;
-        }
+        $sortControls = $this->dashboard->getHomeKeyNameArray(false);
 
-        foreach ($homes as $item) {
-            if ($active === $item->getName()) {
-                continue;
-            }
-            $sortControls[$item->getName()] = $item->getName();
+        if (Url::fromRequest()->getParam('home')) {
+            $this->activeHome = Url::fromRequest()->getParam('home');
         }
 
         $this->addElement(
@@ -40,7 +33,8 @@ class SettingSortBox extends CompatForm
                 'class'          => 'autosubmit',
                 'required'       => true,
                 'label'          => t('Dashboard Home'),
-                'multiOptions'   => $sortControls ?: ['no' => 'No home available'],
+                'multiOptions'   => $sortControls,
+                'value'          => $this->activeHome?: current($sortControls),
                 'description'    => t('Select a dashboard home you want to see the dashboards from.')
             ]
         );
@@ -50,5 +44,14 @@ class SettingSortBox extends CompatForm
     {
         // Do nothing
         parent::onSuccess();
+    }
+
+    public function __get($name)
+    {
+        if (! property_exists($this, $name)) {
+
+        }
+
+        return $this->$name;
     }
 }

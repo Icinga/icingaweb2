@@ -3,7 +3,8 @@
 
 namespace Icinga\Web\Widget;
 
-use Zend_Controller_Action_Exception;
+use Icinga\Exception\Http\HttpNotFoundException;
+use Icinga\Web\Navigation\DashboardHome;
 use Icinga\Application\Icinga;
 use Icinga\Web\Url;
 
@@ -13,6 +14,13 @@ use Icinga\Web\Url;
 class SearchDashboard extends Dashboard
 {
     /**
+     * Name for the search home
+     *
+     * @var string
+     */
+    const SEARCH_HOME = 'Search Home';
+
+    /**
      * Name for the search pane
      *
      * @var string
@@ -20,9 +28,23 @@ class SearchDashboard extends Dashboard
     const SEARCH_PANE = 'search';
 
     /**
+     * This search dashboard's dashboard home instance
+     *
+     * @var DashboardHome
+     */
+    protected $dashboardHome;
+
+    public function __construct()
+    {
+        // Initialize "Search Home" dashboard Home
+        $this->dashboardHome = new DashboardHome(self::SEARCH_HOME);
+        $this->dashboardHome->setActive();
+    }
+
+    /**
      * {@inheritdoc}
      */
-    public function getTabs($defaultPane = false)
+    public function getTabs()
     {
         if ($this->tabs === null) {
             $this->tabs = new \ipl\Web\Widget\Tabs();
@@ -36,7 +58,16 @@ class SearchDashboard extends Dashboard
                 )
             );
         }
+
         return $this->tabs;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getActiveHome()
+    {
+        return $this->dashboardHome;
     }
 
     /**
@@ -48,14 +79,14 @@ class SearchDashboard extends Dashboard
      */
     public function search($searchString = '')
     {
-        $pane = $this->createPane(self::SEARCH_PANE)->getPane(self::SEARCH_PANE)->setTitle(t('Search'));
+        $pane = $this->dashboardHome->createPane(self::SEARCH_PANE)->getPane(self::SEARCH_PANE)->setTitle(t('Search'));
         $this->activate(self::SEARCH_PANE);
 
         $manager = Icinga::app()->getModuleManager();
         $searchUrls = array();
 
         foreach ($manager->getLoadedModules() as $module) {
-            if ($this->getUser()->can($manager::MODULE_PERMISSION_NS . $module->getName())) {
+            if ($this->dashboardHome->getUser()->can($manager::MODULE_PERMISSION_NS . $module->getName())) {
                 $moduleSearchUrls = $module->getSearchUrls();
                 if (! empty($moduleSearchUrls)) {
                     if ($searchString === '') {
@@ -80,18 +111,15 @@ class SearchDashboard extends Dashboard
     }
 
     /**
-     * Renders the output
-     *
-     * @return  string
-     *
-     * @throws  Zend_Controller_Action_Exception
+     * {@inheritDoc}
      */
-    public function render()
+    public function assemble()
     {
-        if (! $this->getPane(self::SEARCH_PANE)->hasDashlets()) {
-            throw new Zend_Controller_Action_Exception(t('Page not found'), 404);
+        if (! $this->dashboardHome->getPane(self::SEARCH_PANE)->hasDashlets()) {
+            throw new HttpNotFoundException(t('Page not found'));
         }
-        return parent::render();
+
+        $this->add($this->dashboardHome->getPane(self::SEARCH_PANE)->getDashlets());
     }
 
     /**
@@ -108,5 +136,10 @@ class SearchDashboard extends Dashboard
             return 0;
         }
         return ($a->priority < $b->priority) ? -1 : 1;
+    }
+
+    public function __get($name)
+    {
+        return $this->$name;
     }
 }

@@ -13,6 +13,7 @@ use Icinga\Exception\IcingaException;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Module\Setup\SetupWizard;
 use Icinga\Util\File;
+use Icinga\Web\Navigation\DashboardHome;
 use Icinga\Web\Navigation\Navigation;
 use Icinga\Web\Widget;
 use ipl\I18n\GettextTranslator;
@@ -258,7 +259,7 @@ class Module
     /**
      * A set of DashboardHome elements
      *
-     * @var array
+     * @var DashboardHomeContainer[]
      */
     protected $homeItems = [];
 
@@ -431,12 +432,18 @@ class Module
         $navigation = new Navigation();
 
         foreach ($homes as $home) {
+            if (! array_key_exists('label', $home->getProperties())) {
+                $home->setProperties(array_merge(
+                    $home->getProperties(),
+                    ['label' => $this->translate($home->getName())]
+                ));
+            }
+
             $navigation->addItem(
                 $home->getName(),
                 array_merge(
                     $home->getProperties(),
                     array(
-                        'label'     => $this->translate($home->getName()),
                         'type'      => 'dashboard-home',
                         'children'  => $home->getDashboards()
                     )
@@ -476,7 +483,7 @@ class Module
      */
     protected function provideHome($name, array $properties = [])
     {
-        if ($name === Widget\Dashboard::DEFAULT_HOME) {
+        if ($name === DashboardHome::DEFAULT_HOME) {
             throw new ProgrammingError('Specified dashboard home "%s" is reserved for internal use', $name);
         }
 

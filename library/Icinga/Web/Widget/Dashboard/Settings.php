@@ -50,16 +50,7 @@ class Settings extends BaseHtmlElement
 
     public function tableBody()
     {
-        if (Url::fromRequest()->hasParam('home')) {
-            $home = $this->dashboard->getHome(Url::fromRequest()->getParam('home'));
-        } else {
-            $home = $this->dashboard->rewindHomes();
-
-            if (! empty($home)) {
-                $this->dashboard->loadUserDashboards($home->getAttribute('homeId'));
-            }
-        }
-
+        $home = $this->dashboard->getActiveHome();
         $tbody = new HtmlElement('tbody', null);
 
         if (! empty($home)) {
@@ -70,7 +61,7 @@ class Settings extends BaseHtmlElement
                     'colspan'   => '2',
                     'style'     => 'text-align: left; padding: 0.5em; background-color: #0095bf;'
                 ], new Link(
-                    $home->getName(),
+                    $home->getLabel(),
                     sprintf('dashboard/rename-home?home=%s', $home->getName()),
                     [
                         'title' => sprintf(t('Edit home %s'), $home->getName())
@@ -78,7 +69,7 @@ class Settings extends BaseHtmlElement
                 ))
             );
 
-            if ($home->getAttribute('disabled')) {
+            if ($home->getDisabled()) {
                 $tableRow->add(new HtmlElement('td', [
                     'style' => 'text-align: center; width: 15px;'
                 ], new Icon('ban', ['style' => 'color: red; font-size: 1.5em;'])));
@@ -89,19 +80,14 @@ class Settings extends BaseHtmlElement
             $tbody->add($tableRow);
         }
 
-        if (empty($this->dashboard->getPanes())) {
+        if (empty($home->getPanes())) {
             $tbody->add(new HtmlElement(
                 'tr',
                 null,
                 new HtmlElement('td', ['colspan' => '3'], t('Currently there is no dashboard available.'))
             ));
         } else {
-            /** @var Pane $pane */
-            foreach ($this->dashboard->getPanes() as $pane) {
-                if ($pane->getParentId() !== $home->getAttribute('homeId')) {
-                    continue;
-                }
-
+            foreach ($home->getPanes() as $pane) {
                 $tableRow = new HtmlElement('tr', null);
                 $th = new HtmlElement('th', [
                     'colspan'   => '2',

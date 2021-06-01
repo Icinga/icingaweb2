@@ -5,11 +5,9 @@ namespace Icinga\Web\Widget\Dashboard;
 
 use Icinga\Authentication\Auth;
 use Icinga\Common\Database;
-use Icinga\Data\ConfigObject;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Web\Dashboard\Dashlet;
-use Icinga\Web\Widget\Dashboard;
 
 /**
  * A pane, displaying different Dashboard dashlets
@@ -48,9 +46,9 @@ class Pane implements UserWidget
     /**
      * A user this panel belongs to
      *
-     * @var string|null
+     * @var string
      */
-    private $owner = null;
+    private $owner = 'icingaweb2';
 
     /**
      * An array of @see Dashlets that are displayed in this pane
@@ -234,7 +232,7 @@ class Pane implements UserWidget
     /**
      * Get the owner of this panel
      *
-     * @return string|null
+     * @return string
      */
     public function getOwner()
     {
@@ -300,12 +298,12 @@ class Pane implements UserWidget
         }
 
         $owner = $dashlet->getPane()->getOwner();
-        if (empty($owner)) {
+        if ($owner === \Icinga\Web\Navigation\DashboardHome::DEFAULT_IW2_USER) {
             $owner = Auth::getInstance()->getUser()->getUsername();
         }
 
         if ($dashlet->isUserWidget() === true && ! $dashlet->getDisabled()) {
-            if ($dashlet->isOverridesSystem()) {
+            if ($dashlet->isOverriding()) {
                 $this->getDb()->delete('dashlet_override', [
                     'dashlet_id = ?'    => $dashlet->getDashletId(),
                     'owner = ?'         => $owner
@@ -316,16 +314,9 @@ class Pane implements UserWidget
                     'dashboard_id = ?'  => $dashlet->getPane()->getPaneId()
                 ]);
             }
-        } elseif (! $dashlet->getDisabled()) {
-            // Since system dashlets can be edited by multiple users, we need to change
-            // the original id here so we don't encounter a duplicate key error
-            $dashletId = sha1(
-                $owner . Dashboard::DEFAULT_HOME . $dashlet->getPane()->getName() . $dashlet->getName(),
-                true
-            );
-
+        } elseif (! $dashlet->getDisabled() && ! $this->isUserWidget()) {
             $this->getDb()->insert('dashlet_override', [
-                'dashlet_id'    => $dashletId,
+                'dashlet_id'    => $dashlet->getDashletId(),
                 'dashboard_id'  => $dashlet->getPane()->getPaneId(),
                 'owner'         => $owner,
                 'disabled'      => true
@@ -349,7 +340,7 @@ class Pane implements UserWidget
         }
 
         // Remove dashlets only if this is a custom pane
-        if ($this->getOwner()) {
+        if ($this->getOwner() !== \Icinga\Web\Navigation\DashboardHome::DEFAULT_IW2_USER) {
             foreach ($dashlets as $dashlet) {
                 $this->removeDashlet($dashlet);
             }
@@ -459,31 +450,11 @@ class Pane implements UserWidget
      */
     public function toArray()
     {
-        $pane =  array(
-            'title'     => $this->getTitle(),
-        );
-
+        $pane = ['title' => $this->getTitle()];
         if ($this->getDisabled() === true) {
             $pane['disabled'] = 1;
         }
 
-        return $pane;
-    }
-
-    /**
-     * Create a new pane with the title $title from the given configuration
-     *
-     * @param $title                The title for this pane
-     * @param ConfigObject  $config The configuration to use for setup
-     *
-     * @return Pane
-     */
-    public static function fromIni($title, ConfigObject $config)
-    {
-        $pane = new Pane($title);
-        if ($config->get('title', false)) {
-            $pane->setTitle($config->get('title'));
-        }
         return $pane;
     }
 
@@ -494,7 +465,7 @@ class Pane implements UserWidget
      */
     public function setDisabled($disabled)
     {
-        $this->disabled = (bool)$disabled;
+        $this->disabled = (bool) $disabled;
 
         return $this;
     }
@@ -528,7 +499,7 @@ class Pane implements UserWidget
      *
      * @return bool
      */
-    public function isOverridesSystem()
+    public function isOverridingPane()
     {
         return $this->override;
     }
