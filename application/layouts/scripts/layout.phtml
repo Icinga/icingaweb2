@@ -1,6 +1,8 @@
 <?php
 
-use Icinga\Util\Translator;
+use ipl\I18n\Locale;
+use ipl\I18n\GettextTranslator;
+use ipl\I18n\StaticTranslator;
 use ipl\Web\Widget\Icon;
 
 if (array_key_exists('_dev', $_GET)) {
@@ -11,8 +13,11 @@ if (array_key_exists('_dev', $_GET)) {
   $cssfile = 'css/icinga.min.css';
 }
 
+/** @var GettextTranslator $translator */
+$translator = StaticTranslator::$instance;
+
+$lang = (new Locale())->parseLocale($translator->getLocale())->language;
 $timezone = date_default_timezone_get();
-$lang = Translator::splitLocaleCode()->language;
 $isIframe = $this->layout()->isIframe;
 $showFullscreen = $this->layout()->showFullscreen;
 $iframeClass = $isIframe ? ' iframe' : '';

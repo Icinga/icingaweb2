@@ -7,6 +7,8 @@ require_once dirname(__FILE__) . '/ApplicationBootstrap.php';
 
 use Icinga\Web\Request;
 use Icinga\Web\Response;
+use ipl\I18n\NoopTranslator;
+use ipl\I18n\StaticTranslator;
 
 /**
  * Use this if you want to make use of Icinga functionality in other web projects
@@ -72,6 +74,7 @@ class EmbeddedWeb extends ApplicationBootstrap
             ->setupRequest()
             ->setupResponse()
             ->setupTimezone()
+            ->prepareFakeInternationalization()
             ->setupModuleManager()
             ->loadEnabledModules();
     }
@@ -95,6 +98,18 @@ class EmbeddedWeb extends ApplicationBootstrap
     protected function setupResponse()
     {
         $this->response = new Response();
+        return $this;
+    }
+
+    /**
+     * Prepare fake internationalization
+     *
+     * @return $this
+     */
+    protected function prepareFakeInternationalization()
+    {
+        StaticTranslator::$instance = new NoopTranslator();
+
         return $this;
     }
 }

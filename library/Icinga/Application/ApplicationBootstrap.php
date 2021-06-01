@@ -6,13 +6,14 @@ namespace Icinga\Application;
 use DirectoryIterator;
 use ErrorException;
 use Exception;
+use ipl\I18n\GettextTranslator;
+use ipl\I18n\StaticTranslator;
 use LogicException;
 use Icinga\Application\Modules\Manager as ModuleManager;
 use Icinga\Authentication\User\UserBackend;
 use Icinga\Data\ConfigObject;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\NotReadableError;
-use Icinga\Util\Translator;
 use Icinga\Exception\IcingaException;
 
 /**
@@ -700,23 +701,39 @@ abstract class ApplicationBootstrap
     }
 
     /**
+     * Prepare internationalization using gettext
+     *
+     * @return $this
+     */
+    protected function prepareInternationalization()
+    {
+        StaticTranslator::$instance = (new GettextTranslator())
+            ->setDefaultDomain('icinga');
+
+        return $this;
+    }
+
+    /**
      * Set up internationalization using gettext
      *
      * @return $this
      */
     final protected function setupInternationalization()
     {
+        /** @var GettextTranslator $translator */
+        $translator = StaticTranslator::$instance;
+
         if ($this->hasLocales()) {
-            Translator::registerDomain(Translator::DEFAULT_DOMAIN, $this->getLocaleDir());
+            $translator->addTranslationDirectory($this->getLocaleDir(), 'icinga');
         }
 
         $locale = $this->detectLocale();
         if ($locale === null) {
-            $locale = Translator::DEFAULT_LOCALE;
+            $locale = $translator->getDefaultLocale();
         }
 
         try {
-            Translator::setupLocale($locale);
+            $translator->setLocale($locale);
         } catch (Exception $error) {
             Logger::error($error);
         }
@@ -753,27 +770,15 @@ abstract class ApplicationBootstrap
     /**
      * List all available locales
      *
-     * NOTE: Might be a candidate for a static function in Translator
+     * @return array Locale list
      *
-     * return array Locale list
+     * @deprecated Use {@see \ipl\I18n\GettextTranslator::listLocales()} instead
      */
     public function listLocales()
     {
-        $locales = array();
-        if (! $this->hasLocales()) {
-            return $locales;
-        }
-        $localedir = $this->getLocaleDir();
+        /** @var GettextTranslator $translator */
+        $translator = StaticTranslator::$instance;
 
-        $dh = opendir($localedir);
-        while (false !== ($file = readdir($dh))) {
-            $filename = $localedir . DIRECTORY_SEPARATOR . $file;
-            if (preg_match('/^[a-z]{2}_[A-Z]{2}$/', $file) && is_dir($filename)) {
-                $locales[] = $file;
-            }
-        }
-        closedir($dh);
-        sort($locales);
-        return $locales;
+        return $translator->listLocales();
     }
 }

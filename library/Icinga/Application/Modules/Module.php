@@ -13,9 +13,11 @@ use Icinga\Exception\IcingaException;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Module\Setup\SetupWizard;
 use Icinga\Util\File;
-use Icinga\Util\Translator;
 use Icinga\Web\Navigation\Navigation;
 use Icinga\Web\Widget;
+use ipl\I18n\GettextTranslator;
+use ipl\I18n\StaticTranslator;
+use ipl\I18n\Translation;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use Zend_Controller_Router_Route;
@@ -29,6 +31,11 @@ use Zend_Controller_Router_Route_Regex;
  */
 class Module
 {
+    use Translation {
+        translate as protected;
+        translatePlural as protected;
+    }
+
     /**
      * Module name
      *
@@ -300,6 +307,8 @@ class Module
         $this->runScript      = $basedir . '/run.php';
         $this->configScript   = $basedir . '/configuration.php';
         $this->metadataFile   = $basedir . '/module.info';
+
+        $this->translationDomain = $name;
     }
 
     /**
@@ -1418,9 +1427,10 @@ class Module
      */
     protected function registerLocales()
     {
-        if ($this->hasLocales()) {
-            Translator::registerDomain($this->name, $this->localedir);
+        if ($this->hasLocales() && StaticTranslator::$instance instanceof GettextTranslator) {
+            StaticTranslator::$instance->addTranslationDirectory($this->localedir, $this->name);
         }
+
         return $this;
     }
 
@@ -1632,23 +1642,5 @@ class Module
     {
         $this->routes[$name] = $route;
         return $this;
-    }
-
-    /**
-     * (non-PHPDoc)
-     * @see Translator::translate() For the function documentation.
-     */
-    protected function translate($string, $context = null)
-    {
-        return mt($this->name, $string, $context);
-    }
-
-    /**
-     * (non-PHPDoc)
-     * @see Translator::translatePlural() For the function documentation.
-     */
-    protected function translatePlural($textSingular, $textPlural, $number, $context = null)
-    {
-        return mtp($this->name, $textSingular, $textPlural, $number, $context);
     }
 }

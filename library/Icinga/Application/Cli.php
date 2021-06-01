@@ -41,6 +41,7 @@ class Cli extends ApplicationBootstrap
             ->loadLibraries()
             ->loadConfig()
             ->setupTimezone()
+            ->prepareInternationalization()
             ->setupInternationalization()
             ->parseBasicParams()
             ->setupLogger()

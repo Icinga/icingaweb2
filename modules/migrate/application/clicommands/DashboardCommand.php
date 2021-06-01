@@ -9,8 +9,8 @@ use Icinga\Application\Icinga;
 use Icinga\Application\Modules\DashboardContainer;
 use Icinga\Cli\Command;
 use Icinga\Application\Logger;
-use Icinga\Exception\IcingaException;
-use Icinga\Util\Translator;
+use ipl\I18n\GettextTranslator;
+use ipl\I18n\StaticTranslator;
 use ReflectionClass;
 
 class DashboardCommand extends Command
@@ -34,25 +34,23 @@ class DashboardCommand extends Command
         // Calling getDashboard() results in Url::fromPath() getting called as well == the CLI's death
         $paneItemsProperty = $moduleReflection->getProperty('paneItems');
         $paneItemsProperty->setAccessible(true);
-        // Again, no direct way to access this nor to let the module setup its own translation domain
-        $localeDirProperty = $moduleReflection->getProperty('localedir');
-        $localeDirProperty->setAccessible(true);
 
-        $locales = Translator::getAvailableLocaleCodes();
-        $modules = Icinga::app()->getModuleManager()->loadEnabledModules()->getLoadedModules();
+        /** @var GettextTranslator $translator */
+        $translator = StaticTranslator::$instance;
+
+        $locales = $translator->listLocales();
+        $modules = Icinga::app()->getModuleManager()->getLoadedModules();
         foreach ($this->listDashboardConfigs() as $path) {
             Logger::info('Migrating dashboard config: %s', $path);
 
             $config = Config::fromIni($path);
             foreach ($modules as $module) {
-                $localePath = $localeDirProperty->getValue($module);
-                if (! is_dir($localePath)) {
+                if (! $module->hasLocales()) {
                     // Modules without any translations are not affected
                     continue;
                 }
 
                 $launchConfigScriptMethod->invoke($module);
-                Translator::registerDomain($module->getName(), $localePath);
 
                 foreach ($locales as $locale) {
                     if ($locale === 'en_US') {
@@ -60,8 +58,8 @@ class DashboardCommand extends Command
                     }
 
                     try {
-                        Translator::setupLocale($locale);
-                    } catch (IcingaException $e) {
+                        $translator->setLocale($locale);
+                    } catch (Exception $e) {
                         Logger::debug('Ignoring locale "%s". Reason: %s', $locale, $e->getMessage());
                         continue;
                     }

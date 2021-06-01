@@ -5,10 +5,10 @@ namespace Icinga\Web;
 
 use Closure;
 use Icinga\Application\Icinga;
+use ipl\I18n\Translation;
 use Zend_View_Abstract;
 use Icinga\Authentication\Auth;
 use Icinga\Exception\ProgrammingError;
-use Icinga\Util\Translator;
 
 /**
  * Icinga view
@@ -54,6 +54,8 @@ use Icinga\Util\Translator;
  */
 class View extends Zend_View_Abstract
 {
+    use Translation;
+
     /**
      * Charset to be used - we only support UTF-8
      */
@@ -176,21 +178,6 @@ class View extends Zend_View_Abstract
             $this->helperFunctions[$name],
             $args
         );
-    }
-
-    public function translate($text, $context = null)
-    {
-        return Translator::translate($text, $this->translationDomain, $context);
-    }
-
-    /**
-     * Translate a plural string
-     *
-     * @see Translator::translatePlural()
-     */
-    public function translatePlural($textSingular, $textPlural, $number, $context = null)
-    {
-        return Translator::translatePlural($textSingular, $textPlural, $number, $this->translationDomain, $context);
     }
 
     /**

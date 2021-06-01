@@ -66,25 +66,11 @@ class GettextTranslationHelper
     private $locale;
 
     /**
-     * The path to the Zend application root
-     *
-     * @var string
-     */
-    private $appDir;
-
-    /**
      * The path to the module, if any
      *
      * @var string
      */
     private $moduleDir;
-
-    /**
-     * Path to the Icinga library
-     *
-     * @var string
-     */
-    protected $libDir;
 
     /**
      * The path to the file catalog
@@ -115,9 +101,7 @@ class GettextTranslationHelper
      */
     public function __construct(ApplicationBootstrap $bootstrap, $locale)
     {
-        $this->moduleMgr = $bootstrap->getModuleManager()->loadEnabledModules();
-        $this->appDir = $bootstrap->getApplicationDir();
-        $this->libDir = $bootstrap->getLibraryDir('Icinga');
+        $this->moduleMgr = $bootstrap->getModuleManager();
         $this->locale = $locale;
     }
 
@@ -159,32 +143,6 @@ class GettextTranslationHelper
     }
 
     /**
-     * Update the translation table for the main application
-     */
-    public function updateIcingaTranslations()
-    {
-        $this->catalogPath = tempnam(sys_get_temp_dir(), 'IcingaTranslation_');
-        $this->templatePath = tempnam(sys_get_temp_dir(), 'IcingaPot_');
-        $this->version = 'None'; // TODO: Access icinga version from a file or property
-
-        $this->moduleDir = null;
-        $this->tablePath = implode(
-            DIRECTORY_SEPARATOR,
-            array(
-                $this->appDir,
-                'locale',
-                $this->locale,
-                'LC_MESSAGES',
-                'icinga.po'
-            )
-        );
-
-        $this->createFileCatalog();
-        $this->createTemplateFile();
-        $this->updateTranslationTable();
-    }
-
-    /**
      * Update the translation table for a particular module
      *
      * @param   string      $module     The name of the module for which to update the translation table
@@ -212,25 +170,6 @@ class GettextTranslationHelper
         $this->createFileCatalog();
         $this->createTemplateFile();
         $this->updateTranslationTable();
-    }
-
-    /**
-     * Compile the translation table for the main application
-     */
-    public function compileIcingaTranslation()
-    {
-        $this->tablePath = implode(
-            DIRECTORY_SEPARATOR,
-            array(
-                $this->appDir,
-                'locale',
-                $this->locale,
-                'LC_MESSAGES',
-                'icinga.po'
-            )
-        );
-
-        $this->compileTranslationTable();
     }
 
     /**
@@ -296,8 +235,12 @@ class GettextTranslationHelper
                     '--language=PHP',
                     '--keyword=translate',
                     '--keyword=translate:1,2c',
+                    '--keyword=translateInDomain:2',
+                    '--keyword=translateInDomain:2,3c',
                     '--keyword=translatePlural:1,2',
                     '--keyword=translatePlural:1,2,4c',
+                    '--keyword=translatePluralInDomain:2,3',
+                    '--keyword=translatePluralInDomain:2,3,5c',
                     '--keyword=mt:2',
                     '--keyword=mt:2,3c',
                     '--keyword=mtp:2,3',
@@ -326,15 +269,15 @@ class GettextTranslationHelper
     private function updateHeader($path)
     {
         $headerInfo = array(
-            'title' => 'Icinga Web 2 - Head for multiple monitoring backends',
-            'copyright_holder' => 'Icinga Development Team',
+            'title' => $this->moduleMgr->getModule($this->moduleName)->getTitle(),
+            'copyright_holder' => 'TEAM NAME',
             'copyright_year' => date('Y'),
             'author_name' => 'FIRST AUTHOR',
             'author_mail' => 'EMAIL@ADDRESS',
             'author_year' => 'YEAR',
-            'project_name' => $this->moduleName ? ucfirst($this->moduleName) . ' Module' : 'Icinga Web 2',
+            'project_name' => ucfirst($this->moduleName) . ' Module',
             'project_version' => $this->version,
-            'project_bug_mail' => 'dev@icinga.com',
+            'project_bug_mail' => 'ISSUE TRACKER',
             'pot_creation_date' => date('Y-m-d H:iO'),
             'po_revision_date' => 'YEAR-MO-DA HO:MI+ZONE',
             'translator_name' => 'FULL NAME',
@@ -418,7 +361,7 @@ class GettextTranslationHelper
     {
         shell_exec(sprintf(
             "sed -i 's;%s;../../../..;g' %s",
-            $this->moduleDir ?: dirname($this->appDir),
+            $this->moduleDir,
             $path
         ));
     }
@@ -433,12 +376,7 @@ class GettextTranslationHelper
         $catalog = new File($this->catalogPath, 'w');
 
         try {
-            if ($this->moduleDir) {
-                $this->getSourceFileNames($this->moduleDir, $catalog);
-            } else {
-                $this->getSourceFileNames($this->appDir, $catalog);
-                $this->getSourceFileNames($this->libDir, $catalog);
-            }
+            $this->getSourceFileNames($this->moduleDir, $catalog);
         } catch (Exception $error) {
             throw $error;
         }

@@ -6,7 +6,8 @@ namespace Icinga\Module\Translation\Clicommands;
 use Icinga\Date\DateFormatter;
 use Icinga\Module\Translation\Cli\ArrayToTextTableHelper;
 use Icinga\Module\Translation\Cli\TranslationCommand;
-use Icinga\Util\Translator;
+use ipl\I18n\GettextTranslator;
+use ipl\I18n\StaticTranslator;
 
 /**
  * Timestamp test helper
@@ -89,12 +90,19 @@ class TestCommand extends TranslationCommand
         foreach ($this->params->getAllStandalone() as $l) {
             $this->locales[] = $l;
         }
-        // TODO: get from to environment by default?
+
+        if (empty($this->locales)) {
+            /** @var GettextTranslator $translator */
+            $translator = StaticTranslator::$instance;
+            $this->locales = $translator->listLocales();
+        }
     }
 
-    protected function callTranslated($callback, $arguments, $locale = 'C')
+    protected function callTranslated($callback, $arguments, $locale = 'en_US')
     {
-        Translator::setupLocale($locale);
+        /** @var GettextTranslator $translator */
+        $translator = StaticTranslator::$instance;
+        $translator->setLocale($locale);
         return call_user_func_array($callback, $arguments);
     }
 

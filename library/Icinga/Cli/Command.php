@@ -8,10 +8,12 @@ use Icinga\Application\Config;
 use Icinga\Application\Logger;
 use Icinga\Exception\IcingaException;
 use Icinga\Exception\NotReadableError;
-use Icinga\Util\Translator;
+use ipl\I18n\Translation;
 
 abstract class Command
 {
+    use Translation;
+
     protected $app;
     protected $docs;
 
@@ -60,6 +62,8 @@ abstract class Command
         $this->isVerbose    = $this->params->shift('verbose', false);
         $this->isDebugging  = $this->params->shift('debug', false);
         $this->configs      = [];
+
+        $this->translationDomain = $moduleName ?: 'icinga';
 
         if ($this->loadEnabledModules) {
             try {
@@ -132,21 +136,6 @@ abstract class Command
     public function showTrace()
     {
         return $this->trace;
-    }
-
-    /**
-     * Translate a string
-     *
-     * Autoselects the module domain, if any, and falls back to the global one if no translation could be found.
-     *
-     * @param   string  $text   The string to translate
-     *
-     * @return  string          The translated string
-     */
-    public function translate($text)
-    {
-        $domain = $this->moduleName === null ? 'icinga' : $this->moduleName;
-        return Translator::translate($text, $domain);
     }
 
     public function fail($msg)

@@ -1,8 +1,13 @@
 <?php
 
-use Icinga\Util\Translator;
+use ipl\I18n\Locale;
+use ipl\I18n\GettextTranslator;
+use ipl\I18n\StaticTranslator;
 
-$lang = Translator::splitLocaleCode()->language;
+/** @var GettextTranslator $translator */
+$translator = StaticTranslator::$instance;
+
+$lang = (new Locale())->parseLocale($translator->getLocale())->language;
 $showFullscreen = $this->layout()->showFullscreen;
 $innerLayoutScript = $this->layout()->innerLayout . '.phtml';
 

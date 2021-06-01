@@ -6,6 +6,9 @@ namespace Icinga\Application;
 require_once __DIR__ . '/EmbeddedWeb.php';
 
 use ErrorException;
+use ipl\I18n\GettextTranslator;
+use ipl\I18n\Locale;
+use ipl\I18n\StaticTranslator;
 use Zend_Controller_Action_HelperBroker;
 use Zend_Controller_Front;
 use Zend_Controller_Router_Route;
@@ -16,7 +19,6 @@ use Icinga\Authentication\Auth;
 use Icinga\User;
 use Icinga\Util\DirectoryIterator;
 use Icinga\Util\TimezoneDetect;
-use Icinga\Util\Translator;
 use Icinga\Web\Controller\Dispatcher;
 use Icinga\Web\Menu;
 use Icinga\Web\Navigation\Navigation;
@@ -91,6 +93,7 @@ class Web extends EmbeddedWeb
             ->setupNotifications()
             ->setupResponse()
             ->setupZendMvc()
+            ->prepareInternationalization()
             ->setupModuleManager()
             ->loadSetupModuleIfNecessary()
             ->loadEnabledModules()
@@ -493,9 +496,7 @@ class Web extends EmbeddedWeb
      *
      * Uses the preferred user language or the browser suggested language or our default.
      *
-     * @return  string                      Detected locale code
-     *
-     * @see     Translator::DEFAULT_LOCALE  For the default locale code.
+     * @return string Detected locale code
      */
     protected function detectLocale()
     {
@@ -505,9 +506,14 @@ class Web extends EmbeddedWeb
         ) {
             return $locale;
         }
+
+        /** @var GettextTranslator $translator */
+        $translator = StaticTranslator::$instance;
+
         if (isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
-            return Translator::getPreferredLocaleCode($_SERVER['HTTP_ACCEPT_LANGUAGE']);
+            return (new Locale())->getPreferred($_SERVER['HTTP_ACCEPT_LANGUAGE'], $translator->listLocales());
         }
-        return Translator::DEFAULT_LOCALE;
+
+        return $translator->getDefaultLocale();
     }
 }
