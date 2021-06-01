@@ -217,7 +217,7 @@ class HomeAndPaneForm extends CompatForm
 
             if ($this->getPopulatedValue('btn_update')) {
                 $newHome = $this->getPopulatedValue('home', $orgHome->getName());
-                $orgHomeId = $orgHome->getIdentifier();
+                $homeId = $orgHome->getIdentifier();
 
                 if ($pane->getOwner() === DashboardHome::DEFAULT_IW2_USER && $orgHome->getName() !== $newHome) {
                     Notification::error(sprintf(
@@ -228,25 +228,20 @@ class HomeAndPaneForm extends CompatForm
                     return;
                 }
 
-                // Begin DB transaction
-                $db->beginTransaction();
+                $createNewHome = true;
+                if ($this->dashboard->hasHome($newHome)) {
+                    $home = $this->dashboard->getHome($newHome);
+                    $homeId = $home->getIdentifier();
 
-                $homeId = $orgHomeId;
-                if (! $this->dashboard->hasHome($newHome) || /** prevents from failing foreign key constraint */
-                    ($this->dashboard->getHome($newHome)->getOwner() === DashboardHome::DEFAULT_IW2_USER &&
-                    $this->dashboard->getHome($newHome)->getName() !== DashboardHome::DEFAULT_HOME)) {
-                    $label = $newHome;
+                    $createNewHome = false;
 
-                    if ($this->dashboard->hasHome($newHome)) {
-                        $label = $this->dashboard->getHome($newHome)->getLabel();
+                    if ($home->getName() !== $orgHome->getName()) {
+                        $this->dashboard->loadDashboards($home->getName());
                     }
-
-                    $db->insert('dashboard_home', ['name' => $newHome, 'label' => $label, 'owner' => $username]);
-
-                    $homeId = $db->lastInsertId();
-                } elseif ($orgHome->getName() !== $newHome) {
-                    $homeId = $this->dashboard->getHome($newHome)->getIdentifier();
                 }
+
+                // Begin the DB transaction
+                $db->beginTransaction();
 
                 $paneUpdated = false;
                 if ($this->getPopulatedValue('enable_pane') === 'y') {
@@ -268,7 +263,7 @@ class HomeAndPaneForm extends CompatForm
                             'dashboard_id = ?'  => $pane->getPaneId(),
                         ]);
 
-                    } elseif ($pane->getOwner() === DashboardHome::DEFAULT_IW2_USER) { // System panes
+                    } elseif (! $pane->isUserWidget()) { // System panes
                         $paneId = DashboardHome::getSHA1($username . $newHome . $pane->getName());
 
                         $db->insert('dashboard_override', [
@@ -278,6 +273,24 @@ class HomeAndPaneForm extends CompatForm
                             'label'         => $this->getValue('title')
                         ]);
                     } else { // Custom panes
+                        if ($createNewHome || ($newHome !== DashboardHome::DEFAULT_HOME &&
+                            $this->dashboard->getActiveHome()->getOwner() === DashboardHome::DEFAULT_IW2_USER)) {
+                            $label = $newHome;
+
+                            if (! $createNewHome) {
+                                $activeHome = $this->dashboard->getActiveHome();
+                                $label = $activeHome->getLabel();
+                            }
+
+                            $db->insert('dashboard_home', [
+                                'name'  => $newHome,
+                                'label' => $label,
+                                'owner' => $username
+                            ]);
+
+                            $homeId = $db->lastInsertId();
+                        }
+
                         $db->update('dashboard', [
                             'home_id'   => $homeId,
                             'name'      => $this->getValue('name'),

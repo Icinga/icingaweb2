@@ -28,7 +28,7 @@ class DashboardWithPredefinableActiveName extends Dashboard
 {
     public $activeName = '';
 
-    public function getTabs($defaultPane = false)
+    public function getTabs()
     {
         return Mockery::mock('Icinga\Web\Widget\Tabs')
             ->shouldReceive('getActiveName')->andReturn($this->activeName)

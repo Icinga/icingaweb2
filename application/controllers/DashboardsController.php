@@ -39,7 +39,7 @@ class DashboardsController extends CompatController
 
         $activeHome = $this->dashboard->getActiveHome();
 
-        if (! $this->dashboard || ! $activeHome || ! $activeHome->hasPanes()) {
+        if (! $activeHome || ! $activeHome->hasPanes()) {
             $this->getTabs()->add('dashboard', [
                 'active'    => true,
                 'title'     => $this->translate('Dashboard'),

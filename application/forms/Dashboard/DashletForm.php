@@ -409,9 +409,6 @@ class DashletForm extends CompatForm
             return;
         }
 
-        // Begin DB transaction
-        $db->beginTransaction();
-
         $createNewHome = true;
         if ($this->dashboard->hasHome($homeName)) {
             $home = $this->dashboard->getHome($homeName);
@@ -420,8 +417,7 @@ class DashletForm extends CompatForm
             $createNewHome = false;
 
             if ($orgHome->getName() !== $home->getName()) {
-                $this->dashboard->loadDashboards($homeName);
-                $homeId = $this->dashboard->getActiveHome()->getIdentifier();
+                $this->dashboard->loadDashboards($home->getName());
             }
         }
 
@@ -447,6 +443,9 @@ class DashletForm extends CompatForm
         if ($this->getPopulatedValue('enable_dashlet') === 'y') {
             $dashletDisabled = false;
         }
+
+        // Begin DB transaction
+        $db->beginTransaction();
 
         if (! $orgDashlet->isUserWidget()) { // System dashlets
             // Since system dashlets can be edited by multiple users, we need to change
