@@ -8,11 +8,11 @@
     "use strict";
 
     try {
-        var SearchBar = require('icinga/ipl/widget/SearchBar');
-        var SearchEditor = require('icinga/ipl/widget/SearchEditor');
-        var FilterInput = require('icinga/ipl/widget/FilterInput');
-        var TermInput = require('icinga/ipl/widget/TermInput');
-        var Completer = require('icinga/ipl/widget/Completer');
+        var SearchBar = require('icinga/icinga-php-library/widget/SearchBar');
+        var SearchEditor = require('icinga/icinga-php-library/widget/SearchEditor');
+        var FilterInput = require('icinga/icinga-php-library/widget/FilterInput');
+        var TermInput = require('icinga/icinga-php-library/widget/TermInput');
+        var Completer = require('icinga/icinga-php-library/widget/Completer');
     } catch (e) {
         console.warn('Unable to provide input enrichments. Libraries not available:', e);
         return;

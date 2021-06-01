@@ -8,8 +8,8 @@
     'use strict';
 
     try {
-        var Flatpickr = require('icinga/ipl/vendor/flatpickr');
-        var notjQuery = require('icinga/ipl/notjQuery');
+        var Flatpickr = require('icinga/icinga-php-library/vendor/flatpickr');
+        var notjQuery = require('icinga/icinga-php-library/notjQuery');
     } catch (e) {
         console.warn('Unable to provide datetime picker. Libraries not available:', e);
         return;
@@ -155,23 +155,23 @@
     DatetimePicker.prototype.loadFlatpickrLocale = function () {
         switch (this.icinga.config.locale) {
             case 'ar':
-                return require('icinga/ipl/vendor/flatpickr/l10n/ar').Arabic;
+                return require('icinga/icinga-php-library/vendor/flatpickr/l10n/ar').Arabic;
             case 'de':
-                return require('icinga/ipl/vendor/flatpickr/l10n/de').German;
+                return require('icinga/icinga-php-library/vendor/flatpickr/l10n/de').German;
             case 'es':
-                return require('icinga/ipl/vendor/flatpickr/l10n/es').Spanish;
+                return require('icinga/icinga-php-library/vendor/flatpickr/l10n/es').Spanish;
             case 'fi':
-                return require('icinga/ipl/vendor/flatpickr/l10n/fi').Finnish;
+                return require('icinga/icinga-php-library/vendor/flatpickr/l10n/fi').Finnish;
             case 'it':
-                return require('icinga/ipl/vendor/flatpickr/l10n/it').Italian;
+                return require('icinga/icinga-php-library/vendor/flatpickr/l10n/it').Italian;
             case 'ja':
-                return require('icinga/ipl/vendor/flatpickr/l10n/ja').Japanese;
+                return require('icinga/icinga-php-library/vendor/flatpickr/l10n/ja').Japanese;
             case 'pt':
-                return require('icinga/ipl/vendor/flatpickr/l10n/pt').Portuguese;
+                return require('icinga/icinga-php-library/vendor/flatpickr/l10n/pt').Portuguese;
             case 'ru':
-                return require('icinga/ipl/vendor/flatpickr/l10n/ru').Russian;
+                return require('icinga/icinga-php-library/vendor/flatpickr/l10n/ru').Russian;
             case 'uk':
-                return require('icinga/ipl/vendor/flatpickr/l10n/uk').Ukrainian;
+                return require('icinga/icinga-php-library/vendor/flatpickr/l10n/uk').Ukrainian;
             default:
                 return 'default';
         }
