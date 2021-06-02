@@ -213,6 +213,7 @@ class PreferenceForm extends Form
             $languages['autodetect'] = sprintf($this->translate('Browser (%s)', 'preferences.form'), $locale);
         }
 
+        $availableLocales[] = $translator->getDefaultLocale();
         foreach ($availableLocales as $language) {
             $languages[$language] = $language;
         }
