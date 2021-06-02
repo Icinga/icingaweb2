@@ -28,6 +28,13 @@ class UserGroupBackendForm extends ConfigForm
     protected $backendToLoad;
 
     /**
+     * Known custom backends
+     *
+     * @var array
+     */
+    protected $customBackends;
+
+    /**
      * Create a user group backend by using the given form's values and return its inspection results
      *
      * Returns null for non-inspectable backends.
@@ -51,6 +58,7 @@ class UserGroupBackendForm extends ConfigForm
     {
         $this->setName('form_config_usergroupbackend');
         $this->setSubmitLabel($this->translate('Save Changes'));
+        $this->customBackends = UserGroupBackend::getCustomBackendConfigForms();
     }
 
     /**
@@ -71,6 +79,10 @@ class UserGroupBackendForm extends ConfigForm
             case 'msldap':
                 return new LdapUserGroupBackendForm();
             default:
+                if (isset($this->customBackends[$type])) {
+                    return new $this->customBackends[$type]();
+                }
+
                 throw new InvalidArgumentException(
                     sprintf($this->translate('Invalid backend type "%s" provided'), $type)
                 );
@@ -174,12 +186,14 @@ class UserGroupBackendForm extends ConfigForm
      */
     public function createElements(array $formData)
     {
-        // TODO(jom): We did not think about how to configure custom group backends yet!
         $backendTypes = array(
             'db'        => $this->translate('Database'),
             'ldap'      => 'LDAP',
             'msldap'    => 'ActiveDirectory'
         );
+
+        $customBackendTypes = array_keys($this->customBackends);
+        $backendTypes += array_combine($customBackendTypes, $customBackendTypes);
 
         $backendType = isset($formData['type']) ? $formData['type'] : null;
         if ($backendType === null) {

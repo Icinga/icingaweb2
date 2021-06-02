@@ -43,4 +43,14 @@ interface UserGroupBackendInterface
      * @return  null|string     The name of the backend or null in case this information is not available
      */
     public function getUserBackendName($username);
+
+    /**
+     * Return this backend's configuration form class path
+     *
+     * This is not part of the interface to not break existing implementations.
+     * If you need a custom backend form, implement this method.
+     *
+     * @return string
+     */
+    //public static function getConfigurationFormClass();
 }

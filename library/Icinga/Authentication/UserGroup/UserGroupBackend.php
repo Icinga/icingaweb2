@@ -69,6 +69,22 @@ class UserGroupBackend
     }
 
     /**
+     * Get config forms of all custom user group backends
+     */
+    public static function getCustomBackendConfigForms()
+    {
+        $customBackendConfigForms = [];
+        static::registerCustomUserGroupBackends();
+        foreach (self::$customBackends as $customBackendType => $customBackendClass) {
+            if (method_exists($customBackendClass, 'getConfigurationFormClass')) {
+                $customBackendConfigForms[$customBackendType] = $customBackendClass::getConfigurationFormClass();
+            }
+        }
+
+        return $customBackendConfigForms;
+    }
+
+    /**
      * Return the class for the given custom user group backend
      *
      * @param   string  $identifier     The identifier of the custom user group backend
