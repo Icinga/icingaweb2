@@ -598,7 +598,9 @@ class Zend_Form_Element implements Zend_Validate_Interface
         $valueFiltered = $this->_value;
 
         if ($this->isArray() && is_array($valueFiltered)) {
-            array_walk_recursive($valueFiltered, array($this, '_filterValue'));
+            array_walk_recursive($valueFiltered, function (&$val, $key) {
+                $this->_filterValue($val, $key);
+            });
         } else {
             $this->_filterValue($valueFiltered, $valueFiltered);
         }
