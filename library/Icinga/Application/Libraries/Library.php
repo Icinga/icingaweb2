@@ -120,6 +120,22 @@ class Library
     }
 
     /**
+     * Check whether the given package is required
+     *
+     * @param string $vendor The vendor of the project
+     * @param string $project The project's name
+     *
+     * @return bool
+     */
+    public function isRequired($vendor, $project)
+    {
+        // Ensure the parts are lowercase and separated by dashes, not capital letters
+        $project = strtolower(join('-', preg_split('/\w(?=[A-Z])/', $project)));
+
+        return isset($this->metaData()['require'][strtolower($vendor) . '/' . $project]);
+    }
+
+    /**
      * Get this library's JS assets
      *
      * @return string[] Asset paths

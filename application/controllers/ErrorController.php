@@ -21,7 +21,8 @@ class ErrorController extends ActionController
     /**
      * Regular expression to match exceptions resulting from missing functions/classes
      */
-    const MISSING_DEP_ERROR = "/Uncaught Error:.*(?:undefined function (\S+)|Class '([^']+)' not found).* in ([^:]+)/";
+    const MISSING_DEP_ERROR =
+        "/Uncaught Error:.*(?:undefined function (\S+)|Class ['\"]([^']+)['\"] not found).* in ([^:]+)/";
 
     /**
      * {@inheritdoc}
@@ -108,9 +109,10 @@ class ErrorController extends ActionController
                         }
                     }
 
-                    if (preg_match('/^(?:Icinga\\\Module\\\(\w+)|(\w+)\\\)/', $match[1] ?: $match[2], $natch)) {
+                    if (preg_match('/^(?:Icinga\\\Module\\\(\w+)|(\w+)\\\(\w+))/', $match[1] ?: $match[2], $natch)) {
                         $this->view->requiredModule = isset($natch[1]) ? strtolower($natch[1]) : null;
-                        $this->view->requiredLibrary = isset($natch[2]) ? $natch[2] : null;
+                        $this->view->requiredVendor = isset($natch[2]) ? $natch[2] : null;
+                        $this->view->requiredProject = isset($natch[3]) ? $natch[3] : null;
                     }
                 }
 
