@@ -29,6 +29,11 @@ For minor versions not branched off git master you need
 to manually backport any and all commits from the
 master branch which should be part of this release.
 
+### Docker
+
+[Build the Docker image locally.](https://github.com/Icinga/docker-icingaweb2#build-it-yourself)
+Ensure it works as expected.
+
 ### Authors
 
 Update the [.mailmap](.mailmap) and [AUTHORS](AUTHORS) files:
