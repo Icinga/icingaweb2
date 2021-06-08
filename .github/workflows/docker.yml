@@ -1,0 +1,15 @@
+name: Docker image
+
+on:
+  workflow_dispatch:
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Docker image
+        uses: Icinga/docker-icingaweb2@master
+        env:
+          INPUT_TOKEN: '${{ github.token }}'
+          DOCKER_HUB_PASSWORD: '${{ secrets.DOCKER_HUB_PERSONAL_TOKEN }}'
