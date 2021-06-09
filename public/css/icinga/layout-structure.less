@@ -26,7 +26,7 @@ body {
 }
 
 #sidebar {
-  width: 16em;
+  width: @sidebar-width;
   display: flex;
   flex-direction: column;
   position: relative;
@@ -37,6 +37,7 @@ body {
   flex: 1;
   display: flex;
   z-index: 1;
+  max-width: calc(~"100% - "@sidebar-width);
 }
 
 .iframe {
