@@ -275,7 +275,10 @@ class BackendConfigForm extends ConfigForm
 
         if (($el = $this->getElement('skip_validation')) === null || false === $el->isChecked()) {
             $resourceConfig = ResourceFactory::getResourceConfig($this->getValue('resource'));
-            if (! self::isValidIdoSchema($this, $resourceConfig) || !self::isValidIdoInstance($this, $resourceConfig)) {
+            if (! self::isValidIdoSchema($this, $resourceConfig)
+                || (! $this->getElement('disabled')->isChecked()
+                    && ! self::isValidIdoInstance($this, $resourceConfig))
+            ) {
                 if ($el === null) {
                     $this->addSkipValidationCheckbox();
                 }
