@@ -79,7 +79,7 @@
         inputs.forEach(function (input) {
             var enrichment = _this._enrichments.get(input);
             if (enrichment) {
-                _this._cachedEnrichments[_this.icinga.utils.getDomPath(input).join(' ')] = enrichment;
+                _this._cachedEnrichments[_this.icinga.utils.getDomPath(input).join(' > ')] = enrichment;
             }
         });
     };
