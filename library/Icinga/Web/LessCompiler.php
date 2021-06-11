@@ -56,6 +56,13 @@ class LessCompiler
     protected $theme;
 
     /**
+     * Path of the LESS theme mode
+     *
+     * @var string
+     */
+    protected $themeMode;
+
+    /**
      * Create a new LESS compiler
      */
     public function __construct()
@@ -127,6 +134,11 @@ class LessCompiler
         if ($this->theme !== null) {
             $lessFiles[] = $this->theme;
         }
+
+        if ($this->themeMode !== null) {
+            $lessFiles[] = $this->themeMode;
+        }
+
         return $lessFiles;
     }
 
@@ -143,6 +155,23 @@ class LessCompiler
             $this->theme = $theme;
         } else {
             Logger::error('Can\t load theme %s. Make sure that the theme exists and is readable', $theme);
+        }
+        return $this;
+    }
+
+    /**
+     * Set the path to the LESS theme mode
+     *
+     * @param   string  $themeMode  Path to the LESS theme mode
+     *
+     * @return  $this
+     */
+    public function setThemeMode($themeMode)
+    {
+        if (is_file($themeMode) && is_readable($themeMode)) {
+            $this->themeMode = $themeMode;
+        } else {
+            Logger::error('Can\t load theme mode %s. Make sure that the theme mode exists and is readable', $themeMode);
         }
         return $this;
     }
@@ -214,6 +243,10 @@ class LessCompiler
 
         if ($this->theme !== null) {
             $this->source .= file_get_contents($this->theme);
+        }
+
+        if ($this->themeMode !== null) {
+            $this->source .= file_get_contents($this->themeMode);
         }
 
         return preg_replace(
