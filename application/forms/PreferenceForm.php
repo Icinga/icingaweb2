@@ -100,6 +100,7 @@ class PreferenceForm extends Form
         $webPreferences = $this->preferences->get('icingaweb', array());
         foreach ($this->getValues() as $key => $value) {
             if ($value === ''
+                || $value === null
                 || $value === 'autodetect'
                 || ($key === 'theme' && $value === Config::app()->get('themes', 'default', StyleSheet::DEFAULT_THEME))
             ) {
@@ -192,6 +193,7 @@ class PreferenceForm extends Form
                     array(
                         'label'         => $this->translate('Theme', 'Form element label'),
                         'multiOptions'  => $themes,
+                        'autosubmit'    => true,
                         'value'         => $this->preferences->getValue(
                             'icingaweb',
                             'theme',
@@ -201,6 +203,31 @@ class PreferenceForm extends Form
                 );
             }
         }
+
+        if (isset($formData['theme']) && $formData['theme'] !== StyleSheet::DEFAULT_THEME) {
+            $file = file_get_contents(StyleSheet::getThemeFile($formData['theme']));
+            if (! preg_match(StyleSheet::REGEX_ALL_MODE_QUERY, $file)) {
+                $disabled = ['', 'light', 'system'];
+                if (preg_match(StyleSheet::REGEX_AUTO_MODE_QUERY, $file)) {
+                    $value = 'system';
+                    $disabled = ['', 'light'];
+                }
+            }
+        }
+        $this->addElement(
+            'radio',
+            'theme_mode',
+            [
+                'label'         => $this->translate('Theme Mode'),
+                'multiOptions'  => [
+                    ''          => $this->translate('Dark'),
+                    'light'     => $this->translate('Light'),
+                    'system'      => $this->translate('System')
+                ],
+                'value'         => isset($value) ? $value : '',
+                'disable'       => isset($disabled) ? $disabled : [],
+            ]
+        );
 
         /** @var GettextTranslator $translator */
         $translator = StaticTranslator::$instance;
