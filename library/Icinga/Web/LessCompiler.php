@@ -174,7 +174,7 @@ class LessCompiler
         foreach ($this->moduleLessFiles as $moduleName => $moduleLessFiles) {
             $moduleCss .= '.icinga-module.module-' . $moduleName . ' {';
 
-            // TODO: Import these. (https://github.com/leafo/lessphp/issues/515)
+            // TODO: Import these.
             foreach ($this->moduleRequires as $requiredFile => $modules) {
                 if (in_array($moduleName, $modules, true)) {
                     $moduleCss .= file_get_contents($requiredFile);
