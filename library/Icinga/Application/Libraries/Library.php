@@ -189,7 +189,7 @@ class Library
     protected function metaData()
     {
         if ($this->metaData === null) {
-            $metaData = file_get_contents($this->path . DIRECTORY_SEPARATOR . 'composer.json');
+            $metaData = @file_get_contents($this->path . DIRECTORY_SEPARATOR . 'composer.json');
             if ($metaData === false) {
                 throw new ConfigurationError('Library at "%s" is not a composerized project', $this->path);
             }
