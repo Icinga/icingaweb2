@@ -19,18 +19,25 @@ by this module.
 
 ### Default Settings <a id="monitoring-module-configuration-settings"></a>
 
-Option                        | Description
-------------------------------|-----------------------------------------------
-acknowledge_expire            | **Optional.** Check "Use Expire Time" in Acknowledgement dialog by default. Defaults to **0 (false)**.
-acknowledge_expire_time       | **Optional.** Set default value for "Expire Time" in Acknowledgement dialog, its calculated as now + this setting. Format is a [PHP Dateinterval](http://www.php.net/manual/en/dateinterval.construct.php). Defaults to **1 hour (PT1H)**.
-acknowledge_notify            | **Optional.** Check "Send Notification" in Acknowledgement dialog by default. Defaults to **1 (true)**.
-acknowledge_persistent        | **Optional.** Check "Persistent Comment" in Acknowledgement dialog by default. Defaults to **0 (false)**.
-acknowledge_sticky            | **Optional.** Check "Sticky Acknowledgement" in Acknowledgement dialog by default. Defaults to **0 (false)**.
-comment_expire                | **Optional.** Check "Use Expire Time" in Comment dialog by default. Defaults to **0 (false)**.
-comment_expire_time           | **Optional.** Set default value for "Expire Time" in Comment dialog, its calculated as now + this setting. Format is a [PHP Dateinterval](http://www.php.net/manual/en/dateinterval.construct.php). Defaults to **1 hour (PT1H)**.
-custom_notification_forced    | **Optional.** Check "Forced" in Custom Notification dialog by default. Defaults to **0 (false)**.
-hostcheck_all_services        | **Optional.** Check "All Services" in Schedule Host Check dialog by default. Defaults to **0 (false)**.
-hostdowntime_all_services     | **Optional.** Check "All Services" in Schedule Host Downtime dialog by default. Defaults to **0 (false)**.
+Option                            | Description
+----------------------------------|-----------------------------------------------
+acknowledge_expire                | **Optional.** Check "Use Expire Time" in Acknowledgement dialog by default. Defaults to **0 (false)**.
+acknowledge_expire_time           | **Optional.** Set default value for "Expire Time" in Acknowledgement dialog, its calculated as now + this setting. Format is a [PHP Dateinterval](http://www.php.net/manual/en/dateinterval.construct.php). Defaults to **1 hour (PT1H)**.
+acknowledge_notify                | **Optional.** Check "Send Notification" in Acknowledgement dialog by default. Defaults to **1 (true)**.
+acknowledge_persistent            | **Optional.** Check "Persistent Comment" in Acknowledgement dialog by default. Defaults to **0 (false)**.
+acknowledge_sticky                | **Optional.** Check "Sticky Acknowledgement" in Acknowledgement dialog by default. Defaults to **0 (false)**.
+comment_expire                    | **Optional.** Check "Use Expire Time" in Comment dialog by default. Defaults to **0 (false)**.
+hostdowntime_comment_text         | **Optional.** Set default text for "Comment" in Host Downtime dialog by default.
+servicedowntime_comment_text      | **Optional.** Set default text for "Comment" in Service Downtime dialog by default.
+comment_expire_time               | **Optional.** Set default value for "Expire Time" in Comment dialog, its calculated as now + this setting. Format is a [PHP Dateinterval](http://www.php.net/manual/en/dateinterval.construct.php). Defaults to **1 hour (PT1H)**.
+custom_notification_forced        | **Optional.** Check "Forced" in Custom Notification dialog by default. Defaults to **0 (false)**.
+hostcheck_all_services            | **Optional.** Check "All Services" in Schedule Host Check dialog by default. Defaults to **0 (false)**.
+hostdowntime_end_fixed            | **Optional.** Set default value for "End Time" in Schedule Host Downtime dialog for **Fixed** downtime, its calculated as now + this setting. Format is a [PHP Dateinterval](http://www.php.net/manual/en/dateinterval.construct.php). Defaults to **1 hour (PT1H)**.
+hostdowntime_end_flexible         | **Optional.** Set default value for "End Time" in Schedule Host Downtime dialog for **Flexible** downtime, its calculated as now + this setting. Format is a [PHP Dateinterval](http://www.php.net/manual/en/dateinterval.construct.php). Defaults to **1 hour (PT1H)**.
+hostdowntime_flexible_duration    | **Optional.** Set default value for "Flexible Duration" in Schedule Host Downtime dialog for **Flexible** downtime. Format is a [PHP Dateinterval](http://www.php.net/manual/en/dateinterval.construct.php). Defaults to **2 hour (PT2H)**.
+servicedowntime_end_fixed         | **Optional.** Set default value for "End Time" in Schedule Service Downtime dialog for **Fixed** downtime, its calculated as now + this setting. Format is a [PHP Dateinterval](http://www.php.net/manual/en/dateinterval.construct.php). Defaults to **1 hour (PT1H)**.
+servicedowntime_end_flexible      | **Optional.** Set default value for "End Time" in Schedule Service Downtime dialog for **Flexible** downtime, its calculated as now + this setting. Format is a [PHP Dateinterval](http://www.php.net/manual/en/dateinterval.construct.php). Defaults to **1 hour (PT1H)**.
+servicedowntime_flexible_duration | **Optional.** Set default value for "Flexible Duration" in Schedule Service Downtime dialog for **Flexible** downtime. Format is a [PHP Dateinterval](http://www.php.net/manual/en/dateinterval.construct.php). Defaults to **2 hour (PT2H)**.
 
 Example for having acknowledgements with 2 hours expire time by default.
 

@@ -5,6 +5,7 @@ namespace Icinga\Module\Monitoring\Forms\Command\Object;
 
 use DateTime;
 use DateInterval;
+use Icinga\Application\Config;
 use Icinga\Module\Monitoring\Command\Object\ScheduleServiceDowntimeCommand;
 use Icinga\Web\Notification;
 use Icinga\Web\Request;
@@ -24,18 +25,41 @@ class ScheduleServiceDowntimeCommandForm extends ObjectsCommandForm
      */
     const FLEXIBLE = 'flexible';
 
+    /** @var DateTime downtime start */
+    protected $start;
+
+    /** @var DateTime fixed downtime end */
+    protected $fixedEnd;
+
+    /** @var DateTime flexible downtime end */
+    protected $flexibleEnd;
+
+    /** @var DateInterval flexible downtime duration */
+    protected $flexibleDuration;
+
+    /** @var mixed Comment text */
+    protected $commentText;
+
     /**
      * Initialize this form
      */
     public function init()
     {
-        $this->addDescription($this->translate(
-            'This command is used to schedule host and service downtimes. During the specified downtime,'
-            . ' Icinga will not send notifications out about the hosts and services. When the scheduled'
-            . ' downtime expires, Icinga will send out notifications for the hosts and services as it'
-            . ' normally would. Scheduled downtimes are preserved across program shutdowns and'
-            . ' restarts.'
-        ));
+        $this->start = new DateTime();
+
+        $config = Config::module('monitoring');
+
+        $this->commentText = $config->get('settings', 'servicedowntime_comment_text');
+        $fixedEnd = clone $this->start;
+        $fixed = $config->get('settings', 'servicedowntime_end_fixed', 'PT1H');
+        $this->fixedEnd = $fixedEnd->add(new DateInterval($fixed));
+
+        $flexibleEnd = clone $this->start;
+        $flexible = $config->get('settings', 'servicedowntime_end_flexible', 'PT1H');
+        $this->flexibleEnd = $flexibleEnd->add(new DateInterval($flexible));
+
+        $flexibleDuration = $config->get('settings', 'servicedowntime_flexible_duration', 'PT2H');
+        $this->flexibleDuration = new DateInterval($flexibleDuration);
     }
 
     /**
@@ -53,9 +77,16 @@ class ScheduleServiceDowntimeCommandForm extends ObjectsCommandForm
      */
     public function createElements(array $formData = array())
     {
-        $start = new DateTime;
-        $end = clone $start;
-        $end->add(new DateInterval('PT1H'));
+        $this->addDescription($this->translate(
+            'This command is used to schedule host and service downtimes. During the specified downtime,'
+            . ' Icinga will not send notifications out about the hosts and services. When the scheduled'
+            . ' downtime expires, Icinga will send out notifications for the hosts and services as it'
+            . ' normally would. Scheduled downtimes are preserved across program shutdowns and'
+            . ' restarts.'
+        ));
+
+        $isFlexible = (bool) isset($formData['type']) && $formData['type'] === self::FLEXIBLE;
+
         $this->addElements(array(
             array(
                 'textarea',
@@ -68,37 +99,39 @@ class ScheduleServiceDowntimeCommandForm extends ObjectsCommandForm
                         . ' the host or service that is having problems. Make sure you enter a brief description of'
                         . ' what you are doing.'
                     ),
-                    'attribs'       => array('class' => 'autofocus')
+                    'attribs'       => array('class' => 'autofocus'),
+                    'value'         => $this->commentText
                 )
             ),
             array(
                 'dateTimePicker',
                 'start',
                 array(
-                    'required'      => true,
-                    'label'         => $this->translate('Start Time'),
-                    'description'   => $this->translate('Set the start date and time for the downtime.'),
-                    'value'         => $start
+                    'required'        => true,
+                    'label'           => $this->translate('Start Time'),
+                    'description'     => $this->translate('Set the start date and time for the downtime.'),
+                    'value'           => $this->start
                 )
             ),
             array(
                 'dateTimePicker',
                 'end',
                 array(
-                    'required'      => true,
-                    'label'         => $this->translate('End Time'),
-                    'description'   => $this->translate('Set the end date and time for the downtime.'),
-                    'value'         => $end
+                    'required'        => true,
+                    'label'           => $this->translate('End Time'),
+                    'description'     => $this->translate('Set the end date and time for the downtime.'),
+                    'preserveDefault' => true,
+                    'value'           => $isFlexible ? $this->flexibleEnd : $this->fixedEnd
                 )
             ),
             array(
                 'select',
                 'type',
                 array(
-                    'required'      => true,
-                    'autosubmit'    => true,
-                    'label'         => $this->translate('Type'),
-                    'description'   => $this->translate(
+                    'required'        => true,
+                    'autosubmit'      => true,
+                    'label'           => $this->translate('Type'),
+                    'description'     => $this->translate(
                         'If you select the fixed option, the downtime will be in effect between the start and end'
                         . ' times you specify whereas a flexible downtime starts when the host or service enters a'
                         . ' problem state sometime between the start and end times you specified and lasts as long'
@@ -128,7 +161,7 @@ class ScheduleServiceDowntimeCommandForm extends ObjectsCommandForm
                 )
             )
         );
-        if (isset($formData['type']) && $formData['type'] === self::FLEXIBLE) {
+        if ($isFlexible) {
             $this->addElements(array(
                 array(
                     'number',
@@ -136,7 +169,7 @@ class ScheduleServiceDowntimeCommandForm extends ObjectsCommandForm
                     array(
                         'required'  => true,
                         'label'     => $this->translate('Hours'),
-                        'value'     => 2,
+                        'value'     => $this->flexibleDuration->h,
                         'min'       => -1
                     )
                 ),
@@ -146,7 +179,7 @@ class ScheduleServiceDowntimeCommandForm extends ObjectsCommandForm
                     array(
                         'required'  => true,
                         'label'     => $this->translate('Minutes'),
-                        'value'     => 0,
+                        'value'     => $this->flexibleDuration->m,
                         'min'       => -1
                     )
                 )
