@@ -3,6 +3,7 @@
 
 namespace Icinga\Module\Monitoring\Forms\Command\Object;
 
+use DateInterval;
 use DateTime;
 use Icinga\Application\Config;
 use Icinga\Module\Monitoring\Command\Object\PropagateHostDowntimeCommand;
@@ -15,6 +16,29 @@ use Icinga\Web\Notification;
  */
 class ScheduleHostDowntimeCommandForm extends ScheduleServiceDowntimeCommandForm
 {
+    /** @var bool */
+    protected $hostDowntimeAllServices;
+
+    public function init()
+    {
+        $this->start = new DateTime();
+        $config = Config::module('monitoring');
+        $this->commentText = $config->get('settings', 'hostdowntime_comment_text');
+
+        $this->hostDowntimeAllServices = (bool) $config->get('settings', 'hostdowntime_all_services', false);
+
+        $fixedEnd = clone $this->start;
+        $fixed = $config->get('settings', 'hostdowntime_end_fixed', 'PT1H');
+        $this->fixedEnd = $fixedEnd->add(new DateInterval($fixed));
+
+        $flexibleEnd = clone $this->start;
+        $flexible = $config->get('settings', 'hostdowntime_end_flexible', 'PT1H');
+        $this->flexibleEnd = $flexibleEnd->add(new DateInterval($flexible));
+
+        $flexibleDuration = $config->get('settings', 'hostdowntime_flexible_duration', 'PT2H');
+        $this->flexibleDuration = new DateInterval($flexibleDuration);
+    }
+
     /**
      * (non-PHPDoc)
      * @see \Icinga\Web\Form::createElements() For the method documentation.
@@ -22,8 +46,6 @@ class ScheduleHostDowntimeCommandForm extends ScheduleServiceDowntimeCommandForm
     public function createElements(array $formData = array())
     {
         parent::createElements($formData);
-
-        $config = Config::module('monitoring');
 
         $this->addElement(
             'checkbox',
@@ -33,7 +55,7 @@ class ScheduleHostDowntimeCommandForm extends ScheduleServiceDowntimeCommandForm
                     'Schedule downtime for all services on the hosts and the hosts themselves.'
                 ),
                 'label'         => $this->translate('All Services'),
-                'value'         => (bool) $config->get('settings', 'hostdowntime_all_services', false)
+                'value'         => $this->hostDowntimeAllServices
             )
         );
 
