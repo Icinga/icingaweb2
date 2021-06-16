@@ -3,6 +3,8 @@
 use Icinga\Web\Url;
 use Icinga\Web\Notification;
 use Icinga\Authentication\Auth;
+use ipl\Html\HtmlString;
+use ipl\Web\Widget\Icon;
 
 $moduleName = $this->layout()->moduleName;
 if ($moduleName !== 'default') {
@@ -70,7 +72,25 @@ if ($this->layout()->inlineLayout) {
     $notifications = Notification::getInstance();
     if ($notifications->hasMessages()) {
         foreach ($notifications->popMessages() as $m) {
-            echo '<li class="' . $m->type . '">' . $this->escape($m->message) . '</li>';
+            switch ($m->type) {
+                case 'success':
+                    $icon = new HtmlString(new Icon('check-circle'));
+                    break;
+                case 'error':
+                    $icon = new HtmlString(new Icon('times'));
+                    break;
+                case 'warning':
+                    $icon = new HtmlString(new Icon('exclamation-triangle'));
+                    break;
+                case 'info':
+                    $icon = new HtmlString(new Icon('info-circle'));
+                    break;
+                default:
+                    $icon = '';
+                    break;
+            }
+
+            echo '<li class="' . $m->type . '">' . $icon . $this->escape($m->message) . '</li>';
         }
     }
   ?></ul>
