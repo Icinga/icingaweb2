@@ -25,9 +25,8 @@
   }
 
   .login-form {
-    min-width: 24em;
+    width: 24em;
     position: relative;
-    width: 33%;
     z-index: 10;
   }
 
@@ -66,14 +65,9 @@
     padding: 0;
   }
 
-  .control-group {
-    margin: 0 auto; // Center horizontally
-  }
-
-  .control-group,
-  .form-errors {
-    width: 24em;
-
+  .form-errors,
+  input[type="text"],
+  input[type="password"] {
     &:not(:last-child) {
       margin-bottom: 1em;
     }
