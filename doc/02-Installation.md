@@ -121,6 +121,12 @@ zypper ar http://packages.icinga.com/SUSE/ICINGA-release.repo
 zypper ref
 ```
 
+If you're using php-fpm on SLES 15 SP2 onwards, `/etc/icingaweb2` may not be writable.
+That's because the default systemd unit file for php-fpm has `ProtectSystem=full`
+enabled. You want to lookup/add the systemd setting `ReadWritePaths=` in this case and
+add `/etc/icingaweb2` to it. Alternatively you can also define a different configuration
+directory using the environment variable `ICINGAWEB_CONFIGDIR`.
+
 **openSUSE**:
 ```
 zypper ar http://packages.icinga.com/openSUSE/ICINGA-release.repo
