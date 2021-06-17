@@ -4,8 +4,6 @@
 namespace Icinga\Web\Dashboard;
 
 use Icinga\Web\Url;
-use Icinga\Web\Widget\Dashboard\Pane;
-use Icinga\Web\Widget\Dashboard\UserWidget;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\HtmlElement;
 use ipl\Web\Widget\Link;
@@ -15,25 +13,19 @@ use ipl\Web\Widget\Link;
  *
  * This is the new element being used for the Dashlets view
  */
-class Dashlet extends BaseHtmlElement implements UserWidget
+class Dashlet extends BaseHtmlElement
 {
+    use UserWidget;
+
+    /** @var string Database table name */
+    const TABLE = 'dashlet';
+
+    /** @var string Database overriding table name */
+    const OVERRIDING_TABLE = 'dashlet_override';
+
     protected $tag = 'div';
 
-    protected $defaultAttributes = ['class' => 'container'];
-
-    /**
-     * Flag if widget is created by an user
-     *
-     * @var bool
-     */
-    protected $userWidget = false;
-
-    /**
-     * Flag if this dashlet overrides a system dashlet
-     *
-     * @var bool
-     */
-    private $override = false;
+    protected $defaultAttributes = ['class' => 'container dashlet-sortable'];
 
     /**
      * The url of this Dashlet
@@ -81,6 +73,13 @@ class Dashlet extends BaseHtmlElement implements UserWidget
      * @var string
      */
     private $dashletId;
+
+    /**
+     * The priority order of this dashlet
+     *
+     * @var int
+     */
+    private $order;
 
     /**
      * Create a new dashlet displaying the given url in the provided pane
@@ -156,11 +155,37 @@ class Dashlet extends BaseHtmlElement implements UserWidget
     }
 
     /**
+     * Set the title of this dashlet
+     *
      * @param string $title
      */
     public function setTitle($title)
     {
         $this->title = $title;
+    }
+
+    /**
+     * Get the priority order of this dashlet
+     *
+     * @return int
+     */
+    public function getOrder()
+    {
+        return $this->order;
+    }
+
+    /**
+     * Set the priority order of this dashlet
+     *
+     * @param $order
+     *
+     * @return $this
+     */
+    public function setOrder($order)
+    {
+        $this->order = $order;
+
+        return $this;
     }
 
     /**
@@ -265,8 +290,8 @@ class Dashlet extends BaseHtmlElement implements UserWidget
     protected function assemble()
     {
         if (! $this->url) {
-            $this->add(new HtmlElement('h1', null, $this->getTitle()));
-            $this->add(new HtmlElement(
+            $this->add(HtmlElement::create('h1', null, $this->getTitle()));
+            $this->add(HtmlElement::create(
                 'p',
                 ['class' => 'error-message'],
                 sprintf(t('Cannot create dashboard dashlet "%s" without valid URL'), $this->getTitle())
@@ -275,7 +300,11 @@ class Dashlet extends BaseHtmlElement implements UserWidget
             $url = $this->getUrl();
             $url->setParam('showCompact', true);
 
-            $this->addAttributes(['data-icinga-url' => $url]);
+            $pane = $this->getPane();
+            $this->addAttributes([
+                'data-icinga-url'       => $url,
+                'data-icinga-dashlets'  => $pane->getHome()->getName() . $pane->getName() . $this->getName(),
+            ]);
             $this->add(new HtmlElement('h1', null, new Link(
                 $this->getTitle(),
                 $url->getUrlWithout(['showCompact', 'limit'])->getRelativeUrl(),
@@ -286,21 +315,23 @@ class Dashlet extends BaseHtmlElement implements UserWidget
                 ]
             )));
 
-            $this->add(new HtmlElement(
+            $this->add(HtmlElement::create(
                 'p',
-                ['class'    => 'progress-label'],
+                ['class' => 'progress-label'],
                 [
                     $this->getProgressLabe(),
-                    new HtmlElement('span', null, '.'),
-                    new HtmlElement('span', null, '.'),
-                    new HtmlElement('span', null, '.'),
+                    HtmlElement::create('span', null, '.'),
+                    HtmlElement::create('span', null, '.'),
+                    HtmlElement::create('span', null, '.'),
                 ]
             ));
         }
     }
 
     /**
-     * @param \Icinga\Web\Widget\Dashboard\Pane $pane
+     * Set the Pane of this dashlet
+     *
+     * @param \Icinga\Web\Dashboard\Pane $pane
      */
     public function setPane(Pane $pane)
     {
@@ -308,52 +339,12 @@ class Dashlet extends BaseHtmlElement implements UserWidget
     }
 
     /**
-     * @return \Icinga\Web\Widget\Dashboard\Pane
+     * Get the pane of this dashlet
+     *
+     * @return \Icinga\Web\Dashboard\Pane
      */
     public function getPane()
     {
         return $this->pane;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function setUserWidget($userWidget = true)
-    {
-        $this->userWidget = (bool) $userWidget;
-
-        return $this;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function isUserWidget()
-    {
-        return $this->userWidget;
-    }
-
-    /**
-     * Setter for dashlet override
-     *
-     * @param bool $override
-     *
-     * @return $this
-     */
-    public function setOverride($override = true)
-    {
-        $this->override = $override;
-
-        return $this;
-    }
-
-    /**
-     * Getter for dashlet override
-     *
-     * @return bool
-     */
-    public function isOverriding()
-    {
-        return $this->override;
     }
 }

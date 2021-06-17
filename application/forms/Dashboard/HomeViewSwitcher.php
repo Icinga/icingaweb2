@@ -1,16 +1,17 @@
 <?php
 
-namespace Icinga\Web\Widget\Dashboard;
+namespace Icinga\Forms\Dashboard;
 
 use Icinga\Web\Widget\Dashboard;
 use ipl\Web\Compat\CompatForm;
 use ipl\Web\Url;
 
-class SettingSortBox extends CompatForm
+class HomeViewSwitcher extends CompatForm
 {
     /** @var Dashboard */
     private $dashboard;
 
+    /** @var string */
     private $activeHome;
 
     public function __construct($dashboard)
@@ -34,7 +35,7 @@ class SettingSortBox extends CompatForm
                 'required'       => true,
                 'label'          => t('Dashboard Home'),
                 'multiOptions'   => $sortControls,
-                'value'          => $this->activeHome?: current($sortControls),
+                'value'          => $this->activeHome ?: current($sortControls),
                 'description'    => t('Select a dashboard home you want to see the dashboards from.')
             ]
         );
@@ -43,15 +44,10 @@ class SettingSortBox extends CompatForm
     public function onSuccess()
     {
         // Do nothing
-        parent::onSuccess();
     }
 
-    public function __get($name)
+    public function getHome()
     {
-        if (! property_exists($this, $name)) {
-
-        }
-
-        return $this->$name;
+        return $this->activeHome;
     }
 }

@@ -6,11 +6,12 @@ namespace Icinga\Web\Widget;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\ProgrammingError;
 use Icinga\User;
+use Icinga\Web\Dashboard\Pane;
 use Icinga\Web\Menu;
 use Icinga\Web\Navigation\DashboardHome;
-use Icinga\Web\Widget\Dashboard\Pane;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\HtmlElement;
+use ipl\Html\Text;
 use ipl\Web\Url;
 use ipl\Web\Widget\Link;
 use ipl\Web\Widget\Tabs;
@@ -19,26 +20,19 @@ use ipl\Web\Widget\Tabs;
  * Dashboards display multiple views on a single page
  *
  * The terminology is as follows:
- * - Dashlet:     A single view showing a specific url
- * - Pane:          Aggregates one or more dashlets on one page, displays its title as a tab
- * - Dashboard:     Shows all panes
+ * - Dashlet:           A single view showing a specific url
+ * - Pane:              Aggregates one or more dashlets on one page, displays its title as a tab
+ * - Dashboard/Home:    Shows all panes belonging to this home
  *
  */
 class Dashboard extends BaseHtmlElement
 {
     /**
-     * Preserve key name for coming features
+     * Upon mysql duplicate key error raised error code
      *
-     * @var string
+     * @var int
      */
-    const AVAILABLE_DASHLETS = 'Available Dashlets';
-
-    /**
-     * Preserve key name for coming features
-     *
-     * @var string
-     */
-    const SHARED_DASHBOARDS = 'Shared Dashboards';
+    const PDO_DUPLICATE_KEY_ERR = 1062;
 
     protected $tag = 'div';
 
@@ -100,7 +94,7 @@ class Dashboard extends BaseHtmlElement
     }
 
     /**
-     * Load Pane items provided by all enabled modules
+     * Load Home items and their dashboard panes
      *
      * @return  $this
      */
@@ -109,11 +103,19 @@ class Dashboard extends BaseHtmlElement
         $this->loadHomeItems();
         $this->loadDashboards();
 
+        if (! $this->hasHome(DashboardHome::AVAILABLE_DASHLETS)) {
+            DashboardHome::getConn()->insert(DashboardHome::TABLE, [
+                'name'  => DashboardHome::AVAILABLE_DASHLETS,
+                'label' => DashboardHome::AVAILABLE_DASHLETS,
+                'owner' => DashboardHome::DEFAULT_IW2_USER
+            ]);
+        }
+
         return $this;
     }
 
     /**
-     * Load dashboards to a specific home
+     * Load dashboard panes belonging to a specific home
      *
      * @param string|null $home
      *
@@ -138,7 +140,7 @@ class Dashboard extends BaseHtmlElement
             if (! $this->hasHome(DashboardHome::DEFAULT_HOME)) {
                 $db = DashboardHome::getConn();
 
-                $db->insert('dashboard_home', [
+                $db->insert(DashboardHome::TABLE, [
                     'name'  => DashboardHome::DEFAULT_HOME,
                     'label' => DashboardHome::DEFAULT_HOME,
                     'owner' => DashboardHome::DEFAULT_IW2_USER
@@ -155,7 +157,7 @@ class Dashboard extends BaseHtmlElement
         } else {
             $homeParam = Url::fromRequest()->getParam('home');
 
-            if (empty($homeParam)) {
+            if (empty($homeParam) || ! $this->hasHome($homeParam)) {
                 // Was opened e.g from icingaweb2/search
                 $home = $this->rewindHomes();
 
@@ -177,7 +179,7 @@ class Dashboard extends BaseHtmlElement
     }
 
     /**
-     * Load dashboard home items from the navigation menu
+     * Load home items from the navigation menu
      */
     public function loadHomeItems()
     {
@@ -198,8 +200,8 @@ class Dashboard extends BaseHtmlElement
         $activeHome = $this->getActiveHome();
 
         if ($activeHome && $activeHome->getName() !== DashboardHome::DEFAULT_HOME) {
-            $url = Url::fromPath('dashboard/home')->getUrlWithout([DashboardHome::TAB_PARAM, $this->tabParam]);
-            $url->addParams([DashboardHome::TAB_PARAM => $activeHome->getName()]);
+            $url = Url::fromPath('dashboard/home')->getUrlWithout(['home', $this->tabParam]);
+            $url->addParams(['home' => $activeHome->getName()]);
         } else {
             $url = Url::fromPath('dashboard')->getUrlWithout($this->tabParam);
         }
@@ -332,7 +334,7 @@ class Dashboard extends BaseHtmlElement
 
         if ($parent->getOwner() === DashboardHome::DEFAULT_IW2_USER &&
             $parent->getName() !== DashboardHome::DEFAULT_HOME) {
-            DashboardHome::getConn()->insert('dashboard_home', [
+            DashboardHome::getConn()->insert(DashboardHome::TABLE, [
                 'name'      => $parent->getName(),
                 'label'     => $parent->getLabel(),
                 'owner'     => $this->user->getUsername(),
@@ -340,7 +342,10 @@ class Dashboard extends BaseHtmlElement
             ]);
         } elseif (! $parent->getDisabled()) {
             if ($parent->getName() === DashboardHome::DEFAULT_HOME) {
-                DashboardHome::getConn()->update('dashboard_home', ['disabled' => (int) true], [
+                DashboardHome::getConn()->update(DashboardHome::TABLE, [
+                    'owner'     => $this->user->getUsername(),
+                    'disabled'  => (int) true,
+                ], [
                     'id = ?' => $parent->getIdentifier()
                 ]);
             } else {
@@ -350,7 +355,7 @@ class Dashboard extends BaseHtmlElement
 
                 $this->getActiveHome()->removePanes();
 
-                DashboardHome::getConn()->delete('dashboard_home', ['id = ?' => $parent->getIdentifier()]);
+                DashboardHome::getConn()->delete(DashboardHome::TABLE, ['id = ?' => $parent->getIdentifier()]);
             }
         }
 
@@ -369,6 +374,12 @@ class Dashboard extends BaseHtmlElement
         $list = [];
         foreach ($this->getHomes() as $name => $home) {
             if ($home->getDisabled() && $skipDisabled) {
+                continue;
+            }
+
+            // User is not allowed to add new content directly to this dashboard home
+            if ($home->getName() === DashboardHome::AVAILABLE_DASHLETS
+                || $home->getName() === DashboardHome::SHARED_DASHBOARDS) {
                 continue;
             }
 
@@ -509,18 +520,13 @@ class Dashboard extends BaseHtmlElement
     public function assemble()
     {
         $activeHome = $this->getActiveHome();
-        $panes = array_filter($activeHome->getPanes(), function ($pane) {
-            return ! $pane->getDisabled();
-        });
 
-        if (! empty($panes)) {
-            $dashlets = array_filter($this->getActivePane()->getDashlets(), function ($dashlet) {
-                return ! $dashlet->getDisabled();
-            });
+        if ($activeHome && ! empty($activeHome->getPanes(true))) {
+            $dashlets = $this->getActivePane()->getDashlets(true);
 
             if (empty($dashlets)) {
                 $this->setAttribute('class', 'content');
-                $dashlets = new HtmlElement('h1', null, t('No dashlet added to this pane.'));
+                $dashlets = new HtmlElement('h1', null, Text::create(t('No dashlet added to this pane.')));
             }
         } else {
             $this->setAttribute('class', 'content');
@@ -529,7 +535,7 @@ class Dashboard extends BaseHtmlElement
             );
 
             $dashlets = [
-                new HtmlElement('h1', null, t('Welcome to Icinga Web!')),
+                new HtmlElement('h1', null, Text::create(t('Welcome to Icinga Web!'))),
                 sprintf($format, new Link('modules', 'config/modules'))
             ];
         }

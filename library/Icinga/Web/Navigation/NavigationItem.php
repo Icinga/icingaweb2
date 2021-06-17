@@ -622,23 +622,13 @@ class NavigationItem implements IteratorAggregate
     }
 
     /**
-     * Get whether this item's url is set
-     *
-     * @return bool
-     */
-    public function hasUrl()
-    {
-        return (bool) $this->url;
-    }
-
-    /**
-     * Set a flag whether this item should have a url even if having children
+     * Set a flag whether this item should have default url
      *
      * @param $value
      *
      * @return $this
      */
-    public function setDefaultUrl($value)
+    public function loadWithDefaultUrl($value)
     {
         $this->defaultUrl = $value;
 

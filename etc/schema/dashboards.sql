@@ -10,6 +10,7 @@ CREATE TABLE `dashboard_home` (
     `owner` varchar(254) NOT NULL COLLATE utf8mb4_unicode_ci,
     `label` varchar(64) NOT NULL COLLATE utf8mb4_unicode_ci,
     `disabled` tinyint(1) DEFAULT 0,
+    UNIQUE `unique_indexes` (`name`, `owner`) COMMENT 'Only as a combined entity should be uniquely identified',
     PRIMARY KEY (`id`)
 ) Engine=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
@@ -23,6 +24,15 @@ CREATE TABLE `dashboard` (
     PRIMARY KEY (`id`),
     KEY `fk_dashboard_dashboard_home` (`home_id`),
     CONSTRAINT `fk_dashboard_dashboard_home` FOREIGN KEY (`home_id`) REFERENCES  `dashboard_home` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+
+CREATE TABLE `dashboard_order` (
+    `dashboard_id` binary(20) NOT NULL,
+    `home_id` int(10) UNSIGNED NOT NULL,
+    `owner` varchar(254)NOT NULL COLLATE utf8mb4_unicode_ci,
+    `priority` tinyint UNSIGNED NOT NULL,
+    KEY `fk_dashboard_order_dashboard` (`dashboard_id`),
+    CONSTRAINT `fk_dashboard_order_dashboard` FOREIGN KEY (`dashboard_id`) REFERENCES dashboard (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 CREATE TABLE `dashboard_override` (
@@ -44,6 +54,15 @@ CREATE TABLE `dashlet` (
     PRIMARY KEY (`id`),
     KEY `fk_dashlet_dashboard` (`dashboard_id`),
     CONSTRAINT `fk_dashlet_dashboard` FOREIGN KEY (`dashboard_id`) REFERENCES `dashboard` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+
+CREATE TABLE `dashlet_order` (
+    `dashlet_id` binary(20) NOT NULL,
+    `dashboard_id` binary(20) NOT NULL,
+    `owner` varchar(254)NOT NULL COLLATE utf8mb4_unicode_ci,
+    `priority` tinyint UNSIGNED NOT NULL,
+    KEY `dashlet_order_dashlet` (`dashlet_id`),
+    CONSTRAINT `dashlet_order_dashlet` FOREIGN KEY (`dashlet_id`) REFERENCES dashlet (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 CREATE TABLE `dashlet_override` (

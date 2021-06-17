@@ -79,7 +79,7 @@ class SearchDashboard extends Dashboard
      */
     public function search($searchString = '')
     {
-        $pane = $this->dashboardHome->createPane(self::SEARCH_PANE)->getPane(self::SEARCH_PANE)->setTitle(t('Search'));
+        $pane = $this->dashboardHome->addPane(self::SEARCH_PANE)->getPane(self::SEARCH_PANE)->setTitle(t('Search'));
         $this->activate(self::SEARCH_PANE);
 
         $manager = Icinga::app()->getModuleManager();
@@ -101,10 +101,9 @@ class SearchDashboard extends Dashboard
         usort($searchUrls, array($this, 'compareSearchUrls'));
 
         foreach (array_reverse($searchUrls) as $searchUrl) {
-            $pane->createDashlet(
-                $searchUrl->title . ': ' . $searchString,
-                Url::fromPath($searchUrl->url, array('q' => $searchString))
-            )->setProgressLabel(t('Searching'));
+            $title = $searchUrl->title . ': ' . $searchString;
+            $pane->addDashlet($title, Url::fromPath($searchUrl->url, array('q' => $searchString)));
+            $pane->getDashlet($title)->setProgressLabel(t('Searching'));
         }
 
         return $this;

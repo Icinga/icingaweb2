@@ -296,7 +296,7 @@ class Module
      *
      * @var array
      */
-    protected $dashletItems = array();
+    protected $dashletItems = [];
 
     /**
      * Create a new module object
@@ -484,7 +484,7 @@ class Module
     protected function provideHome($name, array $properties = [])
     {
         if ($name === DashboardHome::DEFAULT_HOME) {
-            throw new ProgrammingError('Specified dashboard home "%s" is reserved for internal use', $name);
+            throw new ProgrammingError('Dashboard home "%s" is marked for internal use only', $name);
         }
 
         if (array_key_exists($name, $this->homeItems)) {
@@ -1387,7 +1387,7 @@ class Module
      *
      * @return array
      */
-    public function getDashletHomes()
+    public function getDashlets()
     {
         $this->launchConfigScript();
         return $this->dashletItems;
