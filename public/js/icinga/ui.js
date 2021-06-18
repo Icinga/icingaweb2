@@ -110,12 +110,9 @@
             $('link').each(function() {
                 var $oldLink = $(this);
                 if ($oldLink.hasAttr('type') && $oldLink.attr('type').indexOf('css') > -1) {
-                    var base = location.protocol + '//' + location.host;
-                    var url = $(this).attr('href');
-
                     var $newLink = $oldLink.clone().attr(
                         'href',
-                        base + '/' + url.replace(/^\//, '')
+                        $(this).attr('href')
                     ).on('load', function() {
                         $oldLink.remove();
                     });
