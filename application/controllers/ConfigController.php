@@ -176,11 +176,22 @@ class ConfigController extends Controller
 
         $form = new ActionForm();
         $form->setOnSuccess(function (ActionForm $form) {
-            $module = $form->getValue('identifier');
-            Icinga::app()->getModuleManager()->enableModule($module);
-            Notification::success(sprintf($this->translate('Module "%s" enabled'), $module));
+            $moduleName = $form->getValue('identifier');
+            $module = Icinga::app()->getModuleManager()
+                ->enableModule($moduleName)
+                ->getModule($moduleName);
+            Notification::success(sprintf($this->translate('Module "%s" enabled'), $moduleName));
             $form->onSuccess();
-            $this->redirectHttp('config/modules');
+
+            if ($module->hasJs()) {
+                $this->redirectHttp('config/modules');
+            } else {
+                if ($module->hasCss()) {
+                    $this->reloadCss();
+                }
+
+                $this->rerenderLayout()->redirectNow('config/modules');
+            }
         });
 
         try {
@@ -202,11 +213,22 @@ class ConfigController extends Controller
 
         $form = new ActionForm();
         $form->setOnSuccess(function (ActionForm $form) {
-            $module = $form->getValue('identifier');
-            Icinga::app()->getModuleManager()->disableModule($module);
-            Notification::success(sprintf($this->translate('Module "%s" disabled'), $module));
+            $mm = Icinga::app()->getModuleManager();
+            $moduleName = $form->getValue('identifier');
+            $module = $mm->getModule($moduleName);
+            $mm->disableModule($moduleName);
+            Notification::success(sprintf($this->translate('Module "%s" disabled'), $moduleName));
             $form->onSuccess();
-            $this->redirectHttp('config/modules');
+
+            if ($module->hasJs()) {
+                $this->redirectHttp('config/modules');
+            } else {
+                if ($module->hasCss()) {
+                    $this->reloadCss();
+                }
+
+                $this->rerenderLayout()->redirectNow('config/modules');
+            }
         });
 
         try {

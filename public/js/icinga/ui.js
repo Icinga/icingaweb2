@@ -111,10 +111,7 @@
                 var $oldLink = $(this);
                 if ($oldLink.hasAttr('type') && $oldLink.attr('type').indexOf('css') > -1) {
                     var base = location.protocol + '//' + location.host;
-                    var url = icinga.utils.addUrlParams(
-                        $(this).attr('href'),
-                        { id: new Date().getTime() }
-                    );
+                    var url = $(this).attr('href');
 
                     var $newLink = $oldLink.clone().attr(
                         'href',

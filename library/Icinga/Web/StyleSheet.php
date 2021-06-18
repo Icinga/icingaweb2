@@ -192,7 +192,7 @@ class StyleSheet
 
         $request = $styleSheet->app->getRequest();
         $response = $styleSheet->app->getResponse();
-        $response->setHeader('Cache-Control', 'public', true);
+        $response->setHeader('Cache-Control', 'private,no-cache,must-revalidate', true);
 
         $noCache = $request->getHeader('Cache-Control') === 'no-cache' || $request->getHeader('Pragma') === 'no-cache';
 

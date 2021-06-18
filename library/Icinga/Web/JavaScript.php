@@ -129,7 +129,7 @@ class JavaScript
         $request = Icinga::app()->getRequest();
         $noCache = $request->getHeader('Cache-Control') === 'no-cache' || $request->getHeader('Pragma') === 'no-cache';
 
-        header('Cache-Control: public');
+        header('Cache-Control: public,no-cache,must-revalidate');
 
         if (! $noCache && FileCache::etagMatchesFiles($files)) {
             header("HTTP/1.1 304 Not Modified");
