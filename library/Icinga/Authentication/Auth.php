@@ -104,9 +104,10 @@ class Auth
         // Reload CSS if the theme changed
         $themingConfig = Icinga::app()->getConfig()->getSection('themes');
         $userTheme = $user->getPreferences()->getValue('icingaweb', 'theme');
+        $themeMode = $user->getPreferences()->getValue('icingaweb', 'theme_mode');
         if (! (bool) $themingConfig->get('disabled', false) && $userTheme !== null) {
             $defaultTheme = $themingConfig->get('default', StyleSheet::DEFAULT_THEME);
-            if ($userTheme !== $defaultTheme) {
+            if (($userTheme !== $defaultTheme) || ($themeMode !== StyleSheet::DEFAULT_MODE)) {
                 $this->getResponse()->setReloadCss(true);
             }
         }
