@@ -93,8 +93,8 @@ class PreferenceForm extends Form
     public function onSuccess()
     {
         $this->preferences = new Preferences($this->store ? $this->store->load() : array());
-
         $oldTheme = $this->preferences->getValue('icingaweb', 'theme');
+        $oldMode = $this->preferences->getValue('icingaweb', 'theme_mode');
         $oldLocale = $this->preferences->getValue('icingaweb', 'language');
         $defaultTheme = Config::app()->get('themes', 'default', StyleSheet::DEFAULT_THEME);
 
@@ -113,12 +113,13 @@ class PreferenceForm extends Form
             }
         }
         $this->preferences->icingaweb = $webPreferences;
-
         Session::getSession()->user->setPreferences($this->preferences);
 
-        if (($theme = $this->getElement('theme')) !== null
+        if ((($theme = $this->getElement('theme')) !== null
             && ($theme = $theme->getValue()) !== $oldTheme
-            && ($theme !== $defaultTheme || $oldTheme !== null)
+            && ($theme !== $defaultTheme || $oldTheme !== null))
+            || (($mode = $this->getElement('theme_mode')) !== null
+            && ($mode->getValue()) !== $oldMode)
         ) {
             $this->getResponse()->setReloadCss(true);
         }
