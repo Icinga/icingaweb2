@@ -114,6 +114,22 @@ class UserBackend implements ConfigAwareFactory
     }
 
     /**
+     * Get config forms of all custom user backends
+     */
+    public static function getCustomBackendConfigForms()
+    {
+        $customBackendConfigForms = [];
+        static::registerCustomUserBackends();
+        foreach (self::$customBackends as $customBackendType => $customBackendClass) {
+            if (method_exists($customBackendClass, 'getConfigurationFormClass')) {
+                $customBackendConfigForms[$customBackendType] = $customBackendClass::getConfigurationFormClass();
+            }
+        }
+
+        return $customBackendConfigForms;
+    }
+
+    /**
      * Return the class for the given custom user backend
      *
      * @param   string  $identifier     The identifier of the custom user backend
