@@ -3,18 +3,34 @@
 
 namespace Icinga\Web\Widget\Dashboard;
 
-use Icinga\Data\ConfigObject;
-use Icinga\Web\Widget\AbstractWidget;
+use Icinga\Authentication\Auth;
+use Icinga\Common\Database;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Exception\ConfigurationError;
+use Icinga\Web\Dashboard\Dashlet;
 
 /**
  * A pane, displaying different Dashboard dashlets
  */
-class Pane extends UserWidget
+class Pane implements UserWidget
 {
+    use Database;
+
+    /** @var string A type for all panes provided by modules */
+    const SYSTEM = 'system';
+
+    /** @var string A type for user created panes */
+    const PRIVATE = 'private';
+
     /**
-     * The name of this pane, as defined in the ini file
+     * Flag if widget is created by an user
+     *
+     * @var bool
+     */
+    protected $userWidget = false;
+
+    /**
+     * The not translatable name of this pane
      *
      * @var string
      */
@@ -26,6 +42,13 @@ class Pane extends UserWidget
      * @var string
      */
     private $title;
+
+    /**
+     * A user this panel belongs to
+     *
+     * @var string
+     */
+    private $owner = 'icingaweb2';
 
     /**
      * An array of @see Dashlets that are displayed in this pane
@@ -42,6 +65,34 @@ class Pane extends UserWidget
     private $disabled = false;
 
     /**
+     * Whether this pane overrides a system pane
+     *
+     * @var bool
+     */
+    private $override = false;
+
+    /**
+     * Dashboard home id if the current pane
+     *
+     * @var integer
+     */
+    private $parentId;
+
+    /**
+     * Unique identifier of the this pane
+     *
+     * @var integer
+     */
+    private $paneId;
+
+    /**
+     * A flag whether the user has create a dashlet in a system pane
+     *
+     * @var string
+     */
+    private $type = 'system';
+
+    /**
      * Create a new pane
      *
      * @param string $name         The pane to create
@@ -50,6 +101,74 @@ class Pane extends UserWidget
     {
         $this->name  = $name;
         $this->title = $name;
+    }
+
+    /**
+     * Set the dashboard home id for this pane
+     *
+     * @param  integer  $homeId
+     */
+    public function setParentId($homeId)
+    {
+        $this->parentId = $homeId;
+
+        return $this;
+    }
+
+    /**
+     * Returns the dashboard home id of this pane
+     *
+     * @return integer
+     */
+    public function getParentId()
+    {
+        return $this->parentId;
+    }
+
+    /**
+     * Set unique identifier of this pane
+     *
+     * @param  integer  $id
+     */
+    public function setPaneId($id)
+    {
+        $this->paneId = $id;
+
+        return $this;
+    }
+
+    /**
+     * Get the unique identifier of this pane
+     *
+     * @return integer
+     */
+    public function getPaneId()
+    {
+        return $this->paneId;
+    }
+
+    /**
+     * Set type of this pane (system | private)
+     *
+     * @param $type
+     *
+     * @return $this
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
+    /**
+     * Get type of this pane
+     *
+     * @return string
+     */
+    public function getType()
+    {
+        return $this->type;
     }
 
     /**
@@ -92,7 +211,32 @@ class Pane extends UserWidget
     public function setTitle($title)
     {
         $this->title = $title;
+
         return $this;
+    }
+
+    /**
+     * Set the owner of this panel
+     *
+     * @param $owner
+     *
+     * @return $this
+     */
+    public function setOwner($owner)
+    {
+        $this->owner = $owner;
+
+        return $this;
+    }
+
+    /**
+     * Get the owner of this panel
+     *
+     * @return string
+     */
+    public function getOwner()
+    {
+        return $this->owner;
     }
 
     /**
@@ -104,7 +248,7 @@ class Pane extends UserWidget
      */
     public function hasDashlet($title)
     {
-        return array_key_exists($title, $this->dashlets);
+        return $title && array_key_exists($title, $this->dashlets);
     }
 
     /**
@@ -139,40 +283,69 @@ class Pane extends UserWidget
     /**
      * Removes the dashlet with the given title if it exists in this pane
      *
-     * @param string $title         The pane
-     * @return Pane $this
+     * @param   Dashlet|string $dashlet
+     *
+     * @return  $this
      */
-    public function removeDashlet($title)
+    public function removeDashlet($dashlet)
     {
-        if ($this->hasDashlet($title)) {
-            $dashlet = $this->getDashlet($title);
-            if ($dashlet->isUserWidget() === true) {
-                unset($this->dashlets[$title]);
-            } else {
-                $dashlet->setDisabled(true);
-                $dashlet->setUserWidget();
+        if (! $dashlet instanceof Dashlet) {
+            if (! $this->hasDashlet($dashlet)) {
+                throw new ProgrammingError('Trying to remove invalid dashlet: %s', $dashlet);
             }
-        } else {
-            throw new ProgrammingError('Dashlet does not exist: ' . $title);
+
+            $dashlet = $this->getDashlet($dashlet);
         }
+
+        $owner = $dashlet->getPane()->getOwner();
+        if ($owner === \Icinga\Web\Navigation\DashboardHome::DEFAULT_IW2_USER) {
+            $owner = Auth::getInstance()->getUser()->getUsername();
+        }
+
+        if ($dashlet->isUserWidget() === true && ! $dashlet->getDisabled()) {
+            if ($dashlet->isOverriding()) {
+                $this->getDb()->delete('dashlet_override', [
+                    'dashlet_id = ?'    => $dashlet->getDashletId(),
+                    'owner = ?'         => $owner
+                ]);
+            } else {
+                $this->getDb()->delete('dashlet', [
+                    'id = ?'            => $dashlet->getDashletId(),
+                    'dashboard_id = ?'  => $dashlet->getPane()->getPaneId()
+                ]);
+            }
+        } elseif (! $dashlet->getDisabled() && ! $this->isUserWidget()) {
+            $this->getDb()->insert('dashlet_override', [
+                'dashlet_id'    => $dashlet->getDashletId(),
+                'dashboard_id'  => $dashlet->getPane()->getPaneId(),
+                'owner'         => $owner,
+                'disabled'      => true
+            ]);
+        }
+
         return $this;
     }
 
     /**
      * Removes all or a given list of dashlets from this pane
      *
-     * @param array $dashlets Optional list of dashlet titles
+     * @param array|null $dashlets Optional list of dashlet titles
+     *
      * @return Pane $this
      */
     public function removeDashlets(array $dashlets = null)
     {
         if ($dashlets === null) {
-            $this->dashlets = array();
-        } else {
+            $dashlets = $this->getDashlets();
+        }
+
+        // Remove dashlets only if this is a custom pane
+        if ($this->getOwner() !== \Icinga\Web\Navigation\DashboardHome::DEFAULT_IW2_USER) {
             foreach ($dashlets as $dashlet) {
                 $this->removeDashlet($dashlet);
             }
         }
+
         return $this;
     }
 
@@ -181,23 +354,21 @@ class Pane extends UserWidget
      *
      * @return array
      */
-    public function getDashlets()
+    public function getDashlets($skipDisabled = false, $ordered = true)
     {
-        return $this->dashlets;
-    }
+        $dashlets = $this->dashlets;
 
-    /**
-     * @see Widget::render
-     */
-    public function render()
-    {
-        $dashlets = array_filter(
-            $this->dashlets,
-            function ($e) {
-                return ! $e->getDisabled();
-            }
-        );
-        return implode("\n", $dashlets) . "\n";
+        if ($skipDisabled) {
+            $dashlets = array_filter($this->dashlets, function ($dashlet) {
+                return ! $dashlet->getDisabled();
+            });
+        }
+
+        if ($ordered) {
+            ksort($dashlets);
+        }
+
+        return $dashlets;
     }
 
     /**
@@ -218,9 +389,8 @@ class Pane extends UserWidget
     /**
      * Add a dashlet to this pane, optionally creating it if $dashlet is a string
      *
-     * @param string|Dashlet $dashlet               The dashlet object or title
-     *                                                  (if a new dashlet will be created)
-     * @param string|null $url                          An Url to be used when dashlet is a string
+     * @param string|Dashlet $dashlet The dashlet object or title (if a new dashlet will be created)
+     * @param string|null $url        An Url to be used when dashlet is a string
      *
      * @return $this
      * @throws \Icinga\Exception\ConfigurationError
@@ -285,10 +455,7 @@ class Pane extends UserWidget
      */
     public function toArray()
     {
-        $pane =  array(
-            'title'     => $this->getTitle(),
-        );
-
+        $pane = ['title' => $this->getTitle()];
         if ($this->getDisabled() === true) {
             $pane['disabled'] = 1;
         }
@@ -297,30 +464,15 @@ class Pane extends UserWidget
     }
 
     /**
-     * Create a new pane with the title $title from the given configuration
-     *
-     * @param $title                The title for this pane
-     * @param ConfigObject  $config The configuration to use for setup
-     *
-     * @return Pane
-     */
-    public static function fromIni($title, ConfigObject $config)
-    {
-        $pane = new Pane($title);
-        if ($config->get('title', false)) {
-            $pane->setTitle($config->get('title'));
-        }
-        return $pane;
-    }
-
-    /**
      * Setter for disabled
      *
      * @param boolean $disabled
      */
-    public function setDisabled($disabled = true)
+    public function setDisabled($disabled)
     {
         $this->disabled = (bool) $disabled;
+
+        return $this;
     }
 
     /**
@@ -331,5 +483,47 @@ class Pane extends UserWidget
     public function getDisabled()
     {
         return $this->disabled;
+    }
+
+    /**
+     * Set whether this pane overrides a system pane
+     *
+     * @param  boolean $value
+     *
+     * @return $this
+     */
+    public function setOverride($value)
+    {
+        $this->override = (bool)$value;
+
+        return $this;
+    }
+
+    /**
+     * Get whether this pane overrides a system pane with the same name
+     *
+     * @return bool
+     */
+    public function isOverridingPane()
+    {
+        return $this->override;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setUserWidget($userWidget = true)
+    {
+        $this->userWidget = (bool) $userWidget;
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function isUserWidget()
+    {
+        return $this->userWidget;
     }
 }

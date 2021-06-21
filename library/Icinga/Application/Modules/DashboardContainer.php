@@ -44,6 +44,7 @@ class DashboardContainer extends NavigationItemContainer
      * @param   string  $name
      * @param   string  $url
      * @param   int     $priority
+     * @param   array   $properties
      *
      * @return  $this
      */
@@ -51,7 +52,7 @@ class DashboardContainer extends NavigationItemContainer
     {
         $this->dashlets[$name] = [
             'url'       => $url,
-            'priority'  => $priority
+            'priority'  => $priority,
         ];
         return $this;
     }

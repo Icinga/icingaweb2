@@ -432,7 +432,7 @@ class Navigation implements ArrayAccess, Countable, IteratorAggregate
     public function load($type)
     {
         $user = Auth::getInstance()->getUser();
-        if ($type !== 'dashboard-pane') {
+        if ($type !== 'dashboard-pane' && $type !== 'dashboard-home') {
             // Shareables
             $this->merge(Icinga::app()->getSharedNavigation($type));
 
@@ -448,6 +448,8 @@ class Navigation implements ArrayAccess, Countable, IteratorAggregate
                     $this->merge($module->getMenu());
                 } elseif ($type === 'dashboard-pane') {
                     $this->merge($module->getDashboard());
+                } elseif ($type === 'dashboard-home') {
+                    $this->merge($module->getHomes());
                 }
             }
         }

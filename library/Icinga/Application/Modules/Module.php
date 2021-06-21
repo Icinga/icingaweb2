@@ -13,6 +13,7 @@ use Icinga\Exception\IcingaException;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Module\Setup\SetupWizard;
 use Icinga\Util\File;
+use Icinga\Web\Navigation\DashboardHome;
 use Icinga\Web\Navigation\Navigation;
 use Icinga\Web\Widget;
 use ipl\I18n\GettextTranslator;
@@ -256,6 +257,13 @@ class Module
     protected $paneItems = array();
 
     /**
+     * A set of DashboardHome elements
+     *
+     * @var DashboardHomeContainer[]
+     */
+    protected $homeItems = [];
+
+    /**
      * A set of objects representing a searchUrl configuration
      *
      * @var array
@@ -282,6 +290,13 @@ class Module
      * @var array
      */
     protected $navigationItems = array();
+
+    /**
+     * This module's dashlet home items
+     *
+     * @var array
+     */
+    protected $dashletItems = [];
 
     /**
      * Create a new module object
@@ -364,7 +379,11 @@ class Module
     {
         $navigation = new Navigation();
         foreach ($panes as $pane) {
-            /** @var DashboardContainer $pane */
+            if (array_key_exists('home', $pane->getProperties())) {
+                // $pane belongs to a Dashboard Home and hence can't be loaded standalone.
+                continue;
+            }
+
             $dashlets = [];
             foreach ($pane->getDashlets() as $dashletName => $dashletConfig) {
                 $dashlets[$dashletName] = [
@@ -391,6 +410,51 @@ class Module
     }
 
     /**
+     * Get this module's dashboard homes
+     *
+     * @return Navigation
+     */
+    public function getHomes()
+    {
+        $this->launchConfigScript();
+        return $this->createHomes($this->homeItems);
+    }
+
+    /**
+     * Create and return a new navigation for the given dashboard homes
+     *
+     * @param DashboardHomeContainer[] $homes
+     *
+     * @return Navigation
+     */
+    public function createHomes(array $homes)
+    {
+        $navigation = new Navigation();
+
+        foreach ($homes as $home) {
+            if (! array_key_exists('label', $home->getProperties())) {
+                $home->setProperties(array_merge(
+                    $home->getProperties(),
+                    ['label' => $this->translate($home->getName())]
+                ));
+            }
+
+            $navigation->addItem(
+                $home->getName(),
+                array_merge(
+                    $home->getProperties(),
+                    array(
+                        'type'      => 'dashboard-home',
+                        'children'  => $home->getDashboards()
+                    )
+                )
+            );
+        }
+
+        return $navigation;
+    }
+
+    /**
      * Add or get a dashboard pane
      *
      * @param   string  $name
@@ -407,6 +471,29 @@ class Module
         }
 
         return $this->paneItems[$name];
+    }
+
+    /**
+     * Add and get a dashboard home
+     *
+     * @param   string $name
+     * @param   array   $properties
+     *
+     * @return  DashboardHomeContainer
+     */
+    protected function provideHome($name, array $properties = [])
+    {
+        if ($name === DashboardHome::DEFAULT_HOME) {
+            throw new ProgrammingError('Dashboard home "%s" is marked for internal use only', $name);
+        }
+
+        if (array_key_exists($name, $this->homeItems)) {
+            $this->homeItems[$name]->setProperties($properties);
+        } else {
+            $this->homeItems[$name] = new DashboardHomeContainer($name, $properties);
+        }
+
+        return $this->homeItems[$name];
     }
 
     /**
@@ -1240,6 +1327,17 @@ class Module
     }
 
     /**
+     * Return this module's dashlet items provided by the provideDashlet() method
+     *
+     * @return array
+     */
+    public function getDashletHomes()
+    {
+        $this->launchConfigScript();
+        return $this->dashletItems;
+    }
+
+    /**
      * Provide a named permission
      *
      * @param   string $name        Unique permission name
@@ -1360,6 +1458,24 @@ class Module
         );
 
         return $this;
+    }
+
+    /**
+     * Provide dashlets that will be listed in dashboard homes as "Available Dashlets"
+     *
+     * with the associated module names.
+     *
+     * @param string $name
+     *
+     * @param array $properties
+     *
+     * @return array|mixed
+     */
+    protected function provideDashlet($name, $properties = array())
+    {
+        $this->dashletItems[$name] = $properties;
+
+        return $this->dashletItems[$name];
     }
 
     /**

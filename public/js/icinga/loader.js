@@ -89,6 +89,12 @@
                 $target = this.getLinkTargetFor($form);
             }
 
+            // Overwrite the URL only if the form is not auto submitted
+            if ($button.hasAttr('formaction') && ! $autoSubmittedBy) {
+                // Overwrite the URL of the form action with the one specified in formaction attr
+                url = $button.attr('formaction');
+            }
+
             if (! url) {
                 // Use the URL of the target container if the form's action is not set
                 url = $target.closest('.container').data('icinga-url');
