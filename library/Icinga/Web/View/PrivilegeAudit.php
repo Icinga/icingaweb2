@@ -6,9 +6,11 @@ namespace Icinga\Web\View;
 use Icinga\Authentication\Role;
 use Icinga\Forms\Security\RoleForm;
 use Icinga\Util\StringHelper;
+use ipl\Html\Attributes;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\HtmlElement;
 use ipl\Html\HtmlString;
+use ipl\Html\Text;
 use ipl\Stdlib\Filter;
 use ipl\Web\Common\BaseTarget;
 use ipl\Web\Filter\QueryString;
@@ -132,19 +134,19 @@ class PrivilegeAudit extends BaseHtmlElement
 
                 $connector = null;
                 if ($role->getParent() !== null) {
-                    $connector = new HtmlElement('li', ['class' => ['connector', $class]]);
+                    $connector = HtmlElement::create('li', ['class' => ['connector', $class]]);
                     if ($setInitiator) {
                         $setInitiator = false;
                         $connector->getAttributes()->add('class', 'initiator');
                     }
 
-                    $path->prepend($connector);
+                    $path->prependHtml($connector);
                 }
 
-                $path->prepend(new HtmlElement('li', [
+                $path->prependHtml(new HtmlElement('li', Attributes::create([
                     'class' => ['role', $class],
                     'title' => $role->getName()
-                ], new Link([$icon, $role->getName()], Url::fromPath('role/edit', ['role' => $role->getName()]))));
+                ]), new Link([$icon, $role->getName()], Url::fromPath('role/edit', ['role' => $role->getName()]))));
 
                 if ($refused) {
                     $setInitiator = $class !== 'refused';
@@ -160,18 +162,18 @@ class PrivilegeAudit extends BaseHtmlElement
             }
 
             array_unshift($rolePaths, $path->prepend([
-                empty($rolePaths) ? null : new HtmlElement('li', ['class' => ['vertical-line', $vClass]]),
-                new HtmlElement('li', ['class' => [
+                empty($rolePaths) ? null : HtmlElement::create('li', ['class' => ['vertical-line', $vClass]]),
+                new HtmlElement('li', Attributes::create(['class' => [
                     'connector',
                     $class,
                     $setInitiator ? 'initiator' : null
-                ]])
+                ]]))
             ]));
         }
 
         return [
             empty($refusedBy) ? (empty($grantedBy) ? null : true) : false,
-            new HtmlElement('div', [
+            HtmlElement::create('div', [
                 'class' => [empty($rolePaths) ? null : 'collapsible', 'inheritance-paths'],
                 'data-toggle-element' => '.collapsible-control',
                 'data-no-persistence' => true,
@@ -229,20 +231,24 @@ class PrivilegeAudit extends BaseHtmlElement
         $roles = [];
         if (! empty($restrictions) && count($restrictions) > 1) {
             list($combinedRestrictions, $combinedLinks) = $this->createRestrictionLinks($restriction, $restrictions);
-            $roles[] = new HtmlElement('li', null, [
-                new HtmlElement('div', ['class' => 'flex-overflow'], [
-                    new HtmlElement('span', [
+            $roles[] = HtmlElement::create('li', null, [
+                new HtmlElement(
+                    'div',
+                    Attributes::create(['class' => 'flex-overflow']),
+                    HtmlElement::create('span', [
                         'class' => 'role',
                         'title' => t('All roles combined')
                     ], join(' | ', array_map(function ($role) {
                         return $role->getName();
                     }, $restrictedBy))),
-                    new HtmlElement('code', ['class' => 'restriction'], $combinedRestrictions)
-                ]),
-                $combinedLinks ? new HtmlElement('div', ['class' => 'previews'], [
-                    new HtmlElement('em', null, t('Previews:')),
+                    HtmlElement::create('code', ['class' => 'restriction'], $combinedRestrictions)
+                ),
+                $combinedLinks ? new HtmlElement(
+                    'div',
+                    Attributes::create(['class' => 'previews']),
+                    HtmlElement::create('em', null, t('Previews:')),
                     $combinedLinks
-                ]) : null
+                ) : null
             ]);
         }
 
@@ -252,32 +258,38 @@ class PrivilegeAudit extends BaseHtmlElement
                 [$role->getRestrictions($restriction)]
             );
 
-            $roles[] = new HtmlElement('li', null, [
-                new HtmlElement('div', ['class' => 'flex-overflow'], [
+            $roles[] = HtmlElement::create('li', null, [
+                new HtmlElement(
+                    'div',
+                    Attributes::create(['class' => 'flex-overflow']),
                     new Link($role->getName(), Url::fromPath('role/edit', ['role' => $role->getName()]), [
                         'class' => 'role',
                         'title' => $role->getName()
                     ]),
-                    new HtmlElement('code', ['class' => 'restriction'], $roleRestriction)
-                ]),
-                $restrictionLinks ? new HtmlElement('div', ['class' => 'previews'], [
-                    new HtmlElement('em', null, t('Previews:')),
+                    HtmlElement::create('code', ['class' => 'restriction'], $roleRestriction)
+                ),
+                $restrictionLinks ? new HtmlElement(
+                    'div',
+                    Attributes::create(['class' => 'previews']),
+                    HtmlElement::create('em', null, t('Previews:')),
                     $restrictionLinks
-                ]) : null
+                ) : null
             ]);
         }
 
         return [
             ! empty($restrictedBy),
-            new HtmlElement('div', [
-                'class' => [empty($roles) ? null : 'collapsible', 'restrictions'],
-                'data-toggle-element' => '.collapsible-control',
-                'data-no-persistence' => true,
-                'data-visible-height' => 0
-            ], [
+            new HtmlElement(
+                'div',
+                Attributes::create([
+                    'class' => [empty($roles) ? null : 'collapsible', 'restrictions'],
+                    'data-toggle-element' => '.collapsible-control',
+                    'data-no-persistence' => true,
+                    'data-visible-height' => 0
+                ]),
                 empty($roles) ? $header : $header->addAttributes(['class' => 'collapsible-control']),
-                new HtmlElement('ul', null, $roles)
-            ])
+                new HtmlElement('ul', null, ...$roles)
+            )
         ];
     }
 
@@ -287,32 +299,44 @@ class PrivilegeAudit extends BaseHtmlElement
         list($wildcardState, $wildcardAudit) = $this->auditPermission('*');
         list($unrestrictedState, $unrestrictedAudit) = $this->auditPermission(self::UNRESTRICTED_PERMISSION);
 
-        $this->add(new HtmlElement('li', [
-            'class' => 'collapsible',
-            'data-toggle-element' => 'h3',
-            'data-visible-height' => 0
-        ], [
-            new HtmlElement('h3', null, [
-                new HtmlElement('span', null, t('Administrative Privileges')),
-                new HtmlElement('span', ['class' => 'audit-preview'], [
+        $this->addHtml(new HtmlElement(
+            'li',
+            Attributes::create([
+                'class' => 'collapsible',
+                'data-toggle-element' => 'h3',
+                'data-visible-height' => 0
+            ]),
+            new HtmlElement(
+                'h3',
+                null,
+                new HtmlElement('span', null, Text::create(t('Administrative Privileges'))),
+                HtmlElement::create(
+                    'span',
+                    ['class' => 'audit-preview'],
                     $wildcardState || $unrestrictedState
                         ? new Icon('check-circle', ['class' => 'granted'])
                         : null
-                ])
-            ]),
-            new HtmlElement('ol', ['class' => 'privilege-list'], [
-                new HtmlElement('li', null, [
-                    new HtmlElement('p', ['class' => 'privilege-label'], t('Administrative Access')),
-                    new HtmlElement('div', ['class' => 'spacer']),
+                )
+            ),
+            new HtmlElement(
+                'ol',
+                Attributes::create(['class' => 'privilege-list']),
+                new HtmlElement(
+                    'li',
+                    null,
+                    HtmlElement::create('p', ['class' => 'privilege-label'], t('Administrative Access')),
+                    HtmlElement::create('div', ['class' => 'spacer']),
                     $wildcardAudit
-                ]),
-                new HtmlElement('li', null, [
-                    new HtmlElement('p', ['class' => 'privilege-label'], t('Unrestricted Access')),
-                    new HtmlElement('div', ['class' => 'spacer']),
+                ),
+                new HtmlElement(
+                    'li',
+                    null,
+                    HtmlElement::create('p', ['class' => 'privilege-label'], t('Unrestricted Access')),
+                    HtmlElement::create('div', ['class' => 'spacer']),
                     $unrestrictedAudit
-                ])
-            ])
-        ]));
+                )
+            )
+        ));
 
         $privilegeSources = array_unique(array_merge(array_keys($permissions), array_keys($restrictions)));
         foreach ($privilegeSources as $source) {
@@ -320,7 +344,7 @@ class PrivilegeAudit extends BaseHtmlElement
             $anythingRefused = false;
             $anythingRestricted = false;
 
-            $permissionList = new HtmlElement('ol', ['class' => 'privilege-list']);
+            $permissionList = new HtmlElement('ol', Attributes::create(['class' => 'privilege-list']));
             foreach (isset($permissions[$source]) ? $permissions[$source] : [] as $permission => $metaData) {
                 list($permissionState, $permissionAudit) = $this->auditPermission($permission);
                 if ($permissionState !== null) {
@@ -331,8 +355,10 @@ class PrivilegeAudit extends BaseHtmlElement
                     }
                 }
 
-                $permissionList->add(new HtmlElement('li', null, [
-                    new HtmlElement(
+                $permissionList->addHtml(new HtmlElement(
+                    'li',
+                    null,
+                    HtmlElement::create(
                         'p',
                         ['class' => 'privilege-label'],
                         isset($metaData['label'])
@@ -341,8 +367,8 @@ class PrivilegeAudit extends BaseHtmlElement
                                 return $segment[0] === '/' ? [
                                     // Adds a zero-width char after each slash to help browsers break onto newlines
                                     new HtmlString('/&#8203;'),
-                                    new HtmlElement('span', ['class' => 'no-wrap'], substr($segment, 1))
-                                ] : new HtmlElement('em', null, $segment);
+                                    HtmlElement::create('span', ['class' => 'no-wrap'], substr($segment, 1))
+                                ] : HtmlElement::create('em', null, $segment);
                             }, preg_split(
                                 '~(/[^/]+)~',
                                 $permission,
@@ -350,20 +376,22 @@ class PrivilegeAudit extends BaseHtmlElement
                                 PREG_SPLIT_DELIM_CAPTURE|PREG_SPLIT_NO_EMPTY
                             ))
                     ),
-                    new HtmlElement('div', ['class' => 'spacer']),
+                    new HtmlElement('div', Attributes::create(['class' => 'spacer'])),
                     $permissionAudit
-                ]));
+                ));
             }
 
-            $restrictionList = new HtmlElement('ol', ['class' => 'privilege-list']);
+            $restrictionList = new HtmlElement('ol', Attributes::create(['class' => 'privilege-list']));
             foreach (isset($restrictions[$source]) ? $restrictions[$source] : [] as $restriction => $metaData) {
                 list($restrictionState, $restrictionAudit) = $this->auditRestriction($restriction);
                 if ($restrictionState) {
                     $anythingRestricted = true;
                 }
 
-                $restrictionList->add(new HtmlElement('li', null, [
-                    new HtmlElement(
+                $restrictionList->addHtml(new HtmlElement(
+                    'li',
+                    null,
+                    HtmlElement::create(
                         'p',
                         ['class' => 'privilege-label'],
                         isset($metaData['label'])
@@ -372,8 +400,8 @@ class PrivilegeAudit extends BaseHtmlElement
                                 return $segment[0] === '/' ? [
                                     // Adds a zero-width char after each slash to help browsers break onto newlines
                                     new HtmlString('/&#8203;'),
-                                    new HtmlElement('span', ['class' => 'no-wrap'], substr($segment, 1))
-                                ] : new HtmlElement('em', null, $segment);
+                                    HtmlElement::create('span', ['class' => 'no-wrap'], substr($segment, 1))
+                                ] : HtmlElement::create('em', null, $segment);
                             }, preg_split(
                                 '~(/[^/]+)~',
                                 $restriction,
@@ -381,36 +409,38 @@ class PrivilegeAudit extends BaseHtmlElement
                                 PREG_SPLIT_DELIM_CAPTURE|PREG_SPLIT_NO_EMPTY
                             ))
                     ),
-                    new HtmlElement('div', ['class' => 'spacer']),
+                    new HtmlElement('div', Attributes::create(['class' => 'spacer'])),
                     $restrictionAudit
-                ]));
+                ));
             }
 
             if ($source === 'application') {
                 $label = 'Icinga Web 2';
             } else {
-                $label = [$source, ' ', new HtmlElement('em', null, t('Module'))];
+                $label = [$source, ' ', HtmlElement::create('em', null, t('Module'))];
             }
 
-            $this->add(new HtmlElement('li', [
+            $this->addHtml(HtmlElement::create('li', [
                 'class' => 'collapsible',
                 'data-toggle-element' => 'h3',
                 'data-visible-height' => 0
             ], [
-                new HtmlElement('h3', null, [
-                    new HtmlElement('span', null, $label),
-                    new HtmlElement('span', ['class' => 'audit-preview'], [
+                new HtmlElement(
+                    'h3',
+                    null,
+                    HtmlElement::create('span', null, $label),
+                    HtmlElement::create('span', ['class' => 'audit-preview'], [
                         $anythingGranted ? new Icon('check-circle', ['class' => 'granted']) : null,
                         $anythingRefused ? new Icon('times-circle', ['class' => 'refused']) : null,
                         $anythingRestricted ? new Icon('filter', ['class' => 'restricted']) : null
                     ])
-                ]),
+                ),
                 $permissionList->isEmpty() ? null : [
-                    new HtmlElement('h4', null, t('Permissions')),
+                    HtmlElement::create('h4', null, t('Permissions')),
                     $permissionList
                 ],
                 $restrictionList->isEmpty() ? null : [
-                    new HtmlElement('h4', null, t('Restrictions')),
+                    HtmlElement::create('h4', null, t('Restrictions')),
                     $restrictionList
                 ]
             ]));
@@ -433,7 +463,9 @@ class PrivilegeAudit extends BaseHtmlElement
         switch ($restrictionName) {
             case 'icingadb/filter/objects':
                 $filterString = join('|', $restrictions);
-                $list = new HtmlElement('ul', ['class' => 'links'], [
+                $list = new HtmlElement(
+                    'ul',
+                    Attributes::create(['class' => 'links']),
                     new HtmlElement('li', null, new Link(
                         'icingadb/hosts',
                         Url::fromPath('icingadb/hosts')->setQueryString($filterString)
@@ -450,12 +482,14 @@ class PrivilegeAudit extends BaseHtmlElement
                         'icingadb/servicegroups',
                         Url::fromPath('icingadb/servicegroups')->setQueryString($filterString)
                     ))
-                ]);
+                );
 
                 break;
             case 'icingadb/filter/hosts':
                 $filterString = join('|', $restrictions);
-                $list = new HtmlElement('ul', ['class' => 'links'], [
+                $list = new HtmlElement(
+                    'ul',
+                    Attributes::create(['class' => 'links']),
                     new HtmlElement('li', null, new Link(
                         'icingadb/hosts',
                         Url::fromPath('icingadb/hosts')->setQueryString($filterString)
@@ -464,22 +498,26 @@ class PrivilegeAudit extends BaseHtmlElement
                         'icingadb/services',
                         Url::fromPath('icingadb/services')->setQueryString($filterString)
                     ))
-                ]);
+                );
 
                 break;
             case 'icingadb/filter/services':
                 $filterString = join('|', $restrictions);
-                $list = new HtmlElement('ul', ['class' => 'links'], [
+                $list = new HtmlElement(
+                    'ul',
+                    Attributes::create(['class' => 'links']),
                     new HtmlElement('li', null, new Link(
                         'icingadb/services',
                         Url::fromPath('icingadb/services')->setQueryString($filterString)
                     ))
-                ]);
+                );
 
                 break;
             case 'monitoring/filter/objects':
                 $filterString = join('|', $restrictions);
-                $list = new HtmlElement('ul', ['class' => 'links'], [
+                $list = new HtmlElement(
+                    'ul',
+                    Attributes::create(['class' => 'links']),
                     new HtmlElement('li', null, new Link(
                         'monitoring/list/hosts',
                         Url::fromPath('monitoring/list/hosts')->setQueryString($filterString)
@@ -496,7 +534,7 @@ class PrivilegeAudit extends BaseHtmlElement
                         'monitoring/list/servicegroups',
                         Url::fromPath('monitoring/list/servicegroups')->setQueryString($filterString)
                     ))
-                ]);
+                );
 
                 break;
             case 'application/share/users':
@@ -509,12 +547,14 @@ class PrivilegeAudit extends BaseHtmlElement
                 }
 
                 $filterString = QueryString::render($filter);
-                $list = new HtmlElement('ul', ['class' => 'links'], [
+                $list = new HtmlElement(
+                    'ul',
+                    Attributes::create(['class' => 'links']),
                     new HtmlElement('li', null, new Link(
                         'user/list',
                         Url::fromPath('user/list')->setQueryString($filterString)
                     ))
-                ]);
+                );
 
                 break;
             case 'application/share/groups':
@@ -527,12 +567,14 @@ class PrivilegeAudit extends BaseHtmlElement
                 }
 
                 $filterString = QueryString::render($filter);
-                $list = new HtmlElement('ul', ['class' => 'links'], [
+                $list = new HtmlElement(
+                    'ul',
+                    Attributes::create(['class' => 'links']),
                     new HtmlElement('li', null, new Link(
                         'group/list',
                         Url::fromPath('group/list')->setQueryString($filterString)
                     ))
-                ]);
+                );
 
                 break;
             default:
