@@ -31,23 +31,21 @@ class AppHealth extends Table
     {
         foreach ($this->data as $row) {
             $this->add(Table::tr([
-                Table::th(new HtmlElement('span', ['class' => [
+                Table::th(HtmlElement::create('span', ['class' => [
                     'ball',
                     'ball-size-xl',
                     $this->getStateClass($row->state)
                 ]])),
                 Table::td([
-                    new HtmlElement('header', null, [
-                        FormattedString::create(
-                            t('%s by %s is %s', '<check> by <module> is <state-text>'),
-                            $row->url
-                                ? new Link(new HtmlElement('span', null, $row->name), $row->url)
-                                : new HtmlElement('span', null, $row->name),
-                            new HtmlElement('span', null, $row->module),
-                            new HtmlElement('span', null, $this->getStateText($row->state))
-                        )
-                    ]),
-                    new HtmlElement('section', null, $row->message)
+                    new HtmlElement('header', null, FormattedString::create(
+                        t('%s by %s is %s', '<check> by <module> is <state-text>'),
+                        $row->url
+                            ? new Link(HtmlElement::create('span', null, $row->name), $row->url)
+                            : HtmlElement::create('span', null, $row->name),
+                        HtmlElement::create('span', null, $row->module),
+                        HtmlElement::create('span', null, $this->getStateText($row->state))
+                    )),
+                    HtmlElement::create('section', null, $row->message)
                 ])
             ]));
         }
