@@ -87,6 +87,9 @@
                     return format === this.dateFormat
                         ? Flatpickr.formatDate(date, format, locale)
                         : dateTimeFormatter.format(date);
+                },
+                onOpen: function (selectedDates, dateStr, instance) {
+                    _this.closePickers(instance);
                 }
             };
 
@@ -131,6 +134,20 @@
             if (cId === containerId) {
                 this._pickers.delete(fp);
                 fp.destroy();
+            }
+        }, this);
+    };
+
+    /**
+     * Close all other flatpickr instances and keep the given one
+     *
+     * @param fp {Flatpickr}
+     */
+    DatetimePicker.prototype.closePickers = function (fp) {
+        var containerId = this._pickers.get(fp);
+        this._pickers.forEach(function (cId, fp2) {
+            if (cId === containerId && fp2 !== fp) {
+                fp2.close();
             }
         }, this);
     };
