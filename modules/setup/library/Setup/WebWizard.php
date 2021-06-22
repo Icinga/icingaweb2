@@ -728,6 +728,15 @@ class WebWizard extends Wizard implements SetupWizard
 
         $set->add($dbRequire);
 
+        $set->add(new ConfigDirectoryRequirement(array(
+            'condition'     => Icinga::app()->getStorageDir(),
+            'title'         => mt('setup', 'Read- and writable storage directory'),
+            'description'   => mt(
+                'setup',
+                'The Icinga Web 2 storage directory defaults to "/var/lib/icingaweb2", if' .
+                ' not explicitly set in the environment variable "ICINGAWEB_STORAGEDIR".'
+            )
+        )));
 
         $set->add(new ConfigDirectoryRequirement(array(
             'condition'     => Icinga::app()->getConfigDir(),
