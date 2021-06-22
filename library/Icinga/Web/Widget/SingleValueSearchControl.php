@@ -125,7 +125,7 @@ class SingleValueSearchControl extends Form
             foreach ($this->metaDataNames as $name) {
                 $hiddenElement = $this->createElement('hidden', $this->searchParameter . '-' . $name);
                 $this->registerElement($hiddenElement);
-                $fieldset->add($hiddenElement);
+                $fieldset->addHtml($hiddenElement);
             }
 
             $this->getElement($this->searchParameter)->prependWrapper($fieldset);
@@ -140,7 +140,7 @@ class SingleValueSearchControl extends Form
             ]
         );
 
-        $this->add(new HtmlElement('div', [
+        $this->add(HtmlElement::create('div', [
             'id'    => $suggestionsId,
             'class' => 'search-suggestions'
         ]));
@@ -159,19 +159,21 @@ class SingleValueSearchControl extends Form
         foreach ($groups as list($name, $entries)) {
             if ($name) {
                 if ($entries === false) {
-                    $ul->add(new HtmlElement('li', ['class' => 'failure-message'], [
-                        new HtmlElement('em', null, t('Can\'t search:')),
+                    $ul->addHtml(HtmlElement::create('li', ['class' => 'failure-message'], [
+                        HtmlElement::create('em', null, t('Can\'t search:')),
                         $name
                     ]));
                     continue;
                 } elseif (empty($entries)) {
-                    $ul->add(new HtmlElement('li', ['class' => 'failure-message'], [
-                        new HtmlElement('em', null, t('No results:')),
+                    $ul->addHtml(HtmlElement::create('li', ['class' => 'failure-message'], [
+                        HtmlElement::create('em', null, t('No results:')),
                         $name
                     ]));
                     continue;
                 } else {
-                    $ul->add(new HtmlElement('li', ['class' => Suggestions::SUGGESTION_TITLE_CLASS], $name));
+                    $ul->addHtml(
+                        HtmlElement::create('li', ['class' => Suggestions::SUGGESTION_TITLE_CLASS], $name)
+                    );
                 }
             }
 
@@ -185,7 +187,7 @@ class SingleValueSearchControl extends Form
                     $attributes['data-' . $key] = $value;
                 }
 
-                $ul->add(new HtmlElement('li', null, new InputElement(null, $attributes)));
+                $ul->addHtml(new HtmlElement('li', null, new InputElement(null, $attributes)));
             }
         }
 
