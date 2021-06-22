@@ -4,6 +4,7 @@
 namespace Icinga\Module\Setup;
 
 use Icinga\Module\Setup\Requirement\SetRequirement;
+use Icinga\Module\Setup\Requirement\WebLibraryRequirement;
 use PDOException;
 use Icinga\Web\Form;
 use Icinga\Web\Wizard;
@@ -579,6 +580,24 @@ class WebWizard extends Wizard implements SetupWizard
                 'setup',
                 'Icinga Web 2 is developed for and tested on Linux. While we cannot'
                 . ' guarantee they will, other platforms may also perform as well.'
+            )
+        )));
+
+        $set->add(new WebLibraryRequirement(array(
+            'condition'     => ['icinga-php-library', '>=', '0.6.0'],
+            'alias'         => 'Icinga PHP library',
+            'description'   => mt(
+                'setup',
+                'The Icinga PHP library (IPL) is required for Icinga Web 2 and modules'
+            )
+        )));
+
+        $set->add(new WebLibraryRequirement(array(
+            'condition'     => ['icinga-php-thirdparty', '>=', '0.10.0'],
+            'alias'         => 'Icinga PHP Thirdparty',
+            'description'   => mt(
+                'setup',
+                'The Icinga PHP Thirdparty library is required for Icinga Web 2 and modules'
             )
         )));
 
