@@ -32,8 +32,6 @@ use Icinga\Module\Setup\Steps\UserGroupStep;
 use Icinga\Module\Setup\Utils\EnableModuleStep;
 use Icinga\Module\Setup\Utils\DbTool;
 use Icinga\Module\Setup\Requirement\OSRequirement;
-use Icinga\Module\Setup\Requirement\ClassRequirement;
-use Icinga\Module\Setup\Requirement\PhpConfigRequirement;
 use Icinga\Module\Setup\Requirement\PhpModuleRequirement;
 use Icinga\Module\Setup\Requirement\PhpVersionRequirement;
 use Icinga\Module\Setup\Requirement\ConfigDirectoryRequirement;
@@ -649,9 +647,7 @@ class WebWizard extends Wizard implements SetupWizard
         )));
 
         $dbSet = new RequirementSet(false, RequirementSet::MODE_OR);
-
-        $mysqlSet = new RequirementSet(true);
-        $mysqlSet->add(new PhpModuleRequirement(array(
+        $dbSet->add(new PhpModuleRequirement(array(
             'optional'      => true,
             'condition'     => 'pdo_mysql',
             'alias'         => 'PDO-MySQL',
@@ -660,30 +656,7 @@ class WebWizard extends Wizard implements SetupWizard
                 'To store users or preferences in a MySQL database the PDO-MySQL module for PHP is required.'
             )
         )));
-        $mysqlSet->add(new ClassRequirement(array(
-            'optional'      => true,
-            'condition'     => 'Zend_Db_Adapter_Pdo_Mysql',
-            'alias'         => mt('setup', 'Zend database adapter for MySQL'),
-            'description'   => mt(
-                'setup',
-                'The Zend database adapter for MySQL is required to access a MySQL database.'
-            ),
-            'textAvailable' => mt(
-                'setup',
-                'The Zend database adapter for MySQL is available.',
-                'setup.requirement.class'
-            ),
-            'textMissing'   => mt(
-                'setup',
-                'The Zend database adapter for MySQL is missing.',
-                'setup.requirement.class'
-            )
-        )));
-
-        $dbSet->merge($mysqlSet);
-
-        $pgsqlSet = new RequirementSet(true);
-        $pgsqlSet->add(new PhpModuleRequirement(array(
+        $dbSet->add(new PhpModuleRequirement(array(
             'optional'      => true,
             'condition'     => 'pdo_pgsql',
             'alias'         => 'PDO-PostgreSQL',
@@ -692,26 +665,6 @@ class WebWizard extends Wizard implements SetupWizard
                 'To store users or preferences in a PostgreSQL database the PDO-PostgreSQL module for PHP is required.'
             )
         )));
-        $pgsqlSet->add(new ClassRequirement(array(
-            'optional'      => true,
-            'condition'     => 'Zend_Db_Adapter_Pdo_Pgsql',
-            'alias'         => mt('setup', 'Zend database adapter for PostgreSQL'),
-            'description'   => mt(
-                'setup',
-                'The Zend database adapter for PostgreSQL is required to access a PostgreSQL database.'
-            ),
-            'textAvailable' => mt(
-                'setup',
-                'The Zend database adapter for PostgreSQL is available.',
-                'setup.requirement.class'
-            ),
-            'textMissing'   => mt(
-                'setup',
-                'The Zend database adapter for PostgreSQL is missing.',
-                'setup.requirement.class'
-            )
-        )));
-        $dbSet->merge($pgsqlSet);
         $set->merge($dbSet);
 
         $dbRequire = (new SetRequirement(array(
