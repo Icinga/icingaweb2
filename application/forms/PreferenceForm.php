@@ -3,8 +3,8 @@
 
 namespace Icinga\Forms;
 
-use Exception;
 use DateTimeZone;
+use Exception;
 use Icinga\Application\Config;
 use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
@@ -16,6 +16,7 @@ use Icinga\Web\Form;
 use Icinga\Web\Notification;
 use Icinga\Web\Session;
 use Icinga\Web\StyleSheet;
+use ipl\Html\HtmlElement;
 use ipl\I18n\GettextTranslator;
 use ipl\I18n\Locale;
 use ipl\I18n\StaticTranslator;
@@ -218,18 +219,30 @@ class PreferenceForm extends Form
                 }
             }
         }
+
         $this->addElement(
             'radio',
             'theme_mode',
             [
-                'label'         => $this->translate('Theme Mode'),
-                'multiOptions'  => [
-                    ''          => $this->translate('Dark'),
-                    'light'     => $this->translate('Light'),
-                    'system'      => $this->translate('System')
+                'class' => 'theme-mode-input',
+                'label' => $this->translate('Theme Mode'),
+                'multiOptions' => [
+                    '' => HtmlElement::create(
+                        'img',
+                        ['src' => $this->getView()->href('img/theme-mode-thumbnail-dark.svg')]
+                    ) . HtmlElement::create('span', [], $this->translate('Dark')),
+                    'light' => HtmlElement::create(
+                        'img',
+                        ['src' => $this->getView()->href('img/theme-mode-thumbnail-light.svg')]
+                    ) . HtmlElement::create('span', [], $this->translate('Light')),
+                    'system' => HtmlElement::create(
+                        'img',
+                        ['src' => $this->getView()->href('img/theme-mode-thumbnail-system.svg')]
+                    ) . HtmlElement::create('span', [], $this->translate('System'))
                 ],
-                'value'         => isset($value) ? $value : '',
-                'disable'       => isset($disabled) ? $disabled : [],
+                'value' => isset($value) ? $value : '',
+                'disable' => isset($disabled) ? $disabled : [],
+                'escape' => false
             ]
         );
 
