@@ -3,6 +3,12 @@
 Specific version upgrades are described below. Please note that upgrades are incremental. An upgrade from
 v2.6 to v2.8 requires to follow the instructions for v2.7 too.
 
+## Upgrading to Icinga Web 2 2.9.x
+
+**Deprecations**
+
+* Support for EOL PHP versions (5.6, 7.0, 7.1 and 7.2) will be removed with version 2.11
+
 ## Upgrading to Icinga Web 2 2.8.x
 
 **Changes in packaging and dependencies**

@@ -3,6 +3,7 @@
 
 namespace Icinga\Module\Setup;
 
+use Icinga\Application\Platform;
 use Icinga\Module\Setup\Requirement\SetRequirement;
 use Icinga\Module\Setup\Requirement\WebLibraryRequirement;
 use PDOException;
@@ -564,14 +565,29 @@ class WebWizard extends Wizard implements SetupWizard
     public function getRequirements($skipModules = false)
     {
         $set = new RequirementSet();
+        $phpVersion = Platform::getPhpVersion();
 
-        $set->add(new PhpVersionRequirement(array(
-            'condition'     => array('>=', '5.6'),
-            'description'   => mt(
-                'setup',
-                'Running Icinga Web 2 requires PHP version 5.6.'
-            )
-        )));
+        if (version_compare($phpVersion, '5.6', '>=')
+            && version_compare($phpVersion, '7.3', '<')
+        ) {
+            $set->add(new PhpVersionRequirement(array(
+                'optional'      => true,
+                'condition'     => array('>=', '7.3'),
+                'description'   => mt(
+                    'setup',
+                    'Running Icinga Web 2 requires PHP version 7.3.'
+                    . ' Older versions are only supported up until version 2.11.'
+                )
+            )));
+        } else {
+            $set->add(new PhpVersionRequirement(array(
+                'condition'     => array('>=', '7.3'),
+                'description'   => mt(
+                    'setup',
+                    'Running Icinga Web 2 requires PHP version 7.3.'
+                )
+            )));
+        }
 
         $set->add(new OSRequirement(array(
             'optional'      => true,

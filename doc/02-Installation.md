@@ -14,7 +14,8 @@ chapter.
 
 * [Icinga 2](https://icinga.com/products/icinga-2/) with the IDO database backend (MySQL or PostgreSQL)
 * A web server, e.g. Apache or Nginx
-* PHP version >= 5.6.0
+* PHP version >= 7.3
+  * Older versions (5.6+) are only supported up until version 2.11
 * [Icinga PHP Library (ipl)](https://github.com/Icinga/icinga-php-library) (>= 0.6)
 * [Icinga PHP Thirdparty](https://github.com/Icinga/icinga-php-thirdparty) (>= 0.10)
 * The following PHP modules must be installed: cURL, gettext, intl, mbstring, OpenSSL and xml
