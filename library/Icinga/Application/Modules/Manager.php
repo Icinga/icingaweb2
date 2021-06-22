@@ -228,7 +228,11 @@ class Manager
         } else {
             $module = new Module($this->app, $name, $basedir);
         }
-        $module->register();
+
+        if ($name !== 'ipl' && $name !== 'reactbundle') {
+            $module->register();
+        }
+
         $this->loadedModules[$name] = $module;
         return $this;
     }
