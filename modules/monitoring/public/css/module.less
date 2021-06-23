@@ -158,7 +158,7 @@
   color: @text-color-light;
 
   > a {
-    color: @text-color;
+    .var(color, text-color);
     letter-spacing: normal;
     font-weight: bold;
   }
@@ -401,7 +401,7 @@ div.box.stats {
   max-width: 50em;
   border: 1px solid @gray-lighter;
   border-left: 15px solid @gray;
-  color: @text-color;
+  .var(color, text-color);
 }
 
 .stats > .boxview > div.box {
@@ -699,7 +699,8 @@ form.instance-features span.description, form.object-features span.description {
      border-bottom: 1px @gray-light dotted;
 
     &:hover {
-      border-bottom: 1px @text-color solid;
+      border-bottom: 1px solid;
+      .var(border-bottom-color, text-color);
       text-decoration: none;
     }
   }

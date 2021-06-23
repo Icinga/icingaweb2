@@ -202,7 +202,7 @@ table.multiselect tr[href] td {
       padding: .5em;
       border: none;
       background: none;
-      color: @text-color;
+      .var(color, text-color);
 
       &:hover, &:focus {
         color: @icinga-blue;
@@ -414,7 +414,7 @@ ul.tree li a.error {
 }
 
 ul.tree li a:hover {
-  color: @text-color;
+  .var(color, text-color);
   text-decoration: underline;
 }
 
@@ -561,7 +561,7 @@ ul.tree li a.error:hover {
 
 .donut-label {
   font-weight: bold;
-  fill: @text-color;
+  .var(fill, text-color);
 }
 
 .donut-label {
@@ -584,7 +584,7 @@ ul.tree li a.error:hover {
 }
 
 .donut-label-small {
-  fill: @text-color;
+  .var(fill, text-color);
   font-size: 1.2em;
   text-anchor: middle;
   -moz-transform: translateY(0.35em);

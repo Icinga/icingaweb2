@@ -28,7 +28,8 @@ pre > code {
   font-weight: @font-weight-bold;
 
   &:hover {
-    border-bottom: 1px @text-color solid;
+    border-bottom: 1px solid;
+    .var(border-bottom-color, text-color);
     text-decoration: none;
   }
 }

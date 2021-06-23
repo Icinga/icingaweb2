@@ -82,7 +82,7 @@
 
 #layout {
   .var(background-color, body-bg-color);
-  color: @text-color;
+  .var(color, text-color);
   font-family: @font-family;
 }
 
@@ -204,7 +204,7 @@
 }
 
 #notifications > li {
-  color: @text-color;
+  .var(color, text-color);
   display: block;
   line-height: 2.5em;
   border-left: .5em solid @gray-light;
