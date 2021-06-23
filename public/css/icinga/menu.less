@@ -74,7 +74,7 @@
       display: none;
     }
 
-    background-color: @menu-active-bg-color;
+    .var(background-color, menu-active-bg-color);
   }
 
   &.no-icon > a {
@@ -87,7 +87,7 @@
 
   &.active:not(.selected) > a:focus,
   &.active:not(.selected) > a:hover {
-    background-color: darken(@menu-active-bg-color, 20);
+    .var(background-color, menu-active-hover-bg-color);
   }
 
   &:not(.selected) > a:hover,
@@ -217,7 +217,7 @@
   width: 100%;
 
   &.active {
-    background-color: @menu-active-bg-color;
+    .var(background-color, menu-active-bg-color);
   }
 
   &:hover,
@@ -384,7 +384,7 @@
 }
 
 .search-input:focus ~ .search-reset:hover {
-  background-color: darken(@menu-active-bg-color, 20);
+  .var(background-color, menu-active-hover-bg-color);
 }
 
 .search-reset {
