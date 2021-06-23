@@ -46,7 +46,7 @@
 
 // Host name and IP addresses in the host and service detail view
 .host-meta {
-  color: @text-color-light;
+  .var(color, text-color-light);
   font-size: @font-size-small;
 }
 
@@ -59,7 +59,7 @@
 
 // Notification recipient in the notifications overview
 .notification-recipient {
-  color: @text-color-light;
+  .var(color, text-color-light);
   float: right;
   font-size: @font-size-small;
 }
@@ -91,7 +91,7 @@
 
 // Plugin output in overviews
 .overview-plugin-output {
-  color: @text-color-light;
+  .var(color, text-color-light);
   font-family: @font-family-fixed;
   font-size: @font-size-small;
   margin: 0;
@@ -133,7 +133,7 @@
 
 // Service description if in the service detail view
 .service-meta {
-  color: @text-color-light;
+  .var(color, text-color-light);
   font-size: @font-size-small;
 }
 
@@ -195,7 +195,8 @@
 
   // State class for history events
   &.state-no-state {
-    border-left: @border-left-width solid @text-color-light;
+    border-left: @border-left-width solid;
+    .var(border-left-color, text-color-light);
   }
 
   * {

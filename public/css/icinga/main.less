@@ -128,7 +128,7 @@ a:hover > .icon-cancel {
 }
 
 .comment-time {
-  color: @text-color-light;
+  .var(color, text-color-light);
   font-size: @font-size-small;
 }
 
@@ -139,7 +139,7 @@ a:hover > .icon-cancel {
   }
 
   > dt {
-    color: @text-color-light;
+    .var(color, text-color-light);
     font-size: @font-size-small;
   }
 }
@@ -199,7 +199,7 @@ a:hover > .icon-cancel {
 }
 
 .name-value-table > tbody > tr > th {
-  color: @text-color-light;
+  .var(color, text-color-light);
   // Reset default font-weight
   font-weight: normal;
   padding-left: 0;
@@ -385,7 +385,7 @@ a:hover > .icon-cancel {
   .name-value-table {
     > caption {
       font-weight: normal;
-      color: @text-color-light;
+      .var(color, text-color-light);
     }
 
     > tbody > tr > th {
