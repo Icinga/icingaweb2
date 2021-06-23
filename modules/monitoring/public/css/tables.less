@@ -151,7 +151,7 @@
   &.state-critical,
   &.state-down {
     background-color: @color-critical;
-    color: @text-color-inverted;
+    .var(color, text-color-inverted);
 
     &.handled {
       background-color: inherit;
@@ -162,7 +162,7 @@
 
   &.state-warning {
     background-color: @color-warning;
-    color: @text-color-inverted;
+    .var(color, text-color-inverted);
 
     &.handled {
       background-color: inherit;
@@ -173,7 +173,7 @@
 
   &.state-unknown {
     background-color: @color-unknown;
-    color: @text-color-inverted;
+    .var(color, text-color-inverted);
 
     &.handled {
       background-color: inherit;
@@ -184,7 +184,7 @@
 
   &.state-unreachable {
     background-color: @color-unreachable;
-    color: @text-color-inverted;
+    .var(color, text-color-inverted);
 
     &.handled {
       background-color: inherit;

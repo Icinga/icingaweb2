@@ -110,11 +110,11 @@
 
 #menu ul:not(.nav-level-2) > .selected > a {
   background-color: @menu-highlight-color;
-  color: @text-color-inverted;
+  .var(color, text-color-inverted);
 
 
   &:hover {
-    color: @text-color-inverted;
+    .var(color, text-color-inverted);
   }
 
   &:after {
@@ -327,7 +327,7 @@
       }
 
       a.badge {
-         color: @text-color-inverted;
+        .var(color, text-color-inverted);
          flex: 0 1 auto;
          margin-right: 1em;
          padding: .25em;
@@ -521,7 +521,7 @@ html.no-js  #toggle-sidebar {
   }
 
   &.badge-nav-item a.badge {
-    color: @text-color-inverted;
+    .var(color, text-color-inverted);
     flex: 0 1 auto;
     margin-right: 1em;
     padding: .25em;
