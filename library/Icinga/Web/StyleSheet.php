@@ -22,6 +22,28 @@ class StyleSheet
     const DEFAULT_THEME = 'Icinga';
 
     /**
+     * The name of the default theme mode
+     *
+     * @var string
+     */
+    const DEFAULT_MODE = 'dark';
+
+    /**
+     * RegEx pattern for matching full css @media query of theme mode
+     *
+     * @var string
+     */
+    const REGEX_ALL_MODE_QUERY = '/@media\s*\(\s*min-height\s*:\s*@prefer-light-color-scheme\s*\)\s*,' .
+    '\s*\(\s*prefers-color-scheme\s*:\s*light\s*\)\s*and\s*\(\s*min-height\s*:\s*@enable-color-preference\s*\)/';
+
+    /**
+     * RegEx pattern for matching css @media query of theme mode
+     *
+     * @var string
+     */
+    const REGEX_AUTO_MODE_QUERY = '/@media.*prefers-color-scheme/';
+
+    /**
      * Array of core LESS files Web 2 sends to the client
      *
      * @var string[]
@@ -137,18 +159,23 @@ class StyleSheet
             }
         }
 
-        if ($theme && $theme !== self::DEFAULT_THEME) {
-            if (($pos = strpos($theme, '/')) !== false) {
-                $moduleName = substr($theme, 0, $pos);
-                $theme = substr($theme, $pos + 1);
-                if ($mm->hasLoaded($moduleName)) {
-                    $module = $mm->getModule($moduleName);
-                    $this->lessCompiler->setTheme($module->getCssDir() . '/themes/' . $theme . '.less');
+        if ($themePath = self::getThemeFile($theme)) {
+            $this->lessCompiler->setTheme($themePath);
+        }
+
+        $mode = 'none';
+        if ($user = Auth::getInstance()->getUser()) {
+            $file = $themePath !== null ? file_get_contents($themePath) : '';
+            if ($file !== '' && ! preg_match(self::REGEX_ALL_MODE_QUERY, $file)) {
+                if (preg_match(self::REGEX_AUTO_MODE_QUERY, $file)) {
+                    $mode = 'system';
                 }
             } else {
-                $this->lessCompiler->setTheme($this->pubPath . '/css/themes/' . $theme . '.less');
+                $mode = $user->getPreferences()->getValue('icingaweb', 'theme_mode', self::DEFAULT_MODE);
             }
         }
+
+        $this->lessCompiler->setThemeMode($this->pubPath . '/css/modes/'. $mode . '.less');
     }
 
     /**
@@ -235,5 +262,33 @@ class StyleSheet
             Logger::error($e);
             return IcingaException::describe($e);
         }
+    }
+
+    /**
+     * Get the path to the current LESS theme file
+     *
+     * @param $theme
+     *
+     * @return  string|null Return null if self::DEFAULT_THEME is set as theme, path otherwise
+     */
+    public static function getThemeFile($theme)
+    {
+        $app = Icinga::app();
+
+        if ($theme && $theme !== self::DEFAULT_THEME) {
+            if (($pos = strpos($theme, '/')) !== false) {
+                $moduleName = substr($theme, 0, $pos);
+                $theme = substr($theme, $pos + 1);
+                if ($app->getModuleManager()->hasLoaded($moduleName)) {
+                    $module = $app->getModuleManager()->getModule($moduleName);
+
+                    return $module->getCssDir() . '/themes/' . $theme . '.less';
+                }
+            } else {
+                return $app->getBaseDir('public') . '/css/themes/' . $theme . '.less';
+            }
+        }
+
+        return null;
     }
 }

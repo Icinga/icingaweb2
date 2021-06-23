@@ -220,3 +220,8 @@
     background-color: @color-pending;
   }
 }
+
+.var(@property, @variable) {
+    @{property}: @@variable;
+    @{property}: var(~"--@{variable}", @@variable);
+}

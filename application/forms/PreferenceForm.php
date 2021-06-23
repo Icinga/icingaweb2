@@ -3,8 +3,8 @@
 
 namespace Icinga\Forms;
 
-use Exception;
 use DateTimeZone;
+use Exception;
 use Icinga\Application\Config;
 use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
@@ -16,6 +16,7 @@ use Icinga\Web\Form;
 use Icinga\Web\Notification;
 use Icinga\Web\Session;
 use Icinga\Web\StyleSheet;
+use ipl\Html\HtmlElement;
 use ipl\I18n\GettextTranslator;
 use ipl\I18n\Locale;
 use ipl\I18n\StaticTranslator;
@@ -93,15 +94,17 @@ class PreferenceForm extends Form
     public function onSuccess()
     {
         $this->preferences = new Preferences($this->store ? $this->store->load() : array());
-
         $oldTheme = $this->preferences->getValue('icingaweb', 'theme');
+        $oldMode = $this->preferences->getValue('icingaweb', 'theme_mode');
         $oldLocale = $this->preferences->getValue('icingaweb', 'language');
+        $defaultTheme = Config::app()->get('themes', 'default', StyleSheet::DEFAULT_THEME);
 
         $webPreferences = $this->preferences->get('icingaweb', array());
         foreach ($this->getValues() as $key => $value) {
             if ($value === ''
+                || $value === null
                 || $value === 'autodetect'
-                || ($key === 'theme' && $value === Config::app()->get('themes', 'default', StyleSheet::DEFAULT_THEME))
+                || ($key === 'theme' && $value === $defaultTheme)
             ) {
                 if (isset($webPreferences[$key])) {
                     unset($webPreferences[$key]);
@@ -111,16 +114,19 @@ class PreferenceForm extends Form
             }
         }
         $this->preferences->icingaweb = $webPreferences;
-
         Session::getSession()->user->setPreferences($this->preferences);
 
-        if (($theme = $this->getElement('theme')) !== null
+        if ((($theme = $this->getElement('theme')) !== null
             && ($theme = $theme->getValue()) !== $oldTheme
+            && ($theme !== $defaultTheme || $oldTheme !== null))
+            || (($mode = $this->getElement('theme_mode')) !== null
+            && ($mode->getValue()) !== $oldMode)
         ) {
             $this->getResponse()->setReloadCss(true);
         }
 
         if (($locale = $this->getElement('language')) !== null
+            && $locale->getValue() !== 'autodetect'
             && $locale->getValue() !== $oldLocale
         ) {
             $this->getResponse()->setHeader('X-Icinga-Redirect-Http', 'yes');
@@ -192,6 +198,7 @@ class PreferenceForm extends Form
                     array(
                         'label'         => $this->translate('Theme', 'Form element label'),
                         'multiOptions'  => $themes,
+                        'autosubmit'    => true,
                         'value'         => $this->preferences->getValue(
                             'icingaweb',
                             'theme',
@@ -201,6 +208,43 @@ class PreferenceForm extends Form
                 );
             }
         }
+
+        if (isset($formData['theme']) && $formData['theme'] !== StyleSheet::DEFAULT_THEME) {
+            $file = file_get_contents(StyleSheet::getThemeFile($formData['theme']));
+            if (! preg_match(StyleSheet::REGEX_ALL_MODE_QUERY, $file)) {
+                $disabled = ['', 'light', 'system'];
+                if (preg_match(StyleSheet::REGEX_AUTO_MODE_QUERY, $file)) {
+                    $value = 'system';
+                    $disabled = ['', 'light'];
+                }
+            }
+        }
+
+        $this->addElement(
+            'radio',
+            'theme_mode',
+            [
+                'class' => 'theme-mode-input',
+                'label' => $this->translate('Theme Mode'),
+                'multiOptions' => [
+                    '' => HtmlElement::create(
+                        'img',
+                        ['src' => $this->getView()->href('img/theme-mode-thumbnail-dark.svg')]
+                    ) . HtmlElement::create('span', [], $this->translate('Dark')),
+                    'light' => HtmlElement::create(
+                        'img',
+                        ['src' => $this->getView()->href('img/theme-mode-thumbnail-light.svg')]
+                    ) . HtmlElement::create('span', [], $this->translate('Light')),
+                    'system' => HtmlElement::create(
+                        'img',
+                        ['src' => $this->getView()->href('img/theme-mode-thumbnail-system.svg')]
+                    ) . HtmlElement::create('span', [], $this->translate('System'))
+                ],
+                'value' => isset($value) ? $value : '',
+                'disable' => isset($disabled) ? $disabled : [],
+                'escape' => false
+            ]
+        );
 
         /** @var GettextTranslator $translator */
         $translator = StaticTranslator::$instance;

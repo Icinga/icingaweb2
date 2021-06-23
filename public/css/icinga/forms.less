@@ -513,3 +513,30 @@ form.icinga-form .form-info {
 .flyover-content .control-label-group {
   text-align: left;
 }
+
+.theme-mode-input {
+  display: none;
+
+  &:checked + img {
+    border-color: @icinga-blue;
+    border-radius: .25em;
+  }
+
+  & + img {
+    margin: 0 auto;
+    border: .25em solid transparent;
+    display: block;
+    width: 6em;
+    overflow: hidden;
+    box-shadow: 0 0 .25em 0 rgba(0,0,0,.4);
+  }
+
+  &[disabled] ~ * {
+    opacity: .25;
+  }
+
+  & ~ span {
+    display: block;
+    text-align: center;
+  }
+}
