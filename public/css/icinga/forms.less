@@ -148,7 +148,7 @@ form.icinga-form .control-group .toggle-switch ~ .control-info {
   input[type="time"],
   textarea,
   select {
-    background-color: @low-sat-blue;
+    .var(background-color, low-sat-blue);
   }
 }
 
@@ -338,8 +338,9 @@ form.inline {
   top: 0;
 
   display: inline-block;
-  background:  @low-sat-blue;
-  border: 1px solid @low-sat-blue;
+  .var(background, low-sat-blue);
+  border: 1px solid;
+  .var(border-color, low-sat-blue);
   box-sizing: content-box;
   border-radius: 1em;
   height: 4/3em;
@@ -354,7 +355,8 @@ form.inline {
 
   background: @text-color-inverted;
   border-radius: 1em;
-  border: 1px solid @low-sat-blue;
+  border: 1px solid;
+  .var(border-color, low-sat-blue);
   box-sizing: border-box;
   content: "";
   display: block;
