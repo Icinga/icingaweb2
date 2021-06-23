@@ -6,9 +6,10 @@
           box-shadow: @arguments;
 }
 
-.button(@background-color: @body-bg-color, @border-font-color: @icinga-blue, @color-dark: darken(@border-font-color, 10%)) {
+.button(@background-color: ~"var(--body-bg-color, @{body-bg-color})", @border-font-color: @icinga-blue, @color-dark: darken(@border-font-color, 10%)) {
   .rounded-corners(3px);
 
+  background-color: extract-variable-default(@background-color);
   background-color: @background-color;
   border: 2px solid @border-font-color;
   color: @border-font-color;
@@ -25,6 +26,7 @@
   &:hover,
   &.btn-primary {
     background-color: @border-font-color;
+    color: extract-variable-default(@background-color);
     color: @background-color;
   }
 
@@ -32,6 +34,7 @@
   &.btn-primary:hover {
     background-color: @color-dark;
     border-color: @color-dark;
+    color: extract-variable-default(@background-color);
     color: @background-color;
   }
 

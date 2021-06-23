@@ -291,11 +291,11 @@ form.icinga-form .form-controls {
   }
 
   input[type="submit"].btn-remove {
-    .button(@body-bg-color, @color-critical, darken(@color-critical, 10%));
+    .button(~"var(--body-bg-color, @{body-bg-color})", @color-critical, darken(@color-critical, 10%));
   }
 
   input[type="submit"].btn-cancel {
-    .button(@body-bg-color, @gray, @black);
+    .button(~"var(--body-bg-color, @{body-bg-color})", @gray, @black);
   }
 
   button.noscript-apply {
@@ -376,6 +376,7 @@ form.inline {
 
 .icinga-controls input[type="checkbox"]:focus + .toggle-switch .toggle-slider {
   box-shadow: 0 0 0 2px @body-bg-color, 0 0 0 4px fade(@icinga-blue, 40);
+  box-shadow: 0 0 0 2px var(--body-bg-color, @body-bg-color), 0 0 0 4px fade(@icinga-blue, 40);
 }
 
 .icinga-controls input[type="checkbox"]:checked + .toggle-switch .toggle-slider:before {

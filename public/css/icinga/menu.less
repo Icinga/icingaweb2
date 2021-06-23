@@ -123,7 +123,7 @@
     position: absolute;
     right: -.75em;
 
-    background-color: @body-bg-color;
+    .var(background-color, body-bg-color);
     box-shadow: 0 0 1em 0 rgba(0,0,0,0.6);
     content: "";
     display: block;
@@ -154,7 +154,7 @@
   &.active:after {
     .transform(rotate(45deg));
 
-    background-color: @body-bg-color;
+    .var(background-color, body-bg-color);
     box-shadow: 0 0 1em 0 rgba(0,0,0,.6);
     content: "";
     display: block;
@@ -252,7 +252,7 @@
     &:after {
       .transform(rotate(45deg));
 
-      background-color: @body-bg-color;
+      .var(background-color, body-bg-color);
       border-bottom: 1px solid @gray-light;
       border-left: 1px solid @gray-light;
       content: "";
@@ -350,7 +350,7 @@
     li {
       display: block;
       a, button[type="submit"] {
-        background-color: @body-bg-color;
+        .var(background-color, body-bg-color);
         border: none;
         left: -999px;
         padding: @vertical-padding @horizontal-padding;
@@ -461,7 +461,7 @@ input[type=text].search-input {
   z-index: 3;
 
   i {
-    background-color: @body-bg-color;
+    .var(background-color, body-bg-color);
     border-radius: .25em 0 0 .25em;
     font-size: 1.125em;
     width: 2em;

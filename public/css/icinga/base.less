@@ -69,6 +69,7 @@
 @menu-2ndlvl-highlight-color: @text-color-inverted;
 @menu-flyout-bg-color: @body-bg-color;
 @menu-flyout-color: @text-color;
+@tab-hover-bg-color: fade(@body-bg-color, 50%);
 
 // Other colors
 @color-granted: #59cd59;
@@ -94,6 +95,17 @@
 
 @vertical-padding: 0.5em; // 6px
 @horizontal-padding: 1em; // 12px
+
+@media (min-height: @prefer-light-color-scheme), (prefers-color-scheme: light) and (min-height: @enable-color-preference) {
+  :root {
+    --body-bg-color: #F5F9FA;
+    --badge-color: #F5F9FA;
+    --text-color-inverted: #F5F9FA;
+    --text-color-on-icinga-blue: #F5F9FA;
+    --menu-flyout-bg-color: #F5F9FA;
+    --tab-hover-bg-color: fade(#F5F9FA, 50%);
+  }
+}
 
 // Make padding not affect the final computed width of an element
 html {
@@ -200,7 +212,8 @@ td, th {
     content: "";
     display: block;
 
-    background: @body-bg-color url(../img/icinga-loader.gif) no-repeat center center;
+    background: url(../img/icinga-loader.gif) no-repeat center center;
+    .var(background-color, body-bg-color);
     background-size: 4em 4em;
 
     opacity: 0;

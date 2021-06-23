@@ -20,7 +20,7 @@
 
 #guest-error-message {
   .fadein();
-  color: @body-bg-color;
+  .var(color, body-bg-color);
   font-size: 2em;
 }
 
@@ -81,7 +81,7 @@
 }
 
 #layout {
-  background-color: @body-bg-color;
+  .var(background-color, body-bg-color);
   color: @text-color;
   font-family: @font-family;
 }
@@ -208,7 +208,7 @@
   display: block;
   line-height: 2.5em;
   border-left: .5em solid @gray-light;
-  background: @body-bg-color;
+  .var(background, body-bg-color);
   margin-bottom: 1px;
   box-shadow: 0 0 1em 0 rgba(0,0,0,0.25);
 
@@ -225,10 +225,10 @@
   &.error {
     border-color: @color-down;
     background: @color-down;
-    color: @body-bg-color;
+    .var(color, body-bg-color);
 
     .icon {
-      color: @body-bg-color;
+      .var(color, body-bg-color);
     }
   }
 
@@ -251,10 +251,10 @@
   &.warning {
     border-color: @color-warning;
     background: @color-warning;
-    color: @body-bg-color;
+    .var(color, body-bg-color);
 
     .icon {
-      color: @body-bg-color;
+      .var(color, body-bg-color);
     }
   }
 }

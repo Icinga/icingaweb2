@@ -2,7 +2,7 @@
 
 .monitoring-statusbar {
   position: relative;
-  background-color: @body-bg-color;
+  .var(background-color, body-bg-color);
   border-top: 1px solid @gray-lighter;
   padding: .25em @gutter;
   line-height: 1.3;
@@ -657,37 +657,37 @@ form.instance-features span.description, form.object-features span.description {
 
   .state-critical {
     background-color: @color-critical;
-    color: @body-bg-color;
+    .var(color, body-bg-color);
     padding: 0.2em;
   }
 
   .state-ok {
     background-color: @color-ok;
-    color: @body-bg-color;
+    .var(color, body-bg-color);
     padding: 0.2em;
   }
 
   .state-unknown {
     background-color: @color-unknown;
-    color: @body-bg-color;
+    .var(color, body-bg-color);
     padding: 0.2em;
   }
 
   .state-warning {
     background-color: @color-warning;
-    color: @body-bg-color;
+    .var(color, body-bg-color);
     padding: 0.2em;
   }
 
   .state-down {
     background-color: @color-down;
-    color: @body-bg-color;
+    .var(color, body-bg-color);
     padding: 0.2em;
   }
 
   .state-up {
     background-color: @color-up;
-    color: @body-bg-color;
+    .var(color, body-bg-color);
     padding: 0.2em;
   }
 }
