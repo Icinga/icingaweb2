@@ -81,7 +81,8 @@
   }
 
   .connector {
-    border: 0 solid @gray-lighter;
+    border: 0 solid;
+    .var(border-color, gray-lighter);
     border-bottom-width: 2px;
 
     &.granted {
@@ -100,7 +101,8 @@
 
   .role {
     .rounded-corners(1em);
-    border: 2px solid @gray-lighter;
+    border: 2px solid;
+    .var(border-color, gray-lighter);
 
     &.granted {
       border: 2px solid @color-granted;
@@ -113,7 +115,7 @@
 
   .restriction {
     font-family: @font-family-fixed;
-    background-color: @gray-lighter;
+    .var(background-color, gray-lighter);
   }
 }
 

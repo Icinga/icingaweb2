@@ -398,7 +398,7 @@ form.inline {
     .var(border-color, gray-light);
 
     &:before {
-      background-color: @gray-lighter;
+      .var(background-color, gray-lighter);
       .var(border-color, gray-light);
     }
   }
@@ -411,7 +411,7 @@ form.icinga-form .control-group.disabled .control-label-group {
 .icinga-controls {
   input[disabled],
   select[disabled] {
-    background: @gray-lighter;
+    .var(background-color, gray-lighter);
     border-color: transparent;
   }
 }

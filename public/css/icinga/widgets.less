@@ -7,7 +7,8 @@
   padding: 0;
 
   > li {
-    border-bottom: 1px solid @gray-lighter;
+    border-bottom: 1px solid;
+    .var(border-bottom-color, gray-lighter);
     line-height: 1.5em;
     padding: 0.5em 1em 0.5em 3em;
 
@@ -460,7 +461,8 @@ ul.tree li a.error:hover {
 
   .flyover-content {
     .var(background-color, body-bg-color);
-    border: 1px solid @gray-lighter;
+    border: 1px solid;
+    .var(border-color, gray-lighter);
     box-shadow: 0 0 .5em 0 rgba(0, 0, 0, 0.2);
     position: absolute;
     padding: @vertical-padding @horizontal-padding;
@@ -469,8 +471,10 @@ ul.tree li a.error:hover {
 
   &.flyover-arrow-top .flyover-content:before {
     .var(background, body-bg-color);
-    border-left: 1px solid @gray-lighter;
-    border-top: 1px solid @gray-lighter;
+    border-left: 1px solid;
+    .var(border-left-color, gray-lighter);
+    border-top: 1px solid;
+    .var(border-top-color, gray-lighter);
     content: "";
     height: 1em;
     -ms-transform: rotate(45deg);

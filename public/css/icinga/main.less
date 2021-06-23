@@ -105,7 +105,8 @@ a:hover > .icon-cancel {
   margin: 0;
 
   > dt {
-    border-bottom: 1px solid @gray-lighter;
+    border-bottom: 1px solid;
+    .var(border-bottom-color, gray-lighter);
     margin-bottom: 0.25em;
 
     &:hover {
@@ -275,7 +276,7 @@ a:hover > .icon-cancel {
     margin-top: -1em;
     margin-right: .25em;
 
-    background: @gray-lighter;
+    .var(background, gray-lighter);
     .var(color, "gray");
     border: none;
     -webkit-box-shadow: 0 0 1/3em rgba(0,0,0,.3);

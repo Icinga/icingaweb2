@@ -140,7 +140,8 @@
 // Columns
 
 #layout.twocols #col2 {
-  border-left: 1px solid @gray-lighter;
+  border-left: 1px solid;
+  .var(border-left-color, gray-lighter);
 }
 
 #layout.twocols.wide-layout #col2 {
@@ -158,7 +159,8 @@
 }
 
 #layout.twocols #col2 {
-  border-left: 1px solid @gray-lighter;
+  border-left: 1px solid;
+  .var(border-left-color, gray-lighter);
 
   &:empty {
     display: flex;
