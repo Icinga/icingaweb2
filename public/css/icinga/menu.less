@@ -10,7 +10,7 @@
 @icon-width: 1.7em; // 1.5em width + 0.2em right margin
 
 #menu {
-  background-color: @menu-bg-color;
+  .var(background-color, menu-bg-color);
   width: 100%;
   flex: 1;
   overflow: auto;
@@ -92,7 +92,7 @@
 
   &:not(.selected) > a:hover,
   &:not(.selected) > a:focus {
-    background-color: fade(@menu-bg-color, 50%)
+    .var(background-color, menu-hover-bg-color);
   }
 
   // Balance icon weight for non active menu items
@@ -222,7 +222,7 @@
 
   &:hover,
   &:focus {
-    background-color: darken(@menu-bg-color, 20);
+    .var(background-color, menu-search-hover-bg-color);
   }
 }
 
@@ -402,7 +402,7 @@
 
   &:focus,
   &:hover {
-    background-color: darken(@menu-bg-color, 20);
+    .var(background-color, menu-search-hover-bg-color);
     outline: none;
   }
 }
