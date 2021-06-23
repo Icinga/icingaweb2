@@ -2,10 +2,10 @@
 
 .app-health {
   header {
-    color: @text-color-light;
+    .var(color, text-color-light);
 
     span {
-      color: @text-color;
+      .var(color, text-color);
     }
   }
 
@@ -36,12 +36,13 @@
   }
 
   tr:not(:last-child) td {
-    border: 0 solid @gray-light;
+    border: 0 solid;
+    .var(border-color, gray-light);
     border-bottom-width: 1px;
   }
 
   section {
-    color: @text-color-light;
+    .var(color, text-color-light);
     font-family: @font-family-fixed;
   }
 }

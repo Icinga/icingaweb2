@@ -1,13 +1,14 @@
 /*! Icinga Web 2 | (c) 2014 Icinga Development Team | GPLv2+ */
 
 #announcements > ul {
-  background-color: @body-bg-color;
+  .var(background-color, body-bg-color);
   list-style: none;
   margin: 0;
   padding: 0;
 
   > li {
-    border-bottom: 1px solid @gray-lighter;
+    border-bottom: 1px solid;
+    .var(border-bottom-color, gray-lighter);
     line-height: 1.5em;
     padding: 0.5em 1em 0.5em 3em;
 
@@ -117,7 +118,7 @@
 }
 
 .link-description {
-  color: @text-color-light;
+  .var(color, text-color-light);
 }
 
 .link-icon {
@@ -195,14 +196,14 @@ table.multiselect tr[href] td {
     }
 
     ul.tree li.active {
-      background-color: @gray-lightest;
+      .var(background-color, gray-lightest);
     }
 
     button {
       padding: .5em;
       border: none;
       background: none;
-      color: @text-color;
+      .var(color, text-color);
 
       &:hover, &:focus {
         color: @icinga-blue;
@@ -226,7 +227,7 @@ form.role-form {
   }
 
   .control-label-group em {
-    color: @text-color-light;
+    .var(color, text-color-light);
     font-style: normal;
   }
 
@@ -259,7 +260,7 @@ form.role-form {
     h3 em {
       font-size: .857em;
       font-weight: normal;
-      color: @text-color-light;
+      .var(color, text-color-light);
     }
 
     h4 {
@@ -286,7 +287,8 @@ form.role-form {
     }
 
     .collapsible-control {
-      border-bottom: 1px solid @gray-light;
+      border-bottom: 1px solid;
+      .var(border-bottom-color, gray-light);
       cursor: pointer;
       -webkit-touch-callout: none;
       -webkit-user-select: none;
@@ -362,7 +364,7 @@ ul.tree li::before, ul.tree li::after {
   position: absolute;
   right: auto;
   left: -0.2em;
-  border-color: @gray-light;
+  .var(border-color, gray-light);
   border-style: dotted;
   border-width: 0;
 }
@@ -404,7 +406,7 @@ ul.tree li a {
   line-height: 2em;
   padding: 0 .5em;
   text-decoration: none;
-  color: @gray;
+  .var(color, "gray");
   background-repeat: no-repeat;
   background-position: 0.8em 0.4em;
 }
@@ -414,7 +416,7 @@ ul.tree li a.error {
 }
 
 ul.tree li a:hover {
-  color: @text-color;
+  .var(color, text-color);
   text-decoration: underline;
 }
 
@@ -458,8 +460,9 @@ ul.tree li a.error:hover {
   position: relative;
 
   .flyover-content {
-    background-color: @body-bg-color;
-    border: 1px solid @gray-lighter;
+    .var(background-color, body-bg-color);
+    border: 1px solid;
+    .var(border-color, gray-lighter);
     box-shadow: 0 0 .5em 0 rgba(0, 0, 0, 0.2);
     position: absolute;
     padding: @vertical-padding @horizontal-padding;
@@ -467,9 +470,11 @@ ul.tree li a.error:hover {
   }
 
   &.flyover-arrow-top .flyover-content:before {
-    background: @body-bg-color;
-    border-left: 1px solid @gray-lighter;
-    border-top: 1px solid @gray-lighter;
+    .var(background, body-bg-color);
+    border-left: 1px solid;
+    .var(border-left-color, gray-lighter);
+    border-top: 1px solid;
+    .var(border-top-color, gray-lighter);
     content: "";
     height: 1em;
     -ms-transform: rotate(45deg);
@@ -543,8 +548,8 @@ ul.tree li a.error:hover {
 }
 
 .slice-state-not-checked {
-  stroke: @gray-light;
-  background: @gray-light;
+  .var(stroke, gray-light);
+  .var(background, gray-light);
 }
 
 .donut {
@@ -561,7 +566,7 @@ ul.tree li a.error:hover {
 
 .donut-label {
   font-weight: bold;
-  fill: @text-color;
+  .var(fill, text-color);
 }
 
 .donut-label {
@@ -570,7 +575,7 @@ ul.tree li a.error:hover {
 }
 
 .donut-label-big {
-  color: @gray-light;
+  .var(color, gray-light);
   font-size: 6em;
   line-height: 0;
   text-anchor: middle;
@@ -584,7 +589,7 @@ ul.tree li a.error:hover {
 }
 
 .donut-label-small {
-  fill: @text-color;
+  .var(fill, text-color);
   font-size: 1.2em;
   text-anchor: middle;
   -moz-transform: translateY(0.35em);

@@ -20,7 +20,7 @@
 
 #guest-error-message {
   .fadein();
-  color: @body-bg-color;
+  .var(color, body-bg-color);
   font-size: 2em;
 }
 
@@ -32,7 +32,7 @@
 }
 
 #header-logo-container {
-  background: @menu-bg-color;
+  .var(background, menu-bg-color);
   height: 6em;
   padding: 1.25em;
   width: 16em;
@@ -81,8 +81,8 @@
 }
 
 #layout {
-  background-color: @body-bg-color;
-  color: @text-color;
+  .var(background-color, body-bg-color);
+  .var(color, text-color);
   font-family: @font-family;
 }
 
@@ -141,11 +141,11 @@
 
 // Mobile menu
 #layout.minimal-layout #sidebar {
-  background-color: @menu-bg-color;
+  .var(background-color, menu-bg-color);
 }
 
 #mobile-menu-toggle {
-  color: @menu-color;
+  .var(color, menu-color);
   text-align: right;
 
   > button {
@@ -204,11 +204,12 @@
 }
 
 #notifications > li {
-  color: @text-color;
+  .var(color, text-color);
   display: block;
   line-height: 2.5em;
-  border-left: .5em solid @gray-light;
-  background: @body-bg-color;
+  border-left: .5em solid;
+  .var(border-left-color, gray-light);
+  .var(background, body-bg-color);
   margin-bottom: 1px;
   box-shadow: 0 0 1em 0 rgba(0,0,0,0.25);
 
@@ -225,10 +226,10 @@
   &.error {
     border-color: @color-down;
     background: @color-down;
-    color: @body-bg-color;
+    .var(color, body-bg-color);
 
     .icon {
-      color: @body-bg-color;
+      .var(color, body-bg-color);
     }
   }
 
@@ -251,10 +252,10 @@
   &.warning {
     border-color: @color-warning;
     background: @color-warning;
-    color: @body-bg-color;
+    .var(color, body-bg-color);
 
     .icon {
-      color: @body-bg-color;
+      .var(color, body-bg-color);
     }
   }
 }
@@ -332,10 +333,10 @@
   }
 
   #search:focus {
-    background-color: @menu-bg-color;
+    .var(background-color, menu-bg-color);
     border-radius: 0 .25em .25em 0;
     box-shadow: 0 0 .25em 0 rgba(0, 0, 0, .2);
-    color: @menu-color;
+    .var(color, menu-color);
     width: 20em;
     position: fixed;
     z-index: 1;
@@ -354,5 +355,13 @@
     a, button {
       width: 20em;
     }
+  }
+}
+
+@media (min-height: @prefer-light-color-scheme), (prefers-color-scheme: light) and (min-height: @enable-color-preference) {
+  #header-logo,
+  #mobile-menu-logo,
+  #about .icinga-logo {
+    filter: brightness(0.415) sepia(1) ~"saturate(0.1)" hue-rotate(144deg);
   }
 }

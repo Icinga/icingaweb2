@@ -5,7 +5,7 @@
   white-space: nowrap;
 
   td {
-    color: @gray-light;
+    .var(color, gray-light);
     padding: 0.2em;
     text-align: center;
     width: 1em;
@@ -33,11 +33,11 @@
   font-size: 130%;
 
   a {
-    color: @text-color;
+    .var(color, text-color);
     outline: none;
 
     &:hover {
-      color: @text-color-light;
+      .var(color, text-color-light);
     }
     &:focus, &:active {
       color: @icinga-blue;
@@ -66,7 +66,7 @@ form.filter-toggle {
     display: inline-block;
     vertical-align: top;
     margin-left: .5em;
-    color: @gray-light;
+    .var(color, gray-light);
   }
 
   input[type="checkbox"]:checked ~ label {

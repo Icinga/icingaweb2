@@ -5,7 +5,8 @@
 
   li {
     .rounded-corners(3px);
-    border: 1px solid @low-sat-blue;
+    border: 1px solid;
+    .var(border-color, low-sat-blue);
 
     &.active {
       border-color: @icinga-blue;
@@ -19,13 +20,14 @@
   }
 
   h3 {
-    border-bottom: 1px solid @gray-light;
+    border-bottom: 1px solid;
+    .var(border-bottom-color, gray-light);
   }
 
   h3 em,
   .previews em,
   .privilege-label em {
-    color: @text-color-light;
+    .var(color, text-color-light);
   }
   h3 em {
     font-weight: normal;
@@ -35,7 +37,7 @@
   }
 
   .icon {
-    color: @gray-light;
+    .var(color, gray-light);
 
     &.granted {
       color: @color-granted;
@@ -58,7 +60,8 @@
 
     &:hover .spacer {
       .transition(opacity .25s .25s ease-in);
-      border: 0 dashed @gray-light;
+      border: 0 dashed;
+      .var(border-color, gray-light);
       border-top-width: .2em;
       opacity: 1;
     }
@@ -78,7 +81,8 @@
   }
 
   .connector {
-    border: 0 solid @gray-lighter;
+    border: 0 solid;
+    .var(border-color, gray-lighter);
     border-bottom-width: 2px;
 
     &.granted {
@@ -97,7 +101,8 @@
 
   .role {
     .rounded-corners(1em);
-    border: 2px solid @gray-lighter;
+    border: 2px solid;
+    .var(border-color, gray-lighter);
 
     &.granted {
       border: 2px solid @color-granted;
@@ -110,7 +115,7 @@
 
   .restriction {
     font-family: @font-family-fixed;
-    background-color: @gray-lighter;
+    .var(background-color, gray-lighter);
   }
 }
 

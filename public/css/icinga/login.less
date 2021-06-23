@@ -4,7 +4,7 @@
 
 #login {
   height: 100%;
-  background-color: @menu-bg-color;
+  .var(background-color, menu-bg-color);
   background-repeat:  no-repeat;
   background-position: center center;
   text-align: center;
@@ -125,7 +125,7 @@
     padding: 1em;
 
     a {
-      color: @text-color-inverted;
+      .var(color, text-color-inverted);
       font-weight: bold;
     }
   }

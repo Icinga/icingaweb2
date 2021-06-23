@@ -43,6 +43,14 @@ input.search {
   }
 }
 
+@media (min-height: @prefer-light-color-scheme), (prefers-color-scheme: light) and (min-height: @enable-color-preference) {
+  #menu input.search,
+  .controls input.search,
+  input.search {
+    background-image: url(../img/icons/search.png);
+  }
+}
+
 .backend-selection,
 .pagination-control,
 .selection-info,
@@ -122,7 +130,7 @@ input.search {
       padding: 0.5em;
     }
     > a:hover {
-      background-color: @gray-lighter;
+      .var(background-color, gray-lighter);
       text-decoration: none;
     }
   }

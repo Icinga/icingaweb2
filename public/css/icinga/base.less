@@ -60,7 +60,10 @@
 
 // Menu colors
 @menu-bg-color: #06062B;
+@menu-hover-bg-color: fade(@menu-bg-color, 50%);
+@menu-search-hover-bg-color: darken(@menu-bg-color, 20%);
 @menu-active-bg-color: #181742;
+@menu-active-hover-bg-color: darken(@menu-active-bg-color, 20%);
 @menu-color: #DBDBDB;
 @menu-active-color: @text-color;
 @menu-highlight-color: @icinga-blue;
@@ -69,6 +72,7 @@
 @menu-2ndlvl-highlight-color: @text-color-inverted;
 @menu-flyout-bg-color: @body-bg-color;
 @menu-flyout-color: @text-color;
+@tab-hover-bg-color: fade(@body-bg-color, 50%);
 
 // Other colors
 @color-granted: #59cd59;
@@ -94,6 +98,40 @@
 
 @vertical-padding: 0.5em; // 6px
 @horizontal-padding: 1em; // 12px
+
+@media (min-height: @prefer-light-color-scheme), (prefers-color-scheme: light) and (min-height: @enable-color-preference) {
+  :root {
+    --body-bg-color: #F5F9FA;
+    --badge-color: #F5F9FA;
+    --text-color-inverted: #F5F9FA;
+    --text-color-on-icinga-blue: #F5F9FA;
+    --menu-flyout-bg-color: #F5F9FA;
+    --tab-hover-bg-color: fade(#F5F9FA, 50%);
+
+    --menu-color: #676767;
+    --menu-bg-color: #DEECF1;
+    --menu-hover-bg-color: fade(#DEECF1, 50%);
+    --menu-search-hover-bg-color: darken(#DEECF1, 20%);
+    --menu-active-bg-color: #EDF7FC;
+    --menu-active-hover-bg-color: darken(#EDF7FC, 20%);
+    --menu-2ndlvl-color: #7E8182;
+
+    --text-color: #535353;
+    --text-color-light: fade(#535353, 75%);
+    --link-color: #535353;
+    --menu-active-color: #535353;
+    --menu-flyout-color: #535353;
+
+    --low-sat-blue: #DEECF1;
+    --low-sat-blue-dark: #c0cccd;
+
+    --gray: #7F7F7F;
+    --gray-semilight: #A9A9A9;
+    --gray-light: #C9C9C9;
+    --gray-lighter: #EEEEEE;
+    --gray-lightest: #F7F7F7;
+  }
+}
 
 // Make padding not affect the final computed width of an element
 html {
@@ -128,7 +166,8 @@ blockquote, p, pre {
 }
 
 blockquote {
-  border-left: 5px solid @gray-lighter;
+  border-left: 5px solid;
+  .var(border-left-color, gray-lighter);
   padding: 0.667em 0.333em;
 }
 
@@ -138,7 +177,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 h1 {
-  border-bottom: 1px solid @gray-lighter;
+  border-bottom: 1px solid;
+  .var(border-bottom-color, gray-lighter);
   font-size: 1.333em;
 }
 
@@ -164,7 +204,7 @@ h6 {
 }
 
 pre {
-  background-color: @gray-lightest;
+  .var(background-color, gray-lightest);
   font-family: @font-family-fixed;
   font-size: @font-size-small;
   padding: @vertical-padding @horizontal-padding;
@@ -200,7 +240,8 @@ td, th {
     content: "";
     display: block;
 
-    background: @body-bg-color url(../img/icinga-loader.gif) no-repeat center center;
+    background: url(../img/icinga-loader.gif) no-repeat center center;
+    .var(background-color, body-bg-color);
     background-size: 4em 4em;
 
     opacity: 0;
@@ -230,5 +271,14 @@ td, th {
 
   &.impact:before {
     top: 2.5em;
+  }
+}
+
+@media (min-height: @prefer-light-color-scheme), (prefers-color-scheme: light) and (min-height: @enable-color-preference) {
+  .container {
+    &:before,
+    > .content:before {
+      background-image: url(../img/icinga-loader-light.gif)
+    }
   }
 }

@@ -89,12 +89,12 @@ a:hover > .icon-cancel {
   .action-link();
   .rounded-corners(3px);
 
-  background: @low-sat-blue;
+  .var(background, low-sat-blue);
   display: inline-block;
   padding: 0.25em 0.5em;
 
   &:hover {
-    background: @low-sat-blue-dark;
+    .var(background, low-sat-blue-dark);
     text-decoration: none;
   }
 }
@@ -105,11 +105,12 @@ a:hover > .icon-cancel {
   margin: 0;
 
   > dt {
-    border-bottom: 1px solid @gray-lighter;
+    border-bottom: 1px solid;
+    .var(border-bottom-color, gray-lighter);
     margin-bottom: 0.25em;
 
     &:hover {
-      background-color: @gray-lightest;
+      .var(background-color, gray-lightest);
 
       > .remove-action {
         visibility: visible;
@@ -127,7 +128,7 @@ a:hover > .icon-cancel {
 }
 
 .comment-time {
-  color: @text-color-light;
+  .var(color, text-color-light);
   font-size: @font-size-small;
 }
 
@@ -138,7 +139,7 @@ a:hover > .icon-cancel {
   }
 
   > dt {
-    color: @text-color-light;
+    .var(color, text-color-light);
     font-size: @font-size-small;
   }
 }
@@ -162,11 +163,13 @@ a:hover > .icon-cancel {
   }
 
   thead {
-    border-bottom: 1px solid @gray-light;
+    border-bottom: 1px solid;
+    .var(border-bottom-color, gray-light);
   }
 
   tbody tr {
-    border-bottom: 1px solid @gray-lightest;
+    border-bottom: 1px solid;
+    .var(border-bottom-color, gray-lightest);
     border-left: 5px solid transparent;
 
     &:last-child {
@@ -196,7 +199,7 @@ a:hover > .icon-cancel {
 }
 
 .name-value-table > tbody > tr > th {
-  color: @text-color-light;
+  .var(color, text-color-light);
   // Reset default font-weight
   font-weight: normal;
   padding-left: 0;
@@ -274,15 +277,15 @@ a:hover > .icon-cancel {
     margin-top: -1em;
     margin-right: .25em;
 
-    background: @gray-lighter;
-    color: @gray;
+    .var(background, gray-lighter);
+    .var(color, "gray");
     border: none;
     -webkit-box-shadow: 0 0 1/3em rgba(0,0,0,.3);
     -moz-box-shadow: 0 0 1/3em rgba(0,0,0,.3);
     box-shadow: 0 0 1/3em rgba(0,0,0,.3);
 
     &:hover {
-      background: @gray-light;
+      .var(background, gray-light);
     }
   }
 
@@ -324,7 +327,8 @@ a:hover > .icon-cancel {
     content: "";
     display: block;
     height: 2em;
-    background: linear-gradient(fade(@body-bg-color, 0), @body-bg-color);
+    background: linear-gradient(transparent, @body-bg-color);
+    background: linear-gradient(transparent, var(--body-bg-color, @body-bg-color));
     position: absolute;
     bottom: 0;
     left: 0;
@@ -337,7 +341,8 @@ a:hover > .icon-cancel {
 
   &:after {
     opacity: 0;
-    background: linear-gradient(fade(@body-bg-color, 0), @body-bg-color);
+    background: linear-gradient(transparent, @body-bg-color);
+    background: linear-gradient(transparent, var(--body-bg-color, @body-bg-color));
   }
 }
 
@@ -372,7 +377,7 @@ a:hover > .icon-cancel {
 .module-dependencies {
   .unmet-dependencies {
     background-color: @color-warning;
-    color: @text-color-on-icinga-blue;
+    .var(color, text-color-on-icinga-blue);
     padding: .25em .5em;
     margin-left: -.5em;
   }
@@ -380,12 +385,12 @@ a:hover > .icon-cancel {
   .name-value-table {
     > caption {
       font-weight: normal;
-      color: @text-color-light;
+      .var(color, text-color-light);
     }
 
     > tbody > tr > th {
       font-weight: bold;
-      color: @text-color;
+      .var(color, text-color);
     }
 
     .missing {

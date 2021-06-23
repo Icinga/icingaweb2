@@ -376,7 +376,7 @@ form#setup_requirements {
       padding: 0.2em;
       margin: -1em -1em 1em;
       text-align: center;
-      color: @text-color;
+      .var(color, text-color);
       background-color: #f6fafa;
       border: 1px solid lightgrey;
     }
@@ -421,8 +421,9 @@ form#setup_requirements {
     height: 15em;
     margin: 1em;
     padding: 0.3em;
-    border: 1px solid @gray-semilight;
-    background-color: @gray-lightest;
+    border: 1px solid;
+    .var(border-color, gray-semilight);
+    .var(background-color, gray-lightest);
 
     .header {
       height: 2.5em;

@@ -2,13 +2,20 @@
 
 // Mixins
 
-.gradient(@a: @gray-lighter; @b: @gray-lightest) {
+.gradient(@a: ~"var(--gray-lighter, @{gray-lighter})"; @b: ~"var(--gray-lightest, @{gray-lightest})") {
+  background: extract-variable-default(@a);
   background: @a;
+  background: -webkit-gradient(linear, left top, left bottom, from(extract-variable-default(@a, true)), to(extract-variable-default(@b, true)));
   background: -webkit-gradient(linear, left top, left bottom, from(@a), to(@b));
+  background: -webkit-linear-gradient(top, extract-variable-default(@a, true), extract-variable-default(@b, true));
   background: -webkit-linear-gradient(top, @a, @b);
+  background: -moz-linear-gradient(top, extract-variable-default(@a, true), extract-variable-default(@b, true));
   background: -moz-linear-gradient(top, @a, @b);
+  background: -ms-linear-gradient(top, extract-variable-default(@a, true), extract-variable-default(@b, true));
   background: -ms-linear-gradient(top, @a, @b);
+  background: -o-linear-gradient(top, extract-variable-default(@a, true), extract-variable-default(@b, true));
   background: -o-linear-gradient(top, @a, @b);
+  background: linear-gradient(to bottom, extract-variable-default(@a, true), extract-variable-default(@b, true));
   background: linear-gradient(to bottom, @a, @b);
 }
 
@@ -24,11 +31,13 @@ pre > code {
 }
 
 .chapter a {
-  border-bottom: 1px @gray-light dotted;
+  border-bottom: 1px dotted;
+  .var(border-bottom-color, gray-light);
   font-weight: @font-weight-bold;
 
   &:hover {
-    border-bottom: 1px @text-color solid;
+    border-bottom: 1px solid;
+    .var(border-bottom-color, text-color);
     text-decoration: none;
   }
 }
@@ -41,7 +50,7 @@ pre > code {
   .rounded-corners();
 
   background: @icinga-blue;
-  color: @text-color-on-icinga-blue;
+  .var(color, text-color-on-icinga-blue);
   padding: 0 0.3em 0 0.3em;
 }
 
@@ -88,7 +97,7 @@ tbody > tr:nth-child(odd) {
 }
 
 tbody > tr:nth-child(even) {
-  background: @body-bg-color;
+  .var(background, body-bg-color);
 }
 
 td, th {
