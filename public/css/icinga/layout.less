@@ -145,7 +145,7 @@
 }
 
 #mobile-menu-toggle {
-  color: @menu-color;
+  .var(color, menu-color);
   text-align: right;
 
   > button {
@@ -335,7 +335,7 @@
     .var(background-color, menu-bg-color);
     border-radius: 0 .25em .25em 0;
     box-shadow: 0 0 .25em 0 rgba(0, 0, 0, .2);
-    color: @menu-color;
+    .var(color, menu-color);
     width: 20em;
     position: fixed;
     z-index: 1;
