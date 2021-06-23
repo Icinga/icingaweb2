@@ -232,3 +232,12 @@ td, th {
     top: 2.5em;
   }
 }
+
+@media (min-height: @prefer-light-color-scheme), (prefers-color-scheme: light) and (min-height: @enable-color-preference) {
+  .container {
+    &:before,
+    > .content:before {
+      background-image: url(../img/icinga-loader-light.gif)
+    }
+  }
+}
