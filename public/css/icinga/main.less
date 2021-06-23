@@ -110,7 +110,7 @@ a:hover > .icon-cancel {
     margin-bottom: 0.25em;
 
     &:hover {
-      background-color: @gray-lightest;
+      .var(background-color, gray-lightest);
 
       > .remove-action {
         visibility: visible;
@@ -168,7 +168,8 @@ a:hover > .icon-cancel {
   }
 
   tbody tr {
-    border-bottom: 1px solid @gray-lightest;
+    border-bottom: 1px solid;
+    .var(border-bottom-color, gray-lightest);
     border-left: 5px solid transparent;
 
     &:last-child {

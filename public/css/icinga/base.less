@@ -129,6 +129,7 @@
     --gray-semilight: #A9A9A9;
     --gray-light: #C9C9C9;
     --gray-lighter: #EEEEEE;
+    --gray-lightest: #F7F7F7;
   }
 }
 
@@ -203,7 +204,7 @@ h6 {
 }
 
 pre {
-  background-color: @gray-lightest;
+  .var(background-color, gray-lightest);
   font-family: @font-family-fixed;
   font-size: @font-size-small;
   padding: @vertical-padding @horizontal-padding;
