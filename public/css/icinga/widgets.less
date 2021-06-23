@@ -286,7 +286,8 @@ form.role-form {
     }
 
     .collapsible-control {
-      border-bottom: 1px solid @gray-light;
+      border-bottom: 1px solid;
+      .var(border-bottom-color, gray-light);
       cursor: pointer;
       -webkit-touch-callout: none;
       -webkit-user-select: none;
@@ -362,7 +363,7 @@ ul.tree li::before, ul.tree li::after {
   position: absolute;
   right: auto;
   left: -0.2em;
-  border-color: @gray-light;
+  .var(border-color, gray-light);
   border-style: dotted;
   border-width: 0;
 }
@@ -543,8 +544,8 @@ ul.tree li a.error:hover {
 }
 
 .slice-state-not-checked {
-  stroke: @gray-light;
-  background: @gray-light;
+  .var(stroke, gray-light);
+  .var(background, gray-light);
 }
 
 .donut {
@@ -570,7 +571,7 @@ ul.tree li a.error:hover {
 }
 
 .donut-label-big {
-  color: @gray-light;
+  .var(color, gray-light);
   font-size: 6em;
   line-height: 0;
   text-anchor: middle;

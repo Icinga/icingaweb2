@@ -36,7 +36,8 @@
   }
 
   tr:not(:last-child) td {
-    border: 0 solid @gray-light;
+    border: 0 solid;
+    .var(border-color, gray-light);
     border-bottom-width: 1px;
   }
 

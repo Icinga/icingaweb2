@@ -20,7 +20,8 @@
   }
 
   h3 {
-    border-bottom: 1px solid @gray-light;
+    border-bottom: 1px solid;
+    .var(border-bottom-color, gray-light);
   }
 
   h3 em,
@@ -36,7 +37,7 @@
   }
 
   .icon {
-    color: @gray-light;
+    .var(color, gray-light);
 
     &.granted {
       color: @color-granted;
@@ -59,7 +60,8 @@
 
     &:hover .spacer {
       .transition(opacity .25s .25s ease-in);
-      border: 0 dashed @gray-light;
+      border: 0 dashed;
+      .var(border-color, gray-light);
       border-top-width: .2em;
       opacity: 1;
     }

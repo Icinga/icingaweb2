@@ -162,7 +162,8 @@ a:hover > .icon-cancel {
   }
 
   thead {
-    border-bottom: 1px solid @gray-light;
+    border-bottom: 1px solid;
+    .var(border-bottom-color, gray-light);
   }
 
   tbody tr {
@@ -282,7 +283,7 @@ a:hover > .icon-cancel {
     box-shadow: 0 0 1/3em rgba(0,0,0,.3);
 
     &:hover {
-      background: @gray-light;
+      .var(background, gray-light);
     }
   }
 

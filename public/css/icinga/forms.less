@@ -110,7 +110,8 @@ form.icinga-form.inline .control-label-group {
   margin: 0;
   padding: 0;
   border: none;
-  border-top: 1px solid @gray-light;
+  border-top: 1px solid;
+  .var(border-top-color, gray-light);
 
   legend, .description {
     margin-left: .7em;
@@ -393,12 +394,12 @@ form.inline {
   cursor: default;
 
   & > .toggle-slider {
-    background-color: @gray-light;
-    border-color: @gray-light;
+    .var(background-color, gray-light);
+    .var(border-color, gray-light);
 
     &:before {
       background-color: @gray-lighter;
-      border-color: @gray-light;
+      .var(border-color, gray-light);
     }
   }
 }

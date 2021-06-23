@@ -35,7 +35,7 @@
     }
 
     &.-inactive {
-      color: @gray-light;
+      .var(color, gray-light);
     }
   }
 }
@@ -70,7 +70,7 @@
     color: white;
   }
   .group-grid-cell > div.state-none {
-    background-color: @gray-light;
+    .var(background-color, gray-light);
   }
 }
 
@@ -651,7 +651,7 @@ form.instance-features span.description, form.object-features span.description {
 
     & + span.hint {
       margin: .35em;
-      color: @gray-light;
+      .var(color, gray-light);
       font-style: italic;
     }
   }
@@ -702,7 +702,8 @@ form.instance-features span.description, form.object-features span.description {
 .markdown,
 .plugin-output {
   a {
-     border-bottom: 1px @gray-light dotted;
+    border-bottom: 1px dotted;
+    .var(border-bottom-color, gray-light);
 
     &:hover {
       border-bottom: 1px solid;
