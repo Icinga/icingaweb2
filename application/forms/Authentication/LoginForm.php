@@ -50,7 +50,7 @@ class LoginForm extends Form
                 'autocapitalize'    => 'off',
                 'autocomplete'      => 'username',
                 'class'             => false === isset($formData['username']) ? 'autofocus' : '',
-                'label'             => $this->translate('Username'),
+                'placeholder'       => $this->translate('Username'),
                 'required'          => true
             )
         );
@@ -60,7 +60,7 @@ class LoginForm extends Form
             array(
                 'required'      => true,
                 'autocomplete'  => 'current-password',
-                'label'         => $this->translate('Password'),
+                'placeholder'   => $this->translate('Password'),
                 'class'         => isset($formData['username']) ? 'autofocus' : ''
             )
         );

@@ -1,0 +1,50 @@
+
+@original-menu-bg-color: #06062B;
+@original-low-sat-blue: #404d72;
+
+@gray: #7F7F7F;
+@gray-semilight: #A9A9A9;
+@gray-light: #C9C9C9;
+@gray-lighter: #EEEEEE;
+@gray-lightest: #F7F7F7;
+
+@text-color: #535353;
+
+@body-bg-color: #F5F9FA;
+@menu-bg-color: #DEECF1;
+
+@menu-color: #676767;
+@menu-active-bg-color: #EDF7FC;
+
+@menu-2ndlvl-color: #7E8182;
+
+@low-sat-blue: #DEECF1;
+@low-sat-blue-dark: #c0cccd;
+
+#header-logo,
+#mobile-menu-logo,
+#about .icinga-logo {
+  filter: brightness(0.415) sepia(1) ~"saturate(0.1)" hue-rotate(144deg);
+}
+
+#menu input.search,
+.controls input.search,
+input.search {
+  background-image: url(../img/icons/search.png);
+}
+
+#login {
+  background-color: @original-menu-bg-color;
+
+  input[type=password],
+  input[type=text] {
+    background-color: @original-low-sat-blue;
+  }
+}
+
+.container {
+  &:before,
+  > .content:before {
+    background-image: url(../img/icinga-loader-light.gif)
+  }
+}

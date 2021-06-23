@@ -11,7 +11,6 @@
 
 #menu {
   background-color: @menu-bg-color;
-  box-shadow: inset -.5em 0 1em rgba(0, 0, 0, .3);
   width: 100%;
   flex: 1;
   overflow: auto;
@@ -69,6 +68,8 @@
   color: @menu-color;
 
   &.active {
+    color: @menu-active-color;
+
     > a > .badge {
       display: none;
     }
@@ -91,7 +92,7 @@
 
   &:not(.selected) > a:hover,
   &:not(.selected) > a:focus {
-    background-color: mix(#000, @menu-bg-color, 20);
+    background-color: fade(@menu-bg-color, 50%)
   }
 
   // Balance icon weight for non active menu items
@@ -122,7 +123,7 @@
     position: absolute;
     right: -.75em;
 
-    background-color: #fff;
+    background-color: @body-bg-color;
     box-shadow: 0 0 1em 0 rgba(0,0,0,0.6);
     content: "";
     display: block;
@@ -162,10 +163,11 @@
     position: absolute;
     top: .5em;
     right: -.75em;
+    z-index: 3;
   }
 
   &.active > a {
-    color: @menu-color;
+    color: @menu-2ndlvl-highlight-color;
   }
 }
 
@@ -322,7 +324,7 @@
       }
 
       a.badge {
-         color: white;
+         color: @text-color-inverted;
          flex: 0 1 auto;
          margin-right: 1em;
          padding: .25em;
@@ -452,10 +454,11 @@ input[type=text].search-input {
   background: none;
   border: none;
   padding: 0;
-  color: @gray-light;
+  color: @text-color-light;
   position: absolute;
   bottom: 0.2em;
   right: 0;
+  z-index: 3;
 
   i {
     background-color: @body-bg-color;
@@ -497,11 +500,7 @@ html.no-js  #toggle-sidebar {
   &.nav-item:not(.badge-nav-item) {
     &:not(.selected):not(.active):hover,
     &:not(.selected):not(.active):focus {
-      background-color: darken(@menu-bg-color, 20);
-
-      > a {
-        color: @menu-2ndlvl-highlight-color;
-      }
+      background-color: @menu-2ndlvl-highlight-bg-color;
     }
   }
 }
@@ -519,7 +518,7 @@ html.no-js  #toggle-sidebar {
   }
 
   &.badge-nav-item a.badge {
-    color: white;
+    color: @text-color-inverted;
     flex: 0 1 auto;
     margin-right: 1em;
     padding: .25em;
@@ -534,11 +533,7 @@ html.no-js  #toggle-sidebar {
 #layout:not(.sidebar-collapsed) #menu .nav-level-1 > .nav-item.active .nav-level-2 > li {
   &.badge-nav-item:not(.selected) {
     &:hover {
-      background-color: darken(@menu-bg-color, 20);
-
-      a {
-        color: white;
-      }
+      background-color: @menu-2ndlvl-highlight-bg-color;
     }
   }
 }

@@ -32,7 +32,7 @@
 }
 
 #header-logo-container {
-  background: @icinga-blue;
+  background: @menu-bg-color;
   height: 6em;
   padding: 1.25em;
   width: 16em;
@@ -200,37 +200,62 @@
   list-style-type: none;
   margin: 0;
   padding: 0;
+  padding-left: 12em;
 }
 
 #notifications > li {
-  background: no-repeat 1em center;
-  border-top: 1px solid @gray-light;
-  color: @body-bg-color;
+  color: @text-color;
   display: block;
   line-height: 2.5em;
-  padding-left: 3em;
+  border-left: .5em solid @gray-light;
+  background: @body-bg-color;
+  margin-bottom: 1px;
+  box-shadow: 0 0 1em 0 rgba(0,0,0,0.25);
+
+  .icon {
+    padding: .5em;
+    width: 3em;
+    text-align: center;
+  }
 
   &:hover {
     cursor: pointer;
   }
 
   &.error {
-    background-color: @color-notification-error;
-    background-image: url(../img/icons/error_white.png);
+    border-color: @color-down;
+    background: @color-down;
+    color: @body-bg-color;
+
+    .icon {
+      color: @body-bg-color;
+    }
   }
 
   &.info {
-    background-color: @color-notification-info;
+    border-color: @color-pending;
+
+    .icon {
+      color: @color-pending;
+    }
   }
 
   &.success {
-    background-color: @color-notification-success;
-    background-image: url(../img/icons/success.png);
-    color: @text-color;
+    border-color: @color-ok;
+
+    .icon {
+      color: @color-ok;
+    }
   }
 
   &.warning {
-    background-color: @color-notification-warning;
+    border-color: @color-warning;
+    background: @color-warning;
+    color: @body-bg-color;
+
+    .icon {
+      color: @body-bg-color;
+    }
   }
 }
 

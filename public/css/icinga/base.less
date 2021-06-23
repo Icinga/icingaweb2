@@ -2,13 +2,15 @@
 
 // Black colors
 @black: #535353;
+@white: #fff;
 
 // Gray colors
-@gray: #7F7F7F;
-@gray-semilight: #A9A9A9;
-@gray-light: #C9C9C9;
-@gray-lighter: #EEEEEE;
-@gray-lightest: #F7F7F7;
+@gray: #c4c4c4;
+@gray-semilight: #888;
+@gray-light: #5c5c5c;
+@gray-lighter: #4b4b4b;
+@gray-lightest: #3a3a3a;
+
 @disabled-gray: #9a9a9a;
 
 
@@ -28,10 +30,10 @@
 @color-pending: #77aaff;
 
 // Icinga colors
-@icinga-blue: #0095BF;
+@icinga-blue: #00C3ED;
 @icinga-secondary: #EF4F98;
-@low-sat-blue: #dae3e6;
-@low-sat-blue-dark: #becbcf;
+@low-sat-blue: #404d72;
+@low-sat-blue-dark: #434374;
 @icinga-blue-light: #a5c4cd;
 @icinga-blue-dark: #0081a6;
 
@@ -42,27 +44,28 @@
 @color-notification-warning: @color-warning-handled;
 
 // Background color for <body>
-@body-bg-color: #fff;
+@body-bg-color: #282E39;
 
 // Text colors
-@text-color: @black;
+@text-color: @white;
 @text-color-inverted: @body-bg-color;
-@text-color-light: @gray;
+@text-color-light: fade(@text-color, 75%);
 @text-color-on-icinga-blue: @body-bg-color;
 
 // Text color on <a>
 @link-color: @text-color;
 
-@tr-active-color: #E5F9FF;
-@tr-hover-color: #F5FDFF;
+@tr-active-color: rgba(0,195,237,0.5);
+@tr-hover-color: rgba(0,195,237,0.2);
 
 // Menu colors
-@menu-bg-color: #494949;
-@menu-active-bg-color: #333;
-@menu-flyout-bg-color: @body-bg-color;
-@menu-color: @text-color-inverted;
+@menu-bg-color: #06062B;
+@menu-active-bg-color: #181742;
+@menu-color: #DBDBDB;
+@menu-active-color: @text-color;
 @menu-highlight-color: @icinga-blue;
 @menu-2ndlvl-color: #c4c4c4;
+@menu-2ndlvl-highlight-bg-color: @tr-hover-color;
 @menu-2ndlvl-highlight-color: @text-color-inverted;
 @menu-flyout-bg-color: @body-bg-color;
 @menu-flyout-color: @text-color;

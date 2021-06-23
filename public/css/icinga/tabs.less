@@ -3,7 +3,7 @@
 // Styles for tab navigation of containers
 
 .tabs {
-  background-color: @icinga-blue;
+  background-color: @menu-bg-color;
   letter-spacing: -0.417em;
 }
 
@@ -27,11 +27,11 @@
   }
 
   > a {
-    color: @body-bg-color;
+    color: @menu-color;
 
     &:hover {
       text-decoration: none;
-      background: rgba(0,0,0,.1);
+      background: fade(@body-bg-color, 50%);
     }
   }
 
