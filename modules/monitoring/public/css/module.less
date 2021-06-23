@@ -286,7 +286,8 @@ div.box.ok_hosts div.box.entry, div.box.problem_hosts div.box.entry {
 
 div.box.monitoringfeatures {
   border: 1px solid @gray-lighter;
-  border-left: 15px solid @gray;
+  border-left: 15px solid;
+  .var(border-left-color, "gray");
 }
 
 div.box.monitoringfeatures div.box-separator {
@@ -303,7 +304,8 @@ div.box.monitoringfeatures a.feature-highlight {
 
 div.box.hostservicechecks {
   border: 1px solid @gray-lighter;
-  border-left: 15px solid @gray;
+  border-left: 15px solid;
+  .var(border-left-color, "gray");
 }
 
 div.box.hostservicechecks th {
@@ -316,7 +318,8 @@ div.box.process {
   width: 100%;
   max-width: 50em;
   border: 1px solid @gray-lighter;
-  border-left: 15px solid @gray;
+  border-left: 15px solid;
+  .var(border-left-color, "gray");
   margin-bottom: 1em;
   margin-right: 1em;
 }
@@ -374,7 +377,8 @@ div.box.features {
   width: 100%;
   max-width: 50em;
   border: 1px solid @gray-lighter;
-  border-left: 15px solid @gray;
+  border-left: 15px solid;
+  .var(border-left-color, "gray");
 }
 
 .features div.box.header {
@@ -400,7 +404,8 @@ div.box.stats {
   width: 100%;
   max-width: 50em;
   border: 1px solid @gray-lighter;
-  border-left: 15px solid @gray;
+  border-left: 15px solid;
+  .var(border-left-color, "gray");
   .var(color, text-color);
 }
 
@@ -414,7 +419,7 @@ div.box.stats {
 }
 
 .stats > table > thead {
-  color: @gray;
+  .var(color, "gray");
 }
 
 .stats > h2 {
@@ -440,7 +445,8 @@ div.timeline-legend {
   padding: 0.5em;
   margin-top: 2em;
   border: 1px solid @gray-lighter;
-  border-left: 15px solid @gray;
+  border-left: 15px solid;
+  .var(border-left-color, "gray");
 
   h2 {
     margin: 0;

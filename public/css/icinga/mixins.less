@@ -6,12 +6,14 @@
           box-shadow: @arguments;
 }
 
-.button(@background-color: ~"var(--body-bg-color, @{body-bg-color})", @border-font-color: @icinga-blue, @color-dark: darken(@border-font-color, 10%)) {
+.button(@background-color: ~"var(--body-bg-color, @{body-bg-color})", @border-font-color: @icinga-blue, @color-dark: darken(@icinga-blue, 10%)) {
   .rounded-corners(3px);
 
   background-color: extract-variable-default(@background-color);
   background-color: @background-color;
+  border: extract-variable-default(2px solid @border-font-color);
   border: 2px solid @border-font-color;
+  color: extract-variable-default(@border-font-color);
   color: @border-font-color;
   cursor: pointer;
   line-height: normal;
@@ -25,6 +27,7 @@
   &:focus,
   &:hover,
   &.btn-primary {
+    background-color: extract-variable-default(@border-font-color);
     background-color: @border-font-color;
     color: extract-variable-default(@background-color);
     color: @background-color;

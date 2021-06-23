@@ -295,13 +295,13 @@ form.icinga-form .form-controls {
   }
 
   input[type="submit"].btn-cancel {
-    .button(~"var(--body-bg-color, @{body-bg-color})", @gray, @black);
+    .button(~"var(--body-bg-color, @{body-bg-color})", ~"var(--gray, @{gray})", @black);
   }
 
   button.noscript-apply {
-    color: @gray;
+    .var(color, "gray");
     background-color: @gray-lightest;
-    border-color: @gray;
+    .var(border-color, "gray");
     border-width: 1px;
   }
 }
@@ -461,7 +461,7 @@ form.icinga-form {
   }
 
   .form-description {
-    background-color: fade(@gray, 5%);
+    .var(background-color, "gray");
   }
 
   .errors {
