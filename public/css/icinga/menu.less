@@ -240,7 +240,7 @@
 #layout:not(.minimal-layout).sidebar-collapsed #menu .nav-level-1 > .nav-item.hover,
 #layout:not(.minimal-layout) #menu .nav-level-1 > .nav-item:not(.active).hover {
   > .nav-level-2 {
-    background-color: @menu-flyout-bg-color;
+    .var(background-color, menu-flyout-bg-color);
     border: 1px solid;
     .var(border-color, gray-light);
     border-radius: .25em;
