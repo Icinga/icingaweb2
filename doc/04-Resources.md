@@ -33,6 +33,7 @@ username                            | **Required.** The database username.
 password                            | **Required.** The database password.
 dbname                              | **Required.** The database name.
 charset                             | **Optional.** The character set for the database connection.
+use\_ssl                            | **Optional.** Use SSL. Enables the following SSL options.
 ssl\_do\_not\_verify\_server\_cert  | **Optional.** Disable validation of the server certificate. Only available for the `mysql` database and on PHP versions > 5.6.
 ssl\_cert                           | **Optional.** The file path to the SSL certificate. Only available for the `mysql` database.
 ssl\_key                            | **Optional.** The file path to the SSL key. Only available for the `mysql` database.
