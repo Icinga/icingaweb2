@@ -25,9 +25,11 @@ class ServiceStatus extends DataView
             'host_ipv4',
             'host_is_flapping',
             'host_last_check',
+            'host_last_check_ts',
             'host_last_hard_state',
             'host_last_hard_state_change',
             'host_last_state_change',
+            'host_last_state_change_ts',
             'host_last_time_down',
             'host_last_time_unreachable',
             'host_last_time_up',
@@ -122,15 +124,6 @@ class ServiceStatus extends DataView
                 ),
                 'order' => self::SORT_DESC
             ),
-            'host_severity' => array(
-                'columns' => array(
-                    'host_severity',
-                    'host_last_state_change DESC',
-                    'host_display_name ASC',
-                    'service_display_name ASC'
-                ),
-                'order' => self::SORT_DESC
-            ),
             'host_display_name' => array(
                 'columns' => array(
                     'host_display_name',
@@ -144,7 +137,33 @@ class ServiceStatus extends DataView
                     'service_display_name'
                 ),
                 'order' => self::SORT_ASC
-            )
+            ),
+            'host_severity' => [
+                'columns' => [
+                    'host_severity',
+                    'host_last_state_change_ts DESC'
+                ],
+                'order' => self::SORT_DESC
+            ],
+            'host_state' => [
+                'columns' => [
+                    'host_state',
+                    'host_last_state_change_ts DESC'
+                ],
+                'order' => self::SORT_ASC
+            ],
+            'host_last_state_change' => [
+                'columns' => [
+                    'host_last_state_change_ts'
+                ],
+                'order' => self::SORT_DESC
+            ],
+            'host_last_check' => [
+                'columns' => [
+                    'host_last_check_ts'
+                ],
+                'order' => self::SORT_DESC
+            ]
         );
     }
 

@@ -3,6 +3,8 @@
 
 namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 
+use Icinga\Data\Filter\Filter;
+
 /**
  * Query for service status
  */
@@ -16,7 +18,7 @@ class ServicestatusQuery extends IdoQuery
     /**
      * {@inheritdoc}
      */
-    protected $groupBase = array('services' => array('so.object_id', 's.service_id'));
+    protected $groupBase = array('services' => array('so.object_id'));
 
     /**
      * {@inheritdoc}
@@ -56,8 +58,8 @@ class ServicestatusQuery extends IdoQuery
             'host_action_url'       => 'h.action_url',
             'host_address'          => 'h.address',
             'host_address6'         => 'h.address6',
-            'host_alias'            => 'h.alias COLLATE latin1_general_ci',
-            'host_display_name'     => 'h.display_name COLLATE latin1_general_ci',
+            'host_alias'            => 'h.alias',
+            'host_display_name'     => 'h.display_name',
             'host_icon_image'       => 'h.icon_image',
             'host_icon_image_alt'   => 'h.icon_image_alt',
             'host_ipv4'             => 'INET_ATON(h.address)',
@@ -90,10 +92,12 @@ class ServicestatusQuery extends IdoQuery
             'host_is_flapping'                      => 'hs.is_flapping',
             'host_is_reachable'                     => 'hs.is_reachable',
             'host_last_check'                       => 'UNIX_TIMESTAMP(hs.last_check)',
+            'host_last_check_ts'                    => 'hs.last_check',
             'host_last_hard_state'                  => 'hs.last_hard_state',
             'host_last_hard_state_change'           => 'UNIX_TIMESTAMP(hs.last_hard_state_change)',
             'host_last_notification'                => 'UNIX_TIMESTAMP(hs.last_notification)',
             'host_last_state_change'                => 'UNIX_TIMESTAMP(hs.last_state_change)',
+            'host_last_state_change_ts'             => 'hs.last_state_change',
             'host_last_time_down'                   => 'UNIX_TIMESTAMP(hs.last_time_down)',
             'host_last_time_unreachable'            => 'UNIX_TIMESTAMP(hs.last_time_unreachable)',
             'host_last_time_up'                     => 'UNIX_TIMESTAMP(hs.last_time_up)',
@@ -157,7 +161,7 @@ class ServicestatusQuery extends IdoQuery
             'service_action_url'        => 's.action_url',
             'service_check_interval'    => '(s.check_interval * 60)',
             'service_description'       => 'so.name2',
-            'service_display_name'      => 's.display_name COLLATE latin1_general_ci',
+            'service_display_name'      => 's.display_name',
             'service_host'              => 'so.name1 COLLATE latin1_general_ci',
             'service_host_name'         => 'so.name1',
             'service_icon_image'        => 's.icon_image',
@@ -284,6 +288,17 @@ class ServicestatusQuery extends IdoQuery
             'problems'                                  => 'CASE WHEN COALESCE(ss.current_state, 0) = 0 THEN 0 ELSE 1 END'
         )
     );
+
+    protected $isFiltered = false;
+
+    public function addFilter(Filter $filter)
+    {
+        if (! $filter->isEmpty()) {
+            $this->isFiltered = true;
+        }
+
+        return parent::addFilter($filter);
+    }
 
     /**
      * {@inheritdoc}
@@ -512,5 +527,30 @@ class ServicestatusQuery extends IdoQuery
         }
 
         return parent::joinSubQuery($query, $name, $filter, $and, $negate, $additionalFilter);
+    }
+
+    public function getSelectQuery()
+    {
+        if ($this->getDatasource()->getDbType() === 'mysql' && ! $this->isFiltered) {
+            $order = $this->getOrder();
+            if ($order === [['s.display_name', 'ASC']] || $order === [['s.display_name', 'DESC']]) {
+                // Force idx_services_display_name index usage
+                $zendSelect = $this->select;
+
+                $partsProp = (new \ReflectionClass('\Zend_Db_Select'))->getProperty('_parts');
+                $partsProp->setAccessible(true);
+
+                $parts = $partsProp->getValue($zendSelect);
+
+                $parts['from'] = json_decode(
+                    str_replace('"s":', '"s USE INDEX(idx_services_display_name)":', json_encode($parts['from'])),
+                    true
+                );
+
+                $partsProp->setValue($zendSelect, $parts);
+            }
+        }
+
+        return parent::getSelectQuery();
     }
 }

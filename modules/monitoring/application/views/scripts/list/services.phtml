@@ -29,14 +29,14 @@ if (! $this->compact): ?>
         $serviceLink = $this->href(
             'monitoring/service/show',
             array(
-                'host'      => $service->host_name,
+                'host'      => $service->service_host_name,
                 'service'   => $service->service_description
             )
         );
         $hostLink = $this->href(
             'monitoring/host/show',
             array(
-                'host' => $service->host_name,
+                'host' => $service->service_host_name,
             )
         );
         $serviceStateName = Service::getStateText($service->service_state);

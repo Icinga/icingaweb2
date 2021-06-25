@@ -16,7 +16,7 @@ class ContactgroupQuery extends IdoQuery
     /**
      * {@inheritdoc}
      */
-    protected $groupBase = array('contactgroups' => array('cg.contactgroup_id', 'cgo.object_id'));
+    protected $groupBase = array('contactgroups' => array('cgo.object_id'));
 
     /**
      * {@inheritdoc}
@@ -35,21 +35,21 @@ class ContactgroupQuery extends IdoQuery
         'contactgroups' => array(
             'contactgroup'          => 'cgo.name1 COLLATE latin1_general_ci',
             'contactgroup_name'     => 'cgo.name1',
-            'contactgroup_alias'    => 'cg.alias COLLATE latin1_general_ci'
+            'contactgroup_alias'    => 'cg.alias'
         ),
         'members' => array(
             'contact_count' => 'SUM(CASE WHEN cgmo.object_id IS NOT NULL THEN 1 ELSE 0 END)'
         ),
         'hostgroups' => array(
             'hostgroup'         => 'hgo.name1 COLLATE latin1_general_ci',
-            'hostgroup_alias'   => 'hg.alias COLLATE latin1_general_ci',
+            'hostgroup_alias'   => 'hg.alias',
             'hostgroup_name'    => 'hgo.name1'
         ),
         'hosts' => array(
             'host'              => 'ho.name1 COLLATE latin1_general_ci',
             'host_name'         => 'ho.name1',
             'host_alias'        => 'h.alias',
-            'host_display_name' => 'h.display_name COLLATE latin1_general_ci'
+            'host_display_name' => 'h.display_name'
         ),
         'instances' => array(
             'instance_name' => 'i.instance_name'
@@ -57,12 +57,12 @@ class ContactgroupQuery extends IdoQuery
         'servicegroups' => array(
             'servicegroup'          => 'sgo.name1 COLLATE latin1_general_ci',
             'servicegroup_name'     => 'sgo.name1',
-            'servicegroup_alias'    => 'sg.alias COLLATE latin1_general_ci'
+            'servicegroup_alias'    => 'sg.alias'
         ),
         'services' => array(
             'service'               => 'so.name2 COLLATE latin1_general_ci',
             'service_description'   => 'so.name2',
-            'service_display_name'  => 's.display_name COLLATE latin1_general_ci',
+            'service_display_name'  => 's.display_name',
             'service_host_name'     => 'so.name1'
         )
     );

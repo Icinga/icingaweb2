@@ -457,7 +457,19 @@ class SimpleQuery implements QueryInterface, Queryable, Iterator
      */
     public function hasResult()
     {
-        return $this->cachedCount > 0 || $this->iteratorPosition !== null || $this->fetchRow() !== false;
+        if ($this->cachedCount > 0) {
+            return true;
+        }
+
+        if ($this->iteratorPosition !== null) {
+            return true;
+        }
+
+        foreach ($this as $row) {
+            return true;
+        }
+
+        return false;
     }
 
     /**

@@ -11,7 +11,7 @@ class HostgroupQuery extends IdoQuery
     protected $allowCustomVars = true;
 
     protected $groupBase = array(
-        'hostgroups'         => array('hgo.object_id', 'hg.hostgroup_id'),
+        'hostgroups'         => array('hgo.object_id'),
         'hoststatus'         => array('hs.hoststatus_id'),
         'servicestatus'      => array('ss.servicestatus_id')
     );
@@ -32,7 +32,7 @@ class HostgroupQuery extends IdoQuery
         ],
         'hostgroups' => array(
             'hostgroup'         => 'hgo.name1 COLLATE latin1_general_ci',
-            'hostgroup_alias'   => 'hg.alias COLLATE latin1_general_ci',
+            'hostgroup_alias'   => 'hg.alias',
             'hostgroup_name'    => 'hgo.name1'
         ),
         'hoststatus' => array(

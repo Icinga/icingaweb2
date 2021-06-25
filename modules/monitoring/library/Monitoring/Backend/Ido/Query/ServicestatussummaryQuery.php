@@ -74,8 +74,7 @@ class ServicestatussummaryQuery extends IdoQuery
             'servicestatus',
             array(
                 'handled'       => 'service_handled',
-                'state'         => 'service_state',
-                'state_change'  => 'service_last_state_change'
+                'state'         => 'service_state'
             )
         );
         $this->select->from(

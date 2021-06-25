@@ -61,8 +61,7 @@ class HoststatussummaryQuery extends IdoQuery
             'Hoststatus',
             array(
                 'handled'       => 'host_handled',
-                'state'         => 'host_state',
-                'state_change'  => 'host_last_state_change'
+                'state'         => 'host_state'
             )
         );
         $this->select->from(

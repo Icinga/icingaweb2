@@ -6,7 +6,7 @@ namespace Icinga\Module\Monitoring\Backend\Ido\Query;
 class ServicegroupQuery extends IdoQuery
 {
     protected $groupBase = array(
-        'servicegroups' => array('sgo.object_id', 'sg.servicegroup_id'),
+        'servicegroups' => array('sgo.object_id'),
         'servicestatus' => array('ss.servicestatus_id', 'hs.hoststatus_id')
     );
 
@@ -47,7 +47,7 @@ class ServicegroupQuery extends IdoQuery
         ),
         'servicegroups' => array(
             'servicegroup'          => 'sgo.name1 COLLATE latin1_general_ci',
-            'servicegroup_alias'    => 'sg.alias COLLATE latin1_general_ci',
+            'servicegroup_alias'    => 'sg.alias',
             'servicegroup_name'     => 'sgo.name1'
         ),
         'servicestatus' => array(
