@@ -57,6 +57,8 @@ if (! $modulePaths) {
         $path = "$modulePath/$path";
     }
     unset($path);
+
+    putenv('ICINGAWEB_MODULE_DIRS=' . implode(':', $modulePaths));
 }
 
 foreach ($modulePaths as $path) {
