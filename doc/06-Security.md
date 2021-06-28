@@ -154,10 +154,13 @@ application/share/groups  | which groups a user can share navigation items with 
 ### Username placeholder
 
 It is possible to reference the local username (without the domain part) of the user in restrictions. To accomplish
-this, put the macro `$user:local_name$` in the restriction where you want it to appear.
+this, put the macro `$user.local_name$` in the restriction where you want it to appear.
 
 This can come in handy if you have e.g. an attribute on hosts or services defining which user is responsible for it:
-`_host_deputy=$user:local_name$|_service_deputy=$user:local_name$`
+`_host_deputy=$user.local_name$|_service_deputy=$user.local_name$`
+
+> Please note that since version 2.9 the use of `user.local_name` instead of `user:local_name` is supported and
+> recommended. `user:local_name` is deprecated and will be removed in version 2.11.
 
 ### Filter Expressions
 
