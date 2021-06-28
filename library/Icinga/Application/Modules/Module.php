@@ -867,7 +867,19 @@ class Module
      */
     public function getRequiredLibraries()
     {
-        return $this->metadata()->libraries;
+        $requiredLibraries = $this->metadata()->libraries;
+
+        // Register module requirements for ipl and reactbundle as library requirements
+        $requiredModules = $this->metadata()->modules ?: $this->metadata()->depends;
+        if (isset($requiredModules['ipl']) && ! isset($requiredLibraries['icinga-php-library'])) {
+            $requiredLibraries['icinga-php-library'] = $requiredModules['ipl'];
+        }
+
+        if (isset($requiredModules['reactbundle']) && ! isset($requiredLibraries['icinga-php-thirdparty'])) {
+            $requiredLibraries['icinga-php-thirdparty'] = $requiredModules['reactbundle'];
+        }
+
+        return $requiredLibraries;
     }
 
     /**
@@ -877,7 +889,12 @@ class Module
      */
     public function getRequiredModules()
     {
-        return $this->metadata()->modules ?: $this->metadata()->depends;
+        $requiredModules = $this->metadata()->modules ?: $this->metadata()->depends;
+
+        // Both modules are deprecated and their successors are now dependencies of web itself
+        unset($requiredModules['ipl'], $requiredModules['reactbundle']);
+
+        return $requiredModules;
     }
 
     /**
