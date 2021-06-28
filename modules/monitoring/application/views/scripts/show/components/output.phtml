@@ -2,4 +2,5 @@
 <div id="check-output-<?= $this->escape(str_replace(' ', '-', $object->check_command)) ?>" class="collapsible" data-visible-height="100">
     <?= $this->pluginOutput($object->output, false, $object->check_command) ?>
     <?= $this->pluginOutput($object->long_output, false, $object->check_command) ?>
+    <p> Since <?= date('Y-m-d H:i:s',($object->last_state_change)) ?> </p>
 </div>
