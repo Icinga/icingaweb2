@@ -405,7 +405,7 @@ form.inline {
 }
 
 form.icinga-form .control-group.disabled .control-label-group {
-  color: @disabled-gray;
+  .var(color, disabled-gray);
 }
 
 .icinga-controls {
@@ -490,13 +490,13 @@ form.icinga-form .form-info {
 
 .icinga-controls {
   input::placeholder {
-    color: @disabled-gray;
+    .var(color, disabled-gray);
     font-style: italic;
     opacity: 1;
   }
 
   input:-ms-input-placeholder {
-    color: @disabled-gray;
+    .var(color, disabled-gray);
     font-style: italic;
     opacity: 1;
   }
