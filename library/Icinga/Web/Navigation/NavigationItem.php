@@ -4,6 +4,7 @@
 namespace Icinga\Web\Navigation;
 
 use Exception;
+use Icinga\Authentication\Auth;
 use InvalidArgumentException;
 use IteratorAggregate;
 use Icinga\Application\Icinga;
@@ -601,12 +602,15 @@ class NavigationItem implements IteratorAggregate
     public function setUrl($url)
     {
         if (is_string($url)) {
-            $url = Url::fromPath($url);
-        } elseif (! $url instanceof Url) {
+            $url = Url::fromPath($this->resolveMacros($url));
+        } elseif ($url instanceof Url) {
+            $url = Url::fromPath($this->resolveMacros($url->getAbsoluteUrl()));
+        } else {
             throw new InvalidArgumentException('Argument $url must be of type string or Url');
         }
 
         $this->url = $url;
+
         return $this;
     }
 
@@ -914,5 +918,29 @@ class NavigationItem implements IteratorAggregate
         } catch (Exception $e) {
             return IcingaException::describe($e);
         }
+    }
+
+    /**
+     * Resolve all macros in the given URL
+     *
+     * @param string $url
+     *
+     * @return  string
+     */
+    protected function resolveMacros($url)
+    {
+        if (strpos($url, '$') === false) {
+            return $url;
+        }
+
+        $macros = [];
+        if (Auth::getInstance()->isAuthenticated()) {
+            $macros['$user.local_name$'] = Auth::getInstance()->getUser()->getLocalUsername();
+        }
+        if (! empty($macros)) {
+            $url = str_replace(array_keys($macros), array_values($macros), $url);
+        }
+
+        return $url;
     }
 }
