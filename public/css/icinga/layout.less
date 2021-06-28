@@ -224,8 +224,8 @@
   }
 
   &.error {
-    border-color: @color-down;
-    background: @color-down;
+    .var(border-color, color-down);
+    .var(background, color-down);
     .var(color, body-bg-color);
 
     .icon {
@@ -234,24 +234,24 @@
   }
 
   &.info {
-    border-color: @color-pending;
+    .var(border-color, color-pending);
 
     .icon {
-      color: @color-pending;
+      .var(color, color-pending);
     }
   }
 
   &.success {
-    border-color: @color-ok;
+    .var(border-color, color-ok);
 
     .icon {
-      color: @color-ok;
+      .var(color, color-ok);
     }
   }
 
   &.warning {
-    border-color: @color-warning;
-    background: @color-warning;
+    .var(border-color, color-warning);
+    .var(background, color-warning);
     .var(color, body-bg-color);
 
     .icon {

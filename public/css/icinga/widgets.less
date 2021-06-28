@@ -61,7 +61,7 @@
 }
 
 #application-state-summary > div {
-  background-color: @color-critical;
+  .var(background-color, color-critical);
   color: #fff;
   line-height: 1.5em;
   padding: 0.5em 1em 0.5em 3em;
@@ -239,15 +239,15 @@ form.role-form {
 
     .privilege-preview .icon {
       &.granted {
-        color: @color-granted;
+        .var(color, color-granted);
       }
 
       &.refused {
-        color: @color-refused;
+        .var(color, color-refused);
       }
 
       &.restricted {
-        color: @color-restricted;
+        .var(color, color-restricted);
       }
     }
   }
@@ -277,11 +277,11 @@ form.role-form {
         text-align: center;
 
         &.icon-ok {
-          color: @color-granted;
+          .var(color, color-granted);
         }
 
         &.icon-cancel {
-          color: @color-refused;
+          .var(color, color-refused);
         }
       }
     }
@@ -412,7 +412,7 @@ ul.tree li a {
 }
 
 ul.tree li a.error {
-  color: @color-critical-handled;
+  .var(color, color-critical-handled);
 }
 
 ul.tree li a:hover {
@@ -421,7 +421,7 @@ ul.tree li a:hover {
 }
 
 ul.tree li a.error:hover {
-  color: @color-critical;
+  .var(color, color-critical);
 }
 
 /* charts should grow as much as possible but never beyond the current viewport's size */
@@ -498,53 +498,53 @@ ul.tree li a.error:hover {
 }
 
 .slice-state-ok {
-  stroke: @color-ok;
-  background: @color-ok;
+  .var(stroke, color-ok);
+  .var(background, color-ok);
 }
 
 .slice-state-warning-handled {
-  stroke: @color-warning-handled;
-  background: @color-warning-handled;
+  .var(stroke, color-warning-handled);
+  .var(background, color-warning-handled);
 }
 
 .slice-state-warning {
-  stroke: @color-warning;
-  background: @color-unreachable-handled;
+  .var(stroke, color-warning);
+  .var(background, color-unreachable-handled);
 }
 
 .slice-state-critical-handled {
-  stroke: @color-critical-handled;
-  background: @color-critical-handled;
+  .var(stroke, color-critical-handled);
+  .var(background, color-critical-handled);
 }
 
 .slice-state-critical {
-  stroke: @color-critical;
-  background: @color-critical;
+  .var(stroke, color-critical);
+  .var(background, color-critical);
 }
 
 .slice-state-unknown-handled {
-  stroke: @color-unknown-handled;
-  background: @color-unknown-handled;
+  .var(stroke, color-unknown-handled);
+  .var(background, color-unknown-handled);
 }
 
 .slice-state-unknown {
-  stroke: @color-unknown;
-  background: @color-unknown;
+  .var(stroke, color-unknown);
+  .var(background, color-unknown);
 }
 
 .slice-state-unreachable-handled {
-  stroke: @color-unreachable-handled;
-  background: @color-unreachable-handled;
+  .var(stroke, color-unreachable-handled);
+  .var(background, color-unreachable-handled);
 }
 
 .slice-state-unreachable {
-  stroke: @color-unreachable;
-  background: @color-unreachable;
+  .var(stroke, color-unreachable);
+  .var(background, color-unreachable);
 }
 
 .slice-state-pending {
-  stroke: @color-pending;
-  background: @color-pending;
+  .var(stroke, color-pending);
+  .var(background, color-pending);
 }
 
 .slice-state-not-checked {
@@ -585,7 +585,7 @@ ul.tree li a.error:hover {
 }
 
 .donut-label-big-eye-catching {
-  color: @color-critical;
+  .var(color, color-critical);
 }
 
 .donut-label-small {

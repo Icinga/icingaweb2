@@ -76,7 +76,7 @@
 }
 
 a:hover > .icon-cancel {
-  color: @color-critical;
+  .var(color, color-critical);
 }
 
 .icon-stateful {
@@ -376,7 +376,7 @@ a:hover > .icon-cancel {
 
 .module-dependencies {
   .unmet-dependencies {
-    background-color: @color-warning;
+    .var(background-color, color-warning);
     .var(color, text-color-on-icinga-blue);
     padding: .25em .5em;
     margin-left: -.5em;
@@ -394,7 +394,7 @@ a:hover > .icon-cancel {
     }
 
     .missing {
-      color: @color-critical;
+      .var(color, color-critical);
       font-weight: bold;
     }
   }

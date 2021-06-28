@@ -52,7 +52,7 @@
 
 // Link to unhandled services in the hosts overview
 .host-services-incidents {
-  color: @color-critical;
+  .var(color, color-critical);
   font-family: @font-family-wide;
   font-size: @font-size-small;
 }
@@ -141,55 +141,61 @@
 .state-col {
   &.state-ok,
   &.state-up {
-    border-left: @border-left-width solid @color-ok;
+    border-left: @border-left-width solid;
+    .var(border-left-color, color-ok);
   }
 
   &.state-pending {
-    border-left: @border-left-width solid @color-pending;
+    border-left: @border-left-width solid;
+    .var(border-left-color, color-pending);
   }
 
   &.state-critical,
   &.state-down {
-    background-color: @color-critical;
+    .var(background-color, color-critical);
     .var(color, text-color-inverted);
 
     &.handled {
       background-color: inherit;
       color: inherit;
-      border-left: @border-left-width solid @color-critical-handled;
+      border-left: @border-left-width solid;
+      .var(border-left-color, color-critical-handled);
     }
   }
 
   &.state-warning {
-    background-color: @color-warning;
+    .var(background-color, color-warning);
     .var(color, text-color-inverted);
 
     &.handled {
       background-color: inherit;
       color: inherit;
-      border-left: @border-left-width solid @color-warning-handled;
+      border-left: @border-left-width solid;
+      .var(border-left-color, color-warning-handled);
     }
   }
 
   &.state-unknown {
-    background-color: @color-unknown;
+    .var(background-color, color-unknown);
     .var(color, text-color-inverted);
 
     &.handled {
       background-color: inherit;
       color: inherit;
-      border-left: @border-left-width solid @color-unknown-handled;
+      border-left: @border-left-width solid;
+      .var(border-left-color, color-unknown-handled);
     }
   }
 
   &.state-unreachable {
-    background-color: @color-unreachable;
+    .var(background-color, color-unreachable);
     .var(color, text-color-inverted);
 
     &.handled {
       background-color: inherit;
       color: inherit;
-      border-left: @border-left-width solid @color-unreachable-handled;
+      border-left: @border-left-width solid;
+      .var(border-left-color, color-unreachable-handled);
     }
   }
 

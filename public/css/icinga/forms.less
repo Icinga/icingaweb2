@@ -292,7 +292,7 @@ form.icinga-form .form-controls {
   }
 
   input[type="submit"].btn-remove {
-    .button(~"var(--body-bg-color, @{body-bg-color})", @color-critical, darken(@color-critical, 10%));
+    .button(~"var(--body-bg-color, @{body-bg-color})", ~"var(--color-critical, @{color-critical})", ~"var(--color-critical-accentuated, @{color-critical-accentuated})");
   }
 
   input[type="submit"].btn-cancel {
@@ -449,15 +449,15 @@ form.icinga-form {
 
   .form-notifications {
     &.info {
-      background-color: fade(@color-ok, 20%);
+      .var(background-color, form-info-bg-color);
     }
 
     &.error {
-      background-color: fade(@color-critical, 30%);
+      .var(background-color, form-error-bg-color);
     }
 
     &.warning {
-      background-color: fade(@color-warning, 40%);
+      .var(background-color, form-warning-bg-color);
     }
   }
 

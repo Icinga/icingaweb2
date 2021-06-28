@@ -21,6 +21,7 @@
 @color-warning-handled: #ffcc66;
 @color-critical: #ff5566;
 @color-critical-handled: #ff99aa;
+@color-critical-accentuated: darken(@color-critical, 10%);
 @color-down: @color-critical;
 @color-down-handled: @color-critical-handled;
 @color-unknown: #aa44ff;
@@ -74,6 +75,11 @@
 @menu-flyout-bg-color: @body-bg-color;
 @menu-flyout-color: @text-color;
 @tab-hover-bg-color: fade(@body-bg-color, 50%);
+
+// Form colors
+@form-info-bg-color: fade(@color-ok, 20%);
+@form-error-bg-color: fade(@color-critical, 30%);
+@form-warning-bg-color: fade(@color-warning, 40%);
 
 // Other colors
 @color-granted: #59cd59;
