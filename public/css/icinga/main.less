@@ -7,7 +7,7 @@
 @name-value-table-name-width: 38/3em;
 
 .action-link {
-  color: @icinga-blue;
+  .var(color, icinga-blue);
 }
 
 .error-message {
@@ -179,7 +179,7 @@ a:hover > .icon-cancel {
 
   tr[href].active {
     .var(background-color, tr-active-color);
-    border-left-color: @icinga-blue;
+    .var(border-left-color, icinga-blue);
   }
 
   tr[href]:hover {

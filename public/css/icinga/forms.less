@@ -373,17 +373,19 @@ form.inline {
 }
 
 .icinga-controls input[type="checkbox"]:checked + .toggle-switch .toggle-slider {
-  background-color: @icinga-blue;
-  border: 1px solid @icinga-blue;
+  .var(background-color, icinga-blue);
+  border: 1px solid;
+  .var(border-color, icinga-blue);
 }
 
 .icinga-controls input[type="checkbox"]:focus + .toggle-switch .toggle-slider {
-  box-shadow: 0 0 0 2px @body-bg-color, 0 0 0 4px fade(@icinga-blue, 40);
-  box-shadow: 0 0 0 2px var(--body-bg-color, @body-bg-color), 0 0 0 4px fade(@icinga-blue, 40);
+  box-shadow: 0 0 0 2px @body-bg-color, 0 0 0 4px @icinga-blue-light;
+  box-shadow: 0 0 0 2px var(--body-bg-color, @body-bg-color), 0 0 0 4px var(--icinga-blue-light, @icinga-blue-light);
 }
 
 .icinga-controls input[type="checkbox"]:checked + .toggle-switch .toggle-slider:before {
-  border: 1px solid @icinga-blue;
+  border: 1px solid;
+  .var(border-color, icinga-blue);
   left: 100%;
   margin-left: -4/3em;
 }
@@ -522,7 +524,7 @@ form.icinga-form .form-info {
   display: none;
 
   &:checked + img {
-    border-color: @icinga-blue;
+    .var(border-color, icinga-blue);
     border-radius: .25em;
   }
 

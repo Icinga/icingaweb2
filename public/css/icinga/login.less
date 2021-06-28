@@ -96,7 +96,8 @@
   }
 
   input[type="submit"]:focus {
-    outline: 3px solid fade(@icinga-blue, 50%);
+    outline: 3px solid;
+    .var(outline-color, icinga-blue-light);
   }
 
   .form-controls {
@@ -105,7 +106,7 @@
 
   input[type=submit] {
     border-radius: .25em;
-    background: @icinga-secondary;
+    .var(background, icinga-secondary);
     color: white;
     border: none;
     height: 2.5em;
@@ -113,7 +114,7 @@
     width: 100%;
 
     &:hover {
-      background-color: darken(@icinga-secondary, 10)
+      .var(background-color, icinga-secondary-dark);
     }
   }
 
@@ -196,11 +197,11 @@
 
   a {
     font-weight: @font-weight-bold;
-    color: @icinga-secondary;
+    .var(color, icinga-secondary);
 
     &:hover {
       text-decoration: none;
-      color: darken(@icinga-blue, 10);
+      .var(color, icinga-secondary-dark);
     }
   }
 }

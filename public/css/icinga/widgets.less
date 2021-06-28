@@ -15,7 +15,7 @@
     position: relative;
 
     &:before {
-      color: @icinga-blue;
+      .var(color, icinga-blue);
       content: "\e811";
       font-family: 'ifont';
 
@@ -28,7 +28,7 @@
     }
 
     a {
-      color: @icinga-blue;
+      .var(color, icinga-blue);
     }
 
     .message {
@@ -56,7 +56,7 @@
   color: #fff;
 
   &:hover .icon-cancel {
-    color: @icinga-blue;
+    .var(color, icinga-blue);
   }
 }
 
@@ -206,7 +206,7 @@ table.multiselect tr[href] td {
       .var(color, text-color);
 
       &:hover, &:focus {
-        color: @icinga-blue;
+        .var(color, icinga-blue);
       }
     }
 

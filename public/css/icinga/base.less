@@ -33,9 +33,10 @@
 // Icinga colors
 @icinga-blue: #00C3ED;
 @icinga-secondary: #EF4F98;
+@icinga-secondary-dark: darken(@icinga-secondary, 10%);
 @low-sat-blue: #404d72;
 @low-sat-blue-dark: #434374;
-@icinga-blue-light: #a5c4cd;
+@icinga-blue-light: fade(@icinga-blue, 50%);
 @icinga-blue-dark: #0081a6;
 
 // Notification colors
@@ -57,8 +58,8 @@
 // Text color on <a>
 @link-color: @text-color;
 
-@tr-active-color: rgba(0,195,237,0.5);
-@tr-hover-color: rgba(0,195,237,0.2);
+@tr-active-color: fade(@icinga-blue, 25);
+@tr-hover-color: fade(@icinga-blue, 5);
 
 // Menu colors
 @menu-bg-color: #06062B;

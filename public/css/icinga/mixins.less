@@ -6,7 +6,11 @@
           box-shadow: @arguments;
 }
 
-.button(@background-color: ~"var(--body-bg-color, @{body-bg-color})", @border-font-color: @icinga-blue, @color-dark: darken(@icinga-blue, 10%)) {
+.button(
+  @background-color: ~"var(--body-bg-color, @{body-bg-color})",
+  @border-font-color: ~"var(--icinga-blue, @{icinga-blue})",
+  @color-dark: ~"var(--icinga-blue-dark, @{icinga-blue-dark})"
+) {
   .rounded-corners(3px);
 
   background-color: extract-variable-default(@background-color);
