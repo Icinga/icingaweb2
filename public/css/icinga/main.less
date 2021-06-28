@@ -178,12 +178,12 @@ a:hover > .icon-cancel {
   }
 
   tr[href].active {
-    background-color: @tr-active-color;
+    .var(background-color, tr-active-color);
     border-left-color: @icinga-blue;
   }
 
   tr[href]:hover {
-    background-color: @tr-hover-color;
+    .var(background-color, tr-hover-color);
     cursor: pointer;
   }
 }

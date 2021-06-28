@@ -250,11 +250,11 @@
   }
 
   tr[href].active {
-    background-color: @tr-active-color;
+    .var(background-color, tr-active-color);
   }
 
   tr[href]:hover {
-    background-color: @tr-hover-color;
+    .var(background-color, tr-hover-color);
     cursor: pointer;
   }
 
