@@ -224,38 +224,38 @@
   }
 
   &.error {
-    .var(border-color, color-down);
-    .var(background, color-down);
-    .var(color, body-bg-color);
+    .var(border-color, color-notification-error);
+    .var(background, color-notification-error);
+    .var(color, text-color-on-icinga-blue);
 
     .icon {
-      .var(color, body-bg-color);
+      .var(color, text-color-on-icinga-blue);
     }
   }
 
   &.info {
-    .var(border-color, color-pending);
+    .var(border-color, color-notification-info);
 
     .icon {
-      .var(color, color-pending);
+      .var(color, color-notification-info);
     }
   }
 
   &.success {
-    .var(border-color, color-ok);
+    .var(border-color, color-notification-success);
 
     .icon {
-      .var(color, color-ok);
+      .var(color, color-notification-success);
     }
   }
 
   &.warning {
-    .var(border-color, color-warning);
-    .var(background, color-warning);
-    .var(color, body-bg-color);
+    .var(border-color, color-notification-warning);
+    .var(background, color-notification-warning);
+    .var(color, text-color-inverted);
 
     .icon {
-      .var(color, body-bg-color);
+      .var(color, text-color-inverted);
     }
   }
 }
