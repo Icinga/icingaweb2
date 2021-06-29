@@ -6,7 +6,11 @@
           box-shadow: @arguments;
 }
 
-.button(@background-color: ~"var(--body-bg-color, @{body-bg-color})", @border-font-color: @icinga-blue, @color-dark: darken(@icinga-blue, 10%)) {
+.button(
+  @background-color: ~"var(--body-bg-color, @{body-bg-color})",
+  @border-font-color: ~"var(--icinga-blue, @{icinga-blue})",
+  @color-dark: ~"var(--icinga-blue-dark, @{icinga-blue-dark})"
+) {
   .rounded-corners(3px);
 
   background-color: extract-variable-default(@background-color);
@@ -35,7 +39,9 @@
 
   &.btn-primary:focus,
   &.btn-primary:hover {
+    background-color: extract-variable-default(@color-dark);
     background-color: @color-dark;
+    border-color: extract-variable-default(@color-dark);
     border-color: @color-dark;
     color: extract-variable-default(@background-color);
     color: @background-color;
@@ -144,86 +150,86 @@
 // Mixin for stateful foreground colors, e.g. text or icons
 .fg-stateful {
   &.state-ok {
-    color: @color-ok;
+    .var(color, color-ok);
   }
   &.state-up {
-    color: @color-up;
+    .var(color, color-up);
   }
   &.state-warning {
-    color: @color-warning;
+    .var(color, color-warning);
     &.handled {
-      color: @color-warning-handled;
+      .var(color, color-warning-handled);
     }
   }
   &.state-critical {
-    color: @color-critical;
+    .var(color, color-critical);
     &.handled {
-      color: @color-critical-handled;
+      .var(color, color-critical-handled);
     }
   }
   &.state-down {
-    color: @color-down;
+    .var(color, color-down);
     &.handled {
-      color: @color-down-handled;
+      .var(color, color-down-handled);
     }
   }
   &.state-unreachable {
-    color: @color-unreachable;
+    .var(color, color-unreachable);
     &.handled {
-      color: @color-unreachable-handled;
+      .var(color, color-unreachable-handled);
     }
   }
   &.state-unknown {
-    color: @color-unknown;
+    .var(color, color-unknown);
     &.handled {
-      color: @color-unknown-handled;
+      .var(color, color-unknown-handled);
     }
   }
   &.state-pending {
-    color: @color-pending;
+    .var(color, color-pending);
   }
 }
 
 // Mixin for stateful background colors
 .bg-stateful {
   &.state-ok {
-    background-color: @color-ok;
+    .var(background-color, color-ok);
   }
   &.state-up {
-    background-color: @color-up;
+    .var(background-color, color-up);
   }
   &.state-warning {
-    background-color: @color-warning;
+    .var(background-color, color-warning);
     &.handled {
-      background-color: @color-warning-handled;
+      .var(background-color, color-warning-handled);
     }
   }
   &.state-critical {
-    background-color: @color-critical;
+    .var(background-color, color-critical);
     &.handled {
-      background-color: @color-critical-handled;
+      .var(background-color, color-critical-handled);
     }
   }
   &.state-down {
-    background-color: @color-down;
+    .var(background-color, color-down);
     &.handled {
-      background-color: @color-down-handled;
+      .var(background-color, color-down-handled);
     }
   }
   &.state-unreachable {
-    background-color: @color-unreachable;
+    .var(background-color, color-unreachable);
     &.handled {
-      background-color: @color-unreachable-handled;
+      .var(background-color, color-unreachable-handled);
     }
   }
   &.state-unknown {
-    background-color: @color-unknown;
+    .var(background-color, color-unknown);
     &.handled {
-      background-color: @color-unknown-handled;
+      .var(background-color, color-unknown-handled);
     }
   }
   &.state-pending {
-    background-color: @color-pending;
+    .var(background-color, color-pending);
   }
 }
 

@@ -22,7 +22,7 @@
 // General styles
 
 code {
-  color: @icinga-blue;
+  .var(color, icinga-blue);
   font-family: @font-family-fixed;
 }
 
@@ -49,7 +49,7 @@ pre > code {
 .search-highlight {
   .rounded-corners();
 
-  background: @icinga-blue;
+  .var(background, icinga-blue);
   .var(color, text-color-on-icinga-blue);
   padding: 0 0.3em 0 0.3em;
 }
@@ -70,7 +70,7 @@ pre > code {
 
     a {
       &:before {
-        color: @icinga-blue;
+        .var(color, icinga-blue);
         content: counters(li,".") " ";
         display: inline-block;
         font-size: small;
@@ -111,7 +111,8 @@ td {
 }
 
 th {
-  border-bottom: 2px solid @icinga-blue;
+  border-bottom: 2px solid;
+  .var(border-bottom-color, icinga-blue);
   font-weight: @font-weight-bold;
   text-align: left;
   text-transform: uppercase;

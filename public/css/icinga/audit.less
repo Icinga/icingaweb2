@@ -9,7 +9,7 @@
     .var(border-color, low-sat-blue);
 
     &.active {
-      border-color: @icinga-blue;
+      .var(border-color, icinga-blue);
     }
   }
 }
@@ -40,15 +40,15 @@
     .var(color, gray-light);
 
     &.granted {
-      color: @color-granted;
+      .var(color, color-granted);
     }
 
     &.refused {
-      color: @color-refused;
+      .var(color, color-refused);
     }
 
     &.restricted {
-      color: @color-restricted;
+      .var(color, color-restricted);
     }
   }
 
@@ -72,11 +72,11 @@
     border-left-width: 2px;
 
     &.granted {
-      border-color: @color-granted;
+      .var(border-color, color-granted);
     }
 
     &.refused {
-      border-color: @color-refused;
+      .var(border-color, color-refused);
     }
   }
 
@@ -86,11 +86,11 @@
     border-bottom-width: 2px;
 
     &.granted {
-      border-color: @color-granted;
+      .var(border-color, color-granted);
     }
 
     &.refused {
-      border-color: @color-refused;
+      .var(border-color, color-refused);
     }
 
     &:first-child {
@@ -105,11 +105,13 @@
     .var(border-color, gray-lighter);
 
     &.granted {
-      border: 2px solid @color-granted;
+      border: 2px solid;
+      .var(border-color, color-granted);
     }
 
     &.refused {
-      border: 2px solid @color-refused;
+      border: 2px solid;
+      .var(border-color, color-refused);
     }
   }
 

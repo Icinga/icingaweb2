@@ -292,11 +292,11 @@ form.icinga-form .form-controls {
   }
 
   input[type="submit"].btn-remove {
-    .button(~"var(--body-bg-color, @{body-bg-color})", @color-critical, darken(@color-critical, 10%));
+    .button(~"var(--body-bg-color, @{body-bg-color})", ~"var(--color-critical, @{color-critical})", ~"var(--color-critical-accentuated, @{color-critical-accentuated})");
   }
 
   input[type="submit"].btn-cancel {
-    .button(~"var(--body-bg-color, @{body-bg-color})", ~"var(--gray, @{gray})", @black);
+    .button(~"var(--body-bg-color, @{body-bg-color})", ~"var(--gray, @{gray})", ~"var(--black, @{black})");
   }
 
   button.noscript-apply {
@@ -373,17 +373,19 @@ form.inline {
 }
 
 .icinga-controls input[type="checkbox"]:checked + .toggle-switch .toggle-slider {
-  background-color: @icinga-blue;
-  border: 1px solid @icinga-blue;
+  .var(background-color, icinga-blue);
+  border: 1px solid;
+  .var(border-color, icinga-blue);
 }
 
 .icinga-controls input[type="checkbox"]:focus + .toggle-switch .toggle-slider {
-  box-shadow: 0 0 0 2px @body-bg-color, 0 0 0 4px fade(@icinga-blue, 40);
-  box-shadow: 0 0 0 2px var(--body-bg-color, @body-bg-color), 0 0 0 4px fade(@icinga-blue, 40);
+  box-shadow: 0 0 0 2px @body-bg-color, 0 0 0 4px @icinga-blue-light;
+  box-shadow: 0 0 0 2px var(--body-bg-color, @body-bg-color), 0 0 0 4px var(--icinga-blue-light, @icinga-blue-light);
 }
 
 .icinga-controls input[type="checkbox"]:checked + .toggle-switch .toggle-slider:before {
-  border: 1px solid @icinga-blue;
+  border: 1px solid;
+  .var(border-color, icinga-blue);
   left: 100%;
   margin-left: -4/3em;
 }
@@ -405,7 +407,7 @@ form.inline {
 }
 
 form.icinga-form .control-group.disabled .control-label-group {
-  color: @disabled-gray;
+  .var(color, disabled-gray);
 }
 
 .icinga-controls {
@@ -449,15 +451,15 @@ form.icinga-form {
 
   .form-notifications {
     &.info {
-      background-color: fade(@color-ok, 20%);
+      .var(background-color, form-info-bg-color);
     }
 
     &.error {
-      background-color: fade(@color-critical, 30%);
+      .var(background-color, form-error-bg-color);
     }
 
     &.warning {
-      background-color: fade(@color-warning, 40%);
+      .var(background-color, form-warning-bg-color);
     }
   }
 
@@ -490,13 +492,13 @@ form.icinga-form .form-info {
 
 .icinga-controls {
   input::placeholder {
-    color: @disabled-gray;
+    .var(color, disabled-gray);
     font-style: italic;
     opacity: 1;
   }
 
   input:-ms-input-placeholder {
-    color: @disabled-gray;
+    .var(color, disabled-gray);
     font-style: italic;
     opacity: 1;
   }
@@ -522,7 +524,7 @@ form.icinga-form .form-info {
   display: none;
 
   &:checked + img {
-    border-color: @icinga-blue;
+    .var(border-color, icinga-blue);
     border-radius: .25em;
   }
 

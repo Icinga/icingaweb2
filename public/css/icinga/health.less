@@ -11,19 +11,19 @@
 
   span {
     &.state-ok {
-      background-color: @color-ok;
+      .var(background-color, color-ok);
     }
 
     &.state-warning {
-      background-color: @color-warning;
+      .var(background-color, color-warning);
     }
 
     &.state-critical {
-      background-color: @color-critical;
+      .var(background-color, color-critical);
     }
 
     &.state-unknown {
-      background-color: @color-unknown;
+      .var(background-color, color-unknown);
     }
   }
 

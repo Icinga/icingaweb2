@@ -9,7 +9,7 @@
 }
 
 #guest-error {
-  background-color: @icinga-blue;
+  .var(background-color, icinga-blue);
   height: 100%;
   overflow: auto;
 }
@@ -224,38 +224,38 @@
   }
 
   &.error {
-    border-color: @color-down;
-    background: @color-down;
-    .var(color, body-bg-color);
+    .var(border-color, color-notification-error);
+    .var(background, color-notification-error);
+    .var(color, text-color-on-icinga-blue);
 
     .icon {
-      .var(color, body-bg-color);
+      .var(color, text-color-on-icinga-blue);
     }
   }
 
   &.info {
-    border-color: @color-pending;
+    .var(border-color, color-notification-info);
 
     .icon {
-      color: @color-pending;
+      .var(color, color-notification-info);
     }
   }
 
   &.success {
-    border-color: @color-ok;
+    .var(border-color, color-notification-success);
 
     .icon {
-      color: @color-ok;
+      .var(color, color-notification-success);
     }
   }
 
   &.warning {
-    border-color: @color-warning;
-    background: @color-warning;
-    .var(color, body-bg-color);
+    .var(border-color, color-notification-warning);
+    .var(background, color-notification-warning);
+    .var(color, text-color-inverted);
 
     .icon {
-      .var(color, body-bg-color);
+      .var(color, text-color-inverted);
     }
   }
 }

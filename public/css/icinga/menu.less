@@ -109,7 +109,7 @@
 }
 
 #menu ul:not(.nav-level-2) > .selected > a {
-  background-color: @menu-highlight-color;
+  .var(background-color, menu-highlight-color);
   .var(color, text-color-inverted);
 
 
@@ -145,7 +145,7 @@
   }
 
   &.active {
-    background-color: @menu-highlight-color;
+    .var(background-color, menu-highlight-color);
     overflow: hidden;
     position: relative;
   }
@@ -167,7 +167,7 @@
   }
 
   &.active > a {
-    color: @menu-2ndlvl-highlight-color;
+    .var(color, menu-2ndlvl-highlight-color);
   }
 }
 
@@ -279,7 +279,7 @@
 
       &:not(.active) {
         &:hover, &:focus {
-          background-color: @tr-active-color;
+          .var(background-color, tr-active-color);
         }
       }
 
@@ -476,7 +476,7 @@ input[type=text].search-input {
 
   &:hover, &:focus {
     i {
-      color: @menu-highlight-color;
+      .var(color, menu-highlight-color);
     }
   }
 }
@@ -503,7 +503,7 @@ html.no-js  #toggle-sidebar {
   &.nav-item:not(.badge-nav-item) {
     &:not(.selected):not(.active):hover,
     &:not(.selected):not(.active):focus {
-      background-color: @menu-2ndlvl-highlight-bg-color;
+      .var(background-color, menu-2ndlvl-highlight-bg-color);
     }
   }
 }
@@ -536,7 +536,7 @@ html.no-js  #toggle-sidebar {
 #layout:not(.sidebar-collapsed) #menu .nav-level-1 > .nav-item.active .nav-level-2 > li {
   &.badge-nav-item:not(.selected) {
     &:hover {
-      background-color: @menu-2ndlvl-highlight-bg-color;
+      .var(background-color, menu-2ndlvl-highlight-bg-color);
     }
   }
 }

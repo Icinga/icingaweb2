@@ -32,7 +32,7 @@
     font-size: 1.25em;
 
     &.-active {
-      color: @icinga-blue;
+      .var(color, icinga-blue);
     }
 
     &.-inactive {
@@ -187,7 +187,7 @@
   }
 
   li {
-    color: @icinga-blue;
+    .var(color, icinga-blue);
   }
 
   a,
@@ -264,12 +264,12 @@
 }
 
 div.box.ok_hosts.state_up {
-  background-color: @color-ok;
+  .var(background-color, color-ok);
   border: 1px solid white;
 }
 
 div.box.problem_hosts.state_down {
-  background-color: @color-critical;
+  .var(background-color, color-critical);
   border: 1px solid white;
 }
 
@@ -294,11 +294,11 @@ div.box.monitoringfeatures {
 
 div.box.monitoringfeatures div.box-separator {
   color: white;
-  background-color: @color-ok;
+  .var(background-color, color-ok);
 }
 
 div.box.monitoringfeatures div.feature-highlight {
-  background-color: @color-critical;
+  .var(background-color, color-critical);
 }
 
 div.box.monitoringfeatures a.feature-highlight {
@@ -358,7 +358,7 @@ div.box.process {
 }
 
 div.backend-running {
-  background: @color-ok;
+  .var(background, color-ok);
   color: white;
   text-align: center;
   margin-top: 1em;
@@ -370,7 +370,7 @@ div.backend-running {
 }
 
 div.backend-not-running {
-  background: @color-critical;
+  .var(background, color-critical);
   color: white;
   text-align: center;
   padding: 0.1em;
@@ -675,37 +675,37 @@ form.instance-features span.description, form.object-features span.description {
   padding: 0.66em 0.33em;
 
   .state-critical {
-    background-color: @color-critical;
+    .var(background-color, color-critical);
     .var(color, body-bg-color);
     padding: 0.2em;
   }
 
   .state-ok {
-    background-color: @color-ok;
+    .var(background-color, color-ok);
     .var(color, body-bg-color);
     padding: 0.2em;
   }
 
   .state-unknown {
-    background-color: @color-unknown;
+    .var(background-color, color-unknown);
     .var(color, body-bg-color);
     padding: 0.2em;
   }
 
   .state-warning {
-    background-color: @color-warning;
+    .var(background-color, color-warning);
     .var(color, body-bg-color);
     padding: 0.2em;
   }
 
   .state-down {
-    background-color: @color-down;
+    .var(background-color, color-down);
     .var(color, body-bg-color);
     padding: 0.2em;
   }
 
   .state-up {
-    background-color: @color-up;
+    .var(background-color, color-up);
     .var(color, body-bg-color);
     padding: 0.2em;
   }

@@ -16,7 +16,7 @@
 .setup-header {
   width: 100%;
   height: 5.5em;
-  background-color: @icinga-blue;
+  .var(background-color, icinga-blue);
   border-bottom: 1px solid #d9d9d9;
   text-align: center;
 
@@ -104,7 +104,7 @@
         }
 
         &.complete {
-          background-color: @color-ok;
+          .var(background-color, color-ok);
         }
 
         &.visited {
@@ -228,7 +228,7 @@ form#setup_requirements {
       padding: 0.4em;
 
       &.fulfilled {
-        background-color: @color-ok;
+        .var(background-color, color-ok);
       }
 
       &.not-available {
@@ -237,7 +237,7 @@ form#setup_requirements {
       }
 
       &.missing {
-        background-color: @color-critical;
+        .var(background-color, color-critical);
       }
     }
   }
@@ -314,11 +314,11 @@ form#setup_requirements {
     color: white;
 
     &.success {
-      background-color: @color-ok;
+      .var(background-color, color-ok);
     }
 
     &.failure {
-      background-color: @color-critical;
+      .var(background-color, color-critical);
     }
   }
 

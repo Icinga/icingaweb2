@@ -7,7 +7,7 @@
 @name-value-table-name-width: 38/3em;
 
 .action-link {
-  color: @icinga-blue;
+  .var(color, icinga-blue);
 }
 
 .error-message {
@@ -76,7 +76,7 @@
 }
 
 a:hover > .icon-cancel {
-  color: @color-critical;
+  .var(color, color-critical);
 }
 
 .icon-stateful {
@@ -178,12 +178,12 @@ a:hover > .icon-cancel {
   }
 
   tr[href].active {
-    background-color: @tr-active-color;
-    border-left-color: @icinga-blue;
+    .var(background-color, tr-active-color);
+    .var(border-left-color, icinga-blue);
   }
 
   tr[href]:hover {
-    background-color: @tr-hover-color;
+    .var(background-color, tr-hover-color);
     cursor: pointer;
   }
 }
@@ -376,7 +376,7 @@ a:hover > .icon-cancel {
 
 .module-dependencies {
   .unmet-dependencies {
-    background-color: @color-warning;
+    .var(background-color, color-warning);
     .var(color, text-color-on-icinga-blue);
     padding: .25em .5em;
     margin-left: -.5em;
@@ -394,7 +394,7 @@ a:hover > .icon-cancel {
     }
 
     .missing {
-      color: @color-critical;
+      .var(color, color-critical);
       font-weight: bold;
     }
   }
