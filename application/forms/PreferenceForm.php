@@ -247,6 +247,9 @@ class PreferenceForm extends Form
             ]
         );
 
+        // Temporarily disabled. Re-enabled with v2.10
+        $this->removeElement('theme_mode');
+
         /** @var GettextTranslator $translator */
         $translator = StaticTranslator::$instance;
 

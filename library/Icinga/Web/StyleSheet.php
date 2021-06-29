@@ -175,6 +175,9 @@ class StyleSheet
             }
         }
 
+        // Temporarily disabled. Re-enabled with v2.10
+        $mode = 'none';
+
         $this->lessCompiler->setThemeMode($this->pubPath . '/css/modes/'. $mode . '.less');
     }
 
