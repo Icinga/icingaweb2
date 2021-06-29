@@ -10,6 +10,8 @@ v2.6 to v2.8 requires to follow the instructions for v2.7 too.
 * Support for EOL PHP versions (5.6, 7.0, 7.1 and 7.2) will be removed with version 2.11
 * Support for Internet Explorer will be completely removed with version 2.11
   * New features after v2.9 will already not (necessarily) be available in Internet Explorer
+* `user.local_name` replaces the `user:local_name` macro in restrictions, and the latter will be removed with
+  version 2.11
 
 ## Upgrading to Icinga Web 2 2.8.x
 

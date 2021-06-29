@@ -204,7 +204,14 @@ class AdmissionLoader
 
                     $roleRestrictions = $role->getRestrictions();
                     foreach ($roleRestrictions as $name => & $restriction) {
-                        $restriction = str_replace('$user:local_name$', $user->getLocalUsername(), $restriction);
+                        // TODO(el): user.local_name is supported since version 2.9.
+                        // and therefore user:local_name is deprecated.
+                        // The latter will be removed in version 2.11.
+                        $restriction = str_replace(
+                            ['$user.local_name$', '$user:local_name$'],
+                            $user->getLocalUsername(),
+                            $restriction
+                        );
                         $restrictions[$name][] = $restriction;
                     }
 
