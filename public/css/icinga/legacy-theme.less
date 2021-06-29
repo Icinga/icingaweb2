@@ -1,0 +1,175 @@
+// base.less
+@gray: #7F7F7F;
+@gray-semilight: #A9A9A9;
+@gray-light: #C9C9C9;
+@gray-lighter: #EEEEEE;
+@gray-lightest: #F7F7F7;
+@icinga-blue: #0095BF;
+@low-sat-blue: #dae3e6;
+@low-sat-blue-dark: #becbcf;
+@body-bg-color: #fff;
+@text-color: @black;
+@text-color-light: @gray;
+@tr-active-color: #E5F9FF;
+@tr-hover-color: #F5FDFF;
+@menu-bg-color: #494949;
+@menu-active-bg-color: #333;
+@menu-color: @text-color-inverted;
+@menu-hover-bg-color: mix(#000, @menu-bg-color, 20);
+@menu-search-hover-bg-color: mix(#000, @menu-bg-color, 20);
+@menu-active-hover-bg-color: mix(#000, @menu-active-bg-color, 20);
+@menu-2ndlvl-highlight-bg-color: darken(@menu-bg-color, 20);
+@tab-hover-bg-color: rgba(0,0,0,.1);
+
+.container {
+  &:before,
+  > .content:before {
+    background-image: url(../img/icinga-loader-light.gif);
+  }
+}
+
+// badges.less
+.badge {
+  background-color: @gray-light;
+}
+
+// controls.less
+.controls input.search,
+input.search {
+  background-image: url(../img/icons/search.png);
+}
+
+@fp-calendarBackground: #ffffff;
+@fp-calendarBorderColor: @fp-dayHoverBackground;
+
+@fp-arrowColor: fadeout(@fp-dayForeground, 40%);
+@fp-arrow_hover_color: #f64747;
+
+@fp-monthForeground: fadeout(black, 10%);
+@fp-monthBackground: transparent;
+
+@fp-weekdaysBackground: transparent;
+@fp-weekdaysForeground: fadeout(black, 46%);
+@fp-weekNumberForeground: fadeout(@fp-dayForeground, 70%);
+
+@fp-dayForeground: #393939;
+@fp-dayHoverBackground: #e6e6e6;
+@fp-disabledDayForeground: fadeout(@fp-dayForeground, 90%);
+@fp-outsideRangeDayForeground: fadeout(@fp-dayForeground, 70%);
+@fp-selectedDayBackground: #569FF7;
+@fp-todayColor: #959ea9;
+
+@fp-timeHoverBg: lighten(@fp-dayHoverBackground, 3);
+
+@fp-hoverInvertedBg: fadeout(black, 95%);
+
+@fp-numChooserSvgFillColor: fadeout(fadeout(black, 10%), 50%);
+@fp-hoverNumChooserBg: fadeout(black, 90%);
+@fp-numChooserBorderColor: fadeout(@fp-dayForeground, 85%);
+
+.icinga-datetime-picker .flatpickr-day.today {
+  &:hover,
+  &:focus {
+    color: #fff;
+  }
+}
+
+// layout-structure.less
+
+#sidebar:after {
+  display: none;
+}
+
+// layout.less
+#header-logo-container {
+  .var(background, icinga-blue);
+}
+
+// login.less
+#login {
+  color: @white;
+
+  background-color: #06062B;
+
+  input[type=text],
+  input[type=password],
+  .toggle-slider {
+    border-color: #404d72;
+    background-color: #404d72;
+
+    &:before {
+      border-color: #282e39;
+      background-color: #282E39;
+    }
+  }
+
+  input[type="checkbox"]:checked + .toggle-switch .toggle-slider {
+    border-color: #00C3ED;
+    background-color: #00C3ED;
+  }
+}
+
+// menu.less
+#menu .nav-level-1 > .nav-item {
+  &.active {
+    color: @menu-color;
+  }
+
+  &:not(.selected) > a:hover,
+  &:not(.selected) > a:focus {
+    background-color: mix(#000, @menu-bg-color, 20);
+  }
+}
+
+#menu .nav-level-2 > .nav-item {
+  &.active > a {
+    color: @menu-color;
+  }
+}
+
+#layout:not(.sidebar-collapsed) #menu .nav-level-1 > .nav-item.active .nav-level-2 > li {
+  &.nav-item:not(.badge-nav-item) {
+    &:not(.selected):not(.active) a:hover,
+    &:not(.selected):not(.active) a:focus {
+      background-color: darken(@menu-bg-color, 20);
+      color: @menu-2ndlvl-highlight-color;
+    }
+  }
+
+  &.badge-nav-item:not(.selected) {
+    a:hover,
+    a:focus {
+      &:first-of-type,
+      &:first-of-type ~ a {
+        color: white;
+        background-color: darken(@menu-bg-color, 20);
+      }
+    }
+  }
+}
+
+// Hovered menu
+#layout:not(.minimal-layout).sidebar-collapsed #menu .nav-level-1 > .nav-item.hover,
+#layout:not(.minimal-layout) #menu .nav-level-1 > .nav-item:not(.active).hover {
+  > .nav-level-2 {
+    > .nav-item {
+      &:not(.active) {
+        a:hover, a:focus {
+          &:first-of-type,
+          &:first-of-type ~ a {
+            background-color: @tr-active-color;
+          }
+        }
+      }
+    }
+  }
+}
+
+// tabs.less
+.tabs {
+  background-color: @icinga-blue;
+
+  > li > a {
+    color: @body-bg-color;
+  }
+}

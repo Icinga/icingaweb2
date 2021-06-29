@@ -3,6 +3,7 @@
 
 namespace Icinga\Web;
 
+use Icinga\Application\Icinga;
 use Icinga\Application\Logger;
 use Icinga\Util\LessParser;
 
@@ -47,6 +48,8 @@ class LessCompiler
      * @var string
      */
     protected $source;
+
+    private $defaultThemeOverride = false;
 
     /**
      * Path of the LESS theme
@@ -140,6 +143,14 @@ class LessCompiler
         }
 
         return $lessFiles;
+    }
+
+    /**
+     * @deprecated Don't use
+     */
+    public function enableDefaultThemeOverride()
+    {
+        $this->defaultThemeOverride = true;
     }
 
     /**
@@ -240,6 +251,12 @@ class LessCompiler
         // exported vars are injected at the beginning to avoid that they are
         // able to override other variables, that's what themes are for
         $this->source = $varExports . "\n\n" . $this->source;
+
+        if ($this->defaultThemeOverride) {
+            $this->source .= file_get_contents(
+                Icinga::app()->getBaseDir('public/css/icinga') . '/legacy-theme.less'
+            );
+        }
 
         if ($this->theme !== null) {
             $this->source .= file_get_contents($this->theme);
