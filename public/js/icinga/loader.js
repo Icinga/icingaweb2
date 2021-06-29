@@ -1104,12 +1104,31 @@
          * Create a notification. Can be improved.
          */
         createNotice: function (severity, message, persist) {
-            var c = severity;
+            var c = severity,
+                icon;
             if (persist) {
                 c += ' persist';
             }
+
+            switch (severity) {
+                case 'success':
+                    icon = 'check-circle';
+                    break;
+                case 'error':
+                    icon = 'times';
+                    break;
+                case 'warning':
+                    icon = 'exclamation-triangle';
+                    break;
+                case 'info':
+                    icon = 'info-circle';
+                    break;
+            }
+
             var $notice = $(
-                '<li class="' + c + '">' + this.icinga.utils.escape(message) + '</li>'
+                '<li class="' + c + '">' +
+                '<i class="icon fa fa-' + icon + '"></i>' +
+                this.icinga.utils.escape(message) + '</li>'
             ).appendTo($('#notifications'));
 
             if (!persist) {
