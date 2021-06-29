@@ -107,6 +107,7 @@ class StyleSheet
         $app = Icinga::app();
         $this->app = $app;
         $this->lessCompiler = new LessCompiler();
+        $this->lessCompiler->enableDefaultThemeOverride();
         $this->pubPath = $app->getBaseDir('public');
         $this->collect();
     }
