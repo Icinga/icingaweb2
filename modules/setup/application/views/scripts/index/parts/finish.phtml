@@ -8,10 +8,11 @@
   <?php if ($success): ?>
     <?= $this->qlink(
         $this->translate('Login to Icinga Web 2'),
-        'authentication/login?renderLayout',
+        'authentication/login',
         null,
         array(
             'class' => 'button-link login',
+            'data-no-icinga-ajax' => true,
             'title' => $this->translate('Show the login page of Icinga Web 2')
         )
     ); ?>

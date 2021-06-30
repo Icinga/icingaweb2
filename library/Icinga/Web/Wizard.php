@@ -3,6 +3,7 @@
 
 namespace Icinga\Web;
 
+use Icinga\Forms\ConfigForm;
 use LogicException;
 use InvalidArgumentException;
 use Icinga\Web\Session\SessionNamespace;
@@ -286,7 +287,7 @@ class Wizard
 
                 if ($isValid) {
                     $pageData = & $this->getPageData();
-                    $pageData[$page->getName()] = $page->getValues();
+                    $pageData[$page->getName()] = ConfigForm::transformEmptyValuesToNull($page->getValues());
                     $this->setCurrentPage($this->getNewPage($requestedPage, $page));
                     $page->getResponse()->redirectAndExit($page->getRedirectUrl());
                 }

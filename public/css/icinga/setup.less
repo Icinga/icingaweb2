@@ -17,7 +17,6 @@
   width: 100%;
   height: 5.5em;
   .var(background-color, icinga-blue);
-  border-bottom: 1px solid #d9d9d9;
   text-align: center;
 
   img {
@@ -129,7 +128,7 @@
   }
 }
 
-.setup-content .control-group > * {
+.setup-content .control-group > :not([hidden]) {
   display: inline-block;
   margin-right: 1em;
 }
@@ -370,15 +369,17 @@ form#setup_requirements {
     margin: 3em auto 0;
     text-align: left;
     font-size: 0.9em;
-    border: 1px solid lightgrey;
+    border: 1px solid;
+    .var(border-color, gray-light);
 
     h3 {
       padding: 0.2em;
       margin: -1em -1em 1em;
       text-align: center;
       .var(color, text-color);
-      background-color: #f6fafa;
-      border: 1px solid lightgrey;
+      .var(background-color, gray-lightest);
+      border: 1px solid;
+      .var(border-color, gray-light);
     }
 
     img {

@@ -121,6 +121,12 @@ class DbTool
      */
     public function __construct(array $config)
     {
+        if (! isset($config['port'])) {
+            // TODO: This is not quite correct, but works as it previously did. Previously empty values were not
+            //       transformed no NULL (now they are) so if the port is now null, it's been the empty string.
+            $config['port'] = '';
+        }
+
         $this->config = $config;
     }
 

@@ -11,11 +11,9 @@ use Icinga\Module\Setup\SetupWizard;
 use Icinga\Module\Setup\RequirementSet;
 use Icinga\Module\Setup\Forms\SummaryPage;
 use Icinga\Module\Monitoring\Forms\Setup\WelcomePage;
-use Icinga\Module\Monitoring\Forms\Setup\BackendPage;
 use Icinga\Module\Monitoring\Forms\Setup\SecurityPage;
 use Icinga\Module\Monitoring\Forms\Setup\TransportPage;
 use Icinga\Module\Monitoring\Forms\Setup\IdoResourcePage;
-use Icinga\Module\Setup\Requirement\ClassRequirement;
 use Icinga\Module\Setup\Requirement\PhpModuleRequirement;
 
 /**
@@ -29,7 +27,6 @@ class MonitoringWizard extends Wizard implements SetupWizard
     public function init()
     {
         $this->addPage(new WelcomePage());
-        $this->addPage(new BackendPage());
         $this->addPage(new IdoResourcePage());
         $this->addPage(new TransportPage());
         $this->addPage(new SecurityPage());
@@ -62,30 +59,6 @@ class MonitoringWizard extends Wizard implements SetupWizard
                 $page->error(mt('monitoring', 'The given resource name is already in use.'));
             }
         }
-    }
-
-    /**
-     * Return the new page to set as current page
-     *
-     * {@inheritdoc} Runs additional checks related to some registered pages.
-     *
-     * @param   string  $requestedPage      The name of the requested page
-     * @param   Form    $originPage         The origin page
-     *
-     * @return  Form                        The new page
-     *
-     * @throws  InvalidArgumentException    In case the requested page does not exist or is not permitted yet
-     */
-    protected function getNewPage($requestedPage, Form $originPage)
-    {
-        $skip = false;
-        $newPage = parent::getNewPage($requestedPage, $originPage);
-        if ($newPage->getName() === 'setup_monitoring_ido') {
-            $backendData = $this->getPageData('setup_monitoring_backend');
-            $skip = $backendData['type'] !== 'ido';
-        }
-
-        return $skip ? $this->skipPage($newPage) : $newPage;
     }
 
     /**
@@ -140,7 +113,7 @@ class MonitoringWizard extends Wizard implements SetupWizard
 
         $setup->addStep(
             new BackendStep(array(
-                'backendConfig'     => $pageData['setup_monitoring_backend'],
+                'backendConfig'     => ['name' => 'icinga', 'type' => 'ido'],
                 'resourceConfig'    => array_diff_key(
                     $pageData['setup_monitoring_ido'], //TODO: Prefer a new backend once implemented.
                     array('skip_validation' => null)
@@ -171,48 +144,6 @@ class MonitoringWizard extends Wizard implements SetupWizard
     public function getRequirements()
     {
         $set = new RequirementSet();
-        $backendSet = new RequirementSet(false, RequirementSet::MODE_OR);
-        $mysqlSet = new RequirementSet(true);
-        $mysqlSet->add(new PhpModuleRequirement(array(
-            'optional'      => true,
-            'condition'     => 'pdo_mysql',
-            'alias'         => 'PDO-MySQL',
-            'description'   => mt(
-                'monitoring',
-                'To access the IDO stored in a MySQL database the PDO-MySQL module for PHP is required.'
-            )
-        )));
-        $mysqlSet->add(new ClassRequirement(array(
-            'optional'      => true,
-            'condition'     => 'Zend_Db_Adapter_Pdo_Mysql',
-            'alias'         => mt('monitoring', 'Zend database adapter for MySQL'),
-            'description'   => mt(
-                'monitoring',
-                'The Zend database adapter for MySQL is required to access a MySQL database.'
-            )
-        )));
-        $backendSet->merge($mysqlSet);
-        $pgsqlSet = new RequirementSet(true);
-        $pgsqlSet->add(new PhpModuleRequirement(array(
-            'optional'      => true,
-            'condition'     => 'pdo_pgsql',
-            'alias'         => 'PDO-PostgreSQL',
-            'description'   => mt(
-                'monitoring',
-                'To access the IDO stored in a PostgreSQL database the PDO-PostgreSQL module for PHP is required.'
-            )
-        )));
-        $pgsqlSet->add(new ClassRequirement(array(
-            'optional'      => true,
-            'condition'     => 'Zend_Db_Adapter_Pdo_Pgsql',
-            'alias'         => mt('monitoring', 'Zend database adapter for PostgreSQL'),
-            'description'   => mt(
-                'monitoring',
-                'The Zend database adapter for PostgreSQL is required to access a PostgreSQL database.'
-            )
-        )));
-        $backendSet->merge($pgsqlSet);
-        $set->merge($backendSet);
         $set->add(new PhpModuleRequirement(array(
             'optional'      => true,
             'condition'     => 'curl',
