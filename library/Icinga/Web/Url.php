@@ -696,6 +696,16 @@ class Url
     }
 
     /**
+     * Get whether this Url has any parameters
+     *
+     * @return bool
+     */
+    public function hasParams()
+    {
+        return ! $this->params->isEmpty();
+    }
+
+    /**
      * Return a url's query parameter if it exists, otherwise $default
      *
      * @param   string  $param      A query parameter name to return if existing
