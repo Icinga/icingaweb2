@@ -66,6 +66,33 @@
 // Form colors
 @button-primary-color: lighten(@base02, 20);
 
+// Datetime picker colors
+@fp-calendarBackground: #3f4458;
+@fp-calendarBorderColor: darken(#3f4458, 50%);
+
+@fp-monthForeground: #fff;
+@fp-monthBackground: #3f4458;
+
+@fp-weekdaysBackground: transparent;
+@fp-weekdaysForeground: #fff;
+
+@fp-dayForeground: fadeout(white, 5%);
+@fp-dayHoverBackground: lighten(@fp-calendarBackground, 25%);
+
+@fp-todayColor: #eee;
+@fp-today_fg_color: #3f4458;
+
+@fp-selectedDayBackground: #80CBC4;
+
+.icinga-datetime-picker .flatpickr-day.today {
+  &:hover,
+  &:focus {
+    color: @fp-today_fg_color;
+  }
+}
+
+// Datetime picker colors (end)
+
 #sidebar {
   background-color: @base02;
   box-shadow: inset -0.5em 0 1em rgba(0,0,0,0.3);
