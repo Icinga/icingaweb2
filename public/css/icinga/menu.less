@@ -112,9 +112,9 @@
   .var(background-color, menu-highlight-color);
   .var(color, text-color-inverted);
 
-
-  &:hover {
-    .var(color, text-color-inverted);
+  &:hover,
+  &:focus {
+    .var(background-color, menu-highlight-hover-bg-color);
   }
 
   &:after {
@@ -145,7 +145,6 @@
   }
 
   &.active {
-    .var(background-color, menu-highlight-color);
     overflow: hidden;
     position: relative;
   }
@@ -167,7 +166,13 @@
   }
 
   &.active > a {
-    .var(color, menu-2ndlvl-highlight-color);
+    .var(color, menu-2ndlvl-active-color);
+    .var(background-color, menu-2ndlvl-active-bg-color);
+
+    &:hover, &:focus {
+      .var(color, menu-2ndlvl-active-hover-color);
+      .var(background-color, menu-2ndlvl-active-hover-bg-color);
+    }
   }
 }
 
@@ -215,6 +220,13 @@
   padding: .25em;
   padding-left: @icon-width + .75em;
   width: 100%;
+
+  &:focus::placeholder {
+    .var(color, menu-color);
+  }
+  &:focus::-ms-input-placeholder {
+    color: @menu-color;
+  }
 
   &.active {
     .var(background-color, menu-active-bg-color);
@@ -278,8 +290,8 @@
       }
 
       &:not(.active) {
-        &:hover, &:focus {
-          .var(background-color, tr-active-color);
+        a:hover, a:focus {
+          .var(background-color, menu-2ndlvl-highlight-bg-color);
         }
       }
 
@@ -501,8 +513,8 @@ html.no-js  #toggle-sidebar {
 
 #layout:not(.sidebar-collapsed) #menu .nav-level-1 > .nav-item.active .nav-level-2 > li {
   &.nav-item:not(.badge-nav-item) {
-    &:not(.selected):not(.active):hover,
-    &:not(.selected):not(.active):focus {
+    &:not(.selected):not(.active) a:hover,
+    &:not(.selected):not(.active) a:focus {
       .var(background-color, menu-2ndlvl-highlight-bg-color);
     }
   }
@@ -535,7 +547,8 @@ html.no-js  #toggle-sidebar {
 
 #layout:not(.sidebar-collapsed) #menu .nav-level-1 > .nav-item.active .nav-level-2 > li {
   &.badge-nav-item:not(.selected) {
-    &:hover {
+    a:hover,
+    a:focus {
       .var(background-color, menu-2ndlvl-highlight-bg-color);
     }
   }
