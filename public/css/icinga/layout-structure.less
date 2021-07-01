@@ -133,17 +133,20 @@ body {
 
 /*
  * Class to hide content from users but available for screen reader
- * @todo(mh): Replace .audible class
+ * Based on: https://cloudfour.com/thinks/see-no-evil-hidden-content-and-accessibility/
  */
 .sr-only {
   border: 0;
   clip: rect(0 0 0 0);
+  clip-path: polygon(0px 0px, 0px 0px, 0px 0px);
+  -webkit-clip-path: polygon(0px 0px, 0px 0px, 0px 0px);
   height: 1px;
   margin: -1px;
   overflow: hidden;
   padding: 0;
-  position: absolute;
+  position: fixed; // absolute causes view port glitches in chrome (#4310)
   width: 1px;
+  white-space: nowrap;
 }
 
 // Hide non-javascript elements if javascript is enabled
