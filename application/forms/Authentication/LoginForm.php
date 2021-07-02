@@ -27,6 +27,13 @@ class LoginForm extends Form
      */
     const REDIRECT_URL = 'dashboard';
 
+    public static $defaultElementDecorators = [
+        ['ViewHelper', ['separator' => '']],
+        ['Help', []],
+        ['Errors', ['separator' => '']],
+        ['HtmlTag', ['tag' => 'div', 'class' => 'control-group']]
+    ];
+
     /**
      * {@inheritdoc}
      */
@@ -68,7 +75,19 @@ class LoginForm extends Form
             'checkbox',
             'rememberme',
             [
-                'label' => $this->translate('Stay logged in'),
+                'label'         => $this->translate('Stay logged in'),
+                'decorators'    => [
+                    ['ViewHelper', ['separator' => '']],
+                    ['Label', [
+                        'tag'       => 'span',
+                        'separator' => '',
+                        'class'     => 'control-label',
+                        'placement' => 'APPEND'
+                    ]],
+                    ['Help', []],
+                    ['Errors', ['separator' => '']],
+                    ['HtmlTag', ['tag' => 'div', 'class' => 'control-group remember-me-box']]
+                ]
             ]
         );
         if (! $this->hasDb()) {
