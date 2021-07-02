@@ -17,21 +17,15 @@
 @text-color-light: #555555;
 
 @menu-highlight-color: white;
+@menu-highlight-hover-bg-color: white;
 @menu-2ndlvl-color: white;
 @menu-2ndlvl-highlight-color: white;
-@menu-2ndlvl-active-hover-color: @text-color;
+@menu-2ndlvl-active-bg-color: black;
+@menu-2ndlvl-active-hover-color: white;
 
 #menu ul.nav-level-1 > .nav-item > a {
   &:focus, &:hover {
     text-decoration: underline;
-  }
-}
-
-#menu .nav-level-2 > .nav-item.active {
-  background-color: black;
-
-  > a:focus, > a:hover {
-    opacity: 1;
   }
 }
 
