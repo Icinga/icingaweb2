@@ -112,7 +112,10 @@
                 if ($oldLink.hasAttr('type') && $oldLink.attr('type').indexOf('css') > -1) {
                     var $newLink = $oldLink.clone().attr(
                         'href',
-                        $(this).attr('href')
+                        icinga.utils.addUrlParams(
+                            $oldLink.attr('href'),
+                            { id: new Date().getTime() } // Only required for Firefox to reload CSS automatically
+                        )
                     ).on('load', function() {
                         $oldLink.remove();
                     });
