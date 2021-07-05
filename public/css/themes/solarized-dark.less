@@ -49,12 +49,19 @@
 
 // Menu colors
 @menu-bg-color: @base02;
-@menu-active-bg-color: @base03;
-@menu-highlight-color: @icinga-blue;
 @menu-2ndlvl-active-bg-color: lighten(@base03, 5%);
 @menu-highlight-hover-bg-color: @base03;
-@menu-2ndlvl-color: #c4c4c4;
 @menu-flyout-color: @text-color;
+@menu-color: @text-color;
+@menu-2ndlvl-active-color: @text-color;
+@menu-active-color: @text-color;
+@menu-active-hover-bg-color: darken(@base03, 5);
+@menu-active-bg-color: darken(@base03, 3);
+@menu-2ndlvl-color: @text-color;
+@menu-2ndlvl-active-hover-color: @text-color;
+@menu-2ndlvl-active-hover-bg-color: @menu-hover-bg-color;
+@menu-highlight-color: darken(@base03, 3);
+@menu-2ndlvl-highlight-bg-color: darken(@base03, 5);
 
 // Form colors
 @button-primary-color: lighten(@base02, 20);
@@ -159,82 +166,8 @@ textarea {
 }
 
 #menu {
-  input.search {
-    color: @text-color;
-    background-image: url(../img/icons/search_white.png);
-
-    &:focus {
-      background-image: url(../img/icons/search_white.png) !important;
-    }
-  }
-
-  .nav-level-1 > .nav-item {
-    color: @text-color;
-
-    &.active, &:hover {
-      color: @text-color;
-      background-color: darken(@base03, 5);
-    }
-
-    &.active:not(.selected) {
-      background-color: darken(@base03, 3);
-
-      & > a:focus,
-      & > a:hover {
-        background-color: darken(@base03, 5);
-      }
-    }
-  }
-
-  .nav-level-2, .nav-level-2:after {
-    background-color: darken(@base03, 3) !important;
-  }
-
-  .nav-level-2 > .nav-item {
-    color: @text-color;
-
-    &.active, &:hover {
-      a {
-        color: @text-color !important;
-      }
-      background-color: @base00;
-    }
-
-    &.active.selected {
-      background-color: @base02;
-    }
-
-    &:not(.selected):not(.active) > a:hover,
-    &:not(.selected):not(.active) > a:focus {
-      color: @text-color;
-    }
-  }
-
   ul:not(.nav-level-2) > .selected > a {
-    background-color: darken(@base03, 3);
     color: @text-color;
-
-    &:after {
-      background-color: darken(@base03, 3);
-      box-shadow: 0 0 1em 0 rgba(0,0,0,0.6);
-    }
-  }
-
-  .nav-level-2 > .nav-item:not(.selected):not(.active) {
-    & > a:hover,
-    & > a:focus {
-      background-color: darken(@base03, 5);
-    }
-  }
-
-  .nav-itemxx{
-    &:hover,
-    &:hover > a,
-    &.active,
-    &.active > a {
-      color: @text-color !important;
-      //background-color: @base01 !important;
-    }
   }
 }
 
