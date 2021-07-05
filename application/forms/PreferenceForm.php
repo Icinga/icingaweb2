@@ -93,12 +93,13 @@ class PreferenceForm extends Form
      */
     public function onSuccess()
     {
-        $this->preferences = new Preferences($this->store ? $this->store->load() : array());
-        $oldTheme = $this->preferences->getValue('icingaweb', 'theme');
-        $oldMode = $this->preferences->getValue('icingaweb', 'theme_mode');
-        $oldLocale = $this->preferences->getValue('icingaweb', 'language');
+        $currentPreferences = $this->Auth()->getUser()->getPreferences();
+        $oldTheme = $currentPreferences->getValue('icingaweb', 'theme');
+        $oldMode = $currentPreferences->getValue('icingaweb', 'theme_mode');
+        $oldLocale = $currentPreferences->getValue('icingaweb', 'language');
         $defaultTheme = Config::app()->get('themes', 'default', StyleSheet::DEFAULT_THEME);
 
+        $this->preferences = new Preferences($this->store ? $this->store->load() : array());
         $webPreferences = $this->preferences->get('icingaweb', array());
         foreach ($this->getValues() as $key => $value) {
             if ($value === ''
