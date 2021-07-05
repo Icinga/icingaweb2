@@ -46,7 +46,7 @@
   }
 }
 
-#layout:not(.sidebar-collapsed) #menu .nav-item > a {
+#layout:not(.sidebar-collapsed) #menu .nav-item > a:first-of-type {
   // Respect overflowing content
   overflow: hidden;
   text-overflow: ellipsis;
@@ -141,7 +141,11 @@
   > a {
     .var(color, menu-2ndlvl-color);
     font-size: @font-size-small;
-    padding: 0.364em 0.545em 0.364em (@icon-width + .75em)/@font-size-small;
+    padding: 0.364em 0.545em 0.364em 0.545em;
+
+    &:first-of-type {
+      padding-left: (@icon-width + .75em)/@font-size-small;
+    }
   }
 
   &.active {
@@ -170,8 +174,11 @@
     .var(background-color, menu-2ndlvl-active-bg-color);
 
     &:hover, &:focus {
-      .var(color, menu-2ndlvl-active-hover-color);
-      .var(background-color, menu-2ndlvl-active-hover-bg-color);
+      &:first-of-type,
+      &:first-of-type ~ a {
+        .var(color, menu-2ndlvl-active-hover-color);
+        .var(background-color, menu-2ndlvl-active-hover-bg-color);
+      }
     }
   }
 }
@@ -286,12 +293,18 @@
 
       > a {
         .var(color, menu-flyout-color);
-        padding-left: 1.5em;
+
+        &:first-of-type {
+          padding-left: 1.5em;
+        }
       }
 
       &:not(.active) {
         a:hover, a:focus {
-          .var(background-color, menu-2ndlvl-highlight-bg-color);
+          &:first-of-type,
+          &:first-of-type ~ a {
+            .var(background-color, menu-2ndlvl-highlight-bg-color);
+          }
         }
       }
 
@@ -333,20 +346,20 @@
       display: flex;
       align-items: center;
 
-      a:not(.badge) {
+      a:first-of-type {
         flex: 1 1 auto;
         width: 0;
       }
 
-      a.badge {
-        .var(color, text-color-inverted);
-         flex: 0 1 auto;
-         margin-right: 1em;
-         padding: .25em;
+      a:first-of-type ~ a {
+         flex: 0;
          width: auto;
 
-         &:hover {
-           opacity: .6;
+         &:hover,
+         &:focus {
+           .badge {
+             opacity: .6;
+           }
          }
        }
     }
@@ -527,20 +540,20 @@ html.no-js  #toggle-sidebar {
     align-items: center;
   }
 
-  &.badge-nav-item a:not(.badge) {
+  &.badge-nav-item a:first-of-type {
     flex: 1 1 auto;
     width: 0;
   }
 
-  &.badge-nav-item a.badge {
-    .var(color, text-color-inverted);
-    flex: 0 1 auto;
-    margin-right: 1em;
-    padding: .25em;
+  &.badge-nav-item a:first-of-type ~ a {
+    flex: 0;
     width: auto;
 
-    &:hover {
-      opacity: .6;
+    &:hover,
+    &:focus {
+      .badge {
+        opacity: .6;
+      }
     }
   }
 }
@@ -549,7 +562,10 @@ html.no-js  #toggle-sidebar {
   &.badge-nav-item:not(.selected) {
     a:hover,
     a:focus {
-      .var(background-color, menu-2ndlvl-highlight-bg-color);
+      &:first-of-type,
+      &:first-of-type ~ a {
+        .var(background-color, menu-2ndlvl-highlight-bg-color);
+      }
     }
   }
 }
