@@ -72,7 +72,7 @@ class AppHealth extends Table
     protected function getStateText($state)
     {
         if ($state === null) {
-            $state = t('UNKOWN');
+            $state = t('UNKNOWN');
         }
 
         switch ($state) {
