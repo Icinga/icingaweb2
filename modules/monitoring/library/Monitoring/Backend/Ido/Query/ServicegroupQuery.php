@@ -192,15 +192,15 @@ class ServicegroupQuery extends IdoQuery
     protected function joinHostgroups()
     {
         $this->requireVirtualTable('services');
-        $this->select->join(
+        $this->select->joinLeft(
             array('hgm' => $this->prefix . 'hostgroup_members'),
             'hgm.host_object_id = s.host_object_id',
             array()
-        )->join(
+        )->joinLeft(
             array('hg' => $this->prefix . 'hostgroups'),
             'hg.hostgroup_id = hgm.hostgroup_id',
             array()
-        )->join(
+        )->joinLeft(
             array('hgo' => $this->prefix . 'objects'),
             'hgo.object_id = hg.hostgroup_object_id AND hgo.objecttype_id = 3 AND hgo.is_active = 1',
             array()
