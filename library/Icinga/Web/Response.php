@@ -48,6 +48,13 @@ class Response extends Zend_Controller_Response_Http
     protected $request;
 
     /**
+     * Whether to instruct the client to reload the window
+     *
+     * @var bool
+     */
+    protected $reloadWindow;
+
+    /**
      * Whether to instruct client side script code to reload CSS
      *
      * @var bool
@@ -199,6 +206,30 @@ class Response extends Zend_Controller_Response_Http
     }
 
     /**
+     * Get whether to instruct the client to reload the window
+     *
+     * @return bool
+     */
+    public function isWindowReloaded()
+    {
+        return $this->reloadWindow;
+    }
+
+    /**
+     * Set whether to instruct the client to reload the window
+     *
+     * @param bool $reloadWindow
+     *
+     * @return $this
+     */
+    public function setReloadWindow($reloadWindow)
+    {
+        $this->reloadWindow = $reloadWindow;
+
+        return $this;
+    }
+
+    /**
      * Get whether to instruct client side script code to reload CSS
      *
      * @return bool
@@ -301,6 +332,9 @@ class Response extends Zend_Controller_Response_Http
             }
             if ($this->getRerenderLayout()) {
                 $this->setHeader('X-Icinga-Container', 'layout', true);
+            }
+            if ($this->isWindowReloaded()) {
+                $this->setHeader('X-Icinga-Reload-Window', 'yes', true);
             }
             if ($this->isReloadCss()) {
                 $this->setHeader('X-Icinga-Reload-Css', 'now', true);
