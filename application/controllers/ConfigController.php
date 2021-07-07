@@ -184,7 +184,9 @@ class ConfigController extends Controller
             $form->onSuccess();
 
             if ($module->hasJs()) {
-                $this->redirectHttp('config/modules');
+                $this->getResponse()
+                    ->setReloadWindow(true)
+                    ->sendResponse();
             } else {
                 if ($module->hasCss()) {
                     $this->reloadCss();
@@ -221,7 +223,9 @@ class ConfigController extends Controller
             $form->onSuccess();
 
             if ($module->hasJs()) {
-                $this->redirectHttp('config/modules');
+                $this->getResponse()
+                    ->setReloadWindow(true)
+                    ->sendResponse();
             } else {
                 if ($module->hasCss()) {
                     $this->reloadCss();
