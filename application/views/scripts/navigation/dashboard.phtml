@@ -1,3 +1,8 @@
+<?php
+
+use ipl\Web\Widget\Icon;
+
+?>
 <div class="controls">
     <?= $tabs ?>
 </div>
@@ -5,7 +10,13 @@
     <?php foreach ($navigation as $item): /** @var \Icinga\Web\Navigation\NavigationItem $item */?>
     <a class="dashboard-link" href="<?= $this->url($item->getUrl(), $item->getUrlParameters()) ?>"<?= $this->propertiesToString($item->getAttributes()) ?>>
         <div class="link-icon">
-            <?= $this->icon($item->getIcon() ?: 'forward', null, array('aria-hidden' => true)) ?>
+        <?php
+            if (substr($item->getUrl()->getPath(), 0, 9) === 'icingadb/') {
+                echo new Icon($item->getIcon(), [ 'aria-hidden' => 1]);
+            } else {
+                echo $this->icon($item->getIcon() ?: 'forward', null, array('aria-hidden' => true));
+            }
+        ?>
         </div>
         <div class="link-meta">
             <div class="link-label"><?= $this->escape($item->getLabel()) ?></div>
