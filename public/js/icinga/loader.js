@@ -930,6 +930,11 @@
                 }
             }
 
+            if (req.getResponseHeader('X-Icinga-Reload-Window') === 'yes') {
+                window.location.reload();
+                return;
+            }
+
             if (! req.autorefresh && ! req.autosubmit) {
                 // TODO: Hook for response/url?
                 var url = req.url;
