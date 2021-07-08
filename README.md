@@ -19,7 +19,8 @@
 and command-line interface developed by the [Icinga Project](https://icinga.com/), supporting Icinga 2,
 Icinga Core and any other monitoring backend compatible with the IDO database.
 
-![Icinga Web 2 Monitoring Module with Graphite](doc/res/monitoring-module-preview.png "Icinga Web 2 Monitoring Module with Graphite")
+![Icinga Web 2 with Graphite](https://icinga.com/wp-content/uploads/2017/11/Icinga-Web-2-graphite.png "Icinga Web 2 with Graphite")
+![Icinga Web 2 Sidebar Collapsed](https://icinga.com/wp-content/uploads/2017/11/Icinga-Web-2-collapsed-sidebar.png "Icinga Web 2 Sidebar Collapsed")
 
 ## License
 
