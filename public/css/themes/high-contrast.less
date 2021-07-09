@@ -2,15 +2,6 @@
 
 @icinga-blue: #006D8C;
 
-// Gray colors
-@gray: #7F7F7F;
-@gray-semilight: #A9A9A9;
-@gray-light: #C9C9C9;
-@gray-lighter: #EEEEEE;
-@gray-lightest: #F7F7F7;
-@disabled-gray: #9a9a9a;
-
-// State colors
 @color-ok: #006400;
 @color-critical: #EE0000;
 @color-critical-handled: #EE0000;
@@ -22,41 +13,19 @@
 @color-unreachable-handled: #800080;
 @color-pending: #0000EE;
 
-// Icinga colors
-@low-sat-blue: #dae3e6;
-
-// Background color for <body>
-@body-bg-color: @white;
-
 @text-color: #191919;
 @text-color-light: #555555;
 
 @menu-highlight-color: white;
+@menu-highlight-hover-bg-color: white;
 @menu-2ndlvl-color: white;
 @menu-2ndlvl-highlight-color: white;
-@menu-2ndlvl-active-hover-color: @text-color;
+@menu-2ndlvl-active-bg-color: black;
+@menu-2ndlvl-active-hover-color: white;
 
 #menu ul.nav-level-1 > .nav-item > a {
   &:focus, &:hover {
     text-decoration: underline;
-  }
-}
-
-#menu ul.nav-level-1 > .nav-item.active > a,
-#menu .nav-level-1 > .nav-item.active:not(.selected) > a:hover {
-  color: @text-color;
-  background-color: @white;
-}
-
-#menu .nav-level-2 > .nav-item.active {
-  background-color: @white;
-
-  a {
-    color: @text-color;
-  }
-
-  > a:focus, > a:hover {
-    opacity: 1;
   }
 }
 
@@ -74,53 +43,37 @@
   text-decoration: underline;
 }
 
-.badge:not(.handled),
-.state-badge:not(.handled) {
-  &.state-warning {
-    border: 1px solid @color-warning;
-  }
-
-  &.state-critical,
-  &.state-down {
-    border: 1px solid @color-critical;
-  }
-
-  &.state-unreachable {
-    border: 1px solid @color-unreachable;
-  }
-
-  &.state-unknown {
-    border: 1px solid @color-unknown;
-  }
-
-  &.state-ok,
-  &.state-up {
-    border: 1px solid @color-ok;
-  }
+.badge {
+  background-color: @text-color-light;
 }
 
-.badge.handled,
-.badge.state-ok,
-.state-badge.handled,
-.state-badge.state-ok {
+.badge.handled {
   background-color: @body-bg-color !important;
-  color: @text-color !important;
+  color: @text-color;
 
   &.state-warning {
     border: 1px solid @color-warning-handled;
+    margin-top: -1px;
   }
 
-  &.state-critical,
+  &.state-critical {
+    border: 1px solid @color-critical-handled;
+    margin-top: -1px;
+  }
+
   &.state-down {
     border: 1px solid @color-critical-handled;
+    margin-top: -1px;
   }
 
   &.state-unreachable {
     border: 1px solid @color-unreachable-handled;
+    margin-top: -1px;
   }
 
   &.state-unknown {
     border: 1px solid @color-unknown-handled;
+    margin-top: -1px;
   }
 }
 
@@ -189,8 +142,7 @@
   }
 }
 
-.icinga-controls,
-.search-editor {
+.icinga-controls {
   input:not([type="checkbox"]):not([type="radio"]),
   .toggle-switch .toggle-slider:before,
   .toggle-switch > .toggle-slider,
@@ -203,32 +155,5 @@
     height: 1.166666667em;
     width: 1.166666667em;
     margin: 1px;
-  }
-}
-
-.icinga-module.module-icingadb .list-item.overdue {
-  background: none;
-
-  header > *:not(time),
-  .caption {
-    opacity: 1;
-  }
-}
-
-.controls input.search,
-input.search {
-  background-image: url(../img/icons/search.png);
-}
-
-.search-bar,
-.button-link {
-  border: 1px solid @icinga-blue;
-}
-
-.view-mode-switcher > label {
-  border: 1px solid @icinga-blue;
-
-  &:not(:first-of-type) {
-    border-left: none;
   }
 }

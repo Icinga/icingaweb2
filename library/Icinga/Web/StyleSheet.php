@@ -107,6 +107,7 @@ class StyleSheet
         $app = Icinga::app();
         $this->app = $app;
         $this->lessCompiler = new LessCompiler();
+        $this->lessCompiler->enableDefaultThemeOverride();
         $this->pubPath = $app->getBaseDir('public');
         $this->collect();
     }
@@ -174,6 +175,9 @@ class StyleSheet
                 $mode = $user->getPreferences()->getValue('icingaweb', 'theme_mode', self::DEFAULT_MODE);
             }
         }
+
+        // Temporarily disabled. Re-enabled with v2.10
+        $mode = 'none';
 
         $this->lessCompiler->setThemeMode($this->pubPath . '/css/modes/'. $mode . '.less');
     }
