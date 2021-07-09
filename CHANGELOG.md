@@ -4,6 +4,21 @@ Please make sure to always read our [Upgrading](doc/80-Upgrading.md) documentati
 
 ## What's New
 
+### What's New in Version 2.7.5
+
+**Notice**: This is a security release. It is recommended to upgrade to this release if you don't plan to upgrade to v2.9.0.
+
+You can find all fixes related to this release on our [Project](https://github.com/Icinga/icingaweb2/projects/7).
+
+#### Security Fixes
+
+This release includes two security related fixes. Both were published as part of a security advisory on Github.
+They allow the circumvention of custom variable protection rules and blacklists as well as a path traversal if
+the `doc` module is enabled. Please check the respective advisory for details.
+
+* Custom variable protection and blacklists can be circumvented [GHSA-2xv9-886q-p7xx](https://github.com/Icinga/icingaweb2/security/advisories/GHSA-2xv9-886q-p7xx)
+* Possible path traversal by use of the `doc` module [GHSA-cmgc-h4cx-3v43](https://github.com/Icinga/icingaweb2/security/advisories/GHSA-cmgc-h4cx-3v43)
+
 ### What's New in Version 2.7.4
 
 **Notice**: This is a security release. It is recommended to immediately upgrade to this release.
