@@ -5,6 +5,8 @@ namespace Icinga\Forms\Config\User;
 
 use Exception;
 use Icinga\Application\Logger;
+use Icinga\Authentication\User\DomainAwareInterface;
+use Icinga\Authentication\User\UserBackendInterface;
 use Icinga\Data\DataArray\ArrayDatasource;
 use Icinga\Web\Form;
 use Icinga\Web\Notification;
@@ -29,6 +31,13 @@ class CreateMembershipForm extends Form
      * @var string
      */
     protected $userName;
+
+    /**
+     * Backend of the user to add memberships for
+     *
+     * @var UserBackendInterface
+     */
+    protected $userBackend;
 
     /**
      * Set the user group backends to fetch groups from
@@ -57,6 +66,45 @@ class CreateMembershipForm extends Form
     }
 
     /**
+     * Set backend of the user to add memberships for
+     *
+     * @param UserBackendInterface $backend
+     *
+     * @return $this
+     */
+    public function setUserBackend($backend)
+    {
+        $this->userBackend = $backend;
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getUserDomain()
+    {
+        if ($this->userBackend instanceof DomainAwareInterface) {
+            return $this->userBackend->getDomain();
+        } else {
+            return null;
+        }
+
+    }
+    /**
+     * Get the full username including the domain if there is one
+     *
+     * @return string
+     */
+    public function getFullUsername()
+    {
+        if (($domain = $this->getUserDomain()) !== null) {
+            return $this->userName . '@' . $domain;
+        } else {
+            return $this->userName;
+        }
+    }
+
+    /**
      * Create and add elements to this form
      *
      * @param   array   $formData   The data sent by the user
@@ -79,13 +127,13 @@ class CreateMembershipForm extends Form
                 'label'         => $this->translate('Groups'),
                 'description'   => sprintf(
                     $this->translate('Select one or more groups where to add %s as member'),
-                    $this->userName
+                    $this->getFullUsername()
                 ),
                 'class'         => 'grant-permissions'
             )
         );
 
-        $this->setTitle(sprintf($this->translate('Create memberships for %s'), $this->userName));
+        $this->setTitle(sprintf($this->translate('Create memberships for %s'), $this->getFullUsername()));
         $this->setSubmitLabel($this->translate('Create'));
     }
 
@@ -95,7 +143,7 @@ class CreateMembershipForm extends Form
     public function onRequest()
     {
         if ($this->createDataSource()->select()->from('group')->count() === 0) {
-            Notification::info(sprintf($this->translate('User %s is already a member of all groups'), $this->userName));
+            Notification::info(sprintf($this->translate('User %s is already a member of all groups'), $this->getFullUsername()));
             $this->getResponse()->redirectAndExit($this->getRedirectUrl());
         }
     }
@@ -116,17 +164,27 @@ class CreateMembershipForm extends Form
         foreach ($this->getValue('groups') as $backendAndGroup) {
             list($backendName, $groupName) = explode(';', $backendAndGroup, 2);
             try {
+                $userName = $this->getFullUsername();
+
+                // check if target backend is in the same domain
+                if ($backend instanceof DomainAwareInterface) {
+                    $domain = $backend->getDomain();
+                    if ($domain !== null && $domain === $this->getUserDomain()) {
+                        $userName = $this->userName;
+                    }
+                }
+
                 $backendMap[$backendName]->insert(
                     'group_membership',
-                    array(
-                        'group_name'    => $groupName,
-                        'user_name'     => $this->userName
-                    )
+                    [
+                        'group_name' => $groupName,
+                        'user_name'  => $userName,
+                    ]
                 );
             } catch (Exception $e) {
                 Notification::error(sprintf(
                     $this->translate('Failed to add "%s" as group member for "%s"'),
-                    $this->userName,
+                    $userName,
                     $groupName
                 ));
                 $this->error($e->getMessage());
@@ -157,10 +215,11 @@ class CreateMembershipForm extends Form
         $groups = $failures = array();
         foreach ($this->backends as $backend) {
             try {
+                // TODO(mf): this needs to be improved when Extensible backends support domains (DbUserBackend)
                 $memberships = $backend
                     ->select()
                     ->from('group_membership', array('group_name'))
-                    ->where('user_name', $this->userName)
+                    ->where('user_name', $this->getFullUsername())
                     ->fetchColumn();
                 foreach ($backend->select(array('group_name')) as $row) {
                     if (! in_array($row->group_name, $memberships)) { // TODO(jom): Apply this as native query filter
@@ -173,7 +232,7 @@ class CreateMembershipForm extends Form
             }
         }
 
-        if (empty($groups) && !empty($failures)) {
+        if (empty($groups) && ! empty($failures)) {
             // In case there are only failures, throw the very first exception again
             throw $failures[0][1];
         } elseif (! empty($failures)) {
