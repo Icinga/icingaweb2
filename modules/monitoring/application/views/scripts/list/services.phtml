@@ -120,7 +120,11 @@ if (! $this->compact): ?>
                 </div>
             </td>
         <?php foreach($this->addColumns as $col): ?>
+          <?php if ($service->$col && preg_match('~^_(host|service)_([a-zA-Z0-9_]+)$~', $col, $m)): ?>
+            <td><?= $this->escape(\Icinga\Module\Monitoring\Object\MonitoredObject::protectCustomVars([$m[2] => $service->$col])[$m[2]]) ?></td>
+          <?php else: ?>
             <td><?= $this->escape($service->$col) ?></td>
+          <?php endif ?>
         <?php endforeach ?>
         </tr>
     <?php endforeach ?>

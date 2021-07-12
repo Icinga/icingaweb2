@@ -3,11 +3,13 @@
 
 namespace Icinga\Module\Monitoring;
 
+use ArrayIterator;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Exception\QueryException;
 use Icinga\Data\Filter\Filter;
 use Icinga\Data\Filterable;
 use Icinga\File\Csv;
+use Icinga\Module\Monitoring\Data\CustomvarProtectionIterator;
 use Icinga\Util\Json;
 use Icinga\Web\Controller as IcingaWebController;
 use Icinga\Web\Url;
@@ -60,7 +62,15 @@ class Controller extends IcingaWebController
                         'Content-Disposition',
                         'inline; filename=' . $this->getRequest()->getActionName() . '.json'
                     )
-                    ->appendBody(Json::sanitize($query->fetchAll()))
+                    ->appendBody(
+                        Json::sanitize(
+                            iterator_to_array(
+                                new CustomvarProtectionIterator(
+                                    new ArrayIterator($query->fetchAll())
+                                )
+                            )
+                        )
+                    )
                     ->sendResponse();
                 exit;
             case 'csv':
@@ -72,7 +82,7 @@ class Controller extends IcingaWebController
                         'Content-Disposition',
                         'attachment; filename=' . $this->getRequest()->getActionName() . '.csv'
                     )
-                    ->appendBody((string) Csv::fromQuery($query))
+                    ->appendBody((string) Csv::fromQuery(new CustomvarProtectionIterator($query)))
                     ->sendResponse();
                 exit;
         }

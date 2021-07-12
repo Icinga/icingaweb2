@@ -418,7 +418,37 @@ abstract class MonitoredObject implements Filterable
      */
     public function fetchCustomvars()
     {
-        $blacklist = array();
+
+        if ($this->type === self::TYPE_SERVICE) {
+            $this->fetchServiceVariables();
+            $customvars = $this->serviceVariables;
+        } else {
+            $this->fetchHostVariables();
+            $customvars = $this->hostVariables;
+        }
+
+        $this->customvars = $customvars;
+        $this->hideBlacklistedProperties();
+        $this->customvars = $this->obfuscateCustomVars($this->customvars, null);
+
+        return $this;
+    }
+
+    /**
+     * Obfuscate custom variables recursively
+     *
+     * @param stdClass|array    $customvars         The custom variables to obfuscate
+     *
+     * @return stdClass|array                       The obfuscated custom variables
+     */
+    protected function obfuscateCustomVars($customvars, $_)
+    {
+        return self::protectCustomVars($customvars);
+    }
+
+    public static function protectCustomVars($customvars)
+    {
+        $blacklist = [];
         $blacklistPattern = '';
 
         if (($blacklistConfig = Config::module('monitoring')->get('security', 'protected_customvars', '')) !== '') {
@@ -432,44 +462,24 @@ abstract class MonitoredObject implements Filterable
             $blacklistPattern = '/^(' . implode('|', $blacklist) . ')$/i';
         }
 
-        if ($this->type === self::TYPE_SERVICE) {
-            $this->fetchServiceVariables();
-            $customvars = $this->serviceVariables;
-        } else {
-            $this->fetchHostVariables();
-            $customvars = $this->hostVariables;
+        if (! $blacklistPattern) {
+            return $customvars;
         }
 
-        $this->customvars = $customvars;
-        $this->hideBlacklistedProperties();
-
-        if ($blacklistPattern) {
-            $this->customvars = $this->obfuscateCustomVars($this->customvars, $blacklistPattern);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Obfuscate custom variables recursively
-     *
-     * @param stdClass|array    $customvars         The custom variables to obfuscate
-     * @param string            $blacklistPattern   Which custom variables to obfuscate
-     *
-     * @return stdClass|array                       The obfuscated custom variables
-     */
-    protected function obfuscateCustomVars($customvars, $blacklistPattern)
-    {
-        $obfuscatedCustomVars = array();
-        foreach ($customvars as $name => $value) {
-            if ($blacklistPattern && preg_match($blacklistPattern, $name)) {
-                $obfuscatedCustomVars[$name] = '***';
-            } else {
-                $obfuscatedCustomVars[$name] = $value instanceof stdClass || is_array($value)
-                    ? $this->obfuscateCustomVars($value, $blacklistPattern)
-                    : $value;
+        $obfuscatedCustomVars = [];
+        $obfuscator = function ($vars) use ($blacklistPattern, &$obfuscatedCustomVars, &$obfuscator) {
+            foreach ($vars as $name => $value) {
+                if ($blacklistPattern && preg_match($blacklistPattern, $name)) {
+                    $obfuscatedCustomVars[$name] = '***';
+                } else {
+                    $obfuscatedCustomVars[$name] = $value instanceof stdClass || is_array($value)
+                        ? $obfuscator($value)
+                        : $value;
+                }
             }
-        }
+        };
+        $obfuscator($customvars);
+
         return $customvars instanceof stdClass ? (object) $obfuscatedCustomVars : $obfuscatedCustomVars;
     }
 
