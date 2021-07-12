@@ -5,6 +5,37 @@ v2.6 to v2.8 requires to follow the instructions for v2.7 too.
 
 ## Upgrading to Icinga Web 2 2.9.x
 
+**Installation**
+
+* Icinga Web 2 now requires the [Icinga PHP Library (ipl)](https://github.com/Icinga/icinga-php-library) (>= 0.6)
+  and [Icinga PHP Thirdparty](https://github.com/Icinga/icinga-php-thirdparty) (>= 0.10). Please make sure to
+  install both when upgrading. We provide packages for them and if you've installed Icinga Web 2 already by
+  package they should be installed automatically during the upgrade.
+* [Icinga Business Process Modelling](https://github.com/Icinga/icingaweb2-module-businessprocess/releases/tag/v2.3.1)
+  has been updated to v2.3.1. If you're using this module, this version is required when upgrading.
+
+**General**
+
+* For database connections to the IDO running on MySQL, a default charset (`latin1`) is now applied.
+  If you had previously problems with special characters and umlauts and you've set this charset
+  already manually, no change is required. However, if your IDO resource configuration has another
+  charset configured than this, it is highly recommended to clear this setting. Otherwise the default
+  won't apply and characters may still be shown incorrectly in the UI.
+
+**Database Schema**
+
+* Icinga Web 2 now permits its users to stay logged in. This requires a new database table.
+  * Please apply the `v2.9.0.sql` upgrade script depending on your database vendor.
+    In package installations this file can be found in `/usr/share/doc/icingaweb2/schema/*-upgrades/`
+
+**Breaking changes**
+
+* Password changes are not allowed by default anymore
+  * The fake refusal `no-user/password-change` has now been changed to a grant `user/password-change`.
+    Any user that had `no-user/password-change` previously still cannot change passwords. Though any
+    user that didn't have this *permission*, needs to be granted `user/password-change` now in order
+    to change passwords.
+
 **Deprecations**
 
 * Support for EOL PHP versions (5.6, 7.0, 7.1 and 7.2) will be removed with version 2.11
@@ -12,6 +43,24 @@ v2.6 to v2.8 requires to follow the instructions for v2.7 too.
   * New features after v2.9 will already not (necessarily) be available in Internet Explorer
 * `user.local_name` replaces the `user:local_name` macro in restrictions, and the latter will be removed with
   version 2.11
+* The configuration backend type `INI` is not configurable anymore. **A database is now mandatory.**
+  * Existing configurations using this configuration backend type will stop working with the
+    release of v2.11.
+  * Note that this only applies to user preferences. Other configurations are still stored
+    in `.ini` files. (#3770)
+* The Vagrant file and all its assets will be removed with version 2.11
+
+**Framework changes affecting third-party code**
+
+* The `jquery-migrate` compatibility layer for Javascript code working with jQuery 2.x has been removed.
+  It has been introduced with v2.7 when we upgraded jQuery to v3.4.1 in order to allow module developers
+  a seamless upgrade chance. If a module still has UI glitches after an upgrade to v2.9, please contact
+  the module developer.
+* The method `getHtmlForEvent` of the `EventDetailsExtensionHook` previously received the host or service
+  object of an event. Now the actual event object is passed to it instead.
+* Asset support for modules (#3961) introduced with v2.8 has now been deprecated in favor of library
+  support (#4272) and will be removed with v2.10. We don't expect broad usage of this feature since
+  it's been introduced with the latest major version, so it's already being removed with the next one.
 
 ## Upgrading to Icinga Web 2 2.8.x
 
