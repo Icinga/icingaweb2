@@ -466,19 +466,22 @@ abstract class MonitoredObject implements Filterable
             return $customvars;
         }
 
-        $obfuscatedCustomVars = [];
-        $obfuscator = function ($vars) use ($blacklistPattern, &$obfuscatedCustomVars, &$obfuscator) {
+        $obfuscator = function ($vars) use ($blacklistPattern, &$obfuscator) {
+            $result = [];
             foreach ($vars as $name => $value) {
                 if ($blacklistPattern && preg_match($blacklistPattern, $name)) {
-                    $obfuscatedCustomVars[$name] = '***';
+                    $result[$name] = '***';
+                } elseif ($value instanceof stdClass || is_array($value)) {
+                    $obfuscated = $obfuscator($value);
+                    $result[$name] = $value instanceof stdClass ? (object) $obfuscated : $obfuscated;
                 } else {
-                    $obfuscatedCustomVars[$name] = $value instanceof stdClass || is_array($value)
-                        ? $obfuscator($value)
-                        : $value;
+                    $result[$name] = $value;
                 }
             }
+
+            return $result;
         };
-        $obfuscator($customvars);
+        $obfuscatedCustomVars = $obfuscator($customvars);
 
         return $customvars instanceof stdClass ? (object) $obfuscatedCustomVars : $obfuscatedCustomVars;
     }
