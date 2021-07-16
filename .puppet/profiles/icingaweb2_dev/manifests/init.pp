@@ -22,6 +22,8 @@ class icingaweb2_dev (
 
   # TODO(el): icinga-gui is not a icingaweb2_dev package
   package { [
+    'icinga-php-library',
+    'icinga-php-thirdparty',
     'rh-php73-php-cli',
     'rh-php73-php-gd',
     'rh-php73-php-intl',
@@ -47,7 +49,7 @@ class icingaweb2_dev (
   -> exec { 'enable-monitoring-module':
     command => 'icingacli module enable monitoring',
     user    => 'apache',
-    require => Class[[ 'icingacli', 'apache' ]],
+    require => [ Class[[ 'icingacli', 'apache' ]], Package[[ 'icinga-php-library', 'icinga-php-thirdparty' ]] ],
   }
   -> exec { 'enable-test-module':
     command => 'icingacli module enable test',
