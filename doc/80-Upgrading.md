@@ -26,7 +26,7 @@ v2.6 to v2.8 requires to follow the instructions for v2.7 too.
 
 * Icinga Web 2 now permits its users to stay logged in. This requires a new database table.
   * Please apply the `v2.9.0.sql` upgrade script depending on your database vendor.
-    In package installations this file can be found in `/usr/share/doc/icingaweb2/schema/*-upgrades/`
+    In package installations this file can be found in `/usr/share/doc/icingaweb2/schema/*-upgrades/` (Debian/Ubuntu: `/usr/share/icingaweb2/etc/schema/*-upgrades/`).
 
 **Breaking changes**
 
@@ -263,7 +263,8 @@ affects environments that opted for not storing preferences, your new backend is
 ## Upgrading the MySQL Database <a id="upgrading-mysql-db"></a>
 
 If you installed Icinga Web 2 from package, please check the upgrade scripts located in
-**/usr/share/doc/icingaweb2/schema/mysql-upgrades** to update your database schema.
+**/usr/share/doc/icingaweb2/schema/mysql-upgrades** (Debian/Ubuntu: **/usr/share/icingaweb2/etc/schema/mysql-upgrades**)
+to update your database schema.
 In case you installed Icinga Web 2 from source, please find the upgrade scripts in **etc/schema/mysql-upgrades**.
 
 > **Note**
@@ -294,7 +295,8 @@ upgrade files involved, apply them incrementally.
 ## Upgrading the PostgreSQL Database <a id="upgrading-pgsql-db"></a>
 
 If you installed Icinga Web 2 from package, please check the upgrade scripts located in
-**/usr/share/doc/icingaweb2/schema/pgsql-upgrades** to update your database schema.
+**/usr/share/doc/icingaweb2/schema/pgsql-upgrades** (Debian/Ubuntu: **/usr/share/icingaweb2/etc/schema/pgsql-upgrades**)
+to update your database schema.
 In case you installed Icinga Web 2 from source, please find the upgrade scripts in **etc/schema/pgsql-upgrades**.
 
 > **Note**
