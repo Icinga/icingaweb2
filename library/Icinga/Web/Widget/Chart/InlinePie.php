@@ -3,6 +3,7 @@
 
 namespace Icinga\Web\Widget\Chart;
 
+use Exception;
 use Icinga\Chart\PieChart;
 use Icinga\Module\Monitoring\Plugin\PerfdataSet;
 use Icinga\Util\StringHelper;
@@ -237,12 +238,27 @@ class InlinePie extends AbstractWidget
             }
         }
 
-        $pie->title = $this->title;
-        $pie->description = $this->title;
+        try {
+            $pie->title = $this->title;
+            $pie->description = $this->title;
+            $renderedPie = $pie->render();
+        } catch (Exception $e) {
+            $pie->title = '<malformed-title>';
+            $pie->description = '<malformed-description>';
+
+            Logger::error(
+                'Failed to render pie chart with the following title: %s (%s)',
+                $this->title,
+                bin2hex($this->title)
+            );
+            Logger::error('Maybe also responsible: %s', print_r($this->data, true));
+
+            $renderedPie = $pie->render();
+        }
 
         $template = $this->template;
         $template = str_replace('{class}', $this->class, $template);
-        $template = str_replace('{svg}', $pie->render(), $template);
+        $template = str_replace('{svg}', $renderedPie, $template);
 
         return $template;
     }
