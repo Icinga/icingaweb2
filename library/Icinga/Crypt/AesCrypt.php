@@ -51,10 +51,16 @@ class AesCrypt
     private $tag;
 
     /** @var string The cipher method */
-    private $method = 'aes-128-gcm';
+    public $method = 'aes-128-gcm';
+
+    const GCM_SUPPORT_VERSION = 7.1;
 
     public function __construct($random_bytes_len = 128)
     {
+        if (PHP_VERSION < self::GCM_SUPPORT_VERSION) {
+            $this->method = 'AES-128-CBC';
+        }
+
         $len = openssl_cipher_iv_length($this->method);
         $this->iv = random_bytes($len);
         $this->key = random_bytes($random_bytes_len);
@@ -162,7 +168,12 @@ class AesCrypt
      */
     public function decrypt($data)
     {
+        if (PHP_VERSION < self::GCM_SUPPORT_VERSION) {
+            return $this->getDecryptCBC($data);
+        }
+
         $decrypt = openssl_decrypt($data, $this->method, $this->getKey(), 0, $this->getIV(), $this->getTag());
+
         if (is_bool($decrypt) && $decrypt === false) {
             throw new RuntimeException('Decryption failed');
         }
@@ -195,6 +206,10 @@ class AesCrypt
      */
     public function encrypt($data)
     {
+        if (PHP_VERSION < self::GCM_SUPPORT_VERSION) {
+            return $this->getEncryptCBC($data);
+        }
+
         $encrypt = openssl_encrypt($data, $this->method, $this->getkey(), 0, $this->getIV(), $this->tag);
 
         if (is_bool($encrypt) && $encrypt === false) {
@@ -216,5 +231,42 @@ class AesCrypt
     public function encryptToBase64($data)
     {
         return base64_encode($this->encrypt($data));
+    }
+
+    private function getDecryptCBC($data)
+    {
+        $c = base64_decode($data);
+        $ivlen = openssl_cipher_iv_length($this->method);
+        $iv = substr($c, 0, $ivlen);
+        $hmac = substr($c, $ivlen, $sha2len=32);
+        $data = substr($c, $ivlen + $sha2len);
+
+        $decrypt = openssl_decrypt($data, $this->method, $this->getKey(), 0, $this->getIV());
+
+        if (is_bool($decrypt) && $decrypt === false) {
+            throw new RuntimeException('Decryption failed');
+        }
+
+        $calcmac = hash_hmac('sha256', $data, $this->getKey(), $as_binary=true);
+
+        if (hash_equals($hmac, $calcmac))
+        {
+            return $decrypt;
+        }
+
+        return false;
+    }
+
+    private function getEncryptCBC($data)
+    {
+        $encrypt = openssl_encrypt($data, $this->method, $this->getkey(), 0, $this->getIV());
+
+        if (is_bool($encrypt) && $encrypt === false) {
+            throw new RuntimeException('Encryption failed');
+        }
+
+        $hmac = hash_hmac('sha256', $encrypt, $this->getkey(), $as_binary=true);
+
+        return base64_encode($this->getIV() . $hmac . $encrypt);
     }
 }
