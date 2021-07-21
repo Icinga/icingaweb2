@@ -29,6 +29,18 @@ class StyleSheet
     const DEFAULT_MODE = 'dark';
 
     /**
+     * The themes that are compatible with the default theme
+     *
+     * @var array
+     */
+    const THEME_WHITELIST = [
+        'colorblind',
+        'high-contrast',
+        'solarized-dark',
+        'Winter'
+    ];
+
+    /**
      * RegEx pattern for matching full css @media query of theme mode
      *
      * @var string
@@ -161,6 +173,10 @@ class StyleSheet
 
         if ($themePath = self::getThemeFile($theme)) {
             $this->lessCompiler->setTheme($themePath);
+        }
+
+        if (! $themePath || in_array($theme, self::THEME_WHITELIST, true)) {
+            $this->lessCompiler->addLessFile('css/icinga/login-orbs.less');
         }
 
         $mode = 'none';

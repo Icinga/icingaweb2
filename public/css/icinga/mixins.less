@@ -1,8 +1,11 @@
 /*! Icinga Web 2 | (c) 2015 Icinga Development Team | GPLv2+ */
 
 .box-shadow(@x: 0.2em; @y: 0.2em; @blur: 0.2em; @spread: 0; @color: rgba(83, 83, 83, 0.25)) {
+  -webkit-box-shadow: @x @y @blur @spread extract-variable-default(@color);
   -webkit-box-shadow: @arguments;
+     -moz-box-shadow: @x @y @blur @spread extract-variable-default(@color);
      -moz-box-shadow: @arguments;
+          box-shadow: @x @y @blur @spread extract-variable-default(@color);
           box-shadow: @arguments;
 }
 
