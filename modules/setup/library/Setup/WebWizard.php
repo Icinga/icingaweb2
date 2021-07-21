@@ -90,7 +90,8 @@ class WebWizard extends Wizard implements SetupWizard
         'icingaweb_group',
         'icingaweb_group_membership',
         'icingaweb_user',
-        'icingaweb_user_preference'
+        'icingaweb_user_preference',
+        'icingaweb_rememberme'
     );
 
     /**
