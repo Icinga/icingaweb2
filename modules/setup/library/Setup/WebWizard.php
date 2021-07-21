@@ -626,11 +626,42 @@ class WebWizard extends Wizard implements SetupWizard
         )));
 
         $set->add(new PhpModuleRequirement(array(
-            'optional'      => true,
+            'condition'     => 'XML',
+            'description'   => mt(
+                'setup',
+                'The XML module for PHP is required for Markdown and custom HTML annotations.'
+            )
+        )));
+
+        $set->add(new PhpModuleRequirement(array(
             'condition'     => 'JSON',
             'description'   => mt(
                 'setup',
                 'The JSON module for PHP is required for various export functionalities as well as APIs.'
+            )
+        )));
+
+        $set->add(new PhpModuleRequirement(array(
+            'condition'     => 'gettext',
+            'description'   => mt(
+                'setup',
+                'For message localization, the gettext module for PHP is required.'
+            )
+        )));
+
+        $set->add(new PhpModuleRequirement(array(
+            'condition'     => 'INTL',
+            'description'   => mt(
+                'setup',
+                'For language, timezone and date/time format negotiation, the INTL module for PHP is required.'
+            )
+        )));
+
+        $set->add(new PhpModuleRequirement(array(
+            'condition'     => 'DOM',
+            'description'   => mt(
+                'setup',
+                'For charts and exports of views and reports to PDF, the DOM module for PHP is required.'
             )
         )));
 
@@ -645,21 +676,10 @@ class WebWizard extends Wizard implements SetupWizard
 
         $set->add(new PhpModuleRequirement(array(
             'optional'      => true,
-            'condition'     => 'INTL',
+            'condition'     => 'mbstring',
             'description'   => mt(
                 'setup',
-                'If you want your users to benefit from language, timezone and date/time'
-                . ' format negotiation, the INTL module for PHP is required.'
-            )
-        )));
-
-        // TODO(6172): Remove this requirement once we do not ship dompdf with Icinga Web 2 anymore
-        $set->add(new PhpModuleRequirement(array(
-            'optional'      => true,
-            'condition'     => 'DOM',
-            'description'   => mt(
-                'setup',
-                'To be able to export views and reports to PDF, the DOM module for PHP is required.'
+                'In case you want views being exported to PDF, you\'ll need the mbstring extension for PHP.'
             )
         )));
 
