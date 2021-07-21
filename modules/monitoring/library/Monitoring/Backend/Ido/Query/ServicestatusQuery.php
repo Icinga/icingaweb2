@@ -494,6 +494,14 @@ class ServicestatusQuery extends IdoQuery
                 $groupedColumns[] = 'ss.servicestatus_id';
                 $groupedTables['servicestatus'] = true;
             }
+        } elseif ($table === 'contacts') {
+            $groupedColumns[] = 'sc.service_contact_id';
+            $groupedColumns[] = 'sco.object_id';
+            $groupedTables[$table] = true;
+        } elseif ($table === 'contactgroups') {
+            $groupedColumns[] = 'scg.service_contactgroup_id';
+            $groupedColumns[] = 'scgo.object_id';
+            $groupedTables[$table] = true;
         } else {
             parent::registerGroupColumns($alias, $table, $groupedColumns, $groupedTables);
         }
