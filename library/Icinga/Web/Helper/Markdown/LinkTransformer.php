@@ -60,10 +60,12 @@ class LinkTransformer extends HTMLPurifier_AttrTransform
             $attr['class'] = 'with-thumbnail';
         }
 
-        if ((! isset($attr['target']) || ! in_array($attr['target'], ['_blank', '_self']))
-            && ($useIframe || $url->isExternal())
-        ) {
-            $attr['href'] = Url::fromPath('iframe', ['url' => $url])->getAbsoluteUrl();
+        if ((! isset($attr['target']) || ! in_array($attr['target'], ['_blank', '_self']))) {
+            if ($useIframe) {
+                $attr['href'] = Url::fromPath('iframe', ['url' => $url])->getAbsoluteUrl();
+            } elseif ($url->isExternal()) {
+                $attr['target'] = '_blank';
+            }
         }
 
         return $attr;
