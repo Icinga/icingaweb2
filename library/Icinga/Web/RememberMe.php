@@ -72,7 +72,6 @@ class RememberMe
     {
         $data = explode('|', $_COOKIE[static::COOKIE]);
         $iv = base64_decode(array_pop($data));
-        $tag = base64_decode(array_pop($data));
 
         $select = (new Select())
             ->from(static::TABLE)
@@ -91,8 +90,21 @@ class RememberMe
 
         $rememberMe->aesCrypt = (new AesCrypt())
             ->setKey(hex2bin($rs->passphrase))
-            ->setTag($tag)
             ->setIV($iv);
+
+        if (PHP_VERSION >= AesCrypt::GCM_SUPPORT_VERSION) {
+
+            if (count($data) === 1) {
+                throw new RuntimeException(sprintf(
+                    "Cookie data was encrypted with older method. Php version '%s' use new method.",
+                    PHP_VERSION
+                ));
+            }
+
+            $tag = base64_decode(array_pop($data));
+            $rememberMe->aesCrypt->setTag($tag);
+        }
+
         $rememberMe->username = $rs->username;
         $rememberMe->encryptedPassword = $data[0];
 
@@ -140,14 +152,23 @@ class RememberMe
      */
     public function getCookie()
     {
-        return (new Cookie(static::COOKIE))
-            ->setExpire($this->getExpiresAt())
-            ->setHttpOnly(true)
-            ->setValue(implode('|', [
+        $values = [
+            $this->encryptedPassword,
+            base64_encode($this->aesCrypt->getIV()),
+        ];
+
+        if (PHP_VERSION >= AesCrypt::GCM_SUPPORT_VERSION) {
+            $values = [
                 $this->encryptedPassword,
                 base64_encode($this->aesCrypt->getTag()),
                 base64_encode($this->aesCrypt->getIV()),
-            ]));
+            ];
+        }
+
+        return (new Cookie(static::COOKIE))
+            ->setExpire($this->getExpiresAt())
+            ->setHttpOnly(true)
+            ->setValue(implode('|', $values));
     }
 
     /**
