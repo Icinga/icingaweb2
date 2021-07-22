@@ -51,7 +51,7 @@ class AesCrypt
     private $tag;
 
     /** @var string The cipher method */
-    public $method = 'aes-128-gcm';
+    private $method = 'aes-128-gcm';
 
     const GCM_SUPPORT_VERSION = 7.1;
 
@@ -242,19 +242,13 @@ class AesCrypt
         $data = substr($c, $ivlen + $sha2len);
 
         $decrypt = openssl_decrypt($data, $this->method, $this->getKey(), 0, $this->getIV());
+        $calcmac = hash_hmac('sha256', $data, $this->getKey(), $as_binary=true);
 
-        if (is_bool($decrypt) && $decrypt === false) {
+        if ((is_bool($decrypt) && $decrypt === false) || ! hash_equals($hmac, $calcmac)) {
             throw new RuntimeException('Decryption failed');
         }
 
-        $calcmac = hash_hmac('sha256', $data, $this->getKey(), $as_binary=true);
-
-        if (hash_equals($hmac, $calcmac))
-        {
-            return $decrypt;
-        }
-
-        return false;
+        return $decrypt;
     }
 
     private function getEncryptCBC($data)
