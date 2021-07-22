@@ -11,6 +11,7 @@ use Icinga\User;
 use ipl\Sql\Expression;
 use ipl\Sql\Select;
 use RuntimeException;
+use UnexpectedValueException;
 
 /**
  * Remember me component
@@ -93,15 +94,15 @@ class RememberMe
             ->setIV($iv);
 
         if (PHP_VERSION >= AesCrypt::GCM_SUPPORT_VERSION) {
+            $tag = base64_decode(array_pop($data));
 
-            if (count($data) === 1) {
-                throw new RuntimeException(sprintf(
+            if (empty($data)) {
+                throw new UnexpectedValueException(sprintf(
                     "Cookie data was encrypted with older method. Php version '%s' use new method.",
                     PHP_VERSION
                 ));
             }
 
-            $tag = base64_decode(array_pop($data));
             $rememberMe->aesCrypt->setTag($tag);
         }
 
