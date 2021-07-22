@@ -5,7 +5,7 @@ namespace Icinga\Web;
 
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
-use ipl\Web\Url;
+use ipl\Web\Url as iplWebUrl;  //alias is needed for php5.6
 use ipl\Web\Widget\Icon;
 use ipl\Web\Widget\Link;
 
@@ -124,7 +124,7 @@ class RememberMeUserDevicesList extends BaseHtmlElement
 
                 $link = (new Link(
                     new Icon('trash'),
-                    Url::fromPath($this->getUrl())
+                    iplWebUrl::fromPath($this->getUrl())
                         ->addParams(
                             [
                                 'name'          => $this->getUsername(),
