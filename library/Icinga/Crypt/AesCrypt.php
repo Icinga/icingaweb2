@@ -53,7 +53,7 @@ class AesCrypt
     /** @var string The cipher method */
     private $method = 'AES-128-GCM';
 
-    const GCM_SUPPORT_VERSION = 7.1;
+    const GCM_SUPPORT_VERSION = '7.1';
 
     public function __construct($random_bytes_len = 128)
     {
