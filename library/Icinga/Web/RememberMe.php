@@ -159,11 +159,7 @@ class RememberMe
         ];
 
         if (version_compare(PHP_VERSION, AesCrypt::GCM_SUPPORT_VERSION, '>=')) {
-            $values = [
-                $this->encryptedPassword,
-                base64_encode($this->aesCrypt->getTag()),
-                base64_encode($this->aesCrypt->getIV()),
-            ];
+            array_splice($values,1,0,$this->aesCrypt->getIV());
         }
 
         return (new Cookie(static::COOKIE))
