@@ -57,7 +57,7 @@ class AesCrypt
 
     public function __construct($random_bytes_len = 128)
     {
-        if (PHP_VERSION < self::GCM_SUPPORT_VERSION) {
+        if (version_compare(PHP_VERSION, self::GCM_SUPPORT_VERSION, '<')) {
             $this->method = 'AES-128-CBC';
         }
 
@@ -168,7 +168,7 @@ class AesCrypt
      */
     public function decrypt($data)
     {
-        if (PHP_VERSION < self::GCM_SUPPORT_VERSION) {
+        if (version_compare(PHP_VERSION, self::GCM_SUPPORT_VERSION, '<')) {
             return $this->getDecryptCBC($data);
         }
 
@@ -206,7 +206,7 @@ class AesCrypt
      */
     public function encrypt($data)
     {
-        if (PHP_VERSION < self::GCM_SUPPORT_VERSION) {
+        if (version_compare(PHP_VERSION, self::GCM_SUPPORT_VERSION, '<')) {
             return $this->getEncryptCBC($data);
         }
 

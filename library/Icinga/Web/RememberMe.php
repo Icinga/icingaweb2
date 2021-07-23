@@ -93,12 +93,12 @@ class RememberMe
             ->setKey(hex2bin($rs->passphrase))
             ->setIV($iv);
 
-        if (PHP_VERSION >= AesCrypt::GCM_SUPPORT_VERSION) {
+        if (version_compare(PHP_VERSION, AesCrypt::GCM_SUPPORT_VERSION, '>=')) {
             $tag = base64_decode(array_pop($data));
 
             if (empty($data)) {
                 throw new UnexpectedValueException(sprintf(
-                    "Cookie data was encrypted with older method. Php version '%s' use new method.",
+                    "Cookie data was encrypted with older method. Php version '%s' uses a new method.",
                     PHP_VERSION
                 ));
             }
@@ -158,7 +158,7 @@ class RememberMe
             base64_encode($this->aesCrypt->getIV()),
         ];
 
-        if (PHP_VERSION >= AesCrypt::GCM_SUPPORT_VERSION) {
+        if (version_compare(PHP_VERSION, AesCrypt::GCM_SUPPORT_VERSION, '>=')) {
             $values = [
                 $this->encryptedPassword,
                 base64_encode($this->aesCrypt->getTag()),
