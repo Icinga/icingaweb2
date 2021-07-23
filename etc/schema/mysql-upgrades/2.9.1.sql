@@ -1,2 +1,2 @@
 ALTER TABLE `icingaweb_rememberme`
-    MODIFY random_iv varchar(32);
+    MODIFY random_iv varchar(32)  NOT NULL;
