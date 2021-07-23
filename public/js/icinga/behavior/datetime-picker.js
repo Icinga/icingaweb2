@@ -73,12 +73,17 @@
                 server_format = _this.server_time_format;
             }
 
+            // Inject calendar container into a new empty div, inside the column/modal but outside the form.
+            // See https://github.com/flatpickr/flatpickr/issues/2054 for details.
+            var appendTo = document.createElement('div');
+            this.form.parentNode.insertBefore(appendTo, this.form.nextSibling);
+
             var enableTime = server_format !== _this.server_date_format;
             var disableDate = server_format === _this.server_time_format;
             var dateTimeFormatter = _this.createFormatter(! disableDate, enableTime);
             var options = {
                 locale: _this.loadFlatpickrLocale(),
-                appendTo: this.form.parentNode,
+                appendTo: appendTo,
                 altInput: true,
                 enableTime: enableTime,
                 noCalendar: disableDate,
@@ -87,9 +92,6 @@
                     return format === this.dateFormat
                         ? Flatpickr.formatDate(date, format, locale)
                         : dateTimeFormatter.format(date);
-                },
-                onOpen: function (selectedDates, dateStr, instance) {
-                    _this.closePickers(instance);
                 }
             };
 
