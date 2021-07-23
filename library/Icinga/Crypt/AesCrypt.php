@@ -235,6 +235,10 @@ class AesCrypt
 
     private function decryptCBC($data)
     {
+        if (strlen($this->getIV()) !== 16) {
+            throw new RuntimeException('Decryption failed');
+        }
+
         $c = base64_decode($data);
         $hmac = substr($c, 0, 32);
         $data = substr($c, 32);
