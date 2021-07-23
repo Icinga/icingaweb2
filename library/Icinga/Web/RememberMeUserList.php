@@ -5,7 +5,7 @@ namespace Icinga\Web;
 
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\Html;
-use ipl\Web\Url;
+use ipl\Web\Url as iplWebUrl;  //alias is needed for php5.6
 use ipl\Web\Widget\Link;
 
 /**
@@ -91,7 +91,7 @@ class RememberMeUserList extends BaseHtmlElement
                 $element = Html::tag('tr');
                 $link = new Link(
                     $user->username,
-                    Url::fromPath($this->getUrl())->addParams(['name' => $user->username]),
+                    iplWebUrl::fromPath($this->getUrl())->addParams(['name' => $user->username]),
                     ['title' => sprintf(t('Device list of %s'), $user->username)]
                 );
 
