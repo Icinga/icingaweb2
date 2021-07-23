@@ -97,6 +97,7 @@ class RememberMe
             $tag = base64_decode(array_pop($data));
 
             if (empty($data)) {
+                $rememberMe->remove(bin2hex($iv));
                 throw new UnexpectedValueException(sprintf(
                     "Cookie data was encrypted with older method. Php version '%s' uses a new method.",
                     PHP_VERSION
