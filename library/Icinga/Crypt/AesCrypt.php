@@ -169,7 +169,7 @@ class AesCrypt
     public function decrypt($data)
     {
         if (version_compare(PHP_VERSION, self::GCM_SUPPORT_VERSION, '<')) {
-            return $this->getDecryptCBC($data);
+            return $this->decryptCBC($data);
         }
 
         $decrypt = openssl_decrypt($data, $this->method, $this->getKey(), 0, $this->getIV(), $this->getTag());
@@ -207,7 +207,7 @@ class AesCrypt
     public function encrypt($data)
     {
         if (version_compare(PHP_VERSION, self::GCM_SUPPORT_VERSION, '<')) {
-            return $this->getEncryptCBC($data);
+            return $this->encryptCBC($data);
         }
 
         $encrypt = openssl_encrypt($data, $this->method, $this->getkey(), 0, $this->getIV(), $this->tag);
@@ -233,25 +233,23 @@ class AesCrypt
         return base64_encode($this->encrypt($data));
     }
 
-    private function getDecryptCBC($data)
+    private function decryptCBC($data)
     {
         $c = base64_decode($data);
-        $ivlen = openssl_cipher_iv_length($this->method);
-        $iv = substr($c, 0, $ivlen);
-        $hmac = substr($c, $ivlen, $sha2len=32);
-        $data = substr($c, $ivlen + $sha2len);
+        $hmac = substr($c, 0, 32);
+        $data = substr($c, 32);
 
         $decrypt = openssl_decrypt($data, $this->method, $this->getKey(), 0, $this->getIV());
-        $calcmac = hash_hmac('sha256', $data, $this->getKey(), $as_binary=true);
+        $calcHmac = hash_hmac('sha256', $data, $this->getKey(), true);
 
-        if ((is_bool($decrypt) && $decrypt === false) || ! hash_equals($hmac, $calcmac)) {
+        if ((is_bool($decrypt) && $decrypt === false) || ! hash_equals($hmac, $calcHmac)) {
             throw new RuntimeException('Decryption failed');
         }
 
         return $decrypt;
     }
 
-    private function getEncryptCBC($data)
+    private function encryptCBC($data)
     {
         $encrypt = openssl_encrypt($data, $this->method, $this->getkey(), 0, $this->getIV());
 
@@ -259,8 +257,8 @@ class AesCrypt
             throw new RuntimeException('Encryption failed');
         }
 
-        $hmac = hash_hmac('sha256', $encrypt, $this->getkey(), $as_binary=true);
+        $hmac = hash_hmac('sha256', $encrypt, $this->getkey(), true);
 
-        return base64_encode($this->getIV() . $hmac . $encrypt);
+        return base64_encode($hmac . $encrypt);
     }
 }
