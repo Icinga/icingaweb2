@@ -159,7 +159,7 @@ class RememberMe
         ];
 
         if (version_compare(PHP_VERSION, AesCrypt::GCM_SUPPORT_VERSION, '>=')) {
-            array_splice($values, 1, 0, $this->aesCrypt->getIV());
+            array_splice($values, 1, 0, base64_encode($this->aesCrypt->getTag()));
         }
 
         return (new Cookie(static::COOKIE))
