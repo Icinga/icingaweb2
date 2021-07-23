@@ -44,38 +44,8 @@
 
         $.each(event.target.querySelectorAll('.collapsible:not(.can-collapse)'), function (_, collapsible) {
             // Assumes that any newly rendered elements are expanded
-            if (_this.canCollapse(collapsible)) {
-                var toggleSelector = collapsible.dataset.toggleElement;
-                if (!! toggleSelector) {
-                    var toggle = $(collapsible).children(toggleSelector)[0];
-                    if (! toggle && $(collapsible.nextSibling).is(toggleSelector)) {
-                        toggle = collapsible.nextSibling;
-                    }
-
-                    if (! toggle) {
-                        _this.icinga.logger.error(
-                            '[Collapsible] Control `' + toggleSelector + '` not found in .collapsible', collapsible);
-                    } else if (! toggle.classList.contains('collapsible-control')) {
-                        toggle.classList.add('collapsible-control');
-                    }
-                } else {
-                    setTimeout(function () {
-                        var collapsibleControl = document
-                            .getElementById('collapsible-control-ghost')
-                            .cloneNode(true);
-                        collapsibleControl.removeAttribute('id');
-                        collapsible.parentNode.insertBefore(collapsibleControl, collapsible.nextElementSibling);
-                    }, 0);
-                }
-
-                collapsible.classList.add('can-collapse');
-
-                if (
-                    typeof collapsible.dataset.noPersistence !== 'undefined'
-                    || ! _this.state.has(_this.icinga.utils.getCSSPath(collapsible))
-                ) {
-                    toCollapse.push([collapsible, _this.calculateCollapsedHeight(collapsible)]);
-                }
+            if (_this.canCollapse(collapsible) && _this.setupCollapsible(collapsible)) {
+                toCollapse.push([collapsible, _this.calculateCollapsedHeight(collapsible)]);
             }
         });
 
@@ -99,28 +69,17 @@
         $.each(document.querySelectorAll('.collapsible'), function (_, collapsible) {
             if ($(collapsible).is('.can-collapse')) {
                 if (! _this.canCollapse(collapsible)) {
-                    $(collapsible).next('.collapsible-control').remove();
+                    var toggleSelector = collapsible.dataset.toggleElement;
+                    if (! toggleSelector) {
+                        $(collapsible).next('.collapsible-control').remove();
+                    }
+
                     collapsible.classList.remove('can-collapse');
                     _this.expand(collapsible);
                 }
-            } else if (_this.canCollapse(collapsible)) {
+            } else if (_this.canCollapse(collapsible) && _this.setupCollapsible(collapsible)) {
                 // It's expanded but shouldn't
-                setTimeout(function () {
-                    var collapsibleControl = document
-                        .getElementById('collapsible-control-ghost')
-                        .cloneNode(true);
-                    collapsibleControl.removeAttribute('id');
-                    collapsible.parentNode.insertBefore(collapsibleControl, collapsible.nextElementSibling);
-                }, 0);
-
-                collapsible.classList.add('can-collapse');
-
-                if (
-                    typeof collapsible.dataset.noPersistence !== 'undefined'
-                    || ! _this.state.has(_this.icinga.utils.getCSSPath(collapsible))
-                ) {
-                    toCollapse.push([collapsible, _this.calculateCollapsedHeight(collapsible)]);
-                }
+                toCollapse.push([collapsible, _this.calculateCollapsedHeight(collapsible)]);
             }
         });
 
@@ -190,6 +149,43 @@
                 _this.expand(collapsible);
             }
         }
+    };
+
+    /**
+     * Setup the given collapsible
+     *
+     * @param collapsible  The given collapsible container element
+     *
+     * @returns {boolean}  Whether it needs to collapse or not
+     */
+    Collapsible.prototype.setupCollapsible = function (collapsible) {
+        var toggleSelector = collapsible.dataset.toggleElement;
+        if (!! toggleSelector) {
+            var toggle = $(collapsible).children(toggleSelector)[0];
+            if (! toggle && $(collapsible.nextSibling).is(toggleSelector)) {
+                toggle = collapsible.nextSibling;
+            }
+
+            if (! toggle) {
+                this.icinga.logger.error(
+                    '[Collapsible] Control `' + toggleSelector + '` not found in .collapsible', collapsible);
+            } else if (! toggle.classList.contains('collapsible-control')) {
+                toggle.classList.add('collapsible-control');
+            }
+        } else {
+            setTimeout(function () {
+                var collapsibleControl = document
+                    .getElementById('collapsible-control-ghost')
+                    .cloneNode(true);
+                collapsibleControl.removeAttribute('id');
+                collapsible.parentNode.insertBefore(collapsibleControl, collapsible.nextElementSibling);
+            }, 0);
+        }
+
+        collapsible.classList.add('can-collapse');
+
+        return typeof collapsible.dataset.noPersistence !== 'undefined'
+            || ! this.state.has(this.icinga.utils.getCSSPath(collapsible));
     };
 
     /**
