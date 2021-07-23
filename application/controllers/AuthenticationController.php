@@ -108,7 +108,7 @@ class AuthenticationController extends Controller
         } else {
             if (RememberMe::hasCookie() && $this->hasDb()) {
                 try {
-                    (new RememberMe())->remove(RememberMe::fromCookie()->getAesCrypt()->getIV());
+                    (new RememberMe())->remove(bin2hex(RememberMe::fromCookie()->getAesCrypt()->getIV()));
                 } catch (RuntimeException $e) {
                     // pass
                 }

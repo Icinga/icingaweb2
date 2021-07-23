@@ -236,7 +236,7 @@ class RememberMe
     public function persist($iv = null)
     {
         if ($iv) {
-            $this->remove($iv);
+            $this->remove(bin2hex($iv));
         }
 
         $this->getDb()->insert(static::TABLE, [
@@ -262,7 +262,7 @@ class RememberMe
     public function remove($iv)
     {
         $this->getDb()->delete(static::TABLE, [
-            'random_iv = ?' => bin2hex($iv)
+            'random_iv = ?' => $iv
         ]);
 
         return $this;
@@ -279,24 +279,6 @@ class RememberMe
             $this->username,
             $this->aesCrypt->decryptFromBase64($this->encryptedPassword)
         );
-    }
-
-    /**
-     * Remove specific remember me information from the database
-     *
-     * @param string $username
-     *
-     * @param $iv
-     *
-     * @return $this
-     */
-    public function removeSpecific($iv)
-    {
-        $this->getDb()->delete(static::TABLE, [
-            'random_iv = ?' => $iv
-        ]);
-
-        return $this;
     }
 
     /**
