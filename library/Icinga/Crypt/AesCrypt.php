@@ -51,7 +51,7 @@ class AesCrypt
     private $tag;
 
     /** @var string The cipher method */
-    private $method = 'aes-128-gcm';
+    private $method = 'AES-128-GCM';
 
     const GCM_SUPPORT_VERSION = 7.1;
 
@@ -168,7 +168,7 @@ class AesCrypt
      */
     public function decrypt($data)
     {
-        if (version_compare(PHP_VERSION, self::GCM_SUPPORT_VERSION, '<')) {
+        if ($this->method === 'AES-128-CBC') {
             return $this->decryptCBC($data);
         }
 
@@ -206,7 +206,7 @@ class AesCrypt
      */
     public function encrypt($data)
     {
-        if (version_compare(PHP_VERSION, self::GCM_SUPPORT_VERSION, '<')) {
+        if ($this->method === 'AES-128-CBC') {
             return $this->encryptCBC($data);
         }
 
