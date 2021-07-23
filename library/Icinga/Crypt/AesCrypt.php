@@ -174,7 +174,7 @@ class AesCrypt
 
         $decrypt = openssl_decrypt($data, $this->method, $this->getKey(), 0, $this->getIV(), $this->getTag());
 
-        if (is_bool($decrypt) && $decrypt === false) {
+        if ($decrypt === false) {
             throw new RuntimeException('Decryption failed');
         }
 
@@ -212,7 +212,7 @@ class AesCrypt
 
         $encrypt = openssl_encrypt($data, $this->method, $this->getkey(), 0, $this->getIV(), $this->tag);
 
-        if (is_bool($encrypt) && $encrypt === false) {
+        if ($encrypt === false) {
             throw new RuntimeException('Encryption failed');
         }
 
@@ -242,7 +242,7 @@ class AesCrypt
         $decrypt = openssl_decrypt($data, $this->method, $this->getKey(), 0, $this->getIV());
         $calcHmac = hash_hmac('sha256', $data, $this->getKey(), true);
 
-        if ((is_bool($decrypt) && $decrypt === false) || ! hash_equals($hmac, $calcHmac)) {
+        if ($decrypt === false || ! hash_equals($hmac, $calcHmac)) {
             throw new RuntimeException('Decryption failed');
         }
 
@@ -253,7 +253,7 @@ class AesCrypt
     {
         $encrypt = openssl_encrypt($data, $this->method, $this->getkey(), 0, $this->getIV());
 
-        if (is_bool($encrypt) && $encrypt === false) {
+        if ($encrypt === false) {
             throw new RuntimeException('Encryption failed');
         }
 
