@@ -233,6 +233,7 @@ class SVGRenderer
         $this->addAriaDescription($this->svg, $this->ariaTitle, $this->ariaDescription);
         $this->svg->appendChild($this->rootCanvas->toSvg($ctx));
         $this->document->formatOutput = true;
+        $this->document->encoding = 'UTF-8';
         return $this->document->saveXML();
     }
 
