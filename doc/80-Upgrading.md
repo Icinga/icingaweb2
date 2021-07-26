@@ -46,6 +46,9 @@ v2.6 to v2.8 requires to follow the instructions for v2.7 too.
 * The configuration backend type `INI` is not configurable anymore. **A database is now mandatory.**
   * Existing configurations using this configuration backend type will stop working with the
     release of v2.11.
+  * To migrate your local user preferences to database, enable the `migrate` module and use the command
+    `icingacli migrate preferences`. If you already setup the configuration database, it will work right
+    away. If not, pass it the resource you'd like to use as configuration database with `--resource=`.
   * Note that this only applies to user preferences. Other configurations are still stored
     in `.ini` files. (#3770)
 * The Vagrant file and all its assets will be removed with version 2.11
