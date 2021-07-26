@@ -55,10 +55,14 @@ class AesCrypt
 
     const GCM_SUPPORT_VERSION = '7.1';
 
-    public function __construct($random_bytes_len = 128)
+    public function __construct($forceMethod = null, $random_bytes_len = 128)
     {
         if (version_compare(PHP_VERSION, self::GCM_SUPPORT_VERSION, '<')) {
             $this->method = 'AES-128-CBC';
+        }
+
+        if ($forceMethod) {
+            $this->method = $forceMethod;
         }
 
         $len = openssl_cipher_iv_length($this->method);
