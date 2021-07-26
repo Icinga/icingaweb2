@@ -96,7 +96,8 @@ class RememberMe
             $tag = array_pop($data);
 
             if (empty($data)) {
-                $rememberMe->aesCrypt = (new AesCrypt('AES-128-CBC'))
+                $rememberMe->aesCrypt = (new AesCrypt())
+                    ->setMethod('AES-128-CBC')
                     ->setKey(hex2bin($rs->passphrase))
                     ->setIV($iv);
 

@@ -55,19 +55,25 @@ class AesCrypt
 
     const GCM_SUPPORT_VERSION = '7.1';
 
-    public function __construct($forceMethod = null, $random_bytes_len = 128)
+    public function __construct($random_bytes_len = 128)
     {
         if (version_compare(PHP_VERSION, self::GCM_SUPPORT_VERSION, '<')) {
             $this->method = 'AES-128-CBC';
         }
 
-        if ($forceMethod) {
-            $this->method = $forceMethod;
-        }
-
-        $len = openssl_cipher_iv_length($this->method);
-        $this->iv = random_bytes($len);
         $this->key = random_bytes($random_bytes_len);
+    }
+
+    /**
+     * Force set the method
+     *
+     * @return $this
+     */
+    public function setMethod($method)
+    {
+        $this->method = $method;
+
+        return $this;
     }
 
     /**
@@ -120,7 +126,8 @@ class AesCrypt
     public function getIV()
     {
         if (empty($this->iv)) {
-            throw new RuntimeException('No iv set');
+            $len = openssl_cipher_iv_length($this->method);
+            $this->iv = random_bytes($len);
         }
 
         return $this->iv;
