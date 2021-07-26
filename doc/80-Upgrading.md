@@ -3,6 +3,14 @@
 Specific version upgrades are described below. Please note that upgrades are incremental. An upgrade from
 v2.6 to v2.8 requires to follow the instructions for v2.7 too.
 
+## Upgrading to Icinga Web 2 2.9.1
+
+**Database Schema**
+
+* Please apply the `v2.9.1.sql` upgrade script depending on your database vendor.
+  In package installations this file can be found in `/usr/share/doc/icingaweb2/schema/*-upgrades/`
+  (Debian/Ubuntu: `/usr/share/icingaweb2/etc/schema/*-upgrades/`).
+
 ## Upgrading to Icinga Web 2 2.9.x
 
 **Installation**
@@ -26,7 +34,8 @@ v2.6 to v2.8 requires to follow the instructions for v2.7 too.
 
 * Icinga Web 2 now permits its users to stay logged in. This requires a new database table.
   * Please apply the `v2.9.0.sql` upgrade script depending on your database vendor.
-    In package installations this file can be found in `/usr/share/doc/icingaweb2/schema/*-upgrades/` (Debian/Ubuntu: `/usr/share/icingaweb2/etc/schema/*-upgrades/`).
+    In package installations this file can be found in `/usr/share/doc/icingaweb2/schema/*-upgrades/`
+    (Debian/Ubuntu: `/usr/share/icingaweb2/etc/schema/*-upgrades/`).
 
 **Breaking changes**
 
