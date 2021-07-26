@@ -31,6 +31,7 @@ trait Database
         $config = new SqlConfig(ResourceFactory::getResourceConfig(
             IcingaConfig::app()->get('global', 'config_resource')
         ));
+        $config->charset = 'utf8mb4';
 
         $config->options = [PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ];
         if ($config->db === 'mysql') {
