@@ -51,13 +51,29 @@ class AesCrypt
     private $tag;
 
     /** @var string The cipher method */
-    private $method = 'aes-128-gcm';
+    private $method = 'AES-128-GCM';
+
+    const GCM_SUPPORT_VERSION = '7.1';
 
     public function __construct($random_bytes_len = 128)
     {
-        $len = openssl_cipher_iv_length($this->method);
-        $this->iv = random_bytes($len);
+        if (version_compare(PHP_VERSION, self::GCM_SUPPORT_VERSION, '<')) {
+            $this->method = 'AES-128-CBC';
+        }
+
         $this->key = random_bytes($random_bytes_len);
+    }
+
+    /**
+     * Force set the method
+     *
+     * @return $this
+     */
+    public function setMethod($method)
+    {
+        $this->method = $method;
+
+        return $this;
     }
 
     /**
@@ -110,7 +126,8 @@ class AesCrypt
     public function getIV()
     {
         if (empty($this->iv)) {
-            throw new RuntimeException('No iv set');
+            $len = openssl_cipher_iv_length($this->method);
+            $this->iv = random_bytes($len);
         }
 
         return $this->iv;
@@ -162,8 +179,13 @@ class AesCrypt
      */
     public function decrypt($data)
     {
+        if ($this->method === 'AES-128-CBC') {
+            return $this->decryptCBC($data);
+        }
+
         $decrypt = openssl_decrypt($data, $this->method, $this->getKey(), 0, $this->getIV(), $this->getTag());
-        if (is_bool($decrypt) && $decrypt === false) {
+
+        if ($decrypt === false) {
             throw new RuntimeException('Decryption failed');
         }
 
@@ -195,9 +217,13 @@ class AesCrypt
      */
     public function encrypt($data)
     {
+        if ($this->method === 'AES-128-CBC') {
+            return $this->encryptCBC($data);
+        }
+
         $encrypt = openssl_encrypt($data, $this->method, $this->getkey(), 0, $this->getIV(), $this->tag);
 
-        if (is_bool($encrypt) && $encrypt === false) {
+        if ($encrypt === false) {
             throw new RuntimeException('Encryption failed');
         }
 
@@ -216,5 +242,38 @@ class AesCrypt
     public function encryptToBase64($data)
     {
         return base64_encode($this->encrypt($data));
+    }
+
+    private function decryptCBC($data)
+    {
+        if (strlen($this->getIV()) !== 16) {
+            throw new RuntimeException('Decryption failed');
+        }
+
+        $c = base64_decode($data);
+        $hmac = substr($c, 0, 32);
+        $data = substr($c, 32);
+
+        $decrypt = openssl_decrypt($data, $this->method, $this->getKey(), 0, $this->getIV());
+        $calcHmac = hash_hmac('sha256', $data, $this->getKey(), true);
+
+        if ($decrypt === false || ! hash_equals($hmac, $calcHmac)) {
+            throw new RuntimeException('Decryption failed');
+        }
+
+        return $decrypt;
+    }
+
+    private function encryptCBC($data)
+    {
+        $encrypt = openssl_encrypt($data, $this->method, $this->getkey(), 0, $this->getIV());
+
+        if ($encrypt === false) {
+            throw new RuntimeException('Encryption failed');
+        }
+
+        $hmac = hash_hmac('sha256', $encrypt, $this->getkey(), true);
+
+        return base64_encode($hmac . $encrypt);
     }
 }

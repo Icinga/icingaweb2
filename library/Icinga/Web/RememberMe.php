@@ -72,7 +72,6 @@ class RememberMe
     {
         $data = explode('|', $_COOKIE[static::COOKIE]);
         $iv = base64_decode(array_pop($data));
-        $tag = base64_decode(array_pop($data));
 
         $select = (new Select())
             ->from(static::TABLE)
@@ -91,8 +90,23 @@ class RememberMe
 
         $rememberMe->aesCrypt = (new AesCrypt())
             ->setKey(hex2bin($rs->passphrase))
-            ->setTag($tag)
             ->setIV($iv);
+
+        if (version_compare(PHP_VERSION, AesCrypt::GCM_SUPPORT_VERSION, '>=')) {
+            $tag = array_pop($data);
+
+            if (empty($data)) {
+                $rememberMe->aesCrypt = (new AesCrypt())
+                    ->setMethod('AES-128-CBC')
+                    ->setKey(hex2bin($rs->passphrase))
+                    ->setIV($iv);
+
+                $data[0] = $tag; // encryptedPass
+            } else {
+                $rememberMe->aesCrypt->setTag(base64_decode($tag));
+            }
+        }
+
         $rememberMe->username = $rs->username;
         $rememberMe->encryptedPassword = $data[0];
 
@@ -140,14 +154,19 @@ class RememberMe
      */
     public function getCookie()
     {
+        $values = [
+            $this->encryptedPassword,
+            base64_encode($this->aesCrypt->getIV()),
+        ];
+
+        if (version_compare(PHP_VERSION, AesCrypt::GCM_SUPPORT_VERSION, '>=')) {
+            array_splice($values, 1, 0, base64_encode($this->aesCrypt->getTag()));
+        }
+
         return (new Cookie(static::COOKIE))
             ->setExpire($this->getExpiresAt())
             ->setHttpOnly(true)
-            ->setValue(implode('|', [
-                $this->encryptedPassword,
-                base64_encode($this->aesCrypt->getTag()),
-                base64_encode($this->aesCrypt->getIV()),
-            ]));
+            ->setValue(implode('|', $values));
     }
 
     /**
@@ -218,7 +237,7 @@ class RememberMe
     public function persist($iv = null)
     {
         if ($iv) {
-            $this->remove($iv);
+            $this->remove(bin2hex($iv));
         }
 
         $this->getDb()->insert(static::TABLE, [
@@ -244,7 +263,7 @@ class RememberMe
     public function remove($iv)
     {
         $this->getDb()->delete(static::TABLE, [
-            'random_iv = ?' => bin2hex($iv)
+            'random_iv = ?' => $iv
         ]);
 
         return $this;
@@ -261,24 +280,6 @@ class RememberMe
             $this->username,
             $this->aesCrypt->decryptFromBase64($this->encryptedPassword)
         );
-    }
-
-    /**
-     * Remove specific remember me information from the database
-     *
-     * @param string $username
-     *
-     * @param $iv
-     *
-     * @return $this
-     */
-    public function removeSpecific($iv)
-    {
-        $this->getDb()->delete(static::TABLE, [
-            'random_iv = ?' => $iv
-        ]);
-
-        return $this;
     }
 
     /**
