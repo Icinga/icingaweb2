@@ -66,6 +66,13 @@
         _this.cleanupPickers(containerId);
 
         $.each(inputs, function () {
+            if (this.type !== 'text') {
+                // Ignore native inputs. Browser widgets are (mostly) superior.
+                // TODO: This makes the type distinction below useless.
+                //       Refactor this once we decided how we continue here in the future.
+                return;
+            }
+
             var server_format = _this.server_full_format;
             if (this.type === 'date') {
                 server_format = _this.server_date_format;
