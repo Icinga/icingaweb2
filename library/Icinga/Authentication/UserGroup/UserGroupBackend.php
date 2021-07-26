@@ -164,8 +164,13 @@ class UserGroupBackend
                 $name
             );
         }
-        $resource = ResourceFactory::create($backendConfig->resource);
 
+        $resourceConfig = ResourceFactory::getResourceConfig($backendConfig->resource);
+        if ($backendType === 'db') {
+            $resourceConfig->charset = 'utf8';
+        }
+
+        $resource = ResourceFactory::createResource($resourceConfig);
         switch ($backendType) {
             case 'db':
                 $backend = new DbUserGroupBackend($resource);

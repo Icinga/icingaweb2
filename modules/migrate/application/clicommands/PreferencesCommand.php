@@ -35,7 +35,9 @@ class PreferencesCommand extends Command
             $resource = $this->params->getRequired('resource');
         }
 
-        $connection = ResourceFactory::create($resource);
+        $resourceConfig = ResourceFactory::getResourceConfig($resource);
+        $resourceConfig->charset = 'utf8';
+        $connection = ResourceFactory::createResource($resourceConfig);
 
         $preferencesPath = Config::resolvePath('preferences');
         if (! file_exists($preferencesPath)) {
