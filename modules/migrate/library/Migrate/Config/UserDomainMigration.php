@@ -206,8 +206,11 @@ class UserDomainMigration
 
                 break;
             case 'db':
+                $resourceConfig = ResourceFactory::getResourceConfig($config->get('global', 'config_resource'));
+                $resourceConfig->charset = 'utf8';
+
                 /** @var DbConnection $conn */
-                $conn = ResourceFactory::create($config->get('global', 'config_resource'));
+                $conn = ResourceFactory::createResource($resourceConfig);
 
                 $query = $conn
                     ->select()
@@ -288,8 +291,11 @@ class UserDomainMigration
                 continue;
             }
 
+            $resourceConfig = ResourceFactory::getResourceConfig($config->resource);
+            $resourceConfig->charset = 'utf8';
+
             /** @var DbConnection $conn */
-            $conn = ResourceFactory::create($config->resource);
+            $conn = ResourceFactory::createResource($resourceConfig);
 
             $query = $conn
                 ->select()
@@ -336,8 +342,11 @@ class UserDomainMigration
                 continue;
             }
 
+            $resourceConfig = ResourceFactory::getResourceConfig($config->resource);
+            $resourceConfig->charset = 'utf8';
+
             /** @var DbConnection $conn */
-            $conn = ResourceFactory::create($config->resource);
+            $conn = ResourceFactory::createResource($resourceConfig);
 
             $query = $conn
                 ->select()
