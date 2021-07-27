@@ -26,7 +26,8 @@ class PreferencesCommand extends Command
      *
      * OPTIONS:
      *
-     *  --resource=<resource-name>  The resource to use. If not given, the current database config backend is used.
+     *  --resource=<resource-name>  The resource to use, if no current database config backend is configured.
+     *  --no-set-config-backend     Do not set the given resource as config backend automatically
      */
     public function indexAction()
     {
@@ -80,8 +81,22 @@ class PreferencesCommand extends Command
         if ($rc > 0) {
             Logger::error('Failed to migrate some user preferences');
             exit($rc);
-        } else {
-            Logger::info('Successfully migrated all local user preferences to database');
         }
+
+        if ($this->params->has('resource') && ! $this->params->has('no-set-config-backend')) {
+            $appConfig = Config::app();
+            $globalConfig = $appConfig->getSection('global');
+            $globalConfig['config_backend'] = 'db';
+            $globalConfig['config_resource'] = $resource;
+
+            try {
+                $appConfig->saveIni();
+            } catch (NotWritableError $e) {
+                Logger::error('Failed to update general configuration: %s', $e->getMessage());
+                exit(256);
+            }
+        }
+
+        Logger::info('Successfully migrated all local user preferences to database');
     }
 }
