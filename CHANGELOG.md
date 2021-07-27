@@ -4,6 +4,10 @@ Please make sure to always read our [Upgrading](doc/80-Upgrading.md) documentati
 
 ## What's New
 
+### What's New in Version 2.7.6
+
+This release only contains a single fix for flattened custom variables. [#4439](https://github.com/Icinga/icingaweb2/issues/4439)
+
 ### What's New in Version 2.7.5
 
 **Notice**: This is a security release. It is recommended to upgrade to this release if you don't plan to upgrade to v2.9.0.
