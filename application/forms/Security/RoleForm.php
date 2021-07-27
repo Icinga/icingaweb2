@@ -332,14 +332,23 @@ class RoleForm extends RepositoryForm
             }
 
             foreach ($this->providedPermissions as $moduleName => $permissionList) {
+                $hasFullPerm = false;
                 foreach ($permissionList as $name => $spec) {
                     if (in_array($name, $permissions, true)) {
                         $values[$this->filterName($name)] = 1;
+
+                        if (isset($spec['isFullPerm'])) {
+                            $hasFullPerm = true;
+                        }
                     }
 
                     if (in_array($name, $refusals, true)) {
                         $values[$this->filterName(self::DENY_PREFIX . $name)] = 1;
                     }
+                }
+
+                if ($hasFullPerm) {
+                    unset($values[$this->filterName(Manager::MODULE_PERMISSION_NS . $moduleName)]);
                 }
             }
         }
@@ -376,10 +385,15 @@ class RoleForm extends RepositoryForm
 
         $refusals = [];
         foreach ($this->providedPermissions as $moduleName => $permissionList) {
+            $hasFullPerm = false;
             foreach ($permissionList as $name => $spec) {
                 $elementName = $this->filterName($name);
                 if (isset($values[$elementName]) && $values[$elementName]) {
                     $permissions[] = $name;
+
+                    if (isset($spec['isFullPerm'])) {
+                        $hasFullPerm = true;
+                    }
                 }
 
                 $denyName = $this->filterName(self::DENY_PREFIX . $name);
@@ -388,6 +402,11 @@ class RoleForm extends RepositoryForm
                 }
 
                 unset($values[$elementName], $values[$denyName]);
+            }
+
+            $modulePermission = Manager::MODULE_PERMISSION_NS . $moduleName;
+            if ($hasFullPerm && ! in_array($modulePermission, $permissions, true)) {
+                $permissions[] = $modulePermission;
             }
         }
 
