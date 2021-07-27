@@ -4,6 +4,47 @@ Please make sure to always read our [Upgrading](doc/80-Upgrading.md) documentati
 
 ## What's New
 
+### What's New in Version 2.9.1
+
+You can find all issues related to this release on our [Roadmap](https://github.com/Icinga/icingaweb2/milestone/64?closed=1).
+
+Please make sure to also check the respective [upgrading section](https://icinga.com/docs/icinga-web-2/latest/doc/80-Upgrading/#upgrading-to-icinga-web-2-291)
+in the documentation.
+
+This release is accompanied by the minor releases v2.7.6 and v2.8.4 which include the fix for the flattened custom variables.
+
+#### Pancakes everywhere
+
+One of the security fixes included in v2.7.5, v2.8.3 and v2.9.0 went rampant and let you see similarities between custom
+variables and pancakes. These are gone now. Also, the login allowed some users to bake pancakes on their CPUs. However,
+we'd still recommend not to. What we do recommend, is to use graphical details to ease recognition. A pancake 🥞 in
+performance data labels for example.
+
+* Nested custom variables are flattened [#4439](https://github.com/Icinga/icingaweb2/issues/4439)
+* Disable login orb animation and all orbs for themes [#4468](https://github.com/Icinga/icingaweb2/pull/4468)
+* SVG chart library doesn't process input as UTF-8 [#4462](https://github.com/Icinga/icingaweb2/issues/4462)
+
+#### Staying remembered too difficult
+
+We all have sometimes difficulties remembering people we rarely meet. Especially obvious is this on those that slip
+through because they don't do the same things we do. With v2.9.0 this has happened for PostgreSQL, PHP v5.6-v7.0 and
+setup wizard users. Now they get their deserved attention, and Icinga Web 2 will remember them just like all others.
+
+* RememberMe not working with only PostgreSQL [#4441](https://github.com/Icinga/icingaweb2/issues/4441)
+* RememberMe compatibility with php version 5.6+ [#4472](https://github.com/Icinga/icingaweb2/pull/4472)
+* RememberMe fails after running the wizard for grants [#4434](https://github.com/Icinga/icingaweb2/issues/4434)
+
+#### Being picky pays off
+
+A custom datetime picker was introduced with v2.9.0. It had it's issues, but we didn't anticipate that much headwind.
+After careful reconsideration, we chose to only show the custom datetime picker for Firefox and IE users. Other browsers
+have their own capable enough native implementation which, in Chrome's case, may even be superior. If it is now used,
+it also closes automatically and doesn't swallow unrelated key presses.
+
+* Datetimepicker not usable by keyboard [#4442](https://github.com/Icinga/icingaweb2/issues/4442)
+* Close the datepicker automatically [#4461](https://github.com/Icinga/icingaweb2/issues/4461)
+* Paragraphs in Acknowledge/Downtime not possible [#4443](https://github.com/Icinga/icingaweb2/issues/4443)
+
 ### What's New in Version 2.9.0
 
 You can find all issues related to this release on our [Roadmap](https://github.com/Icinga/icingaweb2/milestone/59?closed=1).
