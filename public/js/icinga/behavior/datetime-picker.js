@@ -188,6 +188,8 @@
                 return require('icinga/icinga-php-library/vendor/flatpickr/l10n/es').Spanish;
             case 'fi':
                 return require('icinga/icinga-php-library/vendor/flatpickr/l10n/fi').Finnish;
+            case 'fr':
+                return require('icinga/icinga-php-library/vendor/flatpickr/l10n/fr').French;
             case 'it':
                 return require('icinga/icinga-php-library/vendor/flatpickr/l10n/it').Italian;
             case 'ja':
