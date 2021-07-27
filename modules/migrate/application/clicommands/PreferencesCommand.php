@@ -26,7 +26,7 @@ class PreferencesCommand extends Command
      *
      * OPTIONS:
      *
-     *  --resource=<resource-name>  The resource to use. If not given, the current database config backend is used.
+     *  --resource=<resource-name>  The resource to use, if no current database config backend is configured.
      */
     public function indexAction()
     {
