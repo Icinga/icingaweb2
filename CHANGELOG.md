@@ -4,6 +4,11 @@ Please make sure to always read our [Upgrading](doc/80-Upgrading.md) documentati
 
 ## What's New
 
+### What's New in Version 2.9.2
+
+This is a hotfix release. v2.9.1 included a change that wasn't compatible with PostgreSQL again. This has been fixed
+in this release. (#4490)
+
 ### What's New in Version 2.9.1
 
 You can find all issues related to this release on our [Roadmap](https://github.com/Icinga/icingaweb2/milestone/64?closed=1).
