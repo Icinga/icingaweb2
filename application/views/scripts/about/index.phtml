@@ -1,25 +1,140 @@
+<?php
+
+use ipl\Html\HtmlElement;
+use ipl\Web\Widget\Icon;
+
+?>
 <div class="controls">
     <?= $tabs ?>
 </div>
-<div id="about" class="content content-centered">
-    <?= $this->img('img/icinga-logo-big.svg', null, array('class' => 'icinga-logo', 'width' => 320)) ?>
-    <dl class="name-value-list">
-    <?php if (isset($version['appVersion'])): ?>
-        <dt><?= $this->translate('Icinga Web 2 Version') ?></dt>
-        <dd><?= $this->escape($version['appVersion']) ?></dd>
-    <?php endif ?>
-    <?php if (isset($version['gitCommitID'])): ?>
-        <dt><?= $this->translate('Git commit') ?></dt>
-        <dd><?= $this->escape($version['gitCommitID']) ?></dd>
-    <?php endif ?>
-        <dt><?= $this->translate('PHP Version') ?></dt>
-        <dd><?= $this->escape(PHP_VERSION) ?></dd>
-    <?php if (isset($version['gitCommitDate'])): ?>
-        <dt><?= $this->translate('Git commit date') ?></dt>
-        <dd><?= $this->escape($version['gitCommitDate']) ?></dd>
-    <?php endif ?>
-        <dt><?= $this->translate('Copyright') ?></dt>
-        <dd>
+<div id="about" class="content">
+
+    <?= $this->img('img/icinga-logo-big.svg', null, array('class' => 'icinga-logo', 'width' => 194)) ?>
+
+    <section>
+        <table class="name-value-table">
+        <?php if (isset($version['appVersion'])): ?>
+            <tr>
+                <th><?= $this->translate('Icinga Web 2 Version') ?></th>
+                <td><?= $this->escape($version['appVersion']) ?></td>
+            </tr>
+        <?php endif ?>
+        <?php if (isset($version['gitCommitID'])): ?>
+            <tr>
+                <th><?= $this->translate('Git commit') ?></th>
+                <td><?= $this->escape($version['gitCommitID']) ?></td>
+            </tr>
+        <?php endif ?>
+            <tr>
+                <th><?= $this->translate('PHP Version') ?></th>
+                <td><?= $this->escape(PHP_VERSION) ?></td>
+            </tr>
+        <?php if (isset($version['gitCommitDate'])): ?>
+            <tr>
+                <th><?= $this->translate('Git commit date') ?></th>
+                <td><?= $this->escape($version['gitCommitDate']) ?></td>
+            </tr>
+        <?php endif ?>
+        </table>
+
+        <div class="external-links">
+            <div class="col">
+            <?=
+                HtmlElement::create('a', [
+                    'href'   => 'https://icinga.com/support/',
+                    'target' => '_blank',
+                    'title'  => $this->translate('Get Icinga Support')
+                ], [
+                        new Icon('life-ring'),
+                        $this->translate('Get Icinga Support'),
+                    ]
+                );
+            ?>
+            </div>
+            <div class="col">
+            <?=
+                HtmlElement::create('a', [
+                        'href' => 'https://icinga.com/community/',
+                        'target'    => '_blank',
+                        'title'     => $this->translate('Icinga Community')
+                    ], [
+                        new Icon('globe-europe'),
+                        $this->translate('Icinga Community'),
+                    ]
+                );
+            ?>
+            </div>
+            <div class="col">
+            <?=
+                HtmlElement::create('a', [
+                    'href'   => 'https://github.com/icinga/icingaweb2/issues',
+                    'target' => '_blank',
+                    'title'  => $this->translate('Icinga Community')
+                ], [
+                        new Icon('bullhorn'),
+                        $this->translate('Report a bug'),
+                    ]
+                );
+            ?>
+            </div>
+            <div class="col">
+            <?=
+                HtmlElement::create('a', [
+                    'href'   => 'https://github.com/icinga/icingaweb2/issues',
+                    'target'    => '_blank',
+                    'title'     => $this->translate('Icinga Documentation')
+                ], [
+                        new Icon('book'),
+                        $this->translate('Icinga Documentation'),
+                    ]
+                );
+            ?>
+            </div>
+        </div>
+
+        <h2><?= $this->translate('Loaded Libraries') ?></h2>
+        <table class="name-value-table" data-base-target="_next">
+        <?php foreach ($libraries as $library): ?>
+            <tr>
+                <th>
+                    <?= $this->escape($library->getName()) ?>
+                </th>
+                <td>
+                    <?= $this->escape($library->getVersion()) ?: '-' ?>
+                </td>
+            </tr>
+        <?php endforeach ?>
+        </table>
+
+        <h2><?= $this->translate('Loaded Modules') ?></h2>
+        <table class="name-value-table" data-base-target="_next">
+        <?php foreach ($modules as $module): ?>
+            <tr>
+                <th>
+                    <?= $this->escape($module->getName()) ?>
+                </th>
+                <td>
+                <td>
+                    <?= $this->escape($module->getVersion()) ?>
+                </td>
+                <td>
+                <?php if ($this->hasPermission('config/modules')): ?>
+                    <?= $this->qlink(
+                        $this->translate('Configure'),
+                        'config/module/',
+                        array('name' => $module->getName()),
+                        array('title' => sprintf($this->translate('Show the overview of the %s module'), $module->getName()))
+                    ) ?>
+                <?php endif ?>
+                </td>
+            </tr>
+        <?php endforeach ?>
+        </table>
+    </section>
+
+    <footer>
+        <div class="about-copyright">
+            <?= $this->translate('Copyright') ?>
             <span>&copy; 2013-<?= date('Y') ?></span>
             <?= $this->qlink(
                 'Icinga GmbH',
@@ -29,118 +144,27 @@
                     'target' => '_blank'
                 )
             ) ?>
-        </dd>
-    </dl>
-    <div class="about-social">
-        <?= $this->qlink(
-            null,
-            'https://www.twitter.com/icinga',
-            null,
-            array(
-                'target'    => '_blank',
-                'icon'      => 'twitter',
-                'title'     => $this->translate('Icinga on Twitter')
-            )
-        ) ?> <?= $this->qlink(
-            null,
-            'https://www.facebook.com/icinga',
-            null,
-            array(
-                'target'    => '_blank',
-                'icon'      => 'facebook-squared',
-                'title'     => $this->translate('Icinga on Facebook')
-            )
-        ) ?>
-    </div>
-    <div class="about-links">
-    <?= $this->qlink(
-        null,
-        'https://github.com/icinga/icingaweb2/issues',
-        null,
-        array(
-            'target'    => '_blank',
-            'icon'       => 'bug',
-            'title'     => $this->translate('Report a bug')
-        )
-    ) ?>
-    <?= $this->qlink(
-        null,
-        'https://icinga.com/support/',
-        null,
-        array(
-            'target'    => '_blank',
-            'icon'       => 'chat-empty',
-            'title'     => $this->translate('Support')
-        )
-    ) ?>
-        <?= $this->qlink(
-            null,
-            'https://icinga.com/community/',
-            null,
-            array(
-                'target'    => '_blank',
-                'icon'       => 'lightbulb',
-                'title'     => $this->translate('Icinga Community')
-            )
-        ) ?>
-        <?= $this->qlink(
-            null,
-            'https://docs.icinga.com/',
-            null,
-            array(
-                'target'    => '_blank',
-                'icon'       => 'doc-text',
-                'title'     => $this->translate('Icinga Documentation')
-            )
-        ) ?>
-    </div>
-    <h2><?= $this->translate('Loaded Libraries') ?></h2>
-    <table class="table-row-selectable common-table" data-base-target="_next">
-        <thead>
-            <tr>
-                <th><?= $this->translate('Name') ?></th>
-                <th><?= $this->translate('Version') ?></th>
-            </tr>
-        </thead>
-        <tbody>
-        <?php foreach ($libraries as $library): ?>
-            <tr>
-                <td>
-                    <?= $this->escape($library->getName()) ?>
-                <td>
-                    <?= $this->escape($library->getVersion()) ?: '-' ?>
-                </td>
-            </tr>
-        <?php endforeach ?>
-        </tbody>
-    </table>
-    <h2><?= $this->translate('Loaded Modules') ?></h2>
-    <table class="table-row-selectable common-table" data-base-target="_next">
-    <thead>
-        <tr>
-            <th><?= $this->translate('Name') ?></th>
-            <th><?= $this->translate('Version') ?></th>
-        </tr>
-    </thead>
-    <tbody>
-<?php foreach ($modules as $module): ?>
-    <tr>
-        <td>
-        <?php if ($this->hasPermission('config/modules')): ?>
+        </div>
+        <div class="about-social">
             <?= $this->qlink(
-                $module->getName(),
-                'config/module/',
-                array('name' => $module->getName()),
-                array('title' => sprintf($this->translate('Show the overview of the %s module'), $module->getName()))
+                null,
+                'https://www.twitter.com/icinga',
+                null,
+                array(
+                    'target'    => '_blank',
+                    'icon'      => 'twitter',
+                    'title'     => $this->translate('Icinga on Twitter')
+                )
+            ) ?> <?= $this->qlink(
+                null,
+                'https://www.facebook.com/icinga',
+                null,
+                array(
+                    'target'    => '_blank',
+                    'icon'      => 'facebook-squared',
+                    'title'     => $this->translate('Icinga on Facebook')
+                )
             ) ?>
-        <?php else: ?>
-            <?= $this->escape($module->getName()) ?>
-        <?php endif ?>
-        <td>
-            <?= $this->escape($module->getVersion()) ?>
-        </td>
-    </tr>
-<?php endforeach ?>
-    </tbody>
-    </table>
+        </div>
+    </footer>
 </div>
