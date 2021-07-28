@@ -207,7 +207,9 @@ class UserDomainMigration
                 break;
             case 'db':
                 $resourceConfig = ResourceFactory::getResourceConfig($config->get('global', 'config_resource'));
-                $resourceConfig->charset = 'utf8';
+                if ($resourceConfig->db === 'mysql') {
+                    $resourceConfig->charset = 'utf8';
+                }
 
                 /** @var DbConnection $conn */
                 $conn = ResourceFactory::createResource($resourceConfig);
@@ -292,7 +294,9 @@ class UserDomainMigration
             }
 
             $resourceConfig = ResourceFactory::getResourceConfig($config->resource);
-            $resourceConfig->charset = 'utf8';
+            if ($resourceConfig->db === 'mysql') {
+                $resourceConfig->charset = 'utf8';
+            }
 
             /** @var DbConnection $conn */
             $conn = ResourceFactory::createResource($resourceConfig);
@@ -343,7 +347,9 @@ class UserDomainMigration
             }
 
             $resourceConfig = ResourceFactory::getResourceConfig($config->resource);
-            $resourceConfig->charset = 'utf8';
+            if ($resourceConfig->db === 'mysql') {
+                $resourceConfig->charset = 'utf8';
+            }
 
             /** @var DbConnection $conn */
             $conn = ResourceFactory::createResource($resourceConfig);
