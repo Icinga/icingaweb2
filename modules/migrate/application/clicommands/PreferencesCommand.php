@@ -37,7 +37,10 @@ class PreferencesCommand extends Command
         }
 
         $resourceConfig = ResourceFactory::getResourceConfig($resource);
-        $resourceConfig->charset = 'utf8';
+        if ($resourceConfig->db === 'mysql') {
+            $resourceConfig->charset = 'utf8';
+        }
+
         $connection = ResourceFactory::createResource($resourceConfig);
 
         $preferencesPath = Config::resolvePath('preferences');
