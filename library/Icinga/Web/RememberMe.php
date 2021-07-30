@@ -97,7 +97,7 @@ class RememberMe
 
             if (empty($data)) {
                 $rememberMe->aesCrypt = (new AesCrypt())
-                    ->setMethod('AES-128-CBC')
+                    ->setMethod('aes-128-cbc')
                     ->setKey(hex2bin($rs->passphrase))
                     ->setIV($iv);
 

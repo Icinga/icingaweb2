@@ -51,14 +51,14 @@ class AesCrypt
     private $tag;
 
     /** @var string The cipher method */
-    private $method = 'AES-128-GCM';
+    private $method = 'aes-128-gcm';
 
     const GCM_SUPPORT_VERSION = '7.1';
 
     public function __construct($random_bytes_len = 128)
     {
         if (version_compare(PHP_VERSION, self::GCM_SUPPORT_VERSION, '<')) {
-            $this->method = 'AES-128-CBC';
+            $this->method = 'aes-128-cbc';
         }
 
         $this->key = random_bytes($random_bytes_len);
@@ -121,7 +121,6 @@ class AesCrypt
      *
      * @return string
      *
-     * @throws RuntimeException If the IV is not set
      */
     public function getIV()
     {
@@ -179,7 +178,7 @@ class AesCrypt
      */
     public function decrypt($data)
     {
-        if ($this->method === 'AES-128-CBC') {
+        if ($this->method === 'aes-128-cbc') {
             return $this->decryptCBC($data);
         }
 
@@ -217,7 +216,7 @@ class AesCrypt
      */
     public function encrypt($data)
     {
-        if ($this->method === 'AES-128-CBC') {
+        if ($this->method === 'aes-128-cbc') {
             return $this->encryptCBC($data);
         }
 
