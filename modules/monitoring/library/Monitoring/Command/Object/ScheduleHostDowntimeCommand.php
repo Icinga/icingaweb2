@@ -23,6 +23,9 @@ class ScheduleHostDowntimeCommand extends ScheduleServiceDowntimeCommand
      */
     protected $forAllServices = false;
 
+    /** @var bool Whether to send the all_services API parameter */
+    protected $forAllServicesNative;
+
     /**
      * Set whether to schedule a downtime for all services associated with a particular host
      *
@@ -44,5 +47,29 @@ class ScheduleHostDowntimeCommand extends ScheduleServiceDowntimeCommand
     public function getForAllServices()
     {
         return $this->forAllServices;
+    }
+
+    /**
+     * Get whether to send the all_services API parameter
+     *
+     * @return bool
+     */
+    public function isForAllServicesNative()
+    {
+        return $this->forAllServicesNative;
+    }
+
+    /**
+     * Get whether to send the all_services API parameter
+     *
+     * @param bool $forAllServicesNative
+     *
+     * @return $this
+     */
+    public function setForAllServicesNative($forAllServicesNative = true)
+    {
+        $this->forAllServicesNative = (bool) $forAllServicesNative;
+
+        return $this;
     }
 }

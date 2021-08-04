@@ -3,10 +3,12 @@
 
 namespace Icinga\Module\Monitoring\Command\Renderer;
 
+use Icinga\Module\Monitoring\Backend\MonitoringBackend;
 use Icinga\Module\Monitoring\Command\IcingaApiCommand;
 use Icinga\Module\Monitoring\Command\Instance\ToggleInstanceFeatureCommand;
 use Icinga\Module\Monitoring\Command\Object\AcknowledgeProblemCommand;
 use Icinga\Module\Monitoring\Command\Object\AddCommentCommand;
+use Icinga\Module\Monitoring\Command\Object\ApiScheduleHostDowntimeCommand;
 use Icinga\Module\Monitoring\Command\Object\DeleteCommentCommand;
 use Icinga\Module\Monitoring\Command\Object\DeleteDowntimeCommand;
 use Icinga\Module\Monitoring\Command\Object\ProcessCheckResultCommand;
@@ -156,25 +158,40 @@ class IcingaApiCommandRenderer implements IcingaCommandRendererInterface
             'trigger_name'  => $command->getTriggerId()
         );
         $commandData = $data;
+
         if ($command instanceof PropagateHostDowntimeCommand) {
-            /** @var \Icinga\Module\Monitoring\Command\Object\PropagateHostDowntimeCommand $command */
             $commandData['child_options'] = $command->getTriggered() ? 1 : 2;
+        } elseif ($command instanceof ApiScheduleHostDowntimeCommand) {
+            // We assume that it has previously been verified that the Icinga version is
+            // equal to or greater than 2.11.0
+            $commandData['child_options'] = $command->getChildOptions();
         }
+
+        $allServicesCompat = false;
+        if ($command instanceof ScheduleHostDowntimeCommand) {
+            if ($command->isForAllServicesNative()) {
+                // We assume that it has previously been verified that the Icinga version is
+                // equal to or greater than 2.11.0
+                $commandData['all_services'] = $command->getForAllServices();
+            } else {
+                $allServicesCompat = $command->getForAllServices();
+            }
+        }
+
         $this->applyFilter($commandData, $command->getObject());
         $apiCommand = IcingaApiCommand::create($endpoint, $commandData);
-        if ($command instanceof ScheduleHostDowntimeCommand
-            /** @var \Icinga\Module\Monitoring\Command\Object\ScheduleHostDowntimeCommand $command */
-            && $command->getForAllServices()
-        ) {
-            $commandData = $data + array(
-                'type'          => 'Service',
-                'filter'        => 'host.name == host_name',
-                'filter_vars'   => array(
+
+        if ($allServicesCompat) {
+            $commandData = $data + [
+                'type'        => 'Service',
+                'filter'      => 'host.name == host_name',
+                'filter_vars' => [
                     'host_name' => $command->getObject()->getName()
-                )
-            );
+                ]
+            ];
             $apiCommand->setNext(IcingaApiCommand::create($endpoint, $commandData));
         }
+
         return $apiCommand;
     }
 

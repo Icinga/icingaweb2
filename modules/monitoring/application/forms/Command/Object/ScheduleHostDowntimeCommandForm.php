@@ -6,9 +6,12 @@ namespace Icinga\Module\Monitoring\Forms\Command\Object;
 use DateInterval;
 use DateTime;
 use Icinga\Application\Config;
+use Icinga\Module\Monitoring\Command\Object\ApiScheduleHostDowntimeCommand;
 use Icinga\Module\Monitoring\Command\Object\PropagateHostDowntimeCommand;
 use Icinga\Module\Monitoring\Command\Object\ScheduleHostDowntimeCommand;
 use Icinga\Module\Monitoring\Command\Object\ScheduleServiceDowntimeCommand;
+use Icinga\Module\Monitoring\Command\Transport\ApiCommandTransport;
+use Icinga\Module\Monitoring\Command\Transport\CommandTransport;
 use Icinga\Web\Notification;
 
 /**
@@ -105,7 +108,37 @@ class ScheduleHostDowntimeCommandForm extends ScheduleServiceDowntimeCommandForm
             return false;
         }
 
+        // Send all_services API parameter if Icinga is equal to or greater than 2.11.0
+        $allServicesNative = version_compare($this->getBackend()->getProgramVersion(), '2.11.0', '>=');
+        // Use ApiScheduleHostDowntimeCommand only when Icinga is equal to or greater than 2.11.0 and
+        // when an API command transport is requested or only API command transports are configured:
+        $useApiDowntime = $allServicesNative;
+        if ($useApiDowntime) {
+            $transport = $this->getTransport($this->getRequest());
+            if ($transport instanceof CommandTransport) {
+                foreach ($transport::getConfig() as $config) {
+                    if (strtolower($config->transport) !== 'api') {
+                        $useApiDowntime = false;
+                        break;
+                    }
+                }
+            } elseif (! $transport instanceof ApiCommandTransport) {
+                $useApiDowntime = false;
+            }
+        }
+
         foreach ($this->objects as $object) {
+            if ($useApiDowntime) {
+                $hostDowntime = (new ApiScheduleHostDowntimeCommand())
+                    ->setForAllServices($this->getElement('all_services')->isChecked())
+                    ->setChildOptions((int) $this->getElement('child_hosts')->getValue());
+                // Code duplicated for readability and scope
+                $hostDowntime->setObject($object);
+                $this->scheduleDowntime($hostDowntime, $this->request);
+
+                continue;
+            }
+
             /** @var \Icinga\Module\Monitoring\Object\Host $object */
             if (($childHostsEl = $this->getElement('child_hosts')) !== null) {
                 $childHosts = (int) $childHostsEl->getValue();
@@ -114,7 +147,8 @@ class ScheduleHostDowntimeCommandForm extends ScheduleServiceDowntimeCommandForm
             }
             $allServices = $this->getElement('all_services')->isChecked();
             if ($childHosts === 0) {
-                $hostDowntime = new ScheduleHostDowntimeCommand();
+                $hostDowntime = (new ScheduleHostDowntimeCommand())
+                    ->setForAllServicesNative($allServicesNative);
                 if ($allServices === true) {
                     $hostDowntime->setForAllServices();
                 };
