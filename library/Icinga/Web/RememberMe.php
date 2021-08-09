@@ -50,12 +50,18 @@ class RememberMe
     }
 
     /**
-     * Unset the remember me cookie from PHP's `$_COOKIE` superglobal and return the invalidation cookie
+     * Remove the database entry if exists and unset the remember me cookie from PHP's `$_COOKIE` superglobal
      *
-     * @return Cookie Cookie which has to be sent to client in oder to remove the remember me cookie
+     * @return Cookie The invalidation cookie which has to be sent to client in oder to remove the remember me cookie
      */
     public static function forget()
     {
+        if (self::hasCookie()) {
+            $data = explode('|', $_COOKIE[static::COOKIE]);
+            $iv = base64_decode(array_pop($data));
+            (new self())->remove(bin2hex($iv));
+        }
+
         unset($_COOKIE[static::COOKIE]);
 
         return (new Cookie(static::COOKIE))
@@ -92,19 +98,15 @@ class RememberMe
             ->setKey(hex2bin($rs->passphrase))
             ->setIV($iv);
 
-        if (version_compare(PHP_VERSION, AesCrypt::GCM_SUPPORT_VERSION, '>=')) {
-            $tag = array_pop($data);
-
-            if (empty($data)) {
-                $rememberMe->aesCrypt = (new AesCrypt())
-                    ->setMethod('AES-128-CBC')
-                    ->setKey(hex2bin($rs->passphrase))
-                    ->setIV($iv);
-
-                $data[0] = $tag; // encryptedPass
-            } else {
-                $rememberMe->aesCrypt->setTag(base64_decode($tag));
-            }
+        if (count($data) > 1) {
+            $rememberMe->aesCrypt->setTag(
+                base64_decode(array_pop($data))
+            );
+        } elseif ($rememberMe->aesCrypt->isAuthenticatedEncryptionRequired()) {
+            throw new RuntimeException(
+                "The given decryption method needs a tag, but is not specified. "
+                . "You have probably updated the PHP version."
+            );
         }
 
         $rememberMe->username = $rs->username;
@@ -125,7 +127,7 @@ class RememberMe
     {
         $aesCrypt = new AesCrypt();
         $rememberMe = new static();
-        $rememberMe->encryptedPassword = $aesCrypt->encryptToBase64($password);
+        $rememberMe->encryptedPassword = $aesCrypt->encrypt($password);
         $rememberMe->username = $username;
         $rememberMe->aesCrypt = $aesCrypt;
 
@@ -159,7 +161,7 @@ class RememberMe
             base64_encode($this->aesCrypt->getIV()),
         ];
 
-        if (version_compare(PHP_VERSION, AesCrypt::GCM_SUPPORT_VERSION, '>=')) {
+        if ($this->aesCrypt->isAuthenticatedEncryptionRequired()) {
             array_splice($values, 1, 0, base64_encode($this->aesCrypt->getTag()));
         }
 
@@ -208,7 +210,6 @@ class RememberMe
      */
     public function authenticate()
     {
-        $password = $this->aesCrypt->decryptFromBase64($this->encryptedPassword);
         $auth = Auth::getInstance();
         $authChain = $auth->getAuthChain();
         $authChain->setSkipExternalBackends(true);
@@ -217,7 +218,11 @@ class RememberMe
             $user->setDomain(Config::app()->get('authentication', 'default_domain'));
         }
 
-        $authenticated = $authChain->authenticate($user, $password);
+        $authenticated = $authChain->authenticate(
+            $user,
+            $this->aesCrypt->decrypt($this->encryptedPassword)
+        );
+
         if ($authenticated) {
             $auth->setAuthenticated($user);
         }
@@ -228,9 +233,9 @@ class RememberMe
     /**
      * Persist the remember me information into the database
      *
-     * Any previous stored information is automatically removed.
+     * To remove any previous stored information, set the iv
      *
-     * @param string|null $iv
+     * @param string|null $iv To remove a specific iv record from the database
      *
      * @return $this
      */
@@ -254,7 +259,7 @@ class RememberMe
     }
 
     /**
-     * Remove remember me information from the database
+     * Remove remember me information from the database on the basis of iv
      *
      * @param string $iv
      *
@@ -278,14 +283,14 @@ class RememberMe
     {
         return static::fromCredentials(
             $this->username,
-            $this->aesCrypt->decryptFromBase64($this->encryptedPassword)
+            $this->aesCrypt->decrypt($this->encryptedPassword)
         );
     }
 
     /**
-     * Get all users using rememberme cookie
+     * Get all users using remember me cookie
      *
-     * @return array
+     * @return array Array of users
      */
     public static function getAllUser()
     {
@@ -303,11 +308,11 @@ class RememberMe
     }
 
     /**
-     * Get all rememberme cookies of the given user
+     * Get all remember me entries from the database of the given user.
      *
      * @param $username
      *
-     * @return array
+     * @return array Array of database entries
      */
     public static function getAllByUsername($username)
     {
@@ -325,7 +330,7 @@ class RememberMe
     }
 
     /**
-     * Get the encrypton/decryption instance
+     * Get the AesCrypt instance
      *
      * @return AesCrypt
      */

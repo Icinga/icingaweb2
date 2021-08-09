@@ -45,15 +45,13 @@ class AuthenticationController extends Controller
 
         if (RememberMe::hasCookie() && $this->hasDb()) {
             $authenticated = false;
-            $iv = null;
             try {
                 $rememberMeOld = RememberMe::fromCookie();
-                $iv = $rememberMeOld->getAesCrypt()->getIv();
                 $authenticated = $rememberMeOld->authenticate();
                 if ($authenticated) {
                     $rememberMe = $rememberMeOld->renew();
                     $this->getResponse()->setCookie($rememberMe->getCookie());
-                    $rememberMe->persist($iv);
+                    $rememberMe->persist($rememberMeOld->getAesCrypt()->getIv());
                 }
             } catch (RuntimeException $e) {
                 Logger::error("Can't authenticate user via remember me cookie: %s", $e->getMessage());
@@ -62,7 +60,6 @@ class AuthenticationController extends Controller
             }
 
             if (! $authenticated) {
-                (new RememberMe())->remove(bin2hex($iv));
                 $this->getResponse()->setCookie(RememberMe::forget());
             }
         }
@@ -110,12 +107,6 @@ class AuthenticationController extends Controller
             $this->getResponse()->setHttpResponseCode(401);
         } else {
             if (RememberMe::hasCookie() && $this->hasDb()) {
-                try {
-                    (new RememberMe())->remove(bin2hex(RememberMe::fromCookie()->getAesCrypt()->getIV()));
-                } catch (RuntimeException $e) {
-                    // pass
-                }
-
                 $this->getResponse()->setCookie(RememberMe::forget());
             }
 

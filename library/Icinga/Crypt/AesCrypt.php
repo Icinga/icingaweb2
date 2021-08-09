@@ -14,7 +14,7 @@ use RuntimeException;
  * ```php
  *
  * // Encryption
- * $encryptedData = new AesCrypt()->encrypt($data); // Accepts a string
+ * $encryptedData = (new AesCrypt())->encrypt($data); // Accepts a string
  *
  *
  * // Encrypt and encode to Base64
@@ -23,7 +23,7 @@ use RuntimeException;
  *
  * // Decryption
  * $aesCrypt = (new AesCrypt())
- *          ->setTag($tag)
+ *          ->setTag($tag)  // if exists
  *          ->setIV($iv)
  *          ->setKey($key);
  *
@@ -35,14 +35,24 @@ use RuntimeException;
  *          ->setIV($iv)
  *          ->setKey($key);
  *
- * $decryptedData = $aesCrypt->->decryptFromBase64($data);
+ * $decryptedData = $aesCrypt->decryptFromBase64($data);
  * ```
  *
  */
 class AesCrypt
 {
+    /** @var array The list of cipher methods */
+    const METHODS = [
+        'aes-256-gcm',
+        'aes-256-cbc',
+        'aes-256-ctr'
+    ];
+
     /** @var string The encryption key */
     private $key;
+
+    /** @var int The length of the key */
+    private $keyLength;
 
     /** @var string The initialization vector which is not NULL */
     private $iv;
@@ -51,21 +61,15 @@ class AesCrypt
     private $tag;
 
     /** @var string The cipher method */
-    private $method = 'AES-128-GCM';
+    private $method;
 
-    const GCM_SUPPORT_VERSION = '7.1';
-
-    public function __construct($random_bytes_len = 128)
+    public function __construct($keyLength = 128)
     {
-        if (version_compare(PHP_VERSION, self::GCM_SUPPORT_VERSION, '<')) {
-            $this->method = 'AES-128-CBC';
-        }
-
-        $this->key = random_bytes($random_bytes_len);
+        $this->keyLength = $keyLength;
     }
 
     /**
-     * Force set the method
+     * Set the method
      *
      * @return $this
      */
@@ -74,6 +78,45 @@ class AesCrypt
         $this->method = $method;
 
         return $this;
+    }
+
+    /**
+     * Get the method
+     *
+     * @return string
+     */
+    public function getMethod()
+    {
+        if ($this->method === null) {
+            $this->method = $this->getSupportedMethod();
+        }
+
+        return $this->method;
+    }
+
+    /**
+     * Get supported method
+     *
+     * @return string
+     *
+     * @throws RuntimeException If none of the methods listed in the METHODS array is available
+     */
+    protected function getSupportedMethod()
+    {
+        $availableMethods = openssl_get_cipher_methods();
+        $methods = self::METHODS;
+
+        if (! $this->isAuthenticatedEncryptionSupported()) {
+            unset($methods[0]);
+        }
+
+        foreach ($methods as $method) {
+            if (in_array($method, $availableMethods)) {
+                return $method;
+            }
+        }
+
+        throw new RuntimeException('No supported method found');
     }
 
     /**
@@ -93,12 +136,11 @@ class AesCrypt
      *
      * @return string
      *
-     * @throws RuntimeException If the key is not set
      */
     public function getKey()
     {
         if (empty($this->key)) {
-            throw new RuntimeException('No key set');
+            $this->key = random_bytes($this->keyLength);
         }
 
         return $this->key;
@@ -121,12 +163,11 @@ class AesCrypt
      *
      * @return string
      *
-     * @throws RuntimeException If the IV is not set
      */
     public function getIV()
     {
         if (empty($this->iv)) {
-            $len = openssl_cipher_iv_length($this->method);
+            $len = openssl_cipher_iv_length($this->getMethod());
             $this->iv = random_bytes($len);
         }
 
@@ -137,9 +178,20 @@ class AesCrypt
      * Set the Tag
      *
      * @return $this
+     *
+     * @throws RuntimeException If a tag is available but authenticated encryption (AE) is not supported.
+     *
+     * @throws UnexpectedValueException If tag length is less then 16
      */
     public function setTag($tag)
     {
+        if (! $this->isAuthenticatedEncryptionSupported()) {
+            throw new RuntimeException(sprintf(
+                "The given decryption method is not supported in php version '%s'",
+                PHP_VERSION
+            ));
+        }
+
         if (strlen($tag) !== 16) {
             throw new UnexpectedValueException(sprintf(
                 'expects tag length to be 16, got instead %s',
@@ -169,7 +221,7 @@ class AesCrypt
     }
 
     /**
-     * Decrypt the given data using the key, iv and tag
+     * Decrypt the given string
      *
      * @param string $data
      *
@@ -179,11 +231,11 @@ class AesCrypt
      */
     public function decrypt($data)
     {
-        if ($this->method === 'AES-128-CBC') {
-            return $this->decryptCBC($data);
+        if (! $this->isAuthenticatedEncryptionRequired()) {
+            return $this->nonAEDecrypt($data);
         }
 
-        $decrypt = openssl_decrypt($data, $this->method, $this->getKey(), 0, $this->getIV(), $this->getTag());
+        $decrypt = openssl_decrypt($data, $this->getMethod(), $this->getKey(), 0, $this->getIV(), $this->getTag());
 
         if ($decrypt === false) {
             throw new RuntimeException('Decryption failed');
@@ -193,11 +245,13 @@ class AesCrypt
     }
 
     /**
-     * Decode from Base64 and decrypt the given data using the key, iv and tag
+     * Decode from Base64 and decrypt the given string
      *
      * @param string $data
      *
-     * @return string decrypted data
+     * @return string The base64 decoded and decrypted string
+     *
+     * @deprecated Use decrypt() instead as it also returns a base64 decoded string
      *
      * @throws RuntimeException If decryption fails
      */
@@ -207,21 +261,21 @@ class AesCrypt
     }
 
     /**
-     * Encrypt the given data using the key, iv and tag
+     * Encrypt the given string
      *
      * @param string $data
      *
-     * @return string encrypted data
+     * @return string encrypted string
      *
      * @throws RuntimeException If decryption fails
      */
     public function encrypt($data)
     {
-        if ($this->method === 'AES-128-CBC') {
-            return $this->encryptCBC($data);
+        if (! $this->isAuthenticatedEncryptionRequired()) {
+            return $this->nonAEEncrypt($data);
         }
 
-        $encrypt = openssl_encrypt($data, $this->method, $this->getkey(), 0, $this->getIV(), $this->tag);
+        $encrypt = openssl_encrypt($data, $this->getMethod(), $this->getKey(), 0, $this->getIV(), $this->tag);
 
         if ($encrypt === false) {
             throw new RuntimeException('Encryption failed');
@@ -231,11 +285,13 @@ class AesCrypt
     }
 
     /**
-     * Encrypt the given string using the the key, iv, tag and encode to Base64
+     * Encrypt the given string and encode to Base64
      *
      * @param string $data
      *
-     * @return string encrypted and encoded to Base64 data
+     * @return string encrypted and base64 encoded string
+     *
+     * @deprecated Use encrypt() instead as it also returns a base64 encoded string
      *
      * @throws RuntimeException If encryption fails
      */
@@ -244,18 +300,23 @@ class AesCrypt
         return base64_encode($this->encrypt($data));
     }
 
-    private function decryptCBC($data)
+    /**
+     * Decrypt the given string with non Authenticated encryption (AE) cipher method
+     *
+     * @param string $data
+     *
+     * @return string decrypted string
+     *
+     * @throws RuntimeException If decryption fails
+     */
+    private function nonAEDecrypt($data)
     {
-        if (strlen($this->getIV()) !== 16) {
-            throw new RuntimeException('Decryption failed');
-        }
-
         $c = base64_decode($data);
         $hmac = substr($c, 0, 32);
         $data = substr($c, 32);
 
-        $decrypt = openssl_decrypt($data, $this->method, $this->getKey(), 0, $this->getIV());
-        $calcHmac = hash_hmac('sha256', $data, $this->getKey(), true);
+        $decrypt = openssl_decrypt($data, $this->getMethod(), $this->getKey(), 0, $this->getIV());
+        $calcHmac = hash_hmac('sha256', $this->getIV() . $data, $this->getKey(), true);
 
         if ($decrypt === false || ! hash_equals($hmac, $calcHmac)) {
             throw new RuntimeException('Decryption failed');
@@ -264,16 +325,45 @@ class AesCrypt
         return $decrypt;
     }
 
-    private function encryptCBC($data)
+    /**
+     * Encrypt the given string with non Authenticated encryption (AE) cipher method
+     *
+     * @param string $data
+     *
+     * @return string encrypted string
+     *
+     * @throws RuntimeException If encryption fails
+     */
+    private function nonAEEncrypt($data)
     {
-        $encrypt = openssl_encrypt($data, $this->method, $this->getkey(), 0, $this->getIV());
+        $encrypt = openssl_encrypt($data, $this->getMethod(), $this->getKey(), 0, $this->getIV());
 
         if ($encrypt === false) {
             throw new RuntimeException('Encryption failed');
         }
 
-        $hmac = hash_hmac('sha256', $encrypt, $this->getkey(), true);
+        $hmac = hash_hmac('sha256', $this->getIV() . $encrypt, $this->getKey(), true);
 
         return base64_encode($hmac . $encrypt);
+    }
+
+    /**
+     * Whether the Authenticated encryption (a tag) is required
+     *
+     * @return bool True if required false otherwise
+     */
+    public function isAuthenticatedEncryptionRequired()
+    {
+        return $this->getMethod() === 'aes-256-gcm';
+    }
+
+    /**
+     * Whether the php version supports Authenticated encryption (AE) or not
+     *
+     * @return bool True if supported false otherwise
+     */
+    public function isAuthenticatedEncryptionSupported()
+    {
+        return PHP_VERSION_ID >= 70100;
     }
 }
