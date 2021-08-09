@@ -4,6 +4,33 @@ Please make sure to always read our [Upgrading](doc/80-Upgrading.md) documentati
 
 ## What's New
 
+### What's New in Version 2.9.3
+
+You can also find the issues related to this release on our [Roadmap](https://github.com/Icinga/icingaweb2/milestone/66?closed=1).
+
+#### Staying remembered on RHEL/CentOS 7 now possible
+
+RHEL/CentOS 7 still relies on OpenSSL v1.0.2 by default. A change in v2.9.1 resulted in an error in combination with
+this when ticking `Stay Logged In` during authentication. Staying logged in now works fine also on this platform.
+
+* Stay Logged In - Unknown cipher algorithm [#4493](https://github.com/Icinga/icingaweb2/issues/4493)
+
+#### Missing icons with SLES/OpenSUSE 15
+
+If you're running Icinga Web 2 Version 2.9.x on a SLES/OpenSUSE 15.x, you may have noticed some missing icons in the UI.
+This is due to a missing PHP extension `fileinfo`. By upgrading to this release using packages, this dependency will now
+be installed automatically.
+
+* Missing fileinfo php extension on SLES/OpenSUSE 15+ [#4503](https://github.com/Icinga/icingaweb2/issues/4503)
+
+#### Child downtimes for services are now removed automatically
+
+With Icinga v2.13, Icinga Web 2 will now make sure that service downtimes that were created automatically are also
+removed automatically. This will only work for downtimes you create with the `All Services` option after upgrading
+to this release. It will not work for downtimes created with earlier versions of Icinga Web 2.
+
+* If appropriate, set the API parameter all_services for schedule-downtime [#4501](https://github.com/Icinga/icingaweb2/pull/4501)
+
 ### What's New in Version 2.9.2
 
 This is a hotfix release. v2.9.1 included a change that wasn't compatible with PostgreSQL again. This has been fixed
