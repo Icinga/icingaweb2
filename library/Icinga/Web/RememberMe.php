@@ -40,6 +40,28 @@ class RememberMe
     protected $expiresAt;
 
     /**
+     * Get whether staying logged in is possible
+     *
+     * @return bool
+     */
+    public static function isSupported()
+    {
+        $self = new self();
+
+        if (! $self->hasDb()) {
+            return false;
+        }
+
+        try {
+            (new AesCrypt())->getMethod();
+        } catch (RuntimeException $_) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Get whether the remember cookie is set
      *
      * @return bool

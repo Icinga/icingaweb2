@@ -3,8 +3,10 @@
 
 namespace Icinga\Forms\Authentication;
 
+use Exception;
 use Icinga\Application\Config;
 use Icinga\Application\Hook\AuthenticationHook;
+use Icinga\Application\Logger;
 use Icinga\Authentication\Auth;
 use Icinga\Authentication\User\ExternalBackend;
 use Icinga\Common\Database;
@@ -90,10 +92,13 @@ class LoginForm extends Form
                 ]
             ]
         );
-        if (! $this->hasDb()) {
+        if (! RememberMe::isSupported()) {
             $this->getElement('rememberme')
                 ->setAttrib('disabled', true)
-                ->setAttrib('title', "You can't stay logged in without a database configuration backend");
+                ->setDescription($this->translate(
+                    'Staying logged in requires a database configuration backend'
+                    . ' and an appropriate OpenSSL encryption method'
+                ));
         }
 
         $this->addElement(
@@ -137,9 +142,13 @@ class LoginForm extends Form
         if ($authenticated) {
             $auth->setAuthenticated($user);
             if ($this->getElement('rememberme')->isChecked()) {
-                $rememberMe = RememberMe::fromCredentials($user->getUsername(), $password);
-                $this->getResponse()->setCookie($rememberMe->getCookie());
-                $rememberMe->persist();
+                try {
+                    $rememberMe = RememberMe::fromCredentials($user->getUsername(), $password);
+                    $this->getResponse()->setCookie($rememberMe->getCookie());
+                    $rememberMe->persist();
+                } catch (Exception $e) {
+                    Logger::error('Failed to let user "%s" stay logged in: %s', $user->getUsername(), $e);
+                }
             }
 
             // Call provided AuthenticationHook(s) after successful login
