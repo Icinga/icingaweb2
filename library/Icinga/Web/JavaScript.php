@@ -226,7 +226,7 @@ class JavaScript
      */
     public static function optimizeDefine($js, $filePath, $basePath, $packageName)
     {
-        if (! preg_match(self::DEFINE_RE, $js, $match)) {
+        if (! preg_match(self::DEFINE_RE, $js, $match) || strpos($js, 'define.amd') !== false) {
             return $js;
         }
 
@@ -245,12 +245,17 @@ class JavaScript
             $assetName = Json::encode($assetName, JSON_UNESCAPED_SLASHES);
         } catch (JsonDecodeException $_) {
             $assetName = $match[1];
-            Logger::error('Can\'t optimize name of "%s". Are single quotes used instead of double quotes?', $filePath);
+            Logger::debug('Can\'t optimize name of "%s". Are single quotes used instead of double quotes?', $filePath);
         }
 
         try {
             $dependencies = $match[2] ? Json::decode($match[2]) : [];
             foreach ($dependencies as &$dependencyName) {
+                if ($dependencyName === 'exports') {
+                    // exports is a special keyword and doesn't need optimization
+                    continue;
+                }
+
                 if (preg_match('~^((?:\.\.?/)+)*(.*)~', $dependencyName, $natch)) {
                     $dependencyName = join(DIRECTORY_SEPARATOR, array_filter([
                         $packageName,
@@ -266,7 +271,7 @@ class JavaScript
             $dependencies = Json::encode($dependencies, JSON_UNESCAPED_SLASHES);
         } catch (JsonDecodeException $_) {
             $dependencies = $match[2];
-            Logger::error(
+            Logger::debug(
                 'Can\'t optimize dependencies of "%s". Are single quotes used instead of double quotes?',
                 $filePath
             );
