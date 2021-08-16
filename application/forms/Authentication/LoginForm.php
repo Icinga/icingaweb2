@@ -27,7 +27,7 @@ class LoginForm extends Form
     /**
      * Redirect URL
      */
-    const REDIRECT_URL = 'dashboard';
+    const REDIRECT_URL = 'dashboards';
 
     public static $defaultElementDecorators = [
         ['ViewHelper', ['separator' => '']],

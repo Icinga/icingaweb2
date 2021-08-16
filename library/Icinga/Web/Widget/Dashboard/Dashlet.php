@@ -3,9 +3,10 @@
 
 namespace Icinga\Web\Widget\Dashboard;
 
-use Icinga\Web\Url;
-use Icinga\Data\ConfigObject;
-use Icinga\Exception\IcingaException;
+use ipl\Html\BaseHtmlElement;
+use ipl\Html\HtmlElement;
+use ipl\Web\Url;
+use ipl\Web\Widget\Link;
 
 /**
  * A dashboard pane dashlet
@@ -13,15 +14,27 @@ use Icinga\Exception\IcingaException;
  * This is the element displaying a specific view in icinga2web
  *
  */
-class Dashlet extends UserWidget
+class Dashlet extends BaseHtmlElement
 {
+    /** @var string Database table name */
+    const TABLE = 'dashlet';
+
+    protected $tag = 'div';
+
+    protected $defaultAttributes = ['class' => 'container dashlet-sortable'];
+
     /**
      * The url of this Dashlet
      *
-     * @var Url|null
+     * @var Url
      */
     private $url;
 
+    /**
+     * Not translatable name of this dashlet
+     *
+     * @var string
+     */
     private $name;
 
     /**
@@ -31,17 +44,17 @@ class Dashlet extends UserWidget
     private $title;
 
     /**
+     * A user this dashlet belongs to
+     *
+     * @var string
+     */
+    private $owner;
+
+    /**
      * The pane containing this dashlet, needed for the 'remove button'
      * @var Pane
      */
     private $pane;
-
-    /**
-     * The disabled option is used to "delete" default dashlets provided by modules
-     *
-     * @var bool
-     */
-    private $disabled = false;
 
     /**
      * The progress label being used
@@ -51,39 +64,18 @@ class Dashlet extends UserWidget
     private $progressLabel;
 
     /**
-     * The template string used for rendering this widget
+     * Unique identifier of this dashlet
      *
-     * @var string
+     * @var int
      */
-    private $template =<<<'EOD'
-
-    <div class="container" data-icinga-url="{URL}">
-        <h1><a href="{FULL_URL}" aria-label="{TOOLTIP}" title="{TOOLTIP}" data-base-target="col1">{TITLE}</a></h1>
-        <p class="progress-label">{PROGRESS_LABEL}<span>.</span><span>.</span><span>.</span></p>
-        <noscript>
-            <div class="iframe-container">
-                <iframe
-                    src="{IFRAME_URL}"
-                    frameborder="no"
-                    title="{TITLE_PREFIX}{TITLE}">
-                </iframe>
-            </div>
-        </noscript>
-    </div>
-EOD;
+    private $dashletId;
 
     /**
-     * The template string used for rendering this widget in case of an error
+     * The priority order of this dashlet
      *
-     * @var string
+     * @var int
      */
-    private $errorTemplate = <<<'EOD'
-
-    <div class="container">
-        <h1 title="{TOOLTIP}">{TITLE}</h1>
-        <p class="error-message">{ERROR_MESSAGE}</p>
-    </div>
-EOD;
+    private $order;
 
     /**
      * Create a new dashlet displaying the given url in the provided pane
@@ -100,19 +92,55 @@ EOD;
         $this->url = $url;
     }
 
+    /**
+     * Set the identifier of this dashlet
+     *
+     * @param int $id
+     *
+     * @return $this
+     */
+    public function setId($id)
+    {
+        $this->dashletId = $id;
+
+        return $this;
+    }
+
+    /**
+     * Get the unique identifier of this dashlet
+     *
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->dashletId;
+    }
+
+    /**
+     * Set the name of this dashlet
+     *
+     * @param $name
+     *
+     * @return $this
+     */
     public function setName($name)
     {
         $this->name = $name;
         return $this;
     }
 
+    /**
+     * Get the name of this dashlet
+     *
+     * @return string
+     */
     public function getName()
     {
         return $this->name;
     }
 
     /**
-     * Retrieve the dashlets title
+     * Get the title of this dashlet
      *
      * @return string
      */
@@ -122,23 +150,76 @@ EOD;
     }
 
     /**
+     * Set the title of this dashlet
+     *
      * @param string $title
      */
     public function setTitle($title)
     {
         $this->title = $title;
+
+        return $this;
     }
 
     /**
-     * Retrieve the dashlets url
+     * Set the owner of this dashlet
      *
-     * @return Url|null
+     * @param string $user
+     *
+     * @return $this
+     */
+    public function setOwner($user)
+    {
+        $this->owner = $user;
+
+        return $this;
+    }
+
+    /**
+     * Get the owner of this dashlet
+     *
+     * @return string
+     */
+    public function getOwner()
+    {
+        return $this->owner;
+    }
+
+    /**
+     * Get the priority order of this dashlet
+     *
+     * @return int
+     */
+    public function getOrder()
+    {
+        return $this->order;
+    }
+
+    /**
+     * Set the priority order of this dashlet
+     *
+     * @param $order
+     *
+     * @return $this
+     */
+    public function setOrder($order)
+    {
+        $this->order = $order;
+
+        return $this;
+    }
+
+    /**
+     * Get the url of this dashlet
+     *
+     * @return Url
      */
     public function getUrl()
     {
-        if ($this->url !== null && ! $this->url instanceof Url) {
+        if (! $this->url instanceof Url) {
             $this->url = Url::fromPath($this->url);
         }
+
         return $this->url;
     }
 
@@ -152,27 +233,8 @@ EOD;
     public function setUrl($url)
     {
         $this->url = $url;
+
         return $this;
-    }
-
-    /**
-     * Set the disabled property
-     *
-     * @param boolean $disabled
-     */
-    public function setDisabled($disabled)
-    {
-        $this->disabled = $disabled;
-    }
-
-    /**
-     * Get the disabled property
-     *
-     * @return boolean
-     */
-    public function getDisabled()
-    {
-        return $this->disabled;
     }
 
     /**
@@ -185,119 +247,82 @@ EOD;
     public function setProgressLabel($label)
     {
         $this->progressLabel = $label;
+
         return $this;
     }
 
     /**
-     * Return the progress label to use
+     * Get the progress label to use
      *
      * @return  string
      */
     public function getProgressLabe()
     {
         if ($this->progressLabel === null) {
-            return $this->view()->translate('Loading');
+            $this->progressLabel = t('Loading');
         }
 
         return $this->progressLabel;
     }
 
     /**
-     * Return this dashlet's structure as array
+     * Get this dashlet's structure as array
      *
      * @return  array
      */
     public function toArray()
     {
-        $array = array(
+        return [
             'url'   => $this->getUrl()->getRelativeUrl(),
-            'title' => $this->getTitle()
-        );
-        if ($this->getDisabled() === true) {
-            $array['disabled'] = 1;
-        }
-        return $array;
+            'title' => $this->getTitle(),
+            'name'  => $this->getName(),
+            'pane'  => $this->getPane()
+        ];
     }
 
     /**
-     * @see Widget::render()
+     * @inheritDoc
      */
-    public function render()
+    protected function assemble()
     {
-        if ($this->disabled === true) {
-            return '';
-        }
-
-        $view = $this->view();
-
         if (! $this->url) {
-            $searchTokens = array(
-                '{TOOLTIP}',
-                '{TITLE}',
-                '{ERROR_MESSAGE}'
-            );
+            $this->add(HtmlElement::create('h1', null, $this->getTitle()));
+            $this->add(HtmlElement::create(
+                'p',
+                ['class' => 'error-message'],
+                sprintf(t('Cannot create dashboard dashlet "%s" without valid URL'), $this->getTitle())
+            ));
+        } else {
+            $url = $this->getUrl();
+            $url->setParam('showCompact', true);
 
-            $replaceTokens = array(
-                sprintf($view->translate('Show %s', 'dashboard.dashlet.tooltip'), $view->escape($this->getTitle())),
-                $view->escape($this->getTitle()),
-                $view->escape(
-                    sprintf($view->translate('Cannot create dashboard dashlet "%s" without valid URL'), $this->title)
-                )
-            );
+            $this->addAttributes(['data-icinga-url' => $url]);
+            $this->add(new HtmlElement('h1', null, new Link(
+                $this->getTitle(),
+                $url->getUrlWithout(['showCompact', 'limit'])->getRelativeUrl(),
+                [
+                    'aria-label'        => $this->getTitle(),
+                    'title'             => $this->getTitle(),
+                    'data-base-target'  => 'col1'
+                ]
+            )));
 
-            return str_replace($searchTokens, $replaceTokens, $this->errorTemplate);
+            $this->add(HtmlElement::create(
+                'p',
+                ['class' => 'progress-label'],
+                [
+                    $this->getProgressLabe(),
+                    HtmlElement::create('span', null, '.'),
+                    HtmlElement::create('span', null, '.'),
+                    HtmlElement::create('span', null, '.'),
+                ]
+            ));
         }
-
-        $url = $this->getUrl();
-        $url->setParam('showCompact', true);
-        $iframeUrl = clone $url;
-        $iframeUrl->setParam('isIframe');
-
-        $searchTokens = array(
-            '{URL}',
-            '{IFRAME_URL}',
-            '{FULL_URL}',
-            '{TOOLTIP}',
-            '{TITLE}',
-            '{TITLE_PREFIX}',
-            '{PROGRESS_LABEL}'
-        );
-
-        $replaceTokens = array(
-            $url,
-            $iframeUrl,
-            $url->getUrlWithout(array('showCompact', 'limit')),
-            sprintf($view->translate('Show %s', 'dashboard.dashlet.tooltip'), $view->escape($this->getTitle())),
-            $view->escape($this->getTitle()),
-            $view->translate('Dashlet') . ': ',
-            $this->getProgressLabe()
-        );
-
-        return str_replace($searchTokens, $replaceTokens, $this->template);
     }
 
     /**
-     * Create a @see Dashlet instance from the given Zend config, using the provided title
+     * Set the pane of this dashlet
      *
-     * @param $title                The title for this dashlet
-     * @param ConfigObject $config  The configuration defining url, parameters, height, width, etc.
-     * @param Pane $pane            The pane this dashlet belongs to
-     *
-     * @return Dashlet        A newly created Dashlet for use in the Dashboard
-     */
-    public static function fromIni($title, ConfigObject $config, Pane $pane)
-    {
-        $height = null;
-        $width = null;
-        $url = $config->get('url');
-        $parameters = $config->toArray();
-        unset($parameters['url']); // otherwise there's an url = parameter in the Url
-
-        $cmp = new Dashlet($title, Url::fromPath($url, $parameters), $pane);
-        return $cmp;
-    }
-
-    /**
      * @param \Icinga\Web\Widget\Dashboard\Pane $pane
      */
     public function setPane(Pane $pane)
@@ -306,6 +331,8 @@ EOD;
     }
 
     /**
+     * Get the pane this dashlet belongs to
+     *
      * @return \Icinga\Web\Widget\Dashboard\Pane
      */
     public function getPane()

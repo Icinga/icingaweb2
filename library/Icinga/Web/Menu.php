@@ -5,7 +5,9 @@ namespace Icinga\Web;
 
 use Icinga\Application\Logger;
 use Icinga\Authentication\Auth;
+use Icinga\Web\Navigation\DashboardHome;
 use Icinga\Web\Navigation\Navigation;
+use ipl\Sql\Select;
 
 /**
  * Main menu for Icinga Web 2
@@ -19,6 +21,7 @@ class Menu extends Navigation
     {
         $this->init();
         $this->load('menu-item');
+        $this->loadDashboardHomes();
     }
 
     /**
@@ -28,7 +31,7 @@ class Menu extends Navigation
     {
         $this->addItem('dashboard', [
             'label'     => t('Dashboard'),
-            'url'       => 'dashboard',
+            'url'       => DashboardHome::BASE_PATH,
             'icon'      => 'dashboard',
             'priority'  => 10
         ]);
@@ -145,6 +148,36 @@ class Menu extends Navigation
                 'permission'  => 'application/log',
                 'priority'    => 900
             ]));
+        }
+    }
+
+    /**
+     * Load user specific and shared dashboard homes from the db and
+     *
+     * append them as child items to the "dashboard" navigation menu
+     */
+    protected function loadDashboardHomes()
+    {
+        $user = Auth::getInstance()->getUser();
+        $dashboardItem = $this->getItem('dashboard');
+
+        $dashboardHomes = DashboardHome::getConn()->select((new Select())
+            ->columns('*')
+            ->from(DashboardHome::TABLE . ' dh')
+            ->where(['dh.owner = ?' => $user->getUsername()]));
+
+        $priority = 10;
+        foreach ($dashboardHomes as $dashboardHome) {
+            $home = new DashboardHome($dashboardHome->name, [
+                'label'         => t($dashboardHome->label),
+                'priority'      => $priority,
+                'user'          => $user,
+                'owner'         => $dashboardHome->owner,
+                'id'            => $dashboardHome->id,
+            ]);
+
+            $dashboardItem->addChild($home);
+            $priority += 10;
         }
     }
 }
