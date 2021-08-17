@@ -573,7 +573,10 @@ abstract class IdoQuery extends DbQuery
         $column = $subQuery->aliasToColumnName($alias);
         if (isset($this->caseInsensitiveColumns[$subQuery->aliasToTableName($alias)][$alias])) {
             $column = 'LOWER( ' . $column . ' )';
+            $subQueryFilter->setColumn($column);
             $subQueryFilter->setExpression(array_map('strtolower', (array) $subQueryFilter->getExpression()));
+        } else {
+            $subQueryFilter->setColumn($column);
         }
 
         $additional = null;
@@ -653,10 +656,6 @@ abstract class IdoQuery extends DbQuery
         $exists = new FilterExpression($negate ? 'NOT EXISTS' : 'EXISTS', '', new Zend_Db_Expr($subQuery));
 
         if ($additional !== null) {
-            $alias = $additional->getColumn();
-            $this->requireColumn($alias);
-            $additional->setColumn($this->aliasToColumnName($alias));
-
             return Filter::matchAll($exists, $additional);
         }
 
