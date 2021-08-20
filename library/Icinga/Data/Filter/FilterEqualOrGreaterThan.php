@@ -7,6 +7,10 @@ class FilterEqualOrGreaterThan extends FilterExpression
 {
     public function matches($row)
     {
+        if (! isset($row->{$this->column})) {
+            return false;
+        }
+
         return (string) $row->{$this->column} >= (string) $this->expression;
     }
 }
