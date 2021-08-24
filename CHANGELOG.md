@@ -4,6 +4,13 @@ Please make sure to always read our [Upgrading](doc/80-Upgrading.md) documentati
 
 ## What's New
 
+### What's New in Version 2.8.5
+
+This minor release backports two small fixes to the v2.8.x branch:
+
+* Host- and Servicegroups with not only lowercase names are not found in CI searches with PostgreSQL [#4508](https://github.com/Icinga/icingaweb2/issues/4508)
+* Check if the column in the row is set for filters [#4511](https://github.com/Icinga/icingaweb2/pull/4511)
+
 ### What's New in Version 2.8.4
 
 This release only contains a single fix for flattened custom variables. [#4439](https://github.com/Icinga/icingaweb2/issues/4439)
