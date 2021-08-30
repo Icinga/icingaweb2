@@ -260,7 +260,8 @@ class Role
     public function grants($permission, $ignoreParent = false, $cascadeUpwards = true)
     {
         foreach ($this->permissions as $grantedPermission) {
-            if ($this->match($grantedPermission, $permission, $cascadeUpwards)) {
+            if ($this->match($grantedPermission, $permission, $cascadeUpwards)
+                && ! $this->denies($permission)) {
                 return true;
             }
         }
