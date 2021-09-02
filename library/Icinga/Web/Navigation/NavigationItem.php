@@ -602,9 +602,9 @@ class NavigationItem implements IteratorAggregate
     public function setUrl($url)
     {
         if (is_string($url)) {
-            $url = Url::fromPath($this->resolveMacros($url));
+            $url = Url::fromPath($this->expandMacros($url));
         } elseif ($url instanceof Url) {
-            $url = Url::fromPath($this->resolveMacros($url->getAbsoluteUrl()));
+            $url = Url::fromPath($this->expandMacros($url->getAbsoluteUrl()));
         } else {
             throw new InvalidArgumentException('Argument $url must be of type string or Url');
         }
@@ -927,7 +927,7 @@ class NavigationItem implements IteratorAggregate
      *
      * @return  string
      */
-    protected function resolveMacros($url)
+    protected function expandMacros($url)
     {
         if (strpos($url, '$') === false) {
             return $url;
