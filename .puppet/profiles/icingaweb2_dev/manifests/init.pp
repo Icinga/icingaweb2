@@ -42,7 +42,7 @@ class icingaweb2_dev (
     require => Class['icinga_packages'],
   }
 
-  Exec { path => '/usr/local/bin:/usr/bin:/bin' }
+  Exec { path => '/opt/rh/rh-php73/root/bin:/usr/local/bin:/usr/bin:/bin' }
 
   # TODO(el): Enabling/disabling modules should be a resource
   User <| alias == apache |> { groups +> $web_group }
