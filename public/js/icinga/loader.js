@@ -734,9 +734,7 @@
                 });
                 if (moduleName) {
                     // Lazy load module javascript (Applies only to module.js code)
-                    if (_this.icinga.hasModule(moduleName) && ! _this.icinga.isLoadedModule(moduleName)) {
-                        _this.icinga.loadModule(moduleName);
-                    }
+                    _this.icinga.ensureModule(moduleName);
 
                     req.$target.data('icingaModule', moduleName);
                     classes.push('icinga-module');
@@ -1027,10 +1025,8 @@
 
             req.$target.find('.container').each(function () {
                 // Lazy load module javascript (Applies only to module.js code)
-                var moduleName = $(this).data('icingaModule');
-                if (_this.icinga.hasModule(moduleName) && ! _this.icinga.isLoadedModule(moduleName)) {
-                    _this.icinga.loadModule(moduleName);
-                }
+                _this.icinga.ensureModule($(this).data('icingaModule'));
+                _this.icinga.ensureSubModules(this);
 
                 $(this).trigger('rendered', [req.autorefresh, req.scripted, req.autosubmit]);
             });
@@ -1296,6 +1292,8 @@
             }
 
             this.icinga.ui.assignUniqueContainerIds();
+
+            _this.icinga.ensureSubModules($container);
 
             if (! discard && navigationAnchor) {
                 setTimeout(this.icinga.ui.focusElement.bind(this.icinga.ui), 0, navigationAnchor, $container);

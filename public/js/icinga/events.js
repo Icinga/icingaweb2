@@ -40,10 +40,10 @@
                 // Initialize module javascript (Applies only to module.js code)
                 var moduleName = $(this).data('icingaModule');
                 if (moduleName) {
-                    if (_this.icinga.hasModule(moduleName) && ! _this.icinga.isLoadedModule(moduleName)) {
-                        _this.icinga.loadModule(moduleName);
-                    }
+                    _this.icinga.ensureModule(moduleName);
                 }
+
+                _this.icinga.ensureSubModules(this);
             });
 
             // We catch resize events
