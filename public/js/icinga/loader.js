@@ -599,10 +599,12 @@
                 rerenderLayout,
                 autoRefreshInterval,
                 forceFocus,
-                origin;
+                origin,
+                shiftRightColumn;
 
             if (typeof referrer !== 'undefined') {
                 rerenderLayout = referrer.getResponseHeader('X-Icinga-Rerender-Layout');
+                shiftRightColumn = referrer.getResponseHeader('X-Icinga-Shift-RightColumn');
                 autoRefreshInterval = referrer.autoRefreshInterval;
                 forceFocus = referrer.forceFocus;
                 origin = referrer.url;
@@ -643,7 +645,7 @@
                     this.loadUrl(parts.shift(), $('#col2'));
                 } else {
                     if ($target.attr('id') === 'col2') { // TODO: multicol
-                        if ($('#col1').data('icingaUrl').split('?')[0] === url.split('?')[0]) {
+                        if ($('#col1').data('icingaUrl').split('?')[0] === url.split('?')[0] && shiftRightColumn !== 'false') {
                             icinga.ui.layout1col();
                             $target = $('#col1');
                             delete(this.requests['col2']);
