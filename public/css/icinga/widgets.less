@@ -62,10 +62,10 @@
 
 #application-state-summary > div {
   .var(background-color, color-critical);
-  color: #fff;
+  .var(color, text-color-on-icinga-blue);
   line-height: 1.5em;
   padding: 0.5em 1em 0.5em 3em;
-  width: 100%;
+  margin-left: 12em;
 
   position: relative;
 
@@ -74,7 +74,19 @@
     font-family: 'ifont';
 
     position: absolute;
-    left: 1.25em;
+    text-align: center;
+    left: .4em;
+    padding: .5em;
+    width: 3em;
+    top: 0;
+  }
+
+  > section {
+    margin-left: .5em;
+  }
+
+  > form .icon-cancel:before {
+    .var(color, text-color-on-icinga-blue);
   }
 }
 
