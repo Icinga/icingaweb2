@@ -42,6 +42,11 @@
         var $modal = _this.$ghost.clone();
         var $urlTarget = _this.icinga.loader.getLinkTargetFor($a, false);
 
+        _this.modalOpener = event.currentTarget;
+
+        // Disable pointer events to block further function calls
+        _this.modalOpener.style.pointerEvents = 'none';
+
         // Add showCompact, we don't want controls in a modal
         url = _this.icinga.utils.addUrlFlag(url, 'showCompact');
 
@@ -90,6 +95,8 @@
         var _this = event.data.self;
         var $form = $(event.currentTarget).closest('form');
         var $modal = $form.closest('#modal');
+        // otherwise the form is submitted several times by clicking the "Submit" button several times
+        $form.find('input:not(:disabled)').prop('disabled', true);
 
         var req = _this.icinga.loader.submitForm($form, $autoSubmittedBy);
         req.addToHistory = false;
@@ -187,6 +194,10 @@
      * @param $modal {jQuery} The modal element
      */
     Modal.prototype.hide = function($modal) {
+        // Remove pointerEvent none style to make the button clickable again
+        this.modalOpener.style.pointerEvents = '';
+        this.modalOpener = null;
+
         $modal.removeClass('active');
         // Using `setTimeout` here to let the transition finish
         setTimeout(function () {
