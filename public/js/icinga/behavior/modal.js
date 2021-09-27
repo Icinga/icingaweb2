@@ -95,8 +95,6 @@
         var _this = event.data.self;
         var $form = $(event.currentTarget).closest('form');
         var $modal = $form.closest('#modal');
-        // otherwise the form is submitted several times by clicking the "Submit" button several times
-        $form.find('input:not(:disabled)').prop('disabled', true);
 
         var req = _this.icinga.loader.submitForm($form, $autoSubmittedBy);
         req.addToHistory = false;
@@ -106,6 +104,9 @@
                 _this.hide($modal);
             }
         });
+
+        // otherwise the form is submitted several times by clicking the "Submit" button several times
+        $form.find('input:not(:disabled)').prop('disabled', true);
 
         event.stopPropagation();
         event.preventDefault();
