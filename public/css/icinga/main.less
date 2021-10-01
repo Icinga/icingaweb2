@@ -46,6 +46,49 @@
   > *:last-child {
     margin-bottom: 0;
   }
+
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  a {
+    border-bottom: 1px @text-color-light dotted;
+
+    &:hover, &:focus {
+      border-bottom: 1px @text-color solid;
+      text-decoration: none;
+    }
+
+    img {
+      max-width: 32em;
+    }
+
+    &.with-thumbnail {
+      img {
+        padding: 1px;
+      }
+
+      &:hover, &:focus {
+        img {
+          padding: 0;
+        }
+      }
+    }
+  }
+
+  table {
+    border-collapse: collapse;
+
+    th {
+      text-align: left;
+      background-color: @gray-lighter;
+    }
+
+    &, th, td {
+      border: 1px solid @gray-light;
+    }
+  }
 }
 
 .no-wrap {

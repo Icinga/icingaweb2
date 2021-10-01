@@ -28,6 +28,19 @@
   float: right;
 }
 
+.caption {
+  height: 3em;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+
+  img {
+    max-height: 1em;
+  }
+}
+
 // Type information for backends in the monitoring config
 .config-label-meta {
   font-size: @font-size-small;
