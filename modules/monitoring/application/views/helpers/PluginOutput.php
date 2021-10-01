@@ -16,7 +16,6 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
      * @var array
      */
     protected static $txtPatterns = array(
-        '~\\\n\\\n~',
         '~\\\t~',
         '~\\\n~',
         '~(\[|\()OK(\]|\))~',
@@ -34,7 +33,6 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
      * @var array
      */
     protected static $txtReplacements = array(
-        "\n",
         "\t",
         "\n",
         '<span class="state-ok">$1OK$2</span>',
@@ -52,7 +50,6 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
      * @var array
      */
     protected static $htmlPatterns = array(
-        '~\\\n\\\n~',
         '~\\\t~',
         '~\\\n~',
         '~<table~'
@@ -64,7 +61,6 @@ class Zend_View_Helper_PluginOutput extends Zend_View_Helper_Abstract
      * @var array
      */
     protected static $htmlReplacements = array(
-        "\n",
         "\t",
         "\n",
         '<table style="font-size: 0.75em"'
