@@ -69,7 +69,7 @@ class PluginOutputTest extends BaseTestCase
     {
         $this->checkOutput(
             'foo\nbar\n\nraboof',
-            "foo\nbar\nraboof"
+            "foo\nbar\n\nraboof"
         );
     }
 
