@@ -603,7 +603,7 @@
 
             if (typeof referrer !== 'undefined') {
                 rerenderLayout = referrer.getResponseHeader('X-Icinga-Rerender-Layout');
-                autoRefreshInterval = referrer.autoRefreshInterval;
+                autoRefreshInterval = referrer.getResponseHeader('X-Icinga-Refresh');
                 forceFocus = referrer.forceFocus;
                 origin = referrer.url;
             }
