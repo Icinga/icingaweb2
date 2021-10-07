@@ -714,7 +714,9 @@
             }
 
             if (req.getResponseHeader('X-Icinga-Announcements') === 'refresh') {
-                _this.loadUrl(_this.url('/layout/announcements'), $('#announcements'));
+                var announceReq = _this.loadUrl(_this.url('/layout/announcements'), $('#announcements'));
+                announceReq.addToHistory = false;
+                announceReq.scripted = true;
             }
 
             var rendered = false;
