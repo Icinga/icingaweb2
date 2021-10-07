@@ -79,4 +79,4 @@
     } ?>
     </span>
 </div>
-<?= $this->nl2br($this->markdown($comment->comment, isset($textId) ? ['id' => $textId] : null)) ?>
+<?= $this->nl2br($this->markdownLine($comment->comment, isset($textId) ? ['id' => $textId,  'class' => 'caption'] : [ 'class' => 'caption'])) ?>

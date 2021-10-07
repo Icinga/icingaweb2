@@ -23,3 +23,14 @@ $this->addHelperFunction('markdown', function ($content, $containerAttribs = nul
 
     return '<section' . $this->propertiesToString($containerAttribs) . '>' . Markdown::text($content) . '</section>';
 });
+
+$this->addHelperFunction('markdownLine', function ($content, $containerAttribs = null) {
+    if (! isset($containerAttribs['class'])) {
+        $containerAttribs['class'] = 'markdown inline';
+    } else {
+        $containerAttribs['class'] .= ' markdown inline';
+    }
+
+    return '<section' . $this->propertiesToString($containerAttribs) . '>' .
+        Markdown::line($content) . '</section>';
+});

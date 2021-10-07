@@ -39,13 +39,14 @@ if (empty($object->comments) && ! $addLink) {
         echo '<br>' . $addLink;
     }
     ?></th>
-    <td data-base-target="_self">
+    <td data-base-target="_next">
     <?php if (empty($object->comments)):
         echo $addLink;
     else: ?>
         <dl class="comment-list">
         <?php foreach ($object->comments as $comment): ?>
             <dt>
+                <a href="<?=  $this->href('monitoring/comment/show', array('comment_id' => $comment->id)) ?>">
                 <?= $this->escape($comment->author) ?>
                 <span class="comment-time">
                     <?= $this->translate('commented') ?>
@@ -73,9 +74,10 @@ if (empty($object->comments) && ! $addLink) {
                     );
                     echo $deleteButton;
                 } ?>
+                </a>
             </dt>
             <dd>
-                <?= $this->nl2br($this->createTicketLinks($this->markdown($comment->comment))) ?>
+                <?= $this->nl2br($this->createTicketLinks($this->markdownLine($comment->comment, [ 'class' => 'caption']))) ?>
             </dd>
         <?php endforeach ?>
         </dl>
