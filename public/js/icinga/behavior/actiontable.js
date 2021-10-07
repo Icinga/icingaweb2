@@ -425,7 +425,7 @@
         });
 
         // update selection info
-        $('.selection-info-count').text(table.selections().length);
+        $('.selection-info-count').text(count);
         return false;
     };
 
