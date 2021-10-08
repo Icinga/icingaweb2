@@ -221,7 +221,7 @@ class Library
 
             $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator(
                 $dir,
-                RecursiveDirectoryIterator::CURRENT_AS_PATHNAME | RecursiveDirectoryIterator::SKIP_DOTS
+                RecursiveDirectoryIterator::CURRENT_AS_FILEINFO | RecursiveDirectoryIterator::SKIP_DOTS
             ));
             if ($type === 'static') {
                 return $iterator;
@@ -230,7 +230,15 @@ class Library
             return new CallbackFilterIterator(
                 $iterator,
                 function ($path) use ($type) {
-                    return substr($path, -5 - strlen($type)) !== ".min.$type";
+                    if ($type === 'js' && $path->getExtension() === 'js') {
+                        return substr($path->getPathname(), -5 - strlen($type)) !== ".min.$type";
+                    } elseif ($type === 'css'
+                        && ($path->getExtension() === 'css' || $path->getExtension() === 'less')
+                    ) {
+                        return substr($path->getPathname(), -5 - strlen($type)) !== ".min.$type";
+                    }
+
+                    return false;
                 }
             );
         };
