@@ -1,11 +1,5 @@
 /*! Icinga Web 2 | (c) 2015 Icinga Development Team | GPLv2+ */
 
-.box-shadow(@x: 0.2em; @y: 0.2em; @blur: 0.2em; @spread: 0; @color: rgba(83, 83, 83, 0.25)) {
-  -webkit-box-shadow: @arguments;
-     -moz-box-shadow: @arguments;
-          box-shadow: @arguments;
-}
-
 .button(
   @background-color: @body-bg-color,
   @border-font-color: @icinga-blue,
@@ -56,13 +50,6 @@
   opacity: @opacity;
 }
 
-.appearance(@appearance) {
-  -webkit-appearance: @appearance;
-     -moz-appearance: @appearance;
-      -ms-appearance: @appearance;
-          appearance: @appearance;
-}
-
 .transform(@transform) {
   -webkit-transform: @transform;
      -moz-transform: @transform;
@@ -76,14 +63,6 @@
   -moz-user-select: @user-select;
   -ms-user-select: @user-select;
   user-select: @user-select;
-}
-
-.rounded-corners(@border-radius: 0.4em) {
-  border-radius: @border-radius;
-
-  -webkit-background-clip: padding-box;
-     -moz-background-clip: padding;
-          background-clip: padding-box;
 }
 
 .transition (@transition) {
