@@ -475,6 +475,24 @@ class Manager
     }
 
     /**
+     * Check if any module in the given array is enabled
+     *
+     * @param array $modules
+     *
+     * @return bool
+     */
+    public function hasAny($modules)
+    {
+        foreach ($modules as $name => $version) {
+            if ($this->has($name, $version)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Get the currently loaded modules
      *
      * @return  Module[]
@@ -558,7 +576,14 @@ class Manager
     {
         $module = $this->getModule($name, false);
 
-        $requiredMods = $module->getRequiredModules();
+        $optionalMods = $module->getOptionalModules();
+        foreach ($optionalMods as $modules) {
+            if (! $this->hasAny($modules)) {
+                return true;
+            }
+        }
+
+        $requiredMods = array_diff_key($module->getRequiredModules(), $optionalMods);
         foreach ($requiredMods as $moduleName => $moduleVersion) {
             if (! $this->has($moduleName, $moduleVersion)) {
                 return true;

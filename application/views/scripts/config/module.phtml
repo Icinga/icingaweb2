@@ -6,7 +6,8 @@
     <?= $this->translate('There is no such module installed.') ?>
   <?php return; endif ?>
   <?php
-    $requiredMods = $module->getRequiredModules();
+    $requiredMods = array_diff_key($module->getRequiredModules(), $module->getOptionalModules());
+    $optionalMods = $module->getOptionalModules();
     $requiredLibs = $module->getRequiredLibraries();
     $restrictions = $module->getProvidedRestrictions();
     $permissions = $module->getProvidedPermissions();
@@ -50,7 +51,7 @@
     <tr>
       <th><?= $this->escape($this->translate('Dependencies')) ?></th>
       <td class="module-dependencies">
-      <?php if (empty($requiredLibs) && empty($requiredMods)): ?>
+      <?php if (empty($requiredLibs) && empty($requiredMods) && empty($optionalMods)): ?>
           <?= $this->translate('This module has no dependencies') ?>
       <?php else: ?>
         <?php if ($unmetDependencies): ?>
@@ -78,28 +79,63 @@
           <?php endforeach ?>
           </table>
         <?php endif ?>
-        <?php if (! empty($requiredMods)): ?>
+        <?php if (! empty($requiredMods) || ! empty($optionalMods)): ?>
           <table class="name-value-table">
               <caption><?= $this->translate('Modules') ?></caption>
-          <?php foreach ($requiredMods as $moduleName => $versionString): ?>
-              <tr>
-                  <th><?= $this->escape($moduleName) ?></th>
-                  <td>
-                  <?php if ($moduleManager->has($moduleName, $versionString === true ? null : $versionString)): ?>
-                      <?= $versionString === true ? '*' : $this->escape($versionString) ?>
-                  <?php else: ?>
-                      <span class="missing"><?= $versionString === true ? '*' : $this->escape($versionString) ?></span>
-                    <?php if (! $moduleManager->hasInstalled($moduleName)): ?>
-                      (<?= $this->translate('not installed') ?>)
-                    <?php else: ?>
-                      (<?= $moduleManager->getModule($moduleName, false)->getVersion() ?><?= $moduleManager->hasEnabled($moduleName) ? '' : ', ' . $this->translate('disabled') ?>)
-                    <?php endif ?>
-                  <?php endif ?>
-                  </td>
-              </tr>
-          <?php endforeach ?>
-          </table>
-        <?php endif ?>
+              <?php if (! empty($requiredMods)): ?>
+                  <?php foreach ($requiredMods as $moduleName => $versionString): ?>
+                      <tr>
+                          <th><?= $this->escape($moduleName) ?></th>
+                          <td>
+                          <?php if ($moduleManager->has($moduleName, $versionString === true ? null : $versionString)): ?>
+                              <?= $versionString === true ? '*' : $this->escape($versionString) ?>
+                          <?php else: ?>
+                              <span class="missing"><?= $versionString === true ? '*' : $this->escape($versionString) ?></span>
+                            <?php if (! $moduleManager->hasInstalled($moduleName)): ?>
+                              (<?= $this->translate('not installed') ?>)
+                            <?php else: ?>
+                              (<?= $moduleManager->getModule($moduleName, false)->getVersion() ?><?= $moduleManager->hasEnabled($moduleName) ? '' : ', ' . $this->translate('disabled') ?>)
+                            <?php endif ?>
+                          <?php endif ?>
+                          </td>
+                      </tr>
+                  <?php endforeach ?>
+              <?php endif ?>
+              <?php if (! empty($optionalMods)): ?>
+                  <?php foreach ($optionalMods as $modules): ?>
+                      <?php
+                        $i = 0;
+                        $has = $moduleManager->hasAny($modules);
+                      ?>
+                    <tbody class="optional-module-group">
+                      <?php foreach ($modules as $moduleName => $versionString): ?>
+                          <?php if ($i > 0): ?>
+                              <tr><th class="or-separator"><?= $this->translate('or') ?></th></tr>
+                          <?php endif ?>
+                          <tr>
+                              <th><?=$this->escape($moduleName) ?></th>
+                              <td>
+                                  <?php if ($moduleManager->has($moduleName, $versionString === true ? null : $versionString)): ?>
+                                      <?= $versionString === true ? '*' : $this->escape($versionString) ?>
+                                  <?php else: ?>
+                                      <span class=<?= ! $has ? 'missing' : null ?>>
+                                              <?= $versionString === true ? '*' : $this->escape($versionString) ?>
+                                          </span>
+                                      <?php if (! $moduleManager->hasInstalled($moduleName)): ?>
+                                          (<?= $this->translate('not installed') ?>)
+                                      <?php else: ?>
+                                          (<?= $moduleManager->getModule($moduleName, false)->getVersion() ?><?= $moduleManager->hasEnabled($moduleName) ? '' : ', ' . $this->translate('disabled') ?>)
+                                      <?php endif ?>
+                                  <?php endif ?>
+                              </td>
+                          </tr>
+                          <?php $i++ ?>
+                      <?php endforeach ?>
+                    </tbody>
+                  <?php endforeach ?>
+              <?php endif ?>
+              </table>
+            <?php endif ?>
       <?php endif ?>
       </td>
     </tr>

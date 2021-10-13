@@ -898,6 +898,25 @@ class Module
     }
 
     /**
+     * Get optional modules
+     *
+     * Modules that have an or operator
+     *
+     * @return array
+     */
+    public function getOptionalModules()
+    {
+        $modulesWithOrOperator = [];
+        foreach ($this->getRequiredModules() as $key => $val) {
+            if (strpos($key, '|') !== false) {
+                $modulesWithOrOperator[$key] = $val;
+            }
+        }
+
+        return $modulesWithOrOperator;
+    }
+
+    /**
      * Fetch module metadata
      *
      * @return object
@@ -983,8 +1002,15 @@ class Module
                             }
 
                             $parts = preg_split('/,\s+/', $val);
-                            foreach ($parts as $part) {
-                                if (preg_match('/^([\w\-\/]+)\s+\((.+)\)$/', $part, $m)) {
+                            foreach ($parts as $i => $part) {
+                                if (strpos($part, '|') !== false) {
+                                    $orParts = array_map('trim', explode('|', $part));
+                                    foreach ($orParts as $orPart) {
+                                        if (preg_match('/^([\w\-\/]+)\s+\((.+)\)$/', $orPart, $m)) {
+                                            $metadata->{$key}['|' . $i][$m[1]] = $m[2];
+                                        }
+                                    }
+                                } elseif (preg_match('/^([\w\-\/]+)\s+\((.+)\)$/', $part, $m)) {
                                     $metadata->{$key}[$m[1]] = $m[2];
                                 } else {
                                     // TODO: FAIL?
