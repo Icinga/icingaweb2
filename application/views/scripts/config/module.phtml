@@ -107,7 +107,7 @@
                         $i = 0;
                         $has = $moduleManager->hasAny($modules);
                       ?>
-                    <tbody class="optional-module-group">
+                    <tbody class="optional-module-group <?= ! $has ? 'missing-all-optional' : null ?>">
                       <?php foreach ($modules as $moduleName => $versionString): ?>
                           <?php if ($i > 0): ?>
                               <tr><th class="or-separator"><?= $this->translate('or') ?></th></tr>

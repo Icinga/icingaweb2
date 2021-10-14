@@ -441,9 +441,23 @@ a:hover > .icon-cancel {
       font-weight: bold;
     }
 
-    .or-separator {
-      position: relative;
-      transform: translate(70%, 0);
+    .optional-module-group {
+      display: block;
+      margin-top: 1em;
+      margin-left: -1.1em;
+      padding-left: 1em;
+      border-left: 2px solid;
+      .var(border-left-color, color-up);
+
+      &.missing-all-optional {
+        .var(border-left-color, color-critical);
+      }
+
+      .or-separator {
+        position: absolute;
+        transform: translate(0, -50%);
+        right: 0;
+      }
     }
   }
 }
