@@ -41,6 +41,34 @@ $loader->registerNamespace('Tests', $testLibraryPath);
 $loader->registerNamespace('Icinga', $icingaLibPath);
 $loader->registerNamespace('Icinga\\Forms', $applicationPath . '/forms');
 
+$libraryPaths = getenv('ICINGAWEB_LIBDIR');
+if ($libraryPaths !== false) {
+    $libraryPaths = array_filter(array_map(
+        'realpath',
+        explode(':', $libraryPaths)
+    ), 'is_dir');
+} else {
+    $libraryPaths = is_dir('/usr/share/icinga-php')
+        ? ['/usr/share/icinga-php']
+        : [];
+}
+
+foreach ($libraryPaths as $externalLibraryPath) {
+    $libPaths = array_flip(scandir($externalLibraryPath));
+    unset($libPaths['.']);
+    unset($libPaths['..']);
+    $libPaths = array_keys($libPaths);
+    foreach ($libPaths as $libPath) {
+        $libPath = join(DIRECTORY_SEPARATOR, [$externalLibraryPath, $libPath]);
+        if (is_dir(realpath($libPath))) {
+            $libAutoLoader = join(DIRECTORY_SEPARATOR, [$libPath, 'vendor', 'autoload.php']);
+            if (file_exists($libAutoLoader)) {
+                require_once $libAutoLoader;
+            }
+        }
+    }
+}
+
 $modulePaths = getenv('ICINGAWEB_MODULE_DIRS');
 
 if ($modulePaths) {
