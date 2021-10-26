@@ -243,7 +243,11 @@ class PreferenceForm extends Form
                 ],
                 'value' => isset($value) ? $value : '',
                 'disable' => isset($disabled) ? $disabled : [],
-                'escape' => false
+                'escape' => false,
+                'decorators' => array_merge(
+                    array_slice(self::$defaultElementDecorators, 0, -1),
+                    [['HtmlTag', ['tag' => 'div', 'class' => 'control-group theme-mode']]]
+                )
             ]
         );
 
