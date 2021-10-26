@@ -27,11 +27,6 @@ set_include_path(implode(PATH_SEPARATOR, [
 $vendorAutoload = $basePath . '/vendor/autoload.php';
 if (file_exists($vendorAutoload)) {
     require_once $vendorAutoload;
-} else {
-    require_once 'Mockery/Loader.php';
-
-    $mockeryLoader = new \Mockery\Loader;
-    $mockeryLoader->register();
 }
 
 require_once($icingaLibPath . '/Test/ClassLoader.php');
@@ -116,6 +111,13 @@ set_include_path(
         array($libraryPath . '/vendor', get_include_path())
     )
 );
+
+if (! class_exists('Mockery')) {
+    require_once 'Mockery/Loader.php';
+
+    $mockeryLoader = new \Mockery\Loader;
+    $mockeryLoader->register();
+}
 
 require_once 'Zend/Loader/Autoloader.php';
 \Zend_Loader_Autoloader::getInstance();
