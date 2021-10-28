@@ -112,7 +112,6 @@
   .var(background-color, menu-highlight-color);
   .var(color, text-color-inverted);
 
-  &:hover,
   &:focus {
     .var(background-color, menu-highlight-hover-bg-color);
   }
@@ -173,7 +172,7 @@
     .var(color, menu-2ndlvl-active-color);
     .var(background-color, menu-2ndlvl-active-bg-color);
 
-    &:hover, &:focus {
+    &:focus {
       &:first-of-type,
       &:first-of-type ~ a {
         .var(color, menu-2ndlvl-active-hover-color);
