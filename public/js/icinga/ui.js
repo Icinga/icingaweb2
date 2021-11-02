@@ -145,9 +145,14 @@
          *
          * @param   {string}    element         The name or id of the element to focus
          * @param   {object}    [$container]    The container containing the element
+         * @param   {boolean}   [scroll]        Whether the viewport should be scrolled to the focused element
          */
-        focusElement: function(element, $container) {
+        focusElement: function(element, $container, scroll) {
             var $element = element;
+
+            if (typeof scroll === 'undefined') {
+                scroll = true;
+            }
 
             if (typeof element === 'string') {
                 if ($container && $container.length) {
@@ -175,7 +180,7 @@
 
                 $element[0].focus();
 
-                if ($container && $container.length) {
+                if (scroll && $container && $container.length) {
                     if (! $container.is('.container')) {
                         $container = $container.closest('.container');
                     }
