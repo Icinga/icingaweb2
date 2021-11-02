@@ -1023,11 +1023,10 @@
                 }
             }
 
-            req.$target.find('.container').each(function () {
-                // Lazy load module javascript (Applies only to module.js code)
-                _this.icinga.ensureModule($(this).data('icingaModule'));
-                _this.icinga.ensureSubModules(this);
+            // Lazy load module javascript (Applies only to module.js code)
+            this.icinga.ensureSubModules(req.$target);
 
+            req.$target.find('.container').each(function () {
                 $(this).trigger('rendered', [req.autorefresh, req.scripted, req.autosubmit]);
             });
             req.$target.trigger('rendered', [req.autorefresh, req.scripted, req.autosubmit]);
@@ -1292,8 +1291,6 @@
             }
 
             this.icinga.ui.assignUniqueContainerIds();
-
-            _this.icinga.ensureSubModules($container);
 
             if (! discard && navigationAnchor) {
                 setTimeout(this.icinga.ui.focusElement.bind(this.icinga.ui), 0, navigationAnchor, $container);

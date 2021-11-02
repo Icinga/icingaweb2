@@ -169,25 +169,28 @@
          * @param {string} moduleName
          */
         ensureModule: function(moduleName) {
-            if (this.hasModule(moduleName) && !this.isLoadedModule(moduleName)) {
+            if (this.hasModule(moduleName) && ! this.isLoadedModule(moduleName)) {
                 this.loadModule(moduleName);
             }
         },
 
         /**
-         * If a container contains sub-containers for another modules,
+         * If a container contains sub-containers for other modules,
          * make sure the javascript code for each module is loaded.
          *
-         * Containers are identified by class "icinga-module" and the
-         * module name should be passed as "data-icinga-module".
+         * Containers are identified by "data-icinga-module" which
+         * holds the module name.
          *
          * @param container
          */
         ensureSubModules: function (container) {
             var icinga = this;
 
-            $(container).find('.icinga-module').each(function () {
-                icinga.ensureModule($(this).data('icingaModule'))
+            $(container).find('[data-icinga-module]').each(function () {
+                var moduleName = $(this).data('icingaModule');
+                if (moduleName) {
+                    icinga.ensureModule(moduleName);
+                }
             });
         },
 
