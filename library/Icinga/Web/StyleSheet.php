@@ -181,8 +181,8 @@ class StyleSheet
 
         $mode = 'none';
         if ($user = Auth::getInstance()->getUser()) {
-            $file = $themePath !== null ? file_get_contents($themePath) : '';
-            if ($file !== '' && ! preg_match(self::REGEX_ALL_MODE_QUERY, $file)) {
+            $file = $themePath !== null ? @file_get_contents($themePath) : '';
+            if ($file && $file !== '' && ! preg_match(self::REGEX_ALL_MODE_QUERY, $file)) {
                 if (preg_match(self::REGEX_AUTO_MODE_QUERY, $file)) {
                     $mode = 'system';
                 }

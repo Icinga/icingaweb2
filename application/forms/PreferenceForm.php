@@ -211,8 +211,9 @@ class PreferenceForm extends Form
         }
 
         if (isset($formData['theme']) && $formData['theme'] !== StyleSheet::DEFAULT_THEME) {
-            $file = file_get_contents(StyleSheet::getThemeFile($formData['theme']));
-            if (! preg_match(StyleSheet::REGEX_ALL_MODE_QUERY, $file)) {
+            $themeFile = StyleSheet::getThemeFile($formData['theme']);
+            $file = $themeFile !== null ? @file_get_contents($themeFile) : false;
+            if ($file && ! preg_match(StyleSheet::REGEX_ALL_MODE_QUERY, $file)) {
                 $disabled = ['', 'light', 'system'];
                 if (preg_match(StyleSheet::REGEX_AUTO_MODE_QUERY, $file)) {
                     $value = 'system';
