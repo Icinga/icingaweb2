@@ -3,6 +3,7 @@
 
 namespace Icinga\Web;
 
+use Exception;
 use Icinga\Application\Logger;
 use Icinga\Util\LessParser;
 
@@ -249,10 +250,38 @@ class LessCompiler
             $this->source .= file_get_contents($this->themeMode);
         }
 
-        return preg_replace(
-            '/(\.icinga-module\.module-[^\s]+) (#layout\.[^\s]+)/m',
-            '\2 \1',
-            $this->lessc->compile($this->source)
-        );
+        try {
+            return preg_replace(
+                '/(\.icinga-module\.module-[^\s]+) (#layout\.[^\s]+)/m',
+                '\2 \1',
+                $this->lessc->compile($this->source)
+            );
+        } catch (Exception $e) {
+            $excerpt = substr($this->source, $e->index - 500, 1000);
+
+            $lines = [];
+            $found = false;
+            $pos = $e->index - 500;
+            foreach (explode("\n", $excerpt) as $i => $line) {
+                if ($i === 0) {
+                    $pos += strlen($line);
+                    $lines[] = '.. ' . $line;
+                } else {
+                    $pos += strlen($line) + 1;
+                    $sep = '   ';
+                    if (! $found && $pos > $e->index) {
+                        $found = true;
+                        $sep = '!! ';
+                    }
+
+                    $lines[] = $sep . $line;
+                }
+            }
+
+            $lines[] = '..';
+            $excerpt = join("\n", $lines);
+
+            return sprintf("%s\n%s\n\n\n%s", $e->getMessage(), $e->getTraceAsString(), $excerpt);
+        }
     }
 }
