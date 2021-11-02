@@ -1298,7 +1298,12 @@
             this.icinga.ui.assignUniqueContainerIds();
 
             if (! discard && navigationAnchor) {
-                setTimeout(this.icinga.ui.focusElement.bind(this.icinga.ui), 0, navigationAnchor, $container);
+                var $element = $container.find('#' + navigationAnchor);
+                if ($element.length) {
+                    // data-icinga-no-scroll-on-focus is NOT designed to avoid scrolling for non-XHR requests
+                    setTimeout(this.icinga.ui.focusElement.bind(this.icinga.ui), 0,
+                        $element, $container, ! $element.is('[data-icinga-no-scroll-on-focus]'));
+                }
             } else if (! activeElementPath) {
                 // Active element was not in this container
                 if (! autorefresh && ! autoSubmit && ! scripted) {
