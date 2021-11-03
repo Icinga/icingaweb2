@@ -88,6 +88,18 @@ form.inline {
   }
 }
 
+#layout.minimal-layout .icinga-form {
+  .form-controls {
+    input[type="submit"] {
+      width: 100%;
+
+      &:not(:last-child) {
+        margin-bottom: 1em;
+      }
+    }
+  }
+}
+
 // Label styles
 
 form.icinga-form .control-label-group {
