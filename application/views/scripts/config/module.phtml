@@ -11,7 +11,8 @@
     $restrictions = $module->getProvidedRestrictions();
     $permissions = $module->getProvidedPermissions();
     $unmetDependencies = $moduleManager->hasUnmetDependencies($module->getName());
-    $state = $moduleData->enabled ? ($moduleData->loaded ? 'enabled' : 'failed') : 'disabled'
+    $isIcingadbSupported = isset($requiredMods['icingadb']);
+    $state = $moduleData->enabled ? ($moduleData->loaded ? 'enabled' : 'failed') : 'disabled';
   ?>
   <table class="name-value-table">
     <tr>
@@ -82,13 +83,18 @@
           <table class="name-value-table">
               <caption><?= $this->translate('Modules') ?></caption>
           <?php foreach ($requiredMods as $moduleName => $versionString): ?>
+              <?php if ($moduleName === 'monitoring' && $isIcingadbSupported && $moduleManager->has('icingadb', $requiredMods['icingadb'])) : ?>
+                  <?php continue; ?>
+              <?php endif ?>
               <tr>
                   <th><?= $this->escape($moduleName) ?></th>
                   <td>
                   <?php if ($moduleManager->has($moduleName, $versionString === true ? null : $versionString)): ?>
                       <?= $versionString === true ? '*' : $this->escape($versionString) ?>
                   <?php else: ?>
-                      <span class="missing"><?= $versionString === true ? '*' : $this->escape($versionString) ?></span>
+                      <span <?= ($moduleName === 'icingadb' && isset($requiredMods['monitoring']) && $moduleManager->has('monitoring', $requiredMods['monitoring'])) ? 'class="optional"' : 'class="missing"' ?>>
+                          <?= $versionString === true ? '*' : $this->escape($versionString) ?>
+                      </span>
                     <?php if (! $moduleManager->hasInstalled($moduleName)): ?>
                       (<?= $this->translate('not installed') ?>)
                     <?php else: ?>
@@ -96,6 +102,9 @@
                     <?php endif ?>
                   <?php endif ?>
                   </td>
+                  <?php if ($moduleName === 'monitoring' && $isIcingadbSupported) : ?>
+                      <td class="or-separator"><?= $this->translate('or') ?></td>
+                  <?php endif ?>
               </tr>
           <?php endforeach ?>
           </table>
