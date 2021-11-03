@@ -440,5 +440,29 @@ a:hover > .icon-cancel {
       .var(color, color-critical);
       font-weight: bold;
     }
+
+    td {
+      white-space: nowrap;
+
+      &.or-separator {
+        width: 100%;
+        transform: translate(0, 50%);
+        padding-left: 3em;
+
+        &::before {
+          content: "";
+          position: absolute;
+          height: 1.5em;
+          width: 1.5em;
+          left: 0.5em;
+          border-top: 3px solid;
+          border-right: 3px solid;
+          .var(border-top-color, "gray");
+          .var(border-right-color, "gray");
+          border-top-right-radius: .50em;
+          transform: rotate(45deg);
+        }
+      }
+    }
   }
 }
