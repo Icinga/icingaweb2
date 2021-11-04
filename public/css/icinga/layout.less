@@ -151,12 +151,18 @@
   > button {
     background: none;
     border: none;
-    height: 2.5em;
+    font-size: 2em;
+    padding: 0 .5em;
+    line-height: 2;
 
     -webkit-appearance: none;
        -moz-appearance: none;
         -ms-appearance: none;
             appearance: none;
+  }
+
+  i:before {
+    margin-right: 0;
   }
 }
 
@@ -200,6 +206,9 @@
   list-style-type: none;
   margin: 0;
   padding: 0;
+}
+
+#layout:not(.minimal-layout) #notifications {
   padding-left: 12em;
 }
 

@@ -88,6 +88,18 @@ form.inline {
   }
 }
 
+#layout.minimal-layout .icinga-form {
+  .form-controls {
+    input[type="submit"] {
+      width: 100%;
+
+      &:not(:last-child) {
+        margin-bottom: 1em;
+      }
+    }
+  }
+}
+
 // Label styles
 
 form.icinga-form .control-label-group {
@@ -544,5 +556,18 @@ form.icinga-form .form-info {
   & ~ span {
     display: block;
     text-align: center;
+  }
+}
+
+#layout.minimal-layout .icinga-form {
+  .theme-mode {
+    .control-label-group {
+      width: 100%;
+      margin-bottom: .5em;
+    }
+
+    label:first-of-type {
+      margin-left: auto;
+    }
   }
 }
