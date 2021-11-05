@@ -47,7 +47,7 @@ class ApiTransportForm extends Form
                 'text',
                 'username',
                 array(
-                    'required'      => true,
+                    'required'      => false,
                     'label'         => $this->translate('API Username'),
                     'description'   => $this->translate(
                         'User to log in as on the remote Icinga instance. Please note that key-based SSH login must be'
@@ -59,13 +59,31 @@ class ApiTransportForm extends Form
                 'password',
                 'password',
                 array(
-                    'required'      => true,
+                    'required'      => false,
                     'label'         => $this->translate('API Password'),
                     'description'   => $this->translate(
                         'User to log in as on the remote Icinga instance. Please note that key-based SSH login must be'
                         . ' possible for this user'
                     ),
                     'renderPassword'    => true
+                )
+            ),
+            array(
+                'text',
+                'clientKey',
+                array(
+                    'required'      => false,
+                    'label'         => $this->translate('Client Key'),
+                    'description'   => $this->translate('Path to a private key for client authentication')
+                )
+            ),
+            array(
+                'text',
+                'clientCert',
+                array(
+                    'required'      => false,
+                    'label'         => $this->translate('Client Certificate'),
+                    'description'   => $this->translate('Path to a public certificate for client authentication')
                 )
             )
         ));

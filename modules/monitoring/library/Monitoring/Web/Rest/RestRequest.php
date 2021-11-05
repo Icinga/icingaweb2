@@ -56,6 +56,27 @@ class RestRequest
     protected $password;
 
     /**
+     * Whether to authenticate with cert auth
+     *
+     * @var bool
+     */
+    protected $hasCertAuth;
+
+    /**
+     * Cert auth key
+     *
+     * @var string
+     */
+    protected $authKey;
+
+    /**
+     * Cert auth certificate
+     *
+     * @var string
+     */
+    protected $authCert;
+
+    /**
      * Request payload
      *
      * @var mixed
@@ -128,9 +149,28 @@ class RestRequest
      */
     public function authenticateWith($username, $password)
     {
+        $this->hasCertAuth = false;
         $this->hasBasicAuth = true;
         $this->username = $username;
         $this->password = $password;
+
+        return $this;
+    }
+
+    /**
+     * Set certificate auth credentials
+     *
+     * @param   string  $authKey
+     * @param   string  $authCert
+     *
+     * @return  $this
+     */
+    public function authenticateCert($authKey, $authCert)
+    {
+        $this->hasCertAuth = true;
+        $this->hasBasicAuth = false;
+        $this->authKey = $authKey;
+        $this->authCert = $authCert;
 
         return $this;
     }
@@ -236,6 +276,12 @@ class RestRequest
         if ($this->hasBasicAuth) {
             $options[CURLOPT_USERPWD] = sprintf('%s:%s', $this->username, $this->password);
             $curlCmd[] = sprintf('-u %s:%s', escapeshellarg($this->username), escapeshellarg($this->password));
+        }
+
+        if ($this->hasCertAuth) {
+            $options[CURLOPT_SSLKEY] = $this->authKey;
+            $options[CURLOPT_SSLCERT] = $this->authCert;
+            $curlCmd += [ '--key', escapeshellarg($this->authKey), '--cert', escapeshellarg($this->authCert) ];
         }
 
         if (! empty($this->payload)) {

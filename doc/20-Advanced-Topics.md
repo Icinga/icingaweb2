@@ -296,6 +296,9 @@ host = "localhost"
 port = "5665"
 username = "api"
 password = "api"
+# Optional, disables username/password auth
+clientKey = "/etc/icingaweb2/client.key"
+clientCert = "/etc/icingaweb2/client.crt"
 ```
 
 ### Icinga Web 2 Manual Setup Login <a id="web-setup-manual-from-source-login"></a>
