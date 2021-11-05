@@ -112,7 +112,6 @@
   .var(background-color, menu-highlight-color);
   .var(color, text-color-inverted);
 
-  &:hover,
   &:focus {
     .var(background-color, menu-highlight-hover-bg-color);
   }
@@ -173,7 +172,7 @@
     .var(color, menu-2ndlvl-active-color);
     .var(background-color, menu-2ndlvl-active-bg-color);
 
-    &:hover, &:focus {
+    &:focus {
       &:first-of-type,
       &:first-of-type ~ a {
         .var(color, menu-2ndlvl-active-hover-color);
@@ -344,7 +343,6 @@
 
     > .badge-nav-item {
       display: flex;
-      align-items: center;
 
       a:first-of-type {
         flex: 1 1 auto;
@@ -537,7 +535,6 @@ html.no-js  #toggle-sidebar {
 #layout:not(.sidebar-collapsed) #menu .nav-level-1 > .nav-item:not(.active).hover .nav-level-2 > li {
   &.badge-nav-item {
     display: flex;
-    align-items: center;
   }
 
   &.badge-nav-item a:first-of-type {
