@@ -70,6 +70,24 @@ class ApiTransportForm extends Form
             ),
             array(
                 'text',
+                'caFile',
+                array(
+                    'required'      => false,
+                    'label'         => $this->translate('CA Certificate'),
+                    'description'   => $this->translate('Path to a CA certificate to verify the API host with. Leave unset to disable verification')
+                )
+            ),
+            array(
+                'checkbox',
+                'verifyHostname',
+                array(
+                    'required'      => false,
+                    'label'         => $this->translate('Verify hostname'),
+                    'description'   => $this->translate('Whether to verify the hostname in the certificate when CA verification is enabled')
+                )
+            ),
+            array(
+                'text',
                 'clientKey',
                 array(
                     'required'      => false,

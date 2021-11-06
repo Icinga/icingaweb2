@@ -46,6 +46,20 @@ class ApiCommandTransport implements CommandTransportInterface
     protected $port = 5665;
 
     /**
+     * CA bundle path
+     *
+     * @var string
+     */
+    protected $caFile = null;
+
+    /**
+     * Whether to verify the hostname
+     *
+     * @var bool
+     */
+    protected $verifyHostname = true;
+
+    /**
      * Command renderer
      *
      * @var IcingaApiCommandRenderer
@@ -168,6 +182,54 @@ class ApiCommandTransport implements CommandTransportInterface
     }
 
     /**
+     * Get the CA file
+     *
+     * @return  string
+     */
+    public function getCaFile()
+    {
+        return $this->caFile;
+    }
+
+    /**
+     * Set the CA file
+     *
+     * @param   string $caFile
+     *
+     * @return  $this
+     */
+    public function setCaFile($caFile)
+    {
+        $this->caFile = $caFile;
+
+        return $this;
+    }
+
+    /**
+     * Get whether hostnames should be verified
+     *
+     * @return  bool
+     */
+    public function getVerifyHostname()
+    {
+        return $this->verifyHostname;
+    }
+
+    /**
+     * Set whether hostnames should be verified
+     *
+     * @param   string $verifyHostname
+     *
+     * @return  $this
+     */
+    public function setVerifyHostname($verifyHostname)
+    {
+        $this->verifyHostname = $verifyHostname;
+
+        return $this;
+    }
+
+    /**
      * Get the API username
      *
      * @return string
@@ -271,8 +333,14 @@ class ApiCommandTransport implements CommandTransportInterface
         try {
             $request = RestRequest::post($this->getUriFor($command->getEndpoint()))
                 ->sendJson()
-                ->noStrictSsl()
                 ->setPayload($command->getData());
+
+            if ($this->getCaFile() != null) {
+                $request->setCaFile($this->getCaFile());
+                $request->setVerifyHostname($this->getVerifyHostname());
+            } else {
+                $request->noStrictSsl();
+            }
 
             if ($this->getClientKey() && $this->getClientCert()) {
                 $request->authenticateCert($this->getClientKey(), $this->getClientCert());
@@ -329,13 +397,19 @@ class ApiCommandTransport implements CommandTransportInterface
      */
     public function probe()
     {
-        $request = RestRequest::get($this->getUriFor(null))
-            ->noStrictSsl();
+        $request = RestRequest::get($this->getUriFor(null));
+
+        if ($this->getCaFile() != null) {
+            $request->setCaFile($this->getCaFile());
+            $request->setVerifyHostname($this->getVerifyHostname());
+        } else {
+            $request->noStrictSsl();
+        }
 
         if ($this->getClientKey() && $this->getClientCert()) {
-            $response = $request->authenticateCert($this->getClientKey(), $this->getClientCert());
+            $request->authenticateCert($this->getClientKey(), $this->getClientCert());
         } else {
-            $response = $request->authenticateWith($this->getUsername(), $this->getPassword());
+            $request->authenticateWith($this->getUsername(), $this->getPassword());
         }
 
         try {

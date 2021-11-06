@@ -299,6 +299,9 @@ password = "api"
 # Optional, disables username/password auth
 clientKey = "/etc/icingaweb2/client.key"
 clientCert = "/etc/icingaweb2/client.crt"
+# Optional, default is not to verify anything
+caFile = "/etc/icingaweb2/api-ca.crt"
+verifyHostname = 0
 ```
 
 ### Icinga Web 2 Manual Setup Login <a id="web-setup-manual-from-source-login"></a>

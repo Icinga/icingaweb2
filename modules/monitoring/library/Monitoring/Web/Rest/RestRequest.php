@@ -84,6 +84,22 @@ class RestRequest
     protected $payload;
 
     /**
+     * Path to a CA certificate file, can be
+     * set to null to not explicitly set one.
+     *
+     * @var string
+     */
+    protected $caFile = null;
+
+    /**
+     * Whether to verify the hostname when CA
+     * verification is enabled.
+     *
+     * @var bool
+     */
+    protected $verifyHostname = true;
+
+    /**
      * Whether strict SSL is enabled
      *
      * @var bool
@@ -190,6 +206,30 @@ class RestRequest
     }
 
     /**
+     * Set a CA file
+     *
+     * @return $this
+     */
+    public function setCaFile($caFile)
+    {
+        $this->caFile = $caFile;
+
+        return $this;
+    }
+
+    /**
+     * Enable or disable hostname verification
+     *
+     * @return $this
+     */
+    public function setVerifyHostname($verifyHostname)
+    {
+        $this->verifyHostname = $verifyHostname;
+
+        return $this;
+    }
+
+    /**
      * Disable strict SSL
      *
      * @return $this
@@ -266,11 +306,16 @@ class RestRequest
 
         if ($this->strictSsl) {
             $options[CURLOPT_SSL_VERIFYHOST] = 2;
-            $options[CURLOPT_SSL_VERIFYPEER] = true;
+            $options[CURLOPT_SSL_VERIFYPEER] = $this->verifyHostname;
         } else {
             $options[CURLOPT_SSL_VERIFYHOST] = false;
             $options[CURLOPT_SSL_VERIFYPEER] = false;
             $curlCmd[] = '-k';
+        }
+
+        if ($this->caFile != null) {
+            $options[CURLOPT_CAINFO] = $this->caFile;
+            $curlCmd += [ '--cacert', escapeshellarg($this->caFile) ];
         }
 
         if ($this->hasBasicAuth) {
