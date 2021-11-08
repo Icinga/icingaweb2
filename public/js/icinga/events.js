@@ -35,16 +35,8 @@
                 behavior.bind($(document));
             });
 
-            var _this = this;
-            $('.container').each(function () {
-                // Initialize module javascript (Applies only to module.js code)
-                var moduleName = $(this).data('icingaModule');
-                if (moduleName) {
-                    if (_this.icinga.hasModule(moduleName) && ! _this.icinga.isLoadedModule(moduleName)) {
-                        _this.icinga.loadModule(moduleName);
-                    }
-                }
-            });
+            // Initialize module javascript (Applies only to module.js code)
+            this.icinga.ensureSubModules(document);
 
             // We catch resize events
             $(window).on('resize', { self: this.icinga.ui }, this.icinga.ui.onWindowResize);
