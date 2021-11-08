@@ -734,9 +734,7 @@
                 });
                 if (moduleName) {
                     // Lazy load module javascript (Applies only to module.js code)
-                    if (_this.icinga.hasModule(moduleName) && ! _this.icinga.isLoadedModule(moduleName)) {
-                        _this.icinga.loadModule(moduleName);
-                    }
+                    _this.icinga.ensureModule(moduleName);
 
                     req.$target.data('icingaModule', moduleName);
                     classes.push('icinga-module');
@@ -1025,13 +1023,10 @@
                 }
             }
 
-            req.$target.find('.container').each(function () {
-                // Lazy load module javascript (Applies only to module.js code)
-                var moduleName = $(this).data('icingaModule');
-                if (_this.icinga.hasModule(moduleName) && ! _this.icinga.isLoadedModule(moduleName)) {
-                    _this.icinga.loadModule(moduleName);
-                }
+            // Lazy load module javascript (Applies only to module.js code)
+            this.icinga.ensureSubModules(req.$target);
 
+            req.$target.find('.container').each(function () {
                 $(this).trigger('rendered', [req.autorefresh, req.scripted, req.autosubmit]);
             });
             req.$target.trigger('rendered', [req.autorefresh, req.scripted, req.autosubmit]);
