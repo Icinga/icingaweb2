@@ -366,12 +366,12 @@ a:hover > .icon-cancel {
 .collapsible.collapsed:not([data-toggle-element]) {
   position: relative;
 
-  &:before, &:after {
+  &:after {
     content: "";
     display: block;
     height: 2em;
-    background: linear-gradient(transparent, @body-bg-color);
-    background: linear-gradient(transparent, var(--body-bg-color, @body-bg-color));
+    background: linear-gradient(@body-bg-color-transparent, @body-bg-color);
+    background: linear-gradient(var(--body-bg-color-transparent, @body-bg-color-transparent), var(--body-bg-color, @body-bg-color));
     position: absolute;
     bottom: 0;
     left: 0;
@@ -380,22 +380,6 @@ a:hover > .icon-cancel {
 
     opacity: 1;
     transition: opacity 2s 1s linear;
-  }
-
-  &:after {
-    opacity: 0;
-    background: linear-gradient(transparent, @body-bg-color);
-    background: linear-gradient(transparent, var(--body-bg-color, @body-bg-color));
-  }
-}
-
-.impact .collapsible.collapsed:not([data-toggle-element]) {
-  &:before {
-    opacity: 0;
-  }
-
-  &:after {
-    opacity: 1;
   }
 }
 
