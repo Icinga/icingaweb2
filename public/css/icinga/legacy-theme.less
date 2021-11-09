@@ -181,9 +181,15 @@ input.search {
 @base-gray-light: @gray-light;
 @base-gray-lighter: @gray-lighter;
 @base-disabled: @disabled-gray;
+@base-primary-color: @icinga-blue;
+@base-primary-bg: @icinga-blue;
 
 @default-text-color: @text-color;
 @default-text-color-light: @text-color-light;
 @default-text-color-inverted: @text-color-inverted;
 
-@searchbar-bg: #DEECF1;
+@searchbar-bg: @low-sat-blue;
+
+.icinga-controls select:not([multiple]) {
+  background-image: url(../img/select-icon-legacy.svg);
+}
