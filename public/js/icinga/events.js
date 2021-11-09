@@ -195,6 +195,10 @@
             // .closest is not required unless subelements to trigger this
             var $form = $(event.currentTarget).closest('form');
 
+            if ($form.closest('[data-no-icinga-ajax]').length > 0) {
+                return true;
+            }
+            
             var $button;
             var $rememberedSubmittButton = $form.data('submitButton');
             if (typeof $rememberedSubmittButton != 'undefined') {
@@ -202,10 +206,6 @@
                     $button = $rememberedSubmittButton;
                 }
                 $form.removeData('submitButton');
-            }
-
-            if ($form.closest('[data-no-icinga-ajax]').length > 0) {
-                return true;
             }
 
             if (typeof $button === 'undefined') {

@@ -96,7 +96,16 @@
         var $form = $(event.currentTarget).closest('form');
         var $modal = $form.closest('#modal');
 
-        var req = _this.icinga.loader.submitForm($form, $autoSubmittedBy);
+        var $button;
+        var $rememberedSubmittButton = $form.data('submitButton');
+        if (typeof $rememberedSubmittButton != 'undefined') {
+            if ($form.has($rememberedSubmittButton)) {
+                $button = $rememberedSubmittButton;
+            }
+            $form.removeData('submitButton');
+        }
+
+        var req = _this.icinga.loader.submitForm($form, $autoSubmittedBy, $button);
         req.addToHistory = false;
         req.$redirectTarget = $modal.data('redirectTarget');
         req.done(function (data, textStatus, req) {
