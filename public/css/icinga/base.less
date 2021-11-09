@@ -47,6 +47,7 @@
 
 // Background color for <body>
 @body-bg-color: #282E39;
+@body-bg-color-transparent: fade(@body-bg-color, 0);
 
 // Text colors
 @text-color: @white;
@@ -113,8 +114,12 @@
 @horizontal-padding: 1em; // 12px
 
 @media (min-height: @prefer-light-color-scheme), (prefers-color-scheme: light) and (min-height: @enable-color-preference) {
+
+  @light-body-bg-color: #F5F9FA;
+
   :root {
-    --body-bg-color: #F5F9FA;
+    --body-bg-color: @light-body-bg-color;
+    --body-bg-color-transparent: fade(@light-body-bg-color, 0);
     --badge-color: #F5F9FA;
     --text-color-inverted: #F5F9FA;
     --text-color-on-icinga-blue: #F5F9FA;
