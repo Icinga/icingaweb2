@@ -4,6 +4,37 @@ Please make sure to always read our [Upgrading](doc/80-Upgrading.md) documentati
 
 ## What's New
 
+### What's New in Version 2.9.4
+
+You can also find all issues related to this release on our [Roadmap](https://github.com/Icinga/icingaweb2/milestone/68?closed=1).
+
+#### Broken Preference Configuration
+
+The preferences configuration broke with the release of v2.9 in some cases. Previously it was possible to access this
+and the general configuration without any configuration at all on disk. This is now possible again. The preferences of
+some users, which have a theme of a disabled module enabled, also showed an error. This doesn't happen anymore now.
+
+* Config/Preferences not accessible without config.ini [#4504](https://github.com/Icinga/icingaweb2/issues/4504)
+* "My Account" broken after Upgrade from 2.8.2 to 2.9.3 [#4512](https://github.com/Icinga/icingaweb2/issues/4512)
+
+#### Notable Fixes in the UI
+
+For a long time now, comments in lists had the bad habit to spread erratically if their content was large. They're
+limited to two lines now in lists and are still shown in full glory in their respective detail area. While talking
+of lines... Plugin output with subsequent empty lines erroneously showed only one of them. This is now fixed.
+
+* Proposal for new Feature make comments collapsible [#4515](https://github.com/Icinga/icingaweb2/issues/4515)
+* new line character is being removed in the plugin output [#4522](https://github.com/Icinga/icingaweb2/issues/4522)
+
+#### Less Notable But No Less Important Fixes
+
+We are actually very committed to provide a good experience for restricted users. So I'm happy to tell you that a nasty
+bug is fixed that resulted in the focus being lost randomly. Third party integrations are also important to us, hence
+I'm happy that this release fixes an issue where module specific JavaScript didn't load properly. Are you happy now?
+
+* `announcements` request clears focus [#4543](https://github.com/Icinga/icingaweb2/issues/4543)
+* js: Fix regression for loading dependent modules for sub-containers [#4533](https://github.com/Icinga/icingaweb2/issues/4533)
+
 ### What's New in Version 2.9.3
 
 You can also find the issues related to this release on our [Roadmap](https://github.com/Icinga/icingaweb2/milestone/66?closed=1).
