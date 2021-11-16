@@ -4,6 +4,13 @@ Please make sure to always read our [Upgrading](doc/80-Upgrading.md) documentati
 
 ## What's New
 
+### What's New in Version 2.9.5
+
+This is a hotfix release which fixes the following issues:
+
+* Some detail views of Icinga Director and other modules are broken with Web 2.9.4 [#4598](https://github.com/Icinga/icingaweb2/issues/4598)
+* Error on skipping LDAP Discovery [#4603](https://github.com/Icinga/icingaweb2/issues/4603)
+
 ### What's New in Version 2.9.4
 
 You can also find all issues related to this release on our [Roadmap](https://github.com/Icinga/icingaweb2/milestone/68?closed=1).
