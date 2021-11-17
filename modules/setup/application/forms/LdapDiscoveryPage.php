@@ -97,12 +97,12 @@ class LdapDiscoveryPage extends Form
      *
      * @param bool $suppressArrayNotation
      *
-     * @return array|null
+     * @return array
      */
     public function getValues($suppressArrayNotation = false)
     {
         if (! isset($this->discovery) || ! $this->discovery->isSuccess()) {
-            return null;
+            return [];
         }
         $disc = $this->discovery;
         return array(
