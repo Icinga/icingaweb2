@@ -169,6 +169,9 @@ class FilterExpression extends Filter
             // TODO: REALLY? Exception?
             return false;
         }
+        if ($rowValue === null) {
+            return false;
+        }
 
         if ($this->caseSensitive) {
             $expression = $this->expression;

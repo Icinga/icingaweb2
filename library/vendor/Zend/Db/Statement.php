@@ -135,8 +135,12 @@ abstract class Zend_Db_Statement implements Zend_Db_Statement_Interface
         $sql = $this->_stripQuoted($sql);
 
         // split into text and params
-        $this->_sqlSplit = preg_split('/(\?|\:[a-zA-Z0-9_]+)/',
-            $sql, -1, PREG_SPLIT_DELIM_CAPTURE|PREG_SPLIT_NO_EMPTY);
+        if ($sql === null) {
+            $this->_sqlSplit = [];
+        } else {
+            $this->_sqlSplit = preg_split('/(\?|\:[a-zA-Z0-9_]+)/',
+                $sql, -1, PREG_SPLIT_DELIM_CAPTURE|PREG_SPLIT_NO_EMPTY);
+        }
 
         // map params
         $this->_sqlParam = array();
@@ -193,7 +197,9 @@ abstract class Zend_Db_Statement implements Zend_Db_Statement_Interface
         // get a version of the SQL statement with all quoted
         // values and delimited identifiers stripped out
         // remove "foo\"bar"
-        $sql = preg_replace("/\"(\\\\\"|[^\"])*\"/Us", '', $sql);
+        if ($sql !== null) {
+            $sql = preg_replace("/\"(\\\\\"|[^\"])*\"/Us", '', $sql);
+        }
 
         // get the character for delimited id quotes,
         // this is usually " but in MySQL is `
@@ -205,7 +211,9 @@ abstract class Zend_Db_Statement implements Zend_Db_Statement_Interface
         $de = substr($de, 1, 2);
         $de = preg_quote($de);
         // Note: $de and $d where never used..., now they are:
-        $sql = preg_replace("/$d($de|\\\\{2}|[^$d])*$d/Us", '', $sql);
+        if ($sql !== null) {
+            $sql = preg_replace("/$d($de|\\\\{2}|[^$d])*$d/Us", '', $sql);
+        }
         return $sql;
     }
 

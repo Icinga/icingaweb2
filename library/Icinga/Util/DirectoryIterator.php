@@ -125,6 +125,7 @@ class DirectoryIterator implements RecursiveIterator
     /**
      * {@inheritdoc}
      */
+    #[\ReturnTypeWillChange]
     public function hasChildren()
     {
         return static::isReadable($this->current);
@@ -133,6 +134,7 @@ class DirectoryIterator implements RecursiveIterator
     /**
      * {@inheritdoc}
      */
+    #[\ReturnTypeWillChange]
     public function getChildren()
     {
         return new static($this->current, $this->extension, $this->flags);
@@ -142,6 +144,7 @@ class DirectoryIterator implements RecursiveIterator
     /**
      * {@inheritdoc}
      */
+    #[\ReturnTypeWillChange]
     public function current()
     {
         return $this->current;
@@ -150,6 +153,7 @@ class DirectoryIterator implements RecursiveIterator
     /**
      * {@inheritdoc}
      */
+    #[\ReturnTypeWillChange]
     public function next()
     {
         do {
@@ -203,6 +207,7 @@ class DirectoryIterator implements RecursiveIterator
     /**
      * {@inheritdoc}
      */
+    #[\ReturnTypeWillChange]
     public function key()
     {
         return $this->key;
@@ -211,6 +216,7 @@ class DirectoryIterator implements RecursiveIterator
     /**
      * {@inheritdoc}
      */
+    #[\ReturnTypeWillChange]
     public function valid()
     {
         return $this->current !== false;
@@ -219,6 +225,7 @@ class DirectoryIterator implements RecursiveIterator
     /**
      * {@inheritdoc}
      */
+    #[\ReturnTypeWillChange]
     public function rewind()
     {
         if ($this->files === null) {

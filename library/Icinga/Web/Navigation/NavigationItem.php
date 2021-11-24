@@ -173,6 +173,7 @@ class NavigationItem implements IteratorAggregate
     /**
      * {@inheritdoc}
      */
+    #[\ReturnTypeWillChange]
     public function getIterator()
     {
         return $this->getChildren();

@@ -104,6 +104,10 @@ class View extends Zend_View_Abstract
      */
     public function escape($value)
     {
+        if ($value === null) {
+            return null;
+        }
+
         return htmlspecialchars($value, ENT_COMPAT | ENT_SUBSTITUTE | ENT_HTML5, self::CHARSET, true);
     }
 

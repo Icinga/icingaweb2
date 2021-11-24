@@ -217,6 +217,8 @@ class SortBox extends AbstractWidget
                 $direction = $url->getParam('dir');
                 list($column, $_) = $this->getSortDefaults();
             }
+        } else {
+            $direction = null;
         }
 
         if ($column === null) {
@@ -225,7 +227,7 @@ class SortBox extends AbstractWidget
 
         // TODO(el): ToggleButton :)
         $toggle = array('asc' => 'sort-name-down', 'desc' => 'sort-name-up');
-        unset($toggle[strtolower($direction) ?: 'asc']);
+        unset($toggle[$direction === null ? 'asc' : strtolower($direction)]);
         $newDirection = key($toggle);
         $icon = current($toggle);
 

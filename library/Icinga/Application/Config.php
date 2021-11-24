@@ -122,6 +122,7 @@ class Config implements Countable, Iterator, Selectable
      *
      * @return  int
      */
+    #[\ReturnTypeWillChange]
     public function count()
     {
         return $this->select()->count();
@@ -132,6 +133,7 @@ class Config implements Countable, Iterator, Selectable
      *
      * @return  ConfigObject
      */
+    #[\ReturnTypeWillChange]
     public function rewind()
     {
         return $this->config->rewind();
@@ -142,6 +144,7 @@ class Config implements Countable, Iterator, Selectable
      *
      * @return  ConfigObject
      */
+    #[\ReturnTypeWillChange]
     public function current()
     {
         return $this->config->current();
@@ -152,6 +155,7 @@ class Config implements Countable, Iterator, Selectable
      *
      * @return  bool
      */
+    #[\ReturnTypeWillChange]
     public function valid()
     {
         return $this->config->valid();
@@ -162,6 +166,7 @@ class Config implements Countable, Iterator, Selectable
      *
      * @return  string
      */
+    #[\ReturnTypeWillChange]
     public function key()
     {
         return $this->config->key();
@@ -172,6 +177,7 @@ class Config implements Countable, Iterator, Selectable
      *
      * @return  ConfigObject
      */
+    #[\ReturnTypeWillChange]
     public function next()
     {
         return $this->config->next();

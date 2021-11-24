@@ -83,6 +83,7 @@ class SimpleTree implements IteratorAggregate
      * {@inheritdoc}
      * @return TreeNodeIterator
      */
+    #[\ReturnTypeWillChange]
     public function getIterator()
     {
         return new TreeNodeIterator($this->sentinel);

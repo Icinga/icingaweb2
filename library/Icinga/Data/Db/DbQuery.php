@@ -283,7 +283,7 @@ class DbQuery extends SimpleQuery
      *       backends will work. We probably should also rename this
      *       function to isTimestampColumn().
      *
-     * @param  string $field Field Field name to checked
+     * @param  string $field Field-name to be checked
      * @return bool          Whether this field expects timestamps
      */
     public function isTimestamp($field)
@@ -325,7 +325,7 @@ class DbQuery extends SimpleQuery
             }
 
             return '(' . implode(" $operator ", $sql) . ')';
-        } elseif ($sign === '=' && strpos($expression, '*') !== false) {
+        } elseif ($sign === '=' && $expression !== null && strpos($expression, '*') !== false) {
             if ($expression === '*') {
                 return $col . ' IS NOT NULL';
             }

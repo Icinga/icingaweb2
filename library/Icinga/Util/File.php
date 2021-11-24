@@ -117,6 +117,7 @@ class File extends SplFileObject
     /**
      * @see SplFileObject::fwrite()
      */
+    #[\ReturnTypeWillChange]
     public function fwrite($str, $length = null)
     {
         $this->assertOpenForWriting();
@@ -129,6 +130,7 @@ class File extends SplFileObject
     /**
      * @see SplFileObject::ftruncate()
      */
+    #[\ReturnTypeWillChange]
     public function ftruncate($size)
     {
         $this->assertOpenForWriting();
@@ -141,6 +143,7 @@ class File extends SplFileObject
     /**
      * @see SplFileObject::ftell()
      */
+    #[\ReturnTypeWillChange]
     public function ftell()
     {
         $this->setupErrorHandler();
@@ -152,6 +155,7 @@ class File extends SplFileObject
     /**
      * @see SplFileObject::flock()
      */
+    #[\ReturnTypeWillChange]
     public function flock($operation, &$wouldblock = null)
     {
         $this->setupErrorHandler();
@@ -163,6 +167,7 @@ class File extends SplFileObject
     /**
      * @see SplFileObject::fgetc()
      */
+    #[\ReturnTypeWillChange]
     public function fgetc()
     {
         $this->setupErrorHandler();
@@ -174,6 +179,7 @@ class File extends SplFileObject
     /**
      * @see SplFileObject::fflush()
      */
+    #[\ReturnTypeWillChange]
     public function fflush()
     {
         $this->setupErrorHandler();

@@ -123,7 +123,7 @@ class Cli extends ApplicationBootstrap
         if ($watch === true) {
             $watch = 5;
         }
-        if (preg_match('~^\d+$~', $watch)) {
+        if ($watch !== null && preg_match('~^\d+$~', $watch)) {
             $this->watchTimeout = (int) $watch;
         }
 

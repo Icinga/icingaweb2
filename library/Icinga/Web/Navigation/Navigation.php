@@ -70,6 +70,7 @@ class Navigation implements ArrayAccess, Countable, IteratorAggregate
     /**
      * {@inheritdoc}
      */
+    #[\ReturnTypeWillChange]
     public function offsetExists($offset)
     {
         return isset($this->items[$offset]);
@@ -78,6 +79,7 @@ class Navigation implements ArrayAccess, Countable, IteratorAggregate
     /**
      * {@inheritdoc}
      */
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         return isset($this->items[$offset]) ? $this->items[$offset] : null;
@@ -86,6 +88,7 @@ class Navigation implements ArrayAccess, Countable, IteratorAggregate
     /**
      * {@inheritdoc}
      */
+    #[\ReturnTypeWillChange]
     public function offsetSet($offset, $value)
     {
         $this->items[$offset] = $value;
@@ -94,6 +97,7 @@ class Navigation implements ArrayAccess, Countable, IteratorAggregate
     /**
      * {@inheritdoc}
      */
+    #[\ReturnTypeWillChange]
     public function offsetUnset($offset)
     {
         unset($this->items[$offset]);
@@ -102,6 +106,7 @@ class Navigation implements ArrayAccess, Countable, IteratorAggregate
     /**
      * {@inheritdoc}
      */
+    #[\ReturnTypeWillChange]
     public function count()
     {
         return count($this->items);
@@ -110,6 +115,7 @@ class Navigation implements ArrayAccess, Countable, IteratorAggregate
     /**
      * {@inheritdoc}
      */
+    #[\ReturnTypeWillChange]
     public function getIterator()
     {
         $this->order();

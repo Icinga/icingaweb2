@@ -31,6 +31,7 @@ class TreeNodeIterator implements RecursiveIterator
     /**
      * {@inheritdoc}
      */
+    #[\ReturnTypeWillChange]
     public function current()
     {
         return $this->children->current();
@@ -39,6 +40,7 @@ class TreeNodeIterator implements RecursiveIterator
     /**
      * {@inheritdoc}
      */
+    #[\ReturnTypeWillChange]
     public function key()
     {
         return $this->children->key();
@@ -47,6 +49,7 @@ class TreeNodeIterator implements RecursiveIterator
     /**
      * {@inheritdoc}
      */
+    #[\ReturnTypeWillChange]
     public function next()
     {
         $this->children->next();
@@ -55,6 +58,7 @@ class TreeNodeIterator implements RecursiveIterator
     /**
      * {@inheritdoc}
      */
+    #[\ReturnTypeWillChange]
     public function rewind()
     {
         $this->children->rewind();
@@ -63,6 +67,7 @@ class TreeNodeIterator implements RecursiveIterator
     /**
      * {@inheritdoc}
      */
+    #[\ReturnTypeWillChange]
     public function valid()
     {
         return $this->children->valid();
@@ -71,6 +76,7 @@ class TreeNodeIterator implements RecursiveIterator
     /**
      * {@inheritdoc}
      */
+    #[\ReturnTypeWillChange]
     public function hasChildren()
     {
         return $this->current()->hasChildren();
@@ -80,6 +86,7 @@ class TreeNodeIterator implements RecursiveIterator
      * {@inheritdoc}
      * @return TreeNodeIterator
      */
+    #[\ReturnTypeWillChange]
     public function getChildren()
     {
         return new static($this->current());

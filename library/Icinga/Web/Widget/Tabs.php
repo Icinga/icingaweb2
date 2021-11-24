@@ -403,6 +403,7 @@ EOT;
      *
      * @see     Countable
      */
+    #[\ReturnTypeWillChange]
     public function count()
     {
         return count($this->tabs);

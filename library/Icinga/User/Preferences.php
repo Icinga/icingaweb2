@@ -49,6 +49,7 @@ class Preferences implements Countable
      *
      * @return  int     The number of preferences
      */
+    #[\ReturnTypeWillChange]
     public function count()
     {
         return count($this->preferences);

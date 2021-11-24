@@ -23,6 +23,7 @@ class CookieSet implements IteratorAggregate
      *
      * @return  ArrayIterator   An iterator for traversing the cookies in this set
      */
+    #[\ReturnTypeWillChange]
     public function getIterator()
     {
         return new ArrayIterator($this->cookies);

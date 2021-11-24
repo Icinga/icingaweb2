@@ -68,7 +68,11 @@ class CommentParser
 
     public function dump()
     {
-        $res = $this->title . "\n" . str_repeat('=', strlen($this->title)) . "\n\n";
+        if ($this->title) {
+            $res = $this->title . "\n" . str_repeat('=', strlen($this->title)) . "\n\n";
+        } else {
+            $res = '';
+        }
         foreach ($this->paragraphs as $p) {
             $res .= wordwrap($p, 72) . "\n\n";
         }

@@ -124,6 +124,7 @@ class RecursiveNavigationRenderer extends RecursiveIteratorIterator implements N
     /**
      * {@inheritdoc}
      */
+    #[\ReturnTypeWillChange]
     public function beginIteration()
     {
         $this->content[] = $this->getInnerIterator()->beginMarkup();
@@ -132,6 +133,7 @@ class RecursiveNavigationRenderer extends RecursiveIteratorIterator implements N
     /**
      * {@inheritdoc}
      */
+    #[\ReturnTypeWillChange]
     public function endIteration()
     {
         $this->content[] = $this->getInnerIterator()->endMarkup();
@@ -140,6 +142,7 @@ class RecursiveNavigationRenderer extends RecursiveIteratorIterator implements N
     /**
      * {@inheritdoc}
      */
+    #[\ReturnTypeWillChange]
     public function beginChildren()
     {
         $this->content[] = $this->getInnerIterator()->beginChildrenMarkup($this->getDepth() + 1);
@@ -148,6 +151,7 @@ class RecursiveNavigationRenderer extends RecursiveIteratorIterator implements N
     /**
      * {@inheritdoc}
      */
+    #[\ReturnTypeWillChange]
     public function endChildren()
     {
         $this->content[] = $this->getInnerIterator()->endChildrenMarkup();

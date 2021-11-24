@@ -390,9 +390,9 @@ class Response extends Zend_Controller_Response_Http
             setcookie(
                 $cookie->getName(),
                 $cookie->getValue(),
-                $cookie->getExpire(),
-                $cookie->getPath(),
-                $cookie->getDomain(),
+                $cookie->getExpire() ?: 0,
+                $cookie->getPath() ?: '',
+                $cookie->getDomain() ?: '',
                 $cookie->isSecure(),
                 $cookie->isHttpOnly()
             );

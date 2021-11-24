@@ -19,6 +19,7 @@ interface StorageInterface extends IteratorAggregate
      *
      * @throws  NotReadableError    If the file list can't be read
      */
+    #[\ReturnTypeWillChange]
     public function getIterator();
 
     /**

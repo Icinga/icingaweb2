@@ -25,6 +25,7 @@ class ColumnFilterIterator extends FilterIterator
     /**
      * {@inheritdoc}
      */
+    #[\ReturnTypeWillChange]
     public function accept()
     {
         $column = $this->current();

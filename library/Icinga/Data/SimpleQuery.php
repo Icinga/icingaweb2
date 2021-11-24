@@ -165,6 +165,7 @@ class SimpleQuery implements QueryInterface, Queryable, Iterator
     /**
      * Start or rewind the iteration
      */
+    #[\ReturnTypeWillChange]
     public function rewind()
     {
         if ($this->iterator === null) {
@@ -186,6 +187,7 @@ class SimpleQuery implements QueryInterface, Queryable, Iterator
      *
      * @return  object
      */
+    #[\ReturnTypeWillChange]
     public function current()
     {
         return $this->iterator->current();
@@ -196,6 +198,7 @@ class SimpleQuery implements QueryInterface, Queryable, Iterator
      *
      * @return  bool
      */
+    #[\ReturnTypeWillChange]
     public function valid()
     {
         $valid = $this->iterator->valid();
@@ -221,6 +224,7 @@ class SimpleQuery implements QueryInterface, Queryable, Iterator
      *
      * @return  mixed
      */
+    #[\ReturnTypeWillChange]
     public function key()
     {
         return $this->iterator->key();
@@ -229,6 +233,7 @@ class SimpleQuery implements QueryInterface, Queryable, Iterator
     /**
      * Advance to the next row of this query's result
      */
+    #[\ReturnTypeWillChange]
     public function next()
     {
         $this->iterator->next();
@@ -376,7 +381,7 @@ class SimpleQuery implements QueryInterface, Queryable, Iterator
             $column = $this->flippedColumns[$column];
         }
 
-        $result = strcmp(strtolower($a->$column), strtolower($b->$column));
+        $result = strcmp(strtolower($a->$column ?: ''), strtolower($b->$column ?: ''));
         if ($result === 0) {
             return $this->compare($a, $b, ++$orderIndex);
         }
@@ -648,6 +653,7 @@ class SimpleQuery implements QueryInterface, Queryable, Iterator
      *
      * @return  int
      */
+    #[\ReturnTypeWillChange]
     public function count()
     {
         $query = clone $this;

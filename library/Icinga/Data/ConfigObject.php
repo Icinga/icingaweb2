@@ -52,6 +52,7 @@ class ConfigObject extends ArrayDatasource implements Iterator, ArrayAccess
      *
      * @return  mixed
      */
+    #[\ReturnTypeWillChange]
     public function rewind()
     {
         return reset($this->data);
@@ -62,6 +63,7 @@ class ConfigObject extends ArrayDatasource implements Iterator, ArrayAccess
      *
      * @return  mixed
      */
+    #[\ReturnTypeWillChange]
     public function current()
     {
         return current($this->data);
@@ -72,6 +74,7 @@ class ConfigObject extends ArrayDatasource implements Iterator, ArrayAccess
      *
      * @return  bool
      */
+    #[\ReturnTypeWillChange]
     public function valid()
     {
         return key($this->data) !== null;
@@ -82,6 +85,7 @@ class ConfigObject extends ArrayDatasource implements Iterator, ArrayAccess
      *
      * @return  mixed
      */
+    #[\ReturnTypeWillChange]
     public function key()
     {
         return key($this->data);
@@ -92,6 +96,7 @@ class ConfigObject extends ArrayDatasource implements Iterator, ArrayAccess
      *
      * @return  mixed
      */
+    #[\ReturnTypeWillChange]
     public function next()
     {
         return next($this->data);
@@ -153,6 +158,7 @@ class ConfigObject extends ArrayDatasource implements Iterator, ArrayAccess
      *
      * @return  bool
      */
+    #[\ReturnTypeWillChange]
     public function offsetExists($key)
     {
         return isset($this->$key);
@@ -165,6 +171,7 @@ class ConfigObject extends ArrayDatasource implements Iterator, ArrayAccess
      *
      * @return  mixed|NULL      The value or NULL in case $key does not exist
      */
+    #[\ReturnTypeWillChange]
     public function offsetGet($key)
     {
         return $this->get($key);
@@ -178,6 +185,7 @@ class ConfigObject extends ArrayDatasource implements Iterator, ArrayAccess
      *
      * @throws  ProgrammingError    If the key is null
      */
+    #[\ReturnTypeWillChange]
     public function offsetSet($key, $value)
     {
         if ($key === null) {
@@ -192,6 +200,7 @@ class ConfigObject extends ArrayDatasource implements Iterator, ArrayAccess
      *
      * @param   string  $key    The property or section to remove
      */
+    #[\ReturnTypeWillChange]
     public function offsetUnset($key)
     {
         unset($this->$key);

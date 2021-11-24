@@ -50,6 +50,7 @@ class DocTocRenderer extends DocRenderer
     /**
      * {@inheritdoc}
      */
+    #[\ReturnTypeWillChange]
     public function beginIteration()
     {
         $this->content[] = sprintf('<nav role="navigation"><%s class="%s">', static::HTML_LIST_TAG, static::CSS_CLASS);
@@ -58,6 +59,7 @@ class DocTocRenderer extends DocRenderer
     /**
      * {@inheritdoc}
      */
+    #[\ReturnTypeWillChange]
     public function endIteration()
     {
         $this->content[] = sprintf('</%s></nav>', static::HTML_LIST_TAG);
@@ -66,6 +68,7 @@ class DocTocRenderer extends DocRenderer
     /**
      * {@inheritdoc}
      */
+    #[\ReturnTypeWillChange]
     public function beginChildren()
     {
         $this->content[] = sprintf('<%s class="%s">', static::HTML_LIST_TAG, static::CSS_CLASS);
@@ -74,6 +77,7 @@ class DocTocRenderer extends DocRenderer
     /**
      * {@inheritdoc}
      */
+    #[\ReturnTypeWillChange]
     public function endChildren()
     {
         $this->content[] = sprintf('</%s>', static::HTML_LIST_TAG);

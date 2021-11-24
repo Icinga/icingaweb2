@@ -58,6 +58,7 @@ abstract class DataView implements QueryInterface, SortRules, FilterColumns, Ite
      *
      * @return  IdoQuery
      */
+    #[\ReturnTypeWillChange]
     public function getIterator()
     {
         return $this->getQuery();
@@ -499,6 +500,7 @@ abstract class DataView implements QueryInterface, SortRules, FilterColumns, Ite
      *
      * @return int
      */
+    #[\ReturnTypeWillChange]
     public function count()
     {
         return $this->query->count();

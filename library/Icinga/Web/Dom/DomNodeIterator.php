@@ -50,6 +50,7 @@ class DomNodeIterator implements RecursiveIterator
     /**
      * {@inheritdoc}
      */
+    #[\ReturnTypeWillChange]
     public function current()
     {
         return $this->children->current();
@@ -58,6 +59,7 @@ class DomNodeIterator implements RecursiveIterator
     /**
      * {@inheritdoc}
      */
+    #[\ReturnTypeWillChange]
     public function key()
     {
         return $this->children->key();
@@ -66,6 +68,7 @@ class DomNodeIterator implements RecursiveIterator
     /**
      * {@inheritdoc}
      */
+    #[\ReturnTypeWillChange]
     public function next()
     {
         $this->children->next();
@@ -74,6 +77,7 @@ class DomNodeIterator implements RecursiveIterator
     /**
      * {@inheritdoc}
      */
+    #[\ReturnTypeWillChange]
     public function rewind()
     {
         $this->children->rewind();
@@ -82,6 +86,7 @@ class DomNodeIterator implements RecursiveIterator
     /**
      * {@inheritdoc}
      */
+    #[\ReturnTypeWillChange]
     public function valid()
     {
         return $this->children->valid();
@@ -90,6 +95,7 @@ class DomNodeIterator implements RecursiveIterator
     /**
      * {@inheritdoc}
      */
+    #[\ReturnTypeWillChange]
     public function hasChildren()
     {
         return $this->current()->hasChildNodes();
@@ -99,6 +105,7 @@ class DomNodeIterator implements RecursiveIterator
      * {@inheritdoc}
      * @return DomNodeIterator
      */
+    #[\ReturnTypeWillChange]
     public function getChildren()
     {
         return new static($this->current());

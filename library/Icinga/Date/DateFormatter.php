@@ -48,7 +48,7 @@ class DateFormatter
     {
         $invert = false;
         $now = time();
-        $time = (float) $time;
+        $time = (int) $time;
         $diff = $time - $now;
         if ($diff < 0) {
             $diff = abs($diff);
@@ -62,23 +62,23 @@ class DateFormatter
                 $formatted = date($requireTime ? 'Y-m-d H:i' : 'Y-m', $time);
             }
         } else {
-            $minutes = floor($diff / 60);
+            $minutes = (int) floor($diff / 60);
             if ($minutes < 60) {
                 $type = static::RELATIVE;
                 $formatted = sprintf('%dm %ds', $minutes, $diff % 60);
             } else {
-                $hours = floor($minutes / 60);
+                $hours = (int) floor($minutes / 60);
                 if ($hours < 24) {
-                    if (date('d') === date('d', $time)) {
+                    if (date('d') === date('d', (int) $time)) {
                         $type = static::TIME;
-                        $formatted = date('H:i', $time);
+                        $formatted = date('H:i', (int) $time);
                     } else {
                         $type = static::DATE;
-                        $formatted = date('M j H:i', $time);
+                        $formatted = date('M j H:i', (int) $time);
                     }
                 } else {
                     $type = static::RELATIVE;
-                    $formatted = sprintf('%dd %dh', floor($hours / 24), $hours % 24);
+                    $formatted = sprintf('%dd %dh', (int) floor($hours / 24), $hours % 24);
                 }
             }
         }
@@ -94,7 +94,7 @@ class DateFormatter
      */
     public static function formatDate($date)
     {
-        return date('Y-m-d', (float) $date);
+        return date('Y-m-d', (int) $date);
     }
 
     /**
@@ -106,7 +106,7 @@ class DateFormatter
      */
     public static function formatDateTime($dateTime)
     {
-        return date('Y-m-d H:i:s', (float) $dateTime);
+        return date('Y-m-d H:i:s', (int) $dateTime);
     }
 
     /**
@@ -141,7 +141,7 @@ class DateFormatter
      */
     public static function formatTime($time)
     {
-        return date('H:i:s', (float) $time);
+        return date('H:i:s', (int) $time);
     }
 
     /**

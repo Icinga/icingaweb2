@@ -344,7 +344,13 @@ class RepositoryQuery implements QueryInterface, SortRules, FilterColumns, Itera
             }
         }
 
-        $baseDirection = strtoupper($sortColumns['order']) === static::SORT_DESC ? static::SORT_DESC : static::SORT_ASC;
+        if ($sortColumns['order'] === null) {
+            $baseDirection = static::SORT_ASC;
+        } else {
+            $baseDirection = strtoupper($sortColumns['order']) === static::SORT_DESC
+                ? static::SORT_DESC
+                : static::SORT_ASC;
+        }
 
         foreach ($sortColumns['columns'] as $column) {
             list($column, $specificDirection) = $this->splitOrder($column);
@@ -690,6 +696,7 @@ class RepositoryQuery implements QueryInterface, SortRules, FilterColumns, Itera
      *
      * @return  int
      */
+    #[\ReturnTypeWillChange]
     public function count()
     {
         return $this->query->count();
@@ -708,6 +715,7 @@ class RepositoryQuery implements QueryInterface, SortRules, FilterColumns, Itera
     /**
      * Start or rewind the iteration
      */
+    #[\ReturnTypeWillChange]
     public function rewind()
     {
         if ($this->iterator === null) {
@@ -737,6 +745,7 @@ class RepositoryQuery implements QueryInterface, SortRules, FilterColumns, Itera
      *
      * @return  object
      */
+    #[\ReturnTypeWillChange]
     public function current()
     {
         $row = $this->iterator->current();
@@ -763,6 +772,7 @@ class RepositoryQuery implements QueryInterface, SortRules, FilterColumns, Itera
      *
      * @return  bool
      */
+    #[\ReturnTypeWillChange]
     public function valid()
     {
         if (! $this->iterator->valid()) {
@@ -778,6 +788,7 @@ class RepositoryQuery implements QueryInterface, SortRules, FilterColumns, Itera
      *
      * @return  mixed
      */
+    #[\ReturnTypeWillChange]
     public function key()
     {
         return $this->iterator->key();
@@ -786,6 +797,7 @@ class RepositoryQuery implements QueryInterface, SortRules, FilterColumns, Itera
     /**
      * Advance to the next row of this query's result
      */
+    #[\ReturnTypeWillChange]
     public function next()
     {
         $this->iterator->next();
