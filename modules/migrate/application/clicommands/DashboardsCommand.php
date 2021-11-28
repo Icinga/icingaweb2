@@ -1,156 +1,85 @@
 <?php
 
+/* Icinga Web 2 | (c) 2021 Icinga GmbH | GPLv2+ */
+
 namespace Icinga\Module\Migrate\Clicommands;
 
 use Icinga\Application\Config;
+use Icinga\Application\Logger;
 use Icinga\Cli\Command;
-use Icinga\Common\Database;
 use Icinga\Exception\NotReadableError;
 use Icinga\Util\DirectoryIterator;
-use ipl\Sql\Select;
+use Icinga\Common\DashboardManager;
 
 class DashboardsCommand extends Command
 {
-    use Database;
+    use DashboardManager;
 
     /**
-     * Name of the default home
+     * Migrate local INI user dashboards to a database
      *
-     * @var string
-     */
-    const DEFAULT_HOME = 'Default Home';
-
-    /**
-     * Default user of the "Default Home"
-     *
-     * @var string
-     */
-    const DEFAULT_HOME_USER = 'icingaweb2';
-
-    /**
-     * Migrates all existing dashboards that are located in
-     * dashboard.ini files to the database
+     * If you perform this operation over and over again, your database will be flooded
+     * with the same entries. So, it is quite sufficient when you execute this only once!
      *
      * USAGE
      *
-     *  icingacli migrate dashboards
+     *  icingacli migrate dashboards [options]
+     *
+     * OPTIONS:
+     *
+     *  --user=<username>   Migrate local INI dashboards only for
+     *                      the given user. (Default *)
+     *
+     *  --delete            Remove all INI files after successfully
+     *                      migrated the dashboards to DB.
      */
     public function indexAction()
     {
-        $config = Config::resolvePath('dashboards');
-
-        if (DirectoryIterator::isReadable($config)) {
-            $directories = new DirectoryIterator($config);
-
-            foreach ($directories as $directory) {
-                $directory .= '/dashboard.ini';
-
-                $this->loadUserDashboardsFromFile($directories->key(), $directory);
-            }
-        }
-    }
-
-    /**
-     * Load user dashboards from the given config file
-     *
-     * @param string $username
-     *
-     * @param string $file
-     */
-    private function loadUserDashboardsFromFile($username, $file)
-    {
-        try {
-            $config = Config::fromIni($file);
-        } catch (NotReadableError $error) {
+        $dashboardsPath = Config::resolvePath('dashboards');
+        if (! file_exists($dashboardsPath)) {
+            Logger::info('There are no local user dashboards to migrate');
             return;
         }
 
-        if (! count($config)) {
-            return;
-        }
+        $rc = 0;
+        $user = $this->params->get('user');
+        $deleteLegacyFiles = $this->params->get('delete');
+        $dashboardDirs = new DirectoryIterator($dashboardsPath);
 
-        $db = $this->getDb();
-        $defaultHome = $db->select((new Select())
-            ->columns('id')
-            ->from('dashboard_home')
-            ->where([
-                'name = ?'  => self::DEFAULT_HOME,
-                'owner = ?' => self::DEFAULT_HOME_USER
-            ]))->fetch();
+        foreach ($dashboardDirs as $dashboardDir) {
+            $username = $user;
+            if ($username && $username !== $dashboardDirs->key()) {
+                continue;
+            }
 
-        if (! $defaultHome) {
-            $db->insert('dashboard_home', [
-                'name'  => self::DEFAULT_HOME,
-                'owner' => self::DEFAULT_HOME_USER
-            ]);
+            if (! $username) {
+                $username = $dashboardDirs->key();
+            }
 
-            $homeId = $db->lastInsertId();
-        } else {
-            $homeId = $defaultHome->id;
-        }
+            Logger::info('Migrating INI dashboards for user "%s" to database...', $username);
 
-        $panes = [];
-        foreach ($config as $key => $part) {
-            if (strpos($key, '.') === false) {
-                $paneId = sha1($username . self::DEFAULT_HOME . $key, true);
-                $searchPane = $db->select((new Select())
-                    ->columns('id')
-                    ->from('dashboard')
-                    ->where([
-                        'id = ?'        => $paneId,
-                        'home_id = ?'   => $homeId
-                    ]))->fetch();
+            try {
+                $this->migrateFromIni($dashboardDir . '/dashboard.ini');
 
-                if ($searchPane) {
-                    $db->update('dashboard', [
-                        'owner' => $username,
-                        'name'  => $key,
-                        'label' => $part->get('title', $key)
-                    ], ['id = ?' => $paneId, 'home_id = ?' => $homeId]);
+                if ($deleteLegacyFiles) {
+                    unlink($dashboardDir . '/dashboard.ini');
+                }
+            } catch (NotReadableError $err) {
+                if ($err->getPrevious() !== null) {
+                    Logger::error('%s: %s', $err->getMessage(), $err->getPrevious()->getMessage());
                 } else {
-                    $db->insert('dashboard', [
-                        'id'        => $paneId,
-                        'home_id'   => $homeId,
-                        'owner'     => $username,
-                        'name'      => $key,
-                        'label'     => $part->get('title', $key)
-                    ]);
+                    Logger::error($err->getMessage());
                 }
 
-                $panes[$key] = $paneId;
-            } else {
-                list($paneName, $dashletName) = explode('.', $key, 2);
-                if (! array_key_exists($paneName, $panes)) {
-                    continue;
-                }
-
-                $dashletId = sha1($username . self::DEFAULT_HOME . $paneName . $dashletName, true);
-                $searchDashlet = $db->select((new Select())
-                    ->columns('id')
-                    ->from('dashlet')
-                    ->where([
-                        'id = ?'            => $dashletId,
-                        'dashboard_id = ?'  => $panes[$paneName]
-                    ]))->fetch();
-
-                if ($searchDashlet) {
-                    $db->update('dashlet', [
-                        'owner' => $username,
-                        'name'  => $dashletName,
-                        'label' => $part->get('title', $dashletName),
-                        'url'   => $part->get('url')
-                    ], ['id = ?' => $dashletId, 'dashboard_id = ?' => $panes[$paneName]]);
-                } else {
-                    $db->insert('dashlet', [
-                        'id'            => $dashletId,
-                        'dashboard_id'  => $panes[$paneName],
-                        'owner'         => $username,
-                        'name'          => $dashletName,
-                        'label'         => $part->get('title', $dashletName),
-                        'url'           => $part->get('url')
-                    ]);
-                }
+                $rc = 128;
             }
         }
+
+        if ($rc > 0) {
+            Logger::error('Failed to migrate some user dashboards');
+            exit($rc);
+        }
+
+        Logger::info('Successfully migrated all local user dashboards to database');
     }
 }

@@ -1,31 +1,34 @@
 <?php
+/* Icinga Web 2 | (c) 2021 Icinga GmbH | GPLv2+ */
 
 namespace Icinga\Forms\Dashboard;
 
 use Icinga\Web\Widget\Dashboard;
+use ipl\Web\Common\FormUid;
 use ipl\Web\Compat\CompatForm;
 use ipl\Web\Url;
 
 class HomeViewSwitcher extends CompatForm
 {
+    use FormUid;
+
     /** @var Dashboard */
     private $dashboard;
 
-    /** @var string */
-    private $activeHome;
+    protected $defaultAttributes = [
+        'class' => 'icinga-form icinga-controls',
+        'name'  => 'home-mode-switcher'
+    ];
 
     public function __construct($dashboard)
     {
         $this->dashboard = $dashboard;
     }
 
-    public function assemble()
+    protected function assemble()
     {
         $sortControls = $this->dashboard->getHomeKeyNameArray(false);
-
-        if (Url::fromRequest()->getParam('home')) {
-            $this->activeHome = Url::fromRequest()->getParam('home');
-        }
+        $activeHome = Url::fromRequest()->getParam('home');
 
         $this->addElement(
             'select',
@@ -35,19 +38,16 @@ class HomeViewSwitcher extends CompatForm
                 'required'       => true,
                 'label'          => t('Dashboard Home'),
                 'multiOptions'   => $sortControls,
-                'value'          => $this->activeHome ?: current($sortControls),
+                'value'          => $activeHome ?: current($sortControls),
                 'description'    => t('Select a dashboard home you want to see the dashboards from.')
             ]
         );
+
+        $this->addHtml($this->createUidElement());
     }
 
-    public function onSuccess()
+    protected function onSuccess()
     {
         // Do nothing
-    }
-
-    public function getHome()
-    {
-        return $this->activeHome;
     }
 }

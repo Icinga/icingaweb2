@@ -13,7 +13,7 @@ class DashboardContainer extends NavigationItemContainer
      *
      * @var array
      */
-    protected $dashlets;
+    protected $dashlets = [];
 
     /**
      * Set this dashboard's dashlets
@@ -25,6 +25,7 @@ class DashboardContainer extends NavigationItemContainer
     public function setDashlets(array $dashlets)
     {
         $this->dashlets = $dashlets;
+
         return $this;
     }
 
@@ -35,7 +36,7 @@ class DashboardContainer extends NavigationItemContainer
      */
     public function getDashlets()
     {
-        return $this->dashlets ?: array();
+        return $this->dashlets;
     }
 
     /**
@@ -44,7 +45,6 @@ class DashboardContainer extends NavigationItemContainer
      * @param   string  $name
      * @param   string  $url
      * @param   int     $priority
-     * @param   array   $properties
      *
      * @return  $this
      */

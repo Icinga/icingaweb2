@@ -533,6 +533,14 @@ class RoleForm extends RepositoryForm
             'application/log' => [
                 'description' => t('Allow to view the application log')
             ],
+            'application/share/dashboards' => [
+                'description' => t('Allow to share specific dashboards')
+            ],
+            'application/manage/dashboards' => [
+                'description' => t(
+                    'Allow to manage shared and system dashboards and to provide default dashboards for others'
+                )
+            ],
             'config/*' => [
                 'description' => t('Allow full config access')
             ],

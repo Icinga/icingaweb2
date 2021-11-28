@@ -1,15 +1,16 @@
 <?php
-/* Icinga Web 2 | (c) 2013 Icinga Development Team | GPLv2+ */
+
+/* Icinga Web 2 | (c) 2013-2021 Icinga GmbH | GPLv2+ */
 
 namespace Icinga\Forms\Dashboard;
 
-use Icinga\Exception\ProgrammingError;
+use Icinga\Authentication\Auth;
+use Icinga\DBUser;
 use Icinga\Web\Navigation\DashboardHome;
 use Icinga\Web\Notification;
 use Icinga\Web\Widget\Dashboard;
 use Icinga\Web\Dashboard\Dashlet;
 use Icinga\Web\Dashboard\Pane;
-use ipl\Html\Html;
 use ipl\Html\HtmlElement;
 use ipl\Web\Compat\CompatForm;
 use ipl\Web\Url;
@@ -22,29 +23,43 @@ class DashletForm extends CompatForm
     /** @var Dashboard */
     private $dashboard;
 
-    /** @var bool A flag whether a new home has been created */
-    private $homeCreated = true;
+    /**
+     * Icinga Web 2's authentication manager
+     *
+     * @var Auth
+     */
+    private $auth;
 
     /**
      * DashletForm constructor.
      *
      * @param Dashboard $dashboard
+     * @param Auth $auth
      */
-    public function __construct(Dashboard $dashboard)
+    public function __construct(Dashboard $dashboard, Auth $auth)
     {
         $this->dashboard = $dashboard;
-    }
-
-    public function hasBeenHomeCreated()
-    {
-        return $this->homeCreated;
+        $this->auth = $auth;
     }
 
     /**
-     * @inheritdoc
+     * Populate form data from config
      *
-     * @return bool
+     * @param Dashlet $dashlet
+     * @param string  $home
      */
+    public function load(Dashlet $dashlet, $home)
+    {
+        $this->populate(array(
+            'pane'          => $dashlet->getPane()->getName(),
+            'org_pane'      => $dashlet->getPane()->getName(),
+            'org_home'      => $home,
+            'dashlet'       => $dashlet->getTitle(),
+            'org_dashlet'   => $dashlet->getName(),
+            'url'           => $dashlet->getUrl()->getRelativeUrl()
+        ));
+    }
+
     public function hasBeenSubmitted()
     {
         return $this->hasBeenSent()
@@ -52,17 +67,92 @@ class DashletForm extends CompatForm
                 || $this->getPopulatedValue('submit'));
     }
 
+    /**
+     * Check whether the auth user has the required dashboard
+     * permission to manage system and public dashboards
+     *
+     * @return bool
+     */
+    protected function hasPerm()
+    {
+        return $this->auth->hasPermission('application/manage/dashboards');
+    }
+
+    /**
+     * Check whether the dashlet is user widget and returns true
+     * if the dashlet is user widget or if the request path is new-dashlet
+     *
+     * @return bool
+     */
+    protected function isUserWidget()
+    {
+        if (($dashlet = $this->dashletExist())) {
+            return $dashlet->isUserWidget() && ! $dashlet->isOverridingWidget();
+        }
+
+        return true;
+    }
+
+    /**
+     * Check whether this dashlet being loaded is public dashlet
+     *
+     * @return bool
+     */
+    protected function isPublic()
+    {
+        if (($dashlet = $this->dashletExist())) {
+            return $dashlet->getType() === Dashboard::PUBLIC_DS;
+        }
+
+        return false;
+    }
+
+    /**
+     * Get whether the dashlet being currently loaded is shared one
+     *
+     * @return bool
+     */
+    protected function isShared()
+    {
+        if (($dashlet = $this->dashletExist())) {
+            return $dashlet->getType() === Dashboard::SHARED;
+        }
+
+        return false;
+    }
+
+    /**
+     * Render an optional checkbox to purge a dashboard from DB
+     *
+     * @return void
+     */
+    protected function renderRemoveForAllUsers()
+    {
+        if ($this->hasPerm() && ($this->isPublic() || $this->isShared())) {
+            $this->addElement('checkbox', 'purge_from_db', [
+                'value'         => 'n',
+                'label'         => t('Purge from DB'),
+                'description'   => t('Check this box if you want to completely remove this dashlet from DB')
+            ]);
+        }
+    }
+
     protected function assemble()
     {
-        $home = Url::fromRequest()->getParam('home');
+        $requestUrl = Url::fromRequest();
+        $requestPath = $requestUrl->getPath();
+        $removeDashlet = Dashboard::BASE_ROUTE . '/remove-dashlet';
+        $updateDashlet = Dashboard::BASE_ROUTE . '/update-dashlet';
+
+        $activeHome = $this->dashboard->getActiveHome();
+        $home = $requestUrl->getParam('home');
         $populatedHome = $this->getPopulatedValue('home', $home);
+
+        $paneParam = $requestUrl->getParam('pane');
+        $dashletParam = $requestUrl->getParam('dashlet');
 
         $panes = [];
         $dashboardHomes = [];
-        $requestPath = Url::fromRequest()->getPath();
-        $removeDashlet = 'dashboard/remove-dashlet';
-        $updateDashlet = 'dashboard/update-dashlet';
-
         if ($this->dashboard) {
             $dashboardHomes = $this->dashboard->getHomeKeyNameArray();
 
@@ -72,8 +162,8 @@ class DashletForm extends CompatForm
             }
 
             if ($home === $populatedHome && $this->getPopulatedValue('create_new_home') !== 'y') {
-                if (! empty($home)) {
-                    $panes = $this->dashboard->getActiveHome()->getPaneKeyTitleArray();
+                if (! empty($home) && $activeHome) {
+                    $panes = $activeHome->getPaneKeyTitleArray();
                 } else {
                     // This tab was opened from where the home parameter is not being present
                     $firstHome = $this->dashboard->rewindHomes();
@@ -93,12 +183,19 @@ class DashletForm extends CompatForm
         }
 
         if ($requestPath === $removeDashlet) {
-            $this->add(HtmlElement::create('h1', null, sprintf(
+            $this->addHtml(HtmlElement::create('h1', null, sprintf(
                 t('Please confirm removal of dashlet "%s"'),
-                Url::fromRequest()->getParam('dashlet')
+                $dashletParam
             )));
+
+            $this->renderRemoveForAllUsers();
+
             $this->addElement('submit', 'remove_dashlet', [
-                'label' => t('Remove Dashlet'),
+                'disabled'  => ! $this->hasPerm() && ! $this->isUserWidget() ?: null,
+                'label'     => $this->hasPerm() && ! $this->isUserWidget() ? t('Disable Dashlet') : t('Remove Dashlet'),
+                'title'     => ! $this->hasPerm() && ! $this->isUserWidget()
+                    ? t('You have not the required permission to disable system dashlet')
+                    : null
             ]);
         } else {
             $submitLabel = t('Add To Dashboard');
@@ -109,486 +206,453 @@ class DashletForm extends CompatForm
                 $formTitle = t('Edit Dashlet');
             }
 
-            $this->add(Html::tag('h1', $formTitle));
+            $this->addHtml(HtmlElement::create('h1', null, $formTitle));
             $this->addElement('hidden', 'org_pane', ['required'     => false]);
             $this->addElement('hidden', 'org_home', ['required'     => false]);
             $this->addElement('hidden', 'org_dashlet', ['required'  => false]);
-            $this->addElement(
-                'checkbox',
-                'create_new_home',
-                [
-                    'class'         => 'autosubmit',
-                    'disabled'      => empty($dashboardHomes) ?: null,
-                    'required'      => false,
-                    'label'         => t('New Dashboard Home'),
-                    'description'   => t('Check this box if you want to add the dashboard to a new dashboard home.'),
-                ]
-            );
-
-            $shouldDisable = empty($panes) || $this->getPopulatedValue('create_new_home') === 'y';
+            $this->addElement('checkbox', 'create_new_home', [
+                'class'         => 'autosubmit',
+                'disabled'      => empty($dashboardHomes) ?: null,
+                'required'      => false,
+                'label'         => t('New Dashboard Home'),
+                'description'   => t('Check this box if you want to add the dashboard to a new dashboard home'),
+            ]);
 
             if (empty($dashboardHomes) || $this->getPopulatedValue('create_new_home') === 'y') {
-                if (empty($dashboardHomes)) {
-                    $this->getElement('create_new_home')->addAttributes(['checked' => 'checked']);
-                }
+                $this->getElement('create_new_home')->addAttributes(['checked' => 'checked']);
 
-                $this->addElement(
-                    'text',
-                    'home',
-                    [
-                        'required'      => true,
-                        'label'         => t('Dashboard Home'),
-                        'description'   => t('Enter a title for the new dashboard home.'),
-                    ]
-                );
+                $this->addElement('text', 'home', [
+                    'required'      => true,
+                    'label'         => t('Dashboard Home'),
+                    'description'   => t('Enter a title for the new dashboard home'),
+                ]);
             } else {
-                if (! empty($panes)) {
-                    $shouldDisable = false;
-                }
-
-                $this->addElement(
-                    'select',
-                    'home',
-                    [
-                        'class'         => 'autosubmit',
-                        'required'      => true,
-                        'label'         => t('Dashboard Home'),
-                        'multiOptions'  => $dashboardHomes,
-                        'value'         => $home,
-                        'description'   => t('Select a home you want to add the pane to'),
-                    ]
-                );
+                $this->addElement('select', 'home', [
+                    'class'         => 'autosubmit',
+                    'required'      => true,
+                    'label'         => t('Dashboard Home'),
+                    'multiOptions'  => $dashboardHomes,
+                    'value'         => $home,
+                    'description'   => t('Select a home you want to add the pane to'),
+                ]);
             }
 
-            $this->addElement(
-                'checkbox',
-                'create_new_pane',
-                [
-                    'class'         => 'autosubmit',
-                    'disabled'      => $shouldDisable ?: null,
-                    'required'      => false,
-                    'label'         => t('New Dashboard'),
-                    'description'   => t('Check this box if you want to add the dashlet to a new dashboard'),
-                ]
-            );
+            $shouldDisable = empty($panes) || $this->getPopulatedValue('create_new_home') === 'y';
+            $this->addElement('checkbox', 'create_new_pane', [
+                'class'         => 'autosubmit',
+                'disabled'      => $shouldDisable ?: null,
+                'required'      => false,
+                'label'         => t('New Dashboard'),
+                'description'   => t('Check this box if you want to add the dashlet to a new dashboard'),
+            ]);
 
-            if (empty($panes) || $shouldDisable || $this->getPopulatedValue('create_new_pane') === 'y') {
-                if ($shouldDisable) {
-                    $this->getElement('create_new_pane')->addAttributes(['checked' => 'checked']);
+            if ($shouldDisable || $this->getPopulatedValue('create_new_pane') === 'y') {
+                $this->getElement('create_new_pane')->setAttribute('checked', 'checked');
+                $this->addElement('text', 'pane', [
+                    'required'      => true,
+                    'label'         => t('New Dashboard Title'),
+                    'description'   => t('Enter a title for the new dashboard'),
+                ]);
+            } else {
+                $this->addElement('select', 'pane', [
+                    'required'      => true,
+                    'label'         => t('Dashboard'),
+                    'multiOptions'  => $panes,
+                    'value'         => reset($panes),
+                    'description'   => t('Select a dashboard you want to add the dashlet to'),
+                ]);
+            }
+
+            if ($this->hasPerm() && $this->isUserWidget()) {
+                $this->addElement('checkbox', 'create_public_dashboard', [
+                    'class'         => 'autosubmit',
+                    'required'      => false,
+                    'label'         => t('Public Dashboard'),
+                    'description'   => t('Check this box if you want to propose this as default dashboard for others'),
+                ]);
+            }
+
+            if ($this->getPopulatedValue('create_public_dashboard') === 'y') {
+                if (! empty($this->dashboard->getUsers())){
+                    $users = array_keys($this->dashboard->getUsers());
+                    $this->addElement('select', 'user_name[]', [
+                        'required'      => false,
+                        'multiple'      => true,
+                        'multiOptions'  => array_combine($users, $users),
+                        'label'         => t('Users'),
+                        'description'   => t(
+                            'Select one or more users you want to set this as default dashboard for'
+                        ),
+                    ]);
                 }
 
-                $this->addElement(
-                    'text',
-                    'pane',
-                    [
-                        'required'      => true,
-                        'label'         => t('New Dashboard Title'),
-                        'description'   => t('Enter a title for the new dashboard'),
-                    ]
-                );
-            } else {
-                $this->addElement(
-                    'select',
-                    'pane',
-                    [
-                        'required'      => true,
-                        'label'         => t('Dashboard'),
-                        'multiOptions'  => $panes,
-                        'description'   => t('Select a dashboard you want to add the dashlet to'),
-                    ]
-                );
+                $this->addElement('textarea', 'users', [
+                    'required'      => false,
+                    'label'         => t('Users'),
+                    'description'   => t(
+                        'Provide comma separated list of usernames to set the dashboard as default for'
+                    )
+                ]);
             }
 
             $this->add(new HtmlElement('hr'));
 
             if ($requestPath === $updateDashlet) {
                 if ($home === $populatedHome) {
-                    $pane = Url::fromRequest()->getParam('pane');
-                    $pane = $this->dashboard->getActiveHome()->getPane($pane);
-                    $dashlet = $pane->getDashlet(Url::fromRequest()->getParam('dashlet'));
-
-                    if ($dashlet->getDisabled()) {
-                        $this->addElement(
-                            'checkbox',
-                            'enable_dashlet',
-                            [
-                                'label'         => t('Enable Dashlet'),
-                                'value'         => 'n',
-                                'description'   => t('Check this box if you want to enable this dashlet.')
-                            ]
-                        );
+                    $dashlet = $this->dashboard->getActiveHome()->getPane($paneParam)->getDashlet($dashletParam);
+                    if ($dashlet->isDisabled()) {
+                        $this->addElement('checkbox', 'enable_dashlet', [
+                            'value'         => 'n',
+                            'label'         => t('Enable Dashlet'),
+                            'description'   => t('Check this box if you want to enable this dashlet')
+                        ]);
                     }
                 }
             }
-            $this->addElement(
-                'textarea',
-                'url',
-                [
-                    'required'      => true,
-                    'label'         => t('Url'),
-                    'description'   => t(
-                        'Enter url to be loaded in the dashlet. You can paste the full URL, including filters.'
-                    ),
-                ]
-            );
 
-            $this->addElement(
-                'text',
-                'dashlet',
-                [
-                    'required'      => true,
-                    'label'         => t('Dashlet Title'),
-                    'description'   => t('Enter a title for the dashlet.'),
-                ]
-            );
+            $this->renderRemoveForAllUsers();
+            $this->addElement('textarea', 'url', [
+                'required'      => true,
+                'label'         => t('Url'),
+                'description'   => t(
+                    'Enter url to be loaded in the dashlet. You can paste the full URL, including filters'
+                ),
+            ]);
 
-            $this->add(
-                HtmlElement::create(
-                    'div',
-                    [
-                        'class' => 'control-group form-controls',
-                        'style' => 'position: relative;  margin-top: 2em;'
-                    ],
-                    [
-                        $requestPath !== $updateDashlet ? '' :
-                        HtmlElement::create(
-                            'input',
-                            [
-                                'class'         => 'btn-primary',
-                                'type'          => 'submit',
-                                'name'          => 'remove_dashlet',
-                                'value'         => t('Remove Dashlet'),
-                                'formaction'    => (string) Url::fromRequest()->setPath('dashboard/remove-dashlet')
-                            ]
-                        ),
-                        HtmlElement::create(
-                            'input',
-                            [
-                                'class'  => 'btn-primary',
-                                'type'  => 'submit',
-                                'name'  => 'submit',
-                                'value' => $submitLabel,
-                            ]
-                        ),
-                    ]
-                )
-            );
+            $this->addElement('text', 'dashlet', [
+                'required'      => true,
+                'label'         => t('Dashlet Title'),
+                'description'   => t('Enter a title for the dashlet'),
+            ]);
+
+            $controlGroup = HtmlElement::create('div', [
+                'class' => 'control-group form-controls',
+                'style' => 'position: relative;  margin-top: 2em;'
+            ]);
+
+            if ($requestPath === $updateDashlet) {
+                $controlGroup->addHtml(HtmlElement::create('input', [
+                    'class'         => 'btn-primary',
+                    'type'          => 'submit',
+                    'name'          => 'remove_dashlet',
+                    'value'         => ! $this->isUserWidget() ? t('Disable Dashlet') : t('Remove Dashlet'),
+                    'formaction'    => (string) $requestUrl->setPath($removeDashlet),
+                    'disabled'      => ! $this->hasPerm() && (! $this->isUserWidget() || $this->isPublic()) ?: null,
+                    'title'         => ! $this->hasPerm() && (! $this->isUserWidget() || $this->isPublic())
+                        ? sprintf(
+                            t('You have not the required permission to %s dashlet'),
+                            ! $this->isUserWidget() ? 'disable system' : 'remove public'
+                        )
+                        : null
+                ]));
+            }
+
+            $controlGroup->addHtml(HtmlElement::create('input', [
+                'class'     => 'btn-primary',
+                'type'      => 'submit',
+                'name'      => 'submit',
+                'value'     => $submitLabel,
+                'disabled'  => ! $this->hasPerm() && (! $this->isUserWidget() || $this->isPublic()) ?: null,
+                'title'     => ! $this->hasPerm() && (! $this->isUserWidget() || $this->isPublic())
+                    ? sprintf(
+                        t('You have not the required permission to edit %s dashlet'),
+                        ! $this->isUserWidget() ? 'system' : 'public'
+                    )
+                    : null
+            ]));
+
+            $this->addHtml($controlGroup);
         }
     }
 
-    public function createDashlet()
+    protected function onSuccess()
     {
         $dashboard = $this->dashboard;
-        $db = DashboardHome::getConn();
+        $isPublicDashboard = $this->getPopulatedValue('create_public_dashboard') === 'y';
+        $usernames = $this->getShareWithUsers();
 
-        $username = $dashboard->getUser()->getUsername();
-        $home = $this->getValue('home');
+        if (Url::fromRequest()->getPath() === Dashboard::BASE_ROUTE . '/new-dashlet') {
+            $newHome = new DashboardHome($this->getValue('home'));
+            $newHome
+                ->setAuthUser($dashboard->getAuthUser())
+                ->setAdditional('with_users', $usernames)
+                ->setType($isPublicDashboard ? Dashboard::PUBLIC_DS : Dashboard::PRIVATE_DS);
 
-        // Begin DB transaction
-        $db->beginTransaction();
+            $pane = new Pane($this->getValue('pane'));
+            $pane
+                ->setUserWidget()
+                ->setType($newHome->getType())
+                ->setAdditional('with_users', $usernames);
 
-        if (! $dashboard->hasHome($home) || /** prevents from failing foreign key constraint */
-            ($dashboard->getHome($home)->getOwner() === DashboardHome::DEFAULT_IW2_USER &&
-            $dashboard->getHome($home)->getName() !== DashboardHome::DEFAULT_HOME)) {
-            $db->insert(DashboardHome::TABLE, ['name' => $home, 'label' => $home, 'owner' => $username]);
+            $dashlet = new Dashlet($this->getValue('dashlet'), $this->getValue('url'), $pane);
+            $dashlet
+                ->setUserWidget()
+                ->setType($pane->getType())
+                ->setAdditional('with_users', $usernames);
 
-            $homeId = $db->lastInsertId();
-        } else {
-            $homeId = $dashboard->getHome($home)->getIdentifier();
-
-            $dashboard->loadDashboards($home);
-        }
-
-        $paneName = $this->getValue('pane');
-
-        try {
-            $pane = $dashboard->getActiveHome()->getPane($paneName);
-            $paneId = $pane->getPaneId();
-
-            if ($pane->getOwner() === DashboardHome::DEFAULT_IW2_USER) {
-                throw new ProgrammingError('User is going to create a dashlet in a system pane.');
-            }
-        } catch (ProgrammingError $_) {
-            $pane = null;
-            $type = Pane::PRIVATE_DS;
-
-            $paneLabel = $paneName;
-            $paneId = DashboardHome::getSHA1($username . $home . $paneName);
-
-            $activeHome = $dashboard->getActiveHome();
-            if ($activeHome->getName() === $home && $activeHome->hasPane($paneName)) {
-                $tmpPane = $activeHome->getPane($paneName);
-                $paneLabel = $tmpPane->getTitle();
-
-                if ($tmpPane->getOwner() === DashboardHome::DEFAULT_IW2_USER) {
-                    $type = Pane::SYSTEM;
-                }
-            }
-
-            $db->insert(Pane::TABLE, [
-                'id'        => $paneId,
-                'home_id'   => $homeId,
-                'owner'     => $username,
-                'name'      => $paneName,
-                'label'     => $paneLabel,
-                'source'    => $type
-            ]);
-
-            $db->insert('dashboard_order', [
-                'dashboard_id'  => $paneId,
-                'home_id'       => $homeId,
-                'owner'         => $username,
-                'priority'      => rand(1, 100)
-            ]);
-        }
-
-        try {
-            $dashletFound = false;
-
-            if (! empty($pane)) {
-                if ($pane->hasDashlet($this->getValue('dashlet'))) {
-                    $dashletFound = true;
-                }
-            }
-
-            if (! $dashletFound) {
-                throw new ProgrammingError('Dashlet does not exist');
-            }
-
-            Notification::error(t('There already exists a Dashlet with the same name.'));
-        } catch (ProgrammingError $err) {
-            $dashletId = DashboardHome::getSHA1(
-                $username . $home . $paneName . $this->getValue('dashlet')
-            );
-            $db->insert(Dashlet::TABLE, [
-                'id'            => $dashletId,
-                'dashboard_id'  => $paneId,
-                'owner'         => $username,
-                'name'          => $this->getValue('dashlet'),
-                'label'         => $this->getValue('dashlet'),
-                'url'           => $this->getValue('url')
-            ]);
-
-            $db->insert('dashlet_order', [
-                'dashlet_id'    => $dashletId,
-                'dashboard_id'  => $paneId,
-                'owner'         => $username,
-                'priority'      => rand(1, 100)
-            ]);
-
-            // Commit DB transaction
-            $db->commitTransaction();
-
-            Notification::success(t('Dashlet created'));
-        }
-    }
-
-    public function updateDashlet()
-    {
-        $db = DashboardHome::getConn();
-        $username = $this->dashboard->getUser()->getUsername();
-        $orgHome = $this->dashboard->getHome($this->getValue('org_home'));
-
-        // Original pane and dashlet
-        $orgPane = $orgHome->getPane($this->getValue('org_pane'));
-        $orgDashlet = $orgPane->getDashlet($this->getValue('org_dashlet'));
-
-        $homeName = $this->getValue('home');
-
-        $paneId = $orgPane->getPaneId();
-        $homeId = $orgHome->getIdentifier();
-
-        if (! $orgDashlet->isUserWidget() && (
-            $orgPane->getName() !== $this->getValue('pane')
-            || $orgHome->getName() !== $homeName)
-        ) {
-            Notification::error(t(
-                'It is not allowed to move system dashlet: "' . $this->getValue('org_dashlet') . '"'
-            ));
-
-            $this->homeCreated = false;
-
-            return;
-        }
-
-        $createNewHome = true;
-        if ($this->dashboard->hasHome($homeName)) {
-            $home = $this->dashboard->getHome($homeName);
-            $homeId = $home->getIdentifier();
-
-            $createNewHome = false;
-
-            if ($orgHome->getName() !== $home->getName()) {
-                $this->dashboard->loadDashboards($home->getName());
-            }
-        }
-
-        $activeHome = $this->dashboard->getActiveHome();
-        $paneName = $this->getValue('pane');
-        $createNewPane = true;
-
-        if ($activeHome && $activeHome->hasPane($paneName)) {
-            $paneId = $activeHome->getPane($paneName)->getPaneId();
-
-            $createNewPane = false;
-        }
-
-        $dashletUrl = null;
-        $dashletLabel = $this->getValue('dashlet');
-        $dashletDisabled = $orgDashlet->getDisabled();
-
-        if (! $orgDashlet->getUrl()->matches($this->getValue('url'))) {
-            $dashletUrl = $this->getValue('url');
-        }
-
-        if ($this->getPopulatedValue('enable_dashlet') === 'y') {
-            $dashletDisabled = false;
-        }
-
-        // Begin DB transaction
-        $db->beginTransaction();
-
-        if (! $orgDashlet->isUserWidget()) { // System dashlets
-            // Since system dashlets can be edited by multiple users, we need to change
-            // the original id here, so we don't encounter a duplicate key error
-            $dashletId = DashboardHome::getSHA1(
-                $username . $homeName . $orgPane->getName() . $orgDashlet->getName()
-            );
-
-            if (! $orgPane->isUserWidget()) {
-                $paneId = DashboardHome::getSHA1($username . $homeName . $orgPane->getName());
-            }
-
-            $db->insert(Dashlet::OVERRIDING_TABLE, [
-                'dashlet_id'    => $dashletId,
-                'dashboard_id'  => $paneId,
-                'owner'         => $username,
-                'label'         => $dashletLabel,
-                'url'           => $dashletUrl,
-                'disabled'      => (int) $dashletDisabled
-            ]);
-        } elseif ($orgDashlet->isOverridingWidget()) { // Custom dashelts that overwrites system dashlets
-            if ($orgPane->getName() !== $paneName) {
-                Notification::error(sprintf(
-                    t('Dashlet "%s" can\'t be moved, as it overwrites a system dashlet'),
-                    $orgDashlet->getName()
-                ));
-
-                return;
-            }
-
-            $db->update(Dashlet::OVERRIDING_TABLE, [
-                'label'     => $dashletLabel,
-                'url'       => $dashletUrl,
-                'disabled'  => (int) $dashletDisabled
-            ], [
-                'dashlet_id = ?'    => $orgDashlet->getDashletId(),
-                'dashboard_id = ?'  => $paneId
-            ]);
-        } else { // Custom
-            if ($createNewHome || ($homeName !== DashboardHome::DEFAULT_HOME &&
-                    $activeHome->getOwner() === DashboardHome::DEFAULT_IW2_USER)) {
-                $db->insert(DashboardHome::TABLE, ['name' => $homeName, 'label' => $homeName, 'owner' => $username]);
-
-                $homeId = $db->lastInsertId();
-            }
-
-            if ($createNewPane || $activeHome->getPane($paneName)->getOwner() === DashboardHome::DEFAULT_IW2_USER) {
-                $paneLabel = $paneName;
-                $source = Pane::PRIVATE_DS;
-                $paneId = DashboardHome::getSHA1($username . $homeName . $paneName);
-
-                if (! $createNewPane) {
-                    $paneLabel = $activeHome->getPane($paneName)->getTitle();
-                    $source = Pane::SYSTEM;
-                }
-
-                $db->insert(Pane::TABLE, [
-                    'id'        => $paneId,
-                    'home_id'   => $homeId,
-                    'name'      => $paneName,
-                    'owner'     => $username,
-                    'label'     => $paneLabel,
-                    'source'    => $source,
-                ]);
-
-                // Dashboard priority order
-                $db->insert('dashboard_order', [
-                    'dashboard_id'  => $paneId,
-                    'home_id'       => $homeId,
-                    'owner'         => $username,
-                    'priority'      => rand(1, 100)
-                ]);
-            }
-
-            $dashletId = DashboardHome::getSHA1($username . $homeName . $paneName . $orgDashlet->getName());
-
-            try {
-                $db->update(Dashlet::TABLE, [
-                    'id'            => $dashletId,
-                    'dashboard_id'  => $paneId,
-                    'owner'         => $username,
-                    'name'          => $orgDashlet->getName(),
-                    'label'         => $this->getValue('dashlet'),
-                    'url'           => $this->getValue('url')
-                ], ['dashlet.id = ?'  => $orgDashlet->getDashletId()]);
-            } catch (\PDOException $err) {
-                if ($err->errorInfo[1] === Dashboard::PDO_DUPLICATE_KEY_ERR) { // Duplicate entry
+            $orgHome = null;
+            if ($dashboard->hasHome($newHome->getName())) {
+                $orgHome = $dashboard->getActiveHome();
+                if ($isPublicDashboard && $orgHome->getType() !== Dashboard::PUBLIC_DS) {
                     Notification::error(
-                        sprintf(t('There is already a dashlet "%s" within this pane.'), $orgDashlet->getName())
+                        sprintf(t('You cannot create public dashboard in a "%s" home'), $orgHome->getType())
                     );
 
                     return;
                 }
+
+                if ($orgHome->getName() !== $dashboard->getActiveHome()->getName()) {
+                    $orgHome = $dashboard->getHome($newHome->getName());
+                    $orgHome->setActive(true);
+                    $orgHome->loadUserDashboards();
+                }
+
+                if ($orgHome->hasPane($pane->getName())) {
+                    $orgPane = $orgHome->getPane($pane->getName());
+                    if ($isPublicDashboard && $orgPane->getType() !== Dashboard::PUBLIC_DS) {
+                        Notification::error(
+                            sprintf(t('You cannot create public dashlet in a "%s" pane'), $orgHome->getType())
+                        );
+
+                        return;
+                    }
+
+                    if ($orgPane->hasDashlet($dashlet->getName())) {
+                        Notification::info(t('There already exists a dashlet with the same name'));
+
+                        return;
+                    }
+
+                    $pane
+                        ->setCtime(strtotime($orgPane->getCtime()))
+                        ->setMtime(strtotime($orgPane->getMtime()))
+                        ->setType($orgPane->getType())
+                        ->setPaneId($orgPane->getPaneId());
+                }
+
+                $newHome
+                    ->setName($orgHome->getName())
+                    ->setType($orgHome->getType())
+                    ->setIdentifier($orgHome->getIdentifier());
             }
-        }
 
-        // Commit DB transaction
-        $db->commitTransaction();
+            $pane->addDashlet($dashlet);
+            $newHome->addPane($pane);
+            $dashboard->manageHome($newHome, $orgHome);
 
-        Notification::success(t('Dashlet updated'));
-    }
-
-    public function onSuccess()
-    {
-        if (Url::fromRequest()->getPath() === 'dashboard/new-dashlet') {
-            $this->createDashlet();
+            Notification::success(t('Dashlet created'));
         } else {
             if ($this->getPopulatedValue('remove_dashlet')) {
-                $activeHome = $this->dashboard->getActiveHome();
-                $dashlet = Url::fromRequest()->getParam('dashlet');
-                $pane = $activeHome->getPane(Url::fromRequest()->getParam('pane'));
+                $requestUrl = Url::fromRequest();
+                $home = $dashboard->getHome($requestUrl->getParam('home'));
+                $pane = $home->getPane($requestUrl->getParam('pane'));
+                $dashlet = $pane->getDashlet($requestUrl->getParam('dashlet'));
 
-                if (! $pane->getDashlet($dashlet)->isUserWidget()) {
-                    $dashletId = DashboardHome::getSHA1(
-                        $activeHome->getUser()->getUsername() . $activeHome->getName() . $pane->getName() . $dashlet
-                    );
-
-                    $pane->getDashlet($dashlet)->setDashletId($dashletId);
+                if ($this->getPopulatedValue('purge_from_db') === 'y') {
+                    $dashlet->setAdditional('unshared_users', new DBUser('*'));
                 }
 
                 $pane->removeDashlet($dashlet);
 
-                Notification::success(t('Dashlet has been removed from.') . ' ' . $pane->getTitle());
+                $message = sprintf(t('Removed dashlet "%s" successfully'), $pane->getTitle());
+                if (! $dashlet->isUserWidget()) {
+                    $message = sprintf(t('Disabled dashlet "%s" successfully'), $pane->getTitle());
+                }
+
+                Notification::success($message);
             } else {
-                $this->updateDashlet();
+                $orgHome = $dashboard->getHome($this->getValue('org_home'));
+
+                $orgPane = $orgHome->getPane($this->getValue('org_pane'));
+                $orgDashlet = $orgPane->getDashlet($this->getValue('org_dashlet'));
+
+                $newHome = new DashboardHome($this->getValue('home', $orgHome->getName()));
+                $newHome
+                    ->setType(Dashboard::PRIVATE_DS)
+                    ->setAuthUser($orgHome->getAuthUser());
+
+                if (
+                    $this->getPopulatedValue('create_new_home') !== 'y'
+                    && $newHome->getName() === $orgHome->getName()
+                ) {
+                    $newHome->setLabel($orgHome->getLabel());
+                }
+
+                if (
+                    ! $orgDashlet->isUserWidget()
+                    && (
+                        $orgPane->getName() !== $this->getValue('pane')
+                        || $orgHome->getName() !== $newHome->getName()
+                    )
+                ) {
+                    Notification::info(t(
+                        'It is not allowed to move system dashlet: "' . $this->getValue('org_dashlet') . '"'
+                    ));
+
+                    return;
+                }
+
+                $newPane = new Pane($this->getValue('pane'));
+                $newPane
+                    ->setType($orgPane->getType())
+                    ->setUserWidget($orgPane->isUserWidget())
+                    ->setOverride($orgPane->isOverridingWidget());
+
+                if ($this->getPopulatedValue('create_new_pane') !== 'y') {
+                    $newPane
+                        ->setUserWidget()
+                        ->setOverride(false)
+                        ->setType(Dashboard::PRIVATE_DS)
+                        ->setPaneId($orgPane->getPaneId());
+                }
+
+                $dashlet = clone $orgDashlet;
+                $dashlet
+                    ->setPane($newPane)
+                    ->setUrl($this->getValue('url'))
+                    ->setTitle($this->getValue('dashlet'));
+
+                if ($this->getPopulatedValue('enable_dashlet') === 'y') {
+                    $dashlet->setDisabled(false);
+                }
+
+                if (
+                    $dashlet->isOverridingWidget()
+                    && (
+                        $orgPane->getName() !== $newPane->getName()
+                        || $orgHome->getName() !== $newHome->getName()
+                    )
+                ) {
+                    Notification::info(sprintf(
+                        t('Dashlet "%s" cannot be moved, as it overwrites a system dashlet'),
+                        $orgDashlet->getTitle()
+                    ));
+
+                    return;
+                }
+
+                if ($dashboard->hasHome($newHome->getName())) {
+                    $copyHome = $dashboard->getActiveHome();
+                    if (
+                        $orgHome->getName() !== $newHome->getName()
+                        || $dashboard->getActiveHome()->getName() !== $newHome->getName()
+                    ) {
+                        $copyHome = (clone $dashboard->getHome($newHome->getName()))->setPanes([]);
+                        $copyHome->setActive(true);
+                        $copyHome->loadUserDashboards();
+                    }
+
+                    if ($copyHome->hasPane($newPane->getName())) {
+                        $pane = $copyHome->getPane($newPane->getName());
+                        if (
+                            $pane->hasDashlet($dashlet->getName())
+                            && ! $orgDashlet->isDisabled()
+                            && (
+                                $dashlet->getTitle() === $orgDashlet->getTitle()
+                                || $newHome->getName() !== $orgHome->getName()
+                                || $pane->getName() !== $orgPane->getName()
+                            )
+                        ) {
+                            Notification::info(sprintf(
+                                t('There is already a dashlet "%s" within this pane.'),
+                                $orgDashlet->getTitle()
+                            ));
+
+                            return;
+                        }
+
+                        $newPane
+                            ->setUserWidget()
+                            ->setType($pane->getType())
+                            ->setPaneId($pane->getPaneId())
+                            ->setDisabled($pane->isDisabled());
+                    }
+
+                    if (
+                        $this->getPopulatedValue('create_new_pane') !== 'y'
+                        && $copyHome->hasPane($newPane->getName())
+                    ) {
+                        $newPane->setTitle($copyHome->getPane($newPane->getName())->getTitle());
+                    }
+
+                    $newHome->setType($copyHome->getType());
+                }
+
+                $paneDiff = array_filter(array_diff_assoc($newPane->toArray(), $orgPane->toArray()));
+                $dashletDiff = array_filter(
+                    array_diff_assoc($dashlet->toArray(), $orgDashlet->toArray()),
+                    function ($value) {
+                        return $value !== null;
+                    }
+                );
+
+                // Prevent meaningless updates when there weren't any changes,
+                // e.g. when the user just presses the update button without changing anything
+                if ($orgHome->getName() !== $newHome->getName() || ! empty($dashletDiff) || ! empty($paneDiff)) {
+                    $orgPane->setDashlets([$orgDashlet->getName() => $orgDashlet]);
+                    // We need to use the new pane name as a key here, because we will have an easier task
+                    // to manage it afterwards. So, it mainly serves us not to create the dashlet over again,
+                    // even though the user wants to move it
+                    $orgHome->setPanes([$newPane->getName() => $orgPane]);
+
+                    $newPane->addDashlet($dashlet);
+                    $newHome->addPane($newPane);
+                    $dashboard->manageHome($newHome, $orgHome);
+                }
+
+                Notification::success(t('Dashlet updated'));
             }
         }
     }
 
     /**
-     * @param Dashlet $dashlet
-     * @param string  $home
+     * @return false|Dashlet
+     *
+     * @throws \Icinga\Exception\ProgrammingError
      */
-    public function load(Dashlet $dashlet, $home)
+    private function dashletExist()
     {
-        $this->populate(array(
-            'pane'          => $dashlet->getPane()->getName(),
-            'org_pane'      => $dashlet->getPane()->getName(),
-            'org_home'      => $home,
-            'dashlet'       => $dashlet->getTitle(),
-            'org_dashlet'   => $dashlet->getName(),
-            'url'           => $dashlet->getUrl()->getRelativeUrl()
-        ));
+        $requestUrl = Url::fromRequest();
+        $pane = $this->getPopulatedValue('pane');
+        if (
+            $pane
+            && $requestUrl->getPath() === Dashboard::BASE_ROUTE . '/update-dashlet'
+            || $requestUrl->getPath() === Dashboard::BASE_ROUTE . '/remove-dashlet'
+        ) {
+            $activeHome = $this->dashboard->getActiveHome();
+            if (! $activeHome->hasPane($pane)) {
+                return false;
+            }
+
+            $dashlet = $requestUrl->getParam('dashlet');
+            $pane = $activeHome->getPane($pane);
+            if (! $pane->hasDashlet($dashlet)) {
+                return false;
+            }
+
+            return $pane->getDashlet($dashlet);
+        }
+
+        return false;
+    }
+
+    /**
+     * Get all user to share the dashboard with
+     *
+     * @return DBUser[]
+     */
+    private function getShareWithUsers()
+    {
+        $usernames = $this->getPopulatedValue('user_name') ?: [];
+        if (($users = $this->getValue('users'))) {
+            $usernames = array_merge($usernames, array_map('trim', explode(',', $users)));
+        }
+
+        $users = [];
+        foreach ($usernames as $username) {
+            $users[$username] = new DBUser($username);
+        }
+
+        return $users;
     }
 }

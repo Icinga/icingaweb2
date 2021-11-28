@@ -36,14 +36,13 @@ class SearchDashboard extends Dashboard
 
     public function __construct()
     {
+        parent::__construct();
+
         // Initialize "Search Home" dashboard Home
         $this->dashboardHome = new DashboardHome(self::SEARCH_HOME);
         $this->dashboardHome->setActive();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getTabs()
     {
         if ($this->tabs === null) {
@@ -62,9 +61,6 @@ class SearchDashboard extends Dashboard
         return $this->tabs;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getActiveHome()
     {
         return $this->dashboardHome;
@@ -79,6 +75,7 @@ class SearchDashboard extends Dashboard
      */
     public function search($searchString = '')
     {
+        $this->dashboardHome->setAuthUser($this->getAuthUser());
         $pane = $this->dashboardHome->addPane(self::SEARCH_PANE)->getPane(self::SEARCH_PANE)->setTitle(t('Search'));
         $this->activate(self::SEARCH_PANE);
 
@@ -86,11 +83,11 @@ class SearchDashboard extends Dashboard
         $searchUrls = array();
 
         foreach ($manager->getLoadedModules() as $module) {
-            if ($this->dashboardHome->getUser()->can($manager::MODULE_PERMISSION_NS . $module->getName())) {
+            if ($this->dashboardHome->getAuthUser()->can($manager::MODULE_PERMISSION_NS . $module->getName())) {
                 $moduleSearchUrls = $module->getSearchUrls();
                 if (! empty($moduleSearchUrls)) {
                     if ($searchString === '') {
-                        $pane->add(t('Ready to search'), 'search/hint');
+                        $pane->addDashlet(t('Ready to search'), 'search/hint');
                         return $this;
                     }
                     $searchUrls = array_merge($searchUrls, $moduleSearchUrls);
@@ -109,10 +106,7 @@ class SearchDashboard extends Dashboard
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function assemble()
+    protected function assemble()
     {
         if (! $this->dashboardHome->getPane(self::SEARCH_PANE)->hasDashlets()) {
             throw new HttpNotFoundException(t('Page not found'));
@@ -135,10 +129,5 @@ class SearchDashboard extends Dashboard
             return 0;
         }
         return ($a->priority < $b->priority) ? -1 : 1;
-    }
-
-    public function __get($name)
-    {
-        return $this->$name;
     }
 }

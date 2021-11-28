@@ -1,9 +1,10 @@
 <?php
-/* Icinga Web 2 | (c) 2014 Icinga Development Team | GPLv2+ */
+
+/* Icinga Web 2 | (c) 2021 Icinga GmbH | GPLv2+ */
 
 namespace Icinga\Web\Dashboard;
 
-use Icinga\Web\Navigation\DashboardHome;
+use Icinga\Web\Widget\Dashboard;
 
 trait UserWidget
 {
@@ -26,7 +27,21 @@ trait UserWidget
      *
      * @var string
      */
-    private $owner = DashboardHome::DEFAULT_IW2_USER;
+    protected $owner;
+
+    /**
+     * A type of this widget
+     *
+     * @var string
+     */
+    protected $type = Dashboard::SYSTEM;
+
+    /**
+     * Disabled flag of a pane
+     *
+     * @var bool
+     */
+    protected $disabled = false;
 
     /**
      * Set the owner of this widget
@@ -36,6 +51,8 @@ trait UserWidget
     public function setOwner($owner)
     {
         $this->owner = $owner;
+
+        return $this;
     }
 
     /**
@@ -80,6 +97,8 @@ trait UserWidget
     public function setUserWidget($userWidget = true)
     {
         $this->userWidget = (bool) $userWidget;
+
+        return $this;
     }
 
     /**
@@ -90,5 +109,51 @@ trait UserWidget
     public function isUserWidget()
     {
         return $this->userWidget;
+    }
+
+    /**
+     * Set type of this widget
+     *
+     * @param $type
+     *
+     * @return $this
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
+    /**
+     * Get type of this widget
+     *
+     * @return string
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    /**
+     * Setter for disabled
+     *
+     * @param bool $disabled
+     */
+    public function setDisabled(bool $disabled)
+    {
+        $this->disabled = $disabled;
+
+        return $this;
+    }
+
+    /**
+     * Getter for disabled
+     *
+     * @return bool
+     */
+    public function isDisabled()
+    {
+        return $this->disabled;
     }
 }

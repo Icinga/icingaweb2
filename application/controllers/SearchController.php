@@ -3,8 +3,7 @@
 
 namespace Icinga\Controllers;
 
-use Icinga\Web\Controller\ActionController;
-use Icinga\Web\Widget;
+use Icinga\DBUser;
 use Icinga\Web\Widget\SearchDashboard;
 use ipl\Web\Compat\CompatController;
 
@@ -16,7 +15,8 @@ class SearchController extends CompatController
     public function indexAction()
     {
         $searchDashboard = new SearchDashboard();
-        $searchDashboard->dashboardHome->setUser($this->Auth()->getUser());
+        $user = $this->Auth()->getUser();
+        $searchDashboard->getActiveHome()->setAuthUser((new DBUser($user->getUsername()))->extractFrom($user));
 
         $this->controls->setTabs($searchDashboard->getTabs());
         $this->content = $searchDashboard->search($this->getParam('q'));

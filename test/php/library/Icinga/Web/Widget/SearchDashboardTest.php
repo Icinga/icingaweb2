@@ -39,7 +39,7 @@ class SearchDashboardTest extends BaseTestCase
         $user = new User('test');
         $user->setPermissions(array('*' => '*'));
         $dashboard = new SearchDashboard();
-        $dashboard->setUser($user);
+        $dashboard->setAuthUser($user);
         $dashboard = $dashboard->search('pending');
         $dashboard->getPane('search')->removeDashlets();
         $dashboard->render();
@@ -54,7 +54,7 @@ class SearchDashboardTest extends BaseTestCase
         $user->setRoles([$role]);
 
         $dashboard = new SearchDashboard();
-        $dashboard->setUser($user);
+        $dashboard->setAuthUser($user);
         $dashboard = $dashboard->search('pending');
 
         $result = $dashboard->getPane('search')->hasDashlet('Hosts: pending');
@@ -71,7 +71,7 @@ class SearchDashboardTest extends BaseTestCase
         $user->setRoles([$role]);
 
         $dashboard = new SearchDashboard();
-        $dashboard->setUser($user);
+        $dashboard->setAuthUser($user);
         $dashboard = $dashboard->search();
 
         $result = $dashboard->getPane('search')->hasDashlet('Ready to search');

@@ -4,6 +4,7 @@
 namespace Icinga\Web\Widget\Tabextension;
 
 use Icinga\Web\Url;
+use Icinga\Web\Widget\Dashboard;
 use Icinga\Web\Widget\Tabs;
 
 /**
@@ -31,7 +32,7 @@ class DashboardSettings implements Tabextension
      */
     public function apply(Tabs $tabs)
     {
-        $url = Url::fromPath('dashboard/new-dashlet');
+        $url = Url::fromPath(Dashboard::BASE_ROUTE . '/new-dashlet');
         $tabs->addAsDropdown(
             'dashboard_add',
             array(
@@ -41,7 +42,7 @@ class DashboardSettings implements Tabextension
             )
         );
 
-        $url = Url::fromPath('dashboard/settings');
+        $url = Url::fromPath(Dashboard::BASE_ROUTE . '/settings');
         $tabs->addAsDropdown(
             'dashboard_settings',
             array(

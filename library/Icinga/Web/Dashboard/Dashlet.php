@@ -1,11 +1,16 @@
 <?php
-/* Icinga Web 2 | (c) 2021 Icinga Development Team | GPLv2+ */
+/* Icinga Web 2 | (c) 2021 Icinga GmbH | GPLv2+ */
 
 namespace Icinga\Web\Dashboard;
 
+use Icinga\Common\DBUserManager;
+use Icinga\Common\Relation;
+use Icinga\DBUser;
+use Icinga\Web\Navigation\DashboardHome;
 use Icinga\Web\Url;
 use ipl\Html\BaseHtmlElement;
 use ipl\Html\HtmlElement;
+use ipl\Sql\Select;
 use ipl\Web\Widget\Link;
 
 /**
@@ -15,6 +20,7 @@ use ipl\Web\Widget\Link;
  */
 class Dashlet extends BaseHtmlElement
 {
+    use Relation;
     use UserWidget;
 
     /** @var string Database table name */
@@ -27,59 +33,55 @@ class Dashlet extends BaseHtmlElement
 
     protected $defaultAttributes = ['class' => 'container dashlet-sortable'];
 
+    protected $tableMembership = 'dashlet_member';
+
     /**
      * The url of this Dashlet
      *
      * @var Url|null
      */
-    private $url;
+    protected $url;
 
     /**
      * Not translatable name of this dashlet
      *
      * @var string
      */
-    private $name;
+    protected $name;
 
     /**
      * The title being displayed on top of the dashlet
      * @var
      */
-    private $title;
+    protected $title;
 
     /**
-     * The pane containing this dashlet, needed for the 'remove button'
+     * The pane this dashlet belongs to
+     *
      * @var Pane
      */
-    private $pane;
-
-    /**
-     * The disabled option is used to "delete" default dashlets provided by modules
-     *
-     * @var bool
-     */
-    private $disabled = false;
+    protected $pane;
 
     /**
      * The progress label being used
      *
      * @var string
      */
-    private $progressLabel;
+    protected $progressLabel;
 
     /**
      * Unique identifier of this dashlet
      *
      * @var string
      */
-    private $dashletId;
+    protected $dashletId;
 
     /**
      * The priority order of this dashlet
      *
      * @var int
      */
-    private $order;
+    protected $order;
 
     /**
      * Create a new dashlet displaying the given url in the provided pane
@@ -94,6 +96,27 @@ class Dashlet extends BaseHtmlElement
         $this->title = $title;
         $this->pane = $pane;
         $this->url = $url;
+
+        $this->loadMembers();
+    }
+
+    public function loadMembers()
+    {
+        $conn = DashboardHome::getConn();
+        $members = $conn->select((new Select())
+            ->columns('user.id, user.name')
+            ->from($this->getTableMembership() . ' member')
+            ->join(self::TABLE, 'member.dashlet_id = dashlet.id')
+            ->join(DBUserManager::$dashboardUsersTable . ' user', 'user.id = member.user_id')
+            ->where(['dashlet.id = ?' => $this->getDashletId()]));
+
+        $users = [];
+        foreach ($members as $member) {
+            $member = (new DBUser($member->name))->setIdentifier($member->id);
+            $users[$member->getUsername()] = $member;
+        }
+
+        $this->setMembers($users);
     }
 
     /**
@@ -151,17 +174,21 @@ class Dashlet extends BaseHtmlElement
      */
     public function getTitle()
     {
-        return $this->title;
+        return $this->title !== null ? $this->title : $this->getName();
     }
 
     /**
      * Set the title of this dashlet
      *
      * @param string $title
+     *
+     * @return $this
      */
     public function setTitle($title)
     {
         $this->title = $title;
+
+        return $this;
     }
 
     /**
@@ -217,28 +244,6 @@ class Dashlet extends BaseHtmlElement
     }
 
     /**
-     * Set the disabled property
-     *
-     * @param boolean $disabled
-     */
-    public function setDisabled($disabled)
-    {
-        $this->disabled = $disabled;
-
-        return $this;
-    }
-
-    /**
-     * Get the disabled property
-     *
-     * @return boolean
-     */
-    public function getDisabled()
-    {
-        return $this->disabled;
-    }
-
-    /**
      * Set the progress label to use
      *
      * @param   string  $label
@@ -267,55 +272,54 @@ class Dashlet extends BaseHtmlElement
     }
 
     /**
-     * Return this dashlet's structure as array
+     * Set the Pane of this dashlet
      *
-     * @return  array
+     * @param Pane $pane
+     *
+     * @return Dashlet
      */
-    public function toArray()
+    public function setPane(Pane $pane)
     {
-        $array = array(
-            'url'   => $this->getUrl()->getRelativeUrl(),
-            'title' => $this->getTitle()
-        );
-        if ($this->getDisabled() === true) {
-            $array['disabled'] = 1;
-        }
+        $this->pane = $pane;
 
-        return $array;
+        return $this;
     }
 
     /**
-     * @inheritDoc
+     * Get the pane of this dashlet
+     *
+     * @return Pane
      */
+    public function getPane()
+    {
+        return $this->pane;
+    }
+
     protected function assemble()
     {
-        if (! $this->url) {
-            $this->add(HtmlElement::create('h1', null, $this->getTitle()));
-            $this->add(HtmlElement::create(
+        if (! $this->getUrl()) {
+            $this->addHtml(HtmlElement::create('h1', null, t($this->getTitle())));
+            $this->addHtml(HtmlElement::create(
                 'p',
                 ['class' => 'error-message'],
-                sprintf(t('Cannot create dashboard dashlet "%s" without valid URL'), $this->getTitle())
+                sprintf(t('Cannot create dashboard dashlet "%s" without valid URL'), t($this->getTitle()))
             ));
         } else {
             $url = $this->getUrl();
             $url->setParam('showCompact', true);
 
-            $pane = $this->getPane();
-            $this->addAttributes([
-                'data-icinga-url'       => $url,
-                'data-icinga-dashlets'  => $pane->getHome()->getName() . $pane->getName() . $this->getName(),
-            ]);
-            $this->add(new HtmlElement('h1', null, new Link(
-                $this->getTitle(),
+            $this->setAttribute('data-icinga-url', $url);
+            $this->addHtml(new HtmlElement('h1', null, new Link(
+                t($this->getTitle()),
                 $url->getUrlWithout(['showCompact', 'limit'])->getRelativeUrl(),
                 [
-                    'aria-label'        => $this->getTitle(),
-                    'title'             => $this->getTitle(),
+                    'aria-label'        => t($this->getTitle()),
+                    'title'             => t($this->getTitle()),
                     'data-base-target'  => 'col1'
                 ]
             )));
 
-            $this->add(HtmlElement::create(
+            $this->addHtml(HtmlElement::create(
                 'p',
                 ['class' => 'progress-label'],
                 [
@@ -329,22 +333,20 @@ class Dashlet extends BaseHtmlElement
     }
 
     /**
-     * Set the Pane of this dashlet
+     * Get this dashlet's structure as array
      *
-     * @param \Icinga\Web\Dashboard\Pane $pane
+     * @return  array
      */
-    public function setPane(Pane $pane)
+    public function toArray()
     {
-        $this->pane = $pane;
-    }
-
-    /**
-     * Get the pane of this dashlet
-     *
-     * @return \Icinga\Web\Dashboard\Pane
-     */
-    public function getPane()
-    {
-        return $this->pane;
+        return array(
+            'id'        => $this->getDashletId(),
+            'pane'      => $this->getPane() ? $this->getPane()->getName() : null,
+            'name'      => $this->getName(),
+            'url'       => $this->getUrl()->getRelativeUrl(),
+            'label'     => $this->getTitle(),
+            'order'     => $this->getOrder(),
+            'disabled'  => (int) $this->isDisabled(),
+        );
     }
 }

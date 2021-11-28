@@ -1,6 +1,5 @@
 <?php
-
-/* Icinga Web 2 | (c) 2021 Icinga GmbH | GPLv2 */
+/* Icinga Web 2 | (c) 2021 Icinga GmbH | GPLv2+ */
 
 namespace Icinga\Application\Modules;
 
@@ -48,12 +47,13 @@ class DashboardHomeContainer extends NavigationItemContainer
     /**
      * Add a new dashboard pane
      *
-     * @param string                   $name
-     * @param DashboardContainer|array $dashboard
+     * @param string                    $name       Unique name of the given dashboard
+     * @param DashboardContainer|array  $dashboard  A dashboard pane
+     * @param array                     $properties Properties of this dashboard
      *
      * @return $this
      */
-    public function add($name, $dashboard = [], $properties = [])
+    public function add($name, $dashboard = [], array $properties = [])
     {
         if (! is_array($dashboard) && ! $dashboard instanceof DashboardContainer) {
             throw new InvalidArgumentException(sprintf(
@@ -64,10 +64,11 @@ class DashboardHomeContainer extends NavigationItemContainer
             ));
         }
 
-        // If $dashboard is an object, we need to convert it to an array
+        // Navigation::addItem() expects parameter #2 to be an array, since these dashboards
+        // are actually properties of this home, so we need to extract them into an array
         if (is_object($dashboard)) {
             $dashboard->setProperties(array_merge($dashboard->getProperties(), ['home' => $this->getName()]));
-            $dashboard = self::objectToArray($dashboard);
+            $dashboard = self::toArray($dashboard);
         }
 
         $dashboard['properties'] = array_merge($dashboard['properties'], $properties);
@@ -77,23 +78,22 @@ class DashboardHomeContainer extends NavigationItemContainer
     }
 
     /**
-     * Converts the given object to Array
+     * Extract the given object to array
      *
-     * @param  object $obj
+     * @param object $object
      *
      * @return array
      */
-    public static function objectToArray($obj)
+    public static function toArray($object)
     {
-        $array = [];
-        $reflectionClass = new ReflectionClass(get_class($obj));
-
+        $dashboards = [];
+        $reflectionClass = new ReflectionClass(get_class($object));
         foreach ($reflectionClass->getProperties() as $property) {
             $property->setAccessible(true);
-            $array[$property->getName()] = $property->getValue($obj);
+            $dashboards[$property->getName()] = $property->getValue($object);
             $property->setAccessible(false);
         }
 
-        return $array;
+        return $dashboards;
     }
 }

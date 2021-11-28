@@ -1,5 +1,5 @@
 <?php
-/* Icinga Web 2 | (c) 2015 Icinga Development Team | GPLv2+ */
+/* Icinga Web 2 | (c) 2021 Icinga GmbH | GPLv2+ */
 
 namespace Icinga\Web\Navigation;
 

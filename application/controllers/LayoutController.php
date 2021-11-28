@@ -4,7 +4,7 @@
 namespace Icinga\Controllers;
 
 use Icinga\Web\Controller\ActionController;
-use Icinga\Web\Menu;
+use Icinga\Web\HomeMenu;
 
 /**
  * Create complex layout parts
@@ -18,7 +18,7 @@ class LayoutController extends ActionController
     {
         $this->setAutorefreshInterval(15);
         $this->_helper->layout()->disableLayout();
-        $this->view->menuRenderer = (new Menu())->getRenderer();
+        $this->view->menuRenderer = (new HomeMenu())->getRenderer();
     }
 
     public function announcementsAction()

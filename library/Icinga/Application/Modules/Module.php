@@ -410,6 +410,25 @@ class Module
     }
 
     /**
+     * Add or get a dashboard pane
+     *
+     * @param   string  $name
+     * @param   array   $properties
+     *
+     * @return  DashboardContainer
+     */
+    protected function dashboard($name, array $properties = array())
+    {
+        if (array_key_exists($name, $this->paneItems)) {
+            $this->paneItems[$name]->setProperties($properties);
+        } else {
+            $this->paneItems[$name] = new DashboardContainer($name, $properties);
+        }
+
+        return $this->paneItems[$name];
+    }
+
+    /**
      * Get this module's dashboard homes
      *
      * @return Navigation
@@ -430,7 +449,6 @@ class Module
     public function createHomes(array $homes)
     {
         $navigation = new Navigation();
-
         foreach ($homes as $home) {
             if (! array_key_exists('label', $home->getProperties())) {
                 $home->setProperties(array_merge(
@@ -443,10 +461,10 @@ class Module
                 $home->getName(),
                 array_merge(
                     $home->getProperties(),
-                    array(
+                    [
                         'type'      => 'dashboard-home',
                         'children'  => $home->getDashboards()
-                    )
+                    ]
                 )
             );
         }
@@ -455,35 +473,16 @@ class Module
     }
 
     /**
-     * Add or get a dashboard pane
-     *
-     * @param   string  $name
-     * @param   array   $properties
-     *
-     * @return  DashboardContainer
-     */
-    protected function dashboard($name, array $properties = array())
-    {
-        if (array_key_exists($name, $this->paneItems)) {
-            $this->paneItems[$name]->setProperties($properties);
-        } else {
-            $this->paneItems[$name] = new DashboardContainer($name, $properties);
-        }
-
-        return $this->paneItems[$name];
-    }
-
-    /**
      * Add and get a dashboard home
      *
-     * @param   string $name
-     * @param   array   $properties
+     * @param string $name
+     * @param array  $properties
      *
      * @return  DashboardHomeContainer
      */
     protected function provideHome($name, array $properties = [])
     {
-        if ($name === DashboardHome::DEFAULT_HOME) {
+        if (in_array($name, DashboardHome::DEFAULT_HOME_ENUMS)) {
             throw new ProgrammingError('Dashboard home "%s" is marked for internal use only', $name);
         }
 
@@ -1518,16 +1517,14 @@ class Module
 
     /**
      * Provide dashlets that will be listed in dashboard homes as "Available Dashlets"
-     *
      * with the associated module names.
      *
      * @param string $name
-     *
      * @param array $properties
      *
-     * @return array|mixed
+     * @return array
      */
-    protected function provideDashlet($name, $properties = array())
+    protected function provideDashlet($name, array $properties = [])
     {
         $this->dashletItems[$name] = $properties;
 

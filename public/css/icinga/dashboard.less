@@ -11,7 +11,11 @@
 }
 
 .home-th {
-  background-color: #00C3ED;
+  background-color: @icinga-blue;
+}
+
+.pin-dashlets:before {
+  font-size: 1.3em;
 }
 
 .pane-th {
@@ -28,34 +32,26 @@
   }
 }
 
-// Added using jquery
-.drag-active {
-  opacity: 0.5;
+.pinned-icon {
+  color: @icinga-blue;
 }
 
-.drag-over {
-  border: 3px dotted #00C3ED;
-}
+.content-wrapper {
+  flex-wrap: nowrap;
 
-// Create dashboard from pinned dashlets
-.pinned-item {
-  color: #00C3ED;
-}
-
-.paragraph {
-  font-size: 1.25em;
-  color: @gray;
-
-  .count-pinned {
-    background-color: #7E8182;
-    color: white;
-    padding: 0 8px 0 8px;
+  > form {
+    margin-left: .6em;
   }
 }
 
-.pinned-form {
-  a {
-    color: #00C3ED;
-    font-weight: bolder;
+.create-new-dashboard-label {
+  font-size: 1.25em;
+  color: @text-color;
+  float: left;
+
+  .count-pinned-items {
+    background-color: @gray;
+    border-radius: 4px;
+    padding: 0 8px 0 8px;
   }
 }

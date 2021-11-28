@@ -1,11 +1,13 @@
 <?php
 
+use Icinga\DBUser;
 use Icinga\Web\Widget\SearchDashboard;
 
 $searchDashboard = new SearchDashboard();
-$searchDashboard->dashboardHome->setUser($this->Auth()->getUser());
+$user = $this->Auth()->getUser();
+$searchDashboard->getActiveHome()->setAuthUser((new DBUser($user->getUsername()))->extractFrom($user));
 
-if ($searchDashboard->search('dummy')->dashboardHome->getPane('search')->hasDashlets()): ?>
+if ($searchDashboard->search('dummy')->getActiveHome()->getPane('search')->hasDashlets()): ?>
     <form action="<?= $this->href('search') ?>" method="get" role="search" class="search-control">
         <input type="text" name="q" id="search" class="search search-input" required
                placeholder="<?= $this->translate('Search') ?> &hellip;"

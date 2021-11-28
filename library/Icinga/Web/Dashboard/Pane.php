@@ -1,57 +1,30 @@
 <?php
-/* Icinga Web 2 | (c) 2013 Icinga Development Team | GPLv2+ */
+
+/* Icinga Web 2 | (c) 2013-2021 Icinga GmbH | GPLv2+ */
 
 namespace Icinga\Web\Dashboard;
 
-use Icinga\Common\Database;
+use DateTime;
+use DateTimeZone;
+use Icinga\Application\Logger;
+use Icinga\Common\DashboardManager;
+use Icinga\Common\DBUserManager;
+use Icinga\Common\Relation;
+use Icinga\DBUser;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Exception\ConfigurationError;
 use Icinga\Web\Navigation\DashboardHome;
+use Icinga\Web\Widget\Dashboard;
+use ipl\Sql\Select;
 
 /**
- * A pane, displaying different Dashboard dashlets
+ * A Dashboard pane, displaying different dashlets
  */
 class Pane
 {
     use UserWidget;
-
-    use Database;
-
-    /**
-     * System panes are provided by the modules in PHP code
-     *
-     * and are available to all users
-     *
-     * @var string
-     */
-    const SYSTEM = 'system';
-
-    /**
-     * Public panes are created by authorized users and
-     *
-     * are available to all users
-     *
-     * @var string
-     */
-    const PUBLIC_DS = 'public';
-
-    /**
-     * Private panes are created by any user and are only
-     *
-     * available to this user
-     *
-     * @var string
-     */
-    const PRIVATE_DS = 'private';
-
-    /**
-     * Are available to users who have accepted a share or who
-     *
-     * have been assigned the dashboard by their Admin
-     *
-     * @var string
-     */
-    const SHARED = 'shared';
+    use Relation;
+    use DBUserManager;
 
     /**
      * Database table name
@@ -61,11 +34,20 @@ class Pane
     const TABLE = 'dashboard';
 
     /**
-     * Database pane overriding table name
+     * Database table name for overriding dashboards
      *
      * @var string
      */
-    const OVERRIDING_TABLE = 'dashboard_override';
+    const DASHBOARD_OVERRIDE = 'dashboard_override';
+
+    /**
+     * DateTime format being used when rendering shared dashboards last modify time
+     *
+     * @var string
+     */
+    const DATETIME_FORMAT = 'M dS, Y';
+
+    protected $tableMembership = 'dashboard_member';
 
     /**
      * The not translatable name of this pane
@@ -86,21 +68,7 @@ class Pane
      *
      * @var Dashlet[]
      */
-    private $dashlets = array();
-
-    /**
-     * Disabled flag of a pane
-     *
-     * @var bool
-     */
-    private $disabled = false;
-
-    /**
-     * Dashboard home id if the current pane
-     *
-     * @var integer
-     */
-    private $parentId;
+    private $dashlets = [];
 
     /**
      * Dashboard home of this pane
@@ -117,18 +85,25 @@ class Pane
     private $paneId;
 
     /**
-     * A type of this pane
-     *
-     * @var string
-     */
-    private $type = 'system';
-
-    /**
      * The priority order of this pane
      *
      * @var int
      */
     private $order;
+
+    /**
+     * Creation time of this dashboard
+     *
+     * @var int|float
+     */
+    private $ctime;
+
+    /**
+     * Last modified time of this dashboard
+     *
+     * @var int|float
+     */
+    private $mtime;
 
     /**
      * Create a new pane
@@ -139,6 +114,29 @@ class Pane
     {
         $this->name  = $name;
         $this->title = $name;
+    }
+
+    public function loadMembers()
+    {
+        $conn = DashboardHome::getConn();
+        $members = $conn->select((new Select())
+            ->columns('user.id, user.name, member.write_access, member.removed')
+            ->from($this->getTableMembership() . ' member')
+            ->join(self::TABLE . ' pane', 'member.dashboard_id = pane.id')
+            ->join(DBUserManager::$dashboardUsersTable . ' user', 'user.id = member.user_id')
+            ->where(['pane.id = ?' => $this->getPaneId()]));
+
+        $users = [];
+        foreach ($members as $member) {
+            $member = (new DBUser($member->name))
+                ->setIdentifier($member->id)
+                ->setRemoved($member->removed === 'y')
+                ->setWriteAccess($member->write_access === 'y');
+            $users[$member->getUsername()] = $member;
+        }
+
+        $this->setMembers($users);
+        $this->resolveRoleGroupMembers();
     }
 
     /**
@@ -158,7 +156,7 @@ class Pane
     /**
      * Get the dashboard home of this pane
      *
-     * @return DashboardHome
+     * @return ?DashboardHome
      */
     public function getHome()
     {
@@ -200,49 +198,29 @@ class Pane
     /**
      * Set the priority order of this pane
      *
-     * @param $order
+     * @param int $order
      *
      * @return $this
      */
     public function setOrder($order)
     {
-        $this->order = $order;
+        $this->order = (int) $order;
 
         return $this;
-    }
-
-    /**
-     * Set type of this pane
-     *
-     * @param $type
-     *
-     * @return $this
-     */
-    public function setType($type)
-    {
-        $this->type = $type;
-
-        return $this;
-    }
-
-    /**
-     * Get type of this pane
-     *
-     * @return string
-     */
-    public function getType()
-    {
-        return $this->type;
     }
 
     /**
      * Set the name of this pane
      *
-     * @param   string  $name
+     * @param string  $name
+     *
+     * @return $this
      */
     public function setName($name)
     {
         $this->name = $name;
+
+        return $this;
     }
 
     /**
@@ -262,7 +240,7 @@ class Pane
      */
     public function getTitle()
     {
-        return $this->title;
+        return $this->title !== null ? $this->title : $this->getName();
     }
 
     /**
@@ -280,15 +258,77 @@ class Pane
     }
 
     /**
+     * Get creation time of this pane
+     *
+     * @return string
+     */
+    public function getCtime()
+    {
+        if (! $this->ctime) {
+            return '';
+        }
+
+        $dt = DateTime::createFromFormat('U.u', sprintf('%F', $this->ctime));
+        return $dt->setTimezone(new DateTimeZone('UTC'))
+            ->format(self::DATETIME_FORMAT);
+    }
+
+    /**
+     * Set creation time of this pane
+     *
+     * This is only of use for shared dashboards
+     *
+     * @param ?int|float $ctime
+     *
+     * @return $this
+     */
+    public function setCtime($ctime)
+    {
+        $this->ctime = $ctime;
+
+        return $this;
+    }
+
+    /**
+     * Get last modified time of this dashboard
+     *
+     * @return string
+     */
+    public function getMtime()
+    {
+        if (! $this->mtime) {
+            return '';
+        }
+
+        $dt = DateTime::createFromFormat('U.u', sprintf('%F', $this->mtime));
+        return $dt->setTimezone(new DateTimeZone('UTC'))
+            ->format(self::DATETIME_FORMAT);
+    }
+
+    /**
+     * Set last modified time of this dashboard
+     *
+     * @param ?int|float $mtime
+     *
+     * @return $this
+     */
+    public function setMtime($mtime)
+    {
+        $this->mtime = $mtime;
+
+        return $this;
+    }
+
+    /**
      * Return true if a dashlet with the given title exists in this pane
      *
-     * @param string $title The title of the dashlet to check for existence
+     * @param string $name The title of the dashlet to check for existence
      *
      * @return bool
      */
-    public function hasDashlet($title)
+    public function hasDashlet($name)
     {
-        return $title && array_key_exists($title, $this->dashlets);
+        return array_key_exists($name, $this->dashlets);
     }
 
     /**
@@ -304,20 +344,20 @@ class Pane
     /**
      * Return a dashlet with the given name if existing
      *
-     * @param string $title       The title of the dashlet to return
+     * @param string $name       The title of the dashlet to return
      *
      * @return Dashlet            The dashlet with the given title
      * @throws ProgrammingError   If the dashlet doesn't exist
      */
-    public function getDashlet($title)
+    public function getDashlet($name)
     {
-        if ($this->hasDashlet($title)) {
-            return $this->dashlets[$title];
+        if ($this->hasDashlet($name)) {
+            return $this->dashlets[$name];
         }
 
         throw new ProgrammingError(
             'Trying to access invalid dashlet: %s',
-            $title
+            $name
         );
     }
 
@@ -338,35 +378,43 @@ class Pane
             $dashlet = $this->getDashlet($dashlet);
         }
 
-        $owner = $dashlet->getPane()->getOwner();
-        if ($owner === DashboardHome::DEFAULT_IW2_USER) {
-            $owner = $this->getHome()->getUser()->getUsername();
+        if (! $dashlet->getDashletId()) {
+            return $this;
         }
 
-        if ($dashlet->isUserWidget() === true && ! $dashlet->getDisabled()) {
-            if ($dashlet->isOverridingWidget()) {
-                $this->getDb()->delete('dashlet_override', [
-                    'dashlet_id = ?'    => $dashlet->getDashletId(),
-                    'owner = ?'         => $owner
-                ]);
-            } else {
-                $this->getDb()->delete('dashlet', [
-                    'id = ?'            => $dashlet->getDashletId(),
-                    'dashboard_id = ?'  => $this->getPaneId()
-                ]);
-            }
-        } elseif (! $dashlet->getDisabled() && ! $this->getDisabled()) {
-            // When modifying system dashlets, we need also to change the pane id accordingly,
-            // so that we won't have id mismatch in DashboardHome class when it is loading.
-            $paneId = DashboardHome::getSHA1(
-                $owner . $this->getHome()->getName() . $this->getName()
-            );
+        $purgeFromDB = false;
+        if ($dashlet->getType() === Dashboard::PUBLIC_DS || $dashlet->getType() === Dashboard::SHARED) {
+            $purgeFromDB = (bool) array_filter($dashlet->getAdditional('unshared_users'), function ($DBUser) {
+                return $DBUser->getUsername() === '*';
+            });
+        }
 
-            $this->getDb()->insert('dashlet_override', [
+        if (
+            $dashlet->isOverridingWidget()
+            || $purgeFromDB
+            || $dashlet->getType() === Dashboard::PRIVATE_DS
+        ) {
+            // Overriding dashlet widget
+            DashboardHome::getConn()->delete(Dashlet::OVERRIDING_TABLE, [
+                'user_id = ?'       => $this->getAuthUser()->getIdentifier(),
+                'dashlet_id = ?'    => $dashlet->getDashletId()
+            ]);
+
+            // Custom dashlets
+            DashboardHome::getConn()->delete(Dashlet::TABLE, [
+                'id = ?'            => $dashlet->getDashletId(),
+                'dashboard_id = ?'  => $this->getPaneId()
+            ]);
+        } elseif ($dashlet->getType() === Dashboard::PUBLIC_DS) {
+            DashboardHome::getConn()->delete($dashlet->getTableMembership(), [
+                'dashlet_id = ?' => $dashlet->getDashletId(),
+                'user_id = ?'    => $this->getHome()->getAuthUser()->getIdentifier()
+            ]);
+        } elseif (! $dashlet->isDisabled() && ! $this->isDisabled()) {
+            DashboardHome::getConn()->insert(Dashlet::OVERRIDING_TABLE, [
                 'dashlet_id'    => $dashlet->getDashletId(),
-                'dashboard_id'  => $paneId,
-                'owner'         => $owner,
-                'disabled'      => true
+                'user_id'       => $this->getAuthUser()->getIdentifier(),
+                'disabled'      => 1
             ]);
         }
 
@@ -380,17 +428,14 @@ class Pane
      *
      * @return Pane $this
      */
-    public function removeDashlets(array $dashlets = null)
+    public function removeDashlets(array $dashlets = [])
     {
-        if ($dashlets === null) {
+        if (empty($dashlets)) {
             $dashlets = $this->getDashlets();
         }
 
-        // Remove dashlets only if this is a custom pane
-        if ($this->getOwner() !== DashboardHome::DEFAULT_IW2_USER) {
-            foreach ($dashlets as $dashlet) {
-                $this->removeDashlet($dashlet);
-            }
+        foreach ($dashlets as $dashlet) {
+            $this->removeDashlet($dashlet);
         }
 
         return $this;
@@ -401,7 +446,7 @@ class Pane
      *
      * @param bool $skipDisabled Whether to skip disabled dashlets
      *
-     * @return array
+     * @return Dashlet[]
      */
     public function getDashlets($skipDisabled = false)
     {
@@ -409,7 +454,7 @@ class Pane
 
         if ($skipDisabled) {
             $dashlets = array_filter($this->dashlets, function ($dashlet) {
-                return ! $dashlet->getDisabled();
+                return ! $dashlet->isDisabled();
             });
         }
 
@@ -423,98 +468,183 @@ class Pane
     /**
      * Add a dashlet to this pane, optionally creating it if $dashlet is a string
      *
+     * If the given dashlet is system and there is already dashlet with same name,
+     * it won't be added as custom dashlets have higher priority than system ones
+     *
      * @param string|Dashlet $dashlet The dashlet object or title (if a new dashlet will be created)
-     * @param string|null $url        An Url to be used when dashlet is a string
+     * @param string|null $url        An Url to be used when $dashlet is a string type
      *
      * @return $this
-     * @throws \Icinga\Exception\ConfigurationError
      */
     public function addDashlet($dashlet, $url = null)
     {
-        if ($dashlet instanceof Dashlet) {
-            $this->dashlets[$dashlet->getName()] = $dashlet;
-        } elseif (is_string($dashlet) && $url !== null) {
-            $this->dashlets[$dashlet] = new Dashlet($dashlet, $url, $this);
-        } else {
+        if (is_string($dashlet) && $url !== null) {
+            $dashlet = new Dashlet($dashlet, $url);
+        } elseif (! $dashlet instanceof Dashlet) {
             throw new ConfigurationError('Invalid dashlet added: %s', $dashlet);
         }
+
+        if ($this->hasDashlet($dashlet->getName())) {
+            // Custom dashlets always take precedence over system dashlets
+            if (! $dashlet->isUserWidget() && $this->getDashlet($dashlet->getName())->isUserWidget()) {
+                return $this;
+            }
+        }
+
+        $dashlet->setPane($this);
+        $this->dashlets[$dashlet->getName()] = $dashlet;
 
         return $this;
     }
 
     /**
-     * Add new dashlets to existing dashlets
+     * Add new dashlets
      *
-     * @param array $dashlets
+     * @param Dashlet[] $dashlets
+     *
      * @return $this
      */
     public function addDashlets(array $dashlets)
     {
-        /* @var $dashlet Dashlet */
         foreach ($dashlets as $dashlet) {
-            if (array_key_exists($dashlet->getName(), $this->dashlets)) {
-                // Custom dashlets always take precedence over system dashlets
-                if (! $dashlet->isUserWidget() && $this->dashlets[$dashlet->getName()]->isUserWidget()) {
-                    continue;
-                }
-            }
-
-            $this->dashlets[$dashlet->getName()] = $dashlet;
+            $this->addDashlet($dashlet);
         }
 
         return $this;
     }
 
     /**
-     * Add a dashlet to the current pane
+     * Set this pane's dashlets
      *
-     * @param $title
-     * @param $url
-     * @return Dashlet
+     * @param Dashlet|Dashlet[] $dashlets
      *
-     * @see addDashlet()
+     * @return $this
      */
-    public function add($title, $url = null)
+    public function setDashlets($dashlets)
     {
-        $this->addDashlet($title, $url);
+        if ($dashlets instanceof Dashlet) {
+            $dashlets = [$dashlets->getName() => $dashlets];
+        }
 
-        return $this->dashlets[$title];
+        $this->dashlets = $dashlets;
+
+        return $this;
     }
 
     /**
-     * Return the this pane's structure as array
+     * Check whether the given dashlet exists in the DB and isn't member of this user
      *
-     * @return  array
+     * @param Dashlet $dashlet
+     *
+     * @return bool
+     */
+    public static function dashletPersists(Dashlet $dashlet)
+    {
+        $conn = DashboardHome::getConn();
+        $result = $conn->select((new Select())
+            ->columns('id')
+            ->from(Dashlet::TABLE)
+            ->where(['id = ?' => $dashlet->getDashletId()]))->fetch();
+
+        if ($result) {
+            $dashlet->setDashletId($result->id);
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Resolve panes which have been assigned to groups or roles down to user level
+     *
+     * When the currently logged-in user doesn't have the appropriate role or
+     * is not part of appropriate group no resolution will be performed
+     *
+     * @return void
+     */
+    public function resolveRoleGroupMembers()
+    {
+        $conn = DashboardHome::getConn();
+        $unionQuery = (new Select())
+            ->columns('ds.name, ds.url, ds.id, dg.name AS `group`, NULL AS `role`')
+            ->from(Dashlet::TABLE . ' ds')
+            ->join(Dashboard::GROUP_ROLE_TABLE . ' grm', 'grm.dashboard_id = ds.id')
+            ->join(DBUserManager::$dashboardGroup . ' dg', 'dg.id = grm.group_id')
+            ->where(['ds.dashboard_id = ?' => $this->getPaneId()])
+            ->groupBy(['ds.id', '`role`'])
+            ->unionAll(
+                (new Select())
+                    ->columns('ds.name, ds.url, ds.id, NULL AS `group`, dr.role AS `role`')
+                    ->from(Dashlet::TABLE . ' ds')
+                    ->join(Dashboard::GROUP_ROLE_TABLE . ' grm', 'grm.dashboard_id = ds.id')
+                    ->join(DBUserManager::$dashboardRole . ' dr', 'grm.role_id = dr.id')
+                    ->where(['ds.dashboard_id = ?' => $this->getPaneId()])
+                    ->groupBy(['ds.id', '`role`'])
+            );
+
+        $dashlets = $conn->select((new Select())
+            ->columns('*')
+            ->from(['dashlet' => $unionQuery]));
+
+        foreach ($dashlets as $dashlet) {
+            // Skip if this user isn't assigned to the role
+            if ($dashlet->role && ! $this->getAuthUser()->hasRole($dashlet->role)) {
+                continue;
+            }
+
+            // Skip if this user isn't member of the group
+            if ($dashlet->group && ! $this->getAuthUser()->isMemberOf($dashlet->group)) {
+                continue;
+            }
+
+            $dashlet = (new Dashlet($dashlet->name, $dashlet->url, $this))
+                ->setDashletId($dashlet->id);
+            $dashlet->loadMembers();
+
+            if ($dashlet->hasMember($this->getAuthUser()->getUsername())) {
+                continue;
+            }
+
+            $ownerDetail = DashboardManager::getWidgetOwnerDetail($dashlet);
+            if (! $ownerDetail) {
+                Logger::error(
+                    'There is a corrupted dashlet in the database with the identity "%s" which doesn\'t'
+                    . ' have an owner. This will be purged automatically!',
+                    bin2hex($dashlet->getDashletId())
+                );
+
+                $conn->delete(Dashlet::TABLE, ['id = ?' => $dashlet->getDashletId()]);
+
+                continue;
+            }
+
+            $conn->insert($dashlet->getTableMembership(), [
+                'dashlet_id'    => $dashlet->getDashletId(),
+                'user_id'       => $this->getAuthUser()->getIdentifier(),
+                'type'          => $ownerDetail->type
+            ]);
+        }
+    }
+
+    /**
+     * Return this pane's structure as array
+     *
+     * @return array
      */
     public function toArray()
     {
-        $pane = ['title' => $this->getTitle()];
-        if ($this->getDisabled() === true) {
+        $pane = [
+            'id'        => $this->getPaneId(),
+            'home_id'   => $this->getHome() ? $this->getHome()->getIdentifier() : null,
+            'name'      => $this->getName(),
+            'label'     => $this->getTitle(),
+        ];
+
+        if ($this->isDisabled() === true) {
             $pane['disabled'] = 1;
         }
 
         return $pane;
-    }
-
-    /**
-     * Setter for disabled
-     *
-     * @param boolean $disabled
-     */
-    public function setDisabled($disabled)
-    {
-        $this->disabled = (bool) $disabled;
-
-        return $this;
-    }
-
-    /**
-     * Getter for disabled
-     *
-     * @return boolean
-     */
-    public function getDisabled()
-    {
-        return $this->disabled;
     }
 }

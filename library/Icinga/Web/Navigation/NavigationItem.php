@@ -532,7 +532,7 @@ class NavigationItem implements IteratorAggregate
      */
     public function setLabel($label)
     {
-        $this->label = $label;
+        $this->label = t($label);
         return $this;
     }
 

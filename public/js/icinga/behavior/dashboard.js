@@ -1,133 +1,99 @@
 ;(function (Icinga, $) {
     'use strict';
 
-    let dashletData;
-
     Icinga.Behaviors = Icinga.Behaviors || {};
 
-    function Dashboard(icinga) {
+    const NEW_DASHBOARD_FORM = '<div class="content-wrapper">\n' +
+        '   <p class="create-new-dashboard-label">Pinned ' +
+        '       <span class="count-pinned-items"></span> Dashlets.' +
+        '   </p>\n' +
+        '   <form id="homePaneForm" name="CreateNewDashboardFromPinnedDashlets" class="icinga-form icinga-controls inline" ' +
+        '       action="dashboards/new-dashboard" method="post" data-base-target="_next">\n' +
+        '       <input type="hidden" class="hidden-input" name="formUID" id="CreateNewDashboardFromPinnedDashlets">\n' +
+        '       <input type="submit" class="create-new-dashboard" value="Create New Dashboard">\n' +
+        '   </form>\n' +
+        '</div>';
+
+    var Dashboard = function (icinga) {
         Icinga.EventListener.call(this, icinga);
+
         this.icinga = icinga;
 
         this.on('rendered', '.dashboard > .container', this.onRendered, this);
-        this.on('dragstart', '.dashboard > .dashlet-sortable', this.onDragStart, this);
-        this.on('dragend', '.dashboard > .dashlet-sortable', this.onDragEnd, this);
-        this.on('dragleave', '.dashboard > .dashlet-sortable', this.onDragLeave, this);
-        this.on('dragover', '.dashboard > .dashlet-sortable', this.onDragOver, this);
-        this.on('drop', '.dashboard > .dashlet-sortable', this.onDrop, this);
-        this.on('click', '.dashboard > .dashlet-sortable', this.onUpdateDashlet, this);
-    }
+        this.on('click', '.pin-dashlets', this.onPinDashlet, this);
+        this.on('dblclick', '.pin-dashlets', this.onUnPinDashlet, this);
+        this.on('click', '.create-new-dashboard', this.onCreateNewDashboard, this);
+    };
 
     Dashboard.prototype = new Icinga.EventListener();
 
-    Dashboard.prototype.onDragStart = function (event) {
+    Dashboard.prototype.onPinDashlet = function (event) {
         let $target = $(event.target);
-
-        if (typeof $target.data('icinga-dashlets') === 'undefined') {
-            $target = $target.parent();
-        }
-
-        dashletData = $target.data('icinga-dashlets');
-
-        event.originalEvent.dataTransfer.setData('text', $target.attr('id'));
-
-        $target.addClass('drag-active');
-    };
-
-    Dashboard.prototype.onDragLeave = function (event) {
-        let $target = $(event.target);
-
-        if (typeof $target.data('icinga-dashlets') === 'undefined') {
-            $target = $target.parent();
-        }
-
-        $target.removeClass('drag-over');
-    };
-
-    Dashboard.prototype.onDragEnd = function (event) {
-        let $target = $(event.target);
-
-        if (typeof $target.data('icinga-dashlets') === 'undefined') {
-            $target = $target.parent();
-        }
-
-        $target.removeClass('drag-over');
-        $target.removeClass('drag-active');
-    };
-
-    Dashboard.prototype.onDragOver = function (event) {
-        let $target = $(event.target);
-
-        if (typeof $target.data('icinga-dashlets') === 'undefined') {
-            $target = $target.parent();
-        }
-
-        let currentId = $target.data('icinga-dashlets');
-
-        if (typeof currentId !== 'undefined' && currentId !== dashletData) {
-            event.preventDefault();
-            event.stopPropagation();
-            $target.addClass('drag-over');
-        }
-    };
-
-    Dashboard.prototype.onDrop = function (event) {
-        let $target = $(event.target);
-
-        if (typeof $target.data('icinga-dashlets') === 'undefined') {
-            $target = $target.parent();
-        }
+        let $tr = $target.closest('tr');
 
         event.preventDefault();
+        event.stopPropagation();
 
-        const dragTarget = event.originalEvent.dataTransfer.getData('text');
-        const draggableElement = $('#' + dragTarget);
-
-        if ($target.nextAll().filter(draggableElement).length) {
-            $(draggableElement).insertBefore($target);
-        } else {
-            $(draggableElement).insertAfter($target);
+        if ($tr.hasClass('pinned-item')) {
+            return;
         }
 
-        $target.removeClass('drag-over');
-        let dashlets = '';
+        $target.closest('i').addClass('pinned-icon')
+        $tr.addClass('pinned-item');
 
-        $target.parent().children('.dashlet-sortable').each(function () {
-            let $current = $(this).data('icinga-dashlets');
-
-            if (dashlets === '') {
-                dashlets = $current;
-            } else {
-                dashlets += ',' + $current;
-            }
-        });
-
-        var $url = $target.baseURI;
-        $.ajax({
-            url: ($url + 'dashlets/update-priority').replace('undefined', ''),
-            method: 'POST',
-            data: {'dashletsData': dashlets},
-            dataType: 'text',
-            success: function (data) {
-                console.log(data, 'Order saved Successfully');
-            },
-            error: function (jqxHR, textStatus, error) {
-                console.error(error);
-            }
-        });
+        let _this = event.data.self;
+        _this.renderUserHint();
     };
 
-    Dashboard.prototype.onUpdateDashlet = function (event) {
-        let $dashlets = event.target.parent().children('.dashlet-sortable');
+    Dashboard.prototype.onUnPinDashlet = function (event) {
+        let $target = $(event.target);
+        let $tr = $target.closest('tr');
 
-        $dashlets.css({resize: 'both'});
-        $dashlets.on('mousedown', function () {
-            let $dashlet = $(this);
+        event.preventDefault();
+        event.stopPropagation();
 
-            $dashlet.on('mouseup', function () {
+        if (! $tr.hasClass('pinned-item')) {
+            return;
+        }
 
-            });
+        $target.closest('i').removeClass('pinned-icon')
+        $tr.removeClass('pinned-item');
+
+        let _this = event.data.self;
+        _this.renderUserHint();
+    };
+
+    Dashboard.prototype.renderUserHint = function () {
+        let $content = $('.content');
+        let pinnedItems = $content.find('tr.pinned-item');
+
+        if (! pinnedItems.length) {
+            (pinnedItems.children('.pinned-icon')).removeClass('.pinned-icon');
+            $content.children('.content-wrapper').remove();
+        } else if (! $content.children('.content-wrapper').length) {
+            let $wrapper = $(NEW_DASHBOARD_FORM);
+            $wrapper.find('.count-pinned-items').text(pinnedItems.length);
+            $content.prepend($wrapper);
+        } else {
+            $content
+                .find('.count-pinned-items')
+                .text(pinnedItems.length);
+        }
+
+        let dashlets = [];
+        $('.common-table').find('.pinned-item').each((index, element) => {
+            dashlets.push($(element).data('dashlet-name'))
         });
+
+        $content.find('.content-wrapper > form').find('.hidden-input').val(dashlets);
+    };
+
+    Dashboard.prototype.onCreateNewDashboard = function (event) {
+        let _this = event.data.self;
+        let $form = $(event.currentTarget).closest('form');
+        $form.attr('action', 'dashboards/new-dashboard?dashlets=' + $form.find('.hidden-input').val())
+
+        _this.icinga.loader.submitForm($form);
     };
 
     Dashboard.prototype.onRendered = function (event) {
