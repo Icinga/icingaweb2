@@ -3,6 +3,7 @@
 
 namespace Icinga\Util;
 
+use Icinga\Less\Visitor;
 use Less_Tree_Anonymous;
 use Less_Tree_Expression;
 use Less_Tree_Quoted;
@@ -16,6 +17,7 @@ class LessParser extends lessc
     public function __construct()
     {
         $this->registerFunction('extract-variable-default', [$this, 'extractVariableDefault']);
+        $this->setOption('plugins', [new Visitor()]);
     }
 
     /**
