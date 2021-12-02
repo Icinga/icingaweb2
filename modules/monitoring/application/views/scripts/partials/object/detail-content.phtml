@@ -45,12 +45,9 @@
 
     <?php if (! empty($object->customvars)): ?>
     <h2><?= $this->translate('Custom Variables') ?></h2>
-    <table id="<?= $object->type ?>-customvars" class="name-value-table collapsible" data-visible-height="200">
-    <tbody>
-        <?= $this->render('show/components/customvars.phtml') ?>
-    </tbody>
-    </table>
+    <div id="<?= $object->type ?>-customvars" data-visible-height="200" class="collapsible">
+        <?= (new \Icinga\Module\Monitoring\Web\Widget\CustomVarTable($object->customvarsWithOriginalNames, $object)) ?>
+    </div>
     <?php endif ?>
-
     <?= $this->render('show/components/flags.phtml') ?>
 </div>
