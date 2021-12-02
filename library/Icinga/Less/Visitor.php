@@ -22,6 +22,16 @@ class Visitor extends Less_VisitorReplacing
     protected $callingVar = false;
 
     /**
+     * Whether defining a mixin
+     *
+     * If that's the case, don't try to replace compiled Less colors with CSS var() function calls.
+     * This is handled explicitly.
+     *
+     * @var bool|string
+     */
+    protected $definingMixin = false;
+
+    /**
      * Whether defining a variable
      *
      * If that's the case, don't try to replace compiled Less colors with CSS var() function calls.
@@ -59,6 +69,41 @@ class Visitor extends Less_VisitorReplacing
         return $rs;
     }
 
+    public function visitMixinCall($c)
+    {
+        foreach ($c->arguments as $a) {
+            $a['value'] = $this->visitObj($a['value']);
+        }
+
+        return $c;
+    }
+
+    public function visitMixinDefinition($m)
+    {
+        if ($this->definingMixin !== false) {
+            throw new LogicException('Already defining mixin');
+        }
+
+        foreach ($m->params as $p) {
+            if (! isset($p['value'])) {
+                continue;
+            }
+
+            $p['value'] = $this->visitObj($p['value']);
+        }
+
+        $this->definingMixin = spl_object_hash($m);
+
+        return $m;
+    }
+
+    public function visitMixinDefinitionOut($m)
+    {
+        if ($this->definingMixin !== false && $this->definingMixin === spl_object_hash($m)) {
+            $this->definingMixin = false;
+        }
+    }
+
     public function visitRule($r)
     {
         if ($r->name[0] === '@' && $r->variable) {
@@ -81,7 +126,7 @@ class Visitor extends Less_VisitorReplacing
 
     public function visitVariable($v)
     {
-        if ($this->callingVar !== false || $this->definingVar !== false) {
+        if ($this->callingVar !== false || $this->definingMixin !== false || $this->definingVar !== false) {
             return $v;
         }
 

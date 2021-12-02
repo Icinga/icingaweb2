@@ -38,6 +38,11 @@ class ColorPropOrVariable extends Less_Tree
         $v = $this->getVariable();
         $compiled = $v->compile($env);
 
+        if ($compiled instanceof ColorProp) {
+            // We may already have a ColorProp, which is the case with mixin calls.
+            return $compiled;
+        }
+
         if ($compiled instanceof Less_Tree_Color) {
             return ColorProp::fromColor($compiled)
                 ->setIndex($v->index)
