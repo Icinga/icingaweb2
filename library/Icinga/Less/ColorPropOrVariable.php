@@ -36,6 +36,14 @@ class ColorPropOrVariable extends Less_Tree
     public function compile($env)
     {
         $v = $this->getVariable();
+
+        if ($v->name[1] === '@') {
+            // Evaluate variable variable as in Less_Tree_Variable:28
+            $vv = new Less_Tree_Variable(substr($v->name, 1), $v->index + 1, $v->currentFileInfo);
+            // Overwrite the name so that the variable variable is not evaluated again
+            $v->name = '@' . $vv->compile($env)->value;
+        }
+
         $compiled = $v->compile($env);
 
         if ($compiled instanceof ColorProp) {
