@@ -92,6 +92,8 @@ class Visitor extends Less_VisitorReplacing
             $p['value'] = $this->visitObj($p['value']);
         }
 
+        $m->rules = $this->visitArray($m->rules);
+
         $this->definingMixin = spl_object_hash($m);
 
         return $m;
