@@ -7,6 +7,9 @@ use LogicException;
 
 /**
  * Replace compiled Less colors with CSS var() function calls
+ *
+ * This basically works by replacing every visited Less variable with {@link ColorPropOrVariable},
+ * which is later compiled to {@link ColorProp} if it is a color.
  */
 class Visitor extends Less_VisitorReplacing
 {
@@ -20,16 +23,6 @@ class Visitor extends Less_VisitorReplacing
      * @var bool|string
      */
     protected $callingVar = false;
-
-    /**
-     * Whether defining a mixin
-     *
-     * If that's the case, don't try to replace compiled Less colors with CSS var() function calls.
-     * This is handled explicitly.
-     *
-     * @var bool|string
-     */
-    protected $definingMixin = false;
 
     /**
      * Whether defining a variable
@@ -71,6 +64,7 @@ class Visitor extends Less_VisitorReplacing
 
     public function visitMixinCall($c)
     {
+        // Less_Tree_Mixin_Call::accept() does not visit arguments, but we have to replace them if necessary.
         foreach ($c->arguments as $a) {
             $a['value'] = $this->visitObj($a['value']);
         }
@@ -80,10 +74,7 @@ class Visitor extends Less_VisitorReplacing
 
     public function visitMixinDefinition($m)
     {
-        if ($this->definingMixin !== false) {
-            throw new LogicException('Already defining mixin');
-        }
-
+        // Less_Tree_Mixin_Definition::accept() does not visit params, but we have to replace them if necessary.
         foreach ($m->params as $p) {
             if (! isset($p['value'])) {
                 continue;
@@ -92,18 +83,7 @@ class Visitor extends Less_VisitorReplacing
             $p['value'] = $this->visitObj($p['value']);
         }
 
-        $m->rules = $this->visitArray($m->rules);
-
-        $this->definingMixin = spl_object_hash($m);
-
         return $m;
-    }
-
-    public function visitMixinDefinitionOut($m)
-    {
-        if ($this->definingMixin !== false && $this->definingMixin === spl_object_hash($m)) {
-            $this->definingMixin = false;
-        }
     }
 
     public function visitRule($r)
@@ -128,7 +108,7 @@ class Visitor extends Less_VisitorReplacing
 
     public function visitVariable($v)
     {
-        if ($this->callingVar !== false || $this->definingMixin !== false || $this->definingVar !== false) {
+        if ($this->callingVar !== false || $this->definingVar !== false) {
             return $v;
         }
 

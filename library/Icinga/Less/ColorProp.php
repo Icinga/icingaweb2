@@ -6,16 +6,21 @@ use Less_Tree_Call;
 use Less_Tree_Color;
 use Less_Tree_Keyword;
 
+/**
+ * ColorProp renders Less colors as CSS var() function calls
+ *
+ * It extends {@link Less_Tree_Color} so that Less functions that take a Less_Tree_Color as an argument do not fail.
+ */
 class ColorProp extends Less_Tree_Color
 {
-    /** @var Less_Tree_Color */
+    /** @var Less_Tree_Color Color with which we created the ColorProp */
     protected $color;
 
     /** @var int */
     protected $index;
 
-    /** @var string */
-    protected $origin;
+    /** @var string Color variable name */
+    protected $name;
 
     public function __construct()
     {
@@ -24,11 +29,11 @@ class ColorProp extends Less_Tree_Color
     /**
      * @param Less_Tree_Color $color
      *
-     * @return self
+     * @return static
      */
     public static function fromColor(Less_Tree_Color $color)
     {
-        $self = new self();
+        $self = new static();
         $self->color = $color;
 
         foreach ($color as $k => $v) {
@@ -61,25 +66,20 @@ class ColorProp extends Less_Tree_Color
     /**
      * @return string
      */
-    public function getOrigin()
+    public function getName()
     {
-        return $this->origin;
+        return $this->name;
     }
 
     /**
-     * @param string $origin
+     * @param string $name
      *
      * @return $this
      */
-    public function setOrigin($origin)
+    public function setName($name)
     {
-        $this->origin = $origin;
+        $this->name = $name;
 
-        return $this;
-    }
-
-    public function compile()
-    {
         return $this;
     }
 
@@ -88,7 +88,8 @@ class ColorProp extends Less_Tree_Color
         $css = (new Less_Tree_Call(
             'var',
             [
-                new Less_Tree_Keyword('--' . $this->getOrigin()),
+                new Less_Tree_Keyword('--' . $this->getName()),
+                // Use the Less_Tree_Color with which we created the ColorProp so that we don't get into genCSS() loops.
                 $this->color
             ],
             $this->getIndex()
