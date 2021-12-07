@@ -50,10 +50,11 @@ class NavigationCommand extends Command
         }
 
         $rc = 0;
-        $username = $this->params->get('user');
+        $user = $this->params->get('user');
         $directories = new DirectoryIterator($preferencesPath);
 
         foreach ($directories as $directory) {
+            $username = $user;
             if ($username !== null && $directories->key() !== $username) {
                 continue;
             }
@@ -66,7 +67,6 @@ class NavigationCommand extends Command
             $serviceActions = $this->readFromIni($directory . '/service-actions.ini', $rc);
 
             Logger::info('Migrating monitoring navigation items for user "%s" to the Icinga DB Web actions', $username);
-            $username = null;
 
             if (! $hostActions->isEmpty()) {
                 $this->migrateNavigationItems($hostActions, $directory . '/icingadb-host-actions.ini', $rc);
