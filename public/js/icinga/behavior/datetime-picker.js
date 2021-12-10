@@ -113,9 +113,17 @@
                 }
             }
 
-            var fp = Flatpickr(this, options);
+            var element = this;
+            if (!! options.wrap) {
+                element = this.parentNode;
+            }
+
+            var fp = Flatpickr(element, options);
             fp.calendarContainer.classList.add('icinga-datetime-picker');
-            this.parentNode.insertBefore(_this.renderIcon(), fp.altInput.nextSibling);
+
+            if (! !!options.wrap) {
+                this.parentNode.insertBefore(_this.renderIcon(), fp.altInput.nextSibling);
+            }
 
             _this._pickers.set(fp, containerId);
         });
