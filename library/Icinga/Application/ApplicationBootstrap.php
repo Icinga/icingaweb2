@@ -751,7 +751,7 @@ abstract class ApplicationBootstrap
             if (file_exists($L10nLocales) && is_dir($L10nLocales)) {
                 $this->localeDir = $L10nLocales;
             } else {
-                $this->localeDir = $this->getApplicationDir('locale');
+                $this->localeDir = false;
             }
         }
 
@@ -764,7 +764,7 @@ abstract class ApplicationBootstrap
     public function hasLocales()
     {
         $localedir = $this->getLocaleDir();
-        return file_exists($localedir) && is_dir($localedir);
+        return $localedir !== false && file_exists($localedir) && is_dir($localedir);
     }
 
     /**
