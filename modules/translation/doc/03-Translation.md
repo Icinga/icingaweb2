@@ -81,7 +81,7 @@ class ExampleController extends Controller
 > **Note**:
 >
 > If you want to translate Icinga Web 2 or any module made by Icinga, please head over to
-> [Icinga/L10n](https://github.com/Icinga/L10n) instead. We won't accept any contributions
+> [translate.icinga.com](https://translate.icinga.com) instead. We won't accept any contributions
 > in this regard other than those made there.
 
 Icinga Web 2 internally uses the UNIX standard gettext tool to perform internationalization, this means translation
