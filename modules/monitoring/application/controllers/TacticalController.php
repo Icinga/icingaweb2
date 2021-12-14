@@ -92,9 +92,13 @@ class TacticalController extends Controller
             ->addSlice($summary->services_unknown_unhandled, array('class' => 'slice-state-unknown'))
             ->addSlice($summary->services_pending, array('class' => 'slice-state-pending'))
             ->addSlice($summary->services_pending_not_checked, array('class' => 'slice-state-not-checked'))
-            ->setLabelBig($summary->services_critical_unhandled)
-            ->setLabelBigEyeCatching($summary->services_critical_unhandled > 0)
-            ->setLabelSmall($this->translate('Services Critical'));
+            ->setLabelBig($summary->services_critical_unhandled ?: $summary->services_unknown_unhandled)
+            ->setLabelBigState($summary->services_critical_unhandled > 0 ? 'critical' : (
+                $summary->services_unknown_unhandled > 0 ? 'unknown' : null
+            ))
+            ->setLabelSmall($summary->services_critical_unhandled > 0 || $summary->services_unknown_unhandled < 1
+                ? $this->translate('Services Critical')
+                : $this->translate('Services Unknown'));
 
         $this->view->hostStatusSummaryChart = $hostSummaryChart
             ->setLabelBigUrl($this->view->filteredUrl(

@@ -23,11 +23,11 @@ class Donut
     protected $labelBigUrl;
 
     /**
-     * Whether the big label shall be eye-catching
+     * The state the big label shall indicate
      *
-     * @var bool
+     * @var string|null
      */
-    protected $labelBigEyeCatching = true;
+    protected $labelBigState = 'critical';
 
     /**
      * Small label in the lower part of the donuts hole
@@ -194,7 +194,7 @@ class Donut
      */
     public function getLabelBigEyeCatching()
     {
-        return $this->labelBigEyeCatching;
+        return $this->labelBigState !== null;
     }
 
     /**
@@ -206,7 +206,31 @@ class Donut
      */
     public function setLabelBigEyeCatching($labelBigEyeCatching = true)
     {
-        $this->labelBigEyeCatching = $labelBigEyeCatching;
+        $this->labelBigState = $labelBigEyeCatching ? 'critical' : null;
+
+        return $this;
+    }
+
+    /**
+     * Get the state the big label shall indicate
+     *
+     * @return string|null
+     */
+    public function getLabelBigState()
+    {
+        return $this->labelBigState;
+    }
+
+    /**
+     * Set the state the big label shall indicate
+     *
+     * @param string|null $labelBigState
+     *
+     * @return $this
+     */
+    public function setLabelBigState($labelBigState)
+    {
+        $this->labelBigState = $labelBigState;
 
         return $this;
     }
@@ -332,9 +356,9 @@ class Donut
                         'attributes' => array(
                             'aria-label' => $labelBig . ' ' . $labelSmall,
                             'href' => $this->getLabelBigUrl() ? $this->getLabelBigUrl()->getAbsoluteUrl() : null,
-                            'class' => $this->labelBigEyeCatching
-                                ? 'donut-label-big donut-label-big-eye-catching'
-                                : 'donut-label-big'
+                            'class' => $this->labelBigState === null
+                                ? 'donut-label-big'
+                                : 'donut-label-big state-' . $this->labelBigState
                         ),
                         'content' => $this->shortenLabel($labelBig)
                     );
