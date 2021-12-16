@@ -1,0 +1,17 @@
+@diff-bg-color: transparent;
+@diff-text-color: @text-color;
+
+@diff-bg-color-ins-base: @color-up;
+@diff-bg-color-del-base: @color-down;
+@diff-bg-color-rep-base: @color-warning;
+
+@diff-border-color: @gray-light;
+
+@light-mode: {
+  :root {
+    --diff-bg-color: var(--body-bg-color);
+    --diff-text-color: var(--text-color);
+
+    --diff-border-color: var(--gray-light);
+  }
+};
