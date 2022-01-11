@@ -176,7 +176,7 @@ class StyleSheet
         }
 
         if (! $themePath || in_array($theme, self::THEME_WHITELIST, true)) {
-            $this->lessCompiler->addLessFile('css/icinga/login-orbs.less');
+            $this->lessCompiler->addLessFile($this->pubPath . '/css/icinga/login-orbs.less');
         }
 
         $mode = 'none';
