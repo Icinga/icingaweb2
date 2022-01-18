@@ -17,7 +17,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: ['7.2', '7.3', '7.4', '8.0']
+        php: ['7.2', '7.3', '7.4', '8.0', '8.1']
         os: ['ubuntu-latest']
 
     steps:
@@ -46,12 +46,12 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     env:
-      phpunit-version: 9.5.4
+      phpunit-version: 9.5
 
     strategy:
       fail-fast: false
       matrix:
-        php: ['7.2', '7.3', '7.4', '8.0']
+        php: ['7.2', '7.3', '7.4', '8.0', '8.1']
         os: ['ubuntu-latest']
         include:
           - php: '7.2'
