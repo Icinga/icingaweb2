@@ -47,59 +47,37 @@ class DomNodeIterator implements RecursiveIterator
         $this->children = new IteratorIterator($node->childNodes);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function current()
+    public function current(): ?DOMNode
     {
         return $this->children->current();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function key()
+    public function key(): int
     {
         return $this->children->key();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function next()
+    public function next(): void
     {
         $this->children->next();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function rewind()
+    public function rewind(): void
     {
         $this->children->rewind();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function valid()
+    public function valid(): bool
     {
         return $this->children->valid();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function hasChildren()
+    public function hasChildren(): bool
     {
         return $this->current()->hasChildNodes();
     }
 
-    /**
-     * {@inheritdoc}
-     * @return DomNodeIterator
-     */
-    public function getChildren()
+    public function getChildren(): DomNodeIterator
     {
         return new static($this->current());
     }

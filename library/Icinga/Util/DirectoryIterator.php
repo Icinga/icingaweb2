@@ -50,7 +50,7 @@ class DirectoryIterator implements RecursiveIterator
     /**
      * Current key
      *
-     * @var string
+     * @var string|false
      */
     private $key;
 
@@ -122,35 +122,23 @@ class DirectoryIterator implements RecursiveIterator
         return is_dir($path) && is_readable($path);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function hasChildren()
+    public function hasChildren(): bool
     {
         return static::isReadable($this->current);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getChildren()
+    public function getChildren(): DirectoryIterator
     {
         return new static($this->current, $this->extension, $this->flags);
     }
 
-
-    /**
-     * {@inheritdoc}
-     */
+    #[\ReturnTypeWillChange]
     public function current()
     {
         return $this->current;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function next()
+    public function next(): void
     {
         do {
             $this->files->next();
@@ -200,26 +188,18 @@ class DirectoryIterator implements RecursiveIterator
         $this->key = $file;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\ReturnTypeWillChange]
     public function key()
     {
         return $this->key;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function valid()
+    public function valid(): bool
     {
         return $this->current !== false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function rewind()
+    public function rewind(): void
     {
         if ($this->files === null) {
             $files = scandir($this->path);

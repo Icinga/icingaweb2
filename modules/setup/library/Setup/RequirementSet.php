@@ -5,6 +5,7 @@ namespace Icinga\Module\Setup;
 
 use LogicException;
 use RecursiveIterator;
+use Traversable;
 
 /**
  * Container to store and handle requirements
@@ -258,7 +259,7 @@ class RequirementSet implements RecursiveIterator
      *
      * @return  bool
      */
-    public function hasChildren()
+    public function hasChildren(): bool
     {
         $current = $this->current();
         return $current instanceof static;
@@ -267,9 +268,9 @@ class RequirementSet implements RecursiveIterator
     /**
      * Return a iterator for the current nested set of requirements
      *
-     * @return  RecursiveIterator
+     * @return  ?RecursiveIterator
      */
-    public function getChildren()
+    public function getChildren(): ?RecursiveIterator
     {
         return $this->current();
     }
@@ -277,7 +278,7 @@ class RequirementSet implements RecursiveIterator
     /**
      * Rewind the iterator to its first element
      */
-    public function rewind()
+    public function rewind(): void
     {
         reset($this->requirements);
     }
@@ -287,7 +288,7 @@ class RequirementSet implements RecursiveIterator
      *
      * @return  bool
      */
-    public function valid()
+    public function valid(): bool
     {
         return $this->key() !== null;
     }
@@ -297,6 +298,7 @@ class RequirementSet implements RecursiveIterator
      *
      * @return  Requirement|RequirementSet
      */
+    #[\ReturnTypeWillChange]
     public function current()
     {
         return current($this->requirements);
@@ -307,7 +309,7 @@ class RequirementSet implements RecursiveIterator
      *
      * @return  int
      */
-    public function key()
+    public function key(): int
     {
         return key($this->requirements);
     }
@@ -315,7 +317,7 @@ class RequirementSet implements RecursiveIterator
     /**
      * Advance the iterator to the next element
      */
-    public function next()
+    public function next(): void
     {
         next($this->requirements);
     }

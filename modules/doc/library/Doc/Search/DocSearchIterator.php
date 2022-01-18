@@ -9,10 +9,6 @@ use Icinga\Data\Tree\TreeNodeIterator;
 
 /**
  * Iterator over doc sections that match a given search criteria
- *
- * @method TreeNodeIterator getInnerIterator() {
- *     {@inheritdoc}
- * }
  */
 class DocSearchIterator extends RecursiveFilterIterator
 {
@@ -48,7 +44,7 @@ class DocSearchIterator extends RecursiveFilterIterator
      * @return bool Whether the current element of the iterator is acceptable
      *              through this filter
      */
-    public function accept()
+    public function accept(): bool
     {
         $section = $this->current();
         /** @var $section \Icinga\Module\Doc\DocSection */
@@ -84,10 +80,7 @@ class DocSearchIterator extends RecursiveFilterIterator
         return $this->search;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getChildren()
+    public function getChildren(): self
     {
         return new static($this->getInnerIterator()->getChildren(), $this->search);
     }

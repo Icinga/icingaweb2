@@ -22,10 +22,7 @@ class ColumnFilterIterator extends FilterIterator
         parent::__construct(new ArrayIterator($columns));
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function accept()
+    public function accept(): bool
     {
         $column = $this->current();
         return ! ($column instanceof Zend_Db_Expr || $column === '(NULL)');

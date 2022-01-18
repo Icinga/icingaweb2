@@ -9,6 +9,7 @@ use Icinga\Data\Filter\Filter;
 use Icinga\Data\Filterable;
 use IteratorAggregate;
 use Icinga\Module\Monitoring\Backend\MonitoringBackend;
+use Traversable;
 
 abstract class ObjectList implements Countable, IteratorAggregate, Filterable
 {
@@ -118,10 +119,7 @@ abstract class ObjectList implements Countable, IteratorAggregate, Filterable
         return $this->objects;
     }
 
-    /**
-     * @return int
-     */
-    public function count()
+    public function count(): int
     {
         if ($this->count === null) {
             $this->count = (int) $this->backend
@@ -135,7 +133,7 @@ abstract class ObjectList implements Countable, IteratorAggregate, Filterable
         return $this->count;
     }
 
-    public function getIterator()
+    public function getIterator(): Traversable
     {
         if ($this->objects === null) {
             $this->fetch();

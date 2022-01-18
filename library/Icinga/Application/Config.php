@@ -122,7 +122,7 @@ class Config implements Countable, Iterator, Selectable
      *
      * @return  int
      */
-    public function count()
+    public function count(): int
     {
         return $this->select()->count();
     }
@@ -130,11 +130,11 @@ class Config implements Countable, Iterator, Selectable
     /**
      * Reset the current position of the internal config object
      *
-     * @return  ConfigObject
+     * @return  void
      */
-    public function rewind()
+    public function rewind(): void
     {
-        return $this->config->rewind();
+        $this->config->rewind();
     }
 
     /**
@@ -142,7 +142,7 @@ class Config implements Countable, Iterator, Selectable
      *
      * @return  ConfigObject
      */
-    public function current()
+    public function current(): ConfigObject
     {
         return $this->config->current();
     }
@@ -152,7 +152,7 @@ class Config implements Countable, Iterator, Selectable
      *
      * @return  bool
      */
-    public function valid()
+    public function valid(): bool
     {
         return $this->config->valid();
     }
@@ -162,7 +162,7 @@ class Config implements Countable, Iterator, Selectable
      *
      * @return  string
      */
-    public function key()
+    public function key(): string
     {
         return $this->config->key();
     }
@@ -170,11 +170,11 @@ class Config implements Countable, Iterator, Selectable
     /**
      * Advance the position of the current iteration and return the new section
      *
-     * @return  ConfigObject
+     * @return  void
      */
-    public function next()
+    public function next(): void
     {
-        return $this->config->next();
+        $this->config->next();
     }
 
     /**

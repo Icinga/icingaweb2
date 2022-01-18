@@ -690,7 +690,7 @@ class RepositoryQuery implements QueryInterface, SortRules, FilterColumns, Itera
      *
      * @return  int
      */
-    public function count()
+    public function count(): int
     {
         return $this->query->count();
     }
@@ -708,7 +708,7 @@ class RepositoryQuery implements QueryInterface, SortRules, FilterColumns, Itera
     /**
      * Start or rewind the iteration
      */
-    public function rewind()
+    public function rewind(): void
     {
         if ($this->iterator === null) {
             if (! $this->hasOrder()) {
@@ -735,8 +735,9 @@ class RepositoryQuery implements QueryInterface, SortRules, FilterColumns, Itera
     /**
      * Fetch and return the current row of this query's result
      *
-     * @return  object
+     * @return  mixed
      */
+    #[\ReturnTypeWillChange]
     public function current()
     {
         $row = $this->iterator->current();
@@ -763,7 +764,7 @@ class RepositoryQuery implements QueryInterface, SortRules, FilterColumns, Itera
      *
      * @return  bool
      */
-    public function valid()
+    public function valid(): bool
     {
         if (! $this->iterator->valid()) {
             Benchmark::measure('Query result iteration finished');
@@ -778,6 +779,7 @@ class RepositoryQuery implements QueryInterface, SortRules, FilterColumns, Itera
      *
      * @return  mixed
      */
+    #[\ReturnTypeWillChange]
     public function key()
     {
         return $this->iterator->key();
@@ -786,7 +788,7 @@ class RepositoryQuery implements QueryInterface, SortRules, FilterColumns, Itera
     /**
      * Advance to the next row of this query's result
      */
-    public function next()
+    public function next(): void
     {
         $this->iterator->next();
     }

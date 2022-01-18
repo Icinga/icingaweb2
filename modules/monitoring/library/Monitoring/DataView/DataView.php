@@ -17,6 +17,7 @@ use Icinga\Module\Monitoring\Backend\Ido\Query\IdoQuery;
 use Icinga\Module\Monitoring\Backend\MonitoringBackend;
 use Icinga\Web\Request;
 use Icinga\Web\Url;
+use Traversable;
 
 /**
  * A read-only view of an underlying query
@@ -58,7 +59,7 @@ abstract class DataView implements QueryInterface, SortRules, FilterColumns, Ite
      *
      * @return  IdoQuery
      */
-    public function getIterator()
+    public function getIterator(): Traversable
     {
         return $this->getQuery();
     }
@@ -499,7 +500,7 @@ abstract class DataView implements QueryInterface, SortRules, FilterColumns, Ite
      *
      * @return int
      */
-    public function count()
+    public function count(): int
     {
         return $this->query->count();
     }

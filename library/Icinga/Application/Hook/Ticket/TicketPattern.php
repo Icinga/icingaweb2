@@ -34,26 +34,17 @@ class TicketPattern implements ArrayAccess
      */
     protected $pattern;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return isset($this->match[$offset]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function offsetGet($offset)
+    public function offsetGet($offset): ?string
     {
         return array_key_exists($offset, $this->match) ? $this->match[$offset] : null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         if ($offset === null) {
             $this->match[] = $value;
@@ -62,10 +53,7 @@ class TicketPattern implements ArrayAccess
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         unset($this->match[$offset]);
     }

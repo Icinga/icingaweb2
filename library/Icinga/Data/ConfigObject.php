@@ -50,11 +50,11 @@ class ConfigObject extends ArrayDatasource implements Iterator, ArrayAccess
     /**
      * Reset the current position of $this->data
      *
-     * @return  mixed
+     * @return  void
      */
-    public function rewind()
+    public function rewind(): void
     {
-        return reset($this->data);
+        reset($this->data);
     }
 
     /**
@@ -62,6 +62,7 @@ class ConfigObject extends ArrayDatasource implements Iterator, ArrayAccess
      *
      * @return  mixed
      */
+    #[\ReturnTypeWillChange]
     public function current()
     {
         return current($this->data);
@@ -72,7 +73,7 @@ class ConfigObject extends ArrayDatasource implements Iterator, ArrayAccess
      *
      * @return  bool
      */
-    public function valid()
+    public function valid(): bool
     {
         return key($this->data) !== null;
     }
@@ -80,9 +81,9 @@ class ConfigObject extends ArrayDatasource implements Iterator, ArrayAccess
     /**
      * Return the section's or property's name of the current iteration
      *
-     * @return  mixed
+     * @return  string
      */
-    public function key()
+    public function key(): string
     {
         return key($this->data);
     }
@@ -90,11 +91,11 @@ class ConfigObject extends ArrayDatasource implements Iterator, ArrayAccess
     /**
      * Advance the position of the current iteration and return the new section's or property's value
      *
-     * @return  mixed
+     * @return  void
      */
-    public function next()
+    public function next(): void
     {
-        return next($this->data);
+        next($this->data);
     }
 
     /**
@@ -153,7 +154,7 @@ class ConfigObject extends ArrayDatasource implements Iterator, ArrayAccess
      *
      * @return  bool
      */
-    public function offsetExists($key)
+    public function offsetExists($key): bool
     {
         return isset($this->$key);
     }
@@ -163,8 +164,9 @@ class ConfigObject extends ArrayDatasource implements Iterator, ArrayAccess
      *
      * @param   string  $key    The name of the property or section
      *
-     * @return  mixed|NULL      The value or NULL in case $key does not exist
+     * @return  ?mixed      The value or NULL in case $key does not exist
      */
+    #[\ReturnTypeWillChange]
     public function offsetGet($key)
     {
         return $this->get($key);
@@ -178,7 +180,7 @@ class ConfigObject extends ArrayDatasource implements Iterator, ArrayAccess
      *
      * @throws  ProgrammingError    If the key is null
      */
-    public function offsetSet($key, $value)
+    public function offsetSet($key, $value): void
     {
         if ($key === null) {
             throw new ProgrammingError('Appending values without an explicit key is not supported');
@@ -192,7 +194,7 @@ class ConfigObject extends ArrayDatasource implements Iterator, ArrayAccess
      *
      * @param   string  $key    The property or section to remove
      */
-    public function offsetUnset($key)
+    public function offsetUnset($key): void
     {
         unset($this->$key);
     }

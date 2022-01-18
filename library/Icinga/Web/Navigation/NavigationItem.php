@@ -13,6 +13,7 @@ use Icinga\Exception\IcingaException;
 use Icinga\Exception\ProgrammingError;
 use Icinga\Web\Navigation\Renderer\NavigationItemRenderer;
 use Icinga\Web\Url;
+use Traversable;
 
 /**
  * A navigation item
@@ -171,9 +172,9 @@ class NavigationItem implements IteratorAggregate
     }
 
     /**
-     * {@inheritdoc}
+     * @return Navigation
      */
-    public function getIterator()
+    public function getIterator(): Traversable
     {
         return $this->getChildren();
     }

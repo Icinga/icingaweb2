@@ -12,6 +12,7 @@ use Icinga\Data\Filter\Filter;
 use Icinga\Web\Hook;
 use Icinga\Web\Session\SessionNamespace;
 use Icinga\Module\Monitoring\DataView\DataView;
+use Traversable;
 
 /**
  * Represents a set of events in a specific range of time
@@ -100,7 +101,7 @@ class TimeLine implements IteratorAggregate
      *
      * @return  ArrayIterator
      */
-    public function getIterator()
+    public function getIterator(): Traversable
     {
         return new ArrayIterator($this->toArray());
     }

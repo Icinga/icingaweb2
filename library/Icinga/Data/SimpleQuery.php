@@ -165,7 +165,7 @@ class SimpleQuery implements QueryInterface, Queryable, Iterator
     /**
      * Start or rewind the iteration
      */
-    public function rewind()
+    public function rewind(): void
     {
         if ($this->iterator === null) {
             $iterator = $this->ds->query($this);
@@ -184,8 +184,9 @@ class SimpleQuery implements QueryInterface, Queryable, Iterator
     /**
      * Fetch and return the current row of this query's result
      *
-     * @return  object
+     * @return  mixed
      */
+    #[\ReturnTypeWillChange]
     public function current()
     {
         return $this->iterator->current();
@@ -196,7 +197,7 @@ class SimpleQuery implements QueryInterface, Queryable, Iterator
      *
      * @return  bool
      */
-    public function valid()
+    public function valid(): bool
     {
         $valid = $this->iterator->valid();
         if ($valid && $this->peekAhead && $this->hasLimit() && $this->iteratorPosition + 1 === $this->getLimit()) {
@@ -221,6 +222,7 @@ class SimpleQuery implements QueryInterface, Queryable, Iterator
      *
      * @return  mixed
      */
+    #[\ReturnTypeWillChange]
     public function key()
     {
         return $this->iterator->key();
@@ -229,7 +231,7 @@ class SimpleQuery implements QueryInterface, Queryable, Iterator
     /**
      * Advance to the next row of this query's result
      */
-    public function next()
+    public function next(): void
     {
         $this->iterator->next();
         $this->iteratorPosition += 1;
@@ -648,7 +650,7 @@ class SimpleQuery implements QueryInterface, Queryable, Iterator
      *
      * @return  int
      */
-    public function count()
+    public function count(): int
     {
         $query = clone $this;
         $query->limit(0, 0);

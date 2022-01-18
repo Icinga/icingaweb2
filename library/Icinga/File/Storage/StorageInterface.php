@@ -19,7 +19,7 @@ interface StorageInterface extends IteratorAggregate
      *
      * @throws  NotReadableError    If the file list can't be read
      */
-    public function getIterator();
+    public function getIterator(): Traversable;
 
     /**
      * Return whether the given file exists

@@ -7,6 +7,7 @@ use Exception;
 use ArrayIterator;
 use Icinga\Exception\IcingaException;
 use IteratorAggregate;
+use Traversable;
 
 /**
  * Container for session values
@@ -32,7 +33,7 @@ class SessionNamespace implements IteratorAggregate
      *
      * @return  ArrayIterator
      */
-    public function getIterator()
+    public function getIterator(): Traversable
     {
         return new ArrayIterator($this->getAll());
     }

@@ -6,6 +6,7 @@ namespace Icinga\Module\Setup;
 use ArrayIterator;
 use IteratorAggregate;
 use Icinga\Module\Setup\Exception\SetupException;
+use Traversable;
 
 /**
  * Container for multiple configuration steps
@@ -21,7 +22,7 @@ class Setup implements IteratorAggregate
         $this->steps = array();
     }
 
-    public function getIterator()
+    public function getIterator(): Traversable
     {
         return new ArrayIterator($this->getSteps());
     }

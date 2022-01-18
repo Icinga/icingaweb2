@@ -28,59 +28,37 @@ class TreeNodeIterator implements RecursiveIterator
         $this->children = new ArrayIterator($node->getChildren());
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function current()
+    public function current(): TreeNode
     {
         return $this->children->current();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function key()
+    public function key(): int
     {
         return $this->children->key();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function next()
+    public function next(): void
     {
         $this->children->next();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function rewind()
+    public function rewind(): void
     {
         $this->children->rewind();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function valid()
+    public function valid(): bool
     {
         return $this->children->valid();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function hasChildren()
+    public function hasChildren(): bool
     {
         return $this->current()->hasChildren();
     }
 
-    /**
-     * {@inheritdoc}
-     * @return TreeNodeIterator
-     */
-    public function getChildren()
+    public function getChildren(): TreeNodeIterator
     {
         return new static($this->current());
     }

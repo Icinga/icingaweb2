@@ -403,7 +403,7 @@ EOT;
      *
      * @see     Countable
      */
-    public function count()
+    public function count(): int
     {
         return count($this->tabs);
     }

@@ -44,7 +44,7 @@ class FileIterator extends EnumeratingFilterIterator
      *
      * @return array
      */
-    public function current()
+    public function current(): array
     {
         return $this->currentData;
     }
@@ -56,7 +56,7 @@ class FileIterator extends EnumeratingFilterIterator
      *
      * @throws FileReaderException  If PHP failed parsing the PCRE pattern
      */
-    public function accept()
+    public function accept(): bool
     {
         $data = array();
         $matched = preg_match(

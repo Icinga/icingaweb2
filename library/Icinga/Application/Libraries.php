@@ -6,6 +6,7 @@ namespace Icinga\Application;
 use ArrayIterator;
 use IteratorAggregate;
 use Icinga\Application\Libraries\Library;
+use Traversable;
 
 class Libraries implements IteratorAggregate
 {
@@ -17,7 +18,7 @@ class Libraries implements IteratorAggregate
      *
      * @return ArrayIterator
      */
-    public function getIterator()
+    public function getIterator(): Traversable
     {
         return new ArrayIterator($this->libraries);
     }

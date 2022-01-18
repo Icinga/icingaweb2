@@ -41,7 +41,7 @@ class DocSectionFilterIterator extends RecursiveFilterIterator implements Counta
      * @return bool Whether the current element of the iterator is acceptable
      *              through this filter
      */
-    public function accept()
+    public function accept(): bool
     {
         $section = $this->current();
         /** @var \Icinga\Module\Doc\DocSection $section */
@@ -51,18 +51,12 @@ class DocSectionFilterIterator extends RecursiveFilterIterator implements Counta
         return false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getChildren()
+    public function getChildren(): self
     {
         return new static($this->getInnerIterator()->getChildren(), $this->chapter);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function count()
+    public function count(): int
     {
         return iterator_count($this);
     }

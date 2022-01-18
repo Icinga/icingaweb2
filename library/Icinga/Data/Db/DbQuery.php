@@ -410,7 +410,7 @@ class DbQuery extends SimpleQuery
      *
      * @return int
      */
-    public function count()
+    public function count(): int
     {
         if ($this->count === null) {
             $this->count = parent::count();

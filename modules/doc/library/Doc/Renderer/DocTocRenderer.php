@@ -3,16 +3,11 @@
 
 namespace Icinga\Module\Doc\Renderer;
 
-use Icinga\Web\View;
 use Icinga\Data\Tree\TreeNodeIterator;
 use RecursiveIteratorIterator;
 
 /**
  * TOC renderer
- *
- * @method TreeNodeIterator getInnerIterator() {
- *     {@inheritdoc}
- * }
  */
 class DocTocRenderer extends DocRenderer
 {
@@ -47,41 +42,26 @@ class DocTocRenderer extends DocRenderer
         parent::__construct($iterator, RecursiveIteratorIterator::SELF_FIRST);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function beginIteration()
+    public function beginIteration(): void
     {
         $this->content[] = sprintf('<nav role="navigation"><%s class="%s">', static::HTML_LIST_TAG, static::CSS_CLASS);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function endIteration()
+    public function endIteration(): void
     {
         $this->content[] = sprintf('</%s></nav>', static::HTML_LIST_TAG);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function beginChildren()
+    public function beginChildren(): void
     {
         $this->content[] = sprintf('<%s class="%s">', static::HTML_LIST_TAG, static::CSS_CLASS);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function endChildren()
+    public function endChildren(): void
     {
         $this->content[] = sprintf('</%s>', static::HTML_LIST_TAG);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function render()
     {
         if ($this->getInnerIterator()->isEmpty()) {

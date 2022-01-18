@@ -10,7 +10,7 @@ class CustomvarProtectionIterator extends IteratorIterator
 {
     const IS_CV_RE = '~^_(host|service)_([a-zA-Z0-9_]+)$~';
 
-    public function current()
+    public function current(): object
     {
         $row = parent::current();
 

@@ -252,7 +252,7 @@ class Zend_Db_Statement_Pdo extends Zend_Db_Statement implements IteratorAggrega
      *
      * @return IteratorIterator
      */
-    public function getIterator()
+    public function getIterator(): Traversable
     {
         return new IteratorIterator($this->_stmt);
     }

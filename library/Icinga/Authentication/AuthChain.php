@@ -184,12 +184,12 @@ class AuthChain implements Authenticatable, Iterator
     /**
      * Rewind the chain
      *
-     * @return ConfigObject
+     * @return void
      */
-    public function rewind()
+    public function rewind(): void
     {
         $this->currentBackend = null;
-        return $this->config->rewind();
+        $this->config->rewind();
     }
 
     /**
@@ -197,7 +197,7 @@ class AuthChain implements Authenticatable, Iterator
      *
      * @return UserBackendInterface
      */
-    public function current()
+    public function current(): UserBackendInterface
     {
         return $this->currentBackend;
     }
@@ -207,7 +207,7 @@ class AuthChain implements Authenticatable, Iterator
      *
      * @return string
      */
-    public function key()
+    public function key(): string
     {
         return $this->config->key();
     }
@@ -215,11 +215,11 @@ class AuthChain implements Authenticatable, Iterator
     /**
      * Move forward to the next user backend config
      *
-     * @return ConfigObject
+     * @return void
      */
-    public function next()
+    public function next(): void
     {
-        return $this->config->next();
+        $this->config->next();
     }
 
     /**
@@ -228,7 +228,7 @@ class AuthChain implements Authenticatable, Iterator
      *
      * @return bool
      */
-    public function valid()
+    public function valid(): bool
     {
         if (! $this->config->valid()) {
             // Stop when there are no more backends to check
