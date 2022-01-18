@@ -17,14 +17,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: ['5.6', '7.0', '7.1', '7.2', '7.3', '7.4', '8.0']
+        php: ['7.2', '7.3', '7.4', '8.0']
         os: ['ubuntu-latest']
-        include:
-          - php: '5.6'
-            allow_failure: true
-            phplint_options: "--exclude='{(?>.*/)?test/php/.*}' --exclude=library/Icinga/Test/BaseTestCase.php"
-          - php: '7.0'
-            allow_failure: true
 
     steps:
       - name: Checkout code base
@@ -61,7 +55,7 @@ jobs:
         os: ['ubuntu-latest']
         include:
           - php: '7.2'
-            phpunit-version: 8.5.15
+            phpunit-version: 8.5
 
     services:
       mysql:
