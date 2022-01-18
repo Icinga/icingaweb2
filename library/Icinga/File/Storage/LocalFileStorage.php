@@ -38,7 +38,14 @@ class LocalFileStorage implements StorageInterface
     public function getIterator()
     {
         try {
-            return new LocalFileStorageIterator($this->baseDir);
+            return new RecursiveIteratorIterator(
+                new RecursiveDirectoryIterator(
+                    $this->baseDir,
+                    RecursiveDirectoryIterator::CURRENT_AS_FILEINFO
+                    | RecursiveDirectoryIterator::KEY_AS_PATHNAME
+                    | RecursiveDirectoryIterator::SKIP_DOTS
+                )
+            );
         } catch (UnexpectedValueException $e) {
             throw new NotReadableError('Couldn\'t read the directory "%s": %s', $this->baseDir, $e);
         }

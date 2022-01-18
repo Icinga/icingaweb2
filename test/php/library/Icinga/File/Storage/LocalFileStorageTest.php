@@ -51,7 +51,10 @@ class LocalFileStorageTest extends BaseTestCase
     {
         $lfs = new TemporaryLocalFileStorage();
         $lfs->create('foobar', 'Hello world!');
-        static::assertSame(array('foobar'), array_values(iterator_to_array($lfs->getIterator())));
+
+        foreach ($lfs as $path => $_) {
+            $this->assertEquals($lfs->resolvePath('foobar'), $path);
+        }
     }
 
     public function testGetIteratorThrowsNotReadableError()
