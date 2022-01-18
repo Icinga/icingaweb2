@@ -70,6 +70,16 @@ class Zend_Paginator_SerializableLimitIterator extends LimitIterator implements 
         ));
     }
 
+    public function __serialize(): array
+    {
+        return array(
+            'it'     => $this->getInnerIterator(),
+            'offset' => $this->_offset,
+            'count'  => $this->_count,
+            'pos'    => $this->getPosition(),
+        );
+    }
+
     /**
      * @param string $data representation of the instance
      */
@@ -78,6 +88,12 @@ class Zend_Paginator_SerializableLimitIterator extends LimitIterator implements 
         $dataArr = unserialize($data);
         $this->__construct($dataArr['it'], $dataArr['offset'], $dataArr['count']);
         $this->seek($dataArr['pos']+$dataArr['offset']);
+    }
+
+    public function __unserialize(array $data): void
+    {
+        $this->__construct($data['it'], $data['offset'], $data['count']);
+        $this->seek($data['pos']+$data['offset']);
     }
 
     /**
