@@ -418,4 +418,83 @@ LESS
             )
         );
     }
+
+    public function testRulesetUsagesInsideRulesets()
+    {
+        $this->assertEquals(
+            <<<CSS
+.ruleset-user {
+  color: black;
+  border-color: white;
+}
+
+CSS
+            ,
+            $this->compileLess(<<<LESS
+@detached-ruleset: {
+  color: black;
+  @another-detached-ruleset();
+};
+
+@another-detached-ruleset: {
+  border-color: white;
+};
+
+.ruleset-user {
+  @detached-ruleset();
+}
+LESS
+            )
+        );
+    }
+
+    public function testLightModeCollection()
+    {
+        $this->assertEquals(
+            <<<CSS
+@media (min-height: 999999px), (prefers-color-scheme: light) and (min-height: 999999px) {
+  :root {
+    --my-color: orange;
+  }
+  :root {
+    --my-other-color: green;
+  }
+  .wrapper {
+    --greenish-color: lime;
+    --blueish-color: navy;
+  }
+}
+
+CSS
+            ,
+            $this->compileLess(<<<LESS
+@prefer-light-color-scheme: 999999px;
+@enable-color-preference: 999999px;
+
+@light-mode: {
+  :root {
+    --my-color: orange;
+  }
+};
+
+@light-mode: {
+  :root {
+    --my-other-color: green;
+  }
+};
+
+.wrapper {
+  @light-mode: {
+    @more-light-colors();
+  };
+}
+
+@more-light-colors: {
+  --greenish-color: lime;
+  --blueish-color: navy;
+};
+LESS
+            )
+        );
+    }
 }
