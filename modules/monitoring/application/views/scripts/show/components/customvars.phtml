@@ -1,4 +1,4 @@
-<?php foreach ($object->customvars as $name => $value): ?>
+<?php foreach ($object->customvarsWithOriginalNames as $name => $value): ?>
 <tr>
     <th><?= $this->escape($name) ?></th>
     <td class="custom-variables"><?= $this->customvar($value) ?></td>
