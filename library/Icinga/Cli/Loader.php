@@ -276,6 +276,10 @@ class Loader
 
     protected function searchMatch($needle, $haystack)
     {
+        if ($needle === null) {
+            $needle = '';
+        }
+
         $this->lastSuggestions = preg_grep(sprintf('/^%s.*$/', preg_quote($needle, '/')), $haystack);
         $match = array_search($needle, $haystack, true);
         if (false !== $match) {

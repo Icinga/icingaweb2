@@ -356,13 +356,13 @@ class DbQuery extends SimpleQuery
             }
 
             return '(' . implode(" $operator ", $sql) . ')';
-        } elseif ($sign === '=' && strpos($expression, '*') !== false) {
+        } elseif ($sign === '=' && $expression !== null && strpos($expression, '*') !== false) {
             if ($expression === '*') {
                 return $col . ' IS NOT NULL';
             }
 
             return $col . ' LIKE ' . $this->escapeForSql($this->escapeWildcards($expression));
-        } elseif ($sign === '!=' && strpos($expression, '*') !== false) {
+        } elseif ($sign === '!=' && $expression !== null && strpos($expression, '*') !== false) {
             if ($expression === '*') {
                 return $col . ' IS NULL';
             }

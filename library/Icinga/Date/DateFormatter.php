@@ -48,7 +48,7 @@ class DateFormatter
     {
         $invert = false;
         $now = time();
-        $time = (float) $time;
+        $time = (int) $time;
         $diff = $time - $now;
         if ($diff < 0) {
             $diff = abs($diff);
@@ -94,7 +94,7 @@ class DateFormatter
      */
     public static function formatDate($date)
     {
-        return date('Y-m-d', (float) $date);
+        return date('Y-m-d', (int) $date);
     }
 
     /**
@@ -141,7 +141,7 @@ class DateFormatter
      */
     public static function formatTime($time)
     {
-        return date('H:i:s', (float) $time);
+        return date('H:i:s', (int) $time);
     }
 
     /**

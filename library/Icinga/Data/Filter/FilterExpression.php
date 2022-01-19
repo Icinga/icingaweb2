@@ -152,7 +152,10 @@ class FilterExpression extends Filter
      */
     protected function strtolowerRecursive($var)
     {
-        if ($var === null || is_scalar($var)) {
+        if ($var === null) {
+            return '';
+        }
+        if (is_scalar($var)) {
             return strtolower($var);
         }
         if (is_array($var)) {
@@ -206,7 +209,7 @@ class FilterExpression extends Filter
             return false;
         }
 
-        return (bool) preg_match($pattern, $rowValue);
+        return $rowValue !== null && preg_match($pattern, $rowValue);
     }
 
     public function andFilter(Filter $filter)

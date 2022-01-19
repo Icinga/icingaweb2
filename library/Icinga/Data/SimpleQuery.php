@@ -378,7 +378,7 @@ class SimpleQuery implements QueryInterface, Queryable, Iterator
             $column = $this->flippedColumns[$column];
         }
 
-        $result = strcmp(strtolower($a->$column), strtolower($b->$column));
+        $result = strcmp(strtolower($a->$column ?: ''), strtolower($b->$column ?: ''));
         if ($result === 0) {
             return $this->compare($a, $b, ++$orderIndex);
         }
