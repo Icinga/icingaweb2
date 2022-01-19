@@ -131,7 +131,7 @@ class SVGRenderer
             'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd'
         );
 
-        $this->document = $implementation->createDocument(null, null, $docType);
+        $this->document = $implementation->createDocument(null, '', $docType);
         $this->svg = $this->createOuterBox();
         $this->document->appendChild($this->svg);
     }

@@ -119,11 +119,11 @@ class Cli extends ApplicationBootstrap
         if ($this->params->shift('autocomplete')) {
             $this->params->unshift('autocomplete');
         }
+
         $watch = $this->params->shift('watch');
         if ($watch === true) {
-            $watch = 5;
-        }
-        if (preg_match('~^\d+$~', $watch)) {
+            $this->watchTimeout = 5;
+        } elseif (is_numeric($watch)) {
             $this->watchTimeout = (int) $watch;
         }
 

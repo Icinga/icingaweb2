@@ -19,6 +19,10 @@ class StringHelper
      */
     public static function trimSplit($value, $delimiter = ',', $limit = null)
     {
+        if ($value === null) {
+            return [];
+        }
+
         if ($limit !== null) {
             $exploded = explode($delimiter, $value, $limit);
         } else {
@@ -40,6 +44,10 @@ class StringHelper
      */
     public static function cname($name, $separator = '_')
     {
+        if ($name === null) {
+            return '';
+        }
+
         return str_replace(' ', '', ucwords(str_replace($separator, ' ', strtolower($name))));
     }
 
@@ -54,6 +62,10 @@ class StringHelper
      */
     public static function ellipsis($string, $maxLength, $ellipsis = '...')
     {
+        if ($string === null) {
+            return '';
+        }
+
         if (strlen($string) > $maxLength) {
             return substr($string, 0, $maxLength - strlen($ellipsis)) . $ellipsis;
         }
@@ -72,6 +84,10 @@ class StringHelper
      */
     public static function ellipsisCenter($string, $maxLength, $ellipsis = '...')
     {
+        if ($string === null) {
+            return '';
+        }
+
         $start = ceil($maxLength / 2.0);
         $end = floor($maxLength / 2.0);
         if (strlen($string) > $maxLength) {
@@ -117,6 +133,10 @@ class StringHelper
      */
     public static function endsWith($string, $suffix)
     {
+        if ($string === null) {
+            return false;
+        }
+
         $stringSuffix = substr($string, -strlen($suffix));
         return $stringSuffix !== false ? $stringSuffix === $suffix : false;
     }

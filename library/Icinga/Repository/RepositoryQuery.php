@@ -344,7 +344,9 @@ class RepositoryQuery implements QueryInterface, SortRules, FilterColumns, Itera
             }
         }
 
-        $baseDirection = strtoupper($sortColumns['order']) === static::SORT_DESC ? static::SORT_DESC : static::SORT_ASC;
+        $baseDirection = isset($sortColumns['order']) && strtoupper($sortColumns['order']) === static::SORT_DESC
+            ? static::SORT_DESC
+            : static::SORT_ASC;
 
         foreach ($sortColumns['columns'] as $column) {
             list($column, $specificDirection) = $this->splitOrder($column);

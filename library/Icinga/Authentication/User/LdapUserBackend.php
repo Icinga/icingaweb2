@@ -88,7 +88,7 @@ class LdapUserBackend extends LdapRepository implements UserBackendInterface, Do
      */
     public function setBaseDn($baseDn)
     {
-        if (($baseDn = trim($baseDn))) {
+        if ($baseDn && ($baseDn = trim($baseDn))) {
             $this->baseDn = $baseDn;
         }
 
@@ -160,7 +160,7 @@ class LdapUserBackend extends LdapRepository implements UserBackendInterface, Do
      */
     public function setFilter($filter)
     {
-        if (($filter = trim($filter))) {
+        if ($filter && ($filter = trim($filter))) {
             if ($filter[0] === '(') {
                 $filter = substr($filter, 1, -1);
             }
@@ -195,9 +195,7 @@ class LdapUserBackend extends LdapRepository implements UserBackendInterface, Do
      */
     public function setDomain($domain)
     {
-        $domain = trim($domain);
-
-        if (strlen($domain)) {
+        if ($domain && ($domain = trim($domain))) {
             $this->domain = $domain;
         }
 

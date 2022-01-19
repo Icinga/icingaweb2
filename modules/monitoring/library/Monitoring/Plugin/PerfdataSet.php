@@ -37,7 +37,7 @@ class PerfdataSet implements IteratorAggregate
      */
     protected function __construct($perfdataStr)
     {
-        if (($perfdataStr = trim($perfdataStr)) !== '') {
+        if ($perfdataStr && ($perfdataStr = trim($perfdataStr))) {
             $this->perfdataStr = $perfdataStr;
             $this->parse();
         }

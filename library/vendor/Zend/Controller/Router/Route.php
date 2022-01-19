@@ -271,11 +271,12 @@ class Zend_Controller_Router_Route extends Zend_Controller_Router_Route_Abstract
                 // Translate value if required
                 $part = $this->_parts[$pos];
                 if ($this->_isTranslated
+                    && $part !== null
                     && (substr($part, 0, 1) === '@' && substr($part, 1, 1) !== '@'
                         && $name === null)
                     || $name !== null && in_array($name, $this->_translatable)
                 ) {
-                    if (substr($part, 0, 1) === '@') {
+                    if ($part && substr($part, 0, 1) === '@') {
                         $part = substr($part, 1);
                     }
 
@@ -284,7 +285,7 @@ class Zend_Controller_Router_Route extends Zend_Controller_Router_Route_Abstract
                     }
                 }
 
-                if (substr($part, 0, 2) === '@@') {
+                if ($part && substr($part, 0, 2) === '@@') {
                     $part = substr($part, 1);
                 }
 

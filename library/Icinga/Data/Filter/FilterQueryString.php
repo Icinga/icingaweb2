@@ -263,7 +263,7 @@ class FilterQueryString
 
         $this->string = $string;
 
-        $this->length = strlen($string);
+        $this->length = $string ? strlen($string) : 0;
 
         if ($this->length === 0) {
             return Filter::matchAll();

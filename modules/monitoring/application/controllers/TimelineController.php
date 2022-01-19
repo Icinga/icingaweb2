@@ -275,7 +275,7 @@ class TimelineController extends Controller
     {
         $startTime = new DateTime();
         $startParam = $this->_request->getParam('start');
-        $startTimestamp = is_numeric($startParam) ? intval($startParam) : strtotime($startParam);
+        $startTimestamp = is_numeric($startParam) ? intval($startParam) : strtotime($startParam ?? '');
         if ($startTimestamp !== false) {
             $startTime->setTimestamp($startTimestamp);
         } else {
@@ -284,7 +284,7 @@ class TimelineController extends Controller
 
         $endTime = clone $startTime;
         $endParam = $this->_request->getParam('end');
-        $endTimestamp = is_numeric($endParam) ? intval($endParam) : strtotime($endParam);
+        $endTimestamp = is_numeric($endParam) ? intval($endParam) : strtotime($endParam ?? '');
         if ($endTimestamp !== false) {
             $endTime->setTimestamp($endTimestamp);
         } else {

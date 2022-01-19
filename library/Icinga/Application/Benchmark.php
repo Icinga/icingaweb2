@@ -232,7 +232,7 @@ class Benchmark
                 round(($m->timestamp - floor($m->timestamp)) * 1000)
             );
             $vals = array(
-                date('H:i:s', $m->timestamp) . '.' . $micro,
+                date('H:i:s', (int) $m->timestamp) . '.' . $micro,
                 $m->message
             );
 

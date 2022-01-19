@@ -106,7 +106,7 @@ class DateFormatter
      */
     public static function formatDateTime($dateTime)
     {
-        return date('Y-m-d H:i:s', (float) $dateTime);
+        return date('Y-m-d H:i:s', (int) $dateTime);
     }
 
     /**

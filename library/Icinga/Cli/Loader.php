@@ -358,7 +358,7 @@ class Loader
             } elseif (! empty($step['object'])) {
                 $object = (string) $step['object'] . $step['type'];
             }
-            if (is_array($step['args'])) {
+            if (isset($step['args']) && is_array($step['args'])) {
                 foreach ($step['args'] as & $arg) {
                     if (is_object($arg)) {
                         $arg = sprintf('[%s]', get_class($arg));

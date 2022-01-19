@@ -240,6 +240,12 @@ class Zend_Db_Statement_Pdo extends Zend_Db_Statement implements IteratorAggrega
         if ($style === null) {
             $style = $this->_fetchMode;
         }
+        if ($cursor === null) {
+            $cursor = PDO::FETCH_ORI_NEXT;
+        }
+        if ($offset === null) {
+            $offset = 0;
+        }
         try {
             return $this->_stmt->fetch($style, $cursor, $offset);
         } catch (PDOException $e) {
