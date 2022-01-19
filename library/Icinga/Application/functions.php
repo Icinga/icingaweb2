@@ -14,7 +14,7 @@ use ipl\I18n\StaticTranslator;
  *
  * @return  string
  */
-function N_($messageId)
+function N_(string $messageId): string
 {
     return $messageId;
 }
@@ -30,7 +30,7 @@ if (extension_loaded('gettext')) {
     /**
      * @see Translator::translate() For the function documentation.
      */
-    function t($messageId, $context = null)
+    function t(string $messageId, ?string $context = null): string
     {
         return StaticTranslator::$instance->translate($messageId, $context);
     }
@@ -38,7 +38,7 @@ if (extension_loaded('gettext')) {
     /**
      * @see Translator::translateInDomain() For the function documentation.
      */
-    function mt($domain, $messageId, $context = null)
+    function mt(string $domain, string $messageId, ?string $context = null): string
     {
         return StaticTranslator::$instance->translateInDomain($domain, $messageId, $context);
     }
@@ -46,21 +46,21 @@ if (extension_loaded('gettext')) {
     /**
      * @see Translator::translatePlural() For the function documentation.
      */
-    function tp($messageId, $messageId2, $number, $context = null)
+    function tp(string $messageId, string $messageId2, ?int $number, ?string $context = null): string
     {
-        return StaticTranslator::$instance->translatePlural($messageId, $messageId2, $number, $context);
+        return StaticTranslator::$instance->translatePlural($messageId, $messageId2, $number ?? 0, $context);
     }
 
     /**
      * @see Translator::translatePluralInDomain() For the function documentation.
      */
-    function mtp($domain, $messageId, $messageId2, $number, $context = null)
+    function mtp(string $domain, string $messageId, string $messageId2, ?int $number, ?string $context = null): string
     {
         return StaticTranslator::$instance->translatePluralInDomain(
             $domain,
             $messageId,
             $messageId2,
-            $number,
+            $number ?? 0,
             $context
         );
     }
@@ -70,7 +70,7 @@ if (extension_loaded('gettext')) {
     /**
      * @see Translator::translate() For the function documentation.
      */
-    function t($messageId, $context = null)
+    function t(string $messageId, ?string $context = null): string
     {
         return $messageId;
     }
@@ -78,7 +78,7 @@ if (extension_loaded('gettext')) {
     /**
      * @see Translator::translate() For the function documentation.
      */
-    function mt($domain, $messageId, $context = null)
+    function mt(string $domain, string $messageId, ?string $context = null): string
     {
         return $messageId;
     }
@@ -86,7 +86,7 @@ if (extension_loaded('gettext')) {
     /**
      * @see Translator::translatePlural() For the function documentation.
      */
-    function tp($messageId, $messageId2, $number, $context = null)
+    function tp(string $messageId, string $messageId2, ?int $number, ?string $context = null): string
     {
         if ((int) $number !== 1) {
             return $messageId2;
@@ -98,7 +98,7 @@ if (extension_loaded('gettext')) {
     /**
      * @see Translator::translatePlural() For the function documentation.
      */
-    function mtp($domain, $messageId, $messageId2, $number, $context = null)
+    function mtp(string $domain, string $messageId, string $messageId2, ?int $number, ?string $context = null): string
     {
         if ((int) $number !== 1) {
             return $messageId2;
