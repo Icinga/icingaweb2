@@ -59,6 +59,13 @@ abstract class MonitoredObject implements Filterable
     protected $customvars;
 
     /**
+     * This object's obfuscated custom variables, names not lower case
+     *
+     * @var array
+     */
+    protected $customvarsWithOriginalNames;
+
+    /**
      * The host custom variables
      *
      * @var array
@@ -430,6 +437,7 @@ abstract class MonitoredObject implements Filterable
         $this->customvars = $customvars;
         $this->hideBlacklistedProperties();
         $this->customvars = $this->obfuscateCustomVars($this->customvars, null);
+        $this->customvarsWithOriginalNames = $this->obfuscateCustomVars($this->customvarsWithOriginalNames, null);
 
         return $this;
     }
@@ -500,9 +508,18 @@ abstract class MonitoredObject implements Filterable
         }
 
         $allProperties = $this->blacklistedProperties->removeMatching(
-            array($this->type => array('vars' => $this->customvars))
+            [$this->type => ['vars' => $this->customvars]]
         );
-        $this->customvars = isset($allProperties[$this->type]['vars']) ? $allProperties[$this->type]['vars'] : array();
+        $this->customvars = isset($allProperties[$this->type]['vars'])
+            ? $allProperties[$this->type]['vars']
+            : [];
+
+        $allProperties = $this->blacklistedProperties->removeMatching(
+            [$this->type => ['vars' => $this->customvarsWithOriginalNames]]
+        );
+        $this->customvarsWithOriginalNames = isset($allProperties[$this->type]['vars'])
+            ? $allProperties[$this->type]['vars']
+            : [];
     }
 
     /**
@@ -520,12 +537,17 @@ abstract class MonitoredObject implements Filterable
             ->where('object_type', static::TYPE_HOST)
             ->where('host_name', $this->host_name);
 
-        $this->hostVariables = array();
+        $this->hostVariables = [];
+        $this->customvarsWithOriginalNames = [];
         foreach ($query as $row) {
             if ($row->is_json) {
                 $this->hostVariables[strtolower($row->varname)] = json_decode($row->varvalue);
             } else {
                 $this->hostVariables[strtolower($row->varname)] = $row->varvalue;
+            }
+
+            if ($this->type === static::TYPE_HOST) {
+                $this->customvarsWithOriginalNames[$row->varname] = $this->hostVariables[strtolower($row->varname)];
             }
         }
 
@@ -554,12 +576,15 @@ abstract class MonitoredObject implements Filterable
             ->where('host_name', $this->host_name)
             ->where('service_description', $this->service_description);
 
-        $this->serviceVariables = array();
+        $this->serviceVariables = [];
+        $this->customvarsWithOriginalNames = [];
         foreach ($query as $row) {
             if ($row->is_json) {
-                $this->serviceVariables[strtolower($row->varname)] = json_decode($row->varvalue);
+                $this->customvarsWithOriginalNames[$row->varname] = json_decode($row->varvalue);
+                $this->serviceVariables[strtolower($row->varname)] = $this->customvarsWithOriginalNames[$row->varname];
             } else {
                 $this->serviceVariables[strtolower($row->varname)] = $row->varvalue;
+                $this->customvarsWithOriginalNames[$row->varname] = $row->varvalue;
             }
         }
 
