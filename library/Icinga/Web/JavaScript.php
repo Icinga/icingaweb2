@@ -118,12 +118,6 @@ class JavaScript
                     }
                 }
             }
-
-            $assetDir = $module->getJsAssetDir();
-            foreach ($module->getJsAssets() as $path) {
-                $moduleFiles[$name][$assetDir][] = $path;
-                $files[] = $path;
-            }
         }
 
         $request = Icinga::app()->getRequest();

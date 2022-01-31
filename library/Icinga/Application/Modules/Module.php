@@ -18,8 +18,6 @@ use Icinga\Web\Widget;
 use ipl\I18n\GettextTranslator;
 use ipl\I18n\StaticTranslator;
 use ipl\I18n\Translation;
-use RecursiveDirectoryIterator;
-use RecursiveIteratorIterator;
 use Zend_Controller_Router_Route;
 use Zend_Controller_Router_Route_Abstract;
 use Zend_Controller_Router_Route_Regex;
@@ -49,13 +47,6 @@ class Module
      * @var string
      */
     private $basedir;
-
-    /**
-     * Directory for assets
-     *
-     * @var string
-     */
-    private $assetDir;
 
     /**
      * Directory for styles
@@ -205,34 +196,6 @@ class Module
     protected $jsFiles = array();
 
     /**
-     * Globally provided CSS assets
-     *
-     * @var array
-     */
-    protected $cssAssets = [];
-
-    /**
-     * Globally provided JS assets
-     *
-     * @var array
-     */
-    protected $jsAssets = [];
-
-    /**
-     * Required CSS assets
-     *
-     * @var array
-     */
-    protected $cssRequires = [];
-
-    /**
-     * Required JS assets
-     *
-     * @var array
-     */
-    protected $jsRequires = [];
-
-    /**
      * Routes to add to the route chain
      *
      * @var array Array of name-route pairs
@@ -295,7 +258,6 @@ class Module
         $this->app            = $app;
         $this->name           = $name;
         $this->basedir        = $basedir;
-        $this->assetDir       = $basedir . '/asset';
         $this->cssdir         = $basedir . '/public/css';
         $this->jsdir          = $basedir . '/public/js';
         $this->libdir         = $basedir . '/library';
@@ -487,7 +449,6 @@ class Module
             return false;
         }
         $this->registerWebIntegration();
-        $this->registerAssets();
         $this->registered = true;
 
         return true;
@@ -535,164 +496,6 @@ class Module
         }
         // Throws ProgrammingError when the module is not yet loaded
         return $manager->getModule($name);
-    }
-
-    /**
-     * Provide a static CSS asset which can be required by other modules
-     *
-     * @param   string  $path   The path, relative to the module's base
-     *
-     * @return  $this
-     */
-    protected function provideCssAsset($path)
-    {
-        $fullPath = join(DIRECTORY_SEPARATOR, [$this->basedir, $path]);
-        $this->cssAssets[] = $fullPath;
-        $this->cssRequires[] = $fullPath; // A module should not have to require its own assets
-
-        return $this;
-    }
-
-    /**
-     * Get the CSS assets provided by this module
-     *
-     * @return array
-     */
-    public function getCssAssets()
-    {
-        return $this->cssAssets;
-    }
-
-    /**
-     * Require CSS from a different module
-     *
-     * @param   string  $path   The file's path, relative to the module's asset or base directory
-     * @param   string  $from   The module's name
-     *
-     * @deprecated Deprecated with v2.9, don't use and depend on a library instead
-     * @return  $this
-     */
-    protected function requireCssFile($path, $from)
-    {
-        $module = self::get($from);
-        $cssAssetDir = join(DIRECTORY_SEPARATOR, [$module->assetDir, 'css']);
-        foreach ($module->getCssAssets() as $assetPath) {
-            if (substr($assetPath, 0, strlen($cssAssetDir)) === $cssAssetDir) {
-                $relativePath = ltrim(substr($assetPath, strlen($cssAssetDir)), '/\\');
-            } else {
-                $relativePath = ltrim(substr($assetPath, strlen($module->basedir)), '/\\');
-            }
-
-            if ($path === $relativePath) {
-                $this->cssRequires[] = $assetPath;
-                break; // Exact match, won't match again..
-            } elseif (fnmatch($path, $relativePath)) {
-                $this->cssRequires[] = $assetPath;
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * Check whether this module requires CSS from a different module
-     *
-     * @return bool
-     */
-    public function requiresCss()
-    {
-        $this->launchConfigScript();
-        return ! empty($this->cssRequires);
-    }
-
-    /**
-     * List the CSS assets required by this module
-     *
-     * @return array
-     */
-    public function getCssRequires()
-    {
-        $this->launchConfigScript();
-        return $this->cssRequires;
-    }
-
-    /**
-     * Provide a static Javascript asset which can be required by other modules
-     *
-     * @param   string  $path   The path, relative to the module's base
-     *
-     * @return  $this
-     */
-    protected function provideJsAsset($path)
-    {
-        $fullPath = join(DIRECTORY_SEPARATOR, [$this->basedir, $path]);
-        $this->jsAssets[] = $fullPath;
-        $this->jsRequires[] = $fullPath; // A module should not have to require its own assets
-
-        return $this;
-    }
-
-    /**
-     * Get the Javascript assets provided by this module
-     *
-     * @return array
-     */
-    public function getJsAssets()
-    {
-        return $this->jsAssets;
-    }
-
-    /**
-     * Require Javascript from a different module
-     *
-     * @param   string  $path   The file's path, relative to the module's asset or base directory
-     * @param   string  $from   The module's name
-     *
-     * @deprecated Deprecated with v2.9, don't use and depend on a library instead
-     * @return  $this
-     */
-    protected function requireJsFile($path, $from)
-    {
-        $module = self::get($from);
-        $jsAssetDir = join(DIRECTORY_SEPARATOR, [$module->assetDir, 'js']);
-        foreach ($module->getJsAssets() as $assetPath) {
-            if (substr($assetPath, 0, strlen($jsAssetDir)) === $jsAssetDir) {
-                $relativePath = ltrim(substr($assetPath, strlen($jsAssetDir)), '/\\');
-            } else {
-                $relativePath = ltrim(substr($assetPath, strlen($module->basedir)), '/\\');
-            }
-
-            if ($path === $relativePath) {
-                $this->jsRequires[] = $assetPath;
-                break; // Exact match, won't match again..
-            } elseif (fnmatch($path, $relativePath)) {
-                $this->jsRequires[] = $assetPath;
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * Check whether this module requires Javascript from a different module
-     *
-     * @return bool
-     */
-    public function requiresJs()
-    {
-        $this->launchConfigScript();
-        return ! empty($this->jsRequires);
-    }
-
-    /**
-     * List the Javascript assets required by this module
-     *
-     * @return array
-     */
-    public function getJsRequires()
-    {
-        $this->launchConfigScript();
-        return $this->jsRequires;
     }
 
     /**
@@ -1082,16 +885,6 @@ class Module
     }
 
     /**
-     * Get the module's JS asset directory
-     *
-     * @return string
-     */
-    public function getJsAssetDir()
-    {
-        return join(DIRECTORY_SEPARATOR, [$this->assetDir, 'js']);
-    }
-
-    /**
      * Get the module's controller directory
      *
      * @return string
@@ -1438,40 +1231,6 @@ class Module
         );
 
         $this->registeredAutoloader = true;
-
-        return $this;
-    }
-
-    /**
-     * Register this module's assets
-     *
-     * @return $this
-     */
-    protected function registerAssets()
-    {
-        if (! is_dir($this->assetDir)) {
-            return $this;
-        }
-
-        $listAssets = function ($type) {
-            $dir = join(DIRECTORY_SEPARATOR, [$this->assetDir, $type]);
-            if (! is_dir($dir)) {
-                return [];
-            }
-
-            return new RecursiveIteratorIterator(new RecursiveDirectoryIterator(
-                $dir,
-                RecursiveDirectoryIterator::CURRENT_AS_PATHNAME | RecursiveDirectoryIterator::SKIP_DOTS
-            ));
-        };
-
-        foreach ($listAssets('css') as $assetPath) {
-            $this->provideCssAsset(ltrim(substr($assetPath, strlen($this->basedir)), '/\\'));
-        }
-
-        foreach ($listAssets('js') as $assetPath) {
-            $this->provideJsAsset(ltrim(substr($assetPath, strlen($this->basedir)), '/\\'));
-        }
 
         return $this;
     }
