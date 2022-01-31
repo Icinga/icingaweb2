@@ -146,12 +146,6 @@ class StyleSheet
                     $this->lessCompiler->addModuleLessFile($moduleName, $lessFilePath);
                 }
             }
-
-            if ($module->requiresCss()) {
-                foreach ($module->getCssRequires() as $lessFilePath) {
-                    $this->lessCompiler->addModuleRequire($moduleName, $lessFilePath);
-                }
-            }
         }
 
         $themingConfig = $this->app->getConfig()->getSection('themes');

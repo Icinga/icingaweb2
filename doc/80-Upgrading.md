@@ -3,6 +3,12 @@
 Specific version upgrades are described below. Please note that upgrades are incremental. An upgrade from
 v2.6 to v2.8 requires to follow the instructions for v2.7 too.
 
+## Upgrading to Icinga Web 2 2.10.x
+
+**Framework changes affecting third-party code**
+
+* Asset support for modules (#3961) introduced with v2.8 has now been removed.
+
 ## Upgrading to Icinga Web 2 2.9.1
 
 **Database Schema**
