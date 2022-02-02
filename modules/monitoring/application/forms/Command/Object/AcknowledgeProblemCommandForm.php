@@ -76,6 +76,7 @@ class AcknowledgeProblemCommandForm extends ObjectsCommandForm
                 'checkbox',
                 'expire',
                 array(
+                    'required'      => (bool) $config->get('settings', 'acknowledge_expire_required', false),
                     'label'         => $this->translate('Use Expire Time'),
                     'value'         => $acknowledgeExpire,
                     'description'   => $this->translate(
