@@ -829,8 +829,7 @@ class Module
                                 if (preg_match('/^([\w\-\/]+)\s+\((.+)\)$/', $part, $m)) {
                                     $metadata->{$key}[$m[1]] = $m[2];
                                 } else {
-                                    // TODO: FAIL?
-                                    continue;
+                                    $metadata->{$key}[$part] = true;
                                 }
                             }
 
