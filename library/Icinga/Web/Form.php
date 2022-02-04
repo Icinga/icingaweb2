@@ -1085,7 +1085,7 @@ class Form extends Zend_Form
                 return $this;
             }
             if ($this->getElement($this->tokenElementName) === null) {
-                $this->addElement(new CsrfCounterMeasure($this->tokenElementName));
+                $this->addElement('CsrfCounterMeasure', $this->tokenElementName);
             }
         }
         return $this;
