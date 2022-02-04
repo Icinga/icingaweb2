@@ -5,26 +5,10 @@ namespace Icinga\Web\Helper\Markdown;
 
 use HTMLPurifier_AttrTransform;
 use HTMLPurifier_Config;
-use ipl\Stdlib\Str;
 use ipl\Web\Url;
 
 class LinkTransformer extends HTMLPurifier_AttrTransform
 {
-    /**
-     * Link targets with such a file extension are not loaded by an iFrame
-     *
-     * @var string[]
-     */
-    public static $NON_IFRAME_FILES = [
-        'html',
-        'htm',
-        'php',
-        'svg',
-        'aspx',
-        'cshtml',
-        'vbhtml'
-    ];
-
     /**
      * Link targets that are considered to have a thumbnail
      *
@@ -48,23 +32,25 @@ class LinkTransformer extends HTMLPurifier_AttrTransform
         }
 
         $url = Url::fromPath($attr['href']);
+        $fileName = basename($url->getPath());
 
-        list($_, $ext) = Str::symmetricSplit($url->getPath(), '.', 2);
+        $ext = null;
+        if (($extAt = strrpos($fileName, '.')) !== false) {
+            $ext = substr($fileName, $extAt + 1);
+        }
 
         $hasThumbnail = $ext !== null && in_array($ext, static::$IMAGE_FILES, true);
-        $useIframe = $ext !== null && ! in_array($ext, static::$NON_IFRAME_FILES, true);
-
         if ($hasThumbnail) {
             // I would have liked to not only base this off of the extension, but also by
             // whether there is an actual img tag inside the anchor. Seems not possible :(
             $attr['class'] = 'with-thumbnail';
         }
 
-        if ((! isset($attr['target']) || ! in_array($attr['target'], ['_blank', '_self']))) {
-            if ($useIframe) {
-                $attr['href'] = Url::fromPath('iframe', ['url' => $url])->getAbsoluteUrl();
-            } elseif ($url->isExternal()) {
+        if (! isset($attr['target'])) {
+            if ($url->isExternal()) {
                 $attr['target'] = '_blank';
+            } else {
+                $attr['data-base-target'] = '_next';
             }
         }
 
