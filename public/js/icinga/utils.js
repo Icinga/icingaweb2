@@ -373,8 +373,8 @@
             while (true) {
                 var id = element.id;
 
-                // Ignore forms and form controls because id generation is unreliable :(
-                if (id && ! element.form && ! (element instanceof HTMLFormElement)) {
+                // Only use ids if they're truly unique
+                if (!! id && document.querySelectorAll('* #' + id).length === 1) {
                     path.push('#' + id);
                     break;
                 }
