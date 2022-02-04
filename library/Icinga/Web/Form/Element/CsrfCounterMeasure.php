@@ -40,7 +40,7 @@ class CsrfCounterMeasure extends FormElement
      */
     public function init()
     {
-        $this->addDecorator('ViewHelper');
+        $this->setDecorators(['ViewHelper']);
         $this->setValue($this->generateCsrfToken());
     }
 
