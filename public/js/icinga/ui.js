@@ -220,7 +220,7 @@
                 'data-icinga-refresh': $col.data('icingaRefresh'),
                 'data-last-update': $col.data('lastUpdate'),
                 'data-icinga-module': $col.data('icingaModule'),
-                'data-icinga-container-id': $col.data('icingaContainerId')
+                'data-icinga-container-id': $col[0].dataset.icingaContainerId
               },
               'class': $col.attr('class')
             };
@@ -230,7 +230,7 @@
             $col.removeData('icingaRefresh');
             $col.removeData('lastUpdate');
             $col.removeData('icingaModule');
-            $col.removeData('icingaContainerId');
+            delete $col[0].dataset.icingaContainerId;
             $col.removeAttr('class').attr('class', 'container');
             return props;
         },
@@ -243,7 +243,7 @@
             $col.data('icingaRefresh', backup['data']['data-icinga-refresh']);
             $col.data('lastUpdate', backup['data']['data-last-update']);
             $col.data('icingaModule', backup['data']['data-icinga-module']);
-            $col.data('icingaContainerId', backup['data']['data-icinga-container-id']);
+            $col[0].dataset.icingaContainerId = backup['data']['data-icinga-container-id'];
         },
 
         triggerWindowResize: function () {
