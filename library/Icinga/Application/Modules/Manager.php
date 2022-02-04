@@ -465,7 +465,7 @@ class Manager
         }
 
         $operator = '=';
-        if (preg_match('/^([<>=]{1,2})\s*v?((?:[\d.]+)(?:\D+)?)$/', $version, $match)) {
+        if (preg_match('/^([<>=]{1,2})\s*v?((?:[\d.]+)(?:.+)?)$/', $version, $match)) {
             $operator = $match[1];
             $version = $match[2];
         }
