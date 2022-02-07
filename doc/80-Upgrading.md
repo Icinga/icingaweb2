@@ -8,6 +8,8 @@ v2.6 to v2.8 requires to follow the instructions for v2.7 too.
 **Framework changes affecting third-party code**
 
 * Asset support for modules (#3961) introduced with v2.8 has now been removed.
+* `expandable-toggle`-support has been removed. Use `class="collapsible" data-visible-height=0`
+  to achieve the same effect. (Available since v2.7.0)
 
 ## Upgrading to Icinga Web 2 2.9.1
 

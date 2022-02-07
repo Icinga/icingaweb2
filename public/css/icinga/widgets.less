@@ -654,51 +654,6 @@ ul.tree li a.error:hover {
   }
 }
 
-input[type="checkbox"].expandable-toggle {
-  display: none;
-
-  & + label {
-    float: right;
-    margin-right: 1em;
-
-    cursor: pointer;
-    user-select: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-  }
-
-  & ~ .expandable-content {
-    clear: right;  // Because the label is floating right
-  }
-
-  &:checked ~ .expandable-content {
-    -webkit-transition: opacity 0.2s linear;
-    -moz-transition: opacity 0.2s linear;
-    -o-transition: opacity 0.2s linear;
-    transition: opacity 0.2s linear;
-  }
-
-  &:not(:checked) ~ .expandable-content {
-    height: 0;
-    opacity: 0;
-    visibility: hidden;
-
-    -webkit-transition: opacity 0.2s linear, visibility 0.2s;
-    -moz-transition: opacity 0.2s linear, visibility 0.2s;
-    -o-transition: opacity 0.2s linear, visibility 0.2s;
-    transition: opacity 0.2s linear, visibility 0.2s;
-  }
-
-  &:checked ~ label .expandable-expand-label {
-    display: none;
-  }
-
-  &:not(:checked) ~ label .expandable-collapse-label {
-    display: none;
-  }
-}
-
 html.no-js .progress-label {
   display: none;
 }
